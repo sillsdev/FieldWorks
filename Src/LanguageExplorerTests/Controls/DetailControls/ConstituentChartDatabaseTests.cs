@@ -16,7 +16,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 	[TestFixture]
 	internal class ConstituentChartDatabaseTests : InMemoryDiscourseTestBase
 	{
-		internal readonly Dictionary<IStTxtPara, AnalysisOccurrence[]> m_allOccurrences;
 		private TestCCLogic m_ccl;
 		private List<ICmPossibility> m_allColumns;
 		private IDsConstChart m_chart;

@@ -23,7 +23,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		private FlexComponentParameters _flexComponentParameters;
 		private int m_wsFr;
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			try
@@ -41,7 +41,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 		}
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();

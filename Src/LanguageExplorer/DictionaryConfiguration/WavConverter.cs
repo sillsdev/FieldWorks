@@ -108,7 +108,16 @@ namespace LanguageExplorer.DictionaryConfiguration
 				{
 					WindowStyle = ProcessWindowStyle.Hidden,
 					FileName = "/bin/bash",
-					Arguments = $"-c 'lame -V 8 -b 16 -F -B -a -m m -q 1 {sourceFilePath} {destinationFilePath}'",
+					// Larry Hayashi's recommended lame settings
+					// lame -V 8 -b 16 -F -B -a -m m -q 1
+					// -V 8 (enable VBR (variable bitrate); 8 is fairly low quality)
+					// -b 16 (minimum bitrate)
+					// -B (maximum bitrate) should have an arg
+					// -F (strictly enforce minimum bitrate)
+					// -a (downmix)
+					// -m m (mono)
+					// -q 1 (algorithm quality)
+					Arguments = $"-c 'lame -V 8 -b 16 -F -a -m m -q 1 --quiet {sourceFilePath} {destinationFilePath}'",
 					UseShellExecute = false,
 					CreateNoWindow = true
 				};

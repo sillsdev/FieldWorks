@@ -58,8 +58,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				ShowHwNumInCrossRef = false,
 				ShowSenseNumber = false
 			};
-			var view = new TestHeadwordNumbersView { HomographBefore = false, ShowHomograph = true, ShowSenseNumber = true };
-			var model = new DictionaryConfigurationModel { HomographConfiguration = testConfig };
+			var view = new TestHeadwordNumbersView { HomographBefore = false, ShowHomograph = true, ShowSenseNumber = true};
+			var model = new DictionaryConfigurationModel {  HomographConfiguration = testConfig };
 			// ReSharper disable once UnusedVariable
 			var testController = new HeadwordNumbersController(view, model, Cache);
 			view.Show();
@@ -141,7 +141,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void Ok_Enabled_WithNoCustomNumbers()
 		{
 			// Test enabled on initial setup
-			var view = new TestHeadwordNumbersView { OkButtonEnabled = false };
+			var view = new TestHeadwordNumbersView {OkButtonEnabled = false};
 			var model = new DictionaryConfigurationModel();
 			var controller = new HeadwordNumbersController(view, model, Cache);
 			// verify ok button enabled on setup with no numbers
@@ -195,33 +195,34 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// SUT
 			var testController = new HeadwordNumbersController(view, model, Cache);
 
-			Assert.That(view.Description, Is.StringContaining("Dictionary"), "Description should say current 'Dictionary' configuration");
-			Assert.That(view.Description, Is.StringContaining("Webster"), "Description should include the current configuration label");
+			Assert.That(view.Description, Does.Contain("Dictionary"), "Description should say current 'Dictionary' configuration");
+			Assert.That(view.Description, Does.Contain("Webster"), "Description should include the current configuration label");
 		}
 
 		[Test]
 		public void ConstructorSetsDescriptionTextInView_Reversal()
 		{
 			var view = new TestHeadwordNumbersView();
-			var model = new DictionaryConfigurationModel { WritingSystem = "en", Label = "PrincePauper" };
+			var model = new DictionaryConfigurationModel { WritingSystem = "en", Label = "PrincePauper"};
 			// ReSharper disable once UnusedVariable
 			// SUT
 			var testController = new HeadwordNumbersController(view, model, Cache);
 
-			Assert.That(view.Description, Is.StringContaining("Reversal Index"), "Description should say current 'Reversal Index' configuration");
-			Assert.That(view.Description, Is.StringContaining("PrincePauper"), "Description should include the current configuration label");
+			Assert.That(view.Description, Does.Contain("Reversal Index"), "Description should say current 'Reversal Index' configuration");
+			Assert.That(view.Description, Does.Contain("PrincePauper"), "Description should include the current configuration label");
 		}
 
 		[Test]
 		public void ConstructorSetsWritingSystemInView()
 		{
 			var view = new TestHeadwordNumbersView();
-			var model = new DictionaryConfigurationModel { HomographConfiguration = new DictionaryHomographConfiguration { HomographWritingSystem = "fr" } };
+			var model = new DictionaryConfigurationModel { HomographConfiguration = new DictionaryHomographConfiguration { HomographWritingSystem = "fr"} };
 			// ReSharper disable once UnusedVariable
 			// SUT
 			var testController = new HeadwordNumbersController(view, model, Cache);
 
-			Assert.That(view.HomographWritingSystem, Is.StringContaining("French"), "The writing system in the view should match the model (but show the pretty name).");
+			Assert.That(view.HomographWritingSystem, Does.Contain("French"),
+				"The writing system in the view should match the model (but show the pretty name).");
 		}
 
 		[Test]
@@ -232,7 +233,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// SUT
 			var testController = new HeadwordNumbersController(view, model, Cache);
 
-			Assert.That(view.HomographWritingSystem, Is.StringContaining("English"), "The default writing system 'English' should be in the view when given HomographWritingSystem is missing.");
+			Assert.That(view.HomographWritingSystem, Does.Contain("English"),
+				"The default writing system 'English' should be in the view when given HomographWritingSystem is missing.");
 		}
 
 		[Test]
@@ -254,12 +256,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 		private sealed class TestHeadwordNumbersView : IHeadwordNumbersView
 		{
-			public event EventHandler Shown = delegate (object sender, EventArgs args) { };
+			public event EventHandler Shown = delegate(object sender, EventArgs args) {  };
 			public bool HomographBefore { get; set; }
 			public bool ShowHomograph { get; set; }
 			public bool ShowHomographOnCrossRef { get; set; }
 			public bool ShowSenseNumber { get; set; }
-			public void Show() { Shown.Invoke(this, new EventArgs()); }
+			public void Show() { Shown.Invoke(this, new EventArgs());}
 			public string Description { get; set; }
 			public string HomographWritingSystem { get; set; }
 

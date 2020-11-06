@@ -8,6 +8,7 @@ using SIL.LCModel.FixData;
 using SIL.LCModel.Utils;
 using SIL.Reporting;
 using SIL.Windows.Forms.HotSpot;
+using SIL.Windows.Forms.Reporting;
 
 namespace FixFwData
 {
@@ -45,7 +46,7 @@ namespace FixFwData
 			{
 				ErrorReport.EmailAddress = "flex_errors@sil.org";
 				ErrorReport.AddStandardProperties();
-				ExceptionHandler.Init();
+				ExceptionHandler.Init(new WinFormsExceptionHandler());
 			}
 		}
 

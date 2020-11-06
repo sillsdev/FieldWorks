@@ -30,6 +30,7 @@ using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using SIL.Linq;
+using SIL.PlatformUtilities;
 using SIL.TestUtilities;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
@@ -50,7 +51,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		private GeneratorSettings DefaultSettings => new GeneratorSettings(Cache, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null);
 		private DictionaryPublicationDecorator DefaultDecorator => new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -60,7 +61,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			if (!styles.Contains(DictionaryNormal))
 			{
 				styles.Add(new BaseStyleInfo { Name = DictionaryNormal });
-			}
+		}
 			_recordListRepositoryForTools = _flexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository);
 			_statusBar = StatusBarPanelServices.CreateStatusBarFor_TESTS();
 			_recordList = CreateRecordList();
@@ -77,7 +78,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var recordList = new RecordList(LanguageExplorerConstants.Entries, _statusBar, Cache.GetManagedSilDataAccess(), false,
 				new VectorPropertyParameterObject(Cache.LanguageProject.LexDbOA, "Entries", Cache.MetaDataCacheAccessor.GetFieldId2(Cache.LanguageProject.LexDbOA.ClassID, "Entries", false)),
 				new Dictionary<string, PropertyRecordSorter>
-				{
+		{
 					{ AreaServices.Default, new PropertyRecordSorter(AreaServices.ShortName) },
 					{ "PrimaryGloss", new PropertyRecordSorter("PrimaryGloss") }
 				});
@@ -86,7 +87,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			return recordList;
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			try
@@ -98,9 +99,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				_statusBar = null;
 				_recordList = null;
 				_flexComponentParameters = null;
-			}
+		}
 			catch (Exception err)
-			{
+		{
 				throw new Exception($"Error in running {GetType().Name} FixtureTeardown method.", err);
 			}
 			finally
@@ -119,18 +120,18 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public override void TestTearDown()
 		{
 			try
-			{
+		{
 				XHTMLStringBuilder = null;
 
 				// Specific tests override this, reset to SIL.LCModel.dll needed by most tests in the file
 				ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
-			}
+		}
 			catch (Exception err)
-			{
+		{
 				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
-			}
+		}
 			finally
-			{
+		{
 				base.TestTearDown();
 			}
 		}
@@ -340,7 +341,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var variant = CreateInterestingLexEntry(Cache);
 			// we need a real Variant Type to pass the list options test
 			CreateVariantForm(Cache, entry, variant, "Spelling Variant");
-			// Create a folder in the project to hold the media files
+																		  // Create a folder in the project to hold the media files
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
 			// Create and fill in the media files
@@ -444,7 +445,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//keep the xml valid (single root element)
 			XHTMLStringBuilder.AppendLine("<TESTWRAPPER>");
-			//SUT
+															//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 			XHTMLStringBuilder.Append(result);
 			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryTwo, mainEntryNode, null, settings);
@@ -498,10 +499,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var testEntry = CreateInterestingLexEntry(Cache);
 
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
-			//SUT
+			// SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 			const string oneSenseWithGlossOfGloss = xpathThruSense + "//span[@lang='en' and text()='gloss']";
-			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
+			// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithGlossOfGloss, 1);
 		}
 
@@ -547,7 +548,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//keep the xml valid (single root element)
 			XHTMLStringBuilder.AppendLine("<TESTWRAPPER>");
-			//SUT
+															//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 			XHTMLStringBuilder.Append(result);
 			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryTwo, mainEntryNode, null, settings);
@@ -584,9 +585,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				FieldDescription = "Senses",
 				IsEnabled = false,
 				Children = new List<ConfigurableDictionaryNode>
-				{
-					new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true }
-				}
+					{
+						new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true }
+					}
 			};
 			var headword = new ConfigurableDictionaryNode
 			{
@@ -623,9 +624,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				FieldDescription = "Senses",
 				IsEnabled = false,
 				Children = new List<ConfigurableDictionaryNode>
-				{
-					new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true }
-				}
+					{
+						new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts, IsEnabled = true }
+					}
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -1187,9 +1188,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				FieldDescription = "Senses",
 				Children = new List<ConfigurableDictionaryNode>
-				{
-					new ConfigurableDictionaryNode { FieldDescription = "DefinitionOrGloss", DictionaryNodeOptions = wsOpts }
-				}
+					{
+						new ConfigurableDictionaryNode { FieldDescription = "DefinitionOrGloss", DictionaryNodeOptions = wsOpts }
+					}
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -1213,13 +1214,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				FieldDescription = "Senses",
 				Children = new List<ConfigurableDictionaryNode>
-				{
-					new ConfigurableDictionaryNode
 					{
-						FieldDescription = "DefinitionOrGloss",
-						DictionaryNodeOptions = GetWsOptionsForLanguageswithDisplayWsAbbrev(new[] { "en" })
+						new ConfigurableDictionaryNode
+						{
+							FieldDescription = "DefinitionOrGloss",
+							DictionaryNodeOptions = GetWsOptionsForLanguageswithDisplayWsAbbrev(new[] { "en" })
+						}
 					}
-				}
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -1244,9 +1245,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				FieldDescription = "Senses",
 				Children = new List<ConfigurableDictionaryNode>
-				{
-					new ConfigurableDictionaryNode { FieldDescription = "DefinitionOrGloss", DictionaryNodeOptions = wsOpts }
-				}
+					{
+						new ConfigurableDictionaryNode { FieldDescription = "DefinitionOrGloss", DictionaryNodeOptions = wsOpts }
+					}
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -1322,16 +1323,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			// set of xpaths and required number of matches.
 			var checkthis = new Dictionary<string, int>()
-			{
-				{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='definitionA1']", 1 },
-				{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='definitionA2']", 1 },
-				{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='glossB1']", 1 },
-				{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='glossB2']", 1 },
-				{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='definitionC1']", 1 },
-				{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='glossC2']", 1 },
-				{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='glossD1']", 1 },
-				{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='definitionD2']", 1 },
-			};
+				{
+					{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='definitionA1']", 1 },
+					{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='definitionA2']", 1 },
+					{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='glossB1']", 1 },
+					{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='glossB2']", 1 },
+					{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='definitionC1']", 1 },
+					{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='glossC2']", 1 },
+					{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='glossD1']", 1 },
+					{ "/div/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='definitionorgloss']/span[.='definitionD2']", 1 },
+				};
 			foreach (var thing in checkthis)
 			{
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(thing.Key, thing.Value);
@@ -1344,9 +1345,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var complexformoptions = new DictionaryNodeListAndParaOptions
 			{
 				Options = new List<DictionaryNodeOption>
-				{
+					{
 					new DictionaryNodeOption { Id = "73266a3a-48e8-4bd7-8c84-91c730340b7d" }
-				}
+					}
 			};
 
 			var revAbbrevNode = new ConfigurableDictionaryNode
@@ -1561,21 +1562,21 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				FieldDescription = "EtymologyOS",
 				CSSClassNameOverride = "etymologies",
 				Children = new List<ConfigurableDictionaryNode>
-				{
-					new ConfigurableDictionaryNode()
 					{
-						Label = "Source Language",
-						FieldDescription = "LanguageRS",
-						CSSClassNameOverride = "languages",
-						Children = new List<ConfigurableDictionaryNode> { abbrNode }
-					},
-					new ConfigurableDictionaryNode
-					{
-						Label = "Source Language Notes",
-						FieldDescription = "LanguageNotes",
-						DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+						new ConfigurableDictionaryNode()
+						{
+							Label = "Source Language",
+							FieldDescription = "LanguageRS",
+							CSSClassNameOverride = "languages",
+							Children = new List<ConfigurableDictionaryNode> { abbrNode }
+						},
+						new ConfigurableDictionaryNode
+						{
+							Label = "Source Language Notes",
+							FieldDescription = "LanguageNotes",
+							DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+						}
 					}
-				}
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -3030,7 +3031,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			CssGeneratorTests.PopulateFieldsForTesting(model);
 
 			string xhtmlPath = null;
-			var letterHeaderXPath = "//div[@class='letHead']";
 			try
 			{
 				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { firstEntry.Hvo }, pubEverything, model, _flexComponentParameters.PropertyTable, Cache, _recordList);
@@ -5238,7 +5238,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(filePath));
 				var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[starts-with(@src, '" + pictureRelativePath + "')]";
-				if (!MiscUtils.IsUnix)
+				if (!Platform.IsUnix)
 				{
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 1);
 				}
@@ -5277,7 +5277,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(filePath));
 				var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[starts-with(@src, '" + pictureRelativePath + "')]";
-				if (!MiscUtils.IsUnix)
+				if (!Platform.IsUnix)
 				{
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 1);
 				}
@@ -5334,14 +5334,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(fileName));
 				var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[contains(@src, '" + pictureRelativePath + "')]";
-				if (!MiscUtils.IsUnix)
+				if (!Platform.IsUnix)
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 1);
 				// that src contains a string, and escaping any Windows path separators
 				AssertRegex(result, $"src=\"[^\"]*{pictureRelativePath.Replace(@"\", @"\\")}[^\"]*\"", 1);
 				// The second file with the same name should have had something appended to the end of the filename but the initial filename should match both entries
 				var filenameWithoutExtension = Path.GetFileNameWithoutExtension(pictureRelativePath);
 				var pictureStartsWith = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[contains(@src, '" + filenameWithoutExtension + "')]";
-				if (!MiscUtils.IsUnix)
+				if (!Platform.IsUnix)
 				{
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureStartsWith, 2);
 				}
@@ -5392,7 +5392,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(fileName));
 				const string pictureXPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img";
 				var pictureWithComposedPath = pictureXPath + "[contains(@src, '" + pictureRelativePath + "')]";
-				if (!MiscUtils.IsUnix)
+				if (!Platform.IsUnix)
 				{
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 2);
 				}
@@ -5432,9 +5432,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			try
 			{
 				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, tempFolder.FullName);
-				//SUT
-				Assert.DoesNotThrow(() => ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
-			}
+			//SUT
+			Assert.DoesNotThrow(() => ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
+		}
 			finally
 			{
 				RobustIO.DeleteDirectoryAndContents(tempFolder.FullName);
@@ -5460,9 +5460,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			try
 			{
 				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, true, true, tempFolder.FullName);
-				//SUT
-				Assert.DoesNotThrow(() => ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
-			}
+			//SUT
+			Assert.DoesNotThrow(() => ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings));
+		}
 			finally
 			{
 				RobustIO.DeleteDirectoryAndContents(tempFolder.FullName);
@@ -5550,7 +5550,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(fileName));
 				var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[contains(@src, '" + pictureRelativePath + "')]";
-				if (!MiscUtils.IsUnix)
+				if (!Platform.IsUnix)
 				{
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 2);
 				}
@@ -6261,7 +6261,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var variant = CreateInterestingLexEntry(Cache);
 			// we need a real Variant Type to pass the list options test
 			CreateVariantForm(Cache, entry, variant, "Spelling Variant");
-			// Create a folder in the project to hold the media files
+																		  // Create a folder in the project to hold the media files
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
 			// Create and fill in the media files
@@ -6441,7 +6441,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var variant = CreateInterestingLexEntry(Cache);
 			// we need a real Variant Type to pass the list options test
 			CreateVariantForm(Cache, entry, variant, "Spelling Variant");
-			// Create a folder in the project to hold the media files
+																		  // Create a folder in the project to hold the media files
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
 			// Create and fill in the media files
@@ -7074,7 +7074,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(variantEntry, model, null, settings);
-			Assert.IsNullOrEmpty(result);
+			Assert.That(result, Is.Null.Or.Empty);
 			// try with HideMinorEntry off
 			variantEntryRef.HideMinorEntry = 0;
 			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(variantEntry, model, null, settings);
@@ -7085,7 +7085,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("/div[@class='lexentry']/span[@class='headword']", 1);
 			variantEntryRef.HideMinorEntry = 1;
 			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(variantEntry, model, null, settings);
-			Assert.IsNullOrEmpty(result);
+			Assert.That(result, Is.Null.Or.Empty);
 		}
 
 		[Test]
@@ -7189,7 +7189,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				if (complexForm == FormType.Unspecified)
 				{
 					complexRef.ComplexEntryTypesRS.Clear();
-				}
+			}
 			}
 			if (isUnspecifiedComplexTypeEnabled)
 			{
@@ -7201,7 +7201,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				if (variantForm == FormType.Unspecified)
 				{
 					variantRef.VariantEntryTypesRS.Clear();
-				}
+			}
 			}
 			if (isUnspecifiedVariantTypeEnabled)
 			{
@@ -7243,7 +7243,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			else
 			{
 				Assert.IsEmpty(result);
-			}
+		}
 		}
 
 		[Test]
@@ -7465,7 +7465,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryCorps, mainEntryNode, pubEverything, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the unfiltered output displays everything.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchPronunciation, 1);
@@ -7476,7 +7476,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			//SUT
 			output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryCorps, mainEntryNode, pubMain, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the main publication output displays what it should.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchPronunciation, 1);
@@ -7489,7 +7489,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			//SUT
 			output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryCorps, mainEntryNode, pubTest, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the test publication output displays what it should.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchPronunciation, 0);
@@ -7502,7 +7502,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			//SUT
 			output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryBras, mainEntryNode, pubEverything, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the unfiltered output displays everything.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 2);
@@ -7511,7 +7511,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			//SUT
 			output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryBras, mainEntryNode, pubMain, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the main publication output displays everything.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 2);
@@ -7522,7 +7522,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// We can still produce test publication output for the entry since we have a copy of it.  Its senses and
 			// examples should not be displayed because the senses are separately hidden.
 			output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryBras, mainEntryNode, pubTest, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the test output doesn't display the senses and examples.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 0);
@@ -7531,7 +7531,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			//SUT
 			output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryOreille, mainEntryNode, pubEverything, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the unfiltered output displays everything.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 1);
@@ -7542,7 +7542,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// We can still produce main publication output for the entry since we have a copy of it.  Its sense and
 			// example should not be displayed because the sense is separately hidden.
 			output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryOreille, mainEntryNode, pubMain, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the test output doesn't display the sense and example.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 0);
@@ -7551,7 +7551,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			//SUT
 			output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryOreille, mainEntryNode, pubTest, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the test publication output displays everything.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 1);
@@ -7565,7 +7565,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			//SUT
 			output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, pubMain, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the main publication output displays what it should.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 1);
@@ -7576,7 +7576,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			//SUT
 			output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, pubTest, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the test publication output displays what it should.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 1);
@@ -7984,8 +7984,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 			const string senseXpath = "div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='gloss']/span[@lang='en' and text()='gloss']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseXpath, 1);
-			Assert.That(result, Is.Not.StringMatching(@"<div class=['""]paracontinuation['""]\s*/>"), "Empty Self closing <div> element should not generated after senses in paragraph");
-			Assert.That(result, Is.Not.StringMatching(@"<div class=['""]paracontinuation['""]\s*></div>"), "Empty <div> element should not be generated after senses in paragraph");
+			Assert.That(result, Does.Not.Contain(@"<div class=['""]paracontinuation['""]\s*/>"), "Empty Self closing <div> element should not generated after senses in paragraph");
+			Assert.That(result, Does.Not.Contain(@"<div class=['""]paracontinuation['""]\s*></div>"), "Empty <div> element should not be generated after senses in paragraph");
 		}
 
 		[Test]
@@ -8358,7 +8358,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				foreach (var sub in sense.SensesOS)
 				{
 					sub.MorphoSyntaxAnalysisRA = msa2;
-				}
+			}
 			}
 
 			const string thirdHeadword = "bon";
@@ -8372,7 +8372,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				foreach (var sub in sense.SensesOS)
 				{
 					sub.MorphoSyntaxAnalysisRA = msa3;
-				}
+			}
 			}
 			var msa4 = CreateMSA(thirdEntry, posNoun);
 			thirdEntry.SensesOS[1].SensesOS[1].MorphoSyntaxAnalysisRA = msa4;
@@ -8446,7 +8446,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			CssGeneratorTests.PopulateFieldsForTesting(model);
 
 			string xhtmlPath = null;
-			var letterHeaderXPath = "//div[@class='letHead']";
 			try
 			{
 				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { thirdEntry.Hvo, secondEntry.Hvo, firstEntry.Hvo }, pubEverything, model, _flexComponentParameters.PropertyTable, Cache, _recordList);
@@ -8595,7 +8594,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			entry.Bibliography.set_String(_wsHe, multiRunString);
 			// Right-to-Left
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null, true);
-			//SUT
+																															 //SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 			const string nestedEn = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@lang='en']/span[@dir='ltr']";
 			const string nestedHe = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@lang='he']";
@@ -8842,11 +8841,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				CSSClassNameOverride = "lexrefs",
 				Between = "; ",
 				DictionaryNodeOptions = GetListOptionsForStrings(ListIds.Sense, new[]
-				{
-					wholeparts.Guid + ":r",
-					antonyms.Guid.ToString(),
-					wholeparts.Guid + ":f"
-				}),
+					{
+							wholeparts.Guid + ":r",
+							antonyms.Guid.ToString(),
+							wholeparts.Guid + ":f"
+						}),
 				Children = new List<ConfigurableDictionaryNode> { relAbbrNode, relNameNode, targetsNode }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
@@ -9027,11 +9026,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					VirtualOrderingServices.SetVO(lexentry, varFlid, new[] { c1.Item, c2.Item, c3.Item, c4.Item });
 					headwords = new[]
 					{
-						c1.Item.OwningEntry.HomographForm,
-						c2.Item.OwningEntry.HomographForm,
-						c3.Item.OwningEntry.HomographForm,
-						c4.Item.OwningEntry.HomographForm
-					};
+							c1.Item.OwningEntry.HomographForm,
+							c2.Item.OwningEntry.HomographForm,
+							c3.Item.OwningEntry.HomographForm,
+							c4.Item.OwningEntry.HomographForm
+						};
 				}
 				var complexTypeNameNode = new ConfigurableDictionaryNode
 				{
@@ -9421,7 +9420,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var entries = LcmXhtmlGenerator.GenerateNextFewEntries(pubEverything, new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, configPath,
 					settings, currentPage, adjPage, 1, out _, out _);
 				Assert.AreEqual(1, entries.Count, "No entries generated");
-				Assert.That(entries[0], Is.StringContaining(thirdEntry.HeadWord.Text));
+				Assert.That(entries[0], Does.Contain(thirdEntry.HeadWord.Text));
 			}
 			finally
 			{
@@ -9474,8 +9473,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var entries = LcmXhtmlGenerator.GenerateNextFewEntries(pubEverything, new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, configPath,
 					settings, currentPage, adjPage, 2, out _, out var adjacent);
 				Assert.AreEqual(2, entries.Count, "Not enough entries generated");
-				Assert.That(entries[0], Is.StringContaining(thirdEntry.HeadWord.Text));
-				Assert.That(entries[1], Is.StringContaining(fourthEntry.HeadWord.Text));
+				Assert.That(entries[0], Does.Contain(thirdEntry.HeadWord.Text));
+				Assert.That(entries[1], Does.Contain(fourthEntry.HeadWord.Text));
 				Assert.IsNull(adjacent);
 			}
 			finally
@@ -9524,13 +9523,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				FieldDescription = "LexEntry",
 				CSSClassNameOverride = "über",
 				Children = new List<ConfigurableDictionaryNode>
-				{
-					new ConfigurableDictionaryNode
 					{
-						FieldDescription = "MLHeadWord",
-						DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "ko" })
+						new ConfigurableDictionaryNode
+						{
+							FieldDescription = "MLHeadWord",
+							DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "ko" })
+						}
 					}
-				}
 			};
 
 			CssGeneratorTests.PopulateFieldsForTesting(node);
@@ -9630,7 +9629,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			if (configType != ConfigType.Root)
 			{
 				model.Parts.Remove(minorEntryNode);
-			}
+		}
 
 			return model;
 		}
@@ -9666,7 +9665,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		/// <param name="gloss">Optional: defaults to 'gloss'</param>
 		/// <returns></returns>
 		internal static ILexEntry CreateInterestingLexEntry(LcmCache cache, string headword = "Citation", string gloss = "gloss", string definition = null)
-		{
+			{
 			var entryFactory = cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			var entry = entryFactory.Create();
 			var wsEn = EnsureWritingSystemSetup(cache, "en", false);
@@ -10162,7 +10161,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 		// ReSharper disable once InconsistentNaming
 		public IMoMorphSynAnalysis CreateMSA(ILexEntry entry, IPartOfSpeech pos)
-		{
+			{
 			var msa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
 			entry.MorphoSyntaxAnalysesOC.Add(msa);
 			msa.PartOfSpeechRA = pos;

@@ -70,7 +70,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&b < az << a < c <<< ch" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
-			string output;
 			using (var stream = new MemoryStream())
 			{
 				using (var writer = new StreamWriter(stream))
@@ -90,7 +89,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			var ws = Cache.LangProject.DefaultVernacularWritingSystem;
 			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&b << az / c <<< AZ / C" + Environment.NewLine + "&f << gz" };
 			var exporter = new ConfiguredExport(null, null, 0);
-			string output;
 			using (var stream = new MemoryStream())
 			using (var writer = new StreamWriter(stream))
 			{
@@ -114,7 +112,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&[last tertiary ignorable] = \\" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
-			string output;
 			using (var stream = new MemoryStream())
 			{
 				using (var writer = new StreamWriter(stream))
@@ -140,7 +137,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&[last tertiary ignorable] = \\uA78C" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
-			string output;
 			using (var stream = new MemoryStream())
 			{
 				using (var writer = new StreamWriter(stream))
@@ -164,7 +160,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&[last tertiary ignorable]=\\uA78C" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
-			string output;
 			using (var stream = new MemoryStream())
 			{
 				using (var writer = new StreamWriter(stream))
@@ -188,7 +183,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&[last tertiary ignorable] = '!'\r\n&[last tertiary ignorable]='?'" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
-			string output;
 			using (var stream = new MemoryStream())
 			{
 				using (var writer = new StreamWriter(stream))
@@ -212,7 +206,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&[last tertiary ignorable]= '!'\r\n&[last tertiary ignorable] ='?'" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
-			string output;
 			using (var stream = new MemoryStream())
 			{
 				using (var writer = new StreamWriter(stream))
@@ -235,7 +228,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "& [before 2] a < aa <<< Aa <<< AA" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
-			string output;
 			using (var stream = new MemoryStream())
 			{
 				using (var writer = new StreamWriter(stream))
@@ -259,7 +251,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "& a < bb & [before 1] a < aa" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
-			string output;
 			using (var stream = new MemoryStream())
 			{
 				using (var writer = new StreamWriter(stream))
@@ -281,7 +272,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "& [before 1] a < aa <<< Aa <<< AA" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
-			string output;
 			using (var stream = new MemoryStream())
 			{
 				using (var writer = new StreamWriter(stream))
@@ -305,7 +295,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			ws.DefaultCollation = new SimpleRulesCollationDefinition("standard") { SimpleRules = "b" + Environment.NewLine + "az a" + Environment.NewLine + "c ch" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
-			string output;
 			using (var stream = new MemoryStream())
 			{
 				using (var writer = new StreamWriter(stream))
@@ -326,7 +315,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			ws.DefaultCollation = new SimpleRulesCollationDefinition("standard") { SimpleRules = "b" + Environment.NewLine + "ñe ñ" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
-			string output;
 			using (var stream = new MemoryStream())
 			{
 				using (var writer = new StreamWriter(stream))
@@ -368,7 +356,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			ws.DefaultCollation = new SystemCollationDefinition { LanguageTag = "fr" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
-			string output;
 			using (var stream = new MemoryStream())
 			{
 				using (var writer = new StreamWriter(stream))
@@ -401,7 +388,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 					}
 				}
 			}
-			Assert.That(output, Is.StringContaining("class=\"someNUMBER_SIGNstyle\""));
+			Assert.That(output, Does.Contain("class=\"someNUMBER_SIGNstyle\""));
 		}
 	}
 }

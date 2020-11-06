@@ -45,7 +45,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		/// <summary>
 		/// Create objects required for testing.
 		/// </summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void Setup()
 		{
 			// Create the following:
@@ -112,7 +112,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			m_layouts = new LayoutCache(m_mdc, m_layoutInventory, m_partInventory);
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void Teardown()
 		{
 			if (Marshal.IsComObject(m_cda))

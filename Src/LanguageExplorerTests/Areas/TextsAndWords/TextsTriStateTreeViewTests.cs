@@ -3,6 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
+using LanguageExplorer;
+using LanguageExplorer.Controls;
 using NUnit.Framework;
 
 #pragma warning disable 1591 // no XML comments needed in tests
@@ -58,8 +60,8 @@ namespace LanguageExplorerTests.Interlinear
 			var treeView = new TestTextsTriStateTreeView();
 			var dummyVersesNode = new TreeNode(TextsTriStateTreeView.ksDummyName) { Name = TextsTriStateTreeView.ksDummyName };
 			m_bookNode = new TreeNode("II Hezekiah", new[] { dummyVersesNode }) { Name = "Book", Tag = 7 };
-			m_testamentNode = new TreeNode(ITextStrings.kstidOtNode, new[] { m_bookNode }) { Name = "Testament" };
-			m_bibleNode = new TreeNode(ITextStrings.kstidBibleNode, new[] { m_testamentNode }) { Name = "Bible" };
+			m_testamentNode = new TreeNode(LanguageExplorerResources.kstidOtNode, new[] { m_bookNode }) { Name = "Testament" };
+			m_bibleNode = new TreeNode(LanguageExplorerResources.kstidBibleNode, new[] { m_testamentNode }) { Name = "Bible" };
 			treeView.Nodes.Add(m_bibleNode);
 			EnableEventHandling(treeView);
 			return treeView;

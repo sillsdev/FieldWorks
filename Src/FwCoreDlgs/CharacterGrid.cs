@@ -635,7 +635,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				return;
 			}
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				// on unix we don't support getting Glyphs from the font.
 				// The results i m_chars is only currently used be CalcCellSize

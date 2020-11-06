@@ -22,7 +22,7 @@ namespace LanguageExplorerTests
 		#region Overrides of TestBaseForTestsThatCreateTempFilesBasedOnResources
 
 		/// <inheritdoc />
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			var keyAttrs = new Dictionary<string, string[]>

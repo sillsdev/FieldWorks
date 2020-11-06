@@ -286,8 +286,8 @@ namespace ParatextImport
 
 			// Verify section head differences
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(sectionCur.HeadingOA[0], diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -358,7 +358,7 @@ namespace ParatextImport
 			// Verify that differences are correct
 			Assert.AreEqual(1, m_bookMerger.OriginalNumberOfDifferences);
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001002, diff.RefStart);
+			Assert.AreEqual(01001002, (int)diff.RefStart);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(hvoRev, diff.ParaRev);
 			Assert.AreEqual(sectionCur.ContentOA[0], diff.ParaCurr);
@@ -414,7 +414,7 @@ namespace ParatextImport
 			// Detect differences and verify that they are correct
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(DifferenceType.CharStyleDifference, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(ichMinCurr, diff.IchMinCurr);
@@ -468,7 +468,7 @@ namespace ParatextImport
 			// Detect differences and verify that they are correct
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(DifferenceType.WritingSystemDifference, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(ichMinCurr, diff.IchMinCurr);
@@ -525,7 +525,7 @@ namespace ParatextImport
 			// Detect differences and verify that they are correct
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(DifferenceType.CharStyleDifference | DifferenceType.WritingSystemDifference,
 				diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
@@ -588,7 +588,7 @@ namespace ParatextImport
 			// Detect differences and verify that they are correct
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(ichMinCurr, diff.IchMinCurr);
@@ -598,7 +598,7 @@ namespace ParatextImport
 			Assert.AreEqual(ichLimRev, diff.IchLimRev);
 
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001002, diff.RefStart);
+			Assert.AreEqual(01001002, (int)diff.RefStart);
 			Assert.AreEqual(DifferenceType.VerseMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(ichMinCurr, diff.IchMinCurr);
@@ -661,8 +661,8 @@ namespace ParatextImport
 
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001002, diff.RefStart);
-			Assert.AreEqual(01001003, diff.RefEnd);
+			Assert.AreEqual(01001002, (int)diff.RefStart);
+			Assert.AreEqual(01001003, (int)diff.RefEnd);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(ichMinCurr, diff.IchMinCurr);
 			Assert.AreEqual(ichLimCurr, diff.IchLimCurr);
@@ -724,8 +724,8 @@ namespace ParatextImport
 
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001002, diff.RefStart);
-			Assert.AreEqual(01001003, diff.RefEnd);
+			Assert.AreEqual(01001002, (int)diff.RefStart);
+			Assert.AreEqual(01001003, (int)diff.RefEnd);
 			Assert.AreEqual(hvoRev, diff.ParaRev);
 			Assert.AreEqual(ichMinRev, diff.IchMinRev);
 			Assert.AreEqual(ichLimRev, diff.IchLimRev);
@@ -774,7 +774,7 @@ namespace ParatextImport
 			// Detect differences and verify that they are correct
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(ichMinCurr, diff.IchMinCurr);
 			Assert.AreEqual(ichLimCurr, diff.IchLimCurr);
@@ -821,7 +821,7 @@ namespace ParatextImport
 			// Detect differences and verify that they are correct
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(ichMinCurr, diff.IchMinCurr);
 			Assert.AreEqual(ichLimCurr, diff.IchLimCurr);
@@ -865,7 +865,7 @@ namespace ParatextImport
 			Assert.AreEqual(1, m_bookMerger.Differences.Count);
 
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(3, diff.IchMinCurr);
 			Assert.AreEqual(3, diff.IchLimCurr);
@@ -909,7 +909,7 @@ namespace ParatextImport
 			Assert.AreEqual(1, m_bookMerger.Differences.Count);
 
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(3, diff.IchMinCurr);
 			Assert.AreEqual(4, diff.IchLimCurr);
@@ -953,7 +953,7 @@ namespace ParatextImport
 			Assert.AreEqual(1, m_bookMerger.Differences.Count);
 
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(5, diff.IchMinCurr);
 			Assert.AreEqual(5, diff.IchLimCurr);
@@ -1003,8 +1003,8 @@ namespace ParatextImport
 
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001002, diff.RefStart);
-			Assert.AreEqual(01001003, diff.RefEnd);
+			Assert.AreEqual(01001002, (int)diff.RefStart);
+			Assert.AreEqual(01001003, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.VerseAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(hvoRev, diff.ParaRev);
 			Assert.AreEqual(ichEndV1Rev, diff.IchMinRev);
@@ -1067,8 +1067,8 @@ namespace ParatextImport
 
 			// verse 1 is missing in the revision
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.VerseAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(sectionCur.ContentOA[0], diff.ParaCurr);
 			Assert.AreEqual(sectionRev.ContentOA[0], diff.ParaRev);
@@ -1079,8 +1079,8 @@ namespace ParatextImport
 
 			// verses 2-3 are missing in current
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001002, diff.RefStart);
-			Assert.AreEqual(01001003, diff.RefEnd);
+			Assert.AreEqual(01001002, (int)diff.RefStart);
+			Assert.AreEqual(01001003, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.VerseMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(sectionCur.ContentOA[0], diff.ParaCurr);
 			Assert.AreEqual(sectionRev.ContentOA[0], diff.ParaRev);
@@ -1142,8 +1142,8 @@ namespace ParatextImport
 
 			// verse 2 is missing in the revision
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001002, diff.RefStart);
-			Assert.AreEqual(01001002, diff.RefEnd);
+			Assert.AreEqual(01001002, (int)diff.RefStart);
+			Assert.AreEqual(01001002, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.VerseAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(sectionCur.ContentOA[0], diff.ParaCurr);
 			Assert.AreEqual(sectionRev.ContentOA[0], diff.ParaRev);
@@ -1154,8 +1154,8 @@ namespace ParatextImport
 
 			// verse 3 is missing in current
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001003, diff.RefStart);
-			Assert.AreEqual(01001003, diff.RefEnd);
+			Assert.AreEqual(01001003, (int)diff.RefStart);
+			Assert.AreEqual(01001003, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.VerseMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(sectionCur.ContentOA[0], diff.ParaCurr);
 			Assert.AreEqual(sectionRev.ContentOA[0], diff.ParaRev);
@@ -1220,8 +1220,8 @@ namespace ParatextImport
 
 			// verse 1 missing in current
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.VerseMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(hvoRev, diff.ParaRev);
@@ -1300,8 +1300,8 @@ namespace ParatextImport
 			Assert.AreEqual(3, m_bookMerger.Differences.Count);
 
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001002, diff.RefStart);
-			Assert.AreEqual(01001003, diff.RefEnd);
+			Assert.AreEqual(01001002, (int)diff.RefStart);
+			Assert.AreEqual(01001003, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.VerseMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(ichEndV1Curr, diff.IchMinCurr);
@@ -1311,8 +1311,8 @@ namespace ParatextImport
 			Assert.AreEqual(ichMinRev, diff.IchMinRev);
 
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001004, diff.RefStart);
-			Assert.AreEqual(01001004, diff.RefEnd);
+			Assert.AreEqual(01001004, (int)diff.RefStart);
+			Assert.AreEqual(01001004, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(ichEndV1Curr, diff.IchMinCurr);
@@ -1322,8 +1322,8 @@ namespace ParatextImport
 			Assert.AreEqual(0, diff.IchMinRev);
 
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001005, diff.RefStart);
-			Assert.AreEqual(01001005, diff.RefEnd);
+			Assert.AreEqual(01001005, (int)diff.RefStart);
+			Assert.AreEqual(01001005, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(ichEndV1Curr, diff.IchMinCurr);
@@ -1383,20 +1383,20 @@ namespace ParatextImport
 
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(hvoRev, diff.ParaRev);
 
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001002, diff.RefStart);
-			Assert.AreEqual(01001002, diff.RefEnd);
+			Assert.AreEqual(01001002, (int)diff.RefStart);
+			Assert.AreEqual(01001002, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001003, diff.RefStart);
-			Assert.AreEqual(01001003, diff.RefEnd);
+			Assert.AreEqual(01001003, (int)diff.RefStart);
+			Assert.AreEqual(01001003, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.IsNull(m_bookMerger.Differences.MoveNext());
 		}
@@ -1451,22 +1451,22 @@ namespace ParatextImport
 
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(hvoCurr1, diff.ParaCurr);
 			Assert.AreEqual(hvoRev1, diff.ParaRev);
 
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001002, diff.RefStart);
-			Assert.AreEqual(01001002, diff.RefEnd);
+			Assert.AreEqual(01001002, (int)diff.RefStart);
+			Assert.AreEqual(01001002, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(hvoCurr1, diff.ParaCurr);
 			Assert.AreEqual(hvoRev1, diff.ParaRev);
 
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001003, diff.RefStart);
-			Assert.AreEqual(01001003, diff.RefEnd);
+			Assert.AreEqual(01001003, (int)diff.RefStart);
+			Assert.AreEqual(01001003, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(hvoCurr2, diff.ParaCurr);
 			Assert.AreEqual(hvoRev2, diff.ParaRev);
@@ -1676,8 +1676,8 @@ namespace ParatextImport
 
 			// Verify verse 2-4 text difference
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001002, diff.RefStart);
-			Assert.AreEqual(01001004, diff.RefEnd);
+			Assert.AreEqual(01001002, (int)diff.RefStart);
+			Assert.AreEqual(01001004, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(ichMinV2Curr, diff.IchMinCurr);
 			Assert.AreEqual(ichEndV4Curr, diff.IchLimCurr);
@@ -1686,8 +1686,8 @@ namespace ParatextImport
 
 			// Verify verse 5-9 text difference
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001005, diff.RefStart);
-			Assert.AreEqual(01001009, diff.RefEnd);
+			Assert.AreEqual(01001005, (int)diff.RefStart);
+			Assert.AreEqual(01001009, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(ichEndV4Curr, diff.IchMinCurr);
 			Assert.AreEqual(ichEndV9Curr, diff.IchLimCurr);
@@ -1791,8 +1791,8 @@ namespace ParatextImport
 			Assert.AreEqual(1, m_bookMerger.Differences.Count);
 
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.FootnoteMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(paraCur, diff.ParaCurr);
 			Assert.AreEqual(footnotePos, diff.IchMinCurr);
@@ -1841,8 +1841,8 @@ namespace ParatextImport
 			// verify the diffs
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(1, m_bookMerger.Differences.Count);
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.FootnoteMissingInCurrent, diff.DiffType);
 
 			Assert.AreEqual(paraCur, diff.ParaCurr);
@@ -1939,8 +1939,8 @@ namespace ParatextImport
 			// verify the diffs
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(1, m_bookMerger.Differences.Count);
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.FootnoteAddedToCurrent | DifferenceType.TextDifference, diff.DiffType);
 
 			Assert.AreEqual(paraCur, diff.ParaCurr);
@@ -2007,8 +2007,8 @@ namespace ParatextImport
 			// verify the diffs
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(1, m_bookMerger.Differences.Count);
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.FootnoteAddedToCurrent | DifferenceType.TextDifference, diff.DiffType);
 
 			Assert.AreEqual(paraCur, diff.ParaCurr);
@@ -2084,8 +2084,8 @@ namespace ParatextImport
 			Assert.AreEqual(1, m_genesis.FootnotesOS.Count);
 
 			// verify the diffs existence
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 
 			// verify the diff references
@@ -2135,8 +2135,8 @@ namespace ParatextImport
 			Assert.AreEqual(1, m_bookMerger.Differences.Count);
 
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.FootnoteDifference, diff.DiffType);
 			Assert.AreEqual(paraCur, diff.ParaCurr);
 			Assert.AreEqual(footnotePos, diff.IchMinCurr);
@@ -2234,8 +2234,8 @@ namespace ParatextImport
 //
 //					Difference diff = m_bookMerger.Differences.MoveNext();
 //					Assert.IsNotNull(diff, "Should have one diff");
-//					Assert.AreEqual(01001001, diff.RefStart);
-//					Assert.AreEqual(01001001, diff.RefEnd);
+//					Assert.AreEqual(01001001, (int)diff.RefStart);
+//					Assert.AreEqual(01001001, (int)diff.RefEnd);
 //					// TODO: Difference should also include PictureMissingInCurrent
 //					Assert.AreEqual(DifferenceType.FootnoteAddedToCurrent, diff.DiffType);
 //
@@ -2333,8 +2333,8 @@ namespace ParatextImport
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.IsNotNull(diff, "Should have one diff");
 
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.MultipleCharStyleDifferences, diff.DiffType);
 			Assert.AreEqual(paraCur, diff.ParaCurr);
 			Assert.AreEqual(1, diff.IchMinCurr);
@@ -2413,8 +2413,8 @@ namespace ParatextImport
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.IsNotNull(diff, "Should have one diff");
 
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.CharStyleDifference | DifferenceType.TextDifference |
 				DifferenceType.FootnoteAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(paraCur, diff.ParaCurr);
@@ -2507,8 +2507,8 @@ namespace ParatextImport
 			// verify the diffs
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.IsNotNull(diff, "Should have one diff");
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.CharStyleDifference | DifferenceType.TextDifference, diff.DiffType);
 
 			Assert.AreEqual(paraCur, diff.ParaCurr);
@@ -2568,8 +2568,8 @@ namespace ParatextImport
 			// Verify the diffs
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(1, m_bookMerger.Differences.Count);
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 
 			Assert.AreEqual(paraCur, diff.ParaCurr);
@@ -2612,8 +2612,8 @@ namespace ParatextImport
 			// verify the diffs
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(1, m_bookMerger.Differences.Count);
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.FootnoteAddedToCurrent | DifferenceType.CharStyleDifference,
 				diff.DiffType);
 
@@ -2680,7 +2680,7 @@ namespace ParatextImport
 			// Detect differences and verify that they are correct
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(2, diff.IchMinCurr);
@@ -2730,7 +2730,7 @@ namespace ParatextImport
 			// Detect differences and verify that they are correct
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(1, diff.IchMinCurr);
@@ -2790,7 +2790,7 @@ namespace ParatextImport
 			// Detect differences and verify that they are correct
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(DifferenceType.CharStyleDifference, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(ichMinCurr, diff.IchMinCurr);
@@ -2849,8 +2849,8 @@ namespace ParatextImport
 			// Detect differences and verify that they are correct
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(DifferenceType.MultipleCharStyleDifferences, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(ichMinCurr, diff.IchMinCurr);
@@ -2910,8 +2910,8 @@ namespace ParatextImport
 			// Detect differences and verify that they are correct
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(DifferenceType.MultipleWritingSystemDifferences, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(ichMinDiff, diff.IchMinCurr);
@@ -2967,8 +2967,8 @@ namespace ParatextImport
 			// Detect differences and verify that they are correct
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.CharStyleDifference | DifferenceType.TextDifference,
 				diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
@@ -3028,8 +3028,8 @@ namespace ParatextImport
 			// Detect differences and verify that they are correct
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.CharStyleDifference | DifferenceType.TextDifference,
 				diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
@@ -3082,7 +3082,7 @@ namespace ParatextImport
 			// Detect differences and verify that they are correct
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(1, diff.IchMinCurr);
@@ -3132,8 +3132,8 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.IsNotNull(diff);
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphStyleDifference, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -3187,7 +3187,7 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(DifferenceType.ParagraphStyleDifference, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -3197,7 +3197,7 @@ namespace ParatextImport
 			Assert.AreEqual(ichLimRev, diff.IchLimRev);
 
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(DifferenceType.CharStyleDifference, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(1, diff.IchMinCurr);
@@ -3249,8 +3249,8 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphStyleDifference, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -3260,8 +3260,8 @@ namespace ParatextImport
 			Assert.AreEqual(ichLimRev, diff.IchLimRev);
 
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(23, diff.IchMinCurr);
@@ -3322,8 +3322,8 @@ namespace ParatextImport
 			// verify paragraph zero missing in revision
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff.DiffType);
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(sectionCur.ContentOA[0], diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
 			Assert.AreEqual(ichLimP1Curr, diff.IchLimCurr);
@@ -3333,8 +3333,8 @@ namespace ParatextImport
 
 			// verify paragraph style different in verse two
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001002, diff.RefStart);
-			Assert.AreEqual(01001002, diff.RefEnd);
+			Assert.AreEqual(01001002, (int)diff.RefStart);
+			Assert.AreEqual(01001002, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphStyleDifference, diff.DiffType);
 			Assert.AreEqual(sectionCur.ContentOA[1], diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -3512,8 +3512,8 @@ namespace ParatextImport
 
 			// verify verse 2 missing in revision
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001002, diff.RefStart);
-			Assert.AreEqual(01001002, diff.RefEnd);
+			Assert.AreEqual(01001002, (int)diff.RefStart);
+			Assert.AreEqual(01001002, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.VerseAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(ichLimCurrV1, diff.IchMinCurr);
@@ -3524,8 +3524,8 @@ namespace ParatextImport
 
 			// verify verse 3-4 text difference
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001003, diff.RefStart);
-			Assert.AreEqual(01001004, diff.RefEnd);
+			Assert.AreEqual(01001003, (int)diff.RefStart);
+			Assert.AreEqual(01001004, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(ichLimCurrV2, diff.IchMinCurr);
@@ -3599,8 +3599,8 @@ namespace ParatextImport
 			Assert.AreEqual(2, m_bookMerger.Differences.Count);
 
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001002, diff.RefStart);
-			Assert.AreEqual(01001002, diff.RefEnd);
+			Assert.AreEqual(01001002, (int)diff.RefStart);
+			Assert.AreEqual(01001002, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.VerseAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(ichLimCurrV1, diff.IchMinCurr);
@@ -3610,8 +3610,8 @@ namespace ParatextImport
 			Assert.AreEqual(ichLimRevV1, diff.IchLimRev);
 
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001003, diff.RefStart);
-			Assert.AreEqual(01001006, diff.RefEnd);
+			Assert.AreEqual(01001003, (int)diff.RefStart);
+			Assert.AreEqual(01001006, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(ichLimCurrV2, diff.IchMinCurr);
@@ -3668,7 +3668,7 @@ namespace ParatextImport
 
 			// Verify that differences are correct
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(hvoRev, diff.ParaRev);
 			Assert.AreEqual(sectionCur.ContentOA[0], diff.ParaCurr);
@@ -3733,7 +3733,7 @@ namespace ParatextImport
 
 			// Verify that differences are correct
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(hvoCurr, diff.ParaCurr);
 			Assert.AreEqual(hvoRev, diff.ParaRev);
 			Assert.AreEqual(sectionCur.ContentOA[0], diff.ParaCurr);
@@ -3797,8 +3797,8 @@ namespace ParatextImport
 
 			// the first curr para is added in current
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001006, diff.RefStart);
-			Assert.AreEqual(01001007, diff.RefEnd);
+			Assert.AreEqual(01001006, (int)diff.RefStart);
+			Assert.AreEqual(01001007, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(para1Curr, diff.ParaCurr);
 			Assert.AreEqual(para1Rev, diff.ParaRev);
@@ -3809,8 +3809,8 @@ namespace ParatextImport
 
 			// text difference: the first word after the verse number has changed
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001008, diff.RefStart);
-			Assert.AreEqual(01001008, diff.RefEnd);
+			Assert.AreEqual(01001008, (int)diff.RefStart);
+			Assert.AreEqual(01001008, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(para2Curr, diff.ParaCurr);
 			Assert.AreEqual(para1Rev, diff.ParaRev);
@@ -3821,8 +3821,8 @@ namespace ParatextImport
 
 			// the last difference is another paragraph added in current
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001010, diff.RefStart);
-			Assert.AreEqual(01001010, diff.RefEnd);
+			Assert.AreEqual(01001010, (int)diff.RefStart);
+			Assert.AreEqual(01001010, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(para3Curr, diff.ParaCurr);
 			Assert.AreEqual(para1Rev, diff.ParaRev);
@@ -3879,8 +3879,8 @@ namespace ParatextImport
 
 			// the first rev para is missing in current
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001006, diff.RefStart);
-			Assert.AreEqual(01001007, diff.RefEnd);
+			Assert.AreEqual(01001006, (int)diff.RefStart);
+			Assert.AreEqual(01001007, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(para1Curr, diff.ParaCurr);
 			Assert.AreEqual(para1Rev, diff.ParaRev);
@@ -3891,8 +3891,8 @@ namespace ParatextImport
 
 			// text difference: the first word after the verse number has changed
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001008, diff.RefStart);
-			Assert.AreEqual(01001008, diff.RefEnd);
+			Assert.AreEqual(01001008, (int)diff.RefStart);
+			Assert.AreEqual(01001008, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(para1Curr, diff.ParaCurr);
 			Assert.AreEqual(para2Rev, diff.ParaRev);
@@ -3903,8 +3903,8 @@ namespace ParatextImport
 
 			// the last difference is another paragraph missing in current
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001010, diff.RefStart);
-			Assert.AreEqual(01001010, diff.RefEnd);
+			Assert.AreEqual(01001010, (int)diff.RefStart);
+			Assert.AreEqual(01001010, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(para1Curr, diff.ParaCurr);
 			Assert.AreEqual(para3Rev, diff.ParaRev);
@@ -4326,7 +4326,7 @@ namespace ParatextImport
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.ParagraphSplitInCurrent, diff.DiffType);
 			Assert.AreEqual(2, diff.SubDiffsForParas.Count);
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 
 			m_bookMerger.ReplaceCurrentWithRevision(diff); // we expect this to merge the current paras
 			Assert.AreEqual(1, sectionCur.ContentOA.ParagraphsOS.Count);
@@ -5764,7 +5764,7 @@ namespace ParatextImport
 			// to simulate clicking the "revert to old" button
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.ParagraphSplitInCurrent, diff.DiffType);
-			Assert.AreEqual(01020006, diff.RefStart);
+			Assert.AreEqual(01020006, (int)diff.RefStart);
 			Assert.IsNotNull(diff.SubDiffsForParas);
 			Assert.AreEqual(2, diff.SubDiffsForParas.Count);
 
@@ -5782,7 +5782,7 @@ namespace ParatextImport
 			// Get the remaining difference (a text difference) for the following ScrVerse
 			diff = m_bookMerger.Differences.CurrentDifference;
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
-			Assert.AreEqual(01020008, diff.RefStart);
+			Assert.AreEqual(01020008, (int)diff.RefStart);
 			m_bookMerger.ReplaceCurrentWithRevision(diff);
 			Assert.AreEqual("206Verse 6 part a. Verse 6 part b.7Verse 7.8Verse 8. with a small text change",
 				((IScrTxtPara)sectionCur.ContentOA[0]).Contents.Text);
@@ -6778,7 +6778,7 @@ namespace ParatextImport
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.ParagraphMergedInCurrent, diff.DiffType);
 			Assert.AreEqual(2, diff.SubDiffsForParas.Count);
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 
 			//Revert!
 			m_bookMerger.ReplaceCurrentWithRevision(diff); // we expect this to split the current para
@@ -11961,8 +11961,8 @@ namespace ParatextImport
 
 			//verify text difference in section head
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(sectionCur.HeadingOA[0], diff.ParaCurr);
 			Assert.AreEqual(sectionRev.HeadingOA[0], diff.ParaRev);
@@ -12012,8 +12012,8 @@ namespace ParatextImport
 
 			//verify difference in section head paragraph style
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphStyleDifference, diff.DiffType);
 			Assert.AreEqual(sectionCur.HeadingOA[0], diff.ParaCurr);
 			Assert.AreEqual(sectionRev.HeadingOA[0], diff.ParaRev);
@@ -12024,8 +12024,8 @@ namespace ParatextImport
 
 			//verify difference in section head text
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(sectionCur.HeadingOA[0], diff.ParaCurr);
 			Assert.AreEqual(sectionRev.HeadingOA[0], diff.ParaRev);
@@ -12081,8 +12081,8 @@ namespace ParatextImport
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 
 			// verify that the second paragraph is missing in the Current section head
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(sectionCur.HeadingOA[0], diff.ParaCurr);
 			Assert.AreEqual(sectionRev.HeadingOA[1], diff.ParaRev);
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
@@ -12153,8 +12153,8 @@ namespace ParatextImport
 			// verify verse 2 missing in Current
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.IsNotNull(diff, "There should be a diff for verse 2 missing in the Current");
-			Assert.AreEqual(01001002, diff.RefStart);
-			Assert.AreEqual(01001002, diff.RefEnd);
+			Assert.AreEqual(01001002, (int)diff.RefStart);
+			Assert.AreEqual(01001002, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.VerseMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(hvoCurr1, diff.ParaCurr);
 			Assert.AreEqual(hvoRev1, diff.ParaRev);
@@ -12284,8 +12284,8 @@ namespace ParatextImport
 
 			//verify the results
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual( m_genesis.TitleOA[0], diff.ParaCurr);
 			Assert.AreEqual( m_genesisRevision.TitleOA[0], diff.ParaRev);
@@ -12341,8 +12341,8 @@ namespace ParatextImport
 
 			//verify second paragraph in title is missing Current
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
 			Assert.AreEqual( m_genesis.TitleOA[0], diff.ParaCurr);
 			Assert.AreEqual( m_genesisRevision.TitleOA[1], diff.ParaRev);
@@ -12410,8 +12410,8 @@ namespace ParatextImport
 
 			// Missing verse 6 from revision
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001006, diff.RefStart);
-			Assert.AreEqual(01001006, diff.RefEnd);
+			Assert.AreEqual(01001006, (int)diff.RefStart);
+			Assert.AreEqual(01001006, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.VerseAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(sectionCur.ContentOA[0], diff.ParaCurr);
 			Assert.AreEqual(sectionRev.ContentOA[0], diff.ParaRev);
@@ -12422,8 +12422,8 @@ namespace ParatextImport
 
 			// verse 14 text difference
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001014, diff.RefStart);
-			Assert.AreEqual(01001014, diff.RefEnd);
+			Assert.AreEqual(01001014, (int)diff.RefStart);
+			Assert.AreEqual(01001014, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(sectionCur.ContentOA[0], diff.ParaCurr);
 			Assert.AreEqual(sectionRev.ContentOA[0], diff.ParaRev);
@@ -12434,8 +12434,8 @@ namespace ParatextImport
 
 			// verse 21 missing in current
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001021, diff.RefStart);
-			Assert.AreEqual(01001021, diff.RefEnd);
+			Assert.AreEqual(01001021, (int)diff.RefStart);
+			Assert.AreEqual(01001021, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.VerseMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(sectionCur.ContentOA[0], diff.ParaCurr);
 			Assert.AreEqual(sectionRev.ContentOA[0], diff.ParaRev);
@@ -12499,8 +12499,8 @@ namespace ParatextImport
 
 			// Text difference in section head
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(sectionCur.HeadingOA[0], diff.ParaCurr);
 			Assert.AreEqual(sectionRev.HeadingOA[0], diff.ParaRev);
@@ -12511,8 +12511,8 @@ namespace ParatextImport
 
 			// verse 1 missing in revision
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.VerseAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(sectionCur.ContentOA[0], diff.ParaCurr);
 			Assert.AreEqual(sectionRev.ContentOA[0], diff.ParaRev);
@@ -12523,8 +12523,8 @@ namespace ParatextImport
 
 			// verse 11 missing in current
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001011, diff.RefStart);
-			Assert.AreEqual(01001011, diff.RefEnd);
+			Assert.AreEqual(01001011, (int)diff.RefStart);
+			Assert.AreEqual(01001011, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.VerseMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(sectionCur.ContentOA[0], diff.ParaCurr);
 			Assert.AreEqual(sectionRev.ContentOA[0], diff.ParaRev);
@@ -12535,8 +12535,8 @@ namespace ParatextImport
 
 			// verse 14 missing in revision
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001014, diff.RefStart);
-			Assert.AreEqual(01001014, diff.RefEnd);
+			Assert.AreEqual(01001014, (int)diff.RefStart);
+			Assert.AreEqual(01001014, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.VerseAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(sectionCur.ContentOA[0], diff.ParaCurr);
 			Assert.AreEqual(sectionRev.ContentOA[0], diff.ParaRev);
@@ -12547,8 +12547,8 @@ namespace ParatextImport
 
 			// verse 21 missing in current
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001021, diff.RefStart);
-			Assert.AreEqual(01001021, diff.RefEnd);
+			Assert.AreEqual(01001021, (int)diff.RefStart);
+			Assert.AreEqual(01001021, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.VerseMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(sectionCur.ContentOA[0], diff.ParaCurr);
 			Assert.AreEqual(sectionRev.ContentOA[0], diff.ParaRev);
@@ -12782,8 +12782,8 @@ namespace ParatextImport
 
 			// This difference will indicate a text difference in "A"
 			diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(paraCurr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -12794,8 +12794,8 @@ namespace ParatextImport
 
 			// the first difference will be "B" missing in current
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(paraCurr, diff.ParaCurr);
 			Assert.AreEqual(lenParaCurr, diff.IchMinCurr);
@@ -12806,8 +12806,8 @@ namespace ParatextImport
 
 			// the last difference will be "C" missing in current
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(paraCurr, diff.ParaCurr);
 			Assert.AreEqual(lenParaCurr, diff.IchMinCurr);
@@ -12872,8 +12872,8 @@ namespace ParatextImport
 
 			// the first difference will be "A" missing in current
 			diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(paraCurr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -12884,8 +12884,8 @@ namespace ParatextImport
 
 			// This difference will indicate a text difference in "B"
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(paraCurr, diff.ParaCurr);
 			Assert.AreEqual(15, diff.IchMinCurr);
@@ -12896,8 +12896,8 @@ namespace ParatextImport
 
 			// the last difference will be "C" missing in current
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(paraCurr, diff.ParaCurr);
 			Assert.AreEqual(lenParaCurr, diff.IchMinCurr);
@@ -12962,8 +12962,8 @@ namespace ParatextImport
 
 			// the first difference will be "A" missing in current
 			diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(paraCurr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -12974,8 +12974,8 @@ namespace ParatextImport
 
 			// This difference will be "B" missing in current
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(paraCurr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -12986,8 +12986,8 @@ namespace ParatextImport
 
 			// This difference will indicate a text difference in "C"
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(paraCurr, diff.ParaCurr);
 			Assert.AreEqual(9, diff.IchMinCurr);
@@ -13052,8 +13052,8 @@ namespace ParatextImport
 
 			// This difference will indicate a text difference in "A"
 			diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(para1Curr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -13064,8 +13064,8 @@ namespace ParatextImport
 
 			// the first difference will be "B" added to current
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(para2Curr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -13076,8 +13076,8 @@ namespace ParatextImport
 
 			// the last difference will be "C" added to current
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(para3Curr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -13142,8 +13142,8 @@ namespace ParatextImport
 
 			// the first difference will be "A" added in current
 			diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(para1Curr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -13154,8 +13154,8 @@ namespace ParatextImport
 
 			// This difference will indicate a text difference in "B"
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(para2Curr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -13166,8 +13166,8 @@ namespace ParatextImport
 
 			// the last difference will be "C" added to current
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(para3Curr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -13232,8 +13232,8 @@ namespace ParatextImport
 
 			// the first difference will be "A" added to current
 			diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(para1Curr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -13244,8 +13244,8 @@ namespace ParatextImport
 
 			// This difference will be "B" added to current
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(para2Curr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -13256,8 +13256,8 @@ namespace ParatextImport
 
 			// This difference will indicate a text difference in "C"
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(para3Curr, diff.ParaCurr);
 			Assert.AreEqual(9, diff.IchMinCurr);
@@ -13330,8 +13330,8 @@ namespace ParatextImport
 
 			// This difference will be "J" added to current
 			diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(para1Curr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -13342,8 +13342,8 @@ namespace ParatextImport
 
 			// This difference will be "A" deleted from current
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(para2Curr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -13354,8 +13354,8 @@ namespace ParatextImport
 
 			// This difference will be "B" compared to "B"
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(para2Curr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -13366,8 +13366,8 @@ namespace ParatextImport
 
 			// This difference will indicate "L" added to current
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(para3Curr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -13378,8 +13378,8 @@ namespace ParatextImport
 
 			// This difference will indicate "C" missing from current
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(para3Curr, diff.ParaCurr);
 			Assert.AreEqual(lenPara3Curr, diff.IchMinCurr);
@@ -13452,8 +13452,8 @@ namespace ParatextImport
 
 			// This difference will be "K" added to current
 			diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(para2Curr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -13464,8 +13464,8 @@ namespace ParatextImport
 
 			// This difference will be "B" deleted from current
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(para3Curr, diff.ParaCurr);
 			Assert.AreEqual(0, diff.IchMinCurr);
@@ -13716,8 +13716,8 @@ namespace ParatextImport
 
 			// section two has a text difference
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001002, diff.RefStart);
-			Assert.AreEqual(01001002, diff.RefEnd);
+			Assert.AreEqual(01001002, (int)diff.RefStart);
+			Assert.AreEqual(01001002, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(para2Curr, diff.ParaCurr);
 			Assert.AreEqual(2, diff.IchMinCurr);
@@ -13841,8 +13841,8 @@ namespace ParatextImport
 			// section two has a text difference
 			diff = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
-			Assert.AreEqual(01001002, diff.RefStart);
-			Assert.AreEqual(01001002, diff.RefEnd);
+			Assert.AreEqual(01001002, (int)diff.RefStart);
+			Assert.AreEqual(01001002, (int)diff.RefEnd);
 			Assert.AreEqual(paraCurr, diff.ParaCurr);
 			Assert.AreEqual(2, diff.IchMinCurr);
 			Assert.AreEqual(3, diff.IchLimCurr);
@@ -15190,8 +15190,8 @@ namespace ParatextImport
 
 			// section heading is missing in current
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001001, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(sectionCurr.HeadingOA[0], diff.ParaCurr);
 			Assert.AreEqual(sectionRev.HeadingOA[0], diff.ParaRev);
@@ -15202,8 +15202,8 @@ namespace ParatextImport
 
 			// paragraph with verses 1-2 missing in current
 			diff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001001, diff.RefStart);
-			Assert.AreEqual(01001002, diff.RefEnd);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
+			Assert.AreEqual(01001002, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(sectionCurr.HeadingOA[0], diff.ParaCurr);
 			Assert.AreEqual(sectionRev.ContentOA[0], diff.ParaRev);
@@ -15459,7 +15459,7 @@ namespace ParatextImport
 			// quick check of the diffs
 			Assert.AreEqual(1, m_bookMerger.Differences.Count);
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(DifferenceType.TextDifference | DifferenceType.FootnoteAddedToCurrent, diff.DiffType);
 			Assert.AreEqual(para1Curr, diff.ParaCurr);
 			Assert.AreEqual(1, diff.IchMinCurr); // chapter num matched
@@ -15727,7 +15727,7 @@ namespace ParatextImport
 
 			// The first difference should be a text differenc in verse one
 			Difference firstDiff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, firstDiff.RefStart);
+			Assert.AreEqual(01001001, (int)firstDiff.RefStart);
 			Assert.AreEqual(DifferenceType.TextDifference, firstDiff.DiffType);
 			Assert.AreEqual(para1Curr, firstDiff.ParaCurr);
 			Assert.AreEqual(1, firstDiff.IchMinCurr);
@@ -15738,7 +15738,7 @@ namespace ParatextImport
 
 			// The second diff should be a text difference in verse two
 			Difference secondDiff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001002, secondDiff.RefStart);
+			Assert.AreEqual(01001002, (int)secondDiff.RefStart);
 			Assert.AreEqual(DifferenceType.TextDifference, secondDiff.DiffType);
 			Assert.AreEqual(para1Curr, secondDiff.ParaCurr);
 			Assert.AreEqual(9, secondDiff.IchMinCurr);
@@ -15749,7 +15749,7 @@ namespace ParatextImport
 
 			// The third diff should be a text difference in verse three
 			Difference thirdDiff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001003, thirdDiff.RefStart);
+			Assert.AreEqual(01001003, (int)thirdDiff.RefStart);
 			Assert.AreEqual(DifferenceType.TextDifference, thirdDiff.DiffType);
 			Assert.AreEqual(para1Curr, thirdDiff.ParaCurr);
 			Assert.AreEqual(17, thirdDiff.IchMinCurr);
@@ -15829,7 +15829,7 @@ namespace ParatextImport
 			// Verse 2 is missing in the current
 			Difference firstDiff = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.VerseMissingInCurrent, firstDiff.DiffType);
-			Assert.AreEqual(01001002, firstDiff.RefStart);
+			Assert.AreEqual(01001002, (int)firstDiff.RefStart);
 			Assert.AreEqual(para1Curr, firstDiff.ParaCurr);
 			Assert.AreEqual(7, firstDiff.IchMinCurr);
 			Assert.AreEqual(7, firstDiff.IchLimCurr);
@@ -15839,7 +15839,7 @@ namespace ParatextImport
 
 			// Verse 3 has a text difference
 			Difference secondDiff = m_bookMerger.Differences.MoveNext();
-			Assert.AreEqual(01001003, secondDiff.RefStart);
+			Assert.AreEqual(01001003, (int)secondDiff.RefStart);
 			Assert.AreEqual(DifferenceType.TextDifference, secondDiff.DiffType);
 			Assert.AreEqual(para1Curr, secondDiff.ParaCurr);
 			Assert.AreEqual(14, secondDiff.IchMinCurr);
@@ -15856,8 +15856,8 @@ namespace ParatextImport
 
 			// difference in verse 3 remains
 			Difference remainingDiff = m_bookMerger.Differences.CurrentDifference;
-			Assert.AreEqual(01001003, remainingDiff.RefStart);
-			Assert.AreEqual(01001003, remainingDiff.RefEnd);
+			Assert.AreEqual(01001003, (int)remainingDiff.RefStart);
+			Assert.AreEqual(01001003, (int)remainingDiff.RefEnd);
 			Assert.AreEqual(21, remainingDiff.IchMinCurr); // diff ich updated
 			Assert.AreEqual(21, remainingDiff.IchLimCurr);
 
@@ -16130,7 +16130,7 @@ namespace ParatextImport
 			Assert.AreEqual(1, m_bookMerger.Differences.Count);
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.VerseMissingInCurrent, diff.DiffType);
-			Assert.AreEqual(01001003, diff.RefStart);
+			Assert.AreEqual(01001003, (int)diff.RefStart);
 			Assert.AreEqual(para1Curr, diff.ParaCurr);
 			Assert.AreEqual(14, diff.IchMinCurr);
 			Assert.AreEqual(14, diff.IchLimCurr);
@@ -16188,7 +16188,7 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Assert.AreEqual(1, m_bookMerger.Differences.Count);
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001000, diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(m_genesis.TitleOA[0], diff.ParaCurr);
 			Assert.AreEqual(3, diff.IchMinCurr);
@@ -16233,7 +16233,7 @@ namespace ParatextImport
 			m_bookMerger.DetectDifferences(null); // find the diffs for Genesis
 			Assert.AreEqual(1, m_bookMerger.Differences.Count);
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 			Assert.AreEqual(DifferenceType.TextDifference, diff.DiffType);
 			Assert.AreEqual(sectionCurr.HeadingOA[0], diff.ParaCurr);
 			Assert.AreEqual(3, diff.IchMinCurr);
@@ -16296,7 +16296,7 @@ namespace ParatextImport
 			// to simulate clicking the "revert to old" button
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 
 			m_bookMerger.ReplaceCurrentWithRevision(diff); // we expect this to insert the new first para
 			Assert.AreEqual(2, sectionCur.ContentOA.ParagraphsOS.Count);
@@ -16310,7 +16310,7 @@ namespace ParatextImport
 			// Verify the next difference, and do a ReplaceCurrentWithRevision for it too
 			diff = m_bookMerger.Differences.CurrentDifference;
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
-			Assert.AreEqual(01001003, diff.RefStart);
+			Assert.AreEqual(01001003, (int)diff.RefStart);
 
 			m_bookMerger.ReplaceCurrentWithRevision(diff);  // we expect this to insert the new last para
 			Assert.AreEqual(3, sectionCur.ContentOA.ParagraphsOS.Count);
@@ -16376,7 +16376,7 @@ namespace ParatextImport
 			// to simulate clicking the "revert to old" button
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff.DiffType);
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 
 			m_bookMerger.ReplaceCurrentWithRevision(diff); // we expect this to delete the new first para
 			Assert.AreEqual(2, sectionCur.ContentOA.ParagraphsOS.Count);
@@ -16388,7 +16388,7 @@ namespace ParatextImport
 			// Verify the next difference, and do a ReplaceCurrentWithRevision for it too
 			diff = m_bookMerger.Differences.CurrentDifference;
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff.DiffType);
-			Assert.AreEqual(01001003, diff.RefStart);
+			Assert.AreEqual(01001003, (int)diff.RefStart);
 
 			m_bookMerger.ReplaceCurrentWithRevision(diff);  // we expect this to delete the new last para
 			Assert.AreEqual(1, sectionCur.ContentOA.ParagraphsOS.Count);
@@ -16650,7 +16650,7 @@ namespace ParatextImport
 			// to simulate clicking the "revert to old" button
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
-			Assert.AreEqual(01001002, diff.RefStart);
+			Assert.AreEqual(01001002, (int)diff.RefStart);
 
 			// we expect this to insert the new second para
 			m_bookMerger.ReplaceCurrentWithRevision(diff);
@@ -16666,7 +16666,7 @@ namespace ParatextImport
 			// Verify the next difference, and do a ReplaceCurrentWithRevision for it too
 			diff = m_bookMerger.Differences.CurrentDifference;
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
-			Assert.AreEqual(01001003, diff.RefStart);
+			Assert.AreEqual(01001003, (int)diff.RefStart);
 
 			// we expect this to insert the new last para with a footnote
 			m_bookMerger.ReplaceCurrentWithRevision(diff);
@@ -16744,7 +16744,7 @@ namespace ParatextImport
 			// to simulate clicking the "revert to old" button
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
-			Assert.AreEqual(01001001, diff.RefStart);
+			Assert.AreEqual(01001001, (int)diff.RefStart);
 
 			// we expect this to insert the new first para
 			m_bookMerger.ReplaceCurrentWithRevision(diff);
@@ -16760,7 +16760,7 @@ namespace ParatextImport
 			// Verify the next difference, and do a ReplaceCurrentWithRevision for it too
 			diff = m_bookMerger.Differences.CurrentDifference;
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
-			Assert.AreEqual(01001002, diff.RefStart);
+			Assert.AreEqual(01001002, (int)diff.RefStart);
 
 			// we expect this to insert the new second para
 			m_bookMerger.ReplaceCurrentWithRevision(diff);
@@ -16895,8 +16895,8 @@ namespace ParatextImport
 			// Verify the difference
 			Difference diff1 = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff1.DiffType);
-			Assert.AreEqual(01001001, diff1.RefStart);
-			Assert.AreEqual(01001003, diff1.RefEnd);
+			Assert.AreEqual(01001001, (int)diff1.RefStart);
+			Assert.AreEqual(01001003, (int)diff1.RefEnd);
 
 			// Revert the difference.
 			// This would normally result in the Current paragraph being deleted, but since
@@ -16952,8 +16952,8 @@ namespace ParatextImport
 			// Verify the difference
 			Difference diff1 = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff1.DiffType);
-			Assert.AreEqual(01001001, diff1.RefStart);
-			Assert.AreEqual(01001003, diff1.RefEnd);
+			Assert.AreEqual(01001001, (int)diff1.RefStart);
+			Assert.AreEqual(01001003, (int)diff1.RefEnd);
 
 			// Revert the difference.
 			// This would normally result in inserting the Rev paragraph in the Current, but since
@@ -17031,7 +17031,7 @@ namespace ParatextImport
 			// Get the first difference, verify it
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
-			Assert.AreEqual(01001002, diff.RefStart);
+			Assert.AreEqual(01001002, (int)diff.RefStart);
 
 			//do a ReplaceCurrentWithRevision to simulate clicking the "revert to old" button
 			m_bookMerger.ReplaceCurrentWithRevision(diff);
@@ -17494,35 +17494,35 @@ namespace ParatextImport
 			// Do a quick sanity check of the diffs
 			Difference diff1 = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff1.DiffType);
-			Assert.AreEqual(01001001, diff1.RefStart);
+			Assert.AreEqual(01001001, (int)diff1.RefStart);
 
 			Difference diff2 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff2.DiffType);
-			Assert.AreEqual(01001002, diff2.RefStart);
+			Assert.AreEqual(01001002, (int)diff2.RefStart);
 
 			Difference diff3 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff3.DiffType);
-			Assert.AreEqual(01001003, diff3.RefStart);
+			Assert.AreEqual(01001003, (int)diff3.RefStart);
 
 			Difference diff4 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff4.DiffType);
-			Assert.AreEqual(01001004, diff4.RefStart);
+			Assert.AreEqual(01001004, (int)diff4.RefStart);
 
 			Difference diff5 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff5.DiffType);
-			Assert.AreEqual(01001005, diff5.RefStart);
+			Assert.AreEqual(01001005, (int)diff5.RefStart);
 
 			Difference diff6 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff6.DiffType);
-			Assert.AreEqual(01001006, diff6.RefStart);
+			Assert.AreEqual(01001006, (int)diff6.RefStart);
 
 			Difference diff7 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff7.DiffType);
-			Assert.AreEqual(01001007, diff7.RefStart);
+			Assert.AreEqual(01001007, (int)diff7.RefStart);
 
 			Difference diff8 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff8.DiffType);
-			Assert.AreEqual(01001008, diff8.RefStart);
+			Assert.AreEqual(01001008, (int)diff8.RefStart);
 
 			// Revert all the "missing in current" diffs, to insert them into the current
 			// FORWARD order
@@ -17607,35 +17607,35 @@ namespace ParatextImport
 			// Do a quick sanity check of the diffs
 			Difference diff1 = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff1.DiffType);
-			Assert.AreEqual(01001001, diff1.RefStart);
+			Assert.AreEqual(01001001, (int)diff1.RefStart);
 
 			Difference diff2 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff2.DiffType);
-			Assert.AreEqual(01001002, diff2.RefStart);
+			Assert.AreEqual(01001002, (int)diff2.RefStart);
 
 			Difference diff3 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff3.DiffType);
-			Assert.AreEqual(01001003, diff3.RefStart);
+			Assert.AreEqual(01001003, (int)diff3.RefStart);
 
 			Difference diff4 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff4.DiffType);
-			Assert.AreEqual(01001004, diff4.RefStart);
+			Assert.AreEqual(01001004, (int)diff4.RefStart);
 
 			Difference diff5 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff5.DiffType);
-			Assert.AreEqual(01001005, diff5.RefStart);
+			Assert.AreEqual(01001005, (int)diff5.RefStart);
 
 			Difference diff6 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff6.DiffType);
-			Assert.AreEqual(01001006, diff6.RefStart);
+			Assert.AreEqual(01001006, (int)diff6.RefStart);
 
 			Difference diff7 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff7.DiffType);
-			Assert.AreEqual(01001007, diff7.RefStart);
+			Assert.AreEqual(01001007, (int)diff7.RefStart);
 
 			Difference diff8 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff8.DiffType);
-			Assert.AreEqual(01001008, diff8.RefStart);
+			Assert.AreEqual(01001008, (int)diff8.RefStart);
 
 			// Revert all the "missing in current" diffs, to insert them into the current
 			// REVERSE order
@@ -17734,19 +17734,19 @@ namespace ParatextImport
 			// Do a quick sanity check of the diffs
 			Difference diff1 = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff1.DiffType);
-			Assert.AreEqual(01001001, diff1.RefStart);
+			Assert.AreEqual(01001001, (int)diff1.RefStart);
 
 			Difference diff2 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff2.DiffType);
-			Assert.AreEqual(01001002, diff2.RefStart);
+			Assert.AreEqual(01001002, (int)diff2.RefStart);
 
 			Difference diff3 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff3.DiffType);
-			Assert.AreEqual(01001003, diff3.RefStart);
+			Assert.AreEqual(01001003, (int)diff3.RefStart);
 
 			Difference diff4 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff4.DiffType);
-			Assert.AreEqual(01001004, diff4.RefStart);
+			Assert.AreEqual(01001004, (int)diff4.RefStart);
 
 			// Revert the second difference to delete verse 2 para
 			m_bookMerger.ReplaceCurrentWithRevision(diff2);
@@ -17835,19 +17835,19 @@ namespace ParatextImport
 			// Do a quick sanity check of the diffs
 			Difference diff1 = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff1.DiffType);
-			Assert.AreEqual(01001001, diff1.RefStart);
+			Assert.AreEqual(01001001, (int)diff1.RefStart);
 
 			Difference diff2 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff2.DiffType);
-			Assert.AreEqual(01001002, diff2.RefStart);
+			Assert.AreEqual(01001002, (int)diff2.RefStart);
 
 			Difference diff3 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff3.DiffType);
-			Assert.AreEqual(01001004, diff3.RefStart);
+			Assert.AreEqual(01001004, (int)diff3.RefStart);
 
 			Difference diff4 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff4.DiffType);
-			Assert.AreEqual(01001005, diff4.RefStart);
+			Assert.AreEqual(01001005, (int)diff4.RefStart);
 
 			// Revert the first difference to delete verse 1 para
 			m_bookMerger.ReplaceCurrentWithRevision(diff1);
@@ -17917,8 +17917,8 @@ namespace ParatextImport
 
 			//verify second paragraph in title is missing Current
 			Difference diff = m_bookMerger.Differences.MoveFirst();
-			Assert.AreEqual(01001000, diff.RefStart);
-			Assert.AreEqual(01001000, diff.RefEnd);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefEnd);
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
 			Assert.AreEqual(m_genesis.TitleOA[0], diff.ParaCurr);
 			Assert.AreEqual(7, diff.IchMinCurr);
@@ -17996,7 +17996,7 @@ namespace ParatextImport
 			// to simulate clicking the "revert to old" button
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
-			Assert.AreEqual(01001000, diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
 
 			m_bookMerger.ReplaceCurrentWithRevision(diff); // we expect this to insert the new first para
 			Assert.AreEqual(01001000, sectionCur.VerseRefEnd);
@@ -18008,7 +18008,7 @@ namespace ParatextImport
 			// Verify the next difference, and do a ReplaceCurrentWithRevision for it too
 			diff = m_bookMerger.Differences.CurrentDifference;
 			Assert.AreEqual(DifferenceType.ParagraphMissingInCurrent, diff.DiffType);
-			Assert.AreEqual(01001000, diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
 
 			m_bookMerger.ReplaceCurrentWithRevision(diff);  // we expect this to insert the new last para
 			Assert.AreEqual(01001000, sectionCur.VerseRefEnd);
@@ -18073,7 +18073,7 @@ namespace ParatextImport
 			// to simulate clicking the "revert to old" button
 			Difference diff = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff.DiffType);
-			Assert.AreEqual(01001000, diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
 
 			m_bookMerger.ReplaceCurrentWithRevision(diff); // we expect this to delete the new first para
 			Assert.AreEqual(01001000, sectionCur.VerseRefEnd);
@@ -18084,7 +18084,7 @@ namespace ParatextImport
 			// Verify the next difference, and do a ReplaceCurrentWithRevision for it too
 			diff = m_bookMerger.Differences.CurrentDifference;
 			Assert.AreEqual(DifferenceType.ParagraphAddedToCurrent, diff.DiffType);
-			Assert.AreEqual(01001000, diff.RefStart);
+			Assert.AreEqual(01001000, (int)diff.RefStart);
 
 			m_bookMerger.ReplaceCurrentWithRevision(diff);  // we expect this to delete the new last para
 			Assert.AreEqual(01001000, sectionCur.VerseRefEnd);
@@ -19594,19 +19594,19 @@ namespace ParatextImport
 			// Do a quick sanity check of the diffs
 			Difference diff1 = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.SectionMissingInCurrent, diff1.DiffType);
-			Assert.AreEqual(01001001, diff1.RefStart);
+			Assert.AreEqual(01001001, (int)diff1.RefStart);
 
 			Difference diff2 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.SectionAddedToCurrent, diff2.DiffType);
-			Assert.AreEqual(01002001, diff2.RefStart);
+			Assert.AreEqual(01002001, (int)diff2.RefStart);
 
 			Difference diff3 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.SectionMissingInCurrent, diff3.DiffType);
-			Assert.AreEqual(01004001, diff3.RefStart);
+			Assert.AreEqual(01004001, (int)diff3.RefStart);
 
 			Difference diff4 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.SectionAddedToCurrent, diff4.DiffType);
-			Assert.AreEqual(01005001, diff4.RefStart);
+			Assert.AreEqual(01005001, (int)diff4.RefStart);
 
 			// Revert the second difference which will delete the first current section
 			m_bookMerger.ReplaceCurrentWithRevision(diff2);
@@ -19719,19 +19719,19 @@ namespace ParatextImport
 			// Do a quick sanity check of the diffs
 			Difference diff1 = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.SectionMissingInCurrent, diff1.DiffType);
-			Assert.AreEqual(01002001, diff1.RefStart);
+			Assert.AreEqual(01002001, (int)diff1.RefStart);
 
 			Difference diff2 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.SectionAddedToCurrent, diff2.DiffType);
-			Assert.AreEqual(01003001, diff2.RefStart);
+			Assert.AreEqual(01003001, (int)diff2.RefStart);
 
 			Difference diff3 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.SectionAddedToCurrent, diff3.DiffType);
-			Assert.AreEqual(01005001, diff3.RefStart);
+			Assert.AreEqual(01005001, (int)diff3.RefStart);
 
 			Difference diff4 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.SectionMissingInCurrent, diff4.DiffType);
-			Assert.AreEqual(01006001, diff4.RefStart);
+			Assert.AreEqual(01006001, (int)diff4.RefStart);
 
 			// Revert the second difference which will delete a current section
 			m_bookMerger.ReplaceCurrentWithRevision(diff2);
@@ -19821,13 +19821,13 @@ namespace ParatextImport
 			// Do a quick sanity check of the diffs
 			Difference diff1 = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.SectionAddedToCurrent, diff1.DiffType);
-			Assert.AreEqual(01001001, diff1.RefStart);
-			Assert.AreEqual(01003001, diff1.RefEnd);
+			Assert.AreEqual(01001001, (int)diff1.RefStart);
+			Assert.AreEqual(01003001, (int)diff1.RefEnd);
 
 			Difference diff5 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.SectionAddedToCurrent, diff5.DiffType);
-			Assert.AreEqual(01005001, diff5.RefStart);
-			Assert.AreEqual(01006001, diff5.RefEnd);
+			Assert.AreEqual(01005001, (int)diff5.RefStart);
+			Assert.AreEqual(01006001, (int)diff5.RefEnd);
 
 			// Revert all the "added in current" diffs, to delete them from the current
 			m_bookMerger.ReplaceCurrentWithRevision(diff1);
@@ -19917,26 +19917,26 @@ namespace ParatextImport
 			// Do a quick sanity check of the diffs
 			Difference diff1 = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.SectionMissingInCurrent, diff1.DiffType);
-			Assert.AreEqual(01001001, diff1.RefStart);
-			Assert.AreEqual(01002001, diff1.RefEnd);
+			Assert.AreEqual(01001001, (int)diff1.RefStart);
+			Assert.AreEqual(01002001, (int)diff1.RefEnd);
 
 			Difference diff3 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.SectionAddedToCurrent, diff3.DiffType);
-			Assert.AreEqual(01003001, diff3.RefStart);
+			Assert.AreEqual(01003001, (int)diff3.RefStart);
 
 			Difference diff4 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.SectionMissingInCurrent, diff4.DiffType);
-			Assert.AreEqual(01004001, diff4.RefStart);
-			Assert.AreEqual(01005001, diff4.RefEnd);
+			Assert.AreEqual(01004001, (int)diff4.RefStart);
+			Assert.AreEqual(01005001, (int)diff4.RefEnd);
 
 			Difference diff6 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.SectionAddedToCurrent, diff6.DiffType);
-			Assert.AreEqual(01006001, diff6.RefStart);
+			Assert.AreEqual(01006001, (int)diff6.RefStart);
 
 			Difference diff7 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.SectionMissingInCurrent, diff7.DiffType);
-			Assert.AreEqual(01007001, diff7.RefStart);
-			Assert.AreEqual(01008001, diff7.RefEnd);
+			Assert.AreEqual(01007001, (int)diff7.RefStart);
+			Assert.AreEqual(01008001, (int)diff7.RefEnd);
 
 			// Revert all the "missing in current" diffs, to insert them into the current
 			// FORWARD order
@@ -20050,26 +20050,26 @@ namespace ParatextImport
 			// Do a quick sanity check of the diffs
 			Difference diff1 = m_bookMerger.Differences.MoveFirst();
 			Assert.AreEqual(DifferenceType.SectionMissingInCurrent, diff1.DiffType);
-			Assert.AreEqual(01001001, diff1.RefStart);
-			Assert.AreEqual(01002001, diff1.RefEnd);
+			Assert.AreEqual(01001001, (int)diff1.RefStart);
+			Assert.AreEqual(01002001, (int)diff1.RefEnd);
 
 			Difference diff3 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.SectionAddedToCurrent, diff3.DiffType);
-			Assert.AreEqual(01003001, diff3.RefStart);
+			Assert.AreEqual(01003001, (int)diff3.RefStart);
 
 			Difference diff4 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.SectionMissingInCurrent, diff4.DiffType);
-			Assert.AreEqual(01004001, diff4.RefStart);
-			Assert.AreEqual(01005001, diff4.RefEnd);
+			Assert.AreEqual(01004001, (int)diff4.RefStart);
+			Assert.AreEqual(01005001, (int)diff4.RefEnd);
 
 			Difference diff6 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.SectionAddedToCurrent, diff6.DiffType);
-			Assert.AreEqual(01006001, diff6.RefStart);
+			Assert.AreEqual(01006001, (int)diff6.RefStart);
 
 			Difference diff7 = m_bookMerger.Differences.MoveNext();
 			Assert.AreEqual(DifferenceType.SectionMissingInCurrent, diff7.DiffType);
-			Assert.AreEqual(01007001, diff7.RefStart);
-			Assert.AreEqual(01008001, diff7.RefEnd);
+			Assert.AreEqual(01007001, (int)diff7.RefStart);
+			Assert.AreEqual(01008001, (int)diff7.RefEnd);
 
 			// Revert all the "missing in current" diffs, to insert them into the current
 			// REVERSE order
@@ -22017,7 +22017,7 @@ namespace ParatextImport
 				para3Rev, para3Rev.Contents.Length);
 			// Second difference is an added section in the current.
 			Assert.AreEqual(DifferenceType.SectionAddedToCurrent, diff2.DiffType);
-			Assert.AreEqual(01002001, diff2.RefStart.BBCCCVVV);
+			Assert.AreEqual(01002001, (int)diff2.RefStart);
 
 			// Revert all of the differences.
 			m_bookMerger.ReplaceCurrentWithRevision(diff1);
@@ -22072,10 +22072,10 @@ namespace ParatextImport
 			// A quick check of differences...
 			// First, a paragraph structure change for the multiple paragraphs in verse one.
 			Assert.AreEqual(DifferenceType.ParagraphStructureChange, diff1.DiffType);
-			Assert.AreEqual(01001001, diff1.RefStart.BBCCCVVV);
+			Assert.AreEqual(01001001, (int)diff1.RefStart);
 			// Third, an added section in the current.
 			Assert.AreEqual(DifferenceType.SectionMissingInCurrent, diff2.DiffType);
-			Assert.AreEqual(01002001, diff2.RefStart.BBCCCVVV);
+			Assert.AreEqual(01002001, (int)diff2.RefStart);
 
 			// Revert all of the differences.
 			m_bookMerger.ReplaceCurrentWithRevision(diff1);

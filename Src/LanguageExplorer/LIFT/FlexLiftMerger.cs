@@ -25,6 +25,7 @@ using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using SIL.Lift;
 using SIL.Lift.Parsing;
+using SIL.PlatformUtilities;
 using SIL.WritingSystems;
 using SIL.WritingSystems.Migration;
 using SIL.Xml;
@@ -1995,7 +1996,7 @@ namespace LanguageExplorer.LIFT
 							typeFlid = m_cache.DomainDataByFlid.MetaDataCache.GetClassId(items[i + 1].Trim());
 							return true;
 						}
-						catch (Exception e)
+						catch (Exception)
 						{
 							//we can't deal with this class, but no need to give up now
 							//we won't create a custom field for it, but let's not crash (our bogus cache in the tests crashed here)
@@ -2105,7 +2106,7 @@ namespace LanguageExplorer.LIFT
 			{
 				m_mapIdObject.Add(id, cmo);
 			}
-			catch (ArgumentException ex)
+			catch (ArgumentException)
 			{
 				// presumably duplicate id.
 				string msg = null;
@@ -5910,7 +5911,7 @@ namespace LanguageExplorer.LIFT
 				{
 					File.Copy(sPath, fwPath, true);
 				}
-				catch (IOException e)
+				catch (IOException)
 				{
 					// We will get an IOException if Flex has an open entry displaying a picture we are trying to copy.
 					// Ignore the copy in this case assuming the picture probably didn't change anyway.
@@ -7725,7 +7726,7 @@ namespace LanguageExplorer.LIFT
 				if (!string.IsNullOrEmpty(span.LinkURL))
 				{
 					var linkPath = FileUtils.StripFilePrefix(span.LinkURL);
-					if (MiscUtils.IsUnix)
+					if (Platform.IsUnix)
 					{
 						linkPath = linkPath.TrimStart('/');
 					}
@@ -11841,7 +11842,6 @@ namespace LanguageExplorer.LIFT
 
 		private void StoreStandardListsWithGuids()
 		{
-			Guid guid;
 			AddListNameAndGuid(m_cache.LanguageProject.AffixCategoriesOA, RangeNames.sAffixCategoriesOA);
 			AddListNameAndGuid(m_cache.LanguageProject.AnnotationDefsOA, RangeNames.sAnnotationDefsOA);
 			AddListNameAndGuid(m_cache.LanguageProject.AnthroListOA, RangeNames.sAnthroListOAold1);
@@ -12019,7 +12019,7 @@ namespace LanguageExplorer.LIFT
 						}
 					}
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
 					// not a fatal error
 				}

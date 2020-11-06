@@ -1,19 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
-
-	<UsingTask TaskName="GoldEticToXliff" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="ListsToXliff" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="LocalizeFieldWorks" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="NormalizeLocales" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="PoToXml" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="XliffToGoldEtic" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="XliffToLists" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="XmlToPo" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="Zip" AssemblyFile="FwBuildTasks.dll"/>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 	<!-- Localize strings-en.xml, lists, and all resx files -->
 	<Target Name="localize" DependsOnTargets="localize-source;localize-binaries"/>
-	<Target Name="localize-source" DependsOnTargets="Initialize;downloadTranslatedFiles;copyLibL10ns;combineGOLDEtic;zipLocalizedLists;processLanguages-source" Condition="'$(DisableLocalization)'!='true'"/>
+	<Target Name="localize-source" DependsOnTargets="Initialize;downloadTranslatedFiles;combineGOLDEtic;zipLocalizedLists;processLanguages-source" Condition="'$(DisableLocalization)'!='true'"/>
 	<Target Name="localize-binaries" DependsOnTargets="Initialize;processLanguages-binaries" Condition="'$(DisableLocalization)'!='true'"/>
 
 	<PropertyGroup>
@@ -80,22 +70,6 @@
 			Properties="Locale=%(LocaleDirs.Filename)"/>
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="updateOneTemplateLdmlFile"
 			Properties="Locale=en"/>
-	</Target>
-
-	<Target Name="copyLibL10ns">
-	<PropertyGroup>
-		<ChorusL10nsNugetDir>$(fwrt)/packages/SIL.Chorus.l10ns.3.0.1</ChorusL10nsNugetDir>
-		<PalasoL10nsNugetDir>$(fwrt)/packages/SIL.libpalaso.l10ns.6.0.0</PalasoL10nsNugetDir>
-	</PropertyGroup>
-	<Error Text="Chorus L10ns package missing, did you update nuget without updating Localize.targets?" Condition="!Exists($(ChorusL10nsNugetDir))" />
-	<Error Text="Palaso L10ns package missing, did you update nuget without updating Localize.targets?" Condition="!Exists($(PalasoL10nsNugetDir))" />
-	<ItemGroup>
-		<XliffFiles Include="$(ChorusL10nsNugetDir)/content/**/*.xlf"/>
-		<XliffFiles Include="$(PalasoL10nsNugetDir)/content/**/*.xlf"/>
-	</ItemGroup>
-	  <Copy SourceFiles="@(XliffFiles)"
-			DestinationFiles="@(XliffFiles->'$(LibL10nsDirectory)/%(Filename)%(Extension)')"
-			SkipUnchangedFiles="true"/>
 	</Target>
 
 	<!-- Each downloaded translation needs the following post-processing:

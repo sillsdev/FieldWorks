@@ -17,6 +17,7 @@ using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Utils;
 using SIL.ObjectModel;
+using SIL.PlatformUtilities;
 using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
@@ -49,7 +50,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			FwRegistryHelper.Initialize();
 
 			// setup necessary environment variables on Linux
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				// update ICU_DATA to location of ICU data files
 				if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICU_DATA")))
@@ -128,7 +129,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// <param name="projectId">The project identifier.</param>
 		/// <param name="langId">The language identifier.</param>
 		/// <returns></returns>
-		public Lexicon GetLexicon(string scrTextName, string projectId, string langId)
+		public Paratext.LexicalContracts.Lexicon GetLexicon(string scrTextName, string projectId, string langId)
 		{
 			return GetLcmLexicon(scrTextName, projectId, langId);
 		}

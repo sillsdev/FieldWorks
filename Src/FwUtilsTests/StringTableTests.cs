@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private StringTable m_table;
 
 		/// <inheritdoc />
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			m_tempFolder = CreateTestResourceFiles(typeof(Properties.Resources), "food");
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <inheritdoc />
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTearDown()
 		{
 			try
@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			/*
 			 this one demonstrates that omitting the txt attribute just means that we should return the id value
-			 <string id="Banana"/>
+					<string id="Banana"/>
 			*/
 			Assert.AreEqual("Banana", m_table.GetString("Banana"));
 		}
@@ -82,10 +82,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void WithXPathFragment()
 		{
-			// find any group that contains a match
-			// the leading '/' here will lead to a double slash,
-			// something like strings//group,
-			// meaning that this can be found in any group.
+			//find any group that contains a match
+			//the leading '/' here will lead to a double slash,
+			//	something like strings//group,
+			//meaning that this can be found in any group.
 			Assert.AreEqual(m_table.GetStringWithXPath("MyPineapple", "/group/"), "pnppl");
 		}
 
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var folderPath = Path.Combine(Path.GetTempPath(), folderName);
 			var resourceMgrPropInfo = resourcesType.GetProperty("ResourceManager", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
 			Debug.Assert(resourceMgrPropInfo != null);
-			var resourceMgr = (ResourceManager)resourceMgrPropInfo.GetValue(null);
+			var resourceMgr = (ResourceManager) resourceMgrPropInfo.GetValue(null);
 			var props = resourcesType.GetProperties(BindingFlags.Static | BindingFlags.NonPublic);
 
 			foreach (var pi in props)
@@ -124,7 +124,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				if (pi.PropertyType == typeof(string) && pi.Name.StartsWith(folderName + "__"))
 				{
 					CreateSingleTempTestFile(pi.Name, resourceMgr);
-				}
+			}
 			}
 			return folderPath;
 		}

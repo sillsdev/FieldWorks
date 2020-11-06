@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
+using DialogAdapters;
 
 namespace LanguageExplorer.LIFT
 {
@@ -76,104 +76,104 @@ namespace LanguageExplorer.LIFT
 			this.btnCancel.Name = "btnCancel";
 			this.btnCancel.UseVisualStyleBackColor = true;
 			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-			// 
+			//
 			// btnOK
-			// 
+			//
 			resources.ApplyResources(this.btnOK, "btnOK");
 			this.btnOK.Name = "btnOK";
 			this.btnOK.UseVisualStyleBackColor = true;
 			this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
-			// 
+			//
 			// btnBrowse
-			// 
+			//
 			resources.ApplyResources(this.btnBrowse, "btnBrowse");
 			this.btnBrowse.Name = "btnBrowse";
 			this.btnBrowse.UseVisualStyleBackColor = true;
 			this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
-			// 
+			//
 			// tbPath
-			// 
+			//
 			resources.ApplyResources(this.tbPath, "tbPath");
 			this.tbPath.Name = "tbPath";
-			// 
+			//
 			// label1
-			// 
+			//
 			resources.ApplyResources(this.label1, "label1");
 			this.label1.Name = "label1";
-			// 
+			//
 			// panel1
-			// 
+			//
 			resources.ApplyResources(this.panel1, "panel1");
 			this.panel1.Controls.Add(this.label1);
 			this.panel1.Controls.Add(this.btnBrowse);
 			this.panel1.Controls.Add(this.tbPath);
 			this.panel1.Name = "panel1";
-			// 
+			//
 			// btnBackup
-			// 
+			//
 			resources.ApplyResources(this.btnBackup, "btnBackup");
 			this.btnBackup.Name = "btnBackup";
 			this.btnBackup.UseVisualStyleBackColor = true;
 			this.btnBackup.Click += new System.EventHandler(this.btnBackup_Click);
-			// 
+			//
 			// tbBackup
-			// 
+			//
 			resources.ApplyResources(this.tbBackup, "tbBackup");
 			this.tbBackup.BackColor = System.Drawing.SystemColors.Control;
 			this.tbBackup.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.tbBackup.Name = "tbBackup";
 			this.tbBackup.ReadOnly = true;
-			// 
+			//
 			// tbOptions
-			// 
+			//
 			resources.ApplyResources(this.tbOptions, "tbOptions");
 			this.tbOptions.BackColor = System.Drawing.SystemColors.Control;
 			this.tbOptions.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.tbOptions.Name = "tbOptions";
 			this.tbOptions.ReadOnly = true;
-			// 
+			//
 			// panel2
-			// 
+			//
 			resources.ApplyResources(this.panel2, "panel2");
 			this.panel2.Controls.Add(this.m_rbKeepBoth);
 			this.panel2.Controls.Add(this.tbOptions);
 			this.panel2.Controls.Add(this.m_rbKeepNew);
 			this.panel2.Controls.Add(this.m_rbKeepCurrent);
 			this.panel2.Name = "panel2";
-			// 
+			//
 			// m_rbKeepBoth
-			// 
+			//
 			resources.ApplyResources(this.m_rbKeepBoth, "m_rbKeepBoth");
 			this.m_rbKeepBoth.Name = "m_rbKeepBoth";
 			this.m_rbKeepBoth.UseVisualStyleBackColor = true;
 			this.m_rbKeepBoth.CheckedChanged += new System.EventHandler(this.m_rbKeepBoth_CheckedChanged);
-			// 
+			//
 			// m_rbKeepNew
-			// 
+			//
 			resources.ApplyResources(this.m_rbKeepNew, "m_rbKeepNew");
 			this.m_rbKeepNew.Name = "m_rbKeepNew";
 			this.m_rbKeepNew.UseVisualStyleBackColor = true;
 			this.m_rbKeepNew.CheckedChanged += new System.EventHandler(this.m_rbKeepNew_CheckedChanged);
-			// 
+			//
 			// m_rbKeepCurrent
-			// 
+			//
 			resources.ApplyResources(this.m_rbKeepCurrent, "m_rbKeepCurrent");
 			this.m_rbKeepCurrent.Checked = true;
 			this.m_rbKeepCurrent.Name = "m_rbKeepCurrent";
 			this.m_rbKeepCurrent.TabStop = true;
 			this.m_rbKeepCurrent.UseVisualStyleBackColor = true;
 			this.m_rbKeepCurrent.CheckedChanged += new System.EventHandler(this.m_rbKeepCurrent_CheckedChanged);
-			// 
+			//
 			// m_chkTrustModTimes
-			// 
+			//
 			resources.ApplyResources(this.m_chkTrustModTimes, "m_chkTrustModTimes");
 			this.m_chkTrustModTimes.Checked = true;
 			this.m_chkTrustModTimes.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.m_chkTrustModTimes.Name = "m_chkTrustModTimes";
 			this.m_chkTrustModTimes.UseVisualStyleBackColor = true;
-			// 
+			//
 			// LiftImportDlg
-			// 
+			//
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.m_chkTrustModTimes);
@@ -216,7 +216,7 @@ namespace LanguageExplorer.LIFT
 		private System.Windows.Forms.RadioButton m_rbKeepNew;
 		private System.Windows.Forms.RadioButton m_rbKeepCurrent;
 		private System.Windows.Forms.CheckBox m_chkTrustModTimes;
-		private IOpenFileDialog openFileDialog1;
+		private OpenFileDialogAdapter openFileDialog1;
 
 	}
 }

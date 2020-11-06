@@ -12,8 +12,9 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.Acknowledgements;
+using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Impls
 {
@@ -54,7 +55,7 @@ namespace LanguageExplorer.Impls
 			m_sAvailableMemoryFmt = edtAvailableMemory.Text;
 			m_sTitleFmt = Text;
 			m_sAvailableDiskSpaceFmt = edtAvailableDiskSpace.Text;
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				// Link to System Monitor
 				// Hide memory and disk usage fields and show a link to
@@ -154,82 +155,82 @@ namespace LanguageExplorer.Impls
 			m_toolTip = new System.Windows.Forms.ToolTip(this.components);
 			((System.ComponentModel.ISupportInitialize)(fieldWorksIcon)).BeginInit();
 			this.SuspendLayout();
-			// 
+			//
 			// buttonOk
-			// 
+			//
 			buttonOk.BackColor = System.Drawing.SystemColors.Control;
 			buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
 			resources.ApplyResources(buttonOk, "buttonOk");
 			buttonOk.Name = "buttonOk";
 			m_toolTip.SetToolTip(buttonOk, resources.GetString("buttonOk.ToolTip"));
 			buttonOk.UseVisualStyleBackColor = true;
-			// 
+			//
 			// lblSILFieldWorks1
-			// 
+			//
 			resources.ApplyResources(lblSILFieldWorks1, "lblSILFieldWorks1");
 			lblSILFieldWorks1.Name = "lblSILFieldWorks1";
-			// 
+			//
 			// fieldWorksIcon
-			// 
+			//
 			resources.ApplyResources(fieldWorksIcon, "fieldWorksIcon");
 			fieldWorksIcon.Name = "fieldWorksIcon";
 			fieldWorksIcon.TabStop = false;
-			// 
+			//
 			// m_toolTip
-			// 
+			//
 			m_toolTip.AutomaticDelay = 100;
 			m_toolTip.AutoPopDelay = 1000;
 			m_toolTip.InitialDelay = 100;
 			m_toolTip.ReshowDelay = 100;
-			// 
+			//
 			// lblAvailableDiskSpace
-			// 
+			//
 			resources.ApplyResources(this.lblAvailableDiskSpace, "lblAvailableDiskSpace");
 			this.lblAvailableDiskSpace.Name = "lblAvailableDiskSpace";
-			// 
+			//
 			// lblAvailableMemory
-			// 
+			//
 			resources.ApplyResources(this.lblAvailableMemory, "lblAvailableMemory");
 			this.lblAvailableMemory.Name = "lblAvailableMemory";
-			// 
+			//
 			// lblName
-			// 
+			//
 			resources.ApplyResources(this.lblName, "lblName");
 			this.lblName.Name = "lblName";
-			// 
+			//
 			// edtAvailableDiskSpace
-			// 
+			//
 			this.edtAvailableDiskSpace.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			resources.ApplyResources(this.edtAvailableDiskSpace, "edtAvailableDiskSpace");
 			this.edtAvailableDiskSpace.Name = "edtAvailableDiskSpace";
-			// 
+			//
 			// edtAvailableMemory
-			// 
+			//
 			this.edtAvailableMemory.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			resources.ApplyResources(this.edtAvailableMemory, "edtAvailableMemory");
 			this.edtAvailableMemory.Name = "edtAvailableMemory";
-			// 
+			//
 			// lblAppVersion
-			// 
+			//
 			resources.ApplyResources(this.lblAppVersion, "lblAppVersion");
 			this.lblAppVersion.Name = "lblAppVersion";
-			// 
+			//
 			// lblFwVersion
-			// 
+			//
 			resources.ApplyResources(this.lblFwVersion, "lblFwVersion");
 			this.lblFwVersion.Name = "lblFwVersion";
-			// 
+			//
 			// txtCopyright
-			// 
+			//
 			this.txtCopyright.BackColor = System.Drawing.Color.White;
 			this.txtCopyright.Cursor = System.Windows.Forms.Cursors.SizeAll;
 			resources.ApplyResources(this.txtCopyright, "txtCopyright");
 			this.txtCopyright.Name = "txtCopyright";
 			this.txtCopyright.ReadOnly = true;
 			this.txtCopyright.TabStop = false;
-			// 
+			//
 			// FwHelpAbout
-			// 
+			//
 			this.AcceptButton = buttonOk;
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -286,7 +287,7 @@ namespace LanguageExplorer.Impls
 				Text = string.Format(m_sTitleFmt, viProvider.ProductName);
 				var strRoot = Path.GetPathRoot(Application.ExecutablePath);
 
-				if (MiscUtils.IsUnix)
+				if (Platform.IsUnix)
 				{
 					return;
 				}
@@ -315,8 +316,9 @@ namespace LanguageExplorer.Impls
 		private static void HandleSystemMonitorLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			const string program = "gnome-system-monitor";
-			using (var process = MiscUtils.RunProcess(program, null, null))
+			using (var process = new Process())
 			{
+				process.RunProcess(program, null, null);
 				Thread.Sleep(300);
 				// If gnome-system-monitor is already open, HasExited will be true with ExitCode of 0
 				if (process.HasExited && process.ExitCode != 0)

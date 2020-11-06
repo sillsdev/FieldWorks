@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Impls.SilSidePane
 {
@@ -35,7 +36,7 @@ namespace LanguageExplorer.Impls.SilSidePane
 			SmallImageList = _smallImageList;
 			LargeImageList = _largeImageList;
 			HideSelection = false;
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				LabelWrap = false;      // Fix FWNX-739 as best we can (no ellipsis when trimming like in Windows).
 			}

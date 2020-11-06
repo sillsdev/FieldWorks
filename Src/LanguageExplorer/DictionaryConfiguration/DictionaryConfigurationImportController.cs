@@ -10,9 +10,10 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using DialogAdapters;
 using Ionic.Zip;
 using LanguageExplorer.LIFT;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
@@ -360,7 +361,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		public void OnBrowse()
 		{
-			using (IOpenFileDialog openDialog = new OpenFileDialogAdapter())
+			using (var openDialog = new OpenFileDialogAdapter())
 			{
 				openDialog.Title = DictionaryConfigurationStrings.kstidChooseFile;
 				openDialog.Filter = DictionaryConfigurationStrings.kstidZipFiles + "|*.zip";

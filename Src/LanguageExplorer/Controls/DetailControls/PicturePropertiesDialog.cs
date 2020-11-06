@@ -8,12 +8,12 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using DialogAdapters;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -682,7 +682,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		private DialogResult ShowChoosePictureDlg()
 		{
 			var dialogResult = DialogResult.None;
-			using (IOpenFileDialog dlg = new OpenFileDialogAdapter())
+			using (var dlg = new OpenFileDialogAdapter())
 			{
 				dlg.InitialDirectory = (m_grpFileLocOptions.Visible) ? m_txtDestination.Text : s_defaultPicturesFolder;
 				dlg.Filter = ResourceHelper.BuildFileFilter(FileFilterType.AllImage, FileFilterType.AllFiles);

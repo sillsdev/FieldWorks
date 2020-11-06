@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using JetBrains.Annotations;
 using Paratext.Data;
 using Paratext.Data.ProjectSettingsAccess;
 using SIL.FieldWorks.Common.ScriptureUtils;
@@ -17,7 +18,7 @@ namespace Paratext8Plugin
 	/// <summary>
 	/// Wrapper for the Paratext8 version of ScrText and all the trimmings
 	/// </summary>
-	internal class PT8ScrTextWrapper : IScrText
+	public class PT8ScrTextWrapper : IScrText
 	{
 		private ScrText pt8Object;
 		public PT8ScrTextWrapper(ScrText text)
@@ -30,25 +31,19 @@ namespace Paratext8Plugin
 			pt8Object.Reload();
 		}
 
-		public IScriptureProviderStyleSheet DefaultStylesheet
-		{
-			get
-			{
-				return new Pt8StyleSheetWrapper(pt8Object.DefaultStylesheet);
-			}
-		}
+		public IScriptureProviderStyleSheet DefaultStylesheet => new Pt8StyleSheetWrapper(pt8Object.DefaultStylesheet);
 
 		internal class Pt8StyleSheetWrapper : IScriptureProviderStyleSheet
 		{
-			private ScrStylesheet pt7StyleSheet;
-			public Pt8StyleSheetWrapper(ScrStylesheet pt7ObjectDefaultStylesheet)
+			private ScrStylesheet ptStyleSheet;
+			public Pt8StyleSheetWrapper(ScrStylesheet ptObjectDefaultStylesheet)
 			{
-				pt7StyleSheet = pt7ObjectDefaultStylesheet;
+				ptStyleSheet = ptObjectDefaultStylesheet;
 			}
 
 			public IEnumerable<ITag> Tags
 			{
-				get { return ScriptureProvider.WrapPtCollection(pt7StyleSheet.Tags, new Func<ScrTag, ITag>(tag => new PT8TagWrapper(tag))); }
+				get { return ScriptureProvider.WrapPtCollection(ptStyleSheet.Tags, new Func<ScrTag, ITag>(tag => new PT8TagWrapper(tag))); }
 			}
 
 			internal class PT8TagWrapper : ITag
@@ -60,23 +55,22 @@ namespace Paratext8Plugin
 					ptTag = tag;
 				}
 
-				public string Marker { get { return ptTag.Marker; } set { ptTag.Marker = value; } }
-				public string Endmarker { get { return ptTag.Endmarker; } set { ptTag.Endmarker = value; } }
+				public string Marker { get => ptTag.Marker; set => ptTag.Marker = value; }
+				public string Endmarker { get => ptTag.Endmarker; set => ptTag.Endmarker = value; }
 
 				public ScrStyleType StyleType
 				{
-					get { return (ScrStyleType)Enum.Parse(typeof(Paratext.Data.ScrStyleType), ptTag.StyleType.ToString()); }
-					set { ptTag.StyleType = (Paratext.Data.ScrStyleType)Enum.Parse(typeof(Paratext.Data.ScrStyleType), ptTag.StyleType.ToString()); }
+					// REVIEW (Hasso) 2022.10: Why can't we simply return ptTag.StyleType? If we want an SIL.FW.C.SU.SST, why are we parsing typeof(P.D.SST)?
+					get => (ScrStyleType)Enum.Parse(typeof(Paratext.Data.ScrStyleType), ptTag.StyleType.ToString());
+					// REVIEW (Hasso) 2022.10: What?!? This setter converts the existing type to a string, parses it as an Enum, and assigns it back to itself.
+					set => ptTag.StyleType = (Paratext.Data.ScrStyleType)Enum.Parse(typeof(Paratext.Data.ScrStyleType), ptTag.StyleType.ToString());
 				}
 
-				public bool IsScriptureBook { get { return (ptTag.TextProperties & TextProperties.scBook) != 0; } }
+				public bool IsScriptureBook => (ptTag.TextProperties & TextProperties.scBook) != 0;
 			}
 		}
 
-		public IScriptureProviderParser Parser
-		{
-			get { return new Pt8ParserWrapper(pt8Object.Parser); }
-		}
+		public IScriptureProviderParser Parser => new Pt8ParserWrapper(pt8Object.Parser);
 
 		internal class Pt8ParserWrapper : IScriptureProviderParser
 		{
@@ -100,25 +94,22 @@ namespace Paratext8Plugin
 					ptToken = token;
 				}
 
-				public string Marker { get { return ptToken.Marker; } }
+				public string Marker => ptToken.Marker;
 
-				public string EndMarker { get { return ptToken.EndMarker; } }
+				public string EndMarker => ptToken.EndMarker;
 
-				public TokenType Type { get { return (TokenType)Enum.Parse(typeof(TokenType), ptToken.Type.ToString()); } }
+				public TokenType Type => (TokenType)Enum.Parse(typeof(TokenType), ptToken.Type.ToString());
 
-				public object CoreToken { get { return ptToken; } }
+				public object CoreToken => ptToken;
 
-				public string Text { get { return ptToken.Text; } }
+				public string Text => ptToken.Text;
 			}
 		}
 
 		public IScriptureProviderBookSet BooksPresentSet
 		{
-			get
-			{
-				return new PT8BookSetWrapper(pt8Object.Settings.BooksPresentSet);
-			}
-			set { throw new NotImplementedException(); }
+			get => new PT8BookSetWrapper(pt8Object.Settings.BooksPresentSet);
+			set => throw new NotImplementedException();
 		}
 
 		internal class PT8BookSetWrapper : IScriptureProviderBookSet
@@ -129,52 +120,45 @@ namespace Paratext8Plugin
 				ptBookSet = getValue;
 			}
 
-			public IEnumerable<int> SelectedBookNumbers { get { return ptBookSet.SelectedBookNumbers; } }
+			public IEnumerable<int> SelectedBookNumbers => ptBookSet.SelectedBookNumbers;
 		}
 
-		public string Name { get { return pt8Object.Name; } set { pt8Object.Name = value; } }
+		public string Name
+		{
+			get => pt8Object.Name;
+			set => pt8Object.Name = value;
+		}
 
 		public ILexicalProject AssociatedLexicalProject
 		{
-			get { return new PT8LexicalProjectWrapper(pt8Object.Settings.AssociatedLexicalProject); }
-			set { throw new NotImplementedException(); }
+			get => new PT8LexicalProjectWrapper(pt8Object.Settings.AssociatedLexicalProject);
+			set => throw new NotImplementedException();
 		}
 
-		internal class PT8LexicalProjectWrapper : ILexicalProject
+		internal class PT8LexicalProjectWrapper : LexicalProject
 		{
-			private AssociatedLexicalProject pt7Object;
+			private AssociatedLexicalProject ptObject;
 			public PT8LexicalProjectWrapper(AssociatedLexicalProject project)
 			{
-				pt7Object = project;
+				ptObject = project;
 			}
 
-			public string ProjectType
-			{
-				get { return pt7Object.ApplicationType; }
-			}
+			public override string ProjectType => ptObject.ApplicationType;
 
-			public string ProjectId
-			{
-				get { return pt7Object.ProjectId; }
-			}
-
-			public override string ToString()
-			{
-				return string.Format("{0}:{1}", ProjectType, ProjectId);
-			}
+			public override string ProjectId => ptObject.ProjectId;
 		}
 
 		public ITranslationInfo TranslationInfo
 		{
-			get { return new PT8TranslationInfoWrapper(pt8Object.Settings.TranslationInfo); }
-			set { throw new NotImplementedException(); }
+			get => new PT8TranslationInfoWrapper(pt8Object.Settings.TranslationInfo);
+			set => throw new NotImplementedException();
 		}
 
 		internal class PT8TranslationInfoWrapper : ITranslationInfo
 		{
 			private TranslationInformation ptObject;
 
-			public string BaseProjectName { get { return ptObject.BaseProjectName; } }
+			public string BaseProjectName => ptObject.BaseProjectName;
 
 			public ProjectType Type
 			{
@@ -201,19 +185,13 @@ namespace Paratext8Plugin
 
 		public bool Editable
 		{
-			get { return pt8Object.Settings.Editable; }
-			set { pt8Object.Settings.Editable = value; }
+			get => pt8Object.Settings.Editable;
+			set => pt8Object.Settings.Editable = value;
 		}
 
-		public bool IsResourceText
-		{
-			get { return pt8Object.Settings.IsZippedResource; }
-		}
+		public bool IsResourceText => pt8Object.IsResourceProject;
 
-		public string Directory
-		{
-			get { return pt8Object.Directory; }
-		}
+		public string Directory => pt8Object.Directory;
 
 		/// <summary>
 		/// For unit tests only. FLEx is not responsible for disposing of IScrText objects received from ParaText
@@ -232,11 +210,8 @@ namespace Paratext8Plugin
 
 		public string BooksPresent
 		{
-			get { return pt8Object.Settings.BooksPresentSet.Books; }
-			set
-			{
-				pt8Object.Settings.BooksPresentSet.Books = value;
-			}
+			get => pt8Object.Settings.BooksPresentSet.Books;
+			set => pt8Object.Settings.BooksPresentSet.Books = value;
 		}
 
 		public bool BookPresent(int bookCanonicalNum)
@@ -249,25 +224,22 @@ namespace Paratext8Plugin
 			return pt8Object.IsCheckSumCurrent(bookCanonicalNum, checkSum);
 		}
 
-		public IScrVerse Versification
-		{
-			get { return new Pt8VerseWrapper(pt8Object.Settings.Versification); }
-		}
+		public IScrVerse Versification => new Pt8VerseWrapper(pt8Object.Settings.Versification);
 
 		public override string ToString()
 		{
 			return Name;
 		}
 
-		public string JoinedNameAndFullName { get { return pt8Object.JoinedNameAndFullName; } }
+		public string JoinedNameAndFullName => pt8Object.ToString();
 
-		public string FileNamePrePart { get { throw new NotImplementedException("Filename parts changed for PT8. Unnecessary perhaps?"); } }
+		public string FileNamePrePart => throw new NotImplementedException("Filename parts changed for PT8. Unnecessary perhaps?");
 
-		public string FileNameForm { get { throw new NotImplementedException("Filename parts changed for PT8. Unnecessary perhaps?"); } }
+		public string FileNameForm => throw new NotImplementedException("Filename parts changed for PT8. Unnecessary perhaps?");
 
-		public string FileNamePostPart { get { throw new NotImplementedException("Filename parts changed for PT8. Unnecessary perhaps?"); } }
+		public string FileNamePostPart => throw new NotImplementedException("Filename parts changed for PT8. Unnecessary perhaps?");
 
-		public object CoreScrText { get { return pt8Object; } }
+		public object CoreScrText => pt8Object;
 
 		public string GetBookCheckSum(int canonicalNum)
 		{

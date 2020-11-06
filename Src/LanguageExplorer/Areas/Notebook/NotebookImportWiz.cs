@@ -11,12 +11,12 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using DialogAdapters;
 using LanguageExplorer.Controls;
 using LanguageExplorer.SfmToXml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
@@ -25,6 +25,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Xml;
 using SilEncConverters40;
 
@@ -57,7 +58,7 @@ namespace LanguageExplorer.Areas.Notebook
 		private ICmPossibilityListRepository m_repoList;
 
 		private bool m_fCanceling;
-		private IOpenFileDialog openFileDialog;
+		private OpenFileDialogAdapter openFileDialog;
 		private CmPossibilityCreator m_factPossibility;
 		private CmAnthroItemCreator m_factAnthroItem;
 		private CmLocationCreator m_factLocation;
@@ -1768,7 +1769,7 @@ namespace LanguageExplorer.Areas.Notebook
 		{
 			if (m_viewProcess == null || m_viewProcess.HasExited)
 			{
-				m_viewProcess = Process.Start(MiscUtils.IsUnix ? "xdg-open" : Path.Combine(FwDirectoryFinder.CodeDirectory, "ZEdit.exe"), m_sSfmDataFile);
+				m_viewProcess = Process.Start(Platform.IsUnix ? "xdg-open" : Path.Combine(FwDirectoryFinder.CodeDirectory, "ZEdit.exe"), m_sSfmDataFile);
 			}
 		}
 

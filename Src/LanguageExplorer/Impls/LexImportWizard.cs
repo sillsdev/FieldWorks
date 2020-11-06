@@ -17,12 +17,12 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Xsl;
+using DialogAdapters;
 using LanguageExplorer.Controls;
 using LanguageExplorer.SfmToXml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
@@ -92,7 +92,7 @@ namespace LanguageExplorer.Impls
 		private Button btnDeleteCharMapping;
 		private ColumnHeader columnHeaderCM4;
 		private ImageList imageList1;
-		private IOpenFileDialog openFileDialog;
+		private OpenFileDialogAdapter openFileDialog;
 		private CheckBox m_chkCreateMissingLinks;
 		List<uint> m_lastCrcs = new List<uint>();
 		private const string kOptionKeyMissingLinkCheckbox = "chkCreateMissingLinks";
@@ -3767,7 +3767,6 @@ namespace LanguageExplorer.Impls
 				m_SortOrder[1] = false; // handle first click in column one
 				InitFromMapFile(m_mapFile);
 				m_DataInfo = new SfmFileReader(m_dataFile);
-				bool changed;
 				UpdateLexFieldsWithCustomFields(customFields);
 				// get a list of the languages that are defined/edited in the GUI
 				m_htUILangInfo = uiLangInfo;

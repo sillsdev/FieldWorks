@@ -8,10 +8,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
+using DialogAdapters;
 using ECInterfaces;
 using Icu;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.Resources;
 using SilEncConverters40;
 
@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal FwOverrideComboBox cboConverter;
 		/// <summary />
 		internal FwOverrideComboBox cboSpec;
-		private IOpenFileDialog ofDlg = new OpenFileDialogAdapter();
+		private OpenFileDialogAdapter ofDlg = new OpenFileDialogAdapter();
 
 		/// <summary>Event handler when settings for a converter change.</summary>
 		internal event EventHandler ConverterFileChanged;

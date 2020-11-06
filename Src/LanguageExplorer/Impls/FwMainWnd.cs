@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using DialogAdapters;
 using IWshRuntimeLibrary;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Controls;
@@ -24,12 +25,11 @@ using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.Impls.SilSidePane;
 using LanguageExplorer.SendReceive;
 using LanguageExplorer.UtilityTools;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.Resources;
 using SIL.IO;
 using SIL.LCModel;
@@ -121,7 +121,7 @@ namespace LanguageExplorer.Impls
 			// its active control.  This swallows keyboard input.  To prevent this, we select the
 			// desired control if one has been established so that keyboard input can still be seen
 			// by that control.  (See FWNX-785.)
-			if (MiscUtils.IsMono && m.Msg == (int)Win32.WinMsgs.WM_ACTIVATE && m.HWnd == Handle && DesiredControl != null && DesiredControl.Visible && DesiredControl.Enabled)
+			if (Platform.IsMono && m.Msg == (int)Win32.WinMsgs.WM_ACTIVATE && m.HWnd == Handle && DesiredControl != null && DesiredControl.Visible && DesiredControl.Enabled)
 			{
 				DesiredControl.Select();
 			}
@@ -1990,7 +1990,7 @@ namespace LanguageExplorer.Impls
 		{
 			try
 			{
-				if (MiscUtils.IsUnix && (path.EndsWith(".html") || path.EndsWith(".htm")))
+				if (Platform.IsUnix && (path.EndsWith(".html") || path.EndsWith(".htm")))
 				{
 					Process.Start(_webBrowserProgramLinux, Enquote(path));
 				}
@@ -2244,7 +2244,7 @@ namespace LanguageExplorer.Impls
 			}
 			var applicationArguments = $"-{FwAppArgs.kProject} \"{_flexApp.Cache.ProjectId.Handle}\"";
 			var description = ResourceHelper.FormatResourceString("kstidCreateShortcutLinkDescription", _flexApp.Cache.ProjectId.UiName, _flexApp.ApplicationName);
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				var projectName = _flexApp.Cache.ProjectId.UiName;
 				const string pathExtension = ".desktop";
@@ -2274,7 +2274,7 @@ namespace LanguageExplorer.Impls
 			}
 			else
 			{
-				WshShell shell = new WshShellClass();
+				WshShell shell = new WshShell();
 				var filename = _flexApp.Cache.ProjectId.UiName;
 				filename = Path.ChangeExtension(filename, "lnk");
 				var linkPath = Path.Combine(directory, filename);
@@ -2328,7 +2328,7 @@ namespace LanguageExplorer.Impls
 			// ActiveForm can go null (see FWNX-731), so cache its value, and check whether
 			// we need to use 'this' instead (which might be a better idea anyway).
 			var form = ActiveForm ?? this;
-			using (IOpenFileDialog dlg = new OpenFileDialogAdapter())
+			using (var dlg = new OpenFileDialogAdapter())
 			{
 				dlg.CheckFileExists = true;
 				dlg.RestoreDirectory = true;
@@ -2930,7 +2930,7 @@ very simple minor adjustments. ;)"
 				return;
 			}
 			string pathname;
-			using (IFileDialog fileDialog = new OpenFileDialogAdapter())
+			using (var fileDialog = new OpenFileDialogAdapter())
 			{
 				fileDialog.Filter = ResourceHelper.FileFilter(FileFilterType.AllFiles);
 				fileDialog.RestoreDirectory = true;
@@ -2956,12 +2956,21 @@ very simple minor adjustments. ;)"
 		/// Linux: Always enable the menu. If it's not installed we display an error message when the user tries to launch it. See FWNX-567 for more info.
 		/// Windows: Enable the menu if we can find the CharMap program.
 		/// </summary>
-		private static Tuple<bool, bool> CanCmdShowCharMap => new Tuple<bool, bool>(true, MiscUtils.IsUnix || File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "charmap.exe")));
+		private static Tuple<bool, bool> CanCmdShowCharMap => new Tuple<bool, bool>(true, Platform.IsUnix || File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "charmap.exe")));
 
 		private void SpecialCharacterToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			var program = MiscUtils.IsUnix ? "gucharmap" : "charmap.exe";
-			MiscUtils.RunProcess(program, null, MiscUtils.IsUnix ? exception => { MessageBox.Show(string.Format(DictionaryConfigurationStrings.ksUnableToStartGnomeCharMap, program)); } : (Action<Exception>)null);
+			var program = Platform.IsUnix ? "gucharmap" : "charmap.exe";
+			using (var process = new Process())
+			{
+				process.RunProcess(program, null, Platform.IsUnix
+					? exception => {
+						MessageBox.Show(string.Format(
+							DictionaryConfigurationStrings.ksUnableToStartGnomeCharMap,
+							program));
+					}
+					: (Action<Exception>)null);
+			}
 		}
 
 		private void showVernacularSpellingErrorsToolStripMenuItem_Click(object sender, EventArgs e)

@@ -241,7 +241,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var menu = testModel.GetRightClickMenuItems();
 			Assert.That(menu.Count, Is.EqualTo(1));
 			Assert.That(menu.First().IsEnabled, Is.EqualTo(canDelete), "English can be deleted from the Vernacular but not the Analysis WS List");
-			Assert.That(menu.First().MenuText, Is.StringMatching("Delete English"));
+			Assert.That(menu.First().MenuText, Does.Match("Delete English"));
 		}
 
 		[Test]
@@ -252,7 +252,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var menu = testModel.GetRightClickMenuItems();
 			Assert.That(menu.Count, Is.EqualTo(1));
 			Assert.IsFalse(menu.First().IsEnabled);
-			Assert.That(menu.First().MenuText, Is.StringMatching("Delete French"));
+			Assert.That(menu.First().MenuText, Does.Match("Delete French"));
 		}
 
 		[Test]
@@ -276,8 +276,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				AddNewVernacularLanguageWarning = () =>
 				{
-					warned = true;
-					return false;
+				warned = true;
+				return false;
 				}
 			};
 			var addLanguageMenu = testModel.GetAddMenuItems().First(item => item.MenuText.Contains("Add new language"));
@@ -293,14 +293,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Analysis)
 			{
 				AddNewVernacularLanguageWarning = () =>
-				{
-					warned = true;
-					return false;
+			{
+				warned = true;
+				return false;
 				},
 				ShowChangeLanguage = (out LanguageInfo info) =>
-				{
-					info = null;
-					return false;
+			{
+				info = null;
+				return false;
 				}
 			};
 			var addLanguageMenu = testModel.GetAddMenuItems().First(item => item.MenuText.Contains("Add new language"));
@@ -517,7 +517,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// SUT
 			var mergeTargets = testModel.MergeTargets.ToList();
 			Assert.That(mergeTargets.Count, Is.EqualTo(1));
-			Assert.That(mergeTargets.First().WorkingWs.LanguageTag, Is.StringMatching("fr"));
+			Assert.That(mergeTargets.First().WorkingWs.LanguageTag, Does.Match("fr"));
 		}
 
 		[Test]
@@ -533,7 +533,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Add an audio writing system because it currently doesn't require a cache to create properly
 			addMenuItems.First(item => item.MenuText.Contains("Audio")).ClickHandler.Invoke(this, new EventArgs());
 			Assert.That(testModel.CurrentWsSetupModel.CurrentLanguageTag, Is.EqualTo("en-Zxxx-x-audio"));
-			Assert.That(testModel.LanguageName, Is.StringMatching("Testing"));
+			Assert.That(testModel.LanguageName, Does.Match("Testing"));
 		}
 
 		[Test]
@@ -550,7 +550,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Add a variation writing system because it doesn't currently require a cache to create properly
 			addMenuItems.First(item => item.MenuText.Contains("variation")).ClickHandler.Invoke(this, new EventArgs());
 			Assert.That(testModel.CurrentWritingSystemIndex, Is.Not.EqualTo(origEnIndex));
-			Assert.That(testModel.LanguageName, Is.StringMatching("Testing"));
+			Assert.That(testModel.LanguageName, Does.Match("Testing"));
 		}
 
 		[Test]
@@ -590,7 +590,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "en" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager)
 			{
-				// no-op handling of importing lists for new writing system
+			// no-op handling of importing lists for new writing system
 				ImportListForNewWs = import => { }
 			};
 			var french = new CoreWritingSystemDefinition("fr");
@@ -629,7 +629,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] {"fr", "fr-FR", "fr-Zxxx-x-audio"});
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager)
 			{
-				// Start changing stuff like crazy
+			// Start changing stuff like crazy
 				CurrentWsSetupModel =
 				{
 					CurrentAbbreviation = "free.",
@@ -725,7 +725,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var container = new TestWSContainer(new [] { "en" }, new [] { "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, type);
-			Assert.That(testModel.Title, Is.StringContaining($"{type} Writing System Properties"));
+			Assert.That(testModel.Title, Does.Contain($"{type} Writing System Properties"));
 		}
 
 		[Test]
@@ -737,14 +737,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			const string newLangName = "Ingrish";
 			testModel.LanguageName = newLangName;
 			Assert.AreEqual(newLangName, testModel.CurrentWsSetupModel.CurrentLanguageName);
-			Assert.That(testModel.LanguageCode, Is.Not.StringContaining("qaa"), "Changing the name should not change the language to private use");
+			Assert.That(testModel.LanguageCode, Does.Not.Contain("qaa"),
+				"Changing the name should not change the language to private use");
 			testModel.SelectWs("en");
 			Assert.AreEqual(newLangName, testModel.CurrentWsSetupModel.CurrentLanguageName);
-			Assert.That(testModel.CurrentWsSetupModel.CurrentLanguageTag, Is.StringMatching("en"));
-			Assert.That(testModel.LanguageCode, Is.Not.StringContaining("qaa"), "Changing the name should not change the language to private use");
+			Assert.That(testModel.CurrentWsSetupModel.CurrentLanguageTag, Does.Match("en"));
+			Assert.That(testModel.LanguageCode, Does.Not.Contain("qaa"),
+				"Changing the name should not change the language to private use");
 			testModel.SelectWs("en-fonipa");
 			Assert.AreEqual(newLangName, testModel.CurrentWsSetupModel.CurrentLanguageName);
-			Assert.That(testModel.LanguageCode, Is.Not.StringContaining("qaa"), "Changing the name should not change the language to private use");
+			Assert.That(testModel.LanguageCode, Does.Not.Contain("qaa"),
+				"Changing the name should not change the language to private use");
 		}
 
 		[Test]
@@ -919,7 +922,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			};
 			var converters = testModel.GetEncodingConverters();
 			Assert.AreEqual(1, converters.Count);
-			Assert.That(converters.First(), Is.StringMatching("\\<None\\>"));
+			Assert.That(converters.First(), Does.Match("\\<None\\>"));
 		}
 
 		[Test]
@@ -932,7 +935,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				ShowModifyEncodingConverters = TestShowModifyConverters
 			};
 			testModel.ModifyEncodingConverters();
-			Assert.That(testModel.CurrentLegacyConverter, Is.StringMatching("Test"));
+			Assert.That(testModel.CurrentLegacyConverter, Does.Match("Test"));
 		}
 
 		[Test]
@@ -946,7 +949,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				CurrentLegacyConverter = "Test2"
 			};
 			testModel.ModifyEncodingConverters();
-			Assert.That(testModel.CurrentLegacyConverter, Is.StringMatching("Test2"));
+			Assert.That(testModel.CurrentLegacyConverter, Does.Match("Test2"));
 		}
 
 		[Test]
@@ -960,7 +963,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				ShowModifyEncodingConverters = TestShowModifyConvertersReturnFalse
 			};
 			testModel.ModifyEncodingConverters();
-			Assert.IsNullOrEmpty(testModel.CurrentLegacyConverter);
+			Assert.That(testModel.CurrentLegacyConverter, Is.Null.Or.Empty);
 		}
 
 		[Test]
@@ -971,10 +974,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			// Verify that the custom system returns custom digits
 			Assert.That(testModel.CurrentWsSetupModel.CurrentNumberingSystemDefinition.IsCustom, Is.True);
-			Assert.That(testModel.CurrentWsSetupModel.CurrentNumberingSystemDefinition.Digits, Is.StringMatching("abcdefghij"));
+			Assert.That(testModel.CurrentWsSetupModel.CurrentNumberingSystemDefinition.Digits, Does.Match("abcdefghij"));
 			// Test switching to default switches back to default digits
 			testModel.CurrentWsSetupModel.CurrentNumberingSystemDefinition = NumberingSystemDefinition.Default;
-			Assert.That(testModel.CurrentWsSetupModel.CurrentNumberingSystemDefinition.Digits, Is.StringMatching("0123456789"));
+			Assert.That(testModel.CurrentWsSetupModel.CurrentNumberingSystemDefinition.Digits, Does.Match("0123456789"));
 		}
 
 		[Test]
@@ -1095,8 +1098,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				ConfirmDeleteWritingSystem = label => true,
 				ConfirmMergeWritingSystem = (string merge, out CoreWritingSystemDefinition tag) =>
 				{
-					tag = container.CurrentVernacularWritingSystems.First();
-					return true;
+				tag = container.CurrentVernacularWritingSystems.First();
+				return true;
 				}
 			};
 			var menu = testModel.GetRightClickMenuItems();
@@ -1252,7 +1255,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] {"auc-Latn-PR"});
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager());
 			var spellingDict = testModel.SpellingDictionary;
-			Assert.IsNullOrEmpty(spellingDict.Id);
+			Assert.That(spellingDict.Id, Is.Null.Or.Empty);
 		}
 
 		[Test]
@@ -1261,7 +1264,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager());
 			Assert.DoesNotThrow(() => testModel.SpellingDictionary = null);
-			Assert.IsNullOrEmpty(testModel.SpellingDictionary.Id);
+			Assert.That(testModel.SpellingDictionary.Id, Is.Null.Or.Empty);
 		}
 
 		[Test]
@@ -1298,7 +1301,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			testModel.SelectWs("en-GB");
 			testModel.GetRightClickMenuItems().First(item => item.MenuText == "Merge...").ClickHandler.Invoke(null, null);
 			testModel.Save();
-			Assert.That(entry.SummaryDefinition.get_String(en.Handle).Text, Is.StringStarting("Queens English"));
+			Assert.That(entry.SummaryDefinition.get_String(en.Handle).Text, Does.StartWith("Queens English"));
 		}
 
 

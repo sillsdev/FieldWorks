@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
-using System.Xml.XPath;
 using FwBuildTasks;
 using Microsoft.Build.Framework;
 
@@ -25,13 +24,9 @@ namespace NUnitReport
 		private LoggerVerbosity m_verbosity = LoggerVerbosity.Minimal;
 		private ReportType m_reportType = ReportType.NUnit;
 
-		public List<string> Projects { get; set; }
+		public List<string> Projects { get; }
 
-		public string OutputDir
-		{
-			get;
-			private set;
-		}
+		public string OutputDir { get; }
 
 		public ReportGenerator(string[] args)
 		{
@@ -45,7 +40,9 @@ namespace NUnitReport
 			var root = Directory.GetDirectoryRoot(curDir);
 			var outDir = Path.DirectorySeparatorChar + s_output + Path.DirectorySeparatorChar + s_debug;
 			var topDir = GetRightLevelDirectory(root, curDir, outDir);
-			return topDir + outDir;
+			var combinedDir = topDir + outDir;
+			var nugetDirs = Directory.GetDirectories(combinedDir, "net*");
+			return nugetDirs.Length > 0 ? nugetDirs[0] : combinedDir;
 		}
 
 		private static string GetRightLevelDirectory(string root, string curDir, string outDir)
@@ -185,9 +182,11 @@ namespace NUnitReport
 			{
 				case ReportType.NUnit:
 				{
-					var reportTask = new GenerateNUnitReports();
-					reportTask.HostObject = this;
-					reportTask.BuildEngine = new StubBuildEngine(m_verbosity);
+					var reportTask = new GenerateNUnitReports
+					{
+						HostObject = this,
+						BuildEngine = new StubBuildEngine(m_verbosity)
+					};
 					reportTask.Log.InitializeLifetimeService();
 					reportTask.ReportFiles = DelimitedStringFromListOfProjects();
 					reportTask.Execute();

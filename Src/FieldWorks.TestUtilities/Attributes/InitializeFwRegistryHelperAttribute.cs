@@ -5,6 +5,7 @@
 using System;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using NUnit.Framework.Interfaces;
 
 namespace FieldWorks.TestUtilities.Attributes
 {
@@ -20,10 +21,10 @@ namespace FieldWorks.TestUtilities.Attributes
 	/// (see http://www.nunit.org/index.php?p=actionAttributes&amp;r=2.6.4)
 	/// </remarks>
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class)]
-	public class InitializeFwRegistryHelperAttribute : TestActionAttribute
+	public class InitializeFwRegistryHelperAttribute: TestActionAttribute
 	{
 		/// <inheritdoc />
-		public override void BeforeTest(TestDetails testDetails)
+		public override void BeforeTest(ITest testDetails)
 		{
 			base.BeforeTest(testDetails);
 			FwRegistryHelper.Initialize();

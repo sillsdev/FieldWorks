@@ -152,7 +152,7 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			var firstPartNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = LexEntry,
-				Children = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { FieldDescription = KidField } }
+				Children = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { FieldDescription = KidField} }
 			};
 			var alphaModel = new DictionaryConfigurationModel
 			{
@@ -211,7 +211,7 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 				DictionaryNodeOptions = new DictionaryNodeGroupingOptions(),
 				Children = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { FieldDescription = KidField } }
 			};
-			var olderBrother = new ConfigurableDictionaryNode { FieldDescription = olderBroField };
+			var olderBrother = new ConfigurableDictionaryNode {FieldDescription = olderBroField};
 			var defaultModelWithGroup = new DictionaryConfigurationModel
 			{
 				Version = DictionaryConfigurationServices.VersionCurrent,
@@ -559,7 +559,7 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			};
 			var reversalDefault = _migrator.LoadBetaDefaultForAlphaConfig(reversalModel); // SUT
 			Assert.IsTrue(reversalDefault.IsReversal);
-			Assert.That(reversalDefault.Label, Is.StringContaining("Reversal"));
+			Assert.That(reversalDefault.Label, Does.Contain("Reversal"));
 
 			var rootModel = new DictionaryConfigurationModel
 			{
@@ -567,7 +567,8 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			};
 			var rootDefault = _migrator.LoadBetaDefaultForAlphaConfig(rootModel); // SUT
 			Assert.IsTrue(rootDefault.IsRootBased);
-			Assert.That(rootDefault.Label, Is.StringContaining(DictionaryConfigurationServices.RootFileName));
+			Assert.That(rootDefault.Label, Does.Contain(DictionaryConfigurationServices.RootFileName));
+
 			var subEntry = new ConfigurableDictionaryNode
 			{
 				Label = "Minor Subentries",
@@ -594,7 +595,7 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			};
 
 			var hybridDefault = _migrator.LoadBetaDefaultForAlphaConfig(hybridModel); // SUT
-			Assert.That(hybridDefault.Label, Is.StringContaining("Hybrid"));
+			Assert.That(hybridDefault.Label, Does.Contain("Hybrid"));
 
 			var stemModel = new DictionaryConfigurationModel
 			{
@@ -615,7 +616,7 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 				}
 			};
 			var stemDefault = _migrator.LoadBetaDefaultForAlphaConfig(stemModel); // SUT
-			Assert.That(stemDefault.Label, Is.StringContaining("Lexeme"));
+			Assert.That(stemDefault.Label, Does.Contain("Lexeme"));
 		}
 
 		[Test]
@@ -703,13 +704,13 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			var migratedExtendedNoteNode = alphaModel.Parts[0].Children[0].Children[0];
 
 			// Parent Node is Extended Note
-			Assert.That(migratedExtendedNoteNode.Label, Is.StringMatching("Extended Note"), "Extended Note not migrated");
+			Assert.That(migratedExtendedNoteNode.Label, Does.Match("Extended Note"), "Extended Note not migrated");
 
 			// Children Nodes are Note Type, Discussion, Example Sentence, Translations
-			Assert.That(migratedExtendedNoteNode.Children[0].Label, Is.StringMatching("Note Type"), "Note Type not migrated");
-			Assert.That(migratedExtendedNoteNode.Children[1].Label, Is.StringMatching("Discussion"), "Discussion not migrated");
-			Assert.That(migratedExtendedNoteNode.Children[2].Children[0].Label, Is.StringMatching("Example Sentence"), "Example Sentence not migrated");
-			Assert.That(migratedExtendedNoteNode.Children[2].Children[1].Label, Is.StringMatching("Translations"), "Translations not migrated");
+			Assert.That(migratedExtendedNoteNode.Children[0].Label, Does.Match("Note Type"), "Note Type not migrated");
+			Assert.That(migratedExtendedNoteNode.Children[1].Label, Does.Match("Discussion"), "Discussion not migrated");
+			Assert.That(migratedExtendedNoteNode.Children[2].Children[0].Label, Does.Match("Example Sentence"), "Example Sentence not migrated");
+			Assert.That(migratedExtendedNoteNode.Children[2].Children[1].Label, Does.Match("Translations"), "Translations not migrated");
 		}
 
 		[Test]
@@ -1073,7 +1074,7 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			{
 				Label = "Etymology",
 				FieldDescription = "Etymology (Custom)",
-				Children = new List<ConfigurableDictionaryNode> { new ConfigurableDictionaryNode { Label = "unimportant" } }
+				Children = new List<ConfigurableDictionaryNode> {  new ConfigurableDictionaryNode { Label = "unimportant"} }
 			};
 			var variantNode = new ConfigurableDictionaryNode
 			{
@@ -1389,7 +1390,7 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 		public void MigrateFrom83Alpha_RemoveReferencedHeadwordSubField() // LT-18470
 		{
 			//Populate a reversal configuration based on the current defaults
-			var reversalBetaModel = new DictionaryConfigurationModel { WritingSystem = "en" };
+			var reversalBetaModel = new DictionaryConfigurationModel { WritingSystem = "en"};
 			var betaModel = _migrator.LoadBetaDefaultForAlphaConfig(reversalBetaModel); // SUT
 			Assert.IsTrue(betaModel.IsReversal);
 			var alphaModel = betaModel.DeepClone();
@@ -1426,7 +1427,7 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			{
 				Label = "Reversal Entry",
 				FieldDescription = "ReversalIndexEntry",
-				Children = new List<ConfigurableDictionaryNode> { referencedSenses }
+				Children = new List<ConfigurableDictionaryNode> {referencedSenses}
 			};
 			var alphaModel = new DictionaryConfigurationModel
 			{

@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -47,7 +48,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			resources.ApplyResources(m_matchingObjectsBrowser, "m_matchingObjectsBrowser");
 			resources.ApplyResources(this, "$this");
 
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				// Mono doesn't handle anchoring coming in through these resources for adjusting
 				// initial locations and sizes, so let's set those manually.  See FWNX-546.

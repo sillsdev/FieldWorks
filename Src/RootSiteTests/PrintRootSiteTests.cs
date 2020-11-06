@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	{
 		PrinterSettings m_pSettings;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			m_pSettings = new PrinterSettings();

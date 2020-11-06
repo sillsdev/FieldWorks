@@ -6,7 +6,6 @@ include $(BUILD_ROOT)/Bld/_init.mak.lnx
 OUTPUT  = $(FWOUTPUT)
 INCLUDE = $(FWINCLUDE)
 
-COMMONDLGS_SRC = $(SRC)/CommonCOMDlgs
 TLB_SRC        = $(OUTPUT)/Common
 
 # -I$(AFCORE_SRC)
@@ -33,7 +32,6 @@ INCLUDES := \
 	-I. -Ilib \
 	-I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(DEBUGPROCS_SRC) \
 	-I$(GR2_INC) \
-	-I$(COMMONDLGS_SRC) \
 	-I$(TLB_SRC) -I$(INCLUDE) \
 	-I$(WIN32MORE_INC) \
 	-I$(COM_INC) \
@@ -152,7 +150,7 @@ $(INT_DIR)/libVwGraphics: $(VWG_OBJS) $(OBJS_OTHER) $(GENERIC_OBJ)/main.o $(LINK
 	$(LINK.cc) -o $@ $^ $(LDLIBS)
 
 ComponentsMap: $(OUT_DIR)/libViews.so $(OUT_DIR)/libVwGraphics.so
-	(export PATH=$(PATH):$(COM_DIR)/build$(ARCH)/bin && cd $(OUT_DIR) && generate-map.sh libViews.so > $(OUT_DIR)/libViews.compmap)
+	(export PATH=$(PATH):$(COM_DIR)/build$(ARCH)/bin && cd $(OUT_DIR) && generate-map.sh libViews.so > libViews.compmap)
 
 # === Rules ===
 

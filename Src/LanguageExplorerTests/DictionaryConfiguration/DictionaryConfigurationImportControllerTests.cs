@@ -49,7 +49,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		private string _pathToConfiguration;
 		private string _reversalPathToConfiguration;
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			// delete the directory that was created in SetUp
@@ -246,7 +246,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			_controller.DoImport();
 			var importedTestStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "TestStyle");
 			Assert.NotNull(importedTestStyle, "test style was not imported.");
-			Assert.That(importedTestStyle.Usage.BestAnalysisAlternative.Text, Is.StringMatching("Test Style"));
+			Assert.That(importedTestStyle.Usage.BestAnalysisAlternative.Text, Does.Match("Test Style"));
 			Assert.AreEqual(importedTestStyle.Context, ContextValues.InternalConfigureView);
 			Assert.AreEqual(importedTestStyle.Type, StyleType.kstCharacter);
 			Assert.AreEqual(importedTestStyle.UserLevel, 2);
@@ -445,7 +445,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Publications = new List<string> { "Main Dictionary", "unknown pub 1", "unknown pub 2" },
 				FilePath = Path.Combine(_projectConfigPath, "Different" + configFilename)
 			};
-			FileUtils.WriteStringtoFile(alreadyExistingModelWithSameLabel.FilePath, "arbitrary file content", Encoding.UTF8);
+			FileUtils.WriteStringToFile(alreadyExistingModelWithSameLabel.FilePath, "arbitrary file content", Encoding.UTF8);
 			var anotherAlreadyExistingModel = new DictionaryConfigurationModel
 			{
 				Label = "importexportConfiguration-Imported1",
@@ -453,7 +453,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				FilePath = Path.GetTempPath() + configFilename
 			};
 			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigPath, _controller._configurations, anotherAlreadyExistingModel);
-			FileUtils.WriteStringtoFile(anotherAlreadyExistingModel.FilePath, "arbitrary file content", Encoding.UTF8);
+			FileUtils.WriteStringToFile(anotherAlreadyExistingModel.FilePath, "arbitrary file content", Encoding.UTF8);
 
 			_controller._configurations.Add(alreadyExistingModelWithSameLabel);
 			_controller._configurations.Add(anotherAlreadyExistingModel);
@@ -546,7 +546,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			const string xmlOpenTagsThruRoot = @"<?xml version=""1.0"" encoding=""utf-8""?>
 			<DictionaryConfiguration name=""Root"" allPublications=""true"" isRootBased=""true"" version=""1"" lastModified=""2014-02-13"">";
 			const string xmlCloseTagsFromRoot = "</DictionaryConfiguration>";
-			FileUtils.WriteStringtoFile(configFile, xmlOpenTagsThruRoot +
+			FileUtils.WriteStringToFile(configFile, xmlOpenTagsThruRoot +
 				"<ConfigurationItem name=\"Main Entry\" style=\"Dictionary-Normal\" styleType=\"paragraph\" isEnabled=\"true\" field=\"LexEntry\" cssClassNameOverride=\"entry\"></ConfigurationItem>"
 				+ xmlCloseTagsFromRoot, Encoding.UTF8);
 			_controller._temporaryImportConfigLocation = configFile;

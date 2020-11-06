@@ -26,7 +26,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		private IPropertyTable _propertyTable;
 
 		/// <summary />
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();

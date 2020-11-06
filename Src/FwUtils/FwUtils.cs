@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Media;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -18,6 +19,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -25,8 +27,28 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// <summary>
 	/// Collection of miscellaneous utility methods needed for FieldWorks
 	/// </summary>
-	public static partial class FwUtils
+	public static class FwUtils
 	{
+		private static string _FwMajorVersion;
+
+		/// <summary>
+		/// The current major version of FieldWorks. This is also known in FwKernelInterfaces/IcuWrappers.cs, InitIcuDataDir.
+		/// </summary>
+		public static string SuiteVersion
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(_FwMajorVersion))
+				{
+					var gitVersionInformationType = Assembly.GetExecutingAssembly().GetType("GitVersionInformation");
+					var versionField = gitVersionInformationType.GetField("Major");
+					_FwMajorVersion = versionField.GetValue(null) as string;
+				}
+
+				return _FwMajorVersion;
+			}
+		}
+
 		/// <summary>
 		/// Generates a name suitable for use as a pipe name from the specified project handle.
 		/// </summary>
@@ -84,7 +106,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>Name of the font, or <c>null</c> if not found.</returns>
 		public static string GetFontNameForLanguage(string lang)
 		{
-			if (MiscUtils.IsWindows)
+			if (Platform.IsWindows)
 			{
 				throw new PlatformNotSupportedException();
 			}
@@ -411,7 +433,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			try
 			{
-				if (MiscUtils.IsDotNet)
+				if (Platform.IsDotNet)
 				{
 					string sidString = null;
 					if (OpenProcessToken(procHandle, TOKEN_QUERY, out var procToken))

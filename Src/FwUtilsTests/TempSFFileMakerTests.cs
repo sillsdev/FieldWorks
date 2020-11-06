@@ -23,11 +23,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// null SIL book id
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void TestCreateFileNullSILBookId()
 		{
 			var testFileMaker = new TempSFFileMaker();
-			testFileMaker.CreateFile(null, null);
+			Assert.That(() => { testFileMaker.CreateFile(null, null); }, Throws.TypeOf<ArgumentNullException>());
 		}
 
 		/// <summary>

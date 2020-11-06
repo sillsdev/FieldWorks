@@ -47,7 +47,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			try
 			{
-				MockLauncher.Dispose();
+			MockLauncher.Dispose();
 				MockLauncher = null;
 			}
 			catch (Exception err)
@@ -56,8 +56,8 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			}
 			finally
 			{
-				base.TestTearDown();
-			}
+			base.TestTearDown();
+		}
 		}
 
 		private IPartOfSpeech GetNounPOS()
@@ -128,46 +128,46 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		}
 
 		private sealed class MockAtomicReferenceLauncher : AtomicReferenceLauncher
+	{
+		#region overrides
+
+		protected override AtomicReferenceView CreateAtomicReferenceView()
 		{
-			#region overrides
+			return new MockAtomicReferenceView();
+		}
 
-			protected override AtomicReferenceView CreateAtomicReferenceView()
-			{
-				return new MockAtomicReferenceView();
-			}
-
-			protected override void AdjustFormScrollbars(bool displayScrollbars)
-			{
-				base.AdjustFormScrollbars(false);
-			}
+		protected override void AdjustFormScrollbars(bool displayScrollbars)
+		{
+			base.AdjustFormScrollbars(false);
+		}
 
 			protected override bool CanRaiseEvents => false;
-			#endregion
+		#endregion
 
-			public void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, string analysisWs)
-			{
-				Assert.IsNotNull(obj, "Must initialize with an object and flid.");
-				Assert.Greater(flid, 0, "Must initialize with an object and flid.");
-				Assert.IsNotNullOrEmpty(fieldName, "Must initialize with a field name.");
-				Initialize(cache, obj, flid, fieldName, null, "", analysisWs);
-			}
-		}
-
-		/// <summary>
-		/// Functions with MockAtomicReferenceLauncher to eliminate views from
-		/// these AtomicReferenceLauncher tests.
-		/// </summary>
-		private sealed class MockAtomicReferenceView : AtomicReferenceView
+		public void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, string analysisWs)
 		{
-			#region overrides
-
-			public override void MakeRoot()
-			{
-				// Do nothing the base class(es) do.
-			}
-
-			#endregion
-
+			Assert.IsNotNull(obj, "Must initialize with an object and flid.");
+			Assert.Greater(flid, 0, "Must initialize with an object and flid.");
+			Assert.That(fieldName, Is.Not.Null.Or.Empty, "Must initialize with a field name.");
+				Initialize(cache, obj, flid, fieldName, null, "", analysisWs);
 		}
 	}
+
+	/// <summary>
+	/// Functions with MockAtomicReferenceLauncher to eliminate views from
+	/// these AtomicReferenceLauncher tests.
+	/// </summary>
+		private sealed class MockAtomicReferenceView : AtomicReferenceView
+	{
+		#region overrides
+
+		public override void MakeRoot()
+		{
+				// Do nothing the base class(es) do.
+		}
+
+		#endregion
+
+	}
+}
 }

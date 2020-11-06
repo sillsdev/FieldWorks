@@ -13,7 +13,6 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 
@@ -140,7 +139,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
-		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
+		public Image Icon => SIL.FieldWorks.Resources.Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
 

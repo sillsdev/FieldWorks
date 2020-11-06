@@ -41,7 +41,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		private LayoutCache m_layouts;
 
 		/// <summary />
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -79,7 +79,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 		}
 
 		/// <summary />
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			try

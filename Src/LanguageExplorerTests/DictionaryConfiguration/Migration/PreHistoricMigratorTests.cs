@@ -95,7 +95,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 
 		#endregion
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_BeforeAfterAndBetweenWork()
 		{
@@ -107,7 +107,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.AreEqual(configNode.Before, oldNode.Before, "Before not migrated");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_SubsensesBeforeAfterAndBetweenWork()
 		{
@@ -178,7 +178,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.AreEqual(oldSubsensesNode.Children[0].Children[0].After, "@", "After not migrated");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_SubsensesGetsConvertedSenseChildren()
 		{
@@ -263,7 +263,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.AreEqual(oldSubsensesNode.Children[2].FieldDescription, "PostSubsenses", "Defaults not copied into fields following Subsenses");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_StyleWorks()
 		{
@@ -273,7 +273,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.AreEqual(configNode.Style, oldNode.StyleName, "Style not migrated");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_MainEntryAndMinorEntryWork()
 		{
@@ -550,7 +550,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.AreEqual(isUnspecifiedVariantSelected || isSpecifiedVariantSelected, _migrator.HasVariantTypesSelected(options), "Variant");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_IsEnabledWorks()
 		{
@@ -563,7 +563,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.AreEqual(configNode.IsEnabled, untickedNode.Checked, "Unchecked node in old tree did not set IsEnabled correctly after migration");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_WritingSystemOptionsAnalysisTypeWorks()
 		{
@@ -577,7 +577,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.IsNotNull(wsOpts.Options, "analysis choice did not result in any options being created.");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_WritingSystemOptionsVernacularTypeWorks()
 		{
@@ -591,7 +591,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.IsNotNull(wsOpts.Options, "vernacular choice did not result in any options being created.");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_WritingSystemOptionsVernacularAnalysisTypeWorks()
 		{
@@ -606,7 +606,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "vernacular"), "vernacular choice was not migrated.");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_WritingSystemOptionsPronunciationTypeWorks()
 		{
@@ -621,7 +621,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "pronunciation"), "pronunciation choice was not migrated.");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_WritingSystemOptionsAnalysisVernacularTypeWorks()
 		{
@@ -636,7 +636,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "analysis"), "analysis choice was not migrated.");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_WritingSystemOptionsVernacularSingleLanguageWorks()
 		{
@@ -651,7 +651,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "fr"), "French choice was not migrated.");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_WritingSystemOptionsTwoLanguagesWork()
 		{
@@ -667,7 +667,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "hi"), "hi choice was not migrated.");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_WritingSystemOptionsWsAbbreviationWorks()
 		{
@@ -686,7 +686,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.IsFalse(wsOpts.DisplayWritingSystemAbbreviations, "ShowWsLabels false value did not convert into DisplayWritingSystemAbbreviation");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_ListOptionsEnabledLexRelationWorks()
 		{
@@ -703,7 +703,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.IsTrue(lexRelationOptions.Options[0].IsEnabled);
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_ListOptionsDisabledLexRelationWorks()
 		{
@@ -761,7 +761,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.IsTrue(options.DisplayEachInAParagraph, "Did not set");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_ListOptionsEnabledLexEntryTypeWorks()
 		{
@@ -778,7 +778,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.IsTrue(lexRelationOptions.Options[0].IsEnabled);
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_ListOptionsDisabledLexEntryTypeWorks()
 		{
@@ -846,11 +846,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(duplicateNode);
 			}
 			Assert.IsFalse(configNode.IsDuplicate, "Node incorrectly marked as a duplicate.");
-			Assert.IsNullOrEmpty(configNode.LabelSuffix, "suffix incorrectly migrated");
+			Assert.That(configNode.LabelSuffix, Is.Null.Or.Empty, "suffix incorrectly migrated");
 			Assert.AreEqual("A b c D e f", configNode.Label, "should not have a suffix on ConfigurableDictionaryNode.Label");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_ChildrenAreAdded()
 		{
@@ -866,7 +866,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.AreEqual(configNode.Children[0].Label, childNode.Label);
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_SenseNumberStyleIsAddedAndUsed()
 		{
@@ -893,7 +893,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			DeleteStyleSheet(styleName);
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_SenseConfigsWithDifferingStylesMakeTwoStyles()
 		{
@@ -939,11 +939,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			DeleteStyleSheet(styleName2);
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_AllDifferentNumStylesResultInNewStyleSheets()
 		{
-			var senseNumberOptions = new[] { "-bold -italic", "bold italic", "bold", "italic", "-bold italic", "bold -italic" };
+			var senseNumberOptions = new [] { "-bold -italic", "bold italic", "bold", "italic", "-bold italic", "bold -italic" };
 			var senseNumberNode = new LayoutTreeNode
 			{
 				Label = "Parent",
@@ -960,20 +960,20 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
 			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName);
-			foreach (var option in senseNumberOptions)
+			foreach(var option in senseNumberOptions)
 			{
 				senseNumberNode.NumStyle = option;
 				Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
 			}
 			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, lastStyleName);
 			DeleteStyleSheet(styleName);
-			for (var i = 2; i < 2 + senseNumberOptions.Length; i++) // Delete all the created dictionary styles
+			for(var i = 2; i < 2 + senseNumberOptions.Length; i++) // Delete all the created dictionary styles
 			{
 				DeleteStyleSheet($"Dictionary-SenseNumber-{i}");
 			}
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_AllDifferentNumStylesMatchThemselves()
 		{
@@ -991,7 +991,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
 			Assert.IsNull(senseStyle2, "A second sense number style should not exist before conversion for a valid test.");
 
-			foreach (var option in senseNumberOptions)
+			foreach(var option in senseNumberOptions)
 			{
 				senseNumberNode.NumStyle = option;
 				Assert.DoesNotThrow(() => _migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
@@ -1002,7 +1002,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			}
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_SenseConfigsWithDifferentFontsMakeTwoStyles()
 		{
@@ -1042,7 +1042,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			DeleteStyleSheet(styleName2);
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConvertLayoutTreeNodeToConfigNode_SenseOptionsAreMigrated()
 		{
@@ -1064,7 +1064,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			DeleteStyleSheet("Dictionary-SenseNumber");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_FieldDescriptionIsMigrated()
 		{
@@ -1077,7 +1077,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				Version = PreHistoricMigrator.VersionPre83
 			};
 			const string parentField = "ParentDescription";
-			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", FieldDescription = parentField };
+			var baseParentNode = new ConfigurableDictionaryNode { Label = "Parent", FieldDescription = parentField};
 			const string childField = "ChildDescription";
 			var baseChildNode = new ConfigurableDictionaryNode { Label = "Child", FieldDescription = childField };
 			baseParentNode.Children = new List<ConfigurableDictionaryNode> { baseChildNode };
@@ -1092,7 +1092,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].FieldDescription, childField, "Field description for child not migrated");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_CSSClassOverrideIsMigrated()
 		{
@@ -1120,7 +1120,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].CSSClassNameOverride, childOverride, "CssClassNameOverride for child not migrated");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_NewStyleDefaultsAreAddedWhenStyleIsNotSet()
 		{
@@ -1154,7 +1154,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.AreEqual(defaultStyleType, convertedModel.Parts[0].Children[1].StyleType, "StyleType for child 2 not set to Default");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_StyleInfoIsMigratedWhenStyleIsSet()
 		{
@@ -1164,8 +1164,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			var convertedParentNode = new ConfigurableDictionaryNode
 			{
 				Label = "Parent",
-				StyleType = parentStyleType,
-				Style = parentStyle
+			  StyleType = parentStyleType,
+			  Style = parentStyle
 			};
 			const string childStyle = "italic";
 			var convertedChildNode1 = new ConfigurableDictionaryNode
@@ -1196,7 +1196,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.AreEqual(childStyle, convertedModel.Parts[0].Children[0].Style, "child Style not migrated");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_WsOptionIsMigrated()
 		{
@@ -1234,13 +1234,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].DictionaryNodeOptions, baseModel.Parts[0].Children[0].DictionaryNodeOptions, "DictionaryNodeOptions for child not migrated");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_CopyOfNodeGetsValueFromBase()
 		{
 			var convertedParentNode = new ConfigurableDictionaryNode { Label = "Parent" };
 			// make convertedChildNode look like a copy of a Child node which is not represented in the test.
-			var convertedChildNode = new ConfigurableDictionaryNode { Label = "Child", LabelSuffix = "1" };
+			var convertedChildNode = new ConfigurableDictionaryNode { Label = "Child", LabelSuffix = "1"};
 			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { convertedChildNode };
 			var convertedModel = new DictionaryConfigurationModel
 			{
@@ -1262,7 +1262,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.AreEqual(convertedModel.Parts[0].Children[0].FieldDescription, childField, "Field description for copy of child not migrated");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_TwoCopiesBothGetValueFromBase()
 		{
@@ -1294,7 +1294,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.AreEqual(convertedModel.Parts[0].Children[2].FieldDescription, childField, "Field description for copy of child not migrated");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_NewNodeFromBaseIsMerged()
 		{
@@ -1325,7 +1325,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.AreEqual(convertedModel.Parts[0].Children[1].Label, "Child2", "New node from base was not merged properly");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_OrderFromOldModelIsRetained()
 		{
@@ -1357,7 +1357,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.AreEqual(convertedModel.Parts[0].Children[1].Label, convertedChildNode.Label, "Nodes incorrectly merged");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_UnmatchedNodeFromOldModelIsCustom()
 		{
@@ -1390,7 +1390,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.AreEqual(customNode.Label, customNode.FieldDescription, "Custom nodes' Labels and Fields should match");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_NestedCustomFieldsAreAllMarked()
 		{
@@ -1427,7 +1427,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.AreEqual(customChild.Label, customChild.FieldDescription, "Custom nodes' Labels and Fields should match");
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_RelabeledCustomFieldsNamesAreMigrated()
 		{
@@ -1507,7 +1507,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		{
 			var convertedParentNode = new ConfigurableDictionaryNode { Label = "Minor Entries", FieldDescription = "LexEntry" };
 			var customPersonNode = new ConfigurableDictionaryNode { Label = CustomFieldLocation, Parent = convertedParentNode };
-			var customGenDateNode = new ConfigurableDictionaryNode { Label = CustomFieldGenDate, Parent = convertedParentNode };
+			var customGenDateNode = new ConfigurableDictionaryNode {Label = CustomFieldGenDate, Parent = convertedParentNode };
 			convertedParentNode.Children = new List<ConfigurableDictionaryNode> { customPersonNode, customGenDateNode };
 			var convertedModel = new DictionaryConfigurationModel
 			{
@@ -1561,10 +1561,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 
 		private static DictionaryConfigurationModel BuildConvertedReferenceEntryNodes(bool enableHeadword, bool enableSummaryDef, bool enableSenseHeadWord, bool enableGloss)
 		{
-			var headWord = new ConfigurableDictionaryNode { Label = "Referenced Headword", IsEnabled = enableHeadword, Before = HwBefore };
-			var summaryDef = new ConfigurableDictionaryNode { Label = "Summary Definition", IsEnabled = enableSummaryDef, Before = GlsBefore };
+			var headWord = new ConfigurableDictionaryNode { Label = "Referenced Headword", IsEnabled = enableHeadword, Before = HwBefore};
+			var summaryDef = new ConfigurableDictionaryNode { Label = "Summary Definition", IsEnabled = enableSummaryDef, Before = GlsBefore};
 			var senseHeadWord = new ConfigurableDictionaryNode { Label = "Referenced Sense Headword", IsEnabled = enableSenseHeadWord, Between = HwBetween, After = HwAfter };
-			var gloss = new ConfigurableDictionaryNode { Label = "Gloss", IsEnabled = enableGloss, Between = GlsBetween, After = GlsAfter, Style = GlsStyle };
+			var gloss = new ConfigurableDictionaryNode { Label = "Gloss", IsEnabled = enableGloss, Between = GlsBetween, After = GlsAfter, Style = GlsStyle};
 			var referencedEntriesNode = new ConfigurableDictionaryNode
 			{
 				Label = "Referenced Entries",
@@ -1594,8 +1594,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 
 		private static DictionaryConfigurationModel BuildCurrentDefaultReferenceEntryNodes(bool enableHeadWord, bool enableGloss)
 		{
-			var headWord = new ConfigurableDictionaryNode { Label = "Referenced Headword", IsEnabled = enableHeadWord, FieldDescription = "HeadWord" };
-			var gloss = new ConfigurableDictionaryNode { Label = "Gloss (or Summary Definition)", IsEnabled = enableGloss, FieldDescription = "DefinitionOrGloss" };
+			var headWord = new ConfigurableDictionaryNode { Label = "Referenced Headword", IsEnabled = enableHeadWord, FieldDescription = "HeadWord"};
+			var gloss = new ConfigurableDictionaryNode { Label = "Gloss (or Summary Definition)", IsEnabled = enableGloss, FieldDescription = "DefinitionOrGloss"};
 			var referencedEntriesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ConfigReferencedEntries",
@@ -1626,12 +1626,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			return model;
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_MinorEntryComponentsReferencedEntriesChanged()
 		{
 			const string refEntriesPath = "//ConfigurationItem[@name='Minor Entry']/ConfigurationItem[@name='Components']/ConfigurationItem[@name='Referenced Entries']/";
-			using (var convertedModelFile = new TempFile())
+			using(var convertedModelFile = new TempFile())
 			{
 				var convertedMinorEntry = BuildConvertedReferenceEntryNodes(true, true, true, true);
 				convertedMinorEntry.FilePath = convertedModelFile.Path;
@@ -1655,7 +1655,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		public void CopyNewDefaultsIntoConvertedModel_MinorEntryComponentsReferencedEntriesChangedInSpecialCase()
 		{
 			const string refEntriesPath = "//ConfigurationItem[@name='Minor Entry']/ConfigurationItem[@name='Components']/ConfigurationItem[@name='Referenced Entries']/";
-			using (var convertedModelFile = new TempFile())
+			using(var convertedModelFile = new TempFile())
 			{
 				var convertedMinorEntry = BuildConvertedReferenceEntryNodes(true, true, true, true);
 				convertedMinorEntry.Parts[0].Children[0].Children[0].Children.First(child => child.Label == "Referenced Sense Headword").Label
@@ -1671,11 +1671,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			}
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_MinorEntryComponentsBeforeAfterBetweenMigrated()
 		{
-			using (var convertedModelFile = new TempFile())
+			using(var convertedModelFile = new TempFile())
 			{
 				var convertedMinorEntry = BuildConvertedReferenceEntryNodes(true, true, true, true);
 				convertedMinorEntry.FilePath = convertedModelFile.Path;
@@ -1684,21 +1684,21 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
 				string cssResults = null;
 				Assert.DoesNotThrow(() => cssResults = CssGenerator.GenerateCssFromConfiguration(convertedMinorEntry, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable)));
-				Assert.That(cssResults, Is.StringContaining(HwBefore));
-				Assert.That(cssResults, Is.StringContaining(HwBetween));
-				Assert.That(cssResults, Is.StringContaining(HwAfter));
-				Assert.That(cssResults, Is.StringContaining(GlsBefore));
-				Assert.That(cssResults, Is.StringContaining(GlsBetween));
-				Assert.That(cssResults, Is.StringContaining(GlsAfter));
+				Assert.That(cssResults, Does.Contain(HwBefore));
+				Assert.That(cssResults, Does.Contain(HwBetween));
+				Assert.That(cssResults, Does.Contain(HwAfter));
+				Assert.That(cssResults, Does.Contain(GlsBefore));
+				Assert.That(cssResults, Does.Contain(GlsBetween));
+				Assert.That(cssResults, Does.Contain(GlsAfter));
 			}
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_MinorEntryComponentsHeadwordChecksMigrated()
 		{
 			const string refEntriesPath = "//ConfigurationItem[@name='Minor Entry']/ConfigurationItem[@name='Components']/ConfigurationItem[@name='Referenced Entries']/";
-			using (var convertedModelFile = new TempFile())
+			using(var convertedModelFile = new TempFile())
 			{
 				var convertedMinorEntry = BuildConvertedReferenceEntryNodes(true, false, false, false);
 				convertedMinorEntry.FilePath = convertedModelFile.Path;
@@ -1723,12 +1723,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			}
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_MinorEntryComponentsGlossChecksMigrated()
 		{
 			const string refEntriesPath = "//ConfigurationItem[@name='Minor Entry']/ConfigurationItem[@name='Components']/ConfigurationItem[@name='Referenced Entries']/";
-			using (var convertedModelFile = new TempFile())
+			using(var convertedModelFile = new TempFile())
 			{
 				var convertedMinorEntry = BuildConvertedReferenceEntryNodes(false, true, false, false);
 				convertedMinorEntry.FilePath = convertedModelFile.Path;
@@ -1753,7 +1753,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			}
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_DuplicatedConvertedNodesDoesNotBreakOriginal()
 		{
@@ -1852,7 +1852,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			return model;
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_SubentryComplexTypeAbbreviationChanged()
 		{
@@ -1937,7 +1937,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			return model;
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_ReversalIndexInflectionFeaturesMigration()
 		{
@@ -2021,7 +2021,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			return model;
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_ReversalIndexChildNodesMigrated()
 		{
@@ -2133,7 +2133,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			return model;
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_MainEntryComponentReferences_ComponentsRenamedToReferencedEntries()
 		{
@@ -2252,7 +2252,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			return model;
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_Homograph_RenamedTo_SecondaryHomographNumber()
 		{
@@ -2281,7 +2281,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			}
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void CopyNewDefaultsIntoConvertedModel_CopyNewDefaultsThrowsWhenLabelsAreMismatched()
 		{
@@ -2312,58 +2312,58 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.Throws<ArgumentException>(() => _migrator.CopyNewDefaultsIntoConvertedModel(convertedConfig, defaultConfig));
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConfigsNeedMigratingFromPre83_ReturnsFalseIfNewReversalConfigsExist()
 		{
 			var newRevIdxConfigLoc = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)), DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName);
 			try
 			{
-				Directory.CreateDirectory(newRevIdxConfigLoc);
+			Directory.CreateDirectory(newRevIdxConfigLoc);
 				File.AppendAllText(Path.Combine(newRevIdxConfigLoc, "SomeConfig" + LanguageExplorerConstants.DictionaryConfigurationFileExtension), "Foo");
 				Assert.That(!_migrator.ConfigsNeedMigratingFromPre83(), "If current configs exist no migration should be needed."); // SUT
 			}
 			finally
 			{
-				RobustIO.DeleteDirectoryAndContents(newRevIdxConfigLoc);
-			}
+			RobustIO.DeleteDirectoryAndContents(newRevIdxConfigLoc);
+		}
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConfigsNeedMigratingFromPre83_ReturnsFalseIfNewDictionaryConfigsExist()
 		{
 			var newDictConfigLoc = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)), DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
 			try
 			{
-				Directory.CreateDirectory(newDictConfigLoc);
+			Directory.CreateDirectory(newDictConfigLoc);
 				File.AppendAllText(Path.Combine(newDictConfigLoc, "SomeConfig" + LanguageExplorerConstants.DictionaryConfigurationFileExtension), "Foo");
 				Assert.That(!_migrator.ConfigsNeedMigratingFromPre83(), "If current configs exist no migration should be needed."); // SUT
 			}
 			finally
 			{
-				RobustIO.DeleteDirectoryAndContents(newDictConfigLoc);
-			}
+			RobustIO.DeleteDirectoryAndContents(newDictConfigLoc);
+		}
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConfigsNeedMigratingFromPre83_ReturnsFalseIfNoNewConfigsAndNoOldConfigs()
 		{
 			var newDictConfigLoc = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)), DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
 			try
 			{
-				Directory.CreateDirectory(newDictConfigLoc);
-				Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);
+			Directory.CreateDirectory(newDictConfigLoc);
+			Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);
 				Assert.That(!_migrator.ConfigsNeedMigratingFromPre83(), "With no new or old configs no migration should be needed."); // SUT
 			}
 			finally
 			{
-				RobustIO.DeleteDirectoryAndContents(newDictConfigLoc);
-			}
+			RobustIO.DeleteDirectoryAndContents(newDictConfigLoc);
+		}
 		}
 
-		///<summary />
+		///<summary/>
 		[Test]
 		public void ConfigsNeedMigratingFromPre83_ReturnsTrueIfNoNewConfigsAndOneOldConfig()
 		{
@@ -2371,15 +2371,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			var newDictConfigLoc = Path.Combine(configSettingsDir, "Dictionary");
 			try
 			{
-				Directory.CreateDirectory(newDictConfigLoc);
-				Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);
-				var tempFwLayoutPath = Path.Combine(configSettingsDir, "SomeConfig.fwlayout");
-				using (TempFile.WithFilename(tempFwLayoutPath))
-				{
-					File.AppendAllText(tempFwLayoutPath, "LayoutFoo");
+			Directory.CreateDirectory(newDictConfigLoc);
+			Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);
+			var tempFwLayoutPath = Path.Combine(configSettingsDir, "SomeConfig.fwlayout");
+			using(TempFile.WithFilename(tempFwLayoutPath))
+			{
+				File.AppendAllText(tempFwLayoutPath, "LayoutFoo");
 					Assert.That(_migrator.ConfigsNeedMigratingFromPre83(), "There is an old config, a migration is needed."); // SUT
-				}
 			}
+		}
 			finally
 			{
 				RobustIO.DeleteDirectoryAndContents(configSettingsDir);
@@ -2600,6 +2600,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			public string m_partName;
 
 			public override string PartName => m_partName;
+			}
 		}
-	}
 }

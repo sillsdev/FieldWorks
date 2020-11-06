@@ -1387,7 +1387,7 @@ namespace LanguageExplorer.Controls.XMLViews
 						}
 					}
 				}
-				catch (ObjectDisposedException ode)
+				catch (ObjectDisposedException)
 				{
 					throw; // We should die, if we get into this one.
 				}

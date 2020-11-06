@@ -1,197 +1,140 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
-  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{AFD8FD49-A08C-478E-BC8D-9BCED0588B2D}</ProjectGuid>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <AssemblyKeyContainerName>
-    </AssemblyKeyContainerName>
-    <AssemblyName>ViewsInterfaces</AssemblyName>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
-    <DefaultClientScript>JScript</DefaultClientScript>
-    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
-    <DefaultTargetSchema>IE50</DefaultTargetSchema>
-    <DelaySign>false</DelaySign>
-    <OutputType>Library</OutputType>
     <RootNamespace>SIL.FieldWorks.Common.ViewsInterfaces</RootNamespace>
-    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
+    <Description>ViewsInterfaces</Description>
+    <OutputCommonPath>../../Output/Common/</OutputCommonPath>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <OutputPath>..\..\Output\Debug\</OutputPath>
-    <BaseAddress>285212672</BaseAddress>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\Output\Debug\ViewsInterfaces.xml</DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <Optimize>false</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>full</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>..\..\Output\Release\</OutputPath>
-    <BaseAddress>285212672</BaseAddress>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <Optimize>true</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>full</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <OutputPath>..\..\Output\Debug\</OutputPath>
-    <BaseAddress>285212672</BaseAddress>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\Output\Debug\ViewsInterfaces.xml</DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <Optimize>false</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>full</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <OutputPath>..\..\Output\Release\</OutputPath>
-    <BaseAddress>285212672</BaseAddress>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <Optimize>true</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>full</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Core">
-      <HintPath>..\..\Output\Debug\SIL.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Drawing" />
+    <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="All" />
+    <!-- On Linux, we don't use a nuget package for Icu4c but a Debian package -->
+    <PackageReference Include="Icu4c.Win.Fw.Bin" Version="54.1.31" />
+    <PackageReference Include="Icu4c.Win.Fw.Lib" Version="54.1.31" />
+    <PackageReference Include="SIL.FwBuildTasks" Version="10.0.0" PrivateAssets="All" />
+    <PackageReference Include="SIL.LCModel" Version="10.2.0-beta0002" />
+    <PackageReference Include="SIL.LCModel.Build.Tasks" Version="10.2.0-beta0002" PrivateAssets="All" />
+    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0002" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>CommonAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="ComUtils.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ComWrapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DispPropOverrideFactory.cs" />
-    <Compile Include="IPicture.cs" />
-    <Compile Include="Rect.cs" />
-    <Compile Include="AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Views.cs" />
-    <None Include="BuildInclude.targets">
-      <SubType>Designer</SubType>
-    </None>
+    <ViewsSources Include="$(OutputCommonPath)ViewsTlb.idl" />
+    <ViewsIdhFiles Include="../views/Render.idh" />
+    <ViewsIdhFiles Include="../views/Views.idh" />
+    <ViewsInputs Include="@(ViewsIdhFiles)" />
+    <ViewsInputs Include="@(ViewsSources)" />
   </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
   <PropertyGroup>
-    <DistFiles>../../DistFiles</DistFiles>
+    <buildtlb Condition="'$(buildtlb)'==''">false</buildtlb>
+    <ContinueIfOutOfDate Condition="!$(buildtlb)">false</ContinueIfOutOfDate>
+    <ContinueIfOutOfDate Condition="$(buildtlb)">true</ContinueIfOutOfDate>
   </PropertyGroup>
-  <Import Project="BuildInclude.targets" />
+
+  <Target Name="CopyKernelFiles">
+    <!-- Copy the .idh files from liblcm into the Kernel project so that it can use them when it builds -->
+    <Copy SourceFiles="@(SilLcModelCoreKernelInterfaces)" DestinationFolder="../Kernel" />
+  </Target>
+
+  <Target Name="Prepare" DependsOnTargets="CopyKernelFiles">
+    <ItemGroup>
+      <LinuxCommonFiles Include="../../Lib/linux/Common/*.*" />
+    </ItemGroup>
+    <MakeDir Directories="$(OutputCommonPath)" />
+    <Copy SourceFiles="@(LinuxCommonFiles)" DestinationFolder="$(OutputCommonPath)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix' Or $(buildtlb)" />
+  </Target>
+
+  <Target Name="ViewsCs" Inputs="@(ViewsInputs)" Outputs="Views.cs" DependsOnTargets="Prepare" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <UsingNamespaces Include="SIL.LCModel.Core.KernelInterfaces" />
+      <UsingNamespaces Include="SIL.LCModel.Utils" />
+    </ItemGroup>
+
+    <IdlImp Output="Views.cs" Namespace="SIL.FieldWorks.Common.ViewsInterfaces" Sources="@(ViewsSources)" UsingNamespaces="@(UsingNamespaces)" IdhFiles="@(ViewsIdhFiles)" ReferenceFiles="@(SilLcModelCoreKernelReferences)" />
+
+    <ItemGroup>
+      <Compile Remove="Views.cs" />
+      <Compile Include="Views.cs" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CustomClean" AfterTargets="Clean">
+    <Delete Files="@(OutputFiles)" ContinueOnError="true" />
+    <Delete Files="Views.cs;$(OutputCommonPath)ViewsTlb.iip;$(OutputCommonPath)ViewsTlb.json" ContinueOnError="true" />
+  </Target>
+
+  <!--
+    On Linux we can't generate TLBs, so we do that on Windows and check them in.
+    But this means that whenever the *.idh files change we have to regenerate these
+    files.  This task checks that they are up-to-date and fails the build early on
+    if they are outdated.  We have to use unix line endings so that we get the same
+    checksum on both Windows and Linux.
+  -->
+  <ItemGroup>
+    <IdhFiles Include="@(SilLcModelCoreKernelInterfaces)" />
+    <IdhFiles Include="../views/Render.idh" />
+    <IdhFiles Include="../views/Views.idh" />
+    <IdhFiles Include="../views/ViewsTlb.idl" />
+    <FilesToDeleteInOutputCommon Include="$(OutputCommonPath)*.*" Exclude="$(OutputCommonPath)bldinc.h" Condition="Exists('$(OutputCommonPath)')" />
+  </ItemGroup>
+
+  <Target Name="verifyTLBsUpToDate" DependsOnTargets="GenerateCellarConstants" AfterTargets="CoreCompile">
+    <CatenateFiles SourceFiles="@(IdhFiles)" TargetFile="$(OutputCommonPath)idhfiles" UseUnixNewlines="true" />
+    <Md5Checksum SourceFile="$(OutputCommonPath)idhfiles" />
+    <VerifyFilesIdentical FirstFile="$(OutputCommonPath)idhfiles.MD5" SecondFile="../../Lib/linux/Common/idhfiles.MD5" ErrorMessage="TLB files are out of date. Please run 'msbuild /t:generateLinuxIdlFiles /p:buildtlb=true'." ContinueOnError="$(ContinueIfOutOfDate)">
+      <Output TaskParameter="Result" PropertyName="VerifyFilesIdentical" />
+    </VerifyFilesIdentical>
+    <CallTarget Targets="generateLinuxIdlFiles" Condition="!$(VerifyFilesIdentical)" />
+  </Target>
+
+  <Target Name="generateLinuxIdlFiles" DependsOnTargets="generateLinuxIdlFiles-Linux;generateLinuxIdlFiles-Windows;CopyKernelFiles">
+    <ItemGroup>
+      <TlbFiles Include="$(OutputCommonPath)*Tlb.h;$(OutputCommonPath)*Tlb.idl;$(OutputCommonPath)*Tlb.tlb" />
+    </ItemGroup>
+
+    <!-- The new idl related files got built by the generateLinuxIdlFiles-* targets
+      (without WIN32 defined). The thing left to do is to copy them to the right
+      directory. -->
+    <Copy SourceFiles="@(TlbFiles)" DestinationFolder="../../Lib/linux/Common" />
+
+    <!--We also need to extract the interface GUIDs for Linux -->
+    <Message Text="Extracting iids for use on Linux..." />
+    <ExtractIIDs Input="$(OutputCommonPath)FwKernelTlb.h" Output="../Kernel/FwKernel_GUIDs.cpp" />
+    <ExtractIIDs Input="$(OutputCommonPath)ViewsTlb.h" Output="../views/Views_GUIDs.cpp" LinesToInsertAtTop="#include &quot;FwKernelTlb.h&quot;" />
+    <Copy SourceFiles="$(OutputCommonPath)../idhfiles.MD5" DestinationFolder="../../Lib/linux/Common" />
+
+    <!-- Above we generated special IDL related files in Output/Common to save for linux.
+      We delete them here so that later in the build the ordinary Windows ones will
+      be built. -->
+    <Delete Files="FilesToDeleteInOutputCommon" Condition="'$(OS)'!='Unix'" />
+  </Target>
+
+  <!-- Build TLB files on a Windows machine for use on Linux -->
+  <Target Name="generateLinuxIdlFiles-Linux" Condition="'$(OS)'=='Unix'">
+    <!-- on Linux we run 'make idl' which calls remote-midl on a Windows machine -->
+    <Make Makefile="IDLMakefile" Target="all" Configuration="$(Configuration)" BuildRoot="../.." WorkingDirectory="$(MSBuildThisFileDirectory)" />
+  </Target>
+  <Target Name="generateLinuxIdlFiles-Windows" Condition="'$(OS)'!='Unix'">
+    <!-- on Windows we can directly create the necessary files. We pass
+      the property build4ux=1 so that we don't define WIN32. -->
+    <!-- <Delete Files="@(FilesToDeleteInOutputCommon)" /> -->
+    <MSBuild Projects="../../Build/FieldWorks.proj" Targets="mktlbs" Properties="build4ux=1" BuildInParallel="false" />
+  </Target>
+
+  <ItemGroup>
+    <CellarConstantsInputs Include="$(SilLCModelFile)" />
+    <CellarConstantsInputs Include="../Kernel/CellarConstants.vm.h" />
+    <CellarConstantsOutputs Include="../../Output/Common/CellarConstants.h" />
+  </ItemGroup>
+
+  <Target Name="GenerateCellarConstants" DependsOnTargets="CopyCellarBaseConstants" Inputs="@(CellarConstantsInputs)" Outputs="@(CellarConstantsOutputs)">
+    <LcmGenerate XmlFile="@(SilLCModelFile)" OutputDir="../../Output/Common/" OutputFile="CellarConstants.h" TemplateFile="../Kernel/CellarConstants.vm.h" WorkingDirectory="$(SilLCModelFile)" HandGeneratedDir="@(SilLCModelHandgeneratedFilesDir)" />
+    <Message Importance="high" Text="Generated CellarConstants files" />
+  </Target>
+
+  <Target Name="CopyCellarBaseConstants" Inputs="../Kernel/CellarBaseConstants.h" Outputs="../../Output/Common/CellarBaseConstants.h" DependsOnTargets="CopyKernelFiles">
+    <MakeDir Directories="../../Output/Common/" />
+    <Copy SourceFiles="../Kernel/CellarBaseConstants.h" DestinationFolder="../../Output/Common/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+  </Target>
+
 </Project>

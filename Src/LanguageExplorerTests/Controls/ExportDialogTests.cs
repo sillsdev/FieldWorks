@@ -466,7 +466,7 @@ namespace LanguageExplorerTests.Controls
 			using (var reader = new StringReader(s_ksSemanticDomainsXml))
 			{
 				xl.ImportList(m_cache.LangProject, "SemanticDomainList", reader, null);
-			}
+		}
 		}
 
 		/// <summary>
@@ -499,7 +499,7 @@ namespace LanguageExplorerTests.Controls
 				var wss = new List<int> { m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en") };
 				exportDlg.SetTranslationWritingSystems(wss);
 
-				exportDlg.ExportSemanticDomains(new DummyProgressDlg(), new object[] { tempPath, fxt, fxtPath, false });
+				exportDlg.ExportSemanticDomains(new DummyProgressDlg(), new object[] {tempPath, fxt, fxtPath, false});
 
 				string result;
 				using (var reader = new StreamReader(tempPath, Encoding.UTF8))
@@ -507,32 +507,37 @@ namespace LanguageExplorerTests.Controls
 					result = reader.ReadToEnd();
 				}
 				File.Delete(tempPath);
-				Assert.That(result, Is.StringContaining("What words refer to the sun?"));
-				Assert.That(result, Is.Not.StringContaining("1.1.1.11.1.1.1"), "should not output double abbr for en");
-				Assert.That(result, Is.Not.StringContaining("class: english"), "English should not give anything the missing translation style");
+				Assert.That(result, Does.Contain("What words refer to the sun?"));
+				Assert.That(result, Does.Not.Contain("1.1.1.11.1.1.1"), "should not output double abbr for en");
+				Assert.That(result, Does.Not.Contain("class: english"), "English should not give anything the missing translation style");
 
 				wss.Clear();
 				wss.Add(m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("fr"));
 
-				exportDlg.ExportSemanticDomains(new DummyProgressDlg(), new object[] { tempPath, fxt, fxtPath, false });
+				exportDlg.ExportSemanticDomains(new DummyProgressDlg(), new object[] {tempPath, fxt, fxtPath, false});
 
 				using (var reader = new StreamReader(tempPath, Encoding.UTF8))
 				{
 					result = reader.ReadToEnd();
 				}
 				File.Delete(tempPath);
-				Assert.That(result, Is.Not.StringContaining("What words refer to the sun?"), "french export should not have english questions");
-				Assert.That(result, Is.StringContaining("<p class=\"quest1\" lang=\"fr\">(1) Quels mots se"), "French export should have the French question (not english class)");
+				Assert.That(result, Does.Not.Contain("What words refer to the sun?"),
+					"french export should not have english questions");
+				Assert.That(result, Does.Contain("<p class=\"quest1\" lang=\"fr\">(1) Quels mots se"),
+					"French export should have the French question (not english class)");
 
-				exportDlg.ExportSemanticDomains(new DummyProgressDlg(), new object[] { tempPath, fxt, fxtPath, true });
+				exportDlg.ExportSemanticDomains(new DummyProgressDlg(), new object[] {tempPath, fxt, fxtPath, true});
 				using (var reader = new StreamReader(tempPath, Encoding.UTF8))
 				{
 					result = reader.ReadToEnd();
 				}
 				File.Delete(tempPath);
-				Assert.That(result, Is.StringContaining("<span class=\"english\" lang=\"en\">(1) What words refer to the sun?"), "french export with all questions should have english where french is missing (in red)");
-				Assert.That(result, Is.StringContaining("<p class=\"quest1\" lang=\"fr\">(1) Quels mots se"), "French export should have the French question (not red)");
-				Assert.That(result, Is.Not.StringContaining("What words refer to everything we can see"), "French export should not have English alternative where French is present");
+				Assert.That(result, Does.Contain("<span class=\"english\" lang=\"en\">(1) What words refer to the sun?"),
+					"french export with all questions should have english where french is missing (in red)");
+				Assert.That(result, Does.Contain("<p class=\"quest1\" lang=\"fr\">(1) Quels mots se"),
+					"French export should have the French question (not red)");
+				Assert.That(result, Does.Not.Contain("What words refer to everything we can see"),
+					"French export should not have English alternative where French is present");
 			}
 		}
 
@@ -984,7 +989,7 @@ namespace LanguageExplorerTests.Controls
 					Assert.AreEqual("<AUni ws=\"en\">(2) What words refer to the shape of a person's body?</AUni>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
 					Assert.AreEqual("</Question>", r.ReadLine());
-					Assert.AreEqual("<ExampleWords>", r.ReadLine());
+						Assert.AreEqual("<ExampleWords>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">build, figure, physique, </AUni>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"fr\"></AUni>", r.ReadLine());
 					Assert.AreEqual("</ExampleWords>", r.ReadLine());
@@ -1211,7 +1216,7 @@ namespace LanguageExplorerTests.Controls
 				// Set data to test.
 				for (var i = 0; i < m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.Count; i++)
 				{
-					var possibility = m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[i] as ILexEntryInflType;
+					var possibility = m_cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[i]  as ILexEntryInflType;
 					if (possibility == null)
 					{
 						continue;
@@ -1221,7 +1226,7 @@ namespace LanguageExplorerTests.Controls
 					possibility.GlossAppend.set_String(wsEn, string.Format("gloss append {0}", i));
 				}
 
-				var lists = new List<ICmPossibilityList> { m_cache.LangProject.LexDbOA.VariantEntryTypesOA };
+				var lists = new List<ICmPossibilityList>{ m_cache.LangProject.LexDbOA.VariantEntryTypesOA };
 
 				var wses = new List<int> { wsFr };
 				var exporter = new TranslatedListsExporter(lists, wses, null);

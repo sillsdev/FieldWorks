@@ -51,8 +51,8 @@ namespace ParatextImport
 			// Verify section 1 heading
 			ScrVerse scrVerse = m_bookMerger.NextVerseInStText();
 			Assert.AreEqual(section1.HeadingOA[0], scrVerse.Para);
-			Assert.AreEqual(01002001, scrVerse.StartRef);
-			Assert.AreEqual(01002001, scrVerse.EndRef);
+			Assert.AreEqual(01002001, (int)scrVerse.StartRef);
+			Assert.AreEqual(01002001, (int)scrVerse.EndRef);
 			Assert.AreEqual("My aching head!", scrVerse.Text.Text);
 			Assert.AreEqual(0, scrVerse.VerseStartIndex);
 
@@ -66,21 +66,21 @@ namespace ParatextImport
 			// Verify section 1 content
 			scrVerse = m_bookMerger.NextVerseInStText();
 			Assert.AreEqual(hvoS1Para, scrVerse.Para);
-			Assert.AreEqual(01002001, scrVerse.StartRef);
-			Assert.AreEqual(01002001, scrVerse.EndRef);
+			Assert.AreEqual(01002001, (int)scrVerse.StartRef);
+			Assert.AreEqual(01002001, (int)scrVerse.EndRef);
 			Assert.AreEqual("2Verse 1. ", scrVerse.Text.Text);
 			Assert.AreEqual(0, scrVerse.VerseStartIndex);
 			Assert.AreEqual(1, scrVerse.TextStartIndex);
 
 			scrVerse = m_bookMerger.NextVerseInStText();
-			Assert.AreEqual(01002002, scrVerse.StartRef);
-			Assert.AreEqual(01002002, scrVerse.EndRef);
+			Assert.AreEqual(01002002, (int)scrVerse.StartRef);
+			Assert.AreEqual(01002002, (int)scrVerse.EndRef);
 			Assert.AreEqual("2Verse 2. ", scrVerse.Text.Text);
 			Assert.AreEqual(10, scrVerse.VerseStartIndex);
 
 			scrVerse = m_bookMerger.NextVerseInStText();
-			Assert.AreEqual(01002003, scrVerse.StartRef);
-			Assert.AreEqual(01002004, scrVerse.EndRef);
+			Assert.AreEqual(01002003, (int)scrVerse.StartRef);
+			Assert.AreEqual(01002004, (int)scrVerse.EndRef);
 			Assert.AreEqual("3-4Verse 3-4.", scrVerse.Text.Text);
 			Assert.AreEqual(20, scrVerse.VerseStartIndex);
 
@@ -119,15 +119,15 @@ namespace ParatextImport
 			// Verify section 1 content
 			ScrVerse scrVerse = m_bookMerger.NextVerseInStText();
 			Assert.AreEqual(hvoS1Para, scrVerse.Para);
-			Assert.AreEqual(01001001, scrVerse.StartRef);
-			Assert.AreEqual(01001001, scrVerse.EndRef);
+			Assert.AreEqual(01001001, (int)scrVerse.StartRef);
+			Assert.AreEqual(01001001, (int)scrVerse.EndRef);
 			Assert.AreEqual("Some initial text. ", scrVerse.Text.Text);
 			Assert.AreEqual(0, scrVerse.VerseStartIndex);
 
 			scrVerse = m_bookMerger.NextVerseInStText();
 			Assert.AreEqual(hvoS1Para, scrVerse.Para);
-			Assert.AreEqual(01001005, scrVerse.StartRef);
-			Assert.AreEqual(01001006, scrVerse.EndRef);
+			Assert.AreEqual(01001005, (int)scrVerse.StartRef);
+			Assert.AreEqual(01001006, (int)scrVerse.EndRef);
 			Assert.AreEqual("5-6Verses 5-6.", scrVerse.Text.Text);
 			Assert.AreEqual(19, scrVerse.VerseStartIndex);
 

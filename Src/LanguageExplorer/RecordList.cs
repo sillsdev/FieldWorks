@@ -605,7 +605,6 @@ namespace LanguageExplorer
 				var currentIndex = CurrentIndex;
 				foreach (var key in _canMoveTo.Keys.ToList())
 				{
-					bool canMoveTo;
 					switch (key)
 					{
 						case Navigation.First:

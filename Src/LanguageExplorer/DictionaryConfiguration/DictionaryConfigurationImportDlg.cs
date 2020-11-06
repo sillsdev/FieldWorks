@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {
@@ -22,7 +23,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			m_helpTopicProvider = helpProvider;
 			// Clear away example text
 			explanationLabel.Text = string.Empty;
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				var optimalWidthOnMono = 582;
 				MinimumSize = new Size(optimalWidthOnMono, MinimumSize.Height);

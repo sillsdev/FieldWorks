@@ -25,8 +25,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 		{
 			// build pre-existing data
 			var mdc = Cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
-			IWfiWordform word = null;
-			ITsString para1_1Contents = null;
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				mdc.AddCustomField("Segment", "test1", CellarPropertyType.String, 0, "just testing", Cache.DefaultAnalWs, Guid.Empty);

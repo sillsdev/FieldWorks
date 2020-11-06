@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.Cellar;
@@ -21,25 +22,27 @@ namespace LanguageExplorer.TestUtilities.Tests
 	{
 		/// <summary />
 		private RealDataCache m_realDataCache;
+
 		/// <summary />
 		private ISilDataAccess SilDataAccess => m_realDataCache;
+
 		/// <summary />
 		private IVwCacheDa VwCacheDa => m_realDataCache;
 
 		/// <summary>
 		/// If a test overrides this, it should call this base implementation.
 		/// </summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			m_realDataCache = new RealDataCache
 			{
-				MetaDataCache = MetaDataCache.CreateMetaDataCache("TestModel.xml")
+				MetaDataCache = MetaDataCache.CreateMetaDataCache(MDCTestUtils.GetPathToTestFile("TestModel.xml"))
 			};
 		}
 
-		/// <summary />
-		[TestFixtureTearDown]
+		/// <summary/>
+		[OneTimeTearDown]
 		public void FixtureTearDown()
 		{
 			m_realDataCache.Dispose();
@@ -73,19 +76,25 @@ namespace LanguageExplorer.TestUtilities.Tests
 			// Now set its 'Prop1' property.
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassA", "Prop1", false);
 			SilDataAccess.SetObjProp(hvo, tag, hvoObj);
-			Assert.AreEqual(hvoObj, SilDataAccess.get_ObjectProp(hvo, tag), "Wrong hvoObj in cache.");
+			Assert.AreEqual(hvoObj, SilDataAccess.get_ObjectProp(hvo, tag),
+				"Wrong hvoObj in cache.");
 		}
+
 		/// <summary>
 		/// Test Int Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(KeyNotFoundException))]
 		public void ObjPropKNTTest()
 		{
 			const int hvo = 1;
 			// Set class first, or it will throw the exception in the wrong place.
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassC"));
-			SilDataAccess.get_ObjectProp(hvo, (int)CmObjectFields.kflidCmObject_Owner);
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassC"));
+			Assert.That(
+				() =>
+				{
+					SilDataAccess.get_ObjectProp(hvo, (int)CmObjectFields.kflidCmObject_Owner);
+				}, Throws.TypeOf<KeyNotFoundException>());
 		}
 
 		/// <summary>
@@ -108,7 +117,8 @@ namespace LanguageExplorer.TestUtilities.Tests
 			Assert.AreEqual(clid1, clid2, "Clids are not the same.");
 			// See if the int is there via another method.
 			// It should not be there.
-			var ownerHvo = VwCacheDa.get_CachedIntProp(hvo, (int)CmObjectFields.kflidCmObject_Owner, out isInCache);
+			var ownerHvo = VwCacheDa.get_CachedIntProp(hvo,
+				(int)CmObjectFields.kflidCmObject_Owner, out isInCache);
 			Assert.IsFalse(isInCache, "Int is in cache.");
 			Assert.AreEqual(0, ownerHvo, "Wrong owner.");
 		}
@@ -117,13 +127,18 @@ namespace LanguageExplorer.TestUtilities.Tests
 		/// Test Int Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(KeyNotFoundException))]
 		public void IntPropKNTTest()
 		{
 			const int hvo = 1;
 			// Set class first, or it will throw the exception in the wrong place.
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassC"));
-			SilDataAccess.get_IntProp(hvo, SilDataAccess.MetaDataCache.GetFieldId("ClassC", "IntProp2", false));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassC"));
+			Assert.That(
+				() =>
+				{
+					SilDataAccess.get_IntProp(hvo,
+						SilDataAccess.MetaDataCache.GetFieldId("ClassC", "IntProp2", false));
+				}, Throws.TypeOf<KeyNotFoundException>());
 		}
 
 		/// <summary>
@@ -135,7 +150,8 @@ namespace LanguageExplorer.TestUtilities.Tests
 			// Set class first, or it will throw an exception.
 			const int hvo = 1;
 			var clidAnal = SilDataAccess.MetaDataCache.GetClassId("ClassA");
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassA"));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassA"));
 			// Now set its 'Guid' property.
 			const int tag = (int)CmObjectFields.kflidCmObject_Guid;
 			var uid = Guid.NewGuid();
@@ -144,19 +160,25 @@ namespace LanguageExplorer.TestUtilities.Tests
 			Assert.AreEqual(uid, uid2, "Wrong uid in cache.");
 
 			// Test the reverse method.
-			Assert.AreEqual(hvo, SilDataAccess.get_ObjFromGuid(uid2), "Wrong hvo in cache for Guid.");
+			Assert.AreEqual(hvo, SilDataAccess.get_ObjFromGuid(uid2),
+				"Wrong hvo in cache for Guid.");
 		}
+
 		/// <summary>
 		/// Test Guid Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(KeyNotFoundException))]
 		public void GuidPropKNTTest()
 		{
 			const int hvo = 1;
 			// Set class first, or it will throw the exception in the wrong place.
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassD"));
-			SilDataAccess.get_GuidProp(hvo, (int)CmObjectFields.kflidCmObject_Guid);
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassD"));
+			Assert.That(
+				() =>
+				{
+					SilDataAccess.get_GuidProp(hvo, (int)CmObjectFields.kflidCmObject_Guid);
+				}, Throws.TypeOf<KeyNotFoundException>());
 		}
 
 		/// <summary>
@@ -167,24 +189,32 @@ namespace LanguageExplorer.TestUtilities.Tests
 		{
 			// Set class first, or it will throw an exception.
 			const int hvo = 1;
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassD"));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassD"));
 			// Now set its 'BoolProp3' property.
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassD", "BoolProp3", false);
 			const bool excludeOriginal = true;
 			SilDataAccess.SetBoolean(hvo, tag, excludeOriginal);
-			Assert.AreEqual(excludeOriginal, SilDataAccess.get_BooleanProp(hvo, tag), "Wrong bool in cache.");
+			Assert.AreEqual(excludeOriginal, SilDataAccess.get_BooleanProp(hvo, tag),
+				"Wrong bool in cache.");
 		}
+
 		/// <summary>
 		/// Test Guid Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(KeyNotFoundException))]
 		public void BoolPropKNTTest()
 		{
 			const int hvo = 1;
 			// Set class first, or it will throw the exception in the wrong place.
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassA"));
-			SilDataAccess.get_BooleanProp(hvo, SilDataAccess.MetaDataCache.GetFieldId("ClassA", "Prop1", false));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassA"));
+			Assert.That(
+				() =>
+				{
+					SilDataAccess.get_BooleanProp(hvo,
+						SilDataAccess.MetaDataCache.GetFieldId("ClassA", "Prop1", false));
+				}, Throws.TypeOf<KeyNotFoundException>());
 		}
 
 		/// <summary>
@@ -195,12 +225,14 @@ namespace LanguageExplorer.TestUtilities.Tests
 		{
 			// Set class first, or it will throw an exception.
 			const int hvo = 1;
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassE"));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassE"));
 			// Set its 'UnicodeProp4' property, using the 'BSTR' method.
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassE", "UnicodeProp4", false);
 			const string ec = "ZPI";
 			SilDataAccess.set_UnicodeProp(hvo, tag, ec);
-			Assert.AreEqual(ec, SilDataAccess.get_UnicodeProp(hvo, tag), "Wrong Unicode string in cache.");
+			Assert.AreEqual(ec, SilDataAccess.get_UnicodeProp(hvo, tag),
+				"Wrong Unicode string in cache.");
 			// Set its 'UnicodeProp4' property, using non-bstr method.
 			const string ecNew = "ZPR";
 			SilDataAccess.SetUnicode(hvo, tag, ecNew, ecNew.Length);
@@ -220,30 +252,36 @@ namespace LanguageExplorer.TestUtilities.Tests
 		/// Test Unicode Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(KeyNotFoundException))]
 		public void UnicodePropKNTTest()
 		{
 			const int hvo = 1;
 			// Set class first, or it will throw the exception in the wrong place.
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassE"));
-			SilDataAccess.get_UnicodeProp(hvo, SilDataAccess.MetaDataCache.GetFieldId("ClassE", "UnicodeProp4", false));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassE"));
+			Assert.That(
+				() =>
+				{
+					SilDataAccess.get_UnicodeProp(hvo,
+						SilDataAccess.MetaDataCache.GetFieldId("ClassE", "UnicodeProp4", false));
+				}, Throws.TypeOf<KeyNotFoundException>());
 		}
 
 		/// <summary>
 		/// Test Unicode Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void UnicodePropWrongLengthTest()
 		{
 			// Set class first, or it will throw an exception.
 			const int hvo = 1;
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassE"));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassE"));
 			// Set its 'UnicodeProp4' property, using the 'BSTR' method.
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassE", "UnicodeProp4", false);
 			const string ec = "ZPI";
 			SilDataAccess.set_UnicodeProp(hvo, tag, ec);
-			Assert.AreEqual(ec, SilDataAccess.get_UnicodeProp(hvo, tag), "Wrong Unicode string in cache.");
+			Assert.AreEqual(ec, SilDataAccess.get_UnicodeProp(hvo, tag),
+				"Wrong Unicode string in cache.");
 			// Set its 'UnicodeProp4' property, using non-bstr method.
 			const string ecNew = "ZPR";
 			SilDataAccess.SetUnicode(hvo, tag, ecNew, ecNew.Length);
@@ -251,8 +289,9 @@ namespace LanguageExplorer.TestUtilities.Tests
 			Assert.AreEqual(ecNew.Length, len);
 			using (var arrayPtr = MarshalEx.StringToNative(len, true))
 			{
-				// Should throw the exception here.
-				SilDataAccess.UnicodePropRgch(hvo, tag, arrayPtr, len, out _);
+				Assert.That(
+					() => { SilDataAccess.UnicodePropRgch(hvo, tag, arrayPtr, len, out _); },
+					Throws.TypeOf<ArgumentException>());
 			}
 		}
 
@@ -265,23 +304,30 @@ namespace LanguageExplorer.TestUtilities.Tests
 			// ClassF->Int64Prop5:GenDate
 			// First, set up class id.
 			const int hvo = 1;
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassF"));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassF"));
 			const long dob = long.MinValue;
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassF", "Int64Prop5", false);
 			SilDataAccess.SetInt64(hvo, tag, dob);
 			Assert.AreEqual(dob, SilDataAccess.get_Int64Prop(hvo, tag), "Wrong DOB in cache.");
 		}
+
 		/// <summary>
 		/// Test In64 Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(KeyNotFoundException))]
 		public void In64PropKNTTest()
 		{
 			const int hvo = 1;
 			// Set class first, or it will throw the exception in the wrong place.
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassF"));
-			SilDataAccess.get_Int64Prop(hvo, SilDataAccess.MetaDataCache.GetFieldId("ClassF", "Int64Prop5", false));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassF"));
+			Assert.That(
+				() =>
+				{
+					SilDataAccess.get_Int64Prop(hvo,
+						SilDataAccess.MetaDataCache.GetFieldId("ClassF", "Int64Prop5", false));
+				}, Throws.TypeOf<KeyNotFoundException>());
 		}
 
 		/// <summary>
@@ -293,23 +339,31 @@ namespace LanguageExplorer.TestUtilities.Tests
 			// ClassD->TimeProp6
 			// First, set up class id.
 			const int hvo = 2;
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassD"));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassD"));
 			const long doc = long.MinValue;
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassD", "TimeProp6", false);
 			SilDataAccess.SetTime(hvo, tag, doc);
-			Assert.AreEqual(doc, SilDataAccess.get_TimeProp(hvo, tag), "Wrong creation in cache.");
+			Assert.AreEqual(doc, SilDataAccess.get_TimeProp(hvo, tag),
+				"Wrong creation in cache.");
 		}
+
 		/// <summary>
 		/// Test Time Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(KeyNotFoundException))]
 		public void TimePropKNTTest()
 		{
 			const int hvo = 1;
 			// Set class first, or it will throw the exception in the wrong place.
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassD"));
-			SilDataAccess.get_TimeProp(hvo, SilDataAccess.MetaDataCache.GetFieldId("ClassD", "TimeProp6", false));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassD"));
+			Assert.That(
+				() =>
+				{
+					SilDataAccess.get_TimeProp(hvo,
+						SilDataAccess.MetaDataCache.GetFieldId("ClassD", "TimeProp6", false));
+				}, Throws.TypeOf<KeyNotFoundException>());
 		}
 
 		/// <summary>
@@ -320,53 +374,73 @@ namespace LanguageExplorer.TestUtilities.Tests
 		{
 			// First, set up class id.
 			const int hvo = 1;
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassG"));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassG"));
 			var tsPropsBuilder = TsStringUtils.MakePropsBldr();
 			var props = tsPropsBuilder.GetTextProps();
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassG", "TextPropsProp7", false);
 			SilDataAccess.SetUnknown(hvo, tag, props);
-			Assert.AreEqual(props, (ITsTextProps)SilDataAccess.get_UnknownProp(hvo, tag), "Wrong text props in cache.");
+			Assert.AreEqual(props, (ITsTextProps)SilDataAccess.get_UnknownProp(hvo, tag),
+				"Wrong text props in cache.");
 		}
 
 		/// <summary>
 		/// Test Time Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(KeyNotFoundException))]
 		public void UnkPropKNTTest()
 		{
 			const int hvo = 1;
 			// Set class first, or it will throw the exception in the wrong place.
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassG"));
-			SilDataAccess.get_UnknownProp(hvo, SilDataAccess.MetaDataCache.GetFieldId("ClassG", "TextPropsProp7", false));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassG"));
+			Assert.That(
+				() =>
+				{
+					SilDataAccess.get_UnknownProp(hvo,
+						SilDataAccess.MetaDataCache.GetFieldId("ClassG", "TextPropsProp7",
+							false));
+				}, Throws.TypeOf<KeyNotFoundException>());
 		}
 
 		/// <summary>
 		/// Test Time Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void UnkPropMisMatchedFlidTest()
 		{
 			// First, set up class id.
 			const int hvo = 1;
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassE"));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassE"));
 			var tsPropsBuilder = TsStringUtils.MakePropsBldr();
-			SilDataAccess.SetUnknown(hvo, SilDataAccess.MetaDataCache.GetFieldId("ClassE", "UnicodeProp4", false), tsPropsBuilder.GetTextProps());
+			Assert.That(
+				() =>
+				{
+					SilDataAccess.SetUnknown(hvo,
+						SilDataAccess.MetaDataCache.GetFieldId("ClassE", "UnicodeProp4", false),
+						tsPropsBuilder.GetTextProps());
+				}, Throws.TypeOf<ArgumentException>());
 		}
 
 		/// <summary>
 		/// Test Time Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void UnkPropWrongInterfaceTest()
 		{
 			// First, set up class id.
 			const int hvo = 1;
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassG"));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassG"));
 			var tsPropsBuilder = TsStringUtils.MakePropsBldr();
-			SilDataAccess.SetUnknown(hvo, SilDataAccess.MetaDataCache.GetFieldId("ClassG", "TextPropsProp7", false), tsPropsBuilder);
+			Assert.That(
+				() =>
+				{
+					SilDataAccess.SetUnknown(hvo,
+						SilDataAccess.MetaDataCache.GetFieldId("ClassG", "TextPropsProp7", false),
+						tsPropsBuilder);
+				}, Throws.TypeOf<ArgumentException>());
 		}
 
 		/// <summary>
@@ -378,7 +452,8 @@ namespace LanguageExplorer.TestUtilities.Tests
 			// ClassH::BinaryProp8:Binary
 			// Set class first, or it will throw an exception.
 			const int hvo = 1;
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassH"));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassH"));
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassH", "BinaryProp8", false);
 
 			using (var arrayPtr = MarshalEx.ArrayToNative<int>(3))
@@ -399,30 +474,37 @@ namespace LanguageExplorer.TestUtilities.Tests
 		/// Test Binary Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(KeyNotFoundException))]
 		public void BinaryPropKNTTest()
 		{
 			const int hvo = 1;
 			// Set class first, or it will throw the exception in the wrong place.
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassI"));
-			SilDataAccess.BinaryPropRgb(hvo, SilDataAccess.MetaDataCache.GetFieldId("ClassI", "BinaryProp9", false), ArrayPtr.Null, 0, out _);
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassI"));
+			Assert.That(
+				() =>
+				{
+					SilDataAccess.BinaryPropRgb(hvo,
+						SilDataAccess.MetaDataCache.GetFieldId("ClassI", "BinaryProp9", false),
+						ArrayPtr.Null, 0, out _);
+				}, Throws.TypeOf<KeyNotFoundException>());
 		}
 
 		/// <summary>
 		/// Test Binary Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void BinaryPropWrongLengthTest()
 		{
 			const int hvo = 1;
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassI"));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassI"));
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassI", "BinaryProp9", false);
 			using (var arrayPtr = MarshalEx.ArrayToNative<int>(2))
 			{
 				var prgb = new byte[] { 3, 4, 5 };
 				SilDataAccess.SetBinary(hvo, tag, prgb, prgb.Length);
-				SilDataAccess.BinaryPropRgb(hvo, tag, arrayPtr, 2, out _);
+				Assert.That(() => { SilDataAccess.BinaryPropRgb(hvo, tag, arrayPtr, 2, out _); },
+					Throws.TypeOf<ArgumentException>());
 			}
 		}
 
@@ -434,7 +516,8 @@ namespace LanguageExplorer.TestUtilities.Tests
 		{
 			// Set class first, or it will throw an exception.
 			const int hvo = 1;
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassJ"));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassJ"));
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassJ", "StringProp10", false);
 
 			var tsString = TsStringUtils.MakeString("/ a _", 42, "Verse");
@@ -447,13 +530,18 @@ namespace LanguageExplorer.TestUtilities.Tests
 		/// Test String Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(KeyNotFoundException))]
 		public void StringPropKNTTest()
 		{
 			// Set class first, or it will throw an exception.
 			const int hvo = 1;
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassJ"));
-			SilDataAccess.get_StringProp(hvo, SilDataAccess.MetaDataCache.GetFieldId("ClassJ", "StringProp10", false));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassJ"));
+			Assert.That(
+				() =>
+				{
+					SilDataAccess.get_StringProp(hvo,
+						SilDataAccess.MetaDataCache.GetFieldId("ClassJ", "StringProp10", false));
+				}, Throws.TypeOf<KeyNotFoundException>());
 		}
 
 		/// <summary>
@@ -464,8 +552,10 @@ namespace LanguageExplorer.TestUtilities.Tests
 		{
 			// Set class first, or it will throw an exception.
 			const int hvo = 1;
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassK"));
-			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11", false);
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassK"));
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11",
+				false);
 
 			var tss = TsStringUtils.MakeString("Verb", 1);
 			SilDataAccess.SetMultiStringAlt(hvo, tag, 1, tss);
@@ -481,8 +571,10 @@ namespace LanguageExplorer.TestUtilities.Tests
 		{
 			// Set class first, or it will throw an exception.
 			const int hvo = 1;
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassK"));
-			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11", false);
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassK"));
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11",
+				false);
 
 			var tss = TsStringUtils.MakeString("Verb", 1);
 			SilDataAccess.SetMultiStringAlt(hvo, tag, 1, tss);
@@ -496,26 +588,38 @@ namespace LanguageExplorer.TestUtilities.Tests
 		/// Test setting a Ws of zero method.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void MultiString0WSTest()
 		{
 			// Set class first, or it will throw an exception.
 			const int hvo = 1;
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassK"));
-			SilDataAccess.SetMultiStringAlt(hvo, SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11", false), 0, TsStringUtils.MakeString("Verb", 1));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassK"));
+			Assert.That(
+				() =>
+				{
+					SilDataAccess.SetMultiStringAlt(hvo,
+						SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11",
+							false), 0, TsStringUtils.MakeString("Verb", 1));
+				}, Throws.TypeOf<ArgumentException>());
 		}
 
 		/// <summary>
 		/// Test setting a Ws of zero method.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void MultiStringNegativeWSTest()
 		{
 			// Set class first, or it will throw an exception.
 			const int hvo = 1;
-			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, SilDataAccess.MetaDataCache.GetClassId("ClassK"));
-			SilDataAccess.SetMultiStringAlt(hvo, SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11", false), -1, TsStringUtils.MakeString("Verb", 1));
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
+				SilDataAccess.MetaDataCache.GetClassId("ClassK"));
+			Assert.That(
+				() =>
+				{
+					SilDataAccess.SetMultiStringAlt(hvo,
+						SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11",
+							false), -1, TsStringUtils.MakeString("Verb", 1));
+				}, Throws.TypeOf<ArgumentException>());
 		}
 
 		/// <summary>
@@ -526,7 +630,8 @@ namespace LanguageExplorer.TestUtilities.Tests
 		{
 			var hvoNew = SilDataAccess.MakeNewObject(1, 0, -1, 0);
 			Assert.IsTrue(SilDataAccess.get_IsValidObject(hvoNew));
-			Assert.AreEqual(1, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Class));
+			Assert.AreEqual(1,
+				SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Class));
 		}
 
 		/// <summary>
@@ -540,9 +645,12 @@ namespace LanguageExplorer.TestUtilities.Tests
 			var flid = SilDataAccess.MetaDataCache.GetFieldId2(1, "AtomicProp97", false);
 			var hvoNew = SilDataAccess.MakeNewObject(clid, hvoOwner, flid, -2);
 			Assert.IsTrue(SilDataAccess.get_IsValidObject(hvoNew));
-			Assert.AreEqual(flid, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_OwnFlid));
-			Assert.AreEqual(hvoOwner, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Owner));
-			Assert.AreEqual(clid, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Class));
+			Assert.AreEqual(flid,
+				SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_OwnFlid));
+			Assert.AreEqual(hvoOwner,
+				SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Owner));
+			Assert.AreEqual(clid,
+				SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Class));
 			Assert.AreEqual(hvoNew, SilDataAccess.get_ObjectProp(hvoOwner, flid));
 		}
 
@@ -567,12 +675,20 @@ namespace LanguageExplorer.TestUtilities.Tests
 			{
 				var hvoNew = SilDataAccess.get_VecItem(hvoOwner, flid, i);
 				Assert.IsTrue(SilDataAccess.get_IsValidObject(hvoNew));
-				Assert.AreEqual(flid, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_OwnFlid));
-				Assert.AreEqual(hvoOwner, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Owner));
-				var ownOrd = SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_OwnOrd);
+				Assert.AreEqual(flid,
+					SilDataAccess.get_ObjectProp(hvoNew,
+						(int)CmObjectFields.kflidCmObject_OwnFlid));
+				Assert.AreEqual(hvoOwner,
+					SilDataAccess.get_ObjectProp(hvoNew,
+						(int)CmObjectFields.kflidCmObject_Owner));
+				var ownOrd =
+					SilDataAccess.get_ObjectProp(hvoNew,
+						(int)CmObjectFields.kflidCmObject_OwnOrd);
 				Assert.IsTrue(prevOwnOrd < ownOrd);
 				prevOwnOrd = ownOrd;
-				Assert.AreEqual(clid, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Class));
+				Assert.AreEqual(clid,
+					SilDataAccess.get_ObjectProp(hvoNew,
+						(int)CmObjectFields.kflidCmObject_Class));
 			}
 		}
 
@@ -587,9 +703,12 @@ namespace LanguageExplorer.TestUtilities.Tests
 			var flid = SilDataAccess.MetaDataCache.GetFieldId2(1, "CollectionProp99", false);
 			var hvoNew = SilDataAccess.MakeNewObject(clid, hvoOwner, flid, -1);
 			Assert.IsTrue(SilDataAccess.get_IsValidObject(hvoNew));
-			Assert.AreEqual(flid, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_OwnFlid));
-			Assert.AreEqual(hvoOwner, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Owner));
-			Assert.AreEqual(clid, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Class));
+			Assert.AreEqual(flid,
+				SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_OwnFlid));
+			Assert.AreEqual(hvoOwner,
+				SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Owner));
+			Assert.AreEqual(clid,
+				SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Class));
 			Assert.AreEqual(1, SilDataAccess.get_VecSize(hvoOwner, flid));
 			Assert.AreEqual(hvoNew, SilDataAccess.get_VecItem(hvoOwner, flid, 0));
 		}

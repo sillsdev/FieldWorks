@@ -138,7 +138,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			// around a crash somewhere deep in Mono (LT-20249). We could always pass true here,
 			// but it's probably a little bit faster if we only do it where we need it.
 			var transform = new XslCompiledTransform(Platform.IsMono);
-			if (MiscUtils.IsDotNet)
+			if (Platform.IsDotNet)
 			{
 				// Assumes the XSL has been precompiled.  xslName is the name of the precompiled class
 				var type = Type.GetType($"{xslName},{assemblyName}");

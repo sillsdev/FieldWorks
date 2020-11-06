@@ -60,8 +60,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				var fact = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
-				CreateStyle(fact, "Dictionary-Headword", StyleType.kstCharacter);   // needed by Load_LoadsBasicsAndDetails
-				CreateStyle(fact, "bold", StyleType.kstCharacter);                  // needed by Load_LoadsSenseOptions
+				CreateStyle(fact, "Dictionary-Headword", StyleType.kstCharacter);	// needed by Load_LoadsBasicsAndDetails
+				CreateStyle(fact, "bold", StyleType.kstCharacter);					// needed by Load_LoadsSenseOptions
 			});
 		}
 
@@ -93,11 +93,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var rootConfigNode = model.Parts[0];
 			Assert.AreEqual("Main Entry", rootConfigNode.Label);
 			Assert.AreEqual("LexEntry", rootConfigNode.FieldDescription);
-			Assert.IsNullOrEmpty(rootConfigNode.LabelSuffix);
-			Assert.IsNullOrEmpty(rootConfigNode.SubField);
-			Assert.IsNullOrEmpty(rootConfigNode.Before);
-			Assert.IsNullOrEmpty(rootConfigNode.Between);
-			Assert.IsNullOrEmpty(rootConfigNode.After);
+			Assert.That(rootConfigNode.LabelSuffix, Is.Null.Or.Empty);
+			Assert.That(rootConfigNode.SubField, Is.Null.Or.Empty);
+			Assert.That(rootConfigNode.Before, Is.Null.Or.Empty);
+			Assert.That(rootConfigNode.Between, Is.Null.Or.Empty);
+			Assert.That(rootConfigNode.After, Is.Null.Or.Empty);
 			Assert.IsFalse(rootConfigNode.IsCustomField);
 			Assert.IsFalse(rootConfigNode.IsDuplicate);
 			Assert.IsTrue(rootConfigNode.IsEnabled);
@@ -342,7 +342,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					model = new DictionaryConfigurationModel(modelFile.Path, Cache);
 				}
 
-				Assert.IsEmpty(model.Publications, "Should have resulted in an empty set of publications for input XML: " + string.Join("", noPublicationsXml));
+				Assert.IsEmpty(model.Publications, "Should have resulted in an empty set of publications for input XML: " + string.Join("",noPublicationsXml));
 			}
 
 			RemovePublication(addedPublication);
@@ -423,7 +423,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			// "Main Dictionary" was added by base class
 
-			DictionaryConfigurationModel model;
 			using (var modelFile = new TempFile(
 				new[] {
 					XmlOpenTagsThruRoot,
@@ -450,12 +449,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				if (model.SharedItems != null)
 				{
 					VerifyNoRedundantChildren(model.SharedItems);
-					foreach (var si in model.SharedItems)
+					foreach(var si in model.SharedItems)
 					{
 						Assert.NotNull(si.Parent, "Shared item {0} is an orphan", si.Label);
-					}
 				}
 			}
+		}
 		}
 
 		private static void VerifyNoRedundantChildren(List<ConfigurableDictionaryNode> nodes)
@@ -463,11 +462,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			foreach (var node in nodes)
 			{
 				Assert.That(string.IsNullOrEmpty(node.ReferenceItem) || node.Children == null || !node.Children.Any());
-				if (node.Children != null)
+				if(node.Children != null)
 				{
 					VerifyNoRedundantChildren(node.Children);
-				}
 			}
+		}
 		}
 
 		[Test]
@@ -562,21 +561,21 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var modelFile = Path.GetTempFileName();
 			var firstNode = new ConfigurableDictionaryNode
-			{
-				Label = "Main Entry",
-				IsEnabled = true,
-				Before = "[",
-				FieldDescription = "LexEntry"
-			};
+				{
+					Label = "Main Entry",
+					IsEnabled = true,
+					Before = "[",
+					FieldDescription = "LexEntry"
+				};
 
 			var secondNode = new ConfigurableDictionaryNode
-			{
-				Label = "Minor Entry",
-				Before = "{",
-				After = "}",
-				FieldDescription = "LexEntry",
-				IsEnabled = false
-			};
+				{
+					Label = "Minor Entry",
+					Before = "{",
+					After = "}",
+					FieldDescription = "LexEntry",
+					IsEnabled = false
+				};
 
 			var model = new DictionaryConfigurationModel
 			{
@@ -596,19 +595,19 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var modelFile = Path.GetTempFileName();
 			var headword = new ConfigurableDictionaryNode
-			{
-				Label = "Headword",
-				FieldDescription = "LexEntry, headword",
-				IsEnabled = true
-			};
+				{
+					Label = "Headword",
+					FieldDescription = "LexEntry, headword",
+					IsEnabled = true
+				};
 			var oneConfigNode = new ConfigurableDictionaryNode
-			{
-				Label = "Main Entry",
-				IsEnabled = true,
-				Before = "[",
-				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { headword }
-			};
+				{
+					Label = "Main Entry",
+					IsEnabled = true,
+					Before = "[",
+					FieldDescription = "LexEntry",
+					Children = new List<ConfigurableDictionaryNode> { headword }
+				};
 
 			var model = new DictionaryConfigurationModel
 			{
@@ -949,7 +948,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var schemaLocation = Path.Combine(Path.Combine(FwDirectoryFinder.FlexFolder, "Configuration"), "DictionaryConfiguration.xsd");
 			var schemas = new XmlSchemaSet();
-			using (var reader = XmlReader.Create(schemaLocation))
+			using(var reader = XmlReader.Create(schemaLocation))
 			{
 				schemas.Add("", reader);
 				var document = XDocument.Load(xmlFile);
@@ -970,10 +969,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var child = new ConfigurableDictionaryNode();
 			var rootNode = new ConfigurableDictionaryNode
 			{
-				Children = new List<ConfigurableDictionaryNode> { child },
+				Children = new List<ConfigurableDictionaryNode> {child},
 				Parent = null
 			};
-			var parts = new List<ConfigurableDictionaryNode> { rootNode };
+			var parts = new List<ConfigurableDictionaryNode> {rootNode};
 			// SUT
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(parts);
 			Assert.That(parts[0].Parent, Is.Null, "Shouldn't have changed parent of a root node");

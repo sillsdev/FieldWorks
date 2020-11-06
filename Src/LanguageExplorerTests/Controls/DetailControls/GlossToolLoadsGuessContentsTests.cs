@@ -25,7 +25,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		private FlexComponentParameters _flexComponentParameters;
 
 		/// <summary/>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();

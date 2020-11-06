@@ -5,6 +5,7 @@
 using System;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using NUnit.Framework.Interfaces;
 
 namespace FieldWorks.TestUtilities.Attributes
 {
@@ -15,7 +16,7 @@ namespace FieldWorks.TestUtilities.Attributes
 	public class SuppressErrorBeepsAttribute : TestActionAttribute
 	{
 		/// <inheritdoc />
-		public override void BeforeTest(TestDetails testDetails)
+		public override void BeforeTest(ITest testDetails)
 		{
 			base.BeforeTest(testDetails);
 
@@ -23,7 +24,7 @@ namespace FieldWorks.TestUtilities.Attributes
 		}
 
 		/// <inheritdoc />
-		public override void AfterTest(TestDetails testDetails)
+		public override void AfterTest(ITest testDetails)
 		{
 			base.AfterTest(testDetails);
 

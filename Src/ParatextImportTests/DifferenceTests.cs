@@ -33,8 +33,8 @@ namespace ParatextImport
 
 			Difference clonedDiff = diff.Clone();
 
-			Assert.AreEqual(1001001, clonedDiff.RefStart);
-			Assert.AreEqual(1001030, clonedDiff.RefEnd);
+			Assert.AreEqual(1001001, (int)clonedDiff.RefStart);
+			Assert.AreEqual(1001030, (int)clonedDiff.RefEnd);
 			Assert.AreSame(paras[0], clonedDiff.ParaCurr);
 			Assert.AreEqual(1, clonedDiff.IchMinCurr);
 			Assert.AreEqual(99, clonedDiff.IchLimCurr);

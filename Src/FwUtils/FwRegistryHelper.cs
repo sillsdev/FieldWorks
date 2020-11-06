@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// FWNX-1235 Mono's implementation of the "Windows Registry" on Unix uses XML files in separate folders for
 				// each user and each software publisher.  We need to read Paratext's entries, so we copy theirs into ours.
 				// We overwrite any existing Paratext keys in case they have changed.
-				if (MiscUtils.IsUnix)
+				if (Platform.IsUnix)
 				{
 #if DEBUG
 					// On a developer Linux machine these are kept under output/registry. Since the program is running at output/{debug|release},
@@ -160,7 +160,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Gets the current SuiteVersion as a string
 		/// </summary>
-		public static string FieldWorksRegistryKeyName => FwUtils.SuiteVersion.ToString(CultureInfo.InvariantCulture);
+		public static string FieldWorksRegistryKeyName => FwUtils.SuiteVersion;
 
 		/// <summary>
 		/// It's probably a good idea to keep around the name of the old versions' keys

@@ -5,15 +5,17 @@ FWXml.xpr
 GeneratedAssemblyInfo.cs
 Collection.cpp
 .vs/
+.idea/
 Build/FieldWorks.targets
 Build/GlobalInclude.properties
 Build/LibraryDevelopment.properties
-Build/NuGet.exe
+Build/nuget.exe
 Build/nunit.framework.dll
 Build/nunit.framework.xml
 Build/packages.config
 Build/*.dll
 Build/*.pdb
+Build/gitversion.json
 BuildDir/
 Src/ViewsInterfaces/Views.cs
 DistFiles/Data/
@@ -51,9 +53,7 @@ UpgradeLog*.htm
 *.user
 *.ncrunchsolution
 *.ncb
-*.sln
 *.suo
-*.DotSettings
 *.o
 *_ReSharper*
 *~
@@ -73,6 +73,7 @@ _user.mak.lnx
 .project
 *.VC.db
 *.VC.opendb
+*.vcxproj.AssemblyReference.cache
 
 .dotest/
 .depend
@@ -81,6 +82,7 @@ Lib/linux/Common/*.raw
 [Oo]bj/
 Obj_i686/
 Obj_x86_64/
+Obj_x64/
 buildi686/
 buildx86_64/
 installi686/

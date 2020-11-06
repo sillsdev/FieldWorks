@@ -1083,7 +1083,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					new XElement("font", new XAttribute("face", titleFont), new XElement("h2", title)),
 					new XElement("font", new XAttribute("face", userFont), new XElement("h3", XMLViewsStrings.ksShortDesc)),
 					new XElement("font", new XAttribute("face", descFont), new XElement("p", desc))));
-			if (MiscUtils.IsMono)
+			if (Platform.IsMono)
 			{
 				var tempfile = Path.Combine(FileUtils.GetTempFile("htm"));
 				var xDocument = new XDocument(htmlElem);

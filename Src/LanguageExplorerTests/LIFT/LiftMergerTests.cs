@@ -427,7 +427,7 @@ namespace LanguageExplorerTests.LIFT
 		public void TestLiftImport1()
 		{
 			string[] liftData1 =
-			{
+		{
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
@@ -520,7 +520,7 @@ namespace LanguageExplorerTests.LIFT
 			"</sense>",
 			"</entry>",
 			"</lift>"
-			};
+		};
 			var messageCapture = new MessageCapture();
 			MessageBoxUtils.SetMessageBoxAdapter(messageCapture);
 			SetWritingSystems("es");
@@ -532,7 +532,7 @@ namespace LanguageExplorerTests.LIFT
 
 			var sOrigFile = CreateInputFile(liftData1);
 			CreateDummyFile("pictures", "Desert.jpg");
-			var myPicRelativePath = Path.Combine("subfolder", "MyPic.jpg");
+			var myPicRelativePath = Path.Combine("subfolder","MyPic.jpg");
 			CreateDummyFile("pictures", myPicRelativePath);
 			CreateDummyFile("audio", "Sleep Away.mp3");
 			CreateDummyFile("audio", "hombre634407358826681759.wav");
@@ -763,7 +763,7 @@ namespace LanguageExplorerTests.LIFT
 			"</relation>",
 			"</entry>",
 			"</lift>"
-			};
+		};
 			Assert.AreEqual("en", Cache.LangProject.CurAnalysisWss);
 			Assert.AreEqual("fr", Cache.LangProject.CurVernWss);
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -891,34 +891,34 @@ namespace LanguageExplorerTests.LIFT
 		public void TestImportOutOfOrderRelation()
 		{
 			string[] outOfOrderRelation = {
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-				"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
-				"<header>",
-				"<ranges/>",
-				"<fields/>",
-				"</header>",
-				"<entry dateCreated=\"2011-03-01T22:26:47Z\" dateModified=\"2011-03-01T22:41:41Z\" guid=\"69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\" id=\"house_69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\">",
-				"<lexical-unit>",
-				"<form lang=\"fr\"><text>house</text></form>",
-				"</lexical-unit>",
-				"<trait name=\"morph-type\" value=\"stem\"></trait>",
-				"<sense id=\"house_f722992a-cfdc-41ec-9c46-f927f02d68ef\">",
-				"<relation type=\"Calendar\" ref=\"house_f722992a-cfdc-41ec-9c46-f927f02d68ef\" order=\"3\"/>",
-				"<relation type=\"Calendar\" ref=\"2e827b5e-1558-48fd-b629-1518f1aabba3\" order=\"1\"/>",
-				"<grammatical-info value=\"Noun\">",
-				"</grammatical-info>",
-				"<gloss lang=\"en\"><text>house</text></gloss>",
-				"</sense>",
-				"<sense id=\"2e827b5e-1558-48fd-b629-1518f1aabba3\">",
-				"<relation type=\"Calendar\" ref=\"house_f722992a-cfdc-41ec-9c46-f927f02d68ef\" order=\"3\"/>",
-				"<relation type=\"Calendar\" ref=\"2e827b5e-1558-48fd-b629-1518f1aabba3\" order=\"1\"/>",
-				"<grammatical-info value=\"Noun\">",
-				"</grammatical-info>",
-				"<gloss lang=\"en\"><text>shack</text></gloss>",
-				"</sense>",
-				"</entry>",
-				"</lift>"
-			};
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
+			"<header>",
+			"<ranges/>",
+			"<fields/>",
+			"</header>",
+			"<entry dateCreated=\"2011-03-01T22:26:47Z\" dateModified=\"2011-03-01T22:41:41Z\" guid=\"69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\" id=\"house_69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>house</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"stem\"></trait>",
+			"<sense id=\"house_f722992a-cfdc-41ec-9c46-f927f02d68ef\">",
+			"<relation type=\"Calendar\" ref=\"house_f722992a-cfdc-41ec-9c46-f927f02d68ef\" order=\"3\"/>",
+			"<relation type=\"Calendar\" ref=\"2e827b5e-1558-48fd-b629-1518f1aabba3\" order=\"1\"/>",
+			"<grammatical-info value=\"Noun\">",
+			"</grammatical-info>",
+			"<gloss lang=\"en\"><text>house</text></gloss>",
+			"</sense>",
+			"<sense id=\"2e827b5e-1558-48fd-b629-1518f1aabba3\">",
+			"<relation type=\"Calendar\" ref=\"house_f722992a-cfdc-41ec-9c46-f927f02d68ef\" order=\"3\"/>",
+			"<relation type=\"Calendar\" ref=\"2e827b5e-1558-48fd-b629-1518f1aabba3\" order=\"1\"/>",
+			"<grammatical-info value=\"Noun\">",
+			"</grammatical-info>",
+			"<gloss lang=\"en\"><text>shack</text></gloss>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			var repoLrType = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
@@ -1119,33 +1119,33 @@ namespace LanguageExplorerTests.LIFT
 		public void LiftDoesNotImportTabs()
 		{
 			string[] tabInput = {"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-				"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
-				"<header>",
-				"<ranges/>",
-				"<fields/>",
-				"</header>",
-				"<entry dateCreated=\"2011-03-01T18:09:46Z\" dateModified=\"2011-03-01T18:30:07Z\" guid=\"ecfbe958-36a1-4b82-bb69-ca5210355401\" id=\"hombre_ecfbe958-36a1-4b82-bb69-ca5210355400\">",
-				"<lexical-unit>",
-				"<form lang=\"fr\"><text>\thombre</text></form>",
-				"</lexical-unit>",
-				"<trait name=\"morph-type\" value=\"root\"></trait>",
-				"<pronunciation>",
-				"<form lang=\"fr\"><text>ombre\t1</text></form>",
-				"<media href=\"\t\tSleep Away.mp3\">",
-				"</media>",
-				"</pronunciation>",
-				"<sense id=\"hombre_f63f1ccf-3d50-417e-8024-035d999d48bc\">",
-				"<grammatical-info value=\"Noun\">",
-				"</grammatical-info>",
-				"<gloss lang=\"en\"><text>\t\tman</text></gloss>",
-				"<definition>",
-				"<form lang=\"en\"><text>",
-				"\tmale adult\thuman\t<span href=\"file://others/SomeFile.txt\" class=\"Hyperlink\">link</span></text></form>",
-				"</definition>",
-				"</sense>",
-				"</entry>",
-				"</lift>"
-			};
+			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
+			"<header>",
+			"<ranges/>",
+			"<fields/>",
+			"</header>",
+			"<entry dateCreated=\"2011-03-01T18:09:46Z\" dateModified=\"2011-03-01T18:30:07Z\" guid=\"ecfbe958-36a1-4b82-bb69-ca5210355401\" id=\"hombre_ecfbe958-36a1-4b82-bb69-ca5210355400\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>\thombre</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"root\"></trait>",
+			"<pronunciation>",
+			"<form lang=\"fr\"><text>ombre\t1</text></form>",
+			"<media href=\"\t\tSleep Away.mp3\">",
+			"</media>",
+			"</pronunciation>",
+			"<sense id=\"hombre_f63f1ccf-3d50-417e-8024-035d999d48bc\">",
+			"<grammatical-info value=\"Noun\">",
+			"</grammatical-info>",
+			"<gloss lang=\"en\"><text>\t\tman</text></gloss>",
+			"<definition>",
+			"<form lang=\"en\"><text>",
+			"\tmale adult\thuman\t<span href=\"file://others/SomeFile.txt\" class=\"Hyperlink\">link</span></text></form>",
+			"</definition>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
 			var sOrigFile = CreateInputFile(tabInput);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepNew, 1);
 			Assert.IsNotNull(logFile);
@@ -1206,36 +1206,36 @@ namespace LanguageExplorerTests.LIFT
 		public void TestLiftImport4()
 		{
 			string[] liftData4 = {
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-				"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
-				"<header>",
-				"<ranges/>",
-				"<fields/>",
-				"</header>",
-				"<entry dateCreated=\"2011-03-01T18:09:46Z\" dateModified=\"2011-03-01T18:30:07Z\" guid=\"ecfbe958-36a1-4b82-bb69-ca5210355400\" id=\"hombre_ecfbe958-36a1-4b82-bb69-ca5210355400\">",
-				"<lexical-unit>",
-				"<form lang=\"es\"><text>hombre</text></form>",
-				"</lexical-unit>",
-				"<trait name=\"morph-type\" value=\"root\"></trait>",
-				"<relation type=\"_component-lexeme\" ref=\"nonsence_object_ID\">",
-				"<trait  name=\"complex-form-type\" value=\"Derivative\"/>",
-				"</relation>",
-				"<sense id=\"hombre_f63f1ccf-3d50-417e-8024-035d999d48bc\">",
-				"<grammatical-info value=\"Noun\">",
-				"</grammatical-info>",
-				"<gloss lang=\"en\"><text>man</text></gloss>",
-				"<definition>",
-				"<form lang=\"en\"><text>male{0}adult{1}human{2}</text></form>",
-				"</definition>",
-				"<note type=\"encyclopedic\">",
-				"<form lang=\"en\">",
-				"<text>This is <span class=\"underline\">not</span> limited to spans, etc.</text>",
-				"</form>",
-				"</note>",
-				"</sense>",
-				"</entry>",
-				"</lift>"
-			};
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
+			"<header>",
+			"<ranges/>",
+			"<fields/>",
+			"</header>",
+			"<entry dateCreated=\"2011-03-01T18:09:46Z\" dateModified=\"2011-03-01T18:30:07Z\" guid=\"ecfbe958-36a1-4b82-bb69-ca5210355400\" id=\"hombre_ecfbe958-36a1-4b82-bb69-ca5210355400\">",
+			"<lexical-unit>",
+			"<form lang=\"es\"><text>hombre</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"root\"></trait>",
+			"<relation type=\"_component-lexeme\" ref=\"nonsence_object_ID\">",
+			"<trait  name=\"complex-form-type\" value=\"Derivative\"/>",
+			"</relation>",
+			"<sense id=\"hombre_f63f1ccf-3d50-417e-8024-035d999d48bc\">",
+			"<grammatical-info value=\"Noun\">",
+			"</grammatical-info>",
+			"<gloss lang=\"en\"><text>man</text></gloss>",
+			"<definition>",
+			"<form lang=\"en\"><text>male{0}adult{1}human{2}</text></form>",
+			"</definition>",
+			"<note type=\"encyclopedic\">",
+			"<form lang=\"en\">",
+			"<text>This is <span class=\"underline\">not</span> limited to spans, etc.</text>",
+			"</form>",
+			"</note>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
 			// Setup
 			var messageCapture = new MessageCapture();
 			MessageBoxUtils.SetMessageBoxAdapter(messageCapture);
@@ -1244,7 +1244,7 @@ namespace LanguageExplorerTests.LIFT
 			var s_newLine = Environment.NewLine;
 			const string s_cr = "\r";
 			const string s_lf = "\n";
-			// ReSharper restore InconsistentNaming
+// ReSharper restore InconsistentNaming
 
 			SetWritingSystems("es");
 
@@ -1267,7 +1267,7 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
 
-			Assert.That(messageCapture.Messages[0], Is.StringContaining("nonsence_object_ID"), "inability to link up bad ref should be reported in message box");
+			Assert.That(messageCapture.Messages[0], Does.Contain("nonsence_object_ID"), "inability to link up bad ref should be reported in message box");
 
 			Assert.IsTrue(repoEntry.TryGetObject(new Guid("ecfbe958-36a1-4b82-bb69-ca5210355400"), out var entry));
 			Assert.AreEqual(1, entry.SensesOS.Count);
@@ -1396,7 +1396,7 @@ namespace LanguageExplorerTests.LIFT
 							"</sense>",
 			"</entry>",
 			"</lift>"
-			};
+		};
 			SetWritingSystems("fr");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -1431,12 +1431,12 @@ namespace LanguageExplorerTests.LIFT
 			var sense0 = entry.SensesOS[0];
 			Assert.AreEqual(sense0.Guid, new Guid("29b7913f-0d28-4ee9-a57e-177f68a96654"));
 			var customData = new CustomFieldData()
-			{
-				CustomFieldname = "CustomFldSense",
-				CustomFieldType = CellarPropertyType.String,
-				StringFieldText = "Sense custom fiield in English",
-				StringFieldWs = "en"
-			};
+								{
+									CustomFieldname = "CustomFldSense",
+									CustomFieldType = CellarPropertyType.String,
+									StringFieldText = "Sense custom fiield in English",
+									StringFieldWs = "en"
+								};
 			m_customFieldSenseIds = GetCustomFlidsOfObject(sense0);
 			VerifyCustomField(sense0, customData, m_customFieldSenseIds["CustomFldSense"]);
 
@@ -1452,10 +1452,10 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual("Papi", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
 			m_customFieldEntryIds = GetCustomFlidsOfObject(entry);
 			customData = new CustomFieldData()
-			{
-				CustomFieldname = "UndefinedCustom",
-				CustomFieldType = CellarPropertyType.MultiUnicode,
-			};
+							{
+								CustomFieldname = "UndefinedCustom",
+								CustomFieldType = CellarPropertyType.MultiUnicode,
+							};
 			customData.MultiUnicodeStrings.Add("Undefined custom field");
 			customData.MultiUnicodeWss.Add("en");
 			VerifyCustomField(entry, customData, m_customFieldEntryIds["UndefinedCustom"]);
@@ -1475,10 +1475,10 @@ namespace LanguageExplorerTests.LIFT
 			//        "<form lang=\"en\"><text>Entry Multi Eng</text></form>",
 			//        "</field>",
 			customData = new CustomFieldData()
-			{
-				CustomFieldname = "CustomFldEntryMulti",
-				CustomFieldType = CellarPropertyType.MultiUnicode,
-			};
+							{
+								CustomFieldname = "CustomFldEntryMulti",
+								CustomFieldType = CellarPropertyType.MultiUnicode,
+							};
 			customData.MultiUnicodeStrings.Add("Entry Multi Frn");
 			customData.MultiUnicodeStrings.Add("Entry Multi Spn");
 			customData.MultiUnicodeStrings.Add("Entry Multi Eng");
@@ -1492,12 +1492,12 @@ namespace LanguageExplorerTests.LIFT
 			{
 				m_customFieldExampleSentencesIds = GetCustomFlidsOfObject(example);
 				customData = new CustomFieldData()
-				{
-					CustomFieldname = "CustomFldExample",
-					CustomFieldType = CellarPropertyType.String,
-					StringFieldText = "example sentence custom field",
-					StringFieldWs = "fr"
-				};
+								{
+									CustomFieldname = "CustomFldExample",
+									CustomFieldType = CellarPropertyType.String,
+									StringFieldText = "example sentence custom field",
+									StringFieldWs = "fr"
+								};
 				VerifyCustomField(example, customData, m_customFieldExampleSentencesIds["CustomFldExample"]);
 			}
 
@@ -1506,10 +1506,10 @@ namespace LanguageExplorerTests.LIFT
 
 			m_customFieldAllomorphsIds = GetCustomFlidsOfObject(form);
 			customData = new CustomFieldData()
-			{
-				CustomFieldname = "CustomFldAllomorf",
-				CustomFieldType = CellarPropertyType.MultiUnicode,
-			};
+							{
+								CustomFieldname = "CustomFldAllomorf",
+								CustomFieldType = CellarPropertyType.MultiUnicode,
+							};
 			customData.MultiUnicodeStrings.Add("Allomorph multi French");
 			customData.MultiUnicodeStrings.Add("Allomorph multi Spanish");
 			customData.MultiUnicodeStrings.Add("Allomorph multi English");
@@ -1521,12 +1521,12 @@ namespace LanguageExplorerTests.LIFT
 			//"<form lang=\"fr\"><text>Allomorph single Vernacular</text></form>",
 			//"</field>",
 			customData = new CustomFieldData()
-			{
-				CustomFieldname = "CustomFldAllomorphSingle",
-				CustomFieldType = CellarPropertyType.String,
-				StringFieldText = "Allomorph single Vernacular",
-				StringFieldWs = "fr"
-			};
+							{
+								CustomFieldname = "CustomFldAllomorphSingle",
+								CustomFieldType = CellarPropertyType.String,
+								StringFieldText = "Allomorph single Vernacular",
+								StringFieldWs = "fr"
+							};
 			VerifyCustomField(form, customData, m_customFieldAllomorphsIds["CustomFldAllomorphSingle"]);
 		}
 
@@ -1634,7 +1634,7 @@ namespace LanguageExplorerTests.LIFT
 			"</sense>",
 			"</entry>",
 			"</lift>"
-			};
+		};
 			SetWritingSystems("fr");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -1687,11 +1687,11 @@ namespace LanguageExplorerTests.LIFT
 			m_customFieldEntryIds = GetCustomFlidsOfObject(obj);
 
 			var customData = new CustomFieldData()
-			{
-				CustomFieldname = "CustomFldEntry Number",
-				CustomFieldType = CellarPropertyType.Integer,
-				IntegerValue = 13
-			};
+				{
+					CustomFieldname = "CustomFldEntry Number",
+					CustomFieldType = CellarPropertyType.Integer,
+					IntegerValue = 13
+				};
 			VerifyCustomField(obj, customData, m_customFieldEntryIds["CustomFldEntry Number"]);
 
 			customData = new CustomFieldData()
@@ -1763,19 +1763,19 @@ namespace LanguageExplorerTests.LIFT
 			{
 				case ILexEntry lexEntry:
 				{
-					Assert.That(lexEntry.LiftResidue, Is.Not.StringContaining(fieldData.CustomFieldname));
+					Assert.That(lexEntry.LiftResidue, Does.Not.Contain(fieldData.CustomFieldname));
 					break;
-				}
+			}
 				case ILexSense lexSense:
-				{
-					Assert.That(lexSense.LiftResidue, Is.Not.StringContaining(fieldData.CustomFieldname));
+			{
+					Assert.That(lexSense.LiftResidue, Does.Not.Contain(fieldData.CustomFieldname));
 					break;
-				}
+			}
 				case ILexExampleSentence exampleSentence:
-				{
-					Assert.That(exampleSentence.LiftResidue, Is.Not.StringContaining(fieldData.CustomFieldname));
+			{
+					Assert.That(exampleSentence.LiftResidue, Does.Not.Contain(fieldData.CustomFieldname));
 					break;
-				}
+			}
 			}
 
 			var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
@@ -1803,13 +1803,13 @@ namespace LanguageExplorerTests.LIFT
 					Assert.IsNotNull(tssMultiString);
 					//Assert.IsTrue(tssMultiString.StringCount >0);
 
-					for (var i = 0; i < tssMultiString.StringCount; ++i)
-					{
-						tssString = tssMultiString.GetStringFromIndex(i, out ws);
-						Assert.AreEqual(fieldData.MultiUnicodeStrings[i], tssString.Text);
-						Assert.AreEqual(fieldData.MultiUnicodeWss[i], Cache.WritingSystemFactory.GetStrFromWs(ws));
-					}
-					Assert.That(tssMultiString.StringCount, Is.EqualTo(fieldData.MultiUnicodeStrings.Count));
+						for (var i = 0; i < tssMultiString.StringCount; ++i)
+						{
+							tssString = tssMultiString.GetStringFromIndex(i, out ws);
+							Assert.AreEqual(fieldData.MultiUnicodeStrings[i], tssString.Text);
+							Assert.AreEqual(fieldData.MultiUnicodeWss[i], Cache.WritingSystemFactory.GetStrFromWs(ws));
+						}
+						Assert.That(tssMultiString.StringCount, Is.EqualTo(fieldData.MultiUnicodeStrings.Count));
 					break;
 				case CellarPropertyType.MultiString:
 					break;
@@ -2110,7 +2110,7 @@ namespace LanguageExplorerTests.LIFT
 				"</range-element>",
 			"</range>",
 			"</lift-ranges>"
-			};
+		};
 			SetWritingSystems("fr");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -2503,16 +2503,16 @@ namespace LanguageExplorerTests.LIFT
 				switch (fieldName)
 				{
 					case "CustomFld ListSingle":
-						VerifyCustomListToPossList(flid, CellarPropertyType.ReferenceAtomic, RangeNames.sSemanticDomainListOA);
+					VerifyCustomListToPossList(flid, CellarPropertyType.ReferenceAtomic, RangeNames.sSemanticDomainListOA);
 						break;
 					case "CustomFld ListMulti":
-						VerifyCustomListToPossList(flid, CellarPropertyType.ReferenceCollection, RangeNames.sSemanticDomainListOA);
+					VerifyCustomListToPossList(flid, CellarPropertyType.ReferenceCollection, RangeNames.sSemanticDomainListOA);
 						break;
 					case "CustomFld CmPossibilityCustomList":
-						VerifyCustomListToPossList(flid, CellarPropertyType.ReferenceAtomic, "CustomCmPossibiltyList");
+					VerifyCustomListToPossList(flid, CellarPropertyType.ReferenceAtomic, "CustomCmPossibiltyList");
 						break;
 					case "CustomFld CustomList2":
-						VerifyCustomListToPossList(flid, CellarPropertyType.ReferenceAtomic, "CustomList Number2 ");
+					VerifyCustomListToPossList(flid, CellarPropertyType.ReferenceAtomic, "CustomList Number2 ");
 						break;
 				}
 			}
@@ -2651,50 +2651,50 @@ namespace LanguageExplorerTests.LIFT
 			"</sense>",
 			"</entry>",
 			"</lift>"
-			};
+		};
 			string[] liftRangeDataLocations = {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 				"<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->",
 				"<lift-ranges>",
 
 				"<range id=\"location\">",
-				"<range-element id=\"Village\" guid=\"63403699-07c1-43f3-a47c-069d6e4316e5\">",
-				"<label>",
-				"<form lang=\"en\"><text>village</text></form>",
-				"</label>",
-				"<abbrev>",
-				"<form lang=\"en\"><text>VIL</text></form>",
-				"</abbrev>",
-				"<description>",
-				"<form lang=\"en\"><text>Located 135 deg east, 3 deg south</text></form>",
-				"</description>",
-				"</range-element>",
+					"<range-element id=\"Village\" guid=\"63403699-07c1-43f3-a47c-069d6e4316e5\">",
+					"<label>",
+					"<form lang=\"en\"><text>village</text></form>",
+					"</label>",
+					"<abbrev>",
+					"<form lang=\"en\"><text>VIL</text></form>",
+					"</abbrev>",
+					"<description>",
+					"<form lang=\"en\"><text>Located 135 deg east, 3 deg south</text></form>",
+					"</description>",
+					"</range-element>",
 
-				"<range-element id=\"river\">",
-				"<label>",
-				"<form lang=\"en\"><text>river</text></form>",
-				"</label>",
-				"<abbrev>",
-				"<form lang=\"en\"><text>RIV</text></form>",
-				"</abbrev>",
-				"<description>",
-				"<form lang=\"en\"><text>large river, somewhat silty</text></form>",
-				"</description>",
-				"</range-element>",
+					"<range-element id=\"river\">",
+					"<label>",
+					"<form lang=\"en\"><text>river</text></form>",
+					"</label>",
+					"<abbrev>",
+					"<form lang=\"en\"><text>RIV</text></form>",
+					"</abbrev>",
+					"<description>",
+					"<form lang=\"en\"><text>large river, somewhat silty</text></form>",
+					"</description>",
+					"</range-element>",
 
-				"<range-element id=\"House\" guid=\"5893e40e-e7bb-4c44-ac06-b6cec06b8470\" parent=\"Village\">",
-				"<label>",
-				"<form lang=\"en\"><text>House</text></form>",
-				"</label>",
-				"</range-element>",
-				"<range-element id=\"Square\" parent=\"Village\">",
-				"<label>",
-				"<form lang=\"en\"><text>Square</text></form>",
-				"</label>",
-				"</range-element>",
+					"<range-element id=\"House\" guid=\"5893e40e-e7bb-4c44-ac06-b6cec06b8470\" parent=\"Village\">",
+					"<label>",
+					"<form lang=\"en\"><text>House</text></form>",
+					"</label>",
+					"</range-element>",
+					"<range-element id=\"Square\" parent=\"Village\">",
+					"<label>",
+					"<form lang=\"en\"><text>Square</text></form>",
+					"</label>",
+					"</range-element>",
 				"</range>",
-				"</lift-ranges>"
-			};
+			"</lift-ranges>"
+		};
 			SetWritingSystems("fr");
 
 			// One should exist already, to show that we can detect duplicates.
@@ -2771,7 +2771,7 @@ namespace LanguageExplorerTests.LIFT
 			var flidCustom = Cache.MetaDataCacheAccessor.GetFieldId("LexEntry", "Long Text", false);
 			Assert.AreNotEqual(0, flidCustom, "The \"Long Text\" custom field should exist for LexEntry objects.");
 			var type = Cache.MetaDataCacheAccessor.GetFieldType(flidCustom);
-			Assert.AreEqual((int)CellarPropertyType.OwningAtomic, type, "The custom field should be an atomic owning field.");
+			Assert.AreEqual((int) CellarPropertyType.OwningAtomic, type, "The custom field should be an atomic owning field.");
 			var destName = Cache.MetaDataCacheAccessor.GetDstClsName(flidCustom);
 			Assert.AreEqual("StText", destName, "The custom field should own an StText object.");
 
@@ -2961,35 +2961,35 @@ namespace LanguageExplorerTests.LIFT
 		public void TestLiftImportEmptyInflectionFeature()
 		{
 			string[] liftData9 = {
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-				"<lift producer=\"SIL.FLEx 7.2.4.41019\" version=\"0.13\">",
-				"<header>",
-				"<ranges/>",
-				"<fields/>",
-				"</header>",
-				"<entry dateCreated=\"2012-02-23T11:53:26Z\" dateModified=\"2012-08-16T08:10:28Z\" id=\"test\" guid=\"f8506500-d17c-4c1b-b05d-ea57f562cb1c\">",
-				"<lexical-unit>",
-				"<form lang=\"grh\"><text>test</text></form>",
-				"<form lang=\"grh-fonipa\"><text>testipa</text></form>",
-				"</lexical-unit>",
-				"<trait name=\"morph-type\" value=\"stem\"/>",
-				"<field type=\"Syllable shape\">",
-				"<form lang=\"en\"><text>CV-CV</text></form>",
-				"</field>",
-				"<sense id=\"62fc5222-aa72-40bb-b3f1-24569bb94042\" dateCreated=\"2012-08-12T12:27:12Z\" dateModified=\"2012-08-12T12:27:12Z\">",
-				"<grammatical-info value=\"Noun\">",
-				"<trait name=\"inflection-feature\" value=\"{Infl}\"/>",
-				"</grammatical-info>",
-				"<gloss lang=\"en\"><text>black.plum</text></gloss>",
-				"<gloss lang=\"fr\"><text>noir</text></gloss>",
-				"<definition>",
-				"<form lang=\"en\"><text>black plum tree</text></form>",
-				"<form lang=\"fr\"><text>noir: noir est un manque de couleur</text></form>",
-				"</definition>",
-				"</sense>",
-				"</entry>",
-				"</lift>"
-			};
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.2.4.41019\" version=\"0.13\">",
+			"<header>",
+			"<ranges/>",
+			"<fields/>",
+			"</header>",
+			"<entry dateCreated=\"2012-02-23T11:53:26Z\" dateModified=\"2012-08-16T08:10:28Z\" id=\"test\" guid=\"f8506500-d17c-4c1b-b05d-ea57f562cb1c\">",
+			"<lexical-unit>",
+			"<form lang=\"grh\"><text>test</text></form>",
+			"<form lang=\"grh-fonipa\"><text>testipa</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"stem\"/>",
+			"<field type=\"Syllable shape\">",
+			"<form lang=\"en\"><text>CV-CV</text></form>",
+			"</field>",
+			"<sense id=\"62fc5222-aa72-40bb-b3f1-24569bb94042\" dateCreated=\"2012-08-12T12:27:12Z\" dateModified=\"2012-08-12T12:27:12Z\">",
+			"<grammatical-info value=\"Noun\">",
+			"<trait name=\"inflection-feature\" value=\"{Infl}\"/>",
+			"</grammatical-info>",
+			"<gloss lang=\"en\"><text>black.plum</text></gloss>",
+			"<gloss lang=\"fr\"><text>noir</text></gloss>",
+			"<definition>",
+			"<form lang=\"en\"><text>black plum tree</text></form>",
+			"<form lang=\"fr\"><text>noir: noir est un manque de couleur</text></form>",
+			"</definition>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
@@ -3203,7 +3203,6 @@ namespace LanguageExplorerTests.LIFT
 			var rangeElement = range.XPathSelectElement("//*[name()='range-element' and @id='Kalaba anatomy']");
 
 			XAttribute attr;
-			XElement span;
 			XElement text;
 
 			var label = rangeElement.XPathSelectElement("label");
@@ -3213,16 +3212,16 @@ namespace LanguageExplorerTests.LIFT
 				switch (i)
 				{
 					case 0:
-						attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
-						Assert.IsTrue(attr.Value.Equals("en"));
-						text = form.XPathSelectElement("text");
-						Assert.IsTrue(text.Value.Equals("anatomy"));
+					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+					Assert.IsTrue(attr.Value.Equals("en"));
+					text = form.XPathSelectElement("text");
+					Assert.IsTrue(text.Value.Equals("anatomy"));
 						break;
 					case 1:
-						attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
-						Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
-						text = form.XPathSelectElement("text");
-						Assert.IsTrue(text.Value.Equals("Kalaba anatomy"));
+					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+					text = form.XPathSelectElement("text");
+					Assert.IsTrue(text.Value.Equals("Kalaba anatomy"));
 						break;
 				}
 
@@ -3236,16 +3235,16 @@ namespace LanguageExplorerTests.LIFT
 				switch (i)
 				{
 					case 0:
-						attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
-						Assert.IsTrue(attr.Value.Equals("en"));
-						text = form.XPathSelectElement("text");
-						Assert.IsTrue(text.Value.Equals("Anat"));
+					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+					Assert.IsTrue(attr.Value.Equals("en"));
+					text = form.XPathSelectElement("text");
+					Assert.IsTrue(text.Value.Equals("Anat"));
 						break;
 					case 1:
-						attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
-						Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
-						text = form.XPathSelectElement("text");
-						Assert.IsTrue(text.Value.Equals("Kalaba Anat"));
+					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+					text = form.XPathSelectElement("text");
+					Assert.IsTrue(text.Value.Equals("Kalaba Anat"));
 						break;
 				}
 
@@ -3290,22 +3289,22 @@ namespace LanguageExplorerTests.LIFT
 				switch (i)
 				{
 					case 0:
-						attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
-						Assert.IsTrue(attr.Value.Equals("en"));
-						span = form.XPathSelectElement("text/span");
-						attr = span.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
-						Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+					Assert.IsTrue(attr.Value.Equals("en"));
+					span = form.XPathSelectElement("text/span");
+					attr = span.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
+					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
 						break;
 					case 1:
-						attr = form.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
-						Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
-						span = form.XPathSelectElement("text/span");
-						attr = span.Attribute("lang"); Assert.IsNotNull(attr); //en
-						Assert.IsTrue(attr.Value.Equals("en"));
+					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
+					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+					span = form.XPathSelectElement("text/span");
+					attr = span.Attribute("lang"); Assert.IsNotNull(attr); //en
+					Assert.IsTrue(attr.Value.Equals("en"));
 						break;
 					case 2:
-						attr = form.Attribute("lang"); Assert.IsNotNull(attr); //es
-						Assert.IsTrue(attr.Value.Equals("es"));
+					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //es
+					Assert.IsTrue(attr.Value.Equals("es"));
 						break;
 				}
 
@@ -3318,21 +3317,19 @@ namespace LanguageExplorerTests.LIFT
 			var entry = data.XPathSelectElement("//*[name()='entry' and @guid='fa6a7bf7-1007-4e33-95b5-663335a12a98']");
 			var lexUnitForm = entry.XPathSelectElement("lexical-unit");
 			XAttribute attr;
-			XElement text;
-			XElement span;
 			var i = 0;
 			foreach (var form in lexUnitForm.XPathSelectElements("form"))
 			{
 				switch (i)
 				{
 					case 0:
-						attr = form.Attribute("lang");
-						Assert.IsNotNull(attr); //en
-						Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+					attr = form.Attribute("lang");
+					Assert.IsNotNull(attr); //en
+					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
 						break;
 					case 1:
-						attr = form.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
-						Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal"));
+					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
+					Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal"));
 						break;
 				}
 
@@ -3347,22 +3344,22 @@ namespace LanguageExplorerTests.LIFT
 				switch (i)
 				{
 					case 0:
-						attr = gloss.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
-						Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
-						glossText = gloss.XPathSelectElement("text"); Assert.IsNotNull(glossText);
-						Assert.IsTrue(glossText.Value.Equals("KalabaGloss"));
+					attr = gloss.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
+					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+					glossText = gloss.XPathSelectElement("text");Assert.IsNotNull(glossText);
+					Assert.IsTrue(glossText.Value.Equals("KalabaGloss"));
 						break;
 					case 1:
-						attr = gloss.Attribute("lang"); Assert.IsNotNull(attr);
-						Assert.IsTrue(attr.Value.Equals("en"));
-						glossText = gloss.XPathSelectElement("text"); Assert.IsNotNull(glossText);
-						Assert.IsTrue(glossText.Value.Equals("EnglishGLoss"));
+					attr = gloss.Attribute("lang"); Assert.IsNotNull(attr);
+					Assert.IsTrue(attr.Value.Equals("en"));
+					glossText = gloss.XPathSelectElement("text"); Assert.IsNotNull(glossText);
+					Assert.IsTrue(glossText.Value.Equals("EnglishGLoss"));
 						break;
 					case 2:
-						attr = gloss.Attribute("lang"); Assert.IsNotNull(attr);
-						Assert.IsTrue(attr.Value.Equals("es"));
-						glossText = gloss.XPathSelectElement("text"); Assert.IsNotNull(glossText);
-						Assert.IsTrue(glossText.Value.Equals("SpanishGloss"));
+					attr = gloss.Attribute("lang"); Assert.IsNotNull(attr);
+					Assert.IsTrue(attr.Value.Equals("es"));
+					glossText = gloss.XPathSelectElement("text"); Assert.IsNotNull(glossText);
+					Assert.IsTrue(glossText.Value.Equals("SpanishGloss"));
 						break;
 				}
 
@@ -3379,34 +3376,34 @@ namespace LanguageExplorerTests.LIFT
 				switch (i)
 				{
 					case 0:
-						attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
-						Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal"));
-						Assert.IsTrue(spanInDefn.Value.Equals("KalabaIPAspan"));
+					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+					Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal"));
+					Assert.IsTrue(spanInDefn.Value.Equals("KalabaIPAspan"));
 						break;
 					case 1:
-						attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
-						Assert.IsTrue(attr.Value.Equals("en"));
-						Assert.IsTrue(spanInDefn.Value.Equals("EnglishSpan"));
+					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+					Assert.IsTrue(attr.Value.Equals("en"));
+					Assert.IsTrue(spanInDefn.Value.Equals("EnglishSpan"));
 						break;
 					case 2:
-						attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
-						Assert.IsTrue(attr.Value.Equals("es"));
-						Assert.IsTrue(spanInDefn.Value.Equals("SpanishSpan"));
+					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+					Assert.IsTrue(attr.Value.Equals("es"));
+					Assert.IsTrue(spanInDefn.Value.Equals("SpanishSpan"));
 						break;
 					case 3:
-						attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
-						Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal-emic"));
-						Assert.IsTrue(spanInDefn.Value.Equals("KalabaPhonemic"));
+					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+					Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal-emic"));
+					Assert.IsTrue(spanInDefn.Value.Equals("KalabaPhonemic"));
 						break;
 					case 4:
-						attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
-						Assert.IsTrue(attr.Value.Equals("qaa-x-Lomwe"));
-						Assert.IsTrue(spanInDefn.Value.Equals("Lomwe Span"));
+					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+					Assert.IsTrue(attr.Value.Equals("qaa-x-Lomwe"));
+					Assert.IsTrue(spanInDefn.Value.Equals("Lomwe Span"));
 						break;
 					case 5:
-						attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
-						Assert.IsTrue(attr.Value.Equals("qaa-x-AveryLon"));
-						Assert.IsTrue(spanInDefn.Value.Equals("AveryLongWSName span"));
+					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+					Assert.IsTrue(attr.Value.Equals("qaa-x-AveryLon"));
+					Assert.IsTrue(spanInDefn.Value.Equals("AveryLongWSName span"));
 						break;
 				}
 
@@ -3439,7 +3436,7 @@ namespace LanguageExplorerTests.LIFT
 		public void TestLiftImportOfPublicationSettings()
 		{
 			string[] publicationTestData = {
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 				"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
 				"<header>",
 				"<ranges>",
@@ -3474,45 +3471,45 @@ namespace LanguageExplorerTests.LIFT
 			};
 			string[] publicationLiftRangeData = {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-				"<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->",
-				"<lift-ranges>",
+			"<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->",
+			"<lift-ranges>",
 
-				"<range id=\"morph-type\">",
-				"<range-element id=\"stem\" guid=\"d7f713e8-e8cf-11d3-9764-00c04f186933\">",
-				"<label>",
-				"<form lang=\"en\"><text>stem</text></form>",
-				"</label>",
-				"<abbrev>",
-				"<form lang=\"en\"><text>u stem</text></form>",
-				"</abbrev>",
-				"<description>",
-				"<form lang=\"en\"><text>A stem is...</text></form>",
-				"</description>",
-				"</range-element>",
-				"</range>",
+			"<range id=\"morph-type\">",
+			"<range-element id=\"stem\" guid=\"d7f713e8-e8cf-11d3-9764-00c04f186933\">",
+			"<label>",
+			"<form lang=\"en\"><text>stem</text></form>",
+			"</label>",
+			"<abbrev>",
+			"<form lang=\"en\"><text>u stem</text></form>",
+			"</abbrev>",
+			"<description>",
+			"<form lang=\"en\"><text>A stem is...</text></form>",
+			"</description>",
+			"</range-element>",
+			"</range>",
 
-				"<range id=\"do-not-publish-in\" guid=\"fc769efe-efd8-4e44-981e-9a07e343bb64\">",
+			"<range id=\"do-not-publish-in\" guid=\"fc769efe-efd8-4e44-981e-9a07e343bb64\">",
 
-				"<range-element id=\"Main Dictionary\" guid=\"70c0a758-5901-4884-b992-94ca31087607\">",
-				"<label>",
-				"<form lang=\"en\"><text>Main Dictionary</text></form>",
-				"</label>",
-				"<abbrev>",
-				"<form lang=\"en\"><text>Main</text></form>",
-				"<form lang=\"fr\"><text>Principal</text></form>",
-				"</abbrev>",
-				"</range-element>",
-				"<range-element id=\"Pocket\" guid=\"9f699508-3773-4889-87ee-ca0dbd9e3736\">",
-				"<label>",
-				"<form lang=\"en\"><text>Pocket</text></form>",
-				"<form lang=\"fr\"><text>Poche</text></form>",
-				"</label>",
-				"</range-element>",
+			"<range-element id=\"Main Dictionary\" guid=\"70c0a758-5901-4884-b992-94ca31087607\">",
+			"<label>",
+			"<form lang=\"en\"><text>Main Dictionary</text></form>",
+			"</label>",
+			"<abbrev>",
+			"<form lang=\"en\"><text>Main</text></form>",
+			"<form lang=\"fr\"><text>Principal</text></form>",
+			"</abbrev>",
+			"</range-element>",
+			"<range-element id=\"Pocket\" guid=\"9f699508-3773-4889-87ee-ca0dbd9e3736\">",
+			"<label>",
+			"<form lang=\"en\"><text>Pocket</text></form>",
+			"<form lang=\"fr\"><text>Poche</text></form>",
+			"</label>",
+			"</range-element>",
 
-				"</range>",
+			"</range>",
 
-				"</lift-ranges>"
-			};
+			"</lift-ranges>"
+		};
 			SetWritingSystems("fr");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -3565,7 +3562,7 @@ namespace LanguageExplorerTests.LIFT
 			var examplePublications = example0.DoNotPublishInRC.Select(pub => pub.Name.AnalysisDefaultWritingSystem.Text).ToList();
 			Assert.IsTrue(examplePublications.Contains("Main Dictionary"));
 			Assert.IsTrue(examplePublications.Contains("Pocket"));
-			Assert.That(example0.LiftResidue, Is.Not.StringContaining("do-not-publish-in"));
+			Assert.That(example0.LiftResidue, Does.Not.Contain("do-not-publish-in"));
 		}
 
 		/// <summary>
@@ -3615,7 +3612,7 @@ namespace LanguageExplorerTests.LIFT
 			var sOrigRangesFile = CreateInputRangesFile(customListRanges);
 
 			// prove that our setup is good and we are importing these objects
-			Assert.Throws<KeyNotFoundException>(() => Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(customListGuid)));
+			Assert.Throws<KeyNotFoundException>(()=>Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(customListGuid)));
 			Assert.Throws<KeyNotFoundException>(() => Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(customListItemGuid)));
 
 			// SUT
@@ -3645,29 +3642,29 @@ namespace LanguageExplorerTests.LIFT
 		public void TestLiftImportChangingAffixToStem()
 		{
 			string[] badMorphTypeTestData = {
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-				"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
-				"<header>",
-				"<ranges>",
-				"</ranges>",
-				"<fields/>",
-				"</header>",
-				"<entry dateCreated=\"2013-01-29T08:53:26Z\" dateModified=\"2013-01-29T08:10:28Z\" id=\"baba_$guid1\" guid=\"$guid1\">",
-				"<lexical-unit>",
-				"<form lang=\"fr\"><text>baba baba</text></form>",
-				"</lexical-unit>",
-				"<trait name=\"morph-type\" value=\"phrase\"/>",
-				"<variant>",
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
+			"<header>",
+			"<ranges>",
+			"</ranges>",
+			"<fields/>",
+			"</header>",
+			"<entry dateCreated=\"2013-01-29T08:53:26Z\" dateModified=\"2013-01-29T08:10:28Z\" id=\"baba_$guid1\" guid=\"$guid1\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>baba baba</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"phrase\"/>",
+			"<variant>",
 				"<form lang=\"fr\"><text>baba baba</text></form>",
 				"<trait name=\"nonsence\" value=\"look for this\" />",
 				"<trait name=\"morph-type\" value=\"phrase\" />",
-				"</variant>",
-				"<sense id=\"$guid2\" dateCreated=\"2013-01-29T08:55:26Z\" dateModified=\"2013-01-29T08:15:28Z\">",
-				"<gloss lang=\"en\"><text>dad</text></gloss>",
-				"</sense>",
-				"</entry>",
-				"</lift>"
-			};
+			"</variant>",
+			"<sense id=\"$guid2\" dateCreated=\"2013-01-29T08:55:26Z\" dateModified=\"2013-01-29T08:15:28Z\">",
+			"<gloss lang=\"en\"><text>dad</text></gloss>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
 			SetWritingSystems("fr");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -3707,7 +3704,7 @@ namespace LanguageExplorerTests.LIFT
 
 			Assert.That(entry.AlternateFormsOS, Has.Count.EqualTo(1), "should still have exactly one allomorph");
 			Assert.That(entry.AlternateFormsOS.First(), Is.InstanceOf(typeof(IMoStemAllomorph)), "affix should be changed to stem");
-			Assert.That(entry.AlternateFormsOS.First().LiftResidue, Is.StringContaining("look for this"));
+			Assert.That(entry.AlternateFormsOS.First().LiftResidue, Does.Contain("look for this"));
 		}
 
 		/// <summary>
@@ -3719,35 +3716,35 @@ namespace LanguageExplorerTests.LIFT
 		public void TestLiftMergeOfPronunciations()
 		{
 			string[] liftPronunciations = {
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-				"<lift producer=\"SIL.FLEx 8.0.3.41457\" version=\"0.13\">",
-				"<header>",
-				"<ranges/>",
-				"<fields/>",
-				"</header>",
-				"<entry dateCreated=\"2013-07-02T20:01:04Z\" dateModified=\"2013-07-02T20:05:43Z\" id=\"test_503d3478-3545-4213-9f6b-1f087464e140\" guid=\"503d3478-3545-4213-9f6b-1f087464e140\">",
-				"<lexical-unit>",
-				"<form lang=\"fr\"><text>test</text></form>",
-				"</lexical-unit>",
-				"<trait name=\"morph-type\" value=\"stem\"/>",
-				"<pronunciation>",
-				"<form lang=\"fr\"><text>pronunciation</text></form>",
-				"</pronunciation>",
-				"<pronunciation>",
-				"<form lang=\"es\"><text>pronunciation</text></form>",
-				"</pronunciation>",
-				"</entry>",
-				"<entry dateCreated=\"2013-07-02T20:01:04Z\" dateModified=\"2013-07-02T20:05:43Z\" id=\"test_8d735e34-c555-4390-a0af-21a12e1dd6ff\" guid=\"8d735e34-c555-4390-a0af-21a12e1dd6ff\">",
-				"<lexical-unit>",
-				"<form lang=\"fr\"><text>testb</text></form>",
-				"</lexical-unit>",
-				"<trait name=\"morph-type\" value=\"stem\"/>",
-				"<pronunciation>",
-				"<form lang=\"es\"><text>pronunciation</text></form>",
-				"</pronunciation>",
-				"</entry>",
-				"</lift>"
-			};
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 8.0.3.41457\" version=\"0.13\">",
+			"<header>",
+			"<ranges/>",
+			"<fields/>",
+			"</header>",
+			"<entry dateCreated=\"2013-07-02T20:01:04Z\" dateModified=\"2013-07-02T20:05:43Z\" id=\"test_503d3478-3545-4213-9f6b-1f087464e140\" guid=\"503d3478-3545-4213-9f6b-1f087464e140\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>test</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"stem\"/>",
+			"<pronunciation>",
+			"<form lang=\"fr\"><text>pronunciation</text></form>",
+			"</pronunciation>",
+			"<pronunciation>",
+			"<form lang=\"es\"><text>pronunciation</text></form>",
+			"</pronunciation>",
+			"</entry>",
+			"<entry dateCreated=\"2013-07-02T20:01:04Z\" dateModified=\"2013-07-02T20:05:43Z\" id=\"test_8d735e34-c555-4390-a0af-21a12e1dd6ff\" guid=\"8d735e34-c555-4390-a0af-21a12e1dd6ff\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>testb</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"stem\"/>",
+			"<pronunciation>",
+			"<form lang=\"es\"><text>pronunciation</text></form>",
+			"</pronunciation>",
+			"</entry>",
+			"</lift>"
+		};
 			SetWritingSystems("fr es");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -3806,7 +3803,7 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(1, sense.ExamplesOS.Count);
 			var example = sense.ExamplesOS[0];
 			// Important assertion
-			Assert.That(example.LiftResidue, Is.StringContaining("totallyunknowntrait"));
+			Assert.That(example.LiftResidue, Does.Contain("totallyunknowntrait"));
 		}
 
 		[Test]
@@ -3998,7 +3995,7 @@ namespace LanguageExplorerTests.LIFT
 			if (ws > 0)
 			{
 				lexPronunciation.Form.set_String(ws, TsStringUtils.MakeString(pronunciation, ws));
-			}
+		}
 		}
 
 		[Test]
@@ -4144,10 +4141,10 @@ namespace LanguageExplorerTests.LIFT
 			Assert.That(lrt.Abbreviation.get_String(de).Text, Is.EqualTo("AntG"));
 
 			var log = File.ReadAllText(logFile, Encoding.UTF8);
-			Assert.That(log, Is.StringContaining("AntonymRubbish"));
-			Assert.That(log, Is.StringContaining("had a conflicting value"));
-			Assert.That(log, Is.StringContaining("Description"));
-			Assert.That(log, Is.Not.StringContaining("OppositeG"), "should not report conflict when values are equal");
+			Assert.That(log, Does.Contain("AntonymRubbish"));
+			Assert.That(log, Does.Contain("had a conflicting value"));
+			Assert.That(log, Does.Contain("Description"));
+			Assert.That(log, Does.Not.Contain("OppositeG"), "should not report conflict when values are equal");
 		}
 		[Test]
 		public void TestImportDoesNotDuplicateSequenceRelations()
@@ -4363,12 +4360,12 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(2, coldEntry.LexEntryReferences.ElementAt(0).TargetsRS.Count, "Incorrect number of component references.");
 			var coolerEntry = entryRepo.GetObject(new Guid(coolerGuid));
 			Assert.AreEqual(0, coolerEntry.LexEntryReferences.Count());
-		}
+	}
 
 
 		[Test]
 		public void TestImportDoesNotSplitComponentCollection()
-		{
+	{
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
@@ -5678,7 +5675,7 @@ namespace LanguageExplorerTests.LIFT
 			internal string StringFieldWs;
 
 			/// <summary />
-			internal CellarPropertyType CustomFieldType;
+		internal CellarPropertyType CustomFieldType;
 
 			/// <summary />
 			internal List<string> MultiUnicodeStrings = new List<string>();
@@ -5687,7 +5684,7 @@ namespace LanguageExplorerTests.LIFT
 			internal List<string> MultiUnicodeWss = new List<string>();
 
 			/// <summary />
-			internal int IntegerValue;
+		internal int IntegerValue;
 
 			internal string GenDateLiftFormat;
 

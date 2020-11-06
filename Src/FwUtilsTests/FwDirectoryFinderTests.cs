@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using NUnit.Framework;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -18,7 +19,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Resets the registry helper
 		/// </summary>
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void TearDown()
 		{
 			FwRegistryHelper.Reset();
@@ -27,18 +28,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Fixture setup
 		/// </summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void TestFixtureSetup()
 		{
 			FwRegistryHelper.SetRegistryHelper(new DummyFwRegistryHelper());
-			FwRegistryHelper.FieldWorksRegistryKey.SetValue("RootDataDir", Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles")));
-			FwRegistryHelper.FieldWorksRegistryKey.SetValue("RootCodeDir", Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles")));
+			FwRegistryHelper.FieldWorksRegistryKey.SetValue("RootDataDir", Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "..", "..", "..", "DistFiles")));
+			FwRegistryHelper.FieldWorksRegistryKey.SetValue("RootCodeDir", Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "..", "..", "..", "DistFiles")));
 		}
 
 		/// <summary>
 		/// Gets the directory where the Utils assembly is
 		/// </summary>
-		private string UtilsAssemblyDir => Path.GetDirectoryName(typeof(FwDirectoryFinder).Assembly.CodeBase.Substring(MiscUtils.IsUnix ? 7 : 8));
+		private string UtilsAssemblyDir => Path.GetDirectoryName(typeof(FwDirectoryFinder).Assembly.CodeBase.Substring(Platform.IsUnix ? 7 : 8));
 
 		/// <summary>
 		/// Tests the CodeDirectory property. This should return the DistFiles directory.
@@ -46,7 +47,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void CodeDirectory()
 		{
-			Assert.That(FwDirectoryFinder.CodeDirectory, Is.SamePath(Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles"))));
+			Assert.That(FwDirectoryFinder.CodeDirectory, Is.SamePath(Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "..", "..", "..", "DistFiles"))));
 		}
 
 		/// <summary>
@@ -102,7 +103,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void DataDirectory()
 		{
-			Assert.That(FwDirectoryFinder.DataDirectory, Is.SamePath(Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../DistFiles"))));
+			Assert.That(FwDirectoryFinder.DataDirectory, Is.SamePath(Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "..", "..", "..", "DistFiles"))));
 		}
 
 		/// <summary>
@@ -111,7 +112,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void SourceDirectory()
 		{
-			Assert.That(FwDirectoryFinder.SourceDirectory, Is.SamePath(Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "../../Src"))));
+			Assert.That(FwDirectoryFinder.SourceDirectory, Is.SamePath(Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "..", "..", "..", "Src"))));
 		}
 
 		/// <summary>
@@ -196,7 +197,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			// SpecialFolder.MyDocuments returns $HOME on Linux!
 			Assert.AreEqual(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-				"Documents/fieldworks/backups"), FwDirectoryFinder.DefaultBackupDirectory);
+				"Documents", "fieldworks", "backups"), FwDirectoryFinder.DefaultBackupDirectory);
 		}
 	}
 }

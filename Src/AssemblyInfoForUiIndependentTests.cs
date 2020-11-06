@@ -21,4 +21,4 @@ using SIL.TestUtilities;
 [assembly: OfflineSldr]
 
 // Initialize ICU
-[assembly: InitializeIcu(IcuVersion = 54)]
+//[assembly: InitializeIcu(IcuVersion = 54)]

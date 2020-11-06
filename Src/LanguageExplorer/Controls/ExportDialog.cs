@@ -14,13 +14,13 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Xsl;
+using DialogAdapters;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.LIFT;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -505,7 +505,7 @@ namespace LanguageExplorer.Controls
 							ProcessWebonaryExport();
 							return;
 						default:
-							using (ISaveFileDialog dlg = new SaveFileDialogAdapter())
+							using (var dlg = new SaveFileDialogAdapter())
 							{
 								dlg.AddExtension = true;
 								dlg.DefaultExt = m_exportItems[0].SubItems[2].Text;

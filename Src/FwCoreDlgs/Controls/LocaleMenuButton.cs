@@ -13,7 +13,7 @@ using Icu;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgs.Controls
 {
@@ -253,7 +253,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 				}
 			}
 
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				menu.ShowWithOverflow(this, new Point(0, Height));
 			}

@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			using (var wrapper = CreateXAmpleDllWrapper())
 			{
 				Assert.IsNotNull(wrapper);
-			}
+		}
 		}
 
 		[Test]
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			using (var wrapper = CreateXAmpleDllWrapper())
 			{
 				LoadFilesHelper(wrapper);
-			}
+		}
 		}
 
 		[Test]
@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			using (var wrapper = CreateXAmpleDllWrapper())
 			{
 				wrapper.SetParameter("MaxAnalysesToReturn", "3");
-			}
+		}
 		}
 
 		[Test]
@@ -59,17 +59,16 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			using (var wrapper = CreateXAmpleDllWrapper())
 			{
 				Assert.AreNotEqual(IntPtr.Zero, wrapper.GetSetup());
-			}
+		}
 		}
 
 		[Test]
-		[ExpectedException(typeof(NotImplementedException))]
 		public void TestSetLogFile()
 		{
 			using (var wrapper = CreateXAmpleDllWrapper())
 			{
-				wrapper.SetLogFile(Path.GetTempFileName());
-			}
+				Assert.That(() => { wrapper.SetLogFile(Path.GetTempFileName()); }, Throws.TypeOf<NotImplementedException>());
+		}
 		}
 
 		[Test]

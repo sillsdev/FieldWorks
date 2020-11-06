@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using FwBuildTasks;
 
 namespace NUnitReport
 {
@@ -11,10 +10,9 @@ namespace NUnitReport
 	/// This program is intended to take semi-colon separated project names (e.g. DiscourseTests),
 	/// go out to Output/Debug and generate NUnit reports from selected 'projectname'.dll-nunit-output.xml files.
 	/// </summary>
-	class Program
+	public static class Program
 	{
-
-		static void Main(string[] args)
+		public static void Main(string[] args)
 		{
 			var report = new ReportGenerator(args);
 			if (report.Projects.Count == 0)

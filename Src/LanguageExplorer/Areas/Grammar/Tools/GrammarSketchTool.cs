@@ -109,7 +109,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
-		public Image Icon => Images.DocumentView.SetBackgroundColor(Color.Magenta);
+		public Image Icon => SIL.FieldWorks.Resources.Images.DocumentView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
 		/// <summary>

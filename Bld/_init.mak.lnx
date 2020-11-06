@@ -8,7 +8,7 @@ GCC46 := $(shell expr `gcc -dumpversion | cut -f1-2 -d.` \>= 4.6)
 
 ARCH := $(shell uname -m)
 SRC = $(BUILD_ROOT)/Src
-LIBCOM_DIR = $(BUILD_ROOT)/../libcom
+LIBCOM_DIR = $(shell $(BUILD_ROOT)/Bin/abs.py "$(BUILD_ROOT)/../libcom")
 
 COM_DIR = $(LIBCOM_DIR)/COM
 WIN32BASE_DIR = $(LIBCOM_DIR)/Win32Base
@@ -78,11 +78,15 @@ VIEWS_SRC = $(SRC)/$(VIEWS_NAME)
 # Include user specific settings
 -include $(BUILD_ROOT)/Bld/_user.mak.lnx
 
-ICU_INSTALL_DIR ?= $(shell icu-config --prefix)
+FW_ICU_DIR = /usr/lib/fieldworks
+ICU_INSTALL_DIR ?= $(shell $(FW_ICU_DIR)/icu-bin/icu-config --prefix)
 # ENHANCE: have the icu54-bin-fw package install in bin instead of icu-bin and use `icu-config --bindir`
 ICU_BIN_DIR = $(ICU_INSTALL_DIR)/icu-bin
+ICU_LIB_DIR = $(shell $(ICU_INSTALL_DIR)/icu-bin/icu-config --libdir)
 
 # Use our own icu-config by putting it first in the path
-PATH := $(ICU_BIN_DIR):$(PATH):$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/Bin)
-
+PATH := $(ICU_BIN_DIR):$(PATH):$(shell $(BUILD_ROOT)/Bin/abs.py "$(BUILD_ROOT)/Bin")
 export PATH
+
+LD_LIBRARY_PATH := $(LD_LIBRARY_PATH):$(ICU_LIB_DIR):$(COM_LIB)
+export LD_LIBRARY_PATH

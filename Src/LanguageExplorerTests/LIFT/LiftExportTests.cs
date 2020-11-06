@@ -639,7 +639,6 @@ namespace LanguageExplorerTests.LIFT
 				ls.DoNotPublishInRC.Add(m_mapPublications["School"]);
 				m_entryTest.LiftResidue = "<lift-residue id=\"songanganya & nganga_63698066-52d6-46bd-8438-64ce2a820dc6\" dateCreated=\"2008-04-27T22:41:26Z\" dateModified=\"2007-07-02T17:00:00Z\"></lift-residue>";
 				//Add an academic domain to the sense.
-				ICmPossibility possibility;
 				AddAcademicDomain(ls, "rhetoric");
 				AddAcademicDomain(ls, "computer science");
 				AddAcademicDomain(ls, "medicine");
@@ -1239,7 +1238,7 @@ namespace LanguageExplorerTests.LIFT
 				var xform = xentry.SelectSingleNode("lexical-unit/form");
 				Assert.IsNotNull(xform);
 				var sLang = XmlUtils.GetOptionalAttributeValue(xform, "lang");
-				Assert.IsNotNullOrEmpty(sLang);
+				Assert.That(sLang, Is.Not.Null.Or.Empty);
 				var formWs = m_cache.WritingSystemFactory.get_Engine(sLang);
 				Assert.AreEqual(m_cache.DefaultVernWs, formWs.Handle);
 				Assert.AreEqual(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, xform.FirstChild.InnerText);
@@ -1280,7 +1279,7 @@ namespace LanguageExplorerTests.LIFT
 				var xgloss = xsense.SelectSingleNode("gloss");
 				Assert.IsNotNull(xgloss);
 				sLang = XmlUtils.GetOptionalAttributeValue(xgloss, "lang");
-				Assert.IsNotNullOrEmpty(sLang);
+				Assert.That(sLang,Is.Not.Null.Or.Empty);
 				var glossWs = m_cache.WritingSystemFactory.get_Engine(sLang);
 				Assert.AreEqual(m_cache.DefaultAnalWs, glossWs.Handle);
 				Assert.AreEqual(sense.Gloss.AnalysisDefaultWritingSystem.Text, xgloss.FirstChild.InnerText);

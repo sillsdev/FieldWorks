@@ -8,6 +8,7 @@ using System.IO;
 using System.Windows.Forms;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -127,7 +128,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			_synchronizeInvoke.Invoke(() =>
 			{
-				if (MiscUtils.IsMono)
+				if (Platform.IsMono)
 				{
 					// Mono doesn't support Help
 					MessageBox.Show(message, caption, MessageBoxButtons.OK, icon);

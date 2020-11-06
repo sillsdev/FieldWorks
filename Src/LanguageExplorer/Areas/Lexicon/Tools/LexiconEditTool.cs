@@ -11,12 +11,12 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using DialogAdapters;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.DictionaryConfiguration;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -199,7 +199,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
-		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
+		public Image Icon => SIL.FieldWorks.Resources.Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
 
@@ -499,7 +499,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 						lexEntry.PronunciationsOS.Add(_cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create());
 					}
 					var firstPronunciation = lexEntry.PronunciationsOS[0];
-					using (IOpenFileDialog dlg = new OpenFileDialogAdapter())
+					using (var dlg = new OpenFileDialogAdapter())
 					{
 						dlg.InitialDirectory = _propertyTable.GetValue(insertMediaFileLastDirectory, _cache.LangProject.LinkedFilesRootDir);
 						dlg.Filter = ResourceHelper.BuildFileFilter(FileFilterType.AllAudio, FileFilterType.AllVideo, FileFilterType.AllFiles);

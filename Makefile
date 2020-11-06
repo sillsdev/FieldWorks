@@ -68,12 +68,10 @@ idl: idl-do
 # extracting the GUIDs is now done with a msbuild target, please run 'msbuild /t:generateLinuxIdlFiles'
 
 idl-do:
-	$(MAKE) -C$(SRC)/Common/ViewsInterfaces -f IDLMakefile all
-	$(MAKE) -C$(SRC)/Common/FwKernelInterfaces -f IDLMakefile all
+	$(MAKE) -C$(SRC)/ViewsInterfaces -f IDLMakefile all
 
 idl-clean:
-	$(MAKE) -C$(SRC)/Common/ViewsInterfaces -f IDLMakefile clean
-	$(MAKE) -C$(SRC)/Common/FwKernelInterfaces -f IDLMakefile clean
+	$(MAKE) -C$(SRC)/ViewsInterfaces -f IDLMakefile clean
 
 fieldworks-flex.1.gz: DistFiles/Linux/fieldworks-flex.1.xml
 	docbook2x-man DistFiles/Linux/fieldworks-flex.1.xml

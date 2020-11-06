@@ -24,13 +24,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 	{
 		private FlexComponentParameters _flexComponentParameters;
 		private int m_wsEn, m_wsFr;
-		private static readonly StringComparison strComp = StringComparison.InvariantCulture;
 
 		private StringBuilder XHTMLStringBuilder { get; set; }
 
 		private GeneratorSettings DefaultSettings => new GeneratorSettings(Cache, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null);
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -59,11 +58,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			catch (Exception err)
 			{
 				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
-			}
+		}
 			finally
-			{
+		{
 				base.TestTearDown();
-			}
+		}
 		}
 
 		[Test]
@@ -221,7 +220,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var typeNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "EntryTypes",
-				Children = new List<ConfigurableDictionaryNode> { abbrNode },
+				Children = new List<ConfigurableDictionaryNode> {abbrNode},
 			};
 			var refHeadwordNode = new ConfigurableDictionaryNode
 			{
@@ -240,13 +239,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				FieldDescription = "PrimarySensesOrEntries",
 				CSSClassNameOverride = "primarylexemes",
-				Children = new List<ConfigurableDictionaryNode> { refHeadwordNode, glossOrSummaryNode },
+				Children = new List<ConfigurableDictionaryNode> {refHeadwordNode, glossOrSummaryNode},
 				Label = "Primary Entry(s)"
 			};
 			var primaryEntryRefNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MainEntryRefs",
-				Children = new List<ConfigurableDictionaryNode> { typeNode, primaryEntryNode },
+				Children = new List<ConfigurableDictionaryNode> {typeNode, primaryEntryNode},
 				Label = "Primary Entry References"
 			};
 			var headWordNode = new ConfigurableDictionaryNode
@@ -259,7 +258,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var referencedSensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesRS",
-				Children = new List<ConfigurableDictionaryNode> { headWordNode, primaryEntryRefNode },
+				Children = new List<ConfigurableDictionaryNode> {headWordNode, primaryEntryRefNode},
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions
 				{
 					NumberingStyle = "Dictionary-SenseNumber",
@@ -270,7 +269,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			};
 			var mainRevEntryNode = new ConfigurableDictionaryNode
 			{
-				Children = new List<ConfigurableDictionaryNode> { referencedSensesNode },
+				Children = new List<ConfigurableDictionaryNode> {referencedSensesNode},
 				FieldDescription = "ReversalIndexEntry",
 				CSSClassNameOverride = "reversalindexentry"
 			};
@@ -403,7 +402,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				FieldDescription = "SensesRS",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d" },
-				Children = new List<ConfigurableDictionaryNode> { headwordNode, glossNode }
+				Children = new List<ConfigurableDictionaryNode> {headwordNode, glossNode}
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -522,15 +521,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var formNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesRS",
-				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d", NumberEvenASingleSense = true },
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { NumberingStyle = "%d",NumberEvenASingleSense = true},
 				Children = new List<ConfigurableDictionaryNode> { headwordNode, glossNode }
 			};
 			var subEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SubentriesOS",
 				CSSClassNameOverride = "subentries",
-				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true },
-				Children = new List<ConfigurableDictionaryNode> { formNode }
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions {DisplayEachInAParagraph = true},
+				Children = new List<ConfigurableDictionaryNode> {formNode}
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -670,7 +669,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			var xhtml = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 			// check that the sense gram info appears once before the rest of the sense information.
-			Assert.IsNotNullOrEmpty(xhtml);
+			Assert.That(xhtml, Is.Not.Null.Or.Empty);
 			const string sharedGramInfo = "/div[@class='reversalindexentry']/span[@class='sensesrs']/span[@class='sharedgrammaticalinfo']/span[@class='morphosyntaxanalysis']/span[@class='partofspeech']/span[@lang='en' and text()='n']";
 			const string separateGramInfo = "/div[@class='reversalindexentry']/span[@class='sensesrs']/span[@class='sensecontent']/span[@class='sensesr']/span[@class='morphosyntaxanalysis']/span[@class='partofspeech']/span[@lang='en']";
 			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(sharedGramInfo, 1);

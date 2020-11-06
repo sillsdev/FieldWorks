@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Windows.Forms;
 
 namespace LanguageExplorer.Impls
@@ -40,7 +41,7 @@ namespace LanguageExplorer.Impls
 		public UploadToWebonaryDlg(UploadToWebonaryController controller, UploadToWebonaryModel model, IPropertyTable propertyTable)
 		{
 			InitializeComponent();
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height + m_additionalMinimumHeightForMono);
 			}
@@ -286,7 +287,7 @@ namespace LanguageExplorer.Impls
 			var allButTheLogRowHeight = tableLayoutPanel.GetRowHeights().Sum() - tableLayoutPanel.GetRowHeights().Last();
 			var fudge = Height - tableLayoutPanel.Height;
 			var minimumFormHeightToShowLog = allButTheLogRowHeight + outputLogTextbox.MinimumSize.Height + fudge;
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				minimumFormHeightToShowLog += m_additionalMinimumHeightForMono;
 			}
@@ -362,7 +363,7 @@ namespace LanguageExplorer.Impls
 			base.OnResize(e);
 			// On Linux, when reducing the height of the dialog, the output log doesn't shrink with it.
 			// Set its height back to something smaller to keep the whole control visible. It will expand as appropriate.
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				outputLogTextbox.Size = new Size(outputLogTextbox.Size.Width, outputLogTextbox.MinimumSize.Height);
 			}

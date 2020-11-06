@@ -4,7 +4,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using SIL.Extensions;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -32,13 +34,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static IEnumerable<KeyValuePair<string, string>> FindInstalledPackages(string search)
 		{
 			var processError = false;
-			var process = MiscUtils.RunProcess("dpkg", $"-l '{search}'", exception => { processError = true; });
-			if (processError)
+			string output;
+			using (var process = new Process())
 			{
-				yield break;
+				process.RunProcess("dpkg", $"-l '{search}'",
+					exception => { processError = true; }, true);
+				if (processError)
+				{
+					yield break;
+				}
+
+				output = process.StandardOutput.ReadToEnd();
+				process.WaitForExit();
 			}
-			var output = process.StandardOutput.ReadToEnd();
-			process.WaitForExit();
+
 			var dpkgListedPackages = output.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 			// ii means installed packages with no errors or pending changes.
 			const string installedNoErrorState = "ii";

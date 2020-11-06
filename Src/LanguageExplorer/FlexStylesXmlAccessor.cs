@@ -1070,7 +1070,7 @@ namespace LanguageExplorer
 			{   // convert the string to a valid enum case insensitive
 				return (ContextValues)Enum.Parse(typeof(ContextValues), sContext, true);
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 				Debug.Assert(false, $"Unrecognized context attribute for style {styleName} in {ResourceFileName}: {sContext}");
 				throw new Exception(ResourceHelper.GetResourceString("kstidInvalidInstallation"));

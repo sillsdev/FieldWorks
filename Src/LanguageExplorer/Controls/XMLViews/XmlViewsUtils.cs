@@ -20,6 +20,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Xml;
 
 namespace LanguageExplorer.Controls.XMLViews
@@ -1117,7 +1118,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			Assembly assemblyFound;
 			try
 			{
-				var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase).Substring(MiscUtils.IsUnix ? 5 : 6);
+				var baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase).Substring(Platform.IsUnix ? 5 : 6);
 				assemblyFound = Assembly.LoadFrom(Path.Combine(baseDir, sAssemblyName));
 			}
 			catch (Exception error)

@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
+using DialogAdapters;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
 
@@ -161,7 +161,7 @@ namespace LanguageExplorer.Controls
 
 		private void m_btnBrowse_Click(object sender, EventArgs e)
 		{
-			using (ISaveFileDialog dlg = new SaveFileDialogAdapter())
+			using (var dlg = new SaveFileDialogAdapter())
 			{
 				dlg.AddExtension = true;
 				dlg.DefaultExt = string.IsNullOrEmpty(m_defaultExt) ? ".xml" : m_defaultExt;

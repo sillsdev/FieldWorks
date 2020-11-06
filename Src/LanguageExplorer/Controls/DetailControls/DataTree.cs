@@ -1203,7 +1203,7 @@ namespace LanguageExplorer.Controls.DetailControls
 							}
 						}
 						// FWNX-590
-						if (MiscUtils.IsMono)
+						if (Platform.IsMono)
 						{
 							VerticalScroll.Value = scrollbarPosition;
 						}

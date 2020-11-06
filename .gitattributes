@@ -16,6 +16,7 @@
 *.resx -whitespace
 *.settings -whitespace
 *.svg -whitespace
+*.targets -whitespace
 *.vcxproj -whitespace
 *.vcxproj.filters -whitespace
 *.vdproj -whitespace
@@ -27,3 +28,4 @@ RealSplashScreen.cs -whitespace
 run-app -whitespace
 Bin/ilrepack-assemblies -whitespace
 *.json -whitespace
+GitVersion.yml -whitespace

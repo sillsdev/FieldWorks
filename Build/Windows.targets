@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
-
-	<UsingTask TaskName="CheckAdminPrivilege" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Windows_NT'"/>
-	<UsingTask TaskName="RegFree" AssemblyFile="FwBuildTasks.dll"/>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 	<!-- call preparatory Windows targets -->
 	<Target Name="initWindows" Condition="'$(OS)'=='Windows_NT'"
-			DependsOnTargets="Initialize;RegisterEncConvertersDlls;BuildWindowsXslAssemblies;graphite2Windows;Unit++">
+			DependsOnTargets="Initialize;graphite2Windows;Unit++">
 	</Target>
 
 	<Target Name="cleanWindows" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="clean-graphite2Windows">
@@ -18,73 +15,6 @@
 	<Target Name="Unit++" Inputs="@(UnitSources)" Outputs="$(fwrt)\Lib\$(config-lower)\unit++.lib" Condition="'$(OS)'=='Windows_NT'">
 		<MSBuild Projects="$(fwrt)\Lib\src\unit++\VS\unit++.vcxproj"
 			Properties="Configuration=$(config-capital)"/>
-	</Target>
-	<!-- Define Encoding Converters files needed for building and running tests -->
-	<PropertyGroup>
-		<ECNugetVersion>0.0.6</ECNugetVersion>
-		<ECArch Condition="'$(arch)'!='x64'">Win32</ECArch>
-		<ECArch Condition="'$(arch)'=='x64'">x64</ECArch>
-	</PropertyGroup>
-	<ItemGroup>
-		<ECWindowsFiles Include="CcEC.dll" />
-		<ECWindowsFiles Include="CC32.dll" Condition="'$(arch)'!='x64'"/>
-		<ECWindowsFiles Include="Cc64.dll" Condition="'$(arch)'=='x64'"/>
-		<ECWindowsFiles Include="ECInterfaces.dll" />
-		<ECWindowsFiles Include="ECInterfaces.tlb" />
-		<ECWindowsFiles Include="EncConvertersAppDataMover40.exe" />
-		<ECWindowsFiles Include="ECDriver.dll"/>
-		<ECWindowsFiles Include="IcuConvEC.dll" />
-		<ECWindowsFiles Include="IcuEC.dll" />
-		<ECWindowsFiles Include="IcuRegexEC.dll" />
-		<ECWindowsFiles Include="IcuTranslitEC.dll" />
-		<ECWindowsFiles Include="PerlExpressionEC.dll" />
-		<ECWindowsFiles Include="PyScriptEC.dll" />
-		<ECWindowsFiles Include="PyScriptEncConverter.dll" />
-		<ECWindowsFiles Include="SilEncConverters40.dll" />
-		<ECWindowsFiles Include="SilEncConverters40.tlb" />
-		<ECWindowsFiles Include="SilIndicEncConverters40.dll" />
-		<ECWindowsFiles Include="SilIndicEncConverters40.tlb" />
-		<ECWindowsFiles Include="TECkit_Compiler_x86.dll" />
-		<ECWindowsFiles Include="TECkit_x86.dll" />
-		<ECWindowsFiles Include="libgcc_s_sjlj-1.dll" Condition="'$(arch)'!='x64'"/>
-		<ECWindowsFiles Include="libgcc_s_seh-1.dll" Condition="'$(arch)'=='x64'"/>
-		<ECWindowsFiles Include="libstdc++-6.dll" />
-
-		<ECPlugins Include="CC 4.0.0.0 Plugin Details.xml" />
-		<ECPlugins Include="EC 4.0.0.0 Plugin Details.xml" />
-		<ECPlugins Include="IcuEC 4.0.0.0 Plugin Details.xml" />
-		<ECPlugins Include="PerlEC 4.0.0.0 Plugin Details.xml" />
-		<ECPlugins Include="PythonEC 4.0.0.0 Plugin Details.xml" />
-		<ECPlugins Include="SIEC 4.0.0.0 Plugin Details.xml" />
-	</ItemGroup>
-
-	<Target Name="RegisterEncConvertersDlls" Condition="'$(OS)'=='Windows_NT'">
-		<ItemGroup>
-			<ConverterDlls Include="$(fwrt)/packages/Encoding-Converters-Core.$(ECNugetVersion)/lib/net40/$(ECArch)/EcInterfaces.dll"/>
-			<ConverterDlls Include="$(fwrt)/packages/Encoding-Converters-Core.$(ECNugetVersion)/lib/net40/$(ECArch)/SilEncConverters40.dll"/>
-		</ItemGroup>
-		<Copy SourceFiles="@(ConverterDlls)"
-			  DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
-			  Condition="'$(action)'!='clean'"/>
-	</Target>
-
-	<!-- Only Windows has the xsltc tool for compiling XSLs -->
-	<PropertyGroup>
-		<ApplicationTransformsPath>$(fwrt)\Src\Transforms\Application</ApplicationTransformsPath>
-		<PresentationTransformsPath>$(fwrt)\Src\Transforms\Presentation</PresentationTransformsPath>
-		<!-- The default platform is WIN32 which is not a valid platform argument for xltc.exe -->
-		<PlatformForExec Condition="'$(Platform)'!='x64'">x86</PlatformForExec>
-		<PlatformForExec Condition="'$(Platform)'=='x64'">x64</PlatformForExec>
-	</PropertyGroup>
-	<ItemGroup>
-		<ApplicationTransforms Include="$(ApplicationTransformsPath)\*.xsl" />
-		<PresentationTransforms Include="$(PresentationTransformsPath)\*.xsl" />
-	</ItemGroup>
-	<Target Name="BuildWindowsXslAssemblies" Inputs="@(ApplicationTransforms);@(PresentationTransforms)" Outputs="$(dir-outputBase)\ApplicationTransforms.dll;$(dir-outputBase)\PresentationTransforms.dll" Condition="'$(action)'!='clean'">
-	<!-- The WindowsSDK_ExecutablePath_x64 does not contain the xsltc executable, but the x86 path contains one that can build a 64bit assembly -->
-		<Exec Command="&quot;$(WindowsSDK_ExecutablePath_x86)\xsltc.exe&quot; /settings:document /platform:$(PlatformForExec) /out:$(dir-outputBase)\ApplicationTransforms.dll $(ApplicationTransformsPath)\FxtM3MorphologySketch.xsl $(ApplicationTransformsPath)\FxtM3ParserToGAFAWS.xsl $(ApplicationTransformsPath)\FxtM3ParserToToXAmpleGrammar.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleADCtl.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleLex.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl" />
-		<Exec Command="&quot;$(WindowsSDK_ExecutablePath_x86)\xsltc.exe&quot; /settings:document /platform:$(PlatformForExec) /out:$(dir-outputBase)\PresentationTransforms.dll $(PresentationTransformsPath)\FormatHCTrace.xsl $(PresentationTransformsPath)\FormatXAmpleParse.xsl $(PresentationTransformsPath)\FormatXAmpleTrace.xsl $(PresentationTransformsPath)\FormatXAmpleWordGrammarDebuggerResult.xsl $(PresentationTransformsPath)\XLingPap1.xsl" />
 	</Target>
 
 	<ItemGroup>

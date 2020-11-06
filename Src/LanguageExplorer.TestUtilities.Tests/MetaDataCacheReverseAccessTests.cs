@@ -27,10 +27,10 @@ namespace LanguageExplorer.TestUtilities.Tests
 		/// Tests GetClassId with an invalid class name
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
 		public void GetClassId_Invalid()
 		{
-			m_metaDataCache.GetClassId("NonExistentClassName");
+			Assert.That(() => m_metaDataCache.GetClassId("NonExistentClassName"),
+				Throws.InvalidOperationException);
 		}
 
 		/// <summary>
@@ -39,7 +39,9 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[Test]
 		public void GetFieldId_SansSuperClass()
 		{
-			Assert.AreEqual(2003, m_metaDataCache.GetFieldId("ClassD", "MultiUnicodeProp12", false), "Wrong field Id.");
+			Assert.AreEqual(2003,
+				m_metaDataCache.GetFieldId("ClassD", "MultiUnicodeProp12", false),
+				"Wrong field Id.");
 		}
 
 		/// <summary>
@@ -48,7 +50,8 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[Test]
 		public void GetFieldId_WithSuperClass()
 		{
-			Assert.AreEqual(35001, m_metaDataCache.GetFieldId("ClassL2", "Whatever", true), "Wrong field Id.");
+			Assert.AreEqual(35001, m_metaDataCache.GetFieldId("ClassL2", "Whatever", true),
+				"Wrong field Id.");
 		}
 
 		/// <summary>
@@ -66,7 +69,8 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[Test]
 		public void GetFieldId_WithSuperClass_Nonexistent()
 		{
-			Assert.AreEqual(0, m_metaDataCache.GetFieldId("ClassL2", "Flurskuiwert", true), "Wrong field Id.");
+			Assert.AreEqual(0, m_metaDataCache.GetFieldId("ClassL2", "Flurskuiwert", true),
+				"Wrong field Id.");
 		}
 
 		/// <summary>
@@ -75,7 +79,8 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[Test]
 		public void GetFieldId2_SansSuperClass()
 		{
-			Assert.AreEqual(2003, m_metaDataCache.GetFieldId2(2, "MultiUnicodeProp12", false), "Wrong field Id.");
+			Assert.AreEqual(2003, m_metaDataCache.GetFieldId2(2, "MultiUnicodeProp12", false),
+				"Wrong field Id.");
 		}
 
 		/// <summary>
@@ -84,7 +89,8 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[Test]
 		public void GetFieldId2_WithSuperClass()
 		{
-			Assert.AreEqual(35001, m_metaDataCache.GetFieldId2(45, "Whatever", true), "Wrong field Id.");
+			Assert.AreEqual(35001, m_metaDataCache.GetFieldId2(45, "Whatever", true),
+				"Wrong field Id.");
 		}
 
 		/// <summary>
@@ -136,7 +142,8 @@ namespace LanguageExplorer.TestUtilities.Tests
 					var clid = ids[i];
 					if (i < 2)
 					{
-						Assert.IsTrue(((clid == 28) || (clid == 45)), "Clid should be 28 or 49 for direct subclasses of ClassL.");
+						Assert.IsTrue(((clid == 28) || (clid == 45)),
+							"Clid should be 28 or 49 for direct subclasses of ClassL.");
 					}
 					else
 					{
@@ -209,8 +216,10 @@ namespace LanguageExplorer.TestUtilities.Tests
 			using (var clids = MarshalEx.ArrayToNative<int>(countAllClasses))
 			{
 				// Check BaseClass.
-				m_metaDataCache.GetAllSubclasses(0, countAllClasses, out var countAllSubclasses, clids);
-				Assert.AreEqual(countAllClasses, countAllSubclasses, "Wrong number of subclasses returned.");
+				m_metaDataCache.GetAllSubclasses(0, countAllClasses, out var countAllSubclasses,
+					clids);
+				Assert.AreEqual(countAllClasses, countAllSubclasses,
+					"Wrong number of subclasses returned.");
 			}
 		}
 	}

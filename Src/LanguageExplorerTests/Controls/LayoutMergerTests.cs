@@ -21,7 +21,7 @@ namespace LanguageExplorerTests.Controls
 		private Inventory m_inventory;
 		private string m_testPathMerge;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void Setup()
 		{
 			var keyAttrs = new Dictionary<string, string[]>();

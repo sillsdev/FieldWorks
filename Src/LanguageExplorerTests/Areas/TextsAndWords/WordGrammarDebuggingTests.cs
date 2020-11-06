@@ -41,14 +41,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		private string m_sResultTransformStemNames;
 		/// <summary />
 		private string m_sResultTransformAffixAlloFeats;
-		/// <summary />
-		private string m_sM3FXTDump;
-		/// <summary />
-		private string m_sM3FXTDumpNoCompoundRules;
-		/// <summary />
-		private string m_sM3FXTDumpStemNames;
-		/// <summary />
-		private string m_sM3FXTDumpAffixAlloFeats;
 		/// <summary>Set to true to be able to debug into stylesheets</summary>
 		private readonly bool m_fDebug;
 		/// <summary>path to the standard directory for temporary files.</summary>
@@ -69,7 +61,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		/// <summary>
 		/// Fixtures setup method
 		/// </summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			_baseTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory, TestUtilities.LanguageExplorerTests, "Areas", "TextsAndWords");
@@ -90,7 +82,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		/// <summary>
 		/// Delete any files that we may have created.
 		/// </summary>
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureTeardown()
 		{
 			if (File.Exists(m_sResultTransform))
@@ -116,7 +108,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			if (File.Exists(Path.Combine(m_sTempPath, "TestUnificationViaXSLT-Linux.xsl")))
 			{
 				File.Delete(Path.Combine(m_sTempPath, "TestUnificationViaXSLT-Linux.xsl"));
-			}
+		}
 		}
 
 		#region Helper methods for setup
@@ -159,7 +151,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			using (var writer = new StreamWriter(resultTransform))
 			{
 				m_masterTransform.Transform(fxtDump, null, writer);
-			}
+		}
 		}
 
 		/// <summary>
@@ -255,7 +247,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 			ApplyTransform("nihimbiliraBadInflectionClassInTenseStep00.xml", "nihimbiliraBadInflectionClassInTenseStep01.xml");
 			ApplyTransform("nihimbiliraBadInflectionClassesInTenseStep00.xml", "nihimbiliraBadInflectionClassesInTenseStep01.xml");
 			// Compound roots
-			// Left-headed
+				// Left-headed
 			ApplyTransform("nihinlikximuraStep00.xml", "nihinlikximuraStep01.xml");
 			ApplyTransform("nihinlikximuraStep01.xml", "nihinlikximuraStep02.xml");
 			// Right-headed

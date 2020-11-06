@@ -12,11 +12,11 @@ using System.Resources;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using DialogAdapters;
 using ECInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
@@ -31,13 +31,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	internal sealed class ConverterTrial : UserControl
 	{
 		private FwOverrideComboBox outputFontCombo;
-		private IOpenFileDialog ofDlg;
+		private OpenFileDialogAdapter ofDlg;
 		private string m_mapname; // name of the conversion to apply when convert is pressed.
 		private StringBuilder m_savedOutput; // saves the converted data for saving to a file
 		private SampleView m_svOutput;
 		private bool m_fHasOutput;
 		private Panel OutputPanel;
-		private ISaveFileDialog saveFileDialog;
+		private SaveFileDialogAdapter saveFileDialog;
 		private TextBox txtInputFile;
 		private ToolTip toolTipInputFile;
 		private Button convertButton;

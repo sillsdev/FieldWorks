@@ -21,7 +21,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 	internal class ConstChartRowDecoratorTests : InMemoryDiscourseTestBase
 	{
 		private VwEnvSpy m_spy;
-		private char m_PDF = '\x202C';
 
 		#region Overrides of MemoryOnlyBackendProviderRestoredForEachTestTestBase
 		public override void TestSetup()

@@ -373,7 +373,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 			{
 				wsEngine = wsFact.get_Engine(langCode);
 			}
-			catch (ArgumentException e)
+			catch (ArgumentException)
 			{
 				Debug.Assert(false, "We hit the non-existent ws in AdjustPunctStringForCharacter().");
 				return false;
@@ -990,7 +990,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 			{
 				writingSystem = wsFactory.get_Engine(lang.lang);
 			}
-			catch (ArgumentException e)
+			catch (ArgumentException)
 			{
 				WritingSystemServices.FindOrCreateSomeWritingSystem(cache, FwDirectoryFinder.TemplateDirectory, lang.lang, !fIsVernacular, fIsVernacular, out var ws);
 				writingSystem = ws;

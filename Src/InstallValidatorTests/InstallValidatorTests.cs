@@ -2,18 +2,17 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-#if !__MonoCS__
-
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using SIL.FieldWorks.Build.Tasks;
 using SIL.TestUtilities;
+using SIL.FieldWorks.Build.Tasks;
 
 namespace SIL.InstallValidator
 {
 	[TestFixture]
+	[Platform(Exclude = "Linux", Reason = "Windows specific tests")]
 	public class InstallValidatorTests
 	{
 		private TemporaryFolder m_TestInstallDir;
@@ -99,7 +98,7 @@ namespace SIL.InstallValidator
 		{
 			var sut = new Process
 			{
-				StartInfo = new ProcessStartInfo(Path.Combine(m_startingDirectory, "InstallValidator.exe"), $"{LogFileName} {ResultsFlieName}")
+				StartInfo = new ProcessStartInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "InstallValidator.exe"), $"{LogFileName} {ResultsFlieName}")
 				{
 					RedirectStandardError = true,
 					UseShellExecute = false,
@@ -124,5 +123,3 @@ namespace SIL.InstallValidator
 		}
 	}
 }
-
-#endif

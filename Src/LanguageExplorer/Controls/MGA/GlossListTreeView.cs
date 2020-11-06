@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
@@ -101,11 +102,11 @@ namespace LanguageExplorer.Controls.MGA
 			}
 			catch (XmlException xex)
 			{
-				MessageBox.Show(xex.Message);
+				MessageBoxUtils.Show(xex.Message);
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message);
+				MessageBoxUtils.Show(ex.Message);
 			}
 		}
 

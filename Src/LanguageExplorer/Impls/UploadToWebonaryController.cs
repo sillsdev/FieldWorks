@@ -20,6 +20,7 @@ using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Impls
 {
@@ -170,7 +171,7 @@ namespace LanguageExplorer.Impls
 				dynamic fileToSign = new JObject();
 				// ReSharper disable once AssignNullToNotNullAttribute - This file has a filename, the OS told us so.
 				var relativeFilePath = Path.Combine(model.SiteName, subFolder, Path.GetFileName(file));
-				if (MiscUtils.IsWindows)
+				if (Platform.IsWindows)
 				{
 					relativeFilePath = relativeFilePath.Replace('\\', '/');
 				}

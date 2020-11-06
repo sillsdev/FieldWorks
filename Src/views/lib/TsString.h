@@ -498,6 +498,10 @@ public:
 	{
 	}
 
+	virtual ~TsStrBase()
+	{
+	}
+
 	// IUnknown methods.
 	STDMETHODIMP_(UCOMINT32) AddRef(void);
 	STDMETHODIMP_(UCOMINT32) Release(void);

@@ -1,437 +1,51 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
-  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-  </PropertyGroup>
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{7CE209AF-EB05-4584-9444-966C0978757F}</ProjectGuid>
+    <UseWindowsForms>true</UseWindowsForms>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SIL.FieldWorks</RootNamespace>
-    <AssemblyName>FieldWorks</AssemblyName>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <Description>FieldWorks</Description>
+    <NoWarn>414</NoWarn>
     <NoWin32Manifest>true</NoWin32Manifest>
     <ApplicationIcon>BookOnCube.ico</ApplicationIcon>
-    <TargetFrameworkProfile />
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <OutputPath>..\..\Output\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\Output\Debug\FieldWorks.xml</DocumentationFile>
-    <ErrorReport>prompt</ErrorReport>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <OutputPath>..\..\Output\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <OutputPath>..\..\Output\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\Output\Debug\FieldWorks.xml</DocumentationFile>
-    <ErrorReport>prompt</ErrorReport>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <OutputPath>..\..\Output\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Mono.Posix">
-      <HintPath>..\..\packages\Mono.Posix-4.5.4.5.0\lib\net45\Mono.Posix.dll</HintPath>
-    </Reference>
-    <Reference Include="L10NSharp, Version=4.1.0.0, Culture=neutral, PublicKeyToken=fd0b3e309a5b7c28, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\L10NSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="LanguageExplorer, Version=10.0.0.37221, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\LanguageExplorer.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Core.Desktop">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Windows.Forms.WritingSystems, Version=6.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.Windows.Forms.WritingSystems.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="SIL.Lexicon">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.Lexicon.dll</HintPath>
-    </Reference>
-    <Reference Include="ViewsInterfaces, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
-    </Reference>
-    <Reference Include="FwCoreDlgs, Version=6.1.1.27759, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
-    </Reference>
-    <Reference Include="FwResources, Version=6.1.1.30858, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FwResources.dll</HintPath>
-    </Reference>
-    <Reference Include="FwUtils, Version=6.1.1.19918, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="Geckofx-Core">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Geckofx-Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Geckofx-Winforms">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Geckofx-Winforms.dll</HintPath>
-    </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="ParatextShared, Version=7.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\ParatextShared.dll</HintPath>
-    </Reference>
-    <Reference Include="RootSite, Version=6.1.1.19944, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\RootSite.dll</HintPath>
-    </Reference>
-    <Reference Include="ScriptureUtils, Version=8.0.9.21108, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\ScriptureUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Windows.Forms">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.Windows.Forms.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Windows.Forms.Keyboarding">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.Windows.Forms.Keyboarding.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.WritingSystems">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.WritingSystems.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Net" />
+    <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="All" />
+    <PackageReference Include="SIL.Chorus.l10ns" Version="3.0.1" GeneratePathProperty="true" />
+    <PackageReference Include="SIL.FwBuildTasks" Version="10.0.0" PrivateAssets="All" />
+    <PackageReference Include="SIL.libpalaso.l10ns" Version="6.0.0" GeneratePathProperty="true" />
+    <PackageReference Include="vswhere" Version="2.8.4" PrivateAssets="All" />
     <Reference Include="System.Runtime.Remoting" />
-    <Reference Include="System.Runtime.Serialization">
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.ServiceModel">
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="icu.net">
-      <HintPath>..\..\Output\Debug\icu.net.dll</HintPath>
-    </Reference>
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="ApplicationBusyDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ApplicationBusyDialog.Designer.cs">
-      <DependentUpon>ApplicationBusyDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ButtonPress.cs" />
-    <Compile Include="ChooseLangProjectDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ChooseLangProjectDialog.Designer.cs">
-      <DependentUpon>ChooseLangProjectDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ComposablePartCatalogExtensions.cs" />
-    <Compile Include="FieldWorksManager.cs" />
-    <Compile Include="FwChooseAnthroListCtrl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="FwChooseAnthroListCtrl.Designer.cs">
-      <DependentUpon>FwChooseAnthroListCtrl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FwDeleteProjectDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FwNewLangProject.Designer.cs">
-      <DependentUpon>FwNewLangProject.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FwNewLangProject.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FwNewLangProjMoreWsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="FwNewLangProjMoreWsControl.Designer.cs">
-      <DependentUpon>FwNewLangProjMoreWsControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FwNewLangProjWritingSystemsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="FwNewLangProjWritingSystemsControl.Designer.cs">
-      <DependentUpon>FwNewLangProjWritingSystemsControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FwNewProjectProjectNameControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="FwNewProjectProjectNameControl.Designer.cs">
-      <DependentUpon>FwNewProjectProjectNameControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FwRestoreProjectSettings.cs" />
-    <Compile Include="LexicalProvider\EntryType.cs" />
-    <Compile Include="LexicalProvider\ILexicalServiceProvider.cs" />
-    <Compile Include="LexicalProvider\LexemeType.cs" />
-    <Compile Include="LexicalProvider\LexGloss.cs" />
-    <Compile Include="LexicalProvider\LexicalEntry.cs" />
-    <Compile Include="LexicalProvider\LexicalProviderManager.cs" />
-    <Compile Include="LexicalProvider\LexSense.cs" />
-    <Compile Include="LexicalProvider\RelatedWords.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MissingOldFieldWorksDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MissingOldFieldWorksDlg.Designer.cs">
-      <DependentUpon>MissingOldFieldWorksDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MoveProjectsDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MoveProjectsDlg.Designer.cs">
-      <DependentUpon>MoveProjectsDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LexicalProvider\ILexicalProvider.cs" />
-    <Compile Include="FieldWorks.cs" />
-    <Compile Include="ProjectLocationDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ProjectLocationDlg.Designer.cs">
-      <DependentUpon>ProjectLocationDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="RealSplashScreen.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="WaitFor.cs" />
-    <Compile Include="WelcomeToFieldWorksDlg.Designer.cs">
-      <DependentUpon>WelcomeToFieldWorksDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="WindowsInstallerQuery.cs" />
-    <Compile Include="WizardStep.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="WizardStep.Designer.cs">
-      <DependentUpon>WizardStep.cs</DependentUpon>
-    </Compile>
-    <None Include="App.config" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ProjectMatch.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
+    <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RemoteRequest.cs" />
-    <Compile Include="WelcomeToFieldWorksDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
   </ItemGroup>
+
   <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ApplicationBusyDialog.resx">
-      <DependentUpon>ApplicationBusyDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ChooseLangProjectDialog.resx">
-      <DependentUpon>ChooseLangProjectDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwChooseAnthroListCtrl.resx">
-      <DependentUpon>FwChooseAnthroListCtrl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwDeleteProjectDlg.resx">
-      <DependentUpon>FwDeleteProjectDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwNewLangProject.resx">
-      <DependentUpon>FwNewLangProject.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwNewLangProjMoreWsControl.resx">
-      <DependentUpon>FwNewLangProjMoreWsControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwNewLangProjWritingSystemsControl.resx">
-      <DependentUpon>FwNewLangProjWritingSystemsControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwNewProjectProjectNameControl.resx">
-      <DependentUpon>FwNewProjectProjectNameControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LexicalProvider\RelatedWords.resx">
-      <DependentUpon>RelatedWords.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MissingOldFieldWorksDlg.resx">
-      <DependentUpon>MissingOldFieldWorksDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MoveProjectsDlg.resx">
-      <DependentUpon>MoveProjectsDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProjectLocationDlg.resx">
-      <DependentUpon>ProjectLocationDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
+    <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="RealSplashScreen.resx">
-      <DependentUpon>RealSplashScreen.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="WelcomeToFieldWorksDlg.resx">
-      <DependentUpon>WelcomeToFieldWorksDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="WizardStep.resx">
-      <DependentUpon>WizardStep.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+
   <ItemGroup>
-    <Content Include="BookOnCube.ico" />
-    <None Include="Resources\OpenFile.png" />
-    <None Include="Resources\DatabaseNew.png" />
-    <None Include="Resources\chorus32x32.png" />
-    <None Include="Resources\Bullet.png" />
-    <None Include="Resources\SendReceiveGetArrow32x32.png" />
-    <None Include="Resources\wait22trans.gif" />
-    <Content Include="SmallBookOnCube.ico" />
+    <ProjectReference Include="..\LanguageExplorer\LanguageExplorer.csproj" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="BuildInclude.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-	   Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
+
+  <Target Name="copyLibL10ns" AfterTargets="CoreCompile">
+  <ItemGroup>
+      <XliffFiles Include="$(SIL_Chorus_l10ns)/content/**/*.xlf" />
+      <XliffFiles Include="$(SIL_libpalaso_l10ns)/content/**/*.xlf" />
+  </ItemGroup>
+    <Copy SourceFiles="@(XliffFiles)" DestinationFiles="@(XliffFiles->'../../DistFiles/CommonLocalizations/%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
+  <Import Project="$(MSBuildThisFileDirectory)../../Build/RegFree.targets" Condition="'$(OS)'=='Windows_NT'" />
 </Project>

@@ -6,12 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using Paratext;
-using Paratext.LexicalClient;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Test.ProjectUnpacker;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
+using Rhino.Mocks;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
 {
@@ -54,9 +54,6 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". *******");
 			if (fDisposing && !IsDisposed)
 			{
-				// dispose managed and unmanaged objects
-				foreach (var scrText in Projects)
-					((PT7ScrTextWrapper)scrText).DisposePTObject();
 
 				Projects.Clear();
 			}
@@ -72,7 +69,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// ------------------------------------------------------------------------------------
 		public string ProjectsDirectory
 		{
-			get { return MiscUtils.IsUnix ? "~/MyParatextProjects/" : @"c:\My Paratext Projects\"; }
+			get { return Platform.IsUnix ? "~/MyParatextProjects/" : @"c:\My Paratext Projects\"; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -181,7 +178,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			bool editable, bool isResource, string booksPresent)
 		{
 			AddProject(shortName, associatedProject, baseProject, editable, isResource,
-				booksPresent, string.IsNullOrEmpty(baseProject) ? Paratext.ProjectType.Standard : Paratext.ProjectType.BackTranslation);
+				booksPresent, string.IsNullOrEmpty(baseProject) ? Paratext.Data.ProjectType.Standard : Paratext.Data.ProjectType.BackTranslation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -190,34 +187,59 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public void AddProject(string shortName, string associatedProject, string baseProject,
-			bool editable, bool isResource, string booksPresent, Utilities.Enum<Paratext.ProjectType> translationType)
+			bool editable, bool isResource, string booksPresent, PtxUtils.Enum<Paratext.Data.ProjectType> translationType)
 		{
-			ScrText scrText = new ScrText();
-			scrText.Name = shortName;
-
+			var scrText = MockRepository.GenerateMock<IScrText>();
+			scrText.Stub(st => st.Name).Return(shortName);
 			if (!string.IsNullOrEmpty(associatedProject))
-				scrText.AssociatedLexicalProject = new AssociatedLexicalProject(LexicalAppType.FieldWorks, associatedProject);
-			// Don't know how to implement a test involving baseProject now that BaseTranslation is gone from the PT API.
-			// However all clients I can find so far pass null.
+			{
+				var lexProj = MockRepository.GenerateMock<LexicalProject>();
+				lexProj.Stub(lp => lp.ProjectId).Return(associatedProject);
+				lexProj.Stub(lp => lp.ProjectType).Return("FieldWorks");
+				lexProj.Stub(lp => lp.ToString()).Return($"FieldWorks:{lexProj.ProjectId}");
+				scrText.Stub(st => st.AssociatedLexicalProject).Return(lexProj);
+			}
 			if (!string.IsNullOrEmpty(baseProject))
 			{
-				//scrText.BaseTranslation = new BaseTranslation(derivedTranslationType, baseProject, string.Empty);
 				var baseProj = Projects.Select(x => x.Name == baseProject).FirstOrDefault();
 				Assert.That(baseProj, Is.Not.Null);
-				scrText.TranslationInfo = new TranslationInformation(translationType, baseProject, string.Empty);
-				Assert.That(scrText.TranslationInfo.BaseProjectName, Is.EqualTo(baseProject));
+				var translationInfoMock = MockRepository.GenerateStub<ITranslationInfo>(translationType, baseProject);
+				translationInfoMock.Stub(ti => ti.BaseProjectName).Return(baseProject);
+				scrText.Stub(st => st.TranslationInfo).Return(translationInfoMock);
 			}
 			else
 			{
-				scrText.TranslationInfo = new TranslationInformation(translationType);
+				var translationInfo = MockRepository.GenerateMock<ITranslationInfo>();
+				if (Enum.TryParse(translationType.InternalValue, out ProjectType projectTypeEnum))
+				{
+					translationInfo.Stub(ti => ti.Type).Return(projectTypeEnum);
+					scrText.TranslationInfo = translationInfo;
+				}
+				else
+				{
+					Assert.Fail("Testing unsupported Paratext.Data.ProjectType");
+				}
 			}
 
-			scrText.Editable = editable;
+			scrText.Stub(st => st.Editable).Return(editable);
 			scrText.SetParameterValue("ResourceText", isResource ? "T" : "F");
 			if (booksPresent != null)
-				scrText.BooksPresent = booksPresent;
+			{
+				var booksPresentSet = MockRepository.GenerateMock<IScriptureProviderBookSet>();
+				var books = new List<int>();
+				for (var i = 0; i < booksPresent.Length; ++i)
+				{
+					if (booksPresent[i] == '1')
+					{
+						books.Add(i + 1); // Book numbers start at 1 not 0
+					}
+				}
 
-			Projects.Add(new PT7ScrTextWrapper(scrText));
+				booksPresentSet.Stub(bps => bps.SelectedBookNumbers).Return(books);
+				scrText.Stub(st => st.BooksPresentSet).Return(booksPresentSet);
+			}
+
+			Projects.Add(scrText);
 		}
 		#endregion
 	}
@@ -294,51 +316,6 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			Assert.AreEqual("SOUP", found.Name);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests the GetWritableShortNames method on the ParatextHelper.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetWritableShortNames()
-		{
-			if (ScriptureProvider.VersionInUse >= new Version(8, 0))
-				Assert.Ignore("This test is insufficiently mocked and uses Paratext7 data with Paratext8 logic if Paratext8 is installed.");
-			m_ptHelper.AddProject("MNKY");
-			m_ptHelper.AddProject("SOUP", "Monkey Soup", null, true, false);
-			m_ptHelper.AddProject("TWNS", null, null, false, false);
-			m_ptHelper.AddProject("LNDN", null, null, false, true);
-			m_ptHelper.AddProject("Mony", null, null, true, true);
-			m_ptHelper.AddProject("Grk7"); // Considered a source language text so should be ignored
-			m_ptHelper.AddProject("Sup");
-
-			ValidateEnumerable(ParatextHelper.WritableShortNames, new[] { "MNKY", "Sup" });
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests the IsProjectWritable method on the ParatextHelper.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void IsProjectWritable()
-		{
-			if (ScriptureProvider.VersionInUse >= new Version(8, 0))
-				Assert.Ignore("This test is insufficiently mocked and uses Paratext7 data with Paratext8 logic if Paratext8 is installed.");
-			m_ptHelper.AddProject("MNKY");
-			m_ptHelper.AddProject("SOUP", "Monkey Soup", null, true, false);
-			m_ptHelper.AddProject("TWNS", null, null, false, false);
-			m_ptHelper.AddProject("LNDN", null, null, false, true);
-			m_ptHelper.AddProject("Mony", null, null, true, true);
-			m_ptHelper.AddProject("Grk7"); // Considered a source language text so should be ignored
-
-			Assert.IsTrue(ParatextHelper.IsProjectWritable("MNKY"));
-			Assert.IsFalse(ParatextHelper.IsProjectWritable("SOUP"));
-			Assert.IsFalse(ParatextHelper.IsProjectWritable("TWNS"));
-			Assert.IsFalse(ParatextHelper.IsProjectWritable("LNDN"));
-			Assert.IsFalse(ParatextHelper.IsProjectWritable("Mony"));
-			Assert.IsFalse(ParatextHelper.IsProjectWritable("Grk7"));
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -348,8 +325,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[Test]
 		public void GetProjectsWithBooks()
 		{
-			//                                                         1         2         3         4         5         6         7         8
-			//                                                12345678901234567890123456789012345678901234567890123456789012345678901234567890
+			//                                                               1         2         3         4         5         6         7         8
+			//                                                      12345678901234567890123456789012345678901234567890123456789012345678901234567890
 			m_ptHelper.AddProject("MNKY", null, null, true, false, "0001001001010100010101010001110000000000000000000000000000000000000000000000");
 			m_ptHelper.AddProject("SOUP", null, null, true, false, "0000000000000000000000000000000000000000000000000000000000000000000000000000");
 			m_ptHelper.AddProject("DEUT", null, null, true, false, "0000000000000000000000000000000000000000000000000000000000000000001000000000");
@@ -396,37 +373,6 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
 			ParatextHelper.LoadProjectMappings(importSettings);
 			Assert.That(importSettings.ParatextScrProj, Is.Null);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test the ability to save and reload the Scripture and BT Paratext 6 projects
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Category("LongRunning")]
-		public void LoadParatextMappings_Normal()
-		{
-			if (ScriptureProvider.VersionInUse >= new Version(8, 0))
-				Assert.Ignore("This test uses data that is only valid for Paratext7. The test fails with Paratext8 installed.");
-			Unpacker.UnPackParatextTestProjects();
-
-			var stylesheet = new LcmStyleSheet();
-			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
-			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
-			Cache.LangProject.TranslatedScriptureOA.ImportSettingsOC.Add(importSettings);
-			importSettings.ParatextScrProj = "KAM";
-			ParatextHelper.LoadProjectMappings(importSettings);
-
-			ScrMappingList mappingList = importSettings.GetMappingListForDomain(ImportDomain.Main);
-			// Test to see that the projects are set correctly
-			Assert.AreEqual(44, mappingList.Count);
-
-			Assert.AreEqual(MarkerDomain.Default, mappingList[@"\c"].Domain);
-			Assert.AreEqual(MarkerDomain.Default, mappingList[@"\v"].Domain);
-			Assert.AreEqual(@"\f*", mappingList[@"\f"].EndMarker);
-			Assert.IsTrue(mappingList[@"\p"].IsInUse);
-			Assert.IsFalse(mappingList[@"\tb2"].IsInUse);
 		}
 
 		/// ------------------------------------------------------------------------------------

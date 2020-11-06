@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		}
 
 		/// <summary />
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureTeardown()
 		{
 			s1 = null;
@@ -45,13 +45,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Having different number of levels should throw an exception.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void NumberOfLevels()
 		{
-
 			Assert.IsFalse(s1 < s2);
 			s2.rgvsli = new SelLevInfo[3];
-			Assert.IsFalse(s1 < s2); // exception
+			Assert.That(() => s1 < s2, Throws.ArgumentException);
 		}
 
 		/// <summary>
@@ -59,7 +57,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// an exception.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void TopLevelParentObjects()
 		{
 			s1.rgvsli[1].ihvo = 1;
@@ -92,15 +89,15 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.IsFalse(s1 > s2);
 			Assert.IsFalse(s2 > s1);
 			s2.rgvsli[1].tag = 2;
-			Assert.IsFalse(s1 < s2);  // exception
+			Assert.That(() => s1 < s2, Throws.ArgumentException);
 		}
+
 
 		/// <summary>
 		/// Test different immediate parent objects. If the tags are different we expect
 		/// an exception.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void ImmediateParentObjects()
 		{
 			// make the top level parent the same
@@ -138,7 +135,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.IsFalse(s1 > s2);
 			Assert.IsFalse(s2 > s1);
 			s2.rgvsli[0].tag = 2;
-			Assert.IsFalse(s1 < s2);  // exception
+			Assert.That(() => s1 < s2, Throws.ArgumentException);
 		}
 
 		/// <summary>

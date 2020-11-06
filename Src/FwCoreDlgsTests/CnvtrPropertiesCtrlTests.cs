@@ -10,8 +10,8 @@ using NUnit.Framework;
 using SilEncConverters40;
 
 namespace SIL.FieldWorks.FwCoreDlgs
-{
-	/// <summary>
+			{
+		/// <summary>
 	/// Class for testing the CnvtrPropertiesCtrl
 	/// </summary>
 	[TestFixture]
@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Creates and loads a set of dummy converters to test the
 		/// <see cref="CnvtrPropertiesCtrl"/> class.
 		/// </summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			var encConverters = new EncConverters();
@@ -38,17 +38,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// there won't be any conceivable conflict with user chosen names.  Inconceivable
 			// conflicts might still happen, but...)
 			RemoveTestConverters(encConverters, "Installed mappings before test setup:");
-			string[] ccFileContents = { "'c' > 'C'" };
+			string[] ccFileContents = {"'c' > 'C'"};
 			m_ccFileName = CreateTempFile(ccFileContents, "cct");
 			encConverters.AddConversionMap("ZZZUnitTestCC", m_ccFileName, ConvType.Legacy_to_Unicode, "SIL.cc", string.Empty, string.Empty, ProcessTypeFlags.UnicodeEncodingConversion);
 
 			string[] mapFileContents = {
-				"EncodingName	'ZZZUnitTestText'",
-				"DescriptiveName	'Silly test file'",
-				"ByteDefault		'?'",
-				"UniDefault		replacement_character",
-				"0x80	<>	euro_sign"
-			};
+										   "EncodingName	'ZZZUnitTestText'",
+										   "DescriptiveName	'Silly test file'",
+										   "ByteDefault		'?'",
+										   "UniDefault		replacement_character",
+										   "0x80	<>	euro_sign"
+									   };
 			m_mapFileName = CreateTempFile(mapFileContents, "map");
 			encConverters.AddConversionMap("ZZZUnitTestMap", m_mapFileName, ConvType.Legacy_to_from_Unicode, "SIL.map", string.Empty, string.Empty, ProcessTypeFlags.UnicodeEncodingConversion);
 
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// recognizes for now.
 			encConverters.AddCompoundConverterStep("ZZZUnitTestCompound", "ZZZUnitTestCC", true, NormalizeFlags.None);
 
-			encConverters.Remove("BogusTecKitFile");    // shouldn't exist, but...
+			encConverters.Remove("BogusTecKitFile");	// shouldn't exist, but...
 
 			m_myDlg = new DummyAddCnvtrDlg();
 			m_myCtrl = new DummyCnvtrPropertiesCtrl
@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Clean up after running all the tests.
 		/// </summary>
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureTeardown()
 		{
 			EncConverters encConverters;
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			m_myDlg?.Dispose();
-			m_myDlg = null;
+				m_myDlg = null;
 
 			try
 			{
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			encConverters.Remove("ZZZUnitTestMap");
 			encConverters.Remove("ZZZUnitTestICU");
 			encConverters.Remove("ZZZUnitTestCompound");
-			encConverters.Remove("ZZZUnitTestBogusTecKitFile"); // shouldn't exist, but...
+			encConverters.Remove("ZZZUnitTestBogusTecKitFile");	// shouldn't exist, but...
 #if !QUIET
 			Console.WriteLine("{0}", testMessage);
 			foreach (var name in encConverters.Mappings)
@@ -415,17 +415,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 			}
 
-			/// <summary>
+		/// <summary>
 			/// Override this for testing without UI
-			/// </summary>
+		/// </summary>
 			protected override DialogResult ShowMessage(string sMessage, string sTitle, MessageBoxButtons buttons)
-			{
+		{
 				return DialogResult.OK;
-			}
+		}
 
-			/// <summary>
+		/// <summary>
 			/// Helper method to enable us to set a mapping file for testing purposes
-			/// </summary>
+		/// </summary>
 			internal void SetMappingFile(string sMapping)
 			{
 				m_cnvtrPropertiesCtrl.txtMapFile.Text = sMapping;
@@ -441,14 +441,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			internal void setCboConverter(ConverterType setTo)
 			{
 				for (var i = 0; i < cboConverter.Items.Count; i++)
-				{
+		{
 					if (((CnvtrTypeComboItem)cboConverter.Items[i]).Type == setTo)
-					{
+			{
 						cboConverter.SelectedIndex = i;
 						break;
 					}
 					cboConverter.SelectedIndex = 0;
-				}
+	}
 			}
 		}
 	}

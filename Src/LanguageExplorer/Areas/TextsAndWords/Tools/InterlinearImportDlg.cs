@@ -7,9 +7,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using DialogAdapters;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
@@ -32,7 +32,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 
 		private void m_btnBrowse_Click(object sender, EventArgs e)
 		{
-			using (IOpenFileDialog dlg = new OpenFileDialogAdapter())
+			using (var dlg = new OpenFileDialogAdapter())
 			{
 				dlg.DefaultExt = "flextext";
 				dlg.Filter = ResourceHelper.BuildFileFilter(FileFilterType.FLExText, FileFilterType.XML, FileFilterType.AllFiles);

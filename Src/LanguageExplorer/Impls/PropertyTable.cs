@@ -359,7 +359,7 @@ namespace LanguageExplorer.Impls
 			{
 				//don't do anything
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				var activeForm = Form.ActiveForm;
 				if (activeForm == null)
@@ -465,7 +465,6 @@ namespace LanguageExplorer.Impls
 		/// <param name="defaultValue"></param>
 		private T GetValueInternal<T>(string key, T defaultValue)
 		{
-			T result;
 			var prop = GetProperty(key);
 			if (prop == null)
 			{

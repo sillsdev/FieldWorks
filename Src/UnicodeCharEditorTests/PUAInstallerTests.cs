@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		///<summary>
 		/// Rename any existing CustomChars.xml file, and restore ICU Data files to pristine purity.
 		///</summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void Setup()
 		{
 			FwRegistryHelper.Initialize();
@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		///<summary>
 		/// Restore the original CustomChars.xml file, and install it.
 		///</summary>
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void Teardown()
 		{
 			RestoreIcuData(m_sCustomCharsFile, m_sCustomCharsBackup);

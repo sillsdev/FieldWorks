@@ -13,10 +13,10 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using DialogAdapters;
 using Icu;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.Resources;
 using SIL.Keyboarding;
 using SIL.LCModel;
@@ -533,7 +533,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>Hold a reference to the writing system manager</summary>
 		private WritingSystemManager m_wsManager;
 
-		private IOpenFileDialog m_openFileDialog;
+		private OpenFileDialogAdapter m_openFileDialog;
 		private CheckBoxColumnHeaderHandler m_chkBoxColHdrHandler;
 
 		#endregion
@@ -811,7 +811,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private void btnAddCharacters_Click(object sender, EventArgs e)
 		{
-			List<string> chars;
 			// ENHANCE: Make each tab's add code a different method.
 			switch (tabCtrlAddFrom.SelectedIndex)
 			{

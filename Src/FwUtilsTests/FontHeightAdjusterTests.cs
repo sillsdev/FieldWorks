@@ -11,6 +11,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -30,7 +31,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Set up some dummy styles for testing purposes
 		/// </summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			m_stylesheet = new TestFwStylesheet();
@@ -91,7 +92,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private static int GetUbuntuVersion()
 		{
-			if (!MiscUtils.IsUnix)
+			if (!Platform.IsUnix)
 			{
 				return 0;
 			}
@@ -111,8 +112,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 					if (value.Contains("."))
 					{
 						return int.Parse(value.Split('.')[0]);
-					}
 				}
+			}
 			}
 			catch (Exception)
 			{

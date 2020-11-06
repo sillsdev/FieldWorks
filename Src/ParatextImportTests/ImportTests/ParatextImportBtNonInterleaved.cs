@@ -705,12 +705,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ScriptureUtilsException),
-			ExpectedMessage = "Back translation does not correspond to a vernacular paragraph:(\\r)?\\n" +
-			"\\tFirst Scripture Section(\\r)?\\n" +
-			"The style for a back translation paragraph must match the style for the corresponding vernacular paragraph.(\\r)?\\n" +
-			"No vernacular paragraph could be found having style \"Section Head\" and containing \"EXO 1:1\".",
-			MatchType = MessageMatch.Regex)]
 		public void SectionHeadTypeMismatch()
 		{
 			// Set up the vernacular to match the BT we will import.
@@ -742,7 +736,10 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("First Scripture Section", @"\bts");
 
 			// ************** finalize **************
-			m_importer.FinalizeImport();
+			Assert.That(() => { m_importer.FinalizeImport(); }, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match("Back translation does not correspond to a vernacular paragraph:(\\r)?\\n" +
+			"\\tFirst Scripture Section(\\r)?\\n" +
+			"The style for a back translation paragraph must match the style for the corresponding vernacular paragraph.(\\r)?\\n" +
+			"No vernacular paragraph could be found having style \"Section Head\" and containing \"EXO 1:1\"."));
 		}
 
 		/// ------------------------------------------------------------------------------------

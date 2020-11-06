@@ -9,11 +9,11 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using DialogAdapters;
 using LanguageExplorer.Controls;
 using LanguageExplorer.SfmToXml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
@@ -131,7 +131,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 
 		private string GetFiles(string currentFiles)
 		{
-			using (IOpenFileDialog openFileDialog = new OpenFileDialogAdapter())
+			using (var openFileDialog = new OpenFileDialogAdapter())
 			{
 				openFileDialog.Filter = ResourceHelper.BuildFileFilter(FileFilterType.InterlinearSfm, FileFilterType.AllFiles);
 				openFileDialog.CheckFileExists = true;
@@ -243,7 +243,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 
 		private string GetFile(string currentFile, string pathForInitialDirectory, FileFilterType[] types, bool checkFileExists, string title, Func<string, bool> isValidFile)
 		{
-			using (IOpenFileDialog openFileDialog = new OpenFileDialogAdapter())
+			using (var openFileDialog = new OpenFileDialogAdapter())
 			{
 				openFileDialog.Filter = ResourceHelper.BuildFileFilter(types);
 				openFileDialog.CheckFileExists = checkFileExists;

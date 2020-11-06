@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="Restore" Condition="'$(OS)'=='Unix'" />
+  <Target Name="Build" Condition="'$(OS)'=='Unix'" >
+    <Exec Command="cd .. &amp;&amp; autoreconf -isf &amp;&amp; ./configure &amp;&amp; make" />
+  </Target>
+</Project>

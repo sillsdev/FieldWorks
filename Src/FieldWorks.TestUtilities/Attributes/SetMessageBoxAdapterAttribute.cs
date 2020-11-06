@@ -4,6 +4,7 @@
 
 using System;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace FieldWorks.TestUtilities.Attributes
@@ -25,14 +26,14 @@ namespace FieldWorks.TestUtilities.Attributes
 		{
 		}
 
-		/// <summary />
+		/// <summary/>
 		public SetMessageBoxAdapterAttribute(Type adapterType)
 		{
 			m_AdapterType = adapterType;
 		}
 
 		/// <inheritdoc />
-		public override void BeforeTest(TestDetails testDetails)
+		public override void BeforeTest(ITest testDetails)
 		{
 			base.BeforeTest(testDetails);
 			m_PreviousAdapter = s_CurrentAdapter;
@@ -41,7 +42,7 @@ namespace FieldWorks.TestUtilities.Attributes
 		}
 
 		/// <inheritdoc />
-		public override void AfterTest(TestDetails testDetails)
+		public override void AfterTest(ITest testDetails)
 		{
 			base.AfterTest(testDetails);
 

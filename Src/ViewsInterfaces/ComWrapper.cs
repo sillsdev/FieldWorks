@@ -116,13 +116,11 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 		public IPicture Picture { get; }
 
 		#region IDisposable Members
-		#if DEBUG
 		/// <summary/>
 		~ComPictureWrapper()
 		{
 			Dispose(false);
 		}
-		#endif
 
 		/// <summary/>
 		public bool IsDisposed { get; private set; }

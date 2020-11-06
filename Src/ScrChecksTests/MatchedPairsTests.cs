@@ -24,7 +24,7 @@ namespace SILUBS.ScriptureChecks
 		private MatchedPairList m_pairList;
 
 		/// <summary />
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			m_pairList = MatchedPairList.Load(kXml, "Test WS");

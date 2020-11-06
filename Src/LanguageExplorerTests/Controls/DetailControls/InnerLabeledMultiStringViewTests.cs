@@ -74,7 +74,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			//SUT
 			InnerLabeledMultiStringView.EliminateExtraStyleAndWsInfo(Cache.MetaDataCacheAccessor, args, LexEntryTags.kflidLiftResidue);
 			Assert.False(TsStringHelper.TsStringsAreEqual(m_tss, args.TsString, out var differences), differences);
-			Assert.That(differences, Is.StringContaining("TsStrings have different number of runs"));
+			Assert.That(differences, Does.Contain("TsStrings have different number of runs"));
 		}
 
 		[Test]
@@ -86,7 +86,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			//SUT
 			InnerLabeledMultiStringView.EliminateExtraStyleAndWsInfo(Cache.MetaDataCacheAccessor, args, LexEntryTags.kflidCitationForm);
 			Assert.False(TsStringHelper.TsStringsAreEqual(m_tss, args.TsString, out var differences), differences);
-			Assert.That(differences, Is.StringContaining("TsStrings have different number of runs"));
+			Assert.That(differences, Does.Contain("TsStrings have different number of runs"));
 		}
 
 		[Test]

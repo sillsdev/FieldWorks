@@ -385,7 +385,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 					}
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				wsName = string.Empty;
 			}

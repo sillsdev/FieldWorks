@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (numberOfProps > 0)
 				{
 					m_TextProps = textProps;
-				}
+			}
 			}
 
 			public SelectionHelper SelectionHelper { get; }
@@ -230,7 +230,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				else
 				{
 					return m_initialSelection.SelectionHelper.IsRange ? selHelper : new SelectionHelper(m_initialSelection.SelectionHelper);
-				}
+			}
 			}
 			else
 			{
@@ -317,8 +317,8 @@ namespace SIL.FieldWorks.Common.RootSites
 				if (attribute is IBusUnderlineAttribute iBusUnderlineAttribute && iBusUnderlineAttribute.Underline == IBusAttrUnderline.None)
 				{
 					IsCommittingKeyboard = true;
-				}
 			}
+		}
 		}
 
 		#region IIbusEventHandler implementation

@@ -11,6 +11,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -57,7 +58,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			// Set these now because the Graphics object will be locked below.
 			m_rcDst = m_rcSrc = new Rect(0, 0, (int)e.Graphics.DpiX, (int)e.Graphics.DpiY);
-			var dpix = MiscUtils.IsUnix ? 72 : (int)e.Graphics.DpiX;
+			var dpix = Platform.IsUnix ? 72 : (int)e.Graphics.DpiX;
 			m_dxpAvailWidth = PixelsFrom100ths(e.MarginBounds.Width, dpix);
 
 			// Create and initialize a print context.
@@ -277,7 +278,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			printable.Offset((int)(e.PageSettings.HardMarginX), (int)(e.PageSettings.HardMarginY));
 
 			Rectangle relative;
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				dpiX = 72;
 				dpiY = 72;

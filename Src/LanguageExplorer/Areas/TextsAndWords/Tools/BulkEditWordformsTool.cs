@@ -134,7 +134,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
-		public Image Icon => Images.BrowseView.SetBackgroundColor(Color.Magenta);
+		public Image Icon => SIL.FieldWorks.Resources.Images.BrowseView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
 

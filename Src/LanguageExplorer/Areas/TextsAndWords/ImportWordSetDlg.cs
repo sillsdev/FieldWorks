@@ -8,10 +8,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using DialogAdapters;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Impls;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
@@ -189,7 +189,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 
 		private void btnChooseFiles_Click(object sender, System.EventArgs e)
 		{
-			using (IOpenFileDialog dlg = new OpenFileDialogAdapter())
+			using (var dlg = new OpenFileDialogAdapter())
 			{
 				dlg.Multiselect = true;
 				dlg.Filter = ResourceHelper.FileFilter(FileFilterType.Text);

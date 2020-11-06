@@ -1426,7 +1426,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				{
 					return;
 				}
-				if (MiscUtils.IsUnix)
+				if (Platform.IsUnix)
 				{
 					using (var pageDlg = new PageSetupDialog())
 					{

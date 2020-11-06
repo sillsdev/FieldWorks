@@ -2,7 +2,7 @@ if [ "$RUNMODE" = "INSTALLED" ]
 then
 	GECKOFX="/usr/lib/fieldworks"
 else
-	GECKOFX="${BASE}/Output_${ARCH}/${BUILD}"
+	GECKOFX="${BASE}/Output_${ARCH}/${BUILD}/${FRAMEWORK_VERSION}"
 fi
 
 BITS=64
@@ -10,7 +10,7 @@ if [ "$(arch)" != "x86_64" ]; then
   BITS=32
 fi
 
-XULRUNNER="${GECKOFX}/Firefox-Linux${BITS}"
+XULRUNNER="${GECKOFX}/Firefox"
 LD_LIBRARY_PATH="${XULRUNNER}:${LD_LIBRARY_PATH}"
 if [ "$RUNMODE" != "PACKAGING" ]
 then

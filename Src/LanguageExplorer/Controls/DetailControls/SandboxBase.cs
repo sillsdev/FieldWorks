@@ -21,6 +21,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -732,7 +733,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			base.OnHandleCreated(e);
 			var activeForm = PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window);
-			if (MiscUtils.IsMono && activeForm != null)
+			if (Platform.IsMono && activeForm != null)
 			{
 				activeForm.DesiredControl = this;
 			}
@@ -746,7 +747,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			base.OnHandleDestroyed(e);
 			var activeForm = PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window);
-			if (MiscUtils.IsMono && activeForm != null)
+			if (Platform.IsMono && activeForm != null)
 			{
 				activeForm.DesiredControl = null;
 			}
@@ -774,7 +775,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void SubscribeToRootSiteEventHandlerEvents()
 		{
-			if (!MiscUtils.IsMono)
+			if (!Platform.IsMono)
 			{
 				return;
 			}
@@ -815,7 +816,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (disposing)
 			{
 				var activeForm = PropertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window);
-				if (MiscUtils.IsMono && activeForm != null)
+				if (Platform.IsMono && activeForm != null)
 				{
 					activeForm.DesiredControl = null;
 				}

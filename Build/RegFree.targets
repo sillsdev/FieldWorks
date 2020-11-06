@@ -1,30 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
-	<UsingTask TaskName="RegFree" AssemblyFile="FwBuildTasks.dll" />
-
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
-		<DistFilesDir Condition="'$(OutDir)' != ''">$(OutDir)../../DistFiles</DistFilesDir>
-		<DistFilesDir Condition="'$(OutDir)' == ''">$(MSBuildThisFileDirectory)../DistFiles</DistFilesDir>
+		<DistFilesDir>$(MSBuildThisFileDirectory)../DistFiles</DistFilesDir>
 	</PropertyGroup>
-	<!-- This file is included in BuildInclude.targets for each of our EXEs which use our COM components.
+	<!-- This file is included in several .csproj files for each of our EXEs which use our COM components.
 	It runs a custom task to create a manifest, then EXEC's a program to embed it in the EXE itself.
 	This allows our programs to run without registering our COM DLLs, which in turn allows different
 	versions of FieldWorks to coexist on the same computer. This is only relevant for Windows.
 	Manifest files should have a different name from the dll to allow windows XP to load them.
 	See: "Registration-Free Activation of COM Components: A Walkthrough"(http://msdn.microsoft.com/en-us/library/ms973913.aspx) Aug 2014 -->
 	<ItemGroup>
-		<DependentAssemblies Include="$(OutDir)FwKernel.X.manifest"/>
-		<DependentAssemblies Include="$(OutDir)Views.X.manifest"/>
+		<DependentAssemblies Include="$(OutputPath)FwKernel.X.manifest" />
+		<DependentAssemblies Include="$(OutputPath)Views.X.manifest" />
+		<Fragments Include="$(DistFilesDir)/*.fragment.manifest" />
 	</ItemGroup>
-	<ItemGroup>
-		<Fragments Include="$(DistFilesDir)/*.fragment.manifest"/>
-	</ItemGroup>
+
 	<Target Name="CreateManifest" Condition="'$(OS)'=='Windows_NT'" Inputs="@(DependentAssemblies)" Outputs="$(Executable).manifest">
-		<RegFree Executable="$(Executable)" DependentAssemblies="@(DependentAssemblies)" Fragments="@(Fragments)" Platform="$(Platform)" MSBuildArchitecture="$(Platform)"/>
+		<RegFree Executable="$(TargetPath)" DependentAssemblies="@(DependentAssemblies)" Fragments="@(Fragments)" />
 	</Target>
-	<Target Name="AttachManifest" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="CreateManifest">
-		<Exec Command="mt.exe -outputresource:$(Executable) -manifest $(Executable).manifest"/>
-	</Target>
-	<Target Name="RegFree" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="CreateManifest;AttachManifest">
+
+	<Target Name="AttachManifest" Condition="'$(OS)'=='Windows_NT'" AfterTargets="CoreBuild" DependsOnTargets="CreateManifest">
+		<CpuArchitecture>
+			<Output TaskParameter="Value" PropertyName="arch" />
+		</CpuArchitecture>
+		<Exec Command='"$(VSWhereDir)vswhere.exe" -version "[15.0,16.999)" -latest -property installationPath' ConsoleToMSBuild="true" EchoOff="true" StandardOutputImportance="Normal">
+			<Output TaskParameter="ConsoleOutput" PropertyName="InstallationPath" />
+		</Exec>
+		<Exec Command="$(MSBuildThisFileDirectory)regfree.bat -outputresource:$(TargetFileName) -manifest $(TargetFileName).manifest"
+			EnvironmentVariables="InstallDir=&quot;$(InstallationPath)&quot;;arch=$(arch)"
+			WorkingDirectory="$(TargetDir)"/>
 	</Target>
 </Project>

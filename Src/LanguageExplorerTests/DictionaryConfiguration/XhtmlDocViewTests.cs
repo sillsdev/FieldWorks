@@ -315,7 +315,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 							_flexComponentParameters.PropertyTable.SetProperty("DictionaryPublicationLayout", tempConfigFile.Path);
 							File.WriteAllText(tempConfigFile.Path, configWithTestPub);
 							// SUT
-							Assert.That(docView.GetValidConfigurationForPublication("TestPub"), Is.StringContaining(tempConfigFile.Path));
+							Assert.That(docView.GetValidConfigurationForPublication("TestPub"), Does.Contain(tempConfigFile.Path));
 						}
 					}
 					finally
@@ -352,7 +352,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 						// DictionaryConfigurationListener.GetCurrentConfiguration() needs to know the currentContentControl.
 						File.WriteAllText(tempConfigFile.Path, configWithTestPub);
 						// SUT
-						Assert.That(docView.GetValidConfigurationForPublication(LanguageExplorerResources.AllEntriesPublication), Is.StringContaining(tempConfigFile.Path));
+						Assert.That(docView.GetValidConfigurationForPublication(LanguageExplorerResources.AllEntriesPublication), Does.Contain(tempConfigFile.Path));
 					}
 				}
 				finally
@@ -449,7 +449,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					// SUT
 					var validConfig = docView.GetValidConfigurationForPublication("TestPub");
 					Assert.That(validConfig, Is.Not.StringContaining(nonMatchedConfigFile.Path));
-					Assert.That(validConfig, Is.StringContaining(matchedConfigFile.Path));
+					Assert.That(validConfig, Does.Contain(matchedConfigFile.Path));
 				}
 			}
 		}

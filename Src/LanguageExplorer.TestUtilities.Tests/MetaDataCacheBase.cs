@@ -1,7 +1,6 @@
 // Copyright (c) 2006-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
 using NUnit.Framework;
 using SIL.LCModel.Core.KernelInterfaces;
 
@@ -18,14 +17,14 @@ namespace LanguageExplorer.TestUtilities.Tests
 		/// <summary>
 		/// If a test overrides this, it should call this base implementation.
 		/// </summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public virtual void FixtureSetup()
 		{
-			m_metaDataCache = MetaDataCache.CreateMetaDataCache("TestModel.xml");
+			m_metaDataCache = MetaDataCache.CreateMetaDataCache(MDCTestUtils.GetPathToTestFile("TestModel.xml"));
 		}
 
 		/// <summary />
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public virtual void FixtureTearDown()
 		{
 		}

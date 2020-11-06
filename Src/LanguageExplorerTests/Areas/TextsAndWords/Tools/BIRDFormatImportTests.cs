@@ -11,7 +11,6 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Schema;
 using LanguageExplorer.Areas.TextsAndWords.Tools;
-//using LanguageExplorerTests.Areas.TextsAndWords.Interlinear;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -168,11 +167,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 
 			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!MiscUtils.IsMono)
-			{
-				Assert.That(ex.Message, Is.EqualTo("The 'scrSectionType' attribute is invalid - The value 'invalid' is invalid according to its datatype 'scrSectionTypes' - The Enumeration constraint failed."));
-			}
+			Assert.That(ex.Message, Is.EqualTo("The 'scrSectionType' attribute is invalid - The value 'invalid' is invalid according to its datatype 'scrSectionTypes' - The Enumeration constraint failed."));
 		}
 
 		[Test]
@@ -196,11 +191,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 
 			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!MiscUtils.IsMono)
-			{
-				Assert.That(ex.Message, Is.EqualTo("The required attribute 'chapter' is missing."));
-			}
+			Assert.That(ex.Message, Is.EqualTo("The required attribute 'chapter' is missing."));
 		}
 
 		[Test]
@@ -212,11 +203,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 
 			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!MiscUtils.IsMono)
-			{
-				Assert.That(ex.Message, Is.EqualTo("The required attribute 'verse' is missing."));
-			}
+			Assert.That(ex.Message, Is.EqualTo("The required attribute 'verse' is missing."));
 		}
 
 		[Test]
@@ -228,11 +215,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 
 			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!MiscUtils.IsMono)
-			{
-				Assert.That(ex.Message, Is.EqualTo("The element 'words' has invalid child element 'scrMilestone'. List of possible elements expected: 'word'."));
-			}
+			Assert.That(ex.Message, Is.EqualTo("The element 'words' has invalid child element 'scrMilestone'. List of possible elements expected: 'word'."));
 		}
 
 		[Test]
@@ -244,11 +227,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 
 			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!MiscUtils.IsMono)
-			{
-				Assert.That(ex.Message, Is.EqualTo("The 'chapter' attribute is invalid - The value 'one' is invalid according to its datatype 'http://www.w3.org/2001/XMLSchema:integer' - The string 'one' is not a valid Integer value."));
-			}
+			Assert.That(ex.Message, Is.EqualTo("The 'chapter' attribute is invalid - The value 'one' is invalid according to its datatype 'http://www.w3.org/2001/XMLSchema:integer' - The string 'one' is not a valid Integer value."));
 		}
 
 		[Test]
@@ -260,11 +239,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 
 			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!MiscUtils.IsMono)
-			{
 				Assert.That(ex.Message, Is.EqualTo("The 'verse' attribute is invalid - The value 'one' is invalid according to its datatype 'http://www.w3.org/2001/XMLSchema:integer' - The string 'one' is not a valid Integer value."));
-			}
 		}
 
 		[Test]
@@ -302,11 +277,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 
 			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!MiscUtils.IsMono)
-			{
-				Assert.That(ex.Message, Is.EqualTo("The 'analysisStatus' attribute is invalid - The value 'invalid' is invalid according to its datatype 'analysisStatusTypes' - The Enumeration constraint failed."));
-			}
+			Assert.That(ex.Message, Is.EqualTo("The 'analysisStatus' attribute is invalid - The value 'invalid' is invalid according to its datatype 'analysisStatusTypes' - The Enumeration constraint failed."));
 		}
 
 		[Test]
@@ -314,10 +285,10 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 		{
 			//an interlinear text example xml string
 			const string xml = "<document><interlinear-text><paragraphs><paragraph><phrases><phrase><words>" +
-							"<word><item type='gls' lang='en' analysisStatus='humanApproved'/></word>" +
-							"<word><item type='gls' lang='en' analysisStatus='guessByStatisticalAnalysis'/></word>" +
-							"<word><item type='gls' lang='en' analysisStatus='guessByHumanApproved'/></word>" +
-						 "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+					"<word><item type='gls' lang='en' analysisStatus='humanApproved'/></word>" +
+					"<word><item type='gls' lang='en' analysisStatus='guessByStatisticalAnalysis'/></word>" +
+					"<word><item type='gls' lang='en' analysisStatus='guessByHumanApproved'/></word>" +
+				"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			var xmlReader = GetXmlReaderForTest(xml);
 			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));

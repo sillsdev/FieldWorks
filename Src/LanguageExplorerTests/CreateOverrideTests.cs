@@ -20,7 +20,7 @@ namespace LanguageExplorerTests
 		XElement _root;
 
 		/// <inheritdoc />
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			var folder = CreateTempTestFiles(typeof(LanguageExplorerTestsResources), "CreateOverrideTestData");

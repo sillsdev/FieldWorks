@@ -55,10 +55,9 @@ namespace LanguageExplorer.TestUtilities.Tests
 		/// This should test for any case where the given flid is not valid.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void GetClsNameForBadFlidTest()
 		{
-			m_metaDataCache.GetOwnClsName(50);
+			Assert.That(() => m_metaDataCache.GetOwnClsName(50), Throws.ArgumentException);
 		}
 
 		/// <summary />
@@ -79,6 +78,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 					Assert.IsTrue(flid > 0, "Wrong flid value: " + flid);
 				}
 			}
+
 			testFlidSize = flidSize;
 			using (var flids = MarshalEx.ArrayToNative<int>(testFlidSize))
 			{
@@ -90,6 +90,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 					Assert.IsTrue(flid > 0, "Wrong flid value: " + flid);
 				}
 			}
+
 			testFlidSize = flidSize + 1;
 			using (var flids = MarshalEx.ArrayToNative<int>(testFlidSize))
 			{
@@ -165,16 +166,36 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[Test]
 		public void GetFieldTypeTest()
 		{
-			Assert.AreEqual(CellarPropertyType.Boolean, (CellarPropertyType)m_metaDataCache.GetFieldType(2027), "Wrong field data type for Boolean data.");
-			Assert.AreEqual(CellarPropertyType.Integer, (CellarPropertyType)m_metaDataCache.GetFieldType(26002), "Wrong field data type for Integer data.");
-			Assert.AreEqual(CellarPropertyType.Time, (CellarPropertyType)m_metaDataCache.GetFieldType(2005), "Wrong field data type for Time data.");
-			Assert.AreEqual(CellarPropertyType.Guid, (CellarPropertyType)m_metaDataCache.GetFieldType(8002), "Wrong field data type for Guid data.");
-			Assert.AreEqual(CellarPropertyType.GenDate, (CellarPropertyType)m_metaDataCache.GetFieldType(13004), "Wrong field data type for GenDate data.");
-			Assert.AreEqual(CellarPropertyType.Binary, (CellarPropertyType)m_metaDataCache.GetFieldType(15002), "Wrong field data type for Binary data.");
-			Assert.AreEqual(CellarPropertyType.String, (CellarPropertyType)m_metaDataCache.GetFieldType(97008), "Wrong field data type for String data.");
-			Assert.AreEqual(CellarPropertyType.MultiString, (CellarPropertyType)m_metaDataCache.GetFieldType(97021), "Wrong field data type for MultiString data.");
-			Assert.AreEqual(CellarPropertyType.Unicode, (CellarPropertyType)m_metaDataCache.GetFieldType(1001), "Wrong field data type for Unicode data.");
-			Assert.AreEqual(CellarPropertyType.MultiUnicode, (CellarPropertyType)m_metaDataCache.GetFieldType(7001), "Wrong field data type for MultiUnicode data.");
+			Assert.AreEqual(CellarPropertyType.Boolean,
+				(CellarPropertyType)m_metaDataCache.GetFieldType(2027),
+				"Wrong field data type for Boolean data.");
+			Assert.AreEqual(CellarPropertyType.Integer,
+				(CellarPropertyType)m_metaDataCache.GetFieldType(26002),
+				"Wrong field data type for Integer data.");
+			Assert.AreEqual(CellarPropertyType.Time,
+				(CellarPropertyType)m_metaDataCache.GetFieldType(2005),
+				"Wrong field data type for Time data.");
+			Assert.AreEqual(CellarPropertyType.Guid,
+				(CellarPropertyType)m_metaDataCache.GetFieldType(8002),
+				"Wrong field data type for Guid data.");
+			Assert.AreEqual(CellarPropertyType.GenDate,
+				(CellarPropertyType)m_metaDataCache.GetFieldType(13004),
+				"Wrong field data type for GenDate data.");
+			Assert.AreEqual(CellarPropertyType.Binary,
+				(CellarPropertyType)m_metaDataCache.GetFieldType(15002),
+				"Wrong field data type for Binary data.");
+			Assert.AreEqual(CellarPropertyType.String,
+				(CellarPropertyType)m_metaDataCache.GetFieldType(97008),
+				"Wrong field data type for String data.");
+			Assert.AreEqual(CellarPropertyType.MultiString,
+				(CellarPropertyType)m_metaDataCache.GetFieldType(97021),
+				"Wrong field data type for MultiString data.");
+			Assert.AreEqual(CellarPropertyType.Unicode,
+				(CellarPropertyType)m_metaDataCache.GetFieldType(1001),
+				"Wrong field data type for Unicode data.");
+			Assert.AreEqual(CellarPropertyType.MultiUnicode,
+				(CellarPropertyType)m_metaDataCache.GetFieldType(7001),
+				"Wrong field data type for MultiUnicode data.");
 		}
 
 		/// <summary>
@@ -185,19 +206,23 @@ namespace LanguageExplorer.TestUtilities.Tests
 		{
 			// Exact match
 			var isValid = m_metaDataCache.get_IsValidClass(59004, 0);
-			Assert.IsTrue(isValid, "Object of type BaseClass should be able to be assigned to a field whose signature is BaseClass");
+			Assert.IsTrue(isValid,
+				"Object of type BaseClass should be able to be assigned to a field whose signature is BaseClass");
 
 			// Prevent use of base class when specific subclass is expected
 			isValid = m_metaDataCache.get_IsValidClass(59003, 0);
-			Assert.IsFalse(isValid, "Object of type BaseClass should NOT be able to be assigned to a field whose signature is ClassB");
+			Assert.IsFalse(isValid,
+				"Object of type BaseClass should NOT be able to be assigned to a field whose signature is ClassB");
 
 			// Mismatch
 			isValid = m_metaDataCache.get_IsValidClass(59003, 45);
-			Assert.IsFalse(isValid, "Object of type ClassL2 should NOT be able to be assigned to a field whose signature is ClassB");
+			Assert.IsFalse(isValid,
+				"Object of type ClassL2 should NOT be able to be assigned to a field whose signature is ClassB");
 
 			// Allow subclass when base class is expected
 			isValid = m_metaDataCache.get_IsValidClass(59005, 45);
-			Assert.IsTrue(isValid, "Object of type ClassL2 should be able to be assigned to a field whose signature is ClassL");
+			Assert.IsTrue(isValid,
+				"Object of type ClassL2 should be able to be assigned to a field whose signature is ClassL");
 
 			// Prevent assignment of object to field that is expecting a basic type
 			isValid = m_metaDataCache.get_IsValidClass(28002, 97);
@@ -208,10 +233,9 @@ namespace LanguageExplorer.TestUtilities.Tests
 		/// Check for validity of adding the given clid to an illegal field of 0.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void get_IsValidClassBadTest()
 		{
-			m_metaDataCache.get_IsValidClass(0, 0);
+			Assert.That(() => m_metaDataCache.get_IsValidClass(0, 0), Throws.ArgumentException);
 		}
 	}
 }

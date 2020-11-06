@@ -610,12 +610,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 			}
 		}
 
-		[Test, Ignore]
-		public void ImportNewUserConfirmedWordGlossMergeIntoAnalysisMatchingStemOfExistingAnalysis()
-		{
-
-		}
-
 		[Test]
 		public void ImportUnknownPhraseWholeSegmentNoVersion_MakesSeparateWords()
 		{

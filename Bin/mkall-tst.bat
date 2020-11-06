@@ -3,7 +3,7 @@
 time /T
 
 rem ***** Set FWROOT and BUILD_ROOT to the root of the FieldWorks project. *****
-call %0\..\_EnsureRoot.bat
+call %~dp0\_EnsureRoot.bat
 
 
 set FW_TEST_ERROR=

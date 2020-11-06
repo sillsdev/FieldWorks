@@ -5,6 +5,7 @@
 using System;
 using System.Threading;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using SIL.PlatformUtilities;
 
 namespace FieldWorks.TestUtilities.Attributes
@@ -23,7 +24,7 @@ namespace FieldWorks.TestUtilities.Attributes
 		{
 			if (Platform.IsWindows)
 			{
-				Properties.Add("APARTMENT_STATE", ApartmentState.STA);
+				Properties.Add(PropertyNames.ApartmentState, ApartmentState.STA);
 			}
 		}
 	}

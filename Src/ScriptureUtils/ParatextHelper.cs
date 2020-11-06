@@ -655,8 +655,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			var existingProj = s_ptHelper.GetProjects().FirstOrDefault(x =>
 				x.Name.Equals(projShortName, StringComparison.InvariantCultureIgnoreCase));
 
-			return existingProj == null || (string.IsNullOrEmpty(existingProj.AssociatedLexicalProject.ProjectId) &&
-											existingProj.Editable && !existingProj.IsResourceText);
+			return existingProj == null || string.IsNullOrEmpty(existingProj.AssociatedLexicalProject?.ProjectId) &&
+											existingProj.Editable && !existingProj.IsResourceText;
 		}
 		#endregion
 	}
@@ -731,5 +731,16 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		End,
 		/// <summary/>
 		Unknown,
+	}
+
+	public abstract class LexicalProject : ILexicalProject
+	{
+		public abstract string ProjectId { get; }
+		public abstract string ProjectType { get; }
+
+		public override string ToString()
+		{
+			return $"{ProjectType}:{ProjectId}";
+		}
 	}
 }

@@ -21,7 +21,7 @@ namespace LanguageExplorerTests.Repository
 		/// <summary>
 		/// Set up test fixture.
 		/// </summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -32,7 +32,7 @@ namespace LanguageExplorerTests.Repository
 		/// <summary>
 		/// Tear down the test fixture.
 		/// </summary>
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			_allAreas = null;

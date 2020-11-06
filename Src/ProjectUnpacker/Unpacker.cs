@@ -10,6 +10,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using SIL.LCModel.Utils;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Test.ProjectUnpacker
 {
@@ -55,6 +56,8 @@ namespace SIL.FieldWorks.Test.ProjectUnpacker
 
 		private const string kPTSettingsRegKey = @"SOFTWARE\ScrChecks\1.0\Settings_Directory";
 		private const string kPT8SettingsRegKey = @"SOFTWARE\Paratext\8";
+		private const string kPT9SettingsRegKey = @"SOFTWARE\Paratext\9";
+		private const string kPT832SettingsRegKey = @"SOFTWARE\Wow6432Node\Paratext\8";
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -65,14 +68,17 @@ namespace SIL.FieldWorks.Test.ProjectUnpacker
 		{
 			get
 			{
-				using (RegistryKey pt8key = Registry.LocalMachine.OpenSubKey(kPT8SettingsRegKey, false))
-				using (RegistryKey key = Registry.LocalMachine.OpenSubKey(kPTSettingsRegKey, false))
+				using (var key = Registry.LocalMachine.OpenSubKey(kPTSettingsRegKey, false))
+				using (var pt9Key = Registry.LocalMachine.OpenSubKey(kPT9SettingsRegKey, false))
+				using (var pt832Hive = Registry.LocalMachine.OpenSubKey(kPT832SettingsRegKey, false))
+				using (var pt8Key = Registry.LocalMachine.OpenSubKey(kPT8SettingsRegKey, false))
 				{
-					if (key == null && pt8key == null)
+					if (key == null && pt8Key == null && pt9Key == null && pt832Hive == null)
 						Assert.Ignore("This test requires Paratext to be properly installed.");
-					if(pt8key == null)
+					var paraTextKey = pt9Key ?? pt832Hive ?? pt8Key;
+					if(paraTextKey == null)
 						return key.GetValue(null) as string;
-					return pt8key.GetValue("Settings_Directory") as string;
+					return paraTextKey.GetValue("Settings_Directory") as string;
 				}
 			}
 		}
@@ -154,7 +160,7 @@ namespace SIL.FieldWorks.Test.ProjectUnpacker
 					new ResourceManager("SIL.FieldWorks.Test.ProjectUnpacker." + packedProject,
 					System.Reflection.Assembly.GetExecutingAssembly());
 
-				string replacePart = MiscUtils.IsUnix ? unpackLocation :
+				string replacePart = Platform.IsUnix ? unpackLocation :
 					unpackLocation.Substring(0, unpackLocation.IndexOf('\\', 4));
 				using (var resourceStream = new MemoryStream((byte[])resources.GetObject(packedProject)))
 				{

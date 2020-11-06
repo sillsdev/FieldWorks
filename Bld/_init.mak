@@ -203,7 +203,7 @@ MIDL_OPTS=$(MIDL_OPTS) /Oicf /env $(MIDL_ARCH) /I"$(COM_OUT_DIR)" /error all /er
 
 REGSVR_OPTS=/s $(REGSVR_OPTS)
 
-USER_INCLUDE=$(OUT_DIR);$(COM_OUT_DIR);$(INT_DIR);$(COM_INT_DIR);$(BUILD_ROOT)\Lib\$(BUILD_CONFIG);$(BUILD_ROOT)\Include;$(USER_INCLUDE)
+USER_INCLUDE=$(OUT_DIR);$(COM_OUT_DIR);$(INT_DIR);$(COM_INT_DIR);$(BUILD_ROOT)\Lib\$(BUILD_CONFIG);$(BUILD_ROOT)\Include;$(EXTRA_INCLUDE);$(USER_INCLUDE)
 
 # Include ICU libraries here to make them available to all components whose .mak file includes this one.
 LINK_LIBS=icuin.lib icudt.lib icuuc.lib $(LINK_LIBS)
@@ -226,7 +226,7 @@ SBR_OPT=
 
 CL_OPTS=$(CL_OPTS) /Zi /Od $(SBR_OPT)
 
-LINK_OPTS=$(LINK_OPTS) /debug /pdb:"$*.pdb"
+LINK_OPTS=$(LINK_OPTS) $(EXTRA_LINK_OPTS) /debug /pdb:"$*.pdb"
 
 LIBRARY_SUFFIX=d
 

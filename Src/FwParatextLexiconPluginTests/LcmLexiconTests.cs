@@ -62,9 +62,9 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		[TearDown]
 		public void TearDown()
 		{
-			m_lexicon.Dispose();
-			m_cache.Dispose();
-			m_threadHelper.Dispose();
+			m_lexicon?.Dispose();
+			m_cache?.Dispose();
+			m_threadHelper?.Dispose();
 		}
 
 		#region Tests

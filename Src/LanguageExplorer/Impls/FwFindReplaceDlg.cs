@@ -1116,7 +1116,7 @@ namespace LanguageExplorer.Impls
 				}
 				try
 				{
-					if (MiscUtils.IsUnix)
+					if (Platform.IsUnix)
 					{
 						// Get a wait cursor to display when waiting for the messagebox
 						// to show. See FWNX-660.
@@ -1127,7 +1127,7 @@ namespace LanguageExplorer.Impls
 				}
 				finally
 				{
-					if (MiscUtils.IsUnix)
+					if (Platform.IsUnix)
 					{
 						tabReplace.Parent.UseWaitCursor = false;
 						tabReplace.UseWaitCursor = false;

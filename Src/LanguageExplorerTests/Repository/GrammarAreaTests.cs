@@ -14,7 +14,7 @@ namespace LanguageExplorerTests.Repository
 		/// <summary>
 		/// Set up test fixture.
 		/// </summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			_areaMachineName = LanguageExplorerConstants.GrammarAreaMachineName;
@@ -25,7 +25,7 @@ namespace LanguageExplorerTests.Repository
 		/// <summary>
 		/// Tear down the test fixture.
 		/// </summary>
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			base.FixtureTeardown();

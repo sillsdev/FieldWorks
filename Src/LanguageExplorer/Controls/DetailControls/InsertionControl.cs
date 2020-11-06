@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
@@ -243,7 +244,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					m_growing = true;
 					var sz = TextRenderer.MeasureText(Text, Font, new Size(Width, int.MaxValue), TextFormatFlags.WordBreak);
 					// The mono implementation chops off the bottom line of the display (FWNX-752).
-					if (MiscUtils.IsMono)
+					if (Platform.IsMono)
 					{
 						Height = sz.Height + 7;
 					}

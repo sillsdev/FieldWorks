@@ -79,9 +79,9 @@ namespace LanguageExplorerTests.Impls.SilSidePane
 			var itemAreas = TestUtilities.GetPrivateField(_sidePane, "_itemAreas") as Dictionary<Tab, IItemArea>;
 			Assert.IsNotNull(itemAreas);
 			foreach (var area in itemAreas.Values)
-			{
+	{
 				Assert.IsInstanceOf(expectedType, area);
-			}
+		}
 		}
 
 		[Test]
@@ -93,10 +93,9 @@ namespace LanguageExplorerTests.Impls.SilSidePane
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void AddTab_null()
 		{
-			_sidePane.AddTab(null);
+			Assert.That(() => {	_sidePane.AddTab(null); }, Throws.TypeOf<ArgumentNullException>());
 		}
 
 		[Test]
@@ -110,22 +109,20 @@ namespace LanguageExplorerTests.Impls.SilSidePane
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void AddTab_ofSameIdentity()
 		{
 			var tab = new Tab("mytab");
 			_sidePane.AddTab(tab);
-			_sidePane.AddTab(tab);
+			Assert.That(() => { _sidePane.AddTab(tab); }, Throws.TypeOf<ArgumentException>());
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void AddTab_ofSameName()
 		{
 			var tab1 = new Tab("mytab");
 			var tab2 = new Tab("mytab");
 			_sidePane.AddTab(tab1);
-			_sidePane.AddTab(tab2);
+			Assert.That(() => { _sidePane.AddTab(tab2); }, Throws.TypeOf<ArgumentException>());
 		}
 
 		[Test]
@@ -159,31 +156,27 @@ namespace LanguageExplorerTests.Impls.SilSidePane
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void AddItem_null1()
 		{
-			_sidePane.AddItem(null, null);
+			Assert.That(() => { _sidePane.AddItem(null, null); }, Throws.TypeOf<ArgumentNullException>());
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void AddItem_null2()
 		{
-			_sidePane.AddItem(null, new Item("itemname"));
+			Assert.That(() => { _sidePane.AddItem(null, new Item("itemname")); }, Throws.TypeOf<ArgumentNullException>());
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void AddItem_null3()
 		{
-			_sidePane.AddItem(new Tab("tabname"), null);
+			Assert.That(() => { _sidePane.AddItem(new Tab("tabname"), null); }, Throws.TypeOf<ArgumentNullException>());
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void AddItem_toNonExistentTab()
 		{
-			_sidePane.AddItem(new Tab("tabname"), new Item("itemname"));
+			Assert.That(() => { _sidePane.AddItem(new Tab("tabname"), new Item("itemname")); }, Throws.TypeOf<ArgumentOutOfRangeException>());
 		}
 
 		[Test]
@@ -195,14 +188,13 @@ namespace LanguageExplorerTests.Impls.SilSidePane
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void AddItem_ofSameIdentity_onSameTab()
 		{
 			var tab = new Tab("tabname");
 			var item = new Item("itemname");
 			_sidePane.AddTab(tab);
 			_sidePane.AddItem(tab, item);
-			_sidePane.AddItem(tab, item);
+			Assert.That(() => { _sidePane.AddItem(tab, item); }, Throws.TypeOf<ArgumentException>());
 		}
 
 		[Test]
@@ -218,7 +210,6 @@ namespace LanguageExplorerTests.Impls.SilSidePane
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void AddItem_ofSameName_onSameTab_forNullName()
 		{
 			var tab = new Tab("tab");
@@ -226,11 +217,10 @@ namespace LanguageExplorerTests.Impls.SilSidePane
 			var item2 = new Item("itemname");
 			_sidePane.AddTab(tab);
 			_sidePane.AddItem(tab, item1);
-			_sidePane.AddItem(tab, item2);
+			Assert.That(() => { _sidePane.AddItem(tab, item2); }, Throws.TypeOf<ArgumentException>());
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void AddItem_ofSameName_onSameTab_forNonNullName()
 		{
 			var tab = new Tab("tab");
@@ -238,7 +228,7 @@ namespace LanguageExplorerTests.Impls.SilSidePane
 			var item2 = new Item("item");
 			_sidePane.AddTab(tab);
 			_sidePane.AddItem(tab, item1);
-			_sidePane.AddItem(tab, item2);
+			Assert.That(() => { _sidePane.AddItem(tab, item2); }, Throws.TypeOf<ArgumentException>());
 		}
 
 		[Test]
@@ -289,45 +279,39 @@ namespace LanguageExplorerTests.Impls.SilSidePane
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void SelectTab_null()
 		{
-			_sidePane.SelectTab(null);
+			Assert.That(() => { _sidePane.SelectTab(null); }, Throws.TypeOf<ArgumentNullException>());
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void SelectTab_thatDoesntExist()
 		{
-			_sidePane.SelectTab(new Tab("tabname"));
+			Assert.That(() => { _sidePane.SelectTab(new Tab("tabname")); }, Throws.TypeOf<ArgumentOutOfRangeException>());
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void SelectItem_null1()
 		{
-			_sidePane.SelectItem((Tab)null, null);
+			Assert.That(() => { _sidePane.SelectItem((Tab)null, null); }, Throws.TypeOf<ArgumentNullException>());
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void SelectItem_null2()
 		{
-			_sidePane.SelectItem((Tab)null, "itemname");
+			Assert.That(() => { _sidePane.SelectItem((Tab)null, "itemname"); }, Throws.TypeOf<ArgumentNullException>());
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void SelectItem_null3()
 		{
-			_sidePane.SelectItem(new Tab("tabname"), null);
+			Assert.That(() => { _sidePane.SelectItem(new Tab("tabname"), null); }, Throws.TypeOf<ArgumentNullException>());
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void SelectItem_onNonexistentTab()
 		{
-			_sidePane.SelectItem(new Tab("tabname"), "itemName");
+			Assert.That(() => { _sidePane.SelectItem(new Tab("tabname"), "itemName"); }, Throws.TypeOf<ArgumentOutOfRangeException>());
 		}
 
 		[Test]
@@ -384,10 +368,9 @@ namespace LanguageExplorerTests.Impls.SilSidePane
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void GetTabByName_null()
 		{
-			_sidePane.GetTabByName(null);
+			Assert.That(() => { _sidePane.GetTabByName(null); }, Throws.TypeOf<ArgumentNullException>());
 		}
 
 		[Test]
@@ -431,12 +414,11 @@ namespace LanguageExplorerTests.Impls.SilSidePane
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void TrySelectingDisabledTabThatDoesNotExist()
 		{
 			var tab = new Tab("tabname");
 			tab.Enabled = false;
-			_sidePane.SelectTab(tab);
+			Assert.That(() => { _sidePane.SelectTab(tab); }, Throws.TypeOf<ArgumentOutOfRangeException>());
 		}
 
 		[Test]

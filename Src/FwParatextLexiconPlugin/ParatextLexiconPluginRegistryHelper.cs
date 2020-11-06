@@ -8,7 +8,9 @@ using System.IO;
 using System.Reflection;
 #endif
 using Microsoft.Win32;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
@@ -18,7 +20,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		static ParatextLexiconPluginRegistryHelper()
 		{
 			// copy the FW registry values to PT registry
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				const string fwRegKey = "LocalMachine/software/sil";
 #if DEBUG
@@ -54,14 +56,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
-		public static RegistryKey FieldWorksRegistryKey
-		{
-			get { return RegistryHelper.SettingsKey(FWMajorVersion) ?? RegistryHelper.SettingsKeyOld32Bit(FWMajorVersion); }
-		}
+		public static RegistryKey FieldWorksRegistryKey =>
+			RegistryHelper.SettingsKey(FwUtils.SuiteVersion) ??
+			RegistryHelper.SettingsKeyOld32Bit(FwUtils.SuiteVersion);
 
-		public static RegistryKey FieldWorksRegistryKeyLocalMachine
-		{
-			get { return RegistryHelper.SettingsKeyLocalMachine(FWMajorVersion) ?? RegistryHelper.SettingsKeyLocalMachineOld32Bit(FWMajorVersion); }
-		}
+		public static RegistryKey FieldWorksRegistryKeyLocalMachine =>
+			RegistryHelper.SettingsKeyLocalMachine(FwUtils.SuiteVersion) ??
+			RegistryHelper.SettingsKeyLocalMachineOld32Bit(FwUtils.SuiteVersion);
 	}
 }

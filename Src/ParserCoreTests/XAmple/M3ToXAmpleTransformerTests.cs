@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 		/// </summary>
 		private string m_sTestPath;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			m_sTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "ParserCoreTests", "XAmple", "M3ToXAmpleTransformerTestsDataFiles");

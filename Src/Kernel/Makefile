@@ -78,7 +78,7 @@ $(INT_DIR)/libFwKernel: $(OBJ_OTHER) $(GENERIC_OBJ)/main.o $(LINK_LIBS)
 	$(LINK.cc) -o $@ -Wl,-whole-archive $(LINK_LIBS) -Wl,-no-whole-archive $(GENERIC_OBJ)/main.o  $(OBJ_OTHER) $(LDLIBS)
 
 ComponentsMap: $(OUT_DIR)/libFwKernel.so
-	(export PATH=$(PATH):$(COM_DIR)/build$(ARCH)/bin && cd $(OUT_DIR) && generate-map.sh libFwKernel.so > $(OUT_DIR)/libFwKernel.compmap)
+	(export PATH=$(PATH):$(COM_DIR)/build$(ARCH)/bin && cd $(OUT_DIR) && generate-map.sh libFwKernel.so > libFwKernel.compmap)
 
 # === Rules ===
 

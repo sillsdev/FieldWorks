@@ -17,10 +17,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private ScriptListItem _currentScriptListItem;
 		private ScriptListItem _script;
 		private RegionListItem _region;
-		private readonly RegionSubtag _privateUseQMRegion = new RegionSubtag("QM", "Private Use Region");
-		private readonly VariantListItem _noneVariantListItem = new VariantListItem(null);
-		private readonly ScriptListItem _noneScriptListItem = new ScriptListItem(null);
-		private readonly RegionListItem _noneRegionListItem = new RegionListItem(null);
+		private static readonly ScriptSubtag _privateUseQaaaScript = new ScriptSubtag("Qaaa", "Private Use Script"); // TODO (Hasso): 2021.12: ensure helps list this
+		private static readonly RegionSubtag _privateUseQMRegion = new RegionSubtag("QM", "Private Use Region");
+		private static readonly VariantListItem _noneVariantListItem = new VariantListItem(null);
+		private static readonly ScriptListItem _noneScriptListItem = new ScriptListItem(null);
+		private static readonly RegionListItem _noneRegionListItem = new RegionListItem(null);
 		private delegate void ChangeCodeDelegate();
 		private event ChangeCodeDelegate ChangeCode;
 
@@ -345,6 +346,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 				yield return new ScriptListItem(script);
 			}
+			yield return new ScriptListItem(_privateUseQaaaScript);
 		}
 
 		/// <summary/>

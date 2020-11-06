@@ -1,0 +1,4 @@
+increment: Patch
+assembly-versioning-scheme: MajorMinor
+# Tell gitversion to use a version number >= next-version
+next-version: 10.0.0

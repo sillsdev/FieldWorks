@@ -4,6 +4,7 @@
 
 using System;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 using SIL.Keyboarding;
 using SIL.Windows.Forms.Keyboarding;
 
@@ -16,10 +17,10 @@ namespace FieldWorks.TestUtilities.Attributes
 	/// method.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Method, AllowMultiple = true)]
-	public class InitializeRealKeyboardControllerAttribute : TestActionAttribute
+	public class InitializeRealKeyboardControllerAttribute: TestActionAttribute
 	{
 		/// <inheritdoc />
-		public override void BeforeTest(TestDetails testDetails)
+		public override void BeforeTest(ITest testDetails)
 		{
 			base.BeforeTest(testDetails);
 
@@ -30,7 +31,7 @@ namespace FieldWorks.TestUtilities.Attributes
 		}
 
 		/// <inheritdoc />
-		public override void AfterTest(TestDetails testDetails)
+		public override void AfterTest(ITest testDetails)
 		{
 			base.AfterTest(testDetails);
 			KeyboardController.Shutdown();

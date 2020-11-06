@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using NUnit.Framework.Interfaces;
 using SIL.PlatformUtilities;
 
 namespace FieldWorks.TestUtilities.Attributes
@@ -25,7 +26,7 @@ namespace FieldWorks.TestUtilities.Attributes
 		public override ActionTargets Targets => ActionTargets.Suite;
 
 		/// <inheritdoc />
-		public override void BeforeTest(TestDetails testDetails)
+		public override void BeforeTest(ITest testDetails)
 		{
 			base.BeforeTest(testDetails);
 
@@ -54,7 +55,7 @@ namespace FieldWorks.TestUtilities.Attributes
 		}
 
 		/// <inheritdoc />
-		public override void AfterTest(TestDetails testDetails)
+		public override void AfterTest(ITest testDetails)
 		{
 			CoFreeUnusedLibraries();
 
@@ -71,7 +72,7 @@ namespace FieldWorks.TestUtilities.Attributes
 		[DllImport("ole32.dll")]
 		private static extern void CoFreeUnusedLibraries();
 
-		[DllImport("libc")] // Linux
+		[DllImport ("libc")] // Linux
 		private static extern int prctl(int option, IntPtr arg2, IntPtr arg3, IntPtr arg4, IntPtr arg5);
 
 		private const int PR_SET_PTRACER = 0x59616d61;

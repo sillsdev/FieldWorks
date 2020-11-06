@@ -10,9 +10,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using DialogAdapters;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -369,7 +369,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Let the user specify a Paratext or Toolbox language file to scan.
 			var languageFiles = ResourceHelper.GetResourceString("kstidToolboxLanguageFiles");
 			var allFiles = ResourceHelper.GetResourceString("kstidAllFiles");
-			using (IOpenFileDialog openFileDialog = new OpenFileDialogAdapter())
+			using (var openFileDialog = new OpenFileDialogAdapter())
 			{
 				openFileDialog.Title = FwCoreDlgs.kstidLanguageFileBrowser;
 				openFileDialog.InitialDirectory = ScriptureProvider.SettingsDirectory;

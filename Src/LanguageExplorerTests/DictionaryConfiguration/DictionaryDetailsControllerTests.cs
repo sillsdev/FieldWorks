@@ -40,19 +40,19 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		}
 
 		public override void FixtureTeardown()
-		{
+			{
 			TestSetupServices.DisposeTrash(_flexComponentParameters);
 			if (_staticDDController?.View != null && !_staticDDController.View.IsDisposed)
-			{
+				{
 				_staticDDController.View.Dispose();
-			}
+				}
 			_flexComponentParameters = null;
 			_staticDDController = null;
 
 			base.FixtureTeardown();
-		}
+			}
 
-		#endregion
+			#endregion
 
 		protected void GenerateStyles()
 		{
@@ -215,9 +215,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void NonSenseLoadsCharacterStyles()
 		{
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
-			using (var view = controller.View)
+			using(var view = controller.View)
 			{
-				controller.LoadNode(null, new ConfigurableDictionaryNode { Parent = new ConfigurableDictionaryNode() });
+				controller.LoadNode(null, new ConfigurableDictionaryNode {Parent = new ConfigurableDictionaryNode()});
 				AssertShowingCharacterStyles(view);
 			}
 		}
@@ -335,7 +335,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
 			controller.LoadNode(null, childGramarNode);
-			using (var view = controller.View)
+			using(var view = controller.View)
 			{
 				var optionsView = GetListOptionsView(view);
 				optionsView.DisplayOptionCheckBoxChecked = false;
@@ -361,7 +361,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			// SUT is LoadNode.  `using ... .View` to ensure disposal
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), _flexComponentParameters.PropertyTable);
-			Assert.DoesNotThrow(() => { using (controller.View) { controller.LoadNode(null, childGramarNode); } });
+			Assert.DoesNotThrow(() => { using(controller.View) { controller.LoadNode(null, childGramarNode); } });
 		}
 		#endregion Sense tests
 
@@ -466,7 +466,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			testNode = new ConfigurableDictionaryNode
 			{
 				IsEnabled = true,
-				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true }
+				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions { DisplayEachInAParagraph = true}
 			};
 			controller.LoadNode(null, testNode);
 			Assert.False(controller.View.SurroundingCharsVisible, "Context should now be hidden");
@@ -773,27 +773,27 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 						switch (innerControl)
 						{
 							case CheckBox _ when innerControl.Name == "checkBoxShowGrammarFirst":
-								Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxShowGrammarFirst should be enabled and visible for {0}", label);
-								++innerControls;
+							Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxShowGrammarFirst should be enabled and visible for {0}", label);
+							++innerControls;
 								break;
 							case CheckBox _ when innerControl.Name == "checkBoxSenseInPara":
-								Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxSenseInPara should be enabled and visible for {0}", label);
-								++innerControls;
+							Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxSenseInPara should be enabled and visible for {0}", label);
+							++innerControls;
 								break;
 							case CheckBox _ when innerControl.Name == "checkBoxFirstSenseInline":
-							{
-								if (isSubsense)
+						{
+							if (isSubsense)
 								{
-									Assert.IsFalse(innerControl.Enabled || innerControl.Visible, "checkBoxFirstSenseInline should be disabled and invisible when no paras");
+								Assert.IsFalse(innerControl.Enabled || innerControl.Visible, "checkBoxFirstSenseInline should be disabled and invisible when no paras");
 								}
-								else
+							else
 								{
-									Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxFirstSenseInline should be enabled and visible when paras");
+								Assert.IsTrue(innerControl.Enabled && innerControl.Visible, "checkBoxFirstSenseInline should be enabled and visible when paras");
 								}
-								++innerControls;
+							++innerControls;
 								break;
-							}
 						}
+					}
 					}
 					Assert.AreEqual(3, innerControls, "Matched incorrect number of controls within senseStructureVerticalFlow for {0}", label);
 					++controlsChecked;
@@ -1015,7 +1015,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var subEntryHeadword = new ConfigurableDictionaryNode { FieldDescription = "HeadWord" };
 			var sensesUnderSubentries = new ConfigurableDictionaryNode { FieldDescription = "SensesOS", ReferenceItem = "SharedSenses" };
-			var subsubEntries = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = "SharedSubentries" };
+			var subsubEntries = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = "SharedSubentries"};
 			var sharedSubentries = new ConfigurableDictionaryNode
 			{
 				Label = "SharedSubentries",
@@ -1024,7 +1024,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			};
 			var subSenseGloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
 			var subsenses = new ConfigurableDictionaryNode { FieldDescription = "SensesOS", ReferenceItem = "SharedSenses" };
-			var subentriesUnderSenses = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = "SharedSubentries" };
+			var subentriesUnderSenses = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = "SharedSubentries"};
 			var sharedSenses = new ConfigurableDictionaryNode
 			{
 				Label = "SharedSenses",
@@ -1033,11 +1033,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			};
 			var mainEntryHeadword = new ConfigurableDictionaryNode { FieldDescription = "HeadWord" };
 			var senses = new ConfigurableDictionaryNode { FieldDescription = "SensesOS", ReferenceItem = "SharedSenses" };
-			var subentries = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = "SharedSubentries" };
+			var subentries = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = "SharedSubentries"};
 			var mainEntry = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { mainEntryHeadword, senses, subentries }
+				Children = new List<ConfigurableDictionaryNode> {  mainEntryHeadword, senses, subentries }
 			};
 			var model = new DictionaryConfigurationModel
 			{
@@ -1051,10 +1051,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var controller = new DictionaryDetailsController(view, _flexComponentParameters.PropertyTable);
 				// SUT (actually, ensures that messages will show after the user selects a different Config in the ConfigDlg)
 				controller.LoadNode(new DictionaryConfigurationModel(), mainEntry);
-				Assert.IsNullOrEmpty(view.GetTooltipFromOverPanel(), "Unshared nodes require no explanation");
+				Assert.That(view.GetTooltipFromOverPanel(), Is.Null.Or.Empty, "Unshared nodes require no explanation");
 
 				controller.LoadNode(model, mainEntry); // SUT (unshared node)
-				Assert.IsNullOrEmpty(view.GetTooltipFromOverPanel(), "Unshared nodes require no explanation");
+				Assert.That(view.GetTooltipFromOverPanel(), Is.Null.Or.Empty, "Unshared nodes require no explanation");
 
 				controller.LoadNode(model, subentries); // SUT (Master Parent)
 				var tooltip = view.GetTooltipFromOverPanel();
@@ -1095,7 +1095,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var entryConfig = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { groupConfig }
+				Children = new List<ConfigurableDictionaryNode> {groupConfig}
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(entryConfig);
 
@@ -1105,7 +1105,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				var optionsView = GetGroupingOptionsView(view);
 				Assert.IsTrue(optionsView.DisplayInParagraph);
-				Assert.That(optionsView.Description, Is.StringMatching("Test"));
+				Assert.That(optionsView.Description, Does.Match("Test"));
 			}
 		}
 		#endregion

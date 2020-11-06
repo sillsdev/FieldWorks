@@ -33,7 +33,7 @@ namespace SILUBS.ScriptureChecks
 		private QuotationMarksList m_qmarks;
 
 		#region Test setup
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void TestSetup()
 		{
 			m_source = new UnitTestChecksDataSource();

@@ -21,7 +21,8 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[Test]
 		public void GetClassNameTest()
 		{
-			Assert.AreEqual("ClassB", m_metaDataCache.GetClassName(49), "Wrong class name for ClassB.");
+			Assert.AreEqual("ClassB", m_metaDataCache.GetClassName(49),
+				"Wrong class name for ClassB.");
 		}
 
 		/// <summary>
@@ -40,17 +41,17 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[Test]
 		public void GetBaseClsIdTest()
 		{
-			Assert.AreEqual(7, m_metaDataCache.GetBaseClsId(49), "Wrong base class id for ClassB.");
+			Assert.AreEqual(7, m_metaDataCache.GetBaseClsId(49),
+				"Wrong base class id for ClassB.");
 		}
 
 		/// <summary>
 		/// Check for finding the class name based on the given clid.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
 		public void GetBaseClsIdBadTest()
 		{
-			m_metaDataCache.GetBaseClsId(0);
+			Assert.That(() => m_metaDataCache.GetBaseClsId(0), Throws.InvalidOperationException);
 		}
 
 		/// <summary>
@@ -59,17 +60,18 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[Test]
 		public void GetBaseClsNameTest()
 		{
-			Assert.AreEqual("ClassK", m_metaDataCache.GetBaseClsName(49), "Wrong base class id for ClassB.");
+			Assert.AreEqual("ClassK", m_metaDataCache.GetBaseClsName(49),
+				"Wrong base class id for ClassB.");
 		}
 
 		/// <summary>
 		/// Check for finding the class name based on the given clid.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
 		public void GetBaseClsNameBadTest()
 		{
-			m_metaDataCache.GetBaseClsName(0);
+			Assert.That(() => m_metaDataCache.GetBaseClsName(0),
+				Throws.InvalidOperationException);
 		}
 
 		/// <summary>
@@ -88,6 +90,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 				ids = MarshalEx.NativeToArray<int>(clids, countAllClasses);
 				Assert.AreEqual(countAllClasses, ids.Length, "Wrong number of classes returned.");
 			}
+
 			countAllClasses = 2;
 			using (var clids = MarshalEx.ArrayToNative<int>(countAllClasses))
 			{
@@ -107,34 +110,44 @@ namespace LanguageExplorer.TestUtilities.Tests
 			int countAllFlidsOut;
 			using (var flids = MarshalEx.ArrayToNative<int>(500))
 			{
-				countAllFlidsOut = m_metaDataCache.GetFields(0, true, (int)CellarPropertyTypeFilter.All, 0, flids);
+				countAllFlidsOut = m_metaDataCache.GetFields(0, true,
+					(int)CellarPropertyTypeFilter.All, 0, flids);
 				var countAllFlids = countAllFlidsOut;
-				countAllFlidsOut = m_metaDataCache.GetFields(0, true, (int)CellarPropertyTypeFilter.All, countAllFlidsOut, flids);
-				Assert.AreEqual(countAllFlids, countAllFlidsOut, "Wrong number of fields returned for BaseClass.");
+				countAllFlidsOut = m_metaDataCache.GetFields(0, true,
+					(int)CellarPropertyTypeFilter.All, countAllFlidsOut, flids);
+				Assert.AreEqual(countAllFlids, countAllFlidsOut,
+					"Wrong number of fields returned for BaseClass.");
 			}
+
 			using (var flids = MarshalEx.ArrayToNative<int>(500))
 			{
-				countAllFlidsOut = m_metaDataCache.GetFields(49, true, (int)CellarPropertyTypeFilter.All, 0, flids);
-				countAllFlidsOut = m_metaDataCache.GetFields(49, true, (int)CellarPropertyTypeFilter.All, countAllFlidsOut, flids);
+				countAllFlidsOut = m_metaDataCache.GetFields(49, true,
+					(int)CellarPropertyTypeFilter.All, 0, flids);
+				countAllFlidsOut = m_metaDataCache.GetFields(49, true,
+					(int)CellarPropertyTypeFilter.All, countAllFlidsOut, flids);
 				Assert.AreEqual(8, countAllFlidsOut, "Wrong number of fields returned for 49.");
 			}
+
 			using (var flids = MarshalEx.ArrayToNative<int>(500))
 			{
-				countAllFlidsOut = m_metaDataCache.GetFields(49, true, (int)CellarPropertyTypeFilter.AllReference, 0, flids);
-				countAllFlidsOut = m_metaDataCache.GetFields(49, true, (int)CellarPropertyTypeFilter.AllReference, countAllFlidsOut, flids);
+				countAllFlidsOut = m_metaDataCache.GetFields(49, true,
+					(int)CellarPropertyTypeFilter.AllReference, 0, flids);
+				countAllFlidsOut = m_metaDataCache.GetFields(49, true,
+					(int)CellarPropertyTypeFilter.AllReference, countAllFlidsOut, flids);
 				Assert.AreEqual(1, countAllFlidsOut, "Wrong number of fields returned for 49.");
 			}
 		}
 
 		/// <summary />
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void GetFieldsBadTest()
 		{
 			using (var flids = MarshalEx.ArrayToNative<int>(500))
 			{
 				const int countAllFlidsOut = 1;
-				m_metaDataCache.GetFields(49, true, (int)CellarPropertyTypeFilter.All, countAllFlidsOut, flids);
+				Assert.That(() => m_metaDataCache.GetFields(49, true,
+					(int)CellarPropertyTypeFilter.All, countAllFlidsOut, flids),
+					Throws.ArgumentException);
 			}
 		}
 	}

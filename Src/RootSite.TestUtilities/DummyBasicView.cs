@@ -19,9 +19,6 @@ namespace RootSite.TestUtilities
 	internal sealed class DummyBasicView : SIL.FieldWorks.Common.RootSites.RootSite
 	{
 		#region Data members
-		/// <summary />
-		private System.ComponentModel.IContainer components;
-
 		/// <summary>Text for the first and third test paragraph (English)</summary>
 		internal const string kFirstParaEng = "This is the first test paragraph.";
 		/// <summary>Text for the second and fourth test paragraph (English).</summary>
@@ -66,7 +63,6 @@ namespace RootSite.TestUtilities
 
 			if (disposing)
 			{
-				components?.Dispose();
 				var disposable = ViewConstructor as IDisposable;
 				disposable?.Dispose();
 			}

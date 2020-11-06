@@ -15,6 +15,7 @@ using SIL.LCModel.Infrastructure;
 using SIL.WritingSystems;
 
 
+#if NOT_INCLUDED_IN_OLD_CSPROJ_FILE
 namespace SIL.FieldWorks.FwCoreDlgs
 {
 	#region Dummy WritingSystemPropertiesDlg
@@ -924,3 +925,4 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 	}
 }
+#endif

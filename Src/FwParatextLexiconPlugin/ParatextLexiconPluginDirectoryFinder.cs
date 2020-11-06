@@ -8,6 +8,7 @@ using Microsoft.Win32;
 using SIL.IO;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
@@ -33,7 +34,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public static string DataDirectoryLocalMachine => GetDirectoryLocalMachine(RootDataDir, Path.Combine(LcmFileHelper.CommonApplicationData, SilDir, FieldWorksDir));
 
-		public static string CodeDirectory => GetDirectory(RootCodeDir, MiscUtils.IsUnix ? "/usr/share/fieldworks" : FileLocationUtilities.DirectoryOfTheApplicationExecutable);
+		public static string CodeDirectory => GetDirectory(RootCodeDir, Platform.IsUnix ? "/usr/share/fieldworks" : FileLocationUtilities.DirectoryOfTheApplicationExecutable);
 
 		private static string GetDirectory(string registryValue, string defaultDir)
 		{

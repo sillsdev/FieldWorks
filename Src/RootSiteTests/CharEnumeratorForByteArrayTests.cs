@@ -62,11 +62,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Tests enumeration of a byte array containing an odd number of bytes
 		/// </summary>
-		[ExpectedException(typeof(ArgumentNullException))]
 		[Test]
 		public void NullConstructor()
 		{
-			var unused = new CharEnumeratorForByteArray(null);
+			Assert.That(() => new CharEnumeratorForByteArray(null), Throws.ArgumentNullException);
 		}
 	}
 }

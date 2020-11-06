@@ -44,7 +44,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 		#region Overrides of LcmTestBase
 
-		[TestFixtureSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -90,12 +89,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			});
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			try
 			{
-				FileUtils.Manager.Reset();
+			FileUtils.Manager.Reset();
 				_mockFilesystem = null;
 			}
 			catch (Exception err)
@@ -104,8 +103,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 			finally
 			{
-				base.FixtureTeardown();
-			}
+			base.FixtureTeardown();
+		}
 		}
 
 		public override void TestSetup()
@@ -145,9 +144,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
 			}
 			finally
-			{
+		{
 				base.TestTearDown();
-			}
+		}
 		}
 
 		#endregion
@@ -330,7 +329,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var configToRename = GenerateFilePath_Helper(out _);
 
-			FileUtils.WriteStringtoFile(Path.Combine(_projectConfigPath, "configuration3_3.fwdictconfig"), "file contents of config file that is in the way on disk but not actually registered in the list of configurations", Encoding.UTF8);
+			FileUtils.WriteStringToFile(Path.Combine(_projectConfigPath, "configuration3_3.fwdictconfig"), "file contents of config file that is in the way on disk but not actually registered in the list of configurations", Encoding.UTF8);
 
 			// SUT
 			DictionaryConfigurationManagerController.GenerateFilePath(_controller._projectConfigDir, _controller._configurations, configToRename);
@@ -406,7 +405,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			DictionaryConfigurationManagerController.GenerateFilePath(_controller._projectConfigDir, _controller._configurations, configurationToDelete);
 			var pathToConfiguration = configurationToDelete.FilePath;
-			FileUtils.WriteStringtoFile(pathToConfiguration, "file contents", Encoding.UTF8);
+			FileUtils.WriteStringToFile(pathToConfiguration, "file contents", Encoding.UTF8);
 			Assert.That(FileUtils.FileExists(pathToConfiguration), "Unit test not set up right");
 
 			// SUT
@@ -423,7 +422,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.That(configurationToDelete.FilePath, Is.Null, "Unit test not testing what it used to. Perhaps the code is smarter now.");
 
 			// SUT
-			Assert.DoesNotThrow(() => _controller.DeleteConfiguration(configurationToDelete), "Don't crash if the FilePath isn't set for some reason.");
+			Assert.DoesNotThrow(()=> _controller.DeleteConfiguration(configurationToDelete), "Don't crash if the FilePath isn't set for some reason.");
 			Assert.That(_controller.IsDirty, "made changes; should be dirty");
 		}
 
@@ -438,15 +437,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void DeleteConfigurationResetsForShippedDefaultRatherThanDelete()
 		{
 			var shippedRootDefaultConfigurationPath = Path.Combine(_defaultConfigPath, "Root" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
-			FileUtils.WriteStringtoFile(shippedRootDefaultConfigurationPath, "bogus data that is unread, the file is read from the real defaults", Encoding.UTF8);
+			FileUtils.WriteStringToFile(shippedRootDefaultConfigurationPath, "bogus data that is unread, the file is read from the real defaults", Encoding.UTF8);
 
 			var configurationToDelete = _configurations[0];
 			configurationToDelete.FilePath = Path.Combine("whateverdir", "Root" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			configurationToDelete.Label = "customizedLabel";
 
 			var pathToConfiguration = configurationToDelete.FilePath;
-			FileUtils.WriteStringtoFile(pathToConfiguration, "customized file contents", Encoding.UTF8);
+			FileUtils.WriteStringToFile(pathToConfiguration, "customized file contents", Encoding.UTF8);
 			Assert.That(FileUtils.FileExists(pathToConfiguration), "Unit test not set up right");
+			Assert.That(FileUtils.FileExists(shippedRootDefaultConfigurationPath), "Unit test not set up right");
 
 			// SUT
 			_controller.DeleteConfiguration(configurationToDelete);
@@ -463,12 +463,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void DeleteConfigurationResetsReversalToShippedDefaultIfNoProjectAllReversal()
 		{
 			var defaultReversalPath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "ReversalIndex");
+			var defaultDictionaryPath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary");
+			// initialize an empty default dictionary folder, the default dictionary files are checked first when checking
+			// to see if we should reset to defaults
+			FileUtils.EnsureDirectoryExists(defaultDictionaryPath);
 			// construct a controller to work in the default reversal directory
 			_controller = new DictionaryConfigurationManagerController(_configurations, new List<string>(), _projectConfigPath, defaultReversalPath);
 			_controller.InitializeFlexComponent(_flexComponentParameters);
 			var allRevFileName = LanguageExplorerConstants.AllReversalIndexesFilenameBase + LanguageExplorerConstants.DictionaryConfigurationFileExtension;
 			var shippedRootDefaultConfigurationPath = Path.Combine(defaultReversalPath, allRevFileName);
-			FileUtils.WriteStringtoFile(shippedRootDefaultConfigurationPath, "bogus data that is unread, the file is read from the real defaults", Encoding.UTF8);
+			FileUtils.WriteStringToFile(shippedRootDefaultConfigurationPath, "bogus data that is unread, the file is read from the real defaults", Encoding.UTF8);
 
 			var configurationToDelete = _configurations[0];
 			configurationToDelete.FilePath = Path.Combine("whateverdir", "en" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
@@ -476,7 +480,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			configurationToDelete.WritingSystem = "en";
 
 			var pathToConfiguration = configurationToDelete.FilePath;
-			FileUtils.WriteStringtoFile(pathToConfiguration, "customized file contents", Encoding.UTF8);
+			FileUtils.WriteStringToFile(pathToConfiguration, "customized file contents", Encoding.UTF8);
 			Assert.That(FileUtils.FileExists(pathToConfiguration), "Unit test not set up right");
 			Assert.IsFalse(FileUtils.FileExists(Path.Combine(_projectConfigPath, allRevFileName)), "Unit test not set up right");
 
@@ -698,8 +702,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				// SUT
 				var customFieldFiles = DictionaryConfigurationManagerController.PrepareCustomFieldsExport(Cache).ToList();
 				Assert.That(customFieldFiles.Count, Is.EqualTo(2), "Not enough files prepared");
-				Assert.That(customFieldFiles[0], Is.StringEnding("CustomFields.lift"));
-				Assert.That(customFieldFiles[1], Is.StringEnding("CustomFields.lift-ranges"));
+				Assert.That(customFieldFiles[0], Does.EndWith("CustomFields.lift"));
+				Assert.That(customFieldFiles[1], Does.EndWith("CustomFields.lift-ranges"));
 				AssertThatXmlIn.File(customFieldFiles[0]).HasAtLeastOneMatchForXpath("//field[@tag='" + customFieldLabel + "']");
 			}
 		}

@@ -1,11 +1,7 @@
 @if "%_echo%"=="" echo off
 
 rem ***** Set BUILD_ROOT to the root of the FieldWorks project. *****
-call %0\..\_EnsureRoot.bat
-
-set BUILD_MAKEFILE=%BUILD_ROOT%\Src\Language\Language.mak
-
-call %BUILD_ROOT%\bld\_mkcore.bat dirs %BUILD_OUTPUT%\Common\LanguageTlb.tlb
+call %~dp0\_EnsureRoot.bat
 
 set BUILD_MAKEFILE=%BUILD_ROOT%\Src\Kernel\FwKernel.mak
 call %BUILD_ROOT%\bld\_mkcore.bat dirs %BUILD_OUTPUT%\Common\FwKernelTlb.tlb

@@ -6,7 +6,7 @@ rem Second parameter is build action: build (default), test, clean
 set FW_BUILD_ERROR=0
 set FW_BUILD_CORE_ERROR=0
 if not "%OS%"=="" setlocal
-call %0\..\_EnsureRoot.bat
+call %~dp0\_EnsureRoot.bat
 
 set CONFIG=
 if "%1"=="b" set CONFIG=/property:config=bounds

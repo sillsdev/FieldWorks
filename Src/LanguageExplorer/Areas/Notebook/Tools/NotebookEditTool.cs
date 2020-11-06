@@ -161,7 +161,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 		/// <summary>
 		/// Get the image for the area.
 		/// </summary>
-		public Image Icon => Images.SideBySideView.SetBackgroundColor(Color.Magenta);
+		public Image Icon => SIL.FieldWorks.Resources.Images.SideBySideView.SetBackgroundColor(Color.Magenta);
 
 		#endregion
 

@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		#endregion
 
 		/// <summary />
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			m_wsManager = new WritingSystemManager();

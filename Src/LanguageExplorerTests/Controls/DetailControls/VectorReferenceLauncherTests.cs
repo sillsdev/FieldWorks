@@ -451,51 +451,51 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		}
 
 		private sealed class MockVectorReferenceLauncher : VectorReferenceLauncher
-		{
-			#region overrides
+	{
+		#region overrides
 
-			protected override VectorReferenceView CreateVectorReferenceView()
-			{
-				return new MockVectorReferenceView();
-			}
+		protected override VectorReferenceView CreateVectorReferenceView()
+		{
+			return new MockVectorReferenceView();
+		}
 
 			protected override int RootBoxHeight => 16;
 
-			protected override void AdjustFormScrollbars(bool displayScrollbars)
-			{
-				base.AdjustFormScrollbars(false);
-			}
+		protected override void AdjustFormScrollbars(bool displayScrollbars)
+		{
+			base.AdjustFormScrollbars(false);
+		}
 
 			protected override bool CanRaiseEvents => false;
 
-			#endregion
+		#endregion
 
-			public void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, string analysisWs)
-			{
-				Assert.IsNotNull(obj, "Must initialize with an object and flid.");
-				Assert.Greater(flid, 0, "Must initialize with an object and flid.");
-				Assert.IsNotNullOrEmpty(fieldName, "Must initialize with a field name.");
-				Initialize(cache, obj, flid, fieldName, null, string.Empty, analysisWs);
-			}
-		}
-
-		/// <summary>
-		/// Functions with MockVectorReferenceLauncher to eliminate views from
-		/// these VectorReferenceLauncher tests.
-		/// </summary>
-		private sealed class MockVectorReferenceView : VectorReferenceView
+		public void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, string analysisWs)
 		{
-			#region overrides
-
-			public override void MakeRoot()
-			{
-			}
-
-			public override void ReloadVector()
-			{
-			}
-			#endregion
-
+			Assert.IsNotNull(obj, "Must initialize with an object and flid.");
+			Assert.Greater(flid, 0, "Must initialize with an object and flid.");
+			Assert.That(fieldName, Is.Not.Null.Or.Empty, "Must initialize with a field name.");
+				Initialize(cache, obj, flid, fieldName, null, string.Empty, analysisWs);
 		}
 	}
+
+	/// <summary>
+	/// Functions with MockVectorReferenceLauncher to eliminate views from
+	/// these VectorReferenceLauncher tests.
+	/// </summary>
+		private sealed class MockVectorReferenceView : VectorReferenceView
+	{
+		#region overrides
+
+		public override void MakeRoot()
+		{
+		}
+
+		public override void ReloadVector()
+		{
+		}
+		#endregion
+
+	}
+}
 }

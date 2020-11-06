@@ -50,7 +50,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private Control m_master;
 		private IReceiveSequentialMessages m_receiver;
 		private SafeQueue m_messages = new SafeQueue();
-		private int m_cLevelsOfSequentialBlockInMessageHandler; // See Begin/EndSequentialBlock.
 
 		/// <summary />
 		public MessageSequencer(Control master)

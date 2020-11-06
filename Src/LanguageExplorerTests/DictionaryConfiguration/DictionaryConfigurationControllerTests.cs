@@ -177,7 +177,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			return rootNode;
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		public void FindTreeNode_ThrowsOnNullArgument()
 		{
@@ -192,7 +192,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		public void FindTreeNode_CanFindRoot()
 		{
@@ -208,7 +208,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		public void FindTreeNode_CanFindChild()
 		{
@@ -226,7 +226,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		public void FindTreeNode_ReturnsNullIfNotFound()
 		{
@@ -242,7 +242,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		public void CreateAndAddTreeNodeForNode_ThrowsOnNullNodeArgument()
 		{
@@ -253,7 +253,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.Throws<ArgumentNullException>(() => controller.CreateAndAddTreeNodeForNode(null, null));
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		public void CreateAndAddTreeNodeForNode_CanAddRoot()
 		{
@@ -269,7 +269,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		public void CreateAndAddTreeNodeForNode_SetsCheckbox()
 		{
@@ -287,7 +287,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		public void CreateTreeOfTreeNodes_ThrowsOnNullNodeArgument()
 		{
@@ -298,7 +298,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.Throws<ArgumentNullException>(() => controller.CreateTreeOfTreeNodes(null, null));
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		public void CreateTreeOfTreeNodes_CanCreateOneLevelTree()
 		{
@@ -312,7 +312,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		public void CreateTreeOfTreeNodes_CanCreateTwoLevelTree()
 		{
@@ -328,8 +328,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				for (var i = 0; i < 3; i++)
 				{
 					Assert.That(rootTreeNode.Nodes[i].Nodes.Count, Is.EqualTo(rootNode.Children[i].Children.Count), errorMessage); // ie 0
-				}
 			}
+		}
 		}
 
 		/// <summary>
@@ -361,8 +361,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				for (var i = 0; i < 3; i++)
 				{
 					Assert.That(rootTreeNode.Nodes[1].Nodes[i].Nodes.Count, Is.EqualTo(rootNode.Children[1].Children[i].Children.Count), errorMessage2); // ie 0
-				}
 			}
+		}
 		}
 
 		[Test]
@@ -391,10 +391,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var testUserFolder = Path.Combine(Path.GetTempPath(), userFolderName);
 			try
 			{
-				// SUT
+			// SUT
 				Assert.DoesNotThrow(() => DictionaryConfigurationServices.ListDictionaryConfigurationChoices(testDefaultFolder, testUserFolder), "A missing User location should not throw.");
-				Assert.IsTrue(Directory.Exists(testUserFolder), "A missing user configuration folder should be created.");
-			}
+			Assert.IsTrue(Directory.Exists(testUserFolder), "A missing user configuration folder should be created.");
+		}
 			finally
 			{
 				RobustIO.DeleteDirectoryAndContents(testDefaultFolder);
@@ -410,13 +410,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				using (var writer = new StreamWriter(string.Concat(Path.Combine(testDefaultFolder.FullName, "default"), LanguageExplorerConstants.DictionaryConfigurationFileExtension)))
 				{
-					writer.Write("test");
-				}
-				var testUserFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
-				// SUT
-				var choices = DictionaryConfigurationServices.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
-				Assert.IsTrue(choices.Count == 1, "xml configuration file in default directory was not read");
+				writer.Write("test");
 			}
+				var testUserFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
+			// SUT
+				var choices = DictionaryConfigurationServices.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
+			Assert.IsTrue(choices.Count == 1, "xml configuration file in default directory was not read");
+		}
 			finally
 			{
 				RobustIO.DeleteDirectoryAndContents(testDefaultFolder.FullName);
@@ -431,17 +431,17 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			try
 			{
 				using (var writer = new StreamWriter(string.Concat(Path.Combine(testDefaultFolder.FullName, "default"), LanguageExplorerConstants.DictionaryConfigurationFileExtension)))
-				{
-					writer.Write("test");
-				}
-				using (var writer = new StreamWriter(string.Concat(Path.Combine(testUserFolder.FullName, "user"), LanguageExplorerConstants.DictionaryConfigurationFileExtension)))
-				{
-					writer.Write("usertest");
-				}
-				// SUT
-				var choices = DictionaryConfigurationServices.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
-				Assert.IsTrue(choices.Count == 2, "One of the configuration files was not listed");
+			{
+				writer.Write("test");
 			}
+				using (var writer = new StreamWriter(string.Concat(Path.Combine(testUserFolder.FullName, "user"), LanguageExplorerConstants.DictionaryConfigurationFileExtension)))
+			{
+				writer.Write("usertest");
+			}
+			// SUT
+				var choices = DictionaryConfigurationServices.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
+			Assert.IsTrue(choices.Count == 2, "One of the configuration files was not listed");
+		}
 			finally
 			{
 				RobustIO.DeleteDirectoryAndContents(testDefaultFolder.FullName);
@@ -457,18 +457,18 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			try
 			{
 				using (var writer = new StreamWriter(string.Concat(Path.Combine(testDefaultFolder.FullName, "Root"), LanguageExplorerConstants.DictionaryConfigurationFileExtension)))
-				{
-					writer.Write("test");
-				}
-				using (var writer = new StreamWriter(string.Concat(Path.Combine(testUserFolder.FullName, "Root"), LanguageExplorerConstants.DictionaryConfigurationFileExtension)))
-				{
-					writer.Write("usertest");
-				}
-				// SUT
-				var choices = DictionaryConfigurationServices.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
-				Assert.IsTrue(choices.Count == 1, "Only the user configuration should be listed");
-				Assert.IsTrue(choices[0].Contains(testUserFolder.FullName), "The default overrode the user configuration.");
+			{
+				writer.Write("test");
 			}
+				using (var writer = new StreamWriter(string.Concat(Path.Combine(testUserFolder.FullName, "Root"), LanguageExplorerConstants.DictionaryConfigurationFileExtension)))
+			{
+				writer.Write("usertest");
+			}
+			// SUT
+				var choices = DictionaryConfigurationServices.ListDictionaryConfigurationChoices(testDefaultFolder.FullName, testUserFolder.FullName);
+			Assert.IsTrue(choices.Count == 1, "Only the user configuration should be listed");
+			Assert.IsTrue(choices[0].Contains(testUserFolder.FullName), "The default overrode the user configuration.");
+		}
 			finally
 			{
 				RobustIO.DeleteDirectoryAndContents(testDefaultFolder.FullName);
@@ -494,8 +494,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Assert.Contains("configurationALabel", labels.Keys, "missing a label");
 				Assert.Contains("configurationBLabel", labels.Keys, "missing a label");
 				Assert.That(labels.Count, Is.EqualTo(2), "unexpected label count");
-				Assert.That(labels["configurationALabel"].FilePath, Is.StringContaining(string.Concat("configurationA", LanguageExplorerConstants.DictionaryConfigurationFileExtension)), "missing a file name");
-				Assert.That(labels["configurationBLabel"].FilePath, Is.StringContaining(string.Concat("configurationB", LanguageExplorerConstants.DictionaryConfigurationFileExtension)), "missing a file name");
+				Assert.That(labels["configurationALabel"].FilePath, Does.Contain(string.Concat("configurationA", LanguageExplorerConstants.DictionaryConfigurationFileExtension)), "missing a file name");
+				Assert.That(labels["configurationBLabel"].FilePath, Does.Contain(string.Concat("configurationB", LanguageExplorerConstants.DictionaryConfigurationFileExtension)), "missing a file name");
 			}
 			finally
 			{
@@ -504,7 +504,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 		}
 
-		/// <summary />
+		/// <summary/>
 		private static void AddChildrenToNode(ConfigurableDictionaryNode node, int numberOfChildren)
 		{
 			for (var childIndex = 0; childIndex < numberOfChildren; childIndex++)
@@ -564,7 +564,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		public void CanReorder_ThrowsOnNullArgument()
 		{
@@ -572,7 +572,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationController.CanReorder(null, Direction.Up));
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		public void CanReorder_CantMoveUpFirstNode()
 		{
@@ -583,7 +583,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.That(DictionaryConfigurationController.CanReorder(firstChild, Direction.Up), Is.False, "Shouldn't be able to move up the first child");
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		public void CanReorder_CanMoveDownFirstNode()
 		{
@@ -594,7 +594,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.That(DictionaryConfigurationController.CanReorder(firstChild, Direction.Down), Is.True, "Should be able to move down the first child");
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		public void CanReorder_CanMoveUpSecondNode()
 		{
@@ -605,7 +605,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.That(DictionaryConfigurationController.CanReorder(secondChild, Direction.Up), Is.True, "Should be able to move up the second child");
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		public void CanReorder_CantMoveDownLastNode()
 		{
@@ -616,7 +616,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.That(DictionaryConfigurationController.CanReorder(lastChild, Direction.Down), Is.False, "Shouldn't be able to move down the last child");
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		public void CanReorder_CantReorderRootNodes()
 		{
@@ -626,7 +626,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.That(DictionaryConfigurationController.CanReorder(rootNode, Direction.Down), Is.False, "Should not be able to reorder a root node");
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		public void Reorder_ThrowsOnNullArgument()
 		{
@@ -635,7 +635,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.Throws<ArgumentNullException>(() => controller.Reorder(null, Direction.Up));
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		public void Reorder_ThrowsIfCantReorder()
 		{
@@ -652,7 +652,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.Throws<ArgumentOutOfRangeException>(() => controller.Reorder(grandChild, Direction.Up), "Can't move a node with no siblings");
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		[TestCase(1, 0, 0)] // Move sibling from index 1 up one
 		[TestCase(0, 1, 1)] // Move sibling from index 0 down one
@@ -676,7 +676,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		[TestCase(0, 0, 0, 1)] // move child from 0 down into group with no children
 		[TestCase(2, 0, 0, 0)] // move child from 2 up into group with no children
@@ -702,7 +702,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		[TestCase(0, 0, 0)] // move child from group index 0 up above the group
 		[TestCase(1, 1, 1)] // move child from group index 1 down below the group
@@ -726,7 +726,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 		}
 
-		/// <summary />
+		/// <summary/>
 		[Test]
 		public void Reorder_GroupWontMoveIntoGroupingNodes([Values(0, 1)]int direction)
 		{
@@ -805,7 +805,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var cfChildren = customFieldNodes[0].Children;
 				CollectionAssert.IsNotEmpty(cfChildren, "ListItem Child nodes not created");
 				Assert.AreEqual(2, cfChildren.Count, "custom list type nodes should get a child for Name and Abbreviation");
-				Assert.IsNullOrEmpty(cfChildren[0].After, "Child nodes should have no After space");
+				Assert.That(cfChildren[0].After, Is.Null.Or.Empty, "Child nodes should have no After space");
 				CollectionAssert.IsNotEmpty(cfChildren.Where(t => t.Label == "Name" && !t.IsCustomField), "No standard Name node found on custom possibility list reference");
 				CollectionAssert.IsNotEmpty(cfChildren.Where(t => t.Label == "Abbreviation" && !t.IsCustomField), "No standard Abbreviation node found on custom possibility list reference");
 				var wsOptions = cfChildren[0].DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
@@ -1191,15 +1191,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				{
 					Label = "Senses",
 					FieldDescription = "SensesOS",
-					Children = new List<ConfigurableDictionaryNode> { customNode, duplicateCustomNode }
+					Children = new List<ConfigurableDictionaryNode> {customNode, duplicateCustomNode}
 				};
 				var entryNode = new ConfigurableDictionaryNode
 				{
 					Label = "Main Entry",
 					FieldDescription = "LexEntry",
-					Children = new List<ConfigurableDictionaryNode> { sensesNode }
+					Children = new List<ConfigurableDictionaryNode> {sensesNode}
 				};
-				model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+				model.Parts = new List<ConfigurableDictionaryNode> {entryNode};
 				CssGeneratorTests.PopulateFieldsForTesting(model);
 				//SUT
 				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
@@ -1213,11 +1213,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var model = new DictionaryConfigurationModel();
 			var customNode = new ConfigurableDictionaryNode { FieldDescription = "CustomString", IsCustomField = true };
 			var sensesNode = new ConfigurableDictionaryNode
-			{
-				Label = "Senses",
-				FieldDescription = "SensesOS",
-				Children = new List<ConfigurableDictionaryNode> { customNode }
-			};
+				{
+					Label = "Senses",
+					FieldDescription = "SensesOS",
+					Children = new List<ConfigurableDictionaryNode> { customNode }
+				};
 			var entryNode = new ConfigurableDictionaryNode
 			{
 				Label = "Main Entry",
@@ -1461,7 +1461,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				CreateDefaultReversalIndex();
 				//SUT
 				dcc.PopulateTreeView();
-				Assert.IsNullOrEmpty(testView.PreviewData, "Should not have created a preview");
+				Assert.That(testView.PreviewData, Is.Null.Or.Empty, "Should not have created a preview");
 				Assert.AreEqual(1, Cache.LangProject.LexDbOA.ReversalIndexesOC.Count);
 				Assert.AreEqual("en", Cache.LangProject.LexDbOA.ReversalIndexesOC.First().WritingSystem);
 			}
@@ -1664,16 +1664,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				dcc.SetStartingNode(new List<string>());
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNull(treeNode, "Passing an empty class list should not find a TreeNode");
-				dcc.SetStartingNode(new List<string> { "something", "invalid" });
+				dcc.SetStartingNode(new List<string> {"something","invalid"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNull(treeNode, "Passing a totally invalid class list should not find a TreeNode");
-				dcc.SetStartingNode(new List<string> { "entry", "senses", "sensecontent", "sense", "random", "nonsense" });
+				dcc.SetStartingNode(new List<string>{"entry","senses","sensecontent","sense","random","nonsense"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNotNull(treeNode, "Passing a partially valid class list should find a TreeNode");
 				Assert.AreSame(sensesNode, treeNode.Tag, "Passing a partially valid class list should find the best node possible");
 				// Starting here we need to Unset the controller's SelectedNode to keep from getting false positives
 				ClearSelectedNode(dcc);
-				dcc.SetStartingNode(new List<string> { "entry", "mainheadword" });
+				dcc.SetStartingNode(new List<string> {"entry","mainheadword"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNotNull(treeNode, "entry/mainheadword should find a TreeNode");
 				Assert.AreSame(headwordNode, treeNode.Tag, "entry/mainheadword should find the right TreeNode");
@@ -1685,13 +1685,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Assert.AreSame(headwordNode, treeNode.Tag, "entry/mainheadword should find the right TreeNode");
 				Assert.AreEqual(headwordNode.Label, treeNode.Text, "The TreeNode for entry/mainheadword should have the right Text");
 				ClearSelectedNode(dcc);
-				dcc.SetStartingNode(new List<string> { "entry", "senses", "sensecontent", "sense", "definitionorgloss" });
+				dcc.SetStartingNode(new List<string> {"entry","senses","sensecontent","sense","definitionorgloss"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNotNull(treeNode, "entry//definitionorgloss should find a TreeNode");
 				Assert.AreSame(defglossNode, treeNode.Tag, "entry//definitionorgloss should find the right TreeNode");
 				Assert.AreEqual(defglossNode.Label, treeNode.Text, "The TreeNode for entry//definitionorgloss should have the right Text");
 				ClearSelectedNode(dcc);
-				dcc.SetStartingNode(new List<string> { "entry", "senses", "sensecontent", "sense", "examples", "example", "translations", "translation", "translation" });
+				dcc.SetStartingNode(new List<string> {"entry","senses","sensecontent","sense","examples","example","translations","translation","translation"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.IsNotNull(treeNode, "entry//translation should find a TreeNode");
 				Assert.AreSame(translationNode, treeNode.Tag, "entry//translation should find the right TreeNode");
@@ -1739,18 +1739,18 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(DictionaryConfigurationModelTests.CreateSimpleSharingModel(entryNode, subSensesSharedItem));
 			var node = DictionaryConfigurationController.FindConfigNode(entryNode, new List<string>
-			{
-				"entry",
-				"senses",
-				"sensecontent",
-				"sense",
-				"senses mainentrysubsenses",
-				"sensecontent",
-				"sense mainentrysubsense",
-				"senses mainentrysubsenses",
-				"sensecontent",
-				"sensenumber"
-			});
+				{
+					"entry",
+					"senses",
+					"sensecontent",
+					"sense",
+					"senses mainentrysubsenses",
+					"sensecontent",
+					"sense mainentrysubsense",
+					"senses mainentrysubsenses",
+					"sensecontent",
+					"sensenumber"
+				});
 			Assert.AreSame(subsubsensesNode, node, "Sense Numbers are configured on the node itself, not its ReferencedOrDirectChildren.{0}Expected: {1}{0}But got:  {2}", Environment.NewLine,
 				DictionaryConfigurationServices.BuildPathStringFromNode(subsubsensesNode), DictionaryConfigurationServices.BuildPathStringFromNode(node));
 		}
@@ -2133,7 +2133,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				Label = "Extended Note",
 				FieldDescription = "ExtendedNoteOS",
-				DictionaryNodeOptions = new DictionaryNodeListOptions
+								DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
 					ListId = ListIds.Note
 				}
@@ -2499,7 +2499,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Label = "Main Entry",
 				FieldDescription = "LexEntry",
 				Style = "Dictionary-Normal",
-				Children = new List<ConfigurableDictionaryNode> { subentriesNode, variantsNode, variantsInflectionalNode }
+				Children = new List<ConfigurableDictionaryNode> { subentriesNode, variantsNode, variantsInflectionalNode}
 			};
 			var model = new DictionaryConfigurationModel
 			{

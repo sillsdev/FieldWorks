@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Fixture setup
 		/// </summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public virtual void FixtureSetup()
 		{
 			m_cache = new T
@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Teardown
 		/// </summary>
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public virtual void FixtureTeardown()
 		{
 			FileUtils.Manager.Reset();

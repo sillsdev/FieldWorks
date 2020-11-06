@@ -9,6 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Controls
 {
@@ -231,7 +232,7 @@ namespace LanguageExplorer.Controls
 					d.EmailAddress = emailAddress;
 					d.EmailSubject = $"{applicationName} {version} Report {launchCount} Launches";
 					var bldr = new StringBuilder();
-					bldr.AppendFormat("<report app='{0}' version='{1}' linux='{2}'>", applicationName, version, MiscUtils.IsUnix);
+					bldr.AppendFormat("<report app='{0}' version='{1}' linux='{2}'>", applicationName, version, Platform.IsUnix);
 					bldr.AppendFormat("<stat type='launches' value='{0}'/>", launchCount);
 					if (launchCount > 1)
 					{

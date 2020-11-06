@@ -316,7 +316,6 @@ namespace LanguageExplorer.LIFT
 				var type = (CellarPropertyType)m_mdc.GetFieldType(flid);
 				int ws;
 				ITsString tssString;
-				string sLang;
 				switch (type)
 				{
 					case CellarPropertyType.MultiUnicode:

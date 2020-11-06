@@ -23,6 +23,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
+using DialogAdapters;
 using Gecko;
 using L10NSharp;
 using LanguageExplorer;
@@ -35,7 +36,6 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.LexicalProvider;
 using SIL.FieldWorks.Resources;
 using SIL.Keyboarding;
@@ -153,7 +153,7 @@ namespace SIL.FieldWorks
 				// on this thread to prevent race conditions on shutdown.See TE-975
 				// See http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=911603&SiteID=1
 				// TODO-Linux: uses mono feature that is not implemented. What are the implications of this? Review.
-				if (MiscUtils.IsDotNet)
+				if (Platform.IsDotNet)
 				{
 					SystemEvents.InvokeOnEventsThread(new Action(DoNothing));
 				}
@@ -320,7 +320,7 @@ namespace SIL.FieldWorks
 				// Create a listener for this project for applications using FLEx as a LexicalProvider.
 				LexicalProviderManager.StartLexicalServiceProvider(Project, Cache);
 
-				if (MiscUtils.IsMono)
+				if (Platform.IsMono)
 				{
 					UglyHackForXkbIndicator();
 				}
@@ -637,7 +637,7 @@ namespace SIL.FieldWorks
 					var thisProcessName = Assembly.GetExecutingAssembly().GetName().Name;
 					var thisSid = FwUtils.GetUserForProcess(thisProcess);
 					var processes = Process.GetProcessesByName(thisProcessName).ToList();
-					if (MiscUtils.IsUnix)
+					if (Platform.IsUnix)
 					{
 						processes.AddRange(Process.GetProcesses().Where(p => p.ProcessName.Contains("mono")
 							&& p.Modules.Cast<ProcessModule>().Any(m => m.ModuleName == (thisProcessName + ".exe"))));
@@ -1853,7 +1853,7 @@ namespace SIL.FieldWorks
 				var projectPath = cache.ProjectId.Path;
 				var parentDirectory = Path.GetDirectoryName(cache.ProjectId.ProjectFolder);
 				var projectsDirectory = FwDirectoryFinder.ProjectsDirectory;
-				if (!MiscUtils.IsUnix)
+				if (!Platform.IsUnix)
 				{
 #if JASON_TO_REVIEW
 					// REVIEW: These two modified paths are not actually used anywhere. Is that a problem?
@@ -1923,7 +1923,7 @@ namespace SIL.FieldWorks
 			}
 			string oldRoot = null;
 			string newRoot = null;
-			if (!MiscUtils.IsUnix)
+			if (!Platform.IsUnix)
 			{
 				oldPath = oldPath.ToLowerInvariant();
 				newPath = newPath.ToLowerInvariant();
@@ -1963,7 +1963,7 @@ namespace SIL.FieldWorks
 					case DriveType.Fixed:
 					case DriveType.Network:
 					case DriveType.Removable:
-						if (MiscUtils.IsUnix)
+						if (Platform.IsUnix)
 						{
 							driveMounts.Add(driveInfo.Name + (driveInfo.Name.EndsWith("/") ? "" : "/"));    // ensure terminated with a slash
 						}
@@ -2101,7 +2101,7 @@ namespace SIL.FieldWorks
 				bldr.Append(Properties.Resources.ksYouCanTryToMoveProjects);
 				MessageBox.Show(bldr.ToString(), Properties.Resources.ksProblemsMovingProjects);
 			}
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				if (!projectPath.StartsWith(oldFolderForProjects))
 				{
@@ -2309,7 +2309,7 @@ namespace SIL.FieldWorks
 							retry = (dlg.ShowDialog() == DialogResult.Retry);
 						}
 					}
-					catch (FailedFwRestoreException e)
+					catch (FailedFwRestoreException)
 					{
 						MessageBoxUtils.Show(Properties.Resources.ksRestoringOldFwBackupFailed, Properties.Resources.ksFailed);
 					}
@@ -2799,7 +2799,7 @@ namespace SIL.FieldWorks
 			}
 			catch (StartupException sue)
 			{
-				if (MiscUtils.IsUnix && sue.InnerException is UnauthorizedAccessException)
+				if (Platform.IsUnix && sue.InnerException is UnauthorizedAccessException)
 				{
 					// Tell Mono user he/she needs to logout and log back in
 					MessageBox.Show(ResourceHelper.GetResourceString("ksNeedToJoinFwGroup"));
@@ -3323,7 +3323,7 @@ namespace SIL.FieldWorks
 			ErrorReporter.AddProperty("MachineName", Environment.MachineName);
 			ErrorReporter.AddProperty("OSVersion", Environment.OSVersion.ToString());
 			ErrorReporter.AddProperty("OSRelease", ErrorReport.GetOperatingSystemLabel());
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				var packageVersions = LinuxPackageUtils.FindInstalledPackages("fieldworks-applications*");
 				if (packageVersions.Any())
@@ -3464,7 +3464,7 @@ namespace SIL.FieldWorks
 					HandleLinkRequest(appArgs);
 					return Project;
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
 					//This is not good.
 				}
@@ -3674,29 +3674,6 @@ namespace SIL.FieldWorks
 			// TODO: Add 'link' and 'x' help
 
 			MessageBox.Show(helpMessage, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
-		}
-
-		/// <summary>
-		/// Ask user whether to use newer version of writing systems (presumably changed by some
-		/// other Palaso app or some other FW project).
-		/// </summary>
-		/// <param name="wsLabel">The display name (and other information) for the updated
-		/// writing systems (a list of them, possibly).</param>
-		/// <param name="projectName">Name of the project where we might switch to the newer writing system.</param>
-		/// <returns><c>true</c> to accept newer version; <c>false</c> otherwise</returns>
-		private static bool ComplainToUserAboutNewWs(string wsLabel, string projectName)
-		{
-			// Assume they want the WS updated when we're not supposed to show a UI.
-			if (s_noUserInterface)
-			{
-				return true;
-			}
-
-			var text = string.Format(Properties.Resources.kstidGlobalWsChangedMsg, wsLabel, projectName);
-			var caption = Properties.Resources.kstidGlobalWsChangedCaption;
-			var owner = s_splashScreen != null ? s_splashScreen.Form : Form.ActiveForm;
-
-			return ThreadHelper.ShowMessageBox(owner, text, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
 		}
 
 		/// <summary>

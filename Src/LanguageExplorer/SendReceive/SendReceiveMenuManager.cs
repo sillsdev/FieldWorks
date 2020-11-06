@@ -28,6 +28,7 @@ using SIL.Lift;
 using SIL.Lift.Migration;
 using SIL.Lift.Parsing;
 using SIL.Lift.Validation;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.SendReceive
 {
@@ -67,7 +68,7 @@ namespace LanguageExplorer.SendReceive
 			_globalUiWidgetParameterObject = globalParameterObject;
 		}
 
-		private Tuple<bool, bool> CanDoCmdCheckForFlexBridgeUpdates => new Tuple<bool, bool>(!MiscUtils.IsUnix, !MiscUtils.IsUnix);
+		private Tuple<bool, bool> CanDoCmdCheckForFlexBridgeUpdates => new Tuple<bool, bool>(!Platform.IsUnix, !Platform.IsUnix);
 
 		private Tuple<bool, bool> CanDoCmdFLExLiftBridge
 		{
@@ -197,7 +198,7 @@ namespace LanguageExplorer.SendReceive
 		{
 			var lastBridgeRun = GetLastBridge();
 			// Process the event for the toolbar button that does S/R for the last repo that was done.
-			if (MiscUtils.IsMono)
+			if (Platform.IsMono)
 			{
 				// This is a horrible workaround for a nasty bug in Mono. The toolbar button captures the mouse,
 				// and does not release it before calling this event handler. If we proceed to run the bridge,
@@ -561,7 +562,6 @@ namespace LanguageExplorer.SendReceive
 						return;
 					}
 				}
-				string url;
 				var projectFolder = Cache.ProjectId.ProjectFolder;
 				var savedState = PrepareToDetectMainConflicts(projectFolder);
 				var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension);

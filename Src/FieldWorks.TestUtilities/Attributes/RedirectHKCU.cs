@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using NUnit.Framework.Interfaces;
 using System;
 using System.Runtime.InteropServices;
 
@@ -43,7 +44,7 @@ namespace FieldWorks.TestUtilities.Attributes
 		private static string TmpRegistryKey => $@"Software\SIL\BuildAgents\{KeyPart}\HKCU";
 
 		/// <inheritdoc />
-		public override void BeforeTest(NUnit.Framework.TestDetails testDetails)
+		public override void BeforeTest(ITest testDetails)
 		{
 			base.BeforeTest(testDetails);
 
@@ -56,7 +57,7 @@ namespace FieldWorks.TestUtilities.Attributes
 		}
 
 		/// <inheritdoc />
-		public override void AfterTest(NUnit.Framework.TestDetails testDetails)
+		public override void AfterTest(ITest testDetails)
 		{
 			if (Environment.OSVersion.Platform != PlatformID.Unix && !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BUILDAGENT_SUBKEY")))
 			{

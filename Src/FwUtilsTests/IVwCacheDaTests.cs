@@ -173,14 +173,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Test getting/setting binary data
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(COMException))]
 		public void BinaryProp_BufferToSmall()
 		{
 			var prgb2 = new byte[] { 6, 7, 8, 9 };
 			m_IVwCacheDa.CacheBinaryProp(1112, 2221, prgb2, prgb2.Length);
 			using (var arrayPtr = MarshalEx.ArrayToNative<int>(10))
 			{
-				m_ISilDataAccess.BinaryPropRgb(1112, 2221, arrayPtr, 2, out _);
+				Assert.That(() => m_ISilDataAccess.BinaryPropRgb(1112, 2221, arrayPtr, 2, out _),
+					Throws.Exception.TypeOf<COMException>());
 			}
 		}
 

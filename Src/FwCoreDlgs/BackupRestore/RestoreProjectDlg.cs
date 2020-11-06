@@ -5,8 +5,8 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
+using DialogAdapters;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.DomainServices.BackupRestore;
 using SIL.LCModel.Utils;
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		#region Data members
 		private readonly RestoreProjectPresenter m_presenter;
 		private readonly string m_fmtUseOriginalName;
-		private IOpenFileDialog m_openFileDlg;
+		private OpenFileDialogAdapter m_openFileDlg;
 
 		#endregion
 

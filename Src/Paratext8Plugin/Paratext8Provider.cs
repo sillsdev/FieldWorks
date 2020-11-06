@@ -15,7 +15,7 @@ using SIL.Scripture;
 namespace Paratext8Plugin
 {
 	/// <summary>
-	/// Class wrapping the Paratext8 API for intereacting with scripture data.
+	/// Class wrapping the Paratext8 API for interacting with scripture data.
 	/// </summary>
 	[Export(typeof(ScriptureProvider.IScriptureProvider))]
 	[ExportMetadata("Version", "8")]
@@ -54,7 +54,8 @@ namespace Paratext8Plugin
 
 		public IScrText MakeScrText(string projectName)
 		{
-			return string.IsNullOrEmpty(projectName) ? new PT8ScrTextWrapper(new ScrText()) : new PT8ScrTextWrapper(new ScrText(projectName));
+			var scrText = ScrTextCollection.Find(projectName);
+			return scrText == null ? null : new PT8ScrTextWrapper(scrText);
 		}
 
 		/// <summary/>

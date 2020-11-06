@@ -4,6 +4,7 @@
 
 using System;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 using SIL.Keyboarding;
 using SIL.Windows.Forms.Keyboarding;
 
@@ -16,10 +17,10 @@ namespace FieldWorks.TestUtilities.Attributes
 	/// InitializeRealKeyboardControllerAttribute instead.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Method, AllowMultiple = true)]
-	public class InitializeNoOpKeyboardControllerAttribute : TestActionAttribute
+	public class InitializeNoOpKeyboardControllerAttribute: TestActionAttribute
 	{
 		/// <inheritdoc />
-		public override void BeforeTest(TestDetails testDetails)
+		public override void BeforeTest(ITest testDetails)
 		{
 			base.BeforeTest(testDetails);
 			// If we already have a keyboard controller we'd better dispose it or we'll end up with missing dispose calls.
@@ -32,7 +33,7 @@ namespace FieldWorks.TestUtilities.Attributes
 		}
 
 		/// <inheritdoc />
-		public override void AfterTest(TestDetails testDetails)
+		public override void AfterTest(ITest testDetails)
 		{
 			// Shut down (and implicitly dispose) the keyboard controller we created.
 			base.AfterTest(testDetails);

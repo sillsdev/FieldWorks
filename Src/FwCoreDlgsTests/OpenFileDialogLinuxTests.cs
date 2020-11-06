@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.IO;
 using Gtk;
 using NUnit.Framework;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {

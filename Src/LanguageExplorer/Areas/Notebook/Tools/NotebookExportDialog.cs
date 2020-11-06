@@ -424,7 +424,6 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 				var fieldName = m_mdc.GetFieldName(flid);
 				var fHandled = false;
 				ITsString tss;
-				string s;
 				var cpt = (CellarPropertyType)m_mdc.GetFieldType(flid);
 				switch (cpt)
 				{

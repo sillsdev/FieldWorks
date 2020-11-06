@@ -15,27 +15,27 @@ namespace LanguageExplorerTests
 		public void GetSuffixedPartOfNamedViewOrDuplicateNodeWorks()
 		{
 			string[] keyAttributes = { null, null, "name", null };
-			string[] keyValues = { null, null, "test#1", null };
+			string[] keyValues = { null, null, "test#1", null};
 			// SUT
 			var suffix = LayoutKeyUtils.GetSuffixedPartOfNamedViewOrDuplicateNode(keyAttributes, keyValues, out var stdKeyValues);
-			Assert.That(suffix, Is.StringMatching("#1"));
-			Assert.That(stdKeyValues[2], Is.StringMatching("test"));
+			Assert.That(suffix, Does.Match("#1"));
+			Assert.That(stdKeyValues[2], Does.Match("test"));
 			keyValues[2] = "test%01";
 			suffix = LayoutKeyUtils.GetSuffixedPartOfNamedViewOrDuplicateNode(keyAttributes, keyValues, out stdKeyValues);
-			Assert.That(suffix, Is.StringMatching("%01"));
-			Assert.That(stdKeyValues[2], Is.StringMatching("test"));
+			Assert.That(suffix, Does.Match("%01"));
+			Assert.That(stdKeyValues[2], Does.Match("test"));
 			keyValues[2] = "test_1";
 			suffix = LayoutKeyUtils.GetSuffixedPartOfNamedViewOrDuplicateNode(keyAttributes, keyValues, out stdKeyValues);
-			Assert.That(suffix, Is.StringMatching("_1"));
-			Assert.That(stdKeyValues[2], Is.StringMatching("test"));
+			Assert.That(suffix, Does.Match("_1"));
+			Assert.That(stdKeyValues[2], Does.Match("test"));
 			keyValues[2] = "test_AsPara#Stem01";
 			suffix = LayoutKeyUtils.GetSuffixedPartOfNamedViewOrDuplicateNode(keyAttributes, keyValues, out stdKeyValues);
-			Assert.That(suffix, Is.StringMatching("#Stem01"));
-			Assert.That(stdKeyValues[2], Is.StringMatching("test_AsPara"));
+			Assert.That(suffix, Does.Match("#Stem01"));
+			Assert.That(stdKeyValues[2], Does.Match("test_AsPara"));
 			keyValues[2] = "test-en";
 			suffix = LayoutKeyUtils.GetSuffixedPartOfNamedViewOrDuplicateNode(keyAttributes, keyValues, out stdKeyValues);
-			Assert.That(suffix, Is.StringMatching("en"));
-			Assert.That(stdKeyValues[2], Is.StringMatching("test"));
+			Assert.That(suffix, Does.Match("en"));
+			Assert.That(stdKeyValues[2], Does.Match("test"));
 		}
 
 		[Test]
@@ -43,11 +43,11 @@ namespace LanguageExplorerTests
 		{
 			var element = XDocument.Parse("<part ref=\"RootSubEntryTypeConfig\" param=\"publishRootSubEntryType_1\" hideConfig=\"true\" dup=\"1\" />");
 			var suffix = LayoutKeyUtils.GetPossibleParamSuffix(element.Root);
-			Assert.That(suffix, Is.StringMatching("_1"));
+			Assert.That(suffix, Does.Match("_1"));
 
 			element = XDocument.Parse("<part ref=\"RootSubEntryTypeConfig\" param=\"publishRootSubEntryType_%01_1\" hideConfig=\"true\" dup=\"1\" />");
 			suffix = LayoutKeyUtils.GetPossibleParamSuffix(element.Root);
-			Assert.That(suffix, Is.StringMatching("%01_1"));
+			Assert.That(suffix, Does.Match("%01_1"));
 		}
 	}
 }

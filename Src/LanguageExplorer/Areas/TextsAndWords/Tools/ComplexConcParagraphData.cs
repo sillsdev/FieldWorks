@@ -358,7 +358,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 
 		public IStTxtPara Paragraph { get; }
 
-		public Span<ShapeNode> Span => Shape.Span;
+		public SIL.Machine.Annotations.Span<ShapeNode> Span => Shape.Span;
 
 		public AnnotationList<ShapeNode> Annotations => Shape.Annotations;
 

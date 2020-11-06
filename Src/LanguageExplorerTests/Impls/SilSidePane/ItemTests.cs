@@ -12,18 +12,17 @@ namespace LanguageExplorerTests.Impls.SilSidePane
 	[TestFixture]
 	public class ItemTests
 	{
-		[Test]
-		public void ItemTest_basic()
+		[TestCase("")]
+		[TestCase("itemname")]
+		public void ItemTest_basic(string itemName)
 		{
-			Assert.DoesNotThrow(()=> new Item(string.Empty));
-			Assert.DoesNotThrow(() => new Item("itemname"));
+			Assert.That(()=> new Item(itemName), Throws.Nothing);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void ItemTest_null()
 		{
-			var item = new Item(null);
+			Assert.That(() => { var item = new Item(null); }, Throws.TypeOf<ArgumentNullException>());
 		}
 	}
 }

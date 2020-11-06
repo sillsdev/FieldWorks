@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.IO;
 using System.Xml;
 using NUnit.Framework;
 using SIL.LCModel.Utils;
@@ -18,14 +19,14 @@ namespace LanguageExplorer.TestUtilities.Tests
 		/// <summary>
 		/// Don't use the real file system
 		/// </summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			FileUtils.Manager.SetFileAdapter(new MockFileOS());
 		}
 
 		/// <summary />
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureTeardown()
 		{
 			FileUtils.Manager.Reset();
@@ -35,92 +36,92 @@ namespace LanguageExplorer.TestUtilities.Tests
 		/// Tests creating a MetaDataCache with no input pathname to the XML file.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void CreateMetaDataCacheNoFile()
 		{
-			MetaDataCache.CreateMetaDataCache(null);
+			Assert.That(() => MetaDataCache.CreateMetaDataCache(null),
+				Throws.ArgumentNullException);
 		}
 
 		/// <summary>
 		/// Tests creating a MetaDataCache with non-existent input pathname to the XML file.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void CreateMetaDataCacheEmptyPathname()
 		{
-			MetaDataCache.CreateMetaDataCache(string.Empty);
+			Assert.That(() => MetaDataCache.CreateMetaDataCache(string.Empty),
+				Throws.ArgumentNullException);
 		}
 
 		/// <summary>
 		/// Tests creating a MetaDataCache with non-existent input pathname to the XML file.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
 		public void CreateMetaDataCacheBadPathname()
 		{
-			MetaDataCache.CreateMetaDataCache("MyBadpathname");
+			Assert.That(() => MetaDataCache.CreateMetaDataCache(MDCTestUtils.GetPathToTestFile("MyBadpathname")),
+				Throws.InvalidOperationException);
 		}
 
 		/// <summary>
 		/// Tests creating a MetaDataCache with non-existent input pathname to the XML file.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(XmlException))]
 		public void CreateMetaDataCacheNotXMLData()
 		{
-			MetaDataCache.CreateMetaDataCache("NotXml.txt");
+			Assert.That(() => MetaDataCache.CreateMetaDataCache(MDCTestUtils.GetPathToTestFile("NotXml.txt")),
+				Throws.Exception.TypeOf<XmlException>());
 		}
 
 		/// <summary>
 		/// Tests creating a MetaDataCache with non-existent input pathname to the XML file.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
 		public void CreateMetaDataCacheEntireModelXMLData()
 		{
-			MetaDataCache.CreateMetaDataCache("Non-existent.xml");
+			Assert.That(() => MetaDataCache.CreateMetaDataCache(MDCTestUtils.GetPathToTestFile("Non-existent.xml")),
+				Throws.InvalidOperationException);
 		}
 
 		/// <summary>
 		/// Tests creating a MetaDataCache with an XML file containing no classes.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void CreateMetaDataCacheCellarModuleXMLData()
 		{
-			MetaDataCache.CreateMetaDataCache("NoClasses.xml");
+			Assert.That(() => MetaDataCache.CreateMetaDataCache(MDCTestUtils.GetPathToTestFile("NoClasses.xml")),
+				Throws.ArgumentException);
 		}
 
 		/// <summary>
 		/// Tests attempting to initialize a MetaDataCache twice with the same XML file.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void CreateMetaDataCacheDuplicateFiles()
 		{
-			var mdc = MetaDataCache.CreateMetaDataCache("Good.xml");
-			mdc.InitXml("Good.xml", false);
+			var mdc = MetaDataCache.CreateMetaDataCache(MDCTestUtils.GetPathToTestFile("Good.xml"));
+			Assert.That(() => mdc.InitXml(MDCTestUtils.GetPathToTestFile("Good.xml"), false),
+				Throws.ArgumentException);
 		}
 
 		/// <summary>
 		/// Tests creating a MetaDataCache with duplicate classes defined in an XML file.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void CreateMetaDataCacheDuplicateClassesInXmlFile()
 		{
-			MetaDataCache.CreateMetaDataCache("Bogus_DuplicateClassNames.xml");
+			Assert.That(() => MetaDataCache.CreateMetaDataCache(MDCTestUtils.GetPathToTestFile("Bogus_DuplicateClassNames.xml")),
+				Throws.ArgumentException);
 		}
 
 		/// <summary>
 		/// Tests creating a MetaDataCache with duplicate classes defined in different XML files.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void CreateMetaDataCacheDuplicateClassesInTwoFiles()
 		{
-			var mdc = MetaDataCache.CreateMetaDataCache("Good.xml");
-			mdc.InitXml("ReallyGood.xml", false);
+			var mdc = MetaDataCache.CreateMetaDataCache(MDCTestUtils.GetPathToTestFile("Good.xml"));
+			Assert.That(() => mdc.InitXml(MDCTestUtils.GetPathToTestFile("ReallyGood.xml"), false),
+				Throws.ArgumentException);
 		}
 
 		/// <summary>
@@ -129,7 +130,8 @@ namespace LanguageExplorer.TestUtilities.Tests
 		[Test]
 		public void CreateMetaDataCacheNonDuplicateClasses()
 		{
-			MetaDataCache.CreateMetaDataCache("Good_2.xml");
+			Assert.That(() => MetaDataCache.CreateMetaDataCache(MDCTestUtils.GetPathToTestFile("Good_2.xml")),
+				Throws.Nothing);
 		}
 	}
 }

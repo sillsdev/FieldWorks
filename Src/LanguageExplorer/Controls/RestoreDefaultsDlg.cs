@@ -4,12 +4,12 @@
 
 using System;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Framework;
+// using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls
 {
-	public partial class RestoreDefaultsDlg : Form
+	internal partial class RestoreDefaultsDlg : Form
 	{
 		private const string s_helpTopic = "khtpRestoreDefaults";
 		private IFlexApp m_app;

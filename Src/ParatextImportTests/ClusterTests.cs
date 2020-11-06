@@ -1641,8 +1641,8 @@ namespace ParatextImport
 			ClusterKind kindOfCluster)
 		{
 			// verify the basics
-			Assert.AreEqual(refMin, cluster.verseRefMin);
-			Assert.AreEqual(refMax, cluster.verseRefMax);
+			Assert.AreEqual(refMin, (int)cluster.verseRefMin);
+			Assert.AreEqual(refMax, (int)cluster.verseRefMax);
 			Assert.AreEqual(type, cluster.clusterType);
 
 			// verify the indexToInsertAtInOther
@@ -1935,14 +1935,14 @@ namespace ParatextImport
 				// for good measure, if a section, check section refs too
 				if (cmObjExpected is IScrSection)
 				{
-					Assert.AreEqual(((IScrSection)cmObjExpected).VerseRefMin, oiActual.verseRefMin);
-					Assert.AreEqual(((IScrSection)cmObjExpected).VerseRefMax, oiActual.verseRefMax);
+					Assert.AreEqual(new BCVRef(((IScrSection)cmObjExpected).VerseRefMin), oiActual.verseRefMin);
+					Assert.AreEqual(new BCVRef(((IScrSection)cmObjExpected).VerseRefMax), oiActual.verseRefMax);
 				}
 			}
 			else if (objExpected is ScrVerse)
 			{
-				Assert.AreEqual(((ScrVerse)objExpected).StartRef, oiActual.verseRefMin);
-				Assert.AreEqual(((ScrVerse)objExpected).EndRef, oiActual.verseRefMin);
+				Assert.AreEqual(new BCVRef(((ScrVerse)objExpected).StartRef), oiActual.verseRefMin);
+				Assert.AreEqual(new BCVRef(((ScrVerse)objExpected).EndRef), oiActual.verseRefMin);
 			}
 			else
 				Assert.Fail("Unhandled expected type.");

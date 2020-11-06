@@ -237,7 +237,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static void LaunchFlexBridge(IIPCHost host, string command, string args, Action onNonBlockerCommandComplete, ref bool changesReceived, ref string projectName)
 		{
 			var flexbridgeLauncher = FullFieldWorksBridgePath();
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				flexbridgeLauncher = FwDirectoryFinder.FlexBridgeFolder + "/flexbridge";
 			}

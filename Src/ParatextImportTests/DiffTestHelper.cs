@@ -163,8 +163,8 @@ namespace ParatextImport
 		{
 			Difference subDiff = rootDiff.SubDiffsForORCs[iSubDiff];
 			// verify the basics
-			Assert.AreEqual(0, subDiff.RefStart);
-			Assert.AreEqual(0, subDiff.RefEnd);
+			Assert.AreEqual(0, (int)subDiff.RefStart);
+			Assert.AreEqual(0, (int)subDiff.RefEnd);
 			Assert.AreEqual(DifferenceType.NoDifference, subDiff.DiffType);
 
 			// the Current para stuff
@@ -205,8 +205,8 @@ namespace ParatextImport
 		{
 			Difference subDiff = rootDiff.SubDiffsForORCs[iSubDiff];
 			// verify the basics
-			Assert.AreEqual(0, subDiff.RefStart);
-			Assert.AreEqual(0, subDiff.RefEnd);
+			Assert.AreEqual(0, (int)subDiff.RefStart);
+			Assert.AreEqual(0, (int)subDiff.RefEnd);
 			Assert.AreEqual(DifferenceType.NoDifference, subDiff.DiffType);
 
 			// the Current para stuff
@@ -705,8 +705,8 @@ namespace ParatextImport
 			string verseText, int iVerseStart, bool fIsChapter, bool fIsHeading, int iSection)
 		{
 			Assert.AreEqual(para, scrVerse.Para);
-			Assert.AreEqual(startRef, scrVerse.StartRef);
-			Assert.AreEqual(endRef, scrVerse.EndRef);
+			Assert.AreEqual(startRef, (int)scrVerse.StartRef);
+			Assert.AreEqual(endRef, (int)scrVerse.EndRef);
 			Assert.AreEqual(verseText, scrVerse.Text.Text);
 			Assert.AreEqual(iVerseStart, scrVerse.VerseStartIndex);
 			Assert.AreEqual(fIsChapter, scrVerse.ChapterNumberRun);

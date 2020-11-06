@@ -7,9 +7,9 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using DialogAdapters;
 using LanguageExplorer.SendReceive;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 
@@ -188,7 +188,7 @@ namespace SIL.FieldWorks
 		private void OpenFwDataProjectLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			// Use 'el cheapo' .Net dlg to find LangProj.
-			using (IOpenFileDialog dlg = new OpenFileDialogAdapter())
+			using (var dlg = new OpenFileDialogAdapter())
 			{
 				Hide();
 				dlg.CheckFileExists = true;

@@ -38,7 +38,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			catch (Exception err)
 			{
 				throw new Exception($"Error in running {GetType().Name} TestTearDown method.", err);
-			}
+		}
 			finally
 			{
 				_logger = null;
@@ -361,7 +361,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				Parts = new List<ConfigurableDictionaryNode> { configParent }
 			};
 			_migrator.MigrateFrom83Alpha(configModel);
-			Assert.That(_logger.Content, Is.StringContaining("'Parent > Complex Form' reached the Alpha2 migration with a null FieldDescription."));
+			Assert.That(_logger.Content, Does.Contain("'Parent > Complex Form' reached the Alpha2 migration with a null FieldDescription."));
 		}
 
 		[Test]
@@ -533,9 +533,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				Parts = new List<ConfigurableDictionaryNode> { mainEntry }
 			};
 			_migrator.MigrateFrom83Alpha(model);
-			Assert.That(subsenses.ReferenceItem, Is.StringMatching("MainEntrySubsenses"));
-			Assert.That(subsubsenses.ReferenceItem, Is.StringMatching("MainEntrySubsenses"));
-			Assert.That(subentriesUnderSenses.ReferenceItem, Is.StringMatching("MainEntrySubentries"));
+			Assert.That(subsenses.ReferenceItem, Does.Match("MainEntrySubsenses"));
+			Assert.That(subsubsenses.ReferenceItem, Does.Match("MainEntrySubsenses"));
+			Assert.That(subentriesUnderSenses.ReferenceItem, Does.Match("MainEntrySubentries"));
 			Assert.Null(subsenses.Children, "Children not removed from shared nodes");
 			Assert.Null(subsubsenses.Children, "Children not removed from shared nodes");
 			Assert.Null(subentriesUnderSenses.Children, "Children not removed from shared nodes");
@@ -596,7 +596,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			};
 			_migrator.MigrateFrom83Alpha(model);
 			var subSenseNode = (DictionaryNodeSenseOptions)subsenses.DictionaryNodeOptions;
-			Assert.That(subSenseNode.ParentSenseNumberingStyle, Is.StringMatching("%."));
+			Assert.That(subSenseNode.ParentSenseNumberingStyle, Does.Match("%."));
 		}
 
 		[Test]
@@ -629,7 +629,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			var subSenses = model.SharedItems.Find(node => node.Label == "MainEntrySubsenses");
 			Assert.NotNull(subSenses);
 			Assert.AreEqual(2, subSenses.Children.Count, "Subsenses children were not moved to shared");
-			Assert.That(subSenses.Children[1].Label, Is.StringMatching("Subsubsenses"), "Subsubsenses not added during migration");
+			Assert.That(subSenses.Children[1].Label, Does.Match("Subsubsenses"), "Subsubsenses not added during migration");
 			Assert.Null(model.Parts[0].Children[0].Children[0].Children, "Subsenses children were left in non-shared node");
 		}
 
@@ -739,7 +739,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			var subEntries = model.SharedItems.Find(node => node.Label == "AllReversalSubentries");
 			Assert.NotNull(subEntries);
 			Assert.AreEqual(2, subEntries.Children.Count, "Subentries children were not moved to shared");
-			Assert.That(subEntries.Children[1].Label, Is.StringMatching("Reversal Subsubentries"), "Subsubentries not added during migration");
+			Assert.That(subEntries.Children[1].Label, Does.Match("Reversal Subsubentries"), "Subsubentries not added during migration");
 			Assert.Null(model.Parts[0].Children[0].Children, "Subentries children were left in non-shared node");
 		}
 
@@ -773,7 +773,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			var subEntries = model.SharedItems.Find(node => node.Label == "AllReversalSubentries");
 			Assert.NotNull(subEntries);
 			Assert.AreEqual(2, subEntries.Children.Count, "Subentries children were not moved to shared");
-			Assert.That(subEntries.Children[1].Label, Is.StringMatching("Reversal Subsubentries"), "Subsubentries not added during migration");
+			Assert.That(subEntries.Children[1].Label, Does.Match("Reversal Subsubentries"), "Subsubentries not added during migration");
 			Assert.Null(model.Parts[0].Children[0].Children, "Subentries children were left in non-shared node");
 		}
 
@@ -832,7 +832,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			{
 				Label = "Variant Type",
 				FieldDescription = "VariantEntryTypesRS",
-				Children = new List<ConfigurableDictionaryNode> { revAbbrNode, nameNode }
+				Children = new List<ConfigurableDictionaryNode> {revAbbrNode, nameNode}
 			};
 			var varTypeNodeWithRevAbbr2 = varTypeNodeWithRevAbbr.DeepCloneUnderSameParent();
 			var varTypeNodeWithAbbr = new ConfigurableDictionaryNode
@@ -1223,7 +1223,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			{
 				Label = "Reversal Entry",
 				FieldDescription = "ReversalIndexEntry",
-				Children = new List<ConfigurableDictionaryNode> { referencedSensesNode }
+				Children = new List<ConfigurableDictionaryNode> {referencedSensesNode}
 			};
 			var model = new DictionaryConfigurationModel
 			{
@@ -1275,17 +1275,17 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				FieldDescription = "PictureFieldRA"
 			};
 			var picturesNode = new ConfigurableDictionaryNode
-			{
-				Label = "Pictures",
-				FieldDescription = "PicturesOfSenses",
-				Children = new List<ConfigurableDictionaryNode> { thumbnailNode, senseNumberNode, captionNode }
-			};
+				{
+					Label = "Pictures",
+					FieldDescription = "PicturesOfSenses",
+					Children = new List<ConfigurableDictionaryNode>{ thumbnailNode, senseNumberNode, captionNode }
+				};
 			var mainEntryNode = new ConfigurableDictionaryNode
-			{
-				Label = "Main Entry",
-				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { picturesNode }
-			};
+				{
+					Label = "Main Entry",
+					FieldDescription = "LexEntry",
+					Children = new List<ConfigurableDictionaryNode> { picturesNode }
+				};
 			var model = new DictionaryConfigurationModel
 			{
 				Version = PreHistoricMigrator.VersionAlpha1,
@@ -1295,19 +1295,19 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			// SUT
 			_migrator.MigrateFrom83Alpha(model);
 
-			var migratedPicturesNode = model.Parts[0].Children[0];
+			var migratedPicturesNode=model.Parts[0].Children[0];
 
 			// Sense Number should be gone
-			Assert.That(migratedPicturesNode.Children[1].Label, Is.Not.StringMatching("Sense Number"), "Sense Number should be gone");
+			Assert.That(migratedPicturesNode.Children[1].Label, Does.Not.Contain("Sense Number"), "Sense Number should be gone");
 
 			// Thumbnail and Caption should still be there
-			Assert.That(migratedPicturesNode.Children[0].Label, Is.StringMatching("Thumbnail"), "Thumbnail should still be present");
-			Assert.That(migratedPicturesNode.Children[1].Label, Is.StringMatching("Caption"), "Caption should still be present");
+			Assert.That(migratedPicturesNode.Children[0].Label, Does.Match("Thumbnail"), "Thumbnail should still be present");
+			Assert.That(migratedPicturesNode.Children[1].Label, Does.Match("Caption"), "Caption should still be present");
 
 			// Headword and Gloss should now be there
 			Assert.That(migratedPicturesNode.Children.Count, Is.GreaterThanOrEqualTo(3), "Not enough child nodes. Maybe Headword and Gloss weren't added.");
-			Assert.That(migratedPicturesNode.Children[2].Label, Is.StringMatching("Headword"), "Headword not introduced");
-			Assert.That(migratedPicturesNode.Children[3].Label, Is.StringMatching("Gloss"), "Gloss not introduced");
+			Assert.That(migratedPicturesNode.Children[2].Label, Does.Match("Headword"), "Headword not introduced");
+			Assert.That(migratedPicturesNode.Children[3].Label, Does.Match("Gloss"), "Gloss not introduced");
 		}
 	}
 }

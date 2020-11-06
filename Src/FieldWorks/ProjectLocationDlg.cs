@@ -7,9 +7,9 @@ using System.IO;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Windows.Forms;
+using DialogAdapters;
 using Mono.Unix;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.FwCoreDlgs.FileDialog;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
@@ -56,7 +56,7 @@ namespace SIL.FieldWorks
 			{
 				var newFolder = m_tbProjectsFolder.Text;
 				var oldFolder = FwDirectoryFinder.ProjectsDirectory;
-				if (!MiscUtils.IsUnix)
+				if (!Platform.IsUnix)
 				{
 					newFolder = newFolder.ToLowerInvariant();
 					oldFolder = oldFolder.ToLowerInvariant();
@@ -80,7 +80,7 @@ namespace SIL.FieldWorks
 						foreach (var file in Directory.GetFiles(path))
 						{
 							var filename = file;
-							if (!MiscUtils.IsUnix)
+							if (!Platform.IsUnix)
 							{
 								filename = filename.ToLowerInvariant();
 							}

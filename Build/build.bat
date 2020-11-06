@@ -1,11 +1,5 @@
 echo off
 
-echo.
-echo.
-echo NOTE: If you are building from a clean repository, you will need to answer a few questions after restoring NuGet packages before the build can continue.
-echo.
-echo.
-
 REM cause Environment variable changes to be lost after this process dies:
 if not "%OS%"=="" setlocal
 
@@ -15,12 +9,13 @@ cd ..
 set PATH=%cd%\DistFiles;%cd%\Bin;%WIX%\bin;%PATH%
 popd
 
-for /f "usebackq tokens=1* delims=: " %%i in (`vswhere -version "[15.0,15.999)" -requires Microsoft.Component.MSBuild`) do (
+for /f "usebackq tokens=1* delims=: " %%i in (`vswhere -version "[15.0,16.999)" -latest -requires Microsoft.Component.MSBuild`) do (
   if /i "%%i"=="installationPath" set InstallDir=%%j
   if /i "%%i"=="catalog_productLineVersion" set VSVersion=%%j
 )
 
 if "%arch%" == "" set arch=x86
+
 call "%InstallDir%\VC\Auxiliary\Build\vcvarsall.bat" %arch% 8.1
 
 
@@ -46,10 +41,6 @@ set OAPERUSERTLIBREG=1
 echo "Feedback" %MsBuild%
 REM Run the next target only if the previous target succeeded
 (
-	%MsBuild% /t:RestoreNuGetPackages
-) && (
-	%MsBuild% /t:CheckDevelopmentPropertiesFile
-) && (
 	%MsBuild% /t:refreshTargets
 ) && (
 	%MsBuild% %*

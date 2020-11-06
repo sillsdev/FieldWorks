@@ -8,8 +8,6 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
-using Paratext;
-using Paratext.LexicalClient;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
@@ -214,53 +212,6 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		}
 	}
 
-	internal class PT7VerseRefWrapper : IVerseRef
-	{
-		private VerseRef pt7VerseRef;
-		public PT7VerseRefWrapper(VerseRef verseRef)
-		{
-			pt7VerseRef = verseRef;
-		}
-
-		public object CoreVerseRef { get { return pt7VerseRef;} }
-
-		public int BookNum { get { return pt7VerseRef.BookNum; } set { pt7VerseRef.BookNum = value; } }
-
-		public int ChapterNum { get { return pt7VerseRef.ChapterNum; } }
-
-		public int VerseNum { get { return pt7VerseRef.VerseNum; } }
-
-		public string Segment()
-		{
-			return pt7VerseRef.Segment();
-		}
-
-		public IEnumerable<IVerseRef> AllVerses(bool v)
-		{
-			return ScriptureProvider.WrapPtCollection(pt7VerseRef.AllVerses(v),
-				new Func<VerseRef, IVerseRef>(verseRef => new PT7VerseRefWrapper(verseRef)));
-		}
-	}
-
-	internal class Pt7VerseWrapper : IScrVerse
-	{
-		private ScrVers pt7Versification;
-		public Pt7VerseWrapper(ScrVers versification)
-		{
-			pt7Versification = versification;
-		}
-
-		public int LastChapter(int bookNum)
-		{
-			return pt7Versification.LastChapter(bookNum);
-		}
-
-		public int LastVerse(int bookNum, int chapter)
-		{
-			return pt7Versification.LastVerse(bookNum, chapter);
-		}
-	}
-
 	/// <summary/>
 	public interface IScrVerse
 	{
@@ -269,104 +220,5 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 
 		/// <summary/>
 		int LastVerse(int bookNum, int chapter);
-	}
-
-	internal class Pt7ParserWrapper : IScriptureProviderParser
-	{
-		private ScrParser pt7Parser;
-		public Pt7ParserWrapper(ScrParser parser)
-		{
-			pt7Parser = parser;
-		}
-
-		public IEnumerable<IUsfmToken> GetUsfmTokens(IVerseRef verseRef, bool b, bool b1)
-		{
-			return ScriptureProvider.WrapPtCollection(pt7Parser.GetUsfmTokens((VerseRef)verseRef.CoreVerseRef, b, b1),
-				new Func<UsfmToken, IUsfmToken>(token => new PT7TokenWrapper(token)));
-		}
-	}
-
-	internal class PT7TokenWrapper : IUsfmToken
-	{
-		private UsfmToken pt7Token;
-		public PT7TokenWrapper(UsfmToken token)
-		{
-			pt7Token = token;
-		}
-
-		public object CoreToken { get { return pt7Token; } }
-
-		public string Marker { get {return pt7Token.Marker; } }
-
-		public string EndMarker { get { return pt7Token.EndMarker; } }
-
-		public TokenType Type { get { return (TokenType)Enum.Parse(typeof(TokenType), pt7Token.Type.ToString()); } }
-
-		public string Text {  get { return pt7Token.Text; } }
-	}
-
-	internal class PT7TagWrapper : ITag
-	{
-		private ScrTag pt7Tag;
-		public PT7TagWrapper(ScrTag tag)
-		{
-			pt7Tag = tag;
-		}
-
-		public string Marker { get { return pt7Tag.Marker; } set { pt7Tag.Marker = value; } }
-		public string Endmarker { get { return pt7Tag.Endmarker; } set { pt7Tag.Endmarker = value; } }
-
-		public ScrStyleType StyleType
-		{
-			get { return (ScrStyleType)Enum.Parse(typeof(ScrStyleType), pt7Tag.StyleType.ToString()); }
-			set { pt7Tag.StyleType = (Paratext.ScrStyleType)Enum.Parse(typeof(Paratext.ScrStyleType), pt7Tag.StyleType.ToString()); }
-		}
-
-		public bool IsScriptureBook
-		{
-			get
-			{
-				return (pt7Tag.TextProperties & TextProperties.scBook) != 0;
-			}
-		}
-	}
-
-	internal class PT7LexicalProjectWrapper : ILexicalProject
-	{
-		private AssociatedLexicalProject pt7Object;
-
-		public PT7LexicalProjectWrapper(AssociatedLexicalProject project)
-		{
-			pt7Object = project;
-		}
-
-		public string ProjectType
-		{
-			get { return pt7Object.ApplicationType.ToString(); }
-		}
-
-		public string ProjectId
-		{
-			get { return pt7Object.ProjectId; }
-		}
-
-		public override string ToString()
-		{
-			return string.Format("{0}:{1}", ProjectType, ProjectId);
-		}
-	}
-
-
-	internal class PT7TranslationInfoWrapper : ITranslationInfo
-	{
-		private TranslationInformation pt7Object;
-
-		public PT7TranslationInfoWrapper(TranslationInformation translationInfo)
-		{
-			pt7Object = translationInfo;
-		}
-
-		public string BaseProjectName { get { return pt7Object.BaseProjectName; } }
-		public ProjectType Type { get { return (ProjectType)Enum.Parse(typeof(ProjectType), pt7Object.Type.ToString()); } }
 	}
 }

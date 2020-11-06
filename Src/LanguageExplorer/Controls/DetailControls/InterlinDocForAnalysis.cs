@@ -2286,7 +2286,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				UowHelpers.UndoExtension(MyMajorFlexComponentParameters.UiWidgetController.DataMenuDictionary[Command.CmdApproveAll].Text, Cache.ActionHandlerAccessor, () =>
 				{
 					var nav = new SegmentServices.StTextAnnotationNavigator(SelectedOccurrence);
-					AnalysisOccurrence lastOccurrence;
 					var analyses = navigator.GetAnalysisOccurrencesAdvancingInStText().ToList();
 					foreach (var occ in analyses)
 					{   // This could be punctuation or any kind of analysis.

@@ -1554,12 +1554,6 @@ namespace ParatextImport.ImportTests
 		/// ------------------------------------------------------------------------------------
 		[Test]
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
-		[ExpectedException(typeof(ScriptureUtilsException),
-		   ExpectedMessage = "Back translation not part of a paragraph:(\\r)?\\n" +
-			"\\tThis is default paragraph characters (\\r)?\\n" +
-			"\\t\\(Style: Default Paragraph Characters\\)(\\r)?\\n" +
-			"Attempting to read GEN",
-			MatchType = MessageMatch.Regex)]
 		public void BackTranslationNonInterleaved_DefaultParaCharsStart()
 		{
 			m_importer.Settings.SetMapping(MappingSet.Main,
@@ -1599,47 +1593,10 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 			m_importer.ProcessSegment("This is default paragraph characters ", @"\nt");
-			m_importer.ProcessSegment("Title ", @"\mt");
-			m_importer.ProcessSegment("First Section ", @"\s");
-			m_importer.ProcessSegment("", @"\p");
-			m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 0);
-			m_importer.TextSegment.LastReference = new BCVRef(1, 1, 0);
-			m_importer.ProcessSegment("", @"\c");
-			m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 1);
-			m_importer.TextSegment.LastReference = new BCVRef(1, 1, 1);
-			m_importer.ProcessSegment("First verse ", @"\v");
-			m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 2);
-			m_importer.TextSegment.LastReference = new BCVRef(1, 1, 2);
-			m_importer.ProcessSegment("Second verse ", @"\v");
-
-			// ************** finalize **************
-			m_importer.FinalizeImport();
-
-			Assert.AreEqual(1, genesis.SectionsOS.Count); // minor sanity check
-
-			Assert.AreEqual(1, genesis.TitleOA.ParagraphsOS.Count);
-			IStTxtPara titlePara = (IStTxtPara)genesis.TitleOA.ParagraphsOS[0];
-			Assert.AreEqual(1, titlePara.TranslationsOC.Count);
-			ICmTranslation titleTranslation = titlePara.TranslationsOC.ToArray()[0];
-			Assert.AreEqual("Title",
-				titleTranslation.Translation.get_String(m_wsAnal).Text);
-
-			// Check first section
-			IScrSection section = genesis.SectionsOS[0];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
-			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("Primera Seccion", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
-			ICmTranslation translation = para.TranslationsOC.ToArray()[0];
-			Assert.AreEqual("First Section",
-				translation.Translation.get_String(m_wsAnal).Text);
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
-			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11Primer versiculo 2Segundo versiculo", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
-			translation = para.TranslationsOC.ToArray()[0];
-			Assert.AreEqual("11First verse 2Second verse",
-				translation.Translation.get_String(m_wsAnal).Text);
+			Assert.That(() => { m_importer.ProcessSegment("Title ", @"\mt"); }, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match("Back translation not part of a paragraph:(\\r)?\\n" +
+			"\\tThis is default paragraph characters (\\r)?\\n" +
+			"\\t\\(Style: Default Paragraph Characters\\)(\\r)?\\n" +
+			"Attempting to read GEN"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1841,9 +1798,6 @@ namespace ParatextImport.ImportTests
 		/// ------------------------------------------------------------------------------------
 		[Test]
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
-		[ExpectedException(typeof(ScriptureUtilsException),
-			ExpectedMessage = "No corresponding vernacular book for back translation.(\\r)?\\nAttempting to read GEN",
-			MatchType = MessageMatch.Regex)]
 		public void BackTranslationNonInterleaved_NoCorrespondingBook()
 		{
 			m_importer.Settings.ImportTranslation = false;
@@ -1854,10 +1808,8 @@ namespace ParatextImport.ImportTests
 			m_importer.CurrentImportDomain = ImportDomain.BackTrans;
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
-			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-
-			// ************** finalize **************
-			m_importer.FinalizeImport();
+			 // no text provided in segment, just the refs
+			Assert.That(() => { m_importer.ProcessSegment("", @"\id"); }, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match("No corresponding vernacular book for back translation.(\\r)?\\nAttempting to read GEN"));
 			// Shouldn't get here
 		}
 
@@ -3097,73 +3049,54 @@ namespace ParatextImport.ImportTests
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_MissingPicture()
 		{
-			try
+			using (new DummyFileMaker("junk1.jpg", true))
 			{
-				using (DummyFileMaker filemaker = new DummyFileMaker("junk1.jpg", true))
-				{
-					m_importer.Settings.ImportTranslation = true;
-					m_importer.Settings.ImportBackTranslation = true;
-					m_importer.Settings.ImportBookIntros = false;
+				m_importer.Settings.ImportTranslation = true;
+				m_importer.Settings.ImportBackTranslation = true;
+				m_importer.Settings.ImportBookIntros = false;
 
-					// ************** process a \id segment, test MakeBook() method *********************
-					m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
-					m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
+				// ************** process a \id segment, test MakeBook() method *********************
+				m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
+				m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 
-					// Set up the vernacular Scripture
-					m_importer.ProcessSegment("", @"\id");
-					// no text provided in segment, just the refs
-					m_importer.ProcessSegment("Primera Seccion ", @"\s");
-					m_importer.ProcessSegment("", @"\p");
-					m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 0);
-					m_importer.TextSegment.LastReference = new BCVRef(1, 1, 0);
-					m_importer.ProcessSegment("", @"\c");
-					m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 1);
-					m_importer.TextSegment.LastReference = new BCVRef(1, 1, 1);
-					m_importer.ProcessSegment("Primer versiculo", @"\v");
-					IScrBook genesis = m_importer.ScrBook;
-					Assert.AreEqual(1, genesis.SectionsOS.Count);
-					// minor sanity check
+				// Set up the vernacular Scripture
+				m_importer.ProcessSegment("", @"\id");
+				// no text provided in segment, just the refs
+				m_importer.ProcessSegment("Primera Seccion ", @"\s");
+				m_importer.ProcessSegment("", @"\p");
+				m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 0);
+				m_importer.TextSegment.LastReference = new BCVRef(1, 1, 0);
+				m_importer.ProcessSegment("", @"\c");
+				m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 1);
+				m_importer.TextSegment.LastReference = new BCVRef(1, 1, 1);
+				m_importer.ProcessSegment("Primer versiculo", @"\v");
+				IScrBook genesis = m_importer.ScrBook;
+				Assert.AreEqual(1, genesis.SectionsOS.Count);
+				// minor sanity check
 
-					// Now test the missing picture in a non-interleaved BT
-					m_importer.CurrentImportDomain = ImportDomain.BackTrans;
-					m_importer.ProcessSegment("", @"\id");
-					// no text provided in segment, just the refs
-					Assert.AreEqual(genesis.Hvo, m_importer.ScrBook.Hvo,
-						"The id line in the BT file should not cause a new ScrBook to get created.");
-					m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
-					m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
-					m_importer.ProcessSegment("First Section ", @"\s");
-					m_importer.ProcessSegment("", @"\p");
-					m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 0);
-					m_importer.TextSegment.LastReference = new BCVRef(1, 1, 0);
-					m_importer.ProcessSegment("", @"\c");
-					m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 1);
-					m_importer.TextSegment.LastReference = new BCVRef(1, 1, 1);
-					m_importer.ProcessSegment("First verse ", @"\v");
-					m_importer.ProcessSegment("BT for first photo", @"\fig");
-				}
-
-				// ************** finalize **************
-				m_importer.FinalizeImport();
-
-				Assert.Fail("We should throw an exception for the bad picture");
+				// Now test the missing picture in a non-interleaved BT
+				m_importer.CurrentImportDomain = ImportDomain.BackTrans;
+				m_importer.ProcessSegment("", @"\id");
+				// no text provided in segment, just the refs
+				Assert.AreEqual(genesis.Hvo, m_importer.ScrBook.Hvo,
+					"The id line in the BT file should not cause a new ScrBook to get created.");
+				m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
+				m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
+				m_importer.ProcessSegment("First Section ", @"\s");
+				m_importer.ProcessSegment("", @"\p");
+				m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 0);
+				m_importer.TextSegment.LastReference = new BCVRef(1, 1, 0);
+				m_importer.ProcessSegment("", @"\c");
+				m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 1);
+				m_importer.TextSegment.LastReference = new BCVRef(1, 1, 1);
+				m_importer.ProcessSegment("First verse ", @"\v");
+				m_importer.ProcessSegment("BT for first photo", @"\fig");
 			}
-			catch (ScriptureUtilsException e)
-			{
-				// Rather than having the test expect an exception, we had to put this assertion into
-				// a catch because the exception contains a variable, which is not allowed in the
-				// attribute.
-				// REVIEW (EberhardB): where exactly do we expect it to throw? Consider using
-				// Assert.Throws instead of the catch block (http://www.nunit.org/index.php?p=exceptionAsserts&r=2.5.9)
-				Assert.AreEqual(string.Format("Back translation does not correspond to a vernacular picture.{1}" +
-						"A back translation picture must correspond to a picture in the corresponding vernacular paragraph." +
-						"{1}{1}\\fig {0}{1}Attempting to read GEN  Chapter: 1  Verse: 1",
-						Path.Combine(Path.GetTempPath(), "BT for first photo"), Environment.NewLine), e.Message);
-			}
-			catch (Exception)
-			{
-				Assert.Fail("Exception should have been a ScriptureUtilsException");
-			}
+
+			// ************** finalize **************
+			var exception = Assert.Throws<ScriptureUtilsException>(()=>m_importer.FinalizeImport());
+			Assert.AreEqual(exception.ErrorCode, SUE_ErrorCode.BackTransMissingVernPicture,
+				"The import should have thrown a missing picture exception.");
 		}
 
 		/// ------------------------------------------------------------------------------------

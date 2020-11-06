@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected IScrBook m_book;
 
 		/// <summary />
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();

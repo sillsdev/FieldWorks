@@ -13,6 +13,7 @@ using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace ParatextImport.ImportTests
 {
@@ -1179,7 +1180,7 @@ namespace ParatextImport.ImportTests
 		[Test]
 		public void EnsurePictureFilePathIsRooted_Rooted()
 		{
-			string fileName = MiscUtils.IsUnix ? "P0|/tmp/mypic.jpg|P2|P3|P4"
+			string fileName = Platform.IsUnix ? "P0|/tmp/mypic.jpg|P2|P3|P4"
 				: @"P0|c:\temp\mypic.jpg|P2|P3|P4";
 			Assert.AreEqual(fileName,
 				ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted",
@@ -2251,10 +2252,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ScriptureUtilsException),
-			 ExpectedMessage = "Book introduction within Scripture text.(\\r)?\\n(\\r)?\\n" +
-			 "\\\\ip Bad intro para(\\r)?\\nAttempting to read EXO  Chapter: 1  Verse: 1",
-			 MatchType = MessageMatch.Regex)]
 		public void FailWhenImplicitIntroSectionFollowsScripture()
 		{
 			m_importer.Settings.ImportBackTranslation = true;
@@ -2266,7 +2263,9 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("A", @"\s");
 			m_importer.ProcessSegment("My para", @"\p");
 			m_importer.ProcessSegment("B", @"\s");
-			m_importer.ProcessSegment("Bad intro para", @"\ip");
+			Assert.That(() => { m_importer.ProcessSegment("Bad intro para", @"\ip"); }, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match("Book introduction within Scripture text.(\\r)?\\n(\\r)?\\n" +
+			 "\\\\ip Bad intro para(\\r)?\\nAttempting to read EXO  Chapter: 1  Verse: 1"));
+
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2276,10 +2275,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ScriptureUtilsException),
-		   ExpectedMessage = "Book introduction within Scripture text.(\\r)?\\n(\\r)?\\n" +
-		   "\\\\ip Bad intro para(\\r)?\\nAttempting to read EXO  Chapter: 1  Verse: 1",
-		   MatchType = MessageMatch.Regex)]
 		public void FailWhenIntroParaFollowsScripture()
 		{
 			m_importer.Settings.ImportBackTranslation = true;
@@ -2290,7 +2285,8 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("", @"\id");
 			m_importer.ProcessSegment("A", @"\s");
 			m_importer.ProcessSegment("My para", @"\p");
-			m_importer.ProcessSegment("Bad intro para", @"\ip");
+			Assert.That(() => { m_importer.ProcessSegment("Bad intro para", @"\ip"); }, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match("Book introduction within Scripture text.(\\r)?\\n(\\r)?\\n" +
+		   "\\\\ip Bad intro para(\\r)?\\nAttempting to read EXO  Chapter: 1  Verse: 1"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2300,10 +2296,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ScriptureUtilsException),
-			ExpectedMessage = "Book introduction within Scripture text.(\\r)?\\n(\\r)?\\n" +
-			"\\\\is B(\\r)?\\nAttempting to read EXO  Chapter: 1  Verse: 1",
-			MatchType = MessageMatch.Regex)]
 		public void FailWhenIntroSectionFollowsEmptyScriptureSection()
 		{
 			m_importer.Settings.ImportBackTranslation = true;
@@ -2313,7 +2305,8 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id");
 			m_importer.ProcessSegment("A", @"\s");
-			m_importer.ProcessSegment("B", @"\is");
+			Assert.That(() => { m_importer.ProcessSegment("B", @"\is");	}, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match("Book introduction within Scripture text.(\\r)?\\n(\\r)?\\n" +
+			"\\\\is B(\\r)?\\nAttempting to read EXO  Chapter: 1  Verse: 1"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2323,10 +2316,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ScriptureUtilsException),
-			ExpectedMessage = "Book introduction within Scripture text.(\\r)?\\n(\\r)?\\n" +
-			"\\\\is B(\\r)?\\nAttempting to read EXO  Chapter: 1  Verse: 1",
-			MatchType = MessageMatch.Regex)]
 		public void FailWhenIntroSectionFollowsNotImportedNormalScriptureSection()
 		{
 			m_importer.Settings.ImportBackTranslation = true;
@@ -2340,7 +2329,8 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("", @"\id");
 			m_importer.ProcessSegment("A", @"\s");
 			m_importer.ProcessSegment("My para", @"\p");
-			m_importer.ProcessSegment("B", @"\is");
+			Assert.That(() => {	m_importer.ProcessSegment("B", @"\is");	}, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match("Book introduction within Scripture text.(\\r)?\\n(\\r)?\\n" +
+			"\\\\is B(\\r)?\\nAttempting to read EXO  Chapter: 1  Verse: 1"));
 		}
 
 
@@ -2351,10 +2341,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ScriptureUtilsException),
-			ExpectedMessage = "Book introduction within Scripture text.(\\r)?\\n(\\r)?\\n" +
-			"\\\\is B(\\r)?\\nAttempting to read EXO  Chapter: 1  Verse: 1",
-			MatchType = MessageMatch.Regex)]
 		public void FailWhenIntroSectionFollowsNormalScriptureSection()
 		{
 			m_importer.Settings.ImportBackTranslation = true;
@@ -2365,7 +2351,8 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("", @"\id");
 			m_importer.ProcessSegment("A", @"\s");
 			m_importer.ProcessSegment("My para", @"\p");
-			m_importer.ProcessSegment("B", @"\is");
+			Assert.That(() => {	m_importer.ProcessSegment("B", @"\is");	}, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match("Book introduction within Scripture text.(\\r)?\\n(\\r)?\\n" +
+			"\\\\is B(\\r)?\\nAttempting to read EXO  Chapter: 1  Verse: 1"));
 		}
 	#endregion
 
@@ -4171,7 +4158,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 0);
 			m_importer.ProcessSegment("", @"\c");
 			m_importer.ProcessSegment("", @"\p");
-			string fileName = MiscUtils.IsUnix ? "/the Answer is 42.jpg" : @"Q:\the\Answer\is\42.jpg";
+			string fileName = Platform.IsUnix ? "/the Answer is 42.jpg" : @"Q:\the\Answer\is\42.jpg";
 			m_importer.ProcessSegment("User-supplied picture|" +  fileName +
 				"|col|EXO 1--1||Caption for junk.jpg|", @"\fig");
 			m_importer.FinalizeImport();
@@ -4415,7 +4402,7 @@ namespace ParatextImport.ImportTests
 				m_importer.ProcessSegment("", @"\c");
 				m_importer.ProcessSegment("", @"\p");
 				m_importer.ProcessSegment(filemaker.Filename, @"\cat");
-				string fileName = MiscUtils.IsUnix ? "/MissingPicture.jpg" : @"c:\MissingPicture.jpg";
+				string fileName = Platform.IsUnix ? "/MissingPicture.jpg" : @"c:\MissingPicture.jpg";
 				m_importer.ProcessSegment(fileName, @"\cat");
 				m_importer.FinalizeImport();
 				IScrBook exodus = m_importer.UndoInfo.ImportedVersion.BooksOS[0];
@@ -4475,11 +4462,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ScriptureUtilsException),
-		   ExpectedMessage = "Invalid figure file name property(\\r)?\\n(\\r)?\\n" +
-		   "\\\\cat InvalidFile|junk\u0000jpg||(\\r)?\\n" +
-		   "Attempting to read EXO  Chapter: 1  Verse: 1",
-		   MatchType = MessageMatch.Regex)]
 		public void HandleToolboxStylePictures_InvalidFigFilename()
 		{
 			using (DummyFileMaker filemaker = new DummyFileMaker("junk.jpg", true))
@@ -4496,8 +4478,10 @@ namespace ParatextImport.ImportTests
 				m_importer.ProcessSegment("", @"\p");
 
 				// Linux Invalid filename chars are only null and /,
-				m_importer.ProcessSegment(MiscUtils.IsUnix ? "InvalidFile|junk\u0000jpg||" : "InvalidFile|.jpg||",
-					@"\cat");
+				Assert.That(() => {	m_importer.ProcessSegment(Platform.IsUnix ? "InvalidFile|junk\u0000jpg||" : "InvalidFile|.jpg||",
+					@"\cat"); }, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match("Invalid figure file name property(\\r)?\\n(\\r)?\\n" +
+					   "\\\\cat InvalidFile|junk\u0000jpg||(\\r)?\\n" +
+					   "Attempting to read EXO  Chapter: 1  Verse: 1"));
 			}
 		}
 

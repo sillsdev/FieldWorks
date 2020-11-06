@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Reporting;
 
 namespace SIL.FieldWorks
@@ -138,7 +139,7 @@ namespace SIL.FieldWorks
 			// make sure that the dialog comes up visible and activated.
 			Activate();
 
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				ReLayoutCorrectly();
 			}

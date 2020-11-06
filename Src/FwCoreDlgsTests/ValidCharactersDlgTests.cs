@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
@@ -35,7 +36,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[TearDown]
 		public void TearDown()
 		{
-			m_dlg.Dispose();
+			m_dlg?.Dispose();
 		}
 
 		/// <summary>
@@ -205,7 +206,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			/// <summary>
-			/// Create a ValidCharsGridMngr for testing
+			/// Create a ValidCharsGridMngr for testing - This value must be disposed by the caller.
 			/// </summary>
 			protected override ValidCharGridsManager CreateValidCharGridsManager()
 			{
@@ -261,6 +262,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			protected override ValidCharacterType GetCharacterType(string chr)
 			{
 				return !string.IsNullOrEmpty(chr) && chr[0] != 0x5678 ? ValidCharacterType.DefinedUnknown : ValidCharacterType.None;
+			}
+
+			protected override void Dispose(bool isDisposing)
+			{
+				Debug.WriteLine("Disposing DummyValidCharacterDialog");
+				base.Dispose(isDisposing);
+				Debug.WriteLine("Finished Disposing DummyValidCharacterDialog");
 			}
 		}
 

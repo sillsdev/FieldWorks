@@ -34,7 +34,7 @@ namespace LanguageExplorerTests.Impls
 		/// Set-up for this test fixture involves creating some temporary
 		/// settings files. These will be cleaned up in the fixture teardown.
 		/// </summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp()
 		{
 			// load a persisted version of the property table.
@@ -71,7 +71,7 @@ namespace LanguageExplorerTests.Impls
 		/// <summary>
 		/// Needed to remove temporary settings folder.
 		/// </summary>
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureTearDown()
 		{
 			if (Directory.Exists(_originalSettingsPath))

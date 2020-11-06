@@ -9,7 +9,6 @@ using System.Security;
 using Microsoft.Win32;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
-using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -96,7 +95,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 #else
 				const string arch = "Release";
 #endif
-				return Path.Combine(Path.Combine(Path.Combine(Path.GetDirectoryName(SourceDirectory), "Output"), arch), file);
+				return Path.Combine(Path.GetDirectoryName(SourceDirectory), "Output", arch, file);
 			}
 
 			return Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), file);
@@ -293,15 +292,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					return m_srcdir;
 				}
-				if (MiscUtils.IsUnix)
+				if (Platform.IsUnix)
 				{
 					// Linux doesn't have the registry setting, at least while running tests,
 					// so we'll assume the executing assembly is $FW/Output/Debug/FwUtils.dll,
 					// and the source dir is $FW/Src.
 					var uriBase = new Uri(Assembly.GetExecutingAssembly().CodeBase);
 					var dir = Path.GetDirectoryName(Uri.UnescapeDataString(uriBase.AbsolutePath));
-					dir = Path.GetDirectoryName(dir);       // strip the parent directory name (Debug)
-					dir = Path.GetDirectoryName(dir);       // strip the parent directory again (Output)
+					dir = Path.GetDirectoryName(dir); // strip the parent directory again (net<version>)
+					dir = Path.GetDirectoryName(dir); // strip the parent directory name (Debug)
+					dir = Path.GetDirectoryName(dir); // strip the parent directory again (Output)
 					dir = Path.Combine(dir, "Src");
 					if (!Directory.Exists(dir))
 					{
@@ -363,24 +363,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-#if RELEASE
-				try
-				{
-#endif
 				var directory = EditorialChecksDirectory;
 				var checksDll = Path.Combine(directory, "ScrChecks.dll");
 				if (!File.Exists(checksDll))
 				{
-					throw new ApplicationException(string.Format(ResourceHelper.GetResourceString("kstidUnableToFindEditorialChecks"), directory));
+					throw new InstallationException(string.Format(ResourceHelper.GetResourceString("kstidUnableToFindEditorialChecks"), directory), null);
 				}
 				return checksDll;
-#if RELEASE
-				}
-				catch (ApplicationException e)
-				{
-					throw new InstallationException(e);
-				}
-#endif
 			}
 		}
 
@@ -459,7 +448,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// NOTE: SpecialFolder.MyDocuments returns $HOME on Linux
 				var myDocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 				// FWNX-501: use slightly different default path on Linux
-				var defaultDir = MiscUtils.IsUnix ? Path.Combine(myDocs, "Documents/fieldworks/backups") : Path.Combine(Path.Combine(myDocs, "My FieldWorks"), "Backups");
+				var defaultDir = Platform.IsUnix ? Path.Combine(myDocs, "Documents/fieldworks/backups") : Path.Combine(Path.Combine(myDocs, "My FieldWorks"), "Backups");
 				using (var registryKey = FwRegistryHelper.FieldWorksRegistryKey.OpenSubKey("ProjectBackup"))
 				{
 					return GetDirectory(registryKey, "DefaultBackupDirectory", defaultDir);

@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
-
-	<UsingTask TaskName="ExtractIIDs" AssemblyFile="FwBuildTasks.dll"/>
+<Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 	<PropertyGroup Condition="'$(OS)'=='Unix'">
 		<build4ux>1</build4ux>
 	</PropertyGroup>
 
 	<!-- call preparatory Linux targets -->
-	<Target Name="initLinux" Condition="'$(OS)'=='Unix'" DependsOnTargets="Initialize;unitpp;tlbs-copy;teckit;linuxLibs;ensureTLBsUpToDate;setupLinuxRegistry;BuildLinuxXslAssemblies;graphite2Linux"
+	<Target Name="initLinux" Condition="'$(OS)'=='Unix'" DependsOnTargets="Initialize;unitpp;tlbs-copy;teckit;linuxLibs;setupLinuxRegistry;graphite2Linux"
 			Inputs="$(dir-fwdistfiles)/strings-en.txt" Outputs="$(dir-outputBase)/strings-en.txt">
 		<Copy SourceFiles="$(dir-fwdistfiles)/strings-en.txt"
 			  DestinationFolder="$(dir-outputBase)"
@@ -27,18 +25,17 @@
 
 	<Target Name="tlbs-copy" Condition="'$(action)'!='clean'"
 			Inputs="$(fwrt)/Lib/linux/Common/**/*.*" Outputs="$(dir-fwoutputCommon)/**/*.*">
+		<ItemGroup>
+			<LinuxCommonFiles Include="$(fwrt)/Lib/linux/Common/*.*" />
+			<LinuxRawCommonFiles Include="$(fwrt)/Lib/linux/Common/Raw/**/*.*" />
+		</ItemGroup>
+
 		<MakeDir Directories="$(dir-fwoutputCommon)"/>
-		<CreateItem Include="$(fwrt)/Lib/linux/Common/**/*.*">
-			<Output TaskParameter="Include" ItemName="LinuxCommonFiles"/>
-		</CreateItem>
 		<Copy SourceFiles="@(LinuxCommonFiles)"
 			  DestinationFolder="$(dir-fwoutputCommon)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 
 		<MakeDir Directories="$(dir-fwoutputCommon)/Raw"/>
-		<CreateItem Include="$(fwrt)/Lib/linux/Common/Raw/**/*.*">
-			<Output TaskParameter="Include" ItemName="LinuxRawCommonFiles"/>
-		</CreateItem>
 		<Copy SourceFiles="@(LinuxRawCommonFiles)"
 			  DestinationFolder="$(dir-fwoutputCommon)/Raw"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
@@ -46,22 +43,18 @@
 
 	<!-- Copy (or delete copied) TECKit files -->
 	<Target Name="teckit">
-		<CreateProperty Value="x86" Condition="'$(arch)'!='x86_64'">
-			<Output TaskParameter="Value" PropertyName="teckit-ext"/>
-		</CreateProperty>
-		<CreateProperty Value="x86_64" Condition="'$(arch)'=='x86_64'">
-			<Output TaskParameter="Value" PropertyName="teckit-ext"/>
-		</CreateProperty>
-		<CreateItem Include="$(dir-fwdistfiles)/libTECkit_*$(teckit-ext).so">
-			<Output TaskParameter="Include" ItemName="CopyTECkitFiles"/>
-		</CreateItem>
+		<PropertyGroup>
+			<teckit-ext Condition="'$(arch)'!='x86_64'">x86</teckit-ext>
+			<teckit-ext Condition="'$(arch)'=='x86_64'">x86_64</teckit-ext>
+		</PropertyGroup>
+		<ItemGroup>
+			<CopyTECkitFiles Include="$(dir-fwdistfiles)/libTECkit_*$(teckit-ext).so" />
+			<DeleteTECkitFiles Include="$(dir-outputBase)/libTECkit_*$(teckit-ext).so" />
+		</ItemGroup>
 		<Copy SourceFiles="@(CopyTECkitFiles)"
 			  DestinationFolder="$(dir-outputBase)"
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
 			  Condition="'$(action)'!='clean'"/>
-		<CreateItem Include="$(dir-outputBase)/libTECkit_*$(teckit-ext).so">
-			<Output TaskParameter="Include" ItemName="DeleteTECkitFiles"/>
-		</CreateItem>
 		<Delete Files="@(DeleteTECkitFiles)" Condition="'$(action)'=='clean'"/>
 	</Target>
 
@@ -97,87 +90,13 @@
 			  Condition="'$(action)'!='clean'"/>
 	</Target>
 
-	<!--
-		On Linux we can't generate TLBs, so we do that on Windows and check them in.
-		But this means that whenever the *.idh files change we have to regenerate these
-		files.  This task checks that they are up-to-date and fails the build early on
-		if they are outdated.  We have to use unix line endings so that we get the same
-		checksum on both Windows and Linux.
-
-		Note: The common.idh, FwKernel.idh, TextServ.idh, Language.idh, and FwKernelTlb.idl
-		files are all copied from LCM.
-	-->
-	<ItemGroup>
-		<IdhFiles Include="$(fwrt)/Src/CommonCOMDlgs/CmnFwDlgs.idh"/>
-		<IdhFiles Include="$(fwrt)/Src/Kernel/common.idh"/>
-		<IdhFiles Include="$(fwrt)/Src/Kernel/FwKernel.idh"/>
-		<IdhFiles Include="$(fwrt)/Src/Kernel/FwKernelTlb.idl"/>
-		<IdhFiles Include="$(fwrt)/Src/Kernel/TextServ.idh"/>
-		<IdhFiles Include="$(fwrt)/Src/Kernel/Language.idh"/>
-		<IdhFiles Include="$(fwrt)/Src/views/Render.idh"/>
-		<IdhFiles Include="$(fwrt)/Src/views/Views.idh"/>
-		<IdhFiles Include="$(fwrt)/Src/views/ViewsTlb.idl"/>
-		<FilesToDeleteInOutputCommon Include="$(dir-fwoutputCommon)/*.*" Exclude="$(dir-fwoutputCommon)/bldinc.h" Condition="Exists('$(dir-fwoutputCommon)')"/>
-	</ItemGroup>
-	<PropertyGroup>
-		<ContinueIfOutOfDate Condition="!$(buildtlb)">false</ContinueIfOutOfDate>
-		<ContinueIfOutOfDate Condition="$(buildtlb) Or '$(OS)'!='Unix'">true</ContinueIfOutOfDate>
-	</PropertyGroup>
-	<Target Name="ensureTLBsUpToDate" DependsOnTargets="CopyDlls">
-		<MakeDir Directories="$(dir-fwoutput)"/><!-- just in case... -->
-		<CatenateFiles SourceFiles="@(IdhFiles)" TargetFile="$(dir-fwoutput)/idhfiles" UseUnixNewlines="true"/>
-		<Md5Checksum SourceFile="$(dir-fwoutput)/idhfiles"/>
-		<VerifyFilesIdentical FirstFile="$(dir-fwoutput)/idhfiles.MD5"
-			SecondFile="$(fwrt)/Lib/linux/Common/idhfiles.MD5"
-			ErrorMessage="TLB files are out of date. Please run 'xbuild /t:generateLinuxIdlFiles'."
-			ContinueOnError="$(ContinueIfOutOfDate)">
-			<Output TaskParameter="Result" PropertyName="VerifyFilesIdentical"/>
-		</VerifyFilesIdentical>
-		<CallTarget Targets="generateLinuxIdlFiles" Condition="!$(VerifyFilesIdentical)"/>
+	<Target Name="generateLinuxIdlFiles">
+		<MSBuild Projects="$(fwrt)/Src/ViewsInterfaces/ViewsInterfaces.csproj"
+			Targets="Restore;generateLinuxIdlFiles"
+			Properties="$(msbuild-props);IntermediateOutputPath=$(dir-fwobj)/ViewsInterfaces/;DefineConstants=$(ViewsInterfacesDefines);$(warningsAsErrors);WarningLevel=4"/>
 	</Target>
 
-	<Target Name="generateLinuxIdlFiles" DependsOnTargets="generateLinuxIdlFiles-Linux;generateLinuxIdlFiles-Windows">
-		<!-- It would be nice to use <ItemGroup> in here directly (which is supported in
-			.NET >= 3.5), but unfortunately it isn't implemented in Mono's xbuild yet. -->
-		<CreateItem Include="$(dir-fwoutputCommon)/*Tlb.h;$(dir-fwoutputCommon)/*Tlb.idl;$(dir-fwoutputCommon)/*Tlb.tlb">
-			<Output TaskParameter="Include" ItemName="TlbFiles"/>
-		</CreateItem>
-
-		<!-- The new idl related files got built by the generateLinuxIdlFiles-* targets
-			(without WIN32 defined). The thing left to do is to copy them to the right
-			directory. -->
-		<Copy SourceFiles="@(TlbFiles)" DestinationFolder="$(fwrt)/Lib/linux/Common"/>
-
-		<!--We also need to extract the interface GUIDs for Linux -->
-		<Message Text="Extracting iids for use on Linux..."/>
-		<ExtractIIDs Input="$(dir-fwoutputCommon)/FwKernelTlb.h" Output="$(fwrt)/Src/Kernel/FwKernel_GUIDs.cpp"/>
-		<ExtractIIDs Input="$(dir-fwoutputCommon)/ViewsTlb.h" Output="$(fwrt)/Src/views/Views_GUIDs.cpp"
-			LinesToInsertAtTop='#include "FwKernelTlb.h"'/>
-		<Copy SourceFiles="$(dir-fwoutput)/idhfiles.MD5" DestinationFolder="$(fwrt)/Lib/linux/Common"/>
-
-		<!-- Above we generated special IDL related files in Output/Common to save for linux.
-			We delete them here so that later in the build the ordinary Windows ones will
-			be built. -->
-		<Delete Files="FilesToDeleteInOutputCommon"  Condition="'$(OS)'!='Unix'"/>
-	</Target>
-
-	<!-- Build TLB files on a Windows machine for use on Linux -->
-	<Target Name="generateLinuxIdlFiles-Linux" Condition="'$(OS)'=='Unix'">
-		<!-- on Linux we run 'make idl' which calls remote-midl on a Windows machine -->
-		<Make ToolPath="/usr/bin"
-			Makefile="$(fwrt)/Makefile" Target="idl"
-			Configuration="$(config-capital)"
-			WorkingDirectory="$(fwrt)"/>
-	</Target>
-	<Target Name="generateLinuxIdlFiles-Windows" Condition="'$(OS)'!='Unix'">
-		<!-- on Windows we can directly create the necessary files. We pass
-			the property build4ux=1 so that we don't define WIN32. -->
-		<Delete Files="@(FilesToDeleteInOutputCommon)" />
-		<MSBuild Projects="$(MSBuildProjectFile)" Targets="mktlbs"
-			Properties="build4ux=1" BuildInParallel="false"/>
-	</Target>
-
-	<Target Name="setupLinuxRegistry" Condition="'$(OS)'=='Unix'">
+	<Target Name="setupLinuxRegistry" DependsOnTargets="GenerateVersionFiles" Condition="'$(OS)'=='Unix'">
 		<MakeDir Directories="$(fwrt)/DistFiles/Editorial Checks"/>
 		<!-- we use our own copy of the registry, so permissions aren't a problem -->
 		<WriteRegistry Hive="LocalMachine"
@@ -193,20 +112,20 @@
 					   Key="SOFTWARE\SIL\InitIcu"
 					   Value="1"/>
 		<WriteRegistry Hive="LocalMachine"
-					   Key="SOFTWARE\SIL\FieldWorks\$(FWMAJOR)\RootDataDir"
-					   Value="$(FW_ROOTDATA)"/>
+					   Key="SOFTWARE\SIL\FieldWorks\$(GitVersion_Major)\RootDataDir"
+					   Value="$(dir-fwdistfiles)"/>
 		<WriteRegistry Hive="LocalMachine"
-					   Key="SOFTWARE\SIL\FieldWorks\$(FWMAJOR)\RootCodeDir"
-					   Value="$(FW_ROOTCODE)"/>
+					   Key="SOFTWARE\SIL\FieldWorks\$(GitVersion_Major)\RootCodeDir"
+					   Value="$(dir-fwdistfiles)"/>
 		<WriteRegistry Hive="LocalMachine"
-					   Key="SOFTWARE\SIL\FieldWorks\$(FWMAJOR)\ProjectsDir"
-					   Value="$(FW_ROOT)/Projects"/>
+					   Key="SOFTWARE\SIL\FieldWorks\$(GitVersion_Major)\ProjectsDir"
+					   Value="$(fwrt)/Projects"/>
 		<WriteRegistry Hive="LocalMachine"
 					   Key="SOFTWARE\SIL\Icu54DataDir"
-					   Value="$(ICU_DATA)/icudt54l"/>
+					   Value="$(dir-icuData)/icudt54l"/>
 		<WriteRegistry Hive="LocalMachine"
 					   Key="SOFTWARE\SIL\Icu54Dir"
-					   Value="$(ICU_DATA)"/>
+					   Value="$(dir-icuData)"/>
 		<WriteRegistry Hive="LocalMachine"
 					   Key="SOFTWARE\SIL\SilEncConverters40\PluginDir"
 					   Value="$(dir-outputBase)/EC/Plugins"/>
@@ -249,34 +168,22 @@
 			SecondLine="8856396c-63a9-4bc7-ad47-87ec8b6ef5a4 libManagedComBridge.so"/>
 	</Target>
 
-	<!-- Mono doesn't have an XSL compiler so we just put the XSLs in a resource assembly -->
-	<ItemGroup>
-		<PresentationXslFiles Include="$(fwrt)/Src/Transforms/Presentation/*.xsl" />
-		<ApplicationXslFiles Include="$(fwrt)/Src/Transforms/Application/*.xsl" />
-	</ItemGroup>
-	<Target Name="BuildLinuxXslAssemblies" Inputs="@(PresentationXslFiles);@(ApplicationXslFiles)" Outputs="$(dir-outputBase)/PresentationTransforms.dll;$(dir-outputBase)/ApplicationTransforms.dll" Condition="'$(action)'!='clean'">
-		<Csc TargetType="library" OutputAssembly="$(dir-outputBase)/PresentationTransforms.dll" Optimize="true" Platform="AnyCPU" Resources="@(PresentationXslFiles)" />
-		<Csc TargetType="library" OutputAssembly="$(dir-outputBase)/ApplicationTransforms.dll" Optimize="true" Platform="AnyCPU" Resources="@(ApplicationXslFiles)" />
-	</Target>
-
 	<ItemGroup>
 		<Graphite2Sources Include="$(fwrt)/Lib/src/graphite2/src/*.*" />
 	</ItemGroup>
 	<Target Name="graphite2Linux" Inputs="@(Graphite2Sources)" Outputs="$(fwrt)/Lib/linux/$(config-capital)/libgraphite2.a" Condition="'$(action)'!='clean'">
 		<MakeDir Directories="$(fwrt)/Lib/linux/$(config-capital)" />
-		<Make ToolPath="/usr/bin"
-				Makefile="$(fwrt)/Lib/src/graphite2/Makefile"
-				Configuration="$(config-capital)" Target="$(make-target)"
-				BuildRoot="$(fwrt)"
-				WorkingDirectory="$(fwrt)/Lib/src/graphite2"/>
+		<Make Makefile="$(fwrt)/Lib/src/graphite2/Makefile"
+			Configuration="$(config-capital)" Target="$(make-target)"
+			BuildRoot="$(fwrt)"
+			WorkingDirectory="$(fwrt)/Lib/src/graphite2"/>
 		<Message Text="Finished building graphite2."/>
 	</Target>
 	<Target Name="clean-graphite2Linux">
-		<Make ToolPath="/usr/bin"
-				Makefile="$(fwrt)/Lib/src/graphite2/Makefile"
-				Configuration="$(config-capital)" Target="clean"
-				BuildRoot="$(fwrt)"
-				WorkingDirectory="$(fwrt)/Lib/src/graphite2"/>
+		<Make Makefile="$(fwrt)/Lib/src/graphite2/Makefile"
+			Configuration="$(config-capital)" Target="clean"
+			BuildRoot="$(fwrt)"
+			WorkingDirectory="$(fwrt)/Lib/src/graphite2"/>
 		<Message Text="Finished building graphite2."/>
 	</Target>
 
@@ -293,9 +200,9 @@
 		<ForceDelete Files="@(FilesToDelete)"/>
 	</Target>
 
-	<Target Name="build4package-fdo" DependsOnTargets="Initialize;setRegistryValues;ensureTLBsUpToDate;downloadDlls;allCppNoTest;FDO">
+	<Target Name="build4package-fdo" DependsOnTargets="Initialize;setRegistryValues;downloadDlls;allCppNoTest;FDO">
 	</Target>
 
-	<Target Name="build4package-rest" DependsOnTargets="CopyDlls;IcuData;mkall">
+	<Target Name="build4package-rest" DependsOnTargets="IcuData;mkall">
 	</Target>
 </Project>

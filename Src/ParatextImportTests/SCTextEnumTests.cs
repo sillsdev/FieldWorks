@@ -1502,12 +1502,15 @@ namespace ParatextImport
 			}
 			finally
 			{
-				m_converters.Remove("MyConverter");
+				m_converters?.Remove("MyConverter");
 				try
 				{
 					FileUtils.Delete(encFileName);
 				}
-				catch { }
+				catch
+				{
+					// ignored - We tried to delete the test file and couldn't but we don't want to crash NUnit and hang.
+				}
 			}
 		}
 
@@ -1517,8 +1520,6 @@ namespace ParatextImport
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(EncodingConverterException), ExpectedMessage="Encoding converter not found.",
-			MatchType=MessageMatch.StartsWith)]
 		public void MissingEncodingConverter()
 		{
 			string encFileName = string.Empty;
@@ -1540,9 +1541,9 @@ namespace ParatextImport
 			ISCTextSegment textSeg = textEnum.Next();
 			Assert.IsNotNull(textSeg, "Unable to read segment");
 
-				// read the \mt segment which should cause an exception
-				textSeg = textEnum.Next();
-			}
+			// read the \mt segment which should cause an exception
+			Assert.That(() => {	textSeg = textEnum.Next(); }, Throws.TypeOf<EncodingConverterException>().With.Message.StartsWith("Encoding converter not found."));
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
