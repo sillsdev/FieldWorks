@@ -2973,17 +2973,6 @@ namespace LanguageExplorer.Controls
 			set => m_orderForColumnsDisplay = value;
 		}
 
-		// In your AllItems list, the specified objects have been replaced (typically dummy to real).
-		internal void FixReplacedItems(Dictionary<int, int> replacedObjects)
-		{
-			// As far as I can tell, this never happens in 7.0+; probably it was ONLY used for replacing dummy with real objects,
-			// which no longer happens. The necessary action is possibly to update the list of items shown in the browse view
-			// by replacing the keys in replacedObjects with the corresponding values (but this might happen anyway as a
-			// result of some automatic PropChanged), and also to set the selected status of the replacement to match
-			// the selected status of the original in the decorator that manages the check marks on the rows.
-			throw new NotSupportedException("Attempt to execute FW 6.0 code that was believed obsolete and not ported");
-		}
-
 		/// <summary>
 		/// Pass the message on to the main browse view so it can adjust its scroll position.
 		/// </summary>

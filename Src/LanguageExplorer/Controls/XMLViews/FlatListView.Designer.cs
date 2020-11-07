@@ -30,6 +30,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (disposing)
 			{
 				components?.Dispose();
+				m_bvList.SelectionChanged -= m_bvList_SelectionChanged;
 			}
 
 			m_cache = null;

@@ -80,6 +80,9 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				m_searchEngine.SearchCompleted -= m_searchEngine_SearchCompleted;
 				m_searchEngine.Dispose();
+				m_bvMatches.SelectionChanged -= m_bvMatches_SelectionChanged;
+				m_bvMatches.SelectionMade -= m_bvMatches_SelectionMade;
+				m_bvMatches.ColumnsChanged -= m_bvMatches_ColumnsChanged;
 			}
 			m_cache = null;
 

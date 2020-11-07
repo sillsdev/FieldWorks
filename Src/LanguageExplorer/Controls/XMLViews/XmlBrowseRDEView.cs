@@ -23,7 +23,7 @@ using SIL.Xml;
 namespace LanguageExplorer.Controls.XMLViews
 {
 	/// <summary> XML Browse View for Rapid Data Entry (Collect Words) </summary>
-	internal class XmlBrowseRDEView : XmlBrowseViewBase, IUndoRedoHandler
+	internal sealed class XmlBrowseRDEView : XmlBrowseViewBase, IUndoRedoHandler
 	{
 		#region Data members
 
@@ -99,7 +99,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Gets the RDE vc.
 		/// </summary>
-		protected XmlRDEBrowseViewVc RDEVc => (XmlRDEBrowseViewVc)Vc;
+		private XmlRDEBrowseViewVc RDEVc => (XmlRDEBrowseViewVc)Vc;
 
 		/// <summary>
 		/// True if we are running the read-only version of the view that is primarily used for

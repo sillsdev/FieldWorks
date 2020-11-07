@@ -312,6 +312,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 			if (disposing)
 			{
 				components?.Dispose();
+				_currentBrowseView.BrowseViewer.SelectionChanged -= BrowseViewer_SelectionChanged;
 				PropertyTable.RemoveProperty("IgnoreStatusPanel");
 				Subscriber.Unsubscribe("DialogFilterStatus", DialogFilterStatus_Handler);
 				var repository = PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository);

@@ -13,7 +13,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 namespace LanguageExplorer.Controls.XMLViews
 {
 	/// <summary />
-	internal class XmlBrowseView : XmlBrowseViewBase
+	internal sealed class XmlBrowseView : XmlBrowseViewBase
 	{
 		private bool m_fInSelectionChanged;
 

@@ -155,7 +155,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// 'columns' elements that specify the BE bar (among other things).</param>
 		/// <param name="flexComponentParameters"></param>
 		/// <param name="cache">The cache.</param>
-		public BulkEditBar(BrowseViewer bv, XElement parametersElement, FlexComponentParameters flexComponentParameters, LcmCache cache)
+		internal BulkEditBar(BrowseViewer bv, XElement parametersElement, FlexComponentParameters flexComponentParameters, LcmCache cache)
 			: this()
 		{
 			PropertyTable = flexComponentParameters.PropertyTable;
@@ -331,6 +331,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				m_closeButton.Click -= m_closeButton_Click;
 				m_operationsTabControl.Deselecting -= m_operationsTabControl_Deselecting;
 				m_operationsTabControl.SelectedIndexChanged -= m_operationsTabControl_SelectedIndexChanged;
+				m_bv.RefreshCompleted -= BrowseViewSorterChanged;
 				DisposeBulkEditItems();
 			}
 			m_beItems = null;
@@ -1840,7 +1841,6 @@ namespace LanguageExplorer.Controls.XMLViews
 							return;
 						}
 						method.Doit(ItemsToChange(true), state);
-						FixReplacedItems(method);
 					}
 					else if (m_operationsTabControl.SelectedTab == BulkCopyTab)
 					{
@@ -1850,7 +1850,6 @@ namespace LanguageExplorer.Controls.XMLViews
 							return;
 						}
 						method.Doit(ItemsToChange(true), state);
-						FixReplacedItems(method);
 					}
 					else if (m_operationsTabControl.SelectedTab == TransduceTab)
 					{
@@ -1860,7 +1859,6 @@ namespace LanguageExplorer.Controls.XMLViews
 							return;
 						}
 						method.Doit(ItemsToChange(true), state);
-						FixReplacedItems(method);
 					}
 					else if (m_operationsTabControl.SelectedTab == m_deleteTab)
 					{
@@ -1884,7 +1882,6 @@ namespace LanguageExplorer.Controls.XMLViews
 								return;
 							}
 							method.Doit(ItemsToChange(true), state);
-							FixReplacedItems(method);
 						}
 
 					}
@@ -1912,15 +1909,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal void ResumeRecordListRowChanges()
 		{
 			m_bv.SetListModificationInProgress(false);
-		}
-
-		private void FixReplacedItems(object doItObject)
-		{
-			var replacedObjects = (doItObject as IGetReplacedObjects)?.ReplacedObjects;
-			if (replacedObjects != null && replacedObjects.Count != 0)
-			{
-				m_bv.FixReplacedItems(replacedObjects);
-			}
 		}
 
 		/// <summary>

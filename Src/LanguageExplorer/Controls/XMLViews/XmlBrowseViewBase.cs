@@ -812,7 +812,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Initializes using <paramref name="configParamsElement"/>.
 		/// </summary>
-		public virtual void Init(XElement configParamsElement, int hvoRoot, int madeUpFieldIdentifier, LcmCache cache, BrowseViewer bv)
+		internal void Init(XElement configParamsElement, int hvoRoot, int madeUpFieldIdentifier, LcmCache cache, BrowseViewer bv)
 		{
 			Debug.Assert((m_selectedIndex == -1), "Cannot set the index to less than zero before initializing.");
 			Debug.Assert(_configParamsElement == null || _configParamsElement == configParamsElement, "XmlBrowseViewBase.Init: Mismatched configuration parameters.");
@@ -824,7 +824,11 @@ namespace LanguageExplorer.Controls.XMLViews
 				_configParamsElement = configParamsElement;
 			}
 			// Do this early...we need the ID to restore the columns when the VC is created.
-			m_id = XmlUtils.GetOptionalAttributeValue(_configParamsElement, "id", "NeedsId");
+			m_id = XmlUtils.GetOptionalAttributeValue(_configParamsElement, "id");
+			if (string.IsNullOrWhiteSpace(m_id))
+			{
+				throw new ArgumentNullException("No id element which is required.");
+			}
 			m_bv = bv;
 			m_cache = cache;
 			SpecialCache = m_bv.SpecialCache;
@@ -1222,7 +1226,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		/// <summary>
 		/// Cause the behavior to switch to the current setting of ReadOnlyBrowse.
-		/// Override if the behaivor should be different than this.
+		/// Override if the behavior should be different than this.
 		/// </summary>
 		public virtual void SetSelectedRowHighlighting()
 		{

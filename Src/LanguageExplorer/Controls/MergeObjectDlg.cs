@@ -140,6 +140,7 @@ namespace LanguageExplorer.Controls
 			if (disposing)
 			{
 				components?.Dispose();
+				m_bvMergeOptions.SelectedIndexChanged -= m_bvMergeOptions_SelectedIndexChanged;
 			}
 			m_cache = null;
 			m_fwTextBoxBottomMsg = null;

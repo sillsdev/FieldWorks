@@ -174,6 +174,8 @@ namespace LanguageExplorer.Controls
 			if (disposing)
 			{
 				m_helpProvider?.Dispose();
+				m_bvList.SelectionChanged -= m_bvList_SelectionChanged;
+				m_bvList.ColumnsChanged -= BrowseViewer_ColumnsChanged;
 			}
 			m_cache = null;
 			FS = null;

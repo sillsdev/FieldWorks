@@ -35,7 +35,7 @@ namespace LanguageExplorer.Controls.XMLViews
 	/// </summary>
 	internal class XmlVc : FwBaseVc
 	{
-		// The specification parameteres element that contains fragments (in the old approach). Null in new.
+		// The specification parameters element that contains fragments (in the old approach). Null in new.
 		/// <summary></summary>
 		protected XElement _configParamsElement;
 		// Summary of how we use frag IDs.
