@@ -21,7 +21,16 @@ for /f "usebackq tokens=1* delims=: " %%i in (`vswhere -version "[15.0,15.999)" 
 )
 
 if "%arch%" == "" set arch=x86
-call "%InstallDir%\VC\Auxiliary\Build\vcvarsall.bat" %arch% 8.1
+
+REM run Microsoft's batch file to set all the environment variables and path necessary to build a C++ app
+set VcVarsLoc=%InstallDir%\VC\Auxiliary\Build\vcvarsall.bat
+
+if exist "%VcVarsLoc%" (
+  call "%VcVarsLoc%" %arch% 8.1
+) else (
+  echo "Could not find: %VcVarsLoc% something is wrong with the Visual Studio installation"
+  GOTO End
+)
 
 
 if "%arch%" == "x86" IF "%VSVersion%" GEQ "2019" (set MsBuild="%InstallDir%\MSBuild\Current\Bin\msbuild.exe") else (set MsBuild="%InstallDir%\MSBuild\15.0\Bin\msbuild.exe")
@@ -54,6 +63,7 @@ REM Run the next target only if the previous target succeeded
 ) && (
 	%MsBuild% %*
 )
+:END
 FOR /F "tokens=*" %%g IN ('date /t') do (SET DATE=%%g)
 FOR /F "tokens=*" %%g IN ('time /t') do (SET TIME=%%g)
 echo Build completed at %TIME% on %DATE%
