@@ -45,14 +45,6 @@ namespace LanguageExplorer.Filters
 		}
 
 		/// <summary>
-		/// Return the HVO of the list from which choices can be made.
-		/// </summary>
-		internal static int List(LcmCache cache)
-		{
-			return cache.LanguageProject.PartsOfSpeechOA.Hvo;
-		}
-
-		/// <summary>
 		/// This is a filter for an atomic property, and the "all" and "only" options should not be presented.
 		/// </summary>
 		/// <remarks>NB: Used by reflection.</remarks>

@@ -7,9 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
-using LanguageExplorer;
 using LanguageExplorer.Controls;
-using LanguageExplorer.DictionaryConfiguration;
 using NUnit.Framework;
 
 namespace LanguageExplorerTests.Controls

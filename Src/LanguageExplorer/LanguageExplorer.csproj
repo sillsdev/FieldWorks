@@ -311,7 +311,7 @@
       <DependentUpon>DetailControlsStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="Controls\DetailControls\RecordChangeHandlerFactory.cs" />
-    <Compile Include="DictionaryConfiguration\DictConfigItem.cs" />
+    <Compile Include="Controls\DictConfigItem.cs" />
     <Compile Include="FactoryNames.cs" />
     <Compile Include="Filters\InflectionClassFilter.cs" />
     <Compile Include="Filters\IntCompareFinder.cs" />
@@ -1290,6 +1290,7 @@
     <Compile Include="Controls\MsaVc.cs" />
     <Compile Include="Filters\PosFilter.cs" />
     <Compile Include="Controls\XMLViews\TargetFeatureEventArgs.cs" />
+    <Compile Include="UtilityTools\UtilityRepository.cs" />
     <Compile Include="VcFrags.cs" />
     <Compile Include="Controls\MGA\MGAImageKind.cs" />
     <Compile Include="Controls\MGA\MasterItemCitation.cs" />
@@ -1823,8 +1824,8 @@
     <Compile Include="IAnalysisOccurrenceFromHvo.cs" />
     <Compile Include="ICreateAndInsert.cs" />
     <Compile Include="IDictConfigManager.cs" />
-    <Compile Include="IDictConfigPresenter.cs" />
-    <Compile Include="IDictConfigViewer.cs" />
+    <Compile Include="Controls\IDictConfigPresenter.cs" />
+    <Compile Include="Controls\IDictConfigViewer.cs" />
     <Compile Include="DictionaryConfiguration\IDictionaryConfigurationView.cs" />
     <Compile Include="DictionaryConfiguration\IDictionaryDetailsView.cs" />
     <Compile Include="DictionaryConfiguration\IDictionaryGroupingOptionsView.cs" />

@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace LanguageExplorer
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// Interface which the DictionaryConfigMgrDlg or (for test) the DictionaryConfigViewerStub

@@ -4,7 +4,7 @@
 
 using System;
 
-namespace LanguageExplorer.DictionaryConfiguration
+namespace LanguageExplorer.Controls
 {
 	/// <summary>
 	/// Item to be managed by the DictionaryConfigManager. Represents a user-configurable
@@ -53,7 +53,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			IsProtected = false;
 			UserMarkedDelete = false;
 			CopyOf = source.UniqueCode;
-			DispName = string.Format(DictionaryConfigurationStrings.ksDictConfigCopyOf, source.DispName);
+			DispName = string.Format(LanguageExplorerControls.ksDictConfigCopyOf, source.DispName);
 			m_initialName = DispName;
 		}
 

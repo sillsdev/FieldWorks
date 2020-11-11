@@ -710,6 +710,15 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to That name is already in use by another view..
+        /// </summary>
+        internal static string ksChooseAnotherViewName {
+            get {
+                return ResourceManager.GetString("ksChooseAnotherViewName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Default Backup Folder.
         /// </summary>
         internal static string ksChooseBackupFolder {
@@ -800,6 +809,24 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete the {0} View {1}?.
+        /// </summary>
+        internal static string ksConfirmDelete {
+            get {
+                return ResourceManager.GetString("ksConfirmDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete {0} View.
+        /// </summary>
+        internal static string ksConfirmDeleteTitle {
+            get {
+                return ResourceManager.GetString("ksConfirmDeleteTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Contains Data(%).
         /// </summary>
         internal static string ksContainsData_ {
@@ -886,6 +913,24 @@ namespace LanguageExplorer.Controls {
         internal static string ksDerivational {
             get {
                 return ResourceManager.GetString("ksDerivational", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy of {0}.
+        /// </summary>
+        internal static string ksDictConfigCopyOf {
+            get {
+                return ResourceManager.GetString("ksDictConfigCopyOf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy of {0} ({1}).
+        /// </summary>
+        internal static string ksDictConfigMultiCopyOf {
+            get {
+                return ResourceManager.GetString("ksDictConfigMultiCopyOf", resourceCulture);
             }
         }
         
@@ -1813,6 +1858,15 @@ namespace LanguageExplorer.Controls {
         internal static string ksMultiStringImportOptions {
             get {
                 return ResourceManager.GetString("ksMultiStringImportOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name Already In Use.
+        /// </summary>
+        internal static string ksNameInUseTitle {
+            get {
+                return ResourceManager.GetString("ksNameInUseTitle", resourceCulture);
             }
         }
         

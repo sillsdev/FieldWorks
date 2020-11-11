@@ -888,7 +888,7 @@ namespace LanguageExplorerTests.Impls
 				"LanguageExplorer.Controls.PaneBar",
 				"LanguageExplorer.Controls.DetailControls.AdvancedMTDialog",
 				"LanguageExplorer.Areas.TextsAndWords.Tools.ClosedFeatureValue",
-				"LanguageExplorer.UtilityTools.UtilityDlg+CircularRefBreaker",
+				"LanguageExplorer.UtilityTools.UtilityRepository+CircularRefBreaker",
 				"LanguageExplorer.Controls.DetailControls.AddAllomorphDlg",
 				"LanguageExplorer.Impls.RestoreDefaultsDlg",
 				"LanguageExplorer.Controls.DetailControls.AdhocCoProhibAtomicLauncher",

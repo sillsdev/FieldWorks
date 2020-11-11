@@ -430,7 +430,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			var optionalAttributeValue = OptionalAttributeValue(item.ColumnSpecificationElement, out var options);
 			var bulkEdit_xor_chooseFilter = options.FirstOrDefault(option => _supportedInMakeListChoiceFilterItem.Contains(option));
-			var canbeMadeInMakeListChoiceFilterItem = !string.IsNullOrWhiteSpace(bulkEdit_xor_chooseFilter);
+			var shouldHaveListChoiceFilterItem = !string.IsNullOrWhiteSpace(bulkEdit_xor_chooseFilter);
 			var sortType = XmlUtils.GetOptionalAttributeValue(item.ColumnSpecificationElement, "sortType", null);
 			switch (sortType)
 			{
@@ -485,15 +485,14 @@ namespace LanguageExplorer.Controls.XMLViews
 				default:
 					// If it isn't any of those, include the bad spelling item, provided we have a dictionary
 					// for the relevant language, and provided it is NOT a list (for which we will make a chooser).
-					if (!string.IsNullOrEmpty(optionalAttributeValue))
+					if (!shouldHaveListChoiceFilterItem)
 					{
-						break;
+						AddSpellingErrorsIfAppropriate(item, combo, ws);
 					}
-					AddSpellingErrorsIfAppropriate(item, combo, ws);
 					break;
 			}
 			combo.Items.Add(new FindComboItem(MakeLabel(XMLViewsStrings.ksFilterFor_), item, ws, combo, m_bv));
-			if (canbeMadeInMakeListChoiceFilterItem)
+			if (shouldHaveListChoiceFilterItem)
 			{
 				MakeListChoiceFilterItem(item, combo, bulkEdit_xor_chooseFilter, m_bv.PropertyTable);
 			}

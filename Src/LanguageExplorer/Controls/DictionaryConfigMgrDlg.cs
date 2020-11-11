@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorer.Controls
@@ -183,8 +182,8 @@ namespace LanguageExplorer.Controls
 			{
 				return; // what happened?
 			}
-			var dr = MessageBox.Show(string.Format(DictionaryConfigurationStrings.ksConfirmDelete, m_objType, CurrentSelectedItem.Name),
-				string.Format(DictionaryConfigurationStrings.ksConfirmDeleteTitle, m_objType), MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+			var dr = MessageBox.Show(string.Format(LanguageExplorerControls.ksConfirmDelete, m_objType, CurrentSelectedItem.Name),
+				string.Format(LanguageExplorerControls.ksConfirmDeleteTitle, m_objType), MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
 			if (dr == DialogResult.Yes)
 			{
 				Presenter.TryMarkForDeletion(CurrentSelectedItem.Code);

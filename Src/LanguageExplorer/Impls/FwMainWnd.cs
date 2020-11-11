@@ -2466,9 +2466,8 @@ very simple minor adjustments. ;)"
 
 		private void utilitiesToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new UtilityDlg(_flexApp))
+			using (var dlg = new UtilityDlg(_flexApp, _majorFlexComponentParameters))
 			{
-				dlg.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 				dlg.ShowDialog(this);
 			}
 		}

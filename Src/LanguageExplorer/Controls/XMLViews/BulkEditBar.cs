@@ -564,7 +564,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			var result = pi.GetValue(owner, null);
 			if (result != null && !(result is ICmPossibilityList))
 			{
-				throw new FwConfigurationException($"Specified property ({owningClass}.{property}) does not return a possibility list, but a {result.GetType().ToString()}.");
+				throw new FwConfigurationException($"Specified property ({owningClass}.{property}) does not return a possibility list, but a {result.GetType()}.");
 			}
 			return (ICmPossibilityList)result;
 		}

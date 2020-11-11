@@ -40,17 +40,6 @@ namespace LanguageExplorer.Filters
 		}
 
 		/// <summary>
-		/// Return the HVO of the list from which choices can be made.
-		/// Critical TODO JohnT: this isn't right; need to get the simple list chooser populated with the
-		/// items we put in the chooser; but how??
-		/// </summary>
-		/// <remarks>NB: Used by reflection.</remarks>
-		internal static int List(LcmCache cache)
-		{
-			return cache.LanguageProject.PartsOfSpeechOA.Hvo;
-		}
-
-		/// <summary>
 		/// This is a filter for an atomic property, and the "all" and "only" options should not be presented.
 		/// Review JOhnT: is this true?
 		/// </summary>

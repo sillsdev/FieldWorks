@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using LanguageExplorer.DictionaryConfiguration;
 using SIL.LCModel.Utils;
 using SIL.Xml;
 
@@ -194,7 +193,7 @@ namespace LanguageExplorer.Controls
 				counter++;
 				// change DispName on newItem using ksDictConfigMultiCopyOf
 				m_configList.TryGetValue(newItem.CopyOf, out var origItem);
-				newItem.DispName = string.Format(DictionaryConfigurationStrings.ksDictConfigMultiCopyOf, origItem.DispName, counter);
+				newItem.DispName = string.Format(LanguageExplorerControls.ksDictConfigMultiCopyOf, origItem.DispName, counter);
 			}
 		}
 
@@ -227,7 +226,7 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		protected virtual void ShowAlreadyInUseMsg()
 		{
-			MessageBox.Show(DictionaryConfigurationStrings.ksChooseAnotherViewName, DictionaryConfigurationStrings.ksNameInUseTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
+			MessageBox.Show(LanguageExplorerControls.ksChooseAnotherViewName, LanguageExplorerControls.ksNameInUseTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		private bool NameAlreadyInUse(string newName)

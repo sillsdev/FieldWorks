@@ -1391,4 +1391,28 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   <data name="DonTShowThisAgain" xml:space="preserve">
     <value>Do not show this again.</value>
   </data>
+  <data name="ksChooseAnotherViewName" xml:space="preserve">
+    <value>That name is already in use by another view.</value>
+    <comment>The name of a dictionary configuration/view</comment>
+  </data>
+  <data name="ksConfirmDelete" xml:space="preserve">
+    <value>Are you sure you want to delete the {0} View {1}?</value>
+    <comment>First parameter is something like Dictionary or Reversal Index.  Second parameter is the name of a dictionary configuration/view.</comment>
+  </data>
+  <data name="ksConfirmDeleteTitle" xml:space="preserve">
+    <value>Delete {0} View</value>
+    <comment>Parameter is the name of a dictionary configuration/view</comment>
+  </data>
+  <data name="ksDictConfigCopyOf" xml:space="preserve">
+    <value>Copy of {0}</value>
+    <comment>{0} is the name of a stored dictionary configuration that is being copied.</comment>
+  </data>
+  <data name="ksDictConfigMultiCopyOf" xml:space="preserve">
+    <value>Copy of {0} ({1})</value>
+    <comment>{1} is a number to distinguish an earlier copy.  {0} is the name of a stored dictionary configuration that is being copied.</comment>
+  </data>
+  <data name="ksNameInUseTitle" xml:space="preserve">
+    <value>Name Already In Use</value>
+    <comment>The name of a dictionary configuration/view</comment>
+  </data>
 </root>

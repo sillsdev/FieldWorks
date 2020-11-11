@@ -124,7 +124,6 @@ namespace SIL.FieldWorks
 			Environment.SetEnvironmentVariable("PATH", newPath);
 			Icu.Wrapper.ConfineIcuVersions(54);
 			// ICU will be initialized further down (by calling FwUtils.InitializeIcu())
-			LcmCache.NewerWritingSystemFound += ComplainToUserAboutNewWs;
 			FwRegistryHelper.Initialize();
 
 			try
@@ -2406,7 +2405,6 @@ namespace SIL.FieldWorks
 			{
 				settings.SharedXMLBackendCommitLogSize = sharedXmlBackendCommitLogSize;
 			}
-			settings.UpdateGlobalWSStore = s_appSettings.UpdateGlobalWSStore;
 			return settings;
 		}
 

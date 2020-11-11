@@ -47,7 +47,7 @@ namespace LanguageExplorer.Filters
 				case "PosFilter":
 					return new PosFilter(element);
 				default:
-					throw new InvalidEnumArgumentException($"{className} not recognized by matcher factory.");
+					throw new InvalidEnumArgumentException($"{className} not recognized by record filter factory.");
 			}
 		}
 	}

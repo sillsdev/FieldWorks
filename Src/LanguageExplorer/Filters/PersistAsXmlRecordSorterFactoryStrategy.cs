@@ -32,7 +32,7 @@ namespace LanguageExplorer.Filters
 				case "FindResultSorter":
 					return new FindResultSorter(persistAsXmlFactory, element);
 				default:
-					throw new InvalidEnumArgumentException($"{className} not recognized by matcher factory.");
+					throw new InvalidEnumArgumentException($"{className} not recognized by record sorter factory.");
 			}
 		}
 	}

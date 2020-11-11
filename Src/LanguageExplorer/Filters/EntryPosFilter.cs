@@ -110,14 +110,5 @@ namespace LanguageExplorer.Filters
 				results.Add(hvoPOS);
 			}
 		}
-
-		/// <summary>
-		/// Return the HVO of the list from which choices can be made.
-		/// </summary>
-		/// <remarks>NB: Used by reflection.</remarks>
-		internal static int List(LcmCache cache)
-		{
-			return cache.LanguageProject.PartsOfSpeechOA.Hvo;
-		}
 	}
 }
