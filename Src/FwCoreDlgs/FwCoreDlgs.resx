@@ -219,7 +219,7 @@ If you would like to create a variant of {0}, click the green plus (+).</value>
   </data>
   <data name="kstidDeleteLabel" xml:space="preserve">
     <value>Delete User Configuration</value>
-		<comment>Not sure what kind of configuration this is referring to.</comment>
+    <comment>Not sure what kind of configuration this is referring to.</comment>
   </data>
   <data name="kstidAddPuaTitle" xml:space="preserve">
     <value>Add Custom Character</value>
@@ -807,7 +807,7 @@ Enter a shorter name.</value>
   </data>
   <data name="ksConfigurationSettingsRestoreDlg" xml:space="preserve">
     <value>Configuration settings</value>
-		<comment>Used in the Restore dialog to refer to all kinds of configuration in FieldWorks</comment>
+    <comment>Used in the Restore dialog to refer to all kinds of configuration in FieldWorks</comment>
   </data>
   <data name="ksMediaFilesRestoreDlg" xml:space="preserve">
     <value>Linked files</value>
@@ -1089,5 +1089,13 @@ that also use the SIL Locale Data Repository</value>
   <data name="xOriginal" xml:space="preserve">
     <value>{0} (Original)</value>
     <comment>{0} is an item in a list. There is a copy of this item in the list.</comment>
+  </data>
+  <data name="WritingSystemList_UpdateWs" xml:space="preserve">
+    <value>Update {0}</value>
+    <comment>Right click menu item in the writing system list area. Used to copy the latest writing system data available into this project.</comment>
+  </data>
+  <data name="WritingSystemList_UpdateWsTooltip" xml:space="preserve">
+    <value>Update this writing system with best available data.</value>
+    <comment>Tooltip for the right click menu item 'Update'</comment>
   </data>
 </root>

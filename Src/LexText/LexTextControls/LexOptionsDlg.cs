@@ -44,7 +44,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			InitializeComponent();
 			optionsTooltip = new ToolTip { AutoPopDelay = 6000, InitialDelay = 400, ReshowDelay = 500, IsBalloon = true };
-			optionsTooltip.SetToolTip(updateGlobalWS, LexTextControls.ksUpdateGlobalWsTooltip);
 			optionsTooltip.SetToolTip(groupBox1, LexTextControls.ksUserInterfaceTooltip);
 		}
 
@@ -173,7 +172,6 @@ namespace SIL.FieldWorks.LexText.Controls
 					// Leave any dlls in place since they may be shared, or in use for the moment.
 				}
 			}
-			appSettings.UpdateGlobalWSStore = !updateGlobalWS.Checked;
 			appSettings.Save();
 			AutoOpenLastProject = m_autoOpenCheckBox.Checked;
 			DialogResult = DialogResult.OK;
@@ -217,8 +215,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			m_sUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem.Id;
 			m_sNewUserWs = m_sUserWs;
-			var appSettings = m_propertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
-			updateGlobalWS.Checked = !appSettings.UpdateGlobalWSStore;
 			m_userInterfaceChooser.Init(m_sUserWs);
 
 			// Populate Plugins tab page list.

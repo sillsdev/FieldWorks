@@ -480,7 +480,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			foreach (var item in _model.GetAddMenuItems())
 			{
-				_addMenuStrip.Items.Add(new ToolStripMenuItem(item.MenuText, null, item.ClickHandler));
+				_addMenuStrip.Items.Add(new ToolStripMenuItem(item.MenuText, null, item.ClickHandler) { ToolTipText = item.ToolTip });
 				_addMenuStrip.Show(_addWsButton, new Point(0, _addWsButton.Height));
 			}
 		}
@@ -553,8 +553,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 					foreach (var item in _model.GetRightClickMenuItems())
 					{
-						var menuItem = new ToolStripMenuItem(item.MenuText, null, item.ClickHandler);
-						menuItem.Enabled = item.IsEnabled;
+						var menuItem = new ToolStripMenuItem(item.MenuText, null, item.ClickHandler)
+							{
+								Enabled = item.IsEnabled,
+								ToolTipText = item.ToolTip
+							};
 						_addMenuStrip.Items.Add(menuItem);
 						_addMenuStrip.Show(listBox, e.Location);
 					}
