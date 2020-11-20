@@ -2088,12 +2088,7 @@ namespace SIL.FieldWorks.IText
 				// We put a zero-width space in that WS at the start of the string since that is the
 				// WS the user will end up typing in.
 				ITsStrBldr bldr = TsStringUtils.MakeString(ITextStrings.ksEmptyFreeTransPrompt, m_cache.DefaultUserWs).GetBldr();
-				bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptSpellCheck,
-										 (int)FwTextPropVar.ktpvEnum, (int)SpellingModes.ksmDoNotCheck);
 				bldr.Replace(0, 0, "\u200B", null);
-				// This dummy property should always be set on a user prompt. It allows certain formatting commands to be
-				// handled specially.
-				bldr.SetIntPropValues(0, bldr.Length, SimpleRootSite.ktptUserPrompt, (int)FwTextPropVar.ktpvDefault, 1);
 				bldr.SetIntPropValues(0, 1, (int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, frag);
 				return bldr.GetString();
 			}

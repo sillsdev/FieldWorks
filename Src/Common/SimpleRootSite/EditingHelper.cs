@@ -476,8 +476,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				ITsTextProps ttp = vttp[ittp];
 				// Change the writing system only if it is different and not a user prompt.
 				hvoWsOld = ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
-				if (ttp.GetIntPropValues(SimpleRootSite.ktptUserPrompt, out var) == -1 &&
-					hvoWsOld != hvoWsNew)
+				if (hvoWsOld != hvoWsNew)
 				{
 					ITsPropsBldr tpb = ttp.GetBldr();
 					tpb.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, hvoWsNew);
@@ -2372,12 +2371,6 @@ namespace SIL.FieldWorks.Common.RootSites
 						}
 					}
 				}
-
-				// Skip user prompt strings. A user prompt string will (hopefully) have a
-				// dummy property set on it to indicate this.
-				int nvar;
-				if (vttp[ittp].GetIntPropValues(SimpleRootSite.ktptUserPrompt, out nvar) == 1)
-					continue;
 
 				// Allow a subclass to exclude styles that may have special semantics that should not
 				// removed by applying a style when they are a part of a selection with multiple runs.
