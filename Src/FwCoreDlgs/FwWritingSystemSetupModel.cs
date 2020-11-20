@@ -918,8 +918,27 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void UpdateCurrentWritingSystem(object sender, EventArgs e)
 		{
-			Cache?.UpdateWritingSystemsFromGlobalStore(WorkingList[CurrentWritingSystemIndex].WorkingWs.LanguageTag);
-		}
+			if (Cache != null)
+			{
+				var langTag = WorkingList[CurrentWritingSystemIndex].WorkingWs.LanguageTag;
+				Cache.UpdateWritingSystemsFromGlobalStore(langTag);
+				var updatedWs = new CoreWritingSystemDefinition((CoreWritingSystemDefinition)Cache.WritingSystemFactory.get_Engine(langTag), true);
+				switch (_listType)
+				{
+					case ListType.Analysis:
+						WorkingList[CurrentWritingSystemIndex] = new WSListItemModel(_wsContainer.CurrentAnalysisWritingSystems.Contains(WorkingList[CurrentWritingSystemIndex].OriginalWs), WorkingList[CurrentWritingSystemIndex].OriginalWs, updatedWs);
+						break;
+					case ListType.Vernacular:
+						WorkingList[CurrentWritingSystemIndex] = new WSListItemModel(_wsContainer.CurrentVernacularWritingSystems.Contains(WorkingList[CurrentWritingSystemIndex].OriginalWs), WorkingList[CurrentWritingSystemIndex].OriginalWs, updatedWs);
+						break;
+					case ListType.Pronunciation:
+						throw new NotImplementedException();
+				}
+
+				_currentWs = updatedWs;
+				SelectWs(WorkingList[CurrentWritingSystemIndex].WorkingWs);
+			}
+	  }
 
 		private bool ListHasVoiceForSelectedWs()
 		{
