@@ -470,7 +470,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// 
 			// _okBtn
 			// 
-			this._okBtn.DialogResult = System.Windows.Forms.DialogResult.OK;
 			resources.ApplyResources(this._okBtn, "_okBtn");
 			this._okBtn.Name = "_okBtn";
 			this._okBtn.UseVisualStyleBackColor = true;

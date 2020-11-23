@@ -440,6 +440,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (_model.IsListValid && customDigits.AreAllDigitsValid())
 			{
 				_model.Save();
+				DialogResult = DialogResult.OK;
 				Close();
 			}
 			else
@@ -462,6 +463,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					customDigits.HighlightProblemDigits();
 					_tabControl.SelectedTab = _numbersTab;
 				}
+				DialogResult = DialogResult.None;
 			}
 		}
 
