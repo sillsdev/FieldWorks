@@ -846,7 +846,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var addIpaInputSystem = FwCoreDlgs.WritingSystemList_AddIpa;
 			var addAudioInputSystem = FwCoreDlgs.WritingSystemList_AddAudio;
 			var addDialect = FwCoreDlgs.WritingSystemList_AddDialect;
-			var addNewLanguage = "Add new language...";
+			var addNewLanguage = FwCoreDlgs.WritingSystemList_AddNewLanguage;
 			var menuItemList = new List<WSMenuItemModel>();
 			if (!ListHasIpaForSelectedWs())
 			{
@@ -870,11 +870,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var deleteWritingSystem = FwCoreDlgs.WritingSystemList_DeleteWs;
 			var mergeWritingSystem = FwCoreDlgs.WritingSystemList_MergeWs;
+			var updateWritingSystem = FwCoreDlgs.WritingSystemList_UpdateWs;
 			var menuItemList = new List<WSMenuItemModel>();
 			if (CanMerge())
 			{
 				menuItemList.Add(new WSMenuItemModel(mergeWritingSystem, MergeWritingSystem));
 			}
+			menuItemList.Add(new WSMenuItemModel(string.Format(updateWritingSystem, CurrentWsSetupModel.CurrentDisplayLabel),
+				UpdateCurrentWritingSystem, !IsCurrentWsNew(), FwCoreDlgs.WritingSystemList_UpdateWsTooltip));
 			menuItemList.Add(new WSMenuItemModel(string.Format(deleteWritingSystem, CurrentWsSetupModel.CurrentDisplayLabel),
 				DeleteCurrentWritingSystem, CanDelete()));
 			return menuItemList;
@@ -912,6 +915,30 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				SelectWs(WorkingList.First().WorkingWs);
 			}
 		}
+
+		private void UpdateCurrentWritingSystem(object sender, EventArgs e)
+		{
+			if (Cache != null)
+			{
+				var langTag = WorkingList[CurrentWritingSystemIndex].WorkingWs.LanguageTag;
+				Cache.UpdateWritingSystemsFromGlobalStore(langTag);
+				var updatedWs = new CoreWritingSystemDefinition((CoreWritingSystemDefinition)Cache.WritingSystemFactory.get_Engine(langTag), true);
+				switch (_listType)
+				{
+					case ListType.Analysis:
+						WorkingList[CurrentWritingSystemIndex] = new WSListItemModel(_wsContainer.CurrentAnalysisWritingSystems.Contains(WorkingList[CurrentWritingSystemIndex].OriginalWs), WorkingList[CurrentWritingSystemIndex].OriginalWs, updatedWs);
+						break;
+					case ListType.Vernacular:
+						WorkingList[CurrentWritingSystemIndex] = new WSListItemModel(_wsContainer.CurrentVernacularWritingSystems.Contains(WorkingList[CurrentWritingSystemIndex].OriginalWs), WorkingList[CurrentWritingSystemIndex].OriginalWs, updatedWs);
+						break;
+					case ListType.Pronunciation:
+						throw new NotImplementedException();
+				}
+
+				_currentWs = updatedWs;
+				SelectWs(WorkingList[CurrentWritingSystemIndex].WorkingWs);
+			}
+	  }
 
 		private bool ListHasVoiceForSelectedWs()
 		{
@@ -1168,10 +1195,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// This class models a menu item for interacting with the the writing system model.
 	/// It holds the string to display in the menu item and the event handler for the menu item click.
 	/// </summary>
-	public class WSMenuItemModel : Tuple<string, EventHandler, bool>
+	public class WSMenuItemModel : Tuple<string, EventHandler, bool, string>
 	{
 		/// <summary/>
-		public WSMenuItemModel(string menuText, EventHandler clickHandler, bool enabled = true) : base(menuText, clickHandler, enabled)
+		public WSMenuItemModel(string menuText, EventHandler clickHandler, bool enabled = true, string toolTip = null) : base(menuText, clickHandler, enabled, toolTip)
 		{
 		}
 
@@ -1183,6 +1210,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// <summary/>
 		public bool IsEnabled => Item3;
+
+		/// <summary/>
+		public string ToolTip => Item4;
 	}
 
 	/// <summary>

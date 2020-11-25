@@ -225,10 +225,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "es", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			var menu = testModel.GetRightClickMenuItems().Select(item => item.MenuText);
-			CollectionAssert.AreEqual(new[] { "Merge...", "Delete Spanish" }, menu);
+			CollectionAssert.AreEqual(new[] { "Merge...", "Update Spanish", "Delete Spanish" }, menu);
 			testModel.SelectWs("fr");
 			menu = testModel.GetRightClickMenuItems().Select(item => item.MenuText);
-			CollectionAssert.AreEqual(new[] { "Merge...", "Delete French" }, menu);
+			CollectionAssert.AreEqual(new[] { "Merge...", "Update French", "Delete French" }, menu);
 		}
 
 		[TestCase(FwWritingSystemSetupModel.ListType.Vernacular, true)]
@@ -238,9 +238,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "en", "fr" }, new[] { "en", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, type);
 			var menu = testModel.GetRightClickMenuItems();
-			Assert.That(menu.Count, Is.EqualTo(1));
-			Assert.That(menu.First().IsEnabled, Is.EqualTo(canDelete), "English can be deleted from the Vernacular but not the Analysis WS List");
-			Assert.That(menu.First().MenuText, Is.StringMatching("Delete English"));
+			Assert.That(!menu.Any(m => m.MenuText.Contains("Merge")));
+			Assert.That(menu.First(m => m.MenuText.StartsWith("Delete")).IsEnabled, Is.EqualTo(canDelete), "English can be deleted from the Vernacular but not the Analysis WS List");
+			Assert.That(menu.First(m => m.MenuText.StartsWith("Delete")).MenuText, Is.StringMatching("Delete English"));
 		}
 
 		[Test]
@@ -249,12 +249,33 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			var menu = testModel.GetRightClickMenuItems();
-			Assert.That(menu.Count, Is.EqualTo(1));
-			Assert.IsFalse(menu.First().IsEnabled);
-			Assert.That(menu.First().MenuText, Is.StringMatching("Delete French"));
+			Assert.That(menu.Count, Is.EqualTo(2));
+			Assert.IsFalse(menu.First(m => m.MenuText.StartsWith("Delete")).IsEnabled);
+			Assert.That(menu.First(m => m.MenuText.StartsWith("Delete")).MenuText, Is.StringMatching("Delete French"));
 		}
 
 		[Test]
+		public void WritingSystemList_RightClickMenuItems_UpdateDisabledForNewWs()
+		{
+			var container = new TestWSContainer(new[] { "es" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			var french = new CoreWritingSystemDefinition("fr");
+			testModel.WorkingList.Add(new WSListItemModel(true, null, french));
+			testModel.SelectWs("fr");
+			var menu = testModel.GetRightClickMenuItems();
+			Assert.That(menu.First(m => m.MenuText.StartsWith("Update")).IsEnabled, Is.False);
+		}
+
+		[Test]
+		public void WritingSystemList_RightClickMenuItems_UpdateEnabledOnExistingWs()
+		{
+			var container = new TestWSContainer(new[] { "es" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			var menu = testModel.GetRightClickMenuItems();
+			Assert.That(menu.First(m => m.MenuText.StartsWith("Update")).IsEnabled, Is.True);
+		}
+
+	  [Test]
 		public void WritingSystemList_AddMenuItems_ChangeWithSelection()
 		{
 			var container = new TestWSContainer(new [] { "en", "fr" });

@@ -382,8 +382,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					FindText = vwPattern.Pattern;
 				}
-				else if ((bldr.Length != 0 || FindText == null || FindText.Length == 0)
-					&& tssSel.get_Properties(0).GetIntPropValues(SimpleRootSite.ktptUserPrompt, out nVar) != 1)
+				else if (bldr.Length != 0 || FindText == null || FindText.Length == 0)
 				{
 					FindText = bldr.GetString();
 				}

@@ -2415,6 +2415,24 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Update {0}.
+        /// </summary>
+        public static string WritingSystemList_UpdateWs {
+            get {
+                return ResourceManager.GetString("WritingSystemList_UpdateWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update this writing system with best available data..
+        /// </summary>
+        public static string WritingSystemList_UpdateWsTooltip {
+            get {
+                return ResourceManager.GetString("WritingSystemList_UpdateWsTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &amp;Encoding converter for importing {0}:.
         /// </summary>
         public static string WritingSystemSetup_EncodingConverterForImporting {

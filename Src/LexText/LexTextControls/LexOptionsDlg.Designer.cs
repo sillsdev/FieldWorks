@@ -50,7 +50,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.m_userInterfaceChooser = new SIL.FieldWorks.Common.Widgets.UserInterfaceChooser();
-			this.updateGlobalWS = new System.Windows.Forms.CheckBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.m_autoOpenCheckBox = new System.Windows.Forms.CheckBox();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -151,7 +150,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			resources.ApplyResources(this.m_tabInterface, "m_tabInterface");
 			this.m_tabInterface.Controls.Add(this.m_autoOpenCheckBox);
 			this.m_tabInterface.Controls.Add(this.label4);
-			this.m_tabInterface.Controls.Add(this.updateGlobalWS);
 			this.m_tabInterface.Controls.Add(this.groupBox1);
 			this.m_tabInterface.Name = "m_tabInterface";
 			this.m_tabInterface.UseVisualStyleBackColor = true;
@@ -176,13 +174,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_userInterfaceChooser.FormattingEnabled = true;
 			this.m_userInterfaceChooser.Name = "m_userInterfaceChooser";
 			this.m_userInterfaceChooser.Sorted = true;
-			// 
-			// updateGlobalWS
-			// 
-			resources.ApplyResources(this.updateGlobalWS, "updateGlobalWS");
-			this.updateGlobalWS.Name = "updateGlobalWS";
-			this.updateGlobalWS.UseVisualStyleBackColor = true;
-			this.updateGlobalWS.MouseHover += new System.EventHandler(this.updateGlobalWS_MouseHover);
 			// 
 			// label4
 			// 
@@ -247,7 +238,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.TabPage m_tabInterface;
 		private System.Windows.Forms.CheckBox m_autoOpenCheckBox;
 		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.CheckBox updateGlobalWS;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private Common.Widgets.UserInterfaceChooser m_userInterfaceChooser;
 		private System.Windows.Forms.Label label3;
