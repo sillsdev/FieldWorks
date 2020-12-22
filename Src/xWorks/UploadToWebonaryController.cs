@@ -12,6 +12,7 @@ using XCore;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -142,8 +143,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 		/// <summary>
-		/// This method will recurse into a directory and add files into the zip file with their relative path
-		/// to the original dirToUpload.
+		/// This method will recurse into a directory and add upload all the files through the webonary api to an amazon s3 bucket
 		/// </summary>
 		private bool RecursivelyPutFilesToWebonary(UploadToWebonaryModel model, string dirToUpload, IUploadToWebonaryView webonaryView, string subFolder = "")
 		{
@@ -164,10 +164,16 @@ namespace SIL.FieldWorks.XWorks
 				fileToSign.objectId = relativeFilePath;
 				fileToSign.action = "putObject";
 				var signedUrl = PostContentToWebonary(model, webonaryView, "post/file", fileToSign);
-				if (signedUrl == null)
+				if (string.IsNullOrEmpty(signedUrl))
 				{
-					webonaryView.UpdateStatus(string.Format(xWorksStrings.ksPutFilesToWebonaryFailed, relativeFilePath));
-					return false;
+					// Sleep briefly and try one more time (To compensate for a potential lambda cold start)
+					Thread.Sleep(500);
+					signedUrl = PostContentToWebonary(model, webonaryView, "post/file", fileToSign);
+					if (string.IsNullOrEmpty(signedUrl))
+					{
+						webonaryView.UpdateStatus(string.Format(xWorksStrings.ksPutFilesToWebonaryFailed, relativeFilePath));
+						return false;
+					}
 				}
 				allFilesSucceeded &= UploadFileToWebonary(signedUrl, file, webonaryView);
 				webonaryView.UpdateStatus(string.Format(xWorksStrings.ksPutFilesToWebonaryUploaded, Path.GetFileName(file)));
@@ -501,35 +507,62 @@ namespace SIL.FieldWorks.XWorks
 			Directory.CreateDirectory(tempDirectoryForExport);
 			if (UseJsonApi)
 			{
-				var deleteResponse = DeleteContentFromWebonary(model, view, "delete/dictionary");
-				if (deleteResponse != string.Empty)
+				try
 				{
-					view.UpdateStatus(string.Format(xWorksStrings.UploadToWebonary_DeletingProjFiles, Environment.NewLine, deleteResponse));
-				}
-				var configuration = model.Configurations[model.SelectedConfiguration];
-				var templateFileNames = GenerateConfigurationTemplates(configuration, m_cache, tempDirectoryForExport);
-				view.UpdateStatus(xWorksStrings.ksPreparingDataForWebonary);
-				var metadataContent = GenerateDictionaryMetadataContent(model, templateFileNames, tempDirectoryForExport);
-				view.UpdateStatus(xWorksStrings.ksWebonaryFinishedDataPrep);
-				var entries = m_exportService.ExportConfiguredJson(tempDirectoryForExport, configuration);
-				var allRequestsSucceeded = PostEntriesToWebonary(model, view, entries, false);
+					var deleteResponse =
+						DeleteContentFromWebonary(model, view, "delete/dictionary");
+					if (deleteResponse != string.Empty)
+					{
+						view.UpdateStatus(string.Format(
+							xWorksStrings.UploadToWebonary_DeletingProjFiles, Environment.NewLine,
+							deleteResponse));
+					}
 
-				foreach (var selectedReversal in model.SelectedReversals)
-				{
-					int[] entryIds;
-					var writingSystem = model.Reversals[selectedReversal].WritingSystem;
-					entries = m_exportService.ExportConfiguredReversalJson(tempDirectoryForExport, writingSystem, out entryIds, model.Reversals[selectedReversal]);
-					allRequestsSucceeded &= PostEntriesToWebonary(model, view, entries, true);
-					var reversalLetters = LcmJsonGenerator.GenerateReversalLetterHeaders(model.SiteName, writingSystem, entryIds, m_cache);
-					AddReversalHeadword(metadataContent, writingSystem, reversalLetters);
+					var configuration = model.Configurations[model.SelectedConfiguration];
+					var templateFileNames =
+						GenerateConfigurationTemplates(configuration, m_cache,
+							tempDirectoryForExport);
+					view.UpdateStatus(xWorksStrings.ksPreparingDataForWebonary);
+					var metadataContent = GenerateDictionaryMetadataContent(model,
+						templateFileNames, tempDirectoryForExport);
+					view.UpdateStatus(xWorksStrings.ksWebonaryFinishedDataPrep);
+					var entries =
+						m_exportService.ExportConfiguredJson(tempDirectoryForExport,
+							configuration);
+					var allRequestsSucceeded = PostEntriesToWebonary(model, view, entries, false);
+
+					foreach (var selectedReversal in model.SelectedReversals)
+					{
+						int[] entryIds;
+						var writingSystem = model.Reversals[selectedReversal].WritingSystem;
+						entries = m_exportService.ExportConfiguredReversalJson(
+							tempDirectoryForExport, writingSystem, out entryIds,
+							model.Reversals[selectedReversal]);
+						allRequestsSucceeded &= PostEntriesToWebonary(model, view, entries, true);
+						var reversalLetters =
+							LcmJsonGenerator.GenerateReversalLetterHeaders(model.SiteName,
+								writingSystem, entryIds, m_cache);
+						AddReversalHeadword(metadataContent, writingSystem, reversalLetters);
+					}
+
+					allRequestsSucceeded &=
+						RecursivelyPutFilesToWebonary(model, tempDirectoryForExport, view);
+					var postResult = PostContentToWebonary(model, view, "post/dictionary",
+						metadataContent);
+					allRequestsSucceeded &= !string.IsNullOrEmpty(postResult);
+					if (allRequestsSucceeded)
+					{
+						view.UpdateStatus(xWorksStrings.ksWebonaryUploadSuccessful);
+						view.SetStatusCondition(WebonaryStatusCondition.Success);
+					}
 				}
-				allRequestsSucceeded &= RecursivelyPutFilesToWebonary(model, tempDirectoryForExport, view);
-				var postResult = PostContentToWebonary(model, view, "post/dictionary", metadataContent);
-				allRequestsSucceeded &= !string.IsNullOrEmpty(postResult);
-				if (allRequestsSucceeded)
+				catch(Exception e)
 				{
-					view.UpdateStatus(xWorksStrings.ksWebonaryUploadSuccessful);
-					view.SetStatusCondition(WebonaryStatusCondition.Success);
+					//TODO: i18n this error string
+					view.UpdateStatus("Unexpected error encountered while uploading to webonary.");
+					view.UpdateStatus(e.Message);
+					view.UpdateStatus(e.StackTrace);
+					view.SetStatusCondition(WebonaryStatusCondition.Error);
 				}
 			}
 			else
