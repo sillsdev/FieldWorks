@@ -548,6 +548,9 @@ namespace SIL.FieldWorks.IText
 
 		public void InitColumnDictionary()
 		{
+			// Cache the baseline and best analysis no matter what we see in the specs
+			WsComboItems(ColumnConfigureDialog.WsComboContent.kwccVernacularInParagraph);
+			WsComboItems(ColumnConfigureDialog.WsComboContent.kwccBestAnalysis);
 			foreach (var spec in m_choices.AllLineSpecs)
 			{
 				WsComboItems(spec.ComboContent);
