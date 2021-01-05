@@ -608,6 +608,32 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateJsonForEntry_UnicodeLineBreak_GeneratesValidJson()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Bibliography",
+				CSSClassNameOverride = "bib",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr", "en" })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var englishStr = TsStringUtils.MakeString("English\u2028with line break", m_wsEn);
+			entry.Bibliography.set_String(m_wsFr, englishStr);
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings, 0);
+			var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""g" + entry.Guid + @""",""letterHead"": ""c"",""sortIndex"": 0,
+				""bib"": [{""lang"":""en"",""value"":""English\nwith line break""}]}";
+			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
+			VerifyJson(result, expected);
+		}
+
+		[Test]
 		public void GenerateJsonForEntry_GeneratesForwardNameForForwardLexicalRelations()
 		{
 			var mainEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);

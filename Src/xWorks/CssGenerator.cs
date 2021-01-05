@@ -1055,8 +1055,6 @@ namespace SIL.FieldWorks.XWorks
 			if(exportStyleInfo.HasLineSpacing)
 			{
 				var lineHeight = new Property("line-height");
-				if (!exportStyleInfo.LineSpacing.m_relative && exportStyleInfo.LineSpacing.m_lineHeight >= 0)
-					lineHeight = new Property("flex-line-height");
 				//m_relative means single, 1.5 or double line spacing was chosen. The CSS should be a number
 				if(exportStyleInfo.LineSpacing.m_relative)
 				{
@@ -1066,7 +1064,17 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
+					// Note: In Flex a user can set 'at least' or 'exactly' for line heights. These are differentiated using negative and positive
+					// values in LineSpacing.m_lineHeight.
+					// There is no reasonable way to handle the 'exactly' option in css so both will behave the same for html views and exports
 					lineHeight.Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(Math.Abs(exportStyleInfo.LineSpacing.m_lineHeight)));
+					if (exportStyleInfo.LineSpacing.m_lineHeight >= 0)
+					{
+						// The flex-line-height property is used here for continued Pathway export support
+						var flexLineHeight = new Property("flex-line-height");
+						flexLineHeight.Term = lineHeight.Term;
+						declaration.Add(flexLineHeight);
+					}
 				}
 				declaration.Add(lineHeight);
 			}

@@ -995,6 +995,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph-LineSpacingAtleast", CssGenerator.DefaultStyle, m_propertyTable);
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("flex-line-height:12pt;"));
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("line-height:12pt;"));
 		}
 
 		[Test]

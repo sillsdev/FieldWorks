@@ -26,6 +26,7 @@ namespace SIL.FieldWorks.XWorks
 	public class LcmJsonGenerator : ILcmContentGenerator
 	{
 		private LcmCache Cache { get; }
+		private StringBuilder m_runBuilder = new StringBuilder();
 		public LcmJsonGenerator(LcmCache cache)
 		{
 			Cache = cache;
@@ -134,13 +135,15 @@ namespace SIL.FieldWorks.XWorks
 
 		public void AddToRunContent(IFragmentWriter writer, string txtContent)
 		{
-			((JsonFragmentWriter)writer).InsertJsonProperty("value", txtContent);
+			m_runBuilder.Append(txtContent);
 		}
 
 		public void EndRun(IFragmentWriter writer)
 		{
+			((JsonFragmentWriter)writer).InsertJsonProperty("value", m_runBuilder.ToString());
 			((JsonFragmentWriter)writer).EndObject();
 			((JsonFragmentWriter)writer).InsertRawJson(",");
+			m_runBuilder.Clear();
 		}
 
 		public void SetRunStyle(IFragmentWriter writer, string css)
@@ -160,7 +163,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public void AddLineBreakInRunContent(IFragmentWriter writer)
 		{
-			throw new NotImplementedException("Line breaks in strings aren't supported in the json generator yet.");
+			m_runBuilder.Append("\n");
 		}
 
 		public void BeginEntry(IFragmentWriter xw, string className, Guid entryGuid, int index)
