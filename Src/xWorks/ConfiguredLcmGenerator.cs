@@ -2443,9 +2443,8 @@ namespace SIL.FieldWorks.XWorks
 							badStrBuilder.Append(unicodeChars.GetTextElement());
 						}
 					}
-					//FIXME: The error content here needs to come from the settings.ContentGenerator implementation (won't work for json)
-					return string.Format("<span>\u0FFF\u0FFF\u0FFF<!-- Error generating content for string: '{0}' invalid surrogate pairs replaced with \\u0fff --></span>",
-						badStrBuilder);
+
+					return settings.ContentGenerator.GenerateErrorContent(badStrBuilder);
 				}
 			}
 			return string.Empty;

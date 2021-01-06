@@ -51,5 +51,6 @@ namespace SIL.FieldWorks.XWorks
 		void EndCrossReference(IFragmentWriter writer);
 		string WriteProcessedSenses(bool isBlock, string senseContent, string className, string sharedCollectionInfo);
 		string AddAudioWsContent(string wsId, Guid linkTarget, string fileContent);
+		string GenerateErrorContent(StringBuilder badStrBuilder);
 	}
 }

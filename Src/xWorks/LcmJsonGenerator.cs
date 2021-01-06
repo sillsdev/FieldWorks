@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SIL.FieldWorks.Common.Controls;
@@ -23,10 +24,11 @@ namespace SIL.FieldWorks.XWorks
 	/// a robust implementation that will always generate correct .json given any <code>LCMCache</code> and
 	/// <code>DictionaryConfigurationModel</code>
 	/// </summary>
+	/// <remarks>All methods in this class need to be thread safe</remarks>
 	public class LcmJsonGenerator : ILcmContentGenerator
 	{
 		private LcmCache Cache { get; }
-		private StringBuilder m_runBuilder = new StringBuilder();
+		private ThreadLocal<StringBuilder> m_runBuilder = new ThreadLocal<StringBuilder>(()=> new StringBuilder());
 		public LcmJsonGenerator(LcmCache cache)
 		{
 			Cache = cache;
@@ -135,7 +137,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public void AddToRunContent(IFragmentWriter writer, string txtContent)
 		{
-			m_runBuilder.Append(txtContent);
+			m_runBuilder.Value.Append(txtContent);
 		}
 
 		public void EndRun(IFragmentWriter writer)
@@ -143,7 +145,7 @@ namespace SIL.FieldWorks.XWorks
 			((JsonFragmentWriter)writer).InsertJsonProperty("value", m_runBuilder.ToString());
 			((JsonFragmentWriter)writer).EndObject();
 			((JsonFragmentWriter)writer).InsertRawJson(",");
-			m_runBuilder.Clear();
+			m_runBuilder.Value.Clear();
 		}
 
 		public void SetRunStyle(IFragmentWriter writer, string css)
@@ -163,7 +165,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public void AddLineBreakInRunContent(IFragmentWriter writer)
 		{
-			m_runBuilder.Append("\n");
+			m_runBuilder.Value.Append("\n");
 		}
 
 		public void BeginEntry(IFragmentWriter xw, string className, Guid entryGuid, int index)
@@ -305,6 +307,13 @@ namespace SIL.FieldWorks.XWorks
 		public string AddAudioWsContent(string wsId, Guid linkTarget, string fileContent)
 		{
 			return $"{{\"guid\":\"g{linkTarget}\",\"lang\":\"{wsId}\",{fileContent}}}";
+		}
+
+		public string GenerateErrorContent(StringBuilder badStrBuilder)
+		{
+			// We can't generate comments in json - But adding unicode tofu in front of the cleaned bad string should help
+			// highlight the problem content without crashing the user or blocking the rest of the export
+			return $"\\u+0FFF\\u+0FFF\\u+0FFF{badStrBuilder}";
 		}
 
 		public string AddSenseData(string senseNumberSpan, bool isBlock, Guid ownerGuid,

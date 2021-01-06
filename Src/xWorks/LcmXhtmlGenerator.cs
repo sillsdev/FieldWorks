@@ -867,6 +867,12 @@ namespace SIL.FieldWorks.XWorks
 			return fileContent;
 		}
 
+		public string GenerateErrorContent(StringBuilder badStrBuilder)
+		{
+			return $"<span>\u0FFF\u0FFF\u0FFF<!-- Error generating content for string: '{badStrBuilder}'" +
+				   $" invalid surrogate pairs replaced with \\u0fff --></span>";
+		}
+
 		public string AddCollectionItem(bool isBlock, string collectionItemClass, string content)
 		{
 			var bldr = new StringBuilder();
