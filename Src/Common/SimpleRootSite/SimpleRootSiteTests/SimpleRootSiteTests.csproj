@@ -214,7 +214,7 @@
       <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="ibusdotnet, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c9ab93f7b23223fb">
-      <HintPath>..\..\..\packages\ibusdotnet.2.0.3\lib\net461\ibusdotnet.dll</HintPath>
+      <HintPath>..\..\..\..\packages\ibusdotnet.2.0.3\lib\net461\ibusdotnet.dll</HintPath>
     </Reference>
     <Reference Include="NDesk.DBus, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f6716e4f9b2ed099">
       <HintPath>..\..\..\..\packages\NDesk.DBus.0.15.0\lib\NDesk.DBus.dll</HintPath>
