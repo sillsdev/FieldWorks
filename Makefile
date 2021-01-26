@@ -8,6 +8,8 @@
 
 FW_PACKAGE_DEBUG = false
 BUILD_TOOL = msbuild
+# Verbosity: normal or detailed
+MSBUILD_ARGS ?= -verbosity:normal
 ICU_VERSION = 54
 BUILD_ROOT = $(shell pwd)
 include $(BUILD_ROOT)/Bld/_names.mak
@@ -376,27 +378,27 @@ Fw-build-package: check-have-build-dependencies
 		&& mkdir -p $$LcmLocalArtifactsDir \
 		&& . environ \
 		&& cd $(BUILD_ROOT)/Build \
-		&& $(BUILD_TOOL) /t:refreshTargets \
-		&& $(BUILD_TOOL) '/t:remakefw' /property:config=release /property:Platform=$(PLATFORM) /property:packaging=yes \
-		&& ./multitry $(BUILD_TOOL) '/t:localize-binaries' /property:config=release /property:packaging=yes
+		&& $(BUILD_TOOL) /t:refreshTargets $(MSBUILD_ARGS) \
+		&& $(BUILD_TOOL) '/t:remakefw' /property:config=release /property:Platform=$(PLATFORM) /property:packaging=yes $(MSBUILD_ARGS) \
+		&& ./multitry $(BUILD_TOOL) '/t:localize-binaries' /property:config=release /property:packaging=yes $(MSBUILD_ARGS)
 	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then find "$(BUILD_ROOT)/.."; fi
 
 Fw-build-package-fdo: check-have-build-dependencies
 	cd $(BUILD_ROOT)/Build \
-		&& $(BUILD_TOOL) /t:refreshTargets \
-		&& $(BUILD_TOOL) '/t:build4package-fdo' /property:config=release /property:packaging=yes
+		&& $(BUILD_TOOL) /t:refreshTargets $(MSBUILD_ARGS) \
+		&& $(BUILD_TOOL) '/t:build4package-fdo' /property:config=release /property:packaging=yes $(MSBUILD_ARGS)
 
 RestoreNuGetPackages:
 	. environ \
 		&& cd Build \
 		&& $(BUILD_TOOL) /t:RestoreNuGetPackages /property:config=release \
-			/property:packaging=yes
+			/property:packaging=yes $(MSBUILD_ARGS)
 
 # Begin localization section
 
 localize-source: RestoreNuGetPackages
 	. environ && \
-	(cd Build && $(BUILD_TOOL) /t:localize-source /property:config=release /property:packaging=yes)
+	(cd Build && $(BUILD_TOOL) /t:localize-source /property:config=release /property:packaging=yes $(MSBUILD_ARGS))
 	# Remove symbolic links from Output - we don't want those in the source package
 	find Output -type l -delete
 	# Copy localization files to Localizations folder so that they survive a 'clean'
@@ -405,7 +407,7 @@ localize-source: RestoreNuGetPackages
 LOCALIZATIONS := $(shell ls $(BUILD_ROOT)/Localizations/l10ns/*/messages.*.po | sed 's/.*messages\.\(.*\)\.po/\1/')
 
 l10n-all:
-	(cd $(BUILD_ROOT)/Build && $(BUILD_TOOL) /t:localize-binaries)
+	(cd $(BUILD_ROOT)/Build && $(BUILD_TOOL) /t:localize-binaries $(MSBUILD_ARGS))
 
 l10n-clean:
 	# We don't want to remove strings-en.xml
