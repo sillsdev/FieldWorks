@@ -1,4 +1,4 @@
-// Copyright (c) 2019 SIL International
+// Copyright (c) 2019-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -85,8 +85,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public event EventHandler WritingSystemUpdated;
 
-		/// <summary/>
-		public delegate void ShowMessageBoxDelegate(string message);
+		/// <param name="message">the  message to display</param>
+		/// <param name="needResponse">True if the user needs to provide a response (Yes or No); false otherwise (only an OK button is shown)</param>
+		/// <returns>True if the user clicks Yes</returns>
+		public delegate bool ShowMessageBoxDelegate(string message, bool needResponse = false);
 
 		/// <summary/>
 		public delegate bool ChangeLanguageDelegate(out LanguageInfo info);
@@ -118,7 +120,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public delegate bool ConfirmClearAdvancedDelegate();
 
-		/// <summary/>
+		/// <returns>True if the user clicks Yes</returns>
 		public ShowMessageBoxDelegate ShowMessageBox;
 
 		/// <summary/>
@@ -495,16 +497,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public string EthnologueLabel
-		{
-			get { return string.Format("Ethnologue entry for {0}", LanguageCode); }
-		}
+		public string EthnologueLabel => string.Format(FwCoreDlgs.ksWSPropEthnologueEntryFor, LanguageCode);
 
 		/// <summary/>
-		public string EthnologueLink
-		{
-			get { return string.Format("https://www.ethnologue.com/show_language.asp?code={0}", LanguageCode); }
-		}
+		public string EthnologueLink => $"https://www.ethnologue.com/show_language.asp?code={LanguageCode}";
 
 		/// <summary/>
 		public int CurrentWritingSystemIndex
@@ -540,20 +536,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				ShowMessageBox(FwCoreDlgs.kstidCantChangeEnglishWS);
 				return;
 			}
-			LanguageInfo info;
-			if (ShowChangeLanguage(out info))
+
+			if (ShowChangeLanguage(out var info))
 			{
-				if (WorkingList.Exists(ws => ws.WorkingWs.LanguageTag == info.LanguageTag))
+				if (WorkingList.Exists(ws => ws.WorkingWs.LanguageTag == info.LanguageTag) &&
+					!ShowMessageBox(string.Format(FwCoreDlgs.ksWouldCauseDuplicateWSConfirm, info.LanguageTag, info.DesiredName), true))
 				{
-					ShowMessageBox(string.Format(FwCoreDlgs.kstidCantCauseDuplicateWS, info.LanguageTag, info.DesiredName));
 					return;
 				}
 				var languagesToChange = new List<WSListItemModel>(WorkingList.Where(ws => ws.WorkingWs.LanguageName == _languageName));
-				LanguageSubtag languageSubtag;
-				ScriptSubtag scriptSubtag;
-				RegionSubtag regionSubtag;
-				IEnumerable<VariantSubtag> variantSubtags;
-				if (!IetfLanguageTag.TryGetSubtags(info.LanguageTag, out languageSubtag, out scriptSubtag, out regionSubtag, out variantSubtags))
+				if (!IetfLanguageTag.TryGetSubtags(info.LanguageTag, out var languageSubtag, out var scriptSubtag, out var regionSubtag, out _))
 					return;
 				languageSubtag = new LanguageSubtag(languageSubtag, info.DesiredName);
 

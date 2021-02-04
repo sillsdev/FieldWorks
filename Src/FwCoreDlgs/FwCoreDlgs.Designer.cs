@@ -1283,15 +1283,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You cannot change the code of this writing system to &quot;{0}&quot; because the &quot;{1}&quot; writing system already exists..
-        /// </summary>
-        public static string kstidCantCauseDuplicateWS {
-            get {
-                return ResourceManager.GetString("kstidCantCauseDuplicateWS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to You cannot change the script, region, or variant of the default &quot;{0}&quot; (en) writing system because it is used as a fallback when other writing systems are missing text.
         ///If you would like to create a variant of {0}, click the green plus (+)..
         /// </summary>
@@ -2069,6 +2060,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string ksWhichIsComponent {
             get {
                 return ResourceManager.GetString("ksWhichIsComponent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This project already has a writing system with the language code &quot;{0}&quot; ({1}). Are you sure you want to make this change?.
+        /// </summary>
+        public static string ksWouldCauseDuplicateWSConfirm {
+            get {
+                return ResourceManager.GetString("ksWouldCauseDuplicateWSConfirm", resourceCulture);
             }
         }
         

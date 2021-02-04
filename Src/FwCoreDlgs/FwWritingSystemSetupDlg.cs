@@ -281,9 +281,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Delegates (called by presentation model)
-		private void ShowMessageBox(string msg)
+		private bool ShowMessageBox(string msg, bool needResponse)
 		{
-			MessageBox.Show(msg, Text, MessageBoxButtons.OK);
+			return DialogResult.Yes == MessageBox.Show(msg, Text, needResponse ? MessageBoxButtons.YesNo : MessageBoxButtons.OK);
 		}
 
 		private bool ShowSharedWsChangeWarning(string originalLanguageName)

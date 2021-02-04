@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			string errorMessage = null;
 			var wssModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular)
 			{
-				ShowMessageBox = text => { errorMessage = text; }
+				ShowMessageBox = (text, b) => { errorMessage = text; return false; }
 			}.CurrentWsSetupModel;
 			wssModel.CurrentScriptCode = "Cyrilic";
 			Assert.AreEqual("Latn", wssModel.CurrentScriptCode, "script code should be reset to Latin");
@@ -838,20 +838,33 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.AreEqual("Spanish", testModel.CurrentWsSetupModel.CurrentLanguageName);
 		}
 
-		[Test]
-		public void ChangeLanguage_DoesNotChangeIfWouldCreateDuplicate()
+		[TestCase(true)]
+		[TestCase(false)]
+		public void ChangeLanguage_WarnsBeforeCreatingDuplicate(bool userWantsToChangeAnyway)
 		{
 			var container = new TestWSContainer(new[] { "es", "es-PR", "es-fonipa", "auc" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			testModel.SelectWs("es-PR");
 			string errorMessage = null;
-			testModel.ShowMessageBox = text => { errorMessage = text; };
+			testModel.ShowMessageBox = (text, b) => { errorMessage = text; return userWantsToChangeAnyway; };
 			testModel.ShowChangeLanguage = ShowChangeLanguage;
+
+			// SUT
 			testModel.ChangeLanguage();
-			Assert.AreEqual("Spanish", testModel.CurrentWsSetupModel.CurrentLanguageName);
-			testModel.SelectWs("es");
-			Assert.AreEqual("Spanish", testModel.CurrentWsSetupModel.CurrentLanguageName);
-			StringAssert.Contains("writing system already exists", errorMessage);
+
+			if (userWantsToChangeAnyway)
+			{
+				Assert.AreEqual("TestName", testModel.CurrentWsSetupModel.CurrentLanguageName);
+				testModel.SelectWs("auc-fonipa");
+				Assert.AreEqual("TestName", testModel.CurrentWsSetupModel.CurrentLanguageName, "all WS's for the language should change");
+			}
+			else
+			{
+				Assert.AreEqual("Spanish", testModel.CurrentWsSetupModel.CurrentLanguageName);
+				testModel.SelectWs("es");
+				Assert.AreEqual("Spanish", testModel.CurrentWsSetupModel.CurrentLanguageName, "other WS's shouldn't have changed, either");
+			}
+			StringAssert.Contains("This project already has a writing system with the language code", errorMessage);
 		}
 
 		[Test]
@@ -861,7 +874,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			testModel.SelectWs("en-GB");
 			string errorMessage = null;
-			testModel.ShowMessageBox = text => { errorMessage = text; };
+			testModel.ShowMessageBox = (text, b) => { errorMessage = text; return false; };
 			testModel.ShowChangeLanguage = ShowChangeLanguage;
 			testModel.ChangeLanguage();
 			Assert.AreEqual("English", testModel.CurrentWsSetupModel.CurrentLanguageName);
