@@ -33,9 +33,9 @@ fi
 BASE=$(pwd)
 COM=$(dirname "${BASE}")/libcom/COM
 ARCH=$(uname -m)
-[ -z "$BUILD" ] && BUILD=Debug
-[ -z "$MONO_PREFIX" ] && MONO_PREFIX=/opt/mono5-sil
-[ -z "$MONO_SILPKGDIR" ] && MONO_SILPKGDIR=/opt/mono5-sil
+BUILD="${BUILD:-Debug}"
+MONO_PREFIX="${MONO_PREFIX:-/opt/mono5-sil}"
+MONO_SILPKGDIR="${MONO_SILPKGDIR:-/opt/mono5-sil}"
 
 # Dependency locations
 # search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH
@@ -60,7 +60,7 @@ ${COM}/build${ARCH}/lib:\
 ${LD_LIBRARY_PATH}"
 fi
 # ensure we scan the default pkg-config directories (to pick up Geckofx for compiling)
-[ -z "$PKG_CONFIG_PATH" ] && PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig
+PKG_CONFIG_PATH="${PKG_CONFIG_PATH:-/usr/lib/pkgconfig:/usr/share/pkgconfig}"
 
 # Add packaged mono items to paths
 PATH="${MONO_SILPKGDIR}/bin:${PATH}"
