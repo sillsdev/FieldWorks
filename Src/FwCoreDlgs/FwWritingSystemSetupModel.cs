@@ -539,22 +539,22 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (ShowChangeLanguage(out var info))
 			{
-				if (WorkingList.Exists(ws => ws.WorkingWs.LanguageTag == info.LanguageTag) &&
-					!ShowMessageBox(string.Format(FwCoreDlgs.ksWouldCauseDuplicateWSConfirm, info.LanguageTag, info.DesiredName), true))
+				if (!IetfLanguageTag.TryGetSubtags(info.LanguageTag, out var languageSubtag, out var scriptSubtag, out var regionSubtag, out _) ||
+					WorkingList.Exists(ws => ws.WorkingWs.Language.Code == languageSubtag.Code) &&
+						!ShowMessageBox(string.Format(FwCoreDlgs.ksWouldCauseDuplicateWSConfirm, info.LanguageTag, info.DesiredName), true) ||
+					!CheckChangingWSForSRProject())
 				{
 					return;
 				}
-				var languagesToChange = new List<WSListItemModel>(WorkingList.Where(ws => ws.WorkingWs.LanguageName == _languageName));
-				if (!IetfLanguageTag.TryGetSubtags(info.LanguageTag, out var languageSubtag, out var scriptSubtag, out var regionSubtag, out _))
-					return;
-				languageSubtag = new LanguageSubtag(languageSubtag, info.DesiredName);
 
-				if (!CheckChangingWSForSRProject(languageSubtag))
-					return;
+				var languagesToChange = new List<WSListItemModel>(WorkingList.Where(ws => ws.WorkingWs.LanguageName == _languageName));
+				languageSubtag = new LanguageSubtag(languageSubtag, info.DesiredName);
+				var oldDefaultScriptSubtag = IetfLanguageTag.GetScriptSubtag(languagesToChange[0].WorkingWs.Language.Code);
+
 				foreach (var ws in languagesToChange)
 				{
 					ws.WorkingWs.Language = languageSubtag;
-					if (ws.WorkingWs.Script == null)
+					if (ws.WorkingWs.Script == null || ws.WorkingWs.Script == oldDefaultScriptSubtag)
 						ws.WorkingWs.Script = scriptSubtag;
 					if (ws.WorkingWs.Region == null)
 						ws.WorkingWs.Region = regionSubtag;
@@ -568,10 +568,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Check if the writing system is being changed and prompt the user with instructions to successfully perform the change
 		/// </summary>
-		/// <param name="newLangTag">The language tag of the original WritingSystem.
-		/// REVIEW (Hasso) 2019.05: this parameter is not used</param>
-		/// <returns></returns>
-		private bool CheckChangingWSForSRProject(LanguageSubtag newLangTag)
+		private bool CheckChangingWSForSRProject()
 		{
 			bool hasFlexOrLiftRepo = FLExBridgeHelper.DoesProjectHaveFlexRepo(Cache?.ProjectId) || FLExBridgeHelper.DoesProjectHaveLiftRepo(Cache?.ProjectId);
 
