@@ -398,7 +398,7 @@
 			Condition="!Exists('$(WixLibsDir)/vcredist_2017_x64.exe') And $(Platform)=='x64'"
 			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 14.1 runtime -->
 		<!-- FLEx Bridge -->
-		<DownloadFile Address="https://build.palaso.org/guestAuth/repository/download/FLExBridgeDevelopWin32InstallerSansPublish/fw-9.0.15.tcbuildtag/FLExBridge_Offline.exe"
+		<DownloadFile Address="https://build.palaso.org/guestAuth/repository/download/FLExBridgeDevelopWin32InstallerSansPublish/fw-9.0.15.tcbuildtag/FLExBridge_Offline.exe?branch=flexbridge-3.1"
 			DownloadsDir="$(WixLibsDir)"/> <!-- always download to get the latest version -->
 	</Target>
 
