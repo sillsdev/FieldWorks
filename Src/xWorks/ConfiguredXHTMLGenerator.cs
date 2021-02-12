@@ -2364,7 +2364,10 @@ namespace SIL.FieldWorks.XWorks
 		private static int CompareLexRefTargets(Tuple<ISenseOrEntry, ILexReference> lhs,
 			Tuple<ISenseOrEntry, ILexReference> rhs)
 		{
-			return string.Compare(lhs.Item1.HeadWord.Text, rhs.Item1.HeadWord.Text, StringComparison.CurrentCultureIgnoreCase);
+			var wsId = lhs.Item1.Item.Cache.ServiceLocator.WritingSystemManager.Get(lhs.Item1.HeadWord.get_WritingSystem(0));
+			var comparer = new WritingSystemComparer(wsId);
+			var result = comparer.Compare(lhs.Item1.HeadWord.Text, rhs.Item1.HeadWord.Text);
+			return result;
 		}
 
 		/// <returns>Content for Targets and nodes, except Type, which is returned in ref string typeXHTML</returns>
