@@ -93,6 +93,7 @@ Main template
 	<xsl:template match="AmpleTrace">
 		<html>
 			<head>
+				<meta charset="UTF-8" />
 				<xsl:call-template name="Script"/>
 				<style type="text/css">
 					.interblock {
