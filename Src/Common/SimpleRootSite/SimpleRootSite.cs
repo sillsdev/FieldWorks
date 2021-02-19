@@ -122,6 +122,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// 3. Implement DisplayVariant to recognize kTagUserPrompt and insert the appropriate prompt.
 		/// Usually this is all DisplayVariant is used for, so the frag argument can be used in any convenient way,
 		/// for example, to indicate which prompt, or which writing system.
+		/// Typically, the entire prompt should be given the property ktptUserPrompt (this suppresses various formatting commands).
 		/// Typically, the text of the prompt should be given the ktptSpellCheck/DoNotCheck property.
 		/// At the start of the prompt, insert "\u200B" (a zero-width space) in the desired writing system; this ensures
 		/// that anything the user types will be in that writing system and that the right keyboard will be active.
@@ -137,6 +138,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// is in progress, since the user prompt is about to be replaced by the real property.
 		/// </remarks>
 		public const int kTagUserPrompt = 1000000001;
+
+		/// <summary>Property for indicating user prompt strings.
+		/// This is an arbitrary number above 10,000.  Property numbers above 10,000 are
+		/// "user-defined" and will be ignored by the property store.</summary>
+		public const int ktptUserPrompt = 10537;
 
 		/// <summary>If 0 we allow OnPaint to execute, if non-zero we don't perform OnPaint.
 		/// This is used to prevent redraws from happening while we do a RefreshDisplay.

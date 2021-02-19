@@ -2457,6 +2457,7 @@ namespace SIL.FieldWorks.IText
 
 			ITsStrBldr bldr = tssVal.GetBldr();
 			// Clear special prompt properties
+			bldr.SetIntPropValues(0, bldr.Length, SimpleRootSite.ktptUserPrompt, -1, -1);
 			bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptSpellCheck, -1, -1);
 
 			// Add the text the user just typed to the translatin - this destroys the selection
