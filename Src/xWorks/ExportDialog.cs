@@ -3,7 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -34,6 +36,7 @@ using SIL.LCModel.Utils;
 using SIL.Utils;
 using SIL.Windows.Forms;
 using XCore;
+using PropertyTable = XCore.PropertyTable;
 using ReflectionHelper = SIL.LCModel.Utils.ReflectionHelper;
 
 namespace SIL.FieldWorks.XWorks
@@ -51,7 +54,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		protected LcmCache m_cache;
 		protected Mediator m_mediator;
-		protected XCore.PropertyTable m_propertyTable;
+		protected PropertyTable m_propertyTable;
 		private Label label1;
 		protected ColumnHeader columnHeader1;
 		protected ColumnHeader columnHeader2;
@@ -126,9 +129,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.Container components = null;
+		private Container components = null;
 
 		private List<ListViewItem> m_exportItems;
+
+		private const string OtherExportsFilename = "OtherExports.xml";
 
 		/// <summary>
 		/// For testing only!
@@ -137,7 +142,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		public ExportDialog(Mediator mediator, XCore.PropertyTable propertyTable)
+		public ExportDialog(Mediator mediator, PropertyTable propertyTable)
 		{
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
@@ -324,47 +329,48 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExportDialog));
-			this.btnExport = new System.Windows.Forms.Button();
-			this.btnCancel = new System.Windows.Forms.Button();
-			this.m_exportList = new System.Windows.Forms.ListView();
-			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-			this.m_description = new System.Windows.Forms.RichTextBox();
-			this.label1 = new System.Windows.Forms.Label();
-			this.buttonHelp = new System.Windows.Forms.Button();
-			this.m_chkExportPictures = new System.Windows.Forms.CheckBox();
-			this.m_chkShowInFolder = new System.Windows.Forms.CheckBox();
+			ComponentResourceManager resources = new ComponentResourceManager(typeof(ExportDialog));
+			this.btnExport = new Button();
+			this.btnCancel = new Button();
+			this.m_exportList = new ListView();
+			this.columnHeader1 = new ColumnHeader();
+			this.columnHeader2 = new ColumnHeader();
+			this.m_description = new RichTextBox();
+			this.label1 = new Label();
+			this.buttonHelp = new Button();
+			this.m_chkExportPictures = new CheckBox();
+			this.m_chkShowInFolder = new CheckBox();
 			this.SuspendLayout();
 			//
 			// btnExport
 			//
 			resources.ApplyResources(this.btnExport, "btnExport");
 			this.btnExport.Name = "btnExport";
-			this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+			this.btnExport.Click += new EventHandler(this.btnExport_Click);
 			//
 			// btnCancel
 			//
 			resources.ApplyResources(this.btnCancel, "btnCancel");
-			this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.btnCancel.DialogResult = DialogResult.Cancel;
 			this.btnCancel.Name = "btnCancel";
-			this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+			this.btnCancel.Click += new EventHandler(this.btnCancel_Click);
 			//
 			// m_exportList
 			//
 			resources.ApplyResources(this.m_exportList, "m_exportList");
-			this.m_exportList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+			this.m_exportList.Columns.AddRange(new ColumnHeader[] {
 			this.columnHeader1,
 			this.columnHeader2});
 			this.m_exportList.FullRowSelect = true;
 			this.m_exportList.HideSelection = false;
-			this.m_exportList.MinimumSize = new System.Drawing.Size(256, 183);
+			this.m_exportList.MinimumSize = new Size(256, 183);
 			this.m_exportList.MultiSelect = false;
 			this.m_exportList.Name = "m_exportList";
-			this.m_exportList.Sorting = System.Windows.Forms.SortOrder.Ascending;
+			this.m_exportList.ListViewItemSorter = new ExportListComparer();
+			this.m_exportList.Sorting = SortOrder.Ascending;
 			this.m_exportList.UseCompatibleStateImageBehavior = false;
-			this.m_exportList.View = System.Windows.Forms.View.Details;
-			this.m_exportList.SelectedIndexChanged += new System.EventHandler(this.m_exportList_SelectedIndexChanged);
+			this.m_exportList.View = View.Details;
+			this.m_exportList.SelectedIndexChanged += new EventHandler(this.m_exportList_SelectedIndexChanged);
 			//
 			// columnHeader1
 			//
@@ -379,7 +385,7 @@ namespace SIL.FieldWorks.XWorks
 			resources.ApplyResources(this.m_description, "m_description");
 			this.m_description.Name = "m_description";
 			this.m_description.ReadOnly = true;
-			this.m_description.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.m_description_LinkClicked);
+			this.m_description.LinkClicked += new LinkClickedEventHandler(this.m_description_LinkClicked);
 			//
 			// label1
 			//
@@ -390,20 +396,20 @@ namespace SIL.FieldWorks.XWorks
 			//
 			resources.ApplyResources(this.buttonHelp, "buttonHelp");
 			this.buttonHelp.Name = "buttonHelp";
-			this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
+			this.buttonHelp.Click += new EventHandler(this.buttonHelp_Click);
 			//
 			// m_chkExportPictures
 			//
 			resources.ApplyResources(this.m_chkExportPictures, "m_chkExportPictures");
 			this.m_chkExportPictures.Name = "m_chkExportPictures";
 			this.m_chkExportPictures.UseVisualStyleBackColor = true;
-			this.m_chkExportPictures.CheckedChanged += new System.EventHandler(this.m_chkExportPictures_CheckedChanged);
+			this.m_chkExportPictures.CheckedChanged += new EventHandler(this.m_chkExportPictures_CheckedChanged);
 			//
 			// m_chkShowInFolder
 			//
 			resources.ApplyResources(this.m_chkShowInFolder, "m_chkShowInFolder");
 			this.m_chkShowInFolder.Checked = true;
-			this.m_chkShowInFolder.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.m_chkShowInFolder.CheckState = CheckState.Checked;
 			this.m_chkShowInFolder.Name = "m_chkShowInFolder";
 			this.m_chkShowInFolder.UseVisualStyleBackColor = true;
 			//
@@ -424,13 +430,49 @@ namespace SIL.FieldWorks.XWorks
 			this.MinimizeBox = false;
 			this.Name = "ExportDialog";
 			this.ShowIcon = false;
-			this.Load += new System.EventHandler(this.ExportDialog_Load);
-			this.Closed += new System.EventHandler(this.ExportDialog_Closed);
+			this.Load += new EventHandler(this.ExportDialog_Load);
+			this.Closed += new EventHandler(this.ExportDialog_Closed);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
 		}
 		#endregion
+
+		/// <summary>
+		/// This class exists for the sole purpose of sorting Other Exports to the end.
+		/// </summary>
+		private sealed class ExportListComparer : IComparer
+		{
+			public int Compare(object x, object y)
+			{
+				var leftItem = (ListViewItem)x;
+				var rightItem = (ListViewItem)y;
+
+				if (leftItem == null)
+				{
+					return -1;
+				}
+
+				if (rightItem == null)
+				{
+					return 1;
+				}
+
+				if (leftItem.SubItems[0] == rightItem.SubItems[0])
+					return 0;
+				if (((string)leftItem.Tag).EndsWith(OtherExportsFilename))
+				{
+					return 1;
+				}
+
+				if (((string)rightItem.Tag).EndsWith(OtherExportsFilename))
+				{
+					return -1;
+				}
+
+				return string.Compare(leftItem.SubItems[0].Text, rightItem.SubItems[0].Text, StringComparison.Ordinal);
+			}
+		}
 
 		/// <summary>
 		/// In case the requested export requires a particular view and we aren't showing it, create a temporary one
@@ -1290,8 +1332,7 @@ namespace SIL.FieldWorks.XWorks
 			bool fFilterAvailable = DetermineIfFilterIsAvailable();
 			return (ft == FxtTypes.kftPathway && !PathwayUtils.IsPathwayInstalled) ||
 				   (ft == FxtTypes.kftLift && isFiltered && fFilterAvailable) ||
-				   (ft == FxtTypes.kftConfigured && (formatType == "htm" || formatType == "sfm")) ||
-				   (ft == FxtTypes.kftReversal && formatType == "sfm");
+				   (ft == FxtTypes.kftFxt && formatType == "any");
 		}
 
 		private bool DetermineIfFilterIsAvailable()
@@ -1441,7 +1482,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			LcmCache m_cache;
 			List<ICmPossibilityList> m_lists;
-			Dictionary<int, string> m_mapWsCode = new Dictionary<int,string>();
+			Dictionary<int, string> m_mapWsCode = new Dictionary<int, string>();
 			IProgress m_progress;
 			int m_wsEn = 0;
 
