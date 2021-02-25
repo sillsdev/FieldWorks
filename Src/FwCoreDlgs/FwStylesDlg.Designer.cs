@@ -371,9 +371,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.Button m_btnOk;
 		private System.Windows.Forms.Button m_btnCancel;
 		private SIL.FieldWorks.Common.Controls.FwHelpButton m_btnHelp;
-		private System.Windows.Forms.TabControl m_tabControl;
-		private System.Windows.Forms.TabPage m_tbGeneral;
-		private System.Windows.Forms.TabPage m_tbFont;
+		/// <summary/>
+		protected System.Windows.Forms.TabControl m_tabControl;
+		/// <summary/>
+		protected System.Windows.Forms.TabPage m_tbGeneral;
+		/// <summary/>
+		protected System.Windows.Forms.TabPage m_tbFont;
 		private System.Windows.Forms.TabPage m_tbParagraph;
 		private System.Windows.Forms.TabPage m_tbBullets;
 		private System.Windows.Forms.TabPage m_tbBorder;

@@ -1283,15 +1283,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You cannot change the code of this writing system to &quot;{0}&quot; because the &quot;{1}&quot; writing system already exists..
-        /// </summary>
-        public static string kstidCantCauseDuplicateWS {
-            get {
-                return ResourceManager.GetString("kstidCantCauseDuplicateWS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to You cannot change the script, region, or variant of the default &quot;{0}&quot; (en) writing system because it is used as a fallback when other writing systems are missing text.
         ///If you would like to create a variant of {0}, click the green plus (+)..
         /// </summary>
@@ -2073,6 +2064,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This project already has a writing system with the language code &quot;{0}&quot; ({1}). Are you sure you want to make this change?.
+        /// </summary>
+        public static string ksWouldCauseDuplicateWSConfirm {
+            get {
+                return ResourceManager.GetString("ksWouldCauseDuplicateWSConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You are changing the internal code for {0} writing systems related to {1}. This will affect every line of text in this project that uses this writing system.{2}{2}It appears that your team uses Send/Receive. Therefore, please do a Send/Receive immediately before and after making this change, and ask other teammates to stop working while you do this. If you and your teammates have not just done a Send/Receive, please click Cancel and do it now..
         /// </summary>
         public static string ksWSChangeWarning {
@@ -2411,6 +2411,24 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string WritingSystemList_SelectAtLeastOneWs {
             get {
                 return ResourceManager.GetString("WritingSystemList_SelectAtLeastOneWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update {0}.
+        /// </summary>
+        public static string WritingSystemList_UpdateWs {
+            get {
+                return ResourceManager.GetString("WritingSystemList_UpdateWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update this writing system with best available data..
+        /// </summary>
+        public static string WritingSystemList_UpdateWsTooltip {
+            get {
+                return ResourceManager.GetString("WritingSystemList_UpdateWsTooltip", resourceCulture);
             }
         }
         

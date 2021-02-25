@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 SIL International
+// Copyright (c) 2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -38,7 +38,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(appSettings.Reporting.Launches, Is.EqualTo(reportingSettings.Launches));
 			Assert.That(appSettings.Reporting.FirstLaunchDate, Is.EqualTo(reportingSettings.FirstLaunchDate));
 			Assert.That(appSettings.Reporting.PreviousVersion, Is.EqualTo(reportingSettings.PreviousVersion));
-			Assert.That(appSettings.UpdateGlobalWSStore, Is.True);
 			Assert.That(appSettings.LocalKeyboards, Is.EqualTo("keyboards"));
 			Assert.That(appSettings.WebonaryUser, Is.EqualTo("username"));
 			Assert.That(appSettings.WebonaryPass, Is.EqualTo("password"));
@@ -62,7 +61,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var appSettings = new TestFwApplicationSettings {ConfigXml = oldConfigXml};
 			appSettings.UpgradeIfNecessary();
 			Assert.That(appSettings.Reporting, Is.Null);
-			Assert.That(appSettings.UpdateGlobalWSStore, Is.False);
 			Assert.That(appSettings.LocalKeyboards, Is.Null);
 			Assert.That(appSettings.WebonaryUser, Is.Null);
 			Assert.That(appSettings.WebonaryPass, Is.Null);
@@ -78,7 +76,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var appSettings = new TestFwApplicationSettings { ConfigXml = oldConfigXml };
 			appSettings.UpgradeIfNecessary();
 			Assert.That(appSettings.Reporting, Is.Null);
-			Assert.That(appSettings.UpdateGlobalWSStore, Is.True);
 			Assert.That(appSettings.LocalKeyboards, Is.EqualTo("keyboards"));
 			Assert.That(appSettings.WebonaryUser, Is.EqualTo("username"));
 			Assert.That(appSettings.WebonaryPass, Is.EqualTo("password"));
@@ -110,7 +107,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(appSettings.Reporting.Launches, Is.EqualTo(reportingSettings.Launches));
 			Assert.That(appSettings.Reporting.FirstLaunchDate, Is.EqualTo(reportingSettings.FirstLaunchDate));
 			Assert.That(appSettings.Reporting.PreviousVersion, Is.EqualTo(reportingSettings.PreviousVersion));
-			Assert.That(appSettings.UpdateGlobalWSStore, Is.True);
 			Assert.That(appSettings.LocalKeyboards, Is.EqualTo("keyboards"));
 			Assert.That(appSettings.WebonaryUser, Is.Null);
 			Assert.That(appSettings.WebonaryPass, Is.EqualTo("password"));
@@ -133,6 +129,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					new XElement("value", XElement.Parse(XmlSerializationHelper.SerializeToString(reportingSettings)))));
 			}
 
+			// Leave this obsolete value in in the old config to test that it doesn't cause problems
 			if (updateGlobalWSStore != null)
 				settingsElem.Add(CreateStringSettingElement("UpdateGlobalWSStore", updateGlobalWSStore));
 

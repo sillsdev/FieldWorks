@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 SIL International
+// Copyright (c) 2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,7 +15,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	public abstract class FwApplicationSettingsBase
 	{
-		public abstract bool UpdateGlobalWSStore { get; set; }
 		public abstract ReportingSettings Reporting { get; set; }
 		public abstract string LocalKeyboards { get; set; }
 		public abstract string WebonaryUser { get; set; }
@@ -58,7 +57,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 						switch ((string) settingElem.Attribute("name"))
 						{
 							case "UpdateGlobalWSStore":
-								UpdateGlobalWSStore = (bool) valueElem;
+								// UpdateGlobalWSStore is no longer used no longer used
 								break;
 							case "WebonaryUser":
 								WebonaryUser = (string) valueElem;

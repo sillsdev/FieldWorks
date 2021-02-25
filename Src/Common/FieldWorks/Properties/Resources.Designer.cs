@@ -440,25 +440,6 @@ namespace SIL.FieldWorks.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Global Writing Systems Changed.
-        /// </summary>
-        internal static string kstidGlobalWsChangedCaption {
-            get {
-                return ResourceManager.GetString("kstidGlobalWsChangedCaption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following writing systems were updated in another project. Would you like to use those changes in this project ({1}) too?
-        ///{0}.
-        /// </summary>
-        internal static string kstidGlobalWsChangedMsg {
-            get {
-                return ResourceManager.GetString("kstidGlobalWsChangedMsg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Invalid FieldWorks project type..
         /// </summary>
         internal static string kstidInvalidFwProjType {

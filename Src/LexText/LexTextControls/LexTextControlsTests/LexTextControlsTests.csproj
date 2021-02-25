@@ -220,9 +220,6 @@
     <Compile Include="WordsSfmImportTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="FeatureSystem2.xml" />
     <Content Include="FeatureSystem3.xml" />
   </ItemGroup>

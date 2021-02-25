@@ -1,9 +1,10 @@
-// Copyright (c) 2019 SIL International
+// Copyright (c) 2019-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -19,7 +20,7 @@ using Is = NUnit.Framework.Is;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	class FwWritingSystemSetupModelTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	internal class FwWritingSystemSetupModelTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 
 		[Test]
@@ -56,7 +57,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			string errorMessage = null;
 			var wssModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular)
 			{
-				ShowMessageBox = text => { errorMessage = text; }
+				ShowMessageBox = (text, isResponseRequested) => { errorMessage = text; Assert.False(isResponseRequested); return false; }
 			}.CurrentWsSetupModel;
 			wssModel.CurrentScriptCode = "Cyrilic";
 			Assert.AreEqual("Latn", wssModel.CurrentScriptCode, "script code should be reset to Latin");
@@ -225,10 +226,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "es", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			var menu = testModel.GetRightClickMenuItems().Select(item => item.MenuText);
-			CollectionAssert.AreEqual(new[] { "Merge...", "Delete Spanish" }, menu);
+			CollectionAssert.AreEqual(new[] { "Merge...", "Update Spanish", "Delete Spanish" }, menu);
 			testModel.SelectWs("fr");
 			menu = testModel.GetRightClickMenuItems().Select(item => item.MenuText);
-			CollectionAssert.AreEqual(new[] { "Merge...", "Delete French" }, menu);
+			CollectionAssert.AreEqual(new[] { "Merge...", "Update French", "Delete French" }, menu);
 		}
 
 		[TestCase(FwWritingSystemSetupModel.ListType.Vernacular, true)]
@@ -238,9 +239,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "en", "fr" }, new[] { "en", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, type);
 			var menu = testModel.GetRightClickMenuItems();
-			Assert.That(menu.Count, Is.EqualTo(1));
-			Assert.That(menu.First().IsEnabled, Is.EqualTo(canDelete), "English can be deleted from the Vernacular but not the Analysis WS List");
-			Assert.That(menu.First().MenuText, Is.StringMatching("Delete English"));
+			Assert.That(!menu.Any(m => m.MenuText.Contains("Merge")));
+			Assert.That(menu.First(m => m.MenuText.StartsWith("Delete")).IsEnabled, Is.EqualTo(canDelete), "English can be deleted from the Vernacular but not the Analysis WS List");
+			Assert.That(menu.First(m => m.MenuText.StartsWith("Delete")).MenuText, Is.StringMatching("Delete English"));
 		}
 
 		[Test]
@@ -249,12 +250,33 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			var menu = testModel.GetRightClickMenuItems();
-			Assert.That(menu.Count, Is.EqualTo(1));
-			Assert.IsFalse(menu.First().IsEnabled);
-			Assert.That(menu.First().MenuText, Is.StringMatching("Delete French"));
+			Assert.That(menu.Count, Is.EqualTo(2));
+			Assert.IsFalse(menu.First(m => m.MenuText.StartsWith("Delete")).IsEnabled);
+			Assert.That(menu.First(m => m.MenuText.StartsWith("Delete")).MenuText, Is.StringMatching("Delete French"));
 		}
 
 		[Test]
+		public void WritingSystemList_RightClickMenuItems_UpdateDisabledForNewWs()
+		{
+			var container = new TestWSContainer(new[] { "es" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			var french = new CoreWritingSystemDefinition("fr");
+			testModel.WorkingList.Add(new WSListItemModel(true, null, french));
+			testModel.SelectWs("fr");
+			var menu = testModel.GetRightClickMenuItems();
+			Assert.That(menu.First(m => m.MenuText.StartsWith("Update")).IsEnabled, Is.False);
+		}
+
+		[Test]
+		public void WritingSystemList_RightClickMenuItems_UpdateEnabledOnExistingWs()
+		{
+			var container = new TestWSContainer(new[] { "es" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			var menu = testModel.GetRightClickMenuItems();
+			Assert.That(menu.First(m => m.MenuText.StartsWith("Update")).IsEnabled, Is.True);
+		}
+
+	  [Test]
 		public void WritingSystemList_AddMenuItems_ChangeWithSelection()
 		{
 			var container = new TestWSContainer(new [] { "en", "fr" });
@@ -510,9 +532,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			addMenuItems.First(item => item.MenuText.Contains("Audio")).ClickHandler.Invoke(this, new EventArgs());
 			testModel.SelectWs("en");
 			// SUT
-			var mergeTargets = testModel.MergeTargets;
-			Assert.That(mergeTargets.Count(), Is.EqualTo(1));
-			Assert.That(mergeTargets.First().WorkingWs.LanguageTag, Is.StringMatching("fr"));
+			var mergeTargets = testModel.MergeTargets.ToArray();
+			Assert.That(mergeTargets.Length, Is.EqualTo(1));
+			Assert.That(mergeTargets[0].WorkingWs.LanguageTag, Is.StringMatching("fr"));
 		}
 
 		[Test]
@@ -817,20 +839,79 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.AreEqual("Spanish", testModel.CurrentWsSetupModel.CurrentLanguageName);
 		}
 
-		[Test]
-		public void ChangeLanguage_DoesNotChangeIfWouldCreateDuplicate()
+		[TestCase(true)]
+		[TestCase(false)]
+		public void ChangeLanguage_WarnsBeforeCreatingDuplicate(bool userWantsToChangeAnyway)
 		{
 			var container = new TestWSContainer(new[] { "es", "es-PR", "es-fonipa", "auc" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			testModel.SelectWs("es-PR");
 			string errorMessage = null;
-			testModel.ShowMessageBox = text => { errorMessage = text; };
+			testModel.ShowMessageBox = (text, isResponseRequested) => { errorMessage = text; Assert.True(isResponseRequested); return userWantsToChangeAnyway; };
 			testModel.ShowChangeLanguage = ShowChangeLanguage;
+
+			// SUT
 			testModel.ChangeLanguage();
-			Assert.AreEqual("Spanish", testModel.CurrentWsSetupModel.CurrentLanguageName);
+
+			if (userWantsToChangeAnyway)
+			{
+				Assert.AreEqual("TestName", testModel.CurrentWsSetupModel.CurrentLanguageName);
+				testModel.SelectWs("auc-fonipa");
+				Assert.AreEqual("TestName", testModel.CurrentWsSetupModel.CurrentLanguageName, "all WS's for the language should change");
+			}
+			else
+			{
+				Assert.AreEqual("Spanish", testModel.CurrentWsSetupModel.CurrentLanguageName);
+				testModel.SelectWs("es");
+				Assert.AreEqual("Spanish", testModel.CurrentWsSetupModel.CurrentLanguageName, "other WS's shouldn't have changed, either");
+				testModel.SelectWs("es-fonipa");
+				Assert.AreEqual("Spanish", testModel.CurrentWsSetupModel.CurrentLanguageName, "variant WS's shouldn't have changed, either");
+			}
+			StringAssert.Contains("This project already has a writing system with the language code", errorMessage);
+		}
+
+		[Test]
+		public void ChangeLanguage_WarnsBeforeCreatingDuplicate_FunnyOldScript()
+		{
+			var container = new TestWSContainer(new[] { "es", "auc-Grek" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			testModel.SelectWs("es");
-			Assert.AreEqual("Spanish", testModel.CurrentWsSetupModel.CurrentLanguageName);
-			StringAssert.Contains("writing system already exists", errorMessage);
+			string errorMessage = null;
+			testModel.ShowMessageBox = (text, isResponseRequested) => { errorMessage = text; Assert.True(isResponseRequested); return true; };
+			testModel.ShowChangeLanguage = ShowChangeLanguage;
+
+			// SUT
+			testModel.ChangeLanguage();
+
+			Assert.AreEqual("TestName", testModel.CurrentWsSetupModel.CurrentLanguageName);
+			testModel.SelectWs("auc");
+			Assert.AreEqual("TestName", testModel.CurrentWsSetupModel.CurrentLanguageName, "the code should have changed");
+			StringAssert.Contains("This project already has a writing system with the language code", errorMessage);
+		}
+
+		[Test]
+		public void ChangeLanguage_WarnsBeforeCreatingDuplicate_FunnyNewScript()
+		{
+			var container = new TestWSContainer(new[] { "es", "ja" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			testModel.SelectWs("es");
+			string errorMessage = null;
+			testModel.ShowMessageBox = (text, isResponseRequested) => { errorMessage = text; Assert.True(isResponseRequested); return true; };
+			const string tagWithScript = "ja-Brai";
+			const string desiredName = "Braille for Japanese";
+			testModel.ShowChangeLanguage = (out LanguageInfo info) =>
+			{
+				info = new LanguageInfo { DesiredName = desiredName, LanguageTag = tagWithScript };
+				return true;
+			};
+
+			// SUT
+			testModel.ChangeLanguage();
+
+			Assert.AreEqual(desiredName, testModel.CurrentWsSetupModel.CurrentLanguageName);
+			testModel.SelectWs(tagWithScript);
+			Assert.AreEqual(desiredName, testModel.CurrentWsSetupModel.CurrentLanguageName, "the code should have changed");
+			StringAssert.Contains("This project already has a writing system with the language code", errorMessage);
 		}
 
 		[Test]
@@ -840,7 +921,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			testModel.SelectWs("en-GB");
 			string errorMessage = null;
-			testModel.ShowMessageBox = text => { errorMessage = text; };
+			testModel.ShowMessageBox = (text, isResponseRequested) => { errorMessage = text; Assert.False(isResponseRequested); return false; };
 			testModel.ShowChangeLanguage = ShowChangeLanguage;
 			testModel.ChangeLanguage();
 			Assert.AreEqual("English", testModel.CurrentWsSetupModel.CurrentLanguageName);
@@ -872,6 +953,32 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			info = new LanguageInfo { DesiredName = "TestName", ThreeLetterTag = "auc", LanguageTag = "auc" };
 			return true;
+		}
+
+		/// <summary>
+		/// When changing the language code on a WS, any selected script or region should remain,
+		/// but if the default for the old language had been selected, then the default for the new language should become selected.
+		/// </summary>
+		[TestCase("fr", "es", "es")] // French to Spanish (both Latin by default)
+		[TestCase("fr-CA", "en", "en-CA")] // Canadian French to English retains Canadian region
+		[TestCase("fr", "el", "el")] // French to Greek changes Latin to Greek script (Latin defaults dropped)
+		[TestCase("el", "ja", "ja")] // Greek to Japanese changes Greek to Japanese script (non-Latin defaults dropped)
+		[TestCase("el-Latn", "ja", "ja-Latn")] // Nondefault scripts retained
+		[TestCase("el-Latn", "es", "es")] // Nondefault script is the default for the new language: no redundant Script code
+		public void ChangeLanguage_CorrectScriptSelected(string oldWs, string newLang, string expectedWs)
+		{
+			var container = new TestWSContainer(new[] { oldWs });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			testModel.SelectWs(oldWs);
+			testModel.ShowChangeLanguage = (out LanguageInfo info) =>
+			{
+				info = new LanguageInfo { LanguageTag = newLang };
+				return true;
+			};
+
+			// SUT
+			testModel.ChangeLanguage();
+			Assert.AreEqual(expectedWs, testModel.CurrentWsSetupModel.CurrentLanguageTag);
 		}
 
 		[Test]
@@ -1323,14 +1430,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			return false;
 		}
 
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		[SuppressMessage("ReSharper", "UnassignedGetOnlyAutoProperty")]
 		internal class TestWSContainer : IWritingSystemContainer
 		{
-			private IWritingSystemContainer _writingSystemContainerImplementation;
-
-			private List<CoreWritingSystemDefinition> _vernacular = new List<CoreWritingSystemDefinition>();
-			private List<CoreWritingSystemDefinition> _analysis = new List<CoreWritingSystemDefinition>();
-			private List<CoreWritingSystemDefinition> _curVern = new List<CoreWritingSystemDefinition>();
-			private List<CoreWritingSystemDefinition> _curAnaly = new List<CoreWritingSystemDefinition>();
+			private readonly List<CoreWritingSystemDefinition> _vernacular = new List<CoreWritingSystemDefinition>();
+			private readonly List<CoreWritingSystemDefinition> _analysis = new List<CoreWritingSystemDefinition>();
+			private readonly List<CoreWritingSystemDefinition> _curVern = new List<CoreWritingSystemDefinition>();
+			private readonly List<CoreWritingSystemDefinition> _curAnaly = new List<CoreWritingSystemDefinition>();
 
 			public TestWSContainer(string[] vernacular, string[] analysis = null, string[] curVern = null, string[] curAnaly = null)
 			{

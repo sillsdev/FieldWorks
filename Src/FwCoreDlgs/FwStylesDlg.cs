@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2018 SIL International
+// Copyright (c) 2006-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// "Right" labels will be used in the display, rather than "Leading" and "Trailing".</param>
 		/// <param name="normalStyleName">Name of the normal style. Selected when the dialog starts if there is no paragraph style.</param>
 		/// <param name="customUserLevel">The custom user level.</param>
-		/// <param name="userMeasurementType">User's prefered measurement units.</param>
+		/// <param name="userMeasurementType">User's preferred measurement units.</param>
 		/// <param name="paraStyleName">Name of the currently selected paragraph style. Selected when the dialog starts.</param>
 		/// <param name="charStyleName">Name of the currently selected character style.</param>
 		/// <param name="hvoRootObject">The hvo of the root object in the current view.</param>
@@ -286,8 +286,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			set
 			{
 				m_styleListHelper.SelectedStyleName = value;
-				if (m_styleListHelper.SelectedStyle != null)
+				if (m_styleListHelper.SelectedStyle == null)
+				{
+					// LT-20566: hide tabs if no style is selected (e.g. if a placeholder string is passed)
+					SetUpForUneditableStyle();
+				}
+				else
+				{
 					m_styleListHelper_StyleChosen(null, m_styleListHelper.SelectedStyle);
+				}
 			}
 		}
 
@@ -439,7 +446,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// If the new style is Default Paragraph Characters then disable everything
 			if (newStyle.IsDefaultParaCharsStyle)
 			{
-				FillForDefaultParagraphCharacters();
+				SetUpForUneditableStyle();
 				return;
 			}
 
@@ -523,10 +530,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Sets up the dialog to have default paragraph characters selected
+		/// Sets up the dialog to have Default Paragraph Characters or no style selected
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void FillForDefaultParagraphCharacters()
+		private void SetUpForUneditableStyle()
 		{
 			RemoveParagraphStyleTabs();
 			if (m_tabControl.TabPages.Contains(m_tbFont))

@@ -1,4 +1,4 @@
-// Copyright (c) 2019 SIL International
+// Copyright (c) 2019-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -85,8 +85,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public event EventHandler WritingSystemUpdated;
 
-		/// <summary/>
-		public delegate void ShowMessageBoxDelegate(string message);
+		/// <param name="message">the  message to display</param>
+		/// <param name="needResponse">True if the user needs to provide a response (Yes or No); false otherwise (only an OK button is shown)</param>
+		/// <returns>True if the user clicks Yes</returns>
+		public delegate bool ShowMessageBoxDelegate(string message, bool needResponse = false);
 
 		/// <summary/>
 		public delegate bool ChangeLanguageDelegate(out LanguageInfo info);
@@ -118,7 +120,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public delegate bool ConfirmClearAdvancedDelegate();
 
-		/// <summary/>
+		/// <returns>True if the user clicks Yes</returns>
 		public ShowMessageBoxDelegate ShowMessageBox;
 
 		/// <summary/>
@@ -495,16 +497,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		public string EthnologueLabel
-		{
-			get { return string.Format("Ethnologue entry for {0}", LanguageCode); }
-		}
+		public string EthnologueLabel => string.Format(FwCoreDlgs.ksWSPropEthnologueEntryFor, LanguageCode);
 
 		/// <summary/>
-		public string EthnologueLink
-		{
-			get { return string.Format("https://www.ethnologue.com/show_language.asp?code={0}", LanguageCode); }
-		}
+		public string EthnologueLink => $"https://www.ethnologue.com/show_language.asp?code={LanguageCode}";
 
 		/// <summary/>
 		public int CurrentWritingSystemIndex
@@ -540,29 +536,25 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				ShowMessageBox(FwCoreDlgs.kstidCantChangeEnglishWS);
 				return;
 			}
-			LanguageInfo info;
-			if (ShowChangeLanguage(out info))
+
+			if (ShowChangeLanguage(out var info))
 			{
-				if (WorkingList.Exists(ws => ws.WorkingWs.LanguageTag == info.LanguageTag))
+				if (!IetfLanguageTag.TryGetSubtags(info.LanguageTag, out var languageSubtag, out var scriptSubtag, out var regionSubtag, out _) ||
+					WorkingList.Exists(ws => ws.WorkingWs.Language.Code == languageSubtag.Code) &&
+						!ShowMessageBox(string.Format(FwCoreDlgs.ksWouldCauseDuplicateWSConfirm, info.LanguageTag, info.DesiredName), true) ||
+					!CheckChangingWSForSRProject())
 				{
-					ShowMessageBox(string.Format(FwCoreDlgs.kstidCantCauseDuplicateWS, info.LanguageTag, info.DesiredName));
 					return;
 				}
-				var languagesToChange = new List<WSListItemModel>(WorkingList.Where(ws => ws.WorkingWs.LanguageName == _languageName));
-				LanguageSubtag languageSubtag;
-				ScriptSubtag scriptSubtag;
-				RegionSubtag regionSubtag;
-				IEnumerable<VariantSubtag> variantSubtags;
-				if (!IetfLanguageTag.TryGetSubtags(info.LanguageTag, out languageSubtag, out scriptSubtag, out regionSubtag, out variantSubtags))
-					return;
-				languageSubtag = new LanguageSubtag(languageSubtag, info.DesiredName);
 
-				if (!CheckChangingWSForSRProject(languageSubtag))
-					return;
+				var languagesToChange = new List<WSListItemModel>(WorkingList.Where(ws => ws.WorkingWs.LanguageName == _languageName));
+				languageSubtag = new LanguageSubtag(languageSubtag, info.DesiredName);
+				var oldDefaultScriptSubtag = IetfLanguageTag.GetScriptSubtag(languagesToChange[0].WorkingWs.Language.Code);
+
 				foreach (var ws in languagesToChange)
 				{
 					ws.WorkingWs.Language = languageSubtag;
-					if (ws.WorkingWs.Script == null)
+					if (ws.WorkingWs.Script == null || ws.WorkingWs.Script == oldDefaultScriptSubtag)
 						ws.WorkingWs.Script = scriptSubtag;
 					if (ws.WorkingWs.Region == null)
 						ws.WorkingWs.Region = regionSubtag;
@@ -576,10 +568,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>
 		/// Check if the writing system is being changed and prompt the user with instructions to successfully perform the change
 		/// </summary>
-		/// <param name="newLangTag">The language tag of the original WritingSystem.
-		/// REVIEW (Hasso) 2019.05: this parameter is not used</param>
-		/// <returns></returns>
-		private bool CheckChangingWSForSRProject(LanguageSubtag newLangTag)
+		private bool CheckChangingWSForSRProject()
 		{
 			bool hasFlexOrLiftRepo = FLExBridgeHelper.DoesProjectHaveFlexRepo(Cache?.ProjectId) || FLExBridgeHelper.DoesProjectHaveLiftRepo(Cache?.ProjectId);
 
@@ -846,7 +835,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var addIpaInputSystem = FwCoreDlgs.WritingSystemList_AddIpa;
 			var addAudioInputSystem = FwCoreDlgs.WritingSystemList_AddAudio;
 			var addDialect = FwCoreDlgs.WritingSystemList_AddDialect;
-			var addNewLanguage = "Add new language...";
+			var addNewLanguage = FwCoreDlgs.WritingSystemList_AddNewLanguage;
 			var menuItemList = new List<WSMenuItemModel>();
 			if (!ListHasIpaForSelectedWs())
 			{
@@ -870,11 +859,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var deleteWritingSystem = FwCoreDlgs.WritingSystemList_DeleteWs;
 			var mergeWritingSystem = FwCoreDlgs.WritingSystemList_MergeWs;
+			var updateWritingSystem = FwCoreDlgs.WritingSystemList_UpdateWs;
 			var menuItemList = new List<WSMenuItemModel>();
 			if (CanMerge())
 			{
 				menuItemList.Add(new WSMenuItemModel(mergeWritingSystem, MergeWritingSystem));
 			}
+			menuItemList.Add(new WSMenuItemModel(string.Format(updateWritingSystem, CurrentWsSetupModel.CurrentDisplayLabel),
+				UpdateCurrentWritingSystem, !IsCurrentWsNew(), FwCoreDlgs.WritingSystemList_UpdateWsTooltip));
 			menuItemList.Add(new WSMenuItemModel(string.Format(deleteWritingSystem, CurrentWsSetupModel.CurrentDisplayLabel),
 				DeleteCurrentWritingSystem, CanDelete()));
 			return menuItemList;
@@ -912,6 +904,30 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				SelectWs(WorkingList.First().WorkingWs);
 			}
 		}
+
+		private void UpdateCurrentWritingSystem(object sender, EventArgs e)
+		{
+			if (Cache != null)
+			{
+				var langTag = WorkingList[CurrentWritingSystemIndex].WorkingWs.LanguageTag;
+				Cache.UpdateWritingSystemsFromGlobalStore(langTag);
+				var updatedWs = new CoreWritingSystemDefinition((CoreWritingSystemDefinition)Cache.WritingSystemFactory.get_Engine(langTag), true);
+				switch (_listType)
+				{
+					case ListType.Analysis:
+						WorkingList[CurrentWritingSystemIndex] = new WSListItemModel(_wsContainer.CurrentAnalysisWritingSystems.Contains(WorkingList[CurrentWritingSystemIndex].OriginalWs), WorkingList[CurrentWritingSystemIndex].OriginalWs, updatedWs);
+						break;
+					case ListType.Vernacular:
+						WorkingList[CurrentWritingSystemIndex] = new WSListItemModel(_wsContainer.CurrentVernacularWritingSystems.Contains(WorkingList[CurrentWritingSystemIndex].OriginalWs), WorkingList[CurrentWritingSystemIndex].OriginalWs, updatedWs);
+						break;
+					case ListType.Pronunciation:
+						throw new NotImplementedException();
+				}
+
+				_currentWs = updatedWs;
+				SelectWs(WorkingList[CurrentWritingSystemIndex].WorkingWs);
+			}
+	  }
 
 		private bool ListHasVoiceForSelectedWs()
 		{
@@ -1168,10 +1184,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// This class models a menu item for interacting with the the writing system model.
 	/// It holds the string to display in the menu item and the event handler for the menu item click.
 	/// </summary>
-	public class WSMenuItemModel : Tuple<string, EventHandler, bool>
+	public class WSMenuItemModel : Tuple<string, EventHandler, bool, string>
 	{
 		/// <summary/>
-		public WSMenuItemModel(string menuText, EventHandler clickHandler, bool enabled = true) : base(menuText, clickHandler, enabled)
+		public WSMenuItemModel(string menuText, EventHandler clickHandler, bool enabled = true, string toolTip = null) : base(menuText, clickHandler, enabled, toolTip)
 		{
 		}
 
@@ -1183,6 +1199,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// <summary/>
 		public bool IsEnabled => Item3;
+
+		/// <summary/>
+		public string ToolTip => Item4;
 	}
 
 	/// <summary>

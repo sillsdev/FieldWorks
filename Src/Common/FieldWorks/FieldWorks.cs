@@ -143,7 +143,6 @@ namespace SIL.FieldWorks
 			Environment.SetEnvironmentVariable("PATH", newPath);
 			Icu.Wrapper.ConfineIcuVersions(54);
 			// ICU will be initialized further down (by calling FwUtils.InitializeIcu())
-			LcmCache.NewerWritingSystemFound += ComplainToUserAboutNewWs;
 			FwRegistryHelper.Initialize();
 
 			try
@@ -2531,7 +2530,6 @@ namespace SIL.FieldWorks
 				sharedXmlBackendCommitLogSize = (int) FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue("SharedXMLBackendCommitLogSize", 0);
 			if (sharedXmlBackendCommitLogSize > 0)
 				settings.SharedXMLBackendCommitLogSize = sharedXmlBackendCommitLogSize;
-			settings.UpdateGlobalWSStore = s_appSettings.UpdateGlobalWSStore;
 			return settings;
 		}
 
@@ -3834,30 +3832,6 @@ namespace SIL.FieldWorks
 
 			MessageBox.Show(helpMessage, Application.ProductName, MessageBoxButtons.OK,
 				MessageBoxIcon.Information);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Ask user whether to use newer version of writing systems (presumably changed by some
-		/// other Palaso app or some other FW project).
-		/// </summary>
-		/// <param name="wsLabel">The display name (and other information) for the updated
-		/// writing systems (a list of them, possibly).</param>
-		/// <param name="projectName">Name of the project where we might switch to the newer writing system.</param>
-		/// <returns><c>true</c> to accept newer version; <c>false</c> otherwise</returns>
-		/// ------------------------------------------------------------------------------------
-		private static bool ComplainToUserAboutNewWs(string wsLabel, string projectName)
-		{
-			// Assume they want the WS updated when we're not supposed to show a UI.
-			if (s_noUserInterface)
-				return true;
-
-			string text = string.Format(Properties.Resources.kstidGlobalWsChangedMsg, wsLabel, projectName);
-			string caption = Properties.Resources.kstidGlobalWsChangedCaption;
-			Form owner = s_splashScreen != null ? s_splashScreen.Form : Form.ActiveForm;
-
-			return ThreadHelper.ShowMessageBox(owner, text, caption, MessageBoxButtons.YesNo,
-				MessageBoxIcon.Question) == DialogResult.Yes;
 		}
 
 		/// ------------------------------------------------------------------------------------

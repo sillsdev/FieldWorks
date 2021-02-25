@@ -1301,10 +1301,6 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   <data name="ksPeopleAdded" xml:space="preserve">
     <value>The following People were added to the language project:</value>
   </data>
-  <data name="ksUpdateGlobalWsTooltip" xml:space="preserve">
-    <value>Consultants or people who work on several unrelated projects may want to select this.</value>
-    <comment>Tools-Options checkbox tooltip</comment>
-  </data>
   <data name="ksUserInterfaceTooltip" xml:space="preserve">
     <value>You can add other language options by running the installer, using Modify, and choosing to install Language Packs. See Help for details.</value>
   </data>

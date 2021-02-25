@@ -1,11 +1,10 @@
-﻿// Copyright (c) 2017 SIL International
+// Copyright (c) 2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
@@ -23,12 +22,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public FwApplicationSettings()
 		{
 			m_settings = Properties.Settings.Default;
-		}
-
-		public override bool UpdateGlobalWSStore
-		{
-			get { return m_settings.UpdateGlobalWSStore; }
-			set { m_settings.UpdateGlobalWSStore = value; }
 		}
 
 		public override ReportingSettings Reporting

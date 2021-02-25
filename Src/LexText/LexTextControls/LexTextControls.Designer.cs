@@ -3154,15 +3154,6 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Consultants or people who work on several unrelated projects may want to select this..
-        /// </summary>
-        internal static string ksUpdateGlobalWsTooltip {
-            get {
-                return ResourceManager.GetString("ksUpdateGlobalWsTooltip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The following Usage Types were added to the language project:.
         /// </summary>
         internal static string ksUsageTypesAdded {

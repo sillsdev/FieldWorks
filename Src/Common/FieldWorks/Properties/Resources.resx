@@ -147,10 +147,6 @@
     <value>Loading Project {0}...</value>
     <comment>Splash screen message</comment>
   </data>
-  <data name="kstidGlobalWsChangedMsg" xml:space="preserve">
-    <value>The following writing systems were updated in another project. Would you like to use those changes in this project ({1}) too?
-{0}</value>
-  </data>
   <data name="kstidChooseCommand" xml:space="preserve">
     <value>Choose a command:</value>
     <comment>Label text in Unable to Open Project dialog box (replaces "To get started, choose a command:", which appears in the Welcome to FieldWorks dialog box.)</comment>
@@ -200,9 +196,6 @@ Ensure that this folder is shared and that you have permission to access it.</va
   </data>
   <data name="ksDoYouWantToMigrate" xml:space="preserve">
     <value>Do you want to migrate existing projects from an older version of FieldWorks?</value>
-  </data>
-  <data name="kstidGlobalWsChangedCaption" xml:space="preserve">
-    <value>Global Writing Systems Changed</value>
   </data>
   <data name="ksCannotMoveProjects" xml:space="preserve">
     <value>FieldWorks is unable to move the following projects to the new location.</value>
