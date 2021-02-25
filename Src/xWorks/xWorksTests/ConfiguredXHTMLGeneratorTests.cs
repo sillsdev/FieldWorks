@@ -371,8 +371,9 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 			var variant = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(Cache, entry, variant, "Spelling Variant"); // we need a real Variant Type to pass the list options test
-																		  // Create a folder in the project to hold the media files
+			// we need a real Variant Type to pass the list options test
+			CreateVariantForm(Cache, entry, variant, "Spelling Variant");
+			// Create a folder in the project to hold the media files
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
 			// Create and fill in the media files
@@ -472,8 +473,9 @@ namespace SIL.FieldWorks.XWorks
 			var entryTwo = CreateInterestingLexEntry(Cache);
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
-			XHTMLStringBuilder.AppendLine("<TESTWRAPPER>"); //keep the xml valid (single root element)
-															//SUT
+			//keep the xml valid (single root element)
+			XHTMLStringBuilder.AppendLine("<TESTWRAPPER>");
+			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 			XHTMLStringBuilder.Append(result);
 			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryTwo, mainEntryNode, null, settings);
@@ -575,8 +577,9 @@ namespace SIL.FieldWorks.XWorks
 			var entryTwoId = entryTwo.Guid;
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
-			XHTMLStringBuilder.AppendLine("<TESTWRAPPER>"); //keep the xml valid (single root element)
-															//SUT
+			//keep the xml valid (single root element)
+			XHTMLStringBuilder.AppendLine("<TESTWRAPPER>");
+			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 			XHTMLStringBuilder.Append(result);
 			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryTwo, mainEntryNode, null, settings);
@@ -6045,8 +6048,9 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 			var variant = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(Cache, entry, variant, "Spelling Variant"); // we need a real Variant Type to pass the list options test
-																		  // Create a folder in the project to hold the media files
+			// we need a real Variant Type to pass the list options test
+			CreateVariantForm(Cache, entry, variant, "Spelling Variant");
+			// Create a folder in the project to hold the media files
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
 			// Create and fill in the media files
@@ -6132,8 +6136,9 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 			var variant = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(Cache, entry, variant, "Spelling Variant"); // we need a real Variant Type to pass the list options test
-																		  // Create a folder in the project to hold the media files
+			// we need a real Variant Type to pass the list options test
+			CreateVariantForm(Cache, entry, variant, "Spelling Variant");
+			// Create a folder in the project to hold the media files
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
 			// Create and fill in the media files
@@ -6222,8 +6227,9 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 			var variant = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(Cache, entry, variant, "Spelling Variant"); // we need a real Variant Type to pass the list options test
-																		  // Create a folder in the project to hold the media files
+			// we need a real Variant Type to pass the list options test
+			CreateVariantForm(Cache, entry, variant, "Spelling Variant");
+			// Create a folder in the project to hold the media files
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
 			// Create and fill in the media files
@@ -8399,8 +8405,8 @@ namespace SIL.FieldWorks.XWorks
 			var entry = CreateInterestingLexEntry(Cache);
 			var multiRunString = MakeBidirectionalTss(new[] { "ירמיהו", " was a bullfrog." });
 			entry.Bibliography.set_String(m_wsHe, multiRunString);
-			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, true); // Right-to-Left
-																															 //SUT
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, /*Right-to-Left*/ true);
+			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 			const string nestedEn = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@lang='en']/span[@dir='ltr']";
 			const string nestedHe = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@lang='he']";
@@ -9068,8 +9074,9 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 			var variant = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(Cache, entry, variant, "Spelling Variant"); // we need a real Variant Type to pass the list options test
-																		  // Create a folder in the project to hold the media files
+			// we need a real Variant Type to pass the list options test
+			CreateVariantForm(Cache, entry, variant, "Spelling Variant");
+			// Create a folder in the project to hold the media files
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
 			// Create and fill in the media files
