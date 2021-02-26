@@ -1014,6 +1014,10 @@ Delete the existing relationship before trying to add this one again.</value>
     <value>Delete {0}</value>
     <comment>Right click menu item in the writing system properties dialog for deleting a writing sytem. e.g. "Delete English"</comment>
   </data>
+  <data name="WritingSystemList_HideWs" xml:space="preserve">
+    <value>Hide {0}</value>
+    <comment>Right click menu item in the writing system properties dialog for hiding a writing system. e.g. "Hide English"</comment>
+  </data>
   <data name="WritingSystemList_MergeWs" xml:space="preserve">
     <value>Merge...</value>
     <comment>Right click menu item in the writing system list area. Brings up a dialog for merging one writing system into another.</comment>

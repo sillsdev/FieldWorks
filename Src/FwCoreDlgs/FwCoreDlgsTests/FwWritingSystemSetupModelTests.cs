@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Xml;
 using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.Extensions;
@@ -16,7 +17,7 @@ using SIL.LCModel.DomainServices;
 using SIL.Windows.Forms.WritingSystems;
 using SIL.WritingSystems;
 using SIL.WritingSystems.Tests;
-using Is = NUnit.Framework.Is;
+using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -226,10 +227,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "es", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			var menu = testModel.GetRightClickMenuItems().Select(item => item.MenuText);
-			CollectionAssert.AreEqual(new[] { "Merge...", "Update Spanish", "Delete Spanish" }, menu);
+			CollectionAssert.AreEqual(new[] { "Merge...", "Update Spanish", "Hide Spanish", "Delete Spanish" }, menu);
 			testModel.SelectWs("fr");
 			menu = testModel.GetRightClickMenuItems().Select(item => item.MenuText);
-			CollectionAssert.AreEqual(new[] { "Merge...", "Update French", "Delete French" }, menu);
+			CollectionAssert.AreEqual(new[] { "Merge...", "Update French", "Hide French", "Delete French" }, menu);
 		}
 
 		[TestCase(FwWritingSystemSetupModel.ListType.Vernacular, true)]
@@ -240,6 +241,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var testModel = new FwWritingSystemSetupModel(container, type);
 			var menu = testModel.GetRightClickMenuItems();
 			Assert.That(!menu.Any(m => m.MenuText.Contains("Merge")));
+			Assert.That(menu.First(m => m.MenuText.StartsWith("Hide")).IsEnabled, Is.EqualTo(canDelete), "English can be hidden from the Vernacular but not the Analysis WS List");
+			Assert.That(menu.First(m => m.MenuText.StartsWith("Hide")).MenuText, Is.StringMatching("Hide English"));
 			Assert.That(menu.First(m => m.MenuText.StartsWith("Delete")).IsEnabled, Is.EqualTo(canDelete), "English can be deleted from the Vernacular but not the Analysis WS List");
 			Assert.That(menu.First(m => m.MenuText.StartsWith("Delete")).MenuText, Is.StringMatching("Delete English"));
 		}
@@ -250,7 +253,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			var menu = testModel.GetRightClickMenuItems();
-			Assert.That(menu.Count, Is.EqualTo(2));
+			Assert.That(menu.Count, Is.EqualTo(3));
+			Assert.IsFalse(menu.First(m => m.MenuText.StartsWith("Hide")).IsEnabled);
+			Assert.That(menu.First(m => m.MenuText.StartsWith("Hide")).MenuText, Is.StringMatching("Hide French"));
 			Assert.IsFalse(menu.First(m => m.MenuText.StartsWith("Delete")).IsEnabled);
 			Assert.That(menu.First(m => m.MenuText.StartsWith("Delete")).MenuText, Is.StringMatching("Delete French"));
 		}
@@ -1149,11 +1154,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		[Test]
+		public void CurrentWsListChanged_HideSelected_Returns_True()
+		{
+			var container = new TestWSContainer(new[] { "en", "fr", "en-Zxxx-x-audio" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			var menu = testModel.GetRightClickMenuItems();
+			menu.First(ws => ws.MenuText.Contains("Hide")).ClickHandler(this, EventArgs.Empty);
+			Assert.IsTrue(testModel.CurrentWsListChanged);
+		}
+
+		[Test]
 		public void CurrentWsListChanged_DeleteSelected_Returns_True()
 		{
 			var container = new TestWSContainer(new[] { "en", "fr", "en-Zxxx-x-audio" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
-			testModel.ConfirmDeleteWritingSystem = label => { return true; };
+			testModel.ConfirmDeleteWritingSystem = label => true;
 			var menu = testModel.GetRightClickMenuItems();
 			menu.First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
 			Assert.IsTrue(testModel.CurrentWsListChanged);
@@ -1163,11 +1178,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Proves that the delete option should work during the New Project Wizard use of this model/dialog
 		/// </summary>
 		[Test]
-		public void CurrentWsListChanged_DeleteSelected_SaveDoesNotCrashWithNoCache()
+		public void DeleteSelected_SaveDoesNotCrashWithNoCache()
 		{
 			var container = new TestWSContainer(new[] { "en", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager());
-			testModel.ConfirmDeleteWritingSystem = label => { return true; };
+			testModel.ConfirmDeleteWritingSystem = label => true;
 			var menu = testModel.GetRightClickMenuItems();
 			menu.First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
 			Assert.DoesNotThrow(() => testModel.Save());
@@ -1179,11 +1194,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <remarks>The user would never want to do this, but just in case, don't crash.</remarks>
 		[Test]
-		public void CurrentWsListChanged_MergeSelected_SaveDoesNotCrashWithNoCache()
+		public void MergeSelected_SaveDoesNotCrashWithNoCache()
 		{
 			var container = new TestWSContainer(new[] { "es", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager());
-			testModel.ConfirmDeleteWritingSystem = label => { return true; };
 			testModel.ConfirmMergeWritingSystem = (string merge, out CoreWritingSystemDefinition tag) => {
 				tag = container.CurrentVernacularWritingSystems.First();
 				return true;
@@ -1195,27 +1209,30 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		[Test]
+		public void CurrentWsListChanged_HideUnSelected_Returns_False()
+		{
+			var container = new TestWSContainer(new[] { "en", "fr", "en-Zxxx-x-audio" }, null, new[] { "en", "en-Zxxx-x-audio" });
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
+			testModel.SelectWs("fr");
+			var menu = testModel.GetRightClickMenuItems();
+			menu.First(ws => ws.MenuText.Contains("Hide")).ClickHandler(this, EventArgs.Empty);
+			Assert.IsFalse(testModel.CurrentWsListChanged);
+		}
+
+		[Test]
 		public void CurrentWsListChanged_DeleteUnSelected_Returns_False()
 		{
 			var container = new TestWSContainer(new[] { "en", "fr", "en-Zxxx-x-audio" }, null, new[] { "en", "en-Zxxx-x-audio" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			testModel.SelectWs("fr");
-			testModel.ConfirmDeleteWritingSystem = label => { return true; };
+			testModel.ConfirmDeleteWritingSystem = label => true;
 			var menu = testModel.GetRightClickMenuItems();
 			menu.First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
 			Assert.IsFalse(testModel.CurrentWsListChanged);
 		}
 
 		[Test]
-		public void CurrentWsListChanged_RemoveUnSelected_Returns_False()
-		{
-			var container = new TestWSContainer(new[] { "en", "fr", "en-Zxxx-x-audio" });
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
-			Assert.IsFalse(testModel.CurrentWsListChanged);
-		}
-
-		[Test]
-		public void CurrentWsListChanged_TopVernIsHomographWs_UncheckedWarnsAndSetsNew()
+		public void TopVernIsHomographWs_UncheckedWarnsAndSetsNew()
 		{
 			SetupHomographLanguagesInCache();
 			Cache.ActionHandlerAccessor.EndUndoTask();
@@ -1229,7 +1246,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		[Test]
-		public void CurrentWsListChanged_TopVernIsHomographWs_UncheckedWarnsAndDoesNotSetOnNo()
+		public void TopVernIsHomographWs_UncheckedWarnsAndDoesNotSetOnNo()
 		{
 			SetupHomographLanguagesInCache();
 			Cache.ActionHandlerAccessor.EndUndoTask();
@@ -1243,7 +1260,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		[Test]
-		public void CurrentWsListChanged_TopVernIsHomographWs_MovedDownWarnsAndSetsNew()
+		public void TopVernIsHomographWs_MovedDownWarnsAndSetsNew()
 		{
 			SetupHomographLanguagesInCache();
 			Cache.ActionHandlerAccessor.EndUndoTask();
@@ -1257,7 +1274,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		[Test]
-		public void CurrentWsListChanged_TopVernIsHomographWs_NewWsAddedAbove_WarnsAndSetsNew()
+		public void TopVernIsHomographWs_NewWsAddedAbove_WarnsAndSetsNew()
 		{
 			SetupHomographLanguagesInCache();
 			Cache.ActionHandlerAccessor.EndUndoTask();
@@ -1275,7 +1292,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		[Test]
-		public void CurrentWsListChanged_TopVernIsNotHomographWs_UncheckedWarnsAndSetsNew()
+		public void TopVernIsNotHomographWs_UncheckedWarnsAndSetsNew()
 		{
 			SetupHomographLanguagesInCache();
 			Assert.AreEqual("en fr", Cache.LangProject.VernWss, "Test data setup incorrect, english should be first followed by french");
@@ -1293,7 +1310,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		[Test]
-		public void CurrentWsListChanged_CurrentVernacularList_ToggleSaved()
+		public void CurrentVernacularList_ToggleSaved()
 		{
 			SetupHomographLanguagesInCache();
 			Cache.ActionHandlerAccessor.EndUndoTask();
@@ -1305,7 +1322,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		[Test]
-		public void CurrentWsListChanged_CurrentVernacularList_ToggleSavedWithOtherChange()
+		public void CurrentVernacularList_ToggleSavedWithOtherChange()
 		{
 			SetupHomographLanguagesInCache();
 			Cache.ActionHandlerAccessor.EndUndoTask();
@@ -1333,6 +1350,142 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// SUT
 			testModel.Save();
 			Assert.AreEqual("fr", Cache.LangProject.CurVernWss, "Only French should remain selected after save");
+		}
+
+		[Test]
+		public void Save_DeletedWs_WsDeleted()
+		{
+			using (var mediator = new Mediator())
+			{
+				var deleteListener = new WSDeletedListener(mediator);
+				SetupHomographLanguagesInCache();
+				ResetAnalysisWsToEnglish();
+				Cache.ActionHandlerAccessor.EndUndoTask();
+				var wasDeleteConfirmed = false;
+				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular,
+					Cache.ServiceLocator.WritingSystemManager, Cache, mediator)
+				{
+					ConfirmDeleteWritingSystem = label =>
+					{
+						wasDeleteConfirmed = true;
+						return true;
+					}
+				};
+				testModel.SelectWs("fr");
+
+				// SUT: click Delete, then save
+				testModel.GetRightClickMenuItems().First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
+				testModel.Save();
+
+
+				Assert.True(wasDeleteConfirmed, "should confirm delete");
+				Assert.AreEqual("en", Cache.LangProject.CurVernWss, "Only English should remain selected after save");
+				Assert.AreEqual("en", Cache.LangProject.VernWss, "Only English should remain after save");
+				CollectionAssert.AreEqual(new[] {"fr"}, deleteListener.DeletedWSs);
+			}
+		}
+
+		[Test]
+		public void Save_DeletedWs_ExistsInOtherList_WsHidden(
+			[Values(FwWritingSystemSetupModel.ListType.Vernacular, FwWritingSystemSetupModel.ListType.Analysis)]
+			FwWritingSystemSetupModel.ListType type)
+		{
+			using (var mediator = new Mediator())
+			{
+				var deleteListener = new WSDeletedListener(mediator);
+				SetupHomographLanguagesInCache();
+				ResetAnalysisWsToEnglish();
+				Cache.LangProject.AnalysisWritingSystems.Add(GetOrCreateWs("fr"));
+				Cache.ActionHandlerAccessor.EndUndoTask();
+				var wasDeleteConfirmed = false;
+				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache, mediator)
+				{
+					ConfirmDeleteWritingSystem = label =>
+					{
+						wasDeleteConfirmed = true;
+						return true;
+					}
+				};
+				testModel.SelectWs("fr");
+
+				// SUT: click Delete, then save
+				testModel.GetRightClickMenuItems().First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
+				testModel.Save();
+
+				Assert.False(wasDeleteConfirmed, "shouldn't confirm 'deleting' a WS that will only be hidden");
+				if (type == FwWritingSystemSetupModel.ListType.Vernacular)
+				{
+					Assert.AreEqual("en", Cache.LangProject.CurVernWss, "Only English should remain selected after save");
+					Assert.AreEqual("en", Cache.LangProject.VernWss, "Only English should remain after save");
+				}
+				else
+				{
+					Assert.AreEqual("en", Cache.LangProject.CurAnalysisWss, "Only English should remain selected after save");
+					Assert.AreEqual("en", Cache.LangProject.AnalysisWss, "Only English should remain after save");
+				}
+				CollectionAssert.AreEqual(new string[0], deleteListener.DeletedWSs);
+			}
+		}
+
+		[Test]
+		public void Save_HiddenWs_WsHidden()
+		{
+			using (var mediator = new Mediator())
+			{
+				var deleteListener = new WSDeletedListener(mediator);
+				SetupHomographLanguagesInCache();
+				ResetAnalysisWsToEnglish();
+				Cache.ActionHandlerAccessor.EndUndoTask();
+				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular,
+					Cache.ServiceLocator.WritingSystemManager, Cache, mediator);
+				testModel.SelectWs("fr");
+
+				// SUT: click Hide, then save
+				testModel.GetRightClickMenuItems().First(ws => ws.MenuText.Contains("Hide")).ClickHandler(this, EventArgs.Empty);
+				testModel.Save();
+
+				Assert.AreEqual("en", Cache.LangProject.CurVernWss, "Only English should remain selected after save");
+				Assert.AreEqual("en", Cache.LangProject.VernWss, "Only English should remain after save");
+				CollectionAssert.AreEqual(new string[0], deleteListener.DeletedWSs);
+			}
+		}
+
+		[Test]
+		public void Save_WsDeletedRestoredAndHidden_WsHidden()
+		{
+			using (var mediator = new Mediator())
+			{
+				const string fr = "fr";
+				var deleteListener = new WSDeletedListener(mediator);
+				SetupHomographLanguagesInCache();
+				ResetAnalysisWsToEnglish();
+				Cache.ActionHandlerAccessor.EndUndoTask();
+				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular,
+					Cache.ServiceLocator.WritingSystemManager, Cache, mediator)
+				{
+					AddNewVernacularLanguageWarning = () => true,
+					ConfirmDeleteWritingSystem = label => true,
+					ShowChangeLanguage = (out LanguageInfo info) =>
+					{
+						info = new LanguageInfo { LanguageTag = fr };
+						return true;
+					}
+				};
+
+				// Delete French, then add it back
+				testModel.SelectWs(fr);
+				testModel.GetRightClickMenuItems().First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
+				testModel.GetAddMenuItems().First(item => item.MenuText.Contains("Add new language")).ClickHandler.Invoke(null, null);
+				testModel.SelectWs(fr);
+
+				// SUT: click Hide, then save
+				testModel.GetRightClickMenuItems().First(ws => ws.MenuText.Contains("Hide")).ClickHandler(this, EventArgs.Empty);
+				testModel.Save();
+
+				Assert.AreEqual("en", Cache.LangProject.CurVernWss, "Only English should remain selected after save");
+				Assert.AreEqual("en", Cache.LangProject.VernWss, "Only English should remain after save");
+				CollectionAssert.AreEqual(new string[0], deleteListener.DeletedWSs);
+			}
 		}
 
 		[Test]
@@ -1390,7 +1543,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.That(entry.SummaryDefinition.get_String(en.Handle).Text, Is.StringStarting("Queens English"));
 		}
 
-
 		/// <summary>
 		/// Adds en and fr to Current Vernacular and sets en as Homograph WS.
 		/// The client must call <c>Cache.ActionHandlerAccessor.EndUndoTask()</c> after this and any additional setup.
@@ -1405,6 +1557,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Cache.LangProject.VernacularWritingSystems.Clear();
 			Cache.LangProject.VernacularWritingSystems.AddRange(Cache.LangProject.CurrentVernacularWritingSystems);
 			Cache.LangProject.HomographWs = "en";
+		}
+
+		/// <summary>
+		/// Clears Analysis WS's and adds English back.
+		/// The client must call <c>Cache.ActionHandlerAccessor.EndUndoTask()</c> after this and any additional setup.
+		/// </summary>
+		private void ResetAnalysisWsToEnglish()
+		{
+			var en = GetOrCreateWs("en");
+			Cache.LangProject.AnalysisWritingSystems.Clear();
+			Cache.LangProject.AnalysisWritingSystems.Add(en);
+			Cache.LangProject.CurrentAnalysisWritingSystems.Clear();
+			Cache.LangProject.CurrentAnalysisWritingSystems.Add(en);
 		}
 
 		private CoreWritingSystemDefinition GetOrCreateWs(string code)
@@ -1510,6 +1675,34 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// Test repo
 			/// </summary>
 			public IWritingSystemRepository Repo { get; set; }
+		}
+
+		private class WSDeletedListener : IxCoreColleague
+		{
+			public List<string> DeletedWSs { get; } = new List<string>();
+
+			public WSDeletedListener(Mediator mediator)
+			{
+				Init(mediator, null, null);
+			}
+
+			public void OnWritingSystemDeleted(object param)
+			{
+				DeletedWSs.AddRange((string[])param);
+			}
+
+			public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+			{
+				mediator.AddColleague(this);
+			}
+
+			public IxCoreColleague[] GetMessageTargets()
+			{
+				return new IxCoreColleague[] { this };
+			}
+
+			public bool ShouldNotCall => false;
+			public int Priority => (int)ColleaguePriority.High;
 		}
 	}
 }

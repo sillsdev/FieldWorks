@@ -2388,6 +2388,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide {0}.
+        /// </summary>
+        public static string WritingSystemList_HideWs {
+            get {
+                return ResourceManager.GetString("WritingSystemList_HideWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Merge....
         /// </summary>
         public static string WritingSystemList_MergeWs {

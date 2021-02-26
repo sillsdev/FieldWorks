@@ -54,6 +54,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private readonly IWritingSystemManager _wsManager;
 		private string _languageName;
 		private WritingSystemSetupModel _currentWsSetupModel;
+		private readonly ISet<string> _wsIdsToDelete = new HashSet<string>();
 		private readonly Dictionary<CoreWritingSystemDefinition, CoreWritingSystemDefinition> _mergedWritingSystems = new Dictionary<CoreWritingSystemDefinition, CoreWritingSystemDefinition>();
 
 
@@ -636,12 +637,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// Adjust the homograph writing system after possibly interacting with the user
 				HandleHomographWsChanges(_homographWsWasTopVern, WorkingList, Cache?.LangProject.HomographWs, _homographWsWasInCurrent);
 
-				// Handle any deleted writing systems
-				DeleteWritingSystems(currentWritingSystems, allWritingSystems, otherWritingSystems, WorkingList.Select(ws => ws.WorkingWs));
+				// Handle hidden and deleted writing systems
+				RemoveWritingSystems(currentWritingSystems, allWritingSystems, otherWritingSystems, WorkingList.Select(ws => ws.WorkingWs));
 
-				for (int workinglistIndex = 0, curIndex = 0; workinglistIndex < WorkingList.Count; ++workinglistIndex)
+				for (int workingListIndex = 0, curIndex = 0; workingListIndex < WorkingList.Count; ++workingListIndex)
 				{
-					var wsListItem = WorkingList[workinglistIndex];
+					var wsListItem = WorkingList[workingListIndex];
 					var workingWs = wsListItem.WorkingWs;
 					var origWs = wsListItem.OriginalWs;
 
@@ -678,7 +679,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 
 					// whether or not the WS was created or changed, its list position may have changed (LT-19788)
-					AddOrMoveInList(allWritingSystems, workinglistIndex, origWs);
+					AddOrMoveInList(allWritingSystems, workingListIndex, origWs);
 					if (wsListItem.InCurrentList)
 					{
 						AddOrMoveInList(currentWritingSystems, curIndex, origWs);
@@ -752,15 +753,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		private bool HandleHomographWsChanges(bool homographWsWasTopVern, List<WSListItemModel> workingList, string homographWs, bool wasSelected)
+		private void HandleHomographWsChanges(bool homographWsWasTopVern, List<WSListItemModel> workingList, string homographWs, bool wasSelected)
 		{
 			if (_listType != ListType.Vernacular || Cache == null)
-				return false;
+			{
+				return;
+			}
 			// If the homograph writing system has been removed then change to the top current vernacular with no user interaction
 			if (workingList.All(ws => ws.OriginalWs?.Id != homographWs))
 			{
 				Cache.LangProject.HomographWs = workingList.First(ws => ws.InCurrentList).WorkingWs.Id;
-				return true;
+				return;
 			}
 			var userWantsChange = false;
 			var newTopVernacular = workingList.First(ws => ws.InCurrentList);
@@ -779,35 +782,38 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (userWantsChange)
 			{
 				Cache.LangProject.HomographWs = workingList.First(ws => ws.InCurrentList).WorkingWs.Id ?? workingList.First(ws => ws.InCurrentList).WorkingWs.LanguageTag;
-				return true;
 			}
-
-			return false;
 		}
 
-		private bool DeleteWritingSystems(
+		/// <summary>
+		/// Hide any writing systems that were removed from the active list.
+		/// If any are marked for deletion and are not in the other list, delete their data, too.
+		/// </summary>
+		/// <param name="currentWritingSystems">WS's currently displayed for this type</param>
+		/// <param name="allWritingSystems">All WS's in the project for this type</param>
+		/// <param name="otherWritingSystems">All WS's in the project for the opposite type</param>
+		/// <param name="workingWritingSystems">WS list that the user has been editing in this dialog session</param>
+		private void RemoveWritingSystems(
 			ICollection<CoreWritingSystemDefinition> currentWritingSystems,
 			ICollection<CoreWritingSystemDefinition> allWritingSystems,
 			ICollection<CoreWritingSystemDefinition> otherWritingSystems,
 			IEnumerable<CoreWritingSystemDefinition> workingWritingSystems)
 		{
-			var atLeastOneDeleted = false;
-			// Delete any writing systems that were removed from the active list and are not present in the other list
 			var deletedWsIds = new List<string>();
-			var deletedWritingSystems = new List<CoreWritingSystemDefinition>(allWritingSystems);
-			deletedWritingSystems.RemoveAll(ws => workingWritingSystems.Any(wws => wws.Id == ws.Id));
-			foreach (var deleteCandidate in deletedWritingSystems)
+			var removedWritingSystems = new List<CoreWritingSystemDefinition>(allWritingSystems);
+			removedWritingSystems.RemoveAll(ws => workingWritingSystems.Any(wws => wws.Id == ws.Id));
+			foreach (var deleteCandidate in removedWritingSystems)
 			{
 				currentWritingSystems.Remove(deleteCandidate);
 				allWritingSystems.Remove(deleteCandidate);
 				// The cache will be null while creating a new project, in which case we aren't really deleting anything
-				if (!otherWritingSystems.Contains(deleteCandidate)
+				if (_wsIdsToDelete.Contains(deleteCandidate.Id)
+					&& !otherWritingSystems.Contains(deleteCandidate)
 					&& !_mergedWritingSystems.Keys.Contains(deleteCandidate)
 					&& Cache != null)
 				{
 					WritingSystemServices.DeleteWritingSystem(Cache, deleteCandidate);
 					deletedWsIds.Add(deleteCandidate.Id);
-					atLeastOneDeleted = true;
 				}
 			}
 
@@ -815,11 +821,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				_mediator?.SendMessage("WritingSystemDeleted", deletedWsIds.ToArray());
 			}
-
-			return atLeastOneDeleted;
 		}
 
-		private bool IsNew(WSListItemModel tempWs)
+		private static bool IsNew(WSListItemModel tempWs)
 		{
 			return tempWs.OriginalWs == null;
 		}
@@ -858,6 +862,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public List<WSMenuItemModel> GetRightClickMenuItems()
 		{
 			var deleteWritingSystem = FwCoreDlgs.WritingSystemList_DeleteWs;
+			var hideWritingSystem = FwCoreDlgs.WritingSystemList_HideWs;
 			var mergeWritingSystem = FwCoreDlgs.WritingSystemList_MergeWs;
 			var updateWritingSystem = FwCoreDlgs.WritingSystemList_UpdateWs;
 			var menuItemList = new List<WSMenuItemModel>();
@@ -867,6 +872,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			menuItemList.Add(new WSMenuItemModel(string.Format(updateWritingSystem, CurrentWsSetupModel.CurrentDisplayLabel),
 				UpdateCurrentWritingSystem, !IsCurrentWsNew(), FwCoreDlgs.WritingSystemList_UpdateWsTooltip));
+			menuItemList.Add(new WSMenuItemModel(string.Format(hideWritingSystem, CurrentWsSetupModel.CurrentDisplayLabel),
+				HideCurrentWritingSystem, CanDelete()));
 			menuItemList.Add(new WSMenuItemModel(string.Format(deleteWritingSystem, CurrentWsSetupModel.CurrentDisplayLabel),
 				DeleteCurrentWritingSystem, CanDelete()));
 			return menuItemList;
@@ -888,21 +895,38 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
+		private void HideCurrentWritingSystem(object sender, EventArgs e)
+		{
+			_wsIdsToDelete.Remove(_currentWs.Id);
+			HideCurrentWritingSystem();
+		}
+
 		private void DeleteCurrentWritingSystem(object sender, EventArgs e)
 		{
 			// If the writing system is in the other list as well, simply hide it silently.
 			var otherList = _listType == ListType.Vernacular ? _wsContainer.AnalysisWritingSystems : _wsContainer.VernacularWritingSystems;
+			if (otherList.Contains(_currentWs) || // will be hidden, not deleted
+				IsCurrentWsNew()) // it hasn't been created yet, so it has no data
+			{
+				HideCurrentWritingSystem();
+				return;
+			}
+
+			if (ConfirmDeleteWritingSystem(CurrentWsSetupModel.CurrentDisplayLabel)) // prompt the user to delete the WS and its data
+			{
+				_wsIdsToDelete.Add(_currentWs.Id);
+				HideCurrentWritingSystem();
+			}
+		}
+
+		private void HideCurrentWritingSystem()
+		{
 			if (WorkingList[CurrentWritingSystemIndex].InCurrentList)
 			{
 				CurrentWsListChanged = true;
 			}
-			if (otherList.Contains(_currentWs) || // will be hidden, not deleted
-				IsCurrentWsNew() || // it hasn't been created yet, so it has no data
-				ConfirmDeleteWritingSystem(CurrentWsSetupModel.CurrentDisplayLabel)) // prompt the user to delete the WS and its data
-			{
-				WorkingList.RemoveAt(CurrentWritingSystemIndex);
-				SelectWs(WorkingList.First().WorkingWs);
-			}
+			WorkingList.RemoveAt(CurrentWritingSystemIndex);
+			SelectWs(WorkingList.First().WorkingWs);
 		}
 
 		private void UpdateCurrentWritingSystem(object sender, EventArgs e)
@@ -927,7 +951,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				_currentWs = updatedWs;
 				SelectWs(WorkingList[CurrentWritingSystemIndex].WorkingWs);
 			}
-	  }
+		}
 
 		private bool ListHasVoiceForSelectedWs()
 		{
