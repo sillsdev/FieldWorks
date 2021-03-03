@@ -616,6 +616,9 @@ Do you want to remove English now?</value>
   <data name="ksHelp" xml:space="preserve">
     <value>Help</value>
   </data>
+  <data name="ks_Help" xml:space="preserve">
+    <value>&amp;Help</value>
+  </data>
   <data name="ks_Close" xml:space="preserve">
     <value>&amp;Close</value>
   </data>
@@ -935,7 +938,7 @@ The error was:
   </data>
   <data name="ksUnauthorizedRenameBakFile" xml:space="preserve">
     <value>The project {0} only exists in the form of a .bak file, and you apparently do not have file access permissions to restore it to the fwdata file. FieldWorks cannot open it. Try renaming it manually.</value>
-    <comment>Displayed if we try to open a .bak file (because there isn't an fwdata one) and the system won't allow it.</comment>
+    <comment>Displayed if we try to open a .bak file (because there isn't an fwdata file) and the system won't allow it.</comment>
   </data>
   <data name="ksCantShare" xml:space="preserve">
     <value>Cannot Share Projects</value>
@@ -1010,9 +1013,13 @@ Delete the existing relationship before trying to add this one again.</value>
     <value>Add new language...</value>
     <comment>Menu item for adding a different language to the writing system list (brings up a dialog)</comment>
   </data>
+  <data name="WritingSystemList_ViewHiddenWSs" xml:space="preserve">
+    <value>View hidden Writing Systems...</value>
+    <comment>Menu item for viewing writing systems that have text in the project, but are not in the current list (brings up a dialog)</comment>
+  </data>
   <data name="WritingSystemList_DeleteWs" xml:space="preserve">
     <value>Delete {0}</value>
-    <comment>Right click menu item in the writing system properties dialog for deleting a writing sytem. e.g. "Delete English"</comment>
+    <comment>Right click menu item in the writing system properties dialog for deleting a writing system. e.g. "Delete English"</comment>
   </data>
   <data name="WritingSystemList_HideWs" xml:space="preserve">
     <value>Hide {0}</value>
@@ -1033,6 +1040,14 @@ that also use the SIL Locale Data Repository</value>
   <data name="WritingSystemSetup_EncodingConverterForImporting" xml:space="preserve">
     <value>&amp;Encoding converter for importing {0}:</value>
     <comment>{0} is the name of a Writing System</comment>
+  </data>
+  <data name="Vernacular" xml:space="preserve">
+    <value>Vernacular</value>
+    <comment>the category of writing systems for the language being studied, as in "analysis writing systems"</comment>
+  </data>
+  <data name="Analysis" xml:space="preserve">
+    <value>Analysis</value>
+    <comment>the category of writing systems for analyzing other languages, as in "analysis writing systems"</comment>
   </data>
   <data name="NewLangProjWizard_AnalysisWritingSystemExplanation" xml:space="preserve">
     <value>It is used for glosses, definitions, notes, text analyses, and so on.</value>

@@ -95,6 +95,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public delegate bool ChangeLanguageDelegate(out LanguageInfo info);
 
 		/// <summary/>
+		public delegate void ViewHiddenWritingSystemsDelegate(ViewHiddenWritingSystemsModel model);
+
+		/// <summary/>
 		public delegate void ValidCharacterDelegate();
 
 		/// <summary/>
@@ -126,6 +129,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// <summary/>
 		public ChangeLanguageDelegate ShowChangeLanguage;
+
+		/// <summary/>
+		public ViewHiddenWritingSystemsDelegate ViewHiddenWritingSystems;
 
 		/// <summary/>
 		public ValidCharacterDelegate ShowValidCharsEditor;
@@ -799,18 +805,27 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ICollection<CoreWritingSystemDefinition> otherWritingSystems,
 			IEnumerable<CoreWritingSystemDefinition> workingWritingSystems)
 		{
-			var deletedWsIds = new List<string>();
 			var removedWritingSystems = new List<CoreWritingSystemDefinition>(allWritingSystems);
 			removedWritingSystems.RemoveAll(ws => workingWritingSystems.Any(wws => wws.Id == ws.Id));
+			_wsIdsToDelete.RemoveAll(wsId => workingWritingSystems.Any(wws => wws.Id == wsId));
 			foreach (var deleteCandidate in removedWritingSystems)
 			{
 				currentWritingSystems.Remove(deleteCandidate);
 				allWritingSystems.Remove(deleteCandidate);
+			}
+
+			if (Cache == null)
+			{
 				// The cache will be null while creating a new project, in which case we aren't really deleting anything
-				if (_wsIdsToDelete.Contains(deleteCandidate.Id)
+				return;
+			}
+
+			var deletedWsIds = new List<string>();
+			foreach (var deleteCandidateId in _wsIdsToDelete)
+			{
+				if (Cache.ServiceLocator.WritingSystemManager.TryGet(deleteCandidateId, out var deleteCandidate)
 					&& !otherWritingSystems.Contains(deleteCandidate)
-					&& !_mergedWritingSystems.Keys.Contains(deleteCandidate)
-					&& Cache != null)
+					&& !_mergedWritingSystems.Keys.Contains(deleteCandidate))
 				{
 					WritingSystemServices.DeleteWritingSystem(Cache, deleteCandidate);
 					deletedWsIds.Add(deleteCandidate.Id);
@@ -855,6 +870,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			menuItemList.Add(new WSMenuItemModel(string.Format(addDialect, CurrentWsSetupModel.CurrentLanguageName),
 				AddDialectHandler));
 			menuItemList.Add(new WSMenuItemModel(addNewLanguage, AddNewLanguageHandler));
+			// If there is a cache, allow the user to view all WS's with text. If there is no cache, there is no text.
+			if (Cache != null)
+			{
+				menuItemList.Add(new WSMenuItemModel(FwCoreDlgs.WritingSystemList_ViewHiddenWSs, ViewHiddenWritingSystemsHandler));
+			}
 			return menuItemList;
 		}
 
@@ -978,45 +998,48 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return;
 			}
 
-			LanguageInfo langInfo;
-			if (ShowChangeLanguage(out langInfo))
+			if (ShowChangeLanguage(out var langInfo))
 			{
-				CoreWritingSystemDefinition wsDef;
-				WSListItemModel wsListItem;
-				if (_wsManager.TryGet(langInfo.LanguageTag, out wsDef))
-				{
-					// (LT-19728) At this point, wsDef is a live reference to an actual WS in this project.
-					// We don't want the user modifying plain English, or modifying any WS without performing the necessary update steps,
-					// so create a "new dialect" (if the selected WS is already in the current list)
-					// or set the OriginalWS and create a copy for editing (if this is the first instance of the selected WS in the current list)
-					if (WorkingList.Any(wItem => wItem.WorkingWs == wsDef))
-					{
-						// The requested WS already exists in the list; create a dialect
-						AddDialectOf(wsDef);
-						return;
-					}
-					// Set the WS up as an existing WS, the same way as existings WS's are set up when the dialog is opened:
-					// (later in this method, we set wsDef's Language Name to the user's DesiredName. This needs to happen on the working WS)
-					var origWs = wsDef;
-					wsDef = new CoreWritingSystemDefinition(wsDef, true);
-					wsListItem = new WSListItemModel(true, origWs, wsDef);
-				}
-				else
-				{
-					wsDef = _wsManager.Set(langInfo.LanguageTag);
-					wsListItem = new WSListItemModel(true, null, wsDef);
-				}
-
-				wsDef.Language = new LanguageSubtag(wsDef.Language, langInfo.DesiredName);
-				WorkingList.Insert(CurrentWritingSystemIndex + 1, wsListItem);
-				CurrentWsListChanged = true;
-				SelectWs(wsDef);
+				AddNewLanguage(langInfo);
 			}
 		}
 
 		private void AddDialectHandler(object sender, EventArgs e)
 		{
 			AddDialectOf(_currentWs);
+		}
+
+		private void AddNewLanguage(LanguageInfo langInfo)
+		{
+			WSListItemModel wsListItem;
+			if (_wsManager.TryGet(langInfo.LanguageTag, out var wsDef))
+			{
+				// (LT-19728) At this point, wsDef is a live reference to an actual WS in this project.
+				// We don't want the user modifying plain English, or modifying any WS without performing the necessary update steps,
+				// so create a "new dialect" (if the selected WS is already in the current list)
+				// or set the OriginalWS and create a copy for editing (if this is the first instance of the selected WS in the current list)
+				if (WorkingList.Any(wItem => wItem.WorkingWs == wsDef))
+				{
+					// The requested WS already exists in the list; create a dialect
+					AddDialectOf(wsDef);
+					return;
+				}
+				// Set the WS up as an existing WS, the same way as existing WS's are set up when the dialog is opened:
+				// (later in this method, we set wsDef's Language Name to the user's DesiredName. This needs to happen on the working WS)
+				var origWs = wsDef;
+				wsDef = new CoreWritingSystemDefinition(wsDef, true);
+				wsListItem = new WSListItemModel(true, origWs, wsDef);
+			}
+			else
+			{
+				wsDef = _wsManager.Set(langInfo.LanguageTag);
+				wsListItem = new WSListItemModel(true, null, wsDef);
+			}
+
+			wsDef.Language = new LanguageSubtag(wsDef.Language, langInfo.DesiredName);
+			WorkingList.Insert(CurrentWritingSystemIndex + 1, wsListItem);
+			CurrentWsListChanged = true;
+			SelectWs(wsDef);
 		}
 
 		private void AddDialectOf(CoreWritingSystemDefinition baseWs)
@@ -1065,6 +1088,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			WorkingList.Insert(CurrentWritingSystemIndex + 1, new WSListItemModel(true, null, wsDef));
 			CurrentWsListChanged = true;
 			SelectWs(wsDef);
+		}
+
+		private void ViewHiddenWritingSystemsHandler(object sender, EventArgs e)
+		{
+			var model = new ViewHiddenWritingSystemsModel(_listType, Cache) { ConfirmDeleteWritingSystem = ConfirmDeleteWritingSystem };
+			ViewHiddenWritingSystems(model);
+
+			_wsIdsToDelete.AddRange(model.DeletedWritingSystems.Select(ws => ws.Id));
+			foreach (var shownWS in model.ShownWritingSystems)
+			{
+				AddNewLanguage(new LanguageInfo{DesiredName = shownWS.LanguageName, LanguageTag = shownWS.LanguageTag});
+			}
 		}
 
 		/// <summary/>

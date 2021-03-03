@@ -61,6 +61,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Analysis.
+        /// </summary>
+        public static string Analysis {
+            get {
+                return ResourceManager.GetString("Analysis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel Delete Writing System.
         /// </summary>
         public static string CancelDeleteWS {
@@ -138,6 +147,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string ks_Close {
             get {
                 return ResourceManager.GetString("ks_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &amp;Help.
+        /// </summary>
+        public static string ks_Help {
+            get {
+                return ResourceManager.GetString("ks_Help", resourceCulture);
             }
         }
         
@@ -2343,6 +2361,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Vernacular.
+        /// </summary>
+        public static string Vernacular {
+            get {
+                return ResourceManager.GetString("Vernacular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Audio for {0}.
         /// </summary>
         public static string WritingSystemList_AddAudio {
@@ -2438,6 +2465,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string WritingSystemList_UpdateWsTooltip {
             get {
                 return ResourceManager.GetString("WritingSystemList_UpdateWsTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View hidden Writing Systems....
+        /// </summary>
+        public static string WritingSystemList_ViewHiddenWSs {
+            get {
+                return ResourceManager.GetString("WritingSystemList_ViewHiddenWSs", resourceCulture);
             }
         }
         
