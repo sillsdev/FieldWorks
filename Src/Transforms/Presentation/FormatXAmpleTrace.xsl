@@ -380,7 +380,7 @@ Script
 -->
 	<xsl:template name="Script">
 		<script language="JavaScript" id="clientEventHandlersJS">
-			<xsl:text>
+			<xsl:text disable-output-escaping="yes">
 	function ButtonShowDetails()
 	{
 	if (TraceSection.style.display == 'none')
