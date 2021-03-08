@@ -52,7 +52,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			get
 			{
-				return GetDirectory(RootCodeDir, MiscUtils.IsUnix ? "/usr/share/fieldworks"
+				string linuxDir = Environment.GetEnvironmentVariable("FW_ROOTCODE") ?? "/usr/share/fieldworks";
+				return GetDirectory(RootCodeDir, MiscUtils.IsUnix ? linuxDir
 					: Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)));
 			}
 		}
