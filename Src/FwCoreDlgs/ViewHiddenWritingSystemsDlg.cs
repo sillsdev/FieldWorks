@@ -26,8 +26,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (model != null)
 			{
 				m_lblInstructions.Text = string.Format(m_lblInstructions.Text
-							+ "Dear testers, this dialog is ugly when resized. Will fix next week." +
-							"\nNOTE: after using this dialog to show or delete, you must click OK or Cancel in the Set Up WS's dlg before using this dlg again.", // TODO (Hasso) 2021.03: fix
+							+ "\nDear testers, this dialog is ugly when resized. Will fix next week.", // TODO (Hasso) 2021.03: fix
 					model.ListType == FwWritingSystemSetupModel.ListType.Analysis ? FwCoreDlgs.Analysis : FwCoreDlgs.Vernacular);
 				BindToModel();
 			}
@@ -36,17 +35,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void BindToModel()
 		{
 			SuspendLayout();
+			var otherListName = m_model.ListType == FwWritingSystemSetupModel.ListType.Analysis ? FwCoreDlgs.Vernacular : FwCoreDlgs.Analysis;
+			var selection = m_listView.SelectedIndices.GetEnumerator();
 			m_listView.Items.Clear();
-			m_listView.Items.AddRange(m_model.Items.Select(i => new ListViewItem { Tag = i, Text = i.ToString() }).ToArray());
+			m_listView.Items.AddRange(m_model.Items.Select(i => new ListViewItem { Tag = i, Text = i.FormatDisplayLabel(otherListName) }).ToArray());
+			while (selection.MoveNext())
+			{
+				// ReSharper disable once PossibleNullReferenceException
+				m_listView.SelectedIndices.Add((int)selection.Current);
+			}
 			BindButtons();
 			ResumeLayout();
 		}
 
 		private void BindButtons()
 		{
-			m_btnShow.Enabled = m_listView.SelectedItems.Count == 1;
-			m_btnDelete.Enabled = m_listView.SelectedItems.Count == 1 &&
-								  !((HiddenWSListItemModel)m_listView.SelectedItems[0].Tag).InOppositeList;
+			var curItem = CurrentItem;
+			m_btnShow.Enabled = curItem != null;
+			m_btnDelete.Enabled = curItem != null && !curItem.InOppositeList && !curItem.WillDelete;
 		}
 
 		private HiddenWSListItemModel CurrentItem => m_listView.SelectedItems.Count == 1

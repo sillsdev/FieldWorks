@@ -311,9 +311,8 @@
   </data>
   <data name="m_lblInstructions.Text" xml:space="preserve">
     <value>This project has text in the following writing systems that are not currently in the list of {0} writing systems. This text may be vernacular text, analysis text, or both. It may be only embedded in text in other writing systems.
-Click "Show" to show the selected writing system to the list of {0} writing systems.
-Click "Delete" to delete all text in the selected writing system.
-</value>
+Click "Show" to show the selected writing system in the list of {0} writing systems.
+Click "Delete" to delete all text in the selected writing system.</value>
     <comment>{0} is either "vernacular" or "analysis".</comment>
   </data>
   <data name="&gt;&gt;m_lblInstructions.Name" xml:space="preserve">

@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.LCModel.Core.WritingSystems;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using SIL.LCModel;
@@ -32,13 +31,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		internal readonly List<HiddenWSListItemModel> Items;
 
 		/// <summary>Hidden Writing Systems that the user has selected to show in the list for the current type</summary>
-		public readonly List<CoreWritingSystemDefinition> ShownWritingSystems = new List<CoreWritingSystemDefinition>();
+		public IEnumerable<CoreWritingSystemDefinition> ShownWritingSystems => Items.Where(i => i.WillShow).Select(i => i.WS);
 
 		/// <summary>Hidden Writing Systems whose data the user has selected to delete permanently</summary>
-		public readonly List<CoreWritingSystemDefinition> DeletedWritingSystems = new List<CoreWritingSystemDefinition>();
+		public IEnumerable<CoreWritingSystemDefinition> DeletedWritingSystems => Items.Where(i => i.WillDelete).Select(i => i.WS);
 
 		/// <summary/>
-		public ViewHiddenWritingSystemsModel(FwWritingSystemSetupModel.ListType type, LcmCache cache = null)
+		public ViewHiddenWritingSystemsModel(FwWritingSystemSetupModel.ListType type, LcmCache cache = null,
+			ICollection<CoreWritingSystemDefinition> alreadyShowing = null, ICollection<CoreWritingSystemDefinition> alreadyDeleted = null)
 		{
 			ListType = type;
 			if (cache == null)
@@ -48,14 +48,22 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return;
 			}
 			m_WSMgr = cache.ServiceLocator.WritingSystemManager;
-			var alreadyInList = ListType == FwWritingSystemSetupModel.ListType.Analysis
+			alreadyShowing = alreadyShowing ?? (ListType == FwWritingSystemSetupModel.ListType.Analysis
 				? cache.LangProject.AnalysisWritingSystems
-				: cache.LangProject.VernacularWritingSystems;
+				: cache.LangProject.VernacularWritingSystems);
 			m_OppositeList = ListType == FwWritingSystemSetupModel.ListType.Analysis
 				? cache.LangProject.VernacularWritingSystems
 				: cache.LangProject.AnalysisWritingSystems;
 			Items = new List<int>(WritingSystemServices.FindAllWritingSystemsWithText(cache))
-				.Where(wsHandle => !alreadyInList.Contains(wsHandle)).Select(IntToListItem).ToList();
+				.Where(wsHandle => !alreadyShowing.Contains(wsHandle)).Select(IntToListItem).ToList();
+			if (alreadyDeleted != null)
+			{
+				foreach (var deletedItem in Items.Where(i => alreadyDeleted.Any(ws => i.WS.Id == ws.Id)))
+				{
+					// This will add a note to the item's display label
+					deletedItem.WillDelete = true;
+				}
+			}
 		}
 
 		/// <summary>
@@ -69,8 +77,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		internal void Show(HiddenWSListItemModel item)
 		{
-			Items.Remove(item);
-			ShownWritingSystems.Add(item.WS);
+			item.WillShow = true;
 		}
 
 		/// <summary/>
@@ -78,8 +85,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			if (!item.InOppositeList && ConfirmDeleteWritingSystem(item.ToString()))
 			{
-				Items.Remove(item);
-				DeletedWritingSystems.Add(item.WS);
+				item.WillDelete = true;
 			}
 		}
 	}
@@ -87,20 +93,81 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary>
 	/// This class models a list item for a writing system (that is not in the list for the current type).
 	/// </summary>
-	internal class HiddenWSListItemModel : Tuple<CoreWritingSystemDefinition, bool>
+	internal class HiddenWSListItemModel
 	{
-		/// <summary/>
-		public HiddenWSListItemModel(CoreWritingSystemDefinition ws, bool inOppositeList) : base(ws, inOppositeList) { }
+		private enum Disposition { Hide, Show, Delete }
+
+		private Disposition m_disposition = Disposition.Hide;
 
 		/// <summary/>
-		public CoreWritingSystemDefinition WS => Item1;
+		public HiddenWSListItemModel(CoreWritingSystemDefinition ws, bool inOppositeList)
+		{
+			WS = ws;
+			InOppositeList = inOppositeList;
+		}
+
+		/// <summary/>
+		public CoreWritingSystemDefinition WS { get; }
 
 		/// <summary>
 		/// Whether the Writing System is in the opposite list (e.g., if we are configuring Analysis WS's, true if this WS is in the Vernacular list)
 		/// </summary>
-		public bool InOppositeList => Item2;
+		public bool InOppositeList { get; }
+
+		public bool WillShow
+		{
+			get => m_disposition == Disposition.Show;
+			set
+			{
+				if (value)
+				{
+					m_disposition = Disposition.Show;
+				}
+				else if (m_disposition == Disposition.Show)
+				{
+					m_disposition = Disposition.Hide;
+				}
+			}
+		}
+
+		public bool WillDelete
+		{
+			get => m_disposition == Disposition.Delete;
+			set
+			{
+				if (value)
+				{
+					m_disposition = Disposition.Delete;
+				}
+				else if (m_disposition == Disposition.Delete)
+				{
+					m_disposition = Disposition.Hide;
+				}
+			}
+		}
 
 		/// <inheritdoc />
-		public override string ToString() => WS.DisplayLabel;
+		public override string ToString()
+		{
+			return FormatDisplayLabel("other");
+		}
+
+		public string FormatDisplayLabel(string otherListType)
+		{
+			var label = $"[{WS.Abbreviation}] {WS.DisplayLabel}";
+			if (InOppositeList)
+			{
+				label = string.Format(FwCoreDlgs.XInTheXList, label, otherListType);
+			}
+			switch (m_disposition)
+			{
+				default:
+					return label;
+				case Disposition.Show:
+					return string.Format(FwCoreDlgs.XWillBeShown, label);
+				case Disposition.Delete:
+					return string.Format(FwCoreDlgs.XWillBeDeleted, label);
+			}
+		}
 	}
 }

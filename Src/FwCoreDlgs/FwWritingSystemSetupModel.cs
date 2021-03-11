@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private readonly IWritingSystemManager _wsManager;
 		private string _languageName;
 		private WritingSystemSetupModel _currentWsSetupModel;
-		private readonly ISet<string> _wsIdsToDelete = new HashSet<string>();
+		private readonly ISet<CoreWritingSystemDefinition> _wssToDelete = new HashSet<CoreWritingSystemDefinition>();
 		private readonly Dictionary<CoreWritingSystemDefinition, CoreWritingSystemDefinition> _mergedWritingSystems = new Dictionary<CoreWritingSystemDefinition, CoreWritingSystemDefinition>();
 
 
@@ -807,7 +807,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var removedWritingSystems = new List<CoreWritingSystemDefinition>(allWritingSystems);
 			removedWritingSystems.RemoveAll(ws => workingWritingSystems.Any(wws => wws.Id == ws.Id));
-			_wsIdsToDelete.RemoveAll(wsId => workingWritingSystems.Any(wws => wws.Id == wsId));
+			_wssToDelete.RemoveAll(ws => workingWritingSystems.Any(wws => wws.Id == ws.Id));
 			foreach (var deleteCandidate in removedWritingSystems)
 			{
 				currentWritingSystems.Remove(deleteCandidate);
@@ -821,10 +821,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			var deletedWsIds = new List<string>();
-			foreach (var deleteCandidateId in _wsIdsToDelete)
+			foreach (var deleteCandidate in _wssToDelete)
 			{
-				if (Cache.ServiceLocator.WritingSystemManager.TryGet(deleteCandidateId, out var deleteCandidate)
-					&& !otherWritingSystems.Contains(deleteCandidate)
+				if (!otherWritingSystems.Contains(deleteCandidate)
 					&& !_mergedWritingSystems.Keys.Contains(deleteCandidate))
 				{
 					WritingSystemServices.DeleteWritingSystem(Cache, deleteCandidate);
@@ -917,10 +916,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void HideCurrentWritingSystem(object sender, EventArgs e)
 		{
-			_wsIdsToDelete.Remove(_currentWs.Id);
+			_wssToDelete.Remove(_wssToDelete.FirstOrDefault(ws => ws.Id == _currentWs.Id));
 			HideCurrentWritingSystem();
 		}
 
+		// REVIEW (Hasso) 2021.03: should we offer to delete the current working WS (current behaviour), or the original WS associated with the current WS?
 		private void DeleteCurrentWritingSystem(object sender, EventArgs e)
 		{
 			// If the writing system is in the other list as well, simply hide it silently.
@@ -934,7 +934,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (ConfirmDeleteWritingSystem(CurrentWsSetupModel.CurrentDisplayLabel)) // prompt the user to delete the WS and its data
 			{
-				_wsIdsToDelete.Add(_currentWs.Id);
+				_wssToDelete.Add(_currentWs);
 				HideCurrentWritingSystem();
 			}
 		}
@@ -1092,10 +1092,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void ViewHiddenWritingSystemsHandler(object sender, EventArgs e)
 		{
-			var model = new ViewHiddenWritingSystemsModel(_listType, Cache) { ConfirmDeleteWritingSystem = ConfirmDeleteWritingSystem };
+			var model = new ViewHiddenWritingSystemsModel(_listType, Cache,
+					WorkingList.Select(li => li.OriginalWs).Where(ws => ws != null).ToList(), _wssToDelete)
+				{ ConfirmDeleteWritingSystem = ConfirmDeleteWritingSystem };
 			ViewHiddenWritingSystems(model);
 
-			_wsIdsToDelete.AddRange(model.DeletedWritingSystems.Select(ws => ws.Id));
+			_wssToDelete.AddRange(model.DeletedWritingSystems);
 			foreach (var shownWS in model.ShownWritingSystems)
 			{
 				AddNewLanguage(new LanguageInfo{DesiredName = shownWS.LanguageName, LanguageTag = shownWS.LanguageTag});

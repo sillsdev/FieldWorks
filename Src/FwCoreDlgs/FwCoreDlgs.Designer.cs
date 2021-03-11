@@ -70,24 +70,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cancel Delete Writing System.
-        /// </summary>
-        public static string CancelDeleteWS {
-            get {
-                return ResourceManager.GetString("CancelDeleteWS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The writing system {0} and all text in the writing system will no longer be deleted..
-        /// </summary>
-        public static string DataInWsWontBeDeleted {
-            get {
-                return ResourceManager.GetString("DataInWsWontBeDeleted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Linked Files Folder.
         /// </summary>
         public static string folderBrowserDlgDescription {
@@ -2515,11 +2497,38 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} (in the {1} list).
+        /// </summary>
+        public static string XInTheXList {
+            get {
+                return ResourceManager.GetString("XInTheXList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} (Original).
         /// </summary>
         public static string xOriginal {
             get {
                 return ResourceManager.GetString("xOriginal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (will be deleted).
+        /// </summary>
+        public static string XWillBeDeleted {
+            get {
+                return ResourceManager.GetString("XWillBeDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (will be shown).
+        /// </summary>
+        public static string XWillBeShown {
+            get {
+                return ResourceManager.GetString("XWillBeShown", resourceCulture);
             }
         }
     }

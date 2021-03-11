@@ -5,6 +5,7 @@
 using System.Linq;
 using NUnit.Framework;
 using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -44,11 +45,56 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		[Test]
-		public void IntToListItem_DisplayLabel([Values("en", "fr-CA", "el-Latn")] string id)
+		public void ViewHiddenWritingSystemsModel_PrefersOverrideExistingWSsList()
+		{
+			// set up languages (in addition to English): one in both lists, one unique to each list, and one in neither list
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("en", out var wsEn);
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("de", out var wsBoth);
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out var wsAnal);
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("fr", out var wsVern);
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("pt", out var wsNeither);
+			Cache.LangProject.AnalysisWritingSystems.Add(wsNeither);
+			Cache.LangProject.VernacularWritingSystems.Add(wsNeither);
+			// set up data in each language
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			entry.CitationForm.set_String(wsVern.Handle, "Citation");
+			entry.CitationForm.set_String(wsBoth.Handle, "Citation");
+			entry.SummaryDefinition.set_String(wsEn.Handle, "Definition");
+			entry.SummaryDefinition.set_String(wsAnal.Handle, "Definition");
+			entry.SummaryDefinition.set_String(wsBoth.Handle, "Definition");
+			entry.SummaryDefinition.set_String(wsNeither.Handle, "Definition");
+			Cache.ActionHandlerAccessor.EndUndoTask();
+
+			// SUT
+			var testModel = new ViewHiddenWritingSystemsModel(FwWritingSystemSetupModel.ListType.Analysis, Cache, new[] { wsBoth, wsAnal });
+			Assert.That(testModel.Items.Select(i => i.WS.Id), Is.EquivalentTo(new[] { "en", "fr", "pt" }));
+
+			// SUT
+			testModel = new ViewHiddenWritingSystemsModel(FwWritingSystemSetupModel.ListType.Vernacular, Cache, new[] { wsEn, wsBoth, wsVern });
+			Assert.That(testModel.Items.Select(i => i.WS.Id), Is.EquivalentTo(new[] { "es", "pt" }));
+		}
+
+		[Test]
+		public void ListItem_FormatDisplayLabel([Values("en", "fr-CA", "el-Latn")] string id)
 		{
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet(id, out var ws);
 			var testModel = new ViewHiddenWritingSystemsModel(FwWritingSystemSetupModel.ListType.Analysis, Cache);
-			Assert.AreEqual(ws.DisplayLabel, testModel.IntToListItem(ws.Handle).ToString());
+			Assert.AreEqual($"[{ws.Abbreviation}] {ws.DisplayLabel}", testModel.IntToListItem(ws.Handle).FormatDisplayLabel(null));
+		}
+
+		[Test]
+		public void ListItem_FormatDisplayLabel_IncludesTags()
+		{
+			var ws = GetOrSetWs("en-CA");
+			var wsAbbrAndLabel = $"[{ws.Abbreviation}] {ws.DisplayLabel}";
+			Assert.AreEqual(string.Format(FwCoreDlgs.XWillBeShown, wsAbbrAndLabel),
+				new HiddenWSListItemModel(ws, false) { WillShow = true }.FormatDisplayLabel(null));
+			Assert.AreEqual(string.Format(FwCoreDlgs.XWillBeDeleted, wsAbbrAndLabel),
+				new HiddenWSListItemModel(ws, false) { WillDelete = true }.FormatDisplayLabel(null));
+			Assert.AreEqual(string.Format(FwCoreDlgs.XInTheXList, wsAbbrAndLabel, "Analysis"),
+				new HiddenWSListItemModel(ws, true).FormatDisplayLabel("Analysis"));
+			Assert.AreEqual(string.Format(FwCoreDlgs.XWillBeShown, string.Format(FwCoreDlgs.XInTheXList, wsAbbrAndLabel, "Vernacular")),
+				new HiddenWSListItemModel(ws, true) { WillShow = true }.FormatDisplayLabel("Vernacular"));
 		}
 
 		[Test]
@@ -79,7 +125,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// SUT
 			testModel.Show(itemHid);
 
-			Assert.That(testModel.Items, Is.EquivalentTo(new[] { itemEn }), "Only English should remain visible in the dialog");
+			Assert.That(testModel.DeletedWritingSystems, Is.Empty, "No WS's should be in the list to be deleted");
 			Assert.That(testModel.ShownWritingSystems, Is.EquivalentTo(new[] { wsHid }), "The hidden WS should be in the list to be shown");
 		}
 
@@ -104,9 +150,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// SUT
 			testModel.Delete(itemHid);
 
-			Assert.That(confirmDeleteLabel, Is.EqualTo(wsHid.DisplayLabel));
-			Assert.That(testModel.Items, Is.EquivalentTo(new[] { itemEn }), "Only English should remain visible in the dialog");
+			Assert.That(confirmDeleteLabel, Is.StringEnding(wsHid.DisplayLabel));
 			Assert.That(testModel.DeletedWritingSystems, Is.EquivalentTo(new[] { wsHid }), "The hidden WS should be in the list to be deleted");
+			Assert.That(testModel.ShownWritingSystems, Is.Empty, "No WS's should be in the list to be shown");
 		}
 
 		[Test]
@@ -130,9 +176,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// SUT
 			testModel.Delete(itemHid);
 
-			Assert.That(confirmDeleteLabel, Is.EqualTo(wsHid.DisplayLabel));
+			Assert.That(confirmDeleteLabel, Is.StringEnding(wsHid.DisplayLabel));
 			Assert.That(testModel.Items, Is.EquivalentTo(new[] { itemEn, itemHid }), "Both WS's remain visible in the dialog");
 			Assert.That(testModel.DeletedWritingSystems, Is.Empty, "Nothing should be in the list to be deleted");
+			Assert.That(testModel.ShownWritingSystems, Is.Empty, "Nothing should be in the list to be shown");
 		}
 
 		[Test]
@@ -150,6 +197,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			Assert.That(testModel.Items, Is.EquivalentTo(new[] { itemEn, itemHid }), "Both WS's remain visible in the dialog");
 			Assert.That(testModel.DeletedWritingSystems, Is.Empty, "Nothing should be in the list to be deleted");
+			Assert.That(testModel.ShownWritingSystems, Is.Empty, "Nothing should be in the list to be shown");
+		}
+
+		private CoreWritingSystemDefinition GetOrSetWs(string code)
+		{
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet(code, out var ws);
+			return ws;
 		}
 	}
 }

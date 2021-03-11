@@ -1181,7 +1181,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "en", "fr", "en-Zxxx-x-audio" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			var menu = testModel.GetRightClickMenuItems();
-			menu.First(ws => ws.MenuText.Contains("Hide")).ClickHandler(this, EventArgs.Empty);
+			menu.First(item => item.MenuText.Contains("Hide")).ClickHandler(this, EventArgs.Empty);
 			Assert.IsTrue(testModel.CurrentWsListChanged);
 		}
 
@@ -1192,7 +1192,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			testModel.ConfirmDeleteWritingSystem = label => true;
 			var menu = testModel.GetRightClickMenuItems();
-			menu.First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
+			menu.First(item => item.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
 			Assert.IsTrue(testModel.CurrentWsListChanged);
 		}
 
@@ -1206,7 +1206,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager());
 			testModel.ConfirmDeleteWritingSystem = label => true;
 			var menu = testModel.GetRightClickMenuItems();
-			menu.First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
+			menu.First(item => item.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
 			Assert.DoesNotThrow(() => testModel.Save());
 			Assert.That(container.VernacularWritingSystems.Count, Is.EqualTo(1));
 		}
@@ -1225,7 +1225,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return true;
 			};
 			var menu = testModel.GetRightClickMenuItems();
-			menu.First(ws => ws.MenuText.Contains("Merge")).ClickHandler(this, EventArgs.Empty);
+			menu.First(item => item.MenuText.Contains("Merge")).ClickHandler(this, EventArgs.Empty);
 			Assert.DoesNotThrow(() => testModel.Save());
 			Assert.That(container.VernacularWritingSystems.Count, Is.EqualTo(1));
 		}
@@ -1237,7 +1237,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			testModel.SelectWs("fr");
 			var menu = testModel.GetRightClickMenuItems();
-			menu.First(ws => ws.MenuText.Contains("Hide")).ClickHandler(this, EventArgs.Empty);
+			menu.First(item => item.MenuText.Contains("Hide")).ClickHandler(this, EventArgs.Empty);
 			Assert.IsFalse(testModel.CurrentWsListChanged);
 		}
 
@@ -1249,7 +1249,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			testModel.SelectWs("fr");
 			testModel.ConfirmDeleteWritingSystem = label => true;
 			var menu = testModel.GetRightClickMenuItems();
-			menu.First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
+			menu.First(item => item.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
 			Assert.IsFalse(testModel.CurrentWsListChanged);
 		}
 
@@ -1263,7 +1263,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				ConfirmDeleteWritingSystem = label => false
 			};
 			var menu = testModel.GetRightClickMenuItems();
-			menu.First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
+			menu.First(item => item.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
 			Assert.IsFalse(testModel.CurrentWsListChanged);
 			Assert.That(testModel.WorkingList.Select(li => li.WorkingWs.Id), Is.EquivalentTo(wsList));
 			Assert.That(testModel.WorkingList.All(li => li.InCurrentList));
@@ -1391,18 +1391,62 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		[Test]
+		public void HiddenWsModel_AllCtorArgsPassed()
+		{
+			ShowChangeLanguage(out var addedInfo);
+			var addedWs = GetOrSetWs(addedInfo.LanguageTag);
+			var deletedWs = GetOrSetWs("doa");
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			entry.SummaryDefinition.set_String(addedWs.Handle, "Hidden Text");
+			entry.SummaryDefinition.set_String(deletedWs.Handle, "Deletable Text");
+			Cache.LangProject.AnalysisWritingSystems.Add(deletedWs);
+			Cache.ActionHandlerAccessor.EndUndoTask();
+
+			var wasDlgShown = false;
+			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Analysis, Cache.ServiceLocator.WritingSystemManager, Cache)
+			{
+				ConfirmDeleteWritingSystem = label => true,
+				ShowChangeLanguage = ShowChangeLanguage,
+				// When clicking "View hidden...", verify that the ViewHiddenWSModel is set up as expected
+				ViewHiddenWritingSystems = model =>
+				{
+					// Already-to-be-shown WS's are not listed as "hidden"
+					Assert.False(model.Items.Any(i => i.WS.Equals(addedWs)), $"{addedWs.DisplayLabel} is not quite 'hidden' anymore");
+
+					// Already-to-be-deleted WS's are labeled as such
+					var deletedItem = model.Items.First(i => i.WS.Equals(deletedWs));
+					Assert.That(deletedItem.ToString(), Is.StringEnding(string.Format(FwCoreDlgs.XWillBeDeleted, deletedWs.DisplayLabel)));
+
+					wasDlgShown = true;
+				}
+			};
+
+			// Add the hidden WS before viewing hidden WS's
+			testModel.GetAddMenuItems().First(item => item.MenuText.Contains("Add new language")).ClickHandler.Invoke(null, null);
+			// Delete the deleted WS before viewing hidden WS's
+			testModel.SelectWs(deletedWs.LanguageTag);
+			testModel.GetRightClickMenuItems().First(item => item.MenuText.Contains("Delete")).ClickHandler.Invoke(null, null);
+
+			// SUT: when we view hidden WS's, we assert that the model was constructed as we expected
+			testModel.GetAddMenuItems().First(item => item.MenuText.Contains("View hidden")).ClickHandler(this, EventArgs.Empty);
+
+			Assert.True(wasDlgShown, nameof(wasDlgShown));
+		}
+
+		[Test]
 		public void HiddenWsShown()
 		{
 			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache)
 			{
-				ViewHiddenWritingSystems = model => model.ShownWritingSystems.Add(GetOrSetWs("hid"))
+				ViewHiddenWritingSystems = model =>
+					model.Items.Add(new HiddenWSListItemModel(GetOrSetWs("hid"), false) { WillShow = true })
 			};
 			// Other tests may have saved the list with different WS's; start with that's already there.
 			var expectedList = testModel.WorkingList.Select(li => li.OriginalWs.Id).ToList();
 			expectedList.Add("hid");
 
 			// SUT
-			testModel.GetAddMenuItems().First(ws => ws.MenuText.Contains("View hidden")).ClickHandler(this, EventArgs.Empty);
+			testModel.GetAddMenuItems().First(item => item.MenuText.Contains("View hidden")).ClickHandler(this, EventArgs.Empty);
 
 			Assert.True(testModel.CurrentWsListChanged, "Showing a WS changes the 'current' showing list");
 			Assert.That(testModel.WorkingList.Select(li => li.OriginalWs.Id), Is.EquivalentTo(expectedList));
@@ -1421,11 +1465,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular,
 					Cache.ServiceLocator.WritingSystemManager, Cache, mediator)
 				{
-					ViewHiddenWritingSystems = model => model.DeletedWritingSystems.Add(GetOrSetWs("doa"))
+					ViewHiddenWritingSystems = model =>
+						model.Items.Add(new HiddenWSListItemModel(GetOrSetWs("doa"), false) { WillDelete = true })
 				};
 
 				// SUT: Delete using the View hidden... dlg, then save
-				testModel.GetAddMenuItems().First(ws => ws.MenuText.Contains("View hidden")).ClickHandler(this, EventArgs.Empty);
+				testModel.GetAddMenuItems().First(item => item.MenuText.Contains("View hidden")).ClickHandler(this, EventArgs.Empty);
 				testModel.Save();
 
 				CollectionAssert.AreEqual(new[] {"doa"}, deleteListener.DeletedWSs);
@@ -1453,7 +1498,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				testModel.SelectWs("fr");
 
 				// SUT: click Delete, then save
-				testModel.GetRightClickMenuItems().First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
+				testModel.GetRightClickMenuItems().First(item => item.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
 				testModel.Save();
 
 
@@ -1487,7 +1532,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				testModel.SelectWs("fr");
 
 				// SUT: click Delete, then save
-				testModel.GetRightClickMenuItems().First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
+				testModel.GetRightClickMenuItems().First(item => item.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
 				testModel.Save();
 
 				Assert.False(wasDeleteConfirmed, "shouldn't confirm 'deleting' a WS that will only be hidden");
@@ -1518,7 +1563,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				testModel.SelectWs("fr");
 
 				// SUT: click Hide, then save
-				testModel.GetRightClickMenuItems().First(ws => ws.MenuText.Contains("Hide")).ClickHandler(this, EventArgs.Empty);
+				testModel.GetRightClickMenuItems().First(item => item.MenuText.Contains("Hide")).ClickHandler(this, EventArgs.Empty);
 				testModel.Save();
 
 				Assert.AreEqual("en", Cache.LangProject.CurVernWss, "Only English should remain selected after save");
@@ -1550,12 +1595,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				// Delete French, then add it back
 				testModel.SelectWs(fr);
-				testModel.GetRightClickMenuItems().First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
+				testModel.GetRightClickMenuItems().First(item => item.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
 				testModel.GetAddMenuItems().First(item => item.MenuText.Contains("Add new language")).ClickHandler.Invoke(null, null);
 				testModel.SelectWs(fr);
 
 				// SUT: click Hide, then save
-				testModel.GetRightClickMenuItems().First(ws => ws.MenuText.Contains("Hide")).ClickHandler(this, EventArgs.Empty);
+				testModel.GetRightClickMenuItems().First(item => item.MenuText.Contains("Hide")).ClickHandler(this, EventArgs.Empty);
 				testModel.Save();
 
 				Assert.AreEqual("en", Cache.LangProject.CurVernWss, "Only English should remain selected after save");
@@ -1589,7 +1634,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				// Delete French, then add it back
 				testModel.SelectWs(fr);
-				testModel.GetRightClickMenuItems().First(ws => ws.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
+				testModel.GetRightClickMenuItems().First(item => item.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
 				testModel.GetAddMenuItems().First(item => item.MenuText.Contains("Add new language")).ClickHandler.Invoke(null, null);
 				testModel.SelectWs(fr);
 
