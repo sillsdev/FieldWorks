@@ -2515,20 +2515,20 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} (will be added).
+        /// </summary>
+        public static string XWillBeAdded {
+            get {
+                return ResourceManager.GetString("XWillBeAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} (will be deleted).
         /// </summary>
         public static string XWillBeDeleted {
             get {
                 return ResourceManager.GetString("XWillBeDeleted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} (will be shown).
-        /// </summary>
-        public static string XWillBeShown {
-            get {
-                return ResourceManager.GetString("XWillBeShown", resourceCulture);
             }
         }
     }

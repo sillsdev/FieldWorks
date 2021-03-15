@@ -12,7 +12,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 {
 	/// <summary>
 	/// Presentation model for the ViewHiddenWritingSystems dialog. Lists Writing Systems with text in the project
-	/// but that are not in the list for the current type (but may be in the opposite list). Allows users to show
+	/// but that are not in the list for the current type (but may be in the opposite list). Allows users to add
 	/// a Writing Systems or to delete all text in a Writing System.
 	/// </summary>
 	public class ViewHiddenWritingSystemsModel
@@ -30,15 +30,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary>Writing Systems with data that are not in the list for the current type</summary>
 		internal readonly List<HiddenWSListItemModel> Items;
 
-		/// <summary>Hidden Writing Systems that the user has selected to show in the list for the current type</summary>
-		public IEnumerable<CoreWritingSystemDefinition> ShownWritingSystems => Items.Where(i => i.WillShow).Select(i => i.WS);
+		/// <summary>Hidden Writing Systems that the user has selected to add to the list for the current type</summary>
+		public IEnumerable<CoreWritingSystemDefinition> AddedWritingSystems => Items.Where(i => i.WillAdd).Select(i => i.WS);
 
 		/// <summary>Hidden Writing Systems whose data the user has selected to delete permanently</summary>
 		public IEnumerable<CoreWritingSystemDefinition> DeletedWritingSystems => Items.Where(i => i.WillDelete).Select(i => i.WS);
 
 		/// <summary/>
 		public ViewHiddenWritingSystemsModel(FwWritingSystemSetupModel.ListType type, LcmCache cache = null,
-			ICollection<CoreWritingSystemDefinition> alreadyShowing = null, ICollection<CoreWritingSystemDefinition> alreadyDeleted = null)
+			ICollection<CoreWritingSystemDefinition> alreadyInList = null, ICollection<CoreWritingSystemDefinition> alreadyDeleted = null)
 		{
 			ListType = type;
 			if (cache == null)
@@ -48,14 +48,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return;
 			}
 			m_WSMgr = cache.ServiceLocator.WritingSystemManager;
-			alreadyShowing = alreadyShowing ?? (ListType == FwWritingSystemSetupModel.ListType.Analysis
+			alreadyInList = alreadyInList ?? (ListType == FwWritingSystemSetupModel.ListType.Analysis
 				? cache.LangProject.AnalysisWritingSystems
 				: cache.LangProject.VernacularWritingSystems);
 			m_OppositeList = ListType == FwWritingSystemSetupModel.ListType.Analysis
 				? cache.LangProject.VernacularWritingSystems
 				: cache.LangProject.AnalysisWritingSystems;
-			Items = new List<int>(WritingSystemServices.FindAllWritingSystemsWithText(cache))
-				.Where(wsHandle => !alreadyShowing.Contains(wsHandle)).Select(IntToListItem).ToList();
+			Items = WritingSystemServices.FindAllWritingSystemsWithText(cache)
+				.Where(wsHandle => !alreadyInList.Contains(wsHandle)).Select(IntToListItem).ToList();
 			if (alreadyDeleted != null)
 			{
 				foreach (var deletedItem in Items.Where(i => alreadyDeleted.Any(ws => i.WS.Id == ws.Id)))
@@ -75,15 +75,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary/>
-		internal void Show(HiddenWSListItemModel item)
+		internal void Add(HiddenWSListItemModel item)
 		{
-			item.WillShow = true;
+			item.WillAdd = true;
 		}
 
 		/// <summary/>
 		internal void Delete(HiddenWSListItemModel item)
 		{
-			if (!item.InOppositeList && ConfirmDeleteWritingSystem(item.ToString()))
+			if (!item.InOppositeList && ConfirmDeleteWritingSystem(item.WS.DisplayLabel))
 			{
 				item.WillDelete = true;
 			}
@@ -95,7 +95,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// </summary>
 	internal class HiddenWSListItemModel
 	{
-		private enum Disposition { Hide, Show, Delete }
+		private enum Disposition { Hide, Add, Delete }
 
 		private Disposition m_disposition = Disposition.Hide;
 
@@ -114,16 +114,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public bool InOppositeList { get; }
 
-		public bool WillShow
+		public bool WillAdd
 		{
-			get => m_disposition == Disposition.Show;
+			get => m_disposition == Disposition.Add;
 			set
 			{
 				if (value)
 				{
-					m_disposition = Disposition.Show;
+					m_disposition = Disposition.Add;
 				}
-				else if (m_disposition == Disposition.Show)
+				else if (m_disposition == Disposition.Add)
 				{
 					m_disposition = Disposition.Hide;
 				}
@@ -163,8 +163,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				default:
 					return label;
-				case Disposition.Show:
-					return string.Format(FwCoreDlgs.XWillBeShown, label);
+				case Disposition.Add:
+					return string.Format(FwCoreDlgs.XWillBeAdded, label);
 				case Disposition.Delete:
 					return string.Format(FwCoreDlgs.XWillBeDeleted, label);
 			}

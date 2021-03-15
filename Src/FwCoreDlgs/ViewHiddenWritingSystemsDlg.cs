@@ -25,10 +25,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (model != null)
 			{
-				m_lblInstructions.Text = string.Format(m_lblInstructions.Text
-							+ "\nDear testers, this dialog is ugly when resized. Will fix next week.", // TODO (Hasso) 2021.03: fix
+				m_lblInstructions.Text = string.Format(m_lblInstructions.Text,
 					model.ListType == FwWritingSystemSetupModel.ListType.Analysis ? FwCoreDlgs.Analysis : FwCoreDlgs.Vernacular);
 				BindToModel();
+				m_listView.Select();
 			}
 		}
 
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void BindButtons()
 		{
 			var curItem = CurrentItem;
-			m_btnShow.Enabled = curItem != null;
+			m_btnAdd.Enabled = curItem != null;
 			m_btnDelete.Enabled = curItem != null && !curItem.InOppositeList && !curItem.WillDelete;
 		}
 
@@ -72,18 +72,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void m_listView_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			BindButtons();
+			AcceptButton = m_btnAdd.Enabled ? m_btnAdd : m_btnClose;
 		}
 
-		private void m_btnShow_Click(object sender, EventArgs e)
+		private void m_btnAdd_Click(object sender, EventArgs e)
 		{
-			m_model.Show(CurrentItem);
+			m_model.Add(CurrentItem);
 			BindToModel();
+			AcceptButton = m_btnClose;
 		}
 
 		private void m_btnDelete_Click(object sender, EventArgs e)
 		{
 			m_model.Delete(CurrentItem);
 			BindToModel();
+			AcceptButton = m_btnClose;
+			// Pressing Escape usually closes the dialog and frequently even saves settings (Close vs Save & Cancel),
+			// but I don't want to give users the slightest illusion that they're canceling a delete. The can press Enter to close the dialog.
+			CancelButton = null;
 		}
 	}
 }

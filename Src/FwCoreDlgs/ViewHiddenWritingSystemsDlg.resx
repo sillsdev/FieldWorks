@@ -130,7 +130,7 @@
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="m_btnHelp.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+    <value>6</value>
   </data>
   <data name="&gt;&gt;m_btnHelp.Name" xml:space="preserve">
     <value>m_btnHelp</value>
@@ -142,7 +142,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;m_btnHelp.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>2</value>
   </data>
   <data name="m_btnClose.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
@@ -157,7 +157,7 @@
     <value>75, 23</value>
   </data>
   <data name="m_btnClose.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+    <value>5</value>
   </data>
   <data name="&gt;&gt;m_btnClose.Name" xml:space="preserve">
     <value>m_btnClose</value>
@@ -169,13 +169,70 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;m_btnClose.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="m_groupBox.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
+    <value>1</value>
   </data>
   <data name="m_groupBox.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
     <value>GrowAndShrink</value>
+  </data>
+  <data name="&gt;&gt;m_listView.Name" xml:space="preserve">
+    <value>m_listView</value>
+  </data>
+  <data name="&gt;&gt;m_listView.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_listView.Parent" xml:space="preserve">
+    <value>m_groupBox</value>
+  </data>
+  <data name="&gt;&gt;m_listView.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_btnDelete.Name" xml:space="preserve">
+    <value>m_btnDelete</value>
+  </data>
+  <data name="&gt;&gt;m_btnDelete.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnDelete.Parent" xml:space="preserve">
+    <value>m_groupBox</value>
+  </data>
+  <data name="&gt;&gt;m_btnDelete.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;m_btnAdd.Name" xml:space="preserve">
+    <value>m_btnAdd</value>
+  </data>
+  <data name="&gt;&gt;m_btnAdd.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnAdd.Parent" xml:space="preserve">
+    <value>m_groupBox</value>
+  </data>
+  <data name="&gt;&gt;m_btnAdd.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="m_groupBox.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="m_groupBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="m_groupBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>490, 261</value>
+  </data>
+  <data name="m_groupBox.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;m_groupBox.Name" xml:space="preserve">
+    <value>m_groupBox</value>
+  </data>
+  <data name="&gt;&gt;m_groupBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_groupBox.Parent" xml:space="preserve">
+    <value>splitInstructionsControls.Panel2</value>
+  </data>
+  <data name="&gt;&gt;m_groupBox.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="m_listView.AccessibleName" xml:space="preserve">
     <value>DictConfigMgr_ListView</value>
@@ -190,13 +247,13 @@
     <value>6, 19</value>
   </data>
   <data name="m_listView.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>425, 122</value>
+    <value>225, 122</value>
   </data>
   <data name="m_listView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>484, 175</value>
+    <value>478, 183</value>
   </data>
   <data name="m_listView.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="&gt;&gt;m_listView.Name" xml:space="preserve">
     <value>m_listView</value>
@@ -220,13 +277,13 @@
     <value>NoControl</value>
   </data>
   <data name="m_btnDelete.Location" type="System.Drawing.Point, System.Drawing">
-    <value>245, 209</value>
+    <value>242, 217</value>
   </data>
   <data name="m_btnDelete.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
   </data>
   <data name="m_btnDelete.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="m_btnDelete.Text" xml:space="preserve">
     <value>&amp;Delete...</value>
@@ -243,75 +300,54 @@
   <data name="&gt;&gt;m_btnDelete.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="m_btnShow.AccessibleName" xml:space="preserve">
+  <data name="m_btnAdd.AccessibleName" xml:space="preserve">
     <value>DictConfigMgr_CopyButton</value>
   </data>
-  <data name="m_btnShow.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="m_btnAdd.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom</value>
   </data>
-  <data name="m_btnShow.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="m_btnAdd.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="m_btnShow.Location" type="System.Drawing.Point, System.Drawing">
-    <value>164, 209</value>
+  <data name="m_btnAdd.Location" type="System.Drawing.Point, System.Drawing">
+    <value>161, 217</value>
   </data>
-  <data name="m_btnShow.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_btnAdd.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
   </data>
-  <data name="m_btnShow.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="m_btnShow.Text" xml:space="preserve">
-    <value>&amp;Show</value>
-  </data>
-  <data name="&gt;&gt;m_btnShow.Name" xml:space="preserve">
-    <value>m_btnShow</value>
-  </data>
-  <data name="&gt;&gt;m_btnShow.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_btnShow.Parent" xml:space="preserve">
-    <value>m_groupBox</value>
-  </data>
-  <data name="&gt;&gt;m_btnShow.ZOrder" xml:space="preserve">
+  <data name="m_btnAdd.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
-  <data name="m_groupBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 104</value>
+  <data name="m_btnAdd.Text" xml:space="preserve">
+    <value>&amp;Add</value>
   </data>
-  <data name="m_groupBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>496, 253</value>
+  <data name="&gt;&gt;m_btnAdd.Name" xml:space="preserve">
+    <value>m_btnAdd</value>
   </data>
-  <data name="m_groupBox.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
+  <data name="&gt;&gt;m_btnAdd.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_groupBox.Name" xml:space="preserve">
+  <data name="&gt;&gt;m_btnAdd.Parent" xml:space="preserve">
     <value>m_groupBox</value>
   </data>
-  <data name="&gt;&gt;m_groupBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;m_btnAdd.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
-  <data name="&gt;&gt;m_groupBox.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;m_groupBox.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="m_lblInstructions.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
+  <data name="m_lblInstructions.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
   </data>
   <data name="m_lblInstructions.Location" type="System.Drawing.Point, System.Drawing">
-    <value>13, 13</value>
+    <value>0, 0</value>
   </data>
   <data name="m_lblInstructions.Size" type="System.Drawing.Size, System.Drawing">
-    <value>495, 88</value>
+    <value>490, 80</value>
   </data>
   <data name="m_lblInstructions.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
   <data name="m_lblInstructions.Text" xml:space="preserve">
     <value>This project has text in the following writing systems that are not currently in the list of {0} writing systems. This text may be vernacular text, analysis text, or both. It may be only embedded in text in other writing systems.
-Click "Show" to show the selected writing system in the list of {0} writing systems.
+Click "Add" to add the selected writing system to the list of {0} writing systems.
 Click "Delete" to delete all text in the selected writing system.</value>
     <comment>{0} is either "vernacular" or "analysis".</comment>
   </data>
@@ -322,9 +358,78 @@ Click "Delete" to delete all text in the selected writing system.</value>
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_lblInstructions.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>splitInstructionsControls.Panel1</value>
   </data>
   <data name="&gt;&gt;m_lblInstructions.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="splitInstructionsControls.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="splitInstructionsControls.Location" type="System.Drawing.Point, System.Drawing">
+    <value>18, 12</value>
+  </data>
+  <data name="splitInstructionsControls.Orientation" type="System.Windows.Forms.Orientation, System.Windows.Forms">
+    <value>Horizontal</value>
+  </data>
+  <data name="splitInstructionsControls.Panel1.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>No</value>
+  </data>
+  <data name="&gt;&gt;splitInstructionsControls.Panel1.Name" xml:space="preserve">
+    <value>splitInstructionsControls.Panel1</value>
+  </data>
+  <data name="&gt;&gt;splitInstructionsControls.Panel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;splitInstructionsControls.Panel1.Parent" xml:space="preserve">
+    <value>splitInstructionsControls</value>
+  </data>
+  <data name="&gt;&gt;splitInstructionsControls.Panel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="splitInstructionsControls.Panel1MinSize" type="System.Int32, mscorlib">
+    <value>60</value>
+  </data>
+  <data name="splitInstructionsControls.Panel2.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>No</value>
+  </data>
+  <data name="&gt;&gt;splitInstructionsControls.Panel2.Name" xml:space="preserve">
+    <value>splitInstructionsControls.Panel2</value>
+  </data>
+  <data name="&gt;&gt;splitInstructionsControls.Panel2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitterPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;splitInstructionsControls.Panel2.Parent" xml:space="preserve">
+    <value>splitInstructionsControls</value>
+  </data>
+  <data name="&gt;&gt;splitInstructionsControls.Panel2.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="splitInstructionsControls.Panel2MinSize" type="System.Int32, mscorlib">
+    <value>200</value>
+  </data>
+  <data name="splitInstructionsControls.RightToLeft" type="System.Windows.Forms.RightToLeft, System.Windows.Forms">
+    <value>No</value>
+  </data>
+  <data name="splitInstructionsControls.Size" type="System.Drawing.Size, System.Drawing">
+    <value>490, 345</value>
+  </data>
+  <data name="splitInstructionsControls.SplitterDistance" type="System.Int32, mscorlib">
+    <value>80</value>
+  </data>
+  <data name="splitInstructionsControls.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="&gt;&gt;splitInstructionsControls.Name" xml:space="preserve">
+    <value>splitInstructionsControls</value>
+  </data>
+  <data name="&gt;&gt;splitInstructionsControls.Type" xml:space="preserve">
+    <value>System.Windows.Forms.SplitContainer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;splitInstructionsControls.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;splitInstructionsControls.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -335,6 +440,9 @@ Click "Delete" to delete all text in the selected writing system.</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>520, 398</value>
+  </data>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>235, 335</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Hidden Writing Systems</value>

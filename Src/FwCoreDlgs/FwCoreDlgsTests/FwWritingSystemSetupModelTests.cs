@@ -1439,7 +1439,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular, Cache.ServiceLocator.WritingSystemManager, Cache)
 			{
 				ViewHiddenWritingSystems = model =>
-					model.Items.Add(new HiddenWSListItemModel(GetOrSetWs("hid"), false) { WillShow = true })
+					model.Items.Add(new HiddenWSListItemModel(GetOrSetWs("hid"), false) { WillAdd = true })
 			};
 			// Other tests may have saved the list with different WS's; start with that's already there.
 			var expectedList = testModel.WorkingList.Select(li => li.OriginalWs.Id).ToList();

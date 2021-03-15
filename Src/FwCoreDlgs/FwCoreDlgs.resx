@@ -1053,9 +1053,9 @@ that also use the SIL Locale Data Repository</value>
     <value>{0} (will be deleted)</value>
     <comment>Shown in the View Hidden Writing Systems dialog for writing systems that will be deleted. {0} is the name of the writing system.</comment>
   </data>
-  <data name="XWillBeShown" xml:space="preserve">
-    <value>{0} (will be shown)</value>
-    <comment>Shown in the View Hidden Writing Systems dialog for writing systems that will be shown. {0} is the name of the writing system.</comment>
+  <data name="XWillBeAdded" xml:space="preserve">
+    <value>{0} (will be added)</value>
+    <comment>Shown in the View Hidden Writing Systems dialog for writing systems that will be added to the list when the dialog is closed. {0} is the name of the writing system.</comment>
   </data>
   <data name="NewLangProjWizard_AnalysisWritingSystemExplanation" xml:space="preserve">
     <value>It is used for glosses, definitions, notes, text analyses, and so on.</value>

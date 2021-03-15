@@ -1098,9 +1098,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ViewHiddenWritingSystems(model);
 
 			_wssToDelete.AddRange(model.DeletedWritingSystems);
-			foreach (var shownWS in model.ShownWritingSystems)
+			foreach (var addedWS in model.AddedWritingSystems)
 			{
-				AddNewLanguage(new LanguageInfo{DesiredName = shownWS.LanguageName, LanguageTag = shownWS.LanguageTag});
+				AddNewLanguage(new LanguageInfo{DesiredName = addedWS.LanguageName, LanguageTag = addedWS.LanguageTag});
 			}
 		}
 
