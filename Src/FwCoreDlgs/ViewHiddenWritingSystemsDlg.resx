@@ -234,9 +234,6 @@
   <data name="&gt;&gt;m_groupBox.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="m_listView.AccessibleName" xml:space="preserve">
-    <value>DictConfigMgr_ListView</value>
-  </data>
   <data name="m_listView.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
@@ -267,9 +264,6 @@
   <data name="&gt;&gt;m_listView.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="m_btnDelete.AccessibleName" xml:space="preserve">
-    <value>DictConfigMgr_DeleteButton</value>
-  </data>
   <data name="m_btnDelete.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom</value>
   </data>
@@ -299,9 +293,6 @@
   </data>
   <data name="&gt;&gt;m_btnDelete.ZOrder" xml:space="preserve">
     <value>1</value>
-  </data>
-  <data name="m_btnAdd.AccessibleName" xml:space="preserve">
-    <value>DictConfigMgr_CopyButton</value>
   </data>
   <data name="m_btnAdd.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom</value>
