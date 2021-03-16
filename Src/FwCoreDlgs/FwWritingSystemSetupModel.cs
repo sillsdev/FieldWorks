@@ -892,7 +892,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			menuItemList.Add(new WSMenuItemModel(string.Format(updateWritingSystem, CurrentWsSetupModel.CurrentDisplayLabel),
 				UpdateCurrentWritingSystem, !IsCurrentWsNew(), FwCoreDlgs.WritingSystemList_UpdateWsTooltip));
 			menuItemList.Add(new WSMenuItemModel(string.Format(hideWritingSystem, CurrentWsSetupModel.CurrentDisplayLabel),
-				HideCurrentWritingSystem, CanDelete()));
+				HideCurrentWritingSystem, CanDelete() && !IsCurrentWsNew()));
 			menuItemList.Add(new WSMenuItemModel(string.Format(deleteWritingSystem, CurrentWsSetupModel.CurrentDisplayLabel),
 				DeleteCurrentWritingSystem, CanDelete()));
 			return menuItemList;

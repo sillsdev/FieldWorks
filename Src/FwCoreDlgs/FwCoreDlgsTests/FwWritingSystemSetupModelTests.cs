@@ -261,7 +261,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		[Test]
-		public void WritingSystemList_RightClickMenuItems_UpdateDisabledForNewWs()
+		public void WritingSystemList_RightClickMenuItems_NewWs()
 		{
 			var container = new TestWSContainer(new[] { "es" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
@@ -269,16 +269,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			testModel.WorkingList.Add(new WSListItemModel(true, null, french));
 			testModel.SelectWs("fr");
 			var menu = testModel.GetRightClickMenuItems();
-			Assert.That(menu.First(m => m.MenuText.StartsWith("Update")).IsEnabled, Is.False);
+			Assert.That(menu.First(m => m.MenuText.StartsWith("Update")).IsEnabled, Is.False, "Update should be disabled");
+			Assert.That(menu.First(m => m.MenuText.StartsWith("Hide")).IsEnabled, Is.False, "Hide should be disabled");
 		}
 
 		[Test]
-		public void WritingSystemList_RightClickMenuItems_UpdateEnabledOnExistingWs()
+		public void WritingSystemList_RightClickMenuItems_ExistingWs()
 		{
-			var container = new TestWSContainer(new[] { "es" });
+			var container = new TestWSContainer(new[] { "es", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			var menu = testModel.GetRightClickMenuItems();
-			Assert.That(menu.First(m => m.MenuText.StartsWith("Update")).IsEnabled, Is.True);
+			Assert.That(menu.First(m => m.MenuText.StartsWith("Update")).IsEnabled, Is.True, "Update should be enabled");
+			Assert.That(menu.First(m => m.MenuText.StartsWith("Hide")).IsEnabled, Is.True, "Hide should be enabled");
 		}
 
 		[Test]
