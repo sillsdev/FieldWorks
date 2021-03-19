@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// <summary/>
 		public ViewHiddenWritingSystemsModel(FwWritingSystemSetupModel.ListType type, LcmCache cache = null,
-			ICollection<CoreWritingSystemDefinition> alreadyInList = null, ICollection<CoreWritingSystemDefinition> alreadyDeleted = null)
+			ICollection<CoreWritingSystemDefinition> alreadyInList = null, ICollection<string> alreadyDeletedIds = null)
 		{
 			ListType = type;
 			if (cache == null)
@@ -56,9 +56,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				: cache.LangProject.AnalysisWritingSystems;
 			Items = WritingSystemServices.FindAllWritingSystemsWithText(cache)
 				.Where(wsHandle => !alreadyInList.Contains(wsHandle)).Select(IntToListItem).ToList();
-			if (alreadyDeleted != null)
+			if (alreadyDeletedIds != null)
 			{
-				foreach (var deletedItem in Items.Where(i => alreadyDeleted.Any(ws => i.WS.Id == ws.Id)))
+				foreach (var deletedItem in Items.Where(i => alreadyDeletedIds.Any(wsId => i.WS.Id == wsId)))
 				{
 					// This will add a note to the item's display label
 					deletedItem.WillDelete = true;
