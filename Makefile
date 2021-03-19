@@ -19,6 +19,7 @@ SHELL=/bin/bash
 BITS := $(shell test `arch` = x86_64 && echo 64 || echo 32)
 PLATFORM := $(shell test `arch` = x86_64 && echo x64 || echo x86)
 INSTALLATION_PREFIX ?= /usr
+BUILD_CONFIG ?= Release
 
 all:
 
@@ -374,31 +375,31 @@ check-have-build-dependencies:
 # As of 2017-03-27, localize is more likely to crash running on mono 3 than to actually have a real localization problem. So try it a few times so that a random crash doesn't fail a packaging job that has been running for over an hour.
 # Make the lcm artifacts dir so it is a valid path for later processing appending things like '/..'.
 Fw-build-package: check-have-build-dependencies
-	export LcmLocalArtifactsDir="$(BUILD_ROOT)/../liblcm/artifacts/Release" \
+	export LcmLocalArtifactsDir="$(BUILD_ROOT)/../liblcm/artifacts/$(BUILD_CONFIG)" \
 		&& mkdir -p $$LcmLocalArtifactsDir \
 		&& . environ \
 		&& cd $(BUILD_ROOT)/Build \
 		&& $(BUILD_TOOL) /t:refreshTargets /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS) \
-		&& $(BUILD_TOOL) '/t:remakefw' /property:config=release /property:Platform=$(PLATFORM) /property:packaging=yes /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS) \
-		&& ./multitry $(BUILD_TOOL) '/t:localize-binaries' /property:config=release /property:packaging=yes /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS)
+		&& $(BUILD_TOOL) '/t:remakefw' /property:config=$(BUILD_CONFIG) /property:Platform=$(PLATFORM) /property:packaging=yes /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS) \
+		&& ./multitry $(BUILD_TOOL) '/t:localize-binaries' /property:config=$(BUILD_CONFIG) /property:packaging=yes /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS)
 	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then find "$(BUILD_ROOT)/.."; fi
 
 Fw-build-package-fdo: check-have-build-dependencies
 	cd $(BUILD_ROOT)/Build \
 		&& $(BUILD_TOOL) /t:refreshTargets /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS) \
-		&& $(BUILD_TOOL) '/t:build4package-fdo' /property:config=release /property:packaging=yes /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS)
+		&& $(BUILD_TOOL) '/t:build4package-fdo' /property:config=$(BUILD_CONFIG) /property:packaging=yes /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS)
 
 RestoreNuGetPackages:
 	. environ \
 		&& cd Build \
-		&& $(BUILD_TOOL) /t:RestoreNuGetPackages /property:config=release \
+		&& $(BUILD_TOOL) /t:RestoreNuGetPackages /property:config=$(BUILD_CONFIG) \
 			/property:packaging=yes /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS)
 
 # Begin localization section
 
 localize-source: RestoreNuGetPackages
 	. environ && \
-	(cd Build && $(BUILD_TOOL) /t:localize-source /property:config=release /property:packaging=yes /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS))
+	(cd Build && $(BUILD_TOOL) /t:localize-source /property:config=$(BUILD_CONFIG) /property:packaging=yes /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS))
 	# Remove symbolic links from Output - we don't want those in the source package
 	find Output -type l -delete
 	# Copy localization files to Localizations folder so that they survive a 'clean'
@@ -425,7 +426,7 @@ l10n-install:
 	for LOCALE in $(LOCALIZATIONS); do \
 		DESTINATION=$(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks-l10n-$${LOCALE,,} ;\
 		install -d $$DESTINATION ;\
-		install -m 644 Output/Release/$$LOCALE/*.dll $$DESTINATION/ ;\
+		install -m 644 Output/$(BUILD_CONFIG)/$$LOCALE/*.dll $$DESTINATION/ ;\
 		install -m 644 "$(BUILD_ROOT)/DistFiles/CommonLocalizations/Palaso.$$LOCALE.xlf" $$DESTINATION/ ;\
 		install -m 644 "$(BUILD_ROOT)/DistFiles/CommonLocalizations/Chorus.$$LOCALE.xlf" $$DESTINATION/ ;\
 		install -m 644 "$(BUILD_ROOT)/DistFiles/Language Explorer/Configuration/strings-$$LOCALE.xml" $$DESTINATION/ ;\
