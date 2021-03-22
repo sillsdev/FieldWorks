@@ -1,10 +1,11 @@
-// Copyright (c) 2017 SIL International
+// Copyright (c) 2017-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.IO;
 using System.Xml.Linq;
 using SIL.Reporting;
+using SIL.Settings;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -16,7 +17,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary />
 		public override ReportingSettings Reporting { get; set; }
 
-		/// <summary />
+		public override UpdateSettings Update { get; set; }
+
 		public override string LocalKeyboards { get; set; }
 
 		/// <summary />

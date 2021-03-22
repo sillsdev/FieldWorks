@@ -1,12 +1,12 @@
-// Copyright (c) 2017 SIL International
+// Copyright (c) 2017-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using SIL.Reporting;
+using SIL.Settings;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -16,6 +16,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	public abstract class FwApplicationSettingsBase
 	{
 		public abstract ReportingSettings Reporting { get; set; }
+		public abstract UpdateSettings Update { get; set; }
 		public abstract string LocalKeyboards { get; set; }
 		public abstract string WebonaryUser { get; set; }
 		public abstract string WebonaryPass { get; set; }
@@ -66,10 +67,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 								WebonaryPass = (string) valueElem;
 								break;
 							case "Reporting":
-								XmlReader reader = valueElem.CreateReader();
-								reader.MoveToContent();
-								string xml = reader.ReadInnerXml();
-								Reporting = Xml.XmlSerializationHelper.DeserializeFromString<ReportingSettings>(xml);
+								Reporting = Deserialize<ReportingSettings>(valueElem);
+								break;
+							case nameof(Update):
+								Update = Deserialize<UpdateSettings>(valueElem);
 								break;
 							case "LocalKeyboards":
 								LocalKeyboards = (string) valueElem;
@@ -86,6 +87,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return true;
 			}
 			return false;
+		}
+
+		private static T Deserialize<T>(XNode node)
+		{
+			var reader = node.CreateReader();
+			reader.MoveToContent();
+			var xml = reader.ReadInnerXml();
+			return Xml.XmlSerializationHelper.DeserializeFromString<T>(xml);
 		}
 	}
 }

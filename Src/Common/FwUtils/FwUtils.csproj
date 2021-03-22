@@ -226,6 +226,7 @@
     <Compile Include="AlphaOutline.cs" />
     <Compile Include="FwApplicationSettings.cs" />
     <Compile Include="FwApplicationSettingsBase.cs" />
+    <Compile Include="FwUpdater.cs" />
     <Compile Include="GraphiteFontFeatures.cs" />
     <Compile Include="HelpTopicProviderBase.cs" />
     <Compile Include="ImportExportStep.cs" />
@@ -342,6 +343,7 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -1,6 +1,8 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using System.Windows.Forms;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -22,6 +24,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				components.Dispose();
 			}
+
 			base.Dispose(disposing);
 		}
 
@@ -54,11 +57,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_userInterfaceChooser = new SIL.FieldWorks.Common.Widgets.UserInterfaceChooser();
 			this.label3 = new System.Windows.Forms.Label();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
+			this.m_tabUpdates = new System.Windows.Forms.TabPage();
+			this.gbUpdateChannel = new System.Windows.Forms.GroupBox();
+			this.m_cbUpdateChannel = new System.Windows.Forms.ComboBox();
+			this.m_okToAutoupdate = new System.Windows.Forms.CheckBox();
 			this.m_tabPrivacy.SuspendLayout();
 			this.m_tabPlugins.SuspendLayout();
 			this.m_tabInterface.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.tabControl1.SuspendLayout();
+			this.m_tabUpdates.SuspendLayout();
+			this.gbUpdateChannel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// m_btnOK
@@ -136,9 +145,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			// m_lvPlugins
 			// 
 			this.m_lvPlugins.CheckBoxes = true;
-			this.m_lvPlugins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-			this.m_chName,
-			this.m_chDescription});
+			this.m_lvPlugins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
+			{
+				this.m_chName,
+				this.m_chDescription
+			});
 			this.m_lvPlugins.FullRowSelect = true;
 			this.m_lvPlugins.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.m_lvPlugins.HideSelection = false;
@@ -203,8 +214,37 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.tabControl1.Controls.Add(this.m_tabInterface);
 			this.tabControl1.Controls.Add(this.m_tabPlugins);
 			this.tabControl1.Controls.Add(this.m_tabPrivacy);
+			this.tabControl1.Controls.Add(this.m_tabUpdates);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
+			// 
+			// m_tabUpdates
+			// 
+			this.m_tabUpdates.Controls.Add(this.gbUpdateChannel);
+			this.m_tabUpdates.Controls.Add(this.m_okToAutoupdate);
+			resources.ApplyResources(this.m_tabUpdates, "m_tabUpdates");
+			this.m_tabUpdates.Name = "m_tabUpdates";
+			this.m_tabUpdates.UseVisualStyleBackColor = true;
+			// 
+			// gbUpdateChannel
+			// 
+			this.gbUpdateChannel.Controls.Add(this.m_cbUpdateChannel);
+			resources.ApplyResources(this.gbUpdateChannel, "gbUpdateChannel");
+			this.gbUpdateChannel.Name = "gbUpdateChannel";
+			this.gbUpdateChannel.TabStop = false;
+			// 
+			// m_cbUpdateChannel
+			// 
+			this.m_cbUpdateChannel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			resources.ApplyResources(this.m_cbUpdateChannel, "m_cbUpdateChannel");
+			this.m_cbUpdateChannel.Name = "m_cbUpdateChannel";
+			this.m_cbUpdateChannel.KeyPress += new KeyPressEventHandler(m_cbUpdateChannel_KeyPress);
+			// 
+			// m_okToAutoupdate
+			// 
+			resources.ApplyResources(this.m_okToAutoupdate, "m_okToAutoupdate");
+			this.m_okToAutoupdate.Name = "m_okToAutoupdate";
+			this.m_okToAutoupdate.UseVisualStyleBackColor = true;
 			// 
 			// LexOptionsDlg
 			// 
@@ -229,11 +269,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_tabInterface.PerformLayout();
 			this.groupBox1.ResumeLayout(false);
 			this.tabControl1.ResumeLayout(false);
+			this.m_tabUpdates.ResumeLayout(false);
+			this.m_tabUpdates.PerformLayout();
+			this.gbUpdateChannel.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
+
 		private System.Windows.Forms.Button m_btnOK;
 		private System.Windows.Forms.Button m_btnCancel;
 		private System.Windows.Forms.Button m_btnHelp;
@@ -254,5 +298,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TabControl tabControl1;
 		private System.Windows.Forms.LinkLabel llPrivacy;
+		private System.Windows.Forms.TabPage m_tabUpdates;
+		private System.Windows.Forms.CheckBox m_okToAutoupdate;
+		private System.Windows.Forms.GroupBox gbUpdateChannel;
+		private System.Windows.Forms.ComboBox m_cbUpdateChannel;
 	}
 }

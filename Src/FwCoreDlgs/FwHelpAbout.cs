@@ -305,13 +305,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				lblFwVersion.Text = viProvider.MajorVersion;
 
 				// List the copyright information
-				var acknowlegements = AcknowledgementsProvider.CollectAcknowledgements();
-				var list = acknowlegements.Keys.ToList();
+				var acknowledgements = AcknowledgementsProvider.CollectAcknowledgements();
+				var list = acknowledgements.Keys.ToList();
 				list.Sort();
 				var text = viProvider.CopyrightString + Environment.NewLine + viProvider.LicenseString + Environment.NewLine + viProvider.LicenseURL;
 				foreach (var key in list)
 				{
-					text += "\r\n" + "\r\n" + key + "\r\n" + acknowlegements[key].Copyright + " " + acknowlegements[key].Url + " " + acknowlegements[key].LicenseUrl;
+					text += "\r\n" + "\r\n" + key + "\r\n" + acknowledgements[key].Copyright + " " + acknowledgements[key].Url + " " + acknowledgements[key].LicenseUrl;
 				}
 				txtCopyright.Text = text;
 
@@ -332,8 +332,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				edtAvailableMemory.Text = string.Format(m_sAvailableMemoryFmt, memStatEx.ullAvailPhys / BytesPerMiB, memStatEx.ullTotalPhys / BytesPerMiB);
 
 				// Set the available disk space information.
-				ulong _, lpTotalNumberOfBytes, lpTotalNumberOfFreeBytes;
-				Win32.GetDiskFreeSpaceEx(strRoot, out _, out lpTotalNumberOfBytes, out lpTotalNumberOfFreeBytes);
+				Win32.GetDiskFreeSpaceEx(strRoot, out _, out var lpTotalNumberOfBytes, out var lpTotalNumberOfFreeBytes);
 				var gbFree = lpTotalNumberOfFreeBytes / BytesPerGiB;
 				var gbTotal = lpTotalNumberOfBytes / BytesPerGiB;
 				edtAvailableDiskSpace.Text = string.Format(m_sAvailableDiskSpaceFmt, gbFree, gbTotal, strRoot);

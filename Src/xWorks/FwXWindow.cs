@@ -302,7 +302,7 @@ namespace SIL.FieldWorks.XWorks
 			m_delegate = new MainWindowDelegate(this);
 			if (app != null) // if configFile in FwXApp == null
 			{
-			m_delegate.App = app;
+				m_delegate.App = app;
 
 				m_propertyTable.SetProperty("HelpTopicProvider", app, true);
 				m_propertyTable.SetPropertyPersistence("HelpTopicProvider", false);

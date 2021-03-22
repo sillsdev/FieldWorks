@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,10 +16,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 	public class VersionInfoProvider
 	{
 		/// <summary>Default copyright string if no assembly could be found</summary>
-		public const string kDefaultCopyrightString = "Copyright (c) 2002-2017 SIL International";
-		/// <summary>Copyright string to use in sensitive areas (i.e. when m_fShowSILInfo is
-		/// true)</summary>
-		public const string kSensitiveCopyrightString = "Copyright (c) 2002-2017";
+		public const string kDefaultCopyrightString = "Copyright (c) 2002-2021 SIL International";
+		/// <summary>Copyright string to use in sensitive areas (i.e. when m_fShowSILInfo is true)</summary>
+		public const string kSensitiveCopyrightString = "Copyright (c) 2002-2021";
 
 		private readonly Assembly m_assembly;
 		private readonly bool m_fShowSILInfo;
@@ -151,6 +150,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
+		/// <summary>
+		/// Gets the build number of the base installer (used for downloading patches)
+		/// </summary>
+		public int BaseBuildNumber
+		{
+			get
+			{
+				var baseBuildAtt = m_assembly.GetCustomAttributes(typeof(AssemblyMetadataAttribute)).Cast<AssemblyMetadataAttribute>()
+					.FirstOrDefault(att => "BaseBuildNumber".Equals(att.Key)) ;
+				return int.TryParse(baseBuildAtt?.Value, out var baseBuildNum) ? baseBuildNum : 0;
+			}
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -163,8 +174,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				// Set the application version text
 				var appVersion = InternalProductVersion;
-				string productVersion, productDate;
-				ParseInformationalVersion(m_assembly, out productVersion, out productDate);
+				ParseInformationalVersion(m_assembly, out _, out var productDate);
 				string bitness;
 				switch (IntPtr.Size)
 				{
@@ -180,7 +190,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 
 #if DEBUG
-				return string.Format(FwUtilsStrings.kstidAppVersionFmt, appVersion, productDate, bitness + "(Debug version)");
+				return string.Format(FwUtilsStrings.kstidAppVersionFmt, appVersion, productDate, bitness + " (Debug version)");
 #else
 				return string.Format(FwUtilsStrings.kstidAppVersionFmt, appVersion, productDate, bitness);
 #endif
@@ -239,9 +249,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				// Set the Fieldworks version text
-				string productVersion, productDate, productType;
-				ParseInformationalVersion(m_assembly, out productVersion, out productDate);
+				// Set the FieldWorks version text
+				ParseInformationalVersion(m_assembly, out var productVersion, out _);
 				// Fill the expected parts to document and avoid a crash if we get an odd informational version
 				var versionParts = new [] {"MAJOR", "MINOR", "REVISION", "BUILDNUMBER", "STABILITY"};
 				var realParts = productVersion.Split('.', ' ');

@@ -419,6 +419,7 @@
 	<PropertyGroup>
 		<Arch Condition="'$(Platform)' != 'x64'">x86</Arch> <!-- Handle x86 and WIN32 -->
 		<Arch Condition="'$(Platform)' == 'x64'">x64</Arch>
+		<Base Condition="'$(BaseBuildish)' != ''">b$(BaseBuildish)_</Base>
 	</PropertyGroup>
 
 	<Target Name="BuildProductBaseMsi" DependsOnTargets="InstallerVersionNumbers">
@@ -455,6 +456,6 @@
 		<ItemGroup>
 			<PatchFiles Include="$(PatchDir)/**/*.msp"/>
 		</ItemGroup>
-		<Move SourceFiles="@(PatchFiles)" DestinationFiles="@(PatchFiles -> '$(InstallersBaseDir)\%(Filename)_$(Arch)%(Extension)')"/>
+		<Move SourceFiles="@(PatchFiles)" DestinationFiles="@(PatchFiles -> '$(InstallersBaseDir)\%(Filename)_$(Base)$(Arch)%(Extension)')"/>
 	</Target>
 </Project>

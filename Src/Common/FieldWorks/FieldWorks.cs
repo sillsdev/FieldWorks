@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2020 SIL International
+// Copyright (c) 2010-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -167,7 +167,7 @@ namespace SIL.FieldWorks
 				s_appSettings.DeleteCorruptedSettingsFilesIfPresent();
 				s_appSettings.UpgradeIfNecessary();
 
-				ReportingSettings reportingSettings = s_appSettings.Reporting;
+				var reportingSettings = s_appSettings.Reporting;
 				if (reportingSettings == null)
 				{
 					// Note: to simulate this, currently it works to delete all subfolders of
@@ -187,10 +187,10 @@ namespace SIL.FieldWorks
 
 				s_appSettings.Save();
 #if DEBUG
-				var analyticsKey = "ddkPyi0BMbFRyOC5PLuCKHVbJH2yI9Cu";
-				var sendFeedback = true;
+				const string analyticsKey = "ddkPyi0BMbFRyOC5PLuCKHVbJH2yI9Cu";
+				const bool sendFeedback = true;
 #else
-				var analyticsKey = "ddkPyi0BMbFRyOC5PLuCKHVbJH2yI9Cu"; // replace with production key after initial testing period
+				const string analyticsKey = "ddkPyi0BMbFRyOC5PLuCKHVbJH2yI9Cu"; // TODO: replace with production key after initial testing period
 				var sendFeedback = reportingSettings.OkToPingBasicUsageData;
 #endif
 				using (new Analytics(analyticsKey, new UserInfo(), sendFeedback))
@@ -322,6 +322,9 @@ namespace SIL.FieldWorks
 
 					if (MiscUtils.IsMono)
 						UglyHackForXkbIndicator();
+
+					if (MiscUtils.IsWindows)
+						FwUpdater.CheckForUpdates();
 
 					// Application was started successfully, so start the message loop
 					Application.Run();
@@ -1675,7 +1678,7 @@ namespace SIL.FieldWorks
 					bool gotAutoOpenSetting = false;
 					if (startingApp.RegistrySettings != null) // may be null if disposed after canceled restore.
 					{
-					dlg.OpenLastProjectCheckboxIsChecked = GetAutoOpenRegistrySetting(startingApp);
+						dlg.OpenLastProjectCheckboxIsChecked = GetAutoOpenRegistrySetting(startingApp);
 						gotAutoOpenSetting = true;
 					}
 					dlg.StartPosition = FormStartPosition.CenterScreen;
@@ -1684,7 +1687,9 @@ namespace SIL.FieldWorks
 					// We get the app each time through the loop because a failed Restore operation can dispose it.
 					var app = GetOrCreateApplication(args);
 					if (gotAutoOpenSetting)
-					app.RegistrySettings.AutoOpenLastEditedProject = dlg.OpenLastProjectCheckboxIsChecked;
+					{
+						app.RegistrySettings.AutoOpenLastEditedProject = dlg.OpenLastProjectCheckboxIsChecked;
+					}
 					switch (dlg.DlgResult)
 					{
 						case WelcomeToFieldWorksDlg.ButtonPress.New:
@@ -3478,29 +3483,14 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static void SetupErrorReportInformation()
 		{
-			string version = Version;
+			var entryAssembly = Assembly.GetEntryAssembly();
+			var version = entryAssembly == null
+				? Version
+				: new VersionInfoProvider(entryAssembly, true).ApplicationVersion;
 			if (version != null)
 			{
-				// Extract the fourth (and final) field of the version to get a date value.
-				int ich = version.IndexOf('.');
-				if (ich >= 0)
-					ich = version.IndexOf('.', ich + 1);
-				if (ich >= 0)
-					ich = version.IndexOf('.', ich + 1);
-				if (ich >= 0)
-				{
-					int iDate = Convert.ToInt32(version.Substring(ich + 1));
-					if (iDate > 0)
-					{
-						double oadate = Convert.ToDouble(iDate);
-						DateTime dt = DateTime.FromOADate(oadate);
-						version += string.Format("  {0}", dt.ToString("yyyy/MM/dd"));
-					}
-				}
-#if DEBUG
-				version += "  (Debug version)";
-#endif
-				ErrorReporter.AddProperty("Version", version);
+				// The property "Version" would be overwritten when Palaso adds the standard properties
+				ErrorReporter.AddProperty("FWVersion", version);
 			}
 			ErrorReporter.AddProperty("CommandLine", Environment.CommandLine);
 			ErrorReporter.AddProperty("CurrentDirectory", Environment.CurrentDirectory);

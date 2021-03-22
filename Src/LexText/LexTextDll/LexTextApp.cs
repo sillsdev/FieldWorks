@@ -375,6 +375,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			if (((classInfo as System.Xml.XmlElement)?.Attributes["class"]?.Value ?? "").Contains(
 				"LinguaLinks"))
 			{
+				// ReSharper disable LocalizableElement
 				// Message is deliberately not localized. We expect this to affect maybe one person every couple of years based on recent
 				// occurrences. Doubt it's worth translating.
 				// The reason for the disabling is that model changes require significant changes to the Import code,
@@ -383,8 +384,9 @@ namespace SIL.FieldWorks.XWorks.LexText
 				// (For example, the currently generated stage 5 XML assumes Senses still reference ReveralEntries, rather than the
 				// current opposite link; and there were problems importing texts even in FLEx 8 (LT-2084)).
 				MessageBox.Show(
-					@"Fieldworks no longer supports import of LinguaLinks data. For any remaining projects that need this, our support staff can help convert your data. Please send a message to flex_errors@sil.org",
+					"Fieldworks no longer supports import of LinguaLinks data. For any remaining projects that need this, our support staff can help convert your data. Please send a message to flex_errors@sil.org",
 					"Sorry", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				// ReSharper restore LocalizableElement
 				return true;
 			}
 			try
@@ -399,15 +401,15 @@ namespace SIL.FieldWorks.XWorks.LexText
 						// Make this localizable!
 					if (message != null)
 						throw new ApplicationException(message, error);
+					throw;
 				}
 				var oldWsUser = Cache.WritingSystemFactory.UserWs;
 				dlg.Init(Cache, wndActive.Mediator, wndActive.PropTable);
 				DialogResult dr = ((Form) dlg).ShowDialog(ActiveForm);
 				if (dr == DialogResult.OK)
 				{
-					if (dlg is LexOptionsDlg)
+					if (dlg is LexOptionsDlg loDlg)
 					{
-						LexOptionsDlg loDlg = dlg as LexOptionsDlg;
 						if (oldWsUser != Cache.WritingSystemFactory.UserWs ||
 							loDlg.PluginsUpdated)
 						{
@@ -427,8 +429,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			}
 			finally
 			{
-				if (dlg != null && dlg is IDisposable)
-					(dlg as IDisposable).Dispose();
+				(dlg as IDisposable)?.Dispose();
 			}
 			return true;
 		}

@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2017 SIL International
+// Copyright (c) 2007-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -19,6 +19,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.LCModel;
 using SIL.PlatformUtilities;
+using SIL.Settings;
 using SIL.Utils;
 using XCore;
 
@@ -38,8 +39,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private IHelpTopicProvider m_helpTopicProvider;
 		private ToolTip optionsTooltip;
 
-		internal bool m_failedToConnectToService;
-
 		public LexOptionsDlg()
 		{
 			InitializeComponent();
@@ -58,16 +57,49 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_autoOpenCheckBox.Checked = AutoOpenLastProject;
 			var appSettings = m_propertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
 			m_okToPingCheckBox.Checked = appSettings.Reporting.OkToPingBasicUsageData;
+			if (Platform.IsWindows)
+			{
+				if (appSettings.Update == null)
+				{
+					// REVIEW (Hasso) 2021.07: we could default to Notify as soon as we implement it, but our low-bandwidth
+					// users wouldn't appreciate automatic downloads of hundreds of megabytes w/o express consent.
+					// TODO (before sending to users): appSettings.Update = new UpdateSettings { Behavior = UpdateSettings.Behaviors.DoNotCheck };
+					appSettings.Update = new UpdateSettings { Channel = UpdateSettings.Channels.Nightly };
+				}
+				m_okToAutoupdate.Checked = appSettings.Update.Behavior != UpdateSettings.Behaviors.DoNotCheck;
+
+				m_cbUpdateChannel.Items.AddRange(new object[]
+				{
+					UpdateSettings.Channels.Stable, UpdateSettings.Channels.Beta, UpdateSettings.Channels.Alpha
+				});
+				// Enable the nightly channel if it is already selected or if this is a tester machine (testers must set the FEEDBACK env var)
+				if (appSettings.Update.Channel == UpdateSettings.Channels.Nightly || Environment.GetEnvironmentVariable("FEEDBACK") != null)
+				{
+					m_cbUpdateChannel.Items.Add(UpdateSettings.Channels.Nightly);
+				}
+				m_cbUpdateChannel.SelectedItem = appSettings.Update.Channel;
+			}
+			else
+			{
+				m_tabUpdates.Visible = false;
+			}
 		}
 
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
 			var appSettings = m_propertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
 			appSettings.Reporting.OkToPingBasicUsageData = m_okToPingCheckBox.Checked;
+
+			if (Platform.IsWindows)
+			{
+				appSettings.Update.Behavior = m_okToAutoupdate.Checked ? UpdateSettings.Behaviors.Download : UpdateSettings.Behaviors.DoNotCheck;
+				appSettings.Update.Channel = (UpdateSettings.Channels)Enum.Parse(typeof(UpdateSettings.Channels), m_cbUpdateChannel.Text);
+			}
+
 			m_sNewUserWs = m_userInterfaceChooser.NewUserWs;
 			if (m_sUserWs != m_sNewUserWs)
 			{
-				CultureInfo ci = MiscUtils.GetCultureForWs(m_sNewUserWs);
+				var ci = MiscUtils.GetCultureForWs(m_sNewUserWs);
 				if (ci != null)
 				{
 					FormLanguageSwitchSingleton.Instance.ChangeCurrentThreadUICulture(ci);
@@ -93,12 +125,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			// Handle installing/uninstalling plugins.
 			if (m_lvPlugins.Items.Count > 0)
 			{
-				List<XmlDocument> pluginsToInstall = new List<XmlDocument>();
-				List<XmlDocument> pluginsToUninstall = new List<XmlDocument>();
+				var pluginsToInstall = new List<XmlDocument>();
+				var pluginsToUninstall = new List<XmlDocument>();
 				foreach (ListViewItem lvi in m_lvPlugins.Items)
 				{
-					string name = lvi.Text;
-					XmlDocument managerDoc = lvi.Tag as XmlDocument;
+					var name = lvi.Text;
+					var managerDoc = lvi.Tag as XmlDocument;
 					if (lvi.Checked && !m_plugins[name])
 					{
 						// Remember we need to install it.
@@ -111,22 +143,22 @@ namespace SIL.FieldWorks.LexText.Controls
 					}
 				}
 				m_pluginsUpdated = pluginsToInstall.Count > 0 || pluginsToUninstall.Count > 0;
-				string basePluginPath = FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer\Configuration\Available Plugins");
+				var basePluginPath = FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer\Configuration\Available Plugins");
 				// The extension XML files should be stored in the data area, not in the code area.
 				// This reduces the need for users to have administrative privileges.
-				string baseExtensionPath = Path.Combine(FwDirectoryFinder.DataDirectory, @"Language Explorer\Configuration");
+				var baseExtensionPath = Path.Combine(FwDirectoryFinder.DataDirectory, @"Language Explorer\Configuration");
 				// Really do the install now.
-				foreach (XmlDocument managerDoc in pluginsToInstall)
+				foreach (var managerDoc in pluginsToInstall)
 				{
-					XmlNode managerNode = managerDoc.SelectSingleNode("/manager");
-					string srcDir = Path.Combine(basePluginPath, managerNode.Attributes["name"].Value);
-					XmlNode configfilesNode = managerNode.SelectSingleNode("configfiles");
-					string extensionPath = Path.Combine(baseExtensionPath, configfilesNode.Attributes["targetdir"].Value);
+					var managerNode = managerDoc.SelectSingleNode("/manager");
+					var srcDir = Path.Combine(basePluginPath, managerNode.Attributes["name"].Value);
+					var configfilesNode = managerNode.SelectSingleNode("configfiles");
+					var extensionPath = Path.Combine(baseExtensionPath, configfilesNode.Attributes["targetdir"].Value);
 					Directory.CreateDirectory(extensionPath);
 					foreach (XmlNode fileNode in configfilesNode.SelectNodes("file"))
 					{
-						string filename = fileNode.Attributes["name"].Value;
-						string extensionPathname = Path.Combine(extensionPath, filename);
+						var filename = fileNode.Attributes["name"].Value;
+						var extensionPathname = Path.Combine(extensionPath, filename);
 						try
 						{
 							File.Copy(
@@ -140,11 +172,11 @@ namespace SIL.FieldWorks.LexText.Controls
 							// Eat copy exception.
 						}
 					}
-					string fwInstallDir = FwDirectoryFinder.CodeDirectory;
+					var fwInstallDir = FwDirectoryFinder.CodeDirectory;
 					foreach (XmlNode dllNode in managerNode.SelectNodes("dlls/file"))
 					{
-						string filename = dllNode.Attributes["name"].Value;
-						string dllPathname = Path.Combine(fwInstallDir, filename);
+						var filename = dllNode.Attributes["name"].Value;
+						var dllPathname = Path.Combine(fwInstallDir, filename);
 						try
 						{
 							File.Copy(
@@ -160,14 +192,14 @@ namespace SIL.FieldWorks.LexText.Controls
 					}
 				}
 				// Really do the uninstall now.
-				foreach (XmlDocument managerDoc in pluginsToUninstall)
+				foreach (var managerDoc in pluginsToUninstall)
 				{
-					XmlNode managerNode = managerDoc.SelectSingleNode("/manager");
-					string shutdownMsg = XmlUtils.GetOptionalAttributeValue(managerNode, "shutdown");
+					var managerNode = managerDoc.SelectSingleNode("/manager");
+					var shutdownMsg = XmlUtils.GetOptionalAttributeValue(managerNode, "shutdown");
 					if (!String.IsNullOrEmpty(shutdownMsg))
 						m_mediator.SendMessage(shutdownMsg, null);
-					XmlNode configfilesNode = managerNode.SelectSingleNode("configfiles");
-					string extensionPath = Path.Combine(baseExtensionPath, configfilesNode.Attributes["targetdir"].Value);
+					var configfilesNode = managerNode.SelectSingleNode("configfiles");
+					var extensionPath = Path.Combine(baseExtensionPath, configfilesNode.Attributes["targetdir"].Value);
 					Directory.Delete(extensionPath, true);
 					// Leave any dlls in place since they may be shared, or in use for the moment.
 				}
@@ -220,32 +252,32 @@ namespace SIL.FieldWorks.LexText.Controls
 			// Populate Plugins tab page list.
 			var baseConfigPath = FwDirectoryFinder.GetCodeSubDirectory(
 				Path.Combine("Language Explorer", "Configuration"));
-			string basePluginPath = Path.Combine(baseConfigPath, "Available Plugins");
+			var basePluginPath = Path.Combine(baseConfigPath, "Available Plugins");
 			// The extension XML files should be stored in the data area, not in the code area.
 			// This reduces the need for users to have administrative privileges.
-			string baseExtensionPath = Path.Combine(FwDirectoryFinder.DataDirectory,
+			var baseExtensionPath = Path.Combine(FwDirectoryFinder.DataDirectory,
 				Path.Combine("Language Explorer", "Configuration"));
-			foreach (string dir in Directory.GetDirectories(basePluginPath))
+			foreach (var dir in Directory.GetDirectories(basePluginPath))
 			{
 				Debug.WriteLine(dir);
 				// Currently not offering Concorder plugin in FW7, therefore, we
 				// can remove the feature until we need to implement. (FWNX-755)
 				if (Platform.IsUnix && dir == Path.Combine(basePluginPath, "Concorder"))
 					continue;
-				string managerPath = Path.Combine(dir, "ExtensionManager.xml");
+				var managerPath = Path.Combine(dir, "ExtensionManager.xml");
 				if (File.Exists(managerPath))
 				{
-					XmlDocument managerDoc = new XmlDocument();
+					var managerDoc = new XmlDocument();
 					managerDoc.Load(managerPath);
-					XmlNode managerNode = managerDoc.SelectSingleNode("/manager");
+					var managerNode = managerDoc.SelectSingleNode("/manager");
 					m_lvPlugins.SuspendLayout();
-					ListViewItem lvi = new ListViewItem();
+					var lvi = new ListViewItem();
 					lvi.Tag = managerDoc;
 					lvi.Text = managerNode.Attributes["name"].Value;
 					lvi.SubItems.Add(managerNode.Attributes["description"].Value);
 					// See if it is installed and check the lvi if it is.
-					XmlNode configfilesNode = managerNode.SelectSingleNode("configfiles");
-					string extensionPath = Path.Combine(baseExtensionPath, configfilesNode.Attributes["targetdir"].Value);
+					var configfilesNode = managerNode.SelectSingleNode("configfiles");
+					var extensionPath = Path.Combine(baseExtensionPath, configfilesNode.Attributes["targetdir"].Value);
 					lvi.Checked = Directory.Exists(extensionPath);
 					m_plugins.Add(lvi.Text, lvi.Checked); // Remember original installed state.
 					m_lvPlugins.Items.Add(lvi);
@@ -277,6 +309,25 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void PrivacyLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			using (Process.Start(llPrivacy.Text)) { }
+		}
+
+		/// <remarks>REVIEW (Hasso) 2021.07: is there a better secret handshake for adding "Nightly"? Considering:
+		/// * Ctrl-Shift-Click (L10nSharp uses Alt-Shift-Click; this avoids collisions)
+		/// * Ctrl-(Shift-)N (for Nightly)
+		/// * Type "nightly" (would require some keeping track—ugh)
+		/// * Set some environment variable (FEEDBACK=QA_CHANNEL or NIGHTLYPATCHES=ON)
+		/// </remarks>
+		private void m_cbUpdateChannel_KeyPress(object sender, KeyPressEventArgs e)
+		{
+			// If the user pressed Ctrl+Shift+N, add and select the Nightly channel
+			if (e.KeyChar == 14 /* ASCII 14 is ^N */ && (ModifierKeys & Keys.Shift) == Keys.Shift)
+			{
+				if (!m_cbUpdateChannel.Items.Contains(UpdateSettings.Channels.Nightly))
+				{
+					m_cbUpdateChannel.Items.Add(UpdateSettings.Channels.Nightly);
+				}
+				m_cbUpdateChannel.SelectedItem = UpdateSettings.Channels.Nightly;
+			}
 		}
 	}
 }
