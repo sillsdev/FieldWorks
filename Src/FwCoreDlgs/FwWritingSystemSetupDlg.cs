@@ -125,6 +125,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			_shareWithSldrCheckbox.Visible = model.ShowSharingWithSldr;
 			_shareWithSldrCheckbox.Checked = model.IsSharingWithSldr;
 			model.ShowChangeLanguage = ShowChangeLanguage;
+			model.ViewHiddenWritingSystems = ViewHiddenWritingSystems;
 			_shareWithSldrCheckbox.CheckedChanged += ShareWithSldrCheckboxCheckChanged;
 			_languageNameTextbox.TextChanged += LanguageNameTextboxOnTextChanged;
 		}
@@ -281,9 +282,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Delegates (called by presentation model)
-		private void ShowMessageBox(string msg)
+		private bool ShowMessageBox(string msg, bool needResponse)
 		{
-			MessageBox.Show(msg, Text, MessageBoxButtons.OK);
+			return DialogResult.Yes == MessageBox.Show(msg, Text, needResponse ? MessageBoxButtons.YesNo : MessageBoxButtons.OK);
 		}
 
 		private bool ShowSharedWsChangeWarning(string originalLanguageName)
@@ -319,6 +320,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			info = null;
 			return false;
+		}
+
+		private void ViewHiddenWritingSystems(ViewHiddenWritingSystemsModel model)
+		{
+			using (var hiddenWSDlg = new ViewHiddenWritingSystemsDlg(model, _helpTopicProvider))
+			{
+				hiddenWSDlg.ShowDialog(this);
+			}
 		}
 
 		private bool ShowModifyEncodingConverter(string originalConverter, out string selectedConverter)

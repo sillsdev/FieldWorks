@@ -492,6 +492,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.MinimizeBox = false;
 			this.Name = "FwWritingSystemSetupDlg";
 			this.ShowIcon = false;
+			this.ShowInTaskbar = false;
 			this._mainLayoutPanel.ResumeLayout(false);
 			this.splitContainer2.Panel1.ResumeLayout(false);
 			this.splitContainer2.Panel2.ResumeLayout(false);

@@ -1,25 +1,25 @@
-// Copyright (c) 2006-2017 SIL International
+// Copyright (c) 2006-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Windows.Forms;
 using NUnit.Framework;
 
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
+	/// <summary/>
 	[TestFixture]
-	public class FwStylesDlgTests
+	public class FwStylesDlgTests : ScrInMemoryLcmTestBase
 	{
 		#region Dummy FwStylesDlg class
 		private class DummyFwStylesDlg : FwStylesDlg
@@ -34,6 +34,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				MsrSysType.Cm, string.Empty, string.Empty, 0, null, null)
 			{
 				m_generalTab.RenamedStyles = m_renamedStyles;
+			}
+
+			/// <inheritdoc/>
+			public DummyFwStylesDlg(IVwRootSite rootSite, LcmCache cache, LcmStyleSheet styleSheet,
+				bool defaultRightToLeft, bool showBiDiLabels, string normalStyleName,
+				int customUserLevel, MsrSysType userMeasurementType, string paraStyleName,
+				string charStyleName, int hvoRootObject, IApp app,
+				IHelpTopicProvider helpTopicProvider)
+				: base(rootSite, cache, styleSheet, defaultRightToLeft, showBiDiLabels,
+					normalStyleName, customUserLevel, userMeasurementType, paraStyleName,
+					charStyleName, hvoRootObject, app, helpTopicProvider)
+			{
 			}
 
 			/// --------------------------------------------------------------------------------
@@ -62,7 +74,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// --------------------------------------------------------------------------------
 			public void CallSaveDeletedStyle(string styleName)
 			{
-				base.SaveDeletedStyle(styleName);
+				SaveDeletedStyle(styleName);
 			}
 
 			/// --------------------------------------------------------------------------------
@@ -86,6 +98,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				get { return m_renamedStyles; }
 			}
+
+			/// <summary/>
+			public TabControl TabControl => m_tabControl;
+
+			/// <summary/>
+			public TabPage TbFont => m_tbFont;
+
+			/// <summary/>
+			public TabPage TbGeneral => m_tbGeneral;
 		}
 		#endregion
 
@@ -145,6 +166,31 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				Assert.AreEqual("name 1", renamedStyles["name 3"]);
 				Assert.AreEqual("my style", renamedStyles["your style"]);
 				Assert.AreEqual("my funny style", renamedStyles["my recurring style"]);
+			}
+		}
+
+		/// <summary>
+		/// Tests that all tabs are hidden if no style is selected (if a placeholder style name is passed) (LT-20566),
+		/// and that the correct tabs are shown for paragraph and character styles.
+		/// </summary>
+		[Platform(Exclude = "Linux", Reason = "seems to require extra setup on Linux")]
+		[TestCase("<not a real style>", 1)]
+		[TestCase("Default Paragraph Characters", 1)]
+		[TestCase("Hyperlink", 2)]
+		[TestCase("Normal", 5)]
+		public void NoStyleSelected_AllTabsHidden(string selectedStyle, int visibleTabs)
+		{
+			var stylesheet = new LcmStyleSheet();
+			stylesheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
+
+			var sut = new DummyFwStylesDlg(null, Cache, stylesheet, false, false, "Normal", 0, MsrSysType.Cm,
+				selectedStyle, string.Empty, 0, null, null);
+
+			Assert.That(sut.TabControl.TabCount, Is.EqualTo(visibleTabs));
+			Assert.That(sut.TabControl.TabPages, Contains.Item(sut.TbGeneral), "The General tab should always be visible");
+			if (visibleTabs > 1)
+			{
+				Assert.That(sut.TabControl.TabPages, Contains.Item(sut.TbFont), "The Font tab should be visible for both character and paragraph styles");
 			}
 		}
 	}

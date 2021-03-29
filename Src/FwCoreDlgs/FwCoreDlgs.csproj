@@ -547,6 +547,13 @@
     <Compile Include="ValidCharactersDlg.Designer.cs">
       <DependentUpon>ValidCharactersDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="ViewHiddenWritingSystemsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewHiddenWritingSystemsDlg.Designer.cs">
+      <DependentUpon>ViewHiddenWritingSystemsDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewHiddenWritingSystemsModel.cs" />
     <Compile Include="WarningNotUsingDefaultLinkedFilesLocation.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -731,6 +738,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ValidCharactersDlg.resx">
       <DependentUpon>ValidCharactersDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewHiddenWritingSystemsDlg.resx">
+      <DependentUpon>ViewHiddenWritingSystemsDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="WarningNotUsingDefaultLinkedFilesLocation.resx">

@@ -346,7 +346,7 @@
 			LocalFilename="ndp48-x86-x64-allos-enu.exe"
 			Condition="!Exists('$(WixLibsDir)/ndp48-x86-x64-allos-enu.exe')" DownloadsDir="$(WixLibsDir)" />
 		<!-- 32-bit VC redistributables -->
-		<DownloadFile Address="https://download.microsoft.com/download/1/1/1/1116b75a-9ec3-481a-a3c8-1777b5381140/vcredist_x86.exe"
+		<DownloadFile Address="https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x86.exe"
 			LocalFilename="vcredist_2008_x86.exe"
 			Condition="!Exists('$(WixLibsDir)/vcredist_2008_x86.exe') And $(Platform)!='x64'"
 			DownloadsDir="$(WixLibsDir)"/>			<!-- VisualC++ 8 runtime -->
@@ -371,7 +371,7 @@
 			Condition="!Exists('$(WixLibsDir)/vcredist_2017_x86.exe') And $(Platform)!='x64'"
 			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 14.1 runtime -->
 		<!-- 64-bit VC redistributables -->
-		<DownloadFile Address="https://download.microsoft.com/download/d/2/4/d242c3fb-da5a-4542-ad66-f9661d0a8d19/vcredist_x64.exe"
+		<DownloadFile Address="https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x64.exe"
 			LocalFilename="vcredist_2008_x64.exe"
 			Condition="!Exists('$(WixLibsDir)/vcredist_2008_x64.exe') And $(Platform)=='x64'"
 			DownloadsDir="$(WixLibsDir)"/>			<!-- VisualC++ 8 runtime -->

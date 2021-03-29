@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template type="fxt" format="any">
+	<FxtDocumentDescription dataLabel="Other Exports" formatLabel="Any" defaultExtension="any" filter="All files (*.*)">
+	We have removed some older export formats (Configured Index, Configured SFM, Configured XML). If you need an export format that is not available, please email FLEx_DevTeam@sil.org, and it will be considered for future versions.
+	</FxtDocumentDescription>
+</template>

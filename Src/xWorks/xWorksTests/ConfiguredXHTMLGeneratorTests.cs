@@ -27,6 +27,7 @@ using SIL.LCModel.DomainServices;
 using SIL.TestUtilities;
 using SIL.LCModel.Utils;
 using XCore;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -9382,6 +9383,37 @@ namespace SIL.FieldWorks.XWorks
 			var tsResult = TsStringUtils.MakeString(result, Cache.DefaultAnalWs);
 			Assert.False(TsStringUtils.IsNullOrEmpty(tsResult), "Results should have been generated");
 			Assert.That(tsResult.get_IsNormalizedForm(FwNormalizationMode.knmNFC), "Resulting XHTML should be NFComposed");
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_CompareRelations_ComplexSituation_CustomSort()
+		{
+			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			var customRule = new IcuRulesCollationDefinition("standard")
+			{
+				IcuRules = "& [last tertiary ignorable] = ‘",
+				OwningWritingSystemDefinition = ws
+			};
+			customRule.Validate(out _);
+			ws.DefaultCollation = customRule;
+			var mainEntry = CreateInterestingLexEntry(Cache, "MainEntry");
+
+			var compareReferencedEntry1 = CreateInterestingLexEntry(Cache, "atest", "atest comparable");
+			var compareReferencedEntry2 = CreateInterestingLexEntry(Cache, "ctest", "ctest comparable");
+			var compareReferencedEntry3 = CreateInterestingLexEntry(Cache, "‘mtest", "‘mtest comparable");
+			var compareReferencedEntry4 = CreateInterestingLexEntry(Cache, "ztest", "ztest comparable");
+			const string comRefTypeName = "Compare";
+			var comRefType = CreateLexRefType(Cache, LexRefTypeTags.MappingTypes.kmtEntryCollection, comRefTypeName, "cf", string.Empty, string.Empty);
+			CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry4, compareReferencedEntry1, compareReferencedEntry3, compareReferencedEntry2 });
+			Assert.IsNotNull(comRefType);
+
+			var mainEntryNode = ModelForCrossReferences(new[] { comRefType.Guid.ToString() });
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, DefaultSettings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(CrossRefOwnerTypeXpath(comRefTypeName), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(1, "atest"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(2, "ctest"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(3, "‘mtest"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(4, "ztest"), 1);
 		}
 
 		[Test]

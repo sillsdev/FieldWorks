@@ -287,11 +287,11 @@
 		<ChorusBuildType Condition="'$(OS)'=='Unix'">Chorus_Linux64masterContinuous</ChorusBuildType>
 		<ChorusBuildTag>.lastSuccessful</ChorusBuildTag>
 		<!-- Libpalaso_PalasoWinmasterContinuous is the master branch build of Palaso for Windows development. Update when appropriate. -->
-		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Libpalaso_PalasoWin32masterContinuous</PalasoBuildType>
-		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Libpalaso_PalasoWinmasterContinuous</PalasoBuildType>
+		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Libpalaso_Palaso60win32Continuous</PalasoBuildType>
+		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Libpalaso_PalasoWin60Continuous</PalasoBuildType>
 		<!-- bt322 is the master branch build of Palaso for Linux development. Update when appropriate. -->
-		<PalasoBuildType Condition="'$(OS)'=='Unix'">Libpalaso_PalasoLinux64masterContinuous</PalasoBuildType>
-		<PalasoBuildTag>fw-9.1.1.tcbuildtag</PalasoBuildTag>
+		<PalasoBuildType Condition="'$(OS)'=='Unix'">Libpalaso_Palaso60linuxContinuous</PalasoBuildType>
+		<PalasoBuildTag>.lastSuccessful</PalasoBuildTag>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
 		<IPCFrameworkBuildType Condition="'$(OS)'=='Windows_NT'">bt278</IPCFrameworkBuildType>
@@ -605,7 +605,7 @@
 			<NuGottenFiles Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'" Include="$(fwrt)/packages/NAudio.Lame.1.1.5/build/libmp3lame.64.dll"/>
 			<NuGottenFiles Include="$(fwrt)/packages/Newtonsoft.Json.12.0.3/lib/net45/Newtonsoft.Json.dll"/>
 			<NuGottenFiles Include="$(fwrt)/packages/Microsoft.Extensions.DependencyModel.2.0.4/lib/net451/Microsoft.Extensions.DependencyModel.dll"/>
-			<NuGottenFiles Include="$(fwrt)/packages/icu.net.2.5.4/lib/net451/icu.net.dll"/>
+			<NuGottenFiles Include="$(fwrt)/packages/icu.net.2.7.0-beta.10/lib/net451/icu.net.dll"/>
 			<NuGottenFiles Include="$(fwrt)/packages/System.ValueTuple.4.5.0/lib/net461/System.ValueTuple.dll"/>
 			<NuGottenFiles Include="$(fwrt)/packages\ParatextData.9.0.3\lib\net461\Paratext.LexicalContracts.dll" />
 			<NuGottenFiles Include="$(fwrt)/packages\ParatextData.9.0.3\lib\net461\ParatextData.dll"/>

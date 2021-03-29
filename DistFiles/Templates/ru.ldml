@@ -26503,7 +26503,7 @@ Warnings: All cp values have U+FE0F characters removed. See /annotationsDerived/
 				=ᅴ
 			]]></cr>
 		</collation>
-		<collation type="standard" sil:modified="true" xmlns:sil="urn://www.sil.org/ldml/0.1">
+		<collation xmlns:sil="urn://www.sil.org/ldml/0.1" type="standard" sil:modified="true">
 			<cr><![CDATA[
 				[reorder Cyrl]
 				# The root collation already sorts й/Й as a base letter.

@@ -2458,7 +2458,7 @@ namespace TestViews
 			MakeStringList(s_rgpsz3);
 			unitpp::assert_eq("AcpToLog should convert 0 even with no selection", 0, ptxs->CallAcpToLog(0));
 
-			assert_exception("Got wrong exception on non-zero AcpToLog with no selection", E_FAIL, ptxs->CallAcpToLog(1));
+			unitpp::assert_eq("AcpToLog should return INT_MIN for non-zero args with no selection", INT_MIN, ptxs->CallAcpToLog(1));
 		}
 
 		/*--------------------------------------------------------------------------------------
