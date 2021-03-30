@@ -91,6 +91,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					var selected = (IMoMorphType) chooser.ChosenOne.Object;
 					MakeMorphTypeChange(selected);
+					UpdateDisplayFromDatabase();
 				}
 			}
 		}

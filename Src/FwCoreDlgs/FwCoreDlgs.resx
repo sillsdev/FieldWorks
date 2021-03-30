@@ -616,6 +616,9 @@ Do you want to remove English now?</value>
   <data name="ksHelp" xml:space="preserve">
     <value>Help</value>
   </data>
+  <data name="ks_Help" xml:space="preserve">
+    <value>&amp;Help</value>
+  </data>
   <data name="ks_Close" xml:space="preserve">
     <value>&amp;Close</value>
   </data>
@@ -935,7 +938,7 @@ The error was:
   </data>
   <data name="ksUnauthorizedRenameBakFile" xml:space="preserve">
     <value>The project {0} only exists in the form of a .bak file, and you apparently do not have file access permissions to restore it to the fwdata file. FieldWorks cannot open it. Try renaming it manually.</value>
-    <comment>Displayed if we try to open a .bak file (because there isn't an fwdata one) and the system won't allow it.</comment>
+    <comment>Displayed if we try to open a .bak file (because there isn't an fwdata file) and the system won't allow it.</comment>
   </data>
   <data name="ksCantShare" xml:space="preserve">
     <value>Cannot Share Projects</value>
@@ -952,12 +955,6 @@ The error was:
   </data>
   <data name="ksCouldNotBackupSomeFiles" xml:space="preserve">
     <value>FieldWorks was not able to back up some of the files used by this project. Do you want to keep the backup anyway? The files not backed up were {0}</value>
-  </data>
-  <data name="CancelDeleteWS" xml:space="preserve">
-    <value>Cancel Delete Writing System</value>
-  </data>
-  <data name="DataInWsWontBeDeleted" xml:space="preserve">
-    <value>The writing system {0} and all text in the writing system will no longer be deleted.</value>
   </data>
   <data name="ksComplexFormIsComponent" xml:space="preserve">
     <value>The {0} you just selected as a complex or variant form of {1} is already saved as a component or variant of {1}. Which item is really a component of the other?
@@ -1010,9 +1007,17 @@ Delete the existing relationship before trying to add this one again.</value>
     <value>Add new language...</value>
     <comment>Menu item for adding a different language to the writing system list (brings up a dialog)</comment>
   </data>
+  <data name="WritingSystemList_ViewHiddenWSs" xml:space="preserve">
+    <value>View hidden Writing Systems...</value>
+    <comment>Menu item for viewing writing systems that have text in the project, but are not in the current list (brings up a dialog)</comment>
+  </data>
   <data name="WritingSystemList_DeleteWs" xml:space="preserve">
     <value>Delete {0}</value>
-    <comment>Right click menu item in the writing system properties dialog for deleting a writing sytem. e.g. "Delete English"</comment>
+    <comment>Right click menu item in the writing system properties dialog for deleting a writing system. e.g. "Delete English"</comment>
+  </data>
+  <data name="WritingSystemList_HideWs" xml:space="preserve">
+    <value>Hide {0}</value>
+    <comment>Right click menu item in the writing system properties dialog for hiding a writing system. e.g. "Hide English"</comment>
   </data>
   <data name="WritingSystemList_MergeWs" xml:space="preserve">
     <value>Merge...</value>
@@ -1029,6 +1034,28 @@ that also use the SIL Locale Data Repository</value>
   <data name="WritingSystemSetup_EncodingConverterForImporting" xml:space="preserve">
     <value>&amp;Encoding converter for importing {0}:</value>
     <comment>{0} is the name of a Writing System</comment>
+  </data>
+  <data name="Vernacular" xml:space="preserve">
+    <value>Vernacular</value>
+    <comment>the category of writing systems for the language being studied, as in "analysis writing systems"</comment>
+  </data>
+  <data name="Analysis" xml:space="preserve">
+    <value>Analysis</value>
+    <comment>the category of writing systems for analyzing other languages, as in "analysis writing systems"</comment>
+  </data>
+  <data name="XInTheXList" xml:space="preserve">
+    <value>{0} (in the {1} list)</value>
+    <comment>Shown in the View Hidden Writing Systems dialog for writing systems that are in the other list.
+    For example, if the user is looking for hidden Analysis WS's, then visible Vernacular WS's will be listed in the dialog with this label applied.
+    {0} is the name of the writing system. {1} is "Vernacular" or "Analysis".</comment>
+  </data>
+  <data name="XWillBeDeleted" xml:space="preserve">
+    <value>{0} (will be deleted)</value>
+    <comment>Shown in the View Hidden Writing Systems dialog for writing systems that will be deleted. {0} is the name of the writing system.</comment>
+  </data>
+  <data name="XWillBeAdded" xml:space="preserve">
+    <value>{0} (will be added)</value>
+    <comment>Shown in the View Hidden Writing Systems dialog for writing systems that will be added to the list when the dialog is closed. {0} is the name of the writing system.</comment>
   </data>
   <data name="NewLangProjWizard_AnalysisWritingSystemExplanation" xml:space="preserve">
     <value>It is used for glosses, definitions, notes, text analyses, and so on.</value>

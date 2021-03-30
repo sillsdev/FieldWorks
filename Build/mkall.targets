@@ -287,11 +287,11 @@
 		<ChorusBuildType Condition="'$(OS)'=='Unix'">Chorus_Linux64masterContinuous</ChorusBuildType>
 		<ChorusBuildTag>fw-9.0.15.tcbuildtag</ChorusBuildTag>
 		<!-- Libpalaso_PalasoWinmasterContinuous is the master branch build of Palaso for Windows development. Update when appropriate. -->
-		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Libpalaso_PalasoWin32masterContinuous</PalasoBuildType>
-		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Libpalaso_PalasoWinmasterContinuous</PalasoBuildType>
+		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Libpalaso_Palaso60win32Continuous</PalasoBuildType>
+		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Libpalaso_PalasoWin60Continuous</PalasoBuildType>
 		<!-- bt322 is the master branch build of Palaso for Linux development. Update when appropriate. -->
-		<PalasoBuildType Condition="'$(OS)'=='Unix'">Libpalaso_PalasoLinux64masterContinuous</PalasoBuildType>
-		<PalasoBuildTag>fw-9.0.15.tcbuildtag</PalasoBuildTag>
+		<PalasoBuildType Condition="'$(OS)'=='Unix'">Libpalaso_Palaso60linuxContinuous</PalasoBuildType>
+		<PalasoBuildTag>fw-9.0.16.tcbuildtag</PalasoBuildTag>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
 		<IPCFrameworkBuildType Condition="'$(OS)'=='Windows_NT'">bt278</IPCFrameworkBuildType>
@@ -314,7 +314,7 @@
 		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Liblcm_LiblcmWin32masterContinuous</LcmBuildType>
 		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Liblcm_LiblcmWin64masterContinuous</LcmBuildType>
 		<LcmBuildType Condition="'$(OS)'=='Unix'">Liblcm_LiblcmLinux64masterContinuous</LcmBuildType>
-		<LcmBuildTag>fw-9.0.15.tcbuildtag</LcmBuildTag>
+		<LcmBuildTag>fw-9.0.16.tcbuildtag</LcmBuildTag>
 		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>

@@ -61,20 +61,11 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cancel Delete Writing System.
+        ///   Looks up a localized string similar to Analysis.
         /// </summary>
-        public static string CancelDeleteWS {
+        public static string Analysis {
             get {
-                return ResourceManager.GetString("CancelDeleteWS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The writing system {0} and all text in the writing system will no longer be deleted..
-        /// </summary>
-        public static string DataInWsWontBeDeleted {
-            get {
-                return ResourceManager.GetString("DataInWsWontBeDeleted", resourceCulture);
+                return ResourceManager.GetString("Analysis", resourceCulture);
             }
         }
         
@@ -138,6 +129,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string ks_Close {
             get {
                 return ResourceManager.GetString("ks_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &amp;Help.
+        /// </summary>
+        public static string ks_Help {
+            get {
+                return ResourceManager.GetString("ks_Help", resourceCulture);
             }
         }
         
@@ -2343,6 +2343,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Vernacular.
+        /// </summary>
+        public static string Vernacular {
+            get {
+                return ResourceManager.GetString("Vernacular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Audio for {0}.
         /// </summary>
         public static string WritingSystemList_AddAudio {
@@ -2384,6 +2393,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string WritingSystemList_DeleteWs {
             get {
                 return ResourceManager.GetString("WritingSystemList_DeleteWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide {0}.
+        /// </summary>
+        public static string WritingSystemList_HideWs {
+            get {
+                return ResourceManager.GetString("WritingSystemList_HideWs", resourceCulture);
             }
         }
         
@@ -2433,6 +2451,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to View hidden Writing Systems....
+        /// </summary>
+        public static string WritingSystemList_ViewHiddenWSs {
+            get {
+                return ResourceManager.GetString("WritingSystemList_ViewHiddenWSs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &amp;Encoding converter for importing {0}:.
         /// </summary>
         public static string WritingSystemSetup_EncodingConverterForImporting {
@@ -2470,11 +2497,38 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} (in the {1} list).
+        /// </summary>
+        public static string XInTheXList {
+            get {
+                return ResourceManager.GetString("XInTheXList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} (Original).
         /// </summary>
         public static string xOriginal {
             get {
                 return ResourceManager.GetString("xOriginal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (will be added).
+        /// </summary>
+        public static string XWillBeAdded {
+            get {
+                return ResourceManager.GetString("XWillBeAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (will be deleted).
+        /// </summary>
+        public static string XWillBeDeleted {
+            get {
+                return ResourceManager.GetString("XWillBeDeleted", resourceCulture);
             }
         }
     }
