@@ -56,6 +56,7 @@ Main template
 	<xsl:template match="Wordform">
 		<html>
 			<head>
+				<meta charset="UTF-8" />
 				<xsl:call-template name="Script"/>
 				<style type="text/css">
 					.interblock {

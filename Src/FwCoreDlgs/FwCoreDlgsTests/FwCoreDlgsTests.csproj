@@ -61,7 +61,7 @@
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <NoWarn>168,169,219,414,649,1591,1635,1702,1701</NoWarn>
     <Optimize>false</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
@@ -165,6 +165,7 @@
     <Reference Include="SIL.WritingSystems.Tests">
       <HintPath>..\..\..\Output\Debug\SIL.WritingSystems.Tests.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml" />
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
       <SpecificVersion>False</SpecificVersion>
@@ -307,6 +308,7 @@
     <Compile Include="..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ViewHiddenWritingSystemsModelTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

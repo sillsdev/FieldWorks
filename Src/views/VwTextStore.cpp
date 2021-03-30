@@ -2614,7 +2614,12 @@ int VwTextStore::AcpToLog(int acpReq)
 		// with acpReq==0 when there is no current selection (e.g., as part of making one).
 		VwTextSelection * psel = dynamic_cast<VwTextSelection *>(m_qrootb->Selection());
 		if (!psel)
-			ThrowHr(WarnHr(E_FAIL));
+		{
+			// There are cases (involving the Chinese IME) where this can be called with no valid selection.
+			// Throwing here causes terrible redrawing performance; returning INT_MIN gives us something to test,
+			// even though all current use cases do test for valid selection before using the results of AcpToLog.
+			return INT_MIN;
+		}
 
 		int cch = TextLength();
 
