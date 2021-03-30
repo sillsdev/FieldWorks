@@ -170,7 +170,7 @@ namespace SIL.FieldWorks.IText
 			htmlWriter.WriteStartElement("link");
 			htmlWriter.WriteAttributeString("rel", "stylesheet");
 			htmlWriter.WriteAttributeString("type", "text/css");
-			htmlWriter.WriteAttributeString("href", "file:\\" + cssPath);
+			htmlWriter.WriteAttributeString("href", new System.Uri(cssPath).AbsoluteUri);
 			htmlWriter.WriteEndElement(); // />
 		}
 
@@ -186,7 +186,7 @@ namespace SIL.FieldWorks.IText
 
 			htmlWriter.WriteStartElement("script");
 			htmlWriter.WriteAttributeString("type", "text/javascript");
-			htmlWriter.WriteAttributeString("src", "file:\\" + scriptPath);
+			htmlWriter.WriteAttributeString("src", new System.Uri(scriptPath).AbsoluteUri);
 			htmlWriter.WriteFullEndElement(); // </script>
 		}
 
