@@ -96,6 +96,7 @@ namespace SIL.FieldWorks.IText
 			{
 				try
 				{
+					TrackingHelper.TrackExport("textsWords", m_exportList.SelectedItems[0]?.SubItems[0].Text, ImportExportStep.Launched);
 					var fxtPath = (string)m_exportList.SelectedItems[0].Tag; // read fxtPath here to prevent access to m_exportList on another thread
 					dlg.RunTask(DoExportWithProgress, outPath, fxtPath);
 				}
@@ -189,9 +190,11 @@ namespace SIL.FieldWorks.IText
 							}
 							break;
 					}
+					TrackingHelper.TrackExport("textsWords", m_exportList.SelectedItems[0]?.SubItems[0].Text, ImportExportStep.Succeeded);
 				}
 				catch (Exception e)
 				{
+					TrackingHelper.TrackExport("textsWords", m_exportList.SelectedItems[0]?.SubItems[0].Text, ImportExportStep.Failed);
 					MessageBox.Show(this, string.Format(ITextStrings.ksExportErrorMsg, e.Message));
 				}
 			}

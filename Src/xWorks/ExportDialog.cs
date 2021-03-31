@@ -15,6 +15,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Xsl;
+using DesktopAnalytics;
 using Microsoft.Win32;
 using SIL.LCModel.Core.Text;
 using SIL.Reporting;
@@ -754,16 +755,26 @@ namespace SIL.FieldWorks.XWorks
 
 		protected void DoExport(string outPath, bool fLiftOutput)
 		{
-			string fxtPath = (string)m_exportItems[0].Tag;
-			FxtType ft = m_rgFxtTypes[FxtIndex(fxtPath)];
+			var fxtPath = (string)m_exportItems[0].Tag;
+			var ft = m_rgFxtTypes[FxtIndex(fxtPath)];
+			var exportType = m_exportItems[0]?.SubItems[0].Text;
 			using (new WaitCursor(this))
 				using (var progressDlg = new ProgressDialogWithTask(this))
 				{
-				UsageReporter.SendEvent(m_areaOrig + @"Export", @"Export", ft.m_ft.ToString(),
-					string.Format("{0} {1} {2}", ft.m_sDataType, ft.m_sFormat, ft.m_filtered ? "filtered" : "unfiltered"), 0);
+					TrackingHelper.TrackExport(m_areaOrig, exportType,
+						ImportExportStep.Launched,
+						new Dictionary<string, string>
+						{
+							{
+								"format", ft.m_sFormat
+							},
+							{
+								"filtered", ft.m_filtered.ToString()
+							}
+						});
 					try
 					{
-						progressDlg.Title = String.Format(xWorksStrings.Exporting0,
+						progressDlg.Title = string.Format(xWorksStrings.Exporting0,
 							m_exportItems[0].SubItems[0].Text);
 						progressDlg.Message = xWorksStrings.Exporting_;
 
@@ -829,9 +840,11 @@ namespace SIL.FieldWorks.XWorks
 								progressDlg.RunTask(true, ExportGrammarSketch, outPath, ft.m_sDataType, ft.m_sXsltFiles);
 								break;
 						}
+						TrackingHelper.TrackExport(m_areaOrig, exportType, ImportExportStep.Succeeded);
 					}
 					catch (WorkerThreadException e)
 					{
+						TrackingHelper.TrackExport(m_areaOrig, exportType, ImportExportStep.Failed);
 						if (e.InnerException is CancelException)
 						{
 							MessageBox.Show(this, e.InnerException.Message);

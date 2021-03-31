@@ -9,6 +9,7 @@
 // <remarks>
 // </remarks>
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -112,7 +113,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			UpdateButtons();
 			if (!btnOK.Enabled)
+			{
 				return;
+			}
+
+			TrackingHelper.TrackImport("lexicon", "Lift", ImportExportStep.Attempted,
+				new Dictionary<string, string> { { "style", Enum.GetName(typeof(FlexLiftMerger.MergeStyle), m_msImport) } });
 			DoImport();
 			this.DialogResult = DialogResult.OK;
 			if (!String.IsNullOrEmpty(m_sLogFile))
@@ -263,10 +269,12 @@ namespace SIL.FieldWorks.LexText.Controls
 					File.Move(sFilename, sTempMigrated);
 				}
 				flexImporter.ProcessPendingRelations(m_progressDlg);
+				TrackingHelper.TrackImport("lexicon", "Lift", ImportExportStep.Succeeded);
 				return flexImporter.DisplayNewListItems(sOrigFile, cEntries);
 			}
 			catch (Exception error)
 			{
+				TrackingHelper.TrackImport("lexicon", "Lift", ImportExportStep.Failed);
 				string sMsg = String.Format(LexTextControls.ksLIFTImportProblem,
 					sOrigFile, error.Message);
 				try
@@ -284,10 +292,11 @@ namespace SIL.FieldWorks.LexText.Controls
 						ClipboardUtils.SetDataObject(bldr.ToString(), true);
 					else
 						progressDlg.SynchronizeInvoke.Invoke(() => ClipboardUtils.SetDataObject(bldr.ToString(), true));
-						Logger.WriteEvent(bldr.ToString());
+					Logger.WriteEvent(bldr.ToString());
 				}
 				catch
 				{
+					// Crashes trying to log errors should be ignored
 				}
 				MessageBox.Show(sMsg, LexTextControls.ksProblemImporting,
 					MessageBoxButtons.OK, MessageBoxIcon.Warning);

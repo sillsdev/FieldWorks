@@ -229,6 +229,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_app = propertyTable.GetValue<IApp>("App");
 				m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			}
+			TrackingHelper.TrackImport("lexicon", "SFM", ImportExportStep.Launched);
+
 			m_dirtyInputFile = true;
 			m_dirtyMapFile = true;
 //			m_hasShownIFMs = false;
@@ -1939,6 +1941,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (UsesInvalidFileNames(false))
 				return;
 
+			TrackingHelper.TrackImport("lexicon", "SFM", ImportExportStep.Attempted);
+
 			base.OnFinishButton();
 
 			bool runToCompletion = true;
@@ -1971,7 +1975,14 @@ namespace SIL.FieldWorks.LexText.Controls
 						m_chkCreateMissingLinks.Checked);
 
 					if (fRet)
-						DialogResult = DialogResult.OK;	// only 'OK' if not exception
+					{
+						TrackingHelper.TrackImport("lexicon", "SFM", ImportExportStep.Succeeded);
+						DialogResult = DialogResult.OK; // only 'OK' if not exception
+					}
+					else
+					{
+						TrackingHelper.TrackImport("lexicon", "SFM", ImportExportStep.Failed);
+					}
 				}
 			}
 		}

@@ -610,6 +610,8 @@
 			<NuGottenFiles Include="$(fwrt)/packages\ParatextData.9.0.3\lib\net461\Paratext.LexicalContracts.dll" />
 			<NuGottenFiles Include="$(fwrt)/packages\ParatextData.9.0.3\lib\net461\ParatextData.dll"/>
 			<NuGottenFiles Include="$(fwrt)/packages\ParatextData.9.0.3\lib\net461\PtxUtils.dll"/>
+			<NuGottenFiles Include="$(fwrt)/packages\Analytics.3.6.0\lib\net461\Analytics.dll"/>
+			<NuGottenFiles Include="$(fwrt)/packages\SIL.DesktopAnalytics.2.0.0\lib\net461\DesktopAnalytics.dll"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(NuGottenFiles)" DestinationFolder="$(dir-outputBase)/%(RecursiveDir)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>

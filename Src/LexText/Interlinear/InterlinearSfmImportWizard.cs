@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using DesktopAnalytics;
 using Sfm2Xml;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
@@ -64,6 +65,7 @@ namespace SIL.FieldWorks.IText
 				m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			}
 			SetDialogTitle();
+			TrackingHelper.TrackImport("textsWords", "SFM", ImportExportStep.Launched);
 		}
 
 		private void m_browseInputFilesButton_Click(object sender, EventArgs e)
@@ -287,15 +289,13 @@ namespace SIL.FieldWorks.IText
 								MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 							if (dr == DialogResult.Yes)
 								return openFileDialog.FileName;
-							else if (dr == DialogResult.No)
+							if (dr == DialogResult.No)
 									continue;
-								else
-									break;	// exit with current still
+							break;	// exit with current still
 						}
 						return openFileDialog.FileName;
 					}
-					else
-						done = true;
+					done = true;
 				}
 				return currentFile;
 			}
@@ -559,6 +559,7 @@ namespace SIL.FieldWorks.IText
 
 		protected override void OnFinishButton()
 		{
+			Common.FwUtils.TrackingHelper.TrackImport("textsWords", "SFM", ImportExportStep.Attempted);
 			base.OnFinishButton();
 			SaveSettings();
 			if (string.IsNullOrEmpty(m_fileListBox.Text))
@@ -594,6 +595,7 @@ namespace SIL.FieldWorks.IText
 				if (clerk != null)
 					clerk.JumpToRecord(m_firstNewText.ContentsOA.Hvo);
 			}
+			Common.FwUtils.TrackingHelper.TrackImport("textsWords", "SFM", m_firstNewText == null ? ImportExportStep.Failed : ImportExportStep.Succeeded);
 		}
 		LCModel.IText m_firstNewText;
 		private List<InterlinearMapping> m_oldMappings;

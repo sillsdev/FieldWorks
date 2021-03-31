@@ -20,6 +20,7 @@ using System.Security;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using DesktopAnalytics;
 using Gecko;
 using L10NSharp;
 using Microsoft.Win32;
@@ -239,34 +240,13 @@ namespace SIL.FieldWorks
 				}
 
 				// Allow develpers and testers to avoid cluttering our analytics by setting an environment variable (FEEDBACK = false)
-				string feedbackEnvVar = Environment.GetEnvironmentVariable("FEEDBACK");
+				var feedbackEnvVar = Environment.GetEnvironmentVariable("FEEDBACK");
 				if (feedbackEnvVar != null)
 				{
 					reportingSettings.OkToPingBasicUsageData = feedbackEnvVar.ToLower().Equals("true") || feedbackEnvVar.ToLower().Equals("yes");
 				}
 
-				// Note that in FLEx we are using this flag to indicate whether we can send usage data at all.
-				// Despite its name, Cambell says this is the original intent (I think there may have been
-				// some thought of adding flags one day to control sending more detailed info, but if 'basic
-				// navigation' is suppressed nothing is sent). May want to consider renaming to something like
-				// OkToPingAtAll, but that affects other Palaso clients.
-				// The usage reporter does not currently send anything at all if the flag is false, but to make
-				// sure, we don't even initialize reporting if it is false.
-				// (Note however that it starts out true. Thus, typically a few pings will be sent
-				// on the very first startup, before the user gets a chance to disable it.)
-				if (reportingSettings.OkToPingBasicUsageData)
-				{
-					UsageReporter.Init(reportingSettings, "flex.palaso.org", "UA-39238981-3",
-#if DEBUG
-						true
-#else
-						false
-#endif
-						);
-					// Init updates various things in the ReportingSettings, such as the number of times
-					// the application has been launched and the 'previous' version.
-					s_appSettings.Save();
-				}
+				s_appSettings.Save();
 
 				// e.g. the first time the user runs FW9, we need to copy a bunch of registry keys
 				// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/9 or
@@ -332,9 +312,17 @@ namespace SIL.FieldWorks
 
 				if (MiscUtils.IsMono)
 					UglyHackForXkbIndicator();
-
-				// Application was started successfully, so start the message loop
-				Application.Run();
+#if DEBUG
+				var analyticsKey = "ddkPyi0BMbFRyOC5PLuCKHVbJH2yI9Cu";
+#else
+				var analyticsKey = "";
+#endif
+				using (new Analytics(analyticsKey, new UserInfo(), reportingSettings.OkToPingBasicUsageData))
+				{
+					ExceptionHandler.AddDelegate((w, e) => Analytics.ReportException(e.Exception));
+					// Application was started successfully, so start the message loop
+					Application.Run();
+				}
 			}
 			catch (ApplicationException ex)
 			{
@@ -573,9 +561,9 @@ namespace SIL.FieldWorks
 		public static void DoNothing()
 		{
 		}
-		#endregion
+#endregion
 
-		#region Properties
+#region Properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether FieldWorks can be automatically shut down (as happens
@@ -712,9 +700,9 @@ namespace SIL.FieldWorks
 				return existingProcesses;
 			}
 		}
-		#endregion
+#endregion
 
-		#region Public Methods
+#region Public Methods
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Starts the specified FieldWorks application.
@@ -785,9 +773,9 @@ namespace SIL.FieldWorks
 
 			return projects;
 		}
-		#endregion
+#endregion
 
-		#region Cache Creation and Handling
+#region Cache Creation and Handling
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates a cache used for accessing the specified project.
@@ -975,9 +963,9 @@ namespace SIL.FieldWorks
 			}
 			return null;
 		}
-		#endregion
+#endregion
 
-		#region Top-level exception handling
+#region Top-level exception handling
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the exception handler.
@@ -1208,9 +1196,9 @@ namespace SIL.FieldWorks
 				return true;
 			}
 		}
-		#endregion
+#endregion
 
-		#region Splash screen
+#region Splash screen
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Displays the splash screen
@@ -1256,9 +1244,9 @@ namespace SIL.FieldWorks
 			}
 		}
 
-		#endregion
+#endregion
 
-		#region Internal Project Handling Methods
+#region Internal Project Handling Methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines the project that will be run by reading the command-line parameters.
@@ -1555,9 +1543,9 @@ namespace SIL.FieldWorks
 			WritingSystemManager manager = s_cache.ServiceLocator.WritingSystemManager;
 			manager.LocalStoreFolder = Path.Combine(s_projectId.ProjectFolder, "WritingSystemStore");
 		}
-		#endregion
+#endregion
 
-		#region Project UI handling methods
+#region Project UI handling methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Displays fieldworks welcome dialog.
@@ -1942,9 +1930,9 @@ namespace SIL.FieldWorks
 			}
 			return null;
 		}
-		#endregion
+#endregion
 
-		#region Project location methods
+#region Project location methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Displays the Project Location dialog box
@@ -2265,9 +2253,9 @@ namespace SIL.FieldWorks
 				// Don't need to worry about deleting here, it will happen in original caller.
 			}
 		}
-		#endregion
+#endregion
 
-		#region Project Migration Methods
+#region Project Migration Methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Migrates the user's databases to FieldWorks 7.0+ if they haven't yet migrated
@@ -2315,9 +2303,9 @@ namespace SIL.FieldWorks
 			}
 			return true;
 		}
-		#endregion
+#endregion
 
-		#region Backup/Restore-related methods
+#region Backup/Restore-related methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles a request to restore a project. This method is thread safe.
@@ -2551,9 +2539,9 @@ namespace SIL.FieldWorks
 				return requestor.HandleRestoreProjectRequest(settings);
 			});
 		}
-		#endregion
+#endregion
 
-		#region Link Handling Methods
+#region Link Handling Methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles a link request. This handles determining the correct application to start
@@ -2703,9 +2691,9 @@ namespace SIL.FieldWorks
 			});
 			app.UpdateExternalLinks(sLinkedFilesRootDir);
 		}
-		#endregion
+#endregion
 
-		#region Event Handlers
+#region Event Handlers
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the Activated event of FieldWorks Main Windows.
@@ -2737,9 +2725,9 @@ namespace SIL.FieldWorks
 				s_activeMainWnd = null;
 			}
 		}
-		#endregion
+#endregion
 
-		#region Window Handling Methods
+#region Window Handling Methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates a new main window and initializes it. The specified App is responsible for
@@ -2829,9 +2817,9 @@ namespace SIL.FieldWorks
 				mainWnd.Invoke((Action) (() => ExceptionHelper.LogAndIgnoreErrors(wnd.Close)));
 			}
 		}
-		#endregion
+#endregion
 
-		#region Application Management Methods
+#region Application Management Methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Starts or activates an application requested from another process. This method is
@@ -3129,9 +3117,9 @@ namespace SIL.FieldWorks
 				// and another
 			}
 		}
-		#endregion
+#endregion
 
-		#region Remote Process Handling Methods
+#region Remote Process Handling Methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether any FW process is in "single user mode".
@@ -3347,9 +3335,9 @@ namespace SIL.FieldWorks
 			return requestor;
 		}
 
-		#endregion
+#endregion
 
-		#region Other Private/Internal Methods
+#region Other Private/Internal Methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Get the directory this assembly is located in
@@ -3844,7 +3832,7 @@ namespace SIL.FieldWorks
 		{
 			CloseAllMainWindowsForApp(s_flexApp);
 		}
-		#endregion
+#endregion
 	}
-	#endregion
+#endregion
 }

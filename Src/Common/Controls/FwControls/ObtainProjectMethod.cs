@@ -9,12 +9,12 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using DesktopAnalytics;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
-using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -31,35 +31,41 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns>Null if the operation was cancelled or otherwise did not work. The full pathname of an fwdata file, if it did work.</returns>
 		public static string ObtainProjectFromAnySource(Form parent, IHelpTopicProvider helpTopicProvider, out ObtainedProjectType obtainedProjectType)
 		{
-			bool dummy;
-			string fwdataFileFullPathname;
 			var liftVersion = "0.13_ldml3";
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(FwDirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null,
-				LcmCache.ModelVersion, liftVersion, null, null, out dummy, out fwdataFileFullPathname);
+				LcmCache.ModelVersion, liftVersion, null, null, out _, out var projectFileFullPath);
 			if (!success)
 			{
 				ReportDuplicateBridge();
 				obtainedProjectType = ObtainedProjectType.None;
 				return null;
 			}
-			if (string.IsNullOrWhiteSpace(fwdataFileFullPathname))
+			if (string.IsNullOrWhiteSpace(projectFileFullPath))
 			{
 				obtainedProjectType = ObtainedProjectType.None;
 				return null; // user canceled.
 			}
 			obtainedProjectType = ObtainedProjectType.FieldWorks;
 
-			if (fwdataFileFullPathname.EndsWith("lift"))
+			if (projectFileFullPath.EndsWith("lift"))
 			{
-				fwdataFileFullPathname = CreateProjectFromLift(parent, helpTopicProvider, fwdataFileFullPathname);
+				projectFileFullPath = CreateProjectFromLift(parent, helpTopicProvider, projectFileFullPath);
 				obtainedProjectType = ObtainedProjectType.Lift;
 			}
 
-			UsageReporter.SendEvent("OpenProject", "SendReceive", string.Format("Create from {0} repo", obtainedProjectType.ToString()),
-				string.Format("vers: {0}, {1}", LcmCache.ModelVersion, liftVersion), 0);
-			EnsureLinkedFoldersExist(fwdataFileFullPathname);
+			Analytics.Track("CreateFromSRRepo", new Dictionary<string, string>
+			{
+				{
+					"type", obtainedProjectType.ToString()
+				},
+				{
+					"modelVersion", LcmCache.ModelVersion.ToString()
+				},
+				{ "liftVersion", liftVersion }
+			});
+			EnsureLinkedFoldersExist(projectFileFullPath);
 
-			return fwdataFileFullPathname;
+			return projectFileFullPath;
 		}
 
 		private static void EnsureLinkedFoldersExist(string fwdataFileFullPathname)
