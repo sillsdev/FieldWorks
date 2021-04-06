@@ -112,7 +112,9 @@ install-tree-fdo:
 	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/{AIGuesserEC,CcEC,IcuEC,PerlExpressionEC,PyScriptEC,SilEncConverters40,ECInterfaces}.dll{,.config}
 	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/libTECkit{,_Compiler}*.so
 
-install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz install-tree-fdo
+install-man-pages: fieldworks-flex.1.gz unicodechareditor.1.gz
+
+install-tree: install-tree-fdo
 	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then find "$(BUILD_ROOT)" "$(DESTDIR)"; fi
 	# Create directories
 	install -d $(DESTDIR)$(INSTALLATION_PREFIX)/bin
@@ -177,12 +179,16 @@ install-packagemetadata:
 	install -d $(DESTDIR)$(INSTALLATION_PREFIX)/share/appdata
 	install -m 644 DistFiles/Linux/fieldworks-applications.desktop.appdata.xml $(DESTDIR)$(INSTALLATION_PREFIX)/share/appdata
 
-install: install-tree install-menuentries l10n-install install-packagemetadata
+install: install-man-pages install-tree install-menuentries l10n-install install-packagemetadata
 
 install-package: install install-COM
 	:
 
 install-package-fdo: install-tree-fdo install-COM
+
+install-for-deb: install-package
+
+install-for-flatpak: install-tree install-menuentries l10n-install install-packagemetadata install-COM
 
 uninstall: uninstall-menuentries
 	rm -rf $(DESTDIR)$(INSTALLATION_PREFIX)/bin/flex $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks $(DESTDIR)$(INSTALLATION_PREFIX)/share/fieldworks
@@ -369,12 +375,18 @@ ComponentsMap-nodep:
 ComponentsMap-clean:
 	$(RM) $(OUT_DIR)/components.map
 
+build-package-for-deb: Fw-build-package
+
+build-package-for-flatpak: build-package
+
 check-have-build-dependencies:
 	$(BUILD_ROOT)/Build/Agent/install-deps --verify
 
+Fw-build-package: check-have-build-dependencies build-package
+
 # As of 2017-03-27, localize is more likely to crash running on mono 3 than to actually have a real localization problem. So try it a few times so that a random crash doesn't fail a packaging job that has been running for over an hour.
 # Make the lcm artifacts dir so it is a valid path for later processing appending things like '/..'.
-Fw-build-package: check-have-build-dependencies
+build-package:
 	export LcmLocalArtifactsDir="$(BUILD_ROOT)/../liblcm/artifacts/$(BUILD_CONFIG)" \
 		&& mkdir -p $$LcmLocalArtifactsDir \
 		&& . environ \
