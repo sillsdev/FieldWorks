@@ -239,7 +239,7 @@ namespace SIL.FieldWorks
 					s_appSettings.Reporting = reportingSettings; //to avoid a defect in Settings rely on the Save in the code below
 				}
 
-				// Allow develpers and testers to avoid cluttering our analytics by setting an environment variable (FEEDBACK = false)
+				// Allow developers and testers to avoid cluttering our analytics by setting an environment variable (FEEDBACK = false)
 				var feedbackEnvVar = Environment.GetEnvironmentVariable("FEEDBACK");
 				if (feedbackEnvVar != null)
 				{
@@ -314,10 +314,12 @@ namespace SIL.FieldWorks
 					UglyHackForXkbIndicator();
 #if DEBUG
 				var analyticsKey = "ddkPyi0BMbFRyOC5PLuCKHVbJH2yI9Cu";
+				var sendFeedback = true;
 #else
 				var analyticsKey = "";
+				var sendFeedback = true; // reportSettings.OkToPingBasicUsageData
 #endif
-				using (new Analytics(analyticsKey, new UserInfo(), reportingSettings.OkToPingBasicUsageData))
+				using (new Analytics(analyticsKey, new UserInfo(), sendFeedback))
 				{
 					ExceptionHandler.AddDelegate((w, e) => Analytics.ReportException(e.Exception));
 					// Application was started successfully, so start the message loop
