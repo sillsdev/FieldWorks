@@ -67,6 +67,8 @@
 			"env": {
 				// Use Flexbridge from code, rather than a package, if desired.
 				"FLEXBRIDGEDIR": "${workspaceRoot}/../flexbridge/output/DebugMono",
+				// Send and receive to the QA LanguageForge server instead of production, if desired.
+				"LANGUAGEFORGESERVER": "-qa.languageforge.org",
 				// Display on main display :0, or on a Xephyr :2.
 				"DISPLAY": ":0",
 				// Help FW+PT find FW. This could be set in environ, but because it needs set on a user's machine independently of environ, it's set here.
