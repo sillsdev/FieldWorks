@@ -160,69 +160,7 @@ namespace SIL.FieldWorks
 				// Set default browser for XWebBrowser to use GeckoFX.
 				// This can still be changed per instance by passing a parameter to the constructor.
 				XWebBrowser.DefaultBrowserType = XWebBrowser.BrowserType.GeckoFx;
-#endregion Initialize XULRunner
-
-				Logger.WriteEvent("Starting app");
-				SetGlobalExceptionHandler();
-				SetupErrorReportInformation();
-				InitializeLocalizationManager();
-
-				// Invoke does nothing directly, but causes BroadcastEventWindow to be initialized
-				// on this thread to prevent race conditions on shutdown.See TE-975
-				// See http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=911603&SiteID=1
-				// TODO-Linux: uses mono feature that is not implemented. What are the implications of this? Review.
-				if (MiscUtils.IsDotNet)
-					SystemEvents.InvokeOnEventsThread(new Action(DoNothing));
-
-				s_threadHelper = new ThreadHelper();
-
-				// ENHANCE (TimS): Another idea for ensuring that we have only one process started for
-				// this project is to use a Mutex. They can be used for cross-process resource access
-				// and would probably be less error-prone then our current implementation since it
-				// doesn't use TCP connections which can get hampered by firewalls. We would probably still
-				// need our current listener functionality for communicating with the other FW process,
-				// so it may not buy us much.
-				// See http://kristofverbiest.blogspot.com/2008/11/creating-single-instance-application.html.
-
-				// Make sure we do this ASAP. If another FieldWorks.exe is started we need
-				// to make sure it can find this one to ask about its project. (FWR-595)
-				CreateRemoteRequestListener();
-
-#if DEBUG
-				WriteExecutablePathSettingForDevs();
-#endif
-
-				if (IsInSingleFWProccessMode())
-				{
-					Logger.WriteEvent("Exiting: Detected single process mode");
-					return 0;
-				}
-
-				if (MigrateProjectsTo70())
-				{
-					Logger.WriteEvent("Migration to Version 7 was still needed.");
-				}
-
-				// Enable visual styles. Ignored on Windows 2000. Needs to be called before
-				// we create any controls! Unfortunately, this alone is not good enough. We
-				// also need to use a manifest, because some ListView and TreeView controls
-				// in native code do not have icons if we just use this method. This is caused
-				// by a bug in XP.
-				Application.EnableVisualStyles();
-
-				FwUtils.InitializeIcu();
-
-				// initialize the SLDR
-				Sldr.Initialize();
-
-				// initialize Palaso keyboarding
-				KeyboardController.Initialize();
-
-				FwAppArgs appArgs = new FwAppArgs(rgArgs);
-				s_noUserInterface = appArgs.NoUserInterface;
-				s_appServerMode = appArgs.AppServerMode;
-
-				s_ui = new FwLcmUI(GetHelpTopicProvider(), s_threadHelper);
+				#endregion Initialize XULRunner
 
 				s_appSettings = new FwApplicationSettings();
 				s_appSettings.DeleteCorruptedSettingsFilesIfPresent();
@@ -247,71 +185,6 @@ namespace SIL.FieldWorks
 				}
 
 				s_appSettings.Save();
-
-				// e.g. the first time the user runs FW9, we need to copy a bunch of registry keys
-				// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/9 or
-				// from HKCU/Software/SIL/FieldWorks/8 -> FieldWorks/9 and
-				// from HKCU/Software/WOW6432Node/SIL/FieldWorks -> HKCU/Software/SIL/FieldWorks
-				FwRegistryHelper.UpgradeUserSettingsIfNeeded();
-
-				if (appArgs.ShowHelp)
-				{
-					ShowCommandLineHelp();
-					return 0;
-				}
-				else if (!string.IsNullOrEmpty(appArgs.ChooseProjectFile))
-				{
-					ProjectId projId = ChooseLangProject(null, GetHelpTopicProvider());
-					if (projId == null)
-						return 1; // User probably canceled
-					try
-					{
-						// Use PipeHandle because this will probably be used to locate a named pipe using
-						// PipeHandle as the identifier.
-						File.WriteAllText(appArgs.ChooseProjectFile, projId.Handle, Encoding.UTF8);
-					}
-					catch (Exception e)
-					{
-						Logger.WriteError(e);
-						return 2;
-					}
-					return 0;
-				}
-
-				if (!SetUICulture(appArgs))
-					return 0; // Error occurred and user chose not to continue.
-
-				if (FwRegistryHelper.FieldWorksRegistryKeyLocalMachine == null && FwRegistryHelper.FieldWorksRegistryKey == null)
-				{
-					// See LT-14461. Some users have managed to get their computers into a state where
-					// neither HKML nor HKCU registry entries can be read. We don't know how this is possible.
-					// This is so far the best we can do.
-					var expected = "HKEY_LOCAL_MACHINE/Software/SIL/FieldWorks/" + FwRegistryHelper.FieldWorksRegistryKeyName;
-					MessageBoxUtils.Show(string.Format(Properties.Resources.ksHklmProblem, expected), Properties.Resources.ksHklmCaption);
-					return 0;
-				}
-
-				s_fwManager = new FieldWorksManager();
-
-				if (!string.IsNullOrEmpty(appArgs.BackupFile))
-				{
-					LaunchRestoreFromCommandLine(appArgs);
-					if (s_flexApp == null)
-						return 0; // Restore was cancelled or failed, or another process took care of it.
-					if (!string.IsNullOrEmpty(s_LinkDirChangedTo))
-					{
-						NonUndoableUnitOfWorkHelper.Do(s_cache.ActionHandlerAccessor,
-							() => s_cache.LangProject.LinkedFilesRootDir = s_LinkDirChangedTo);
-					}
-				}
-				else if (!LaunchApplicationFromCommandLine(appArgs))
-					return 0; // Didn't launch, but probably not a serious error
-
-				// Create a listener for this project for applications using FLEx as a LexicalProvider.
-				LexicalProviderManager.StartLexicalServiceProvider(s_projectId, s_cache);
-
-				if (MiscUtils.IsMono)
-					UglyHackForXkbIndicator();
 #if DEBUG
 				var analyticsKey = "ddkPyi0BMbFRyOC5PLuCKHVbJH2yI9Cu";
 				var sendFeedback = true;
@@ -321,7 +194,134 @@ namespace SIL.FieldWorks
 #endif
 				using (new Analytics(analyticsKey, new UserInfo(), sendFeedback))
 				{
-					ExceptionHandler.AddDelegate((w, e) => Analytics.ReportException(e.Exception));
+
+					Logger.WriteEvent("Starting app");
+					SetGlobalExceptionHandler();
+					SetupErrorReportInformation();
+					InitializeLocalizationManager();
+
+					// Invoke does nothing directly, but causes BroadcastEventWindow to be initialized
+					// on this thread to prevent race conditions on shutdown.See TE-975
+					// See http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=911603&SiteID=1
+					// TODO-Linux: uses mono feature that is not implemented. What are the implications of this? Review.
+					if (MiscUtils.IsDotNet)
+						SystemEvents.InvokeOnEventsThread(new Action(DoNothing));
+
+					s_threadHelper = new ThreadHelper();
+
+					// ENHANCE (TimS): Another idea for ensuring that we have only one process started for
+					// this project is to use a Mutex. They can be used for cross-process resource access
+					// and would probably be less error-prone then our current implementation since it
+					// doesn't use TCP connections which can get hampered by firewalls. We would probably still
+					// need our current listener functionality for communicating with the other FW process,
+					// so it may not buy us much.
+					// See http://kristofverbiest.blogspot.com/2008/11/creating-single-instance-application.html.
+
+					// Make sure we do this ASAP. If another FieldWorks.exe is started we need
+					// to make sure it can find this one to ask about its project. (FWR-595)
+					CreateRemoteRequestListener();
+
+	#if DEBUG
+					WriteExecutablePathSettingForDevs();
+	#endif
+
+					if (IsInSingleFWProccessMode())
+					{
+						Logger.WriteEvent("Exiting: Detected single process mode");
+						return 0;
+					}
+
+					if (MigrateProjectsTo70())
+					{
+						Logger.WriteEvent("Migration to Version 7 was still needed.");
+					}
+
+					// Enable visual styles. Ignored on Windows 2000. Needs to be called before
+					// we create any controls! Unfortunately, this alone is not good enough. We
+					// also need to use a manifest, because some ListView and TreeView controls
+					// in native code do not have icons if we just use this method. This is caused
+					// by a bug in XP.
+					Application.EnableVisualStyles();
+
+					FwUtils.InitializeIcu();
+
+					// initialize the SLDR
+					Sldr.Initialize();
+
+					// initialize Palaso keyboarding
+					KeyboardController.Initialize();
+
+					FwAppArgs appArgs = new FwAppArgs(rgArgs);
+					s_noUserInterface = appArgs.NoUserInterface;
+					s_appServerMode = appArgs.AppServerMode;
+
+					s_ui = new FwLcmUI(GetHelpTopicProvider(), s_threadHelper);
+
+					// e.g. the first time the user runs FW9, we need to copy a bunch of registry keys
+					// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/9 or
+					// from HKCU/Software/SIL/FieldWorks/8 -> FieldWorks/9 and
+					// from HKCU/Software/WOW6432Node/SIL/FieldWorks -> HKCU/Software/SIL/FieldWorks
+					FwRegistryHelper.UpgradeUserSettingsIfNeeded();
+
+					if (appArgs.ShowHelp)
+					{
+						ShowCommandLineHelp();
+						return 0;
+					}
+					else if (!string.IsNullOrEmpty(appArgs.ChooseProjectFile))
+					{
+						ProjectId projId = ChooseLangProject(null, GetHelpTopicProvider());
+						if (projId == null)
+							return 1; // User probably canceled
+						try
+						{
+							// Use PipeHandle because this will probably be used to locate a named pipe using
+							// PipeHandle as the identifier.
+							File.WriteAllText(appArgs.ChooseProjectFile, projId.Handle, Encoding.UTF8);
+						}
+						catch (Exception e)
+						{
+							Logger.WriteError(e);
+							return 2;
+						}
+						return 0;
+					}
+
+					if (!SetUICulture(appArgs))
+						return 0; // Error occurred and user chose not to continue.
+
+					if (FwRegistryHelper.FieldWorksRegistryKeyLocalMachine == null && FwRegistryHelper.FieldWorksRegistryKey == null)
+					{
+						// See LT-14461. Some users have managed to get their computers into a state where
+						// neither HKML nor HKCU registry entries can be read. We don't know how this is possible.
+						// This is so far the best we can do.
+						var expected = "HKEY_LOCAL_MACHINE/Software/SIL/FieldWorks/" + FwRegistryHelper.FieldWorksRegistryKeyName;
+						MessageBoxUtils.Show(string.Format(Properties.Resources.ksHklmProblem, expected), Properties.Resources.ksHklmCaption);
+						return 0;
+					}
+
+					s_fwManager = new FieldWorksManager();
+
+					if (!string.IsNullOrEmpty(appArgs.BackupFile))
+					{
+						LaunchRestoreFromCommandLine(appArgs);
+						if (s_flexApp == null)
+							return 0; // Restore was cancelled or failed, or another process took care of it.
+						if (!string.IsNullOrEmpty(s_LinkDirChangedTo))
+						{
+							NonUndoableUnitOfWorkHelper.Do(s_cache.ActionHandlerAccessor,
+								() => s_cache.LangProject.LinkedFilesRootDir = s_LinkDirChangedTo);
+						}
+					}
+					else if (!LaunchApplicationFromCommandLine(appArgs))
+						return 0; // Didn't launch, but probably not a serious error
+
+					// Create a listener for this project for applications using FLEx as a LexicalProvider.
+					LexicalProviderManager.StartLexicalServiceProvider(s_projectId, s_cache);
+
+					if (MiscUtils.IsMono)
+						UglyHackForXkbIndicator();
+
 					// Application was started successfully, so start the message loop
 					Application.Run();
 				}
@@ -998,10 +998,25 @@ namespace SIL.FieldWorks
 		private static void HandleUnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
 			if (e.ExceptionObject is Exception)
+			{
+				Analytics.ReportException(e.ExceptionObject as Exception);
 				DisplayError(e.ExceptionObject as Exception, e.IsTerminating);
+			}
 			else
+			{
+				Analytics.ReportException(new Exception("Unknown Exception"),
+					new Dictionary<string, string>
+					{
+						{
+							"isTerminating", e.IsTerminating.ToString()
+						},
+						{
+							"unknownExceptionType", e.ExceptionObject.GetType().FullName
+						}
+					});
 				DisplayError(new ApplicationException(string.Format("Got unknown exception: {0}",
 					e.ExceptionObject)), false);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1014,6 +1029,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static void HandleTopLevelError(object sender, ThreadExceptionEventArgs eventArgs)
 		{
+			Analytics.ReportException(eventArgs.Exception);
 			if (FwUtils.IsUnsupportedCultureException(eventArgs.Exception)) // LT-8248
 			{
 				Logger.WriteEvent("Unsupported culture: " + eventArgs.Exception.Message);
