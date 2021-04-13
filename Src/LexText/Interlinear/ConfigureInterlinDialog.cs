@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using DesktopAnalytics;
 using Gecko;
 using Gecko.DOM;
 using SIL.LCModel.Utils;
@@ -67,6 +68,10 @@ namespace SIL.FieldWorks.IText
 			var htmlPath = SaveHtmlToTemp();
 			mainBrowser.Url = new Uri(htmlPath);
 			browser.DomContentChanged += Browser_DomContentChanged;
+			Analytics.Track("ConfigureInterlinear", new Dictionary<string, string> {
+			{
+					"interlinearMode", Enum.GetName(typeof(InterlinLineChoices.InterlinMode), choices.Mode)
+			}});
 		}
 
 		/// <summary>
