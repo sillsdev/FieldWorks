@@ -17,6 +17,7 @@ using System.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.XWorks
@@ -416,8 +417,15 @@ namespace SIL.FieldWorks.XWorks
 				view.UpdateStatus(string.Format(xWorksStrings.ksErrorCannotConnectToWebonary,
 					Environment.NewLine, e.StatusCode, e.Message));
 			}
-
 			view.SetStatusCondition(WebonaryStatusCondition.Error);
+			TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Failed,
+				new Dictionary<string, string>
+				{
+					{
+						"statusCode", Enum.GetName(typeof(HttpStatusCode), e.StatusCode)
+					}
+				});
+
 		}
 
 		private static void UpdateViewWithWebonaryResponse(IUploadToWebonaryView view, IWebonaryClient client, string responseText)
@@ -433,6 +441,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					view.UpdateStatus(xWorksStrings.ksWebonaryUploadSuccessful);
 					view.SetStatusCondition(WebonaryStatusCondition.Success);
+					TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Succeeded);
 					return;
 				}
 
@@ -455,6 +464,13 @@ namespace SIL.FieldWorks.XWorks
 				view.UpdateStatus(string.Format("{0}{1}{2}{1}", xWorksStrings.ksResponseFromServer, Environment.NewLine,
 					responseText.Substring(0, Math.Min(100, responseText.Length))));
 			}
+			TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Failed,
+				new Dictionary<string, string>
+				{
+					{
+						"statusCode", Enum.GetName(typeof(HttpStatusCode), client.ResponseStatusCode)
+					}
+				});
 		}
 
 		///<summary>This stub is intended for other files related to front- and backmatter (things not really managed by FLEx itself)</summary>
@@ -465,6 +481,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public void UploadToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view)
 		{
+			TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Launched);
 			view.UpdateStatus(xWorksStrings.ksUploadingToWebonary);
 			view.SetStatusCondition(WebonaryStatusCondition.None);
 
@@ -503,6 +520,13 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 
+			TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Attempted,
+				new Dictionary<string, string>
+				{
+					{
+						"cloudApi", UseJsonApi.ToString()
+					}
+				});
 			var tempDirectoryForExport = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 			Directory.CreateDirectory(tempDirectoryForExport);
 			if (UseJsonApi)
@@ -554,15 +578,17 @@ namespace SIL.FieldWorks.XWorks
 					{
 						view.UpdateStatus(xWorksStrings.ksWebonaryUploadSuccessful);
 						view.SetStatusCondition(WebonaryStatusCondition.Success);
+						TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Succeeded);
 					}
 				}
-				catch(Exception e)
+				catch (Exception e)
 				{
 					//TODO: i18n this error string
 					view.UpdateStatus("Unexpected error encountered while uploading to webonary.");
 					view.UpdateStatus(e.Message);
 					view.UpdateStatus(e.StackTrace);
 					view.SetStatusCondition(WebonaryStatusCondition.Error);
+					TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Failed);
 				}
 			}
 			else
