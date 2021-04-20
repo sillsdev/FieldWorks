@@ -249,10 +249,6 @@ color lighter.-->
 		  </w:tcBorders>
 		</xsl:if>
 	  </w:tcPr>
-	  <w:tblGrid>
-		<w:gridCol w:w="200" />
-		<!-- minimum cell width in twips (1/20 pt)-->
-	  </w:tblGrid>
 	  <xsl:apply-templates />
 	</w:tc>
   </xsl:template>
@@ -283,10 +279,6 @@ color lighter.-->
 		  </w:tcBorders>
 		</xsl:if>
 	  </w:tcPr>
-	  <w:tblGrid>
-		<w:gridCol w:w="200" />
-		<!-- twips (1/20 pt)-->
-	  </w:tblGrid>
 	  <xsl:if test="not(glosses)">
 		<w:p />
 	  </xsl:if>
