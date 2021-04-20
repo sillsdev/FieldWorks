@@ -190,7 +190,7 @@ namespace SIL.FieldWorks
 				var sendFeedback = true;
 #else
 				var analyticsKey = "ddkPyi0BMbFRyOC5PLuCKHVbJH2yI9Cu"; // replace with production key after initial testing period
-				var sendFeedback = reportSettings.OkToPingBasicUsageData;
+				var sendFeedback = reportingSettings.OkToPingBasicUsageData;
 #endif
 				using (new Analytics(analyticsKey, new UserInfo(), sendFeedback))
 				{
