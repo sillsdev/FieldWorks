@@ -350,9 +350,9 @@
 			LocalFilename="vcredist_2008_x86.exe"
 			Condition="!Exists('$(WixLibsDir)/vcredist_2008_x86.exe') And $(Platform)!='x64'"
 			DownloadsDir="$(WixLibsDir)"/>			<!-- VisualC++ 8 runtime -->
-		<DownloadFile Address="https://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe"
+		<DownloadFile Address="https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe"
 			LocalFilename="vcredist_x86.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_x86.exe') And $(Platform)!='x64'"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2010_x86.exe') And $(Platform)!='x64'"
 			DownloadsDir="$(WixLibsDir)"/>			<!-- VisualC++ 10 runtime -->
 		<DownloadFile Address="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe"
 			LocalFilename="vcredist_2012_x86.exe"
@@ -375,9 +375,9 @@
 			LocalFilename="vcredist_2008_x64.exe"
 			Condition="!Exists('$(WixLibsDir)/vcredist_2008_x64.exe') And $(Platform)=='x64'"
 			DownloadsDir="$(WixLibsDir)"/>			<!-- VisualC++ 8 runtime -->
-		<DownloadFile Address="https://download.microsoft.com/download/3/2/2/3224B87F-CFA0-4E70-BDA3-3DE650EFEBA5/vcredist_x64.exe"
+		<DownloadFile Address="https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe"
 			LocalFilename="vcredist_x64.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_x64.exe') And $(Platform)=='x64'"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2010_x64.exe') And $(Platform)=='x64'"
 			DownloadsDir="$(WixLibsDir)"/>			<!-- VisualC++ 10 runtime -->
 		<DownloadFile Address="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe"
 			LocalFilename="vcredist_2012_x64.exe"
