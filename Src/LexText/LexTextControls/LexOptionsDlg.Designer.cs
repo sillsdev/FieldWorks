@@ -38,20 +38,21 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnHelp = new System.Windows.Forms.Button();
 			this.m_tabPrivacy = new System.Windows.Forms.TabPage();
-			this.m_okToPingCheckBox = new System.Windows.Forms.CheckBox();
+			this.llPrivacy = new System.Windows.Forms.LinkLabel();
 			this.PrivacyText = new System.Windows.Forms.TextBox();
+			this.m_okToPingCheckBox = new System.Windows.Forms.CheckBox();
 			this.m_tabPlugins = new System.Windows.Forms.TabPage();
+			this.m_labelRights = new System.Windows.Forms.Label();
+			this.m_labelPluginBlurb = new System.Windows.Forms.Label();
 			this.m_lvPlugins = new System.Windows.Forms.ListView();
 			this.m_chName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.m_chDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.m_labelPluginBlurb = new System.Windows.Forms.Label();
-			this.m_labelRights = new System.Windows.Forms.Label();
 			this.m_tabInterface = new System.Windows.Forms.TabPage();
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.label3 = new System.Windows.Forms.Label();
-			this.m_userInterfaceChooser = new SIL.FieldWorks.Common.Widgets.UserInterfaceChooser();
-			this.label4 = new System.Windows.Forms.Label();
 			this.m_autoOpenCheckBox = new System.Windows.Forms.CheckBox();
+			this.label4 = new System.Windows.Forms.Label();
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.m_userInterfaceChooser = new SIL.FieldWorks.Common.Widgets.UserInterfaceChooser();
+			this.label3 = new System.Windows.Forms.Label();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.m_tabPrivacy.SuspendLayout();
 			this.m_tabPlugins.SuspendLayout();
@@ -84,17 +85,19 @@ namespace SIL.FieldWorks.LexText.Controls
 			// 
 			// m_tabPrivacy
 			// 
+			this.m_tabPrivacy.Controls.Add(this.llPrivacy);
 			this.m_tabPrivacy.Controls.Add(this.PrivacyText);
 			this.m_tabPrivacy.Controls.Add(this.m_okToPingCheckBox);
 			resources.ApplyResources(this.m_tabPrivacy, "m_tabPrivacy");
 			this.m_tabPrivacy.Name = "m_tabPrivacy";
 			this.m_tabPrivacy.UseVisualStyleBackColor = true;
 			// 
-			// m_okToPingCheckBox
+			// llPrivacy
 			// 
-			resources.ApplyResources(this.m_okToPingCheckBox, "m_okToPingCheckBox");
-			this.m_okToPingCheckBox.Name = "m_okToPingCheckBox";
-			this.m_okToPingCheckBox.UseVisualStyleBackColor = true;
+			resources.ApplyResources(this.llPrivacy, "llPrivacy");
+			this.llPrivacy.Name = "llPrivacy";
+			this.llPrivacy.TabStop = true;
+			this.llPrivacy.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.PrivacyLinkClicked);
 			// 
 			// PrivacyText
 			// 
@@ -103,6 +106,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			resources.ApplyResources(this.PrivacyText, "PrivacyText");
 			this.PrivacyText.Name = "PrivacyText";
 			this.PrivacyText.ReadOnly = true;
+			this.PrivacyText.TabStop = false;
+			// 
+			// m_okToPingCheckBox
+			// 
+			resources.ApplyResources(this.m_okToPingCheckBox, "m_okToPingCheckBox");
+			this.m_okToPingCheckBox.Name = "m_okToPingCheckBox";
+			this.m_okToPingCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// m_tabPlugins
 			// 
@@ -113,14 +123,25 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_tabPlugins.Name = "m_tabPlugins";
 			this.m_tabPlugins.UseVisualStyleBackColor = true;
 			// 
+			// m_labelRights
+			// 
+			resources.ApplyResources(this.m_labelRights, "m_labelRights");
+			this.m_labelRights.Name = "m_labelRights";
+			// 
+			// m_labelPluginBlurb
+			// 
+			resources.ApplyResources(this.m_labelPluginBlurb, "m_labelPluginBlurb");
+			this.m_labelPluginBlurb.Name = "m_labelPluginBlurb";
+			// 
 			// m_lvPlugins
 			// 
 			this.m_lvPlugins.CheckBoxes = true;
 			this.m_lvPlugins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.m_chName,
-            this.m_chDescription});
+			this.m_chName,
+			this.m_chDescription});
 			this.m_lvPlugins.FullRowSelect = true;
 			this.m_lvPlugins.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+			this.m_lvPlugins.HideSelection = false;
 			resources.ApplyResources(this.m_lvPlugins, "m_lvPlugins");
 			this.m_lvPlugins.MultiSelect = false;
 			this.m_lvPlugins.Name = "m_lvPlugins";
@@ -135,16 +156,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			// 
 			resources.ApplyResources(this.m_chDescription, "m_chDescription");
 			// 
-			// m_labelPluginBlurb
-			// 
-			resources.ApplyResources(this.m_labelPluginBlurb, "m_labelPluginBlurb");
-			this.m_labelPluginBlurb.Name = "m_labelPluginBlurb";
-			// 
-			// m_labelRights
-			// 
-			resources.ApplyResources(this.m_labelRights, "m_labelRights");
-			this.m_labelRights.Name = "m_labelRights";
-			// 
 			// m_tabInterface
 			// 
 			resources.ApplyResources(this.m_tabInterface, "m_tabInterface");
@@ -154,6 +165,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_tabInterface.Name = "m_tabInterface";
 			this.m_tabInterface.UseVisualStyleBackColor = true;
 			// 
+			// m_autoOpenCheckBox
+			// 
+			resources.ApplyResources(this.m_autoOpenCheckBox, "m_autoOpenCheckBox");
+			this.m_autoOpenCheckBox.Name = "m_autoOpenCheckBox";
+			this.m_autoOpenCheckBox.UseVisualStyleBackColor = true;
+			// 
+			// label4
+			// 
+			resources.ApplyResources(this.label4, "label4");
+			this.label4.Name = "label4";
+			// 
 			// groupBox1
 			// 
 			this.groupBox1.Controls.Add(this.m_userInterfaceChooser);
@@ -161,11 +183,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			resources.ApplyResources(this.groupBox1, "groupBox1");
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.TabStop = false;
-			// 
-			// label3
-			// 
-			resources.ApplyResources(this.label3, "label3");
-			this.label3.Name = "label3";
 			// 
 			// m_userInterfaceChooser
 			// 
@@ -175,16 +192,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_userInterfaceChooser.Name = "m_userInterfaceChooser";
 			this.m_userInterfaceChooser.Sorted = true;
 			// 
-			// label4
+			// label3
 			// 
-			resources.ApplyResources(this.label4, "label4");
-			this.label4.Name = "label4";
-			// 
-			// m_autoOpenCheckBox
-			// 
-			resources.ApplyResources(this.m_autoOpenCheckBox, "m_autoOpenCheckBox");
-			this.m_autoOpenCheckBox.Name = "m_autoOpenCheckBox";
-			this.m_autoOpenCheckBox.UseVisualStyleBackColor = true;
+			resources.ApplyResources(this.label3, "label3");
+			this.label3.Name = "label3";
 			// 
 			// tabControl1
 			// 
@@ -242,5 +253,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private Common.Widgets.UserInterfaceChooser m_userInterfaceChooser;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TabControl tabControl1;
+		private System.Windows.Forms.LinkLabel llPrivacy;
 	}
 }

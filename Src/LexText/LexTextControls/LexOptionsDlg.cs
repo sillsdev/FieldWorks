@@ -274,9 +274,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			get { return m_pluginsUpdated; }
 		}
 
-		private void updateGlobalWS_MouseHover(object sender, EventArgs e)
+		private void PrivacyLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			;
+			using (Process.Start(llPrivacy.Text)) { }
 		}
 	}
 }

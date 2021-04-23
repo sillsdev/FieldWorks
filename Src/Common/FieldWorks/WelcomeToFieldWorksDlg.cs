@@ -61,7 +61,7 @@ namespace SIL.FieldWorks
 		/// <param name="exception">Exception that was thrown if the previously requested
 		/// project could not be opened.</param>
 		/// <param name="showReportingRow">True (usually only on the first run) when we want to show the first-time warning about
-		/// sending google analytics information</param>
+		/// sending analytics information</param>
 		/// ------------------------------------------------------------------------------------
 		public WelcomeToFieldWorksDlg(IHelpTopicProvider helpTopicProvider, StartupException exception, bool showReportingRow)
 		{

@@ -671,8 +671,8 @@
     <value>4</value>
   </data>
   <data name="reportingInfoLabel.Text" xml:space="preserve">
-    <value>Google Analytics is used to gather usage statistics for the developers. 
-To disable go to Tools-&gt;Options-&gt;Privacy.</value>
+    <value>Third-party tools are used to gather anonymous usage statistics for the developers.
+To disable, go to Tools-&gt;Options-&gt;Privacy.</value>
   </data>
   <data name="&gt;&gt;reportingInfoLabel.Name" xml:space="preserve">
     <value>reportingInfoLabel</value>
