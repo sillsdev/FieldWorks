@@ -98,6 +98,11 @@
 				<dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.LiftImportDlg"/>
 			</parameters>
 		</command>
+		<command id="CmdImportCombineData" label="_Combine Import..." message="LaunchConnectedDialog">
+			<parameters>
+				<dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.CombineImportDlg"/>
+			</parameters>
+		</command>
 		<command id="CmdImportTranslatedLists" label="_Translated List Content" message="ImportTranslatedLists"/>
 		<command id="CmdImportTranslatedGramCats" label="Translated _Grammatical Category Content" message="ImportTranslatedGramCats"/>
 		<command id="CmdExport" label="_Export..." message="Export"/>
@@ -413,6 +418,7 @@
 				<item command="CmdImportSFMLexicon"/>
 				<item command="CmdImportLinguaLinksData"/>
 				<item command="CmdImportLiftData"/>
+				<item command="CmdImportCombineData"/>
 				<item command="CmdImportInterlinearSfm"/>
 				<item command="CmdImportWordsAndGlossesSfm"/>
 				<item command="CmdImportInterlinearData"/>

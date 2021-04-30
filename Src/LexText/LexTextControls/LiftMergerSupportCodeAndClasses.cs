@@ -5284,6 +5284,25 @@ namespace SIL.FieldWorks.LexText.Controls
 
 	public class LdmlFileBackup
 	{
+
+		/// <summary>
+		/// Copy a file to the outPath
+		/// </summary>
+		/// <param name="sFileName"></param>
+		/// <param name="outPath"></param>
+		public static void CopyFile(string sFileName, string outPath)
+		{
+			RemoveWriteProtection(outPath);
+			File.Copy(sFileName, outPath, true);
+			RemoveWriteProtection(outPath);
+		}
+
+		private static void RemoveWriteProtection(string dlgFileName)
+		{
+			if (File.Exists(dlgFileName) && (File.GetAttributes(dlgFileName) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+				File.SetAttributes(dlgFileName, FileAttributes.Normal);
+		}
+
 		/// <summary>
 		/// Copy a complete directory, including all contents recursively.
 		/// Everything in out put will be writeable, even if some input files are read-only.

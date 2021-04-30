@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.LexText.Controls {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class LexTextControls {
@@ -3447,6 +3447,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         internal static string openFileDialog1_Title {
             get {
                 return ResourceManager.GetString("openFileDialog1_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ZIP files|*.zip|All files|*.*.
+        /// </summary>
+        internal static string openFileDialog1_Zip_Filter {
+            get {
+                return ResourceManager.GetString("openFileDialog1_Zip_Filter", resourceCulture);
             }
         }
     }

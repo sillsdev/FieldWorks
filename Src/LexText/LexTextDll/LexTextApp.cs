@@ -417,7 +417,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 						}
 					}
 					else if (dlg is LinguaLinksImportDlg || dlg is InterlinearImportDlg ||
-							 dlg is LexImportWizard || dlg is NotebookImportWiz || dlg is LiftImportDlg)
+							 dlg is LexImportWizard || dlg is NotebookImportWiz ||
+							 dlg is LiftImportDlg || dlg is CombineImportDlg)
 					{
 						// Make everything we've imported visible.
 						wndActive.Mediator.SendMessage("MasterRefresh", wndActive);

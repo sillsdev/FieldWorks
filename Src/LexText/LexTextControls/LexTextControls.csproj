@@ -137,6 +137,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\DesktopAnalytics.dll</HintPath>
     </Reference>
+    <Reference Include="DotNetZip, Version=1.13.3.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\DotNetZip.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
@@ -330,6 +334,12 @@
     <Compile Include="EntryGoSearchEngine.cs" />
     <Compile Include="InsertEntrySearchEngine.cs" />
     <Compile Include="IPatternControl.cs" />
+    <Compile Include="CombineImportDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CombineImportDlg.Designer.cs">
+      <DependentUpon>CombineImportDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="MasterCategory.cs" />
     <Compile Include="OccurrenceDlg.cs">
       <SubType>Form</SubType>
@@ -497,6 +507,10 @@
       <DependentUpon>LexTextControls.resx</DependentUpon>
     </Compile>
     <Compile Include="Sfm2FlexTextWords.cs" />
+    <EmbeddedResource Include="CombineImportDlg.resx">
+      <DependentUpon>CombineImportDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="OccurrenceDlg.resx">
       <DependentUpon>OccurrenceDlg.cs</DependentUpon>
     </EmbeddedResource>

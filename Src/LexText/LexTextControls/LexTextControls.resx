@@ -1239,6 +1239,9 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   <data name="openFileDialog1_Filter" xml:space="preserve">
     <value>LIFT files|*.lift|XML files|*.xml|All files|*.*</value>
   </data>
+  <data name="openFileDialog1_Zip_Filter" xml:space="preserve">
+    <value>ZIP files|*.zip|All files|*.*</value>
+  </data>
   <data name="ksErrorAccessingEncodingConverters" xml:space="preserve">
     <value>Error Accessing Encoding Converters</value>
   </data>
