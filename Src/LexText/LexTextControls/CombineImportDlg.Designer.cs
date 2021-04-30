@@ -97,7 +97,6 @@ namespace SIL.FieldWorks.LexText.Controls
             // panel1
             // 
             resources.ApplyResources(this.panel1, "panel1");
-            this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.btnBrowse);
             this.panel1.Controls.Add(this.tbPath);
             this.panel1.Name = "panel1";
@@ -143,6 +142,7 @@ namespace SIL.FieldWorks.LexText.Controls
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.m_chkTrustModTimes);
             this.Controls.Add(this.btnHelp);
             this.Controls.Add(this.panel2);
