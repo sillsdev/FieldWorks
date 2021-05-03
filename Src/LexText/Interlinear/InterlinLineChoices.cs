@@ -1005,6 +1005,8 @@ namespace SIL.FieldWorks.IText
 
 		/// <summary>
 		/// Answer where line n should move up to (if it can move up).
+		/// We have disabled the re-ordering of any other lines in this view to simplify.
+		/// Now only reordering of writing system lines is allowed.
 		/// If it can't answer -1.
 		/// </summary>
 		/// <param name="n"></param>
@@ -1013,23 +1015,12 @@ namespace SIL.FieldWorks.IText
 		{
 			if (n == 0)
 				return -1; // first line can't move up!
-			InterlinLineSpec spec = this[n];
-			// Can't move up at all if it's a freeform and the previous line is not.
-			if (!spec.WordLevel && this[n - 1].WordLevel)
+			var currentLineSpec = this[n];
+			var aboveLineSpec = this[n - 1];
+
+			if (currentLineSpec.Flid != aboveLineSpec.Flid)
 				return -1;
-			int newPos = n - 1; // default place to put it.
-			// If it is not morpheme level and a morpheme-level precedes it, must move
-			// past all of them. Same treatment for notes if there is more than one ws (one per line)
-			if (!spec.MorphemeLevel && this[newPos].MorphemeLevel)
-				for (; newPos > 0 && this[newPos - 1].MorphemeLevel; newPos--) {}
-			if (spec.Flid != this[newPos].Flid && newPos - 1 >= 0 && this[newPos - 1].Flid == this[newPos].Flid)
-				for (; newPos > 0 && this[newPos - 1].Flid == this[newPos].Flid; newPos--) {}
-			// If it can't go here it just can't move.
-			if (newPos > 0 && !CanFollow(this[newPos - 1], spec))
-				return -1;
-			if (!CanFollow(spec, this[newPos]))
-				return -1;
-			return newPos;
+			return n - 1;
 		}
 
 		/// <summary>
