@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				if (components != null)
 					components.Dispose();
-				openFileDialog1.Dispose();
+				openFileDialog.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -49,10 +49,8 @@ namespace SIL.FieldWorks.LexText.Controls
             this.tbBackup = new System.Windows.Forms.TextBox();
             this.tbOptions = new System.Windows.Forms.TextBox();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.m_chkTrustModTimes = new System.Windows.Forms.CheckBox();
-			this.openFileDialog1 = new OpenFileDialogAdapter();
-			this.panel1.SuspendLayout();
-			this.panel2.SuspendLayout();
+            this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnHelp
@@ -60,7 +58,7 @@ namespace SIL.FieldWorks.LexText.Controls
             resources.ApplyResources(this.btnHelp, "btnHelp");
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.UseVisualStyleBackColor = true;
-            this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
+            this.btnHelp.Click += new System.EventHandler(this.HelpClicked);
             // 
             // btnCancel
             // 
@@ -68,21 +66,21 @@ namespace SIL.FieldWorks.LexText.Controls
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.Click += new System.EventHandler(this.CancelClicked);
             // 
             // btnOK
             // 
             resources.ApplyResources(this.btnOK, "btnOK");
             this.btnOK.Name = "btnOK";
             this.btnOK.UseVisualStyleBackColor = true;
-            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+            this.btnOK.Click += new System.EventHandler(this.OkClicked);
             // 
             // btnBrowse
             // 
             resources.ApplyResources(this.btnBrowse, "btnBrowse");
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.UseVisualStyleBackColor = true;
-            this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
+            this.btnBrowse.Click += new System.EventHandler(this.BrowseClicked);
             // 
             // tbPath
             // 
@@ -106,7 +104,7 @@ namespace SIL.FieldWorks.LexText.Controls
             resources.ApplyResources(this.btnBackup, "btnBackup");
             this.btnBackup.Name = "btnBackup";
             this.btnBackup.UseVisualStyleBackColor = true;
-            this.btnBackup.Click += new System.EventHandler(this.btnBackup_Click);
+            this.btnBackup.Click += new System.EventHandler(this.BackupClicked);
             // 
             // tbBackup
             // 
@@ -130,20 +128,11 @@ namespace SIL.FieldWorks.LexText.Controls
             this.panel2.Controls.Add(this.tbOptions);
             this.panel2.Name = "panel2";
             // 
-            // m_chkTrustModTimes
-            // 
-            resources.ApplyResources(this.m_chkTrustModTimes, "m_chkTrustModTimes");
-            this.m_chkTrustModTimes.Checked = true;
-            this.m_chkTrustModTimes.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.m_chkTrustModTimes.Name = "m_chkTrustModTimes";
-            this.m_chkTrustModTimes.UseVisualStyleBackColor = true;
-            // 
             // CombineImportDlg
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.m_chkTrustModTimes);
             this.Controls.Add(this.btnHelp);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.btnCancel);
@@ -179,8 +168,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.TextBox tbBackup;
 		private System.Windows.Forms.TextBox tbOptions;
 		private System.Windows.Forms.Panel panel2;
-		private System.Windows.Forms.CheckBox m_chkTrustModTimes;
-		private OpenFileDialogAdapter openFileDialog1;
+		private OpenFileDialogAdapter openFileDialog;
 
 	}
 }

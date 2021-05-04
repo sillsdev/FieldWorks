@@ -98,7 +98,7 @@
 				<dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.LiftImportDlg"/>
 			</parameters>
 		</command>
-		<command id="CmdImportCombineData" label="_Combine Import..." message="LaunchConnectedDialog">
+		<command id="CmdImportCombineData" label="Lexicon from The _Combine..." message="LaunchConnectedDialog">
 			<parameters>
 				<dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.CombineImportDlg"/>
 			</parameters>
