@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var relevantReversalIndexesAndTheirCounts = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
 					.Select(repo => m_cache.ServiceLocator.GetObject(repo.Guid) as IReversalIndex)
-					.Where(ri => ri != null && selectedReversalIndexes.Contains(ri.ShortName))
+					.Where(ri => ri != null && selectedReversalIndexes.Any(s => s.Contains(ri.ShortName)))
 					.ToDictionary(ri => ri.ShortName, CountReversalIndexEntries);
 
 				return new SortedDictionary<string,int> (relevantReversalIndexesAndTheirCounts);
