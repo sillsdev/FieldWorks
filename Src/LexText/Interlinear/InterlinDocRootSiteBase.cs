@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -103,7 +103,8 @@ namespace SIL.FieldWorks.IText
 			m_sda = m_cache.MainCacheAccessor;
 			m_sda.AddNotification(this);
 
-			Vc.ShowMorphBundles = m_propertyTable.GetBoolProperty("ShowMorphBundles", true);
+			// PropertyTable can be null when the root site exists inside a dialog (LT-20412)
+			Vc.ShowMorphBundles = m_propertyTable?.GetBoolProperty("ShowMorphBundles", true) ?? true;
 			Vc.LineChoices = LineChoices;
 			Vc.ShowDefaultSense = true;
 
