@@ -246,9 +246,9 @@ namespace SIL.FieldWorks.XWorks
 			xhtmlWriter.WriteEndElement(); //</link>
 			GenerateWritingSystemsMetadata(exportSettings, xhtmlWriter);
 			xhtmlWriter.WriteStartElement("title");
-			// Use the WriteRaw, WriteFullEndElement hack to avoid a self closing tag which is invalid xhtml. This empty title is here to make more valid xhtml.
-			xhtmlWriter.WriteRaw("");
-			xhtmlWriter.WriteFullEndElement(); //</title>
+			// cssPath should have the same filename as the current dictionary or reversal view
+			xhtmlWriter.WriteString($"{Path.GetFileNameWithoutExtension(cssPath)} - {exportSettings.Cache.ProjectId.Name}");
+			xhtmlWriter.WriteEndElement(); //</title>
 			xhtmlWriter.WriteEndElement(); //</head>
 			xhtmlWriter.WriteStartElement("body");
 			if (exportSettings.RightToLeft)

@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2020 SIL International
+// Copyright (c) 2014-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -39,6 +39,8 @@ namespace SIL.FieldWorks.XWorks
 		internal const string CurrentSelectedEntryClass = "currentSelectedEntry";
 		private string m_currentConfigView; // used when this is a Dictionary view to store which view is active.
 
+		private GeckoWebBrowser GeckoBrowser => (GeckoWebBrowser)m_mainView.NativeBrowser;
+
 		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			m_mediator = mediator;
@@ -50,15 +52,15 @@ namespace SIL.FieldWorks.XWorks
 			m_mainView.IsWebBrowserContextMenuEnabled = false;
 			ReadParameters();
 			// Use update helper to help with optimizations and special cases for list loading
-			using(var luh = new RecordClerk.ListUpdateHelper(Clerk, Clerk.ListLoadingSuppressed))
+			using(new RecordClerk.ListUpdateHelper(Clerk, Clerk.ListLoadingSuppressed))
 			{
 				m_mediator.AddColleague(this);
 				Clerk.UpdateOwningObjectIfNeeded();
 			}
 			Controls.Add(m_mainView);
 
-			var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
-			if (browser != null)
+			// REVIEW (Hasso) 2021.05: when do we expect NativeBrowser not to be a GeckoWebBrowser?
+			if (m_mainView.NativeBrowser is GeckoWebBrowser browser)
 			{
 				var clerk = XmlUtils.GetOptionalAttributeValue(configurationParameters, "clerk");
 				if (clerk == "entries" || clerk == "AllReversalEntries")
@@ -74,14 +76,14 @@ namespace SIL.FieldWorks.XWorks
 		private void OnMouseWheel(object sender, DomMouseEventArgs domMouseEventArgs)
 		{
 			var scrollDelta = domMouseEventArgs.Detail;
-			var browser = (GeckoWebBrowser)m_mainView.NativeBrowser;
+			var browser = GeckoBrowser;
 			if (scrollDelta < 0 && browser.Window.ScrollY == 0)
 			{
-				AddMoreEntriesToPage(true, (GeckoWebBrowser)m_mainView.NativeBrowser);
+				AddMoreEntriesToPage(true, browser);
 			}
 			else if (browser.Window.ScrollY >= browser.Window.ScrollMaxY)
 			{
-				AddMoreEntriesToPage(false, (GeckoWebBrowser)m_mainView.NativeBrowser);
+				AddMoreEntriesToPage(false, browser);
 			}
 		}
 
@@ -90,7 +92,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void OnDomKeyPress(object sender, DomKeyEventArgs e)
 		{
-			var browser = (GeckoWebBrowser) m_mainView.NativeBrowser;
+			var browser = GeckoBrowser;
 			const int UP = 38;
 			const int DOWN = 40;
 			const int PAGEUP = 33;
@@ -101,7 +103,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (browser.Window.ScrollY == 0)
 					{
-						AddMoreEntriesToPage(true, (GeckoWebBrowser)m_mainView.NativeBrowser);
+						AddMoreEntriesToPage(true, browser);
 					}
 					break;
 				}
@@ -109,7 +111,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (browser.Window.ScrollY >= browser.Window.ScrollMaxY)
 					{
-						AddMoreEntriesToPage(false, (GeckoWebBrowser)m_mainView.NativeBrowser);
+						AddMoreEntriesToPage(false, browser);
 					}
 					break;
 				}
@@ -647,7 +649,7 @@ namespace SIL.FieldWorks.XWorks
 			// exist on disk.
 			var validConfiguration = SetCurrentDictionaryPublicationLayout();
 			if (string.IsNullOrEmpty(m_propertyTable.GetStringProperty("SuspendLoadingRecordUntilOnJumpToRecord", null)))
-				UpdateContent(PublicationDecorator, validConfiguration);
+				UpdateContent(validConfiguration);
 		}
 
 		private string SetCurrentDictionaryPublicationLayout()
@@ -738,21 +740,40 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Handle the 'File Print...' menu item click (defined in the Lexicon areaConfiguration.xml)
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <returns></returns>
 		public bool OnPrint(object commandObject)
 		{
 			CloseContextMenuIfOpen(); // not sure if this is necessary or not
-			PrintPage(m_mainView);
+			var areAllEntriesOnOnePage = m_mainView.NativeBrowser is GeckoWebBrowser browser &&
+										 GetTopCurrentPageButton(browser.Document.Body) == null;
+			var entryCount = PublicationDecorator.GetEntriesToPublish(m_propertyTable, Clerk.VirtualFlid).Length;
+			var message = string.Format(xWorksStrings.promptGenerateAllEntriesBeforePrinting_ShowingXofX,
+					LcmXhtmlGenerator.EntriesPerPage, entryCount);
+			if (!areAllEntriesOnOnePage && MessageBox.Show(message, xWorksStrings.promptGenerateAllEntriesBeforePrinting,
+				MessageBoxButtons.YesNo) == DialogResult.Yes)
+			{
+				// Generate all entries
+				UpdateContent(GetCurrentConfiguration(false), true);
+
+				// The Control.Refresh command to load the newly-generated page returns before it is finished,
+				// but then fails if the print dialog is opened too soon. Printing on idle solves this.
+				void PrintAfterRefresh(object sender, EventArgs args)
+				{
+					Application.Idle -= PrintAfterRefresh;
+					PrintPage(m_mainView);
+				}
+				Application.Idle += PrintAfterRefresh;
+			}
+			else
+			{
+				PrintPage(m_mainView);
+			}
 			return true;
 		}
 
 		internal static void PrintPage(XWebBrowser browser)
 		{
 			var geckoBrowser = browser.NativeBrowser as GeckoWebBrowser;
-			if (geckoBrowser == null)
-				return;
-			geckoBrowser.Window.Print();
+			geckoBrowser?.Window.Print();
 		}
 
 		/// <summary>
@@ -886,9 +907,8 @@ namespace SIL.FieldWorks.XWorks
 			switch (name)
 			{
 				case "SelectedPublication":
-					var pubDecorator = PublicationDecorator;
 					var validConfiguration = SetCurrentDictionaryPublicationLayout();
-					UpdateContent(pubDecorator, validConfiguration);
+					UpdateContent(validConfiguration);
 					break;
 				case "DictionaryPublicationLayout":
 				case "ReversalIndexPublicationLayout":
@@ -901,7 +921,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						m_propertyTable.SetProperty("SelectedPublication", validPublication, false);
 					}
-					UpdateContent(PublicationDecorator, currentConfig);
+					UpdateContent(currentConfig);
 					break;
 				case "ActiveClerkSelectedObject":
 					var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
@@ -1042,7 +1062,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_propertyTable.SetProperty("SelectedPublication", validPublication, true);
 			}
-			UpdateContent(PublicationDecorator, currentConfig);
+			UpdateContent(currentConfig);
 		}
 
 		public virtual bool OnDisplayShowAllEntries(object commandObject, ref UIItemDisplayProperties display)
@@ -1084,11 +1104,11 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		private void UpdateContent(DictionaryPublicationDecorator publicationDecorator, string configurationFile)
+		private void UpdateContent(string configurationFile, bool allOnOnePage = false)
 		{
 			SetInfoBarText();
 			var htmlErrorMessage = xWorksStrings.ksErrorDisplayingPublication;
-			if (String.IsNullOrEmpty(configurationFile))
+			if (string.IsNullOrEmpty(configurationFile))
 			{
 				htmlErrorMessage = xWorksStrings.NoConfigsMatchPub;
 			}
@@ -1100,8 +1120,8 @@ namespace SIL.FieldWorks.XWorks
 					progressDlg.AllowCancel = true;
 					progressDlg.CancelLabelText = xWorksStrings.ksCancelingPublicationLabel;
 					progressDlg.Title = xWorksStrings.ksPreparingPublicationDisplay;
-					var xhtmlPath = progressDlg.RunTask(true, SaveConfiguredXhtmlAndDisplay, publicationDecorator, configurationFile) as string;
-					if (xhtmlPath != null)
+					if (progressDlg.RunTask(true, SaveConfiguredXhtmlAndDisplay, PublicationDecorator, configurationFile, allOnOnePage)
+						is string xhtmlPath)
 					{
 						if (progressDlg.IsCanceling)
 						{
@@ -1116,31 +1136,33 @@ namespace SIL.FieldWorks.XWorks
 					}
 				}
 			}
-			m_mainView.DocumentText = String.Format("<html><body>{0}</body></html>", htmlErrorMessage);
+			m_mainView.DocumentText = $"<html><body>{htmlErrorMessage}</body></html>";
 		}
 
 		private object SaveConfiguredXhtmlAndDisplay(IThreadedProgress progress, object[] args)
 		{
-			if (args.Length != 2)
+			if (args.Length != 3)
 				return null;
 			var publicationDecorator = (DictionaryPublicationDecorator)args[0];
 			var configurationFile = (string)args[1];
+			var allOnOnePage = (bool)args[2];
 			if (progress != null)
 				progress.Message = xWorksStrings.ksObtainingEntriesToDisplay;
 			var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
 			publicationDecorator.Refresh();
 			var entriesToPublish = publicationDecorator.GetEntriesToPublish(m_propertyTable, Clerk.VirtualFlid);
 			var start = DateTime.Now;
+			var entriesPerPage = allOnOnePage ? entriesToPublish.Length : LcmXhtmlGenerator.EntriesPerPage;
 			if (progress != null)
 			{
 				progress.Minimum = 0;
-				var entryCount = LcmXhtmlGenerator.EntriesPerPage;
-				progress.Maximum = entryCount + 1 + entryCount / 100;
+				progress.Maximum = entriesPerPage + 1 + entriesPerPage / 100;
 				progress.Position++;
 			}
-			var xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, m_propertyTable, progress);
+			var xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, m_propertyTable,
+				progress, entriesPerPage);
 			var end = DateTime.Now;
-			System.Diagnostics.Debug.WriteLine(string.Format("saving xhtml/css took {0}", end - start));
+			Debug.WriteLine($"saving xhtml/css took {end - start}");
 			return xhtmlPath;
 		}
 

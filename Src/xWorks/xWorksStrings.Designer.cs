@@ -2545,6 +2545,24 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Generate all entries before printing?.
+        /// </summary>
+        internal static string promptGenerateAllEntriesBeforePrinting {
+            get {
+                return ResourceManager.GetString("promptGenerateAllEntriesBeforePrinting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your dictionary has {1} entries that match the current filter, but to speed performance, only {0} are shown at a time. Would you like to print all {1} entries?.
+        /// </summary>
+        internal static string promptGenerateAllEntriesBeforePrinting_ShowingXofX {
+            get {
+                return ResourceManager.GetString("promptGenerateAllEntriesBeforePrinting_ShowingXofX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clicking Submit will send {0} dictionary entries{1} to Webonary..
         /// </summary>
         internal static string PublicationEntriesLabel {

@@ -8142,6 +8142,30 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void SavePublishedHtmlWithStyles_ProducesDocumentTitle()
+		{
+			var entry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(entry, "femme", m_wsFr);
+			const string configName = "Test Config Name";
+			var model = CreateInterestingConfigurationModel(Cache, m_propertyTable);
+			model.FilePath = "/nowhere/" + configName + DictionaryConfigurationModel.FileExtension;
+			string xhtmlPath = null;
+			try
+			{
+				//SUT
+				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { entry.Hvo }, null, model, m_propertyTable);
+				// Since this is for the LexEdit Preview, the config name will be appended with '-Preview'
+				// Note: because the project name is the file name, and there is no file behind our cache, Name is the empty string
+				var xpath = $"/html/head/title[text()='{configName}-Preview - {Cache.ProjectId.Name}']";
+				AssertThatXmlIn.File(xhtmlPath).HasSpecifiedNumberOfMatchesForXpath(xpath, 1);
+			}
+			finally
+			{
+				DeleteTempXhtmlAndCssFiles(xhtmlPath);
+			}
+		}
+
+		[Test]
 		public void CheckSubsenseOutput()
 		{
 			var posNoun = CreatePartOfSpeech("noun", "n");
