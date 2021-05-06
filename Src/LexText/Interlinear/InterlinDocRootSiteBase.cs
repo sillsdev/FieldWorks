@@ -833,7 +833,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="argument"></param>
 		public bool OnConfigureInterlinear(object argument)
 		{
-			using (var dlg = new ConfigureInterlinDialog(this.m_cache, this.m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+			using (var dlg = new ConfigureInterlinDialog(m_mediator, m_propertyTable, this.m_cache, this.m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 				this.Vc.LineChoices.Clone() as InterlinLineChoices))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)

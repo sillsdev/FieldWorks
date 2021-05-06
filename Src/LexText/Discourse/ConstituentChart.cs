@@ -106,7 +106,7 @@ namespace SIL.FieldWorks.Discourse
 			LineChoices = GetLineChoices();
 			Vc.LineChoices = LineChoices;
 
-			using (var dlg = new ConfigureInterlinDialog(Cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+			using (var dlg = new ConfigureInterlinDialog(m_mediator, PropertyTable, Cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
 				m_ribbon.Vc.LineChoices.Clone() as InterlinLineChoices))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)

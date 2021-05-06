@@ -24,6 +24,7 @@ using SIL.Windows.Forms.HtmlBrowser;
 using Directory = System.IO.Directory;
 using Property = ExCSS.Property;
 using StyleSheet = ExCSS.StyleSheet;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -40,6 +41,9 @@ namespace SIL.FieldWorks.IText
 		private const string s_helpTopic = "khtpConfigureInterlinearLines";
 		private HelpProvider helpProvider;
 
+		private const string PersistProviderID = "ConfigureInterlinearLines";
+		private PersistenceProvider m_persistProvider;
+
 		private Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection> m_cachedComboContentForColumns;
 		private IContainer components;
 
@@ -50,11 +54,10 @@ namespace SIL.FieldWorks.IText
 		InterlinLineChoices m_choices;
 		private ComboBox wsCombo;
 		private XWebBrowser mainBrowser;
-		private FlowLayoutPanel mainLayoutPanel;
 		private FlowLayoutPanel buttonLayoutPanel;
 		private List<WsComboItem> m_columns;
 
-		public ConfigureInterlinDialog(LcmCache cache, IHelpTopicProvider helpTopicProvider,
+		public ConfigureInterlinDialog(Mediator mediator, PropertyTable propertyTable, LcmCache cache, IHelpTopicProvider helpTopicProvider,
 			InterlinLineChoices choices)
 		{
 			InitializeComponent();
@@ -66,6 +69,9 @@ namespace SIL.FieldWorks.IText
 			helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+
+			m_persistProvider = new PersistenceProvider(mediator, propertyTable, PersistProviderID);
+			m_persistProvider.RestoreWindowSettings(PersistProviderID, this);
 
 			m_cachedComboContentForColumns = new Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection>();
 			m_columns = new List<WsComboItem>();
@@ -98,9 +104,7 @@ namespace SIL.FieldWorks.IText
 			this.cancelButton = new System.Windows.Forms.Button();
 			this.okButton = new System.Windows.Forms.Button();
 			this.mainBrowser = new SIL.Windows.Forms.HtmlBrowser.XWebBrowser();
-			this.mainLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.buttonLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this.mainLayoutPanel.SuspendLayout();
 			this.buttonLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			//
@@ -120,30 +124,20 @@ namespace SIL.FieldWorks.IText
 			resources.ApplyResources(this.cancelButton, "cancelButton");
 			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.cancelButton.Name = "cancelButton";
+			this.cancelButton.Click += new System.EventHandler(this.CancelButton_Click);
 			//
 			// okButton
 			//
 			resources.ApplyResources(this.okButton, "okButton");
 			this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.okButton.Name = "okButton";
-			this.okButton.Click += OkButton_Click;
+			this.okButton.Click += new System.EventHandler(this.OkButton_Click);
 			//
 			// mainBrowser
 			//
 			resources.ApplyResources(this.mainBrowser, "mainBrowser");
 			this.mainBrowser.IsWebBrowserContextMenuEnabled = false;
-			this.mainBrowser.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-			this.mainBrowser.Margin = new Padding(10, 10, 10, 10);
-			this.mainBrowser.Height = 300;
 			this.mainBrowser.Name = "mainBrowser";
-			//
-			// mainLayoutPanel
-			//
-			this.mainLayoutPanel.Controls.Add(this.label1);
-			this.mainLayoutPanel.Controls.Add(this.mainBrowser);
-			this.mainLayoutPanel.Controls.Add(this.buttonLayoutPanel);
-			resources.ApplyResources(this.mainLayoutPanel, "mainLayoutPanel");
-			this.mainLayoutPanel.Name = "mainLayoutPanel";
 			//
 			// buttonLayoutPanel
 			//
@@ -158,12 +152,12 @@ namespace SIL.FieldWorks.IText
 			this.AcceptButton = this.okButton;
 			resources.ApplyResources(this, "$this");
 			this.CancelButton = this.cancelButton;
-			this.Controls.Add(this.mainLayoutPanel);
-			this.Name = "ConfigureInterlinDialog";
-			this.FormBorderStyle = FormBorderStyle.FixedDialog;
+			this.Controls.Add(this.mainBrowser);
+			this.Controls.Add(this.label1);
+			this.Controls.Add(this.buttonLayoutPanel);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
-			this.mainLayoutPanel.ResumeLayout(false);
+			this.Name = "ConfigureInterlinDialog";
 			this.buttonLayoutPanel.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -974,6 +968,8 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		private void OkButton_Click(object sender, EventArgs e)
 		{
+			m_persistProvider.PersistWindowSettings(PersistProviderID, this);
+
 			var checkBoxes =
 				(mainBrowser.NativeBrowser as GeckoWebBrowser)?.Document.GetElementsByClassName("checkBox");
 
@@ -1001,6 +997,11 @@ namespace SIL.FieldWorks.IText
 					m_choices.m_specs.Add(m_choices.CreateSpec(flid, ws));
 				}
 			}
+		}
+
+		private void CancelButton_Click(object sender, EventArgs e)
+		{
+			m_persistProvider.PersistWindowSettings(PersistProviderID, this);
 		}
 		#endregion
 	}
