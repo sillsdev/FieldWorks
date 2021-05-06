@@ -18,6 +18,7 @@ using Gecko;
 using Gecko.DOM;
 using SIL.LCModel.Utils;
 using Directory = System.IO.Directory;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -35,11 +36,14 @@ namespace SIL.FieldWorks.IText
 		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 
+		private const string PersistProviderID = "ConfigureInterlinearLines";
+		private PersistenceProvider m_persistProvider;
+
 		InterlinLineChoices m_choices;
 		private ComboBox wsCombo;
 		private List<WsComboItem> m_columns;
 
-		public ConfigureInterlinDialog(LcmCache cache, IHelpTopicProvider helpTopicProvider,
+		public ConfigureInterlinDialog(Mediator mediator, PropertyTable propertyTable, LcmCache cache, IHelpTopicProvider helpTopicProvider,
 			InterlinLineChoices choices)
 		{
 			InitializeComponent();
@@ -51,6 +55,9 @@ namespace SIL.FieldWorks.IText
 			helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+
+			m_persistProvider = new PersistenceProvider(mediator, propertyTable, PersistProviderID);
+			m_persistProvider.RestoreWindowSettings(PersistProviderID, this);
 
 			m_cachedComboContentForColumns = new Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection>();
 			m_columns = new List<WsComboItem>();
@@ -748,6 +755,8 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		private void OkButton_Click(object sender, EventArgs e)
 		{
+			m_persistProvider.PersistWindowSettings(PersistProviderID, this);
+
 			var checkBoxes =
 				(mainBrowser.NativeBrowser as GeckoWebBrowser)?.Document.GetElementsByClassName("checkBox");
 
@@ -775,6 +784,11 @@ namespace SIL.FieldWorks.IText
 					m_choices.AllLineSpecs.Add(m_choices.CreateSpec(flid, ws));
 				}
 			}
+		}
+
+		private void CancelButton_Click(object sender, EventArgs e)
+		{
+			m_persistProvider.PersistWindowSettings(PersistProviderID, this);
 		}
 		#endregion
 

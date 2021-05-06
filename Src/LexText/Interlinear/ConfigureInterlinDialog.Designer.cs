@@ -66,6 +66,7 @@ namespace SIL.FieldWorks.IText
 			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.cancelButton.Name = "cancelButton";
 			this.cancelButton.UseVisualStyleBackColor = false;
+			this.cancelButton.Click += new System.EventHandler(this.CancelButton_Click);
 			// 
 			// okButton
 			// 
