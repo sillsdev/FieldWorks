@@ -127,7 +127,7 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz install-tree-fdo
 	install Bin/WriteKey.exe $(DESTDIR)/usr/lib/fieldworks
 	install Lib/linux/fieldworks-flex $(DESTDIR)/usr/bin
 	install Lib/linux/unicodechareditor $(DESTDIR)/usr/bin
-	install Lib/linux/{cpol-action,run-app,extract-userws.xsl,launch-xchm} $(DESTDIR)/usr/lib/fieldworks
+	install Lib/linux/{run-app,extract-userws.xsl,launch-xchm} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 environ{,-xulrunner} $(DESTDIR)/usr/lib/fieldworks
 	install -m 644 Lib/linux/fieldworks.sh $(DESTDIR)/etc/profile.d
 	# Install content and plug-ins
@@ -176,7 +176,7 @@ install-packagemetadata:
 install: install-tree install-menuentries l10n-install install-packagemetadata
 
 install-package: install install-COM
-	$(DESTDIR)/usr/lib/fieldworks/cpol-action pack
+	:
 
 install-package-fdo: install-tree-fdo install-COM
 
