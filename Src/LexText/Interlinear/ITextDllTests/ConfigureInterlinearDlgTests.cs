@@ -1,6 +1,9 @@
+using System;
 using System.Linq;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
 
 namespace SIL.FieldWorks.IText
 {
@@ -25,6 +28,25 @@ namespace SIL.FieldWorks.IText
 			// SUT
 			var rowChoices = ConfigureInterlinDialog.InitRowChoices(morphemeRows);
 			Assert.That(rowChoices.Count(), Is.EqualTo(5));
+		}
+
+		[Test]
+		public void InitRowChoices_CustomSegmentChoiceReturnsAnalysisWs()
+		{
+			using (var cf = new CustomFieldForTest(Cache,
+				"Candy Apple Red",
+				Cache.MetaDataCacheAccessor.GetClassId("Segment"),
+				-1,
+				CellarPropertyType.String,
+				Guid.Empty))
+			{
+				var customRow = new InterlinLineChoices(Cache, Cache.WritingSystemFactory.GetWsFromStr("fr"), Cache.WritingSystemFactory.GetWsFromStr("en"), InterlinLineChoices.InterlinMode.Analyze);
+				customRow.Add(cf.Flid);
+				// Verify preconditions
+				Assert.That(customRow.AllLineSpecs.Count, Is.EqualTo(1));
+				Assert.That(customRow[0].WordLevel, Is.False);
+				Assert.That(customRow[0].ComboContent, Is.EqualTo(ColumnConfigureDialog.WsComboContent.kwccAnalysis));
+			}
 		}
 
 		[Test]

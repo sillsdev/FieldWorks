@@ -835,7 +835,9 @@ namespace SIL.FieldWorks.IText
 					fWordLevel = false;
 					break;
 				default:
-					var mdc = (IFwMetaDataCacheManaged) m_cache.MetaDataCacheAccessor;
+					var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
+					fWordLevel = false;
+					comboContent = ColumnConfigureDialog.WsComboContent.kwccVernAndAnal;
 					if (mdc.FieldExists(flid))
 					{
 						if (!mdc.IsCustom(flid))
@@ -844,9 +846,14 @@ namespace SIL.FieldWorks.IText
 						}
 
 						ws = mdc.GetFieldWs(flid);
+						if (ws != -1)
+						{
+							// Oh, so we're letting users choose their writing system on custom segments now!
+							Debug.Fail("The code here is not ready to receive writing systems set on custom segments.");
+						}
+						ws = WritingSystemServices.kwsFirstAnal;
+						comboContent = ColumnConfigureDialog.WsComboContent.kwccAnalysis;
 					}
-					fWordLevel = false;
-					comboContent = ColumnConfigureDialog.WsComboContent.kwccAnalAndVern;
 					break;
 			}
 			InterlinLineSpec spec = new InterlinLineSpec();
