@@ -702,6 +702,16 @@ namespace SIL.FieldWorks.Discourse
 				}
 			}
 
+			if (m_chart != null)
+			{
+				m_body.SetRoot(m_chart.Hvo, m_allColumns, ChartIsRtL);
+				GetAndScrollToBookmark();
+			}
+			else
+			{
+				m_body.SetRoot(0, null, false);
+			}
+
 			// If necessary adjust number of buttons
 			if (m_MoveHereButtons.Count != m_allColumns.Length && hvo > 0)
 			{
@@ -710,16 +720,6 @@ namespace SIL.FieldWorks.Discourse
 			SetHeaderColAndButtonWidths();
 
 			BuildTemplatePanel();
-
-			if (m_chart != null)
-			{
-				m_body.SetRoot(m_chart.Hvo, m_allColumns, ChartIsRtL);
-
-				GetAndScrollToBookmark();
-			}
-
-			else
-				m_body.SetRoot(0, null, false);
 		}
 
 		private void BuildTemplatePanel()

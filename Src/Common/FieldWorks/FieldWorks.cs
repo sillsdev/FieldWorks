@@ -997,10 +997,10 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static void HandleUnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
-			if (e.ExceptionObject is Exception)
+			if (e.ExceptionObject is Exception exception)
 			{
-				Analytics.ReportException(e.ExceptionObject as Exception);
-				DisplayError(e.ExceptionObject as Exception, e.IsTerminating);
+				Analytics.ReportException(exception, GetInnerExceptionInfo(exception));
+				DisplayError(exception, e.IsTerminating);
 			}
 			else
 			{
@@ -1019,6 +1019,37 @@ namespace SIL.FieldWorks
 			}
 		}
 
+		/// <summary>
+		/// Gather inner exception information to pass into the analytics
+		/// </summary>
+		/// <returns>A dictionary with inner exception properties, or null if there is no inner exception</returns>
+		private static Dictionary<string, string> GetInnerExceptionInfo(Exception exception)
+		{
+			Dictionary<string, string> extraInfo = null;
+			if (exception.InnerException != null)
+			{
+				// Recurse into the InnerException property and return the inner most exception that actually has
+				// a useful stacktrace.
+				var innerMost = exception.InnerException;
+				while (innerMost.InnerException != null
+					   && !string.IsNullOrEmpty(innerMost.InnerException.StackTrace))
+				{
+					innerMost = innerMost.InnerException;
+				}
+				extraInfo = new Dictionary<string, string>
+				{
+					{
+						"Inner Exception", innerMost.Message
+					},
+					{
+						"Inner Exception Stack", innerMost.StackTrace
+					}
+				};
+			}
+
+			return extraInfo;
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Catches and displays a otherwise unhandled exception.
@@ -1029,7 +1060,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static void HandleTopLevelError(object sender, ThreadExceptionEventArgs eventArgs)
 		{
-			Analytics.ReportException(eventArgs.Exception);
+			Analytics.ReportException(eventArgs.Exception, GetInnerExceptionInfo(eventArgs.Exception));
 			if (FwUtils.IsUnsupportedCultureException(eventArgs.Exception)) // LT-8248
 			{
 				Logger.WriteEvent("Unsupported culture: " + eventArgs.Exception.Message);
