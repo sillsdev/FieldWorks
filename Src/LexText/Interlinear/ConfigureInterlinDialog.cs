@@ -213,7 +213,7 @@ namespace SIL.FieldWorks.IText
 			var rowChoicesList = InitRowChoices(m_choices);
 
 			htmlWriter.WriteStartElement("div");
-			var wsColumnWidths = string.Join(" ", m_columns.Select(c => "9em"));
+			var wsColumnWidths = string.Join(" ", m_columns.Select(c => "4em"));
 			htmlWriter.WriteAttributeString("style", $"display: grid; grid-template-columns: 2em 2em 8em {wsColumnWidths};");
 			htmlWriter.WriteAttributeString("id", "parent-grid");
 			htmlWriter.WriteStartElement("div");
@@ -308,7 +308,7 @@ namespace SIL.FieldWorks.IText
 				InterlinLineChoices choices)
 			{
 				htmlWriter.WriteStartElement("div");
-				var wsColumnWidths = string.Join(" ", columns.Select(c => "9em"));
+				var wsColumnWidths = string.Join(" ", columns.Select(c => "4em"));
 				htmlWriter.WriteAttributeString("style", $"grid-column-start: 1; grid-column-end: span {columns.Count + 3}; display: grid; grid-template-columns: 2em 2em 8em {wsColumnWidths};");
 				htmlWriter.WriteAttributeString("class", IsMorphemeRow(FirstRow, choices)
 					? "morpheme-container"
@@ -468,7 +468,7 @@ namespace SIL.FieldWorks.IText
 			{
 				htmlWriter.WriteStartElement("div");
 				htmlWriter.WriteAttributeString("class", $"grid-cell {extraClasses}");
-				htmlWriter.WriteRaw(column.ToString());
+				htmlWriter.WriteRaw(column.Abbreviation);
 				htmlWriter.WriteFullEndElement();
 			}
 		}
