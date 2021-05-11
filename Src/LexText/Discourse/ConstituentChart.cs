@@ -210,7 +210,7 @@ namespace SIL.FieldWorks.Discourse
 			m_headerMainCols.SizeChanged += m_headerMainCols_SizeChanged;
 
 			m_templateSelectionPanel = new Panel() { Height = new Button().Height, Dock = DockStyle.Top, Width = 0 };
-			m_templateSelectionPanel.Layout += new LayoutEventHandler(TemplateSelectionPanel_Layout);
+			m_templateSelectionPanel.Layout += TemplateSelectionPanel_Layout;
 
 			m_topStuff = m_topBottomSplit.Panel1;
 			m_topStuff.Controls.AddRange(new Control[] { m_body, m_headerMainCols, m_templateSelectionPanel });
@@ -234,7 +234,7 @@ namespace SIL.FieldWorks.Discourse
 			// fills the 'bottom stuff'
 			m_ribbon = new InterlinRibbon(Cache, 0) { Dock = DockStyle.Fill };
 			m_logic.Ribbon = m_ribbon;
-			m_logic.Ribbon_Changed += m_logic_Ribbon_Changed;
+			m_logic.Ribbon_Changed += OnLogicRibbonChanged;
 
 			// Holds tooltip help for 'Move Here' buttons.
 			// Set up the delays for the ToolTip.
@@ -828,13 +828,13 @@ namespace SIL.FieldWorks.Discourse
 			{
 				// Remove MoveHere button
 				var lastButton = m_MoveHereButtons[m_MoveHereButtons.Count - 1];
-				lastButton.Click -= new EventHandler(btnMoveHere_Click);
+				lastButton.Click -= btnMoveHere_Click;
 				m_buttonRow.Controls.Remove(lastButton);
 				m_MoveHereButtons.Remove(lastButton);
 
 				// Remove Context Menu button
 				var lastBtnContextMenu = m_ContextMenuButtons[m_ContextMenuButtons.Count - 1];
-				lastBtnContextMenu.Click -= new EventHandler(btnContextMenu_Click);
+				lastBtnContextMenu.Click -= btnContextMenu_Click;
 				m_buttonRow.Controls.Remove(lastBtnContextMenu);
 				m_ContextMenuButtons.Remove(lastBtnContextMenu);
 			}
@@ -843,7 +843,7 @@ namespace SIL.FieldWorks.Discourse
 			{
 				// Install MoveHere button
 				var newButton = new Button();
-				newButton.Click += new EventHandler(btnMoveHere_Click);
+				newButton.Click += btnMoveHere_Click;
 				var sColName = m_logic.GetColumnLabel(m_MoveHereButtons.Count);
 				// Holds column name while setting buttons
 				m_buttonRow.Controls.Add(newButton);
@@ -865,7 +865,7 @@ namespace SIL.FieldWorks.Discourse
 
 				// Install context menu button
 				var newBtnContextMenu = new Button();
-				newBtnContextMenu.Click += new EventHandler(btnContextMenu_Click);
+				newBtnContextMenu.Click += btnContextMenu_Click;
 				newBtnContextMenu.Image = SIL.FieldWorks.Resources.ResourceHelper.ButtonMenuArrowIcon;
 				m_buttonRow.Controls.Add(newBtnContextMenu);
 				m_ContextMenuButtons.Add(newBtnContextMenu);
@@ -912,7 +912,7 @@ namespace SIL.FieldWorks.Discourse
 			bool fExactMatch;
 			var occurrenceToMark = SegmentServices.FindNearestAnalysis(GetTextParagraphByIndex(iPara),
 				offset, offset, out fExactMatch);
-			m_bookmark.Save(occurrenceToMark, false, m_bookmark.TextIndex); // bookmark this location, but don't persist.
+			m_bookmark?.Save(occurrenceToMark, false, m_bookmark.TextIndex); // bookmark this location, but don't persist.
 		}
 
 		private IStTxtPara GetTextParagraphByIndex(int iPara)
@@ -1110,16 +1110,27 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		// Event handler to run if Ribbon changes
-		void m_logic_Ribbon_Changed(object sender, EventArgs e)
+		void OnLogicRibbonChanged(object sender, EventArgs e)
 		{
 			int iPara, offset;
 			// 'out' vars for NextInputIsChOrph()
 			// Tests ribbon contents
 			if (m_logic.NextInputIsChOrph(out iPara, out offset))
 			{
-				Debug.Assert(m_bookmark != null, "Hit null bookmark. Why?");
 				if (m_bookmark != null)
+				{
 					m_bookmark.Reset(m_bookmark.TextIndex);
+				}
+				else
+				{
+					// This code path was unexpected but the conditions were seen in a crash stack
+					// from the field. We will avoid NullReference by attempting to get a bookmark to use
+					// and checking for a null bookmark in PrepareForChOrphInsert.
+					// This very well could be the right thing to do, but understanding why the bookmark is null
+					// is worthwhile
+					m_bookmark = GetAncestorBookmark(this, m_chart.BasedOnRA);
+					Debug.Fail("This is not an expected path, analyze.");
+				}
 				// Resetting of highlight is done in the array setter now.
 				PrepareForChOrphInsert(iPara, offset);
 				// scroll to ChOrph, highlight cell possibilities, set bookmark etc.
