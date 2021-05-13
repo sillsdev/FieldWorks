@@ -70,4 +70,7 @@ cd "$lib"; RUNMODE="INSTALLED" . environ; cd $OLDPWD
 #fi
 
 cd "$share" # Temporary
-exec mono --debug "$lib"/"$@"
+# If set, use externally specified commands and args to launch with a debugger.
+# Otherwise just exec with mono.
+command="${FW_COMMAND_PREFIX} ${FW_MONO_COMMAND:-mono} ${FW_MONO_OPTS} --debug ""$lib"/"$@"
+exec ${command}
