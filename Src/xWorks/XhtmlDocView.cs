@@ -1104,6 +1104,8 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
+
+
 		private void UpdateContent(string configurationFile, bool allOnOnePage = false)
 		{
 			SetInfoBarText();
@@ -1129,8 +1131,7 @@ namespace SIL.FieldWorks.XWorks
 						}
 						else
 						{
-							m_mainView.Url = new Uri(xhtmlPath);
-							m_mainView.Refresh(WebBrowserRefreshOption.Completely);
+							m_mainView.Navigate(new Uri(xhtmlPath));
 						}
 						return;
 					}

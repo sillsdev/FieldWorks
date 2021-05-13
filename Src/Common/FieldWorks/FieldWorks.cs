@@ -157,6 +157,7 @@ namespace SIL.FieldWorks
 				}
 				Xpcom.Initialize(firefoxPath);
 				GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
+				GeckoPreferences.User["print.show_print_progress"] = false;
 				// Set default browser for XWebBrowser to use GeckoFX.
 				// This can still be changed per instance by passing a parameter to the constructor.
 				XWebBrowser.DefaultBrowserType = XWebBrowser.BrowserType.GeckoFx;
