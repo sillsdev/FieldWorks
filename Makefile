@@ -6,7 +6,7 @@
 #
 #	MarkS - 2007-08-08
 
-FW_PACKAGE_DEBUG = false
+FW_PACKAGE_DEBUG ?= false
 BUILD_TOOL = msbuild
 # Verbosity: normal or detailed
 MSBUILD_ARGS ?= -verbosity:normal
