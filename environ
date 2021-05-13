@@ -42,7 +42,7 @@ MONO_SILPKGDIR="${MONO_SILPKGDIR:-/opt/mono5-sil}"
 # search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH
 . ./environ-xulrunner
 [ -d /usr/lib/cli/gdk-sharp-2.0 ] && GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0/
-ENC_CONVERTERS=/usr/lib/fieldworks
+ENC_CONVERTERS="${INSTALLATION_PREFIX}/lib/fieldworks"
 
 MONO_RUNTIME=v4.0.30319
 MONO_DEBUG=explicit-null-checks
@@ -52,11 +52,11 @@ MONO_ENV_OPTIONS="-O=-gshared"
 if [ "$RUNMODE" != "INSTALLED" ]
 then
 	PATH="${BASE}/Output_${ARCH}/${BUILD}:\
-/usr/lib/fieldworks/icu-bin:\
+${INSTALLATION_PREFIX}/lib/fieldworks/icu-bin:\
 ${COM}/build${ARCH}/bin:\
 ${PATH}"
 	LD_LIBRARY_PATH="${BASE}/Output_${ARCH}/${BUILD}:\
-/usr/lib/fieldworks/lib:\
+${INSTALLATION_PREFIX}/lib/fieldworks/lib:\
 ${COM}/build${ARCH}/lib:\
 ${LD_LIBRARY_PATH}"
 fi
@@ -66,7 +66,7 @@ PKG_CONFIG_PATH="${PKG_CONFIG_PATH:-/usr/lib/pkgconfig:/usr/share/pkgconfig}"
 # Add packaged mono items to paths
 PATH="${MONO_SILPKGDIR}/bin:${PATH}"
 LD_LIBRARY_PATH="${MONO_SILPKGDIR}/lib:${ENC_CONVERTERS}:${LD_LIBRARY_PATH}"
-PKG_CONFIG_PATH="${MONO_SILPKGDIR}/lib/pkgconfig:/usr/lib/fieldworks/lib/pkgconfig:${PKG_CONFIG_PATH}"
+PKG_CONFIG_PATH="${MONO_SILPKGDIR}/lib/pkgconfig:${INSTALLATION_PREFIX}/lib/fieldworks/lib/pkgconfig:${PKG_CONFIG_PATH}"
 MONO_GAC_PREFIX="${MONO_SILPKGDIR}:${ENC_CONVERTERS}:/usr:${MONO_PREFIX}"
 
 if [ "$RUNMODE" != "PACKAGING" ]
@@ -117,9 +117,9 @@ MONO_MWF_SCALING=disable
 # If the standard installation directory for FLExBridge exists, and the environment
 # variable is not yet set, set the environment variable for finding FLExBridge.
 # (Setting the LocalMachine registry value at installation doesn't work for Linux.)
-if [ -z "$FLEXBRIDGEDIR" -a -d "/usr/lib/flexbridge" ]
+if [ -z "$FLEXBRIDGEDIR" -a -d "${INSTALLATION_PREFIX}/lib/flexbridge" ]
 then
-	FLEXBRIDGEDIR="/usr/lib/flexbridge"
+	FLEXBRIDGEDIR="${INSTALLATION_PREFIX}/lib/flexbridge"
 fi
 
 export \
