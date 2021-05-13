@@ -757,7 +757,11 @@ namespace SIL.FieldWorks.XWorks
 				void PrintAfterRefresh(object sender, EventArgs args)
 				{
 					Application.Idle -= PrintAfterRefresh;
-					PrintPage(m_mainView);
+					// The user may become impatient and cancel; don't try to print if this happens
+					if (!IsDisposed)
+					{
+						PrintPage(m_mainView);
+					}
 				}
 				Application.Idle += PrintAfterRefresh;
 			}
