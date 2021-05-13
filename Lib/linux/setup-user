@@ -6,6 +6,8 @@
 # see http://standards.freedesktop.org/basedir-spec/basedir-spec-0.6.html for standard
 # locations and environment variables
 
+[[ -z ${FW_DEBUG} ]] || set -x
+
 XDG_DATA_HOME=${XDG_DATA_HOME:-${HOME}/.local/share}
 XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}
 
@@ -19,8 +21,19 @@ FW_SHARE=$prefix/share/fieldworks
 WRITEKEY="${FW_LIB}/WriteKey.exe"
 READKEY="${FW_LIB}/ReadKey.exe"
 
+# Usage: Debug "foo baz" "bar"
+Debug()
+{
+	[[ -z ${FW_DEBUG} ]] || echo -e "$(date +'%F %T') setup-user[$$]: " "$@"
+}
+
+Debug "XDG_DATA_HOME is ${XDG_DATA_HOME}"
+Debug "XDG_CONFIG_HOME is ${XDG_CONFIG_HOME}"
+Debug "prefix is ${prefix}"
+
 WriteKey()
 {
+	Debug "Writing" "$@"
 	mono "${WRITEKEY}" "$@"
 }
 
@@ -78,6 +91,7 @@ CopyRegistryKey()
 
 	# Are there FW 9 registry settings?
 	if ReadKey LM "Software/SIL/FieldWorks/9" "ProjectsDir" 2>/dev/null; then
+		Debug "There are already FW 9 registry settings."
 		# All done!
 		:
 	else

@@ -8,6 +8,8 @@
 # - INSTALLED: when running an installed package
 # - PACKAGING: while building the package
 
+[[ -z ${FW_DEBUG} ]] || set -x
+
 # Unset things from incoming environment to avoid unexpected behaviour, such
 # as when FW is run from PT. Restore path to something basic, along with the
 # dotnet tools path, if present.

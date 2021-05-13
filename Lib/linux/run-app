@@ -2,12 +2,19 @@
 
 # Run a FieldWorks application
 
+[[ -z ${FW_DEBUG} ]] || set -x
+
 scriptdir=$(dirname "$0")
 prefix=$(cd "$scriptdir/../.."; /bin/pwd)
 lib=$prefix/lib/fieldworks
 share=$prefix/share/fieldworks
 sharedWsRoot=/var/lib/fieldworks
 sharedWs=$sharedWsRoot/SIL/WritingSystemStore
+
+# Usage: debug "foo baz" "bar"
+debug() {
+  [[ -z ${FW_DEBUG} ]] || echo -e "$(date +'%F %T') run-app[$$]: " "$@"
+}
 
 # Test for write permissions in global writing system store.
 # If things are not set right, tell the user about it, erring on the side of
@@ -73,4 +80,5 @@ cd "$share" # Temporary
 # If set, use externally specified commands and args to launch with a debugger.
 # Otherwise just exec with mono.
 command="${FW_COMMAND_PREFIX} ${FW_MONO_COMMAND:-mono} ${FW_MONO_OPTS} --debug ""$lib"/"$@"
+debug "Executing ${command} from dir $(pwd) in the following environment:\n$(env)"
 exec ${command}
