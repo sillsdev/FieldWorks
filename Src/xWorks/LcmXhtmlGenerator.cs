@@ -1,6 +1,6 @@
-// // Copyright (c) $year$ SIL International
-// // This software is licensed under the LGPL, version 2.1 or later
-// // (http://www.gnu.org/licenses/lgpl-2.1.html)
+// Copyright (c) 2014-$year$ SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
@@ -29,7 +29,13 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This is the limit for the number of entries allowed on a single page of the output (used only when generating internal previews)
 		/// </summary>
+#if DEBUG
+		// Assembling fragments and letter headings takes a long time when debugging, but doesn't seem to be a problem otherwise.
+		// Spare developers some pain until resolving this becomes a priority.
+		public const int EntriesPerPage = 100;
+#else
 		public const int EntriesPerPage = 1000;
+#endif
 
 
 		/// <summary>

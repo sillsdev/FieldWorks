@@ -146,8 +146,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-
-
 		/// <summary>
 		/// Used to verify current content control so that Find Lexical Entry behaves differently
 		/// in Dictionary View.
@@ -1104,8 +1102,6 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-
-
 		private void UpdateContent(string configurationFile, bool allOnOnePage = false)
 		{
 			SetInfoBarText();
@@ -1283,7 +1279,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private const int kSpaceForMenuButton = 26;
-
 
 		protected override void OnSizeChanged(EventArgs e)
 		{

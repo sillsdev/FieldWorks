@@ -2554,7 +2554,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your dictionary has {1} entries that match the current filter, but to speed performance, only {0} are shown at a time. Would you like to print all {1} entries?.
+        ///   Looks up a localized string similar to There are {1} entries that match the current filter, but to improve performance, only {0} entries are displayed at a time. Do you want to generate all {1} entries so they are available to print at the same time?.
         /// </summary>
         internal static string promptGenerateAllEntriesBeforePrinting_ShowingXofX {
             get {

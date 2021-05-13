@@ -1058,7 +1058,7 @@ If you are not the one designated user who adds fields, or you are making some o
     <comment>dialog title</comment>
   </data>
   <data name="promptGenerateAllEntriesBeforePrinting_ShowingXofX" xml:space="preserve">
-    <value>Your dictionary has {1} entries that match the current filter, but to speed performance, only {0} are shown at a time. Would you like to print all {1} entries?</value>
+    <value>There are {1} entries that match the current filter, but to improve performance, only {0} entries are displayed at a time. Do you want to generate all {1} entries so they are available to print at the same time?</value>
     <comment>Message shown when the user chooses Print in the Dictionary view, and not all entries are being shown. Options are Yes and No.</comment>
   </data>
   <data name="ksSubsenseNumberConfig" xml:space="preserve">
