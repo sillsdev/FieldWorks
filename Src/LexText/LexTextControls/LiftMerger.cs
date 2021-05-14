@@ -133,7 +133,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			/// <summary>When there's a conflict, keep both the existing data and the data in the LIFT file.</summary>
 			MsKeepBoth = 3,
 			/// <summary>Throw away any existing entries/senses/... that are not in the LIFT file.</summary>
-			MsKeepOnlyNew = 4
+			MsKeepOnlyNew = 4,
+			/// <summary>When there's a conflict, keep the data in the LIFT file. Throw away moved entries/senses/.
+			/// This import was designed to import data from The Combine</summary>
+			MsTheCombine = 5
 		}
 		MergeStyle m_msImport = MergeStyle.MsKeepOld;
 
@@ -1184,7 +1187,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			MergeInMultiUnicode(feat.Abbreviation, FsFeatDefnTags.kflidAbbreviation, abbrev, feat.Guid);
 			MergeInMultiUnicode(feat.Name, FsFeatDefnTags.kflidName, label, feat.Guid);
 			MergeInMultiString(feat.Description, FsFeatDefnTags.kflidDescription, description, feat.Guid);
-			if (fNew || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
+			if (fNew || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				if (!String.IsNullOrEmpty(sCatalogId))
 					feat.CatalogSourceId = sCatalogId;
@@ -1222,7 +1225,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (sComplexType == null)
 				return;		// The user didn't give a type -- see LT-15112.
 			if (featComplex.TypeRA == null ||
-				m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
+				m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				IFsFeatStrucType featType;
 				if (m_mapIdFeatStrucType.TryGetValue(sComplexType, out featType))
@@ -1242,13 +1245,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void FinishMergingOpenFeatDefn(IFsOpenFeature featOpen, int nWsSelector, string sWs)
 		{
 			if (featOpen.WsSelector == 0 ||
-				m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
+				m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				if (nWsSelector != 0)
 					featOpen.WsSelector = nWsSelector;
 			}
 			if (string.IsNullOrEmpty(featOpen.WritingSystem) ||
-				m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
+				m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				if (!string.IsNullOrEmpty(sWs))
 					featOpen.WritingSystem = sWs;
@@ -1263,7 +1266,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			string id)
 		{
 			if (featClosed.ValuesOC.Count == 0 ||
-				m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
+				m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				IFsSymFeatVal featValue;
 				var rgsMissing = new List<string>(rgsValues.Count);
@@ -1453,13 +1456,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			MergeInMultiUnicode(featType.Name, FsFeatDefnTags.kflidName, label, featType.Guid);
 			MergeInMultiString(featType.Description, FsFeatDefnTags.kflidDescription, description, featType.Guid);
 			if (featType.CatalogSourceId == null ||
-				m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
+				m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				if (!String.IsNullOrEmpty(sCatalogId))
 					featType.CatalogSourceId = sCatalogId;
 			}
 			if (featType.FeaturesRS.Count == 0 ||
-				m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
+				m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				IFsFeatDefn feat;
 				featType.FeaturesRS.Clear();
@@ -1577,7 +1580,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			MergeInMultiUnicode(val.Abbreviation, FsSymFeatValTags.kflidAbbreviation, abbrev, val.Guid);
 			MergeInMultiUnicode(val.Name, FsSymFeatValTags.kflidName, label, val.Guid);
 			MergeInMultiString(val.Description, FsSymFeatValTags.kflidDescription, description, val.Guid);
-			if (fNew || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
+			if (fNew || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				if (!String.IsNullOrEmpty(sCatalogId))
 					val.CatalogSourceId = sCatalogId;
@@ -2038,8 +2041,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (ls != null)
 					setUsed.Add(ls.Hvo);
 			}
-			// If we're keeping only the imported data, delete any unused senses.
-			if (m_msImport == MergeStyle.MsKeepOnlyNew)
+			// If we're keeping only the imported data, delete any unused or moved senses.
+			if (m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				foreach (int hvo in le.SensesOS.ToHvoArray())
 				{
@@ -2669,6 +2672,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						}
 						break;
 					case MergeStyle.MsKeepNew:
+					case MergeStyle.MsTheCombine:
 						// Replace old paragraph contents with the new.  If there are extra old paragraphs,
 						// keep them.  (This decision is apt to change.)
 						for (var i = 0; i < cparaNew; ++i)
@@ -3999,7 +4003,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					setUsed.Add(lsSub.Hvo);
 			}
 			// If we're keeping only the imported data, delete any unused subsense.
-			if (m_msImport == MergeStyle.MsKeepOnlyNew)
+			if (m_msImport == MergeStyle.MsKeepOnlyNew  || m_msImport == MergeStyle.MsTheCombine)
 			{
 				foreach (int hvo in ls.SensesOS.ToHvoArray())
 				{
@@ -4059,7 +4063,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					setUsed.Add(les.Hvo);
 			}
 			// If we're keeping only the imported data, delete any unused example.
-			if (m_msImport == MergeStyle.MsKeepOnlyNew)
+			if (m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				foreach (int hvo in ls.ExamplesOS.ToHvoArray())
 				{
@@ -4293,7 +4297,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					setUsed.Add(ct.Hvo);
 			}
 			// If we're keeping only the imported data, erase any unused existing data first.
-			if (m_msImport == MergeStyle.MsKeepOnlyNew)
+			if (m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				foreach (int hvo in les.TranslationsOC.ToHvoArray())
 				{

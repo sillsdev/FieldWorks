@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private IThreadedProgress m_progressDlg;
 		string m_sLogFile;      // name of HTML log file (if successful).
 
-		private FlexLiftMerger.MergeStyle m_msImport = FlexLiftMerger.MergeStyle.MsKeepOnlyNew;
+		private FlexLiftMerger.MergeStyle m_msImport = FlexLiftMerger.MergeStyle.MsTheCombine;
 
 		public CombineImportDlg()
 		{
@@ -154,7 +154,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Prepare this dialog to import from a Combine zip file.
 		///
 		/// </summary>
-		private string PrepareImport(string importZipFile)
+		private string PrepareImport(string importZipFile, string originalFile)
 		{
 			if (string.IsNullOrEmpty(importZipFile))
 			{
@@ -173,11 +173,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			catch (Exception error)
 			{
-				var message = string.Format(LexTextControls.ksLIFTImportProblem,
-					importZipFile, error.Message);
+				var message = string.Format(LexTextControls.ksLIFTCombineImportProblem,
+					originalFile, error.Message);
 				MessageBox.Show(message, LexTextControls.ksProblemImporting,
 					MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				throw;
+				return "";
 			}
 		}
 
@@ -207,7 +207,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				LdmlFileBackup.CopyFile(originalFile, tempFileName);
 
-				var tempLiftFile = PrepareImport(tempFileName);
+				var tempLiftFile = PrepareImport(tempFileName, originalFile);
+				if (string.IsNullOrWhiteSpace(tempLiftFile))
+					return null;
 
 				var fileName = tempLiftFile;
 				// Validate the Combine file.

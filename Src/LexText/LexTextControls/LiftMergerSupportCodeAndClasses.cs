@@ -2580,10 +2580,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			WriteAccumulatedResidue();
 
 			// If we're keeping only the imported data, erase any unused entries or senses.
-			if (m_msImport == MergeStyle.MsKeepOnlyNew)
+			if (m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				progress.Message = LexTextControls.ksDeletingUnwantedEntries;
-				GatherUnwantedObjects(originalLexEntryRefs, originalLexRefs); //at this point any LexRefs which haven't been matched are dead.
+				if (m_msImport == MergeStyle.MsKeepOnlyNew)
+					GatherUnwantedObjects(originalLexEntryRefs, originalLexRefs); //at this point any LexRefs which haven't been matched are dead.
 				DeleteUnwantedObjects();
 			}
 			// Now that the relations have all been set, it's safe to set the entry

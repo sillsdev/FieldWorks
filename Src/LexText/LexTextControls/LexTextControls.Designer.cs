@@ -1727,6 +1727,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Something is wrong with the data in {0}. If it was a zip file exported from The Combine please contact us at flex_errors@sil.org.
+        /// </summary>
+        internal static string ksLIFTCombineImportProblem {
+            get {
+                return ResourceManager.GetString("ksLIFTCombineImportProblem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Something went wrong while FieldWorks was attempting to import {0}.
         ///{1}
         ///
