@@ -113,6 +113,8 @@ install-tree-fdo:
 	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/libTECkit{,_Compiler}*.so
 
 install-man-pages: fieldworks-flex.1.gz unicodechareditor.1.gz
+	install -d $(DESTDIR)$(INSTALLATION_PREFIX)/share/man/man1
+	install -m 644 *.1.gz $(DESTDIR)$(INSTALLATION_PREFIX)/share/man/man1
 
 install-tree: install-tree-fdo
 	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then find "$(BUILD_ROOT)" "$(DESTDIR)"; fi
@@ -120,7 +122,6 @@ install-tree: install-tree-fdo
 	install -d $(DESTDIR)$(INSTALLATION_PREFIX)/bin
 	install -d $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks
 	install -d $(DESTDIR)$(INSTALLATION_PREFIX)/share/fieldworks
-	install -d $(DESTDIR)$(INSTALLATION_PREFIX)/share/man/man1
 	install -d $(DESTDIR)/etc/profile.d
 	# Install libraries and their support files
 	install -m 644 DistFiles/*.{dll*,so} $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks
@@ -140,8 +141,6 @@ install-tree: install-tree-fdo
 	install -m 644 DistFiles/*.{txt,reg} $(DESTDIR)$(INSTALLATION_PREFIX)/share/fieldworks
 	cp -pdr DistFiles/{"Editorial Checks",EncodingConverters} $(DESTDIR)$(INSTALLATION_PREFIX)/share/fieldworks
 	cp -pdr DistFiles/{Helps,Fonts,Graphite,Keyboards,"Language Explorer",Parts} $(DESTDIR)$(INSTALLATION_PREFIX)/share/fieldworks
-	# Install man pages
-	install -m 644 *.1.gz $(DESTDIR)$(INSTALLATION_PREFIX)/share/man/man1
 	# Handle the Converter files
 	mv $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/{Converter.exe,ConvertLib.dll,ConverterConsole.exe} $(DESTDIR)$(INSTALLATION_PREFIX)/share/fieldworks
 	# Remove unwanted items
