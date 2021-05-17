@@ -2012,13 +2012,12 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			var tool = m_propertyTable.GetValue<MultiPane>("currentContentControlObject", null);
-			if (tool != null)
+			if (m_propertyTable.GetValue<Control>("currentContentControlObject", null) is MultiPane tool)
 			{
 				// We want to print only if this tool is selected for printing, or if nothing has been selected.
 				// or if no default has been specified.
-				if ((tool).PrintPane == m_id ||
-					(tool).PrintPane == "")
+				if (tool.PrintPane == m_id ||
+					tool.PrintPane == "")
 				{
 					return base.OnPrint(args);
 				}
