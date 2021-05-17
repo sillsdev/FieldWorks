@@ -537,6 +537,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Finished generating entries..
+        /// </summary>
+        internal static string FinishedGeneratingEntries {
+            get {
+                return ResourceManager.GetString("FinishedGeneratingEntries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to First Analysis Writing System.
         /// </summary>
         internal static string FirstAnalysisWs {

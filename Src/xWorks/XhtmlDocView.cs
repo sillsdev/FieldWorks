@@ -21,6 +21,7 @@ using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Utils;
 using SIL.Windows.Forms.HtmlBrowser;
 using XCore;
@@ -760,6 +761,12 @@ namespace SIL.FieldWorks.XWorks
 					// The user may become impatient and cancel; don't try to print if this happens
 					if (!IsDisposed)
 					{
+						if (Platform.IsUnix)
+						{
+							// Trying to print immediately on idle on Linux leads to a COMException.
+							// This dialog buys enough time for the page to finish loading.
+							MessageBox.Show(xWorksStrings.FinishedGeneratingEntries);
+						}
 						PrintPage(m_mainView);
 					}
 				}
