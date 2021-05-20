@@ -374,7 +374,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void HelpClicked(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpImportLIFT");
+			ShowHelp.ShowHelpTopic(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), "khtpImportTheCombine");
 		}
 	}
 }
