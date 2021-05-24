@@ -281,15 +281,11 @@
 		<MasterVersionInfo>$(fwrt)/Src/MasterVersionInfo.txt</MasterVersionInfo>
 		<TeamCityUrl>https://build.palaso.org/</TeamCityUrl>
 
-		<!-- Chorus_Win32masterContinuous is the master branch build of Chorus for Windows development. Update when appropriate. -->
-		<ChorusBuildType Condition="'$(OS)'=='Windows_NT'">Chorus_Win32masterContinuous</ChorusBuildType>
-		<!-- Chorus_Linux64masterContinuous is the master branch build of Chorus for Linux development. Update when appropriate. -->
-		<ChorusBuildType Condition="'$(OS)'=='Unix'">Chorus_Linux64masterContinuous</ChorusBuildType>
-		<ChorusBuildTag>fw-9.1.3.tcbuildtag</ChorusBuildTag>
-		<!-- Libpalaso_PalasoWinmasterContinuous is the master branch build of Palaso for Windows development. Update when appropriate. -->
+		<ChorusBuildType Condition="'$(OS)'=='Windows_NT'">Chorus_Win32v30Continuous</ChorusBuildType>
+		<ChorusBuildType Condition="'$(OS)'=='Unix'">Chorus_Linux30Continuous</ChorusBuildType>
+		<ChorusBuildTag>.lastSuccessful</ChorusBuildTag>
 		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Libpalaso_Palaso60win32Continuous</PalasoBuildType>
 		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Libpalaso_PalasoWin60Continuous</PalasoBuildType>
-		<!-- bt322 is the master branch build of Palaso for Linux development. Update when appropriate. -->
 		<PalasoBuildType Condition="'$(OS)'=='Unix'">Libpalaso_Palaso60linuxContinuous</PalasoBuildType>
 		<PalasoBuildTag>.lastSuccessful</PalasoBuildTag>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
