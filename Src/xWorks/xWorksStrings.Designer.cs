@@ -852,7 +852,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You cannot promote part of one discourse chart template to a new template. In fact, currently we do not support having more than one template at all..
+        ///   Looks up a localized string similar to You cannot promote part of one discourse chart template to a new template..
         /// </summary>
         internal static string ksCantPromoteGroupToTemplate {
             get {
