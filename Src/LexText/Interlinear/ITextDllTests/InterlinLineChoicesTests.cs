@@ -2,10 +2,12 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
@@ -305,6 +307,104 @@ namespace SIL.FieldWorks.IText
 			Assert.AreEqual(InterlinLineChoices.kflidLitTrans, choices[9].Flid);
 
 			Assert.AreEqual(wsGer, choices[4].WritingSystem);
+		}
+
+		[Test]
+		public void NewCustomFieldAddedAfterRestore()
+		{
+			var wsManager = new WritingSystemManager();
+			CoreWritingSystemDefinition enWs;
+			wsManager.GetOrSet("en", out enWs);
+			var wsEng = enWs.Handle;
+
+			CoreWritingSystemDefinition frWs;
+			wsManager.GetOrSet("fr", out frWs);
+			var wsFrn = frWs.Handle;
+
+			CoreWritingSystemDefinition deWs;
+			wsManager.GetOrSet("de", out deWs);
+			var wsGer = deWs.Handle;
+
+			var choices = new InterlinLineChoices(m_lp, wsFrn, wsEng);
+			MakeStandardState(choices);
+			var persist = choices.Persist(wsManager);
+			var choicesCountBeforeCustomField = choices.AllLineOptions.Count;
+			using (var cf = new CustomFieldForTest(Cache,
+				"Candy Apple Red",
+				Cache.MetaDataCacheAccessor.GetClassId("Segment"),
+				WritingSystemServices.kwsAnal,
+				CellarPropertyType.String,
+				Guid.Empty))
+			{
+				choices = InterlinLineChoices.Restore(persist, wsManager, m_lp, wsFrn, wsEng);
+
+				Assert.That(choices.AllLineOptions.Count, Is.EqualTo(choicesCountBeforeCustomField + 1));
+				Assert.That(choices.AllLineOptions[choicesCountBeforeCustomField].Flid, Is.EqualTo(cf.Flid));
+
+				// Verify that the choices are not disturbed by the new custom field
+				Assert.That(choices[0].Flid, Is.EqualTo(InterlinLineChoices.kflidWord));
+				Assert.That(choices[1].Flid, Is.EqualTo(InterlinLineChoices.kflidMorphemes));
+				Assert.That(choices[2].Flid, Is.EqualTo(InterlinLineChoices.kflidLexEntries));
+				Assert.That(choices[3].Flid, Is.EqualTo(InterlinLineChoices.kflidLexGloss));
+				Assert.That(choices[4].Flid, Is.EqualTo(InterlinLineChoices.kflidLexPos));
+				Assert.That(choices[5].Flid, Is.EqualTo(InterlinLineChoices.kflidWordGloss));
+				Assert.That(choices[6].Flid, Is.EqualTo(InterlinLineChoices.kflidWordPos));
+				Assert.That(choices[7].Flid, Is.EqualTo(InterlinLineChoices.kflidFreeTrans));
+				Assert.That(choices[8].Flid, Is.EqualTo(InterlinLineChoices.kflidLitTrans));
+			}
+		}
+
+		[Test]
+		public void DeletedCustomFieldRemovedAfterRestore()
+		{
+			var wsManager = new WritingSystemManager();
+			CoreWritingSystemDefinition enWs;
+			wsManager.GetOrSet("en", out enWs);
+			var wsEng = enWs.Handle;
+
+			CoreWritingSystemDefinition frWs;
+			wsManager.GetOrSet("fr", out frWs);
+			var wsFrn = frWs.Handle;
+
+			CoreWritingSystemDefinition deWs;
+			wsManager.GetOrSet("de", out deWs);
+			var wsGer = deWs.Handle;
+
+			InterlinLineChoices choices;
+			int choicesCountWithCustomField;
+			string persist;
+			using (var cf = new CustomFieldForTest(Cache,
+				"Candy Apple Red",
+				Cache.MetaDataCacheAccessor.GetClassId("Segment"),
+				WritingSystemServices.kwsAnal,
+				CellarPropertyType.String,
+				Guid.Empty))
+			{
+				choices = new InterlinLineChoices(m_lp, wsFrn, wsEng);
+				MakeStandardState(choices);
+				choices.Add(cf.Flid);
+				persist = choices.Persist(wsManager);
+				choicesCountWithCustomField = choices.Count;
+			}
+
+			choices = InterlinLineChoices.Restore(persist, wsManager, m_lp, wsFrn, wsEng);
+
+			Assert.That(choices.Count, Is.EqualTo(choicesCountWithCustomField - 1));
+
+			Assert.That(choices[0].Flid, Is.EqualTo(InterlinLineChoices.kflidWord));
+			Assert.That(choices[1].Flid, Is.EqualTo(InterlinLineChoices.kflidMorphemes));
+			Assert.That(choices[2].Flid, Is.EqualTo(InterlinLineChoices.kflidLexEntries));
+			Assert.That(choices[3].Flid, Is.EqualTo(InterlinLineChoices.kflidLexGloss));
+			Assert.That(choices[4].Flid, Is.EqualTo(InterlinLineChoices.kflidLexPos));
+			Assert.That(choices[5].Flid, Is.EqualTo(InterlinLineChoices.kflidWordGloss));
+			Assert.That(choices[6].Flid, Is.EqualTo(InterlinLineChoices.kflidWordPos));
+			Assert.That(choices[7].Flid, Is.EqualTo(InterlinLineChoices.kflidFreeTrans));
+			Assert.That(choices[8].Flid, Is.EqualTo(InterlinLineChoices.kflidLitTrans));
+
+			// Check writing systems assigned by default.
+			Assert.That(choices[0].WritingSystem, Is.EqualTo(wsFrn));
+			Assert.That(choices[5].WritingSystem, Is.EqualTo(wsEng));
+			Assert.That(choices[2].WritingSystem, Is.EqualTo(wsFrn));
 		}
 
 		[Test]

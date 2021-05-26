@@ -251,8 +251,6 @@ namespace SIL.FieldWorks.IText
 					propertyTable.SetPropertyPersistence(configPropName, true);
 				}
 			}
-			result.AllLineOptions = lineChoicesFlids.Select(choice => result.AllLineOptions.Find(x => x.Flid == choice))
-				.Where(optionToMove => optionToMove != null).ToList();
 			return result;
 		}
 
