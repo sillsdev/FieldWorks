@@ -276,6 +276,7 @@
     <Compile Include="BulkEditBarTests.cs">
     </Compile>
     <Compile Include="ConfigurableDictionaryNodeTests.cs" />
+    <Compile Include="ConfiguredLcmUsfmGeneratorTests.cs" />
     <Compile Include="ConfiguredXHTMLGeneratorReversalTests.cs" />
     <Compile Include="ConfiguredXHTMLGeneratorTestHelpers.cs" />
     <Compile Include="ConfiguredLcmGeneratorTests.cs" />

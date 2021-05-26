@@ -723,7 +723,7 @@ namespace SIL.FieldWorks.XWorks
 			((XmlFragmentWriter)writer).Writer.WriteAttributeString("style", css);
 		}
 
-		public void BeginLink(IFragmentWriter writer, Guid destination)
+		public void StartLink(IFragmentWriter writer, Guid destination)
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement("a");
@@ -747,7 +747,62 @@ namespace SIL.FieldWorks.XWorks
 			xw.WriteEndElement();
 		}
 
-		public void BeginEntry(IFragmentWriter writer, string className, Guid entryGuid, int index)
+		public void StartTable(IFragmentWriter writer)
+		{
+			((XmlFragmentWriter)writer).Writer.WriteStartElement("table");
+		}
+
+		public void AddTableTitle(IFragmentWriter writer, string content)
+		{
+			var xw = ((XmlFragmentWriter)writer).Writer;
+			xw.WriteStartElement("caption");
+			xw.WriteRaw(content);
+			xw.WriteEndElement(); // </caption>
+		}
+
+		public void StartTableBody(IFragmentWriter writer)
+		{
+			((XmlFragmentWriter)writer).Writer.WriteStartElement("tbody");
+		}
+
+		public void StartTableRow(IFragmentWriter writer)
+		{
+			((XmlFragmentWriter)writer).Writer.WriteStartElement("tr");
+		}
+
+		/// <summary>
+		/// Adds a &lt;td&gt; element (or &lt;th&gt; if isHead is true).
+		/// If isRightAligned is true, adds the appropriate style element.
+		/// </summary>
+		public void AddTableCell(IFragmentWriter writer, bool isHead, bool isRightAligned, string content)
+		{
+			var xw = ((XmlFragmentWriter)writer).Writer;
+			xw.WriteStartElement(isHead ? "th" : "td");
+			if (isRightAligned)
+			{
+				xw.WriteAttributeString("style", "text-align: right;");
+			}
+			xw.WriteRaw(content);
+			// WriteFullEndElement in case there is no content
+			xw.WriteFullEndElement(); // </td> or </th>
+		}
+
+		public void EndTableRow(IFragmentWriter writer)
+		{
+			((XmlFragmentWriter)writer).Writer.WriteEndElement(); // should be </tr>
+		}
+
+		public void EndTableBody(IFragmentWriter writer)
+		{
+			((XmlFragmentWriter)writer).Writer.WriteEndElement(); // should be </tbody>
+		}
+
+		public void EndTable(IFragmentWriter writer)
+		{
+			((XmlFragmentWriter)writer).Writer.WriteEndElement(); // should be </table>
+		}
+
+		public void StartEntry(IFragmentWriter writer, string className, Guid entryGuid, int index)
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement("div");

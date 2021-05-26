@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2019 SIL International
+// Copyright (c) 2014-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
 using SIL.Code;
@@ -45,6 +46,11 @@ namespace SIL.FieldWorks.XWorks
 		internal const string MovieCamera = "\U0001F3A5";
 
 		/// <summary>
+		/// Regular expression for determining whether a string should be parsed as USFM
+		/// </summary>
+		private static readonly Regex USFMTableStart = new Regex(@"\A\\(d|tr)\s+");
+
+		/// <summary>
 		/// The Assembly that the model Types should be loaded from. Allows test code to introduce a test model.
 		/// </summary>
 		internal static string AssemblyFile { get; set; }
@@ -60,15 +66,23 @@ namespace SIL.FieldWorks.XWorks
 		/// The number of entries to add to a page when the user asks to see 'a few more'
 		/// </summary>
 		/// <remarks>internal to facilitate unit tests</remarks>
-		internal static int EntriesToAddCount { get; set; }
+		internal static int EntriesToAddCount { get; }
 
 		/// <summary>
 		/// Static initializer setting the AssemblyFile to the default LCM dll.
 		/// </summary>
 		static ConfiguredLcmGenerator()
 		{
-			AssemblyFile = "SIL.LCModel";
+			Init();
 			EntriesToAddCount = 5;
+		}
+
+		/// <summary>
+		/// Sets initial values (or resets them after tests)
+		/// </summary>
+		internal static void Init()
+		{
+			AssemblyFile = "SIL.LCModel";
 		}
 
 		internal static bool IsNormalRtl(ReadOnlyPropertyTable propertyTable)
@@ -244,7 +258,7 @@ namespace SIL.FieldWorks.XWorks
 			var bldr = new StringBuilder();
 			using (var xw = settings.ContentGenerator.CreateWriter(bldr))
 			{
-				settings.ContentGenerator.BeginEntry(xw, GetClassNameAttributeForConfig(configuration), entry.Guid, index);
+				settings.ContentGenerator.StartEntry(xw, GetClassNameAttributeForConfig(configuration), entry.Guid, index);
 				settings.ContentGenerator.AddEntryData(xw, pieces);
 				settings.ContentGenerator.EndEntry(xw);
 				xw.Flush();
@@ -2384,6 +2398,10 @@ namespace SIL.FieldWorks.XWorks
 						return settings.ContentGenerator.WriteProcessedObject(false, content, null);
 				}
 			}
+			else if (config.IsCustomField && IsUSFM(fieldValue.Text))
+			{
+				return GenerateTableFromUSFM(fieldValue, config, settings, writingSystem);
+			}
 			else
 			{
 				// use the passed in writing system unless null
@@ -2411,10 +2429,9 @@ namespace SIL.FieldWorks.XWorks
 						{
 							var text = fieldValue.get_RunText(i);
 							var props = fieldValue.get_Properties(i);
-							var style = props.GetStrPropValue((int) FwTextPropType.ktptNamedStyle);
+							var style = props.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
 							writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(fieldValue.get_WritingSystem(i));
-							GenerateRunWithPossibleLink(settings, writingSystem, writer, style, text,
-								linkTarget, rightToLeft);
+							GenerateRunWithPossibleLink(settings, writingSystem, writer, style, text, linkTarget, rightToLeft);
 						}
 
 						if (fieldValue.RunCount > 1)
@@ -2478,9 +2495,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (linkDestination != Guid.Empty)
 			{
-				settings.ContentGenerator.BeginLink(writer, linkDestination);
+				settings.ContentGenerator.StartLink(writer, linkDestination);
 			}
-			const char txtlineSplit = (Char)8232; //Line-Seperator Decimal Code
+			const char txtlineSplit = (char)8232; //Line-Separator Decimal Code
 			if (text.Contains(txtlineSplit))
 			{
 				var txtContents = text.Split(txtlineSplit);
@@ -2507,20 +2524,16 @@ namespace SIL.FieldWorks.XWorks
 			settings.ContentGenerator.EndRun(writer);
 		}
 
-		/// <summary>
-		/// This method Generate XHTML for Audio file
-		/// </summary>
 		/// <param name="classname">value for class attribute for audio tag</param>
-		/// <param name="writer"></param>
 		/// <param name="audioId">value for Id attribute for audio tag</param>
 		/// <param name="srcAttribute">Source location path for audio file</param>
-		/// <param name="caption">Innertext for hyperlink</param>
-		/// <returns></returns>
+		/// <param name="caption">Inner text for hyperlink</param>
+		/// <param name="settings"/>
 		private static string GenerateXHTMLForAudioFile(string classname,
 			string audioId, string srcAttribute, string caption, GeneratorSettings settings)
 		{
-			if (String.IsNullOrEmpty(audioId) && String.IsNullOrEmpty(srcAttribute) && String.IsNullOrEmpty(caption))
-				return String.Empty;
+			if (string.IsNullOrEmpty(audioId) && string.IsNullOrEmpty(srcAttribute) && string.IsNullOrEmpty(caption))
+				return string.Empty;
 			var safeAudioId = GetSafeXHTMLId(audioId);
 			return settings.ContentGenerator.GenerateAudioLinkContent(classname, srcAttribute, caption, safeAudioId);
 		}
@@ -2530,6 +2543,89 @@ namespace SIL.FieldWorks.XWorks
 			// Prepend a letter, since some filenames start with digits, which gives an invalid id
 			// Are there other characters that are unsafe in XHTML Ids or Javascript?
 			return "g" + audioId.Replace(" ", "_").Replace("'", "_");
+		}
+
+		/// <summary>
+		/// Determines whether the candidate string should be parsed as USFM.
+		/// As of 2021.06, only strings beginning with \d (descriptive title) or \tr (table row) are supported by this code.
+		/// </summary>
+		private static bool IsUSFM(string candidate)
+		{
+			return USFMTableStart.IsMatch(candidate);
+		}
+
+		private static string GenerateTableFromUSFM(ITsString usfm, ConfigurableDictionaryNode config,
+			GeneratorSettings settings, string writingSystem)
+		{
+			var bldr = new StringBuilder();
+			using (var writer = settings.ContentGenerator.CreateWriter(bldr))
+			{
+				var usfmText = usfm.Text;
+				var firstMarker = USFMTableStart.Match(usfmText);
+				var rowBreaks = new Regex(@"\s+\\tr\s+").Matches(usfmText);
+				var firstLineLim = rowBreaks.Count > 0 ? rowBreaks[0].Index : usfm.Length;
+				settings.ContentGenerator.StartTable(writer);
+				if (firstMarker.Groups[1].ToString().Equals("d"))
+				{
+					var title = usfm.GetSubstring(firstMarker.Length, firstLineLim);
+					GenerateTableTitle(title, writer, config, settings, writingSystem);
+				}
+				settings.ContentGenerator.StartTableBody(writer);
+				if (firstMarker.Groups[1].ToString().Equals("tr"))
+				{
+					GenerateTableRow(usfm.GetSubstring(firstMarker.Length - 1, firstLineLim), writer, config, settings, writingSystem);
+				}
+
+				for (var i = 0; i < rowBreaks.Count; i++)
+				{
+					var rowMin = rowBreaks[i].Index + rowBreaks[i].Length - 1;
+					var rowLim = i + 1 < rowBreaks.Count ? rowBreaks[i + 1].Index : usfm.Length;
+					GenerateTableRow(usfm.GetSubstring(rowMin, rowLim), writer, config, settings, writingSystem);
+				}
+				settings.ContentGenerator.EndTableBody(writer);
+				settings.ContentGenerator.EndTable(writer);
+				writer.Flush();
+			}
+			return bldr.ToString();
+			// TODO (Hasso) 2021.06: catch !implExc (esp. until impl'd for JSON)
+			// TODO (Hasso) 2021.06: handle bad USFM?
+		}
+
+		/// <summary>
+		/// Generate the table title from USFM (\d descriptive title in USFM)
+		/// </summary>
+		private static void GenerateTableTitle(ITsString title, IFragmentWriter writer,
+			ConfigurableDictionaryNode config, GeneratorSettings settings, string writingSystem)
+		{
+			settings.ContentGenerator.AddTableTitle(writer, GenerateXHTMLForString(title, config, settings, writingSystem));
+		}
+
+		/// <remarks>
+		/// rowUSFM should have at least one leading whitespace character so that the regular expression matches the first \tc# or \th#
+		/// </remarks>>
+		private static void GenerateTableRow(ITsString rowUSFM, IFragmentWriter writer,
+			ConfigurableDictionaryNode config, GeneratorSettings settings, string writingSystem)
+		{
+			settings.ContentGenerator.StartTableRow(writer);
+			var usfmText = rowUSFM.Text;
+			var cellMarker = new Regex(@"\s+\\t(c|h)r?\d+\s+");
+			for (Match curCellMarker = cellMarker.Match(usfmText), nextCellMarker; curCellMarker.Success; curCellMarker = nextCellMarker)
+			{
+				var cellMin = curCellMarker.Index + curCellMarker.Length;
+				// Allow shared whitespace in case of empty cells
+				nextCellMarker = cellMarker.Match(usfmText, cellMin - 1);
+				var cellLim = nextCellMarker.Success ? nextCellMarker.Index : usfmText.Length;
+				var cellContent = cellMin < cellLim
+					? GenerateXHTMLForString(rowUSFM.GetSubstring(cellMin, cellLim), config, settings, writingSystem)
+					: string.Empty;
+				GenerateTableCell(curCellMarker, cellContent, writer, settings);
+			}
+			settings.ContentGenerator.EndTableRow(writer);
+		}
+
+		private static void GenerateTableCell(Match cellMarker, string contentXHTML, IFragmentWriter writer, GeneratorSettings settings)
+		{
+			settings.ContentGenerator.AddTableCell(writer, cellMarker.Groups[1].Value.Equals("h"), cellMarker.Value.Contains("r"), contentXHTML);
 		}
 
 		internal static bool IsBlockProperty(ConfigurableDictionaryNode config)

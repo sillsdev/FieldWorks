@@ -71,17 +71,19 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[TestFixtureTearDown]
-		protected void TearDown()
+		public override void FixtureTeardown()
 		{
+			ConfiguredLcmGenerator.Init();
 			m_application.Dispose();
 			m_window.PropTable.Dispose();
 			FwRegistrySettings.Release();
+			base.FixtureTeardown();
 		}
 
 		[SetUp]
-		public void ResetAssemblyFile()
+		public void Setup()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
+			ConfiguredLcmGenerator.Init();
 			if (!m_styleSheet.Styles.Contains("FooStyle"))
 			{
 				GenerateStyle("FooStyle");

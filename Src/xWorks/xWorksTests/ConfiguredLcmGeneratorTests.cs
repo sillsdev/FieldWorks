@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2019 SIL International
+// Copyright (c) 2014-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -27,6 +27,7 @@ namespace SIL.FieldWorks.XWorks
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
+			ConfiguredLcmGenerator.Init();
 			base.FixtureTeardown();
 			Dispose();
 		}
@@ -352,7 +353,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GetPropertyTypeForConfigurationNode_StTextReturnsPrimitive()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
+			ConfiguredLcmGenerator.Init();
 			var fieldName = "CustomMultiPara";
 			using (var customField = new CustomFieldForTest(Cache, fieldName, fieldName, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), StTextTags.kClassId, -1,
 			 CellarPropertyType.OwningAtomic, Guid.Empty))

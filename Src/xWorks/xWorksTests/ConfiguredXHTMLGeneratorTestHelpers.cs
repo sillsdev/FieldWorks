@@ -117,6 +117,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="cache"></param>
 		/// <param name="headword">Optional: defaults to 'Citation'</param>
 		/// <param name="gloss">Optional: defaults to 'gloss'</param>
+		/// <param name="definition">Optional: default is to omit</param>
 		/// <returns></returns>
 		internal static ILexEntry CreateInterestingLexEntry(LcmCache cache, string headword = "Citation", string gloss = "gloss", string definition = null)
 		{

@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.XWorks
 		[TestFixtureTearDown]
 		public override void FixtureTeardown()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
+			ConfiguredLcmGenerator.Init();
 			base.FixtureTeardown();
 			Dispose();
 		}
@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.XWorks
 				mockView.Model.Configurations = testConfig;
 				mockView.Model.Reversals = reversalConfig;
 				// Build model sufficient to generate xhtml and css
-				ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
+				ConfiguredLcmGenerator.Init();
 				var mainHeadwordNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "HeadWord",

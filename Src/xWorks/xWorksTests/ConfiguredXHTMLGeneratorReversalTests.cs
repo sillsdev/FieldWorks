@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -43,6 +43,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			base.FixtureSetup();
 
+			ConfiguredLcmGenerator.Init();
 			FwRegistrySettings.Init();
 			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
 			var m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory,
@@ -103,7 +104,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_LexemeFormConfigurationGeneratesCorrectResult()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var reversalFormNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalForm",
@@ -138,7 +138,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_PrimaryEntryReferencesWork_ComplexFormOfEntry()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry("spokesmanRevForm", "porte-parole", "spokesman:gloss");
 			var sense = reversalEntry.SensesRS.First();
@@ -159,7 +158,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_PrimaryEntryReferencesWork_ComplexFormOfSense()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry("spokesmanRevForm", "porte-parole", "spokesman:gloss");
 			var sense = reversalEntry.SensesRS.First();
@@ -177,7 +175,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_PrimaryEntryReferencesWork_VariantFormOfSense()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry("speechRevForm", "parol", "speech:gloss");
 			var variantEntry = reversalEntry.SensesRS.First().Owner as ILexEntry;
@@ -195,7 +192,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_PrimaryEntryReferencesWork_VariantFormOfEntry()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry("speechRevForm", "parol", "speech:gloss");
 			var variantEntry = reversalEntry.SensesRS.First().Owner as ILexEntry;
@@ -214,7 +210,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_PrimaryEntryReferences_Ordered()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 
 			var reversalEntry = CreateInterestingEnglishReversalEntry();
@@ -377,7 +372,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_ReversalStringGeneratesContent()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var formNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalForm",
@@ -413,7 +407,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SenseNumbersGeneratedForMultipleReferencedSenses()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalName",
@@ -479,7 +472,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_VernacularFormWithSubSenses()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalName",
@@ -535,7 +527,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_VernacularFormWithSubSensesinReversalSubEntry()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalName",
@@ -597,7 +588,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SameGramInfoCollapsesOnDemand()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var defOrGlossNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "DefinitionOrGloss",

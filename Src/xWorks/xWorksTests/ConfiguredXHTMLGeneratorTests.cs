@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.XWorks
 		public void ResetModelAssembly()
 		{
 			// Specific tests override this, reset to SIL.LCModel.dll needed by most tests in the file
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
+			ConfiguredLcmGenerator.Init();
 		}
 
 		const string xpathThruSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']";

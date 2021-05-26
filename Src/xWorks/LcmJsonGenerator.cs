@@ -154,7 +154,7 @@ namespace SIL.FieldWorks.XWorks
 				((JsonFragmentWriter)writer).InsertJsonProperty("style", css);
 		}
 
-		public void BeginLink(IFragmentWriter writer, Guid destination)
+		public void StartLink(IFragmentWriter writer, Guid destination)
 		{
 			((JsonFragmentWriter)writer).InsertJsonProperty("guid", "g" + destination);
 		}
@@ -168,7 +168,47 @@ namespace SIL.FieldWorks.XWorks
 			m_runBuilder.Value.Append("\n");
 		}
 
-		public void BeginEntry(IFragmentWriter xw, string className, Guid entryGuid, int index)
+		public void StartTable(IFragmentWriter writer)
+		{
+			// TODO: decide on a useful json representation for tables
+		}
+
+		public void AddTableTitle(IFragmentWriter writer, string content)
+		{
+			// TODO: decide on a useful json representation for tables
+		}
+
+		public void StartTableBody(IFragmentWriter writer)
+		{
+			// TODO: decide on a useful json representation for tables
+		}
+
+		public void StartTableRow(IFragmentWriter writer)
+		{
+			// TODO: decide on a useful json representation for tables
+		}
+
+		public void AddTableCell(IFragmentWriter writer, bool isHead, bool isRightAligned, string content)
+		{
+			// TODO: decide on a useful json representation for tables
+		}
+
+		public void EndTableRow(IFragmentWriter writer)
+		{
+			// TODO: decide on a useful json representation for tables
+		}
+
+		public void EndTableBody(IFragmentWriter writer)
+		{
+			// TODO: decide on a useful json representation for tables
+		}
+
+		public void EndTable(IFragmentWriter writer)
+		{
+			// TODO: decide on a useful json representation for tables
+		}
+
+		public void StartEntry(IFragmentWriter xw, string className, Guid entryGuid, int index)
 		{
 			var jsonWriter = (JsonFragmentWriter)xw;
 			jsonWriter.StartObject();
