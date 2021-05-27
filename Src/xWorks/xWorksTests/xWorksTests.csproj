@@ -270,7 +270,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddCustomFieldDialogTests.cs" />
+    <Compile Include="AddCustomFieldDlgTests.cs" />
     <Compile Include="AllReversalEntriesRecordListTests.cs" />
     <Compile Include="ArchivingTests.cs" />
     <Compile Include="BulkEditBarTests.cs">

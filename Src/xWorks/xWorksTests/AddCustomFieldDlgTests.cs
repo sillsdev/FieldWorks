@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,10 +9,10 @@ using SIL.LCModel;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// Tests for (what small part has automated tests of) AddCustomFieldDialog.
+	/// Tests for (what small part has automated tests of) AddCustomFieldDlg.
 	/// </summary>
 	[TestFixture]
-	public class AddCustomFieldDialogTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	public class AddCustomFieldDlgTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		/// <summary>
 		/// Test the code that populates the Lists combo.
