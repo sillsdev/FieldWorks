@@ -1062,7 +1062,7 @@ If you are not the one designated user who adds fields, or you are making some o
     <comment>Message shown when the user chooses Print in the Dictionary view, and not all entries are being shown. Options are Yes and No.</comment>
   </data>
   <data name="FinishedGeneratingEntries" xml:space="preserve">
-    <value>Finished generating entries.</value>
+    <value>The dictionary is now ready to print. Click OK to proceed to the Print dialog.</value>
   </data>
   <data name="ksSubsenseNumberConfig" xml:space="preserve">
     <value>Subsense Number Configuration</value>

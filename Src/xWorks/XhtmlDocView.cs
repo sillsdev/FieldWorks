@@ -761,12 +761,14 @@ namespace SIL.FieldWorks.XWorks
 					// The user may become impatient and cancel; don't try to print if this happens
 					if (!IsDisposed)
 					{
-						if (Platform.IsUnix)
-						{
-							// Trying to print immediately on idle on Linux leads to a COMException.
-							// This dialog buys enough time for the page to finish loading.
-							MessageBox.Show(xWorksStrings.FinishedGeneratingEntries);
-						}
+						// Trying to print immediately on idle on Linux leads to a COMException.
+						// Trying to print some dictionaries on Windows only prints the first page.
+						// This dialog will not come up until the full dictionary view display is complete,
+						// so when it is closed the Print dialog will open and it will work properly.
+						// There is probably a way to block the Print until a thread gets done, but we don't
+						// have time to research that, and this solves the problem, and it's not a high-use
+						// feature so we can live with the extra dialog.
+						MessageBox.Show(xWorksStrings.FinishedGeneratingEntries);
 						PrintPage(m_mainView);
 					}
 				}
