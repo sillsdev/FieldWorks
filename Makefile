@@ -6,6 +6,7 @@
 #
 #	MarkS - 2007-08-08
 
+# Print more debugging information during packaging.
 FW_PACKAGE_DEBUG ?= false
 BUILD_TOOL = msbuild
 # Verbosity: normal or detailed
@@ -222,6 +223,9 @@ CTags-background-generation:
 	(nice -n20 /usr/bin/ctags -R --c++-types=+px --excmd=pattern --exclude=Makefile -f $(BUILD_ROOT)/tags.building $(BUILD_ROOT) $(WIN32BASE_DIR) $(WIN32MORE_DIR) $(COM_DIR) /usr/include && mv -f $(BUILD_ROOT)/tags.building $(BUILD_ROOT)/tags) &
 
 Win32Base:
+	[[ $(FW_PACKAGE_DEBUG) != true ]] || env
+	[[ $(FW_PACKAGE_DEBUG) != true ]] || which icu-config
+	[[ $(FW_PACKAGE_DEBUG) != true ]] || icu-config --cppflags --ldflags --libdir
 	$(MAKE) -C$(WIN32BASE_DIR) all
 Win32Base-clean:
 	$(MAKE) -C$(WIN32BASE_DIR) clean
