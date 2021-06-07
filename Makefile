@@ -118,7 +118,7 @@ install-man-pages: fieldworks-flex.1.gz unicodechareditor.1.gz
 	install -m 644 *.1.gz $(DESTDIR)$(INSTALLATION_PREFIX)/share/man/man1
 
 install-tree: install-tree-fdo
-	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then find "$(BUILD_ROOT)" "$(DESTDIR)"; fi
+	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then find "$(BUILD_ROOT)" "$(DESTDIR)" || true; fi
 	# Create directories
 	install -d $(DESTDIR)$(INSTALLATION_PREFIX)/bin
 	install -d $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks
@@ -397,7 +397,7 @@ build-package:
 		&& $(BUILD_TOOL) /t:refreshTargets /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS) \
 		&& $(BUILD_TOOL) '/t:remakefw' /property:config=$(BUILD_CONFIG) /property:Platform=$(PLATFORM) /property:packaging=yes /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS) \
 		&& ./multitry $(BUILD_TOOL) '/t:localize-binaries' /property:config=$(BUILD_CONFIG) /property:packaging=yes /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS)
-	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then find "$(BUILD_ROOT)/.."; fi
+	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then find "$(BUILD_ROOT)/.." || true; fi
 
 Fw-build-package-fdo: check-have-build-dependencies
 	cd $(BUILD_ROOT)/Build \
@@ -434,7 +434,7 @@ l10n-clean:
 	done
 
 l10n-install:
-	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then find "$(BUILD_ROOT)/DistFiles" "$(DESTDIR)"; fi
+	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then find "$(BUILD_ROOT)/DistFiles" "$(DESTDIR)" || true; fi
 	install -d $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks
 	install -d $(DESTDIR)$(INSTALLATION_PREFIX)/share/fieldworks/CommonLocalizations
 	install -d "$(DESTDIR)$(INSTALLATION_PREFIX)/share/fieldworks/Language Explorer/Configuration"
