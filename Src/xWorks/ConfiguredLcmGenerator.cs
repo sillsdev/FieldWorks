@@ -1341,7 +1341,7 @@ namespace SIL.FieldWorks.XWorks
 						: null;
 					var className = generateLexType ? GetClassNameAttributeForConfig(typeNode) : null;
 					var refsByType = settings.ContentGenerator.AddLexReferences(generateLexType,
-						lexTypeContent, className, innerBldr.ToString());
+						lexTypeContent, className, innerBldr.ToString(), IsTypeBeforeForm(config));
 					bldr.Append(refsByType);
 				}
 			}
@@ -2596,6 +2596,33 @@ namespace SIL.FieldWorks.XWorks
 			var decorator = new DictionaryPublicationDecorator(cache, clerk.VirtualListPublisher, clerk.VirtualFlid, currentPublication);
 			entriesToSave = decorator.GetEntriesToPublish(propertyTable, clerk.VirtualFlid, dictionaryType);
 			return decorator;
+		}
+
+		/// <summary>
+		/// Determines if Variant Type comes before or after Variant Form.
+		/// </summary>
+		/// <param name="config"></param>
+		/// <returns>Returns True if Variant Type is before Variant Form.</returns>
+		private static bool IsTypeBeforeForm(ConfigurableDictionaryNode config)
+		{
+			bool typeBefore = true;
+
+			// Determine if 'Variant Type' should be before or after 'Variant Form'.
+			ConfigurableDictionaryNode node = null;
+			var variantOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
+			if (variantOptions != null && variantOptions.ListId == DictionaryNodeListOptions.ListIds.Variant)
+			{
+				node = config.ReferencedOrDirectChildren.FirstOrDefault(x => ((x.FieldDescription == "VariantEntryTypesRS") || (x.FieldDescription == "OwningEntry")));
+				if (node != null)
+				{
+					if (node.FieldDescription == "OwningEntry")
+					{
+						typeBefore = false;
+					}
+				}
+			}
+
+			return typeBefore;
 		}
 
 		public class GeneratorSettings

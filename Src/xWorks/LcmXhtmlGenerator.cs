@@ -839,16 +839,22 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public string AddLexReferences(bool generateLexType, string lexTypeContent, string className,
-			string referencesContent)
+			string referencesContent, bool typeBefore)
 		{
 			var bldr = new StringBuilder(100);
-			// Generate the factored ref types element
-			if (generateLexType)
+			// Generate the factored ref types element (if before).
+			if (generateLexType && typeBefore)
 			{
 				bldr.Append(WriteProcessedObject(false, lexTypeContent, className));
 			}
 			// Then add all the contents for the LexReferences (e.g. headwords)
 			bldr.Append(referencesContent);
+			// Generate the factored ref types element (if after).
+			if (generateLexType && !typeBefore)
+			{
+				bldr.Append(WriteProcessedObject(false, lexTypeContent, className));
+			}
+
 			return bldr.ToString();
 		}
 

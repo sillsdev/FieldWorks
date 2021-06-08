@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.XWorks
 		string AddImage(string classAttribute, string srcAttribute, string pictureGuid);
 		string AddImageCaption(string captionContent);
 		string GenerateSenseNumber(string formattedSenseNumber);
-		string AddLexReferences(bool generateLexType, string lexTypeContent, string className, string referencesContent);
+		string AddLexReferences(bool generateLexType, string lexTypeContent, string className, string referencesContent, bool typeBefore);
 		void BeginCrossReference(IFragmentWriter writer, bool isBlockProperty, string className);
 		void EndCrossReference(IFragmentWriter writer);
 		string WriteProcessedSenses(bool isBlock, string senseContent, string className, string sharedCollectionInfo);

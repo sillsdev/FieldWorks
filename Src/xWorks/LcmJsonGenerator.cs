@@ -258,15 +258,15 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public string AddLexReferences(bool generateLexType, string lexTypeContent, string className,
-			string referencesContent)
+			string referencesContent, bool typeBefore)
 		{
 			var bldr = new StringBuilder();
 			var sw = new StringWriter(bldr);
 			using (var xw = new JsonTextWriter(sw))
 			{
 				xw.WriteStartObject();
-				// Write properties related to the factored type (if any).
-				if (!generateLexType)
+				// Write properties related to the factored type (if any and if before).
+				if (generateLexType && typeBefore)
 				{
 					xw.WritePropertyName("referenceType");
 					xw.WriteValue(lexTypeContent);
@@ -276,6 +276,13 @@ namespace SIL.FieldWorks.XWorks
 				xw.WriteStartArray();
 				xw.WriteRaw(referencesContent);
 				xw.WriteEndArray();
+				// Write properties related to the factored type (if any and if after).
+				if (generateLexType && !typeBefore)
+				{
+					xw.WritePropertyName("referenceType");
+					xw.WriteValue(lexTypeContent);
+				}
+
 				xw.WriteEndObject();
 				xw.WriteRaw(",");
 				xw.Flush();
