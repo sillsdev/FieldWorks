@@ -940,7 +940,10 @@ namespace SIL.FieldWorks.IText
 					vwenv.AddString(m_tssSpace);
 					AddTssDirForWs(vwenv, wsVernPara);
 					SetNoteLabelProps(vwenv);
-					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[0]));
+					var abbrevLabel = WsListManager.WsLabel(m_cache, wssAnalysis[0]);
+					var abbrevBldr = abbrevLabel.GetBldr();
+					AddLineIndexProperty(abbrevBldr, lineChoiceIndex);
+					vwenv.AddString(abbrevBldr.GetString());
 				}
 				AddTssDirForWs(vwenv, wsVernPara);
 				vwenv.AddString(m_tssSpace);
@@ -961,7 +964,10 @@ namespace SIL.FieldWorks.IText
 				else
 				{
 					SetNoteLabelProps(vwenv);
-					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[0]));
+					var abbrevLabel = WsListManager.WsLabel(m_cache, wssAnalysis[0]);
+					var abbrevBldr = abbrevLabel.GetBldr();
+					AddLineIndexProperty(abbrevBldr, lineChoiceIndex);
+					vwenv.AddString(abbrevBldr.GetString());
 					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
 					// label width unfortunately does not include trailing space.
@@ -998,7 +1004,10 @@ namespace SIL.FieldWorks.IText
 					AddTssDirForWs(vwenv, wsVernPara); // REVIEW (Hasso) 2018.01: two in a row RTL flags seems redundant.
 					AddTssDirForWs(vwenv, wsVernPara);
 					SetNoteLabelProps(vwenv);
-					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[i]));
+					var abbrevLabel = WsListManager.WsLabel(m_cache, wssAnalysis[i]);
+					var abbrevBldr = abbrevLabel.GetBldr();
+					AddLineIndexProperty(abbrevBldr, lineChoiceIndex + i);
+					vwenv.AddString(abbrevBldr.GetString());
 					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
 					AddTssDirForWs(vwenv, wsVernPara);
@@ -1009,7 +1018,10 @@ namespace SIL.FieldWorks.IText
 					vwenv.AddString(m_tssSpace);
 					AddTssDirForWs(vwenv, wsVernPara);
 					SetNoteLabelProps(vwenv);
-					vwenv.AddString(WsListManager.WsLabel(m_cache, wssAnalysis[i]));
+					var abbrevLabel = WsListManager.WsLabel(m_cache, wssAnalysis[i]);
+					var abbrevBldr = abbrevLabel.GetBldr();
+					AddLineIndexProperty(abbrevBldr, lineChoiceIndex + i);
+					vwenv.AddString(abbrevBldr.GetString());
 					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
 					AddTssDirForWs(vwenv, wsVernPara);
