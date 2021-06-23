@@ -1,8 +1,10 @@
-#!/bin/sh
-
-# Environment settings for running FieldWorks
+# Environment settings for running FieldWorks and FlexBridge
 #
-# Source this file in a shell and then run "mono FieldWorks.exe -app {Te,Flex}"
+# Copyright (c) 2009 SIL International
+# This software is licensed under the LGPL, version 2.1 or later
+# (http://www.gnu.org/licenses/lgpl-2.1.html)
+#
+# Source this file in a shell and then run "mono FieldWorks.exe"
 
 # Possible values for RUNMODE:
 # - INSTALLED: when running an installed package
@@ -32,7 +34,36 @@ if [ -f "${DOTNET_TOOLS_PATHER}" ]; then
   . "${DOTNET_TOOLS_PATHER}"
 fi
 
-if [[ -d /app/lib/fieldworks ]]; then
+
+STANDARD_XDG_DATA_HOME="${HOME}/.local/share"
+STANDARD_XDG_CONFIG_HOME="${HOME}/.config"
+# Set XDG_DATA_HOME to the standard location if it isn't already set, such as
+# by the user or flatpak. XDG_DATA_HOME will be application-specific when using
+# flatpak.
+XDG_DATA_HOME="${XDG_DATA_HOME:-${STANDARD_XDG_DATA_HOME}}"
+XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${STANDARD_XDG_CONFIG_HOME}}"
+# It's good to write our data and config to XDG_DATA_HOME and XDG_CONFIG_HOME.
+# In Ubuntu 20.04, these aren't set anyway, and so we just fall back to
+# hard-coded defaults. In flatpak they are set to application-specific
+# locations. This application-specific location is nice for some configuration
+# and data, but not ideal for others that we want to make more prominent or
+# share with other applications. For example, FieldWorks projects (for users to
+# find and backup) and Writing System LDML files (to share with other
+# applications). And for some configuration we can continue using the
+# directories that are used by the deb package and possibly choose to migrate to
+# application-specific directories at a later time.
+# When running from a .deb package, set USER_DATA_HOME to XDG_DATA_HOME and
+# continue using either the user-specified location or the fallback. When
+# running in a flatpak package, set USER_DATA_HOME to the user specified
+# location (if available via HOST_XDG_DATA_HOME), or the fallback. In this way,
+# USER_DATA_HOME will be a location outside of the flatpak for running from both
+# .deb and flatpak, such as ~/.local/share.
+# In this way, data to share among applications run by a given user can be
+# written to the user-specific USER_DATA_HOME, and data that is only needed by
+# the running application, but could be shared with other applications, can be
+# written to the potentially application-specific XDG_DATA_HOME.
+
+if [[ -n ${FLATPAK_ID} ]]; then
   # We are running in flatpak.
   MONO_PREFIX=/app
   MONO_SILPKGDIR=/app
@@ -40,6 +71,37 @@ if [[ -d /app/lib/fieldworks ]]; then
   # Including /usr/lib/x86_64-linux-gnu so flatpak fw can find libdl.so.2.
   LD_LIBRARY_PATH="/app/lib:${LD_LIBRARY_PATH}:/usr/lib/x86_64-linux-gnu"
   PATH="/app/bin:${PATH}"
+
+  # Set to the value outside of flatpak, if any, or fall back
+  # to the standard location (also outside of flatpak).
+  USER_DATA_HOME="${HOST_XDG_DATA_HOME:-${STANDARD_XDG_DATA_HOME}}"
+  USER_CONFIG_HOME="${HOST_XDG_CONFIG_HOME:-${STANDARD_XDG_CONFIG_HOME}}"
+  # CommonApplicationData directory for FW and LCM. Use a user-specific directory.
+  FW_CommonAppData="${USER_DATA_HOME}"
+else
+  # We are not running in flatpak.
+  # Use FW 9.0 deb package behaviour.
+  USER_DATA_HOME="${XDG_DATA_HOME}"
+  USER_CONFIG_HOME="${XDG_CONFIG_HOME}"
+  FW_CommonAppData="/var/lib/fieldworks"
+fi
+
+FW_CONFIG_DIR="${USER_CONFIG_HOME}/fieldworks"
+
+if [[ -n ${FLATPAK_ID} ]]; then
+  # Encoding Converters will write settings and data to this location. Use a
+  # user-specific location that can be shared with other applications. FW 9.0
+  # and earlier has been using some FieldWorks-specific paths for EC files, and
+  # so there may not have been much multi-application data sharing yet.
+  # .map, .tec, etc files are shipped in a read-only location at
+  # /app/share/encoding-converters from encoding-converters-core.git and
+  # at /app/share/fieldworks/EncodingConverters from FieldWorks.git.
+  # Use a user-writable location that is consistent with FW 9.0 .deb package,
+  # but not /var/lib/fieldworks. A future improvement could be
+  # using a path like "${USER_DATA_HOME}/SIL/encoding-converters" instead.
+  EC_COMMON_APPLICATION_DATA_PATH="${FW_CONFIG_DIR}"
+else
+  EC_COMMON_APPLICATION_DATA_PATH="/var/lib/fieldworks"
 fi
 
 BASE=$(pwd)
@@ -51,10 +113,13 @@ MONO_PREFIX="${MONO_PREFIX:-/opt/mono5-sil}"
 MONO_SILPKGDIR="${MONO_SILPKGDIR:-/opt/mono5-sil}"
 
 # Dependency locations
-# search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH
+# Search for xulrunner and geckofx, select the best, and add its location to
+# LD_LIBRARY_PATH
 . ./environ-xulrunner
 [ -d /usr/lib/cli/gdk-sharp-2.0 ] && GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0/
 ENC_CONVERTERS="${INSTALLATION_PREFIX}/lib/fieldworks"
+
+
 
 MONO_RUNTIME=v4.0.30319
 MONO_DEBUG=explicit-null-checks
@@ -72,7 +137,8 @@ ${INSTALLATION_PREFIX}/lib/fieldworks/lib:\
 ${COM}/build${ARCH}/lib:\
 ${LD_LIBRARY_PATH}"
 fi
-# ensure we scan the default pkg-config directories (to pick up Geckofx for compiling)
+# ensure we scan the default pkg-config directories (to pick up Geckofx for
+# compiling)
 PKG_CONFIG_PATH="${PKG_CONFIG_PATH:-/usr/lib/pkgconfig:/usr/share/pkgconfig}"
 
 # Add packaged mono items to paths
@@ -92,14 +158,39 @@ fi
 
 if [ "$RUNMODE" = "INSTALLED" ]
 then
+	# COMPONENTS_MAP_PATH in FW 9.0 is the dir containing environ, which is the
+	# readonly dir PREFIX/lib/fieldworks.
 	COMPONENTS_MAP_PATH="${BASE}"
+	# FW_ROOT in FW 9.0 is the readonly dir PREFIX/share/fieldworks.
 	FW_ROOT="${BASE}/../../share/fieldworks"
-	FW_ROOTDATA="${HOME}/.config/fieldworks"
+	# FW_ROOTDATA in FW 9.0 is the user-specific, writable dir
+	# ~/.config/fieldworks. It is reported by Util.cpp
+	# DirectoryFinder::FwRootDataDir(). FwDirectoryFinder.cs DataDirectory and
+	# DataDirectoryLocalMachine look up registry key RootDataDir (which is set to
+	# ~/.config/fieldworks by setup-user) and so return the same, tho
+	# interestingly they would fall back to ~/.local/share/SIL/FieldWorks.
+	FW_ROOTDATA="${FW_CONFIG_DIR}"
+	# FW_ROOTCODE in FW 9.0 is the readonly dir PREFIX/share/fieldworks. It is
+	# reported by Util.cpp DirectoryFinder::FwRootCodeDir() and used by
+	# StringTable.cpp BuildMap(). ParatextLexiconPluginDirectoryFinder.cs
+	# CodeDirectory looks up a value by registry key "RootCodeDir" (which is set
+	# to PREFIX/share/fieldworks by setup-user) but looks up environment variable
+	# FW_ROOTCODE for a fallback. FwLexiconPlugin.cs FwLexiconPlugin() will set
+	# FW_ROOTCODE if it's not set yet, to
+	# ParatextLexiconPluginDirectoryFinder.CodeDirectory.
 	FW_ROOTCODE="${BASE}/../../share/fieldworks"
-	ICU_DATA="${HOME}/.config/fieldworks/Icu54"
+	# ICU_DATA in FW 9.0 is the user-specific, writable dir
+	# ~/.config/fieldworks/Icu54. FwLexiconPlugin.cs may set env ICU_DATA as
+	# ~/.config/fieldworks/IcuVERSION. FwUtils.cs InitializeIcu() may set env
+	# ICU_DATA, if not set, from a registry lookup using key "IcuVERSIONDataDir".
+	# At every FW launch, setup-user writes registry key "Icu54DataDir" with
+	# value ".../.config/fieldworks/Icu54".
+	ICU_DATA="${FW_CONFIG_DIR}/Icu54"
 	PATH="${BASE}/icu-bin:${PATH}"
 	LD_LIBRARY_PATH="${BASE}:${BASE}/lib:${LD_LIBRARY_PATH}"
-	MONO_REGISTRY_PATH="${HOME}/.config/fieldworks/registry"
+	# This is one of at least two mono registry paths used. Another is
+	# ~/.mono/registry, such as for CurrentUser.
+	MONO_REGISTRY_PATH="${FW_CONFIG_DIR}/registry"
 	MONO_HELP_VIEWER=${BASE}/launch-xchm
 else
 	COMPONENTS_MAP_PATH="${BASE}/Output_${ARCH}/${BUILD}"
@@ -140,11 +231,21 @@ export \
 	FW_ROOT FW_ROOTCODE FW_ROOTDATA \
 	ICU_DATA \
 	FLEXBRIDGEDIR \
+	FW_CommonAppData \
+	EC_COMMON_APPLICATION_DATA_PATH \
+	WSR_ROOT_PATH \
+	STANDARD_XDG_DATA_HOME \
+	STANDARD_XDG_CONFIG_HOME \
+	USER_DATA_HOME \
+	USER_CONFIG_HOME \
+	XDG_DATA_HOME \
+	XDG_CONFIG_HOME \
+	FW_CONFIG_DIR \
 	MONO_HELP_VIEWER \
 	MONO_PATH MONO_REGISTRY_PATH \
 	MONO_PREFIX MONO_GAC_PREFIX \
 	MONO_RUNTIME MONO_DEBUG MONO_ENV_OPTIONS \
-	MONO_TRACE_LISTENER MONO_IOMAP MONO_MWF_SCALING FW_CommonAppData
+	MONO_TRACE_LISTENER MONO_IOMAP MONO_MWF_SCALING
 
 #DEBUG_ENABLE_PTR_VALIDATION
 

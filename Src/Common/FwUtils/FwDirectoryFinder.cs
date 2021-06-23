@@ -542,8 +542,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// multiple applications and multiple users on the same machine.
 		///
 		/// On Windows this returns a subdirectory of
-		/// Environment.SpecialFolder.CommonApplicationData (C:\ProgramData),on Linux
-		/// /var/lib/fieldworks.
+		/// Environment.SpecialFolder.CommonApplicationData (C:\ProgramData). On Linux it will
+		/// be $FW_CommonAppData (which will be a user-specific location) or
+		/// "/var/lib/fieldworks".
 		/// </summary>
 		/// <param name="appName">Name of the application.</param>
 		/// ------------------------------------------------------------------------------------

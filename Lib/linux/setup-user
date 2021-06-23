@@ -1,42 +1,43 @@
 #!/bin/bash
-# Copyright (c) 2014 SIL International
+#
+# Copyright (c) 2010-2021 SIL International
 # This software is licensed under the LGPL, version 2.1 or later
 # (http://www.gnu.org/licenses/lgpl-2.1.html)
 #
-# see http://standards.freedesktop.org/basedir-spec/basedir-spec-0.6.html for standard
-# locations and environment variables
+# Prepare user configuration for running FieldWorks.
+#
+# See http://standards.freedesktop.org/basedir-spec/basedir-spec-0.6.html for
+# standard locations and environment variables.
 
 [[ -z ${FW_DEBUG} ]] || set -x
-
-XDG_DATA_HOME=${XDG_DATA_HOME:-${HOME}/.local/share}
-XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}
+debugVerboseFlag=""
+[[ -z ${FW_DEBUG} ]] || debugVerboseFlag="-v"
 
 scriptdir="$(dirname "$0")"
 prefix=$(cd "$scriptdir/../.."; /bin/pwd)
-FW_DATA="${XDG_DATA_HOME}/fieldworks"
-FW_CONFIG="${XDG_CONFIG_HOME}/fieldworks"
+
+FW_DATA="${USER_DATA_HOME}/fieldworks"
 FW_LIB=$prefix/lib/fieldworks
 FW_SHARE=$prefix/share/fieldworks
 
 WRITEKEY="${FW_LIB}/WriteKey.exe"
 READKEY="${FW_LIB}/ReadKey.exe"
 
-# Usage: Debug "foo baz" "bar"
+# Usage: Debug "blah blah" "blah"
 Debug()
 {
 	[[ -z ${FW_DEBUG} ]] || echo -e "$(date +'%F %T') setup-user[$$]: " "$@"
 }
 
-Debug "XDG_DATA_HOME is ${XDG_DATA_HOME}"
-Debug "XDG_CONFIG_HOME is ${XDG_CONFIG_HOME}"
-Debug "prefix is ${prefix}"
+Debug "FW_DATA: ${FW_DATA}"
+Debug "FW_CONFIG_DIR: ${FW_CONFIG_DIR}"
+Debug "prefix: ${prefix}"
 
 WriteKey()
 {
 	Debug "Writing" "$@"
 	mono "${WRITEKEY}" "$@"
 }
-
 
 ReadKey()
 {
@@ -49,7 +50,8 @@ ReadKey()
 	mono "${READKEY}" "$@")
 }
 
-# For example: CopyRegistryKey LM "Software/SIL/FieldWorks/7.0" "ProjectsDir" LM "Software/SIL/FieldWorks/8" "ProjectsDir"
+# For example:
+#   CopyRegistryKey LM "Software/SIL/FieldWorks/7.0" "ProjectsDir" LM "Software/SIL/FieldWorks/8" "ProjectsDir"
 CopyRegistryKey()
 {
 	SOURCE_ROOT="$1"
@@ -65,25 +67,25 @@ CopyRegistryKey()
 }
 
 (
-	if [ ! -d "${FW_CONFIG}/Icu54/" ]; then
+	if [ ! -d "${FW_CONFIG_DIR}/Icu54/" ]; then
 		echo "# Copying ICU data"
-		mkdir -p "${FW_CONFIG}"
-		cp -a "${FW_SHARE}/Icu54" "${FW_CONFIG}/"
+		mkdir -p "${FW_CONFIG_DIR}"
+		cp ${debugVerboseFlag} -a "${FW_SHARE}/Icu54" "${FW_CONFIG_DIR}/"
 	fi
 
-	if [ ! -d "${FW_CONFIG}/SIL/" ]; then
-		echo "# Copying encoding converter registry"
-		mkdir -p "${FW_CONFIG}/"
-		cp -a "${FW_SHARE}/SIL" "${FW_CONFIG}/"
+	if [[ -z ${FLATPAK_ID} ]]; then
+		if [ ! -d "${FW_CONFIG_DIR}/SIL/" ]; then
+			# This stanza goes back to 2013, and may not still be significant.
+			echo "# Copying encoding converter registry"
+			mkdir -p "${FW_CONFIG_DIR}/"
+			cp ${debugVerboseFlag} -a "${FW_SHARE}/SIL" "${FW_CONFIG_DIR}/"
+		fi
 	fi
 
 	if [ ! -d "${FW_DATA}/Projects/" ]; then
 		echo "# Creating default Project database directory"
 		mkdir -p "${FW_DATA}/Projects/"
 	fi
-
-	mkdir -p "${FW_CONFIG}/SIL/Repository"
-	mkdir -p "${FW_CONFIG}/MoveRepositoryTo"
 
 	# Set registry keys
 
@@ -126,33 +128,44 @@ CopyRegistryKey()
 				# Create FW 9 registry settings for an empty registry.
 				echo "# Creating FW 9 registry settings."
 
-				# REVIEW these were taken from nant setup registry may not be correct for an install.
-				if [ ! -d "${FW_CONFIG}/registry/LocalMachine/software/sil/encodingconverterrepository" ]; then
-					WriteKey LM "Software/SIL/EncodingConverterRepository" "Registry" "${FW_CONFIG}/SIL/Repository/mappingRegistry.xml"
-					WriteKey LM "Software/SIL/EncodingConverterRepository" "MoveRepositoryTo" "${FW_CONFIG}/MoveRepositoryTo"
+				# Are there SIL/EncodingConverterRepository registry keys?
+				if [[ ! -d "${FW_CONFIG_DIR}/registry/LocalMachine/software/sil/encodingconverterrepository" ]]; then
+					mkdir -p "${FW_CONFIG_DIR}/SIL/Repository"
+					mkdir -p "${FW_CONFIG_DIR}/MoveRepositoryTo"
+					# These are used in encoding-converters-core.git EncConverters.cs.
+					WriteKey LM "Software/SIL/EncodingConverterRepository" "Registry" "${FW_CONFIG_DIR}/SIL/Repository/mappingRegistry.xml"
+					WriteKey LM "Software/SIL/EncodingConverterRepository" "MoveRepositoryTo" "${FW_CONFIG_DIR}/MoveRepositoryTo"
 				fi
-				WriteKey LM "Software/Microsoft/.NETFramework/AssemblyFolders" "Primary Interop Assemblies" "$FW_LIB"
+				# InitIcu is also set by Registry.wxs but it's not clear if anything
+				# uses it. And a newer Windows installer doesn't use this key.
 				WriteKey LM "Software/SIL" "InitIcu" "1"
+				# InstallLanguageUseLog appears to only be used by UnicodeCharEditor.
 				WriteKey LM "Software/SIL/FieldWorks" "InstallLanguageUseLog" "False"
 
-				WriteKey LM "Software/SIL/FieldWorks/9" "RootDataDir" "${FW_CONFIG}/"
-				WriteKey LM "Software/SIL/FieldWorks/9" "RootCodeDir" "${FW_SHARE}"
+				WriteKey LM "Software/SIL/FieldWorks/9" "RootDataDir" "${FW_CONFIG_DIR}/"
 				WriteKey LM "Software/SIL/FieldWorks/9" "ProjectsDir" "${FW_DATA}/Projects"
+
+				WriteKey LM "Software/SIL" "Icu54DataDir" "${FW_CONFIG_DIR}/Icu54"
+				WriteKey LM "Software/SIL" "Icu54Dir" "${FW_CONFIG_DIR}/Icu54"
 			fi
 		fi
 	fi
 
-	# Set values unconditionally, to take care of upgrades
+	# Set some values unconditionally. Do this for any values that might begin
+	# with PREFIX, such as "/usr", since FieldWorks flatpak will instead need
+	# "/app".
+
 	# TODO: implement a WriteKey option to only set and not overwrite values. See comments in FWNX-1065.
 	# TODO: implement batch load/dump in WriteKey similar to dconf
 
 	echo "# Writing required registry settings."
 
-	WriteKey LM "Software/SIL" "Icu54DataDir" "${FW_CONFIG}/Icu54"
-	WriteKey LM "Software/SIL" "Icu54Dir" "${FW_CONFIG}/Icu54"
-
+	WriteKey LM "Software/SIL/FieldWorks/9" "RootCodeDir" "${FW_SHARE}"
 	WriteKey LM "Software/SIL/SilEncConverters40" "PluginDir" "${FW_LIB}/EC/Plugins"
 	WriteKey LM "Software/SIL/SilEncConverters40" "RootDir" "${FW_LIB}"
+	# It's not clear if "Primary Interop Assemblies" is being used by anything
+	# other than NMock.
+	WriteKey LM "Software/Microsoft/.NETFramework/AssemblyFolders" "Primary Interop Assemblies" "${FW_LIB}"
 
 ) | zenity --progress \
 	--title="User specific setup" \
