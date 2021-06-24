@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		private void ReadDataFromUnicodeFiles()
 		{
-			var icuDir = CustomIcu.DefaultDataDirectory;
+			var icuDir = PUAInstaller.IcuDir;
 			if (string.IsNullOrEmpty(icuDir))
 				throw new Exception("An error occurred: ICU directory not found. Registry value for ICU not set?");
 			var unicodeDataFilename = Path.Combine(icuDir, "UnicodeDataOverrides.txt");
@@ -392,13 +392,16 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			get
 			{
-				var icuDir = CustomIcu.DefaultDataDirectory;
+				var icuDir = PUAInstaller.IcuDir;
 				if (string.IsNullOrEmpty(icuDir))
 					throw new Exception("An error occurred: ICU directory not found. Registry value for ICU not set?");
 				// Must handle registry setting with or without final \  LT-11766.
 				if (icuDir.LastIndexOf(Path.DirectorySeparatorChar) == icuDir.Length -1)
 					icuDir = icuDir.Substring(0, icuDir.Length - 1);
-				return Path.GetDirectoryName(icuDir);	// strip the ICU specific subdirectory (FWR-2803)
+
+				// icuDir is in a form similar to "C:\ProgramData\SIL\Icu54". We need to
+				// strip off  the "Icuxx" directory (FWR-2803, LT-20599).
+				return Path.GetDirectoryName(icuDir);
 			}
 		}
 
