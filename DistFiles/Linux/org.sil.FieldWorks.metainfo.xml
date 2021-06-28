@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Linux FieldWorks application description.
+Copyright 2016 SIL International. LGPL2+ license.
+
+Can be validated using
+
+```
+flatpak run org.freedesktop.appstream-glib validate org.sil.FieldWorks.metainfo.xml
+```
+-->
+
+<!-- Change component type to 'desktop-application' once RHEL 7 goes EOL (in 2026?). ( https://github.com/flathub/flathub/wiki/AppData-Guidelines#upgrading ) -->
+<component type="desktop">
+  <id>org.sil.FieldWorks</id>
+  <metadata_license>CC-BY-SA-3.0</metadata_license>
+  <project_license>LGPL-2.1+ AND MIT</project_license>
+  <name>FieldWorks Language Explorer</name>
+  <summary>Language and cultural data management</summary>
+  <developer_name>SIL International</developer_name>
+
+  <description>
+    <p>FieldWorks consists of software tools that help you manage linguistic and cultural data. FieldWorks supports tasks ranging from the initial entry of collected data through to the preparation of data for publication, including dictionary development, interlinearization of texts, morphological analysis, and other publications.</p>
+    <p>The Lexicon area contains the forms (stems, roots, morphemes phrases and so on) and their descriptions. Here you can edit and browse your data. You can configure the dictionary to look like you want. You can use Bulk Edit to more easily populate data fields. You can configure and define reversal entries You can use Collect Words to rapidly enter words for this project.</p>
+    <p>The Texts &amp; Words area contains texts and a list of the words in the texts. Texts can be used to analyze the Words. A parser can help with the analysis based on defined rules. There is a discourse analysis tool that can be used to analyze texts. Words can be added to the lexicon from the texts. Texts from Paratext can be included here and analyzed. There is also a Concordance and Complex Concordance to find words based on context.</p>
+    <p>The Grammar area contains tools for morphological parsing. It allows you to define rules that govern project data. The Grammar area stores the grammatical data that is referenced, for example, in Lexicon Edit and used by computational parsers.</p>
+    <p>The Notebook allows you to manage data for language and cultural field work. This tool facilitates documenting, categorizing, retrieving, analyzing, and summarizing conclusions about your fieldnotes. You can use it to gain insights from your anthropological fieldnotes. The text field in Notebook data is automatically available as a text in the Texts &amp; Words area.</p>
+    <p>FieldWorks supports complex non-roman scripts using Graphite.</p>
+  </description>
+
+  <launchable type="desktop-id">fieldworks-applications.desktop</launchable>
+
+  <!-- icon and categories are specified in the .deskotp file. -->
+
+  <screenshots>
+    <!-- These screenshots are supposed to be in 16:9 ratio, and will look more native if they are taken on Linux. See the docs at https://freedesktop.org/software/appstream/docs/chap-Quickstart.html#qsr-app-screenshots-info -->
+    <screenshot>
+      <image>https://software.sil.org/fieldworks/wp-content/uploads/sites/38/2016/11/Lexicon_EntryBrowse-large.png</image>
+      <caption>Browse your lexicon</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://software.sil.org/fieldworks/wp-content/uploads/sites/38/2016/11/Lexicon_EntrySplit-large.png</image>
+      <caption>Edit your lexicon</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://software.sil.org/fieldworks/wp-content/uploads/sites/38/2016/10/Lexicon_NewEntryDeriv_Large.gif</image>
+      <caption>Create a new lexical entry</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://software.sil.org/fieldworks/wp-content/uploads/sites/38/2016/11/Lexicon_LexicalRelationMenu-large.png</image>
+      <caption>Specify lexical relations on entries and senses</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://software.sil.org/fieldworks/wp-content/uploads/sites/38/2016/10/Lexicon_exportSetup.gif</image>
+      <caption>Import USFM. Export USFM, a configured dictionary, or interlinear text to HTML. Upload to Webonary</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://software.sil.org/fieldworks/wp-content/uploads/sites/38/2016/11/Lexicon_SemanticEntry-Large.png</image>
+      <caption>Efficiently input words collected by semantic domain</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://software.sil.org/fieldworks/wp-content/uploads/sites/38/2016/11/ConfigureDictionary-large.png</image>
+      <caption>Configure dictionary publications by choosing and ordering fields and formatting, with live preview</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://software.sil.org/fieldworks/wp-content/uploads/sites/38/2016/09/ListChoice_Large.png</image>
+      <caption>Modify many items at once with Bulk Edit</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://software.sil.org/fieldworks/wp-content/uploads/sites/38/2016/10/Sketch-large.png</image>
+      <caption>Automatically generate a draft grammar sketch</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://software.sil.org/fieldworks/wp-content/uploads/sites/38/2016/10/CategoryShowingTemplate-large.png</image>
+      <caption>Describe inflection classes and affixes using grammatical categories</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://software.sil.org/fieldworks/wp-content/uploads/sites/38/2016/10/Lexicon_InterliniarAnalyze.gif</image>
+      <caption>Edit and export interlinear text</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://software.sil.org/fieldworks/wp-content/uploads/sites/38/2016/10/textchart-large.png</image>
+      <caption>Organize your data into a discourse chart</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://software.sil.org/fieldworks/wp-content/uploads/sites/38/2016/11/Lexicon_WordListConc-large.png</image>
+      <caption>View words in context using Concordance</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://software.sil.org/fieldworks/wp-content/uploads/sites/38/2017/01/CompConc_large.png</image>
+      <caption>Search for words in a context. Here there is a search for the word Thika preceded by any verb</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://software.sil.org/fieldworks/wp-content/uploads/sites/38/2016/10/FLeX_Notebook-1.png</image>
+      <caption>Record cultural and other research notes in Notebook</caption>
+    </screenshot>
+    <screenshot>
+    <!-- This video needs to be converted to another format, like AV1 + Opus in WebM. See https://freedesktop.org/software/appstream/docs/chap-Metadata.html#tag-screenshots -->
+      <video container="mp4" codec="h264" width="714" height="500">http://downloads.sil.org/FieldWorks/Movies/1-quick%20tour.mp4</video>
+      <caption>Quick video tour of FieldWorks</caption>
+    </screenshot>
+  </screenshots>
+
+  <url type="homepage">https://software.sil.org/fieldworks/</url>
+  <url type="help">https://software.sil.org/fieldworks/support/</url>
+  <url type="faq">https://software.sil.org/fieldworks/faq/</url>
+
+  <content_rating type="oars-1.1">
+    <content_attribute id="social-info">intense</content_attribute>
+  </content_rating>
+
+  <provides>
+    <binary>fieldworks-flex</binary>
+  </provides>
+
+  <releases>
+    <release version="9.0" date="2020-09-16" />
+    <release version="8.3" date="2017-04-25" />
+  </releases>
+</component>

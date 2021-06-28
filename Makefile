@@ -179,8 +179,8 @@ install-menuentries:
 	desktop-file-install --dir $(DESTDIR)$(INSTALLATION_PREFIX)/share/applications Lib/linux/unicodechareditor.desktop
 
 install-packagemetadata:
-	install -d $(DESTDIR)$(INSTALLATION_PREFIX)/share/appdata
-	install -m 644 DistFiles/Linux/fieldworks-applications.desktop.appdata.xml $(DESTDIR)$(INSTALLATION_PREFIX)/share/appdata
+	install -d $(DESTDIR)$(INSTALLATION_PREFIX)/share/metainfo
+	install -m 644 DistFiles/Linux/org.sil.FieldWorks.metainfo.xml $(DESTDIR)$(INSTALLATION_PREFIX)/share/metainfo
 
 install: install-man-pages install-tree install-menuentries l10n-install install-packagemetadata
 
