@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2014 SIL International
+// Copyright (c) 2014-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -243,9 +243,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 				case FailureReason.Pattern:
 					Debug.Assert(aprule != null);
-					var env = (string) aprule.Allomorphs[subruleIndex].Properties["Env"];
-					var prefixEnv = (string) aprule.Allomorphs[subruleIndex].Properties["PrefixEnv"];
-					var suffixEnv = (string) aprule.Allomorphs[subruleIndex].Properties["SuffixEnv"];
+					var env = (string) aprule.Allomorphs[subruleIndex].Properties[HCParser.Env];
+					var prefixEnv = (string) aprule.Allomorphs[subruleIndex].Properties[HCParser.PrefixEnv];
+					var suffixEnv = (string) aprule.Allomorphs[subruleIndex].Properties[HCParser.SuffixEnv];
 					if (env != null || prefixEnv != null || suffixEnv != null)
 					{
 						var reasonElem = new XElement("FailureReason", new XAttribute("type", "environment"));
@@ -393,12 +393,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private XElement CreateMorphemeElement(Morpheme morpheme)
 		{
-			var msaID = (int?) morpheme.Properties["ID"] ?? 0;
+			var msaID = (int?) morpheme.Properties[HCParser.MsaID] ?? 0;
 			IMoMorphSynAnalysis msa;
 			if (msaID == 0 || !m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().TryGetObject(msaID, out msa))
 				return null;
 
-			var inflTypeID = (int?) morpheme.Properties["InflTypeID"] ?? 0;
+			var inflTypeID = (int?) morpheme.Properties[HCParser.InflTypeID] ?? 0;
 			ILexEntryInflType inflType = null;
 			if (inflTypeID != 0 && !m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(inflTypeID, out inflType))
 				return null;
@@ -418,26 +418,26 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			int id = 0;
 			var morpheme = rule as Morpheme;
 			if (morpheme != null)
-				id = (int?) morpheme.Properties["ID"] ?? 0;
+				id = (int?) morpheme.Properties[HCParser.MsaID] ?? 0;
 			return new XElement(name, new XAttribute("id", id), rule.Name);
 		}
 
 		private XElement CreateAllomorphElement(Allomorph allomorph)
 		{
-			bool isNull = (bool?) allomorph.Properties["IsNull"] ?? false;
+			bool isNull = (bool?) allomorph.Properties[HCParser.IsNull] ?? false;
 			if (isNull)
 			{
-				var slotID = (int) allomorph.Morpheme.Properties["SlotID"];
+				var slotID = (int) allomorph.Morpheme.Properties[HCParser.SlotID];
 				IMoInflAffixSlot slot;
 				if (!m_cache.ServiceLocator.GetInstance<IMoInflAffixSlotRepository>().TryGetObject(slotID, out slot))
 					return null;
 
-				var nullInflTypeID = (int) allomorph.Morpheme.Properties["InflTypeID"];
+				var nullInflTypeID = (int) allomorph.Morpheme.Properties[HCParser.InflTypeID];
 				ILexEntryInflType nullInflType;
 				if (!m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(nullInflTypeID, out nullInflType))
 					return null;
 
-				var isPrefix = (bool) allomorph.Properties["IsPrefix"];
+				var isPrefix = (bool) allomorph.Properties[HCParser.IsPrefix];
 				return new XElement("Allomorph", new XAttribute("id", 0), new XAttribute("type", isPrefix ? MoMorphTypeTags.kMorphPrefix : MoMorphTypeTags.kMorphSuffix),
 					new XElement("Form", "^0"),
 					new XElement("Morpheme", new XAttribute("id", 0), new XAttribute("type", "infl"),
@@ -448,19 +448,19 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						new XElement("Slot", new XAttribute("optional", slot.Optional), slot.Name.BestAnalysisAlternative.Text)));
 			}
 
-			var formID = (int?) allomorph.Properties["ID"] ?? 0;
+			var formID = (int?) allomorph.Properties[HCParser.FormID] ?? 0;
 			IMoForm form;
 			if (formID == 0 || !m_cache.ServiceLocator.GetInstance<IMoFormRepository>().TryGetObject(formID, out form))
 				return null;
 
-			var formID2 = (int?) allomorph.Properties["ID2"] ?? 0;
+			var formID2 = (int?) allomorph.Properties[HCParser.FormID2] ?? 0;
 
-			var msaID = (int) allomorph.Morpheme.Properties["ID"];
+			var msaID = (int) allomorph.Morpheme.Properties[HCParser.MsaID];
 			IMoMorphSynAnalysis msa;
 			if (!m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().TryGetObject(msaID, out msa))
 				return null;
 
-			var inflTypeID = (int?) allomorph.Morpheme.Properties["InflTypeID"] ?? 0;
+			var inflTypeID = (int?) allomorph.Morpheme.Properties[HCParser.InflTypeID] ?? 0;
 			ILexEntryInflType inflType = null;
 			if (inflTypeID != 0 && !m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(inflTypeID, out inflType))
 				return null;
