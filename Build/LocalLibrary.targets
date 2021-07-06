@@ -45,7 +45,7 @@
 		<Message Text="Building libpalaso. Artifacts will be put into: $(PalasoArtifactsDir)" />
 		<MSBuild Projects="$(PalasoArtifactsDir)/../../build/Palaso.proj"
 			Targets="Build"
-			Properties="Configuration=$(ConfigName);Platform=Any CPU"/>
+			Properties="Configuration=$(ConfigName);Platform=$(Platform)"/>
 		<!--Build the LCM library-->
 		<MakeDir Directories="$(LcmArtifactsDir)" />
 		<MakeDir Directories="$(LcmArtifactsDir)/../../lib/downloads/$(Platform)" Condition="'$(OS)'=='Windows_NT' "/>
