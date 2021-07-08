@@ -2608,7 +2608,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			settings.ContentGenerator.StartTableRow(writer);
 			var usfmText = rowUSFM.Text;
-			var cellMarker = new Regex(@"\s+\\t(c|h)r?\d+\s+");
+			var cellMarker = new Regex(@"\s+\\t(c|h)r?\d*\s+");
 			for (Match curCellMarker = cellMarker.Match(usfmText), nextCellMarker; curCellMarker.Success; curCellMarker = nextCellMarker)
 			{
 				var cellMin = curCellMarker.Index + curCellMarker.Length;
