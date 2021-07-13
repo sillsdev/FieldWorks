@@ -63,8 +63,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					// REVIEW (Hasso) 2021.07: we could default to Notify as soon as we implement it, but our low-bandwidth
 					// users wouldn't appreciate automatic downloads of hundreds of megabytes w/o express consent.
-					// TODO (before sending to users): appSettings.Update = new UpdateSettings { Behavior = UpdateSettings.Behaviors.DoNotCheck };
-					appSettings.Update = new UpdateSettings { Channel = UpdateSettings.Channels.Nightly };
+					appSettings.Update = new UpdateSettings
+					{
+						Behavior = UpdateSettings.Behaviors.DoNotCheck,
+						Channel = UpdateSettings.Channels.Stable
+					};
 				}
 				m_okToAutoupdate.Checked = appSettings.Update.Behavior != UpdateSettings.Behaviors.DoNotCheck;
 

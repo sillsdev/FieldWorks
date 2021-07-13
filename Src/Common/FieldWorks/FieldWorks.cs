@@ -178,6 +178,8 @@ namespace SIL.FieldWorks
 					s_appSettings.Reporting = reportingSettings; //to avoid a defect in Settings rely on the Save in the code below
 				}
 
+				// REVIEW (Hasso) 2021.07: should checking FEEDBACK be centralized? Besides enabling and disabling analytics,
+				// it could also be used to select an analytics channel, or even (scope creep!) determine if this is a test machine for other purposes
 				// Allow developers and testers to avoid cluttering our analytics by setting an environment variable (FEEDBACK = false)
 				var feedbackEnvVar = Environment.GetEnvironmentVariable("FEEDBACK");
 				if (feedbackEnvVar != null)

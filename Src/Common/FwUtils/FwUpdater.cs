@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.LCModel.Utils;
 using SIL.Reporting;
@@ -29,9 +30,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="fwAssembly">The FieldWorks assembly (to determine the current version)</param>
 		public static void CheckForUpdates(Assembly fwAssembly = null)
 		{
-			// TODO: prompt testers (iff feedback==off) w/ message box to download the latest nightly now; in opts dlg, default to Stable.
-			var updateSettings = new FwApplicationSettings().Update;
-			if (updateSettings == null || updateSettings.Behavior == UpdateSettings.Behaviors.DoNotCheck)
+			var settings = new FwApplicationSettings();
+			var updateSettings = settings.Update;
+			if (updateSettings == null)
+			{
+				// TODO (Hasso) 2021.07: remove or refine this before sending to users
+				settings.Update = updateSettings = Environment.GetEnvironmentVariable("FEEDBACK") != null &&
+												   MessageBoxUtils.Show(null, "Would you like to check for and download the latest nightly patch now?",
+													   "Check for updates?", MessageBoxButtons.YesNo) == DialogResult.Yes
+						? new UpdateSettings { Behavior = UpdateSettings.Behaviors.Download, Channel = UpdateSettings.Channels.Nightly }
+						: new UpdateSettings { Behavior = UpdateSettings.Behaviors.DoNotCheck, Channel = UpdateSettings.Channels.Stable };
+			}
+			if (updateSettings.Behavior == UpdateSettings.Behaviors.DoNotCheck)
 			{
 				return;
 			}
