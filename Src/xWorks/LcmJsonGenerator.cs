@@ -9,9 +9,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Icu.Collation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using XCore;
@@ -29,6 +31,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private LcmCache Cache { get; }
 		private ThreadLocal<StringBuilder> m_runBuilder = new ThreadLocal<StringBuilder>(()=> new StringBuilder());
+		private Collator m_headwordWsCollator;
 		public LcmJsonGenerator(LcmCache cache)
 		{
 			Cache = cache;
@@ -216,11 +219,21 @@ namespace SIL.FieldWorks.XWorks
 			jsonWriter.InsertJsonProperty("guid", "g" + entryGuid);
 			// get the index character (letter header) for this entry
 			var entry = Cache.ServiceLocator.GetObject(entryGuid);
-			var indexChar = ConfiguredExport.GetLeadChar(ConfiguredLcmGenerator.GetHeadwordForLetterHead(entry),
-				ConfiguredLcmGenerator.GetWsForEntryType(entry, Cache),
+			var headwordWs = ConfiguredLcmGenerator.GetWsForEntryType(entry, Cache);
+
+			if (!jsonWriter.collatorCache.TryGetValue(headwordWs, out var col))
+			{
+				col = FwUtils.GetCollatorForWs(headwordWs);
+
+				jsonWriter.collatorCache[headwordWs] = col;
+			}
+
+			var indexChar = ConfiguredExport.GetLeadChar(
+				ConfiguredLcmGenerator.GetHeadwordForLetterHead(entry),
+				headwordWs,
 				new Dictionary<string, ISet<string>>(),
 				new Dictionary<string, Dictionary<string, string>>(),
-				new Dictionary<string, ISet<string>>(), Cache);
+				new Dictionary<string, ISet<string>>(), col, Cache);
 			jsonWriter.InsertJsonProperty("letterHead", indexChar);
 			jsonWriter.InsertJsonProperty("sortIndex", index);
 			jsonWriter.InsertRawJson(",");
@@ -391,6 +404,7 @@ namespace SIL.FieldWorks.XWorks
 			private JsonTextWriter jsonWriter;
 			private StringWriter stringWriter;
 			private bool isDisposed;
+			internal Dictionary<string, Collator> collatorCache = new Dictionary<string, Collator>();
 
 			public JsonFragmentWriter(StringBuilder bldr)
 			{
@@ -400,6 +414,10 @@ namespace SIL.FieldWorks.XWorks
 
 			public void Dispose()
 			{
+				foreach (var cachEntry in collatorCache.Values)
+				{
+					cachEntry?.Dispose();
+				}
 				Dispose(true);
 				GC.SuppressFinalize(this);
 			}
@@ -644,15 +662,19 @@ namespace SIL.FieldWorks.XWorks
 			var wsIgnorableMap = new Dictionary<string, ISet<string>>();
 			var wsString = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultVernWs);
 			var letters = new List<string>();
+			var col = FwUtils.GetCollatorForWs(wsString);
+
 			foreach (var entryHvo in entriesToSave)
 			{
 				var entry = cache.ServiceLocator.GetObject(entryHvo);
 				var firstLetter = ConfiguredExport.GetLeadChar(ConfiguredLcmGenerator.GetHeadwordForLetterHead(entry),
-					wsString, wsDigraphMap, wsCharEquivalentMap, wsIgnorableMap, cache);
+					wsString, wsDigraphMap, wsCharEquivalentMap, wsIgnorableMap, col, cache);
 				if (letters.Contains(firstLetter))
 					continue;
 				letters.Add(firstLetter);
 			}
+			// Dispose of the collator if we created one
+			col?.Dispose();
 			return letters;
 		}
 	}

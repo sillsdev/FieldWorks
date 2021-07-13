@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using Icu.Collation;
 using NUnit.Framework;
 using SIL.Linq;
 using SIL.LCModel.Core.Cellar;
@@ -39,7 +40,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private FwXApp m_application;
 		private FwXWindow m_window;
-		private PropertyTable m_propertyTable;
+		private XCore.PropertyTable m_propertyTable;
 		private Mediator m_mediator;
 		private RecordClerk m_Clerk;
 
@@ -4846,12 +4847,14 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfNoPreviousHeader()
 		{
 			var entry = CreateInterestingLexEntry(Cache);
+			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			using (var col = new CollatorForTest(vernWs))
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				string last = null;
 				XHTMLWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='C c']";
@@ -4863,12 +4866,14 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfPreviousHeaderDoesNotMatch()
 		{
 			var entry = CreateInterestingLexEntry(Cache);
+			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			using (var col = new CollatorForTest(vernWs))
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				var last = "A a";
 				XHTMLWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='C c']";
@@ -4880,12 +4885,14 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderForSuffixWithNewBaseLetter()
 		{
 			var entry = CreateInterestingSuffix(Cache, " ba");
+			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			using (var col = new CollatorForTest(vernWs))
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				var last = "A a";
 				XHTMLWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='B b']";
@@ -4896,14 +4903,15 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateLetterHeaderIfNeeded_GeneratesNoHeaderIfPreviousHeaderDoesMatch()
 		{
-			var entry = CreateInterestingLexEntry(Cache);
+			var entry = CreateInterestingLexEntry(Cache); var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			using (var col = new CollatorForTest(vernWs))
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				var last = "A a";
 				XHTMLWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='C c']";
@@ -9594,6 +9602,32 @@ namespace SIL.FieldWorks.XWorks
 			const string expectedHwTemplate = "/div[@class='lexentry']/span[@class='headword']/span[@lang='en']/a[@href='%headword.guid%' and text()='%headword.[lang=en].value%']";
 			AssertThatXmlIn.String(result[0]).HasSpecifiedNumberOfMatchesForXpath(expectedTemplate, 1);
 			AssertThatXmlIn.String(result[0]).HasSpecifiedNumberOfMatchesForXpath(expectedHwTemplate, 1);
+		}
+	}
+
+	internal class CollatorForTest : IDisposable
+	{
+		private Collator collator;
+
+		public static implicit operator Collator(CollatorForTest col) => col.collator;
+
+		public CollatorForTest(string vernWs)
+		{
+			Collator col = null;
+			try
+			{
+				var icuLocale = new Icu.Locale(vernWs).Name;
+				col = Collator.Create(icuLocale);
+			}
+			catch (Exception)
+			{
+				// no Collator can be created, not fatal, just means people might not like their letter headers
+			}
+		}
+
+		public void Dispose()
+		{
+			collator?.Dispose();
 		}
 	}
 }

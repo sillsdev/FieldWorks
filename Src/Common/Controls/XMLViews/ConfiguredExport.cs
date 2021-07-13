@@ -15,8 +15,8 @@ using Icu.Collation;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Utils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -74,6 +74,7 @@ namespace SIL.FieldWorks.Common.Controls
 		Dictionary<XmlNode, string> m_mapXnToCssClass = new Dictionary<XmlNode, string>();
 		private XhtmlHelper m_xhtml;
 		private XhtmlHelper.CssType m_cssType = XhtmlHelper.CssType.Dictionary;
+		private Dictionary<string, Collator> m_wsCollators = new Dictionary<string, Collator>();
 
 		private bool m_fCancel = false;
 
@@ -594,8 +595,23 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		public string GetLeadChar(string sEntryNFD, string sWs)
 		{
-			return GetLeadChar(sEntryNFD, sWs, m_mapWsDigraphs, m_mapWsMapChars, m_mapWsIgnorables,
+			var sortKeyCollator = GetCollator(sWs);
+			return GetLeadChar(sEntryNFD, sWs, m_mapWsDigraphs, m_mapWsMapChars, m_mapWsIgnorables, sortKeyCollator,
 									 m_cache);
+		}
+
+		private Collator GetCollator(string sWs)
+		{
+			Collator col;
+			if (m_wsCollators.TryGetValue(sWs, out col))
+			{
+				return col;
+			}
+
+			col = FwUtils.FwUtils.GetCollatorForWs(sWs);
+
+			m_wsCollators[sWs] = col;
+			return col;
 		}
 
 		/// <summary>
@@ -607,12 +623,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="wsDigraphMap">Map of writing system to digraphs already discovered for that ws</param>
 		/// <param name="wsCharEquivalentMap">Map of writing system to already discovered character equivalences for that ws</param>
 		/// <param name="wsIgnorableCharMap">Map of writing system to ignorable characters for that ws </param>
+		/// <param name="sortKeyCollator">A collator for the writing system to use to find sort keys</param>
 		/// <param name="cache"></param>
 		/// <returns>The character sEntryNFD is being sorted under in the dictionary.</returns>
 		public static string GetLeadChar(string sEntryNFD, string sWs,
 													Dictionary<string, ISet<string>> wsDigraphMap,
 													Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
 													Dictionary<string, ISet<string>> wsIgnorableCharMap,
+													Collator sortKeyCollator,
 													LcmCache cache)
 		{
 			if (string.IsNullOrEmpty(sEntryNFD))
@@ -673,28 +691,14 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			// We don't want sFirst for an ignored first character or digraph.
 
-			Collator col;
-			try
+			if (sortKeyCollator != null)
 			{
-				string icuLocale = new Icu.Locale(sWs).Name;
-				col = Collator.Create(icuLocale);
-			}
-			catch (Exception)
-			{
-				return sFirst;
-			}
-			try
-			{
-				byte[] ka = col.GetSortKey(sFirst).KeyData;
+				byte[] ka = sortKeyCollator.GetSortKey(sFirst).KeyData;
 				if (ka.Length > 0 && ka[0] == 1)
 				{
 					string sT = sEntry.Substring(sFirst.Length);
-					return GetLeadChar(sT, sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, cache);
+					return GetLeadChar(sT, sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, sortKeyCollator, cache);
 				}
-			}
-			finally
-			{
-				col.Dispose();
 			}
 			return sFirst;
 		}
@@ -1228,6 +1232,12 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			m_writer.Close();
 			m_writer = null;
+			// Dispose of any collators that we needed during this export
+			foreach (var collator in m_wsCollators.Values)
+			{
+				collator?.Dispose();
+			}
+			m_wsCollators.Clear();
 		}
 
 		/// <summary>

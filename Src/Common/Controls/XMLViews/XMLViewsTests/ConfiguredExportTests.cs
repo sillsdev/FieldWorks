@@ -356,7 +356,7 @@ namespace XMLViewsTests
 			Dictionary<string, ISet<string>> wsDigraphMap = new Dictionary<string, ISet<string>>();
 			Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
 			Dictionary<string, ISet<string>> wsIgnorableCharMap = new Dictionary<string, ISet<string>>();
-			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar(entryLetter, "ipo", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, Cache));
+			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar(entryLetter, "ipo", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, null, Cache));
 			Assert.AreEqual(data.Length, 2, "Surrogate pair should contains 2 characters");
 		}
 

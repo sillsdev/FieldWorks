@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using Icu.Collation;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -16,6 +17,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
+using SIL.Windows.Forms;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -42,7 +44,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Saves the generated content in the Temp directory, to a unique but discoverable and somewhat stable location.
 		/// </summary>
 		/// <returns>The path to the XHTML file</returns>
-		public static string SavePreviewHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, PropertyTable propertyTable,
+		public static string SavePreviewHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, XCore.PropertyTable propertyTable,
 			IThreadedProgress progress = null, int entriesPerPage = EntriesPerPage)
 		{
 			var preferredPath = GetPreferredPreviewPath(configuration, propertyTable.GetValue<LcmCache>("cache"), entryHvos.Length == 1);
@@ -78,7 +80,7 @@ namespace SIL.FieldWorks.XWorks
 		/// the given collection.
 		/// </summary>
 		public static void SavePublishedHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, int entriesPerPage,
-			DictionaryConfigurationModel configuration, PropertyTable propertyTable, string xhtmlPath, IThreadedProgress progress = null)
+			DictionaryConfigurationModel configuration, XCore.PropertyTable propertyTable, string xhtmlPath, IThreadedProgress progress = null)
 		{
 			var entryCount = entryHvos.Length;
 			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
@@ -126,12 +128,17 @@ namespace SIL.FieldWorks.XWorks
 				// Generate the letter headers and insert the document fragments into the full xhtml file
 				if (progress != null)
 					progress.Message = xWorksStrings.ksArrangingDisplayFragments;
+
+				var wsString = entryContents.Length > 0 ? ConfiguredLcmGenerator.GetWsForEntryType(entryContents[0].Item1, settings.Cache) : null;
+				var col = FwUtils.GetCollatorForWs(wsString);
+
 				foreach (var entryAndXhtml in entryContents)
 				{
 					if (wantLetterHeaders && !String.IsNullOrEmpty(entryAndXhtml.Item2.ToString()))
-						GenerateLetterHeaderIfNeeded(entryAndXhtml.Item1, ref lastHeader, xhtmlWriter, settings);
+						GenerateLetterHeaderIfNeeded(entryAndXhtml.Item1, ref lastHeader, xhtmlWriter, col, settings);
 					xhtmlWriter.WriteRaw(entryAndXhtml.Item2.ToString());
 				}
+				col?.Dispose();
 				GenerateBottomOfPageButtonsIfNeeded(settings, entryHvos, entriesPerPage, currentPageBounds, xhtmlWriter);
 				GenerateClosingHtml(xhtmlWriter);
 				xhtmlWriter.Flush();
@@ -153,7 +160,7 @@ namespace SIL.FieldWorks.XWorks
 			return !settings.ExportPath.StartsWith(Path.Combine(Path.GetTempPath(), "DictionaryPreview"));
 		}
 
-		internal static void GenerateLetterHeaderIfNeeded(ICmObject entry, ref string lastHeader, XmlWriter xhtmlWriter, ConfiguredLcmGenerator.GeneratorSettings settings)
+		internal static void GenerateLetterHeaderIfNeeded(ICmObject entry, ref string lastHeader, XmlWriter xhtmlWriter, Collator headwordWsCollator, ConfiguredLcmGenerator.GeneratorSettings settings)
 		{
 			// If performance is an issue these dummy's can be stored between calls
 			var dummyOne = new Dictionary<string, ISet<string>>();
@@ -162,7 +169,7 @@ namespace SIL.FieldWorks.XWorks
 			var cache = settings.Cache;
 			var wsString = ConfiguredLcmGenerator.GetWsForEntryType(entry, settings.Cache);
 			var firstLetter = ConfiguredExport.GetLeadChar(ConfiguredLcmGenerator.GetHeadwordForLetterHead(entry), wsString, dummyOne, dummyTwo, dummyThree,
-				cache);
+				headwordWsCollator, cache);
 			if (firstLetter != lastHeader && !string.IsNullOrEmpty(firstLetter))
 			{
 				var headerTextBuilder = new StringBuilder();
@@ -196,7 +203,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <returns>The HTML as a string</returns>
 		public static string GenerateEntryHtmlWithStyles(ICmObject entry, DictionaryConfigurationModel configuration,
-																		 DictionaryPublicationDecorator pubDecorator, PropertyTable propertyTable)
+																		 DictionaryPublicationDecorator pubDecorator, XCore.PropertyTable propertyTable)
 		{
 			if (entry == null)
 			{
