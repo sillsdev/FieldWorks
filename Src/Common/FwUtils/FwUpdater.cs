@@ -3,32 +3,42 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.Reporting;
 using SIL.Settings;
 using SIL.Xml;
+using Timer = System.Timers.Timer;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// Finds and downloads updates to FieldWorks.
 	/// </summary>
+	/// <remarks>REVIEW (Hasso) 2021.07: should this be static or singleton?</remarks>
 	public class FwUpdater
 	{
 		private const uint BytesPerMiB = 1048576;
+
+		///// <remarks>so we can check daily even if the user never closes FW. REVIEW (Hasso) 2021.07: would a timer be better?
+		///// If we check daily, and we download two updates before the user restarts (unlikely!), should we notify again?</remarks>
+		//private static DateTime s_lastCheck;
+
+		// TODO (Hasso) 2021.07: bool or RESTClient to track whether we're presently checking or downloading; clear in `finally`
 
 		/// <summary>
 		/// Checks for updates to FieldWorks, if the settings say to. If an update is found,
 		/// downloads the update in the background and (TODO!) notifies the user when the download is complete.
 		/// </summary>
+		/// <param name="ui">to notify the user when an update is ready to install</param>
 		/// <param name="fwAssembly">The FieldWorks assembly (to determine the current version)</param>
-		public static void CheckForUpdates(Assembly fwAssembly = null)
+		public static void CheckForUpdates(ILcmUI ui, Assembly fwAssembly = null)
 		{
 			var settings = new FwApplicationSettings();
 			var updateSettings = settings.Update;
@@ -46,12 +56,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return;
 			}
 			Logger.WriteEvent("Checking for updates...");
-			// REVIEW (Hasso) 2021.07: hitting the Internet on the main thread can be a performance hit
-			Logger.WriteEvent(CheckForUpdatesInternal(updateSettings, fwAssembly ?? Assembly.GetEntryAssembly()));
+			// Check on a background thread; hitting the Internet on the main thread can be a performance hit
+			new Thread(() => Logger.WriteEvent(CheckForUpdatesInternal(ui, updateSettings, fwAssembly ?? Assembly.GetEntryAssembly())))
+			{
+				IsBackground = true
+			}.Start();
 		}
 
 		/// <returns>a message for the log</returns>
-		private static string CheckForUpdatesInternal(UpdateSettings updateSettings, Assembly fwAssembly)
+		private static string CheckForUpdatesInternal(ILcmUI ui, UpdateSettings updateSettings, Assembly fwAssembly)
 		{
 			try
 			{
@@ -68,6 +81,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 				var vip = new VersionInfoProvider(fwAssembly, true);
 				var current = new FwUpdate(vip.NumericAppVersion, Environment.Is64BitProcess, vip.BaseBuildNumber, FwUpdate.Typ.Offline);
+				#if DEBUG
+				current = new FwUpdate("9.1.4.847", false, 453, FwUpdate.Typ.Offline);
+				#endif
 
 				var available = GetLatestNightlyPatch(current,
 					XDocument.Load("https://flex-updates.s3.amazonaws.com/?prefix=jobs/FieldWorks-Win-all"),
@@ -77,19 +93,46 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					return "Check complete; already up to date";
 				}
+				Logger.WriteMinorEvent($"Update found at {available.URL}");
 
-				// TODO: download within FieldWorks, in the background, to a specific location, if the file hasn't been downloaded yet.
-				// TODO: If the user requested this check for updates (menu option or button), let them know that they will be notified when complete.
-				// TODO: If fails (and the user had requested this check), report that an update is available but could not be downloaded (try website?); try later
-				// TODO: If succeeds, tell the user to restart to install (well, for now, to install from wherever it's saved)
-				Process.Start(available.URL);
+				var localFile = Path.Combine(FwDirectoryFinder.DownloadedUpdates, Path.GetFileName(available.URL));
+				if(!File.Exists(localFile))
+				{
+					var tempFile = $"{localFile}.tmp";
+					if (new DownloadClient().DownloadFile(available.URL, tempFile))
+					{
+						File.Move(tempFile, localFile);
+					}
+					else
+					{
+						return "Update found, but failed to download";
+					}
+				}
 
-				return "Update found; downloading in the default browser";
+				// TODO (Hasso) 2021.07: localize strings after they are finalized
+				NotifyUserOnIdle(ui,
+					$"An update has been downloaded to {localFile}; you can install it at your convenience", "sorry for the inconvenience");
+
+				return $"Update downloaded to {localFile}";
 			}
 			catch (Exception e)
 			{
 				return $"Got {e.GetType()}: {e.Message}";
 			}
+		}
+
+		private static void NotifyUserOnIdle(ILcmUI ui, string message, string caption = null)
+		{
+			var timer = new Timer { SynchronizingObject = ui.SynchronizeInvoke, Interval = 1000 };
+			timer.Elapsed += (o, e) =>
+			{
+				if (DateTime.Now - ui.LastActivityTime < TimeSpan.FromMilliseconds(8000))
+					return; // Don't interrupt a user who is busy typing. Wait for a pause to prompt to install updates.
+
+				timer.Stop(); // one notification is enough
+				MessageBox.Show(message, caption);
+			};
+			timer.Start();
 		}
 
 		public static FwUpdate GetLatestNightlyPatch(FwUpdate current, XDocument bucketContents, string bucketURL)

@@ -326,7 +326,7 @@ namespace SIL.FieldWorks
 						UglyHackForXkbIndicator();
 
 					if (MiscUtils.IsWindows)
-						FwUpdater.CheckForUpdates();
+						FwUpdater.CheckForUpdates(s_ui);
 
 					// Application was started successfully, so start the message loop
 					Application.Run();
@@ -428,10 +428,7 @@ namespace SIL.FieldWorks
 		private static void WarnUserAboutFailedLiftImportIfNecessary(FwApp fwApp)
 		{
 			var mainWindow = fwApp.ActiveMainWindow as IFwMainWnd;
-			if(mainWindow != null)
-			{
-				mainWindow.Mediator.SendMessage("WarnUserAboutFailedLiftImportIfNecessary", null);
-			}
+			mainWindow?.Mediator.SendMessage("WarnUserAboutFailedLiftImportIfNecessary", null);
 		}
 
 		private static bool IsSharedXmlBackendNeeded(ProjectId projectId)
@@ -1751,24 +1748,23 @@ namespace SIL.FieldWorks
 							projectToTry = CreateNewProject(dlg, app, helpTopicProvider);
 							if (projectToTry != null)
 							{
-							var projectLaunched = LaunchProject(args, ref projectToTry);
+								var projectLaunched = LaunchProject(args, ref projectToTry);
 								if (projectLaunched)
-							{
-								s_projectId = projectToTry; // Window is open on this project, we must not try to initialize it again.
-								var mainWindow = Form.ActiveForm;
-									if (mainWindow is IxWindow)
 								{
-										((IxWindow) mainWindow).Mediator.SendMessage("SFMImport", null);
+									s_projectId = projectToTry; // Window is open on this project, we must not try to initialize it again.
+									if (Form.ActiveForm is IxWindow mainWindow)
+									{
+										mainWindow.Mediator.SendMessage("SFMImport", null);
+									}
+									else
+									{
+										return null;
+									}
 								}
 								else
 								{
 									return null;
 								}
-							}
-							else
-							{
-								return null;
-							}
 							}
 							break;
 					}

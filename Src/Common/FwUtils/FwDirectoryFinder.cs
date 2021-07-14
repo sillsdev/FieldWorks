@@ -345,7 +345,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the directory where FieldWorks data was installed (i.e. under AppData),
+		/// Gets the directory where FieldWorks data was installed (i.e. under ProgramData),
 		/// as it would be determined ignoring current user registry settings.
 		/// </summary>
 		/// <exception cref="ApplicationException">If an installation directory could not be
@@ -471,6 +471,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get { return GetCodeSubDirectory("Templates"); }
 		}
+
+		/// <summary>
+		/// Gets the directory where FieldWorks updates are downloaded (\ProgramData\DownloadedUpdates)
+		/// </summary>
+		/// <exception cref="ApplicationException">If an installation directory could not be found.</exception>
+		public static string DownloadedUpdates => Path.Combine(DataDirectoryLocalMachine, "DownloadedUpdates");
 
 		private const string ksProjects = "Projects";
 
