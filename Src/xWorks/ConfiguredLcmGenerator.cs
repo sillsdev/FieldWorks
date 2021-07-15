@@ -85,11 +85,18 @@ namespace SIL.FieldWorks.XWorks
 			AssemblyFile = "SIL.LCModel";
 		}
 
-		internal static bool IsNormalRtl(ReadOnlyPropertyTable propertyTable)
+		internal static bool IsEntryStyleRtl(ReadOnlyPropertyTable propertyTable, DictionaryConfigurationModel model)
 		{
-			// Right-to-Left for the overall layout is determined by Dictionary-Normal
-			var dictionaryNormalStyle = new ExportStyleInfo(FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable).Styles["Dictionary-Normal"]);
-			return dictionaryNormalStyle.DirectionIsRightToLeft == TriStateBool.triTrue; // default is LTR
+			// Right-to-Left for the overall layout is determined by Dictionary-Normal - or the user selected style for Main Entry
+			var mainEntryStyle = GetEntryStyle(model);
+			var entryStyle = new ExportStyleInfo(FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable).Styles[mainEntryStyle]);
+			return entryStyle.DirectionIsRightToLeft == TriStateBool.triTrue; // default is LTR
+		}
+
+		internal static string GetEntryStyle(DictionaryConfigurationModel model)
+		{
+			return model.Parts.FirstOrDefault(part => part.IsMainEntry)?.Style
+				?? "Dictionary-Normal";
 		}
 
 		private static bool IsCanceling(IThreadedProgress progress)

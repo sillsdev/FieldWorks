@@ -95,7 +95,7 @@ namespace SIL.FieldWorks.XWorks
 				var readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);
 				var custCssPath = CssGenerator.CopyCustomCssAndGetPath(Path.GetDirectoryName(xhtmlPath), configDir);
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(xhtmlPath),
-					ConfiguredLcmGenerator.IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css");
+					ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), Path.GetFileName(cssPath) == "configured.css");
 				GenerateOpeningHtml(cssPath, custCssPath, settings, xhtmlWriter);
 				Tuple<int, int> currentPageBounds = GetPageForCurrentEntry(settings, entryHvos, entriesPerPage);
 				GenerateTopOfPageButtonsIfNeeded(settings, entryHvos, entriesPerPage, currentPageBounds, xhtmlWriter, cssWriter);
@@ -225,7 +225,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var readOnlyPropTable = new ReadOnlyPropertyTable(propertyTable);
 				var exportSettings = new ConfiguredLcmGenerator.GeneratorSettings(readOnlyPropTable.GetValue<LcmCache>("cache"), readOnlyPropTable, false, false, null,
-					ConfiguredLcmGenerator.IsNormalRtl(readOnlyPropTable));
+					ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropTable, configuration));
 				GenerateOpeningHtml(previewCssPath, custCssPath, exportSettings, writer);
 				var content = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, configuration, pubDecorator, exportSettings);
 				writer.WriteRaw(content);

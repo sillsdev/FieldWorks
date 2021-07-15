@@ -85,8 +85,9 @@ namespace SIL.FieldWorks.XWorks
 			if (propStyleSheet.Styles.Contains("Normal"))
 				GenerateCssForWsSpanWithNormalStyle(styleSheet, propertyTable);
 
-			if (propStyleSheet.Styles.Contains(DictionaryNormal))
-				GenerateDictionaryNormalParagraphCss(styleSheet, propertyTable);
+			var entryBaseStyle = ConfiguredLcmGenerator.GetEntryStyle(model);
+			if (propStyleSheet.Styles.Contains(entryBaseStyle))
+				GenerateDictionaryNormalParagraphCss(styleSheet, propertyTable, entryBaseStyle);
 
 			if (propStyleSheet.Styles.Contains(LetterHeadingStyleName))
 			{
@@ -137,14 +138,14 @@ namespace SIL.FieldWorks.XWorks
 			GenerateCssForWritingSystems("span", "Normal", styleSheet, propertyTable);
 		}
 
-		private static void GenerateDictionaryNormalParagraphCss(StyleSheet styleSheet, ReadOnlyPropertyTable propertyTable)
+		private static void GenerateDictionaryNormalParagraphCss(StyleSheet styleSheet, ReadOnlyPropertyTable propertyTable, string entryBaseStyle)
 		{
 			var dictNormalRule = new StyleRule { Value = "div.entry" };
-			var dictNormalStyle = GenerateCssStyleFromLcmStyleSheet(DictionaryNormal, 0, propertyTable);
+			var dictNormalStyle = GenerateCssStyleFromLcmStyleSheet(entryBaseStyle, 0, propertyTable);
 			dictNormalRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictNormalStyle));
 			styleSheet.Rules.Add(dictNormalRule);
 			// Then generate the rules for all the writing system overrides
-			GenerateCssForWritingSystems("div.entry span", DictionaryNormal, styleSheet, propertyTable);
+			GenerateCssForWritingSystems("div.entry span", entryBaseStyle, styleSheet, propertyTable);
 		}
 
 		private static void GenerateDictionaryMinorParagraphCss(StyleSheet styleSheet, ReadOnlyPropertyTable propertyTable, DictionaryConfigurationModel model)

@@ -2959,9 +2959,12 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GenerateCssForConfiguration_GenerateDictionaryNormalParagraphStyle()
+		public void GenerateCssForConfiguration_GenerateMainEntryParagraphStyle()
 		{
 			GenerateNormalStyle("Dictionary-Normal");
+			var rtlStyle = GenerateEmptyParagraphStyle("Dictionary-RTL");
+			rtlStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptRightToLeft, 0,
+				(int)TriStateBool.triTrue);
 			var testSensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses"
@@ -2969,7 +2972,8 @@ namespace SIL.FieldWorks.XWorks
 			var testEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { testSensesNode }
+				Children = new List<ConfigurableDictionaryNode> { testSensesNode },
+				CSSClassNameOverride = "entry"
 			};
 			var model = new DictionaryConfigurationModel
 			{
@@ -2978,8 +2982,17 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(testEntryNode);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.IsTrue(Regex.Match(cssResult, @"div.entry{\s*margin-left:24pt;\s*padding-right:48pt;\s*}", RegexOptions.Singleline).Success,
-							  "Generate Dictionary-Normal Paragraph Style not generated.");
+			Assert.IsTrue(
+				Regex.Match(cssResult,
+					@"div.entry{\s*margin-left:24pt;\s*padding-right:48pt;\s*}",
+					RegexOptions.Singleline).Success,
+				"Dictionary-Normal Paragraph Style not generated when main entry has no style selected.");
+			model.Parts[0].Style = "Dictionary-RTL";
+			cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			Assert.IsTrue(
+				Regex.Match(cssResult, @"div.entry{\s*direction:rtl;\s*}",
+					RegexOptions.Singleline).Success,
+				"Main Entry style was not used as the main page style");
 		}
 
 		[Test]

@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public string AddCollectionItem(bool isBlock, string className, string content)
 		{
-			return $"{{{content}}},";
+			return string.IsNullOrEmpty(content)? string.Empty : $"{{{content}}},";
 		}
 
 		public string AddProperty(string className, bool isBlockProperty, string content)
@@ -510,9 +510,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(jsonPath),
-					ConfiguredLcmGenerator.IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css") { ContentGenerator = new LcmJsonGenerator(cache)};
+					ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), Path.GetFileName(cssPath) == "configured.css") { ContentGenerator = new LcmJsonGenerator(cache)};
 				var displayXhtmlSettings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(jsonPath),
-						ConfiguredLcmGenerator.IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css");
+						ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), Path.GetFileName(cssPath) == "configured.css");
 				var entryContents = new Tuple<ICmObject, StringBuilder, StringBuilder>[entryCount];
 				var entryActions = new List<Action>();
 				// For every entry in the page generate an action that will produce the xhtml document fragment for that entry
