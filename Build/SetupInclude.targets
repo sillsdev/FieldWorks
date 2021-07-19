@@ -214,6 +214,15 @@
 	  <Output TaskParameter="Value" PropertyName="icu_lib"/>
 	</CreateProperty>
 
+	<!-- Area of filesystem where FieldWorks and its dependencies are being installed. This
+	is /usr when installed from a .deb package, or /app when using flatpak. -->
+	<CreateProperty Condition="'$(OS)'!='Windows_NT'" Value="/usr">
+	  <Output TaskParameter="Value" PropertyName="installation_prefix"/>
+	</CreateProperty>
+	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="">
+	  <Output TaskParameter="Value" PropertyName="installation_prefix"/>
+	</CreateProperty>
+
 <!--<if test="${not property::exists('dir.nunitreport')}">-->
 <!--	<property name="dir.nunitreport" value="${nant::get-base-directory()}/extensions/common/neutral/FwTasks/NUnit.Report"/>-->
 <!--</if>-->

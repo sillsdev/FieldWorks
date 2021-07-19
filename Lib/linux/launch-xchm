@@ -7,6 +7,9 @@
 CHMPATH="$(awk -F:: '{print $1}' <<< ${1})"
 PAGEPATH="$(awk -F:: '{print $2}' <<< ${1})"
 
+# LD_LIBRARY_PATH may have something unhelpful in the way (LT-20483).
+unset LD_LIBRARY_PATH LD_PRELOAD
+
 if [ "$PAGEPATH" = "" ]
 then
 	xchm "${CHMPATH}"

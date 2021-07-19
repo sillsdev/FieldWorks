@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,7 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.LCModel.Core.Text;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.HermitCrab;
@@ -29,6 +28,21 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly string m_outputDirectory;
 		private ParserModelChangeListener m_changeListener;
 		private bool m_forceUpdate;
+
+		internal const string CRuleID = "ID";
+		internal const string FormID = "ID";
+		internal const string FormID2 = "ID2";
+		internal const string InflTypeID = "InflTypeID";
+		internal const string MsaID = "ID";
+		internal const string PRuleID = "ID";
+		internal const string SlotID = "SlotID";
+		internal const string TemplateID = "ID";
+
+		internal const string IsNull = "IsNull";
+		internal const string IsPrefix = "IsPrefix";
+		internal const string Env = "Env";
+		internal const string PrefixEnv = "PrefixEnv";
+		internal const string SuffixEnv = "SuffixEnv";
 
 		public HCParser(LcmCache cache)
 		{
@@ -154,14 +168,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (selectTraceMorphs != null)
 				{
 					var selectTraceMorphsSet = new HashSet<int>(selectTraceMorphs);
-					m_morpher.LexEntrySelector = entry => selectTraceMorphsSet.Contains((int) entry.Properties["MsaID"]);
+					m_morpher.LexEntrySelector = entry => selectTraceMorphsSet.Contains((int) entry.Properties[MsaID]);
 					m_morpher.RuleSelector = rule =>
+					{
+						if (rule is Morpheme mRule)
 						{
-							var mrule = rule as Morpheme;
-							if (mrule != null)
-								return selectTraceMorphsSet.Contains((int) mrule.Properties["MsaID"]);
-							return true;
-						};
+							return selectTraceMorphsSet.Contains((int)mRule.Properties[MsaID]);
+						}
+						return true;
+					};
 				}
 				else
 				{
@@ -268,10 +283,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			foreach (Annotation<ShapeNode> morph in ws.Morphs)
 			{
 				Allomorph allomorph = ws.GetAllomorph(morph);
-				var formID = (int?) allomorph.Properties["ID"] ?? 0;
+				var formID = (int?) allomorph.Properties[FormID] ?? 0;
 				if (formID == 0)
 					continue;
-				var formID2 = (int?) allomorph.Properties["ID2"] ?? 0;
+				var formID2 = (int?) allomorph.Properties[FormID2] ?? 0;
 				string formStr = ws.Shape.GetNodes(morph.Span).ToString(ws.Stratum.CharacterDefinitionTable, false);
 				int curFormID;
 				MorphInfo morphInfo;
@@ -297,7 +312,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					return false;
 				}
 
-				var msaID = (int) allomorph.Morpheme.Properties["ID"];
+				var msaID = (int) allomorph.Morpheme.Properties[MsaID];
 				IMoMorphSynAnalysis msa;
 				if (!m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().TryGetObject(msaID, out msa))
 				{
@@ -305,7 +320,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					return false;
 				}
 
-				var inflTypeID = (int?) allomorph.Morpheme.Properties["InflTypeID"] ?? 0;
+				var inflTypeID = (int?) allomorph.Morpheme.Properties[InflTypeID] ?? 0;
 				ILexEntryInflType inflType = null;
 				if (inflTypeID > 0 && !m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(inflTypeID, out inflType))
 				{

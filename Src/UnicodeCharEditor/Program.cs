@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -129,7 +129,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		private static void DeleteTemporaryFiles()
 		{
 			// Delete the files we previously renamed. Couldn't do that before because they were locked.
-			var tempFilesToDelete = Path.Combine(CustomIcu.DefaultDataDirectory,
+			var tempFilesToDelete = Path.Combine(PUAInstaller.IcuDir,
 				$"icudt{CustomIcu.Version}l", "TempFilesToDelete");
 
 			if (!File.Exists(tempFilesToDelete))

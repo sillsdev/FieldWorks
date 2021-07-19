@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			model.OnCurrentWritingSystemChanged -= OnCurrentWritingSystemChangedHandler;
 			model.CurrentWsSetupModel.CurrentItemUpdated -= OnCurrentItemUpdated;
 			BindGeneralTab(model);
-			_sortControl.BindToModel(model.CurrentWsSetupModel);
+			BindToSortTab(model);
 			_keyboardControl.BindToModel(model.CurrentWsSetupModel);
 			BindCurrentWSList(model);
 			BindHeader(model);
@@ -176,6 +176,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			_enableAdvanced.Visible = model.ShowAdvancedScriptRegionVariantCheckBox;
 			_enableAdvanced.Checked = model.ShowAdvancedScriptRegionVariantView;
 			_enableAdvanced.CheckedChanged += EnableAdvancedOnCheckedChanged;
+		}
+		private void BindToSortTab(FwWritingSystemSetupModel model)
+		{
+			_sortControl.UserWantsHelpWithCustomSorting += FormHelpClick;
+			_sortControl.BindToModel(model.CurrentWsSetupModel);
 		}
 
 		private void SpellingDictionaryChanged(object sender, EventArgs e)

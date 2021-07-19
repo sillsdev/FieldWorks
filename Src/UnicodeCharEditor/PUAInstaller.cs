@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2018 SIL International
+// Copyright (c) 2010-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,10 +20,13 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 	public class PUAInstaller
 	{
 		private readonly Dictionary<int, PUACharacter> m_dictCustomChars = new Dictionary<int, PUACharacter>();
-		private string m_icuDir;
+		private static string m_icuDir;
 		private string m_icuDataDir;
 
-		private string IcuDir
+		/// <summary>
+		/// Get the pathname of the Icu folder (similar to "C:\ProgramData\SIL\Icu54")
+		/// </summary>
+		public static string IcuDir
 		{
 			get
 			{
@@ -32,6 +35,11 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 					m_icuDir = CustomIcu.DefaultDataDirectory;
 					if (string.IsNullOrEmpty(m_icuDir))
 						throw new DirectoryNotFoundException("ICU directory not found. Registry value for ICU not set?");
+
+					// m_icuDir is in a form similar to "C:\ProgramData\SIL\Icu54\icudt54l". We need to
+					// strip off the "icudtxxx" directory.
+					m_icuDir = Path.GetDirectoryName(m_icuDir);
+
 					if (!Directory.Exists(m_icuDir))
 						throw new DirectoryNotFoundException($"ICU directory does not exist at {m_icuDir}. Registry value for ICU set incorrectly?");
 				}
