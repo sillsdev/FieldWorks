@@ -32,10 +32,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 	public class LexTextApp : FwXApp, IApp, IxCoreColleague
 	{
 		protected XMessageBoxExManager m_messageBoxExManager;
-		/// <summary>
-		///  Web browser to use in Linux
-		/// </summary>
-		private string webBrowserProgramLinux = "firefox";
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -557,15 +553,37 @@ namespace SIL.FieldWorks.XWorks.LexText
 		public bool OnHelpTraining(object sender)
 		{
 			CheckDisposed();
-
-			using (var process = new Process())
-			{
-				process.StartInfo.UseShellExecute = true;
-				process.StartInfo.FileName = "https://lingtran.net/FLEx+8";
-				process.Start();
-				process.Close();
-			}
+			OpenResource("https://lingtran.net/FLEx+8");
 			return true;
+		}
+
+		/// <summary>
+		/// Returns str surrounded by double-quotes.
+		/// This is useful for paths containing spaces in Linux.
+		/// </summary>
+		private static string Enquote(string str)
+		{
+			return "\"" + str + "\"";
+		}
+
+		/// <summary>
+		/// Open URL or local file (eg .pdf or .html) in an appropriate application to be viewed.
+		/// </summary>
+		private static void OpenResource(string path)
+		{
+			if (MiscUtils.IsUnix)
+			{
+				string preferredApplicationOpener = "xdg-open";
+				using (Process.Start(preferredApplicationOpener, Enquote(path)))
+				{
+				}
+			}
+			else
+			{
+				using (Process.Start(path))
+				{
+				}
+			}
 		}
 
 		public bool OnHelpNotesLinguaLinksDatabaseImport(object sender)
@@ -868,21 +886,12 @@ namespace SIL.FieldWorks.XWorks.LexText
 		#endregion
 
 		/// <summary>
-		/// Returns str surrounded by double-quotes.
-		/// This is useful for paths containing spaces in Linux.
-		/// </summary>
-		private static string Enquote(string str)
-		{
-			return "\"" + str + "\"";
-		}
-
-		/// <summary>
-		/// Uses Process.Start to run path. If running in Linux and path ends in .html or .htm,
-		/// surrounds the path in double quotes and opens it with a web browser.
+		/// Uses Process.Start to run path.
 		/// </summary>
 		/// <param name="path"></param>
-		/// <param name="exceptionHandler"/>
+		/// <param name="exceptionHandler">
 		/// Delegate to run if an exception is thrown. Takes the exception as an argument.
+		/// </param>
 
 		private void OpenDocument(string path, Action<Exception> exceptionHandler)
 		{
@@ -896,18 +905,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			try
 			{
-				if (MiscUtils.IsUnix && (path.EndsWith(".html") || path.EndsWith(".htm")))
-				{
-					using (Process.Start(webBrowserProgramLinux, Enquote(path)))
-					{
-					}
-				}
-				else
-				{
-					using (Process.Start(path))
-					{
-					}
-				}
+				OpenResource(path);
 			}
 			catch (T e)
 			{
