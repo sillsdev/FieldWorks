@@ -3,12 +3,16 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.IO;
 using System.Xml.Linq;
 using NUnit.Framework;
+using SIL.IO;
+using SIL.TestUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
 	[TestFixture]
+	[Platform(Exclude = "Linux", Reason = "uses a different update system")]
 	public class FwUpdaterTests
 	{
 		private const string ListBucketTemplate = @"<ListBucketResult xmlns=""http://s3.amazonaws.com/doc/2006-03-01/"">{0}</ListBucketResult>";
@@ -25,6 +29,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void LatestPatchOnThisBase()
 		{
 			const string bucketURL = "https://test.s3.amazonaws.com/";
+			// ReSharper disable once InconsistentNaming
 			const int Base = 10;
 			const int arch = 64;
 			var template = string.Format(ContentsTemplate, "{0}", ushort.MaxValue);
@@ -104,11 +109,104 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return FwUpdater.IsPatchOn(current, available);
 		}
 
+		[Test]
+		public void IsPatchOn_NullDoesNotThrow()
+		{
+			Assert.That(FwUpdater.IsPatchOn(new FwUpdate("9.0.14", true, 366, FwUpdate.Typ.Patch), null), Is.False,
+				"Null likely means something wasn't parseable, which means it isn't applicable");
+		}
+
 		// TODO: is base of higher version; (is patch on base of higher version?)
+
+		[Test]
+		public static void GetLatestDownloadedPatch_DirectoryDoesNotExist()
+		{
+			var current = new FwUpdate("9.0.15", true, 10, FwUpdate.Typ.Offline);
+			var updateDir = Path.Combine(Path.GetTempPath(), "NonExtantFwUpdatesDir");
+			Assert.That(RobustIO.DeleteDirectoryAndContents(updateDir), "this test requires a nonexistent directory");
+			// SUT
+			Assert.That(FwUpdater.GetLatestDownloadedPatch(current, updateDir), Is.Null);
+		}
+
+		[Test]
+		public static void GetLatestDownloadedPatch_NoneExist()
+		{
+			var current = new FwUpdate("9.0.15", true, 10, FwUpdate.Typ.Offline);
+			using (var updateDir = new TemporaryFolder("EmptyFwUpdateDir"))
+			{
+				Assert.That(FwUpdater.GetLatestDownloadedPatch(current, updateDir.Path), Is.Null);
+			}
+		}
+
+		[Test]
+		public static void GetLatestDownloadedPatch_SkipsPartialDownloads()
+		{
+			const int baseBld = 12;
+			var current = new FwUpdate("9.0.15.1", true, baseBld, FwUpdate.Typ.Offline);
+			using (var updateDir = new TemporaryFolder("TestFwUpdateDir"))
+			{
+				var updateFileName = Path.Combine(updateDir.Path, $"{PatchFileName("9.0.15.2", baseBld, 64)}.tmp");
+				File.WriteAllText(updateFileName, string.Empty);
+
+				Assert.That(FwUpdater.GetLatestDownloadedPatch(current, updateDir.Path), Is.Null);
+			}
+		}
+
+		[Test]
+		public static void GetLatestDownloadedPatch_BadFilename_DoesNotThrow()
+		{
+			var current = new FwUpdate("9.0.15.1", true, 12, FwUpdate.Typ.Offline);
+			using (var updateDir = new TemporaryFolder("TestFwUpdateDir"))
+			{
+				var updateFileName = Path.Combine(updateDir.Path, $"{PatchFileName("version", 12, 64)}.tmp");
+				File.WriteAllText(updateFileName, string.Empty);
+
+				Assert.That(FwUpdater.GetLatestDownloadedPatch(current, updateDir.Path), Is.Null);
+			}
+		}
+
+		[Test]
+		public static void GetLatestDownloadedPatch_DoesNotReinstallTheSameVersion()
+		{
+			const string version = "9.0.15.1";
+			const int baseBld = 14;
+			var current = new FwUpdate(version, true, baseBld, FwUpdate.Typ.Offline);
+			using (var updateDir = new TemporaryFolder("TestFwUpdateDir"))
+			{
+				var updateFileName = Path.Combine(updateDir.Path, PatchFileName(version, baseBld, 64));
+				File.WriteAllText(updateFileName, string.Empty);
+
+				Assert.That(FwUpdater.GetLatestDownloadedPatch(current, updateDir.Path), Is.Null);
+			}
+		}
+
+		[Test]
+		public static void GetLatestDownloadedPatch_GetsLatestPatchForThisBase()
+		{
+			const int baseBld = 14;
+			var current = new FwUpdate("9.0.15.1", true, baseBld, FwUpdate.Typ.Offline);
+			using (var updateDir = new TemporaryFolder("TestFwUpdateDir"))
+			{
+				// earlier patch
+				File.WriteAllText(Path.Combine(updateDir.Path, PatchFileName("9.0.17.4", baseBld, 64)), string.Empty);
+				// latest patch for this base
+				var updateFileName = Path.Combine(updateDir.Path, PatchFileName("9.0.18.8", baseBld, 64));
+				File.WriteAllText(updateFileName, string.Empty);
+				// patch for a different base
+				File.WriteAllText(Path.Combine(updateDir.Path, PatchFileName("9.0.21.42", baseBld + 1, 64)), string.Empty);
+
+				Assert.That(FwUpdater.GetLatestDownloadedPatch(current, updateDir.Path), Is.EqualTo(updateFileName));
+			}
+		}
 
 		private static string Key(string version, int baseBuild, int arch)
 		{
-			return $"jobs/FieldWorks-Win-all-Patch/10/FieldWorks_{version}_b{baseBuild}_x{arch}.msp";
+			return $"jobs/FieldWorks-Win-all-Patch/10/{PatchFileName(version, baseBuild, arch)}";
+		}
+
+		private static string PatchFileName(string version, int baseBuild, int arch)
+		{
+			return $"FieldWorks_{version}_b{baseBuild}_x{arch}.msp";
 		}
 	}
 }

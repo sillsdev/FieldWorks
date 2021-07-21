@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?if $(sys.BUILDARCH) = x64 ?>
-<?define CFDir = CommonFiles64Folder?>
-<?else?>
-<?define CFDir = CommonFilesFolder?>
-<?endif?>
 <?define EncodingConvertersPath = "..\..\packages\Encoding-Converters-Core.0.0.6\MergeModules" ?>
 <!-- REVIEW (Hasso) 2018.07: if this file gets too long, it can be split into separate files for MergeModules, L10n, and possibly others. -->
 <Include>
@@ -13,18 +8,16 @@
 	<WixVariable Id="RootObjectsDir" Value="$(var.UPDATEBUILDDIR)\.."/>
 	<?endif?>
 
-	<DirectoryRef Id="$(var.PFDir)">
-		<Directory Id="$(var.CFDir)">
-			<Directory Id="SIL" Name="SIL">
-				<Component Id="vs_piaredist.exe" Guid="69E34503-AFF1-455d-8B02-38EC1EC156C2">
-					<File Id="vs_piaredist.exe" Name="vs_piaredist.exe" ReadOnly="yes" Source="!(wix.RootObjectsDir)\vs_piaredist.exe"/>
-				</Component>
-				<?if $(sys.BUILDARCH) = x64 ?>
-				<Merge Id="TECkit_DLLs" Language="1033" SourceFile="$(var.EncodingConvertersPath)\TECkit64bitDLLsMM.msm" DiskId="1"/>
-				<?else?>
-				<Merge Id="TECkit_DLLs" Language="1033" SourceFile="$(var.EncodingConvertersPath)\TECkitDLLsMM.msm" DiskId="1"/>
-				<?endif?>
-			</Directory>
+	<DirectoryRef Id="$(var.CFDir)">
+		<Directory Id="SIL" Name="SIL">
+			<Component Id="vs_piaredist.exe" Guid="69E34503-AFF1-455d-8B02-38EC1EC156C2">
+				<File Id="vs_piaredist.exe" Name="vs_piaredist.exe" ReadOnly="yes" Source="!(wix.RootObjectsDir)\vs_piaredist.exe"/>
+			</Component>
+			<?if $(sys.BUILDARCH) = x64 ?>
+			<Merge Id="TECkit_DLLs" Language="1033" SourceFile="$(var.EncodingConvertersPath)\TECkit64bitDLLsMM.msm" DiskId="1"/>
+			<?else?>
+			<Merge Id="TECkit_DLLs" Language="1033" SourceFile="$(var.EncodingConvertersPath)\TECkitDLLsMM.msm" DiskId="1"/>
+			<?endif?>
 		</Directory>
 	</DirectoryRef>
 

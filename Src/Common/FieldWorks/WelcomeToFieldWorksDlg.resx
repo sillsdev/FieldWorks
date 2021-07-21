@@ -671,8 +671,9 @@
     <value>4</value>
   </data>
   <data name="reportingInfoLabel.Text" xml:space="preserve">
-    <value>Third-party tools are used to gather anonymous usage statistics for the developers.
+    <value>Third-party tools are used to gather anonymous usage statistics for the developers. We also download updates.
 To disable, go to Tools-&gt;Options-&gt;Privacy.</value>
+    <!-- TODO (Hasso) 2021.07: real warning about updates. REVIEW: should the updates warning be a separate string for the benefit of localization? -->
   </data>
   <data name="&gt;&gt;reportingInfoLabel.Name" xml:space="preserve">
     <value>reportingInfoLabel</value>

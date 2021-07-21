@@ -286,5 +286,45 @@ namespace SIL.FieldWorks.Common.FwUtils {
                 return ResourceManager.GetString("kstidPt", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Software updates for FieldWorks are ready to install.
+        ///
+        ///Please restart the application at your convenience..
+        /// </summary>
+        internal static string SoftwareUpdatesAreReady_PleaseRestart {
+            get {
+                return ResourceManager.GetString("SoftwareUpdatesAreReady_PleaseRestart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Software Updates.
+        /// </summary>
+        internal static string SoftwareUpdatesCaption {
+            get {
+                return ResourceManager.GetString("SoftwareUpdatesCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A FieldWorks update has been downloaded
+        ///
+        ///Do you want to install it now? (You will need to grant permission to the installer.).
+        /// </summary>
+        internal static string UpdateDownloadedInstallNowPrompt {
+            get {
+                return ResourceManager.GetString("UpdateDownloadedInstallNowPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update FieldWorks now?.
+        /// </summary>
+        internal static string UpdateNowCaption {
+            get {
+                return ResourceManager.GetString("UpdateNowCaption", resourceCulture);
+            }
+        }
     }
 }

@@ -3,6 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -21,10 +23,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// <summary>
 	/// Finds and downloads updates to FieldWorks.
 	/// </summary>
-	/// <remarks>REVIEW (Hasso) 2021.07: should this be static or singleton?</remarks>
-	public class FwUpdater
+	public static class FwUpdater
 	{
 		private const uint BytesPerMiB = 1048576;
+
+		private static FwUpdate Current
+		{
+			get
+			{
+				#if DEBUG
+				return new FwUpdate("9.1.4.847", false, 453, FwUpdate.Typ.Offline);
+				#else
+				var vip = new VersionInfoProvider(Assembly.GetEntryAssembly(), true);
+				return new FwUpdate(vip.NumericAppVersion, Environment.Is64BitProcess, vip.BaseBuildNumber, FwUpdate.Typ.Offline);
+				#endif
+
+			}
+		}
 
 		///// <remarks>so we can check daily even if the user never closes FW. REVIEW (Hasso) 2021.07: would a timer be better?
 		///// If we check daily, and we download two updates before the user restarts (unlikely!), should we notify again?</remarks>
@@ -32,19 +47,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		// TODO (Hasso) 2021.07: bool or RESTClient to track whether we're presently checking or downloading; clear in `finally`
 
+		#region check for updates
 		/// <summary>
 		/// Checks for updates to FieldWorks, if the settings say to. If an update is found,
 		/// downloads the update in the background and (TODO!) notifies the user when the download is complete.
 		/// </summary>
 		/// <param name="ui">to notify the user when an update is ready to install</param>
-		/// <param name="fwAssembly">The FieldWorks assembly (to determine the current version)</param>
-		public static void CheckForUpdates(ILcmUI ui, Assembly fwAssembly = null)
+		public static void CheckForUpdates(ILcmUI ui)
 		{
 			var settings = new FwApplicationSettings();
 			var updateSettings = settings.Update;
 			if (updateSettings == null)
 			{
-				// TODO (Hasso) 2021.07: remove or refine this before sending to users
+				// TODO (Hasso) 2021.07: remove or refine this before sending to users; add a link to the Options dialog from the Welcome dialog
 				settings.Update = updateSettings = Environment.GetEnvironmentVariable("FEEDBACK") != null &&
 												   MessageBoxUtils.Show(null, "Would you like to check for and download the latest nightly patch now?",
 													   "Check for updates?", MessageBoxButtons.YesNo) == DialogResult.Yes
@@ -57,14 +72,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			Logger.WriteEvent("Checking for updates...");
 			// Check on a background thread; hitting the Internet on the main thread can be a performance hit
-			new Thread(() => Logger.WriteEvent(CheckForUpdatesInternal(ui, updateSettings, fwAssembly ?? Assembly.GetEntryAssembly())))
+			new Thread(() => Logger.WriteEvent(CheckForUpdatesInternal(ui, updateSettings)))
 			{
 				IsBackground = true
 			}.Start();
 		}
 
 		/// <returns>a message for the log</returns>
-		private static string CheckForUpdatesInternal(ILcmUI ui, UpdateSettings updateSettings, Assembly fwAssembly)
+		private static string CheckForUpdatesInternal(ILcmUI ui, UpdateSettings updateSettings)
 		{
 			try
 			{
@@ -79,13 +94,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 						   $" {updateSettings.Channel} releases must be downloaded from software.sil.org/fieldworks/downloads";
 				}
 
-				var vip = new VersionInfoProvider(fwAssembly, true);
-				var current = new FwUpdate(vip.NumericAppVersion, Environment.Is64BitProcess, vip.BaseBuildNumber, FwUpdate.Typ.Offline);
-				#if DEBUG
-				current = new FwUpdate("9.1.4.847", false, 453, FwUpdate.Typ.Offline);
-				#endif
 
-				var available = GetLatestNightlyPatch(current,
+				var available = GetLatestNightlyPatch(Current,
 					XDocument.Load("https://flex-updates.s3.amazonaws.com/?prefix=jobs/FieldWorks-Win-all"),
 					"https://flex-updates.s3.amazonaws.com/");
 				// ENHANCE (Hasso) 2021.07: catch WebEx and try again in a minute
@@ -111,7 +121,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 				// TODO (Hasso) 2021.07: localize strings after they are finalized
 				NotifyUserOnIdle(ui,
-					$"An update has been downloaded to {localFile}; you can install it at your convenience", "sorry for the inconvenience");
+					$"An update has been downloaded to {localFile}; please restart FLEx your convenience; it will be installed on startup", "new update");
 
 				return $"Update downloaded to {localFile}";
 			}
@@ -141,11 +151,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				return null;
 			}
-
 			bucketContents.Root.RemoveNamespaces();
+			return GetLatestPatchOn(current,
+				bucketContents.Root.Elements().Where(elt => elt.Name.LocalName.Equals("Contents")).Select(elt => Parse(elt, bucketURL)));
+		}
+
+		public static FwUpdate GetLatestPatchOn(FwUpdate current, IEnumerable<FwUpdate> available)
+		{
 			FwUpdate latest = null;
-			foreach (var potential in bucketContents.Root.Elements().Where(elt => elt.Name.LocalName.Equals("Contents"))
-				.Select(elt => Parse(elt, bucketURL)).Where(ver => IsPatchOn(latest ?? current, ver)))
+			foreach (var potential in available.Where(ver => IsPatchOn(latest ?? current, ver)))
 			{
 				latest = potential;
 			}
@@ -156,9 +170,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="current">the currently-installed version</param>
 		/// <param name="potential">a potential installer</param>
 		/// <returns>true iff potential is a patch that can be installed on top of current</returns>
-		public static bool IsPatchOn(FwUpdate current, FwUpdate potential)
+		internal static bool IsPatchOn(FwUpdate current, FwUpdate potential)
 		{
-			return potential.InstallerType == FwUpdate.Typ.Patch
+			return potential != null
+				&& potential.InstallerType == FwUpdate.Typ.Patch
 				&& potential.Is64Bit == current.Is64Bit
 				&& potential.BaseBuild == current.BaseBuild
 				&& potential.Version > current.Version;
@@ -170,10 +185,36 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			try
 			{
+				var update = Parse(elt.Element("Key")?.Value, baseURL);
+				if (update != null && ulong.TryParse(elt.Element("Size")?.Value, out var byteSize))
+				{
+					// round up to the next MB
+					var size = (int)((byteSize + BytesPerMiB - 1) / BytesPerMiB);
+					update = new FwUpdate(update.Version, update.Is64Bit, update.BaseBuild, update.InstallerType, size, update.URL);
+				}
+
+				return update;
+			}
+			catch (Exception e)
+			{
+				// ReSharper disable once LocalizableElement (log content)
+				Console.WriteLine($"Got {e.GetType()}: {e.Message}");
+				return null;
+			}
+		}
+
+		/// <param name="key"></param>
+		/// <param name="baseURI">the https:// URL of the bucket, with the trailing /</param>
+		internal static FwUpdate Parse(string key, string baseURI)
+		{
+			try
+			{
 				// Key will be something like
 				// jobs/FieldWorks-Win-all-Base/312/FieldWorks_9.0.11.1_Online_x64.exe
 				// jobs/FieldWorks-Win-all-Patch/10/FieldWorks_9.0.14.10_b312_x64.msp
-				var key = elt.Element("Key")?.Value;
+				// fieldWorks/9.0.15/FieldWorks_9.0.16.128_x64.msp
+				// FieldWorks_9.0.14.10_b312_x64.msp
+				// and maybe even (TODO: do we need the base number here?) fieldWorks/9.0.15/FieldWorks_9.0.15.1_Online_x64.exe
 				var keyParts = Path.GetFileName(key)?.Split('_');
 				if (keyParts?.Length != 4)
 				{
@@ -187,23 +228,81 @@ namespace SIL.FieldWorks.Common.FwUtils
 				var installerType = isBaseBuild
 					? keyParts[2].Equals("Offline") ? FwUpdate.Typ.Offline : FwUpdate.Typ.Online
 					: FwUpdate.Typ.Patch;
-				var size = -1;
-				if (ulong.TryParse(elt.Element("Size")?.Value, out var byteSize))
-				{
-					// round up to the next MB
-					size = (int)((byteSize + BytesPerMiB - 1) / BytesPerMiB);
-				}
 
-				return new FwUpdate(keyParts[1], keyParts[3].StartsWith("x64."), baseBuild, installerType, size, $"{baseURL}{key}");
+				return new FwUpdate(keyParts[1], keyParts[3].StartsWith("x64."), baseBuild, installerType, url: $"{baseURI}{key}");
 			}
 			catch (Exception e)
 			{
 				// ReSharper disable once LocalizableElement (log content)
-				Console.WriteLine($"Got {e.GetType()}: {e.Message}");
+				Console.WriteLine($"Got {e.GetType()} parsing {key}: {e.Message}");
 				// REVIEW (Hasso) 2021.05: would returning all zeros be better?
 				return null;
 			}
 		}
+
+
+		#endregion check for updates
+
+		#region install updates
+		/// <summary>
+		/// If an update has been downloaded and the user wants to, install it
+		/// </summary>
+		public static void InstallDownloadedUpdate()
+		{
+			var latestPatch = GetLatestDownloadedPatch(Current, FwDirectoryFinder.DownloadedUpdates);
+			if (string.IsNullOrEmpty(latestPatch) || DialogResult.Yes != MessageBox.Show(
+				// TODO (Hasso) 2021.07: localize strings
+				$"An update has been downloaded to {latestPatch}; would you like to install it now?", "Install now?", MessageBoxButtons.YesNo))
+			{
+				return;
+			}
+			var info = new ProcessStartInfo();
+			var installerRunner = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles), "SIL", "ProcRunner_5.0.exe");
+			if (!File.Exists(installerRunner))
+			{
+				MessageBox.Show($"You may need to install the installer at {latestPatch} yourself, then restart FLEx yourself.",
+					"Difficulties", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				Process.Start(latestPatch);
+				Environment.Exit(1);
+			}
+			installerRunner = installerRunner.Replace(@"\", @"\\");
+			Logger.WriteEvent($"Installing {latestPatch} using {installerRunner}");
+
+			info.FileName = installerRunner;
+			info.UseShellExecute = false;
+			info.CreateNoWindow = true;
+			info.RedirectStandardError = true;
+			info.RedirectStandardInput = true;
+			info.RedirectStandardOutput = true;
+			var exeToRestart = Assembly.GetEntryAssembly();
+			// ReSharper disable once PossibleNullReferenceException
+			info.Arguments = $"\"{latestPatch}\" \"{exeToRestart.Location}\"";
+			try
+			{
+				Process.Start(info);
+				Environment.Exit(0);
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError(e);
+				MessageBox.Show($"You may need to install the installer at {latestPatch} yourself, then restart FLEx yourself.",
+					"Difficulties", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				ErrorReport.ReportNonFatalException(e);
+			}
+		}
+
+		/// <summary>
+		/// Returns the latest fully-downloaded patch that can be installed to upgrade this version of FW
+		/// </summary>
+		internal static string GetLatestDownloadedPatch(FwUpdate current, string downloadsDir)
+		{
+			var dirInfo = new DirectoryInfo(downloadsDir);
+			if (!dirInfo.Exists)
+				return null;
+			return GetLatestPatchOn(current, dirInfo.EnumerateFiles("*.msp")
+				.Select(fi => Parse(fi.Name, $"{fi.DirectoryName}{Path.DirectorySeparatorChar}")))?.URL;
+		}
+		#endregion install updates
 	}
 
 	/// <summary>Represents an update that can be downloaded</summary>
@@ -231,7 +330,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public string URL { get; }
 
 		/// <summary/>
-		public FwUpdate(string version, bool is64Bit, int baseBuild, Typ installerType, int size = 0, string url = null)
+		public FwUpdate(string version, bool is64Bit, int baseBuild, Typ installerType, int size = -1, string url = null)
 			: this(new Version(version), is64Bit, baseBuild, installerType, size, url)
 		{
 		}

@@ -13,8 +13,6 @@ with appropriate values, typically version numbers, by a custom build task
 Other directives are merely here because we want them to be the same for all FieldWorks projects.
 ----------------------------------------------------------------------------------------------*/
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]

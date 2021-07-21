@@ -192,6 +192,29 @@ If you want to use Paratext with this project, make a change in this project (so
     <value>Version: {0}  {1}  {2}</value>
     <comment>Displays in the Help/About box and the splash screen</comment>
   </data>
+  <data name="SoftwareUpdatesCaption" xml:space="preserve">
+    <value>Software Updates</value>
+  </data>
+  <data name="SoftwareUpdatesAreReady_PleaseRestart" xml:space="preserve">
+    <value>Software updates for FieldWorks are ready to install.
+
+Please restart the application at your convenience.</value>
+  </data>
+  <data name="UpdateNowCaption" xml:space="preserve">
+    <value>Update FieldWorks now?</value>
+  </data>
+  <data name="UpdateDownloadedInstallNowPrompt" xml:space="preserve">
+    <value>A FieldWorks update has been downloaded
+
+Do you want to install it now? (You will need to grant permission to the installer.)</value>
+  </data>
+  <!--data name="CouldNotUpdateAutomaticallyCaption" xml:space="preserve">
+    <value>Could Not Update Automatically</value>
+  </data>
+  <<data name="AutomaticUpdateFailedMessage" xml:space="preserve">
+    <value>FieldWorks could not be updated automatically. Please close all FieldWorks windows and install the update from {0}</value>
+    <comment>{0} is the path to the installer</comment>
+  </data>-->
   <data name="kstidLicense" xml:space="preserve">
     <value>This software is licensed under the LGPL, version 2.1 or later</value>
     <comment>Displays in the Help/About box and the splash screen</comment>

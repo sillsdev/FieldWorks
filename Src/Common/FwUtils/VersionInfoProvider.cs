@@ -33,9 +33,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public VersionInfoProvider(Assembly assembly, bool fShowSILInfo)
 		{
-			if (assembly == null)
-				throw new ArgumentNullException("assembly");
-			m_assembly = assembly;
+			m_assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
 			m_fShowSILInfo = fShowSILInfo;
 		}
 

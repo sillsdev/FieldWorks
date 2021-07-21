@@ -114,7 +114,7 @@ namespace SIL.FieldWorks
 		private static int s_servicePort;
 		// true if we have no previous reporting settings, typically the first time a version of FLEx that
 		// supports usage reporting has been run.
-		private static bool s_noPreviousReportingSettings;
+		private static bool s_missingSomeInternetSettings;
 		private static ILcmUI s_ui;
 		private static FwApplicationSettings s_appSettings;
 		#endregion
@@ -167,13 +167,22 @@ namespace SIL.FieldWorks
 				s_appSettings.DeleteCorruptedSettingsFilesIfPresent();
 				s_appSettings.UpgradeIfNecessary();
 
+				if (s_appSettings.Update == null)
+				{
+					s_missingSomeInternetSettings = true;
+				}
+				else
+				{
+					FwUpdater.InstallDownloadedUpdate();
+				}
+
 				var reportingSettings = s_appSettings.Reporting;
 				if (reportingSettings == null)
 				{
 					// Note: to simulate this, currently it works to delete all subfolders of
 					// (e.g.) C:\Users\thomson\AppData\Local\SIL\FieldWorks.exe_Url_tdkbegygwiuamaf3mokxurci022yv1kn
 					// That guid may depend on version or something similar; it's some artifact of how the Settings persists.
-					s_noPreviousReportingSettings = true;
+					s_missingSomeInternetSettings = true;
 					reportingSettings = new ReportingSettings();
 					s_appSettings.Reporting = reportingSettings; //to avoid a defect in Settings rely on the Save in the code below
 				}
@@ -1640,7 +1649,7 @@ namespace SIL.FieldWorks
 				// reset our projectId.
 				projectToTry = lastProjectId;
 
-				using (WelcomeToFieldWorksDlg dlg = new WelcomeToFieldWorksDlg(helpTopicProvider, exception, s_noPreviousReportingSettings))
+				using (WelcomeToFieldWorksDlg dlg = new WelcomeToFieldWorksDlg(helpTopicProvider, exception, s_missingSomeInternetSettings))
 				{
 					if (exception != null)
 					{
