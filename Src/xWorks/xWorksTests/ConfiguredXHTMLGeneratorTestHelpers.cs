@@ -470,30 +470,35 @@ namespace SIL.FieldWorks.XWorks
 			return builder.GetString();
 		}
 
-		private ITsString MakeBidirectionalTss(IEnumerable<string> content)
+		internal static ITsString MakeBidirectionalTss(IEnumerable<string> content, LcmCache cache)
 		{
-			EnsureHebrewExists();
+			var wsHe = EnsureHebrewExists(cache);
+			var wsEn = cache.ServiceLocator.WritingSystems.AllWritingSystems
+				.First(ws => ws.Id == "en").Handle;
 			// automatically alternates runs between 'en' and 'he' (Hebrew)
 			var tsFact = TsStringUtils.TsStrFactory;
-			var lastWs = m_wsEn;
+			var lastWs = wsEn;
 			var builder = tsFact.GetIncBldr();
 			foreach (var runContent in content)
 			{
-				lastWs = lastWs == m_wsEn ? m_wsHe : m_wsEn; // switch ws for each run
+				lastWs = lastWs == wsEn ? wsHe : wsEn; // switch ws for each run
 				builder.AppendTsString(tsFact.MakeString(runContent, lastWs));
 			}
 			return builder.GetString();
 		}
 
-		private void EnsureHebrewExists()
+		private static int EnsureHebrewExists(LcmCache cache)
 		{
-			if (m_wsHe > 0)
-				return;
-			var wsManager = Cache.ServiceLocator.WritingSystemManager;
+			var heWs =
+				cache.ServiceLocator.WritingSystems.AllWritingSystems.FirstOrDefault(ws =>
+					ws.Id == "he");
+			if (heWs != null)
+				return heWs.Handle;
+			var wsManager = cache.ServiceLocator.WritingSystemManager;
 			CoreWritingSystemDefinition hebrew;
 			wsManager.GetOrSet("he", out hebrew);
 			hebrew.RightToLeftScript = true;
-			m_wsHe = hebrew.Handle;
+			return hebrew.Handle;
 		}
 
 		private void SetDictionaryNormalDirection(InheritableStyleProp<TriStateBool> rightToLeft)

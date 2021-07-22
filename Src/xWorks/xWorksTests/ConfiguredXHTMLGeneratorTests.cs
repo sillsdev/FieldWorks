@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	public partial class ConfiguredXHTMLGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
-		private int m_wsEn, m_wsFr, m_wsHe;
+		private int m_wsEn, m_wsFr;
 
 		private FwXApp m_application;
 		private FwXWindow m_window;
@@ -8401,8 +8401,9 @@ namespace SIL.FieldWorks.XWorks
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
-			var multiRunString = MakeBidirectionalTss(new[] { "דוד", " et ", "דניאל" });
-			entry.Bibliography.set_String(m_wsHe, multiRunString);
+			var multiRunString = MakeBidirectionalTss(new[] { "דוד", " et ", "דניאל" }, Cache);
+			var wsHe = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("he");
+			entry.Bibliography.set_String(wsHe, multiRunString);
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
 			const string nestedEn = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@dir='rtl']/span[@lang='en']/span[@dir='ltr']";
@@ -8429,8 +8430,9 @@ namespace SIL.FieldWorks.XWorks
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
-			var multiRunString = MakeBidirectionalTss(new[] { "ירמיהו", " was a bullfrog." });
-			entry.Bibliography.set_String(m_wsHe, multiRunString);
+			var multiRunString = MakeBidirectionalTss(new[] { "ירמיהו", " was a bullfrog." }, Cache);
+			var wsHe = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("he");
+			entry.Bibliography.set_String(wsHe, multiRunString);
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, true); // Right-to-Left
 																															 //SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);

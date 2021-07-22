@@ -15,10 +15,12 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
+using SIL.TestUtilities;
 using XCore;
 using Formatting = Newtonsoft.Json.Formatting;
 
@@ -27,7 +29,7 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	class LcmJsonGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
-		private int m_wsEn, m_wsFr, m_wsHe;
+		private int m_wsEn, m_wsFr;
 
 		private FwXApp m_application;
 		private FwXWindow m_window;
@@ -1057,6 +1059,34 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(0, result[0].Count, "entries");
 		}
 
+		[Test]
+		public void GenerateXHTMLForEntry_EmbeddedWritingSystemOfOppositeDirectionGeneratesCorrectResult()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Bibliography",
+				CSSClassNameOverride = "bib",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "he" })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var multiRunString = ConfiguredXHTMLGeneratorTests.MakeBidirectionalTss(new[] { "דוד", " et ", "דניאל" }, Cache);
+			var wsHe = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("he");
+			entry.Bibliography.set_String(wsHe, multiRunString);
+			//SUT
+
+			var json = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
+			var expectedResults = @"{""xhtmlTemplate"":""lexentry"",""guid"":""g" + entry.Guid + @""",""letterHead"":""c"",""sortIndex"":-1,
+				""bib"": [{""lang"":""he"",""value"":""דוד""},{""lang"":""en"",""value"":"" et ""},{""lang"":""he"",""value"":""דניאל""}],}";
+			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
+			VerifyJson(json, expected);
+		}
+
 		/// <summary>
 		/// Verifies the json data generated is equivalent to the expected result
 		/// </summary>
@@ -1065,7 +1095,6 @@ namespace SIL.FieldWorks.XWorks
 			// TODO: use Json FluentAssert library
 			dynamic jsonResult = JsonConvert.DeserializeObject(actual, new JsonSerializerSettings { Formatting = Formatting.None });
 			string actualReformatted = JsonConvert.SerializeObject(jsonResult, Formatting.Indented);
-			Console.WriteLine(actualReformatted);
 			Assert.That(actualReformatted, Is.EqualTo(JsonConvert.SerializeObject(expected, Formatting.Indented)));
 		}
 	}

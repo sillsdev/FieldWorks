@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.XWorks
 	public class LcmJsonGenerator : ILcmContentGenerator
 	{
 		private LcmCache Cache { get; }
-		private ThreadLocal<StringBuilder> m_runBuilder = new ThreadLocal<StringBuilder>(()=> new StringBuilder());
+		private readonly ThreadLocal<StringBuilder> m_runBuilder = new ThreadLocal<StringBuilder>(()=> new StringBuilder());
 		private Collator m_headwordWsCollator;
 		public LcmJsonGenerator(LcmCache cache)
 		{
@@ -124,7 +124,6 @@ namespace SIL.FieldWorks.XWorks
 
 		public void StartBiDiWrapper(IFragmentWriter writer, bool rightToLeft)
 		{
-			((JsonFragmentWriter)writer).InsertJsonProperty("rtl", rightToLeft.ToString());
 		}
 
 		public void EndBiDiWrapper(IFragmentWriter writer)
