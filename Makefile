@@ -149,8 +149,6 @@ install-tree: install-tree-fdo
 	case $(ARCH) in i686) OTHERWIDTH=64;; x86_64) OTHERWIDTH=32;; esac; \
 	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/lib{xample,patr}$$OTHERWIDTH.so
 	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/lib{ecdriver,IcuConvEC,IcuRegexEC,IcuTranslitEC,PyScriptEncConverter}*.so
-	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/{AIGuesserEC,CcEC,IcuEC,PerlExpressionEC,PyScriptEC,SilEncConverters40,ECInterfaces}.dll{,.config}
-	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/libTECkit{,_Compiler}*.so
 	rm -Rf $(DESTDIR)$(INSTALLATION_PREFIX)/lib/share/fieldworks/Icu54/tools
 	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/share/fieldworks/Icu54/Keyboards
 	# Windows dll and exe files.
@@ -162,6 +160,11 @@ install-tree: install-tree-fdo
 	mkdir -p "$(DESTDIR)$(INSTALLATION_PREFIX)/share/fieldworks/CommonLocalizations"
 	install -m 644 DistFiles/CommonLocalizations/*.en.xlf $(DESTDIR)$(INSTALLATION_PREFIX)/share/fieldworks/CommonLocalizations
 	install -m 644 DistFiles/Language\ Explorer/Configuration/strings-en.xml $(DESTDIR)$(INSTALLATION_PREFIX)/share/fieldworks/Language\ Explorer/Configuration
+
+install-tree-deb:
+	# EC files are installed by package fieldworks-enc-converters
+	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/{AIGuesserEC,CcEC,IcuEC,PerlExpressionEC,PyScriptEC,SilEncConverters40,ECInterfaces}.dll{,.config}
+	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/libTECkit{,_Compiler}*.so
 
 install-menuentries:
 	# Add to Applications menu
@@ -186,7 +189,7 @@ install-package: install install-COM
 
 install-package-fdo: install-tree-fdo install-COM
 
-install-for-deb: install-package
+install-for-deb: install-package install-tree-deb
 
 install-for-flatpak: install-tree install-menuentries l10n-install install-packagemetadata install-COM
 
