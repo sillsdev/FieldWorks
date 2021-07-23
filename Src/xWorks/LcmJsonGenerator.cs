@@ -280,8 +280,11 @@ namespace SIL.FieldWorks.XWorks
 
 		public void WriteProcessedContents(IFragmentWriter writer, string contents)
 		{
-			// Try not to double up, but do try to end content with a ',' for building up objects
-			((JsonFragmentWriter)writer).InsertRawJson(contents.TrimEnd(',') + ",");
+			if (!string.IsNullOrEmpty(contents))
+			{
+				// Try not to double up, but do try to end content with a ',' for building up objects
+				((JsonFragmentWriter)writer).InsertRawJson(contents.TrimEnd(',') + ",");
+			}
 		}
 
 		public string AddImage(string classAttribute, string srcAttribute, string pictureGuid)
