@@ -368,6 +368,32 @@ namespace SIL.FieldWorks.Discourse
 			Assert.IsNull(result);
 		}
 
+		[Test]
+		public void FindChartLocOfWordform_DoesNotCrashWithInvalidatedAnalysis()
+		{
+			var para1 = MakeParagraphSpecificContent("Three wordforms here.");
+			var seg1 = para1.SegmentsOS[0];
+			var w0 = new AnalysisOccurrence(seg1, 0);
+			var w1 = new AnalysisOccurrence(seg1, 1);
+			var w2 = new AnalysisOccurrence(seg1, 2);
+
+			// Chart the wordforms in two groups
+			var row = m_helper.MakeFirstRow();
+			MakeWordGroup(row, 0, w0, w1);
+			MakeWordGroup(row, 1, w2, w2);
+
+			// Replace the paragraph contents
+			((IStText)para1.Owner).DeleteParagraph(para1);
+			para1 = MakeParagraphSpecificContent("Three wordfarms hare.");
+
+			// SUT
+			ChartLocation result = null;
+			Assert.DoesNotThrow(() => result = m_ccl.FindChartLocOfWordform(w2),
+				"No crashes should happen when working with stale AnalysisOccurences");
+			// The result should be null when looking for the invalidated wordform
+			Assert.IsNull(result);
+		}
+
 		/// <summary>
 		/// Find ChartLocation of a Wordform that is in the chart.
 		/// </summary>

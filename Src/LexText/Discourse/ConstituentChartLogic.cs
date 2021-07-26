@@ -412,7 +412,7 @@ namespace SIL.FieldWorks.Discourse
 			while (true)
 			{
 				var lastWordGroup = FindLastWordGroup(CellPartsInRow(latestRow));
-				if (lastWordGroup != null)
+				if (lastWordGroup?.EndSegmentRA != null)
 				{
 					var temp = new AnalysisOccurrence(lastWordGroup.EndSegmentRA, lastWordGroup.EndAnalysisIndex + 1);
 					return temp.PreviousWordform();
@@ -836,7 +836,7 @@ namespace SIL.FieldWorks.Discourse
 		/// <returns></returns>
 		public ChartLocation FindChartLocOfWordform(AnalysisOccurrence point)
 		{
-			if (m_chart == null || Chart.RowsOS.Count < 1)
+			if (Chart == null || Chart.RowsOS.Count < 1 || !point.IsValid)
 				return null;
 			Debug.Assert(point != null);
 
@@ -866,7 +866,7 @@ namespace SIL.FieldWorks.Discourse
 						 select new ChartLocation(row, IndexOfColumnForCellPart(wordGrp));
 
 			// Either return the valid result from LINQ or an invalid ChartLocation
-			return result.Count() > 0 ? result.First() : new ChartLocation(null, -1);
+			return result.Any() ? result.First() : new ChartLocation(null, -1);
 		}
 
 		/// <summary>
