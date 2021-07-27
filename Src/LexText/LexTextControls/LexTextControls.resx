@@ -1360,4 +1360,12 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   <data name="ksDialectsAdded" xml:space="preserve">
     <value>The following Dialect labels were added to the language project:</value>
   </data>
+  <data name="RestartToForSettingsToTakeEffect_Content" xml:space="preserve">
+    <value>Restart FieldWorks for these settings to take effect.</value>
+    <comment>Message box contents when a user changes a setting requiring a restart in Tools-&gt;Options</comment>
+  </data>
+  <data name="RestartToForSettingsToTakeEffect_Title" xml:space="preserve">
+    <value>Restart required</value>
+    <comment>Message box title when a user changes a setting requiring a restart in Tools-&gt;Options</comment>
+  </data>
 </root>

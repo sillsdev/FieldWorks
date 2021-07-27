@@ -3467,5 +3467,23 @@ namespace SIL.FieldWorks.LexText.Controls {
                 return ResourceManager.GetString("openFileDialog1_Zip_Filter", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restart FieldWorks for these settings to take effect..
+        /// </summary>
+        internal static string RestartToForSettingsToTakeEffect_Content {
+            get {
+                return ResourceManager.GetString("RestartToForSettingsToTakeEffect_Content", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restart required.
+        /// </summary>
+        internal static string RestartToForSettingsToTakeEffect_Title {
+            get {
+                return ResourceManager.GetString("RestartToForSettingsToTakeEffect_Title", resourceCulture);
+            }
+        }
     }
 }

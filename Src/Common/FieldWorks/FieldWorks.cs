@@ -47,6 +47,7 @@ using SIL.Keyboarding;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
+using SIL.Settings;
 using SIL.Utils;
 using SIL.Windows.Forms.HtmlBrowser;
 using SIL.Windows.Forms.Keyboarding;
@@ -167,13 +168,18 @@ namespace SIL.FieldWorks
 				s_appSettings.DeleteCorruptedSettingsFilesIfPresent();
 				s_appSettings.UpgradeIfNecessary();
 
-				if (s_appSettings.Update == null)
+				var updateSettings = s_appSettings.Update;
+				if (updateSettings == null)
 				{
 					s_missingSomeInternetSettings = true;
-				}
-				else
-				{
-					FwUpdater.InstallDownloadedUpdate();
+					updateSettings = new UpdateSettings();
+					// TODO (Hasso) 2021.07: remove this before sending to users
+					if (Environment.GetEnvironmentVariable("FEEDBACK") != null &&
+						MessageBoxUtils.Show(null, "Would you like to check for and download the latest nightly patch now?", "Check for updates?",
+							MessageBoxButtons.YesNo) == DialogResult.Yes)
+					{
+						updateSettings.Channel = UpdateSettings.Channels.Nightly;
+					}
 				}
 
 				var reportingSettings = s_appSettings.Reporting;
@@ -280,7 +286,10 @@ namespace SIL.FieldWorks
 						ShowCommandLineHelp();
 						return 0;
 					}
-					else if (!string.IsNullOrEmpty(appArgs.ChooseProjectFile))
+
+					FwUpdater.InstallDownloadedUpdate();
+
+					if (!string.IsNullOrEmpty(appArgs.ChooseProjectFile))
 					{
 						ProjectId projId = ChooseLangProject(null, GetHelpTopicProvider());
 						if (projId == null)
@@ -1649,7 +1658,7 @@ namespace SIL.FieldWorks
 				// reset our projectId.
 				projectToTry = lastProjectId;
 
-				using (WelcomeToFieldWorksDlg dlg = new WelcomeToFieldWorksDlg(helpTopicProvider, exception, s_missingSomeInternetSettings))
+				using (var dlg = new WelcomeToFieldWorksDlg(helpTopicProvider, exception, s_missingSomeInternetSettings))
 				{
 					if (exception != null)
 					{

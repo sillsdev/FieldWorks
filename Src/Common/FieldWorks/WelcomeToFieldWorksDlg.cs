@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.LexText.Controls;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
 
@@ -96,6 +97,8 @@ namespace SIL.FieldWorks
 			receiveButton.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled();
 		}
 
+		/// <remarks> REVIEW (Hasso) 2021.07: this check box is redundant to the one in the Options dialog,
+		/// and they don't update each other until both dialogs have been closed</remarks>
 		public bool OpenLastProjectCheckboxIsChecked
 		{
 			get { return alwaysOpenLastProjectCheckBox.Checked; }
@@ -267,13 +270,6 @@ namespace SIL.FieldWorks
 			Hide();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		private void m_btnExit_Click(object sender, EventArgs e)
 		{
 			m_dlgResult = ButtonPress.Exit;
@@ -298,13 +294,16 @@ namespace SIL.FieldWorks
 			Hide();
 		}
 
-		/// ------------------------------------------------------------------------------------
+		private void m_btnOptions_Click(object sender, EventArgs e)
+		{
+			var optionsDlg = new LexOptionsDlg();
+			optionsDlg.InitBareBones(m_helpTopicProvider);
+			optionsDlg.Show(this);
+		}
+
 		/// <summary>
 		/// Open the context-sensitive help for this dialog.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, m_helpTopic);

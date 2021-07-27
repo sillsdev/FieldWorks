@@ -13,7 +13,6 @@ using System.Globalization;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
@@ -28,21 +27,22 @@ namespace SIL.FieldWorks.LexText.Controls
 	public partial class LexOptionsDlg : Form, IFwExtension
 	{
 		private Mediator m_mediator;
-		private XCore.PropertyTable m_propertyTable;
-		private LcmCache m_cache = null;
-		private string m_sUserWs = null;
-		private string m_sNewUserWs = null;
-		private bool m_pluginsUpdated = false;
+		private PropertyTable m_propertyTable;
+		private LcmCache m_cache;
+		private string m_sUserWs;
+		private string m_sNewUserWs;
+		private bool m_pluginsUpdated;
 		private Dictionary<string, bool> m_plugins = new Dictionary<string, bool>();
-		private const string s_helpTopic = "khtpLexOptions";
-		private HelpProvider helpProvider;
+		private const string HelpTopic = "khtpLexOptions";
 		private IHelpTopicProvider m_helpTopicProvider;
-		private ToolTip optionsTooltip;
+
+		private FwApplicationSettingsBase m_settings;
+		private FwApp App => m_propertyTable?.GetValue<FwApp>("App") ?? m_helpTopicProvider as FwApp;
 
 		public LexOptionsDlg()
 		{
 			InitializeComponent();
-			optionsTooltip = new ToolTip { AutoPopDelay = 6000, InitialDelay = 400, ReshowDelay = 500, IsBalloon = true };
+			var optionsTooltip = new ToolTip { AutoPopDelay = 6000, InitialDelay = 400, ReshowDelay = 500, IsBalloon = true };
 			optionsTooltip.SetToolTip(groupBox1, LexTextControls.ksUserInterfaceTooltip);
 		}
 
@@ -55,32 +55,27 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			base.OnLoad(e);
 			m_autoOpenCheckBox.Checked = AutoOpenLastProject;
-			var appSettings = m_propertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
-			m_okToPingCheckBox.Checked = appSettings.Reporting.OkToPingBasicUsageData;
+			m_okToPingCheckBox.Checked = m_settings.Reporting.OkToPingBasicUsageData;
 			if (Platform.IsWindows)
 			{
-				if (appSettings.Update == null)
+				if (m_settings.Update == null)
 				{
 					// REVIEW (Hasso) 2021.07: we could default to Notify as soon as we implement it, but our low-bandwidth
 					// users wouldn't appreciate automatic downloads of hundreds of megabytes w/o express consent.
-					appSettings.Update = new UpdateSettings
-					{
-						Behavior = UpdateSettings.Behaviors.DoNotCheck,
-						Channel = UpdateSettings.Channels.Stable
-					};
+					m_settings.Update = new UpdateSettings { Behavior = UpdateSettings.Behaviors.DoNotCheck };
 				}
-				m_okToAutoupdate.Checked = appSettings.Update.Behavior != UpdateSettings.Behaviors.DoNotCheck;
+				m_okToAutoupdate.Checked = m_settings.Update.Behavior != UpdateSettings.Behaviors.DoNotCheck;
 
 				m_cbUpdateChannel.Items.AddRange(new object[]
 				{
 					UpdateSettings.Channels.Stable, UpdateSettings.Channels.Beta, UpdateSettings.Channels.Alpha
 				});
-				// Enable the nightly channel if it is already selected or if this is a tester machine (testers must set the FEEDBACK env var)
-				if (appSettings.Update.Channel == UpdateSettings.Channels.Nightly || Environment.GetEnvironmentVariable("FEEDBACK") != null)
+				// Enable the nightly channel only if it is already selected
+				if (m_settings.Update.Channel == UpdateSettings.Channels.Nightly)
 				{
 					m_cbUpdateChannel.Items.Add(UpdateSettings.Channels.Nightly);
 				}
-				m_cbUpdateChannel.SelectedItem = appSettings.Update.Channel;
+				m_cbUpdateChannel.SelectedItem = m_settings.Update.Channel;
 			}
 			else
 			{
@@ -90,13 +85,28 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
-			var appSettings = m_propertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
-			appSettings.Reporting.OkToPingBasicUsageData = m_okToPingCheckBox.Checked;
+			var restartRequired = false;
+			if(m_settings.Reporting.OkToPingBasicUsageData != m_okToPingCheckBox.Checked)
+			{
+				m_settings.Reporting.OkToPingBasicUsageData = m_okToPingCheckBox.Checked;
+				restartRequired = true;
+			}
 
 			if (Platform.IsWindows)
 			{
-				appSettings.Update.Behavior = m_okToAutoupdate.Checked ? UpdateSettings.Behaviors.Download : UpdateSettings.Behaviors.DoNotCheck;
-				appSettings.Update.Channel = (UpdateSettings.Channels)Enum.Parse(typeof(UpdateSettings.Channels), m_cbUpdateChannel.Text);
+				var updateSettings = m_settings.Update;
+				var oldBehavior = updateSettings.Behavior;
+				var oldChannel = updateSettings.Channel;
+				updateSettings.Behavior = m_okToAutoupdate.Checked ? UpdateSettings.Behaviors.Download : UpdateSettings.Behaviors.DoNotCheck;
+				updateSettings.Channel = (UpdateSettings.Channels)Enum.Parse(typeof(UpdateSettings.Channels), m_cbUpdateChannel.Text);
+				// If the mediator is null, we aren't finished starting yet, so we haven't initiated the check for updates.
+				// When we initiate the check, these new settings will already have been saved, so they will be used.
+				// If the mediator is not null, the user will need to restart to either stop the download or to check the new channel.
+				// Paratext has a way of pausing or checking immediately when the user changes these settings, but FLEx does not yet.
+				if (m_mediator != null && (oldBehavior != updateSettings.Behavior || oldChannel != updateSettings.Channel))
+				{
+					restartRequired = true;
+				}
 			}
 
 			m_sNewUserWs = m_userInterfaceChooser.NewUserWs;
@@ -116,17 +126,20 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 				// This needs to be consistent with Common/FieldWorks/FieldWorks.SetUICulture().
 				FwRegistryHelper.FieldWorksRegistryKey.SetValue(FwRegistryHelper.UserLocaleValueName, m_sNewUserWs);
-				//The writing system the user selects for the user interface may not be loaded yet into the project
-				//database. Therefore we need to check this first and if it is not we need to load it.
-				CoreWritingSystemDefinition ws;
-				m_cache.ServiceLocator.WritingSystemManager.GetOrSet(m_sNewUserWs, out ws);
-				m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem = ws;
+				if (m_cache != null)
+				{
+					//The writing system the user selects for the user interface may not be loaded yet into the project
+					//database. Therefore we need to check this first and if it is not we need to load it.
+					m_cache.ServiceLocator.WritingSystemManager.GetOrSet(m_sNewUserWs, out var ws);
+					m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem = ws;
+				}
 				// Reload the mediator's string table with the appropriate language data.
 				StringTable.Table.Reload(m_sNewUserWs);
+				restartRequired = true;
 			}
 
 			// Handle installing/uninstalling plugins.
-			if (m_lvPlugins.Items.Count > 0)
+			if (m_lvPlugins.Items.Count > 0 && m_mediator != null)
 			{
 				var pluginsToInstall = new List<XmlDocument>();
 				var pluginsToUninstall = new List<XmlDocument>();
@@ -199,7 +212,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					var managerNode = managerDoc.SelectSingleNode("/manager");
 					var shutdownMsg = XmlUtils.GetOptionalAttributeValue(managerNode, "shutdown");
-					if (!String.IsNullOrEmpty(shutdownMsg))
+					if (!string.IsNullOrEmpty(shutdownMsg))
 						m_mediator.SendMessage(shutdownMsg, null);
 					var configfilesNode = managerNode.SelectSingleNode("configfiles");
 					var extensionPath = Path.Combine(baseExtensionPath, configfilesNode.Attributes["targetdir"].Value);
@@ -207,23 +220,26 @@ namespace SIL.FieldWorks.LexText.Controls
 					// Leave any dlls in place since they may be shared, or in use for the moment.
 				}
 			}
-			appSettings.Save();
+			m_settings.Save();
 			AutoOpenLastProject = m_autoOpenCheckBox.Checked;
 			DialogResult = DialogResult.OK;
+			Close();
+			if(restartRequired)
+			{
+				MessageBox.Show(Owner, LexTextControls.RestartToForSettingsToTakeEffect_Content, LexTextControls.RestartToForSettingsToTakeEffect_Title);
+			}
 		}
 
+		/// <summary>
+		/// If this is true and there is a last edited project name stored, FieldWorks will
+		/// open that project automatically instead of displaying the usual Welcome dialog.
+		/// </summary>
 		private bool AutoOpenLastProject
 		{
-			// If set to true and there is a last edited project name stored, FieldWorks will
-			// open that project automatically instead of displaying the usual Welcome dialog.
-			get
-			{
-				var app = m_propertyTable.GetValue<FwApp>("App");
-				return app.RegistrySettings.AutoOpenLastEditedProject;
-			}
+			get => App?.RegistrySettings.AutoOpenLastEditedProject ?? false;
 			set
 			{
-				var app = m_propertyTable.GetValue<FwApp>("App");
+				var app = App;
 				if (app != null)
 					app.RegistrySettings.AutoOpenLastEditedProject = value;
 			}
@@ -232,12 +248,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void m_btnCancel_Click(object sender, EventArgs e)
 		{
 			DialogResult = DialogResult.Cancel;
+			Close();
 		}
 
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			// TODO: Implement.
-			ShowHelp.ShowHelpTopic(m_helpTopicProvider, s_helpTopic);
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, HelpTopic);
 		}
 
 		#region IFwExtension Members
@@ -248,6 +264,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_propertyTable = propertyTable;
 			m_cache = cache;
 			m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
+			m_settings = m_propertyTable.GetValue<FwApplicationSettingsBase>("AppSettings");
 			m_sUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem.Id;
 			m_sNewUserWs = m_sUserWs;
 			m_userInterfaceChooser.Init(m_sUserWs);
@@ -290,14 +307,26 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (m_helpTopicProvider != null) // Will be null when running tests
 			{
-				helpProvider = new HelpProvider();
-				helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
-				helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
+				var helpProvider = new HelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };
+				helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
 				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
 		}
 
 		#endregion
+
+		/// <remarks>For use only when <c>IFwExtension.Init</c> cannot be called (when the Mediator and PropertyTable don't exist)</remarks>
+		public void InitBareBones(IHelpTopicProvider helpTopicProvider)
+		{
+			m_helpTopicProvider = helpTopicProvider;
+			m_settings = new FwApplicationSettings();
+			m_sUserWs = FwRegistryHelper.FieldWorksRegistryKey.GetValue(FwRegistryHelper.UserLocaleValueName, "en") as string;
+			m_sNewUserWs = m_sUserWs;
+			m_userInterfaceChooser.Init(m_sUserWs);
+
+			// The Plugins tab requires the Mediator
+			m_tabPlugins.Enabled = false;
+		}
 
 		public string NewUserWs
 		{

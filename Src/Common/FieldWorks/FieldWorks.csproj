@@ -347,6 +347,12 @@
     <None Include="Resources\Info.png" />
     <Content Include="SmallBookOnCube.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\LexText\LexTextControls\LexTextControls.csproj">
+      <Project>{37c30ac6-66d3-4ffd-a50f-d9194fb9e33b}</Project>
+      <Name>LexTextControls</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="BuildInclude.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

@@ -414,8 +414,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 							loDlg.PluginsUpdated)
 						{
 							wndActive.SaveSettings();
-							MessageBoxUtils.Show(wndActive, LexTextStrings.LexTextApp_RestartToChangeUI_Content,
-								LexTextStrings.LexTextApp_RestartToChangeUI_Title, MessageBoxButtons.OK);
 						}
 					}
 					else if (dlg is LinguaLinksImportDlg || dlg is InterlinearImportDlg ||

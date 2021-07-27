@@ -55,18 +55,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="ui">to notify the user when an update is ready to install</param>
 		public static void CheckForUpdates(ILcmUI ui)
 		{
-			var settings = new FwApplicationSettings();
-			var updateSettings = settings.Update;
-			if (updateSettings == null)
-			{
-				// TODO (Hasso) 2021.07: remove or refine this before sending to users; add a link to the Options dialog from the Welcome dialog
-				settings.Update = updateSettings = Environment.GetEnvironmentVariable("FEEDBACK") != null &&
-												   MessageBoxUtils.Show(null, "Would you like to check for and download the latest nightly patch now?",
-													   "Check for updates?", MessageBoxButtons.YesNo) == DialogResult.Yes
-						? new UpdateSettings { Behavior = UpdateSettings.Behaviors.Download, Channel = UpdateSettings.Channels.Nightly }
-						: new UpdateSettings { Behavior = UpdateSettings.Behaviors.DoNotCheck, Channel = UpdateSettings.Channels.Stable };
-			}
-			if (updateSettings.Behavior == UpdateSettings.Behaviors.DoNotCheck)
+			var updateSettings = new FwApplicationSettings().Update;
+			if (updateSettings == null || updateSettings.Behavior == UpdateSettings.Behaviors.DoNotCheck)
 			{
 				return;
 			}

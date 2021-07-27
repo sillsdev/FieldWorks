@@ -544,60 +544,6 @@
   <data name="reportingInfoLayout.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
     <value>GrowAndShrink</value>
   </data>
-  <data name="&gt;&gt;infoIcon.Name" xml:space="preserve">
-    <value>infoIcon</value>
-  </data>
-  <data name="&gt;&gt;infoIcon.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;infoIcon.Parent" xml:space="preserve">
-    <value>reportingInfoLayout</value>
-  </data>
-  <data name="&gt;&gt;infoIcon.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;reportingInfoLabel.Name" xml:space="preserve">
-    <value>reportingInfoLabel</value>
-  </data>
-  <data name="&gt;&gt;reportingInfoLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;reportingInfoLabel.Parent" xml:space="preserve">
-    <value>reportingInfoLayout</value>
-  </data>
-  <data name="&gt;&gt;reportingInfoLabel.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="reportingInfoLayout.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Left</value>
-  </data>
-  <data name="reportingInfoLayout.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 329</value>
-  </data>
-  <data name="reportingInfoLayout.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 0, 0, 0</value>
-  </data>
-  <data name="reportingInfoLayout.Size" type="System.Drawing.Size, System.Drawing">
-    <value>311, 49</value>
-  </data>
-  <data name="reportingInfoLayout.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="reportingInfoLayout.WrapContents" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;reportingInfoLayout.Name" xml:space="preserve">
-    <value>reportingInfoLayout</value>
-  </data>
-  <data name="&gt;&gt;reportingInfoLayout.Type" xml:space="preserve">
-    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;reportingInfoLayout.Parent" xml:space="preserve">
-    <value>mainVerticalLayout</value>
-  </data>
-  <data name="&gt;&gt;reportingInfoLayout.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
   <data name="infoIcon.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
@@ -665,15 +611,15 @@
     <value>True</value>
   </data>
   <data name="reportingInfoLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>281, 43</value>
+    <value>310, 96</value>
   </data>
   <data name="reportingInfoLabel.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
   </data>
   <data name="reportingInfoLabel.Text" xml:space="preserve">
-    <value>Third-party tools are used to gather anonymous usage statistics for the developers. We also download updates.
-To disable, go to Tools-&gt;Options-&gt;Privacy.</value>
-    <!-- TODO (Hasso) 2021.07: real warning about updates. REVIEW: should the updates warning be a separate string for the benefit of localization? -->
+    <value>Third-party tools are used to gather anonymous usage statistics for the developers.
+Some updates are downloaded automatically.
+These can be configured in the Privacy and Updates tabs in the Options dialog; click Options below or go to Tools-&gt;Options</value>
   </data>
   <data name="&gt;&gt;reportingInfoLabel.Name" xml:space="preserve">
     <value>reportingInfoLabel</value>
@@ -687,6 +633,36 @@ To disable, go to Tools-&gt;Options-&gt;Privacy.</value>
   <data name="&gt;&gt;reportingInfoLabel.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="reportingInfoLayout.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="reportingInfoLayout.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 329</value>
+  </data>
+  <data name="reportingInfoLayout.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 0, 0, 0</value>
+  </data>
+  <data name="reportingInfoLayout.Size" type="System.Drawing.Size, System.Drawing">
+    <value>340, 102</value>
+  </data>
+  <data name="reportingInfoLayout.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="reportingInfoLayout.WrapContents" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;reportingInfoLayout.Name" xml:space="preserve">
+    <value>reportingInfoLayout</value>
+  </data>
+  <data name="&gt;&gt;reportingInfoLayout.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;reportingInfoLayout.Parent" xml:space="preserve">
+    <value>mainVerticalLayout</value>
+  </data>
+  <data name="&gt;&gt;reportingInfoLayout.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
   <data name="buttonLayout.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Left, Right</value>
   </data>
@@ -696,60 +672,6 @@ To disable, go to Tools-&gt;Options-&gt;Privacy.</value>
   <data name="buttonLayout.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
     <value>GrowAndShrink</value>
   </data>
-  <data name="&gt;&gt;helpButton.Name" xml:space="preserve">
-    <value>helpButton</value>
-  </data>
-  <data name="&gt;&gt;helpButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;helpButton.Parent" xml:space="preserve">
-    <value>buttonLayout</value>
-  </data>
-  <data name="&gt;&gt;helpButton.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;closeButton.Name" xml:space="preserve">
-    <value>closeButton</value>
-  </data>
-  <data name="&gt;&gt;closeButton.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;closeButton.Parent" xml:space="preserve">
-    <value>buttonLayout</value>
-  </data>
-  <data name="&gt;&gt;closeButton.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="buttonLayout.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
-    <value>RightToLeft</value>
-  </data>
-  <data name="buttonLayout.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 384</value>
-  </data>
-  <data name="buttonLayout.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 5</value>
-  </data>
-  <data name="buttonLayout.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 0, 0</value>
-  </data>
-  <data name="buttonLayout.Size" type="System.Drawing.Size, System.Drawing">
-    <value>400, 31</value>
-  </data>
-  <data name="buttonLayout.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
-  </data>
-  <data name="&gt;&gt;buttonLayout.Name" xml:space="preserve">
-    <value>buttonLayout</value>
-  </data>
-  <data name="&gt;&gt;buttonLayout.Type" xml:space="preserve">
-    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;buttonLayout.Parent" xml:space="preserve">
-    <value>mainVerticalLayout</value>
-  </data>
-  <data name="&gt;&gt;buttonLayout.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
   <data name="helpButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Left</value>
   </data>
@@ -757,7 +679,7 @@ To disable, go to Tools-&gt;Options-&gt;Privacy.</value>
     <value>NoControl</value>
   </data>
   <data name="helpButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>322, 3</value>
+    <value>302, 3</value>
   </data>
   <data name="helpButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 0</value>
@@ -769,7 +691,7 @@ To disable, go to Tools-&gt;Options-&gt;Privacy.</value>
     <value>1</value>
   </data>
   <data name="helpButton.Text" xml:space="preserve">
-    <value>Help</value>
+    <value>&amp;Help</value>
   </data>
   <data name="&gt;&gt;helpButton.Name" xml:space="preserve">
     <value>helpButton</value>
@@ -783,6 +705,39 @@ To disable, go to Tools-&gt;Options-&gt;Privacy.</value>
   <data name="&gt;&gt;helpButton.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="optionsButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="optionsButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="optionsButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>221, 3</value>
+  </data>
+  <data name="optionsButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 0</value>
+  </data>
+  <data name="optionsButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="optionsButton.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="optionsButton.Text" xml:space="preserve">
+    <value>Op&amp;tions</value>
+  </data>
+  <data name="&gt;&gt;optionsButton.Name" xml:space="preserve">
+    <value>optionsButton</value>
+  </data>
+  <data name="&gt;&gt;optionsButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;optionsButton.Parent" xml:space="preserve">
+    <value>buttonLayout</value>
+  </data>
+  <data name="&gt;&gt;optionsButton.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="closeButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Left</value>
   </data>
@@ -790,7 +745,7 @@ To disable, go to Tools-&gt;Options-&gt;Privacy.</value>
     <value>NoControl</value>
   </data>
   <data name="closeButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>241, 3</value>
+    <value>140, 3</value>
   </data>
   <data name="closeButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 0</value>
@@ -814,7 +769,34 @@ To disable, go to Tools-&gt;Options-&gt;Privacy.</value>
     <value>buttonLayout</value>
   </data>
   <data name="&gt;&gt;closeButton.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
+  </data>
+  <data name="buttonLayout.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
+    <value>RightToLeft</value>
+  </data>
+  <data name="buttonLayout.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 437</value>
+  </data>
+  <data name="buttonLayout.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 5</value>
+  </data>
+  <data name="buttonLayout.Size" type="System.Drawing.Size, System.Drawing">
+    <value>380, 26</value>
+  </data>
+  <data name="buttonLayout.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;buttonLayout.Name" xml:space="preserve">
+    <value>buttonLayout</value>
+  </data>
+  <data name="&gt;&gt;buttonLayout.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonLayout.Parent" xml:space="preserve">
+    <value>mainVerticalLayout</value>
+  </data>
+  <data name="&gt;&gt;buttonLayout.ZOrder" xml:space="preserve">
+    <value>9</value>
   </data>
   <data name="mainVerticalLayout.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -847,7 +829,7 @@ To disable, go to Tools-&gt;Options-&gt;Privacy.</value>
     <value>m_lblProjectLoadError</value>
   </data>
   <data name="&gt;&gt;m_lblProjectLoadError.Type" xml:space="preserve">
-    <value>Palaso.UI.WindowsForms.Widgets.BetterLabel, PalasoUIWindowsForms, Version=2.6.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.Windows.Forms.Widgets.BetterLabel, SIL.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_lblProjectLoadError.Parent" xml:space="preserve">
     <value>mainVerticalLayout</value>
