@@ -4251,16 +4251,17 @@ namespace SIL.FieldWorks.LexText.Controls
 					//}
 					goto case CellarPropertyType.Nil;
 				case CellarPropertyType.ReferenceAtomic:
-					//if (fd.ListRootId != Guid.Empty)
-					//{
-					//	sig = "ListRef";
-					//}
-					//break;
+					if (fd.ListRootId != Guid.Empty)
+					{
+						sig = "ListRef";
+					}
+					break;
 				case CellarPropertyType.ReferenceCollection:
-					//if (fd.ListRootId != Guid.Empty)
-					//{
-					//	sig = "ListMultiRef";
-					//}
+					if (fd.ListRootId != Guid.Empty)
+					{
+						sig = "ListMultiRef";
+					}
+					break;
 				// JohnT: added  GenDate and Numeric and Integer to prevent the crash in LT-11188.
 				// Hasso (2021.05): some property types cannot be imported. Don't lie to the users and drop their data (LT-18536, LT-20281)
 				case CellarPropertyType.GenDate:
