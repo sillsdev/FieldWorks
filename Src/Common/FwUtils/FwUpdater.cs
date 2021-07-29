@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					return; // Don't interrupt a user who is busy typing. Wait for a pause to prompt to install updates.
 
 				timer.Stop(); // one notification is enough
-				MessageBox.Show(message, caption);
+				MessageBox.Show(Form.ActiveForm, message, caption);
 			};
 			timer.Start();
 		}
@@ -277,7 +277,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Logger.WriteError(e);
 				MessageBox.Show($"You may need to install the installer at {latestPatch} yourself, then restart FLEx yourself.",
 					"Difficulties", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				ErrorReport.ReportNonFatalException(e);
+				throw;
 			}
 		}
 
