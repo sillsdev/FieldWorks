@@ -1368,7 +1368,8 @@ namespace SIL.FieldWorks
 					latestProject));
 			}
 
-			var fOpenLastEditedProject = GetAutoOpenRegistrySetting(app);
+			// If the user has not seen the warning about downloading updates, don't bypass the welcome dlg
+			var fOpenLastEditedProject = !s_missingSomeInternetSettings && GetAutoOpenRegistrySetting(app);
 
 			if (fOpenLastEditedProject && projId.IsValid && projectOpenError == null
 				&& previousStartupStatus == StartupStatus.Successful)
