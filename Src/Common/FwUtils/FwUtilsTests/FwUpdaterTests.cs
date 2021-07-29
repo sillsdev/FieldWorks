@@ -26,6 +26,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 </Contents>";
 
 		[Test]
+		public void EmptyBucket_DoesNotThrow()
+		{
+			const string bucketURL = "https://test.s3.amazonaws.com/";
+			// ReSharper disable once InconsistentNaming
+			const int Base = 10;
+			var listDoc = XDocument.Parse(string.Format(ListBucketTemplate, "<metadata/>"));
+			var current = new FwUpdate(new Version("9.0.15"), true, Base, FwUpdate.Typ.Offline);
+
+			// SUT
+			Assert.That(FwUpdater.GetLatestNightlyPatch(current, listDoc, bucketURL), Is.Null);
+		}
+
+		[Test]
 		public void LatestPatchOnThisBase()
 		{
 			const string bucketURL = "https://test.s3.amazonaws.com/";
@@ -72,7 +85,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[TestCase("https://test.s3.amazonaws.com/", "9.0.15.1", 32, 32, false, 535000222, 511)]
 		public void Parse_S3ContentsForBase(string baseURL, string version, int baseBuild, int arch, bool isOnline, int byteSize, int mbSize)
 		{
-			var key = $"jobs/FieldWorks_Win-all-Base/{baseBuild}/FieldWorks_{version}_O{(isOnline ? "n" : "ff")}line_x{arch}.exe";
+			var key = $"jobs/FieldWorks_Win-all-Base/{BaseFileName(version, baseBuild, arch, isOnline)}";
 			var xElt = XElement.Parse(string.Format(ContentsTemplate, key, byteSize));
 
 			var result = FwUpdater.Parse(xElt, baseURL);
@@ -89,6 +102,51 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[TestCase("jobs/FieldWorks-Win-all-Release-Patch/761/FieldWorks_9.1.1.761_bad_x64.msp")]
 		[TestCase("jobs/FieldWorks-Win-all-Release-Patch/761/FieldWorks_9.1.1.761_x64.msp")]
 		public void Parse_S3ContentsWithErrors_ReturnsNull(string key)
+		{
+			var xElt = XElement.Parse(string.Format(ContentsTemplate, key, 0));
+
+			var result = FwUpdater.Parse(xElt, "https://test.s3.amazonaws.com/");
+			Assert.Null(result);
+		}
+
+		[TestCase("https://downloads.languagetechnology.org/", "9.0.14.10", 367, 64, 217055232, 207)]
+		[TestCase("https://downloads.languagetechnology.org/", "9.0.15.85", 365, 32, 217055233, 208)]
+		[TestCase("https://downloads.languagetechnology.org/", "9.0.14.10", 367, 64, -23456789, -1)]
+		public void Parse_OurContentsForPatch(string baseURL, string version, int baseBuild, int arch, int byteSize, int mbSize)
+		{
+			var key = $"fieldworks/{version}/{PatchFileName(version, baseBuild, arch)}";
+			var xElt = XElement.Parse(string.Format(ContentsTemplate, key, byteSize));
+
+			var result = FwUpdater.Parse(xElt, baseURL);
+
+			Assert.AreEqual(version, result.Version.ToString());
+			Assert.AreEqual($"{baseURL}{key}", result.URL);
+			Assert.AreEqual(baseBuild, result.BaseBuild);
+			Assert.AreEqual(FwUpdate.Typ.Patch, result.InstallerType);
+			Assert.AreEqual(arch == 64, result.Is64Bit, $"Arch: {arch}");
+			Assert.AreEqual(mbSize, result.Size);
+		}
+
+		[TestCase("https://downloads.languagetechnology.org/", "9.0.15.1", 316, 64, true, 536111222, 512)]
+		[TestCase("https://downloads.languagetechnology.org/", "9.0.15.1", 32, 32, false, 535000222, 511)]
+		public void Parse_OurContentsForBase(string baseURL, string version, int baseBuild, int arch, bool isOnline, int byteSize, int mbSize)
+		{
+			var key = $"fieldworks/{version}/{BaseFileName(version, baseBuild, arch, isOnline)}";
+			var xElt = XElement.Parse(string.Format(ContentsTemplate, key, byteSize));
+
+			var result = FwUpdater.Parse(xElt, baseURL);
+
+			Assert.AreEqual(version, result.Version.ToString());
+			Assert.AreEqual($"{baseURL}{key}", result.URL);
+			Assert.AreEqual(baseBuild, result.BaseBuild);
+			Assert.AreEqual(isOnline ? FwUpdate.Typ.Online : FwUpdate.Typ.Offline, result.InstallerType);
+			Assert.AreEqual(arch == 64, result.Is64Bit, $"Arch: {arch}");
+			Assert.AreEqual(mbSize, result.Size);
+		}
+
+		[TestCase("fieldworks/9.1.1/FieldWorks_9.1.1.1_Offline_x64.exe")]
+		[TestCase("fieldworks/9.1.1/NaN/FieldWorks_9.1.1.1_Online_x64.exe")]
+		public void Parse_OurContentsWithErrors_ReturnsNull(string key)
 		{
 			var xElt = XElement.Parse(string.Format(ContentsTemplate, key, 0));
 
@@ -207,6 +265,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static string PatchFileName(string version, int baseBuild, int arch)
 		{
 			return $"FieldWorks_{version}_b{baseBuild}_x{arch}.msp";
+		}
+
+		private static string BaseFileName(string version, int baseBuild, int arch, bool isOnline)
+		{
+			return $"{baseBuild}/FieldWorks_{version}_O{(isOnline ? "n" : "ff")}line_x{arch}.exe";
 		}
 	}
 }

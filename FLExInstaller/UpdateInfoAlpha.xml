@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<UpdateInfo>
+	<BaseUrl>https://downloads.languagetechnology.org/fieldworks/</BaseUrl>
+	<Contents>
+		<Key>469/FieldWorks_9.1.5.1_Offline_x64.exe</Key>
+		<LastModified>2021-07-07T13:47:44.000Z</LastModified>
+		<Size>517000000</Size>
+	</Contents>
+	<Contents>
+		<Key>469/FieldWorks_9.1.5.1_Online_x64.exe</Key>
+		<LastModified>2021-07-07T13:47:44.000Z</LastModified>
+		<Size>350300000</Size>
+	</Contents>
+	<Contents>
+		<Key>469/FieldWorks_9.1.5.1_Offline_x86.exe</Key>
+		<LastModified>2021-07-07T13:47:44.000Z</LastModified>
+		<Size>487500000</Size>
+	</Contents>
+	<Contents>
+		<Key>469/FieldWorks_9.1.5.1_Online_x86.exe</Key>
+		<LastModified>2021-07-07T13:47:44.000Z</LastModified>
+		<Size>334100000</Size>
+	</Contents>
+	<Contents>
+		<Key>FieldWorks_9.1.5.870_b469_x64.msp</Key>
+		<LastModified>2021-07-29T13:56:48.000Z</LastModified>
+		<Size>205451264</Size>
+	</Contents>
+	<Contents>
+		<Key>FieldWorks_9.1.5.872_b469_x64.msp</Key>
+		<LastModified>2021-07-29T16:55:19.000Z</LastModified>
+		<Size>205447168</Size>
+	</Contents>
+</UpdateInfo>

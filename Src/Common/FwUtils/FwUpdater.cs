@@ -78,16 +78,28 @@ namespace SIL.FieldWorks.Common.FwUtils
 					ErrorReport.ReportNonFatalExceptionWithMessage(new ApplicationException(), "Only Windows updates are available here");
 					return "ERROR: Only Windows updates are available here";
 				}
-				if (updateSettings.Channel != UpdateSettings.Channels.Nightly)
+
+				var baseURL = "https://downloads.languagetechnology.org/fieldworks/";
+				var infoURL = "https://downloads.languagetechnology.org/fieldworks/UpdateInfo{0}.xml";
+
+				switch (updateSettings.Channel)
 				{
-					return "Presently, only nightly releases are available automatically;" +
-						   $" {updateSettings.Channel} releases must be downloaded from software.sil.org/fieldworks/downloads";
+					case UpdateSettings.Channels.Stable:
+						infoURL = string.Format(infoURL, string.Empty);
+						break;
+					case UpdateSettings.Channels.Beta:
+					case UpdateSettings.Channels.Alpha:
+						infoURL = string.Format(infoURL, updateSettings.Channel);
+						break;
+					case UpdateSettings.Channels.Nightly:
+						baseURL = "https://flex-updates.s3.amazonaws.com/";
+						infoURL = "https://flex-updates.s3.amazonaws.com/?prefix=jobs/FieldWorks-Win-all";
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
 				}
 
-
-				var available = GetLatestNightlyPatch(Current,
-					XDocument.Load("https://flex-updates.s3.amazonaws.com/?prefix=jobs/FieldWorks-Win-all"),
-					"https://flex-updates.s3.amazonaws.com/");
+				var available = GetLatestNightlyPatch(Current, XDocument.Load(infoURL), baseURL);
 				// ENHANCE (Hasso) 2021.07: catch WebEx and try again in a minute
 				if (available == null)
 				{
