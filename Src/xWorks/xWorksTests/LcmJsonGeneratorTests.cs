@@ -622,6 +622,64 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateJsonForEntry_SensibleJsonForVideoFiles()
+		{
+			var entryCorps = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "corps", "body");
+			var pronunciation = ConfiguredXHTMLGeneratorTests.AddPronunciationToEntry(entryCorps, "pronunciation", m_wsFr, Cache);
+			ConfiguredXHTMLGeneratorTests.AddSenseToEntry(entryCorps, "corpse", m_wsEn, Cache);
+			var mainMediaFile = Cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
+			pronunciation.MediaFilesOS.Add(mainMediaFile);
+			var mainFile = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			var localMediaFolder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(localMediaFolder);
+			localMediaFolder.FilesOC.Add(mainFile);
+			// InternalPath is null by default, but trying to set it to null throws an exception
+			mainFile.InternalPath = "fileName.mp4";
+			mainMediaFile.MediaFileRA = mainFile;
+
+			var mediaFileNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MediaFileRA",
+				IsEnabled = true
+			};
+			var mediaNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MediaFilesOS",
+				CSSClassNameOverride = "mediafiles",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { mediaFileNode }
+			};
+			var mainPronunciationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "PronunciationsOS",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "pronunciations",
+				Children = new List<ConfigurableDictionaryNode> { mediaNode }
+			};
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "entry"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, mainPronunciationsNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			//SUT
+			var output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryCorps, mainEntryNode, DefaultDecorator, DefaultSettings, 0);
+			Assert.IsNotNullOrEmpty(output);
+			var expectedResults = "{\"xhtmlTemplate\":\"lexentry\",\"guid\":\"g" + entryCorps.Guid + "\",\"letterHead\":\"c\",\"sortIndex\":0," +
+								  "\"entry\": [{\"lang\":\"fr\",\"value\":\"corps\"}]," +
+								  "\"pronunciations\": [{\"mediafiles\": [{\"value\": {\"id\":\"g" + mainMediaFile.Guid + "\",\"src\": \"AudioVisual/fileName.mp4\"}}]}]}";
+			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
+			VerifyJson(output, expected);
+		}
+
+		[Test]
 		public void GenerateJsonForEntry_SenseNumbersGeneratedForMultipleSenses()
 		{
 			var wsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" });

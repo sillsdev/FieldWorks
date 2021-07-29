@@ -60,5 +60,7 @@ namespace SIL.FieldWorks.XWorks
 		string WriteProcessedSenses(bool isBlock, string senseContent, string className, string sharedCollectionInfo);
 		string AddAudioWsContent(string wsId, Guid linkTarget, string fileContent);
 		string GenerateErrorContent(StringBuilder badStrBuilder);
+		string GenerateVideoLinkContent(string className, string mediaId, string srcAttribute,
+			string caption);
 	}
 }

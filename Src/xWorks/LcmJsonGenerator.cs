@@ -57,6 +57,17 @@ namespace SIL.FieldWorks.XWorks
 			return WriteProcessedObject(false, audioObject.ToString(), "value");
 		}
 
+		public string GenerateVideoLinkContent(string className, string mediaId,
+			string srcAttribute,
+			string caption)
+		{
+			// TODO: Work out any required changes for webonary to play the video with the webonary team
+			dynamic videoObject = new JObject();
+			videoObject.id = mediaId;
+			videoObject.src = srcAttribute.Replace("\\", "/"); // expecting relative paths only
+			return WriteProcessedObject(false, videoObject.ToString(), "value");
+		}
+
 		public string WriteProcessedObject(bool isBlock, string elementContent, string className)
 		{
 			if (elementContent.StartsWith("{"))

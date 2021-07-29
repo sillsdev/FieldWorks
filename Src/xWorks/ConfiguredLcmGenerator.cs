@@ -419,14 +419,14 @@ namespace SIL.FieldWorks.XWorks
 					if (fileProperty != null && !string.IsNullOrEmpty(internalPath))
 					{
 						var srcAttr = GenerateSrcAttributeForMediaFromFilePath(internalPath, "AudioVisual", settings);
-						if (IsVideo(fileProperty.InternalPath))
-							return GenerateXHTMLForVideoFile(fileProperty.ClassName, srcAttr, MovieCamera);
 						fileOwner = field as ICmObject;
+						// the XHTML id attribute must be unique. The owning ICmMedia has a unique guid.
+						// The ICmFile is used for all references to the same file within the project, so its guid is not unique.
 						if (fileOwner != null)
 						{
-							// the XHTML id attribute must be unique. The owning ICmMedia has a unique guid.
-							// The ICmFile is used for all references to the same file within the project, so its guid is not unique.
-							return GenerateXHTMLForAudioFile(fileProperty.ClassName, fileOwner.Guid.ToString(), srcAttr, LoudSpeaker, settings);
+							return IsVideo(fileProperty.InternalPath) ? GenerateXHTMLForVideoFile(fileProperty.ClassName, fileOwner.Guid.ToString(),
+								srcAttr, MovieCamera, settings) : GenerateXHTMLForAudioFile(fileProperty.ClassName, fileOwner.Guid.ToString(),
+								srcAttr, LoudSpeaker, settings);
 						}
 					}
 					return string.Empty;
@@ -542,26 +542,13 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		private static string GenerateXHTMLForVideoFile(string className, string srcAttribute, string caption)
+		private static string GenerateXHTMLForVideoFile(string className, string mediaId, string srcAttribute, string caption, GeneratorSettings settings)
 		{
-			if (String.IsNullOrEmpty(srcAttribute) && String.IsNullOrEmpty(caption))
-				return String.Empty;
-			var bldr = new StringBuilder();
-			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
-			{
-				// This creates a link that will open the video in the same window as the dictionary view/preview
-				// refreshing will bring it back to the dictionary
-				xw.WriteStartElement("a");
-				xw.WriteAttributeString("class", className);
-				xw.WriteAttributeString("href", srcAttribute);
-				if (!String.IsNullOrEmpty(caption))
-					xw.WriteString(caption);
-				else
-					xw.WriteRaw("");
-				xw.WriteFullEndElement();
-				xw.Flush();
-				return bldr.ToString();
-			}
+			if (string.IsNullOrEmpty(srcAttribute) && string.IsNullOrEmpty(caption))
+				return string.Empty;
+			// This creates a link that will open the video in the same window as the dictionary view/preview
+			// refreshing will bring it back to the dictionary
+			return settings.ContentGenerator.GenerateVideoLinkContent(className, GetSafeXHTMLId(mediaId), srcAttribute, caption);
 		}
 
 		private static bool IsVideo(string fileName)
@@ -2534,15 +2521,15 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="classname">value for class attribute for audio tag</param>
 		/// <param name="audioId">value for Id attribute for audio tag</param>
 		/// <param name="srcAttribute">Source location path for audio file</param>
-		/// <param name="caption">Inner text for hyperlink</param>
+		/// <param name="audioIcon">Inner text for hyperlink (unicode icon for audio)</param>
 		/// <param name="settings"/>
 		private static string GenerateXHTMLForAudioFile(string classname,
-			string audioId, string srcAttribute, string caption, GeneratorSettings settings)
+			string audioId, string srcAttribute, string audioIcon, GeneratorSettings settings)
 		{
-			if (string.IsNullOrEmpty(audioId) && string.IsNullOrEmpty(srcAttribute) && string.IsNullOrEmpty(caption))
+			if (string.IsNullOrEmpty(audioId) && string.IsNullOrEmpty(srcAttribute) && string.IsNullOrEmpty(audioIcon))
 				return string.Empty;
 			var safeAudioId = GetSafeXHTMLId(audioId);
-			return settings.ContentGenerator.GenerateAudioLinkContent(classname, srcAttribute, caption, safeAudioId);
+			return settings.ContentGenerator.GenerateAudioLinkContent(classname, srcAttribute, audioIcon, safeAudioId);
 		}
 
 		private static string GetSafeXHTMLId(string audioId)

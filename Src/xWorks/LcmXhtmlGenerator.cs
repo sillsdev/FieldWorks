@@ -947,6 +947,28 @@ namespace SIL.FieldWorks.XWorks
 				   $" invalid surrogate pairs replaced with \\u0fff --></span>";
 		}
 
+		public string GenerateVideoLinkContent(string className, string mediaId,
+			string srcAttribute, string caption)
+		{
+			var bldr = new StringBuilder();
+			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
+			{
+				// This creates a link that will open the video in the same window as the dictionary view/preview
+				// refreshing will bring it back to the dictionary
+				xw.WriteStartElement("a");
+				xw.WriteAttributeString("id", mediaId);
+				xw.WriteAttributeString("class", className);
+				xw.WriteAttributeString("href", srcAttribute);
+				if (!string.IsNullOrEmpty(caption))
+					xw.WriteString(caption);
+				else
+					xw.WriteRaw("");
+				xw.WriteFullEndElement();
+				xw.Flush();
+				return bldr.ToString();
+			}
+		}
+
 		public string AddCollectionItem(bool isBlock, string collectionItemClass, string content)
 		{
 			var bldr = new StringBuilder();
