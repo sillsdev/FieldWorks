@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Diagnostics;
+using System.Linq;
 using Icu.Collation;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
@@ -593,10 +594,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Get the lead character, either a single character or a composite matching something
 		/// in the sort rules.  (We need to support multi-graph letters.  See LT-9244.)
 		/// </summary>
-		public string GetLeadChar(string sEntryNFD, string sWs)
+		public string GetLeadChar(string headwordNFD, string sWs)
 		{
 			var sortKeyCollator = GetCollator(sWs);
-			return GetLeadChar(sEntryNFD, sWs, m_mapWsDigraphs, m_mapWsMapChars, m_mapWsIgnorables, sortKeyCollator,
+			return GetLeadChar(headwordNFD, sWs, m_mapWsDigraphs, m_mapWsMapChars, m_mapWsIgnorables, sortKeyCollator,
 									 m_cache);
 		}
 
@@ -618,51 +619,58 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Get the lead character, either a single character or a composite matching something
 		/// in the sort rules.  (We need to support multi-graph letters.  See LT-9244.)
 		/// </summary>
-		/// <param name="sEntryNFD">The headword to be written next</param>
+		/// <param name="headwordNFD">The headword to be written next</param>
 		/// <param name="sWs">Name of the writing system</param>
 		/// <param name="wsDigraphMap">Map of writing system to digraphs already discovered for that ws</param>
 		/// <param name="wsCharEquivalentMap">Map of writing system to already discovered character equivalences for that ws</param>
 		/// <param name="wsIgnorableCharMap">Map of writing system to ignorable characters for that ws </param>
 		/// <param name="sortKeyCollator">A collator for the writing system to use to find sort keys</param>
 		/// <param name="cache"></param>
-		/// <returns>The character sEntryNFD is being sorted under in the dictionary.</returns>
-		public static string GetLeadChar(string sEntryNFD, string sWs,
+		/// <returns>The character headwordNFD is being sorted under in the dictionary.</returns>
+		public static string GetLeadChar(string headwordNFD, string sWs,
 													Dictionary<string, ISet<string>> wsDigraphMap,
 													Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
 													Dictionary<string, ISet<string>> wsIgnorableCharMap,
 													Collator sortKeyCollator,
 													LcmCache cache)
 		{
-			if (string.IsNullOrEmpty(sEntryNFD))
+			if (string.IsNullOrEmpty(headwordNFD))
 				return "";
-			string sEntryPre = Icu.UnicodeString.ToLower(sEntryNFD, sWs);
+			var headwordLC = Icu.UnicodeString.ToLower(headwordNFD, sWs);
 			Dictionary<string, string> mapChars;
 			// List of characters to ignore in creating letter heads.
 			ISet<string> chIgnoreList;
 			ISet<string> sortChars = GetDigraphs(sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, cache, out mapChars, out chIgnoreList);
-			string sEntry = String.Empty;
-			if (chIgnoreList != null) // this list was built in GetDigraphs()
+			if (chIgnoreList != null && chIgnoreList.Any()) // this list was built in GetDigraphs()
 			{
-				foreach (char ch in sEntryPre)
+				// sort the ignorable set with the longest first to avoid edge case where one ignorable
+				// string starts with a shorter ignorable string.
+				// eg. 'a' and 'aa'
+				var ignorablesLongToShort = from s in chIgnoreList.ToList()
+					orderby s.Length descending
+					select s;
+				foreach (var ignorableString in ignorablesLongToShort)
 				{
-					if(!(chIgnoreList.Contains(ch.ToString(CultureInfo.InvariantCulture))))
-						sEntry += ch;
+					// if the headword starts with the ignorable chop it off.
+					if (headwordLC.StartsWith(ignorableString))
+					{
+						headwordLC = headwordLC.Substring(ignorableString.Length);
+						break;
+					}
 				}
 			}
-			else
-				sEntry = sEntryPre;
-			if (string.IsNullOrEmpty(sEntry))
+			if (string.IsNullOrEmpty(headwordLC))
 				return ""; // check again
-			string sEntryT = sEntry;
-			bool fChanged = false;
+			var headwordBeforeEquivalence = headwordLC;
+			bool changed;
 			var map = mapChars;
-			do  // This loop replaces each occurance of equivalent characters in sEntry
+			do  // This loop replaces each occurrence of equivalent characters in headwordLC
 				// with the representative of its equivalence class
 			{   // replace subsorting chars by their main sort char. a << 'a << ^a, etc. are replaced by a.
 				foreach (string key in map.Keys)
-					sEntry = sEntry.Replace(key, map[key]);
-				fChanged = sEntryT != sEntry;
-				if (sEntry.Length > sEntryT.Length && map == mapChars)
+					headwordLC = headwordLC.Replace(key, map[key]);
+				changed = headwordBeforeEquivalence != headwordLC;
+				if (headwordLC.Length > headwordBeforeEquivalence.Length && map == mapChars)
 				{   // Rules like a -> a' repeat infinitely! To truncate this eliminate any rule whose output contains an input.
 					map = new Dictionary<string, string>(mapChars);
 					foreach (var kvp in mapChars)
@@ -677,30 +685,28 @@ namespace SIL.FieldWorks.Common.Controls
 						}
 					}
 				}
-				sEntryT = sEntry;
-			} while (fChanged);
-			int cnt = GetLetterLengthAt(sEntry, 0);
-			string sFirst = sEntry.Substring(0, cnt);
-			foreach (string sChar in sortChars)
+				headwordBeforeEquivalence = headwordLC;
+			} while (changed);
+			var cnt = GetLetterLengthAt(headwordLC, 0);
+			var firstChar = headwordLC.Substring(0, cnt);
+			foreach (var sortChar in sortChars)
 			{
-				if (sEntry.StartsWith(sChar))
+				if (headwordLC.StartsWith(sortChar))
 				{
-					if (sFirst.Length < sChar.Length)
-						sFirst = sChar;
+					if (firstChar.Length < sortChar.Length)
+						firstChar = sortChar;
 				}
 			}
-			// We don't want sFirst for an ignored first character or digraph.
-
+			// We don't want firstChar for an ignored first character or digraph.
 			if (sortKeyCollator != null)
 			{
-				byte[] ka = sortKeyCollator.GetSortKey(sFirst).KeyData;
+				byte[] ka = sortKeyCollator.GetSortKey(firstChar).KeyData;
 				if (ka.Length > 0 && ka[0] == 1)
 				{
-					string sT = sEntry.Substring(sFirst.Length);
-					return GetLeadChar(sT, sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, sortKeyCollator, cache);
+					return GetLeadChar(headwordLC.Substring(firstChar.Length), sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, sortKeyCollator, cache);
 				}
 			}
-			return sFirst;
+			return firstChar;
 		}
 
 		/// <returns>

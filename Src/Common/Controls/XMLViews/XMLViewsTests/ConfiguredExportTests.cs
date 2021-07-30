@@ -207,6 +207,30 @@ namespace XMLViewsTests
 		}
 
 		[Test]
+		public void XHTMLExportGetDigraphMapsFromICUSortRules_TertiaryIgnorableMultipleCharsWorks()
+		{
+			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&[last tertiary ignorable] ='eb-'='oba-'='ba-'" };
+
+			var exporter = new ConfiguredExport(null, null, 0);
+			string output;
+			using (var stream = new MemoryStream())
+			{
+				using (var writer = new StreamWriter(stream))
+				{
+					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
+					Dictionary<string, string> mapChars = null;
+					ISet<string> ignoreSet = null;
+					ISet<string> data = null;
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
+					Assert.AreEqual(ignoreSet.Count, 3, "Ignorable character not parsed from rule");
+					CollectionAssert.AreEquivalent(ignoreSet, new[] { "eb-", "oba-", "ba-" });
+				}
+			}
+		}
+
+		[Test]
 		public void XHTMLExportGetDigraphMapsFromICUSortRules_TertiaryIgnorableMixedSpacingWorks()
 		{
 			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
@@ -349,15 +373,32 @@ namespace XMLViewsTests
 		public void XHTMLExportGetLeadChar_SurrogatePairDoesNotCrash()
 		{
 			string data = null;
-			CoreWritingSystemDefinition wsEn;
-			Cache.ServiceLocator.WritingSystemManager.GetOrSet("ipo", out wsEn);
-			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsEn);
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("ipo", out var wsDef);
+			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsDef);
 			string entryLetter = "\U00016F00\U00016F51\U00016F61\U00016F90";
 			Dictionary<string, ISet<string>> wsDigraphMap = new Dictionary<string, ISet<string>>();
 			Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
 			Dictionary<string, ISet<string>> wsIgnorableCharMap = new Dictionary<string, ISet<string>>();
 			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar(entryLetter, "ipo", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, null, Cache));
-			Assert.AreEqual(data.Length, 2, "Surrogate pair should contains 2 characters");
+			Assert.That(data.Length, Is.EqualTo(2), "Surrogate pair should contains 2 characters");
+		}
+
+		[Test]
+		public void XHTMLExportGetLeadChar_MultigraphsInIgnoreListAreIgnored()
+		{
+			string data = null;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("guq", out var wsDef);
+			wsDef.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&[last tertiary ignorable] ='ig'='ignore-'='i'" };
+			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsDef);
+			var wsDigraphMap = new Dictionary<string, ISet<string>>();
+			var wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
+			var wsIgnorableCharMap = new Dictionary<string, ISet<string>>();
+			// test for the longest of the ignore rules
+			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar("ignore-a", "guq", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, null, Cache));
+			Assert.That(data, Is.StringMatching("a"));
+			// test for the shortest of the ignore rules
+			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar("ia", "guq", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, null, Cache));
+			Assert.That(data, Is.StringMatching("a"));
 		}
 
 		/// <summary>
