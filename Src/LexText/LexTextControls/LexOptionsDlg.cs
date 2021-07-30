@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			else
 			{
-				m_tabUpdates.Visible = false;
+				tabControl1.TabPages.Remove(m_tabUpdates);
 			}
 		}
 
@@ -325,7 +325,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_userInterfaceChooser.Init(m_sUserWs);
 
 			// The Plugins tab requires the Mediator
-			m_tabPlugins.Enabled = false;
+			m_labelPluginBlurb.Text = LexTextControls.OpenAProjectBeforeConfiguringPlugins;
+			m_labelPluginRights.Visible = false;
+			m_lvPlugins.Visible = false;
 		}
 
 		public string NewUserWs

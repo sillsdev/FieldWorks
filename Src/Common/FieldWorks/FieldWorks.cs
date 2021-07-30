@@ -287,7 +287,8 @@ namespace SIL.FieldWorks
 						return 0;
 					}
 
-					FwUpdater.InstallDownloadedUpdate();
+					if (MiscUtils.IsWindows)
+						FwUpdater.InstallDownloadedUpdate();
 
 					if (!string.IsNullOrEmpty(appArgs.ChooseProjectFile))
 					{

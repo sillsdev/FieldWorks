@@ -538,10 +538,10 @@
   <data name="&gt;&gt;alwaysOpenLastProjectCheckBox.ZOrder" xml:space="preserve">
     <value>7</value>
   </data>
-  <data name="reportingInfoLayout.AutoSize" type="System.Boolean, mscorlib">
+  <data name="internetUseLayout.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="reportingInfoLayout.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+  <data name="internetUseLayout.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
     <value>GrowAndShrink</value>
   </data>
   <data name="infoIcon.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -599,7 +599,7 @@
     <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;infoIcon.Parent" xml:space="preserve">
-    <value>reportingInfoLayout</value>
+    <value>internetUseLayout</value>
   </data>
   <data name="&gt;&gt;infoIcon.ZOrder" xml:space="preserve">
     <value>0</value>
@@ -611,15 +611,17 @@
     <value>True</value>
   </data>
   <data name="reportingInfoLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>310, 96</value>
+    <value>310, 68</value>
   </data>
   <data name="reportingInfoLabel.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
   </data>
   <data name="reportingInfoLabel.Text" xml:space="preserve">
     <value>Third-party tools are used to gather anonymous usage statistics for the developers.
-Some updates are downloaded automatically.
-These can be configured in the Privacy and Updates tabs in the Options dialog; click Options below or go to Tools-&gt;Options</value>
+To configure, go to Tools-&gt;Options-&gt;Privacy or click Options below.</value>
+  </data>
+  <data name="reportingInfoLabel.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="&gt;&gt;reportingInfoLabel.Name" xml:space="preserve">
     <value>reportingInfoLabel</value>
@@ -628,39 +630,68 @@ These can be configured in the Privacy and Updates tabs in the Options dialog; c
     <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;reportingInfoLabel.Parent" xml:space="preserve">
-    <value>reportingInfoLayout</value>
+    <value>internetUseLayout</value>
   </data>
   <data name="&gt;&gt;reportingInfoLabel.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="reportingInfoLayout.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+  <data name="internetUseLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>303, 3</value>
+  </data>
+  <data name="internetUseLabel.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="internetUseLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>310, 97</value>
+  </data>
+  <data name="internetUseLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="internetUseLabel.Text" xml:space="preserve">
+    <value>Third-party tools are used to gather anonymous usage statistics for the developers.
+Some updates are downloaded automatically.
+These can be configured in the Privacy and Updates tabs in the Options dialog; click Options below or go to Tools-&gt;Options</value>
+  </data>
+  <data name="&gt;&gt;internetUseLabel.Name" xml:space="preserve">
+    <value>internetUseLabel</value>
+  </data>
+  <data name="&gt;&gt;internetUseLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;internetUseLabel.Parent" xml:space="preserve">
+    <value>internetUseLayout</value>
+  </data>
+  <data name="&gt;&gt;internetUseLabel.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="internetUseLayout.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Left</value>
   </data>
-  <data name="reportingInfoLayout.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="internetUseLayout.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 329</value>
   </data>
-  <data name="reportingInfoLayout.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="internetUseLayout.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 0, 0, 0</value>
   </data>
-  <data name="reportingInfoLayout.Size" type="System.Drawing.Size, System.Drawing">
-    <value>340, 102</value>
+  <data name="internetUseLayout.Size" type="System.Drawing.Size, System.Drawing">
+    <value>576, 103</value>
   </data>
-  <data name="reportingInfoLayout.TabIndex" type="System.Int32, mscorlib">
+  <data name="internetUseLayout.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
   </data>
-  <data name="reportingInfoLayout.WrapContents" type="System.Boolean, mscorlib">
+  <data name="internetUseLayout.WrapContents" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="&gt;&gt;reportingInfoLayout.Name" xml:space="preserve">
-    <value>reportingInfoLayout</value>
+  <data name="&gt;&gt;internetUseLayout.Name" xml:space="preserve">
+    <value>internetUseLayout</value>
   </data>
-  <data name="&gt;&gt;reportingInfoLayout.Type" xml:space="preserve">
+  <data name="&gt;&gt;internetUseLayout.Type" xml:space="preserve">
     <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;reportingInfoLayout.Parent" xml:space="preserve">
+  <data name="&gt;&gt;internetUseLayout.Parent" xml:space="preserve">
     <value>mainVerticalLayout</value>
   </data>
-  <data name="&gt;&gt;reportingInfoLayout.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;internetUseLayout.ZOrder" xml:space="preserve">
     <value>8</value>
   </data>
   <data name="buttonLayout.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
@@ -679,7 +710,7 @@ These can be configured in the Privacy and Updates tabs in the Options dialog; c
     <value>NoControl</value>
   </data>
   <data name="helpButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>302, 3</value>
+    <value>498, 3</value>
   </data>
   <data name="helpButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 0</value>
@@ -712,7 +743,7 @@ These can be configured in the Privacy and Updates tabs in the Options dialog; c
     <value>NoControl</value>
   </data>
   <data name="optionsButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>221, 3</value>
+    <value>417, 3</value>
   </data>
   <data name="optionsButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 0</value>
@@ -745,7 +776,7 @@ These can be configured in the Privacy and Updates tabs in the Options dialog; c
     <value>NoControl</value>
   </data>
   <data name="closeButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>140, 3</value>
+    <value>336, 3</value>
   </data>
   <data name="closeButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 0</value>
@@ -775,13 +806,13 @@ These can be configured in the Privacy and Updates tabs in the Options dialog; c
     <value>RightToLeft</value>
   </data>
   <data name="buttonLayout.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 437</value>
+    <value>3, 438</value>
   </data>
   <data name="buttonLayout.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 5</value>
   </data>
   <data name="buttonLayout.Size" type="System.Drawing.Size, System.Drawing">
-    <value>380, 26</value>
+    <value>576, 26</value>
   </data>
   <data name="buttonLayout.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -847,7 +878,7 @@ These can be configured in the Privacy and Updates tabs in the Options dialog; c
     <value>3, 3, 3, 0</value>
   </data>
   <data name="mainVerticalLayout.Size" type="System.Drawing.Size, System.Drawing">
-    <value>400, 400</value>
+    <value>582, 469</value>
   </data>
   <data name="mainVerticalLayout.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -880,7 +911,7 @@ These can be configured in the Privacy and Updates tabs in the Options dialog; c
     <value>GrowAndShrink</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>400, 400</value>
+    <value>400, 465</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

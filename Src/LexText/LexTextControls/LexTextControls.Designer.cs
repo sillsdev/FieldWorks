@@ -3442,6 +3442,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You must open a project before configuring plugins..
+        /// </summary>
+        internal static string OpenAProjectBeforeConfiguringPlugins {
+            get {
+                return ResourceManager.GetString("OpenAProjectBeforeConfiguringPlugins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to LIFT files|*.lift|XML files|*.xml|All files|*.*.
         /// </summary>
         internal static string openFileDialog1_Filter {

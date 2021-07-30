@@ -56,8 +56,9 @@ namespace SIL.FieldWorks
 			this.importButton = new System.Windows.Forms.Button();
 			this.restoreButton = new System.Windows.Forms.Button();
 			this.alwaysOpenLastProjectCheckBox = new System.Windows.Forms.CheckBox();
-			this.reportingInfoLayout = new System.Windows.Forms.FlowLayoutPanel();
+			this.internetUseLayout = new System.Windows.Forms.FlowLayoutPanel();
 			this.infoIcon = new System.Windows.Forms.PictureBox();
+			this.internetUseLabel = new System.Windows.Forms.TextBox();
 			this.reportingInfoLabel = new System.Windows.Forms.TextBox();
 			this.buttonLayout = new System.Windows.Forms.FlowLayoutPanel();
 			this.helpButton = new System.Windows.Forms.Button();
@@ -66,7 +67,7 @@ namespace SIL.FieldWorks
 			this.mainVerticalLayout = new System.Windows.Forms.FlowLayoutPanel();
 			this.m_lblProjectLoadError = new SIL.Windows.Forms.Widgets.BetterLabel();
 			this.topPanel.SuspendLayout();
-			this.reportingInfoLayout.SuspendLayout();
+			this.internetUseLayout.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.infoIcon)).BeginInit();
 			this.buttonLayout.SuspendLayout();
 			this.mainVerticalLayout.SuspendLayout();
@@ -150,18 +151,26 @@ namespace SIL.FieldWorks
 			this.alwaysOpenLastProjectCheckBox.Name = "alwaysOpenLastProjectCheckBox";
 			this.alwaysOpenLastProjectCheckBox.UseVisualStyleBackColor = true;
 			// 
-			// reportingInfoLayout
+			// internetUseLayout
 			// 
-			resources.ApplyResources(this.reportingInfoLayout, "reportingInfoLayout");
-			this.reportingInfoLayout.Controls.Add(this.infoIcon);
-			this.reportingInfoLayout.Controls.Add(this.reportingInfoLabel);
-			this.reportingInfoLayout.Name = "reportingInfoLayout";
+			resources.ApplyResources(this.internetUseLayout, "internetUseLayout");
+			this.internetUseLayout.Controls.Add(this.infoIcon);
+			this.internetUseLayout.Controls.Add(this.internetUseLabel);
+			this.internetUseLayout.Controls.Add(this.reportingInfoLabel);
+			this.internetUseLayout.Name = "internetUseLayout";
 			// 
 			// infoIcon
 			// 
 			resources.ApplyResources(this.infoIcon, "infoIcon");
 			this.infoIcon.Name = "infoIcon";
 			this.infoIcon.TabStop = false;
+			// 
+			// internetUseLabel
+			// 
+			this.internetUseLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			resources.ApplyResources(this.internetUseLabel, "internetUseLabel");
+			this.internetUseLabel.Name = "internetUseLabel";
+			this.internetUseLabel.ReadOnly = true;
 			// 
 			// reportingInfoLabel
 			// 
@@ -210,7 +219,7 @@ namespace SIL.FieldWorks
 			this.mainVerticalLayout.Controls.Add(this.importButton);
 			this.mainVerticalLayout.Controls.Add(this.restoreButton);
 			this.mainVerticalLayout.Controls.Add(this.alwaysOpenLastProjectCheckBox);
-			this.mainVerticalLayout.Controls.Add(this.reportingInfoLayout);
+			this.mainVerticalLayout.Controls.Add(this.internetUseLayout);
 			this.mainVerticalLayout.Controls.Add(this.buttonLayout);
 			this.mainVerticalLayout.Name = "mainVerticalLayout";
 			// 
@@ -235,8 +244,8 @@ namespace SIL.FieldWorks
 			this.MinimizeBox = false;
 			this.Name = "WelcomeToFieldWorksDlg";
 			this.topPanel.ResumeLayout(false);
-			this.reportingInfoLayout.ResumeLayout(false);
-			this.reportingInfoLayout.PerformLayout();
+			this.internetUseLayout.ResumeLayout(false);
+			this.internetUseLayout.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.infoIcon)).EndInit();
 			this.buttonLayout.ResumeLayout(false);
 			this.mainVerticalLayout.ResumeLayout(false);
@@ -250,9 +259,10 @@ namespace SIL.FieldWorks
 
 		private FlowLayoutPanel mainVerticalLayout;
 		private FlowLayoutPanel buttonLayout;
-		private FlowLayoutPanel reportingInfoLayout;
+		private FlowLayoutPanel internetUseLayout;
 		private Button helpButton;
 		private Button closeButton;
+		private TextBox internetUseLabel;
 		private TextBox reportingInfoLabel;
 		private BetterLabel m_lblProjectLoadError;
 		private Button optionsButton;

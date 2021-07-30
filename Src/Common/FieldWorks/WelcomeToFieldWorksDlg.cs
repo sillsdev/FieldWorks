@@ -86,7 +86,12 @@ namespace SIL.FieldWorks
 
 			if (!showInternetUseRow)
 			{
-				reportingInfoLayout.Visible = false;
+				internetUseLayout.Visible = false;
+			}
+			else if (!MiscUtils.IsWindows)
+			{
+				internetUseLabel.Visible = false;
+				reportingInfoLabel.Visible = true;
 			}
 
 			m_helpTopicProvider = helpTopicProvider;

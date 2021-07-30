@@ -1368,4 +1368,8 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
     <value>Restart required</value>
     <comment>Message box title when a user changes a setting requiring a restart in Tools-&gt;Options</comment>
   </data>
+  <data name="OpenAProjectBeforeConfiguringPlugins" xml:space="preserve">
+    <value>You must open a project before configuring plugins.</value>
+    <comment>Message shown in the Tools-&gt;Options-&gt;Plugins dialog tab when plugins cannot be configured.</comment>
+  </data>
 </root>

@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.PrivacyText = new System.Windows.Forms.TextBox();
 			this.m_okToPingCheckBox = new System.Windows.Forms.CheckBox();
 			this.m_tabPlugins = new System.Windows.Forms.TabPage();
-			this.m_labelRights = new System.Windows.Forms.Label();
+			this.m_labelPluginRights = new System.Windows.Forms.Label();
 			this.m_labelPluginBlurb = new System.Windows.Forms.Label();
 			this.m_lvPlugins = new System.Windows.Forms.ListView();
 			this.m_chName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -125,7 +125,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// 
 			// m_tabPlugins
 			// 
-			this.m_tabPlugins.Controls.Add(this.m_labelRights);
+			this.m_tabPlugins.Controls.Add(this.m_labelPluginRights);
 			this.m_tabPlugins.Controls.Add(this.m_labelPluginBlurb);
 			this.m_tabPlugins.Controls.Add(this.m_lvPlugins);
 			resources.ApplyResources(this.m_tabPlugins, "m_tabPlugins");
@@ -134,8 +134,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			// 
 			// m_labelRights
 			// 
-			resources.ApplyResources(this.m_labelRights, "m_labelRights");
-			this.m_labelRights.Name = "m_labelRights";
+			resources.ApplyResources(this.m_labelPluginRights, "m_labelPluginRights");
+			this.m_labelPluginRights.Name = "m_labelPluginRights";
 			// 
 			// m_labelPluginBlurb
 			// 
@@ -145,11 +145,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			// m_lvPlugins
 			// 
 			this.m_lvPlugins.CheckBoxes = true;
-			this.m_lvPlugins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
-			{
-				this.m_chName,
-				this.m_chDescription
-			});
+			this.m_lvPlugins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.m_chName,
+            this.m_chDescription});
 			this.m_lvPlugins.FullRowSelect = true;
 			this.m_lvPlugins.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.m_lvPlugins.HideSelection = false;
@@ -238,7 +236,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_cbUpdateChannel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			resources.ApplyResources(this.m_cbUpdateChannel, "m_cbUpdateChannel");
 			this.m_cbUpdateChannel.Name = "m_cbUpdateChannel";
-			this.m_cbUpdateChannel.KeyPress += new KeyPressEventHandler(m_cbUpdateChannel_KeyPress);
+			this.m_cbUpdateChannel.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.m_cbUpdateChannel_KeyPress);
 			// 
 			// m_okToAutoupdate
 			// 
@@ -285,7 +283,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.TextBox PrivacyText;
 		private System.Windows.Forms.CheckBox m_okToPingCheckBox;
 		private System.Windows.Forms.TabPage m_tabPlugins;
-		private System.Windows.Forms.Label m_labelRights;
+		private System.Windows.Forms.Label m_labelPluginRights;
 		private System.Windows.Forms.Label m_labelPluginBlurb;
 		private System.Windows.Forms.ListView m_lvPlugins;
 		private System.Windows.Forms.ColumnHeader m_chName;
