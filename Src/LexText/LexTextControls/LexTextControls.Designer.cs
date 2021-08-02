@@ -3494,5 +3494,59 @@ namespace SIL.FieldWorks.LexText.Controls {
                 return ResourceManager.GetString("RestartToForSettingsToTakeEffect_Title", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alpha.
+        /// </summary>
+        internal static string UpdatesAlpha {
+            get {
+                return ResourceManager.GetString("UpdatesAlpha", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alpha updates have bugs. Choose this channel only if your tech support person recommended it to you..
+        /// </summary>
+        internal static string UpdatesAlphaDescription {
+            get {
+                return ResourceManager.GetString("UpdatesAlphaDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Beta.
+        /// </summary>
+        internal static string UpdatesBeta {
+            get {
+                return ResourceManager.GetString("UpdatesBeta", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Beta updates are recommended for users who want to try the latest features and don&apos;t mind a few minor bugs..
+        /// </summary>
+        internal static string UpdatesBetaDescription {
+            get {
+                return ResourceManager.GetString("UpdatesBetaDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stable (recommended).
+        /// </summary>
+        internal static string UpdatesStable {
+            get {
+                return ResourceManager.GetString("UpdatesStable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stable updates are recommended for all users. If you&apos;re not sure which channel to choose, choose Stable..
+        /// </summary>
+        internal static string UpdatesStableDescription {
+            get {
+                return ResourceManager.GetString("UpdatesStableDescription", resourceCulture);
+            }
+        }
     }
 }

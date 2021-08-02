@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class FwUtilsStrings {
@@ -61,11 +61,38 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to FieldWorks will attempt to install the update from {0}, but you will need to restart FieldWorks yourself after the update is complete..
+        /// </summary>
+        internal static string CannotRestartAutomaticallyMessage {
+            get {
+                return ResourceManager.GetString("CannotRestartAutomaticallyMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error converting wav file to mp3 {0}{1}{2}.
         /// </summary>
         internal static string ConvertBytesToMp3_BadWavFile {
             get {
                 return ResourceManager.GetString("ConvertBytesToMp3_BadWavFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could Not Update Automatically.
+        /// </summary>
+        internal static string CouldNotUpdateAutomaticallyCaption {
+            get {
+                return ResourceManager.GetString("CouldNotUpdateAutomaticallyCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FieldWorks could not be updated automatically. Please close all FieldWorks windows and install the update from {0}.
+        /// </summary>
+        internal static string CouldNotUpdateAutomaticallyFileXMessage {
+            get {
+                return ResourceManager.GetString("CouldNotUpdateAutomaticallyFileXMessage", resourceCulture);
             }
         }
         
@@ -288,6 +315,24 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Restart to Update.
+        /// </summary>
+        internal static string RestartToUpdateCaption {
+            get {
+                return ResourceManager.GetString("RestartToUpdateCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To install it, please restart FieldWorks at your convenience..
+        /// </summary>
+        internal static string RestartToUpdatePrompt {
+            get {
+                return ResourceManager.GetString("RestartToUpdatePrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Software updates for FieldWorks are ready to install.
         ///
         ///Please restart the application at your convenience..
@@ -308,13 +353,13 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A FieldWorks update has been downloaded
+        ///   Looks up a localized string similar to A FieldWorks update has been downloaded (version {0}; you currently have {1}).
         ///
-        ///Do you want to install it now? (You will need to grant permission to the installer.).
+        ///{2}.
         /// </summary>
-        internal static string UpdateDownloadedInstallNowPrompt {
+        internal static string UpdateDownloadedVersionXCurrentXPromptX {
             get {
-                return ResourceManager.GetString("UpdateDownloadedInstallNowPrompt", resourceCulture);
+                return ResourceManager.GetString("UpdateDownloadedVersionXCurrentXPromptX", resourceCulture);
             }
         }
         
@@ -324,6 +369,15 @@ namespace SIL.FieldWorks.Common.FwUtils {
         internal static string UpdateNowCaption {
             get {
                 return ResourceManager.GetString("UpdateNowCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want to install it now? (You will need to grant permission to the installer.).
+        /// </summary>
+        internal static string UpdateNowPrompt {
+            get {
+                return ResourceManager.GetString("UpdateNowPrompt", resourceCulture);
             }
         }
     }

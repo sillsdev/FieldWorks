@@ -31,13 +31,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				#if DEBUG
-				return new FwUpdate("9.1.4.847", false, 453, FwUpdate.Typ.Offline);
-				#else
 				var vip = new VersionInfoProvider(Assembly.GetEntryAssembly(), true);
 				return new FwUpdate(vip.NumericAppVersion, Environment.Is64BitProcess, vip.BaseBuildNumber, FwUpdate.Typ.Offline);
-				#endif
-
 			}
 		}
 
@@ -50,7 +45,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		#region check for updates
 		/// <summary>
 		/// Checks for updates to FieldWorks, if the settings say to. If an update is found,
-		/// downloads the update in the background and (TODO!) notifies the user when the download is complete.
+		/// downloads the update in the background and notifies the user when the download is complete.
 		/// </summary>
 		/// <param name="ui">to notify the user when an update is ready to install</param>
 		public static void CheckForUpdates(ILcmUI ui)
@@ -121,9 +116,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 					}
 				}
 
-				// TODO (Hasso) 2021.07: localize strings after they are finalized
 				NotifyUserOnIdle(ui,
-					$"An update has been downloaded to {localFile}; please restart FLEx your convenience; it will be installed on startup", "new update");
+					string.Format(FwUtilsStrings.UpdateDownloadedVersionXCurrentXPromptX, available.Version, Current.Version, FwUtilsStrings.RestartToUpdatePrompt),
+					FwUtilsStrings.RestartToUpdateCaption);
 
 				return $"Update downloaded to {localFile}";
 			}
@@ -138,7 +133,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var timer = new Timer { SynchronizingObject = ui.SynchronizeInvoke, Interval = 1000 };
 			timer.Elapsed += (o, e) =>
 			{
-				if (DateTime.Now - ui.LastActivityTime < TimeSpan.FromMilliseconds(8000))
+				if (DateTime.Now - ui.LastActivityTime < TimeSpan.FromSeconds(12))
 					return; // Don't interrupt a user who is busy typing. Wait for a pause to prompt to install updates.
 
 				timer.Stop(); // one notification is enough
@@ -214,9 +209,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// Key will be something like
 				// jobs/FieldWorks-Win-all-Base/312/FieldWorks_9.0.11.1_Online_x64.exe
 				// jobs/FieldWorks-Win-all-Patch/10/FieldWorks_9.0.14.10_b312_x64.msp
-				// fieldWorks/9.0.15/FieldWorks_9.0.16.128_x64.msp
-				// FieldWorks_9.0.14.10_b312_x64.msp
-				// and maybe even (TODO: do we need the base number here?) fieldWorks/9.0.15/FieldWorks_9.0.15.1_Online_x64.exe
+				// 9.0.15/FieldWorks_9.0.16.128_b312_x64.msp
+				// 9.0.15/312/FieldWorks_9.0.15.1_Online_x64.exe
 				var keyParts = Path.GetFileName(key)?.Split('_');
 				if (keyParts?.Length != 4)
 				{
@@ -237,7 +231,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				// ReSharper disable once LocalizableElement (log content)
 				Console.WriteLine($"Got {e.GetType()} parsing {key}: {e.Message}");
-				// REVIEW (Hasso) 2021.05: would returning all zeros be better?
 				return null;
 			}
 		}
@@ -252,43 +245,47 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static void InstallDownloadedUpdate()
 		{
 			var latestPatch = GetLatestDownloadedPatch(Current, FwDirectoryFinder.DownloadedUpdates);
-			if (string.IsNullOrEmpty(latestPatch) || DialogResult.Yes != MessageBox.Show(
-				// TODO (Hasso) 2021.07: localize strings
-				$"An update has been downloaded to {latestPatch}; would you like to install it now?", "Install now?", MessageBoxButtons.YesNo))
+			if (latestPatch == null || DialogResult.Yes != MessageBox.Show(
+				string.Format(FwUtilsStrings.UpdateDownloadedVersionXCurrentXPromptX, latestPatch.Version, Current.Version, FwUtilsStrings.UpdateNowPrompt),
+				FwUtilsStrings.UpdateNowCaption, MessageBoxButtons.YesNo))
 			{
 				return;
 			}
-			var info = new ProcessStartInfo();
+
+			var latestPatchFile = latestPatch.URL;
 			var installerRunner = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles), "SIL", "ProcRunner_5.0.exe");
 			if (!File.Exists(installerRunner))
 			{
-				MessageBox.Show($"You may need to install the installer at {latestPatch} yourself, then restart FLEx yourself.",
-					"Difficulties", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				Process.Start(latestPatch);
+				MessageBox.Show(string.Format(FwUtilsStrings.CannotRestartAutomaticallyMessage, latestPatchFile),
+					FwUtilsStrings.CouldNotUpdateAutomaticallyCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				Process.Start(latestPatchFile, "/passive");
 				Environment.Exit(1);
 			}
 			installerRunner = installerRunner.Replace(@"\", @"\\");
-			Logger.WriteEvent($"Installing {latestPatch} using {installerRunner}");
+			Logger.WriteEvent($"Installing {latestPatchFile} using {installerRunner}");
 
-			info.FileName = installerRunner;
-			info.UseShellExecute = false;
-			info.CreateNoWindow = true;
-			info.RedirectStandardError = true;
-			info.RedirectStandardInput = true;
-			info.RedirectStandardOutput = true;
-			var exeToRestart = Assembly.GetEntryAssembly();
-			// ReSharper disable once PossibleNullReferenceException
-			info.Arguments = $"\"{latestPatch}\" \"{exeToRestart.Location}\"";
 			try
 			{
+				var exeToRestart = Assembly.GetEntryAssembly();
+				var info = new ProcessStartInfo
+				{
+					FileName = installerRunner,
+					UseShellExecute = false,
+					CreateNoWindow = true,
+					RedirectStandardError = true,
+					RedirectStandardInput = true,
+					RedirectStandardOutput = true,
+					// ReSharper disable once PossibleNullReferenceException
+					Arguments = $"\"{latestPatchFile}\" \"{exeToRestart.Location}\""
+				};
 				Process.Start(info);
 				Environment.Exit(0);
 			}
 			catch (Exception e)
 			{
 				Logger.WriteError(e);
-				MessageBox.Show($"You may need to install the installer at {latestPatch} yourself, then restart FLEx yourself.",
-					"Difficulties", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show(string.Format(FwUtilsStrings.CouldNotUpdateAutomaticallyFileXMessage, latestPatchFile),
+					FwUtilsStrings.CouldNotUpdateAutomaticallyCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				throw;
 			}
 		}
@@ -296,13 +293,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Returns the latest fully-downloaded patch that can be installed to upgrade this version of FW
 		/// </summary>
-		internal static string GetLatestDownloadedPatch(FwUpdate current, string downloadsDir)
+		internal static FwUpdate GetLatestDownloadedPatch(FwUpdate current, string downloadsDir)
 		{
 			var dirInfo = new DirectoryInfo(downloadsDir);
 			if (!dirInfo.Exists)
 				return null;
 			return GetLatestPatchOn(current, dirInfo.EnumerateFiles("*.msp")
-				.Select(fi => Parse(fi.Name, $"{fi.DirectoryName}{Path.DirectorySeparatorChar}")))?.URL;
+				.Select(fi => Parse(fi.Name, $"{fi.DirectoryName}{Path.DirectorySeparatorChar}")));
 		}
 		#endregion install updates
 	}

@@ -253,7 +253,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// patch for a different base
 				File.WriteAllText(Path.Combine(updateDir.Path, PatchFileName("9.0.21.42", baseBld + 1, 64)), string.Empty);
 
-				Assert.That(FwUpdater.GetLatestDownloadedPatch(current, updateDir.Path), Is.EqualTo(updateFileName));
+				// SUT
+				var result = FwUpdater.GetLatestDownloadedPatch(current, updateDir.Path);
+
+				Assert.That(result.URL, Is.EqualTo(updateFileName));
+				Assert.That(result.Version, Is.EqualTo(new Version(9, 0, 18, 8)));
 			}
 		}
 

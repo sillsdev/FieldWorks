@@ -168,18 +168,10 @@ namespace SIL.FieldWorks
 				s_appSettings.DeleteCorruptedSettingsFilesIfPresent();
 				s_appSettings.UpgradeIfNecessary();
 
-				var updateSettings = s_appSettings.Update;
-				if (updateSettings == null)
+				if (s_appSettings.Update == null)
 				{
 					s_missingSomeInternetSettings = true;
-					updateSettings = new UpdateSettings();
-					// TODO (Hasso) 2021.07: remove this before sending to users
-					if (Environment.GetEnvironmentVariable("FEEDBACK") != null &&
-						MessageBoxUtils.Show(null, "Would you like to check for and download the latest nightly patch now?", "Check for updates?",
-							MessageBoxButtons.YesNo) == DialogResult.Yes)
-					{
-						updateSettings.Channel = UpdateSettings.Channels.Nightly;
-					}
+					s_appSettings.Update = new UpdateSettings();
 				}
 
 				var reportingSettings = s_appSettings.Reporting;
@@ -194,7 +186,7 @@ namespace SIL.FieldWorks
 				}
 
 				// REVIEW (Hasso) 2021.07: should checking FEEDBACK be centralized? Besides enabling and disabling analytics,
-				// it could also be used to select an analytics channel, or even (scope creep!) determine if this is a test machine for other purposes
+				// it could be used to select an analytics channel.
 				// Allow developers and testers to avoid cluttering our analytics by setting an environment variable (FEEDBACK = false)
 				var feedbackEnvVar = Environment.GetEnvironmentVariable("FEEDBACK");
 				if (feedbackEnvVar != null)
@@ -315,7 +307,7 @@ namespace SIL.FieldWorks
 					if (FwRegistryHelper.FieldWorksRegistryKeyLocalMachine == null && FwRegistryHelper.FieldWorksRegistryKey == null)
 					{
 						// See LT-14461. Some users have managed to get their computers into a state where
-						// neither HKML nor HKCU registry entries can be read. We don't know how this is possible.
+						// neither HKLM nor HKCU registry entries can be read. We don't know how this is possible.
 						// This is so far the best we can do.
 						var expected = "HKEY_LOCAL_MACHINE/Software/SIL/FieldWorks/" + FwRegistryHelper.FieldWorksRegistryKeyName;
 						MessageBoxUtils.Show(string.Format(Properties.Resources.ksHklmProblem, expected), Properties.Resources.ksHklmCaption);

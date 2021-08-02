@@ -59,6 +59,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.m_tabUpdates = new System.Windows.Forms.TabPage();
 			this.gbUpdateChannel = new System.Windows.Forms.GroupBox();
+			this.m_textChannelDescription = new System.Windows.Forms.TextBox();
 			this.m_cbUpdateChannel = new System.Windows.Forms.ComboBox();
 			this.m_okToAutoupdate = new System.Windows.Forms.CheckBox();
 			this.m_tabPrivacy.SuspendLayout();
@@ -132,7 +133,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_tabPlugins.Name = "m_tabPlugins";
 			this.m_tabPlugins.UseVisualStyleBackColor = true;
 			// 
-			// m_labelRights
+			// m_labelPluginRights
 			// 
 			resources.ApplyResources(this.m_labelPluginRights, "m_labelPluginRights");
 			this.m_labelPluginRights.Name = "m_labelPluginRights";
@@ -226,16 +227,26 @@ namespace SIL.FieldWorks.LexText.Controls
 			// 
 			// gbUpdateChannel
 			// 
+			this.gbUpdateChannel.Controls.Add(this.m_textChannelDescription);
 			this.gbUpdateChannel.Controls.Add(this.m_cbUpdateChannel);
 			resources.ApplyResources(this.gbUpdateChannel, "gbUpdateChannel");
 			this.gbUpdateChannel.Name = "gbUpdateChannel";
 			this.gbUpdateChannel.TabStop = false;
+			// 
+			// m_textChannelDescription
+			// 
+			this.m_textChannelDescription.BackColor = System.Drawing.SystemColors.Window;
+			this.m_textChannelDescription.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			resources.ApplyResources(this.m_textChannelDescription, "m_textChannelDescription");
+			this.m_textChannelDescription.Name = "m_textChannelDescription";
+			this.m_textChannelDescription.ReadOnly = true;
 			// 
 			// m_cbUpdateChannel
 			// 
 			this.m_cbUpdateChannel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			resources.ApplyResources(this.m_cbUpdateChannel, "m_cbUpdateChannel");
 			this.m_cbUpdateChannel.Name = "m_cbUpdateChannel";
+			this.m_cbUpdateChannel.SelectedIndexChanged += new System.EventHandler(this.m_cbUpdateChannel_SelectedIndexChanged);
 			this.m_cbUpdateChannel.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.m_cbUpdateChannel_KeyPress);
 			// 
 			// m_okToAutoupdate
@@ -270,6 +281,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_tabUpdates.ResumeLayout(false);
 			this.m_tabUpdates.PerformLayout();
 			this.gbUpdateChannel.ResumeLayout(false);
+			this.gbUpdateChannel.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -300,5 +312,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.CheckBox m_okToAutoupdate;
 		private System.Windows.Forms.GroupBox gbUpdateChannel;
 		private System.Windows.Forms.ComboBox m_cbUpdateChannel;
+		private System.Windows.Forms.TextBox m_textChannelDescription;
 	}
 }

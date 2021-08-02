@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Forms;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -32,7 +33,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		private string m_sUserWs;
 		private string m_sNewUserWs;
 		private bool m_pluginsUpdated;
-		private Dictionary<string, bool> m_plugins = new Dictionary<string, bool>();
+		private readonly Dictionary<string, bool> m_plugins = new Dictionary<string, bool>();
+		private readonly Dictionary<UpdateSettings.Channels, UpdateChannelMenuItem> m_channels;
+		private readonly UpdateChannelMenuItem m_NightlyChannel;
 		private const string HelpTopic = "khtpLexOptions";
 		private IHelpTopicProvider m_helpTopicProvider;
 
@@ -44,6 +47,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			InitializeComponent();
 			var optionsTooltip = new ToolTip { AutoPopDelay = 6000, InitialDelay = 400, ReshowDelay = 500, IsBalloon = true };
 			optionsTooltip.SetToolTip(groupBox1, LexTextControls.ksUserInterfaceTooltip);
+			m_channels = new Dictionary<UpdateSettings.Channels, UpdateChannelMenuItem>();
+			m_channels[UpdateSettings.Channels.Stable] = new UpdateChannelMenuItem(UpdateSettings.Channels.Stable,
+				LexTextControls.UpdatesStable, LexTextControls.UpdatesStableDescription);
+			m_channels[UpdateSettings.Channels.Beta] = new UpdateChannelMenuItem(UpdateSettings.Channels.Beta,
+				LexTextControls.UpdatesBeta, LexTextControls.UpdatesBetaDescription);
+			m_channels[UpdateSettings.Channels.Alpha] = new UpdateChannelMenuItem(UpdateSettings.Channels.Alpha,
+				LexTextControls.UpdatesAlpha, LexTextControls.UpdatesAlphaDescription);
+			m_NightlyChannel =  new UpdateChannelMenuItem(UpdateSettings.Channels.Nightly, "Nightly",
+				"DO NOT select this option unless you are an official FieldWorks tester. You might not be able to access your data tomorrow.");
 		}
 
 		/// <summary>
@@ -66,16 +78,17 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 				m_okToAutoupdate.Checked = m_settings.Update.Behavior != UpdateSettings.Behaviors.DoNotCheck;
 
-				m_cbUpdateChannel.Items.AddRange(new object[]
-				{
-					UpdateSettings.Channels.Stable, UpdateSettings.Channels.Beta, UpdateSettings.Channels.Alpha
-				});
+				m_cbUpdateChannel.Items.AddRange(m_channels.Values.ToArray());
 				// Enable the nightly channel only if it is already selected
 				if (m_settings.Update.Channel == UpdateSettings.Channels.Nightly)
 				{
-					m_cbUpdateChannel.Items.Add(UpdateSettings.Channels.Nightly);
+					m_cbUpdateChannel.Items.Add(m_NightlyChannel);
+					m_cbUpdateChannel.SelectedItem = m_NightlyChannel;
 				}
-				m_cbUpdateChannel.SelectedItem = m_settings.Update.Channel;
+				else
+				{
+					m_cbUpdateChannel.SelectedItem = m_channels[m_settings.Update.Channel];
+				}
 			}
 			else
 			{
@@ -98,7 +111,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				var oldBehavior = updateSettings.Behavior;
 				var oldChannel = updateSettings.Channel;
 				updateSettings.Behavior = m_okToAutoupdate.Checked ? UpdateSettings.Behaviors.Download : UpdateSettings.Behaviors.DoNotCheck;
-				updateSettings.Channel = (UpdateSettings.Channels)Enum.Parse(typeof(UpdateSettings.Channels), m_cbUpdateChannel.Text);
+				updateSettings.Channel = ((UpdateChannelMenuItem)m_cbUpdateChannel.SelectedItem).Channel;
 				// If the mediator is null, we aren't finished starting yet, so we haven't initiated the check for updates.
 				// When we initiate the check, these new settings will already have been saved, so they will be used.
 				// If the mediator is not null, the user will need to restart to either stop the download or to check the new channel.
@@ -345,22 +358,40 @@ namespace SIL.FieldWorks.LexText.Controls
 			using (Process.Start(llPrivacy.Text)) { }
 		}
 
-		/// <remarks>REVIEW (Hasso) 2021.07: is there a better secret handshake for adding "Nightly"? Considering:
-		/// * Ctrl-Shift-Click (L10nSharp uses Alt-Shift-Click; this avoids collisions)
-		/// * Ctrl-(Shift-)N (for Nightly)
-		/// * Type "nightly" (would require some keeping track—ugh)
-		/// * Set some environment variable (FEEDBACK=QA_CHANNEL or NIGHTLYPATCHES=ON)
-		/// </remarks>
+		private void m_cbUpdateChannel_SelectedIndexChanged(object sender, EventArgs args)
+		{
+			m_textChannelDescription.Text = ((UpdateChannelMenuItem)m_cbUpdateChannel.SelectedItem).Description;
+		}
+
+		/// <summary>secret handshake for adding "Nightly": If the user pressed Ctrl+Shift+N, add and select the Nightly channel</summary>
 		private void m_cbUpdateChannel_KeyPress(object sender, KeyPressEventArgs e)
 		{
-			// If the user pressed Ctrl+Shift+N, add and select the Nightly channel
 			if (e.KeyChar == 14 /* ASCII 14 is ^N */ && (ModifierKeys & Keys.Shift) == Keys.Shift)
 			{
-				if (!m_cbUpdateChannel.Items.Contains(UpdateSettings.Channels.Nightly))
+				if (!m_cbUpdateChannel.Items.Contains(m_NightlyChannel))
 				{
-					m_cbUpdateChannel.Items.Add(UpdateSettings.Channels.Nightly);
+					m_cbUpdateChannel.Items.Add(m_NightlyChannel);
 				}
-				m_cbUpdateChannel.SelectedItem = UpdateSettings.Channels.Nightly;
+				m_cbUpdateChannel.SelectedItem = m_NightlyChannel;
+			}
+		}
+
+		private class UpdateChannelMenuItem
+		{
+			public UpdateSettings.Channels Channel { get; }
+			private readonly string m_name;
+			public string Description { get; }
+
+			public UpdateChannelMenuItem(UpdateSettings.Channels channel, string name, string description)
+			{
+				Channel = channel;
+				m_name = name;
+				Description = description;
+			}
+
+			public override string ToString()
+			{
+				return m_name;
 			}
 		}
 	}

@@ -200,21 +200,38 @@ If you want to use Paratext with this project, make a change in this project (so
 
 Please restart the application at your convenience.</value>
   </data>
+  <data name="RestartToUpdateCaption" xml:space="preserve">
+    <value>Restart to Update</value>
+  </data>
   <data name="UpdateNowCaption" xml:space="preserve">
     <value>Update FieldWorks now?</value>
   </data>
-  <data name="UpdateDownloadedInstallNowPrompt" xml:space="preserve">
-    <value>A FieldWorks update has been downloaded
+  <data name="UpdateDownloadedVersionXCurrentXPromptX" xml:space="preserve">
+    <value>A FieldWorks update has been downloaded (version {0}; you currently have {1}).
 
-Do you want to install it now? (You will need to grant permission to the installer.)</value>
+{2}</value>
+    <comment>{0} is the new version of FieldWorks; {1} is the currently-installed version;
+    {2} is either "Please restart FieldWorks at your convenience" or "Do you want to install it now?"</comment>
   </data>
-  <!--data name="CouldNotUpdateAutomaticallyCaption" xml:space="preserve">
+  <data name="RestartToUpdatePrompt" xml:space="preserve">
+    <value>To install it, please restart FieldWorks at your convenience.</value>
+    <comment>This is the second half of a message that begins "A FieldWorks update has been downloaded."</comment>
+  </data>
+  <data name="UpdateNowPrompt" xml:space="preserve">
+    <value>Do you want to install it now? (You will need to grant permission to the installer.)</value>
+    <comment>This is the second half of a message that begins "A FieldWorks update has been downloaded."</comment>
+  </data>
+  <data name="CouldNotUpdateAutomaticallyCaption" xml:space="preserve">
     <value>Could Not Update Automatically</value>
   </data>
-  <<data name="AutomaticUpdateFailedMessage" xml:space="preserve">
+  <data name="CouldNotUpdateAutomaticallyFileXMessage" xml:space="preserve">
     <value>FieldWorks could not be updated automatically. Please close all FieldWorks windows and install the update from {0}</value>
     <comment>{0} is the path to the installer</comment>
-  </data>-->
+  </data>
+  <data name="CannotRestartAutomaticallyMessage" xml:space="preserve">
+    <value>FieldWorks will attempt to install the update from {0}, but you will need to restart FieldWorks yourself after the update is complete.</value>
+    <comment>Message shown when FieldWorks will not be able to restart automatically after installing an update. {0} is the path to the installer</comment>
+  </data>
   <data name="kstidLicense" xml:space="preserve">
     <value>This software is licensed under the LGPL, version 2.1 or later</value>
     <comment>Displays in the Help/About box and the splash screen</comment>
