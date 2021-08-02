@@ -187,6 +187,34 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void NoGapNoContentTitleAndRow_DoesNotThrow()
+		{
+			// table caption and row markup with no whitespace or content
+			var almostTable = $"\\d{TR}";
+			var entry = CreateInterestingLexEntry(almostTable);
+			var result = string.Empty;
+			// SUT
+			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings));
+
+			// Verify that the empty table is in the results
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToRow + "[not(text())]", 1);
+		}
+
+		[Test]
+		public void WhitespaceOnlyBetweenTitleAndRow_DoesNotThrow()
+		{
+			// table caption and row markup with no whitespace or content
+			var almostTable = $"\\d \t{TR}";
+			var entry = CreateInterestingLexEntry(almostTable);
+			var result = string.Empty;
+			// SUT
+			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings));
+
+			// Verify that the empty table is in the results
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToRow + "[not(text())]", 1);
+		}
+
+		[Test]
 		public void ManyRowsAndCells()
 		{
 			const string a1 = "one, eh?";

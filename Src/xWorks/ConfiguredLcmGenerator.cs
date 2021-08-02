@@ -45,10 +45,8 @@ namespace SIL.FieldWorks.XWorks
 		internal const string LoudSpeaker = "\uD83D\uDD0A";
 		internal const string MovieCamera = "\U0001F3A5";
 
-		/// <summary>
-		/// Regular expression for determining whether a string should be parsed as USFM
-		/// </summary>
-		private static readonly Regex USFMTableStart = new Regex(@"\A\\(d|tr)\s+");
+		// A sanity check regex. Verifies that we are looking at a potential start of a table
+		private static readonly Regex USFMTableStart = new Regex(@"\A(\\d|\\tr)");
 
 		/// <summary>
 		/// The Assembly that the model Types should be loaded from. Allows test code to introduce a test model.
@@ -424,9 +422,9 @@ namespace SIL.FieldWorks.XWorks
 						// The ICmFile is used for all references to the same file within the project, so its guid is not unique.
 						if (fileOwner != null)
 						{
-							return IsVideo(fileProperty.InternalPath) ? GenerateXHTMLForVideoFile(fileProperty.ClassName, fileOwner.Guid.ToString(),
-								srcAttr, MovieCamera, settings) : GenerateXHTMLForAudioFile(fileProperty.ClassName, fileOwner.Guid.ToString(),
-								srcAttr, LoudSpeaker, settings);
+							return IsVideo(fileProperty.InternalPath)
+								? GenerateXHTMLForVideoFile(fileProperty.ClassName, fileOwner.Guid.ToString(), srcAttr, MovieCamera, settings)
+								: GenerateXHTMLForAudioFile(fileProperty.ClassName, fileOwner.Guid.ToString(), srcAttr, LoudSpeaker, settings);
 						}
 					}
 					return string.Empty;
@@ -2554,27 +2552,40 @@ namespace SIL.FieldWorks.XWorks
 			var bldr = new StringBuilder();
 			using (var writer = settings.ContentGenerator.CreateWriter(bldr))
 			{
+
+				// Regular expression to match at the beginning of the string a \d followed by one or more spaces
+				// then grouping any number of characters as 'contents' until encountering any number of spaces followed
+				// by \tr or the end of the string
+				var USFMHeaderGroup = @"(?<header>\A\\d\s+(?<contents>.*?)\s*((?=\\tr)|$))";
+
+				// Match the header optionally, then capture any contents found between \tr tags or between \tr and the end of the string
+				// in groups labeled 'rowcontents' - The header including the sfm and spaces is captured as header and the row with the
+				// sfm and surrounding space is captured as <row>
+				var USFMTableRegEx = new Regex(USFMHeaderGroup + @"?(?<row>\\tr\s*(?<rowcontents>.*?)\s*((?=\\tr)|$))?", RegexOptions.Compiled | RegexOptions.Singleline);
 				var usfmText = usfm.Text;
-				var firstMarker = USFMTableStart.Match(usfmText);
-				var rowBreaks = new Regex(@"\s+\\tr\s+").Matches(usfmText);
-				var firstLineLim = rowBreaks.Count > 0 ? rowBreaks[0].Index : usfm.Length;
-				settings.ContentGenerator.StartTable(writer);
-				if (firstMarker.Groups[1].ToString().Equals("d"))
+				var fancyMatch = USFMTableRegEx.Matches(usfmText);
+				var headerContent = fancyMatch.Count > 0
+					? fancyMatch[0].Groups["contents"].Success ? fancyMatch[0].Groups["contents"].Captures[0] : null
+					: null;
+				var rows = new List<Tuple<int,string>>();
+				foreach (Match match in fancyMatch)
 				{
-					var title = usfm.GetSubstring(firstMarker.Length, firstLineLim);
+					if (match.Success && match.Groups["rowcontents"].Success)
+					{
+						var rowContentsGroup = match.Groups["rowcontents"];
+						rows.Add(new Tuple<int, string> (rowContentsGroup.Index, rowContentsGroup.Value));
+					}
+				}
+				settings.ContentGenerator.StartTable(writer);
+				if (headerContent != null)
+				{
+					var title = usfm.GetSubstring(headerContent.Index, headerContent.Index + headerContent.Length);
 					GenerateTableTitle(title, writer, config, settings, writingSystem);
 				}
 				settings.ContentGenerator.StartTableBody(writer);
-				if (firstMarker.Groups[1].ToString().Equals("tr"))
+				foreach(var row in rows)
 				{
-					GenerateTableRow(usfm.GetSubstring(firstMarker.Length - 1, firstLineLim), writer, config, settings, writingSystem);
-				}
-
-				for (var i = 0; i < rowBreaks.Count; i++)
-				{
-					var rowMin = rowBreaks[i].Index + rowBreaks[i].Length - 1;
-					var rowLim = i + 1 < rowBreaks.Count ? rowBreaks[i + 1].Index : usfm.Length;
-					GenerateTableRow(usfm.GetSubstring(rowMin, rowLim), writer, config, settings, writingSystem);
+					GenerateTableRow(usfm.GetSubstring(row.Item1, row.Item1 + row.Item2.Length), writer, config, settings, writingSystem);
 				}
 				settings.ContentGenerator.EndTableBody(writer);
 				settings.ContentGenerator.EndTable(writer);
@@ -2601,8 +2612,8 @@ namespace SIL.FieldWorks.XWorks
 			ConfigurableDictionaryNode config, GeneratorSettings settings, string writingSystem)
 		{
 			settings.ContentGenerator.StartTableRow(writer);
-			var usfmText = rowUSFM.Text;
-			var cellMarker = new Regex(@"\s+\\t(c|h)r?\d*\s+");
+			var usfmText = rowUSFM.Text ?? string.Empty;
+			var cellMarker = new Regex(@"\s*\\t(c|h)r?\d*\s*");
 			for (Match curCellMarker = cellMarker.Match(usfmText), nextCellMarker; curCellMarker.Success; curCellMarker = nextCellMarker)
 			{
 				var cellMin = curCellMarker.Index + curCellMarker.Length;
