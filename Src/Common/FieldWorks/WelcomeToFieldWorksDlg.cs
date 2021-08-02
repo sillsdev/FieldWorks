@@ -60,10 +60,10 @@ namespace SIL.FieldWorks
 		/// <param name="helpTopicProvider">Help topic provider</param>
 		/// <param name="exception">Exception that was thrown if the previously requested
 		/// project could not be opened.</param>
-		/// <param name="showInternetUseRow">True (usually only on the first run) when we want to show the first-time warning about
-		/// sending analytics information and downloading updates automatically.</param>
+		/// <param name="showReportingRow">True (usually only on the first run) when we want to show the first-time warning about
+		/// sending analytics information</param>
 		/// ------------------------------------------------------------------------------------
-		public WelcomeToFieldWorksDlg(IHelpTopicProvider helpTopicProvider, StartupException exception, bool showInternetUseRow)
+		public WelcomeToFieldWorksDlg(IHelpTopicProvider helpTopicProvider, StartupException exception, bool showReportingRow)
 		{
 			InitializeComponent();
 			AccessibleName = GetType().Name;
@@ -83,14 +83,9 @@ namespace SIL.FieldWorks
 				Logger.WriteEvent("Opening 'Unable to Open Project' dialog");
 			}
 
-			if (!showInternetUseRow)
+			if (!showReportingRow)
 			{
-				internetUseLayout.Visible = false;
-			}
-			else if (!MiscUtils.IsWindows)
-			{
-				internetUseLabel.Visible = false;
-				reportingInfoLabel.Visible = true;
+				reportingInfoLayout.Visible = false;
 			}
 
 			m_helpTopicProvider = helpTopicProvider;

@@ -115,7 +115,7 @@ namespace SIL.FieldWorks
 		private static int s_servicePort;
 		// true if we have no previous reporting settings, typically the first time a version of FLEx that
 		// supports usage reporting has been run.
-		private static bool s_missingSomeInternetSettings;
+		private static bool s_noPreviousReportingSettings;
 		private static ILcmUI s_ui;
 		private static FwApplicationSettings s_appSettings;
 		#endregion
@@ -168,19 +168,23 @@ namespace SIL.FieldWorks
 				s_appSettings.DeleteCorruptedSettingsFilesIfPresent();
 				s_appSettings.UpgradeIfNecessary();
 
-				if (s_appSettings.Update == null)
+				if (s_appSettings.Update == null && MiscUtils.IsWindows)
 				{
-					s_missingSomeInternetSettings = true;
-					s_appSettings.Update = new UpdateSettings();
+					s_appSettings.Update = new UpdateSettings
+					{
+						Behavior = DialogResult.Yes == MessageBox.Show(
+								Properties.Resources.AutomaticUpdatesMessage, Properties.Resources.AutomaticUpdatesCaption, MessageBoxButtons.YesNo)
+							? UpdateSettings.Behaviors.Download
+							: UpdateSettings.Behaviors.DoNotCheck
+					};
 				}
 
 				var reportingSettings = s_appSettings.Reporting;
 				if (reportingSettings == null)
 				{
 					// Note: to simulate this, currently it works to delete all subfolders of
-					// (e.g.) C:\Users\thomson\AppData\Local\SIL\FieldWorks.exe_Url_tdkbegygwiuamaf3mokxurci022yv1kn
-					// That guid may depend on version or something similar; it's some artifact of how the Settings persists.
-					s_missingSomeInternetSettings = true;
+					// (e.g.) C:\Users\thomson\AppData\Local\SIL\SIL FieldWorks\ (in the past, they were under FieldWorks.exe_Url_tdkbegygwiuamaf3mokxurci022yv1kn)
+					s_noPreviousReportingSettings = true;
 					reportingSettings = new ReportingSettings();
 					s_appSettings.Reporting = reportingSettings; //to avoid a defect in Settings rely on the Save in the code below
 				}
@@ -191,7 +195,8 @@ namespace SIL.FieldWorks
 				var feedbackEnvVar = Environment.GetEnvironmentVariable("FEEDBACK");
 				if (feedbackEnvVar != null)
 				{
-					reportingSettings.OkToPingBasicUsageData = feedbackEnvVar.ToLower().Equals("true") || feedbackEnvVar.ToLower().Equals("yes");
+					feedbackEnvVar = feedbackEnvVar.ToLowerInvariant();
+					reportingSettings.OkToPingBasicUsageData = feedbackEnvVar.Equals("true") || feedbackEnvVar.Equals("yes") || feedbackEnvVar.Equals("on");
 				}
 
 				s_appSettings.Save();
@@ -1361,8 +1366,7 @@ namespace SIL.FieldWorks
 					latestProject));
 			}
 
-			// If the user has not seen the warning about downloading updates, don't bypass the welcome dlg
-			var fOpenLastEditedProject = !s_missingSomeInternetSettings && GetAutoOpenRegistrySetting(app);
+			var fOpenLastEditedProject = GetAutoOpenRegistrySetting(app);
 
 			if (fOpenLastEditedProject && projId.IsValid && projectOpenError == null
 				&& previousStartupStatus == StartupStatus.Successful)
@@ -1652,7 +1656,7 @@ namespace SIL.FieldWorks
 				// reset our projectId.
 				projectToTry = lastProjectId;
 
-				using (var dlg = new WelcomeToFieldWorksDlg(helpTopicProvider, exception, s_missingSomeInternetSettings))
+				using (var dlg = new WelcomeToFieldWorksDlg(helpTopicProvider, exception, s_noPreviousReportingSettings))
 				{
 					if (exception != null)
 					{
