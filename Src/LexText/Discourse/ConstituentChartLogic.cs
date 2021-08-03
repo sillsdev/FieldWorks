@@ -1489,7 +1489,7 @@ namespace SIL.FieldWorks.Discourse
 			var ifirstRowToDelete = rowIndex + 1;
 			var crows = m_chart.RowsOS.Count;
 			var crowsToDelete = crows - ifirstRowToDelete;
-			var ccells = row.CellsOS.Count;
+			var ccells = row.IsValidObject ? row.CellsOS.Count : 0;
 			var ccellsToDelete = ccells - icellPart;
 			if (ccellsToDelete == 0 && crowsToDelete == 0)
 				return;
@@ -1520,7 +1520,7 @@ namespace SIL.FieldWorks.Discourse
 
 				// Delete the redundant stuff in the current row.
 				// Have to recalculate some of the original information in case of side effects
-				ccells = row.CellsOS.Count;
+				ccells = row.IsValidObject ? row.CellsOS.Count : 0;
 				icellPart = cell.ColIndex == 0 ? 0 : FindIndexOfFirstCellPartInOrAfterColumn(cell);
 				ccellsToDelete = ccells - icellPart;
 

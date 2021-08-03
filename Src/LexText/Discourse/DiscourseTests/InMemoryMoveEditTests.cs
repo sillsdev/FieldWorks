@@ -1284,6 +1284,34 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		[Test]
+		public void ClearChart_DeadRow_DoesNotThrow()
+		{
+			var allParaOccurrences = m_helper.MakeAnalysesUsedN(5);
+			var row0 = m_helper.MakeRow1a();
+			var row1 = m_helper.MakeSecondRow();
+			var row2 = m_helper.MakeRow(m_chart, "1c");
+			m_helper.MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
+			var cellPart1_1 = m_helper.MakeWordGroup(row1, 1, allParaOccurrences[1], allParaOccurrences[1]);
+			var cellPart1_2 = m_helper.MakeWordGroup(row1, 2, allParaOccurrences[2], allParaOccurrences[3]);
+			var cellPart2_1 = m_helper.MakeWordGroup(row2, 1, allParaOccurrences[4], allParaOccurrences[4]);
+			var cell = MakeLocObj(row0, 0);
+			// delete row 2
+			row0.Delete();
+			EndSetupTask(); // SUT has its own UOW
+
+			// SUT
+			m_logic.ClearChartFromHereOn(cell);
+
+			// Verify
+			VerifyDeletedHvos(new[] { cellPart1_1.Hvo, cellPart1_2.Hvo, cellPart2_1.Hvo, row2.Hvo, row0.Hvo, row1.Hvo, row2.Hvo },
+				"Should have removed all content; Hvo {0} still exists!");
+			Assert.That(m_chart.RowsOS.Count, Is.EqualTo(0));
+
+			// Make sure we have restored all words to the ribbon
+			AssertUsedAnalyses(allParaOccurrences, 0);
+		}
+
+		[Test]
 		public void ClearChartFromHereOn_IncludingDepClause()
 		{
 			var allParaOccurrences = m_helper.MakeAnalysesUsedN(5);
