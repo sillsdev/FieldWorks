@@ -192,19 +192,11 @@ If you want to use Paratext with this project, make a change in this project (so
     <value>Version: {0}  {1}  {2}</value>
     <comment>Displays in the Help/About box and the splash screen</comment>
   </data>
-  <data name="SoftwareUpdatesCaption" xml:space="preserve">
-    <value>Software Updates</value>
-  </data>
-  <data name="SoftwareUpdatesAreReady_PleaseRestart" xml:space="preserve">
-    <value>Software updates for FieldWorks are ready to install.
-
-Please restart the application at your convenience.</value>
-  </data>
   <data name="RestartToUpdateCaption" xml:space="preserve">
     <value>Restart to Update</value>
   </data>
   <data name="UpdateNowCaption" xml:space="preserve">
-    <value>Update FieldWorks now?</value>
+    <value>Update FieldWorks Now?</value>
   </data>
   <data name="UpdateDownloadedVersionXCurrentXPromptX" xml:space="preserve">
     <value>A FieldWorks update has been downloaded (version {0}; you currently have {1}).

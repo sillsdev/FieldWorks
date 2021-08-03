@@ -333,26 +333,6 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Software updates for FieldWorks are ready to install.
-        ///
-        ///Please restart the application at your convenience..
-        /// </summary>
-        internal static string SoftwareUpdatesAreReady_PleaseRestart {
-            get {
-                return ResourceManager.GetString("SoftwareUpdatesAreReady_PleaseRestart", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Software Updates.
-        /// </summary>
-        internal static string SoftwareUpdatesCaption {
-            get {
-                return ResourceManager.GetString("SoftwareUpdatesCaption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to A FieldWorks update has been downloaded (version {0}; you currently have {1}).
         ///
         ///{2}.
@@ -364,7 +344,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Update FieldWorks now?.
+        ///   Looks up a localized string similar to Update FieldWorks Now?.
         /// </summary>
         internal static string UpdateNowCaption {
             get {
