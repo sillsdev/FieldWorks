@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls; // for XmlViews stuff, especially borrowed form ColumnConfigureDialog
 using SIL.LCModel;
@@ -424,7 +425,7 @@ namespace SIL.FieldWorks.IText
 					htmlWriter.WriteAttributeString("id", id);
 					htmlWriter.WriteAttributeString("class", "checkBox");
 					htmlWriter.WriteAttributeString("name", id.Split('%')[0] + "[]");
-					if (choices.IndexOf(flid, ws, true) != -1) // If the option is in choices, check it
+					if (choices.IndexInEnabled(flid, ws, true) != -1) // If the option is enabled in choices, check it
 						htmlWriter.WriteAttributeString("checked", "checked");
 					htmlWriter.WriteEndElement(); // /> <--- End input element
 				}
@@ -439,11 +440,11 @@ namespace SIL.FieldWorks.IText
 		{
 			var rowChoices = new List<InterlinearTableGroup>();
 			var remainingChoiceRows = new Queue<InterlinearTableRow>();
-			var lineOptions = choices.AllLineOptions;
+			var lineOptions = choices.ConfigurationLineOptions;
 			foreach (var lineOption in lineOptions)
 			{
 				remainingChoiceRows.Enqueue(new InterlinearTableRow(new Tuple<LineOption, InterlinLineSpec[]>(lineOption,
-					choices.AllLineSpecs.Where(spec => spec.Flid == lineOption.Flid).ToArray())));
+					choices.EnabledLineSpecs.Where(spec => spec.Flid == lineOption.Flid).ToArray())));
 			}
 			do
 			{
@@ -512,16 +513,6 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Finds the line choices in m_choices with the given flids and then sets the new order.
-		/// </summary>
-		/// <param name="lineChoicesFlids">The array containing the flids of the line choices</param>
-		private void ReorderLineChoices(int[] lineChoicesFlids)
-		{
-			var newOrderOfLineOptions = lineChoicesFlids.Select(choice => m_choices.AllLineOptions.Find(x => x.Flid == choice)).Where(optionToMove => optionToMove != null).ToList();
-			m_choices.AllLineOptions = newOrderOfLineOptions;
-		}
-
-		/// <summary>
 		/// Check to see if the object has been disposed.
 		/// All public Properties and Methods should call this
 		/// before doing anything else.
@@ -563,7 +554,7 @@ namespace SIL.FieldWorks.IText
 			// Cache the baseline and best analysis no matter what we see in the specs
 			WsComboItems(ColumnConfigureDialog.WsComboContent.kwccVernacularInParagraph);
 			WsComboItems(ColumnConfigureDialog.WsComboContent.kwccBestAnalysis);
-			foreach (var spec in m_choices.AllLineSpecs)
+			foreach (var spec in m_choices.EnabledLineSpecs)
 			{
 				WsComboItems(spec.ComboContent);
 			}
@@ -751,7 +742,7 @@ namespace SIL.FieldWorks.IText
 
 		/// <summary>
 		/// When the okButton is clicked, this gets the JavaScript order of the rows to reorder the line choices. Additionally,
-		/// this gets the checkboxes on the page to add/remove them from the actual m_choices.
+		/// this gets the checkboxes on the page to enable/disable them in the actual m_choices.
 		/// </summary>
 		private void OkButton_Click(object sender, EventArgs e)
 		{
@@ -763,27 +754,70 @@ namespace SIL.FieldWorks.IText
 			if (checkBoxes == null)
 				return;
 
-			using (var context = new AutoJSContext(((GeckoWebBrowser) mainBrowser.NativeBrowser).Window.DomWindow))
+			List<int> orderedFlids;
+			using (var context = new AutoJSContext(((GeckoWebBrowser)mainBrowser.NativeBrowser).Window.DomWindow))
 			{
 				string rows;
 				context.EvaluateScript(@"getRows()", out rows);
-				ReorderLineChoices(Array.ConvertAll(rows.Split(','), int.Parse));
+				orderedFlids = Array.ConvertAll(rows.Split(','), int.Parse).ToList();
 			}
 
-			m_choices.AllLineSpecs.Clear();
+			// Get all of the specs with the new enabled (checked) value.
+			// (The Flid order is correct but the order of the writing systems are not.)
+			List<InterlinLineSpec> newLineSpecsUnordered = new List<InterlinLineSpec>();
 			foreach (var checkBox in checkBoxes)
 			{
-				var element = (GeckoInputElement) checkBox;
+				var element = (GeckoInputElement)checkBox;
 				var elementId = element.GetAttribute("id");
 				var flidAndWs = elementId.Split('%');
 				var flid = int.Parse(flidAndWs[0]);
 				var ws = int.Parse(flidAndWs[1]);
-
-				if (element.Checked)
-				{
-					m_choices.AllLineSpecs.Add(m_choices.CreateSpec(flid, ws));
-				}
+				newLineSpecsUnordered.Add(m_choices.CreateSpec(flid, ws, element.Checked));
 			}
+
+			OrderAllSpecs(m_choices, orderedFlids, newLineSpecsUnordered);
+		}
+
+		internal static void OrderAllSpecs(InterlinLineChoices choices, List<int> orderedFlids, List<InterlinLineSpec> newLineSpecsUnordered)
+		{
+			// Preserve the existing order of the writing system for each Flid.
+			// (This list might not contain all of the specs.)
+			ReadOnlyCollection<InterlinLineSpec> oldLineSpecsOrder = choices.AllLineSpecs;
+			choices.ReinitializeEmptyAllLineSpecs();
+
+			// Update m_choices with the new Flid (row) order and new enabled (checked) values while
+			// preserving the old writing system order for each Flid.
+			foreach (int flid in orderedFlids)
+			{
+				InterlinLineSpec newSpec = null;
+				// Preserve the order of the writing systems from the old list.
+				foreach (InterlinLineSpec oldSpec in oldLineSpecsOrder)
+				{
+					if (oldSpec.Flid == flid)
+					{
+						newSpec = newLineSpecsUnordered.Find(spec => ((spec.Flid == flid) && (spec.WritingSystem == oldSpec.WritingSystem)));
+						if (newSpec != null)
+						{
+							choices.Append(newSpec);
+							newLineSpecsUnordered.Remove(newSpec);
+						}
+					}
+				}
+
+				// Add any remaing specs for this flid in the default order.
+				do
+				{
+					newSpec = newLineSpecsUnordered.Find(spec => spec.Flid == flid);
+					if (newSpec != null)
+					{
+						choices.Append(newSpec);
+						newLineSpecsUnordered.Remove(newSpec);
+					}
+
+				} while (newSpec != null);
+			}
+
+			Debug.Assert(newLineSpecsUnordered.Count == 0);
 		}
 
 		private void CancelButton_Click(object sender, EventArgs e)

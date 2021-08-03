@@ -341,15 +341,15 @@ namespace SIL.FieldWorks.IText
 									(int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalRight);
 							}
 							vwenv.OpenInnerPile();
-							for (int ispec = 0; ispec < m_choices.Count; )
+							for (int ispec = 0; ispec < m_choices.EnabledCount; )
 							{
-								InterlinLineSpec spec = m_choices[ispec];
+								InterlinLineSpec spec = m_choices.EnabledLineSpecs[ispec];
 								if (!spec.WordLevel)
 									break;
 								if (spec.MorphemeLevel)
 								{
 									DisplayMorphBundles(vwenv, hvo);
-									ispec = m_choices.LastMorphemeIndex + 1;
+									ispec = m_choices.LastEnabledMorphemeIndex + 1;
 									continue;
 								}
 								switch (spec.Flid)
@@ -380,12 +380,12 @@ namespace SIL.FieldWorks.IText
 							vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing,
 								(int)FwTextPropVar.ktpvMilliPoint, 10000);
 							vwenv.OpenInnerPile();
-							for (int ispec = m_choices.FirstMorphemeIndex; ispec <= m_choices.LastMorphemeIndex; ispec++)
+							for (int ispec = m_choices.FirstEnabledMorphemeIndex; ispec <= m_choices.LastEnabledMorphemeIndex; ispec++)
 							{
 								int tagLexEntryIcon = 0;
-								if (m_choices.FirstLexEntryIndex == ispec)
+								if (m_choices.FirstEnabledLexEntryIndex == ispec)
 									tagLexEntryIcon = ktagMorphEntryIcon;
-								InterlinLineSpec spec = m_choices[ispec];
+								InterlinLineSpec spec = m_choices.EnabledLineSpecs[ispec];
 								switch (spec.Flid)
 								{
 									case InterlinLineChoices.kflidMorphemes:
@@ -409,9 +409,9 @@ namespace SIL.FieldWorks.IText
 
 							break;
 						default:
-							if (frag >= kfragNamedObjectNameChoices && frag < kfragNamedObjectNameChoices + m_choices.Count)
+							if (frag >= kfragNamedObjectNameChoices && frag < kfragNamedObjectNameChoices + m_choices.EnabledCount)
 							{
-								InterlinLineSpec spec = m_choices[frag - kfragNamedObjectNameChoices];
+								InterlinLineSpec spec = m_choices.EnabledLineSpecs[frag - kfragNamedObjectNameChoices];
 								int wsActual = GetActualWs(hvo, ktagSbNamedObjName, spec.WritingSystem);
 								vwenv.AddStringAltMember(ktagSbNamedObjName, wsActual, this);
 							}
@@ -485,10 +485,10 @@ namespace SIL.FieldWorks.IText
 				return wsActual;
 			}
 
-			private void DisplayLexGloss(IVwEnv vwenv, int hvo, int ws, int choiceIndex)
+			private void DisplayLexGloss(IVwEnv vwenv, int hvo, int ws, int enabledChoiceIndex)
 			{
 				int hvoNo = vwenv.DataAccess.get_ObjectProp(hvo, ktagSbMorphGloss);
-				SetColor(vwenv, m_choices.LabelRGBFor(choiceIndex));
+				SetColor(vwenv, m_choices.LabelRGBForEnabled(enabledChoiceIndex));
 				if (m_fIconsForAnalysisChoices)
 				{
 					// This line does not have one, but add some white space to line things up.
@@ -505,23 +505,23 @@ namespace SIL.FieldWorks.IText
 				}
 				else
 				{
-					vwenv.AddObjProp(ktagSbMorphGloss, this, kfragNamedObjectNameChoices + choiceIndex);
+					vwenv.AddObjProp(ktagSbMorphGloss, this, kfragNamedObjectNameChoices + enabledChoiceIndex);
 				}
 			}
 
-			private void DisplayMorphForm(IVwEnv vwenv, int hvo, int frag, int ws, int choiceIndex)
+			private void DisplayMorphForm(IVwEnv vwenv, int hvo, int frag, int ws, int enabledChoiceIndex)
 			{
 				int hvoMorphForm = vwenv.DataAccess.get_ObjectProp(hvo, ktagSbMorphForm);
 
 				// Allow editing of the morpheme breakdown line.
-				SetColor(vwenv, m_choices.LabelRGBFor(choiceIndex));
+				SetColor(vwenv, m_choices.LabelRGBForEnabled(enabledChoiceIndex));
 				// On this line we want an icon only for the first column (and only if it is the first
 				// occurrence of the flid).
-				bool fWantIcon = m_fIsMorphemeFormEditable && (frag == kfragFirstMorph) && m_choices.IsFirstOccurrenceOfFlid(choiceIndex);
+				bool fWantIcon = m_fIsMorphemeFormEditable && (frag == kfragFirstMorph) && m_choices.IsFirstEnabledOccurrenceOfFlid(enabledChoiceIndex);
 				if (!fWantIcon)
 					SetIndentForMissingIcon(vwenv);
 				vwenv.OpenParagraph();
-				bool fFirstMorphLine = (m_choices.IndexOf(InterlinLineChoices.kflidMorphemes) == choiceIndex);
+				bool fFirstMorphLine = (m_choices.IndexInEnabled(InterlinLineChoices.kflidMorphemes) == enabledChoiceIndex);
 				if (fWantIcon) // Review JohnT: should we do the 'edit box' for all first columns?
 				{
 					AddPullDownIcon(vwenv, ktagMorphFormIcon);
@@ -542,7 +542,7 @@ namespace SIL.FieldWorks.IText
 						(int)FwTextPropVar.ktpvDefault, krgbEditable);
 				}
 				// Per LT-14891, morpheme form is not editable except for the default vernacular.
-				if (m_fIsMorphemeFormEditable && m_choices.IsFirstOccurrenceOfFlid(choiceIndex))
+				if (m_fIsMorphemeFormEditable && m_choices.IsFirstEnabledOccurrenceOfFlid(enabledChoiceIndex))
 					MakeNextFlowObjectEditable(vwenv);
 				else
 					MakeNextFlowObjectReadOnly(vwenv);
@@ -551,7 +551,7 @@ namespace SIL.FieldWorks.IText
 				if (fFirstMorphLine)
 					vwenv.AddStringProp(ktagSbMorphPrefix, this);
 				// This is never missing, but may, or may not, be editable.
-				vwenv.AddObjProp(ktagSbMorphForm, this, kfragNamedObjectNameChoices + choiceIndex);
+				vwenv.AddObjProp(ktagSbMorphForm, this, kfragNamedObjectNameChoices + enabledChoiceIndex);
 				if (fFirstMorphLine)
 					vwenv.AddStringProp(ktagSbMorphPostfix, this);
 				// close the special edit box we opened for the first morpheme.
@@ -569,7 +569,7 @@ namespace SIL.FieldWorks.IText
 					kfragMissingWordPos, ktagWordPosIcon, ws, choiceIndex);
 			}
 
-			private void DisplayWordGloss(IVwEnv vwenv, int hvo, int ws, int choiceIndex)
+			private void DisplayWordGloss(IVwEnv vwenv, int hvo, int ws, int enabledChoiceIndex)
 			{
 				// Count how many glosses there are for the current analysis:
 				int cGlosses = 0;
@@ -579,13 +579,13 @@ namespace SIL.FieldWorks.IText
 				if (wa != null)
 					cGlosses = wa.MeaningsOC.Count;
 
-				SetColor(vwenv, m_choices.LabelRGBFor(choiceIndex));
+				SetColor(vwenv, m_choices.LabelRGBForEnabled(enabledChoiceIndex));
 
 				// Icon only if we want icons at all (currently always true) and there is at least one WfiGloss to choose
 				// and this is the first word gloss line.
 				bool fWantIcon = m_fIconsForAnalysisChoices &&
 					(cGlosses > 0 || m_sandbox.ShouldAddWordGlossToLexicon) &&
-					m_choices.IsFirstOccurrenceOfFlid(choiceIndex);
+					m_choices.IsFirstEnabledOccurrenceOfFlid(enabledChoiceIndex);
 				// If there isn't going to be an icon, add an indent.
 				if (!fWantIcon)
 				{
@@ -658,7 +658,7 @@ namespace SIL.FieldWorks.IText
 					MakeNextFlowObjectReadOnly(vwenv);
 					if (vwenv.DataAccess.get_VecSize(hvo, ktagSbWordMorphs) == 0)
 					{
-						SetColor(vwenv, m_choices.LabelRGBFor(m_choices.IndexOf(InterlinLineChoices.kflidMorphemes)));
+						SetColor(vwenv, m_choices.LabelRGBForEnabled(m_choices.IndexInEnabled(InterlinLineChoices.kflidMorphemes)));
 						vwenv.AddProp(ktagMissingMorphs, this, kfragMissingMorphs);
 						// Blank lines to fill up the gap; LexEntry line
 						vwenv.AddString(m_tssEmptyVern);
@@ -777,15 +777,15 @@ namespace SIL.FieldWorks.IText
 			/// <param name="dummyFrag"></param>
 			/// <param name="tagIcon">If non-zero, display a pull-down icon before the item, marked with this tag.</param>
 			/// <param name="ws">which alternative of the name to display</param>
-			/// <param name="choiceIndex">which item in m_choices this comes from. The icon is displayed
+			/// <param name="enabledChoiceIndex">which enabled item in m_choices this comes from. The icon is displayed
 			/// only if it is the first one for its flid.</param>
 			protected void AddOptionalNamedObj(IVwEnv vwenv, int hvo, int tag, int dummyTag,
-				int dummyFrag, int tagIcon, int ws, int choiceIndex)
+				int dummyFrag, int tagIcon, int ws, int enabledChoiceIndex)
 			{
 				int hvoNo = vwenv.DataAccess.get_ObjectProp(hvo, tag);
-				SetColor(vwenv, m_choices.LabelRGBFor(choiceIndex));
+				SetColor(vwenv, m_choices.LabelRGBForEnabled(enabledChoiceIndex));
 				bool fWantIcon = false;
-				fWantIcon = tagIcon != 0 && m_choices.IsFirstOccurrenceOfFlid(choiceIndex);
+				fWantIcon = tagIcon != 0 && m_choices.IsFirstEnabledOccurrenceOfFlid(enabledChoiceIndex);
 				if (m_fIconsForAnalysisChoices && !fWantIcon)
 				{
 					// This line does not have one, but add some white space to line things up.
@@ -802,7 +802,7 @@ namespace SIL.FieldWorks.IText
 				if (hvoNo == 0)
 					vwenv.AddProp(dummyTag, this, dummyFrag);
 				else
-					vwenv.AddObjProp(tag, this, kfragNamedObjectNameChoices + choiceIndex);
+					vwenv.AddObjProp(tag, this, kfragNamedObjectNameChoices + enabledChoiceIndex);
 				vwenv.CloseParagraph();
 			}
 

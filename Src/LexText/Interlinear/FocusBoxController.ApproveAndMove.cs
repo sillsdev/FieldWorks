@@ -413,7 +413,7 @@ namespace SIL.FieldWorks.IText
 			// analysis is either a WfiAnalysis or WfiGloss; find the actual analysis.
 			var wa = (IWfiAnalysis)(analysis is IWfiAnalysis ? analysis : analysis.Owner);
 
-			foreach (InterlinLineSpec spec in m_lineChoices)
+			foreach (InterlinLineSpec spec in m_lineChoices.EnabledLineSpecs)
 			{
 				// see if the information required for this linespec is present.
 				switch (spec.Flid)

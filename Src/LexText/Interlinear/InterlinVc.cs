@@ -499,7 +499,7 @@ namespace SIL.FieldWorks.IText
 
 		virtual protected int LabelRGBFor(int choiceIndex)
 		{
-			return LabelRGBFor(m_lineChoices[choiceIndex]);
+			return LabelRGBFor(m_lineChoices.EnabledLineSpecs[choiceIndex]);
 		}
 
 		virtual protected int LabelRGBFor(InterlinLineSpec spec)
@@ -677,7 +677,7 @@ namespace SIL.FieldWorks.IText
 				int chvoGlosses = wa.MeaningsOC.Count;
 				for (int i = 0; i < m_WsList.AnalysisWsIds.Length; ++i)
 				{
-					SetColor(vwenv, LabelRGBFor(m_lineChoices.IndexOf(InterlinLineChoices.kflidWordGloss,
+					SetColor(vwenv, LabelRGBFor(m_lineChoices.IndexInEnabled(InterlinLineChoices.kflidWordGloss,
 						m_WsList.AnalysisWsIds[i])));
 					if (chvoGlosses == 0)
 					{
@@ -778,24 +778,24 @@ namespace SIL.FieldWorks.IText
 					int ws = m_WsList.AnalysisWsIds[frag - kfragWordGlossWs];
 					vwenv.AddStringAltMember(WfiGlossTags.kflidForm, ws, this);
 				}
-				else if (frag >= kfragLineChoices && frag < kfragLineChoices + m_lineChoices.Count)
+				else if (frag >= kfragLineChoices && frag < kfragLineChoices + m_lineChoices.EnabledCount)
 				{
-					var spec = m_lineChoices[frag - kfragLineChoices];
+					var spec = m_lineChoices.EnabledLineSpecs[frag - kfragLineChoices];
 					var ws = GetRealWsOrBestWsForContext(hvo, spec); // can be vernacular or analysis
 					if (ws > 0)
 						vwenv.AddStringAltMember(spec.StringFlid, ws, this);
 				}
-				else if (frag >= kfragAnalysisCategoryChoices && frag < kfragAnalysisCategoryChoices + m_lineChoices.Count)
+				else if (frag >= kfragAnalysisCategoryChoices && frag < kfragAnalysisCategoryChoices + m_lineChoices.EnabledCount)
 				{
 					AddAnalysisPos(vwenv, hvo, hvo, frag - kfragAnalysisCategoryChoices);
 				}
-				else if (frag >= kfragMorphFormChoices && frag < kfragMorphFormChoices + m_lineChoices.Count)
+				else if (frag >= kfragMorphFormChoices && frag < kfragMorphFormChoices + m_lineChoices.EnabledCount)
 				{
-					var spec = m_lineChoices[frag - kfragMorphFormChoices];
+					var spec = m_lineChoices.EnabledLineSpecs[frag - kfragMorphFormChoices];
 					var ws = GetRealWsOrBestWsForContext(hvo, spec);
 					DisplayMorphForm(vwenv, hvo, ws);
 				}
-				else if (frag >= kfragSegFfChoices && frag < kfragSegFfChoices + m_lineChoices.Count)
+				else if (frag >= kfragSegFfChoices && frag < kfragSegFfChoices + m_lineChoices.EnabledCount)
 				{
 					AddFreeformComment(vwenv, hvo, frag - kfragSegFfChoices);
 				}
@@ -878,7 +878,7 @@ namespace SIL.FieldWorks.IText
 
 		protected virtual void AddFreeformComment(IVwEnv vwenv, int hvoSeg, int lineChoiceIndex)
 		{
-			int[] wssAnalysis = m_lineChoices.AdjacentWssAtIndex(lineChoiceIndex, hvoSeg);
+			int[] wssAnalysis = m_lineChoices.AdjacentEnabledWssAtIndex(lineChoiceIndex, hvoSeg);
 			if (wssAnalysis.Length == 0)
 				return;
 			vwenv.OpenDiv();
@@ -887,7 +887,7 @@ namespace SIL.FieldWorks.IText
 			string label;
 			int flid;
 			InterlinearExporter exporter = vwenv as InterlinearExporter;
-			int dummyFlid = m_lineChoices[lineChoiceIndex].Flid;
+			int dummyFlid = m_lineChoices.EnabledLineSpecs[lineChoiceIndex].Flid;
 			switch (dummyFlid)
 			{
 				case InterlinLineChoices.kflidFreeTrans:
@@ -1330,8 +1330,8 @@ namespace SIL.FieldWorks.IText
 			vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing,
 				(int)FwTextPropVar.ktpvMilliPoint, 10000);
 			vwenv.OpenInnerPile();
-			var first = m_lineChoices.FirstMorphemeIndex;
-			var last = m_lineChoices.LastMorphemeIndex;
+			var first = m_lineChoices.FirstEnabledMorphemeIndex;
+			var last = m_lineChoices.LastEnabledMorphemeIndex;
 			IMoForm mf = null;
 			if (wmb != null)
 			{
@@ -1347,7 +1347,7 @@ namespace SIL.FieldWorks.IText
 
 			for (int i = first; i <= last; i++)
 			{
-				var spec = m_lineChoices[i];
+				var spec = m_lineChoices.EnabledLineSpecs[i];
 				SetColor(vwenv, LabelRGBFor(spec));
 				switch (spec.Flid)
 				{
@@ -1484,7 +1484,7 @@ namespace SIL.FieldWorks.IText
 		internal bool DisplayLexGlossWithInflType(IVwEnv vwenv, ILexEntry possibleVariant, ILexSense sense, InterlinLineSpec spec,
 			ILexEntryInflType inflType)
 		{
-			int iLineChoice = m_lineChoices.IndexOf(spec);
+			int iLineChoice = m_lineChoices.IndexInEnabled(spec);
 			ILexEntryRef ler;
 			if (possibleVariant.IsVariantOfSenseOrOwnerEntry(sense, out ler))
 			{
@@ -1617,15 +1617,15 @@ namespace SIL.FieldWorks.IText
 				(int)FwTextPropVar.ktpvMilliPoint,
 				5000); // default spacing is fine for all embedded paragraphs.
 			vwenv.OpenInnerPile();
-			for (var i = 0; i < m_lineChoices.Count; i++)
+			for (var i = 0; i < m_lineChoices.EnabledCount; i++)
 			{
-				InterlinLineSpec spec = m_lineChoices[i];
+				InterlinLineSpec spec = m_lineChoices.EnabledLineSpecs[i];
 				if (!spec.WordLevel)
 					break;
 				SetColor(vwenv, LabelRGBFor(spec));
 				ITsString tss = MakeUiElementString(m_lineChoices.LabelFor(spec.Flid), wsUI, null);
 				var bldr = tss.GetBldr();
-				if (m_lineChoices.RepetitionsOfFlid(spec.Flid) > 1)
+				if (m_lineChoices.EnabledRepetitionsOfFlid(spec.Flid) > 1)
 				{
 					bldr.Append(spaceStr);
 					bldr.Append(spec.WsLabel(cache));
@@ -1729,16 +1729,16 @@ namespace SIL.FieldWorks.IText
 					throw new Exception("invalid type used for word analysis");
 				}
 				m_defaultObj = coRepository.GetObject(m_hvoDefault);
-				for (var i = 0; i < m_choices.Count; )
+				for (var i = 0; i < m_choices.EnabledCount; )
 				{
 					m_this.m_icurLine = i;
-					var spec = m_choices[i];
+					var spec = m_choices.EnabledLineSpecs[i];
 					if (!spec.WordLevel)
 						break;
 					if (spec.MorphemeLevel)
 					{
 						DisplayMorphemes();
-						while (i < m_choices.Count && m_choices[i].MorphemeLevel)
+						while (i < m_choices.EnabledCount && m_choices.EnabledLineSpecs[i].MorphemeLevel)
 							i++;
 					}
 					else
@@ -1783,7 +1783,7 @@ namespace SIL.FieldWorks.IText
 							}
 						}
 					}
-					var spec = m_choices[choiceIndex];
+					var spec = m_choices.EnabledLineSpecs[choiceIndex];
 					var ws = m_this.GetRealWsOrBestWsForContext(m_hvoWordform, spec);
 					if (ws == m_analysisOccurrence.BaselineWs)
 						m_vwenv.AddString(baseLineForm);
@@ -1970,11 +1970,11 @@ namespace SIL.FieldWorks.IText
 		{
 			// Add them in the order specified. Each iteration adds a group with the same flid but (typically)
 			// different writing systems.
-			for (int ispec = m_lineChoices.FirstFreeformIndex;
-				 ispec < m_lineChoices.Count;
-				 ispec += m_lineChoices.AdjacentWssAtIndex(ispec, hvoSeg).Length)
+			for (int ispec = m_lineChoices.FirstEnabledFreeformIndex;
+				 ispec < m_lineChoices.EnabledCount;
+				 ispec += m_lineChoices.AdjacentEnabledWssAtIndex(ispec, hvoSeg).Length)
 			{
-				int flid = m_lineChoices[ispec].Flid;
+				int flid = m_lineChoices.EnabledLineSpecs[ispec].Flid;
 				switch(flid)
 				{
 					case InterlinLineChoices.kflidFreeTrans:
@@ -1998,7 +1998,7 @@ namespace SIL.FieldWorks.IText
 
 		protected virtual void AddCustomFreeFormComment(IVwEnv vwenv, int hvoSeg, int lineChoiceIndex)
 		{
-			int[] wssAnalysis = m_lineChoices.AdjacentWssAtIndex(lineChoiceIndex, hvoSeg);
+			int[] wssAnalysis = m_lineChoices.AdjacentEnabledWssAtIndex(lineChoiceIndex, hvoSeg);
 			if (wssAnalysis.Length == 0)
 				return;
 
@@ -2010,7 +2010,7 @@ namespace SIL.FieldWorks.IText
 			vwenv.OpenMappedPara();
 			string label;
 			int flid;
-			int customCommentFlid = m_lineChoices[lineChoiceIndex].Flid;
+			int customCommentFlid = m_lineChoices.EnabledLineSpecs[lineChoiceIndex].Flid;
 			label = m_cache.MetaDataCacheAccessor.GetFieldLabel(customCommentFlid) + " ";
 			flid = customCommentFlid;
 			SetNoteLabelProps(vwenv);
@@ -2199,7 +2199,7 @@ namespace SIL.FieldWorks.IText
 			var length = seg.BaselineText.Length;
 			int width = length*kPixelsPerChar + kPixelsForRowLabels;
 			var rows = dxAvailWidth/width + 1;
-			return rows*m_lineChoices.Count*kPixelsPerLine;
+			return rows*m_lineChoices.EnabledCount*kPixelsPerLine;
 		}
 
 		/// <summary>
@@ -2370,7 +2370,7 @@ namespace SIL.FieldWorks.IText
 		protected virtual void FormatGloss(IVwEnv vwenv, int ws)
 		{
 			SetColor(vwenv,
-				LabelRGBFor(LineChoices.IndexOf(InterlinLineChoices.kflidWordGloss, ws)));
+				LabelRGBFor(LineChoices.IndexInEnabled(InterlinLineChoices.kflidWordGloss, ws)));
 		}
 
 		/// -----------------------------------------------------------------------------------

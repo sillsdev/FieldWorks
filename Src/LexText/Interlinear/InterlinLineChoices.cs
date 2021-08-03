@@ -8,6 +8,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FdoUi;
@@ -40,6 +41,7 @@ namespace SIL.FieldWorks.IText
 		internal LcmCache m_cache;
 		Dictionary<int, string> m_fieldNames = new Dictionary<int, string>();
 		InterlinMode m_mode = InterlinMode.Analyze;
+		private List<InterlinLineSpec> m_allLineSpecs = new List<InterlinLineSpec>();
 
 		public InterlinLineChoices(ILangProject proj, int defaultVernacularWs, int defaultAnalysisWs)
 			: this(proj, defaultVernacularWs, defaultAnalysisWs, InterlinMode.Analyze)
@@ -58,8 +60,6 @@ namespace SIL.FieldWorks.IText
 			UpdateFieldNamesFromLines(mode);
 			m_wsDefVern = defaultVernacularWs;
 			m_wsDefAnal = defaultAnalysisWs == WritingSystemServices.kwsAnal ? m_cache.DefaultAnalWs : defaultAnalysisWs;
-			AllLineOptions = LineOptions(mode).ToList();
-			AllLineSpecs = new List<InterlinLineSpec>();
 		}
 
 		public InterlinLineChoices(ILangProject proj, int defaultVernacularWs, int defaultAnalysisWs, InterlinMode mode)
@@ -84,20 +84,99 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		internal List<LineOption> AllLineOptions { get; set; }
+		internal ReadOnlyCollection<LineOption> ConfigurationLineOptions {
+			get
+			{
+				List<LineOption> lineOptions = new List<LineOption>();
+				List<LineOption> requiredOptions = LineOptions(Mode).ToList();
+				if (AllLineSpecs.Count > 0)
+				{
+					int previousFlid = AllLineSpecs.First().Flid - 1;
+					foreach (InterlinLineSpec spec in AllLineSpecs)
+					{
+						// Only return the first of each type (each Flid).
+						if (spec.Flid == previousFlid)
+							continue;
 
-		internal List<InterlinLineSpec> AllLineSpecs { get; private set; }
+						previousFlid = spec.Flid;
+						LineOption lineOption = null;
+						try
+						{
+							lineOption = new LineOption(spec.Flid, LabelFor(spec.Flid));
+						}
+						// Skip the field.
+						// LabelFor can thrown if the key is not found. This can happen if AllLineSpecs
+						// is out of date.
+						catch
+						{
+							continue;
+						}
+						lineOptions.Add(lineOption);
+						requiredOptions.Remove(lineOption);
+					}
+				}
+
+				// Append any required options that are missing.
+				foreach (LineOption lineOption in requiredOptions)
+					lineOptions.Add(lineOption);
+
+				return lineOptions.AsReadOnly();
+			}
+		}
+
+		// Only returns the enabled lines. (Preserve the old behavior.)
+		public ReadOnlyCollection<InterlinLineSpec> EnabledLineSpecs
+		{
+			get
+			{
+				return AllLineSpecs.Where(spec => spec.Enabled).ToList().AsReadOnly();
+			}
+		}
+
+		internal ReadOnlyCollection<InterlinLineSpec> AllLineSpecs {
+			get
+			{
+				return m_allLineSpecs.AsReadOnly();
+			}
+		}
+
+		/// <summary>
+		/// Creates a new empty list for AllLineSpecs.
+		/// Reinitialize is used when we need to point to a new list.
+		/// </summary>
+		internal void ReinitializeEmptyAllLineSpecs()
+		{
+			m_allLineSpecs = new List<InterlinLineSpec>();
+		}
+
+		/// <summary>
+		/// Clears the AllLineSpecs list.
+		/// </summary>
+		public void ClearAllLineSpecs()
+		{
+			m_allLineSpecs.Clear();
+		}
+
+		/// <summary>
+		/// Appends the spec to the end of the AllLineSpecs list WITHOUT checking proper order.
+		/// </summary>
+		/// <param name="spec"></param>
+		/// <returns></returns>
+		public void Append(InterlinLineSpec spec)
+		{
+			m_allLineSpecs.Add(spec);
+		}
 
 		/// <summary>
 		/// Count previous occurrences of the flid at the specified index.
 		/// </summary>
 		/// <param name="index"></param>
 		/// <returns></returns>
-		public int PreviousOccurrences(int index)
+		public int PreviousEnabledOccurrences(int index)
 		{
 			int prev = 0;
 			for (int i = 0; i < index; i++)
-				if (this[i].Flid == this[index].Flid)
+				if (EnabledLineSpecs[i].Flid == EnabledLineSpecs[index].Flid)
 					prev++;
 			return prev;
 		}
@@ -136,7 +215,7 @@ namespace SIL.FieldWorks.IText
 
 		public void SetStandardChartState()
 		{
-			AllLineSpecs.Clear();
+			ClearAllLineSpecs();
 			Add(InterlinLineChoices.kflidWord);
 			Add(InterlinLineChoices.kflidWordGloss);
 			Add(InterlinLineChoices.kflidMorphemes);
@@ -147,7 +226,7 @@ namespace SIL.FieldWorks.IText
 
 		public void SetStandardState()
 		{
-			AllLineSpecs.Clear();
+			ClearAllLineSpecs();
 			Add(InterlinLineChoices.kflidWord); // 0
 			Add(InterlinLineChoices.kflidMorphemes); // 1
 			Add(InterlinLineChoices.kflidLexEntries); // 2
@@ -160,7 +239,7 @@ namespace SIL.FieldWorks.IText
 
 		public void SetStandardGlossState()
 		{
-			AllLineSpecs.Clear();
+			ClearAllLineSpecs();
 			Add(InterlinLineChoices.kflidWord); // 0
 			Add(InterlinLineChoices.kflidWordGloss); // 5
 			Add(InterlinLineChoices.kflidWordPos); // 6
@@ -172,25 +251,21 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		public string Persist(ILgWritingSystemFactory wsf)
 		{
-			var builder = new StringBuilder();
-			builder.Append(GetType().Name);
-			// For every LineOption persist the selected writing systems. If none are selected still persist the option so the order is restored.
-			foreach (LineOption option in AllLineOptions)
-			{
-				var lineSpecs = AllLineSpecs.Where(spec => spec.Flid == option.Flid).ToList();
-				if (!lineSpecs.Any())
-				{
-					builder.Append($",{option.Flid}%");
-					continue;
-				}
+			List<LineOption> customOptions = GetCustomLineOptions(Mode);
 
-				foreach (var lineSpec in lineSpecs)
-				{
-					var wsName = lineSpec.IsMagicWritingSystem
-						? WritingSystemServices.GetMagicWsNameFromId(lineSpec.WritingSystem)
-						: wsf.GetStrFromWs(lineSpec.WritingSystem);
-					builder.Append($",{option.Flid}%{wsName}");
-				}
+			var builder = new StringBuilder();
+			builder.Append(GetType().Name + "_v3");
+			foreach (var lineSpec in AllLineSpecs)
+			{
+				var custOpt = customOptions.Find(opt => opt.Flid == lineSpec.Flid);
+				var wsName = lineSpec.IsMagicWritingSystem
+					? WritingSystemServices.GetMagicWsNameFromId(lineSpec.WritingSystem)
+					: wsf.GetStrFromWs(lineSpec.WritingSystem);
+
+				if (custOpt == null)
+					builder.Append($",{lineSpec.Flid}%{wsName}%{lineSpec.Enabled}");
+				else
+					builder.Append($",{lineSpec.Flid}%{wsName}%{lineSpec.Enabled}%{custOpt.Label}");
 			}
 			return builder.ToString();
 		}
@@ -204,11 +279,18 @@ namespace SIL.FieldWorks.IText
 			InterlinLineChoices result;
 			string[] parts = data.Split(',');
 
+			int dataFormatVersion = 2;
 			switch(parts[0])
 			{
+				case "InterlinLineChoices_v3":
+					dataFormatVersion = 3;
+					goto case "InterlinLineChoices";
 				case "InterlinLineChoices":
 					result = new InterlinLineChoices(proj, defVern, defAnalysis, mode);
 					break;
+				case "EditableInterlinLineChoices_v3":
+					dataFormatVersion = 3;
+					goto case "EditableInterlinLineChoices";
 				case "EditableInterlinLineChoices":
 					result = new EditableInterlinLineChoices(proj, defVern, defAnalysis);
 					break;
@@ -216,23 +298,45 @@ namespace SIL.FieldWorks.IText
 					throw new Exception("Unrecognised type of InterlinLineChoices: " + parts[0]);
 			}
 
-			var lineChoicesFlids = new List<int>();
 			// If there is any saved data in the lines then clear the line specs to repopulate them with the restored data
-			if (parts.Length > 1)
-			{
-				result.AllLineSpecs.Clear();
-			}
+			result.ClearAllLineSpecs();
+
+			List<LineOption> requiredOptions = result.LineOptions(mode).ToList();
+			List<LineOption> customOptions = result.GetCustomLineOptions(mode);
+			bool updatePropTable = false;
 			for (int i = 1; i < parts.Length; i++)
 			{
 				string[] flidAndWs = parts[i].Split('%');
-				if (flidAndWs.Length != 2)
+				if (dataFormatVersion == 2 && flidAndWs.Length != 2)
 					throw new Exception("Unrecognized InterlinLineSpec: " + parts[i]);
+				if (dataFormatVersion == 3 && !(flidAndWs.Length == 3 || flidAndWs.Length == 4))
+					throw new Exception("Unrecognized InterlinLineSpec: " + parts[i]);
+
 				var flid = int.Parse(flidAndWs[0]);
-				if (!lineChoicesFlids.Contains(flid))
-				{
-					lineChoicesFlids.Add(flid);
-				}
 				int ws = wsf.GetWsFromStr(flidAndWs[1]);
+				bool enabled = true;
+
+				// Restore v3 data.
+				if (dataFormatVersion == 3)
+				{
+					enabled = bool.Parse(flidAndWs[2]);
+
+					// Handle customs.
+					if (flidAndWs.Length == 4)
+					{
+						// Find the custom option by Label since the flid's can change.
+						var custOpt = customOptions.Find(opt => opt.Label.Equals(flidAndWs[3]));
+						if(custOpt != null)
+						{
+							// Set the flid to the new value for this custom option.
+							flid = custOpt.Flid;
+						}
+						// Nothing exists with the persisted label, skip it.
+						else
+							continue;
+					}
+				}
+
 				// try magic writing system
 				if (ws == 0)
 				{
@@ -242,30 +346,43 @@ namespace SIL.FieldWorks.IText
 				if (ws != 0 && (flid <= ComplexConcPatternVc.kfragFeatureLine ||
 								((IFwMetaDataCacheManaged)proj.Cache.MetaDataCacheAccessor).FieldExists(flid)))
 				{
-					result.Add(flid, ws);
+					result.Add(flid, ws, enabled);
+					requiredOptions.Remove(requiredOptions.Find(opt => opt.Flid == flid));
 				}
+				// Else update the property table. One example of this is a deleted custom option.
 				else if (propertyTable != null && !string.IsNullOrEmpty(configPropName))
 				{
-					data = data.Replace("," + flid + "%", "");
-					propertyTable.SetProperty(configPropName, data, false);
-					propertyTable.SetPropertyPersistence(configPropName, true);
+					updatePropTable = true;
 				}
 			}
+
+			// Make sure there is at least one of every Flid.
+			foreach (LineOption lineOption in requiredOptions)
+				result.Add(lineOption.Flid, 0, false);
+
+			if(updatePropTable)
+			{
+				string newData = result.Persist(wsf);
+				propertyTable.SetProperty(configPropName, newData, false);
+				propertyTable.SetPropertyPersistence(configPropName, true);
+
+			}
+
 			return result;
 		}
 
-		public int Count
+		public int EnabledCount
 		{
-			get { return AllLineSpecs.Count; }
+			get { return EnabledLineSpecs.Count; }
 		}
 
-		public bool HaveMorphemeLevel
+		private bool HaveMorphemeLevel
 		{
 			get
 			{
 				for (int i = 0; i < AllLineSpecs.Count; i++)
 				{
-					if (this[i].MorphemeLevel)
+					if (AllLineSpecs[i].MorphemeLevel)
 						return true;
 				}
 				return false;
@@ -289,49 +406,38 @@ namespace SIL.FieldWorks.IText
 		public virtual int Add(InterlinLineSpec spec)
 		{
 			bool fGotMorpheme = HaveMorphemeLevel;
-			for (int i = AllLineSpecs.Count - 1; i >= 0; i--)
+			for (int i = m_allLineSpecs.Count - 1; i >= 0; i--)
 			{
-				if (this[i].Flid == spec.Flid)
+				if (m_allLineSpecs[i].Flid == spec.Flid)
 				{
 					// It's always OK (and optimal) to insert a new occurrence of the same
 					// flid right after the last existing one.
-					AllLineSpecs.Insert(i + 1, spec);
+					m_allLineSpecs.Insert(i + 1, spec);
 					return i + 1;
 				}
 			}
-			for (int i = AllLineSpecs.Count - 1; i >= 0; i--)
+			for (int i = m_allLineSpecs.Count - 1; i >= 0; i--)
 			{
-				if (CanFollow(this[i], spec))
+				if (CanFollow(m_allLineSpecs[i], spec))
 				{
 					int firstMorphemeIndex = FirstMorphemeIndex;
 					// Even if otherwise OK, if we're inserting something morpheme level
 					// and there's already morpheme-level stuff present it must follow
 					// the existing morpheme-level stuff.
 					if (fGotMorpheme && spec.MorphemeLevel && i >= firstMorphemeIndex &&
-						!this[i].MorphemeLevel)
+						!m_allLineSpecs[i].MorphemeLevel)
 					{
 						continue;
 					}
 					// And word-level annotations can't follow freeform ones.
-					if (spec.WordLevel && !this[i].WordLevel)
+					if (spec.WordLevel && !m_allLineSpecs[i].WordLevel)
 						continue;
-					AllLineSpecs.Insert(i + 1, spec);
+					m_allLineSpecs.Insert(i + 1, spec);
 					return i + 1;
 				}
 			}
-			AllLineSpecs.Insert(0, spec); // can't follow anything, put first.
+			m_allLineSpecs.Insert(0, spec); // can't follow anything, put first.
 			return 0;
-		}
-
-		/// <summary>
-		/// Answer true if it is OK to change the writing system of the specified field.
-		/// By default this is always OK.
-		/// </summary>
-		/// <param name="index"></param>
-		/// <returns></returns>
-		public virtual bool OkToChangeWritingSystem(int index)
-		{
-			return true;
 		}
 
 		/// <summary>
@@ -346,7 +452,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		public virtual bool OkToRemove(InterlinLineSpec spec, out string message)
 		{
-			if (AllLineSpecs.Count == 1)
+			if (EnabledLineSpecs.Count == 1)
 			{
 				message = ITextStrings.ksNeedOneField;
 				return false;
@@ -355,9 +461,9 @@ namespace SIL.FieldWorks.IText
 			return true;
 		}
 
-		internal bool OkToRemove(int choiceIndex)
+		internal bool OkToRemove(int enabledChoiceIndex)
 		{
-			return OkToRemove(this[choiceIndex]);
+			return OkToRemove(EnabledLineSpecs[enabledChoiceIndex]);
 		}
 
 		internal bool OkToRemove(InterlinLineSpec spec)
@@ -374,8 +480,8 @@ namespace SIL.FieldWorks.IText
 		/// <param name="spec"></param>
 		public virtual void Remove(InterlinLineSpec spec)
 		{
-			AllLineSpecs.Remove(spec);
-			Debug.Assert(AllLineSpecs.Count > 0);
+			m_allLineSpecs.Remove(spec);
+			Debug.Assert(EnabledLineSpecs.Count > 0);
 		}
 
 
@@ -384,12 +490,12 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		public bool Remove(int flid, int ws)
 		{
-			var spec = AllLineSpecs.Find(x => x.Flid == flid && x.WritingSystem == ws);
+			var spec = m_allLineSpecs.Find(x => x.Flid == flid && x.WritingSystem == ws);
 			if (spec == null)
 				return false;
 			if (OkToRemove(spec))
 			{
-				AllLineSpecs.Remove(spec);
+				Remove(spec);
 				return true;
 			}
 			return false;
@@ -423,7 +529,7 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Get the standard list of lines. Also updates the member variable storing the line names.
+		/// Get the standard and custom list of lines. Also updates the member variable storing the line names.
 		/// </summary>
 		internal LineOption[] LineOptions()
 		{
@@ -499,9 +605,9 @@ namespace SIL.FieldWorks.IText
 			return m_fieldNames[flid];
 		}
 
-		internal int LabelRGBFor(int choiceIndex)
+		internal int LabelRGBForEnabled(int enabledChoiceIndex)
 		{
-			return LabelRGBFor(this[choiceIndex]);
+			return LabelRGBFor(EnabledLineSpecs[enabledChoiceIndex]);
 		}
 
 		internal int LabelRGBFor(InterlinLineSpec spec)
@@ -520,9 +626,9 @@ namespace SIL.FieldWorks.IText
 		}
 
 		// Find where the spec is in your collection.
-		public int IndexOf(InterlinLineSpec spec)
+		public int IndexInEnabled(InterlinLineSpec spec)
 		{
-			return AllLineSpecs.IndexOf(spec);
+			return EnabledLineSpecs.IndexOf(spec);
 		}
 
 		/// <summary>
@@ -538,97 +644,111 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Answer the index of the first item that is at the morpheme level (or -1 if none)
 		/// </summary>
-		public int FirstMorphemeIndex
+		private int FirstMorphemeIndex
 		{
 			get
 			{
-				for (int i = 0; i < Count; i++)
-					if (this[i].MorphemeLevel)
+				for (int i = 0; i < AllLineSpecs.Count; i++)
+					if (AllLineSpecs[i].MorphemeLevel)
 						return i;
 				return -1;
 			}
 		}
 
 		/// <summary>
-		/// Answer the index of the first item that is at the lex entry level (or -1 if none)
+		/// Answer the index of the first enabled item that is at the morpheme level (or -1 if none)
 		/// </summary>
-		public int FirstLexEntryIndex
+		public int FirstEnabledMorphemeIndex
 		{
 			get
 			{
-				for (int i = 0; i < Count; i++)
-					if (this[i].LexEntryLevel)
+				for (int i = 0; i < EnabledCount; i++)
+					if (EnabledLineSpecs[i].MorphemeLevel)
 						return i;
 				return -1;
 			}
 		}
 
 		/// <summary>
-		/// Answer the index of the first item that is at the morpheme level (or Count if none).
+		/// Answer the index of the first enabled item that is at the lex entry level (or -1 if none)
+		/// </summary>
+		public int FirstEnabledLexEntryIndex
+		{
+			get
+			{
+				for (int i = 0; i < EnabledCount; i++)
+					if (EnabledLineSpecs[i].LexEntryLevel)
+						return i;
+				return -1;
+			}
+		}
+
+		/// <summary>
+		/// Answer the index of the first enabled item that is at the word level (or Count if none).
 		/// (Returning Count if none makes it easy to loop from FirstFreeformIndex to Count
 		/// to get them all.)
 		/// </summary>
-		public int FirstFreeformIndex
+		public int FirstEnabledFreeformIndex
 		{
 			get
 			{
-				for (int i = 0; i < Count; i++)
-					if (!this[i].WordLevel)
+				for (int i = 0; i < EnabledCount; i++)
+					if (!EnabledLineSpecs[i].WordLevel)
 						return i;
-				return Count;
+				return EnabledCount;
 			}
 		}
 
 		/// <summary>
-		/// Answer the index of the last item that is at the morpheme level (or -1 if none)
+		/// Answer the index of the last enabled item that is at the morpheme level (or -1 if none)
 		/// </summary>
-		public int LastMorphemeIndex
+		public int LastEnabledMorphemeIndex
 		{
 			get
 			{
-				for (int i = Count - 1; i >= 0; i--)
-					if (this[i].MorphemeLevel)
+				for (int i = EnabledCount - 1; i >= 0; i--)
+					if (EnabledLineSpecs[i].MorphemeLevel)
 						return i;
 				return -1;
 			}
 		}
 
 		/// <summary>
-		/// Answer true if the spec at index is the first one that has its flid.
+		/// Answer true if the spec at index is the first one on the enabled list that has its flid.
 		/// (This is used to decide whether to display a pull-down icon in the sandbox.)
 		/// </summary>
 		/// <param name="index"></param>
 		/// <returns></returns>
-		public bool IsFirstOccurrenceOfFlid(int index)
+		public bool IsFirstEnabledOccurrenceOfFlid(int enabledIndex)
 		{
-			int flid = this[index].Flid;
-			for (int i = 0; i < index; i++)
-				if (this[i].Flid == flid)
+			int flid = EnabledLineSpecs[enabledIndex].Flid;
+			for (int i = 0; i < enabledIndex; i++)
+				if (EnabledLineSpecs[i].Flid == flid)
 					return false;
 			return true;
 		}
 
 		/// <summary>
-		/// Answer an array list of integers, the writing systems we care about for the specified flid.
+		/// Answer an array list of integers, the enabled writing systems we care about for the specified flid.
 		/// Note that some of these may be magic; one is returned for each occurrence of flid.
 		/// </summary>
 		/// <param name="flid"></param>
 		/// <returns></returns>
-		public List<int> WritingSystemsForFlid(int flid)
+		public List<int> EnabledWritingSystemsForFlid(int flid)
 		{
-			return WritingSystemsForFlid(flid, false);
+			return EnabledWritingSystemsForFlid(flid, false);
 		}
 
 		/// <summary>
-		/// Get the writing system for the given flid.
+		/// Get the enabled writing system for the given flid.
 		/// </summary>
 		/// <param name="flid"></param>
 		/// <param name="fGetDefaultForMissing">if true, provide the default writing system for the given flid.</param>
 		/// <returns></returns>
-		public List<int> WritingSystemsForFlid(int flid, bool fGetDefaultForMissing)
+		public List<int> EnabledWritingSystemsForFlid(int flid, bool fGetDefaultForMissing)
 		{
 			List<int> result = new List<int>();
-			foreach (InterlinLineSpec spec in AllLineSpecs)
+			foreach (InterlinLineSpec spec in EnabledLineSpecs)
 			{
 				if (spec.Flid == flid && result.IndexOf(spec.WritingSystem) < 0)
 					result.Add(spec.WritingSystem);
@@ -642,14 +762,14 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Answer the number of times the specified flid is displayed (typically using different writing systems).
+		/// Answer the number of times the specified flid is enabled (displayed), typically using different writing systems.
 		/// </summary>
 		/// <param name="flid"></param>
 		/// <returns></returns>
-		public int RepetitionsOfFlid(int flid)
+		public int EnabledRepetitionsOfFlid(int flid)
 		{
 			int result = 0;
-			foreach (InterlinLineSpec spec in AllLineSpecs)
+			foreach (InterlinLineSpec spec in EnabledLineSpecs)
 			{
 				if (spec.Flid == flid)
 				{
@@ -660,54 +780,37 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// A list of integers representing the writing systems we care about for the view.
-		/// </summary>
-		public List<int> WritingSystems
-		{
-			get
-			{
-				List<int> result = new List<int>();
-				foreach (InterlinLineSpec spec in AllLineSpecs)
-				{
-					if (result.IndexOf(spec.WritingSystem) < 0)
-						result.Add(spec.WritingSystem);
-				}
-				return result;
-			}
-		}
-
-		/// <summary>
-		/// Answer an array of the writing systems to display for the field at index,
-		/// and any subsequent fields with the same flid.
+		/// Answer an array of the enabled writing systems to display for the field at index,
+		/// and any subsequent enabled fields with the same flid.
 		/// </summary>
 		/// <param name="index"></param>
 		/// <returns></returns>
-		public int[] AdjacentWssAtIndex(int index, int hvo)
+		public int[] AdjacentEnabledWssAtIndex(int index, int hvo)
 		{
 			int first = index;
 			int lim = index + 1;
-			while (lim < Count && this[lim].Flid == this[first].Flid)
+			while (lim < EnabledCount && EnabledLineSpecs[lim].Flid == EnabledLineSpecs[first].Flid)
 				lim++;
 			int[] result = new int[lim - first];
 			for (int i = first; i < lim; i++)
 			{
-				var wsId = this[i].WritingSystem;
+				var wsId = EnabledLineSpecs[i].WritingSystem;
 				if (wsId < 0) // if this is a magic writing system
 				{
-					wsId = WritingSystemServices.ActualWs(m_cache, wsId, hvo, this[i].Flid);
+					wsId = WritingSystemServices.ActualWs(m_cache, wsId, hvo, EnabledLineSpecs[i].Flid);
 				}
 				result[i - first] = wsId;
 			}
 			return result;
 		}
 		/// <summary>
-		/// Answer an array list of integers, the writing systems we care about for the specified flid,
+		/// Answer an array list of integers, the enabled writing systems we care about for the specified flid,
 		/// except the one specified.
 		/// </summary>
 		/// <param name="flid"></param>
 		/// <param name="wsToOmit">the ws to omit. use 0 remove the default ws for this flid</param>
 		/// <returns></returns>
-		public List<int> OtherWritingSystemsForFlid(int flid, int wsToOmit)
+		public List<int> OtherEnabledWritingSystemsForFlid(int flid, int wsToOmit)
 		{
 			if (wsToOmit == 0)
 			{
@@ -716,7 +819,7 @@ namespace SIL.FieldWorks.IText
 				wsToOmit = specDefault.WritingSystem;
 			}
 			List<int> result = new List<int>();
-			foreach (InterlinLineSpec spec in AllLineSpecs)
+			foreach (InterlinLineSpec spec in EnabledLineSpecs)
 			{
 				if (spec.Flid == flid && result.IndexOf(spec.WritingSystem) < 0 && spec.WritingSystem != wsToOmit)
 					result.Add(spec.WritingSystem);
@@ -736,9 +839,9 @@ namespace SIL.FieldWorks.IText
 		/// <param name="ws">If zero, supply the default ws for the field; otherwise
 		/// use the one supplied.</param>
 		/// <returns>the integer where inserted</returns>
-		public int Add(int flid, int wsRequested)
+		public int Add(int flid, int wsRequested, bool enabled = true)
 		{
-			InterlinLineSpec spec = CreateSpec(flid, wsRequested);
+			InterlinLineSpec spec = CreateSpec(flid, wsRequested, enabled);
 			return Add(spec);
 		}
 
@@ -751,7 +854,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns>null, if no primary spec is found.</returns>
 		public InterlinLineSpec GetPrimarySpec(int specFlid)
 		{
-			List<InterlinLineSpec> matchingSpecs = this.ItemsWithFlids(new int[] { specFlid });
+			List<InterlinLineSpec> matchingSpecs = this.EnabledItemsWithFlids(new int[] { specFlid });
 			// should we consider creating a default spec instead?
 			if (matchingSpecs.Count == 0)
 				return null;
@@ -780,7 +883,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="wsRequested">If zero, supply the default ws for the field; otherwise
 		/// use the one supplied.</param>
 		/// <returns></returns>
-		internal InterlinLineSpec CreateSpec(int flid, int wsRequested)
+		internal InterlinLineSpec CreateSpec(int flid, int wsRequested, bool enabled=true)
 		{
 			int ws = 0;
 			bool fMorphemeLevel = false;
@@ -861,37 +964,28 @@ namespace SIL.FieldWorks.IText
 			spec.MorphemeLevel = fMorphemeLevel;
 			spec.WordLevel = fWordLevel;
 			spec.StringFlid = flidString;
+			spec.Enabled = enabled;
 			return spec;
 		}
 
-		public InterlinLineSpec this[int index]
-		{
-			get { return AllLineSpecs[index]; }
-		}
-
-		public IEnumerator GetEnumerator()
-		{
-			return AllLineSpecs.GetEnumerator();
-		}
-
 		/// <summary>
-		/// Return the index of the (first) spec with the specified flid and ws, if any.
+		/// Return the index of the (first) enabled spec with the specified flid and ws, if any.
 		/// First tries to match the ws exactly, and then will see if we can find it in
 		/// collections referred to by a magic value.
 		/// </summary>
 		/// <param name="flid"></param>
 		/// <param name="ws"></param>
 		/// <returns>-1 if not found.</returns>
-		internal int IndexOf(int flid, int ws)
+		internal int IndexInEnabled(int flid, int ws)
 		{
 			int index = -1;
 			if (ws > 0)
 			{
 				// first try to find an exact match.
-				 index = IndexOf(flid, ws, true);
+				 index = IndexInEnabled(flid, ws, true);
 			}
 			if (index == -1)
-				index = IndexOf(flid, ws, false);
+				index = IndexInEnabled(flid, ws, false);
 			return index;
 		}
 
@@ -900,17 +994,27 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="flid"></param>
 		/// <param name="ws"></param>
-		/// <param name="fExact">if true, see if we can find a line choice that matches the exact writing system given.
-		/// if false, we'll try to see if a line choice refers to a collection (via magic value) that contains the ws.</param>
+		/// <param name="fExact">if true, see if we can find a enabled line choice that matches the exact writing system given.
+		/// if false, we'll try to see if a enabled line choice refers to a collection (via magic value) that contains the ws.</param>
 		/// <returns></returns>
-		internal int IndexOf(int flid, int ws, bool fExact)
+		internal int IndexInEnabled(int flid, int ws, bool fExact)
 		{
-			for (int i = 0; i < AllLineSpecs.Count; i++)
+			for (int i = 0; i < EnabledLineSpecs.Count; i++)
 			{
-				if (this[i].Flid == flid && MatchingWritingSystem(this[i].WritingSystem, ws, fExact))
+				if (EnabledLineSpecs[i].Flid == flid && MatchingWritingSystem(EnabledLineSpecs[i].WritingSystem, ws, fExact))
 					return i;
 			}
 			return -1;
+		}
+
+		/// <summary>
+		/// Finds the index of the spec in the list of all specs (includes enabled and disabled).
+		/// </summary>
+		/// <param name="spec"></param>
+		/// <returns>The index in the All list if found.  Else returns -1.</returns>
+		private int IndexInAll(InterlinLineSpec spec)
+		{
+			return m_allLineSpecs.FindIndex(s => s.Flid == spec.Flid && s.WritingSystem == spec.WritingSystem);
 		}
 
 		/// <summary>
@@ -964,44 +1068,44 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Return the index of the (first) spec with the specified flid
+		/// Return the index of the (first) enabled spec with the specified flid
 		/// </summary>
 		/// <param name="flid"></param>
 		/// <param name="ws"></param>
 		/// <returns>-1 if not found.</returns>
-		public int IndexOf(int flid)
+		public int IndexInEnabled(int flid)
 		{
-			for (int i = 0; i < AllLineSpecs.Count; i++)
+			for (int i = 0; i < EnabledLineSpecs.Count; i++)
 			{
-				if (this[i].Flid == flid)
+				if (EnabledLineSpecs[i].Flid == flid)
 					return i;
 			}
 			return -1;
 		}
 
 		/// <summary>
-		/// Return a collection containing any line which has any of the specified flids.
+		/// Return a collection containing any enabled line which has any of the specified flids.
 		/// </summary>
 		/// <param name="flids"></param>
 		/// <returns></returns>
-		internal List<InterlinLineSpec> ItemsWithFlids(int[] flids)
+		internal List<InterlinLineSpec> EnabledItemsWithFlids(int[] flids)
 		{
-			return ItemsWithFlids(flids, null);
+			return EnabledItemsWithFlids(flids, null);
 		}
 
-		internal List<InterlinLineSpec> ItemsWithFlids(int[] flids, int[] wsList)
+		internal List<InterlinLineSpec> EnabledItemsWithFlids(int[] flids, int[] wsList)
 		{
 			Debug.Assert(wsList == null || wsList.Length == flids.Length,
 				"wsList should be empty or match the same item count in flids.");
 			List<InterlinLineSpec> result = new List<InterlinLineSpec>();
-			for (int i = 0; i < AllLineSpecs.Count; i++)
+			for (int i = 0; i < EnabledLineSpecs.Count; i++)
 			{
 				for (int j = 0; j < flids.Length; j++)
 				{
-					if (this[i].Flid == flids[j] &&
-						(wsList == null || this[i].WritingSystem == wsList[j]))
+					if (EnabledLineSpecs[i].Flid == flids[j] &&
+						(wsList == null || EnabledLineSpecs[i].WritingSystem == wsList[j]))
 					{
-						result.Add(this[i]);
+						result.Add(EnabledLineSpecs[i]);
 					}
 				}
 			}
@@ -1016,12 +1120,12 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="n"></param>
 		/// <returns></returns>
-		internal int WhereToMoveUpTo(int n)
+		private int WhereToMoveUpTo(int n)
 		{
 			if (n == 0)
 				return -1; // first line can't move up!
-			var currentLineSpec = this[n];
-			var aboveLineSpec = this[n - 1];
+			var currentLineSpec = EnabledLineSpecs[n];
+			var aboveLineSpec = EnabledLineSpecs[n - 1];
 
 			if (currentLineSpec.Flid != aboveLineSpec.Flid)
 				return -1;
@@ -1048,39 +1152,39 @@ namespace SIL.FieldWorks.IText
 			int dest = WhereToMoveUpTo(n);
 			if (dest < 0)
 				return;
-			InterlinLineSpec spec = this[n];
+			InterlinLineSpec spec = EnabledLineSpecs[n];
 			// If this was the first morpheme field, move the others too.
-			var isMorphGroupMove = spec.MorphemeLevel && !this[n - 1].MorphemeLevel;
-			var isWsGroupMove = Count > n + 1 && this[n + 1].Flid == spec.Flid && this[n - 1].Flid != spec.Flid;
+			var isMorphGroupMove = spec.MorphemeLevel && !EnabledLineSpecs[n - 1].MorphemeLevel;
+			var isWsGroupMove = EnabledCount > n + 1 && EnabledLineSpecs[n + 1].Flid == spec.Flid && EnabledLineSpecs[n - 1].Flid != spec.Flid;
 
 			MoveLine(n, dest, spec);
 			if (isMorphGroupMove || isWsGroupMove)
 			{
-				for (int i = n + 1; i < Count && ((isMorphGroupMove && this[i].MorphemeLevel) ||
-												  (isWsGroupMove && this[i].Flid == spec.Flid)); i++)
+				for (int i = n + 1; i < EnabledCount && ((isMorphGroupMove && EnabledLineSpecs[i].MorphemeLevel) ||
+												  (isWsGroupMove && EnabledLineSpecs[i].Flid == spec.Flid)); i++)
 				{
-					InterlinLineSpec specT = this[i];
+					InterlinLineSpec specT = EnabledLineSpecs[i];
 					MoveLine(i, dest + i - n, specT);
 				}
 			}
 		}
 
 		/// <summary>
-		/// This will move the LineSpec and, if necessary, the LineOption.
-		/// If this is a WS reorder within a field, only the LineSpec will be moved
+		/// This will move the LineSpec.
 		/// </summary>
-		private void MoveLine(int start, int dest, InterlinLineSpec spec)
+		private void MoveLine(int enabledStart, int enabledDest, InterlinLineSpec spec)
 		{
-			var lineOptionStart = AllLineOptions.IndexOf(AllLineOptions.First(lo => lo.Flid == AllLineSpecs[start].Flid));
-			var lineOptionDest = AllLineOptions.IndexOf(AllLineOptions.First(lo => lo.Flid == AllLineSpecs[dest].Flid));
-			if (lineOptionStart != lineOptionDest)
-			{
-				var lineOptionToMove = AllLineOptions[lineOptionStart];
-				AllLineOptions.RemoveAt(lineOptionStart);
-				AllLineOptions.Insert(lineOptionDest, lineOptionToMove);
-			}
-			AllLineSpecs.RemoveAt(start);
-			AllLineSpecs.Insert(dest, spec);
+			Debug.Assert(enabledStart > enabledDest);  // Else the remove will mess up the insert location.
+
+			// Find the indexes in the list of all line specs.
+			int allStart = IndexInAll(spec);
+			int allDest = IndexInAll(EnabledLineSpecs[enabledDest]);
+			Debug.Assert(allStart != -1);
+			Debug.Assert(allDest != -1);
+			Debug.Assert(allStart > allDest);
+
+			m_allLineSpecs.RemoveAt(allStart);
+			m_allLineSpecs.Insert(allDest, spec);
 		}
 
 		/// <summary>
@@ -1091,7 +1195,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		public virtual bool OkToMoveDown(int n)
 		{
-			if (n > Count - 2)
+			if (n > EnabledCount - 2)
 				return false;
 			return OkToMoveUp(n + 1);
 		}
@@ -1102,7 +1206,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="n"></param>
 		public void MoveDown(int n)
 		{
-			if (n > Count - 2)
+			if (n > EnabledCount - 2)
 				return;
 			MoveUp(n + 1);
 		}
@@ -1113,9 +1217,9 @@ namespace SIL.FieldWorks.IText
 			InterlinLineChoices result = base.MemberwiseClone() as InterlinLineChoices;
 			// We need a deep clone of the specs, because not only may we reorder the
 			// list and add items, but we may alter items, e.g., by setting the WS.
-			result.AllLineSpecs = new List<InterlinLineSpec>(AllLineSpecs.Count);
+			result.ReinitializeEmptyAllLineSpecs();
 			foreach (InterlinLineSpec spec in AllLineSpecs)
-				result.AllLineSpecs.Add(spec.Clone() as InterlinLineSpec);
+				result.Append(spec.Clone() as InterlinLineSpec);
 			return result;
 		}
 
@@ -1162,33 +1266,12 @@ namespace SIL.FieldWorks.IText
 		//	return base.Add(spec);
 		//}
 
-		/// <summary>
-		/// Answer true if it is OK to change the writing system of the specified field.
-		/// This is not allowed if it is one of the special fields and is the first
-		/// occurrence of the default writing system.
-		/// </summary>
-		/// <param name="index"></param>
-		/// <returns></returns>
-		public override bool OkToChangeWritingSystem(int index)
-		{
-			int flid = this[index].Flid;
-			if (flid == kflidLexPos)
-				return true; // We now allow the user to select the ws for Lex Grammatical Info.
-			if (flid != kflidWord && flid != kflidMorphemes && flid != kflidLexEntries)
-				return true; // Not a field we care about.
-			if (this[index].WritingSystem != m_wsDefVern)
-				return true; // Not a Ws we care about.
-			if (IndexOf(flid) != index)
-				return true; // Not the instance we care about.
-			return false;
-		}
-
 		public override bool OkToRemove(InterlinLineSpec spec, out string message)
 		{
 			if (!base.OkToRemove(spec, out message))
 				return false;
 			if (spec.Flid == kflidWord && spec.WritingSystem == m_wsDefVern &&
-				ItemsWithFlids(new int[] {kflidWord}, new int[] {m_wsDefVern}).Count < 2)
+				EnabledItemsWithFlids(new int[] {kflidWord}, new int[] {m_wsDefVern}).Count < 2)
 			{
 				message = ITextStrings.ksNeedWordLine;
 				return false;
@@ -1213,7 +1296,7 @@ namespace SIL.FieldWorks.IText
 			List<InterlinLineSpec> dependents = new List<InterlinLineSpec>();
 			dependents = FindDependents(spec);
 			foreach (InterlinLineSpec depSpec in dependents)
-				AllLineSpecs.Remove(depSpec);
+				base.Remove(depSpec);
 			base.Remove(spec);
 		}
 
@@ -1224,7 +1307,7 @@ namespace SIL.FieldWorks.IText
 		}
 	}
 
-	internal class LineOption
+	internal class LineOption : IEquatable<LineOption>
 	{
 		int m_flid;
 		string m_label;
@@ -1250,6 +1333,17 @@ namespace SIL.FieldWorks.IText
 			get { return m_label; }
 			set { m_label = value; }
 		}
+
+		public bool Equals(LineOption other)
+		{
+			if (other is null)
+				return false;
+
+			return this.Flid == other.Flid;
+		}
+
+		public override bool Equals(object obj) => Equals(obj as LineOption);
+		public override int GetHashCode() => Flid.GetHashCode();
 	}
 
 	/// <summary>
@@ -1379,6 +1473,8 @@ namespace SIL.FieldWorks.IText
 					m_fMorpheme = false;
 			}
 		}
+
+		public bool Enabled { get; set; }
 
 		#region ICloneable Members
 

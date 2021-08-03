@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.IText
 
 		public bool ForEditing { get; set; }
 
-		public virtual InterlinLineChoices SetupLineChoices(string lineConfigPropName, InterlinLineChoices.InterlinMode mode)
+		public virtual InterlinLineChoices SetupLineChoices(string lineConfigPropName, string oldLineConfigPropName, InterlinLineChoices.InterlinMode mode)
 		{
 			throw new System.NotImplementedException();
 		}

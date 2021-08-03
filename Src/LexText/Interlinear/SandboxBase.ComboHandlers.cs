@@ -897,7 +897,7 @@ namespace SIL.FieldWorks.IText
 					ISilDataAccess sda = m_caches.DataAccess;
 					m_caches.DataAccess.SetInt(m_hvoSbWord, ktagSbWordGlossGuess, 1);
 					int hvoRealSense = m_caches.RealHvo(hvoSbRootSense);
-					foreach (int wsId in m_sandbox.m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
+					foreach (int wsId in m_sandbox.m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 					{
 						// Update the guess, by copying the glosses of the SbNamedObj representing the sense
 						// to the word gloss property.
@@ -1934,7 +1934,7 @@ namespace SIL.FieldWorks.IText
 					disabledItemProperties == null);
 
 				// If the morpheme line is hidden, give the user the option to edit morph breaks.
-				if (m_sandbox.m_choices.IndexOf(InterlinLineChoices.kflidMorphemes) < 0)
+				if (m_sandbox.m_choices.IndexInEnabled(InterlinLineChoices.kflidMorphemes) < 0)
 				{
 					AddItemToComboList("-------", null, null, false);
 					AddItemToComboList(ITextStrings.ksEditMorphBreaks_,
@@ -3053,7 +3053,7 @@ namespace SIL.FieldWorks.IText
 				{
 					// clear out the WordGloss line(s).
 					ISilDataAccess sda = m_caches.DataAccess;
-					foreach (int wsId in m_sandbox.m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
+					foreach (int wsId in m_sandbox.m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 					{
 						ITsString tssGloss = TsStringUtils.MakeString("", wsId);
 						sda.SetMultiStringAlt(m_hvoSbWord, ktagSbWordGloss, wsId, tssGloss);
@@ -3115,7 +3115,7 @@ namespace SIL.FieldWorks.IText
 				if (item == null)
 					return;
 				m_sandbox.WordGlossHvo = item.Hvo;
-				foreach (int ws in m_sandbox.m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
+				foreach (int ws in m_sandbox.m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 				{
 					ITsString tss;
 					if (item.Hvo == 0)
@@ -3195,7 +3195,7 @@ namespace SIL.FieldWorks.IText
 
 			private void AddComboItems(ref int hvoEmptyGloss, ITsStrBldr tsb, IWfiAnalysis wa)
 			{
-				IList<int> wsids = m_sandbox.m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss);
+				IList<int> wsids = m_sandbox.m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss);
 				foreach (IWfiGloss gloss in wa.MeaningsOC)
 				{
 					int glossCount = 0;

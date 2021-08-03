@@ -355,9 +355,9 @@ namespace SIL.FieldWorks.IText
 				string icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs);
 				m_writer.WriteAttributeString("lang", icuCode);
 			}
-			if (vc is InterlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + (vc as InterlinVc).LineChoices.Count)
+			if (vc is InterlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + (vc as InterlinVc).LineChoices.EnabledCount)
 			{
-				var spec = (vc as InterlinVc).LineChoices[frag - InterlinVc.kfragLineChoices];
+				var spec = (vc as InterlinVc).LineChoices.EnabledLineSpecs[frag - InterlinVc.kfragLineChoices];
 				if (spec.Flid == InterlinLineChoices.kflidLexGloss)
 				{
 					OpenItem("gls");
@@ -376,9 +376,9 @@ namespace SIL.FieldWorks.IText
 				CloseItem();
 				m_fDoingVariantTypes = false;
 			}
-			if (vc is InterlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + (vc as InterlinVc).LineChoices.Count)
+			if (vc is InterlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + (vc as InterlinVc).LineChoices.EnabledCount)
 			{
-				var spec = (vc as InterlinVc).LineChoices[frag - InterlinVc.kfragLineChoices];
+				var spec = (vc as InterlinVc).LineChoices.EnabledLineSpecs[frag - InterlinVc.kfragLineChoices];
 				if (spec.Flid == InterlinLineChoices.kflidLexGloss)
 				{
 					CloseItem();

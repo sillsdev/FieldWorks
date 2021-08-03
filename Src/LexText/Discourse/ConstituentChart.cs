@@ -91,7 +91,8 @@ namespace SIL.FieldWorks.Discourse
 			Vc = new InterlinVc(Cache);
 
 			BuildUIComponents();
-			ConfigPropName = "InterlinConfig_v2_Edit_ConstituentChart";
+			ConfigPropName = "InterlinConfig_v3_Edit_ConstituentChart";
+			OldConfigPropName = "InterlinConfig_v2_Edit_ConstituentChart";
 		}
 
 		/// <summary>
@@ -1357,13 +1358,24 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		/// <summary>
+		/// The old property table key storing InterlinLineChoices used by our display.
+		/// </summary>
+		private static string OldConfigPropName
+		{
+			get;
+			set;
+		}
+
+		/// <summary>
 		/// Retrieves the Line Choices from persistence, or otherwise sets them to a default option
 		/// </summary>
 		/// <param name="lineConfigPropName">The string key to retrieve Line Choices from the Property Table</param>
+		/// <param name="oldLineConfigPropName">The old string key to retrieve Line Choices from the Property Table</param>
 		/// <param name="mode">Should always be Chart for this override</param>
-		public override InterlinLineChoices SetupLineChoices(string lineConfigPropName, InterlinLineChoices.InterlinMode mode)
+		public override InterlinLineChoices SetupLineChoices(string lineConfigPropName, string oldLineConfigPropName, InterlinLineChoices.InterlinMode mode)
 		{
 			ConfigPropName = lineConfigPropName;
+			OldConfigPropName = oldLineConfigPropName;
 			InterlinLineChoices lineChoices;
 			if (!TryRestoreLineChoices(out lineChoices))
 			{
@@ -1396,8 +1408,12 @@ namespace SIL.FieldWorks.Discourse
 		{
 			lineChoices = null;
 			var persist = PropertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+			if (persist == null)
+				persist = PropertyTable.GetStringProperty(OldConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+
 			if (persist != null)
 			{
+				// Intentionally never pass OldConfigPropName into Restore to prevent corrupting it's old value with the new format.
 				lineChoices = InterlinLineChoices.Restore(persist, Cache.LanguageWritingSystemFactoryAccessor,
 					Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze, PropertyTable, ConfigPropName);
 			}
@@ -1414,6 +1430,8 @@ namespace SIL.FieldWorks.Discourse
 			if (PropertyTable != null)
 			{
 				persist = PropertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+				if (persist == null)
+					persist = PropertyTable.GetStringProperty(OldConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
 			}
 			InterlinLineChoices lineChoices = null;
 
@@ -1424,6 +1442,7 @@ namespace SIL.FieldWorks.Discourse
 					InterlinLineChoices.kflidWordGloss);
 				return result;
 			}
+			// Intentionally never pass OldConfigPropName into Restore to prevent corrupting it's old value with the new format.
 			lineChoices = InterlinLineChoices.Restore(persist, Cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>(), Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Chart, PropertyTable, ConfigPropName);
 			return lineChoices;
 		}
@@ -1438,10 +1457,10 @@ namespace SIL.FieldWorks.Discourse
 			{
 				if (source != null)
 				{
-					var index = source.IndexOf(flid);
+					var index = source.IndexInEnabled(flid);
 					if (index >= 0)
 					{
-						dest.Add(source[index]);
+						dest.Add(source.EnabledLineSpecs[index]);
 						return;
 					}
 				}

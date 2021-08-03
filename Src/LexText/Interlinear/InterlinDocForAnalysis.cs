@@ -496,7 +496,7 @@ namespace SIL.FieldWorks.IText
 			realAnalysis = null;
 			var currentText = currentPara.Owner as IStText;
 			Debug.Assert(currentText != null, "Paragraph not owned by a text.");
-			var lines = LineChoices.AllLineSpecs as IEnumerable<InterlinLineSpec>;
+			var lines = LineChoices.EnabledLineSpecs as IEnumerable<InterlinLineSpec>;
 			var delta = upward ? -1 : 1;
 			var nextSegIndex = delta + seg.IndexInOwner;
 			do
@@ -554,7 +554,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns>The flid of the translation or note or 0 if none is found.</returns>
 		internal int GetFirstVisibleTranslationOrNoteFlid(ISegment segment, out int ws)
 		{
-			var lines = LineChoices.AllLineSpecs as IEnumerable<InterlinLineSpec>;
+			var lines = LineChoices.EnabledLineSpecs as IEnumerable<InterlinLineSpec>;
 			Debug.Assert(lines != null, "Interlinear line configurations not enumerable 2");
 			var annotations = lines.SkipWhile(line => line.WordLevel);
 			int tryAnnotationIndex = lines.Count() - annotations.Count();
@@ -964,7 +964,7 @@ namespace SIL.FieldWorks.IText
 				if (!haveLineInfo)
 					return ArrowChange.None;
 
-				var lines = LineChoices.AllLineSpecs as IEnumerable<InterlinLineSpec>; // so we can use linq
+				var lines = LineChoices.EnabledLineSpecs as IEnumerable<InterlinLineSpec>; // so we can use linq
 				Debug.Assert(lines != null, "Interlinear line configurations not enumerable");
 				bool isUpNewSeg;
 				bool isUpMove = DetectUpMove(e, lines, lineNum, curSeg, curNoteIndex, where, isRightToLeft, out isUpNewSeg);
@@ -1029,7 +1029,7 @@ namespace SIL.FieldWorks.IText
 			Debug.Assert(para != null, "Tried to move to a null paragraph ind=" + paragraphInd);
 			Debug.Assert(seg != null, "Tried to move to a null segment ind=" + seg.IndexInOwner + " in para " + paragraphInd);
 			// get the "next" segment with a real analysis or real translation or note
-			var lines = LineChoices.AllLineSpecs as IEnumerable<InterlinLineSpec>; // so we can use linq
+			var lines = LineChoices.EnabledLineSpecs as IEnumerable<InterlinLineSpec>; // so we can use linq
 			while (true)
 			{
 				AnalysisOccurrence realAnalysis;
@@ -1157,7 +1157,7 @@ namespace SIL.FieldWorks.IText
 			}
 			else
 			{	// this is the last translation or note and it can't be a null note because it was selected
-				bool noteIsLastAnnotation = LineChoices[LineChoices.Count - 1].Flid == InterlinLineChoices.kflidNote;
+				bool noteIsLastAnnotation = LineChoices.EnabledLineSpecs[LineChoices.EnabledCount - 1].Flid == InterlinLineChoices.kflidNote;
 				hasFollowingAnnotation = noteIsLastAnnotation && curNoteIndex < curSeg.NotesOS.Count - 1;
 			}
 			bool hasDownMotion = (e.KeyCode == Keys.Down) ||
@@ -1244,9 +1244,9 @@ namespace SIL.FieldWorks.IText
 					return false;
 			}
 			if (wid > 0)
-				lineNum = LineChoices.IndexOf(id, wid);
+				lineNum = LineChoices.IndexInEnabled(id, wid);
 			if (lineNum == -1)
-				lineNum = LineChoices.IndexOf(id);
+				lineNum = LineChoices.IndexInEnabled(id);
 			return true;
 		}
 
@@ -1617,9 +1617,9 @@ namespace SIL.FieldWorks.IText
 						var annType = freeAnn.AnnotationTypeRA;
 						int idx = 0;
 						var choices = Vc.LineChoices;
-						for (int i = choices.FirstFreeformIndex; i < choices.Count; )
+						for (int i = choices.FirstEnabledFreeformIndex; i < choices.EnabledCount; )
 						{
-							var ffAannType = Vc.SegDefnFromFfFlid(choices[i].Flid);
+							var ffAannType = Vc.SegDefnFromFfFlid(choices.EnabledLineSpecs[i].Flid);
 							if (ffAannType == annType)
 							{
 								idx = i;
@@ -1628,9 +1628,9 @@ namespace SIL.FieldWorks.IText
 							// Adjacent WSS of the same annotation count as only ONE object in the display.
 							// So we advance i over as many items in m_choices as there are adjacent Wss
 							// of the same flid.
-							i += choices.AdjacentWssAtIndex(i, hvoSeg).Length;
+							i += choices.AdjacentEnabledWssAtIndex(i, hvoSeg).Length;
 						}
-						int[] rgws = choices.AdjacentWssAtIndex(idx, hvoSeg);
+						int[] rgws = choices.AdjacentEnabledWssAtIndex(idx, hvoSeg);
 						for (int i = 0; i < rgws.Length; ++i)
 						{
 							if (rgws[i] == wsField)
@@ -2208,7 +2208,7 @@ namespace SIL.FieldWorks.IText
 				});
 
 			TryHideFocusBoxAndUninstall();
-			if (Vc.LineChoices.IndexOf(InterlinLineChoices.kflidNote) < 0)
+			if (Vc.LineChoices.IndexInEnabled(InterlinLineChoices.kflidNote) < 0)
 			{
 				Vc.LineChoices.Add(InterlinLineChoices.kflidNote);
 				PersistAndDisplayChangedLineChoices();
