@@ -2869,6 +2869,7 @@ namespace SIL.FieldWorks.Discourse
 							m_chart.RowsOS[0].Delete();
 						continue;
 					}
+
 					// Under the new system, if a cellPart goes away and it's the last one, the row will go
 					// automatically. We'll want to check, though, that we aren't loading things with null refs
 					// such as MovedTextMarkers whose source WordGroup is gone or ClauseMarkers with one or more
@@ -2929,6 +2930,11 @@ namespace SIL.FieldWorks.Discourse
 							irow--;
 					} // cellPart loop
 				} // row loop
+
+				if (m_chart.RowsOS.Any() && m_chart.RowsOS.Sum(row => row.CellsOS.Count) == 0)
+				{
+					m_chart.RowsOS.Clear();
+				}
 				if (fReported)
 					RenumberRows(0, false); // We don't know where the change occurred. Better to be safe.
 			});

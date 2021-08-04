@@ -4,8 +4,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using SIL.LCModel;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.Discourse
@@ -1003,6 +1005,35 @@ namespace SIL.FieldWorks.Discourse
 			Assert.AreEqual((int)SpecialHVOValues.kHvoObjectDeleted, cellPartFoolish.Hvo,
 				"Should have deleted this cellpart.");
 			AssertUsedAnalyses(allParaOccurrences, 2); // no change in ribbon
+		}
+
+		/// <summary>
+		/// Verify that all rows are cleared if No cells are valid, even if there was a note on a row
+		/// </summary>
+		[Test]
+		public void AllChartRowsClearedIfNoValidCells()
+		{
+			var allParaOccurrences = m_helper.MakeAnalysesUsedN(2);
+			var row0 = m_helper.MakeRow1a();
+			var row1 = m_helper.MakeSecondRow();
+			m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
+			m_helper.MakeWordGroup(row1, 0, allParaOccurrences[1], allParaOccurrences[1]);
+			row1.Notes = TsStringUtils.MakeString("This is a test note", Cache.DefaultAnalWs);
+			// now that we have rows with words grouped and a note, blow away the paragraphs they all hang on
+			var occuranceParagraphs = new HashSet<IStTxtPara>();
+			occuranceParagraphs.UnionWith(
+				allParaOccurrences.Select(occurrance => occurrance.Paragraph));
+			foreach (var para in occuranceParagraphs)
+			{
+				para.Delete();
+			}
+			EndSetupTask(); // SUT has its own UOW
+
+			// SUT
+			m_logic.CleanupInvalidChartCells();
+
+			// Verify that the rows are gone
+			CollectionAssert.IsEmpty(m_helper.Chart.RowsOS);
 		}
 
 		/// <summary>
