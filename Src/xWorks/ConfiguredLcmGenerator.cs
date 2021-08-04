@@ -2393,7 +2393,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (config.IsCustomField && IsUSFM(fieldValue.Text))
 			{
-				return GenerateTableFromUSFM(fieldValue, config, settings, writingSystem);
+				return GenerateTablesFromUSFM(fieldValue, config, settings, writingSystem);
 			}
 			else
 			{
@@ -2547,8 +2547,33 @@ namespace SIL.FieldWorks.XWorks
 			return USFMTableStart.IsMatch(candidate);
 		}
 
-		private static string GenerateTableFromUSFM(ITsString usfm, ConfigurableDictionaryNode config,
-			GeneratorSettings settings, string writingSystem)
+		private static string GenerateTablesFromUSFM(ITsString usfm, ConfigurableDictionaryNode config, GeneratorSettings settings, string writingSystem)
+		{
+			var delimiters = new Regex(@"\\d\s+").Matches(usfm.Text);
+
+			// If there is only one table, generate it
+			if (delimiters.Count == 0 || delimiters.Count == 1 && delimiters[0].Index == 0)
+			{
+				return GenerateTableFromUSFM(usfm, config, settings, writingSystem);
+			}
+
+			var bldr = new StringBuilder();
+			// If there is a table with no title, generate it
+			if (delimiters[0].Index > 0)
+			{
+				bldr.Append(GenerateTableFromUSFM(usfm.GetSubstring(0, delimiters[0].Index), config, settings, writingSystem));
+			}
+
+			for (var i = 0; i < delimiters.Count; i++)
+			{
+				var lim = i == delimiters.Count - 1 ? usfm.Length : delimiters[i + 1].Index;
+				bldr.Append(GenerateTableFromUSFM(usfm.GetSubstring(delimiters[i].Index, lim), config, settings, writingSystem));
+			}
+
+			return bldr.ToString();
+		}
+
+		private static string GenerateTableFromUSFM(ITsString usfm, ConfigurableDictionaryNode config, GeneratorSettings settings, string writingSystem)
 		{
 			var bldr = new StringBuilder();
 			using (var writer = settings.ContentGenerator.CreateWriter(bldr))
@@ -2569,10 +2594,10 @@ namespace SIL.FieldWorks.XWorks
 				var rows = from Match match in fancyMatch
 					where match.Success && match.Groups["rowcontents"].Success
 					select match.Groups["rowcontents"] into rowContentsGroup
-					select new Tuple<int, int>(rowContentsGroup.Index, rowContentsGroup.Index + rowContentsGroup.Value.Length);
+					select new Tuple<int, int>(rowContentsGroup.Index, rowContentsGroup.Index + rowContentsGroup.Length);
 
 				settings.ContentGenerator.StartTable(writer);
-				if (headerContent != null)
+				if (headerContent != null && headerContent.Length > 0)
 				{
 					var title = usfm.GetSubstring(headerContent.Index, headerContent.Index + headerContent.Length);
 					GenerateTableTitle(title, writer, config, settings, writingSystem);
@@ -2608,7 +2633,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			settings.ContentGenerator.StartTableRow(writer);
 			var usfmText = rowUSFM.Text ?? string.Empty;
-			var cellMarker = new Regex(@"\s*\\t(c|h)(r|c|l)?\d*\s*");
+			var cellMarker = new Regex(@"\s*\\t(c|h)(r|c|l)?\d*(\s+|$)");
 			for (Match curCellMarker = cellMarker.Match(usfmText), nextCellMarker; curCellMarker.Success; curCellMarker = nextCellMarker)
 			{
 				var cellMin = curCellMarker.Index + curCellMarker.Length;

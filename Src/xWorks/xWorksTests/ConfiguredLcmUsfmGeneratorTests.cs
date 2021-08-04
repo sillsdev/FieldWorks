@@ -213,6 +213,22 @@ namespace SIL.FieldWorks.XWorks
 
 			// Verify that the empty table is in the results
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField + "/table", 1);
+			AssertThatXmlIn.String(result).HasNoMatchForXpath(XPathToUSFMField + "/table/caption");
+		}
+
+		[Test]
+		public void MissingSpaces_NoCells()
+		{
+			// table caption and row markup with no whitespace between
+			var almostTable = $"{TR} {TH}1content {TC}2content";
+			var entry = CreateInterestingLexEntry(almostTable);
+			var result = string.Empty;
+			// SUT
+			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings));
+
+			// Verify that the field is in the results
+			AssertThatXmlIn.String(result).HasNoMatchForXpath("//th");
+			AssertThatXmlIn.String(result).HasNoMatchForXpath("//tc");
 		}
 
 		[Test]
@@ -324,6 +340,25 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToD, 1);
 		}
 
-		// TODO: trailing captions? NOT for MVP
+		[Test]
+		public void MultipleTables()
+		{
+			const string title1 = "first";
+			const string la1 = "loner";
+			const string title2 = "second";
+			const string za1 = "Hu is on first";
+			const string za2 = "Watt's the name of the guy on second";
+			const string zb1 = "Ida Nou";
+			const string zb2 = "home, sweet home";
+			const string loneCell = "untitled table";
+			var entry = CreateInterestingLexEntry(
+				$@"\d {title1} {TR} {TC}1 {la1} \d {title2} {TR} {TH}1 {za1} {TH}2 {za2} {TR} {TC}1 {zb1} {TC}2 {zb2} \d {TR} {TH}1 {loneCell}");
+
+			// SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField + "/table", 3);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToTitle, 2);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToRow, 4); // 1 + 2 + 1 = 4
+		}
 	}
 }
