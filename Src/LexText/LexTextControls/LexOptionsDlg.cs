@@ -47,13 +47,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			InitializeComponent();
 			var optionsTooltip = new ToolTip { AutoPopDelay = 6000, InitialDelay = 400, ReshowDelay = 500, IsBalloon = true };
 			optionsTooltip.SetToolTip(groupBox1, LexTextControls.ksUserInterfaceTooltip);
-			m_channels = new Dictionary<UpdateSettings.Channels, UpdateChannelMenuItem>();
-			m_channels[UpdateSettings.Channels.Stable] = new UpdateChannelMenuItem(UpdateSettings.Channels.Stable,
-				LexTextControls.UpdatesStable, LexTextControls.UpdatesStableDescription);
-			m_channels[UpdateSettings.Channels.Beta] = new UpdateChannelMenuItem(UpdateSettings.Channels.Beta,
-				LexTextControls.UpdatesBeta, LexTextControls.UpdatesBetaDescription);
-			m_channels[UpdateSettings.Channels.Alpha] = new UpdateChannelMenuItem(UpdateSettings.Channels.Alpha,
-				LexTextControls.UpdatesAlpha, LexTextControls.UpdatesAlphaDescription);
+			m_channels = new Dictionary<UpdateSettings.Channels, UpdateChannelMenuItem>
+			{
+				[UpdateSettings.Channels.Stable] = new UpdateChannelMenuItem(UpdateSettings.Channels.Stable,
+					LexTextControls.UpdatesStable, LexTextControls.UpdatesStableDescription),
+				[UpdateSettings.Channels.Beta] = new UpdateChannelMenuItem(UpdateSettings.Channels.Beta,
+					LexTextControls.UpdatesBeta, LexTextControls.UpdatesBetaDescription),
+				[UpdateSettings.Channels.Alpha] = new UpdateChannelMenuItem(UpdateSettings.Channels.Alpha,
+					LexTextControls.UpdatesAlpha, LexTextControls.UpdatesAlphaDescription)
+			};
 			m_NightlyChannel =  new UpdateChannelMenuItem(UpdateSettings.Channels.Nightly, "Nightly",
 				"DO NOT select this option unless you are an official FieldWorks tester. You might not be able to access your data tomorrow.");
 		}
@@ -76,7 +78,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					// users wouldn't appreciate automatic downloads of hundreds of megabytes w/o express consent.
 					m_settings.Update = new UpdateSettings { Behavior = UpdateSettings.Behaviors.DoNotCheck };
 				}
-				m_okToAutoupdate.Checked = m_settings.Update.Behavior != UpdateSettings.Behaviors.DoNotCheck;
+				gbUpdateChannel.Visible = m_okToAutoupdate.Checked = m_settings.Update.Behavior != UpdateSettings.Behaviors.DoNotCheck;
 
 				m_cbUpdateChannel.Items.AddRange(m_channels.Values.ToArray());
 				// Enable the nightly channel only if it is already selected
@@ -356,6 +358,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void PrivacyLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			using (Process.Start(llPrivacy.Text)) { }
+		}
+
+		private void m_okToAutoupdate_CheckedChanged(object sender, EventArgs e)
+		{
+			gbUpdateChannel.Visible = m_okToAutoupdate.Checked;
 		}
 
 		private void m_cbUpdateChannel_SelectedIndexChanged(object sender, EventArgs args)

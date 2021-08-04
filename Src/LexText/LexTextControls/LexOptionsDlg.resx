@@ -807,7 +807,7 @@ always open the last edited project automatically</value>
     <value>3</value>
   </data>
   <data name="gbUpdateChannel.Text" xml:space="preserve">
-    <value>Channel</value>
+    <value>Which updates would you like?</value>
   </data>
   <data name="&gt;&gt;gbUpdateChannel.Name" xml:space="preserve">
     <value>gbUpdateChannel</value>

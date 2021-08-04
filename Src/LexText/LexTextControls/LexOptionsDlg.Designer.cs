@@ -254,6 +254,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			resources.ApplyResources(this.m_okToAutoupdate, "m_okToAutoupdate");
 			this.m_okToAutoupdate.Name = "m_okToAutoupdate";
 			this.m_okToAutoupdate.UseVisualStyleBackColor = true;
+			this.m_okToAutoupdate.CheckedChanged += new System.EventHandler(this.m_okToAutoupdate_CheckedChanged);
 			// 
 			// LexOptionsDlg
 			// 
