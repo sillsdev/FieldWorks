@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Web.UI.WebControls;
 using System.Xml;
 using SIL.Code;
 using SIL.LCModel.Core.Cellar;
@@ -46,7 +47,7 @@ namespace SIL.FieldWorks.XWorks
 		internal const string MovieCamera = "\U0001F3A5";
 
 		// A sanity check regex. Verifies that we are looking at a potential start of a table
-		private static readonly Regex USFMTableStart = new Regex(@"\A(\\d|\\tr)");
+		private static readonly Regex USFMTableStart = new Regex(@"\A(\\d|\\tr)\s");
 
 		/// <summary>
 		/// The Assembly that the model Types should be loaded from. Allows test code to introduce a test model.
@@ -2556,26 +2557,20 @@ namespace SIL.FieldWorks.XWorks
 				// Regular expression to match at the beginning of the string a \d followed by one or more spaces
 				// then grouping any number of characters as 'contents' until encountering any number of spaces followed
 				// by \tr or the end of the string
-				var USFMHeaderGroup = @"(?<header>\A\\d\s+(?<contents>.*?)\s*((?=\\tr)|$))";
+				const string usfmHeaderGroup = @"(?<header>\A\\d\s+(?<contents>.*?)\s*((?=\\tr)|$))";
 
 				// Match the header optionally, then capture any contents found between \tr tags or between \tr and the end of the string
 				// in groups labeled 'rowcontents' - The header including the sfm and spaces is captured as header and the row with the
 				// sfm and surrounding space is captured as <row>
-				var USFMTableRegEx = new Regex(USFMHeaderGroup + @"?(?<row>\\tr\s*(?<rowcontents>.*?)\s*((?=\\tr)|$))?", RegexOptions.Compiled | RegexOptions.Singleline);
+				var usfmTableRegEx = new Regex(usfmHeaderGroup + @"?(?<row>\\tr\s+(?<rowcontents>.*?)\s*((?=\\tr)|$))?", RegexOptions.Compiled | RegexOptions.Singleline);
 				var usfmText = usfm.Text;
-				var fancyMatch = USFMTableRegEx.Matches(usfmText);
-				var headerContent = fancyMatch.Count > 0
-					? fancyMatch[0].Groups["contents"].Success ? fancyMatch[0].Groups["contents"].Captures[0] : null
-					: null;
-				var rows = new List<Tuple<int,string>>();
-				foreach (Match match in fancyMatch)
-				{
-					if (match.Success && match.Groups["rowcontents"].Success)
-					{
-						var rowContentsGroup = match.Groups["rowcontents"];
-						rows.Add(new Tuple<int, string> (rowContentsGroup.Index, rowContentsGroup.Value));
-					}
-				}
+				var fancyMatch = usfmTableRegEx.Matches(usfmText);
+				var headerContent = fancyMatch.Count > 0 && fancyMatch[0].Groups["contents"].Success ? fancyMatch[0].Groups["contents"].Captures[0] : null;
+				var rows = from Match match in fancyMatch
+					where match.Success && match.Groups["rowcontents"].Success
+					select match.Groups["rowcontents"] into rowContentsGroup
+					select new Tuple<int, int>(rowContentsGroup.Index, rowContentsGroup.Index + rowContentsGroup.Value.Length);
+
 				settings.ContentGenerator.StartTable(writer);
 				if (headerContent != null)
 				{
@@ -2585,7 +2580,7 @@ namespace SIL.FieldWorks.XWorks
 				settings.ContentGenerator.StartTableBody(writer);
 				foreach(var row in rows)
 				{
-					GenerateTableRow(usfm.GetSubstring(row.Item1, row.Item1 + row.Item2.Length), writer, config, settings, writingSystem);
+					GenerateTableRow(usfm.GetSubstring(row.Item1, row.Item2), writer, config, settings, writingSystem);
 				}
 				settings.ContentGenerator.EndTableBody(writer);
 				settings.ContentGenerator.EndTable(writer);
@@ -2613,7 +2608,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			settings.ContentGenerator.StartTableRow(writer);
 			var usfmText = rowUSFM.Text ?? string.Empty;
-			var cellMarker = new Regex(@"\s*\\t(c|h)r?\d*\s*");
+			var cellMarker = new Regex(@"\s*\\t(c|h)(r|c|l)?\d*\s*");
 			for (Match curCellMarker = cellMarker.Match(usfmText), nextCellMarker; curCellMarker.Success; curCellMarker = nextCellMarker)
 			{
 				var cellMin = curCellMarker.Index + curCellMarker.Length;
@@ -2630,7 +2625,23 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void GenerateTableCell(Match cellMarker, string contentXHTML, IFragmentWriter writer, GeneratorSettings settings)
 		{
-			settings.ContentGenerator.AddTableCell(writer, cellMarker.Groups[1].Value.Equals("h"), cellMarker.Value.Contains("r"), contentXHTML);
+			var alignment = HorizontalAlign.NotSet;
+			if (cellMarker.Groups.Count > 2)
+			{
+				switch (cellMarker.Groups[2].Value)
+				{
+					case "r":
+						alignment = HorizontalAlign.Right;
+						break;
+					case "c":
+						alignment = HorizontalAlign.Center;
+						break;
+					case "l":
+						alignment = HorizontalAlign.Left;
+						break;
+				}
+			}
+			settings.ContentGenerator.AddTableCell(writer, cellMarker.Groups[1].Value.Equals("h"), alignment, contentXHTML);
 		}
 
 		internal static bool IsBlockProperty(ConfigurableDictionaryNode config)

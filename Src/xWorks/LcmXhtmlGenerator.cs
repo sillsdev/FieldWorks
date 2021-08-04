@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Web.UI.WebControls;
 using System.Xml;
 using Icu.Collation;
 using SIL.FieldWorks.Common.Controls;
@@ -17,7 +18,6 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
-using SIL.Windows.Forms;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -781,13 +781,25 @@ namespace SIL.FieldWorks.XWorks
 		/// Adds a &lt;td&gt; element (or &lt;th&gt; if isHead is true).
 		/// If isRightAligned is true, adds the appropriate style element.
 		/// </summary>
-		public void AddTableCell(IFragmentWriter writer, bool isHead, bool isRightAligned, string content)
+		public void AddTableCell(IFragmentWriter writer, bool isHead, HorizontalAlign alignment, string content)
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement(isHead ? "th" : "td");
-			if (isRightAligned)
+			switch (alignment)
 			{
-				xw.WriteAttributeString("style", "text-align: right;");
+				case HorizontalAlign.NotSet:
+					break;
+				case HorizontalAlign.Left:
+					xw.WriteAttributeString("style", "text-align: left;");
+					break;
+				case HorizontalAlign.Center:
+					xw.WriteAttributeString("style", "text-align: center;");
+					break;
+				case HorizontalAlign.Right:
+					xw.WriteAttributeString("style", "text-align: right;");
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(alignment), alignment, null);
 			}
 			xw.WriteRaw(content);
 			// WriteFullEndElement in case there is no content

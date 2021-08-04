@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Web.UI.WebControls;
 using Icu.Collation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -201,7 +202,7 @@ namespace SIL.FieldWorks.XWorks
 			// TODO: decide on a useful json representation for tables
 		}
 
-		public void AddTableCell(IFragmentWriter writer, bool isHead, bool isRightAligned, string content)
+		public void AddTableCell(IFragmentWriter writer, bool isHead, HorizontalAlign alignment, string content)
 		{
 			// TODO: decide on a useful json representation for tables
 		}

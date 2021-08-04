@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Web.UI.WebControls;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -40,7 +41,7 @@ namespace SIL.FieldWorks.XWorks
 		void AddTableTitle(IFragmentWriter writer, string content);
 		void StartTableBody(IFragmentWriter writer);
 		void StartTableRow(IFragmentWriter writer);
-		void AddTableCell(IFragmentWriter writer, bool isHead, bool isRightAligned, string content);
+		void AddTableCell(IFragmentWriter writer, bool isHead, HorizontalAlign alignment, string content);
 		void EndTableRow(IFragmentWriter writer);
 		void EndTableBody(IFragmentWriter writer);
 		void EndTable(IFragmentWriter writer);

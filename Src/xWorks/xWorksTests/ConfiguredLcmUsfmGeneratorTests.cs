@@ -177,7 +177,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void TitleAndTableRow_GeneratesBoth()
 		{
-			var entry = CreateInterestingLexEntry(@"\d title \tr ");
+			var entry = CreateInterestingLexEntry(@"\d title \tr \tc ");
 			// SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField + "/table", 1);
@@ -189,21 +189,22 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void NoGapNoContentTitleAndRow_DoesNotThrow()
 		{
-			// table caption and row markup with no whitespace or content
+			// table caption and row markup with no whitespace between
 			var almostTable = $"\\d{TR}";
 			var entry = CreateInterestingLexEntry(almostTable);
 			var result = string.Empty;
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings));
 
-			// Verify that the empty table is in the results
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToRow + "[not(text())]", 1);
+			// Verify that the field is in the results
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField, 1);
+			AssertThatXmlIn.String(result).HasNoMatchForXpath("//table", message: "invalid opening USFM shouldn't trigger USFM generation");
 		}
 
 		[Test]
 		public void WhitespaceOnlyBetweenTitleAndRow_DoesNotThrow()
 		{
-			// table caption and row markup with no whitespace or content
+			// table caption and row markup with no content
 			var almostTable = $"\\d \t{TR}";
 			var entry = CreateInterestingLexEntry(almostTable);
 			var result = string.Empty;
@@ -211,7 +212,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings));
 
 			// Verify that the empty table is in the results
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToRow + "[not(text())]", 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField + "/table", 1);
 		}
 
 		[Test]
@@ -301,15 +302,26 @@ namespace SIL.FieldWorks.XWorks
 			const string a2 = "tail";
 			const string b1 = "foot";
 			const string b2 = "nose";
-			var entry = CreateInterestingLexEntry($"{TR} {TH}r1 {a1}  {TH}2\r{a2}\n{TR} {TC}1 {b1} {TC}r2 {b2}");
+			const string c1 = "knee";
+			const string c2 = "toes";
+			const string d1 = "eyes";
+			const string d2 = "ears";
+			var entry = CreateInterestingLexEntry($"{TR} {TH}r1 {a1}  {TH}2\r{a2}\n{TR} {TC}1 {b1} {TC}r2 {b2} " +
+												  $"{TR} {TH}c1 {c1}  {TH}l2\r{c2}\n{TR} {TC}l1 {d1} {TC}c2 {d2}");
 			// SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings);
 			const string xpathToA = XPathToRow + "/th[@style='text-align: right;' and span[@lang='en' and text()='" + a1 +
-						"']]/following-sibling::th[not(@style) and span[@lang='en' and text()='" + a2 + "']]";
+									"']]/following-sibling::th[not(@style) and span[@lang='en' and text()='" + a2 + "']]";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToA, 1);
 			const string xpathToB = XPathToRow + "/td[not(@style) and span[@lang='en' and text()='" + b1 +
-						"']]/following-sibling::td[@style='text-align: right;' and span[@lang='en' and text()='" + b2 + "']]";
+									"']]/following-sibling::td[@style='text-align: right;' and span[@lang='en' and text()='" + b2 + "']]";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToB, 1);
+			const string xpathToC = XPathToRow + "/th[@style='text-align: center;' and span[@lang='en' and text()='" + c1 +
+									"']]/following-sibling::th[@style='text-align: left;' and span[@lang='en' and text()='" + c2 + "']]";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToC, 1);
+			const string xpathToD = XPathToRow + "/td[@style='text-align: left;' and span[@lang='en' and text()='" + d1 +
+									"']]/following-sibling::td[@style='text-align: center;' and span[@lang='en' and text()='" + d2 + "']]";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToD, 1);
 		}
 
 		// TODO: trailing captions? NOT for MVP
