@@ -103,17 +103,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Logger.WriteMinorEvent($"Update found at {available.URL}");
 
 				var localFile = Path.Combine(FwDirectoryFinder.DownloadedUpdates, Path.GetFileName(available.URL));
-				if(!File.Exists(localFile))
+				if(File.Exists(localFile))
 				{
-					var tempFile = $"{localFile}.tmp";
-					if (new DownloadClient().DownloadFile(available.URL, tempFile))
-					{
-						File.Move(tempFile, localFile);
-					}
-					else
-					{
-						return "Update found, but failed to download";
-					}
+					return $"Update already downloaded to {localFile}";
+				}
+
+				var tempFile = $"{localFile}.tmp";
+				if (new DownloadClient().DownloadFile(available.URL, tempFile))
+				{
+					File.Move(tempFile, localFile);
+				}
+				else
+				{
+					return "Update found, but failed to download";
 				}
 
 				NotifyUserOnIdle(ui,

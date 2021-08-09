@@ -206,7 +206,7 @@ If you want to use Paratext with this project, make a change in this project (so
     {2} is either "Please restart FieldWorks at your convenience" or "Do you want to install it now?"</comment>
   </data>
   <data name="RestartToUpdatePrompt" xml:space="preserve">
-    <value>To install it, please restart FieldWorks at your convenience.</value>
+    <value>To install it, restart FieldWorks at your convenience.</value>
     <comment>This is the second half of a message that begins "A FieldWorks update has been downloaded."</comment>
   </data>
   <data name="UpdateNowPrompt" xml:space="preserve">

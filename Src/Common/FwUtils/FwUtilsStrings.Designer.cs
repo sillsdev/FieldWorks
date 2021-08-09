@@ -324,7 +324,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to To install it, please restart FieldWorks at your convenience..
+        ///   Looks up a localized string similar to To install it, restart FieldWorks at your convenience..
         /// </summary>
         internal static string RestartToUpdatePrompt {
             get {

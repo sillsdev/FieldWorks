@@ -164,6 +164,10 @@ namespace SIL.FieldWorks
 				XWebBrowser.DefaultBrowserType = XWebBrowser.BrowserType.GeckoFx;
 				#endregion Initialize XULRunner
 
+				// Only the first FieldWorks process should notify the user of updates. If the user wants to open multiple projects before restarting
+				// for updates, skip the nagging dialogs.
+				var shouldCheckForUpdates = MiscUtils.IsWindows && !TryFindExistingProcess();
+
 				s_appSettings = new FwApplicationSettings();
 				s_appSettings.DeleteCorruptedSettingsFilesIfPresent();
 				s_appSettings.UpgradeIfNecessary();
@@ -284,7 +288,7 @@ namespace SIL.FieldWorks
 						return 0;
 					}
 
-					if (MiscUtils.IsWindows)
+					if (shouldCheckForUpdates)
 						FwUpdater.InstallDownloadedUpdate();
 
 					if (!string.IsNullOrEmpty(appArgs.ChooseProjectFile))
@@ -341,7 +345,7 @@ namespace SIL.FieldWorks
 					if (MiscUtils.IsMono)
 						UglyHackForXkbIndicator();
 
-					if (MiscUtils.IsWindows)
+					if (shouldCheckForUpdates)
 						FwUpdater.CheckForUpdates(s_ui);
 
 					// Application was started successfully, so start the message loop
@@ -3273,6 +3277,17 @@ namespace SIL.FieldWorks
 				s_fWaitingForUserOrOtherFw = false;
 				return (isMyProject == ProjectMatch.ItsMyProject);
 			});
+		}
+
+		/// <summary>
+		/// Tries to find any existing FieldWorks process
+		/// </summary>
+		/// <returns>
+		/// True if another existing process was found, false otherwise
+		/// </returns>
+		private static bool TryFindExistingProcess()
+		{
+			return RunOnRemoteClients(kFwRemoteRequest, requestor => true);
 		}
 
 		/// ------------------------------------------------------------------------------------
