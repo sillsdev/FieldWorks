@@ -34,6 +34,8 @@ namespace SIL.FieldWorks.XWorks
 		private const string TH = @"\th";
 		private const string TC = @"\tc";
 
+		private const string StyleBigRed = "@style='color:#DE0000;font-size:1.5em;'";
+
 		private const string USFMFieldName = "USFM Field";
 		private CustomFieldForTest m_usfmField;
 		private int m_wsEn;
@@ -141,6 +143,7 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				XPathToUSFMField + "/span[@lang='en' and text()='" + plainText + "']", 1);
 			AssertThatXmlIn.String(result).HasNoMatchForXpath("//table");
+			AssertIsGood(result);
 		}
 
 		[Test]
@@ -151,6 +154,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings);
 			AssertThatXmlIn.String(result).HasNoMatchForXpath("//table");
+			AssertIsGood(result);
 		}
 
 		[Test]
@@ -163,6 +167,7 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				XPathToTitle + "[@lang='en' and text()='" + title + "']", 1);
+			AssertIsGood(result);
 		}
 
 		[Test]
@@ -171,7 +176,8 @@ namespace SIL.FieldWorks.XWorks
 			var entry = CreateInterestingLexEntry("\\tr\n");
 			// SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings);
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToRow, 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField + "/table", 1);
+			AssertIsGood(result);
 		}
 
 		[Test]
@@ -184,6 +190,7 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				XPathToTitle + "[@lang='en' and text()='title']", 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToRow, 1);
+			AssertIsGood(result);
 		}
 
 		[Test]
@@ -199,6 +206,7 @@ namespace SIL.FieldWorks.XWorks
 			// Verify that the field is in the results
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField, 1);
 			AssertThatXmlIn.String(result).HasNoMatchForXpath("//table", message: "invalid opening USFM shouldn't trigger USFM generation");
+			AssertIsGood(result);
 		}
 
 		[Test]
@@ -214,6 +222,7 @@ namespace SIL.FieldWorks.XWorks
 			// Verify that the empty table is in the results
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField + "/table", 1);
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(XPathToUSFMField + "/table/caption");
+			AssertIsGood(result);
 		}
 
 		[Test]
@@ -229,6 +238,7 @@ namespace SIL.FieldWorks.XWorks
 			// Verify that the field is in the results
 			AssertThatXmlIn.String(result).HasNoMatchForXpath("//th");
 			AssertThatXmlIn.String(result).HasNoMatchForXpath("//tc");
+			Assert.That(result, Is.Not.StringContaining("/>"));
 		}
 
 		[Test]
@@ -267,6 +277,7 @@ namespace SIL.FieldWorks.XWorks
 						"']]/following-sibling::td[span[text()='" + c2 +
 						"']]/following-sibling::td[span[text()='" + c3 + "']]";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToC, 1);
+			AssertIsGood(result);
 		}
 
 		[Test]
@@ -280,6 +291,8 @@ namespace SIL.FieldWorks.XWorks
 			const string xpathToA = XPathToRow + "/td[span[@lang='en' and text()='" + a1 +
 									"']]/following-sibling::td[not(node())]/following-sibling::td[span[text()='" + a3 + "']]";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToA, 1);
+			Assert.That(result, Is.Not.StringContaining("/>"));
+			Assert.That(result, Is.Not.StringContaining("Invalid USFM"));
 		}
 
 		[Test]
@@ -291,6 +304,7 @@ namespace SIL.FieldWorks.XWorks
 			const string xpathToA = XPathToRow +
 				"/td[not(node())]/following-sibling::td[not(node())]/following-sibling::td[not(node())]/following-sibling::td[not(node())]";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToA, 1);
+			AssertIsGood(result);
 		}
 
 		[Test]
@@ -309,6 +323,7 @@ namespace SIL.FieldWorks.XWorks
 			const string xpathToB = XPathToRow + "/td[span[@lang='en' and text()='" + b1c +
 						"']]/following-sibling::th[span[@lang='en' and text()='" + b2h + "']]";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToB, 1);
+			AssertIsGood(result);
 		}
 
 		[Test]
@@ -338,6 +353,7 @@ namespace SIL.FieldWorks.XWorks
 			const string xpathToD = XPathToRow + "/td[@style='text-align: left;' and span[@lang='en' and text()='" + d1 +
 									"']]/following-sibling::td[@style='text-align: center;' and span[@lang='en' and text()='" + d2 + "']]";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToD, 1);
+			AssertIsGood(result);
 		}
 
 		[Test]
@@ -359,6 +375,80 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField + "/table", 3);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToTitle, 2);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToRow, 4); // 1 + 2 + 1 = 4
+			AssertIsGood(result);
 		}
+
+		private static void AssertIsGood(string xhtml)
+		{
+			Assert.That(xhtml, Is.Not.StringContaining("/>"));
+			Assert.That(xhtml, Is.Not.StringContaining("Invalid USFM"));
+			Assert.That(xhtml, Is.Not.StringContaining("Unsupported USFM"));
+		}
+
+		[Test]
+		public void BadUSFM_RowWithoutCells()
+		{
+			const string junk = "no cells";
+			var entry = CreateInterestingLexEntry($"{TR} {junk}");
+			// SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings);
+			var expected = string.Format(xWorksStrings.InvalidUSFM_TextAfterTR, junk);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField +
+				$"//span[{StyleBigRed} and text() = '{expected}']", 1);
+			Assert.That(result, Is.Not.StringContaining("/>"));
+			Assert.That(result, Is.StringEnding("</div>"));
+		}
+
+		[Test]
+		public void BadUSFM_RowWithTextBeforeCells()
+		{
+			const string junk = "oops";
+			var entry = CreateInterestingLexEntry($"{TR} {junk} {TC}1 data");
+			// SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings);
+
+			var expected = string.Format(xWorksStrings.InvalidUSFM_TextAfterTR, junk);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField +
+				$"//span[{StyleBigRed} and text() = '{expected}']", 1);
+			Assert.That(result, Is.Not.StringContaining("/>"));
+			Assert.That(result, Is.StringEnding("</div>"));
+		}
+
+		[TestCase(TR + " " + TC, XPathToRow + "/td")]
+		[TestCase(TR + " " + TH + "1", XPathToRow + "/th")]
+		public void BadUSFM_PartiallyTyped_NoErrors(string usfm, string xpath)
+		{
+			var entry = CreateInterestingLexEntry(usfm);
+			// SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpath, 1);
+			Assert.That(result, Is.StringEnding("</div>"));
+			AssertIsGood(result);
+		}
+
+		[Test]
+		public void BadUSFM_PartiallyTyped_NoErrors([Values(@"\t", TC, TH + "1")] string marker)
+		{
+			var entry = CreateInterestingLexEntry($@"{TR} {marker}\th2 exists");
+			// SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField +
+				$"//span[{StyleBigRed} and text()='{marker}']", 1);
+			Assert.That(result, Is.StringEnding("</div>"));
+			AssertIsGood(result);
+		}
+
+		[Test]
+		public void BadUSFM_PartiallyTyped_NoError()
+		{
+			var entry = CreateInterestingLexEntry(TR + @" \t");
+			// SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField +
+				"//span[" + StyleBigRed + @" and text()='\t']", 1);
+			Assert.That(result, Is.StringEnding("</div>"));
+			AssertIsGood(result);
+		}
+
 	}
 }

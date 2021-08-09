@@ -537,7 +537,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Finished generating entries..
+        ///   Looks up a localized string similar to The dictionary is now ready to print. Click OK to proceed to the Print dialog..
         /// </summary>
         internal static string FinishedGeneratingEntries {
             get {
@@ -641,6 +641,17 @@ namespace SIL.FieldWorks.XWorks {
         internal static string InvalidRootConfigurationNode {
             get {
                 return ResourceManager.GetString("InvalidRootConfigurationNode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid USFM: \tr should be followed by \tc# or \th#, but found
+        ///&quot;{0}&quot;.
+        ///See USFM documentation for help..
+        /// </summary>
+        internal static string InvalidUSFM_TextAfterTR {
+            get {
+                return ResourceManager.GetString("InvalidUSFM_TextAfterTR", resourceCulture);
             }
         }
         

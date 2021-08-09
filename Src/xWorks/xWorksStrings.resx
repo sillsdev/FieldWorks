@@ -891,6 +891,11 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>The root node in your configured view is invalid. The field attribute '{0}' must match a class name.</value>
     <comment>low priority for localizing, helpful to developers of dictionary configuration files, hopefully users will never see this.</comment>
   </data>
+  <data name="InvalidUSFM_TextAfterTR" xml:space="preserve">
+    <value>Invalid USFM: \tr should be followed by \tc# or \th#, but found
+"{0}".
+See USFM documentation for help.</value>
+  </data>
   <data name="NoConfigsMatchPub" xml:space="preserve">
     <value>No views match the current publication.</value>
     <comment>If a user selects a publication, but has deselected that publication from all their configured views, this will be the content of the dictionary preview pane.</comment>

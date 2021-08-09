@@ -813,7 +813,8 @@ namespace SIL.FieldWorks.XWorks
 
 		public void EndTableBody(IFragmentWriter writer)
 		{
-			((XmlFragmentWriter)writer).Writer.WriteEndElement(); // should be </tbody>
+			// WriteFullEndElement in case there is no content
+			((XmlFragmentWriter)writer).Writer.WriteFullEndElement(); // should be </tbody>
 		}
 
 		public void EndTable(IFragmentWriter writer)

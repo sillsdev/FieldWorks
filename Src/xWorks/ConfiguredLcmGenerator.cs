@@ -14,7 +14,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web.UI.WebControls;
-using System.Xml;
+using ExCSS;
 using SIL.Code;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
@@ -32,6 +32,7 @@ using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using XCore;
 using FileUtils = SIL.LCModel.Utils.FileUtils;
+using UnitType = ExCSS.UnitType;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -45,6 +46,12 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal const string LoudSpeaker = "\uD83D\uDD0A";
 		internal const string MovieCamera = "\U0001F3A5";
+
+		/// <summary>
+		/// Line-Separator Decimal Code
+		/// </summary>
+		private const char TxtLineSplit = (char)8232;
+
 
 		// A sanity check regex. Verifies that we are looking at a potential start of a table
 		private static readonly Regex USFMTableStart = new Regex(@"\A(\\d|\\tr)\s");
@@ -2490,10 +2497,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				settings.ContentGenerator.StartLink(writer, linkDestination);
 			}
-			const char txtlineSplit = (char)8232; //Line-Separator Decimal Code
-			if (text.Contains(txtlineSplit))
+			if (text.Contains(TxtLineSplit))
 			{
-				var txtContents = text.Split(txtlineSplit);
+				var txtContents = text.Split(TxtLineSplit);
 				for (int i = 0; i < txtContents.Count(); i++)
 				{
 					settings.ContentGenerator.AddToRunContent(writer, txtContents[i]);
@@ -2558,7 +2564,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			var bldr = new StringBuilder();
-			// If there is a table with no title, generate it
+			// If there is a table before the first title, generate it
 			if (delimiters[0].Index > 0)
 			{
 				bldr.Append(GenerateTableFromUSFM(usfm.GetSubstring(0, delimiters[0].Index), config, settings, writingSystem));
@@ -2587,7 +2593,7 @@ namespace SIL.FieldWorks.XWorks
 				// Match the header optionally, then capture any contents found between \tr tags or between \tr and the end of the string
 				// in groups labeled 'rowcontents' - The header including the sfm and spaces is captured as header and the row with the
 				// sfm and surrounding space is captured as <row>
-				var usfmTableRegEx = new Regex(usfmHeaderGroup + @"?(?<row>\\tr\s+(?<rowcontents>.*?)\s*((?=\\tr)|$))?", RegexOptions.Compiled | RegexOptions.Singleline);
+				var usfmTableRegEx = new Regex(usfmHeaderGroup + @"?(?<row>\\tr\s+(?<rowcontents>.*?)((?=\\tr)|$))?", RegexOptions.Compiled | RegexOptions.Singleline);
 				var usfmText = usfm.Text;
 				var fancyMatch = usfmTableRegEx.Matches(usfmText);
 				var headerContent = fancyMatch.Count > 0 && fancyMatch[0].Groups["contents"].Success ? fancyMatch[0].Groups["contents"].Captures[0] : null;
@@ -2631,42 +2637,94 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateTableRow(ITsString rowUSFM, IFragmentWriter writer,
 			ConfigurableDictionaryNode config, GeneratorSettings settings, string writingSystem)
 		{
-			settings.ContentGenerator.StartTableRow(writer);
-			var usfmText = rowUSFM.Text ?? string.Empty;
-			var cellMarker = new Regex(@"\s*\\t(c|h)(r|c|l)?\d*(\s+|$)");
-			for (Match curCellMarker = cellMarker.Match(usfmText), nextCellMarker; curCellMarker.Success; curCellMarker = nextCellMarker)
+			var usfmText = rowUSFM.Text;
+			if (string.IsNullOrEmpty(usfmText))
 			{
-				var cellMin = curCellMarker.Index + curCellMarker.Length;
-				// Allow shared whitespace in case of empty cells
-				nextCellMarker = cellMarker.Match(usfmText, cellMin - 1);
-				var cellLim = nextCellMarker.Success ? nextCellMarker.Index : usfmText.Length;
-				var cellContent = cellMin < cellLim
-					? GenerateXHTMLForString(rowUSFM.GetSubstring(cellMin, cellLim), config, settings, writingSystem)
-					: string.Empty;
-				GenerateTableCell(curCellMarker, cellContent, writer, settings);
+				return;
+			}
+
+			settings.ContentGenerator.StartTableRow(writer);
+			//var cellMarker = new Regex(@"\s*\\t(c|h)(r|c|l)?\d*(\s+|$)");
+			//var curCellMarker = cellMarker.Match(usfmText);
+			// TODO (Hasso) 2021.08: handle bad USFM: span size 1.5em color red>Unexpected text after \tr: {0}!
+			// TODO: unsupported spanning cells
+			// Capture any invalid junk before the first cell marker, then match each cell, capturing the distinctive part of its tag,
+			// its optional alignment, and its contents
+			//var rowToCellsRegex = new Regex(@"(\A(?<junk>.+?)\s+)?(?<cell>\\t(?<tag>h|c)(?<alignment>r|c|l)?\d*\s+(?<cellcontents>.*?)\s*(?=\\t|$))?",
+			var rowToCellsRegex = new Regex(@"(?<cell>\\t(?<tag>h|c)(?<alignment>r|c|l)?\d*(\s+|$)(?<cellcontents>.*?)\s*(?=\\t|$))?",
+				RegexOptions.Compiled | RegexOptions.Singleline);
+			var cellMatches = rowToCellsRegex.Matches(usfmText);
+			var cells = new List<Match>(from Match match in cellMatches where match.Success && match.Groups["cellcontents"].Success select match);
+
+			// check for extra text before the first cell
+			if (cells.Count == 0 || cells[0].Index > 0)
+			{
+				var junk = cells.Count == 0 ? usfmText : usfmText.Remove(cells[0].Index).Trim();
+				if (@"\t".StartsWith(junk) || new Regex(@"\A\\t(h|c)(r|c|l)?\d*$").IsMatch(junk))
+				{
+					// The user seems to be starting to type a valid marker; call attention to its location
+					GenerateError(junk, writer, settings);
+				}
+				else
+				{
+					// Yes, this strips all WS and formatting information, but for an error message, I'm not sure that we care
+					GenerateError(string.Format(xWorksStrings.InvalidUSFM_TextAfterTR, junk), writer, settings);
+				}
+			}
+
+			foreach (var cell in cells)
+			{
+				var contentsGroup = cell.Groups["cellcontents"];
+				var cellLim = contentsGroup.Index + contentsGroup.Length;
+				var contentXHTML = GenerateXHTMLForString(rowUSFM.GetSubstring(contentsGroup.Index, cellLim), config, settings, writingSystem);
+				var alignment = HorizontalAlign.NotSet;
+				if (cell.Groups["alignment"].Success)
+				{
+					switch (cell.Groups["alignment"].Value)
+					{
+						case "r":
+							alignment = HorizontalAlign.Right;
+							break;
+						case "c":
+							alignment = HorizontalAlign.Center;
+							break;
+						case "l":
+							alignment = HorizontalAlign.Left;
+							break;
+					}
+				}
+				settings.ContentGenerator.AddTableCell(writer, cell.Groups["tag"].Value.Equals("h"), alignment, contentXHTML);
 			}
 			settings.ContentGenerator.EndTableRow(writer);
 		}
 
-		private static void GenerateTableCell(Match cellMarker, string contentXHTML, IFragmentWriter writer, GeneratorSettings settings)
+		private static void GenerateError(string text, IFragmentWriter writer, GeneratorSettings settings)
 		{
-			var alignment = HorizontalAlign.NotSet;
-			if (cellMarker.Groups.Count > 2)
+			var writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(settings.Cache.WritingSystemFactory.UserWs);
+			settings.ContentGenerator.StartRun(writer, writingSystem);
+			// Make the error red and slightly larger than the surrounding text
+			var css = new StyleDeclaration
 			{
-				switch (cellMarker.Groups[2].Value)
+				new ExCSS.Property("color") { Term = new HtmlColor(222, 0, 0) },
+				new ExCSS.Property("font-size") { Term = new PrimitiveTerm(UnitType.Ems, 1.5f) }
+			};
+			settings.ContentGenerator.SetRunStyle(writer, css.ToString());
+			if (text.Contains(TxtLineSplit))
+			{
+				var txtContents = text.Split(TxtLineSplit);
+				for (var i = 0; i < txtContents.Length; i++)
 				{
-					case "r":
-						alignment = HorizontalAlign.Right;
+					settings.ContentGenerator.AddToRunContent(writer, txtContents[i]);
+					if (i == txtContents.Length - 1)
 						break;
-					case "c":
-						alignment = HorizontalAlign.Center;
-						break;
-					case "l":
-						alignment = HorizontalAlign.Left;
-						break;
+					settings.ContentGenerator.AddLineBreakInRunContent(writer);
 				}
 			}
-			settings.ContentGenerator.AddTableCell(writer, cellMarker.Groups[1].Value.Equals("h"), alignment, contentXHTML);
+			else
+			{
+				settings.ContentGenerator.AddToRunContent(writer, text);
+			}
+			settings.ContentGenerator.EndRun(writer);
 		}
 
 		internal static bool IsBlockProperty(ConfigurableDictionaryNode config)
