@@ -251,7 +251,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		public string Persist(ILgWritingSystemFactory wsf)
 		{
-			List<LineOption> customOptions = GetCustomLineOptions(Mode);
+			List<CustomLineOption> customOptions = GetCustomLineOptions(Mode);
 
 			var builder = new StringBuilder();
 			builder.Append(GetType().Name + "_v3");
@@ -265,7 +265,7 @@ namespace SIL.FieldWorks.IText
 				if (custOpt == null)
 					builder.Append($",{lineSpec.Flid}%{wsName}%{lineSpec.Enabled}");
 				else
-					builder.Append($",{lineSpec.Flid}%{wsName}%{lineSpec.Enabled}%{custOpt.Label}");
+					builder.Append($",{lineSpec.Flid}%{wsName}%{lineSpec.Enabled}%{custOpt.Name}");
 			}
 			return builder.ToString();
 		}
@@ -302,7 +302,7 @@ namespace SIL.FieldWorks.IText
 			result.ClearAllLineSpecs();
 
 			List<LineOption> requiredOptions = result.LineOptions(mode).ToList();
-			List<LineOption> customOptions = result.GetCustomLineOptions(mode);
+			List<CustomLineOption> customOptions = result.GetCustomLineOptions(mode);
 			bool updatePropTable = false;
 			for (int i = 1; i < parts.Length; i++)
 			{
@@ -324,14 +324,14 @@ namespace SIL.FieldWorks.IText
 					// Handle customs.
 					if (flidAndWs.Length == 4)
 					{
-						// Find the custom option by Label since the flid's can change.
-						var custOpt = customOptions.Find(opt => opt.Label.Equals(flidAndWs[3]));
+						// Find the custom option by Name since the flid's can change.
+						var custOpt = customOptions.Find(opt => opt.Name.Equals(flidAndWs[3]));
 						if(custOpt != null)
 						{
 							// Set the flid to the new value for this custom option.
 							flid = custOpt.Flid;
 						}
-						// Nothing exists with the persisted label, skip it.
+						// Nothing exists with the persisted name, skip it.
 						else
 							continue;
 					}
@@ -569,9 +569,9 @@ namespace SIL.FieldWorks.IText
 			}.Union(customLineOptions).ToArray();
 		}
 
-		private List<LineOption> GetCustomLineOptions(InterlinMode mode)
+		private List<CustomLineOption> GetCustomLineOptions(InterlinMode mode)
 		{
-			var customLineOptions = new List<LineOption>();
+			var customLineOptions = new List<CustomLineOption>();
 			switch (mode)
 			{
 				case InterlinMode.Analyze:
@@ -585,7 +585,7 @@ namespace SIL.FieldWorks.IText
 						{
 							if (!mdc.IsCustom(flid))
 								continue;
-							customLineOptions.Add(new LineOption(flid, mdc.GetFieldLabel(flid)));
+							customLineOptions.Add(new CustomLineOption(flid, mdc.GetFieldLabel(flid), mdc.GetFieldName(flid)));
 						}
 					}
 					break;
@@ -1344,6 +1344,23 @@ namespace SIL.FieldWorks.IText
 
 		public override bool Equals(object obj) => Equals(obj as LineOption);
 		public override int GetHashCode() => Flid.GetHashCode();
+	}
+
+	internal class CustomLineOption : LineOption
+	{
+		public CustomLineOption(int flid, string label, string name) : base(flid, label)
+		{
+			Name = name;
+		}
+
+		/// <summary>
+		/// The Name does NOT change when a custom field is renamed, the Label does change.
+		/// </summary>
+		public string Name
+		{
+			get;
+			private set;
+		}
 	}
 
 	/// <summary>
