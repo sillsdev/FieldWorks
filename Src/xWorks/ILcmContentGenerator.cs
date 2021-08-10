@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.XWorks
 		void AddTableTitle(IFragmentWriter writer, string content);
 		void StartTableBody(IFragmentWriter writer);
 		void StartTableRow(IFragmentWriter writer);
-		void AddTableCell(IFragmentWriter writer, bool isHead, HorizontalAlign alignment, string content);
+		void AddTableCell(IFragmentWriter writer, bool isHead, int colSpan, HorizontalAlign alignment, string content);
 		void EndTableRow(IFragmentWriter writer);
 		void EndTableBody(IFragmentWriter writer);
 		void EndTable(IFragmentWriter writer);

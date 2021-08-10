@@ -219,9 +219,8 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings));
 
-			// Verify that the empty table is in the results
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField + "/table", 1);
-			AssertThatXmlIn.String(result).HasNoMatchForXpath(XPathToUSFMField + "/table/caption");
+			// Verify that the partially-typed table is in the results
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToTitle + "[text()='" + TR + "']", 1);
 			AssertIsGood(result);
 		}
 
@@ -378,11 +377,32 @@ namespace SIL.FieldWorks.XWorks
 			AssertIsGood(result);
 		}
 
-		private static void AssertIsGood(string xhtml)
+		[TestCase(1, 2)]
+		[TestCase(2, 4)]
+		[TestCase(3, 7)]
+		public void CellRange(int min, int lim)
 		{
-			Assert.That(xhtml, Is.Not.StringContaining("/>"));
-			Assert.That(xhtml, Is.Not.StringContaining("Invalid USFM"));
-			Assert.That(xhtml, Is.Not.StringContaining("Unsupported USFM"));
+			var entry = CreateInterestingLexEntry($"{TR} {TC}{min}-{lim} home on the range");
+			// SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings);
+			// +1 because the range includes both ends
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath($"{XPathToRow}/td[@colspan='{lim - min + 1}']", 1);
+			AssertIsGood(result);
+		}
+
+		[TestCase("")]
+		[TestCase("4")]
+		[TestCase("3-3")]
+		[TestCase("2-1")]
+		[TestCase("4-1")]
+		public void CellRange_None_NoColSpan(string range)
+		{
+			const string content = "seldom";
+			var entry = CreateInterestingLexEntry($"{TR} {TC}{range} {content}");
+			// SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath($"{XPathToRow}/td[not(@colspan)]/span[text()='{content}']", 1);
+			AssertIsGood(result);
 		}
 
 		[Test]
@@ -427,7 +447,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void BadUSFM_PartiallyTyped_NoErrors([Values(@"\t", TC, TH + "1")] string marker)
+		public void BadUSFM_PartiallyTyped_NoErrors([Values(@"\t", TC, TH + "1", TH + "l", TC + "3-", TH + "7-11")] string marker)
 		{
 			var entry = CreateInterestingLexEntry($@"{TR} {marker}\th2 exists");
 			// SUT
@@ -450,5 +470,25 @@ namespace SIL.FieldWorks.XWorks
 			AssertIsGood(result);
 		}
 
+		[Test]
+		public void MistypedMarker([Values("tre", "tcp", "t", "td", "tl", "t2", "h", "th-2", "th2-", "doh")] string misMark)
+		{
+			const string cellBefore = "before";
+			const string cellAfter = "after";
+			var cellWithBadMark = $@"in \{misMark} between";
+			var entry = CreateInterestingLexEntry($"{TR} {TC} {cellBefore} {TC} {cellWithBadMark} {TC} {cellAfter}");
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToCell, 3);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToCell + "[text()='" + cellBefore + "']", 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToCell + "[text()='" + cellAfter + "']", 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath($"{XPathToCell}[text()='{cellWithBadMark}']", 1);
+			AssertIsGood(result);
+		}
+
+		private static void AssertIsGood(string xhtml)
+		{
+			Assert.That(xhtml, Is.Not.StringContaining("/>"));
+			Assert.That(xhtml, Is.Not.StringContaining("Invalid USFM"));
+		}
 	}
 }

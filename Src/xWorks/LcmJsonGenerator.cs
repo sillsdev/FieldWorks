@@ -202,7 +202,7 @@ namespace SIL.FieldWorks.XWorks
 			// TODO: decide on a useful json representation for tables
 		}
 
-		public void AddTableCell(IFragmentWriter writer, bool isHead, HorizontalAlign alignment, string content)
+		public void AddTableCell(IFragmentWriter writer, bool isHead, int colSpan, HorizontalAlign alignment, string content)
 		{
 			// TODO: decide on a useful json representation for tables
 		}

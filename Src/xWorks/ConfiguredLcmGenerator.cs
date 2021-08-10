@@ -2555,7 +2555,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private static string GenerateTablesFromUSFM(ITsString usfm, ConfigurableDictionaryNode config, GeneratorSettings settings, string writingSystem)
 		{
-			var delimiters = new Regex(@"\\d\s+").Matches(usfm.Text);
+			var delimiters = new Regex(@"\\d\s").Matches(usfm.Text);
 
 			// If there is only one table, generate it
 			if (delimiters.Count == 0 || delimiters.Count == 1 && delimiters[0].Index == 0)
@@ -2584,16 +2584,18 @@ namespace SIL.FieldWorks.XWorks
 			var bldr = new StringBuilder();
 			using (var writer = settings.ContentGenerator.CreateWriter(bldr))
 			{
+				// Regular expression to match the end of a string or a table row marker at the end of a title or row
+				const string usfmRowTerminator = @"(?=\\tr\s|$)";
 
 				// Regular expression to match at the beginning of the string a \d followed by one or more spaces
 				// then grouping any number of characters as 'contents' until encountering any number of spaces followed
 				// by \tr or the end of the string
-				const string usfmHeaderGroup = @"(?<header>\A\\d\s+(?<contents>.*?)\s*((?=\\tr)|$))";
+				const string usfmHeaderGroup = @"(?<header>\A\\d\s+(?<contents>.*?)\s*" + usfmRowTerminator + ")";
 
 				// Match the header optionally, then capture any contents found between \tr tags or between \tr and the end of the string
 				// in groups labeled 'rowcontents' - The header including the sfm and spaces is captured as header and the row with the
 				// sfm and surrounding space is captured as <row>
-				var usfmTableRegEx = new Regex(usfmHeaderGroup + @"?(?<row>\\tr\s+(?<rowcontents>.*?)((?=\\tr)|$))?", RegexOptions.Compiled | RegexOptions.Singleline);
+				var usfmTableRegEx = new Regex(usfmHeaderGroup + @"?(?<row>\\tr\s+(?<rowcontents>.*?)" + usfmRowTerminator + ")?", RegexOptions.Compiled | RegexOptions.Singleline);
 				var usfmText = usfm.Text;
 				var fancyMatch = usfmTableRegEx.Matches(usfmText);
 				var headerContent = fancyMatch.Count > 0 && fancyMatch[0].Groups["contents"].Success ? fancyMatch[0].Groups["contents"].Captures[0] : null;
@@ -2618,8 +2620,7 @@ namespace SIL.FieldWorks.XWorks
 				writer.Flush();
 			}
 			return bldr.ToString();
-			// TODO (Hasso) 2021.06: catch !implExc (esp. until impl'd for JSON)
-			// TODO (Hasso) 2021.06: handle bad USFM?
+			// TODO (Hasso) 2021.06: impl for JSON
 		}
 
 		/// <summary>
@@ -2644,23 +2645,17 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			settings.ContentGenerator.StartTableRow(writer);
-			//var cellMarker = new Regex(@"\s*\\t(c|h)(r|c|l)?\d*(\s+|$)");
-			//var curCellMarker = cellMarker.Match(usfmText);
-			// TODO (Hasso) 2021.08: handle bad USFM: span size 1.5em color red>Unexpected text after \tr: {0}!
-			// TODO: unsupported spanning cells
-			// Capture any invalid junk before the first cell marker, then match each cell, capturing the distinctive part of its tag,
-			// its optional alignment, and its contents
-			//var rowToCellsRegex = new Regex(@"(\A(?<junk>.+?)\s+)?(?<cell>\\t(?<tag>h|c)(?<alignment>r|c|l)?\d*\s+(?<cellcontents>.*?)\s*(?=\\t|$))?",
-			var rowToCellsRegex = new Regex(@"(?<cell>\\t(?<tag>h|c)(?<alignment>r|c|l)?\d*(\s+|$)(?<cellcontents>.*?)\s*(?=\\t|$))?",
+			var rowToCellsRegex = new Regex(
+				@"\\t(?<tag>c|h)(?<align>r|c|l)?((?<min>\d+)(-(?<lim>\d+))?)?(\s+|$)(?<content>.*?)\s*(?=\\t(c|h)(r|c|l)?(\d+(-\d+)?)?\s|$)",
 				RegexOptions.Compiled | RegexOptions.Singleline);
 			var cellMatches = rowToCellsRegex.Matches(usfmText);
-			var cells = new List<Match>(from Match match in cellMatches where match.Success && match.Groups["cellcontents"].Success select match);
+			var cells = new List<Match>(from Match match in cellMatches where match.Success && match.Groups["content"].Success select match);
 
 			// check for extra text before the first cell
 			if (cells.Count == 0 || cells[0].Index > 0)
 			{
 				var junk = cells.Count == 0 ? usfmText : usfmText.Remove(cells[0].Index).Trim();
-				if (@"\t".StartsWith(junk) || new Regex(@"\A\\t(h|c)(r|c|l)?\d*$").IsMatch(junk))
+				if (new Regex(@"\A\\(t((h|c)(r|c|l)?(\d+(-\d*)?)?)?)?$").IsMatch(junk))
 				{
 					// The user seems to be starting to type a valid marker; call attention to its location
 					GenerateError(junk, writer, settings);
@@ -2674,13 +2669,13 @@ namespace SIL.FieldWorks.XWorks
 
 			foreach (var cell in cells)
 			{
-				var contentsGroup = cell.Groups["cellcontents"];
+				var contentsGroup = cell.Groups["content"];
 				var cellLim = contentsGroup.Index + contentsGroup.Length;
 				var contentXHTML = GenerateXHTMLForString(rowUSFM.GetSubstring(contentsGroup.Index, cellLim), config, settings, writingSystem);
 				var alignment = HorizontalAlign.NotSet;
-				if (cell.Groups["alignment"].Success)
+				if (cell.Groups["align"].Success)
 				{
-					switch (cell.Groups["alignment"].Value)
+					switch (cell.Groups["align"].Value)
 					{
 						case "r":
 							alignment = HorizontalAlign.Right;
@@ -2693,7 +2688,14 @@ namespace SIL.FieldWorks.XWorks
 							break;
 					}
 				}
-				settings.ContentGenerator.AddTableCell(writer, cell.Groups["tag"].Value.Equals("h"), alignment, contentXHTML);
+
+				var colSpan = 1;
+				if (cell.Groups["lim"].Success)
+				{
+					// Add one because the range includes both ends
+					colSpan = int.Parse(cell.Groups["lim"].Value) - int.Parse(cell.Groups["min"].Value) + 1;
+				}
+				settings.ContentGenerator.AddTableCell(writer, cell.Groups["tag"].Value.Equals("h"), colSpan, alignment, contentXHTML);
 			}
 			settings.ContentGenerator.EndTableRow(writer);
 		}

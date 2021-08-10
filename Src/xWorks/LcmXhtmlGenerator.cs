@@ -781,10 +781,14 @@ namespace SIL.FieldWorks.XWorks
 		/// Adds a &lt;td&gt; element (or &lt;th&gt; if isHead is true).
 		/// If isRightAligned is true, adds the appropriate style element.
 		/// </summary>
-		public void AddTableCell(IFragmentWriter writer, bool isHead, HorizontalAlign alignment, string content)
+		public void AddTableCell(IFragmentWriter writer, bool isHead, int colSpan, HorizontalAlign alignment, string content)
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement(isHead ? "th" : "td");
+			if (colSpan > 1)
+			{
+				xw.WriteAttributeString("colspan", colSpan.ToString());
+			}
 			switch (alignment)
 			{
 				case HorizontalAlign.NotSet:
