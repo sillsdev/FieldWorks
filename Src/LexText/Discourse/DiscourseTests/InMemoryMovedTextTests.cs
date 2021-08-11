@@ -1018,6 +1018,7 @@ namespace SIL.FieldWorks.Discourse
 			var row1 = m_helper.MakeSecondRow();
 			m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
 			m_helper.MakeWordGroup(row1, 0, allParaOccurrences[1], allParaOccurrences[1]);
+			m_helper.MakeDependentClauseMarker(row1, 1, new[] { row0 }, ClauseTypes.Song);
 			row1.Notes = TsStringUtils.MakeString("This is a test note", Cache.DefaultAnalWs);
 			// now that we have rows with words grouped and a note, blow away the paragraphs they all hang on
 			var occuranceParagraphs = new HashSet<IStTxtPara>();
@@ -1043,9 +1044,10 @@ namespace SIL.FieldWorks.Discourse
 		[Test]
 		public void CheckForValidMarkersOnLoad()
 		{
-			var allParaOccurrences = m_helper.MakeAnalysesUsedN(0);
+			var allParaOccurrences = m_helper.MakeAnalysesUsedN(1);
 			var row0 = m_helper.MakeRow1a();
 			var row1 = m_helper.MakeSecondRow();
+			m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
 
 			m_helper.MakeChartMarker(row0, 1, m_helper.GetAMarker());
 			m_helper.MakeMissingMarker(row1, 0);
@@ -1059,7 +1061,7 @@ namespace SIL.FieldWorks.Discourse
 			m_logic.CleanupInvalidChartCells();
 
 			// Verify
-			AssertUsedAnalyses(allParaOccurrences, 0); // no change in ribbon
+			AssertUsedAnalyses(allParaOccurrences, 1); // no change in ribbon
 			Assert.AreEqual(cfirstRow, row0.CellsOS.Count,
 				"Shouldn't have changed number of cells in first row.");
 			Assert.AreEqual(c2ndRow, row1.CellsOS.Count,

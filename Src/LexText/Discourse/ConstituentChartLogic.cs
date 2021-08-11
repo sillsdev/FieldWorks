@@ -2931,7 +2931,8 @@ namespace SIL.FieldWorks.Discourse
 					} // cellPart loop
 				} // row loop
 
-				if (m_chart.RowsOS.Any() && m_chart.RowsOS.Sum(row => row.CellsOS.Count) == 0)
+				// If there are no rows that have any word groups in them then the contents are not worth keeping so clear all rows
+				if (m_chart.RowsOS.Any() && m_chart.RowsOS.Sum(row => row.CellsOS.Count(c => c is IConstChartWordGroup)) == 0)
 				{
 					m_chart.RowsOS.Clear();
 				}
