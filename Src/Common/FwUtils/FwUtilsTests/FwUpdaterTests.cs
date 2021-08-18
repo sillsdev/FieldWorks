@@ -35,11 +35,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var current = new FwUpdate(new Version("9.0.15"), true, Base, FwUpdate.Typ.Offline);
 
 			// SUT
-			Assert.That(FwUpdater.GetLatestNightlyPatch(current, listDoc, bucketURL), Is.Null);
+			Assert.That(FwUpdater.GetLatestUpdateFrom(current, listDoc, bucketURL), Is.Null);
 		}
 
 		[Test]
-		public void LatestPatchOnThisBase()
+		public void LatestUpdateFrom_Patch()
 		{
 			const string bucketURL = "https://test.s3.amazonaws.com/";
 			// ReSharper disable once InconsistentNaming
@@ -57,9 +57,38 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var current = new FwUpdate(new Version("9.0.15"), true, Base, FwUpdate.Typ.Offline);
 
 			// SUT
-			var result = FwUpdater.GetLatestNightlyPatch(current, listDoc, bucketURL);
+			var result = FwUpdater.GetLatestUpdateFrom(current, listDoc, bucketURL);
 
 			Assert.That(result.Version.ToString(), Is.EqualTo("9.0.21"));
+			Assert.That(result.URL, Is.EqualTo($"{bucketURL}{newestCompatibleKey}"));
+		}
+
+		[Test]
+		public void LatestUpdateFrom_Base()
+		{
+			const string bucketURL = "https://test.s3.amazonaws.com/";
+			const int base1 = 10;
+			const int base2 = 14;
+			const int arch = 64;
+			var template = string.Format(ContentsTemplate, "{0}", ushort.MaxValue);
+			var newestCompatibleKey = BaseKey("9.1.5", base2, arch, true);
+			var inBetweenBaseBuildKey = BaseKey("9.1.1", 12, arch, true);
+			var irrelevantKey = Path.ChangeExtension(BaseKey("9.3.7", 17, arch, true), "msi");
+			var bucketList = string.Format(ListBucketTemplate, string.Join(Environment.NewLine,
+				string.Format(template, Key("9.0.18", base1, arch)), // matching patch
+				string.Format(template, newestCompatibleKey), // this is the latest base
+				string.Format(template, inBetweenBaseBuildKey), // this is a later base than current, but not the latest
+				string.Format(template, Key("9.0.90", base1, 32)), // arch must match
+				string.Format(template, Key("9.1.9", base2, arch)), // this is a patch on the latest base, but cannot be applied directly to the current version
+				string.Format(template, irrelevantKey), // we can't use an MSI, because there may be updated shared libraries
+				string.Format(template, Key("9.0.21", base1, arch)))); // matching patch
+			var listDoc = XDocument.Parse(bucketList);
+			var current = new FwUpdate(new Version("9.0.15"), true, base1, FwUpdate.Typ.Offline);
+
+			// SUT
+			var result = FwUpdater.GetLatestUpdateFrom(current, listDoc, bucketURL);
+
+			Assert.That(result.Version.ToString(), Is.EqualTo("9.1.5"));
 			Assert.That(result.URL, Is.EqualTo($"{bucketURL}{newestCompatibleKey}"));
 		}
 
@@ -85,7 +114,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[TestCase("https://test.s3.amazonaws.com/", "9.0.15.1", 32, 32, false, 535000222, 511)]
 		public void Parse_S3ContentsForBase(string baseURL, string version, int baseBuild, int arch, bool isOnline, int byteSize, int mbSize)
 		{
-			var key = $"jobs/FieldWorks_Win-all-Base/{BaseFileName(version, baseBuild, arch, isOnline)}";
+			var key = BaseKey(version, baseBuild, arch, isOnline);
 			var xElt = XElement.Parse(string.Format(ContentsTemplate, key, byteSize));
 
 			var result = FwUpdater.Parse(xElt, baseURL);
@@ -131,7 +160,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[TestCase("https://downloads.languagetechnology.org/", "9.0.15.1", 32, 32, false, 535000222, 511)]
 		public void Parse_OurContentsForBase(string baseURL, string version, int baseBuild, int arch, bool isOnline, int byteSize, int mbSize)
 		{
-			var key = $"fieldworks/{version}/{BaseFileName(version, baseBuild, arch, isOnline)}";
+			var key = $"fieldworks/{version}/{baseBuild}/{BaseFileName(version, arch, isOnline)}";
 			var xElt = XElement.Parse(string.Format(ContentsTemplate, key, byteSize));
 
 			var result = FwUpdater.Parse(xElt, baseURL);
@@ -144,14 +173,29 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(mbSize, result.Size);
 		}
 
-		[TestCase("fieldworks/9.1.1/FieldWorks_9.1.1.1_Offline_x64.exe")]
-		[TestCase("fieldworks/9.1.1/NaN/FieldWorks_9.1.1.1_Online_x64.exe")]
+		[TestCase("fieldworks/9.1.1/FieldWorks9.1.1_Offline_x64.exe")]
+		[TestCase("fieldworks/9.1.1/NaN/FieldWorks_9.1.1.1.1_Online_x64.exe")]
 		public void Parse_OurContentsWithErrors_ReturnsNull(string key)
 		{
 			var xElt = XElement.Parse(string.Format(ContentsTemplate, key, 0));
 
 			var result = FwUpdater.Parse(xElt, "https://test.s3.amazonaws.com/");
 			Assert.Null(result);
+		}
+
+		[TestCase(@"C:\ProgramData\SIL\FieldWorks\DownloadedUpdates\", "9.0.15.1", 316, 64, true)]
+		[TestCase(@"C:\ProgramData\SIL\FieldWorks\DownloadedUpdates\", "9.0.15.1", 32, 32, false)]
+		public void Parse_LocalContentsForBase(string baseURL, string version, int baseBuild, int arch, bool isOnline)
+		{
+			var filename = BaseFileName(version, arch, isOnline);
+
+			var result = FwUpdater.Parse(filename, baseURL);
+
+			Assert.AreEqual(version, result.Version.ToString());
+			Assert.AreEqual($"{baseURL}{filename}", result.URL);
+			Assert.AreEqual(0, result.BaseBuild, "not important at this point");
+			Assert.AreEqual(isOnline ? FwUpdate.Typ.Online : FwUpdate.Typ.Offline, result.InstallerType);
+			Assert.AreEqual(arch == 64, result.Is64Bit, $"Arch: {arch}");
 		}
 
 		[TestCase("9.0.16", "9.0.17", true, true, 314, 314, FwUpdate.Typ.Patch, ExpectedResult = true)]
@@ -174,30 +218,49 @@ namespace SIL.FieldWorks.Common.FwUtils
 				"Null likely means something wasn't parseable, which means it isn't applicable");
 		}
 
-		// TODO: is base of higher version; (is patch on base of higher version?)
+		[TestCase("9.0.16", "9.0.17", true, true, 314, 316, FwUpdate.Typ.Online, ExpectedResult = true)]
+		[TestCase("9.0.16", "9.0.17", true, true, 314, 316, FwUpdate.Typ.Offline, ExpectedResult = false, TestName = "Online would be better")]
+		[TestCase("9.0.16", "9.0.17", true, true, 314, 314, FwUpdate.Typ.Patch, ExpectedResult = false, TestName = "Not a base")]
+		[TestCase("9.0.16", "9.0.17", true, true, 314, 320, FwUpdate.Typ.Patch, ExpectedResult = false, TestName = "Patches a different Base")]
+		[TestCase("9.0.16", "9.0.16", true, true, 314, 314, FwUpdate.Typ.Online, ExpectedResult = false, TestName = "Same version")]
+		[TestCase("9.0.16", "9.0.17", true, false, 314, 316, FwUpdate.Typ.Online, ExpectedResult = false, TestName = "Different Architecture")]
+		[TestCase("9.0.16", "9.0.17", false, false, 314, 316, FwUpdate.Typ.Online, ExpectedResult = true, TestName = "Both 32-bit")]
+		public bool IsNewerBase(string thisVer, string thatVer, bool isThis64Bit, bool isThat64Bit, int thisBase, int thatBase, FwUpdate.Typ thatType)
+		{
+			var current = new FwUpdate(new Version(thisVer), isThis64Bit, thisBase, FwUpdate.Typ.Offline);
+			var available = new FwUpdate(new Version(thatVer), isThat64Bit, thatBase, thatType);
+			return FwUpdater.IsNewerBase(current, available);
+		}
 
 		[Test]
-		public static void GetLatestDownloadedPatch_DirectoryDoesNotExist()
+		public void IsNewerBase_NullDoesNotThrow()
+		{
+			Assert.That(FwUpdater.IsNewerBase(new FwUpdate("9.0.14", true, 366, FwUpdate.Typ.Patch), null), Is.False,
+				"Null likely means something wasn't parseable, which means it isn't applicable");
+		}
+
+		[Test]
+		public static void GetLatestDownloadedUpdate_DirectoryDoesNotExist()
 		{
 			var current = new FwUpdate("9.0.15", true, 10, FwUpdate.Typ.Offline);
 			var updateDir = Path.Combine(Path.GetTempPath(), "NonExtantFwUpdatesDir");
 			Assert.That(RobustIO.DeleteDirectoryAndContents(updateDir), "this test requires a nonexistent directory");
 			// SUT
-			Assert.That(FwUpdater.GetLatestDownloadedPatch(current, updateDir), Is.Null);
+			Assert.That(FwUpdater.GetLatestDownloadedUpdate(current, updateDir), Is.Null);
 		}
 
 		[Test]
-		public static void GetLatestDownloadedPatch_NoneExist()
+		public static void GetLatestDownloadedUpdate_NoneExist()
 		{
 			var current = new FwUpdate("9.0.15", true, 10, FwUpdate.Typ.Offline);
 			using (var updateDir = new TemporaryFolder("EmptyFwUpdateDir"))
 			{
-				Assert.That(FwUpdater.GetLatestDownloadedPatch(current, updateDir.Path), Is.Null);
+				Assert.That(FwUpdater.GetLatestDownloadedUpdate(current, updateDir.Path), Is.Null);
 			}
 		}
 
 		[Test]
-		public static void GetLatestDownloadedPatch_SkipsPartialDownloads()
+		public static void GetLatestDownloadedUpdate_SkipsPartialDownloads()
 		{
 			const int baseBld = 12;
 			var current = new FwUpdate("9.0.15.1", true, baseBld, FwUpdate.Typ.Offline);
@@ -206,12 +269,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 				var updateFileName = Path.Combine(updateDir.Path, $"{PatchFileName("9.0.15.2", baseBld, 64)}.tmp");
 				File.WriteAllText(updateFileName, string.Empty);
 
-				Assert.That(FwUpdater.GetLatestDownloadedPatch(current, updateDir.Path), Is.Null);
+				Assert.That(FwUpdater.GetLatestDownloadedUpdate(current, updateDir.Path), Is.Null);
 			}
 		}
 
 		[Test]
-		public static void GetLatestDownloadedPatch_BadFilename_DoesNotThrow()
+		public static void GetLatestDownloadedUpdate_BadFilename_DoesNotThrow()
 		{
 			var current = new FwUpdate("9.0.15.1", true, 12, FwUpdate.Typ.Offline);
 			using (var updateDir = new TemporaryFolder("TestFwUpdateDir"))
@@ -219,12 +282,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 				var updateFileName = Path.Combine(updateDir.Path, $"{PatchFileName("version", 12, 64)}.tmp");
 				File.WriteAllText(updateFileName, string.Empty);
 
-				Assert.That(FwUpdater.GetLatestDownloadedPatch(current, updateDir.Path), Is.Null);
+				Assert.That(FwUpdater.GetLatestDownloadedUpdate(current, updateDir.Path), Is.Null);
 			}
 		}
 
 		[Test]
-		public static void GetLatestDownloadedPatch_DoesNotReinstallTheSameVersion()
+		public static void GetLatestDownloadedUpdate_DoesNotReinstallTheSameVersion()
 		{
 			const string version = "9.0.15.1";
 			const int baseBld = 14;
@@ -234,12 +297,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 				var updateFileName = Path.Combine(updateDir.Path, PatchFileName(version, baseBld, 64));
 				File.WriteAllText(updateFileName, string.Empty);
 
-				Assert.That(FwUpdater.GetLatestDownloadedPatch(current, updateDir.Path), Is.Null);
+				Assert.That(FwUpdater.GetLatestDownloadedUpdate(current, updateDir.Path), Is.Null);
 			}
 		}
 
 		[Test]
-		public static void GetLatestDownloadedPatch_GetsLatestPatchForThisBase()
+		public static void GetLatestDownloadedUpdate_GetsLatestPatchForThisBase()
 		{
 			const int baseBld = 14;
 			var current = new FwUpdate("9.0.15.1", true, baseBld, FwUpdate.Typ.Offline);
@@ -252,9 +315,37 @@ namespace SIL.FieldWorks.Common.FwUtils
 				File.WriteAllText(updateFileName, string.Empty);
 				// patch for a different base
 				File.WriteAllText(Path.Combine(updateDir.Path, PatchFileName("9.0.21.42", baseBld + 1, 64)), string.Empty);
+				// irrelevant file
+				var otherFileName = Path.Combine(updateDir.Path, Path.ChangeExtension(PatchFileName("9.3.5", baseBld, 64), "xml"));
+				File.WriteAllText(otherFileName, string.Empty);
 
 				// SUT
-				var result = FwUpdater.GetLatestDownloadedPatch(current, updateDir.Path);
+				var result = FwUpdater.GetLatestDownloadedUpdate(current, updateDir.Path);
+
+				Assert.That(result.URL, Is.EqualTo(updateFileName));
+				Assert.That(result.Version, Is.EqualTo(new Version(9, 0, 18, 8)));
+			}
+		}
+
+		[Test]
+		public static void GetLatestDownloadedUpdate_GetsLatestBase()
+		{
+			var current = new FwUpdate("9.0.15.1", true, 12, FwUpdate.Typ.Offline);
+			using (var updateDir = new TemporaryFolder("TestFwUpdateDir"))
+			{
+				// earlier base
+				File.WriteAllText(Path.Combine(updateDir.Path, BaseFileName("9.0.17.4")), string.Empty);
+				// latest base
+				var updateFileName = Path.Combine(updateDir.Path, BaseFileName("9.0.18.8"));
+				File.WriteAllText(updateFileName, string.Empty);
+				// patch for a different base
+				File.WriteAllText(Path.Combine(updateDir.Path, PatchFileName("9.0.21.42", 15, 64)), string.Empty);
+				// irrelevant file (although, perhaps, in the future, we will support .msi installers)
+				var otherFileName = Path.Combine(updateDir.Path, Path.ChangeExtension(BaseFileName("9.3.5"), "msi"));
+				File.WriteAllText(otherFileName, string.Empty);
+
+				// SUT
+				var result = FwUpdater.GetLatestDownloadedUpdate(current, updateDir.Path);
 
 				Assert.That(result.URL, Is.EqualTo(updateFileName));
 				Assert.That(result.Version, Is.EqualTo(new Version(9, 0, 18, 8)));
@@ -271,9 +362,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return $"FieldWorks_{version}_b{baseBuild}_x{arch}.msp";
 		}
 
-		private static string BaseFileName(string version, int baseBuild, int arch, bool isOnline)
+		private static string BaseKey(string version, int baseBuild, int arch, bool isOnline)
 		{
-			return $"{baseBuild}/FieldWorks_{version}_O{(isOnline ? "n" : "ff")}line_x{arch}.exe";
+			return $"jobs/FieldWorks-Win-all-Release-Base/{baseBuild}/{BaseFileName(version, arch, isOnline)}";
+		}
+
+		private static string BaseFileName(string version, int arch = 64, bool isOnline = true)
+		{
+			return $"FieldWorks_{version}_O{(isOnline ? "n" : "ff")}line_x{arch}.exe";
 		}
 	}
 }

@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 						throw new ArgumentOutOfRangeException();
 				}
 
-				var available = GetLatestNightlyPatch(Current, XDocument.Load(infoURL), baseURL);
+				var available = GetLatestUpdateFrom(Current, XDocument.Load(infoURL), baseURL);
 				// ENHANCE (Hasso) 2021.07: catch WebEx and try again in a minute
 				if (available == null)
 				{
@@ -144,26 +144,40 @@ namespace SIL.FieldWorks.Common.FwUtils
 			timer.Start();
 		}
 
-		public static FwUpdate GetLatestNightlyPatch(FwUpdate current, XDocument bucketContents, string bucketURL)
+		public static FwUpdate GetLatestUpdateFrom(FwUpdate current, XDocument bucketContents, string bucketURL)
 		{
 			if (bucketContents.Root == null)
 			{
 				return null;
 			}
 			bucketContents.Root.RemoveNamespaces();
-			return GetLatestPatchOn(current,
+			return GetLatestUpdateFrom(current,
 				bucketContents.Root.Elements().Where(elt => elt.Name.LocalName.Equals("Contents")).Select(elt => Parse(elt, bucketURL)));
 		}
+		#endregion check for updates
 
-		public static FwUpdate GetLatestPatchOn(FwUpdate current, IEnumerable<FwUpdate> available)
+		#region select updates
+		public static FwUpdate GetLatestUpdateFrom(FwUpdate current, IEnumerable<FwUpdate> available)
 		{
-			FwUpdate latest = null;
-			foreach (var potential in available.Where(ver => IsPatchOn(latest ?? current, ver)))
+			FwUpdate latestPatch = null, latestBase = null;
+			foreach (var potential in available)
 			{
-				latest = potential;
+				if (IsPatchOn(latestPatch ?? current, potential))
+				{
+					latestPatch = potential;
+				}
+
+				if (IsNewerBase(latestBase ?? current, potential))
+				{
+					latestBase = potential;
+				}
 			}
 
-			return latest;
+			return latestBase == null
+				? latestPatch
+				: latestPatch == null || latestBase.Version > latestPatch.Version
+					? latestBase
+					: latestPatch;
 		}
 
 		/// <param name="current">the currently-installed version</param>
@@ -175,6 +189,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 				&& potential.InstallerType == FwUpdate.Typ.Patch
 				&& potential.Is64Bit == current.Is64Bit
 				&& potential.BaseBuild == current.BaseBuild
+				&& potential.Version > current.Version;
+		}
+
+		/// <param name="current">the currently-installed version</param>
+		/// <param name="potential">a potential installer</param>
+		/// <returns>true iff potential is a(n online) base installer with a greater version than current</returns>
+		internal static bool IsNewerBase(FwUpdate current, FwUpdate potential)
+		{
+			return potential != null
+				&& potential.InstallerType == FwUpdate.Typ.Online
+				&& potential.Is64Bit == current.Is64Bit
 				&& potential.Version > current.Version;
 		}
 
@@ -219,9 +244,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 					return null;
 				}
 
-				var isBaseBuild = !Path.GetExtension(keyParts[3]).Equals(".msp");
+				var extension = Path.GetExtension(keyParts[3]);
+				if (!extension.Equals(".msp") && !extension.Equals(".exe"))
+				{
+					return null;
+				}
+
+				var isBaseBuild = !extension.Equals(".msp");
 				var baseBuild = isBaseBuild
-					? int.Parse(key.Split('/')[2])
+					? ParseBuildNumber(key)
 					: int.Parse(keyParts[2].Substring(1));
 				var installerType = isBaseBuild
 					? keyParts[2].Equals("Offline") ? FwUpdate.Typ.Offline : FwUpdate.Typ.Online
@@ -237,8 +268,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-
-		#endregion check for updates
+		/// <returns>the build number from a base build key, or 0 if the build number could not be determined</returns>
+		private static int ParseBuildNumber(string baseKey)
+		{
+			var parts = baseKey.Split('/');
+			return parts.Length > 1 && int.TryParse(parts[parts.Length - 2], out var baseBuild)
+				? baseBuild
+				: 0;
+		}
+		#endregion select updates
 
 		#region install updates
 		/// <summary>
@@ -246,7 +284,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static void InstallDownloadedUpdate()
 		{
-			var latestPatch = GetLatestDownloadedPatch(Current, FwDirectoryFinder.DownloadedUpdates);
+			var updateSettings = new FwApplicationSettings().Update;
+			if (updateSettings == null || updateSettings.Behavior == UpdateSettings.Behaviors.DoNotCheck)
+			{
+				// TODO (Hasso) 2021.08: whenever we implement check on demand, we will need to offer the update once per check (LT-20774, LT-19171)
+				return;
+			}
+			var latestPatch = GetLatestDownloadedUpdate(Current, FwDirectoryFinder.DownloadedUpdates);
 			if (latestPatch == null || DialogResult.Yes != MessageBox.Show(
 				string.Format(FwUtilsStrings.UpdateDownloadedVersionXCurrentXPromptX, latestPatch.Version, Current.Version, FwUtilsStrings.UpdateNowPrompt),
 				FwUtilsStrings.UpdateNowCaption, MessageBoxButtons.YesNo))
@@ -295,12 +339,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Returns the latest fully-downloaded patch that can be installed to upgrade this version of FW
 		/// </summary>
-		internal static FwUpdate GetLatestDownloadedPatch(FwUpdate current, string downloadsDir)
+		internal static FwUpdate GetLatestDownloadedUpdate(FwUpdate current, string downloadsDir)
 		{
 			var dirInfo = new DirectoryInfo(downloadsDir);
 			if (!dirInfo.Exists)
 				return null;
-			return GetLatestPatchOn(current, dirInfo.EnumerateFiles("*.msp")
+			return GetLatestUpdateFrom(current, dirInfo.EnumerateFiles()
 				.Select(fi => Parse(fi.Name, $"{fi.DirectoryName}{Path.DirectorySeparatorChar}")));
 		}
 		#endregion install updates
