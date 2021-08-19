@@ -65,10 +65,10 @@
 	</Target>
 
 	<!-- Download translations from Crowdin (and LDML files from SLDR) -->
-	<Target Name="downloadTranslatedFiles" Condition="'$(disableDownloads)'!='true'" DependsOnTargets="InstallOvercrowdin">
+	<Target Name="downloadTranslatedFiles" DependsOnTargets="InstallOvercrowdin">
 		<ForceDelete Files="$(L10nsDirectory)"/>
 		<MakeDir Directories="$(DownloadsDir)"/>
-		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin download -v -r2 -f $(CrowdinZip)" ContinueOnError="$(OnFailedCrowdinDownload)"/>
+		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin download -v -r2 -f $(CrowdinZip)" ContinueOnError="$(OnFailedCrowdinDownload)" Condition="'$(disableDownloads)'!='true'"/>
 		<Unzip ZipFilename="$(CrowdinZip)" ToDir="$(L10nsDirectory)"/>
 		<NormalizeLocales L10nsDirectory="$(L10nsDirectory)"/>
 		<ItemGroup>
