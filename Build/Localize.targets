@@ -34,7 +34,7 @@
 	<Target Name="InstallOvercrowdin">
 		<Message Condition="'$(disableDownloads)'!='true'" Text="disableDownloads: Skipping dotnet tool install overcrowdin."/>
 		<!-- Install overcrowdin, or update if already installed. -->
-		<Exec WorkingDirectory="$(fwrt)" Command="dotnet tool update -g overcrowdin || dotnet tool install -g overcrowdin"/>
+		<Exec WorkingDirectory="$(fwrt)" Command="dotnet tool update -g overcrowdin || dotnet tool install -g overcrowdin" Condition="'$(disableDownloads)'!='true'"/>
 	</Target>
 
 	<!-- Update localizable files in Crowdin -->
