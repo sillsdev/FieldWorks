@@ -398,8 +398,9 @@ build-package:
 		&& . environ \
 		&& cd $(BUILD_ROOT)/Build \
 		&& $(BUILD_TOOL) /t:refreshTargets /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS) \
-		&& $(BUILD_TOOL) '/t:remakefw' /property:config=$(BUILD_CONFIG) /property:Platform=$(PLATFORM) /property:packaging=yes /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS) \
-		&& ./multitry $(BUILD_TOOL) '/t:localize-binaries' /property:config=$(BUILD_CONFIG) /property:packaging=yes /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS)
+		&& $(BUILD_TOOL) /t:remakefw /property:config=$(BUILD_CONFIG) /property:Platform=$(PLATFORM) /property:packaging=yes /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS) \
+		&& ./multitry $(BUILD_TOOL) -t:localize-binaries -p:config=$(BUILD_CONFIG) -p:packaging=yes \
+		  -p:installation_prefix=$(INSTALLATION_PREFIX) -p:LcmLocalArtifactsDir=$$LcmLocalArtifactsDir $(MSBUILD_ARGS)
 	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then find "$(BUILD_ROOT)/.." || true; fi
 
 Fw-build-package-fdo: check-have-build-dependencies
@@ -418,8 +419,12 @@ RestoreNuGetPackages:
 localize-source: RestoreNuGetPackages localize-source-internal
 
 localize-source-internal:
-	. environ && \
-	(cd Build && $(BUILD_TOOL) /t:localize-source /property:config=$(BUILD_CONFIG) /property:packaging=yes /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS))
+	export LcmLocalArtifactsDir="$(BUILD_ROOT)/../liblcm/artifacts/$(BUILD_CONFIG)" \
+		&& mkdir -p $$LcmLocalArtifactsDir \
+		&& . environ \
+		&& (cd Build && $(BUILD_TOOL) /t:localize-source -p:config=$(BUILD_CONFIG) -p:packaging=yes \
+			-p:installation_prefix=$(INSTALLATION_PREFIX) -p:LcmLocalArtifactsDir=$$LcmLocalArtifactsDir \
+			$(MSBUILD_ARGS))
 	# Remove symbolic links from Output - we don't want those in the source package
 	find Output -type l -delete
 	# Copy localization files to Localizations folder so that they survive a 'clean'
