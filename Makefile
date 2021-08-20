@@ -425,7 +425,7 @@ localize-source-internal:
 	# Copy localization files to Localizations folder so that they survive a 'clean'
 	cp -a Output Localizations/
 
-LOCALIZATIONS := $(shell ls $(BUILD_ROOT)/Localizations/l10ns/*/messages.*.po | sed 's/.*messages\.\(.*\)\.po/\1/')
+LOCALIZATIONS = $(shell ls $(BUILD_ROOT)/Localizations/l10ns/*/messages.*.po | sed 's/.*messages\.\(.*\)\.po/\1/')
 
 l10n-all:
 	(cd $(BUILD_ROOT)/Build && $(BUILD_TOOL) /t:localize-binaries /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS))
