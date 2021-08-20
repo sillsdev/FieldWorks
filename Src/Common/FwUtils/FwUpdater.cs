@@ -32,7 +32,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get
 			{
 				var vip = new VersionInfoProvider(Assembly.GetEntryAssembly(), true);
-				return new FwUpdate(vip.NumericAppVersion, Environment.Is64BitProcess, vip.BaseBuildNumber, FwUpdate.Typ.Offline);
+				// Base builds can take precedence over each other by being online or offline. Selecting Patch here will prevent
+				// finding an "update" that is really the same version.
+				return new FwUpdate(vip.NumericAppVersion, Environment.Is64BitProcess, vip.BaseBuildNumber, FwUpdate.Typ.Patch);
 			}
 		}
 
@@ -194,13 +196,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// <param name="current">the currently-installed version</param>
 		/// <param name="potential">a potential installer</param>
-		/// <returns>true iff potential is a(n online) base installer with a greater version than current</returns>
+		/// <returns>>true iff potential is a base installer with a greater version than current,
+		/// or that takes precedence by being online installer of the same version as current.</returns>
 		internal static bool IsNewerBase(FwUpdate current, FwUpdate potential)
 		{
 			return potential != null
-				&& potential.InstallerType == FwUpdate.Typ.Online
+				&& (potential.InstallerType == FwUpdate.Typ.Online || potential.InstallerType == FwUpdate.Typ.Offline)
 				&& potential.Is64Bit == current.Is64Bit
-				&& potential.Version > current.Version;
+				&& (potential.Version > current.Version
+					|| potential.Version == current.Version
+						&& current.InstallerType == FwUpdate.Typ.Offline
+						&& potential.InstallerType == FwUpdate.Typ.Online);
 		}
 
 		/// <param name="elt">a &lt;Contents/&gt; element from an S3 bucket list</param>

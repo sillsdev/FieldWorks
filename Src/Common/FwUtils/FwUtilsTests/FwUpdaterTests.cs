@@ -219,7 +219,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		[TestCase("9.0.16", "9.0.17", true, true, 314, 316, FwUpdate.Typ.Online, ExpectedResult = true)]
-		[TestCase("9.0.16", "9.0.17", true, true, 314, 316, FwUpdate.Typ.Offline, ExpectedResult = false, TestName = "Online would be better")]
+		[TestCase("9.0.16", "9.0.17", true, true, 314, 316, FwUpdate.Typ.Offline, ExpectedResult = true, TestName = "Offline works, too")]
 		[TestCase("9.0.16", "9.0.17", true, true, 314, 314, FwUpdate.Typ.Patch, ExpectedResult = false, TestName = "Not a base")]
 		[TestCase("9.0.16", "9.0.17", true, true, 314, 320, FwUpdate.Typ.Patch, ExpectedResult = false, TestName = "Patches a different Base")]
 		[TestCase("9.0.16", "9.0.16", true, true, 314, 314, FwUpdate.Typ.Online, ExpectedResult = false, TestName = "Same version")]
@@ -227,9 +227,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[TestCase("9.0.16", "9.0.17", false, false, 314, 316, FwUpdate.Typ.Online, ExpectedResult = true, TestName = "Both 32-bit")]
 		public bool IsNewerBase(string thisVer, string thatVer, bool isThis64Bit, bool isThat64Bit, int thisBase, int thatBase, FwUpdate.Typ thatType)
 		{
-			var current = new FwUpdate(new Version(thisVer), isThis64Bit, thisBase, FwUpdate.Typ.Offline);
+			var current = new FwUpdate(new Version(thisVer), isThis64Bit, thisBase, FwUpdate.Typ.Patch);
 			var available = new FwUpdate(new Version(thatVer), isThat64Bit, thatBase, thatType);
 			return FwUpdater.IsNewerBase(current, available);
+		}
+
+		[TestCase("9.1.5", "9.1.5", 5, 5, FwUpdate.Typ.Patch, FwUpdate.Typ.Online, ExpectedResult = false)]
+		[TestCase("9.1.5", "9.1.5", 5, 5, FwUpdate.Typ.Patch, FwUpdate.Typ.Offline, ExpectedResult = false)]
+		[TestCase("9.1.5", "9.1.5", 5, 5, FwUpdate.Typ.Online, FwUpdate.Typ.Offline, ExpectedResult = false)]
+		[TestCase("9.1.5", "9.1.5", 5, 5, FwUpdate.Typ.Online, FwUpdate.Typ.Offline, ExpectedResult = false, TestName = "Keeps online")]
+		[TestCase("9.1.5", "9.1.5", 5, 5, FwUpdate.Typ.Offline, FwUpdate.Typ.Online, ExpectedResult = true, TestName = "Prefers online")]
+		[TestCase("9.1.5", "9.1.6", 5, 6, FwUpdate.Typ.Online, FwUpdate.Typ.Offline, ExpectedResult = true, TestName = "Prefers newer")]
+		[TestCase("9.1.6", "9.1.5", 6, 5, FwUpdate.Typ.Online, FwUpdate.Typ.Offline, ExpectedResult = false, TestName = "Prevents backsliding")]
+		public bool IsNewerBase(string ver1, string ver2, int base1, int base2, FwUpdate.Typ type1, FwUpdate.Typ type2)
+		{
+			var bestSoFar = new FwUpdate(ver1, true, base1, type1);
+			var nextCandidate = new FwUpdate(ver2, true, base2, type2);
+			return FwUpdater.IsNewerBase(bestSoFar, nextCandidate);
 		}
 
 		[Test]
