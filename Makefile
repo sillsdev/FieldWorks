@@ -383,7 +383,7 @@ ComponentsMap-clean:
 
 build-package-for-deb: Fw-build-package
 
-build-package-for-flatpak: build-package
+build-package-for-flatpak: localize-source-internal build-package
 
 check-have-build-dependencies:
 	$(BUILD_ROOT)/Build/Agent/install-deps --verify
@@ -415,7 +415,9 @@ RestoreNuGetPackages:
 
 # Begin localization section
 
-localize-source: RestoreNuGetPackages
+localize-source: RestoreNuGetPackages localize-source-internal
+
+localize-source-internal:
 	. environ && \
 	(cd Build && $(BUILD_TOOL) /t:localize-source /property:config=$(BUILD_CONFIG) /property:packaging=yes /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS))
 	# Remove symbolic links from Output - we don't want those in the source package
