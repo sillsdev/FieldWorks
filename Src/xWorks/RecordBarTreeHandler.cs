@@ -303,7 +303,7 @@ namespace SIL.FieldWorks.XWorks
 			ICmPossibility column = m_possRepo.GetObject(hvoMove);
 			using (var columnUI = new CmPossibilityUi(column))
 			{
-				if (columnUI.CheckAndReportProtectedChartColumn())
+				if (column.OwningPossibility != null && columnUI.CheckAndReportProtectedChartColumn())
 					return;
 			}
 			var owner = column.Owner;
