@@ -2,33 +2,35 @@
 <UpdateInfo>
 	<BaseUrl>https://downloads.languagetechnology.org/fieldworks/</BaseUrl>
 	<Contents>
-		<Key>469/FieldWorks_9.1.5.1_Offline_x64.exe</Key>
-		<LastModified>2021-07-07T13:47:44.000Z</LastModified>
-		<Size>517000000</Size>
+		<Key>479/FieldWorks_9.1.5.1_Offline_x64.exe</Key>
+		<LastModified>2021-08-30T16:38:00.000Z</LastModified>
+		<LCModelVersion>7000072</LCModelVersion>
+		<LIFTModelVersion>0.13_ldml3</LIFTModelVersion>
+		<FlexBridgeDataVersion>7500002</FlexBridgeDataVersion>
+		<Size>544532280</Size>
 	</Contents>
 	<Contents>
-		<Key>469/FieldWorks_9.1.5.1_Online_x64.exe</Key>
-		<LastModified>2021-07-07T13:47:44.000Z</LastModified>
-		<Size>350300000</Size>
+		<Key>479/FieldWorks_9.1.5.1_Online_x64.exe</Key>
+		<LastModified>2021-08-30T16:38:00.000Z</LastModified>
+		<LCModelVersion>7000072</LCModelVersion>
+		<LIFTModelVersion>0.13_ldml3</LIFTModelVersion>
+		<FlexBridgeDataVersion>7500002</FlexBridgeDataVersion>
+		<Size>368954112</Size>
 	</Contents>
 	<Contents>
-		<Key>469/FieldWorks_9.1.5.1_Offline_x86.exe</Key>
-		<LastModified>2021-07-07T13:47:44.000Z</LastModified>
-		<Size>487500000</Size>
+		<Key>479/FieldWorks_9.1.5.1_Offline_x86.exe</Key>
+		<LastModified>2021-08-30T16:59:00.000Z</LastModified>
+		<LCModelVersion>7000072</LCModelVersion>
+		<LIFTModelVersion>0.13_ldml3</LIFTModelVersion>
+		<FlexBridgeDataVersion>7500002</FlexBridgeDataVersion>
+		<Size>511389288</Size>
 	</Contents>
 	<Contents>
-		<Key>469/FieldWorks_9.1.5.1_Online_x86.exe</Key>
-		<LastModified>2021-07-07T13:47:44.000Z</LastModified>
-		<Size>334100000</Size>
-	</Contents>
-	<Contents>
-		<Key>FieldWorks_9.1.5.870_b469_x64.msp</Key>
-		<LastModified>2021-07-29T13:56:48.000Z</LastModified>
-		<Size>205451264</Size>
-	</Contents>
-	<Contents>
-		<Key>FieldWorks_9.1.5.872_b469_x64.msp</Key>
-		<LastModified>2021-07-29T16:55:19.000Z</LastModified>
-		<Size>205447168</Size>
+		<Key>479/FieldWorks_9.1.5.1_Online_x86.exe</Key>
+		<LastModified>2021-08-30T16:59:00.000Z</LastModified>
+		<LCModelVersion>7000072</LCModelVersion>
+		<LIFTModelVersion>0.13_ldml3</LIFTModelVersion>
+		<FlexBridgeDataVersion>7500002</FlexBridgeDataVersion>
+		<Size>350534672</Size>
 	</Contents>
 </UpdateInfo>
