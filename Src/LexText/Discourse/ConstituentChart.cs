@@ -754,7 +754,14 @@ namespace SIL.FieldWorks.Discourse
 			//If user chooses to add a new template then navigate them to the Text Constituent Chart Template list view
 			if (selection.SelectedItem as string == DiscourseStrings.ksCreateNewTemplate)
 			{
-				m_mediator.PostMessage("FollowLink", new FwLinkArgs(DiscourseStrings.ksNewTemplateLink, new Guid()));
+				MessageBoxUtils.Show(selection.Parent, DiscourseStrings.ksNewConstChartMessage, DiscourseStrings.ksNewConstChartCaption, MessageBoxButtons.OK);
+				Cache.DomainDataByFlid.BeginUndoTask("Undo Insert new Text Constituent Chart Template",
+					"Redo Insert new Text Constituent Chart Template");
+				var list = Cache.LanguageProject.DiscourseDataOA.ConstChartTemplOA;
+				var newKid = list.Services.GetInstance<ICmPossibilityFactory>().Create();
+				list.PossibilitiesOS.Add(newKid);
+				Cache.DomainDataByFlid.EndUndoTask();
+				m_mediator.PostMessage("FollowLink", new FwLinkArgs(DiscourseStrings.ksNewTemplateLink, newKid.Guid));
 				selection.SelectedItem = m_template;
 				return;
 			}

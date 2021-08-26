@@ -435,6 +435,24 @@ namespace SIL.FieldWorks.Discourse {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Information.
+        /// </summary>
+        internal static string ksNewConstChartCaption {
+            get {
+                return ResourceManager.GetString("ksNewConstChartCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You will now be taken to a new empty chart template. Give the template a name and create groups and rows. Then, click the &quot;Back&quot; button on the toolbar to return to where you were working. The new chart template will then be available for you to choose..
+        /// </summary>
+        internal static string ksNewConstChartMessage {
+            get {
+                return ResourceManager.GetString("ksNewConstChartMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to charttempEdit.
         /// </summary>
         internal static string ksNewTemplateLink {
