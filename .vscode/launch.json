@@ -89,7 +89,7 @@
       "name": "Launch FW from flatpak (to attach debugger)",
       "env": {
         // Use Flexbridge from code, rather than a package, if desired.
-        // "FLEXBRIDGEDIR": "${workspaceRoot}/../flexbridge/output/DebugMono",
+        // "FLEXBRIDGEDIR": "${workspaceRoot}/../flexbridge/output/Debug/net461",
         // Display on main display :0, or on a Xephyr :2.
         "DISPLAY": ":0",
         // Help FW+PT find FW. This could be set in environ, but because it needs set on a user's machine independently of environ, it's set here.
@@ -110,7 +110,7 @@
       "name": "Launch unit tests",
       "env": {
         // Use Flexbridge from code, rather than a package, if desired.
-        "FLEXBRIDGEDIR": "${workspaceRoot}/../flexbridge/output/DebugMono",
+        "FLEXBRIDGEDIR": "${workspaceRoot}/../flexbridge/output/Debug/net461",
         // Display on main display :0, or on a Xephyr :2.
         "DISPLAY": ":0",
         // Help FW+PT find FW. This could be set in environ, but because it needs set on a user's machine independently of environ, it's set here.
