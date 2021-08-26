@@ -1747,21 +1747,29 @@ namespace SIL.FieldWorks
 								break;
 							ObtainedProjectType obtainedProjectType;
 							projectToTry = null; // If the user cancels the send/receive, this null will result in a return to the welcome dialog.
-							// Hard to say what Form.ActiveForm is here. The splash and welcome dlgs are both gone.
-							var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm,
-								helpTopicProvider, out obtainedProjectType);
-							if (!string.IsNullOrEmpty(projectDataPathname))
+							try
 							{
-								projectToTry = new ProjectId(BackendProviderType.kXML, projectDataPathname);
-								var activeWindow = startingApp.ActiveMainWindow;
-								if (activeWindow != null)
+								// Form.ActiveForm is null here, because the splash and welcome dlgs are both gone.
+								var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm,
+									helpTopicProvider, out obtainedProjectType);
+								if (!string.IsNullOrEmpty(projectDataPathname))
 								{
-									var activeWindowInterface = (IFwMainWnd)activeWindow;
-									activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
-										obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
-										PropertyTable.SettingsGroup.LocalSettings,
-										true);
+									projectToTry = new ProjectId(BackendProviderType.kXML, projectDataPathname);
+									var activeWindow = startingApp.ActiveMainWindow;
+									if (activeWindow != null)
+									{
+										var activeWindowInterface = (IFwMainWnd)activeWindow;
+										activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
+											obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
+											PropertyTable.SettingsGroup.LocalSettings, true);
+									}
 								}
+							}
+							catch (Exception e)
+							{
+								ErrorReport.AddProperty("FLEXBRIDGEDIR", Environment.GetEnvironmentVariable("FLEXBRIDGEDIR"));
+								ErrorReport.AddProperty("FLExBridgeFolder", FwDirectoryFinder.FlexBridgeFolder);
+								ErrorReport.ReportNonFatalException(e);
 							}
 							break;
 						case WelcomeToFieldWorksDlg.ButtonPress.Import:
