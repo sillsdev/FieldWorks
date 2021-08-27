@@ -44,7 +44,6 @@ namespace SIL.FieldWorks.Discourse
 		// Popups associated with each 'MoveHere' button
 		private bool m_fContextMenuButtonsEnabled;
 		private IDsConstChart m_chart;
-		private int m_chartHvo = 0;
 		private ICmPossibility m_template;
 		private ICmPossibility[] m_allColumns;
 		private ConstituentChartLogic m_logic;
@@ -789,8 +788,7 @@ namespace SIL.FieldWorks.Discourse
 				});
 			}
 
-
-			m_chartHvo = selectedChart.Hvo;
+			PropertyTable.SetProperty(GetLastChartPropForText(RootStText.Guid), selectedChart.Guid, PropertyTable.SettingsGroup.LocalSettings, false);
 			SetRoot(m_hvoRoot);
 		}
 
@@ -889,7 +887,7 @@ namespace SIL.FieldWorks.Discourse
 		private void CreateChartInNonUndoableUOW()
 		{
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => { m_chart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(Cache.LangProject.DiscourseDataOA, RootStText, Cache.LangProject.GetDefaultChartTemplate()); });
-			m_chartHvo = m_chart.Hvo;
+			PropertyTable.SetProperty(GetLastChartPropForText(RootStText.Guid), m_chart.Guid, PropertyTable.SettingsGroup.LocalSettings, false);
 		}
 
 		private void DetectAndReportTemplateProblem()
@@ -999,17 +997,38 @@ namespace SIL.FieldWorks.Discourse
 			return m_logic.GetUnchartedWordForBookmark();
 		}
 
+		private string GetLastChartPropForText(Guid guid) => $"LastChartForText_{guid.ToString()}";
+
+		/// <summary>
+		/// Find the last chart used for this text (or the first chart available), set it in
+		/// the chart member and in the chart logic, and clean up any invalid cells
+		/// </summary>
+		/// <param name="hvoStText"></param>
 		private void FindAndCleanUpMyChart(int hvoStText)
 		{
-			foreach (var chart in Cache.LangProject.DiscourseDataOA.ChartsOC.Cast<IDsConstChart>().Where(chart => chart.BasedOnRA != null && chart.BasedOnRA.Hvo == hvoStText))
+			IDsConstChart chartToClean = null;
+			// Try to retrieve the last chart used for this text from the property table
+			var textGuid = Cache.ServiceLocator.GetObject(hvoStText).Guid;
+			if(PropertyTable.TryGetValue(GetLastChartPropForText(textGuid), out Guid chartGuid))
 			{
-				m_chart = chart;
-				m_logic.Chart = m_chart;
-				m_logic.CleanupInvalidChartCells();
-				//If a template change requests a specific chart, then use that one, otherwise use the last active chart
-				if (m_chart.Hvo == m_chartHvo)
-					break;
+				if (Cache.ServiceLocator.ObjectRepository.TryGetObject(chartGuid, out var chart))
+				{
+					if (chart is IDsConstChart constChart)
+					{
+						chartToClean = constChart;
+					}
+				}
+				// if that chart no longer exists clear it from the prop table
+				if (chartToClean == null)
+				{
+					PropertyTable.RemoveProperty(GetLastChartPropForText(textGuid));
+				}
 			}
+			// Use the retrieved last chart, or pick the first valid chart for this text
+			m_logic.Chart = m_chart = chartToClean ?? Cache.LangProject.DiscourseDataOA.ChartsOC
+				.Cast<IDsConstChart>()
+				.FirstOrDefault(chart => chart.BasedOnRA != null && chart.BasedOnRA.Hvo == hvoStText);
+			m_logic.CleanupInvalidChartCells();
 		}
 
 		/// <summary>
