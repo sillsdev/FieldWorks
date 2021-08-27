@@ -198,20 +198,31 @@ If you want to use Paratext with this project, make a change in this project (so
   <data name="UpdateNowCaption" xml:space="preserve">
     <value>Update FieldWorks Now?</value>
   </data>
-  <data name="UpdateDownloadedVersionXCurrentXPromptX" xml:space="preserve">
-    <value>A FieldWorks update has been downloaded (version {0}; you currently have {1}).
-
-{2}</value>
-    <comment>{0} is the new version of FieldWorks; {1} is the currently-installed version;
-    {2} is either "Please restart FieldWorks at your convenience" or "Do you want to install it now?"</comment>
+  <data name="UpdateDownloadedVersionYCurrentX" xml:space="preserve">
+    <value>A FieldWorks update has been downloaded (version {1}; you currently have {0}).</value>
+    <comment>{1} is the version number for the update; {0} is the currently-installed version number.
+    This is the first part of a message. This part is followed by messages about model version changes (if there are any).
+    Finally, the message will end with either "To install this update, restart FieldWorks" or "Do you want to install it now?"</comment>
+  </data>
+  <data name="ModelChangeLCM" xml:space="preserve">
+    <value>This update contains a FieldWorks model change. After installing it, you will not be able to open your projects with older versions of FieldWorks. If you are using Send/Receive with other FieldWorks users, everyone will need to update so you can continue to see each other's changes.</value>
+    <comment>This is part of the message that begins "A FieldWorks update has been downloaded"</comment>
+  </data>
+  <data name="ModelChangeLIFT" xml:space="preserve">
+    <value>This update contains a LIFT or LDML model change. If you are using Send/Receive with WeSay, WeSay users will need to update so you can continue to see each other's changes.</value>
+    <comment>This is part of the message that begins "A FieldWorks update has been downloaded"</comment>
+  </data>
+  <data name="ModelChangeFBButNotFW" xml:space="preserve">
+    <value>This update contains a Send/Receive model change. If you are using Send/Receive with other FieldWorks users, everyone will need to update so you can continue to see each other's changes. (You will still be able to open your projects in FieldWorks {0}.)</value>
+    <comment>This is part of the message that begins "A FieldWorks update has been downloaded". {0} is the currently-installed FieldWorks version number.</comment>
   </data>
   <data name="RestartToUpdatePrompt" xml:space="preserve">
-    <value>To install it, restart FieldWorks at your convenience.</value>
-    <comment>This is the second half of a message that begins "A FieldWorks update has been downloaded."</comment>
+    <value>To install this update, restart FieldWorks at your convenience.</value>
+    <comment>This is the final part of the message that begins "A FieldWorks update has been downloaded."</comment>
   </data>
   <data name="UpdateNowPrompt" xml:space="preserve">
     <value>Do you want to install it now? (You will need to grant permission to the installer.)</value>
-    <comment>This is the second half of a message that begins "A FieldWorks update has been downloaded."</comment>
+    <comment>This is the final part of the message that begins "A FieldWorks update has been downloaded."</comment>
   </data>
   <data name="CouldNotUpdateAutomaticallyCaption" xml:space="preserve">
     <value>Could Not Update Automatically</value>

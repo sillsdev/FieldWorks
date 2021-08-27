@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class FwUtilsStrings {
@@ -315,6 +315,33 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This update contains a Send/Receive model change. If you are using Send/Receive with other FieldWorks users, everyone will need to update so you can continue to see each other&apos;s changes. (You will still be able to open your projects in FieldWorks {0}.).
+        /// </summary>
+        internal static string ModelChangeFBButNotFW {
+            get {
+                return ResourceManager.GetString("ModelChangeFBButNotFW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This update contains a FieldWorks model change. After installing it, you will not be able to open your projects with older versions of FieldWorks. If you are using Send/Receive with other FieldWorks users, everyone will need to update so you can continue to see each other&apos;s changes..
+        /// </summary>
+        internal static string ModelChangeLCM {
+            get {
+                return ResourceManager.GetString("ModelChangeLCM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This update contains a LIFT or LDML model change. If you are using Send/Receive with WeSay, WeSay users will need to update so you can continue to see each other&apos;s changes..
+        /// </summary>
+        internal static string ModelChangeLIFT {
+            get {
+                return ResourceManager.GetString("ModelChangeLIFT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Restart to Update.
         /// </summary>
         internal static string RestartToUpdateCaption {
@@ -324,7 +351,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to To install it, restart FieldWorks at your convenience..
+        ///   Looks up a localized string similar to To install this update, restart FieldWorks at your convenience..
         /// </summary>
         internal static string RestartToUpdatePrompt {
             get {
@@ -333,13 +360,11 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A FieldWorks update has been downloaded (version {0}; you currently have {1}).
-        ///
-        ///{2}.
+        ///   Looks up a localized string similar to A FieldWorks update has been downloaded (version {1}; you currently have {0})..
         /// </summary>
-        internal static string UpdateDownloadedVersionXCurrentXPromptX {
+        internal static string UpdateDownloadedVersionYCurrentX {
             get {
-                return ResourceManager.GetString("UpdateDownloadedVersionXCurrentXPromptX", resourceCulture);
+                return ResourceManager.GetString("UpdateDownloadedVersionYCurrentX", resourceCulture);
             }
         }
         

@@ -27,22 +27,35 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 		private const uint BytesPerMiB = 1048576;
 
-		private static FwUpdate Current
-		{
-			get
-			{
-				var vip = new VersionInfoProvider(Assembly.GetEntryAssembly(), true);
-				// Base builds can take precedence over each other by being online or offline. Selecting Patch here will prevent
-				// finding an "update" that is really the same version.
-				return new FwUpdate(vip.NumericAppVersion, Environment.Is64BitProcess, vip.BaseBuildNumber, FwUpdate.Typ.Patch);
-			}
-		}
+		private static FwUpdate Current { get; }
+
+		/// <summary>
+		/// The local copy of the selected channel's UpdateInfo.xml, downloaded when checking and kept until we determine FLEx is up to date or until
+		/// the user decides whether to install the update. Used to decide whether to offer to install downloaded updates at startup and to determine
+		/// if downloaded updates contain model changes.
+		/// </summary>
+		internal static string LocalUpdateInfoFilePath { get; }
 
 		///// <remarks>so we can check daily even if the user never closes FW. REVIEW (Hasso) 2021.07: would a timer be better?
 		///// If we check daily, and we download two updates before the user restarts (unlikely!), should we notify again?</remarks>
 		//private static DateTime s_lastCheck;
 
 		// TODO (Hasso) 2021.07: bool or RESTClient to track whether we're presently checking or downloading; clear in `finally`
+
+		static FwUpdater()
+		{
+			// Entry Assembly is null during unit tests, which also supply their own "current" version info.
+			var assembly = Assembly.GetEntryAssembly();
+			if (assembly != null)
+			{
+				var vip = new VersionInfoProvider(assembly, true);
+				// Base builds can take precedence over each other by being online or offline. Selecting Patch here will prevent
+				// finding an "update" that is really the same version.
+				Current = new FwUpdate(vip.NumericAppVersion, Environment.Is64BitProcess, vip.BaseBuildNumber, FwUpdate.Typ.Patch,
+					0, LcmCache.ModelVersion.ToString(), FLExBridgeHelper.LiftVersion, FLExBridgeHelper.FlexBridgeDataVersion);
+			}
+			LocalUpdateInfoFilePath = Path.Combine(FwDirectoryFinder.DownloadedUpdates, "LastCheckUpdateInfo.xml");
+		}
 
 		#region check for updates
 		/// <summary>
@@ -96,10 +109,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 						throw new ArgumentOutOfRangeException();
 				}
 
-				var available = GetLatestUpdateFrom(Current, XDocument.Load(infoURL), baseURL);
-				// ENHANCE (Hasso) 2021.07: catch WebEx and try again in a minute
+				if (!new DownloadClient().DownloadFile(infoURL, LocalUpdateInfoFilePath))
+				{
+					return $"Failed to download update info from {infoURL}";
+				}
+				var available = GetLatestUpdateFrom(Current, XDocument.Load(LocalUpdateInfoFilePath), baseURL);
 				if (available == null)
 				{
+					File.Delete(LocalUpdateInfoFilePath);
 					return "Check complete; already up to date";
 				}
 				Logger.WriteMinorEvent($"Update found at {available.URL}");
@@ -120,8 +137,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					return "Update found, but failed to download";
 				}
 
-				NotifyUserOnIdle(ui,
-					string.Format(FwUtilsStrings.UpdateDownloadedVersionXCurrentXPromptX, available.Version, Current.Version, FwUtilsStrings.RestartToUpdatePrompt),
+				NotifyUserOnIdle(ui, GetUpdateMessage(Current, available, FwUtilsStrings.RestartToUpdatePrompt),
 					FwUtilsStrings.RestartToUpdateCaption);
 
 				return $"Update downloaded to {localFile}";
@@ -153,8 +169,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return null;
 			}
 			bucketContents.Root.RemoveNamespaces();
-			return GetLatestUpdateFrom(current,
-				bucketContents.Root.Elements().Where(elt => elt.Name.LocalName.Equals("Contents")).Select(elt => Parse(elt, bucketURL)));
+			return GetLatestUpdateFrom(current, bucketContents.Root.Elements("Contents").Select(elt => Parse(elt, bucketURL)));
 		}
 		#endregion check for updates
 
@@ -216,11 +231,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			try
 			{
 				var update = Parse(elt.Element("Key")?.Value, baseURL);
-				if (update != null && ulong.TryParse(elt.Element("Size")?.Value, out var byteSize))
+				if (update != null)
 				{
-					// round up to the next MB
-					var size = (int)((byteSize + BytesPerMiB - 1) / BytesPerMiB);
-					update = new FwUpdate(update.Version, update.Is64Bit, update.BaseBuild, update.InstallerType, size, update.URL);
+					update = AddSizeAndModelVersions(update, elt);
 				}
 
 				return update;
@@ -233,8 +246,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		/// <param name="key"></param>
-		/// <param name="baseURI">the https:// URL of the bucket, with the trailing /</param>
+		/// <returns>a new FwUpdate, cloned from <c>update</c>, with size and model version information from <c>elt</c></returns>
+		internal static FwUpdate AddSizeAndModelVersions(FwUpdate update, XElement elt)
+		{
+			// round up to the next MB
+			var size = ulong.TryParse(elt.Element("Size")?.Value, out var byteSize)
+				? (int)((byteSize + BytesPerMiB - 1) / BytesPerMiB)
+				: update.Size;
+			var lcmVersion = elt.Element("LCModelVersion")?.Value;
+			var liftVersion = elt.Element("LIFTModelVersion")?.Value;
+			var fbDataVersion = elt.Element("FlexBridgeDataVersion")?.Value;
+			update = new FwUpdate(update, size, lcmVersion, liftVersion, fbDataVersion);
+			return update;
+		}
+
+		/// <param name="key">the filename and possibly part or all of the URI</param>
+		/// <param name="baseURI">the https:// URL of the bucket, with the trailing '/'. Full URI = baseURI + key</param>
 		internal static FwUpdate Parse(string key, string baseURI)
 		{
 			try
@@ -284,21 +311,43 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 		#endregion select updates
 
+		internal static string GetUpdateMessage(FwUpdate current, FwUpdate update, string actionPrompt)
+		{
+			var messageParts = new List<string>(4) { FwUtilsStrings.UpdateDownloadedVersionYCurrentX };
+			if (HasVersionChanged(current.LCModelVersion, update.LCModelVersion))
+			{
+				messageParts.Add(FwUtilsStrings.ModelChangeLCM);
+			}
+			// If FLEx Bridge is not installed, the current FB data version will be null, and users won't care about S/R compatibility
+			else if (current.FlexBridgeDataVersion != null && HasVersionChanged(current.FlexBridgeDataVersion, update.FlexBridgeDataVersion))
+			{
+				messageParts.Add(FwUtilsStrings.ModelChangeFBButNotFW);
+			}
+
+			if (HasVersionChanged(current.LIFTModelVersion, update.LIFTModelVersion))
+			{
+				messageParts.Add(FwUtilsStrings.ModelChangeLIFT);
+			}
+			messageParts.Add(actionPrompt);
+			return string.Format(string.Join($"{Environment.NewLine}{Environment.NewLine}", messageParts), current.Version, update.Version);
+		}
+
+		private static bool HasVersionChanged(string curVer, string newVer)
+		{
+			// If the new version is null, we didn't read it from the XML (Nightly downloads, or didn't find a matching XML entry
+			// for a file that is already downloaded). Don't warn users or testers about something that's probably not true.
+			return !newVer?.Equals(curVer) ?? false;
+		}
+
 		#region install updates
 		/// <summary>
 		/// If an update has been downloaded and the user wants to, install it
 		/// </summary>
 		public static void InstallDownloadedUpdate()
 		{
-			var updateSettings = new FwApplicationSettings().Update;
-			if (updateSettings == null || updateSettings.Behavior == UpdateSettings.Behaviors.DoNotCheck)
-			{
-				// TODO (Hasso) 2021.08: whenever we implement check on demand, we will need to offer the update once per check (LT-20774, LT-19171)
-				return;
-			}
-			var latestPatch = GetLatestDownloadedUpdate(Current, FwDirectoryFinder.DownloadedUpdates);
+			var latestPatch = GetLatestDownloadedUpdate(Current);
 			if (latestPatch == null || DialogResult.Yes != MessageBox.Show(
-				string.Format(FwUtilsStrings.UpdateDownloadedVersionXCurrentXPromptX, latestPatch.Version, Current.Version, FwUtilsStrings.UpdateNowPrompt),
+				GetUpdateMessage(Current, latestPatch, FwUtilsStrings.UpdateNowPrompt),
 				FwUtilsStrings.UpdateNowCaption, MessageBoxButtons.YesNo))
 			{
 				return;
@@ -343,15 +392,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// Returns the latest fully-downloaded patch that can be installed to upgrade this version of FW
+		/// Returns the latest fully-downloaded update that can be installed directly on this version of FW.
+		/// Returns null if none is found, or if there is no UpdateInfo.xml present.
 		/// </summary>
-		internal static FwUpdate GetLatestDownloadedUpdate(FwUpdate current, string downloadsDir)
+		internal static FwUpdate GetLatestDownloadedUpdate(FwUpdate current)
 		{
-			var dirInfo = new DirectoryInfo(downloadsDir);
-			if (!dirInfo.Exists)
+			if (!FileUtils.FileExists(LocalUpdateInfoFilePath))
 				return null;
-			return GetLatestUpdateFrom(current, dirInfo.EnumerateFiles()
-				.Select(fi => Parse(fi.Name, $"{fi.DirectoryName}{Path.DirectorySeparatorChar}")));
+			var result = GetLatestUpdateFrom(current,
+				FileUtils.GetFilesInDirectory(FwDirectoryFinder.DownloadedUpdates).Select(file => Parse(file, string.Empty)));
+			// Deleting the info file ensures that we don't offer to install updates until after the next check (LT-20774)
+			FileUtils.Delete(LocalUpdateInfoFilePath);
+			return result;
 		}
 		#endregion install updates
 	}
@@ -378,22 +430,44 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public int Size { get; }
 
 		/// <summary/>
+		// ReSharper disable once InconsistentNaming
+		public string LCModelVersion { get; }
+
+		/// <summary/>
+		public string LIFTModelVersion { get; }
+
+		/// <summary/>
+		public string FlexBridgeDataVersion { get; }
+
+		/// <summary/>
 		public string URL { get; }
 
 		/// <summary/>
-		public FwUpdate(string version, bool is64Bit, int baseBuild, Typ installerType, int size = -1, string url = null)
-			: this(new Version(version), is64Bit, baseBuild, installerType, size, url)
+		internal FwUpdate(FwUpdate toCopy, int size, string lcmVersion, string liftModelVersion, string flexBridgeDataVersion)
+			: this(toCopy.Version, toCopy.Is64Bit, toCopy.BaseBuild, toCopy.InstallerType, size,
+				lcmVersion, liftModelVersion, flexBridgeDataVersion, toCopy.URL)
 		{
 		}
 
 		/// <summary/>
-		public FwUpdate(Version version, bool is64Bit, int baseBuild, Typ installerType, int size = 0, string url = null)
+		public FwUpdate(string version, bool is64Bit, int baseBuild, Typ installerType, int size = 0,
+			string lcmVersion = null, string liftModelVersion = null, string flexBridgeDataVersion = null, string url = null)
+			: this(new Version(version), is64Bit, baseBuild, installerType, size, lcmVersion, liftModelVersion, flexBridgeDataVersion, url)
+		{
+		}
+
+		/// <summary/>
+		public FwUpdate(Version version, bool is64Bit, int baseBuild, Typ installerType, int size = 0,
+			string lcmVersion = null, string liftModelVersion = null, string flexBridgeDataVersion = null, string url = null)
 		{
 			Version = version;
 			Is64Bit = is64Bit;
 			BaseBuild = baseBuild;
 			InstallerType = installerType;
 			Size = size;
+			LCModelVersion = lcmVersion;
+			LIFTModelVersion = liftModelVersion;
+			FlexBridgeDataVersion = flexBridgeDataVersion;
 			URL = url;
 		}
 	}

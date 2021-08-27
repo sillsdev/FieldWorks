@@ -201,6 +201,7 @@
     <Compile Include="Attributes\SuppressErrorBeepsAttribute.cs" />
     <Compile Include="CharEnumeratorForByteArrayTests.cs" />
     <Compile Include="DebugProcsTests.cs" />
+    <Compile Include="FLExBridgeHelperTests.cs" />
     <Compile Include="FwApplicationSettingsTests.cs" />
     <Compile Include="FwUpdaterTests.cs" />
     <Compile Include="InterfacesTests.cs" />

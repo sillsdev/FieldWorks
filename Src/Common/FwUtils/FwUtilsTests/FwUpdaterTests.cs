@@ -4,10 +4,11 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Xml.Linq;
 using NUnit.Framework;
-using SIL.IO;
-using SIL.TestUtilities;
+using SIL.LCModel.Utils;
+using FileUtils = SIL.LCModel.Utils.FileUtils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -17,13 +18,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 		private const string ListBucketTemplate = @"<ListBucketResult xmlns=""http://s3.amazonaws.com/doc/2006-03-01/"">{0}</ListBucketResult>";
 
-		private const string ContentsTemplate = @"<Contents>
-	<Key>{0}</Key>
-	<LastModified>2020-12-13T04:46:57.000Z</LastModified>
-	<ETag>""3a474435577458c18cdc98e1b9336ce1-42""</ETag>
-	<Size>{1}</Size>
-	<StorageClass>STANDARD</StorageClass>
-</Contents>";
+		[TestFixtureTearDown]
+		public void TearDown()
+		{
+			FileUtils.Manager.Reset();
+		}
 
 		[Test]
 		public void EmptyBucket_DoesNotThrow()
@@ -45,7 +44,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// ReSharper disable once InconsistentNaming
 			const int Base = 10;
 			const int arch = 64;
-			var template = string.Format(ContentsTemplate, "{0}", ushort.MaxValue);
+			var template = Contents("{0}", ushort.MaxValue);
 			var newestCompatibleKey = Key("9.0.21", Base, arch);
 			var bucketList = string.Format(ListBucketTemplate, string.Join(Environment.NewLine,
 				string.Format(template, Key("9.0.40", 14, arch)), // base must match
@@ -70,7 +69,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			const int base1 = 10;
 			const int base2 = 14;
 			const int arch = 64;
-			var template = string.Format(ContentsTemplate, "{0}", ushort.MaxValue);
+			var template = Contents("{0}", ushort.MaxValue);
 			var newestCompatibleKey = BaseKey("9.1.5", base2, arch, true);
 			var inBetweenBaseBuildKey = BaseKey("9.1.1", 12, arch, true);
 			var irrelevantKey = Path.ChangeExtension(BaseKey("9.3.7", 17, arch, true), "msi");
@@ -94,11 +93,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		[TestCase("https://test-bucket.s3.amazonaws.com/", "9.0.14.10", 367, 64, 217055232, 207)]
 		[TestCase("https://bucket-test.s3.amazonaws.com/", "9.0.15.85", 365, 32, 217055233, 208)]
-		[TestCase("https://test-bucket.s3.amazonaws.com/", "9.0.14.10", 367, 64, -23456789, -1)]
+		[TestCase("https://test-bucket.s3.amazonaws.com/", "9.0.14.10", 367, 64, -23456789, 0)]
 		public void Parse_S3ContentsForPatch(string baseURL, string version, int baseBuild, int arch, int byteSize, int mbSize)
 		{
 			var key = Key(version, baseBuild, arch);
-			var xElt = XElement.Parse(string.Format(ContentsTemplate, key, byteSize));
+			var xElt = XElement.Parse(Contents(key, byteSize));
 
 			var result = FwUpdater.Parse(xElt, baseURL);
 
@@ -115,7 +114,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void Parse_S3ContentsForBase(string baseURL, string version, int baseBuild, int arch, bool isOnline, int byteSize, int mbSize)
 		{
 			var key = BaseKey(version, baseBuild, arch, isOnline);
-			var xElt = XElement.Parse(string.Format(ContentsTemplate, key, byteSize));
+			var xElt = XElement.Parse(Contents(key, byteSize));
 
 			var result = FwUpdater.Parse(xElt, baseURL);
 
@@ -132,7 +131,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[TestCase("jobs/FieldWorks-Win-all-Release-Patch/761/FieldWorks_9.1.1.761_x64.msp")]
 		public void Parse_S3ContentsWithErrors_ReturnsNull(string key)
 		{
-			var xElt = XElement.Parse(string.Format(ContentsTemplate, key, 0));
+			var xElt = XElement.Parse(Contents(key));
 
 			var result = FwUpdater.Parse(xElt, "https://test.s3.amazonaws.com/");
 			Assert.Null(result);
@@ -140,11 +139,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		[TestCase("https://downloads.languagetechnology.org/", "9.0.14.10", 367, 64, 217055232, 207)]
 		[TestCase("https://downloads.languagetechnology.org/", "9.0.15.85", 365, 32, 217055233, 208)]
-		[TestCase("https://downloads.languagetechnology.org/", "9.0.14.10", 367, 64, -23456789, -1)]
+		[TestCase("https://downloads.languagetechnology.org/", "9.0.14.10", 367, 64, -23456789, 0)]
 		public void Parse_OurContentsForPatch(string baseURL, string version, int baseBuild, int arch, int byteSize, int mbSize)
 		{
 			var key = $"fieldworks/{version}/{PatchFileName(version, baseBuild, arch)}";
-			var xElt = XElement.Parse(string.Format(ContentsTemplate, key, byteSize));
+			var xElt = XElement.Parse(Contents(key, byteSize));
 
 			var result = FwUpdater.Parse(xElt, baseURL);
 
@@ -161,7 +160,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void Parse_OurContentsForBase(string baseURL, string version, int baseBuild, int arch, bool isOnline, int byteSize, int mbSize)
 		{
 			var key = $"fieldworks/{version}/{baseBuild}/{BaseFileName(version, arch, isOnline)}";
-			var xElt = XElement.Parse(string.Format(ContentsTemplate, key, byteSize));
+			var xElt = XElement.Parse(Contents(key, byteSize));
 
 			var result = FwUpdater.Parse(xElt, baseURL);
 
@@ -177,7 +176,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[TestCase("fieldworks/9.1.1/NaN/FieldWorks_9.1.1.1.1_Online_x64.exe")]
 		public void Parse_OurContentsWithErrors_ReturnsNull(string key)
 		{
-			var xElt = XElement.Parse(string.Format(ContentsTemplate, key, 0));
+			var xElt = XElement.Parse(Contents(key));
 
 			var result = FwUpdater.Parse(xElt, "https://test.s3.amazonaws.com/");
 			Assert.Null(result);
@@ -196,6 +195,98 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(0, result.BaseBuild, "not important at this point");
 			Assert.AreEqual(isOnline ? FwUpdate.Typ.Online : FwUpdate.Typ.Offline, result.InstallerType);
 			Assert.AreEqual(arch == 64, result.Is64Bit, $"Arch: {arch}");
+		}
+
+		[TestCase("7000072", "0.13_ldml3", "7500002")]
+		[TestCase("7000076", "2.0_ldml4", "75000002")]
+		public static void Parse_ModelVersions(string lcm, string lift, string flexBridge)
+		{
+			var xElt = XElement.Parse(Contents(Key("9.8", 0, 8), modelVersion: lcm, liftModelVersion: lift, flexBridgeDataVersion: flexBridge));
+
+			var result = FwUpdater.Parse(xElt, "/");
+
+			Assert.That(result.LCModelVersion, Is.EqualTo(lcm));
+			Assert.That(result.LIFTModelVersion, Is.EqualTo(lift));
+			Assert.That(result.FlexBridgeDataVersion, Is.EqualTo(flexBridge));
+		}
+
+		[Test]
+		public static void Parse_Sparse()
+		{
+			const string version = "9.3.7.0";
+			const int baseBld = 42;
+			var key = Key(version, baseBld, 64);
+			const string baseUrl = "/what/ever/";
+			var xElt = XElement.Parse($"<Contents><Key>{key}</Key></Contents>");
+
+			var result = FwUpdater.Parse(xElt, baseUrl);
+
+			Assert.That(result.Version.ToString(), Is.EqualTo(version));
+			Assert.That(result.BaseBuild, Is.EqualTo(baseBld));
+			Assert.That(result.Is64Bit, Is.True);
+			Assert.That(result.URL, Is.EqualTo($"{baseUrl}{key}"));
+			Assert.That(result.Size, Is.EqualTo(0));
+			Assert.That(result.LCModelVersion, Is.Null);
+			Assert.That(result.LIFTModelVersion, Is.Null);
+			Assert.That(result.FlexBridgeDataVersion, Is.Null);
+		}
+
+		[Test]
+		public static void AddSizeAndModelVersions()
+		{
+			const int size = 1048900;
+			const string lcm = "7000070";
+			const string lift = "0.12";
+			const string flexBridge = "7500";
+			var before = new FwUpdate("9.1.8", false, 44, FwUpdate.Typ.Online, url: "https://example.com");
+			var xElt = XElement.Parse(Contents("not checked in SUT", size,
+				modelVersion: lcm, liftModelVersion: lift, flexBridgeDataVersion: flexBridge));
+
+			var result = FwUpdater.AddSizeAndModelVersions(before, xElt);
+
+			Assert.That(result, Is.Not.SameAs(before));
+			Assert.That(result.Version, Is.EqualTo(before.Version));
+			Assert.That(result.Is64Bit, Is.EqualTo(before.Is64Bit));
+			Assert.That(result.BaseBuild, Is.EqualTo(before.BaseBuild));
+			Assert.That(result.URL, Is.EqualTo(before.URL));
+			Assert.That(result.InstallerType, Is.EqualTo(before.InstallerType));
+			Assert.That(result.Size, Is.EqualTo(2));
+			Assert.That(result.LCModelVersion, Is.EqualTo(lcm));
+			Assert.That(result.LIFTModelVersion, Is.EqualTo(lift));
+			Assert.That(result.FlexBridgeDataVersion, Is.EqualTo(flexBridge));
+		}
+
+		[TestCase("7000072", "7000072", "0.13_ldml3", "0.13_ldml3", "7500002", "7600042", false, false, true, TestName = "new FLEx Bridge")]
+		[TestCase("7000072", "7000076", "0.13_ldml3", "0.13_ldml3", "7500002", "7500002", true, false, false, TestName = "new LCM")]
+		[TestCase("7000072", "7000076", "0.13_ldml3", "0.13_ldml3", "7500002", "7600042", true, false, false, TestName = "new LCM and FLEx Bridge")]
+		[TestCase("7000072", "7000076", "0.13_ldml3", "1.13_ldml3", "7500002", "7500002", true, true, false, TestName = "new LCM and LIFT")]
+		[TestCase("7000072", "7000072", "0.13_ldml3", "1.13_ldml3", "7500002", "7500002", false, true, false, TestName = "new LIFT")]
+		[TestCase("7000072", "7000072", "0.13_ldml3", "1.13_ldml3", "7500002", "7500042", false, true, true, TestName = "new LIFT and FLEx Bridge")]
+		[TestCase("7000072", "7000076", "0.13_ldml3", "1.13_ldml3", "7500002", "7500042", true, true, false, TestName = "new everything")]
+		[TestCase("7000072", "7000072", "0.13_ldml3", "0.13_ldml3", null, "7500002", false, false, false, TestName = "no FLEx Bridge installed")]
+		[TestCase("7000072", null, "0.13_ldml3", null, "7500002", null, false, false, false, TestName = "no new versions found")]
+		[TestCase("7000072", "7000072", "0.13_ldml3", "0.13_ldml3", "7500002", "7500002", false, false, false, TestName = "no change")]
+		public static void GetUpdateMessage(string curLCM, string newLCM, string curLIFT, string newLIFT, string curSR, string newSR,
+			bool wantLCMMsg, bool wantLIFTMsg, bool wantSRMsg)
+		{
+			const string curVer = "9.0.14";
+			const string newVer = "9.3.7";
+			const string prompt = "Do it now!";
+			var current = new FwUpdate(curVer, true, 2, FwUpdate.Typ.Patch, 0, curLCM, curLIFT, curSR);
+			var available = new FwUpdate(newVer, true, 2, FwUpdate.Typ.Patch, 0, newLCM, newLIFT, newSR);
+
+			var result = FwUpdater.GetUpdateMessage(current, available, prompt);
+
+			var versionMsg = string.Format(FwUtilsStrings.UpdateDownloadedVersionYCurrentX, curVer, newVer);
+			var lcmMsg = FwUtilsStrings.ModelChangeLCM;
+			var liftMsg = FwUtilsStrings.ModelChangeLIFT;
+			var srMsg = string.Format(FwUtilsStrings.ModelChangeFBButNotFW, curVer);
+
+			Assert.That(result, Is.StringStarting(versionMsg));
+			Assert.That(result, Is.StringEnding(prompt));
+			Assert.That(result, wantLCMMsg ? Is.StringContaining(lcmMsg) : Is.Not.StringContaining(lcmMsg));
+			Assert.That(result, wantLIFTMsg ? Is.StringContaining(liftMsg) : Is.Not.StringContaining(liftMsg));
+			Assert.That(result, wantSRMsg ? Is.StringContaining(srMsg) : Is.Not.StringContaining(srMsg));
 		}
 
 		[TestCase("9.0.16", "9.0.17", true, true, 314, 314, FwUpdate.Typ.Patch, ExpectedResult = true)]
@@ -257,20 +348,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static void GetLatestDownloadedUpdate_DirectoryDoesNotExist()
 		{
 			var current = new FwUpdate("9.0.15", true, 10, FwUpdate.Typ.Offline);
-			var updateDir = Path.Combine(Path.GetTempPath(), "NonExtantFwUpdatesDir");
-			Assert.That(RobustIO.DeleteDirectoryAndContents(updateDir), "this test requires a nonexistent directory");
+			FileUtils.Manager.SetFileAdapter(new MockFileOS());
 			// SUT
-			Assert.That(FwUpdater.GetLatestDownloadedUpdate(current, updateDir), Is.Null);
+			Assert.That(FwUpdater.GetLatestDownloadedUpdate(current), Is.Null);
 		}
 
 		[Test]
 		public static void GetLatestDownloadedUpdate_NoneExist()
 		{
 			var current = new FwUpdate("9.0.15", true, 10, FwUpdate.Typ.Offline);
-			using (var updateDir = new TemporaryFolder("EmptyFwUpdateDir"))
-			{
-				Assert.That(FwUpdater.GetLatestDownloadedUpdate(current, updateDir.Path), Is.Null);
-			}
+			var mockFileOS = new MockFileOS();
+			FileUtils.Manager.SetFileAdapter(mockFileOS);
+			mockFileOS.ExistingDirectories.Add(FwDirectoryFinder.DownloadedUpdates);
+			Assert.That(FwUpdater.GetLatestDownloadedUpdate(current), Is.Null);
 		}
 
 		[Test]
@@ -278,26 +368,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			const int baseBld = 12;
 			var current = new FwUpdate("9.0.15.1", true, baseBld, FwUpdate.Typ.Offline);
-			using (var updateDir = new TemporaryFolder("TestFwUpdateDir"))
-			{
-				var updateFileName = Path.Combine(updateDir.Path, $"{PatchFileName("9.0.15.2", baseBld, 64)}.tmp");
-				File.WriteAllText(updateFileName, string.Empty);
+			var updateDir = FwDirectoryFinder.DownloadedUpdates;
+			var mockFileOS = new BetterMockFileOS();
+			FileUtils.Manager.SetFileAdapter(mockFileOS);
+			var updateFileName = Path.Combine(updateDir, $"{PatchFileName("9.0.15.2", baseBld, 64)}.tmp");
+			mockFileOS.AddFile(updateFileName, string.Empty);
 
-				Assert.That(FwUpdater.GetLatestDownloadedUpdate(current, updateDir.Path), Is.Null);
-			}
+			Assert.That(FwUpdater.GetLatestDownloadedUpdate(current), Is.Null);
 		}
 
 		[Test]
 		public static void GetLatestDownloadedUpdate_BadFilename_DoesNotThrow()
 		{
 			var current = new FwUpdate("9.0.15.1", true, 12, FwUpdate.Typ.Offline);
-			using (var updateDir = new TemporaryFolder("TestFwUpdateDir"))
-			{
-				var updateFileName = Path.Combine(updateDir.Path, $"{PatchFileName("version", 12, 64)}.tmp");
-				File.WriteAllText(updateFileName, string.Empty);
+			var updateDir = FwDirectoryFinder.DownloadedUpdates;
+			var mockFileOS = new BetterMockFileOS();
+			FileUtils.Manager.SetFileAdapter(mockFileOS);
+			var updateFileName = Path.Combine(updateDir, PatchFileName("bad-version", 12, 64));
+			mockFileOS.AddFile(updateFileName, string.Empty);
 
-				Assert.That(FwUpdater.GetLatestDownloadedUpdate(current, updateDir.Path), Is.Null);
-			}
+			Assert.That(FwUpdater.GetLatestDownloadedUpdate(current), Is.Null);
 		}
 
 		[Test]
@@ -306,13 +396,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 			const string version = "9.0.15.1";
 			const int baseBld = 14;
 			var current = new FwUpdate(version, true, baseBld, FwUpdate.Typ.Offline);
-			using (var updateDir = new TemporaryFolder("TestFwUpdateDir"))
-			{
-				var updateFileName = Path.Combine(updateDir.Path, PatchFileName(version, baseBld, 64));
-				File.WriteAllText(updateFileName, string.Empty);
+			var updateDir = FwDirectoryFinder.DownloadedUpdates;
+			var mockFileOS = new BetterMockFileOS();
+			FileUtils.Manager.SetFileAdapter(mockFileOS);
+			var updateFileName = Path.Combine(updateDir, PatchFileName(version, baseBld, 64));
+			mockFileOS.AddFile(updateFileName, string.Empty);
 
-				Assert.That(FwUpdater.GetLatestDownloadedUpdate(current, updateDir.Path), Is.Null);
-			}
+			Assert.That(FwUpdater.GetLatestDownloadedUpdate(current), Is.Null);
+		}
+
+		[Test]
+		public static void GetLatestDownloadedUpdate_DoesNotCheckIfNoXml()
+		{
+			const int baseBld = 14;
+			var current = new FwUpdate("9.0.15.1", true, baseBld, FwUpdate.Typ.Offline);
+			var updateDir = FwDirectoryFinder.DownloadedUpdates;
+			var mockFileOS = new BetterMockFileOS();
+			FileUtils.Manager.SetFileAdapter(mockFileOS);
+			mockFileOS.AddFile(Path.Combine(updateDir, PatchFileName("9.0.18.8", baseBld, 64)), string.Empty);
+
+			Assert.That(FwUpdater.GetLatestDownloadedUpdate(current), Is.Null);
 		}
 
 		[Test]
@@ -320,50 +423,73 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			const int baseBld = 14;
 			var current = new FwUpdate("9.0.15.1", true, baseBld, FwUpdate.Typ.Offline);
-			using (var updateDir = new TemporaryFolder("TestFwUpdateDir"))
-			{
-				// earlier patch
-				File.WriteAllText(Path.Combine(updateDir.Path, PatchFileName("9.0.17.4", baseBld, 64)), string.Empty);
-				// latest patch for this base
-				var updateFileName = Path.Combine(updateDir.Path, PatchFileName("9.0.18.8", baseBld, 64));
-				File.WriteAllText(updateFileName, string.Empty);
-				// patch for a different base
-				File.WriteAllText(Path.Combine(updateDir.Path, PatchFileName("9.0.21.42", baseBld + 1, 64)), string.Empty);
-				// irrelevant file
-				var otherFileName = Path.Combine(updateDir.Path, Path.ChangeExtension(PatchFileName("9.3.5", baseBld, 64), "xml"));
-				File.WriteAllText(otherFileName, string.Empty);
+			var updateDir = FwDirectoryFinder.DownloadedUpdates;
+			var mockFileOS = new BetterMockFileOS();
+			FileUtils.Manager.SetFileAdapter(mockFileOS);
+			// UpdateInfo XML file
+			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath, string.Empty);
+			// earlier patch
+			mockFileOS.AddFile(Path.Combine(updateDir, PatchFileName("9.0.17.4", baseBld, 64)), string.Empty);
+			// latest patch for this base
+			var updateFileName = Path.Combine(updateDir, PatchFileName("9.0.18.8", baseBld, 64));
+			mockFileOS.AddFile(updateFileName, string.Empty);
+			// patch for a different base
+			mockFileOS.AddFile(Path.Combine(updateDir, PatchFileName("9.0.21.42", baseBld + 1, 64)), string.Empty);
+			// irrelevant file
+			var otherFileName = Path.Combine(updateDir, Path.ChangeExtension(PatchFileName("9.3.5", baseBld, 64), "xml"));
+			mockFileOS.AddFile(otherFileName, string.Empty);
 
-				// SUT
-				var result = FwUpdater.GetLatestDownloadedUpdate(current, updateDir.Path);
+			// SUT
+			var result = FwUpdater.GetLatestDownloadedUpdate(current);
 
-				Assert.That(result.URL, Is.EqualTo(updateFileName));
-				Assert.That(result.Version, Is.EqualTo(new Version(9, 0, 18, 8)));
-			}
+			Assert.That(result.URL, Is.EqualTo(updateFileName));
+			Assert.That(result.Version, Is.EqualTo(new Version(9, 0, 18, 8)));
+			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath), "Local update XML should have been deleted");
 		}
 
 		[Test]
 		public static void GetLatestDownloadedUpdate_GetsLatestBase()
 		{
 			var current = new FwUpdate("9.0.15.1", true, 12, FwUpdate.Typ.Offline);
-			using (var updateDir = new TemporaryFolder("TestFwUpdateDir"))
-			{
-				// earlier base
-				File.WriteAllText(Path.Combine(updateDir.Path, BaseFileName("9.0.17.4")), string.Empty);
-				// latest base
-				var updateFileName = Path.Combine(updateDir.Path, BaseFileName("9.0.18.8"));
-				File.WriteAllText(updateFileName, string.Empty);
-				// patch for a different base
-				File.WriteAllText(Path.Combine(updateDir.Path, PatchFileName("9.0.21.42", 15, 64)), string.Empty);
-				// irrelevant file (although, perhaps, in the future, we will support .msi installers)
-				var otherFileName = Path.Combine(updateDir.Path, Path.ChangeExtension(BaseFileName("9.3.5"), "msi"));
-				File.WriteAllText(otherFileName, string.Empty);
+			var updateDir = FwDirectoryFinder.DownloadedUpdates;
+			var mockFileOS = new BetterMockFileOS();
+			FileUtils.Manager.SetFileAdapter(mockFileOS);
+			// UpdateInfo XML file
+			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath, string.Empty);
+			// earlier base
+			mockFileOS.AddFile(Path.Combine(updateDir, BaseFileName("9.0.17.4")), string.Empty);
+			// latest base
+			var updateFileName = Path.Combine(updateDir, BaseFileName("9.0.18.8"));
+			mockFileOS.AddFile(updateFileName, string.Empty);
+			// patch for a different base
+			mockFileOS.AddFile(Path.Combine(updateDir, PatchFileName("9.0.21.42", 15, 64)), string.Empty);
+			// irrelevant file (although, perhaps, in the future, we will support .msi installers)
+			var otherFileName = Path.Combine(updateDir, Path.ChangeExtension(BaseFileName("9.3.5"), "msi"));
+			mockFileOS.AddFile(otherFileName, string.Empty);
 
-				// SUT
-				var result = FwUpdater.GetLatestDownloadedUpdate(current, updateDir.Path);
+			// SUT
+			var result = FwUpdater.GetLatestDownloadedUpdate(current);
 
-				Assert.That(result.URL, Is.EqualTo(updateFileName));
-				Assert.That(result.Version, Is.EqualTo(new Version(9, 0, 18, 8)));
-			}
+			Assert.That(result.URL, Is.EqualTo(updateFileName));
+			Assert.That(result.Version, Is.EqualTo(new Version(9, 0, 18, 8)));
+			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath), "Local update XML should have been deleted");
+		}
+
+		// TODO: test that model versions are loaded from UpdateInfo for downloaded updates
+
+		private static string Contents(string key, int size = 0, string modified = "2020-12-13T04:46:57.000Z",
+			string modelVersion = null, string liftModelVersion = null, string flexBridgeDataVersion = null)
+		{
+			return $@"<Contents>
+	<Key>{key}</Key>
+	<LastModified>{modified}</LastModified>
+	<ETag>""3a474435577458c18cdc98e1b9336ce1-42""</ETag>
+	<LCModelVersion>{modelVersion}</LCModelVersion>
+	<LIFTModelVersion>{liftModelVersion}</LIFTModelVersion>
+	<FlexBridgeDataVersion>{flexBridgeDataVersion}</FlexBridgeDataVersion>
+	<Size>{size}</Size>
+	<StorageClass>STANDARD</StorageClass>
+</Contents>";
 		}
 
 		private static string Key(string version, int baseBuild, int arch)
@@ -384,6 +510,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static string BaseFileName(string version, int arch = 64, bool isOnline = true)
 		{
 			return $"FieldWorks_{version}_O{(isOnline ? "n" : "ff")}line_x{arch}.exe";
+		}
+
+		public class BetterMockFileOS : MockFileOS
+		{
+			public void AddFile(string filename, string contents) => AddFile(filename, contents, Encoding.UTF8);
 		}
 	}
 }
