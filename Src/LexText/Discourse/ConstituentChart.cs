@@ -665,8 +665,10 @@ namespace SIL.FieldWorks.Discourse
 				// Tell the ribbon whether it needs to display and select words Right to Left or not
 				m_ribbon.SetRoot(m_hvoRoot);
 				if (m_chart.TemplateRA == null)
-					// LT-8700: if original template is deleted we might need this
-					m_chart.TemplateRA = Cache.LangProject.GetDefaultChartTemplate();
+				{
+					// LT-8700: if original template is deleted then set to the default
+					NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor, ()=> m_chart.TemplateRA = Cache.LangProject.GetDefaultChartTemplate());
+				}
 				m_template = m_chart.TemplateRA;
 				m_logic.StTextHvo = m_hvoRoot;
 				m_allColumns = m_logic.AllColumns(m_chart.TemplateRA).ToArray();
