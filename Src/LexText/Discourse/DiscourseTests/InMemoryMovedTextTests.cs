@@ -1038,6 +1038,44 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		/// <summary>
+		/// Verify that all rows are cleared if No cells are valid, even if there is a
+		/// earlier row '1a' that has a dependency on a later row '1b'.
+		/// </summary>
+		[Test]
+		public void AllChartRowsClearedIfDependency()
+		{
+			var allParaOccurrences = m_helper.MakeAnalysesUsedN(4);
+			var row1a = m_helper.MakeRow1a();
+			var row1b = m_helper.MakeSecondRow();
+			var row2 = m_helper.MakeRow("2");
+			var row3 = m_helper.MakeRow("3");
+			m_helper.MakeWordGroup(row1a, 0, allParaOccurrences[0], allParaOccurrences[0]);
+			m_helper.MakeWordGroup(row1b, 0, allParaOccurrences[1], allParaOccurrences[1]);
+			m_helper.MakeWordGroup(row2, 0, allParaOccurrences[2], allParaOccurrences[2]);
+			m_helper.MakeWordGroup(row3, 0, allParaOccurrences[3], allParaOccurrences[3]);
+
+			// Make row1a dependent on row1b.
+			m_helper.MakeDependentClauseMarker(row1a, 1, new[] { row1b }, ClauseTypes.Dependent);
+
+			// now that we have rows with words grouped and a dependency, blow away the paragraphs the word groups hang on
+			var occuranceParagraphs = new HashSet<IStTxtPara>();
+			occuranceParagraphs.UnionWith(
+				allParaOccurrences.Select(occurrance => occurrance.Paragraph));
+			foreach (var para in occuranceParagraphs)
+			{
+				para.Delete();
+			}
+			EndSetupTask(); // SUT has its own UOW
+
+			// Note: When this method iterates through the rows it doesn't delete row1a until the iteration
+			//       where row1b is deleted.  Then they are both deleted.
+			m_logic.CleanupInvalidChartCells();
+
+			// Verify that the rows are gone
+			CollectionAssert.IsEmpty(m_helper.Chart.RowsOS);
+		}
+
+		/// <summary>
 		/// If we load a ListMarker (points to a Possibility), or a ChartTag which is a missing marker,
 		/// or a DepClause marker, we don't want CheckForInvalidNonWordGroupCellParts() to mess with them.
 		/// </summary>

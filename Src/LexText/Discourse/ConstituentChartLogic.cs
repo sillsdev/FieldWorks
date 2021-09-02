@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.LCModel.Core.Text;
@@ -2853,6 +2854,7 @@ namespace SIL.FieldWorks.Discourse
 				// row count each time through instead of maintaining a count that can get messed up.
 				for (var irow = 0; irow < m_chart.RowsOS.Count; irow++) // not foreach here, as we may delete some as we go
 				{
+					int rowCountBefore = m_chart.RowsOS.Count;
 					var curRow = m_chart.RowsOS[irow];
 					var citems = curRow.CellsOS.Count;
 					// If there are already no items, it's presumably an empty row the user inserted manually
@@ -2888,9 +2890,15 @@ namespace SIL.FieldWorks.Discourse
 						{
 							if (!((IConstChartClauseMarker)curPart).HasValidRefs)
 							{
-								if(!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
+								if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
 									ref fReported, ref ipart, ref citems))
-									irow--;
+								{
+									// If more than one row was deleted then start iterating from the beginning.
+									if (m_chart.RowsOS.Count < rowCountBefore - 1)
+										irow = -1;
+									else
+										irow--;
+								}
 							}
 							continue;
 						}
@@ -2900,7 +2908,13 @@ namespace SIL.FieldWorks.Discourse
 							{
 								if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
 									ref fReported, ref ipart, ref citems))
-									irow--;
+								{
+									// If more than one row was deleted then start iterating from the beginning.
+									if (m_chart.RowsOS.Count < rowCountBefore - 1)
+										irow = -1;
+									else
+										irow--;
+								}
 							}
 							continue;
 						}
@@ -2910,7 +2924,13 @@ namespace SIL.FieldWorks.Discourse
 						{
 							if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
 								ref fReported, ref ipart, ref citems))
-								irow--;
+							{
+								// If more than one row was deleted then start iterating from the beginning.
+								if (m_chart.RowsOS.Count < rowCountBefore - 1)
+									irow = -1;
+								else
+									irow--;
+							}
 							continue; // Skip to next.
 						}
 						try
@@ -2927,13 +2947,46 @@ namespace SIL.FieldWorks.Discourse
 						// CCWordGroup is now empty, take it out of row!
 						if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curWordGroup,
 							ref fReported, ref ipart, ref citems))
-							irow--;
+						{
+							// If more than one row was deleted then start iterating from the beginning.
+							if (m_chart.RowsOS.Count < rowCountBefore - 1)
+								irow = -1;
+							else
+								irow--;
+						}
 					} // cellPart loop
 				} // row loop
 
 				// If there are no rows that have any word groups in them then the contents are not worth keeping so clear all rows
 				if (m_chart.RowsOS.Any() && m_chart.RowsOS.Sum(row => row.CellsOS.Count(c => c is IConstChartWordGroup)) == 0)
 				{
+					// Store notes before deleting the rows that contain them.
+					string path = System.IO.Path.Combine(Cache.ProjectId.ProjectFolder, "SavedNotes.txt");
+					using (StreamWriter sw = File.AppendText(path))
+					{
+						bool firstNote = true;
+						foreach (var row in m_chart.RowsOS)
+						{
+							if (row.Notes != null && row.Notes.Text != null)
+							{
+								if(firstNote)
+								{
+									sw.WriteLine("\n**********************************************************************");
+									sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd h:mm tt"));
+									firstNote = false;
+								}
+								sw.WriteLine(row.Notes.Text);
+							}
+						}
+
+						// Let the user know the location of the deleted notes.
+						if (!firstNote)
+						{
+							sw.Flush();
+							DisplayDeletedNotesLocation(path);
+						}
+					}
+
 					m_chart.RowsOS.Clear();
 				}
 				if (fReported)
@@ -2988,6 +3041,15 @@ namespace SIL.FieldWorks.Discourse
 		{
 			MessageBox.Show(DiscourseStrings.ksTextEditWarning, DiscourseStrings.ksWarning,
 							MessageBoxButtons.OK, MessageBoxIcon.Warning);
+		}
+
+		/// <summary>
+		/// Overidden by test subclass to not display message.
+		/// </summary>
+		protected virtual void DisplayDeletedNotesLocation(string path)
+		{
+			MessageBox.Show(String.Format(DiscourseStrings.ksDeletedNotesLocation, path), DiscourseStrings.ksInformation,
+							MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		/// <summary>

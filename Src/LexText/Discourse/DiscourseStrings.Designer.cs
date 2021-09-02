@@ -169,6 +169,15 @@ namespace SIL.FieldWorks.Discourse {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Deleted notes have been saved in {0}.
+        /// </summary>
+        internal static string ksDeletedNotesLocation {
+            get {
+                return ResourceManager.GetString("ksDeletedNotesLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This will delete {0} rows of data from your chart! Are you sure?.
         /// </summary>
         internal static string ksDelRowWarning {
@@ -251,6 +260,15 @@ namespace SIL.FieldWorks.Discourse {
         internal static string ksFoundAndFixingInvalidDataCells {
             get {
                 return ResourceManager.GetString("ksFoundAndFixingInvalidDataCells", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Information.
+        /// </summary>
+        internal static string ksInformation {
+            get {
+                return ResourceManager.GetString("ksInformation", resourceCulture);
             }
         }
         
