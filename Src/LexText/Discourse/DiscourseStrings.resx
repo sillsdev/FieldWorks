@@ -452,7 +452,7 @@ you expect.</value>
     <comment>Title of informational message box shown from 'Add a new Template' in the Text Chart tab of interlinear</comment>
   </data>
   <data name="ksNewConstChartMessage" xml:space="preserve">
-    <value>You will now be taken to a new empty chart template. Give the template a name and create groups and rows. Then, click the "Back" button on the toolbar to return to where you were working. The new chart template will then be available for you to choose.</value>
+    <value>You will now be taken to a new empty chart template. Give the template a name and create groups and columns. Then, click the "Back" button on the toolbar to return to where you were working. The new chart template will then be available for you to choose.</value>
     <comment>Informational message shown when the user chooses 'Add a new Template' in the Text Chart tab of interlinear</comment>
   </data>
   <data name="ksDeletedNotesLocation" xml:space="preserve">
