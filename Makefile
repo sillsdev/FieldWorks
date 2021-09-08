@@ -390,7 +390,7 @@ check-have-build-dependencies:
 
 Fw-build-package: check-have-build-dependencies build-package
 
-# As of 2017-03-27, localize is more likely to crash running on mono 3 than to actually have a real localization problem. So try it a few times so that a random crash doesn't fail a packaging job that has been running for over an hour.
+
 # Make the lcm artifacts dir so it is a valid path for later processing appending things like '/..'.
 build-package:
 	export LcmLocalArtifactsDir="$(BUILD_ROOT)/../liblcm/artifacts/$(BUILD_CONFIG)" \
@@ -399,7 +399,7 @@ build-package:
 		&& cd $(BUILD_ROOT)/Build \
 		&& $(BUILD_TOOL) /t:refreshTargets /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS) \
 		&& $(BUILD_TOOL) /t:remakefw /property:config=$(BUILD_CONFIG) /property:Platform=$(PLATFORM) /property:packaging=yes /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS) \
-		&& ./multitry $(BUILD_TOOL) -t:localize-binaries -p:config=$(BUILD_CONFIG) -p:packaging=yes \
+		&& $(BUILD_TOOL) -t:localize-binaries -p:config=$(BUILD_CONFIG) -p:packaging=yes \
 		  -p:installation_prefix=$(INSTALLATION_PREFIX) -p:LcmLocalArtifactsDir=$$LcmLocalArtifactsDir $(MSBUILD_ARGS)
 	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then find "$(BUILD_ROOT)/.." || true; fi
 
