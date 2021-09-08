@@ -381,15 +381,24 @@ ComponentsMap-nodep:
 ComponentsMap-clean:
 	$(RM) $(OUT_DIR)/components.map
 
+diagnostics:
+	[[ -z $(FW_PACKAGE_DEBUG) ]] || { \
+		set -x ;\
+		pwd ;\
+		which mono msbuild ;\
+		mono --version ;\
+		msbuild -version;echo ;\
+		env ;\
+	}
+
 build-package-for-deb: Fw-build-package
 
-build-package-for-flatpak: localize-source-internal build-package
+build-package-for-flatpak: diagnostics localize-source-internal build-package
 
 check-have-build-dependencies:
 	$(BUILD_ROOT)/Build/Agent/install-deps --verify
 
 Fw-build-package: check-have-build-dependencies build-package
-
 
 # Make the lcm artifacts dir so it is a valid path for later processing appending things like '/..'.
 build-package:
