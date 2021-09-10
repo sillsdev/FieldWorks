@@ -58,7 +58,10 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 			var resourceInfo = GetResourceInfo(ProjectFolder);
 			if (resourceInfo == null || resourceInfo.ResXFiles.Count == 0)
+			{
+				Options.LogMessage(MessageImportance.Low, $"Skipping project folder with no resx files: {ProjectFolder}");
 				return; // nothing to localize; in particular we should NOT call al with no inputs.
+			}
 
 			if (Options.BuildSource)
 				CopySources(resourceInfo);
@@ -220,7 +223,10 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		private void CreateResourceAssemblies(ResourceInfo resourceInfo)
 		{
 			if (resourceInfo.ResXFiles.Count == 0)
+			{
+				Options.LogMessage(MessageImportance.Low, $"Skipping creating any resources for assembly with no resx files: {resourceInfo.ProjectFolder} {resourceInfo.AssemblyName}");
 				return; // nothing to localize; in particular we should NOT call al with no inputs.
+			}
 
 			var embedResources = new List<EmbedInfo>();
 			var errors = 0;
@@ -283,7 +289,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var fileName = IsUnix ? "al" : "al.exe";
 			var arguments = BuildLinkerArgs(outputDllPath, culture, fileversion,
 				productVersion, version, resources);
-			var exitCode = RunProcess(fileName, arguments, out var stdOutput);
+			var exitCode = RunProcess(fileName, arguments, out var stdOutput, Options);
 			if (exitCode != 0)
 			{
 				throw new ApplicationException(
@@ -292,7 +298,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			}
 		}
 
-		private static int RunProcess(string fileName, string arguments, out string stdOutput,
+		private static int RunProcess(string fileName, string arguments, out string stdOutput, LocalizerOptions options,
 			int timeout = 300000 /* 5 min */, string workdir = null)
 		{
 			var output = string.Empty;
@@ -316,6 +322,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 							else
 								output = e.Data;
 						};
+						options.LogMessage(MessageImportance.Low, $"Running command {process.StartInfo.FileName} {process.StartInfo.Arguments} in {process.StartInfo.WorkingDirectory}");
 						process.Start();
 
 						process.BeginOutputReadLine();
@@ -359,6 +366,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		protected virtual void RunResGen(string outputResourcePath, string localizedResxPath,
 			string originalResxFolder)
 		{
+			Options.LogMessage(MessageImportance.Low, $"Running resgen on {localizedResxPath}");
 			var fileName = IsUnix ? "resgen" : "resgen.exe";
 			var arguments = $"\"{localizedResxPath}\" \"{outputResourcePath}\"";
 			if (!IsUnix)
@@ -372,7 +380,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			}
 			// Setting the working directory to the folder containing the ORIGINAL resx file allows us to find included files
 			// like FDO/Resources/Question.ico that the resx file refers to using relative paths.
-			var exitCode = RunProcess(fileName, arguments, out var stdOutput, workdir: originalResxFolder);
+			var exitCode = RunProcess(fileName, arguments, out var stdOutput, Options, workdir: originalResxFolder);
 			if (exitCode != 0)
 			{
 				throw new ApplicationException($"Resgen returned error {exitCode} for {localizedResxPath}.\n" +
