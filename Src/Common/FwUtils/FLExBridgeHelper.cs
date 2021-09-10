@@ -14,6 +14,7 @@ using SIL.LCModel;
 using SIL.LCModel.Utils;
 using IPCFramework;
 using SIL.PlatformUtilities;
+using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -165,10 +166,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var fbDllWithConstantsPath = Path.Combine(FwDirectoryFinder.FlexBridgeFolder, "LibFLExBridge-ChorusPlugin.dll");
 			if (File.Exists(fbDllWithConstantsPath))
 			{
-				var fbAssemblyWithConstants = Assembly.LoadFile(fbDllWithConstantsPath);
-				FlexBridgeDataVersion = fbAssemblyWithConstants.GetType("LibFLExBridgeChorusPlugin.Infrastructure.FlexBridgeConstants")
+				var fbAssemblyWithConstants = Assembly.ReflectionOnlyLoadFrom(fbDllWithConstantsPath);
+				FlexBridgeDataVersion = fbAssemblyWithConstants
+					.GetType("LibFLExBridgeChorusPlugin.Infrastructure.FlexBridgeConstants")
 					?.GetField("FlexBridgeDataVersion", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
-					?.GetRawConstantValue() as string;
+					// When FLEx Bridge is available but the version cannot be determined (such as for FB 3.1 and earlier),
+					// set the data version to an empty string. This will trigger the assert to let developers know if this becomes a problem again,
+					// and will also let users know that updating FLEx Bridge will require everyone to update at the same time (LT-20019, LT-20778)
+					?.GetRawConstantValue() as string ?? string.Empty;
 			}
 			else
 			{
@@ -176,7 +181,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 #if DEBUG
 			// Don't pester developers who haven't set FLEx Bridge up.
-			if (File.Exists(FLExBridgeHelper.FullFieldWorksBridgePath()))
+			if (File.Exists(FullFieldWorksBridgePath()))
 			{
 				// This is not unit testable on build agents because they don't have FLEx Bridge installed.
 				Debug.Assert(!string.IsNullOrWhiteSpace(FlexBridgeDataVersion),
