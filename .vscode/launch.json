@@ -76,7 +76,9 @@
         // When launching FieldWorks, use this mono.
         "PATH": "/opt/mono5-sil/bin:${env:PATH}",
         // Path to the rest of the necessary enviromnent settings for FieldWorks. This is handled by a mono wrapper script in /opt.
-        "MONO_ENVIRON": "${workspaceRoot}/environ"
+        "MONO_ENVIRON": "${workspaceRoot}/environ",
+        // Make FB listen for debugger attach, and Chorus print hg debugging info.
+        "CHORUSDEBUGGING": "true",
       },
       "type": "mono",
       "request": "launch",
@@ -98,6 +100,7 @@
         // "PATH": "/opt/mono5-sil/bin:${env:PATH}",
         // Path to the rest of the necessary enviromnent settings for FieldWorks. This is handled by a mono wrapper script in /opt.
         //"MONO_ENVIRON": "${workspaceRoot}/environ"
+        "CHORUSDEBUGGING": "true",
       },
       "type": "gdb",
       "request": "launch",
