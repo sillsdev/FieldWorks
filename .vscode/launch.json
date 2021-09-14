@@ -80,11 +80,11 @@
       "type": "mono",
       "request": "launch",
       "program": "${workspaceRoot}/Output/Debug/FieldWorks.exe",
-      "cwd": "${workspaceRoot}"
+      "cwd": "${workspaceRoot}",
       "preLaunchTask": "build recent"
     },
     {
-      "name": "Launch FW from flatpak (to attach debugger)",
+      "name": "Launch FW from flatpak (to attach C# debugger)",
       "env": {
         // Use Flexbridge from code, rather than a package, if desired.
         // "FLEXBRIDGEDIR": "${workspaceRoot}/../flexbridge/output/DebugMono",
@@ -101,10 +101,30 @@
       "request": "launch",
       "target": "/usr/bin/flatpak",
       // Use suspend=y to pause until a debugger attaches
-      "arguments": "run --devel --env=FW_DEBUG=true --env=FW_MONO_OPTS=--debugger-agent=address=127.0.0.1:55555,transport=dt_socket,server=y,suspend=n org.sil.FieldWorks",
+      "arguments": "run --devel --env=FW_DEBUG=true --env=FW_MONO_OPTS=--debugger-agent=address=127.0.0.1:55001,transport=dt_socket,server=y,suspend=n org.sil.FieldWorks",
       "cwd": "${workspaceRoot}"
     },
     {
+      "name": "Launch FW from flatpak (to attach C++ debugger)",
+      "env": {
+        // Use Flexbridge from code, rather than a package, if desired.
+        // "FLEXBRIDGEDIR": "${workspaceRoot}/../flexbridge/output/DebugMono",
+        // Display on main display :0, or on a Xephyr :2.
+        "DISPLAY": ":0",
+        // Help FW+PT find FW. This could be set in environ, but because it needs set on a user's machine independently of environ, it's set here.
+        "FIELDWORKSDIR": "${workspaceRoot}/Output/Debug",
+        // When launching FieldWorks, use this mono.
+        // "PATH": "/opt/mono5-sil/bin:${env:PATH}",
+        // Path to the rest of the necessary enviromnent settings for FieldWorks. This is handled by a mono wrapper script in /opt.
+        //"MONO_ENVIRON": "${workspaceRoot}/environ"
+      },
+      "type": "gdb",
+      "request": "launch",
+      "target": "/usr/bin/flatpak",
+      "arguments": "run --devel --env=FW_DEBUG=true --env=FW_COMMAND_PREFIX='gdbserver 127.0.0.1:9999' --env=FW_MONO_COMMAND=/app/bin/mono-sgen org.sil.FieldWorks",
+      "cwd": "${workspaceRoot}"
+    },
+		{
       "name": "Launch unit tests",
       "env": {
         // Use Flexbridge from code, rather than a package, if desired.
@@ -127,30 +147,40 @@
       "console": "integratedTerminal"
     },
     // To debug FW managed code in flatpak, run FieldWorks using the following, and then start the debugger:
-    //   flatpak run --devel --env=FW_DEBUG=true --env=FW_MONO_OPTS=--debugger-agent=address=127.0.0.1:55555,transport=dt_socket,server=y,suspend=n org.sil.FieldWorks
+    //   flatpak run --devel --env=FW_DEBUG=true --env=FW_MONO_OPTS=--debugger-agent=address=127.0.0.1:55001,transport=dt_socket,server=y,suspend=n org.sil.FieldWorks
+    // Or open the flatpak with:
+    //   flatpak-builder --run build-dir org.sil.FieldWorks.yml bash
+    //   and then in the flatpak environment, run the following, and then start the debugger:
+    //   FW_MONO_OPTS=--debugger-agent=address=127.0.0.1:55001,transport=dt_socket,server=y,suspend=y fieldworks-flex
     {
-      "name": "Attach to local (such as flatpak)",
+      "name": "Attach to local C# (such as flatpak)",
       "type": "mono",
       "request": "attach",
       "address": "localhost",
-      "port": 55555
+      "port": 55001
     },
-    // To debug FW unmanaged code in flatpak, run using:
+    // To debug FW unmanaged code in flatpak, first launch the "Launch FW from flatpak (to attach C++ debugger)" task.
+    // Or run FW using:
     //   flatpak run --devel --env=FW_DEBUG=true --env=FW_COMMAND_PREFIX="gdbserver 127.0.0.1:9999" --env=FW_MONO_COMMAND=/app/bin/mono-sgen org.sil.FieldWorks
+    // Or open the flatpak with:
+    //   flatpak-builder --run build-dir org.sil.FieldWorks.yml bash
+    //   and then in the flatpak environment, run:
+    //   (cd /app/lib/fieldworks && RUNMODE="INSTALLED" . ./environ && gdbserver 127.0.0.1:9999 /app/bin/mono-sgen --debug FieldWorks.exe)
     {
       "type": "gdb",
       "request": "attach",
-      "name": "Attach to local gdbserver",
-      "executable": "/opt/mono5-sil/bin/mono-sgen",
+      "name": "Attach to local C++ gdbserver",
+      "executable": "",
       "target": "127.0.0.1:9999",
       "remote": true,
-      "cwd": "${workspaceRoot}/Output_x86_64/Debug",
+      "cwd": "${workspaceRoot}",
       "gdbpath": "/usr/bin/gdb",
       "autorun": [
         "set sysroot target:/",
         // Map source build location to where it is on your workstation to help breakpoints
         // ( https://sourceware.org/gdb/onlinedocs/gdb/Source-Path.html#index-default-source-path-substitution ).
-        "set substitute-path /run/build/fieldworks ${workspaceRoot}/.."
+        "set substitute-path /run/build/fieldworks ${workspaceRoot}/..",
+        "set substitute-path /run/build/icu-fw ${workspaceRoot}/../icu-fw"
       ]
     },
   ]
