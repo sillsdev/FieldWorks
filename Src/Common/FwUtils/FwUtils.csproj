@@ -153,7 +153,7 @@
     </Reference>
     <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>/opt/mono5-sil/lib/mono/xbuild/Microsoft/Microsoft.NET.Build.Extensions/net461/lib/netstandard.dll</HintPath>
+      <HintPath>$(MONO_PREFIX)/lib/mono/xbuild/Microsoft/Microsoft.NET.Build.Extensions/net461/lib/netstandard.dll</HintPath>
     </Reference>
     <Reference Include="NAudio.Lame, Version=1.1.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
