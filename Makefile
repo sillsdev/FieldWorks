@@ -123,7 +123,6 @@ install-tree: install-tree-fdo
 	install -d $(DESTDIR)$(INSTALLATION_PREFIX)/bin
 	install -d $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks
 	install -d $(DESTDIR)$(INSTALLATION_PREFIX)/share/fieldworks
-	install -d $(DESTDIR)/etc/profile.d
 	# Install libraries and their support files
 	install -m 644 DistFiles/*.{dll*,so} $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks
 	install -m 644 DistFiles/Linux/*.so $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks
@@ -137,7 +136,6 @@ install-tree: install-tree-fdo
 	install Lib/linux/unicodechareditor $(DESTDIR)$(INSTALLATION_PREFIX)/bin
 	install Lib/linux/{run-app,extract-userws.xsl,launch-xchm} $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks
 	install -m 644 environ{,-xulrunner} $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks
-	install -m 644 Lib/linux/fieldworks.sh $(DESTDIR)/etc/profile.d
 	# Install content and plug-ins
 	install -m 644 DistFiles/*.{txt,reg} $(DESTDIR)$(INSTALLATION_PREFIX)/share/fieldworks
 	cp -pdr DistFiles/{"Editorial Checks",EncodingConverters} $(DESTDIR)$(INSTALLATION_PREFIX)/share/fieldworks
@@ -182,6 +180,10 @@ install-packagemetadata:
 	install -d $(DESTDIR)$(INSTALLATION_PREFIX)/share/metainfo
 	install -m 644 DistFiles/Linux/org.sil.FieldWorks.metainfo.xml $(DESTDIR)$(INSTALLATION_PREFIX)/share/metainfo
 
+install-set-fw-location:
+	install -d $(DESTDIR)/etc/profile.d
+	install -m 644 Lib/linux/fieldworks.sh $(DESTDIR)/etc/profile.d
+
 install: install-man-pages install-tree install-menuentries l10n-install install-packagemetadata
 
 install-package: install install-COM
@@ -189,7 +191,7 @@ install-package: install install-COM
 
 install-package-fdo: install-tree-fdo install-COM
 
-install-for-deb: install-package install-tree-deb
+install-for-deb: install-package install-tree-deb install-set-fw-location
 
 install-for-flatpak: install-tree install-menuentries l10n-install install-packagemetadata install-COM
 
