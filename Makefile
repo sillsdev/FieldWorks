@@ -395,10 +395,10 @@ build-package-for-deb: Fw-build-package
 
 build-package-for-flatpak: diagnostics localize-source-internal build-package
 
-check-have-build-dependencies:
+check-ubuntu-build-dependencies:
 	$(BUILD_ROOT)/Build/Agent/install-deps --verify
 
-Fw-build-package: check-have-build-dependencies build-package
+Fw-build-package: check-ubuntu-build-dependencies build-package
 
 # Make the lcm artifacts dir so it is a valid path for later processing appending things like '/..'.
 build-package:
@@ -412,7 +412,7 @@ build-package:
 		  -p:installation_prefix=$(INSTALLATION_PREFIX) -p:LcmLocalArtifactsDir=$$LcmLocalArtifactsDir $(MSBUILD_ARGS)
 	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then find "$(BUILD_ROOT)/.." || true; fi
 
-Fw-build-package-fdo: check-have-build-dependencies
+Fw-build-package-fdo: check-ubuntu-build-dependencies
 	cd $(BUILD_ROOT)/Build \
 		&& $(BUILD_TOOL) /t:refreshTargets /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS) \
 		&& $(BUILD_TOOL) '/t:build4package-fdo' /property:config=$(BUILD_CONFIG) /property:packaging=yes /property:installation_prefix=$(INSTALLATION_PREFIX) $(MSBUILD_ARGS)
