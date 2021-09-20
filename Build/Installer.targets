@@ -25,7 +25,7 @@
 
 	<!-- $(ApplicationName) 1.0.0.X ($(ApplicationName) build)-->
 	<PropertyGroup>
-		<ProductIdGuid>6EAC3E24-634E-43FC-AD0E-BCE026AE52BC</ProductIdGuid>
+		<ProductIdGuid>E2C79BA2-FB69-45CF-9321-5BECA25F3002</ProductIdGuid>
 	</PropertyGroup>
 
 	<!-- ########################################################################################################## -->
