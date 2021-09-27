@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
@@ -109,7 +110,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 						throw new ArgumentOutOfRangeException();
 				}
 
-				if (!new DownloadClient().DownloadFile(infoURL, LocalUpdateInfoFilePath))
+				if (updateSettings.Channel == UpdateSettings.Channels.Nightly)
+				{
+					// Use WebClient for nightly builds because DownloadClient can't download the dynamically built update info (LT-20819).
+					// DownloadClient is still best for all other channels because it is better for unstable internet.
+					new WebClient().DownloadFile(infoURL, LocalUpdateInfoFilePath);
+				}
+				else if (!new DownloadClient().DownloadFile(infoURL, LocalUpdateInfoFilePath))
 				{
 					return $"Failed to download update info from {infoURL}";
 				}
