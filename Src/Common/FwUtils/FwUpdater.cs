@@ -151,6 +151,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			catch (Exception e)
 			{
+				if (updateSettings.Channel == UpdateSettings.Channels.Nightly)
+				{
+					ErrorReport.ReportNonFatalExceptionWithMessage(e, "Failed to download updates");
+				}
 				return $"Got {e.GetType()}: {e.Message}";
 			}
 		}
