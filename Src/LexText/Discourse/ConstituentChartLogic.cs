@@ -2846,6 +2846,11 @@ namespace SIL.FieldWorks.Discourse
 		/// </summary>
 		protected internal void CleanupInvalidChartCells()
 		{
+			if (m_chart == null)
+			{
+				// Hmm. Clean as a whistle!
+				return;
+			}
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				var fReported = false;
