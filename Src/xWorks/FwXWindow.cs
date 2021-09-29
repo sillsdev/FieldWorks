@@ -2250,10 +2250,10 @@ namespace SIL.FieldWorks.XWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Called just before a window syncronizes it's views with DB changes (e.g. when an
+		/// Called just before a window synchronizes its views with DB changes (e.g. when an
 		/// undo or redo command is issued).
 		/// </summary>
-		/// <param name="sync">syncronization message</param>
+		/// <param name="sync">synchronization message</param>
 		/// ------------------------------------------------------------------------------------
 		public virtual void PreSynchronize(SyncMsg sync)
 		{
@@ -2280,10 +2280,10 @@ namespace SIL.FieldWorks.XWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Called when a window syncronizes it's views with DB changes (e.g. when an undo or
+		/// Called when a window synchronizes its views with DB changes (e.g. when an undo or
 		/// redo command is issued).
 		/// </summary>
-		/// <param name="sync">syncronization message</param>
+		/// <param name="sync">synchronization message</param>
 		/// <returns>True if the sync message was handled; false, indicating that the
 		/// application should refresh all windows. </returns>
 		/// ------------------------------------------------------------------------------------
