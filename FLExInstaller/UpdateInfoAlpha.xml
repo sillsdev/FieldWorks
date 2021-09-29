@@ -2,7 +2,7 @@
 <UpdateInfo>
 	<BaseUrl>https://downloads.languagetechnology.org/fieldworks/</BaseUrl>
 	<Contents>
-		<Key>479/FieldWorks_9.1.5.1_Offline_x64.exe</Key>
+		<Key>9.1.5/479/FieldWorks_9.1.5.1_Offline_x64.exe</Key>
 		<LastModified>2021-08-30T16:38:00.000Z</LastModified>
 		<LCModelVersion>7000072</LCModelVersion>
 		<LIFTModelVersion>0.13_ldml3</LIFTModelVersion>
@@ -10,7 +10,7 @@
 		<Size>544532280</Size>
 	</Contents>
 	<Contents>
-		<Key>479/FieldWorks_9.1.5.1_Online_x64.exe</Key>
+		<Key>9.1.5/479/FieldWorks_9.1.5.1_Online_x64.exe</Key>
 		<LastModified>2021-08-30T16:38:00.000Z</LastModified>
 		<LCModelVersion>7000072</LCModelVersion>
 		<LIFTModelVersion>0.13_ldml3</LIFTModelVersion>
@@ -18,7 +18,7 @@
 		<Size>368954112</Size>
 	</Contents>
 	<Contents>
-		<Key>479/FieldWorks_9.1.5.1_Offline_x86.exe</Key>
+		<Key>9.1.5/479/FieldWorks_9.1.5.1_Offline_x86.exe</Key>
 		<LastModified>2021-08-30T16:59:00.000Z</LastModified>
 		<LCModelVersion>7000072</LCModelVersion>
 		<LIFTModelVersion>0.13_ldml3</LIFTModelVersion>
@@ -26,7 +26,7 @@
 		<Size>511389288</Size>
 	</Contents>
 	<Contents>
-		<Key>479/FieldWorks_9.1.5.1_Online_x86.exe</Key>
+		<Key>9.1.5/479/FieldWorks_9.1.5.1_Online_x86.exe</Key>
 		<LastModified>2021-08-30T16:59:00.000Z</LastModified>
 		<LCModelVersion>7000072</LCModelVersion>
 		<LIFTModelVersion>0.13_ldml3</LIFTModelVersion>
@@ -34,11 +34,28 @@
 		<Size>350534672</Size>
 	</Contents>
 	<Contents>
-		<Key>FieldWorks_9.1.5.0_b479_x64.msp</Key>
+		<Key>9.1.5/FieldWorks_9.1.5.0_b479_x64.msp</Key>
 		<LastModified>2021-07-29T13:56:48.000Z</LastModified>
 		<LCModelVersion>7000072</LCModelVersion>
 		<LIFTModelVersion>0.13_ldml3</LIFTModelVersion>
 		<FlexBridgeDataVersion>7500002</FlexBridgeDataVersion>
 		<Size>205451264</Size>
+	</Contents>
+	<!-- TODO: these installers are exclusively for testing purposes and should be removed when LT-20787 has been closed -->
+	<Contents>
+		<Key>9.1.6/489/FieldWorks_9.1.6.1_Online_x64.exe</Key>
+		<LastModified>2021-09-24T15:02:48.000Z</LastModified>
+		<LCModelVersion>7000072</LCModelVersion>
+		<LIFTModelVersion>0.13_ldml3</LIFTModelVersion>
+		<FlexBridgeDataVersion>7500002</FlexBridgeDataVersion>
+		<Size>368954112</Size>
+	</Contents>
+	<Contents>
+		<Key>9.1.6/489/FieldWorks_9.1.6.1_Offline_x86.exe</Key>
+		<LastModified>2021-09-24T15:02:48.000Z</LastModified>
+		<LCModelVersion>7000072</LCModelVersion>
+		<LIFTModelVersion>0.13_ldml3</LIFTModelVersion>
+		<FlexBridgeDataVersion>7500002</FlexBridgeDataVersion>
+		<Size>368954112</Size>
 	</Contents>
 </UpdateInfo>
