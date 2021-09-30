@@ -73,17 +73,18 @@ namespace SIL.FieldWorks.Discourse
 		/// <summary>
 		/// Make one. Usually called by reflection.
 		/// </summary>
-		public ConstituentChart(LcmCache cache) : this(cache, new ConstituentChartLogic(cache))
+		public ConstituentChart(LcmCache cache, PropertyTable propTable) : this(cache, propTable, new ConstituentChartLogic(cache))
 		{
 		}
 
 		/// <summary>
 		/// Make one. This variant is used in testing (to plug in a known logic class).
 		/// </summary>
-		internal ConstituentChart(LcmCache cache, ConstituentChartLogic logic)
+		internal ConstituentChart(LcmCache cache, PropertyTable propTable, ConstituentChartLogic logic)
 		{
 			Cache = cache;
 			m_serviceLocator = Cache.ServiceLocator;
+			PropertyTable = propTable;
 			m_logic = logic;
 			ForEditing = true;
 			Name = "ConstituentChart";
@@ -184,11 +185,13 @@ namespace SIL.FieldWorks.Discourse
 
 		protected override void OnLayout(LayoutEventArgs e)
 		{
+			m_topBottomSplit.SplitterMoved -= RibbonSizeChanged;
 			//Call SplitLayout here to ensure Mono properly updates Splitter length
 			SplitLayout(m_topBottomSplit, e);
-			//Mono makes SplitLayout calls while Splitter is moving so set default distance here
-			m_topBottomSplit.SplitterDistance = (int) (Height * .9);
 			base.OnLayout(e);
+			//Mono makes SplitLayout calls while Splitter is moving so set default distance here
+			m_topBottomSplit.SplitterDistance = PropertyTable.GetIntProperty("constChartRibbonSize", (int)(Height * .9));
+			m_topBottomSplit.SplitterMoved += RibbonSizeChanged;
 		}
 
 		/// <summary>
@@ -242,7 +245,6 @@ namespace SIL.FieldWorks.Discourse
 			m_toolTip = new ToolTip { AutoPopDelay = 5000, InitialDelay = 1000, ReshowDelay = 500, ShowAlways = true };
 
 			m_bottomStuff = m_topBottomSplit.Panel2;
-			m_bottomStuff.Height = 100;
 			m_bottomStuff.SuspendLayout();
 
 			m_buttonRow = new Panel { Height = new Button().Height, Dock = DockStyle.Top, BackColor = Color.FromKnownColor(KnownColor.ControlLight) };
@@ -251,6 +253,11 @@ namespace SIL.FieldWorks.Discourse
 
 			m_bottomStuff.Controls.AddRange(new Control[] { m_ribbon, m_buttonRow });
 			m_bottomStuff.ResumeLayout();
+		}
+
+		private void RibbonSizeChanged(object sender, EventArgs e)
+		{
+			PropertyTable.SetProperty("constChartRibbonSize", m_topBottomSplit.SplitterDistance, false);
 		}
 
 		private const int kmaxWordforms = 20;

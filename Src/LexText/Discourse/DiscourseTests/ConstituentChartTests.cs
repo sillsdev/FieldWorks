@@ -9,6 +9,7 @@ using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.Windows.Forms.Widgets;
+using XCore;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -17,7 +18,7 @@ namespace SIL.FieldWorks.Discourse
 	public class FakeConstituentChart : ConstituentChart
 	{
 		/// <summary/>
-		public FakeConstituentChart(LcmCache cache) : base(cache)
+		public FakeConstituentChart(LcmCache cache, PropertyTable propTable) : base(cache, propTable)
 		{
 		}
 
@@ -41,7 +42,8 @@ namespace SIL.FieldWorks.Discourse
 		[Test]
 		public void Basic()
 		{
-			using(var chart = new ConstituentChart(Cache))
+			using(var propTable = new PropertyTable(null))
+			using(new ConstituentChart(Cache, propTable))
 			{
 			}
 		}
@@ -50,7 +52,8 @@ namespace SIL.FieldWorks.Discourse
 		[Test]
 		public void LayoutIgnoredDuringColumnResizing()
 		{
-			using (var chart = new FakeConstituentChart(Cache))
+			using(var propTable = new PropertyTable(null))
+			using (var chart = new FakeConstituentChart(Cache, propTable))
 			{
 				ChartHeaderView headerView = ReflectionHelper.GetField(chart, "m_headerMainCols") as ChartHeaderView;
 				for (int i = 0; i < 5; i++)

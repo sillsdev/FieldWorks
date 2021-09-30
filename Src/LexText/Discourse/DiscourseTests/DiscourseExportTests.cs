@@ -9,6 +9,7 @@ using SIL.LCModel;
 using System.IO;
 using System.Xml;
 using SIL.LCModel.Core.Text;
+using XCore;
 
 namespace SIL.FieldWorks.Discourse
 {
@@ -23,6 +24,7 @@ namespace SIL.FieldWorks.Discourse
 		private ConstChartBody m_chartBody;
 		private ConstituentChart m_constChart;
 		private List<ICmPossibility> m_allColumns;
+		private PropertyTable m_propertyTable;
 
 		protected override void CreateTestData()
 		{
@@ -33,8 +35,8 @@ namespace SIL.FieldWorks.Discourse
 			m_helper.MakeTemplate(out m_allColumns);
 			// Note: do this AFTER creating the template, which may also create the DiscourseData object.
 			m_chart = m_helper.SetupAChart();
-
-			m_constChart = new ConstituentChart(Cache, m_logic);
+			m_propertyTable = new PropertyTable(null);
+			m_constChart = new ConstituentChart(Cache, m_propertyTable, m_logic);
 			m_constChart.Init(null, null, null);
 			m_chartBody = m_constChart.Body;
 			m_chartBody.Cache = Cache; // don't know why constructor doesn't do this, but it doesn't.
@@ -46,6 +48,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			m_chartBody.Dispose();
 			m_constChart.Dispose();
+			m_propertyTable.Dispose();
 			base.TestTearDown();
 		}
 

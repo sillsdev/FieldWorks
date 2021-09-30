@@ -21,6 +21,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			if (disposing)
 			{
+				m_topBottomSplit.SplitterMoved -= RibbonSizeChanged;
 				if (components != null)
 					components.Dispose();
 
