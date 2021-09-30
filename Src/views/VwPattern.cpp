@@ -963,12 +963,17 @@ public:
 			// We can't if we're at the limit already.
 			if (m_ichLimFoundSearch == m_ichLimSearch)
 				return true;
+			// We can not increment by half of a surrogate pair and expect good results
+			int nextCharBoundary = 1;
+			if (IsHighSurrogate(*reinterpret_cast<const wchar_t *>(m_pchBuf + m_ichLimFoundSearch)))
+				++nextCharBoundary;
+
 			// Try incrementing it...
-			m_ichLimFoundSearch++;
+			m_ichLimFoundSearch += nextCharBoundary;
 			// See if this is still a good match.
 			if (!CheckMatchAndProps())
 			{
-				m_ichLimFoundSearch--;
+				m_ichLimFoundSearch -= nextCharBoundary;
 				break;
 			}
 		}
