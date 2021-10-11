@@ -24,7 +24,8 @@
 		<ListsDirectory>$(L10nsBaseDir)/lists</ListsDirectory>
 		<GoldEticDir>$(ListsDirectory)/GramCats</GoldEticDir>
 		<MessagesPot>$(L10nsBaseDir)/messages.pot</MessagesPot>
-		<LcmRootDir>$(LcmLocalArtifactsDir)/../..</LcmRootDir>
+		<!-- Normalizing the LCM path is necessary, because on Linux, if ./artifacts doesn't exist, neither does ./artifacts/.. -->
+		<LcmRootDir>$([System.IO.Path]::GetFullPath(&quot;$(LcmLocalArtifactsDir)/../..&quot;))</LcmRootDir>
 		<LcmSrcDir>$(LcmRootDir)/src</LcmSrcDir>
 		<CrowdinZip>$(DownloadsDir)/Crowdin.zip</CrowdinZip>
 		<OnFailedCrowdinDownload Condition="Exists('$(CrowdinZip)')">WarnAndContinue</OnFailedCrowdinDownload>
