@@ -16,6 +16,7 @@ using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.Reporting;
 using SIL.Settings;
+using SIL.Windows.Forms.Reporting;
 using SIL.Xml;
 using Timer = System.Timers.Timer;
 
@@ -73,6 +74,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			Logger.WriteEvent("Checking for updates...");
 			// Check on a background thread; hitting the Internet on the main thread can be a performance hit
+			if (updateSettings.Channel == UpdateSettings.Channels.Nightly)
+			{
+				ExceptionHandler.Init(new WinFormsExceptionHandler());
+			}
 			new Thread(() => Logger.WriteEvent(CheckForUpdatesInternal(ui, updateSettings)))
 			{
 				IsBackground = true
@@ -86,7 +91,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				if (!MiscUtils.IsWindows)
 				{
-					ErrorReport.ReportNonFatalExceptionWithMessage(new ApplicationException(), "Only Windows updates are available here");
 					return "ERROR: Only Windows updates are available here";
 				}
 
@@ -153,6 +157,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				if (updateSettings.Channel == UpdateSettings.Channels.Nightly)
 				{
+					ErrorReport.AddStandardProperties();
 					ErrorReport.ReportNonFatalExceptionWithMessage(e, "Failed to download updates");
 				}
 				return $"Got {e.GetType()}: {e.Message}";
