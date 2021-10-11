@@ -634,7 +634,7 @@ namespace SIL.FieldWorks.IText
 		{
 			m_constChartPane = (InterlinDocChart)DynamicLoader.CreateObject("Discourse.dll",
 																		"SIL.FieldWorks.Discourse.ConstituentChart",
-																		new object[] { Cache });
+																		new object[] { Cache, m_propertyTable });
 			SetupChartPane();
 			m_tpCChart.Controls.Add(m_constChartPane);
 			if (m_styleSheet != null)
