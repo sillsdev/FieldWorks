@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2020 SIL International
+// Copyright (c) 2015-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,6 +15,7 @@ using System.Threading;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Microsoft.Build.Framework;
+using Newtonsoft.Json;
 
 // ReSharper disable AssignNullToNotNullAttribute - System.IO is hypocritical in its null handling
 
@@ -141,14 +142,33 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			return Path.Combine(outputFolder, fileName);
 		}
 
-		private string GetLocalizedResxSourcePath(string resxPath)
+		internal string GetLocalizedResxSourcePath(string resxPath)
 		{
 			var resxFileName = Path.GetFileNameWithoutExtension(resxPath);
 			// ReSharper disable once PossibleNullReferenceException
 			var partialDir = Path.GetDirectoryName(resxPath.Substring(Options.RootDir.Length + 1));
-			var sourceFolder = Path.Combine(Options.CurrentLocaleDir, partialDir);
+			var crowdinBranch = GetCrowdinBranch();
+			var sourceFolder = string.IsNullOrEmpty(crowdinBranch)
+				? Path.Combine(Options.CurrentLocaleDir, partialDir)
+				: Path.Combine(Options.CurrentLocaleDir, crowdinBranch, partialDir);
 			var fileName = $"{resxFileName}.{Options.Locale}.resx";
 			return Path.Combine(sourceFolder, fileName);
+		}
+
+		/// <remarks>
+		/// If there is a crowdin.json file with a branch, include it in the path to the source localized resx file.
+		/// LT-20831: Crowdin now includes the branch directory in %original_path%
+		/// </remarks>
+		internal string GetCrowdinBranch()
+		{
+			var crowdinJson = Path.Combine(Options.RootDir, "crowdin.json");
+			return File.Exists(crowdinJson) ? JsonConvert.DeserializeObject<CrowdinConfig>(File.ReadAllText(crowdinJson))?.Branch : null;
+		}
+
+		private class CrowdinConfig
+		{
+			// ReSharper disable once UnusedAutoPropertyAccessor.Local - It is set by DeserializeObject
+			public string Branch { get; set; }
 		}
 
 		/// <returns><c>true</c> if the given ResX file has errors in string.Format variables</returns>

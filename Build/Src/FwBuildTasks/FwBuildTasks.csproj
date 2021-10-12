@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="FwBuildTasksTests\ProjectLocalizerTests.cs" />
     <Compile Include="FwBuildTasksTests\XliffToGoldEticTests.cs" />
     <Compile Include="FwBuildTasksTests\GoldEticToXliffTests.cs" />
     <Compile Include="FwBuildTasksTests\LocalizeListsTests.cs" />
@@ -149,6 +150,11 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.1</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
