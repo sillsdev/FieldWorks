@@ -189,8 +189,21 @@ namespace SIL.FieldWorks.Discourse
 			//Call SplitLayout here to ensure Mono properly updates Splitter length
 			SplitLayout(m_topBottomSplit, e);
 			base.OnLayout(e);
+			int splitterValue;
+			// use a default property unless the property has been set
+			if (PropertyTable.PropertyExists("constChartRibbonSize"))
+			{
+				// GetIntProperty will set the default value if it isn't set.
+				// OnLayout will be called several times before the final correct values are available
+				splitterValue = PropertyTable.GetIntProperty("constChartRibbonSize", 100);
+			}
+			else
+			{
+				splitterValue = (int)(Height * .9);
+			}
+
 			//Mono makes SplitLayout calls while Splitter is moving so set default distance here
-			m_topBottomSplit.SplitterDistance = PropertyTable.GetIntProperty("constChartRibbonSize", (int)(Height * .9));
+			m_topBottomSplit.SplitterDistance = splitterValue;
 			m_topBottomSplit.SplitterMoved += RibbonSizeChanged;
 		}
 
