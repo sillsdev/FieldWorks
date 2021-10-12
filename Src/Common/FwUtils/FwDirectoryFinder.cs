@@ -140,12 +140,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// for some reason.
 
 				// The following code should only run by unittests.
-#if DEBUG
-				const string arch = "Debug";
-#else
-				const string arch = "Release";
-#endif
-				return Path.Combine(Path.Combine(Path.Combine(Path.GetDirectoryName(SourceDirectory), "Output"), arch), file);
+				return Path.Combine(ExeOrDllDirectory, file);
 			}
 
 			return Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), file);
@@ -354,6 +349,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static string DataDirectoryLocalMachine => GetDirectoryLocalMachine(ksRootDataDir,
 			Path.Combine(LcmFileHelper.CommonApplicationData, CompanyName, ksFieldWorks));
 
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the executing assembly directory (exe or dll) (for running tests)
+		/// Expecting this to return something similar to C:/fwrepo/fw/Output/Debug
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public static string ExeOrDllDirectory
+		{
+			get
+			{
+				Uri uriBase = new Uri(Assembly.GetExecutingAssembly().CodeBase);
+				return Path.GetDirectoryName(Uri.UnescapeDataString(uriBase.AbsolutePath));
+			}
+		}
+
 		private static string m_srcdir;
 
 		/// ------------------------------------------------------------------------------------
@@ -367,43 +378,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				if (!string.IsNullOrEmpty(m_srcdir))
 					return m_srcdir;
-				if (MiscUtils.IsUnix)
-				{
-					// Linux doesn't have the registry setting, at least while running tests,
-					// so we'll assume the executing assembly is $FW/Output/Debug/FwUtils.dll,
-					// and the source dir is $FW/Src.
-					Uri uriBase = new Uri(Assembly.GetExecutingAssembly().CodeBase);
-					var dir = Path.GetDirectoryName(Uri.UnescapeDataString(uriBase.AbsolutePath));
-					dir = Path.GetDirectoryName(dir);		// strip the parent directory name (Debug)
-					dir = Path.GetDirectoryName(dir);		// strip the parent directory again (Output)
-					dir = Path.Combine(dir, "Src");
-					if (!Directory.Exists(dir))
-						throw new ApplicationException("Could not find the Src directory.  Was expecting it at: " + dir);
-					m_srcdir = dir;
-				}
-				else
-				{
-					string rootDir = null;
-					if (FwRegistryHelper.FieldWorksRegistryKey != null)
-					{
-						rootDir = FwRegistryHelper.FieldWorksRegistryKey.GetValue("RootCodeDir") as string;
-					}
-					else if (FwRegistryHelper.FieldWorksRegistryKeyLocalMachine != null)
-					{
-						rootDir = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine.GetValue("RootCodeDir") as string;
-					}
-					if (string.IsNullOrEmpty(rootDir))
-					{
-						throw new ApplicationException(
-							string.Format(@"You need to have the registry key {0}\RootCodeDir pointing at your DistFiles dir.",
-							FwRegistryHelper.FieldWorksRegistryKeyLocalMachine?.Name));
-					}
-					string fw = Directory.GetParent(rootDir).FullName;
-					string src = Path.Combine(fw, "Src");
-					if (!Directory.Exists(src))
-						throw new ApplicationException(@"Could not find the Src directory.  Was expecting it at: " + src);
-						m_srcdir = src;
-				}
+
+				// We'll assume the executing assembly is $FW/Output/Debug/FwUtils.dll,
+				// and the source dir is $FW/Src.
+				var dir = ExeOrDllDirectory;
+				dir = Path.GetDirectoryName(dir);		// strip the parent directory name (Debug)
+				dir = Path.GetDirectoryName(dir);		// strip the parent directory again (Output)
+				dir = Path.Combine(dir, "Src");
+				if (!Directory.Exists(dir))
+					throw new ApplicationException("Could not find the Src directory.  Was expecting it at: " + dir);
+				m_srcdir = dir;
+
 				return m_srcdir;
 			}
 		}
