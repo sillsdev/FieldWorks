@@ -13,6 +13,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			_LocalizeFieldWorksTask = localizeFieldWorksTask;
 			SrcFolder = localizeFieldWorksTask.SrcFolder;
 			RootDir = localizeFieldWorksTask.RootDirectory;
+			FwRootDir = localizeFieldWorksTask.FwRootDirectory;
 			OutputFolder = localizeFieldWorksTask.OutputFolder;
 			AssemblyInfoPath = localizeFieldWorksTask.AssemblyInfoPath;
 			Config = localizeFieldWorksTask.Config;
@@ -26,6 +27,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			_LocalizeFieldWorksTask = otherOptions._LocalizeFieldWorksTask;
 			SrcFolder = otherOptions.SrcFolder;
 			RootDir = otherOptions.RootDir;
+			FwRootDir = otherOptions.FwRootDir;
 			OutputFolder = otherOptions.OutputFolder;
 			AssemblyInfoPath = otherOptions.AssemblyInfoPath;
 			Config = otherOptions.Config;
@@ -38,6 +40,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 		public string SrcFolder { get; }
 		public string RootDir { get; }
+		public string FwRootDir { get; }
 		public string OutputFolder { get; }
 		public string AssemblyInfoPath { get; }
 		public string Config { get; }

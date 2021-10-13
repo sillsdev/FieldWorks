@@ -55,7 +55,15 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		internal object SyncObj = new object();
 
 		/// <summary>
-		/// The directory in which it all happens, corresponding to the main fw directory in source control.
+		/// The directory in which it all happens, corresponding to the main FW directory in source control.
+		/// This directory contains crowdin.json and DistFiles (which contains xml configuration)
+		/// </summary>
+		[Required]
+		public string FwRootDirectory { get; set; }
+
+		/// <summary>
+		/// The directory in which it all happens, corresponding to the main FW or LCM directory in source control,
+		/// used to calculate the relative location of resx files.
 		/// </summary>
 		[Required]
 		public string RootDirectory { get; set; }
@@ -96,7 +104,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 		internal string AssemblyInfoPath => Path.Combine(SrcFolder, AssemblyInfoName);
 
-		internal string ConfigurationFolder => Path.Combine(RootDirectory, DistFilesFolderName, LExFolderName, ConfigFolderName);
+		internal string ConfigurationFolder => Path.Combine(FwRootDirectory, DistFilesFolderName, LExFolderName, ConfigFolderName);
 
 		internal bool BuildSource => Build != "BinaryOnly";
 

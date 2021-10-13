@@ -122,6 +122,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				{
 					File.Copy(resxFile, localizedResxPath, overwrite: true);
 					Options.LogMessage(MessageImportance.Normal, $"copying original English resx to {localizedResxPath}");
+					Options.LogMessage(MessageImportance.Low, $"\t(could not find {localizedResxSourcePath})");
 				}
 			}
 		}
@@ -161,14 +162,9 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		/// </remarks>
 		internal string GetCrowdinBranch()
 		{
-			var crowdinJson = Path.Combine(Options.RootDir, "crowdin.json");
-			return File.Exists(crowdinJson) ? JsonConvert.DeserializeObject<CrowdinConfig>(File.ReadAllText(crowdinJson))?.Branch : null;
-		}
-
-		private class CrowdinConfig
-		{
-			// ReSharper disable once UnusedAutoPropertyAccessor.Local - It is set by DeserializeObject
-			public string Branch { get; set; }
+			var crowdinJson = Path.Combine(Options.FwRootDir, "crowdin.json");
+			var crowdinObj = new {Branch = (string) null};
+			return File.Exists(crowdinJson) ? JsonConvert.DeserializeAnonymousType(File.ReadAllText(crowdinJson), crowdinObj).Branch : null;
 		}
 
 		/// <returns><c>true</c> if the given ResX file has errors in string.Format variables</returns>

@@ -2,8 +2,10 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
 using System.IO;
 using FwBuildTasks;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using SIL.FieldWorks.Build.Tasks.Localization;
 
@@ -12,8 +14,9 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 	[TestFixture]
 	public class ProjectLocalizerTests
 	{
-		ProjectLocalizer _sut;
+		private ProjectLocalizer _sut;
 		private string _rootPath;
+		private string _fwRootPath;
 		private string _l10NDir;
 		private string _localeDir;
 		private string _srcDir;
@@ -26,7 +29,8 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		[SetUp]
 		public void Setup()
 		{
-			_rootPath = Path.Combine(Path.GetTempPath(), "TestRootProjLocalizer");
+			_rootPath = Path.Combine(Path.GetTempPath(), "TestRoot4ProjLocalizer_LCM");
+			_fwRootPath = Path.Combine(Path.GetTempPath(), "TestRoot4ProjLocalizer");
 			_srcDir = Path.Combine(_rootPath, "Src");
 			_projectDir = Path.Combine(_srcDir, FdoProjName);
 			_l10NDir = Path.Combine(_rootPath, "Localizations", "l10ns");
@@ -35,6 +39,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			{
 				L10nFileDirectory = _l10NDir,
 				RootDirectory = _rootPath,
+				FwRootDirectory = _fwRootPath,
 				SrcFolder = _srcDir,
 				OutputFolder = Path.Combine(_rootPath, "Output")
 			};
@@ -48,13 +53,15 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		[TearDown]
 		public void TearDown()
 		{
-			DeleteRootDir();
+			DeleteRootDirs();
 		}
 
-		private void DeleteRootDir()
+		private void DeleteRootDirs()
 		{
 			if (Directory.Exists(_rootPath))
 				Directory.Delete(_rootPath, true);
+			if (Directory.Exists(_fwRootPath))
+				Directory.Delete(_fwRootPath, true);
 		}
 
 		[Test]
@@ -102,16 +109,23 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 		private void WriteCrowdinJson(string branch)
 		{
-			TaskTestUtils.RecreateDirectory(_rootPath);
-			var branchJson = branch == null ? string.Empty : $"\n\t\"branch\": \"{branch}\",";
-			File.WriteAllText(Path.Combine(_rootPath, "crowdin.json"), $@"{{{branchJson}
-	""files"": [
-		{{
-			""source"": ""Localizations/LCM/**/*.resx"",
-			""translation"": ""/%locale%/%original_path%/%file_name%.%locale%.%file_extension%""
-		}}
-	]
-}}");
+			TaskTestUtils.RecreateDirectory(_fwRootPath);
+			var json = new Dictionary<string, object>
+			{
+				{
+					"files", new Dictionary<string, string>
+					{
+						{"source", "Localizations/LCM/**/*.resx"},
+						{"translation", "/%locale%/%original_path%/%file_name%.%locale%.%file_extension%"}
+					}
+				}
+			};
+			if (branch != null)
+			{
+				json["branch"] = branch;
+			}
+
+			File.WriteAllText(Path.Combine(_fwRootPath, "crowdin.json"), JsonConvert.SerializeObject(json));
 		}
 	}
 }

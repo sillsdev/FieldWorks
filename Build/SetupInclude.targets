@@ -336,7 +336,7 @@
   </Target>
 
   <PropertyGroup>
-	<fwrt>$(MSBuildProjectDirectory)/..</fwrt>
+	<fwrt>$([System.IO.Path]::GetFullPath(&quot;$(MSBuildProjectDirectory)/..&quot;))</fwrt>
 	<BUILD_LEVEL Condition="'$(BUILD_LEVEL)'==''">9</BUILD_LEVEL>
 	<!-- action is one of the following: build test clean register unregister -->
 	<action Condition="'$(action)'==''">build</action>

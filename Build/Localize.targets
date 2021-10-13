@@ -172,6 +172,7 @@
 	<Message Text="LcmRootDir = $(LcmRootDir)" />
 	<!-- Passing RootDir as SrcFolder because LCM stores common assembly info in its root dir. -->
 		<LocalizeFieldWorks
+			FwRootDirectory="$(fwrt)"
 			RootDirectory="$(LcmRootDir)"
 			SrcFolder="$(LcmRootDir)"
 			L10nFileDirectory="$(fwrt)/Localizations/l10ns"
@@ -180,6 +181,7 @@
 			Build="SourceOnly"/>
 	<!-- Process source for fieldworks -->
 		<LocalizeFieldWorks
+			FwRootDirectory="$(fwrt)"
 			RootDirectory="$(fwrt)"
 			SrcFolder="$(fwrt)/Src"
 			L10nFileDirectory="$(fwrt)/Localizations/l10ns"
@@ -202,6 +204,7 @@
 	<!-- Process source for liblcm -->
 	<!-- Passing RootDir as SrcFolder because LCM stores common assembly info in its root dir. -->
 		<LocalizeFieldWorks
+			FwRootDirectory="$(fwrt)"
 			RootDirectory="$(LcmRootDir)"
 			SrcFolder="$(LcmRootDir)"
 			L10nFileDirectory="$(fwrt)/Localizations/l10ns"
@@ -210,6 +213,7 @@
 			Build="BinaryOnly"/>
 	<!-- Process source for fieldworks -->
 		<LocalizeFieldWorks
+			FwRootDirectory="$(fwrt)"
 			RootDirectory="$(fwrt)"
 			SrcFolder="$(fwrt)/Src"
 			L10nFileDirectory="$(fwrt)/Localizations/l10ns"
