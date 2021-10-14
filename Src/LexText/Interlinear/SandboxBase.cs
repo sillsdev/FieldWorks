@@ -17,12 +17,13 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.Widgets;
-using XCore;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.PlatformUtilities;
+using XCore;
 
 namespace SIL.FieldWorks.IText
 {
@@ -1037,7 +1038,7 @@ namespace SIL.FieldWorks.IText
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
-			if (MiscUtils.IsMono && (Form.ActiveForm as XWorks.FwXWindow) != null)
+			if (Platform.IsMono && (Form.ActiveForm as XWorks.FwXWindow) != null)
 			{
 				(Form.ActiveForm as XWorks.FwXWindow).DesiredControl = this;
 			}
@@ -1050,7 +1051,7 @@ namespace SIL.FieldWorks.IText
 		protected override void OnHandleDestroyed(EventArgs e)
 		{
 			base.OnHandleDestroyed(e);
-			if (MiscUtils.IsMono && (Form.ActiveForm as XWorks.FwXWindow) != null)
+			if (Platform.IsMono && (Form.ActiveForm as XWorks.FwXWindow) != null)
 			{
 				(Form.ActiveForm as XWorks.FwXWindow).DesiredControl = null;
 			}
@@ -1076,7 +1077,7 @@ namespace SIL.FieldWorks.IText
 
 		private void SubscribeToRootSiteEventHandlerEvents()
 		{
-			if (MiscUtils.IsMono)
+			if (Platform.IsMono)
 			{
 				var ibusRootSiteEventHandler = m_rootSiteEventHandler as IbusRootSiteEventHandler;
 				if (ibusRootSiteEventHandler != null)

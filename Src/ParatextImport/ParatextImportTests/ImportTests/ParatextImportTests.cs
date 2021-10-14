@@ -6,13 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Utils;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
 using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace ParatextImport.ImportTests
 {
@@ -1287,7 +1288,7 @@ namespace ParatextImport.ImportTests
 		[Test]
 		public void EnsurePictureFilePathIsRooted_Rooted()
 		{
-			string fileName = MiscUtils.IsUnix ? "P0|/tmp/mypic.jpg|P2|P3|P4"
+			string fileName = Platform.IsUnix ? "P0|/tmp/mypic.jpg|P2|P3|P4"
 				: @"P0|c:\temp\mypic.jpg|P2|P3|P4";
 			Assert.AreEqual(fileName,
 				ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted",
@@ -4279,7 +4280,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 0);
 			m_importer.ProcessSegment("", @"\c");
 			m_importer.ProcessSegment("", @"\p");
-			string fileName = MiscUtils.IsUnix ? "/the Answer is 42.jpg" : @"Q:\the\Answer\is\42.jpg";
+			string fileName = Platform.IsUnix ? "/the Answer is 42.jpg" : @"Q:\the\Answer\is\42.jpg";
 			m_importer.ProcessSegment("User-supplied picture|" +  fileName +
 				"|col|EXO 1--1||Caption for junk.jpg|", @"\fig");
 			m_importer.FinalizeImport();
@@ -4523,7 +4524,7 @@ namespace ParatextImport.ImportTests
 				m_importer.ProcessSegment("", @"\c");
 				m_importer.ProcessSegment("", @"\p");
 				m_importer.ProcessSegment(filemaker.Filename, @"\cat");
-				string fileName = MiscUtils.IsUnix ? "/MissingPicture.jpg" : @"c:\MissingPicture.jpg";
+				string fileName = Platform.IsUnix ? "/MissingPicture.jpg" : @"c:\MissingPicture.jpg";
 				m_importer.ProcessSegment(fileName, @"\cat");
 				m_importer.FinalizeImport();
 				IScrBook exodus = m_importer.UndoInfo.ImportedVersion.BooksOS[0];
@@ -4604,7 +4605,7 @@ namespace ParatextImport.ImportTests
 				m_importer.ProcessSegment("", @"\p");
 
 				// Linux Invalid filename chars are only null and /,
-				m_importer.ProcessSegment(MiscUtils.IsUnix ? "InvalidFile|junk\u0000jpg||" : "InvalidFile|.jpg||",
+				m_importer.ProcessSegment(Platform.IsUnix ? "InvalidFile|junk\u0000jpg||" : "InvalidFile|.jpg||",
 					@"\cat");
 			}
 		}

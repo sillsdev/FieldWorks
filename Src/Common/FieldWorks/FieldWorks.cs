@@ -168,7 +168,7 @@ namespace SIL.FieldWorks
 
 				// Only the first FieldWorks process should notify the user of updates. If the user wants to open multiple projects before restarting
 				// for updates, skip the nagging dialogs.
-				var shouldCheckForUpdates = MiscUtils.IsWindows && !TryFindExistingProcess();
+				var shouldCheckForUpdates = Platform.IsWindows && !TryFindExistingProcess();
 				// FlexibleMessageBoxes for updates are shown before the main window is shown. Show them in the taskbar so they don't get lost.
 				FlexibleMessageBox.ShowInTaskbar = true;
 				FlexibleMessageBox.MaxWidthFactor = 0.4;
@@ -177,7 +177,7 @@ namespace SIL.FieldWorks
 				s_appSettings.DeleteCorruptedSettingsFilesIfPresent();
 				s_appSettings.UpgradeIfNecessary();
 
-				if (s_appSettings.Update == null && MiscUtils.IsWindows)
+				if (s_appSettings.Update == null && Platform.IsWindows)
 				{
 					s_appSettings.Update = new UpdateSettings
 					{
@@ -229,7 +229,7 @@ namespace SIL.FieldWorks
 					// on this thread to prevent race conditions on shutdown.See TE-975
 					// See http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=911603&SiteID=1
 					// TODO-Linux: uses mono feature that is not implemented. What are the implications of this? Review.
-					if (MiscUtils.IsDotNet)
+					if (Platform.IsDotNet)
 						SystemEvents.InvokeOnEventsThread(new Action(DoNothing));
 
 					s_threadHelper = new ThreadHelper();
@@ -348,7 +348,7 @@ namespace SIL.FieldWorks
 					// Create a listener for this project for applications using FLEx as a LexicalProvider.
 					LexicalProviderManager.StartLexicalServiceProvider(s_projectId, s_cache);
 
-					if (MiscUtils.IsMono)
+					if (Platform.IsMono)
 						UglyHackForXkbIndicator();
 
 					if (shouldCheckForUpdates)
@@ -711,7 +711,7 @@ namespace SIL.FieldWorks
 					string thisProcessName = Assembly.GetExecutingAssembly().GetName().Name;
 					string thisSid = FwUtils.GetUserForProcess(thisProcess);
 					List<Process> processes = Process.GetProcessesByName(thisProcessName).ToList();
-					if (MiscUtils.IsUnix)
+					if (Platform.IsUnix)
 					{
 						processes.AddRange(Process.GetProcesses().Where(p => p.ProcessName.Contains("mono")
 							&& p.Modules.Cast<ProcessModule>().Any(m => m.ModuleName == (thisProcessName + ".exe"))));
@@ -2037,7 +2037,7 @@ namespace SIL.FieldWorks
 			string projectPath = fwApp.Cache.ProjectId.Path;
 			string parentDirectory = Path.GetDirectoryName(fwApp.Cache.ProjectId.ProjectFolder);
 			string projectsDirectory = FwDirectoryFinder.ProjectsDirectory;
-				if (!MiscUtils.IsUnix)
+				if (!Platform.IsUnix)
 				{
 					parentDirectory = parentDirectory.ToLowerInvariant();
 					projectsDirectory = projectsDirectory.ToLowerInvariant();
@@ -2106,7 +2106,7 @@ namespace SIL.FieldWorks
 			}
 			string oldRoot = null;
 			string newRoot = null;
-			if (!MiscUtils.IsUnix)
+			if (!Platform.IsUnix)
 			{
 				oldPath = oldPath.ToLowerInvariant();
 				newPath = newPath.ToLowerInvariant();
@@ -2138,7 +2138,7 @@ namespace SIL.FieldWorks
 					case DriveType.Fixed:
 					case DriveType.Network:
 					case DriveType.Removable:
-						if (MiscUtils.IsUnix)
+						if (Platform.IsUnix)
 							driveMounts.Add(d.Name + (d.Name.EndsWith("/") ? "" : "/"));	// ensure terminated with a slash
 						else
 							driveMounts.Add(d.Name.ToLowerInvariant());		// Windows produces C:\ D:\ etc.
@@ -2267,7 +2267,7 @@ namespace SIL.FieldWorks
 				bldr.Append(Properties.Resources.ksYouCanTryToMoveProjects);
 				MessageBox.Show(bldr.ToString(), Properties.Resources.ksProblemsMovingProjects);
 			}
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				if (projectPath.StartsWith(oldFolderForProjects))
 				{
@@ -3023,7 +3023,7 @@ namespace SIL.FieldWorks
 			}
 			catch (StartupException sue)
 			{
-				if (MiscUtils.IsUnix && sue.InnerException is UnauthorizedAccessException)
+				if (Platform.IsUnix && sue.InnerException is UnauthorizedAccessException)
 				{
 					// Tell Mono user he/she needs to logout and log back in
 					MessageBox.Show(ResourceHelper.GetResourceString("ksNeedToJoinFwGroup"));
@@ -3540,7 +3540,7 @@ namespace SIL.FieldWorks
 			ErrorReporter.AddProperty("MachineName", Environment.MachineName);
 			ErrorReporter.AddProperty("OSVersion", Environment.OSVersion.ToString());
 			ErrorReporter.AddProperty("OSRelease", ErrorReport.GetOperatingSystemLabel());
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				var packageVersions = LinuxPackageUtils.FindInstalledPackages("fieldworks-applications*");
 				if (packageVersions.Count() > 0)

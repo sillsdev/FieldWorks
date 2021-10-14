@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2020 SIL International
+// Copyright (c) 2014-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,6 +19,7 @@ using Newtonsoft.Json.Linq;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -160,7 +161,7 @@ namespace SIL.FieldWorks.XWorks
 				dynamic fileToSign = new JObject();
 				// ReSharper disable once AssignNullToNotNullAttribute - This file has a filename, the OS told us so.
 				var relativeFilePath = Path.Combine(model.SiteName, subFolder, Path.GetFileName(file));
-				if (MiscUtils.IsWindows)
+				if (Platform.IsWindows)
 					relativeFilePath = relativeFilePath.Replace('\\', '/');
 				fileToSign.objectId = relativeFilePath;
 				fileToSign.action = "putObject";

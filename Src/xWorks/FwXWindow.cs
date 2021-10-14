@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2019 SIL International
+// Copyright (c) 2003-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,29 +13,29 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using Microsoft.Win32;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.UIAdapters;
-using SIL.LCModel;
-using SIL.LCModel.Application;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgControls;
 using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.Archiving;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.IO;
+using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Reporting;
-using SIL.LCModel.Utils;
 using SIL.Utils;
 using XCore;
 
@@ -899,7 +899,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				// Always enable menu command on Linux. If it's not installed we display an error
 				// message when the user tries to launch it. See FWNX-567 for more info.
@@ -925,7 +925,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var program = "charmap.exe";
 			Action<Exception> errorHandler = null;
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				program = "gucharmap";
 				errorHandler = (exception) => {
@@ -1114,7 +1114,7 @@ namespace SIL.FieldWorks.XWorks
 			TMItemProperties itemProps = args as TMItemProperties;
 			if (itemProps != null)
 			{
-				itemProps.Visible = !(MiscUtils.IsMono);
+				itemProps.Visible = !(Platform.IsMono);
 				itemProps.Update = true;
 				return true;
 			}
@@ -2073,7 +2073,7 @@ namespace SIL.FieldWorks.XWorks
 			// its active control.  This swallows keyboard input.  To prevent this, we select the
 			// desired control if one has been established so that keyboard input can still be seen
 			// by that control.  (See FWNX-785.)
-			if (MiscUtils.IsMono && m.Msg == (int)Win32.WinMsgs.WM_ACTIVATE && m.HWnd == this.Handle &&
+			if (Platform.IsMono && m.Msg == (int)Win32.WinMsgs.WM_ACTIVATE && m.HWnd == this.Handle &&
 				DesiredControl != null && !DesiredControl.IsDisposed && DesiredControl.Visible && DesiredControl.Enabled)
 			{
 				DesiredControl.Select();

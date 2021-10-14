@@ -6,14 +6,15 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
-using SIL.LCModel.Utils;
-using XCore;
+using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
+using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -468,7 +469,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			////
 			resources.ApplyResources(this, "$this");
 
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				// Mono doesn't handle anchoring coming in through these resources for adjusting
 				// initial locations and sizes, so let's set those manually.  See FWNX-546.

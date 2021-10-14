@@ -8,6 +8,7 @@ using System.Reflection;
 using Microsoft.Win32;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
@@ -53,7 +54,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			get
 			{
 				string linuxDir = Environment.GetEnvironmentVariable("FW_ROOTCODE") ?? "/usr/share/fieldworks";
-				return GetDirectory(RootCodeDir, MiscUtils.IsUnix ? linuxDir
+				return GetDirectory(RootCodeDir, Platform.IsUnix ? linuxDir
 					: Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)));
 			}
 		}

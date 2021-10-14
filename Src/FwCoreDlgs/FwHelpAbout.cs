@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using SIL.Acknowledgements;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -64,7 +65,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_sTitleFmt = Text;
 			m_sAvailableDiskSpaceFmt = edtAvailableDiskSpace.Text;
 
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				// Link to System Monitor
 
@@ -320,7 +321,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				var strRoot = Path.GetPathRoot(Application.ExecutablePath);
 
-				if (MiscUtils.IsUnix)
+				if (Platform.IsUnix)
 				{
 					return;
 				}

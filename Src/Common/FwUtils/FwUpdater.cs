@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Reporting;
 using SIL.Settings;
 using SIL.Windows.Forms;
@@ -92,7 +93,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			try
 			{
-				if (!MiscUtils.IsWindows)
+				if (!Platform.IsWindows)
 				{
 					return "ERROR: Only Windows updates are available here";
 				}

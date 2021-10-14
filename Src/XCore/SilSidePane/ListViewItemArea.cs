@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.SilSidePane
 {
@@ -35,7 +35,7 @@ namespace SIL.SilSidePane
 			base.SmallImageList = _smallImageList;
 			base.LargeImageList = _largeImageList;
 			base.HideSelection = false;
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 				base.LabelWrap = false;		// Fix FWNX-739 as best we can (no ellipsis when trimming like in Windows).
 		}
 

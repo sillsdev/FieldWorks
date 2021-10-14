@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using SIL.FieldWorks.Common.ScriptureUtils;
-using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace ParatextImport
 {
@@ -17,7 +17,7 @@ namespace ParatextImport
 		}
 		public string SettingsDirectory
 		{
-			get { return MiscUtils.IsUnix ? "~/MyParatextProjects/" : @"c:\My Paratext Projects\"; }
+			get { return Platform.IsUnix ? "~/MyParatextProjects/" : @"c:\My Paratext Projects\"; }
 		}
 		public IEnumerable<string> NonEditableTexts { get; set; }
 		public IEnumerable<string> ScrTextNames { get; set; }

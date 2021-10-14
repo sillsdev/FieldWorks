@@ -10,6 +10,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks
 {
@@ -201,7 +202,7 @@ namespace SIL.FieldWorks
 			// make sure that the dialog comes up visible and activated.
 			Activate();
 
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 				ReLayoutCorrectly();
 		}
 

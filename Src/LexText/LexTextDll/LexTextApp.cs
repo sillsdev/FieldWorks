@@ -10,19 +10,20 @@ using System.Diagnostics;
 using System.ComponentModel;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
-using SIL.LCModel;
-using SIL.LCModel.DomainImpl;
-using SIL.LCModel.Infrastructure;
-using SIL.LCModel.Utils;
-using XCore;
-using SIL.FieldWorks.IText;
-using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.IText;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.LexText.Controls.DataNotebook;
+using SIL.LCModel;
 using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
@@ -896,7 +897,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			try
 			{
-				if (MiscUtils.IsUnix && (path.EndsWith(".html") || path.EndsWith(".htm")))
+				if (Platform.IsUnix && (path.EndsWith(".html") || path.EndsWith(".htm")))
 				{
 					using (Process.Start(webBrowserProgramLinux, Enquote(path)))
 					{

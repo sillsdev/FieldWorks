@@ -5,7 +5,7 @@
 using System;
 using System.IO;
 using NUnit.Framework;
-using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get
 			{
 				return Path.GetDirectoryName(typeof(FwDirectoryFinder).Assembly.CodeBase
-					.Substring(MiscUtils.IsUnix ? 7 : 8));
+					.Substring(Platform.IsUnix ? 7 : 8));
 			}
 		}
 

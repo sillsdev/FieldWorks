@@ -11,6 +11,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
@@ -107,7 +108,7 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		private static int GetUbuntuVersion()
 		{
-			if (!MiscUtils.IsUnix)
+			if (!Platform.IsUnix)
 				return 0;
 
 			try

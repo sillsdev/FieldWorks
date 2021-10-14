@@ -15,6 +15,7 @@ using Icu.Collation;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -105,7 +106,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>Name of the font, or <c>null</c> if not found.</returns>
 		public static string GetFontNameForLanguage(string lang)
 		{
-			if (MiscUtils.IsWindows)
+			if (Platform.IsWindows)
 				throw new PlatformNotSupportedException();
 
 			string fontName;
@@ -560,7 +561,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			try
 			{
-				if (MiscUtils.IsDotNet)
+				if (Platform.IsDotNet)
 				{
 					IntPtr procToken;
 					string sidString = null;

@@ -1,4 +1,4 @@
-// Copyright (c) 2017 SIL International
+// Copyright (c) 2017-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -15,7 +15,7 @@ using SIL.Scripture;
 namespace Paratext8Plugin
 {
 	/// <summary>
-	/// Class wrapping the Paratext8 API for intereacting with scripture data.
+	/// Class wrapping the Paratext8 API for interacting with scripture data.
 	/// </summary>
 	[Export(typeof(ScriptureProvider.IScriptureProvider))]
 	[ExportMetadata("Version", "8")]

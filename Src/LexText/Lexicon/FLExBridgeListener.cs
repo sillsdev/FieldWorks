@@ -11,21 +11,22 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.Lift;
-using SIL.Lift.Migration;
-using SIL.Lift.Parsing;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.LexText;
-using SIL.IO;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
+using SIL.Lift;
+using SIL.Lift.Migration;
+using SIL.Lift.Parsing;
+using SIL.IO;
+using SIL.PlatformUtilities;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -141,7 +142,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns></returns>
 		public bool OnFLExLiftBridge(object commandObject)
 		{
-			if (MiscUtils.IsMono)
+			if (Platform.IsMono)
 			{
 				// This is a horrible workaround for a nasty bug in Mono. The toolbar button captures the mouse,
 				// and does not release it before calling this event handler. If we proceed to run the bridge,
@@ -537,7 +538,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public bool OnDisplayCheckForFlexBridgeUpdates(object commandObject, ref UIItemDisplayProperties display)
 		{
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				display.Visible = false;
 				display.Enabled = false;

@@ -282,7 +282,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			ref bool changesReceived, ref string projectName)
 		{
 			string flexbridgeLauncher = FullFieldWorksBridgePath();
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				flexbridgeLauncher = FwDirectoryFinder.FlexBridgeFolder + "/flexbridge";
 			}

@@ -12,15 +12,16 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.Lift.Parsing;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
+using SIL.Lift.Parsing;
+using SIL.PlatformUtilities;
 using SIL.Utils;
 using SIL.WritingSystems;
 
@@ -378,7 +379,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (!String.IsNullOrEmpty(span.LinkURL))
 				{
 					string linkPath = FileUtils.StripFilePrefix(span.LinkURL);
-					if (MiscUtils.IsUnix)
+					if (Platform.IsUnix)
 						linkPath = linkPath.TrimStart('/');
 					string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile), linkPath);
 					if (linkPath.StartsWith("others" + '/') || linkPath.StartsWith("others" + "\\")

@@ -1,13 +1,6 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: HelperClasses.cs
-// Responsibility: TE Team
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections;
@@ -16,8 +9,8 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
 using System.Diagnostics;
-using XCore;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.UIAdapters
 {
@@ -744,7 +737,7 @@ namespace SIL.FieldWorks.Common.UIAdapters
 			//string appPath = Application.StartupPath;
 			// Get the directory where our DLLs live (Substring(6 strips off file//).
 			// The old version above fails when the executing application is the C#Refactory test runner.
-			string appPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase.Substring(MiscUtils.IsUnix ? 5 : 6));
+			string appPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase.Substring(Platform.IsUnix ? 5 : 6));
 			try
 			{
 				// Load an adapter library .dll

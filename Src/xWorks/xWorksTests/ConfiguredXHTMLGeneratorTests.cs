@@ -12,23 +12,24 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using Icu.Collation;
 using NUnit.Framework;
-using SIL.Linq;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
-using SIL.TestUtilities;
 using SIL.LCModel.Utils;
-using XCore;
+using SIL.Linq;
+using SIL.PlatformUtilities;
+using SIL.TestUtilities;
 using SIL.WritingSystems;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -5023,7 +5024,7 @@ namespace SIL.FieldWorks.XWorks
 				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(filePath));
 				var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[starts-with(@src, '" + pictureRelativePath + "')]";
-				if (!MiscUtils.IsUnix)
+				if (!Platform.IsUnix)
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 1);
 				// that src starts with a string, and escaping any Windows path separators
 				AssertRegex(result, string.Format("src=\"{0}[^\"]*\"", pictureRelativePath.Replace(@"\", @"\\")), 1);
@@ -5060,7 +5061,7 @@ namespace SIL.FieldWorks.XWorks
 				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(filePath));
 				var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[starts-with(@src, '" + pictureRelativePath + "')]";
-				if (!MiscUtils.IsUnix)
+				if (!Platform.IsUnix)
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 1);
 				// that src starts with a string, and escaping any Windows path separators
 				AssertRegex(result, string.Format("src=\"{0}[^\"]*\"", pictureRelativePath.Replace(@"\", @"\\")), 1);
@@ -5115,14 +5116,14 @@ namespace SIL.FieldWorks.XWorks
 				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(fileName));
 				var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[contains(@src, '" + pictureRelativePath + "')]";
-				if (!MiscUtils.IsUnix)
+				if (!Platform.IsUnix)
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 1);
 				// that src contains a string, and escaping any Windows path separators
 				AssertRegex(result, string.Format("src=\"[^\"]*{0}[^\"]*\"", pictureRelativePath.Replace(@"\", @"\\")), 1);
 				// The second file with the same name should have had something appended to the end of the filename but the initial filename should match both entries
 				var filenameWithoutExtension = Path.GetFileNameWithoutExtension(pictureRelativePath);
 				var pictureStartsWith = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[contains(@src, '" + filenameWithoutExtension + "')]";
-				if (!MiscUtils.IsUnix)
+				if (!Platform.IsUnix)
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureStartsWith, 2);
 				// that src contains a string
 				AssertRegex(result, string.Format("src=\"[^\"]*{0}[^\"]*\"", filenameWithoutExtension), 2);
@@ -5171,7 +5172,7 @@ namespace SIL.FieldWorks.XWorks
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(fileName));
 				const string pictureXPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img";
 				var pictureWithComposedPath = pictureXPath + "[contains(@src, '" + pictureRelativePath + "')]";
-				if (!MiscUtils.IsUnix)
+				if (!Platform.IsUnix)
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 2);
 				else
 					// that src contains a string, and escaping any Windows path separators
@@ -5312,7 +5313,7 @@ namespace SIL.FieldWorks.XWorks
 				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(fileName));
 				var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[contains(@src, '" + pictureRelativePath + "')]";
-				if (!MiscUtils.IsUnix)
+				if (!Platform.IsUnix)
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 2);
 				// that src starts with string, and escaping Windows directory separators
 				AssertRegex(result, string.Format("src=\"{0}[^\"]*\"", pictureRelativePath.Replace(@"\", @"\\")), 2);

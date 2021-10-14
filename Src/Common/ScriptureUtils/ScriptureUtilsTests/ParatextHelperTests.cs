@@ -8,10 +8,11 @@ using System.Linq;
 using NUnit.Framework;
 using Paratext;
 using Paratext.LexicalClient;
+using SIL.FieldWorks.Test.ProjectUnpacker;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.Test.ProjectUnpacker;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
 {
@@ -72,7 +73,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// ------------------------------------------------------------------------------------
 		public string ProjectsDirectory
 		{
-			get { return MiscUtils.IsUnix ? "~/MyParatextProjects/" : @"c:\My Paratext Projects\"; }
+			get { return Platform.IsUnix ? "~/MyParatextProjects/" : @"c:\My Paratext Projects\"; }
 		}
 
 		/// ------------------------------------------------------------------------------------

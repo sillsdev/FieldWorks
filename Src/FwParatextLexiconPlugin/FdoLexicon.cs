@@ -18,10 +18,11 @@ using SIL.LCModel;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Machine.Morphology;
 using SIL.ObjectModel;
-using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
@@ -311,7 +312,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				string url = string.Format("silfw://localhost/link?app=flex&database={0}&tool={1}&guid={2}",
 					HttpUtility.UrlEncode(m_cache.ProjectId.Name), HttpUtility.UrlEncode(toolName), HttpUtility.UrlEncode(guid));
 				// TODO: this would probably be faster if we directly called the RPC socket if FW is already open
-				if (MiscUtils.IsUnix)
+				if (Platform.IsUnix)
 				{
 					string libPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
 					using (Process.Start(Path.Combine(libPath, "run-app"), string.Format("FieldWorks.exe {0}", url))) {}

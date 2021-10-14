@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 			// Don't fade in on Linux to work-around for timer issue with UpdateOpacityCallback, fixing FWNX-959.
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 				Opacity = 1;
 
 			HandleCreated += SetPosition;

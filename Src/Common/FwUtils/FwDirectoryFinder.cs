@@ -557,7 +557,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// NOTE: SpecialFolder.MyDocuments returns $HOME on Linux
 				string myDocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 				// FWNX-501: use slightly different default path on Linux
-				string defaultDir = MiscUtils.IsUnix ?
+				string defaultDir = Platform.IsUnix ?
 					Path.Combine(myDocs, "Documents/fieldworks/backups") :
 					Path.Combine(Path.Combine(myDocs, "My FieldWorks"), "Backups");
 

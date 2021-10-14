@@ -10,8 +10,8 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Utils;
 using SIL.Windows.Forms;
+using SIL.PlatformUtilities;
 using PropertyTable = XCore.PropertyTable;
 
 namespace SIL.FieldWorks.XWorks
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			InitializeComponent();
 
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 				MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height + m_additionalMinimumHeightForMono);
 
 			m_controller = controller;
@@ -286,7 +286,7 @@ namespace SIL.FieldWorks.XWorks
 			var allButTheLogRowHeight = tableLayoutPanel.GetRowHeights().Sum() - tableLayoutPanel.GetRowHeights().Last();
 			var fudge = Height - tableLayoutPanel.Height;
 			var minimumFormHeightToShowLog = allButTheLogRowHeight + outputLogTextbox.MinimumSize.Height + fudge;
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 				minimumFormHeightToShowLog += m_additionalMinimumHeightForMono;
 			MinimumSize = new Size(MinimumSize.Width, minimumFormHeightToShowLog);
 
@@ -364,7 +364,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// On Linux, when reducing the height of the dialog, the output log doesn't shrink with it.
 			// Set its height back to something smaller to keep the whole control visible. It will expand as appropriate.
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 				outputLogTextbox.Size = new Size(outputLogTextbox.Size.Width, outputLogTextbox.MinimumSize.Height);
 		}
 	}

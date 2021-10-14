@@ -1313,7 +1313,7 @@ namespace SIL.FieldWorks.Common.Controls
 					new XElement("font",
 						new XAttribute("face", descFont),
 						new XElement("p", desc))));
-			if (MiscUtils.IsMono)
+			if (Platform.IsMono)
 			{
 				var tempfile = Path.Combine(FileUtils.GetTempFile("htm"));
 				using (var w = new StreamWriter(tempfile, false))
