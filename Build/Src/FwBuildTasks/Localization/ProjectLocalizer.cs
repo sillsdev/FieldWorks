@@ -15,7 +15,6 @@ using System.Threading;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Microsoft.Build.Framework;
-using Newtonsoft.Json;
 
 // ReSharper disable AssignNullToNotNullAttribute - System.IO is hypocritical in its null handling
 
@@ -148,23 +147,9 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var resxFileName = Path.GetFileNameWithoutExtension(resxPath);
 			// ReSharper disable once PossibleNullReferenceException
 			var partialDir = Path.GetDirectoryName(resxPath.Substring(Options.RootDir.Length + 1));
-			var crowdinBranch = GetCrowdinBranch();
-			var sourceFolder = string.IsNullOrEmpty(crowdinBranch)
-				? Path.Combine(Options.CurrentLocaleDir, partialDir)
-				: Path.Combine(Options.CurrentLocaleDir, crowdinBranch, partialDir);
+			var sourceFolder = Path.Combine(Options.CurrentLocaleDir, partialDir);
 			var fileName = $"{resxFileName}.{Options.Locale}.resx";
 			return Path.Combine(sourceFolder, fileName);
-		}
-
-		/// <remarks>
-		/// If there is a crowdin.json file with a branch, include it in the path to the source localized resx file.
-		/// LT-20831: Crowdin now includes the branch directory in %original_path%
-		/// </remarks>
-		internal string GetCrowdinBranch()
-		{
-			var crowdinJson = Path.Combine(Options.FwRootDir, "crowdin.json");
-			var crowdinObj = new {Branch = (string) null};
-			return File.Exists(crowdinJson) ? JsonConvert.DeserializeAnonymousType(File.ReadAllText(crowdinJson), crowdinObj).Branch : null;
 		}
 
 		/// <returns><c>true</c> if the given ResX file has errors in string.Format variables</returns>

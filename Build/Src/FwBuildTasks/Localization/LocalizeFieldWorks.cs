@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2020 SIL International
+// Copyright (c) 2015-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -55,15 +55,8 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		internal object SyncObj = new object();
 
 		/// <summary>
-		/// The directory in which it all happens, corresponding to the main FW directory in source control.
-		/// This directory contains crowdin.json and DistFiles (which contains xml configuration)
-		/// </summary>
-		[Required]
-		public string FwRootDirectory { get; set; }
-
-		/// <summary>
 		/// The directory in which it all happens, corresponding to the main FW or LCM directory in source control,
-		/// used to calculate the relative location of resx files.
+		/// used to calculate the relative location of resx files, locate xml configuration, etc.
 		/// </summary>
 		[Required]
 		public string RootDirectory { get; set; }
@@ -104,7 +97,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 		internal string AssemblyInfoPath => Path.Combine(SrcFolder, AssemblyInfoName);
 
-		internal string ConfigurationFolder => Path.Combine(FwRootDirectory, DistFilesFolderName, LExFolderName, ConfigFolderName);
+		internal string ConfigurationFolder => Path.Combine(RootDirectory, DistFilesFolderName, LExFolderName, ConfigFolderName);
 
 		internal bool BuildSource => Build != "BinaryOnly";
 

@@ -101,15 +101,11 @@
 
 	<!-- Each downloaded translation needs the following post-processing:
 			* Insert strings from messages.*.po into strings-*.xml
-			* Move LCM resx files to a more convenient place (they have extra folders in Crowdin
-			  because of the folder structure we use to upload them) -->
+			* Move resx files to a more convenient place -->
 	<Target Name="postProcessDownloadedTranslation">
-		<Message Text="Converting po file and relocating LCM .resx files for $(Locale)" />
+		<Message Text="Converting po file and relocating .resx files for $(Locale)" />
 		<PoToXml PoFile="$(LocaleDir)/messages.$(Locale).po" StringsXml="$(LocaleDir)/strings-$(Locale).xml"/>
-		<ItemGroup>
-			<TranslatedResxFiles Include="$(LocaleDir)/Localizations/LCM/**/*.resx"/>
-		</ItemGroup>
-		<Move SourceFiles="@(TranslatedResxFiles)" DestinationFolder="$(LocaleDir)/src/%(RecursiveDir)" />
+		<MoveResxsToLocaleSrc LocaleDirectory="$(LocaleDir)" CrowdinJson="$(fwrt)/crowdin.json"/>
 	</Target>
 
 	<Target Name="combineGOLDEtic">
@@ -172,7 +168,6 @@
 	<Message Text="LcmRootDir = $(LcmRootDir)" />
 	<!-- Passing RootDir as SrcFolder because LCM stores common assembly info in its root dir. -->
 		<LocalizeFieldWorks
-			FwRootDirectory="$(fwrt)"
 			RootDirectory="$(LcmRootDir)"
 			SrcFolder="$(LcmRootDir)"
 			L10nFileDirectory="$(fwrt)/Localizations/l10ns"
@@ -181,7 +176,6 @@
 			Build="SourceOnly"/>
 	<!-- Process source for fieldworks -->
 		<LocalizeFieldWorks
-			FwRootDirectory="$(fwrt)"
 			RootDirectory="$(fwrt)"
 			SrcFolder="$(fwrt)/Src"
 			L10nFileDirectory="$(fwrt)/Localizations/l10ns"
@@ -204,7 +198,6 @@
 	<!-- Process source for liblcm -->
 	<!-- Passing RootDir as SrcFolder because LCM stores common assembly info in its root dir. -->
 		<LocalizeFieldWorks
-			FwRootDirectory="$(fwrt)"
 			RootDirectory="$(LcmRootDir)"
 			SrcFolder="$(LcmRootDir)"
 			L10nFileDirectory="$(fwrt)/Localizations/l10ns"
@@ -213,7 +206,6 @@
 			Build="BinaryOnly"/>
 	<!-- Process source for fieldworks -->
 		<LocalizeFieldWorks
-			FwRootDirectory="$(fwrt)"
 			RootDirectory="$(fwrt)"
 			SrcFolder="$(fwrt)/Src"
 			L10nFileDirectory="$(fwrt)/Localizations/l10ns"

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2019 SIL International
+// Copyright (c) 2015-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,7 +13,6 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			_LocalizeFieldWorksTask = localizeFieldWorksTask;
 			SrcFolder = localizeFieldWorksTask.SrcFolder;
 			RootDir = localizeFieldWorksTask.RootDirectory;
-			FwRootDir = localizeFieldWorksTask.FwRootDirectory;
 			OutputFolder = localizeFieldWorksTask.OutputFolder;
 			AssemblyInfoPath = localizeFieldWorksTask.AssemblyInfoPath;
 			Config = localizeFieldWorksTask.Config;
@@ -27,7 +26,6 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			_LocalizeFieldWorksTask = otherOptions._LocalizeFieldWorksTask;
 			SrcFolder = otherOptions.SrcFolder;
 			RootDir = otherOptions.RootDir;
-			FwRootDir = otherOptions.FwRootDir;
 			OutputFolder = otherOptions.OutputFolder;
 			AssemblyInfoPath = otherOptions.AssemblyInfoPath;
 			Config = otherOptions.Config;
@@ -40,7 +38,6 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 		public string SrcFolder { get; }
 		public string RootDir { get; }
-		public string FwRootDir { get; }
 		public string OutputFolder { get; }
 		public string AssemblyInfoPath { get; }
 		public string Config { get; }

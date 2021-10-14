@@ -19,6 +19,7 @@
   <UsingTask TaskName="LogMetadata" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="Make" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="Md5Checksum" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="MoveResxsToLocaleSrc" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="NUnit" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="ParentDirectory" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="ParseVersionNumbers" AssemblyFile="FwBuildTasks.dll"/>
