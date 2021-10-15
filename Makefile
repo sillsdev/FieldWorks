@@ -187,7 +187,6 @@ install-set-fw-location:
 install: install-man-pages install-tree install-menuentries l10n-install install-packagemetadata
 
 install-package: install install-COM
-	:
 
 install-package-fdo: install-tree-fdo install-COM
 
