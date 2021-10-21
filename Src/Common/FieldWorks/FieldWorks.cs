@@ -49,11 +49,13 @@ using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Settings;
 using SIL.Utils;
+using SIL.Windows.Forms;
 using SIL.Windows.Forms.HtmlBrowser;
 using SIL.Windows.Forms.Keyboarding;
 using SIL.WritingSystems;
 using XCore;
 using ConfigurationException = SIL.Reporting.ConfigurationException;
+using PropertyTable = XCore.PropertyTable;
 
 namespace SIL.FieldWorks
 {
@@ -167,6 +169,9 @@ namespace SIL.FieldWorks
 				// Only the first FieldWorks process should notify the user of updates. If the user wants to open multiple projects before restarting
 				// for updates, skip the nagging dialogs.
 				var shouldCheckForUpdates = MiscUtils.IsWindows && !TryFindExistingProcess();
+				// FlexibleMessageBoxes for updates are shown before the main window is shown. Show them in the taskbar so they don't get lost.
+				FlexibleMessageBox.ShowInTaskbar = true;
+				FlexibleMessageBox.MaxWidthFactor = 0.4;
 
 				s_appSettings = new FwApplicationSettings();
 				s_appSettings.DeleteCorruptedSettingsFilesIfPresent();
@@ -176,8 +181,9 @@ namespace SIL.FieldWorks
 				{
 					s_appSettings.Update = new UpdateSettings
 					{
-						Behavior = DialogResult.Yes == MessageBox.Show(
-								Properties.Resources.AutomaticUpdatesMessage, Properties.Resources.AutomaticUpdatesCaption, MessageBoxButtons.YesNo)
+						Behavior = DialogResult.Yes == FlexibleMessageBox.Show(
+								Properties.Resources.AutomaticUpdatesMessage, Properties.Resources.AutomaticUpdatesCaption, MessageBoxButtons.YesNo,
+								options: FlexibleMessageBoxOptions.AlwaysOnTop)
 							? UpdateSettings.Behaviors.Download
 							: UpdateSettings.Behaviors.DoNotCheck
 					};

@@ -16,6 +16,7 @@ using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.Reporting;
 using SIL.Settings;
+using SIL.Windows.Forms;
 using SIL.Windows.Forms.Reporting;
 using SIL.Xml;
 using Timer = System.Timers.Timer;
@@ -362,9 +363,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static void InstallDownloadedUpdate()
 		{
 			var latestPatch = GetLatestDownloadedUpdate(Current);
-			if (latestPatch == null || DialogResult.Yes != MessageBox.Show(
+			if (latestPatch == null || DialogResult.Yes != FlexibleMessageBox.Show(
 				GetUpdateMessage(Current, latestPatch, FwUtilsStrings.UpdateNowPrompt),
-				FwUtilsStrings.UpdateNowCaption, MessageBoxButtons.YesNo))
+				FwUtilsStrings.UpdateNowCaption, MessageBoxButtons.YesNo, options: FlexibleMessageBoxOptions.AlwaysOnTop))
 			{
 				return;
 			}
