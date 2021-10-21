@@ -947,13 +947,22 @@ namespace SIL.FieldWorks.IText
 						}
 
 						ws = mdc.GetFieldWs(flid);
-						if (ws != -1)
+						if ((ws != WritingSystemServices.kwsAnal) && (ws != WritingSystemServices.kwsVern))
 						{
 							// Oh, so we're letting users choose their writing system on custom segments now!
 							Debug.Fail("The code here is not ready to receive writing systems set on custom segments.");
 						}
-						ws = WritingSystemServices.kwsFirstAnal;
-						comboContent = ColumnConfigureDialog.WsComboContent.kwccAnalysis;
+
+						if (ws == WritingSystemServices.kwsVern)
+						{
+							ws = WritingSystemServices.kwsFirstVern;
+							comboContent = ColumnConfigureDialog.WsComboContent.kwccVernacular;
+						}
+						else
+						{
+							ws = WritingSystemServices.kwsFirstAnal;
+							comboContent = ColumnConfigureDialog.WsComboContent.kwccAnalysis;
+						}
 					}
 					break;
 			}

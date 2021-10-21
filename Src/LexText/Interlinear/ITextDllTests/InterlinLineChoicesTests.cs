@@ -523,6 +523,40 @@ namespace SIL.FieldWorks.IText
 		}
 
 		[Test]
+		public void AddCustomSpecsForAnalAndVern()
+		{
+			var wsManager = new WritingSystemManager();
+			CoreWritingSystemDefinition enWs;
+			wsManager.GetOrSet("en", out enWs);
+			var wsEng = enWs.Handle;
+
+			CoreWritingSystemDefinition frWs;
+			wsManager.GetOrSet("fr", out frWs);
+			var wsFrn = frWs.Handle;
+
+			using (var cFirstAnal = new CustomFieldForTest(Cache,
+				"Candy Apple Red",
+				Cache.MetaDataCacheAccessor.GetClassId("Segment"),
+				WritingSystemServices.kwsAnal,
+				CellarPropertyType.String,
+				Guid.Empty))
+			using (var cFirstVern = new CustomFieldForTest(Cache,
+				"Candy Apple Red",
+				Cache.MetaDataCacheAccessor.GetClassId("Segment"),
+				WritingSystemServices.kwsVern,
+				CellarPropertyType.String,
+				Guid.Empty))
+			{
+				InterlinLineChoices choices = new InterlinLineChoices(m_lp, wsFrn, wsEng);
+				choices.Add(cFirstAnal.Flid);
+				choices.Add(cFirstVern.Flid);
+				Assert.That(choices.EnabledCount, Is.EqualTo(2));
+				Assert.That(choices.EnabledLineSpecs[0].WritingSystem, Is.EqualTo(WritingSystemServices.kwsFirstAnal));
+				Assert.That(choices.EnabledLineSpecs[1].WritingSystem, Is.EqualTo(WritingSystemServices.kwsFirstVern));
+			}
+		}
+
+		[Test]
 		public void GetActualWs_MorphBundleBehavesLikeMoForm()
 		{
 			var wsManager = new WritingSystemManager();
