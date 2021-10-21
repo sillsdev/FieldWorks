@@ -2,32 +2,32 @@
 <UpdateInfo>
 	<BaseUrl>https://downloads.languagetechnology.org/fieldworks/</BaseUrl>
 	<Contents>
-		<Key>9.1.5/479/FieldWorks_9.1.5.1_Offline_x64.exe</Key>
-		<LastModified>2021-08-30T16:38:00.000Z</LastModified>
+		<Key>9.1.6/502/FieldWorks_9.1.6.1_Offline_x64.exe</Key>
+		<LastModified>2021-10-18T12:53:00.000Z</LastModified>
 		<LCModelVersion>7000072</LCModelVersion>
 		<LIFTModelVersion>0.13_ldml3</LIFTModelVersion>
 		<FlexBridgeDataVersion>7500002</FlexBridgeDataVersion>
 		<Size>544532280</Size>
 	</Contents>
 	<Contents>
-		<Key>9.1.5/479/FieldWorks_9.1.5.1_Online_x64.exe</Key>
-		<LastModified>2021-08-30T16:38:00.000Z</LastModified>
+		<Key>9.1.6/502/FieldWorks_9.1.6.1_Online_x64.exe</Key>
+		<LastModified>2021-10-18T12:53:00.000Z</LastModified>
 		<LCModelVersion>7000072</LCModelVersion>
 		<LIFTModelVersion>0.13_ldml3</LIFTModelVersion>
 		<FlexBridgeDataVersion>7500002</FlexBridgeDataVersion>
 		<Size>368954112</Size>
 	</Contents>
 	<Contents>
-		<Key>9.1.5/479/FieldWorks_9.1.5.1_Offline_x86.exe</Key>
-		<LastModified>2021-08-30T16:59:00.000Z</LastModified>
+		<Key>9.1.6/502/FieldWorks_9.1.6.1_Offline_x86.exe</Key>
+		<LastModified>2021-10-18T12:54:00.000Z</LastModified>
 		<LCModelVersion>7000072</LCModelVersion>
 		<LIFTModelVersion>0.13_ldml3</LIFTModelVersion>
 		<FlexBridgeDataVersion>7500002</FlexBridgeDataVersion>
 		<Size>511389288</Size>
 	</Contents>
 	<Contents>
-		<Key>9.1.5/479/FieldWorks_9.1.5.1_Online_x86.exe</Key>
-		<LastModified>2021-08-30T16:59:00.000Z</LastModified>
+		<Key>9.1.6/502/FieldWorks_9.1.6.1_Online_x86.exe</Key>
+		<LastModified>2021-10-18T12:54:00.000Z</LastModified>
 		<LCModelVersion>7000072</LCModelVersion>
 		<LIFTModelVersion>0.13_ldml3</LIFTModelVersion>
 		<FlexBridgeDataVersion>7500002</FlexBridgeDataVersion>
