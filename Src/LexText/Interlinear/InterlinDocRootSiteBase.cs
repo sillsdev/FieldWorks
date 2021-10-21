@@ -736,9 +736,11 @@ namespace SIL.FieldWorks.IText
 
 			var flid = menuItem.Flid;
 			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
-			if (newLineChoices != null && ((IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor).FieldExists(flid))
+			var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
+			// Some virtual Ids such as -61 and 103 create standard items. so add those.
+			if (newLineChoices != null && (mdc.FieldExists(flid) || (flid <= ComplexConcPatternVc.kfragFeatureLine)))
 			{
-				newLineChoices.Add(flid);
+				newLineChoices.Add(flid, 0, true);
 				UpdateForNewLineChoices(newLineChoices);
 			}
 		}
