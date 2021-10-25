@@ -74,7 +74,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="FwBuildTasksTests\MoveResxsToLocaleSrcTests.cs" />
     <Compile Include="FwBuildTasksTests\ProjectLocalizerTests.cs" />
     <Compile Include="FwBuildTasksTests\XliffToGoldEticTests.cs" />
     <Compile Include="FwBuildTasksTests\GoldEticToXliffTests.cs" />
@@ -84,7 +83,6 @@
     <Compile Include="FwBuildTasksTests\WxsToWxiTests.cs" />
     <Compile Include="FwBuildTasksTests\XmlToPoTests.cs" />
     <Compile Include="Localization\GoldEticToXliff.cs" />
-    <Compile Include="Localization\MoveResxsToLocaleSrc.cs" />
     <Compile Include="Localization\PoToXml.cs" />
     <Compile Include="Localization\XliffUtils.cs" />
     <Compile Include="Localization\XliffToGoldEtic.cs" />

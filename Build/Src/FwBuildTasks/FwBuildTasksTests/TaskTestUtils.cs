@@ -6,30 +6,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using Microsoft.Build.Framework;
-using NUnit.Framework;
 
 namespace FwBuildTasks
 {
 	internal static class TaskTestUtils
 	{
-		public static void AssertFileExists(string path)
-		{
-			Assert.That(File.Exists(path), $"Expected '{path}' to be an existing file, but it is not.");
-		}
-
-		/// <param name="actual"></param>
-		/// <param name="expectedSubstrings">if any is null, it is ignored</param>
-		public static void AssertContainsExpectedSubstrings(string actual, params string[] expectedSubstrings)
-		{
-			foreach (var expected in expectedSubstrings.Where(s => s != null))
-			{
-				Assert.That(actual, Contains.Substring(expected));
-			}
-		}
-
 		public static void RecreateDirectory(string path)
 		{
 			if (Directory.Exists(path))
