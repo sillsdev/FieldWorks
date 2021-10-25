@@ -1,9 +1,6 @@
-﻿// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LiftMergerTests1.cs
-// Responsibility: mcconnel
 
 using System;
 using System.Collections.Generic;
@@ -86,26 +83,30 @@ namespace LexTextControlsTests
 			}
 		}
 
-		private static string LiftFolder { get; set; }
-
-		private static readonly Random TestNameRandomizer = new Random((int)DateTime.Now.Ticks);
-
-		private static string CreateInputFile(IList<string> data)
+		private static string CreateInputFile(IList<string> data, string[] audioFilesToFake = null)
 		{
-			LiftFolder = Path.Combine(Path.GetTempPath(), "xxyyTestLIFTImport");
-			if (Directory.Exists(LiftFolder))
-				Directory.Delete(LiftFolder, true);
-			Directory.CreateDirectory(LiftFolder);
-			var path = Path.Combine(LiftFolder, String.Format("LiftTest{0}.lift", TestNameRandomizer.Next(1000)));
+			var liftFolder = Path.Combine(Path.GetTempPath(), "LiftImportTests", Path.GetRandomFileName());
+			if (Directory.Exists(liftFolder))
+				Directory.Delete(liftFolder, true);
+			Directory.CreateDirectory(liftFolder);
+			if (audioFilesToFake != null)
+			{
+				var audioPath = Path.Combine(liftFolder, "audio");
+				Directory.CreateDirectory(audioPath);
+				foreach (var fakeAudioFile in audioFilesToFake)
+				{
+					FileUtils.WriteStringtoFile(Path.Combine(audioPath, fakeAudioFile), "fake audio file", Encoding.ASCII);
+				}
+			}
+			var path = Path.Combine(liftFolder, "LiftTest.lift");
 			CreateLiftInputFile(path, data);
 			return path;
 		}
 
-		private static string CreateInputRangesFile(IList<string> data)
+		private static string CreateInputRangesFile(IList<string> data, string liftFolder)
 		{
-			LiftFolder = Path.Combine(Path.GetTempPath(), "xxyyTestLIFTImport");
-			Assert.True(Directory.Exists(LiftFolder));
-			var path = Path.Combine(LiftFolder, String.Format("LiftTest{0}.lift-ranges", TestNameRandomizer.Next(1000)));
+			Assert.True(Directory.Exists(liftFolder));
+			var path = Path.Combine(liftFolder, "LiftTest.lift-ranges");
 			CreateLiftInputFile(path, data);
 			return path;
 		}
@@ -159,9 +160,9 @@ namespace LexTextControlsTests
 			return logfile;
 		}
 
-		private static void CreateDummyFile(string folder, string filename)
+		private static void CreateDummyFile(string liftFolder, string folder, string filename)
 		{
-			CreateDummyFile(Path.Combine(Path.Combine(LiftFolder, folder), filename));
+			CreateDummyFile(Path.Combine(Path.Combine(liftFolder, folder), filename));
 		}
 
 		private static string CreateDummyFile(string path)
@@ -292,13 +293,14 @@ namespace LexTextControlsTests
 			Assert.AreEqual(0, repoSense.Count);
 
 			var sOrigFile = CreateInputFile(s_LiftData1);
-			CreateDummyFile("pictures", "Desert.jpg");
+			var liftFolder = Path.GetDirectoryName(sOrigFile);
+			CreateDummyFile(liftFolder, "pictures", "Desert.jpg");
 			var myPicRelativePath = Path.Combine("subfolder","MyPic.jpg");
-			CreateDummyFile("pictures", myPicRelativePath);
-			CreateDummyFile("audio", "Sleep Away.mp3");
-			CreateDummyFile("audio", "hombre634407358826681759.wav");
-			CreateDummyFile("audio", "male adult634407358826681760.wav");
-			CreateDummyFile("others", "SomeFile.txt");
+			CreateDummyFile(liftFolder, "pictures", myPicRelativePath);
+			CreateDummyFile(liftFolder, "audio", "Sleep Away.mp3");
+			CreateDummyFile(liftFolder, "audio", "hombre634407358826681759.wav");
+			CreateDummyFile(liftFolder, "audio", "male adult634407358826681760.wav");
+			CreateDummyFile(liftFolder, "others", "SomeFile.txt");
 
 			var logFile = TryImport(sOrigFile, 4);
 			File.Delete(sOrigFile);
@@ -955,6 +957,51 @@ namespace LexTextControlsTests
 
 			Assert.That(entry.SensesOS[0].Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("  man"));
 			Assert.That(entry.SensesOS[0].Definition.AnalysisDefaultWritingSystem.Text, Is.EqualTo("\u2028 male adult human link"));
+		}
+
+		[Test]
+		public void LiftAudioFilesMoved()
+		{
+			var tabInput = new string[] {"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"TheCombine\" version=\"0.13\">",
+				"<header>",
+				"<ranges/>",
+				"<fields/>",
+				"</header>",
+				"<entry dateCreated=\"2011-03-01T18:09:46Z\" dateModified=\"2011-03-01T18:30:07Z\" guid=\"ecfbe958-36a1-4b82-bb69-ca5210355401\" id=\"hombre_ecfbe958-36a1-4b82-bb69-ca5210355400\">",
+				"<lexical-unit>",
+				"<form lang=\"fr\"><text>hombre</text></form>",
+				"</lexical-unit>",
+				"<trait name=\"morph-type\" value=\"root\"></trait>",
+				"<pronunciation>",
+				"<form lang=\"fr\"><text>ombre1</text></form>",
+				"<media href=\"Sleep Away.mp3\">",
+				"</media>",
+				"</pronunciation>",
+				"<sense id=\"hombre_f63f1ccf-3d50-417e-8024-035d999d48bc\">",
+				"<grammatical-info value=\"Noun\">",
+				"</grammatical-info>",
+				"<gloss lang=\"en\"><text>man</text></gloss>",
+				"<definition>",
+				"<form lang=\"en\"><text>",
+				"male adulthuman<span href=\"file://others/SomeFile.txt\" class=\"Hyperlink\">link</span></text></form>",
+				"</definition>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
+			};
+
+			var sOrigFile = CreateInputFile(tabInput, new []{ "Sleep Away.mp3" });
+			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
+			Assert.IsNotNull(logFile);
+			File.Delete(logFile);
+			File.Delete(sOrigFile);
+
+			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			ILexEntry entry;
+			Assert.IsTrue(repoEntry.TryGetObject(new Guid("ecfbe958-36a1-4b82-bb69-ca5210355401"), out entry));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("hombre"));
+			Assert.That(entry.PronunciationsOS[0].MediaFilesOS[0].MediaFileRA.AbsoluteInternalPath, Is.SamePath(Path.Combine(Cache.LangProject.LinkedFilesRootDir, "AudioVisual", "Sleep Away.mp3")));
 		}
 
 		[Test]
@@ -1942,7 +1989,7 @@ namespace LexTextControlsTests
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(s_LiftData7);
 			//Create the LIFT ranges file
-			var sOrigRangesFile = CreateInputRangesFile(s_LiftRangeData7);
+			var sOrigRangesFile = CreateInputRangesFile(s_LiftRangeData7, Path.GetDirectoryName(sOrigFile));
 
 			var logFile = TryImportWithRanges(sOrigFile, sOrigRangesFile, 1);
 			File.Delete(sOrigFile);
@@ -2043,7 +2090,7 @@ namespace LexTextControlsTests
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(inflectionLiftData);
 			//Create the LIFT ranges file
-			var sOrigRangesFile = CreateInputRangesFile(inflectionLiftRangeData);
+			var sOrigRangesFile = CreateInputRangesFile(inflectionLiftRangeData, Path.GetDirectoryName(sOrigFile));
 
 			var logFile = TryImportWithRanges(sOrigFile, sOrigRangesFile, 1);
 			File.Delete(sOrigFile);
@@ -2556,7 +2603,7 @@ namespace LexTextControlsTests
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(s_LiftDataLocations);
 			//Create the LIFT ranges file
-			var sOrigRangesFile = CreateInputRangesFile(s_LiftRangeDataLocations);
+			var sOrigRangesFile = CreateInputRangesFile(s_LiftRangeDataLocations, Path.GetDirectoryName(sOrigFile));
 
 			var logFile = TryImportWithRanges(sOrigFile, sOrigRangesFile, 1);
 			File.Delete(sOrigFile);
@@ -3436,7 +3483,7 @@ namespace LexTextControlsTests
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(s_PublicationTestData);
 			//Create the LIFT ranges file
-			var sOrigRangesFile = CreateInputRangesFile(s_PublicationLiftRangeData);
+			var sOrigRangesFile = CreateInputRangesFile(s_PublicationLiftRangeData, Path.GetDirectoryName(sOrigFile));
 
 			// SUT
 			var logFile = TryImportWithRanges(sOrigFile, sOrigRangesFile, 1);
@@ -3532,7 +3579,7 @@ namespace LexTextControlsTests
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(customListLiftData);
 			//Create the LIFT ranges file
-			var sOrigRangesFile = CreateInputRangesFile(customListRanges);
+			var sOrigRangesFile = CreateInputRangesFile(customListRanges, Path.GetDirectoryName(sOrigFile));
 
 			// prove that our setup is good and we are importing these objects
 			Assert.Throws<KeyNotFoundException>(()=>Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(customListGuid)));
@@ -3983,7 +4030,7 @@ namespace LexTextControlsTests
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(_minimalLiftData);
 			//Create the LIFT ranges file
-			var sOrigRangesFile = CreateInputRangesFile(noNameRangeData);
+			var sOrigRangesFile = CreateInputRangesFile(noNameRangeData, Path.GetDirectoryName(sOrigFile));
 
 			var logFile = TryImport(sOrigFile, sOrigRangesFile, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
 			File.Delete(sOrigFile);
@@ -4025,7 +4072,7 @@ namespace LexTextControlsTests
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(_minimalLiftData);
 			//Create the LIFT ranges file
-			var sOrigRangesFile = CreateInputRangesFile(noNameRangeData1);
+			var sOrigRangesFile = CreateInputRangesFile(noNameRangeData1, Path.GetDirectoryName(sOrigFile));
 
 			var logFile = TryImport(sOrigFile, sOrigRangesFile, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
 			File.Delete(sOrigFile);
@@ -4076,7 +4123,7 @@ namespace LexTextControlsTests
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(_minimalLiftData);
 			//Create the LIFT ranges file
-			var sOrigRangesFile = CreateInputRangesFile(moreCompleteRangeData);
+			var sOrigRangesFile = CreateInputRangesFile(moreCompleteRangeData, Path.GetDirectoryName(sOrigFile));
 
 			var logFile = TryImport(sOrigFile, sOrigRangesFile, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
 			File.Delete(sOrigFile);

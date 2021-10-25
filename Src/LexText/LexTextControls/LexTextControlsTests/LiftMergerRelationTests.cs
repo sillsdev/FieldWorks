@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -859,7 +859,7 @@ namespace LexTextControlsTests
 			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 
 			var sOrigFile = CreateInputFile(treeLiftData);
-			var logFile = TryImport(sOrigFile, CreateInputRangesFile(treeLiftRange), FlexLiftMerger.MergeStyle.MsKeepNew, 4);
+			var logFile = TryImport(sOrigFile, CreateInputRangesFile(treeLiftRange, Path.GetDirectoryName(sOrigFile)), FlexLiftMerger.MergeStyle.MsKeepNew, 4);
 			var bodySense = senseRepo.GetObject(new Guid("52c632c2-98ad-4f97-b130-2a32992254e3"));
 
 			Assert.AreEqual(1, bodySense.LexSenseReferences.Count(), "Too many LexSenseReferences, the parts were split.");
@@ -867,7 +867,7 @@ namespace LexTextControlsTests
 								 "Incorrect number of references, part relations not imported correctly.");
 
 			var sNewFile = CreateInputFile(treeLiftData2);
-			TryImport(sNewFile, CreateInputRangesFile(treeLiftRange), FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 4);
+			TryImport(sNewFile, CreateInputRangesFile(treeLiftRange, Path.GetDirectoryName(sNewFile)), FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 4);
 			var legSense = senseRepo.GetObject(new Guid("62c632c2-98ad-4f97-b130-2a32992254e3"));
 			var armSense = senseRepo.GetObject(new Guid("5ca96ad0-cb18-4ddc-be8e-3547fc87221f"));
 			//There should be 1 LexSenseReference for the Whole/Part relationship and each involved sense should share it.
@@ -988,7 +988,7 @@ namespace LexTextControlsTests
 			var senseRepo = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 
 			var sOrigFile = CreateInputFile(treeLiftDataBase);
-			var logFile = TryImport(sOrigFile, CreateInputRangesFile(treeLiftRange), FlexLiftMerger.MergeStyle.MsKeepNew, 3);
+			var logFile = TryImport(sOrigFile, CreateInputRangesFile(treeLiftRange, Path.GetDirectoryName(sOrigFile)), FlexLiftMerger.MergeStyle.MsKeepNew, 3);
 			var aSense = senseRepo.GetObject(new Guid("5ca96ad0-cb18-4ddc-be8e-3547fc87221f"));
 			var bSense = senseRepo.GetObject(new Guid("52c632c2-98ad-4f97-b130-2a32992254e3"));
 			var cSense = senseRepo.GetObject(new Guid("62c632c2-98ad-4f97-b130-2a32992254e3"));
@@ -998,7 +998,7 @@ namespace LexTextControlsTests
 								 "Incorrect number of references, part relations not imported correctly.");
 
 			var sNewFile = CreateInputFile(treeLiftDataReparented);
-			TryImport(sNewFile, CreateInputRangesFile(treeLiftRange), FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 4);
+			TryImport(sNewFile, CreateInputRangesFile(treeLiftRange, Path.GetDirectoryName(sNewFile)), FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 4);
 			var dSense = senseRepo.GetObject(new Guid("3b3632c2-98ad-4f97-b130-2a32992254e3"));
 			//There should be 1 LexSenseReference for the Whole/Part relationship and each involved sense should share it.
 			Assert.AreEqual(1, aSense.LexSenseReferences.Count(), "Too many LexSenseReferences, the parts were split.");
@@ -1124,7 +1124,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(0, bSense.LexSenseReferences.Count(), "Incorrect number of component references.");
 
 			var sNewFile = CreateInputFile(newWithPair);
-			logFile = TryImport(sNewFile, CreateInputRangesFile(newWithPairRange), FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
+			logFile = TryImport(sNewFile, CreateInputRangesFile(newWithPairRange, Path.GetDirectoryName(sNewFile)), FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
 			Assert.AreEqual(1, aSense.LexSenseReferences.Count(), "Incorrect number of component references.");
 			Assert.AreEqual(1, bSense.LexSenseReferences.Count(), "Incorrect number of component references.");
 			Assert.That(aSense.LexSenseReferences.First().TargetsRS.Contains(bSense), "The Twin/Twain relationship failed to contain 'Bother' and 'me'");
@@ -1184,7 +1184,7 @@ namespace LexTextControlsTests
 
 			var sOrigFile = CreateInputFile(newWithPair);
 			Assert.AreEqual(0, typeRepo.Count, "Too many types exist before import, bootstrapping has changed?");
-			var logFile = TryImport(sOrigFile, CreateInputRangesFile(rangeWithOneCustomAndOneDefault), FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
+			var logFile = TryImport(sOrigFile, CreateInputRangesFile(rangeWithOneCustomAndOneDefault, Path.GetDirectoryName(sOrigFile)), FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
 			var aSense = senseRepo.GetObject(new Guid("c2b4fe44-a3d9-4a42-a87c-8e174593fb30"));
 			var bSense = senseRepo.GetObject(new Guid("de2fcb48-319a-48cf-bfea-0f25b9f38b31"));
 			Assert.AreEqual(1, aSense.LexSenseReferences.Count(), "Incorrect number of component references.");
@@ -1303,7 +1303,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(0, bSense.LexSenseReferences.Count(), "Incorrect number of component references.");
 
 			var sNewFile = CreateInputFile(newWithRelation);
-			logFile = TryImport(sNewFile, CreateInputRangesFile(newWithRelationRange), FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
+			logFile = TryImport(sNewFile, CreateInputRangesFile(newWithRelationRange, Path.GetDirectoryName(sNewFile)), FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
 			Assert.AreEqual(1, aSense.LexSenseReferences.Count(), "Incorrect number of component references.");
 			Assert.AreEqual(1, bSense.LexSenseReferences.Count(), "Incorrect number of component references.");
 			var queueType = refTypeRepo.AllInstances().FirstOrDefault(refType => refType.Name.BestAnalysisAlternative.Text.Equals("queue"));
@@ -1762,7 +1762,7 @@ namespace LexTextControlsTests
 			Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(testType);
 			var refTypeCountBeforeImport = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Count;
 			var liftFile = CreateInputFile(liftWithSenseUsingNonAsciiRelation);
-			var rangeFile = CreateInputRangesFile(liftRangeWithNonAsciiRelation);
+			var rangeFile = CreateInputRangesFile(liftRangeWithNonAsciiRelation, Path.GetDirectoryName(liftFile));
 			// SUT
 			var logFile = TryImport(liftFile, rangeFile, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 1);
 			Assert.AreEqual(refTypeCountBeforeImport, Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Count, "Relation duplicated on import");

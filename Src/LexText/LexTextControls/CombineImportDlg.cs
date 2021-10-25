@@ -165,10 +165,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				using (var zip = new ZipFile(importZipFile))
 				{
-					var tmpPath = Path.GetTempPath();
+					var tmpPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+					Directory.CreateDirectory(tmpPath);
 					var combineLiftFile = zip.SelectEntries("*.lift").First();
-					combineLiftFile.Extract(tmpPath, ExtractExistingFileAction.OverwriteSilently);
-					return tmpPath + combineLiftFile.FileName;
+					zip.ExtractAll(tmpPath);
+					return Path.Combine(tmpPath, combineLiftFile.FileName);
 				}
 			}
 			catch (Exception error)
