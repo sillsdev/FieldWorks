@@ -101,15 +101,23 @@
 
 	<!-- Each downloaded translation needs the following post-processing:
 			* Insert strings from messages.*.po into strings-*.xml
+			* Verify that translated resx files are where we expect them
 			* Move LCM resx files to a more convenient place (they have extra folders in Crowdin
 			  because of the folder structure we use to upload them) -->
 	<Target Name="postProcessDownloadedTranslation">
 		<Message Text="Converting po file and relocating LCM .resx files for $(Locale)" />
 		<PoToXml PoFile="$(LocaleDir)/messages.$(Locale).po" StringsXml="$(LocaleDir)/strings-$(Locale).xml"/>
+		<PropertyGroup>
+			<FwResxDir>$(LocaleDir)/Src</FwResxDir>
+			<LcmResxDir>$(LocaleDir)/Localizations/LCM</LcmResxDir>
+		</PropertyGroup>
 		<ItemGroup>
-			<TranslatedResxFiles Include="$(LocaleDir)/Localizations/LCM/**/*.resx"/>
+			<FwResxFiles Include="$(FwResxDir)/**/*.resx"/>
+			<LcmResxFiles Include="$(LcmResxDir)/**/*.resx"/>
 		</ItemGroup>
-		<Move SourceFiles="@(TranslatedResxFiles)" DestinationFolder="$(LocaleDir)/src/%(RecursiveDir)" />
+		<Error Text="No localized resx files found in '$(FwResxDir)'" Condition="'@(FwResxFiles)' == ''"/>
+		<Error Text="No localized resx files found in '$(LcmResxDir)'" Condition="'@(LcmResxFiles)' == ''"/>
+		<Move SourceFiles="@(LcmResxFiles)" DestinationFolder="$(LocaleDir)/src/%(RecursiveDir)" />
 	</Target>
 
 	<Target Name="combineGOLDEtic">
