@@ -14,7 +14,12 @@ flatpak run org.freedesktop.appstream-glib validate org.sil.FieldWorks.metainfo.
 <component type="desktop">
   <id>org.sil.FieldWorks</id>
   <metadata_license>CC-BY-SA-3.0</metadata_license>
-  <project_license>LGPL-2.1+ AND MIT</project_license>
+  <!--
+    The main FieldWorks software is LGPL-2.1+.
+    Parts of FieldWorks and fonts are MIT.
+    Some included fonts are OFL-1.1-RFN.
+  -->
+  <project_license>LGPL-2.1+ AND MIT AND OFL-1.1-RFN</project_license>
   <name>FieldWorks Language Explorer</name>
   <summary>Language and cultural data management</summary>
   <developer_name>SIL International</developer_name>
