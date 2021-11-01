@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.IText
 {
@@ -33,21 +37,70 @@ namespace SIL.FieldWorks.IText
 		}
 
 		[Test]
-		public void InitRowChoices_CustomSegmentChoiceReturnsAnalysisWs()
+		public void InitRowChoices_CustomSegmentChoiceReturnsOnlyDefaultAnalysisWs()
 		{
-			using (var cf = new CustomFieldForTest(Cache,
-				"Candy Apple Red",
-				Cache.MetaDataCacheAccessor.GetClassId("Segment"),
-				-1,
-				CellarPropertyType.String,
-				Guid.Empty))
+			CoreWritingSystemDefinition indonesian = null;
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("add lang", "remove lang", Cache.ActionHandlerAccessor,
+				() =>
+				{
+					Cache.ServiceLocator.WritingSystemManager.GetOrSet("id", out indonesian);
+					Cache.LangProject.CurrentAnalysisWritingSystems.Add(indonesian);
+				});
+			try
 			{
-				var customRow = new InterlinLineChoices(Cache, Cache.WritingSystemFactory.GetWsFromStr("fr"), Cache.WritingSystemFactory.GetWsFromStr("en"), InterlinLineChoices.InterlinMode.Analyze);
-				customRow.Add(cf.Flid);
-				// Verify preconditions
-				Assert.That(customRow.EnabledLineSpecs.Count, Is.EqualTo(1));
-				Assert.That(customRow.EnabledLineSpecs[0].WordLevel, Is.False);
-				Assert.That(customRow.EnabledLineSpecs[0].ComboContent, Is.EqualTo(ColumnConfigureDialog.WsComboContent.kwccAnalysis));
+				using (var cf = new CustomFieldForTest(Cache,
+					"Candy Apple Red",
+					Cache.MetaDataCacheAccessor.GetClassId("Segment"),
+					WritingSystemServices.kwsAnal,
+					CellarPropertyType.String,
+					Guid.Empty))
+				{
+					var customRow = new InterlinLineChoices(Cache,
+						Cache.WritingSystemFactory.GetWsFromStr("fr"),
+						Cache.WritingSystemFactory.GetWsFromStr("en"),
+						InterlinLineChoices.InterlinMode.Analyze);
+					customRow.Add(cf.Flid);
+					Assert.That(customRow.EnabledLineSpecs.Count, Is.EqualTo(1));
+					Assert.That(customRow.EnabledLineSpecs[0].WordLevel, Is.False);
+					Assert.That(customRow.EnabledLineSpecs[0].ComboContent,
+						Is.EqualTo(ColumnConfigureDialog.WsComboContent.kwccAnalysis));
+					// Set up two column combo items for analysis, one with the default ws handle, and one with indonesian
+					// the WritingSystemType and the WritingSystem(Handle) are used by the code to determine if a checkbox is needed
+					var columns = new List<WsComboItem>
+					{
+						new WsComboItem("A Ok", Cache.LangProject.DefaultAnalysisWritingSystem.Id)
+						{
+							WritingSystem = Cache.LangProject.DefaultAnalysisWritingSystem.Handle,
+							WritingSystemType = "analysis"
+						},
+						new WsComboItem("Begone", indonesian.Id)
+						{
+							WritingSystem = indonesian.Handle,
+							WritingSystemType = "analysis"
+						}
+					};
+
+					// Verify that only one checkbox is available
+					// SUT
+					var rowChoices = ConfigureInterlinDialog.InitRowChoices(customRow);
+					using (var stringStream = new StringWriter())
+					{
+						using (var xmlWriter = XmlWriter.Create(stringStream))
+						{
+							rowChoices.First().GenerateRow(xmlWriter, columns, Cache, customRow);
+						}
+
+						var generatedRows = stringStream.ToString();
+						var wsEn = Cache.DefaultAnalWs;
+						Assert.That(generatedRows, Is.StringContaining($"{cf.Flid}%{wsEn}"));
+						Assert.That(generatedRows,
+							Is.Not.StringContaining($"{cf.Flid}%{indonesian.Id}"));
+					}
+				}
+			}
+			finally
+			{
+				m_actionHandler.Undo();
 			}
 		}
 

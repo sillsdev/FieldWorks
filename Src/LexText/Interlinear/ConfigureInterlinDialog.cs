@@ -17,6 +17,7 @@ using System.Xml;
 using DesktopAnalytics;
 using Gecko;
 using Gecko.DOM;
+using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using Directory = System.IO.Directory;
 using XCore;
@@ -382,9 +383,9 @@ namespace SIL.FieldWorks.IText
 							? row.FirstSpec
 							: choices.CreateSpec(row.Flid, 0);
 						var wsItems = new List<WsComboItem>();
-						ColumnConfigureDialog.AddWritingSystemsToCombo(cache,wsItems, interlinSpec.ComboContent);
+						ColumnConfigureDialog.AddWritingSystemsToCombo(cache, wsItems, interlinSpec.ComboContent);
 
-						if (wsItems.Exists(wsItem => wsItem.Id == column.Id))
+						if (RowNeedsCheckbox(cache, interlinSpec, wsItems, column))
 						{
 							var id = row.Flid + "%" + column.WritingSystem;
 							GenerateCheckbox(htmlWriter, choices, id, column.WritingSystemType);
@@ -394,6 +395,24 @@ namespace SIL.FieldWorks.IText
 							GenerateCheckbox(htmlWriter, choices, "", column.WritingSystemType, true);
 						}
 					}
+			}
+
+			private static bool RowNeedsCheckbox(LcmCache lcmCache, InterlinLineSpec interlinSpec,
+				List<WsComboItem> wsItems, WsComboItem column)
+			{
+				if (lcmCache.MetaDataCacheAccessor is IFwMetaDataCacheManaged mdc)
+				{
+					if (mdc.FieldExists(interlinSpec.Flid) && mdc.IsCustom(interlinSpec.Flid))
+					{
+						return
+							(column.WritingSystemType == "analysis" && column.Id == lcmCache.LangProject.DefaultAnalysisWritingSystem.Id ||
+							column.WritingSystemType == "vernacular" && column.Id == lcmCache.LangProject.DefaultVernacularWritingSystem.Id) &&
+							wsItems.Exists(wsItem => wsItem.Id == column.Id);
+					}
+					return wsItems.Exists(wsItem => wsItem.Id == column.Id);
+				}
+
+				throw new ApplicationException("A metadata cache is expected to exist here to check for custom fields.");
 			}
 
 			/// <summary>
