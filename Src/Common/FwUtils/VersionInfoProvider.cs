@@ -79,8 +79,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get
 			{
 				var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly();
-				string productVersion, productDate;
-				ParseInformationalVersion(assembly, out productVersion, out productDate);
+				ParseInformationalVersion(assembly, out var productVersion, out _);
 				if (string.IsNullOrEmpty(productVersion))
 				{
 					var fileVersion = Attribute.GetCustomAttribute(assembly, typeof(AssemblyFileVersionAttribute))
@@ -255,6 +254,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Array.Copy(realParts, versionParts, Math.Min(realParts.Length, versionParts.Length));
 
 				return string.Format(FwUtilsStrings.kstidMajorVersionFmt, $"{versionParts[0]}.{versionParts[1]} {versionParts[4]}");
+			}
+		}
+
+		/// <summary>The date this version of FieldWorks was built, or the date of the first FieldWorks checkin</summary>
+		internal DateTime ApparentBuildDate
+		{
+			get
+			{
+				ParseInformationalVersion(m_assembly, out _, out var date);
+				return string.IsNullOrEmpty(date) ? new DateTime(2001, 06, 23) : DateTime.Parse(date);
 			}
 		}
 

@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -55,7 +56,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// Base builds can take precedence over each other by being online or offline. Selecting Patch here will prevent
 				// finding an "update" that is really the same version.
 				Current = new FwUpdate(vip.NumericAppVersion, Environment.Is64BitProcess, vip.BaseBuildNumber, FwUpdate.Typ.Patch,
-					0, LcmCache.ModelVersion.ToString(), FLExBridgeHelper.LiftVersion, FLExBridgeHelper.FlexBridgeDataVersion);
+					0, vip.ApparentBuildDate, LcmCache.ModelVersion.ToString(), FLExBridgeHelper.LiftVersion, FLExBridgeHelper.FlexBridgeDataVersion);
 			}
 			LocalUpdateInfoFilePath = Path.Combine(FwDirectoryFinder.DownloadedUpdates, "LastCheckUpdateInfo.xml");
 		}
@@ -74,11 +75,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return;
 			}
 			Logger.WriteEvent("Checking for updates...");
-			// Check on a background thread; hitting the Internet on the main thread can be a performance hit
+			// Only testers will access nightly updates, so we can call more attention to errors
 			if (updateSettings.Channel == UpdateSettings.Channels.Nightly)
 			{
 				ExceptionHandler.Init(new WinFormsExceptionHandler());
 			}
+			// Check on a background thread; hitting the Internet on the main thread can be a performance hit
 			new Thread(() => Logger.WriteEvent(CheckForUpdatesInternal(ui, updateSettings)))
 			{
 				IsBackground = true
@@ -97,6 +99,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 				var baseURL = "https://downloads.languagetechnology.org/fieldworks/";
 				var infoURL = "https://downloads.languagetechnology.org/fieldworks/UpdateInfo{0}.xml";
+				var isNightly = false;
 
 				switch (updateSettings.Channel)
 				{
@@ -110,12 +113,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 					case UpdateSettings.Channels.Nightly:
 						baseURL = "https://flex-updates.s3.amazonaws.com/";
 						infoURL = "https://flex-updates.s3.amazonaws.com/?prefix=jobs/FieldWorks-Win-all";
+						isNightly = true;
 						break;
 					default:
 						throw new ArgumentOutOfRangeException();
 				}
 
-				if (updateSettings.Channel == UpdateSettings.Channels.Nightly)
+				if (isNightly)
 				{
 					// Use WebClient for nightly builds because DownloadClient can't download the dynamically built update info (LT-20819).
 					// DownloadClient is still best for all other channels because it is better for unstable internet.
@@ -125,7 +129,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					return $"Failed to download update info from {infoURL}";
 				}
-				var available = GetLatestUpdateFrom(Current, XDocument.Load(LocalUpdateInfoFilePath), baseURL);
+				var available = GetLatestUpdateFrom(Current, XDocument.Load(LocalUpdateInfoFilePath), baseURL, isNightly);
 				if (available == null)
 				{
 					File.Delete(LocalUpdateInfoFilePath);
@@ -179,19 +183,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 			timer.Start();
 		}
 
-		public static FwUpdate GetLatestUpdateFrom(FwUpdate current, XDocument bucketContents, string bucketURL)
+		internal static FwUpdate GetLatestUpdateFrom(FwUpdate current, XDocument bucketContents, string bucketURL, bool userChoice = false)
 		{
 			if (bucketContents.Root == null)
 			{
 				return null;
 			}
-			bucketContents.Root.RemoveNamespaces();
-			return GetLatestUpdateFrom(current, bucketContents.Root.Elements("Contents").Select(elt => Parse(elt, bucketURL)));
+			var availableUpdates = bucketContents.Root.RemoveNamespaces().Elements("Contents").Select(elt => Parse(elt, bucketURL));
+			return userChoice ? ChooseUpdateFrom(current, availableUpdates) : GetLatestUpdateFrom(current, availableUpdates);
 		}
 		#endregion check for updates
 
 		#region select updates
-		public static FwUpdate GetLatestUpdateFrom(FwUpdate current, IEnumerable<FwUpdate> available)
+		internal static FwUpdate GetLatestUpdateFrom(FwUpdate current, IEnumerable<FwUpdate> available)
 		{
 			FwUpdate latestPatch = null, latestBase = null;
 			foreach (var potential in available)
@@ -212,6 +216,31 @@ namespace SIL.FieldWorks.Common.FwUtils
 				: latestPatch == null || latestBase.Version > latestPatch.Version
 					? latestBase
 					: latestPatch;
+		}
+
+		/// <summary>
+		/// Presents the user with a dialog to choose an update from those that are available (filtered to direct updates from the current version)
+		/// </summary>
+		private static FwUpdate ChooseUpdateFrom(FwUpdate current, IEnumerable<FwUpdate> available)
+		{
+			var directUpdates = GetAvailableUpdatesFrom(current, available).ToList();
+			if (!directUpdates.Any())
+			{
+				return null;
+			}
+			directUpdates.Sort();
+			using (var chooser = new FwUpdateChooserDlg(current, directUpdates))
+			{
+				return chooser.ShowDialog() == DialogResult.OK ? chooser.Choice : null;
+			}
+		}
+
+		/// <returns>
+		/// A list of all available updates. Intended for nightly updates, whose list is not curated.
+		/// </returns>
+		internal static IEnumerable<FwUpdate> GetAvailableUpdatesFrom(FwUpdate current, IEnumerable<FwUpdate> available)
+		{
+			return available.Where(u => IsPatchOn(current, u) || IsNewerBaseThanBase(current, u));
 		}
 
 		/// <param name="current">the currently-installed version</param>
@@ -241,6 +270,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 						&& potential.InstallerType == FwUpdate.Typ.Online);
 		}
 
+		/// <param name="current">the currently-installed version</param>
+		/// <param name="potential">a potential installer</param>
+		/// <returns>>true iff potential is a base installer with a greater build number than current's base.</returns>
+		internal static bool IsNewerBaseThanBase(FwUpdate current, FwUpdate potential)
+		{
+			return potential != null
+				&& (potential.InstallerType == FwUpdate.Typ.Online || potential.InstallerType == FwUpdate.Typ.Offline)
+				&& potential.Is64Bit == current.Is64Bit
+				&& potential.BaseBuild > current.BaseBuild;
+		}
+
 		/// <param name="elt">a &lt;Contents/&gt; element from an S3 bucket list</param>
 		/// <param name="baseURL">the https:// URL of the bucket, with the trailing /</param>
 		internal static FwUpdate Parse(XElement elt, string baseURL)
@@ -250,7 +290,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				var update = Parse(elt.Element("Key")?.Value, baseURL);
 				if (update != null)
 				{
-					update = AddSizeAndModelVersions(update, elt);
+					update = AddMetadata(update, elt);
 				}
 
 				return update;
@@ -263,17 +303,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		/// <returns>a new FwUpdate, cloned from <c>update</c>, with size and model version information from <c>elt</c></returns>
-		internal static FwUpdate AddSizeAndModelVersions(FwUpdate update, XElement elt)
+		/// <returns>a new FwUpdate, cloned from <c>update</c>, with size, date, and model version information from <c>elt</c></returns>
+		internal static FwUpdate AddMetadata(FwUpdate update, XElement elt)
 		{
 			// round up to the next MB
 			var size = ulong.TryParse(elt.Element("Size")?.Value, out var byteSize)
 				? (int)((byteSize + BytesPerMiB - 1) / BytesPerMiB)
 				: update.Size;
+			DateTime date = DateTime.TryParse(elt.Element("LastModified")?.Value, out date) ? date.ToUniversalTime() : update.Date;
 			var lcmVersion = elt.Element("LCModelVersion")?.Value;
 			var liftVersion = elt.Element("LIFTModelVersion")?.Value;
 			var fbDataVersion = elt.Element("FlexBridgeDataVersion")?.Value;
-			update = new FwUpdate(update, size, lcmVersion, liftVersion, fbDataVersion);
+			update = new FwUpdate(update, size, date, lcmVersion, liftVersion, fbDataVersion);
 			return update;
 		}
 
@@ -426,7 +467,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	}
 
 	/// <summary>Represents an update that can be downloaded</summary>
-	public class FwUpdate
+	public class FwUpdate : IComparable<FwUpdate>
 	{
 		/// <summary/>
 		public enum Typ { Patch, Offline, Online }
@@ -447,6 +488,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public int Size { get; }
 
 		/// <summary/>
+		public DateTime Date { get; }
+
+		/// <summary/>
 		// ReSharper disable once InconsistentNaming
 		public string LCModelVersion { get; }
 
@@ -459,22 +503,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary/>
 		public string URL { get; }
 
-		/// <summary/>
-		internal FwUpdate(FwUpdate toCopy, int size, string lcmVersion, string liftModelVersion, string flexBridgeDataVersion)
-			: this(toCopy.Version, toCopy.Is64Bit, toCopy.BaseBuild, toCopy.InstallerType, size,
+		/// <summary>Partial copy constructor; used for adding metadata</summary>
+		internal FwUpdate(FwUpdate toCopy, int size, DateTime date, string lcmVersion, string liftModelVersion, string flexBridgeDataVersion)
+			: this(toCopy.Version, toCopy.Is64Bit, toCopy.BaseBuild, toCopy.InstallerType, size, date,
 				lcmVersion, liftModelVersion, flexBridgeDataVersion, toCopy.URL)
 		{
 		}
 
 		/// <summary/>
-		public FwUpdate(string version, bool is64Bit, int baseBuild, Typ installerType, int size = 0,
+		public FwUpdate(string version, bool is64Bit, int baseBuild, Typ installerType, int size = 0, DateTime date = new DateTime(),
 			string lcmVersion = null, string liftModelVersion = null, string flexBridgeDataVersion = null, string url = null)
-			: this(new Version(version), is64Bit, baseBuild, installerType, size, lcmVersion, liftModelVersion, flexBridgeDataVersion, url)
+			: this(new Version(version), is64Bit, baseBuild, installerType, size, date, lcmVersion, liftModelVersion, flexBridgeDataVersion, url)
 		{
 		}
 
 		/// <summary/>
-		public FwUpdate(Version version, bool is64Bit, int baseBuild, Typ installerType, int size = 0,
+		public FwUpdate(Version version, bool is64Bit, int baseBuild, Typ installerType, int size = 0, DateTime date = new DateTime(),
 			string lcmVersion = null, string liftModelVersion = null, string flexBridgeDataVersion = null, string url = null)
 		{
 			Version = version;
@@ -482,10 +526,38 @@ namespace SIL.FieldWorks.Common.FwUtils
 			BaseBuild = baseBuild;
 			InstallerType = installerType;
 			Size = size;
+			Date = date;
 			LCModelVersion = lcmVersion;
 			LIFTModelVersion = liftModelVersion;
 			FlexBridgeDataVersion = flexBridgeDataVersion;
 			URL = url;
+		}
+
+		public override string ToString()
+		{
+			var bldr = new StringBuilder(32).Append(Version);
+			if (InstallerType != Typ.Patch)
+			{
+				bldr.Append('_').Append(BaseBuild);
+			}
+
+			return bldr.Append(" built ").Append(Date.ToString("yyyy-MM-dd")).Append(' ').Append(InstallerType).ToString();
+		}
+
+		public int CompareTo(FwUpdate other)
+		{
+			if (ReferenceEquals(this, other))
+				return 0;
+			if (null == other)
+				return 1;
+			var versionComparison = Comparer<Version>.Default.Compare(Version, other.Version);
+			if (versionComparison != 0)
+				return versionComparison;
+			var baseBuildComparison = BaseBuild.CompareTo(other.BaseBuild);
+			if (baseBuildComparison != 0)
+				return baseBuildComparison;
+			var installerTypeComparison = InstallerType.CompareTo(other.InstallerType);
+			return installerTypeComparison;
 		}
 	}
 }

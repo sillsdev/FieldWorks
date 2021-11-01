@@ -4,7 +4,9 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Xml;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.LCModel.Utils;
@@ -232,17 +234,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		[Test]
-		public static void AddSizeAndModelVersions()
+		public static void AddMetadata()
 		{
 			const int size = 1048900;
+			const string date = "1997-12-25T12:46:57.000Z";
 			const string lcm = "7000070";
 			const string lift = "0.12";
 			const string flexBridge = "7500";
 			var before = new FwUpdate("9.1.8", false, 44, FwUpdate.Typ.Online, url: "https://example.com");
-			var xElt = XElement.Parse(Contents("not checked in SUT", size,
-				modelVersion: lcm, liftModelVersion: lift, flexBridgeDataVersion: flexBridge));
+			var xElt = XElement.Parse(Contents("not checked in SUT", size, date, lcm, lift, flexBridge));
 
-			var result = FwUpdater.AddSizeAndModelVersions(before, xElt);
+			var result = FwUpdater.AddMetadata(before, xElt);
 
 			Assert.That(result, Is.Not.SameAs(before));
 			Assert.That(result.Version, Is.EqualTo(before.Version));
@@ -251,6 +253,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(result.URL, Is.EqualTo(before.URL));
 			Assert.That(result.InstallerType, Is.EqualTo(before.InstallerType));
 			Assert.That(result.Size, Is.EqualTo(2));
+			Assert.That(result.Date, Is.EqualTo(new DateTime(1997, 12, 25, 12, 46, 57, DateTimeKind.Utc)));
 			Assert.That(result.LCModelVersion, Is.EqualTo(lcm));
 			Assert.That(result.LIFTModelVersion, Is.EqualTo(lift));
 			Assert.That(result.FlexBridgeDataVersion, Is.EqualTo(flexBridge));
@@ -272,8 +275,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			const string curVer = "9.0.14";
 			const string newVer = "9.3.7";
 			const string prompt = "Do it now!";
-			var current = new FwUpdate(curVer, true, 2, FwUpdate.Typ.Patch, 0, curLCM, curLIFT, curSR);
-			var available = new FwUpdate(newVer, true, 2, FwUpdate.Typ.Patch, 0, newLCM, newLIFT, newSR);
+			var current = new FwUpdate(curVer, true, 2, FwUpdate.Typ.Patch, 0, new DateTime(2021-11-01), curLCM, curLIFT, curSR);
+			var available = new FwUpdate(newVer, true, 2, FwUpdate.Typ.Patch, 0, DateTime.Today, newLCM, newLIFT, newSR);
 
 			var result = FwUpdater.GetUpdateMessage(current, available, prompt);
 
@@ -342,6 +345,56 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Assert.That(FwUpdater.IsNewerBase(new FwUpdate("9.0.14", true, 366, FwUpdate.Typ.Patch), null), Is.False,
 				"Null likely means something wasn't parseable, which means it isn't applicable");
+		}
+
+		[TestCase("9.0.17", true, true, 314, 316, FwUpdate.Typ.Online, ExpectedResult = true)]
+		[TestCase("9.0.17", true, true, 314, 316, FwUpdate.Typ.Offline, ExpectedResult = true, TestName = "Offline works, too")]
+		[TestCase("9.0.17", true, true, 314, 314, FwUpdate.Typ.Patch, ExpectedResult = false, TestName = "Not a base")]
+		[TestCase("9.0.17", true, true, 314, 320, FwUpdate.Typ.Patch, ExpectedResult = false, TestName = "Patches a different Base")]
+		[TestCase("9.0.16", true, true, 314, 314, FwUpdate.Typ.Online, ExpectedResult = false, TestName = "Same version")]
+		[TestCase("9.0.1", true, true, 200, 300, FwUpdate.Typ.Online, ExpectedResult = true, TestName = "newer than this patch's base")]
+		[TestCase("9.0.17", true, false, 314, 316, FwUpdate.Typ.Online, ExpectedResult = false, TestName = "Different Architecture")]
+		[TestCase("9.0.17", false, false, 314, 316, FwUpdate.Typ.Online, ExpectedResult = true, TestName = "Both 32-bit")]
+		public bool IsNewerBaseThanBase(string thatVer, bool isThis64Bit, bool isThat64Bit, int thisBase, int thatBase, FwUpdate.Typ thatType)
+		{
+			var current = new FwUpdate(new Version("9.0.16"), isThis64Bit, thisBase, FwUpdate.Typ.Patch);
+			var available = new FwUpdate(new Version(thatVer), isThat64Bit, thatBase, thatType);
+			return FwUpdater.IsNewerBaseThanBase(current, available);
+		}
+
+		[Test]
+		public void IsNewerBaseThanBase_NullDoesNotThrow()
+		{
+			Assert.That(FwUpdater.IsNewerBaseThanBase(new FwUpdate("9.0.14", true, 366, FwUpdate.Typ.Patch), null), Is.False,
+				"Null likely means something wasn't parseable, which means it isn't applicable");
+		}
+
+		/// <summary>
+		/// For now, get them all; in the future, we may wish to filter bases by whether they have patches
+		/// </summary>
+		[Test]
+		public void GetAvailableUpdatesFrom()
+		{
+			const int base0 = 10;
+			const int base1 = 12;
+			const int base2 = 14;
+			var current = new FwUpdate(new Version("9.0.15.800"), true, base0, FwUpdate.Typ.Offline);
+
+			var match1 = new FwUpdate("9.0.21", true, base0, FwUpdate.Typ.Patch); // this matches
+			var badArchKey = new FwUpdate("9.0.90", false, base0, FwUpdate.Typ.Patch); // arch must match
+			var oldKey = new FwUpdate("9.0.10", true, base0, FwUpdate.Typ.Patch); // this matches but is a lesser version
+			var match2 = new FwUpdate("9.1.5", true, base2, FwUpdate.Typ.Online); // this is the latest base
+			var match3 = new FwUpdate("9.1.1", true, base1, FwUpdate.Typ.Online); // this is a later base than current, but not the latest
+			var badBaseKey = new FwUpdate("9.1.9", true, base2, FwUpdate.Typ.Patch); // this is a patch on the latest base, but cannot be applied directly to the current version
+			var match4 = new FwUpdate("9.0.18", true, base0, FwUpdate.Typ.Patch); // matching patch
+			var match5 = new FwUpdate("9.0.15.1", true, base1, FwUpdate.Typ.Offline); // Lower version, but a newer base
+
+			// SUT
+			var result = FwUpdater.GetAvailableUpdatesFrom(current,
+				new[] { match1, badArchKey, oldKey, match2, match3, badBaseKey, match4, match5 }).ToList();
+
+			//Assert.That(result.Count, Is.EqualTo(6));
+			Assert.That(result, Is.EquivalentTo(new[] { match1, match2, match3, match4, match5 }));
 		}
 
 		[Test]
