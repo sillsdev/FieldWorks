@@ -471,6 +471,33 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(FwUpdater.GetLatestDownloadedUpdate(current), Is.Null);
 		}
 
+		[TestCase(false, TestName = "invalid XML")]
+		[TestCase(true, TestName = "mismatching metadata")]
+		public static void GetLatestDownloadedUpdate_WorksWithIncompleteXml(bool isXmlValid)
+		{
+			const int baseBld = 14;
+			var current = new FwUpdate("9.0.15.1", true, baseBld, FwUpdate.Typ.Offline);
+			var updateDir = FwDirectoryFinder.DownloadedUpdates;
+			var mockFileOS = new BetterMockFileOS();
+			FileUtils.Manager.SetFileAdapter(mockFileOS);
+			const string updateVersion = "9.0.18.8";
+			var updateFileName = Path.Combine(updateDir, PatchFileName(updateVersion, baseBld, 64));
+			mockFileOS.AddFile(updateFileName, string.Empty);
+			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath, isXmlValid
+				? "<notValidXml><see></notValidXml>"
+				: string.Format(ListBucketTemplate, Contents(Key("8.0.3", baseBld - 1, 64))));
+
+			// SUT
+			var result = FwUpdater.GetLatestDownloadedUpdate(current);
+
+			Assert.That(result.URL, Is.EqualTo(updateFileName));
+			Assert.That(result.Version, Is.EqualTo(new Version(updateVersion)));
+			Assert.That(result.LCModelVersion, Is.Null);
+			Assert.That(result.LIFTModelVersion, Is.Null);
+			Assert.That(result.FlexBridgeDataVersion, Is.Null);
+			Assert.That(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath), Is.False, "Local update XML should have been deleted");
+		}
+
 		[Test]
 		public static void GetLatestDownloadedUpdate_GetsLatestPatchForThisBase()
 		{
@@ -480,7 +507,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var mockFileOS = new BetterMockFileOS();
 			FileUtils.Manager.SetFileAdapter(mockFileOS);
 			// UpdateInfo XML file
-			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath, string.Empty);
+			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath, string.Format(ListBucketTemplate,
+				Contents(Key("9.0.18.8", baseBld, 64), modelVersion:"1.0", liftModelVersion:"2.0",flexBridgeDataVersion:"3.0")));
 			// earlier patch
 			mockFileOS.AddFile(Path.Combine(updateDir, PatchFileName("9.0.17.4", baseBld, 64)), string.Empty);
 			// latest patch for this base
@@ -497,6 +525,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			Assert.That(result.URL, Is.EqualTo(updateFileName));
 			Assert.That(result.Version, Is.EqualTo(new Version(9, 0, 18, 8)));
+			Assert.That(result.LCModelVersion, Is.EqualTo("1.0"));
+			Assert.That(result.LIFTModelVersion, Is.EqualTo("2.0"));
+			Assert.That(result.FlexBridgeDataVersion, Is.EqualTo("3.0"));
 			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath), "Local update XML should have been deleted");
 		}
 
@@ -508,7 +539,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var mockFileOS = new BetterMockFileOS();
 			FileUtils.Manager.SetFileAdapter(mockFileOS);
 			// UpdateInfo XML file
-			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath, string.Empty);
+			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath, string.Format(ListBucketTemplate,
+				Contents(Key("9.0.18.8", 18, 64), modelVersion:"1.0", liftModelVersion:"2.0", flexBridgeDataVersion:"3.0")));
 			// earlier base
 			mockFileOS.AddFile(Path.Combine(updateDir, BaseFileName("9.0.17.4")), string.Empty);
 			// latest base
@@ -525,10 +557,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			Assert.That(result.URL, Is.EqualTo(updateFileName));
 			Assert.That(result.Version, Is.EqualTo(new Version(9, 0, 18, 8)));
+			Assert.That(result.LCModelVersion, Is.EqualTo("1.0"));
+			Assert.That(result.LIFTModelVersion, Is.EqualTo("2.0"));
+			Assert.That(result.FlexBridgeDataVersion, Is.EqualTo("3.0"));
 			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath), "Local update XML should have been deleted");
 		}
-
-		// TODO: test that model versions are loaded from UpdateInfo for downloaded updates
 
 		private static string Contents(string key, int size = 0, string modified = "2020-12-13T04:46:57.000Z",
 			string modelVersion = null, string liftModelVersion = null, string flexBridgeDataVersion = null)

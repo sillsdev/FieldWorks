@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using System.Xml;
 using System.Xml.Linq;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
@@ -189,8 +190,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				return null;
 			}
-			var availableUpdates = bucketContents.Root.RemoveNamespaces().Elements("Contents").Select(elt => Parse(elt, bucketURL));
+
+			var availableUpdates = GetUpdatesFromBucketContents(bucketContents, bucketURL);
 			return userChoice ? ChooseUpdateFrom(current, availableUpdates) : GetLatestUpdateFrom(current, availableUpdates);
+		}
+
+		public static IEnumerable<FwUpdate> GetUpdatesFromBucketContents(XDocument bucketContents, string bucketURL)
+		{
+			return bucketContents.Root.RemoveNamespaces().Elements("Contents").Select(elt => Parse(elt, bucketURL));
 		}
 		#endregion check for updates
 
@@ -459,9 +466,41 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return null;
 			var result = GetLatestUpdateFrom(current,
 				FileUtils.GetFilesInDirectory(FwDirectoryFinder.DownloadedUpdates).Select(file => Parse(file, string.Empty)));
+			result = AddMetaDataFromUpdateInfo(result, LocalUpdateInfoFilePath);
 			// Deleting the info file ensures that we don't offer to install updates until after the next check (LT-20774)
 			FileUtils.Delete(LocalUpdateInfoFilePath);
 			return result;
+		}
+
+		private static FwUpdate AddMetaDataFromUpdateInfo(FwUpdate updateFromFile, string localUpdateInfoFilePath)
+		{
+			// To facilitate unit testing we will read the file contents into a string and then use XDocument to parse the string
+			using (var fileContentStream =
+				FileUtils.OpenFileForRead(localUpdateInfoFilePath, Encoding.UTF8))
+			{
+				var bucketListString = fileContentStream.ReadToEnd();
+				try
+				{
+					var localInfoDoc = XDocument.Parse(bucketListString);
+					var localUpdates =
+						GetUpdatesFromBucketContents(localInfoDoc, updateFromFile.URL);
+					var infoFromBucketFile = localUpdates.First(update =>
+						update.Version == updateFromFile.Version &&
+						update.Is64Bit == updateFromFile.Is64Bit);
+
+					return new FwUpdate(updateFromFile, infoFromBucketFile.Size, infoFromBucketFile.Date, infoFromBucketFile.LCModelVersion,
+						infoFromBucketFile.LIFTModelVersion, infoFromBucketFile.FlexBridgeDataVersion);
+				}
+				catch
+				{
+					// If the file is corrupted, continue happily for users, but alert developers
+#if DEBUG
+					MessageBoxUtils.Show($"Invalid xml in {LocalUpdateInfoFilePath} updates may be broken.");
+#endif
+
+					return updateFromFile;
+				}
+			}
 		}
 		#endregion install updates
 	}
