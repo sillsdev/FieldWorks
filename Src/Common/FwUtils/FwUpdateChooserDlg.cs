@@ -18,10 +18,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		public FwUpdateChooserDlg(FwUpdate current, IEnumerable<FwUpdate> available) : this()
 		{
+			// FwUpdate.ToString does not always include the base build number (which could be informative) but does include the installer type,
+			// even though we have no way of knowing what that was for the current version; define our own relevant parts here.
 			tbInstructions.Text =
-				$"The following installers are available. You currently have {current} installed. " +
+				$"The following installers are available. You currently have {current.Version}_b{current.BaseBuild} built {current.Date} installed. " +
 				"Additional patches may be available on the listed base (online and offline) installers. " +
-				"To download an update, select it and click OK. To install base installers, you may need to uninstall first.";
+				"To download an update, select it and click Download; another dialog will appear when the download is complete. " +
+				$"To install base installers, you may need to uninstall FLEx and then install manually from {FwDirectoryFinder.DownloadedUpdates}.";
 
 			lbChooseVersion.Items.AddRange(available.ToArray());
 		}
