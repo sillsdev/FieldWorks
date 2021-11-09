@@ -12,7 +12,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using System.Xml;
 using System.Xml.Linq;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
@@ -175,8 +174,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var timer = new Timer { SynchronizingObject = ui.SynchronizeInvoke, Interval = 1000 };
 			timer.Elapsed += (o, e) =>
 			{
-				if (DateTime.Now - ui.LastActivityTime < TimeSpan.FromSeconds(12))
-					return; // Don't interrupt a user who is busy typing. Wait for a pause to prompt to install updates.
+				// Don't interrupt a user who is busy typing; wait for a pause to prompt to install updates.
+				// If multiple Elapsed events have piled up, don't keep notifying the user.
+				if (DateTime.Now - ui.LastActivityTime < TimeSpan.FromSeconds(12) || !timer.Enabled)
+					return;
 
 				timer.Stop(); // one notification is enough
 				MessageBox.Show(Form.ActiveForm, message, caption);
