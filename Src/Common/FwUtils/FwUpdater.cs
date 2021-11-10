@@ -121,6 +121,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 				if (isNightly)
 				{
+					// LT-20875: WebClient requires the directory to exist before downloading to it. (DownloadClient creates directories itself)
+					FileUtils.EnsureDirectoryExists(FwDirectoryFinder.DownloadedUpdates);
 					// Use WebClient for nightly builds because DownloadClient can't download the dynamically built update info (LT-20819).
 					// DownloadClient is still best for all other channels because it is better for unstable internet.
 					new WebClient().DownloadFile(infoURL, LocalUpdateInfoFilePath);
