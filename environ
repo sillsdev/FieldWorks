@@ -10,7 +10,9 @@
 # - INSTALLED: when running an installed package
 # - PACKAGING: while building the package
 
-[[ -z ${FW_DEBUG_BASH_TRACE} ]] || set -x
+set -ueo pipefail
+
+[[ -z ${FW_DEBUG_BASH_TRACE-} ]] || set -x
 
 # Unset things from incoming environment to avoid unexpected behaviour, such
 # as when FW is run from PT. Restore path to something basic, along with the
@@ -33,7 +35,6 @@ DOTNET_TOOLS_PATHER="/etc/profile.d/dotnet-cli-tools-bin-path.sh"
 if [ -f "${DOTNET_TOOLS_PATHER}" ]; then
   . "${DOTNET_TOOLS_PATHER}"
 fi
-
 
 STANDARD_XDG_DATA_HOME="${HOME}/.local/share"
 STANDARD_XDG_CONFIG_HOME="${HOME}/.config"
@@ -63,19 +64,19 @@ XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${STANDARD_XDG_CONFIG_HOME}}"
 # the running application, but could be shared with other applications, can be
 # written to the potentially application-specific XDG_DATA_HOME.
 
-if [[ -n "${FLATPAK_SANDBOX_DIR}" && -z "${FLATPAK_ID}" ]]; then
+if [[ -n "${FLATPAK_SANDBOX_DIR-}" && -z "${FLATPAK_ID-}" ]]; then
   # Ubuntu 18.04 flatpak has FLATPAK_SANDBOX_DIR but not FLATPAK_ID.
   # Set FLATPAK_ID so we can rely on it being set.
   export FLATPAK_ID="org.sil.FieldWorks"
 fi
 
-if [[ -n ${FLATPAK_ID} ]]; then
+if [[ -n ${FLATPAK_ID-} ]]; then
   # We are running in flatpak.
   MONO_PREFIX=/app
   MONO_SILPKGDIR=/app
   INSTALLATION_PREFIX=/app
   # Including /usr/lib/x86_64-linux-gnu so flatpak fw can find libdl.so.2.
-  LD_LIBRARY_PATH="/app/lib:${LD_LIBRARY_PATH}:/usr/lib/x86_64-linux-gnu"
+  LD_LIBRARY_PATH="/app/lib:/usr/lib/x86_64-linux-gnu"
   PATH="/app/bin:${PATH}"
 
   # Set to the value outside of flatpak, if any, or fall back
@@ -93,8 +94,7 @@ else
 fi
 
 FW_CONFIG_DIR="${USER_CONFIG_HOME}/fieldworks"
-
-if [[ -n ${FLATPAK_ID} ]]; then
+if [[ -n ${FLATPAK_ID-} ]]; then
   # Encoding Converters will write settings and data to this location. Use a
   # user-specific location that can be shared with other applications. FW 9.0
   # and earlier has been using some FieldWorks-specific paths for EC files, and
@@ -132,7 +132,7 @@ MONO_DEBUG=explicit-null-checks
 MONO_ENV_OPTIONS="-O=-gshared"
 
 # Directory settings
-if [ "$RUNMODE" != "INSTALLED" ]
+if [ "${RUNMODE-}" != "INSTALLED" ]
 then
 	PATH="${BASE}/Output_${ARCH}/${BUILD}:\
 ${INSTALLATION_PREFIX}/lib/fieldworks/icu-bin:\
@@ -153,7 +153,7 @@ LD_LIBRARY_PATH="${MONO_SILPKGDIR}/lib:${ENC_CONVERTERS}:${LD_LIBRARY_PATH}"
 PKG_CONFIG_PATH="${MONO_SILPKGDIR}/lib/pkgconfig:${INSTALLATION_PREFIX}/lib/fieldworks/lib/pkgconfig:${PKG_CONFIG_PATH}"
 MONO_GAC_PREFIX="${MONO_SILPKGDIR}:${ENC_CONVERTERS}:/usr:${MONO_PREFIX}"
 
-if [ "$RUNMODE" != "PACKAGING" ]
+if [ "${RUNMODE-}" != "PACKAGING" ]
 then
 	# Make locally-built software (eg mono) visible
 	PATH="${MONO_PREFIX}/bin:${PATH}"
@@ -162,7 +162,7 @@ then
 	MONO_GAC_PREFIX="${MONO_PREFIX}:${MONO_GAC_PREFIX}"
 fi
 
-if [ "$RUNMODE" = "INSTALLED" ]
+if [ "${RUNMODE-}" = "INSTALLED" ]
 then
 	# COMPONENTS_MAP_PATH in FW 9.0 is the dir containing environ, which is the
 	# readonly dir PREFIX/lib/fieldworks.
@@ -208,7 +208,7 @@ else
 	MONO_HELP_VIEWER=${BASE}/Lib/linux/launch-xchm
 fi
 
-if [ "$RUNMODE" != "PACKAGING" -a "$RUNMODE" != "INSTALLED" ]
+if [ "${RUNMODE-}" != "PACKAGING" -a "${RUNMODE-}" != "INSTALLED" ]
 then
 	FW_CommonAppData=${BASE}/Output_${ARCH}/VarLibFieldworks
 	[ ! -d $FW_CommonAppData ] && mkdir -p $FW_CommonAppData
@@ -216,7 +216,7 @@ then
 	MONO_PATH="${BASE}/DistFiles:${BASE}/Output_${ARCH}/${BUILD}"
 fi
 
-MONO_PATH="${MONO_PATH}:${GDK_SHARP}:${ENC_CONVERTERS}:${GECKOFX}"
+MONO_PATH="${MONO_PATH-}:${GDK_SHARP-}:${ENC_CONVERTERS}:${GECKOFX}"
 MONO_TRACE_LISTENER="Console.Out"
 #MONO_IOMAP=case
 MONO_MWF_SCALING=disable
@@ -226,7 +226,7 @@ MONO_MWF_SCALING=disable
 # If the standard installation directory for FLExBridge exists, and the environment
 # variable is not yet set, set the environment variable for finding FLExBridge.
 # (Setting the LocalMachine registry value at installation doesn't work for Linux.)
-if [ -z "$FLEXBRIDGEDIR" -a -d "${INSTALLATION_PREFIX}/lib/flexbridge" ]
+if [ -z "${FLEXBRIDGEDIR-}" -a -d "${INSTALLATION_PREFIX}/lib/flexbridge" ]
 then
 	FLEXBRIDGEDIR="${INSTALLATION_PREFIX}/lib/flexbridge"
 fi
