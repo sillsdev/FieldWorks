@@ -292,6 +292,38 @@ namespace SIL.FieldWorks.Common.FwUtils
 				&& potential.BaseBuild > current.BaseBuild;
 		}
 
+		/// <summary>
+		/// Given a patch installer try to find the most recent associated base installer.
+		/// Note that the base offline installer takes precedence over the base online installer.
+		/// </summary>
+		/// <param name="patch">the patch installer</param>
+		/// <param name="available">the available installers</param>
+		/// <returns>>If found then returns the most recent associated base installer, else return null.</returns>
+		internal static FwUpdate GetBaseForPatch(FwUpdate patch, IEnumerable<FwUpdate> available)
+		{
+			FwUpdate baseUpdate = null;
+			foreach (var potential in available)
+			{
+				if (potential != null
+					&& (potential.InstallerType == FwUpdate.Typ.Online || potential.InstallerType == FwUpdate.Typ.Offline)
+					&& potential.Is64Bit == patch.Is64Bit
+					&& potential.Version.Major == patch.Version.Major
+					&& potential.Version.Minor == patch.Version.Minor)
+				{
+					if (baseUpdate == null)
+						baseUpdate = potential;
+					// If the Build number is more recent then possibly return it.
+					else if (potential.Version.Build > baseUpdate.Version.Build)
+						baseUpdate = potential;
+					// If the build number is the same but this is a offline installer then possibly return it.
+					else if (potential.Version.Build == baseUpdate.Version.Build && potential.InstallerType == FwUpdate.Typ.Offline)
+						baseUpdate = potential;
+				}
+			}
+
+			return baseUpdate;
+		}
+
 		/// <param name="elt">a &lt;Contents/&gt; element from an S3 bucket list</param>
 		/// <param name="baseURL">the https:// URL of the bucket, with the trailing /</param>
 		internal static FwUpdate Parse(XElement elt, string baseURL)
@@ -422,6 +454,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return;
 			}
 
+			DeleteOldUpdateFiles(latestPatch);
+
 			var latestPatchFile = latestPatch.URL;
 			var installerRunner = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles), "SIL", "ProcRunner_5.0.exe");
 			if (!File.Exists(installerRunner))
@@ -474,6 +508,31 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// Deleting the info file ensures that we don't offer to install updates until after the next check (LT-20774)
 			FileUtils.Delete(LocalUpdateInfoFilePath);
 			return result;
+		}
+
+		/// <summary>
+		/// Deletes the old update files that have been downloaded.
+		/// If we are installing a base then delete all but the base we are installing.
+		/// If we are installing a patch then delete all but the patch we are installing and the
+		/// base that it patches (if it is downloaded).
+		/// </summary>
+		internal static void DeleteOldUpdateFiles(FwUpdate newUpdate)
+		{
+			string[] files = FileUtils.GetFilesInDirectory(FwDirectoryFinder.DownloadedUpdates);
+
+			// Check for a base file associated with this patch.
+			FwUpdate newBase = null;
+			if (newUpdate.InstallerType == FwUpdate.Typ.Patch)
+				newBase = GetBaseForPatch(newUpdate, files.Select(file => Parse(file, string.Empty)));
+
+			var newUpdateFileName = Path.GetFileName(newUpdate.URL);
+			var newBaseFileName = newBase == null ? "" : Path.GetFileName(newBase.URL);
+			foreach (string file in files)
+			{
+				if (!newUpdateFileName.Equals(Path.GetFileName(file), StringComparison.OrdinalIgnoreCase) &&
+					!newBaseFileName.Equals(Path.GetFileName(file), StringComparison.OrdinalIgnoreCase))
+					FileUtils.Delete(file);
+			}
 		}
 
 		private static FwUpdate AddMetaDataFromUpdateInfo(FwUpdate updateFromFile, string localUpdateInfoFilePath)

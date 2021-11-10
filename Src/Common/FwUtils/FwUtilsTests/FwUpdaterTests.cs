@@ -563,6 +563,87 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath), "Local update XML should have been deleted");
 		}
 
+		[Test]
+		public static void DeleteOldUpdateFiles_UpdateBase()
+		{
+			var current = new FwUpdate("9.0.15.1", true, 12, FwUpdate.Typ.Offline);
+			var updateDir = FwDirectoryFinder.DownloadedUpdates;
+			var mockFileOS = new BetterMockFileOS();
+			FileUtils.Manager.SetFileAdapter(mockFileOS);
+			// UpdateInfo XML file
+			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath, string.Format(ListBucketTemplate,
+				Contents(Key("9.0.18.1", 18, 64))));
+			// earlier base
+			var earlierBaseFileName = Path.Combine(updateDir, BaseFileName("9.0.17.1"));
+			mockFileOS.AddFile(earlierBaseFileName, string.Empty);
+			// latest base
+			var updateFileName = Path.Combine(updateDir, BaseFileName("9.0.18.1"));
+			mockFileOS.AddFile(updateFileName, string.Empty);
+			// patch for a different base
+			var patchForDifferentBase = Path.Combine(updateDir, PatchFileName("9.0.21.42", 15, 64));
+			mockFileOS.AddFile(patchForDifferentBase, string.Empty);
+			// irrelevant file (although, perhaps, in the future, we will support .msi installers)
+			var otherFileName = Path.Combine(updateDir, Path.ChangeExtension(BaseFileName("9.3.5"), "msi"));
+			mockFileOS.AddFile(otherFileName, string.Empty);
+			var result = FwUpdater.GetLatestDownloadedUpdate(current);
+
+			// SUT
+			FwUpdater.DeleteOldUpdateFiles(result);
+
+			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath), "Local update XML should have been deleted");
+			Assert.False(FileUtils.FileExists(earlierBaseFileName), "Earlier Base should have been deleted");
+			Assert.True(FileUtils.FileExists(updateFileName), "The Update File should NOT have been deleted");
+			Assert.False(FileUtils.FileExists(patchForDifferentBase), "Patch For Different Base should have been deleted");
+			Assert.False(FileUtils.FileExists(otherFileName), "Other File should have been deleted");
+		}
+
+		[Test]
+		public static void DeleteOldUpdateFiles_UpdatePatch()
+		{
+			const int baseBld = 14;
+			var current = new FwUpdate("9.0.18.1", true, baseBld, FwUpdate.Typ.Offline);
+			var updateDir = FwDirectoryFinder.DownloadedUpdates;
+			var mockFileOS = new BetterMockFileOS();
+			FileUtils.Manager.SetFileAdapter(mockFileOS);
+			// UpdateInfo XML file
+			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath, string.Format(ListBucketTemplate,
+				Contents(Key("9.0.19.8", baseBld, 64))));
+			// earlier patch
+			var earlierPatchFileName = Path.Combine(updateDir, PatchFileName("9.0.18.4", baseBld, 64));
+			mockFileOS.AddFile(earlierPatchFileName, string.Empty);
+			// earlier base
+			var earlierBaseFileName = Path.Combine(updateDir, BaseFileName("9.0.17.1"));
+			mockFileOS.AddFile(earlierBaseFileName, string.Empty);
+			// latest base - online
+			var onlineBaseFileName = Path.Combine(updateDir, BaseFileName("9.0.18.1", 64, true));
+			mockFileOS.AddFile(onlineBaseFileName, string.Empty);
+			// latest base - offline
+			var offlineBaseFileName = Path.Combine(updateDir, BaseFileName("9.0.18.1", 64, false));
+			mockFileOS.AddFile(offlineBaseFileName, string.Empty);
+			// latest patch for this base
+			var updateFileName = Path.Combine(updateDir, PatchFileName("9.0.19.8", baseBld, 64));
+			mockFileOS.AddFile(updateFileName, string.Empty);
+			// patch for a different base
+			var patchForDifferentBase = Path.Combine(updateDir, PatchFileName("9.1.21.42", baseBld + 1, 64));
+			mockFileOS.AddFile(patchForDifferentBase, string.Empty);
+			// irrelevant file
+			var otherFileName = Path.Combine(updateDir, Path.ChangeExtension(PatchFileName("9.3.5", baseBld, 64), "xml"));
+			mockFileOS.AddFile(otherFileName, string.Empty);
+			var result = FwUpdater.GetLatestDownloadedUpdate(current);
+
+			// SUT
+			FwUpdater.DeleteOldUpdateFiles(result);
+
+			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath), "Local update XML should have been deleted");
+			Assert.False(FileUtils.FileExists(earlierPatchFileName), "Earlier Patch should have been deleted");
+			Assert.False(FileUtils.FileExists(earlierBaseFileName), "Earlier Base should have been deleted");
+			Assert.False(FileUtils.FileExists(onlineBaseFileName), "The Online Base File should have been deleted");
+			Assert.True(FileUtils.FileExists(offlineBaseFileName), "The Offline Base File should NOT have been deleted");
+			Assert.True(FileUtils.FileExists(updateFileName), "The Update File should NOT have been deleted");
+			Assert.False(FileUtils.FileExists(patchForDifferentBase), "Patch For Different Base should have been deleted");
+			Assert.False(FileUtils.FileExists(otherFileName), "Other File should have been deleted");
+		}
+
 		private static string Contents(string key, int size = 0, string modified = "2020-12-13T04:46:57.000Z",
 			string modelVersion = null, string liftModelVersion = null, string flexBridgeDataVersion = null)
 		{
