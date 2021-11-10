@@ -63,6 +63,12 @@ XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${STANDARD_XDG_CONFIG_HOME}}"
 # the running application, but could be shared with other applications, can be
 # written to the potentially application-specific XDG_DATA_HOME.
 
+if [[ -n "${FLATPAK_SANDBOX_DIR}" && -z "${FLATPAK_ID}" ]]; then
+  # Ubuntu 18.04 flatpak has FLATPAK_SANDBOX_DIR but not FLATPAK_ID.
+  # Set FLATPAK_ID so we can rely on it being set.
+  export FLATPAK_ID="org.sil.FieldWorks"
+fi
+
 if [[ -n ${FLATPAK_ID} ]]; then
   # We are running in flatpak.
   MONO_PREFIX=/app
