@@ -9,7 +9,7 @@
 # See http://standards.freedesktop.org/basedir-spec/basedir-spec-0.6.html for
 # standard locations and environment variables.
 
-[[ -z ${FW_DEBUG} ]] || set -x
+[[ -z ${FW_DEBUG_BASH_TRACE} ]] || set -x
 debugVerboseFlag=""
 [[ -z ${FW_DEBUG} ]] || debugVerboseFlag="-v"
 

@@ -6,7 +6,7 @@
 # This software is licensed under the LGPL, version 2.1 or later
 # (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-[[ -z ${FW_DEBUG} ]] || set -x
+[[ -z ${FW_DEBUG_BASH_TRACE} ]] || set -x
 
 scriptdir=$(dirname "$0")
 prefix=$(cd "$scriptdir/../.."; /bin/pwd)
