@@ -17,7 +17,7 @@ cd "$lib" && RUNMODE="INSTALLED" . environ && cd $OLDPWD
 
 # Usage: debug "foo baz" "bar"
 debug() {
-  [[ -z ${FW_DEBUG} ]] || echo -e "$(date +'%F %T') run-app[$$]: " "$@"
+  [[ -z ${FW_DEBUG} ]] || echo -e "$(date +'%F %T') run-app[$$]: " "$@" || : "Do not fail from write error Broken pipe"
 }
 
 if [[ -z ${FLATPAK_ID} ]]; then

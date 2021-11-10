@@ -26,7 +26,7 @@ READKEY="${FW_LIB}/ReadKey.exe"
 # Usage: Debug "blah blah" "blah"
 Debug()
 {
-	[[ -z ${FW_DEBUG} ]] || echo -e "$(date +'%F %T') setup-user[$$]: " "$@"
+	[[ -z ${FW_DEBUG} ]] || echo -e "$(date +'%F %T') setup-user[$$]: " "$@" || : "Do not fail from write error Broken pipe"
 }
 
 Debug "FW_DATA: ${FW_DATA}"
