@@ -424,13 +424,6 @@ namespace SIL.FieldWorks.IText
 						ichAnchor = 0;
 					if (ichEnd == -1)
 						ichEnd = 0;
-					if (iPara == ((IStText)para.Owner).ParagraphsOS.Count - 1 && ichAnchor == ichEnd && ichAnchor == para.Contents.Length)
-					{
-						// Special case, IP at the very end, we probably just typed it or pasted it, select the FIRST word of the text.
-						// FWR-723.
-						iPara = 0;
-						ichAnchor = ichEnd = 0;
-					}
 				}
 			}
 			if (iPara >= 0)
