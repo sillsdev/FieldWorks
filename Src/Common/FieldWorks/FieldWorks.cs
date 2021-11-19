@@ -3609,14 +3609,21 @@ namespace SIL.FieldWorks
 				var fieldWorksFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 				var versionObj = Assembly.LoadFrom(Path.Combine(fieldWorksFolder ?? string.Empty, "Chorus.exe")).GetName().Version;
 				var version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
-				LocalizationManager.Create(TranslationMemory.XLiff, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName,
+				// First create localization manager for Chorus with english
+				LocalizationManager.Create(TranslationMemory.XLiff, "en",
 					"Chorus", "Chorus", version, installedL10nBaseDir, userL10nBaseDir, null, "flex_localization@sil.org", "Chorus", "LibChorus");
-
-				var uiLanguageId = LocalizationManager.UILanguageId;
+				// Now that we have one manager initialized check and see if the users UI language has
+				// localizations available
+				var uiCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+				if (LocalizationManager.GetUILanguages(true).Any(lang => lang.TwoLetterISOLanguageName == uiCulture))
+				{
+					// If it is switch to using that instead of english
+					LocalizationManager.SetUILanguage(uiCulture, true);
+				}
 
 				versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
 				version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
-				LocalizationManager.Create(TranslationMemory.XLiff, uiLanguageId, "Palaso", "Palaso", version, installedL10nBaseDir,
+				LocalizationManager.Create(TranslationMemory.XLiff, LocalizationManager.UILanguageId, "Palaso", "Palaso", version, installedL10nBaseDir,
 					userL10nBaseDir, null, "flex_localization@sil.org", "SIL.Windows.Forms");
 			}
 			catch (Exception e)
