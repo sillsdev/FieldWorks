@@ -208,7 +208,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// Fixture setup
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public virtual void FixtureSetup()
 		{
 			SetupTestModel(Properties.Resources.TextCacheModel_xml);
@@ -259,7 +259,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		/// Teardown
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public virtual void FixtureTeardown()
 		{
 			FileUtils.Manager.Reset();
@@ -283,7 +283,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			var styleSheet = new SimpleStyleSheet(m_cache);
 
-			Assert.IsNull(m_basicView);
+			Assert.That(m_basicView, Is.Null);
 			m_basicView = new SimpleBasicView();
 			m_basicView.Cache = m_cache;
 			m_basicView.Visible = false;

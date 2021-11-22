@@ -15,7 +15,7 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	class DictionaryConfigurationUtilsTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public new void FixtureSetup()
 		{
 			var testProjPath = Path.Combine(Path.GetTempPath(), "DictionaryConfigurationUtilsTestsProj");

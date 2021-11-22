@@ -1,7 +1,6 @@
-// Copyright (c) 2016 SIL International
+// Copyright (c) 2016-2021 SIL International
 // SilOutlookBar is licensed under the MIT license.
 
-using System;
 using NUnit.Framework;
 
 namespace SIL.SilSidePane
@@ -21,11 +20,10 @@ namespace SIL.SilSidePane
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void ItemTest_null()
 		{
 #pragma warning disable 0219
-			Item item = new Item(null);
+			Assert.That(() => { Item item = new Item(null); }, Throws.ArgumentNullException);
 #pragma warning restore 0219
 		}
 	}

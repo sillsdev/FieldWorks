@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.IText
 
 		#region SetupTeardown
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		///
 		/// </summary>
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			m_textsDefn = null;
@@ -185,7 +185,7 @@ namespace SIL.FieldWorks.IText
 		private static void VerifyTextTag(ITextTag ttag, ICmPossibility poss,
 										  AnalysisOccurrence point1, AnalysisOccurrence point2)
 		{
-			Assert.IsNotNull(ttag, "There should be a TextTag object.");
+			Assert.That(ttag, Is.Not.Null, "There should be a TextTag object.");
 			Assert.AreEqual(poss.Hvo, ttag.TagRA.Hvo, "Text Tag has wrong possibility Hvo.");
 			Assert.AreEqual(point1.Segment.Hvo, ttag.BeginSegmentRA.Hvo, "Tag has wrong BeginSegment");
 			Assert.AreEqual(point1.Index, ttag.BeginAnalysisIndex, "Tag has wrong BeginAnalysisIndex");
@@ -196,7 +196,7 @@ namespace SIL.FieldWorks.IText
 		private static void VerifyMenuItemCheckStatus(ToolStripItem item1, bool fIsChecked)
 		{
 			var item = item1 as ToolStripMenuItem;
-			Assert.IsNotNull(item, "menu item should be ToolStripMenuItem");
+			Assert.That(item, Is.Not.Null, "menu item should be ToolStripMenuItem");
 			Assert.AreEqual(fIsChecked, item.Checked, item.Text + " should be " + (fIsChecked ? "checked" : "unchecked"));
 		}
 
@@ -370,7 +370,7 @@ namespace SIL.FieldWorks.IText
 
 			// Verification
 			AssertTagDoesntExist(hvoTtag, "MakeTextTagInstance must return null if no Wordforms are selected.");
-			Assert.IsNull(ttag, "MakeTextTagInstance must return null if no Wordforms are selected.");
+			Assert.That(ttag, Is.Null, "MakeTextTagInstance must return null if no Wordforms are selected.");
 		}
 
 		[Test]
@@ -642,7 +642,7 @@ namespace SIL.FieldWorks.IText
 
 				// Verification of SUT; None should be checked
 				var subMenu = AssertHasMenuWithText(menu.Items, "Syntax", 3);
-				Assert.IsNotNull(subMenu, "No Syntax menu!?");
+				Assert.That(subMenu, Is.Not.Null, "No Syntax menu!?");
 				foreach (ToolStripItem item in subMenu.DropDownItems)
 					VerifyMenuItemCheckStatus(item, false);
 			}
@@ -667,7 +667,7 @@ namespace SIL.FieldWorks.IText
 
 				// Verification of SUT; Only one should be checked and that in a submenu
 				var subList = AssertHasMenuWithText(menu.Items, kFTO_RRG_Semantics, 3);
-				Assert.IsNotNull(subList, "No " + kFTO_RRG_Semantics + " menu!?");
+				Assert.That(subList, Is.Not.Null, "No " + kFTO_RRG_Semantics + " menu!?");
 				var subMenu = subList.DropDownItems;
 				var expectedStates = new bool[subMenu.Count];
 				expectedStates[itestItem] = true;
@@ -701,7 +701,7 @@ namespace SIL.FieldWorks.IText
 
 				// Verification of SUT; Only one should be checked and that in a submenu
 				var subList = AssertHasMenuWithText(menu.Items, kFTO_RRG_Semantics, 3);
-				Assert.IsNotNull(subList, "No " + kFTO_RRG_Semantics + " menu!?");
+				Assert.That(subList, Is.Not.Null, "No " + kFTO_RRG_Semantics + " menu!?");
 				var subMenu = subList.DropDownItems;
 				var expectedStates = new bool[subMenu.Count];
 				expectedStates[itestItem] = true;
@@ -750,7 +750,7 @@ namespace SIL.FieldWorks.IText
 
 				// Verification of SUT; Two should be checked and both in a submenu
 				var subList = AssertHasMenuWithText(menu.Items, kFTO_RRG_Semantics, 3);
-				Assert.IsNotNull(subList, "No " + kFTO_RRG_Semantics + " menu!?");
+				Assert.That(subList, Is.Not.Null, "No " + kFTO_RRG_Semantics + " menu!?");
 				var subMenu = subList.DropDownItems;
 				var expectedStates = new bool[subMenu.Count];
 				expectedStates[itestItem1] = false; // Enhance GordonM: This will change to 'true' when multiple layers are okay.
@@ -801,7 +801,7 @@ namespace SIL.FieldWorks.IText
 
 				// Verification of SUT; Two should be checked and that in a submenu
 				var subList = AssertHasMenuWithText(menu.Items, kFTO_RRG_Semantics, 3);
-				Assert.IsNotNull(subList, "No " + kFTO_RRG_Semantics + " menu!?");
+				Assert.That(subList, Is.Not.Null, "No " + kFTO_RRG_Semantics + " menu!?");
 				var subMenu = subList.DropDownItems;
 				var expectedStates = new bool[subMenu.Count];
 				expectedStates[itestItem1] = false;
@@ -850,7 +850,7 @@ namespace SIL.FieldWorks.IText
 
 				// Verification of SUT; Two should be checked and that in a submenu
 				var subList = AssertHasMenuWithText(menu.Items, kFTO_RRG_Semantics, 3);
-				Assert.IsNotNull(subList, "No " + kFTO_RRG_Semantics + " menu!?");
+				Assert.That(subList, Is.Not.Null, "No " + kFTO_RRG_Semantics + " menu!?");
 				var subMenu = subList.DropDownItems;
 				var expectedStates = new bool[subMenu.Count];
 				expectedStates[itestItem1] = true;

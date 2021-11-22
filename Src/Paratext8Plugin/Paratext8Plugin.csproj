@@ -70,7 +70,7 @@
     <Reference Include="PtxUtils">
       <HintPath>..\..\Output\Debug\PtxUtils.dll</HintPath>
     </Reference>
-    <Reference Include="ScriptureUtils">
+    <Reference Include="ScriptureUtils" version="9.0.0">
       <HintPath>..\..\Output\Debug\ScriptureUtils.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Scripture">

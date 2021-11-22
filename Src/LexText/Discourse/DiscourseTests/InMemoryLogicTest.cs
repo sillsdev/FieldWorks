@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.Discourse
 		private static void VerifyMenuItemTextAndChecked(ToolStripItem item1, string text, bool fIsChecked)
 		{
 			var item = item1 as ToolStripMenuItem;
-			Assert.IsNotNull(item, "menu item should be ToolStripMenuItem");
+			Assert.That(item, Is.Not.Null, "menu item should be ToolStripMenuItem");
 			Assert.AreEqual(text, item.Text);
 			Assert.AreEqual(fIsChecked, item.Checked, text + " should be in the expected check state");
 		}
@@ -116,11 +116,11 @@ namespace SIL.FieldWorks.Discourse
 		[Test]
 		public void CreateDefTemplate()
 		{
-			Assert.IsNotNull(Cache.LangProject.GetDefaultChartTemplate()); // minimally exercises the method
+			Assert.That(Cache.LangProject.GetDefaultChartTemplate(), Is.Not.Null); // minimally exercises the method
 			// Howerver, the guts of the method is a call to CreateTemplate, so we should get
 			// better repeatability by testing the results of the CreateTemplate call in our
 			// fixture setup.
-			Assert.IsNotNull(m_template);
+			Assert.That(m_template, Is.Not.Null);
 			Assert.AreEqual(3, m_template.SubPossibilitiesOS.Count);
 			Assert.AreEqual(2, m_template.SubPossibilitiesOS[0].SubPossibilitiesOS.Count);
 			Assert.AreEqual("default", m_template.Name.AnalysisDefaultWritingSystem.Text);
@@ -586,7 +586,7 @@ namespace SIL.FieldWorks.Discourse
 			var result = m_logic.FindWhereToAddWords(3, out whereToInsert, out existingWordGroupToAppendTo);
 			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(1, whereToInsert, "should insert at end, after 1 existing wordform");
-			Assert.IsNull(existingWordGroupToAppendTo);
+			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
 		[Test]
@@ -602,7 +602,7 @@ namespace SIL.FieldWorks.Discourse
 			var result = m_logic.FindWhereToAddWords(3, out whereToInsert, out existingWordGroupToAppendTo);
 			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(2, whereToInsert, "should insert at end, after 2 existing wordforms");
-			Assert.IsNull(existingWordGroupToAppendTo);
+			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
 		/// <summary>
@@ -621,7 +621,7 @@ namespace SIL.FieldWorks.Discourse
 			var result = m_logic.FindWhereToAddWords(0, out whereToInsert, out existingWordGroupToAppendTo);
 			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kMakeNewRow, result);
 			Assert.AreEqual(0, whereToInsert, "should insert at start of new row");
-			Assert.IsNull(existingWordGroupToAppendTo);
+			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
 		[Test]
@@ -637,7 +637,7 @@ namespace SIL.FieldWorks.Discourse
 			var result = m_logic.FindWhereToAddWords(4, out whereToInsert, out existingWordGroupToAppendTo);
 			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kMakeNewRow, result);
 			Assert.AreEqual(0, whereToInsert, "should insert at start of new row");
-			Assert.IsNull(existingWordGroupToAppendTo);
+			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
 		[Test]
@@ -653,7 +653,7 @@ namespace SIL.FieldWorks.Discourse
 			var result = m_logic.FindWhereToAddWords(5, out whereToInsert, out existingWordGroupToAppendTo);
 			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(row0.CellsOS.Count, whereToInsert, "should insert at end of row");
-			Assert.IsNull(existingWordGroupToAppendTo);
+			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
 		[Test]
@@ -669,7 +669,7 @@ namespace SIL.FieldWorks.Discourse
 			var result = m_logic.FindWhereToAddWords(5, out whereToInsert, out existingWordGroupToAppendTo);
 			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(row0.CellsOS.Count, whereToInsert, "should insert at end of row");
-			Assert.IsNull(existingWordGroupToAppendTo);
+			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
 		[Test]
@@ -685,7 +685,7 @@ namespace SIL.FieldWorks.Discourse
 			var result = m_logic.FindWhereToAddWords(0, out whereToInsert, out existingWordGroupToAppendTo);
 			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(0, whereToInsert, "should insert at start of row");
-			Assert.IsNull(existingWordGroupToAppendTo);
+			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
 		[Test]

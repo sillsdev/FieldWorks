@@ -113,26 +113,26 @@ namespace SIL.FieldWorks.IText
 			// We can't remove the Word line.
 			string msg;
 			Assert.IsFalse(choices.OkToRemove(choices.EnabledLineSpecs[0], out msg));
-			Assert.IsNotNull(msg);
+			Assert.That(msg, Is.Not.Null);
 			// Add another word line and make sure we can remove one of them.
 			choices.Add(InterlinLineChoices.kflidWord);
 			Assert.AreEqual(InterlinLineChoices.kflidWord, choices.EnabledLineSpecs[1].Flid);
 			Assert.IsTrue(choices.OkToRemove(choices.EnabledLineSpecs[0], out msg));
-			Assert.IsNull(msg);
+			Assert.That(msg, Is.Null);
 			choices.Remove(choices.EnabledLineSpecs[0]);
 			Assert.AreEqual(InterlinLineChoices.kflidWord, choices.EnabledLineSpecs[0].Flid);
 
 			// Other fields can be removed freely
 			Assert.IsTrue(choices.OkToRemove(choices.EnabledLineSpecs[1], out msg));
-			Assert.IsNull(msg);
+			Assert.That(msg, Is.Null);
 			Assert.IsTrue(choices.OkToRemove(choices.EnabledLineSpecs[2], out msg));
-			Assert.IsNull(msg);
+			Assert.That(msg, Is.Null);
 			Assert.IsTrue(choices.OkToRemove(choices.EnabledLineSpecs[3], out msg));
-			Assert.IsNull(msg);
+			Assert.That(msg, Is.Null);
 			Assert.IsTrue(choices.OkToRemove(choices.EnabledLineSpecs[4], out msg));
-			Assert.IsNull(msg);
+			Assert.That(msg, Is.Null);
 			Assert.IsTrue(choices.OkToRemove(choices.EnabledLineSpecs[5], out msg));
-			Assert.IsNull(msg);
+			Assert.That(msg, Is.Null);
 
 			// Check what goes along with the morphemes line: morpheme line should be independent (LT-6043).
 			choices.Remove(choices.EnabledLineSpecs[1]);

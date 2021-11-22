@@ -203,7 +203,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			cpFormChild.Parent = configParent;
 			var configModel = new DictionaryConfigurationModel { Version = 2, Parts = new List<ConfigurableDictionaryNode> { configParent } };
 			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.That(m_logger.Content, Is.StringContaining("'Parent > Complex Form' reached the Alpha2 migration with a null FieldDescription."));
+			Assert.That(m_logger.Content, Does.Contain("'Parent > Complex Form' reached the Alpha2 migration with a null FieldDescription."));
 		}
 
 		[Test]
@@ -346,9 +346,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 
 			m_migrator.MigrateFrom83Alpha(model);
-			Assert.That(subsenses.ReferenceItem, Is.StringMatching("MainEntrySubsenses"));
-			Assert.That(subsubsenses.ReferenceItem, Is.StringMatching("MainEntrySubsenses"));
-			Assert.That(subentriesUnderSenses.ReferenceItem, Is.StringMatching("MainEntrySubentries"));
+			Assert.That(subsenses.ReferenceItem, Does.Match("MainEntrySubsenses"));
+			Assert.That(subsubsenses.ReferenceItem, Does.Match("MainEntrySubsenses"));
+			Assert.That(subentriesUnderSenses.ReferenceItem, Does.Match("MainEntrySubentries"));
 			Assert.Null(subsenses.Children, "Children not removed from shared nodes");
 			Assert.Null(subsubsenses.Children, "Children not removed from shared nodes");
 			Assert.Null(subentriesUnderSenses.Children, "Children not removed from shared nodes");
@@ -394,7 +394,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 			m_migrator.MigrateFrom83Alpha(model);
 			var subSenseNode = (DictionaryNodeSenseOptions)subsenses.DictionaryNodeOptions;
-			Assert.That(subSenseNode.ParentSenseNumberingStyle, Is.StringMatching("%."));
+			Assert.That(subSenseNode.ParentSenseNumberingStyle, Does.Match("%."));
 		}
 
 		[Test]
@@ -424,7 +424,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var subSenses = model.SharedItems.Find(node => node.Label == "MainEntrySubsenses");
 			Assert.NotNull(subSenses);
 			Assert.AreEqual(2, subSenses.Children.Count, "Subsenses children were not moved to shared");
-			Assert.That(subSenses.Children[1].Label, Is.StringMatching("Subsubsenses"), "Subsubsenses not added during migration");
+			Assert.That(subSenses.Children[1].Label, Does.Match("Subsubsenses"), "Subsubsenses not added during migration");
 			Assert.Null(model.Parts[0].Children[0].Children[0].Children, "Subsenses children were left in non-shared node");
 		}
 
@@ -539,7 +539,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var subEntries = model.SharedItems.Find(node => node.Label == "AllReversalSubentries");
 			Assert.NotNull(subEntries);
 			Assert.AreEqual(2, subEntries.Children.Count, "Subentries children were not moved to shared");
-			Assert.That(subEntries.Children[1].Label, Is.StringMatching("Reversal Subsubentries"), "Subsubentries not added during migration");
+			Assert.That(subEntries.Children[1].Label, Does.Match("Reversal Subsubentries"), "Subsubentries not added during migration");
 			Assert.Null(model.Parts[0].Children[0].Children, "Subentries children were left in non-shared node");
 		}
 
@@ -574,7 +574,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var subEntries = model.SharedItems.Find(node => node.Label == "AllReversalSubentries");
 			Assert.NotNull(subEntries);
 			Assert.AreEqual(2, subEntries.Children.Count, "Subentries children were not moved to shared");
-			Assert.That(subEntries.Children[1].Label, Is.StringMatching("Reversal Subsubentries"), "Subsubentries not added during migration");
+			Assert.That(subEntries.Children[1].Label, Does.Match("Reversal Subsubentries"), "Subsubentries not added during migration");
 			Assert.Null(model.Parts[0].Children[0].Children, "Subentries children were left in non-shared node");
 		}
 
@@ -1082,16 +1082,16 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var migratedPicturesNode=model.Parts[0].Children[0];
 
 			// Sense Number should be gone
-			Assert.That(migratedPicturesNode.Children[1].Label, Is.Not.StringMatching("Sense Number"), "Sense Number should be gone");
+			Assert.That(migratedPicturesNode.Children[1].Label, Is.Not.EqualTo("Sense Number"), "Sense Number should be gone");
 
 			// Thumbnail and Caption should still be there
-			Assert.That(migratedPicturesNode.Children[0].Label, Is.StringMatching("Thumbnail"), "Thumbnail should still be present");
-			Assert.That(migratedPicturesNode.Children[1].Label, Is.StringMatching("Caption"), "Caption should still be present");
+			Assert.That(migratedPicturesNode.Children[0].Label, Is.EqualTo("Thumbnail"), "Thumbnail should still be present");
+			Assert.That(migratedPicturesNode.Children[1].Label, Is.EqualTo("Caption"), "Caption should still be present");
 
 			// Headword and Gloss should now be there
 			Assert.That(migratedPicturesNode.Children.Count, Is.GreaterThanOrEqualTo(3), "Not enough child nodes. Maybe Headword and Gloss weren't added.");
-			Assert.That(migratedPicturesNode.Children[2].Label, Is.StringMatching("Headword"), "Headword not introduced");
-			Assert.That(migratedPicturesNode.Children[3].Label, Is.StringMatching("Gloss"), "Gloss not introduced");
+			Assert.That(migratedPicturesNode.Children[2].Label, Is.EqualTo("Headword"), "Headword not introduced");
+			Assert.That(migratedPicturesNode.Children[3].Label, Is.EqualTo("Gloss"), "Gloss not introduced");
 		}
 	}
 }

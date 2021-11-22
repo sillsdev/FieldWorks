@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Resets the registry helper
 		/// </summary>
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void TearDown()
 		{
 			FwRegistryHelper.Manager.Reset();
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Fixture setup
 		/// </summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void TestFixtureSetup()
 		{
 			//FwDirectoryFinder.CompanyName = "SIL";

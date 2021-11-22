@@ -9,7 +9,6 @@ using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Win32;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Test.ProjectUnpacker

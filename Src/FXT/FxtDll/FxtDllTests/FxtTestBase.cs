@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.Common.FXT
 			Debug.WriteLine(sLabel + " " + m_tsTimeSpan.TotalSeconds.ToString() + " Seconds");
 		}
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public virtual void Init()
 		{
 			m_sExpectedResultsPath = Path.Combine(FwDirectoryFinder.SourceDirectory,

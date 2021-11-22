@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.XWorks
 		private DictionaryPublicationDecorator DefaultDecorator => new DictionaryPublicationDecorator(Cache,
 			(ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 		#endregion disposal
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			base.FixtureTeardown();
@@ -509,7 +509,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, pubMain, DefaultSettings, 0);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			var expectedResults = "{\"xhtmlTemplate\": \"lexentry\",\"guid\":\"g" + entryEntry.Guid + "\",\"letterHead\": \"e\",\"sortIndex\": 0," +
 								  "\"entry\": [{\"lang\":\"fr\",\"value\":\"entry\"}],\"senses\": [{\"guid\":\"g" +
 								  entryEntry.Guid + "\",\"definitionorgloss\": [{\"lang\":\"en\",\"value\":\"entry\"}]}]," +
@@ -579,7 +579,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var outputTypeAfter = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNodeTypeAfter, pubMain, DefaultSettings, 0);
-			Assert.IsNotNullOrEmpty(outputTypeAfter);
+			Assert.That(outputTypeAfter, Is.Not.Null.Or.Empty);
 			var expectedResultsTypeAfter = "{\"xhtmlTemplate\": \"lexentry\",\"guid\":\"g" + entryEntry.Guid + "\",\"letterHead\": \"e\",\"sortIndex\": 0," +
 								  "\"entry\": [{\"lang\":\"fr\",\"value\":\"entry\"}]," +
 								  "\"variantformentrybackrefs\": [{\"references\":[{\"headword\": [{\"lang\":\"fr\",\"guid\": \"g" +
@@ -671,7 +671,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryCorps, mainEntryNode, DefaultDecorator, DefaultSettings, 0);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			var expectedResults = "{\"xhtmlTemplate\":\"lexentry\",\"guid\":\"g" + entryCorps.Guid + "\",\"letterHead\":\"c\",\"sortIndex\":0," +
 								  "\"entry\": [{\"lang\":\"fr\",\"value\":\"corps\"}]," +
 								  "\"pronunciations\": [{\"mediafiles\": [{\"value\": {\"id\":\"g" + mainMediaFile.Guid + "\",\"src\": \"AudioVisual/fileName.mp4\"}}]}]}";
@@ -771,7 +771,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeRevName = "sURsyoT";
 			ConfiguredXHTMLGeneratorTests.CreateLexicalReference(Cache, mainEntry.SensesOS.First(), referencedEntry, refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var nameNode = new ConfigurableDictionaryNode
 			{

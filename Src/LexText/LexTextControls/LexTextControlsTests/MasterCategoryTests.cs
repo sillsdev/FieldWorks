@@ -25,7 +25,7 @@ namespace LexTextControlsTests
 		private static readonly HashSet<IPartOfSpeech> POSEmptySet = new HashSet<IPartOfSpeech>();
 		private static int[] s_wssOnlyEn;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void TestFixtureSetup()
 		{
 			base.FixtureSetup();

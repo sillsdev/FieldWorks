@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			const string sourceXpath = "/eticPOSList/source[text()]";
 			AssertThatXmlIn.String(result.ToString()).HasSpecifiedNumberOfMatchesForXpath(sourceXpath, 1);
 			// ReSharper disable once PossibleNullReferenceException -- ReSharper doesn't understand the assert on the previous line
-			Assert.That(result.XPathSelectElement(sourceXpath).ToString(), Is.StringContaining(source));
+			Assert.That(result.XPathSelectElement(sourceXpath).ToString(), Does.Contain(source));
 		}
 
 		[Test]

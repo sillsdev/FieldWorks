@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.XWorks
 		private FwXWindow m_window;
 		private int m_wsFr;
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			ConfiguredLcmGenerator.Init();
@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.XWorks
 			Dispose();
 		}
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();

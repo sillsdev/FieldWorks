@@ -54,7 +54,9 @@ namespace Paratext8Plugin
 
 		public IScrText MakeScrText(string projectName)
 		{
-			return string.IsNullOrEmpty(projectName) ? new PT8ScrTextWrapper(new ScrText()) : new PT8ScrTextWrapper(new ScrText(projectName));
+			return string.IsNullOrEmpty(projectName)
+				? new PT8ScrTextWrapper(new ScrText(null /* TODO: PT9 user may not be null */))
+				: new PT8ScrTextWrapper(new ScrText(projectName, null /* TODO: ditto */));
 		}
 
 		/// <summary/>
@@ -69,7 +71,20 @@ namespace Paratext8Plugin
 			get { return IsInstalled ? ParatextInfo.ParatextVersion : new Version(); }
 		}
 
-		public bool IsInstalled { get { return ParatextInfo.IsParatextInstalled; } }
+		public bool IsInstalled
+		{
+			get {
+				try
+				{
+					return ParatextInfo.IsParatextInstalled;
+				}
+				catch (Exception)
+				{
+					// If ParatextInfo crashes determining the installed version we'll just say no
+					return false;
+				}
+			}
+		}
 	}
 
 	public class PT8ParserStateWrapper : ScriptureProvider.IScriptureProviderParserState

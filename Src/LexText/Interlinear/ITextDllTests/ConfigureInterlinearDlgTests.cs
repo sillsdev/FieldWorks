@@ -92,9 +92,9 @@ namespace SIL.FieldWorks.IText
 
 						var generatedRows = stringStream.ToString();
 						var wsEn = Cache.DefaultAnalWs;
-						Assert.That(generatedRows, Is.StringContaining($"{cf.Flid}%{wsEn}"));
+						Assert.That(generatedRows, Does.Contain($"{cf.Flid}%{wsEn}"));
 						Assert.That(generatedRows,
-							Is.Not.StringContaining($"{cf.Flid}%{indonesian.Id}"));
+							Does.Not.Contain($"{cf.Flid}%{indonesian.Id}"));
 					}
 				}
 			}

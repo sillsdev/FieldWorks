@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -68,7 +68,7 @@ namespace Paratext8Plugin
 	public class ParatextDataIntegrationTests
 	{
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp()
 		{
 			Alert.Implementation = new ConsoleAlert();
@@ -77,8 +77,15 @@ namespace Paratext8Plugin
 		[SetUp]
 		public void Setup()
 		{
-			if (!ParatextInfo.IsParatextInstalled)
-				Assert.Ignore("Paratext is not installed");
+			try
+			{
+				if (!ParatextInfo.IsParatextInstalled)
+					Assert.Ignore("Paratext is not installed");
+			}
+			catch (Exception)
+			{
+				Assert.Ignore("ParatextData can't tell us if PT is installed.");
+			}
 		}
 
 		[Test]

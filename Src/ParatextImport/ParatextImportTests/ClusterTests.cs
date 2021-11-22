@@ -1756,12 +1756,12 @@ namespace ParatextImport
 			ClusterKind kindOfCluster)
 		{
 			// verify the basics
-			Assert.AreEqual(refMin, cluster.verseRefMin);
-			Assert.AreEqual(refMax, cluster.verseRefMax);
-			Assert.AreEqual(type, cluster.clusterType);
+			Assert.That((int)cluster.verseRefMin, Is.EqualTo(refMin));
+			Assert.That((int)cluster.verseRefMax, Is.EqualTo(refMax));
+			Assert.That(cluster.clusterType, Is.EqualTo(type));
 
 			// verify the indexToInsertAtInOther
-			Assert.AreEqual(indexToInsertAtInOther, cluster.indexToInsertAtInOther);
+			Assert.That(cluster.indexToInsertAtInOther, Is.EqualTo(indexToInsertAtInOther));
 
 			// now verify the cluster's items
 			switch (kindOfCluster)
@@ -1804,20 +1804,20 @@ namespace ParatextImport
 					Assert.IsTrue(expectedItemsRev is ScrVerse);
 					break;
 				case ClusterType.MissingInCurrent:
-					Assert.IsNull(expectedItemsCurr);
+					Assert.That(expectedItemsCurr, Is.Null);
 					Assert.IsTrue(expectedItemsRev is ScrVerse);
 					break;
 				case ClusterType.OrphansInRevision:
-					Assert.IsNull(expectedItemsCurr);
+					Assert.That(expectedItemsCurr, Is.Null);
 					Assert.IsTrue(expectedItemsRev is List<ScrVerse>);
 					break;
 				case ClusterType.AddedToCurrent:
 					Assert.IsTrue(expectedItemsCurr is ScrVerse);
-					Assert.IsNull(expectedItemsRev);
+					Assert.That(expectedItemsRev, Is.Null);
 					break;
 				case ClusterType.OrphansInCurrent:
 					Assert.IsTrue(expectedItemsCurr is List<ScrVerse>);
-					Assert.IsNull(expectedItemsRev);
+					Assert.That(expectedItemsRev, Is.Null);
 					break;
 				case ClusterType.MultipleInBoth:
 					Assert.IsTrue(expectedItemsCurr is List<ScrVerse>);
@@ -1885,12 +1885,12 @@ namespace ParatextImport
 					Assert.IsTrue(expectedItemsRev is IScrSection || expectedItemsRev is IScrTxtPara);
 					break;
 				case ClusterType.MissingInCurrent:
-					Assert.IsNull(expectedItemsCurr);
+					Assert.That(expectedItemsCurr, Is.Null);
 					Assert.IsTrue(expectedItemsRev is IScrSection || expectedItemsRev is IScrTxtPara);
 					break;
 				case ClusterType.AddedToCurrent:
 					Assert.IsTrue(expectedItemsCurr is IScrSection || expectedItemsCurr is IScrTxtPara);
-					Assert.IsNull(expectedItemsRev);
+					Assert.That(expectedItemsRev, Is.Null);
 					break;
 				case ClusterType.MultipleInBoth:
 					Assert.IsTrue(expectedItemsCurr is List<IScrSection>);
@@ -2050,14 +2050,14 @@ namespace ParatextImport
 				// for good measure, if a section, check section refs too
 				if (cmObjExpected is IScrSection)
 				{
-					Assert.AreEqual(((IScrSection)cmObjExpected).VerseRefMin, oiActual.verseRefMin);
-					Assert.AreEqual(((IScrSection)cmObjExpected).VerseRefMax, oiActual.verseRefMax);
+					Assert.That((int)oiActual.verseRefMin, Is.EqualTo(((IScrSection)cmObjExpected).VerseRefMin));
+					Assert.That((int)oiActual.verseRefMax, Is.EqualTo(((IScrSection)cmObjExpected).VerseRefMax));
 				}
 			}
 			else if (objExpected is ScrVerse)
 			{
-				Assert.AreEqual(((ScrVerse)objExpected).StartRef, oiActual.verseRefMin);
-				Assert.AreEqual(((ScrVerse)objExpected).EndRef, oiActual.verseRefMin);
+				Assert.That(oiActual.verseRefMin, Is.EqualTo(((ScrVerse)objExpected).StartRef));
+				Assert.That(oiActual.verseRefMin, Is.EqualTo(((ScrVerse)objExpected).EndRef));
 			}
 			else
 				Assert.Fail("Unhandled expected type.");

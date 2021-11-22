@@ -1,16 +1,17 @@
-// Copyright (c) 2012-2017 SIL International
+// Copyright (c) 2012-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Runtime.InteropServices;
+// ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.Common.FwUtils.Attributes
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// NUnit helper attribute that optionally redirects HKCU to a subkey so that multiple
-	/// builds can run in parallel. Depending on wether the environment variable
+	/// builds can run in parallel. Depending on whether the environment variable
 	/// BUILDAGENT_SUBKEY is set the registry tree HKCU is redirected to a temporary key.
 	/// This means that for the life of the process everything it attempts to read or write to
 	/// HKCU/X will go to/come from tempKey/X. When running on Jenkins each build will have a
@@ -25,13 +26,13 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		private static readonly UIntPtr HKEY_CURRENT_USER = new UIntPtr(0x80000001);
 
 		[DllImport("Advapi32.dll")]
-		private extern static int RegOverridePredefKey(UIntPtr hKey, UIntPtr hNewKey);
+		private static extern int RegOverridePredefKey(UIntPtr hKey, UIntPtr hNewKey);
 
 		[DllImport("Advapi32.dll")]
-		private extern static int RegCreateKey(UIntPtr hKey, string lpSubKey, out UIntPtr phkResult);
+		private static extern int RegCreateKey(UIntPtr hKey, string lpSubKey, out UIntPtr phkResult);
 
 		[DllImport("Advapi32.dll")]
-		private extern static int RegCloseKey(UIntPtr hKey);
+		private static extern int RegCloseKey(UIntPtr hKey);
 
 		private static string KeyPart
 		{
@@ -55,9 +56,9 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		/// <summary>
 		/// Method gets called once at the very start of running the tests
 		/// </summary>
-		public override void BeforeTest(NUnit.Framework.TestDetails testDetails)
+		public override void BeforeTest(NUnit.Framework.Interfaces.ITest test)
 		{
-			base.BeforeTest(testDetails);
+			base.BeforeTest(test);
 
 			if (Environment.OSVersion.Platform != PlatformID.Unix &&
 				!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BUILDAGENT_SUBKEY")))
@@ -72,7 +73,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		/// <summary>
 		/// Method gets called once at the end of running the tests
 		/// </summary>
-		public override void AfterTest(NUnit.Framework.TestDetails testDetails)
+		public override void AfterTest(NUnit.Framework.Interfaces.ITest test)
 		{
 			if (Environment.OSVersion.Platform != PlatformID.Unix &&
 				!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BUILDAGENT_SUBKEY")))
@@ -81,7 +82,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 				// times in NUnit.
 				RegOverridePredefKey(HKEY_CURRENT_USER, UIntPtr.Zero);
 			}
-			base.AfterTest(testDetails);
+			base.AfterTest(test);
 		}
 
 		/// <summary />

@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		/// Set up some dummy styles for testing purposes
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			m_stylesheet = new TestFwStylesheet();

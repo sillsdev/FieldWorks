@@ -259,7 +259,7 @@ namespace Paratext8Plugin
 			return Name;
 		}
 
-		public string JoinedNameAndFullName { get { return pt8Object.JoinedNameAndFullName; } }
+		public string JoinedNameAndFullName { get { return pt8Object.FullName; } }
 
 		public string FileNamePrePart { get { throw new NotImplementedException("Filename parts changed for PT8. Unnecessary perhaps?"); } }
 

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.XWorks
 		private const string m_reference = "Reference";
 		private const string m_field = "LexEntry";
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void DictionaryConfigModelFixtureSetup()
 		{
 			CreateStandardStyles();
@@ -89,11 +89,11 @@ namespace SIL.FieldWorks.XWorks
 			var rootConfigNode = model.Parts[0];
 			Assert.AreEqual("Main Entry", rootConfigNode.Label);
 			Assert.AreEqual("LexEntry", rootConfigNode.FieldDescription);
-			Assert.IsNullOrEmpty(rootConfigNode.LabelSuffix);
-			Assert.IsNullOrEmpty(rootConfigNode.SubField);
-			Assert.IsNullOrEmpty(rootConfigNode.Before);
-			Assert.IsNullOrEmpty(rootConfigNode.Between);
-			Assert.IsNullOrEmpty(rootConfigNode.After);
+			Assert.That(rootConfigNode.LabelSuffix, Is.Null.Or.Empty);
+			Assert.That(rootConfigNode.SubField, Is.Null.Or.Empty);
+			Assert.That(rootConfigNode.Before, Is.Null.Or.Empty);
+			Assert.That(rootConfigNode.Between, Is.Null.Or.Empty);
+			Assert.That(rootConfigNode.After, Is.Null.Or.Empty);
 			Assert.IsFalse(rootConfigNode.IsCustomField);
 			Assert.IsFalse(rootConfigNode.IsDuplicate);
 			Assert.IsTrue(rootConfigNode.IsEnabled);
@@ -1023,14 +1023,14 @@ namespace SIL.FieldWorks.XWorks
 
 			// SUT (Field is different)
 			Assert.Throws<KeyNotFoundException>(() => DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems));
-			Assert.IsNull(configNode.ReferencedNode, "ReferencedNode should not have been set");
+			Assert.That(configNode.ReferencedNode, Is.Null, "ReferencedNode should not have been set");
 
 			refConfigNode.FieldDescription = m_field;
 			refConfigNode.SubField = "SensesOS";
 
 			// SUT (SubField is different)
 			Assert.Throws<KeyNotFoundException>(() => DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems));
-			Assert.IsNull(configNode.ReferencedNode, "ReferencedNode should not have been set");
+			Assert.That(configNode.ReferencedNode, Is.Null, "ReferencedNode should not have been set");
 		}
 
 		[Test]

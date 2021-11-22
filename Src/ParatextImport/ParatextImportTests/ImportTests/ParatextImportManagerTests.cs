@@ -583,7 +583,7 @@ namespace ParatextImport.ImportTests
 			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
 
 			m_settings.ImportAnnotations = true;
-			Assert.IsNull(m_scr.FindBook(1), "This test is invalid if Genesis exists in test DB.");
+			Assert.That(m_scr.FindBook(1), Is.Null, "This test is invalid if Genesis exists in test DB.");
 			// Make sure there are no notes for Genesis
 			ILcmOwningSequence<IScrScriptureNote> notes = m_scr.BookAnnotationsOS[0].NotesOS;
 			int cNotesOrig  = notes.Count;
@@ -601,7 +601,7 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(origActCount, Cache.ActionHandlerAccessor.UndoableSequenceCount,
 				"Should have undone the creation of the book");
 			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
-			Assert.IsNull(m_scr.FindBook(1), "Partially-imported Genesis should have been discarded.");
+			Assert.That(m_scr.FindBook(1), Is.Null, "Partially-imported Genesis should have been discarded.");
 			Assert.AreEqual(cNotesOrig, notes.Count);
 			Assert.AreEqual(0, m_importMgr.m_cDisplayImportedBooksDlgCalled);
 		}
@@ -620,8 +620,8 @@ namespace ParatextImport.ImportTests
 			var origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
 
 			var jude = m_scr.FindBook(65);
-			Assert.IsNotNull(jude, "This test is invalid if Jude does not exist in test DB.");
-			Assert.IsNull(m_scr.FindBook(66), "This test is invalid if Revelation exists in test DB.");
+			Assert.That(jude, Is.Not.Null, "This test is invalid if Jude does not exist in test DB.");
+			Assert.That(m_scr.FindBook(66), Is.Null, "This test is invalid if Revelation exists in test DB.");
 
 			var hvoJudeOrig = jude.Hvo;
 			var cBooksOrig = m_scr.ScriptureBooksOS.Count;
@@ -641,8 +641,8 @@ namespace ParatextImport.ImportTests
 			var curJude = m_scr.FindBook(65);
 			Assert.AreEqual(hvoJudeOrig, curJude.Hvo, "Content should have been merged into Jude.");
 			Assert.AreEqual(curJude.Hvo, m_scr.ScriptureBooksOS.ToHvoArray()[1]);
-			Assert.IsNull(m_scr.FindBook(66), "Partially-imported Revelation should have been discarded.");
-			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
+			Assert.That(m_scr.FindBook(66), Is.Null, "Partially-imported Revelation should have been discarded.");
+			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
 			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
 		}
 		#endregion
@@ -662,8 +662,8 @@ namespace ParatextImport.ImportTests
 
 			IScrBook phm = m_scr.FindBook(57);
 			IScrBook jude = m_scr.FindBook(65);
-			Assert.IsNotNull(phm, "This test is invalid if Philemon does not exist.");
-			Assert.IsNotNull(jude, "This test is invalid if Jude does not exist.");
+			Assert.That(phm, Is.Not.Null, "This test is invalid if Philemon does not exist.");
+			Assert.That(jude, Is.Not.Null, "This test is invalid if Jude does not exist.");
 
 			int hvoJudeOrig = jude.Hvo;
 			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
@@ -737,10 +737,10 @@ namespace ParatextImport.ImportTests
 			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
 
 			IScrBook jude = m_scr.FindBook(65);
-			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
+			Assert.That(jude, Is.Not.Null, "This test is invalid if Jude isn't in the test DB.");
 			int hvoJudeOrig = jude.Hvo;
 			IStTxtPara scrHead1Para1 = GetFirstScriptureSectionHeadParaInBook(jude);
-			Assert.IsNotNull(scrHead1Para1, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
+			Assert.That(scrHead1Para1, Is.Not.Null, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
 			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
 			List<SegmentInfo> al = new List<SegmentInfo>(3);
@@ -763,7 +763,7 @@ namespace ParatextImport.ImportTests
 				Assert.AreEqual("Section head BT", trans.Translation.AnalysisDefaultWritingSystem.Text);
 			}
 
-			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
+			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
 			IScrDraft backupSv = m_importMgr.UndoManager.BackupVersion;
 			Assert.AreEqual(1, backupSv.BooksOS.Count);
 			Assert.AreEqual(65, backupSv.BooksOS[0].CanonicalNum);
@@ -778,7 +778,7 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(hvoJudeOrig, jude.Hvo);
 			scrHead1Para1 = GetFirstScriptureSectionHeadParaInBook(jude);
 			Assert.AreEqual(1, scrHead1Para1.TranslationsOC.Count);
-			Assert.IsNull(scrHead1Para1.GetBT().Translation.AnalysisDefaultWritingSystem.Text);
+			Assert.That(scrHead1Para1.GetBT().Translation.AnalysisDefaultWritingSystem.Text, Is.Null);
 
 			// Backed up version should be gone.
 			Assert.IsFalse(backupSv.IsValidObject);
@@ -817,9 +817,9 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "No new version should have been created");
 			Assert.AreEqual(origActCount, Cache.ActionHandlerAccessor.UndoableSequenceCount);
 			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
-			Assert.IsNull(m_scr.FindBook(1));
-			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
-			Assert.IsNull(m_importMgr.UndoManager.BackupVersion);
+			Assert.That(m_scr.FindBook(1), Is.Null);
+			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
+			Assert.That(m_importMgr.UndoManager.BackupVersion, Is.Null);
 			Assert.AreEqual(0, m_importMgr.m_cDisplayImportedBooksDlgCalled);
 			Assert.IsFalse(Cache.ActionHandlerAccessor.CanRedo());
 		}
@@ -841,12 +841,12 @@ namespace ParatextImport.ImportTests
 
 			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
 
-			Assert.IsNull(m_scr.FindBook(1), "This test is invalid if Genesis is in the test DB.");
+			Assert.That(m_scr.FindBook(1), Is.Null, "This test is invalid if Genesis is in the test DB.");
 			IScrBook jude = m_scr.FindBook(65);
-			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
+			Assert.That(jude, Is.Not.Null, "This test is invalid if Jude isn't in the test DB.");
 			int hvoJudeOrig = jude.Hvo;
 			IStTxtPara scrHead1Para1 = GetFirstScriptureSectionHeadParaInBook(jude);
-			Assert.IsNotNull(scrHead1Para1, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
+			Assert.That(scrHead1Para1, Is.Not.Null, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
 			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
 			List<SegmentInfo> al = new List<SegmentInfo>(7);
@@ -868,12 +868,12 @@ namespace ParatextImport.ImportTests
 				"Should have one extra undo action after Undo cancels incomplete book");
 			Assert.AreEqual("&Undo Import", Cache.ActionHandlerAccessor.GetUndoText());
 			Assert.AreEqual(cBooksOrig + 1, m_scr.ScriptureBooksOS.Count);
-			Assert.IsNotNull(m_scr.FindBook(1));
+			Assert.That(m_scr.FindBook(1), Is.Not.Null);
 			Assert.AreEqual(hvoJudeOrig, m_scr.FindBook(65).Hvo);
 
-			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
+			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
 			IScrDraft backupSv = m_importMgr.UndoManager.BackupVersion;
-			Assert.IsNotNull(backupSv);
+			Assert.That(backupSv, Is.Not.Null);
 			Assert.AreEqual(1, backupSv.BooksOS.Count);
 			Assert.AreEqual(65, backupSv.BooksOS[0].CanonicalNum);
 
@@ -892,11 +892,11 @@ namespace ParatextImport.ImportTests
 			m_settings.ImportTranslation = true;
 			MockScrObjWrapper.s_fSimulateCancel = false;
 
-			Assert.IsNull(m_scr.FindBook(1), "This test is invalid if Genesis is in the test DB.");
+			Assert.That(m_scr.FindBook(1), Is.Null, "This test is invalid if Genesis is in the test DB.");
 			IScrBook jude = m_scr.FindBook(65);
-			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
+			Assert.That(jude, Is.Not.Null, "This test is invalid if Jude isn't in the test DB.");
 			IStTxtPara scrHead1Para1 = GetFirstScriptureSectionHeadParaInBook(jude);
-			Assert.IsNotNull(scrHead1Para1, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
+			Assert.That(scrHead1Para1, Is.Not.Null, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
 
 			List<SegmentInfo> al = new List<SegmentInfo>(7);
 			// process an \id segment to import the BT for an existing a book
@@ -922,7 +922,7 @@ namespace ParatextImport.ImportTests
 
 			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "No new versions should have been created");
 
-			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
+			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
 			Assert.IsFalse(draftNewBooks.IsValidObject);
 
 			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
@@ -941,11 +941,11 @@ namespace ParatextImport.ImportTests
 			m_settings.ImportTranslation = true;
 			MockScrObjWrapper.s_fSimulateCancel = false;
 
-			Assert.IsNull(m_scr.FindBook(1), "This test is invalid if Genesis is in the test DB.");
+			Assert.That(m_scr.FindBook(1), Is.Null, "This test is invalid if Genesis is in the test DB.");
 			IScrBook jude = m_scr.FindBook(65);
-			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
+			Assert.That(jude, Is.Not.Null, "This test is invalid if Jude isn't in the test DB.");
 			IStTxtPara scrHead1Para1 = GetFirstScriptureSectionHeadParaInBook(jude);
-			Assert.IsNotNull(scrHead1Para1, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
+			Assert.That(scrHead1Para1, Is.Not.Null, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
 
 			List<SegmentInfo> al = new List<SegmentInfo>(7);
 			// process an \id segment to import the BT for an existing a book
@@ -977,7 +977,7 @@ namespace ParatextImport.ImportTests
 
 			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "No new versions should have been created");
 
-			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
+			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
 			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
 		}
 
@@ -994,11 +994,11 @@ namespace ParatextImport.ImportTests
 			m_settings.ImportTranslation = true;
 			MockScrObjWrapper.s_fSimulateCancel = false;
 
-			Assert.IsNull(m_scr.FindBook(1), "This test is invalid if Genesis is in the test DB.");
+			Assert.That(m_scr.FindBook(1), Is.Null, "This test is invalid if Genesis is in the test DB.");
 			IScrBook jude = m_scr.FindBook(65);
-			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
+			Assert.That(jude, Is.Not.Null, "This test is invalid if Jude isn't in the test DB.");
 			IStTxtPara scrHead1Para1 = GetFirstScriptureSectionHeadParaInBook(jude);
-			Assert.IsNotNull(scrHead1Para1, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
+			Assert.That(scrHead1Para1, Is.Not.Null, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
 
 			List<SegmentInfo> al = new List<SegmentInfo>(7);
 			// process an \id segment to import the BT for an existing a book
@@ -1034,7 +1034,7 @@ namespace ParatextImport.ImportTests
 
 			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "No new versions should have been created");
 
-			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
+			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
 
 			IScrDraft backupSv = m_importMgr.UndoManager.BackupVersion;
 			Assert.AreEqual(draftReplacedBooks, backupSv);
@@ -1064,11 +1064,11 @@ namespace ParatextImport.ImportTests
 			m_settings.ImportBackTranslation = true;
 			MockScrObjWrapper.s_fSimulateCancel = false;
 
-			Assert.IsNull(m_scr.FindBook(1), "This test is invalid if Genesis is in the test DB.");
+			Assert.That(m_scr.FindBook(1), Is.Null, "This test is invalid if Genesis is in the test DB.");
 			IScrBook jude = m_scr.FindBook(65);
-			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
+			Assert.That(jude, Is.Not.Null, "This test is invalid if Jude isn't in the test DB.");
 			IStTxtPara scrHead1Para1 = GetFirstScriptureSectionHeadParaInBook(jude);
-			Assert.IsNotNull(scrHead1Para1, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
+			Assert.That(scrHead1Para1, Is.Not.Null, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
 
 			List<SegmentInfo> al = new List<SegmentInfo>(7);
 			// process an \id segment to import the BT for an existing a book
@@ -1109,11 +1109,11 @@ namespace ParatextImport.ImportTests
 			m_settings.ImportBackTranslation = true;
 			MockScrObjWrapper.s_fSimulateCancel = false;
 
-			Assert.IsNull(m_scr.FindBook(1), "This test is invalid if Genesis is in the test DB.");
+			Assert.That(m_scr.FindBook(1), Is.Null, "This test is invalid if Genesis is in the test DB.");
 			IScrBook jude = m_scr.FindBook(65);
-			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
+			Assert.That(jude, Is.Not.Null, "This test is invalid if Jude isn't in the test DB.");
 			IStTxtPara scrHead1Para1 = GetFirstScriptureSectionHeadParaInBook(jude);
-			Assert.IsNotNull(scrHead1Para1, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
+			Assert.That(scrHead1Para1, Is.Not.Null, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
 
 			List<SegmentInfo> al = new List<SegmentInfo>(7);
 			// process an \id segment to import the BT for an existing a book
@@ -1162,11 +1162,11 @@ namespace ParatextImport.ImportTests
 			m_settings.ImportBackTranslation = true;
 			MockScrObjWrapper.s_fSimulateCancel = false;
 
-			Assert.IsNull(m_scr.FindBook(1), "This test is invalid if Genesis is in the test DB.");
+			Assert.That(m_scr.FindBook(1), Is.Null, "This test is invalid if Genesis is in the test DB.");
 			IScrBook jude = m_scr.FindBook(65);
-			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
+			Assert.That(jude, Is.Not.Null, "This test is invalid if Jude isn't in the test DB.");
 			IStTxtPara scrHead1Para1 = GetFirstScriptureSectionHeadParaInBook(jude);
-			Assert.IsNotNull(scrHead1Para1, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
+			Assert.That(scrHead1Para1, Is.Not.Null, "This test is invalid if we can't find a normal Scripture section for Jude 1:1.");
 
 			List<SegmentInfo> al = new List<SegmentInfo>(7);
 			// process an \id segment to import the BT for an existing a book
@@ -1219,8 +1219,8 @@ namespace ParatextImport.ImportTests
 
 			IScrBook philemon = m_scr.FindBook(57);
 			IScrBook jude = m_scr.FindBook(65);
-			Assert.IsNotNull(philemon, "This test is invalid if Philemon isn't in the test DB.");
-			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
+			Assert.That(philemon, Is.Not.Null, "This test is invalid if Philemon isn't in the test DB.");
+			Assert.That(jude, Is.Not.Null, "This test is invalid if Jude isn't in the test DB.");
 
 			IStTxtPara scrHead1Para1 = null;
 			int iScrHead1 = 0;
@@ -1233,11 +1233,11 @@ namespace ParatextImport.ImportTests
 				}
 				iScrHead1++;
 			}
-			Assert.IsNotNull(scrHead1Para1, "This test is invalid if there is no Scripture section in Jude in the test DB.");
+			Assert.That(scrHead1Para1, Is.Not.Null, "This test is invalid if there is no Scripture section in Jude in the test DB.");
 			string scrHead1Para1TextOrig = scrHead1Para1.Contents.Text;
 			int scrHead1Para1OrigTransCount = scrHead1Para1.TranslationsOC.Count;
 			Assert.AreEqual(1, scrHead1Para1OrigTransCount);
-			Assert.IsNull(scrHead1Para1.GetBT().Translation.AnalysisDefaultWritingSystem.Text);
+			Assert.That(scrHead1Para1.GetBT().Translation.AnalysisDefaultWritingSystem.Text, Is.Null);
 
 			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
@@ -1267,7 +1267,7 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(2, m_importMgr.UndoManager.BackupVersion.BooksOS.Count);
 			Assert.AreEqual(57, m_importMgr.UndoManager.BackupVersion.BooksOS[0].CanonicalNum);
 			Assert.AreEqual(65, m_importMgr.UndoManager.BackupVersion.BooksOS[1].CanonicalNum);
-			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
+			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
 			Assert.AreEqual("&Undo Import", Cache.ActionHandlerAccessor.GetUndoText());
 			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
 
@@ -1336,7 +1336,7 @@ namespace ParatextImport.ImportTests
 			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
 
 			IScrBook matt = m_scr.FindBook(40);
-			Assert.IsNull(matt, "This test is invalid if Matthew is in the test DB.");
+			Assert.That(matt, Is.Null, "This test is invalid if Matthew is in the test DB.");
 			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
 			List<SegmentInfo> al = new List<SegmentInfo>(1);
@@ -1491,7 +1491,7 @@ namespace ParatextImport.ImportTests
 			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
 
 			IScrBook jude = m_scr.FindBook(65);
-			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
+			Assert.That(jude, Is.Not.Null, "This test is invalid if Jude isn't in the test DB.");
 
 			List<SegmentInfo> al = new List<SegmentInfo>(3);
 			// process a \id segment to import an existing a book
@@ -1526,7 +1526,7 @@ namespace ParatextImport.ImportTests
 			var origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
 
 			var jude = m_scr.FindBook(65);
-			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
+			Assert.That(jude, Is.Not.Null, "This test is invalid if Jude isn't in the test DB.");
 			var cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
 			// process a \id segment to import an existing a book
@@ -1557,8 +1557,8 @@ namespace ParatextImport.ImportTests
 				}
 			}
 
-			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
-			Assert.IsNull(m_importMgr.UndoManager.BackupVersion);
+			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
+			Assert.That(m_importMgr.UndoManager.BackupVersion, Is.Null);
 			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
 		}
 
@@ -1579,7 +1579,7 @@ namespace ParatextImport.ImportTests
 			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
 
 			IScrBook jude = m_scr.FindBook(65);
-			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
+			Assert.That(jude, Is.Not.Null, "This test is invalid if Jude isn't in the test DB.");
 
 			IStTxtPara scrHead1Para1 = null;
 			int iScrHead1 = 0;
@@ -1592,7 +1592,7 @@ namespace ParatextImport.ImportTests
 				}
 				iScrHead1++;
 			}
-			Assert.IsNotNull(scrHead1Para1, "This test is invalid if there is no Scripture section in Jude in the test DB.");
+			Assert.That(scrHead1Para1, Is.Not.Null, "This test is invalid if there is no Scripture section in Jude in the test DB.");
 			string scrHead1Para1TextOrig = scrHead1Para1.Contents.Text;
 			int scrHead1Para1OrigTransCount = scrHead1Para1.TranslationsOC.Count;
 			Assert.AreEqual(1, scrHead1Para1OrigTransCount, "This test is invalid if the first paragraph of the first Scripture section head in Jude has a backtranslation in the test DB.");
@@ -1621,10 +1621,10 @@ namespace ParatextImport.ImportTests
 					Assert.AreEqual("Section head BT", trans.Translation.AnalysisDefaultWritingSystem.Text);
 			}
 
-			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
+			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
 
 			IScrDraft backupSv = m_importMgr.UndoManager.BackupVersion;
-			Assert.IsNotNull(backupSv);
+			Assert.That(backupSv, Is.Not.Null);
 			Assert.AreEqual(1, backupSv.BooksOS.Count);
 			IScrBook backupJude = backupSv.BooksOS[0];
 			Assert.AreEqual(65, backupJude.CanonicalNum);
@@ -1653,7 +1653,7 @@ namespace ParatextImport.ImportTests
 			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
 
 			IScrBook jude = m_scr.FindBook(65);
-			Assert.IsNotNull(jude, "This test is invalid if Jude isn't in the test DB.");
+			Assert.That(jude, Is.Not.Null, "This test is invalid if Jude isn't in the test DB.");
 
 			IStTxtPara scrHead1Para1 = null;
 			int iScrHead1 = 0;
@@ -1666,7 +1666,7 @@ namespace ParatextImport.ImportTests
 				}
 				iScrHead1++;
 			}
-			Assert.IsNotNull(scrHead1Para1, "This test is invalid if there is no Scripture section in Jude in the test DB.");
+			Assert.That(scrHead1Para1, Is.Not.Null, "This test is invalid if there is no Scripture section in Jude in the test DB.");
 			string scrHead1Para1TextOrig = scrHead1Para1.Contents.Text;
 			int scrHead1Para1OrigTransCount = scrHead1Para1.TranslationsOC.Count;
 			Assert.AreEqual(1, scrHead1Para1OrigTransCount, "This test is invalid if the first paragraph of the first Scripture section head in Jude has a backtranslation in the test DB.");
@@ -1705,10 +1705,10 @@ namespace ParatextImport.ImportTests
 				}
 			}
 
-			Assert.IsNull(m_importMgr.UndoManager.ImportedVersion);
+			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
 
 			IScrDraft backupSv = m_importMgr.UndoManager.BackupVersion;
-			Assert.IsNotNull(backupSv);
+			Assert.That(backupSv, Is.Not.Null);
 			Assert.AreEqual(1, backupSv.BooksOS.Count);
 			IScrBook backupJude = backupSv.BooksOS[0];
 			Assert.AreEqual(65, backupJude.CanonicalNum);

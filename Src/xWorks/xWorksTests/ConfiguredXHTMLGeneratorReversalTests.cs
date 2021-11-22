@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.XWorks
 			get { return new ConfiguredLcmGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null); }
 		}
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.XWorks
 			m_wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			base.FixtureTeardown();
@@ -704,7 +704,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var xhtml = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 			// check that the sense gram info appears once before the rest of the sense information.
-			Assert.IsNotNullOrEmpty(xhtml);
+			Assert.That(xhtml, Is.Not.Null.Or.Empty);
 			const string sharedGramInfo = "/div[@class='reversalindexentry']/span[@class='sensesrs']/span[@class='sharedgrammaticalinfo']/span[@class='morphosyntaxanalysis']/span[@class='partofspeech']/span[@lang='en' and text()='n']";
 			const string separateGramInfo = "/div[@class='reversalindexentry']/span[@class='sensesrs']/span[@class='sensecontent']/span[@class='sensesr']/span[@class='morphosyntaxanalysis']/span[@class='partofspeech']/span[@lang='en']";
 			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(sharedGramInfo, 1);

@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.XWorks
 		private RecordClerk m_Clerk;
 
 		#region Environment
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.XWorks
 			m_owningTable.Add(CssGenerator.DictionaryNormal, dictNormStyle);
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			ConfiguredLcmGenerator.Init();
@@ -304,8 +304,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes("webonary:webonary")));
 				var responseText = ConnectAndUpload(client);
-				Assert.That(responseText, Is.Not.StringContaining("authentication failed"));
-				Assert.That(responseText, Is.Not.StringContaining("Wrong username or password"));
+				Assert.That(responseText, Does.Not.Contain("authentication failed"));
+				Assert.That(responseText, Does.Not.Contain("Wrong username or password"));
 			}
 		}
 
@@ -318,7 +318,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes("webonary:webonary")));
 				var responseText = ConnectAndUpload(client);
-				Assert.That(responseText, Is.StringContaining("extracted successfully"));
+				Assert.That(responseText, Does.Contain("extracted successfully"));
 			}
 		}
 
@@ -725,7 +725,7 @@ namespace SIL.FieldWorks.XWorks
 					}
 				};
 				var result = controller.DeleteContentFromWebonary(view.Model, view, "delete/dictionary");
-				Assert.That(result, Is.StringContaining(responseString));
+				Assert.That(result, Does.Contain(responseString));
 			}
 		}
 

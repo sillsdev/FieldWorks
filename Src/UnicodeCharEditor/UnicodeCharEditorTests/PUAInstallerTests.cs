@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		///<summary>
 		/// Rename any existing CustomChars.xml file, and restore ICU Data files to pristine purity.
 		///</summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void Setup()
 		{
 			FwRegistryHelper.Initialize();
@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		///<summary>
 		/// Restore the original CustomChars.xml file, and install it.
 		///</summary>
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void Teardown()
 		{
 			RestoreIcuData(m_sCustomCharsFile, m_sCustomCharsBackup);
@@ -173,13 +173,13 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			numericType = CustomIcu.GetNumericTypeInfo(kChar4);
 			Assert.AreEqual("[none]", numericType.Description);
 			var prettyName = Icu.Character.GetPrettyICUCharName("\xE000");
-			Assert.IsNull(prettyName);
+			Assert.That(prettyName, Is.Null);
 			prettyName = Icu.Character.GetPrettyICUCharName("\xE001");
-			Assert.IsNull(prettyName);
+			Assert.That(prettyName, Is.Null);
 			prettyName = Icu.Character.GetPrettyICUCharName(kChar3S);
-			Assert.IsNull(prettyName);
+			Assert.That(prettyName, Is.Null);
 			prettyName = Icu.Character.GetPrettyICUCharName("\xDDDDD");
-			Assert.IsNull(prettyName);
+			Assert.That(prettyName, Is.Null);
 		}
 
 		private static void VerifyNewlyCreatedChars()

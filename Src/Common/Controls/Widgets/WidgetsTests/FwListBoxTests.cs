@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		int m_hvoEnglishWs;
 		#endregion
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			m_wsManager = new WritingSystemManager();

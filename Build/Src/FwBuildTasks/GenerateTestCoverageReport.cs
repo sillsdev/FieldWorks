@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -38,8 +38,8 @@ namespace FwBuildTasks
 		{
 			if (!File.Exists(DotCoverExe) || !File.Exists(NUnitConsoleExe))
 				return false;
-				var coverPath = GenerateDotCoverAnalysisXml(Assemblies);
-				RunDotCover(coverPath);
+			var coverPath = GenerateDotCoverAnalysisXml(Assemblies);
+			RunDotCover(coverPath);
 			return true;
 		}
 

@@ -771,7 +771,7 @@ namespace LexTextControlsTests
 		private void AddCustomFields()
 		{
 			m_sda = m_cache.DomainDataByFlid as ISilDataAccessManaged;
-			Assert.IsNotNull(m_sda);
+			Assert.That(m_sda, Is.Not.Null);
 			//---------------------------------------------------------------------------------------------------
 			AddCustomFieldsInLexEntry();
 			//---------------------------------------------------------------------------------------------------
@@ -901,7 +901,7 @@ namespace LexTextControlsTests
 			var repo = m_cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
 			var customList = repo.GetObject(m_customListsGuids[0]);
 			var ranges = xdoc.SelectNodes("//range");
-			Assert.IsNotNull(ranges);
+			Assert.That(ranges, Is.Not.Null);
 			XmlNode xcustomListRef = null;
 			foreach (XmlNode range in ranges)
 			{
@@ -1168,7 +1168,7 @@ namespace LexTextControlsTests
 			var unrefedItem2 = unreferencedCustomList.FindOrCreatePossibility("list item 2", m_cache.DefaultAnalWs);
 
 			var ranges = xdoc.SelectNodes("//range");
-			Assert.IsNotNull(ranges);
+			Assert.That(ranges, Is.Not.Null);
 			Assert.AreEqual(14, ranges.Count);
 			XmlNode referencedCustomFieldList = null;
 			XmlNode unreferencedCustomFieldList = null;
@@ -1184,8 +1184,8 @@ namespace LexTextControlsTests
 					unreferencedCustomFieldList = range;
 				}
 			}
-			Assert.IsNotNull(referencedCustomFieldList, "Custom possibility list referenced by a custom field not exported");
-			Assert.IsNotNull(unreferencedCustomFieldList, "Custom possibility list that is not referred to by a custom field not exported");
+			Assert.That(referencedCustomFieldList, Is.Not.Null, "Custom possibility list referenced by a custom field not exported");
+			Assert.That(unreferencedCustomFieldList, Is.Not.Null, "Custom possibility list that is not referred to by a custom field not exported");
 			var xcustomListId = XmlUtils.GetOptionalAttributeValue(referencedCustomFieldList, "id");
 			Assert.AreEqual(referencedCustomList.Name.BestAnalysisVernacularAlternative.Text, xcustomListId);
 			xcustomListId = XmlUtils.GetOptionalAttributeValue(unreferencedCustomFieldList, "id");
@@ -1193,14 +1193,14 @@ namespace LexTextControlsTests
 
 			// verify referenced custom list items
 			var rangeElements = referencedCustomFieldList.ChildNodes;
-			Assert.IsNotNull(rangeElements);
+			Assert.That(rangeElements, Is.Not.Null);
 			Assert.IsTrue(rangeElements.Count == 2);
 			VerifyExportRangeElement(rangeElements[0], item1);
 			VerifyExportRangeElement(rangeElements[1], item2);
 
 			// verify unreferenced custom list items
 			rangeElements = unreferencedCustomFieldList.ChildNodes;
-			Assert.IsNotNull(rangeElements);
+			Assert.That(rangeElements, Is.Not.Null);
 			Assert.IsTrue(rangeElements.Count == 2);
 			VerifyExportRangeElement(rangeElements[0], unRefeditem1);
 			VerifyExportRangeElement(rangeElements[1], unrefedItem2);
@@ -1226,12 +1226,12 @@ namespace LexTextControlsTests
 					break;
 				}
 			}
-			Assert.IsNotNull(xDomainTypesList);
+			Assert.That(xDomainTypesList, Is.Not.Null);
 			var xDomainTypesListId = XmlUtils.GetOptionalAttributeValue(xDomainTypesList, "id");
 			Assert.AreEqual("domain-type", xDomainTypesListId);
 
 			rangeElements = xDomainTypesList.ChildNodes;
-			Assert.IsNotNull(rangeElements);
+			Assert.That(rangeElements, Is.Not.Null);
 			Assert.IsTrue(rangeElements.Count == 6);
 			VerifyExportRangeElement(rangeElements[0], acDomItem0);
 			VerifyExportRangeElement(rangeElements[1], acDomItem1);
@@ -1255,12 +1255,12 @@ namespace LexTextControlsTests
 					break;
 				}
 			}
-			Assert.IsNotNull(xPublicationTypesList);
+			Assert.That(xPublicationTypesList, Is.Not.Null);
 			var xPublicationTypesListId = XmlUtils.GetOptionalAttributeValue(xPublicationTypesList, "id");
 			Assert.AreEqual("do-not-publish-in", xPublicationTypesListId);
 
 			rangeElements = xPublicationTypesList.ChildNodes;
-			Assert.IsNotNull(rangeElements);
+			Assert.That(rangeElements, Is.Not.Null);
 			Assert.IsTrue(rangeElements.Count == 2);
 			VerifyExportRangeElement(rangeElements[0], publicItem0);
 			VerifyExportRangeElement(rangeElements[1], publicItem1);
@@ -1279,20 +1279,20 @@ namespace LexTextControlsTests
 		private void VerifyExport(XmlDocument xdoc)
 		{
 			var repoEntry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>();
-			Assert.IsNotNull(repoEntry, "Should have a lex entry repository");
+			Assert.That(repoEntry, Is.Not.Null, "Should have a lex entry repository");
 			Assert.AreEqual(7, repoEntry.Count, "Should have 7 lex entries");
 			var repoSense = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.IsNotNull(repoSense);
+			Assert.That(repoSense, Is.Not.Null);
 			Assert.AreEqual(7, repoSense.Count, "Each entry has one sense for a total of 7");
 			var entries = xdoc.SelectNodes("//entry");
-			Assert.IsNotNull(entries);
+			Assert.That(entries, Is.Not.Null);
 			Assert.AreEqual(7, entries.Count, "LIFT file should contain 7 entries");
 			var formats = new string[] { "yyyy-MM-ddTHH:mm:sszzzz", "yyyy-MM-ddTHH:mm:ssZ", "yyyy-MM-dd" };
 			VerifyCustomLists(xdoc);
 			foreach (XmlNode xentry in entries)
 			{
 				var sCreated = XmlUtils.GetOptionalAttributeValue(xentry, "dateCreated");
-				Assert.IsNotNull(sCreated, "an LIFT <entry> should have a dateCreated attribute");
+				Assert.That(sCreated, Is.Not.Null, "an LIFT <entry> should have a dateCreated attribute");
 				var dtCreated = DateTime.ParseExact(sCreated, formats, new DateTimeFormatInfo(),
 													DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
 				var delta = DateTime.UtcNow - dtCreated;
@@ -1304,23 +1304,23 @@ namespace LexTextControlsTests
 				delta = DateTime.UtcNow - dtModified;
 				Assert.Greater(300, delta.TotalSeconds);
 				Assert.LessOrEqual(0, delta.TotalSeconds);
-				Assert.IsNotNull(sModified, "an LIFT <entry> should have a dateModified attribute");
+				Assert.That(sModified, Is.Not.Null, "an LIFT <entry> should have a dateModified attribute");
 				var sId = XmlUtils.GetOptionalAttributeValue(xentry, "id");
-				Assert.IsNotNull(sId, "an LIFT <entry> should have a id attribute");
+				Assert.That(sId, Is.Not.Null, "an LIFT <entry> should have a id attribute");
 				var sGuid = XmlUtils.GetOptionalAttributeValue(xentry, "guid");
-				Assert.IsNotNull(sGuid, "an LIFT <entry> should have a guid attribute");
+				Assert.That(sGuid, Is.Not.Null, "an LIFT <entry> should have a guid attribute");
 				var guid = new Guid(sGuid);
 				ILexEntry entry;
 				Assert.IsTrue(repoEntry.TryGetObject(guid, out entry));
 				var xform = xentry.SelectSingleNode("lexical-unit/form");
-				Assert.IsNotNull(xform);
+				Assert.That(xform, Is.Not.Null);
 				var sLang = XmlUtils.GetOptionalAttributeValue(xform, "lang");
-				Assert.IsNotNullOrEmpty(sLang);
+				Assert.That(sLang, Is.Not.Null.Or.Empty);
 				var formWs = m_cache.WritingSystemFactory.get_Engine(sLang);
 				Assert.AreEqual(m_cache.DefaultVernWs, formWs.Handle);
 				Assert.AreEqual(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, xform.FirstChild.InnerText);
 				var traitlist = xentry.SelectNodes("trait");
-				Assert.IsNotNull(traitlist);
+				Assert.That(traitlist, Is.Not.Null);
 				if (entry == m_entryTest)
 				{
 					Assert.AreEqual(9, traitlist.Count);
@@ -1340,11 +1340,11 @@ namespace LexTextControlsTests
 				else
 					Assert.AreEqual("stem", sValue);
 				var senselist = xentry.SelectNodes("sense");
-				Assert.IsNotNull(senselist);
+				Assert.That(senselist, Is.Not.Null);
 				Assert.AreEqual(1, senselist.Count);
 				var xsense = senselist[0];
 				sId = XmlUtils.GetOptionalAttributeValue(xsense, "id");
-				Assert.IsNotNull(sId);
+				Assert.That(sId, Is.Not.Null);
 				if (sId.Contains("_"))
 					guid = new Guid(sId.Substring(sId.LastIndexOf('_')+1));
 				else
@@ -1353,15 +1353,15 @@ namespace LexTextControlsTests
 				Assert.IsTrue(repoSense.TryGetObject(guid, out sense));
 				Assert.AreEqual(entry.SensesOS[0], sense);
 				var xgram = xsense.SelectSingleNode("grammatical-info");
-				Assert.IsNotNull(xgram);
+				Assert.That(xgram, Is.Not.Null);
 				sValue = XmlUtils.GetOptionalAttributeValue(xgram, "value");
 				var msa = sense.MorphoSyntaxAnalysisRA as IMoStemMsa;
 				if (msa != null)
 					Assert.AreEqual(msa.PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text, sValue);
 				var xgloss = xsense.SelectSingleNode("gloss");
-				Assert.IsNotNull(xgloss);
+				Assert.That(xgloss, Is.Not.Null);
 				sLang = XmlUtils.GetOptionalAttributeValue(xgloss, "lang");
-				Assert.IsNotNullOrEmpty(sLang);
+				Assert.That(sLang, Is.Not.Null.Or.Empty);
 				var glossWs = m_cache.WritingSystemFactory.get_Engine(sLang);
 				Assert.AreEqual(m_cache.DefaultAnalWs, glossWs.Handle);
 				Assert.AreEqual(sense.Gloss.AnalysisDefaultWritingSystem.Text, xgloss.FirstChild.InnerText);
@@ -1462,12 +1462,12 @@ namespace LexTextControlsTests
 		private void VerifyEntryExtraStuff(ILexEntry entry, XmlNode xentry)
 		{
 			var citations = xentry.SelectNodes("citation");
-			Assert.IsNotNull(citations);
+			Assert.That(citations, Is.Not.Null);
 			Assert.AreEqual(1, citations.Count);
 			VerifyMultiStringAlt(citations[0], m_cache.DefaultVernWs, 2, entry.CitationForm.VernacularDefaultWritingSystem);
 
 			var notes = xentry.SelectNodes("note");
-			Assert.IsNotNull(notes);
+			Assert.That(notes, Is.Not.Null);
 			Assert.AreEqual(3, notes.Count);
 			foreach (XmlNode xnote in notes)
 			{
@@ -1479,13 +1479,13 @@ namespace LexTextControlsTests
 				else if (sType == "restrictions")
 					VerifyTsString(xnote, m_cache.DefaultAnalWs, entry.Restrictions.AnalysisDefaultWritingSystem);
 				else
-					Assert.IsNull(sType, "Unrecognized type attribute");
+					Assert.That(sType, Is.Null, "Unrecognized type attribute");
 			}
 			VerifyEntryCustomFields(xentry, entry);
 			VerifyAllomorphCustomFields(xentry, entry);
 
 			var xsenses = xentry.SelectNodes("sense");
-			Assert.IsNotNull(xsenses);
+			Assert.That(xsenses, Is.Not.Null);
 			Assert.AreEqual(1, xsenses.Count);
 			VerifyExtraSenseStuff(entry.SensesOS[0], xsenses[0]);
 
@@ -1512,12 +1512,12 @@ namespace LexTextControlsTests
 		private void VerifyEntryCustomFields(XmlNode xentry, ILexEntry entry)
 		{
 			var xfields = xentry.SelectNodes("field");
-			Assert.IsNotNull(xfields);
+			Assert.That(xfields, Is.Not.Null);
 			Assert.AreEqual(5, xfields.Count);
 			foreach (XmlNode xfield in xfields)
 			{
 				var sType = XmlUtils.GetOptionalAttributeValue(xfield, "type");
-				Assert.IsNotNull(sType);
+				Assert.That(sType, Is.Not.Null);
 				if (sType == "literal-meaning")
 					VerifyTsString(xfield, m_cache.DefaultAnalWs, entry.LiteralMeaning.AnalysisDefaultWritingSystem);
 				else if (sType == "summary-definition")
@@ -1534,18 +1534,18 @@ namespace LexTextControlsTests
 					VerifyAudio(kcustomMultiFileName);
 				}
 				else
-					Assert.IsNull(sType, "Unrecognized type attribute");
+					Assert.That(sType, Is.Null, "Unrecognized type attribute");
 			}
 
 			var xtraits = xentry.SelectNodes("trait");
-			Assert.IsNotNull(xtraits);
+			Assert.That(xtraits, Is.Not.Null);
 			var sda = m_cache.DomainDataByFlid as ISilDataAccessManaged;
-			Assert.IsNotNull(sda);
+			Assert.That(sda, Is.Not.Null);
 			int listIndex = 0;
 			foreach (XmlNode xtrait in xtraits)
 			{
 				var sName = XmlUtils.GetOptionalAttributeValue(xtrait, "name");
-				Assert.IsNotNull(sName);
+				Assert.That(sName, Is.Not.Null);
 				if (sName == "CustomField3-LexEntry Date")
 				{
 					var genDate = sda.get_GenDateProp(m_entryTest.Hvo, m_customFieldEntryIds[2]);
@@ -1585,7 +1585,7 @@ namespace LexTextControlsTests
 			//<trait name="CustomField2-LexSense Integer" value="201105112"></trait>
 			//   '-'(BC and ''AD) 2011 05(May) 11(Day) 2(GenDate.PrecisionType (Before, Exact, Approximate, After)
 			var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
-			Assert.IsNotNull(sValue);
+			Assert.That(sValue, Is.Not.Null);
 			var liftGenDate = LiftExporter.GetGenDateFromInt(Convert.ToInt32(sValue));
 			Assert.AreEqual(liftGenDate.Precision, genDate.Precision);
 			Assert.AreEqual(liftGenDate.IsAD, genDate.IsAD);
@@ -1604,20 +1604,20 @@ namespace LexTextControlsTests
 			//</field>
 			//</variant>
 			var xallomorphs = xentry.SelectNodes("variant");
-			Assert.IsNotNull(xallomorphs);
+			Assert.That(xallomorphs, Is.Not.Null);
 			Assert.AreEqual(1, xallomorphs.Count);
 			foreach (XmlNode xallomorph in xallomorphs)
 			{
 				var xfield = xallomorph.SelectSingleNode("field");
 				var sType = XmlUtils.GetOptionalAttributeValue(xfield, "type");
-				Assert.IsNotNull(sType);
+				Assert.That(sType, Is.Not.Null);
 				if (sType == "CustomField1-Allomorph")
 				{
 					var tssString = m_cache.DomainDataByFlid.get_StringProp(entry.AlternateFormsOS[0].Hvo, m_customFieldAllomorphsIds[0]);
 					VerifyTsString(xfield, m_cache.DefaultAnalWs, tssString);
 				}
 				else
-					Assert.IsNull(sType, "Unrecognized type attribute");
+					Assert.That(sType, Is.Null, "Unrecognized type attribute");
 
 			}
 		}
@@ -1625,7 +1625,7 @@ namespace LexTextControlsTests
 		private void VerifyExtraSenseStuff(ILexSense sense, XmlNode xsense)
 		{
 			var xdefs = xsense.SelectNodes("definition");
-			Assert.IsNotNull(xdefs);
+			Assert.That(xdefs, Is.Not.Null);
 			Assert.AreEqual(1, xdefs.Count);
 			VerifyMultiStringAlt(xdefs[0], m_cache.DefaultAnalWs, 2, sense.Definition.AnalysisDefaultWritingSystem);
 			VerifyMultiStringAlt(xdefs[0], m_audioWsCode, 2, TsStringUtils.MakeString(kaudioFileName, m_audioWsCode));
@@ -1638,7 +1638,7 @@ namespace LexTextControlsTests
 			Assert.IsTrue(File.Exists(Path.Combine(liftOtherFolder, kotherLinkedFileName)));
 
 			var xnotes = xsense.SelectNodes("note");
-			Assert.IsNotNull(xnotes);
+			Assert.That(xnotes, Is.Not.Null);
 			Assert.AreEqual(10, xnotes.Count);
 			foreach (XmlNode xnote in xnotes)
 			{
@@ -1664,7 +1664,7 @@ namespace LexTextControlsTests
 				else if (sType == "sociolinguistics")
 					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.SocioLinguisticsNote.AnalysisDefaultWritingSystem);
 				else
-					Assert.IsNull(sType, "Unrecognized type attribute");
+					Assert.That(sType, Is.Null, "Unrecognized type attribute");
 			}
 			VerifySenseCustomFields(xsense, sense);
 			VerifyExampleSentenceCustomFields(xsense, sense);
@@ -1719,23 +1719,23 @@ namespace LexTextControlsTests
 		private void VerifySenseCustomFields(XmlNode xsense, ILexSense sense)
 		{
 			var xfields = xsense.SelectNodes("field");
-			Assert.IsNotNull(xfields);
+			Assert.That(xfields, Is.Not.Null);
 			Assert.AreEqual(1, xfields.Count);
 			foreach (XmlNode xfield in xfields)
 			{
 				var sType = XmlUtils.GetOptionalAttributeValue(xfield, "type");
-				Assert.IsNotNull(sType);
+				Assert.That(sType, Is.Not.Null);
 				if (sType == "CustomField1-LexSense")
 				{
 					var tssString = m_cache.DomainDataByFlid.get_StringProp(sense.Hvo, m_customFieldSenseIds[0]);
 					VerifyTsString(xfield, m_cache.DefaultVernWs, tssString);
 				}
 				else
-					Assert.IsNull(sType, "Unrecognized type attribute");
+					Assert.That(sType, Is.Null, "Unrecognized type attribute");
 			}
 			//<trait name="CustomField2-LexSense Integer" value="5"></trait>
 			var xtraits = xsense.SelectNodes("trait");
-			Assert.IsNotNull(xtraits);
+			Assert.That(xtraits, Is.Not.Null);
 			Assert.AreEqual(5, xtraits.Count); // 4 custom field traits + 1 DoNotPublishIn trait
 
 			int listIndex = 0;
@@ -1745,7 +1745,7 @@ namespace LexTextControlsTests
 			foreach (XmlNode xtrait in xtraits)
 			{
 				var sName = XmlUtils.GetOptionalAttributeValue(xtrait, "name");
-				Assert.IsNotNull(sName);
+				Assert.That(sName, Is.Not.Null);
 				if (sName == "CustomField2-LexSense Integer")
 				{
 					var intVal = m_cache.DomainDataByFlid.get_IntProp(sense.Hvo, m_customFieldSenseIds[1]);
@@ -1764,7 +1764,7 @@ namespace LexTextControlsTests
 					Assert.AreEqual(strPoss, sValue);
 				}
 				else
-					Assert.IsNull(sName, "Unrecognized type attribute");
+					Assert.That(sName, Is.Null, "Unrecognized type attribute");
 			}
 		}
 
@@ -1772,7 +1772,7 @@ namespace LexTextControlsTests
 		{
 			//<trait name="CustomField2-LexSense Integer" value="5"></trait>
 			var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
-			Assert.IsNotNull(sValue);
+			Assert.That(sValue, Is.Not.Null);
 			Assert.AreEqual(sValue, intVal.ToString());
 		}
 
@@ -1789,17 +1789,17 @@ namespace LexTextControlsTests
 			//    </field>
 			//</example>"
 			var xexamples = xsense.SelectNodes("example");
-			Assert.IsNotNull(xexamples);
+			Assert.That(xexamples, Is.Not.Null);
 			Assert.AreEqual(1, xexamples.Count);
 			foreach (XmlNode xexample in xexamples)
 			{
 				var xfields = xexample.SelectNodes("field");
-				Assert.IsNotNull(xfields);
+				Assert.That(xfields, Is.Not.Null);
 				Assert.AreEqual(2, xfields.Count);
 				foreach (XmlNode xfield in xfields)
 				{
 					var sType = XmlUtils.GetOptionalAttributeValue(xfield, "type");
-					Assert.IsNotNull(sType);
+					Assert.That(sType, Is.Not.Null);
 					if (sType == "CustomField1-Example")
 					{
 						var tssString = m_cache.DomainDataByFlid.get_StringProp(sense.ExamplesOS[0].Hvo, m_customFieldExampleSentencesIds[0]);
@@ -1811,7 +1811,7 @@ namespace LexTextControlsTests
 						VerifyMultiStringAnalVern(xfield, tssMultiString, false);
 					}
 					else
-						Assert.IsNull(sType, "Unrecognized type attribute");
+						Assert.That(sType, Is.Null, "Unrecognized type attribute");
 				}
 			}
 		}
@@ -1822,7 +1822,7 @@ namespace LexTextControlsTests
 		private void VerifyTsString(XmlNode xitem, int wsItem, ITsString tssText)
 		{
 			var xforms = xitem.SelectNodes("form");
-			Assert.IsNotNull(xforms);
+			Assert.That(xforms, Is.Not.Null);
 			Assert.AreEqual(1, xforms.Count);
 			var sLang = XmlUtils.GetOptionalAttributeValue(xforms[0], "lang");
 			Assert.AreEqual(m_cache.WritingSystemFactory.GetStrFromWs(wsItem), sLang);
@@ -1832,7 +1832,7 @@ namespace LexTextControlsTests
 		private void VerifyMultiStringAlt(XmlNode xitem, int wsItem, int wsCount, ITsString tssText)
 		{
 			var xforms = xitem.SelectNodes("form");
-			Assert.IsNotNull(xforms);
+			Assert.That(xforms, Is.Not.Null);
 			Assert.AreEqual(wsCount, xforms.Count);
 			var langWanted = m_cache.WritingSystemFactory.GetStrFromWs(wsItem);
 			foreach (XmlNode form in xforms)
@@ -1885,7 +1885,7 @@ namespace LexTextControlsTests
 		private void VerifyMultiStringAnalVern(XmlNode xitem, ITsMultiString tssMultiString, bool expectCustom)
 		{
 			var xforms = xitem.SelectNodes("form");
-			Assert.IsNotNull(xforms);
+			Assert.That(xforms, Is.Not.Null);
 			Assert.AreEqual(expectCustom ? 3 : 2, xforms.Count);
 
 			var sLang = XmlUtils.GetOptionalAttributeValue(xforms[0], "lang");
@@ -1957,7 +1957,7 @@ namespace LexTextControlsTests
 		private void AddStTextCustomFieldAndData()
 		{
 			var mdc = m_cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
-			Assert.IsNotNull(mdc);
+			Assert.That(mdc, Is.Not.Null);
 			m_flidLongText = mdc.AddCustomField("LexEntry", "Long Text", CellarPropertyType.OwningAtomic, StTextTags.kClassId);
 			var hvoText = m_cache.DomainDataByFlid.MakeNewObject(StTextTags.kClassId, m_entryTest.Hvo, m_flidLongText, -2);
 
@@ -2007,12 +2007,12 @@ namespace LexTextControlsTests
 		{
 			var repoEntry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var entries = xdoc.SelectNodes("//entry");
-			Assert.IsNotNull(entries);
+			Assert.That(entries, Is.Not.Null);
 			foreach (XmlNode xentry in entries)
 			{
 				ILexEntry entry;
 				var sGuid = XmlUtils.GetOptionalAttributeValue(xentry, "guid");
-				Assert.IsNotNull(sGuid, "an LIFT <entry> should have a guid attribute");
+				Assert.That(sGuid, Is.Not.Null, "an LIFT <entry> should have a guid attribute");
 				var guid = new Guid(sGuid);
 				Assert.IsTrue(repoEntry.TryGetObject(guid, out entry));
 				if (entry == m_entryTest)
@@ -2029,23 +2029,23 @@ namespace LexTextControlsTests
 		private void VerifyCustomStTextForEntryThisAndAllOthers(XmlNode xentry)
 		{
 			var xcustoms = xentry.SelectNodes("field[@type=\"Long Text\"]");
-			Assert.IsNotNull(xcustoms);
+			Assert.That(xcustoms, Is.Not.Null);
 			Assert.AreEqual(0, xcustoms.Count, "We should have zero \"Long Text\" fields for this entry.");
 		}
 
 		private void VerifyCustomStTextForEntryTest(XmlNode xentry)
 		{
 			var xcustoms = xentry.SelectNodes("field[@type=\"Long Text\"]");
-			Assert.IsNotNull(xcustoms);
+			Assert.That(xcustoms, Is.Not.Null);
 			Assert.AreEqual(1, xcustoms.Count, "We should have a single \"Long Text\" field.");
 			var xforms = xcustoms[0].SelectNodes("form");
-			Assert.IsNotNull(xforms);
+			Assert.That(xforms, Is.Not.Null);
 			Assert.AreEqual(1, xforms.Count, "We should have a single form inside the \"Long Text\" field.");
 			var xtexts = xforms[0].SelectNodes("text");
-			Assert.IsNotNull(xtexts);
+			Assert.That(xtexts, Is.Not.Null);
 			Assert.AreEqual(1, xtexts.Count, "We should have a single text inside the \"Long Text\" field.");
 			var xspans = xtexts[0].SelectNodes("span");
-			Assert.IsNotNull(xspans);
+			Assert.That(xspans, Is.Not.Null);
 			Assert.AreEqual(5, xspans.Count, "We should have 5 span elements inside the \"Long Text\" field.");
 			var i = 0;
 			var sLangExpected = m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultAnalWs);
@@ -2061,49 +2061,49 @@ namespace LexTextControlsTests
 					sLang = XmlUtils.GetOptionalAttributeValue(xe, "lang");
 					sClass = XmlUtils.GetOptionalAttributeValue(xe, "class");
 				}
-				Assert.IsNull(xw);
+				Assert.That(xw, Is.Null);
 				switch (i)
 				{
 					case 0:
-						Assert.IsNotNull(xe);
+						Assert.That(xe, Is.Not.Null);
 						Assert.AreEqual("span", xe.Name);
-						Assert.IsNull(sLang);
+						Assert.That(sLang, Is.Null);
 						Assert.AreEqual("Bulleted Text", sClass);
 						VerifyFirstParagraph(xe, sLangExpected);
 						break;
 					case 1:
-						Assert.IsNotNull(xt);
+						Assert.That(xt, Is.Not.Null);
 						Assert.AreEqual("\u2029", xt.InnerText);
 						break;
 					case 2:
-						Assert.IsNotNull(xe);
+						Assert.That(xe, Is.Not.Null);
 						Assert.AreEqual("span", xe.Name);
 						Assert.AreEqual(sLangExpected, sLang);
-						Assert.IsNull(sClass);
+						Assert.That(sClass, Is.Null);
 						Assert.AreEqual("Why is there air?  ", xe.InnerXml);
 						break;
 					case 3:
-						Assert.IsNotNull(xe);
+						Assert.That(xe, Is.Not.Null);
 						Assert.AreEqual("span", xe.Name);
 						Assert.AreEqual(sLangExpected, sLang);
 						Assert.AreEqual("Strong", sClass);
 						Assert.AreEqual("Which way is up?", xe.InnerXml);
 						break;
 					case 4:
-						Assert.IsNotNull(xe);
+						Assert.That(xe, Is.Not.Null);
 						Assert.AreEqual("span", xe.Name);
 						Assert.AreEqual(sLangExpected, sLang);
-						Assert.IsNull(sClass);
+						Assert.That(sClass, Is.Null);
 						Assert.AreEqual("  Inquiring minds want to know!", xe.InnerXml);
 						break;
 					case 5:
-						Assert.IsNotNull(xt);
+						Assert.That(xt, Is.Not.Null);
 						Assert.AreEqual("\u2029", xt.InnerText);
 						break;
 					case 6:
-						Assert.IsNotNull(xe);
+						Assert.That(xe, Is.Not.Null);
 						Assert.AreEqual("span", xe.Name);
-						Assert.IsNull(sLang);
+						Assert.That(sLang, Is.Null);
 						Assert.AreEqual("Canadian Bacon", sClass);
 						VerifyThirdParagraph(xe, sLangExpected);
 						break;
@@ -2119,14 +2119,14 @@ namespace LexTextControlsTests
 			foreach (var x in xePara.ChildNodes)
 			{
 				var xe = x as XmlElement;
-				Assert.IsNotNull(xe, "The first paragraph should only have elements as child nodes.");
+				Assert.That(xe, Is.Not.Null, "The first paragraph should only have elements as child nodes.");
 				var sLang = XmlUtils.GetOptionalAttributeValue(xe, "lang");
 				var sClass = XmlUtils.GetOptionalAttributeValue(xe, "class");
 				switch (i)
 				{
 					case 0:
 						Assert.AreEqual(sLangExpected, sLang);
-						Assert.IsNull(sClass);
+						Assert.That(sClass, Is.Null);
 						Assert.AreEqual("This is a ", xe.InnerXml);
 						break;
 					case 1:
@@ -2136,7 +2136,7 @@ namespace LexTextControlsTests
 						break;
 					case 2:
 						Assert.AreEqual(sLangExpected, sLang);
-						Assert.IsNull(sClass);
+						Assert.That(sClass, Is.Null);
 						Assert.AreEqual(".  This is only a test!", xe.InnerXml);
 						break;
 				}
@@ -2151,14 +2151,14 @@ namespace LexTextControlsTests
 			foreach (var x in xePara.ChildNodes)
 			{
 				var xe = x as XmlElement;
-				Assert.IsNotNull(xe, "The third paragraph should only have elements as child nodes.");
+				Assert.That(xe, Is.Not.Null, "The third paragraph should only have elements as child nodes.");
 				var sLang = XmlUtils.GetOptionalAttributeValue(xe, "lang");
 				var sClass = XmlUtils.GetOptionalAttributeValue(xe, "class");
 				switch (i)
 				{
 					case 0:
 						Assert.AreEqual(sLangExpected, sLang);
-						Assert.IsNull(sClass);
+						Assert.That(sClass, Is.Null);
 						Assert.AreEqual("CiCi pizza is cheap, but not really gourmet when it comes to pizza.", xe.InnerXml);
 						break;
 				}

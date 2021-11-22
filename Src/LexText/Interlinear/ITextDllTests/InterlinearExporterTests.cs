@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.IText
 		private const string QaaXKal = "qaa-x-kal";
 
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();

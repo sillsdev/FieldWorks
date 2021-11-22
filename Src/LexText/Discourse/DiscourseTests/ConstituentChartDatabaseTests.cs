@@ -365,7 +365,7 @@ namespace SIL.FieldWorks.Discourse
 			var result = m_ccl.FindChartLocOfWordform(w4);
 
 			// Verification
-			Assert.IsNull(result);
+			Assert.That(result, Is.Null);
 		}
 
 		[Test]
@@ -391,7 +391,7 @@ namespace SIL.FieldWorks.Discourse
 			Assert.DoesNotThrow(() => result = m_ccl.FindChartLocOfWordform(w2),
 				"No crashes should happen when working with stale AnalysisOccurences");
 			// The result should be null when looking for the invalidated wordform
-			Assert.IsNull(result);
+			Assert.That(result, Is.Null);
 		}
 
 		/// <summary>
@@ -1001,7 +1001,7 @@ namespace SIL.FieldWorks.Discourse
 			// Test results
 			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(1, whereToInsertActual); // index in Row.Cells!
-			Assert.IsNull(existingWordGroupActual);
+			Assert.That(existingWordGroupActual, Is.Null);
 		}
 
 		/// <summary>
@@ -1149,7 +1149,7 @@ namespace SIL.FieldWorks.Discourse
 			// Test results
 			Assert.IsFalse(m_ccl.NextInputIsChOrph(), "Next word in Ribbon should not be a Chorph.");
 			Assert.AreEqual(-1, m_ccl.Ribbon.EndSelLimitIndex, "Default Ribbon selection limit.");
-			Assert.IsNull(m_ccl.Ribbon.SelLimOccurrence);
+			Assert.That(m_ccl.Ribbon.SelLimOccurrence, Is.Null);
 		}
 
 		/// <summary>

@@ -324,7 +324,7 @@ namespace SIL.FieldWorks.XWorks
 			// "Reversal Form" is linked to m_nolanryan which is excluded from publication
 			Assert.AreEqual(2, entries.Length, "there should be only 2 main Reversal Entry that can be published");
 			var entry = Cache.ServiceLocator.GetObject(entries[0]) as IReversalIndexEntry;
-			Assert.IsNotNull(entry, "the single reversal entry really is a reversal entry");
+			Assert.That(entry, Is.Not.Null, "the single reversal entry really is a reversal entry");
 			Assert.AreEqual("Reversal 2 Form", entry.ShortName, "'Reversal 2 Form' is the sole publishable main reversal entry");
 			Assert.AreEqual(2, entry.SubentriesOS.Count, "'Reversal 2 Form' has two subentries");
 			// "Reversal 2a Form" is linked to m_water2 which is excluded from publication
@@ -349,7 +349,7 @@ namespace SIL.FieldWorks.XWorks
 			// "Reversal Form" is linked to m_nolanryan which is excluded from publication
 			Assert.AreEqual(2, entries.Length, "there should be only 2 main Reversal Entry that can be published");
 			var revEntry = Cache.ServiceLocator.GetObject(entries[1]) as IReversalIndexEntry;
-			Assert.IsNotNull(revEntry, "the single reversal entry really is a reversal entry");
+			Assert.That(revEntry, Is.Not.Null, "the single reversal entry really is a reversal entry");
 			Assert.IsFalse(revEntry.SensesRS.Any(), "Test setup is broken, this entry should have no senses");
 			// SUT
 			Assert.IsFalse(m_revDecorator.IsExcludedObject(revEntry), "A reversal index entry with no senses should not be excluded");

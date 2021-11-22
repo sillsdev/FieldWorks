@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Fixture setup
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();

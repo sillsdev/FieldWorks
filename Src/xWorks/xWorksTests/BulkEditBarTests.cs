@@ -581,7 +581,7 @@ namespace SIL.FieldWorks.XWorks
 		private ILexEntry AddOneVariantToHimbiliraSense()
 		{
 			ILexEntry result = null;
-			var entry = Cache.LangProject.LexDbOA.Entries.First(e => e.HeadWord.Text == "*himbilira");
+			var entry = Cache.LangProject.LexDbOA.Entries.First(e => e.HeadWord.Text == "himbilira");
 			var rootMT = GetMorphTypeOrCreateOne("root");
 			var spellVar = GetVariantTypeOrCreateOne("Spelling Variant");
 			var verbPOS = GetGrammaticalCategoryOrCreateOne("verb", Cache.LangProject.PartsOfSpeechOA);
@@ -905,7 +905,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual("Pronunciation-Location", m_bulkEditBar.SelectedTargetFieldItem.ToString());
 			// check number of options and first is "jungle" (or Empty?)
 			FwComboBox listChoiceControl = m_bulkEditBar.GetTabControlChild("m_listChoiceControl") as FwComboBox;
-			Assert.IsNotNull(listChoiceControl);
+			Assert.That(listChoiceControl, Is.Not.Null);
 			// expect to have some options.
 			Assert.Less(2, listChoiceControl.Items.Count);
 			// expect the first option to be of class CmLocation
@@ -1219,7 +1219,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_bv.OnUncheckAll();
 				m_bv.SetCheckedItems(new List<int>(new int[] {variantEntryRef.Hvo}));
-				Assert.IsNullOrEmpty(variantEntryRef.Summary.AnalysisDefaultWritingSystem.Text);
+				Assert.That(variantEntryRef.Summary.AnalysisDefaultWritingSystem.Text, Is.Null.Or.Empty);
 
 				m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
 				m_bulkEditBar.ClickApply();
@@ -1310,7 +1310,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual("Is Abstract Form (Allomorph)", m_bulkEditBar.SelectedTargetFieldItem.ToString());
 			// check number of options and second is "yes"
 			ComboBox listChoiceControl = m_bulkEditBar.GetTabControlChild("m_listChoiceControl") as ComboBox;
-			Assert.IsNotNull(listChoiceControl);
+			Assert.That(listChoiceControl, Is.Not.Null);
 			// expect to have some options (yes & no).
 			Assert.AreEqual(2, listChoiceControl.Items.Count);
 			IntComboItem item = listChoiceControl.Items[1] as IntComboItem;
@@ -1409,7 +1409,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// check number of options
 			ComplexListChooserBEditControl listChoiceControl = m_bulkEditBar.CurrentBulkEditSpecControl as ComplexListChooserBEditControl;
-			Assert.IsNotNull(listChoiceControl);
+			Assert.That(listChoiceControl, Is.Not.Null);
 			// check browse view class changed to LexPronunciation
 			Assert.AreEqual(LexEntryRefTags.kClassId, m_bv.ListItemsClass);
 			// check that clerk list has also changed.

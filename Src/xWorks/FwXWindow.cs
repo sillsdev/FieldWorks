@@ -13,6 +13,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using Microsoft.Win32;
+using SIL.Extensions;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
@@ -934,7 +935,7 @@ namespace SIL.FieldWorks.XWorks
 				};
 			}
 
-			using (MiscUtils.RunProcess(program, null, errorHandler))
+			using (new Process().RunProcess(program, null, errorHandler))
 				return true;
 		}
 

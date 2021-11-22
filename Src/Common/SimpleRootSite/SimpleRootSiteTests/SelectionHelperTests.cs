@@ -279,18 +279,18 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null,
 				m_basicView);
-			Assert.IsNotNull(selectionHelper);
+			Assert.That(selectionHelper, Is.Not.Null);
 
 			selectionHelper = SelectionHelper.GetSelectionInfo(null, null);
-			Assert.IsNull(selectionHelper);
+			Assert.That(selectionHelper, Is.Null);
 
 			IVwSelection vwSel = m_basicView.RootBox.Selection;
 			selectionHelper = SelectionHelper.GetSelectionInfo(vwSel, null);
-			Assert.IsNotNull(selectionHelper);
+			Assert.That(selectionHelper, Is.Not.Null);
 
 			selectionHelper = SelectionHelper.GetSelectionInfo(vwSel,
 				m_basicView);
-			Assert.IsNotNull(selectionHelper);
+			Assert.That(selectionHelper, Is.Not.Null);
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -384,7 +384,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetSelection(0, 2, 1, 0, 0, 3, 3, false);
 
 			IVwSelection vwsel = m_SelectionHelper.SetSelection(true);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
 
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
@@ -414,7 +414,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetSelection(0, 2, 1, 0, 0, 6, 6, false);
 
 			IVwSelection vwsel = m_SelectionHelper.SetSelection(true);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
 
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
@@ -802,7 +802,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			IVwSelection vwsel = m_SelectionHelper.MakeBest(true);
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.AreEqual(2, newSel.IchAnchor);
 			Assert.AreEqual(2, newSel.IchEnd);
 
@@ -824,7 +824,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
 			int nExpected = SimpleBasicView.kSecondParaEng.Length;
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.AreEqual(nExpected, newSel.IchAnchor);
 			Assert.AreEqual(nExpected, newSel.IchEnd);
 		}
@@ -844,7 +844,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			IVwSelection vwsel = m_SelectionHelper.MakeBest(true);
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.AreEqual(0, newSel.IchAnchor);
 			Assert.AreEqual(0, newSel.IchEnd);
 		}
@@ -864,7 +864,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			IVwSelection vwsel = m_SelectionHelper.MakeBest(true);
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.AreEqual(2, newSel.IchAnchor);
 			Assert.AreEqual(5, newSel.IchEnd);
 		}
@@ -884,7 +884,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			IVwSelection vwsel = m_SelectionHelper.MakeBest(true);
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.AreEqual(3, newSel.IchAnchor);
 			Assert.AreEqual(SimpleBasicView.kSecondParaEng.Length, newSel.IchEnd);
 		}
@@ -904,7 +904,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			IVwSelection vwsel = m_SelectionHelper.MakeBest(true);
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.AreEqual(5, newSel.IchAnchor);
 			Assert.AreEqual(4, newSel.IchEnd);
 		}
@@ -924,7 +924,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			IVwSelection vwsel = m_SelectionHelper.MakeBest(true);
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.AreEqual(SimpleBasicView.kSecondParaEng.Length, newSel.IchAnchor);
 			Assert.AreEqual(2, newSel.IchEnd);
 		}
@@ -945,7 +945,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			IVwSelection vwsel = m_SelectionHelper.MakeBest(true);
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, newSel, 0,
 				0, 6, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
 				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
@@ -970,7 +970,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			IVwSelection vwsel = m_SelectionHelper.MakeBest(true);
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, newSel, 0,
 				0, 6, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
 				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
@@ -995,7 +995,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			IVwSelection vwsel = m_SelectionHelper.MakeBest(true);
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, newSel, 0,
 				0, SimpleBasicView.kSecondParaEng.Length, 0, false, 2,
 				SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
@@ -1022,7 +1022,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			IVwSelection vwsel = m_SelectionHelper.MakeBest(true);
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, newSel, 0, 0,
 				2, 0, true, 2,  SimpleRootsiteTestsConstants.kflidDocFootnotes, 1, 1,
 				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
@@ -1047,7 +1047,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			IVwSelection vwsel = m_SelectionHelper.MakeBest(true);
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, newSel, 0,
 				0, SimpleBasicView.kSecondParaEng.Length, 0, true, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 1, 1,
 				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
@@ -1072,7 +1072,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			IVwSelection vwsel = m_SelectionHelper.MakeBest(true);
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, newSel, 0,
 				0, 1, 0, true, 2,
 				SimpleRootsiteTestsConstants.kflidDocFootnotes, 1, 1,
@@ -1098,7 +1098,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			IVwSelection vwsel = m_SelectionHelper.MakeBest(true);
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.AreEqual(3, newSel.IchAnchor);
 			Assert.AreEqual(SimpleBasicView.kSecondParaEng.Length, newSel.IchEnd);
 		}
@@ -1118,7 +1118,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			IVwSelection vwsel = m_SelectionHelper.MakeBest(true);
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.AreEqual(SimpleBasicView.kSecondParaEng.Length, newSel.IchAnchor);
 			Assert.AreEqual(2, newSel.IchEnd);
 		}
@@ -1139,7 +1139,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			IVwSelection vwsel = m_SelectionHelper.MakeBest(true);
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, newSel, 0,
 				0, 6, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
 				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
@@ -1164,7 +1164,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			IVwSelection vwsel = m_SelectionHelper.MakeBest(true);
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, newSel, 0,
 				0, SimpleBasicView.kSecondParaEng.Length, 0, false, 2,
 				SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
@@ -1191,7 +1191,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			IVwSelection vwsel = m_SelectionHelper.MakeBest(true);
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, newSel, 0,
 				0, SimpleBasicView.kSecondParaEng.Length, 0, true, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 1, 1,
 				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
@@ -1216,7 +1216,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			IVwSelection vwsel = m_SelectionHelper.MakeBest(true);
 
 			SelectionHelper newSel = SelectionHelper.Create(m_basicView);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, newSel, 0,
 				0, 1, 0, true, 2,
 				SimpleRootsiteTestsConstants.kflidDocFootnotes, 1, 1,

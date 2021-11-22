@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2009-2017 SIL International
+// Copyright (c) 2009-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -8,6 +8,7 @@
 
 using System;
 using System.IO;
+using System.Xml;
 using NUnit.Framework;
 using NMock;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -34,7 +35,7 @@ namespace FlexDePluginTests
 		/// <summary>
 		/// Runs before all tests. CompanyName must be forced b/c Resharper sets it to itself
 		/// </summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void TestFixtureSetup()
 		{
 			var path = String.Format("LexText{0}FlexPathwayPlugin{0}FlexPathwayPluginTests{0}Input", Path.DirectorySeparatorChar);
@@ -69,11 +70,10 @@ namespace FlexDePluginTests
 		///A test for ValidXmlFile
 		///</summary>
 		[Test]
-		[ExpectedException("System.IO.FileNotFoundException")]
 		public void ValidXmlFileNullTest()
 		{
 			string xml = string.Empty;
-			ValidXmlFile(xml);
+			Assert.That(() => ValidXmlFile(xml), Throws.TypeOf<FileNotFoundException>());
 		}
 
 		/// <summary>
@@ -90,11 +90,10 @@ namespace FlexDePluginTests
 		///A test for ValidXmlFile
 		///</summary>
 		[Test]
-		[ExpectedException("System.Xml.XmlException")]
 		public void ValidXmlFileFailedTest()
 		{
 			string xml = Path.Combine(_TestPath, "T1-bad.xhtml");
-			ValidXmlFile(xml);
+			Assert.That(() => ValidXmlFile(xml), Throws.TypeOf<XmlException>());
 		}
 
 		/// <summary>
@@ -146,7 +145,6 @@ namespace FlexDePluginTests
 		///A test for ExportTool
 		///</summary>
 		[Test]
-		[ExpectedException("System.NullReferenceException")]
 		public void ExportToolTest()
 		{
 			FlexPathwayPlugin target = new FlexPathwayPlugin();
@@ -158,7 +156,7 @@ namespace FlexDePluginTests
 				string toolChoice = "lexiconDictionary";
 				string exportFormat = "ConfiguredXHTML";
 				string filePath = Path.Combine(_TestPath, "main.xhtml");
-				ExportTool(areaChoice, toolChoice, exportFormat, filePath);
+				Assert.That(() => ExportTool(areaChoice, toolChoice, exportFormat, filePath), Throws.TypeOf<NullReferenceException>());
 			}
 		}
 
@@ -166,17 +164,13 @@ namespace FlexDePluginTests
 		///A Null test for DeFlexExports
 		///</summary>
 		[Test]
-		[ExpectedException("System.NullReferenceException")]
 		public void DeFlexExportsNullTest()
 		{
 			string expCss = "";
 			string mainFullName = "";
 			string revFullXhtml = "";
 			string gramFullName = "";
-			bool expected = false;
-			bool actual;
-			actual = DeFlexExports(expCss, mainFullName, revFullXhtml, gramFullName);
-			Assert.AreEqual(expected, actual);
+			Assert.That(() => DeFlexExports(expCss, mainFullName, revFullXhtml, gramFullName), Throws.TypeOf<NullReferenceException>());
 		}
 
 		/// <summary>
@@ -189,36 +183,29 @@ namespace FlexDePluginTests
 			string mainFullName = Path.Combine(_TestPath, "T1.css");
 			string revFullXhtml = "";
 			string gramFullName = "";
-			bool expected = false;
-			bool actual;
-			actual = DeFlexExports(expCss, mainFullName, revFullXhtml, gramFullName);
-			Assert.AreEqual(expected, actual);
+			Assert.That(DeFlexExports(expCss, mainFullName, revFullXhtml, gramFullName), Is.False);
 		}
 
 		/// <summary>
 		///A test for ChangeAreaTool
 		///</summary>
 		[Test]
-		[ExpectedException("System.NullReferenceException")]
 		public void ChangeAreaToolNullTest()
 		{
 			string areaChoice = string.Empty;
 			string toolChoice = string.Empty;
-			bool actual;
-			actual = ChangeAreaTool(areaChoice, toolChoice);
+			Assert.That(() => ChangeAreaTool(areaChoice, toolChoice), Throws.TypeOf<NullReferenceException>());
 		}
 
 		/// <summary>
 		///A test for ChangeAreaTool
 		///</summary>
 		[Test]
-		[ExpectedException("System.NullReferenceException")]
 		public void ChangeAreaToolFailTest()
 		{
 			string areaChoice = "lexicon";
 			string toolChoice = "lexiconDictionary";
-			bool actual;
-			actual = ChangeAreaTool(areaChoice, toolChoice);
+			Assert.That(() =>  ChangeAreaTool(areaChoice, toolChoice), Throws.TypeOf<NullReferenceException>());
 		}
 
 		/// <summary>

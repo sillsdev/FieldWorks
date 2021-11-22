@@ -420,6 +420,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			ParatextHelper.LoadProjectMappings(importSettings);
 
 			ScrMappingList mappingList = importSettings.GetMappingListForDomain(ImportDomain.Main);
+			Assert.NotNull(mappingList, "Setup Failure, no mapping list returned for the domain.");
 			// Test to see that the projects are set correctly
 			Assert.AreEqual(44, mappingList.Count);
 

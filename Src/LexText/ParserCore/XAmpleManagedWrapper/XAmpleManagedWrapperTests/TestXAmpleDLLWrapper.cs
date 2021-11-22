@@ -31,7 +31,7 @@ namespace XAmpleManagedWrapperTests
 		public void TestInit()
 		{
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
-				Assert.IsNotNull(wrapper);
+				Assert.That(wrapper, Is.Not.Null);
 		}
 
 		[Test]
@@ -56,11 +56,10 @@ namespace XAmpleManagedWrapperTests
 		}
 
 		[Test]
-		[ExpectedException(typeof(NotImplementedException))]
 		public void TestSetLogFile()
 		{
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
-				wrapper.SetLogFile(Path.GetTempFileName());
+				Assert.That(() => wrapper.SetLogFile(Path.GetTempFileName()), Throws.TypeOf<NotImplementedException>());
 		}
 
 		[Test]
@@ -94,7 +93,7 @@ namespace XAmpleManagedWrapperTests
 				LoadFilesHelper(wrapper);
 				string parsedString = wrapper.ParseString("Hello");
 				Assert.IsNotEmpty(parsedString);
-				Assert.IsNotNull(parsedString);
+				Assert.That(parsedString, Is.Not.Null);
 			}
 		}
 
@@ -106,7 +105,7 @@ namespace XAmpleManagedWrapperTests
 				LoadFilesHelper(wrapper);
 				string tracedString = wrapper.TraceString("Hello", "Hello");
 				Assert.IsNotEmpty(tracedString);
-				Assert.IsNotNull(tracedString);
+				Assert.That(tracedString, Is.Not.Null);
 			}
 		}
 

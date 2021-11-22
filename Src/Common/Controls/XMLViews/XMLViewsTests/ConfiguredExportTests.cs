@@ -395,10 +395,10 @@ namespace XMLViewsTests
 			var wsIgnorableCharMap = new Dictionary<string, ISet<string>>();
 			// test for the longest of the ignore rules
 			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar("ignore-a", "guq", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, null, Cache));
-			Assert.That(data, Is.StringMatching("a"));
+			Assert.That(data, Does.Match("a"));
 			// test for the shortest of the ignore rules
 			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar("ia", "guq", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, null, Cache));
-			Assert.That(data, Is.StringMatching("a"));
+			Assert.That(data, Does.Match("a"));
 		}
 
 		/// <summary>
@@ -451,7 +451,7 @@ namespace XMLViewsTests
 					}
 				}
 			}
-			Assert.That(output, Is.StringContaining("class=\"someNUMBER_SIGNstyle\""));
+			Assert.That(output, Does.Contain("class=\"someNUMBER_SIGNstyle\""));
 		}
 	}
 }

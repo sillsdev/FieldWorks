@@ -439,7 +439,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[1].Closing = ">";
 			m_qmList[2].Opening = "<<";
 			m_qmList[2].Closing = ">>";
-			Assert.IsNull(m_qmList.InvalidOpenerCloserCombinations);
+			Assert.That(m_qmList.InvalidOpenerCloserCombinations, Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -458,7 +458,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[2].Opening = ">>";
 			m_qmList[2].Closing = "]";
 			QuotationMarksList.InvalidComboInfo result = m_qmList.InvalidOpenerCloserCombinations;
-			Assert.IsNotNull(result);
+			Assert.That(result, Is.Not.Null);
 			Assert.AreEqual(0, result.LowerLevel);
 			Assert.IsFalse(result.LowerLevelIsOpener);
 			Assert.AreEqual(2, result.UpperLevel);
@@ -482,7 +482,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[2].Opening = "[";
 			m_qmList[2].Closing = "<<";
 			QuotationMarksList.InvalidComboInfo result = m_qmList.InvalidOpenerCloserCombinations;
-			Assert.IsNotNull(result);
+			Assert.That(result, Is.Not.Null);
 			Assert.AreEqual(0, result.LowerLevel);
 			Assert.IsTrue(result.LowerLevelIsOpener);
 			Assert.AreEqual(2, result.UpperLevel);
@@ -505,7 +505,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[1].Closing = ">";
 			m_qmList[2].Opening = "!";
 			m_qmList[2].Closing = "!";
-			Assert.IsNull(m_qmList.InvalidOpenerCloserCombinations);
+			Assert.That(m_qmList.InvalidOpenerCloserCombinations, Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -524,7 +524,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[2].Opening = "[";
 			m_qmList[2].Closing = "]";
 			QuotationMarksList.InvalidComboInfo result = m_qmList.InvalidOpenerCloserCombinations;
-			Assert.IsNotNull(result);
+			Assert.That(result, Is.Not.Null);
 			Assert.AreEqual(0, result.LowerLevel);
 			Assert.IsTrue(result.LowerLevelIsOpener);
 			Assert.AreEqual(1, result.UpperLevel);
@@ -548,7 +548,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[2].Opening = "!";
 			m_qmList[2].Closing = "!";
 			QuotationMarksList.InvalidComboInfo result = m_qmList.InvalidOpenerCloserCombinations;
-			Assert.IsNotNull(result);
+			Assert.That(result, Is.Not.Null);
 			Assert.AreEqual(0, result.LowerLevel);
 			Assert.IsTrue(result.LowerLevelIsOpener);
 			Assert.AreEqual(1, result.UpperLevel);
@@ -571,7 +571,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_qmList[1].Closing = ">>";
 			m_qmList[2].Opening = "<<";
 			m_qmList[2].Closing = ">>";
-			Assert.IsNull(m_qmList.InvalidOpenerCloserCombinations);
+			Assert.That(m_qmList.InvalidOpenerCloserCombinations, Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------

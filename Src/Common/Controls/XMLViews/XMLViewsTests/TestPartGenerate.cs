@@ -77,7 +77,7 @@ namespace XMLViewsTests
 					+"</column> "
 				+"</generate>");
 			XmlNode source = TestXmlViewsUtils.GetRootNode(docSrc, "generate");
-			Assert.IsNotNull(source);
+			Assert.That(source, Is.Not.Null);
 
 			PartGenerator generator = new PartGenerator(Cache, source);
 
@@ -145,7 +145,7 @@ namespace XMLViewsTests
 				+"</column> "
 				+"</generate>");
 			XmlNode source = TestXmlViewsUtils.GetRootNode(docSrc, "generate");
-			Assert.IsNotNull(source);
+			Assert.That(source, Is.Not.Null);
 
 			PartGenerator generator = new PartGenerator(Cache, source);
 
@@ -207,7 +207,7 @@ namespace XMLViewsTests
 					+"<dummy4/> "
 				+"</root>");
 			XmlNode source = TestXmlViewsUtils.GetRootNode(docSrc, "root");
-			Assert.IsNotNull(source);
+			Assert.That(source, Is.Not.Null);
 
 			List<XmlNode> nodes = PartGenerator.GetGeneratedChildren(source, Cache);
 

@@ -5,8 +5,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Xml;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.LCModel.Utils;
@@ -20,7 +18,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 		private const string ListBucketTemplate = @"<ListBucketResult xmlns=""http://s3.amazonaws.com/doc/2006-03-01/"">{0}</ListBucketResult>";
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void TearDown()
 		{
 			FileUtils.Manager.Reset();
@@ -285,11 +283,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var liftMsg = FwUtilsStrings.ModelChangeLIFT;
 			var srMsg = string.Format(FwUtilsStrings.ModelChangeFBButNotFW, curVer);
 
-			Assert.That(result, Is.StringStarting(versionMsg));
-			Assert.That(result, Is.StringEnding(prompt));
-			Assert.That(result, wantLCMMsg ? Is.StringContaining(lcmMsg) : Is.Not.StringContaining(lcmMsg));
-			Assert.That(result, wantLIFTMsg ? Is.StringContaining(liftMsg) : Is.Not.StringContaining(liftMsg));
-			Assert.That(result, wantSRMsg ? Is.StringContaining(srMsg) : Is.Not.StringContaining(srMsg));
+			Assert.That(result, Does.StartWith(versionMsg));
+			Assert.That(result, Does.EndWith(prompt));
+			Assert.That(result, wantLCMMsg ? Does.Contain(lcmMsg) : Does.Not.Contain(lcmMsg));
+			Assert.That(result, wantLIFTMsg ? Does.Contain(liftMsg) : Does.Not.Contain(liftMsg));
+			Assert.That(result, wantSRMsg ? Does.Contain(srMsg) : Does.Not.Contain(srMsg));
 		}
 
 		[TestCase("9.0.16", "9.0.17", true, true, 314, 314, FwUpdate.Typ.Patch, ExpectedResult = true)]
@@ -422,7 +420,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			const int baseBld = 12;
 			var current = new FwUpdate("9.0.15.1", true, baseBld, FwUpdate.Typ.Offline);
 			var updateDir = FwDirectoryFinder.DownloadedUpdates;
-			var mockFileOS = new BetterMockFileOS();
+			var mockFileOS = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(mockFileOS);
 			var updateFileName = Path.Combine(updateDir, $"{PatchFileName("9.0.15.2", baseBld, 64)}.tmp");
 			mockFileOS.AddFile(updateFileName, string.Empty);
@@ -435,7 +433,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			var current = new FwUpdate("9.0.15.1", true, 12, FwUpdate.Typ.Offline);
 			var updateDir = FwDirectoryFinder.DownloadedUpdates;
-			var mockFileOS = new BetterMockFileOS();
+			var mockFileOS = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(mockFileOS);
 			var updateFileName = Path.Combine(updateDir, PatchFileName("bad-version", 12, 64));
 			mockFileOS.AddFile(updateFileName, string.Empty);
@@ -450,7 +448,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			const int baseBld = 14;
 			var current = new FwUpdate(version, true, baseBld, FwUpdate.Typ.Offline);
 			var updateDir = FwDirectoryFinder.DownloadedUpdates;
-			var mockFileOS = new BetterMockFileOS();
+			var mockFileOS = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(mockFileOS);
 			var updateFileName = Path.Combine(updateDir, PatchFileName(version, baseBld, 64));
 			mockFileOS.AddFile(updateFileName, string.Empty);
@@ -464,7 +462,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			const int baseBld = 14;
 			var current = new FwUpdate("9.0.15.1", true, baseBld, FwUpdate.Typ.Offline);
 			var updateDir = FwDirectoryFinder.DownloadedUpdates;
-			var mockFileOS = new BetterMockFileOS();
+			var mockFileOS = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(mockFileOS);
 			mockFileOS.AddFile(Path.Combine(updateDir, PatchFileName("9.0.18.8", baseBld, 64)), string.Empty);
 
@@ -478,7 +476,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			const int baseBld = 14;
 			var current = new FwUpdate("9.0.15.1", true, baseBld, FwUpdate.Typ.Offline);
 			var updateDir = FwDirectoryFinder.DownloadedUpdates;
-			var mockFileOS = new BetterMockFileOS();
+			var mockFileOS = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(mockFileOS);
 			const string updateVersion = "9.0.18.8";
 			var updateFileName = Path.Combine(updateDir, PatchFileName(updateVersion, baseBld, 64));
@@ -504,7 +502,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			const int baseBld = 14;
 			var current = new FwUpdate("9.0.15.1", true, baseBld, FwUpdate.Typ.Offline);
 			var updateDir = FwDirectoryFinder.DownloadedUpdates;
-			var mockFileOS = new BetterMockFileOS();
+			var mockFileOS = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(mockFileOS);
 			// UpdateInfo XML file
 			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath, string.Format(ListBucketTemplate,
@@ -536,7 +534,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			var current = new FwUpdate("9.0.15.1", true, 12, FwUpdate.Typ.Offline);
 			var updateDir = FwDirectoryFinder.DownloadedUpdates;
-			var mockFileOS = new BetterMockFileOS();
+			var mockFileOS = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(mockFileOS);
 			// UpdateInfo XML file
 			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath, string.Format(ListBucketTemplate,
@@ -568,7 +566,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			var current = new FwUpdate("9.0.15.1", true, 12, FwUpdate.Typ.Offline);
 			var updateDir = FwDirectoryFinder.DownloadedUpdates;
-			var mockFileOS = new BetterMockFileOS();
+			var mockFileOS = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(mockFileOS);
 			// UpdateInfo XML file
 			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath, string.Format(ListBucketTemplate,
@@ -603,7 +601,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			const int baseBld = 14;
 			var current = new FwUpdate("9.0.18.1", true, baseBld, FwUpdate.Typ.Offline);
 			var updateDir = FwDirectoryFinder.DownloadedUpdates;
-			var mockFileOS = new BetterMockFileOS();
+			var mockFileOS = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(mockFileOS);
 			// UpdateInfo XML file
 			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath, string.Format(ListBucketTemplate,
@@ -615,10 +613,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var earlierBaseFileName = Path.Combine(updateDir, BaseFileName("9.0.17.1"));
 			mockFileOS.AddFile(earlierBaseFileName, string.Empty);
 			// latest base - online
-			var onlineBaseFileName = Path.Combine(updateDir, BaseFileName("9.0.18.1", 64, true));
+			var onlineBaseFileName = Path.Combine(updateDir, BaseFileName("9.0.18.1"));
 			mockFileOS.AddFile(onlineBaseFileName, string.Empty);
 			// latest base - offline
-			var offlineBaseFileName = Path.Combine(updateDir, BaseFileName("9.0.18.1", 64, false));
+			var offlineBaseFileName = Path.Combine(updateDir, BaseFileName("9.0.18.1", isOnline: false));
 			mockFileOS.AddFile(offlineBaseFileName, string.Empty);
 			// latest patch for this base
 			var updateFileName = Path.Combine(updateDir, PatchFileName("9.0.19.8", baseBld, 64));
@@ -677,11 +675,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static string BaseFileName(string version, int arch = 64, bool isOnline = true)
 		{
 			return $"FieldWorks_{version}_O{(isOnline ? "n" : "ff")}line_x{arch}.exe";
-		}
-
-		public class BetterMockFileOS : MockFileOS
-		{
-			public void AddFile(string filename, string contents) => AddFile(filename, contents, Encoding.UTF8);
 		}
 	}
 }

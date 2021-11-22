@@ -105,10 +105,11 @@ namespace SIL.FieldWorks.Common.FXT
 			Assert.AreEqual("bestAnalName-german", attr);
 		}
 
-		[Test, ExpectedException(typeof(RuntimeConfigurationException))]
+		[Test]
 		public void MissingClassTemplatesThrowsInStrictMode()
 		{
-			GetResultString("<objAtomic objProperty='WordformInventoryOA'/>", "", "requireClassTemplatesForEverything='true'");
+			Assert.That(() => GetResultString("<objAtomic objProperty='WordformInventoryOA'/>", "", "requireClassTemplatesForEverything='true'"),
+				Throws.TypeOf<RuntimeConfigurationException>());
 		}
 
 
@@ -184,7 +185,7 @@ namespace SIL.FieldWorks.Common.FXT
 			doc.LoadXml(result);
 			string attr = doc.ChildNodes[0].Attributes["superDuperRef"].Value;
 
-			Assert.IsNotNull(new Guid(attr));
+			Assert.That(new Guid(attr), Is.Not.Null);
 		}
 
 		[Test]
@@ -195,7 +196,7 @@ namespace SIL.FieldWorks.Common.FXT
 			doc.LoadXml(result);
 			string attr = doc.ChildNodes[0].Attributes["hvoRef"].Value;
 
-			Assert.IsNotNull(int.Parse(attr));
+			Assert.That(int.Parse(attr), Is.Not.Null);
 		}
 
 
@@ -203,7 +204,7 @@ namespace SIL.FieldWorks.Common.FXT
 		public void OutputGuidOfOwnerAsAttribute()
 		{
 			Assert.AreEqual(Cache.LangProject.Hvo, Cache.LangProject.WordformInventoryOA.Owner.Hvo);
-			Assert.IsNotNull(Cache.LangProject.WordformInventoryOA);
+			Assert.That(Cache.LangProject.WordformInventoryOA, Is.Not.Null);
 			Assert.Greater(Cache.LangProject.WordformInventoryOA.Owner.Hvo, 0);
 			string result = GetResultString("<objAtomic objProperty='WordformInventoryOA'/>",
 			   "<class name='WordformInventory'><wfi><attributeIndirect  name='parent' simpleProperty='Guid' target='Owner'/></wfi></class>");

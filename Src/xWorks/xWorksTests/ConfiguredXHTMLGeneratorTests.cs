@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.XWorks
 			return clerk;
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			base.FixtureTeardown();
@@ -3462,7 +3462,7 @@ namespace SIL.FieldWorks.XWorks
 			CreateLexicalReference(Cache, otherMainEntry, referencedEntry, refTypeName);
 
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var RevNameNode = new ConfigurableDictionaryNode
 			{
@@ -3557,7 +3557,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeName = "TestRefType";
 			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var formNode = new ConfigurableDictionaryNode
 			{
@@ -3602,7 +3602,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeName = "TestRefType";
 			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var formNode = new ConfigurableDictionaryNode
 			{
@@ -3654,7 +3654,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeName = "TestRefType";
 			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var formNode = new ConfigurableDictionaryNode
 			{
@@ -3710,7 +3710,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeName = "TestRefType";
 			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var nameNode = new ConfigurableDictionaryNode
 			{
@@ -3755,7 +3755,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeRevName = "epyTfeRtseT";
 			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var nameNode = new ConfigurableDictionaryNode
 			{
@@ -3800,7 +3800,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeRevName = "sURsyoT";
 			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var nameNode = new ConfigurableDictionaryNode
 			{
@@ -3845,7 +3845,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeRevName = "sURsyoT";
 			CreateLexicalReference(Cache, mainEntry.SensesOS.First(), referencedEntry, refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var nameNode = new ConfigurableDictionaryNode
 			{
@@ -3897,7 +3897,7 @@ namespace SIL.FieldWorks.XWorks
 			CreateLexicalReference(Cache, mainEntry.SensesOS.First(), referencedEntry1, refTypeName, refTypeRevName);
 			CreateLexicalReference(Cache, mainEntry.SensesOS.First(), referencedEntry2, refTypeName, refTypeRevName);
 			var refType1 = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType1);
+			Assert.That(refType1, Is.Not.Null);
 			var nameNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "OwnerType",
@@ -3943,7 +3943,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeRevName = "sURsyoT";
 			CreateLexicalReference(Cache, mainEntry, referencedEntry.SensesOS.First(), refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var nameNode = new ConfigurableDictionaryNode
 			{
@@ -4002,8 +4002,8 @@ namespace SIL.FieldWorks.XWorks
 			var etyRefType =
 				Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(
 					poss => poss.Name.BestAnalysisAlternative.Text == etyRefTypeName);
-			Assert.IsNotNull(comRefType);
-			Assert.IsNotNull(etyRefType);
+			Assert.That(comRefType, Is.Not.Null);
+			Assert.That(etyRefType, Is.Not.Null);
 
 			var nameNode = new ConfigurableDictionaryNode
 			{
@@ -4062,7 +4062,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeRevName = "Whole";
 			CreateLexicalReference(Cache, bodyEntry, armEntry.SensesOS.First(), legEntry.SensesOS.First(), refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var headwordNode = new ConfigurableDictionaryNode
 			{
@@ -4140,7 +4140,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeRevName = "Whole";
 			CreateLexicalReference(Cache, firstEntry, firstEntry.SensesOS[0].SensesOS[0], legEntry.SensesOS.First(), refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var headwordNode = new ConfigurableDictionaryNode
 			{
@@ -4205,7 +4205,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeRevName = "Whole";
 			CreateLexicalReference(Cache, firstEntry.SensesOS[0], firstEntry.SensesOS[1], refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var headwordNode = new ConfigurableDictionaryNode
 			{
@@ -4329,7 +4329,7 @@ namespace SIL.FieldWorks.XWorks
 			var variantForm = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, variantForm);
 			var notCrazyVariant = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.FirstOrDefault(variant => variant.Name.BestAnalysisAlternative.Text != TestVariantName);
-			Assert.IsNotNull(notCrazyVariant);
+			Assert.That(notCrazyVariant, Is.Not.Null);
 			var rcfsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
@@ -4411,7 +4411,7 @@ namespace SIL.FieldWorks.XWorks
 			var complexFormRef = CreateComplexForm(Cache, mainEntry, complexForm, false);
 			var complexRefName = complexFormRef.ComplexEntryTypesRS[0].Name.BestAnalysisAlternative.Text;
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(complex => complex.Name.BestAnalysisAlternative.Text != complexRefName);
-			Assert.IsNotNull(notComplexTypePoss);
+			Assert.That(notComplexTypePoss, Is.Not.Null);
 			var rcfsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VisibleComplexFormBackRefs",
@@ -4443,7 +4443,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeName = "TestRefType";
 			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(notComplexTypePoss);
+			Assert.That(notComplexTypePoss, Is.Not.Null);
 			var entryReferenceNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MinimalLexReferences",
@@ -4479,7 +4479,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeName = "TestRefType";
 			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName, "ReverseName");
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(notComplexTypePoss);
+			Assert.That(notComplexTypePoss, Is.Not.Null);
 			var entryReferenceNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MinimalLexReferences",
@@ -4519,7 +4519,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeName = "TestRefType";
 			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName, "ReverseName");
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(notComplexTypePoss);
+			Assert.That(notComplexTypePoss, Is.Not.Null);
 			var entryReferenceNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MinimalLexReferences",
@@ -4559,7 +4559,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeName = "TestRefType";
 			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName, "ReverseName");
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(notComplexTypePoss);
+			Assert.That(notComplexTypePoss, Is.Not.Null);
 			var entryReferenceNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MinimalLexReferences",
@@ -4602,7 +4602,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeName = "TestRefType";
 			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text != refTypeName);
-			Assert.IsNotNull(notComplexTypePoss);
+			Assert.That(notComplexTypePoss, Is.Not.Null);
 			var entryReferenceNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MinimalLexReferences",
@@ -4634,7 +4634,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeName = "TestRefType";
 			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(notComplexTypePoss);
+			Assert.That(notComplexTypePoss, Is.Not.Null);
 			var entryReferenceNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MinimalLexReferences",
@@ -4663,7 +4663,7 @@ namespace SIL.FieldWorks.XWorks
 			var variantForm = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, variantForm);
 			var notCrazyVariant = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.FirstOrDefault(variant => variant.Name.BestAnalysisAlternative.Text != TestVariantName);
-			Assert.IsNotNull(notCrazyVariant);
+			Assert.That(notCrazyVariant, Is.Not.Null);
 			var variantsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
@@ -4708,7 +4708,7 @@ namespace SIL.FieldWorks.XWorks
 			var variantForm = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, variantForm);
 			var crazyVariant = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.FirstOrDefault(variant => variant.Name.BestAnalysisAlternative.Text == TestVariantName);
-			Assert.IsNotNull(crazyVariant);
+			Assert.That(crazyVariant, Is.Not.Null);
 
 			var variantFormTypeNameNode = new ConfigurableDictionaryNode
 			{
@@ -4752,7 +4752,7 @@ namespace SIL.FieldWorks.XWorks
 			var variantForm = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, variantForm);
 			var crazyVariant = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.FirstOrDefault(variant => variant.Name.BestAnalysisAlternative.Text == TestVariantName);
-			Assert.IsNotNull(crazyVariant);
+			Assert.That(crazyVariant, Is.Not.Null);
 
 			var headwordNode = new ConfigurableDictionaryNode
 			{
@@ -6878,7 +6878,7 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(variantEntry, model, null, settings);
-			Assert.IsNullOrEmpty(result);
+			Assert.That(result, Is.Null.Or.Empty);
 			// try with HideMinorEntry off
 			variantEntryRef.HideMinorEntry = 0;
 			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(variantEntry, model, null, settings);
@@ -6889,7 +6889,7 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("/div[@class='lexentry']/span[@class='headword']", 1);
 			variantEntryRef.HideMinorEntry = 1;
 			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(variantEntry, model, null, settings);
-			Assert.IsNullOrEmpty(result);
+			Assert.That(result, Is.Null.Or.Empty);
 		}
 
 		public enum FormType { Specified, Unspecified, None }
@@ -7273,7 +7273,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryCorps, mainEntryNode, pubEverything, settings);
 			Console.WriteLine(output);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the unfiltered output displays everything.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchPronunciation, 1);
@@ -7284,7 +7284,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryCorps, mainEntryNode, pubMain, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the main publication output displays what it should.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchPronunciation, 1);
@@ -7298,7 +7298,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryCorps, mainEntryNode, pubTest, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the test publication output displays what it should.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchPronunciation, 0);
@@ -7312,7 +7312,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryBras, mainEntryNode, pubEverything, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the unfiltered output displays everything.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 2);
@@ -7321,7 +7321,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryBras, mainEntryNode, pubMain, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the main publication output displays everything.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 2);
@@ -7332,7 +7332,7 @@ namespace SIL.FieldWorks.XWorks
 			// We can still produce test publication output for the entry since we have a copy of it.  Its senses and
 			// examples should not be displayed because the senses are separately hidden.
 			output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryBras, mainEntryNode, pubTest, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the test output doesn't display the senses and examples.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 0);
@@ -7341,7 +7341,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryOreille, mainEntryNode, pubEverything, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the unfiltered output displays everything.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 1);
@@ -7352,7 +7352,7 @@ namespace SIL.FieldWorks.XWorks
 			// We can still produce main publication output for the entry since we have a copy of it.  Its sense and
 			// example should not be displayed because the sense is separately hidden.
 			output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryOreille, mainEntryNode, pubMain, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the test output doesn't display the sense and example.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 0);
@@ -7361,7 +7361,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryOreille, mainEntryNode, pubTest, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the test publication output displays everything.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 1);
@@ -7375,7 +7375,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, pubMain, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the main publication output displays what it should.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 1);
@@ -7386,7 +7386,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, pubTest, settings);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the test publication output displays what it should.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishDefOrGloss, 1);
@@ -7796,9 +7796,9 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 			const string senseXpath = "div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='gloss']/span[@lang='en' and text()='gloss']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseXpath, 1);
-			Assert.That(result, Is.Not.StringMatching(@"<div class=['""]paracontinuation['""]\s*/>"),
+			Assert.That(result, Does.Not.Match(@"<div class=['""]paracontinuation['""]\s*/>"),
 				"Empty Self closing <div> element should not generated after senses in paragraph");
-			Assert.That(result, Is.Not.StringMatching(@"<div class=['""]paracontinuation['""]\s*></div>"),
+			Assert.That(result, Does.Not.Match(@"<div class=['""]paracontinuation['""]\s*></div>"),
 				"Empty <div> element should not be generated after senses in paragraph");
 		}
 
@@ -8516,7 +8516,7 @@ namespace SIL.FieldWorks.XWorks
 			var comRefType = CreateLexRefType(Cache, LexRefTypeTags.MappingTypes.kmtEntryCollection, comRefTypeName, "cf", string.Empty, string.Empty);
 			CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry3, compareReferencedEntry2 });
 			CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry5, compareReferencedEntry4, compareReferencedEntry1 });
-			Assert.IsNotNull(comRefType);
+			Assert.That(comRefType, Is.Not.Null);
 
 			var mainEntryNode = ModelForCrossReferences(new[] { comRefType.Guid.ToString() });
 			// SUT
@@ -9215,7 +9215,7 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			LcmXhtmlGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo }, settings, currentPage, adjacentPage, 2,
 				out current, out adjacent);
-			Assert.IsNull(adjacent, "The Adjacent page should have been consumed into the current page");
+			Assert.That(adjacent, Is.Null, "The Adjacent page should have been consumed into the current page");
 			Assert.AreEqual(0, current.Item1, "Current page should start at 0");
 			Assert.AreEqual(2, current.Item2, "Current page should end at 2");
 		}
@@ -9239,7 +9239,7 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			LcmXhtmlGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo }, settings, currentPage, adjPage, 2,
 				out current, out adjacent);
-			Assert.IsNull(adjacent, "The Adjacent page should have been consumed into the current page");
+			Assert.That(adjacent, Is.Null, "The Adjacent page should have been consumed into the current page");
 			Assert.AreEqual(0, current.Item1, "Current page should start at 0");
 			Assert.AreEqual(2, current.Item2, "Current page should end at 2");
 		}
@@ -9349,7 +9349,7 @@ namespace SIL.FieldWorks.XWorks
 				var entries = LcmXhtmlGenerator.GenerateNextFewEntries(pubEverything, new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, configPath,
 					settings, currentPage, adjPage, 1, out current, out adjacent);
 				Assert.AreEqual(1, entries.Count, "No entries generated");
-				Assert.That(entries[0], Is.StringContaining(thirdEntry.HeadWord.Text));
+				Assert.That(entries[0], Does.Contain(thirdEntry.HeadWord.Text));
 			}
 			finally
 			{
@@ -9404,9 +9404,9 @@ namespace SIL.FieldWorks.XWorks
 				var entries = LcmXhtmlGenerator.GenerateNextFewEntries(pubEverything, new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, configPath,
 					settings, currentPage, adjPage, 2, out current, out adjacent);
 				Assert.AreEqual(2, entries.Count, "Not enough entries generated");
-				Assert.That(entries[0], Is.StringContaining(thirdEntry.HeadWord.Text));
-				Assert.That(entries[1], Is.StringContaining(fourthEntry.HeadWord.Text));
-				Assert.IsNull(adjacent);
+				Assert.That(entries[0], Does.Contain(thirdEntry.HeadWord.Text));
+				Assert.That(entries[1], Does.Contain(fourthEntry.HeadWord.Text));
+				Assert.That(adjacent, Is.Null);
 			}
 			finally
 			{
@@ -9498,7 +9498,7 @@ namespace SIL.FieldWorks.XWorks
 			const string comRefTypeName = "Compare";
 			var comRefType = CreateLexRefType(Cache, LexRefTypeTags.MappingTypes.kmtEntryCollection, comRefTypeName, "cf", string.Empty, string.Empty);
 			CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry4, compareReferencedEntry1, compareReferencedEntry3, compareReferencedEntry2 });
-			Assert.IsNotNull(comRefType);
+			Assert.That(comRefType, Is.Not.Null);
 
 			var mainEntryNode = ModelForCrossReferences(new[] { comRefType.Guid.ToString() });
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, DefaultSettings);

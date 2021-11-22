@@ -28,7 +28,7 @@ namespace SIL.SilSidePane
 			_sidePane.AddTab(tab);
 
 			var itemAreas = TestUtilities.GetPrivateField(_sidePane, "_itemAreas") as Dictionary<Tab, IItemArea>;
-			Assert.IsNotNull(itemAreas);
+			Assert.That(itemAreas, Is.Not.Null);
 			foreach (var area in itemAreas.Values)
 				Assert.IsInstanceOf<ToolStrip>(area);
 		}
@@ -54,7 +54,7 @@ namespace SIL.SilSidePane
 			_sidePane.AddTab(tab);
 
 			var itemAreas = TestUtilities.GetPrivateField(_sidePane, "_itemAreas") as Dictionary<Tab, IItemArea>;
-			Assert.IsNotNull(itemAreas);
+			Assert.That(itemAreas, Is.Not.Null);
 			foreach (var area in itemAreas.Values)
 				Assert.IsInstanceOf<ListView>(area);
 		}
@@ -80,7 +80,7 @@ namespace SIL.SilSidePane
 			_sidePane.AddTab(tab);
 
 			var itemAreas = TestUtilities.GetPrivateField(_sidePane, "_itemAreas") as Dictionary<Tab, IItemArea>;
-			Assert.IsNotNull(itemAreas);
+			Assert.That(itemAreas, Is.Not.Null);
 			foreach (var area in itemAreas.Values)
 				Assert.IsInstanceOf<ToolStrip>(area);
 		}
@@ -124,7 +124,7 @@ namespace SIL.SilSidePane
 			_sidePane.AddTab(tab);
 
 			var itemAreas = TestUtilities.GetPrivateField(_sidePane, "_itemAreas") as Dictionary<Tab, IItemArea>;
-			Assert.IsNotNull(itemAreas);
+			Assert.That(itemAreas, Is.Not.Null);
 			foreach (var area in itemAreas.Values)
 				Assert.IsInstanceOf<ToolStrip>(area);
 		}
@@ -163,17 +163,16 @@ namespace SIL.SilSidePane
 		public void ContainingControlTest()
 		{
 			Control containingControl = _sidePane.ContainingControl;
-			Assert.IsNotNull(containingControl);
+			Assert.That(containingControl, Is.Not.Null);
 			Assert.AreSame(containingControl, _parent);
 		}
 		#endregion ContainingControl
 
 		#region AddTab
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void AddTab_null()
 		{
-			_sidePane.AddTab(null);
+			Assert.That(() => _sidePane.AddTab(null), Throws.ArgumentNullException);
 		}
 
 		[Test]
@@ -187,22 +186,20 @@ namespace SIL.SilSidePane
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void AddTab_ofSameIdentity()
 		{
 			Tab tab = new Tab("mytab");
 			_sidePane.AddTab(tab);
-			_sidePane.AddTab(tab);
+			Assert.That(() => _sidePane.AddTab(tab), Throws.ArgumentException);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void AddTab_ofSameName()
 		{
 			Tab tab1 = new Tab("mytab");
 			Tab tab2 = new Tab("mytab");
 			_sidePane.AddTab(tab1);
-			_sidePane.AddTab(tab2);
+			Assert.That(() => _sidePane.AddTab(tab2), Throws.ArgumentException);
 		}
 
 		[Test]
@@ -234,35 +231,31 @@ namespace SIL.SilSidePane
 
 		#region AddItem
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void AddItem_null1()
 		{
-			_sidePane.AddItem(null, null);
+			Assert.That(() => _sidePane.AddItem(null, null), Throws.ArgumentNullException);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void AddItem_null2()
 		{
 			Item item = new Item("itemname");
-			_sidePane.AddItem(null, item);
+			Assert.That(() => _sidePane.AddItem(null, item), Throws.ArgumentNullException);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void AddItem_null3()
 		{
 			Tab tab = new Tab("tabname");
-			_sidePane.AddItem(tab, null);
+			Assert.That(() => _sidePane.AddItem(tab, null), Throws.ArgumentNullException);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void AddItem_toNonExistentTab()
 		{
 			Tab tab = new Tab("tabname");
 			Item item = new Item("itemname");
-			_sidePane.AddItem(tab, item);
+			Assert.That(() => _sidePane.AddItem(tab, item), Throws.TypeOf<ArgumentOutOfRangeException>());
 		}
 
 		[Test]
@@ -275,14 +268,13 @@ namespace SIL.SilSidePane
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void AddItem_ofSameIdentity_onSameTab()
 		{
 			Tab tab = new Tab("tabname");
 			Item item = new Item("itemname");
 			_sidePane.AddTab(tab);
 			_sidePane.AddItem(tab, item);
-			_sidePane.AddItem(tab, item);
+			Assert.That(() => _sidePane.AddItem(tab, item), Throws.ArgumentException);
 		}
 
 		[Test]
@@ -298,7 +290,6 @@ namespace SIL.SilSidePane
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void AddItem_ofSameName_onSameTab_forNullName()
 		{
 			Tab tab = new Tab("tab");
@@ -306,11 +297,10 @@ namespace SIL.SilSidePane
 			Item item2 = new Item("itemname");
 			_sidePane.AddTab(tab);
 			_sidePane.AddItem(tab, item1);
-			_sidePane.AddItem(tab, item2);
+			Assert.That(() => _sidePane.AddItem(tab, item2), Throws.ArgumentException);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void AddItem_ofSameName_onSameTab_forNonNullName()
 		{
 			Tab tab = new Tab("tab");
@@ -318,7 +308,7 @@ namespace SIL.SilSidePane
 			Item item2 = new Item("item");
 			_sidePane.AddTab(tab);
 			_sidePane.AddItem(tab, item1);
-			_sidePane.AddItem(tab, item2);
+			Assert.That(() => _sidePane.AddItem(tab, item2), Throws.ArgumentException);
 		}
 
 		[Test]
@@ -372,51 +362,45 @@ namespace SIL.SilSidePane
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void SelectTab_null()
 		{
-			_sidePane.SelectTab(null);
+			Assert.That(() => _sidePane.SelectTab(null), Throws.ArgumentNullException);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void SelectTab_thatDoesntExist()
 		{
 			Tab tab = new Tab("tabname");
-			_sidePane.SelectTab(tab);
+			Assert.That(() => _sidePane.SelectTab(tab), Throws.TypeOf<ArgumentOutOfRangeException>());
 		}
 		#endregion SelectTab
 
 		#region SelectItem
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void SelectItem_null1()
 		{
-			_sidePane.SelectItem(null, null);
+			Assert.That(() => _sidePane.SelectItem(null, null), Throws.ArgumentNullException);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void SelectItem_null2()
 		{
-			_sidePane.SelectItem(null, "itemname");
+			Assert.That(() => _sidePane.SelectItem(null, "itemname"), Throws.ArgumentNullException);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void SelectItem_null3()
 		{
 			Tab tab = new Tab("tabname");
-			_sidePane.SelectItem(tab, null);
+			Assert.That(() => _sidePane.SelectItem(tab, null), Throws.ArgumentNullException);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void SelectItem_onNonexistentTab()
 		{
 			Tab tab = new Tab("tabname");
 			string itemName = "itemName";
-			_sidePane.SelectItem(tab, itemName);
+			Assert.That(() => _sidePane.SelectItem(tab, itemName), Throws.TypeOf<ArgumentOutOfRangeException>());
 		}
 
 		[Test]
@@ -456,7 +440,7 @@ namespace SIL.SilSidePane
 		public void CurrentTab_whenNoneSelected()
 		{
 			Tab currentTab = _sidePane.CurrentTab;
-			Assert.IsNull(currentTab);
+			Assert.That(currentTab, Is.Null);
 		}
 		#endregion
 
@@ -485,17 +469,16 @@ namespace SIL.SilSidePane
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void GetTabByName_null()
 		{
-			_sidePane.GetTabByName(null);
+			Assert.That(() => _sidePane.GetTabByName(null), Throws.ArgumentNullException);
 		}
 
 		[Test]
 		public void GetTabByName_nonexistentTab()
 		{
 			Tab tab = _sidePane.GetTabByName("nonexistentTabName");
-			Assert.IsNull(tab);
+			Assert.That(tab, Is.Null);
 		}
 		#endregion GetTabByName
 
@@ -553,12 +536,11 @@ namespace SIL.SilSidePane
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void TrySelectingDisabledTabThatDoesNotExist()
 		{
 			Tab tab = new Tab("tabname");
 			tab.Enabled = false;
-			_sidePane.SelectTab(tab);
+			Assert.That(() => _sidePane.SelectTab(tab), Throws.TypeOf<ArgumentOutOfRangeException>());
 		}
 
 		[Test]

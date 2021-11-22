@@ -2,8 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-
 using NUnit.Framework;
 
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -37,7 +35,7 @@ namespace SIL.FieldWorks.Common.Framework.SelInfo
 		}
 
 		/// <summary />
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureTeardown()
 		{
 			s1 = null;
@@ -50,13 +48,12 @@ namespace SIL.FieldWorks.Common.Framework.SelInfo
 		/// </summary>
 		/// --------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void NumberOfLevels()
 		{
-			Assert.IsFalse((s1 < s2));
+			Assert.IsFalse(s1 < s2);
 
 			s2.rgvsli = new SelLevInfo[3];
-			Assert.IsFalse((s1 < s2)); // exception
+			Assert.That(() => Assert.IsFalse(s1 < s2), Throws.ArgumentException);
 		}
 
 		/// --------------------------------------------------------------------------------
@@ -66,7 +63,6 @@ namespace SIL.FieldWorks.Common.Framework.SelInfo
 		/// </summary>
 		/// --------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void TopLevelParentObjects()
 		{
 			s1.rgvsli[1].ihvo = 1;
@@ -75,10 +71,10 @@ namespace SIL.FieldWorks.Common.Framework.SelInfo
 			Assert.IsTrue(s2 > s1);
 
 			s2.rgvsli[1].ihvo = 1;
-			Assert.IsFalse((s1 < s2));
-			Assert.IsFalse((s2 < s1));
-			Assert.IsFalse((s1 > s2));
-			Assert.IsFalse((s2 > s1));
+			Assert.IsFalse(s1 < s2);
+			Assert.IsFalse(s2 < s1);
+			Assert.IsFalse(s1 > s2);
+			Assert.IsFalse(s2 > s1);
 
 			s1.rgvsli[1].cpropPrevious = 1;
 			s2.rgvsli[1].cpropPrevious = 2;
@@ -86,20 +82,20 @@ namespace SIL.FieldWorks.Common.Framework.SelInfo
 			Assert.IsTrue(s2 > s1);
 
 			s2.rgvsli[1].cpropPrevious = 1;
-			Assert.IsFalse((s1 < s2));
-			Assert.IsFalse((s2 < s1));
-			Assert.IsFalse((s1 > s2));
-			Assert.IsFalse((s2 > s1));
+			Assert.IsFalse(s1 < s2);
+			Assert.IsFalse(s2 < s1);
+			Assert.IsFalse(s1 > s2);
+			Assert.IsFalse(s2 > s1);
 
 			s1.rgvsli[1].tag = 1;
 			s2.rgvsli[1].tag = 1;
-			Assert.IsFalse((s1 < s2));
-			Assert.IsFalse((s2 < s1));
-			Assert.IsFalse((s1 > s2));
-			Assert.IsFalse((s2 > s1));
+			Assert.IsFalse(s1 < s2);
+			Assert.IsFalse(s2 < s1);
+			Assert.IsFalse(s1 > s2);
+			Assert.IsFalse(s2 > s1);
 
 			s2.rgvsli[1].tag = 2;
-			Assert.IsFalse((s1 < s2));	// exception
+			Assert.That(() => Assert.IsFalse(s1 < s2), Throws.ArgumentException);
 		}
 
 		/// --------------------------------------------------------------------------------
@@ -109,7 +105,6 @@ namespace SIL.FieldWorks.Common.Framework.SelInfo
 		/// </summary>
 		/// --------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void ImmediateParentObjects()
 		{
 			// make the top level parent the same
@@ -123,10 +118,10 @@ namespace SIL.FieldWorks.Common.Framework.SelInfo
 			Assert.IsTrue(s2 > s1);
 
 			s2.rgvsli[0].ihvo = 1;
-			Assert.IsFalse((s1 < s2));
-			Assert.IsFalse((s2 < s1));
-			Assert.IsFalse((s1 > s2));
-			Assert.IsFalse((s2 > s1));
+			Assert.IsFalse(s1 < s2);
+			Assert.IsFalse(s2 < s1);
+			Assert.IsFalse(s1 > s2);
+			Assert.IsFalse(s2 > s1);
 
 			s1.rgvsli[0].cpropPrevious = 1;
 			s2.rgvsli[0].cpropPrevious = 2;
@@ -134,20 +129,20 @@ namespace SIL.FieldWorks.Common.Framework.SelInfo
 			Assert.IsTrue(s2 > s1);
 
 			s2.rgvsli[0].cpropPrevious = 1;
-			Assert.IsFalse((s1 < s2));
-			Assert.IsFalse((s2 < s1));
-			Assert.IsFalse((s1 > s2));
-			Assert.IsFalse((s2 > s1));
+			Assert.IsFalse(s1 < s2);
+			Assert.IsFalse(s2 < s1);
+			Assert.IsFalse(s1 > s2);
+			Assert.IsFalse(s2 > s1);
 
 			s1.rgvsli[0].tag = 1;
 			s2.rgvsli[0].tag = 1;
-			Assert.IsFalse((s1 < s2));
-			Assert.IsFalse((s2 < s1));
-			Assert.IsFalse((s1 > s2));
-			Assert.IsFalse((s2 > s1));
+			Assert.IsFalse(s1 < s2);
+			Assert.IsFalse(s2 < s1);
+			Assert.IsFalse(s1 > s2);
+			Assert.IsFalse(s2 > s1);
 
 			s2.rgvsli[0].tag = 2;
-			Assert.IsFalse((s1 < s2));	// exception
+			Assert.That(() => Assert.IsFalse(s1 < s2), Throws.ArgumentException);
 		}
 
 
@@ -174,10 +169,10 @@ namespace SIL.FieldWorks.Common.Framework.SelInfo
 			Assert.IsTrue(s2 > s1);
 
 			s2.ihvoRoot = 1;
-			Assert.IsFalse((s1 < s2));
-			Assert.IsFalse((s2 < s1));
-			Assert.IsFalse((s1 > s2));
-			Assert.IsFalse((s2 > s1));
+			Assert.IsFalse(s1 < s2);
+			Assert.IsFalse(s2 < s1);
+			Assert.IsFalse(s1 > s2);
+			Assert.IsFalse(s2 > s1);
 
 			s1.cpropPrevious = 1;
 			s2.cpropPrevious = 2;
@@ -185,10 +180,10 @@ namespace SIL.FieldWorks.Common.Framework.SelInfo
 			Assert.IsTrue(s2 > s1);
 
 			s2.cpropPrevious = 1;
-			Assert.IsFalse((s1 < s2));
-			Assert.IsFalse((s2 < s1));
-			Assert.IsFalse((s1 > s2));
-			Assert.IsFalse((s2 > s1));
+			Assert.IsFalse(s1 < s2);
+			Assert.IsFalse(s2 < s1);
+			Assert.IsFalse(s1 > s2);
+			Assert.IsFalse(s2 > s1);
 
 			s1.ich = 1;
 			s2.ich = 2;
@@ -196,38 +191,38 @@ namespace SIL.FieldWorks.Common.Framework.SelInfo
 			Assert.IsTrue(s2 > s1);
 
 			s2.ich = 1;
-			Assert.IsFalse((s1 < s2));
-			Assert.IsFalse((s2 < s1));
-			Assert.IsFalse((s1 > s2));
-			Assert.IsFalse((s2 > s1));
+			Assert.IsFalse(s1 < s2);
+			Assert.IsFalse(s2 < s1);
+			Assert.IsFalse(s1 > s2);
+			Assert.IsFalse(s2 > s1);
 
 			// we don't care about the rest of the properties, so we should always get false
 			s1.fAssocPrev = true;
 			s2.fAssocPrev = true;
-			Assert.IsFalse((s1 < s2));
-			Assert.IsFalse((s2 < s1));
-			Assert.IsFalse((s1 > s2));
-			Assert.IsFalse((s2 > s1));
+			Assert.IsFalse(s1 < s2);
+			Assert.IsFalse(s2 < s1);
+			Assert.IsFalse(s1 > s2);
+			Assert.IsFalse(s2 > s1);
 
 			s2.fAssocPrev = false;
-			Assert.IsFalse((s1 < s2));
-			Assert.IsFalse((s2 < s1));
-			Assert.IsFalse((s1 > s2));
-			Assert.IsFalse((s2 > s1));
+			Assert.IsFalse(s1 < s2);
+			Assert.IsFalse(s2 < s1);
+			Assert.IsFalse(s1 > s2);
+			Assert.IsFalse(s2 > s1);
 
 			s1.ws = 0;
 			s2.ws = 1;
-			Assert.IsFalse((s1 < s2));
-			Assert.IsFalse((s2 < s1));
-			Assert.IsFalse((s1 > s2));
-			Assert.IsFalse((s2 > s1));
+			Assert.IsFalse(s1 < s2);
+			Assert.IsFalse(s2 < s1);
+			Assert.IsFalse(s1 > s2);
+			Assert.IsFalse(s2 > s1);
 
 			s1.ihvoEnd = 0;
 			s2.ihvoEnd = 1;
-			Assert.IsFalse((s1 < s2));
-			Assert.IsFalse((s2 < s1));
-			Assert.IsFalse((s1 > s2));
-			Assert.IsFalse((s2 > s1));
+			Assert.IsFalse(s1 < s2);
+			Assert.IsFalse(s2 < s1);
+			Assert.IsFalse(s1 > s2);
+			Assert.IsFalse(s2 > s1);
 		}
 	}
 }

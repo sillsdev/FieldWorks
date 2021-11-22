@@ -28,7 +28,7 @@ namespace SILUBS.ScriptureChecks
 		/// Test fixture setup (runs once for the whole fixture).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			QuotationMarksList qmarks = QuotationMarksList.NewList();

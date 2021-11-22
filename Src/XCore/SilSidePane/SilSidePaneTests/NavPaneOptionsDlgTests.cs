@@ -43,7 +43,7 @@ namespace SIL.SilSidePane
 			using (var dialog = new NavPaneOptionsDlg(_tabs))
 			{
 				dialog.Show();
-				Assert.IsNotNull(dialog);
+				Assert.That(dialog, Is.Not.Null);
 			}
 		}
 
@@ -53,7 +53,7 @@ namespace SIL.SilSidePane
 			using (var dialog = new NavPaneOptionsDlg(null))
 			{
 				dialog.Show();
-				Assert.IsNotNull(dialog);
+				Assert.That(dialog, Is.Not.Null);
 			}
 		}
 
@@ -190,7 +190,7 @@ namespace SIL.SilSidePane
 			using (var dialog = new NavPaneOptionsDlg(_tabs))
 			{
 				dialog.Show();
-				Assert.IsNull(dialog.tabListBox.SelectedItem, "This test doesn't make sense if a tab is selected");
+				Assert.That(dialog.tabListBox.SelectedItem, Is.Null, "This test doesn't make sense if a tab is selected");
 				Assert.False(dialog.btn_Down.Enabled, "Down button should be disabled when no tab is selected");
 				Assert.False(dialog.btn_Up.Enabled, "Up button should be disabled when no tab is selected");
 			}
@@ -238,7 +238,7 @@ namespace SIL.SilSidePane
 				dialog.tabListBox.SetSelected(1, true);
 				// Click Reset
 				dialog.btn_Reset.PerformClick();
-				Assert.IsNull(dialog.tabListBox.SelectedItem, "This test doesn't make sense if a tab is selected");
+				Assert.That(dialog.tabListBox.SelectedItem, Is.Null, "This test doesn't make sense if a tab is selected");
 				Assert.False(dialog.btn_Down.Enabled, "Down button should be disabled when no tab is selected");
 				Assert.False(dialog.btn_Up.Enabled, "Up button should be disabled when no tab is selected");
 			}

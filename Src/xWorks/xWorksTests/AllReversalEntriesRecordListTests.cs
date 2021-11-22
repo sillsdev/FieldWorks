@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This is done before the entire set of tests is run.
 		/// </summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void ReveralEntriesFixtureInit()
 		{
 			SetupReversalFactoriesAndRepositories();
@@ -84,8 +84,8 @@ namespace SIL.FieldWorks.XWorks
 
 		protected IReversalIndex AddReversalIndex(List<ICmObject> addList, IReversalIndexEntry revIndexEntry)
 		{
-			Assert.IsNotNull(m_revIndexFactory, "Fixture Initialization is not complete.");
-			Assert.IsNotNull(m_window, "No window.");
+			Assert.That(m_revIndexFactory, Is.Not.Null, "Fixture Initialization is not complete.");
+			Assert.That(m_window, Is.Not.Null, "No window.");
 
 			//create a reversal index for this project.
 			var wsObj = Cache.LanguageProject.DefaultAnalysisWritingSystem;
@@ -99,8 +99,8 @@ namespace SIL.FieldWorks.XWorks
 
 		protected IReversalIndexEntry GetOrCreateReversalIndexEntry(List<ICmObject> addList)
 		{
-			Assert.IsNotNull(m_revIndexEntryFactory, "Fixture Initialization is not complete.");
-			Assert.IsNotNull(m_window, "No window.");
+			Assert.That(m_revIndexEntryFactory, Is.Not.Null, "Fixture Initialization is not complete.");
+			Assert.That(m_window, Is.Not.Null, "No window.");
 
 			var revIndexEntry = m_revIndexEntryFactory.Create();
 

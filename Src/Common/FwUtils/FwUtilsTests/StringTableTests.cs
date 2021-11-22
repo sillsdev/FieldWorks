@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private StringTable m_table;
 
 		/// <summary />
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureInit()
 		{
 			m_tempFolder = CreateTestResourceFiles(typeof(Properties.Resources), "food");
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary />
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureCleanup()
 		{
 			try

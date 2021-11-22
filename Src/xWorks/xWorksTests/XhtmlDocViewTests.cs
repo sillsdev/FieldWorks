@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private PropertyTable m_propertyTable;
 		private Mediator m_mediator;
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureInit()
 		{
 			// Init() is called from XWorksAppTestBase's TestFixtureSetup, so we won't call it here.
@@ -288,7 +288,7 @@ namespace SIL.FieldWorks.XWorks
 						m_propertyTable.SetProperty("DictionaryPublicationLayout", tempConfigFile.Path, true);
 						File.WriteAllText(tempConfigFile.Path, configWithTestPub);
 						// SUT
-						Assert.That(docView.GetValidConfigurationForPublication("TestPub"), Is.StringContaining(tempConfigFile.Path));
+						Assert.That(docView.GetValidConfigurationForPublication("TestPub"), Does.Contain(tempConfigFile.Path));
 					}
 				}
 			}
@@ -321,7 +321,7 @@ namespace SIL.FieldWorks.XWorks
 					File.WriteAllText(tempConfigFile.Path, configWithTestPub);
 					// SUT
 					Assert.That(docView.GetValidConfigurationForPublication(xWorksStrings.AllEntriesPublication),
-									Is.StringContaining(tempConfigFile.Path));
+									Does.Contain(tempConfigFile.Path));
 				}
 			}
 		}
@@ -374,7 +374,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						tempFile.Dispose();
 					}
-					Assert.IsNull(result, "When no configurations have the publication null should be returned.");
+					Assert.That(result, Is.Null, "When no configurations have the publication null should be returned.");
 				}
 			}
 		}
@@ -413,8 +413,8 @@ namespace SIL.FieldWorks.XWorks
 					docView.SetPropertyTable(m_propertyTable);
 					// SUT
 					var validConfig = docView.GetValidConfigurationForPublication("TestPub");
-					Assert.That(validConfig, Is.Not.StringContaining(nonMatchedConfigFile.Path));
-					Assert.That(validConfig, Is.StringContaining(matchedConfigFile.Path));
+					Assert.That(validConfig, Does.Not.Contain(nonMatchedConfigFile.Path));
+					Assert.That(validConfig, Does.Contain(matchedConfigFile.Path));
 				}
 			}
 		}

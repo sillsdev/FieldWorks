@@ -4,6 +4,7 @@
 
 using System;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.Common.FwUtils.Attributes
@@ -36,9 +37,9 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		/// <summary>
 		/// Set the message box adapter
 		/// </summary>
-		public override void BeforeTest(TestDetails testDetails)
+		public override void BeforeTest(ITest test)
 		{
-			base.BeforeTest(testDetails);
+			base.BeforeTest(test);
 			m_PreviousAdapter = s_CurrentAdapter;
 			s_CurrentAdapter = (IMessageBox)Activator.CreateInstance(m_AdapterType);
 			MessageBoxUtils.Manager.SetMessageBoxAdapter(s_CurrentAdapter);
@@ -47,9 +48,9 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		/// <summary>
 		/// Restore previous message box adapter
 		/// </summary>
-		public override void AfterTest(TestDetails testDetails)
+		public override void AfterTest(ITest test)
 		{
-			base.AfterTest(testDetails);
+			base.AfterTest(test);
 
 			s_CurrentAdapter = m_PreviousAdapter;
 			if (s_CurrentAdapter != null)

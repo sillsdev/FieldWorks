@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -265,7 +265,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
 
 				// Is the key under WOW6432Node gone?
-				Assert.IsNull(FwRegistryHelper.FieldWorksVersionlessOld32BitRegistryKey, "Old 32-bit key tree didn't get wiped out.");
+				Assert.That(FwRegistryHelper.FieldWorksVersionlessOld32BitRegistryKey, Is.Null, "Old 32-bit key tree didn't get wiped out.");
 
 				using (var version9Key = m_helper.FieldWorksRegistryKey)
 				{

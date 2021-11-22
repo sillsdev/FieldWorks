@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.XWorks
 		private FwXApp m_application;
 		private FwXWindow m_window;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.XWorks
 				m_wsEn, CellarPropertyType.String, Guid.Empty);
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			Dispose();
@@ -237,7 +237,7 @@ namespace SIL.FieldWorks.XWorks
 			// Verify that the field is in the results
 			AssertThatXmlIn.String(result).HasNoMatchForXpath("//th");
 			AssertThatXmlIn.String(result).HasNoMatchForXpath("//tc");
-			Assert.That(result, Is.Not.StringContaining("/>"));
+			Assert.That(result, Does.Not.Contain("/>"));
 		}
 
 		[Test]
@@ -290,8 +290,8 @@ namespace SIL.FieldWorks.XWorks
 			const string xpathToA = XPathToRow + "/td[span[@lang='en' and text()='" + a1 +
 									"']]/following-sibling::td[not(node())]/following-sibling::td[span[text()='" + a3 + "']]";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToA, 1);
-			Assert.That(result, Is.Not.StringContaining("/>"));
-			Assert.That(result, Is.Not.StringContaining("Invalid USFM"));
+			Assert.That(result, Does.Not.Contain("/>"));
+			Assert.That(result, Does.Not.Contain("Invalid USFM"));
 		}
 
 		[Test]
@@ -415,8 +415,8 @@ namespace SIL.FieldWorks.XWorks
 			var expected = string.Format(xWorksStrings.InvalidUSFM_TextAfterTR, junk);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField +
 				$"//span[{StyleBigRed} and text() = '{expected}']", 1);
-			Assert.That(result, Is.Not.StringContaining("/>"));
-			Assert.That(result, Is.StringEnding("</div>"));
+			Assert.That(result, Does.Not.Contain("/>"));
+			Assert.That(result, Does.EndWith("</div>"));
 		}
 
 		[Test]
@@ -430,8 +430,8 @@ namespace SIL.FieldWorks.XWorks
 			var expected = string.Format(xWorksStrings.InvalidUSFM_TextAfterTR, junk);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField +
 				$"//span[{StyleBigRed} and text() = '{expected}']", 1);
-			Assert.That(result, Is.Not.StringContaining("/>"));
-			Assert.That(result, Is.StringEnding("</div>"));
+			Assert.That(result, Does.Not.Contain("/>"));
+			Assert.That(result, Does.EndWith("</div>"));
 		}
 
 		[TestCase(TR + " " + TC, XPathToRow + "/td")]
@@ -442,7 +442,7 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpath, 1);
-			Assert.That(result, Is.StringEnding("</div>"));
+			Assert.That(result, Does.EndWith("</div>"));
 			AssertIsGood(result);
 		}
 
@@ -454,7 +454,7 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField +
 				$"//span[{StyleBigRed} and text()='{marker}']", 1);
-			Assert.That(result, Is.StringEnding("</div>"));
+			Assert.That(result, Does.EndWith("</div>"));
 			AssertIsGood(result);
 		}
 
@@ -466,7 +466,7 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField +
 				"//span[" + StyleBigRed + @" and text()='\t']", 1);
-			Assert.That(result, Is.StringEnding("</div>"));
+			Assert.That(result, Does.EndWith("</div>"));
 			AssertIsGood(result);
 		}
 
@@ -487,8 +487,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private static void AssertIsGood(string xhtml)
 		{
-			Assert.That(xhtml, Is.Not.StringContaining("/>"));
-			Assert.That(xhtml, Is.Not.StringContaining("Invalid USFM"));
+			Assert.That(xhtml, Does.Not.Contain("/>"));
+			Assert.That(xhtml, Does.Not.Contain("Invalid USFM"));
 		}
 	}
 }

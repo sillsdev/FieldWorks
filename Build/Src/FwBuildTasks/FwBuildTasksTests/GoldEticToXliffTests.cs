@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			AssertThatXmlIn.String(xliffDocs[WsEn].ToString()).HasSpecifiedNumberOfMatchesForXpath(sourceXPath, 1);
 			var sourceElt = xliffDocs[WsEn].XPathSelectElement(sourceXPath);
 			// ReSharper disable once PossibleNullReferenceException -- we just asserted there is 1 sourceElt
-			Assert.That(sourceElt.ToString(), Is.StringContaining(source));
+			Assert.That(sourceElt.ToString(), Does.Contain(source));
 		}
 
 		[Test]
@@ -405,7 +405,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		/// <summary>
 		/// Test with an export of TranslatedLists from FieldWorks (you must add a second analysis language to enable this option)
 		/// </summary>
-		[Ignore]
+		[Ignore("Facilitates human inspection of output files")]
 		[Category("ByHand")]
 		[Test]
 		public void IntegrationTest()

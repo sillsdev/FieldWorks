@@ -67,10 +67,10 @@ namespace XMLViewsTests
 				+"</column>");
 
 			XmlNode source = GetRootNode(docSrc, "column");
-			Assert.IsNotNull(source);
+			Assert.That(source, Is.Not.Null);
 
 			XmlNode output = XmlViewsUtils.CopyWithParamDefaults(source);
-			Assert.IsNotNull(output);
+			Assert.That(output, Is.Not.Null);
 			Assert.IsFalse(source == output);
 
 			XmlDocument docExpected = new XmlDocument();
@@ -96,7 +96,7 @@ namespace XMLViewsTests
 				+"</column>");
 
 			XmlNode source = GetRootNode(docSrc, "column");
-			Assert.IsNotNull(source);
+			Assert.That(source, Is.Not.Null);
 			XmlNode output = XmlViewsUtils.CopyWithParamDefaults(source);
 			Assert.IsTrue(source == output);
 		}
@@ -113,7 +113,7 @@ namespace XMLViewsTests
 				+"</column>");
 
 			XmlNode source = GetRootNode(docSrc, "column");
-			Assert.IsNotNull(source);
+			Assert.That(source, Is.Not.Null);
 			Assert.IsTrue(XmlViewsUtils.HasParam(source));
 
 			string[] paramList = XmlViewsUtils.FindParams(source);

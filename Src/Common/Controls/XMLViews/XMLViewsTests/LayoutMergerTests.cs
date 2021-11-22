@@ -16,7 +16,7 @@ namespace XMLViewsTests
 		Inventory m_inventory;
 		private string testPathMerge;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void Setup()
 		{
 			var keyAttrs = new Dictionary<string, string[]>();

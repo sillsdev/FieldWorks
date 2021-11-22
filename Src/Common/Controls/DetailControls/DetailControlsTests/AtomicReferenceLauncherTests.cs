@@ -127,7 +127,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var target = MockLauncher.Target;
 
 			// Verify results
-			Assert.IsNull(target, "Target should be null.");
+			Assert.That(target, Is.Null, "Target should be null.");
 		}
 	}
 
@@ -154,9 +154,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		public void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, string analysisWs)
 		{
-			Assert.IsNotNull(obj, "Must initialize with an object and flid.");
+			Assert.That(obj, Is.Not.Null, "Must initialize with an object and flid.");
 			Assert.Greater(flid, 0, "Must initialize with an object and flid.");
-			Assert.IsNotNullOrEmpty(fieldName, "Must initialize with a field name.");
+			Assert.That(fieldName, Is.Not.Null.Or.Empty, "Must initialize with a field name.");
 			Initialize(cache, obj, flid, fieldName, null, null, null, "", analysisWs);
 		}
 	}

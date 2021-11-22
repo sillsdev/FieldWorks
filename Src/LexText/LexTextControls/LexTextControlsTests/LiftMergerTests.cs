@@ -95,7 +95,7 @@ namespace LexTextControlsTests
 				Directory.CreateDirectory(audioPath);
 				foreach (var fakeAudioFile in audioFilesToFake)
 				{
-					FileUtils.WriteStringtoFile(Path.Combine(audioPath, fakeAudioFile), "fake audio file", Encoding.ASCII);
+					FileUtils.WriteStringToFile(Path.Combine(audioPath, fakeAudioFile), "fake audio file", Encoding.ASCII);
 				}
 			}
 			var path = Path.Combine(liftFolder, "LiftTest.lift");
@@ -177,7 +177,7 @@ namespace LexTextControlsTests
 			return path;
 		}
 
-		static private readonly string[] s_LiftData1 =
+		private static readonly string[] s_LiftData1 =
 		{
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
@@ -304,28 +304,25 @@ namespace LexTextControlsTests
 
 			var logFile = TryImport(sOrigFile, 4);
 			File.Delete(sOrigFile);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(4, repoEntry.Count);
 			Assert.AreEqual(4, repoSense.Count);
 
 			Assert.That(messageCapture.Messages, Has.Count.EqualTo(0), "we should not message about an empty-string ref in <relation>");
 
-			ILexEntry entry;
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("ecfbe958-36a1-4b82-bb69-ca5210355400"), out entry));
+			Assert.IsTrue(repoEntry.TryGetObject(new Guid("ecfbe958-36a1-4b82-bb69-ca5210355400"), out var entry));
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			var sense0 = entry.SensesOS[0];
 			Assert.AreEqual(sense0.Guid, new Guid("f63f1ccf-3d50-417e-8024-035d999d48bc"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("root", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("hombre", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
 			Assert.AreEqual("hombre634407358826681759.wav", entry.LexemeFormOA.Form.get_String(m_audioWsCode).Text);
-			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Noun", (sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
+			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			Assert.That(((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
+			Assert.AreEqual("Noun", ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("man", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("male adult human link", sense0.Definition.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("male adult634407358826681760.wav", sense0.Definition.get_String(m_audioWsCode).Text);
@@ -361,15 +358,13 @@ namespace LexTextControlsTests
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			sense0 = entry.SensesOS[0];
 			Assert.AreEqual(sense0.Guid, new Guid("cf6680cc-faeb-4bd2-90ec-0be5dcdcc6af"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("root", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("mujer", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Noun", (sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
+			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			Assert.That(((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
+			Assert.AreEqual("Noun", ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("woman", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("female adult human", sense0.Definition.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual(2, sense0.SemanticDomainsRC.Count);
@@ -390,15 +385,13 @@ namespace LexTextControlsTests
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			sense0 = entry.SensesOS[0];
 			Assert.AreEqual(sense0.Guid, new Guid("04545fa2-e24c-446e-928c-2a13710359b3"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("niño".Normalize(NormalizationForm.FormD), entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Noun", (sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
+			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			Assert.That(((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
+			Assert.AreEqual("Noun", ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("boy", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("male human child", sense0.Definition.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual(2, sense0.SemanticDomainsRC.Count);
@@ -419,15 +412,14 @@ namespace LexTextControlsTests
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			sense0 = entry.SensesOS[0];
 			Assert.AreEqual(sense0.Guid, new Guid("db9d3790-2f5c-4d99-b9fc-3b21b47fa505"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("niña".Normalize(NormalizationForm.FormD), entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Noun", (sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
+			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			var pos = ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA;
+			Assert.That(pos, Is.Not.Null);
+			Assert.AreEqual("Noun", pos.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("girl", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("female human child", sense0.Definition.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual(2, sense0.SemanticDomainsRC.Count);
@@ -458,8 +450,7 @@ namespace LexTextControlsTests
 			Assert.That(File.Exists(Path.Combine(Path.Combine(MockLinkedFilesFolder, folder), filename)), Is.True);
 		}
 
-		static private readonly string[] s_LiftData2 = new[]
-		{
+		private static readonly string[] s_LiftData2 = {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
@@ -561,7 +552,7 @@ namespace LexTextControlsTests
 			var sOrigFile = CreateInputFile(s_LiftData2);
 			var logFile = TryImport(sOrigFile, 4);
 			File.Delete(sOrigFile);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(4, repoEntry.Count);
 			Assert.AreEqual(3, repoSense.Count);
@@ -571,28 +562,26 @@ namespace LexTextControlsTests
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			var sense = entry.SensesOS[0];
 			Assert.AreEqual(sense.Guid, new Guid("f722992a-cfdc-41ec-9c46-f927f02d68ef"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("house", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Noun", (sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
+			Assert.That(sense.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
+			Assert.AreEqual("Noun", ((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("house", sense.Gloss.AnalysisDefaultWritingSystem.Text);
-			Assert.IsNull(sense.Definition.AnalysisDefaultWritingSystem.Text);
+			Assert.That(sense.Definition.AnalysisDefaultWritingSystem.Text, Is.Null);
 			Assert.AreEqual(0, sense.SemanticDomainsRC.Count);
 			Assert.AreEqual(1, entry.AlternateFormsOS.Count);
 			var allo = entry.AlternateFormsOS[0] as IMoStemAllomorph;
-			Assert.IsNotNull(allo);
+			Assert.That(allo, Is.Not.Null);
 			Assert.AreEqual("ouse", allo.Form.VernacularDefaultWritingSystem.Text);
 			Assert.AreEqual("stem", allo.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual(1, allo.PhoneEnvRC.Count);
 			IPhEnvironment env = null;
 			foreach (var x in allo.PhoneEnvRC)
 				env = x;
-			Assert.IsNotNull(env);
+			Assert.That(env, Is.Not.Null);
 			Assert.AreEqual("/[C]_", env.StringRepresentation.Text);
 			Assert.AreEqual(0, entry.EntryRefsOS.Count);
 
@@ -600,17 +589,15 @@ namespace LexTextControlsTests
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			sense = entry.SensesOS[0];
 			Assert.AreEqual(sense.Guid, new Guid("d3ed09c5-8757-41cb-849d-a24e6200caf4"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("green", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Adjective", (sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
+			Assert.That(sense.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
+			Assert.AreEqual("Adjective", ((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("green", sense.Gloss.AnalysisDefaultWritingSystem.Text);
-			Assert.IsNull(sense.Definition.AnalysisDefaultWritingSystem.Text);
+			Assert.That(sense.Definition.AnalysisDefaultWritingSystem.Text, Is.Null);
 			Assert.AreEqual(0, sense.SemanticDomainsRC.Count);
 			Assert.AreEqual(0, entry.EntryRefsOS.Count);
 
@@ -618,17 +605,15 @@ namespace LexTextControlsTests
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			sense = entry.SensesOS[0];
 			Assert.AreEqual(sense.Guid, new Guid("cf2ac6f4-01d8-47ed-9b41-25b6e727097f"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("greenhouse", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Noun", (sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
-			Assert.IsNull(sense.Gloss.AnalysisDefaultWritingSystem.Text);
-			Assert.IsNull(sense.Definition.AnalysisDefaultWritingSystem.Text);
+			Assert.That(sense.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
+			Assert.AreEqual("Noun", ((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
+			Assert.That(sense.Gloss.AnalysisDefaultWritingSystem.Text, Is.Null);
+			Assert.That(sense.Definition.AnalysisDefaultWritingSystem.Text, Is.Null);
 			Assert.AreEqual(0, sense.SemanticDomainsRC.Count);
 			Assert.AreEqual(2, entry.EntryRefsOS.Count);
 			var lexref = entry.EntryRefsOS[0];
@@ -657,8 +642,8 @@ namespace LexTextControlsTests
 
 			Assert.IsTrue(repoEntry.TryGetObject(new Guid("58f978d2-2cb2-4506-9a47-63c5454f0065"), out entry));
 			Assert.AreEqual(0, entry.SensesOS.Count);
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("hoose", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
 			Assert.AreEqual(1, entry.EntryRefsOS.Count);
@@ -673,8 +658,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(0, lexref.PrimaryLexemesRS.Count);
 		}
 
-		static private readonly string[] s_outOfOrderRelation = new[]
-		{
+		private static readonly string[] s_outOfOrderRelation = {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
@@ -717,7 +701,7 @@ namespace LexTextControlsTests
 			var sOrigFile = CreateInputFile(s_outOfOrderRelation);
 			var logFile = TryImport(sOrigFile, 1);
 			File.Delete(sOrigFile);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(2, repoSense.Count);
@@ -733,8 +717,7 @@ namespace LexTextControlsTests
 			Assert.That(targets.Skip(1).First(), Is.EqualTo(sense1), "Both senses should be present in targets");
 		}
 
-		static private readonly string[] s_LiftData3a = new[]
-		{
+		private static readonly string[] s_LiftData3a = {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
@@ -771,8 +754,7 @@ namespace LexTextControlsTests
 
 		private const string sLiftData3b =
 			"<entry dateCreated=\"2011-03-01T22:27:46Z\" dateModified=\"{0}\" guid=\"67113a7f-e448-43e7-87cf-6d3a46ee10ec\" id=\"greenhouse_67113a7f-e448-43e7-87cf-6d3a46ee10ec\">";
-		static private readonly string[] s_LiftData3c = new[]
-		{
+		private static readonly string[] s_LiftData3c = {
 			"<lexical-unit>",
 			"<form lang=\"fr\"><text>greenhouse</text></form>",
 			"</lexical-unit>",
@@ -815,7 +797,7 @@ namespace LexTextControlsTests
 			var sOrigFile = CreateInputFile(GetLift3Strings("2011-03-01T22:28:00Z"));
 			var logFile = TryImport(sOrigFile, 4);
 			File.Delete(sOrigFile);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(4, repoEntry.Count);
 			Assert.AreEqual(3, repoSense.Count);
@@ -825,23 +807,21 @@ namespace LexTextControlsTests
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			var sense = entry.SensesOS[0];
 			Assert.AreEqual(sense.Guid, new Guid("f722992a-cfdc-41ec-9c46-f927f02d68ef"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("house", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Noun", (sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
+			Assert.That(sense.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
+			Assert.AreEqual("Noun", ((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("house", sense.Gloss.AnalysisDefaultWritingSystem.Text);
-			Assert.IsNull(sense.Definition.AnalysisDefaultWritingSystem.Text);
+			Assert.That(sense.Definition.AnalysisDefaultWritingSystem.Text, Is.Null);
 			Assert.AreEqual(0, sense.SemanticDomainsRC.Count);
 			Assert.AreEqual(1, entry.AlternateFormsOS.Count);
 			var allo = entry.AlternateFormsOS[0] as IMoStemAllomorph;
-			Assert.IsNotNull(allo);
+			Assert.That(allo, Is.Not.Null);
 			Assert.AreEqual("ouse", allo.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNull(allo.MorphTypeRA);
+			Assert.That(allo.MorphTypeRA, Is.Null);
 			Assert.AreEqual(0, allo.PhoneEnvRC.Count);
 			Assert.AreEqual("<lift-residue><trait name=\"paradigm\" value=\"sing\" />" + Environment.NewLine + "</lift-residue>", allo.LiftResidue);
 			Assert.AreEqual(0, entry.EntryRefsOS.Count);
@@ -850,17 +830,15 @@ namespace LexTextControlsTests
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			sense = entry.SensesOS[0];
 			Assert.AreEqual(sense.Guid, new Guid("d3ed09c5-8757-41cb-849d-a24e6200caf4"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("green", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Adjective", (sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
+			Assert.That(sense.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
+			Assert.AreEqual("Adjective", ((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("green", sense.Gloss.AnalysisDefaultWritingSystem.Text);
-			Assert.IsNull(sense.Definition.AnalysisDefaultWritingSystem.Text);
+			Assert.That(sense.Definition.AnalysisDefaultWritingSystem.Text, Is.Null);
 			Assert.AreEqual(0, sense.SemanticDomainsRC.Count);
 			Assert.AreEqual(0, entry.EntryRefsOS.Count);
 
@@ -868,17 +846,15 @@ namespace LexTextControlsTests
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			sense = entry.SensesOS[0];
 			Assert.AreEqual(sense.Guid, new Guid("cf2ac6f4-01d8-47ed-9b41-25b6e727097f"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("greenhouse", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Noun", (sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
-			Assert.IsNull(sense.Gloss.AnalysisDefaultWritingSystem.Text);
-			Assert.IsNull(sense.Definition.AnalysisDefaultWritingSystem.Text);
+			Assert.That(sense.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
+			Assert.AreEqual("Noun", ((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
+			Assert.That(sense.Gloss.AnalysisDefaultWritingSystem.Text, Is.Null);
+			Assert.That(sense.Definition.AnalysisDefaultWritingSystem.Text, Is.Null);
 			Assert.AreEqual(0, sense.SemanticDomainsRC.Count);
 			Assert.AreEqual(1, entry.EntryRefsOS.Count);
 			var lexref = entry.EntryRefsOS[0];
@@ -892,8 +868,8 @@ namespace LexTextControlsTests
 
 			Assert.IsTrue(repoEntry.TryGetObject(new Guid("58f978d2-2cb2-4506-9a47-63c5454f0065"), out entry));
 			Assert.AreEqual(0, entry.SensesOS.Count);
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("hoose", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
 			Assert.AreEqual(1, entry.EntryRefsOS.Count);
@@ -912,7 +888,7 @@ namespace LexTextControlsTests
 			return s_LiftData3a.Concat(new[] {modString}).Concat(s_LiftData3c).ToArray();
 		}
 
-		private string[] tabInput = new string[] {"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+		private string[] tabInput = {"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
 			"<ranges/>",
@@ -946,7 +922,7 @@ namespace LexTextControlsTests
 		{
 			string sOrigFile = CreateInputFile(tabInput);
 			string logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			File.Delete(sOrigFile);
 
@@ -993,7 +969,7 @@ namespace LexTextControlsTests
 
 			var sOrigFile = CreateInputFile(tabInput, new []{ "Sleep Away.mp3" });
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			File.Delete(sOrigFile);
 
@@ -1016,7 +992,7 @@ namespace LexTextControlsTests
 
 			var sOrigFile = CreateInputFile(GetLift3Strings("2011-03-01T22:28:00Z"));
 			var logFile = TryImport(sOrigFile, 4);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			File.Delete(sOrigFile);
 
@@ -1025,12 +1001,12 @@ namespace LexTextControlsTests
 			Assert.AreEqual(1, entry.EntryRefsOS.Count);
 
 			var temp = entry.EntryRefsOS[0];
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			// Importing twice should not create duplicates. Note that we use a slightly different date here
 			sOrigFile = CreateInputFile(GetLift3Strings("2011-03-01T22:30:00Z"));
 			logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 4);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			File.Delete(sOrigFile);
 
@@ -1042,8 +1018,7 @@ namespace LexTextControlsTests
 
 		}
 
-		static private readonly string[] s_LiftData4 = new[]
-		{
+		private static readonly string[] s_LiftData4 = {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
@@ -1092,10 +1067,9 @@ namespace LexTextControlsTests
 			// ReSharper disable InconsistentNaming
 			const string LINE_SEPARATOR = "\u2028";
 			var s_newLine = Environment.NewLine;
-			var ccharsNL = s_newLine.Length;
 			const string s_cr = "\r";
 			const string s_lf = "\n";
-// ReSharper restore InconsistentNaming
+			// ReSharper restore InconsistentNaming
 
 			SetWritingSystems("es");
 
@@ -1113,19 +1087,19 @@ namespace LexTextControlsTests
 			var sOrigFile = CreateInputFile(s_LiftData4);
 			var logFile = TryImport(sOrigFile, 1);
 			File.Delete(sOrigFile);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
 
-			Assert.That(messageCapture.Messages[0], Is.StringContaining("nonsence_object_ID"), "inability to link up bad ref should be reported in message box");
+			Assert.That(messageCapture.Messages[0], Does.Contain("nonsence_object_ID"), "inability to link up bad ref should be reported in message box");
 
 			ILexEntry entry;
 			Assert.IsTrue(repoEntry.TryGetObject(new Guid("ecfbe958-36a1-4b82-bb69-ca5210355400"), out entry));
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			Assert.AreEqual(entry.SensesOS[0].Guid, new Guid("f63f1ccf-3d50-417e-8024-035d999d48bc"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("root", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("hombre", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
 			var actualDefn = entry.SensesOS[0].Definition.AnalysisDefaultWritingSystem.Text;
@@ -1133,12 +1107,11 @@ namespace LexTextControlsTests
 			var doc = new XmlDocument();
 			doc.LoadXml(expectedXmlDefn);
 			var expectedDefn = doc.SelectSingleNode("form/text");
-			Assert.IsNotNull(expectedDefn);
+			Assert.That(expectedDefn, Is.Not.Null);
 			Assert.AreEqual(expectedDefn.InnerText, actualDefn, "Mismatched definition.");
 		}
 
-		static private readonly string[] s_LiftData5 = new[]
-		{
+		private static readonly string[] s_LiftData5 = {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
@@ -1277,7 +1250,7 @@ namespace LexTextControlsTests
 
 			var logFile = TryImport(sOrigFile, 2);
 			File.Delete(sOrigFile);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(2, repoEntry.Count);
 			Assert.AreEqual(2, repoSense.Count);
@@ -1298,16 +1271,14 @@ namespace LexTextControlsTests
 			VerifyCustomField(sense0, customData, m_customFieldSenseIds["CustomFldSense"]);
 
 			//===================================================================================
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("Babababa", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Noun",
-							(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
+			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			var pos = ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA;
+			Assert.That(pos, Is.Not.Null);
+			Assert.AreEqual("Noun", pos.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("Papi", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
 			m_customFieldEntryIds = GetCustomFlidsOfObject(entry);
 			customData = new CustomFieldData()
@@ -1389,8 +1360,7 @@ namespace LexTextControlsTests
 			VerifyCustomField(form, customData, m_customFieldAllomorphsIds["CustomFldAllomorphSingle"]);
 		}
 
-		private static readonly string[] s_LiftData6 = new[]
-		{
+		private static readonly string[] s_LiftData6 = {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
@@ -1509,7 +1479,7 @@ namespace LexTextControlsTests
 
 			var logFile = TryImport(sOrigFile, 1);
 			File.Delete(sOrigFile);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
@@ -1521,16 +1491,14 @@ namespace LexTextControlsTests
 			Assert.AreEqual(sense0.Guid, new Guid("9d6c600b-192a-4eec-980b-a605173ba5e3"));
 
 			//===================================================================================
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("Baba", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("NounPerson",
-							(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
+			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			var pos = ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA;
+			Assert.That(pos, Is.Not.Null);
+			Assert.AreEqual("NounPerson", pos.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("Pops", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
 
 			//===================================================================================
@@ -1612,7 +1580,7 @@ namespace LexTextControlsTests
 			var customFieldIds2 = new Dictionary<String, int>();
 			var customFieldIds = new List<int>();
 			var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
-			Assert.IsNotNull(mdc);
+			Assert.That(mdc, Is.Not.Null);
 			foreach (var flid in mdc.GetFields(obj.ClassID, true, (int)CellarPropertyTypeFilter.All))
 			{
 				var fieldName = mdc.GetFieldName(flid);
@@ -1631,22 +1599,22 @@ namespace LexTextControlsTests
 			if(obj is ILexEntry)
 			{
 				var entry = (ILexEntry)obj;
-				Assert.That(entry.LiftResidue, Is.Not.StringContaining(fieldData.CustomFieldname));
+				Assert.That(entry.LiftResidue, Does.Not.Contain(fieldData.CustomFieldname));
 			}
 			if(obj is ILexSense)
 			{
 				var sense = (ILexSense)obj;
-				Assert.That(sense.LiftResidue, Is.Not.StringContaining(fieldData.CustomFieldname));
+				Assert.That(sense.LiftResidue, Does.Not.Contain(fieldData.CustomFieldname));
 			}
 			if(obj is ILexExampleSentence)
 			{
 				var example = (ILexExampleSentence)obj;
-				Assert.That(example.LiftResidue, Is.Not.StringContaining(fieldData.CustomFieldname));
+				Assert.That(example.LiftResidue, Does.Not.Contain(fieldData.CustomFieldname));
 			}
 			var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
-			Assert.IsNotNull(mdc);
+			Assert.That(mdc, Is.Not.Null);
 			var sda = Cache.DomainDataByFlid as ISilDataAccessManaged;
-			Assert.IsNotNull(sda);
+			Assert.That(sda, Is.Not.Null);
 
 			var fieldName = mdc.GetFieldName(flid);
 			Assert.AreEqual(fieldData.CustomFieldname, fieldName);
@@ -1665,7 +1633,7 @@ namespace LexTextControlsTests
 					//    "<form lang=\"en\"><text>Allomorph multi English</text></form>",
 					//</field>
 					var tssMultiString = Cache.DomainDataByFlid.get_MultiStringProp(obj.Hvo, flid);
-					Assert.IsNotNull(tssMultiString);
+					Assert.That(tssMultiString, Is.Not.Null);
 					//Assert.IsTrue(tssMultiString.StringCount >0);
 
 						for (var i = 0; i < tssMultiString.StringCount; ++i)
@@ -1737,7 +1705,7 @@ namespace LexTextControlsTests
 			//"<trait name=\"CustomFldEntry GenDate\" value=\"201105232\"/>",
 			//   '-'(BC and ''AD) 2011 05(May) 11(Day) 2(GenDate.PrecisionType (Before, Exact, Approximate, After)
 			var sValue = fieldData.GenDateLiftFormat;
-			Assert.IsNotNull(sValue);
+			Assert.That(sValue, Is.Not.Null);
 			var liftGenDate = LiftExporter.GetGenDateFromInt(Convert.ToInt32(sValue));
 			Assert.AreEqual(liftGenDate.Precision, genDate.Precision);
 			Assert.AreEqual(liftGenDate.IsAD, genDate.IsAD);
@@ -1746,8 +1714,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(liftGenDate.Day, genDate.Day);
 		}
 
-		private static readonly string[] s_LiftRangeData7 = new[]
-		{
+		private static readonly string[] s_LiftRangeData7 = {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->",
 			"<lift-ranges>",
@@ -1907,8 +1874,7 @@ namespace LexTextControlsTests
 			"</lift-ranges>"
 		};
 
-		private static readonly string[] s_LiftData7 = new[]
-		{
+		private static readonly string[] s_LiftData7 = {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
@@ -1994,7 +1960,7 @@ namespace LexTextControlsTests
 			var logFile = TryImportWithRanges(sOrigFile, sOrigRangesFile, 1);
 			File.Delete(sOrigFile);
 			File.Delete(sOrigRangesFile);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
@@ -2006,16 +1972,14 @@ namespace LexTextControlsTests
 			Assert.AreEqual(sense0.Guid, new Guid("5741255b-0563-49e0-8839-98bdb8c73f48"));
 
 			//===================================================================================
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("Baba", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("NounFamily",
-							(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
+			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			var pos = ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA;
+			Assert.That(pos, Is.Not.Null);
+			Assert.AreEqual("NounFamily", pos.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("Papi", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
 
 			// Verify example was imported
@@ -2302,12 +2266,12 @@ namespace LexTextControlsTests
 			//ranges file
 			var semanticDomainsList = Cache.LanguageProject.SemanticDomainListOA;
 			var item = semanticDomainsList.FindOrCreatePossibility("Universe, creation", Cache.DefaultAnalWs);
-			Assert.IsNotNull(item);
+			Assert.That(item, Is.Not.Null);
 			Assert.AreEqual("63403699-07c1-43f3-a47c-069d6e4316e5", item.Guid.ToString());
 
 			item = semanticDomainsList.FindOrCreatePossibility("Universe, creation" + StringUtils.kszObject + "Sky",
 				Cache.DefaultAnalWs);
-			Assert.IsNotNull(item);
+			Assert.That(item, Is.Not.Null);
 			Assert.AreEqual("999581c4-1611-4acb-ae1b-5e6c1dfe6f0c", item.Guid.ToString());
 
 			//FLEX does not allow users to add new morph-types.  However LIFT import will add new morph-types if
@@ -2315,7 +2279,7 @@ namespace LexTextControlsTests
 			//Here we test that standard morph-types were not changed but a new was was added.
 			var morphTylesList = Cache.LanguageProject.LexDbOA.MorphTypesOA;
 			var morphType = morphTylesList.FindOrCreatePossibility("klingongtype", Cache.DefaultAnalWs);
-			Assert.IsNotNull(morphType);
+			Assert.That(morphType, Is.Not.Null);
 			Assert.AreEqual("49343092-A48B-4c73-92B5-7603DF372D8B".ToLowerInvariant(), morphType.Guid.ToString().ToLowerInvariant());
 			Assert.AreEqual("Does this thing kling or clingy thingy.", morphType.Description.BestAnalysisVernacularAlternative.Text);
 			Assert.AreEqual("spok", morphType.Abbreviation.BestAnalysisVernacularAlternative.Text);
@@ -2473,8 +2437,7 @@ namespace LexTextControlsTests
 			return XmlUtils.MakeSafeXmlAttribute(tss.Text);
 		}
 
-		private static readonly string[] s_LiftDataLocations = new[]
-		{
+		private static readonly string[] s_LiftDataLocations = {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
@@ -2534,8 +2497,7 @@ namespace LexTextControlsTests
 			"</lift>"
 		};
 
-		private static readonly string[] s_LiftRangeDataLocations = new[]
-		{
+		private static readonly string[] s_LiftRangeDataLocations = {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 				"<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->",
 				"<lift-ranges>",
@@ -2608,7 +2570,7 @@ namespace LexTextControlsTests
 			var logFile = TryImportWithRanges(sOrigFile, sOrigRangesFile, 1);
 			File.Delete(sOrigFile);
 			File.Delete(sOrigRangesFile);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
@@ -2637,8 +2599,7 @@ namespace LexTextControlsTests
 			Assert.That(location, Is.EqualTo(village));
 		}
 
-		private static readonly string[] s_LiftData8 = new[]
-		{
+		private static readonly string[] s_LiftData8 = {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
 			"<lift producer=\"SIL.FLEx 7.1.0.40722\" version=\"0.13\">",
 			"  <header>",
@@ -2706,7 +2667,7 @@ namespace LexTextControlsTests
 
 			var logFile = TryImport(sOrigFile, 2);
 			File.Delete(sOrigFile);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 
 			var flidCustom = Cache.MetaDataCacheAccessor.GetFieldId("LexEntry", "Long Text", false);
@@ -2730,10 +2691,10 @@ namespace LexTextControlsTests
 			var hvo = Cache.DomainDataByFlid.get_ObjectProp(entry2.Hvo, flidCustom);
 			Assert.AreNotEqual(0, hvo, "The second entry has a value in the \"Long Text\" custom field.");
 			var text = Cache.ServiceLocator.ObjectRepository.GetObject(hvo) as IStText;
-			Assert.IsNotNull(text);
+			Assert.That(text, Is.Not.Null);
 			Assert.AreEqual(3, text.ParagraphsOS.Count, "The first Long Text field should have three paragraphs.");
 
-			Assert.IsNull(text.ParagraphsOS[0].StyleName);
+			Assert.That(text.ParagraphsOS[0].StyleName, Is.Null);
 			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsEn);
@@ -2742,11 +2703,11 @@ namespace LexTextControlsTests
 			tisb.Clear();
 			tisb.ClearProps();
 			var para = text.ParagraphsOS[0] as IStTxtPara;
-			Assert.IsNotNull(para);
+			Assert.That(para, Is.Not.Null);
 			Assert.AreEqual(tss.Text, para.Contents.Text);
 			Assert.IsTrue(tss.Equals(para.Contents), "The first paragraph (second entry) contents should have all its formatting.");
 
-			Assert.IsNull(text.ParagraphsOS[1].StyleName);
+			Assert.That(text.ParagraphsOS[1].StyleName, Is.Null);
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsEn);
 			tisb.Append("This test paragraph has ");
 			tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Strong");
@@ -2761,7 +2722,7 @@ namespace LexTextControlsTests
 			tisb.Clear();
 			tisb.ClearProps();
 			para = text.ParagraphsOS[1] as IStTxtPara;
-			Assert.IsNotNull(para);
+			Assert.That(para, Is.Not.Null);
 			Assert.AreEqual(tss.Text, para.Contents.Text);
 			Assert.IsTrue(tss.Equals(para.Contents), "The second paragraph (second entry) contents should have all its formatting.");
 
@@ -2772,7 +2733,7 @@ namespace LexTextControlsTests
 			tisb.Clear();
 			tisb.ClearProps();
 			para = text.ParagraphsOS[2] as IStTxtPara;
-			Assert.IsNotNull(para);
+			Assert.That(para, Is.Not.Null);
 			Assert.AreEqual(tss.Text, para.Contents.Text);
 			Assert.IsTrue(tss.Equals(para.Contents), "The third paragraph (second entry) contents should have all its formatting.");
 		}
@@ -2872,9 +2833,9 @@ namespace LexTextControlsTests
 			var hvo = Cache.DomainDataByFlid.get_ObjectProp(entry1.Hvo, flidCustom);
 			Assert.AreNotEqual(0, hvo, "The first entry has a value in the \"Long Text\" custom field.");
 			var text = Cache.ServiceLocator.ObjectRepository.GetObject(hvo) as IStText;
-			Assert.IsNotNull(text);
+			Assert.That(text, Is.Not.Null);
 			var para = text.ParagraphsOS[3] as IStTxtPara;
-			Assert.IsNotNull(para);
+			Assert.That(para, Is.Not.Null);
 			Assert.AreEqual("Numbered List", para.StyleName);
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var tss = TsStringUtils.MakeString("This is the fourth paragraph.", wsEn);
@@ -2910,8 +2871,7 @@ namespace LexTextControlsTests
 			VerifyFirstEntryStTextDataImportExact(repoEntry, 3, flidCustom);
 		}
 
-		static private readonly string[] s_LiftData9 = new[]
-		{
+		private static readonly string[] s_LiftData9 = {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.2.4.41019\" version=\"0.13\">",
 			"<header>",
@@ -2979,7 +2939,7 @@ namespace LexTextControlsTests
 			var hvo = Cache.DomainDataByFlid.get_ObjectProp(entry1.Hvo, flidCustom);
 			Assert.AreNotEqual(0, hvo, "The first entry has a value in the \"Long Text\" custom field.");
 			var text = Cache.ServiceLocator.ObjectRepository.GetObject(hvo) as IStText;
-			Assert.IsNotNull(text);
+			Assert.That(text, Is.Not.Null);
 			Assert.AreEqual(cpara, text.ParagraphsOS.Count,
 				String.Format("The first Long Text field should have {0} paragraphs.", cpara));
 			Assert.AreEqual("Bulleted List", text.ParagraphsOS[0].StyleName);
@@ -2995,7 +2955,7 @@ namespace LexTextControlsTests
 			tisb.Clear();
 			tisb.ClearProps();
 			var para = text.ParagraphsOS[0] as IStTxtPara;
-			Assert.IsNotNull(para);
+			Assert.That(para, Is.Not.Null);
 			Assert.AreEqual(tss.Text, para.Contents.Text);
 			Assert.IsTrue(tss.Equals(para.Contents), "The first paragraph contents should have all its formatting.");
 
@@ -3006,7 +2966,7 @@ namespace LexTextControlsTests
 			tisb.Clear();
 			tisb.ClearProps();
 			para = text.ParagraphsOS[1] as IStTxtPara;
-			Assert.IsNotNull(para);
+			Assert.That(para, Is.Not.Null);
 			Assert.AreEqual(tss.Text, para.Contents.Text);
 			Assert.IsTrue(tss.Equals(para.Contents), "The second paragraph contents should have all its formatting.");
 
@@ -3025,7 +2985,7 @@ namespace LexTextControlsTests
 			tisb.Clear();
 			tisb.ClearProps();
 			para = text.ParagraphsOS[2] as IStTxtPara;
-			Assert.IsNotNull(para);
+			Assert.That(para, Is.Not.Null);
 			Assert.AreEqual(tss.Text, para.Contents.Text);
 			Assert.IsTrue(tss.Equals(para.Contents), "The third paragraph contents should have all its formatting.");
 		}
@@ -3046,7 +3006,7 @@ namespace LexTextControlsTests
 			sense0.MorphoSyntaxAnalysisRA = msa;
 
 			var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
-			Assert.IsNotNull(mdc);
+			Assert.That(mdc, Is.Not.Null);
 			var flidCustom = mdc.AddCustomField("LexEntry", "Long Text", CellarPropertyType.OwningAtomic, StTextTags.kClassId);
 			var hvoText = Cache.DomainDataByFlid.MakeNewObject(StTextTags.kClassId, entry0.Hvo, flidCustom, -2);
 			var text = Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(hvoText);
@@ -3167,14 +3127,16 @@ namespace LexTextControlsTests
 			{
 				if (i == 0)
 				{
-					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+					attr = form.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
 					Assert.IsTrue(attr.Value.Equals("en"));
 					text = form.XPathSelectElement("text");
 					Assert.IsTrue(text.Value.Equals("anatomy"));
 				}
 				if (i == 1)
 				{
-					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+					attr = form.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
 					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
 					text = form.XPathSelectElement("text");
 					Assert.IsTrue(text.Value.Equals("Kalaba anatomy"));
@@ -3188,14 +3150,16 @@ namespace LexTextControlsTests
 			{
 				if (i == 0)
 				{
-					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+					attr = form.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
 					Assert.IsTrue(attr.Value.Equals("en"));
 					text = form.XPathSelectElement("text");
 					Assert.IsTrue(text.Value.Equals("Anat"));
 				}
 				if (i == 1)
 				{
-					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+					attr = form.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
 					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
 					text = form.XPathSelectElement("text");
 					Assert.IsTrue(text.Value.Equals("Kalaba Anat"));
@@ -3208,7 +3172,8 @@ namespace LexTextControlsTests
 			{
 				if (i == 0)
 				{
-					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+					attr = form.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
 					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
 					text = form.XPathSelectElement("text");
 					Assert.IsTrue(text.Value.Equals("Kalaba anatomy definition"));
@@ -3230,7 +3195,8 @@ namespace LexTextControlsTests
 		{
 			var entry = data.XPathSelectElement("//*[name()='entry' and @guid='a9628929-4561-4afc-b097-88c9bb6df5e9']");
 			var lexUnitForm = entry.XPathSelectElement("lexical-unit/form");
-			var attr = lexUnitForm.Attribute("lang"); Assert.IsNotNull(attr); //lang
+			var attr = lexUnitForm.Attribute("lang");
+			Assert.That(attr, Is.Not.Null); //lang
 			Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
 
 			var definition = entry.XPathSelectElement("sense/definition");
@@ -3241,23 +3207,26 @@ namespace LexTextControlsTests
 			{
 				if (i == 0)
 				{
-					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+					attr = form.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
 					Assert.IsTrue(attr.Value.Equals("en"));
 					span = form.XPathSelectElement("text/span");
-					attr = span.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
+					attr = span.Attribute("lang");
+					Assert.That(attr, Is.Not.Null); //qaa-x-kal
 					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
 				}
 				else if (i == 1)
 				{
-					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
+					attr = form.Attribute("lang"); Assert.That(attr, Is.Not.Null); //qaa-x-kal
 					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
 					span = form.XPathSelectElement("text/span");
-					attr = span.Attribute("lang"); Assert.IsNotNull(attr); //en
+					attr = span.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
 					Assert.IsTrue(attr.Value.Equals("en"));
 				}
 				else if (i == 2)
 				{
-					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //es
+					attr = form.Attribute("lang"); Assert.That(attr, Is.Not.Null); //es
 					Assert.IsTrue(attr.Value.Equals("es"));
 				}
 				i++;
@@ -3277,12 +3246,12 @@ namespace LexTextControlsTests
 				if (i == 0)
 				{
 					attr = form.Attribute("lang");
-					Assert.IsNotNull(attr); //en
+					Assert.That(attr, Is.Not.Null); //en
 					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
 				}
 				if (i == 1)
 				{
-					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
+					attr = form.Attribute("lang"); Assert.That(attr, Is.Not.Null); //qaa-x-kal
 					Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal"));
 				}
 				i++;
@@ -3295,30 +3264,31 @@ namespace LexTextControlsTests
 			{
 				if (i == 0)
 				{
-					attr = gloss.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
+					attr = gloss.Attribute("lang"); Assert.That(attr, Is.Not.Null); //qaa-x-kal
 					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
-					glossText = gloss.XPathSelectElement("text");Assert.IsNotNull(glossText);
+					glossText = gloss.XPathSelectElement("text");Assert.That(glossText, Is.Not.Null);
 					Assert.IsTrue(glossText.Value.Equals("KalabaGloss"));
 				}
 				if (i == 1)
 				{
-					attr = gloss.Attribute("lang"); Assert.IsNotNull(attr);
+					attr = gloss.Attribute("lang"); Assert.That(attr, Is.Not.Null);
 					Assert.IsTrue(attr.Value.Equals("en"));
-					glossText = gloss.XPathSelectElement("text"); Assert.IsNotNull(glossText);
+					glossText = gloss.XPathSelectElement("text"); Assert.That(glossText, Is.Not.Null);
 					Assert.IsTrue(glossText.Value.Equals("EnglishGLoss"));
 				}
 				if (i == 2)
 				{
-					attr = gloss.Attribute("lang"); Assert.IsNotNull(attr);
+					attr = gloss.Attribute("lang"); Assert.That(attr, Is.Not.Null);
 					Assert.IsTrue(attr.Value.Equals("es"));
-					glossText = gloss.XPathSelectElement("text"); Assert.IsNotNull(glossText);
+					glossText = gloss.XPathSelectElement("text"); Assert.That(glossText, Is.Not.Null);
 					Assert.IsTrue(glossText.Value.Equals("SpanishGloss"));
 				}
 				i++;
 			}
 
 			var definitionForm = entry.XPathSelectElement("sense/definition/form");
-			attr = definitionForm.Attribute("lang"); Assert.IsNotNull(attr); //en
+			attr = definitionForm.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
 			Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
 			var definitionText = entry.XPathSelectElement("sense/definition/form/text");
 			i = 0;
@@ -3326,37 +3296,43 @@ namespace LexTextControlsTests
 			{
 				if (i == 0)
 				{
-					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+					attr = spanInDefn.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
 					Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal"));
 					Assert.IsTrue(spanInDefn.Value.Equals("KalabaIPAspan"));
 				}
 				else if (i == 1)
 				{
-					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+					attr = spanInDefn.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
 					Assert.IsTrue(attr.Value.Equals("en"));
 					Assert.IsTrue(spanInDefn.Value.Equals("EnglishSpan"));
 				}
 				else if (i == 2)
 				{
-					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+					attr = spanInDefn.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
 					Assert.IsTrue(attr.Value.Equals("es"));
 					Assert.IsTrue(spanInDefn.Value.Equals("SpanishSpan"));
 				}
 				else if (i == 3)
 				{
-					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+					attr = spanInDefn.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
 					Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal-emic"));
 					Assert.IsTrue(spanInDefn.Value.Equals("KalabaPhonemic"));
 				}
 				else if (i == 4)
 				{
-					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+					attr = spanInDefn.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
 					Assert.IsTrue(attr.Value.Equals("qaa-x-Lomwe"));
 					Assert.IsTrue(spanInDefn.Value.Equals("Lomwe Span"));
 				}
 				else if (i == 5)
 				{
-					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+					attr = spanInDefn.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
 					Assert.IsTrue(attr.Value.Equals("qaa-x-AveryLon"));
 					Assert.IsTrue(spanInDefn.Value.Equals("AveryLongWSName span"));
 				}
@@ -3372,17 +3348,16 @@ namespace LexTextControlsTests
 
 			var language = data.XPathSelectElement("//*[name()='language']");
 			var attr = language.Attribute("type");
-			Assert.IsNotNull(attr, "The ldml file for Kalaba should have a language element with at type");
+			Assert.That(attr, Is.Not.Null, "The ldml file for Kalaba should have a language element with at type");
 			Assert.IsTrue(attr.Value.Equals("qaa"), "Language type attribute should be 'qaa'.");
 
 			var variant = data.XPathSelectElement("//*[name()='variant']");
 			attr = variant.Attribute("type");
-			Assert.IsNotNull(attr, "The ldml file for Kalaba should have a language element with at type");
+			Assert.That(attr, Is.Not.Null, "The ldml file for Kalaba should have a language element with at type");
 			Assert.IsTrue(attr.Value.Equals("x-kal"), "Variante type attribute should be 'x-kal'.");
 		}
 
-		private static readonly string[] s_PublicationLiftRangeData = new[]
-		{
+		private static readonly string[] s_PublicationLiftRangeData = {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->",
 			"<lift-ranges>",
@@ -3424,8 +3399,7 @@ namespace LexTextControlsTests
 			"</lift-ranges>"
 		};
 
-		static private readonly string[] s_PublicationTestData = new[]
-		{
+		private static readonly string[] s_PublicationTestData = {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
 			"<header>",
@@ -3491,7 +3465,7 @@ namespace LexTextControlsTests
 			File.Delete(sOrigRangesFile);
 
 			// Verification
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
@@ -3504,8 +3478,8 @@ namespace LexTextControlsTests
 			Assert.AreEqual(1, sense0.ExamplesOS.Count);
 			var example0 = sense0.ExamplesOS[0];
 
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("baba", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
 
@@ -3530,7 +3504,7 @@ namespace LexTextControlsTests
 										  select pub.Name.AnalysisDefaultWritingSystem.Text).ToList();
 			Assert.IsTrue(examplePublications.Contains("Main Dictionary"));
 			Assert.IsTrue(examplePublications.Contains("Pocket"));
-			Assert.That(example0.LiftResidue, Is.Not.StringContaining("do-not-publish-in"));
+			Assert.That(example0.LiftResidue, Does.Not.Contain("do-not-publish-in"));
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -3591,7 +3565,7 @@ namespace LexTextControlsTests
 			File.Delete(sOrigRangesFile);
 
 			// Verification
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 
 			var customList = Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(customListGuid)) as ICmPossibilityList;
@@ -3601,8 +3575,7 @@ namespace LexTextControlsTests
 			Assert.IsTrue(customListItem is ICmCustomItem);
 		}
 
-		static private readonly string[] s_BadMorphTypeTestData = new[]
-		{
+		private static readonly string[] s_BadMorphTypeTestData = {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
 			"<header>",
@@ -3671,18 +3644,17 @@ namespace LexTextControlsTests
 			File.Delete(sOrigFile);
 
 			// Verification
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
 
 			Assert.That(entry.AlternateFormsOS, Has.Count.EqualTo(1), "should still have exactly one allomorph");
 			Assert.That(entry.AlternateFormsOS.First(), Is.InstanceOf(typeof(IMoStemAllomorph)), "affix should be changed to stem");
-			Assert.That(entry.AlternateFormsOS.First().LiftResidue, Is.StringContaining("look for this"));
+			Assert.That(entry.AlternateFormsOS.First().LiftResidue, Does.Contain("look for this"));
 		}
 
-		static private readonly string[] s_LiftPronunciations = new[]
-		{
+		private static readonly string[] s_LiftPronunciations = {
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 8.0.3.41457\" version=\"0.13\">",
 			"<header>",
@@ -3713,8 +3685,7 @@ namespace LexTextControlsTests
 			"</lift>"
 		};
 
-		private string[] _minimalLiftData  = new[]
-			{
+		private string[] _minimalLiftData  = {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 				"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
 				"<header>",
@@ -3800,7 +3771,7 @@ namespace LexTextControlsTests
 			Assert.AreEqual(1, sense.ExamplesOS.Count);
 			var example = sense.ExamplesOS[0];
 			// Important assertion
-			Assert.That(example.LiftResidue, Is.StringContaining("totallyunknowntrait"));
+			Assert.That(example.LiftResidue, Does.Contain("totallyunknowntrait"));
 		}
 
 		[Test]
@@ -4137,10 +4108,10 @@ namespace LexTextControlsTests
 			Assert.That(lrt.Abbreviation.get_String(de).Text, Is.EqualTo("AntG"));
 
 			var log = File.ReadAllText(logFile, Encoding.UTF8);
-			Assert.That(log, Is.StringContaining("AntonymRubbish"));
-			Assert.That(log, Is.StringContaining("had a conflicting value"));
-			Assert.That(log, Is.StringContaining("Description"));
-			Assert.That(log, Is.Not.StringContaining("OppositeG"), "should not report conflict when values are equal");
+			Assert.That(log, Does.Contain("AntonymRubbish"));
+			Assert.That(log, Does.Contain("had a conflicting value"));
+			Assert.That(log, Does.Contain("Description"));
+			Assert.That(log, Does.Not.Contain("OppositeG"), "should not report conflict when values are equal");
 		}
 	}
 

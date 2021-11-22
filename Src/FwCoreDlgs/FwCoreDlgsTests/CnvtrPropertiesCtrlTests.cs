@@ -182,7 +182,7 @@ namespace AddConverterDlgTests
 		/// <see cref="CnvtrPropertiesCtrl"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			var encConverters = new EncConverters();
@@ -245,7 +245,7 @@ namespace AddConverterDlgTests
 		/// <summary>
 		/// Clean up after running all the tests.
 		/// </summary>
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureTeardown()
 		{
 			EncConverters encConverters;

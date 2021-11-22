@@ -1053,7 +1053,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		/// <summary>
 		/// Test with an export of TranslatedLists from FieldWorks (you must add a second analysis language to enable this option)
 		/// </summary>
-		[Ignore]
+		[Ignore("Facilitates human inspection of output files")]
 		[Category("ByHand")]
 		[Test]
 		public void IntegrationTest()

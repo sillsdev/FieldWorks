@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.Discourse
 		static void AssertAttr(XmlNode node, string attname, string attval)
 		{
 			var attr = node.Attributes[attname];
-			Assert.IsNotNull(attr, "Expected node " + node.Name + " to have attribute " + attname);
+			Assert.That(attr, Is.Not.Null, "Expected node " + node.Name + " to have attribute " + attname);
 			if (attval != null)
 				Assert.AreEqual(attval, attr.Value, "Expected attr " + attname + " of " + node.Name + " to have value " + attval);
 		}

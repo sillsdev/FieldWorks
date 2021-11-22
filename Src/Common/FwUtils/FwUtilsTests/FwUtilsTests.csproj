@@ -167,7 +167,7 @@
     </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
-      <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\packages\NUnit.3.13.2\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -223,7 +223,6 @@
     <Compile Include="TestFwStylesheetTests.cs" />
     <Compile Include="WavConverterTests.cs" />
     <Compile Include="XmlHelper.cs" />
-    <None Include="App.config" />
     <Compile Include="FwDirectoryFinderTests.cs" />
     <Compile Include="DummyFwRegistryHelper.cs" />
     <Compile Include="FwLinkArgsTests.cs" />

@@ -752,9 +752,9 @@ namespace SIL.FieldWorks.Discourse
 			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
 			Cache.ActionHandlerAccessor.Undo();
 			VerifyRow(0, "1a", 1);
-			Assert.IsNotNull(row0.CellsOS, "Should be a CellPart here.");
+			Assert.That(row0.CellsOS, Is.Not.Null, "Should be a CellPart here.");
 			var cellPartUndo = row0.CellsOS[0] as IConstChartWordGroup;
-			Assert.IsNotNull(cellPartUndo);
+			Assert.That(cellPartUndo, Is.Not.Null);
 			Assert.AreEqual(allParaOccurrences[0].Analysis.Hvo, cellPartUndo.GetOccurrences()[0].Analysis.Hvo);
 
 			// And now Redo

@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.XWorks
 		private const int DoubleSpace = 2 * 10000;	// Relative line heights are in multiples of 10000.
 		private const float CssDoubleSpace = 2.0F;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		protected void Init()
 		{
 			FwRegistrySettings.Init();
@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.XWorks
 			m_owningTable = new StyleInfoTable("AbbySomebody", Cache.ServiceLocator.WritingSystemManager);
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			ConfiguredLcmGenerator.Init();
@@ -453,8 +453,8 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 				Assert.That(cssResult, Contains.Substring(".lexentry> .senses:after"));
-				Assert.That(cssResult, Is.Not.StringContaining(".lexentry> .senses .sense:after"));
-				Assert.That(cssResult, Is.Not.StringContaining(".lexentry> .senses .sense:last-child:after"));
+				Assert.That(cssResult, Does.Not.Contain(".lexentry> .senses .sense:after"));
+				Assert.That(cssResult, Does.Not.Contain(".lexentry> .senses .sense:last-child:after"));
 			}
 		}
 
@@ -830,7 +830,7 @@ namespace SIL.FieldWorks.XWorks
 			// Indent values are converted into pt values on export
 			var firstSenseChildCss = grandChildDeclaration[0].ToString();
 			var allOtherSenseChildrenCss = grandChildDeclaration[1].ToString();
-			Assert.That(firstSenseChildCss, Is.Not.StringMatching(allOtherSenseChildrenCss));
+			Assert.That(firstSenseChildCss, Is.Not.EqualTo(allOtherSenseChildrenCss));
 			var firstSenseIndent = parentHangingIndent - grandChildHangingIndent;
 			var otherSenseIndent = childHangingIndent - grandChildHangingIndent;
 			Assert.That(firstSenseChildCss, Contains.Substring("margin-left:" + firstSenseIndent / 1000 + "pt"));
@@ -933,7 +933,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var childDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(childStyle.Name, CssGenerator.DefaultStyle, headword, m_propertyTable);
-			Assert.That(childDeclaration.ToString(), Is.Not.StringContaining("margin-left"));
+			Assert.That(childDeclaration.ToString(), Does.Not.Contain("margin-left"));
 		}
 
 		[Test]
@@ -1191,7 +1191,7 @@ namespace SIL.FieldWorks.XWorks
 			entry.CitationForm.set_String(wsFr, TsStringUtils.MakeString("homme", wsFr));
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.That(cssResult, Is.Not.StringContaining(".lexentry"));
+			Assert.That(cssResult, Does.Not.Contain(".lexentry"));
 			Assert.That(cssResult, Contains.Substring(".bolo"));
 
 			var xhtmResult = new StringBuilder();
@@ -1237,7 +1237,7 @@ namespace SIL.FieldWorks.XWorks
 			entry.CitationForm.set_String(wsFr, TsStringUtils.MakeString("HeadWordTest", wsFr));
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.That(cssResult, Is.Not.StringContaining(".headword"));
+			Assert.That(cssResult, Does.Not.Contain(".headword"));
 			Assert.That(cssResult, Contains.Substring(".tailwind"));
 
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, testParentNode, null, DefaultSettings);
@@ -2530,7 +2530,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var classAttribute = CssGenerator.GetClassAttributeForConfig(form);
-			Assert.That(classAttribute, Is.StringMatching("owningentry_headword"));
+			Assert.That(classAttribute, Does.Match("owningentry_headword"));
 		}
 
 		/// <summary>
@@ -2544,7 +2544,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var classAttribute = CssGenerator.GetClassAttributeForConfig(form);
 			// Should be headword and should definitely not have owningentry present.
-			Assert.That(classAttribute, Is.StringMatching("headword"));
+			Assert.That(classAttribute, Does.Match("headword"));
 		}
 
 		/// <summary>
@@ -2560,7 +2560,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var classAttribute = CssGenerator.GetClassAttributeForConfig(entry);
-			Assert.That(classAttribute, Is.StringMatching("lexentry"));
+			Assert.That(classAttribute, Does.Match("lexentry"));
 		}
 
 		/// <summary>
@@ -2579,7 +2579,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var classAttribute = CssGenerator.GetClassAttributeForConfig(entry);
-			Assert.That(classAttribute, Is.StringMatching("originalfield_dup"));
+			Assert.That(classAttribute, Does.Match("originalfield_dup"));
 		}
 
 		/// <summary>
@@ -2599,7 +2599,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var classAttribute = CssGenerator.GetClassAttributeForConfig(entry);
-			Assert.That(classAttribute, Is.StringMatching("override_dup"));
+			Assert.That(classAttribute, Does.Match("override_dup"));
 		}
 
 		/// <summary>
@@ -3760,7 +3760,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			PopulateFieldsForTesting(model);
 			var result = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable); // SUT
-			Assert.IsNotNullOrEmpty(result);
+			Assert.That(result, Is.Not.Null.Or.Empty);
 			Assert.That(TsStringUtils.MakeString(result, 1).get_IsNormalizedForm(FwNormalizationMode.knmNFC));
 		}
 
@@ -4115,8 +4115,8 @@ namespace SIL.FieldWorks.XWorks
 					}
 				case (FwUnderlineType.kuntNone):
 					{
-						Assert.That(css, Is.Not.StringContaining("border-bottom:"), "underline should not have been applied");
-						Assert.That(css, Is.Not.StringContaining("text-decoration:underline"), "underline should not have been applied");
+						Assert.That(css, Does.Not.Contain("border-bottom:"), "underline should not have been applied");
+						Assert.That(css, Does.Not.Contain("text-decoration:underline"), "underline should not have been applied");
 						break;
 					}
 				case (FwUnderlineType.kuntStrikethrough):

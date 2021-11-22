@@ -232,7 +232,7 @@ namespace SIL.FieldWorks.Common.Framework
 		}
 
 		/// <summary/>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -240,7 +240,7 @@ namespace SIL.FieldWorks.Common.Framework
 		}
 
 		/// <summary/>
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			FwRegistryHelper.Manager.Reset();

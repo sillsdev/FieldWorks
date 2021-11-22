@@ -290,7 +290,7 @@ namespace SIL.FieldWorks.XWorks
 			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
 			Assert.IsFalse(item.IsNew, "Old item should not be marked as New.");
 			var configItem = GetKeyFromValue("Copy of " + stest1);
-			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
+			Assert.That(configItem, Is.Not.Null, "Didn't find an item with the right Name.");
 			Assert.IsTrue(configItem.IsNew, "New item should be marked as New.");
 			Assert.AreEqual(stest2, configItem.CopyOf,
 				"New item should be marked as a 'Copy of' old item.");
@@ -327,7 +327,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(cnt + 1, m_testPresenter.StubConfigDict.Count,
 				"Should have added a new item.");
 			var configItem = GetKeyFromValue("Copy of " + stest1);
-			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
+			Assert.That(configItem, Is.Not.Null, "Didn't find an item with the right Name.");
 
 			// SUT2
 			m_testPresenter.CopyConfigItem(configItem.UniqueCode);
@@ -462,7 +462,7 @@ namespace SIL.FieldWorks.XWorks
 				"Should have gained a copied item.");
 			DictConfigItem item;
 			var configItem = GetKeyFromValue(newName);
-			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
+			Assert.That(configItem, Is.Not.Null, "Didn't find an item with the right Name.");
 			Assert.IsTrue(configItem.IsNew, "New item should be marked as New.");
 			Assert.AreEqual(stest2, configItem.CopyOf,
 				"New item should be marked as a 'Copy of' old item.");
@@ -502,7 +502,7 @@ namespace SIL.FieldWorks.XWorks
 				"Should have gained a copied item.");
 			DictConfigItem item;
 			var configItem = GetKeyFromValue(newName);
-			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
+			Assert.That(configItem, Is.Not.Null, "Didn't find an item with the right Name.");
 			Assert.IsTrue(configItem.IsNew, "New item should be marked as New.");
 			Assert.AreEqual(stest2, configItem.CopyOf,
 				"New item should be marked as a 'Copy of' old item.");
@@ -544,7 +544,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(1, m_testPresenter.NewConfigurationViews.Count(),
 				"Wrong number of new items.");
 			var configItem = GetKeyFromValue("Copy of " + sname2);
-			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
+			Assert.That(configItem, Is.Not.Null, "Didn't find an item with the right Name.");
 			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.NewConfigurationViews.First().Item1,
 				"Wrong unique code reported for new item.");
 			Assert.AreEqual(sid2, m_testPresenter.NewConfigurationViews.First().Item2,
@@ -592,7 +592,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(1, m_testPresenter.NewConfigurationViews.Count(),
 				"Wrong number of new items.");
 			var configItem = GetKeyFromValue("Copy of " + sname2);
-			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
+			Assert.That(configItem, Is.Not.Null, "Didn't find an item with the right Name.");
 			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.NewConfigurationViews.First().Item1,
 				"Wrong unique code reported for new item.");
 			Assert.AreEqual(sid2, m_testPresenter.NewConfigurationViews.First().Item2,

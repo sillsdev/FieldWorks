@@ -29,7 +29,7 @@ namespace XAmpleManagedWrapperTests
 		public void TestInit()
 		{
 			using (var wrapper = InitHelper())
-				Assert.IsNotNull(wrapper);
+				Assert.That(wrapper, Is.Not.Null);
 		}
 
 		[Test]
@@ -39,7 +39,7 @@ namespace XAmpleManagedWrapperTests
 			{
 				LoadFilesHelper(xAmple);
 				string parsedWord = xAmple.ParseWord("Hello");
-				Assert.IsNotNull(parsedWord);
+				Assert.That(parsedWord, Is.Not.Null);
 				Assert.IsNotEmpty(parsedWord);
 			}
 		}
@@ -51,7 +51,7 @@ namespace XAmpleManagedWrapperTests
 			{
 				LoadFilesHelper(xAmple);
 				string tracedWord = xAmple.TraceWord("Hello", "Hello");
-				Assert.IsNotNull(tracedWord);
+				Assert.That(tracedWord, Is.Not.Null);
 				Assert.IsNotEmpty(tracedWord);
 			}
 		}

@@ -1,9 +1,10 @@
-// Copyright (c) 2002-2018 SIL International
+// Copyright (c) 2002-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -11,6 +12,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.Acknowledgements;
+using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
@@ -351,7 +353,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void HandleSystemMonitorLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			var program = "gnome-system-monitor";
-			using (var process = MiscUtils.RunProcess(program, null, null))
+			using (var process = new Process().RunProcess(program, null, null))
 			{
 				Thread.Sleep(300);
 				// If gnome-system-monitor is already open, HasExited will be true with ExitCode of 0

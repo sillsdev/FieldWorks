@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		private Mediator m_mediator;
 		private PropertyTable m_propertyTable;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application, Cache.ProjectId.Path);
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			RobustIO.DeleteDirectoryAndContents(Cache.ProjectId.Path);
