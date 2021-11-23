@@ -3560,7 +3560,6 @@ namespace SIL.FieldWorks.IText
 			ChooseAnalysisHandler handler = (ChooseAnalysisHandler)sender;
 			AnalysisTree chosenAnalysis = handler.GetAnalysisTree();
 			CurrentAnalysisTree = chosenAnalysis;
-			bool fLookForDefaults = true;
 			if (CurrentAnalysisTree.Analysis == null)
 			{
 				// 'Use default analysis'. This can normally be achieved by loading data
@@ -3570,14 +3569,9 @@ namespace SIL.FieldWorks.IText
 				// displayed.)
 				CurrentAnalysisTree.Analysis = m_wordformOriginal;
 			}
-			else
-			{
-				// If the user chose an analysis we do not want to fill content in with defaults, use what they picked
-				fLookForDefaults = false;
-			}
 
 			// REVIEW: do we need to worry about changing the previous and next words?
-			LoadRealDataIntoSec(fLookForDefaults, false, false);
+			LoadRealDataIntoSec(true, false, false);
 			OnUpdateEdited();
 			m_fShowAnalysisCombo = true; // we must want this icon, because we were previously showing it!
 			m_rootb.Reconstruct();
