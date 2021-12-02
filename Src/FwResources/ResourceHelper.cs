@@ -185,7 +185,6 @@ namespace SIL.FieldWorks.Resources
 
 		#endregion
 
-
 		internal static ResourceHelperImpl Helper
 		{
 			get

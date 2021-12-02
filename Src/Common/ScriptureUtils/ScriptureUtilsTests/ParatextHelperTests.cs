@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2017 SIL International
+// Copyright (c) 2011-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,7 +11,6 @@ using Paratext.LexicalClient;
 using SIL.FieldWorks.Test.ProjectUnpacker;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
@@ -420,7 +419,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			ParatextHelper.LoadProjectMappings(importSettings);
 
 			ScrMappingList mappingList = importSettings.GetMappingListForDomain(ImportDomain.Main);
-			Assert.NotNull(mappingList, "Setup Failure, no mapping list returned for the domain.");
+			Assert.That(mappingList, Is.Not.Null, "Setup Failure, no mapping list returned for the domain.");
 			// Test to see that the projects are set correctly
 			Assert.AreEqual(44, mappingList.Count);
 
