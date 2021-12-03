@@ -118,7 +118,8 @@ install-man-pages: fieldworks-flex.1.gz unicodechareditor.1.gz
 	install -m 644 *.1.gz $(DESTDIR)$(INSTALLATION_PREFIX)/share/man/man1
 
 install-tree: install-tree-fdo
-	if [ "$(FW_PACKAGE_DEBUG)" = "true" ]; then find "$(BUILD_ROOT)" "$(DESTDIR)" || true; fi
+	[[ "$(FW_PACKAGE_DEBUG)" != "true" || ! -d "$(BUILD_ROOT)" ]] || \
+	  find "$(BUILD_ROOT)"
 	# Create directories
 	install -d $(DESTDIR)$(INSTALLATION_PREFIX)/bin
 	install -d $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks
