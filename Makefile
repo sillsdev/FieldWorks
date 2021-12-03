@@ -144,6 +144,11 @@ install-tree: install-tree-fdo
 	# Handle the Converter files
 	mv $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/{Converter.exe,ConvertLib.dll,ConverterConsole.exe} $(DESTDIR)$(INSTALLATION_PREFIX)/share/fieldworks
 	# Remove unwanted items
+	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/*Tests.dll
+	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/*Tests.dll.config
+	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/FormsTester.dll
+	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/SIL.TestUtilities.dll
+	rm -rf $(DESTDIR)$(INSTALLATION_PREFIX)/share/fieldworks/Helps/.git
 	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/DevComponents.DotNetBar.dll
 	case $(ARCH) in i686) OTHERWIDTH=64;; x86_64) OTHERWIDTH=32;; esac; \
 	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/lib{xample,patr}$$OTHERWIDTH.so
