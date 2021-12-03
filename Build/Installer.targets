@@ -167,6 +167,9 @@
 			<DeveloperFiles Include="$(fwrt)\DistFiles\TECkit\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\TxtConv.exe"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Windows\**\*"/>
+			<DevTestArtifacts Include="$(OutputDirForConfig)\*Tests.*"/>
+			<DevTestArtifacts Include="$(OutputDirForConfig)\test*"/>
+			<DevTestArtifacts Include="$(OutputDirForConfig)\*.vrs"/> <!-- versification files from some unit tests -->
 			<FontFiles Include="$(fwrt)\DistFiles\Fonts\Raw\Quivira.otf"/>
 			<FontFiles Include="$(DownloadsDir)\Fonts\**\*.ttf"/>
 			<FontDocumentation Include="$(DownloadsDir)\Fonts\*\*.txt"/>
@@ -248,9 +251,8 @@
 			<L10nFilesWithRecursiveDirs Include="$(OutputDirForConfig)\**\*" Exclude="@(BinFiles)"/>
 			<!-- Now that we've used BinFiles to exclude all non-l10n files from L10nFilesWithRecursiveDirs,
 				we can remove MergeModules, etc., from BinFiles (MergeModules belong in neither ItemGroup). -->
+			<BinFiles Remove="@(DevTestArtifacts)"/>
 			<BinFiles Remove="@(MergeModules)"/>
-			<BinFiles Remove="$(OutputDirForConfig)\*Tests.*"/>
-			<BinFiles Remove="$(OutputDirForConfig)\test*"/>
 			<BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="@(DeveloperFiles);@(IcuDataFiles)"/>
 			<BinFiles Include="$(fwrt)\License.htm"/> <!-- install the license -->
 			<!-- Files with special install locations or steps -->

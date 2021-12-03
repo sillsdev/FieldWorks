@@ -22,7 +22,7 @@
 		<PalasoFileNamesForLL Include="SIL.WritingSystems.dll" />
 		<PalasoFileNamesForLL Include="SIL.WritingSystems.pdb" />
 		<PalasoFileNamesForLL Include="SIL.TestUtilities.dll" />
-		<PalasoFileNamesForLL Include="Newtonsoft.Json.dll" />
+		<PalasoFileNamesForLL Include="Newtonsoft.Json.dll" /> <!-- REVIEW (Hasso) 2021.12: include here or directly from its own package? -->
 		<PalasoFileNamesForLL Include="Spart.dll" />
 		<IcuFileNamesForLL Include="gennorm2.exe" />
 		<IcuFileNamesForLL Include="icudt54.dll" />

@@ -623,28 +623,26 @@
 			<GeckoDir Condition="'$(OS)'!='Windows_NT'">$(PackagesDir)/Geckofx60.$(Architecture).Linux.60.0.51</GeckoDir>
 		</PropertyGroup>
 		<ItemGroup>
-			<!-- Newtonsoft.Json is required for the LocalizeFieldWorks build task (REVIEW (Hasso) 2021.11: is this still true?) -->
-			<NuGottenForBuildTasks Include="$(PackagesDir)/Newtonsoft.Json.12.0.3/lib/net45/Newtonsoft.Json.dll"/>
 			<NuGottenForBuildTasks Include="$(PackagesDir)/SIL.BuildTasks.2.6.0-beta0008/tools/SIL.BuildTasks.dll"/>
-			<NuGottenFiles Include="@(NuGottenForBuildTasks)"/>
 			<NuGottenFiles Include="$(GeckoDir)/lib/net45/*.*" Condition="'$(OS)'=='Windows_NT'"/>
 			<NuGottenFiles Include="$(GeckoDir)/lib/net40/*.*" Condition="'$(OS)'!='Windows_NT'"/>
 			<NuGottenFiles Include="$(GeckoDir)/build/*.dll.config" Condition="'$(OS)'!='Windows_NT'"/>
 			<NuGottenFiles Include="$(GeckoDir)/content/**/*.*"/>
+			<NuGottenFiles Include="$(PackagesDir)/Analytics.3.6.0/lib/net461/Analytics.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/DotNetZip.1.13.3/lib/net40/*.*"/>
+			<NuGottenFiles Include="$(PackagesDir)/icu.net.2.7.1/lib/net451/icu.net.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/Microsoft.Extensions.DependencyModel.2.0.4/lib/net451/Microsoft.Extensions.DependencyModel.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/Microsoft.Win32.Registry.4.7.0/lib/netstandard2.0/Microsoft.Win32.Registry.dll" Condition="'$(OS)'=='Windows_NT'"/>
 			<NuGottenFiles Include="$(PackagesDir)/NAudio.1.10.0/lib/net35/NAudio.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/NAudio.Lame.1.1.5/lib/netstandard2.0/NAudio.Lame.dll"/>
-			<NuGottenFiles Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'" Include="$(PackagesDir)/NAudio.Lame.1.1.5/build/libmp3lame.32.dll"/>
-			<NuGottenFiles Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'" Include="$(PackagesDir)/NAudio.Lame.1.1.5/build/libmp3lame.64.dll"/>
-			<NuGottenFiles Include="$(PackagesDir)/Microsoft.Extensions.DependencyModel.2.0.4/lib/net451/Microsoft.Extensions.DependencyModel.dll"/>
-			<NuGottenFiles Include="$(PackagesDir)/icu.net.2.7.1/lib/net451/icu.net.dll"/>
-			<NuGottenFiles Include="$(PackagesDir)/System.ValueTuple.4.5.0/lib/net461/System.ValueTuple.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/NAudio.Lame.1.1.5/build/libmp3lame.32.dll" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'"/>
+			<NuGottenFiles Include="$(PackagesDir)/NAudio.Lame.1.1.5/build/libmp3lame.64.dll" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'"/>
+			<NuGottenFiles Include="$(PackagesDir)/Newtonsoft.Json.12.0.3/lib/net45/Newtonsoft.Json.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/Paratext.LexicalContracts.dll" />
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/ParatextData.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/PtxUtils.dll"/>
-			<NuGottenFiles Include="$(PackagesDir)/Microsoft.Win32.Registry.4.7.0/lib/netstandard2.0/Microsoft.Win32.Registry.dll" Condition="'$(OS)'=='Windows_NT'"/>
-			<NuGottenFiles Include="$(PackagesDir)/Analytics.3.6.0/lib/net461/Analytics.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/SIL.DesktopAnalytics.2.0.0/lib/net461/DesktopAnalytics.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/System.ValueTuple.4.5.0/lib/net461/System.ValueTuple.dll"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(NuGottenForBuildTasks)" DestinationFolder="$(MSBuildThisFileDirectory)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
