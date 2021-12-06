@@ -61,10 +61,18 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		public string RootDirectory { get; set; }
 
 		/// <summary>
-		/// The directory containing CommonAssemblyInfo.cs and whose subdirectories contain projects and resx files
+		/// The directory containing CommonAssemblyInfo.cs and whose subdirectories contain projects and resx files.
+		/// REVIEW (Hasso) 2021.12: This is redundant to RootDirectory. One of them was added when we started localizing LCM separately,
+		/// to find CommonAssemblyInfo.cs, which LCM no longer has.
 		/// </summary>
 		[Required]
 		public string SrcFolder { get; set; }
+
+		/// <summary>
+		/// The informational version, something like "9.2.3 beta 2" or "10.2.0-beta007";
+		/// If specified, this will override any version in CommonAssemblyInfo.cs
+		/// </summary>
+		public string InformationVersion { get; set; }
 
 		/// <summary>
 		/// Whether to copy strings-xx.xml to its home under DistFiles (default is false)

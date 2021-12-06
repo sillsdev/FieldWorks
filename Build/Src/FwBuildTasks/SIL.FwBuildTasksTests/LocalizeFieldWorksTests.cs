@@ -358,6 +358,29 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				Assert.That(embeddedResources, Has.Member(resource));
 		}
 
+		[Test]
+		public void DoIt_BypassAssemblyInfo()
+		{
+			const string infoVer = "9.3.7 base 513";
+			FullSetup();
+			m_sut.InformationVersion = infoVer;
+
+			var result = m_sut.Execute();
+
+			Assert.That(result, Is.True, m_sut.ErrorMessages);
+
+			// The Assembly Linker should be run (once for each desired project) with expected arguments.
+			Assert.That(InstrumentedProjectLocalizer.LinkerPath.Count, Is.EqualTo(4));
+			for (var i = 0; i < 4; i++)
+			{
+				Assert.That(InstrumentedProjectLocalizer.LinkerCulture[i], Is.EqualTo(LocaleEs));
+				Assert.That(InstrumentedProjectLocalizer.LinkerFileVersion[i], Is.EqualTo("9.3.7.513"));
+				Assert.That(InstrumentedProjectLocalizer.LinkerProductVersion[i], Is.EqualTo(infoVer));
+				Assert.That(InstrumentedProjectLocalizer.LinkerVersion[i], Is.EqualTo("9.3.7.513"));
+				Assert.That(InstrumentedProjectLocalizer.LinkerAlArgs[i], Does.Contain("\"" + infoVer + "\""));
+			}
+		}
+
 		/// <summary>
 		/// Verify that the specified resx file has had its translated version copied to
 		/// ${dir.fwoutput}/${language}/${partialDir}/${fileName}.${language}.resx. That is:
