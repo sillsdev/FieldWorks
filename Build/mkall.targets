@@ -285,7 +285,7 @@
 		<ChorusNugetVersion>5.0.0-beta0013</ChorusNugetVersion>
 		<PalasoNugetVersion>9.0.0-beta0083</PalasoNugetVersion>
 		<ParatextNugetVersion>9.2.5-beta1</ParatextNugetVersion>
-		<LcmNugetVersion>10.2.0-beta0006</LcmNugetVersion>
+		<LcmNugetVersion>10.2.0-beta0007</LcmNugetVersion>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
 		<IPCFrameworkBuildType Condition="'$(OS)'=='Windows_NT'">bt278</IPCFrameworkBuildType>
@@ -379,19 +379,17 @@
 		<LcmOutputBaseFiles Include="SIL.LCModel.FixData.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.Tests.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.Tests.dll.config" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Core.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Core.dll.config"/>
 		<LcmOutputBaseFiles Include="SIL.LCModel.Core.Tests.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.Core.Tests.dll.config" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Build.Tasks.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.dll" />
+		<LcmOutputBaseFiles Include="SIL.LCModel.dll.config" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Tools.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Tests.dll" />
-<!-- TODO: These .config files were not present in the Nuget packages, decide if that is an error
-		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.Tests.dll.config" />
-		<LcmOutputBaseFiles Include="SIL.LCModel.dll.config" />
-		<LcmOutputBaseFiles Include="SIL.LCModel.Core.Tests.dll.config" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Tests.dll.config" />
--->
 
 		<LcmOutputBaseFiles Include="SIL.LCModel.FixData.pdb" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.pdb" />
