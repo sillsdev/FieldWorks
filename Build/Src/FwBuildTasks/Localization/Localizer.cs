@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
@@ -57,30 +58,31 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				}
 
 				if (!GetProjectFolders(out var projectFolders))
-					return;
-
-				using (var reader = new StreamReader(Options.AssemblyInfoPath, Encoding.UTF8))
 				{
-					while (!reader.EndOfStream)
-					{
-						var line = reader.ReadLine();
-						if (line == null)
-							continue;
-						if (line.StartsWith("[assembly: AssemblyFileVersion"))
-							FileVersion = ExtractVersion(line);
-						else if (line.StartsWith("[assembly: AssemblyInformationalVersionAttribute"))
-							InformationVersion = ExtractVersion(line);
-						else if (line.StartsWith("[assembly: AssemblyVersion"))
-							Version = ExtractVersion(line);
-					}
-					reader.Close();
+					return;
 				}
+
+				var assemblyInfo = Assembly.LoadFrom(Options.AssemblyInfoPath);
+				FileVersion = (assemblyInfo.GetCustomAttributes(
+					typeof(AssemblyFileVersionAttribute)).FirstOrDefault() as AssemblyFileVersionAttribute)?.Version;
+				InformationVersion = (assemblyInfo.GetCustomAttributes(
+					typeof(AssemblyInformationalVersionAttribute)).FirstOrDefault() as AssemblyInformationalVersionAttribute)?.InformationalVersion;
+				Version = assemblyInfo.GetName().Version.ToString();
+
 				if (string.IsNullOrEmpty(FileVersion))
+				{
 					FileVersion = "0.0.0.0";
+				}
+
 				if (string.IsNullOrEmpty(InformationVersion))
+				{
 					InformationVersion = FileVersion;
+				}
+
 				if (string.IsNullOrEmpty(Version))
+				{
 					Version = FileVersion;
+				}
 
 				foreach (var currentFolder in projectFolders)
 				{

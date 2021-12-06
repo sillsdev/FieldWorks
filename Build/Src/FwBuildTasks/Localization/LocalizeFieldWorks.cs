@@ -93,9 +93,8 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		internal const string LExFolderName = "Language Explorer";
 		internal const string ConfigFolderName = "Configuration";
 
-		internal static readonly string AssemblyInfoName = "CommonAssemblyInfo.cs";
-
-		internal string AssemblyInfoPath => Path.Combine(SrcFolder, AssemblyInfoName);
+		[Required]
+		public string AssemblyInfoPath { get; set; }
 
 		internal string ConfigurationFolder => Path.Combine(RootDirectory, DistFilesFolderName, LExFolderName, ConfigFolderName);
 
