@@ -93,6 +93,7 @@ else
   FW_CommonAppData="/var/lib/fieldworks"
 fi
 
+FW_DATA_DIR="${USER_DATA_HOME}/fieldworks"
 FW_CONFIG_DIR="${USER_CONFIG_HOME}/fieldworks"
 if [[ -n ${FLATPAK_ID-} ]]; then
   # Encoding Converters will write settings and data to this location. Use a
@@ -246,6 +247,7 @@ export \
 	USER_CONFIG_HOME \
 	XDG_DATA_HOME \
 	XDG_CONFIG_HOME \
+	FW_DATA_DIR \
 	FW_CONFIG_DIR \
 	MONO_HELP_VIEWER \
 	MONO_PATH MONO_REGISTRY_PATH \

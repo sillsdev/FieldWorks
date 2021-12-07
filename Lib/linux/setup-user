@@ -18,7 +18,6 @@ debugVerboseFlag=""
 scriptdir="$(dirname "$0")"
 prefix=$(cd "$scriptdir/../.."; /bin/pwd)
 
-FW_DATA="${USER_DATA_HOME}/fieldworks"
 FW_LIB=$prefix/lib/fieldworks
 FW_SHARE=$prefix/share/fieldworks
 
@@ -31,7 +30,7 @@ Debug()
 	[[ -z ${FW_DEBUG-} ]] || echo -e "$(date +'%F %T') setup-user[$$]: " "$@" || : "Do not fail from write error Broken pipe"
 }
 
-Debug "FW_DATA: ${FW_DATA}"
+Debug "FW_DATA_DIR: ${FW_DATA_DIR}"
 Debug "FW_CONFIG_DIR: ${FW_CONFIG_DIR}"
 Debug "prefix: ${prefix}"
 
@@ -84,9 +83,9 @@ CopyRegistryKey()
 		fi
 	fi
 
-	if [ ! -d "${FW_DATA}/Projects/" ]; then
+	if [ ! -d "${FW_DATA_DIR}/Projects/" ]; then
 		echo "# Creating default Project database directory"
-		mkdir -p "${FW_DATA}/Projects/"
+		mkdir -p "${FW_DATA_DIR}/Projects/"
 	fi
 
 	# Set registry keys
@@ -145,7 +144,7 @@ CopyRegistryKey()
 				WriteKey LM "Software/SIL/FieldWorks" "InstallLanguageUseLog" "False"
 
 				WriteKey LM "Software/SIL/FieldWorks/9" "RootDataDir" "${FW_CONFIG_DIR}/"
-				WriteKey LM "Software/SIL/FieldWorks/9" "ProjectsDir" "${FW_DATA}/Projects"
+				WriteKey LM "Software/SIL/FieldWorks/9" "ProjectsDir" "${FW_DATA_DIR}/Projects"
 
 				WriteKey LM "Software/SIL" "Icu54DataDir" "${FW_CONFIG_DIR}/Icu54"
 				WriteKey LM "Software/SIL" "Icu54Dir" "${FW_CONFIG_DIR}/Icu54"
