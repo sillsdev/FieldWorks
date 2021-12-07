@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		{
 			Options.LogMessage(MessageImportance.Low, "Processing project {0}", ProjectFolder);
 
-			var resourceInfo = GetResourceInfo(ProjectFolder);
+			var resourceInfo = GetResourceInfo(ProjectFolder, Options);
 			if (resourceInfo == null || resourceInfo.ResXFiles.Count == 0)
 				return; // nothing to localize; in particular we should NOT call al with no inputs.
 
@@ -67,21 +67,41 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				CreateResourceAssemblies(resourceInfo);
 		}
 
-		private static ResourceInfo GetResourceInfo(string projectFolder)
+		private static ResourceInfo GetResourceInfo(string projectFolder, ProjectLocalizerOptions options)
 		{
-			var projectFile = Directory.GetFiles(projectFolder, "*.csproj").First(); // called only if there is exactly one.
-			var doc = XDocument.Load(projectFile);
-			XNamespace ns = @"http://schemas.microsoft.com/developer/msbuild/2003";
+			var projectFile = Directory.GetFiles(projectFolder, "*.csproj").FirstOrDefault(); // called only if there is exactly one.
+			if (projectFile == null)
+			{
+				options.LogError($"Tried to process {projectFolder} as a project but no .csproj file was found.");
+				return null;
+			}
 
+			var assemblyName = Path.GetFileNameWithoutExtension(projectFile);
+			var doc = XDocument.Load(projectFile);
 			var resxFiles = GetResXFiles(projectFolder);
 			if (resxFiles.Count == 0)
 				return null;
-
+			var rootNamespaceValue = doc.Descendants()
+				.FirstOrDefault(elem => elem.Name.LocalName == "RootNamespace");
+			var assemblyNameElement =
+				doc.Descendants().FirstOrDefault(elem => elem.Name.LocalName == "AssemblyName");
+			if (rootNamespaceValue == null)
+			{
+				var elements = doc.Descendants().Select(elem => elem.Name.LocalName);
+				options.LogError($"Can't find RootNamespace in {string.Concat(",", elements)}");
+				return null;
+			}
+			if (assemblyNameElement != null)
+			{
+				// The new .csproj format assumes that this is the same as the project name
+				// and specifies it only where it is different
+				assemblyName = assemblyNameElement.Value;
+			}
 			var resourceInfo = new ResourceInfo {
 				ProjectFolder = projectFolder,
 				ResXFiles = resxFiles,
-				RootNameSpace = doc.Descendants(ns + "RootNamespace").First().Value,
-				AssemblyName = doc.Descendants(ns + "AssemblyName").First().Value
+				RootNameSpace = rootNamespaceValue.Value,
+				AssemblyName = assemblyName
 			};
 
 			return resourceInfo;
