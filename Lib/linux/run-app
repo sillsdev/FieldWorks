@@ -91,6 +91,10 @@ fi
 cd "$share" # Temporary
 # If set, use externally specified commands and args to launch with a debugger.
 # Otherwise just exec with mono.
-command="${FW_COMMAND_PREFIX-} ${FW_MONO_COMMAND:-mono} ${FW_MONO_OPTS-} --debug ""$lib"/"$@"
+command="${FW_COMMAND_PREFIX-} ${FW_MONO_COMMAND:-mono} ${FW_MONO_OPTS-} --debug ""${lib}"/"$@"
 debug "Executing ${command} from dir $(pwd) in the following environment:\n$(env)"
-exec ${command}
+# (Write the command again instead of using $command, to retain space-containing
+# single arguments as a single argument when expanding and using "$@". This can
+# matter when specifying a project name with a space, such as '-proj "Sena 3"'.)
+exec ${FW_COMMAND_PREFIX-} ${FW_MONO_COMMAND:-mono} ${FW_MONO_OPTS-} \
+  --debug "${lib}"/"$@"
