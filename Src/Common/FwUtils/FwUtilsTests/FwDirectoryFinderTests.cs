@@ -230,9 +230,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Platform(Include="Linux", Reason="Test is Linux specific")]
 		public void DefaultBackupDirectory_Linux()
 		{
-			// SpecialFolder.MyDocuments returns $HOME on Linux!
-			Assert.AreEqual(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-				"Documents/fieldworks/backups"), FwDirectoryFinder.DefaultBackupDirectory);
+			Assert.AreEqual(Path.Combine(Environment.GetEnvironmentVariable("HOME"),".local","share","fieldworks","backups"), FwDirectoryFinder.DefaultBackupDirectory);
 		}
 	}
 }

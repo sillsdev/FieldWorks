@@ -566,9 +566,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				// NOTE: SpecialFolder.MyDocuments returns $HOME on Linux
 				string myDocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-				// FWNX-501: use slightly different default path on Linux
+				string fwDataDir = Environment.GetEnvironmentVariable("FW_DATA_DIR") ?? Path.Combine(Environment.GetEnvironmentVariable("HOME"),".local","share","fieldworks");
+
 				string defaultDir = MiscUtils.IsUnix ?
-					Path.Combine(myDocs, "Documents/fieldworks/backups") :
+					Path.Combine(fwDataDir, "backups") :
 					Path.Combine(Path.Combine(myDocs, "My FieldWorks"), "Backups");
 
 				using (RegistryKey registryKey = FwRegistryHelper.FieldWorksRegistryKey.OpenSubKey("ProjectBackup"))
