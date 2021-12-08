@@ -19,22 +19,22 @@
 	</PropertyGroup>
 
 	<!-- ########################################################################################################## -->
-	<!-- ### PRODUCT ID GUID definition : This value must be unique for each base build.  Furthermore, every    ### -->
+	<!-- ### PRODUCT ID GUID definition : This value must be UNIQUE for each base build.  Furthermore, every    ### -->
 	<!-- ### base build must get its own unique third number (minor version) in the version number sequence.    ### -->
 	<!-- ########################################################################################################## -->
 
 	<!-- $(ApplicationName) 1.0.0.X ($(ApplicationName) build)-->
 	<PropertyGroup>
-		<ProductIdGuid>E2C79BA2-FB69-45CF-9321-5BECA25F3002</ProductIdGuid>
+		<ProductIdGuid>518FFC73-809E-490A-8E29-5A2BDED787F6</ProductIdGuid>
 	</PropertyGroup>
 
 	<!-- ########################################################################################################## -->
-	<!-- ### UPGRADE CODE GUID definition : This value must be the same for every version of this product.      ### -->
+	<!-- ### UPGRADE CODE GUID definition : This value must be THE SAME for every version of this product.      ### -->
 	<!-- ### Each product should have its own upgrade code.  This allows installers and patches to upgrade      ### -->
-	<!-- ### one another because they share a common upgrade code.                                              ### -->
+	<!-- ### one another because they share a common upgrade code. DON'T EVEN THINK about changing this.        ### -->
 	<!-- ########################################################################################################## -->
 	<PropertyGroup>
-		<UpgradeCodeGuid>F49D06AE-750C-4623-990D-811BBE10E4E0</UpgradeCodeGuid>
+		<UpgradeCodeGuid>1092269F-9EA1-419B-8685-90203F83E254</UpgradeCodeGuid>
 	</PropertyGroup>
 
 	<!-- ########################################################################################################## -->
