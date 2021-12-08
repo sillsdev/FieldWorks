@@ -14,7 +14,6 @@ using System.Windows.Forms;
 using SIL.Acknowledgements;
 using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -307,8 +306,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				lblAppVersion.Text = viProvider.ApplicationVersion;
 				lblFwVersion.Text = viProvider.MajorVersion;
 
-				// List the copyright information
-				var acknowledgements = AcknowledgementsProvider.CollectAcknowledgements();
+				Dictionary<string, AcknowledgementAttribute> acknowledgements;
+				try
+				{
+					AppDomain.CurrentDomain.AssemblyResolve += ResolveFailedAssemblyLoadsByName;
+					// List the copyright information
+					acknowledgements = AcknowledgementsProvider.CollectAcknowledgements();
+				}
+				finally
+				{
+					AppDomain.CurrentDomain.AssemblyResolve -= ResolveFailedAssemblyLoadsByName;
+				}
 				var list = acknowledgements.Keys.ToList();
 				list.Sort();
 				var text = viProvider.CopyrightString + Environment.NewLine + viProvider.LicenseString + Environment.NewLine + viProvider.LicenseURL;
@@ -344,6 +352,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				Console.WriteLine("HelpAbout ignoring exception: " + ex);
 			}
+		}
+
+		private Assembly ResolveFailedAssemblyLoadsByName(object sender, ResolveEventArgs args)
+		{
+			var assemblyName = args.Name.Split(',')[0];
+			var outputPath = Path.GetDirectoryName(ProductExecutableAssembly.Location);
+			return Assembly.LoadFile(Path.Combine(outputPath, assemblyName) + ".dll");
 		}
 		#endregion
 
