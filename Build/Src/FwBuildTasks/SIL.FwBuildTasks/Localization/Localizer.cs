@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			}
 			catch (Exception ex)
 			{
-				LogError($"Caught exception processing {Locale}: {ex.Message}");
+				LogError($"Caught exception processing {Locale}: {ex.Message}{Environment.NewLine}{ex.StackTrace}");
 			}
 		}
 
