@@ -334,7 +334,8 @@
 		<PalasoFiles Include="SIL.TestUtilities.dll"/>
 		<PalasoFiles Include="L10NSharp.dll"/>
 		<PalasoFiles Include="Commons.Xml.Relaxng.dll"/>
-		<PalasoFiles Include="lib/win-x86/irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<PalasoFiles Include="lib/win-x86/irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'"/>
+		<PalasoFiles Include="lib/win-x64/irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'"/>
 		<PalasoFiles Include="Enchant.Net.dll"/>
 		<PalasoFiles Include="Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<PalasoFiles Include="NDesk.DBus.dll"/>
