@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
@@ -62,26 +61,45 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 					return;
 				}
 
-				var assemblyInfo = Assembly.LoadFrom(Options.AssemblyInfoPath);
-				FileVersion = (assemblyInfo.GetCustomAttributes(
-					typeof(AssemblyFileVersionAttribute)).FirstOrDefault() as AssemblyFileVersionAttribute)?.Version;
-				InformationVersion = (assemblyInfo.GetCustomAttributes(
-					typeof(AssemblyInformationalVersionAttribute)).FirstOrDefault() as AssemblyInformationalVersionAttribute)?.InformationalVersion;
-				Version = assemblyInfo.GetName().Version.ToString();
-
-				if (string.IsNullOrEmpty(FileVersion))
+				if (!string.IsNullOrEmpty(Options.InformationVersion))
 				{
-					FileVersion = "0.0.0.0";
+					ParseInformationVersion(Options.InformationVersion);
 				}
-
-				if (string.IsNullOrEmpty(InformationVersion))
+				else
 				{
-					InformationVersion = FileVersion;
-				}
+					if (File.Exists(Options.AssemblyInfoPath))
+					{
+						using (var reader = new StreamReader(Options.AssemblyInfoPath, Encoding.UTF8))
+						{
+							while (!reader.EndOfStream)
+							{
+								var line = reader.ReadLine();
+								if (line == null)
+									continue;
+								if (line.StartsWith("[assembly: AssemblyFileVersion"))
+									FileVersion = ExtractVersion(line);
+								else if (line.StartsWith("[assembly: AssemblyInformationalVersionAttribute"))
+									InformationVersion = ExtractVersion(line);
+								else if (line.StartsWith("[assembly: AssemblyVersion"))
+									Version = ExtractVersion(line);
+							}
 
-				if (string.IsNullOrEmpty(Version))
-				{
-					Version = FileVersion;
+							reader.Close();
+						}
+					}
+
+					if (string.IsNullOrEmpty(FileVersion))
+					{
+						FileVersion = "0.0.0.0";
+					}
+					if (string.IsNullOrEmpty(InformationVersion))
+					{
+						InformationVersion = FileVersion;
+					}
+					if (string.IsNullOrEmpty(Version))
+					{
+						Version = FileVersion;
+					}
 				}
 
 				foreach (var currentFolder in projectFolders)
@@ -95,6 +113,15 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			{
 				LogError($"Caught exception processing {Locale}: {ex.Message}{Environment.NewLine}{ex.StackTrace}");
 			}
+		}
+
+		internal void ParseInformationVersion(string infoVer)
+		{
+			InformationVersion = infoVer;
+			var match = new Regex(@"(?<ver>\d+\.\d+(\.\d+)?)\D+(?<rev>\d+)?\D*").Match(infoVer);
+			var revision = match.Groups["rev"];
+			var lastPart = revision.Success ? $".{int.Parse(revision.Value)}" : string.Empty;
+			FileVersion = Version = $"{match.Groups["ver"]}{lastPart}";
 		}
 
 		protected virtual ProjectLocalizer CreateProjectLocalizer(string folder, ProjectLocalizerOptions options)

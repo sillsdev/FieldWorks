@@ -183,10 +183,10 @@
 			RootDirectory="$(LcmRootDir)"
 			SrcFolder="$(LcmRootDir)"
 			L10nFileDirectory="$(fwrt)/Localizations/l10ns"
+			InformationVersion="$(LcmNugetVersion)"
 			Config="$(config-capital)"
 			OutputFolder="$(fwrt)/Output"
-			Build="SourceOnly"
-			AssemblyInfoPath="$(fwrt)/Output/$(Configuration)/SIL.LCModel.dll"/>
+			Build="SourceOnly"/>
 	<!-- Process source for fieldworks -->
 		<LocalizeFieldWorks
 			RootDirectory="$(fwrt)"
@@ -195,8 +195,7 @@
 			Config="$(config-capital)"
 			OutputFolder="$(fwrt)/Output"
 			CopyStringsXml="true"
-			Build="SourceOnly"
-			AssemblyInfoPath="$(fwrt)/Output/$(Configuration)/FieldWorks.exe"/>
+			Build="SourceOnly"/>
 	</Target>
 
 	<!-- Build localized dll's -->
@@ -215,10 +214,10 @@
 			RootDirectory="$(LcmRootDir)"
 			SrcFolder="$(LcmRootDir)"
 			L10nFileDirectory="$(fwrt)/Localizations/l10ns"
+			InformationVersion="$(LcmNugetVersion)"
 			Config="$(config-capital)"
 			OutputFolder="$(fwrt)/Output"
-			Build="BinaryOnly"
-			AssemblyInfoPath="$(fwrt)/Output/$(Configuration)/SIL.LCModel.dll"/>
+			Build="BinaryOnly"/>
 	<!-- Process source for fieldworks -->
 		<LocalizeFieldWorks
 			RootDirectory="$(fwrt)"
@@ -227,8 +226,7 @@
 			Config="$(config-capital)"
 			OutputFolder="$(fwrt)/Output"
 			CopyStringsXml="true"
-			Build="BinaryOnly"
-			AssemblyInfoPath="$(fwrt)/Output/$(Configuration)/FieldWorks.exe"/>
+			Build="BinaryOnly"/>
 	</Target>
 
 </Project>

@@ -4,10 +4,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 using Microsoft.Build.Framework;
@@ -56,7 +54,6 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			m_sut.RootDirectory = m_rootPath;
 			m_sut.OutputFolder = Path.Combine(m_rootPath, "Output");
 			m_sut.SrcFolder = Path.Combine(m_rootPath, "Src");
-			m_sut.AssemblyInfoPath = Assembly.GetExecutingAssembly().Location;
 			m_sut.L10nFileDirectory = Path.Combine(m_rootPath, "Localizations", "l10ns");
 			// wipe out anything left from last time
 			if (Directory.Exists(m_rootPath))
@@ -76,6 +73,8 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		{
 			CreateLocalizedProjects();
 
+			CreateAssemblyInfo();
+
 			CreateLocalizedFiles();
 		}
 
@@ -87,6 +86,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			m_srcFolder = m_sut.SrcFolder;
 			m_l10nFolder = Path.Combine(m_sut.L10nFileDirectory, locale);
 			m_FdoFolder = CreateLocalizedProject(m_srcFolder, "FDO", "FDO", locale, localizedProjStrings);
+			CreateAssemblyInfo();
 		}
 
 		/// <summary>Sets up the bare minimum to test the localization of a single string</summary>
@@ -95,6 +95,16 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		{
 			SimpleSetupFDO(locale);
 			return CreateLocalizedResX(m_FdoFolder, "simple_sample", locale, english, localized);
+		}
+
+		/// <summary>Create a minimal CommonAssemblyInfo.cs file</summary>
+		private void CreateAssemblyInfo()
+		{
+			var writer = new StreamWriter(m_sut.AssemblyInfoPath, false, Encoding.UTF8);
+			writer.WriteLine("[assembly: AssemblyFileVersion(\"8.4.2.1234\")]");
+			writer.WriteLine("[assembly: AssemblyInformationalVersionAttribute(\"8.4.2 beta 2\")]");
+			writer.WriteLine("[assembly: AssemblyVersion(\"8.4.2.*\")]");
+			writer.Close();
 		}
 
 		/// <remarks>
@@ -335,15 +345,13 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 		private static void VerifyLinkerArgs(string linkerPath, EmbedInfo[] expectedResources)
 		{
-			var assemblyVersionInfo =
-				FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
 			var index = InstrumentedProjectLocalizer.LinkerPath.IndexOf(linkerPath);
 			Assert.That(index, Is.GreaterThanOrEqualTo(0), $"LinkerPath not found: {linkerPath}");
 			Assert.That(InstrumentedProjectLocalizer.LinkerCulture[index], Is.EqualTo(LocaleEs));
-			Assert.That(InstrumentedProjectLocalizer.LinkerFileVersion[index], Is.EqualTo(assemblyVersionInfo.FileVersion));
-			Assert.That(InstrumentedProjectLocalizer.LinkerProductVersion[index], Is.EqualTo(assemblyVersionInfo.ProductVersion));
-			Assert.That(InstrumentedProjectLocalizer.LinkerVersion[index], Is.EqualTo(Assembly.GetExecutingAssembly().GetName().Version.ToString()));
-			Assert.That(InstrumentedProjectLocalizer.LinkerAlArgs[index], Does.Contain(assemblyVersionInfo.ProductVersion));
+			Assert.That(InstrumentedProjectLocalizer.LinkerFileVersion[index], Is.EqualTo("8.4.2.1234"));
+			Assert.That(InstrumentedProjectLocalizer.LinkerProductVersion[index], Is.EqualTo("8.4.2 beta 2"));
+			Assert.That(InstrumentedProjectLocalizer.LinkerVersion[index], Is.EqualTo("8.4.2.*"));
+			Assert.That(InstrumentedProjectLocalizer.LinkerAlArgs[index], Does.Contain("\"8.4.2 beta 2\""));
 			var embeddedResources = InstrumentedProjectLocalizer.LinkerResources[index];
 			Assert.That(embeddedResources.Count, Is.EqualTo(expectedResources.Length));
 			foreach (var resource in expectedResources)

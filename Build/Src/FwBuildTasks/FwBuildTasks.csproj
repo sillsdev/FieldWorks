@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="FwBuildTasksTests\LocalizerTests.cs" />
     <Compile Include="FwBuildTasksTests\ProjectLocalizerTests.cs" />
     <Compile Include="FwBuildTasksTests\XliffToGoldEticTests.cs" />
     <Compile Include="FwBuildTasksTests\GoldEticToXliffTests.cs" />
