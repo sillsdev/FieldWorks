@@ -71,10 +71,29 @@ if [[ -z ${FLATPAK_ID-} ]]; then
 	$more_text"
 		exit 1
 	fi
-
 fi
 
+updateMonoCertStore() {
+  # Update mono's understanding of SSL certificates. This is needed, for
+  # example, for logging into language depot.
+  debug "Updating user mono certificate store"
+
+  quietArgument="--quiet"
+  [[ -z ${FW_DEBUG-} ]] || quietArgument=""
+
+  # cert-sync doesn't appear to always give an error code on problems, but
+  # print a warning in case it does.
+  cert-sync ${quietArgument} --user /etc/ssl/certs/ca-certificates.crt ||
+    echo "Warning: There was a problem updating SSL certificates with cert-sync."
+}
+
 "$share/setup-user"
+if [[ -n ${FLATPAK_ID-} ]]; then
+  # Updating the user mono certificate store was introduced to help when
+  # running in flatpak. It probably wouldn't hurt to run it outside of flatpak
+  # tho. It writes to XDG_CONFIG_HOME/.mono/{new-certs,certs}
+  updateMonoCertStore
+fi
 
 # set the LANG enviroment variable according to the value of UserWs in the registry.
 # unfortunately, there doesn't seem to be a Mono registry access utility, so we'll
