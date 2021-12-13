@@ -526,7 +526,6 @@
 			<SILNugetPackages Include="Vulcan.Uczniowie.HelpProvider"><Version>1.0.16</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<!-- Other supporting packages -->
 			<SILNugetPackages Include="structuremap.patched"><Version>2.5.4</Version><Path>lib/net461/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="System.Runtime.InteropServices.RuntimeInformation"><Version>4.3.0</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 		</ItemGroup>
 	</Target>
 
