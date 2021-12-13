@@ -2371,8 +2371,9 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("A", @"\s");
 			m_importer.ProcessSegment("My para", @"\p");
 			m_importer.ProcessSegment("B", @"\s");
-			Assert.That(() => m_importer.ProcessSegment("Bad intro para", @"\ip"), Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(
-				@"Book introduction within Scripture text.(\r)?\n(\r)?\n\\ip Bad intro para(\r)?\nAttempting to read EXO  Chapter: 1  Verse: 1"));
+			Assert.That(() => m_importer.ProcessSegment("Bad intro para", @"\ip"), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(
+				string.Format(@"Book introduction within Scripture text.{0}{0}\ip Bad intro para{0}Attempting to read EXO  Chapter: 1  Verse: 1",
+					Environment.NewLine)));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2392,8 +2393,9 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("", @"\id");
 			m_importer.ProcessSegment("A", @"\s");
 			m_importer.ProcessSegment("My para", @"\p");
-			Assert.That(() => m_importer.ProcessSegment("Bad intro para", @"\ip"), Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(
-				@"Book introduction within Scripture text.(\r)?\n(\r)?\n\\ip Bad intro para(\r)?\nAttempting to read EXO  Chapter: 1  Verse: 1"));
+			Assert.That(() => m_importer.ProcessSegment("Bad intro para", @"\ip"), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(
+				string.Format(@"Book introduction within Scripture text.{0}{0}\ip Bad intro para{0}Attempting to read EXO  Chapter: 1  Verse: 1",
+					Environment.NewLine)));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2412,8 +2414,8 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id");
 			m_importer.ProcessSegment("A", @"\s");
-			Assert.That(() => m_importer.ProcessSegment("B", @"\is"), Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(
-				@"Book introduction within Scripture text.(\r)?\n(\r)?\n\\is B(\r)?\nAttempting to read EXO  Chapter: 1  Verse: 1"));
+			Assert.That(() => m_importer.ProcessSegment("B", @"\is"), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(string.Format(
+				@"Book introduction within Scripture text.{0}{0}\is B{0}Attempting to read EXO  Chapter: 1  Verse: 1", Environment.NewLine)));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2436,8 +2438,8 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("", @"\id");
 			m_importer.ProcessSegment("A", @"\s");
 			m_importer.ProcessSegment("My para", @"\p");
-			Assert.That(() => m_importer.ProcessSegment("B", @"\is"), Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(
-				@"Book introduction within Scripture text.(\r)?\n(\r)?\n\\is B(\r)?\nAttempting to read EXO  Chapter: 1  Verse: 1"));
+			Assert.That(() => m_importer.ProcessSegment("B", @"\is"), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(string.Format(
+				@"Book introduction within Scripture text.{0}{0}\is B{0}Attempting to read EXO  Chapter: 1  Verse: 1", Environment.NewLine)));
 		}
 
 
@@ -2458,8 +2460,8 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("", @"\id");
 			m_importer.ProcessSegment("A", @"\s");
 			m_importer.ProcessSegment("My para", @"\p");
-			Assert.That(() => m_importer.ProcessSegment("B", @"\is"), Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(
-				@"Book introduction within Scripture text.(\r)?\n(\r)?\n\\is B(\r)?\nAttempting to read EXO  Chapter: 1  Verse: 1"));
+			Assert.That(() => m_importer.ProcessSegment("B", @"\is"), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(string.Format(
+				@"Book introduction within Scripture text.{0}{0}\is B{0}Attempting to read EXO  Chapter: 1  Verse: 1", Environment.NewLine)));
 		}
 		#endregion
 
@@ -4581,10 +4583,11 @@ namespace ParatextImport.ImportTests
 				m_importer.ProcessSegment("", @"\p");
 
 				// Unix invalid filename chars are only null and /,
-				const string invalidFile = "InvalidFile|junk\u0000jpg||";
-				Assert.That(() => m_importer.ProcessSegment(Platform.IsUnix ? invalidFile : "InvalidFile|.jpg||", @"\cat"),
-					Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(
-						$@"Invalid figure file name property(\r)?\n(\r)?\n\\cat {invalidFile}(\r)?\nAttempting to read EXO  Chapter: 1  Verse: 1"));
+				var invalidFile = Platform.IsUnix ? "InvalidFile|junk\u0000jpg||" : "InvalidFile|.jpg||";
+				Assert.That(() => m_importer.ProcessSegment(invalidFile, @"\cat"),
+					Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(string.Format(
+						@"Invalid figure file name property{0}{0}\cat {1}{0}Attempting to read EXO  Chapter: 1  Verse: 1",
+						Environment.NewLine, invalidFile)));
 			}
 		}
 

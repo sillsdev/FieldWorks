@@ -329,7 +329,7 @@ namespace ParatextImport.ImportTests
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
-			IStFootnote footnote = (IStFootnote)mark.FootnotesOS[0];
+			IStFootnote footnote = mark.FootnotesOS[0];
 			ITsString tss = ((IStTxtPara)footnote.ParagraphsOS[0]).Contents;
 			Assert.AreEqual(1, tss.RunCount);
 			AssertEx.RunIsCorrect(tss, 0, "footnote", null, Cache.DefaultVernWs);
@@ -392,7 +392,7 @@ namespace ParatextImport.ImportTests
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
-			IStFootnote footnote = (IStFootnote)mark.FootnotesOS[0];
+			IStFootnote footnote = mark.FootnotesOS[0];
 			IStTxtPara para = (IStTxtPara)footnote.ParagraphsOS[0];
 			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "This is a footnote", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -455,7 +455,7 @@ namespace ParatextImport.ImportTests
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
-			IStFootnote footnote = (IStFootnote)mark.FootnotesOS[0];
+			IStFootnote footnote = mark.FootnotesOS[0];
 			IStTxtPara para = (IStTxtPara)footnote.ParagraphsOS[0];
 			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "I wish This is a footnote", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -522,7 +522,7 @@ namespace ParatextImport.ImportTests
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
-			IStFootnote footnote = (IStFootnote)mark.FootnotesOS[0];
+			IStFootnote footnote = mark.FootnotesOS[0];
 			IStTxtPara para = (IStTxtPara)footnote.ParagraphsOS[0];
 			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "footnote", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -1593,11 +1593,11 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 			m_importer.ProcessSegment("This is default paragraph characters ", @"\nt");
-			Assert.That(() => m_importer.ProcessSegment("Title ", @"\mt"), Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(
-				@"Back translation not part of a paragraph:(\r)?\n" +
-				@"\tThis is default paragraph characters (\r)?\n" +
-				@"\t\(Style: Default Paragraph Characters\)(\r)?\n" +
-				"Attempting to read GEN"));
+			Assert.That(() => m_importer.ProcessSegment("Title ", @"\mt"), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(string.Format(
+				"Back translation not part of a paragraph:{0}" +
+				"\tThis is default paragraph characters {0}" +
+				"\t(Style: Default Paragraph Characters){0}" +
+				"Attempting to read GEN", Environment.NewLine)));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1704,7 +1704,7 @@ namespace ParatextImport.ImportTests
 		public void BackTranslationNonInterleaved_ParallelPassage_BtOnly()
 		{
 			// Setup book
-			IScrBook genesis = (IScrBook)AddBookToMockedScripture(1, "Genesis");
+			IScrBook genesis = AddBookToMockedScripture(1, "Genesis");
 			AddTitleToMockedBook(genesis, "Genesis");
 			IScrSection section1 = AddSectionToMockedBook(genesis);
 			AddSectionHeadParaToSection(section1, "Primera Seccion", ScrStyleNames.SectionHead);
@@ -1810,9 +1810,8 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 			// no text provided in segment, just the refs
-			Assert.That(() => m_importer.ProcessSegment("", @"\id"), Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(
-					"No corresponding vernacular book for back translation.(\\r)?\\nAttempting to read GEN"));
-			// Shouldn't get here
+			Assert.That(() => m_importer.ProcessSegment("", @"\id"), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(
+					$"No corresponding vernacular book for back translation.{Environment.NewLine}Attempting to read GEN"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3051,73 +3050,56 @@ namespace ParatextImport.ImportTests
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_MissingPicture()
 		{
-			try
+			using (new DummyFileMaker("junk1.jpg", true))
 			{
-				using (DummyFileMaker filemaker = new DummyFileMaker("junk1.jpg", true))
-				{
-					m_importer.Settings.ImportTranslation = true;
-					m_importer.Settings.ImportBackTranslation = true;
-					m_importer.Settings.ImportBookIntros = false;
+				m_importer.Settings.ImportTranslation = true;
+				m_importer.Settings.ImportBackTranslation = true;
+				m_importer.Settings.ImportBookIntros = false;
 
-					// ************** process a \id segment, test MakeBook() method *********************
-					m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
-					m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
+				// ************** process a \id segment, test MakeBook() method *********************
+				m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
+				m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 
-					// Set up the vernacular Scripture
-					m_importer.ProcessSegment("", @"\id");
-					// no text provided in segment, just the refs
-					m_importer.ProcessSegment("Primera Seccion ", @"\s");
-					m_importer.ProcessSegment("", @"\p");
-					m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 0);
-					m_importer.TextSegment.LastReference = new BCVRef(1, 1, 0);
-					m_importer.ProcessSegment("", @"\c");
-					m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 1);
-					m_importer.TextSegment.LastReference = new BCVRef(1, 1, 1);
-					m_importer.ProcessSegment("Primer versiculo", @"\v");
-					IScrBook genesis = m_importer.ScrBook;
-					Assert.AreEqual(1, genesis.SectionsOS.Count);
-					// minor sanity check
+				// Set up the vernacular Scripture
+				m_importer.ProcessSegment("", @"\id");
+				// no text provided in segment, just the refs
+				m_importer.ProcessSegment("Primera Seccion ", @"\s");
+				m_importer.ProcessSegment("", @"\p");
+				m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 0);
+				m_importer.TextSegment.LastReference = new BCVRef(1, 1, 0);
+				m_importer.ProcessSegment("", @"\c");
+				m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 1);
+				m_importer.TextSegment.LastReference = new BCVRef(1, 1, 1);
+				m_importer.ProcessSegment("Primer versiculo", @"\v");
+				IScrBook genesis = m_importer.ScrBook;
+				Assert.AreEqual(1, genesis.SectionsOS.Count);
+				// minor sanity check
 
-					// Now test the missing picture in a non-interleaved BT
-					m_importer.CurrentImportDomain = ImportDomain.BackTrans;
-					m_importer.ProcessSegment("", @"\id");
-					// no text provided in segment, just the refs
-					Assert.AreEqual(genesis.Hvo, m_importer.ScrBook.Hvo,
-						"The id line in the BT file should not cause a new ScrBook to get created.");
-					m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
-					m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
-					m_importer.ProcessSegment("First Section ", @"\s");
-					m_importer.ProcessSegment("", @"\p");
-					m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 0);
-					m_importer.TextSegment.LastReference = new BCVRef(1, 1, 0);
-					m_importer.ProcessSegment("", @"\c");
-					m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 1);
-					m_importer.TextSegment.LastReference = new BCVRef(1, 1, 1);
-					m_importer.ProcessSegment("First verse ", @"\v");
-					m_importer.ProcessSegment("BT for first photo", @"\fig");
-				}
-
-				// ************** finalize **************
-				m_importer.FinalizeImport();
-
-				Assert.Fail("We should throw an exception for the bad picture");
+				// Now test the missing picture in a non-interleaved BT
+				m_importer.CurrentImportDomain = ImportDomain.BackTrans;
+				m_importer.ProcessSegment("", @"\id");
+				// no text provided in segment, just the refs
+				Assert.AreEqual(genesis.Hvo, m_importer.ScrBook.Hvo,
+					"The id line in the BT file should not cause a new ScrBook to get created.");
+				m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
+				m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
+				m_importer.ProcessSegment("First Section ", @"\s");
+				m_importer.ProcessSegment("", @"\p");
+				m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 0);
+				m_importer.TextSegment.LastReference = new BCVRef(1, 1, 0);
+				m_importer.ProcessSegment("", @"\c");
+				m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 1);
+				m_importer.TextSegment.LastReference = new BCVRef(1, 1, 1);
+				m_importer.ProcessSegment("First verse ", @"\v");
+				m_importer.ProcessSegment("BT for first photo", @"\fig");
 			}
-			catch (ScriptureUtilsException e)
-			{
-				// Rather than having the test expect an exception, we had to put this assertion into
-				// a catch because the exception contains a variable, which is not allowed in the
-				// attribute.
-				// REVIEW (EberhardB): where exactly do we expect it to throw? Consider using
-				// Assert.Throws instead of the catch block (http://www.nunit.org/index.php?p=exceptionAsserts&r=2.5.9)
-				Assert.AreEqual(string.Format("Back translation does not correspond to a vernacular picture.{1}" +
-						"A back translation picture must correspond to a picture in the corresponding vernacular paragraph." +
-						"{1}{1}\\fig {0}{1}Attempting to read GEN  Chapter: 1  Verse: 1",
-						Path.Combine(Path.GetTempPath(), "BT for first photo"), Environment.NewLine), e.Message);
-			}
-			catch (Exception)
-			{
-				Assert.Fail("Exception should have been a ScriptureUtilsException");
-			}
+
+			// ************** finalize **************
+			Assert.That(() => m_importer.FinalizeImport(), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(string.Format(
+				"Back translation does not correspond to a vernacular picture.{1}" +
+				"A back translation picture must correspond to a picture in the corresponding vernacular paragraph." +
+				"{1}{1}\\fig {0}{1}Attempting to read GEN  Chapter: 1  Verse: 1",
+				Path.Combine(Path.GetTempPath(), "BT for first photo"), Environment.NewLine)));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3251,7 +3233,7 @@ namespace ParatextImport.ImportTests
 			ICmTranslation translation = para.GetBT();
 			ITsString tss = translation.Translation.get_String(m_wsAnal);
 			Assert.AreEqual(1, tss.RunCount);
-			ParatextImportTestInMemory.VerifyFootnoteMarkerOrcRun(tss, 0, m_wsAnal, true);
+			VerifyFootnoteMarkerOrcRun(tss, 0, m_wsAnal, true);
 			VerifyFootnoteWithTranslation(0, "Primer pata nota", "Hi mom", string.Empty,
 				ScrStyleNames.NormalFootnoteParagraph);
 		}
@@ -3268,22 +3250,11 @@ namespace ParatextImport.ImportTests
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void InvalidScrFile_UnexcludedDataBeforeIdLine()
 		{
-			try
-			{
-				m_importer.TextSegment.FirstReference = new BCVRef(41, 1, 0);
-				m_importer.TextSegment.LastReference = new BCVRef(41, 1, 0);
-				m_importer.ProcessSegment("", @"\c");
+			m_importer.TextSegment.FirstReference = new BCVRef(41, 1, 0);
+			m_importer.TextSegment.LastReference = new BCVRef(41, 1, 0);
 
-				Assert.Fail("The exception was not detected.");
-			}
-			catch (ScriptureUtilsException e)
-			{
-				Assert.AreEqual(SUE_ErrorCode.UnexcludedDataBeforeIdLine, e.ErrorCode);
-			}
-			catch
-			{
-				Assert.Fail("Wrong exception detected.");
-			}
+			Assert.That(() => m_importer.ProcessSegment("", @"\c"), Throws.TypeOf<ScriptureUtilsException>().With
+				.Property("ErrorCode").EqualTo(SUE_ErrorCode.UnexcludedDataBeforeIdLine));
 		}
 		#endregion
 	}
