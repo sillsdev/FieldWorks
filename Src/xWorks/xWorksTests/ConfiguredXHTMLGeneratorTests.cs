@@ -5359,6 +5359,93 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_CustomFieldInGroupingNodeGeneratesContent()
+		{
+			using (var customField = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+				CellarPropertyType.String, Guid.Empty))
+			{
+				var customFieldNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomString",
+					IsCustomField = true
+				};
+				var groupingNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomGroup",
+					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
+					DictionaryNodeOptions = new DictionaryNodeGroupingOptions()
+				};
+				var mainEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { groupingNode },
+					FieldDescription = "LexEntry"
+				};
+				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+				var testEntry = CreateInterestingLexEntry(Cache);
+				const string customData = "I am custom data";
+				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+
+				// Set custom field data
+				Cache.MainCacheAccessor.SetString(testEntry.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
+				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+				//SUT
+				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+				var customDataPath = $"/div[@class='lexentry']/span[@class='grouping_customgroup']/span[@class='customstring']/span[text()='" + customData + "']";
+				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_CustomFieldInNestedGroupingNodeGeneratesContent()
+		{
+			using (var customField = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+				CellarPropertyType.String, Guid.Empty))
+			{
+				var customFieldNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomString",
+					IsCustomField = true
+				};
+				var groupingNode3 = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomGroup",
+					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
+					DictionaryNodeOptions = new DictionaryNodeGroupingOptions()
+				};
+				var groupingNode2 = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomGroup",
+					Children = new List<ConfigurableDictionaryNode> { groupingNode3 },
+					DictionaryNodeOptions = new DictionaryNodeGroupingOptions()
+				};
+				var groupingNode1 = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomGroup",
+					Children = new List<ConfigurableDictionaryNode> { groupingNode2 },
+					DictionaryNodeOptions = new DictionaryNodeGroupingOptions()
+				};
+				var mainEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { groupingNode1 },
+					FieldDescription = "LexEntry"
+				};
+				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+				var testEntry = CreateInterestingLexEntry(Cache);
+				const string customData = "This is custom data";
+				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+
+				// Set custom field data
+				Cache.MainCacheAccessor.SetString(testEntry.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
+				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+				//SUT
+				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+				const string grpXPath = "/span[@class='grouping_customgroup']";
+				var customDataPath = $"/div[@class='lexentry']{grpXPath}{grpXPath}{grpXPath}/span[@class='customstring']/span[text()='{customData}']";
+				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_GetPropertyTypeForConfigurationNode_StringCustomFieldIsPrimitive()
 		{
 			using (var customField = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,

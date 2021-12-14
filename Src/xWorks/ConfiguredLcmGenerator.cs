@@ -658,15 +658,18 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static string GetClassNameForCustomFieldParent(ConfigurableDictionaryNode customFieldNode, LcmCache cache)
 		{
-			Type unneeded;
-			// If the parent node of the custom field represents a collection, calling GetTypeForConfigurationNode
-			// with the parent node returns the collection type. We want the type of the elements in the collection.
-			var parentNodeType = GetTypeForConfigurationNode(customFieldNode.Parent, cache, out unneeded);
+			// Use the type of the nearest ancestor that is not a grouping node
+			var parentNode = customFieldNode.Parent;
+			for (; parentNode.DictionaryNodeOptions is DictionaryNodeGroupingOptions; parentNode = parentNode.Parent) { }
+			var parentNodeType = GetTypeForConfigurationNode(parentNode, cache, out _);
 			if (parentNodeType == null)
 			{
 				Debug.Assert(parentNodeType != null, "Unable to find type for configuration node");
 				return string.Empty;
 			}
+
+			// If the parent node of the custom field represents a collection, calling GetTypeForConfigurationNode
+			// with the parent node returns the collection type. We want the type of the elements in the collection.
 			if (IsCollectionType(parentNodeType))
 			{
 				parentNodeType = parentNodeType.GetGenericArguments()[0];
