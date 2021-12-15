@@ -936,16 +936,20 @@ namespace SIL.FieldWorks.Common.Framework
 				tailNumber++;
 			}
 
-			const string applicationExecutablePath = "fieldworks-flex";
-			const string iconPath = "fieldworks-flex";
-			if (string.IsNullOrEmpty(applicationExecutablePath))
-				return false;
+			string applicationCommand = "fieldworks-flex";
+			string iconPath = "fieldworks-flex";
+
+			bool runningInFlatpak = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("FLATPAK_ID"));
+			if (runningInFlatpak) {
+				applicationCommand = "flatpak run org.sil.FieldWorks";
+				iconPath = "org.sil.FieldWorks";
+			}
 
 			string content = String.Format(
 				"[Desktop Entry]{0}" +
 				"Version=1.0{0}" +
 				"Terminal=false{0}" +
-				"Exec=" + applicationExecutablePath + " " + applicationArguments + "{0}" +
+				"Exec=" + applicationCommand + " " + applicationArguments + "{0}" +
 				"Icon=" + iconPath + "{0}" +
 				"Type=Application{0}" +
 				"Name=" + projectName + "{0}" +
