@@ -284,7 +284,7 @@
 		<!-- Versions of NuGet packages. These need to match the versions in nuget-common/packages.config -->
 		<ChorusNugetVersion>5.0.0-beta0013</ChorusNugetVersion>
 		<PalasoNugetVersion>9.0.0-beta0083</PalasoNugetVersion>
-		<ParatextNugetVersion>9.2.5-beta1</ParatextNugetVersion>
+		<ParatextNugetVersion>9.2.6.1</ParatextNugetVersion>
 		<LcmNugetVersion>10.2.0-beta0007</LcmNugetVersion>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
