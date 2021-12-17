@@ -389,7 +389,7 @@ ComponentsMap-clean:
 	$(RM) $(OUT_DIR)/components.map
 
 diagnostics:
-	[[ -z $(FW_PACKAGE_DEBUG) ]] || { \
+	[[ "$(FW_PACKAGE_DEBUG)" != "true" ]] || { \
 		set -x ;\
 		pwd ;\
 		which mono msbuild ;\
