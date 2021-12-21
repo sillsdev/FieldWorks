@@ -2067,14 +2067,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			string dbImportName = m_DatabaseFileName.Text;
 			if (dbImportName != string.Empty)	// has value to save
 			{
-				using (RegistryKey key = m_app.SettingsKey)
-				{
-					if (key == null)
-						return;
+				RegistryKey settingsKey = m_app.SettingsKey;
+				if (settingsKey == null)
+					return;
 
-					// save it as the most recent dictionary file for import
-					key.SetValue("LatestImportDictFile", dbImportName);
-				}
+				// save it as the most recent dictionary file for import
+				settingsKey.SetValue("LatestImportDictFile", dbImportName);
 
 				string dbHash = dbImportName.GetHashCode().ToString();
 
