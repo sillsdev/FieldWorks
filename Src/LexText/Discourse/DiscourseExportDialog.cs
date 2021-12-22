@@ -150,7 +150,7 @@ namespace SIL.FieldWorks.Discourse
 
 		protected int NodeIndex(string tag)
 		{
-			var file = tag.Substring(tag.LastIndexOf('\\') + 1);
+			var file = tag.Substring(tag.LastIndexOfAny(new[] { '\\', '/' }) + 1);
 			for (var i = 0; i < m_ddNodes.Count; i++)
 			{
 				var fileN = m_ddNodes[i].BaseURI.Substring(m_ddNodes[i].BaseURI.LastIndexOf('/') + 1);
