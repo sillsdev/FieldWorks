@@ -284,6 +284,7 @@
 		<!-- Versions of NuGet packages. These need to match the versions in nuget-common/packages.config -->
 		<ChorusNugetVersion>5.0.0-beta0013</ChorusNugetVersion>
 		<PalasoNugetVersion>9.0.0-beta0083</PalasoNugetVersion>
+		<Palaso4ParatextNugetVersion>8.1.0-beta0035</Palaso4ParatextNugetVersion>
 		<ParatextNugetVersion>9.2.6.1</ParatextNugetVersion>
 		<LcmNugetVersion>10.2.0-beta0011</LcmNugetVersion>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
@@ -656,7 +657,7 @@
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<!-- Copy the libpalso dlls that ParatextData depends on -->
 		<ItemGroup>
-			<ParatextDeps Include="$(PackagesDir)/SIL.Lib.6.0.11/lib/net46/SIL.*" />
+			<ParatextDeps Include="$(PackagesDir)/SIL.*.$(Palaso4ParatextNugetVersion)/lib/net461/SIL.*" />
 		</ItemGroup>
 		<Copy SourceFiles="@(ParatextDeps)" DestinationFolder="$(dir-outputBase)/lib/ParatextDeps"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>

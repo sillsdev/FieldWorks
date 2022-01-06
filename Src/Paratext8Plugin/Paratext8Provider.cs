@@ -73,7 +73,8 @@ namespace Paratext8Plugin
 
 		public bool IsInstalled
 		{
-			get {
+			get
+			{
 				try
 				{
 					return ParatextInfo.IsParatextInstalled;
