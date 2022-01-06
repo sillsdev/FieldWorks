@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2019 SIL International
+// Copyright (c) 2014-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
 using Icu.Collation;
 using NUnit.Framework;
@@ -24,7 +23,6 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
-using SIL.LCModel.Utils;
 using SIL.Linq;
 using SIL.PlatformUtilities;
 using SIL.TestUtilities;
@@ -8088,10 +8086,10 @@ namespace SIL.FieldWorks.XWorks
 				var cssPath = Path.ChangeExtension(xhtmlPath, "css");
 				var css = File.ReadAllText(cssPath);
 				// verify that the css file contains a line similar to: @media screen {
-				Assert.IsTrue(Regex.Match(css, @"@media\s*screen\s*{\s*\.pages\s*{\s*display:\s*table;\s*width:\s*100%;").Success,
+				Assert.That(css, Does.Match(@"@media\s*screen\s*{\s*\.pages\s*{\s*display:\s*table;\s*width:\s*100%;"),
 								  "Css for page buttons did not generate a screen-only rule");
 				// verify that the css file contains a line similar to: @media print {
-				Assert.IsTrue(Regex.Match(css, @"@media\s*print\s*{\s*\.pages\s*{\s*display:\s*none;\s*}").Success,
+				Assert.That(css, Does.Match(@"@media\s*print\s*{\s*\.pages\s*{\s*display:\s*none;\s*}"),
 								  "Css for page buttons did not generate a print-only rule");
 			}
 			finally
