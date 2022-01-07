@@ -639,7 +639,7 @@
 			<NuGottenFiles Include="$(PackagesDir)/DotNetZip.1.13.7/lib/net40/*.*"/>
 			<NuGottenFiles Include="$(PackagesDir)/icu.net.2.7.1/lib/net451/icu.net.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/Microsoft.Extensions.DependencyModel.2.0.4/lib/net451/Microsoft.Extensions.DependencyModel.dll"/>
-			<NuGottenFiles Include="$(PackagesDir)/Microsoft.Win32.Registry.4.7.0/lib/netstandard2.0/Microsoft.Win32.Registry.dll" Condition="'$(OS)'=='Windows_NT'"/>
+			<NuGottenFiles Include="$(PackagesDir)/Microsoft.Win32.Registry.4.7.0/lib/net461/Microsoft.Win32.Registry.dll" Condition="'$(OS)'=='Windows_NT'"/>
 			<NuGottenFiles Include="$(PackagesDir)/NAudio.1.10.0/lib/net35/NAudio.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/NAudio.Lame.1.1.5/lib/netstandard2.0/NAudio.Lame.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/NAudio.Lame.1.1.5/build/libmp3lame.32.dll" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'"/>
