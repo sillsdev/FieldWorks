@@ -4,7 +4,6 @@ Linux FieldWorks application description.
 Copyright 2016 SIL International. LGPL2+ license.
 
 Can be validated using
-
 ```
 flatpak run org.freedesktop.appstream-glib validate org.sil.FieldWorks.metainfo.xml
 ```
@@ -35,7 +34,7 @@ flatpak run org.freedesktop.appstream-glib validate org.sil.FieldWorks.metainfo.
 
   <launchable type="desktop-id">fieldworks-applications.desktop</launchable>
 
-  <!-- icon and categories are specified in the .deskotp file. -->
+  <!-- Icon and categories are specified in the .desktop file. -->
 
   <screenshots>
     <!-- These screenshots are supposed to be in 16:9 ratio, and will look more native if they are taken on Linux. See the docs at https://freedesktop.org/software/appstream/docs/chap-Quickstart.html#qsr-app-screenshots-info -->
