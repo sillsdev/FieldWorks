@@ -581,6 +581,51 @@
 		</Extras>
 	  </Help>
 	</Field>
+	<Field MDF="\dle" id="dle" list="yes" multi="yes" property="DialectLabels"
+		   signature="CmPossibility" type="string" uiname="Dialect Labels (Entry)">
+	  <Help>
+		<Usage>When you have a marker that lists dialect labels of this
+		entry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this field,
+		and check whether the content is a full name or
+		abbreviation.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, each field associates with a different list
+		item.</Appends>
+
+		<List>Yes</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\dle French</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>If you have dialect lables in multiple languages in your SFM
+		  file, only one of these can be mapped to this field. The others
+		  should be excluded from input. Flex stores names in additional
+		  writing systems on each domain, but they cannot be imported in this
+		  way.</Limitation>
+
+		  <Limitation>Only one dialect label is allowed per field at this point. If
+		  you have multiple items separated by a separator, you should either
+		  break these into individual fields prior to import, or you'll need
+		  to clean up the bad items after import.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>This field links to an existing item in the Dialect Labels
+		  list or creates a new item in the list if an existing
+		  one is not found. The program checks both the name and abbreviation
+		  for a match. If a new domain is created, the name and abbreviation
+		  will both be set to the field contents.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
   </Class>
 
   <Class name="Etymology" partOf="Entry Subentry">
@@ -2436,6 +2481,51 @@
 	  </Help>
 	</Field>
 
+	<Field MDF="\dls" id="dls" list="yes" multi="yes" property="DialectLabels"
+		   signature="CmPossibility" type="string" uiname="Dialect Labels (Sense)">
+	  <Help>
+		<Usage>When you have a marker that lists dialect labels of this
+		entry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this field,
+		and check whether the content is a full name or
+		abbreviation.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, each field associates with a different list
+		item.</Appends>
+
+		<List>Yes</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\dls French</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>If you have dialect lables in multiple languages in your SFM
+		  file, only one of these can be mapped to this field. The others
+		  should be excluded from input. Flex stores names in additional
+		  writing systems on each domain, but they cannot be imported in this
+		  way.</Limitation>
+
+		  <Limitation>Only one dialect label is allowed per field at this point. If
+		  you have multiple items separated by a separator, you should either
+		  break these into individual fields prior to import, or you'll need
+		  to clean up the bad items after import.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>This field links to an existing item in the Dialect Labels
+		  list or creates a new item in the list if an existing
+		  one is not found. The program checks both the name and abbreviation
+		  for a match. If a new domain is created, the name and abbreviation
+		  will both be set to the field contents.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
 	<!-- <Field id="msref" type="string" property="MainEntriesOrSenses" uiname="Main Sense Reference" signature="MultiUnicode" list="no" multi="yes" MDF="\mn"/> -->
   </Class>
 
@@ -2810,6 +2900,51 @@
 		  underlying form. It will have Is Abstract Form set to true. The
 		  Morph Type will be set based on the affix markers on the underlying
 		  form.</Extra>
+		</Extras>
+	  </Help>
+	</Field>
+	<Field MDF="\sdle" id="sdle" list="yes" multi="yes" property="DialectLabels"
+		   signature="CmPossibility" type="string" uiname="Dialect Labels (Subentry)">
+	  <Help>
+		<Usage>When you have a marker that lists dialect labels of this
+		entry.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this field,
+		and check whether the content is a full name or
+		abbreviation.</Settings>
+
+		<Mapping>No</Mapping>
+
+		<Appends>Yes, each field associates with a different list
+		item.</Appends>
+
+		<List>Yes</List>
+
+		<Multilingual>No</Multilingual>
+
+		<Examples>
+		  <Example>\dle French</Example>
+		</Examples>
+
+		<Limitations>
+		  <Limitation>If you have dialect lables in multiple languages in your SFM
+		  file, only one of these can be mapped to this field. The others
+		  should be excluded from input. Flex stores names in additional
+		  writing systems on each domain, but they cannot be imported in this
+		  way.</Limitation>
+
+		  <Limitation>Only one dialect label is allowed per field at this point. If
+		  you have multiple items separated by a separator, you should either
+		  break these into individual fields prior to import, or you'll need
+		  to clean up the bad items after import.</Limitation>
+		</Limitations>
+
+		<Extras>
+		  <Extra>This field links to an existing item in the Dialect Labels
+		  list or creates a new item in the list if an existing
+		  one is not found. The program checks both the name and abbreviation
+		  for a match. If a new domain is created, the name and abbreviation
+		  will both be set to the field contents.</Extra>
 		</Extras>
 	  </Help>
 	</Field>
