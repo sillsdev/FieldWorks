@@ -968,10 +968,10 @@ namespace SIL.FieldWorks.IText
 				}
 				if (stText.ParagraphsOS.Count == 1 && ((IStTxtPara)stText.ParagraphsOS[0]).Contents.Length == 0)
 				{
-					// If we have restarted FLEx since this text was created, the WS has been lost and replaced with the global default of English.
-					// If this is the case, default to the Default Vernacular WS (LT-15688)
-					var globalDefaultWs = Cache.ServiceLocator.WritingSystemManager.Get("en").Handle;
-					if(stText.MainWritingSystem == globalDefaultWs)
+					// If we have restarted FLEx since this text was created, the WS has been lost and replaced with the userWs.
+					// If this is the case, default to the Default Vernacular WS (LT-15688 & LT-20837)
+					var userWs = Cache.ServiceLocator.WritingSystemManager.UserWs;
+					if(stText.MainWritingSystem == userWs)
 					{
 						NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 							((IStTxtPara)stText.ParagraphsOS[0]).Contents = TsStringUtils.MakeString(string.Empty, Cache.DefaultVernWs));
