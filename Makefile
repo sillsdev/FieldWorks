@@ -130,6 +130,7 @@ install-tree: fieldworks-flex.1.gz unicodechareditor.1.gz install-tree-fdo
 	install Bin/ReadKey.exe $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks
 	install Bin/WriteKey.exe $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks
 	install Lib/linux/fieldworks-flex $(DESTDIR)$(INSTALLATION_PREFIX)/bin
+	install Lib/linux/fieldworks-lcmbrowser $(DESTDIR)$(INSTALLATION_PREFIX)/bin
 	install Lib/linux/unicodechareditor $(DESTDIR)$(INSTALLATION_PREFIX)/bin
 	install Lib/linux/{run-app,extract-userws.xsl,launch-xchm} $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks
 	install -m 644 environ{,-xulrunner} $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks
