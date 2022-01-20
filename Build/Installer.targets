@@ -255,6 +255,9 @@
 			<BinFiles Remove="@(MergeModules)"/>
 			<BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="@(DeveloperFiles);@(IcuDataFiles)"/>
 			<BinFiles Include="$(fwrt)\License.htm"/> <!-- install the license -->
+			<!-- Somehow, upgrading ICU prevented the generation of this file of unknown origin. Since removing it is hardly worth
+				a new base build, we'll keep it around until our next base build. TODO (Hasso) 2022.01: remove this ugly hack. -->
+			<BinFiles Include="$(AppBuildMasterDir)\$(BinDirSuffix)\FixFwData.exe.config"/>
 			<!-- Files with special install locations or steps -->
 			<CustomInstallFiles Include="$(OutputDirForConfig)\FieldWorks.exe"/> <!-- easier to add firewall extension if it isn't harvested -->
 			<CustomInstallFiles Include="$(fwrt)\DistFiles\vs_piaredist.exe"/> <!-- Installed in Program Files\Common Files -->
