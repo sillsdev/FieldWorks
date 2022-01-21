@@ -6,4 +6,9 @@ set -e -o pipefail
 cd "$(dirname "$0")"/..
 . environ
 cd "$OLDPWD"
+if [[ ${FW_DEBUG-} == "true" ]]; then
+  echo "Environment:"
+  env|sort
+  set -x
+fi
 exec "$@"
