@@ -54,7 +54,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteBeginningWithAsterisk()
 		{
 			m_importer.Initialize();
@@ -109,7 +108,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteBeginningWithMultiCharToken()
 		{
 			m_settings.SetMapping(MappingSet.Main, new ImportMappingInfo(@"\ft", @"\ft*",
@@ -175,7 +173,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteBeginningWithMultipleWords()
 		{
 			m_importer.Initialize();
@@ -236,7 +233,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteEndsWithCharStyle()
 		{
 			m_importer.Initialize();
@@ -297,7 +293,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteLastThing()
 		{
 			m_settings.SetMapping(MappingSet.Main, new ImportMappingInfo(@"\ft", @"\ft*",
@@ -359,7 +354,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteLookahead()
 		{
 			m_importer.Initialize();
@@ -422,7 +416,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteWithTextBeforeReference()
 		{
 			m_importer.Initialize();
@@ -484,7 +477,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteDefaultParaChars1()
 		{
 			m_settings.SetMapping(MappingSet.Main, new ImportMappingInfo(@"\ft", @"\ft*",
@@ -560,7 +552,6 @@ namespace ParatextImport.ImportTests
 		/// tests the current behavior. See TE-5078</remarks>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteDefaultParaChars2()
 		{
 			m_settings.SetMapping(MappingSet.Main, new ImportMappingInfo(@"\ft", @"\ft*",
@@ -620,7 +611,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteDefaultParaChars3()
 		{
 			m_settings.SetMapping(MappingSet.Main, new ImportMappingInfo(@"\ft", @"\ft*",
@@ -688,7 +678,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteDefaultParaChars4()
 		{
 			m_settings.SetMapping(MappingSet.Main, new ImportMappingInfo(@"\ft", @"\ft*",
@@ -756,7 +745,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void HandleUSFMStyleFootnotes_FirstOneHasCallerOmitted()
 		{
 			// initialize - process a \id segment to establish a book
@@ -831,7 +819,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void HandleUSFMStyleFootnotes_FirstOneHasSequence()
 		{
 			// initialize - process a \id segment to establish a book
@@ -906,7 +893,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void HandleUSFMStyleFootnotes_FirstOneHasLiteralCaller()
 		{
 			// initialize - process a \id segment to establish a book
@@ -981,7 +967,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void HandleUSFMStyleFootnotes_StripAndIgnoreCallers()
 		{
 			// initialize - process a \id segment to establish a book
@@ -1058,7 +1043,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void HandleUSFMStyleFootnotes_FootnoteInSectionHeadAfterChapterNum()
 		{
 			// initialize - process a \id segment to establish a book
@@ -1117,7 +1101,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void AnnotationNonInterleaved_Simple()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -1288,7 +1271,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void AnnotationNonInterleaved_StartWithCharacterMapping()
 		{
 			m_importer.Settings.ImportTranslation = false;
@@ -1355,7 +1337,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void AnnotationInterleaved_DontImportScripture()
 		{
 			m_importer.Settings.ImportTranslation = false;
@@ -1417,7 +1398,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_Simple()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -1553,7 +1533,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_DefaultParaCharsStart()
 		{
 			m_importer.Settings.SetMapping(MappingSet.Main,
@@ -1593,8 +1572,11 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 			m_importer.ProcessSegment("This is default paragraph characters ", @"\nt");
+
+			// For some reason, starting in 2022-01, this message has a Unix newline even on Windows. If it changes back soon,
+			// we can switch to regular expression matching to save the maintenance.
 			Assert.That(() => m_importer.ProcessSegment("Title ", @"\mt"), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(string.Format(
-				"Back translation not part of a paragraph:{0}" +
+				"Back translation not part of a paragraph:\n" +
 				"\tThis is default paragraph characters {0}" +
 				"\t(Style: Default Paragraph Characters){0}" +
 				"Attempting to read GEN", Environment.NewLine)));
@@ -1610,7 +1592,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_ParallelPassage()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -1700,7 +1681,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_ParallelPassage_BtOnly()
 		{
 			// Setup book
@@ -1798,7 +1778,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_NoCorrespondingBook()
 		{
 			m_importer.Settings.ImportTranslation = false;
@@ -1824,7 +1803,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_RepeatedChapterNum()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -1893,7 +1871,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_NoParaMarker()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -1975,7 +1952,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_TwoBooks()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -2061,7 +2037,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_Intros()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -2163,7 +2138,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_ScrParaWithNoVerseNumber()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -2260,7 +2234,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_VerseInMultipleParagraphs()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -2396,7 +2369,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_EmptyLastPara()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -2494,7 +2466,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_Footnotes()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -2636,7 +2607,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BtFootnoteWhenNotImportingVernacular()
 		{
 			// Set up Scripture to correspond with the back translation to be imported.
@@ -2742,7 +2712,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BtFootnoteWhenNotImportingVernacular_CharStyleUsedTwice()
 		{
 			// Set up Scripture to correspond with the back translation to be imported.
@@ -2859,7 +2828,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_WithInterleavedAnnotation()
 		{
 			// Set up the vernacular Scripture
@@ -2933,7 +2901,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_Pictures()
 		{
 			using (DummyFileMaker filemaker = new DummyFileMaker("junk1.jpg", true))
@@ -3047,7 +3014,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_MissingPicture()
 		{
 			using (new DummyFileMaker("junk1.jpg", true))
@@ -3095,8 +3061,10 @@ namespace ParatextImport.ImportTests
 			}
 
 			// ************** finalize **************
+			// For some reason, starting in 2022-01, this message has a Unix newline even on Windows. If it changes back soon,
+			// we can switch to regular expression matching to save the maintenance.
 			Assert.That(() => m_importer.FinalizeImport(), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(string.Format(
-				"Back translation does not correspond to a vernacular picture.{1}" +
+				"Back translation does not correspond to a vernacular picture.\n" +
 				"A back translation picture must correspond to a picture in the corresponding vernacular paragraph." +
 				"{1}{1}\\fig {0}{1}Attempting to read GEN  Chapter: 1  Verse: 1",
 				Path.Combine(Path.GetTempPath(), "BT for first photo"), Environment.NewLine)));
@@ -3113,7 +3081,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_EmptyBTParaFootnote()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -3193,7 +3160,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_BTFootnoteBeginsPara()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -3247,7 +3213,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void InvalidScrFile_UnexcludedDataBeforeIdLine()
 		{
 			m_importer.TextSegment.FirstReference = new BCVRef(41, 1, 0);

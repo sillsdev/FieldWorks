@@ -286,7 +286,7 @@
 		<PalasoNugetVersion>9.0.0-beta0103</PalasoNugetVersion>
 		<Palaso4ParatextNugetVersion>8.1.0-beta0035</Palaso4ParatextNugetVersion>
 		<ParatextNugetVersion>9.2.6.1</ParatextNugetVersion>
-		<LcmNugetVersion>10.2.0-beta0011</LcmNugetVersion>
+		<LcmNugetVersion>10.2.0-beta0023</LcmNugetVersion>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
 		<IPCFrameworkBuildType Condition="'$(OS)'=='Windows_NT'">bt278</IPCFrameworkBuildType>
