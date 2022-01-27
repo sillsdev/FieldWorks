@@ -586,6 +586,12 @@ namespace SIL.FieldWorks.IText
 			InterlinLineChoices curLineChoices, int ilineChoice)
 		{
 			var curSpec = curLineChoices.EnabledLineSpecs[ilineChoice];
+
+			// Do not add other writing systems for customs.
+			var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
+			if (mdc.FieldExists(curSpec.Flid) && mdc.IsCustom(curSpec.Flid))
+				return;
+
 			var choices = GetWsComboItems(curSpec);
 			var curFlidDisplayedWss = curLineChoices.OtherEnabledWritingSystemsForFlid(curSpec.Flid, 0);
 			var curRealWs = GetRealWsFromSpec(curSpec);
