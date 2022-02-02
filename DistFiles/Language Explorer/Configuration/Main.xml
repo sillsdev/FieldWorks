@@ -39,7 +39,7 @@
 		<command id="CmdObtainFirstFlexBridgeProject" label="Send this _Project for the first time..." icon="syncSendReceiveFirst" message="FirstFLExBridge" />
 		<command id="CmdObtainFirstLiftProject" label="Send this _Lexicon for the first time (to WeSay)..." icon="syncSendReceiveFirst" message="FirstLiftBridge" />
 		<command id="CmdHelpChorus" label="_Help..." message="ShowChorusHelp" />
-		<!-- LT-19830 <command id="CmdCheckForFlexBridgeUpdates" label="Check for FLEx Bridge _Updates..." message="CheckForFlexBridgeUpdates" /> -->
+		<command id="CmdCheckForFlexBridgeUpdates" label="Check for FLEx Bridge _Updates..." message="CheckForFlexBridgeUpdates" />
 		<command id="CmdHelpAboutFLEXBridge" label="_About FLEx Bridge..." icon="chorus" message="AboutFlexBridge"/>
 		<command id="CmdFLExLiftBridge" label="Send/Receive..." icon="syncSendReceive" message="FLExLiftBridge" shortcut="Ctrl+R" />
 
@@ -451,7 +451,7 @@
 			<item command="CmdObtainFirstLiftProject"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdHelpChorus"/>
-			<!-- LT-19830 <item command="CmdCheckForFlexBridgeUpdates"/> -->
+			<item command="CmdCheckForFlexBridgeUpdates"/>
 			<item command="CmdHelpAboutFLEXBridge"/>
 		</menu>
 		<menu id="Edit" label="_Edit" b4InsertMenu="true">

@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -552,17 +553,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// The method/delegate that gets invoked when Send/Receive->"Check for _Updates..." menu is clicked.
+		/// Invoked when Send/Receive->"Check for FLEx Bridge _Updates..." menu is clicked.
 		/// </summary>
 		/// <param name="argument">Includes the XML command element of the OnAboutFlexBridge message</param>
-		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate, or somebody shoudl also try to handle the message.</returns>
+		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate, or somebody should also try to handle the message.</returns>
 		public bool OnCheckForFlexBridgeUpdates(object argument)
 		{
-			FLExBridgeHelper.LaunchFieldworksBridge(
-				GetFullProjectFileName(),
-				SendReceiveUser,
-				FLExBridgeHelper.CheckForUpdates,
-				null, LcmCache.ModelVersion, FLExBridgeHelper.LiftVersion, null, null, out _, out _);
+			//FLExBridgeHelper.LaunchFieldworksBridge(
+			//	GetFullProjectFileName(),
+			//	SendReceiveUser,
+			//	FLExBridgeHelper.CheckForUpdates,
+			//	null, LcmCache.ModelVersion, FLExBridgeHelper.LiftVersion, null, null, out _, out _);
+			Process.Start("https://software.sil.org/fieldworks/support/using-sendreceive/flex-bridge/");
 
 			return true;
 		}
