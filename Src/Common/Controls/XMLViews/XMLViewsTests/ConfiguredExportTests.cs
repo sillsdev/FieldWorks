@@ -1,13 +1,11 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Xml;
 using NUnit.Framework;
 using SIL.LCModel.Core.WritingSystems;
@@ -74,7 +72,7 @@ namespace XMLViewsTests
 					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars;
 					ISet<string> ignoreSet;
-					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
+					var data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet);
 					Assert.AreEqual(mapChars.Count, 2, "Too many characters found equivalents");
 					Assert.AreEqual(mapChars["a"], "az");
 					Assert.AreEqual(mapChars["ch"], "c");
@@ -97,7 +95,7 @@ namespace XMLViewsTests
 					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars;
 					ISet<string> ignoreSet;
-					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
+					var data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet);
 					Assert.AreEqual(data.Count, 0, "Header created for two wedges");
 					Assert.AreEqual(mapChars.Count, 3, "Too many characters found equivalents");
 					Assert.AreEqual(mapChars["az"], "b");
@@ -124,10 +122,10 @@ namespace XMLViewsTests
 					Dictionary<string, string> mapChars = null;
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
-					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet));
 					// The second test catches the real world scenario, GetDigraphs is actually called many times, but the first time
 					// is the only one that should trigger the algorithm, afterward the information is cached in the exporter.
-					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet));
 					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
 					Assert.AreEqual(ignoreSet.Count, 1, "Ignorable character not parsed from rule");
 				}
@@ -150,7 +148,7 @@ namespace XMLViewsTests
 					Dictionary<string, string> mapChars = null;
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
-					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet));
 					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
 					Assert.AreEqual(ignoreSet.Count, 1, "Ignorable character not parsed from rule");
 					Assert.IsTrue(ignoreSet.Contains('\uA78C'.ToString(CultureInfo.InvariantCulture)));
@@ -174,7 +172,7 @@ namespace XMLViewsTests
 					Dictionary<string, string> mapChars = null;
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
-					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet));
 					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
 					Assert.AreEqual(ignoreSet.Count, 1, "Ignorable character not parsed from rule");
 					Assert.IsTrue(ignoreSet.Contains('\uA78C'.ToString(CultureInfo.InvariantCulture)));
@@ -198,7 +196,7 @@ namespace XMLViewsTests
 					Dictionary<string, string> mapChars = null;
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
-					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet));
 					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
 					Assert.AreEqual(ignoreSet.Count, 2, "Ignorable character not parsed from rule");
 					CollectionAssert.AreEquivalent(ignoreSet, new [] {"!", "?"});
@@ -222,7 +220,7 @@ namespace XMLViewsTests
 					Dictionary<string, string> mapChars = null;
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
-					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet));
 					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
 					Assert.AreEqual(ignoreSet.Count, 3, "Ignorable character not parsed from rule");
 					CollectionAssert.AreEquivalent(ignoreSet, new[] { "eb-", "oba-", "ba-" });
@@ -246,7 +244,7 @@ namespace XMLViewsTests
 					Dictionary<string, string> mapChars = null;
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
-					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet));
 					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
 					Assert.AreEqual(ignoreSet.Count, 2, "Ignorable character not parsed from rule");
 					CollectionAssert.AreEquivalent(ignoreSet, new[] { "!", "?" });
@@ -270,7 +268,7 @@ namespace XMLViewsTests
 					Dictionary<string, string> mapChars = null;
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
-					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet));
 					Assert.AreEqual(data.Count, 0, "No characters should be generated by a before 2 rule");
 					Assert.AreEqual(mapChars.Count, 0, "The rule should have been ignored, no characters ought to have been mapped");
 					Assert.AreEqual(ignoreSet.Count, 0, "Ignorable character incorrectly parsed from rule");
@@ -294,7 +292,7 @@ namespace XMLViewsTests
 					Dictionary<string, string> mapChars = null;
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
-					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet));
 					Assert.AreEqual(data.Count, 2, "The [before 1] rule should have added one additional character");
 				}
 			}
@@ -316,7 +314,7 @@ namespace XMLViewsTests
 					Dictionary<string, string> mapChars = null;
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
-					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet));
+					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet));
 					Assert.AreEqual(data.Count, 1, "Wrong number of character mappings found");
 					Assert.AreEqual(mapChars.Count, 2, "Wrong number of character mappings found");
 					Assert.AreEqual(ignoreSet.Count, 0, "Ignorable character incorrectly parsed from rule");
@@ -339,7 +337,7 @@ namespace XMLViewsTests
 					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars;
 					ISet<string> ignoreSet;
-					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
+					var data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet);
 					Assert.AreEqual(mapChars.Count, 2, "Too many characters found equivalents");
 					Assert.AreEqual(mapChars["a"], "az");
 					Assert.AreEqual(mapChars["ch"], "c");
@@ -362,7 +360,7 @@ namespace XMLViewsTests
 					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars;
 					ISet<string> ignoreSet;
-					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
+					var data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet);
 					Assert.AreEqual(data.Count, 2, "Two Digraphs should be returned");
 					Assert.AreEqual(mapChars["ñ"], "ñe");
 				}
@@ -395,10 +393,25 @@ namespace XMLViewsTests
 			var wsIgnorableCharMap = new Dictionary<string, ISet<string>>();
 			// test for the longest of the ignore rules
 			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar("ignore-a", "guq", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, null, Cache));
-			Assert.That(data, Does.Match("a"));
+			Assert.That(data, Is.EqualTo("a"));
 			// test for the shortest of the ignore rules
 			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar("ia", "guq", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, null, Cache));
-			Assert.That(data, Does.Match("a"));
+			Assert.That(data, Is.EqualTo("a"));
+		}
+
+		[Test]
+		public void XHTMLExportGetLeadChar_UsesCaseAlias()
+		{
+			string data = null;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("tkr", out var wsDef);
+			wsDef.CaseAlias = "az";
+			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsDef);
+			const string headword = "Indebted";
+			var wsDigraphMap = new Dictionary<string, ISet<string>>();
+			var wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
+			var wsIgnorableCharMap = new Dictionary<string, ISet<string>>();
+			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar(headword, "tkr", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, null, Cache));
+			Assert.That(data, Is.EqualTo("\u0131"), "When using Azerbaijani casing, dotted and undotted I's are different letters.");
 		}
 
 		/// <summary>
@@ -421,9 +434,7 @@ namespace XMLViewsTests
 				using (var writer = new StreamWriter(stream))
 				{
 					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
-					Dictionary<string, string> mapChars;
-					ISet<string> ignoreSet;
-					var data = exporter.GetDigraphs(ws.Id, out mapChars, out ignoreSet);
+					exporter.GetDigraphs(ws, out var mapChars, out _);
 					Assert.AreEqual(mapChars.Count, 0, "No equivalents expected");
 				}
 			}

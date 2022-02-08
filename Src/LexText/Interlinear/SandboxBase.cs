@@ -298,8 +298,8 @@ namespace SIL.FieldWorks.IText
 
 		protected CaseFunctions VernCaseFuncs(ITsString tss)
 		{
-			string locale = m_caches.MainCache.ServiceLocator.WritingSystemManager.Get(TsStringUtils.GetWsAtOffset(tss, 0)).IcuLocale;
-			return new CaseFunctions(locale);
+			var ws = m_caches.MainCache.ServiceLocator.WritingSystemManager.Get(TsStringUtils.GetWsAtOffset(tss, 0));
+			return new CaseFunctions(ws);
 		}
 
 		protected bool ComboOnMouseHover

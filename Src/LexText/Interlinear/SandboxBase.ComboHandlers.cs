@@ -1073,9 +1073,8 @@ namespace SIL.FieldWorks.IText
 				ComboList.SelectedIndex = this.IndexOfCurrentItem;
 
 				// Add any relevant 'other case' forms.
-				int wsVern = m_sandbox.RawWordformWs;
-				string locale = m_caches.MainCache.ServiceLocator.WritingSystemManager.Get(wsVern).IcuLocale;
-				CaseFunctions cf = new CaseFunctions(locale);
+				var wsVern = m_caches.MainCache.ServiceLocator.WritingSystemManager.Get(m_sandbox.RawWordformWs);
+				CaseFunctions cf = new CaseFunctions(wsVern);
 				switch (m_sandbox.CaseStatus)
 				{
 					case StringCaseStatus.allLower:

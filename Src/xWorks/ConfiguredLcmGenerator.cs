@@ -183,8 +183,8 @@ namespace SIL.FieldWorks.XWorks
 		internal static string GetWsForEntryType(ICmObject entry, LcmCache cache)
 		{
 			var wsString = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultVernWs);
-			if (entry is IReversalIndexEntry)
-				wsString = ((IReversalIndexEntry)entry).SortKeyWs;
+			if (entry is IReversalIndexEntry revEntry)
+				wsString = revEntry.SortKeyWs;
 			return wsString;
 		}
 

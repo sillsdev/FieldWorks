@@ -134,7 +134,7 @@ namespace SIL.FieldWorks.XWorks
 
 				foreach (var entryAndXhtml in entryContents)
 				{
-					if (wantLetterHeaders && !String.IsNullOrEmpty(entryAndXhtml.Item2.ToString()))
+					if (wantLetterHeaders && !string.IsNullOrEmpty(entryAndXhtml.Item2.ToString()))
 						GenerateLetterHeaderIfNeeded(entryAndXhtml.Item1, ref lastHeader, xhtmlWriter, col, settings);
 					xhtmlWriter.WriteRaw(entryAndXhtml.Item2.ToString());
 				}
@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.XWorks
 			if (firstLetter != lastHeader && !string.IsNullOrEmpty(firstLetter))
 			{
 				var headerTextBuilder = new StringBuilder();
-				var upperCase = Icu.UnicodeString.ToTitle(firstLetter, wsString);
+				var upperCase = new CaseFunctions(cache.ServiceLocator.WritingSystemManager.Get(wsString)).ToTitle(firstLetter);
 				var lowerCase = firstLetter.Normalize();
 				headerTextBuilder.Append(upperCase);
 				if (lowerCase != upperCase)

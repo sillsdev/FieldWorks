@@ -2768,7 +2768,6 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(model);
 
 			string xhtmlPath = null;
-			var letterHeaderXPath = "//div[@class='letHead']";
 			try
 			{
 				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { firstEntry.Hvo }, pubEverything, model, m_propertyTable);
@@ -4917,6 +4916,36 @@ namespace SIL.FieldWorks.XWorks
 				const string proveOnlyOneHeader = "//div[@class='letHead']/span[@class='letter']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(proveOnlyOneHeader, 1);
+			}
+		}
+
+		[Test]
+		public void GenerateLetterHeaderIfNeeded_WSHasCaseAlias_GeneratesHeadingWithCorrectPair()
+		{
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("tkr", out var wsDef);
+			wsDef.CaseAlias = "tur";
+			Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem = wsDef;
+			var dotlessEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(dotlessEntry, "Ia", wsDef.Handle);
+			var dottedEntry1 = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(dottedEntry1, "\u0130brahim", wsDef.Handle);
+			var dottedEntry2 = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(dottedEntry2, "icaza", wsDef.Handle);
+			using (var col = new CollatorForTest(wsDef.Id))
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				// SUT
+				string last = null;
+				XHTMLWriter.WriteStartElement("TestElement");
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(dotlessEntry, ref last, XHTMLWriter, col, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(dottedEntry1, ref last, XHTMLWriter, col, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(dottedEntry2, ref last, XHTMLWriter, col, DefaultSettings);
+				XHTMLWriter.WriteEndElement();
+				XHTMLWriter.Flush();
+				const string dotlessHeadingXpath = "//div[@class='letHead']/span[@class='letter' and @lang='tkr' and text()='I \u0131']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(dotlessHeadingXpath, 1);
+				const string dottedHeadingXpath = "//div[@class='letHead']/span[@class='letter' and @lang='tkr' and text()='\u0130 i']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(dottedHeadingXpath, 1);
 			}
 		}
 
