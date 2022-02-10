@@ -285,8 +285,9 @@
 		<ChorusNugetVersion>5.0.0-beta0017</ChorusNugetVersion>
 		<PalasoNugetVersion>9.0.0-beta0133</PalasoNugetVersion>
 		<Palaso4ParatextNugetVersion>8.1.0-beta0035</Palaso4ParatextNugetVersion>
-		<ParatextNugetVersion>9.2.6.1</ParatextNugetVersion>
-		<LcmNugetVersion>10.2.0-beta0027</LcmNugetVersion>
+		<ParatextNugetVersion>9.2.6.2</ParatextNugetVersion>
+		<LcmNugetVersion>10.2.0-beta0031</LcmNugetVersion>
+		<IcuNugetVersion>70.1.0</IcuNugetVersion>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
 		<IPCFrameworkBuildType Condition="'$(OS)'=='Windows_NT'">bt278</IPCFrameworkBuildType>
@@ -444,10 +445,6 @@
 		<Message Text="Downloading artifacts for $(ExCss)."/>
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ExCssBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="$(ExCss).dll;$(ExCss).$(DebugInfo)" DownloadsDir="$(DownloadsDir)"/>
 
-		<Message Text="Downloading artifacts for icu4c." Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType32)" VersionInfo="$(MasterVersionInfo)" Artifacts="@(IcuFiles)" DownloadsDir="$(DownloadsDir)/lib/x86" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType64)" VersionInfo="$(MasterVersionInfo)" Artifacts="@(IcuFiles)" DownloadsDir="$(DownloadsDir)/lib/x64" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'"/>
-
 		<Message Text="Downloading artifacts for HermitCrab." />
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(HermitCrabBuildType)" Tag="$(HermitCrabBuildTag)" VersionInfo="$(MasterVersionInfo)" Artifacts="QuickGraph.dll;SIL.Machine.dll;SIL.Collections.dll;SIL.HermitCrab.dll" DownloadsDir="$(DownloadsDir)"/>
 
@@ -475,6 +472,9 @@
 	<Target Name="DefineNugetPackages">
 		<ItemGroup>
 			<!-- We had been downloading these Nuget packages from TeamCity. Because our copyDlls target can copy either downloaded or locally-built artifacts, copy them all to Downloads so the directory structure matches (locally-built artifacts have no separate packages). -->
+			<SILNugetPackages Include="Icu4c.Win.Fw.Bin"><Version>$(IcuNugetVersion)</Version><Path>build/**/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="Icu4c.Win.Fw.Lib"><Version>$(IcuNugetVersion)</Version><Path>runtimes/**/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="Icu4c.Win.Fw.Lib"><Version>$(IcuNugetVersion)</Version><Path>build/native/**/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<!-- LCM and related packages -->
 			<SILNugetPackages Include="SIL.LCModel"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.LCModel"><Version>$(LcmNugetVersion)</Version><Path>contentFiles/**/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
@@ -577,20 +577,26 @@
 		<Copy SourceFiles="$(fwrt)/DistFiles/xample64.dll" DestinationFiles="$(dir-outputBase)/xample.dll"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'"/>
 		<!-- ICU libs -->
-		<Copy SourceFiles="$(DownloadsDir)/lib/$(arch)/icudt.lib" DestinationFolder="$(fwrt)/Lib"
+		<Copy SourceFiles="$(DownloadsDir)/lib/win7-$(arch)/icudt.lib" DestinationFolder="$(fwrt)/Lib"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(DownloadsDir)/lib/$(arch)/icuin.lib" DestinationFolder="$(fwrt)/Lib"
+		<Copy SourceFiles="$(DownloadsDir)/lib/win7-$(arch)/icuin.lib" DestinationFolder="$(fwrt)/Lib"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="$(DownloadsDir)/lib/$(arch)/icuuc.lib" DestinationFolder="$(fwrt)/Lib"
+		<Copy SourceFiles="$(DownloadsDir)/lib/win7-$(arch)/icuuc.lib" DestinationFolder="$(fwrt)/Lib"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'"/>
+		<ItemGroup>
+			<IcuHeaders Include="$(DownloadsDir)/include/unicode/*.h" />
+		</ItemGroup>
+		<!-- ICU sources -->
+		<Copy Sourcefiles="@(IcuHeaders)" DestinationFolder="$(fwrt)/Include/unicode"
+			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<!-- Copy ICU dll's and exe's to lib/x64 and lib/x86. The ICU .lib files don't need included. -->
 		<ItemGroup>
-			<IcuFileSet32 Include="$(DownloadsDir)/lib/x86/icu*.dll" />
-			<IcuFileSet32 Include="$(DownloadsDir)/lib/x86/gennorm2.exe" />
+			<IcuFileSet32 Include="$(DownloadsDir)/win7-x86/icu*.dll" />
+			<IcuFileSet32 Include="$(DownloadsDir)/win-x86/gennorm2.exe" />
 		</ItemGroup>
 		<ItemGroup>
-			<IcuFileSet64 Include="$(DownloadsDir)/lib/x64/icu*.dll" />
-			<IcuFileSet64 Include="$(DownloadsDir)/lib/x64/gennorm2.exe" />
+			<IcuFileSet64 Include="$(DownloadsDir)/win7-x64/icu*.dll" />
+			<IcuFileSet64 Include="$(DownloadsDir)/win-x64/gennorm2.exe" />
 		</ItemGroup>
 		<!-- Include 32-bit ICU, even if arch is x64, so we can provide 32-bit ICU for 32-bit Paratext to use when the tools interact. -->
 		<Copy SourceFiles="@(IcuFileSet32)" DestinationFolder="$(dir-outputBase)/lib/x86" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'" />

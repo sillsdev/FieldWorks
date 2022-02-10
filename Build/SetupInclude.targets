@@ -4,7 +4,7 @@
 	<UsingTask TaskName="GetSpecialFolderPath" AssemblyFile="FwBuildTasks.dll"/>
 
 	<PropertyGroup>
-		<IcuVersion>54</IcuVersion>
+		<IcuVersion>70</IcuVersion>
 	</PropertyGroup>
 
 	<!-- config is generally either Debug or Release, but might be Bounds or Profile. -->

@@ -39,7 +39,7 @@
 #pragma GCC diagnostic ignored "-Wshadow"
 #endif
 
-#define ICU_VERSION "54"
+#define ICU_VERSION "70"
 
 #include <unicode/alphaindex.h>
 #include <unicode/appendable.h>
@@ -109,7 +109,7 @@
 #include <unicode/rep.h>
 #include <unicode/resbund.h>
 #include <unicode/schriter.h>
-#include <unicode/scientificformathelper.h>
+//#include <unicode/scientificformathelper.h>
 #include <unicode/search.h>
 //#include <unicode/selfmt.h>
 #include <unicode/simpletz.h>
