@@ -455,7 +455,7 @@ STDMETHODIMP LgUnicodeCollater::Compare(BSTR bstrValue1, BSTR bstrValue2,
 	IgnoreHr(hr = SortKeyRgch(bstrValue2, BstrLen(bstrValue2), colopt, cchw2, pchKey2, &cchw2));
 	if (FAILED(hr))
 		return hr;
-	int nVal = u_strncmp(pchKey1, pchKey2, min(cchw1, cchw2));
+	int nVal = u_strncmp(reinterpret_cast<const UChar*>(pchKey1), reinterpret_cast<const UChar*>(pchKey2), min(cchw1, cchw2));
 	if (!nVal)
 	{
 		// equal as far as length of shortest key

@@ -2944,7 +2944,7 @@ void VwRootBox::ProcessHeaderSpecials(ITsString * ptss, ITsString ** pptssRet, i
 	AssertPtr(pptssRet);
 	Assert(!*pptssRet);
 
-	const OLECHAR * pchString;
+	const wchar * pchString;
 	int cch;
 	CheckHr(ptss->LockText(&pchString, &cch));
 	if (!cch)
@@ -2961,12 +2961,8 @@ void VwRootBox::ProcessHeaderSpecials(ITsString * ptss, ITsString ** pptssRet, i
 		do
 		{
 			fMatch = false; // reset each iteration. We only repeat if it is true.
-#if !defined(_WIN32) && !defined(_M_X64)
 			static OleStringLiteral page(L"&[page]");
-			const OLECHAR * pchSpecial = u_strstr(pchString, page);
-#else
-			const OLECHAR * pchSpecial = wcsstr(pchString, L"&[page]");
-#endif
+			const UChar * pchSpecial = u_strstr(reinterpret_cast<const UChar*>(pchString), page);
 			OLECHAR buf[200];
 			int cchSpecial = 0;
 			if (pchSpecial)
@@ -2977,8 +2973,8 @@ void VwRootBox::ProcessHeaderSpecials(ITsString * ptss, ITsString ** pptssRet, i
 			}
 			else
 			{
-				static OleStringLiteral date(L"&[date]");
-				pchSpecial = u_strstr(pchString, date);
+				static UnicodeString date(L"&[date]");
+				pchSpecial = u_strstr(reinterpret_cast<const UChar*>(pchString), date.getBuffer());
 				if (pchSpecial)
 				{
 					fMatch = true;
@@ -3006,7 +3002,7 @@ void VwRootBox::ProcessHeaderSpecials(ITsString * ptss, ITsString ** pptssRet, i
 				else
 				{
 					static OleStringLiteral time(L"&[time]");
-					pchSpecial = u_strstr(pchString, time);
+					pchSpecial = u_strstr(reinterpret_cast<const UChar*>(pchString), time);
 					if (pchSpecial)
 					{
 						fMatch = true;
@@ -3030,7 +3026,7 @@ void VwRootBox::ProcessHeaderSpecials(ITsString * ptss, ITsString ** pptssRet, i
 					else
 					{
 						static OleStringLiteral pages(L"&[pages]");
-						pchSpecial = u_strstr(pchString, pages);
+						pchSpecial = u_strstr(reinterpret_cast<const UChar*>(pchString), pages);
 						if (pchSpecial)
 						{
 							fMatch = true;
@@ -3046,11 +3042,11 @@ void VwRootBox::ProcessHeaderSpecials(ITsString * ptss, ITsString ** pptssRet, i
 			{
 				if (!qtsb)
 					CheckHr(ptss->GetBldr(&qtsb));
-				int cchBuf = u_strlen(buf);
+				int cchBuf = u_strlen(reinterpret_cast<const UChar*>(buf));
 				ITsTextPropsPtr qttp;
 				TsRunInfo tri;
-				int ichSpecial = (int)(pchSpecial - pchString);
-				CheckHr(qtss->FetchRunInfoAt((int)(pchSpecial - pchString), &tri, &qttp));
+				int ichSpecial = (int)(reinterpret_cast<int64>(pchSpecial) - reinterpret_cast<int64>(pchString));
+				CheckHr(qtss->FetchRunInfoAt(ichSpecial, &tri, &qttp));
 				CheckHr(qtsb->ReplaceRgch(ichSpecial, ichSpecial + cchSpecial, buf, cchBuf, qttp));
 				qtss->UnlockText(pchString);
 				pchString = NULL;

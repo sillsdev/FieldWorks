@@ -1536,7 +1536,7 @@ STDMETHODIMP VwPropertyStore::put_StringProperty(int sp, BSTR bstrValue)
 		{
 			// For now, drop caps is invoked by using a particular known named style.
 			static OleStringLiteral chapterNumber(L"Chapter Number");
-			m_fDropCaps = (u_strcmp(chapterNumber, bstrValue) == 0);
+			m_fDropCaps = u_strcmp(chapterNumber, reinterpret_cast<const UChar *>(bstrValue)) == 0;
 			// Ttp invokes a named style. Apply it.
 			ITsTextPropsPtr qttpNamed;
 			CheckHr(m_qss->GetStyleRgch(BstrLen(bstrValue), bstrValue, &qttpNamed));

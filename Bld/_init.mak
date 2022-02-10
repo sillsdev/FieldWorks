@@ -164,11 +164,11 @@ DEFS=$(DEFS) /D_WINDOWS=1 /D_AFXDLL=1
 DEFS=$(DEFS) /D_AFXDLL=1 /D_WINDLL=1 /D_USRDLL=1 /DUSING_MFC=1
 CL_OPTS=$(CL_OPTS) /MD
 !ELSE IF "$(BUILD_TYPE)"=="d"
-CL_OPTS=$(CL_OPTS) /MTd /RTC1
+CL_OPTS=$(CL_OPTS) /MDd /RTC1
 !ELSE IF "$(BUILD_TYPE)"=="b"
-CL_OPTS=$(CL_OPTS) /MTd
+CL_OPTS=$(CL_OPTS) /MDd
 !ELSE
-CL_OPTS=$(CL_OPTS) /MT
+CL_OPTS=$(CL_OPTS) /MD
 !ENDIF
 
 # JohnT: /EHa is required so that our code that converts C exceptions (access violation, div by zero)

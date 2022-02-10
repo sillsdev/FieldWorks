@@ -656,7 +656,7 @@ namespace TestViews
 					sta.Format("BasicNormalization itss=%d: get_Normalization(inm=%d)",
 						itss, inm);
 					unitpp::assert_true(sta.Chars(),
-						u_strcmp(sbstrResult.Chars(), rgpsz[inm]) == 0);
+						u_strcmp(reinterpret_cast<const UChar*>(sbstrResult.Chars()), rgpsz[inm]) == 0);
 					ITsTextPropsPtr qttpInput;
 					ITsTextPropsPtr qttpResult;
 					hr = rgqtssInput[itss]->get_PropertiesAt(0, &qttpInput);
@@ -752,7 +752,7 @@ namespace TestViews
 				SmartBstr sbstrResult;
 				hr = qtssResult->get_Text(&sbstrResult);
 				unitpp::assert_true("get_NormalizedForm(split run composition)",
-					u_strcmp(sbstrResult.Chars(), rgpsz[inm]) == 0);
+					u_strcmp(reinterpret_cast<const UChar*>(sbstrResult.Chars()), rgpsz[inm]) == 0);
 			}
 		}
 		/*--------------------------------------------------------------------------------------
@@ -816,7 +816,7 @@ namespace TestViews
 				hr = qtssResult->get_Text(&sbstrResult);
 				sta.Format("ReorderingRuns inm=%d: get_NormalizedForm()", inm);
 				unitpp::assert_true(sta.Chars(),
-					u_strcmp(sbstrResult.Chars(), rgpsz[inm]) == 0);
+					u_strcmp(reinterpret_cast<const UChar*>(sbstrResult.Chars()), rgpsz[inm]) == 0);
 				int crun;
 				hr = qtssResult->get_RunCount(&crun);
 				sta.Format("ReorderingRuns inm=%d: get_RunCount()", inm);
@@ -905,7 +905,7 @@ namespace TestViews
 				hr = qtssResult->get_Text(&sbstrResult);
 				sta.Format("ReorderingRuns inm=%d: get_NormalizedForm()", inm);
 				unitpp::assert_true(sta.Chars(),
-					u_strcmp(sbstrResult.Chars(), rgpsz[inm]) == 0);
+					u_strcmp(reinterpret_cast<const UChar*>(sbstrResult.Chars()), rgpsz[inm]) == 0);
 				int crun;
 				hr = qtssResult->get_RunCount(&crun);
 				sta.Format("ReorderingRuns inm=%d: get_RunCount()", inm);
@@ -983,7 +983,7 @@ namespace TestViews
 				SmartBstr sbstrResult;
 				hr = qtssResult->get_Text(&sbstrResult);
 				sta.Format("get_NormalizedForm(partial composition) inm=%d", inm);
-				unitpp::assert_true(sta.Chars(), u_strcmp(sbstrResult.Chars(), rgpsz[inm]) == 0);
+				unitpp::assert_true(sta.Chars(), u_strcmp(reinterpret_cast<const UChar*>(sbstrResult.Chars()), rgpsz[inm]) == 0);
 				int crun;
 				hr = qtssResult->get_RunCount(&crun);
 				unitpp::assert_eq("number of runs", rgcRun[inm], crun);

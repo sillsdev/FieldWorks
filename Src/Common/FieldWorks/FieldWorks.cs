@@ -145,7 +145,7 @@ namespace SIL.FieldWorks
 			// Add lib/{x86,x64} to PATH so that C++ code can find ICU dlls
 			var newPath = $"{pathName}{Path.PathSeparator}{Environment.GetEnvironmentVariable("PATH")}";
 			Environment.SetEnvironmentVariable("PATH", newPath);
-			Icu.Wrapper.ConfineIcuVersions(54);
+			Icu.Wrapper.ConfineIcuVersions(70);
 			// ICU will be initialized further down (by calling FwUtils.InitializeIcu())
 			FwRegistryHelper.Initialize();
 

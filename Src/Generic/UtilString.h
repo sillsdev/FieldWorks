@@ -941,7 +941,8 @@ public:
 	{
 		AssertObj(this);
 		AssertPszN(psz);
-		_Replace(0, m_pbuf->Cch(), psz, 0, StrLen(psz));
+		int cch = StrLen(psz);
+		_Replace(0, m_pbuf->Cch(), psz, 0, cch);
 	}
 
 	/*------------------------------------------------------------------------------------------

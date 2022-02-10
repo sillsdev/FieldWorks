@@ -1266,7 +1266,7 @@ public:
 		const OLECHAR * pchBufMatch;
 		int cchMatch;
 		CheckHr(qtssMatch->LockText(&pchBufMatch, &cchMatch));
-		const OLECHAR * pchBufPattern;
+		const wchar * pchBufPattern;
 		int cchPattern;
 		CheckHr(m_pat->m_qtssReducedPattern->LockText(&pchBufPattern, &cchPattern));
 		bool fMatch = true; // unless we find otherwise
@@ -1283,8 +1283,8 @@ public:
 				fMatch = false; // singleton for a given set of props, should be exact same objects.
 				break;
 			}
-			if (m_pat->m_pcoll->compare(pchBufMatch + triMatch.ichMin, triMatch.ichLim - triMatch.ichMin,
-				pchBufPattern + triPattern.ichMin, triPattern.ichLim - triPattern.ichMin) != 0)
+			if (m_pat->m_pcoll->compare(reinterpret_cast<const UChar*>(pchBufMatch + triMatch.ichMin), triMatch.ichLim - triMatch.ichMin,
+				reinterpret_cast<const UChar*>(pchBufPattern + triPattern.ichMin), triPattern.ichLim - triPattern.ichMin) != 0)
 			{
 				fMatch = false; // singleton for a given set of props, should be exact same objects.
 				break;
@@ -1898,7 +1898,7 @@ void VwPattern::RemoveIgnorableRuns(ITsString * ptssIn, ITsString ** pptssOut)
 		int cchRun = tri.ichLim - tri.ichMin;
 		OLECHAR dummy;
 		// If this is an empty TSS, we also want to copy appropriate run props (at least the required WS)
-		if (m_pcoll->compare(&dummy, 0, pchBuf + tri.ichMin, cchRun) != 0 || !cch)
+		if (m_pcoll->compare(reinterpret_cast<const UChar*>(&dummy), 0, reinterpret_cast<const UChar*>(pchBuf + tri.ichMin), cchRun) != 0 || !cch)
 		{
 			// Not ignorable. Figure the props we care about.
 			ITsPropsBldrPtr qtpb;

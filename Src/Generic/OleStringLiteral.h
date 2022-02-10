@@ -48,6 +48,7 @@ Last reviewed:
 #pragma once
 #ifndef _OLESTRINGLITERAL_H_
 #define _OLESTRINGLITERAL_H_
+#include <unicode/umachine.h>
 
 class OleStringLiteral
 {
@@ -78,6 +79,12 @@ public:
 	{
 		return original();
 	}
+
+	operator const UChar* () const
+	{
+		return reinterpret_cast<const UChar*>(original());
+	}
+
 #if !defined(_WIN32) && !defined(_M_X64)
 	operator const uchar_t* () const
 	{

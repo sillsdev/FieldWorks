@@ -41,6 +41,7 @@
 
 #define ICU_VERSION "70"
 
+// ls *.h | sed 's/^/#include <unicode\//' | sed 's/$/>/'
 #include <unicode/alphaindex.h>
 #include <unicode/appendable.h>
 #include <unicode/basictz.h>
@@ -50,8 +51,10 @@
 #include <unicode/bytestriebuilder.h>
 #include <unicode/calendar.h>
 #include <unicode/caniter.h>
+#include <unicode/casemap.h>
+#include <unicode/char16ptr.h>
 #include <unicode/chariter.h>
-//#include <unicode/choicfmt.h>
+#include <unicode/choicfmt.h>
 #include <unicode/coleitr.h>
 #include <unicode/coll.h>
 #include <unicode/compactdecimalformat.h>
@@ -69,11 +72,14 @@
 #include <unicode/dtitvinf.h>
 #include <unicode/dtptngen.h>
 #include <unicode/dtrule.h>
+#include <unicode/edits.h>
 #include <unicode/enumset.h>
 #include <unicode/errorcode.h>
 #include <unicode/fieldpos.h>
+#include <unicode/filteredbrk.h>
 #include <unicode/fmtable.h>
 #include <unicode/format.h>
+#include <unicode/formattedvalue.h>
 #include <unicode/fpositer.h>
 #include <unicode/gender.h>
 #include <unicode/gregocal.h>
@@ -81,16 +87,21 @@
 #include <unicode/icuplug.h>
 #include <unicode/idna.h>
 #include <unicode/listformatter.h>
+#include <unicode/localebuilder.h>
+#include <unicode/localematcher.h>
 #include <unicode/localpointer.h>
 #include <unicode/locdspnm.h>
 #include <unicode/locid.h>
 #include <unicode/measfmt.h>
 #include <unicode/measunit.h>
 #include <unicode/measure.h>
-//#include <unicode/messagepattern.h>
-//#include <unicode/msgfmt.h>
+#include <unicode/messagepattern.h>
+#include <unicode/msgfmt.h>
 #include <unicode/normalizer2.h>
 #include <unicode/normlzr.h>
+#include <unicode/nounit.h>
+#include <unicode/numberformatter.h>
+#include <unicode/numberrangeformatter.h>
 #include <unicode/numfmt.h>
 #include <unicode/numsys.h>
 #include <unicode/parseerr.h>
@@ -109,14 +120,16 @@
 #include <unicode/rep.h>
 #include <unicode/resbund.h>
 #include <unicode/schriter.h>
-//#include <unicode/scientificformathelper.h>
+#include <unicode/scientificnumberformatter.h>
 #include <unicode/search.h>
-//#include <unicode/selfmt.h>
+#include <unicode/selfmt.h>
+#include <unicode/simpleformatter.h>
 #include <unicode/simpletz.h>
 #include <unicode/smpdtfmt.h>
 #include <unicode/sortkey.h>
 #include <unicode/std_string.h>
 #include <unicode/strenum.h>
+#include <unicode/stringoptions.h>
 #include <unicode/stringpiece.h>
 #include <unicode/stringtriebuilder.h>
 #include <unicode/stsearch.h>
@@ -132,6 +145,7 @@
 #include <unicode/tzrule.h>
 #include <unicode/tztrans.h>
 #include <unicode/ubidi.h>
+#include <unicode/ubiditransform.h>
 #include <unicode/ubrk.h>
 #include <unicode/ucal.h>
 #include <unicode/ucasemap.h>
@@ -148,6 +162,8 @@
 #include <unicode/ucol.h>
 #include <unicode/ucoleitr.h>
 #include <unicode/uconfig.h>
+#include <unicode/ucpmap.h>
+#include <unicode/ucptrie.h>
 #include <unicode/ucsdet.h>
 #include <unicode/ucurr.h>
 #include <unicode/udat.h>
@@ -156,16 +172,20 @@
 #include <unicode/udatpg.h>
 #include <unicode/udisplaycontext.h>
 #include <unicode/uenum.h>
+#include <unicode/ufieldpositer.h>
 #include <unicode/uformattable.h>
+#include <unicode/uformattedvalue.h>
 #include <unicode/ugender.h>
 #include <unicode/uidna.h>
 #include <unicode/uiter.h>
 #include <unicode/uldnames.h>
+#include <unicode/ulistformatter.h>
 #include <unicode/uloc.h>
 #include <unicode/ulocdata.h>
 #include <unicode/umachine.h>
 #include <unicode/umisc.h>
 #include <unicode/umsg.h>
+#include <unicode/umutablecptrie.h>
 #include <unicode/unifilt.h>
 #include <unicode/unifunct.h>
 #include <unicode/unimatch.h>
@@ -175,11 +195,14 @@
 #include <unicode/unorm.h>
 #include <unicode/unorm2.h>
 #include <unicode/unum.h>
+#include <unicode/unumberformatter.h>
+#include <unicode/unumberrangeformatter.h>
 #include <unicode/unumsys.h>
 #include <unicode/uobject.h>
 #include <unicode/upluralrules.h>
 #include <unicode/uregex.h>
 #include <unicode/uregion.h>
+#include <unicode/ureldatefmt.h>
 #include <unicode/urename.h>
 #include <unicode/urep.h>
 #include <unicode/ures.h>
@@ -197,14 +220,14 @@
 #include <unicode/utext.h>
 #include <unicode/utf.h>
 #include <unicode/utf_old.h>
-#include <unicode/utf8.h>
 #include <unicode/utf16.h>
 #include <unicode/utf32.h>
+#include <unicode/utf8.h>
 #include <unicode/utmscale.h>
 #include <unicode/utrace.h>
 #include <unicode/utrans.h>
 #include <unicode/utypes.h>
-//#include <unicode/uvernum.h>
+#include <unicode/uvernum.h>
 #include <unicode/uversion.h>
 #include <unicode/vtzone.h>
 
@@ -218,3 +241,5 @@ U_CAPI UBool U_EXPORT2 SilIcuInit(const char * dataPath);
 #else
 #pragma GCC diagnostic pop
 #endif
+
+using namespace icu_70;

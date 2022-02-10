@@ -1041,7 +1041,7 @@ void WriteXmlUnicode(IStream * pstrm, const OLECHAR * rgchTxt, int cchTxt)
 	char rgchsBuffer[UTF16BUFSIZE * 2];
 	ulong cchsBuffer = isizeof(rgchsBuffer);
 	char * prgchUtf8 = rgchsBuffer;
-	ulong cchUtf8 = CountXmlUtf8FromUtf16(output.getBuffer(), output.length());
+	ulong cchUtf8 = CountXmlUtf8FromUtf16(reinterpret_cast<const wchar*>(output.getBuffer()), output.length());
 	Vector<char> vchs;
 	if (cchUtf8 >= cchsBuffer)
 	{
@@ -1049,7 +1049,7 @@ void WriteXmlUnicode(IStream * pstrm, const OLECHAR * rgchTxt, int cchTxt)
 		prgchUtf8 = vchs.Begin();
 		cchsBuffer = cchUtf8 + 1;
 	}
-	ConvertUtf16ToXmlUtf8(prgchUtf8, cchsBuffer, output.getBuffer(), output.length());
+	ConvertUtf16ToXmlUtf8(prgchUtf8, cchsBuffer, reinterpret_cast<const wchar*>(output.getBuffer()), output.length());
 
 	if (!prgchUtf8[cchUtf8 - 1])
 		cchUtf8--; // If there is a null at the end of the string, remove it
