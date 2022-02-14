@@ -154,19 +154,23 @@ CopyRegistryKey()
 
 	# Set some values unconditionally. Do this for any values that might begin
 	# with PREFIX, such as "/usr", since FieldWorks flatpak will instead need
-	# "/app".
+	# "/app". Since the user may have values with the wrong PREFIX in
+	# CurrentUser, also write these settings to CurrentUser (CU) in addition to
+	# LocalMachine (LM).
 
 	# TODO: implement a WriteKey option to only set and not overwrite values. See comments in FWNX-1065.
 	# TODO: implement batch load/dump in WriteKey similar to dconf
 
 	echo "# Writing required registry settings."
 
-	WriteKey LM "Software/SIL/FieldWorks/9" "RootCodeDir" "${FW_SHARE}"
-	WriteKey LM "Software/SIL/SilEncConverters40" "PluginDir" "${FW_LIB}/EC/Plugins"
-	WriteKey LM "Software/SIL/SilEncConverters40" "RootDir" "${FW_LIB}"
-	# It's not clear if "Primary Interop Assemblies" is being used by anything
-	# other than NMock.
-	WriteKey LM "Software/Microsoft/.NETFramework/AssemblyFolders" "Primary Interop Assemblies" "${FW_LIB}"
+	for registry in LM CU; do
+		WriteKey ${registry} "Software/SIL/FieldWorks/9" "RootCodeDir" "${FW_SHARE}"
+		WriteKey ${registry} "Software/SIL/SilEncConverters40" "PluginDir" "${FW_LIB}/EC/Plugins"
+		WriteKey ${registry} "Software/SIL/SilEncConverters40" "RootDir" "${FW_LIB}"
+		# It's not clear if "Primary Interop Assemblies" is being used by anything
+		# other than NMock.
+		WriteKey ${registry} "Software/Microsoft/.NETFramework/AssemblyFolders" "Primary Interop Assemblies" "${FW_LIB}"
+	done
 
 ) | zenity --progress \
 	--title="User specific setup" \
