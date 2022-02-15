@@ -204,11 +204,33 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Create a temporary directory %temp%\TempForLIFTImport. Migrate as necessary and import from this
 				// directory. Directory is left after import is done in case it is needed, but will be deleted next time
 				// if it exists.
+				// LT-20954 Limits copy TempForLIFTImport to file.lift, file.lift-ranges, and WritingSytems, pictures,
+				// and audio dirs to avoid copying oodles of files when lift file is in Documents or similar dirs and
+				// strange errors that resulted from this.
 				var sLIFTfolder = Path.GetDirectoryName(sOrigFile);
 				var sLIFTtempFolder = Path.Combine(Path.GetTempPath(), "TempForLIFTImport");
 				if (Directory.Exists(sLIFTtempFolder) == true)
 					Directory.Delete(sLIFTtempFolder, true);
-				LdmlFileBackup.CopyDirectory(sLIFTfolder, sLIFTtempFolder);
+				Directory.CreateDirectory(sLIFTtempFolder);
+				var sDestFile = Path.Combine(sLIFTtempFolder, Path.GetFileName(sOrigFile));
+				LdmlFileBackup.CopyFile(sOrigFile, sDestFile);
+				var sRangeFile = sOrigFile + "-ranges";
+				if(File.Exists(sRangeFile))
+				{
+					sDestFile = Path.Combine(sLIFTtempFolder, Path.GetFileName(sRangeFile));
+					LdmlFileBackup.CopyFile(sRangeFile, sDestFile);
+
+				}
+				string[] sDirsToCopy = { "WritingSystems", "audio", "pictures" };
+				foreach (string sdir in sDirsToCopy)
+				{
+					var sSourceFolder = Path.Combine(sLIFTfolder, sdir);
+					if (Directory.Exists(sSourceFolder) == true)
+					{
+						var sDestFolder = Path.Combine(sLIFTtempFolder, sdir);
+						LdmlFileBackup.CopyDirectory(sSourceFolder, sDestFolder);
+					}
+				}
 				// Older LIFT files had ldml files in root directory. If found, move them to WritingSystem folder.
 				if (Directory.GetFiles(sLIFTtempFolder, "*.ldml").Length > 0)
 				{
