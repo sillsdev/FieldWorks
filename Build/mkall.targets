@@ -340,7 +340,7 @@
 		<PalasoFiles Include="Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<PalasoFiles Include="NDesk.DBus.dll"/>
 		<PalasoFiles Include="NDesk.DBus.dll.config"/>
-		<PalasoFiles Include="taglib-sharp.dll"/>
+		<PalasoFiles Include="TagLibSharp.dll"/>
 		<PalasoFiles Include="Spart.dll"/>
 		<PalasoFiles Include="SIL.Core.pdb"/>
 		<PalasoFiles Include="SIL.Core.Desktop.pdb"/>
@@ -517,7 +517,7 @@
 			<SILNugetPackages Include="NDesk.DBus"><Version>0.15.0</Version><Path>lib/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="RelaxNG"><Version>5.0.0-pre</Version><Path>lib/net40/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="Spart"><Version>1.0.0</Version><Path>lib/net461/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="TagLibSharp-patched"><Version>2.2.0-beta.1</Version><Path>lib/net462/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="TagLibSharp"><Version>2.2.0</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<!-- Chorus and related packages -->
 			<SILNugetPackages Include="SIL.Chorus.LibChorus"><Version>$(ChorusNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.Chorus.App"><Version>$(ChorusNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
