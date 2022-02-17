@@ -287,7 +287,7 @@
 		<Palaso4ParatextNugetVersion>8.1.0-beta0035</Palaso4ParatextNugetVersion>
 		<ParatextNugetVersion>9.2.6.2</ParatextNugetVersion>
 		<LcmNugetVersion>10.2.0-beta0031</LcmNugetVersion>
-		<IcuNugetVersion>70.1.0</IcuNugetVersion>
+		<IcuNugetVersion>70.1.123</IcuNugetVersion>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
 		<IPCFrameworkBuildType Condition="'$(OS)'=='Windows_NT'">bt278</IPCFrameworkBuildType>
@@ -472,8 +472,8 @@
 	<Target Name="DefineNugetPackages">
 		<ItemGroup>
 			<!-- We had been downloading these Nuget packages from TeamCity. Because our copyDlls target can copy either downloaded or locally-built artifacts, copy them all to Downloads so the directory structure matches (locally-built artifacts have no separate packages). -->
-			<SILNugetPackages Include="Icu4c.Win.Fw.Bin"><Version>$(IcuNugetVersion)</Version><Path>build/**/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="Icu4c.Win.Fw.Lib"><Version>$(IcuNugetVersion)</Version><Path>runtimes/**/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="Icu4c.Win.Fw.Bin" Condition="'$(OS)'=='Windows_NT'"><Version>$(IcuNugetVersion)</Version><Path>build/**/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="Icu4c.Win.Fw.Lib" Condition="'$(OS)'=='Windows_NT'"><Version>$(IcuNugetVersion)</Version><Path>runtimes/**/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="Icu4c.Win.Fw.Lib"><Version>$(IcuNugetVersion)</Version><Path>build/native/**/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<!-- LCM and related packages -->
 			<SILNugetPackages Include="SIL.LCModel"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
@@ -591,11 +591,11 @@
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<!-- Copy ICU dll's and exe's to lib/x64 and lib/x86. The ICU .lib files don't need included. -->
 		<ItemGroup>
-			<IcuFileSet32 Include="$(DownloadsDir)/win7-x86/icu*.dll" />
+			<IcuFileSet32 Include="$(DownloadsDir)/win7-x86/**/icu*.dll" />
 			<IcuFileSet32 Include="$(DownloadsDir)/win-x86/gennorm2.exe" />
 		</ItemGroup>
 		<ItemGroup>
-			<IcuFileSet64 Include="$(DownloadsDir)/win7-x64/icu*.dll" />
+			<IcuFileSet64 Include="$(DownloadsDir)/win7-x64/**/icu*.dll" />
 			<IcuFileSet64 Include="$(DownloadsDir)/win-x64/gennorm2.exe" />
 		</ItemGroup>
 		<!-- Include 32-bit ICU, even if arch is x64, so we can provide 32-bit ICU for 32-bit Paratext to use when the tools interact. -->
@@ -639,7 +639,7 @@
 			<NuGottenFiles Include="$(GeckoDir)/content/**/*.*"/>
 			<NuGottenFiles Include="$(PackagesDir)/Analytics.3.6.0/lib/net461/Analytics.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/DotNetZip.1.13.8/lib/net40/*.*"/>
-			<NuGottenFiles Include="$(PackagesDir)/icu.net.2.8.0-beta.10/lib/net451/icu.net.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/icu.net.2.8.0-beta.21/lib/net451/icu.net.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/Microsoft.Extensions.DependencyModel.2.0.4/lib/net451/Microsoft.Extensions.DependencyModel.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/Microsoft.Win32.Registry.4.7.0/lib/net461/Microsoft.Win32.Registry.dll" Condition="'$(OS)'=='Windows_NT'"/>
 			<NuGottenFiles Include="$(PackagesDir)/NAudio.1.10.0/lib/net35/NAudio.dll"/>

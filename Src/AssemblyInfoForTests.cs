@@ -38,7 +38,7 @@ using SIL.TestUtilities;
 [assembly: OfflineSldr]
 
 // Initialize ICU
-[assembly: InitializeIcu(IcuVersion = 54)]
+[assembly: InitializeIcu(IcuVersion = 70)]
 
 // Allow creating COM objects from manifest file important that it comes after InitializeIcu
 [assembly: CreateComObjectsFromManifest]

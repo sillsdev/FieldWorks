@@ -181,13 +181,13 @@ PREPROCESS_OPTS=/E
 !IF "$(BUILD_CONFIG)"=="Bounds"
 LINK_OPTS=$(LINK_OPTS) /out:"$@" /machine:$(LINK_ARCH) /incremental:no\
 	/map:$(INT_DIR)\$(@B).map /nod:dbguuid.lib /subsystem:windows\
-	/NODEFAULTLIB:LIBC /NODEFAULTLIB:MSVCRT\
+	/NODEFAULTLIB:LIBCMT /NODEFAULTLIB:MSVCRT /VERBOSE \
 	/LIBPATH:"C:\Program Files\Common Files\Compuware\NMShared" \
 	/LIBPATH:"$(BUILD_ROOT)\Lib\$(BUILD_CONFIG)" /LIBPATH:"$(BUILD_ROOT)\Lib"
 !ELSE
 LINK_OPTS=$(LINK_OPTS) /out:"$@" /machine:$(LINK_ARCH) /incremental:no\
 	/map:$(INT_DIR)\$(@B).map /nod:dbguuid.lib /subsystem:windows\
-	/NODEFAULTLIB:LIBC /NODEFAULTLIB:MSVCRT\
+	/NODEFAULTLIB:LIBCMT /NODEFAULTLIB:MSVCRT /VERBOSE \
 	/LIBPATH:"$(BUILD_ROOT)\Lib\$(BUILD_CONFIG)" /LIBPATH:"$(BUILD_ROOT)\Lib"
 !ENDIF
 

@@ -10,7 +10,7 @@ FW_PACKAGE_DEBUG ?= false
 BUILD_TOOL = msbuild
 # Verbosity: normal or detailed
 MSBUILD_ARGS ?= -verbosity:normal
-ICU_VERSION = 54
+ICU_VERSION = 70
 BUILD_ROOT = $(shell pwd)
 include $(BUILD_ROOT)/Bld/_names.mak
 BUILD_PRODUCT = FieldWorks
