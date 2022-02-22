@@ -57,6 +57,7 @@ namespace SIL.FieldWorks.Discourse
 
 		private ICmPossibility[] m_allMyColumns;
 		private ISet<int> m_indexGroupEnds; // indices of ends of column Groups (for LT-8104; setting apart Nucleus)
+		private MultilevelHeaderModel m_allMyColumnsAndGroups;
 		private int[] m_currHighlightCells; // Keeps track of highlighted cells when dealing with ChartOrphan insertion.
 
 		/// <summary>
@@ -216,29 +217,29 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		/// <summary>
-		/// Returns an array of all the columns(Hvos) for the template of the chart that this logic is initialized with.
+		/// Returns an array of all the columns for the template of the chart that this logic is initialized with.
 		/// </summary>
 		public ICmPossibility[] AllMyColumns
 		{
 			get
 			{
-				m_allMyColumns = AllColumns(m_chart.TemplateRA).ToArray();
+				m_allMyColumns = CollectColumns(m_chart.TemplateRA).ToArray();
 				return m_allMyColumns;
 			}
 		}
 
 		/// <summary>
-		/// Returns an array of all the columns for the template of the chart that are the ends of column groups.
+		/// Returns all the columns and column groups for the template of the chart that this logic is initialized with.
 		/// </summary>
-		public ISet<int> GroupEndIndices
+		public MultilevelHeaderModel ColumnsAndGroups
 		{
 			get
 			{
-				return m_indexGroupEnds;
-			}
-			set
-			{
-				m_indexGroupEnds = value;
+				if (m_allMyColumnsAndGroups == null)
+				{
+					m_allMyColumns = CollectColumns(m_chart.TemplateRA).ToArray();
+				}
+				return m_allMyColumnsAndGroups;
 			}
 		}
 
@@ -913,29 +914,24 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		/// <summary>
-		/// Gets all the 'leaf' nodes in a chart template, and also the ends of column groupings.
+		/// Gets all the 'leaf' nodes in a chart template, and also assembles column groupings.
 		/// </summary>
-		/// <param name="template"></param>
-		/// <returns>List of int (hvos?)</returns>
-		public List<ICmPossibility> AllColumns(ICmPossibility template)
+		internal List<ICmPossibility> CollectColumns(ICmPossibility template)
 		{
+			m_allMyColumnsAndGroups = new MultilevelHeaderModel(template);
 			var result = new List<ICmPossibility>();
 			var groups = new HashSet<int>();
 			if (template == null || template.SubPossibilitiesOS.Count == 0)
 				return result; // template itself can't be a column even if no children.
 			CollectColumns(result, template, groups, 0);
-			m_indexGroupEnds = groups;
 			return result;
 		}
 
 		/// <summary>
 		/// Collect (in depth-first traversal) all the leaf columns in the template.
 		/// Also (LT-8104) collect the set of column indices that are the ends of top-level column groupings.
+		/// REVIEW (Hasso) 2022-03 (LT-20634): We shouldn't need to collect indices here
 		/// </summary>
-		/// <param name="result"></param>
-		/// <param name="template"></param>
-		/// <param name="groups"></param>
-		/// <param name="depth"></param>
 		private void CollectColumns(List<ICmPossibility> result, ICmPossibility template, HashSet<int> groups, int depth)
 		{
 			if (template.SubPossibilitiesOS.Count == 0)
@@ -4146,11 +4142,27 @@ namespace SIL.FieldWorks.Discourse
 		}
 		#endregion for test only
 
-		internal static ListView MakeHeaderGroups()
+		internal void MakeColGroupHeaders(ChartHeaderView view)
 		{
-			ListView result = new ListView();
+			// This is actually a display method, not a true 'logic' method.
+			// That's why we need to test for RTL script.
+			view.SuspendLayout();
+			view.Controls.Clear();
 
-			return result;
+			if (ChartIsRtL)
+			{
+				MakeNotesColumnHeader(view);
+				MakeTemplateColumnGroupHeaders(view);
+				MakeRowNumberColumnHeader(view);
+			}
+			else
+			{
+				MakeNotesColumnHeader(view);
+				MakeRowNumberColumnHeader(view);
+				MakeTemplateColumnGroupHeaders(view);
+			}
+
+			view.ResumeLayout(false);
 		}
 
 		internal void MakeMainHeaderCols(ChartHeaderView view)
@@ -4182,6 +4194,19 @@ namespace SIL.FieldWorks.Discourse
 			var ch = new HeaderLabel();
 			ch.Text = DiscourseStrings.ksNotesColumnHeader;
 			view.Controls.Add(ch);
+		}
+
+		private void MakeTemplateColumnGroupHeaders(ChartHeaderView view)
+		{
+			foreach (var col in ChartIsRtL? AllMyColumns.Reverse() : AllMyColumns) // TODO (Hasso) 2022.02: AllMyColumnGroups?
+			{
+				var ch = new HeaderLabel();
+
+				// ensure NFC -- See LT-8815.
+				//ch.Text = m_possRepo.GetObject(col.Hvo).Name.BestAnalysisAlternative.Text.Normalize();
+				ch.Text = col.Name.BestAnalysisAlternative.Text.Normalize();
+				view.Controls.Add(ch);
+			}
 		}
 
 		private void MakeTemplateColumnHeaders(ChartHeaderView view)

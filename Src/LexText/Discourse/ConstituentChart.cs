@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,10 +23,10 @@ using XCore;
 namespace SIL.FieldWorks.Discourse
 {
 	/// <summary>
-	/// A constituent chart is used to organize words (and perhaps eventally somehow morphemes)
-	/// into a table where rows roughtly correspond to clauses and columns to key parts of a clause.
-	/// A typical chart has two pre-nuclear columns, three or four nuclear ones (SVO and perhaps indirect
-	/// object) and one or two post-nuclear ones.
+	/// A constituent chart is used to organize words (and perhaps eventually somehow morphemes)
+	/// into a table where rows roughly correspond to clauses and columns to key parts of a clause.
+	/// A typical chart has two pre-nuclear columns, three or four nuclear columns (SVO and perhaps indirect
+	/// object) and one or two post-nuclear columns.
 	///
 	/// Currently the constituent chart is displayed as a tab in the interlinear window. It is created
 	/// by reflection because it needs to refer to the interlinear assembly (in order to display words
@@ -34,14 +34,13 @@ namespace SIL.FieldWorks.Discourse
 	/// </summary>
 	public partial class ConstituentChart : InterlinDocChart, IHandleBookmark, IxCoreColleague, IStyleSheet
 	{
-
 		#region Member Variables
 		private InterlinRibbon m_ribbon;
 		private ConstChartBody m_body;
-		private List<Button> m_MoveHereButtons = new List<Button>();
 		// Buttons for moving ribbon text into a specific column
-		private List<Button> m_ContextMenuButtons = new List<Button>();
+		private List<Button> m_MoveHereButtons = new List<Button>();
 		// Popups associated with each 'MoveHere' button
+		private List<Button> m_ContextMenuButtons = new List<Button>();
 		private bool m_fContextMenuButtonsEnabled;
 		private IDsConstChart m_chart;
 		private ICmPossibility m_template;
@@ -50,20 +49,20 @@ namespace SIL.FieldWorks.Discourse
 		private Panel m_templateSelectionPanel;
 		private Panel m_buttonRow;
 		private Panel m_bottomStuff;
-		private SplitContainer m_topBottomSplit;
 		// m_buttonRow above m_ribbon
+		private SplitContainer m_topBottomSplit;
 		private ChartHeaderView m_headerMainCols;
+		// top panel has header groups (TODO), headerMainCols, the main chart body, and the template selection panel
 		private Panel m_topStuff;
-		// top panel has header groups, headerMainCols, and main chart
-		private int[] m_columnWidths;
 		// width of each table cell in millipoints
-		private float m_dxpInch;
+		private int[] m_columnWidths;
 		// DPI when m_columnWidths was computed.
+		private float m_dxpInch;
 		// left of each column in pixels. First is zero. Count is one MORE than number
 		// of columns, so last position is width of window (right of last column).
 		private int[] m_columnPositions;
-		private ToolTip m_toolTip;
 		// controls the popup help items for the Constituent Chart Form
+		private ToolTip m_toolTip;
 		private InterAreaBookmark m_bookmark;
 		private ILcmServiceLocator m_serviceLocator;
 		private XmlNode m_configurationParameters;
@@ -425,7 +424,7 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		/// <summary/>
-		protected virtual void SetHeaderColAndButtonWidths()
+		protected virtual void SetHeaderColAndButtonWidths() // TODO (Hasso) 2022.02: also col groups
 		{
 			//Do not change column widths until positions have been updated to represent template change
 			//m_columnPositions should be one longer due to fenceposting
@@ -551,7 +550,7 @@ namespace SIL.FieldWorks.Discourse
 			return maxUsableWidth;
 		}
 
-		/// Compute (or eventually retrieve from persistence) column widths,
+		/// Compute (or eventually retrieve from persistence) column widths, // TODO (Hasso) 2022.02: also col groups
 		/// if not already known.
 		void GetColumnWidths()
 		{
@@ -691,7 +690,7 @@ namespace SIL.FieldWorks.Discourse
 				}
 				m_template = m_chart.TemplateRA;
 				m_logic.StTextHvo = m_hvoRoot;
-				m_allColumns = m_logic.AllColumns(m_chart.TemplateRA).ToArray();
+				m_allColumns = m_logic.AllMyColumns; //AllColumns(m_chart.TemplateRA).ToArray(); // TODO (Hasso) 2022p02: also column groups
 			}
 			else
 			{
@@ -1543,7 +1542,6 @@ namespace SIL.FieldWorks.Discourse
 	public class ChartHeaderView : Control
 	{
 		private ConstituentChart m_chart;
-		private bool m_notesOnRight = true;
 		private bool m_isDraggingNotes;
 		private bool m_isResizingColumn;
 		private bool m_notesWasOnRight;
@@ -1567,7 +1565,7 @@ namespace SIL.FieldWorks.Discourse
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1578,7 +1576,7 @@ namespace SIL.FieldWorks.Discourse
 		/// ------------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
@@ -1591,10 +1589,7 @@ namespace SIL.FieldWorks.Discourse
 			base.Dispose(disposing);
 		}
 
-		public bool NotesOnRight
-		{
-			get { return m_notesOnRight; }
-		}
+		public bool NotesOnRight { get; private set; } = true; // TODO (Hasso) 2022.02: w/ multiple header levels, this needs to be a chart-level variable
 
 		/// <summary>
 		/// ControlList[] represents the z index, so in order to keep the draggable notes column at the top of the z order,
@@ -1606,7 +1601,7 @@ namespace SIL.FieldWorks.Discourse
 			{
 				if (key < 0 || key >= Controls.Count)
 					throw new IndexOutOfRangeException();
-				if (!m_notesOnRight)
+				if (!NotesOnRight)
 				{
 					return Controls[key];
 				}
@@ -1651,7 +1646,7 @@ namespace SIL.FieldWorks.Discourse
 		/// </summary>
 		private void UpdatePositionsExceptNotes()
 		{
-			if (m_notesOnRight)
+			if (NotesOnRight)
 			{
 				Controls[1].Left = 1;
 			}
@@ -1687,7 +1682,7 @@ namespace SIL.FieldWorks.Discourse
 			//Get the notes value from the property table once the first column has been added
 			if (Controls.Count == 1)
 			{
-				m_notesOnRight = m_chart.NotesDataFromPropertyTable;
+				NotesOnRight = m_chart.NotesDataFromPropertyTable;
 			}
 			Control newColumn = e.Control;
 			newColumn.Height = 22;
@@ -1734,7 +1729,7 @@ namespace SIL.FieldWorks.Discourse
 
 			m_origHeaderLeft = header.Left;
 			m_origMouseLeft = e.X;
-			m_notesWasOnRight = m_notesOnRight;
+			m_notesWasOnRight = NotesOnRight;
 			header.SuspendLayout();
 			SuspendLayout();
 		}
@@ -1793,20 +1788,20 @@ namespace SIL.FieldWorks.Discourse
 		/// <summary>
 		/// Controls MouseMove event for column header in case we are in the move notes column state
 		/// </summary>
-		private void MoveColumn(Control header, MouseEventArgs e)
+		private void MoveColumn(Control header, MouseEventArgs e) // TODO (Hasso) 2022.02: update both columns and col groups
 		{
 			if (header.Text != DiscourseStrings.ksNotesColumnHeader) return;
 			if (header.Left < m_origHeaderLeft - 20)
 			{
-				m_notesOnRight = false;
+				NotesOnRight = false;
 			}
 			else if (header.Left > m_origHeaderLeft + 20 || m_notesWasOnRight)
 			{
-				m_notesOnRight = true;
+				NotesOnRight = true;
 			}
 			else
 			{
-				m_notesOnRight = false;
+				NotesOnRight = false;
 			}
 			UpdatePositionsExceptNotes();
 			m_isDraggingNotes = true;
@@ -1836,7 +1831,7 @@ namespace SIL.FieldWorks.Discourse
 			UpdatePositions();
 			if (m_notesWasOnRight != NotesOnRight)
 			{
-				m_chart.NotesDataFromPropertyTable = m_notesOnRight;
+				m_chart.NotesDataFromPropertyTable = NotesOnRight;
 				ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(0));
 				m_chart.RefreshRoot();
 			}

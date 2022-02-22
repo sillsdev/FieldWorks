@@ -128,9 +128,9 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		[Test]
-		public void AllColumns()
+		public void CollectColumns()
 		{
-			var cols = m_logic.AllColumns(m_template);
+			var cols = m_logic.CollectColumns(m_template);
 			Assert.AreEqual(6, cols.Count);
 			Assert.AreEqual(m_template.SubPossibilitiesOS[0].SubPossibilitiesOS[0].Hvo, cols[0].Hvo);
 			Assert.AreEqual(m_template.SubPossibilitiesOS[2].Hvo, cols[5].Hvo);

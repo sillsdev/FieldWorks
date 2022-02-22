@@ -194,6 +194,7 @@
     <Compile Include="LogicTest.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MultilevelHeaderModelTests.cs" />
     <Compile Include="NotifyChangeSpy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestCCLogic.cs" />

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -31,23 +31,13 @@ namespace SIL.FieldWorks.Discourse
 		private readonly HashSet<int> m_usedWritingSystems = new HashSet<int>();
 		private int m_wsGloss;
 		private readonly List<string> m_glossesInCellCollector = new List<string>();
-		private readonly List<int> m_frags = new List<int>();
+		private readonly List<int> m_frags = new List<int>(); // REVIEW (Hasso) 2022.03: should this be a stack?
 		private readonly IDsConstChart m_chart;
 		private readonly IConstChartRowRepository m_rowRepo;
-		private enum TitleStage
-		{
-			ktsStart,
-			ktsGotFirstRowGroups,
-			ktsGotNotesHeaderCell,
-			ktsStartedSecondHeaderRow,
-			ktsFinishedHeaders
-		}
-		// 0 = start, 1 = got first level titles, 2 = opened notes cell, 3 = opened first cell in in 2nd row,
-		// 4 = ended that got first real row (and later).
-		private TitleStage m_titleStage = TitleStage.ktsStart;
+		private int m_titleRowCount;
 		private bool m_fNextCellReversed;
 
-		private readonly int m_wsLineNumber; // ws to use for line numbers.
+		private readonly int m_wsLineNumber; // ws to use for line numbers. REVIEW (Hasso) 2022.02: use or lose?
 
 		public DiscourseExporter(LcmCache cache, XmlWriter writer, int hvoRoot, IVwViewConstructor vc,
 			int wsLineNumber)
@@ -93,12 +83,14 @@ namespace SIL.FieldWorks.Discourse
 
 		public void ExportDisplay()
 		{
+			m_writer.WriteStartDocument();
+			m_writer.WriteStartElement("document");
 			m_writer.WriteStartElement("chart");
-			m_writer.WriteStartElement("row"); // first header
-			m_writer.WriteAttributeString("type", "title1");
-			m_vc.Display(this, this.OpenObject, ConstChartVc.kfragPrintChart);
-			m_writer.WriteEndElement();
+			m_vc.Display(this, OpenObject, ConstChartVc.kfragPrintChart);
+			m_writer.WriteEndElement(); // chart
 			WriteLanguages();
+			m_writer.WriteEndElement(); // document
+			m_writer.WriteEndDocument();
 		}
 
 		/// <summary>
@@ -150,15 +142,7 @@ namespace SIL.FieldWorks.Discourse
 			}
 		}
 
-		int TopFragment
-		{
-			get
-			{
-				if (m_frags.Count == 0)
-					return 0;
-				return m_frags[m_frags.Count - 1];
-			}
-		}
+		private int TopFragment => m_frags.Count == 0 ? 0 : m_frags[m_frags.Count - 1];
 
 		public override void AddStringAltMember(int tag, int ws, IVwViewConstructor _vwvc)
 		{
@@ -329,7 +313,6 @@ namespace SIL.FieldWorks.Discourse
 		/// used in the discourse chart.
 		/// The default is nothing added, indicating that white space IS needed.
 		/// </summary>
-		/// <param name="lit"></param>
 		private void MarkNeedsSpace(string lit)
 		{
 			if (lit.StartsWith("]") || lit.StartsWith(")"))
@@ -341,17 +324,7 @@ namespace SIL.FieldWorks.Discourse
 		public override void AddObjProp(int tag, IVwViewConstructor vc, int frag)
 		{
 			m_frags.Add(frag);
-			switch (frag)
-			{
-				default:
-					break;
-			}
 			base.AddObjProp(tag, vc, frag);
-			switch (frag)
-			{
-				default:
-					break;
-			}
 			m_frags.RemoveAt(m_frags.Count - 1);
 		}
 
@@ -359,28 +332,8 @@ namespace SIL.FieldWorks.Discourse
 		/// Here we build the main structure of the chart as a collection of cells. We have to be a bit tricky about
 		/// generating the header.
 		/// </summary>
-		/// <param name="nRowSpan"></param>
-		/// <param name="nColSpan"></param>
 		public override void OpenTableCell(int nRowSpan, int nColSpan)
 		{
-			if (m_titleStage == TitleStage.ktsStart && m_frags.Count > 0 && m_frags[m_frags.Count - 1] == ConstChartVc.kfragColumnGroupHeader)
-			{
-				// got the first group header
-				m_titleStage = TitleStage.ktsGotFirstRowGroups;
-			}
-			else if (m_titleStage == TitleStage.ktsGotFirstRowGroups && m_frags.Count == 0)
-			{
-				// got the column groups, no longer in that, next thing is the notes header
-				m_titleStage = TitleStage.ktsGotNotesHeaderCell;
-			}
-			else if (m_titleStage == TitleStage.ktsGotNotesHeaderCell)
-			{
-				// got the one last cell on the very first row, now starting the second row, close first and make a new row.
-				m_writer.WriteEndElement();  // terminate the first header row.
-				m_writer.WriteStartElement("row"); // second row headers
-				m_writer.WriteAttributeString("type", "title2");
-				m_titleStage = TitleStage.ktsStartedSecondHeaderRow;
-			}
 			m_writer.WriteStartElement("cell");
 			if (m_fNextCellReversed)
 			{
@@ -415,6 +368,39 @@ namespace SIL.FieldWorks.Discourse
 			m_writer.WriteEndElement(); // cell
 		}
 
+		public override void OpenTableRow()
+		{
+			m_writer.WriteStartElement("row");
+
+			switch (TopFragment)
+			{
+				case ConstChartVc.kfragChartRow:
+					var row = m_rowRepo.GetObject(m_hvoCurr);
+					if (row.EndParagraph)
+						m_writer.WriteAttributeString("endPara", "true");
+					else if (row.EndSentence)
+						m_writer.WriteAttributeString("endSent", "true");
+					var clauseType = ConstChartVc.GetRowStyleName(row);
+					m_writer.WriteAttributeString("type", clauseType);
+					var label = row.Label.Text;
+					if (!string.IsNullOrEmpty(label))
+						m_writer.WriteAttributeString("id", label);
+					break;
+				default:
+					// Not a chart row; this must be a title row
+					m_writer.WriteAttributeString("type", $"title{++m_titleRowCount}");
+					break;
+			}
+
+			base.OpenTableRow();
+		}
+
+		public override void CloseTableRow()
+		{
+			base.CloseTableRow();
+			m_writer.WriteEndElement(); // row
+		}
+
 		/// <summary>
 		/// overridden to maintain the frags array.
 		/// </summary>
@@ -427,59 +413,5 @@ namespace SIL.FieldWorks.Discourse
 			base.AddObjVecItems (tag, vc, frag);
 			m_frags.RemoveAt(m_frags.Count - 1);
 		}
-
-		/// <summary>
-		/// Called whenever we start the display of an object, we currently use it to catch the start of
-		/// a row, basedon the frag. Overriding OpenTableRow() might be more natural, but I was trying to
-		/// minimize changes to other DLLs, and those routines are not currently virtual in the base class.
-		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="ihvo"></param>
-		protected override void OpenTheObject(int hvo, int ihvo)
-		{
-			int frag = m_frags[m_frags.Count - 1];
-			switch (frag)
-			{
-				case ConstChartVc.kfragChartRow:
-					if (m_titleStage == TitleStage.ktsStartedSecondHeaderRow)
-					{
-						// This is the best way I've found to detect the end of the second header row
-						// and terminate it.
-						m_titleStage = TitleStage.ktsFinishedHeaders;
-						m_writer.WriteEndElement();
-					}
-					m_writer.WriteStartElement("row");
-					var row = m_rowRepo.GetObject(hvo);
-					if (row.EndParagraph)
-						m_writer.WriteAttributeString("endPara", "true");
-					else if (row.EndSentence)
-						m_writer.WriteAttributeString("endSent", "true");
-					//ConstChartVc vc = m_vc as ConstChartVc;
-					var clauseType = ConstChartVc.GetRowStyleName(row);
-					m_writer.WriteAttributeString("type", clauseType);
-					var label = row.Label.Text;
-					if (!String.IsNullOrEmpty(label))
-						m_writer.WriteAttributeString("id", label);
-					break;
-				default:
-					break;
-			}
-			base.OpenTheObject(hvo, ihvo);
-		}
-
-		protected override void CloseTheObject()
-		{
-			base.CloseTheObject();
-			int frag = m_frags[m_frags.Count - 1];
-			switch (frag)
-			{
-				case ConstChartVc.kfragChartRow:
-					m_writer.WriteEndElement(); // row
-					break;
-				default:
-					break;
-			}
-		}
-
 	}
 }

@@ -166,12 +166,8 @@ namespace SIL.FieldWorks.Discourse
 
 			using (var writer = new XmlTextWriter(fileName, System.Text.Encoding.UTF8))
 			{
-				writer.WriteStartDocument();
-				writer.WriteStartElement("document");
 				exporter = new DiscourseExporter(m_cache, writer, m_hvoRoot, m_vc, m_wsLineNumber);
 				exporter.ExportDisplay();
-				writer.WriteEndElement();
-				writer.WriteEndDocument();
 				writer.Close();
 			}
 			return true;

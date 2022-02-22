@@ -42,6 +42,47 @@ namespace SIL.FieldWorks.Discourse
 			m_chartBody.Cache = Cache; // don't know why constructor doesn't do this, but it doesn't.
 
 			m_chartBody.SetRoot(m_chart, m_allColumns.ToArray());
+
+			//Set up some cells.
+			var allParaOccurrences = m_helper.MakeAnalysesUsedN(6);
+
+			// Make last analysis point to WfiWordform instead of WfiGloss
+			var lastOccurrence = allParaOccurrences[5];
+			var wordform = (lastOccurrence.Analysis as IWfiGloss).Wordform;
+			lastOccurrence.Segment.AnalysesRS.Replace(1, 0, new List<ICmObject> { wordform });
+			// This block makes the first row, puts WordGroups in cells 1 and 2, and list refs in cells 1 and 2
+			var row0 = m_helper.MakeFirstRow();
+			var movedItem = allParaOccurrences[1];
+			var cellPart0_1 = m_helper.MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
+			var marker = m_helper.GetAMarker();
+			var cellPart0_1b = m_helper.MakeChartMarker(row0, 1, marker);
+			var cellPart0_2 = m_helper.MakeWordGroup(row0, 2, movedItem, movedItem);
+			var marker2 = m_helper.GetAnotherMarker();
+			var cellPart0_2b = m_helper.MakeChartMarker(row0, 2, marker2);
+			var cellPart0_2c = m_helper.MakeChartMarker(row0, 2, marker);
+			var cellPart0_3 = m_helper.MakeWordGroup(row0, 3, lastOccurrence, lastOccurrence);
+
+			// Now another row, and cell 4 on the first has a ref to it. The new row has a WordGroup with two
+			// wordforms in cell 1. The cell is two columns wide, being merged with the previous cell.
+			var row1 = m_helper.MakeSecondRow();
+			m_helper.MakeDependentClauseMarker(row0, 4, new[] { row1 }, ClauseTypes.Song);
+			var cellPart1_1 = m_helper.MakeWordGroup(row1, 1, allParaOccurrences[2], allParaOccurrences[3]);
+			cellPart1_1.MergesBefore = true;
+
+			// Let's have some notes on row 0.
+			row0.Notes = TsStringUtils.MakeString("This is a test note", Cache.DefaultAnalWs);
+
+			// And some moved text in row 1
+			var cellPart1_2 = m_helper.MakeWordGroup(row1, 2, allParaOccurrences[4], allParaOccurrences[4]);
+			m_helper.MakeMovedTextMarker(row1, 3, cellPart1_2, true);
+
+			// We need four rows to properly test the variations on endPara/endSent
+			var row2 = m_helper.MakeRow(m_chart, "2");
+			row2.EndSentence = true;
+			var row3 = m_helper.MakeRow(m_chart, "3");
+			row3.EndSentence = true;
+			row3.EndParagraph = true;
+			m_helper.MakeRow(m_chart, "4");
 		}
 
 		public override void TestTearDown()
@@ -53,7 +94,7 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		// Verify some basics about a child node (and return it)
-		static XmlNode VerifyNode(string message, XmlNode parent, int index, string name, int childCount, int attrCount)
+		private static XmlNode VerifyNode(string message, XmlNode parent, int index, string name, int childCount, int attrCount)
 		{
 			var child = parent.ChildNodes[index];
 			Assert.IsNotNull(child, message);
@@ -64,7 +105,7 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		// Verify attribute presence (and value, if attval is not null)
-		static void AssertAttr(XmlNode node, string attname, string attval)
+		private static void AssertAttr(XmlNode node, string attname, string attval)
 		{
 			var attr = node.Attributes[attname];
 			Assert.That(attr, Is.Not.Null, "Expected node " + node.Name + " to have attribute " + attname);
@@ -78,100 +119,86 @@ namespace SIL.FieldWorks.Discourse
 		public void Export()
 		{
 			using (var stream = new MemoryStream())
+			using (var writer = new XmlTextWriter(stream, Encoding.UTF8))
+			using (var vc = new ConstChartVc(m_chartBody) {LineChoices = m_chartBody.LineChoices})
+			using (var exporter = new DiscourseExporter(Cache, writer, m_chart.Hvo, vc, Cache.DefaultAnalWs))
 			{
-				//Set up some cells.
-				var allParaOccurrences = m_helper.MakeAnalysesUsedN(6);
-
-				// Make last analysis point to WfiWordform instead of WfiGloss
-				var lastOccurrence = allParaOccurrences[5];
-				var wordform = (lastOccurrence.Analysis as IWfiGloss).Wordform;
-				lastOccurrence.Segment.AnalysesRS.Replace(1, 0, new List<ICmObject> { wordform });
-				// This block makes the first row, puts WordGroups in cells 1 and 2, and list refs in cells 1 and 2
-				var row0 = m_helper.MakeFirstRow();
-				var movedItem = allParaOccurrences[1];
-				var cellPart0_1 = m_helper.MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
-				var marker = m_helper.GetAMarker();
-				var cellPart0_1b = m_helper.MakeChartMarker(row0, 1, marker);
-				var cellPart0_2 = m_helper.MakeWordGroup(row0, 2, movedItem, movedItem);
-				var marker2 = m_helper.GetAnotherMarker();
-				var cellPart0_2b = m_helper.MakeChartMarker(row0, 2, marker2);
-				var cellPart0_2c = m_helper.MakeChartMarker(row0, 2, marker);
-				var cellPart0_3 = m_helper.MakeWordGroup(row0, 3, lastOccurrence, lastOccurrence);
-
-				// Now another row, and cell 4 on the first has a ref to it. The new row has a WordGroup with two
-				// wordforms in cell 1. The cell is two columns wide, being merged with the previous cell.
-				var row1 = m_helper.MakeSecondRow();
-				m_helper.MakeDependentClauseMarker(row0, 4, new[] { row1 }, ClauseTypes.Song);
-				var cellPart1_1 = m_helper.MakeWordGroup(row1, 1, allParaOccurrences[2], allParaOccurrences[3]);
-				cellPart1_1.MergesBefore = true;
-
-				// Let's have some notes on row 0.
-				//var notesText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
-				row0.Notes = TsStringUtils.MakeString("This is a test note", Cache.DefaultAnalWs);
-				//var notesPara = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
-				//notesText.ParagraphsOS.Add(notesPara);
-				//notesPara.Contents = ;
-
-				// And some moved text in row 1
-				var cellPart1_2 = m_helper.MakeWordGroup(row1, 2, allParaOccurrences[4], allParaOccurrences[4]);
-				m_helper.MakeMovedTextMarker(row1, 3, cellPart1_2, true);
-
-				// We need four rows to properly test the variations on endPara/endSent
-				var row2 = m_helper.MakeRow(m_chart, "2");
-				row2.EndSentence = true;
-				var row3 = m_helper.MakeRow(m_chart, "3");
-				row3.EndSentence = true;
-				row3.EndParagraph = true;
-				m_helper.MakeRow(m_chart, "4");
-
-				using (var writer = new XmlTextWriter(stream, Encoding.UTF8))
+				// SUT
+				exporter.ExportDisplay();
+				// Close makes the stream unusable; Flush the writer and reset the stream position to 0
+				writer.Flush();
+				stream.Position = 0;
+				using (var reader = new StreamReader(stream, Encoding.UTF8))
 				{
-					using (var vc = new ConstChartVc(m_chartBody))
-					{
-						vc.LineChoices = m_chartBody.LineChoices;
-						using (var exporter = new DiscourseExporter(Cache, writer, m_chart.Hvo, vc, Cache.DefaultAnalWs))
-						{
-							writer.WriteStartDocument();
-							writer.WriteStartElement("document");
-							exporter.ExportDisplay();
-							writer.WriteEndElement();
-							writer.WriteEndDocument();
-							writer.Flush();
-							// Close makes it unuseable
-							stream.Position = 0;
-							using (var reader = new StreamReader(stream, Encoding.UTF8))
-							{
-								var result = reader.ReadToEnd();
-								var doc = new XmlDocument();
-								doc.LoadXml(result);
-								var docNode = doc.DocumentElement;
-								Assert.AreEqual("document", docNode.Name);
-								var chartNode = VerifyNode("chart", docNode, 0, "chart", 7, 0);
-								VerifyTitleRow(chartNode);
-								VerifyTitle2Row(chartNode);
-								VerifyFirstDataRow(chartNode);
-								VerifySecondDataRow(chartNode);
-								var thirdRow = VerifyNode("row", chartNode, 4, "row", 8, 3);
-								AssertAttr(thirdRow, "endSent", "true");
-								var fourthRow = VerifyNode("row", chartNode, 5, "row", 8, 3);
-								AssertAttr(fourthRow, "endPara", "true");
+					var result = reader.ReadToEnd();
+					var doc = new XmlDocument();
+					doc.LoadXml(result);
+					var docNode = doc.DocumentElement;
+					Assert.AreEqual("document", docNode.Name);
+					var chartNode = VerifyNode("chart", docNode, 0, "chart", 7, 0);
+					VerifyTitleRow(chartNode);
+					VerifyTitle2Row(chartNode);
+					VerifyFirstDataRow(chartNode, 2);
+					VerifySecondDataRow(chartNode, 2);
+					var thirdRow = VerifyNode("row", chartNode, 4, "row", 8, 3);
+					AssertAttr(thirdRow, "endSent", "true");
+					var fourthRow = VerifyNode("row", chartNode, 5, "row", 8, 3);
+					AssertAttr(fourthRow, "endPara", "true");
 
-							var langNode = VerifyNode("languages", docNode, 1, "languages", 2, 0);
-								var enNode = VerifyNode("english lang node", langNode, 0, "language", 0, 2);
-								AssertAttr(enNode, "lang", "en");
-								AssertAttr(enNode, "font", null);
-								// don't verify exact font, may depend on installation.
-							}
-						}
-					}
+					var langNode = VerifyNode("languages", docNode, 1, "languages", 2, 0);
+					var enNode = VerifyNode("english lang node", langNode, 0, "language", 0, 2);
+					AssertAttr(enNode, "lang", "en");
+					AssertAttr(enNode, "font", null);
+					// don't verify exact font, may depend on installation.
 				}
 			}
 		}
 
-		private static void VerifySecondDataRow(XmlNode chartNode)
+		/// <remarks>
+		/// (Hasso) 2022.03: not sure the best place for this, but since this is the only test suite that tests <see cref="ConstChartVc.Display"/>,
+		/// this is the easiest place to test displaying discrete chart parts.
+		/// </remarks>
+		[Test]
+		public void DisplayChartBody()
+		{
+			using (var stream = new MemoryStream())
+			using (var writer = new XmlTextWriter(stream, Encoding.UTF8))
+			using (var vc = new ConstChartVc(m_chartBody) {LineChoices = m_chartBody.LineChoices})
+			using (var exporter = new DiscourseExporter(Cache, writer, m_chart.Hvo, vc, Cache.DefaultAnalWs))
+			{
+				writer.WriteStartDocument();
+				writer.WriteStartElement("document");
+				writer.WriteStartElement("chart");
+				// SUT
+				vc.Display(exporter, m_chart.Hvo, ConstChartVc.kfragChart);
+				writer.WriteEndElement();
+				writer.WriteEndElement();
+				writer.WriteEndDocument();
+				// Close makes the stream unusable; Flush the writer and reset the stream position to 0
+				writer.Flush();
+				stream.Position = 0;
+				using (var reader = new StreamReader(stream, Encoding.UTF8))
+				{
+					var result = reader.ReadToEnd();
+					var doc = new XmlDocument();
+					doc.LoadXml(result);
+					var docNode = doc.DocumentElement;
+					Assert.AreEqual("document", docNode.Name);
+					var chartNode = VerifyNode("chart", docNode, 0, "chart", 5, 0);
+					VerifyFirstDataRow(chartNode, 0);
+					VerifySecondDataRow(chartNode, 0);
+					var thirdRow = VerifyNode("row", chartNode, 2, "row", 8, 3);
+					AssertAttr(thirdRow, "endSent", "true");
+					var fourthRow = VerifyNode("row", chartNode, 3, "row", 8, 3);
+					AssertAttr(fourthRow, "endPara", "true");
+				}
+			}
+		}
+
+		private static void VerifySecondDataRow(XmlNode chartNode, int titleRowCount)
 		{
 			//<row type="song" id="1b">
-			var row = VerifyNode("second row", chartNode, 3, "row", 7, 2);
+			var row = VerifyNode("second row", chartNode, titleRowCount + 1, "row", 7, 2);
 			AssertAttr(row, "type", "song");
 			AssertAttr(row, "id", "1b");
 			//    <cell cols="1">
@@ -195,9 +222,9 @@ namespace SIL.FieldWorks.Discourse
 			VerifyNode("main in 2/1", cell1, 0, "main", 3, 0);
 			AssertAttr(cell1, "reversed", "true");
 			AssertAttr(cell1, "cols", "2");
-			AssertMainChild(cell1, 0, "lit", new string[] { "noSpaceAfter", "lang" }, new string[] { "true", "en" }, "[");
-			AssertMainChild(cell1, 1, "word", new string[] { "lang" }, new string[] { "fr" }, "paragraph");
-			AssertMainChild(cell1, 2, "word", new string[] { "lang" }, new string[] { "fr" }, "one");
+			AssertMainChild(cell1, 0, "lit", new[] { "noSpaceAfter", "lang" }, new[] { "true", "en" }, "[");
+			AssertMainChild(cell1, 1, "word", new[] { "lang" }, new[] { "fr" }, "paragraph");
+			AssertMainChild(cell1, 2, "word", new[] { "lang" }, new[] { "fr" }, "one");
 			var glosses1 = VerifyNode("glosses cell 1/2", cell1, 1, "glosses", 2, 0);
 			var gloss1_1 = VerifyNode("second gloss in 1/2", glosses1, 1, "gloss", 1, 1);
 			AssertAttr(gloss1_1, "lang", "en");
@@ -212,7 +239,7 @@ namespace SIL.FieldWorks.Discourse
 			//    </cell>
 			var cell2 = VerifyNode("third node in row 2", row, 2, "cell", 2, 1);
 			VerifyNode("main in 2/2", cell2, 0, "main", 1, 0);
-			AssertMainChild(cell2, 0, "word", new string[] { "moved", "lang" }, new string[] { "true", "fr" }, "It");
+			AssertMainChild(cell2, 0, "word", new[] { "moved", "lang" }, new[] { "true", "fr" }, "It");
 			var glosses2 = VerifyNode("glosses cell 2/2", cell2, 1, "glosses", 1, 0);
 			var gloss2_0 = VerifyNode("gloss in 2/2", glosses2, 0, "gloss", 1, 1);
 			AssertAttr(gloss2_0, "lang", "en");
@@ -224,7 +251,7 @@ namespace SIL.FieldWorks.Discourse
 			//        </main>
 			//    </cell>
 			var cell3 = AssertCellMainChild(row, 3, 1, null, 2, "moveMkr", "Preposed", "en");
-			AssertMainChild(cell3, 1, "lit", new string[] { "noSpaceBefore", "lang" }, new string[] { "true", "en" }, "]");
+			AssertMainChild(cell3, 1, "lit", new[] { "noSpaceBefore", "lang" }, new[] { "true", "en" }, "]");
 			//    <cell cols="1">
 			//        <main />
 			//    </cell>
@@ -237,10 +264,10 @@ namespace SIL.FieldWorks.Discourse
 			//</row>
 		}
 
-		private static void VerifyFirstDataRow(XmlNode chartNode)
+		private static void VerifyFirstDataRow(XmlNode chartNode, int titleRowCount)
 		{
 			//<row type="normal" id="1">
-			var row = VerifyNode("first row", chartNode, 2, "row", 8, 2);
+			var row = VerifyNode("first row", chartNode, titleRowCount, "row", 8, 2);
 			AssertAttr(row, "type", "normal");
 			AssertAttr(row, "id", "1");
 			//    <cell cols="1">
@@ -301,9 +328,9 @@ namespace SIL.FieldWorks.Discourse
 			//    </cell>
 			var cell4 = VerifyNode("fourth node in row 0", row, 5, "cell", 1, 1);
 			VerifyNode("main in 4/1", cell4, 0, "main", 3, 0);
-			AssertMainChild(cell4, 0, "lit", new string[] { "noSpaceAfter", "lang" }, new string[] { "true", "en" }, "[");
-			AssertMainChild(cell4, 1, "clauseMkr", new string[] { "target", "lang" }, new string[] { "1b", "en" }, "1b");
-			AssertMainChild(cell4, 2, "lit", new string[] { "noSpaceBefore", "lang" }, new string[] { "true", "en" }, "]");
+			AssertMainChild(cell4, 0, "lit", new[] { "noSpaceAfter", "lang" }, new[] { "true", "en" }, "[");
+			AssertMainChild(cell4, 1, "clauseMkr", new[] { "target", "lang" }, new[] { "1b", "en" }, "1b");
+			AssertMainChild(cell4, 2, "lit", new[] { "noSpaceBefore", "lang" }, new[] { "true", "en" }, "]");
 			//    <cell cols="1">
 			//        <main />
 			//    </cell>
@@ -425,9 +452,8 @@ namespace SIL.FieldWorks.Discourse
 
 			var titleRow = VerifyNode("title1", chartNode, 0, "row", 5, 1);
 			AssertAttr(titleRow, "type", "title1");
-			//XmlNode cell1 = VerifyNode("title1cell1", titleRow, 0, "cell", 1, 1);
-			//Assert.AreEqual("#", cell1.InnerText);
-			AssertCellMainLit(titleRow, 0, 1, "#", "en");
+			VerifyNode("num col first header", titleRow, 0, "cell", 1, 1);
+			//AssertCellMainLit(titleRow, 0, 1, "#", "en");
 			AssertCellMainLit(titleRow, 1, 2, "prenuclear", "en");
 			AssertCellMainLit(titleRow, 4, 1, "Notes", "en");
 		}
