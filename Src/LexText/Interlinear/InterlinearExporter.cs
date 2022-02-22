@@ -287,7 +287,7 @@ namespace SIL.FieldWorks.IText
 			WriteItem(itemType, tss);
 		}
 
-		private void WriteItem(string itemType, ITsString tss)
+		protected void WriteItem(string itemType, ITsString tss)
 		{
 			m_writer.WriteStartElement("item");
 			m_writer.WriteAttributeString("type", itemType);
@@ -834,12 +834,8 @@ namespace SIL.FieldWorks.IText
 					m_writer.WriteAttributeString("media-file", phrase.MediaURIRA.Guid.ToString());
 				}
 
-				var bestGuessWs = phrase.BaselineText.get_WritingSystem(0);
-				m_writer.WriteStartElement("item");
-				m_writer.WriteAttributeString("type", "txt");
-				m_writer.WriteAttributeString("lang", m_wsManager.GetIcuLocaleFromWs(bestGuessWs));
-				m_writer.WriteValue(phrase.BaselineText.Text);
-				m_writer.WriteEndElement();
+				WriteItem("txt", phrase.BaselineText);
+
 			}
 		}
 
