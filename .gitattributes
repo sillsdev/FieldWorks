@@ -25,5 +25,6 @@ FwHelpAbout.cs -whitespace
 LICENSE -whitespace
 RealSplashScreen.cs -whitespace
 run-app -whitespace
+run-fw -whitespace
 Bin/ilrepack-assemblies -whitespace
 *.json -whitespace
