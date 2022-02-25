@@ -1,18 +1,33 @@
 #!/bin/bash
+#
+# Build application and tests
+#
+# Copyright (c) 2014-2022 SIL International
+# This software is licensed under the LGPL, version 2.1 or later
+# (http://www.gnu.org/licenses/lgpl-2.1.html)
+#
+# Usage example: Build/build -verbosity:detailed
+
+set -ueo pipefail
+cd "$(dirname "$0")"
 
 echo
 echo
-echo NOTE: If you are building from a clean repository, you will need to answer a few questions after restoring NuGet packages before the build can continue.
+echo "NOTE: If you are building from a clean repository, you will need to"
+echo "answer a few questions after restoring NuGet packages before the build"
+echo "can continue."
 echo
 echo
 
 BUILD=msbuild
 PLATFORM=$(test `arch` = x86_64 && echo x64 || echo x86)
 
+set -x
+
 # Use xbuild for CheckDevelopmentPropertiesFile since mono5-sil msbuild has trouble. When move to mono6, may be able to use msbuild again.
 
-"$(dirname "$0")"/Agent/install-deps --verify
-"$(dirname "$0")"/run-in-environ $BUILD "/t:RestoreNuGetPackages" && \
-"$(dirname "$0")"/run-in-environ xbuild "/t:CheckDevelopmentPropertiesFile" && \
-"$(dirname "$0")"/run-in-environ $BUILD "/t:refreshTargets" && \
-"$(dirname "$0")"/run-in-environ $BUILD /p:Platform=$PLATFORM "$@"
+./Agent/install-deps --verify
+./run-in-environ $BUILD "/t:RestoreNuGetPackages"
+./run-in-environ xbuild "/t:CheckDevelopmentPropertiesFile"
+./run-in-environ $BUILD "/t:refreshTargets"
+./run-in-environ $BUILD /p:Platform=$PLATFORM "$@"
