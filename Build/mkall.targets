@@ -511,7 +511,7 @@
 			<SILNugetPackages Include="SIL.Windows.Forms.WritingSystems"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.WritingSystems"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.WritingSystems.Tests"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="L10NSharp"><Version>4.2.0-beta0006</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
+			<SILNugetPackages Include="L10NSharp"><Version>5.0.0-beta0059</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="Enchant.Net"><Version>1.4.3-beta0010</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="Enchant.Net"><Version>1.4.3-beta0010</Version><Path>contentFiles/any/any/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="NDesk.DBus"><Version>0.15.0</Version><Path>lib/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
