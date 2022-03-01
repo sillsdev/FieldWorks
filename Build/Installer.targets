@@ -25,7 +25,7 @@
 
 	<!-- $(ApplicationName) 1.0.0.X ($(ApplicationName) build)-->
 	<PropertyGroup>
-		<ProductIdGuid>6D05ACEA-EBDE-49EA-8D41-8E04575D22FA</ProductIdGuid>
+		<ProductIdGuid>518FFC73-809E-490A-8E29-5A2BDED787F6</ProductIdGuid>
 	</PropertyGroup>
 
 	<!-- ########################################################################################################## -->
@@ -255,6 +255,9 @@
 			<BinFiles Remove="@(MergeModules)"/>
 			<BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="@(DeveloperFiles);@(IcuDataFiles)"/>
 			<BinFiles Include="$(fwrt)\License.htm"/> <!-- install the license -->
+			<!-- Somehow, upgrading ICU prevented the generation of this file of unknown origin. Since removing it is hardly worth
+				a new base build, we'll keep it around until our next base build. TODO (Hasso) 2022.01: remove this ugly hack. -->
+			<BinFiles Include="$(AppBuildMasterDir)\$(BinDirSuffix)\FixFwData.exe.config" Condition="Exists($(AppBuildMasterDir))"/>
 			<!-- Files with special install locations or steps -->
 			<CustomInstallFiles Include="$(OutputDirForConfig)\FieldWorks.exe"/> <!-- easier to add firewall extension if it isn't harvested -->
 			<CustomInstallFiles Include="$(fwrt)\DistFiles\vs_piaredist.exe"/> <!-- Installed in Program Files\Common Files -->
