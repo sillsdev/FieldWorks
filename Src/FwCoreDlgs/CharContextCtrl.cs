@@ -548,7 +548,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					string msg = fileName == null ?
 						string.Format(FwCoreDlgs.kstidNoTokensFoundInCurrentScriptureProj, m_sListName) :
 						string.Format(FwCoreDlgs.kstidNoTokensFoundInFile, m_sListName, fileName);
-					MessageBox.Show(msg, m_app.ApplicationName);
+					MessageBox.Show(msg, m_app?.ApplicationName);
 					ResetContextLists();
 					lblScanMsg.Text = m_sInitialScanMsgLabel;
 					m_tokenGrid.Invalidate();
@@ -589,7 +589,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			catch (Exception e)
 			{
 				MessageBox.Show(string.Format(FwCoreDlgs.kstidNonUnicodeFileError, e.Message),
-					m_app.ApplicationName, MessageBoxButtons.OK,MessageBoxIcon.Information);
+					m_app?.ApplicationName, MessageBoxButtons.OK,MessageBoxIcon.Information);
 				return null;
 			}
 

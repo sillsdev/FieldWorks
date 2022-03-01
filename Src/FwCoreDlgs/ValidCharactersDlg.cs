@@ -1881,7 +1881,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		protected virtual void ShowMessageBox(string message)
 		{
-			MessageBoxUtils.Show(this, message, m_app.ApplicationName, MessageBoxButtons.OK,
+			MessageBoxUtils.Show(this, message, m_app?.ApplicationName, MessageBoxButtons.OK,
 				MessageBoxIcon.Information);
 		}
 

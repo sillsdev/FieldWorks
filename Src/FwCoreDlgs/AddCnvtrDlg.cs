@@ -1214,7 +1214,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// Also seems like the converter is 'lost' when this happens .. hmmm???
 				Debug.WriteLine("=====COMException in AddCnvtrDlg.cs: " + comEx.Message);
 				MessageBox.Show(String.Format(AddConverterDlgStrings.kstidICUErrorText,
-					Environment.NewLine, m_app.ApplicationName), AddConverterDlgStrings.kstidICUErrorTitle,
+					Environment.NewLine, m_app?.ApplicationName), AddConverterDlgStrings.kstidICUErrorTitle,
 					MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
 			catch (Exception ex)
