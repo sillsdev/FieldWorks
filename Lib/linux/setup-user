@@ -170,6 +170,14 @@ CopyRegistryKey()
 		# It's not clear if "Primary Interop Assemblies" is being used by anything
 		# other than NMock.
 		WriteKey ${registry} "Software/Microsoft/.NETFramework/AssemblyFolders" "Primary Interop Assemblies" "${FW_LIB}"
+		devPluginDir="$(ReadKey ${registry} "Software/SIL/SilEncConverters40" "DeveloperPluginDir" 2>/dev/null || true)"
+		if [[ ${devPluginDir} != "" ]]; then
+		  newValue="${FW_LIB}/EC/Plugins"
+		  echo "Warning: Registry setting ${registry} SilEncConverters40" \
+		    "DeveloperPluginDir is set. Its value is \'${devPluginDir}\'." \
+		    "Changing it to \'${newValue}\'."
+		  WriteKey ${registry} "Software/SIL/SilEncConverters40" "DeveloperPluginDir" "${newValue}"
+		fi
 	done
 
 ) | zenity --progress \
