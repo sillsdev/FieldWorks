@@ -30,6 +30,11 @@ Debug()
 	[[ -z ${FW_DEBUG-} ]] || echo -e "$(date +'%F %T') setup-user[$$]: " "$@" || : "Do not fail from write error Broken pipe"
 }
 
+Output()
+{
+	echo "$@" || : "Do not fail from write error Broken pipe"
+}
+
 Debug "FW_DATA_DIR: ${FW_DATA_DIR}"
 Debug "FW_CONFIG_DIR: ${FW_CONFIG_DIR}"
 Debug "prefix: ${prefix}"
@@ -69,7 +74,7 @@ CopyRegistryKey()
 
 (
 	if [ ! -d "${FW_CONFIG_DIR}/Icu54/" ]; then
-		echo "# Copying ICU data"
+		Output "# Copying ICU data"
 		mkdir -p "${FW_CONFIG_DIR}"
 		cp ${debugVerboseFlag} -a "${FW_SHARE}/Icu54" "${FW_CONFIG_DIR}/"
 	fi
@@ -77,14 +82,14 @@ CopyRegistryKey()
 	if [[ -z ${FLATPAK_ID-} ]]; then
 		if [ ! -d "${FW_CONFIG_DIR}/SIL/" ]; then
 			# This stanza goes back to 2013, and may not still be significant.
-			echo "# Copying encoding converter registry"
+			Output "# Copying encoding converter registry"
 			mkdir -p "${FW_CONFIG_DIR}/"
 			cp ${debugVerboseFlag} -a "${FW_SHARE}/SIL" "${FW_CONFIG_DIR}/"
 		fi
 	fi
 
 	if [ ! -d "${FW_DATA_DIR}/Projects/" ]; then
-		echo "# Creating default Project database directory"
+		Output "# Creating default Project database directory"
 		mkdir -p "${FW_DATA_DIR}/Projects/"
 	fi
 
@@ -102,7 +107,7 @@ CopyRegistryKey()
 		if ReadKey LM "Software/SIL/FieldWorks/8" "ProjectsDir" 2>/dev/null; then
 			# Migrate them to FW 9.
 
-			echo "# Migrating from FW 8 registry settings."
+			Output "# Migrating from FW 8 registry settings."
 
 			# Write any default settings for keys that are new in version 9.
 			# None.
@@ -116,7 +121,7 @@ CopyRegistryKey()
 			if ReadKey LM "Software/SIL/FieldWorks/7.0" "ProjectsDir" 2>/dev/null; then
 				# Migrate them to FW 9.
 
-				echo "# Migrating from FW 7 registry settings."
+				Output "# Migrating from FW 7 registry settings."
 
 				# Write any default settings for keys that are new in version 8 or 9.
 				# None.
@@ -127,7 +132,7 @@ CopyRegistryKey()
 				CopyRegistryKey LM "Software/SIL/FieldWorks/7.0" "ProjectsDir" LM "Software/SIL/FieldWorks/9" "ProjectsDir"
 			else
 				# Create FW 9 registry settings for an empty registry.
-				echo "# Creating FW 9 registry settings."
+				Output "# Creating FW 9 registry settings."
 
 				# Are there SIL/EncodingConverterRepository registry keys?
 				if [[ ! -d "${FW_CONFIG_DIR}/registry/LocalMachine/software/sil/encodingconverterrepository" ]]; then
@@ -161,7 +166,7 @@ CopyRegistryKey()
 	# TODO: implement a WriteKey option to only set and not overwrite values. See comments in FWNX-1065.
 	# TODO: implement batch load/dump in WriteKey similar to dconf
 
-	echo "# Writing required registry settings."
+	Output "# Writing required registry settings."
 
 	for registry in LM CU; do
 		WriteKey ${registry} "Software/SIL/FieldWorks/9" "RootCodeDir" "${FW_SHARE}"
@@ -173,7 +178,7 @@ CopyRegistryKey()
 		devPluginDir="$(ReadKey ${registry} "Software/SIL/SilEncConverters40" "DeveloperPluginDir" 2>/dev/null || true)"
 		if [[ ${devPluginDir} != "" ]]; then
 		  newValue="${FW_LIB}/EC/Plugins"
-		  echo "Warning: Registry setting ${registry} SilEncConverters40" \
+		  Output "Warning: Registry setting ${registry} SilEncConverters40" \
 		    "DeveloperPluginDir is set. Its value is \'${devPluginDir}\'." \
 		    "Changing it to \'${newValue}\'."
 		  WriteKey ${registry} "Software/SIL/SilEncConverters40" "DeveloperPluginDir" "${newValue}"
