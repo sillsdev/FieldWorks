@@ -30,13 +30,16 @@ namespace SIL.FieldWorks.Discourse
 		internal const int kfragPossibility = 3000005;
 		internal const int kfragNotesString = 3000007;
 		internal const int kfragPrintChart = 3000009;
-		internal const int kfragTemplateHeader = 3000010;
-		internal const int kfragColumnGroupHeader = 3000011;
 		internal const int kfragClauseLabels = 3000012;
 		internal const int kfragComment = 3000013;
 		internal const int kfragMTMarker = 3000014;
 		private const int kflidDepClauses = ConstChartClauseMarkerTags.kflidDependentClauses;
 		// ReSharper restore InconsistentNaming
+
+		/// <summary>
+		/// Right-to-Left Mark; for flipping individual characters.
+		/// </summary>
+		internal const char RLM = '\x200F';
 
 		private VwLength[] m_colWidths;
 		internal ConstChartBody m_body;
@@ -234,7 +237,7 @@ namespace SIL.FieldWorks.Discourse
 					// Rest is same as kfragChart
 					DisplayChartBody(vwenv);
 					break;
-				case kfragChart: // the whole chart, a DsConstChart.
+				case kfragChart: // the whole chart (except headers), a DsConstChart.
 					if (hvo == 0)
 						return;
 					DisplayChartBody(vwenv);
@@ -387,7 +390,7 @@ namespace SIL.FieldWorks.Discourse
 			// for each column or placeholder at this level
 			foreach (var header in m_body.Logic.ColumnsAndGroups.Headers[depth])
 			{
-				MakeCellsMethod.OpenStandardCell(rtlDecorator, header.LeafCount, header.IsLastInGroup);
+				MakeCellsMethod.OpenStandardCell(rtlDecorator, header.ColumnCount, header.IsLastInGroup);
 				if (header.Label != null)
 				{
 					rtlDecorator.AddString(header.Label);
@@ -684,7 +687,8 @@ namespace SIL.FieldWorks.Discourse
 			var sFormat = "{0}";
 			if (fRtL)
 			{
-				sFormat = m_body.RLM + sFormat + m_body.RLM;
+				sFormat = RLM + sFormat + RLM;
+				// TODO (Hasso) 2022.03: For RTL prints (not exports), the brackets are in the right place, but facing the wrong way. This is true even when it shouldn't be.
 				if (m_fIsAnalysisWsGraphiteEnabled)
 					index = 1;
 			}
@@ -712,7 +716,7 @@ namespace SIL.FieldWorks.Discourse
 			var sFormat = "{0}";
 			if (fRtL)
 			{
-				sFormat = m_body.RLM + sFormat + m_body.RLM;
+				sFormat = RLM + sFormat + RLM;
 				if (m_fIsAnalysisWsGraphiteEnabled)
 					index = 0;
 			}

@@ -506,9 +506,8 @@ namespace SIL.FieldWorks.Discourse
 					(int)ColorUtil.ConvertColorToBGR(Color.LightGreen));
 			}
 
-			// REVIEW (Hasso) 2022.02: does this include the notes column? If not (I don't think so), then we don't need to check iCol < columnsRow.Count
 			var columnsRow = m_body.Logic.ColumnsAndGroups.Headers.Last();
-			OpenStandardCell(m_vwenv, cCols, /*iCol < columnsRow.Count &&*/ columnsRow[iCol].IsLastInGroup);
+			OpenStandardCell(m_vwenv, cCols, columnsRow[iCol].IsLastInGroup);
 		}
 
 		private void OpenNoteCell()

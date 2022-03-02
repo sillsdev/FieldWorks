@@ -204,7 +204,7 @@ namespace SIL.FieldWorks.Discourse
 				+ "<column name=\"postnuc\"/>"
 				+ "</template>");
 			m_template = Cache.LangProject.CreateChartTemplate(doc.DocumentElement);
-			m_allColumns = Logic.CollectColumns(m_template);
+			m_allColumns = ConstituentChartLogic.CollectColumns(m_template);
 			allCols = m_allColumns;
 			return m_template;
 		}

@@ -46,48 +46,47 @@ namespace SIL.FieldWorks.Discourse
 				Assert.That(node.IsLastInGroup, $"{node.Label.Text} is a top-level column group");
 			}
 			Assert.That(row0[0].Label.Text, Is.EqualTo("a"));
-			Assert.That(row0[0].LeafCount, Is.EqualTo(1));
+			Assert.That(row0[0].ColumnCount, Is.EqualTo(1));
 			Assert.That(row0[1].Label.Text, Is.EqualTo("leaf"));
-			Assert.That(row0[1].LeafCount, Is.EqualTo(3));
+			Assert.That(row0[1].ColumnCount, Is.EqualTo(3));
 			Assert.That(row0[2].Label.Text, Is.EqualTo("falls"));
-			Assert.That(row0[2].LeafCount, Is.EqualTo(2));
+			Assert.That(row0[2].ColumnCount, Is.EqualTo(2));
 
 			var row1 = result[1];
-			foreach (var node in row1)
-			{
-				Assert.That(node.IsLastInGroup, $"{node.Label?.Text ?? "this placeholder"} is a column group");
-			}
 			Assert.That(row1[0].Item, Is.Null, "placeholder for the 'a' 'group'");
-			Assert.That(row1[0].LeafCount, Is.EqualTo(1));
+			Assert.That(row1[0].ColumnCount, Is.EqualTo(1));
+			Assert.That(row1[0].IsLastInGroup, Is.True);
 			Assert.That(row1[1].Label.Text, Is.EqualTo("blade"));
-			Assert.That(row1[1].LeafCount, Is.EqualTo(2));
+			Assert.That(row1[1].ColumnCount, Is.EqualTo(2));
+			Assert.That(row1[1].IsLastInGroup, Is.True);
 			Assert.That(row1[2].Label.Text, Is.EqualTo("stem"));
-			Assert.That(row1[2].LeafCount, Is.EqualTo(1));
+			Assert.That(row1[2].ColumnCount, Is.EqualTo(1));
+			Assert.That(row1[2].IsLastInGroup, Is.True);
 			Assert.That(row1[3].Label.Text, Is.EqualTo("disconnects"));
-			Assert.That(row1[3].LeafCount, Is.EqualTo(1));
+			Assert.That(row1[3].ColumnCount, Is.EqualTo(1));
+			Assert.That(row1[3].IsLastInGroup, Is.False);
 			Assert.That(row1[4].Label.Text, Is.EqualTo("descends"));
-			Assert.That(row1[4].LeafCount, Is.EqualTo(1));
+			Assert.That(row1[4].ColumnCount, Is.EqualTo(1));
+			Assert.That(row1[4].IsLastInGroup, Is.True);
 
 			var row2 = result[2];
 			Assert.That(row2[0].Item, Is.Null, "placeholder for the 'a' column");
-			Assert.That(row2[0].LeafCount, Is.EqualTo(1));
+			Assert.That(row2[0].ColumnCount, Is.EqualTo(1));
 			Assert.That(row2[0].IsLastInGroup, Is.True);
 			Assert.That(row2[1].Label.Text, Is.EqualTo("vein"));
-			Assert.That(row2[1].LeafCount, Is.EqualTo(1));
+			Assert.That(row2[1].ColumnCount, Is.EqualTo(1));
 			Assert.That(row2[1].IsLastInGroup, Is.False);
 			Assert.That(row2[2].Label.Text, Is.EqualTo("chlorophyl"));
-			Assert.That(row2[2].LeafCount, Is.EqualTo(1));
+			Assert.That(row2[2].ColumnCount, Is.EqualTo(1));
 			Assert.That(row2[2].IsLastInGroup, Is.True);
 			Assert.That(row2[3].Item, Is.Null, "placeholder for the 'stem' column");
-			Assert.That(row2[3].LeafCount, Is.EqualTo(1));
+			Assert.That(row2[3].ColumnCount, Is.EqualTo(1));
 			Assert.That(row2[3].IsLastInGroup, Is.True);
 			Assert.That(row2[4].Item, Is.Null, "placeholder for the 'disconnects' column");
-			Assert.That(row2[4].LeafCount, Is.EqualTo(1));
-			Assert.That(row2[4].IsLastInGroup, Is.True,
-				"'disconnects' is not the last in its group, but it is not in the last row of headers, so it is still considered last;" +
-				" however, it would be nice to detect this condition, although we don't expect many users to have charts this complicated.");
+			Assert.That(row2[4].ColumnCount, Is.EqualTo(1));
+			Assert.That(row2[4].IsLastInGroup, Is.False);
 			Assert.That(row2[5].Item, Is.Null, "placeholder for the 'descends' column");
-			Assert.That(row2[5].LeafCount, Is.EqualTo(1));
+			Assert.That(row2[5].ColumnCount, Is.EqualTo(1));
 			Assert.That(row2[5].IsLastInGroup, Is.True);
 		}
 
@@ -99,7 +98,7 @@ namespace SIL.FieldWorks.Discourse
 			Assert.That(result.Count, Is.EqualTo(1), "Should be only one 'subpossibility'");
 			Assert.That(result[0].Item, Is.Null);
 			Assert.That(result[0].IsLastInGroup, Is.False, "inherits from parent");
-			Assert.That(result[0].LeafCount, Is.EqualTo(1), "one leaf");
+			Assert.That(result[0].ColumnCount, Is.EqualTo(1), "one leaf");
 		}
 
 		[Test]
@@ -112,7 +111,7 @@ namespace SIL.FieldWorks.Discourse
 			Assert.That(result.Count, Is.EqualTo(1), "Should be only one 'subpossibility'");
 			Assert.That(result[0].Item, Is.Null);
 			Assert.That(result[0].IsLastInGroup, Is.True, "inherits from parent");
-			Assert.That(result[0].LeafCount, Is.EqualTo(1), "one leaf");
+			Assert.That(result[0].ColumnCount, Is.EqualTo(1), "one leaf");
 		}
 
 		[Test]
@@ -127,7 +126,7 @@ namespace SIL.FieldWorks.Discourse
 			foreach (var node in result)
 			{
 				Assert.That(node.Item, Is.Not.Null);
-				Assert.That(node.LeafCount, Is.EqualTo(1));
+				Assert.That(node.ColumnCount, Is.EqualTo(1));
 			}
 			Assert.That(result[0].Label.Text, Is.EqualTo("a"));
 			Assert.That(result[0].IsLastInGroup, Is.False);
@@ -148,16 +147,14 @@ namespace SIL.FieldWorks.Discourse
 			foreach (var node in result)
 			{
 				Assert.That(node.Item, Is.Not.Null);
+				Assert.That(node.IsLastInGroup, $"{node.Label.Text} is a column group");
 			}
 			Assert.That(result[0].Label.Text, Is.EqualTo("a"));
-			Assert.That(result[0].LeafCount, Is.EqualTo(1));
-			Assert.That(result[0].IsLastInGroup, Is.False);
+			Assert.That(result[0].ColumnCount, Is.EqualTo(1));
 			Assert.That(result[1].Label.Text, Is.EqualTo("leaf"));
-			Assert.That(result[1].LeafCount, Is.EqualTo(3));
-			Assert.That(result[1].IsLastInGroup, Is.False);
+			Assert.That(result[1].ColumnCount, Is.EqualTo(3));
 			Assert.That(result[2].Label.Text, Is.EqualTo("falls"));
-			Assert.That(result[2].LeafCount, Is.EqualTo(2));
-			Assert.That(result[2].IsLastInGroup, Is.True);
+			Assert.That(result[2].ColumnCount, Is.EqualTo(2));
 		}
 
 		private ICmPossibilityList MakeMultilevelMarkers()

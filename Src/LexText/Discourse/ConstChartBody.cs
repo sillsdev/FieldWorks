@@ -8,7 +8,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -25,10 +24,11 @@ namespace SIL.FieldWorks.Discourse
 		private InterlinLineChoices m_lineChoices;
 		private int m_hvoChart;
 		private ICmPossibility[] m_AllColumns;
-		private ConstChartVc m_vc;
 		private int m_dxNumColWidth = 25000; // millipoints
-		private ConstituentChart m_chart;
+		private readonly ConstituentChart m_chart;
 		private Button m_hoverButton;
+
+		/// <summary>The fragment to display</summary>
 		/// <summary>
 		/// The context menu displayed for a cell.
 		/// </summary>
@@ -50,53 +50,9 @@ namespace SIL.FieldWorks.Discourse
 			Logic.RowModifiedEvent += m_logic_RowModifiedEvent;
 			m_chart = chart;
 			IsRightToLeft = m_chart.ChartIsRtL;
-			//this.ReadOnlyView = true;
 		}
 
-		internal ConstChartVc Vc
-		{
-			get { return m_vc; }
-		}
-
-		/// <summary>
-		/// Right-to-Left Mark; for flipping individual characters.
-		/// </summary>
-		internal char RLM = '\x200F';
-
-		// Couldn't figure out how to get these to work for my bracketing problem.
-		// Will try something else. -- GJM 16 Sep 2011
-		///// <summary>
-		///// Right-to-Left Embedding mark to start embedded right-to-left.
-		///// We use it for things that aren't otherwise recognized as RTL.
-		///// </summary>
-		//internal char RLE = '\x202B';
-
-		///// <summary>
-		///// Pop Directional Formatting mark to end embedded right-to-left.
-		///// </summary>
-		//internal char PDF = '\x202C';
-
-		/// <summary>
-		/// measures the width of the strings built by the display of a column and
-		/// returns the maximumn width found.
-		/// NOTE: you may need to add a small (e.g. under 10-pixel) margin to prevent wrapping in most cases.
-		/// </summary>
-		/// <returns>width in pixels</returns>
-		public int GetColumnContentsWidth(int icolChanged)
-		{
-			// Review: This WaitCursor doesn't seem to work. Anyone know why?
-			using (new WaitCursor())
-			{
-				using (var g = Graphics.FromHwnd(Handle))
-				{
-					// get a best estimate to determine row needing the greatest column width.
-					var env = new MaxStringWidthForChartColumn(m_vc, m_styleSheet, Cache.MainCacheAccessor,
-						m_hvoChart, g, icolChanged);
-					Vc.Display(env, m_hvoChart, ConstChartVc.kfragChart);
-					return env.MaxStringWidth;
-				}
-			}
-		}
+		internal ConstChartVc Vc { get; private set; }
 
 		/// <summary>
 		/// Gets the logical column index from the display column index.
@@ -331,8 +287,8 @@ namespace SIL.FieldWorks.Discourse
 			lengths[0].nVal -= 1000;
 			RootBox?.SetTableColWidths(lengths, ccol);
 			// TODO: fix this properly - why is m_vc null?
-			Debug.Assert(m_vc != null);
-			m_vc?.SetColWidths(lengths);
+			Debug.Assert(Vc != null);
+			Vc?.SetColWidths(lengths);
 		}
 
 		internal InterlinLineChoices LineChoices
@@ -342,8 +298,8 @@ namespace SIL.FieldWorks.Discourse
 			{
 				m_lineChoices = value;
 
-				if (m_vc != null)
-					m_vc.LineChoices = value;
+				if (Vc != null)
+					Vc.LineChoices = value;
 			}
 		}
 
@@ -353,14 +309,14 @@ namespace SIL.FieldWorks.Discourse
 
 			base.MakeRoot();
 
-			m_vc = new ConstChartVc(this);
-			m_vc.LineChoices = m_lineChoices;
+			Vc = new ConstChartVc(this);
+			Vc.LineChoices = m_lineChoices;
 			// may be needed..normally happens when the VC displays a top-level paragraph.
 			//SetupRealVernWsForDisplay(m_cache.LangProject.ActualWs(LangProject.kwsVernInParagraph,
 			//	hvo, (int)StText.StTextTags.kflidParagraphs));
 
 			m_rootb.DataAccess = Cache.MainCacheAccessor;
-			m_rootb.SetRootObject(m_hvoChart, m_vc, ConstChartVc.kfragChart, this.StyleSheet);
+			m_rootb.SetRootObject(m_hvoChart, Vc, ConstChartVc.kfragChart, StyleSheet);
 			//m_rootb.Activate(VwSelectionState.vssOutOfFocus); // Makes selection visible even before ever got focus.
 		}
 
@@ -394,7 +350,7 @@ namespace SIL.FieldWorks.Discourse
 			if (RootBox == null)
 				MakeRoot();
 			if (RootBox != null)
-				ChangeOrMakeRoot(m_hvoChart, Vc, ConstChartVc.kfragChart, this.StyleSheet);
+				ChangeOrMakeRoot(m_hvoChart, Vc, ConstChartVc.kfragChart, StyleSheet);
 		}
 
 		/// <summary>
@@ -413,8 +369,8 @@ namespace SIL.FieldWorks.Discourse
 			{
 				if (m_cellContextMenu != null)
 					m_cellContextMenu.Dispose();
-				if (m_vc != null)
-					m_vc.Dispose();
+				if (Vc != null)
+					Vc.Dispose();
 				if (m_hoverButton != null)
 				{
 					if (Controls.Contains(m_hoverButton))
@@ -423,7 +379,7 @@ namespace SIL.FieldWorks.Discourse
 				}
 			}
 			m_cellContextMenu = null;
-			m_vc = null;
+			Vc = null;
 			m_hoverButton = null;
 			base.Dispose(disposing);
 		}
@@ -506,7 +462,7 @@ namespace SIL.FieldWorks.Discourse
 
 		protected override void GetPrintInfo(out int hvo, out IVwViewConstructor vc, out int frag, out IVwStylesheet ss)
 		{
-			base.GetPrintInfo(out hvo, out vc, out frag, out ss);
+			base.GetPrintInfo(out hvo, out vc, out _, out ss);
 			frag = ConstChartVc.kfragPrintChart;
 		}
 

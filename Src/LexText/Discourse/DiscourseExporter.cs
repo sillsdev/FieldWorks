@@ -29,9 +29,8 @@ namespace SIL.FieldWorks.Discourse
 		private readonly LcmCache m_cache;
 		private readonly IVwViewConstructor m_vc;
 		private readonly HashSet<int> m_usedWritingSystems = new HashSet<int>();
-		private int m_wsGloss;
-		private readonly List<string> m_glossesInCellCollector = new List<string>();
-		private readonly List<int> m_frags = new List<int>(); // REVIEW (Hasso) 2022.03: should this be a stack?
+		private readonly List<ITsString> m_glossesInCellCollector = new List<ITsString>();
+		private readonly Stack<int> m_frags = new Stack<int>();
 		private readonly IDsConstChart m_chart;
 		private readonly IConstChartRowRepository m_rowRepo;
 		private int m_titleRowCount;
@@ -142,7 +141,7 @@ namespace SIL.FieldWorks.Discourse
 			}
 		}
 
-		private int TopFragment => m_frags.Count == 0 ? 0 : m_frags[m_frags.Count - 1];
+		private int TopFragment => m_frags.Count == 0 ? 0 : m_frags.Peek();
 
 		public override void AddStringAltMember(int tag, int ws, IVwViewConstructor _vwvc)
 		{
@@ -155,11 +154,7 @@ namespace SIL.FieldWorks.Discourse
 						WriteStringProp(tag, "word", ws);
 					break;
 				case WfiGlossTags.kflidForm:
-					m_wsGloss = ws;
-					var val = m_sda.get_MultiStringAlt(m_hvoCurr, tag, m_wsGloss).Text;
-					if (val == null)
-						val = "";
-					m_glossesInCellCollector.Add(val);
+					m_glossesInCellCollector.Add(m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws));
 					break;
 				case ConstChartTagTags.kflidTag:
 					WriteStringProp(tag, "lit", ws); // missing marker.
@@ -210,8 +205,7 @@ namespace SIL.FieldWorks.Discourse
 		private static int GetWsFromTsString(ITsString tss)
 		{
 			ITsTextProps ttp = tss.get_PropertiesAt(0);
-			int var;
-			return ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+			return ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 		}
 
 		public override void set_IntProperty(int tpt, int tpv, int nValue)
@@ -255,9 +249,9 @@ namespace SIL.FieldWorks.Discourse
 
 		public override void AddObj(int hvoItem, IVwViewConstructor vc, int frag)
 		{
-			m_frags.Add(frag);
+			m_frags.Push(frag);
 			base.AddObj (hvoItem, vc, frag);
-			m_frags.RemoveAt(m_frags.Count - 1);
+			m_frags.Pop();
 		}
 
 		public override void AddString(ITsString tss)
@@ -278,7 +272,7 @@ namespace SIL.FieldWorks.Discourse
 				WriteWordForm("word", tss, ws, m_frags.Contains(ConstChartVc.kfragMovedTextCellPart) ? "moved" : null);
 			}
 			else if (text == "***")
-				m_glossesInCellCollector.Add(tss.Text);
+				m_glossesInCellCollector.Add(tss);
 			else
 			{
 				m_writer.WriteStartElement("lit");
@@ -292,12 +286,8 @@ namespace SIL.FieldWorks.Discourse
 
 		private void WriteMTMarker(ITsString tss)
 		{
-			ITsString newTss;
 			var ws = GetWsFromTsString(tss);
-			if (tss == ((ConstChartVc)m_vc).m_sMovedTextBefore)
-				newTss = TsStringUtils.MakeString("Preposed", ws);
-			else
-				newTss = TsStringUtils.MakeString("Postposed", ws);
+			var newTss = TsStringUtils.MakeString(tss.Equals(((ConstChartVc)m_vc).m_sMovedTextBefore) ? "Preposed" : "Postposed", ws);
 			var hvoTarget = m_sda.get_ObjectProp(m_hvoCurr,
 					ConstChartMovedTextMarkerTags.kflidWordGroup); // the CCWordGroup we refer to
 			if (ConstituentChartLogic.HasPreviousMovedItemOnLine(m_chart, hvoTarget))
@@ -323,9 +313,9 @@ namespace SIL.FieldWorks.Discourse
 
 		public override void AddObjProp(int tag, IVwViewConstructor vc, int frag)
 		{
-			m_frags.Add(frag);
+			m_frags.Push(frag);
 			base.AddObjProp(tag, vc, frag);
-			m_frags.RemoveAt(m_frags.Count - 1);
+			m_frags.Pop();
 		}
 
 		/// <summary>
@@ -355,9 +345,9 @@ namespace SIL.FieldWorks.Discourse
 				foreach (var gloss in m_glossesInCellCollector)
 				{
 					m_writer.WriteStartElement("gloss");
-					var icuCode = m_cache.WritingSystemFactory.GetStrFromWs(m_wsGloss);
+					var icuCode = m_cache.WritingSystemFactory.GetStrFromWs(gloss.get_WritingSystem(0));
 					m_writer.WriteAttributeString("lang", icuCode);
-					m_writer.WriteString(gloss);
+					m_writer.WriteString(gloss.Text ?? string.Empty);
 					m_writer.WriteEndElement(); // gloss
 				}
 				m_writer.WriteEndElement(); // glosses
@@ -409,9 +399,9 @@ namespace SIL.FieldWorks.Discourse
 		/// <param name="frag"></param>
 		public override void AddObjVecItems(int tag, IVwViewConstructor vc, int frag)
 		{
-			m_frags.Add(frag);
+			m_frags.Push(frag);
 			base.AddObjVecItems (tag, vc, frag);
-			m_frags.RemoveAt(m_frags.Count - 1);
+			m_frags.Pop();
 		}
 	}
 }

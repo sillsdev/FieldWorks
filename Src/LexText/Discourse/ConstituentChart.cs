@@ -38,22 +38,21 @@ namespace SIL.FieldWorks.Discourse
 		private InterlinRibbon m_ribbon;
 		private ConstChartBody m_body;
 		// Buttons for moving ribbon text into a specific column
-		private List<Button> m_MoveHereButtons = new List<Button>();
+		private readonly List<Button> m_MoveHereButtons = new List<Button>();
 		// Popups associated with each 'MoveHere' button
-		private List<Button> m_ContextMenuButtons = new List<Button>();
+		private readonly List<Button> m_ContextMenuButtons = new List<Button>();
 		private bool m_fContextMenuButtonsEnabled;
 		private IDsConstChart m_chart;
 		private ICmPossibility m_template;
 		private ICmPossibility[] m_allColumns;
-		private ConstituentChartLogic m_logic;
+		private readonly ConstituentChartLogic m_logic;
 		private Panel m_templateSelectionPanel;
 		private Panel m_buttonRow;
 		private Panel m_bottomStuff;
 		// m_buttonRow above m_ribbon
 		private SplitContainer m_topBottomSplit;
+		private readonly List<ChartHeaderView> m_headerColGroups = new List<ChartHeaderView>();
 		private ChartHeaderView m_headerMainCols;
-		// top panel has header groups (TODO), headerMainCols, the main chart body, and the template selection panel
-		private Panel m_topStuff;
 		// width of each table cell in millipoints
 		private int[] m_columnWidths;
 		// DPI when m_columnWidths was computed.
@@ -64,7 +63,7 @@ namespace SIL.FieldWorks.Discourse
 		// controls the popup help items for the Constituent Chart Form
 		private ToolTip m_toolTip;
 		private InterAreaBookmark m_bookmark;
-		private ILcmServiceLocator m_serviceLocator;
+		private readonly ILcmServiceLocator m_serviceLocator;
 		private XmlNode m_configurationParameters;
 		private Mediator m_mediator;
 		#endregion
@@ -170,7 +169,7 @@ namespace SIL.FieldWorks.Discourse
 
 		private void SplitLayout(object sender, LayoutEventArgs e)
 		{
-			var container = sender as SplitContainer;
+			var container = (SplitContainer)sender;
 			container.Width = Width;
 			container.Height = Height;
 		}
@@ -224,16 +223,24 @@ namespace SIL.FieldWorks.Discourse
 			m_headerMainCols.Layout += m_headerMainCols_Layout;
 			m_headerMainCols.SizeChanged += m_headerMainCols_SizeChanged;
 
-			m_templateSelectionPanel = new Panel() { Height = new Button().Height, Dock = DockStyle.Top, Width = 0 };
+			m_templateSelectionPanel = new Panel { Height = new Button().Height, Dock = DockStyle.Top, Width = 0 };
 			m_templateSelectionPanel.Layout += TemplateSelectionPanel_Layout;
 
-			m_topStuff = m_topBottomSplit.Panel1;
-			m_topStuff.Controls.AddRange(new Control[] { m_body, m_headerMainCols, m_templateSelectionPanel });
+			RebuildTopStuffUI();
+		}
+
+		private void RebuildTopStuffUI()
+		{
+			m_topBottomSplit.Panel1.Controls.Clear();
+			m_topBottomSplit.Panel1.Controls.AddRange(new Control[] { m_body, m_headerMainCols });
+			// ReSharper disable once CoVariantArrayConversion
+			m_topBottomSplit.Panel1.Controls.AddRange(m_headerColGroups.ToArray());
+			m_topBottomSplit.Panel1.Controls.Add(m_templateSelectionPanel);
 		}
 
 		private void TemplateSelectionPanel_Layout(object sender, EventArgs e)
 		{
-			var panel = sender as Panel;
+			var panel = (Panel)sender;
 			if (panel.Controls.Count != 0)
 			{
 				var templateButton = panel.Controls[0];
@@ -370,7 +377,8 @@ namespace SIL.FieldWorks.Discourse
 			return true;
 		}
 
-		void m_headerMainCols_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
+		// ENHANCE (Hasso) 2022.03: handle sender != m_headerMainCols
+		private void m_headerMainCols_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
 		{
 			if (m_fInColWidthChanged)
 				return;
@@ -382,7 +390,7 @@ namespace SIL.FieldWorks.Discourse
 				int totalWidth = 0;
 				int maxWidth = MaxUseableWidth();
 				foreach (Control ch in m_headerMainCols.Controls)
-					totalWidth += ch.Width + 0;
+					totalWidth += ch.Width;
 				if (totalWidth > maxWidth)
 				{
 					int delta = totalWidth - maxWidth;
@@ -408,9 +416,8 @@ namespace SIL.FieldWorks.Discourse
 			// Transfer from header to variables.
 			PersistColumnWidths();
 			// Now adjust everything else
-			ComputeButtonWidths();
+			SetHeaderColAndButtonWidths();
 			m_body.SetColWidths(m_columnWidths);
-			m_headerMainCols.UpdatePositions();
 		}
 
 		void m_headerMainCols_SizeChanged(object sender, EventArgs e)
@@ -424,7 +431,7 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		/// <summary/>
-		protected virtual void SetHeaderColAndButtonWidths() // TODO (Hasso) 2022.02: also col groups
+		protected virtual void SetHeaderColAndButtonWidths()
 		{
 			//Do not change column widths until positions have been updated to represent template change
 			//m_columnPositions should be one longer due to fenceposting
@@ -433,14 +440,50 @@ namespace SIL.FieldWorks.Discourse
 				m_fInColWidthChanged = true;
 				try
 				{
-					//GetColumnWidths();
 					for (int i = 0; i < m_headerMainCols.Controls.Count; i++)
 					{
-						int width = m_columnPositions[i + 1] - m_columnPositions[i];
-						if (m_headerMainCols[i].Width != width)
-							m_headerMainCols[i].Width = width;
+						SetColumnWidthIfDifferent(m_headerMainCols[i], i, i + 1);
 					}
+
 					m_headerMainCols.UpdatePositions();
+
+					var offset = (NotesColumnOnRight ? 0 : 1) + (ChartIsRtL ? 0 : 1);
+					var columnGroups = m_logic.ColumnsAndGroups.Headers;
+					Debug.Assert(columnGroups.Count - 1 == m_headerColGroups.Count);
+					for (var iLevel = 0; iLevel < m_headerColGroups.Count; iLevel++)
+					{
+						var levelModel = columnGroups[columnGroups.Count - 2 - iLevel];
+						var levelView = m_headerColGroups[iLevel];
+						Debug.Assert(levelView.Controls.Count == levelModel.Count + 2);
+						int iGroup = 0, iCol = 0;
+						if (!NotesColumnOnRight)
+						{
+							SetColumnWidthIfDifferent(levelView[iGroup++], iCol, ++iCol);
+						}
+						if (ChartIsRtL)
+						{
+							levelModel.Reverse();
+						}
+						else
+						{
+							// number column
+							SetColumnWidthIfDifferent(levelView[iGroup++], iCol, ++iCol);
+						}
+						while (iGroup < levelModel.Count + offset)
+						{
+							SetColumnWidthIfDifferent(levelView[iGroup], iCol, iCol += levelModel[iGroup++ - offset].ColumnCount);
+						}
+						if (ChartIsRtL)
+						{
+							// number column
+							SetColumnWidthIfDifferent(levelView[iGroup++], iCol, ++iCol);
+						}
+						if (NotesColumnOnRight)
+						{
+							SetColumnWidthIfDifferent(levelView[iGroup], iCol, ++iCol);
+						}
+						levelView.UpdatePositions();
+					}
 				}
 				finally
 				{
@@ -449,7 +492,16 @@ namespace SIL.FieldWorks.Discourse
 			}
 			ComputeButtonWidths();
 			if (m_columnWidths != null)
+			{
 				m_body.SetColWidths(m_columnWidths);
+			}
+		}
+
+		private void SetColumnWidthIfDifferent(Control control, int leftIndex, int rightIndex)
+		{
+			var width = m_columnPositions[rightIndex] - m_columnPositions[leftIndex];
+			if (control.Width != width)
+				control.Width = width;
 		}
 
 		int MpToPixelX(int dxmp)
@@ -477,7 +529,7 @@ namespace SIL.FieldWorks.Discourse
 
 		protected override void OnSizeChanged(EventArgs e)
 		{
-			if (m_mediator != null && m_columnWidths != null && m_chart != null && !HasPersistantColWidths)
+			if (m_mediator != null && m_columnWidths != null && m_chart != null && !HasPersistentColWidths)
 			{
 				SetDefaultColumnWidths();
 				SetHeaderColAndButtonWidths();
@@ -550,9 +602,8 @@ namespace SIL.FieldWorks.Discourse
 			return maxUsableWidth;
 		}
 
-		/// Compute (or eventually retrieve from persistence) column widths, // TODO (Hasso) 2022.02: also col groups
-		/// if not already known.
-		void GetColumnWidths()
+		/// <summary>Compute (or eventually retrieve from persistence) column widths, if not already known.</summary>
+		private void GetColumnWidths()
 		{
 			if (m_allColumns == null)
 				return; // no cols, can't do anything useful.
@@ -590,24 +641,26 @@ namespace SIL.FieldWorks.Discourse
 			int cPairs = m_buttonRow.Controls.Count / 2;
 			if (cPairs == 0)
 				return;
-			int widthBtnContextMenu = SIL.FieldWorks.Resources.ResourceHelper.ButtonMenuArrowIcon.Width + 10;
-			int ipair = 0;
-			while (ipair < cPairs)
+			var widthBtnContextMenu = Resources.ResourceHelper.ButtonMenuArrowIcon.Width + 10;
+			var offset = (NotesColumnOnRight ? 0 : 1) + (ChartIsRtL ? 0 : 1);
+			var columnNames = m_logic.AllMyColumns.Select(ConstituentChartLogic.GetColumnHeaderFrom).ToList();
+			if (ChartIsRtL)
+			{
+				columnNames.Reverse();
+			}
+			for (var ipair = 0; ipair < cPairs; ipair++)
 			{
 				Control c = m_buttonRow.Controls[ipair * 2];
-				int offset = NotesColumnOnRight ? 0 : 1;
-				offset += ChartIsRtL ? 0 : 1;
 				// main button
 				c.Left = m_columnPositions[ipair + offset] + 2;
 				// skip number column, fine tune
 				c.Width = m_columnPositions[ipair + offset + 1] - m_columnPositions[ipair + offset] - widthBtnContextMenu;
 				// Redo button name in case some won't (or now will!) fit on the button
-				c.Text = GetBtnName(m_headerMainCols[ipair + offset].Text, c.Width - ((c as Button).Image.Width * 2));
+				c.Text = GetBtnName(columnNames[ipair], c.Width - (((Button)c).Image.Width * 2));
 				Control c2 = m_buttonRow.Controls[ipair * 2 + 1];
 				// pull-down
 				c2.Left = c.Right;
 				c2.Width = widthBtnContextMenu;
-				ipair++;
 			}
 		}
 
@@ -690,7 +743,7 @@ namespace SIL.FieldWorks.Discourse
 				}
 				m_template = m_chart.TemplateRA;
 				m_logic.StTextHvo = m_hvoRoot;
-				m_allColumns = m_logic.AllMyColumns; //AllColumns(m_chart.TemplateRA).ToArray(); // TODO (Hasso) 2022p02: also column groups
+				m_allColumns = m_logic.AllMyColumns;
 			}
 			else
 			{
@@ -705,7 +758,20 @@ namespace SIL.FieldWorks.Discourse
 				m_fInColWidthChanged = true;
 				try
 				{
-					m_logic.MakeMainHeaderCols(m_headerMainCols);
+					var headers = m_logic.ColumnsAndGroups.Headers;
+					headers.Reverse();
+					m_logic.MakeHeaderColsFor(m_headerMainCols, headers[0], headers.Count == 1);
+					m_headerColGroups.ForEach(h => h.Dispose());
+					m_headerColGroups.Clear();
+					for (var i = 1; i < headers.Count; i++)
+					{
+						var headLevel = new ChartHeaderView(this) { Dock = DockStyle.Top, Height = 22 };
+						headLevel.ColumnWidthChanged += m_headerMainCols_ColumnWidthChanged;
+						// TODO (Hasso) 2022.03: register other event handlers (Layout, SizeChanged)?
+						m_logic.MakeHeaderColsFor(headLevel, headers[i], headers.Count == i + 1);
+						m_headerColGroups.Add(headLevel);
+					}
+					RebuildTopStuffUI();
 					if (m_allColumns == new ICmPossibility[0])
 						return;
 					int ccolsWanted = m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns;
@@ -1073,7 +1139,7 @@ namespace SIL.FieldWorks.Discourse
 			return strName;
 		}
 
-		bool HasPersistantColWidths
+		private bool HasPersistentColWidths
 		{
 			get { return PropertyTable.GetStringProperty(ColWidthId(), null) != null; }
 		}
@@ -1082,7 +1148,7 @@ namespace SIL.FieldWorks.Discourse
 		/// Restore column widths if any are persisted for this chart
 		/// </summary>
 		/// <returns>true if it found a valid set of widths.</returns>
-		bool RestoreColumnWidths()
+		private bool RestoreColumnWidths()
 		{
 			if (m_mediator == null)
 				return false;
@@ -1092,7 +1158,6 @@ namespace SIL.FieldWorks.Discourse
 			XmlDocument doc = new XmlDocument();
 			try
 			{
-				doc = new XmlDocument();
 				doc.LoadXml(savedCols);
 			}
 			catch (Exception)
@@ -1325,8 +1390,9 @@ namespace SIL.FieldWorks.Discourse
 
 		public bool NotesColumnOnRight
 		{
-			get { return m_headerMainCols.NotesOnRight; }
-		}
+			get;
+			internal set;
+		} = true;
 
 		#region IxCoreColleague Members
 
@@ -1517,17 +1583,10 @@ namespace SIL.FieldWorks.Discourse
 			}
 		}
 
-		public bool NotesDataFromPropertyTable
+		public bool NotesOnRightFromPropertyTable
 		{
-			get
-			{
-				return PropertyTable == null || PropertyTable.GetBoolProperty("notesOnRight",
-					true, PropertyTable.SettingsGroup.LocalSettings);
-			}
-			set
-			{
-				PropertyTable?.SetProperty("notesOnRight", value, PropertyTable.SettingsGroup.LocalSettings, false);
-			}
+			get => PropertyTable == null || PropertyTable.GetBoolProperty("notesOnRight", true, PropertyTable.SettingsGroup.LocalSettings);
+			set => PropertyTable?.SetProperty("notesOnRight", value, PropertyTable.SettingsGroup.LocalSettings, false);
 		}
 
 		#endregion
@@ -1589,7 +1648,11 @@ namespace SIL.FieldWorks.Discourse
 			base.Dispose(disposing);
 		}
 
-		public bool NotesOnRight { get; private set; } = true; // TODO (Hasso) 2022.02: w/ multiple header levels, this needs to be a chart-level variable
+		private bool NotesOnRight
+		{
+			get => m_chart.NotesColumnOnRight;
+			set => m_chart.NotesColumnOnRight = value;
+		}
 
 		/// <summary>
 		/// ControlList[] represents the z index, so in order to keep the draggable notes column at the top of the z order,
@@ -1671,7 +1734,7 @@ namespace SIL.FieldWorks.Discourse
 			int num = Width / (Controls.Count + 1);
 			this[iColumnChanged].Width = num;
 			UpdatePositions();
-			ColumnWidthChanged(this, new ColumnWidthChangedEventArgs(iColumnChanged));
+			ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(iColumnChanged));
 		}
 
 		/// <summary>
@@ -1679,10 +1742,10 @@ namespace SIL.FieldWorks.Discourse
 		/// </summary>
 		protected override void OnControlAdded(ControlEventArgs e)
 		{
-			//Get the notes value from the property table once the first column has been added
+			//Get the notes value from the property table once the first column has been added // REVIEW (Hasso) 2022.03: is this still our job?
 			if (Controls.Count == 1)
 			{
-				NotesOnRight = m_chart.NotesDataFromPropertyTable;
+				NotesOnRight = m_chart.NotesOnRightFromPropertyTable;
 			}
 			Control newColumn = e.Control;
 			newColumn.Height = 22;
@@ -1691,9 +1754,9 @@ namespace SIL.FieldWorks.Discourse
 			newColumn.MouseUp += OnColumnMouseUp;
 			newColumn.Paint += OnColumnPaint;
 			newColumn.DoubleClick += OnColumnDoubleClick;
-			if (newColumn is HeaderLabel)
+			if (newColumn is HeaderLabel label)
 			{
-				((HeaderLabel)newColumn).BorderStyle = BorderStyle.None;
+				label.BorderStyle = BorderStyle.None;
 			}
 		}
 
@@ -1702,7 +1765,7 @@ namespace SIL.FieldWorks.Discourse
 		/// </summary>
 		private void OnColumnDoubleClick(object sender, EventArgs e)
 		{
-			var header = sender as Control;
+			var header = (Control)sender;
 			if (header.Cursor != Cursors.VSplit)
 			{
 				return;
@@ -1721,7 +1784,7 @@ namespace SIL.FieldWorks.Discourse
 		/// </summary>
 		private void OnColumnMouseDown(object sender, MouseEventArgs e)
 		{
-			Control header = sender as Control;
+			var header = (Control)sender;
 			if (header.Cursor == Cursors.VSplit)
 			{
 				m_isResizingColumn = true;
@@ -1739,7 +1802,7 @@ namespace SIL.FieldWorks.Discourse
 		/// </summary>
 		private void OnColumnMouseMove(object sender, MouseEventArgs e)
 		{
-			var header = sender as Control;
+			var header = (Control)sender;
 			if ((e.X < 3 && header != this[0]) || (e.X > header.Width - 3))
 			{
 				header.Cursor = Cursors.VSplit;
@@ -1788,9 +1851,12 @@ namespace SIL.FieldWorks.Discourse
 		/// <summary>
 		/// Controls MouseMove event for column header in case we are in the move notes column state
 		/// </summary>
-		private void MoveColumn(Control header, MouseEventArgs e) // TODO (Hasso) 2022.02: update both columns and col groups
+		private void MoveColumn(Control header, MouseEventArgs e)
 		{
-			if (header.Text != DiscourseStrings.ksNotesColumnHeader) return;
+			if (header.Text != DiscourseStrings.ksNotesColumnHeader && IndexOf(header) != (NotesOnRight ? Controls.Count - 1 : 0))
+			{
+				return;
+			}
 			if (header.Left < m_origHeaderLeft - 20)
 			{
 				NotesOnRight = false;
@@ -1813,7 +1879,7 @@ namespace SIL.FieldWorks.Discourse
 		/// </summary>
 		private void OnColumnMouseUp(object sender, MouseEventArgs e)
 		{
-			var header = sender as Control;
+			var header = (Control)sender;
 			if (m_isResizingColumn)
 			{
 				UpdatePositions();
@@ -1831,7 +1897,7 @@ namespace SIL.FieldWorks.Discourse
 			UpdatePositions();
 			if (m_notesWasOnRight != NotesOnRight)
 			{
-				m_chart.NotesDataFromPropertyTable = NotesOnRight;
+				m_chart.NotesOnRightFromPropertyTable = NotesOnRight;
 				ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(0));
 				m_chart.RefreshRoot();
 			}
@@ -1845,7 +1911,7 @@ namespace SIL.FieldWorks.Discourse
 		/// </summary>
 		private void OnColumnPaint(object sender, PaintEventArgs e)
 		{
-			var header = sender as Control;
+			var header = (Control)sender;
 			var topLeft = new Point(0, 0);
 			var bottomRight = new Size(header.Width - 1, header.Height - 1);
 			e.Graphics.DrawRectangle(new Pen(Color.Black), new Rectangle(topLeft, bottomRight));
@@ -1891,7 +1957,7 @@ namespace SIL.FieldWorks.Discourse
 			m_isResizingColumn = false;
 			ResumeLayout(false);
 			this[Controls.Count - 1].ResumeLayout(false);
-			ColumnWidthChanged(this, new ColumnWidthChangedEventArgs(Controls.Count - 1));
+			ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(Controls.Count - 1));
 		}
 	}
 }

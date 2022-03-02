@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,11 +18,10 @@ namespace SIL.FieldWorks.Discourse
 	[TestFixture]
 	public class InMemoryLogicTest : InMemoryDiscourseTestBase
 	{
-		IDsConstChart m_chart;
-		ICmPossibility m_template;
-		TestCCLogic m_logic;
-		MockRibbon m_mockRibbon;
-		List<ICmPossibility> m_allColumns;
+		private IDsConstChart m_chart;
+		private ICmPossibility m_template;
+		private TestCCLogic m_logic;
+		private List<ICmPossibility> m_allColumns;
 
 		#region Test setup
 
@@ -31,7 +30,7 @@ namespace SIL.FieldWorks.Discourse
 			base.CreateTestData();
 			m_logic = new TestCCLogic(Cache, m_chart, m_stText);
 			m_helper.Logic = m_logic;
-			m_logic.Ribbon = m_mockRibbon = new MockRibbon(Cache, m_stText.Hvo);
+			m_logic.Ribbon = new MockRibbon(Cache, m_stText.Hvo);
 			m_template = m_helper.MakeTemplate(out m_allColumns);
 			// Note: do this AFTER creating the template, which may also create the DiscourseData object.
 			m_chart = m_helper.SetupAChart();
@@ -117,7 +116,7 @@ namespace SIL.FieldWorks.Discourse
 		public void CreateDefTemplate()
 		{
 			Assert.That(Cache.LangProject.GetDefaultChartTemplate(), Is.Not.Null); // minimally exercises the method
-			// Howerver, the guts of the method is a call to CreateTemplate, so we should get
+			// However, the guts of the method is a call to CreateTemplate, so we should get
 			// better repeatability by testing the results of the CreateTemplate call in our
 			// fixture setup.
 			Assert.That(m_template, Is.Not.Null);
@@ -128,10 +127,10 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		[Test]
-		public void CollectColumns()
+		public void AllMyColumns()
 		{
-			var cols = m_logic.CollectColumns(m_template);
-			Assert.AreEqual(6, cols.Count);
+			var cols = m_logic.AllMyColumns;
+			Assert.AreEqual(6, cols.Length);
 			Assert.AreEqual(m_template.SubPossibilitiesOS[0].SubPossibilitiesOS[0].Hvo, cols[0].Hvo);
 			Assert.AreEqual(m_template.SubPossibilitiesOS[2].Hvo, cols[5].Hvo);
 		}

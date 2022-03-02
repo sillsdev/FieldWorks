@@ -28,11 +28,10 @@ namespace SIL.FieldWorks.Discourse
 			// Make subsequent rows of column groups and columns
 			while (Headers.Last().Any(n => n.Item?.SubPossibilitiesOS.Any() ?? false))
 			{
-				var haveMoreRows = Headers.Last().Any(mhn => mhn.Item?.SubPossibilitiesOS.Any(sp => sp.SubPossibilitiesOS.Any()) ?? false);
 				Headers.Add(new List<MultilevelHeaderNode>());
 				foreach (var node in Headers[Headers.Count - 2])
 				{
-					AddSubpossibilities(Headers.Last(), node, haveMoreRows);
+					AddSubpossibilities(Headers.Last(), node);
 				}
 			}
 		}
@@ -46,6 +45,9 @@ namespace SIL.FieldWorks.Discourse
 				return;
 			}
 
+			// If any of Item's SubPossibilities have their own SubPossibilities, all of Item's SubPossibilities are groups
+			treatAllAsGroups = treatAllAsGroups || colGroup.Item.SubPossibilitiesOS.Any(sp => sp.SubPossibilitiesOS.Any());
+
 			// Add subpossibilities to the row
 			row.AddRange(colGroup.Item.SubPossibilitiesOS.Select((item, i) => new MultilevelHeaderNode(item,
 				// Count item's leaf subpossibilities, or count item as its own leaf node
@@ -56,18 +58,18 @@ namespace SIL.FieldWorks.Discourse
 
 	public struct MultilevelHeaderNode
 	{
-		public MultilevelHeaderNode(ICmPossibility item, int leafCount, bool isLastInGroup)
+		public MultilevelHeaderNode(ICmPossibility item, int columnCount, bool isLastInGroup)
 		{
 			Item = item;
 			IsLastInGroup = isLastInGroup;
-			LeafCount = leafCount;
+			ColumnCount = columnCount;
 		}
 
 		public ICmPossibility Item { get; }
 		/// <summary>
 		/// The number of leaf possibilities descended from Item, or 1 if Item is already a leaf
 		/// </summary>
-		public int LeafCount { get; }
+		public int ColumnCount { get; }
 		/// <remarks>
 		/// Direct children of the top-level template node (historically the column group level)
 		/// are always considered last in their group
