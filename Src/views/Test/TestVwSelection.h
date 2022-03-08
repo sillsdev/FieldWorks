@@ -3565,6 +3565,8 @@ namespace TestViews
 			// Figure out by how much.
 			VwParagraphBox * pvpbox = dynamic_cast<VwParagraphBox *>(m_qrootb->FirstBox());
 			VwBox * pboxmain = pvpbox->FirstBox()->NextOrLazy();
+			unitpp::assert_true("There should have been a box following the FirstBox in pvpbox.",
+				pboxmain != NULL);
 			int dyOffset = pboxmain->Top();
 			unitpp::assert_true("Insertion point (top) locations should be nearly the same whether or not text follows para with drop-cap chapter number.",
 				rcSelFollowingChapterNumberPara.top - rcSelFollowingNoChapterNumberPara.top == dyOffset);

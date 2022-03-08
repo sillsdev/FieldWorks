@@ -2623,7 +2623,7 @@ template<class Op> int UniscribeSegment::DoAllRuns(int ichBase, IVwGraphics * pv
 	OLECHAR rgchBuf[INIT_BUF_SIZE]; // Unlikely segments are longer than this...
 	Vector<OLECHAR> vch; // Use as buffer if 1000 is not enough
 	int citem; // actual number of items obtained.
-	OLECHAR * prgchBuf; // Where text actually goes.
+	OLECHAR * prgchBuf = 0; // Where text actually goes.
 	int cchNfc = CallScriptItemize(rgchBuf, INIT_BUF_SIZE, vch, m_qts, ichBase, m_dichLim, &prgchBuf,
 		citem, m_fParaRTL);
 

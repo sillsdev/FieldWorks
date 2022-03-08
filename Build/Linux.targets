@@ -45,9 +45,9 @@
 	</Target>
 
 	<Target Name="linuxLibs">
-		<Exec Command="make externaltargets" WorkingDirectory="$(fwrt)" Condition="'$(action)'!='clean'"/>
-		<Exec Command="make externaltargets-test" WorkingDirectory="$(fwrt)"
-			IgnoreStandardErrorWarningFormat="true" Condition="'$(action)'=='test'"/>
+		<Exec Command="make V=1 externaltargets" WorkingDirectory="$(fwrt)" Condition="'$(action)'!='clean'"/>
+		<!--		<Exec Command="make V=1 externaltargets-test" WorkingDirectory="$(fwrt)"
+		IgnoreStandardErrorWarningFormat="true" Condition="'$(action)'=='test'"/> -->
 		<CreateItem Include="$(dir-fwoutputlibPlatform)/Release/*.*">
 			<Output TaskParameter="Include" ItemName="LinuxReleaseLibs"/>
 		</CreateItem>
@@ -190,10 +190,10 @@
 					   Key="SOFTWARE\SIL\FieldWorks\$(FWMAJOR)\ProjectsDir"
 					   Value="$(FW_ROOT)/Projects"/>
 		<WriteRegistry Hive="LocalMachine"
-					   Key="SOFTWARE\SIL\Icu54DataDir"
-					   Value="$(ICU_DATA)/icudt54l"/>
+					   Key="SOFTWARE\SIL\Icu70DataDir"
+					   Value="$(ICU_DATA)/icudt70l"/>
 		<WriteRegistry Hive="LocalMachine"
-					   Key="SOFTWARE\SIL\Icu54Dir"
+					   Key="SOFTWARE\SIL\Icu70Dir"
 					   Value="$(ICU_DATA)"/>
 		<WriteRegistry Hive="LocalMachine"
 					   Key="SOFTWARE\SIL\SilEncConverters40\PluginDir"

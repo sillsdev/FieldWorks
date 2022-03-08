@@ -485,7 +485,7 @@ inline int ConvertText(const wwchar * prgchwwSrc, int cchwwSrc, wchar * prgchwDs
 	if (cchwDst == 0)
 		prgchwDst = 0; // Request pre-flighting
 
-	u_strFromWCS(prgchwDst, cchwDst, &unitsWritten, prgchwwSrc, cchwwSrc, &status);
+	u_strFromWCS(reinterpret_cast<UChar*>(prgchwDst), cchwDst, &unitsWritten, prgchwwSrc, cchwwSrc, &status);
 
 	if (U_FAILURE(status) && status != U_BUFFER_OVERFLOW_ERROR)
 		return 0;

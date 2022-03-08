@@ -56,7 +56,7 @@ public:
 #if defined(_WIN32) || defined(_M_X64)
 	typedef wchar_t uchar_t;
 #else
-	typedef unsigned short uchar_t;
+	typedef uint_least16_t uchar_t;
 #endif
 
 	OleStringLiteral(const wchar_t* s)
@@ -82,7 +82,7 @@ public:
 
 	operator const UChar* () const
 	{
-		return reinterpret_cast<const UChar*>(original());
+		return reinterpret_cast<const UChar*>(copy());
 	}
 
 #if !defined(_WIN32) && !defined(_M_X64)

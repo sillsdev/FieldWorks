@@ -608,7 +608,7 @@ HRESULT VwGraphicsCairo::DrawText(int x, int y, int cch, const OLECHAR * prgch, 
 #if DEBUG
 	if (m_loggingFile != NULL)
 	{
-		UnicodeString8 text(prgch, (int)cch);
+		UnicodeString8 text(reinterpret_cast<const UChar*>(prgch), (int)cch);
 		char * strWithoutQuotes = strdup(text.c_str());
 		for(char * p = strWithoutQuotes; *p != '\0'; p++)
 			if (*p == '\"')
@@ -634,7 +634,7 @@ HRESULT VwGraphicsCairo::DrawText(int x, int y, int cch, const OLECHAR * prgch, 
 	FontAscentAndDescent(&ascent, &descent);
 	int fontHeight = ascent + descent;
 
-	UnicodeString8 text(prgch, (int)cch);
+	UnicodeString8 text(reinterpret_cast<const UChar*>(prgch), (int)cch);
 
 	// Only draw text thats in the clipping region, by setting a cairo clipping region.
 	m_ctxt->reset_clip();
@@ -687,7 +687,7 @@ bool VwGraphicsCairo::GetTextExtentHelper(int cch, const OLECHAR * prgch, int * 
 	PangoLayout *layout = GetPangoLayoutHelper();
 	pango_layout_set_font_description (layout, m_pangoFontDescription);
 
-	UnicodeString8 text(prgch, (int)cch);
+	UnicodeString8 text(reinterpret_cast<const UChar*>(prgch), (int)cch);
 
 	pango_layout_set_text (layout, text.data(), text.size());
 	PangoRectangle logical_rect;
@@ -729,7 +729,7 @@ HRESULT VwGraphicsCairo::GetTextExtent(int cch, const OLECHAR * prgch, int * pdx
 #if DEBUG
 	if (m_loggingFile != NULL)
 	{
-		UnicodeString8 text(prgch, (int)cch);
+		UnicodeString8 text(reinterpret_cast<const UChar*>(prgch), (int)cch);
 		fprintf(m_loggingFile, "GetTextExtent %p %d \"%s\"\n", this, cch, text.c_str());
 		fflush(m_loggingFile);
 	}
@@ -1013,8 +1013,8 @@ HRESULT VwGraphicsCairo::SetupGraphics(VwCharRenderProps * pchrp)
 #if DEBUG
 	if (m_loggingFile != NULL)
 	{
-		UnicodeString8 szFaceName(pchrp->szFaceName, (int)32);
-		UnicodeString8 szFontVar(pchrp->szFontVar, (int)64);
+		UnicodeString8 szFaceName(reinterpret_cast<UChar*>(pchrp->szFaceName), (int)32);
+		UnicodeString8 szFontVar(reinterpret_cast<UChar*>(pchrp->szFontVar), (int)64);
 		fprintf(m_loggingFile, "SetupGraphics %p %u %u %u %d %d %d %d %d %d %d %d %d \"%s\" \"%s\"\n",
 			this,
 			pchrp->clrFore, pchrp->clrBack, pchrp->clrUnder, pchrp->dympOffset, pchrp->ws, pchrp->fWsRtl,
@@ -1043,7 +1043,7 @@ HRESULT VwGraphicsCairo::SetupGraphics(VwCharRenderProps * pchrp)
 		fontSize = m_chrp.dympHeight * GetYInch() / kdzmpInch;
 	}
 
-	UnicodeString8 fontNameUtf8(pchrp->szFaceName);
+	UnicodeString8 fontNameUtf8(reinterpret_cast<UChar*>(pchrp->szFaceName));
 	const char* fontName = fontNameUtf8.c_str();
 
 	if (pchrp->clrFore == kclrTransparent) {
@@ -1394,7 +1394,7 @@ HRESULT VwGraphicsCairo::GetTextLeadWidth(int cch, const OLECHAR * prgch, int ic
 #if DEBUG
 	if (m_loggingFile != NULL)
 	{
-		UnicodeString8 text(prgch, (int)cch);
+		UnicodeString8 text(reinterpret_cast<const UChar*>(prgch), (int)cch);
 		fprintf(m_loggingFile, "GetTextLeadWidth %p %d \"%s\" %d %d\n", this, cch, text.c_str(), ich, dxStretch);
 		fflush(m_loggingFile);
 	}

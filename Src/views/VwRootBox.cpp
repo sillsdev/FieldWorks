@@ -2973,7 +2973,7 @@ void VwRootBox::ProcessHeaderSpecials(ITsString * ptss, ITsString ** pptssRet, i
 			}
 			else
 			{
-				static UnicodeString date(L"&[date]");
+				static UnicodeString date(reinterpret_cast<const UChar*>(L"&[date]"));
 				pchSpecial = u_strstr(reinterpret_cast<const UChar*>(pchString), date.getBuffer());
 				if (pchSpecial)
 				{

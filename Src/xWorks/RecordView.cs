@@ -276,7 +276,7 @@ namespace SIL.FieldWorks.XWorks
 			// If we're being disposed because the application is crashing, we do NOT want to save the sort
 			// sequence. It might contain bad objects, or represent a filtered state that is NOT going to
 			// be persisted because of the crash. LT-11446.
-			if (FwApp.InCrashedState || Cache == null)
+			if (FwApp.InCrashedState || Cache == null || Cache.IsDisposed)
 				return;
 			var pathname = GetClerkPersistPathname();
 			var watch = new Stopwatch();
