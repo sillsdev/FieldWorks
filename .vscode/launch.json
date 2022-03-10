@@ -162,6 +162,9 @@
       "address": "localhost",
       "port": 55001
     },
+    // To debug FW unmanaged code as run from a dev machine, outside of flatpak,
+    // first run gdbserver with the following command, and then this debugger.
+    //   Build/run-in-environ gdbserver 127.0.0.1:9999 mono-sgen Output/Debug/FieldWorks.exe
     // To debug FW unmanaged code in flatpak, first launch the "Launch FW from flatpak (to attach C++ debugger)" task.
     // Or run FW using:
     //   flatpak run --devel --env=FW_DEBUG=true --env=FW_COMMAND_PREFIX="gdbserver 127.0.0.1:9999" --env=FW_MONO_COMMAND=/app/bin/mono-sgen org.sil.FieldWorks
