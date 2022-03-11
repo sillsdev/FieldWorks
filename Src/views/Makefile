@@ -11,7 +11,8 @@ TLB_SRC        = $(OUTPUT)/Common
 
 # -I$(AFCORE_SRC)
 
-PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gdk-2.0 gtkmm-2.4 cairomm-1.0 pangomm-1.4 freetype2 uuid
+PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gdk-2.0 gtkmm-2.4 cairomm-1.0 \
+	pangomm-1.4 freetype2 uuid icu-i18n
 
 DEFINES  = -DGR_FW -DVIEWSDLL -DSUPPRESS_FW_EXCEPTION_HANDLING -DWIN32_KEY_VALUES=1 -DGRAPHITE2_STATIC
 
@@ -29,7 +30,6 @@ GR2_INC = $(BUILD_ROOT)/Lib/src/graphite2/include
 INCLUDES := $(DEBUG_INCLUDES)
 
 INCLUDES := \
-	$(shell icu-config --cppflags) \
 	-I. -Ilib \
 	-I$(GENERIC_SRC) -I$(APPCORE_SRC) -I$(DEBUGPROCS_SRC) \
 	-I$(GR2_INC) \
@@ -40,13 +40,11 @@ INCLUDES := \
 	-I$(WIN32BASE_INC) \
 	$(shell pkg-config --cflags $(PACKAGES)) \
 
-
 LDLIBS := \
 	-L$(WIN32MORE_LIB) -lWin32More \
 	-L$(COM_LIB) -lcom \
 	-L$(WIN32BASE_LIB) -lWin32Base \
 	$(shell pkg-config --libs $(PACKAGES)) \
-	$(shell icu-config --ldflags) \
 	-lpthread -ldl \
 
 

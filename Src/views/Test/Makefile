@@ -26,7 +26,8 @@ else
 	OPTIMIZATIONS = -O3
 endif
 
-PACKAGES = gdk-2.0 glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 gdkmm-2.4 cairomm-1.0 pangomm-1.4 freetype2 uuid
+PACKAGES = gdk-2.0 glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 gdkmm-2.4 \
+	cairomm-1.0 pangomm-1.4 freetype2 uuid icu-i18n
 
 GR2_INC = $(BUILD_ROOT)/Lib/src/graphite2/include
 
@@ -35,7 +36,6 @@ INCLUDES := -I$(VIEWS_SRC) -I$(VIEWS_SRC)/lib -I$(VIEWS_SRC)/Test \
 		-I$(GR2_INC) -I$(DEBUGPROCS_SRC) \
 
 INCLUDES := \
-	$(shell icu-config --cppflags) \
 	$(INCLUDES) \
 	-I$(FWINCLUDE) \
 	-I$(UNIT) -I$(LIB_UNIT) \
@@ -45,9 +45,7 @@ INCLUDES := \
 	-I$(WIN32BASE_INC) \
 	$(shell pkg-config --cflags $(PACKAGES)) \
 
-
 LDLIBS := \
-	$(shell icu-config --ldflags) \
 	-L$(FWINCLUDE) \
 	-L$(WIN32MORE_LIB) -lWin32More \
 	-L$(COM_LIB) -lcom \
