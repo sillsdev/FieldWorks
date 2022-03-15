@@ -126,8 +126,6 @@ MONO_SILPKGDIR="${MONO_SILPKGDIR:-/opt/mono5-sil}"
 [ -d /usr/lib/cli/gdk-sharp-2.0 ] && GDK_SHARP=/usr/lib/cli/gdk-sharp-2.0/
 ENC_CONVERTERS="${INSTALLATION_PREFIX}/lib/fieldworks"
 
-
-
 MONO_RUNTIME=v4.0.30319
 MONO_DEBUG=explicit-null-checks
 MONO_ENV_OPTIONS="-O=-gshared"
