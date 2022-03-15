@@ -251,7 +251,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		public string Persist(ILgWritingSystemFactory wsf)
 		{
-			List<CustomLineOption> customOptions = GetCustomLineOptions(Mode);
+			List<CustomLineOption> customOptions = GetCustomLineOptions();
 
 			var builder = new StringBuilder();
 			builder.Append(GetType().Name + "_v3");
@@ -302,7 +302,7 @@ namespace SIL.FieldWorks.IText
 			result.ClearAllLineSpecs();
 
 			List<LineOption> requiredOptions = result.LineOptions(mode).ToList();
-			List<CustomLineOption> customOptions = result.GetCustomLineOptions(mode);
+			List<CustomLineOption> customOptions = result.GetCustomLineOptions();
 			bool updatePropTable = false;
 			for (int i = 1; i < parts.Length; i++)
 			{
@@ -553,7 +553,7 @@ namespace SIL.FieldWorks.IText
 
 		private LineOption[] LineOptions(InterlinMode mode)
 		{
-			var customLineOptions = GetCustomLineOptions(mode);
+			var customLineOptions = GetCustomLineOptions();
 
 			if (mode == InterlinMode.Chart)
 			{
@@ -584,26 +584,19 @@ namespace SIL.FieldWorks.IText
 			}.Union(customLineOptions).ToArray();
 		}
 
-		private List<CustomLineOption> GetCustomLineOptions(InterlinMode mode)
+		private List<CustomLineOption> GetCustomLineOptions()
 		{
 			var customLineOptions = new List<CustomLineOption>();
-			switch (mode)
+			if (m_cache != null)
 			{
-				case InterlinMode.Analyze:
-				case InterlinMode.Chart:
-				case InterlinMode.Gloss:
-					if (m_cache != null)
-					{
-						var classId = m_cache.MetaDataCacheAccessor.GetClassId("Segment");
-						var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
-						foreach (int flid in mdc.GetFields(classId, false, (int)CellarPropertyTypeFilter.All))
-						{
-							if (!mdc.IsCustom(flid))
-								continue;
-							customLineOptions.Add(new CustomLineOption(flid, mdc.GetFieldLabel(flid), mdc.GetFieldName(flid)));
-						}
-					}
-					break;
+				var classId = m_cache.MetaDataCacheAccessor.GetClassId("Segment");
+				var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
+				foreach (int flid in mdc.GetFields(classId, false, (int)CellarPropertyTypeFilter.All))
+				{
+					if (!mdc.IsCustom(flid))
+						continue;
+					customLineOptions.Add(new CustomLineOption(flid, mdc.GetFieldLabel(flid), mdc.GetFieldName(flid)));
+				}
 			}
 
 			return customLineOptions;
