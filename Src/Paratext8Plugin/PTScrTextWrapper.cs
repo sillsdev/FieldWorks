@@ -104,7 +104,7 @@ namespace Paratext8Plugin
 
 				public string EndMarker { get { return ptToken.EndMarker; } }
 
-				public TokenType Type { get { return (TokenType)Enum.Parse(typeof(TokenType), ptToken.Type.ToString()); } }
+				public TokenType Type { get { return Enum.TryParse(ptToken.Type.ToString(), out TokenType outValue) ? outValue : TokenType.Unknown; } }
 
 				public object CoreToken { get { return ptToken; } }
 
