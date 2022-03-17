@@ -1,0 +1,11 @@
+#!/bin/bash
+set -xueo pipefail
+cd "$(dirname "$0")"
+
+export FW_DEBUG=true
+export SIL_REPORTING_LOGGING=foreground
+export MONO_TRACE_LISTENER="Console.Out"
+export MONO_EVENTLOG_TYPE=local:"${XDG_CACHE_HOME-$HOME/.cache}/mono-eventlog"
+# export FW_DEBUG_BASH_TRACE=true
+
+flatpak run -vv --devel "$@" org.sil.FieldWorks

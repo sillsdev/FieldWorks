@@ -1,0 +1,17 @@
+{
+  "name": "fieldworks-flatpak-specification",
+  "version": "0.0.0",
+  "description": "",
+  "main": "",
+  "module": "",
+  "dependencies": {},
+  "devDependencies": {
+    "prettier": "2.2.1"
+  },
+  "scripts": {
+    "format": "npx prettier --write fieldworks-sources-urls-input.yml flexbridge-sources-deps.yml flexbridge-sources-nuget-specific.yml org.sil.FieldWorks.yml"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}

@@ -1,0 +1,4 @@
+#!/bin/bash
+set -xueo pipefail
+cd "$(dirname "$0")"
+./run "$@" --command=bash
