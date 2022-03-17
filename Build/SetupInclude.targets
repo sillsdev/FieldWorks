@@ -107,7 +107,11 @@
 	  <Output TaskParameter="Value" PropertyName="dir-fwobj"/>
 	</CreateProperty>
 
-	<CreateProperty Condition="'$(OS)'!='Windows_NT'" Value="$(fwrt)/Output_$(arch)">
+	<CreateProperty Condition="'$(OS)'!='Windows_NT'" Value="Output_$(arch)">
+	  <Output TaskParameter="Value" PropertyName="dir-output_arch"/>
+	</CreateProperty>
+
+	<CreateProperty Condition="'$(OS)'!='Windows_NT'" Value="$(fwrt)/$(dir-output_arch)">
 	  <Output TaskParameter="Value" PropertyName="dir-fwoutput"/>
 	</CreateProperty>
 	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(fwrt)\Output">
@@ -282,17 +286,17 @@
 	<!-- extra directory (and symbolic links) needed for Linux -->
 	<MakeDir Directories="$(fwrt)/Output" Condition="!Exists('$(fwrt)/Output') And '$(OS)'=='Unix'"/>
 	<Exec Condition="!Exists('$(fwrt)/Output/$(config-capital)') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/$(config-capital) $(fwrt)/Output/$(config-capital)"/>
+	  Command="/bin/ln -T -sf ../$(dir-output_arch)/$(config-capital) $(fwrt)/Output/$(config-capital)"/>
 	<Exec Condition="!Exists('$(fwrt)/Output/$(config-lower)') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/$(config-capital) $(fwrt)/Output/$(config-lower)"/>
+	  Command="/bin/ln -T -sf ../$(dir-output_arch)/$(config-capital) $(fwrt)/Output/$(config-lower)"/>
 	<Exec Condition="!Exists('$(fwrt)/Output/Common') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/Common $(fwrt)/Output/Common"/>
+	  Command="/bin/ln -T -sf ../$(dir-output_arch)/Common $(fwrt)/Output/Common"/>
 	<Exec Condition="!Exists('$(fwrt)/Output/common') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/Common $(fwrt)/Output/common"/>
+	  Command="/bin/ln -T -sf ../$(dir-output_arch)/Common $(fwrt)/Output/common"/>
 	<Exec Condition="!Exists('$(fwrt)/Output/XMI') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/XMI"/>
+	  Command="/bin/ln -T -sf ../$(dir-output_arch)/XMI $(fwrt)/Output/XMI"/>
 	<Exec Condition="!Exists('$(fwrt)/Output/xmi') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/xmi"/>
+	  Command="/bin/ln -T -sf ../$(dir-output_arch)/XMI $(fwrt)/Output/xmi"/>
   </Target>
 
   <!-- Generate Src/CommonAssemblyInfo.cs from Src/CommonAssemblyInfoTemplate.cs and Src/MasterVersionInfo.txt -->
