@@ -113,9 +113,8 @@ modules:
     sources:
       - type: git
         dest: fw
-        url: https://github.com/sillsdev/FieldWorks.git
-        # Branch support/9.0
-        commit: 901fb46b83b422a00af3e8e6cec1c7aad01cf9a9
+        path: ..
+        commit: # FW-Auto-Head: Generated line. See build script.
       - type: git
         # liblcm is cloned for use during localization. But the actual liblcm
         # assemblies used are fetched separately.

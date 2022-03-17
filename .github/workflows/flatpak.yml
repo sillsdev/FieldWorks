@@ -122,6 +122,10 @@ jobs:
       - name: Build flatpak package
         run: |
           set -xueo pipefail
+          # Build HEAD commit.
+          perl -pi -e \
+            "s/(\s*).*FW-Auto-Head.*/\$1commit: $(git rev-parse HEAD) # FW-Auto-Head: Generated line. See build script./" \
+            org.sil.FieldWorks.yml
           flatpak-builder --verbose --user --sandbox --ccache \
 		    --repo=local-repo --keep-build-dirs --force-clean build-dir \
 			org.sil.FieldWorks.yml

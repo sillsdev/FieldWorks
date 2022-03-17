@@ -12,6 +12,17 @@ exec &> >(tee "${LOG_DIR}/flatpak-build-$(date +"%F-%H%M%S").log")
 # --delete-build-dirs so that the build dirs from this time are left in place
 # for optional inspection.
 rm -rf .flatpak-builder/build
+
+# Build HEAD commit.
+perl -pi -e \
+  "s/(\s*).*FW-Auto-Head.*/\$1commit: $(git rev-parse HEAD) # FW-Auto-Head: Generated line. See build script./" \
+  org.sil.FieldWorks.yml
+
+# Clean generated commit line.
+(sleep 10s && perl -pi -e \
+  "s/(\s*).*FW-Auto-Head.*/\$1commit: # FW-Auto-Head: Generated line. See build script./" \
+  org.sil.FieldWorks.yml)&
+
 # Using --no-shallow-clone for flexbridge for GitVersion.
 flatpak-builder --user --repo=local-repo --keep-build-dirs --no-shallow-clone \
   --force-clean build-dir org.sil.FieldWorks.yml "$@"
