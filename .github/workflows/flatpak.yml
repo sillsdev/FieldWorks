@@ -1,0 +1,176 @@
+# Copyright (c) 2021 SIL International. MIT License.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+name: Build flatpak package
+
+on:
+  push:
+    branches:
+	  - develop
+	  - support/*
+	  - release/*
+	  - hotfix/*
+	  - master
+  pull_request:
+    branches:
+	  - develop
+	  - support/*
+	  - release/*
+	  - hotfix/*
+	  - master
+  workflow_dispatch:
+
+jobs:
+  flatpak:
+    name: "Flatpak"
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: "Check if it's plugged in"
+        run: |
+          set -xueo pipefail
+          cd /tmp
+          attempt=1
+          while (( attempt++ < 10 )); do
+            (
+              wget 'https://github.com/sillsdev/flathub/releases' || exit 1
+              wget 'https://api.github.com/repos/sillsdev/flathub/releases' || exit 1
+              wget 'https://api.nuget.org/v3/index.json' || exit 1
+              # Fetching Geckofx45 can fail even if fetching the index.json succeeds.
+              wget 'https://api.nuget.org/v3-flatcontainer/Geckofx45.64.Linux/45.0.21/Geckofx45.64.Linux.45.0.21.nupkg' || exit 1
+              wget 'https://flathub.org/repo/flathub.flatpakrepo' || exit 1
+            ) && break
+            echo "Failed attempt ${attempt}"
+            sudo tee -a /etc/hosts <<< '152.199.4.184 api.nuget.org'
+            sleep 1m
+          done
+      - name: Increase available disk space
+        run: |
+          set -xueo pipefail
+          df -h /
+
+          sudo apt-get purge --assume-yes \
+            google-cloud-sdk \
+            adoptopenjdk-11-hotspot \
+            dotnet-sdk-5.0 \
+            adoptopenjdk-8-hotspot \
+            dotnet-sdk-3.1 \
+            powershell \
+            snapd \
+            mono-devel \
+            monodoc-http \
+            mongodb-org-server \
+            dotnet-runtime-3.1 \
+            linux-azure-headers-5.4.0-1047 \
+            linux-azure-headers-5.4.0-1046 \
+            dotnet-runtime-5.0 \
+            openjdk-11-jre-headless \
+            mongodb-org-mongos \
+            mono-llvm-tools \
+            libclang-common-11-dev \
+            gcc-10 \
+            libclang-common-10-dev \
+            mongodb-org-shell \
+            gcc-11 \
+            libclang-common-9-dev \
+            firefox \
+            google-chrome-stable
+
+          sudo apt-get autoremove --assume-yes
+          sudo apt-get clean
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc
+          df -h /
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      - uses: actions/cache@v2
+        with:
+          path: .flatpak-builder
+          # Store to flatpak-builder-Branch or flatpak-builder-SomePR.
+          # Fetch from there but also from flatpak-builder-PRTargetBranch.
+          key: flatpak-builder-${{ github.ref_name }}
+          restore-keys: flatpak-builder-${{ github.base_ref || github.ref_name }}
+      - name: Install flatpak dependencies
+        run: |
+          set -xueo pipefail
+          sudo add-apt-repository ppa:flatpak/stable
+          sudo apt-get update
+          sudo apt-get install flatpak-builder
+          sudo flatpak remote-add --if-not-exists flathub \
+		    https://flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak install --noninteractive flathub \
+		    org.gnome.Platform//3.36 \
+			org.gnome.Sdk//3.36
+      - name: Build flatpak package
+        run: |
+          set -xueo pipefail
+          flatpak-builder --verbose --user --sandbox --ccache \
+		    --repo=local-repo --keep-build-dirs --force-clean build-dir \
+			org.sil.FieldWorks.yml
+      - name: Determine package version
+        run: |
+          set -xueo pipefail
+          cat ./.flatpak-builder/build/fieldworks-1/fw/Src/MasterVersionInfo.txt
+          source ./.flatpak-builder/build/fieldworks-1/fw/Src/MasterVersionInfo.txt
+          # VERSION_SUFFIX will be empty, or set to FWBETAVERSION but with a dash before it.
+          VERSION_SUFFIX="${FWBETAVERSION:+"-${FWBETAVERSION}"}"
+          PACKAGE_VERSION="${FWMAJOR}.${FWMINOR}.${FWREVISION}.${GITHUB_RUN_NUMBER}${VERSION_SUFFIX}-experimental-$(date +'%Y%m%d')-${GITHUB_SHA::7}"
+          TAG_NAME="v${FWMAJOR}.${FWMINOR}.${FWREVISION}.${GITHUB_RUN_NUMBER}${VERSION_SUFFIX}-experimental"
+          echo >> "${GITHUB_ENV}" "FWMAJOR=${FWMAJOR}"
+          echo >> "${GITHUB_ENV}" "FWMINOR=${FWMINOR}"
+          echo >> "${GITHUB_ENV}" "FWREVISION=${FWREVISION}"
+          echo >> "${GITHUB_ENV}" "FWBETAVERSION=${FWBETAVERSION}"
+          echo >> "${GITHUB_ENV}" "VERSION_SUFFIX=${VERSION_SUFFIX}"
+          echo >> "${GITHUB_ENV}" "PACKAGE_VERSION=${PACKAGE_VERSION}"
+          echo >> "${GITHUB_ENV}" "TAG_NAME=${TAG_NAME}"
+      - name: Create flatpak bundle
+        run: |
+          set -xueo pipefail
+          flatpak --user remote-add --no-gpg-verify --if-not-exists \
+		    local-repo ./local-repo
+          flatpak --user install --or-update --noninteractive local-repo \
+		    org.sil.FieldWorks org.sil.FieldWorks.Debug
+          base_package_name="fieldworks-${{ env.PACKAGE_VERSION }}"
+          flatpak build-bundle           ./local-repo "${base_package_name}.flatpak"        org.sil.FieldWorks
+          flatpak build-bundle --runtime ./local-repo "${base_package_name}-Debug.flatpak"  org.sil.FieldWorks.Debug
+          flatpak build-bundle --runtime ./local-repo "${base_package_name}-Locale.flatpak" org.sil.FieldWorks.Locale
+          mkdir -p artifacts
+          mv fieldworks-*.flatpak artifacts
+          ls -al artifacts
+      - name: Save artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: fw-flatpak-bundle
+          path: |
+            artifacts/
+      - name: Publish artifacts as Github release
+        uses: ncipollo/release-action@v1.8.6
+        with:
+          artifacts: "artifacts/*"
+          prerelease: true
+          commit: ${{ github.ref_name }}
+          # New tag name to use
+          tag: "${{ env.TAG_NAME }}"
+          allowUpdates: true
+          artifactErrorsFailBuild: true
+          name: "v${{ env.PACKAGE_VERSION }}"
+          body: "Automatically generated FieldWorks flatpak package for internal testing. Not for use on production machines or with real data."
+          token: ${{ secrets.GITHUB_TOKEN }}

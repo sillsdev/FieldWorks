@@ -29,3 +29,5 @@ setup-user -whitespace
 run-fw -whitespace
 Bin/ilrepack-assemblies -whitespace
 *.json -whitespace
+*.yml -whitespace
+*.yaml -whitespace
