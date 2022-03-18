@@ -134,8 +134,5 @@ package-build take longer:
 
 ```
 node_modules
-local-repo
-.flatpak-builder
-build-dir
-~/.cache/flatpak-build-logs
+~/.cache/flatpak-build-cache
 ```
