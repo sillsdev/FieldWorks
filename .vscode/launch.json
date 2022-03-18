@@ -158,5 +158,17 @@
         "set substitute-path /run/build/fieldworks ${workspaceRoot}/.."
       ]
     },
+    // To debug unmanaged code from testViews use this target after running:
+    // ./run-in-environ gdbserver 127.0.0.1:9999 ../Output/Debug/testViews
+    {
+      "type": "gdb",
+      "request": "attach",
+      "name": "Attach to 'testViews' in gdbserver",
+      "executable": "~/fwroot/fw/Output/Debug/testViews",
+      "target": "127.0.0.1:9999",
+      "remote": true,
+      "cwd": "${workspaceRoot}/Output_x86_64/Debug",
+      "gdbpath": "/usr/bin/gdb",
+    },
   ]
 }
