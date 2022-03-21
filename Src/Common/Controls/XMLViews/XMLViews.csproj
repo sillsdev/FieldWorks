@@ -320,6 +320,7 @@
     </Compile>
     <Compile Include="ObjectLabels.cs" />
     <Compile Include="ObjectListPublisher.cs" />
+    <Compile Include="OccurrenceInContextFinder.cs" />
     <Compile Include="SearchCompletedEventArgs.cs" />
     <Compile Include="SearchEngine.cs" />
     <Compile Include="SimpleDateMatchDlg.cs">

@@ -170,6 +170,10 @@
 			<DevTestArtifacts Include="$(OutputDirForConfig)\*Tests.*"/>
 			<DevTestArtifacts Include="$(OutputDirForConfig)\test*"/>
 			<DevTestArtifacts Include="$(OutputDirForConfig)\*.vrs"/> <!-- versification files from some unit tests -->
+			<DevTestArtifacts Include="$(OutputDirForConfig)\Castle.Core.dll"/>
+			<DevTestArtifacts Include="$(OutputDirForConfig)\Moq.dll"/>
+			<DevTestArtifacts Include="$(OutputDirForConfig)\System.Runtime.CompilerServices.Unsafe.dll"/>
+			<DevTestArtifacts Include="$(OutputDirForConfig)\System.Threading.Tasks.Extensions.dll"/>
 			<FontFiles Include="$(fwrt)\DistFiles\Fonts\Raw\Quivira.otf"/>
 			<FontFiles Include="$(DownloadsDir)\Fonts\**\*.ttf"/>
 			<FontDocumentation Include="$(DownloadsDir)\Fonts\*\*.txt"/>
