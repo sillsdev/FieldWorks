@@ -283,7 +283,7 @@
 
 		<!-- Versions of NuGet packages. These need to match the versions in nuget-common/packages.config -->
 		<ChorusNugetVersion>5.0.0-beta0017</ChorusNugetVersion>
-		<PalasoNugetVersion>9.0.0-beta0110</PalasoNugetVersion>
+		<PalasoNugetVersion>9.0.0-beta0133</PalasoNugetVersion>
 		<Palaso4ParatextNugetVersion>8.1.0-beta0035</Palaso4ParatextNugetVersion>
 		<ParatextNugetVersion>9.2.6.1</ParatextNugetVersion>
 		<LcmNugetVersion>10.2.0-beta0027</LcmNugetVersion>
