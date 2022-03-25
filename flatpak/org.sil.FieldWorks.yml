@@ -56,6 +56,11 @@ finish-args:
   # keyboard input methods, as well as notifying the desktop environment about
   # what keyboard was switched to.
   - --talk-name=org.gnome.Shell
+  # Allow launching of keyboard configuration tools, such as Keyman
+  # Configration, and gnome-control-center to the input sources area.
+  # Allow querying ibus preload-engines list of keyboards.
+  # Allow applying user keyboard mapping modifications.
+  - --talk-name=org.freedesktop.Flatpak
   # FieldWorks uses FlexBridge to synchronize data over the network or by USB
   # Flash Drives. FlexBridge queries for avaliable USB Flash Drives using
   # the system bus.
