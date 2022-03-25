@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using SIL.Acknowledgements;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -346,12 +347,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		/// <summary>
-		/// Show System Monitor in Linux
+		/// Show System Monitor in Linux.
 		/// </summary>
 		private void HandleSystemMonitorLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			var program = "gnome-system-monitor";
-			using (var process = MiscUtils.RunProcess(program, null, null))
+			string arguments = null;
+			if (Platform.IsFlatpak)
+			{
+				arguments = $"--host --directory=/ {program} {arguments}";
+				program = "flatpak-spawn";
+			}
+			using (var process = MiscUtils.RunProcess(program, arguments, null))
 			{
 				Thread.Sleep(300);
 				// If gnome-system-monitor is already open, HasExited will be true with ExitCode of 0
