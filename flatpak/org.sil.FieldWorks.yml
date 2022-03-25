@@ -55,6 +55,7 @@ finish-args:
   # gloss field. This feature uses the desktop environment's list of defined
   # keyboard input methods, as well as notifying the desktop environment about
   # what keyboard was switched to.
+  # Allow interacting with Gnome Shell keyboard switcher.
   - --talk-name=org.gnome.Shell
   # Allow launching of keyboard configuration tools, such as Keyman
   # Configration, and gnome-control-center to the input sources area.
