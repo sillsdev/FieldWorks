@@ -107,6 +107,28 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				this.Controls.Add(packageVersionLabel);
 				this.Controls.Add(versionInformation);
 
+				if (Platform.IsFlatpak)
+				{
+					string flatpakInfoPath = "/.flatpak-info";
+					var flatpakInfo = File.ReadAllLines(flatpakInfoPath);
+					var lookupItems = new List<string> {
+						"name=",
+						"branch=",
+						"app-commit=",
+						"runtime=",
+						"runtime-commit=",
+						"app-extensions=",
+						"arch=",
+						"flatpak-version="
+						};
+					flatpakInfo = flatpakInfo.Where((string line) =>
+						lookupItems.Any((string item) =>
+							line.StartsWith(item, StringComparison.InvariantCulture)))
+						.ToArray<string>();
+					versionInformation.AppendText(string.Join("\n", flatpakInfo));
+					return;
+				}
+
 				foreach (var info in LinuxPackageUtils.FindInstalledPackages("fieldworks")
 					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-applications"))
 					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-enc-converters"))
