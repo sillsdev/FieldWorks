@@ -41,7 +41,7 @@
 
 #define ICU_VERSION "70"
 
-// ls *.h | sed 's/^/#include <unicode\//' | sed 's/$/>/'
+// Generate the includes using: `ls *.h | sed 's/^/#include <unicode\//' | sed 's/$/>/`'
 #include <unicode/alphaindex.h>
 #include <unicode/appendable.h>
 #include <unicode/basictz.h>

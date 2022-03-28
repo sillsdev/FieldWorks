@@ -520,7 +520,7 @@ STDMETHODIMP LgLineBreaker::put_LineBreakText(OLECHAR * prgchIn, int cch)
 
 	m_cchBrkMax = cch;
 	// Make a copy of the line break text so that the scope of the iterator and the UnicodeString contents
-	// have the same lifetime. This will consume more memory then using m_usBrkIt->setText but is safer
+	// have the same lifetime. This will consume more memory than using m_usBrkIt->setText but is safer
 	// (and perhaps necessary after the icu70 upgrade which stopped building our projects with a static CRT)
 	m_usBrkIt = prgchIn;
 	m_pBrkit->setText(m_usBrkIt);
