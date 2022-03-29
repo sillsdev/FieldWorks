@@ -806,13 +806,10 @@ namespace XCore
 			CheckDisposed();
 			try
 			{
-				XmlSerializer szr = new XmlSerializer(typeof (Property[]));
 				string path = SettingsPath(settingsId);
 				Directory.CreateDirectory(Path.GetDirectoryName(path)); // Just in case it does not exist.
-				using (var writer = new StreamWriter(path))
-				{
-					szr.Serialize(writer, MakePropertyArrayForSerializing(settingsId, omitSettingIds));
-				}
+				SIL.Xml.XmlSerializationHelper.SerializeToFileWithWriteThrough(path,
+					MakePropertyArrayForSerializing(settingsId, omitSettingIds));
 			}
 			catch (SecurityException)
 			{
