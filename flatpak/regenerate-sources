@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Copyright (c) 2022 SIL International. MIT License.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+set -ueo pipefail
+
+echo "First manually apply changes to fieldworks-sources-urls-input.yml such "
+echo "as from: "
+echo "  git log -p FieldWorks9.0.13.. -- ../Build/mkall.targets"
+echo "First the ../../flexbridge directory should be set to the desired commit."
+echo "First set FBT_DIR to the path to flatpak-builder-tools."
+sleep 5s
+
+./compose-nuget-sources \
+  fieldworks-sources-nuget-linux.yml . ../Build/nuget-linux/packages.config
+./compose-nuget-sources \
+  fieldworks-sources-nuget-common.yml . ../Build/nuget-common/packages.config
+./compose-url-sources \
+  fieldworks-sources-urls-input.yml fieldworks-sources-urls.yml
+"${FBT_DIR}"/dotnet/flatpak-dotnet-generator.py \
+  flexbridge-sources-nuget.json \
+  $(find ../../flexbridge -name \*.csproj -o -name \*.proj)
+
+echo "You may still need to manually update "
+echo "flexbridge-sources-nuget-specific.yml from changes to usages of "
+echo "NuGetCommand in: "
+echo "  (cd ../../flexbridge && git log -GNuGetCommand -p -- build/FLExBridge.proj)"
+echo "You may need to adjust flexbridge-sources-nuget.json to use geckofx45."
+echo "You may still need to manually update flexbridge-sources-deps.yml from: "
+echo "  (cd ../../flexbridge && msbuild -t:DownloadDependencies build/FLExBridge.proj && cat build/FLExBridge.files)"
+echo "This need is likely indicated by changes in: "
+echo "  (cd ../../flexbridge && git log -p -- build/FLExBridge.dep)"
