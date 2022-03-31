@@ -1,7 +1,7 @@
 # Generated file
 - type: file
-  url: https://api.nuget.org/v3-flatcontainer/DialogAdapters/0.1.0.32308/DialogAdapters.0.1.0.32308.nupkg
-  sha512: 48a93e5c9b69ff706778999aacebb33e6537ddf2ddd2ebc22885568545eb8dfb8dc6892986d02111223899e4b3f6b3ac606c385d9f74e513c91d57acd6adb3d4
+  url: https://api.nuget.org/v3-flatcontainer/DialogAdapters.Gtk2/0.1.11/DialogAdapters.Gtk2.0.1.11.nupkg
+  sha512: c810dfda0fd4d7a83bfd6d44a8966e1a45b1a1fe1cd72b6388a82c376ce40c09dbd9f2bb3d7562eb75b81d306d8c91f40fa921b729225316eca5bd8ef564a50f
   dest: .
 - type: file
   url: https://api.nuget.org/v3-flatcontainer/DotNetZip/1.13.3/DotNetZip.1.13.3.nupkg
