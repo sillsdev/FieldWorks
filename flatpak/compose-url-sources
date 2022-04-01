@@ -88,4 +88,5 @@ def prepareSourceRecord(name, baseurl, dest, file):
 processInputSourcesList(inputsPath)
 
 with open(outputSourcesPath, 'w') as out:
+    out.write('# Generated file\n')
     yaml.dump(nugetSources, out)

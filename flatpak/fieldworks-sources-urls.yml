@@ -1,3 +1,4 @@
+# Generated file
 - dest: fw/Downloads
   sha512: 3bfa8962d88286e047cdaa56bc0139728037a541cb385f44386ebea8bd1d6b248c07e8680063d0ef1aa5bd3a7b9918da11c5db04c2c1c98d24da0b98e55687e3
   type: file
