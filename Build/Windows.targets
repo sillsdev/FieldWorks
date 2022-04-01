@@ -21,9 +21,8 @@
 	</Target>
 	<!-- Define Encoding Converters files needed for building and running tests -->
 	<PropertyGroup>
-		<ECNugetVersion>0.0.6</ECNugetVersion>
-		<ECArch Condition="'$(arch)'!='x64'">Win32</ECArch>
-		<ECArch Condition="'$(arch)'=='x64'">x64</ECArch>
+		<ECNugetVersion>0.2.28</ECNugetVersion>
+		<ECArch>win-$(arch)</ECArch>
 	</PropertyGroup>
 	<ItemGroup>
 		<ECWindowsFiles Include="CcEC.dll" />
@@ -49,6 +48,9 @@
 		<ECWindowsFiles Include="libgcc_s_sjlj-1.dll" Condition="'$(arch)'!='x64'"/>
 		<ECWindowsFiles Include="libgcc_s_seh-1.dll" Condition="'$(arch)'=='x64'"/>
 		<ECWindowsFiles Include="libstdc++-6.dll" />
+		<ECWindowsFiles Include="icudt68.dll" />
+		<ECWindowsFiles Include="icuin68.dll" />
+		<ECWindowsFiles Include="icuuc68.dll" />
 
 		<ECPlugins Include="CC 4.0.0.0 Plugin Details.xml" />
 		<ECPlugins Include="EC 4.0.0.0 Plugin Details.xml" />
@@ -60,8 +62,8 @@
 
 	<Target Name="RegisterEncConvertersDlls" Condition="'$(OS)'=='Windows_NT'">
 		<ItemGroup>
-			<ConverterDlls Include="$(fwrt)/packages/Encoding-Converters-Core.$(ECNugetVersion)/lib/net40/$(ECArch)/EcInterfaces.dll"/>
-			<ConverterDlls Include="$(fwrt)/packages/Encoding-Converters-Core.$(ECNugetVersion)/lib/net40/$(ECArch)/SilEncConverters40.dll"/>
+			<ConverterDlls Include="$(fwrt)/packages/Encoding-Converters-Core.$(ECNugetVersion)/lib/net45/$(PlatformForExec)/EcInterfaces.dll"/>
+			<ConverterDlls Include="$(fwrt)/packages/Encoding-Converters-Core.$(ECNugetVersion)/lib/net45/$(PlatformForExec)/SilEncConverters40.dll"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(ConverterDlls)"
 			  DestinationFolder="$(dir-outputBase)"
