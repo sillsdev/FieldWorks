@@ -657,9 +657,9 @@ modules:
               </configuration>
           # Regenerate: Set flexbridge git dir to newer code. Then run (in the
           # directory with the flatpak manifest):
-          #   .../flatpak-builder-tools/dotnet/flatpak-dotnet-generator.py flexbridge-sources-nuget.json $(find $HOME/fwrepo/flexbridge -name \*.csproj -o -name \*.proj)
+          #   .../flatpak-builder-tools/dotnet/flatpak-dotnet-generator.py flexbridge-sources-nuget.yml $(find $HOME/fwrepo/flexbridge -name \*.csproj -o -name \*.proj)
           # Also, to work with FW 9.0, FW needs geckofx45 not 60.
-          - flexbridge-sources-nuget.json
+          - flexbridge-sources-nuget.yml
           # Dependencies specified from FLExBridge.dep
           # Determine what is needed by running in the flexbridge repo:
           #   msbuild -t:DownloadDependencies build/FLExBridge.proj && cat build/FLExBridge.files

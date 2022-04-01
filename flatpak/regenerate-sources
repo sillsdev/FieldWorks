@@ -36,14 +36,15 @@ sleep 5s
 ./compose-url-sources \
   fieldworks-sources-urls-input.yml fieldworks-sources-urls.yml
 "${FBT_DIR}"/dotnet/flatpak-dotnet-generator.py \
-  flexbridge-sources-nuget.json \
+  flexbridge-sources-nuget.yml \
   $(find ../../flexbridge -name \*.csproj -o -name \*.proj)
+perl -pi -e 's/^\[$/# Generated file\n[/' flexbridge-sources-nuget.yml
 
 echo "You may still need to manually update "
 echo "flexbridge-sources-nuget-specific.yml from changes to usages of "
 echo "NuGetCommand in: "
 echo "  (cd ../../flexbridge && git log -GNuGetCommand -p -- build/FLExBridge.proj)"
-echo "You may need to adjust flexbridge-sources-nuget.json to use geckofx45."
+echo "You may need to adjust flexbridge-sources-nuget.yml to use geckofx45."
 echo "You may still need to manually update flexbridge-sources-deps.yml from: "
 echo "  (cd ../../flexbridge && msbuild -t:DownloadDependencies build/FLExBridge.proj && cat build/FLExBridge.files)"
 echo "This need is likely indicated by changes in: "
