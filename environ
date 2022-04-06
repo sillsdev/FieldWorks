@@ -40,6 +40,7 @@ MONO_SILPKGDIR="${MONO_SILPKGDIR:-/opt/mono5-sil}"
 # search for xulrunner and geckofx, select the best, and add its location to LD_LIBRARY_PATH
 . ./environ-xulrunner
 ENC_CONVERTERS="${INSTALLATION_PREFIX}/lib/fieldworks"
+ICU_LIBDIR="${INSTALLATION_PREFIX}/lib/fieldworks/lib/x64"
 
 MONO_RUNTIME=v4.0.30319
 MONO_DEBUG=explicit-null-checks
@@ -53,7 +54,7 @@ ${INSTALLATION_PREFIX}/lib/fieldworks/icu-bin:\
 ${COM}/build${ARCH}/bin:\
 ${PATH}"
 	LD_LIBRARY_PATH="${BASE}/Output_${ARCH}/${BUILD}:\
-${INSTALLATION_PREFIX}/lib/fieldworks/lib:\
+${ICU_LIBDIR}:\
 ${COM}/build${ARCH}/lib:\
 ${LD_LIBRARY_PATH}"
 fi
@@ -63,7 +64,7 @@ PKG_CONFIG_PATH="${PKG_CONFIG_PATH:-/usr/lib/pkgconfig:/usr/share/pkgconfig}"
 # Add packaged mono items to paths
 PATH="${MONO_SILPKGDIR}/bin:${PATH}"
 LD_LIBRARY_PATH="${MONO_SILPKGDIR}/lib:${ENC_CONVERTERS}:${LD_LIBRARY_PATH}"
-PKG_CONFIG_PATH="${MONO_SILPKGDIR}/lib/pkgconfig:${INSTALLATION_PREFIX}/lib/fieldworks/lib/pkgconfig:${PKG_CONFIG_PATH}"
+PKG_CONFIG_PATH="${MONO_SILPKGDIR}/lib/pkgconfig:${ICU_LIBDIR}/pkgconfig:${PKG_CONFIG_PATH}"
 MONO_GAC_PREFIX="${MONO_SILPKGDIR}:${ENC_CONVERTERS}:/usr:${MONO_PREFIX}"
 
 if [ "$RUNMODE" != "PACKAGING" ]
@@ -83,7 +84,7 @@ then
 	FW_ROOTCODE="${BASE}/../../share/fieldworks"
 	ICU_DATA="${HOME}/.config/fieldworks/Icu70"
 	PATH="${BASE}/icu-bin:${PATH}"
-	LD_LIBRARY_PATH="${BASE}:${BASE}/lib:${LD_LIBRARY_PATH}"
+	LD_LIBRARY_PATH="${BASE}:${ICU_LIBDIR}:${LD_LIBRARY_PATH}"
 	MONO_REGISTRY_PATH="${HOME}/.config/fieldworks/registry"
 	MONO_HELP_VIEWER=${BASE}/launch-xchm
 else
