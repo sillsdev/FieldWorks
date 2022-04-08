@@ -36,9 +36,12 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 					if (string.IsNullOrEmpty(m_icuDir))
 						throw new DirectoryNotFoundException("ICU directory not found. Registry value for ICU not set?");
 
-					// m_icuDir is in a form similar to "C:\ProgramData\SIL\Icu54\icudt54l". We need to
-					// strip off the "icudtxxx" directory.
-					m_icuDir = Path.GetDirectoryName(m_icuDir);
+					// There is ambiguity about whether the ICU_DATA directory should point to the icudt{icuver}l folder, or its base
+					// Since we can't seem to make up our mind handle both
+					if (!Directory.Exists(Path.Combine(m_icuDir, "data")))
+					{
+						m_icuDir = Path.GetDirectoryName(m_icuDir);
+					}
 
 					if (!Directory.Exists(m_icuDir))
 						throw new DirectoryNotFoundException($"ICU directory does not exist at {m_icuDir}. Registry value for ICU set incorrectly?");
@@ -311,6 +314,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 			// run it to generate the canonical binary data.
 			var args = $@" -o ""{nfcBinaryFileName}"" ""{nfcTxtFileName}"" ""{nfcHebrewFileName}"" ""{nfcOverridesFileName}""";
+			LogFile.AddVerboseLine($"Executing gennorm: {genNorm2} {args}");
 			RunProcess(genNorm2, args);
 
 			// run it again to generate the non-canonical binary data.
@@ -348,7 +352,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				{
 					var stdOutput = gennormProcess.StandardOutput.ReadToEnd();
 					var stdError = gennormProcess.StandardError.ReadToEnd();
-					if (LogFile.IsLogging())
+					if (LogFile.IsLogging)
 					{
 						LogFile.AddErrorLine("Error running gennorm2:");
 						LogFile.AddErrorLine(stdOutput);
@@ -373,8 +377,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			var path = Path.GetDirectoryName(FileUtils.StripFilePrefix(codeBaseUri));
 			var x86Path = Path.Combine(path, "lib", "x86", exeName + ".exe");
 			var x64Path = Path.Combine(path, "lib", "x64", exeName + ".exe");
-			var barePath = Path.Combine(path, exeName + ".exe");
-			return File.Exists(x86Path) ? x86Path : File.Exists(x64Path) ? x86Path : barePath;
+			return Environment.Is64BitProcess ? x64Path : x86Path;
 		}
 
 		///  <summary>
@@ -431,7 +434,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 					var lastCode = 0;
 					// Start looking at the first codepoint
 					var codeIndex = 0;
-					var newCode = Convert.ToInt32(puaDefinitions[codeIndex].CodePoint, 16);
+					var newCode = puaDefinitions.Count > 0 ? Convert.ToInt32(puaDefinitions[codeIndex].CodePoint, 16) : 0;
 
 					//While there is a line to be read in the file
 					while ((line = reader.ReadLine()) != null)
@@ -439,7 +442,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 						// skip entirely blank lines
 						if (line.Length <= 0)
 							continue;
-						if (line.StartsWith("Code") || line.StartsWith("block")) // header line or special instruction
+						if (line.StartsWith("Code") || line.StartsWith("block") || puaDefinitions.Count == 0) // header line or special instruction, or all overrides removed
 						{
 							writer.WriteLine(line);
 							continue;
@@ -643,8 +646,10 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// </summary>
 		private static void LogCodepoint(string code)
 		{
-			if (LogFile.IsLogging())
+			if (LogFile.IsLogging)
+			{
 				LogFile.AddErrorLine("Storing definition for Unicode character: " + code);
+			}
 		}
 
 		#endregion
@@ -671,7 +676,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			var fi = new FileInfo(inName);
 			if (fi.Length > 0)
 			{
-				if (LogFile.IsLogging())
+				if (LogFile.IsLogging)
 				{
 					LogFile.AddVerboseLine($"Copying: <{inName}> to <{outName}> <{overwrite}>");
 				}
@@ -704,14 +709,18 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			if (!File.Exists(file))
 			{
-				if (LogFile.IsLogging())
+				if (LogFile.IsLogging)
+				{
 					LogFile.AddVerboseLine($"Tried to delete file that didn't exist:<{file}>");
+				}
 				return false;
 			}
 			File.SetAttributes(file, FileAttributes.Normal);
 			File.Delete(file);
-			if (LogFile.IsLogging())
+			if (LogFile.IsLogging)
+			{
 				LogFile.AddVerboseLine($"Removed file:<{file}>");
+			}
 			return true;
 		}
 

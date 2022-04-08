@@ -8,6 +8,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using CommandLineParser.Arguments;
+using CommandLineParser.Exceptions;
+using CommandLineParser.Validation;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
@@ -25,63 +28,98 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		[STAThread]
 		static void Main(string[] args)
 		{
+			var commandLineParser = new CommandLineParser.CommandLineParser
+			{
+				AcceptHyphen = true, AcceptSlash = true, AcceptEqualSignSyntaxForValueArguments = true, IgnoreCase = true
+			};
+			var installArg = new SwitchArgument('i', "install", false)
+			{
+				Description =
+					"Install the data from the CustomChars.xml file into the ICU data folder"
+			};
+			var loggingArg = new SwitchArgument('l', "log", false);
+			var verboseArg = new SwitchArgument('v', "verbose", false);
+			var cleanupArg = new ValueArgument<int>('c', "cleanup",
+				"Cleans up icu files that were probably locked, usually not to be called manually.");
+			commandLineParser.Arguments.Add(installArg);
+			commandLineParser.Arguments.Add(loggingArg);
+			commandLineParser.Arguments.Add(verboseArg);
+			commandLineParser.Arguments.Add(cleanupArg);
+			commandLineParser.Certifications.Add(new ArgumentGroupCertification(new Argument[] { cleanupArg, installArg },
+				EArgumentGroupCondition.OneOreNoneUsed));
 			Form window = null;
 			var needCleanup = true;
 			try
 			{
+				commandLineParser.ParseCommandLine(args);
+				if (!commandLineParser.ParsingSucceeded)
+				{
+					using (var stringWriter = new StringWriter())
+					{
+						commandLineParser.PrintUsage(stringWriter);
+						MessageBoxUtils.Show(stringWriter.ToString());
+						return;
+					}
+				}
+				if (loggingArg.Parsed)
+				{
+					LogFile.IsLogging = true;
+				}
+
+				if (verboseArg.Parsed)
+				{
+					LogFile.IsLogging = true;
+					LogFile.IsVerbose = true;
+				}
+
 				// needed to access proper registry values
 				FwRegistryHelper.Initialize();
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
-				switch (args.FirstOrDefault())
+				if (installArg.Parsed)
 				{
-					case "-i":
-					case "-install":
-					case "--install":
-						// If we have any custom character data, install it!
-						FwUtils.InitializeIcu();
-						var customCharsFile = CharEditorWindow.CustomCharsFile;
-						if (File.Exists(customCharsFile))
-						{
-							new PUAInstaller().InstallPUACharacters(customCharsFile);
-						}
-						break;
-					case "--cleanup":
-						// If the second argument is a Process ID (int), wait up to five minutes for the proces to exit and then clean up;
-						// otherwise, silently do nothing.
-						needCleanup = false;
-						int pid;
-						if (int.TryParse(args.LastOrDefault(), out pid))
-						{
-							var iterationCount = 0;
-							while (Process.GetProcesses().Any(p => p.Id == pid) && iterationCount < 300)
-							{
-								// wait 1s then try again
-								Thread.Sleep(1000);
-								iterationCount++;
-							}
-
-							if (iterationCount < 300)
-								DeleteTemporaryFiles();
-						}
-						break;
-					case null:
-						// There were no arguments (the program was double-clicked or opened through the Start menu); run the graphical interface
-						FwUtils.InitializeIcu();
-						window = new CharEditorWindow();
-						Application.Run(window);
-						break;
-					default:
-						// An unrecognized argument was passed
-						MessageBox.Show("Only one command line argument is recognized:" + Environment.NewLine +
-										"\t-i means to install the custom character definitions (as a command line program).",
-							"Unicode Character Editor");
-						break;
+					// If we have any custom character data, install it!
+					FwUtils.InitializeIcu();
+					var customCharsFile = CharEditorWindow.CustomCharsFile;
+					if (File.Exists(customCharsFile))
+					{
+						new PUAInstaller().InstallPUACharacters(customCharsFile);
+					}
 				}
+				else if (cleanupArg.Parsed)
+				{
+					// If the second argument is a Process ID (int), wait up to five minutes for the process to exit and then clean up;
+					// otherwise, silently do nothing.
+					needCleanup = false;
+					var iterationCount = 0;
+					while (Process.GetProcesses().Any(p => p.Id == cleanupArg.Value) &&
+						   iterationCount < 300)
+					{
+						// wait 1s then try again
+						Thread.Sleep(1000);
+						iterationCount++;
+					}
+
+					if (iterationCount < 300)
+					{
+						DeleteTemporaryFiles();
+					}
+				}
+				else
+				{
+					// There were no arguments (the program was double-clicked or opened through the Start menu); run the graphical interface
+					FwUtils.InitializeIcu();
+					window = new CharEditorWindow();
+					Application.Run(window);
+				}
+			}
+			catch (CommandLineException cle)
+			{
+				MessageBoxUtils.Show(cle.Message, "Unicode Character Properties Editor");
 			}
 			catch (ApplicationException ex)
 			{
-				MessageBox.Show(ex.Message, "Unicode Character Properties Editor");
+				MessageBoxUtils.Show(ex.Message, "Unicode Character Properties Editor");
 			}
 			catch (Exception ex)
 			{
@@ -93,7 +131,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				}
 				catch
 				{
-					MessageBox.Show(ex.Message, "Unicode Character Properties Editor");
+					MessageBoxUtils.Show(ex.Message, "Unicode Character Properties Editor");
 				}
 			}
 			finally

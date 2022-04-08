@@ -33,7 +33,7 @@
 			<Environment Id="FwInstallDir" Name="FIELDWORKSDIR" Action="set" System="yes" Value="[APPFOLDER]" />
 		</Component>
 		<Component Id="FwIcuData" Guid="34CB7CF2-6D44-488D-A497-E3EE42C95290">
-			<Environment Id="FwIcuData" Name="ICU_DATA" Action="set" System="yes" Value="[OVRHARVESTDATAFOLDER]\Icu70\icudt70l" />
+			<Environment Id="FwIcuData" Name="ICU_DATA" Action="set" System="yes" Value="[OVRHARVESTDATAFOLDER]\Icu70" />
 		</Component>
 		<Component Id="WebonaryApiToggle" Guid="27CAE356-14F7-4908-91C1-DD897B166A6D">
 			<!-- Enable the cloud api upload. Remove it or set it to nothing to disable it. -->

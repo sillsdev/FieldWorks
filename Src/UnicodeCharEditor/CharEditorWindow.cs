@@ -45,10 +45,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				Int32.TryParse(spec.CodePoint, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out m_code);
 			}
 
-			internal int Code
-			{
-				get { return m_code; }
-			}
+			internal int Code => m_code;
 		}
 
 		class PuaListItemComparer : IComparer
@@ -127,7 +124,10 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				throw new Exception("An error occurred: ICU directory not found. Registry value for ICU not set?");
 			var unicodeDataFilename = Path.Combine(icuDir, "UnicodeDataOverrides.txt");
 			if (!File.Exists(unicodeDataFilename))
+			{
+				LogFile.AddErrorLine($"{unicodeDataFilename} is not present. Skipping overrides");
 				return;
+			}
 			using (var reader = File.OpenText(unicodeDataFilename))
 			{
 				while (reader.Peek() >= 0)
@@ -409,9 +409,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		private void m_btnSave_Click(object sender, EventArgs e)
 		{
-			if (m_dictCustomChars.Count == 0)
-				return;
-
 			var customCharsFile = CustomCharsFile;
 			string oldFile = null;
 			if (File.Exists(customCharsFile))
@@ -525,11 +522,17 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <summary>
 		/// Get the name of the help file.
 		/// </summary>
-		public string HelpFile
-		{
-			get { return Path.Combine(FwDirectoryFinder.CodeDirectory, GetHelpString("UserHelpFile")); }
-		}
-
+		public string HelpFile => Path.Combine(FwDirectoryFinder.CodeDirectory, GetHelpString("UserHelpFile"));
 		#endregion
+
+		private void info_Click(object sender, EventArgs e)
+		{
+			MessageBoxUtils.Show(this,
+				$"Icu Version: {CustomIcu.Version}{Environment.NewLine}" +
+				$"ICU_DATA location: {CustomIcu.DefaultDataDirectory}{Environment.NewLine}" +
+				$"Logging: {LogFile.IsLogging} [run with -l to turn on logging, or -v for verbose]{Environment.NewLine}" +
+				$"Log file location: {LogFile.LogPath}",
+				"Details");
+		}
 	}
 }
