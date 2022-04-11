@@ -1,4 +1,4 @@
-# These nuget packages need extracted into packages/package-name-without-version/ .
+# These nuget packages need to be extracted into packages/package-name-without-version/ .
 - type: file
   url: https://api.nuget.org/v3-flatcontainer/GitVersion.MsBuild/5.6.10/GitVersion.MsBuild.5.6.10.nupkg
   sha512: 9148ad80c714bf7d0fd660f607e9089f6941062c6393e6f753d95f105b5ef05a732781d0d1c8a2556680d9a0dadae363b06980c2d0f4089e0a591b29418c5b99
