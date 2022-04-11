@@ -134,9 +134,6 @@ CopyRegistryKey()
 
 	echo "# Writing required registry settings."
 
-	WriteKey LM "Software/SIL" "Icu70DataDir" "${FW_CONFIG}/Icu70"
-	WriteKey LM "Software/SIL" "Icu70Dir" "${FW_CONFIG}/Icu70"
-
 	WriteKey LM "Software/SIL/SilEncConverters40" "PluginDir" "${FW_LIB}/EC/Plugins"
 	WriteKey LM "Software/SIL/SilEncConverters40" "RootDir" "${FW_LIB}"
 
