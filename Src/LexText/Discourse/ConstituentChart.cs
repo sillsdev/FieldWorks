@@ -760,7 +760,7 @@ namespace SIL.FieldWorks.Discourse
 				{
 					var headers = m_logic.ColumnsAndGroups.Headers;
 					headers.Reverse();
-					m_logic.MakeHeaderColsFor(m_headerMainCols, headers[0], headers.Count == 1);
+					m_logic.MakeHeaderColsFor(m_headerMainCols, headers.FirstOrDefault() ?? new List<MultilevelHeaderNode>(0), headers.Count == 1);
 					m_headerColGroups.ForEach(h => h.Dispose());
 					m_headerColGroups.Clear();
 					for (var i = 1; i < headers.Count; i++)
@@ -772,15 +772,16 @@ namespace SIL.FieldWorks.Discourse
 						m_headerColGroups.Add(headLevel);
 					}
 					RebuildTopStuffUI();
-					if (m_allColumns == new ICmPossibility[0])
-						return;
-					int ccolsWanted = m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns;
-					m_columnWidths = new int[ccolsWanted];
-					m_columnPositions = new int[ccolsWanted + 1];
-					// one extra for after the last column
-					if (!RestoreColumnWidths())
+					if (m_allColumns.Length > 0)
 					{
-						SetDefaultColumnWidths();
+						var cColsWanted = m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns;
+						m_columnWidths = new int[cColsWanted];
+						// one extra for after the last column
+						m_columnPositions = new int[cColsWanted + 1];
+						if (!RestoreColumnWidths())
+						{
+							SetDefaultColumnWidths();
+						}
 					}
 				}
 				finally
