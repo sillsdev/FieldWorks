@@ -44,6 +44,7 @@ jobs:
     timeout-minutes: 180
     env:
       FLATPAK_DIR: "${{github.workspace}}/flatpak"
+      ARTIFACTS_DIR: "${{github.workspace}}/artifacts"
     steps:
       - name: "Check if it's plugged in"
         run: |
@@ -161,19 +162,19 @@ jobs:
           flatpak build-bundle           ./local-repo "${base_package_name}.flatpak"        org.sil.FieldWorks
           flatpak build-bundle --runtime ./local-repo "${base_package_name}-Debug.flatpak"  org.sil.FieldWorks.Debug
           flatpak build-bundle --runtime ./local-repo "${base_package_name}-Locale.flatpak" org.sil.FieldWorks.Locale
-          mkdir -p artifacts
-          mv fieldworks-*.flatpak artifacts
-          ls -al artifacts
+          mkdir -p "${ARTIFACTS_DIR}"
+          mv fieldworks-*.flatpak "${ARTIFACTS_DIR}"
+          ls -al "${ARTIFACTS_DIR}"
       - name: Save artifacts
         uses: actions/upload-artifact@v2
         with:
           name: fw-flatpak-bundle
           path: |
-            artifacts/
+            "${{env.ARTIFACTS_DIR}}"
       - name: Publish artifacts as Github release
         uses: ncipollo/release-action@v1.8.6
         with:
-          artifacts: "artifacts/*"
+          artifacts: "${{env.ARTIFACTS_DIR}}/*"
           prerelease: true
           commit: ${{ github.ref_name }}
           # New tag name to use
