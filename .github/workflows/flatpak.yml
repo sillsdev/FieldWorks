@@ -43,8 +43,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 180
     env:
-      FLATPAK_DIR: "${GITHUB_WORKSPACE}/flatpak"
-      ARTIFACTS_DIR: "${GITHUB_WORKSPACE}/../artifacts"
+      FLATPAK_DIR: "${{env.GITHUB_WORKSPACE}}/flatpak"
+      ARTIFACTS_DIR: "${{env.GITHUB_WORKSPACE}}/../artifacts"
     steps:
       - name: "Check if it's plugged in"
         run: |
