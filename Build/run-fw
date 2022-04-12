@@ -45,7 +45,7 @@ for registry in LM CU; do
   devPluginDir="$(ReadKey ${registry} "Software/SIL/SilEncConverters40" "DeveloperPluginDir" 2>/dev/null || true)"
   if [[ ${devPluginDir} != "" ]]; then
     newValue="${ec_plugin_dir}"
-    echo "Warning: Registry setting ${registry} SilEncConverters40" \
+    echo "Warning: Registry setting ${registry} Software/SIL/SilEncConverters40" \
     "DeveloperPluginDir is set. Its value is \'${devPluginDir}\'." \
     "Changing it to \'${newValue}\'."
     WriteKey ${registry} "Software/SIL/SilEncConverters40" "DeveloperPluginDir" "${newValue}"
