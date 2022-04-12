@@ -147,8 +147,8 @@ modules:
         tag: FieldWorks9.0.17
         commit: 6d09370772ecd99f3efbe776c55c6561d1b7af88
       - type: file
-        url: https://github.com/sillsdev/FwLocalizations/releases/download/v9.0.17-14-g37c0f8f/crowdin.zip
-        sha512: 08586f7479d5c99d668d4ec92a1824e02f2982683abf3d13549e07dc1378eaf1204547a1ce6cf9a29f4a9ee418aeaf558e00a13e25e9bd41a0de880a20de1f39
+        url: https://github.com/sillsdev/FwLocalizations/releases/download/v9.1.9-beta-2-g5e94970/crowdin.zip
+        sha512: 84e809b7452e6b16d9a44c21080da4ef5a7eb6d6613f2702bb131400ddf0197446cc2382c51147fd423838de7fed71797fbe05b1b4e4e0d5a2819e3c16916f9f
         dest: fw/Downloads/
         dest-filename: Crowdin.zip
       # FW nuget dependencies
