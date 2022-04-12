@@ -52,10 +52,11 @@ FOR /F "tokens=2* delims= " %%1 IN (
 REM allow typelib registration in redirected registry key even with limited permissions
 set OAPERUSERTLIBREG=1
 
-echo "Feedback" %MsBuild%
+echo Building using `%MsBuild%`
+set all_args=%*
 REM Run the next target only if the previous target succeeded
 (
-	%MsBuild% /t:RestoreNuGetPackages
+	if "%all_args:disableDownloads=%"=="%all_args%" %MsBuild% /t:RestoreNuGetPackages
 ) && (
 	%MsBuild% /t:CheckDevelopmentPropertiesFile
 ) && (
