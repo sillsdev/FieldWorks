@@ -167,22 +167,22 @@ jobs:
           mkdir -p "${ARTIFACTS_DIR}"
           mv fieldworks-*.flatpak "${ARTIFACTS_DIR}"
           ls -al "${ARTIFACTS_DIR}"
-      #- name: Save artifacts
-      #  uses: actions/upload-artifact@v2
-      #  with:
-      #    name: fw-flatpak-bundle
-      #    path: |
-      #      "${ARTIFACTS_DIR}"
-      #- name: Publish artifacts as Github release
-      #  uses: ncipollo/release-action@v1.8.6
-      #  with:
-      #    artifacts: "${{env.ARTIFACTS_DIR}}/*"
-      #    prerelease: true
-      #    commit: ${{ github.sha }}
-      #    # New tag name to use
-      #    tag: "${{ env.TAG_NAME }}"
-      #    allowUpdates: true
-      #    artifactErrorsFailBuild: true
-      #    name: "v${{ env.PACKAGE_VERSION }}"
-      #    body: "Automatically generated FieldWorks flatpak package for internal testing. Not for use on production machines or with real data."
-      #    token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Save artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: fw-flatpak-bundle
+          path: |
+            "${ARTIFACTS_DIR}"
+      - name: Publish artifacts as Github release
+        uses: ncipollo/release-action@v1.8.6
+        with:
+          artifacts: "${{env.ARTIFACTS_DIR}}/*"
+          prerelease: true
+          commit: ${{ github.sha }}
+          # New tag name to use
+          tag: "${{ env.TAG_NAME }}"
+          allowUpdates: true
+          artifactErrorsFailBuild: true
+          name: "v${{ env.PACKAGE_VERSION }}"
+          body: "Automatically generated FieldWorks flatpak package for internal testing. Not for use on production machines or with real data."
+          token: ${{ secrets.GITHUB_TOKEN }}
