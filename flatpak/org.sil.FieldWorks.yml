@@ -787,3 +787,17 @@ modules:
           - type: archive
             url: https://software.sil.org/downloads/r/ezra/EzraSIL-2.51.zip
             sha512: 404f273a078ce89b84c1fcb91a7d9b729a80934b1327eb62d6625db245fcd4e96400c5fb5350014011771bfeac3191481b6c95e724232355b031f46eb51aab15
+  # - name: Local-final-adjustments
+  #   # This allows for adding and testing additional files without re-building
+  #   # the other modules. For example, experimental changes to libpalaso or
+  #   # FieldWorks could be copied to /app/lib/fieldworks. Copy with --force,
+  #   # since the destination files may be marked as read-only.
+  #   buildsystem: simple
+  #   build-commands:
+  #     - |
+  #       set -xueo pipefail
+  #       cp --force --recursive local-fw-output/Debug/* /app/lib/fieldworks
+  #   sources:
+  #     - type: dir
+  #       path: ../Output_x86_64/
+  #       dest: local-fw-output
