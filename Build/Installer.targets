@@ -405,16 +405,16 @@
 		<DownloadFile Address="http://www.quivira-font.com/files/Quivira.otf" DownloadsDir="$(fwrt)/DistFiles/Fonts/Raw"
 			ContinueOnError="true"/>
 		<!-- TODO (Hasso) 2018.07: download latest version from wirl (LT-19288) -->
-		<DownloadFile Address="https://software.sil.org/downloads/r/andika/Andika-5.000.zip" DownloadsDir="$(DownloadsDir)"
-			Condition="!Exists('$(DownloadsDir)/Andika-5.000.zip')"/>
-		<DownloadFile Address="https://software.sil.org/downloads/r/charis/CharisSIL-5.000.zip" DownloadsDir="$(DownloadsDir)"
-			Condition="!Exists('$(DownloadsDir)/CharisSIL-5.000.zip')"/>
-		<DownloadFile Address="https://software.sil.org/downloads/r/doulos/DoulosSIL-5.000.zip" DownloadsDir="$(DownloadsDir)"
-			Condition="!Exists('$(DownloadsDir)/DoulosSIL-5.000.zip')"/>
-		<DownloadFile Address="https://software.sil.org/downloads/r/gentium/GentiumPlus-5.000.zip" DownloadsDir="$(DownloadsDir)"
-			Condition="!Exists('$(DownloadsDir)/GentiumPlus-5.000.zip')"/>
+		<DownloadFile Address="https://software.sil.org/downloads/r/andika/Andika-6.101.zip" DownloadsDir="$(DownloadsDir)"
+			Condition="!Exists('$(DownloadsDir)/Andika-6.101.zip')"/>
+		<DownloadFile Address="https://software.sil.org/downloads/r/charis/CharisSIL-6.101.zip" DownloadsDir="$(DownloadsDir)"
+			Condition="!Exists('$(DownloadsDir)/CharisSIL-6.101.zip')"/>
+		<DownloadFile Address="https://software.sil.org/downloads/r/doulos/DoulosSIL-6.101.zip" DownloadsDir="$(DownloadsDir)"
+			Condition="!Exists('$(DownloadsDir)/DoulosSIL-6.101.zip')"/>
+		<DownloadFile Address="https://software.sil.org/downloads/r/gentium/GentiumPlus-6.101.zip" DownloadsDir="$(DownloadsDir)"
+			Condition="!Exists('$(DownloadsDir)/GentiumPlus-6.101.zip')"/>
 		<ItemGroup>
-			<ZippedFonts Include="Andika-5.000;CharisSIL-5.000;DoulosSIL-5.000;GentiumPlus-5.000"/>
+			<ZippedFonts Include="Andika-6.101;CharisSIL-6.101;DoulosSIL-6.101;GentiumPlus-6.101"/>
 		</ItemGroup>
 		<Unzip ZipFilename="$(DownloadsDir)/%(ZippedFonts.Identity).zip" ToDir="$(DownloadsDir)/Fonts"
 			Condition="!Exists('$(DownloadsDir)/Fonts/%(ZippedFonts.Identity)')"/>

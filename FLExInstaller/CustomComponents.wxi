@@ -87,16 +87,16 @@
 			<Component Id="StartMenuFontsShortcut" Guid="C3300D43-CBD9-4244-AFBE-35B9FF3C01BA">
 				<Shortcut Id="AndikaDocShortcut"
 					Name="Andika Documentation"
-					Target="[APPFOLDER]Fonts\Andika-5.000\README.txt"/>
+					Target="[APPFOLDER]Fonts\Andika-6.101\README.txt"/>
 				<Shortcut Id="CharisSILDocShortcut"
 					Name="Charis SIL Documentation"
-					Target="[APPFOLDER]Fonts\CharisSIL-5.000\README.txt"/>
+					Target="[APPFOLDER]Fonts\CharisSIL-6.101\README.txt"/>
 				<Shortcut Id="DoulosSILDocShortcut"
 					Name="Doulos SIL Documentation"
-					Target="[APPFOLDER]Fonts\DoulosSIL-5.000\README.txt"/>
+					Target="[APPFOLDER]Fonts\DoulosSIL-6.101\README.txt"/>
 				<Shortcut Id="GentiumPlusDocShortcut"
 					Name="Gentium Plus Documentation"
-					Target="[APPFOLDER]Fonts\GentiumPlus-5.000\README.txt"/>
+					Target="[APPFOLDER]Fonts\GentiumPlus-6.101\README.txt"/>
 				<RemoveFolder Id="RemoveSILProgramMenuFolder" Directory="SILProgramMenuFolder" On="uninstall"/>
 				<!-- The KeyPath for this component is required to be a registry key under HKCU -->
 				<RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.SafeApplicationName)$(var.MajorVersion)FontDocu" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
