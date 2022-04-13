@@ -280,7 +280,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void convertButton_Click(object sender, System.EventArgs e)
 		{
-			if (m_mapname != null && m_mapname != "")
+			if (!string.IsNullOrEmpty(m_mapname))
 			{
 				using (new WaitCursor(this))
 				{
@@ -288,13 +288,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					{
 						DoFileConvert((IEncConverter)m_encConverters[m_mapname], ofDlg.FileName);
 					}
-					catch
+					catch(Exception exception)
 					{
-						ResourceManager resourceStrings = new ResourceManager(
-							"SIL.FieldWorks.FwCoreDlgs.AddConverterDlgStrings",
+						var resourceStrings = new ResourceManager("SIL.FieldWorks.FwCoreDlgs.AddConverterDlgStrings",
 							Assembly.GetExecutingAssembly());
-						MessageBox.Show(this, resourceStrings.GetString("kstidErrorConvertingTestFile"),
-							resourceStrings.GetString("kstidConversionError"));
+						var errorMessage =
+							$"{resourceStrings.GetString("kstidErrorConvertingTestFile")}{Environment.NewLine}{exception.Message}";
+						MessageBoxUtils.Show(this, errorMessage, resourceStrings.GetString("kstidConversionError"));
 					}
 				}
 				saveFileButton.Enabled = m_fHasOutput;
