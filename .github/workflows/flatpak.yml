@@ -106,7 +106,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/cache@v2
         with:
-          path: .flatpak-builder
+          path: "${{env.FLATPAK_DIR}}/.flatpak-builder"
           # Store to flatpak-builder-Branch or flatpak-builder-SomePR.
           # Fetch from there but also from flatpak-builder-PRTargetBranch.
           key: flatpak-builder-${{ github.ref_name }}
