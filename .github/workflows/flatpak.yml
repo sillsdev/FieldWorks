@@ -44,7 +44,7 @@ jobs:
     timeout-minutes: 210
     env:
       FLATPAK_DIR: "${{github.workspace}}/flatpak"
-      ARTIFACTS_DIR: "${{home}}/artifacts"
+      ARTIFACTS_DIR: "${{github.home}}/artifacts"
     steps:
       - name: "Check if it's plugged in"
         run: |
