@@ -176,7 +176,7 @@ jobs:
         with:
           artifacts: "${{env.ARTIFACTS_DIR}}/*"
           prerelease: true
-          commit: ${{ github.ref_name }}
+          commit: ${{ github.sha }}
           # New tag name to use
           tag: "${{ env.TAG_NAME }}"
           allowUpdates: true
