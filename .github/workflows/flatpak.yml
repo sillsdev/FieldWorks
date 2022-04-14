@@ -41,10 +41,10 @@ jobs:
   flatpak:
     name: "Flatpak"
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 210
     env:
       FLATPAK_DIR: "${{github.workspace}}/flatpak"
-      ARTIFACTS_DIR: "${{github.workspace}}/../artifacts"
+      ARTIFACTS_DIR: "${{env.HOME}}/artifacts"
     steps:
       - name: "Check if it's plugged in"
         run: |
