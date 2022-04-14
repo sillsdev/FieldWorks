@@ -566,7 +566,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				// NOTE: SpecialFolder.MyDocuments returns $HOME on Linux
 				string myDocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-				string fwDataDir = Environment.GetEnvironmentVariable("FW_DATA_DIR") ?? Path.Combine(Environment.GetEnvironmentVariable("HOME"),".local","share","fieldworks");
+				string fwDataDir = Environment.GetEnvironmentVariable("FW_DATA_DIR") ?? Path.Combine(myDocs, ".local", "share", "fieldworks");
 
 				string defaultDir = MiscUtils.IsUnix ?
 					Path.Combine(fwDataDir, "backups") :
