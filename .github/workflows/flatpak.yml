@@ -23,25 +23,28 @@ name: Build flatpak package
 on:
   push:
     branches:
-	  - develop
-	  - support/*
-	  - release/*
-	  - hotfix/*
-	  - master
+      - develop
+      - support/*
+      - release/*
+      - hotfix/*
+      - master
   pull_request:
     branches:
-	  - develop
-	  - support/*
-	  - release/*
-	  - hotfix/*
-	  - master
+      - develop
+      - support/*
+      - release/*
+      - hotfix/*
+      - master
   workflow_dispatch:
 
 jobs:
   flatpak:
     name: "Flatpak"
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 210
+    env:
+      FLATPAK_DIR: "${{github.workspace}}/flatpak"
+      ARTIFACTS_DIR: "${{github.workspace}}/artifacts"
     steps:
       - name: "Check if it's plugged in"
         run: |
@@ -103,7 +106,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/cache@v2
         with:
-          path: .flatpak-builder
+          path: "${{env.FLATPAK_DIR}}/.flatpak-builder"
           # Store to flatpak-builder-Branch or flatpak-builder-SomePR.
           # Fetch from there but also from flatpak-builder-PRTargetBranch.
           key: flatpak-builder-${{ github.ref_name }}
@@ -115,23 +118,27 @@ jobs:
           sudo apt-get update
           sudo apt-get install flatpak-builder
           sudo flatpak remote-add --if-not-exists flathub \
-		    https://flathub.org/repo/flathub.flatpakrepo
+            https://flathub.org/repo/flathub.flatpakrepo
           sudo flatpak install --noninteractive flathub \
-		    org.gnome.Platform//3.36 \
-			org.gnome.Sdk//3.36
+            org.gnome.Platform//3.36 \
+            org.gnome.Sdk//3.36
       - name: Build flatpak package
         run: |
-          set -xueo pipefail
+          set -xueo pipefail    
+          cd "${FLATPAK_DIR}"
+          perl -pi -e 's/v9.0.17-14-g37c0f8f/v9.1.9-beta-2-g5e94970/' org.sil.FieldWorks.yml
+          perl -pi -e 's/08586f7479d5c99d668d4ec92a1824e02f2982683abf3d13549e07dc1378eaf1204547a1ce6cf9a29f4a9ee418aeaf558e00a13e25e9bd41a0de880a20de1f39/84e809b7452e6b16d9a44c21080da4ef5a7eb6d6613f2702bb131400ddf0197446cc2382c51147fd423838de7fed71797fbe05b1b4e4e0d5a2819e3c16916f9f/' org.sil.FieldWorks.yml
           # Build HEAD commit.
           perl -pi -e \
             "s/(\s*).*FW-Auto-Head.*/\$1commit: $(git rev-parse HEAD) # FW-Auto-Head: Generated line. See build script./" \
             org.sil.FieldWorks.yml
           flatpak-builder --verbose --user --sandbox --ccache \
-		    --repo=local-repo --keep-build-dirs --force-clean build-dir \
-			org.sil.FieldWorks.yml
+            --repo=local-repo --keep-build-dirs --force-clean build-dir \
+            org.sil.FieldWorks.yml
       - name: Determine package version
         run: |
           set -xueo pipefail
+          cd "${FLATPAK_DIR}"
           cat ./.flatpak-builder/build/fieldworks-1/fw/Src/MasterVersionInfo.txt
           source ./.flatpak-builder/build/fieldworks-1/fw/Src/MasterVersionInfo.txt
           # VERSION_SUFFIX will be empty, or set to FWBETAVERSION but with a dash before it.
@@ -148,29 +155,30 @@ jobs:
       - name: Create flatpak bundle
         run: |
           set -xueo pipefail
+          cd "${FLATPAK_DIR}"
           flatpak --user remote-add --no-gpg-verify --if-not-exists \
-		    local-repo ./local-repo
+            local-repo ./local-repo
           flatpak --user install --or-update --noninteractive local-repo \
-		    org.sil.FieldWorks org.sil.FieldWorks.Debug
+            org.sil.FieldWorks org.sil.FieldWorks.Debug
           base_package_name="fieldworks-${{ env.PACKAGE_VERSION }}"
           flatpak build-bundle           ./local-repo "${base_package_name}.flatpak"        org.sil.FieldWorks
           flatpak build-bundle --runtime ./local-repo "${base_package_name}-Debug.flatpak"  org.sil.FieldWorks.Debug
           flatpak build-bundle --runtime ./local-repo "${base_package_name}-Locale.flatpak" org.sil.FieldWorks.Locale
-          mkdir -p artifacts
-          mv fieldworks-*.flatpak artifacts
-          ls -al artifacts
+          mkdir -p "${ARTIFACTS_DIR}"
+          mv fieldworks-*.flatpak "${ARTIFACTS_DIR}"
+          ls -al "${ARTIFACTS_DIR}"
       - name: Save artifacts
         uses: actions/upload-artifact@v2
         with:
           name: fw-flatpak-bundle
           path: |
-            artifacts/
+            "${{env.ARTIFACTS_DIR}}/*"
       - name: Publish artifacts as Github release
         uses: ncipollo/release-action@v1.8.6
         with:
-          artifacts: "artifacts/*"
+          artifacts: "${{env.ARTIFACTS_DIR}}/*"
           prerelease: true
-          commit: ${{ github.ref_name }}
+          commit: ${{ github.sha }}
           # New tag name to use
           tag: "${{ env.TAG_NAME }}"
           allowUpdates: true
