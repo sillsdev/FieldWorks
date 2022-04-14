@@ -28,13 +28,6 @@ on:
       - release/*
       - hotfix/*
       - master
-  pull_request:
-    branches:
-      - develop
-      - support/*
-      - release/*
-      - hotfix/*
-      - master
   workflow_dispatch:
 
 jobs:
