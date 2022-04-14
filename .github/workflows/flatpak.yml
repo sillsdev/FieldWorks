@@ -172,7 +172,7 @@ jobs:
         with:
           name: fw-flatpak-bundle
           path: |
-            "${{env.ARTIFACTS_DIR}}"
+            "${{env.ARTIFACTS_DIR}}/*"
       - name: Publish artifacts as Github release
         uses: ncipollo/release-action@v1.8.6
         with:
