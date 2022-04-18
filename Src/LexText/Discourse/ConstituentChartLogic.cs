@@ -217,12 +217,12 @@ namespace SIL.FieldWorks.Discourse
 		/// <summary>
 		/// Returns an array of all the columns for the template of the chart that this logic is initialized with.
 		/// </summary>
-		public ICmPossibility[] AllMyColumns => CollectColumns(m_chart.TemplateRA).ToArray();
+		public ICmPossibility[] AllMyColumns => CollectColumns(m_chart?.TemplateRA).ToArray();
 
 		/// <summary>
 		/// Returns all the columns and column groups for the template of the chart that this logic is initialized with.
 		/// </summary>
-		public MultilevelHeaderModel ColumnsAndGroups => new MultilevelHeaderModel(m_chart.TemplateRA);
+		public MultilevelHeaderModel ColumnsAndGroups => new MultilevelHeaderModel(m_chart?.TemplateRA);
 
 		/// <summary>
 		/// Return true if the specified column has automatic 'missing' markers.
