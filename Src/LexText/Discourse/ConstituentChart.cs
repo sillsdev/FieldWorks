@@ -433,8 +433,8 @@ namespace SIL.FieldWorks.Discourse
 		/// <summary/>
 		protected virtual void SetHeaderColAndButtonWidths()
 		{
-			//Do not change column widths until positions have been updated to represent template change
-			//m_columnPositions should be one longer due to fenceposting
+			// Do not change column widths until positions have been updated to represent template change
+			// m_columnPositions should be one longer due to fenceposting
 			if (m_columnPositions != null && m_columnPositions.Length == m_headerMainCols.Controls.Count + 1)
 			{
 				m_fInColWidthChanged = true;
@@ -449,7 +449,11 @@ namespace SIL.FieldWorks.Discourse
 
 					var offset = (NotesColumnOnRight ? 0 : 1) + (ChartIsRtL ? 0 : 1);
 					var columnGroups = m_logic.ColumnsAndGroups.Headers;
-					Debug.Assert(columnGroups.Count - 1 == m_headerColGroups.Count);
+					if (!columnGroups.Any())
+					{
+						// No columnGroups probably means no text. Nothing to recalculate since we may be in the midst of disappearing.
+						return;
+					}
 					for (var iLevel = 0; iLevel < m_headerColGroups.Count; iLevel++)
 					{
 						var levelModel = columnGroups[columnGroups.Count - 2 - iLevel];
@@ -637,13 +641,17 @@ namespace SIL.FieldWorks.Discourse
 
 		private void ComputeButtonWidths()
 		{
-			//GetColumnWidths();
 			int cPairs = m_buttonRow.Controls.Count / 2;
 			if (cPairs == 0)
 				return;
 			var widthBtnContextMenu = Resources.ResourceHelper.ButtonMenuArrowIcon.Width + 10;
 			var offset = (NotesColumnOnRight ? 0 : 1) + (ChartIsRtL ? 0 : 1);
 			var columnNames = m_logic.AllMyColumns.Select(ConstituentChartLogic.GetColumnHeaderFrom).ToList();
+			if (!columnNames.Any())
+			{
+				// No columnNames probably means no text. Nothing to recalculate since we may be in the midst of disappearing.
+				return;
+			}
 			if (ChartIsRtL)
 			{
 				columnNames.Reverse();
