@@ -526,17 +526,20 @@ modules:
                   's|/usr/lib/fieldworks/icu-bin/icu-config|/app/lib/fieldworks/icu-bin/icu-config|' \
                   Makefile.in
           - type: file
-            url: https://api.nuget.org/v3-flatcontainer/Geckofx45.64.Linux/45.0.21/Geckofx45.64.Linux.45.0.21.nupkg
+            url: https://api.nuget.org/v3-flatcontainer/geckofx45.64.linux/45.0.21/geckofx45.64.linux.45.0.21.nupkg
             sha512: d34f7175793bdfc4dcfa0b404bf7d6f2a27ba29389623a23c4d6383281fedf7f8014474775f4321af21ad9eab2817e5309934b81b918296fb518c23064272dfe
             dest: nuget-sources/
+            dest-filename: Geckofx45.64.Linux.45.0.21.nupkg
           - type: file
-            url: https://api.nuget.org/v3-flatcontainer/Geckofx45.32.Linux/45.0.21/Geckofx45.32.Linux.45.0.21.nupkg
+            url: https://api.nuget.org/v3-flatcontainer/geckofx45.32.linux/45.0.21/geckofx45.32.linux.45.0.21.nupkg
             sha512: 677c1dea32bd8631e859a7ddb2e72971a5db5561e9bc3ddced9a5bd451395f78719d3001b1cea908025707bb34175ecbc698c9ca965a44535bb4e9c83687832f
             dest: nuget-sources/
+            dest-filename: Geckofx45.32.Linux.45.0.21.nupkg
           - type: file
-            url: https://api.nuget.org/v3-flatcontainer/NUnit/2.6.4/NUnit.2.6.4.nupkg
+            url: https://api.nuget.org/v3-flatcontainer/nunit/2.6.4/nunit.2.6.4.nupkg
             sha512: e0510c05364d512d810d8bc5741462cb8eeef06b45101f81106f5489fd9f9987d07050320d4306c41c9bc76fe186735a8e3544be0b496dc416617cf0bdb99600
             dest: nuget-sources/
+            dest-filename: NUnit.2.6.4.nupkg
           - type: file
             url: https://dist.nuget.org/win-x86-commandline/v3.4.4/nuget.exe
             sha512: 3b404655c39cfc39334c8437ff2c7d6007e23262daa7bb34863fdd6f2e7da9a89ab97176a52b1e8a99327fde3e9decc29c450664492af73680f5a715a72aacf3

@@ -62,20 +62,23 @@ def processPackagesConfig(path):
     root = packagesTree.getroot()
     packageElements = root.findall('./package')
     for package in packageElements:
-        name = package.attrib['id'] #.lower()
-        version = package.attrib['version'] #.lower()
+        name = package.attrib['id']
+        version = package.attrib['version']
         packageSet.add(PackageAndVersionSpecification(name=name, version=version))
 
 def writeSourceRecord(name, version):
-    url = 'https://api.nuget.org/v3-flatcontainer/{}/{}/{}.{}.nupkg'.format(name, version, name, version)
+    nameLower = name.lower()
+    url = 'https://api.nuget.org/v3-flatcontainer/{}/{}/{}.{}.nupkg'.format(nameLower, version, nameLower, version)
     wget --timestamping --directory-prefix=@(cachePath) @(url)
-    filename = '{}.{}.nupkg'.format(name, version)
+    filename = '{}.{}.nupkg'.format(nameLower, version)
+    destFilename = '{}.{}.nupkg'.format(name, version)
     pathToCachedFile = '{}/{}'.format(cachePath, filename)
     sha512 = $(sha512sum @(pathToCachedFile) | perl -p -e 's/ .*$//').rstrip()
     nugetSources.append('- type: file')
     nugetSources.append('  url: {}'.format(url))
     nugetSources.append('  sha512: {}'.format(sha512))
     nugetSources.append('  dest: {}'.format(destDir))
+    nugetSources.append('  dest-filename: {}'.format(destFilename))
 
 for packagesConfigPath in packagesConfigPaths:
     processPackagesConfig(packagesConfigPath)
