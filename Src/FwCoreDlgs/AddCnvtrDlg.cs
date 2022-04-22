@@ -494,7 +494,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				SelectedConverter = newConv;
 				SetUnchanged();
-				DialogResult = System.Windows.Forms.DialogResult.OK;
+				DialogResult = DialogResult.OK;
 			}
 			SetStates();
 			m_fClosingDialog = false;
@@ -1079,6 +1079,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				SetUnchanged();
 				return installState;
+			}
+			catch (Exception e)
+			{
+				ShowMessage($"Unhandled error saving converters: {e.Message}",
+					"Error saving converters", MessageBoxButtons.OK);
+				// return true to allow closing the dialog when we encounter an unexpected error
+				return true;
 			}
 			finally
 			{
