@@ -436,7 +436,8 @@
 			<BaseBuildDir>$(InstallerDir)/BaseInstallerBuild</BaseBuildDir>
 			<BaseBuildArgs>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" $(SafeManufacturer) $(Arch)</BaseBuildArgs>
 		</PropertyGroup>
-		<Exec WorkingDirectory="$(BaseBuildDir)" Command="buildBaseInstaller.bat $(BaseBuildArgs)" />
+		<!-- Suppress ICE30 because we and Encoding Converters MM both install Geckofx, resulting in an ICE warning for double ref counting -->
+		<Exec WorkingDirectory="$(BaseBuildDir)" Command="(set SuppressICE=-sice:ICE30) &amp; buildBaseInstaller.bat $(BaseBuildArgs)" />
 
 		<ItemGroup>
 			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.exe"/>
