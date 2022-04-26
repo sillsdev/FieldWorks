@@ -1058,9 +1058,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				if (m_cnvtrPropertiesCtrl.cboConverter.SelectedIndex == -1 ||
 					m_cnvtrPropertiesCtrl.cboConversion.SelectedIndex == -1)
-					return false; // all fields must be filled out (not sure if this ever occurs anymore)
+				{
+					MessageBoxUtils.Show(this, AddConverterDlgStrings.kstrErrorInProperties, AddConverterDlgStrings.kstrUnspecifiedSaveError);
+					return true; // all fields must be filled out (not sure if this ever occurs anymore)
+				}
 
-				if (String.IsNullOrEmpty(ConverterName)) // no name provided
+				if (string.IsNullOrEmpty(ConverterName)) // no name provided
 				{
 					return UserDesiresDiscard(AddConverterDlgStrings.kstidNoNameMsg,
 						AddConverterDlgStrings.kstidNoName);
@@ -1075,15 +1078,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						return false;
 					RemoveConverter(m_oldConverter);
 				}
-				bool installState = InstallConverter(); // save changes made
+				var installState = InstallConverter(); // save changes made
 
 				SetUnchanged();
 				return installState;
 			}
 			catch (Exception e)
 			{
-				ShowMessage($"Unhandled error saving converters: {e.Message}",
-					"Error saving converters", MessageBoxButtons.OK);
+				ShowMessage(string.Format(AddConverterDlgStrings.kstrUnhandledConverterException, e.Message),
+					AddConverterDlgStrings.kstrUnspecifiedSaveError, MessageBoxButtons.OK);
 				// return true to allow closing the dialog when we encounter an unexpected error
 				return true;
 			}
@@ -1334,7 +1337,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			MessageBoxButtons buttons)
 		{
 			Debug.WriteLine("MESSAGE: " + sMessage);
-			return MessageBox.Show(sMessage, sTitle, buttons);
+			return MessageBoxUtils.Show(this, sMessage, sTitle, buttons);
 		}
 
 		/// ------------------------------------------------------------------------------------
