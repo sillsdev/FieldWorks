@@ -374,7 +374,7 @@ namespace XMLViewsTests
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("ipo", out var wsDef);
 			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsDef);
 			string entryLetter = "\U00016F00\U00016F51\U00016F61\U00016F90";
-			Dictionary<string, ISet<string>> wsDigraphMap = new Dictionary<string, ISet<string>>();
+			Dictionary<string, Dictionary<string, ConfiguredExport.CollationLevel>> wsDigraphMap = new Dictionary<string, Dictionary<string, ConfiguredExport.CollationLevel>>();
 			Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
 			Dictionary<string, ISet<string>> wsIgnorableCharMap = new Dictionary<string, ISet<string>>();
 			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar(entryLetter, "ipo", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, null, Cache));
@@ -388,7 +388,7 @@ namespace XMLViewsTests
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("guq", out var wsDef);
 			wsDef.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&[last tertiary ignorable] ='ig'='ignore-'='i'" };
 			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsDef);
-			var wsDigraphMap = new Dictionary<string, ISet<string>>();
+			var wsDigraphMap = new Dictionary<string, Dictionary<string, ConfiguredExport.CollationLevel>>();
 			var wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
 			var wsIgnorableCharMap = new Dictionary<string, ISet<string>>();
 			// test for the longest of the ignore rules
@@ -400,6 +400,23 @@ namespace XMLViewsTests
 		}
 
 		[Test]
+		public void XHTMLExportGetLeadChar_PrimaryCollationProceedsSecondary()
+		{
+			string data = null;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("guq", out var wsDef);
+			wsDef.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&a << ha &c < ch " };
+			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsDef);
+			var wsDigraphMap = new Dictionary<string, Dictionary<string, ConfiguredExport.CollationLevel>>();
+			var wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
+			var wsIgnorableCharMap = new Dictionary<string, ISet<string>>();
+			// test that the primary rule 'ch' has a higher priority than the secondary rule which replaces 'ha' with 'a'
+			// (ie. confirm that 'ch' is returned instead of 'c')
+			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar("cha", "guq", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, null, Cache));
+			Assert.That(data, Is.EqualTo("ch"));
+		}
+
+
+		[Test]
 		public void XHTMLExportGetLeadChar_UsesCaseAlias()
 		{
 			string data = null;
@@ -407,7 +424,7 @@ namespace XMLViewsTests
 			wsDef.CaseAlias = "az";
 			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsDef);
 			const string headword = "Indebted";
-			var wsDigraphMap = new Dictionary<string, ISet<string>>();
+			var wsDigraphMap = new Dictionary<string, Dictionary<string, ConfiguredExport.CollationLevel>>();
 			var wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
 			var wsIgnorableCharMap = new Dictionary<string, ISet<string>>();
 			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar(headword, "tkr", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, null, Cache));

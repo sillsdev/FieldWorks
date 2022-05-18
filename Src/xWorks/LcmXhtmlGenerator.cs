@@ -163,7 +163,7 @@ namespace SIL.FieldWorks.XWorks
 		internal static void GenerateLetterHeaderIfNeeded(ICmObject entry, ref string lastHeader, XmlWriter xhtmlWriter, Collator headwordWsCollator, ConfiguredLcmGenerator.GeneratorSettings settings)
 		{
 			// If performance is an issue these dummy's can be stored between calls
-			var dummyOne = new Dictionary<string, ISet<string>>();
+			var dummyOne = new Dictionary<string, Dictionary<string, ConfiguredExport.CollationLevel>>();
 			var dummyTwo = new Dictionary<string, Dictionary<string, string>>();
 			var dummyThree = new Dictionary<string, ISet<string>>();
 			var cache = settings.Cache;

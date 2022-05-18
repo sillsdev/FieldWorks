@@ -49,6 +49,24 @@ namespace SIL.FieldWorks.Common.Controls
 			insideProperty = 2,
 			insideLink = 3,
 		};
+
+		/// <summary>
+		/// The level of the ICU rule that defined a digraph.
+		/// </summary>
+		public enum CollationLevel
+		{
+			/// <summary>
+			/// Either secondary or tertiary level. It would be extra work to determine
+			/// if it is secondary or tertiary and it's currently not needed.
+			/// </summary>
+			notPrimary = 0,
+
+			/// <summary>
+			/// First level
+			/// </summary>
+			primary = 1
+		}
+
 		private CurrentContext m_cc = CurrentContext.unknown;
 		private string m_sTimeField = null;
 
@@ -58,7 +76,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Map from a writing system to its set of digraphs (or multigraphs) used in sorting.
 		/// </summary>
-		Dictionary<string, ISet<string>> m_mapWsDigraphs = new Dictionary<string, ISet<string>>();
+		Dictionary<string, Dictionary<string, CollationLevel>> m_mapWsDigraphs = new Dictionary<string, Dictionary<string, CollationLevel>>();
 		/// <summary>
 		/// Map from a writing system to its map of equivalent graphs/multigraphs used in sorting.
 		/// </summary>
@@ -628,7 +646,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache"></param>
 		/// <returns>The character headwordNFD is being sorted under in the dictionary.</returns>
 		public static string GetLeadChar(string headwordNFD, string sWs,
-													Dictionary<string, ISet<string>> wsDigraphMap,
+													Dictionary<string, Dictionary<string, CollationLevel>> wsDigraphMap,
 													Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
 													Dictionary<string, ISet<string>> wsIgnorableCharMap,
 													Collator sortKeyCollator,
@@ -663,42 +681,58 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			if (string.IsNullOrEmpty(headwordLC))
 				return ""; // check again
-			var headwordBeforeEquivalence = headwordLC;
-			bool changed;
-			var map = mapChars;
-			do  // This loop replaces each occurrence of equivalent characters in headwordLC
-				// with the representative of its equivalence class
-			{   // replace subsorting chars by their main sort char. a << 'a << ^a, etc. are replaced by a.
-				foreach (string key in map.Keys)
-					headwordLC = headwordLC.Replace(key, map[key]);
-				changed = headwordBeforeEquivalence != headwordLC;
-				if (headwordLC.Length > headwordBeforeEquivalence.Length && map == mapChars)
-				{   // Rules like a -> a' repeat infinitely! To truncate this eliminate any rule whose output contains an input.
-					map = new Dictionary<string, string>(mapChars);
-					foreach (var kvp in mapChars)
-					{
-						foreach (var key1 in mapChars.Keys)
+
+			// If the headword begins with a primary digraph then use that as the first character without doing any replacement.
+			string firstChar = null;
+			foreach (var primaryDigraph in wsDigraphMap[ws.Id].Where(digraph => digraph.Value == CollationLevel.primary))
+			{
+				if (headwordLC.StartsWith(cf.ToLower(primaryDigraph.Key)))
+					firstChar = cf.ToLower(primaryDigraph.Key);
+			}
+
+			// Replace equivalent characters.
+			if (firstChar == null)
+			{
+				var headwordBeforeEquivalence = headwordLC;
+				bool changed;
+				var map = mapChars;
+				do // This loop replaces each occurrence of equivalent characters in headwordLC
+					// with the representative of its equivalence class
+				{   // replace subsorting chars by their main sort char. a << 'a << ^a, etc. are replaced by a.
+					foreach (string key in map.Keys)
+						headwordLC = headwordLC.Replace(key, map[key]);
+					changed = headwordBeforeEquivalence != headwordLC;
+					if (headwordLC.Length > headwordBeforeEquivalence.Length && map == mapChars)
+					{   // Rules like a -> a' repeat infinitely! To truncate this eliminate any rule whose output contains an input.
+						map = new Dictionary<string, string>(mapChars);
+						foreach (var kvp in mapChars)
 						{
-							if (kvp.Value.Contains(key1))
+							foreach (var key1 in mapChars.Keys)
 							{
-								map.Remove(kvp.Key);
-								break;
+								if (kvp.Value.Contains(key1))
+								{
+									map.Remove(kvp.Key);
+									break;
+								}
 							}
 						}
 					}
-				}
-				headwordBeforeEquivalence = headwordLC;
-			} while (changed);
-			var cnt = GetLetterLengthAt(headwordLC, 0);
-			var firstChar = headwordLC.Substring(0, cnt);
-			foreach (var sortChar in sortChars)
-			{
-				if (headwordLC.StartsWith(sortChar))
+
+					headwordBeforeEquivalence = headwordLC;
+				} while (changed);
+
+				var cnt = GetLetterLengthAt(headwordLC, 0);
+				firstChar = headwordLC.Substring(0, cnt);
+				foreach (var sortChar in sortChars)
 				{
-					if (firstChar.Length < sortChar.Length)
-						firstChar = sortChar;
+					if (headwordLC.StartsWith(sortChar))
+					{
+						if (firstChar.Length < sortChar.Length)
+							firstChar = sortChar;
+					}
 				}
 			}
+
 			// We don't want firstChar for an ignored first character or digraph.
 			if (sortKeyCollator != null)
 			{
@@ -746,7 +780,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="chIgnoreSet">Set of characters to ignore</param>
 		/// <returns></returns>
 		internal static ISet<string> GetDigraphs(CoreWritingSystemDefinition ws,
-			Dictionary<string, ISet<string>> wsDigraphMap,
+			Dictionary<string, Dictionary<string, CollationLevel>> wsDigraphMap,
 			Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
 			Dictionary<string, ISet<string>> wsIgnorableCharMap,
 			out Dictionary<string, string> mapChars,
@@ -756,15 +790,15 @@ namespace SIL.FieldWorks.Common.Controls
 			// Collect the digraph and character equivalence maps and the ignorable character set
 			// the first time through. There after, these maps and lists are just retrieved.
 			chIgnoreSet = new HashSet<string>(); // if ignorable chars get through they can become letter heads! LT-11172
-			ISet<string> digraphs;
+			Dictionary<string, CollationLevel> digraphs;
 			// Are the maps and ignorables already setup for the taking?
 			if (wsDigraphMap.TryGetValue(sWs, out digraphs))
 			{   // knows about ws, so already knows character equivalence classes
 				mapChars = wsCharEquivalentMap[sWs];
 				chIgnoreSet = wsIgnorableCharMap[sWs];
-				return digraphs;
+				return new HashSet<string>(digraphs.Keys);
 			}
-			digraphs = new HashSet<string>();
+			digraphs = new Dictionary<string, CollationLevel>();
 			mapChars = new Dictionary<string, string>();
 
 			wsDigraphMap[sWs] = digraphs;
@@ -849,7 +883,7 @@ namespace SIL.FieldWorks.Common.Controls
 				wsCharEquivalentMap[sWs] = mapChars = new Dictionary<string, string>();
 
 			wsIgnorableCharMap.Add(sWs, chIgnoreSet);
-			return digraphs;
+			return new HashSet<string>(digraphs.Keys);
 		}
 
 		private static string ProcessAdvancedSyntacticalElements(ISet<string> chIgnoreSet, string rule)
@@ -916,10 +950,11 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		private static void BuildDigraphSet(string part, CoreWritingSystemDefinition ws, Dictionary<string, ISet<string>> wsDigraphsMap)
+		private static void BuildDigraphSet(string part, CoreWritingSystemDefinition ws, Dictionary<string, Dictionary<string, CollationLevel>> wsDigraphsMap)
 		{
 			var sWs = ws.Id;
 			var cf = new CaseFunctions(ws);
+			var collationLevel = CollationLevel.primary;
 			foreach (var character in part.Split('='))
 			{
 				var sGraph = character.Trim();
@@ -931,16 +966,18 @@ namespace SIL.FieldWorks.Common.Controls
 					sGraph = cf.ToLower(sGraph);
 					if (!wsDigraphsMap.ContainsKey(sWs))
 					{
-						wsDigraphsMap.Add(sWs, new HashSet<string> { sGraph });
+						wsDigraphsMap.Add(sWs, new Dictionary<string, CollationLevel> { {sGraph, collationLevel } });
 					}
 					else
 					{
-						if (!wsDigraphsMap[sWs].Contains(sGraph))
+						if (!wsDigraphsMap[sWs].Keys.Contains(sGraph))
 						{
-							wsDigraphsMap[sWs].Add(sGraph);
+							wsDigraphsMap[sWs].Add(sGraph, collationLevel);
 						}
 					}
 				}
+
+				collationLevel = CollationLevel.notPrimary;
 			}
 		}
 

@@ -242,7 +242,7 @@ namespace SIL.FieldWorks.XWorks
 			var indexChar = ConfiguredExport.GetLeadChar(
 				ConfiguredLcmGenerator.GetHeadwordForLetterHead(entry),
 				headwordWs,
-				new Dictionary<string, ISet<string>>(),
+				new Dictionary<string, Dictionary<string, ConfiguredExport.CollationLevel>>(),
 				new Dictionary<string, Dictionary<string, string>>(),
 				new Dictionary<string, ISet<string>>(), col, Cache);
 			jsonWriter.InsertJsonProperty("letterHead", indexChar);
@@ -671,7 +671,7 @@ namespace SIL.FieldWorks.XWorks
 		private static List<string> GenerateLetterHeaders(int[] entriesToSave, LcmCache cache)
 		{
 			// These maps act as a cache to improve performance for discovering the index character for each headword
-			var wsDigraphMap = new Dictionary<string, ISet<string>>();
+			var wsDigraphMap = new Dictionary<string, Dictionary<string, ConfiguredExport.CollationLevel>>();
 			var wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
 			var wsIgnorableMap = new Dictionary<string, ISet<string>>();
 			var wsString = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultVernWs);
