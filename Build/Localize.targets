@@ -165,6 +165,7 @@
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="splitListsForOneLocale"
 			Properties="ListsXml=%(ListsXmlFiles.Identity);BareFilename=%(Filename)"/>
 	</Target>
+
 	<Target Name="splitListsForOneLocale">
 		<PropertyGroup>
 			<Locale>$(BareFilename.Substring(15))</Locale><!-- there are 15 chars in 'LocalizedLists-' -->
@@ -172,6 +173,15 @@
 		</PropertyGroup>
 		<MakeDir Directories="$(XliffOutputDir)"/>
 		<ListsToXliff SourceXml="$(ListsXml)" XliffOutputDir="$(XliffOutputDir)" TargetLocale="$(Locale)"/>
+	</Target>
+
+	<!-- Call with the /p:ListsXml with translated SemanticDomains list and /p:Locale for the locale -->
+	<Target Name="prepareSemanticDomainForCrowdin">
+		<PropertyGroup>
+			<XliffOutputDir>$(ListsDirectory)/$(Locale)</XliffOutputDir>
+		</PropertyGroup>
+		<MakeDir Directories="$(XliffOutputDir)"/>
+		<ListsToXliff SourceXml="$(ListsXml)" XliffOutputDir="$(XliffOutputDir)" TargetLocale="$(Locale)" ListsToInclude="SemanticDomains.xlf" />
 	</Target>
 
 	<!-- Copy translated .resx files and strings-<locale>.xml to their destinations -->
