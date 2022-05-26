@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2013-2017 SIL International
+// Copyright (c) 2013-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -35,6 +35,13 @@ namespace SIL.FieldWorks.XWorks
 		public void ReportFatalException(Exception e)
 		{
 			throw e; // I think this will ultimately show the green-screen (unless something catches it)
+		}
+
+		public void NotifyUserOfProblem(IRepeatNoticePolicy policy, Exception exception, string message)
+		{
+			if (policy.ShouldShowMessage(message))
+				ErrorReporter.ReportException(new Exception(message, exception), m_registryKey,
+					m_supportEmailAddress, m_parentForm, false);
 		}
 
 		public ErrorResult NotifyUserOfProblem(IRepeatNoticePolicy policy, string alternateButton1Label,
