@@ -36,6 +36,12 @@ externaltargets-test: \
 	COM-check \
 	Win32More-check \
 
+externaltargets-clean: \
+	Win32Base-clean \
+	COM-clean \
+	COM-autodegen \
+	Win32More-clean \
+	installable-COM-clean \
 
 # This build item isn't run on a normal build.
 generate-strings:
@@ -281,6 +287,7 @@ COM-uninstall:
 COM-clean:
 	[ -e $(COM_BUILD)/Makefile ] && \
 	$(MAKE) -C$(COM_BUILD) clean || true
+	rm -rf "$(COM_BUILD)"
 COM-distclean:
 	[ -e $(COM_BUILD)/Makefile ] && \
 	$(MAKE) -C$(COM_BUILD) distclean || true

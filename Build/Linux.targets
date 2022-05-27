@@ -16,7 +16,7 @@
 			  Condition="'$(action)'!='clean'"/>
 	</Target>
 
-	<Target Name="cleanLinux" Condition="'$(OS)'=='Unix'" DependsOnTargets="clean-graphite2Linux">
+	<Target Name="cleanLinux" Condition="'$(OS)'=='Unix'" DependsOnTargets="clean-graphite2Linux;clean-externaltargets">
 	</Target>
 
 	<Target Name="LinuxRegistry" Condition="'$(OS)'=='Unix'" DependsOnTargets="setupLinuxRegistry;setRegistryValues"/>
@@ -63,6 +63,10 @@
 			<Output TaskParameter="Include" ItemName="DeleteTECkitFiles"/>
 		</CreateItem>
 		<Delete Files="@(DeleteTECkitFiles)" Condition="'$(action)'=='clean'"/>
+	</Target>
+
+	<Target Name="clean-externaltargets">
+		<Exec Command="make externaltargets-clean" WorkingDirectory="$(fwrt)"/>
 	</Target>
 
 	<Target Name="linuxLibs">
