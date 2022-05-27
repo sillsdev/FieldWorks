@@ -157,7 +157,6 @@ install-tree: install-tree-fdo
 	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/DevComponents.DotNetBar.dll
 	case $(ARCH) in i686) OTHERWIDTH=64;; x86_64) OTHERWIDTH=32;; esac; \
 	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/lib{xample,patr}$$OTHERWIDTH.so
-	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/lib{ecdriver,IcuConvEC,IcuRegexEC,IcuTranslitEC,PyScriptEncConverter}*.so
 	rm -Rf $(DESTDIR)$(INSTALLATION_PREFIX)/lib/share/fieldworks/Icu54/tools
 	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/share/fieldworks/Icu54/Keyboards
 	# Windows dll and exe files.
@@ -172,6 +171,7 @@ install-tree: install-tree-fdo
 
 install-tree-deb:
 	# EC files are installed by package fieldworks-enc-converters
+	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/lib{ecdriver,IcuConvEC,IcuRegexEC,IcuTranslitEC,PyScriptEncConverter}*.so
 	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/{AIGuesserEC,CcEC,IcuEC,PerlExpressionEC,PyScriptEC,SilEncConverters40,ECInterfaces}.dll{,.config}
 	rm -f $(DESTDIR)$(INSTALLATION_PREFIX)/lib/fieldworks/libTECkit{,_Compiler}*.so
 
