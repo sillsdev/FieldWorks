@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -38,7 +38,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="label">The label.</param>
 		/// <param name="stylesheet">The stylesheet.</param>
 		/// <param name="displayUsage"><c>true</c> if usage statistics will be displayed; otherwise, <c>false</c>.</param>
-		public LabelNode(ObjectLabel label, IVwStylesheet stylesheet, bool displayUsage)
+		/// <param name="initialize"><c>true</c> This constructor should do the initialization.
+		///                          <c>false</c> Do not do the initialization, let the caller do it.</param>
+		public LabelNode(ObjectLabel label, IVwStylesheet stylesheet, bool displayUsage, bool initialize = true)
 		{
 			Tag = label;
 			m_stylesheet = stylesheet;
@@ -53,7 +55,7 @@ namespace SIL.FieldWorks.Common.Controls
 				NodeFont = GetVernacularFont(label.Cache.WritingSystemFactory, wsVern, stylesheet);
 			}
 			SetNodeText();
-			if (label.HaveSubItems)
+			if (initialize && label.HaveSubItems)
 				// this is a hack to make the node expandable before we have filled in any
 				// actual children
 				Nodes.Add(new TreeNode("should not see this"));
@@ -192,7 +194,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			Nodes.Clear(); // get rid of the dummy.
 
-			AddSecondaryNodes(this, Nodes, chosenObjs);
+			AddSecondaryNodes(this, chosenObjs);
 			foreach (ObjectLabel label in ((ObjectLabel)Tag).SubItems)
 			{
 				if (!WantNodeForLabel(label))
@@ -201,7 +203,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (chosenObjs != null)
 					node.Checked = chosenObjs.Contains(label.Object);
 				Nodes.Add(node);
-				AddSecondaryNodes(node, node.Nodes, chosenObjs);
+				AddSecondaryNodes(node, chosenObjs);
 				if (recursively)
 				{
 					node.AddChildren(true, chosenObjs);
@@ -223,9 +225,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Adds the secondary nodes.
 		/// </summary>
 		/// <param name="node">The node.</param>
-		/// <param name="nodes">The nodes.</param>
 		/// <param name="chosenObjs">The chosen objects.</param>
-		public virtual void AddSecondaryNodes(LabelNode node, TreeNodeCollection nodes, IEnumerable<ICmObject> chosenObjs)
+		public virtual void AddSecondaryNodes(LabelNode node, IEnumerable<ICmObject> chosenObjs)
 		{
 			// default is to do nothing
 		}
@@ -261,7 +262,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				Nodes.Clear();
 				nodeRepresentingCurrentChoice = AddSecondaryNodesAndLookForSelected(this,
-					Nodes, nodeRepresentingCurrentChoice, objToSelect, ownershipStack, chosenObjs);
+					nodeRepresentingCurrentChoice, objToSelect, chosenObjs);
 				foreach (ObjectLabel label in ((ObjectLabel) Tag).SubItems)
 				{
 					if (!WantNodeForLabel(label))
@@ -273,8 +274,8 @@ namespace SIL.FieldWorks.Common.Controls
 					nodeRepresentingCurrentChoice = CheckForSelection(label, objToSelect,
 						node, nodeRepresentingCurrentChoice);
 					nodeRepresentingCurrentChoice = AddSecondaryNodesAndLookForSelected(
-						node, node.Nodes, nodeRepresentingCurrentChoice, objToSelect,
-						ownershipStack, chosenObjs);
+						node, nodeRepresentingCurrentChoice, objToSelect,
+						chosenObjs);
 				}
 			}
 			else
@@ -307,20 +308,18 @@ namespace SIL.FieldWorks.Common.Controls
 			return nodeRepresentingCurrentChoice;
 		}
 		/// <summary>
-		/// Add secondary nodes to tree at nodes (and check any that occur in rghvoChosen),
+		/// Add secondary nodes to tree (and check any that occur in rghvoChosen),
 		/// and return the one whose hvo is hvoToSelect, or nodeRepresentingCurrentChoice
 		/// if none match.
 		/// </summary>
 		/// <param name="node">node to be added</param>
-		/// <param name="nodes">where to add it</param>
 		/// <param name="nodeRepresentingCurrentChoice">The node representing current choice.</param>
 		/// <param name="objToSelect">The obj to select.</param>
-		/// <param name="ownershipStack">The ownership stack.</param>
 		/// <param name="chosenObjs">The chosen objects.</param>
 		/// <returns></returns>
 		public virtual LabelNode AddSecondaryNodesAndLookForSelected(LabelNode node,
-			TreeNodeCollection nodes, LabelNode nodeRepresentingCurrentChoice,
-			ICmObject objToSelect, Stack<ICmObject> ownershipStack, IEnumerable<ICmObject> chosenObjs)
+			LabelNode nodeRepresentingCurrentChoice,
+			ICmObject objToSelect, IEnumerable<ICmObject> chosenObjs)
 		{
 			// default is to do nothing
 			return nodeRepresentingCurrentChoice;
