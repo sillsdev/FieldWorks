@@ -2144,7 +2144,12 @@ namespace SIL.FieldWorks.IText
 		{
 			CheckDisposed();
 
-			var obj = m_cache.ServiceLocator.ObjectRepository.GetObject(hvo);
+			// We can get in here on a UnitOfWorkHelper.Dispose() call where a VwLazyBox still
+			// contains deleted HVO's, so return zero. Later, before we paint, the VwLazyBox's
+			// are either getting deleted or their hvo lists are getting cleaned up. LT-20881
+			ICmObject obj = null;
+			if (!m_cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out obj))
+				return 0;
 
 			switch (frag)
 			{
