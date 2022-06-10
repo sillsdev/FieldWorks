@@ -56,13 +56,13 @@ echo Building using `%MsBuild%`
 set all_args=%*
 REM Run the next target only if the previous target succeeded
 (
-	if "%all_args:disableDownloads=%"=="%all_args%" %MsBuild% /t:RestoreNuGetPackages
+	if "%all_args:disableDownloads=%"=="%all_args%" %MsBuild% FieldWorks.proj /t:RestoreNuGetPackages
 ) && (
-	%MsBuild% /t:CheckDevelopmentPropertiesFile
+	%MsBuild% FieldWorks.proj /t:CheckDevelopmentPropertiesFile
 ) && (
-	%MsBuild% /t:refreshTargets
+	%MsBuild% FieldWorks.proj /t:refreshTargets
 ) && (
-	%MsBuild% %*
+	%MsBuild% FieldWorks.proj %*
 )
 :END
 FOR /F "tokens=*" %%g IN ('date /t') do (SET DATE=%%g)
