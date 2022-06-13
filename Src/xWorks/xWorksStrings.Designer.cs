@@ -178,6 +178,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There was a problem printing your dictionary. You can try again, but it may be too large for FieldWorks to print. For large dictionaries, FieldWorks can instead generate a PDF for you to print. You can control the maximum number of entries FieldWorks will try to print using the environment variable {0} (you will need to restart FieldWorks for changes to take effect)..
+        /// </summary>
+        internal static string COMExceptionPrintingLargeDictionary {
+            get {
+                return ResourceManager.GetString("COMExceptionPrintingLargeDictionary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clear All Children.
         /// </summary>
         internal static string ConfigurationTreeControl_ClearAllChildren {
@@ -2511,6 +2520,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A component of FieldWorks, {0}, is missing. This prevents printing. Antivirus software sometimes removes files. You may need technical help to repair the FieldWorks installation and protect this file from being deleted again..
+        /// </summary>
+        internal static string MissingGeckofxHtmlToPdf {
+            get {
+                return ResourceManager.GetString("MissingGeckofxHtmlToPdf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Move Down.
         /// </summary>
         internal static string MoveDown {
@@ -2814,6 +2832,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string SharesWithTheseNodes {
             get {
                 return ResourceManager.GetString("SharesWithTheseNodes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Something went wrong trying to print. An operation may have timed out. You may be able to export your dictionary from the File menu and print it using your browser..
+        /// </summary>
+        internal static string SomethingWentWrongTryingToPrintDict {
+            get {
+                return ResourceManager.GetString("SomethingWentWrongTryingToPrintDict", resourceCulture);
             }
         }
         

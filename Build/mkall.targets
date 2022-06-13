@@ -303,6 +303,10 @@
 		<ExCssBuildTag>.lastSuccessful</ExCssBuildTag>
 		<HermitCrabBuildType>bt410</HermitCrabBuildType>
 		<HermitCrabBuildTag>.lastSuccessful</HermitCrabBuildTag>
+		<GeckoFxHtmlToPdfBuildType Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'">GeckofxHtmlToPdf_GeckofxHtmlToPdfGeckofx60Win32continuous</GeckoFxHtmlToPdfBuildType>
+		<GeckoFxHtmlToPdfBuildType Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'">GeckofxHtmlToPdf_Win64_continuous</GeckoFxHtmlToPdfBuildType>
+		<GeckoFxHtmlToPdfBuildType Condition="'$(OS)'=='Unix'">GeckofxHtmlToPdf_GeckofxHtmlToPdfXenial64Geckofx60continuous</GeckoFxHtmlToPdfBuildType>
+		<GeckoFxHtmlToPdfBuildTag>.lastSuccessful</GeckoFxHtmlToPdfBuildTag>
 		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1</DownloadsSilOrgDownloadUrl>
 		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Windows_NT'">$(DownloadsSilOrgDownloadUrl)/Windows</DownloadsSilOrgOSDownloadUrl>
 		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Unix'">$(DownloadsSilOrgDownloadUrl)/Linux</DownloadsSilOrgOSDownloadUrl>
@@ -449,6 +453,9 @@
 		<Message Text="Downloading artifacts for HermitCrab." />
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(HermitCrabBuildType)" Tag="$(HermitCrabBuildTag)" Artifacts="QuickGraph.dll;SIL.Machine.dll;SIL.Collections.dll;SIL.HermitCrab.dll" DownloadsDir="$(DownloadsDir)"/>
 
+		<Message Text="Downloading artifacts for geckofxHtmlToPdf." />
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(GeckoFxHtmlToPdfBuildType)" Tag="$(GeckoFxHtmlToPdfBuildTag)" Artifacts="GeckofxHtmlToPdf.exe;GeckofxHtmlToPdf.exe.config;Args.dll" DownloadsDir="$(DownloadsDir)"/>
+
 		<Message Text="Downloading Paratext DLLs." />
 		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)/Paratext.LexicalContracts.dll" DownloadsDir="$(DownloadsDir)"/>
 		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/FormattedEditor.dll" DownloadsDir="$(DownloadsDir)"/>
@@ -543,6 +550,7 @@
 	<ItemGroup>
 		<!-- we need to explicitly specify the important files, otherwise they'll be ignored
 		if they don't exist by the time this ItemGroup is read -->
+		<DownloadedFiles Include="$(DownloadsDir)/Args.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/IPCFramework.dll"/>
 		<!-- xBuild and MsBuild generate different case artifacts off the same solution file. (sigh) -->
 		<DownloadedFiles Include="$(DownloadsDir)/$(ExCss).dll"/>
@@ -616,8 +624,10 @@
 		<!-- Copy the downloaded artifacts -->
 		<Copy SourceFiles="@(PalasoFiles -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(ChorusFiles -> '$(ChorusArtifactsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)"
-			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<!-- Rename GeckofxHtmlToPdf.exe to FieldWorksPdfMaker so it its origin is clear in case a user needs to release it from antivirus quarantine -->
+		<Copy SourceFiles="$(DownloadsDir)/GeckofxHtmlToPdf.exe" DestinationFiles="$(dir-outputBase)/FieldWorksPdfMaker.exe" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<Copy SourceFiles="$(DownloadsDir)/GeckofxHtmlToPdf.exe.config" DestinationFiles="$(dir-outputBase)/FieldWorksPdfMaker.exe.config" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 
 		<!-- Encoding Converters Files -->
 		<Copy SourceFiles="@(ECWindowsFiles -> '$(PackagesDir)/Encoding-Converters-Core.$(ECNugetVersion)/runtimes/win-$(arch)/native/%(Identity)')"
