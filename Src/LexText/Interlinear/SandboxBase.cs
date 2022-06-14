@@ -24,6 +24,8 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.PlatformUtilities;
 using XCore;
+using SIL.WritingSystems;
+using Icu.Collation;
 
 namespace SIL.FieldWorks.IText
 {
@@ -1965,25 +1967,34 @@ namespace SIL.FieldWorks.IText
 			CheckDisposed();
 			// Find all the matching morphs and count how often used in WfiAnalyses
 			int ws = RawWordformWs;
+			// Use ICU Rules if available, otherwise default search
+			var wsObj = Cache.ServiceLocator.WritingSystemManager.Get(ws);
+			var rules = wsObj.DefaultCollation as IcuRulesCollationDefinition;
+			var srules = rules != null && rules.IsValid ? rules.IcuRules: string.Empty;
 			// Fix FWR-2098 GJM: The definition of 'IsAmbiguousWith' seems not to include 'IsSameAs'.
-			var morphs = (from mf in Cache.ServiceLocator.GetInstance<IMoFormRepository>().AllInstances()
-						  where mf.Form.get_String(ws).Text == form && mf.MorphTypeRA != null
-							&& (mf.MorphTypeRA == mmt || mf.MorphTypeRA.IsAmbiguousWith(mmt))
-						  select mf).ToList();
-			if (morphs.Count == 1)
-				return morphs.First(); // special case: we can avoid the cost of figuring ReferringObjects.
-			IMoForm bestMorph = null;
-			var bestMorphCount = -1;
-			foreach (var mf in morphs)
+			using (var icuCollator = new RuleBasedCollator(srules))
 			{
-				int count = (from source in mf.ReferringObjects where source is IWfiMorphBundle select source).Count();
-				if (count > bestMorphCount)
+				string sWs = WritingSystemFactory.GetStrFromWs(ws);
+				var morphs = (from mf in Cache.ServiceLocator.GetInstance<IMoFormRepository>().AllInstances()
+							  where icuCollator.Compare(mf.Form.get_String(ws).Text, form) == 0
+								  && (mf.MorphTypeRA == mmt || mf.MorphTypeRA.IsAmbiguousWith(mmt))
+							  select mf).ToList();
+
+				if (morphs.Count == 1)
+					return morphs.First(); // special case: we can avoid the cost of figuring ReferringObjects.
+				IMoForm bestMorph = null;
+				var bestMorphCount = -1;
+				foreach (var mf in morphs)
 				{
-					bestMorphCount = count;
-					bestMorph = mf;
+					int count = (from source in mf.ReferringObjects where source is IWfiMorphBundle select source).Count();
+					if (count > bestMorphCount)
+					{
+						bestMorphCount = count;
+						bestMorph = mf;
+					}
 				}
+				return bestMorph;
 			}
-			return bestMorph;
 		}
 
 		/// <summary>
