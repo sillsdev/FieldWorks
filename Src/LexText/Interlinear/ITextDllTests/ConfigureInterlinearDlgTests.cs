@@ -105,6 +105,87 @@ namespace SIL.FieldWorks.IText
 		}
 
 		[Test]
+		public void InitRowChoices_CustomSegmentChoiceWSBothReturnsOnlyOneDefaultWs()
+		{
+			CoreWritingSystemDefinition indonesian = null;
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("add lang", "remove lang", Cache.ActionHandlerAccessor,
+				() =>
+				{
+					Cache.ServiceLocator.WritingSystemManager.GetOrSet("id", out indonesian);
+					Cache.LangProject.CurrentAnalysisWritingSystems.Add(indonesian);
+				});
+			try
+			{
+				using (var cf = new CustomFieldForTest(Cache,
+					"Candy Apple Red",
+					Cache.MetaDataCacheAccessor.GetClassId("Segment"),
+					WritingSystemServices.kwsAnal,
+					CellarPropertyType.String,
+					Guid.Empty))
+				{
+					var customRow = new InterlinLineChoices(Cache,
+						Cache.WritingSystemFactory.GetWsFromStr("fr"),
+						Cache.WritingSystemFactory.GetWsFromStr("en"),
+						InterlinLineChoices.InterlinMode.Analyze);
+					customRow.Add(cf.Flid);
+					Assert.That(customRow.EnabledLineSpecs.Count, Is.EqualTo(1));
+					Assert.That(customRow.EnabledLineSpecs[0].WordLevel, Is.False);
+					Assert.That(customRow.EnabledLineSpecs[0].ComboContent,
+						Is.EqualTo(ColumnConfigureDialog.WsComboContent.kwccAnalysis));
+					// Set up three column combo items:
+					//   One with the default analysis ws handle and a Type of "both" (both Analysis and Vernacular)
+					//   One with the default vernacular ws handle and a Type of "both" (both Analysis and Vernacular)
+					//   One with indonesian
+					// The WritingSystemType and the WritingSystem(Handle) are used by the code to determine if a checkbox is needed.
+					// For Type "both", the code looks at the the custom field ws to determine which column to display the checkbox.
+					var columns = new List<WsComboItem>
+					{
+						new WsComboItem("A Ok", Cache.LangProject.DefaultAnalysisWritingSystem.Id)
+						{
+							WritingSystem = Cache.LangProject.DefaultAnalysisWritingSystem.Handle,
+							WritingSystemType = "both"
+						},
+						new WsComboItem("FROk", Cache.LangProject.DefaultVernacularWritingSystem.Id)
+						{
+							WritingSystem = Cache.LangProject.DefaultVernacularWritingSystem.Handle,
+							WritingSystemType = "both"
+						},
+						new WsComboItem("Begone", indonesian.Id)
+						{
+							WritingSystem = indonesian.Handle,
+							WritingSystemType = "analysis"
+						}
+
+					};
+
+					// Verify that only one checkbox is available
+					// SUT
+					var rowChoices = ConfigureInterlinDialog.InitRowChoices(customRow);
+					using (var stringStream = new StringWriter())
+					{
+						using (var xmlWriter = XmlWriter.Create(stringStream))
+						{
+							rowChoices.First().GenerateRow(xmlWriter, columns, Cache, customRow);
+						}
+
+						var generatedRows = stringStream.ToString();
+						var wsEn = Cache.DefaultAnalWs;
+						var wsFr = Cache.DefaultVernWs;
+						Assert.That(generatedRows, Does.Contain($"{cf.Flid}%{wsEn}"));
+						Assert.That(generatedRows,
+							Does.Not.Contain($"{cf.Flid}%{wsFr}"));
+						Assert.That(generatedRows,
+							Does.Not.Contain($"{cf.Flid}%{indonesian.Id}"));
+					}
+				}
+			}
+			finally
+			{
+				m_actionHandler.Undo();
+			}
+		}
+
+		[Test]
 		public void InitRowChoices_ChartChoices()
 		{
 			var morphemeRows = new InterlinLineChoices(Cache, Cache.WritingSystemFactory.GetWsFromStr("fr"), Cache.WritingSystemFactory.GetWsFromStr("en"), InterlinLineChoices.InterlinMode.Chart);

@@ -404,9 +404,19 @@ namespace SIL.FieldWorks.IText
 				{
 					if (mdc.FieldExists(interlinSpec.Flid) && mdc.IsCustom(interlinSpec.Flid))
 					{
+						string workingWs = column.WritingSystemType;
+						if (workingWs == "both")
+						{
+							int customWS = mdc.GetFieldWs(interlinSpec.Flid);
+							if (customWS == WritingSystemServices.kwsVern)
+								workingWs = "vernacular";
+							else
+								workingWs = "analysis";
+						}
+
 						return
-							(column.WritingSystemType == "analysis" && column.Id == lcmCache.LangProject.DefaultAnalysisWritingSystem.Id ||
-							column.WritingSystemType == "vernacular" && column.Id == lcmCache.LangProject.DefaultVernacularWritingSystem.Id) &&
+							((workingWs == "analysis" && column.Id == lcmCache.LangProject.DefaultAnalysisWritingSystem.Id) ||
+							(workingWs == "vernacular" && column.Id == lcmCache.LangProject.DefaultVernacularWritingSystem.Id)) &&
 							wsItems.Exists(wsItem => wsItem.Id == column.Id);
 					}
 					return wsItems.Exists(wsItem => wsItem.Id == column.Id);
