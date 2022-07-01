@@ -3129,9 +3129,27 @@ namespace SIL.FieldWorks.XWorks
 				insertPosition = 0;
 				hvoNew = sda.MakeNewObject(cpiLevel2.signatureClsid, hvoOwner, flid, -2);
 			}
+
+			// If this is a Text Discourse Chart Template, populate it with a skeleton template (LT-20768)
+			if (OwningObject.OwningFlid == DsDiscourseDataTags.kflidConstChartTempl)
+			{
+				SetUpConstChartTemplateTemplate(hvoNew, flid, cpiFinal.signatureClsid, sda);
+			}
+
 			if (hvoNew != 0)
 				return Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoNew);
 			return null;
+		}
+
+		private void SetUpConstChartTemplateTemplate(int hvoTemplate, int flid, int clid, ISilDataAccess sda)
+		{
+			clid = CmPossibilityTags.kClassId;
+			flid = CmPossibilityTags.kflidSubPossibilities;
+			var hvoGroup1 = sda.MakeNewObject(clid, hvoTemplate, flid, 0);
+			for (var i = 0; i < 2; i++)
+			{
+				sda.MakeNewObject(clid, hvoGroup1, flid, i);
+			}
 		}
 
 		/// <summary>
