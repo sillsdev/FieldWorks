@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class xWorksStrings {
@@ -944,6 +944,24 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Column Group {0}.
+        /// </summary>
+        internal static string ksColumnGroupX {
+            get {
+                return ResourceManager.GetString("ksColumnGroupX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Column {0}.
+        /// </summary>
+        internal static string ksColumnX {
+            get {
+                return ResourceManager.GetString("ksColumnX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Complex Form Types:.
         /// </summary>
         internal static string ksComplexFormTypes {
@@ -1607,6 +1625,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ksNewCustomList {
             get {
                 return ResourceManager.GetString("ksNewCustomList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New Template.
+        /// </summary>
+        internal static string ksNewTemplate {
+            get {
+                return ResourceManager.GetString("ksNewTemplate", resourceCulture);
             }
         }
         

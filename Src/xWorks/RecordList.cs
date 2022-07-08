@@ -24,6 +24,7 @@ using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
+using SIL.LCModel.Core.Text;
 using SIL.ObjectModel;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
@@ -3130,25 +3131,41 @@ namespace SIL.FieldWorks.XWorks
 				hvoNew = sda.MakeNewObject(cpiLevel2.signatureClsid, hvoOwner, flid, -2);
 			}
 
-			// If this is a Text Discourse Chart Template, populate it with a skeleton template (LT-20768)
+			// If this is a Text Discourse Chart Template, populate it with sample column groups and columns (LT-20768)
 			if (OwningObject.OwningFlid == DsDiscourseDataTags.kflidConstChartTempl)
 			{
-				SetUpConstChartTemplateTemplate(hvoNew, flid, cpiFinal.signatureClsid, sda);
+				var newPossibility = (ICmPossibility)Cache.ServiceLocator.GetObject(hvoNew);
+				if (newPossibility.Owner is ICmPossibilityList)
+				{
+					SetUpConstChartTemplateTemplate(newPossibility);
+				}
 			}
+
 
 			if (hvoNew != 0)
 				return Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoNew);
 			return null;
 		}
 
-		private void SetUpConstChartTemplateTemplate(int hvoTemplate, int flid, int clid, ISilDataAccess sda)
+		/// <summary>
+		/// Populates a discourse chart template with sample column groups and columns so that users have an idea what to do with it (LT-20768)
+		/// </summary>
+		/// <remarks>
+		/// The names of the template template parts are in the UI language, but they are stored in the default analysis WS. This could be problematic in
+		/// the unlikely case that the default analysis WS font doesn't have characters for the UI language data. But this is unlikely, and the labels
+		/// are temporary.
+		/// </remarks>
+		public static void SetUpConstChartTemplateTemplate(ICmPossibility templateRoot)
 		{
-			clid = CmPossibilityTags.kClassId;
-			flid = CmPossibilityTags.kflidSubPossibilities;
-			var hvoGroup1 = sda.MakeNewObject(clid, hvoTemplate, flid, 0);
-			for (var i = 0; i < 2; i++)
+			var factory = templateRoot.Services.GetInstance<ICmPossibilityFactory>();
+			var analWS = templateRoot.Services.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+			templateRoot.Name.set_String(analWS, xWorksStrings.ksNewTemplate);
+
+			var group1 = factory.Create(Guid.NewGuid(), templateRoot);
+			group1.Name.set_String(analWS, string.Format(xWorksStrings.ksColumnGroupX, 1));
+			for (var i = 1; i <= 2; i++)
 			{
-				sda.MakeNewObject(clid, hvoGroup1, flid, i);
+				factory.Create(Guid.NewGuid(), group1).Name.set_String(analWS, string.Format(xWorksStrings.ksColumnX, $"1.{i}"));
 			}
 		}
 

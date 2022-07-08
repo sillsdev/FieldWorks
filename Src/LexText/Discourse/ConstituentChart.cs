@@ -16,6 +16,7 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.IText;
+using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using SIL.Windows.Forms.Widgets;
 using XCore;
@@ -843,7 +844,7 @@ namespace SIL.FieldWorks.Discourse
 
 		private void TemplateSelectionChanged(object sender, EventArgs e)
 		{
-			var selection = sender as ComboBox;
+			var selection = (ComboBox)sender;
 			var template = selection.SelectedItem as ICmPossibility;
 
 			//If user chooses to add a new template then navigate them to the Text Constituent Chart Template list view
@@ -855,6 +856,7 @@ namespace SIL.FieldWorks.Discourse
 				var list = Cache.LanguageProject.DiscourseDataOA.ConstChartTemplOA;
 				var newKid = list.Services.GetInstance<ICmPossibilityFactory>().Create();
 				list.PossibilitiesOS.Add(newKid);
+				RecordList.SetUpConstChartTemplateTemplate(newKid);
 				Cache.DomainDataByFlid.EndUndoTask();
 				m_mediator.PostMessage("FollowLink", new FwLinkArgs(DiscourseStrings.ksNewTemplateLink, newKid.Guid));
 				selection.SelectedItem = m_template;

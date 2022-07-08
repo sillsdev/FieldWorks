@@ -420,6 +420,18 @@ Are you SURE you want to delete the field {2}?</value>
   <data name="ksTemplateTooDeep" xml:space="preserve">
     <value>A discourse chart template can only have three levels (template, column group, and column).</value>
   </data>
+  <data name="ksNewTemplate" xml:space="preserve">
+    <value>New Template</value>
+    <comment>Name for a new discourse chart template when it is created.</comment>
+  </data>
+  <data name="ksColumnGroupX" xml:space="preserve">
+    <value>Column Group {0}</value>
+    <comment>Used to populate a discourse chart template template. {0} is the index of the column group, such as "2"</comment>
+  </data>
+  <data name="ksColumnX" xml:space="preserve">
+    <value>Column {0}</value>
+    <comment>Used to populate a discourse chart template template. {0} is the index of the column and its group, such as "2.1"</comment>
+  </data>
   <data name="MoveDown" xml:space="preserve">
     <value>Move Down</value>
     <comment>action on a tree view item</comment>
