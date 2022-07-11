@@ -283,10 +283,10 @@
 
 		<!-- Versions of NuGet packages. These need to match the versions in nuget-common/packages.config -->
 		<ChorusNugetVersion>5.0.0-beta0020</ChorusNugetVersion>
-		<PalasoNugetVersion>9.0.0-beta0198</PalasoNugetVersion>
+		<PalasoNugetVersion>10.0.0-beta0066</PalasoNugetVersion>
 		<Palaso4ParatextNugetVersion>8.1.0-beta0035</Palaso4ParatextNugetVersion>
 		<ParatextNugetVersion>9.2.6.2</ParatextNugetVersion>
-		<LcmNugetVersion>10.2.0-beta0039</LcmNugetVersion>
+		<LcmNugetVersion>10.2.0-beta0042</LcmNugetVersion>
 		<IcuNugetVersion>70.1.123</IcuNugetVersion>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
@@ -330,6 +330,8 @@
 		<PalasoFiles Include="Keyman10Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<PalasoFiles Include="Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<PalasoFiles Include="KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
+		<PalasoFiles Include="Mono.Unix.dll" Condition="'$(OS)'!='Windows_NT'" />
+		<PalasoFiles Include="Mono.Unix.dll.config" Condition="'$(OS)'!='Windows_NT'" />
 		<PalasoFiles Include="SIL.WritingSystems.dll"/>
 		<PalasoFiles Include="SIL.WritingSystems.Tests.dll"/>
 		<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.dll"/>
@@ -379,7 +381,8 @@
 		<LcmOutputBaseFiles Include="Hunspellx86.dll" Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'"/>
 		<LcmOutputBaseFiles Include="Hunspellx64.dll" Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'"/>
 		<LcmOutputBaseFiles Include="NHunspell.dll" Condition="'$(OS)'=='Windows_NT'" />
-		<LcmOutputBaseFiles Include="Microsoft.Practices.ServiceLocation.dll" />
+		<LcmOutputBaseFiles Include="CommonServiceLocator.dll" />
+		<LcmOutputBaseFiles Include="System.CodeDom.dll" />
 		<LcmOutputBaseFiles Include="protobuf-net.dll" />
 		<LcmOutputBaseFiles Include="StructureMap.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.FixData.dll" />
@@ -396,7 +399,6 @@
 		<LcmOutputBaseFiles Include="SIL.LCModel.Tools.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Tests.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Tests.dll.config" />
-
 		<LcmOutputBaseFiles Include="SIL.LCModel.FixData.pdb" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.pdb" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.Tests.pdb" />
@@ -485,21 +487,24 @@
 			<SILNugetPackages Include="Icu4c.Win.Fw.Lib"><Version>$(IcuNugetVersion)</Version><Path>build/native/**/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<!-- LCM and related packages -->
 			<SILNugetPackages Include="SIL.LCModel"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.LCModel"><Version>$(LcmNugetVersion)</Version><Path>contentFiles/**/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.LCModel"><Version>$(LcmNugetVersion)</Version><Path>contentFiles/**/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.LCModel.Build.Tasks"><Version>$(LcmNugetVersion)</Version><Path>tools/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.LCModel.Core"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.LCModel.Core"><Version>$(LcmNugetVersion)</Version><Path>contentFiles/**/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.LCModel.Core"><Version>$(LcmNugetVersion)</Version><Path>contentFiles/**/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.LCModel.Core.Tests"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.LCModel.FixData"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.LCModel.Utils"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.LCModel.Utils.Tests"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.LCModel.Tests"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.LCModel.Tools"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
+			<SILNugetPackages Include="Mono.Unix" Condition="'$(OS)'!='Windows_NT'"><Version>7.1.0-final.1.21458.1</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="Mono.Unix" Condition="'$(OS)'!='Windows_NT'" ><Version>7.1.0-final.1.21458.1</Version><Path>runtimes/linux-x64/native/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="NHunspell.Patched"><Version>1.2.5554</Version><Path>lib/net/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="NHunspell.Patched"><Version>1.2.5554</Version><Path>runtimes/win7-$(Platform)/native/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="SharpZipLib"><Version>0.86.0</Version><Path>lib/20/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SharpZipLib"><Version>1.0.0</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="protobuf-net"><Version>2.0.0.668</Version><Path>lib/net40/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="CommonServiceLocator"><Version>1.0</Version><Path>lib/NET35/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="CommonServiceLocator"><Version>1.4.0</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="System.CodeDom"><Version>4.4.0</Version><Path>lib/netstandard2.0/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<!-- Palaso and related packages -->
 			<SILNugetPackages Include="SIL.Archiving"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.Archiving"><Version>$(PalasoNugetVersion)</Version><Path>contentFiles/any/any/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
@@ -623,6 +628,8 @@
 
 		<!-- Copy the downloaded artifacts -->
 		<Copy SourceFiles="@(PalasoFiles -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<!-- Copy runtime support library for Mono.Unix -->
+		<Copy SourceFiles="$(DownloadsDir)/libMono.Unix.so" DestinationFolder="$(dir-outputBase)/runtimes/linux-x64" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'!='Windows_NT'"/>
 		<Copy SourceFiles="@(ChorusFiles -> '$(ChorusArtifactsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<!-- Rename GeckofxHtmlToPdf.exe to FieldWorksPdfMaker so it its origin is clear in case a user needs to release it from antivirus quarantine -->
@@ -661,7 +668,7 @@
 			<NuGottenFiles Include="$(PackagesDir)/NAudio.Lame.1.1.5/lib/netstandard2.0/NAudio.Lame.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/NAudio.Lame.1.1.5/build/libmp3lame.32.dll" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'"/>
 			<NuGottenFiles Include="$(PackagesDir)/NAudio.Lame.1.1.5/build/libmp3lame.64.dll" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'"/>
-			<NuGottenFiles Include="$(PackagesDir)/Newtonsoft.Json.12.0.3/lib/net45/Newtonsoft.Json.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/Newtonsoft.Json.13.0.1/lib/net45/Newtonsoft.Json.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/Paratext.LexicalContracts.dll" />
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/ParatextData.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/PtxUtils.dll"/>

@@ -98,7 +98,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="nunit.framework">
-      <HintPath>..\..\..\..\packages\NUnit.3.13.2\lib\net45\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\packages\NUnit.3.13.3\lib\net45\nunit.framework.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="xCoreInterfaces, Version=6.1.1.19442, Culture=neutral, processorArchitecture=MSIL">

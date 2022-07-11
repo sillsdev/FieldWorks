@@ -156,13 +156,13 @@
       <Name>LexTextControls</Name>
       <HintPath>..\..\..\..\Output\Debug\LexTextControls.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CommonServiceLocator, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\CommonServiceLocator.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
-      <HintPath>..\..\..\..\packages\NUnit.3.13.2\lib\net45\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\packages\NUnit.3.13.3\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="Sfm2Xml, Version=1.0.2496.16215, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

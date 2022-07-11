@@ -203,9 +203,9 @@
       <HintPath>..\..\Output\Debug\icu.net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CommonServiceLocator, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <HintPath>..\..\Output\Debug\CommonServiceLocator.dll</HintPath>
     </Reference>
     <Reference Include="Reporting, Version=1.0.2327.30181, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

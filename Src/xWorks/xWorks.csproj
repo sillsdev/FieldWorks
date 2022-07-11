@@ -230,9 +230,9 @@
     <Reference Include="LexTextControls, Version=7.1.0.28634, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="CommonServiceLocator, Version=1.4.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <HintPath>..\..\Output\Debug\CommonServiceLocator.dll</HintPath>
     </Reference>
     <Reference Include="Reporting, Version=1.0.3685.30341, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\Reporting.dll</HintPath>

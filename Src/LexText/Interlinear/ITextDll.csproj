@@ -204,9 +204,9 @@
       <HintPath>..\..\..\Output\Debug\LexTextControls.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CommonServiceLocator, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <Package>/home/eberhard/repogit/Calgary/WW/Output_x86_64/Debug/Microsoft.Practices.ServiceLocation.dll</Package>
+      <HintPath>..\..\..\Output\Debug\CommonServiceLocator.dll</HintPath>
     </Reference>
     <Reference Include="ParatextShared, Version=7.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

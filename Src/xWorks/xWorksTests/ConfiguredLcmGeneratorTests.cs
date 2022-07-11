@@ -29,6 +29,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			ConfiguredLcmGenerator.Init();
 			base.FixtureTeardown();
+			FwRegistrySettings.Release();
 			Dispose();
 		}
 

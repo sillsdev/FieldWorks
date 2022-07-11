@@ -919,6 +919,7 @@ namespace SIL.FieldWorks.XWorks
 					PropertyTable.Dispose();
 					Mediator.Dispose();
 				}
+				FwRegistrySettings.Release();
 			}
 
 			~MockWindowSetup()

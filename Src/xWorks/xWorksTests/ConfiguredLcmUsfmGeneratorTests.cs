@@ -70,6 +70,7 @@ namespace SIL.FieldWorks.XWorks
 		public override void FixtureTeardown()
 		{
 			Dispose();
+			FwRegistrySettings.Release();
 			base.FixtureTeardown();
 		}
 
