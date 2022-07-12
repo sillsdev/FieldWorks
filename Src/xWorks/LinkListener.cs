@@ -547,12 +547,15 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch(Exception err)
 			{
-				string s;
-				if (err.InnerException != null && !string.IsNullOrEmpty(err.InnerException.Message))
-					s = String.Format(xWorksStrings.UnableToFollowLink0, err.InnerException.Message);
-				else
-					s = xWorksStrings.UnableToFollowLink;
-				MessageBox.Show(s, xWorksStrings.FailedJump, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				if (m_lnkActive == null || m_lnkActive.DisplayErrorMsg)
+				{
+					string s;
+					if (err.InnerException != null && !string.IsNullOrEmpty(err.InnerException.Message))
+						s = String.Format(xWorksStrings.UnableToFollowLink0, err.InnerException.Message);
+					else
+						s = xWorksStrings.UnableToFollowLink;
+					MessageBox.Show(s, xWorksStrings.FailedJump, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				}
 				return false;
 			}
 			return true;	//we handled this.

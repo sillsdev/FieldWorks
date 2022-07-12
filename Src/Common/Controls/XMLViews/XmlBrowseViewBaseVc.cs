@@ -1738,13 +1738,15 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					if (url.StartsWith(FwLinkArgs.kFwUrlPrefix))
 					{
-						m_xbv.Mediator.SendMessage("FollowLink", new FwLinkArgs(url));
-						return;
+						FwLinkArgs linkArgs = new FwLinkArgs(url);
+						linkArgs.DisplayErrorMsg = false;
+						if (m_xbv.Mediator.SendMessage("FollowLink", linkArgs))
+							return;
 					}
 				}
 				catch
 				{
-					// REVIEW: Why are we catching all errors?
+					// Catch exceptions so we can try using the base class.
 				}
 			}
 			base.DoHotLinkAction(strData, sda);
