@@ -547,6 +547,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 			catch(Exception err)
 			{
+				// Stop suspension of loading records.
+				m_propertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord", "",
+					PropertyTable.SettingsGroup.LocalSettings,
+					true);
+				m_propertyTable.SetPropertyPersistence("SuspendLoadingRecordUntilOnJumpToRecord", false);
+
 				if (m_lnkActive == null || m_lnkActive.DisplayErrorMsg)
 				{
 					string s;
