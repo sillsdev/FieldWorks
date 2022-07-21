@@ -359,7 +359,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				m_fUsingHistory = true;
 				m_lnkActive = Pop(m_backStack);
-				FollowActiveLink();
+				FollowActiveLink(false);
 			}
 
 			return true;
@@ -377,7 +377,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_fUsingHistory = true;
 				m_lnkActive = Pop(m_forwardStack);
-				FollowActiveLink();
+				FollowActiveLink(false);
 			}
 			return true;
 		}
@@ -431,10 +431,10 @@ namespace SIL.FieldWorks.XWorks
 			m_cBackStackOrig = m_backStack.Count;
 			m_lnkActive = lnk as FwLinkArgs;
 
-			return FollowActiveLink();
+			return FollowActiveLink(true);
 		}
 
-		private bool FollowActiveLink()
+		private bool FollowActiveLink(bool suspendLoadingRecord)
 		{
 			try
 			{
@@ -503,7 +503,7 @@ namespace SIL.FieldWorks.XWorks
 				// It's important to do this AFTER we set the real tool name if it is "default". Otherwise, the code that
 				// handles the jump never realizes we have reached the desired tool (as indicated by the value of
 				// SuspendLoadingRecordUntilOnJumpToRecord) and we stop recording context history and various similar problems.
-				if (m_lnkActive.TargetGuid != Guid.Empty)
+				if (suspendLoadingRecord && m_lnkActive.TargetGuid != Guid.Empty)
 				{
 					// allow tools to skip loading a record if we're planning to jump to one.
 					// interested tools will need to reset this "JumpToRecord" property after handling OnJumpToRecord.
