@@ -502,7 +502,7 @@
 			<SILNugetPackages Include="NHunspell.Patched"><Version>1.2.5554</Version><Path>lib/net/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="NHunspell.Patched"><Version>1.2.5554</Version><Path>runtimes/win7-$(Platform)/native/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="SharpZipLib"><Version>1.0.0</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="protobuf-net"><Version>2.0.0.668</Version><Path>lib/net40/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="protobuf-net"><Version>2.4.6</Version><Path>lib/net40/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="CommonServiceLocator"><Version>1.4.0</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="System.CodeDom"><Version>4.4.0</Version><Path>lib/netstandard2.0/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<!-- Palaso and related packages -->
