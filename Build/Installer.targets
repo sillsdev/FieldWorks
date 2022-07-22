@@ -274,6 +274,10 @@
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(CustomInstallFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/.."/>
 		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(OverridesDestDir)"/>
+		<!-- TODO (Hasso) 2022.07: remove this before the next base installer -->
+		<Copy SourceFiles="$(AppBuildMasterDir)\$(BinDirSuffix)\Microsoft.Practices.ServiceLocation.dll"
+			DestinationFiles="$(AppBuildDir)\$(BinDirSuffix)\Microsoft.Practices.ServiceLocation.dll"
+			Condition="!Exists('$(AppBuildDir)\$(BinDirSuffix)\Microsoft.Practices.ServiceLocation.dll')"/>
 		<CallTarget Targets="HarvestL10n;ConvertHarvestsToWxi;WriteFilesMetadata"/>
 	</Target>
 
