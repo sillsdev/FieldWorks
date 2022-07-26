@@ -727,5 +727,15 @@
 		<WriteRegistry Hive="CurrentUser"
 			Key="$(BUILDAGENT_HKCU)SOFTWARE/SIL/EncodingConverterRepository/Registry"
 			Value="$(fwrt)/DistFiles/SIL/Repository/mappingRegistry.xml"/>
+
+		<!-- Register silfw:// link protocol -->
+		<WriteRegistry Hive="CurrentUser"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE/Classes/silfw/"
+			Value="URL:SILFW Protocol"/>
+		<WriteRegistry Hive="CurrentUser"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE/Classes/silfw/URL Protocol"/>
+		<WriteRegistry Hive="CurrentUser"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE/Classes/silfw/shell/open/command/"
+			Value='"$(dir-outputBase)/FieldWorks.exe" %1'/>
 	</Target>
 </Project>

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -60,7 +60,7 @@ namespace FwBuildTasks
 				return false;
 			}
 			Log.LogMessage(MessageImportance.Low, "Setting {0} to {1}", regKeyValueName, Value);
-			mykey.SetValue(regKeyValueName, Value);
+			mykey.SetValue(regKeyValueName, Value ?? string.Empty);
 			return true;
 		}
 
