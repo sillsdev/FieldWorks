@@ -286,7 +286,7 @@
 		<PalasoNugetVersion>10.0.0-beta0066</PalasoNugetVersion>
 		<Palaso4ParatextNugetVersion>8.1.0-beta0035</Palaso4ParatextNugetVersion>
 		<ParatextNugetVersion>9.2.6.2</ParatextNugetVersion>
-		<LcmNugetVersion>10.2.0-beta0042</LcmNugetVersion>
+		<LcmNugetVersion>10.2.0-beta0044</LcmNugetVersion>
 		<IcuNugetVersion>70.1.123</IcuNugetVersion>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
@@ -383,7 +383,6 @@
 		<LcmOutputBaseFiles Include="Hunspellx64.dll" Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'"/>
 		<LcmOutputBaseFiles Include="NHunspell.dll" Condition="'$(OS)'=='Windows_NT'" />
 		<LcmOutputBaseFiles Include="CommonServiceLocator.dll" />
-		<LcmOutputBaseFiles Include="System.CodeDom.dll" />
 		<LcmOutputBaseFiles Include="protobuf-net.dll" />
 		<LcmOutputBaseFiles Include="StructureMap.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.FixData.dll" />
