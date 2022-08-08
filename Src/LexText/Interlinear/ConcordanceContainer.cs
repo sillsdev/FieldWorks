@@ -2,10 +2,18 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
+using System.Xml;
+using Gecko.WebIDL;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.XWorks;
+using XCore;
+using FileMode = System.IO.FileMode;
 
 namespace SIL.FieldWorks.IText
 {
@@ -13,11 +21,33 @@ namespace SIL.FieldWorks.IText
 	/// This class is a specialized MultiPane. It handles the RefreshDisplay differently to avoid crashes, and possibly to do a more efficient job
 	/// then the base MultiPane would do.
 	/// </summary>
-	public class ConcordanceContainer : XCore.MultiPane, IRefreshableRoot
+	public class ConcordanceContainer : MultiPane, IRefreshableRoot
 	{
+		private RecordBrowseView WordOccuranceList => ReCurseControls<RecordBrowseView>(Panel1);
+
+
+		public bool OnDisplayExportConcordanceResults(object commandObject, ref UIItemDisplayProperties display)
+		{
+			display.Enabled = display.Visible = true;
+			return true;
+		}
+
+		public void OnExportConcordanceResults(object arguments)
+		{
+			using (var fs = new FileStream(Path.Combine(Path.GetTempPath(), "ConcordanceResults.csv"), FileMode.Create))
+			using (var textWriter = new StreamWriter(fs))
+			{
+				var exporter = new ConcordanceResultsExporter(textWriter,
+				WordOccuranceList.BrowseViewer.BrowseView.Vc,
+				WordOccuranceList.BrowseViewer.BrowseView.DataAccess,
+				WordOccuranceList.BrowseViewer.BrowseView.RootObjectHvo);
+				exporter.Export();
+			}
+		}
+
 		public bool RefreshDisplay()
 		{
-			ConcordanceControlBase concordanceControl = ReCurseControls(this);
+			ConcordanceControlBase concordanceControl = ReCurseControls<ConcordanceControlBase>(this);
 			if (concordanceControl != null)
 			{
 				concordanceControl.RefreshDisplay();
@@ -36,14 +66,14 @@ namespace SIL.FieldWorks.IText
 		/// of the other views will be inconsistant with the ConcordanceControl and will lead to crashes or incorrect display behavior.
 		/// </summary>
 		/// <param name="parentControl">The control to Recurse</param>
-		private ConcordanceControlBase ReCurseControls(Control parentControl)
+		private T ReCurseControls<T>(Control parentControl) where T : Control
 		{
-			ConcordanceControlBase concordanceControl = null;
+			T concordanceControl = default(T);
 			foreach (Control control in parentControl.Controls)
 			{
-				if (control is ConcordanceControlBase)
+				if (control is T)
 				{
-					concordanceControl = control as ConcordanceControlBase;
+					concordanceControl = control as T;
 					continue;
 				}
 				var cv = control as IClearValues;
@@ -60,11 +90,11 @@ namespace SIL.FieldWorks.IText
 					//Recurse into the child controls, make sure we only have one concordanceControl
 					if(concordanceControl == null)
 					{
-						concordanceControl = ReCurseControls(control);
+						concordanceControl = ReCurseControls<T>(control);
 					}
 					else
 					{
-						var thereCanBeOnlyOne = ReCurseControls(control);
+						var thereCanBeOnlyOne = ReCurseControls<T>(control);
 						Debug.Assert(thereCanBeOnlyOne == null,
 									 "Two concordance controls in the same window is not supported. One won't refresh properly.");
 					}
