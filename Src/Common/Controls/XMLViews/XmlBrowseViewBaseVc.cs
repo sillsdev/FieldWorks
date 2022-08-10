@@ -227,8 +227,8 @@ namespace SIL.FieldWorks.Common.Controls
 				foreach (XmlNode node in doc.DocumentElement.SelectNodes("//column"))
 				{
 					if (IsValidColumnSpec(node))
-					m_columns.Add(node);
-			}
+						m_columns.Add(node);
+				}
 			}
 			m_fakeFlid = fakeFlid;
 			SetupSelectColumn();
@@ -760,6 +760,21 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				return m_dxmpCheckWidth + 4 * m_dxmpCheckBorderWidth;
 			}
+		}
+
+		/// <returns>
+		/// A list of the labels for the visible columns in their configured order
+		/// </returns>
+		public static List<string> GetHeaderLabels(XmlBrowseViewBaseVc vc)
+		{
+			var headerLabelList = new List<string>();
+			foreach (var col in vc.ColumnSpecs)
+			{
+				headerLabelList.Add(XmlUtils.GetLocalizedAttributeValue(col, "label", null) ??
+					XmlUtils.GetMandatoryAttributeValue(col, "label"));
+			}
+
+			return headerLabelList;
 		}
 
 		internal virtual List<XmlNode> ColumnSpecs

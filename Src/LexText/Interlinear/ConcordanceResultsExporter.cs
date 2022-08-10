@@ -1,12 +1,13 @@
+// Copyright (c) 2022 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System.Globalization;
 using System.IO;
-using System.Xml;
 using CsvHelper;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.IText
 {
@@ -16,16 +17,18 @@ namespace SIL.FieldWorks.IText
 	class ConcordanceResultsExporter : CollectorEnv
 	{
 		private TextWriter Writer { get; }
-		private CsvHelper.CsvWriter csv { get; }
+		private CsvWriter Csv { get; }
 		private XmlBrowseViewBaseVc VC { get; }
-		// CsvWriter expects empty cells to be written. Keep track of when a cell is
-		// written. If a cell is being closed and nothing was written to it, then write a empty string.
+		/// <summary>
+		/// CsvWriter expects empty cells to be written. Keep track of when a cell is written.
+		/// If a cell is being closed and nothing was written to it, then write a empty string.
+		/// </summary>
 		private bool HasCellBeenWritten { get; set; }
 
 		public ConcordanceResultsExporter(TextWriter writer, XmlBrowseViewBaseVc vc, ISilDataAccess sda, int hvoRoot) : base(null, sda, hvoRoot)
 		{
 			Writer = writer;
-			csv = new CsvWriter(Writer, CultureInfo.InvariantCulture);
+			Csv = new CsvWriter(Writer, CultureInfo.InvariantCulture);
 			VC = vc;
 			HasCellBeenWritten = false;
 			WriteHeader();
@@ -33,22 +36,17 @@ namespace SIL.FieldWorks.IText
 
 		private void WriteHeader()
 		{
-			// TODO: This doesn't completely work since it lists all the columns, not just the ones displayed.
-			/*
-			foreach (XmlNode node in VC.ComputePossibleColumns())
+			foreach (var columnLabel in XmlBrowseViewBaseVc.GetHeaderLabels(VC))
 			{
-				string label = XmlUtils.GetLocalizedAttributeValue(node, "label", null) ??
-							   XmlUtils.GetMandatoryAttributeValue(node, "label");
-				csv.WriteField(label);
+				Csv.WriteField(columnLabel);
 			}
-			csv.NextRecord();
-			*/
+			Csv.NextRecord();
 		}
 
 		public void Export()
 		{
 			VC.Display(this, m_hvoCurr, 100000);
-			csv.Flush();
+			Csv.Flush();
 		}
 
 		public override void CloseTableCell()
@@ -56,35 +54,25 @@ namespace SIL.FieldWorks.IText
 			// A empty cell might not result in a property value being written.  If we get
 			// in here without writing a value then write an empty string to keep the columns aligned.
 			if (!HasCellBeenWritten)
-				csv.WriteField("");
+				Csv.WriteField("");
 			HasCellBeenWritten = false;
-		}
-
-		public override void AddStringProp(int tag, IVwViewConstructor _vwvc)
-		{
-			base.AddStringProp(tag, _vwvc);
 		}
 
 		public override void AddString(ITsString tss)
 		{
-			csv.WriteField(tss.Text);
+			Csv.WriteField(tss.Text);
 			HasCellBeenWritten = true;
-		}
-
-		public override void AddObj(int hvoItem, IVwViewConstructor vc, int frag)
-		{
-			base.AddObj(hvoItem, vc, frag);
 		}
 
 		public override void AddTsString(ITsString tss)
 		{
-			csv.WriteField(tss.Text);
+			Csv.WriteField(tss.Text);
 			HasCellBeenWritten = true;
 		}
 
 		public override void CloseTableRow()
 		{
-			csv.NextRecord();
+			Csv.NextRecord();
 		}
 	}
 }

@@ -5,11 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using System.Xml;
-using Gecko.WebIDL;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.RootSites;
@@ -79,7 +76,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// This method will handle the RefreshDisplay calls for all the child controls of the ConcordanceContainer, the ConcordanceControl needs to be
 		/// refreshed last because its interaction with the Mediator will update the other views, if it isn't called last then the caches and contents
-		/// of the other views will be inconsistant with the ConcordanceControl and will lead to crashes or incorrect display behavior.
+		/// of the other views will be inconsistent with the ConcordanceControl and will lead to crashes or incorrect display behavior.
 		/// </summary>
 		/// <param name="parentControl">The control to Recurse</param>
 		private T ReCurseControls<T>(Control parentControl) where T : Control
