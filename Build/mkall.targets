@@ -664,6 +664,7 @@
 			<NuGottenFiles Include="$(PackagesDir)/NAudio.1.10.0/lib/net35/NAudio.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/Castle.Core.4.4.1/lib/net45/Castle.Core.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/CommandLineArgumentsParser.3.0.22/lib/net45/CommandLineArgumentsParser.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/CsvHelper.28.0.1/lib/net45/CsvHelper.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/NAudio.Lame.1.1.5/lib/netstandard2.0/NAudio.Lame.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/NAudio.Lame.1.1.5/build/libmp3lame.32.dll" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'"/>
 			<NuGottenFiles Include="$(PackagesDir)/NAudio.Lame.1.1.5/build/libmp3lame.64.dll" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'"/>

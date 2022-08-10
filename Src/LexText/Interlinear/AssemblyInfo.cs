@@ -11,3 +11,4 @@ using SIL.Acknowledgements;
 [assembly: System.Runtime.InteropServices.ComVisible(false)]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("ITextDllTests")]
 [assembly: Acknowledgement("Dragula", Copyright = "Nicolás Bevacqua", Url = "https://github.com/bevacqua/dragula", LicenseUrl = "https://opensource.org/licenses/MIT")]
+[assembly: Acknowledgement("CsvHelper", Copyright = "© 2009-2022 Josh Close", Url = "https://joshclose.github.io/CsvHelper/", LicenseUrl = "https://opensource.org/licenses/MS-PL")]

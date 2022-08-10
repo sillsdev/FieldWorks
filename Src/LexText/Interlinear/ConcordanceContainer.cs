@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -10,6 +11,7 @@ using System.Windows.Forms;
 using System.Xml;
 using Gecko.WebIDL;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.XWorks;
 using XCore;
@@ -34,7 +36,21 @@ namespace SIL.FieldWorks.IText
 
 		public void OnExportConcordanceResults(object arguments)
 		{
-			using (var fs = new FileStream(Path.Combine(Path.GetTempPath(), "ConcordanceResults.csv"), FileMode.Create))
+			string fileName;
+			using (var dlg = new SaveFileDialogAdapter())
+			{
+				dlg.AddExtension = true;
+				dlg.DefaultExt = "csv";
+				dlg.Filter = ITextStrings.ksConcordanceExportFilter;
+				dlg.Title = ITextStrings.ksConcordanceExportTitle;
+				dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+				if (dlg.ShowDialog(this) != DialogResult.OK)
+					return;
+				fileName = dlg.FileName;
+			}
+			DesktopAnalytics.Analytics.Track("ExportConcordanceResults", new Dictionary<string, string>());
+
+			using (var fs = new FileStream(fileName, FileMode.Create))
 			using (var textWriter = new StreamWriter(fs))
 			{
 				var exporter = new ConcordanceResultsExporter(textWriter,
