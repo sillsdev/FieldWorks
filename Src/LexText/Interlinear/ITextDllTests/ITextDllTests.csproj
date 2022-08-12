@@ -298,6 +298,7 @@
     <Compile Include="ComboHandlerTests.cs" />
     <Compile Include="ComplexConcPatternModelTests.cs" />
     <Compile Include="ConcordanceControlTests.cs" />
+    <Compile Include="ConcordanceResultsExporterTests.cs" />
     <Compile Include="ConfigureInterlinearDlgTests.cs" />
     <Compile Include="ImportInterlinearAnalysesTests.cs" />
     <Compile Include="InterlinearExporterTests.cs" />
