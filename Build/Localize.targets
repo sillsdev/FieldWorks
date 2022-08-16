@@ -77,10 +77,12 @@
 		</ItemGroup>
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="postProcessDownloadedTranslation"
 			Properties="LocaleDir=%(LocaleDirs.Identity);Locale=%(Filename)"/>
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="updateOneTemplateLdmlFile"
-			Properties="Locale=%(LocaleDirs.Filename)"/>
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="updateOneTemplateLdmlFile"
-			Properties="Locale=en"/>
+		<!-- Uncomment these lines when LT-21908 is resolved.
+			These lines download the latest LDML files from the SLDR; unfortunately, Palaso can't parse what SLDR is now serving. -->
+		<!-- <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="updateOneTemplateLdmlFile" -->
+			<!-- Properties="Locale=%(LocaleDirs.Filename)"/> -->
+		<!-- <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="updateOneTemplateLdmlFile" -->
+			<!-- Properties="Locale=en"/> -->
 	</Target>
 
 	<Target Name="copyLibL10ns">
