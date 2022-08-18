@@ -222,7 +222,7 @@ namespace SIL.FieldWorks.XWorks
 			// TODO: decide on a useful json representation for tables
 		}
 
-		public void StartEntry(IFragmentWriter xw, string className, Guid entryGuid, int index)
+		public void StartEntry(IFragmentWriter xw, string className, Guid entryGuid, int index, RecordClerk clerk)
 		{
 			var jsonWriter = (JsonFragmentWriter)xw;
 			jsonWriter.StartObject();
@@ -240,7 +240,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			var indexChar = ConfiguredExport.GetLeadChar(
-				ConfiguredLcmGenerator.GetHeadwordForLetterHead(entry),
+				ConfiguredLcmGenerator.GetSortWordForLetterHead(entry, clerk),
 				headwordWs,
 				new Dictionary<string, Dictionary<string, ConfiguredExport.CollationLevel>>(),
 				new Dictionary<string, Dictionary<string, string>>(),
@@ -599,7 +599,8 @@ namespace SIL.FieldWorks.XWorks
 			int[] entryHvos,
 			string configPath,
 			string exportPath,
-			LcmCache cache)
+			LcmCache cache,
+			RecordClerk clerk)
 		{
 			dynamic dictionaryMetaData = new JObject();
 			dictionaryMetaData._id = siteName;
@@ -607,7 +608,7 @@ namespace SIL.FieldWorks.XWorks
 			mainLanguageData.title = cache.LangProject.DefaultVernacularWritingSystem.DisplayLabel;
 			mainLanguageData.lang = cache.LangProject.DefaultVernacularWritingSystem.Id;
 			//mainLanguageData.title = Enhance: Add new field to dialog for title?
-			mainLanguageData.letters = JArray.FromObject(GenerateLetterHeaders(entryHvos, cache));
+			mainLanguageData.letters = JArray.FromObject(GenerateLetterHeaders(entryHvos, cache, clerk));
 			var customDictionaryCss = CssGenerator.CopyCustomCssAndGetPath(exportPath, configPath);
 			var cssFiles = new JArray();
 			cssFiles.Add("configured.css");
@@ -641,9 +642,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 
-		public static JArray GenerateReversalLetterHeaders(string siteName, string writingSystem, int[] entryIds, LcmCache cache)
+		public static JArray GenerateReversalLetterHeaders(string siteName, string writingSystem, int[] entryIds, LcmCache cache, RecordClerk clerk)
 		{
-			return JArray.FromObject(GenerateLetterHeaders(entryIds, cache));
+			return JArray.FromObject(GenerateLetterHeaders(entryIds, cache, clerk));
 		}
 
 		/// <summary>
@@ -668,7 +669,7 @@ namespace SIL.FieldWorks.XWorks
 			return listArray;
 		}
 
-		private static List<string> GenerateLetterHeaders(int[] entriesToSave, LcmCache cache)
+		private static List<string> GenerateLetterHeaders(int[] entriesToSave, LcmCache cache, RecordClerk clerk)
 		{
 			// These maps act as a cache to improve performance for discovering the index character for each headword
 			var wsDigraphMap = new Dictionary<string, Dictionary<string, ConfiguredExport.CollationLevel>>();
@@ -681,7 +682,7 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var entryHvo in entriesToSave)
 			{
 				var entry = cache.ServiceLocator.GetObject(entryHvo);
-				var firstLetter = ConfiguredExport.GetLeadChar(ConfiguredLcmGenerator.GetHeadwordForLetterHead(entry),
+				var firstLetter = ConfiguredExport.GetLeadChar(ConfiguredLcmGenerator.GetSortWordForLetterHead(entry, clerk),
 					wsString, wsDigraphMap, wsCharEquivalentMap, wsIgnorableMap, col, cache);
 				if (letters.Contains(firstLetter))
 					continue;

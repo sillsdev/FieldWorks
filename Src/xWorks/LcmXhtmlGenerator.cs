@@ -135,7 +135,7 @@ namespace SIL.FieldWorks.XWorks
 				foreach (var entryAndXhtml in entryContents)
 				{
 					if (wantLetterHeaders && !string.IsNullOrEmpty(entryAndXhtml.Item2.ToString()))
-						GenerateLetterHeaderIfNeeded(entryAndXhtml.Item1, ref lastHeader, xhtmlWriter, col, settings);
+						GenerateLetterHeaderIfNeeded(entryAndXhtml.Item1, ref lastHeader, xhtmlWriter, col, settings, clerk);
 					xhtmlWriter.WriteRaw(entryAndXhtml.Item2.ToString());
 				}
 				col?.Dispose();
@@ -160,7 +160,7 @@ namespace SIL.FieldWorks.XWorks
 			return !settings.ExportPath.StartsWith(Path.Combine(Path.GetTempPath(), "DictionaryPreview"));
 		}
 
-		internal static void GenerateLetterHeaderIfNeeded(ICmObject entry, ref string lastHeader, XmlWriter xhtmlWriter, Collator headwordWsCollator, ConfiguredLcmGenerator.GeneratorSettings settings)
+		internal static void GenerateLetterHeaderIfNeeded(ICmObject entry, ref string lastHeader, XmlWriter xhtmlWriter, Collator headwordWsCollator, ConfiguredLcmGenerator.GeneratorSettings settings, RecordClerk clerk = null)
 		{
 			// If performance is an issue these dummy's can be stored between calls
 			var dummyOne = new Dictionary<string, Dictionary<string, ConfiguredExport.CollationLevel>>();
@@ -168,7 +168,7 @@ namespace SIL.FieldWorks.XWorks
 			var dummyThree = new Dictionary<string, ISet<string>>();
 			var cache = settings.Cache;
 			var wsString = ConfiguredLcmGenerator.GetWsForEntryType(entry, settings.Cache);
-			var firstLetter = ConfiguredExport.GetLeadChar(ConfiguredLcmGenerator.GetHeadwordForLetterHead(entry), wsString, dummyOne, dummyTwo, dummyThree,
+			var firstLetter = ConfiguredExport.GetLeadChar(ConfiguredLcmGenerator.GetSortWordForLetterHead(entry, clerk), wsString, dummyOne, dummyTwo, dummyThree,
 				headwordWsCollator, cache);
 			if (firstLetter != lastHeader && !string.IsNullOrEmpty(firstLetter))
 			{
@@ -458,10 +458,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private static string GeneratePageButtonText(int firstEntryId, int lastEntryId, ConfiguredLcmGenerator.GeneratorSettings settings, bool isFirst)
 		{
+			var clerk = settings.PropertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 			var firstEntry = settings.Cache.ServiceLocator.GetObject(firstEntryId);
 			var lastEntry = settings.Cache.ServiceLocator.GetObject(lastEntryId);
-			var firstLetters = GetIndexLettersOfHeadword(ConfiguredLcmGenerator.GetHeadwordForLetterHead(firstEntry), isFirst);
-			var lastLetters = GetIndexLettersOfHeadword(ConfiguredLcmGenerator.GetHeadwordForLetterHead(lastEntry));
+			var firstLetters = GetIndexLettersOfSortWord(ConfiguredLcmGenerator.GetSortWordForLetterHead(firstEntry, clerk), isFirst);
+			var lastLetters = GetIndexLettersOfSortWord(ConfiguredLcmGenerator.GetSortWordForLetterHead(lastEntry, clerk));
 			return firstEntryId == lastEntryId ? firstLetters : firstLetters + " .. " + lastLetters;
 		}
 
@@ -492,19 +493,19 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Return the first two letters of headword (or just one letter if headword is one character long, or if justFirstLetter is true
+		/// Return the first two letters of sort word (or just one letter if sort word is one character long, or if justFirstLetter is true
 		/// </summary>
-		private static string GetIndexLettersOfHeadword(string headWord, bool justFirstLetter = false)
+		private static string GetIndexLettersOfSortWord(string sortWord, bool justFirstLetter = false)
 		{
 			// I don't know if we can have an empty headword. If we can then return empty string instead of crashing.
-			if (headWord.Length == 0)
+			if (sortWord.Length == 0)
 				return String.Empty;
-			var length = ConfiguredExport.GetLetterLengthAt(headWord, 0);
-			if (headWord.Length > length && !justFirstLetter)
+			var length = ConfiguredExport.GetLetterLengthAt(sortWord, 0);
+			if (sortWord.Length > length && !justFirstLetter)
 			{
-				length += ConfiguredExport.GetLetterLengthAt(headWord, length);
+				length += ConfiguredExport.GetLetterLengthAt(sortWord, length);
 			}
-			return TsStringUtils.Compose(headWord.Substring(0, length));
+			return TsStringUtils.Compose(sortWord.Substring(0, length));
 		}
 
 		private static List<Tuple<int, int>> GetPageRanges(int[] entryHvos, int entriesPerPage)
@@ -826,7 +827,7 @@ namespace SIL.FieldWorks.XWorks
 			((XmlFragmentWriter)writer).Writer.WriteEndElement(); // should be </table>
 		}
 
-		public void StartEntry(IFragmentWriter writer, string className, Guid entryGuid, int index)
+		public void StartEntry(IFragmentWriter writer, string className, Guid entryGuid, int index, RecordClerk clerk)
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement("div");

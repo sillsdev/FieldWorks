@@ -328,7 +328,8 @@ namespace SIL.FieldWorks.XWorks
 			using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
 			{
 				ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, DictionaryType);
-				return LcmJsonGenerator.GenerateDictionaryMetaData(siteName, templateFileNames, reversals, entriesToSave, configPath, exportPath, m_cache);
+				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+				return LcmJsonGenerator.GenerateDictionaryMetaData(siteName, templateFileNames, reversals, entriesToSave, configPath, exportPath, m_cache, clerk);
 			}
 		}
 	}

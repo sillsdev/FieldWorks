@@ -556,6 +556,7 @@ namespace SIL.FieldWorks.XWorks
 							configuration);
 					var allRequestsSucceeded = PostEntriesToWebonary(model, view, entries, false);
 
+					var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 					foreach (var selectedReversal in model.SelectedReversals)
 					{
 						int[] entryIds;
@@ -566,7 +567,7 @@ namespace SIL.FieldWorks.XWorks
 						allRequestsSucceeded &= PostEntriesToWebonary(model, view, entries, true);
 						var reversalLetters =
 							LcmJsonGenerator.GenerateReversalLetterHeaders(model.SiteName,
-								writingSystem, entryIds, m_cache);
+								writingSystem, entryIds, m_cache, clerk);
 						AddReversalHeadword(metadataContent, writingSystem, reversalLetters);
 					}
 

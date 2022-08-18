@@ -162,19 +162,57 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// To generating the letter headings, we need to check the first character of the "headword," which is a different
-		/// field for ILexEntry and IReversalIndexEntry. Get the headword starting from entry-type-agnostic.
+		/// Get the sort word that will be used to generate the letter headings. The sort word can come from a different
+		/// field depending on the sort column.
 		/// </summary>
-		/// <returns>the "headword" in NFD (the heading letter must be normalized to NFC before writing to XHTML, per LT-18177)</returns>
-		internal static string GetHeadwordForLetterHead(ICmObject entry)
+		/// <returns>the sort word in NFD (the heading letter must be normalized to NFC before writing to XHTML, per LT-18177)</returns>
+		internal static string GetSortWordForLetterHead(ICmObject entry, RecordClerk clerk)
 		{
 			var lexEntry = entry as ILexEntry;
+
+			// Reversal Indexes - We are always using the same sorting, regardless of the sort column that
+			// was selected.  So always return the same word for the letter head.
 			if (lexEntry == null)
 			{
+				// When viewing the Reversal Indexes the sort column always comes back as "Form",
+				// regardless of which column was selected for the sort. If for some cases this assumption changes
+				// then we need to assess if those cases should be returning a different property for the sort word.
+				if (clerk?.SortName != null)
+				{
+					Debug.Assert(clerk.SortName.StartsWith("Form"),
+						"Should we be getting the letter headers from the sort column: " +
+						clerk.SortName);
+				}
+
 				var revEntry = entry as IReversalIndexEntry;
 				return revEntry != null ? revEntry.ReversalForm.BestAnalysisAlternative.Text.TrimStart() : string.Empty;
 			}
-			return lexEntry.HomographForm.TrimStart();
+
+			if (clerk?.SortName != null)
+			{
+				// Lexeme Form
+				if (clerk.SortName.StartsWith("Lexeme Form"))
+				{
+					string retStr = lexEntry.LexemeFormOA?.Form?.VernacularDefaultWritingSystem?.Text?.TrimStart();
+					return retStr != null ? retStr : string.Empty;
+				}
+
+				// Citation Form
+				if (clerk.SortName.StartsWith("Citation Form"))
+				{
+					string retStr = lexEntry.CitationForm?.UserDefaultWritingSystem?.Text?.TrimStart();
+					return (retStr != null && retStr != "***") ? retStr : string.Empty;
+				}
+
+				// If we get here and have a sort name other than "Headword" then it should have
+				// it's own conditional check and use a different lexEntry field to get the sort word.
+				Debug.Assert(clerk.SortName.StartsWith("Headword"),
+					"We should be getting the letter headers from the sort column: " +
+					clerk.SortName);
+			}
+
+			// Headword - Default to using the "Headword" sort word.
+			return  lexEntry.HomographForm.TrimStart();
 		}
 
 		/// <summary>
@@ -271,7 +309,8 @@ namespace SIL.FieldWorks.XWorks
 			var bldr = new StringBuilder();
 			using (var xw = settings.ContentGenerator.CreateWriter(bldr))
 			{
-				settings.ContentGenerator.StartEntry(xw, GetClassNameAttributeForConfig(configuration), entry.Guid, index);
+				var clerk = settings.PropertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+				settings.ContentGenerator.StartEntry(xw, GetClassNameAttributeForConfig(configuration), entry.Guid, index, clerk);
 				settings.ContentGenerator.AddEntryData(xw, pieces);
 				settings.ContentGenerator.EndEntry(xw);
 				xw.Flush();
