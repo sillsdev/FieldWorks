@@ -9,6 +9,7 @@
 // <remarks>
 // </remarks>
 
+#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -19,7 +20,6 @@ using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.FXT
 {
-#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO
 	/// <summary>
 	/// Summary description for M3ParserDumpTests.
 	/// </summary>
@@ -51,5 +51,5 @@ namespace SIL.FieldWorks.Common.FXT
 				DoDump("TestLangProj", "TLP M3Parser dump", m_sFxtParserPath, sAnswerFile, true, true);
 			}
 		}
-#endif
 }
+#endif

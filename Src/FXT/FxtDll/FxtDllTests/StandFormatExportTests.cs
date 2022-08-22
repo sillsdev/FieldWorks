@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //-------------------------------------------------------------------------------
+#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO & to use FileUtils
 using System;
 using System.IO;
 using SIL.FieldWorks.Common.FwUtils;
@@ -10,7 +11,6 @@ using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FXT
 {
-//#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO & to use FileUtils
 	/// <summary>
 	/// Test SFM export
 	/// </summary>
@@ -78,5 +78,5 @@ namespace SIL.FieldWorks.Common.FXT
 		}
 
 	}
-//#endif
 }
+#endif

@@ -1,11 +1,10 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Globalization;
 using System.IO;
-using System.Reflection;
-using Microsoft.Win32;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Program;
@@ -122,7 +121,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 			public void AddLineX(string line, bool echoToStdError)
 			{
-				var dateStamp = string.Format("[{0}] ", DateTime.Now);
+				var dateStamp = $"[{DateTime.Now.ToString(CultureInfo.InvariantCulture)}] ";
 
 				//			// always log to the debug output window
 				//			System.Diagnostics.Debug.Write(dateStamp, "Log");

@@ -1,9 +1,6 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LiftExportTests.cs
-// Responsibility: mcconnel
 
 using System;
 using System.Collections.Generic;
@@ -13,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using NUnit.Framework;
+using SIL.Extensions;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -1303,19 +1301,18 @@ namespace LexTextControlsTests
 			var entries = xdoc.SelectNodes("//entry");
 			Assert.That(entries, Is.Not.Null);
 			Assert.AreEqual(7, entries.Count, "LIFT file should contain 7 entries");
-			var formats = new string[] { "yyyy-MM-ddTHH:mm:sszzzz", "yyyy-MM-ddTHH:mm:ssZ", "yyyy-MM-dd" };
 			VerifyCustomLists(xdoc);
 			foreach (XmlNode xentry in entries)
 			{
 				var sCreated = XmlUtils.GetOptionalAttributeValue(xentry, "dateCreated");
 				Assert.That(sCreated, Is.Not.Null, "an LIFT <entry> should have a dateCreated attribute");
-				var dtCreated = DateTime.ParseExact(sCreated, formats, new DateTimeFormatInfo(),
+				var dtCreated = DateTime.ParseExact(sCreated, DateTimeExtensions.ISO8601TimeFormatWithUTC, new DateTimeFormatInfo(),
 													DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
 				var delta = DateTime.UtcNow - dtCreated;
 				Assert.Greater(300, delta.TotalSeconds);
 				Assert.LessOrEqual(0, delta.TotalSeconds);	// allow time for breakpoints in debugging...
 				var sModified = XmlUtils.GetOptionalAttributeValue(xentry, "dateModified");
-				var dtModified = DateTime.ParseExact(sModified, formats, new DateTimeFormatInfo(),
+				var dtModified = DateTime.ParseExact(sModified, DateTimeExtensions.ISO8601TimeFormatWithUTC, new DateTimeFormatInfo(),
 													 DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
 				delta = DateTime.UtcNow - dtModified;
 				Assert.Greater(300, delta.TotalSeconds);

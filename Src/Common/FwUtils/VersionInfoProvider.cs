@@ -1,10 +1,11 @@
-// Copyright (c) 2010-2021 SIL International
+// Copyright (c) 2010-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Linq;
 using System.Reflection;
+using SIL.Extensions;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -224,7 +225,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					if (date > 0)
 					{
 						DateTime dt = DateTime.FromOADate(date);
-						productDate = dt.ToString("yyyy/MM/dd");
+						productDate = dt.ToISO8601TimeFormatDateOnlyString();
 					}
 
 					goto case 1;

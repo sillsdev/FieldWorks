@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using Ionic.Zip;
+using SIL.Extensions;
 using SIL.LCModel;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.LCModel.Utils;
@@ -537,7 +538,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var saveDialog = new DialogAdapters.SaveFileDialogAdapter())
 			{
 				saveDialog.Title = xWorksStrings.kstidChooseExportFile;
-				saveDialog.FileName = StringUtils.FilterForFileName(SelectedConfiguration + "_FLEx-Dictionary-Configuration_" + DateTime.Now.ToString("yyyy-MM-dd"), disallowedCharacters);
+				saveDialog.FileName = StringUtils.FilterForFileName(SelectedConfiguration + "_FLEx-Dictionary-Configuration_" + DateTime.Now.ToISO8601TimeFormatDateOnlyString(), disallowedCharacters);
 				saveDialog.DefaultExt = "zip";
 				saveDialog.AddExtension = true;
 				saveDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);

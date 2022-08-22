@@ -286,7 +286,7 @@
 		<PalasoNugetVersion>10.0.1-beta0003</PalasoNugetVersion>
 		<Palaso4ParatextNugetVersion>8.1.0-beta0035</Palaso4ParatextNugetVersion>
 		<ParatextNugetVersion>9.2.6.2</ParatextNugetVersion>
-		<LcmNugetVersion>10.2.0-beta0044</LcmNugetVersion>
+		<LcmNugetVersion>10.2.0-beta0047</LcmNugetVersion>
 		<IcuNugetVersion>70.1.123</IcuNugetVersion>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
@@ -363,6 +363,7 @@
 		<PalasoFiles Include="SIL.WritingSystems.Tests.pdb"/>
 		<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.pdb"/>
 		<PalasoFiles Include="SIL.Lexicon.pdb"/>
+
 		<ChorusFiles Include="Autofac.dll"/>
 		<ChorusFiles Include="Chorus.exe"/>
 		<ChorusFiles Include="ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
@@ -384,7 +385,7 @@
 		<LcmOutputBaseFiles Include="NHunspell.dll" Condition="'$(OS)'=='Windows_NT'" />
 		<LcmOutputBaseFiles Include="CommonServiceLocator.dll" />
 		<LcmOutputBaseFiles Include="protobuf-net.dll" />
-		<LcmOutputBaseFiles Include="StructureMap.dll" />
+		<LcmOutputBaseFiles Include="structuremap.patched.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.FixData.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.Tests.dll" />
@@ -407,6 +408,7 @@
 		<LcmOutputBaseFiles Include="SIL.LCModel.Build.Tasks.pdb" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.pdb" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Tests.pdb" />
+
 		<LcmOutputCommonFiles Include="KernelInterfaces/FwKernelTlb.json" />
 
 		<LcmFwKernelFiles Include="KernelInterfaces/common.idh" />
@@ -497,12 +499,13 @@
 			<SILNugetPackages Include="SIL.LCModel.Utils.Tests"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.LCModel.Tests"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.LCModel.Tools"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
+			<SILNugetPackages Include="CommonServiceLocator"><Version>1.4.0</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="Mono.Unix" Condition="'$(OS)'!='Windows_NT'"><Version>7.1.0-final.1.21458.1</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="NHunspell.Patched"><Version>1.2.5554</Version><Path>lib/net/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="NHunspell.Patched"><Version>1.2.5554</Version><Path>runtimes/win7-$(Platform)/native/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="SharpZipLib"><Version>1.0.0</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="protobuf-net"><Version>2.4.6</Version><Path>lib/net40/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="CommonServiceLocator"><Version>1.4.0</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SharpZipLib"><Version>1.0.0</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="structuremap.patched"><Version>4.7.1</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="System.CodeDom"><Version>4.4.0</Version><Path>lib/netstandard2.0/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<!-- Palaso and related packages -->
 			<SILNugetPackages Include="SIL.Archiving"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
@@ -537,8 +540,6 @@
 			<SILNugetPackages Include="SIL.Chorus.ChorusHub"  Condition="'$(OS)'=='Unix'"><Version>$(ChorusNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="Autofac"><Version>2.6.3.862</Version><Path>lib/NET40/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="Vulcan.Uczniowie.HelpProvider"><Version>1.0.16</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<!-- Other supporting packages -->
-			<SILNugetPackages Include="structuremap.patched"><Version>2.5.4</Version><Path>lib/net461/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 		</ItemGroup>
 	</Target>
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -10,6 +10,7 @@
 // </remarks>
 
 using System;
+using System.Globalization;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.LCModel.Core.Cellar;
@@ -376,17 +377,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		protected override void UpdateDisplayFromDatabase()
 		{
-			RichTextBox rtb = ((RichTextBox)this.Control);
-			DateTime dt = SilTime.GetTimeProperty(m_cache.DomainDataByFlid, Object.Hvo, m_flid);
-			if (dt == DateTime.MinValue)
-			{
-				rtb.Text = "Date/Time not set";
-			}
-			else
-			{
-				rtb.Text = String.Format(DetailControlsStrings.ksDateAndTime,
-					dt.ToLongDateString(), dt.ToShortTimeString());
-			}
+			var rtb = (RichTextBox)Control;
+			var dt = SilTime.GetTimeProperty(m_cache.DomainDataByFlid, Object.Hvo, m_flid);
+			rtb.Text = dt == DateTime.MinValue ? "Date/Time not set" : dt.ToString("f", CultureInfo.CurrentUICulture);
 		}
 
 		protected override void OnGotFocus(EventArgs e)

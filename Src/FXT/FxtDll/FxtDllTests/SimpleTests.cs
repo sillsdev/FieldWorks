@@ -9,6 +9,7 @@
 // <remarks>
 // </remarks>
 
+#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO
 using System;
 using System.IO;
 using System.Diagnostics;
@@ -19,7 +20,6 @@ using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.FXT
 {
-#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO
 	/// <summary>
 	/// Summary description for SimpleTests.
 	/// </summary>
@@ -57,5 +57,5 @@ namespace SIL.FieldWorks.Common.FXT
 			DoDump ("TestLangProj", "WebPageSample", sFxtPath, sAnswerFile,false,true);
 		}
 	}
-#endif
 }
+#endif

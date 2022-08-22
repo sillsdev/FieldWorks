@@ -1,12 +1,14 @@
-﻿using SIL.LCModel;
+// Copyright (c) 2015-2022 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+using SIL.LCModel;
 using SIL.FieldWorks.FwCoreDlgs;
 
 namespace SIL.FieldWorks.FixData
 {
 	public class WriteAllObjectsUtility : IUtility
 	{
-		private UtilityDlg _utilityDlg;
-
 		/// <summary>
 		/// Override method to return the Label property.
 		/// </summary>
@@ -16,34 +18,29 @@ namespace SIL.FieldWorks.FixData
 			return Label;
 		}
 
-		public string Label
-		{
-			get { return "Write Everything"; }
-		}
+		public string Label => Strings.WriteEverything;
 
 		public UtilityDlg Dialog
 		{
-			set
-			{
-				_utilityDlg = value;
-			}
+			private get;
+			set;
 		}
 
 		public void LoadUtilities()
 		{
-			_utilityDlg.Utilities.Items.Add(this);
+			Dialog.Utilities.Items.Add(this);
 		}
 
 		public void OnSelection()
 		{
-			_utilityDlg.WhenDescription = "Run this whenever you want to write out all CmObjects in the system. This will fix S/R failures if basic attributes were somehow lost in the fwdata file.";
-			_utilityDlg.WhatDescription = "This utility writes all CmObjects out fresh, as if they had all been modified.";
-			_utilityDlg.RedoDescription = "This operation cannot be undone, since it makes no changes.";
+			Dialog.WhenDescription = Strings.WriteEverythingUseThisWhen;
+			Dialog.WhatDescription = Strings.WriteEverythingThisUtilityAttemptsTo;
+			Dialog.RedoDescription = Strings.WriteEverythingCannotUndo;
 		}
 
 		public void Process()
 		{
-			var cache = _utilityDlg.PropTable.GetValue<LcmCache>("cache");
+			var cache = Dialog.PropTable.GetValue<LcmCache>("cache");
 			cache.ExportEverythingAsModified();
 		}
 	}

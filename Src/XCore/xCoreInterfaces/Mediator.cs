@@ -666,23 +666,12 @@ namespace XCore
 			}
 		}
 
-//		[Conditional("DEBUG")]
-		private void DebugMsg(string msg)
+		private static void DebugMsg(string msg)
 		{
-			// create the initial info:
-			// datetime threadid threadpriority: msg
-			System.Text.StringBuilder msgOut = new System.Text.StringBuilder();
-			msgOut.Append(DateTime.Now.ToString("HH:mm:ss"));
-			msgOut.Append("-");
-			msgOut.Append(Thread.CurrentThread.GetHashCode());
-			msgOut.Append("-");
-			msgOut.Append(Thread.CurrentThread.Priority);
-			msgOut.Append(": ");
-			msgOut.Append(msg);
-			System.Diagnostics.Debug.WriteLine(msgOut.ToString());
+			Debug.WriteLine(BuildDebugMsg(msg));
 		}
 
-		private string BuildDebugMsg(string msg)
+		private static string BuildDebugMsg(string msg)
 		{
 			// create the initial info:
 			// datetime threadid threadpriority: msg

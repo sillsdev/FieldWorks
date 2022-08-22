@@ -120,16 +120,28 @@
   <data name="ksFindAndFixErrors" xml:space="preserve">
     <value>Find and fix errors in a FieldWorks data (XML) file.</value>
   </data>
-  <data name="ksUseThisWhen" xml:space="preserve">
+  <data name="ksErrorFixerUseThisWhen" xml:space="preserve">
     <value>Use this when a project is throwing exceptions such as "Key 62c22e20-8d8a-42bf-a54c-e21529284f2d not found in identity map...", and you suspect the data has been corrupted somehow.</value>
   </data>
-  <data name="ksThisUtilityAttemptsTo" xml:space="preserve">
+  <data name="ksErrorFixerThisUtilityAttemptsTo" xml:space="preserve">
     <value>This utility attempts to fix various errors in a FieldWorks project file.  The project must not be open, and must be in the fwdata (XML) format.</value>
   </data>
-  <data name="ksCannotUndo" xml:space="preserve">
+  <data name="ksErrorFixerCannotUndo" xml:space="preserve">
     <value>If this utility fails, you will need to go back to a previously saved version of the chosen database.</value>
   </data>
   <data name="ksErrorsFoundOrFixed" xml:space="preserve">
     <value>Errors found or fixed</value>
+  </data>
+  <data name="WriteEverything" xml:space="preserve">
+    <value>Write Everything</value>
+  </data>
+  <data name="WriteEverythingUseThisWhen" xml:space="preserve">
+    <value>Run this whenever you want to write out all CmObjects in the system. This will fix Send/Receive failures if basic attributes were somehow lost in the fwdata file, or if the fwdata file contains dates in invalid formats.</value>
+  </data>
+  <data name="WriteEverythingThisUtilityAttemptsTo" xml:space="preserve">
+    <value>This utility writes all CmObjects out fresh, as if they had all been modified. (It does not update their date modified)</value>
+  </data>
+  <data name="WriteEverythingCannotUndo" xml:space="preserve">
+    <value>This operation cannot be undone, since it makes no changes.</value>
   </data>
 </root>

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using SIL.Extensions;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework;
@@ -220,7 +221,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			writer.WriteAttributeString("DTDver", DtdRequiredVersion);
 			writer.WriteAttributeString("label", "Flex Dictionary");
-			writer.WriteAttributeString("date", DateTime.UtcNow.ToString("yyyy-MM-dd"));
+			writer.WriteAttributeString("date", DateTime.UtcNow.ToISO8601TimeFormatDateOnlyString());
 			writer.WriteStartElement("markup");
 			writer.WriteAttributeString("version", GetVersion(m_sourceStyles).ToString());
 			foreach (var style in StyleCollection)

@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,6 +9,8 @@ using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Threading;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
 // ReSharper disable InconsistentNaming
@@ -543,9 +545,12 @@ namespace SIL.FieldWorks.XWorks
 		/// Tests the method ExportTranslatedLists.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
-		[Test]
-		public void ExportTranslatedLists()
+		[TestCase("de", ".", ".")]
+		[TestCase("en", "/", ":")]
+		public void ExportTranslatedLists(string culture, string dateSep, string timeSep)
 		{
+			Thread.CurrentThread.CurrentCulture = new CultureInfo(culture) { DateTimeFormat = { DateSeparator = dateSep, TimeSeparator = timeSep } };
+
 			Assert.AreEqual(2, m_cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Count, "The number of top-level semantic domains");
 			ICmSemanticDomainRepository repoSemDom = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			Assert.AreEqual(11, repoSemDom.Count, "The total number of semantic domains");
@@ -562,7 +567,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					w.Close();
 					Assert.AreEqual("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", r.ReadLine());
-					StringAssert.StartsWith("<Lists date=\"", r.ReadLine());
+					Assert.That(r.ReadLine(), Does.Match(@"^<Lists date=""\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z"">$"));
 					Assert.AreEqual("<List owner=\"LangProject\" field=\"SemanticDomainList\" itemClass=\"CmSemanticDomain\">", r.ReadLine());
 					Assert.AreEqual("<Name>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">Semantic Domains</AUni>", r.ReadLine());

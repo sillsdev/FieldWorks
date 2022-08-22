@@ -1,12 +1,10 @@
-// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: RestoreProjectDlg.cs
-// Responsibility: TE Team
+
 using System;
 using System.IO;
-using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
@@ -477,9 +475,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 					backupDate, (m_lstVersions.Items.Count == 0));
 				if (backupFile != null)
 				{
-					ListViewItem newItem = new ListViewItem(new[]{backupDate.ToString(), backupFile.Comment});
-					newItem.Tag = backupFile;
-					m_lstVersions.Items.Add(newItem);
+					m_lstVersions.Items.Add(new ListViewItem(new[] { backupDate.ToString(Thread.CurrentThread.CurrentUICulture), backupFile.Comment })
+					{
+						Tag = backupFile
+					});
 				}
 			}
 

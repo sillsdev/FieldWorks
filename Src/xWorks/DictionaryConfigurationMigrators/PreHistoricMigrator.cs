@@ -1,4 +1,4 @@
-// Copyright (c) 2017 SIL International
+// Copyright (c) 2017-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -90,8 +90,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 			if (ConfigsNeedMigratingFromPre83())
 			{
-				m_logger.WriteLine(string.Format("{0}: Old configurations were found in need of migration. - {1}",
-					appVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss")));
+				m_logger.WriteLine($"{appVersion}: Old configurations were found in need of migration. - {DateTime.Now:yyyy MMM d h:mm:ss tt}");
 				var projectPath = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 
 				m_logger.WriteLine("Migrating dictionary configurations");
@@ -101,7 +100,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					"Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations",
 					Cache.ActionHandlerAccessor, PerformMigrationUOW);
 				m_logger.WriteLine(string.Format("Migrating Reversal Index configurations, if any - {0}",
-					DateTime.Now.ToString("h:mm:ss")));
+					DateTime.Now.ToLongTimeString()));
 				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName;
 				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
 				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
