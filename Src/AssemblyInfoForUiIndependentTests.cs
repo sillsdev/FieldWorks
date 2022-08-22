@@ -16,9 +16,9 @@ using SIL.TestUtilities;
 // Redirect HKCU if environment variable BUILDAGENT_SUBKEY is set
 [assembly: RedirectHKCU]
 
+// Initialize ICU
+[assembly: InitializeIcu(IcuVersion = 70)]
+
 // NOTE: it is important that OfflineSldr comes before InitializeIcu!
 // Turns the SLDR API into offline mode
 [assembly: OfflineSldr]
-
-// Initialize ICU
-[assembly: InitializeIcu(IcuVersion = 54)]

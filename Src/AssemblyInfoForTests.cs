@@ -33,12 +33,11 @@ using SIL.TestUtilities;
 // Handles any unhandled exceptions thrown on Windows Forms threads
 [assembly: HandleApplicationThreadException]
 
-// NOTE: it is important that OfflineSldr comes before InitializeIcu!
-// Turns the SLDR API into offline mode
-[assembly: OfflineSldr]
-
 // Initialize ICU
 [assembly: InitializeIcu(IcuVersion = 70)]
+
+// Turns the SLDR API into offline mode
+[assembly: OfflineSldr]
 
 // Allow creating COM objects from manifest file important that it comes after InitializeIcu
 [assembly: CreateComObjectsFromManifest]

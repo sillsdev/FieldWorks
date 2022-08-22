@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private bool m_pluginsUpdated;
 		private readonly Dictionary<string, bool> m_plugins = new Dictionary<string, bool>();
 		private readonly Dictionary<UpdateSettings.Channels, UpdateChannelMenuItem> m_channels;
-		private readonly UpdateChannelMenuItem m_NightlyChannel;
+		private readonly Dictionary<UpdateSettings.Channels, UpdateChannelMenuItem> m_QaChannels;
 		private const string HelpTopic = "khtpLexOptions";
 		private IHelpTopicProvider m_helpTopicProvider;
 
@@ -56,9 +56,14 @@ namespace SIL.FieldWorks.LexText.Controls
 				[UpdateSettings.Channels.Alpha] = new UpdateChannelMenuItem(UpdateSettings.Channels.Alpha,
 					LexTextControls.UpdatesAlpha, LexTextControls.UpdatesAlphaDescription)
 			};
-			m_NightlyChannel =  new UpdateChannelMenuItem(UpdateSettings.Channels.Nightly, "Nightly",
-				"DO NOT select this option unless you are an official FieldWorks tester. You might not be able to access your data tomorrow.");
-		}
+			m_QaChannels = new Dictionary<UpdateSettings.Channels, UpdateChannelMenuItem>
+			{
+				[UpdateSettings.Channels.Nightly] = new UpdateChannelMenuItem(UpdateSettings.Channels.Nightly, "Nightly",
+					"DO NOT select this option unless you are an official FieldWorks tester. You might not be able to access your data tomorrow."),
+				[UpdateSettings.Channels.Testing] = new UpdateChannelMenuItem(UpdateSettings.Channels.Testing, "Test Model Change",
+					"This option is only for testing related to model changes - This will not install a real FieldWorks update")
+			};
+	  }
 
 		/// <summary>
 		/// We have to set the checkbox here because the mediator (needed to get the App)
@@ -82,10 +87,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				m_cbUpdateChannel.Items.AddRange(m_channels.Values.ToArray());
 				// Enable the nightly channel only if it is already selected
-				if (m_settings.Update.Channel == UpdateSettings.Channels.Nightly)
+				if (m_settings.Update.Channel == UpdateSettings.Channels.Nightly || m_settings.Update.Channel == UpdateSettings.Channels.Testing)
 				{
-					m_cbUpdateChannel.Items.Add(m_NightlyChannel);
-					m_cbUpdateChannel.SelectedItem = m_NightlyChannel;
+					m_cbUpdateChannel.Items.AddRange(m_QaChannels.Values.ToArray());
+					m_cbUpdateChannel.SelectedItem = m_QaChannels[m_settings.Update.Channel];
 				}
 				else
 				{
@@ -375,11 +380,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (e.KeyChar == 14 /* ASCII 14 is ^N */ && (ModifierKeys & Keys.Shift) == Keys.Shift)
 			{
-				if (!m_cbUpdateChannel.Items.Contains(m_NightlyChannel))
+				if (!m_cbUpdateChannel.Items.Contains(m_QaChannels[UpdateSettings.Channels.Nightly]))
 				{
-					m_cbUpdateChannel.Items.Add(m_NightlyChannel);
+					m_cbUpdateChannel.Items.AddRange(m_QaChannels.Values.ToArray());
 				}
-				m_cbUpdateChannel.SelectedItem = m_NightlyChannel;
+				m_cbUpdateChannel.SelectedItem = m_QaChannels[UpdateSettings.Channels.Nightly];
 			}
 		}
 

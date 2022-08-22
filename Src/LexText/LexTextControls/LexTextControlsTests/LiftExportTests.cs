@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -464,10 +465,25 @@ namespace LexTextControlsTests
 		private string MockProjectFolder { get; set; }
 		private string MockLinkedFilesFolder { get; set; }
 		private int m_audioWsCode;
+		private TraceListener[] m_listeners;
 
 		private ISilDataAccessManaged m_sda;
 
 		#region Setup and Helper Methods
+
+		[OneTimeSetUp]
+		public void DisableTraceLoggers()
+		{
+			m_listeners = new TraceListener[Debug.Listeners.Count];
+			Debug.Listeners.CopyTo(m_listeners, 0);
+			Debug.Listeners.Clear();
+		}
+
+		[OneTimeTearDown]
+		public void RestoreTraceLoggers()
+		{
+			Debug.Listeners.AddRange(m_listeners);
+		}
 
 		/// <summary>
 		/// Setup method: create a memory-only mock cache and empty language project.

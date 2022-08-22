@@ -76,8 +76,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return;
 			}
 			Logger.WriteEvent("Checking for updates...");
-			// Only testers will access nightly updates, so we can call more attention to errors
-			if (updateSettings.Channel == UpdateSettings.Channels.Nightly)
+			// Only testers will access nightly and testing updates, so we can call more attention to errors
+			if (updateSettings.Channel == UpdateSettings.Channels.Nightly || updateSettings.Channel == UpdateSettings.Channels.Testing)
 			{
 				ExceptionHandler.Init(new WinFormsExceptionHandler());
 			}
@@ -109,6 +109,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 						break;
 					case UpdateSettings.Channels.Beta:
 					case UpdateSettings.Channels.Alpha:
+					case UpdateSettings.Channels.Testing:
 						infoURL = string.Format(infoURL, updateSettings.Channel);
 						break;
 					case UpdateSettings.Channels.Nightly:
@@ -132,7 +133,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					return $"Failed to download update info from {infoURL}";
 				}
-				var available = GetLatestUpdateFrom(Current, XDocument.Load(LocalUpdateInfoFilePath), baseURL, isNightly);
+				var available = GetLatestUpdateFrom(Current, XDocument.Load(LocalUpdateInfoFilePath), baseURL,
+					isNightly || updateSettings.Channel == UpdateSettings.Channels.Testing);
 				if (available == null)
 				{
 					File.Delete(LocalUpdateInfoFilePath);
