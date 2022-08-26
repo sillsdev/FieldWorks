@@ -8,6 +8,7 @@
 		<Project name="TeDllTests"/>
 	</TimeoutGroup>
 	<TimeoutGroup timeLimit="240">
+		<Project name="LexTextControlsTests"/>
 		<Project name="TeImportExportTests"/>
 	</TimeoutGroup>
 	<TimeoutGroup timeLimit="150">
@@ -29,7 +30,6 @@
 		<Project name="FwUtilsTests"/>
 		<Project name="ITextDllTests"/>
 		<Project name="LexEdDllTests"/>
-		<Project name="LexTextControlsTests"/>
 		<Project name="LexTextDllTests"/>
 		<Project name="NotesViewTests"/>
 		<Project name="ParserCoreTests"/>
