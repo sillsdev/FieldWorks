@@ -1976,7 +1976,7 @@ namespace SIL.FieldWorks.IText
 			{
 				string sWs = WritingSystemFactory.GetStrFromWs(ws);
 				var morphs = (from mf in Cache.ServiceLocator.GetInstance<IMoFormRepository>().AllInstances()
-							  where icuCollator.Compare(mf.Form.get_String(ws).Text, form) == 0
+							  where icuCollator.Compare(mf.Form.get_String(ws).Text, form) == 0 && mf.MorphTypeRA != null
 								  && (mf.MorphTypeRA == mmt || mf.MorphTypeRA.IsAmbiguousWith(mmt))
 							  select mf).ToList();
 
