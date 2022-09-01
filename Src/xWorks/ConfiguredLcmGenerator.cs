@@ -2470,6 +2470,11 @@ namespace SIL.FieldWorks.XWorks
 						for (int i = 0; i < fieldValue.RunCount; i++)
 						{
 							var text = fieldValue.get_RunText(i);
+
+							// If the text is "<Not Sure>" then don't display any text.
+							if (text == LCModelStrings.NotSure)
+								text = String.Empty;
+
 							var props = fieldValue.get_Properties(i);
 							var style = props.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
 							writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(fieldValue.get_WritingSystem(i));
