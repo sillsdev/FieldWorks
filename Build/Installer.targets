@@ -278,8 +278,8 @@
 		<Copy SourceFiles="$(AppBuildMasterDir)\$(BinDirSuffix)\FixFwData.exe.config"
 			DestinationFiles="$(AppBuildDir)\$(BinDirSuffix)\FixFwData.exe.config"
 			Condition="!Exists('$(AppBuildDir)\$(BinDirSuffix)\FixFwData.exe.config')"/>
-		<Move SourceFiles="$(AppBuildDir)\$(BinDirSuffix)\StructureMap.dll"
-			DestinationFiles="$(AppBuildDir)\$(BinDirSuffix)\structuremap.patched.dll"
+		<Move SourceFiles="$(AppBuildDir)\$(BinDirSuffix)\structuremap.patched.dll"
+			DestinationFiles="$(AppBuildDir)\$(BinDirSuffix)\StructureMap.dll"
 			OverwriteReadOnlyFiles="true"/>
 		<CallTarget Targets="HarvestL10n;ConvertHarvestsToWxi;WriteFilesMetadata"/>
 	</Target>
