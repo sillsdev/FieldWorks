@@ -395,8 +395,9 @@
 			Condition="!Exists('$(WixLibsDir)/vcredist_2015-19_x64.exe') And $(Platform)=='x64'"
 			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 14.1 runtime -->
 		<!-- FLEx Bridge -->
-		<DownloadFile Address="https://build.palaso.org/guestAuth/repository/download/FLExBridgeDevelopWin32InstallerSansPublish/.lastSuccessful/FLExBridge_Offline.exe"
-			DownloadsDir="$(WixLibsDir)"/> <!-- always download to get the latest version -->
+		<DownloadFile Address="https://build.palaso.org/guestAuth/repository/download/FLExBridgeDevelopWin32InstallerSansPublish/fw-9.1.14.tcbuildtag/FLExBridge_Offline.exe"
+			Condition="!Exists('$(WixLibsDir)/FLExBridge_Offline.exe')"
+			DownloadsDir="$(WixLibsDir)"/> <!-- TODO: always download to get the latest version -->
 	</Target>
 
 	<Target Name="DownloadAndUnzipFonts" Condition="'$(disableDownloads)'!='true'">
