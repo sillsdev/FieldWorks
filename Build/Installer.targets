@@ -25,7 +25,7 @@
 
 	<!-- $(ApplicationName) 1.0.0.X ($(ApplicationName) build)-->
 	<PropertyGroup>
-		<ProductIdGuid>DD2296F8-4B40-47DD-8E1E-8E76703C5E23</ProductIdGuid>
+		<ProductIdGuid>94AD0E99-6FCF-41C5-8D32-9C68283C850C</ProductIdGuid>
 	</PropertyGroup>
 
 	<!-- ########################################################################################################## -->
@@ -274,13 +274,6 @@
 		<Copy SourceFiles="@(BinFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"/>
 		<Copy SourceFiles="@(CustomInstallFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/.."/>
 		<Copy SourceFiles="@(OverrideFiles)" OverwriteReadonlyFiles="true" DestinationFolder="$(OverridesDestDir)"/>
-		<!-- TODO (Hasso) 2022.08: remove this before the next base installer -->
-		<Copy SourceFiles="$(AppBuildMasterDir)\$(BinDirSuffix)\FixFwData.exe.config"
-			DestinationFiles="$(AppBuildDir)\$(BinDirSuffix)\FixFwData.exe.config"
-			Condition="!Exists('$(AppBuildDir)\$(BinDirSuffix)\FixFwData.exe.config')"/>
-		<Move SourceFiles="$(AppBuildDir)\$(BinDirSuffix)\structuremap.patched.dll"
-			DestinationFiles="$(AppBuildDir)\$(BinDirSuffix)\StructureMap.dll"
-			OverwriteReadOnlyFiles="true"/>
 		<CallTarget Targets="HarvestL10n;ConvertHarvestsToWxi;WriteFilesMetadata"/>
 	</Target>
 
