@@ -3151,7 +3151,7 @@ namespace SIL.FieldWorks.XWorks
 			var senses = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
-				CSSClassNameOverride = "Senses",
+				CSSClassNameOverride = "sensesos",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions
 				{
 					NumberStyle = "Dictionary-SenseNum",
@@ -3169,7 +3169,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			const string regexExpected = @".lexentry>\s.senses{.*counter-reset:\ssensesos;.*}.*.lexentry>\s.senses\s>\s.sensecontent:before{.*counter-increment:\ssensesos;.*content:\scounter.sensesos,\sdecimal.\s'\s';.*font-size:14pt;.*color:Green;.*}";
+			const string regexExpected = @".lexentry>\s.sensesos{.*counter-reset:\ssensesos;.*}.*.lexentry>\s.sensesos\s>\s.sensecontent:before{.*counter-increment:\ssensesos;.*content:\scounter.sensesos,\sdecimal.\s'\s';.*font-size:14pt;.*color:Green;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regexExpected, RegexOptions.Singleline).Success, "Numbering style not generated for Senses.");
 		}
 

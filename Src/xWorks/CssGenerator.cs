@@ -1115,8 +1115,12 @@ namespace SIL.FieldWorks.XWorks
 					if (node != null)
 					{
 						string selectedNumStyle = NumberingStylesCollection[numScheme];
-						declaration.Add(new Property("counter-increment") { Term = new PrimitiveTerm(UnitType.Attribute, " " + node.Label.ToLower()) });
-						declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.Attribute, string.Format(" counter({0}, {1}) {2}", node.Label.ToLower(), selectedNumStyle, @"' '")) });
+
+						if (string.IsNullOrEmpty(node.CSSClassNameOverride))
+							node.CSSClassNameOverride = GetClassAttributeForConfig(node);
+
+						declaration.Add(new Property("counter-increment") { Term = new PrimitiveTerm(UnitType.Attribute, " " + node.CSSClassNameOverride) });
+						declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.Attribute, string.Format(" counter({0}, {1}) {2}", node.CSSClassNameOverride, selectedNumStyle, @"' '")) });
 					}
 				}
 			}
