@@ -5839,7 +5839,10 @@ void VwParagraphBox::SetHeightAndAdjustChildren(IVwGraphics * pvg, ParaBuilder *
 	else
 	{
 		int dyAscent;
-		int ich = max(Source()->CchRen() - 1, 0);
+		int cchRen = Source()->CchRen();
+		// Allow ich values that are negative.  This is not the final value, it gets combined
+		// with DiscardedInitialRen. LT-17535
+		int ich = cchRen <= 0 ? cchRen : cchRen - 1;
 		LgCharRenderProps chrp;
 		int ichMinRun, ichLimRun; // dummies
 		CheckHr(Source()->GetCharProps(ich, &chrp, &ichMinRun, &ichLimRun));
