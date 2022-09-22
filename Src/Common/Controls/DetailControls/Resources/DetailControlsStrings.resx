@@ -133,10 +133,6 @@
   <data name="ksCreate" xml:space="preserve">
     <value>Create</value>
   </data>
-  <data name="ksDateAndTime" xml:space="preserve">
-    <value>{0} {1}</value>
-    <comment>used to concatenate a long format date string with a short format time string.</comment>
-  </data>
   <data name="ksDelete" xml:space="preserve">
     <value>Delete</value>
   </data>

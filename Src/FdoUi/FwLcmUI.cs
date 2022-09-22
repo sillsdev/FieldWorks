@@ -10,6 +10,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FdoUi.Dialogs;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.FdoUi
@@ -135,7 +136,7 @@ namespace SIL.FieldWorks.FdoUi
 			}
 			m_synchronizeInvoke.Invoke(() =>
 				{
-					if (MiscUtils.IsMono)
+					if (Platform.IsMono)
 					{
 						// Mono doesn't support Help
 						MessageBox.Show(message, caption, MessageBoxButtons.OK, icon);

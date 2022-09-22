@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// If a test overrides this, it should call this base implementation.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public virtual void FixtureSetup()
 		{
 			FileUtils.Manager.SetFileAdapter(new MockFileOS());
@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		}
 
 		/// <summary/>
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public virtual void FixtureTearDown()
 		{
 			FileUtils.Manager.Reset();
@@ -122,7 +122,6 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Test Int Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(KeyNotFoundException))]
 		public void ObjPropKNTTest()
 		{
 			const int hvo = 1;
@@ -130,7 +129,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassC");
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 
-			SilDataAccess.get_ObjectProp(hvo, (int)CmObjectFields.kflidCmObject_Owner);
+			Assert.That(() => SilDataAccess.get_ObjectProp(hvo, (int)CmObjectFields.kflidCmObject_Owner), Throws.TypeOf<KeyNotFoundException>());
 		}
 
 		/// <summary>
@@ -163,7 +162,6 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Test Int Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(KeyNotFoundException))]
 		public void IntPropKNTTest()
 		{
 			const int hvo = 1;
@@ -172,7 +170,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassC", "IntProp2", false);
-			SilDataAccess.get_IntProp(hvo, tag);
+			Assert.That(() => SilDataAccess.get_IntProp(hvo, tag), Throws.TypeOf<KeyNotFoundException>());
 		}
 
 		/// <summary>
@@ -201,7 +199,6 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Test Guid Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(KeyNotFoundException))]
 		public void GuidPropKNTTest()
 		{
 			const int hvo = 1;
@@ -210,7 +207,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clidLe);
 			const int tag = (int)CmObjectFields.kflidCmObject_Guid;
 
-			SilDataAccess.get_GuidProp(hvo, tag);
+			Assert.That(() => SilDataAccess.get_GuidProp(hvo, tag), Throws.TypeOf<KeyNotFoundException>());
 		}
 
 		/// <summary>
@@ -235,7 +232,6 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Test Guid Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(KeyNotFoundException))]
 		public void BoolPropKNTTest()
 		{
 			const int hvo = 1;
@@ -243,7 +239,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			var clidLe = SilDataAccess.MetaDataCache.GetClassId("ClassA");
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clidLe);
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassA", "Prop1", false);
-			SilDataAccess.get_BooleanProp(hvo, tag);
+			Assert.That(() => SilDataAccess.get_BooleanProp(hvo, tag), Throws.TypeOf<KeyNotFoundException>());
 		}
 
 		/// <summary>
@@ -285,7 +281,6 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Test Unicode Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(KeyNotFoundException))]
 		public void UnicodePropKNTTest()
 		{
 			const int hvo = 1;
@@ -294,14 +289,13 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassE", "UnicodeProp4", false);
-			SilDataAccess.get_UnicodeProp(hvo, tag);
+			Assert.That(() => SilDataAccess.get_UnicodeProp(hvo, tag), Throws.TypeOf<KeyNotFoundException>());
 		}
 
 		/// <summary>
 		/// Test Unicode Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void UnicodePropWrongLengthTest()
 		{
 			// Set class first, or it will throw an exception.
@@ -326,7 +320,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			{
 				int cch;
 				// Should throw the exception here.
-				SilDataAccess.UnicodePropRgch(hvo, tag, arrayPtr, len, out cch);
+				Assert.That(() => SilDataAccess.UnicodePropRgch(hvo, tag, arrayPtr, len, out cch), Throws.ArgumentException);
 			}
 		}
 
@@ -352,7 +346,6 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Test In64 Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(KeyNotFoundException))]
 		public void In64PropKNTTest()
 		{
 			const int hvo = 1;
@@ -360,7 +353,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			var clidLe = SilDataAccess.MetaDataCache.GetClassId("ClassF");
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clidLe);
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassF", "Int64Prop5", false);
-			SilDataAccess.get_Int64Prop(hvo, tag);
+			Assert.That(() => SilDataAccess.get_Int64Prop(hvo, tag), Throws.TypeOf<KeyNotFoundException>());
 		}
 
 		/// <summary>
@@ -385,7 +378,6 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Test Time Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(KeyNotFoundException))]
 		public void TimePropKNTTest()
 		{
 			const int hvo = 1;
@@ -394,7 +386,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassD", "TimeProp6", false);
-			SilDataAccess.get_TimeProp(hvo, tag);
+			Assert.That(() => SilDataAccess.get_TimeProp(hvo, tag), Throws.TypeOf<KeyNotFoundException>());
 		}
 
 		/// <summary>
@@ -420,7 +412,6 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Test Time Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(KeyNotFoundException))]
 		public void UnkPropKNTTest()
 		{
 			const int hvo = 1;
@@ -429,14 +420,13 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassG", "TextPropsProp7", false);
-			SilDataAccess.get_UnknownProp(hvo, tag);
+			Assert.That(() => SilDataAccess.get_UnknownProp(hvo, tag), Throws.TypeOf<KeyNotFoundException>());
 		}
 
 		/// <summary>
 		/// Test Time Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void UnkPropMisMatchedFlidTest()
 		{
 			// First, set up class id.
@@ -447,14 +437,13 @@ namespace SIL.FieldWorks.CacheLightTests
 			var tsPropsBuilder = TsStringUtils.MakePropsBldr();
 			var props = tsPropsBuilder.GetTextProps();
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassE", "UnicodeProp4", false);
-			SilDataAccess.SetUnknown(hvo, tag, props);
+			Assert.That(() => SilDataAccess.SetUnknown(hvo, tag, props), Throws.ArgumentException);
 		}
 
 		/// <summary>
 		/// Test Time Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void UnkPropWrongInterfaceTest()
 		{
 			// First, set up class id.
@@ -464,7 +453,7 @@ namespace SIL.FieldWorks.CacheLightTests
 
 			var tsPropsBuilder = TsStringUtils.MakePropsBldr();
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassG", "TextPropsProp7", false);
-			SilDataAccess.SetUnknown(hvo, tag, tsPropsBuilder);
+			Assert.That(() => SilDataAccess.SetUnknown(hvo, tag, tsPropsBuilder), Throws.ArgumentException);
 		}
 
 		/// <summary>
@@ -497,7 +486,6 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Test Binary Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(KeyNotFoundException))]
 		public void BinaryPropKNTTest()
 		{
 			const int hvo = 1;
@@ -506,14 +494,13 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassI", "BinaryProp9", false);
 			int chvo;
-			SilDataAccess.BinaryPropRgb(hvo, tag, ArrayPtr.Null, 0, out chvo);
+			Assert.That(() => SilDataAccess.BinaryPropRgb(hvo, tag, ArrayPtr.Null, 0, out chvo), Throws.TypeOf<KeyNotFoundException>());
 		}
 
 		/// <summary>
 		/// Test Binary Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void BinaryPropWrongLengthTest()
 		{
 			const int hvo = 1;
@@ -522,10 +509,10 @@ namespace SIL.FieldWorks.CacheLightTests
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassI", "BinaryProp9", false);
 			using (var arrayPtr = MarshalEx.ArrayToNative<int>(2))
 			{
-				var prgb = new byte[] { 3, 4, 5 };
+				var prgb = new byte[] {3, 4, 5};
 				int chvo;
 				SilDataAccess.SetBinary(hvo, tag, prgb, prgb.Length);
-				SilDataAccess.BinaryPropRgb(hvo, tag, arrayPtr, 2, out chvo);
+				Assert.That(() => SilDataAccess.BinaryPropRgb(hvo, tag, arrayPtr, 2, out chvo), Throws.ArgumentException);
 			}
 		}
 
@@ -552,7 +539,6 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Test String Property get, when no set has been done.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(KeyNotFoundException))]
 		public void StringPropKNTTest()
 		{
 			// Set class first, or it will throw an exception.
@@ -560,7 +546,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassJ");
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassJ", "StringProp10", false);
-			SilDataAccess.get_StringProp(hvo, tag);
+			Assert.That(() => SilDataAccess.get_StringProp(hvo, tag), Throws.TypeOf<KeyNotFoundException>());
 		}
 
 		/// <summary>
@@ -607,7 +593,6 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Test setting a Ws of zero method.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void MultiString0WSTest()
 		{
 			// Set class first, or it will throw an exception.
@@ -617,14 +602,13 @@ namespace SIL.FieldWorks.CacheLightTests
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11", false);
 
 			var tss = TsStringUtils.MakeString("Verb", 1);
-			SilDataAccess.SetMultiStringAlt(hvo, tag, 0, tss);
+			Assert.That(() => SilDataAccess.SetMultiStringAlt(hvo, tag, 0, tss), Throws.ArgumentException);
 		}
 
 		/// <summary>
 		/// Test setting a Ws of zero method.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void MultiStringNegativeWSTest()
 		{
 			// Set class first, or it will throw an exception.
@@ -634,7 +618,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11", false);
 
 			var tss = TsStringUtils.MakeString("Verb", 1);
-			SilDataAccess.SetMultiStringAlt(hvo, tag, -1, tss);
+			Assert.That(() => SilDataAccess.SetMultiStringAlt(hvo, tag, -1, tss), Throws.ArgumentException);
 		}
 
 		/// <summary>

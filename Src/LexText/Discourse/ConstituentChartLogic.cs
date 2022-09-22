@@ -1,10 +1,11 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.LCModel.Core.Text;
@@ -54,8 +55,6 @@ namespace SIL.FieldWorks.Discourse
 
 		#endregion
 
-		private ICmPossibility[] m_allMyColumns;
-		private ISet<int> m_indexGroupEnds; // indices of ends of column Groups (for LT-8104; setting apart Nucleus)
 		private int[] m_currHighlightCells; // Keeps track of highlighted cells when dealing with ChartOrphan insertion.
 
 		/// <summary>
@@ -205,6 +204,7 @@ namespace SIL.FieldWorks.Discourse
 					return; // no change.
 				m_chart = value;
 				m_currHighlightCells = null; // otherwise we try to clear the old ones when ribbon changed event happens!
+				// REVIEW (Hasso) 2022.03: what other cached props need to be cleared here and when StTextHvo changes? (AllMyColumns, ColumnsAndGroups could be cached)
 			}
 		}
 
@@ -215,31 +215,14 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		/// <summary>
-		/// Returns an array of all the columns(Hvos) for the template of the chart that this logic is initialized with.
+		/// Returns an array of all the columns for the template of the chart that this logic is initialized with.
 		/// </summary>
-		public ICmPossibility[] AllMyColumns
-		{
-			get
-			{
-				m_allMyColumns = AllColumns(m_chart.TemplateRA).ToArray();
-				return m_allMyColumns;
-			}
-		}
+		public ICmPossibility[] AllMyColumns => CollectColumns(m_chart?.TemplateRA).ToArray();
 
 		/// <summary>
-		/// Returns an array of all the columns for the template of the chart that are the ends of column groups.
+		/// Returns all the columns and column groups for the template of the chart that this logic is initialized with.
 		/// </summary>
-		public ISet<int> GroupEndIndices
-		{
-			get
-			{
-				return m_indexGroupEnds;
-			}
-			set
-			{
-				m_indexGroupEnds = value;
-			}
-		}
+		public MultilevelHeaderModel ColumnsAndGroups => new MultilevelHeaderModel(m_chart?.TemplateRA);
 
 		/// <summary>
 		/// Return true if the specified column has automatic 'missing' markers.
@@ -412,7 +395,7 @@ namespace SIL.FieldWorks.Discourse
 			while (true)
 			{
 				var lastWordGroup = FindLastWordGroup(CellPartsInRow(latestRow));
-				if (lastWordGroup != null)
+				if (lastWordGroup?.EndSegmentRA != null)
 				{
 					var temp = new AnalysisOccurrence(lastWordGroup.EndSegmentRA, lastWordGroup.EndAnalysisIndex + 1);
 					return temp.PreviousWordform();
@@ -836,7 +819,7 @@ namespace SIL.FieldWorks.Discourse
 		/// <returns></returns>
 		public ChartLocation FindChartLocOfWordform(AnalysisOccurrence point)
 		{
-			if (m_chart == null || Chart.RowsOS.Count < 1)
+			if (Chart == null || Chart.RowsOS.Count < 1 || !point.IsValid)
 				return null;
 			Debug.Assert(point != null);
 
@@ -866,7 +849,7 @@ namespace SIL.FieldWorks.Discourse
 						 select new ChartLocation(row, IndexOfColumnForCellPart(wordGrp));
 
 			// Either return the valid result from LINQ or an invalid ChartLocation
-			return result.Count() > 0 ? result.First() : new ChartLocation(null, -1);
+			return result.Any() ? result.First() : new ChartLocation(null, -1);
 		}
 
 		/// <summary>
@@ -912,46 +895,30 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		/// <summary>
-		/// Gets all the 'leaf' nodes in a chart template, and also the ends of column groupings.
+		/// Gets all the 'leaf' nodes in a chart template.
 		/// </summary>
-		/// <param name="template"></param>
-		/// <returns>List of int (hvos?)</returns>
-		public List<ICmPossibility> AllColumns(ICmPossibility template)
+		internal static List<ICmPossibility> CollectColumns(ICmPossibility template)
 		{
 			var result = new List<ICmPossibility>();
-			var groups = new HashSet<int>();
 			if (template == null || template.SubPossibilitiesOS.Count == 0)
 				return result; // template itself can't be a column even if no children.
-			CollectColumns(result, template, groups, 0);
-			m_indexGroupEnds = groups;
+			CollectColumns(result, template);
 			return result;
 		}
 
 		/// <summary>
 		/// Collect (in depth-first traversal) all the leaf columns in the template.
-		/// Also (LT-8104) collect the set of column indices that are the ends of top-level column groupings.
 		/// </summary>
-		/// <param name="result"></param>
-		/// <param name="template"></param>
-		/// <param name="groups"></param>
-		/// <param name="depth"></param>
-		private void CollectColumns(List<ICmPossibility> result, ICmPossibility template, HashSet<int> groups, int depth)
+		private static void CollectColumns(List<ICmPossibility> result, ICmPossibility template)
 		{
 			if (template.SubPossibilitiesOS.Count == 0)
 			{
 				// Note: do NOT do add to the list if it has children...we ONLY want leaves in the result.
 				result.Add(template);
-				// We now collect this column index in our GroupEndsIndices even if it's a group of one.
-				if (depth == 1)
-					groups.Add(result.Count - 1);
 				return;
 			}
 			foreach (var child in template.SubPossibilitiesOS)
-				CollectColumns(result, child, groups, depth + 1);
-
-			// Collect this column index in our GroupEndsIndices if we're at the top-level.
-			if (depth == 1)
-				groups.Add(result.Count - 1);
+				CollectColumns(result, child);
 		}
 
 		#region actions for buttons
@@ -1489,7 +1456,7 @@ namespace SIL.FieldWorks.Discourse
 			var ifirstRowToDelete = rowIndex + 1;
 			var crows = m_chart.RowsOS.Count;
 			var crowsToDelete = crows - ifirstRowToDelete;
-			var ccells = row.CellsOS.Count;
+			var ccells = row.IsValidObject ? row.CellsOS.Count : 0;
 			var ccellsToDelete = ccells - icellPart;
 			if (ccellsToDelete == 0 && crowsToDelete == 0)
 				return;
@@ -1520,7 +1487,7 @@ namespace SIL.FieldWorks.Discourse
 
 				// Delete the redundant stuff in the current row.
 				// Have to recalculate some of the original information in case of side effects
-				ccells = row.CellsOS.Count;
+				ccells = row.IsValidObject ? row.CellsOS.Count : 0;
 				icellPart = cell.ColIndex == 0 ? 0 : FindIndexOfFirstCellPartInOrAfterColumn(cell);
 				ccellsToDelete = ccells - icellPart;
 
@@ -2845,6 +2812,11 @@ namespace SIL.FieldWorks.Discourse
 		/// </summary>
 		protected internal void CleanupInvalidChartCells()
 		{
+			if (m_chart == null)
+			{
+				// Hmm. Clean as a whistle!
+				return;
+			}
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				var fReported = false;
@@ -2853,6 +2825,7 @@ namespace SIL.FieldWorks.Discourse
 				// row count each time through instead of maintaining a count that can get messed up.
 				for (var irow = 0; irow < m_chart.RowsOS.Count; irow++) // not foreach here, as we may delete some as we go
 				{
+					int rowCountBefore = m_chart.RowsOS.Count;
 					var curRow = m_chart.RowsOS[irow];
 					var citems = curRow.CellsOS.Count;
 					// If there are already no items, it's presumably an empty row the user inserted manually
@@ -2869,6 +2842,7 @@ namespace SIL.FieldWorks.Discourse
 							m_chart.RowsOS[0].Delete();
 						continue;
 					}
+
 					// Under the new system, if a cellPart goes away and it's the last one, the row will go
 					// automatically. We'll want to check, though, that we aren't loading things with null refs
 					// such as MovedTextMarkers whose source WordGroup is gone or ClauseMarkers with one or more
@@ -2887,9 +2861,15 @@ namespace SIL.FieldWorks.Discourse
 						{
 							if (!((IConstChartClauseMarker)curPart).HasValidRefs)
 							{
-								if(!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
+								if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
 									ref fReported, ref ipart, ref citems))
-									irow--;
+								{
+									// If more than one row was deleted then start iterating from the beginning.
+									if (m_chart.RowsOS.Count < rowCountBefore - 1)
+										irow = -1;
+									else
+										irow--;
+								}
 							}
 							continue;
 						}
@@ -2899,7 +2879,13 @@ namespace SIL.FieldWorks.Discourse
 							{
 								if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
 									ref fReported, ref ipart, ref citems))
-									irow--;
+								{
+									// If more than one row was deleted then start iterating from the beginning.
+									if (m_chart.RowsOS.Count < rowCountBefore - 1)
+										irow = -1;
+									else
+										irow--;
+								}
 							}
 							continue;
 						}
@@ -2909,7 +2895,13 @@ namespace SIL.FieldWorks.Discourse
 						{
 							if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
 								ref fReported, ref ipart, ref citems))
-								irow--;
+							{
+								// If more than one row was deleted then start iterating from the beginning.
+								if (m_chart.RowsOS.Count < rowCountBefore - 1)
+									irow = -1;
+								else
+									irow--;
+							}
 							continue; // Skip to next.
 						}
 						try
@@ -2926,9 +2918,48 @@ namespace SIL.FieldWorks.Discourse
 						// CCWordGroup is now empty, take it out of row!
 						if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curWordGroup,
 							ref fReported, ref ipart, ref citems))
-							irow--;
+						{
+							// If more than one row was deleted then start iterating from the beginning.
+							if (m_chart.RowsOS.Count < rowCountBefore - 1)
+								irow = -1;
+							else
+								irow--;
+						}
 					} // cellPart loop
 				} // row loop
+
+				// If there are no rows that have any word groups in them then the contents are not worth keeping so clear all rows
+				if (m_chart.RowsOS.Any() && m_chart.RowsOS.Sum(row => row.CellsOS.Count(c => c is IConstChartWordGroup)) == 0)
+				{
+					// Store notes before deleting the rows that contain them.
+					string path = System.IO.Path.Combine(Cache.ProjectId.ProjectFolder, "SavedNotes.txt");
+					using (StreamWriter sw = File.AppendText(path))
+					{
+						bool firstNote = true;
+						foreach (var row in m_chart.RowsOS)
+						{
+							if (row.Notes != null && row.Notes.Text != null)
+							{
+								if(firstNote)
+								{
+									sw.WriteLine("\n**********************************************************************");
+									sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd h:mm tt"));
+									firstNote = false;
+								}
+								sw.WriteLine(row.Notes.Text);
+							}
+						}
+
+						// Let the user know the location of the deleted notes.
+						if (!firstNote)
+						{
+							sw.Flush();
+							DisplayDeletedNotesLocation(path);
+						}
+					}
+
+					m_chart.RowsOS.Clear();
+				}
 				if (fReported)
 					RenumberRows(0, false); // We don't know where the change occurred. Better to be safe.
 			});
@@ -2981,6 +3012,15 @@ namespace SIL.FieldWorks.Discourse
 		{
 			MessageBox.Show(DiscourseStrings.ksTextEditWarning, DiscourseStrings.ksWarning,
 							MessageBoxButtons.OK, MessageBoxIcon.Warning);
+		}
+
+		/// <summary>
+		/// Overidden by test subclass to not display message.
+		/// </summary>
+		protected virtual void DisplayDeletedNotesLocation(string path)
+		{
+			MessageBox.Show(String.Format(DiscourseStrings.ksDeletedNotesLocation, path), DiscourseStrings.ksInformation,
+							MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		/// <summary>
@@ -3864,7 +3904,7 @@ namespace SIL.FieldWorks.Discourse
 			var rowDst = srcCell.Row;
 			if (icolDst < 0)
 			{
-				icolDst = m_allMyColumns.Length - 1;
+				icolDst = AllMyColumns.Length - 1;
 				rowDst = PreviousRow(srcCell.Row);
 			}
 			dstCell = new ChartLocation(rowDst, icolDst);
@@ -4072,31 +4112,33 @@ namespace SIL.FieldWorks.Discourse
 		}
 		#endregion for test only
 
-		internal static ListView MakeHeaderGroups()
-		{
-			ListView result = new ListView();
-
-			return result;
-		}
-
-		internal void MakeMainHeaderCols(ChartHeaderView view)
+		internal void MakeHeaderColsFor(ChartHeaderView view, List<MultilevelHeaderNode> cols, bool wantNotesLabel)
 		{
 			// This is actually a display method, not a true 'logic' method.
 			// That's why we need to test for RTL script.
 			view.SuspendLayout();
 			view.Controls.Clear();
 
-			if (ChartIsRtL)
+			if (wantNotesLabel)
 			{
 				MakeNotesColumnHeader(view);
-				MakeTemplateColumnHeaders(view);
-				MakeRowNumberColumnHeader(view);
 			}
 			else
 			{
-				MakeNotesColumnHeader(view);
-				MakeRowNumberColumnHeader(view);
-				MakeTemplateColumnHeaders(view);
+				MakeEmptyColumnHeader(view);
+			}
+
+			if (ChartIsRtL)
+			{
+				MakeTemplateColumnHeaders(view, cols);
+				// number column
+				MakeEmptyColumnHeader(view);
+			}
+			else
+			{
+				// number column
+				MakeEmptyColumnHeader(view);
+				MakeTemplateColumnHeaders(view, cols);
 			}
 
 			view.ResumeLayout(false);
@@ -4105,29 +4147,28 @@ namespace SIL.FieldWorks.Discourse
 		private static void MakeNotesColumnHeader(ChartHeaderView view)
 		{
 			// Add one more column for notes.
-			var ch = new HeaderLabel();
-			ch.Text = DiscourseStrings.ksNotesColumnHeader;
+			var ch = new HeaderLabel { Text = DiscourseStrings.ksNotesColumnHeader };
 			view.Controls.Add(ch);
 		}
 
-		private void MakeTemplateColumnHeaders(ChartHeaderView view)
+		private void MakeTemplateColumnHeaders(ChartHeaderView view, IEnumerable<MultilevelHeaderNode> columns)
 		{
-			foreach (var col in ChartIsRtL? AllMyColumns.Reverse() : AllMyColumns)
+			foreach (var col in ChartIsRtL ? columns.Reverse() : columns)
 			{
-				var ch = new HeaderLabel();
-
-				// ensure NFC -- See LT-8815.
-				//ch.Text = m_possRepo.GetObject(col.Hvo).Name.BestAnalysisAlternative.Text.Normalize();
-				ch.Text = col.Name.BestAnalysisAlternative.Text.Normalize();
-				view.Controls.Add(ch);
+				view.Controls.Add(new HeaderLabel
+				{
+					Text = GetColumnHeaderFrom(col.Item)
+				});
 			}
 		}
 
-		private static void MakeRowNumberColumnHeader(ChartHeaderView view)
+		/// <remarks>ensure NFC -- See LT-8815.</remarks>
+		internal static string GetColumnHeaderFrom(ICmPossibility pos) => pos?.Name.BestAnalysisAlternative.Text.Normalize();
+
+		private static void MakeEmptyColumnHeader(ChartHeaderView view)
 		{
-			var ch = new HeaderLabel();
-			ch.Text = ""; // otherwise default is 'column header'!
-			view.Controls.Add(ch);
+			// default Text is 'column header'!
+			view.Controls.Add(new HeaderLabel { Text = string.Empty });
 		}
 
 		/// <summary>

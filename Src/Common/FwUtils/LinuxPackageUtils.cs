@@ -4,7 +4,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using SIL.Extensions;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -28,27 +30,30 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static IEnumerable<KeyValuePair<string, string>>
 			FindInstalledPackages(string search)
 		{
-			bool processError = false;
-			var process = MiscUtils.RunProcess("dpkg", String.Format("-l '{0}'", search),
-				(exception) => { processError = true; });
-			if (processError)
-				yield break;
-
-			string output = process.StandardOutput.ReadToEnd();
-			process.WaitForExit();
-			var dpkgListedPackages = output.Split(new string[] {System.Environment.NewLine},
-				StringSplitOptions.RemoveEmptyEntries);
-
-			// ii means installed packages with no errors or pending changes.
-			const string installedNoErrorState = "ii";
-
-			// Foreach installed package.
-			foreach(var s in dpkgListedPackages.Where(x => x.StartsWith(installedNoErrorState)))
+			using (var process = new Process())
 			{
-				string[] entries = s.Split(new string[] {"  "},
+				bool processError = false;
+				process.RunProcess("dpkg", String.Format("-l '{0}'", search),
+				(exception) => { processError = true; });
+				if (processError)
+					yield break;
+
+				string output = process.StandardOutput.ReadToEnd();
+				process.WaitForExit();
+				var dpkgListedPackages = output.Split(new string[] {System.Environment.NewLine},
 					StringSplitOptions.RemoveEmptyEntries);
-				yield return new KeyValuePair<string, string> ( entries[(int)DpkgListFields.Name],
-					entries[(int)DpkgListFields.Version]);
+
+				// ii means installed packages with no errors or pending changes.
+				const string installedNoErrorState = "ii";
+
+				// Foreach installed package.
+				foreach(var s in dpkgListedPackages.Where(x => x.StartsWith(installedNoErrorState)))
+				{
+					string[] entries = s.Split(new string[] {"  "},
+						StringSplitOptions.RemoveEmptyEntries);
+					yield return new KeyValuePair<string, string> ( entries[(int)DpkgListFields.Name],
+						entries[(int)DpkgListFields.Version]);
+				}
 			}
 		}
 	}

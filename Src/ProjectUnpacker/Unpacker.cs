@@ -5,11 +5,11 @@
 using System;
 using System.Resources;
 using System.IO;
-using Microsoft.Win32;
 using ICSharpCode.SharpZipLib.Zip;
-using SIL.LCModel.Utils;
+using Microsoft.Win32;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Test.ProjectUnpacker
 {
@@ -154,7 +154,7 @@ namespace SIL.FieldWorks.Test.ProjectUnpacker
 					new ResourceManager("SIL.FieldWorks.Test.ProjectUnpacker." + packedProject,
 					System.Reflection.Assembly.GetExecutingAssembly());
 
-				string replacePart = MiscUtils.IsUnix ? unpackLocation :
+				string replacePart = Platform.IsUnix ? unpackLocation :
 					unpackLocation.Substring(0, unpackLocation.IndexOf('\\', 4));
 				using (var resourceStream = new MemoryStream((byte[])resources.GetObject(packedProject)))
 				{

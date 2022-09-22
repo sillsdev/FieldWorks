@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+#if WANTTESTPORT //(FLEx) Need to port these tests to LCM
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -63,7 +64,7 @@ namespace SIL.FieldWorks.Common.FXT
 			Debug.WriteLine(sLabel + " " + m_tsTimeSpan.TotalSeconds.ToString() + " Seconds");
 		}
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public virtual void Init()
 		{
 			m_sExpectedResultsPath = Path.Combine(FwDirectoryFinder.SourceDirectory,
@@ -129,3 +130,4 @@ namespace SIL.FieldWorks.Common.FXT
 
 	}
 }
+#endif

@@ -91,7 +91,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					var selected = (IMoMorphType) chooser.ChosenOne.Object;
 					MakeMorphTypeChange(selected);
-					UpdateDisplayFromDatabase();
 				}
 			}
 		}
@@ -148,6 +147,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					if (IsStemType(selected))
 					{
 						Target = selected;
+						UpdateDisplayFromDatabase();
 					}
 					else
 					{
@@ -166,6 +166,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					else
 					{
 						Target = selected;
+						UpdateDisplayFromDatabase();
 					}
 				}
 

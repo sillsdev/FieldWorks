@@ -1273,6 +1273,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			foreach (string c in UnicodeSet.ToCharacters(CustomIcu.GetExemplarCharacters(icuLocale)))
 			{
 				chars.Add(c.Normalize(NormalizationForm.FormD));
+				// ENHANCE (Hasso) 2022.02: use CaseFunctions (checks for CaseAlias, but users can still add any character that's already uppercase)
 				chars.Add(UnicodeString.ToUpper(c, icuLocale).Normalize(NormalizationForm.FormD));
 			}
 			m_validCharsGridMngr.AddCharacters(chars);
@@ -1880,7 +1881,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		protected virtual void ShowMessageBox(string message)
 		{
-			MessageBoxUtils.Show(this, message, m_app.ApplicationName, MessageBoxButtons.OK,
+			MessageBoxUtils.Show(this, message, m_app?.ApplicationName, MessageBoxButtons.OK,
 				MessageBoxIcon.Information);
 		}
 

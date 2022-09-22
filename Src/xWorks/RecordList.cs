@@ -24,6 +24,7 @@ using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
+using SIL.LCModel.Core.Text;
 using SIL.ObjectModel;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
@@ -994,11 +995,7 @@ namespace SIL.FieldWorks.XWorks
 		/// The actual database flid from which we get our list of objects, and apply a filter to.
 		/// </summary>
 		protected int m_flid;
-		/// <summary>
-		/// This is true if the list is the LexDb/LexEntries, and one of the entries has
-		/// changed.
-		/// </summary>
-		protected bool m_fReloadLexEntries;
+
 		/// <summary>
 		///
 		/// </summary>
@@ -1651,7 +1648,6 @@ namespace SIL.FieldWorks.XWorks
 			m_fontName = null;
 			m_insertableClasses = null;
 			m_sortedObjects = null;
-			m_owningObject = null;
 		}
 
 		protected override void Dispose(bool disposing)
@@ -1793,7 +1789,7 @@ namespace SIL.FieldWorks.XWorks
 
 		protected virtual void MarkEntriesForReload()
 		{
-			m_fReloadLexEntries = true;
+			ReloadLexEntries = true;
 		}
 
 		/// <summary>
@@ -1824,12 +1820,12 @@ namespace SIL.FieldWorks.XWorks
 			return false;
 		}
 
-		internal bool ReloadLexEntries
-		{
-			get { return m_fReloadLexEntries; }
-		}
+		/// <summary>
+		/// True if the list is the LexDb (LexEntries) and one of the entries has changed.
+		/// </summary>
+		protected internal bool ReloadLexEntries { get; protected set; }
 
-		internal protected virtual bool NeedToReloadList()
+		protected internal virtual bool NeedToReloadList()
 		{
 			bool fReload = RequestedLoadWhileSuppressed;
 			if (Flid == Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries)
@@ -2153,50 +2149,54 @@ namespace SIL.FieldWorks.XWorks
 		/// and/or deleting cvDel objects at ivMin. May call the regular ReloadList, or
 		/// optimize for special cases.
 		/// </summary>
-		/// <param name="ivMin"></param>
-		/// <param name="cvIns"></param>
-		/// <param name="cvDel"></param>
 		internal virtual void ReloadList(int ivMin, int cvIns, int cvDel)
 		{
 			CheckDisposed();
 
-			if (RequestedLoadWhileSuppressed)
+			// if a previous reload was requested, but suppressed, try to reload the entire list now.
+			// If we are missing a valid owning object, current HVO, or current index, the list is empty; load it now.
+			// If there is more than one "new" item, reload the whole list.
+			// If there is a new item that doesn't replace an old one, we need to reload the whole list (LT-20952).
+			if (RequestedLoadWhileSuppressed || m_owningObject == null || m_hvoCurrent == 0 || m_currentIndex < 0 || cvIns > 1 || cvIns > cvDel)
 			{
-				// if a previous reload was requested, but suppressed, try to reload the entire list now
 				ReloadList();
+				return;
 			}
-			// If m_currentIndex is negative the list is empty so we may as well load it fully.
-			// This saves worrying about various special cases in the code below.
-			else if (cvIns == 1 && (cvDel == 1 || cvDel == 0) &&
-				m_owningObject != null && m_hvoCurrent != 0 && m_currentIndex >= 0)
+
+			var cList = VirtualListPublisher.get_VecSize(m_owningObject.Hvo, m_flid);
+			switch (cvIns)
 			{
-				int cList = VirtualListPublisher.get_VecSize(m_owningObject.Hvo, m_flid);
-				if (cList == 1)
+				case 1 when cvDel == 1:
 				{
-					// we only have one item in our list, so let's just do a full reload.
-					// We don't want to insert completely new items in an obsolete list (Cf. LT-6741,6845).
-					ReloadList();
-					return;
-				}
-				if (cvDel > 0)
-				{
-					// Before we try to insert a new one, need to delete any items for deleted stuff,
+					if (cList == 1)
+					{
+						// we have only one item in our list, so let's just do a full reload.
+						// We don't want to insert completely new items in an obsolete list (Cf. LT-6741,6845).
+						ReloadList();
+						return;
+					}
+					// LT-12632: Before we try to insert a new one, we need to delete the deleted one,
 					// otherwise it may crash as it tries to compare the new item with an invalid one.
 					ClearOutInvalidItems();
+					if (ivMin < cList)
+					{
+						// REVIEW (Hasso) 2022.07: How does this method know what the new item is if we pass only the current "replaced" HVO?
+						int hvoReplaced = VirtualListPublisher.get_VecItem(m_owningObject.Hvo, m_flid, ivMin);
+						ReplaceListItem(hvoReplaced);
+					}
+					return;
 				}
-				if (ivMin < cList)
-				{
-					int hvoReplaced = VirtualListPublisher.get_VecItem(m_owningObject.Hvo, m_flid, ivMin);
-					ReplaceListItem(hvoReplaced);
-				}
-			}
-			else if (cvIns == 0 && cvDel == 0 && m_owningObject != null && m_hvoCurrent != 0)
-			{
-				UpdateListItemName(m_hvoCurrent);
-			}
-			else
-			{
-				ReloadList();
+				case 0 when cvDel == 0:
+					UpdateListItemName(m_hvoCurrent);
+					return;
+				// If we are deleting less than half of the list, this may be more efficient than reloading (testing performance is proving difficult)
+				case 0 when cvDel > 0 && cvDel * 2 < cList:
+					ClearOutInvalidItems();
+					DoneReload?.Invoke(this, EventArgs.Empty);
+					return;
+				default:
+					ReloadList();
+					return;
 			}
 		}
 
@@ -2305,8 +2305,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// replace any matching items in our sort list. and do normal navigation prop change.
 		/// </summary>
-		/// <param name="hvoReplaced"></param>
-		internal protected void ReplaceListItem(int hvoReplaced)
+		protected internal void ReplaceListItem(int hvoReplaced)
 		{
 			ReplaceListItem(hvoReplaced, ListChangedEventArgs.ListChangedActions.Normal);
 		}
@@ -2314,19 +2313,15 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// replace any matching items in our sort list.
 		/// </summary>
-		/// <param name="hvoReplaced"></param>
-		/// <param name="listChangeAction"></param>
 		internal void ReplaceListItem(int hvoReplaced, ListChangedEventArgs.ListChangedActions listChangeAction)
 		{
 			bool fUpdatingListOrig = m_fUpdatingList;
 			m_fUpdatingList = true;
 			try
 			{
-				int hvoOldCurrentObj = CurrentObjectHvo != 0 ? CurrentObjectHvo : 0;
-				ArrayList newSortItems = new ArrayList();
+				var hvoOldCurrentObj = CurrentObjectHvo;
 				var objReplaced = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoReplaced);
-				newSortItems.AddRange(ReplaceListItem(objReplaced, hvoReplaced, true));
-				if (newSortItems.Count > 0)
+				if (ReplaceListItem(objReplaced, hvoReplaced, true).Count > 0)
 				{
 					// in general, when adding new items, we want to try to maintain the previous selected *object*,
 					// which may have changed index.  so try to find its new index location.
@@ -2356,11 +2351,11 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="newObj"></param>
 		/// <param name="hvoToReplace"></param>
-		/// <param name="fAssumeSame">if true, we'll try to replace sort objects for hvoToReplace with newObj at the same indices.
+		/// <param name="fAssumeSameIndex">if true, we'll try to replace sort objects for hvoToReplace with newObj at the same indices.
 		/// if false, we'll rely upon sorter to merge the new item into the right index, or else add to the end.
-		/// Enhance: Is there some way we can compare the sort/filter results for newObj and hvoToReplace that is hvo indepedendent?</param>
+		/// Enhance: Is there some way we can compare the sort/filter results for newObj and hvoToReplace that is hvo-independent?</param>
 		/// <returns>resulting list of newSortItems added to SortedObjects</returns>
-		protected ArrayList ReplaceListItem(ICmObject newObj, int hvoToReplace, bool fAssumeSame)
+		protected ArrayList ReplaceListItem(ICmObject newObj, int hvoToReplace, bool fAssumeSameIndex)
 		{
 			ArrayList newSortItems = new ArrayList();
 			List<int> indicesOfSortItemsToRemove = new List<int>(IndicesOfSortItems(new List<int>(new int[] { hvoToReplace })));
@@ -2374,7 +2369,7 @@ namespace SIL.FieldWorks.XWorks
 				if (hvoToReplace == hvoNewObject || IndexOfFirstSortItem(new List<int>(new int[] { hvoNewObject })) < 0)
 					MakeItemsFor(newSortItems, newObj.Hvo);
 				remainingInsertItems = (ArrayList)newSortItems.Clone();
-				if (fAssumeSame)
+				if (fAssumeSameIndex)
 				{
 					//assume we're converting a dummy item to a real one.
 					//In that case, the real item should have same basic content as the dummy item we are replacing,
@@ -2845,7 +2840,7 @@ namespace SIL.FieldWorks.XWorks
 
 		protected virtual void FinishedReloadList()
 		{
-			m_fReloadLexEntries = false;
+			ReloadLexEntries = false;
 		}
 
 		protected virtual int GetNewCurrentIndex(ArrayList newSortedObjects, int hvoCurrent)
@@ -3129,9 +3124,43 @@ namespace SIL.FieldWorks.XWorks
 				insertPosition = 0;
 				hvoNew = sda.MakeNewObject(cpiLevel2.signatureClsid, hvoOwner, flid, -2);
 			}
+
+			// If this is a Text Discourse Chart Template, populate it with sample column groups and columns (LT-20768)
+			if (OwningObject.OwningFlid == DsDiscourseDataTags.kflidConstChartTempl)
+			{
+				var newPossibility = (ICmPossibility)Cache.ServiceLocator.GetObject(hvoNew);
+				if (newPossibility.Owner is ICmPossibilityList)
+				{
+					SetUpConstChartTemplateTemplate(newPossibility);
+				}
+			}
+
+
 			if (hvoNew != 0)
 				return Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoNew);
 			return null;
+		}
+
+		/// <summary>
+		/// Populates a discourse chart template with sample column groups and columns so that users have an idea what to do with it (LT-20768)
+		/// </summary>
+		/// <remarks>
+		/// The names of the template template parts are in the UI language, but they are stored in the default analysis WS. This could be problematic in
+		/// the unlikely case that the default analysis WS font doesn't have characters for the UI language data. But this is unlikely, and the labels
+		/// are temporary.
+		/// </remarks>
+		public static void SetUpConstChartTemplateTemplate(ICmPossibility templateRoot)
+		{
+			var factory = templateRoot.Services.GetInstance<ICmPossibilityFactory>();
+			var analWS = templateRoot.Services.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+			templateRoot.Name.set_String(analWS, xWorksStrings.ksNewTemplate);
+
+			var group1 = factory.Create(Guid.NewGuid(), templateRoot);
+			group1.Name.set_String(analWS, string.Format(xWorksStrings.ksColumnGroupX, 1));
+			for (var i = 1; i <= 2; i++)
+			{
+				factory.Create(Guid.NewGuid(), group1).Name.set_String(analWS, string.Format(xWorksStrings.ksColumnX, $"1.{i}"));
+			}
 		}
 
 		/// <summary>

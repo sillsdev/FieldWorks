@@ -94,14 +94,14 @@ namespace SIL.FieldWorks.IText
 					VerifyItem(textElt, "./item[@type='source']", "en", "Guna Bte Rintal");
 					VerifyItem(textElt, "./item[@type='comment']", "en", "a funny story (folk tale?) about the relationship between Abu Nawas and a king");
 					var paragraphs = textElt.Element("paragraphs");
-					Assert.IsNotNull(paragraphs);
+					Assert.That(paragraphs, Is.Not.Null);
 					var para = paragraphs.Element("paragraph");
-					Assert.IsNotNull(para);
+					Assert.That(para, Is.Not.Null);
 					var phrases = para.Element("phrases");
-					Assert.IsNotNull(phrases);
+					Assert.That(phrases, Is.Not.Null);
 
 					var phrase1 = phrases.Element("phrase");
-					Assert.IsNotNull(phrase1);
+					Assert.That(phrase1, Is.Not.Null);
 					VerifyItem(phrase1, "./item[@type='reference-label']", "en", "Abu Nawas 001");
 					VerifyText(phrase1, new[] {"$$", "Uun", "kono'", "serita'", ",", "dau-dau", "(", "tu",")", "kisa", "Abu", "Nawas", "."},
 						new HashSet<string>(new[] {".", ",", "$$", "(", ")"}), "qaa-x-kal");

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.IText
 				}
 
 				// Update the wordform with any additional wss.
-				List<int> wordformWss = m_choices.OtherWritingSystemsForFlid(InterlinLineChoices.kflidWord, 0);
+				List<int> wordformWss = m_choices.OtherEnabledWritingSystemsForFlid(InterlinLineChoices.kflidWord, 0);
 				// we need another way to detect the static ws for kflidWord.
 				foreach (int wsId in wordformWss)
 				{
@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.IText
 				// We may need to create a new WfiAnalysis based on whether we have any sandbox gloss content.
 				bool fNeedGloss = false;
 				bool fWordGlossLineIsShowing = false; // Set to 'true' if the wrod gloss line is included in the m_choices fields.
-				foreach (InterlinLineSpec ilc in m_choices)
+				foreach (InterlinLineSpec ilc in m_choices.EnabledLineSpecs)
 				{
 					if (ilc.Flid == InterlinLineChoices.kflidWordGloss)
 					{
@@ -307,7 +307,7 @@ namespace SIL.FieldWorks.IText
 				if (fWordGlossLineIsShowing)
 				{
 					// flag that we need to create wfi gloss information if any configured word gloss lines have content.
-					foreach (int wsId in m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
+					foreach (int wsId in m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 					{
 						if (m_sda.get_MultiStringAlt(m_hvoSbWord, ktagSbWordGloss, wsId).Length > 0)
 						{
@@ -565,7 +565,7 @@ namespace SIL.FieldWorks.IText
 					gloss = wgFactory.Create();
 					m_wa.MeaningsOC.Add(gloss);
 				}
-				foreach (int wsId in m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
+				foreach (int wsId in m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 				{
 					ITsString tssGloss = m_sda.get_MultiStringAlt(m_hvoSbWord, ktagSbWordGloss, wsId);
 					if (!tssGloss.Equals(gloss.Form.get_String(wsId)))
@@ -578,7 +578,7 @@ namespace SIL.FieldWorks.IText
 
 			private void CopyGlossesToSense(ILexSense sense)
 			{
-				foreach (int wsId in m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
+				foreach (int wsId in m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 				{
 					UpdateMlaIfDifferent(m_hvoSbWord, ktagSbWordGloss, wsId, sense.Hvo, LexSenseTags.kflidGloss);
 				}
@@ -586,7 +586,7 @@ namespace SIL.FieldWorks.IText
 
 			private void CopyGlossesToWfiGloss(IWfiGloss gloss)
 			{
-				foreach (int wsId in m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
+				foreach (int wsId in m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 				{
 					UpdateMlaIfDifferent(m_hvoSbWord, ktagSbWordGloss, wsId, gloss.Hvo, WfiGlossTags.kflidForm);
 				}
@@ -742,7 +742,7 @@ namespace SIL.FieldWorks.IText
 				if (morphItem.m_hvoSense <= 0)
 					return false;
 				// compare our gloss information.
-				List<int> wordGlossWss = m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss);
+				List<int> wordGlossWss = m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss);
 				foreach (int wsId in wordGlossWss)
 				{
 					if (!IsMlSame(m_hvoSbWord, ktagSbWordGloss, wsId, morphItem.m_hvoSense, LexSenseTags.kflidGloss))
@@ -808,7 +808,7 @@ namespace SIL.FieldWorks.IText
 			/// </summary>
 			void EnsureCorrectMorphForms()
 			{
-				List<int> otherWss = m_choices.OtherWritingSystemsForFlid(InterlinLineChoices.kflidMorphemes, 0);
+				List<int> otherWss = m_choices.OtherEnabledWritingSystemsForFlid(InterlinLineChoices.kflidMorphemes, 0);
 				foreach (int wsId in otherWss)
 				{
 					for (int imorph = 0; imorph < m_cmorphs; imorph++)
@@ -840,7 +840,7 @@ namespace SIL.FieldWorks.IText
 			/// <returns></returns>
 			public IWfiGloss FindMatchingGloss()
 			{
-				var wsIds = m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss);
+				var wsIds = m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss);
 				var sda = m_sda;
 				var wfiAnalysis = m_wa;
 				var hvoWord = m_hvoSbWord;
@@ -972,7 +972,7 @@ namespace SIL.FieldWorks.IText
 
 			private bool MatchesCurrentGlosses(IWfiGloss gloss)
 			{
-				foreach (int wsId in m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
+				foreach (int wsId in m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 				{
 					ITsString tssGloss = m_sda.get_MultiStringAlt(m_hvoSbWord, ktagSbWordGloss, wsId);
 					if (!tssGloss.Equals(gloss.Form.get_String(wsId)))

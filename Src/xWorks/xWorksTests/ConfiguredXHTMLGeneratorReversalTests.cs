@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -38,11 +38,12 @@ namespace SIL.FieldWorks.XWorks
 			get { return new ConfiguredLcmGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null); }
 		}
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
 
+			ConfiguredLcmGenerator.Init();
 			FwRegistrySettings.Init();
 			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
 			var m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory,
@@ -58,10 +59,11 @@ namespace SIL.FieldWorks.XWorks
 			m_wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			base.FixtureTeardown();
+			FwRegistrySettings.Release();
 			Dispose();
 		}
 
@@ -103,7 +105,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_LexemeFormConfigurationGeneratesCorrectResult()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var reversalFormNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalForm",
@@ -138,7 +139,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_PrimaryEntryReferencesWork_ComplexFormOfEntry()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry("spokesmanRevForm", "porte-parole", "spokesman:gloss");
 			var sense = reversalEntry.SensesRS.First();
@@ -159,7 +159,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_PrimaryEntryReferencesWork_ComplexFormOfSense()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry("spokesmanRevForm", "porte-parole", "spokesman:gloss");
 			var sense = reversalEntry.SensesRS.First();
@@ -177,7 +176,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_PrimaryEntryReferencesWork_VariantFormOfSense()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry("speechRevForm", "parol", "speech:gloss");
 			var variantEntry = reversalEntry.SensesRS.First().Owner as ILexEntry;
@@ -195,7 +193,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_PrimaryEntryReferencesWork_VariantFormOfEntry()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry("speechRevForm", "parol", "speech:gloss");
 			var variantEntry = reversalEntry.SensesRS.First().Owner as ILexEntry;
@@ -214,7 +211,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_PrimaryEntryReferences_Ordered()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 
 			var reversalEntry = CreateInterestingEnglishReversalEntry();
@@ -322,12 +318,14 @@ namespace SIL.FieldWorks.XWorks
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfNoPreviousHeader()
 		{
 			var entry = CreateInterestingEnglishReversalEntry();
+			var englishWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
+			using (var col = new CollatorForTest(englishWs))
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				string last = null;
 				XHTMLWriter.WriteStartElement("TestElement");
-				Assert.DoesNotThrow(() => LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings));
+				Assert.DoesNotThrow(() => LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings));
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='en' and text()='R r']";
@@ -339,13 +337,14 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfPreviousHeaderDoesNotMatch()
 		{
-			var entry = CreateInterestingEnglishReversalEntry();
+			var entry = CreateInterestingEnglishReversalEntry(); var englishWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
+			using (var col = new CollatorForTest(englishWs))
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				var last = "A a";
 				XHTMLWriter.WriteStartElement("TestElement");
-				Assert.DoesNotThrow(() => LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings));
+				Assert.DoesNotThrow(() => LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings));
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='en' and text()='R r']";
@@ -356,14 +355,15 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateLetterHeaderIfNeeded_GeneratesNoHeaderIfPreviousHeaderDoesMatch()
 		{
-			var entry = CreateInterestingEnglishReversalEntry();
+			var entry = CreateInterestingEnglishReversalEntry(); var englishWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
+			using (var col = new CollatorForTest(englishWs))
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				var last = "A a";
 				XHTMLWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='en' and text()='R r']";
@@ -377,7 +377,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_ReversalStringGeneratesContent()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var formNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalForm",
@@ -413,7 +412,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SenseNumbersGeneratedForMultipleReferencedSenses()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalName",
@@ -479,7 +477,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_VernacularFormWithSubSenses()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalName",
@@ -535,7 +532,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_VernacularFormWithSubSensesinReversalSubEntry()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalName",
@@ -597,7 +593,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_SameGramInfoCollapsesOnDemand()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var defOrGlossNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "DefinitionOrGloss",
@@ -710,7 +705,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var xhtml = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 			// check that the sense gram info appears once before the rest of the sense information.
-			Assert.IsNotNullOrEmpty(xhtml);
+			Assert.That(xhtml, Is.Not.Null.Or.Empty);
 			const string sharedGramInfo = "/div[@class='reversalindexentry']/span[@class='sensesrs']/span[@class='sharedgrammaticalinfo']/span[@class='morphosyntaxanalysis']/span[@class='partofspeech']/span[@lang='en' and text()='n']";
 			const string separateGramInfo = "/div[@class='reversalindexentry']/span[@class='sensesrs']/span[@class='sensecontent']/span[@class='sensesr']/span[@class='morphosyntaxanalysis']/span[@class='partofspeech']/span[@lang='en']";
 			AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(sharedGramInfo, 1);

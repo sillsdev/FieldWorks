@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using Microsoft.Win32;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.Utils
 {
@@ -341,7 +342,7 @@ namespace SIL.Utils
 					d.EmailSubject = string.Format("{0} {1} Report {2} Launches", applicationName, version, launchCount);
 					StringBuilder bldr = new StringBuilder();
 					bldr.AppendFormat("<report app='{0}' version='{1}' linux='{2}'>", applicationName,
-						version, MiscUtils.IsUnix);
+						version, Platform.IsUnix);
 					bldr.AppendFormat("<stat type='launches' value='{0}'/>", launchCount);
 					if (launchCount > 1)
 					{

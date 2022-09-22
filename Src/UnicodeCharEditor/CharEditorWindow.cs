@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -45,10 +45,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				Int32.TryParse(spec.CodePoint, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out m_code);
 			}
 
-			internal int Code
-			{
-				get { return m_code; }
-			}
+			internal int Code => m_code;
 		}
 
 		class PuaListItemComparer : IComparer
@@ -122,12 +119,15 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		private void ReadDataFromUnicodeFiles()
 		{
-			var icuDir = CustomIcu.DefaultDataDirectory;
+			var icuDir = PUAInstaller.IcuDir;
 			if (string.IsNullOrEmpty(icuDir))
 				throw new Exception("An error occurred: ICU directory not found. Registry value for ICU not set?");
 			var unicodeDataFilename = Path.Combine(icuDir, "UnicodeDataOverrides.txt");
 			if (!File.Exists(unicodeDataFilename))
+			{
+				LogFile.AddErrorLine($"{unicodeDataFilename} is not present. Skipping overrides");
 				return;
+			}
 			using (var reader = File.OpenText(unicodeDataFilename))
 			{
 				while (reader.Peek() >= 0)
@@ -392,13 +392,16 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			get
 			{
-				var icuDir = CustomIcu.DefaultDataDirectory;
+				var icuDir = PUAInstaller.IcuDir;
 				if (string.IsNullOrEmpty(icuDir))
 					throw new Exception("An error occurred: ICU directory not found. Registry value for ICU not set?");
 				// Must handle registry setting with or without final \  LT-11766.
 				if (icuDir.LastIndexOf(Path.DirectorySeparatorChar) == icuDir.Length -1)
 					icuDir = icuDir.Substring(0, icuDir.Length - 1);
-				return Path.GetDirectoryName(icuDir);	// strip the ICU specific subdirectory (FWR-2803)
+
+				// icuDir is in a form similar to "C:\ProgramData\SIL\Icu54". We need to
+				// strip off  the "Icuxx" directory (FWR-2803, LT-20599).
+				return Path.GetDirectoryName(icuDir);
 			}
 		}
 
@@ -406,9 +409,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		private void m_btnSave_Click(object sender, EventArgs e)
 		{
-			if (m_dictCustomChars.Count == 0)
-				return;
-
 			var customCharsFile = CustomCharsFile;
 			string oldFile = null;
 			if (File.Exists(customCharsFile))
@@ -522,11 +522,17 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// <summary>
 		/// Get the name of the help file.
 		/// </summary>
-		public string HelpFile
-		{
-			get { return Path.Combine(FwDirectoryFinder.CodeDirectory, GetHelpString("UserHelpFile")); }
-		}
-
+		public string HelpFile => Path.Combine(FwDirectoryFinder.CodeDirectory, GetHelpString("UserHelpFile"));
 		#endregion
+
+		private void info_Click(object sender, EventArgs e)
+		{
+			MessageBoxUtils.Show(this,
+				$"Icu Version: {CustomIcu.Version}{Environment.NewLine}" +
+				$"ICU_DATA location: {CustomIcu.DefaultDataDirectory}{Environment.NewLine}" +
+				$"Logging: {LogFile.IsLogging} [run with -l to turn on logging, or -v for verbose]{Environment.NewLine}" +
+				$"Log file location: {LogFile.LogPath}",
+				"Details");
+		}
 	}
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 SIL International
+// Copyright (c) 2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -192,8 +192,8 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			var testController = new HeadwordNumbersController(view, model, Cache);
 
-			Assert.That(view.Description, Is.StringContaining("Dictionary"), "Description should say current 'Dictionary' configuration");
-			Assert.That(view.Description, Is.StringContaining("Webster"), "Description should include the current configuration label");
+			Assert.That(view.Description, Does.Contain("Dictionary"), "Description should say current 'Dictionary' configuration");
+			Assert.That(view.Description, Does.Contain("Webster"), "Description should include the current configuration label");
 		}
 
 		[Test]
@@ -205,8 +205,8 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			var testController = new HeadwordNumbersController(view, model, Cache);
 
-			Assert.That(view.Description, Is.StringContaining("Reversal Index"), "Description should say current 'Reversal Index' configuration");
-			Assert.That(view.Description, Is.StringContaining("PrincePauper"), "Description should include the current configuration label");
+			Assert.That(view.Description, Does.Contain("Reversal Index"), "Description should say current 'Reversal Index' configuration");
+			Assert.That(view.Description, Does.Contain("PrincePauper"), "Description should include the current configuration label");
 		}
 
 		[Test]
@@ -218,7 +218,7 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			var testController = new HeadwordNumbersController(view, model, Cache);
 
-			Assert.That(view.HomographWritingSystem, Is.StringContaining("French"),
+			Assert.That(view.HomographWritingSystem, Does.Contain("French"),
 				"The writing system in the view should match the model (but show the pretty name).");
 		}
 
@@ -230,7 +230,7 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			var testController = new HeadwordNumbersController(view, model, Cache);
 
-			Assert.That(view.HomographWritingSystem, Is.StringContaining("English"),
+			Assert.That(view.HomographWritingSystem, Does.Contain("English"),
 				"The default writing system 'English' should be in the view when given HomographWritingSystem is missing.");
 		}
 

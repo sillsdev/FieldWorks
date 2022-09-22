@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -45,10 +45,17 @@ namespace SIL.FieldWorks.XWorks
 		private const string m_reference = "Reference";
 		private const string m_field = "LexEntry";
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void DictionaryConfigModelFixtureSetup()
 		{
 			CreateStandardStyles();
+			TempFile.NamePrefix = GetType().FullName;
+		}
+
+		[OneTimeTearDown]
+		public void OneTimeTeardown()
+		{
+			TempFile.NamePrefix = null;
 		}
 
 		private void CreateStandardStyles()
@@ -89,11 +96,11 @@ namespace SIL.FieldWorks.XWorks
 			var rootConfigNode = model.Parts[0];
 			Assert.AreEqual("Main Entry", rootConfigNode.Label);
 			Assert.AreEqual("LexEntry", rootConfigNode.FieldDescription);
-			Assert.IsNullOrEmpty(rootConfigNode.LabelSuffix);
-			Assert.IsNullOrEmpty(rootConfigNode.SubField);
-			Assert.IsNullOrEmpty(rootConfigNode.Before);
-			Assert.IsNullOrEmpty(rootConfigNode.Between);
-			Assert.IsNullOrEmpty(rootConfigNode.After);
+			Assert.That(rootConfigNode.LabelSuffix, Is.Null.Or.Empty);
+			Assert.That(rootConfigNode.SubField, Is.Null.Or.Empty);
+			Assert.That(rootConfigNode.Before, Is.Null.Or.Empty);
+			Assert.That(rootConfigNode.Between, Is.Null.Or.Empty);
+			Assert.That(rootConfigNode.After, Is.Null.Or.Empty);
 			Assert.IsFalse(rootConfigNode.IsCustomField);
 			Assert.IsFalse(rootConfigNode.IsDuplicate);
 			Assert.IsTrue(rootConfigNode.IsEnabled);
@@ -465,43 +472,49 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Save_BasicValidatesAgainstSchema()
 		{
-			var modelFile = Path.GetTempFileName();
-			var model = new DictionaryConfigurationModel
+			using (var disposableModelFile = new TempFile())
 			{
-				FilePath = modelFile,
-				Version = 0,
-				Label = "root"
-			};
-			//SUT
-			model.Save();
-			ValidateAgainstSchema(modelFile);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 0);
+				var modelFile = disposableModelFile.Path;
+				var model = new DictionaryConfigurationModel
+				{
+					FilePath = modelFile,
+					Version = 0,
+					Label = "root"
+				};
+				//SUT
+				model.Save();
+				ValidateAgainstSchema(modelFile);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 0);
+			}
 		}
 
 		[Test]
 		public void Save_HomographConfigurationValidatesAgainstSchema()
 		{
-			var modelFile = Path.GetTempFileName();
-			var model = new DictionaryConfigurationModel
+			using (var disposableModelFile = new TempFile())
 			{
-				FilePath = modelFile,
-				Version = 0,
-				Label = "root",
-				HomographConfiguration = new DictionaryHomographConfiguration
+				var modelFile = disposableModelFile.Path;
+				var model = new DictionaryConfigurationModel
 				{
-					CustomHomographNumbers = "0;1;2;3;4;5;6;7;8;9",
-					HomographNumberBefore = true,
-					HomographWritingSystem = "en",
-					ShowHwNumber = true,
-					ShowHwNumInCrossRef = true,
-					ShowHwNumInReversalCrossRef = true
-				},
-				Publications = new List<string> { "PublishThis" }
-			};
-			//SUT
-			model.Save();
-			ValidateAgainstSchema(modelFile);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/HomographConfiguration", 1);
+					FilePath = modelFile,
+					Version = 0,
+					Label = "root",
+					HomographConfiguration = new DictionaryHomographConfiguration
+					{
+						CustomHomographNumbers = "0;1;2;3;4;5;6;7;8;9",
+						HomographNumberBefore = true,
+						HomographWritingSystem = "en",
+						ShowHwNumber = true,
+						ShowHwNumInCrossRef = true,
+						ShowHwNumInReversalCrossRef = true
+					},
+					Publications = new List<string> { "PublishThis" }
+				};
+				//SUT
+				model.Save();
+				ValidateAgainstSchema(modelFile);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/HomographConfiguration", 1);
+			}
 		}
 
 		[Test]
@@ -527,33 +540,10 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Save_ConfigWithOneNodeValidatesAgainstSchema()
 		{
-			var modelFile = Path.GetTempFileName();
-			var oneConfigNode = new ConfigurableDictionaryNode
+			using (var disposableModelFile = new TempFile())
 			{
-				Label = "Main Entry",
-				IsEnabled = true,
-				Before = "[",
-				FieldDescription = "LexEntry"
-			};
-
-			var model = new DictionaryConfigurationModel
-			{
-				FilePath = modelFile,
-				Version = 0,
-				Label = "root",
-				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
-			};
-			//SUT
-			model.Save();
-			ValidateAgainstSchema(modelFile);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 1);
-		}
-
-		[Test]
-		public void Save_ConfigWithTwoNodesValidatesAgainstSchema()
-		{
-			var modelFile = Path.GetTempFileName();
-			var firstNode = new ConfigurableDictionaryNode
+				var modelFile = disposableModelFile.Path;
+				var oneConfigNode = new ConfigurableDictionaryNode
 				{
 					Label = "Main Entry",
 					IsEnabled = true,
@@ -561,7 +551,35 @@ namespace SIL.FieldWorks.XWorks
 					FieldDescription = "LexEntry"
 				};
 
-			var secondNode = new ConfigurableDictionaryNode
+				var model = new DictionaryConfigurationModel
+				{
+					FilePath = modelFile,
+					Version = 0,
+					Label = "root",
+					Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
+				};
+				//SUT
+				model.Save();
+				ValidateAgainstSchema(modelFile);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 1);
+			}
+		}
+
+		[Test]
+		public void Save_ConfigWithTwoNodesValidatesAgainstSchema()
+		{
+			using (var disposableModelFile = new TempFile())
+			{
+				var modelFile = disposableModelFile.Path;
+				var firstNode = new ConfigurableDictionaryNode
+				{
+					Label = "Main Entry",
+					IsEnabled = true,
+					Before = "[",
+					FieldDescription = "LexEntry"
+				};
+
+				var secondNode = new ConfigurableDictionaryNode
 				{
 					Label = "Minor Entry",
 					Before = "{",
@@ -570,30 +588,33 @@ namespace SIL.FieldWorks.XWorks
 					IsEnabled = false
 				};
 
-			var model = new DictionaryConfigurationModel
-			{
-				FilePath = modelFile,
-				Version = 0,
-				Label = "root",
-				Parts = new List<ConfigurableDictionaryNode> { firstNode, secondNode }
-			};
-			//SUT
-			model.Save();
-			ValidateAgainstSchema(modelFile);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 2);
+				var model = new DictionaryConfigurationModel
+				{
+					FilePath = modelFile,
+					Version = 0,
+					Label = "root",
+					Parts = new List<ConfigurableDictionaryNode> { firstNode, secondNode }
+				};
+				//SUT
+				model.Save();
+				ValidateAgainstSchema(modelFile);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 2);
+			}
 		}
 
 		[Test]
 		public void Save_ConfigNodeWithChildrenValidatesAgainstSchema()
 		{
-			var modelFile = Path.GetTempFileName();
-			var headword = new ConfigurableDictionaryNode
+			using (var disposableModelFile = new TempFile())
+			{
+				var modelFile = disposableModelFile.Path;
+				var headword = new ConfigurableDictionaryNode
 				{
 					Label = "Headword",
 					FieldDescription = "LexEntry, headword",
 					IsEnabled = true
 				};
-			var oneConfigNode = new ConfigurableDictionaryNode
+				var oneConfigNode = new ConfigurableDictionaryNode
 				{
 					Label = "Main Entry",
 					IsEnabled = true,
@@ -602,341 +623,400 @@ namespace SIL.FieldWorks.XWorks
 					Children = new List<ConfigurableDictionaryNode> { headword }
 				};
 
-			var model = new DictionaryConfigurationModel
-			{
-				FilePath = modelFile,
-				Version = 0,
-				Label = "root",
-				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
-			};
-			//SUT
-			model.Save();
+				var model = new DictionaryConfigurationModel
+				{
+					FilePath = modelFile,
+					Version = 0,
+					Label = "root",
+					Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
+				};
+				//SUT
+				model.Save();
 
-			ValidateAgainstSchema(modelFile);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ConfigurationItem", 1);
+				ValidateAgainstSchema(modelFile);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ConfigurationItem", 1);
+			}
 		}
 
 		[Test]
 		public void Save_ConfigWithReferenceItemValidatesAgainstSchema()
 		{
-			var modelFile = Path.GetTempFileName();
-			const string reference = "Reference";
-			var oneConfigNode = new ConfigurableDictionaryNode
+			using  (var disposableModelFile = new TempFile())
 			{
-				Label = "Main Entry",
-				IsEnabled = true,
-				Before = "[",
-				FieldDescription = "LexEntry",
-				ReferenceItem = reference
-			};
-			var oneRefConfigNode = new ConfigurableDictionaryNode
-			{
-				Label = reference,
-				FieldDescription = "LexEntry",
-			};
-			var model = new DictionaryConfigurationModel
-			{
-				FilePath = modelFile,
-				Version = 0,
-				Label = "root",
-				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode },
-				SharedItems = new List<ConfigurableDictionaryNode> { oneRefConfigNode }
-			};
+				var modelFile=disposableModelFile.Path;
+				const string reference = "Reference";
+				var oneConfigNode = new ConfigurableDictionaryNode
+				{
+					Label = "Main Entry",
+					IsEnabled = true,
+					Before = "[",
+					FieldDescription = "LexEntry",
+					ReferenceItem = reference
+				};
+				var oneRefConfigNode = new ConfigurableDictionaryNode
+				{
+					Label = reference,
+					FieldDescription = "LexEntry",
+				};
+				var model = new DictionaryConfigurationModel
+				{
+					FilePath = modelFile,
+					Version = 0,
+					Label = "root",
+					Parts = new List<ConfigurableDictionaryNode> { oneConfigNode },
+					SharedItems = new List<ConfigurableDictionaryNode> { oneRefConfigNode }
+				};
 
-			//SUT
-			model.Save();
-			ValidateAgainstSchema(modelFile);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 1);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ReferenceItem", 1);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ConfigurationItem", 0);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/SharedItems/ConfigurationItem", 1);
+				//SUT
+				model.Save();
+				ValidateAgainstSchema(modelFile);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 1);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ReferenceItem", 1);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ConfigurationItem", 0);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/SharedItems/ConfigurationItem", 1);
+			}
 		}
 
 		[Test]
 		public void Save_ConfigWithWritingSystemOptionsValidatesAgainstSchema()
 		{
-			var modelFile = Path.GetTempFileName();
-			var oneConfigNode = new ConfigurableDictionaryNode
+			using (var disposableModelFile = new TempFile())
 			{
-				Label = "Main Entry",
-				IsEnabled = true,
-				Before = "[",
-				FieldDescription = "LexEntry",
-				DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
+				var modelFile = disposableModelFile.Path;
+				var oneConfigNode = new ConfigurableDictionaryNode
 				{
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					Label = "Main Entry",
+					IsEnabled = true,
+					Before = "[",
+					FieldDescription = "LexEntry",
+					DictionaryNodeOptions = new DictionaryNodeWritingSystemOptions
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en", IsEnabled = false }
+						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+						{
+							new DictionaryNodeListOptions.DictionaryNodeOption
+								{ Id = "en", IsEnabled = false }
+						}
 					}
-				}
-			};
+				};
 
-			var model = new DictionaryConfigurationModel
-			{
-				FilePath = modelFile,
-				Version = 0,
-				Label = "root",
-				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
-			};
-			//SUT
-			model.Save();
-			ValidateAgainstSchema(modelFile);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 1);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/WritingSystemOptions", 1);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/WritingSystemOptions/Option", 1);
+				var model = new DictionaryConfigurationModel
+				{
+					FilePath = modelFile,
+					Version = 0,
+					Label = "root",
+					Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
+				};
+				//SUT
+				model.Save();
+				ValidateAgainstSchema(modelFile);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 1);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/WritingSystemOptions", 1);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/WritingSystemOptions/Option", 1);
+			}
 		}
 
 		[Test]
 		public void Save_ConfigWithPictureOptionsValidatesAgainstSchema()
 		{
-			var modelFile = Path.GetTempFileName();
-			const float maxHeight = 1.5f;
-			const float minHeight = 1;
-			const float maxWidth = 2.5f;
-			const float minWidth = 2;
-			var oneConfigNode = new ConfigurableDictionaryNode
+			using (var disposableModelFile = new TempFile())
 			{
-				Label = "Main Entry",
-				IsEnabled = true,
-				Before = "[",
-				FieldDescription = "LexEntry",
-				DictionaryNodeOptions = new DictionaryNodePictureOptions
+				var modelFile = disposableModelFile.Path;
+				const float maxHeight = 1.5f;
+				const float minHeight = 1;
+				const float maxWidth = 2.5f;
+				const float minWidth = 2;
+				var oneConfigNode = new ConfigurableDictionaryNode
 				{
-					StackMultiplePictures = true,
-					PictureLocation = DictionaryNodePictureOptions.AlignmentType.Left,
-					MaximumHeight = maxHeight,
-					MinimumHeight = minHeight,
-					MaximumWidth = maxWidth,
-					MinimumWidth = minWidth
-				}
-			};
+					Label = "Main Entry",
+					IsEnabled = true,
+					Before = "[",
+					FieldDescription = "LexEntry",
+					DictionaryNodeOptions = new DictionaryNodePictureOptions
+					{
+						StackMultiplePictures = true,
+						PictureLocation = DictionaryNodePictureOptions.AlignmentType.Left,
+						MaximumHeight = maxHeight,
+						MinimumHeight = minHeight,
+						MaximumWidth = maxWidth,
+						MinimumWidth = minWidth
+					}
+				};
 
-			var model = new DictionaryConfigurationModel
-			{
-				FilePath = modelFile,
-				Version = 0,
-				Label = "root",
-				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
-			};
-			//SUT
-			model.Save();
-			ValidateAgainstSchema(modelFile);
-			const string matchConfigRoot = "/DictionaryConfiguration/ConfigurationItem";
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath(matchConfigRoot, 1);
-			const string matchPictureOptions = matchConfigRoot + "/PictureOptions";
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath(matchPictureOptions, 1);
-			var matchAllOptions = matchPictureOptions +
-			 String.Format("[@stackPictures='{0}' and @pictureLocation='{1}' and @maximumHeight='{2}' and @minimumHeight='{3}' and @maximumWidth='{4}' and @minimumWidth='{5}']",
-								"true", "left", maxHeight, minHeight, maxWidth, minWidth);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath(matchAllOptions, 1);
+				var model = new DictionaryConfigurationModel
+				{
+					FilePath = modelFile,
+					Version = 0,
+					Label = "root",
+					Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
+				};
+				//SUT
+				model.Save();
+				ValidateAgainstSchema(modelFile);
+				const string matchConfigRoot = "/DictionaryConfiguration/ConfigurationItem";
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath(matchConfigRoot, 1);
+				const string matchPictureOptions = matchConfigRoot + "/PictureOptions";
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath(matchPictureOptions, 1);
+				var matchAllOptions = matchPictureOptions +
+					$"[@stackPictures='true' and @pictureLocation='left' and @maximumHeight='{maxHeight}' and @minimumHeight='{minHeight}' and @maximumWidth='{maxWidth}' and @minimumWidth='{minWidth}']";
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath(matchAllOptions, 1);
+			}
 		}
 
 		[Test]
 		public void Save_ConfigWithSenseOptionsValidatesAgainstSchema()
 		{
-			var modelFile = Path.GetTempFileName();
-			var senseOptions = new DictionaryNodeSenseOptions
+			using (var disposableModelFile = new TempFile())
 			{
-				NumberStyle = "Some-Style",
-				BeforeNumber = "(",
-				AfterNumber = ")",
-				NumberingStyle = "%O",
-				DisplayEachSenseInAParagraph = true
-			};
-			var oneConfigNode = new ConfigurableDictionaryNode
-			{
-				Label = "Main Entry",
-				IsEnabled = true,
-				Before = "[",
-				FieldDescription = "LexEntry",
-				Style = "Some-Style",
-				DictionaryNodeOptions = senseOptions
-			};
+				var modelFile = disposableModelFile.Path;
+				var senseOptions = new DictionaryNodeSenseOptions
+				{
+					NumberStyle = "Some-Style",
+					BeforeNumber = "(",
+					AfterNumber = ")",
+					NumberingStyle = "%O",
+					DisplayEachSenseInAParagraph = true
+				};
+				var oneConfigNode = new ConfigurableDictionaryNode
+				{
+					Label = "Main Entry",
+					IsEnabled = true,
+					Before = "[",
+					FieldDescription = "LexEntry",
+					Style = "Some-Style",
+					DictionaryNodeOptions = senseOptions
+				};
 
-			var model = new DictionaryConfigurationModel
-			{
-				FilePath = modelFile,
-				Version = 0,
-				Label = "root",
-				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
-			};
-			//SUT
-			model.Save();
-			ValidateAgainstSchema(modelFile);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 1);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/SenseOptions", 1);
+				var model = new DictionaryConfigurationModel
+				{
+					FilePath = modelFile,
+					Version = 0,
+					Label = "root",
+					Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
+				};
+				//SUT
+				model.Save();
+				ValidateAgainstSchema(modelFile);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 1);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/SenseOptions", 1);
+			}
 		}
 
 		[Test]
 		public void Save_ConfigWithListOptionsValidatesAgainstSchema()
 		{
-			var modelFile = Path.GetTempFileName();
-			var oneConfigNode = new ConfigurableDictionaryNode
+			using (var disposableModelFile = new TempFile())
 			{
-				Label = "Main Entry",
-				IsEnabled = true,
-				Before = "[",
-				FieldDescription = "LexEntry",
-				DictionaryNodeOptions = new DictionaryNodeListOptions
+				var modelFile = disposableModelFile.Path;
+				var oneConfigNode = new ConfigurableDictionaryNode
 				{
-					ListId = DictionaryNodeListOptions.ListIds.Entry,
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					Label = "Main Entry",
+					IsEnabled = true,
+					Before = "[",
+					FieldDescription = "LexEntry",
+					DictionaryNodeOptions = new DictionaryNodeListOptions
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c", IsEnabled = false }
+						ListId = DictionaryNodeListOptions.ListIds.Entry,
+						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+						{
+							new DictionaryNodeListOptions.DictionaryNodeOption
+								{ Id = "1f6ae209-141a-40db-983c-bee93af0ca3c", IsEnabled = false }
+						}
 					}
-				}
-			};
+				};
 
-			var model = new DictionaryConfigurationModel
-			{
-				FilePath = modelFile,
-				Version = 0,
-				Label = "root",
-				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
-			};
-			//SUT
-			model.Save();
-			ValidateAgainstSchema(modelFile);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 1);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ListTypeOptions", 1);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ListTypeOptions/Option", 1);
+				var model = new DictionaryConfigurationModel
+				{
+					FilePath = modelFile,
+					Version = 0,
+					Label = "root",
+					Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
+				};
+				//SUT
+				model.Save();
+				ValidateAgainstSchema(modelFile);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 1);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ListTypeOptions", 1);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ListTypeOptions/Option", 1);
+			}
 		}
 
 		[Test]
 		public void Save_ConfigWithListAndParaOptionsValidatesAgainstSchema()
 		{
-			var modelFile = Path.GetTempFileName();
-			var oneConfigNode = new ConfigurableDictionaryNode
+			using (var disposableModelFile = new TempFile())
 			{
-				Label = "Main Entry",
-				IsEnabled = true,
-				Before = "[",
-				FieldDescription = "LexEntry",
-				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
+				var modelFile = disposableModelFile.Path;
+				var oneConfigNode = new ConfigurableDictionaryNode
 				{
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					Label = "Main Entry",
+					IsEnabled = true,
+					Before = "[",
+					FieldDescription = "LexEntry",
+					DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c", IsEnabled = false }
+						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+						{
+							new DictionaryNodeListOptions.DictionaryNodeOption
+								{ Id = "1f6ae209-141a-40db-983c-bee93af0ca3c", IsEnabled = false }
+						}
 					}
-				}
-			};
+				};
 
-			var model = new DictionaryConfigurationModel
-			{
-				FilePath = modelFile,
-				Version = 0,
-				Label = "root",
-				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
-			};
-			//SUT
-			model.Save();
-			ValidateAgainstSchema(modelFile);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 1);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ComplexFormOptions", 1);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ComplexFormOptions/Option", 1);
+				var model = new DictionaryConfigurationModel
+				{
+					FilePath = modelFile,
+					Version = 0,
+					Label = "root",
+					Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
+				};
+				//SUT
+				model.Save();
+				ValidateAgainstSchema(modelFile);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 1);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ComplexFormOptions", 1);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem/ComplexFormOptions/Option", 1);
+			}
 		}
 
 		[Test]
 		public void Save_ConfigWithOnePublicationValidatesAgainstSchema()
 		{
-			var modelFile = Path.GetTempFileName();
-			var model = new DictionaryConfigurationModel
+			using (var disposableModelFile = new TempFile())
 			{
-				FilePath = modelFile,
-				Version = 0,
-				Label = "root",
-				Publications = new List<string> { "Main Dictionary" }
-			};
-			//SUT
-			model.Save();
-			ValidateAgainstSchema(modelFile);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 0);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications", 1);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications/Publication", 1);
+				var modelFile = disposableModelFile.Path;
+				var model = new DictionaryConfigurationModel
+				{
+					FilePath = modelFile,
+					Version = 0,
+					Label = "root",
+					Publications = new List<string> { "Main Dictionary" }
+				};
+				//SUT
+				model.Save();
+				ValidateAgainstSchema(modelFile);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 0);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications", 1);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications/Publication", 1);
+			}
 		}
 
 		[Test]
 		public void Save_ConfigWithTwoPublicationsValidatesAgainstSchema()
 		{
-			var modelFile = Path.GetTempFileName();
-			var model = new DictionaryConfigurationModel
+			using (var disposableModelFile = new TempFile())
 			{
-				FilePath = modelFile,
-				Version = 0,
-				Label = "root",
-				Publications = new List<string> { "Main Dictionary", "Subset Dictionary" }
-			};
-			//SUT
-			model.Save();
-			ValidateAgainstSchema(modelFile);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 0);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications", 1);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications/Publication", 2);
+				var modelFile = disposableModelFile.Path;
+				var model = new DictionaryConfigurationModel
+				{
+					FilePath = modelFile,
+					Version = 0,
+					Label = "root",
+					Publications = new List<string> { "Main Dictionary", "Subset Dictionary" }
+				};
+				//SUT
+				model.Save();
+				ValidateAgainstSchema(modelFile);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 0);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications", 1);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications/Publication", 2);
+			}
 		}
 
 		[Test]
 		public void Save_ConfigWithAllPublicationsValidatesAgainstSchema()
 		{
-			var modelFile = Path.GetTempFileName();
-			var model = new DictionaryConfigurationModel
+			using  (var disposableModelFile = new TempFile())
 			{
-				FilePath = modelFile,
-				Version = 0,
-				Label = "root",
-				Publications = new List<string> { "Main Dictionary" },
-				AllPublications = true,
-			};
-			//SUT
-			model.Save();
-			ValidateAgainstSchema(modelFile);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 0);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/@allPublications", 1);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications", 1);
-			AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications/Publication", 1);
+				var modelFile=disposableModelFile.Path;
+				var model = new DictionaryConfigurationModel
+				{
+					FilePath = modelFile,
+					Version = 0,
+					Label = "root",
+					Publications = new List<string> { "Main Dictionary" },
+					AllPublications = true,
+				};
+				//SUT
+				model.Save();
+				ValidateAgainstSchema(modelFile);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/ConfigurationItem", 0);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/@allPublications", 1);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications", 1);
+				AssertThatXmlIn.File(modelFile).HasSpecifiedNumberOfMatchesForXpath("/DictionaryConfiguration/Publications/Publication", 1);
+			}
 		}
 
 		[Test]
 		public void Save_RealConfigValidatesAgainstSchema()
 		{
-			var modelFile = Path.GetTempFileName();
-			var shippedConfigfolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", "Dictionary");
-			var sampleShippedFile = Directory.EnumerateFiles(shippedConfigfolder, "*" + DictionaryConfigurationModel.FileExtension).First();
-			var model = new DictionaryConfigurationModel(sampleShippedFile, Cache) { FilePath = modelFile };
-			model.Parts[1].DuplicateAmongSiblings(model.Parts);
-			// SUT
-			model.Save();
-			ValidateAgainstSchema(modelFile);
+			using (var disposableModelFile = new TempFile())
+			{
+				var modelFile = disposableModelFile.Path;
+				var shippedConfigFolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", "Dictionary");
+				var sampleShippedFile = Directory.EnumerateFiles(shippedConfigFolder, "*" + DictionaryConfigurationModel.FileExtension).First();
+				var model = new DictionaryConfigurationModel(sampleShippedFile, Cache) { FilePath = modelFile };
+				model.Parts[1].DuplicateAmongSiblings(model.Parts);
+				// SUT
+				model.Save();
+				ValidateAgainstSchema(modelFile);
+			}
+		}
+
+		[Test]
+		public void Save_UsesISO86010DateTimeFormat()
+		{
+			using (var disposableModelFile = new TempFile())
+			{
+				var modelFile = disposableModelFile.Path;
+				var model = new DictionaryConfigurationModel
+				{
+					FilePath = modelFile,
+					Version = 0,
+					Label = "root",
+					Publications = new List<string> { "Main Dictionary" },
+					AllPublications = true,
+				};
+				//SUT
+				model.Save();
+				ValidateAgainstSchema(modelFile);
+				var xDoc = XDocument.Load(modelFile);
+				var date = xDoc.Root?.Attribute("lastModified")?.Value;
+				Assert.That(date, Does.Match(@"^\d{4}-\d{2}-\d{2}$"), xDoc.ToString());
+			}
 		}
 
 		[Test]
 		public void Save_PrettyPrints()
 		{
-			var modelFile = Path.GetTempFileName();
-			var oneConfigNode = new ConfigurableDictionaryNode
+			using (var disposableModelFile = new TempFile())
 			{
-				Label = "Entry",
-				FieldDescription = "LexEntry",
-				DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
+				var modelFile = disposableModelFile.Path;
+				var oneConfigNode = new ConfigurableDictionaryNode
 				{
-					Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+					Label = "Entry",
+					FieldDescription = "LexEntry",
+					DictionaryNodeOptions = new DictionaryNodeListAndParaOptions
 					{
-						new DictionaryNodeListOptions.DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c" }
+						Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+						{
+							new DictionaryNodeListOptions.DictionaryNodeOption { Id = "1f6ae209-141a-40db-983c-bee93af0ca3c" }
+						}
 					}
-				}
-			};
+				};
 
-			var model = new DictionaryConfigurationModel
-			{
-				FilePath = modelFile,
-				Version = 0,
-				Label = "root",
-				Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
-			};
-			//SUT
-			model.Save();
-			ValidateAgainstSchema(modelFile);
-			StringAssert.Contains("      ", File.ReadAllText(modelFile), "Currently expecting default intent style: two spaces");
-			StringAssert.Contains(Environment.NewLine, File.ReadAllText(modelFile), "Configuration XML should not all be on one line");
+				var model = new DictionaryConfigurationModel
+				{
+					FilePath = modelFile,
+					Version = 0,
+					Label = "root",
+					Parts = new List<ConfigurableDictionaryNode> { oneConfigNode }
+				};
+				//SUT
+				model.Save();
+				ValidateAgainstSchema(modelFile);
+				StringAssert.Contains("      ", File.ReadAllText(modelFile), "Currently expecting default intent style: two spaces");
+				StringAssert.Contains(Environment.NewLine, File.ReadAllText(modelFile), "Configuration XML should not all be on one line");
+			}
 		}
 
 		private static void ValidateAgainstSchema(string xmlFile)
@@ -1023,14 +1103,14 @@ namespace SIL.FieldWorks.XWorks
 
 			// SUT (Field is different)
 			Assert.Throws<KeyNotFoundException>(() => DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems));
-			Assert.IsNull(configNode.ReferencedNode, "ReferencedNode should not have been set");
+			Assert.That(configNode.ReferencedNode, Is.Null, "ReferencedNode should not have been set");
 
 			refConfigNode.FieldDescription = m_field;
 			refConfigNode.SubField = "SensesOS";
 
 			// SUT (SubField is different)
 			Assert.Throws<KeyNotFoundException>(() => DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems));
-			Assert.IsNull(configNode.ReferencedNode, "ReferencedNode should not have been set");
+			Assert.That(configNode.ReferencedNode, Is.Null, "ReferencedNode should not have been set");
 		}
 
 		[Test]

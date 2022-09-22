@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -11,6 +11,7 @@ using SIL.LCModel.FixData;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
 using SIL.Windows.Forms.HotSpot;
+using SIL.Windows.Forms.Reporting;
 
 namespace FixFwData
 {
@@ -52,7 +53,7 @@ namespace FixFwData
 			{
 				ErrorReport.EmailAddress = "flex_errors@sil.org";
 				ErrorReport.AddStandardProperties();
-				ExceptionHandler.Init();
+				ExceptionHandler.Init(new WinFormsExceptionHandler());
 			}
 		}
 

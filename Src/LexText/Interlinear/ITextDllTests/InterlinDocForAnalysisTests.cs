@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		///
 		/// </summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();

@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			using (RootSiteGroup group = new RootSiteGroup())
 			{
-				Assert.IsNull(group.CastAsIVwRootSite());
+				Assert.That(group.CastAsIVwRootSite(), Is.Null);
 			}
 		}
 	}

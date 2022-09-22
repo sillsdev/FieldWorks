@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2013-2017 SIL International
+// Copyright (c) 2013-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks
 	/// create a Palaso dialog, create an instance of this class, passing it the dialog.
 	/// </summary>
 	/// ------------------------------------------------------------------------------------
-	class SilErrorReportingAdapter : IErrorReporter, IDisposable
+	internal class SilErrorReportingAdapter : IErrorReporter, IDisposable
 	{
 		private Form m_parentForm;
 		private RegistryKey m_registryKey;
@@ -37,6 +37,13 @@ namespace SIL.FieldWorks.XWorks
 			throw e; // I think this will ultimately show the green-screen (unless something catches it)
 		}
 
+		public void NotifyUserOfProblem(IRepeatNoticePolicy policy, Exception exception, string message)
+		{
+			if (policy.ShouldShowMessage(message))
+				ErrorReporter.ReportException(new Exception(message, exception), m_registryKey,
+					m_supportEmailAddress, m_parentForm, false);
+		}
+
 		public ErrorResult NotifyUserOfProblem(IRepeatNoticePolicy policy, string alternateButton1Label,
 			ErrorResult resultIfAlternateButtonPressed, string message)
 		{
@@ -45,9 +52,9 @@ namespace SIL.FieldWorks.XWorks
 				ErrorResult.Abort : ErrorResult.Ignore;
 		}
 
-		public void ReportNonFatalException(Exception exception, IRepeatNoticePolicy policy)
+		public void ReportNonFatalException(Exception exception, IRepeatNoticePolicy policy = null)
 		{
-			if (policy.ShouldShowErrorReportDialog(exception))
+			if (policy == null || policy.ShouldShowErrorReportDialog(exception))
 				ErrorReporter.ReportException(exception, m_registryKey, m_supportEmailAddress, m_parentForm, false);
 		}
 

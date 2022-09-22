@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -24,7 +25,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			var instructionsHtml = WebUtility.HtmlDecode(LexEdStrings.SendReceiveForTheFirstTimeContent);
 			// Strip mailto: links until a proper solution can be implemented for LT-16594.
-			if (MiscUtils.IsUnix && instructionsHtml != null)
+			if (Platform.IsUnix && instructionsHtml != null)
 			{
 				instructionsHtml = Regex.Replace(instructionsHtml, "<a href='mailto:.*'>(.*)</a>", "$1");
 			}

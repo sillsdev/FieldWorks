@@ -1,4 +1,4 @@
-// Copyright (c) 2017 SIL International
+// Copyright (c) 2017-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.Reporting;
+using SIL.Settings;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -28,6 +29,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get { return m_settings.Reporting; }
 			set { m_settings.Reporting = value; }
+		}
+
+		public override UpdateSettings Update
+		{
+			get => m_settings.Update;
+			set => m_settings.Update = value;
 		}
 
 		public override string LocalKeyboards

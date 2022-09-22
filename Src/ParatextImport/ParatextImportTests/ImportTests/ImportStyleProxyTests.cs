@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+// Copyright (c) 2003-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -35,8 +35,8 @@ namespace ParatextImport.ImportTests
 			base.TestSetup();
 
 			m_styleSheet = new LcmStyleSheet();
-			// Force load of styles
-			IScripture scr = Cache.LangProject.TranslatedScriptureOA;
+			// ReSharper disable once UnusedVariable - Force load of styles
+			var scr = Cache.LangProject.TranslatedScriptureOA;
 			Assert.IsTrue(Cache.LangProject.StylesOC.Count > 0);
 			m_styleSheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 		}
@@ -64,8 +64,8 @@ namespace ParatextImport.ImportTests
 		{
 			int cStylesOrig = m_styleSheet.CStyles;
 			Assert.IsTrue(cStylesOrig > 10);
-			Assert.IsNotNull(m_styleSheet.GetStyleRgch(0, "Section Head"));
-			Assert.IsNotNull(m_styleSheet.GetStyleRgch(0, "Verse Number"));
+			Assert.That(m_styleSheet.GetStyleRgch(0, "Section Head"), Is.Not.Null);
+			Assert.That(m_styleSheet.GetStyleRgch(0, "Verse Number"), Is.Not.Null);
 
 			// create four new proxies;  verify that they properly determine if they are
 			//  mapped to the TE default stylesheet
@@ -94,13 +94,13 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(ContextValues.Text, proxy1.Context);
 			Assert.AreEqual(StructureValues.Heading, proxy1.Structure);
 			Assert.AreEqual(StyleType.kstParagraph, proxy1.StyleType);
-			Assert.IsNull(proxy1.EndMarker);
+			Assert.That(proxy1.EndMarker, Is.Null);
 
 			Assert.AreEqual(ContextValues.Text, proxy2.Context);
 			Assert.AreEqual(StructureValues.Body, proxy2.Structure);
 			Assert.AreEqual(FunctionValues.Verse, proxy2.Function);
 			Assert.AreEqual(StyleType.kstCharacter, proxy2.StyleType);
-			Assert.IsNull(proxy2.EndMarker);
+			Assert.That(proxy2.EndMarker, Is.Null);
 
 			Assert.AreEqual(ContextValues.Text, proxy3.Context);
 			// getting the text props will cause the style to be created in the database
@@ -108,14 +108,14 @@ namespace ParatextImport.ImportTests
 			IStStyle dbStyle = m_styleSheet.FindStyle(proxy3Name);
 			Assert.AreEqual(ScrStyleNames.NormalParagraph, dbStyle.BasedOnRA.Name);
 			Assert.AreEqual(StyleType.kstParagraph, proxy3.StyleType);
-			Assert.IsNull(proxy3.EndMarker);
+			Assert.That(proxy3.EndMarker, Is.Null);
 
 			Assert.AreEqual(ContextValues.Text, proxy4.Context);
 			props = proxy4.TsTextProps;
 			dbStyle = m_styleSheet.FindStyle(proxy4Name);
-			Assert.IsNull(dbStyle.BasedOnRA);
+			Assert.That(dbStyle.BasedOnRA, Is.Null);
 			Assert.AreEqual(StyleType.kstCharacter, proxy4.StyleType);
-			Assert.IsNull(proxy4.EndMarker);
+			Assert.That(proxy4.EndMarker, Is.Null);
 
 			// use SetFormat to add formatting props to unmapped proxy3
 			ITsPropsBldr tsPropertiesBldr = TsStringUtils.MakePropsBldr();
@@ -126,12 +126,12 @@ namespace ParatextImport.ImportTests
 			proxy3.SetFormat(formatProps3, false);
 
 			// Test retrieval of ParaProps and TsTextProps
-			Assert.IsNotNull(proxy1.TsTextProps);
-			Assert.IsNotNull(proxy2.TsTextProps);
+			Assert.That(proxy1.TsTextProps, Is.Not.Null);
+			Assert.That(proxy2.TsTextProps, Is.Not.Null);
 			// Besides returning the props, retrieving ParaProps or TsTextProps adds a
 			// previously unmapped style to the stylesheet, so that proxy becomes mapped
 			// Next two calls force creation of new styles
-			Assert.IsNotNull(proxy3.TsTextProps); // has benefit of SetFormat
+			Assert.That(proxy3.TsTextProps, Is.Not.Null); // has benefit of SetFormat
 			Assert.IsFalse(proxy3.IsUnknownMapping,
 				"Tom Bogle style should be created when getting TsTextProps");
 			Assert.IsFalse(proxy4.IsUnknownMapping,
@@ -166,7 +166,7 @@ namespace ParatextImport.ImportTests
 				0, 0, ContextValues.EndMarker, m_styleSheet);
 			int cStylesX = m_styleSheet.CStyles;
 			// These calls should not add new style
-			Assert.IsNull(proxy.TsTextProps); //no props returned
+			Assert.That(proxy.TsTextProps, Is.Null); //no props returned
 			Assert.AreEqual(ContextValues.EndMarker, proxy.Context);
 			Assert.IsTrue(proxy.IsUnknownMapping, "Xnote* should not exist");
 			Assert.AreEqual(cStylesX, m_styleSheet.CStyles);
@@ -210,9 +210,9 @@ namespace ParatextImport.ImportTests
 			// Now delete the new style
 			m_styleSheet.Delete(hvoStyle);
 
-			// Verfiy the deletion
+			// Verify the deletion
 			Assert.AreEqual(nStylesOrig, m_styleSheet.CStyles);
-			Assert.IsNull(m_styleSheet.GetStyleRgch(0, "MyNewStyle"),
+			Assert.That(m_styleSheet.GetStyleRgch(0, "MyNewStyle"), Is.Null,
 				"Should get null because style is not there");
 		}
 

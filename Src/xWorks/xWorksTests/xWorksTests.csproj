@@ -189,8 +189,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\LexEdDll.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework, Version=2.5.8.10295, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
-      <HintPath>..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\..\packages\NUnit.3.13.3\lib\net45\nunit.framework.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
@@ -231,9 +231,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="CommonServiceLocator, Version=1.4.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\CommonServiceLocator.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -270,12 +270,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddCustomFieldDialogTests.cs" />
+    <Compile Include="AddCustomFieldDlgTests.cs" />
     <Compile Include="AllReversalEntriesRecordListTests.cs" />
     <Compile Include="ArchivingTests.cs" />
     <Compile Include="BulkEditBarTests.cs">
     </Compile>
     <Compile Include="ConfigurableDictionaryNodeTests.cs" />
+    <Compile Include="ConfiguredLcmUsfmGeneratorTests.cs" />
     <Compile Include="ConfiguredXHTMLGeneratorReversalTests.cs" />
     <Compile Include="ConfiguredXHTMLGeneratorTestHelpers.cs" />
     <Compile Include="ConfiguredLcmGeneratorTests.cs" />
@@ -307,7 +308,8 @@
     <Compile Include="ItemClickedTests.cs" />
     <Compile Include="LcmJsonGeneratorTests.cs" />
     <Compile Include="MacroListenerTests.cs" />
-    <Compile Include="ReveralIndexServicesTests.cs" />
+    <Compile Include="RecordListTests.cs" />
+    <Compile Include="ReversalIndexServicesTests.cs" />
     <Compile Include="TreeBarHandlerUtilsTests.cs" />
     <Compile Include="UploadToWebonaryControllerTests.cs" />
     <Compile Include="UploadToWebonaryModelTests.cs" />

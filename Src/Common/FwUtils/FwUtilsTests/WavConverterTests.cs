@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Assert.IsFalse(File.Exists(destination), "WavConverter should not have created an mp3 file.");
 				Assert.AreEqual(1, messageBoxAdapter.MessagesDisplayed.Count);
 				Assert.That(messageBoxAdapter.MessagesDisplayed[0],
-					Is.StringStarting(string.Format(FwUtilsStrings.ConvertBytesToMp3_BadWavFile, file, string.Empty, string.Empty)));
+					Does.StartWith(string.Format(FwUtilsStrings.ConvertBytesToMp3_BadWavFile, file, string.Empty, string.Empty)));
 			}
 		}
 

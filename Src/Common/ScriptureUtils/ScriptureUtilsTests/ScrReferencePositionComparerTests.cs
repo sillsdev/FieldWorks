@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// Setup the test fixture.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			m_comparer = new ScrReferencePositionComparer(m_mdProvider, true);
@@ -113,12 +113,11 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void InvalidType()
 		{
 			// This was using new CmObject, which made the whole assembly depend on FDO.
 			// There are cheaper ways to test some non reference object (I, RBR, hope).
-			m_comparer.Compare(01001001, new ArgumentException());
+			Assert.That(() => m_comparer.Compare(01001001, new ArgumentException()), Throws.ArgumentException);
 		}
 	}
 }

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -49,7 +50,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					var sz = new Size(Width, Int32.MaxValue);
 					sz = TextRenderer.MeasureText(Text, Font, sz, TextFormatFlags.WordBreak);
 					// The mono implementation chops off the bottom line of the display (FWNX-752).
-					if (MiscUtils.IsMono)
+					if (Platform.IsMono)
 						Height = sz.Height + 7;
 					else
 						Height = sz.Height;

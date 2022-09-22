@@ -54,7 +54,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteBeginningWithAsterisk()
 		{
 			m_importer.Initialize();
@@ -76,7 +75,7 @@ namespace ParatextImport.ImportTests
 
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
-			Assert.IsNotNull(mark, "Book not created");
+			Assert.That(mark, Is.Not.Null, "Book not created");
 			Assert.AreEqual(2, mark.SectionsOS.Count, "section count is not correct");
 			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
@@ -109,7 +108,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteBeginningWithMultiCharToken()
 		{
 			m_settings.SetMapping(MappingSet.Main, new ImportMappingInfo(@"\ft", @"\ft*",
@@ -138,7 +136,7 @@ namespace ParatextImport.ImportTests
 
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
-			Assert.IsNotNull(mark, "Book not created");
+			Assert.That(mark, Is.Not.Null, "Book not created");
 			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
 			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
@@ -175,7 +173,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteBeginningWithMultipleWords()
 		{
 			m_importer.Initialize();
@@ -201,7 +198,7 @@ namespace ParatextImport.ImportTests
 
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
-			Assert.IsNotNull(mark, "Book not created");
+			Assert.That(mark, Is.Not.Null, "Book not created");
 			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
 			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
@@ -236,7 +233,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteEndsWithCharStyle()
 		{
 			m_importer.Initialize();
@@ -262,7 +258,7 @@ namespace ParatextImport.ImportTests
 
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
-			Assert.IsNotNull(mark, "Book not created");
+			Assert.That(mark, Is.Not.Null, "Book not created");
 			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
 			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
@@ -297,7 +293,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteLastThing()
 		{
 			m_settings.SetMapping(MappingSet.Main, new ImportMappingInfo(@"\ft", @"\ft*",
@@ -323,13 +318,13 @@ namespace ParatextImport.ImportTests
 
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
-			Assert.IsNotNull(mark, "Book not created");
+			Assert.That(mark, Is.Not.Null, "Book not created");
 			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
 			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
-			IStFootnote footnote = (IStFootnote)mark.FootnotesOS[0];
+			IStFootnote footnote = mark.FootnotesOS[0];
 			ITsString tss = ((IStTxtPara)footnote.ParagraphsOS[0]).Contents;
 			Assert.AreEqual(1, tss.RunCount);
 			AssertEx.RunIsCorrect(tss, 0, "footnote", null, Cache.DefaultVernWs);
@@ -359,7 +354,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteLookahead()
 		{
 			m_importer.Initialize();
@@ -386,13 +380,13 @@ namespace ParatextImport.ImportTests
 
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
-			Assert.IsNotNull(mark, "Book not created");
+			Assert.That(mark, Is.Not.Null, "Book not created");
 			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
 			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
-			IStFootnote footnote = (IStFootnote)mark.FootnotesOS[0];
+			IStFootnote footnote = mark.FootnotesOS[0];
 			IStTxtPara para = (IStTxtPara)footnote.ParagraphsOS[0];
 			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "This is a footnote", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -422,7 +416,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteWithTextBeforeReference()
 		{
 			m_importer.Initialize();
@@ -449,13 +442,13 @@ namespace ParatextImport.ImportTests
 
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
-			Assert.IsNotNull(mark, "Book not created");
+			Assert.That(mark, Is.Not.Null, "Book not created");
 			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
 			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
-			IStFootnote footnote = (IStFootnote)mark.FootnotesOS[0];
+			IStFootnote footnote = mark.FootnotesOS[0];
 			IStTxtPara para = (IStTxtPara)footnote.ParagraphsOS[0];
 			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "I wish This is a footnote", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -484,7 +477,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteDefaultParaChars1()
 		{
 			m_settings.SetMapping(MappingSet.Main, new ImportMappingInfo(@"\ft", @"\ft*",
@@ -516,13 +508,13 @@ namespace ParatextImport.ImportTests
 
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
-			Assert.IsNotNull(mark, "Book not created");
+			Assert.That(mark, Is.Not.Null, "Book not created");
 			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
 			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
-			IStFootnote footnote = (IStFootnote)mark.FootnotesOS[0];
+			IStFootnote footnote = mark.FootnotesOS[0];
 			IStTxtPara para = (IStTxtPara)footnote.ParagraphsOS[0];
 			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "footnote", StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs));
@@ -560,7 +552,6 @@ namespace ParatextImport.ImportTests
 		/// tests the current behavior. See TE-5078</remarks>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteDefaultParaChars2()
 		{
 			m_settings.SetMapping(MappingSet.Main, new ImportMappingInfo(@"\ft", @"\ft*",
@@ -587,7 +578,7 @@ namespace ParatextImport.ImportTests
 
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
-			Assert.IsNotNull(mark, "Book not created");
+			Assert.That(mark, Is.Not.Null, "Book not created");
 			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
 			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
@@ -620,7 +611,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteDefaultParaChars3()
 		{
 			m_settings.SetMapping(MappingSet.Main, new ImportMappingInfo(@"\ft", @"\ft*",
@@ -651,7 +641,7 @@ namespace ParatextImport.ImportTests
 
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
-			Assert.IsNotNull(mark, "Book not created");
+			Assert.That(mark, Is.Not.Null, "Book not created");
 			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
 			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
@@ -688,7 +678,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void FootnoteDefaultParaChars4()
 		{
 			m_settings.SetMapping(MappingSet.Main, new ImportMappingInfo(@"\ft", @"\ft*",
@@ -719,7 +708,7 @@ namespace ParatextImport.ImportTests
 
 			// Verify the imported data
 			IScrBook mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
-			Assert.IsNotNull(mark, "Book not created");
+			Assert.That(mark, Is.Not.Null, "Book not created");
 			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
 			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
@@ -756,7 +745,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void HandleUSFMStyleFootnotes_FirstOneHasCallerOmitted()
 		{
 			// initialize - process a \id segment to establish a book
@@ -813,7 +801,7 @@ namespace ParatextImport.ImportTests
 				"3Verse 3 start..." + StringUtils.kChObject + " ...verse 3 end. " +
 				"4Verse 4 start..." + StringUtils.kChObject + " ...verse 4 end.",
 				para.Contents.Text);
-			Assert.IsNull(m_scr.GeneralFootnoteMarker);
+			Assert.That(m_scr.GeneralFootnoteMarker, Is.Null);
 			VerifySimpleFootnote(0, "Footnote 1 text", string.Empty);
 			VerifySimpleFootnote(1, "Footnote 2 text", string.Empty);
 			VerifySimpleFootnote(2, "Footnote 3 text", string.Empty);
@@ -831,7 +819,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void HandleUSFMStyleFootnotes_FirstOneHasSequence()
 		{
 			// initialize - process a \id segment to establish a book
@@ -906,7 +893,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void HandleUSFMStyleFootnotes_FirstOneHasLiteralCaller()
 		{
 			// initialize - process a \id segment to establish a book
@@ -981,7 +967,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void HandleUSFMStyleFootnotes_StripAndIgnoreCallers()
 		{
 			// initialize - process a \id segment to establish a book
@@ -1058,7 +1043,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void HandleUSFMStyleFootnotes_FootnoteInSectionHeadAfterChapterNum()
 		{
 			// initialize - process a \id segment to establish a book
@@ -1117,7 +1101,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void AnnotationNonInterleaved_Simple()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -1288,7 +1271,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void AnnotationNonInterleaved_StartWithCharacterMapping()
 		{
 			m_importer.Settings.ImportTranslation = false;
@@ -1303,7 +1285,7 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
 
 			// Since we aren't importing Scripture, we shouldn't have created Genesis.
-			Assert.IsNull(m_importer.ScrBook);
+			Assert.That(m_importer.ScrBook, Is.Null);
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 1, 0);
 			m_importer.ProcessSegment("", @"\c");
@@ -1315,7 +1297,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(1, 1, 2);
 			m_importer.ProcessSegment("Second note", @"\v");
 			m_importer.FinalizeImport();
-			Assert.IsNull(m_importer.UndoInfo.ImportedVersion);
+			Assert.That(m_importer.UndoInfo.ImportedVersion, Is.Null);
 
 			// look at the annotation and see if it is associated to the correct Scripture reference
 			ILcmOwningSequence<IScrScriptureNote> notes = m_scr.BookAnnotationsOS[0].NotesOS;
@@ -1323,8 +1305,8 @@ namespace ParatextImport.ImportTests
 
 			IScrScriptureNote annotation = notes[0];
 			Assert.AreEqual(NoteType.Translator, annotation.AnnotationType);
-			Assert.IsNull(annotation.BeginObjectRA);
-			Assert.IsNull(annotation.EndObjectRA);
+			Assert.That(annotation.BeginObjectRA, Is.Null);
+			Assert.That(annotation.EndObjectRA, Is.Null);
 			Assert.AreEqual(0, annotation.BeginOffset);
 			Assert.AreEqual(0, annotation.EndOffset);
 			Assert.AreEqual(1001001, annotation.BeginRef);
@@ -1338,8 +1320,8 @@ namespace ParatextImport.ImportTests
 
 			annotation = notes[1];
 			Assert.AreEqual(NoteType.Translator, annotation.AnnotationType);
-			Assert.IsNull(annotation.BeginObjectRA);
-			Assert.IsNull(annotation.EndObjectRA);
+			Assert.That(annotation.BeginObjectRA, Is.Null);
+			Assert.That(annotation.EndObjectRA, Is.Null);
 			Assert.AreEqual(0, annotation.BeginOffset);
 			Assert.AreEqual(0, annotation.EndOffset);
 			Assert.AreEqual(1001002, annotation.BeginRef);
@@ -1355,7 +1337,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void AnnotationInterleaved_DontImportScripture()
 		{
 			m_importer.Settings.ImportTranslation = false;
@@ -1368,7 +1349,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
 			// Since we aren't importing Scripture, we shouldn't have created Genesis.
-			Assert.IsNull(m_importer.ScrBook);
+			Assert.That(m_importer.ScrBook, Is.Null);
 			m_importer.ProcessSegment("Genesis ", @"\h");
 			m_importer.ProcessSegment("Titulo ", @"\mt");
 			m_importer.ProcessSegment("Primera Seccion ", @"\s");
@@ -1388,7 +1369,7 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("Some footnote text ", @"\ft");
 			m_importer.ProcessSegment(" ", @"\f*");
 			m_importer.FinalizeImport();
-			Assert.IsNull(m_importer.UndoInfo.ImportedVersion);
+			Assert.That(m_importer.UndoInfo.ImportedVersion, Is.Null);
 
 			// look at the annotation and see if it is associated to the correct Scripture reference
 			ILcmOwningSequence<IScrScriptureNote> notes = m_scr.BookAnnotationsOS[0].NotesOS;
@@ -1396,8 +1377,8 @@ namespace ParatextImport.ImportTests
 
 			IScrScriptureNote annotation = notes[0];
 			Assert.AreEqual(NoteType.Translator, annotation.AnnotationType);
-			Assert.IsNull(annotation.BeginObjectRA);
-			Assert.IsNull(annotation.EndObjectRA);
+			Assert.That(annotation.BeginObjectRA, Is.Null);
+			Assert.That(annotation.EndObjectRA, Is.Null);
 			Assert.AreEqual(0, annotation.BeginOffset);
 			Assert.AreEqual(0, annotation.EndOffset);
 			Assert.AreEqual(1001001, annotation.BeginRef);
@@ -1417,7 +1398,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_Simple()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -1553,13 +1533,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
-		[ExpectedException(typeof(ScriptureUtilsException),
-		   ExpectedMessage = "Back translation not part of a paragraph:(\\r)?\\n" +
-			"\\tThis is default paragraph characters (\\r)?\\n" +
-			"\\t\\(Style: Default Paragraph Characters\\)(\\r)?\\n" +
-			"Attempting to read GEN",
-			MatchType = MessageMatch.Regex)]
 		public void BackTranslationNonInterleaved_DefaultParaCharsStart()
 		{
 			m_importer.Settings.SetMapping(MappingSet.Main,
@@ -1599,47 +1572,14 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 			m_importer.ProcessSegment("This is default paragraph characters ", @"\nt");
-			m_importer.ProcessSegment("Title ", @"\mt");
-			m_importer.ProcessSegment("First Section ", @"\s");
-			m_importer.ProcessSegment("", @"\p");
-			m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 0);
-			m_importer.TextSegment.LastReference = new BCVRef(1, 1, 0);
-			m_importer.ProcessSegment("", @"\c");
-			m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 1);
-			m_importer.TextSegment.LastReference = new BCVRef(1, 1, 1);
-			m_importer.ProcessSegment("First verse ", @"\v");
-			m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 2);
-			m_importer.TextSegment.LastReference = new BCVRef(1, 1, 2);
-			m_importer.ProcessSegment("Second verse ", @"\v");
 
-			// ************** finalize **************
-			m_importer.FinalizeImport();
-
-			Assert.AreEqual(1, genesis.SectionsOS.Count); // minor sanity check
-
-			Assert.AreEqual(1, genesis.TitleOA.ParagraphsOS.Count);
-			IStTxtPara titlePara = (IStTxtPara)genesis.TitleOA.ParagraphsOS[0];
-			Assert.AreEqual(1, titlePara.TranslationsOC.Count);
-			ICmTranslation titleTranslation = titlePara.TranslationsOC.ToArray()[0];
-			Assert.AreEqual("Title",
-				titleTranslation.Translation.get_String(m_wsAnal).Text);
-
-			// Check first section
-			IScrSection section = genesis.SectionsOS[0];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
-			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("Primera Seccion", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
-			ICmTranslation translation = para.TranslationsOC.ToArray()[0];
-			Assert.AreEqual("First Section",
-				translation.Translation.get_String(m_wsAnal).Text);
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
-			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11Primer versiculo 2Segundo versiculo", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
-			translation = para.TranslationsOC.ToArray()[0];
-			Assert.AreEqual("11First verse 2Second verse",
-				translation.Translation.get_String(m_wsAnal).Text);
+			// For some reason, starting in 2022-01, this message has a Unix newline even on Windows. If it changes back soon,
+			// we can switch to regular expression matching to save the maintenance.
+			Assert.That(() => m_importer.ProcessSegment("Title ", @"\mt"), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(string.Format(
+				"Back translation not part of a paragraph:\n" +
+				"\tThis is default paragraph characters {0}" +
+				"\t(Style: Default Paragraph Characters){0}" +
+				"Attempting to read GEN", Environment.NewLine)));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1652,7 +1592,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_ParallelPassage()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -1742,11 +1681,10 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_ParallelPassage_BtOnly()
 		{
 			// Setup book
-			IScrBook genesis = (IScrBook)AddBookToMockedScripture(1, "Genesis");
+			IScrBook genesis = AddBookToMockedScripture(1, "Genesis");
 			AddTitleToMockedBook(genesis, "Genesis");
 			IScrSection section1 = AddSectionToMockedBook(genesis);
 			AddSectionHeadParaToSection(section1, "Primera Seccion", ScrStyleNames.SectionHead);
@@ -1840,10 +1778,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
-		[ExpectedException(typeof(ScriptureUtilsException),
-			ExpectedMessage = "No corresponding vernacular book for back translation.(\\r)?\\nAttempting to read GEN",
-			MatchType = MessageMatch.Regex)]
 		public void BackTranslationNonInterleaved_NoCorrespondingBook()
 		{
 			m_importer.Settings.ImportTranslation = false;
@@ -1854,11 +1788,9 @@ namespace ParatextImport.ImportTests
 			m_importer.CurrentImportDomain = ImportDomain.BackTrans;
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
-			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-
-			// ************** finalize **************
-			m_importer.FinalizeImport();
-			// Shouldn't get here
+			// no text provided in segment, just the refs
+			Assert.That(() => m_importer.ProcessSegment("", @"\id"), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(
+					$"No corresponding vernacular book for back translation.{Environment.NewLine}Attempting to read GEN"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1871,7 +1803,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_RepeatedChapterNum()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -1919,7 +1850,7 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
 			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
 			Assert.AreEqual(1, para.TranslationsOC.Count);
-			Assert.IsNull(para.TranslationsOC.ToArray()[0].Translation.VernacularDefaultWritingSystem.Text);
+			Assert.That(para.TranslationsOC.ToArray()[0].Translation.VernacularDefaultWritingSystem.Text, Is.Null);
 
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
 			Assert.AreEqual("1Primer versiculo 2Segundo versiculo",
@@ -1940,7 +1871,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_NoParaMarker()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -2002,7 +1932,7 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
 			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
 			Assert.AreEqual(1, para.TranslationsOC.Count);
-			Assert.IsNull(para.TranslationsOC.ToArray()[0].Translation.VernacularDefaultWritingSystem.Text);
+			Assert.That(para.TranslationsOC.ToArray()[0].Translation.VernacularDefaultWritingSystem.Text, Is.Null);
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
 			Assert.AreEqual("11Primer versiculo 2Segundo versiculo 3Tercer versiculo 4Cuarto versiculo",
 				para.Contents.Text);
@@ -2022,7 +1952,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_TwoBooks()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -2077,7 +2006,7 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
 			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
 			Assert.AreEqual(1, para.TranslationsOC.Count);
-			Assert.IsNull(para.GetBT().Translation.AnalysisDefaultWritingSystem.Text);
+			Assert.That(para.GetBT().Translation.AnalysisDefaultWritingSystem.Text, Is.Null);
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
 			Assert.AreEqual("1Primer versiculo", para.Contents.Text);
 			Assert.AreEqual(1, para.TranslationsOC.Count);
@@ -2090,7 +2019,7 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
 			Assert.AreEqual(1, para.TranslationsOC.Count);
-			Assert.IsNull(para.GetBT().Translation.AnalysisDefaultWritingSystem.Text);
+			Assert.That(para.GetBT().Translation.AnalysisDefaultWritingSystem.Text, Is.Null);
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
 			Assert.AreEqual("1Primer versiculo", para.Contents.Text);
 			Assert.AreEqual(1, para.TranslationsOC.Count);
@@ -2108,7 +2037,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_Intros()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -2210,7 +2138,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_ScrParaWithNoVerseNumber()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -2307,7 +2234,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_VerseInMultipleParagraphs()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -2443,7 +2369,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_EmptyLastPara()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -2541,7 +2466,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_Footnotes()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -2683,7 +2607,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BtFootnoteWhenNotImportingVernacular()
 		{
 			// Set up Scripture to correspond with the back translation to be imported.
@@ -2763,7 +2686,7 @@ namespace ParatextImport.ImportTests
 			// Check the BT of these two paragraphs
 			Assert.AreEqual(1, para.TranslationsOC.Count);
 			ICmTranslation trans1 = para.GetBT();
-			Assert.IsNotNull(trans1);
+			Assert.That(trans1, Is.Not.Null);
 			ITsString tssBt = trans1.Translation.AnalysisDefaultWritingSystem;
 			Assert.AreEqual(5, tssBt.RunCount);
 			AssertEx.RunIsCorrect(tssBt, 0, "1", ScrStyleNames.ChapterNumber, m_wsAnal);
@@ -2789,7 +2712,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BtFootnoteWhenNotImportingVernacular_CharStyleUsedTwice()
 		{
 			// Set up Scripture to correspond with the back translation to be imported.
@@ -2887,7 +2809,7 @@ namespace ParatextImport.ImportTests
 			// Check the BT of these two paragraphs
 			Assert.AreEqual(1, para.TranslationsOC.Count);
 			ICmTranslation trans1 = para.GetBT();
-			Assert.IsNotNull(trans1);
+			Assert.That(trans1, Is.Not.Null);
 			ITsString tssBt = trans1.Translation.AnalysisDefaultWritingSystem;
 			Assert.AreEqual(5, tssBt.RunCount);
 			AssertEx.RunIsCorrect(tssBt, 0, "1", ScrStyleNames.ChapterNumber, m_wsAnal);
@@ -2906,7 +2828,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_WithInterleavedAnnotation()
 		{
 			// Set up the vernacular Scripture
@@ -2980,7 +2901,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_Pictures()
 		{
 			using (DummyFileMaker filemaker = new DummyFileMaker("junk1.jpg", true))
@@ -3094,76 +3014,60 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_MissingPicture()
 		{
-			try
+			using (new DummyFileMaker("junk1.jpg", true))
 			{
-				using (DummyFileMaker filemaker = new DummyFileMaker("junk1.jpg", true))
-				{
-					m_importer.Settings.ImportTranslation = true;
-					m_importer.Settings.ImportBackTranslation = true;
-					m_importer.Settings.ImportBookIntros = false;
+				m_importer.Settings.ImportTranslation = true;
+				m_importer.Settings.ImportBackTranslation = true;
+				m_importer.Settings.ImportBookIntros = false;
 
-					// ************** process a \id segment, test MakeBook() method *********************
-					m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
-					m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
+				// ************** process a \id segment, test MakeBook() method *********************
+				m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
+				m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 
-					// Set up the vernacular Scripture
-					m_importer.ProcessSegment("", @"\id");
-					// no text provided in segment, just the refs
-					m_importer.ProcessSegment("Primera Seccion ", @"\s");
-					m_importer.ProcessSegment("", @"\p");
-					m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 0);
-					m_importer.TextSegment.LastReference = new BCVRef(1, 1, 0);
-					m_importer.ProcessSegment("", @"\c");
-					m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 1);
-					m_importer.TextSegment.LastReference = new BCVRef(1, 1, 1);
-					m_importer.ProcessSegment("Primer versiculo", @"\v");
-					IScrBook genesis = m_importer.ScrBook;
-					Assert.AreEqual(1, genesis.SectionsOS.Count);
-					// minor sanity check
+				// Set up the vernacular Scripture
+				m_importer.ProcessSegment("", @"\id");
+				// no text provided in segment, just the refs
+				m_importer.ProcessSegment("Primera Seccion ", @"\s");
+				m_importer.ProcessSegment("", @"\p");
+				m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 0);
+				m_importer.TextSegment.LastReference = new BCVRef(1, 1, 0);
+				m_importer.ProcessSegment("", @"\c");
+				m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 1);
+				m_importer.TextSegment.LastReference = new BCVRef(1, 1, 1);
+				m_importer.ProcessSegment("Primer versiculo", @"\v");
+				IScrBook genesis = m_importer.ScrBook;
+				Assert.AreEqual(1, genesis.SectionsOS.Count);
+				// minor sanity check
 
-					// Now test the missing picture in a non-interleaved BT
-					m_importer.CurrentImportDomain = ImportDomain.BackTrans;
-					m_importer.ProcessSegment("", @"\id");
-					// no text provided in segment, just the refs
-					Assert.AreEqual(genesis.Hvo, m_importer.ScrBook.Hvo,
-						"The id line in the BT file should not cause a new ScrBook to get created.");
-					m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
-					m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
-					m_importer.ProcessSegment("First Section ", @"\s");
-					m_importer.ProcessSegment("", @"\p");
-					m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 0);
-					m_importer.TextSegment.LastReference = new BCVRef(1, 1, 0);
-					m_importer.ProcessSegment("", @"\c");
-					m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 1);
-					m_importer.TextSegment.LastReference = new BCVRef(1, 1, 1);
-					m_importer.ProcessSegment("First verse ", @"\v");
-					m_importer.ProcessSegment("BT for first photo", @"\fig");
-				}
-
-				// ************** finalize **************
-				m_importer.FinalizeImport();
-
-				Assert.Fail("We should throw an exception for the bad picture");
+				// Now test the missing picture in a non-interleaved BT
+				m_importer.CurrentImportDomain = ImportDomain.BackTrans;
+				m_importer.ProcessSegment("", @"\id");
+				// no text provided in segment, just the refs
+				Assert.AreEqual(genesis.Hvo, m_importer.ScrBook.Hvo,
+					"The id line in the BT file should not cause a new ScrBook to get created.");
+				m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
+				m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
+				m_importer.ProcessSegment("First Section ", @"\s");
+				m_importer.ProcessSegment("", @"\p");
+				m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 0);
+				m_importer.TextSegment.LastReference = new BCVRef(1, 1, 0);
+				m_importer.ProcessSegment("", @"\c");
+				m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 1);
+				m_importer.TextSegment.LastReference = new BCVRef(1, 1, 1);
+				m_importer.ProcessSegment("First verse ", @"\v");
+				m_importer.ProcessSegment("BT for first photo", @"\fig");
 			}
-			catch (ScriptureUtilsException e)
-			{
-				// Rather than having the test expect an exception, we had to put this assertion into
-				// a catch because the exception contains a variable, which is not allowed in the
-				// attribute.
-				// REVIEW (EberhardB): where exactly do we expect it to throw? Consider using
-				// Assert.Throws instead of the catch block (http://www.nunit.org/index.php?p=exceptionAsserts&r=2.5.9)
-				Assert.AreEqual(string.Format("Back translation does not correspond to a vernacular picture.{1}" +
-						"A back translation picture must correspond to a picture in the corresponding vernacular paragraph." +
-						"{1}{1}\\fig {0}{1}Attempting to read GEN  Chapter: 1  Verse: 1",
-						Path.Combine(Path.GetTempPath(), "BT for first photo"), Environment.NewLine), e.Message);
-			}
-			catch (Exception)
-			{
-				Assert.Fail("Exception should have been a ScriptureUtilsException");
-			}
+
+			// ************** finalize **************
+			// For some reason, starting in 2022-01, this message has a Unix newline even on Windows. If it changes back soon,
+			// we can switch to regular expression matching to save the maintenance.
+			Assert.That(() => m_importer.FinalizeImport(), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(string.Format(
+				"Back translation does not correspond to a vernacular picture.\n" +
+				"A back translation picture must correspond to a picture in the corresponding vernacular paragraph." +
+				"{1}{1}\\fig {0}{1}Attempting to read GEN  Chapter: 1  Verse: 1",
+				Path.Combine(Path.GetTempPath(), "BT for first photo"), Environment.NewLine)));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3177,7 +3081,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_EmptyBTParaFootnote()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -3257,7 +3160,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void BackTranslationNonInterleaved_BTFootnoteBeginsPara()
 		{
 			m_importer.Settings.ImportTranslation = true;
@@ -3297,7 +3199,7 @@ namespace ParatextImport.ImportTests
 			ICmTranslation translation = para.GetBT();
 			ITsString tss = translation.Translation.get_String(m_wsAnal);
 			Assert.AreEqual(1, tss.RunCount);
-			ParatextImportTestInMemory.VerifyFootnoteMarkerOrcRun(tss, 0, m_wsAnal, true);
+			VerifyFootnoteMarkerOrcRun(tss, 0, m_wsAnal, true);
 			VerifyFootnoteWithTranslation(0, "Primer pata nota", "Hi mom", string.Empty,
 				ScrStyleNames.NormalFootnoteParagraph);
 		}
@@ -3311,25 +3213,13 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
 		public void InvalidScrFile_UnexcludedDataBeforeIdLine()
 		{
-			try
-			{
-				m_importer.TextSegment.FirstReference = new BCVRef(41, 1, 0);
-				m_importer.TextSegment.LastReference = new BCVRef(41, 1, 0);
-				m_importer.ProcessSegment("", @"\c");
+			m_importer.TextSegment.FirstReference = new BCVRef(41, 1, 0);
+			m_importer.TextSegment.LastReference = new BCVRef(41, 1, 0);
 
-				Assert.Fail("The exception was not detected.");
-			}
-			catch (ScriptureUtilsException e)
-			{
-				Assert.AreEqual(SUE_ErrorCode.UnexcludedDataBeforeIdLine, e.ErrorCode);
-			}
-			catch
-			{
-				Assert.Fail("Wrong exception detected.");
-			}
+			Assert.That(() => m_importer.ProcessSegment("", @"\c"), Throws.TypeOf<ScriptureUtilsException>().With
+				.Property("ErrorCode").EqualTo(SUE_ErrorCode.UnexcludedDataBeforeIdLine));
 		}
 		#endregion
 	}

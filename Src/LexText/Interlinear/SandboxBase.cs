@@ -17,12 +17,15 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.Widgets;
-using XCore;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.PlatformUtilities;
+using XCore;
+using SIL.WritingSystems;
+using Icu.Collation;
 
 namespace SIL.FieldWorks.IText
 {
@@ -297,8 +300,8 @@ namespace SIL.FieldWorks.IText
 
 		protected CaseFunctions VernCaseFuncs(ITsString tss)
 		{
-			string locale = m_caches.MainCache.ServiceLocator.WritingSystemManager.Get(TsStringUtils.GetWsAtOffset(tss, 0)).IcuLocale;
-			return new CaseFunctions(locale);
+			var ws = m_caches.MainCache.ServiceLocator.WritingSystemManager.Get(TsStringUtils.GetWsAtOffset(tss, 0));
+			return new CaseFunctions(ws);
 		}
 
 		protected bool ComboOnMouseHover
@@ -344,7 +347,7 @@ namespace SIL.FieldWorks.IText
 			{
 				ISilDataAccess sda = m_caches.DataAccess;
 				// See if any alternate writing systems of word line are filled in.
-				List<int> wordformWss = m_choices.OtherWritingSystemsForFlid(InterlinLineChoices.kflidWord, 0);
+				List<int> wordformWss = m_choices.OtherEnabledWritingSystemsForFlid(InterlinLineChoices.kflidWord, 0);
 				foreach (int wsId in wordformWss)
 				{
 					if (sda.get_MultiStringAlt(kSbWord, ktagSbWordForm, wsId).Length > 0)
@@ -395,7 +398,7 @@ namespace SIL.FieldWorks.IText
 		internal bool HasWordGloss()
 		{
 			ISilDataAccess sda = m_caches.DataAccess;
-			foreach (int wsId in m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
+			foreach (int wsId in m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 			{
 				// some analysis exists if any gloss multistring has content.
 				if (sda.get_MultiStringAlt(kSbWord, ktagSbWordGloss, wsId).Length > 0)
@@ -903,7 +906,7 @@ namespace SIL.FieldWorks.IText
 					return false;
 				// only the first Morpheme line is currently displaying prefix/postfix.
 				int currentLine = GetLineOfCurrentSelection();
-				if (currentLine != -1 && m_choices.IsFirstOccurrenceOfFlid(currentLine))
+				if (currentLine != -1 && m_choices.IsFirstEnabledOccurrenceOfFlid(currentLine))
 				{
 					return (tsi.ContainingObjectTag(1) == ktagSbMorphForm
 						&& m_caches.DataAccess.get_StringProp(tsi.ContainingObject(1), ktagSbMorphPrefix).Length == 0);
@@ -933,7 +936,7 @@ namespace SIL.FieldWorks.IText
 					return false;
 				// only the first Morpheme line is currently displaying prefix/postfix.
 				int currentLine = GetLineOfCurrentSelection();
-				if (currentLine != -1 && m_choices.IsFirstOccurrenceOfFlid(currentLine))
+				if (currentLine != -1 && m_choices.IsFirstEnabledOccurrenceOfFlid(currentLine))
 				{
 					return (tsi.ContainingObjectTag(1) == ktagSbMorphForm
 						&& m_caches.DataAccess.get_StringProp(tsi.ContainingObject(1), ktagSbMorphPostfix).Length == 0);
@@ -1037,7 +1040,7 @@ namespace SIL.FieldWorks.IText
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
-			if (MiscUtils.IsMono && (Form.ActiveForm as XWorks.FwXWindow) != null)
+			if (Platform.IsMono && (Form.ActiveForm as XWorks.FwXWindow) != null)
 			{
 				(Form.ActiveForm as XWorks.FwXWindow).DesiredControl = this;
 			}
@@ -1050,7 +1053,7 @@ namespace SIL.FieldWorks.IText
 		protected override void OnHandleDestroyed(EventArgs e)
 		{
 			base.OnHandleDestroyed(e);
-			if (MiscUtils.IsMono && (Form.ActiveForm as XWorks.FwXWindow) != null)
+			if (Platform.IsMono && (Form.ActiveForm as XWorks.FwXWindow) != null)
 			{
 				(Form.ActiveForm as XWorks.FwXWindow).DesiredControl = null;
 			}
@@ -1076,7 +1079,7 @@ namespace SIL.FieldWorks.IText
 
 		private void SubscribeToRootSiteEventHandlerEvents()
 		{
-			if (MiscUtils.IsMono)
+			if (Platform.IsMono)
 			{
 				var ibusRootSiteEventHandler = m_rootSiteEventHandler as IbusRootSiteEventHandler;
 				if (ibusRootSiteEventHandler != null)
@@ -1389,7 +1392,7 @@ namespace SIL.FieldWorks.IText
 							int hvoPos = m_caches.FindOrCreateSec(msaReal.Hvo,
 																  kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
 
-							foreach (int ws in m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidLexPos, true))
+							foreach (int ws in m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidLexPos, true))
 							{
 								// Since ws maybe ksFirstAnal/ksFirstVern, we need to get what is actually
 								// used in order to retrieve the data in Vc.Display().  See LT_7976.
@@ -1698,7 +1701,7 @@ namespace SIL.FieldWorks.IText
 			// get first line index if it isn't specified.
 			if (lineIndex < 0)
 			{
-				lineIndex = m_choices.IndexOf(InterlinLineChoices.kflidWordGloss);
+				lineIndex = m_choices.IndexInEnabled(InterlinLineChoices.kflidWordGloss);
 				if (lineIndex < 0)
 					return false;
 			}
@@ -1712,7 +1715,7 @@ namespace SIL.FieldWorks.IText
 
 		private void GetWordGlossInfo(int lineIndex, out int glossLength, out int cpropPrevious)
 		{
-			int ws = m_choices[lineIndex].WritingSystem;
+			int ws = m_choices.EnabledLineSpecs[lineIndex].WritingSystem;
 			ITsString tss;
 			glossLength = 0;
 			// InterlinLineChoices.kflidWordGloss, ktagSbWordGloss
@@ -1727,7 +1730,7 @@ namespace SIL.FieldWorks.IText
 				glossLength = 0;
 			}
 
-			cpropPrevious = m_choices.PreviousOccurrences(lineIndex);
+			cpropPrevious = m_choices.PreviousEnabledOccurrences(lineIndex);
 		}
 
 		/// <summary>
@@ -1758,7 +1761,7 @@ namespace SIL.FieldWorks.IText
 			cda.CacheStringAlt(hvoEntry, ktagSbNamedObjName, wsVern, tssLexEntry);
 			cda.CacheObjProp(hvoMbSec, ktagSbMorphEntry, hvoEntry);
 			cda.CacheIntProp(hvoEntry, ktagSbNamedObjGuess, fGuessing);
-			List<int> writingSystems = m_choices.OtherWritingSystemsForFlid(InterlinLineChoices.kflidLexEntries, 0);
+			List<int> writingSystems = m_choices.OtherEnabledWritingSystemsForFlid(InterlinLineChoices.kflidLexEntries, 0);
 			if (writingSystems.Count > 0)
 			{
 				// Sigh. We're trying for some reason to display other alternatives of the entry.
@@ -1898,7 +1901,7 @@ namespace SIL.FieldWorks.IText
 			var defFormReal = DefaultMorph(form, mmt);
 			if (defFormReal == null)
 				return; // this form never occurs anywhere, can't supply any default.
-			var otherWritingSystemsForMorphForm = m_choices.OtherWritingSystemsForFlid(InterlinLineChoices.kflidMorphemes, RawWordformWs);
+			var otherWritingSystemsForMorphForm = m_choices.OtherEnabledWritingSystemsForFlid(InterlinLineChoices.kflidMorphemes, RawWordformWs);
 			if (otherWritingSystemsForMorphForm.Any())
 			{
 				var hvoSbForm = m_caches.DataAccess.get_ObjectProp(hvoMorph, ktagSbMorphForm);
@@ -1964,25 +1967,34 @@ namespace SIL.FieldWorks.IText
 			CheckDisposed();
 			// Find all the matching morphs and count how often used in WfiAnalyses
 			int ws = RawWordformWs;
+			// Use ICU Rules if available, otherwise default search
+			var wsObj = Cache.ServiceLocator.WritingSystemManager.Get(ws);
+			var rules = wsObj.DefaultCollation as IcuRulesCollationDefinition;
+			var srules = rules != null && rules.IsValid ? rules.IcuRules: string.Empty;
 			// Fix FWR-2098 GJM: The definition of 'IsAmbiguousWith' seems not to include 'IsSameAs'.
-			var morphs = (from mf in Cache.ServiceLocator.GetInstance<IMoFormRepository>().AllInstances()
-						  where mf.Form.get_String(ws).Text == form && mf.MorphTypeRA != null
-							&& (mf.MorphTypeRA == mmt || mf.MorphTypeRA.IsAmbiguousWith(mmt))
-						  select mf).ToList();
-			if (morphs.Count == 1)
-				return morphs.First(); // special case: we can avoid the cost of figuring ReferringObjects.
-			IMoForm bestMorph = null;
-			var bestMorphCount = -1;
-			foreach (var mf in morphs)
+			using (var icuCollator = new RuleBasedCollator(srules))
 			{
-				int count = (from source in mf.ReferringObjects where source is IWfiMorphBundle select source).Count();
-				if (count > bestMorphCount)
+				string sWs = WritingSystemFactory.GetStrFromWs(ws);
+				var morphs = (from mf in Cache.ServiceLocator.GetInstance<IMoFormRepository>().AllInstances()
+							  where icuCollator.Compare(mf.Form.get_String(ws).Text, form) == 0 && mf.MorphTypeRA != null
+								  && (mf.MorphTypeRA == mmt || mf.MorphTypeRA.IsAmbiguousWith(mmt))
+							  select mf).ToList();
+
+				if (morphs.Count == 1)
+					return morphs.First(); // special case: we can avoid the cost of figuring ReferringObjects.
+				IMoForm bestMorph = null;
+				var bestMorphCount = -1;
+				foreach (var mf in morphs)
 				{
-					bestMorphCount = count;
-					bestMorph = mf;
+					int count = (from source in mf.ReferringObjects where source is IWfiMorphBundle select source).Count();
+					if (count > bestMorphCount)
+					{
+						bestMorphCount = count;
+						bestMorph = mf;
+					}
 				}
+				return bestMorph;
 			}
-			return bestMorph;
 		}
 
 		/// <summary>
@@ -2071,7 +2083,7 @@ namespace SIL.FieldWorks.IText
 			{
 				int hvoNewPos = m_caches.FindOrCreateSec(defMsaReal.Hvo, kclsidSbNamedObj,
 					kSbWord, ktagSbWordDummy);
-				foreach (int ws in m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidLexPos, true))
+				foreach (int ws in m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidLexPos, true))
 				{
 					// Since ws maybe ksFirstAnal/ksFirstVern, we need to get what is actually
 					// used in order to retrieve the data in Vc.Display().  See LT_7976.
@@ -2606,9 +2618,9 @@ namespace SIL.FieldWorks.IText
 					currentLineIndex = 0;
 					break;
 				case ktagSbWordForm: // Wordform
-					currentLineIndex = m_choices.IndexOf(InterlinLineChoices.kflidWord, ws);
+					currentLineIndex = m_choices.IndexInEnabled(InterlinLineChoices.kflidWord, ws);
 					// try selecting the icon.
-					if (increment < 0 && m_choices.IsFirstOccurrenceOfFlid(currentLineIndex))
+					if (increment < 0 && m_choices.IsFirstEnabledOccurrenceOfFlid(currentLineIndex))
 						startLineIndex = currentLineIndex;
 					break;
 				case ktagMissingMorphs: // line 2, morpheme forms, no guess.
@@ -2617,7 +2629,7 @@ namespace SIL.FieldWorks.IText
 					Debug.Assert(false);
 					break;
 				case ktagMorphFormIcon:
-					currentLineIndex = m_choices.IndexOf(InterlinLineChoices.kflidMorphemes);
+					currentLineIndex = m_choices.IndexInEnabled(InterlinLineChoices.kflidMorphemes);
 					if (increment > 0 && !fOnNextLine)
 					{
 						iNextMorphIndex = 0;
@@ -2631,20 +2643,20 @@ namespace SIL.FieldWorks.IText
 					NextPositionForLexEntryText(increment, fOnNextLine, fIsPictureSel, out currentLineIndex, out startLineIndex, ref iNextMorphIndex);
 					break;
 				case ktagMorphEntryIcon:
-					currentLineIndex = m_choices.FirstLexEntryIndex;
+					currentLineIndex = m_choices.FirstEnabledLexEntryIndex;
 					if (!fOnNextLine)
 						startLineIndex = currentLineIndex; 	// try on the same line.
 					break;
 				case ktagSbWordGloss:
-					currentLineIndex = m_choices.IndexOf(InterlinLineChoices.kflidWordGloss, ws);
+					currentLineIndex = m_choices.IndexInEnabled(InterlinLineChoices.kflidWordGloss, ws);
 					if (increment < 0 && m_vc.ShowWordGlossIcon &&
-						m_choices.PreviousOccurrences(currentLineIndex) == 0)
+						m_choices.PreviousEnabledOccurrences(currentLineIndex) == 0)
 					{
 						startLineIndex = currentLineIndex;
 					}
 					break;
 				case ktagWordGlossIcon: // line 6, word gloss.
-					currentLineIndex = m_choices.IndexOf(InterlinLineChoices.kflidWordGloss);
+					currentLineIndex = m_choices.IndexInEnabled(InterlinLineChoices.kflidWordGloss);
 					if (increment > 0)
 					{
 						fSkipIcon = true;
@@ -2652,16 +2664,16 @@ namespace SIL.FieldWorks.IText
 					}
 					break;
 				case ktagMissingWordPos: // line 7, word POS, missing
-					currentLineIndex = m_choices.IndexOf(InterlinLineChoices.kflidWordPos);
+					currentLineIndex = m_choices.IndexInEnabled(InterlinLineChoices.kflidWordPos);
 					if (increment < 0)
 						startLineIndex = currentLineIndex;
 					break;
 				case ktagWordPosIcon:
-					currentLineIndex = m_choices.IndexOf(InterlinLineChoices.kflidWordPos);
+					currentLineIndex = m_choices.IndexInEnabled(InterlinLineChoices.kflidWordPos);
 					break;
 				case ktagSbMorphPrefix:
 				case ktagSbMorphPostfix:
-					currentLineIndex = m_choices.IndexOf(InterlinLineChoices.kflidMorphemes);
+					currentLineIndex = m_choices.IndexInEnabled(InterlinLineChoices.kflidMorphemes);
 					if (!fOnNextLine)
 						startLineIndex = currentLineIndex;
 					break;
@@ -2673,10 +2685,10 @@ namespace SIL.FieldWorks.IText
 						switch (tagObjProp)
 						{
 							case ktagSbMorphForm:
-								currentLineIndex = m_choices.IndexOf(InterlinLineChoices.kflidMorphemes, ws);
+								currentLineIndex = m_choices.IndexInEnabled(InterlinLineChoices.kflidMorphemes, ws);
 								if (fOnNextLine)
 								{
-									if (increment < 0 && m_choices.IsFirstOccurrenceOfFlid(currentLineIndex))
+									if (increment < 0 && m_choices.IsFirstEnabledOccurrenceOfFlid(currentLineIndex))
 									{
 										// try selecting the icon.
 										iNextMorphIndex = -1;
@@ -2694,7 +2706,7 @@ namespace SIL.FieldWorks.IText
 								NextPositionForLexEntryText(increment, fOnNextLine, fIsPictureSel, out currentLineIndex, out startLineIndex, ref iNextMorphIndex);
 								break;
 							case ktagSbWordPos: // line 7, WordPos.
-								currentLineIndex = m_choices.IndexOf(InterlinLineChoices.kflidWordPos);
+								currentLineIndex = m_choices.IndexInEnabled(InterlinLineChoices.kflidWordPos);
 								// try selecting the icon.
 								if (increment < 0 && !fIsPictureSel)
 									startLineIndex = currentLineIndex;
@@ -2721,9 +2733,9 @@ namespace SIL.FieldWorks.IText
 				// only skip icon for editable fields.
 				int nextLine = startLineIndex;
 				if (startLineIndex < 0)
-					nextLine = m_choices.Count - 1;
-				if (m_choices[nextLine].Flid == InterlinLineChoices.kflidWordGloss ||
-					m_choices[nextLine].Flid == InterlinLineChoices.kflidMorphemes)
+					nextLine = m_choices.EnabledCount - 1;
+				if (m_choices.EnabledLineSpecs[nextLine].Flid == InterlinLineChoices.kflidWordGloss ||
+					m_choices.EnabledLineSpecs[nextLine].Flid == InterlinLineChoices.kflidMorphemes)
 				{
 					fSkipIcon = true;
 				}
@@ -2843,7 +2855,7 @@ namespace SIL.FieldWorks.IText
 					else
 					{
 						// move to the start of the next morpheme.
-						SelectAtStartOfMorph(index + 1, m_choices.PreviousOccurrences(currentLineIndex));
+						SelectAtStartOfMorph(index + 1, m_choices.PreviousEnabledOccurrences(currentLineIndex));
 					}
 				}
 				else
@@ -2857,7 +2869,7 @@ namespace SIL.FieldWorks.IText
 					else
 					{
 						// move to the end of the previous morpheme.
-						SelectAtEndOfMorph(index - 1, m_choices.PreviousOccurrences(currentLineIndex));
+						SelectAtEndOfMorph(index - 1, m_choices.PreviousEnabledOccurrences(currentLineIndex));
 					}
 				}
 
@@ -2932,14 +2944,14 @@ namespace SIL.FieldWorks.IText
 			{
 				// since we're in the gloss tab first try to select the text of the word gloss,
 				// for speed-glossing (LT-8371)
-				int startingIndex = m_choices.IndexOf(InterlinLineChoices.kflidWordGloss);
+				int startingIndex = m_choices.IndexInEnabled(InterlinLineChoices.kflidWordGloss);
 				if (startingIndex != -1)
 				{
 					SelectOnOrBeyondLine(startingIndex, 1, -1, true, false);
 					return;
 				}
 				// next try for WordPos
-				startingIndex = m_choices.IndexOf(InterlinLineChoices.kflidWordPos);
+				startingIndex = m_choices.IndexInEnabled(InterlinLineChoices.kflidWordPos);
 				if (startingIndex != -1)
 				{
 					SelectOnOrBeyondLine(startingIndex, 1, -1, false, false);
@@ -3005,7 +3017,7 @@ namespace SIL.FieldWorks.IText
 		private void NextPositionForLexEntryText(int increment, bool fOnNextLine, bool fIsPictureSel,
 			out int currentLineIndex, out int startLineIndex, ref int iNextMorphIndex)
 		{
-			currentLineIndex = m_choices.IndexOf(InterlinLineChoices.kflidLexEntries);
+			currentLineIndex = m_choices.IndexInEnabled(InterlinLineChoices.kflidLexEntries);
 			if (increment < 0 && !fIsPictureSel)
 			{
 				// try selecting the icon just before the current selection.
@@ -3072,7 +3084,7 @@ namespace SIL.FieldWorks.IText
 			if (!fWrapToNextLine)
 			{
 				if (increment > 0)
-					limitLine = m_choices.Count;
+					limitLine = m_choices.EnabledCount;
 				else
 					limitLine = -1;
 			}
@@ -3080,21 +3092,21 @@ namespace SIL.FieldWorks.IText
 			for (int ispec = startLine; fFirstTime || ispec != limitLine; ispec += increment, fFirstTime = false)
 			{
 				int ispecOrig = ispec;
-				if (ispec == m_choices.Count)
+				if (ispec == m_choices.EnabledCount)
 					ispec = 0; // wrap around to top
 				if (ispec < 0)
-					ispec = m_choices.Count - 1; // wrap around to bottom.
+					ispec = m_choices.EnabledCount - 1; // wrap around to bottom.
 				if (ispec != ispecOrig)
 				{
 					// we wrapped lines, test to see if we equal limitLine before continuing.
 					if (ispec == limitLine && !fFirstTime)
 						return false;
 				}
-				InterlinLineSpec spec = m_choices[ispec];
+				InterlinLineSpec spec = m_choices.EnabledLineSpecs[ispec];
 				switch (spec.Flid)
 				{
 					case InterlinLineChoices.kflidWord:
-						if (!fSkipIconToTextField && m_choices.PreviousOccurrences(ispec) == 0)
+						if (!fSkipIconToTextField && m_choices.PreviousEnabledOccurrences(ispec) == 0)
 						{
 							if (ShowAnalysisCombo)
 							{
@@ -3108,7 +3120,7 @@ namespace SIL.FieldWorks.IText
 						{
 							// make a selection in an alternative writing system.
 							MoveSelection(new SelLevInfo[0], ktagSbWordForm,
-								m_choices.PreviousOccurrences(ispec));
+								m_choices.PreviousEnabledOccurrences(ispec));
 							return true;
 						}
 					case InterlinLineChoices.kflidMorphemes:
@@ -3116,14 +3128,14 @@ namespace SIL.FieldWorks.IText
 						if (fSkipIconToTextField && iMorph < 0)
 							iMorph = 0;
 						if (iMorph >= 0 && iMorph < cMorphs)
-							SelectAtStartOfMorph(iMorph, m_choices.PreviousOccurrences(ispec));
+							SelectAtStartOfMorph(iMorph, m_choices.PreviousEnabledOccurrences(ispec));
 						else
 							SelectIconOfMorph(0, ktagMorphFormIcon);
 						return true;
 					case InterlinLineChoices.kflidLexEntries:
 					case InterlinLineChoices.kflidLexGloss:
 					case InterlinLineChoices.kflidLexPos:
-						if (ispec != m_choices.FirstLexEntryIndex)
+						if (ispec != m_choices.FirstEnabledLexEntryIndex)
 							break;
 						// Move to one of the lex entry icons.
 						cMorphs = CheckMorphs();
@@ -3141,7 +3153,7 @@ namespace SIL.FieldWorks.IText
 						}
 						return true;
 					case InterlinLineChoices.kflidWordGloss:
-						if (!fSkipIconToTextField && m_vc.ShowWordGlossIcon && m_choices.PreviousOccurrences(ispec) == 0)
+						if (!fSkipIconToTextField && m_vc.ShowWordGlossIcon && m_choices.PreviousEnabledOccurrences(ispec) == 0)
 						{
 							SelectIcon(ktagWordGlossIcon);
 						}
@@ -3159,7 +3171,7 @@ namespace SIL.FieldWorks.IText
 						}
 						return true;
 					case InterlinLineChoices.kflidWordPos:
-						if (m_choices.PreviousOccurrences(ispec) != 0)
+						if (m_choices.PreviousEnabledOccurrences(ispec) != 0)
 							break;
 						selIcon = MakeSelectionIcon(new SelLevInfo[0],
 							ktagWordPosIcon, !fSkipIconToTextField);
@@ -3186,7 +3198,7 @@ namespace SIL.FieldWorks.IText
 		}
 		private bool SelectAtStartOfMorph(int index, int cprevOccurrences)
 		{
-			if (m_choices.IndexOf(InterlinLineChoices.kflidMorphemes) < 0)
+			if (m_choices.IndexInEnabled(InterlinLineChoices.kflidMorphemes) < 0)
 			{
 				return false;
 			}
@@ -3230,7 +3242,7 @@ namespace SIL.FieldWorks.IText
 				selectIndexMorph[1].tag = ktagSbWordMorphs;
 				selectIndexMorph[1].ihvo = index;
 				int hvoNamedObj = sda.get_ObjectProp(hvoMorph, ktagSbMorphForm);
-				List<InterlinLineSpec> matchingSpecs = m_choices.ItemsWithFlids(new int[] { InterlinLineChoices.kflidMorphemes });
+				List<InterlinLineSpec> matchingSpecs = m_choices.EnabledItemsWithFlids(new int[] { InterlinLineChoices.kflidMorphemes });
 				InterlinLineSpec specMorphemes = matchingSpecs[cPrevOccurrences];
 				int ws = specMorphemes.WritingSystem;
 				if (specMorphemes.IsMagicWritingSystem)
@@ -3339,7 +3351,7 @@ namespace SIL.FieldWorks.IText
 					else
 					{
 						// move to the end of the previous morpheme.
-						SelectAtEndOfMorph(index - 1, m_choices.PreviousOccurrences(currentLineIndex));
+						SelectAtEndOfMorph(index - 1, m_choices.PreviousEnabledOccurrences(currentLineIndex));
 					}
 				}
 				else
@@ -3353,7 +3365,7 @@ namespace SIL.FieldWorks.IText
 					else
 					{
 						// move to the start of the next morpheme.
-						SelectAtStartOfMorph(index + 1, m_choices.PreviousOccurrences(currentLineIndex));
+						SelectAtStartOfMorph(index + 1, m_choices.PreviousEnabledOccurrences(currentLineIndex));
 					}
 				}
 
@@ -3559,7 +3571,6 @@ namespace SIL.FieldWorks.IText
 			ChooseAnalysisHandler handler = (ChooseAnalysisHandler)sender;
 			AnalysisTree chosenAnalysis = handler.GetAnalysisTree();
 			CurrentAnalysisTree = chosenAnalysis;
-			bool fLookForDefaults = true;
 			if (CurrentAnalysisTree.Analysis == null)
 			{
 				// 'Use default analysis'. This can normally be achieved by loading data
@@ -3569,14 +3580,9 @@ namespace SIL.FieldWorks.IText
 				// displayed.)
 				CurrentAnalysisTree.Analysis = m_wordformOriginal;
 			}
-			else
-			{
-				// If the user chose an analysis we do not want to fill content in with defaults, use what they picked
-				fLookForDefaults = false;
-			}
 
 			// REVIEW: do we need to worry about changing the previous and next words?
-			LoadRealDataIntoSec(fLookForDefaults, false, false);
+			LoadRealDataIntoSec(true, false, false);
 			OnUpdateEdited();
 			m_fShowAnalysisCombo = true; // we must want this icon, because we were previously showing it!
 			m_rootb.Reconstruct();
@@ -3763,7 +3769,7 @@ namespace SIL.FieldWorks.IText
 			CheckDisposed();
 
 			var cda = (IVwCacheDa) m_caches.DataAccess;
-			foreach (int wsId in m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss, true))
+			foreach (int wsId in m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss, true))
 			{
 				ITsString tss = TsStringUtils.EmptyString(wsId);
 				cda.CacheStringAlt(kSbWord, ktagSbWordGloss, wsId, tss);

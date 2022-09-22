@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -44,7 +45,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			// The font size below looks random, but is used in InitializeComponent for the
 			// corresponding font assignment.  I didn't want to change it here.
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 				InfoBarLabel.Font = new System.Drawing.Font(MiscUtils.StandardSansSerif, 8.861538F,
 					System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, (System.Byte)0);
 

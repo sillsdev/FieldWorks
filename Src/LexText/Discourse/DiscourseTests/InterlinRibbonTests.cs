@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.Discourse
 			m_ribbon = new TestInterlinRibbon(Cache, m_stText.Hvo);
 			m_ribbon.Width = 100;
 			m_ribbon.Height = 40;
-			Assert.IsNotNull(m_ribbon.Decorator, "Don't have correct access here.");
+			Assert.That(m_ribbon.Decorator, Is.Not.Null, "Don't have correct access here.");
 			m_ribbon.CacheRibbonItems(new List<AnalysisOccurrence>());
 		}
 
@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.Discourse
 			// SUT#1 (but not one that changes data)
 			m_ribbon.MakeRoot();
 			m_ribbon.CallLayout();
-			Assert.IsNotNull(m_ribbon.RootBox, "layout should produce some root box");
+			Assert.That(m_ribbon.RootBox, Is.Not.Null, "layout should produce some root box");
 			var widthEmpty = m_ribbon.RootBox.Width;
 			var glosses = new AnalysisOccurrence[0];
 

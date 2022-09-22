@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,8 +8,8 @@ using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
-using System.Text; // StringBuilder
+using System.Text;
+using SIL.Extensions;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using SIL.FieldWorks.Filters;
@@ -301,12 +301,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Return a string such that ICU alphabetic comparison of the strings
 		/// will produce the same results as DateTime.Compare of the values.
 		/// </summary>
-		/// <param name="dt"></param>
-		/// <returns></returns>
 		public static string DateTimeCompString(DateTime dt)
 		{
-			string format = "u";	// 2000-08-17 23:32:32Z
-			return dt.ToString(format, DateTimeFormatInfo.InvariantInfo);
+			return dt.ToISO8601TimeFormatWithUTCString(); // 2000-08-17T23:32:32Z
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1288,7 +1285,7 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// Get a Time property value coverted to a DateTime value.
+		/// Get a Time property value converted to a DateTime value.
 		/// </summary>
 		public static DateTime GetTimeProperty(ISilDataAccess sda, int hvo, int flid)
 		{

@@ -980,4 +980,10 @@ Click "Cancel" to abort this import.</value>
     <value>Not all paragraphs in {0} could be parsed</value>
     <comment>Warning message in Complex Concordance tool when not all paragraphs in a text could be parsed</comment>
   </data>
+  <data name="ksConcordanceExportFilter" xml:space="preserve">
+    <value>CSV Files (*.csv)|*.csv|All files (*.*)|*.*</value>
+  </data>
+  <data name="ksConcordanceExportTitle" xml:space="preserve">
+    <value>Export Concordance Results</value>
+  </data>
 </root>

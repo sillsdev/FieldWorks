@@ -865,7 +865,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Nothing to do here.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void CloseTableRow()
+		public virtual void CloseTableRow()
 		{
 			CloseFlowObject();
 		}

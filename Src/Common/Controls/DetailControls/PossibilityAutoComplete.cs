@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private void HandleKeyDown(object sender, KeyEventArgs e)
 		{
-			if (!m_listBox.Visible)
+			if (!m_listBox.Visible || m_listBox.IsDisposed)
 				return;
 
 			switch (e.KeyCode)

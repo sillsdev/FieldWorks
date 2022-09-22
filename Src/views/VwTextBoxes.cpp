@@ -6588,7 +6588,7 @@ StrUni VwParagraphBox::GetBulNumString(IVwGraphics * pvg, COLORREF * pclrUnder, 
 		int tpt = *pchProps++;
 		if (tpt == ktptFontFamily)
 		{
-			u_strcpy(chrp.szFaceName, pchProps);
+			u_strcpy(reinterpret_cast<UChar*>(chrp.szFaceName), reinterpret_cast<const UChar*>(pchProps));
 			break; // no more properties
 		}
 		// It must be a numeric property
@@ -6648,7 +6648,7 @@ StrUni VwParagraphBox::GetBulNumString(IVwGraphics * pvg, COLORREF * pclrUnder, 
 		{
 			// bullet
 			static OleStringLiteral fontName(L"Quivira");
-			u_strcpy(chrp.szFaceName, fontName); // only font that works for bullets
+			u_strcpy(reinterpret_cast<UChar *>(chrp.szFaceName), fontName); // only font that works for bullets
 			CheckHr(pvg->SetupGraphics(&chrp));
 			StrUni stuText;
 			stuText.Format(L"%c", s_rgszBulletOptions[vbn - kvbnBulletBase]);
@@ -6714,7 +6714,7 @@ LArabic:
 	}
 	StrUni stuFaceName(chrp.szFaceName);
 	stuFaceName = FwStyledText::FontMarkupToFontName(stuFaceName);
-	u_strcpy(chrp.szFaceName, stuFaceName.Chars());
+	u_strcpy(reinterpret_cast<UChar*>(chrp.szFaceName), reinterpret_cast<const UChar *>(stuFaceName.Chars()));
 	// If we drop out of the switch, as opposed to returning, we have a number in
 	// rgchNum. Now we need to combine it with following and preceding text, if any.
 	CheckHr(pvg->SetupGraphics(&chrp));
@@ -8570,7 +8570,7 @@ public:
 		UnicodeString ucOutput = norm->normalize(ucInput, uerr);
 		if (U_FAILURE(uerr)) // may get warnings, like not terminated.
 			return; // give up if we can't normalize.
-		word.Assign(ucOutput.getBuffer(), ucOutput.length());
+		word.Assign(reinterpret_cast<const wchar *>(ucOutput.getBuffer()), ucOutput.length());
 
 		SmartBstr sbstrWsId;
 		ILgWritingSystemPtr qwse;

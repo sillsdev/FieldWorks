@@ -243,12 +243,4 @@ Would you like to do this now?</value>
   <data name="ksExistingProjectName" xml:space="preserve">
     <value>That project already exists. You'll need to choose a different name in Project Properties.</value>
   </data>
-  <data name="LexTextApp_RestartToChangeUI_Content" xml:space="preserve">
-    <value>Restart FieldWorks to complete the User Interface language change.</value>
-    <comment>Message box contents when a user changes the User Interface language in Tools-&gt;Settings</comment>
-  </data>
-  <data name="LexTextApp_RestartToChangeUI_Title" xml:space="preserve">
-    <value>User Interface Language Changed</value>
-    <comment>Message box title when the User Interface is changed in Tools-&gt;Options</comment>
-  </data>
 </root>

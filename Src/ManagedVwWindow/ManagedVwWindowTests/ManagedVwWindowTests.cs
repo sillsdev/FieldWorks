@@ -31,12 +31,11 @@ namespace SIL.FieldWorks.Language
 		}
 
 		[Test]
-		[ExpectedException(typeof(ApplicationException)) ]
 		public void NotSettingWindowTest()
 		{
 			var wrappedWindow = new ManagedVwWindow();
 			Rect temp;
-			wrappedWindow.GetClientRectangle(out temp);
+			Assert.That(() => wrappedWindow.GetClientRectangle(out temp), Throws.TypeOf<ApplicationException>());
 		}
 	}
 }

@@ -14,20 +14,21 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
-using SIL.LCModel.Utils;
-using SilEncConverters40;
+using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.Utils;
+using SilEncConverters40;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook
@@ -2347,7 +2348,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 		{
 			if (m_viewProcess == null || m_viewProcess.HasExited)
 			{
-				if (MiscUtils.IsUnix)
+				if (Platform.IsUnix)
 					// Open SFM file from users default text editor (FWNX-834)
 					m_viewProcess = Process.Start(
 						"xdg-open",

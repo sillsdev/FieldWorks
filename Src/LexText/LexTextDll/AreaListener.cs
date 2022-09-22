@@ -181,7 +181,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 					if (!string.IsNullOrWhiteSpace(areaNameForReport) && !m_toolsReportedToday.Contains(toolName))
 					{
 						m_toolsReportedToday.Add(toolName);
-						UsageReporter.SendNavigationNotice("SwitchToTool/{0}/{1}", areaNameForReport, toolName);
+						DesktopAnalytics.Analytics.Track("SwitchToTool", new Dictionary<string, string>
+						{
+							{"area", areaNameForReport},
+							{"tool", toolName}
+						});
 					}
 					break;
 

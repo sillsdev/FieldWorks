@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using NUnit.Framework;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -65,11 +64,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Tests enumeration of a byte array containing an odd number of bytes
 		/// </summary>
 		///--------------------------------------------------------------------------------------
-		[ExpectedException(typeof(ArgumentNullException))]
 		[Test]
 		public void NullConstructor()
 		{
-			CharEnumeratorForByteArray array = new CharEnumeratorForByteArray(null);
+			Assert.That(() => new CharEnumeratorForByteArray(null), Throws.ArgumentNullException);
 		}
 	}
 }

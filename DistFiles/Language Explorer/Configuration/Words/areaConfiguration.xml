@@ -76,6 +76,7 @@
 		<command id="CmdConfigureInterlinear" label="Interlinear..." message="ConfigureInterlinear"/>
 		<command id="CmdExportInterlinear" label="_Export Interlinear..." message="ExportInterlinear"/>
 		<command id="CmdExportDiscourseChart" label="Export Discourse Chart..." message="ExportDiscourse"/>
+		<command id="CmdExportConcordanceResult" label="Export Concordance Results..." message="ExportConcordanceResults"/>
 		<!-- the next two commands duplicate another shortcut, and should not be shown or enabled at the same time as
 			  the focus-box moving commands-->
 		<command id="CmdRepeatLastMoveLeft" label="Move _Left (last thing moved)" message="RepeatLastMoveLeft" shortcut="Ctrl+Left"/>
@@ -286,6 +287,7 @@
 		<menu id="FileExport">
 			<item command="CmdExportInterlinear" defaultVisible="false"/>
 			<item command="CmdExportDiscourseChart" defaultVisible="false"/>
+			<item command="CmdExportConcordanceResult" defaultVisible="false"/>
 		</menu>
 		<menu id="Edit">
 			<item command="CmdGoToWfiWordform" defaultVisible="false"/>

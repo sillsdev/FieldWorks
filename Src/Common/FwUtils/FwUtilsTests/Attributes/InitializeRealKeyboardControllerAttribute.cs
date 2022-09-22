@@ -4,6 +4,7 @@
 
 using System;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 using SIL.Keyboarding;
 using SIL.Windows.Forms.Keyboarding;
 
@@ -24,22 +25,22 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		/// <summary>
 		/// Initialize keyboard controller
 		/// </summary>
-		public override void BeforeTest(TestDetails testDetails)
+		public override void BeforeTest(ITest test)
 		{
-			base.BeforeTest(testDetails);
+			base.BeforeTest(test);
 			if (Keyboard.Controller != null)
 				Keyboard.Controller.Dispose();
 
 			KeyboardController.Initialize();
-			base.BeforeTest(testDetails);
+			base.BeforeTest(test);
 		}
 
 		/// <summary>
 		/// Shutdown keyboard controller
 		/// </summary>
-		public override void AfterTest(TestDetails testDetails)
+		public override void AfterTest(ITest test)
 		{
-			base.AfterTest(testDetails);
+			base.AfterTest(test);
 			KeyboardController.Shutdown();
 			Keyboard.Controller = new DefaultKeyboardController();
 		}

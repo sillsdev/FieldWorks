@@ -30,7 +30,7 @@ namespace Utils.MessageBoxExLib
 			m_FormTest.TearDown();
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureTearDown()
 		{
 			MessageBoxExManager.DisposeAllMessageBoxes();

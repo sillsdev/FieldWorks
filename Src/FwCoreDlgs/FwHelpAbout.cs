@@ -1,9 +1,10 @@
-// Copyright (c) 2002-2018 SIL International
+// Copyright (c) 2002-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -11,8 +12,9 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using SIL.Acknowledgements;
+using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -64,7 +66,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_sTitleFmt = Text;
 			m_sAvailableDiskSpaceFmt = edtAvailableDiskSpace.Text;
 
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				// Link to System Monitor
 
@@ -304,14 +306,23 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				lblAppVersion.Text = viProvider.ApplicationVersion;
 				lblFwVersion.Text = viProvider.MajorVersion;
 
-				// List the copyright information
-				var acknowlegements = AcknowledgementsProvider.CollectAcknowledgements();
-				var list = acknowlegements.Keys.ToList();
+				Dictionary<string, AcknowledgementAttribute> acknowledgements;
+				try
+				{
+					AppDomain.CurrentDomain.AssemblyResolve += ResolveFailedAssemblyLoadsByName;
+					// List the copyright information
+					acknowledgements = AcknowledgementsProvider.CollectAcknowledgements();
+				}
+				finally
+				{
+					AppDomain.CurrentDomain.AssemblyResolve -= ResolveFailedAssemblyLoadsByName;
+				}
+				var list = acknowledgements.Keys.ToList();
 				list.Sort();
 				var text = viProvider.CopyrightString + Environment.NewLine + viProvider.LicenseString + Environment.NewLine + viProvider.LicenseURL;
 				foreach (var key in list)
 				{
-					text += "\r\n" + "\r\n" + key + "\r\n" + acknowlegements[key].Copyright + " " + acknowlegements[key].Url + " " + acknowlegements[key].LicenseUrl;
+					text += "\r\n" + "\r\n" + key + "\r\n" + acknowledgements[key].Copyright + " " + acknowledgements[key].Url + " " + acknowledgements[key].LicenseUrl;
 				}
 				txtCopyright.Text = text;
 
@@ -320,7 +331,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				var strRoot = Path.GetPathRoot(Application.ExecutablePath);
 
-				if (MiscUtils.IsUnix)
+				if (Platform.IsUnix)
 				{
 					return;
 				}
@@ -332,8 +343,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				edtAvailableMemory.Text = string.Format(m_sAvailableMemoryFmt, memStatEx.ullAvailPhys / BytesPerMiB, memStatEx.ullTotalPhys / BytesPerMiB);
 
 				// Set the available disk space information.
-				ulong _, lpTotalNumberOfBytes, lpTotalNumberOfFreeBytes;
-				Win32.GetDiskFreeSpaceEx(strRoot, out _, out lpTotalNumberOfBytes, out lpTotalNumberOfFreeBytes);
+				Win32.GetDiskFreeSpaceEx(strRoot, out _, out var lpTotalNumberOfBytes, out var lpTotalNumberOfFreeBytes);
 				var gbFree = lpTotalNumberOfFreeBytes / BytesPerGiB;
 				var gbTotal = lpTotalNumberOfBytes / BytesPerGiB;
 				edtAvailableDiskSpace.Text = string.Format(m_sAvailableDiskSpaceFmt, gbFree, gbTotal, strRoot);
@@ -343,6 +353,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				Console.WriteLine("HelpAbout ignoring exception: " + ex);
 			}
 		}
+
+		private Assembly ResolveFailedAssemblyLoadsByName(object sender, ResolveEventArgs args)
+		{
+			var assemblyName = args.Name.Split(',')[0];
+			var outputPath = Path.GetDirectoryName(ProductExecutableAssembly.Location);
+			return Assembly.LoadFile(Path.Combine(outputPath, assemblyName) + ".dll");
+		}
 		#endregion
 
 		/// <summary>
@@ -351,7 +368,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void HandleSystemMonitorLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			var program = "gnome-system-monitor";
-			using (var process = MiscUtils.RunProcess(program, null, null))
+			using (var process = new Process().RunProcess(program, null, null))
 			{
 				Thread.Sleep(300);
 				// If gnome-system-monitor is already open, HasExited will be true with ExitCode of 0

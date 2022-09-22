@@ -91,7 +91,7 @@
 					<string class="FakeOccurrence" field="Reference" ws="$ws=best vernoranal"/>
 				</span>
 			</column>
-			<column label="Occurrence" width="415000" multipara="true">
+			<column label="Occurrence" sortType="occurrenceInContext" width="415000" multipara="true">
 				<concpara min="FakeOccurrence.BeginOffset" lim="FakeOccurrence.EndOffset" align="144000">
 					<properties>
 						<editable value="false"/>

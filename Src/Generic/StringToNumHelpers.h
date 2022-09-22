@@ -28,7 +28,7 @@ inline unsigned long Utf16StrToUL(const OLECHAR * string, const OLECHAR ** resul
 #else
 	// TODO-Linux: Improve - Convert psz to UTF32 and use wcstoul
 	char buf[256];
-	u_austrcpy(buf, string);
+	u_austrcpy(buf, reinterpret_cast<const UChar*>(string));
 	char * endptr;
 	unsigned long ret = strtoul(buf, &endptr, base);
 	if (ret == 0 || *endptr != '\0')

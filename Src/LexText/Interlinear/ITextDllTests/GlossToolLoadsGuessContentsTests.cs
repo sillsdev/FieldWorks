@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.IText
 		private PropertyTable m_propertyTable;
 
 		/// <summary/>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			m_mediator = new Mediator();

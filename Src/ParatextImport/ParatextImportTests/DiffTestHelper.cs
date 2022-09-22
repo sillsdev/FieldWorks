@@ -57,8 +57,8 @@ namespace ParatextImport
 			Assert.AreEqual(ichLimRev, diff.IchLimRev);
 
 			// section stuff should be null
-			Assert.IsNull(diff.SectionsRev);
-			Assert.IsNull(diff.SectionsCurr);
+			Assert.That(diff.SectionsRev, Is.Null);
+			Assert.That(diff.SectionsCurr, Is.Null);
 		}
 
 		/// <summary>overload for same end ref</summary>
@@ -132,7 +132,7 @@ namespace ParatextImport
 			Assert.AreEqual(type, diff.DiffType);
 
 			// Subdifferences must exist.
-			Assert.IsNotNull(diff.SubDiffsForParas, "Subdifferences should have been created.");
+			Assert.That(diff.SubDiffsForParas, Is.Not.Null, "Subdifferences should have been created.");
 			Assert.Greater(diff.SubDiffsForParas.Count, 0, "Subdifferences should have been created.");
 			Difference firstSubdiff = diff.SubDiffsForParas[0];
 
@@ -147,8 +147,8 @@ namespace ParatextImport
 			Assert.AreEqual(firstSubdiff.IchMinRev, diff.IchLimRev);
 
 			// section stuff should be null
-			Assert.IsNull(diff.SectionsRev);
-			Assert.IsNull(diff.SectionsCurr);
+			Assert.That(diff.SectionsRev, Is.Null);
+			Assert.That(diff.SectionsCurr, Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -163,8 +163,8 @@ namespace ParatextImport
 		{
 			Difference subDiff = rootDiff.SubDiffsForORCs[iSubDiff];
 			// verify the basics
-			Assert.AreEqual(0, subDiff.RefStart);
-			Assert.AreEqual(0, subDiff.RefEnd);
+			Assert.That((int)subDiff.RefStart, Is.EqualTo(0));
+			Assert.That((int)subDiff.RefEnd, Is.EqualTo(0));
 			Assert.AreEqual(DifferenceType.NoDifference, subDiff.DiffType);
 
 			// the Current para stuff
@@ -178,15 +178,15 @@ namespace ParatextImport
 			Assert.AreEqual(0, subDiff.IchLimRev);
 
 			// style names should be null
-			Assert.IsNull(subDiff.StyleNameCurr);
-			Assert.IsNull(subDiff.StyleNameRev);
+			Assert.That(subDiff.StyleNameCurr, Is.Null);
+			Assert.That(subDiff.StyleNameRev, Is.Null);
 
 			// section stuff should be null
-			Assert.IsNull(subDiff.SectionsRev);
-			Assert.IsNull(subDiff.SectionsCurr);
+			Assert.That(subDiff.SectionsRev, Is.Null);
+			Assert.That(subDiff.SectionsCurr, Is.Null);
 
 			// subDiffs may not have subDiffs, so far
-			Assert.IsNull(subDiff.SubDiffsForORCs);
+			Assert.That(subDiff.SubDiffsForORCs, Is.Null);
 
 			//check the root difference for consistency with this subDiff
 			Assert.IsTrue(rootDiff.DiffType == DifferenceType.TextDifference ||
@@ -205,8 +205,8 @@ namespace ParatextImport
 		{
 			Difference subDiff = rootDiff.SubDiffsForORCs[iSubDiff];
 			// verify the basics
-			Assert.AreEqual(0, subDiff.RefStart);
-			Assert.AreEqual(0, subDiff.RefEnd);
+			Assert.That((int)subDiff.RefStart, Is.EqualTo(0));
+			Assert.That((int)subDiff.RefEnd, Is.EqualTo(0));
 			Assert.AreEqual(DifferenceType.NoDifference, subDiff.DiffType);
 
 			// the Current para stuff
@@ -220,15 +220,15 @@ namespace ParatextImport
 			Assert.AreEqual(((IScrTxtPara)footnoteRev.ParagraphsOS[0]).Contents.Length, subDiff.IchLimRev);
 
 			// style names should be null
-			Assert.IsNull(subDiff.StyleNameCurr);
-			Assert.IsNull(subDiff.StyleNameRev);
+			Assert.That(subDiff.StyleNameCurr, Is.Null);
+			Assert.That(subDiff.StyleNameRev, Is.Null);
 
 			// section stuff should be null
-			Assert.IsNull(subDiff.SectionsRev);
-			Assert.IsNull(subDiff.SectionsCurr);
+			Assert.That(subDiff.SectionsRev, Is.Null);
+			Assert.That(subDiff.SectionsCurr, Is.Null);
 
 			// subDiffs may not have subDiffs, so far
-			Assert.IsNull(subDiff.SubDiffsForORCs);
+			Assert.That(subDiff.SubDiffsForORCs, Is.Null);
 
 			//check the root difference for consistency with this subDiff
 			Assert.IsTrue(rootDiff.DiffType == DifferenceType.TextDifference ||
@@ -306,12 +306,12 @@ namespace ParatextImport
 			Assert.AreEqual(ichLimRev, subDiff.IchLimRev);
 
 			// section stuff should be null
-			Assert.IsNull(subDiff.SectionsRev);
-			Assert.IsNull(subDiff.SectionsCurr);
+			Assert.That(subDiff.SectionsRev, Is.Null);
+			Assert.That(subDiff.SectionsCurr, Is.Null);
 
 			// subDiffs may not have subDiffs, so far
-			Assert.IsNull(subDiff.SubDiffsForORCs);
-			Assert.IsNull(subDiff.SubDiffsForParas);
+			Assert.That(subDiff.SubDiffsForORCs, Is.Null);
+			Assert.That(subDiff.SubDiffsForParas, Is.Null);
 
 			Assert.AreEqual(subDiffType, subDiff.DiffType);
 
@@ -336,8 +336,8 @@ namespace ParatextImport
 			}
 			else
 			{
-				Assert.IsNotNull(paraCurr, "The current paragraph cannot be null except for para split/merge root diff");
-				Assert.IsNotNull(paraRev, "The revision paragraph cannot be null except for para split/merge root diff");
+				Assert.That(paraCurr, Is.Not.Null, "The current paragraph cannot be null except for para split/merge root diff");
+				Assert.That(paraRev, Is.Not.Null, "The revision paragraph cannot be null except for para split/merge root diff");
 
 				//check the root difference for consistency with this subDiff
 				if (subDiff.DiffType == DifferenceType.VerseMoved)
@@ -400,12 +400,12 @@ namespace ParatextImport
 			Assert.AreEqual(ichLimRev, subDiff.IchLimRev);
 
 			// section stuff should be null
-			Assert.IsNull(subDiff.SectionsRev);
-			Assert.IsNull(subDiff.SectionsCurr);
+			Assert.That(subDiff.SectionsRev, Is.Null);
+			Assert.That(subDiff.SectionsCurr, Is.Null);
 
 			// subDiffs may not have subDiffs, so far
-			Assert.IsNull(subDiff.SubDiffsForORCs);
-			Assert.IsNull(subDiff.SubDiffsForParas);
+			Assert.That(subDiff.SubDiffsForORCs, Is.Null);
+			Assert.That(subDiff.SubDiffsForParas, Is.Null);
 
 			Assert.AreEqual(subDiffType, subDiff.DiffType);
 		}
@@ -442,11 +442,11 @@ namespace ParatextImport
 			Assert.AreEqual(ichRev, subDiff.IchMinRev);
 			Assert.AreEqual(ichRev, subDiff.IchLimRev);
 
-			Assert.IsNull(subDiff.SectionsRev);
-			Assert.IsNull(subDiff.SectionsRev);
-			Assert.IsNull(subDiff.StyleNameCurr);
-			Assert.IsNull(subDiff.StyleNameRev);
-			Assert.IsNull(subDiff.SubDiffsForORCs);
+			Assert.That(subDiff.SectionsRev, Is.Null);
+			Assert.That(subDiff.SectionsRev, Is.Null);
+			Assert.That(subDiff.StyleNameCurr, Is.Null);
+			Assert.That(subDiff.StyleNameRev, Is.Null);
+			Assert.That(subDiff.SubDiffsForORCs, Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -499,11 +499,11 @@ namespace ParatextImport
 					break;
 			}
 
-			Assert.IsNull(subDiff.SectionsRev);
-			Assert.IsNull(subDiff.SectionsRev);
-			Assert.IsNull(subDiff.StyleNameCurr);
-			Assert.IsNull(subDiff.StyleNameRev);
-			Assert.IsNull(subDiff.SubDiffsForORCs);
+			Assert.That(subDiff.SectionsRev, Is.Null);
+			Assert.That(subDiff.SectionsRev, Is.Null);
+			Assert.That(subDiff.StyleNameCurr, Is.Null);
+			Assert.That(subDiff.StyleNameRev, Is.Null);
+			Assert.That(subDiff.SubDiffsForORCs, Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -558,7 +558,7 @@ namespace ParatextImport
 			switch (type)
 			{
 				case DifferenceType.ParagraphAddedToCurrent:
-					Assert.IsNull(diff.SectionsRev);
+					Assert.That(diff.SectionsRev, Is.Null);
 
 					Assert.AreEqual(paraAdded, diff.ParaCurr);
 					Assert.AreEqual(0, diff.IchMinCurr);
@@ -568,12 +568,12 @@ namespace ParatextImport
 					Assert.AreEqual(ichDest, diff.IchMinRev);
 					Assert.AreEqual(ichDest, diff.IchLimRev);
 
-					Assert.IsNull(diff.StyleNameCurr);
-					Assert.IsNull(diff.StyleNameRev);
+					Assert.That(diff.StyleNameCurr, Is.Null);
+					Assert.That(diff.StyleNameRev, Is.Null);
 					break;
 
 				case DifferenceType.ParagraphMissingInCurrent:
-					Assert.IsNull(diff.SectionsRev);
+					Assert.That(diff.SectionsRev, Is.Null);
 
 					Assert.AreEqual(paraDest, diff.ParaCurr);
 					Assert.AreEqual(ichDest, diff.IchMinCurr);
@@ -583,8 +583,8 @@ namespace ParatextImport
 					Assert.AreEqual(0, diff.IchMinRev);
 					Assert.AreEqual(paraAdded.Contents.Length, diff.IchLimRev);
 
-					Assert.IsNull(diff.StyleNameCurr);
-					Assert.IsNull(diff.StyleNameRev);
+					Assert.That(diff.StyleNameCurr, Is.Null);
+					Assert.That(diff.StyleNameRev, Is.Null);
 					break;
 			}
 		}
@@ -628,7 +628,7 @@ namespace ParatextImport
 					else
 						Assert.Fail("Invalid parameter type");
 
-					Assert.IsNull(diff.SectionsRev);
+					Assert.That(diff.SectionsRev, Is.Null);
 
 					Assert.AreEqual(null, diff.ParaCurr);
 					Assert.AreEqual(0, diff.IchMinCurr);
@@ -638,8 +638,8 @@ namespace ParatextImport
 					Assert.AreEqual(ichDest, diff.IchMinRev);
 					Assert.AreEqual(ichDest, diff.IchLimRev);
 
-					Assert.IsNull(diff.StyleNameCurr);
-					Assert.IsNull(diff.StyleNameRev);
+					Assert.That(diff.StyleNameCurr, Is.Null);
+					Assert.That(diff.StyleNameRev, Is.Null);
 					break;
 
 				case DifferenceType.SectionMissingInCurrent:
@@ -654,7 +654,7 @@ namespace ParatextImport
 					else
 						Assert.Fail("Invalid parameter type");
 
-					Assert.IsNull(diff.SectionsCurr);
+					Assert.That(diff.SectionsCurr, Is.Null);
 
 					Assert.AreEqual(paraDest, diff.ParaCurr);
 					Assert.AreEqual(ichDest, diff.IchMinCurr);
@@ -664,8 +664,8 @@ namespace ParatextImport
 					Assert.AreEqual(0, diff.IchMinRev);
 					Assert.AreEqual(0, diff.IchLimRev);
 
-					Assert.IsNull(diff.StyleNameCurr);
-					Assert.IsNull(diff.StyleNameRev);
+					Assert.That(diff.StyleNameCurr, Is.Null);
+					Assert.That(diff.StyleNameRev, Is.Null);
 					break;
 				default:
 					Assert.Fail("test called wrong verify method or something");
@@ -705,8 +705,8 @@ namespace ParatextImport
 			string verseText, int iVerseStart, bool fIsChapter, bool fIsHeading, int iSection)
 		{
 			Assert.AreEqual(para, scrVerse.Para);
-			Assert.AreEqual(startRef, scrVerse.StartRef);
-			Assert.AreEqual(endRef, scrVerse.EndRef);
+			Assert.That((int)scrVerse.StartRef, Is.EqualTo(startRef));
+			Assert.That((int)scrVerse.EndRef, Is.EqualTo(endRef));
 			Assert.AreEqual(verseText, scrVerse.Text.Text);
 			Assert.AreEqual(iVerseStart, scrVerse.VerseStartIndex);
 			Assert.AreEqual(fIsChapter, scrVerse.ChapterNumberRun);

@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -126,7 +127,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				ctrl.Initialize(Cache, Cache.ServiceLocator.WritingSystems,
 				null, null, null, null);
-
+				// Verify that Icu is using our Custom Library
+				Assert.That(CustomIcu.HaveCustomIcuLibrary, Is.True);
+				// Verify that the data folder exists
+				Assert.That(CustomIcu.DefaultDataDirectory, Contains.Substring(CustomIcu.Version));
 				// First string is the normalized order that ICU produces.
 				// Second string is the normalized order that .Net produces.
 				var icuStyleNormalizationOrder = "\u05E9\u05c1\u05b4\u0596";

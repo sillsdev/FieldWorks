@@ -11,7 +11,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// <summary/>
 	public class AdvancedScriptRegionVariantModelTests
 	{
-		/// <summary/>
+		/// <summary>Test that we can set the region to a pre-loaded Private Use region</summary>
 		[Test]
 		public void SetRegionToQMFromEmptyWorks()
 		{
@@ -21,9 +21,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			model.Region = regions.First(s => s.Code == "QM");
 			Assert.That(model.RegionCode, Is.EqualTo("QM"));
 			Assert.That(model.Region.Code, Is.EqualTo("QM"));
+			Assert.That(model.Region.IsPrivateUse);
 		}
 
-		/// <summary/>
+		/// <summary>Test that we can set the region to a not-yet-loaded Private Use region</summary>
+		[Test]
+		public void SetRegionToQRFromEmptyWorks()
+		{
+			const string qr = "QR";
+			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "qaa" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
+			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
+			Assert.That(model.GetRegions().Any(r => r.Code == qr), Is.False, "Most private use regions should not be preloaded");
+			model.Region = new AdvancedScriptRegionVariantModel.RegionListItem(new RegionSubtag(qr, "Private Use"));
+			Assert.That(model.RegionCode, Is.EqualTo(qr));
+			Assert.That(model.Region.Code, Is.EqualTo(qr));
+			Assert.That(model.Region.IsPrivateUse);
+		}
+
+		/// <summary>Test that we can set the script to a pre-loaded Private Use script</summary>
 		[Test]
 		public void SetScriptToQaaaFromEmptyWorks()
 		{
@@ -33,6 +48,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			model.Script = scripts.First(s => s.Code == "Qaaa");
 			Assert.That(model.ScriptCode, Is.EqualTo("Qaaa"));
 			Assert.That(model.Script.Code, Is.EqualTo("Qaaa"));
+			Assert.That(model.Script.IsPrivateUse);
+		}
+
+		/// <summary>Test that we can set the script to a not-yet-loaded Private Use script</summary>
+		[Test]
+		public void SetScriptToQaadFromEmptyWorks()
+		{
+			const string qaad = "Qaad";
+			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "qaa" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
+			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
+			Assert.That(model.GetScripts().Any(s => s.Code == qaad), Is.False, "Most private use scripts should not be preloaded");
+			model.Script = new AdvancedScriptRegionVariantModel.ScriptListItem(new ScriptSubtag(qaad, "Private Use"));
+			Assert.That(model.ScriptCode, Is.EqualTo(qaad));
+			Assert.That(model.Script.Code, Is.EqualTo(qaad));
+			Assert.That(model.Script.IsPrivateUse);
 		}
 
 		/// <summary/>
@@ -187,7 +217,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// <summary/>
 		[Test]
-		public void EnableScriptCodeDoesNotCrashOnEmptyRegion()
+		public void EnableScriptCodeDoesNotCrashOnEmptyScript()
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "qaa-x-special" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
 			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
@@ -282,8 +312,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "qaa" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
 			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			var scripts = model.GetScripts();
-			Assert.IsTrue(scripts.Any(s => s.IsPrivateUse && s.Code == "Qaaa"));
+			Assert.IsTrue(model.GetScripts().Any(s => s.IsPrivateUse && s.Code == "Qaaa"));
 		}
 
 		/// <summary/>

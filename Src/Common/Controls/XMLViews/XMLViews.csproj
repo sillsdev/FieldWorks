@@ -207,9 +207,9 @@
     <Reference Include="Geckofx-Winforms">
       <HintPath>..\..\..\..\Output\Debug\Geckofx-Winforms.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CommonServiceLocator, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\CommonServiceLocator.dll</HintPath>
     </Reference>
     <Reference Include="Reporting">
       <Name>Reporting</Name>
@@ -235,7 +235,7 @@
     </Reference>
     <Reference Include="ECInterfaces" Condition="'$(OS)'=='Unix'">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>/usr/lib/fieldworks/ECInterfaces.dll</HintPath>
+      <HintPath>$(installation_prefix)/lib/fieldworks/ECInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="SilEncConverters40, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f1447bae1e63f485, processorArchitecture=x86" Condition="'$(OS)'!='Unix'">
       <SpecificVersion>False</SpecificVersion>
@@ -243,7 +243,7 @@
     </Reference>
     <Reference Include="SilEncConverters40" Condition="'$(OS)'=='Unix'">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
+      <HintPath>$(installation_prefix)/lib/fieldworks/SilEncConverters40.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -320,6 +320,7 @@
     </Compile>
     <Compile Include="ObjectLabels.cs" />
     <Compile Include="ObjectListPublisher.cs" />
+    <Compile Include="OccurrenceInContextFinder.cs" />
     <Compile Include="SearchCompletedEventArgs.cs" />
     <Compile Include="SearchEngine.cs" />
     <Compile Include="SimpleDateMatchDlg.cs">

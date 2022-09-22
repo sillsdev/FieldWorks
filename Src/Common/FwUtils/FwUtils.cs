@@ -11,9 +11,11 @@ using System.Media;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.IO;
+using Icu.Collation;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -104,7 +106,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>Name of the font, or <c>null</c> if not found.</returns>
 		public static string GetFontNameForLanguage(string lang)
 		{
-			if (MiscUtils.IsWindows)
+			if (Platform.IsWindows)
 				throw new PlatformNotSupportedException();
 
 			string fontName;
@@ -189,6 +191,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// ICU_DATA should point to the directory that contains nfc_fw.nrm and nfkc_fw.nrm
 			// (i.e. icudt54l).
 			CustomIcu.InitIcuDataDir();
+		}
+
+		/// <summary>
+		/// Creates a collator using Icu Locale for the writing system if possible
+		/// </summary>
+		/// <returns>A collator for the writing system, or null</returns>
+		public static Collator GetCollatorForWs(string sWs)
+		{
+			Collator col = null;
+			try
+			{
+				var icuLocale = new Icu.Locale(sWs).Name;
+				col = Collator.Create(icuLocale);
+			}
+			catch (Exception)
+			{
+				// If we can't create a collator for this writing system cache a null, we won't be able to next time either
+			}
+
+			return col;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -539,7 +561,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			try
 			{
-				if (MiscUtils.IsDotNet)
+				if (Platform.IsDotNet)
 				{
 					IntPtr procToken;
 					string sidString = null;

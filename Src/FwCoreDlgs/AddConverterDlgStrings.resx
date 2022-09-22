@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
 	Microsoft ResX Schema
@@ -209,5 +209,17 @@ Click OK to continue making changes.</value>
   <data name="kstidConverterNotComplete" xml:space="preserve">
 	<value>Not Finished</value>
 	<comment>Error message caption</comment>
+  </data>
+  <data name="kstrUnspecifiedSaveError" xml:space="preserve">
+    <value>Error Saving Converters</value>
+    <comment>Message box title for an unspecified error in the Add Converter Dlg</comment>
+  </data>
+  <data name="kstrErrorInProperties" xml:space="preserve">
+    <value>Error in converter properties.</value>
+    <comment>Message box content for non specific errors in the converter properties</comment>
+  </data>
+  <data name="kstrUnhandledConverterException" xml:space="preserve">
+    <value>Unhandled error saving converters: {0}</value>
+    <comment>Message used to display unexpected exceptions caught when saving encoding converter changes.</comment>
   </data>
 </root>

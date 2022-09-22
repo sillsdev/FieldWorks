@@ -278,7 +278,7 @@ namespace SIL.FieldWorks.Common.Controls
 			//now switch to the next step
 			m_stepIndex++;
 			m_currentStepStartFraction += m_currentStepExpectedFractionOfTotal;
-			m_currentStepStartTime = ElapsedMilliSeconds();
+			m_currentStepStartTime = ElapsedMilliseconds();
 
 			m_currentStepExpectedFractionOfTotal =(1+ m_stepIndex) /(float)m_stepsCount;
 
@@ -289,7 +289,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		// Utility function to return elapsed Milliseconds since the
 		// SplashScreen was launched.
-		private double ElapsedMilliSeconds()
+		private double ElapsedMilliseconds()
 		{
 			TimeSpan ts = DateTime.Now - m_startTime;
 			return ts.TotalMilliseconds;
@@ -298,7 +298,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary/>
 		protected double ElapsedTimeDoingThisStep()
 		{
-			return ElapsedMilliSeconds()- m_currentStepStartTime;
+			return ElapsedMilliseconds() - m_currentStepStartTime;
 		}
 
 		/// <summary/>

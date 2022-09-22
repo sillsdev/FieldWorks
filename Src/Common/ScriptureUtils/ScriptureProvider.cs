@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 SIL International
+// Copyright (c) 2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -300,7 +300,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 
 		public string EndMarker { get { return pt7Token.EndMarker; } }
 
-		public TokenType Type { get { return (TokenType)Enum.Parse(typeof(TokenType), pt7Token.Type.ToString()); } }
+		public TokenType Type { get { return Enum.TryParse(pt7Token.Type.ToString(), out TokenType outValue) ? outValue : TokenType.Unknown; } }
 
 		public string Text {  get { return pt7Token.Text; } }
 	}

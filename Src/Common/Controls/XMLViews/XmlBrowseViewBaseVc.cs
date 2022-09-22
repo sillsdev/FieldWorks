@@ -227,8 +227,8 @@ namespace SIL.FieldWorks.Common.Controls
 				foreach (XmlNode node in doc.DocumentElement.SelectNodes("//column"))
 				{
 					if (IsValidColumnSpec(node))
-					m_columns.Add(node);
-			}
+						m_columns.Add(node);
+				}
 			}
 			m_fakeFlid = fakeFlid;
 			SetupSelectColumn();
@@ -760,6 +760,21 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				return m_dxmpCheckWidth + 4 * m_dxmpCheckBorderWidth;
 			}
+		}
+
+		/// <returns>
+		/// A list of the labels for the visible columns in their configured order
+		/// </returns>
+		public static List<string> GetHeaderLabels(XmlBrowseViewBaseVc vc)
+		{
+			var headerLabelList = new List<string>();
+			foreach (var col in vc.ColumnSpecs)
+			{
+				headerLabelList.Add(XmlUtils.GetLocalizedAttributeValue(col, "label", null) ??
+					XmlUtils.GetMandatoryAttributeValue(col, "label"));
+			}
+
+			return headerLabelList;
 		}
 
 		internal virtual List<XmlNode> ColumnSpecs
@@ -1738,13 +1753,15 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					if (url.StartsWith(FwLinkArgs.kFwUrlPrefix))
 					{
-						m_xbv.Mediator.SendMessage("FollowLink", new FwLinkArgs(url));
-						return;
+						FwLinkArgs linkArgs = new FwLinkArgs(url);
+						linkArgs.DisplayErrorMsg = false;
+						if (m_xbv.Mediator.SendMessage("FollowLink", linkArgs))
+							return;
 					}
 				}
 				catch
 				{
-					// REVIEW: Why are we catching all errors?
+					// Catch exceptions so we can try using the base class.
 				}
 			}
 			base.DoHotLinkAction(strData, sda);

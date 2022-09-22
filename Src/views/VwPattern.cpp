@@ -963,12 +963,17 @@ public:
 			// We can't if we're at the limit already.
 			if (m_ichLimFoundSearch == m_ichLimSearch)
 				return true;
+			// We can not increment by half of a surrogate pair and expect good results
+			int nextCharBoundary = 1;
+			if (IsHighSurrogate(*reinterpret_cast<const wchar_t *>(m_pchBuf + m_ichLimFoundSearch)))
+				++nextCharBoundary;
+
 			// Try incrementing it...
-			m_ichLimFoundSearch++;
+			m_ichLimFoundSearch += nextCharBoundary;
 			// See if this is still a good match.
 			if (!CheckMatchAndProps())
 			{
-				m_ichLimFoundSearch--;
+				m_ichLimFoundSearch -= nextCharBoundary;
 				break;
 			}
 		}
@@ -1261,7 +1266,7 @@ public:
 		const OLECHAR * pchBufMatch;
 		int cchMatch;
 		CheckHr(qtssMatch->LockText(&pchBufMatch, &cchMatch));
-		const OLECHAR * pchBufPattern;
+		const wchar * pchBufPattern;
 		int cchPattern;
 		CheckHr(m_pat->m_qtssReducedPattern->LockText(&pchBufPattern, &cchPattern));
 		bool fMatch = true; // unless we find otherwise
@@ -1278,8 +1283,8 @@ public:
 				fMatch = false; // singleton for a given set of props, should be exact same objects.
 				break;
 			}
-			if (m_pat->m_pcoll->compare(pchBufMatch + triMatch.ichMin, triMatch.ichLim - triMatch.ichMin,
-				pchBufPattern + triPattern.ichMin, triPattern.ichLim - triPattern.ichMin) != 0)
+			if (m_pat->m_pcoll->compare(reinterpret_cast<const UChar*>(pchBufMatch + triMatch.ichMin), triMatch.ichLim - triMatch.ichMin,
+				reinterpret_cast<const UChar*>(pchBufPattern + triPattern.ichMin), triPattern.ichLim - triPattern.ichMin) != 0)
 			{
 				fMatch = false; // singleton for a given set of props, should be exact same objects.
 				break;
@@ -1893,7 +1898,7 @@ void VwPattern::RemoveIgnorableRuns(ITsString * ptssIn, ITsString ** pptssOut)
 		int cchRun = tri.ichLim - tri.ichMin;
 		OLECHAR dummy;
 		// If this is an empty TSS, we also want to copy appropriate run props (at least the required WS)
-		if (m_pcoll->compare(&dummy, 0, pchBuf + tri.ichMin, cchRun) != 0 || !cch)
+		if (m_pcoll->compare(reinterpret_cast<const UChar*>(&dummy), 0, reinterpret_cast<const UChar*>(pchBuf + tri.ichMin), cchRun) != 0 || !cch)
 		{
 			// Not ignorable. Figure the props we care about.
 			ITsPropsBldrPtr qtpb;

@@ -351,11 +351,34 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			Assert.That(InstrumentedProjectLocalizer.LinkerFileVersion[index], Is.EqualTo("8.4.2.1234"));
 			Assert.That(InstrumentedProjectLocalizer.LinkerProductVersion[index], Is.EqualTo("8.4.2 beta 2"));
 			Assert.That(InstrumentedProjectLocalizer.LinkerVersion[index], Is.EqualTo("8.4.2.*"));
-			Assert.That(InstrumentedProjectLocalizer.LinkerAlArgs[index], Is.StringContaining("\"8.4.2 beta 2\""));
+			Assert.That(InstrumentedProjectLocalizer.LinkerAlArgs[index], Does.Contain("\"8.4.2 beta 2\""));
 			var embeddedResources = InstrumentedProjectLocalizer.LinkerResources[index];
 			Assert.That(embeddedResources.Count, Is.EqualTo(expectedResources.Length));
 			foreach (var resource in expectedResources)
 				Assert.That(embeddedResources, Has.Member(resource));
+		}
+
+		[Test]
+		public void DoIt_BypassAssemblyInfo()
+		{
+			const string infoVer = "9.3.7 base 513";
+			FullSetup();
+			m_sut.InformationVersion = infoVer;
+
+			var result = m_sut.Execute();
+
+			Assert.That(result, Is.True, m_sut.ErrorMessages);
+
+			// The Assembly Linker should be run (once for each desired project) with expected arguments.
+			Assert.That(InstrumentedProjectLocalizer.LinkerPath.Count, Is.EqualTo(4));
+			for (var i = 0; i < 4; i++)
+			{
+				Assert.That(InstrumentedProjectLocalizer.LinkerCulture[i], Is.EqualTo(LocaleEs));
+				Assert.That(InstrumentedProjectLocalizer.LinkerFileVersion[i], Is.EqualTo("9.3.7.513"));
+				Assert.That(InstrumentedProjectLocalizer.LinkerProductVersion[i], Is.EqualTo(infoVer));
+				Assert.That(InstrumentedProjectLocalizer.LinkerVersion[i], Is.EqualTo("9.3.7.513"));
+				Assert.That(InstrumentedProjectLocalizer.LinkerAlArgs[i], Does.Contain("\"" + infoVer + "\""));
+			}
 		}
 
 		/// <summary>
@@ -419,7 +442,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(badResXFilePath));
 		}
 
 		[Test]
@@ -430,7 +453,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(badResXFilePath));
 		}
 
 		[Test]
@@ -441,7 +464,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(badResXFilePath));
 		}
 
 		[Test]
@@ -452,7 +475,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(badResXFilePath));
 		}
 
 		[Test]
@@ -463,7 +486,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(badResXFilePath));
 		}
 
 		[Test]
@@ -474,7 +497,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(badResXFilePath));
 		}
 
 		[Test]
@@ -486,8 +509,8 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining("inside out"));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(badResXFilePath));
+			Assert.That(m_sut.ErrorMessages, Does.Contain("inside out"));
 		}
 
 		[Test]
@@ -499,8 +522,8 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(orig));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(badResXFilePath));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(orig));
 		}
 
 		/// <remarks>
@@ -517,7 +540,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 			Assert.False(m_sut.Execute());
 
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(badResXFilePath));
 		}
 
 		/// <remarks>
@@ -562,7 +585,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			Assert.AreEqual(result, m_sut.Execute(), message);
 
 			if (!result)
-				Assert.That(m_sut.ErrorMessages, Is.StringContaining("color"));
+				Assert.That(m_sut.ErrorMessages, Does.Contain("color"));
 		}
 
 		[Test]
@@ -576,8 +599,8 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 			Assert.False(m_sut.Execute());
 
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badFile));
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(extraDataName));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(badFile));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(extraDataName));
 		}
 
 		[Test]
@@ -591,8 +614,8 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 			Assert.False(m_sut.Execute());
 
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badFile));
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(extraDataName));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(badFile));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(extraDataName));
 		}
 
 		[Test]
@@ -603,7 +626,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(badResXFilePath));
 		}
 
 		[Test]
@@ -646,7 +669,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badXmlFilePath));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(badXmlFilePath));
 		}
 
 		[Test]
@@ -658,7 +681,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badResXFilePath));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(badResXFilePath));
 		}
 
 		[Test]
@@ -672,8 +695,8 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 			Assert.False(m_sut.Execute());
 
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badString1));
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badString2));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(badString1));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(badString2));
 		}
 
 		[Test]
@@ -687,8 +710,8 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 			Assert.False(m_sut.Execute());
 
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(dupStringId));
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining(badFileName));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(dupStringId));
+			Assert.That(m_sut.ErrorMessages, Does.Contain(badFileName));
 		}
 
 		[Test]
@@ -713,7 +736,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var result = m_sut.Execute();
 
 			Assert.That(result, Is.False);
-			Assert.That(m_sut.ErrorMessages, Is.StringContaining("FieldWorks"));
+			Assert.That(m_sut.ErrorMessages, Does.Contain("FieldWorks"));
 
 		}
 	}

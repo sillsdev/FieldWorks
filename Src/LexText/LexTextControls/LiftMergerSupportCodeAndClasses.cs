@@ -12,15 +12,16 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.Lift.Parsing;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
+using SIL.Lift.Parsing;
+using SIL.PlatformUtilities;
 using SIL.Utils;
 using SIL.WritingSystems;
 
@@ -378,7 +379,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (!String.IsNullOrEmpty(span.LinkURL))
 				{
 					string linkPath = FileUtils.StripFilePrefix(span.LinkURL);
-					if (MiscUtils.IsUnix)
+					if (Platform.IsUnix)
 						linkPath = linkPath.TrimStart('/');
 					string sPath = Path.Combine(Path.GetDirectoryName(m_sLiftFile), linkPath);
 					if (linkPath.StartsWith("others" + '/') || linkPath.StartsWith("others" + "\\")
@@ -2580,10 +2581,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			WriteAccumulatedResidue();
 
 			// If we're keeping only the imported data, erase any unused entries or senses.
-			if (m_msImport == MergeStyle.MsKeepOnlyNew)
+			if (m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				progress.Message = LexTextControls.ksDeletingUnwantedEntries;
-				GatherUnwantedObjects(originalLexEntryRefs, originalLexRefs); //at this point any LexRefs which haven't been matched are dead.
+				if (m_msImport == MergeStyle.MsKeepOnlyNew)
+					GatherUnwantedObjects(originalLexEntryRefs, originalLexRefs); //at this point any LexRefs which haven't been matched are dead.
 				DeleteUnwantedObjects();
 			}
 			// Now that the relations have all been set, it's safe to set the entry
@@ -5284,6 +5286,25 @@ namespace SIL.FieldWorks.LexText.Controls
 
 	public class LdmlFileBackup
 	{
+
+		/// <summary>
+		/// Copy a file to the outPath
+		/// </summary>
+		/// <param name="sFileName"></param>
+		/// <param name="outPath"></param>
+		public static void CopyFile(string sFileName, string outPath)
+		{
+			RemoveWriteProtection(outPath);
+			File.Copy(sFileName, outPath, true);
+			RemoveWriteProtection(outPath);
+		}
+
+		private static void RemoveWriteProtection(string dlgFileName)
+		{
+			if (File.Exists(dlgFileName) && (File.GetAttributes(dlgFileName) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+				File.SetAttributes(dlgFileName, FileAttributes.Normal);
+		}
+
 		/// <summary>
 		/// Copy a complete directory, including all contents recursively.
 		/// Everything in out put will be writeable, even if some input files are read-only.

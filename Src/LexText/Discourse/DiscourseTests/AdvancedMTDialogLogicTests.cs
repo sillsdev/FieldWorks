@@ -66,9 +66,9 @@ namespace SIL.FieldWorks.Discourse
 
 		private void SetupParamObjBase()
 		{
-			Assert.IsNotNull(m_sentElem, "Create CChartSentenceElements object first.");
-			Assert.IsNotNull(m_eligRows, "Load member variable for eligible rows first.");
-			Assert.IsNotNull(m_origCell, "Load member variable for clicked cell first.");
+			Assert.That(m_sentElem, Is.Not.Null, "Create CChartSentenceElements object first.");
+			Assert.That(m_eligRows, Is.Not.Null, "Load member variable for eligible rows first.");
+			Assert.That(m_origCell, Is.Not.Null, "Load member variable for clicked cell first.");
 			m_sentElem.OriginCell = m_origCell;
 			m_sentElem.EligibleRows = m_eligRows;
 		}
@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.Discourse
 		void SetupParameterObject(IConstChartWordGroup group)
 		{
 			SetupParamObjBase();
-			Assert.IsNotNull(group, "Invalid CCWordGroup.");
+			Assert.That(group, Is.Not.Null, "Invalid CCWordGroup.");
 			m_sentElem.AffectedWordGroups.Add(group);
 		}
 
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.Discourse
 		void SetupParameterObject(IConstChartWordGroup[] affectedGroupsArray)
 		{
 			SetupParamObjBase();
-			Assert.IsNotNull(affectedGroupsArray, "Empty parameter array.");
+			Assert.That(affectedGroupsArray, Is.Not.Null, "Empty parameter array.");
 			Assert.Greater(affectedGroupsArray.Length, 0, "No CCWordGroups to add.");
 			foreach (var group in affectedGroupsArray)
 			{

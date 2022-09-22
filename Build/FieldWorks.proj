@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+<Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
 
   <PropertyGroup>
     <Platform Condition="'$(Platform)'==''">x64</Platform>
@@ -19,7 +19,7 @@
   <UsingTask TaskName="LogMetadata" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="Make" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="Md5Checksum" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="NUnit" AssemblyFile="FwBuildTasks.dll"/>
+  <UsingTask TaskName="NUnit3" AssemblyFile="SIL.BuildTasks.dll"/>
   <UsingTask TaskName="ParentDirectory" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="ParseVersionNumbers" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="PathCombine" AssemblyFile="FwBuildTasks.dll"/>

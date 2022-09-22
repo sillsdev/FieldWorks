@@ -51,14 +51,14 @@ namespace ParatextImport
 			// Verify section 1 heading
 			ScrVerse scrVerse = m_bookMerger.NextVerseInStText();
 			Assert.AreEqual(section1.HeadingOA[0], scrVerse.Para);
-			Assert.AreEqual(01002001, scrVerse.StartRef);
-			Assert.AreEqual(01002001, scrVerse.EndRef);
+			Assert.That((int)scrVerse.StartRef, Is.EqualTo(01002001));
+			Assert.That((int)scrVerse.EndRef, Is.EqualTo(01002001));
 			Assert.AreEqual("My aching head!", scrVerse.Text.Text);
-			Assert.AreEqual(0, scrVerse.VerseStartIndex);
+			Assert.That(scrVerse.VerseStartIndex, Is.EqualTo(0));
 
 			// Verify there are no more scrVerses
 			scrVerse = m_bookMerger.NextVerseInStText();
-			Assert.IsNull(scrVerse);
+			Assert.That(scrVerse, Is.Null);
 
 			// Create an iterator to test content
 			m_bookMerger.CreateVerseIteratorForStText(section1.ContentOA);
@@ -66,27 +66,27 @@ namespace ParatextImport
 			// Verify section 1 content
 			scrVerse = m_bookMerger.NextVerseInStText();
 			Assert.AreEqual(hvoS1Para, scrVerse.Para);
-			Assert.AreEqual(01002001, scrVerse.StartRef);
-			Assert.AreEqual(01002001, scrVerse.EndRef);
+			Assert.That((int)scrVerse.StartRef, Is.EqualTo(01002001));
+			Assert.That((int)scrVerse.EndRef, Is.EqualTo(01002001));
 			Assert.AreEqual("2Verse 1. ", scrVerse.Text.Text);
-			Assert.AreEqual(0, scrVerse.VerseStartIndex);
-			Assert.AreEqual(1, scrVerse.TextStartIndex);
+			Assert.That(scrVerse.VerseStartIndex, Is.EqualTo(0));
+			Assert.That(scrVerse.TextStartIndex, Is.EqualTo(1));
 
 			scrVerse = m_bookMerger.NextVerseInStText();
-			Assert.AreEqual(01002002, scrVerse.StartRef);
-			Assert.AreEqual(01002002, scrVerse.EndRef);
+			Assert.That((int)scrVerse.StartRef, Is.EqualTo(01002002));
+			Assert.That((int)scrVerse.EndRef, Is.EqualTo(01002002));
 			Assert.AreEqual("2Verse 2. ", scrVerse.Text.Text);
-			Assert.AreEqual(10, scrVerse.VerseStartIndex);
+			Assert.That(scrVerse.VerseStartIndex, Is.EqualTo(10));
 
 			scrVerse = m_bookMerger.NextVerseInStText();
-			Assert.AreEqual(01002003, scrVerse.StartRef);
-			Assert.AreEqual(01002004, scrVerse.EndRef);
+			Assert.That((int)scrVerse.StartRef, Is.EqualTo(01002003));
+			Assert.That((int)scrVerse.EndRef, Is.EqualTo(01002004));
 			Assert.AreEqual("3-4Verse 3-4.", scrVerse.Text.Text);
-			Assert.AreEqual(20, scrVerse.VerseStartIndex);
+			Assert.That(scrVerse.VerseStartIndex, Is.EqualTo(20));
 
 			// Verify there are no more scrVerses
 			scrVerse = m_bookMerger.NextVerseInStText();
-			Assert.IsNull(scrVerse);
+			Assert.That(scrVerse, Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -119,19 +119,19 @@ namespace ParatextImport
 			// Verify section 1 content
 			ScrVerse scrVerse = m_bookMerger.NextVerseInStText();
 			Assert.AreEqual(hvoS1Para, scrVerse.Para);
-			Assert.AreEqual(01001001, scrVerse.StartRef);
-			Assert.AreEqual(01001001, scrVerse.EndRef);
+			Assert.That((int)scrVerse.StartRef, Is.EqualTo(01001001));
+			Assert.That((int)scrVerse.EndRef, Is.EqualTo(01001001));
 			Assert.AreEqual("Some initial text. ", scrVerse.Text.Text);
-			Assert.AreEqual(0, scrVerse.VerseStartIndex);
+			Assert.That(scrVerse.VerseStartIndex, Is.EqualTo(0));
 
 			scrVerse = m_bookMerger.NextVerseInStText();
 			Assert.AreEqual(hvoS1Para, scrVerse.Para);
-			Assert.AreEqual(01001005, scrVerse.StartRef);
-			Assert.AreEqual(01001006, scrVerse.EndRef);
+			Assert.That((int)scrVerse.StartRef, Is.EqualTo(01001005));
+			Assert.That((int)scrVerse.EndRef, Is.EqualTo(01001006));
 			Assert.AreEqual("5-6Verses 5-6.", scrVerse.Text.Text);
-			Assert.AreEqual(19, scrVerse.VerseStartIndex);
+			Assert.That(scrVerse.VerseStartIndex, Is.EqualTo(19));
 
-			Assert.IsNull(m_bookMerger.NextVerseInStText());
+			Assert.That(m_bookMerger.NextVerseInStText(), Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -159,7 +159,7 @@ namespace ParatextImport
 			Assert.IsTrue(verse.IsStanzaBreak);
 			Assert.AreEqual(0, verse.VerseStartIndex);
 
-			Assert.IsNull(m_bookMerger.NextVerseInStText());
+			Assert.That(m_bookMerger.NextVerseInStText(), Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -191,7 +191,7 @@ namespace ParatextImport
 			Assert.AreEqual(contentPara, verse.Para);
 			Assert.AreEqual(0, verse.VerseStartIndex);
 
-			Assert.IsNull(m_bookMerger.NextVerseInStText());
+			Assert.That(m_bookMerger.NextVerseInStText(), Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -226,7 +226,7 @@ namespace ParatextImport
 			DiffTestHelper.VerifyScrVerse(verse, "2First verse after empty paragraphs.", ScrStyleNames.NormalParagraph,
 							01001002, 01001002);
 
-			Assert.IsNull(m_bookMerger.NextVerseInStText());
+			Assert.That(m_bookMerger.NextVerseInStText(), Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -256,7 +256,7 @@ namespace ParatextImport
 			DiffTestHelper.VerifyScrVerse(m_bookMerger.NextVerseInStText(),
 									 "1First verse before empty paragraphs.", ScrStyleNames.NormalParagraph,
 									 01001001, 01001001);
-			Assert.IsNull(m_bookMerger.NextVerseInStText(), "The empty paragraphs should not return a ScrVerse");
+			Assert.That(m_bookMerger.NextVerseInStText(), Is.Null, "The empty paragraphs should not return a ScrVerse");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -275,18 +275,18 @@ namespace ParatextImport
 			m_bookMerger.CreateVerseIteratorForStText(section1.HeadingOA);
 
 			// Verify that the verse iterator returns nothing
-			Assert.IsNull(m_bookMerger.NextVerseInStText());
+			Assert.That(m_bookMerger.NextVerseInStText(), Is.Null);
 
 			//Create an iterator for the section contents
 			m_bookMerger.CreateVerseIteratorForStText(section1.ContentOA);
 
 			// Verify section 1 content contains only one empty paragraph.
 			ScrVerse emptyVerse = m_bookMerger.CallFirstVerseForStText((IStText)section1.ContentOA);
-			Assert.IsNotNull(emptyVerse);
+			Assert.That(emptyVerse, Is.Not.Null);
 			DiffTestHelper.VerifyScrVerse(emptyVerse, string.Empty, ScrStyleNames.NormalParagraph, 0, 0);
 
 			// Verify that the verse iterator doesn't return any more ScrVerses
-			Assert.IsNull(m_bookMerger.NextVerseInStText());
+			Assert.That(m_bookMerger.NextVerseInStText(), Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -370,7 +370,7 @@ namespace ParatextImport
 
 			// Verify there are no more scrVerses
 			scrVerse = m_bookMerger.NextVerseInSet();
-			Assert.IsNull(scrVerse);
+			Assert.That(scrVerse, Is.Null);
 		}
 		#endregion
 	}

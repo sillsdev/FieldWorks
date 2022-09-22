@@ -331,8 +331,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					{
 						if (url.StartsWith(FwLinkArgs.kFwUrlPrefix))
 						{
-							m_mediator.SendMessage("FollowLink", new FwLinkArgs(url));
-							return;
+							FwLinkArgs linkArgs = new FwLinkArgs(url);
+							linkArgs.DisplayErrorMsg = false;
+							if (m_mediator.SendMessage("FollowLink", linkArgs))
+								return;
 						}
 					}
 					catch

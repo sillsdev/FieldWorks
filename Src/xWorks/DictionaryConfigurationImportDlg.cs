@@ -4,11 +4,11 @@
 
 
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.PlatformUtilities;
 using XCore;
-using SIL.LCModel.Utils;
-using System.Drawing;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.XWorks
 			// Clear away example text
 			explanationLabel.Text = string.Empty;
 
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				var optimalWidthOnMono = 582;
 				MinimumSize = new Size(optimalWidthOnMono, MinimumSize.Height);

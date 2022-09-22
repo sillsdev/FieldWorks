@@ -11,7 +11,6 @@ using System.IO;
 using System.Text;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
-using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
 using ECInterfaces;
 using SilEncConverters40;
@@ -195,7 +194,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -205,19 +204,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
 
-			if( disposing )
+			if(disposing)
 			{
-				if(m_components != null)
-				{
-					m_components.Dispose();
-				}
+				m_components?.Dispose();
 			}
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 		#endregion
 
@@ -436,7 +432,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		protected void btnCopy_Click(object sender, EventArgs e)
 		{
-			int goToNextIndex = SelectedConverterIndex + 1;
+			var goToNextIndex = SelectedConverterIndex + 1;
 			if (AutoSave())
 			{
 				JumpToHomeTab();
@@ -457,7 +453,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		protected void btnDelete_Click(object sender, EventArgs e)
 		{
-			int goToNextIndex = SelectedConverterIndex;// +1; //no, because the current EC is deleted
+			var goToNextIndex = SelectedConverterIndex;// +1; //no, because the current EC is deleted
 			RemoveConverter(SelectedConverter);
 			SelectedConverterIndex = goToNextIndex;
 			SetStates();
@@ -489,12 +485,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 			}
 
-			string newConv = ConverterName;
+			var newConv = ConverterName;
 			if (AutoSave())
 			{
 				SelectedConverter = newConv;
 				SetUnchanged();
-				DialogResult = System.Windows.Forms.DialogResult.OK;
+				DialogResult = DialogResult.OK;
 			}
 			SetStates();
 			m_fClosingDialog = false;
@@ -509,7 +505,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		protected void btnHelp_Click(object sender, System.EventArgs e)
 		{
-			StringBuilder helpTopicKey = new StringBuilder("khtpEC");
+			var helpTopicKey = new StringBuilder("khtpEC");
 			if (m_fOnlyUnicode)
 				helpTopicKey.Append("Process");
 			switch (m_addCnvtrTabCtrl.SelectedIndex)
@@ -536,15 +532,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event
 		/// data.</param>
 		/// ------------------------------------------------------------------------------------
-		private void AddCnvtrDlg_Load(object sender, System.EventArgs e)
+		private void AddCnvtrDlg_Load(object sender, EventArgs e)
 		{
 			m_currentlyLoading = true;
-			m_cnvtrPropertiesCtrl.ConverterListChanged +=
-				new EventHandler(cnvtrPropertiesCtrl_ConverterListChanged);
-			m_cnvtrPropertiesCtrl.ConverterSaved +=
-				new EventHandler(cnvtrPropertiesCtrl_ConverterSaved);
-			m_cnvtrPropertiesCtrl.ConverterFileChanged +=
-				new EventHandler(cnvtrPropertiesCtrl_ConverterFileChanged);
+			m_cnvtrPropertiesCtrl.ConverterListChanged += cnvtrPropertiesCtrl_ConverterListChanged;
+			m_cnvtrPropertiesCtrl.ConverterSaved += cnvtrPropertiesCtrl_ConverterSaved;
+			m_cnvtrPropertiesCtrl.ConverterFileChanged += cnvtrPropertiesCtrl_ConverterFileChanged;
 			RefreshListBox();
 			SelectedConverterZeroDefault = m_toSelect;
 			SetStates();
@@ -577,7 +570,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				if (m_fOnlyUnicode)
 				{
-					IEncConverter conv = m_encConverters[convName];
+					var conv = m_encConverters[convName];
 					// Only Unicode-to-Unicode converters are relevant.
 					if (conv.ConversionType == ConvType.Unicode_to_Unicode
 						 || conv.ConversionType == ConvType.Unicode_to_from_Unicode)
@@ -592,7 +585,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			// Now add the converters that haven't been validated.
-			foreach (EncoderInfo info in m_undefinedConverters.Values)
+			foreach (var info in m_undefinedConverters.Values)
 				availableCnvtrsListBox.Items.Add(info.m_name);
 		}
 
@@ -656,10 +649,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Gets a value indicating whether the selected converter is installed.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private bool IsConverterInstalled
-		{
-			get { return m_encConverters.ContainsKey(SelectedConverter); }
-		}
+		private bool IsConverterInstalled => m_encConverters.ContainsKey(SelectedConverter);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -671,15 +661,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			set
 			{
-				if (String.IsNullOrEmpty(value) ||
-					(!m_encConverters.ContainsKey(value.Trim()) &&
-					!m_undefinedConverters.ContainsKey(value.Trim())))
+				if (string.IsNullOrEmpty(value) ||
+					!m_encConverters.ContainsKey(value.Trim()) &&
+					!m_undefinedConverters.ContainsKey(value.Trim()))
 				{
 					SelectedConverterIndex = -1;
 				}
 				else if (SelectedConverter.Trim() != value.Trim())
-				{ // most of the time, this will be correct. As a matter of cost reduction, we should test that first
-					for (int i = 0; i < availableCnvtrsListBox.Items.Count; ++i)
+				{
+					for (var i = 0; i < availableCnvtrsListBox.Items.Count; ++i)
 					{
 						if (availableCnvtrsListBox.Items[i].ToString() == value)
 						{
@@ -733,10 +723,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					}
 				}
 			}
-			get
-			{
-				return availableCnvtrsListBox.SelectedIndex;
-			}
+			get => availableCnvtrsListBox.SelectedIndex;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -746,8 +733,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public string ConverterName
 		{
-			set { m_cnvtrPropertiesCtrl.txtName.Text = value; }
-			get { return m_cnvtrPropertiesCtrl.txtName.Text.Trim(); }
+			set => m_cnvtrPropertiesCtrl.txtName.Text = value;
+			get => m_cnvtrPropertiesCtrl.txtName.Text.Trim();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -764,10 +751,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				m_suppressListBoxIndexChanged = true;
 				//We shouldn't load the next converter if the autosave fails
-				bool shouldLoadConv = true;
+				var shouldLoadConv = true;
 				if (!m_currentlyLoading)
 				{
-					string returnToName = SelectedConverter;
+					var returnToName = SelectedConverter;
 					shouldLoadConv = AutoSave();
 					if (shouldLoadConv)
 						SelectedConverter = returnToName;
@@ -803,7 +790,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// Loading newly selected EC
 				m_cnvtrPropertiesCtrl.SelectMapping((string)availableCnvtrsListBox.SelectedItem);
 
-				bool fValidEncConverter = m_encConverters.ContainsKey(ConverterName);
+				var fValidEncConverter = m_encConverters.ContainsKey(ConverterName);
 				if (fValidEncConverter)
 				{
 					m_converterTest.SelectMapping((string)availableCnvtrsListBox.SelectedItem);
@@ -828,12 +815,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			if (!m_currentlyLoading && m_addCnvtrTabCtrl.SelectedIndex != 0)
 			{
-				int returnToIndex = SelectedConverterIndex;
-				string returnToName = ConverterName;
+				var returnToIndex = SelectedConverterIndex;
+				var returnToName = ConverterName;
 				if (AutoSave())
 				{
 					// reselect (because it forgets otherwise)
-					if (!String.IsNullOrEmpty(returnToName))
+					if (!string.IsNullOrEmpty(returnToName))
 						SelectedConverter = returnToName;
 					else if (returnToIndex != -1)
 						SelectedConverterIndex = returnToIndex;
@@ -854,9 +841,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void SetFieldsForAdd()
 		{
 			//set defaults
-			ConverterName = String.Empty;
+			ConverterName = string.Empty;
 			m_cnvtrPropertiesCtrl.cboConverter.SelectedIndex = (int)ConverterType.ktypeTecKitTec;
-			m_cnvtrPropertiesCtrl.txtMapFile.Text = String.Empty;
+			m_cnvtrPropertiesCtrl.txtMapFile.Text = string.Empty;
 
 			// if we're currently adding and the user has not indicated that they want to discard
 			// their changes...
@@ -867,7 +854,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				SelectedConverterIndex = GetNewConverterName(out m_sConverterToAdd);
 				ConverterName = m_sConverterToAdd;
 				m_undefinedConverters.Add(ConverterName, new EncoderInfo(ConverterName,
-					ConverterType.ktypeTecKitTec, String.Empty, ConvType.Legacy_to_from_Unicode));
+					ConverterType.ktypeTecKitTec, string.Empty, ConvType.Legacy_to_from_Unicode));
 				m_cnvtrPropertiesCtrl.txtName.Focus();
 			}
 		}
@@ -882,7 +869,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private int GetNewConverterName(out string strNewConvName)
 		{
 			// Get a unique name for the encoding converter
-			for (int iConverter = 1; ; iConverter++)
+			for (var iConverter = 1; ; iConverter++)
 			{
 				strNewConvName = AddConverterDlgStrings.kstidNewConverterName + iConverter;
 				if (!availableCnvtrsListBox.Items.Contains(strNewConvName))
@@ -902,17 +889,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void SetFieldsForCopy()
 		{
-			string nameField = ConverterName;
-			char[] nameFieldArray = nameField.ToCharArray();
+			var nameField = ConverterName;
+			var nameFieldArray = nameField.ToCharArray();
 			string newName; // name of the copied converter
-			string copy = AddConverterDlgStrings.kstidCopy;
+			var copy = AddConverterDlgStrings.kstidCopy;
 
 			//First we must figure out what newName will be
 			if (nameField.Length >= 10 && string.Compare(" - " + copy + "(", 0, nameField,
 				nameField.Length - 10, 8) == 0) // we're going to make the Xth copy
 			{
-				string nameStripped = nameField.Remove(nameField.Length - 3);
-				int copyCount = (int)nameFieldArray[nameField.Length - 2] - (int)'0' + 1;
+				var nameStripped = nameField.Remove(nameField.Length - 3);
+				var copyCount = (int)nameFieldArray[nameField.Length - 2] - (int)'0' + 1;
 
 				newName = nameStripped;
 				newName += "(" + copyCount + ")";
@@ -938,15 +925,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ConverterName = newName;
 		}
 
-		//private void SetFieldsBlank()
-		//{
-		//    ConverterName = String.Empty;
-		//    cnvtrPropertiesCtrl.cboConverter.SelectedIndex = -1;
-		//    cnvtrPropertiesCtrl.txtMapFile.Text = String.Empty;
-		//    cnvtrPropertiesCtrl.cboSpec.SelectedIndex = -1;
-		//    cnvtrPropertiesCtrl.cboConversion.SelectedIndex = -1;
-		//}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Remove the encoding converter.
@@ -966,7 +944,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			// not sure if this will ever be hit, but let's still check
-			if (String.IsNullOrEmpty(converterToRemove))
+			if (string.IsNullOrEmpty(converterToRemove))
 				return;
 
 			if (m_WSInUse == null || !m_WSInUse.Contains(converterToRemove))
@@ -1042,8 +1020,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						}
 						break;
 					default:
-						if (String.IsNullOrEmpty(m_cnvtrPropertiesCtrl.m_specs) ||	// LT-7098 m_specs can be null
-							String.IsNullOrEmpty(m_cnvtrPropertiesCtrl.m_specs.Trim())) // null field
+						if (string.IsNullOrEmpty(m_cnvtrPropertiesCtrl.m_specs) ||	// LT-7098 m_specs can be null
+							string.IsNullOrEmpty(m_cnvtrPropertiesCtrl.m_specs.Trim())) // null field
 						{
 							return UserDesiresDiscard(AddConverterDlgStrings.kstidInvalidMappingFileMsg,
 								AddConverterDlgStrings.kstidInvalidMappingFile);
@@ -1058,9 +1036,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				if (m_cnvtrPropertiesCtrl.cboConverter.SelectedIndex == -1 ||
 					m_cnvtrPropertiesCtrl.cboConversion.SelectedIndex == -1)
-					return false; // all fields must be filled out (not sure if this ever occurs anymore)
+				{
+					MessageBoxUtils.Show(this, AddConverterDlgStrings.kstrErrorInProperties, AddConverterDlgStrings.kstrUnspecifiedSaveError);
+					return true; // all fields must be filled out (not sure if this ever occurs anymore)
+				}
 
-				if (String.IsNullOrEmpty(ConverterName)) // no name provided
+				if (string.IsNullOrEmpty(ConverterName)) // no name provided
 				{
 					return UserDesiresDiscard(AddConverterDlgStrings.kstidNoNameMsg,
 						AddConverterDlgStrings.kstidNoName);
@@ -1075,10 +1056,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						return false;
 					RemoveConverter(m_oldConverter);
 				}
-				bool installState = InstallConverter(); // save changes made
+				var installState = InstallConverter(); // save changes made
 
 				SetUnchanged();
 				return installState;
+			}
+			catch (Exception e)
+			{
+				ShowMessage(string.Format(AddConverterDlgStrings.kstrUnhandledConverterException, e.Message),
+					AddConverterDlgStrings.kstrUnspecifiedSaveError, MessageBoxButtons.OK);
+				// return true to allow closing the dialog when we encounter an unexpected error
+				return true;
 			}
 			finally
 			{
@@ -1155,16 +1143,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			CheckDisposed();
 
-			if (String.IsNullOrEmpty(ConverterName))
+			if (string.IsNullOrEmpty(ConverterName))
 				return false; // do not add a null converter, even if the warning has been suppressed
 
 			// We MUST remove it if it already exists (otherwise, we may get duplicates in rare cases)
 			// duplicates could occur because the "key" is the name + Converter Type
 			RemoveConverter(ConverterName);
 
-			ConvType ct = ((CnvtrDataComboItem)m_cnvtrPropertiesCtrl.cboConversion.SelectedItem).Type;
-			string impType = ((CnvtrTypeComboItem)m_cnvtrPropertiesCtrl.cboConverter.SelectedItem).ImplementType;
-			ProcessTypeFlags processType = ProcessTypeFlags.DontKnow;
+			var ct = ((CnvtrDataComboItem)m_cnvtrPropertiesCtrl.cboConversion.SelectedItem).Type;
+			var impType = ((CnvtrTypeComboItem)m_cnvtrPropertiesCtrl.cboConverter.SelectedItem).ImplementType;
+			var processType = ProcessTypeFlags.DontKnow;
 			switch (((CnvtrTypeComboItem)m_cnvtrPropertiesCtrl.cboConverter.SelectedItem).Type)
 			{
 				case ConverterType.ktypeCC:
@@ -1213,13 +1201,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				// is to restart the application.  Hmmmm???
 				// Also seems like the converter is 'lost' when this happens .. hmmm???
 				Debug.WriteLine("=====COMException in AddCnvtrDlg.cs: " + comEx.Message);
-				MessageBox.Show(String.Format(AddConverterDlgStrings.kstidICUErrorText,
-					Environment.NewLine, m_app.ApplicationName), AddConverterDlgStrings.kstidICUErrorTitle,
+				MessageBox.Show(string.Format(AddConverterDlgStrings.kstidICUErrorText,
+					Environment.NewLine, m_app?.ApplicationName), AddConverterDlgStrings.kstidICUErrorTitle,
 					MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
 			catch (Exception ex)
 			{
-				StringBuilder sb = new StringBuilder(ex.Message);
+				var sb = new StringBuilder(ex.Message);
 				sb.Append(Environment.NewLine);
 				sb.Append(FwCoreDlgs.kstidErrorAccessingEncConverters);
 				MessageBox.Show(this, sb.ToString(),
@@ -1272,13 +1260,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				!m_suppressListBoxIndexChanged && !m_currentlyAdding && !m_fClosingDialog)
 			{
 				// don't offer the option to cancel.
-				ShowMessage(String.Format(AddConverterDlgStrings.kstidInvalidConverterNotify, sMessage),
+				ShowMessage(string.Format(AddConverterDlgStrings.kstidInvalidConverterNotify, sMessage),
 					sTitle, MessageBoxButtons.OK);
 			}
 			else
 			{
-				DialogResult result = ShowMessage(
-					String.Format(AddConverterDlgStrings.kstidDiscardChangesConfirm, sMessage),
+				var result = ShowMessage(
+					string.Format(AddConverterDlgStrings.kstidDiscardChangesConfirm, sMessage),
 					sTitle, MessageBoxButtons.OKCancel);
 
 				if (result == DialogResult.Cancel)
@@ -1301,13 +1289,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					m_fDiscardingChanges = false;
 					return true;
 				}
-				else // DialogResult.OK
-				{
-					if (m_currentlyAdding)
-						SelectedConverterIndex = -1; // let them keep working
-					else
-						SelectedConverterZeroDefault = m_oldConverter;
-				}
+				// DialogResult.OK
+				if (m_currentlyAdding)
+					SelectedConverterIndex = -1; // let them keep working
+				else
+					SelectedConverterZeroDefault = m_oldConverter;
 			}
 
 			m_fDiscardingChanges = false;
@@ -1327,7 +1313,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			MessageBoxButtons buttons)
 		{
 			Debug.WriteLine("MESSAGE: " + sMessage);
-			return MessageBox.Show(sMessage, sTitle, buttons);
+			return MessageBoxUtils.Show(this, sMessage, sTitle, buttons);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1343,18 +1329,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_cnvtrPropertiesCtrl.EnableEntirePane(false);
 
 			// save the current converter
-			string selectedConverter = ConverterName;
+			var selectedConverter = ConverterName;
 
 			try
 			{
 				// call the v2.2 interface to "AutoConfigure" a converter
-				string strFriendlyName = selectedConverter;
-				EncConverters aEC = new EncConverters();
-				aEC.AutoConfigure(ConvType.Unknown, ref strFriendlyName);
+				var strFriendlyName = selectedConverter;
+				var encConverters = new EncConverters();
+				encConverters.AutoConfigure(ConvType.Unknown, ref strFriendlyName);
 
 				m_outsideDlgChangedCnvtrs = true;
 
-				if (!String.IsNullOrEmpty(strFriendlyName) && strFriendlyName != selectedConverter)
+				if (!string.IsNullOrEmpty(strFriendlyName) && strFriendlyName != selectedConverter)
 				{
 					m_undefinedConverters.Remove(selectedConverter);
 					RefreshListBox();
@@ -1394,11 +1380,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	internal class EncoderInfo
 	{
 		/// <summary>The name of the encoding converter.</summary>
-		public string m_name = string.Empty;
+		public string m_name;
 		/// <summary>The converter method, e.g. CC table, TecKit, etc.</summary>
 		public ConverterType m_method;
 		/// <summary>Name of the file containing the conversion table, etc.</summary>
-		public string m_fileName = string.Empty;
+		public string m_fileName;
 		/// <summary>Type of conversion, e.g. from legacy to Unicode.</summary>
 		public ConvType m_fromToType;
 

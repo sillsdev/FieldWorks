@@ -18,6 +18,7 @@ using SIL.LCModel.Infrastructure;
 using SIL.LCModel.DomainServices;
 using System.Linq;
 using Icu.Normalization;
+using SIL.Extensions;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -3205,30 +3206,29 @@ namespace SIL.FieldWorks.Common.FXT
 			{
 				return ((bool)propertyObject) ? "1" : "0";
 			}
-			else if (type == typeof(DateTime))
+			if (type == typeof(DateTime))
 			{
 				var dt = (DateTime)propertyObject;
-				if (dt.Year > 1900)		// Converting 1/1/1 to local time crashes.
+				// Converting 1/1/1 to local time crashes.
+				if (dt.Year > 1900)
+				{
 					dt = dt.ToLocalTime();
-				string s;
-				if(alternative==1)
-					s = dt.ToString("yyyy-MM-dd");
-				else
-					s = dt.ToString("dd/MMM/yyyy");
-				return s;
+				}
+				// REVIEW (Hasso) 2022.08: where is this use of `alternative` documented? (alternative is usually a WS Handle)
+				return alternative == 1 ? dt.ToISO8601TimeFormatDateOnlyString() : dt.ToString("dd/MMM/yyyy");
 			}
-			else if (type == typeof(Guid))
+			if (type == typeof(Guid))
 			{
 				return propertyObject.ToString();
 			}
-			else if (propertyObject is CoreWritingSystemDefinition)
+			if (propertyObject is CoreWritingSystemDefinition wsDef)
 			{
-				return ((CoreWritingSystemDefinition) propertyObject).Id;
+				return wsDef.Id;
 			}
-			throw new ConfigurationException ("Sorry, XDumper can not yet handle attributes of this class: '"+type.ToString()+"'.");
+			throw new ConfigurationException ($"Sorry, XDumper can not yet handle attributes of this class: '{type}'.");
 		}
 
-		private string ConvertNoneFoundStringToBlank(string str)
+		private static string ConvertNoneFoundStringToBlank(string str)
 		{
 			// at least for the Morph Sketch, we do not want to see lots of asterisks.
 			// rather, we check for blanks and convert blanks to appropriate text

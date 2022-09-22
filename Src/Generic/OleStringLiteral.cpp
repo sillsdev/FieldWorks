@@ -19,9 +19,9 @@ const OleStringLiteral::uchar_t* OleStringLiteral::convert(const wchar_t* w)
 	return w;
 #else
 	uchar_t* u = 0;
-	size_t n = UnicodeConverter::Convert(w, -1, u, 0) + 1;
+	size_t n = UnicodeConverter::Convert(w, -1, reinterpret_cast<UChar *>(u), 0) + 1;
 	u = new uchar_t[n];
-	UnicodeConverter::Convert(w, -1, u, n);
+	UnicodeConverter::Convert(w, -1, reinterpret_cast<UChar *>(u), n);
 	return u;
 #endif
 };

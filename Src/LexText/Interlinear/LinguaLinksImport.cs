@@ -265,7 +265,9 @@ namespace SIL.FieldWorks.IText
 
 		public bool ImportInterlinear(IThreadedProgress progress, Stream birdData, int allottedProgress, ref LCModel.IText firstNewText)
 		{
-			return ImportInterlinear(new ImportInterlinearOptions { Progress = progress, BirdData = birdData, AllottedProgress = allottedProgress },
+			return ImportInterlinear(new ImportInterlinearOptions { Progress = progress, BirdData = birdData, AllottedProgress = allottedProgress,
+					AnalysesLevel = ImportAnalysesLevel.WordGloss
+				},
 				ref firstNewText);
 		}
 

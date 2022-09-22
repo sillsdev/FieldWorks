@@ -1167,7 +1167,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 
 			IVwRootBox rootb = Callbacks.EditedRootBox;
-			if (MiscUtils.IsUnix && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left ||
+			if (Platform.IsUnix && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left ||
 				  e.KeyCode == Keys.F7 || e.KeyCode == Keys.F8) && ss == VwShiftStatus.kfssNone)
 			{
 				// FWNX-456 fix for refreshing lines that cursor is not properly invalidating

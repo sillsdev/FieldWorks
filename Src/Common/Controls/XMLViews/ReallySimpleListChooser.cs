@@ -659,10 +659,11 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				using (new WaitCursor())
 				{
+					// The original check, not recursive.
+					clickNode.AddChildren(true, new HashSet<ICmObject>()); // All have to exist to get checked/unchecked
+
 					if (e.Action != TreeViewAction.Unknown)
 					{
-						// The original check, not recursive.
-						clickNode.AddChildren(true, new HashSet<ICmObject>()); // All have to exist to get checked/unchecked
 						if (!clickNode.IsExpanded)
 							clickNode.Expand(); // open up at least one level to show effects.
 					}
@@ -1313,7 +1314,7 @@ namespace SIL.FieldWorks.Common.Controls
 					new XElement("font",
 						new XAttribute("face", descFont),
 						new XElement("p", desc))));
-			if (MiscUtils.IsMono)
+			if (Platform.IsMono)
 			{
 				var tempfile = Path.Combine(FileUtils.GetTempFile("htm"));
 				using (var w = new StreamWriter(tempfile, false))
@@ -2772,36 +2773,48 @@ namespace SIL.FieldWorks.Common.Controls
 			/// <param name="displayUsage"><c>true</c> if usage statistics will be displayed; otherwise, <c>false</c>.</param>
 			/// <param name="leafFlid">The leaf flid.</param>
 			public LeafLabelNode(ObjectLabel label, IVwStylesheet stylesheet, bool displayUsage, int leafFlid)
-				: base(label, stylesheet, displayUsage)
+				: base(label, stylesheet, displayUsage, false)
 			{
 				m_leafFlid = leafFlid;
+
+				bool haveSubItems = false;
+				// Inflection Classes
+				if (m_leafFlid == PartOfSpeechTags.kflidInflectionClasses &&
+					label is CmPossibilityLabel cmPoss &&
+					cmPoss.Possibility is IPartOfSpeech partOfSpeech)
+					haveSubItems = partOfSpeech.InflectionClassesOC.Count > 0;
+				// Other Classes
+				else
+					haveSubItems = label.HaveSubItems;
+
+				if (haveSubItems)
+					// this is a hack to make the node expandable before we have filled in any
+					// actual children
+					Nodes.Add(new TreeNode("should not see this"));
 			}
 
 			/// <summary>
 			/// Adds the secondary nodes.
 			/// </summary>
 			/// <param name="node">The node.</param>
-			/// <param name="nodes">The nodes.</param>
 			/// <param name="chosenObjs">The chosen objects.</param>
-			public override void AddSecondaryNodes(LabelNode node, TreeNodeCollection nodes, IEnumerable<ICmObject> chosenObjs)
+			public override void AddSecondaryNodes(LabelNode node, IEnumerable<ICmObject> chosenObjs)
 			{
-				AddSecondaryNodesAndLookForSelected(node, nodes, null, null, null, chosenObjs);
+				AddSecondaryNodesAndLookForSelected(node, null, null, chosenObjs);
 			}
 
 			/// <summary>
-			/// Add secondary nodes to tree at nodes (and check any that occur in rghvoChosen),
+			/// Add secondary nodes to tree (and check any that occur in rghvoChosen),
 			/// and return the one whose hvo is hvoToSelect, or nodeRepresentingCurrentChoice
 			/// if none match.
 			/// </summary>
 			/// <param name="node">node to be added</param>
-			/// <param name="nodes">where to add it</param>
 			/// <param name="nodeRepresentingCurrentChoice">The node representing current choice.</param>
 			/// <param name="objToSelect">The obj to select.</param>
-			/// <param name="ownershipStack">The ownership stack.</param>
 			/// <param name="chosenObjs">The chosen objects.</param>
 			/// <returns></returns>
-			public override LabelNode AddSecondaryNodesAndLookForSelected(LabelNode node, TreeNodeCollection nodes,
-				LabelNode nodeRepresentingCurrentChoice, ICmObject objToSelect, Stack<ICmObject> ownershipStack, IEnumerable<ICmObject> chosenObjs)
+			public override LabelNode AddSecondaryNodesAndLookForSelected(LabelNode node,
+				LabelNode nodeRepresentingCurrentChoice, ICmObject objToSelect, IEnumerable<ICmObject> chosenObjs)
 			{
 				LabelNode result = nodeRepresentingCurrentChoice; // result unless we match hvoToSelect
 				var label = (ObjectLabel) Tag;

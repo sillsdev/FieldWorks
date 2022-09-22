@@ -1,10 +1,11 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Linq;
 using System.Reflection;
+using SIL.Extensions;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -16,10 +17,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 	public class VersionInfoProvider
 	{
 		/// <summary>Default copyright string if no assembly could be found</summary>
-		public const string kDefaultCopyrightString = "Copyright (c) 2002-2017 SIL International";
-		/// <summary>Copyright string to use in sensitive areas (i.e. when m_fShowSILInfo is
-		/// true)</summary>
-		public const string kSensitiveCopyrightString = "Copyright (c) 2002-2017";
+		public const string kDefaultCopyrightString = "Copyright (c) 2002-2021 SIL International";
+		/// <summary>Copyright string to use in sensitive areas (i.e. when m_fShowSILInfo is true)</summary>
+		public const string kSensitiveCopyrightString = "Copyright (c) 2002-2021";
 
 		private readonly Assembly m_assembly;
 		private readonly bool m_fShowSILInfo;
@@ -34,9 +34,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public VersionInfoProvider(Assembly assembly, bool fShowSILInfo)
 		{
-			if (assembly == null)
-				throw new ArgumentNullException("assembly");
-			m_assembly = assembly;
+			m_assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
 			m_fShowSILInfo = fShowSILInfo;
 		}
 
@@ -82,8 +80,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get
 			{
 				var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly();
-				string productVersion, productDate;
-				ParseInformationalVersion(assembly, out productVersion, out productDate);
+				ParseInformationalVersion(assembly, out var productVersion, out _);
 				if (string.IsNullOrEmpty(productVersion))
 				{
 					var fileVersion = Attribute.GetCustomAttribute(assembly, typeof(AssemblyFileVersionAttribute))
@@ -151,6 +148,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
+		/// <summary>
+		/// Gets the build number of the base installer (used for downloading patches)
+		/// </summary>
+		public int BaseBuildNumber
+		{
+			get
+			{
+				var baseBuildAtt = m_assembly.GetCustomAttributes(typeof(AssemblyMetadataAttribute)).Cast<AssemblyMetadataAttribute>()
+					.FirstOrDefault(att => "BaseBuildNumber".Equals(att.Key)) ;
+				return int.TryParse(baseBuildAtt?.Value, out var baseBuildNum) ? baseBuildNum : 0;
+			}
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -163,8 +172,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				// Set the application version text
 				var appVersion = InternalProductVersion;
-				string productVersion, productDate;
-				ParseInformationalVersion(m_assembly, out productVersion, out productDate);
+				ParseInformationalVersion(m_assembly, out _, out var productDate);
 				string bitness;
 				switch (IntPtr.Size)
 				{
@@ -180,7 +188,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 
 #if DEBUG
-				return string.Format(FwUtilsStrings.kstidAppVersionFmt, appVersion, productDate, bitness + "(Debug version)");
+				return string.Format(FwUtilsStrings.kstidAppVersionFmt, appVersion, productDate, bitness + " (Debug version)");
 #else
 				return string.Format(FwUtilsStrings.kstidAppVersionFmt, appVersion, productDate, bitness);
 #endif
@@ -217,7 +225,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					if (date > 0)
 					{
 						DateTime dt = DateTime.FromOADate(date);
-						productDate = dt.ToString("yyyy/MM/dd");
+						productDate = dt.ToISO8601TimeFormatDateOnlyString();
 					}
 
 					goto case 1;
@@ -239,15 +247,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				// Set the Fieldworks version text
-				string productVersion, productDate, productType;
-				ParseInformationalVersion(m_assembly, out productVersion, out productDate);
+				// Set the FieldWorks version text
+				ParseInformationalVersion(m_assembly, out var productVersion, out _);
 				// Fill the expected parts to document and avoid a crash if we get an odd informational version
 				var versionParts = new [] {"MAJOR", "MINOR", "REVISION", "BUILDNUMBER", "STABILITY"};
 				var realParts = productVersion.Split('.', ' ');
 				Array.Copy(realParts, versionParts, Math.Min(realParts.Length, versionParts.Length));
 
 				return string.Format(FwUtilsStrings.kstidMajorVersionFmt, $"{versionParts[0]}.{versionParts[1]} {versionParts[4]}");
+			}
+		}
+
+		/// <summary>The date this version of FieldWorks was built, or the date of the first FieldWorks checkin</summary>
+		internal DateTime ApparentBuildDate
+		{
+			get
+			{
+				ParseInformationalVersion(m_assembly, out _, out var date);
+				return string.IsNullOrEmpty(date) ? new DateTime(2001, 06, 23) : DateTime.Parse(date);
 			}
 		}
 

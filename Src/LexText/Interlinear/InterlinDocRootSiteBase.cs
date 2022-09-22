@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -103,7 +103,8 @@ namespace SIL.FieldWorks.IText
 			m_sda = m_cache.MainCacheAccessor;
 			m_sda.AddNotification(this);
 
-			Vc.ShowMorphBundles = m_propertyTable.GetBoolProperty("ShowMorphBundles", true);
+			// PropertyTable can be null when the root site exists inside a dialog (LT-20412)
+			Vc.ShowMorphBundles = m_propertyTable?.GetBoolProperty("ShowMorphBundles", true) ?? true;
 			Vc.LineChoices = LineChoices;
 			Vc.ShowDefaultSense = true;
 
@@ -574,9 +575,9 @@ namespace SIL.FieldWorks.IText
 
 		private string GetAppropriateLineLabel(InterlinLineChoices curLineChoices, int ilineChoice)
 		{
-			var curSpec = curLineChoices[ilineChoice];
+			var curSpec = curLineChoices.EnabledLineSpecs[ilineChoice];
 			var result = curLineChoices.LabelFor(curSpec.Flid);
-			if (curLineChoices.RepetitionsOfFlid(curSpec.Flid) > 1)
+			if (curLineChoices.EnabledRepetitionsOfFlid(curSpec.Flid) > 1)
 				result += "(" + curSpec.WsLabel(Cache).Text + ")";
 			return result;
 		}
@@ -584,9 +585,15 @@ namespace SIL.FieldWorks.IText
 		private void AddAdditionalWsMenuItem(ToolStripMenuItem addSubMenu,
 			InterlinLineChoices curLineChoices, int ilineChoice)
 		{
-			var curSpec = curLineChoices[ilineChoice];
+			var curSpec = curLineChoices.EnabledLineSpecs[ilineChoice];
+
+			// Do not add other writing systems for customs.
+			var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
+			if (mdc.FieldExists(curSpec.Flid) && mdc.IsCustom(curSpec.Flid))
+				return;
+
 			var choices = GetWsComboItems(curSpec);
-			var curFlidDisplayedWss = curLineChoices.OtherWritingSystemsForFlid(curSpec.Flid, 0);
+			var curFlidDisplayedWss = curLineChoices.OtherEnabledWritingSystemsForFlid(curSpec.Flid, 0);
 			var curRealWs = GetRealWsFromSpec(curSpec);
 			if (!curFlidDisplayedWss.Contains(curRealWs))
 				curFlidDisplayedWss.Add(curRealWs);
@@ -669,7 +676,7 @@ namespace SIL.FieldWorks.IText
 		private static IEnumerable<LineOption> GetUnusedSpecs(InterlinLineChoices curLineChoices)
 		{
 			var allOptions = curLineChoices.LineOptions();
-			var optionsUsed = curLineChoices.ItemsWithFlids(
+			var optionsUsed = curLineChoices.EnabledItemsWithFlids(
 				allOptions.Select(lineOption => lineOption.Flid).ToArray());
 			return allOptions.Where(option => !optionsUsed.Any(
 				spec => spec.Flid == option.Flid)).ToList();
@@ -683,7 +690,7 @@ namespace SIL.FieldWorks.IText
 			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
 			if (newLineChoices != null)
 			{
-				newLineChoices.Remove(newLineChoices[ilineToHide]);
+				newLineChoices.Remove(newLineChoices.EnabledLineSpecs[ilineToHide]);
 				UpdateForNewLineChoices(newLineChoices);
 			}
 			RemoveContextButtonIfPresent(); // it will still have a spurious choice to hide the line we just hid; clicking may crash.
@@ -735,9 +742,11 @@ namespace SIL.FieldWorks.IText
 
 			var flid = menuItem.Flid;
 			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
-			if (newLineChoices != null && ((IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor).FieldExists(flid))
+			var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
+			// Some virtual Ids such as -61 and 103 create standard items. so add those.
+			if (newLineChoices != null && (mdc.FieldExists(flid) || (flid <= ComplexConcPatternVc.kfragFeatureLine)))
 			{
-				newLineChoices.Add(flid);
+				newLineChoices.Add(flid, 0, true);
 				UpdateForNewLineChoices(newLineChoices);
 			}
 		}
@@ -769,13 +778,20 @@ namespace SIL.FieldWorks.IText
 		private string ConfigPropName { get; set; }
 
 		/// <summary>
+		/// The old property table key storing InterlinLineChoices used by our display.
+		/// </summary>
+		private static string OldConfigPropName { get; set; }
+
+		/// <summary>
 		/// </summary>
 		/// <param name="lineConfigPropName">the key used to store/restore line configuration settings.</param>
+		/// <param name="oldLineConfigPropName">the old key used to restore line configuration settings.</param>
 		/// <param name="mode"></param>
 		/// <returns></returns>
-		public InterlinLineChoices SetupLineChoices(string lineConfigPropName, InterlinLineChoices.InterlinMode mode)
+		public InterlinLineChoices SetupLineChoices(string lineConfigPropName, string oldLineConfigPropName, InterlinLineChoices.InterlinMode mode)
 		{
 			ConfigPropName = lineConfigPropName;
+			OldConfigPropName = oldLineConfigPropName;
 			InterlinLineChoices lineChoices;
 			if (!TryRestoreLineChoices(out lineChoices))
 			{
@@ -819,8 +835,12 @@ namespace SIL.FieldWorks.IText
 		{
 			lineChoices = null;
 			var persist = m_propertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+			if (persist == null)
+				persist = m_propertyTable.GetStringProperty(OldConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+
 			if (persist != null)
 			{
+				// Intentionally never pass OldConfigPropName into Restore to prevent corrupting it's old value with the new format.
 				lineChoices = InterlinLineChoices.Restore(persist, m_cache.LanguageWritingSystemFactoryAccessor,
 					m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze, m_propertyTable, ConfigPropName);
 			}
@@ -1205,7 +1225,7 @@ namespace SIL.FieldWorks.IText
 		/// True if we will be doing editing (display sandbox, restrict field order choices, etc.).
 		/// </summary>
 		bool ForEditing { get; set; }
-		InterlinLineChoices SetupLineChoices(string lineConfigPropName,
+		InterlinLineChoices SetupLineChoices(string lineConfigPropName, string oldLineConfigPropName,
 			InterlinLineChoices.InterlinMode mode);
 	}
 

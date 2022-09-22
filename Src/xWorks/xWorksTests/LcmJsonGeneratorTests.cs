@@ -15,10 +15,12 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
+using SIL.TestUtilities;
 using XCore;
 using Formatting = Newtonsoft.Json.Formatting;
 
@@ -27,7 +29,7 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	class LcmJsonGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
-		private int m_wsEn, m_wsFr, m_wsHe;
+		private int m_wsEn, m_wsFr;
 
 		private FwXApp m_application;
 		private FwXWindow m_window;
@@ -43,7 +45,7 @@ namespace SIL.FieldWorks.XWorks
 		private DictionaryPublicationDecorator DefaultDecorator => new DictionaryPublicationDecorator(Cache,
 			(ISilDataAccessManaged)Cache.MainCacheAccessor, Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -126,7 +128,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 		#endregion disposal
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			base.FixtureTeardown();
@@ -507,15 +509,84 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNode, pubMain, DefaultSettings, 0);
-			Assert.IsNotNullOrEmpty(output);
+			Assert.That(output, Is.Not.Null.Or.Empty);
 			var expectedResults = "{\"xhtmlTemplate\": \"lexentry\",\"guid\":\"g" + entryEntry.Guid + "\",\"letterHead\": \"e\",\"sortIndex\": 0," +
 								  "\"entry\": [{\"lang\":\"fr\",\"value\":\"entry\"}],\"senses\": [{\"guid\":\"g" +
 								  entryEntry.Guid + "\",\"definitionorgloss\": [{\"lang\":\"en\",\"value\":\"entry\"}]}]," +
 								  "\"subentries\": [{\"subentry\": [{\"lang\":\"fr\",\"value\":\"mainsubentry\"}]}]," +
-								  "\"variantformentrybackrefs\": [{\"references\":[{\"headword\": [{\"lang\":\"fr\",\"guid\": \"g" + bizarroVariant.Guid +
-								  "\", \"value\":\"bizarre\"}]}]}]}";
+								  "\"variantformentrybackrefs\": [{\"referenceType\":\"{\\\"name\\\": [{\\\"lang\\\":\\\"en\\\"," +
+								  "\\\"value\\\":\\\"Spelling Variant\\\"}],},\",\"references\":[{\"headword\": [{\"lang\":\"fr\",\"guid\": \"g" +
+								  bizarroVariant.Guid + "\", \"value\":\"bizarre\"}]}]}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(output, expected);
+		}
+
+		[Test]
+		public void GenerateJsonForEntry_TypeAfterForm()
+		{
+			var typeMain = ConfiguredXHTMLGeneratorTests.CreatePublicationType("main", Cache);
+
+			var entryEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "entry", "entry");
+			var entryMainsubentry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "mainsubentry", "mainsubentry");
+			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, entryEntry, entryMainsubentry, true);
+
+			var bizarroVariant = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "bizarre", "myVariant");
+			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, entryEntry, bizarroVariant, "Spelling Variant");
+
+			// Note that the decorators must be created (or refreshed) *after* the data exists.
+			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var pubMain = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual, typeMain);
+
+			var variantFormNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				CSSClassNameOverride = "headword",
+				SubField = "HeadWordRef",
+				IsEnabled = true,
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "vernacular" })
+			};
+			var variantTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				IsEnabled = true,
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var variantTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
+			};
+			var variantNodeTypeAfter = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				Children = new List<ConfigurableDictionaryNode> { variantFormNode, variantTypeNode },
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant, Cache)
+			};
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "entry"
+			};
+			var mainEntryNodeTypeAfter = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, variantNodeTypeAfter },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNodeTypeAfter);
+
+			//SUT
+			var outputTypeAfter = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNodeTypeAfter, pubMain, DefaultSettings, 0);
+			Assert.That(outputTypeAfter, Is.Not.Null.Or.Empty);
+			var expectedResultsTypeAfter = "{\"xhtmlTemplate\": \"lexentry\",\"guid\":\"g" + entryEntry.Guid + "\",\"letterHead\": \"e\",\"sortIndex\": 0," +
+								  "\"entry\": [{\"lang\":\"fr\",\"value\":\"entry\"}]," +
+								  "\"variantformentrybackrefs\": [{\"references\":[{\"headword\": [{\"lang\":\"fr\",\"guid\": \"g" +
+								  bizarroVariant.Guid + "\", \"value\":\"bizarre\"}]}]," +
+								  "\"referenceType\":\"{\\\"name\\\": [{\\\"lang\\\":\\\"en\\\",\\\"value\\\":\\\"Spelling Variant\\\"}],},\"}]}";
+			var expectedTypeAfter = (JObject)JsonConvert.DeserializeObject(expectedResultsTypeAfter, new JsonSerializerSettings { Formatting = Formatting.None });
+			VerifyJson(outputTypeAfter, expectedTypeAfter);
 		}
 
 		[Test]
@@ -548,6 +619,64 @@ namespace SIL.FieldWorks.XWorks
 								  @""",""letterHead"": ""c"",""sortIndex"": 0, ""headword"": [{""guid"": ""g" + entryOne.Guid + @""", ""lang"":""en-Zxxx-x-audio"", ""value"": {""id"": ""gTest_Audi_o"", ""src"": ""AudioVisual/Test Audi'o.wav""}}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
+		}
+
+		[Test]
+		public void GenerateJsonForEntry_SensibleJsonForVideoFiles()
+		{
+			var entryCorps = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "corps", "body");
+			var pronunciation = ConfiguredXHTMLGeneratorTests.AddPronunciationToEntry(entryCorps, "pronunciation", m_wsFr, Cache);
+			ConfiguredXHTMLGeneratorTests.AddSenseToEntry(entryCorps, "corpse", m_wsEn, Cache);
+			var mainMediaFile = Cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
+			pronunciation.MediaFilesOS.Add(mainMediaFile);
+			var mainFile = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			var localMediaFolder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(localMediaFolder);
+			localMediaFolder.FilesOC.Add(mainFile);
+			// InternalPath is null by default, but trying to set it to null throws an exception
+			mainFile.InternalPath = "fileName.mp4";
+			mainMediaFile.MediaFileRA = mainFile;
+
+			var mediaFileNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MediaFileRA",
+				IsEnabled = true
+			};
+			var mediaNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MediaFilesOS",
+				CSSClassNameOverride = "mediafiles",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { mediaFileNode }
+			};
+			var mainPronunciationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "PronunciationsOS",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "pronunciations",
+				Children = new List<ConfigurableDictionaryNode> { mediaNode }
+			};
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "entry"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, mainPronunciationsNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			//SUT
+			var output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryCorps, mainEntryNode, DefaultDecorator, DefaultSettings, 0);
+			Assert.That(output, Is.Not.Null.Or.Empty);
+			var expectedResults = "{\"xhtmlTemplate\":\"lexentry\",\"guid\":\"g" + entryCorps.Guid + "\",\"letterHead\":\"c\",\"sortIndex\":0," +
+								  "\"entry\": [{\"lang\":\"fr\",\"value\":\"corps\"}]," +
+								  "\"pronunciations\": [{\"mediafiles\": [{\"value\": {\"id\":\"g" + mainMediaFile.Guid + "\",\"src\": \"AudioVisual/fileName.mp4\"}}]}]}";
+			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
+			VerifyJson(output, expected);
 		}
 
 		[Test]
@@ -608,6 +737,32 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateJsonForEntry_UnicodeLineBreak_GeneratesValidJson()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Bibliography",
+				CSSClassNameOverride = "bib",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr", "en" })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var englishStr = TsStringUtils.MakeString("English\u2028with line break", m_wsEn);
+			entry.Bibliography.set_String(m_wsFr, englishStr);
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings, 0);
+			var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""g" + entry.Guid + @""",""letterHead"": ""c"",""sortIndex"": 0,
+				""bib"": [{""lang"":""en"",""value"":""English\nwith line break""}]}";
+			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
+			VerifyJson(result, expected);
+		}
+
+		[Test]
 		public void GenerateJsonForEntry_GeneratesForwardNameForForwardLexicalRelations()
 		{
 			var mainEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
@@ -616,7 +771,7 @@ namespace SIL.FieldWorks.XWorks
 			const string refTypeRevName = "sURsyoT";
 			ConfiguredXHTMLGeneratorTests.CreateLexicalReference(Cache, mainEntry.SensesOS.First(), referencedEntry, refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var nameNode = new ConfigurableDictionaryNode
 			{
@@ -650,6 +805,49 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, DefaultSettings, 0);
 			var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""g" + mainEntry.Guid + @""",""letterHead"": ""c"",""sortIndex"": 0,
 				""sensesos"": [{""lexsensereferences"": [{""ownertype_name"": [{""lang"":""en"",""value"":""TestRefType""}]}]}]}";
+			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
+			VerifyJson(result, expected);
+		}
+
+		[Test]
+		public void GenerateJsonForEntry_EmptyNameOnLexicalRelation_GeneratesEmptyButValidContent()
+		{
+			var mainEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var referencedEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			ConfiguredXHTMLGeneratorTests.CreateLexicalReference(Cache, mainEntry.SensesOS.First(), referencedEntry, "");
+			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(pos => pos.Name.BestAnalysisAlternative.Text == "***");
+			var nameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwnerType",
+				SubField = "Name",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var referencesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexSenseReferences",
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Sense,
+					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { refType.Guid.ToString() })
+				},
+				Children = new List<ConfigurableDictionaryNode> { nameNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { referencesNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, DefaultSettings, 0);
+			var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""g" + mainEntry.Guid + @""",""letterHead"": ""c"",""sortIndex"": 0,
+				""sensesos"": [{""lexsensereferences"": [{}]}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
 		}
@@ -850,8 +1048,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var testEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			var siteName = "test";
-			var json = LcmJsonGenerator.GenerateDictionaryMetaData(siteName, new[] { "mainentry.xhtml" }, new List<DictionaryConfigurationModel>(), new []{ testEntry.Hvo }, null, null, Cache);
-			var expectedResults = @"{""_id"":""" + siteName + @""",""mainLanguage"":{""lang"":""fr"",""letters"":[""c""],""cssFiles"":[""configured.css""]},""partsOfSpeech"":[],""semanticDomains"":[],
+			var json = LcmJsonGenerator.GenerateDictionaryMetaData(siteName, new[] { "mainentry.xhtml" }, new List<DictionaryConfigurationModel>(), new []{ testEntry.Hvo }, null, null, Cache, m_Clerk);
+			var expectedResults = @"{""_id"":""" + siteName + @""",""mainLanguage"":{""title"":""French"",""lang"":""fr"",""letters"":[""c""],""cssFiles"":[""configured.css""]},""partsOfSpeech"":[],""semanticDomains"":[],
 				""xhtmlTemplates"": [""mainentry.xhtml""]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(json.ToString(), expected);
@@ -873,8 +1071,8 @@ namespace SIL.FieldWorks.XWorks
 			noun.Name.set_String(m_wsEn, "noun");
 			var siteName = "test";
 			var json = LcmJsonGenerator.GenerateDictionaryMetaData(siteName, new []{ "mainentry.xhtml" },
-				new List<DictionaryConfigurationModel>(), new[] { testEntry.Hvo }, null, null, Cache);
-			var expectedResults = @"{""_id"":""test"",""mainLanguage"":{""lang"":""fr"",""letters"":[""c""],""cssFiles"":[""configured.css""]},
+				new List<DictionaryConfigurationModel>(), new[] { testEntry.Hvo }, null, null, Cache, m_Clerk);
+			var expectedResults = @"{""_id"":""test"",""mainLanguage"":{""title"":""French"",""lang"":""fr"",""letters"":[""c""],""cssFiles"":[""configured.css""]},
 				""partsOfSpeech"":[{""lang"":""en"",""abbreviation"":""n"",""name"":""noun"",""guid"":""g" + noun.Guid + @"""}],
 				""semanticDomains"":[{""lang"":""en"",""abbreviation"":""9.0"",""name"":""CustomDomain"",""guid"":""g" + domainOne.Guid + @"""}],
 				""xhtmlTemplates"": [""mainentry.xhtml""]}";
@@ -962,6 +1160,34 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(0, result[0].Count, "entries");
 		}
 
+		[Test]
+		public void GenerateXHTMLForEntry_EmbeddedWritingSystemOfOppositeDirectionGeneratesCorrectResult()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Bibliography",
+				CSSClassNameOverride = "bib",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "he" })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var multiRunString = ConfiguredXHTMLGeneratorTests.MakeBidirectionalTss(new[] { "דוד", " et ", "דניאל" }, Cache);
+			var wsHe = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("he");
+			entry.Bibliography.set_String(wsHe, multiRunString);
+			//SUT
+
+			var json = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
+			var expectedResults = @"{""xhtmlTemplate"":""lexentry"",""guid"":""g" + entry.Guid + @""",""letterHead"":""c"",""sortIndex"":-1,
+				""bib"": [{""lang"":""he"",""value"":""דוד""},{""lang"":""en"",""value"":"" et ""},{""lang"":""he"",""value"":""דניאל""}],}";
+			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
+			VerifyJson(json, expected);
+		}
+
 		/// <summary>
 		/// Verifies the json data generated is equivalent to the expected result
 		/// </summary>
@@ -970,7 +1196,6 @@ namespace SIL.FieldWorks.XWorks
 			// TODO: use Json FluentAssert library
 			dynamic jsonResult = JsonConvert.DeserializeObject(actual, new JsonSerializerSettings { Formatting = Formatting.None });
 			string actualReformatted = JsonConvert.SerializeObject(jsonResult, Formatting.Indented);
-			Console.WriteLine(actualReformatted);
 			Assert.That(actualReformatted, Is.EqualTo(JsonConvert.SerializeObject(expected, Formatting.Indented)));
 		}
 	}

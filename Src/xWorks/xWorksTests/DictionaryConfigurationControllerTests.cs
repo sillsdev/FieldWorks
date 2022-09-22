@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.XWorks
 			m_model = new DictionaryConfigurationModel();
 		}
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			FwRegistrySettings.Init(); // This is needed for the MockFwXApp to initialize properly
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.XWorks
 			styles.Add(new BaseStyleInfo { Name = "Bulleted List", IsParagraphStyle = true });
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			if (m_application != null && !m_application.IsDisposed)
@@ -469,9 +469,9 @@ namespace SIL.FieldWorks.XWorks
 			Assert.Contains("configurationBLabel", labels.Keys, "missing a label");
 			Assert.That(labels.Count, Is.EqualTo(2), "unexpected label count");
 			Assert.That(labels["configurationALabel"].FilePath,
-				Is.StringContaining(string.Concat("configurationA", DictionaryConfigurationModel.FileExtension)), "missing a file name");
+				Does.Contain(string.Concat("configurationA", DictionaryConfigurationModel.FileExtension)), "missing a file name");
 			Assert.That(labels["configurationBLabel"].FilePath,
-				Is.StringContaining(string.Concat("configurationB", DictionaryConfigurationModel.FileExtension)), "missing a file name");
+				Does.Contain(string.Concat("configurationB", DictionaryConfigurationModel.FileExtension)), "missing a file name");
 		}
 
 		/// <summary/>
@@ -785,13 +785,13 @@ namespace SIL.FieldWorks.XWorks
 				var cfChildren = customFieldNodes[0].Children;
 				CollectionAssert.IsNotEmpty(cfChildren, "ListItem Child nodes not created");
 				Assert.AreEqual(2, cfChildren.Count, "custom list type nodes should get a child for Name and Abbreviation");
-				Assert.IsNullOrEmpty(cfChildren[0].After, "Child nodes should have no After space");
+				Assert.That(cfChildren[0].After, Is.Null.Or.Empty, "Child nodes should have no After space");
 				CollectionAssert.IsNotEmpty(cfChildren.Where(t => t.Label == "Name" && !t.IsCustomField),
 					"No standard Name node found on custom possibility list reference");
 				CollectionAssert.IsNotEmpty(cfChildren.Where(t => t.Label == "Abbreviation" && !t.IsCustomField),
 					"No standard Abbreviation node found on custom possibility list reference");
 				var wsOptions = cfChildren[0].DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-				Assert.IsNotNull(wsOptions, "No writing system node on possibility list custom node");
+				Assert.That(wsOptions, Is.Not.Null, "No writing system node on possibility list custom node");
 				CollectionAssert.IsNotEmpty(wsOptions.Options.Where(o => o.IsEnabled), "No default writing system added.");
 			}
 		}
@@ -919,6 +919,7 @@ namespace SIL.FieldWorks.XWorks
 					PropertyTable.Dispose();
 					Mediator.Dispose();
 				}
+				FwRegistrySettings.Release();
 			}
 
 			~MockWindowSetup()
@@ -971,7 +972,7 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
 				var children = model.Parts[0].Children;
-				Assert.IsNotNull(children, "Custom Field did not add to children");
+				Assert.That(children, Is.Not.Null, "Custom Field did not add to children");
 				CollectionAssert.IsNotEmpty(children, "Custom Field did not add to children");
 				var cfNode = children[0];
 				Assert.AreEqual(cfNode.Label, "CustomString");
@@ -1182,7 +1183,7 @@ namespace SIL.FieldWorks.XWorks
 					"The only node under Main Entry should be Grouping Node (the Custom Field already under Grouping Node should not be dup'd under ME");
 				var group = children[0];
 				children = group.Children;
-				Assert.IsNotNull(children, "GroupingNode should still have children");
+				Assert.That(children, Is.Not.Null, "GroupingNode should still have children");
 				Assert.AreEqual(1, children.Count, "One CF under Grouping Node should have been retained, the other deleted");
 				var customNode = children[0];
 				Assert.AreEqual("CustomString", customNode.Label);
@@ -1577,7 +1578,7 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				dcc.PopulateTreeView();
 
-				Assert.IsNullOrEmpty(testView.PreviewData, "Should not have created a preview");
+				Assert.That(testView.PreviewData, Is.Null.Or.Empty, "Should not have created a preview");
 				Assert.AreEqual(1, Cache.LangProject.LexDbOA.ReversalIndexesOC.Count);
 				Assert.AreEqual("en", Cache.LangProject.LexDbOA.ReversalIndexesOC.First().WritingSystem);
 			}
@@ -1761,51 +1762,51 @@ namespace SIL.FieldWorks.XWorks
 				dcc.CreateTreeOfTreeNodes(null, m_model.Parts);
 				//SUT
 				var treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNull(treeNode, "No TreeNode should be selected to start out with");
+				Assert.That(treeNode, Is.Null, "No TreeNode should be selected to start out with");
 
 				dcc.SetStartingNode(null);
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNull(treeNode, "Passing a null class list should not find a TreeNode (and should not crash either)");
+				Assert.That(treeNode, Is.Null, "Passing a null class list should not find a TreeNode (and should not crash either)");
 
 				dcc.SetStartingNode(new List<string>());
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNull(treeNode, "Passing an empty class list should not find a TreeNode");
+				Assert.That(treeNode, Is.Null, "Passing an empty class list should not find a TreeNode");
 
 				dcc.SetStartingNode(new List<string> {"something","invalid"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNull(treeNode, "Passing a totally invalid class list should not find a TreeNode");
+				Assert.That(treeNode, Is.Null, "Passing a totally invalid class list should not find a TreeNode");
 
 				dcc.SetStartingNode(new List<string>{"entry","senses","sensecontent","sense","random","nonsense"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "Passing a partially valid class list should find a TreeNode");
+				Assert.That(treeNode, Is.Not.Null, "Passing a partially valid class list should find a TreeNode");
 				Assert.AreSame(sensesNode, treeNode.Tag, "Passing a partially valid class list should find the best node possible");
 
 				// Starting here we need to Unset the controller's SelectedNode to keep from getting false positives
 				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(new List<string> {"entry","mainheadword"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "entry/mainheadword should find a TreeNode");
+				Assert.That(treeNode, Is.Not.Null, "entry/mainheadword should find a TreeNode");
 				Assert.AreSame(headwordNode, treeNode.Tag, "entry/mainheadword should find the right TreeNode");
 				Assert.AreEqual(headwordNode.Label, treeNode.Text, "The TreeNode for entry/mainheadword should have the right Text");
 
 				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(new List<string> { "entry " + XhtmlDocView.CurrentSelectedEntryClass, "mainheadword" });
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "entry/mainheadword should find a TreeNode, even if this is the selected entry");
+				Assert.That(treeNode, Is.Not.Null, "entry/mainheadword should find a TreeNode, even if this is the selected entry");
 				Assert.AreSame(headwordNode, treeNode.Tag, "entry/mainheadword should find the right TreeNode");
 				Assert.AreEqual(headwordNode.Label, treeNode.Text, "The TreeNode for entry/mainheadword should have the right Text");
 
 				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(new List<string> {"entry","senses","sensecontent","sense","definitionorgloss"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "entry//definitionorgloss should find a TreeNode");
+				Assert.That(treeNode, Is.Not.Null, "entry//definitionorgloss should find a TreeNode");
 				Assert.AreSame(defglossNode, treeNode.Tag, "entry//definitionorgloss should find the right TreeNode");
 				Assert.AreEqual(defglossNode.Label, treeNode.Text, "The TreeNode for entry//definitionorgloss should have the right Text");
 
 				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(new List<string> {"entry","senses","sensecontent","sense","examples","example","translations","translation","translation"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "entry//translation should find a TreeNode");
+				Assert.That(treeNode, Is.Not.Null, "entry//translation should find a TreeNode");
 				Assert.AreSame(translationNode, treeNode.Tag, "entry//translation should find the right TreeNode");
 				Assert.AreEqual(translationNode.Label, treeNode.Text, "The TreeNode for entry//translation should have the right Text");
 			}
@@ -1890,10 +1891,10 @@ namespace SIL.FieldWorks.XWorks
 			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(entryNode, sharedNode);
 			DictionaryConfigurationController.EnsureValidStylesInModel(model, Cache);
 			//SUT
-			Assert.IsNull(entryNode.Style, "Missing style should be removed.");
-			Assert.IsNull(senseNode.Style, "Missing style should be removed.");
-			Assert.IsNull(sharedKid.Style, "Missing style should be removed.");
-			Assert.IsNull(((DictionaryNodeSenseOptions)senseNode.DictionaryNodeOptions).NumberStyle, "Missing style should be removed.");
+			Assert.That(entryNode.Style, Is.Null, "Missing style should be removed.");
+			Assert.That(senseNode.Style, Is.Null, "Missing style should be removed.");
+			Assert.That(sharedKid.Style, Is.Null, "Missing style should be removed.");
+			Assert.That(((DictionaryNodeSenseOptions)senseNode.DictionaryNodeOptions).NumberStyle, Is.Null, "Missing style should be removed.");
 		}
 
 		[Test]
@@ -2486,20 +2487,20 @@ namespace SIL.FieldWorks.XWorks
 				//Test normal case first
 				dcc.SetStartingNode(new List<string> { "entry", "senses", "sensecontent", "sense", "gloss" });
 				var treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "Passing a valid class list should find a TreeNode");
+				Assert.That(treeNode, Is.Not.Null, "Passing a valid class list should find a TreeNode");
 				Assert.AreSame(glossNode, treeNode.Tag, "Passing a valid class list should find the node");
 
 				//SUT
 				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(subSenseGloss);
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "Passing a valid class list should find a TreeNode");
+				Assert.That(treeNode, Is.Not.Null, "Passing a valid class list should find a TreeNode");
 				Assert.AreSame(subGlossNode, treeNode.Tag, "Passing a valid class list should even find the node in a referenced node");
 
 				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(subSenseUndefined);
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "invalid field should still find a TreeNode");
+				Assert.That(treeNode, Is.Not.Null, "invalid field should still find a TreeNode");
 				Assert.AreSame(subSensesNode, treeNode.Tag, "'undefined' field should find the closest TreeNode");
 			}
 		}
@@ -2556,19 +2557,19 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				dcc.SetStartingNode(subentryGloss);
 				var treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "Passing a valid class list should find a TreeNode");
+				Assert.That(treeNode, Is.Not.Null, "Passing a valid class list should find a TreeNode");
 				Assert.AreSame(subGlossNode, treeNode.Tag, "Passing a valid class list should even find the node in a referenced node");
 
 				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(subentryUndefined);
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "invalid field should still find a TreeNode");
+				Assert.That(treeNode, Is.Not.Null, "invalid field should still find a TreeNode");
 				Assert.AreSame(subentriesNode, treeNode.Tag, "'undefined' field should find the closest TreeNode");
 
 				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(subentriesClassList);
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "should find main Subentries node");
+				Assert.That(treeNode, Is.Not.Null, "should find main Subentries node");
 				Assert.AreSame(subentriesNode, treeNode.Tag, "Passing a valid class list should find it");
 			}
 		}

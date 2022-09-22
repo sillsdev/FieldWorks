@@ -1,4 +1,4 @@
-// Copyright (c) 2017 SIL International
+// Copyright (c) 2017-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,6 +7,7 @@ using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.Reporting;
+using SIL.Settings;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -32,12 +33,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 				PreviousVersion = "Version 1.0.0"
 			};
 
-			XDocument oldConfigXml = CreateOldConfig(reportingSettings, true, "keyboards", "username", "password");
+			var updateSettings = new UpdateSettings
+			{
+				Channel = UpdateSettings.Channels.Beta,
+				Behavior = UpdateSettings.Behaviors.Notify
+			};
+
+			var oldConfigXml = CreateOldConfig(reportingSettings, updateSettings, true, "keyboards", "username", "password");
 			var appSettings = new TestFwApplicationSettings {ConfigXml = oldConfigXml};
 			appSettings.UpgradeIfNecessary();
 			Assert.That(appSettings.Reporting.Launches, Is.EqualTo(reportingSettings.Launches));
 			Assert.That(appSettings.Reporting.FirstLaunchDate, Is.EqualTo(reportingSettings.FirstLaunchDate));
 			Assert.That(appSettings.Reporting.PreviousVersion, Is.EqualTo(reportingSettings.PreviousVersion));
+			Assert.That(appSettings.Update.Behavior, Is.EqualTo(updateSettings.Behavior));
+			Assert.That(appSettings.Update.Channel, Is.EqualTo(updateSettings.Channel));
 			Assert.That(appSettings.LocalKeyboards, Is.EqualTo("keyboards"));
 			Assert.That(appSettings.WebonaryUser, Is.EqualTo("username"));
 			Assert.That(appSettings.WebonaryPass, Is.EqualTo("password"));
@@ -61,6 +70,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var appSettings = new TestFwApplicationSettings {ConfigXml = oldConfigXml};
 			appSettings.UpgradeIfNecessary();
 			Assert.That(appSettings.Reporting, Is.Null);
+			Assert.That(appSettings.Update, Is.Null);
 			Assert.That(appSettings.LocalKeyboards, Is.Null);
 			Assert.That(appSettings.WebonaryUser, Is.Null);
 			Assert.That(appSettings.WebonaryPass, Is.Null);
@@ -72,10 +82,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void UpgradeIfNecessary_OldConfigReportingMissing_OldConfigMigrated()
 		{
-			XDocument oldConfigXml = CreateOldConfig(null, true, "keyboards", "username", "password");
+			var updateSettings = new UpdateSettings
+			{
+				Channel = UpdateSettings.Channels.Alpha,
+				Behavior = UpdateSettings.Behaviors.DoNotCheck
+			};
+
+			var oldConfigXml = CreateOldConfig(null, updateSettings, true, "keyboards", "username", "password");
 			var appSettings = new TestFwApplicationSettings { ConfigXml = oldConfigXml };
 			appSettings.UpgradeIfNecessary();
 			Assert.That(appSettings.Reporting, Is.Null);
+			Assert.That(appSettings.Update.Behavior, Is.EqualTo(updateSettings.Behavior));
+			Assert.That(appSettings.Update.Channel, Is.EqualTo(updateSettings.Channel));
 			Assert.That(appSettings.LocalKeyboards, Is.EqualTo("keyboards"));
 			Assert.That(appSettings.WebonaryUser, Is.EqualTo("username"));
 			Assert.That(appSettings.WebonaryPass, Is.EqualTo("password"));
@@ -95,18 +113,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				FirstLaunchDate = DateTime.Now.AddYears(-1),
 				HaveShowRegistrationDialog = false,
-				Launches = 100,
+				Launches = 120,
 				OkToPingBasicUsageData = true,
 				PreviousLaunchDate = DateTime.Now.AddDays(-1),
 				PreviousVersion = "Version 1.0.0"
 			};
 
-			XDocument oldConfigXml = CreateOldConfig(reportingSettings, true, "keyboards", null, "password");
+			var updateSettings = new UpdateSettings
+			{
+				Channel = UpdateSettings.Channels.Stable,
+				Behavior = UpdateSettings.Behaviors.Download
+			};
+
+			var oldConfigXml = CreateOldConfig(reportingSettings, updateSettings, true, "keyboards", null, "password");
 			var appSettings = new TestFwApplicationSettings { ConfigXml = oldConfigXml };
 			appSettings.UpgradeIfNecessary();
 			Assert.That(appSettings.Reporting.Launches, Is.EqualTo(reportingSettings.Launches));
 			Assert.That(appSettings.Reporting.FirstLaunchDate, Is.EqualTo(reportingSettings.FirstLaunchDate));
 			Assert.That(appSettings.Reporting.PreviousVersion, Is.EqualTo(reportingSettings.PreviousVersion));
+			Assert.That(appSettings.Update.Behavior, Is.EqualTo(updateSettings.Behavior));
+			Assert.That(appSettings.Update.Channel, Is.EqualTo(updateSettings.Channel));
 			Assert.That(appSettings.LocalKeyboards, Is.EqualTo("keyboards"));
 			Assert.That(appSettings.WebonaryUser, Is.Null);
 			Assert.That(appSettings.WebonaryPass, Is.EqualTo("password"));
@@ -116,7 +142,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(appSettings.ConfigXml.Root?.Element("userSettings")?.HasElements, Is.False);
 		}
 
-		private static XDocument CreateOldConfig(ReportingSettings reportingSettings, bool? updateGlobalWSStore, string localKeyboards,
+		private static XDocument CreateOldConfig(ReportingSettings reportingSettings,
+			UpdateSettings updateSettings, bool? updateGlobalWSStore, string localKeyboards,
 			string webonaryUser, string webonaryPass)
 		{
 			var settingsElem = new XElement("SIL.CoreImpl.Properties.Settings",
@@ -127,6 +154,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				settingsElem.Add(new XElement("setting", new XAttribute("name", "Reporting"), new XAttribute("serializeAs", "Xml"),
 					new XElement("value", XElement.Parse(XmlSerializationHelper.SerializeToString(reportingSettings)))));
+			}
+
+			if (updateSettings != null)
+			{
+				settingsElem.Add(new XElement("setting", new XAttribute("name", "Update"), new XAttribute("serializeAs", "Xml"),
+					new XElement("value", XElement.Parse(XmlSerializationHelper.SerializeToString(updateSettings)))));
 			}
 
 			// Leave this obsolete value in in the old config to test that it doesn't cause problems

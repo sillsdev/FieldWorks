@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,6 +9,8 @@ using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Threading;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
 // ReSharper disable InconsistentNaming
@@ -507,9 +509,9 @@ namespace SIL.FieldWorks.XWorks
 				using (var reader = new StreamReader(tempPath, Encoding.UTF8))
 					result = reader.ReadToEnd();
 				File.Delete(tempPath);
-				Assert.That(result, Is.StringContaining("What words refer to the sun?"));
-				Assert.That(result, Is.Not.StringContaining("1.1.1.11.1.1.1"), "should not output double abbr for en");
-				Assert.That(result, Is.Not.StringContaining("class: english"),
+				Assert.That(result, Does.Contain("What words refer to the sun?"));
+				Assert.That(result, Does.Not.Contain("1.1.1.11.1.1.1"), "should not output double abbr for en");
+				Assert.That(result, Does.Not.Contain("class: english"),
 					"English should not give anything the missing translation style");
 
 				wss.Clear();
@@ -520,20 +522,20 @@ namespace SIL.FieldWorks.XWorks
 				using (var reader = new StreamReader(tempPath, Encoding.UTF8))
 					result = reader.ReadToEnd();
 				File.Delete(tempPath);
-				Assert.That(result, Is.Not.StringContaining("What words refer to the sun?"),
+				Assert.That(result, Does.Not.Contain("What words refer to the sun?"),
 					"french export should not have english questions");
-				Assert.That(result, Is.StringContaining("<p class=\"quest1\" lang=\"fr\">(1) Quels mots se"),
+				Assert.That(result, Does.Contain("<p class=\"quest1\" lang=\"fr\">(1) Quels mots se"),
 					"French export should have the French question (not english class)");
 
 				exportDlg.ExportSemanticDomains(new DummyProgressDlg(), new object[] {tempPath, fxt, fxtPath, true});
 				using (var reader = new StreamReader(tempPath, Encoding.UTF8))
 					result = reader.ReadToEnd();
 				File.Delete(tempPath);
-				Assert.That(result, Is.StringContaining("<span class=\"english\" lang=\"en\">(1) What words refer to the sun?"),
+				Assert.That(result, Does.Contain("<span class=\"english\" lang=\"en\">(1) What words refer to the sun?"),
 					"french export with all questions should have english where french is missing (in red)");
-				Assert.That(result, Is.StringContaining("<p class=\"quest1\" lang=\"fr\">(1) Quels mots se"),
+				Assert.That(result, Does.Contain("<p class=\"quest1\" lang=\"fr\">(1) Quels mots se"),
 					"French export should have the French question (not red)");
-				Assert.That(result, Is.Not.StringContaining("What words refer to everything we can see"),
+				Assert.That(result, Does.Not.Contain("What words refer to everything we can see"),
 					"French export should not have English alternative where French is present");
 			}
 		}
@@ -543,9 +545,12 @@ namespace SIL.FieldWorks.XWorks
 		/// Tests the method ExportTranslatedLists.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
-		[Test]
-		public void ExportTranslatedLists()
+		[TestCase("de", ".", ".")]
+		[TestCase("en", "/", ":")]
+		public void ExportTranslatedLists(string culture, string dateSep, string timeSep)
 		{
+			Thread.CurrentThread.CurrentCulture = new CultureInfo(culture) { DateTimeFormat = { DateSeparator = dateSep, TimeSeparator = timeSep } };
+
 			Assert.AreEqual(2, m_cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Count, "The number of top-level semantic domains");
 			ICmSemanticDomainRepository repoSemDom = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			Assert.AreEqual(11, repoSemDom.Count, "The total number of semantic domains");
@@ -562,7 +567,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					w.Close();
 					Assert.AreEqual("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", r.ReadLine());
-					StringAssert.StartsWith("<Lists date=\"", r.ReadLine());
+					Assert.That(r.ReadLine(), Does.Match(@"^<Lists date=""\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z"">$"));
 					Assert.AreEqual("<List owner=\"LangProject\" field=\"SemanticDomainList\" itemClass=\"CmSemanticDomain\">", r.ReadLine());
 					Assert.AreEqual("<Name>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">Semantic Domains</AUni>", r.ReadLine());
@@ -1079,13 +1084,13 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_cache.LangProject.SemanticDomainListOA.Name.set_String(wsFr, "Domaines sémantiques");
 				ICmSemanticDomain sem1 = repoSemDom.GetObject(new Guid("63403699-07C1-43F3-A47C-069D6E4316E5"));
-				Assert.IsNotNull(sem1);
+				Assert.That(sem1, Is.Not.Null);
 				sem1.Name.set_String(wsFr, "L'univers physique");
 				sem1.QuestionsOS[0].Question.set_String(wsFr, "Quels sont les mots qui font référence à tout ce qu'on peut voir?");
 				sem1.QuestionsOS[0].ExampleWords.set_String(wsFr, "univers, ciel, terre");
 				sem1.QuestionsOS[0].ExampleSentences.set_String(wsFr, "Le rôle du prophète est alors de réveiller le courage et la foi en Dieu.");
 				ICmSemanticDomain sem11 = sem1.SubPossibilitiesOS[0] as ICmSemanticDomain;
-				Assert.IsNotNull(sem11);
+				Assert.That(sem11, Is.Not.Null);
 				sem11.Name.set_String(wsFr, "Ciel");
 				sem11.QuestionsOS[0].Question.set_String(wsFr, "Quels sont les mots qui signifient le ciel?");
 				sem11.QuestionsOS[0].ExampleWords.set_String(wsFr, "ciel, firmament");

@@ -16,6 +16,7 @@ using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -276,7 +277,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				Exception e = wex.InnerException;
 				if (e is UnauthorizedAccessException)
 				{
-					if (MiscUtils.IsUnix)
+					if (Platform.IsUnix)
 					{
 						// Tell Mono user he/she needs to logout and log back in
 						MessageBoxUtils.Show(ResourceHelper.GetResourceString("ksNeedToJoinFwGroup"));

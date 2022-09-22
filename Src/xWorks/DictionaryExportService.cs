@@ -62,7 +62,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var relevantReversalIndexesAndTheirCounts = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
 					.Select(repo => m_cache.ServiceLocator.GetObject(repo.Guid) as IReversalIndex)
-					.Where(ri => ri != null && selectedReversalIndexes.Contains(ri.ShortName))
+					.Where(ri => ri != null && selectedReversalIndexes.Any(s => s.Contains(ri.ShortName)))
 					.ToDictionary(ri => ri.ShortName, CountReversalIndexEntries);
 
 				return new SortedDictionary<string,int> (relevantReversalIndexesAndTheirCounts);
@@ -328,7 +328,8 @@ namespace SIL.FieldWorks.XWorks
 			using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
 			{
 				ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, DictionaryType);
-				return LcmJsonGenerator.GenerateDictionaryMetaData(siteName, templateFileNames, reversals, entriesToSave, configPath, exportPath, m_cache);
+				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+				return LcmJsonGenerator.GenerateDictionaryMetaData(siteName, templateFileNames, reversals, entriesToSave, configPath, exportPath, m_cache, clerk);
 			}
 		}
 	}

@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.FdoUi
 			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
 				TsStringUtils.EmptyString(Cache.DefaultVernWs)))
 			{
-				Assert.IsNull(lexEntryUi);
+				Assert.That(lexEntryUi, Is.Null);
 			}
 		}
 
@@ -103,26 +103,26 @@ namespace SIL.FieldWorks.FdoUi
 			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
 				TsStringUtils.MakeString("Uppercaseword", Cache.DefaultVernWs)))
 			{
-				Assert.IsNotNull(lexEntryUi);
+				Assert.That(lexEntryUi, Is.Not.Null);
 				Assert.AreEqual(entry1.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
 			}
 			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
 				TsStringUtils.MakeString("lowercaseword", Cache.DefaultVernWs)))
 			{
-				Assert.IsNotNull(lexEntryUi);
+				Assert.That(lexEntryUi, Is.Not.Null);
 				Assert.AreEqual(entry2.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
 			}
 			// Now make sure it works with the wrong case
 			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
 				TsStringUtils.MakeString("uppercaseword", Cache.DefaultVernWs)))
 			{
-				Assert.IsNotNull(lexEntryUi);
+				Assert.That(lexEntryUi, Is.Not.Null);
 				Assert.AreEqual(entry1.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
 			}
 			using (var lexEntryUi = LexEntryUi.FindEntryForWordform(Cache,
 				TsStringUtils.MakeString("LowerCASEword", Cache.DefaultVernWs)))
 			{
-				Assert.IsNotNull(lexEntryUi);
+				Assert.That(lexEntryUi, Is.Not.Null);
 				Assert.AreEqual(entry2.Hvo, lexEntryUi.Object.Hvo, "Found wrong object");
 			}
 		}

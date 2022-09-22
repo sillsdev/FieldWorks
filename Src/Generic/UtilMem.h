@@ -314,12 +314,12 @@ void MoveElement(void * pv, int cbElement, int ivSrc, int ivTarget);
 	}
 	inline int __cdecl DebugSysReAllocString(BSTR * pbstr, const OLECHAR * pwsz)
 	{
-		return CanAllocate() ? SysReAllocString(pbstr, pwsz) : FALSE;
+		return CanAllocate() ? SysReAllocString(pbstr, pwsz) : false;
 	}
 	inline int __cdecl DebugSysReAllocStringLen(BSTR * pbstr, const OLECHAR * prgwch,
 		UINT cch)
 	{
-		return CanAllocate() ? SysReAllocStringLen(pbstr, prgwch, cch) : FALSE;
+		return CanAllocate() ? SysReAllocStringLen(pbstr, prgwch, cch) : false;
 	}
 
 	#define NewObj new(true, THIS_FILE, __LINE__)

@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.IText
 		}
 		#endregion disposal
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();

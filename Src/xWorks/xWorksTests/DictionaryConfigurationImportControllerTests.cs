@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.XWorks
 		private string _pathToConfiguration;
 		private string _reversalPathToConfiguration;
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			// delete the directory that was created in SetUp
@@ -264,7 +264,7 @@ namespace SIL.FieldWorks.XWorks
 			_controller.DoImport();
 			var importedTestStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "TestStyle");
 			Assert.NotNull(importedTestStyle, "test style was not imported.");
-			Assert.That(importedTestStyle.Usage.BestAnalysisAlternative.Text, Is.StringMatching("Test Style"));
+			Assert.That(importedTestStyle.Usage.BestAnalysisAlternative.Text, Does.Match("Test Style"));
 			Assert.AreEqual(importedTestStyle.Context, ContextValues.InternalConfigureView);
 			Assert.AreEqual(importedTestStyle.Type, StyleType.kstCharacter);
 			Assert.AreEqual(importedTestStyle.UserLevel, 2);
@@ -477,7 +477,7 @@ namespace SIL.FieldWorks.XWorks
 				Publications = new List<string> { "Main Dictionary", "unknown pub 1", "unknown pub 2" },
 				FilePath = Path.Combine(_projectConfigPath, "Different" + configFilename)
 			};
-			FileUtils.WriteStringtoFile(alreadyExistingModelWithSameLabel.FilePath, "arbitrary file content", Encoding.UTF8);
+			FileUtils.WriteStringToFile(alreadyExistingModelWithSameLabel.FilePath, "arbitrary file content", Encoding.UTF8);
 			var anotherAlreadyExistingModel = new DictionaryConfigurationModel
 			{
 				Label = "importexportConfiguration-Imported1",
@@ -486,7 +486,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigPath, _controller._configurations,
 				anotherAlreadyExistingModel);
-			FileUtils.WriteStringtoFile(anotherAlreadyExistingModel.FilePath, "arbitrary file content", Encoding.UTF8);
+			FileUtils.WriteStringToFile(anotherAlreadyExistingModel.FilePath, "arbitrary file content", Encoding.UTF8);
 
 			_controller._configurations.Add(alreadyExistingModelWithSameLabel);
 			_controller._configurations.Add(anotherAlreadyExistingModel);
@@ -558,19 +558,19 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// Import a Dictionary view into a Dictionary area
 			_controller.PrepareImport(_zipFile);
-			Assert.IsNotNull(_controller.NewConfigToImport, "Dictionary configuration should have been prepared for import, since we requested to import the right kind of configuration (Dictionary into Dictionary area).");
+			Assert.That(_controller.NewConfigToImport, Is.Not.Null, "Dictionary configuration should have been prepared for import, since we requested to import the right kind of configuration (Dictionary into Dictionary area).");
 
 			// Import a Dictionary view into a ReversalIndex area
 			_reversalController.PrepareImport(_zipFile);
-			Assert.IsNull(_reversalController.NewConfigToImport, "No configuration to import should have been prepared since the wrong type of configuration was requested to be imported (Dictionary into Reversal area).");
+			Assert.That(_reversalController.NewConfigToImport, Is.Null, "No configuration to import should have been prepared since the wrong type of configuration was requested to be imported (Dictionary into Reversal area).");
 
 			// Import a Reversal view into a Dictionary area
 			_controller.PrepareImport(_reversalZipFile);
-			Assert.IsNull(_controller.NewConfigToImport, "No configuration to import should have been prepared since the wrong type of configuration was requested to be imported (Reversal into Dictionary area).");
+			Assert.That(_controller.NewConfigToImport, Is.Null, "No configuration to import should have been prepared since the wrong type of configuration was requested to be imported (Reversal into Dictionary area).");
 
 			// Import a Reversal view into a ReversalIndex area
 			_reversalController.PrepareImport(_reversalZipFile);
-			Assert.IsNotNull(_reversalController.NewConfigToImport, "Reversal configuration should have been prepared for import, since we requested to import the right kind of configuration (Reversal into Reversal area).");
+			Assert.That(_reversalController.NewConfigToImport, Is.Not.Null, "Reversal configuration should have been prepared for import, since we requested to import the right kind of configuration (Reversal into Reversal area).");
 		}
 
 		/// <summary>
@@ -583,7 +583,7 @@ namespace SIL.FieldWorks.XWorks
 			const string XmlOpenTagsThruRoot = @"<?xml version=""1.0"" encoding=""utf-8""?>
 			<DictionaryConfiguration name=""Root"" allPublications=""true"" isRootBased=""true"" version=""1"" lastModified=""2014-02-13"">";
 			const string XmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
-			FileUtils.WriteStringtoFile(configFile, XmlOpenTagsThruRoot +
+			FileUtils.WriteStringToFile(configFile, XmlOpenTagsThruRoot +
 				"<ConfigurationItem name=\"Main Entry\" style=\"Dictionary-Normal\" styleType=\"paragraph\" isEnabled=\"true\" field=\"LexEntry\" cssClassNameOverride=\"entry\"></ConfigurationItem>"
 				+ XmlCloseTagsFromRoot, Encoding.UTF8);
 			_controller._temporaryImportConfigLocation = configFile;

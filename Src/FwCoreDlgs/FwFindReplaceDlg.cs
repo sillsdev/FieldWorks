@@ -1294,7 +1294,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				try
 				{
-					if (MiscUtils.IsUnix)
+					if (Platform.IsUnix)
 					{
 						// Get a wait cursor to display when waiting for the messagebox
 						// to show. See FWNX-660.
@@ -1306,7 +1306,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 				finally
 				{
-					if (MiscUtils.IsUnix)
+					if (Platform.IsUnix)
 					{
 						this.tabReplace.Parent.UseWaitCursor = false;
 						this.tabReplace.UseWaitCursor = false;

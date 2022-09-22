@@ -7,6 +7,7 @@ using System.IO;
 using System.Reflection;
 using Microsoft.Win32;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
@@ -16,7 +17,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		static ParatextLexiconPluginRegistryHelper()
 		{
 			// copy the FW registry values to PT registry
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				const string fwRegKey = "LocalMachine/software/sil";
 #if DEBUG

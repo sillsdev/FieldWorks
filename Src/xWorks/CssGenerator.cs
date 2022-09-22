@@ -85,8 +85,9 @@ namespace SIL.FieldWorks.XWorks
 			if (propStyleSheet.Styles.Contains("Normal"))
 				GenerateCssForWsSpanWithNormalStyle(styleSheet, propertyTable);
 
-			if (propStyleSheet.Styles.Contains(DictionaryNormal))
-				GenerateDictionaryNormalParagraphCss(styleSheet, propertyTable);
+			var entryBaseStyle = ConfiguredLcmGenerator.GetEntryStyle(model);
+			if (propStyleSheet.Styles.Contains(entryBaseStyle))
+				GenerateDictionaryNormalParagraphCss(styleSheet, propertyTable, entryBaseStyle);
 
 			if (propStyleSheet.Styles.Contains(LetterHeadingStyleName))
 			{
@@ -137,14 +138,14 @@ namespace SIL.FieldWorks.XWorks
 			GenerateCssForWritingSystems("span", "Normal", styleSheet, propertyTable);
 		}
 
-		private static void GenerateDictionaryNormalParagraphCss(StyleSheet styleSheet, ReadOnlyPropertyTable propertyTable)
+		private static void GenerateDictionaryNormalParagraphCss(StyleSheet styleSheet, ReadOnlyPropertyTable propertyTable, string entryBaseStyle)
 		{
 			var dictNormalRule = new StyleRule { Value = "div.entry" };
-			var dictNormalStyle = GenerateCssStyleFromLcmStyleSheet(DictionaryNormal, 0, propertyTable);
+			var dictNormalStyle = GenerateCssStyleFromLcmStyleSheet(entryBaseStyle, 0, propertyTable);
 			dictNormalRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictNormalStyle));
 			styleSheet.Rules.Add(dictNormalRule);
 			// Then generate the rules for all the writing system overrides
-			GenerateCssForWritingSystems("div.entry span", DictionaryNormal, styleSheet, propertyTable);
+			GenerateCssForWritingSystems("div.entry span", entryBaseStyle, styleSheet, propertyTable);
 		}
 
 		private static void GenerateDictionaryMinorParagraphCss(StyleSheet styleSheet, ReadOnlyPropertyTable propertyTable, DictionaryConfigurationModel model)
@@ -1055,8 +1056,6 @@ namespace SIL.FieldWorks.XWorks
 			if(exportStyleInfo.HasLineSpacing)
 			{
 				var lineHeight = new Property("line-height");
-				if (!exportStyleInfo.LineSpacing.m_relative && exportStyleInfo.LineSpacing.m_lineHeight >= 0)
-					lineHeight = new Property("flex-line-height");
 				//m_relative means single, 1.5 or double line spacing was chosen. The CSS should be a number
 				if(exportStyleInfo.LineSpacing.m_relative)
 				{
@@ -1066,7 +1065,17 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
+					// Note: In Flex a user can set 'at least' or 'exactly' for line heights. These are differentiated using negative and positive
+					// values in LineSpacing.m_lineHeight.
+					// There is no reasonable way to handle the 'exactly' option in css so both will behave the same for html views and exports
 					lineHeight.Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(Math.Abs(exportStyleInfo.LineSpacing.m_lineHeight)));
+					if (exportStyleInfo.LineSpacing.m_lineHeight >= 0)
+					{
+						// The flex-line-height property is used here for continued Pathway export support
+						var flexLineHeight = new Property("flex-line-height");
+						flexLineHeight.Term = lineHeight.Term;
+						declaration.Add(flexLineHeight);
+					}
 				}
 				declaration.Add(lineHeight);
 			}
@@ -1106,8 +1115,12 @@ namespace SIL.FieldWorks.XWorks
 					if (node != null)
 					{
 						string selectedNumStyle = NumberingStylesCollection[numScheme];
-						declaration.Add(new Property("counter-increment") { Term = new PrimitiveTerm(UnitType.Attribute, " " + node.Label.ToLower()) });
-						declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.Attribute, string.Format(" counter({0}, {1}) {2}", node.Label.ToLower(), selectedNumStyle, @"' '")) });
+
+						if (string.IsNullOrEmpty(node.CSSClassNameOverride))
+							node.CSSClassNameOverride = GetClassAttributeForConfig(node);
+
+						declaration.Add(new Property("counter-increment") { Term = new PrimitiveTerm(UnitType.Attribute, " " + node.CSSClassNameOverride) });
+						declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.Attribute, string.Format(" counter({0}, {1}) {2}", node.CSSClassNameOverride, selectedNumStyle, @"' '")) });
 					}
 				}
 			}

@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		private const string MinorEntryComplexXpath = "//ConfigurationItem[@name='" + MinorEntryComplexLabel + "']";
 		private const string MinorEntryVariantXpath = "//ConfigurationItem[@name='" + MinorEntryVariantLabel + "']";
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		protected void Init()
 		{
 			FwRegistrySettings.Init();
@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				CellarPropertyType.ReferenceAtomic, Cache.LanguageProject.LocationsOA.Guid);
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		protected void TearDown()
 		{
 			if (m_migrator != null)
@@ -591,7 +591,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
-			Assert.IsNotNull(wsOpts.Options, "analysis choice did not result in any options being created.");
+			Assert.That(wsOpts.Options, Is.Not.Null, "analysis choice did not result in any options being created.");
 		}
 
 		///<summary/>
@@ -605,7 +605,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
-			Assert.IsNotNull(wsOpts.Options, "vernacular choice did not result in any options being created.");
+			Assert.That(wsOpts.Options, Is.Not.Null, "vernacular choice did not result in any options being created.");
 		}
 
 		///<summary/>
@@ -619,8 +619,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Both);
-			Assert.IsNotNull(wsOpts.Options, "vernacular analysis choice did not result in any options being created.");
-			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "vernacular"), "vernacular choice was not migrated.");
+			Assert.That(wsOpts.Options, Is.Not.Null, "vernacular analysis choice did not result in any options being created.");
+			Assert.That(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "vernacular"), Is.Not.Null, "vernacular choice was not migrated.");
 		}
 
 		///<summary/>
@@ -634,8 +634,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation);
-			Assert.IsNotNull(wsOpts.Options, "pronunciation choice did not result in any options being created.");
-			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "pronunciation"), "pronunciation choice was not migrated.");
+			Assert.That(wsOpts.Options, Is.Not.Null, "pronunciation choice did not result in any options being created.");
+			Assert.That(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "pronunciation"), Is.Not.Null, "pronunciation choice was not migrated.");
 		}
 
 		///<summary/>
@@ -649,8 +649,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Both);
-			Assert.IsNotNull(wsOpts.Options, "analysis vernacular choice did not result in any options being created.");
-			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "analysis"), "analysis choice was not migrated.");
+			Assert.That(wsOpts.Options, Is.Not.Null, "analysis vernacular choice did not result in any options being created.");
+			Assert.That(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "analysis"), Is.Not.Null, "analysis choice was not migrated.");
 		}
 
 		///<summary/>
@@ -664,8 +664,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
-			Assert.IsNotNull(wsOpts.Options, "French choice did not result in any options being created.");
-			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "fr"), "French choice was not migrated.");
+			Assert.That(wsOpts.Options, Is.Not.Null, "French choice did not result in any options being created.");
+			Assert.That(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "fr"), Is.Not.Null, "French choice was not migrated.");
 		}
 
 		///<summary/>
@@ -679,9 +679,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
-			Assert.IsNotNull(wsOpts.Options, "two languages did not result in ws options being created");
-			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "fr"), "French choice was not migrated.");
-			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "hi"), "hi choice was not migrated.");
+			Assert.That(wsOpts.Options, Is.Not.Null, "two languages did not result in ws options being created");
+			Assert.That(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "fr"), Is.Not.Null, "French choice was not migrated.");
+			Assert.That(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "hi"), Is.Not.Null, "hi choice was not migrated.");
 		}
 
 		///<summary/>
@@ -863,7 +863,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(duplicateNode);
 			}
 			Assert.IsFalse(configNode.IsDuplicate, "Node incorrectly marked as a duplicate.");
-			Assert.IsNullOrEmpty(configNode.LabelSuffix, "suffix incorrectly migrated");
+			Assert.That(configNode.LabelSuffix, Is.Null.Or.Empty, "suffix incorrectly migrated");
 			Assert.AreEqual("A b c D e f", configNode.Label, "should not have a suffix on ConfigurableDictionaryNode.Label");
 		}
 
@@ -878,7 +878,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(parentNode));
 			Assert.AreEqual(configNode.Label, parentNode.Label);
-			Assert.IsNotNull(configNode.Children);
+			Assert.That(configNode.Children, Is.Not.Null);
 			Assert.AreEqual(configNode.Children.Count, 1);
 			Assert.AreEqual(configNode.Children[0].Label, childNode.Label);
 		}
@@ -897,12 +897,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			ConfigurableDictionaryNode configNode = null;
 			const string styleName = "Dictionary-SenseNumber";
 			var senseStyle = m_styleSheet.FindStyle(styleName);
-			Assert.IsNull(senseStyle, "Sense number should not exist before conversion for a valid test.");
+			Assert.That(senseStyle, Is.Null, "Sense number should not exist before conversion for a valid test.");
 
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
 			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName);
 			senseStyle = m_styleSheet.FindStyle(styleName);
-			Assert.IsNotNull(senseStyle, "Sense number should have been created by the migrator.");
+			Assert.That(senseStyle, Is.Not.Null, "Sense number should have been created by the migrator.");
 			var usefulStyle = m_styleSheet.Styles[styleName];
 			Assert.IsTrue(usefulStyle.DefaultCharacterStyleInfo.Bold.Value, "bold was not turned on in the created style.");
 			Assert.IsFalse(usefulStyle.DefaultCharacterStyleInfo.Italic.Value, "italic was not turned off in the created style.");
@@ -933,8 +933,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			const string styleName2 = "Dictionary-SenseNumber-2";
 			var senseStyle = m_styleSheet.FindStyle(styleName);
 			var senseStyle2 = m_styleSheet.FindStyle(styleName2);
-			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
-			Assert.IsNull(senseStyle2, "Second sense number style should not exist before conversion for a valid test.");
+			Assert.That(senseStyle, Is.Null, "Sense number style should not exist before conversion for a valid test.");
+			Assert.That(senseStyle2, Is.Null, "Second sense number style should not exist before conversion for a valid test.");
 
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
 			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName);
@@ -942,8 +942,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName2);
 			senseStyle = m_styleSheet.FindStyle(styleName);
 			senseStyle2 = m_styleSheet.FindStyle(styleName2);
-			Assert.IsNotNull(senseStyle, "Sense number should have been created by the migrator.");
-			Assert.IsNotNull(senseStyle2, "Sense number should have been created by the migrator.");
+			Assert.That(senseStyle, Is.Not.Null, "Sense number should have been created by the migrator.");
+			Assert.That(senseStyle2, Is.Not.Null, "Sense number should have been created by the migrator.");
 			var usefulStyle = m_styleSheet.Styles[styleName];
 			Assert.IsTrue(usefulStyle.DefaultCharacterStyleInfo.Bold.Value, "bold was not turned on in the created style.");
 			Assert.IsFalse(usefulStyle.DefaultCharacterStyleInfo.Italic.Value, "italic was not turned off in the created style.");
@@ -972,8 +972,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var lastStyleName = String.Format("Dictionary-SenseNumber-{0}", 1 + senseNumberOptions.Length);
 			var senseStyle = m_styleSheet.FindStyle(styleName);
 			var senseStyle2 = m_styleSheet.FindStyle(lastStyleName);
-			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
-			Assert.IsNull(senseStyle2, "Second sense number style should not exist before conversion for a valid test.");
+			Assert.That(senseStyle, Is.Null, "Sense number style should not exist before conversion for a valid test.");
+			Assert.That(senseStyle2, Is.Null, "Second sense number style should not exist before conversion for a valid test.");
 
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
 			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName);
@@ -1003,8 +1003,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var senseStyle = m_styleSheet.FindStyle(styleName);
 			const string styleName2 = "Dictionary-SenseNumber-2";
 			var senseStyle2 = m_styleSheet.FindStyle(styleName2);
-			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
-			Assert.IsNull(senseStyle2, "A second sense number style should not exist before conversion for a valid test.");
+			Assert.That(senseStyle, Is.Null, "Sense number style should not exist before conversion for a valid test.");
+			Assert.That(senseStyle2, Is.Null, "A second sense number style should not exist before conversion for a valid test.");
 
 			foreach(var option in senseNumberOptions)
 			{
@@ -1013,7 +1013,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Assert.DoesNotThrow(() => m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
 				senseStyle2 = m_styleSheet.FindStyle(styleName2);
 				DeleteStyleSheet(styleName);
-				Assert.IsNull(senseStyle2, "A duplicate sense number style should not have been created converting the same node twice.");
+				Assert.That(senseStyle2, Is.Null, "A duplicate sense number style should not have been created converting the same node twice.");
 			}
 		}
 
@@ -1038,8 +1038,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			const string styleName2 = "Dictionary-SenseNumber-2";
 			var senseStyle = m_styleSheet.FindStyle(styleName);
 			var senseStyle2 = m_styleSheet.FindStyle(styleName2);
-			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
-			Assert.IsNull(senseStyle2, "Second sense number style should not exist before conversion for a valid test.");
+			Assert.That(senseStyle, Is.Null, "Sense number style should not exist before conversion for a valid test.");
+			Assert.That(senseStyle2, Is.Null, "Second sense number style should not exist before conversion for a valid test.");
 
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
 			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName);
@@ -1047,8 +1047,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName2);
 			senseStyle = m_styleSheet.FindStyle(styleName);
 			senseStyle2 = m_styleSheet.FindStyle(styleName2);
-			Assert.IsNotNull(senseStyle, "Sense number should have been created by the migrator.");
-			Assert.IsNotNull(senseStyle2, "Sense number should have been created by the migrator.");
+			Assert.That(senseStyle, Is.Not.Null, "Sense number should have been created by the migrator.");
+			Assert.That(senseStyle2, Is.Not.Null, "Sense number should have been created by the migrator.");
 			var usefulStyle = m_styleSheet.Styles[styleName];
 			Assert.AreEqual(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, "arial", "arial font not used");
 			usefulStyle = m_styleSheet.Styles[styleName2];
@@ -1543,22 +1543,22 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			}
 			Assert.AreEqual(3, convertedModel.Parts[0].Children.Count, "Nodes incorrectly merged");
 			Assert.IsTrue(customPersonNode.IsCustomField, "Custom atomic list reference field should be flagged as custom");
-			Assert.IsNotNull(customPersonNode.Children, "Custom atomic list reference field should have children (added)");
+			Assert.That(customPersonNode.Children, Is.Not.Null, "Custom atomic list reference field should have children (added)");
 			Assert.AreEqual(2, customPersonNode.Children.Count, "Custom atomic list reference field should have two children added");
 			for (int i = 0; i < customPersonNode.Children.Count; ++i)
 			{
 				var child = customPersonNode.Children[i];
 				Assert.IsFalse(child.IsCustomField, "Children of customPersonNode should not be flagged as custom (" + i + ")");
-				Assert.IsNotNull(child.DictionaryNodeOptions, "Children of customPersonNode should have a DictionaryNodeOptions object");
+				Assert.That(child.DictionaryNodeOptions, Is.Not.Null, "Children of customPersonNode should have a DictionaryNodeOptions object");
 				Assert.IsTrue(child.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Children of customPersonNode DictionaryNodeOptions should be a DictionaryNodeWritingSystemOptions object");
 			}
 			Assert.AreEqual("Name", customPersonNode.Children[0].Label, "The first child of customPersonNode should be Name");
 			Assert.AreEqual("Abbreviation", customPersonNode.Children[1].Label, "The second child of customPersonNode should be Abbreviation");
-			Assert.IsNotNull(customPersonNode.DictionaryNodeOptions, "Custom atomic list reference field should have a DictionaryNodeOptions object");
+			Assert.That(customPersonNode.DictionaryNodeOptions, Is.Not.Null, "Custom atomic list reference field should have a DictionaryNodeOptions object");
 			Assert.IsTrue(customPersonNode.DictionaryNodeOptions is DictionaryNodeListOptions, "Custom atomic list reference field DictionaryNodeOptions should be a DictionaryNodeListOptions object");
 			Assert.IsTrue(customGenDateNode.IsCustomField, "Custom GenDate field should be flagged as custom");
-			Assert.IsNull(customGenDateNode.Children, "Custom GenDate field should not have any children (added)");
-			Assert.IsNull(customGenDateNode.DictionaryNodeOptions, "Custom GenDate field should not have a DictionaryNodeOptions object");
+			Assert.That(customGenDateNode.Children, Is.Null, "Custom GenDate field should not have any children (added)");
+			Assert.That(customGenDateNode.DictionaryNodeOptions, Is.Null, "Custom GenDate field should not have a DictionaryNodeOptions object");
 
 		}
 
@@ -1697,12 +1697,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
 				string cssResults = null;
 				Assert.DoesNotThrow(()=>cssResults = CssGenerator.GenerateCssFromConfiguration(convertedMinorEntry, new ReadOnlyPropertyTable(m_propertyTable)));
-				Assert.That(cssResults, Is.StringContaining(HwBefore));
-				Assert.That(cssResults, Is.StringContaining(HwBetween));
-				Assert.That(cssResults, Is.StringContaining(HwAfter));
-				Assert.That(cssResults, Is.StringContaining(GlsBefore));
-				Assert.That(cssResults, Is.StringContaining(GlsBetween));
-				Assert.That(cssResults, Is.StringContaining(GlsAfter));
+				Assert.That(cssResults, Does.Contain(HwBefore));
+				Assert.That(cssResults, Does.Contain(HwBetween));
+				Assert.That(cssResults, Does.Contain(HwAfter));
+				Assert.That(cssResults, Does.Contain(GlsBefore));
+				Assert.That(cssResults, Does.Contain(GlsBetween));
+				Assert.That(cssResults, Does.Contain(GlsAfter));
 			}
 		}
 
@@ -2452,10 +2452,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.AreEqual(3, convertedTopNode.Children[0].Children[0].Children.Count, "Greatgrandchildren should be converted");
 			var convertedTypeNode = convertedTopNode.Children[0].Children[0].Children[0];
 			Assert.AreEqual("Type", convertedTypeNode.Label, "Nodes are converted in order");
-			Assert.IsNull(convertedTypeNode.FieldDescription, "Initial conversion should not set FieldDescription for the Type node");
+			Assert.That(convertedTypeNode.FieldDescription, Is.Null, "Initial conversion should not set FieldDescription for the Type node");
 			var convertedCommentNode = convertedTopNode.Children[0].Children[0].Children[2];
 			Assert.AreEqual("Comment", convertedCommentNode.Label, "Third child converted in order okay");
-			Assert.IsNull(convertedCommentNode.FieldDescription, "Initial conversion should not set FieldDescription for the Comment node");
+			Assert.That(convertedCommentNode.FieldDescription, Is.Null, "Initial conversion should not set FieldDescription for the Comment node");
 
 			var convertedModel = new DictionaryConfigurationModel
 			{

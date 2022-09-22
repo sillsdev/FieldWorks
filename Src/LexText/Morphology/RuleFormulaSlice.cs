@@ -9,6 +9,7 @@ using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
@@ -70,7 +71,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			RuleFormulaControl.InsertionControl.Show();
 			Height = DesiredHeight(RuleFormulaControl.RootSite);
 			// FWNX-753 called attention to misbehavior around here.
-			if (MiscUtils.IsMono &&
+			if (Platform.IsMono &&
 				RuleFormulaControl.Height != Height &&
 				RuleFormulaControl.Height == oldHeight)
 			{

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,7 +8,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// A collection of utility functions related to Unicode.
-	/// See also CaseFunctions, Surrogates, IcuWrappers.
+	/// <seealso cref="LCModel.Core.Text.CaseFunctions"/> <seealso cref="LCModel.Utils.Surrogates"/> See also IcuWrappers
 	/// </summary>
 	public static class Unicode
 	{

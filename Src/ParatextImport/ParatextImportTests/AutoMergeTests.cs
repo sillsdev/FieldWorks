@@ -31,7 +31,7 @@ namespace ParatextImport
 		/// ------------------------------------------------------------------------------------
 		public void MakeBackupIfNeeded(BookMerger bookMerger)
 		{
-			Assert.IsNotNull(bookMerger);
+			Assert.That(bookMerger, Is.Not.Null);
 			if (MakeBackupCalled != null)
 				MakeBackupCalled(bookMerger);
 			m_NumberOfCallsToMakeBackupIfNeeded++;

@@ -117,6 +117,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="cache"></param>
 		/// <param name="headword">Optional: defaults to 'Citation'</param>
 		/// <param name="gloss">Optional: defaults to 'gloss'</param>
+		/// <param name="definition">Optional: default is to omit</param>
 		/// <returns></returns>
 		internal static ILexEntry CreateInterestingLexEntry(LcmCache cache, string headword = "Citation", string gloss = "gloss", string definition = null)
 		{
@@ -219,7 +220,7 @@ namespace SIL.FieldWorks.XWorks
 		internal static ILexEntryRef CreateVariantForm(LcmCache cache, IVariantComponentLexeme main, ILexEntry variantForm, string type = TestVariantName)
 		{
 			var owningList = cache.LangProject.LexDbOA.VariantEntryTypesOA;
-			Assert.IsNotNull(owningList, "No VariantEntryTypes property on Lexicon object.");
+			Assert.That(owningList, Is.Not.Null, "No VariantEntryTypes property on Lexicon object.");
 			var varType = owningList.ReallyReallyAllPossibilities.LastOrDefault(poss => poss.Name.AnalysisDefaultWritingSystem.Text == type) as ILexEntryType;
 			if (varType == null && type != null) // if this type doesn't exist, create it
 			{
@@ -347,6 +348,12 @@ namespace SIL.FieldWorks.XWorks
 			entry.CitationForm.set_String(wsId, TsStringUtils.MakeString(headword, wsId));
 		}
 
+		internal static void AddLexemeFormToEntry(ILexEntry entry, string lexemeForm, LcmCache cache)
+		{
+			entry.LexemeFormOA = cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
+			entry.LexemeFormOA.Form.SetVernacularDefaultWritingSystem(lexemeForm);
+		}
+
 		internal static ILexPronunciation AddPronunciationToEntry(ILexEntry entry, string content, int wsId, LcmCache cache)
 		{
 			var pronunciation = cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
@@ -469,30 +476,35 @@ namespace SIL.FieldWorks.XWorks
 			return builder.GetString();
 		}
 
-		private ITsString MakeBidirectionalTss(IEnumerable<string> content)
+		internal static ITsString MakeBidirectionalTss(IEnumerable<string> content, LcmCache cache)
 		{
-			EnsureHebrewExists();
+			var wsHe = EnsureHebrewExists(cache);
+			var wsEn = cache.ServiceLocator.WritingSystems.AllWritingSystems
+				.First(ws => ws.Id == "en").Handle;
 			// automatically alternates runs between 'en' and 'he' (Hebrew)
 			var tsFact = TsStringUtils.TsStrFactory;
-			var lastWs = m_wsEn;
+			var lastWs = wsEn;
 			var builder = tsFact.GetIncBldr();
 			foreach (var runContent in content)
 			{
-				lastWs = lastWs == m_wsEn ? m_wsHe : m_wsEn; // switch ws for each run
+				lastWs = lastWs == wsEn ? wsHe : wsEn; // switch ws for each run
 				builder.AppendTsString(tsFact.MakeString(runContent, lastWs));
 			}
 			return builder.GetString();
 		}
 
-		private void EnsureHebrewExists()
+		private static int EnsureHebrewExists(LcmCache cache)
 		{
-			if (m_wsHe > 0)
-				return;
-			var wsManager = Cache.ServiceLocator.WritingSystemManager;
+			var heWs =
+				cache.ServiceLocator.WritingSystems.AllWritingSystems.FirstOrDefault(ws =>
+					ws.Id == "he");
+			if (heWs != null)
+				return heWs.Handle;
+			var wsManager = cache.ServiceLocator.WritingSystemManager;
 			CoreWritingSystemDefinition hebrew;
 			wsManager.GetOrSet("he", out hebrew);
 			hebrew.RightToLeftScript = true;
-			m_wsHe = hebrew.Handle;
+			return hebrew.Handle;
 		}
 
 		private void SetDictionaryNormalDirection(InheritableStyleProp<TriStateBool> rightToLeft)

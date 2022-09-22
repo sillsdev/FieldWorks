@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using DesktopAnalytics;
 using Ionic.Zip;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
@@ -114,6 +115,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal void DoImport()
 		{
+			TrackingHelper.TrackImport("dictionary", "DictionaryConfiguration", ImportExportStep.Launched);
+
 			Debug.Assert(NewConfigToImport != null);
 
 			ImportCustomFields(_importLiftLocation);
@@ -175,9 +178,13 @@ namespace SIL.FieldWorks.XWorks
 					? DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName
 					: DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 			var isCustomizedOriginal = DictionaryConfigurationManagerController.IsConfigurationACustomizedOriginal(NewConfigToImport, configDir, _cache);
-			UsageReporter.SendEvent("DictionaryConfigurationImport", "Import", "Import Config",
-				string.Format("Import of [{0}{1}]:{2}",
-					configType, isCustomizedOriginal ? string.Empty : "-Custom", ImportHappened ? "succeeded" : "failed"), 0);
+			TrackingHelper.TrackImport("dictionary", "DictionaryConfiguration",
+				ImportHappened ? ImportExportStep.Succeeded : ImportExportStep.Failed,
+				new Dictionary<string, string>
+				{
+					{ "configType", configType.ToString() },
+					{ "isCustom", isCustomizedOriginal.ToString() }
+				});
 		}
 
 		private void ImportStyles(string importStylesLocation)

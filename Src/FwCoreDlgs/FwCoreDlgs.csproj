@@ -148,8 +148,7 @@
       <HintPath>..\..\Output\Debug\SIL.Windows.Forms.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
-      <SpecificVersion>True</SpecificVersion>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="ViewsInterfaces">
@@ -167,7 +166,7 @@
     </Reference>
     <Reference Include="ECInterfaces" Condition="'$(OS)'=='Unix'">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>/usr/lib/fieldworks/ECInterfaces.dll</HintPath>
+      <HintPath>$(installation_prefix)/lib/fieldworks/ECInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel">
       <Name>SIL.LCModel</Name>
@@ -204,9 +203,9 @@
       <HintPath>..\..\Output\Debug\icu.net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CommonServiceLocator, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <HintPath>..\..\Output\Debug\CommonServiceLocator.dll</HintPath>
     </Reference>
     <Reference Include="Reporting, Version=1.0.2327.30181, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -239,7 +238,7 @@
     </Reference>
     <Reference Include="SilEncConverters40" Condition="'$(OS)'=='Unix'">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
+      <HintPath>$(installation_prefix)/lib/fieldworks/SilEncConverters40.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -806,4 +805,8 @@
   <PropertyGroup>
     <DistFiles>../../DistFiles</DistFiles>
   </PropertyGroup>
+  <Target Name="AfterBuild">
+    <!-- This monkey patch should keep our program from crashing on startup until we can update to .NET 4.6.2 and fix it right -->
+    <Copy SourceFiles="..\..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll" DestinationFolder="$(OutputPath)" />
+  </Target>
 </Project>

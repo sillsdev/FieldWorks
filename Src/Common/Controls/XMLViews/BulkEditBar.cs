@@ -3788,7 +3788,7 @@ namespace SIL.FieldWorks.Common.Controls
 				findDlg.Text = String.Format(XMLViewsStrings.khtpBulkReplaceTitle);
 				IApp app = m_propertyTable.GetValue<IApp>("App");
 				findDlg.SetDialogValues(m_cache, m_pattern, m_bv.BrowseView.StyleSheet,
-					FindForm(), m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app);
+					FindForm(), m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, ws);
 				findDlg.RestoreAndPersistSettingsIn(m_mediator, m_propertyTable);
 				// Set this AFTER it has the correct WSF!
 				findDlg.ReplaceText = m_tssReplace;
@@ -3932,7 +3932,7 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 				catch
 				{
-					Debug.Fail(string.Format("There was an error creating Delete combo item for column ({0})"), optionLabel);
+					Debug.Fail(string.Format("There was an error creating Delete combo item for column ({0})", optionLabel));
 					// skip buggy column
 					continue;
 				}

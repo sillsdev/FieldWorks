@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,21 +12,22 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
-using SIL.Lift;
-using SIL.Lift.Migration;
-using SIL.Lift.Parsing;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.LexText;
-using SIL.IO;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
+using SIL.Lift;
+using SIL.Lift.Migration;
+using SIL.Lift.Parsing;
+using SIL.IO;
+using SIL.PlatformUtilities;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -141,7 +143,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns></returns>
 		public bool OnFLExLiftBridge(object commandObject)
 		{
-			if (MiscUtils.IsMono)
+			if (Platform.IsMono)
 			{
 				// This is a horrible workaround for a nasty bug in Mono. The toolbar button captures the mouse,
 				// and does not release it before calling this event handler. If we proceed to run the bridge,
@@ -220,9 +222,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true; // We dealt with it.
 		}
 
-		// For send/receive involving LIFT projects, use the lift version "0.13_ldml3" so the version 3 ldml files will exist on a different chorus branch
-		private const string ldml3LiftVersion = "0.13_ldml3";
-
 		/// <summary>
 		/// Handles the "Get and _Merge Lexicon with this Project" menu item.
 		/// </summary>
@@ -235,17 +234,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 
 			StopParser();
-			bool dummy;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, null, FLExBridgeHelper.ObtainLift, null,
-				LcmCache.ModelVersion, ldml3LiftVersion, null,
-				null, out dummy, out _liftPathname);
+				LcmCache.ModelVersion, FLExBridgeHelper.LiftVersion, null,
+				null, out _, out _liftPathname);
 
 			if (!success || string.IsNullOrEmpty(_liftPathname))
 			{
 				_liftPathname = null;
 				return true;
 			}
-			 // Do merciful import.
+			// Do merciful import.
 			ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth);
 			_propertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings, true);
 			_mediator.BroadcastMessage("MasterRefresh", null);
@@ -321,15 +319,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			string url;
 			var projectFolder = Cache.ProjectId.ProjectFolder;
 			var savedState = PrepareToDetectMainConflicts(projectFolder);
-			string dummy;
 			var fullProjectFileName = Path.Combine(projectFolder, Cache.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension);
 			bool dataChanged;
 			using (CopyDictionaryConfigFileToTemp(projectFolder))
 			{
 				var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, SendReceiveUser, FLExBridgeHelper.SendReceive,
-					null, LcmCache.ModelVersion, "0.13",
+					null, LcmCache.ModelVersion, FLExBridgeHelper.LiftVersion,
 					Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
-					out dataChanged, out dummy);
+					out dataChanged, out _);
 				if (!success)
 				{
 					ReportDuplicateBridge();
@@ -542,7 +539,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		public bool OnDisplayCheckForFlexBridgeUpdates(object commandObject, ref UIItemDisplayProperties display)
 		{
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				display.Visible = false;
 				display.Enabled = false;
@@ -556,20 +553,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// The method/delegate that gets invoked when Send/Receive->"Check for _Updates..." menu is clicked.
+		/// Invoked when Send/Receive->"Check for FLEx Bridge _Updates..." menu is clicked.
 		/// </summary>
 		/// <param name="argument">Includes the XML command element of the OnAboutFlexBridge message</param>
-		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate, or somebody shoudl also try to handle the message.</returns>
+		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate, or somebody should also try to handle the message.</returns>
 		public bool OnCheckForFlexBridgeUpdates(object argument)
 		{
-			bool dummy1;
-			string dummy2;
-			FLExBridgeHelper.LaunchFieldworksBridge(
-				GetFullProjectFileName(),
-				SendReceiveUser,
-				FLExBridgeHelper.CheckForUpdates,
-				null, LcmCache.ModelVersion, "0.13", null, null,
-				out dummy1, out dummy2);
+			//FLExBridgeHelper.LaunchFieldworksBridge(
+			//	GetFullProjectFileName(),
+			//	SendReceiveUser,
+			//	FLExBridgeHelper.CheckForUpdates,
+			//	null, LcmCache.ModelVersion, FLExBridgeHelper.LiftVersion, null, null, out _, out _);
+			Process.Start("https://software.sil.org/fieldworks/support/using-sendreceive/flex-bridge/");
 
 			return true;
 		}
@@ -595,14 +590,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate, or somebody shoudl also try to handle the message.</returns>
 		public bool OnAboutFlexBridge(object argument)
 		{
-			bool dummy1;
-			string dummy2;
 			FLExBridgeHelper.LaunchFieldworksBridge(
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.AboutFLExBridge,
-				null, LcmCache.ModelVersion, "0.13", null, null,
-				out dummy1, out dummy2);
+				null, LcmCache.ModelVersion, FLExBridgeHelper.LiftVersion, null, null, out _, out _);
 
 			return true;
 		}
@@ -636,14 +628,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <remarks>If you change the name of this method, you need to check for calls to SendMessage("ViewMessages").</remarks>
 		public bool OnViewMessages(object commandObject)
 		{
-			bool dummy1;
-			string dummy2;
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension),
 								   SendReceiveUser,
 								   FLExBridgeHelper.ConflictViewer,
-								   null, LcmCache.ModelVersion, "0.13", null, BroadcastMasterRefresh,
-								   out dummy1, out dummy2);
+								   null, LcmCache.ModelVersion, FLExBridgeHelper.LiftVersion, null, BroadcastMasterRefresh, out _, out _);
 			if (!success)
 			{
 				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
@@ -680,15 +669,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
 		public bool OnViewLiftMessages(object commandObject)
 		{
-			bool dummy1;
-			string dummy2;
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.LiftConflictViewer,
-				null, LcmCache.ModelVersion, ldml3LiftVersion, null, BroadcastMasterRefresh,
-				out dummy1, out dummy2);
+				null, LcmCache.ModelVersion, FLExBridgeHelper.LiftVersion, null, BroadcastMasterRefresh, out _, out _);
 			if (!success)
 			{
 				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
@@ -779,14 +765,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return true;
 			}
 
-			bool dummyDataChanged;
 			// flexbridge -p <path to fwdata file> -u <username> -v move_lift -g Langprojguid
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(
 				GetFullProjectFileName(),
 				SendReceiveUser,
 				FLExBridgeHelper.MoveLift,
-				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), LcmCache.ModelVersion, ldml3LiftVersion, null, null,
-				out dummyDataChanged, out _liftPathname); // _liftPathname will be null, if no repo was moved.
+				Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), LcmCache.ModelVersion, FLExBridgeHelper.LiftVersion, null, null,
+				out _, out _liftPathname); // _liftPathname will be null, if no repo was moved.
 			if (!success)
 			{
 				ReportDuplicateBridge();
@@ -892,14 +877,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			_liftPathname = GetLiftPathname(liftProjectDir);
 			PrepareToDetectLiftConflicts(liftProjectDir);
-			string dummy;
 			// flexbridge -p <path to fwdata/fwdb file> -u <username> -v send_receive_lift
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(
 				fullProjectFileName,
 				SendReceiveUser,
 				FLExBridgeHelper.SendReceiveLift, // May create a new lift repo in the process of doing the S/R. Or, it may just use the extant lift repo.
-				null, LcmCache.ModelVersion, ldml3LiftVersion, Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
-				out dataChanged, out dummy);
+				null, LcmCache.ModelVersion, FLExBridgeHelper.LiftVersion, Cache.LangProject.DefaultVernacularWritingSystem.Id, null,
+				out dataChanged, out _);
 			if (!success)
 			{
 				ReportDuplicateBridge();
@@ -1190,6 +1174,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		internal const string kChorusNotesExtension = "ChorusNotes";
+
 		/// <summary>
 		/// Export the contents of the lift lexicon.
 		/// </summary>
@@ -1336,13 +1321,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		private void UndoExport()
 		{
-			bool dataChanged;
-			string dummy;
 			// Have FLEx Bridge do its 'undo'
 			// flexbridge -p <project folder name> #-u username -v undo_export_lift)
 			FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, SendReceiveUser,
-				FLExBridgeHelper.UndoExportLift, null, LcmCache.ModelVersion, ldml3LiftVersion, null, null,
-				out dataChanged, out dummy);
+				FLExBridgeHelper.UndoExportLift, null, LcmCache.ModelVersion, FLExBridgeHelper.LiftVersion, null, null,
+				out _, out _);
 		}
 
 		#endregion

@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,8 +7,10 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.LexText.Controls;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks
 {
@@ -19,8 +21,7 @@ namespace SIL.FieldWorks
 	/// ----------------------------------------------------------------------------------------
 	internal partial class WelcomeToFieldWorksDlg : Form
 	{
-		private string m_helpTopic = "khtpWelcomeToFieldworks";
-		private readonly HelpProvider helpProvider;
+		private readonly string m_helpTopic = "khtpWelcomeToFieldworks";
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -61,7 +62,7 @@ namespace SIL.FieldWorks
 		/// <param name="exception">Exception that was thrown if the previously requested
 		/// project could not be opened.</param>
 		/// <param name="showReportingRow">True (usually only on the first run) when we want to show the first-time warning about
-		/// sending google analytics information</param>
+		/// sending analytics information</param>
 		/// ------------------------------------------------------------------------------------
 		public WelcomeToFieldWorksDlg(IHelpTopicProvider helpTopicProvider, StartupException exception, bool showReportingRow)
 		{
@@ -89,13 +90,17 @@ namespace SIL.FieldWorks
 			}
 
 			m_helpTopicProvider = helpTopicProvider;
-			helpProvider = new HelpProvider();
-			helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile");
+			var helpProvider = new HelpProvider
+			{
+				HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile")
+			};
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(m_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			receiveButton.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled();
 		}
 
+		/// <remarks> REVIEW (Hasso) 2021.07: this check box is redundant to the one in the Options dialog,
+		/// and they don't update each other until both dialogs have been closed</remarks>
 		public bool OpenLastProjectCheckboxIsChecked
 		{
 			get { return alwaysOpenLastProjectCheckBox.Checked; }
@@ -197,7 +202,7 @@ namespace SIL.FieldWorks
 			// make sure that the dialog comes up visible and activated.
 			Activate();
 
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 				ReLayoutCorrectly();
 		}
 
@@ -267,13 +272,6 @@ namespace SIL.FieldWorks
 			Hide();
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		private void m_btnExit_Click(object sender, EventArgs e)
 		{
 			m_dlgResult = ButtonPress.Exit;
@@ -298,13 +296,16 @@ namespace SIL.FieldWorks
 			Hide();
 		}
 
-		/// ------------------------------------------------------------------------------------
+		private void m_btnOptions_Click(object sender, EventArgs e)
+		{
+			var optionsDlg = new LexOptionsDlg();
+			optionsDlg.InitBareBones(m_helpTopicProvider);
+			optionsDlg.Show(this);
+		}
+
 		/// <summary>
 		/// Open the context-sensitive help for this dialog.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, m_helpTopic);

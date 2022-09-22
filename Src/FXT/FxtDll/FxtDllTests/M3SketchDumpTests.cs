@@ -5,6 +5,7 @@
 // File: M3SketchDumpTests.cs
 // Responsibility: Andy Black
 
+#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -16,7 +17,6 @@ using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FXT
 {
-#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO
 	/// <summary>
 	/// Summary description for M3SketchDumpTests.
 	/// </summary>
@@ -46,5 +46,5 @@ namespace SIL.FieldWorks.Common.FXT
 			DoDump (SIL.FieldWorks.Common.Utils.BasicUtils.GetTestLangProjDataBaseName(), "TLP M3Sketch dump", m_sFxtSketchGenPath, sAnswerFile, true, true);
 		}
 	}
-#endif
 }
+#endif

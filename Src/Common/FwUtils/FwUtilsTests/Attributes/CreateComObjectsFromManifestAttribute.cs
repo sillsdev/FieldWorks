@@ -6,6 +6,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Security;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils.Attributes
@@ -28,9 +29,9 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		public override ActionTargets Targets => ActionTargets.Suite;
 
 		/// <summary/>
-		public override void BeforeTest(TestDetails testDetails)
+		public override void BeforeTest(ITest test)
 		{
-			base.BeforeTest(testDetails);
+			base.BeforeTest(test);
 
 			m_activationContext = new ActivationContextHelper("FieldWorks.Tests.manifest");
 			m_currentActivation = m_activationContext.Activate();
@@ -59,7 +60,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		}
 
 		/// <summary/>
-		public override void AfterTest(TestDetails testDetails)
+		public override void AfterTest(ITest test)
 		{
 			m_debugProcs.Dispose();
 			CoFreeUnusedLibraries();
@@ -67,7 +68,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 			m_currentActivation.Dispose();
 			m_activationContext.Dispose();
 
-			base.AfterTest(testDetails);
+			base.AfterTest(test);
 		}
 
 		/// <summary>

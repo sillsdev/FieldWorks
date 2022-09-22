@@ -12,6 +12,7 @@ using SIL.LCModel.Utils;
 using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
 using System.IO;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -578,7 +579,7 @@ namespace SIL.FieldWorks.Common.Controls
 			// m_progressDialog.ShowInTaskBar being true can result in m_progressDialog.ShowDialog(null)
 			// acting as though we called m_progressDialog.ShowInTaskBar(m_progressDialog), which of
 			// course throws an exception.  This is really a bug in Mono's Form.ShowDialog implementation.
-			if (Application.OpenForms.Count == 0 && fDisplayUi && !MiscUtils.IsUnix)
+			if (Application.OpenForms.Count == 0 && fDisplayUi && !Platform.IsUnix)
 			{
 				if (m_synchronizeInvoke.InvokeRequired)
 					m_synchronizeInvoke.Invoke((Action)(() => m_progressDialog.ShowInTaskbar = true), null);

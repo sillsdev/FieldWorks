@@ -56,20 +56,6 @@ fi
 
 "$share/setup-user"
 
-if ! "$lib/cpol-action" check
-then
-	zenity --error --text="\
-This software cannot be run. Essential parts of it require agreement to the Code Project Open License.
-
-If you wish to indicate your agreement to this license, please reconfigure the package.
-
-To do this, launch Synaptic. Search for fieldworks-applications. Click 'fieldworks-applications' in the list and choose Package > Configure... If you receive an error message saying you need 'libgnome2-perl', then install that package and try again.
-
-You can also reconfigure the package from the commandline by running:
-\tsudo dpkg-reconfigure fieldworks-applications"
-	exit 1
-fi
-
 cd "$lib"; RUNMODE="INSTALLED" . environ; cd $OLDPWD
 # set the LANG enviroment variable according to the value of UserWs in the registry.
 # unfortunately, there doesn't seem to be a Mono registry access utility, so we'll

@@ -42,13 +42,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		#region Data Members
 
 		private IWfiWordform m_wordform;
-		private LcmCache m_cache;
 		private Mediator m_mediator;
 		private PropertyTable m_propertyTable;
 		private XmlNode m_configurationNode;
 		private RecordBrowseView m_currentBrowseView = null;
 		private readonly Dictionary<int, XmlNode> m_configurationNodes = new Dictionary<int, XmlNode>(3);
-		private readonly Dictionary<int, RecordClerk> m_recordClerks = new Dictionary<int, RecordClerk>(3);
+		private RecordClerk m_recordClerk;
 		private XMLViewsDataCache m_specialSda;
 		private int m_currentSourceFakeFlid;
 
@@ -115,6 +114,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
+		private void DisposeRecordClerk(RecordClerk clerk)
+		{
+			if (clerk != null)
+			{
+				// Take it out of the property table and dispose it
+				m_propertyTable.RemoveProperty("RecordClerk-" + clerk.Id);
+				clerk.Dispose();
+			}
+		}
+
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
@@ -130,19 +139,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				{
 					components.Dispose();
 				}
-				foreach (RecordClerk clerk in m_recordClerks.Values)
-				{
-					// Take it out of the Mediator and Dispose it.
-					m_propertyTable.RemoveProperty("RecordClerk-" + clerk.Id);
-					clerk.Dispose();
-				}
-				m_recordClerks.Clear();
+				DisposeRecordClerk(m_recordClerk);
 				m_configurationNodes.Clear();
 			}
 			base.Dispose( disposing );
 
 			m_wordform = null;
-			m_cache = null;
 			m_propertyTable.RemoveProperty("IgnoreStatusPanel");
 			m_mediator = null;
 			m_propertyTable = null;
@@ -272,7 +274,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Debug.Assert(configurationNode != null);
 			Debug.Assert(sourceObject != null && (sourceObject is IWfiWordform || sourceObject is IWfiAnalysis || sourceObject is IWfiGloss));
 
-			m_cache = sourceObject.Cache;
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			m_configurationNode = configurationNode;
@@ -303,23 +304,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var xpath = String.Format(xpathBase, "WordformConcordanceBrowseView", "WordformInSegmentsOccurrenceList");
 			var configNode = m_configurationNode.SelectSingleNode(xpath);
 			// And create the RecordClerks.
-			var clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, configNode, true);
-			clerk.ProgressReporter = m_progAdvInd;
-			m_recordClerks[WfiWordformTags.kClassId] = clerk;
 			m_configurationNodes[WfiWordformTags.kClassId] = configNode;
 
 			xpath = String.Format(xpathBase, "AnalysisConcordanceBrowseView", "AnalysisInSegmentsOccurrenceList");
 			configNode = m_configurationNode.SelectSingleNode(xpath);
-			clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, configNode, true);
-			clerk.ProgressReporter = m_progAdvInd;
-			m_recordClerks[WfiAnalysisTags.kClassId] = clerk;
 			m_configurationNodes[WfiAnalysisTags.kClassId] = configNode;
 
 			xpath = String.Format(xpathBase, "GlossConcordanceBrowseView", "GlossInSegmentsOccurrenceList");
 			configNode = m_configurationNode.SelectSingleNode(xpath);
-			clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, configNode, true);
-			clerk.ProgressReporter = m_progAdvInd;
-			m_recordClerks[WfiGlossTags.kClassId] = clerk;
 			m_configurationNodes[WfiGlossTags.kClassId] = configNode;
 
 			Debug.Assert(m_wordform != null);
@@ -499,8 +491,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			//
 			resources.ApplyResources(this.m_toolStripFilterStatusLabel, "m_toolStripFilterStatusLabel");
 			this.m_toolStripFilterStatusLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top)
-						| System.Windows.Forms.ToolStripStatusLabelBorderSides.Right)
-						| System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+			| System.Windows.Forms.ToolStripStatusLabelBorderSides.Right)
+			| System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
 			this.m_toolStripFilterStatusLabel.BorderStyle = System.Windows.Forms.Border3DStyle.Sunken;
 			this.m_toolStripFilterStatusLabel.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
 			this.m_toolStripFilterStatusLabel.Name = "m_toolStripFilterStatusLabel";
@@ -509,8 +501,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			//
 			resources.ApplyResources(this.m_toolStripRecordStatusLabel, "m_toolStripRecordStatusLabel");
 			this.m_toolStripRecordStatusLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top)
-						| System.Windows.Forms.ToolStripStatusLabelBorderSides.Right)
-						| System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+			| System.Windows.Forms.ToolStripStatusLabelBorderSides.Right)
+			| System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
 			this.m_toolStripRecordStatusLabel.BorderStyle = System.Windows.Forms.Border3DStyle.Sunken;
 			this.m_toolStripRecordStatusLabel.Margin = new System.Windows.Forms.Padding(1, 2, 2, 2);
 			this.m_toolStripRecordStatusLabel.Name = "m_toolStripRecordStatusLabel";
@@ -575,6 +567,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				{
 					// Get rid of old one.
 					m_currentBrowseView.Hide();
+					m_currentBrowseView.CheckBoxChanged -= m_currentBrowseView_CheckBoxChanged;
+					m_currentBrowseView.BrowseViewer.SelectionChanged -= BrowseViewer_SelectionChanged;
+					m_currentBrowseView.BrowseViewer.FilterChanged -= BrowseViewer_FilterChanged;
 					m_pnlConcBrowseHolder.Controls.Remove(m_currentBrowseView);
 					m_currentBrowseView.Dispose();
 					m_currentBrowseView = null;
@@ -589,23 +584,25 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						throw new InvalidOperationException("Class not recognized.");
 					case WfiWordformTags.kClassId:
 						configurationNode = m_configurationNodes[WfiWordformTags.kClassId];
-						clerk = m_recordClerks[WfiWordformTags.kClassId];
 						break;
 					case WfiAnalysisTags.kClassId:
 						configurationNode = m_configurationNodes[WfiAnalysisTags.kClassId];
-						clerk = m_recordClerks[WfiAnalysisTags.kClassId];
 						break;
 					case WfiGlossTags.kClassId:
 						configurationNode = m_configurationNodes[WfiGlossTags.kClassId];
-						clerk = m_recordClerks[WfiGlossTags.kClassId];
 						break;
 				}
-				clerk.OwningObject = selObj;
+
+				// Dispose of the old record clerk and create one for the new Source analysis
+				DisposeRecordClerk(m_recordClerk);
+				m_recordClerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, configurationNode, true);
+				m_recordClerk.ProgressReporter = m_progAdvInd;
+				m_recordClerk.OwningObject = selObj;
 
 				m_currentBrowseView = new RecordBrowseView();
 				m_currentBrowseView.Init(m_mediator, m_propertyTable, configurationNode);
 				// Ensure that the list gets updated whenever it's reloaded.  See LT-8661.
-				var sPropName = clerk.Id + "_AlwaysRecomputeVirtualOnReloadList";
+				var sPropName = m_recordClerk.Id + "_AlwaysRecomputeVirtualOnReloadList";
 				m_propertyTable.SetProperty(sPropName, true, false);
 				m_propertyTable.SetPropertyPersistence(sPropName, false);
 				m_currentBrowseView.Dock = DockStyle.Fill;
@@ -719,8 +716,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					// Make sure the correct updated occurrences will be computed when needed in Refresh of the
 					// occurrences pane and anywhere else.
 					concSda.UpdateExactAnalysisOccurrences(src);
-					var clerk = m_recordClerks[newTarget.ClassID];
-					var clerkSda = (ConcDecorator)((DomainDataByFlidDecoratorBase) clerk.VirtualListPublisher).BaseSda;
+
+					var clerkSda = (ConcDecorator)((DomainDataByFlidDecoratorBase) m_recordClerk.VirtualListPublisher).BaseSda;
 					clerkSda.UpdateExactAnalysisOccurrences(newTarget);
 				});
 

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -225,7 +225,7 @@ namespace SIL.FieldWorks.XWorks
 			testObj.PropChanged(m_sections[0].Hvo, ScrSectionTags.kflidContent, 0, 0, 1);
 			VerifyList(expected, testObj.InterestingTexts, "deleted Scripture texts are removed (ContentsOA)");
 			VerifyScriptureList(testObj, expectedScripture, "deleted Scripture texts are removed from ScriptureTexts (ContentsOA");
-			Assert.IsNull(m_lastTextsChangedArgs, "should NOT get change notification deleting Scripture when not included");
+			Assert.That(m_lastTextsChangedArgs, Is.Null, "should NOT get change notification deleting Scripture when not included");
 
 			((MockStText)expected[1]).IsValidObject = false;
 			expected.RemoveAt(1);

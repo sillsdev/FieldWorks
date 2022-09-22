@@ -1461,7 +1461,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 
 				// FWNX-590
-				if (MiscUtils.IsMono)
+				if (Platform.IsMono)
 					this.VerticalScroll.Value = scrollbarPosition;
 
 				if (m_currentSlice != null)

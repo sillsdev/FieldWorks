@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks.LexText {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class LexTextStrings {
@@ -382,24 +382,6 @@ namespace SIL.FieldWorks.XWorks.LexText {
         public static string ksWhenToTransduceCitForms {
             get {
                 return ResourceManager.GetString("ksWhenToTransduceCitForms", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Restart FieldWorks to complete the User Interface language change..
-        /// </summary>
-        public static string LexTextApp_RestartToChangeUI_Content {
-            get {
-                return ResourceManager.GetString("LexTextApp_RestartToChangeUI_Content", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to User Interface Language Changed.
-        /// </summary>
-        public static string LexTextApp_RestartToChangeUI_Title {
-            get {
-                return ResourceManager.GetString("LexTextApp_RestartToChangeUI_Title", resourceCulture);
             }
         }
     }

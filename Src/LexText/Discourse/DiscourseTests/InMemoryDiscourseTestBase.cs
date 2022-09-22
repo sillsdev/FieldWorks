@@ -61,11 +61,5 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		#endregion
-
-		#region test data creation
-
-
-		#endregion
-
 	}
 }

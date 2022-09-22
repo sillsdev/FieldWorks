@@ -1921,8 +1921,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			CaseFunctions cf;
 			if (!m_caseFunctions.TryGetValue(ws, out cf))
 			{
-				string icuLocale = m_cache.ServiceLocator.WritingSystemManager.Get(ws).IcuLocale;
-				cf = new CaseFunctions(icuLocale);
+				cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(ws));
 				m_caseFunctions[ws] = cf;
 			}
 			return cf;

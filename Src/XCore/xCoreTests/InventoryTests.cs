@@ -22,7 +22,7 @@ namespace XCore
 		/// <summary>
 		/// Initialize everything...individual tests check what we got.
 		/// </summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void Setup()
 		{
 			Dictionary<string, string[]> keyAttrs = new Dictionary<string, string[]>();
@@ -46,10 +46,10 @@ namespace XCore
 		void Check(XmlNode node, string target)
 		{
 			if (node == null)
-				Assert.IsNotNull(node, "expected node not found: " + target);
+				Assert.That(node, Is.Not.Null, "expected node not found: " + target);
 			XmlNode match = node.Attributes["match"];
 			if (match == null)
-				Assert.IsNotNull(match, "expected node lacks match attr: " + target);
+				Assert.That(match, Is.Not.Null, "expected node lacks match attr: " + target);
 			Assert.AreEqual(target, node.Attributes["match"].Value);
 		}
 		XmlNode CheckBaseNode(string name, string[] keyvals, string target)
@@ -251,7 +251,7 @@ namespace XCore
 		/// <summary>
 		/// Initialize everything...load a set of fragments from a file.
 		/// </summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void Setup()
 		{
 			XmlDocument doc = new XmlDocument();

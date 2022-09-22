@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			AssertThatXmlIn.String(xliffDocs[WsEn].ToString()).HasSpecifiedNumberOfMatchesForXpath(sourceXPath, 1);
 			var sourceElt = xliffDocs[WsEn].XPathSelectElement(sourceXPath);
 			// ReSharper disable once PossibleNullReferenceException -- we just asserted there is 1 sourceElt
-			Assert.That(sourceElt.ToString(), Is.StringContaining(source));
+			Assert.That(sourceElt.ToString(), Does.Contain(source));
 		}
 
 		[Test]
@@ -225,6 +225,59 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		}
 
 		[Test]
+		public void MissingDataDoesNotThrow()
+		{
+			const string id = "Adjective";
+			const string guid = "30d07580-5052-4d91-bc24-469b8b2d7df9";
+			const string abbrEn = "adj";
+			const string abbrZh = "形";
+			const string termEn = "Adjective";
+			const string termEs = "Adjetivo";
+			const string termZh = "形容词";
+			const string defEn = "An adjective is a part of speech whose members modify nouns.";
+			const string defEs = "Un adjectif est un modificateur du nom.";
+			var xliffDocs = GoldEticToXliff.ConvertGoldEticToXliff(TestFileName,
+				XDocument.Parse(@"<eticPOSList><source/><item type='category' id='" + id + @"' guid='" + guid + @"'>
+		<abbrev ws='" + WsEn + @"'>" + abbrEn + @"</abbrev>
+		<abbrev ws='" + WsZh + @"'>" + abbrZh + @"</abbrev>
+		<term ws='" + WsEn + @"'>" + termEn + @"</term>
+		<term ws='" + WsEs + @"'>" + termEs + @"</term>
+		<term ws='" + WsZh + @"'>" + termZh + @"</term>
+		<def ws='" + WsEn + @"'>" + defEn + @"</def>
+		<def ws='" + WsEs + @"'>" + defEs + @"</def>
+	</item>
+</eticPOSList>"));
+
+
+			Assert.AreEqual(3, xliffDocs.Count);
+			Assert.Contains(WsEn, xliffDocs.Keys);
+			Assert.Contains(WsEs, xliffDocs.Keys);
+			Assert.Contains(WsZh, xliffDocs.Keys);
+
+			var esXliff = xliffDocs[WsEs].ToString();
+			var zhXliff = xliffDocs[WsZh].ToString();
+
+			const string itemXpath = "/xliff/file/body/group[@id='" + guid + "_" + id + "']";
+			AssertThatXmlIn.String(esXliff).HasSpecifiedNumberOfMatchesForXpath(itemXpath, 1);
+			AssertThatXmlIn.String(zhXliff).HasSpecifiedNumberOfMatchesForXpath(itemXpath, 1);
+			const string tuXpath = itemXpath + "/trans-unit";
+			AssertThatXmlIn.String(esXliff).HasNoMatchForXpath(
+				tuXpath + "[@id='" + guid + "_" + id + "_abbr']/target");
+			AssertThatXmlIn.String(esXliff).HasSpecifiedNumberOfMatchesForXpath(
+				tuXpath + "[@id='" + guid + "_" + id + "_term']/target[text()='" + termEs + "']", 1);
+			AssertThatXmlIn.String(esXliff).HasSpecifiedNumberOfMatchesForXpath(
+				tuXpath + "[@id='" + guid + "_" + id + "_def']/target[text()='" + defEs + "']", 1);
+			AssertThatXmlIn.String(esXliff).HasNoMatchForXpath($"{tuXpath}[@id='{guid}_{id}_cit']/target");
+			AssertThatXmlIn.String(zhXliff).HasSpecifiedNumberOfMatchesForXpath(
+				tuXpath + "[@id='" + guid + "_" + id + "_abbr']/target[text()='" + abbrZh + "']", 1);
+			AssertThatXmlIn.String(zhXliff).HasSpecifiedNumberOfMatchesForXpath(
+				tuXpath + "[@id='" + guid + "_" + id + "_term']/target[text()='" + termZh + "']", 1);
+			AssertThatXmlIn.String(zhXliff).HasNoMatchForXpath(
+				tuXpath + "[@id='" + guid + "_" + id + "_def']/target");
+			AssertThatXmlIn.String(zhXliff).HasNoMatchForXpath($"{tuXpath}[@id='{guid}_{id}_cit']/target");
+		}
+
+		[Test]
 		public void ConvertsSubItems()
 		{
 			const string parentId = "ad-position";
@@ -352,7 +405,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		/// <summary>
 		/// Test with an export of TranslatedLists from FieldWorks (you must add a second analysis language to enable this option)
 		/// </summary>
-		[Ignore]
+		[Ignore("Facilitates human inspection of output files")]
 		[Category("ByHand")]
 		[Test]
 		public void IntegrationTest()

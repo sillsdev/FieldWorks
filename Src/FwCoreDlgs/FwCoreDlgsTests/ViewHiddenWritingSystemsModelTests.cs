@@ -150,7 +150,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// SUT
 			testModel.Delete(itemHid);
 
-			Assert.That(confirmDeleteLabel, Is.StringEnding(wsHid.DisplayLabel));
+			Assert.That(confirmDeleteLabel, Does.EndWith(wsHid.DisplayLabel));
 			Assert.That(testModel.DeletedWritingSystems, Is.EquivalentTo(new[] { wsHid }), "The hidden WS should be in the list to be deleted");
 			Assert.That(testModel.AddedWritingSystems, Is.Empty, "Nothing should be in the list to be added");
 		}
@@ -176,7 +176,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// SUT
 			testModel.Delete(itemHid);
 
-			Assert.That(confirmDeleteLabel, Is.StringEnding(wsHid.DisplayLabel));
+			Assert.That(confirmDeleteLabel, Does.EndWith(wsHid.DisplayLabel));
 			Assert.That(testModel.Items, Is.EquivalentTo(new[] { itemEn, itemHid }), "Both WS's remain visible in the dialog");
 			Assert.That(testModel.DeletedWritingSystems, Is.Empty, "Nothing should be in the list to be deleted");
 			Assert.That(testModel.AddedWritingSystems, Is.Empty, "Nothing should be in the list to be added");

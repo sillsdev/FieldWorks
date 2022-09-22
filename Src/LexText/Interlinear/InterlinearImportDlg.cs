@@ -1,12 +1,13 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-
+using DesktopAnalytics;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -62,6 +63,7 @@ namespace SIL.FieldWorks.IText
 				dlg.Maximum = 500;
 				using (new WaitCursor(this, true))
 				{
+
 					var import = new LinguaLinksImport(m_cache,
 						Path.Combine(Path.GetTempPath(), "LanguageExplorer" + Path.DirectorySeparatorChar),
 						Path.Combine(FwDirectoryFinder.CodeDirectory, Path.Combine("Language Explorer", "Import" + Path.DirectorySeparatorChar)));
@@ -69,8 +71,9 @@ namespace SIL.FieldWorks.IText
 					import.Error += import_Error;
 					try
 					{
-						var fSuccess = (bool) dlg.RunTask(true, import.ImportInterlinear, m_tbFilename.Text);
-						if (fSuccess)
+						TrackingHelper.TrackImport("textsWords", "FlexText", ImportExportStep.Launched);
+						var importSucceeded = (bool) dlg.RunTask(true, import.ImportInterlinear, m_tbFilename.Text);
+						if (importSucceeded)
 						{
 							DialogResult = DialogResult.OK; // only 'OK' if not exception
 							var firstNewText = import.FirstNewText;
@@ -87,6 +90,9 @@ namespace SIL.FieldWorks.IText
 							MessageBox.Show(this, message, ITextStrings.ksImportFailed, MessageBoxButtons.OK,
 								MessageBoxIcon.Warning);
 						}
+
+						TrackingHelper.TrackImport("textsWords", "FlexText",
+							importSucceeded ? ImportExportStep.Succeeded : ImportExportStep.Failed);
 						Close();
 					}
 					catch (WorkerThreadException ex)
@@ -96,7 +102,8 @@ namespace SIL.FieldWorks.IText
 						MessageBox.Show(String.Format(import.ErrorMessage, ex.InnerException.Message),
 							ITextStrings.ksUnhandledError,
 							MessageBoxButtons.OK, MessageBoxIcon.Error);
-						DialogResult = DialogResult.Cancel;	// only 'OK' if not exception
+						DialogResult = DialogResult.Cancel; // only 'OK' if not exception
+						TrackingHelper.TrackImport("textsWords", "FlexText", ImportExportStep.Failed);
 						Close();
 					}
 				}

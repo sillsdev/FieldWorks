@@ -1,23 +1,11 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: HelperClasses.cs
-// Responsibility: TE Team
-// Last reviewed:
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections;
-using System.IO;
-using System.Windows.Forms;
 using System.Drawing;
-using System.Reflection;
-using System.Diagnostics;
-using XCore;
-using SIL.LCModel.Utils;
+using System.Windows.Forms;
 
 namespace SIL.FieldWorks.Common.UIAdapters
 {
@@ -475,64 +463,6 @@ namespace SIL.FieldWorks.Common.UIAdapters
 
 	#endregion
 
-	#region ToolBarPopupInfo Class
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Objects of this class type are used to pass information between a toolbar adapter and
-	/// handlers of "DropDown" commands. DropDown commands are issued via the message mediator
-	/// when a popup-type toolbar button's popup arrow is clicked.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public class ToolBarPopupInfo
-	{
-		private string m_name;
-		private Control m_ctrl;
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Instantiates a new, uninitialized ToolBarPopupInfo object.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ToolBarPopupInfo()
-		{
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Instantiates a new, initialized ToolBarPopupInfo object.
-		/// </summary>
-		/// <param name="name">Toolbar item's name.</param>
-		/// ------------------------------------------------------------------------------------
-		public ToolBarPopupInfo(string name)
-		{
-			m_name = name;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets the name of the toolbar popup item.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string Name
-		{
-			get {return m_name;}
-			set {m_name = value;}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets the control to be popped-up.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public Control Control
-		{
-			get {return m_ctrl;}
-			set {m_ctrl = value;}
-		}
-	}
-
-	#endregion
-
 	#region WindowListInfo Class
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -716,89 +646,6 @@ namespace SIL.FieldWorks.Common.UIAdapters
 			// assigned later.
 			Name = Guid.NewGuid().ToString();
 		}
-	}
-
-	#endregion
-
-	#region AdapterHelper
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	///
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public class AdapterHelper
-	{
-		private	static Assembly m_uiAdapterAssembly = null;
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Loads the UI adapter library DLL.
-		/// </summary>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		private static bool LoadUIAdapterAssembly()
-		{
-			if (m_uiAdapterAssembly != null)
-				return true;
-
-			//string appPath = Application.StartupPath;
-			// Get the directory where our DLLs live (Substring(6 strips off file//).
-			// The old version above fails when the executing application is the C#Refactory test runner.
-			string appPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase.Substring(MiscUtils.IsUnix ? 5 : 6));
-			try
-			{
-				// Load an adapter library .dll
-				m_uiAdapterAssembly = Assembly.LoadFrom(Path.Combine(appPath, "TeUIAdapters.dll"));
-			}
-			catch
-			{
-				MessageBox.Show(String.Format(
-					UIAdapterInterfacesStrings.ksCannotLoadX, Path.Combine(appPath, "TeUIAdapters.dll")),
-					UIAdapterInterfacesStrings.ksError,
-					MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
-					MessageBoxOptions.ServiceNotification);
-			}
-
-			Debug.Assert(m_uiAdapterAssembly != null, "Could not find the adapter library DLL");
-			return (m_uiAdapterAssembly != null);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns>An instance of a sidebar/information bar adapter.</returns>
-		/// ------------------------------------------------------------------------------------
-		public static ISIBInterface CreateSideBarInfoBarAdapter()
-		{
-			if (MiscUtils.RunningTests || !LoadUIAdapterAssembly())
-				return null;
-
-			ISIBInterface sibAdapter = (ISIBInterface)m_uiAdapterAssembly.CreateInstance(
-				"SIL.FieldWorks.Common.UIAdapters.SIBAdapter");
-
-			Debug.Assert(sibAdapter != null, "Could not create a side bar/info. bar adapter.");
-			return sibAdapter;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// <returns>An instance of a menu adapter.</returns>
-		/// ------------------------------------------------------------------------------------
-		public static ITMAdapter CreateTMAdapter()
-		{
-			if (MiscUtils.RunningTests || !LoadUIAdapterAssembly())
-				return null;
-
-			ITMAdapter tmAdapter = (ITMAdapter)m_uiAdapterAssembly.CreateInstance(
-				"SIL.FieldWorks.Common.UIAdapters.TMAdapter");
-
-			Debug.Assert(tmAdapter != null, "Could not create a toolbar/menu adapter.");
-			return tmAdapter;
-		}
-
 	}
 
 	#endregion

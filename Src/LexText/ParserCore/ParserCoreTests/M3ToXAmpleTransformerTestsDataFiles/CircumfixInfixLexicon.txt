@@ -9,7 +9,7 @@
 \lx 14990
 \g perfective
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 15021
 \a ́ {14992}
 \eType infix
@@ -55,7 +55,7 @@
 \lx 15147
 \g InfAbsInfl
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 15132
 \a a {15149}
 \a oXXXX {15150}
@@ -69,7 +69,7 @@
 \lx 15147
 \g InfAbsInfl
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 15136
 \a a {15149}
 \a oXXXX {15150}

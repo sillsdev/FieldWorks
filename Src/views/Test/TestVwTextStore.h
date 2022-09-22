@@ -1173,7 +1173,7 @@ namespace TestViews
 			IVwSelectionPtr qselTemp;
 			CheckHr(m_qrootb->MakeSimpleSel(true, true, false, true, &qselTemp));
 			cchExpectedReturnLength = min(kcch1RequestedChars, (ULONG)wcslen(s_rgpsz2[0]));
-			unitpp::assert_true("Unit test not set up correctly, buffer should be smaller than the data.", wcslen(s_rgpsz2[0]) > wcslen(rgch1Buffer));
+			unitpp::assert_true("Unit test not set up correctly, buffer should be smaller than the data.", wcslen(s_rgpsz2[0]) > sizeof rgch1Buffer / sizeof *rgch1Buffer);
 
 			// SUT
 			LockGetText lgt1(m_qtxs, 0, -1, rgch1Buffer, kcch1RequestedChars + 1, &tri, 1);

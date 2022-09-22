@@ -19,7 +19,7 @@ namespace XCore
 	{
 		protected XmlIncluder m_includer;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureInit()
 		{
 			SimpleResolver resolver = new SimpleResolver();
@@ -43,7 +43,7 @@ namespace XCore
 
 			Dictionary<string, XmlDocument> cachedDoms = new Dictionary<string, XmlDocument>();
 			m_includer.ReplaceNode(cachedDoms, doc.SelectSingleNode("//include"));
-			Assert.IsNull(doc.SelectSingleNode("include"));
+			Assert.That(doc.SelectSingleNode("include"), Is.Null);
 			Assert.AreEqual(2, doc.SelectNodes("blah/name").Count);
 		}
 
@@ -54,7 +54,7 @@ namespace XCore
 			doc.LoadXml(@"<blah><include path='IncludeXmlTestSource.xml' query='food/fruit/name'/></blah>");
 
 			m_includer.ProcessDom("TestMainFile", doc);
-			Assert.IsNull(doc.SelectSingleNode("include"));
+			Assert.That(doc.SelectSingleNode("include"), Is.Null);
 			Assert.AreEqual(2, doc.SelectNodes("blah/name").Count);
 		}
 
@@ -68,8 +68,8 @@ namespace XCore
 			doc.LoadXml(@"<blah><ack><include path='$this' query='blah/drinks'/></ack><drinks><soda><name txt='pepsi'/><name txt='coke'/></soda></drinks></blah>");
 
 			m_includer.ProcessDom("TestMainFile", doc);
-			Assert.IsNull(doc.SelectSingleNode("//includeBase"), "the processor should remove the <includeBase/>");
-			Assert.IsNull(doc.SelectSingleNode("include"));
+			Assert.That(doc.SelectSingleNode("//includeBase"), Is.Null, "the processor should remove the <includeBase/>");
+			Assert.That(doc.SelectSingleNode("include"), Is.Null);
 			Assert.AreEqual(2, doc.SelectNodes("blah/drinks/soda/name").Count);//should be two sodas
 		}
 
@@ -83,8 +83,8 @@ namespace XCore
 			doc.LoadXml(@"<blah><ack><includeBase path='$this'/><include query='blah/drinks'/></ack><drinks><soda><name txt='pepsi'/><name txt='coke'/></soda></drinks></blah>");
 
 			m_includer.ProcessDom("TestMainFile", doc);
-			Assert.IsNull(doc.SelectSingleNode("//includeBase"), "the processor should remove the <includeBase/>");
-			Assert.IsNull(doc.SelectSingleNode("include"));
+			Assert.That(doc.SelectSingleNode("//includeBase"), Is.Null, "the processor should remove the <includeBase/>");
+			Assert.That(doc.SelectSingleNode("include"), Is.Null);
 			Assert.AreEqual(2, doc.SelectNodes("blah/drinks/soda/name").Count);//should be two sodas
 		}
 
@@ -111,9 +111,9 @@ namespace XCore
 			doc.LoadXml(docXml);
 
 			m_includer.ProcessDom("TestMainFile", doc);
-			Assert.IsNull(doc.SelectSingleNode("//includeBase"), "the processor should remove the <includeBase/>");
-			Assert.IsNull(doc.SelectSingleNode("include"));
-			Assert.IsNull(doc.SelectSingleNode("overrides"));
+			Assert.That(doc.SelectSingleNode("//includeBase"), Is.Null, "the processor should remove the <includeBase/>");
+			Assert.That(doc.SelectSingleNode("include"), Is.Null);
+			Assert.That(doc.SelectSingleNode("overrides"), Is.Null);
 			Assert.AreEqual(3, doc.SelectNodes("blah/meats/name").Count);
 			Assert.AreEqual(3, doc.SelectSingleNode("blah/meats/name[@txt='pork']").Attributes.Count);
 			// make sure existing attribute didn't change
@@ -139,8 +139,8 @@ namespace XCore
 			doc.LoadXml(@"<blah><includeBase path='IncludeXmlTestSource.xml'/><include query='food/veggies'/></blah>");
 
 			m_includer.ProcessDom("TestMainFile", doc);
-			Assert.IsNull(doc.SelectSingleNode("//includeBase"), "the processor should remove the <includeBase/>");
-			Assert.IsNull(doc.SelectSingleNode("include"));
+			Assert.That(doc.SelectSingleNode("//includeBase"), Is.Null, "the processor should remove the <includeBase/>");
+			Assert.That(doc.SelectSingleNode("include"), Is.Null);
 			Assert.AreEqual(2, doc.SelectNodes("blah/veggies/name").Count);//should be two vegetables
 		}
 
@@ -152,8 +152,8 @@ namespace XCore
 			doc.LoadXml(@"<blah><includeBase path='IncludeXmlTestSourceB.xml'/><include query='food/veggies'/></blah>");
 
 			m_includer.ProcessDom("TestMainFile", doc);
-			Assert.IsNull(doc.SelectSingleNode("//includeBase"), "the processor should remove the <includeBase/>");
-			Assert.IsNull(doc.SelectSingleNode("include"));
+			Assert.That(doc.SelectSingleNode("//includeBase"), Is.Null, "the processor should remove the <includeBase/>");
+			Assert.That(doc.SelectSingleNode("include"), Is.Null);
 			Assert.AreEqual(2, doc.SelectNodes("blah/veggies/thing").Count);//should be tomato and cooking banana
 		}
 	}

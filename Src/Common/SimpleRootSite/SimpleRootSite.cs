@@ -2194,7 +2194,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					if (dlg.ShowDialog() != DialogResult.OK)
 						return true;
 
-					if (MiscUtils.IsUnix)
+					if (Platform.IsUnix)
 					{
 						using (PageSetupDialog pageDlg = new PageSetupDialog())
 						{
