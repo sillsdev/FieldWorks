@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,6 +28,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
 	internal class FdoLexicon : DisposableBase, Lexicon, WordAnalyses, IVwNotifyChange
 	{
+		internal const string AddedByParatext = "Added by Paratext";
 		private IParser m_parser;
 		private readonly LcmCache m_cache;
 		private readonly string m_scrTextName;
@@ -673,6 +674,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			ITsString tss = TsStringUtils.MakeString(key.LexicalForm.Normalize(NormalizationForm.FormD), DefaultVernWs);
 			var msa = new SandboxGenericMSA {MsaType = (key.Type == LexemeType.Stem) ? MsaType.kStem : MsaType.kUnclassified};
 			ILexEntry entry = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(GetMorphTypeForLexemeType(key.Type), tss, (ITsString) null, msa);
+			entry.ImportResidue = TsStringUtils.MakeString(AddedByParatext, Cache.DefaultAnalWs);
 			m_homographNumbers.GetOrCreateValue(entry).Number = key.Homograph;
 
 			var homographKey = new LexemeKey(key.Type, key.LexicalForm);
