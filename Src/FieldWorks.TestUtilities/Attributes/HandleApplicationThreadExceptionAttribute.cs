@@ -1,10 +1,4 @@
-<<<<<<< HEAD:Src/FieldWorks.TestUtilities/Attributes/HandleApplicationThreadExceptionAttribute.cs
 // Copyright (c) 2017-2020 SIL International
-||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/Attributes/HandleApplicationThreadExceptionAttribute.cs
-﻿// Copyright (c) 2017 SIL International
-=======
-// Copyright (c) 2017 SIL International
->>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/Attributes/HandleApplicationThreadExceptionAttribute.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -25,40 +19,16 @@ namespace FieldWorks.TestUtilities.Attributes
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Method, AllowMultiple = true)]
 	public class HandleApplicationThreadExceptionAttribute : TestActionAttribute
 	{
-<<<<<<< HEAD:Src/FieldWorks.TestUtilities/Attributes/HandleApplicationThreadExceptionAttribute.cs
 		/// <inheritdoc />
-		public override void BeforeTest(ITest testDetails)
-||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/Attributes/HandleApplicationThreadExceptionAttribute.cs
-		/// <summary>
-		/// Method called before each test
-		/// </summary>
-		public override void BeforeTest(TestDetails testDetails)
-=======
-		/// <summary>
-		/// Method called before each test
-		/// </summary>
 		public override void BeforeTest(ITest test)
->>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/Attributes/HandleApplicationThreadExceptionAttribute.cs
 		{
 			base.BeforeTest(test);
 
 			Application.ThreadException += OnThreadException;
 		}
 
-<<<<<<< HEAD:Src/FieldWorks.TestUtilities/Attributes/HandleApplicationThreadExceptionAttribute.cs
 		/// <inheritdoc />
-		public override void AfterTest(ITest testDetails)
-||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/Attributes/HandleApplicationThreadExceptionAttribute.cs
-		/// <summary>
-		/// Method called after each test
-		/// </summary>
-		public override void AfterTest(TestDetails testDetails)
-=======
-		/// <summary>
-		/// Method called after each test
-		/// </summary>
 		public override void AfterTest(ITest test)
->>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/Attributes/HandleApplicationThreadExceptionAttribute.cs
 		{
 			base.AfterTest(test);
 

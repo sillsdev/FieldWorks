@@ -6,13 +6,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Security;
 using NUnit.Framework;
-<<<<<<< HEAD:Src/FieldWorks.TestUtilities/Attributes/CreateComObjectsFromManifestAttribute.cs
+using NUnit.Framework.Interfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using NUnit.Framework.Interfaces;
-||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/Attributes/CreateComObjectsFromManifestAttribute.cs
-=======
-using NUnit.Framework.Interfaces;
->>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/Attributes/CreateComObjectsFromManifestAttribute.cs
+
 using SIL.PlatformUtilities;
 
 namespace FieldWorks.TestUtilities.Attributes
@@ -30,16 +26,8 @@ namespace FieldWorks.TestUtilities.Attributes
 		/// <inheritdoc />
 		public override ActionTargets Targets => ActionTargets.Suite;
 
-<<<<<<< HEAD:Src/FieldWorks.TestUtilities/Attributes/CreateComObjectsFromManifestAttribute.cs
 		/// <inheritdoc />
-		public override void BeforeTest(ITest testDetails)
-||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/Attributes/CreateComObjectsFromManifestAttribute.cs
-		/// <summary/>
-		public override void BeforeTest(TestDetails testDetails)
-=======
-		/// <summary/>
 		public override void BeforeTest(ITest test)
->>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/Attributes/CreateComObjectsFromManifestAttribute.cs
 		{
 			base.BeforeTest(test);
 
@@ -67,16 +55,8 @@ namespace FieldWorks.TestUtilities.Attributes
 			}
 		}
 
-<<<<<<< HEAD:Src/FieldWorks.TestUtilities/Attributes/CreateComObjectsFromManifestAttribute.cs
 		/// <inheritdoc />
-		public override void AfterTest(ITest testDetails)
-||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/Attributes/CreateComObjectsFromManifestAttribute.cs
-		/// <summary/>
-		public override void AfterTest(TestDetails testDetails)
-=======
-		/// <summary/>
 		public override void AfterTest(ITest test)
->>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/Attributes/CreateComObjectsFromManifestAttribute.cs
 		{
 			CoFreeUnusedLibraries();
 
