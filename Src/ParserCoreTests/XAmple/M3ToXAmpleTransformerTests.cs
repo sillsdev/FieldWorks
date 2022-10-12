@@ -18,7 +18,6 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 	[TestFixture]
 	public class M3ToXAmpleTransformerTests
 	{
-<<<<<<< HEAD:Src/ParserCoreTests/XAmple/M3ToXAmpleTransformerTests.cs
 		private string m_sM3FXTDump;
 		private string m_sM3FXTCircumfixDump;
 		private string m_sM3FXTCircumfixInfixDump;
@@ -33,59 +32,12 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 		private string m_sM3FXTAffixAlloFeatsDump;
 		private string m_sM3FXTLatinDump;
 		private string m_sM3FXTIrregularlyInflectedFormsDump;
+		private string m_sAbazaOrderClassPlayDump;
 		private readonly Dictionary<string, XPathDocument> m_mapXmlDocs = new Dictionary<string, XPathDocument>();
 		private XslCompiledTransform m_adTransform;
 		private XslCompiledTransform m_lexTransform;
 		private XslCompiledTransform m_gramTransform;
 		private bool m_fResultMatchesExpected = true;
-||||||| f013144d5:Src/LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTests.cs
-		string m_sM3FXTDump;
-		string m_sM3FXTCircumfixDump;
-		string m_sM3FXTCircumfixInfixDump;
-		string m_sM3FXTCliticDump;
-		string m_sM3FXTFullRedupDump;
-		string m_sM3FXTConceptualIntroDump;
-		string m_sM3FXTStemNameDump;
-		string m_sM3FXTStemName2Dump;
-		string m_sM3FXTStemName3Dump;
-		string m_sM3FXTRootCliticEnvsDump;
-		string m_sM3FXTCliticEnvsDump;
-		string m_sM3FXTAffixAlloFeatsDump;
-		string m_sM3FXTLatinDump;
-		string m_sM3FXTIrregularlyInflectedFormsDump;
-		readonly Dictionary<string, XPathDocument> m_mapXmlDocs = new Dictionary<string, XPathDocument>();
-
-		XslCompiledTransform m_adTransform;
-		XslCompiledTransform m_lexTransform;
-		XslCompiledTransform m_gramTransform;
-
-		bool m_fResultMatchesExpected = true;
-
-=======
-		string m_sM3FXTDump;
-		string m_sM3FXTCircumfixDump;
-		string m_sM3FXTCircumfixInfixDump;
-		string m_sM3FXTCliticDump;
-		string m_sM3FXTFullRedupDump;
-		string m_sM3FXTConceptualIntroDump;
-		string m_sM3FXTStemNameDump;
-		string m_sM3FXTStemName2Dump;
-		string m_sM3FXTStemName3Dump;
-		string m_sM3FXTRootCliticEnvsDump;
-		string m_sM3FXTCliticEnvsDump;
-		string m_sM3FXTAffixAlloFeatsDump;
-		string m_sM3FXTLatinDump;
-		string m_sM3FXTIrregularlyInflectedFormsDump;
-		private string m_sAbazaOrderClassPlayDump;
-		readonly Dictionary<string, XPathDocument> m_mapXmlDocs = new Dictionary<string, XPathDocument>();
-
-		XslCompiledTransform m_adTransform;
-		XslCompiledTransform m_lexTransform;
-		XslCompiledTransform m_gramTransform;
-
-		bool m_fResultMatchesExpected = true;
-
->>>>>>> develop:Src/LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTests.cs
 		/// <summary>
 		/// Location of test files
 		/// </summary>

@@ -1,10 +1,4 @@
-<<<<<<< HEAD:Src/ParserCore/HermitCrab/HCLoader.cs
-// Copyright (c) 2014-2020 SIL International
-||||||| f013144d5:Src/LexText/ParserCore/HCLoader.cs
-﻿// Copyright (c) 2015-2017 SIL International
-=======
-// Copyright (c) 2015-2021 SIL International
->>>>>>> develop:Src/LexText/ParserCore/HCLoader.cs
+// Copyright (c) 2014-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -528,20 +522,8 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			}
 			fs.Freeze();
 			hcEntry.SyntacticFeatureStruct = fs;
-<<<<<<< HEAD:Src/ParserCore/HermitCrab/HCLoader.cs
-			hcEntry.Properties["ID"] = msa.Hvo;
-			foreach (var allo in allos)
-||||||| f013144d5:Src/LexText/ParserCore/HCLoader.cs
-
-			hcEntry.Properties["ID"] = msa.Hvo;
-
-			foreach (IMoStemAllomorph allo in allos)
-=======
-
 			hcEntry.Properties[HCParser.MsaID] = msa.Hvo;
-
-			foreach (IMoStemAllomorph allo in allos)
->>>>>>> develop:Src/LexText/ParserCore/HCLoader.cs
+			foreach (var allo in allos)
 			{
 				try
 				{
@@ -632,20 +614,10 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 
 			hcEntry.Properties[HCParser.MsaID] = msa.Hvo;
 			if (inflType != null)
-<<<<<<< HEAD:Src/ParserCore/HermitCrab/HCLoader.cs
 			{
-				hcEntry.Properties["InflTypeID"] = inflType.Hvo;
-			}
-			foreach (var allo in allos)
-||||||| f013144d5:Src/LexText/ParserCore/HCLoader.cs
-				hcEntry.Properties["InflTypeID"] = inflType.Hvo;
-
-			foreach (IMoStemAllomorph allo in allos)
-=======
 				hcEntry.Properties[HCParser.InflTypeID] = inflType.Hvo;
 
-			foreach (IMoStemAllomorph allo in allos)
->>>>>>> develop:Src/LexText/ParserCore/HCLoader.cs
+			foreach (var allo in allos)
 			{
 				try
 				{
@@ -822,16 +794,8 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			if (msa.FromStemNameRA != null && m_stemNames.TryGetValue(msa.FromStemNameRA, out var hcStemName))
 			{
 				mrule.RequiredStemName = hcStemName;
-<<<<<<< HEAD:Src/ParserCore/HermitCrab/HCLoader.cs
 			}
-			mrule.Properties["ID"] = msa.Hvo;
-||||||| f013144d5:Src/LexText/ParserCore/HCLoader.cs
-
-			mrule.Properties["ID"] = msa.Hvo;
-=======
-
 			mrule.Properties[HCParser.MsaID] = msa.Hvo;
->>>>>>> develop:Src/LexText/ParserCore/HCLoader.cs
 
 			foreach (var hcAllo in LoadAffixProcessAllomorphs(msa, allos))
 			{
@@ -863,24 +827,8 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			}
 			requiredFS.Freeze();
 			mrule.RequiredSyntacticFeatureStruct = requiredFS;
-<<<<<<< HEAD:Src/ParserCore/HermitCrab/HCLoader.cs
 			var requiredMprFeatures = msa.FromProdRestrictRC.Select(prodRestrict => m_mprFeatures[prodRestrict]).ToList();
-			mrule.Properties["ID"] = msa.Hvo;
-||||||| f013144d5:Src/LexText/ParserCore/HCLoader.cs
-
-			var requiredMprFeatures = new List<MprFeature>();
-			foreach (ICmPossibility prodRestrict in msa.FromProdRestrictRC)
-				requiredMprFeatures.Add(m_mprFeatures[prodRestrict]);
-
-			mrule.Properties["ID"] = msa.Hvo;
-=======
-
-			var requiredMprFeatures = new List<MprFeature>();
-			foreach (ICmPossibility prodRestrict in msa.FromProdRestrictRC)
-				requiredMprFeatures.Add(m_mprFeatures[prodRestrict]);
-
 			mrule.Properties[HCParser.MsaID] = msa.Hvo;
->>>>>>> develop:Src/LexText/ParserCore/HCLoader.cs
 
 			foreach (var hcAllo in LoadAffixProcessAllomorphs(msa, allos))
 			{
@@ -1240,25 +1188,13 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			hcAllo.Properties[HCParser.FormID] = prefixAllo.Hvo;
 			hcAllo.Properties[HCParser.FormID2] = suffixAllo.Hvo;
 			if (prefixEnv != null)
-<<<<<<< HEAD:Src/ParserCore/HermitCrab/HCLoader.cs
 			{
-				hcAllo.Properties["PrefixEnv"] = prefixEnv.StringRepresentation.Text;
-			}
-||||||| f013144d5:Src/LexText/ParserCore/HCLoader.cs
-				hcAllo.Properties["PrefixEnv"] = prefixEnv.StringRepresentation.Text;
-=======
 				hcAllo.Properties[HCParser.PrefixEnv] = prefixEnv.StringRepresentation.Text;
->>>>>>> develop:Src/LexText/ParserCore/HCLoader.cs
-			if (suffixEnv != null)
-<<<<<<< HEAD:Src/ParserCore/HermitCrab/HCLoader.cs
-			{
-				hcAllo.Properties["SuffixEnv"] = suffixEnv.StringRepresentation.Text;
 			}
-||||||| f013144d5:Src/LexText/ParserCore/HCLoader.cs
-				hcAllo.Properties["SuffixEnv"] = suffixEnv.StringRepresentation.Text;
-=======
+			if (suffixEnv != null)
+			{
 				hcAllo.Properties[HCParser.SuffixEnv] = suffixEnv.StringRepresentation.Text;
->>>>>>> develop:Src/LexText/ParserCore/HCLoader.cs
+			}
 			return hcAllo;
 		}
 
@@ -1547,15 +1483,9 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 
 			hcAllo.Properties[HCParser.FormID] = allo.Hvo;
 			if (env != null)
-<<<<<<< HEAD:Src/ParserCore/HermitCrab/HCLoader.cs
 			{
-				hcAllo.Properties["Env"] = env.StringRepresentation.Text;
-			}
-||||||| f013144d5:Src/LexText/ParserCore/HCLoader.cs
-				hcAllo.Properties["Env"] = env.StringRepresentation.Text;
-=======
 				hcAllo.Properties[HCParser.Env] = env.StringRepresentation.Text;
->>>>>>> develop:Src/LexText/ParserCore/HCLoader.cs
+			}
 			return hcAllo;
 		}
 

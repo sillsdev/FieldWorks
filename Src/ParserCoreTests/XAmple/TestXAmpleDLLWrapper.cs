@@ -29,17 +29,9 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 		[Test]
 		public void TestInit()
 		{
-<<<<<<< HEAD:Src/ParserCoreTests/XAmple/TestXAmpleDLLWrapper.cs
 			using (var wrapper = CreateXAmpleDllWrapper())
 			{
-				Assert.IsNotNull(wrapper);
-||||||| f013144d5:Src/LexText/ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapperTests/TestXAmpleDLLWrapper.cs
-			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
-				Assert.IsNotNull(wrapper);
-=======
-			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
 				Assert.That(wrapper, Is.Not.Null);
->>>>>>> develop:Src/LexText/ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapperTests/TestXAmpleDLLWrapper.cs
 		}
 		}
 
@@ -73,18 +65,10 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 		[Test]
 		public void TestSetLogFile()
 		{
-<<<<<<< HEAD:Src/ParserCoreTests/XAmple/TestXAmpleDLLWrapper.cs
 			using (var wrapper = CreateXAmpleDllWrapper())
 			{
 				Assert.That(() => { wrapper.SetLogFile(Path.GetTempFileName()); }, Throws.TypeOf<NotImplementedException>());
 		}
-||||||| f013144d5:Src/LexText/ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapperTests/TestXAmpleDLLWrapper.cs
-			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
-				wrapper.SetLogFile(Path.GetTempFileName());
-=======
-			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
-				Assert.That(() => wrapper.SetLogFile(Path.GetTempFileName()), Throws.TypeOf<NotImplementedException>());
->>>>>>> develop:Src/LexText/ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapperTests/TestXAmpleDLLWrapper.cs
 		}
 
 		[Test]
