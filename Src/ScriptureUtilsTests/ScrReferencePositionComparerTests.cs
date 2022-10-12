@@ -117,13 +117,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		{
 			// This was using new CmObject, which made the whole assembly depend on LCM.
 			// There are cheaper ways to test some non reference object (I, RBR, hope).
-<<<<<<< HEAD:Src/ScriptureUtilsTests/ScrReferencePositionComparerTests.cs
 			Assert.That(() => { m_comparer.Compare(01001001, new ArgumentException()); }, Throws.TypeOf<ArgumentException>());
-||||||| f013144d5:Src/Common/ScriptureUtils/ScriptureUtilsTests/ScrReferencePositionComparerTests.cs
-			m_comparer.Compare(01001001, new ArgumentException());
-=======
-			Assert.That(() => m_comparer.Compare(01001001, new ArgumentException()), Throws.ArgumentException);
->>>>>>> develop:Src/Common/ScriptureUtils/ScriptureUtilsTests/ScrReferencePositionComparerTests.cs
 		}
 	}
 }

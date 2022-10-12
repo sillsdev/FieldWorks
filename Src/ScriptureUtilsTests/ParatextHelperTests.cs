@@ -1,10 +1,4 @@
-<<<<<<< HEAD:Src/ScriptureUtilsTests/ParatextHelperTests.cs
-// Copyright (c) 2011-2020 SIL International
-||||||| f013144d5:Src/Common/ScriptureUtils/ScriptureUtilsTests/ParatextHelperTests.cs
-// Copyright (c) 2011-2017 SIL International
-=======
-// Copyright (c) 2011-2021 SIL International
->>>>>>> develop:Src/Common/ScriptureUtils/ScriptureUtilsTests/ParatextHelperTests.cs
+// Copyright (c) 2011-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,28 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-<<<<<<< HEAD:Src/ScriptureUtilsTests/ParatextHelperTests.cs
-||||||| f013144d5:Src/Common/ScriptureUtils/ScriptureUtilsTests/ParatextHelperTests.cs
-using Paratext;
-using Paratext.LexicalClient;
-=======
-using Paratext;
-using Paratext.LexicalClient;
 using SIL.FieldWorks.Test.ProjectUnpacker;
->>>>>>> develop:Src/Common/ScriptureUtils/ScriptureUtilsTests/ParatextHelperTests.cs
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-<<<<<<< HEAD:Src/ScriptureUtilsTests/ParatextHelperTests.cs
-using SIL.FieldWorks.Test.ProjectUnpacker;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using Rhino.Mocks;
-||||||| f013144d5:Src/Common/ScriptureUtils/ScriptureUtilsTests/ParatextHelperTests.cs
-using SIL.FieldWorks.Test.ProjectUnpacker;
-using SIL.LCModel.Utils;
-=======
-using SIL.PlatformUtilities;
->>>>>>> develop:Src/Common/ScriptureUtils/ScriptureUtilsTests/ParatextHelperTests.cs
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
 {
@@ -399,155 +377,6 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-<<<<<<< HEAD:Src/ScriptureUtilsTests/ParatextHelperTests.cs
-||||||| f013144d5:Src/Common/ScriptureUtils/ScriptureUtilsTests/ParatextHelperTests.cs
-		/// Test the ability to save and reload the Scripture and BT Paratext 6 projects
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Category("LongRunning")]
-		public void LoadParatextMappings_Normal()
-		{
-			if (ScriptureProvider.VersionInUse >= new Version(8, 0))
-				Assert.Ignore("This test uses data that is only valid for Paratext7. The test fails with Paratext8 installed.");
-			Unpacker.UnPackParatextTestProjects();
-
-			var stylesheet = new LcmStyleSheet();
-			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
-			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
-			Cache.LangProject.TranslatedScriptureOA.ImportSettingsOC.Add(importSettings);
-			importSettings.ParatextScrProj = "KAM";
-			ParatextHelper.LoadProjectMappings(importSettings);
-
-			ScrMappingList mappingList = importSettings.GetMappingListForDomain(ImportDomain.Main);
-			// Test to see that the projects are set correctly
-			Assert.AreEqual(44, mappingList.Count);
-
-			Assert.AreEqual(MarkerDomain.Default, mappingList[@"\c"].Domain);
-			Assert.AreEqual(MarkerDomain.Default, mappingList[@"\v"].Domain);
-			Assert.AreEqual(@"\f*", mappingList[@"\f"].EndMarker);
-			Assert.IsTrue(mappingList[@"\p"].IsInUse);
-			Assert.IsFalse(mappingList[@"\tb2"].IsInUse);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test the ability to load a Paratext 6 project and distinguish between markers in use
-		/// in the files and those that only come for them STY file, as well as making sure that
-		/// the mappings are not in use when rescanning.
-		/// Jiras task is TE-2439
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("GetMappingListForDomain is returning null after the merge from release/8.3 - This test was fixed in release/8.3 but likely didn't run on develop.")]
-		public void LoadParatextMappings_MarkMappingsInUse()
-		{
-			if (ScriptureProvider.VersionInUse >= new Version(8, 0))
-				Assert.Ignore("This test uses data that is only valid for Paratext7. The test fails with Paratext8 installed.");
-			var stylesheet = new LcmStyleSheet();
-			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
-			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
-			Cache.LangProject.TranslatedScriptureOA.ImportSettingsOC.Add(importSettings);
-			importSettings.ParatextScrProj = "TEV";
-			ScrMappingList mappingList = importSettings.GetMappingListForDomain(ImportDomain.Main);
-			Assert.NotNull(mappingList, "Setup Failure, no mapping list returned for the domain.");
-			mappingList.Add(new ImportMappingInfo(@"\hahaha", @"\*hahaha", false,
-				MappingTargetType.TEStyle, MarkerDomain.Default, "laughing",
-				null, null, true, ImportDomain.Main));
-			mappingList.Add(new ImportMappingInfo(@"\bthahaha", @"\*bthahaha", false,
-				MappingTargetType.TEStyle, MarkerDomain.Default, "laughing",
-				"en", null, true, ImportDomain.Main));
-
-			Unpacker.UnPackParatextTestProjects();
-
-			ParatextHelper.LoadProjectMappings(importSettings);
-
-			Assert.IsTrue(mappingList[@"\c"].IsInUse);
-			Assert.IsTrue(mappingList[@"\p"].IsInUse);
-			Assert.IsFalse(mappingList[@"\ipi"].IsInUse);
-			Assert.IsFalse(mappingList[@"\hahaha"].IsInUse,
-				"In-use flag should have been cleared before re-scanning when the P6 project changed.");
-			Assert.IsTrue(mappingList[@"\bthahaha"].IsInUse,
-				"In-use flag should not have been cleared before re-scanning when the P6 project changed because it was in use by the BT.");
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-=======
-		/// Test the ability to save and reload the Scripture and BT Paratext 6 projects
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Category("LongRunning")]
-		public void LoadParatextMappings_Normal()
-		{
-			if (ScriptureProvider.VersionInUse >= new Version(8, 0))
-				Assert.Ignore("This test uses data that is only valid for Paratext7. The test fails with Paratext8 installed.");
-			Unpacker.UnPackParatextTestProjects();
-
-			var stylesheet = new LcmStyleSheet();
-			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
-			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
-			Cache.LangProject.TranslatedScriptureOA.ImportSettingsOC.Add(importSettings);
-			importSettings.ParatextScrProj = "KAM";
-			ParatextHelper.LoadProjectMappings(importSettings);
-
-			ScrMappingList mappingList = importSettings.GetMappingListForDomain(ImportDomain.Main);
-			Assert.That(mappingList, Is.Not.Null, "Setup Failure, no mapping list returned for the domain.");
-			// Test to see that the projects are set correctly
-			Assert.AreEqual(44, mappingList.Count);
-
-			Assert.AreEqual(MarkerDomain.Default, mappingList[@"\c"].Domain);
-			Assert.AreEqual(MarkerDomain.Default, mappingList[@"\v"].Domain);
-			Assert.AreEqual(@"\f*", mappingList[@"\f"].EndMarker);
-			Assert.IsTrue(mappingList[@"\p"].IsInUse);
-			Assert.IsFalse(mappingList[@"\tb2"].IsInUse);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test the ability to load a Paratext 6 project and distinguish between markers in use
-		/// in the files and those that only come for them STY file, as well as making sure that
-		/// the mappings are not in use when rescanning.
-		/// Jiras task is TE-2439
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("GetMappingListForDomain is returning null after the merge from release/8.3 - This test was fixed in release/8.3 but likely didn't run on develop.")]
-		public void LoadParatextMappings_MarkMappingsInUse()
-		{
-			if (ScriptureProvider.VersionInUse >= new Version(8, 0))
-				Assert.Ignore("This test uses data that is only valid for Paratext7. The test fails with Paratext8 installed.");
-			var stylesheet = new LcmStyleSheet();
-			stylesheet.Init(Cache, m_scr.Hvo, ScriptureTags.kflidStyles);
-			IScrImportSet importSettings = Cache.ServiceLocator.GetInstance<IScrImportSetFactory>().Create();
-			Cache.LangProject.TranslatedScriptureOA.ImportSettingsOC.Add(importSettings);
-			importSettings.ParatextScrProj = "TEV";
-			ScrMappingList mappingList = importSettings.GetMappingListForDomain(ImportDomain.Main);
-			Assert.NotNull(mappingList, "Setup Failure, no mapping list returned for the domain.");
-			mappingList.Add(new ImportMappingInfo(@"\hahaha", @"\*hahaha", false,
-				MappingTargetType.TEStyle, MarkerDomain.Default, "laughing",
-				null, null, true, ImportDomain.Main));
-			mappingList.Add(new ImportMappingInfo(@"\bthahaha", @"\*bthahaha", false,
-				MappingTargetType.TEStyle, MarkerDomain.Default, "laughing",
-				"en", null, true, ImportDomain.Main));
-
-			Unpacker.UnPackParatextTestProjects();
-
-			ParatextHelper.LoadProjectMappings(importSettings);
-
-			Assert.IsTrue(mappingList[@"\c"].IsInUse);
-			Assert.IsTrue(mappingList[@"\p"].IsInUse);
-			Assert.IsFalse(mappingList[@"\ipi"].IsInUse);
-			Assert.IsFalse(mappingList[@"\hahaha"].IsInUse,
-				"In-use flag should have been cleared before re-scanning when the P6 project changed.");
-			Assert.IsTrue(mappingList[@"\bthahaha"].IsInUse,
-				"In-use flag should not have been cleared before re-scanning when the P6 project changed because it was in use by the BT.");
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
->>>>>>> develop:Src/Common/ScriptureUtils/ScriptureUtilsTests/ParatextHelperTests.cs
 		/// Test attempting to load a Paratext project when the Paratext SSF references an
 		/// encoding file that does not exist.
 		/// </summary>

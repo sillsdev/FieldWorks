@@ -23,24 +23,8 @@ namespace SILUBS.ScriptureChecks
 
 		private MatchedPairList m_pairList;
 
-<<<<<<< HEAD:Src/ScrChecksTests/MatchedPairsTests.cs
 		/// <summary />
 		[OneTimeSetUp]
-||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/MatchedPairsTests.cs
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
-=======
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[OneTimeSetUp]
->>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/MatchedPairsTests.cs
 		public void FixtureSetup()
 		{
 			m_pairList = MatchedPairList.Load(kXml, "Test WS");
