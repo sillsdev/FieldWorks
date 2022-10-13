@@ -393,27 +393,27 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			return Environment.Is64BitProcess ? x64Path : x86Path;
 		}
 
-		///  <summary>
-		///  Inserts the given PUADefinitions (any Unicode character) into the UnicodeData.txt file.
+		/// <summary>
+		/// Inserts the given PUADefinitions (any Unicode character) into the UnicodeData.txt file.
 		///
-		///  This accounts for all the cases of inserting into the "first/last" blocks.  That
-		///  is, it will split the blocks into two or move the first and last tags to allow a
-		///  codepoint to be inserted correctly.
+		/// This accounts for all the cases of inserting into the "first/last" blocks.  That
+		/// is, it will split the blocks into two or move the first and last tags to allow a
+		/// codepoint to be inserted correctly.
 		///
-		///  Also, this accounts for Hexadecimal strings that are within the unicode range, not
-		///  just four digit unicode files.
+		/// Also, this accounts for Hexadecimal strings that are within the unicode range, not
+		/// just four digit unicode files.
 		///
-		///  <list type="number">
-		///  <listheader>Assumptions made about the format</listheader>
-		///  <item>The codepoints are in order</item>
-		///  <item>There first last block will always have no space between the word first and the following ">"</item>
-		///  <item>No other data entries contain the word first followed by a ">"</item>
-		///  <item>There will always be a "last" on the line directly after a "first".</item>
-		///  </list>
+		/// <list type="number">
+		/// <listheader>Assumptions made about the format</listheader>
+		/// <item>The codepoints are in order</item>
+		/// <item>There first last block will always have no space between the word first and the following ">"</item>
+		/// <item>No other data entries contain the word first followed by a ">"</item>
+		/// <item>There will always be a "last" on the line directly after a "first".</item>
+		/// </list>
 		///
-		///  </summary>
-		///  <remarks>
-		///  Pseudocode for inserting lines:
+		/// </summary>
+		/// <remarks>
+		/// Pseudocode for inserting lines:
 		/// 	if the unicodePoint	is a first tag
 		/// 		Get	first and last uncodePoint range
 		/// 		Stick into array all the xmlPoints that fit within the uncodePoint range
@@ -426,10 +426,10 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// 	else
 		/// 		do nothing except write	the	line
 		/// </remarks>
-		///  <param name="puaDefinitions">A list of PUADefinitions to insert into UnicodeDataOverrides.txt.</param>
+		/// <param name="puaDefinitions">A list of PUADefinitions to insert into UnicodeDataOverrides.txt.</param>
 		/// <param name="comment"></param>
 		/// <param name="originalOverrides">original to merge into</param>
-		///  <param name="outputOverrides">where to write output</param>
+		/// <param name="outputOverrides">where to write output</param>
 		private static void InsertCharacters(IReadOnlyList<IPuaCharacter> puaDefinitions, string comment, string originalOverrides, string outputOverrides)
 		{
 			// Open the file for reading and writing
@@ -573,7 +573,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		}
 
 		///<summary />
-		///<returns>whether the file was found and successfully deleted</returns>
 		private static void SafeDeleteFile(string file)
 		{
 			try
@@ -587,7 +586,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		}
 
 		///<summary />
-		///<returns>whether the file was found and successfully deleted</returns>
 		private static void DeleteFile(string file)
 		{
 			if (!File.Exists(file))

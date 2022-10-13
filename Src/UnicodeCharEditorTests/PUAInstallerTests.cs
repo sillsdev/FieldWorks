@@ -164,34 +164,14 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			Assert.AreEqual("[none]", numericType.Description);
 			numericType = CustomIcu.GetNumericTypeInfo(kChar4);
 			Assert.AreEqual("[none]", numericType.Description);
-<<<<<<< HEAD:Src/UnicodeCharEditorTests/PUAInstallerTests.cs
 			var prettyName = Character.GetPrettyICUCharName("\xE000");
-			Assert.IsNull(prettyName);
+			Assert.That(prettyName, Is.Null);
 			prettyName = Character.GetPrettyICUCharName("\xE001");
-			Assert.IsNull(prettyName);
+			Assert.That(prettyName, Is.Null);
 			prettyName = Character.GetPrettyICUCharName(kChar3S);
-			Assert.IsNull(prettyName);
+			Assert.That(prettyName, Is.Null);
 			prettyName = Character.GetPrettyICUCharName("\xDDDDD");
-			Assert.IsNull(prettyName);
-||||||| f013144d5:Src/UnicodeCharEditor/UnicodeCharEditorTests/PUAInstallerTests.cs
-			var prettyName = Icu.Character.GetPrettyICUCharName("\xE000");
-			Assert.IsNull(prettyName);
-			prettyName = Icu.Character.GetPrettyICUCharName("\xE001");
-			Assert.IsNull(prettyName);
-			prettyName = Icu.Character.GetPrettyICUCharName(kChar3S);
-			Assert.IsNull(prettyName);
-			prettyName = Icu.Character.GetPrettyICUCharName("\xDDDDD");
-			Assert.IsNull(prettyName);
-=======
-			var prettyName = Icu.Character.GetPrettyICUCharName("\xE000");
 			Assert.That(prettyName, Is.Null);
-			prettyName = Icu.Character.GetPrettyICUCharName("\xE001");
-			Assert.That(prettyName, Is.Null);
-			prettyName = Icu.Character.GetPrettyICUCharName(kChar3S);
-			Assert.That(prettyName, Is.Null);
-			prettyName = Icu.Character.GetPrettyICUCharName("\xDDDDD");
-			Assert.That(prettyName, Is.Null);
->>>>>>> develop:Src/UnicodeCharEditor/UnicodeCharEditorTests/PUAInstallerTests.cs
 		}
 
 		private static void VerifyNewlyCreatedChars()

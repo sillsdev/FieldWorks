@@ -426,8 +426,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		private void m_btnSave_Click(object sender, EventArgs e)
 		{
-			{
-			}
 			var customCharsFile = CustomCharsFile;
 			string oldFile = null;
 			if (File.Exists(customCharsFile))

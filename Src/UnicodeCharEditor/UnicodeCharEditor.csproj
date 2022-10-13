@@ -8,103 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-<<<<<<< HEAD
+    <PackageReference Include="CommandLineArgumentsParser" Version="3.0.22" />
     <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="All" />
     <PackageReference Include="SIL.FwBuildTasks" Version="10.0.0" PrivateAssets="All" />
     <PackageReference Include="vswhere" Version="2.8.4" PrivateAssets="All" />
-||||||| f013144d5
-    <Reference Include="Reporting, Version=9.0.0.28124, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Reporting.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Core, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="FwControls, Version=6.1.1.20026, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FwControls.dll</HintPath>
-    </Reference>
-    <Reference Include="FwCoreDlgs, Version=6.1.1.20128, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
-    </Reference>
-    <Reference Include="FwUtils, Version=6.1.1.20005, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
-    </Reference>
-    <Reference Include="icu.net">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\icu.net.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="XMLUtils, Version=6.1.1.19992, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\XMLUtils.dll</HintPath>
-    </Reference>
-=======
-    <Reference Include="CommandLineArgumentsParser, Version=3.0.22.0, Culture=neutral, PublicKeyToken=2990a79b704d8378, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\CommandLineArgumentsParser.dll</HintPath>
-    </Reference>
-    <Reference Include="Reporting, Version=9.0.0.28124, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Reporting.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Core, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="FwControls, Version=6.1.1.20026, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FwControls.dll</HintPath>
-    </Reference>
-    <Reference Include="FwCoreDlgs, Version=6.1.1.20128, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FwCoreDlgs.dll</HintPath>
-    </Reference>
-    <Reference Include="FwUtils, Version=6.1.1.20005, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
-    </Reference>
-    <Reference Include="icu.net">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\icu.net.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="XMLUtils, Version=6.1.1.19992, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\XMLUtils.dll</HintPath>
-    </Reference>
->>>>>>> develop
   </ItemGroup>
 
   <ItemGroup>
