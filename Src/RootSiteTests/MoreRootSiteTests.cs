@@ -847,31 +847,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		[Test]
 		public void GetParagraphProps_InPictureCaption()
 		{
-<<<<<<< HEAD:Src/RootSiteTests/MoreRootSiteTests.cs
 			var filename = Environment.OSVersion.Platform == PlatformID.Unix ? "/junk.jpg" : "c:\\junk.jpg";
 			var pict = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(filename, TsStringUtils.MakeString("Test picture", Cache.DefaultVernWs), CmFolderTags.LocalPictures);
-			Assert.IsNotNull(pict);
-||||||| f013144d5:Src/Common/RootSite/RootSiteTests/MoreRootSiteTests.cs
-			string filename;
-			if (Environment.OSVersion.Platform == PlatformID.Unix)
-				filename = "/junk.jpg";
-			else
-				filename = "c:\\junk.jpg";
-			ICmPicture pict = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(filename,
-				TsStringUtils.MakeString("Test picture", Cache.DefaultVernWs),
-				CmFolderTags.LocalPictures);
-			Assert.IsNotNull(pict);
-=======
-			string filename;
-			if (Environment.OSVersion.Platform == PlatformID.Unix)
-				filename = "/junk.jpg";
-			else
-				filename = "c:\\junk.jpg";
-			ICmPicture pict = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(filename,
-				TsStringUtils.MakeString("Test picture", Cache.DefaultVernWs),
-				CmFolderTags.LocalPictures);
 			Assert.That(pict, Is.Not.Null);
->>>>>>> develop:Src/Common/RootSite/RootSiteTests/MoreRootSiteTests.cs
 
 			ShowForm(TestLanguages.English, DisplayType.kNormal);
 			var mockedSelection = MockRepository.GenerateMock<IVwSelection>();

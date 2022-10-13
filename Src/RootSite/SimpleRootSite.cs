@@ -1424,39 +1424,11 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				if (dlg.ShowDialog() != DialogResult.OK)
 				{
-<<<<<<< HEAD:Src/RootSite/SimpleRootSite.cs
 					return;
 				}
 				if (Platform.IsUnix)
 				{
 					using (var pageDlg = new PageSetupDialog())
-||||||| f013144d5:Src/Common/SimpleRootSite/SimpleRootSite.cs
-					dlg.Document = pd;
-					dlg.AllowSomePages = true;
-					dlg.AllowSelection = false;
-					dlg.PrinterSettings.FromPage = 1;
-					dlg.PrinterSettings.ToPage = 1;
-					SetupPrintHelp(dlg);
-					AdjustPrintDialog(dlg);
-
-					if (dlg.ShowDialog() != DialogResult.OK)
-						return true;
-
-					if (MiscUtils.IsUnix)
-=======
-					dlg.Document = pd;
-					dlg.AllowSomePages = true;
-					dlg.AllowSelection = false;
-					dlg.PrinterSettings.FromPage = 1;
-					dlg.PrinterSettings.ToPage = 1;
-					SetupPrintHelp(dlg);
-					AdjustPrintDialog(dlg);
-
-					if (dlg.ShowDialog() != DialogResult.OK)
-						return true;
-
-					if (Platform.IsUnix)
->>>>>>> develop:Src/Common/SimpleRootSite/SimpleRootSite.cs
 					{
 						pageDlg.Document = dlg.Document;
 						pageDlg.AllowPrinter = false;

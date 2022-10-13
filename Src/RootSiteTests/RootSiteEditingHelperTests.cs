@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			using (var editHelper = new RootSiteEditingHelper(Cache, null))
 			{
 				var sTextRepOfObject = editHelper.TextRepOfObj(Cache, Guid.Empty);
-				Assert.IsNull(sTextRepOfObject);
+				Assert.That(sTextRepOfObject, Is.Null);
 			}
 		}
 
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				using (var editHelper = new RootSiteEditingHelper(Cache, null))
 				{
 					var pict = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(filemaker.Filename, TsStringUtils.MakeString("Test picture", Cache.DefaultVernWs), CmFolderTags.LocalPictures);
-					Assert.IsNotNull(pict);
+					Assert.That(pict, Is.Not.Null);
 					Assert.IsTrue(pict.PictureFileRA.AbsoluteInternalPath == pict.PictureFileRA.InternalPath);
 					var sTextRepOfObject = editHelper.TextRepOfObj(Cache, pict.Guid);
 					var guid = editHelper.MakeObjFromText(Cache, sTextRepOfObject, null, out _);

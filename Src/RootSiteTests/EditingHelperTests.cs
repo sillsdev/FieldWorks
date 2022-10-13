@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// We expect the contents to remain unchanged.
 			Assert.AreEqual(2, m_cache.get_VecSize(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas));
-			Assert.IsNull(BasicView.RequestedSelectionAtEndOfUow);
+			Assert.That(BasicView.RequestedSelectionAtEndOfUow, Is.Null);
 		}
 
 		/// <summary>
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.AreEqual(hvoTitlePara1, m_cache.get_VecItem(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 2));
 			Assert.AreEqual(hvoTitlePara2, m_cache.get_VecItem(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 3));
 
-			Assert.IsNotNull(BasicView.RequestedSelectionAtEndOfUow);
+			Assert.That(BasicView.RequestedSelectionAtEndOfUow, Is.Not.Null);
 		}
 		#endregion
 
@@ -113,7 +113,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_SelectionHelper = new DummySelectionHelper(null, BasicView);
 			SetSelection(0, 0, 0, 0, 1, 6, 6, true);
 			var vwsel = m_SelectionHelper.SetSelection(true);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.IsTrue(BasicView.IsSelectionVisible(null), "Selection is not visible");
 			BasicView.EditingHelper.GoToNextPara();
 
@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_SelectionHelper = new DummySelectionHelper(null, BasicView);
 			SetSelection(0, 0, 1, 0, 2, 6, 6, true);
 			var vwsel = m_SelectionHelper.SetSelection(true);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.IsTrue(BasicView.IsSelectionVisible(null), "Selection is not visible");
 			BasicView.EditingHelper.GoToNextPara();
 
@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_SelectionHelper = new DummySelectionHelper(null, BasicView);
 			SetSelection(0, 1, 0, 0, 2, 0, 0, true);
 			var vwsel = m_SelectionHelper.SetSelection(true);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.IsTrue(BasicView.IsSelectionVisible(null), "Selection is not visible");
 			BasicView.EditingHelper.GoToNextPara();
 
@@ -198,7 +198,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_SelectionHelper = new DummySelectionHelper(null, BasicView);
 			SetSelection(0, 0, 0, 0, 0, 0, 0, true);
 			var vwsel = m_SelectionHelper.SetSelection(true);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.IsTrue(BasicView.IsSelectionVisible(null), "Selection is not visible");
 			BasicView.EditingHelper.GoToNextPara();
 
@@ -223,7 +223,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			m_SelectionHelper = new DummySelectionHelper(null, BasicView);
 			SetSelection(0, 1, 1, 0, 2, 6, 0, true);
 			var vwsel = m_SelectionHelper.SetSelection(true);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.IsTrue(BasicView.IsSelectionVisible(null), "Selection is not visible");
 			BasicView.EditingHelper.GoToNextPara();
 
@@ -256,7 +256,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			SetSelection(0, 0, 0, 0, 2, 1, 1, false); // Set end
 			SetSelection(0, 1, 0, 0, 1, 12, 12, true); // Set anchor
 			var vwsel = m_SelectionHelper.SetSelection(true);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			BasicView.EditingHelper.GoToNextPara();
 
 			// We expect that the selection will be at the start of the second paragraph in

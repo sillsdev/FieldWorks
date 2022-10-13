@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			var styleSheet = new SimpleStyleSheet(m_cache);
 
-			Assert.IsNull(BasicView);
+			Assert.That(BasicView, Is.Null);
 			BasicView = new SimpleBasicView
 			{
 				Cache = m_cache,
