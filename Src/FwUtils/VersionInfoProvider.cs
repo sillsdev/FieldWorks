@@ -1,22 +1,12 @@
-<<<<<<< HEAD:Src/FwUtils/VersionInfoProvider.cs
-// Copyright (c) 2010-2020 SIL International
-||||||| f013144d5:Src/Common/FwUtils/VersionInfoProvider.cs
-// Copyright (c) 2010-2017 SIL International
-=======
 // Copyright (c) 2010-2022 SIL International
->>>>>>> develop:Src/Common/FwUtils/VersionInfoProvider.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Linq;
 using System.Reflection;
-<<<<<<< HEAD:Src/FwUtils/VersionInfoProvider.cs
 using SIL.Code;
-||||||| f013144d5:Src/Common/FwUtils/VersionInfoProvider.cs
-=======
 using SIL.Extensions;
->>>>>>> develop:Src/Common/FwUtils/VersionInfoProvider.cs
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -25,21 +15,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// </summary>
 	public sealed class VersionInfoProvider
 	{
-<<<<<<< HEAD:Src/FwUtils/VersionInfoProvider.cs
-||||||| f013144d5:Src/Common/FwUtils/VersionInfoProvider.cs
-		/// <summary>Default copyright string if no assembly could be found</summary>
-		public const string kDefaultCopyrightString = "Copyright (c) 2002-2017 SIL International";
-		/// <summary>Copyright string to use in sensitive areas (i.e. when m_fShowSILInfo is
-		/// true)</summary>
-		public const string kSensitiveCopyrightString = "Copyright (c) 2002-2017";
-
-=======
-		/// <summary>Default copyright string if no assembly could be found</summary>
-		public const string kDefaultCopyrightString = "Copyright (c) 2002-2021 SIL International";
-		/// <summary>Copyright string to use in sensitive areas (i.e. when m_fShowSILInfo is true)</summary>
-		public const string kSensitiveCopyrightString = "Copyright (c) 2002-2021";
-
->>>>>>> develop:Src/Common/FwUtils/VersionInfoProvider.cs
 		private readonly Assembly m_assembly;
 		private readonly bool m_fShowSILInfo;
 
@@ -49,17 +24,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// will be hidden.</param>
 		public VersionInfoProvider(Assembly assembly, bool fShowSILInfo)
 		{
-<<<<<<< HEAD:Src/FwUtils/VersionInfoProvider.cs
 			Guard.AgainstNull(assembly, nameof(assembly));
 
 			m_assembly = assembly;
-||||||| f013144d5:Src/Common/FwUtils/VersionInfoProvider.cs
-			if (assembly == null)
-				throw new ArgumentNullException("assembly");
-			m_assembly = assembly;
-=======
-			m_assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
->>>>>>> develop:Src/Common/FwUtils/VersionInfoProvider.cs
 			m_fShowSILInfo = fShowSILInfo;
 		}
 
@@ -163,11 +130,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-<<<<<<< HEAD:Src/FwUtils/VersionInfoProvider.cs
-||||||| f013144d5:Src/Common/FwUtils/VersionInfoProvider.cs
-
-		/// ------------------------------------------------------------------------------------
-=======
 		/// <summary>
 		/// Gets the build number of the base installer (used for downloading patches)
 		/// </summary>
@@ -180,9 +142,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return int.TryParse(baseBuildAtt?.Value, out var baseBuildNum) ? baseBuildNum : 0;
 			}
 		}
-
-		/// ------------------------------------------------------------------------------------
->>>>>>> develop:Src/Common/FwUtils/VersionInfoProvider.cs
 		/// <summary>
 		/// Gets a user-friendly version of the application.
 		/// </summary>
@@ -209,17 +168,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 				var buildSuffix = string.Empty;
 #if DEBUG
-<<<<<<< HEAD:Src/FwUtils/VersionInfoProvider.cs
-				buildSuffix = "(Debug version)";
-||||||| f013144d5:Src/Common/FwUtils/VersionInfoProvider.cs
-				return string.Format(FwUtilsStrings.kstidAppVersionFmt, appVersion, productDate, bitness + "(Debug version)");
-#else
-				return string.Format(FwUtilsStrings.kstidAppVersionFmt, appVersion, productDate, bitness);
-=======
-				return string.Format(FwUtilsStrings.kstidAppVersionFmt, appVersion, productDate, bitness + " (Debug version)");
-#else
-				return string.Format(FwUtilsStrings.kstidAppVersionFmt, appVersion, productDate, bitness);
->>>>>>> develop:Src/Common/FwUtils/VersionInfoProvider.cs
+				buildSuffix = " (Debug version)";
 #endif
 				return string.Format(FwUtilsStrings.kstidAppVersionFmt, appVersion, productDate, $"{bitness}{buildSuffix}");
 			}
@@ -254,16 +203,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 					var date = Convert.ToInt32(versionParts[1]);
 					if (date > 0)
 					{
-<<<<<<< HEAD:Src/FwUtils/VersionInfoProvider.cs
 						var dt = DateTime.FromOADate(date);
-						productDate = dt.ToString("yyyy/MM/dd");
-||||||| f013144d5:Src/Common/FwUtils/VersionInfoProvider.cs
-						DateTime dt = DateTime.FromOADate(date);
-						productDate = dt.ToString("yyyy/MM/dd");
-=======
-						DateTime dt = DateTime.FromOADate(date);
 						productDate = dt.ToISO8601TimeFormatDateOnlyString();
->>>>>>> develop:Src/Common/FwUtils/VersionInfoProvider.cs
 					}
 
 					goto case 1;
@@ -283,17 +224,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-<<<<<<< HEAD:Src/FwUtils/VersionInfoProvider.cs
-				// Set the Fieldworks version text
-				ParseInformationalVersion(m_assembly, out var productVersion, out _);
-||||||| f013144d5:Src/Common/FwUtils/VersionInfoProvider.cs
-				// Set the Fieldworks version text
-				string productVersion, productDate, productType;
-				ParseInformationalVersion(m_assembly, out productVersion, out productDate);
-=======
 				// Set the FieldWorks version text
 				ParseInformationalVersion(m_assembly, out var productVersion, out _);
->>>>>>> develop:Src/Common/FwUtils/VersionInfoProvider.cs
 				// Fill the expected parts to document and avoid a crash if we get an odd informational version
 				var versionParts = new [] {"MAJOR", "MINOR", "REVISION", "BUILDNUMBER", "STABILITY"};
 				var realParts = productVersion.Split('.', ' ');
@@ -303,10 +235,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-<<<<<<< HEAD:Src/FwUtils/VersionInfoProvider.cs
-||||||| f013144d5:Src/Common/FwUtils/VersionInfoProvider.cs
-		/// ------------------------------------------------------------------------------------
-=======
 		/// <summary>The date this version of FieldWorks was built, or the date of the first FieldWorks checkin</summary>
 		internal DateTime ApparentBuildDate
 		{
@@ -317,8 +245,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
->>>>>>> develop:Src/Common/FwUtils/VersionInfoProvider.cs
 		/// <summary>
 		/// Gets a string containing the SIL copyright.
 		/// </summary>

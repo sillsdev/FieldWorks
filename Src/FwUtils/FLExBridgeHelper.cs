@@ -1,10 +1,4 @@
-<<<<<<< HEAD:Src/FwUtils/FLExBridgeHelper.cs
-// Copyright (c) 2012-2020 SIL International
-||||||| f013144d5:Src/Common/FwUtils/FLExBridgeHelper.cs
-// Copyright (c) 2015 SIL International
-=======
 // Copyright (c) 2015-2021 SIL International
->>>>>>> develop:Src/Common/FwUtils/FLExBridgeHelper.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,25 +14,15 @@ using SIL.IO;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
-<<<<<<< HEAD:Src/FwUtils/FLExBridgeHelper.cs
-using FileUtils = SIL.LCModel.Utils.FileUtils;
-||||||| f013144d5:Src/Common/FwUtils/FLExBridgeHelper.cs
-=======
 using SIL.Reporting;
->>>>>>> develop:Src/Common/FwUtils/FLExBridgeHelper.cs
+using FileUtils = SIL.LCModel.Utils.FileUtils;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// Utility methods for FLExBridge interaction
 	/// </summary>
-<<<<<<< HEAD:Src/FwUtils/FLExBridgeHelper.cs
-	public sealed class FLExBridgeHelper
-||||||| f013144d5:Src/Common/FwUtils/FLExBridgeHelper.cs
-	public class FLExBridgeHelper
-=======
 	public static class FLExBridgeHelper
->>>>>>> develop:Src/Common/FwUtils/FLExBridgeHelper.cs
 	{
 		#region These are the available '-v' parameter options:
 		/// <summary>
@@ -145,18 +129,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// constant for locating the nested lift repository (within the "OtherRepositories" path of a project).
 		/// See also SIL.FieldWorks.LCM.LcmFileHelper.OtherRepositories
 		/// </summary>
-<<<<<<< HEAD:Src/FwUtils/FLExBridgeHelper.cs
-		public const string LIFT = "LIFT";
-||||||| f013144d5:Src/Common/FwUtils/FLExBridgeHelper.cs
-		public const string LIFT = @"LIFT";
-
-		/// <summary>
-		/// Event handler delegate that passes a jump URL.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		public delegate void JumpEventHandler(object sender, FLExJumpEventArgs e);
-=======
 		public const string LIFT = "LIFT";
 
 		/// <summary>
@@ -168,14 +140,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// The FLEx Bridge Data Version is part of the Chorus branch name. It must be the same for all users who are collaborating on a project.
 		/// </summary>
 		public static string FlexBridgeDataVersion { get; }
-
-		/// <summary>
-		/// Event handler delegate that passes a jump URL.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		public delegate void JumpEventHandler(object sender, FLExJumpEventArgs e);
->>>>>>> develop:Src/Common/FwUtils/FLExBridgeHelper.cs
 
 		/// <summary>
 		/// Event to enabled FLExBridgeListener to find out when the Conflict Report title was clicked.
@@ -313,16 +277,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private static void LaunchFlexBridge(IIPCHost host, string command, string args, Action onNonBlockerCommandComplete, ref bool changesReceived, ref string projectName)
 		{
-<<<<<<< HEAD:Src/FwUtils/FLExBridgeHelper.cs
 			var flexbridgeLauncher = FullFieldWorksBridgePath();
 			if (Platform.IsUnix)
-||||||| f013144d5:Src/Common/FwUtils/FLExBridgeHelper.cs
-			string flexbridgeLauncher = FullFieldWorksBridgePath();
-			if (MiscUtils.IsUnix)
-=======
-			string flexbridgeLauncher = FullFieldWorksBridgePath();
-			if (Platform.IsUnix)
->>>>>>> develop:Src/Common/FwUtils/FLExBridgeHelper.cs
 			{
 				flexbridgeLauncher = FwDirectoryFinder.FlexBridgeFolder + "/flexbridge";
 			}
@@ -336,25 +292,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 			}
 
-<<<<<<< HEAD:Src/FwUtils/FLExBridgeHelper.cs
-			var nonFlexblockers = new HashSet<string>
-			{
-				ConflictViewer,
-				LiftConflictViewer,
-				AboutFLExBridge,
-				CheckForUpdates
-			};
-			if (nonFlexblockers.Contains(command))
-||||||| f013144d5:Src/Common/FwUtils/FLExBridgeHelper.cs
-			var nonFlexblockers = new HashSet<string>
-				{
-					ConflictViewer,
-					LiftConflictViewer,
-					AboutFLExBridge,
-					CheckForUpdates
-				};
-			if (nonFlexblockers.Contains(command))
-=======
 			var nonFlexBlockers = new HashSet<string>
 			{
 				ConflictViewer,
@@ -363,7 +300,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 				CheckForUpdates
 			};
 			if (nonFlexBlockers.Contains(command))
->>>>>>> develop:Src/Common/FwUtils/FLExBridgeHelper.cs
 			{
 				// This skips the piping and doesn't pause the Flex UI thread for the
 				// two 'view' options and for the 'About Flex Bridge' and 'Check for Updates'.

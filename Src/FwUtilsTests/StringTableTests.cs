@@ -21,37 +21,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private string m_tempFolder;
 		private StringTable m_table;
 
-<<<<<<< HEAD:Src/FwUtilsTests/StringTableTests.cs
 		/// <inheritdoc />
 		[OneTimeSetUp]
 		public override void FixtureSetup()
-||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/StringTableTests.cs
-		/// <summary />
-		[TestFixtureSetUp]
-		public void FixtureInit()
-=======
-		/// <summary />
-		[OneTimeSetUp]
-		public void FixtureInit()
->>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/StringTableTests.cs
 		{
 			m_tempFolder = CreateTestResourceFiles(typeof(Properties.Resources), "food");
 			m_table = new StringTable(Path.Combine(m_tempFolder, "fruit", "citrus"));
 		}
 
-<<<<<<< HEAD:Src/FwUtilsTests/StringTableTests.cs
 		/// <inheritdoc />
 		[OneTimeTearDown]
 		public override void FixtureTearDown()
-||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/StringTableTests.cs
-		/// <summary />
-		[TestFixtureTearDown]
-		public void FixtureCleanup()
-=======
-		/// <summary />
-		[OneTimeTearDown]
-		public void FixtureCleanup()
->>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/StringTableTests.cs
 		{
 			try
 			{

@@ -31,15 +31,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Set up some dummy styles for testing purposes
 		/// </summary>
-<<<<<<< HEAD:Src/FwUtilsTests/FontHeightAdjusterTests.cs
 		[OneTimeSetUp]
-||||||| f013144d5:Src/Common/Controls/Widgets/WidgetsTests/FontHeightAdjusterTests.cs
-		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
-=======
-		/// ------------------------------------------------------------------------------------
-		[OneTimeSetUp]
->>>>>>> develop:Src/Common/Controls/Widgets/WidgetsTests/FontHeightAdjusterTests.cs
 		public void FixtureSetup()
 		{
 			m_stylesheet = new TestFwStylesheet();
@@ -100,14 +92,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private static int GetUbuntuVersion()
 		{
-<<<<<<< HEAD:Src/FwUtilsTests/FontHeightAdjusterTests.cs
 			if (!Platform.IsUnix)
 			{
-||||||| f013144d5:Src/Common/Controls/Widgets/WidgetsTests/FontHeightAdjusterTests.cs
-			if (!MiscUtils.IsUnix)
-=======
-			if (!Platform.IsUnix)
->>>>>>> develop:Src/Common/Controls/Widgets/WidgetsTests/FontHeightAdjusterTests.cs
 				return 0;
 			}
 			try

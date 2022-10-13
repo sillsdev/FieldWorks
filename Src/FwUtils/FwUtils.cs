@@ -7,30 +7,21 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-<<<<<<< HEAD:Src/FwUtils/FwUtils.cs
 using System.Linq;
 using System.Media;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using Icu.Collation;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
-||||||| f013144d5:Src/Common/FwUtils/FwUtils.cs
-=======
-using Icu.Collation;
->>>>>>> develop:Src/Common/FwUtils/FwUtils.cs
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
-<<<<<<< HEAD:Src/FwUtils/FwUtils.cs
 using SIL.PlatformUtilities;
 using SIL.Reporting;
-||||||| f013144d5:Src/Common/FwUtils/FwUtils.cs
-=======
-using SIL.PlatformUtilities;
->>>>>>> develop:Src/Common/FwUtils/FwUtils.cs
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -116,14 +107,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>Name of the font, or <c>null</c> if not found.</returns>
 		public static string GetFontNameForLanguage(string lang)
 		{
-<<<<<<< HEAD:Src/FwUtils/FwUtils.cs
 			if (Platform.IsWindows)
 			{
-||||||| f013144d5:Src/Common/FwUtils/FwUtils.cs
-			if (MiscUtils.IsWindows)
-=======
-			if (Platform.IsWindows)
->>>>>>> develop:Src/Common/FwUtils/FwUtils.cs
 				throw new PlatformNotSupportedException();
 			}
 			if (m_mapLangToFont.TryGetValue(lang, out var fontName))
@@ -225,34 +210,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			CustomIcu.InitIcuDataDir();
 		}
 
-<<<<<<< HEAD:Src/FwUtils/FwUtils.cs
-||||||| f013144d5:Src/Common/FwUtils/FwUtils.cs
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Translate mouse buttons received from a Win API mouse message to .NET mouse buttons
-		/// </summary>
-		/// <param name="winMouseButtons">Windows mouse buttons</param>
-		/// <returns>.NET mouse buttons</returns>
-		/// ------------------------------------------------------------------------------------
-		public static MouseButtons TranslateMouseButtons(Win32.MouseButtons winMouseButtons)
-		{
-			MouseButtons mouseButton = MouseButtons.None;
-			if ((winMouseButtons & Win32.MouseButtons.MK_LBUTTON) == Win32.MouseButtons.MK_LBUTTON)
-				mouseButton |= MouseButtons.Left;
-			if ((winMouseButtons & Win32.MouseButtons.MK_RBUTTON) == Win32.MouseButtons.MK_RBUTTON)
-				mouseButton |= MouseButtons.Right;
-			if ((winMouseButtons & Win32.MouseButtons.MK_MBUTTON) == Win32.MouseButtons.MK_MBUTTON)
-				mouseButton |= MouseButtons.Middle;
-			if ((winMouseButtons & Win32.MouseButtons.MK_XBUTTON1) == Win32.MouseButtons.MK_XBUTTON1)
-				mouseButton |= MouseButtons.XButton1;
-			if ((winMouseButtons & Win32.MouseButtons.MK_XBUTTON2) == Win32.MouseButtons.MK_XBUTTON2)
-				mouseButton |= MouseButtons.XButton2;
-
-			return mouseButton;
-		}
-
-		/// ------------------------------------------------------------------------------------
-=======
 		/// <summary>
 		/// Creates a collator using Icu Locale for the writing system if possible
 		/// </summary>
@@ -273,32 +230,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return col;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Translate mouse buttons received from a Win API mouse message to .NET mouse buttons
-		/// </summary>
-		/// <param name="winMouseButtons">Windows mouse buttons</param>
-		/// <returns>.NET mouse buttons</returns>
-		/// ------------------------------------------------------------------------------------
-		public static MouseButtons TranslateMouseButtons(Win32.MouseButtons winMouseButtons)
-		{
-			MouseButtons mouseButton = MouseButtons.None;
-			if ((winMouseButtons & Win32.MouseButtons.MK_LBUTTON) == Win32.MouseButtons.MK_LBUTTON)
-				mouseButton |= MouseButtons.Left;
-			if ((winMouseButtons & Win32.MouseButtons.MK_RBUTTON) == Win32.MouseButtons.MK_RBUTTON)
-				mouseButton |= MouseButtons.Right;
-			if ((winMouseButtons & Win32.MouseButtons.MK_MBUTTON) == Win32.MouseButtons.MK_MBUTTON)
-				mouseButton |= MouseButtons.Middle;
-			if ((winMouseButtons & Win32.MouseButtons.MK_XBUTTON1) == Win32.MouseButtons.MK_XBUTTON1)
-				mouseButton |= MouseButtons.XButton1;
-			if ((winMouseButtons & Win32.MouseButtons.MK_XBUTTON2) == Win32.MouseButtons.MK_XBUTTON2)
-				mouseButton |= MouseButtons.XButton2;
-
-			return mouseButton;
-		}
-
-		/// ------------------------------------------------------------------------------------
->>>>>>> develop:Src/Common/FwUtils/FwUtils.cs
 		/// <summary>
 		/// Determines whether the window handle is a child window of the specified parent form.
 		/// </summary>
