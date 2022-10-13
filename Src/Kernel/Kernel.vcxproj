@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\Icu4c.Win.Fw.Lib.70.1.123\build\Icu4c.Win.Fw.Lib.props" Condition="Exists('..\..\packages\Icu4c.Win.Fw.Lib.70.1.123\build\Icu4c.Win.Fw.Lib.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -104,6 +105,18 @@
     <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
     <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(IcuFwLibDirectoryX64)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(IcuFwLibDirectoryX64)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(IcuFwLibDirectoryX86)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(IcuFwLibDirectoryX86)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -113,13 +126,26 @@
     <None Include="FwKernel.mak" />
     <None Include="Language.idh" />
     <None Include="Makefile" />
+    <None Include="packages.config" />
     <None Include="TextServ.idh" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="FwKernelPs.idl" />
     <Midl Include="FwKernelTlb.idl" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="icu4c.readme.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" Condition="Exists('$(VCTargetsPath)\Microsoft.Cpp.targets')" />
-  <ImportGroup Label="ExtensionTargets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\..\packages\Icu4c.Win.Fw.Lib.70.1.123\build\Icu4c.Win.Fw.Lib.targets" Condition="Exists('..\..\packages\Icu4c.Win.Fw.Lib.70.1.123\build\Icu4c.Win.Fw.Lib.targets')" />
+  </ImportGroup>
   <Import Project="../Cpp.linux.targets" Condition="'$(OS)'=='Unix'" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Icu4c.Win.Fw.Lib.70.1.123\build\Icu4c.Win.Fw.Lib.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Icu4c.Win.Fw.Lib.70.1.123\build\Icu4c.Win.Fw.Lib.props'))" />
+    <Error Condition="!Exists('..\..\packages\Icu4c.Win.Fw.Lib.70.1.123\build\Icu4c.Win.Fw.Lib.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Icu4c.Win.Fw.Lib.70.1.123\build\Icu4c.Win.Fw.Lib.targets'))" />
+  </Target>
 </Project>

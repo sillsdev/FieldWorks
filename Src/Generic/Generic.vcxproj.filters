@@ -285,5 +285,9 @@
     <None Include="common.idh" />
     <None Include="GenericInc.mak" />
     <None Include="GenericLib.mak" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="icu4c.readme.txt" />
   </ItemGroup>
 </Project>
