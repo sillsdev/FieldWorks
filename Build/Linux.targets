@@ -1,28 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< HEAD
 <Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-||||||| f013144d5
-<Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
-
-	<UsingTask TaskName="ExtractIIDs" AssemblyFile="FwBuildTasks.dll"/>
-=======
-<Project DefaultTargets="all" InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
-
-	<UsingTask TaskName="ExtractIIDs" AssemblyFile="FwBuildTasks.dll"/>
->>>>>>> develop
 
 	<PropertyGroup Condition="'$(OS)'=='Unix'">
 		<build4ux>1</build4ux>
 	</PropertyGroup>
 
 	<!-- call preparatory Linux targets -->
-<<<<<<< HEAD
-	<Target Name="initLinux" Condition="'$(OS)'=='Unix'" DependsOnTargets="Initialize;unitpp;tlbs-copy;teckit;linuxLibs;setupLinuxRegistry;graphite2Linux"
-||||||| f013144d5
-	<Target Name="initLinux" Condition="'$(OS)'=='Unix'" DependsOnTargets="Initialize;unitpp;tlbs-copy;teckit;linuxLibs;ensureTLBsUpToDate;setupLinuxRegistry;BuildLinuxXslAssemblies;graphite2Linux"
-=======
-	<Target Name="initLinux" Condition="'$(OS)'=='Unix'" DependsOnTargets="Initialize;unitpp;tlbs-copy;linuxLibs;ensureTLBsUpToDate;setupLinuxRegistry;BuildLinuxXslAssemblies;graphite2Linux"
->>>>>>> develop
+	<Target Name="initLinux" Condition="'$(OS)'=='Unix'" DependsOnTargets="Initialize;unitpp;tlbs-copy;linuxLibs;setupLinuxRegistry;graphite2Linux"
 			Inputs="$(dir-fwdistfiles)/strings-en.txt" Outputs="$(dir-outputBase)/strings-en.txt">
 		<Copy SourceFiles="$(dir-fwdistfiles)/strings-en.txt"
 			  DestinationFolder="$(dir-outputBase)"
@@ -57,48 +41,6 @@
 			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 	</Target>
 
-<<<<<<< HEAD
-	<!-- Copy (or delete copied) TECKit files -->
-	<Target Name="teckit">
-		<PropertyGroup>
-			<teckit-ext Condition="'$(arch)'!='x86_64'">x86</teckit-ext>
-			<teckit-ext Condition="'$(arch)'=='x86_64'">x86_64</teckit-ext>
-		</PropertyGroup>
-		<ItemGroup>
-			<CopyTECkitFiles Include="$(dir-fwdistfiles)/libTECkit_*$(teckit-ext).so" />
-			<DeleteTECkitFiles Include="$(dir-outputBase)/libTECkit_*$(teckit-ext).so" />
-		</ItemGroup>
-		<Copy SourceFiles="@(CopyTECkitFiles)"
-			  DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
-			  Condition="'$(action)'!='clean'"/>
-		<Delete Files="@(DeleteTECkitFiles)" Condition="'$(action)'=='clean'"/>
-	</Target>
-
-||||||| f013144d5
-	<!-- Copy (or delete copied) TECKit files -->
-	<Target Name="teckit">
-		<CreateProperty Value="x86" Condition="'$(arch)'!='x86_64'">
-			<Output TaskParameter="Value" PropertyName="teckit-ext"/>
-		</CreateProperty>
-		<CreateProperty Value="x86_64" Condition="'$(arch)'=='x86_64'">
-			<Output TaskParameter="Value" PropertyName="teckit-ext"/>
-		</CreateProperty>
-		<CreateItem Include="$(dir-fwdistfiles)/libTECkit_*$(teckit-ext).so">
-			<Output TaskParameter="Include" ItemName="CopyTECkitFiles"/>
-		</CreateItem>
-		<Copy SourceFiles="@(CopyTECkitFiles)"
-			  DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
-			  Condition="'$(action)'!='clean'"/>
-		<CreateItem Include="$(dir-outputBase)/libTECkit_*$(teckit-ext).so">
-			<Output TaskParameter="Include" ItemName="DeleteTECkitFiles"/>
-		</CreateItem>
-		<Delete Files="@(DeleteTECkitFiles)" Condition="'$(action)'=='clean'"/>
-	</Target>
-
-=======
->>>>>>> develop
 	<Target Name="linuxLibs">
 		<Exec Command="make V=1 externaltargets" WorkingDirectory="$(fwrt)" Condition="'$(action)'!='clean'"/>
 		<!--		<Exec Command="make V=1 externaltargets-test" WorkingDirectory="$(fwrt)"
@@ -171,34 +113,18 @@
 					   Key="SOFTWARE\SIL\FieldWorks\$(GitVersion_Major)\ProjectsDir"
 					   Value="$(fwrt)/Projects"/>
 		<WriteRegistry Hive="LocalMachine"
-<<<<<<< HEAD
-					   Key="SOFTWARE\SIL\Icu54DataDir"
-					   Value="$(dir-icuData)/icudt54l"/>
-||||||| f013144d5
-					   Key="SOFTWARE\SIL\Icu54DataDir"
-					   Value="$(ICU_DATA)/icudt54l"/>
-=======
 					   Key="SOFTWARE\SIL\Icu70DataDir"
-					   Value="$(ICU_DATA)/icudt70l"/>
->>>>>>> develop
+					   Value="$(dir-icuData)/icudt70l"/>
 		<WriteRegistry Hive="LocalMachine"
-<<<<<<< HEAD
-					   Key="SOFTWARE\SIL\Icu54Dir"
-					   Value="$(dir-icuData)"/>
-||||||| f013144d5
-					   Key="SOFTWARE\SIL\Icu54Dir"
-					   Value="$(ICU_DATA)"/>
-=======
 					   Key="SOFTWARE\SIL\Icu70Dir"
-					   Value="$(ICU_DATA)"/>
->>>>>>> develop
+					   Value="$(dir-icuData)"/>
 		<WriteRegistry Hive="LocalMachine"
 					   Key="SOFTWARE\SIL\SilEncConverters40\PluginDir"
 					   Value="$(dir-outputBase)/EC/Plugins"/>
 		<WriteRegistry Hive="LocalMachine"
 					   Key="SOFTWARE\SIL\SilEncConverters40\RootDir"
 					   Value="$(dir-outputBase)"/>
-		<!-- These are obsolete, as far as I know. -->
+		<!-- These are obsolete, as far as I know (SteveMcC, 2012-09). -->
 		<WriteRegistry Hive="LocalMachine"
 					   Key="SOFTWARE\Firebird Project\Firebird Server\Instances\DefaultInstance"
 					   Value="/usr/lib/firebird/2.1"/>

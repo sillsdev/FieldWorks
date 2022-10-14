@@ -1,0 +1,43 @@
+# Copyright (c) 2018-2020 SIL International
+# This software is licensed under the LGPL, version 2.1 or later
+# (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+root = true
+
+# Defaults
+[*]
+indent_style = tab
+indent_size = tab
+tab_width = 4
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = false
+max_line_length = 98
+
+[*.cs]
+indent_style = tab
+tab_width = 4
+csharp_style_var_for_built_in_types = true
+csharp_style_var_when_type_is_apparent = true
+csharp_style_var_elsewhere = true
+csharp_prefer_braces = true
+dotnet_sort_system_directives_first = true
+csharp_new_line_before_open_brace = all
+csharp_space_after_cast = false
+
+# Settings Visual Studio uses for generated files
+[*.{csproj,resx,settings,vcxproj*,vdproj,xml,json}]
+indent_style = space
+indent_size = 2
+
+# Generated file
+[*.sln]
+end_of_line = crlf
+
+[*.{cpp,h}]
+indent_style = tab
+indent_size = 4
+
+[*.{proj,props,targets}]
+indent_style = space
+indent_size = 2

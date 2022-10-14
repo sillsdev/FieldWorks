@@ -1,0 +1,49 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<FwBuildTasksPath>$(MSBuildThisFileDirectory)artifacts/Debug</FwBuildTasksPath>
+  </PropertyGroup>
+
+  <UsingTask TaskName="CatenateFiles" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="Clouseau" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="ComputerName" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="CpuArchitecture" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="DownloadFile" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="DownloadFilesFromTeamCity" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="ExtractIIDs" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll"/>
+  <UsingTask TaskName="ForceDelete" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="GenerateFwTargets" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="GenerateNUnitReports" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="GenerateTestCoverageReport" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="GetSpecialFolderPath" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll"/>
+  <UsingTask TaskName="GoldEticToXliff" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="ListsToXliff" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll"/>
+  <UsingTask TaskName="LocalizeFieldWorks" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll"/>
+  <UsingTask TaskName="LogMetadata" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="Make" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="Md5Checksum" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="NormalizeLocales" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll"/>
+  <UsingTask TaskName="NUnit" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="ParentDirectory" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="ParseVersionNumbers" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="PathCombine" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="PoToXml" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll"/>
+  <UsingTask TaskName="RegFree" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="RegisterForTests" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="SetEnvVar" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="Substitute" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll"/>
+  <UsingTask TaskName="Unitpp" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="Unzip" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="VerifyFilesIdentical" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="WriteRegistry" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="XliffToGoldEtic" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+  <UsingTask TaskName="XliffToLists" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll"/>
+  <UsingTask TaskName="XmlToPo" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll"/>
+  <UsingTask TaskName="Zip" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
+
+  <UsingTask TaskName="WriteTextFile" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" Condition="'$(OS)'=='Unix'" />
+  <UsingTask TaskName="XslTransformation" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" Condition="'$(OS)'=='Unix'" />
+
+  <UsingTask TaskName="CheckAdminPrivilege" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" Condition="'$(OS)'=='Windows_NT'"/>
+  <UsingTask TaskName="WxsToWxi" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" Condition="'$(OS)'=='Windows_NT'" />
+
+</Project>

@@ -73,42 +73,6 @@
 			Properties="Locale=en"/>
 	</Target>
 
-<<<<<<< HEAD
-||||||| f013144d5
-	<Target Name="copyLibL10ns">
-	<PropertyGroup>
-		<ChorusL10nsNugetDir>$(fwrt)/packages/SIL.Chorus.l10ns.3.0.1</ChorusL10nsNugetDir>
-		<PalasoL10nsNugetDir>$(fwrt)/packages/SIL.libpalaso.l10ns.6.0.0</PalasoL10nsNugetDir>
-	</PropertyGroup>
-	<Error Text="Chorus L10ns package missing, did you update nuget without updating Localize.targets?" Condition="!Exists($(ChorusL10nsNugetDir))" />
-	<Error Text="Palaso L10ns package missing, did you update nuget without updating Localize.targets?" Condition="!Exists($(PalasoL10nsNugetDir))" />
-	<ItemGroup>
-		<XliffFiles Include="$(ChorusL10nsNugetDir)/content/**/*.xlf"/>
-		<XliffFiles Include="$(PalasoL10nsNugetDir)/content/**/*.xlf"/>
-	</ItemGroup>
-	  <Copy SourceFiles="@(XliffFiles)"
-			DestinationFiles="@(XliffFiles->'$(LibL10nsDirectory)/%(Filename)%(Extension)')"
-			SkipUnchangedFiles="true"/>
-	</Target>
-
-=======
-	<Target Name="copyLibL10ns">
-	<PropertyGroup>
-		<ChorusL10nsNugetDir>$(fwrt)/packages/SIL.Chorus.l10ns.3.0.1</ChorusL10nsNugetDir>
-		<PalasoL10nsNugetDir>$(fwrt)/packages/SIL.libpalaso.l10ns.6.0.0</PalasoL10nsNugetDir>
-	</PropertyGroup>
-	<Error Text="Chorus L10ns package missing, did you update nuget without updating Localize.targets?" Condition="!Exists('$(ChorusL10nsNugetDir)')" />
-	<Error Text="Palaso L10ns package missing, did you update nuget without updating Localize.targets?" Condition="!Exists('$(PalasoL10nsNugetDir)')" />
-	<ItemGroup>
-		<XliffFiles Include="$(ChorusL10nsNugetDir)/content/**/*.xlf"/>
-		<XliffFiles Include="$(PalasoL10nsNugetDir)/content/**/*.xlf"/>
-	</ItemGroup>
-	  <Copy SourceFiles="@(XliffFiles)"
-			DestinationFiles="@(XliffFiles->'$(LibL10nsDirectory)/%(Filename)%(Extension)')"
-			SkipUnchangedFiles="true"/>
-	</Target>
-
->>>>>>> develop
 	<!-- Each downloaded translation needs the following post-processing:
 			* Insert strings from messages.*.po into strings-*.xml
 			* Verify that translated resx files are where we expect them

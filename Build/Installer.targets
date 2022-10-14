@@ -101,8 +101,8 @@
 	<Target Name="BuildProduct" DependsOnTargets="CleanInstaller;ProductCompile"/>
 
 	<Target Name="RequirePlatform">
-		<Error Text="The Platform property must be set on the command line to x86 or x64."  Condition="'$(Platform)' == ''" />
-		<Error Text="Installer must be run for release builds [config=$(config)]"  Condition="'$(config)' != 'release'" />
+		<Error Text="The Platform property must be set on the command line to x86 or x64." Condition="'$(Platform)' == ''" />
+		<Error Text="Installer must be run for release builds [config=$(config)]" Condition="'$(config)' != 'release'" />
 	</Target>
 	<!-- ########################################################################################################## -->
 	<!-- ### Compile Targets                                                                                    ### -->
