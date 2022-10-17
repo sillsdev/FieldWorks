@@ -7,14 +7,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.ServiceModel;
 using System.Threading;
 using IPCFramework;
 using SIL.IO;
 using SIL.LCModel;
-using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
-using SIL.Reporting;
 using FileUtils = SIL.LCModel.Utils.FileUtils;
 
 namespace SIL.FieldWorks.Common.FwUtils

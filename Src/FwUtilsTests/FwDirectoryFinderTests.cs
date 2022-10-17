@@ -6,7 +6,6 @@ using System;
 using System.IO;
 using NUnit.Framework;
 using SIL.PlatformUtilities;
-using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {

@@ -9,6 +9,7 @@
 		<Product>FieldWorks</Product>
 		<Copyright>Copyright © 2010-2021 SIL International</Copyright>
 		<OutputPath>../../Output/$(Configuration)</OutputPath>
+		<TargetDir>$(OutputPath)</TargetDir>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<LangVersion>8</LangVersion>
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

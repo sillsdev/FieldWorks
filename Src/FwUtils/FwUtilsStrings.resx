@@ -166,6 +166,9 @@
     <value>You do not have permission to change the setting "{0}". Administrator privileges are required to make changes affecting all users of this computer.</value>
     <comment>Error message when writing a registry setting for "local machine" fails.</comment>
   </data>
+  <data name="ksCorruptSettingsFileCaption" xml:space="preserve">
+    <value>Corrupt Settings File Detected</value>
+  </data>
   <data name="kstIdCantDoDictExists" xml:space="preserve">
     <value>FieldWorks has unexpectedly timed out trying to determine whether the spelling dictionary {0} exists. FieldWorks will assume there is no such dictionary, which may affect spell-checking. If you think this dictionary should exist, we recommend restarting your computer. If you see this message regularly, please report it as a bug.</value>
   </data>
@@ -175,6 +178,10 @@
   <data name="kstidInvalidDictId" xml:space="preserve">
     <value> The writing system {0} specifies an invalid spelling dictionary ({1}). Valid spelling dictionary IDs must only contain ASCII alphanumeric characters or underline. Spell checking will not work for this writing system until you correct this in the Writing System Properties dialog.</value>
     <comment>Error message. {0} might be a code like "fr" and {1} a bad ID, typically a short string like "frn[".</comment>
+  </data>
+  <data name="ksDeleteAndReportCorruptSettingsFile" xml:space="preserve">
+    <value>FieldWorks has detected one or more corrupted settings files. These files will be safely deleted. If you have been using different keyboards to input text, these may be reset to default values. Please restore them yourself.</value>
+    <comment>Let users know that local user settings need to be manually restored</comment>
   </data>
   <data name="ksPtCommunicationProblem" xml:space="preserve">
     <value>The project you are opening will not communicate with Paratext

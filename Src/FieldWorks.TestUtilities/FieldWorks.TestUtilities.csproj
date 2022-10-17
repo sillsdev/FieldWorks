@@ -8,8 +8,8 @@
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="All" />
     <PackageReference Include="NUnit" Version="3.13.2" />
-    <PackageReference Include="SIL.Core" Version="9.0.0-beta0076" />
-    <PackageReference Include="SIL.Windows.Forms.Keyboarding" Version="9.0.0-beta0076" />
+    <PackageReference Include="SIL.Core" Version="11.0.0-beta0041" />
+    <PackageReference Include="SIL.Windows.Forms.Keyboarding" Version="11.0.0-beta0041" />
   </ItemGroup>
 
   <ItemGroup>
