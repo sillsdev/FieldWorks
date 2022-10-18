@@ -564,7 +564,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 				if (prepend != "***")
 				{
 					glossSB.Append(prepend);
-			}
+				}
 			}
 			glossSB.Append(GetGloss(msa));
 			if (inflType != null)
@@ -573,7 +573,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 				if (append != "***")
 				{
 					glossSB.Append(append);
-			}
+				}
 			}
 			hcEntry.Gloss = glossSB.ToString();
 			var fs = new FeatureStruct();
@@ -602,8 +602,8 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 					else
 					{
 						headFS.Add(inflFS);
+					}
 				}
-			}
 			}
 			if (headFS != null)
 			{
@@ -616,6 +616,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			if (inflType != null)
 			{
 				hcEntry.Properties[HCParser.InflTypeID] = inflType.Hvo;
+			}
 
 			foreach (var allo in allos)
 			{

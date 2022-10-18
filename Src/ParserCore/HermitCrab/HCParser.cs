@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 				{
 					var selectTraceMorphsSet = new HashSet<int>(selectTraceMorphs);
 					m_morpher.LexEntrySelector = entry => selectTraceMorphsSet.Contains((int)entry.Properties[MsaID]);
-					m_morpher.RuleSelector = rule => !(rule is Morpheme mrule) || selectTraceMorphsSet.Contains((int)mrule.Properties[MsaID]);
+					m_morpher.RuleSelector = rule => !(rule is Morpheme morphRule) || selectTraceMorphsSet.Contains((int)morphRule.Properties[MsaID]);
 				}
 				else
 				{
