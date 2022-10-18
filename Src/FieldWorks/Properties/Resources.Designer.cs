@@ -61,6 +61,25 @@ namespace SIL.FieldWorks.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Automatic Updates.
+        /// </summary>
+        internal static string AutomaticUpdatesCaption {
+            get {
+                return ResourceManager.GetString("AutomaticUpdatesCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Would you like FieldWorks to download updates automatically?
+        ///(To configure update settings, go to Tools-&gt;Options-&gt;Updates.).
+        /// </summary>
+        internal static string AutomaticUpdatesMessage {
+            get {
+                return ResourceManager.GetString("AutomaticUpdatesMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Bullet {
@@ -459,25 +478,6 @@ namespace SIL.FieldWorks.Properties {
         internal static string kstidFoundInvalidWs {
             get {
                 return ResourceManager.GetString("kstidFoundInvalidWs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Global Writing Systems Changed.
-        /// </summary>
-        internal static string kstidGlobalWsChangedCaption {
-            get {
-                return ResourceManager.GetString("kstidGlobalWsChangedCaption", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following writing systems were updated in another project. Would you like to use those changes in this project ({1}) too?
-        ///{0}.
-        /// </summary>
-        internal static string kstidGlobalWsChangedMsg {
-            get {
-                return ResourceManager.GetString("kstidGlobalWsChangedMsg", resourceCulture);
             }
         }
         

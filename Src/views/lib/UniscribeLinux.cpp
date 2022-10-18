@@ -188,7 +188,7 @@ HRESULT ScriptShape(
 	psva->fReserved = 0;
 	psva->fShapeReserved = 0;
 
-	UnicodeString8 utf8(pwcChars, cChars);
+	UnicodeString8 utf8(reinterpret_cast<const UChar *>(pwcChars), cChars);
 	HRESULT hr;
 	hr = PangoCharsToGlyph(psc, utf8.c_str(), utf8.size(), cMaxGlyphs, reinterpret_cast<PangoGlyphString**>(pwOutGlyphs), pcGlyphs);
 
@@ -481,7 +481,7 @@ HRESULT ScriptItemize(
   /*__out*/  int *pcItems
 )
 {
-	UnicodeString8 utf8(pwcInChars, cInChars);
+	UnicodeString8 utf8(reinterpret_cast<const UChar*>(pwcInChars), cInChars);
 	HRESULT hr = PangoItemize(utf8.c_str(), utf8.size(), cMaxItems, pItems, pcItems);
 	if (hr != S_OK)
 		return hr;

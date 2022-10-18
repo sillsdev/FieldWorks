@@ -1,10 +1,24 @@
+<<<<<<< HEAD:Src/LanguageExplorer/Impls/LexOptionsDlg.Designer.cs
 // Copyright (c) 2007-2020 SIL International
+||||||| f013144d5:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
+// Copyright (c) 2015 SIL International
+=======
+// Copyright (c) 2015-2021 SIL International
+>>>>>>> develop:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+<<<<<<< HEAD:Src/LanguageExplorer/Impls/LexOptionsDlg.Designer.cs
 using System.Diagnostics;
 
 namespace LanguageExplorer.Impls
+||||||| f013144d5:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
+namespace SIL.FieldWorks.LexText.Controls
+=======
+using System.Windows.Forms;
+
+namespace SIL.FieldWorks.LexText.Controls
+>>>>>>> develop:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
 {
 	partial class LexOptionsDlg
 	{
@@ -30,6 +44,7 @@ namespace LanguageExplorer.Impls
 			{
 				components?.Dispose();
 			}
+
 			base.Dispose(disposing);
 		}
 
@@ -46,20 +61,57 @@ namespace LanguageExplorer.Impls
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnHelp = new System.Windows.Forms.Button();
 			this.m_tabPrivacy = new System.Windows.Forms.TabPage();
-			this.m_okToPingCheckBox = new System.Windows.Forms.CheckBox();
+			this.llPrivacy = new System.Windows.Forms.LinkLabel();
 			this.PrivacyText = new System.Windows.Forms.TextBox();
+<<<<<<< HEAD:Src/LanguageExplorer/Impls/LexOptionsDlg.Designer.cs
+||||||| f013144d5:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
+			this.m_tabPlugins = new System.Windows.Forms.TabPage();
+			this.m_lvPlugins = new System.Windows.Forms.ListView();
+			this.m_chName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.m_chDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.m_labelPluginBlurb = new System.Windows.Forms.Label();
+			this.m_labelRights = new System.Windows.Forms.Label();
+=======
+			this.m_okToPingCheckBox = new System.Windows.Forms.CheckBox();
+			this.m_tabPlugins = new System.Windows.Forms.TabPage();
+			this.m_labelPluginRights = new System.Windows.Forms.Label();
+			this.m_labelPluginBlurb = new System.Windows.Forms.Label();
+			this.m_lvPlugins = new System.Windows.Forms.ListView();
+			this.m_chName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.m_chDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+>>>>>>> develop:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
 			this.m_tabInterface = new System.Windows.Forms.TabPage();
+<<<<<<< HEAD:Src/LanguageExplorer/Impls/LexOptionsDlg.Designer.cs
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.m_userInterfaceChooser = new UserInterfaceChooser();
 			this.updateGlobalWS = new System.Windows.Forms.CheckBox();
 			this.label4 = new System.Windows.Forms.Label();
+||||||| f013144d5:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.label3 = new System.Windows.Forms.Label();
+			this.m_userInterfaceChooser = new SIL.FieldWorks.Common.Widgets.UserInterfaceChooser();
+			this.updateGlobalWS = new System.Windows.Forms.CheckBox();
+			this.label4 = new System.Windows.Forms.Label();
+=======
+>>>>>>> develop:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
 			this.m_autoOpenCheckBox = new System.Windows.Forms.CheckBox();
+			this.label4 = new System.Windows.Forms.Label();
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.m_userInterfaceChooser = new SIL.FieldWorks.Common.Widgets.UserInterfaceChooser();
+			this.label3 = new System.Windows.Forms.Label();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
+			this.m_tabUpdates = new System.Windows.Forms.TabPage();
+			this.gbUpdateChannel = new System.Windows.Forms.GroupBox();
+			this.m_textChannelDescription = new System.Windows.Forms.TextBox();
+			this.m_cbUpdateChannel = new System.Windows.Forms.ComboBox();
+			this.m_okToAutoupdate = new System.Windows.Forms.CheckBox();
 			this.m_tabPrivacy.SuspendLayout();
 			this.m_tabInterface.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.tabControl1.SuspendLayout();
+			this.m_tabUpdates.SuspendLayout();
+			this.gbUpdateChannel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// m_btnOK
@@ -86,17 +138,19 @@ namespace LanguageExplorer.Impls
 			// 
 			// m_tabPrivacy
 			// 
+			this.m_tabPrivacy.Controls.Add(this.llPrivacy);
 			this.m_tabPrivacy.Controls.Add(this.PrivacyText);
 			this.m_tabPrivacy.Controls.Add(this.m_okToPingCheckBox);
 			resources.ApplyResources(this.m_tabPrivacy, "m_tabPrivacy");
 			this.m_tabPrivacy.Name = "m_tabPrivacy";
 			this.m_tabPrivacy.UseVisualStyleBackColor = true;
 			// 
-			// m_okToPingCheckBox
+			// llPrivacy
 			// 
-			resources.ApplyResources(this.m_okToPingCheckBox, "m_okToPingCheckBox");
-			this.m_okToPingCheckBox.Name = "m_okToPingCheckBox";
-			this.m_okToPingCheckBox.UseVisualStyleBackColor = true;
+			resources.ApplyResources(this.llPrivacy, "llPrivacy");
+			this.llPrivacy.Name = "llPrivacy";
+			this.llPrivacy.TabStop = true;
+			this.llPrivacy.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.PrivacyLinkClicked);
 			// 
 			// PrivacyText
 			// 
@@ -105,16 +159,120 @@ namespace LanguageExplorer.Impls
 			resources.ApplyResources(this.PrivacyText, "PrivacyText");
 			this.PrivacyText.Name = "PrivacyText";
 			this.PrivacyText.ReadOnly = true;
+			this.PrivacyText.TabStop = false;
 			// 
+			// m_okToPingCheckBox
+			// 
+			resources.ApplyResources(this.m_okToPingCheckBox, "m_okToPingCheckBox");
+			this.m_okToPingCheckBox.Name = "m_okToPingCheckBox";
+			this.m_okToPingCheckBox.UseVisualStyleBackColor = true;
+			// 
+<<<<<<< HEAD:Src/LanguageExplorer/Impls/LexOptionsDlg.Designer.cs
+||||||| f013144d5:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
+			// m_tabPlugins
+			// 
+			this.m_tabPlugins.Controls.Add(this.m_labelRights);
+			this.m_tabPlugins.Controls.Add(this.m_labelPluginBlurb);
+			this.m_tabPlugins.Controls.Add(this.m_lvPlugins);
+			resources.ApplyResources(this.m_tabPlugins, "m_tabPlugins");
+			this.m_tabPlugins.Name = "m_tabPlugins";
+			this.m_tabPlugins.UseVisualStyleBackColor = true;
+			// 
+			// m_lvPlugins
+			// 
+			this.m_lvPlugins.CheckBoxes = true;
+			this.m_lvPlugins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.m_chName,
+            this.m_chDescription});
+			this.m_lvPlugins.FullRowSelect = true;
+			this.m_lvPlugins.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+			resources.ApplyResources(this.m_lvPlugins, "m_lvPlugins");
+			this.m_lvPlugins.MultiSelect = false;
+			this.m_lvPlugins.Name = "m_lvPlugins";
+			this.m_lvPlugins.UseCompatibleStateImageBehavior = false;
+			this.m_lvPlugins.View = System.Windows.Forms.View.Details;
+			// 
+			// m_chName
+			// 
+			resources.ApplyResources(this.m_chName, "m_chName");
+			// 
+			// m_chDescription
+			// 
+			resources.ApplyResources(this.m_chDescription, "m_chDescription");
+			// 
+			// m_labelPluginBlurb
+			// 
+			resources.ApplyResources(this.m_labelPluginBlurb, "m_labelPluginBlurb");
+			this.m_labelPluginBlurb.Name = "m_labelPluginBlurb";
+			// 
+			// m_labelRights
+			// 
+			resources.ApplyResources(this.m_labelRights, "m_labelRights");
+			this.m_labelRights.Name = "m_labelRights";
+			// 
+=======
+			// m_tabPlugins
+			// 
+			this.m_tabPlugins.Controls.Add(this.m_labelPluginRights);
+			this.m_tabPlugins.Controls.Add(this.m_labelPluginBlurb);
+			this.m_tabPlugins.Controls.Add(this.m_lvPlugins);
+			resources.ApplyResources(this.m_tabPlugins, "m_tabPlugins");
+			this.m_tabPlugins.Name = "m_tabPlugins";
+			this.m_tabPlugins.UseVisualStyleBackColor = true;
+			// 
+			// m_labelPluginRights
+			// 
+			resources.ApplyResources(this.m_labelPluginRights, "m_labelPluginRights");
+			this.m_labelPluginRights.Name = "m_labelPluginRights";
+			// 
+			// m_labelPluginBlurb
+			// 
+			resources.ApplyResources(this.m_labelPluginBlurb, "m_labelPluginBlurb");
+			this.m_labelPluginBlurb.Name = "m_labelPluginBlurb";
+			// 
+			// m_lvPlugins
+			// 
+			this.m_lvPlugins.CheckBoxes = true;
+			this.m_lvPlugins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.m_chName,
+            this.m_chDescription});
+			this.m_lvPlugins.FullRowSelect = true;
+			this.m_lvPlugins.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+			this.m_lvPlugins.HideSelection = false;
+			resources.ApplyResources(this.m_lvPlugins, "m_lvPlugins");
+			this.m_lvPlugins.MultiSelect = false;
+			this.m_lvPlugins.Name = "m_lvPlugins";
+			this.m_lvPlugins.UseCompatibleStateImageBehavior = false;
+			this.m_lvPlugins.View = System.Windows.Forms.View.Details;
+			// 
+			// m_chName
+			// 
+			resources.ApplyResources(this.m_chName, "m_chName");
+			// 
+			// m_chDescription
+			// 
+			resources.ApplyResources(this.m_chDescription, "m_chDescription");
+			// 
+>>>>>>> develop:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
 			// m_tabInterface
 			// 
 			resources.ApplyResources(this.m_tabInterface, "m_tabInterface");
 			this.m_tabInterface.Controls.Add(this.m_autoOpenCheckBox);
 			this.m_tabInterface.Controls.Add(this.label4);
-			this.m_tabInterface.Controls.Add(this.updateGlobalWS);
 			this.m_tabInterface.Controls.Add(this.groupBox1);
 			this.m_tabInterface.Name = "m_tabInterface";
 			this.m_tabInterface.UseVisualStyleBackColor = true;
+			// 
+			// m_autoOpenCheckBox
+			// 
+			resources.ApplyResources(this.m_autoOpenCheckBox, "m_autoOpenCheckBox");
+			this.m_autoOpenCheckBox.Name = "m_autoOpenCheckBox";
+			this.m_autoOpenCheckBox.UseVisualStyleBackColor = true;
+			// 
+			// label4
+			// 
+			resources.ApplyResources(this.label4, "label4");
+			this.label4.Name = "label4";
 			// 
 			// groupBox1
 			// 
@@ -124,11 +282,6 @@ namespace LanguageExplorer.Impls
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.TabStop = false;
 			// 
-			// label3
-			// 
-			resources.ApplyResources(this.label3, "label3");
-			this.label3.Name = "label3";
-			// 
 			// m_userInterfaceChooser
 			// 
 			resources.ApplyResources(this.m_userInterfaceChooser, "m_userInterfaceChooser");
@@ -137,31 +290,58 @@ namespace LanguageExplorer.Impls
 			this.m_userInterfaceChooser.Name = "m_userInterfaceChooser";
 			this.m_userInterfaceChooser.Sorted = true;
 			// 
-			// updateGlobalWS
+			// label3
 			// 
-			resources.ApplyResources(this.updateGlobalWS, "updateGlobalWS");
-			this.updateGlobalWS.Name = "updateGlobalWS";
-			this.updateGlobalWS.UseVisualStyleBackColor = true;
-			this.updateGlobalWS.MouseHover += new System.EventHandler(this.updateGlobalWS_MouseHover);
-			// 
-			// label4
-			// 
-			resources.ApplyResources(this.label4, "label4");
-			this.label4.Name = "label4";
-			// 
-			// m_autoOpenCheckBox
-			// 
-			resources.ApplyResources(this.m_autoOpenCheckBox, "m_autoOpenCheckBox");
-			this.m_autoOpenCheckBox.Name = "m_autoOpenCheckBox";
-			this.m_autoOpenCheckBox.UseVisualStyleBackColor = true;
+			resources.ApplyResources(this.label3, "label3");
+			this.label3.Name = "label3";
 			// 
 			// tabControl1
 			// 
 			resources.ApplyResources(this.tabControl1, "tabControl1");
 			this.tabControl1.Controls.Add(this.m_tabInterface);
 			this.tabControl1.Controls.Add(this.m_tabPrivacy);
+			this.tabControl1.Controls.Add(this.m_tabUpdates);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
+			// 
+			// m_tabUpdates
+			// 
+			this.m_tabUpdates.Controls.Add(this.gbUpdateChannel);
+			this.m_tabUpdates.Controls.Add(this.m_okToAutoupdate);
+			resources.ApplyResources(this.m_tabUpdates, "m_tabUpdates");
+			this.m_tabUpdates.Name = "m_tabUpdates";
+			this.m_tabUpdates.UseVisualStyleBackColor = true;
+			// 
+			// gbUpdateChannel
+			// 
+			this.gbUpdateChannel.Controls.Add(this.m_textChannelDescription);
+			this.gbUpdateChannel.Controls.Add(this.m_cbUpdateChannel);
+			resources.ApplyResources(this.gbUpdateChannel, "gbUpdateChannel");
+			this.gbUpdateChannel.Name = "gbUpdateChannel";
+			this.gbUpdateChannel.TabStop = false;
+			// 
+			// m_textChannelDescription
+			// 
+			this.m_textChannelDescription.BackColor = System.Drawing.SystemColors.Window;
+			this.m_textChannelDescription.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			resources.ApplyResources(this.m_textChannelDescription, "m_textChannelDescription");
+			this.m_textChannelDescription.Name = "m_textChannelDescription";
+			this.m_textChannelDescription.ReadOnly = true;
+			// 
+			// m_cbUpdateChannel
+			// 
+			this.m_cbUpdateChannel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			resources.ApplyResources(this.m_cbUpdateChannel, "m_cbUpdateChannel");
+			this.m_cbUpdateChannel.Name = "m_cbUpdateChannel";
+			this.m_cbUpdateChannel.SelectedIndexChanged += new System.EventHandler(this.m_cbUpdateChannel_SelectedIndexChanged);
+			this.m_cbUpdateChannel.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.m_cbUpdateChannel_KeyPress);
+			// 
+			// m_okToAutoupdate
+			// 
+			resources.ApplyResources(this.m_okToAutoupdate, "m_okToAutoupdate");
+			this.m_okToAutoupdate.Name = "m_okToAutoupdate";
+			this.m_okToAutoupdate.UseVisualStyleBackColor = true;
+			this.m_okToAutoupdate.CheckedChanged += new System.EventHandler(this.m_okToAutoupdate_CheckedChanged);
 			// 
 			// LexOptionsDlg
 			// 
@@ -184,24 +364,50 @@ namespace LanguageExplorer.Impls
 			this.m_tabInterface.PerformLayout();
 			this.groupBox1.ResumeLayout(false);
 			this.tabControl1.ResumeLayout(false);
+			this.m_tabUpdates.ResumeLayout(false);
+			this.m_tabUpdates.PerformLayout();
+			this.gbUpdateChannel.ResumeLayout(false);
+			this.gbUpdateChannel.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
+
 		private System.Windows.Forms.Button m_btnOK;
 		private System.Windows.Forms.Button m_btnCancel;
 		private System.Windows.Forms.Button m_btnHelp;
 		private System.Windows.Forms.TabPage m_tabPrivacy;
 		private System.Windows.Forms.TextBox PrivacyText;
 		private System.Windows.Forms.CheckBox m_okToPingCheckBox;
+<<<<<<< HEAD:Src/LanguageExplorer/Impls/LexOptionsDlg.Designer.cs
+||||||| f013144d5:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
+		private System.Windows.Forms.TabPage m_tabPlugins;
+		private System.Windows.Forms.Label m_labelRights;
+		private System.Windows.Forms.Label m_labelPluginBlurb;
+		private System.Windows.Forms.ListView m_lvPlugins;
+		private System.Windows.Forms.ColumnHeader m_chName;
+		private System.Windows.Forms.ColumnHeader m_chDescription;
+=======
+		private System.Windows.Forms.TabPage m_tabPlugins;
+		private System.Windows.Forms.Label m_labelPluginRights;
+		private System.Windows.Forms.Label m_labelPluginBlurb;
+		private System.Windows.Forms.ListView m_lvPlugins;
+		private System.Windows.Forms.ColumnHeader m_chName;
+		private System.Windows.Forms.ColumnHeader m_chDescription;
+>>>>>>> develop:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
 		private System.Windows.Forms.TabPage m_tabInterface;
 		private System.Windows.Forms.CheckBox m_autoOpenCheckBox;
 		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.CheckBox updateGlobalWS;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private UserInterfaceChooser m_userInterfaceChooser;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TabControl tabControl1;
+		private System.Windows.Forms.LinkLabel llPrivacy;
+		private System.Windows.Forms.TabPage m_tabUpdates;
+		private System.Windows.Forms.CheckBox m_okToAutoupdate;
+		private System.Windows.Forms.GroupBox gbUpdateChannel;
+		private System.Windows.Forms.ComboBox m_cbUpdateChannel;
+		private System.Windows.Forms.TextBox m_textChannelDescription;
 	}
 }

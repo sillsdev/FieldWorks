@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2020 SIL International
+// Copyright (c) 2012-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -55,6 +55,7 @@ namespace SIL.FieldWorks
 			this.reportingInfoLabel = new System.Windows.Forms.TextBox();
 			this.buttonLayout = new System.Windows.Forms.FlowLayoutPanel();
 			this.helpButton = new System.Windows.Forms.Button();
+			this.optionsButton = new System.Windows.Forms.Button();
 			this.closeButton = new System.Windows.Forms.Button();
 			this.mainVerticalLayout = new System.Windows.Forms.FlowLayoutPanel();
 			this.m_lblProjectLoadError = new SIL.Windows.Forms.Widgets.BetterLabel();
@@ -167,6 +168,7 @@ namespace SIL.FieldWorks
 			// 
 			resources.ApplyResources(this.buttonLayout, "buttonLayout");
 			this.buttonLayout.Controls.Add(this.helpButton);
+			this.buttonLayout.Controls.Add(this.optionsButton);
 			this.buttonLayout.Controls.Add(this.closeButton);
 			this.buttonLayout.Name = "buttonLayout";
 			// 
@@ -176,6 +178,13 @@ namespace SIL.FieldWorks
 			this.helpButton.Name = "helpButton";
 			this.helpButton.UseVisualStyleBackColor = true;
 			this.helpButton.Click += new System.EventHandler(this.m_btnHelp_Click);
+			// 
+			// optionsButton
+			// 
+			resources.ApplyResources(this.optionsButton, "optionsButton");
+			this.optionsButton.Name = "optionsButton";
+			this.optionsButton.UseVisualStyleBackColor = true;
+			this.optionsButton.Click += new System.EventHandler(this.m_btnOptions_Click);
 			// 
 			// closeButton
 			// 
@@ -205,10 +214,10 @@ namespace SIL.FieldWorks
 			this.m_lblProjectLoadError.Cursor = System.Windows.Forms.Cursors.Default;
 			resources.ApplyResources(this.m_lblProjectLoadError, "m_lblProjectLoadError");
 			this.m_lblProjectLoadError.ForeColor = System.Drawing.SystemColors.ControlText;
+			this.m_lblProjectLoadError.IsTextSelectable = true;
 			this.m_lblProjectLoadError.Name = "m_lblProjectLoadError";
 			this.m_lblProjectLoadError.ReadOnly = true;
 			this.m_lblProjectLoadError.TabStop = false;
-			this.m_lblProjectLoadError.IsTextSelectable = true;
 			// 
 			// WelcomeToFieldWorksDlg
 			// 
@@ -238,8 +247,9 @@ namespace SIL.FieldWorks
 		private FlowLayoutPanel reportingInfoLayout;
 		private Button helpButton;
 		private Button closeButton;
-		private PictureBox infoIcon;
 		private TextBox reportingInfoLabel;
 		private BetterLabel m_lblProjectLoadError;
+		private Button optionsButton;
+		private PictureBox infoIcon;
 	}
 }

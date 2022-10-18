@@ -17,11 +17,26 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private ScriptListItem _currentScriptListItem;
 		private ScriptListItem _script;
 		private RegionListItem _region;
+<<<<<<< HEAD
 		private static readonly ScriptSubtag _privateUseQaaaScript = new ScriptSubtag("Qaaa", "Private Use Script"); // TODO (Hasso): 2021.12: ensure helps list this
 		private static readonly RegionSubtag _privateUseQMRegion = new RegionSubtag("QM", "Private Use Region");
 		private static readonly VariantListItem _noneVariantListItem = new VariantListItem(null);
 		private static readonly ScriptListItem _noneScriptListItem = new ScriptListItem(null);
 		private static readonly RegionListItem _noneRegionListItem = new RegionListItem(null);
+||||||| f013144d5
+		private readonly RegionSubtag _privateUseQMRegion = new RegionSubtag("QM", "Private Use Region");
+		private readonly VariantListItem _noneVariantListItem = new VariantListItem(null);
+		private readonly ScriptListItem _noneScriptListItem = new ScriptListItem(null);
+		private readonly RegionListItem _noneRegionListItem = new RegionListItem(null);
+
+=======
+		private static readonly ScriptSubtag _privateUseQaaaScript = new ScriptSubtag("Qaaa", "Private Use Script"); // TODO (Hasso): 2021.12: ensure helps list this
+		private static readonly RegionSubtag _privateUseQMRegion = new RegionSubtag("QM", "Private Use Region");
+		private static readonly VariantListItem _noneVariantListItem = new VariantListItem(null);
+		private static readonly ScriptListItem _noneScriptListItem = new ScriptListItem(null);
+		private static readonly RegionListItem _noneRegionListItem = new RegionListItem(null);
+
+>>>>>>> develop
 		private delegate void ChangeCodeDelegate();
 		private event ChangeCodeDelegate ChangeCode;
 
@@ -338,12 +353,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				yield return new ScriptListItem(CurrentWs.Script);
 			}
-			foreach (var script in StandardSubtags.RegisteredScripts)
+			foreach (var script in StandardSubtags.RegisteredScripts.Where(s => !s.IsDeprecated))
 			{
-				if (script.IsDeprecated)
-				{
-					continue;
-				}
 				yield return new ScriptListItem(script);
 			}
 			yield return new ScriptListItem(_privateUseQaaaScript);
@@ -358,12 +369,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				yield return new RegionListItem(CurrentWs.Region);
 			}
-			foreach (var region in StandardSubtags.RegisteredRegions)
+			foreach (var region in StandardSubtags.RegisteredRegions.Where(r => !r.IsDeprecated))
 			{
-				if (region.IsDeprecated)
-				{
-					continue;
-				}
 				yield return new RegionListItem(region);
 			}
 			yield return new RegionListItem(_privateUseQMRegion);

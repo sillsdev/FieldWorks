@@ -19,10 +19,22 @@ namespace FieldWorks.TestUtilities.Attributes
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Method, AllowMultiple = true)]
 	public class InitializeNoOpKeyboardControllerAttribute: TestActionAttribute
 	{
+<<<<<<< HEAD:Src/FieldWorks.TestUtilities/Attributes/InitializeNoOpKeyboardControllerAttribute.cs
 		/// <inheritdoc />
 		public override void BeforeTest(ITest testDetails)
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/Attributes/InitializeNoOpKeyboardControllerAttribute.cs
+		/// <summary>
+		/// Create a dummy keyboard controller
+		/// </summary>
+		public override void BeforeTest(TestDetails testDetails)
+=======
+		/// <summary>
+		/// Create a dummy keyboard controller
+		/// </summary>
+		public override void BeforeTest(ITest test)
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/Attributes/InitializeNoOpKeyboardControllerAttribute.cs
 		{
-			base.BeforeTest(testDetails);
+			base.BeforeTest(test);
 			// If we already have a keyboard controller we'd better dispose it or we'll end up with missing dispose calls.
 			if (Keyboard.Controller != null)
 			{
@@ -32,11 +44,31 @@ namespace FieldWorks.TestUtilities.Attributes
 
 		}
 
+<<<<<<< HEAD:Src/FieldWorks.TestUtilities/Attributes/InitializeNoOpKeyboardControllerAttribute.cs
 		/// <inheritdoc />
 		public override void AfterTest(ITest testDetails)
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/Attributes/InitializeNoOpKeyboardControllerAttribute.cs
+		/// <summary>
+		/// Unset keyboard controller
+		/// </summary>
+		public override void AfterTest(TestDetails testDetails)
+=======
+		/// <summary>
+		/// Unset keyboard controller
+		/// </summary>
+		public override void AfterTest(ITest test)
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/Attributes/InitializeNoOpKeyboardControllerAttribute.cs
 		{
 			// Shut down (and implicitly dispose) the keyboard controller we created.
+<<<<<<< HEAD:Src/FieldWorks.TestUtilities/Attributes/InitializeNoOpKeyboardControllerAttribute.cs
 			base.AfterTest(testDetails);
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/Attributes/InitializeNoOpKeyboardControllerAttribute.cs
+
+			base.AfterTest(testDetails);
+=======
+
+			base.AfterTest(test);
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/Attributes/InitializeNoOpKeyboardControllerAttribute.cs
 			KeyboardController.Shutdown();
 			Keyboard.Controller = new DefaultKeyboardController();
 		}

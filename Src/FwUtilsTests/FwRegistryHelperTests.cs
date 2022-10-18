@@ -242,7 +242,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// SUT
 				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
 				// Is the key under WOW6432Node gone?
-				Assert.IsNull(FwRegistryHelper.FieldWorksVersionlessOld32BitRegistryKey, "Old 32-bit key tree didn't get wiped out.");
+				Assert.That(FwRegistryHelper.FieldWorksVersionlessOld32BitRegistryKey, Is.Null, "Old 32-bit key tree didn't get wiped out.");
 
 				using (var version9Key = m_helper.FieldWorksRegistryKey)
 				{

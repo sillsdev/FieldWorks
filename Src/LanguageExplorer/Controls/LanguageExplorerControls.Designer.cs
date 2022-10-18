@@ -1592,6 +1592,43 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/LanguageExplorerControls.Designer.cs
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControls.Designer.cs
+        ///   Looks up a localized string similar to Something went wrong while FieldWorks was attempting to import {0}.
+        ///{1}
+        ///
+        ///A stack dump has been copied to the clipboard.  Please email it and your LIFT file to Flex_Errors@sil.org so that we can improve the program..
+        /// </summary>
+        internal static string ksLIFTImportProblem {
+            get {
+                return ResourceManager.GetString("ksLIFTImportProblem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+=======
+        ///   Looks up a localized string similar to Something is wrong with the data in {0}. If it was a zip file exported from The Combine please contact us at flex_errors@sil.org.
+        /// </summary>
+        internal static string ksLIFTCombineImportProblem {
+            get {
+                return ResourceManager.GetString("ksLIFTCombineImportProblem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Something went wrong while FieldWorks was attempting to import {0}.
+        ///{1}
+        ///
+        ///A stack dump has been copied to the clipboard.  Please email it and your LIFT file to Flex_Errors@sil.org so that we can improve the program..
+        /// </summary>
+        internal static string ksLIFTImportProblem {
+            get {
+                return ResourceManager.GetString("ksLIFTImportProblem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControls.Designer.cs
         ///   Looks up a localized string similar to The {0} I need is not shown in the Catalog. Create a custom {1}..
         /// </summary>
         internal static string ksLinkText {
@@ -3214,6 +3251,7 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/LanguageExplorerControls.Designer.cs
         ///   Looks up a localized string similar to Consultants or people who work on several unrelated projects may want to select this..
         /// </summary>
         internal static string ksUpdateGlobalWsTooltip {
@@ -3223,6 +3261,54 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControls.Designer.cs
+        ///   Looks up a localized string similar to The following unknown morph-types were found in the imported file:.
+        /// </summary>
+        internal static string ksUnknownMorphTypes {
+            get {
+                return ResourceManager.GetString("ksUnknownMorphTypes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Consultants or people who work on several unrelated projects may want to select this..
+        /// </summary>
+        internal static string ksUpdateGlobalWsTooltip {
+            get {
+                return ResourceManager.GetString("ksUpdateGlobalWsTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following Usage Types were added to the language project:.
+        /// </summary>
+        internal static string ksUsageTypesAdded {
+            get {
+                return ResourceManager.GetString("ksUsageTypesAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+=======
+        ///   Looks up a localized string similar to The following unknown morph-types were found in the imported file:.
+        /// </summary>
+        internal static string ksUnknownMorphTypes {
+            get {
+                return ResourceManager.GetString("ksUnknownMorphTypes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following Usage Types were added to the language project:.
+        /// </summary>
+        internal static string ksUsageTypesAdded {
+            get {
+                return ResourceManager.GetString("ksUsageTypesAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControls.Designer.cs
         ///   Looks up a localized string similar to Use Allomorph.
         /// </summary>
         internal static string ksUseAllomorph {
@@ -3448,11 +3534,26 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/LanguageExplorerControls.Designer.cs
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters id=&quot;lexentryMatchList&quot; listItemsClass=&quot;LexEntry&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;LexEntry-Plural&quot; editable=&quot;false&quot;&gt;
         ///  &lt;columns&gt;
         ///    &lt;column label=&quot;Headword&quot; sortmethod=&quot;FullSortKey&quot; ws=&quot;$ws=best vernoranal&quot; editable=&quot;false&quot; width=&quot;68000&quot; layout=&quot;EntryHeadwordForFindEntry&quot;/&gt;
         ///    &lt;column label=&quot;Lexeme Form&quot; visibility=&quot;menu&quot; common=&quot;true&quot; sortmethod=&quot;MorphSortKey&quot; ws=&quot;$ws=best vernoranal [rest of string was truncated]&quot;;.
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControls.Designer.cs
+        ///   Looks up a localized string similar to LIFT files|*.lift|XML files|*.xml|All files|*.*.
+=======
+        ///   Looks up a localized string similar to You must open a project before configuring plugins..
+        /// </summary>
+        internal static string OpenAProjectBeforeConfiguringPlugins {
+            get {
+                return ResourceManager.GetString("OpenAProjectBeforeConfiguringPlugins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LIFT files|*.lift|XML files|*.xml|All files|*.*.
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControls.Designer.cs
         /// </summary>
         internal static string MatchingEntriesGuiControlParameters {
             get {
@@ -3627,6 +3728,87 @@ namespace LanguageExplorer.Controls {
         internal static string Show_in_Phonemes_list {
             get {
                 return ResourceManager.GetString("Show_in_Phonemes_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ZIP files|*.zip|All files|*.*.
+        /// </summary>
+        internal static string openFileDialog1_Zip_Filter {
+            get {
+                return ResourceManager.GetString("openFileDialog1_Zip_Filter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restart FieldWorks for these settings to take effect..
+        /// </summary>
+        internal static string RestartToForSettingsToTakeEffect_Content {
+            get {
+                return ResourceManager.GetString("RestartToForSettingsToTakeEffect_Content", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restart required.
+        /// </summary>
+        internal static string RestartToForSettingsToTakeEffect_Title {
+            get {
+                return ResourceManager.GetString("RestartToForSettingsToTakeEffect_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alpha.
+        /// </summary>
+        internal static string UpdatesAlpha {
+            get {
+                return ResourceManager.GetString("UpdatesAlpha", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alpha updates have bugs. Choose this channel only if your tech support person recommended it to you..
+        /// </summary>
+        internal static string UpdatesAlphaDescription {
+            get {
+                return ResourceManager.GetString("UpdatesAlphaDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Beta.
+        /// </summary>
+        internal static string UpdatesBeta {
+            get {
+                return ResourceManager.GetString("UpdatesBeta", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Beta updates are recommended for users who want to try the latest features and don&apos;t mind a few minor bugs..
+        /// </summary>
+        internal static string UpdatesBetaDescription {
+            get {
+                return ResourceManager.GetString("UpdatesBetaDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stable (recommended).
+        /// </summary>
+        internal static string UpdatesStable {
+            get {
+                return ResourceManager.GetString("UpdatesStable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stable updates are recommended for all users. If you&apos;re not sure which channel to choose, choose Stable..
+        /// </summary>
+        internal static string UpdatesStableDescription {
+            get {
+                return ResourceManager.GetString("UpdatesStableDescription", resourceCulture);
             }
         }
     }

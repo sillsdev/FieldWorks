@@ -1,4 +1,10 @@
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/DictionaryConfigurationManagerControllerTests.cs
 // Copyright (c) 2014-2020 SIL International
+||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationManagerControllerTests.cs
+﻿// Copyright (c) 2014-2016 SIL International
+=======
+// Copyright (c) 2014-2016 SIL International
+>>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationManagerControllerTests.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -42,8 +48,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		private IStStyle _numberedTestStyle;
 		private IStStyle _homographTestStyle;
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/DictionaryConfigurationManagerControllerTests.cs
 		#region Overrides of LcmTestBase
 
+||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationManagerControllerTests.cs
+		[TestFixtureSetUp]
+=======
+		[OneTimeSetUp]
+>>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationManagerControllerTests.cs
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -383,7 +395,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				Assert.AreEqual(pubs[i], newConfig.Publications[i], "Publications were not copied");
 			}
-			Assert.IsNull(newConfig.FilePath, "Path should be null to signify that it should be generated on rename");
+			Assert.That(newConfig.FilePath, Is.Null, "Path should be null to signify that it should be generated on rename");
 			Assert.True(_controller.IsDirty, "Made changes; should be dirty");
 		}
 
@@ -436,8 +448,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void DeleteConfigurationResetsForShippedDefaultRatherThanDelete()
 		{
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/DictionaryConfigurationManagerControllerTests.cs
 			var shippedRootDefaultConfigurationPath = Path.Combine(_defaultConfigPath, "Root" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 			FileUtils.WriteStringToFile(shippedRootDefaultConfigurationPath, "bogus data that is unread, the file is read from the real defaults", Encoding.UTF8);
+||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationManagerControllerTests.cs
+			var shippedRootDefaultConfigurationPath = Path.Combine(_defaultConfigPath, "Root" + DictionaryConfigurationModel.FileExtension);
+			FileUtils.WriteStringtoFile(shippedRootDefaultConfigurationPath, "bogus data that is unread, the file is read from the real defaults", Encoding.UTF8);
+=======
+			var shippedRootDefaultConfigurationPath = Path.Combine(_defaultConfigPath, "Root" + DictionaryConfigurationModel.FileExtension);
+			FileUtils.WriteStringToFile(shippedRootDefaultConfigurationPath, "bogus data that is unread, the file is read from the real defaults", Encoding.UTF8);
+>>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationManagerControllerTests.cs
 
 			var configurationToDelete = _configurations[0];
 			configurationToDelete.FilePath = Path.Combine("whateverdir", "Root" + LanguageExplorerConstants.DictionaryConfigurationFileExtension);

@@ -11,9 +11,21 @@ using System.Linq;
 using System.Windows.Forms;
 using LanguageExplorer.DictionaryConfiguration;
 using SIL.FieldWorks.Common.FwUtils;
+<<<<<<< HEAD:Src/LanguageExplorer/Impls/UploadToWebonaryDlg.cs
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
+||||||| f013144d5:Src/xWorks/UploadToWebonaryDlg.cs
+using SIL.LCModel.Utils;
+=======
+>>>>>>> develop:Src/xWorks/UploadToWebonaryDlg.cs
 using SIL.Windows.Forms;
+<<<<<<< HEAD:Src/LanguageExplorer/Impls/UploadToWebonaryDlg.cs
+||||||| f013144d5:Src/xWorks/UploadToWebonaryDlg.cs
+using PropertyTable = XCore.PropertyTable;
+=======
+using SIL.PlatformUtilities;
+using PropertyTable = XCore.PropertyTable;
+>>>>>>> develop:Src/xWorks/UploadToWebonaryDlg.cs
 
 namespace LanguageExplorer.Impls
 {
@@ -41,8 +53,16 @@ namespace LanguageExplorer.Impls
 		public UploadToWebonaryDlg(UploadToWebonaryController controller, UploadToWebonaryModel model, IPropertyTable propertyTable)
 		{
 			InitializeComponent();
+<<<<<<< HEAD:Src/LanguageExplorer/Impls/UploadToWebonaryDlg.cs
 			if (Platform.IsUnix)
 			{
+||||||| f013144d5:Src/xWorks/UploadToWebonaryDlg.cs
+
+			if (MiscUtils.IsUnix)
+=======
+
+			if (Platform.IsUnix)
+>>>>>>> develop:Src/xWorks/UploadToWebonaryDlg.cs
 				MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height + m_additionalMinimumHeightForMono);
 			}
 			m_controller = controller;
@@ -88,7 +108,7 @@ namespace LanguageExplorer.Impls
 
 		private void siteNameBox_TextChanged(object sender, EventArgs e)
 		{
-			var subDomain = UploadToWebonaryController.UseJsonApi ? "cloud-api" : "www";
+			var subDomain = m_controller.UseJsonApi ? "cloud-api" : "www";
 			// ReSharper disable once LocalizableElement -- this is the *world-wide* web, not a LAN.
 			webonarySiteURLLabel.Text = $"https://{subDomain}.{UploadToWebonaryController.Server}/{webonarySiteNameTextbox.Text}";
 		}
@@ -287,8 +307,14 @@ namespace LanguageExplorer.Impls
 			var allButTheLogRowHeight = tableLayoutPanel.GetRowHeights().Sum() - tableLayoutPanel.GetRowHeights().Last();
 			var fudge = Height - tableLayoutPanel.Height;
 			var minimumFormHeightToShowLog = allButTheLogRowHeight + outputLogTextbox.MinimumSize.Height + fudge;
+<<<<<<< HEAD:Src/LanguageExplorer/Impls/UploadToWebonaryDlg.cs
 			if (Platform.IsUnix)
 			{
+||||||| f013144d5:Src/xWorks/UploadToWebonaryDlg.cs
+			if (MiscUtils.IsUnix)
+=======
+			if (Platform.IsUnix)
+>>>>>>> develop:Src/xWorks/UploadToWebonaryDlg.cs
 				minimumFormHeightToShowLog += m_additionalMinimumHeightForMono;
 			}
 			MinimumSize = new Size(MinimumSize.Width, minimumFormHeightToShowLog);
@@ -363,8 +389,14 @@ namespace LanguageExplorer.Impls
 			base.OnResize(e);
 			// On Linux, when reducing the height of the dialog, the output log doesn't shrink with it.
 			// Set its height back to something smaller to keep the whole control visible. It will expand as appropriate.
+<<<<<<< HEAD:Src/LanguageExplorer/Impls/UploadToWebonaryDlg.cs
 			if (Platform.IsUnix)
 			{
+||||||| f013144d5:Src/xWorks/UploadToWebonaryDlg.cs
+			if (MiscUtils.IsUnix)
+=======
+			if (Platform.IsUnix)
+>>>>>>> develop:Src/xWorks/UploadToWebonaryDlg.cs
 				outputLogTextbox.Size = new Size(outputLogTextbox.Size.Width, outputLogTextbox.MinimumSize.Height);
 			}
 		}

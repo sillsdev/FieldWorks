@@ -893,7 +893,7 @@ template<class TxtBuf> STDMETHODIMP TsStrBase<TxtBuf>::Equals(ITsString * ptss,
 	const OLECHAR * pwrgch;
 	int cch;
 	CheckHr(ptss->LockText(&pwrgch, &cch));
-	if (cch != BaseClass::Cch() || u_strcmp(pwrgch, BaseClass::Prgch()) != 0)
+	if (cch != BaseClass::Cch() || u_strcmp(reinterpret_cast<const UChar*>(pwrgch), reinterpret_cast<const UChar*>(BaseClass::Prgch())) != 0)
 	{
 		ptss->UnlockText(pwrgch);
 		return S_OK; // Not equal.
@@ -1095,7 +1095,7 @@ public:
 		UErrorCode uerr = U_ZERO_ERROR;
 		int32_t cchAdded;
 		u_strFromUTF32(
-			vch.Begin() + cchBuf,
+			reinterpret_cast<UChar*>(vch.Begin() + cchBuf),
 			2, // never need to add more than 2, don't need trailing null
 			& cchAdded,
 			& ch, // simulate input array

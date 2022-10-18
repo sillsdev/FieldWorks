@@ -479,9 +479,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				Assert.AreEqual(1, analysis.MorphBundlesOS.Count, "Expected only 1 morph in the analysis");
 				var morphBundle = analysis.MorphBundlesOS.ElementAt(0);
-				Assert.IsNotNull(morphBundle.Form, "First bundle: form is not null");
-				Assert.IsNotNull(morphBundle.MsaRA, "First bundle: msa is not null");
-				Assert.IsNotNull(morphBundle.InflTypeRA, "First bundle: infl type is not null");
+				Assert.That(morphBundle.Form, Is.Not.Null, "First bundle: form is not null");
+				Assert.That(morphBundle.MsaRA, Is.Not.Null, "First bundle: msa is not null");
+				Assert.That(morphBundle.InflTypeRA, Is.Not.Null, "First bundle: infl type is not null");
 			}
 		}
 
@@ -547,9 +547,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			var analysis = brubs.AnalysesOC.ElementAt(0);
 			Assert.AreEqual(2, analysis.MorphBundlesOS.Count, "Expected only 2 morphs in the analysis");
 			var morphBundle = analysis.MorphBundlesOS.ElementAt(0);
-			Assert.IsNotNull(morphBundle.Form, "First bundle: form is not null");
-			Assert.IsNotNull(morphBundle.MsaRA, "First bundle: msa is not null");
-			Assert.IsNotNull(morphBundle.InflTypeRA, "First bundle: infl type is not null");
+			Assert.That(morphBundle.Form, Is.Not.Null, "First bundle: form is not null");
+			Assert.That(morphBundle.MsaRA, Is.Not.Null, "First bundle: msa is not null");
+			Assert.That(morphBundle.InflTypeRA, Is.Not.Null, "First bundle: infl type is not null");
 		}
 
 		#endregion // Tests

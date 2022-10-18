@@ -324,7 +324,71 @@ namespace ParatextImport
 		}
 	#endregion
 
+<<<<<<< HEAD:Src/ParatextImportTests/SCTextEnumTests.cs
 	#region Tests for normal operation
+||||||| f013144d5:Src/ParatextImport/ParatextImportTests/SCTextEnumTests.cs
+		#region Tests for normal operation
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// This test reads a portion of a book
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		[Ignore("We do not support reading parts of books yet")]
+		public void Read_GEN_partial()
+		{
+			string filename = m_fileOs.MakeSfFile("GEN",
+				@"\c 1",
+				@"\v 1 In the beginning",
+				@"\v 2 And the earth was formless and void",
+				@"\c 2",
+				@"\v 1 Le ciel, la terre et tous leurs lments furent achevs.",
+				@"\v 2 This should not be read.");
+
+			m_settings.AddFile(filename, ImportDomain.Main, null, null);
+
+			ScrReference expectedRef = new ScrReference(1, 2, 1, ScrVers.English);
+			ISCTextEnum textEnum = GetTextEnum(ImportDomain.Main, expectedRef, expectedRef);
+			Assert.IsNotNull(textEnum, "No TextEnum object was returned");
+
+			ISCTextSegment textSeg = textEnum.Next();
+			Assert.IsNotNull(textSeg, "Unable to read GEN 2:1.");
+			Assert.AreEqual(expectedRef, textSeg.FirstReference, "Incorrect reference returned");
+			Assert.AreEqual(" Le ciel, la terre et tous leurs lments furent achevs. ",
+				textSeg.Text, "Incorrect data found at GEN 2:1");
+		}
+=======
+		#region Tests for normal operation
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// This test reads a portion of a book
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		[Ignore("We do not support reading parts of books yet")]
+		public void Read_GEN_partial()
+		{
+			string filename = m_fileOs.MakeSfFile("GEN",
+				@"\c 1",
+				@"\v 1 In the beginning",
+				@"\v 2 And the earth was formless and void",
+				@"\c 2",
+				@"\v 1 Le ciel, la terre et tous leurs lments furent achevs.",
+				@"\v 2 This should not be read.");
+
+			m_settings.AddFile(filename, ImportDomain.Main, null, null);
+
+			ScrReference expectedRef = new ScrReference(1, 2, 1, ScrVers.English);
+			ISCTextEnum textEnum = GetTextEnum(ImportDomain.Main, expectedRef, expectedRef);
+			Assert.That(textEnum, Is.Not.Null, "No TextEnum object was returned");
+
+			ISCTextSegment textSeg = textEnum.Next();
+			Assert.That(textSeg, Is.Not.Null, "Unable to read GEN 2:1.");
+			Assert.AreEqual(expectedRef, textSeg.FirstReference, "Incorrect reference returned");
+			Assert.AreEqual(" Le ciel, la terre et tous leurs lments furent achevs. ",
+				textSeg.Text, "Incorrect data found at GEN 2:1");
+		}
+>>>>>>> develop:Src/ParatextImport/ParatextImportTests/SCTextEnumTests.cs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -341,12 +405,12 @@ namespace ParatextImport
 				new ScrReference(49, 0, 0, ScrVers.English), new ScrReference(49, 1, 1, ScrVers.English));
 
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read first segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read first segment");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("EPH ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read second segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read second segment");
 			Assert.AreEqual(@"\mt", textSeg.Marker);
 			Assert.AreEqual(@"\it fun \it* Mi\\abi \taki ", textSeg.Text);
 		}
@@ -499,32 +563,152 @@ namespace ParatextImport
 				new ScrReference(50, 0, 0, ScrVers.English), new ScrReference(50, 1, 1, ScrVers.English));
 
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read first segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read first segment");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("PHP ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg);
+			Assert.That(textSeg, Is.Not.Null);
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(50001001, textSeg.FirstReference.BBCCCVVV);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg);
+			Assert.That(textSeg, Is.Not.Null);
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(50001001, textSeg.FirstReference.BBCCCVVV);
 			Assert.AreEqual(" verse 1 of phillipians ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg);
+			Assert.That(textSeg, Is.Not.Null);
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(50001002, textSeg.FirstReference.BBCCCVVV);
 			Assert.AreEqual(" here is verse 2 ", textSeg.Text);
 
-			Assert.IsNull(textEnum.Next());
+			Assert.That(textEnum.Next(), Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+<<<<<<< HEAD:Src/ParatextImportTests/SCTextEnumTests.cs
+||||||| f013144d5:Src/ParatextImport/ParatextImportTests/SCTextEnumTests.cs
+		/// Test handling an inline verse number that follows a paragraph marker. This should
+		/// be legal Paratext 6 data. (TE-8424)
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void InlineVerseNumberAfterParaMarker()
+		{
+			TempSFFileMaker fileMaker = new TempSFFileMaker();
+			// WANTTESTPORT: (TE) Remove braces once no more integrations needed from FW_6.0 (indentation will force merge conflicts to prevent unintended changes)
+			{
+				string fileName = fileMaker.CreateFileNoID(
+					new string[] {
+									 @"\id EPH",
+									 @"\mt Ephesians",
+									 @"\c 1",
+									 @"\p \v 1 hello there"});
+				// The import type for Individual Paratext 6 files is Paratext 5.
+				m_settings.ImportTypeEnum = TypeOfImport.Paratext5;
+				m_settings.AddFile(fileName, ImportDomain.Main, null, null);
+
+				ISCTextEnum textEnum = GetTextEnum(ImportDomain.Main,
+					new ScrReference(49, 0, 0, ScrVers.English), new ScrReference(49, 1, 1, ScrVers.English));
+
+				ISCTextSegment textSeg = textEnum.Next();
+				Assert.IsNotNull(textSeg, "Unable to read first segment");
+				Assert.AreEqual(@"\id", textSeg.Marker);
+				Assert.AreEqual("EPH ", textSeg.Text);
+
+				textSeg = textEnum.Next();
+				Assert.IsNotNull(textSeg);
+				Assert.AreEqual(@"\mt", textSeg.Marker);
+				Assert.AreEqual("Ephesians ", textSeg.Text);
+				Assert.AreEqual(49001000, textSeg.FirstReference.BBCCCVVV);
+
+				textSeg = textEnum.Next();
+				Assert.IsNotNull(textSeg);
+				Assert.AreEqual(@"\c", textSeg.Marker);
+				Assert.AreEqual(" ", textSeg.Text);
+				Assert.AreEqual(49001001, textSeg.FirstReference.BBCCCVVV);
+
+				textSeg = textEnum.Next();
+				Assert.IsNotNull(textSeg);
+				Assert.AreEqual(@"\p", textSeg.Marker);
+				Assert.AreEqual(string.Empty, textSeg.Text);
+				Assert.AreEqual(49001001, textSeg.FirstReference.BBCCCVVV);
+
+				textSeg = textEnum.Next();
+				Assert.IsNotNull(textSeg);
+				Assert.AreEqual(@"\v", textSeg.Marker);
+				Assert.AreEqual(49001001, textSeg.FirstReference.BBCCCVVV);
+				Assert.AreEqual(" hello there ", textSeg.Text);
+
+				Assert.IsNull(textEnum.Next());
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+=======
+		/// Test handling an inline verse number that follows a paragraph marker. This should
+		/// be legal Paratext 6 data. (TE-8424)
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void InlineVerseNumberAfterParaMarker()
+		{
+			TempSFFileMaker fileMaker = new TempSFFileMaker();
+			// WANTTESTPORT: (TE) Remove braces once no more integrations needed from FW_6.0 (indentation will force merge conflicts to prevent unintended changes)
+			{
+				string fileName = fileMaker.CreateFileNoID(
+					new string[] {
+									 @"\id EPH",
+									 @"\mt Ephesians",
+									 @"\c 1",
+									 @"\p \v 1 hello there"});
+				// The import type for Individual Paratext 6 files is Paratext 5.
+				m_settings.ImportTypeEnum = TypeOfImport.Paratext5;
+				m_settings.AddFile(fileName, ImportDomain.Main, null, null);
+
+				ISCTextEnum textEnum = GetTextEnum(ImportDomain.Main,
+					new ScrReference(49, 0, 0, ScrVers.English), new ScrReference(49, 1, 1, ScrVers.English));
+
+				ISCTextSegment textSeg = textEnum.Next();
+				Assert.That(textSeg, Is.Not.Null, "Unable to read first segment");
+				Assert.AreEqual(@"\id", textSeg.Marker);
+				Assert.AreEqual("EPH ", textSeg.Text);
+
+				textSeg = textEnum.Next();
+				Assert.That(textSeg, Is.Not.Null);
+				Assert.AreEqual(@"\mt", textSeg.Marker);
+				Assert.AreEqual("Ephesians ", textSeg.Text);
+				Assert.AreEqual(49001000, textSeg.FirstReference.BBCCCVVV);
+
+				textSeg = textEnum.Next();
+				Assert.That(textSeg, Is.Not.Null);
+				Assert.AreEqual(@"\c", textSeg.Marker);
+				Assert.AreEqual(" ", textSeg.Text);
+				Assert.AreEqual(49001001, textSeg.FirstReference.BBCCCVVV);
+
+				textSeg = textEnum.Next();
+				Assert.That(textSeg, Is.Not.Null);
+				Assert.AreEqual(@"\p", textSeg.Marker);
+				Assert.AreEqual(string.Empty, textSeg.Text);
+				Assert.AreEqual(49001001, textSeg.FirstReference.BBCCCVVV);
+
+				textSeg = textEnum.Next();
+				Assert.That(textSeg, Is.Not.Null);
+				Assert.AreEqual(@"\v", textSeg.Marker);
+				Assert.AreEqual(49001001, textSeg.FirstReference.BBCCCVVV);
+				Assert.AreEqual(" hello there ", textSeg.Text);
+
+				Assert.That(textEnum.Next(), Is.Null);
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+>>>>>>> develop:Src/ParatextImport/ParatextImportTests/SCTextEnumTests.cs
 		/// Test excluding data before an id line
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -543,27 +727,27 @@ namespace ParatextImport
 				new ScrReference(49, 0, 0, ScrVers.English), new ScrReference(49, 1, 1, ScrVers.English));
 
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read first segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read first segment");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("EPH ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg);
+			Assert.That(textSeg, Is.Not.Null);
 			Assert.AreEqual(@"\mt", textSeg.Marker);
 			Assert.AreEqual(49001000, textSeg.FirstReference.BBCCCVVV);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg);
+			Assert.That(textSeg, Is.Not.Null);
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(49001001, textSeg.FirstReference.BBCCCVVV);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg);
+			Assert.That(textSeg, Is.Not.Null);
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(49001001, textSeg.FirstReference.BBCCCVVV);
 			Assert.AreEqual(" hello there ", textSeg.Text);
 
-			Assert.IsNull(textEnum.Next());
+			Assert.That(textEnum.Next(), Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -594,26 +778,26 @@ namespace ParatextImport
 				new ScrReference(40, 0, 0, ScrVers.English), new ScrReference(40, 1, 16, ScrVers.English));
 
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 1");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 1");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("MAT ", textSeg.Text);
 			Assert.AreEqual(40, textSeg.FirstReference.Book);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 2");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 2");
 			Assert.AreEqual(@"\mt", textSeg.Marker);
 			Assert.AreEqual(1, textSeg.FirstReference.Chapter);
 			Assert.AreEqual(0, textSeg.FirstReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 2");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 2");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(" First Chapter ", textSeg.Text);
 			Assert.AreEqual(1, textSeg.FirstReference.Chapter);
 			Assert.AreEqual(1, textSeg.FirstReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 3");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 3");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(@" Verse text ", textSeg.Text);
 			Assert.AreEqual(@"1.", textSeg.LiteralVerseNum);
@@ -621,7 +805,7 @@ namespace ParatextImport
 			Assert.AreEqual(1, textSeg.FirstReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 4");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 4");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(@"aForgot space! ", textSeg.Text);
 			Assert.AreEqual(@"2-3", textSeg.LiteralVerseNum);
@@ -631,7 +815,7 @@ namespace ParatextImport
 			Assert.AreEqual(3, textSeg.LastReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 5");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 5");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(@"ab.Missing Space ", textSeg.Text);
 			Assert.AreEqual(@"2-3", textSeg.LiteralVerseNum);
@@ -641,7 +825,7 @@ namespace ParatextImport
 			Assert.AreEqual(3, textSeg.LastReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 6");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 6");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(@"abMissing Space ", textSeg.Text);
 			Assert.AreEqual(@"2-3.", textSeg.LiteralVerseNum);
@@ -651,7 +835,7 @@ namespace ParatextImport
 			Assert.AreEqual(3, textSeg.LastReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 7");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 7");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(@"bMissing Space ", textSeg.Text);
 			Assert.AreEqual(@"2-3a.", textSeg.LiteralVerseNum);
@@ -661,7 +845,7 @@ namespace ParatextImport
 			Assert.AreEqual(3, textSeg.LastReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 8");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 8");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(@"a.b.Missing Space ", textSeg.Text);
 			Assert.AreEqual(@"2-3.", textSeg.LiteralVerseNum);
@@ -673,7 +857,7 @@ namespace ParatextImport
 			Assert.AreEqual(0, textSeg.LastReference.Segment);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 9");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 9");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(@"-blah ", textSeg.Text);
 			Assert.AreEqual(@"5", textSeg.LiteralVerseNum);
@@ -681,7 +865,7 @@ namespace ParatextImport
 			Assert.AreEqual(5, textSeg.FirstReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 10");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 10");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(@" blah ", textSeg.Text);
 			Assert.AreEqual(@"6-", textSeg.LiteralVerseNum);
@@ -689,7 +873,7 @@ namespace ParatextImport
 			Assert.AreEqual(6, textSeg.FirstReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 11");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 11");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(@"a,8.a,9a. testing ", textSeg.Text);
 			Assert.AreEqual(@"7.", textSeg.LiteralVerseNum);
@@ -699,7 +883,7 @@ namespace ParatextImport
 			Assert.AreEqual(7, textSeg.LastReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 12");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 12");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(" Text with RTL ", textSeg.Text);
 			Assert.AreEqual("8\u200f-\u200f9", textSeg.LiteralVerseNum);
@@ -709,7 +893,7 @@ namespace ParatextImport
 			Assert.AreEqual(9, textSeg.LastReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 13");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 13");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(" Text with unicode hyphen ", textSeg.Text);
 			Assert.AreEqual("10\u201011", textSeg.LiteralVerseNum);
@@ -739,20 +923,20 @@ namespace ParatextImport
 				new ScrReference(40, 0, 0, ScrVers.English), new ScrReference(40, 1, 16, ScrVers.English));
 
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 1");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 1");
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 2");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 2");
 			Assert.AreEqual(@"\mt", textSeg.Marker);
 			Assert.AreEqual(string.Empty, textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 3");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 3");
 			Assert.AreEqual(@"\it ", textSeg.Marker);
 			Assert.AreEqual("Matthew", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 3");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 3");
 			Assert.AreEqual(@"\it*", textSeg.Marker);
 			Assert.AreEqual(@" ", textSeg.Text);
 		}
@@ -779,25 +963,25 @@ namespace ParatextImport
 				new ScrReference(40, 0, 0, ScrVers.English), new ScrReference(40, 1, 4, ScrVers.English));
 
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read id segment ");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read id segment ");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("MAT ", textSeg.Text);
 			Assert.AreEqual(40, textSeg.FirstReference.Book);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read mt segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read mt segment");
 			Assert.AreEqual(@"\mt", textSeg.Marker);
 			Assert.AreEqual(1, textSeg.FirstReference.Chapter);
 			Assert.AreEqual(0, textSeg.FirstReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read c segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read c segment");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(1, textSeg.FirstReference.Chapter);
 			Assert.AreEqual(1, textSeg.FirstReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment v 1a");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment v 1a");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(@" Verse part a ", textSeg.Text);
 			Assert.AreEqual(1, textSeg.FirstReference.Chapter);
@@ -807,7 +991,7 @@ namespace ParatextImport
 			Assert.AreEqual(1, textSeg.LastReference.Segment);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment v 1c");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment v 1c");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(@" Verse part b ", textSeg.Text);
 			Assert.AreEqual(1, textSeg.FirstReference.Chapter);
@@ -817,7 +1001,7 @@ namespace ParatextImport
 			Assert.AreEqual(2, textSeg.LastReference.Segment);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment v 1e");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment v 1e");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(@" Verse part c ", textSeg.Text);
 			Assert.AreEqual(1, textSeg.FirstReference.Chapter);
@@ -827,7 +1011,7 @@ namespace ParatextImport
 			Assert.AreEqual(3, textSeg.LastReference.Segment);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment v 2a-2b");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment v 2a-2b");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(@" ", textSeg.Text);
 			Assert.AreEqual(1, textSeg.FirstReference.Chapter);
@@ -837,7 +1021,7 @@ namespace ParatextImport
 			Assert.AreEqual(2, textSeg.LastReference.Segment);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment v 3-4a");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment v 3-4a");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(@" ", textSeg.Text);
 			Assert.AreEqual(1, textSeg.FirstReference.Chapter);
@@ -872,19 +1056,19 @@ namespace ParatextImport
 				new ScrReference(40, 0, 0, ScrVers.English), new ScrReference(40, 1, 3, ScrVers.English));
 
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read id segment ");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read id segment ");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("MAT ", textSeg.Text);
 			Assert.AreEqual(40, textSeg.FirstReference.Book);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read c segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read c segment");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(1, textSeg.FirstReference.Chapter);
 			Assert.AreEqual(1, textSeg.FirstReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment v 1-3");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment v 1-3");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(@" ", textSeg.Text);
 			Assert.AreEqual(1, textSeg.FirstReference.Chapter);
@@ -894,7 +1078,7 @@ namespace ParatextImport
 			Assert.AreEqual(0, textSeg.LastReference.Segment);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment vt");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment vt");
 			Assert.AreEqual(@"\vt", textSeg.Marker);
 			Assert.AreEqual(@"El era la inceput cu Dumenzeu ", textSeg.Text);
 			Assert.AreEqual(1, textSeg.FirstReference.Chapter);
@@ -904,7 +1088,7 @@ namespace ParatextImport
 			Assert.AreEqual(0, textSeg.LastReference.Segment);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment btvt");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment btvt");
 			Assert.AreEqual(@"\btvt", textSeg.Marker);
 			Assert.AreEqual(@"He was with God ", textSeg.Text);
 			Assert.AreEqual(1, textSeg.FirstReference.Chapter);
@@ -913,7 +1097,7 @@ namespace ParatextImport
 			Assert.AreEqual(3, textSeg.LastReference.Verse);
 			Assert.AreEqual(0, textSeg.LastReference.Segment);
 
-			Assert.IsNull(textEnum.Next(), "Read too many segments");
+			Assert.That(textEnum.Next(), Is.Null, "Read too many segments");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -972,67 +1156,67 @@ namespace ParatextImport
 				new ScrReference(40, 1, 2, ScrVers.English));
 
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read id segment ");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read id segment ");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("MAT ", textSeg.Text);
 			Assert.AreEqual(40, textSeg.FirstReference.Book);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read mt segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read mt segment");
 			Assert.AreEqual(@"\mt", textSeg.Marker);
 			Assert.AreEqual(@"MATTHEW ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read c segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read c segment");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read v 1");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read v 1");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual("1", textSeg.LiteralVerseNum);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read first vt segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read first vt segment");
 			Assert.AreEqual(@"\vt", textSeg.Marker);
 			Assert.AreEqual(@"THIS IS ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read emphasis segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read emphasis segment");
 			Assert.AreEqual(@"\em ", textSeg.Marker);
 			Assert.AreEqual(@"MY", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read emphasis segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read emphasis segment");
 			Assert.AreEqual(@"\em*", textSeg.Marker);
 			Assert.AreEqual(@" VERSE TEXT WITH A ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read Spanish segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read Spanish segment");
 			Assert.AreEqual(@"\sp", textSeg.Marker);
 			Assert.AreEqual(@"espanol ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read keyword segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read keyword segment");
 			Assert.AreEqual(@"\k", textSeg.Marker);
 			Assert.AreEqual(@"KEYWORD ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read footnote text segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read footnote text segment");
 			Assert.AreEqual(@"\f", textSeg.Marker);
 			Assert.AreEqual(@"FOOTNOTE TEXT ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read Spanish keyword in footnote segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read Spanish keyword in footnote segment");
 			Assert.AreEqual(@"\spkwf", textSeg.Marker);
 			Assert.AreEqual(@"raro ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read end of footnote segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read end of footnote segment");
 			Assert.AreEqual(@"\ft", textSeg.Marker);
 			Assert.AreEqual(@"END OF FOOTNOTE ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read btvt segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read btvt segment");
 			Assert.AreEqual(@"\btvt", textSeg.Marker);
 			Assert.AreEqual(@"my ", textSeg.Text);
 
@@ -1047,11 +1231,11 @@ namespace ParatextImport
 			Assert.AreEqual(@" translation ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read BT keyword segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read BT keyword segment");
 			Assert.AreEqual(@"\k", textSeg.Marker);
 			Assert.AreEqual(@"keywordbt ", textSeg.Text);
 
-			Assert.IsNull(textEnum.Next());
+			Assert.That(textEnum.Next(), Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1088,38 +1272,38 @@ namespace ParatextImport
 				new ScrReference(40, 1, 2, ScrVers.English));
 
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read id segment ");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read id segment ");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("MAT ", textSeg.Text);
 			Assert.AreEqual(40, textSeg.FirstReference.Book);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read mt segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read mt segment");
 			Assert.AreEqual(@"\mt", textSeg.Marker);
 			Assert.AreEqual(@"MATTHEW ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read c segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read c segment");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read v 1");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read v 1");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual("1", textSeg.LiteralVerseNum);
 			Assert.AreEqual(@" THIS IS MY VERSE TEXT ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read btvt segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read btvt segment");
 			Assert.AreEqual(@"\rt", textSeg.Marker);
 			Assert.AreEqual(@"my Back translation ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read v 2");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read v 2");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual("2", textSeg.LiteralVerseNum);
 			Assert.AreEqual(@" SECOND VERSE ", textSeg.Text);
 
-			Assert.IsNull(textEnum.Next());
+			Assert.That(textEnum.Next(), Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1156,46 +1340,46 @@ namespace ParatextImport
 				new ScrReference(40, 1, 2, ScrVers.English));
 
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read id segment ");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read id segment ");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("MAT ", textSeg.Text);
 			Assert.AreEqual(40, textSeg.FirstReference.Book);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read mt segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read mt segment");
 			Assert.AreEqual(@"\mt", textSeg.Marker);
 			Assert.AreEqual(@"MATTHEW ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read c segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read c segment");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read v 1");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read v 1");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual("1", textSeg.LiteralVerseNum);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read first vt segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read first vt segment");
 			Assert.AreEqual(@"\vt", textSeg.Marker);
 			Assert.AreEqual(@"MY ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read untranslated word segment (Spanish)");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read untranslated word segment (Spanish)");
 			Assert.AreEqual(@"\uw ", textSeg.Marker);
 			Assert.AreEqual(@"retronica", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to segment following untranslated word");
+			Assert.That(textSeg, Is.Not.Null, "Unable to segment following untranslated word");
 			Assert.AreEqual(@"\uw*", textSeg.Marker);
 			Assert.AreEqual(@" TRANSLATION ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read keyword segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read keyword segment");
 			Assert.AreEqual(@"\k", textSeg.Marker);
 			Assert.AreEqual(@"KEYWORDBT ", textSeg.Text);
 
-			Assert.IsNull(textEnum.Next());
+			Assert.That(textEnum.Next(), Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1215,48 +1399,48 @@ namespace ParatextImport
 				new ScrReference(49, 0, 0, ScrVers.English), new ScrReference(49, 2, 1, ScrVers.English));
 
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 1");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 1");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("EPH ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 2");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 2");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(1, textSeg.FirstReference.Chapter);
 			Assert.AreEqual(1, textSeg.FirstReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 3");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 3");
 			Assert.AreEqual(@"\s", textSeg.Marker);
 			Assert.AreEqual(@"My Section ", textSeg.Text);
 			Assert.AreEqual(1, textSeg.FirstReference.Chapter);
 			Assert.AreEqual(1, textSeg.FirstReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 4");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 4");
 			Assert.AreEqual(@"\p", textSeg.Marker);
 			Assert.AreEqual(@"Some verse text ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 5");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 5");
 			Assert.AreEqual(@"\p", textSeg.Marker);
 			Assert.AreEqual(@"More text ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 6");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 6");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(2, textSeg.FirstReference.Chapter);
 			Assert.AreEqual(1, textSeg.FirstReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 7");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 7");
 			Assert.AreEqual(@"\s", textSeg.Marker);
 			Assert.AreEqual(@"Dude ", textSeg.Text);
 			Assert.AreEqual(2, textSeg.FirstReference.Chapter);
 			Assert.AreEqual(1, textSeg.FirstReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 8");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 8");
 			Assert.AreEqual(@"\p", textSeg.Marker);
 			Assert.AreEqual(@"Beginning of chapter two ", textSeg.Text);
 		}
@@ -1290,78 +1474,78 @@ namespace ParatextImport
 				new ScrReference(49, 0, 0, ScrVers.English), new ScrReference(49, 2, 131, ScrVers.English));
 
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 1");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 1");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("EPH ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 2");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 2");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(1, textSeg.FirstReference.Chapter);
 			Assert.AreEqual(1, textSeg.FirstReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 3");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 3");
 			Assert.AreEqual(@"\s", textSeg.Marker);
 			Assert.AreEqual(@"My Section ", textSeg.Text);
 			Assert.AreEqual(1, textSeg.FirstReference.Chapter);
 			Assert.AreEqual(1, textSeg.FirstReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 4");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 4");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(@" verse one text ", textSeg.Text);
 			Assert.AreEqual(1, textSeg.FirstReference.Chapter);
 			Assert.AreEqual(1, textSeg.FirstReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 5");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 5");
 			Assert.AreEqual(@"\p", textSeg.Marker);
 			Assert.AreEqual(@"Some text ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 6");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 6");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(@" verse two text ", textSeg.Text);
 			Assert.AreEqual(1, textSeg.FirstReference.Chapter);
 			Assert.AreEqual(2, textSeg.FirstReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 7");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 7");
 			Assert.AreEqual(@"\p", textSeg.Marker);
 			Assert.AreEqual(@"More text ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 8");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 8");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(2, textSeg.FirstReference.Chapter);
 			Assert.AreEqual(1, textSeg.FirstReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 9");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 9");
 			Assert.AreEqual(@"\s", textSeg.Marker);
 			Assert.AreEqual(@"Dude ", textSeg.Text);
 			Assert.AreEqual(2, textSeg.FirstReference.Chapter);
 			Assert.AreEqual(1, textSeg.FirstReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 10");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 10");
 			Assert.AreEqual(@"\p", textSeg.Marker);
 			Assert.AreEqual(@"Beginning of chapter two ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 11");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 11");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(3, textSeg.FirstReference.Chapter);
 			Assert.AreEqual(1, textSeg.FirstReference.Verse);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 10");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 10");
 			Assert.AreEqual(@"\s", textSeg.Marker);
 			Assert.AreEqual(@"Last Chapter ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNull(textSeg, "Shouldn't be any more data");
+			Assert.That(textSeg, Is.Null, "Shouldn't be any more data");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1385,47 +1569,47 @@ namespace ParatextImport
 				new ScrReference(45, 0, 0, ScrVers.English), new ScrReference(45, 1, 1, ScrVers.English));
 
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("ROM ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
 			Assert.AreEqual(@"\mt", textSeg.Marker);
 			Assert.AreEqual(@"Rom\\ans ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(@" ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(@" This is a ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
 			Assert.AreEqual(@"picture", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
 			Assert.AreEqual(@" ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
 			Assert.AreEqual(@"c:\scr\files\pic1.jpg", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
 			Assert.AreEqual(@" of ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
 			Assert.AreEqual(@"Rome", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
 			Assert.AreEqual(@". ", textSeg.Text);
 		}
 
@@ -1443,7 +1627,7 @@ namespace ParatextImport
 			{
 				using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ParatextImport.EncTest.map"))
 				{
-					Assert.IsNotNull(stream);
+					Assert.That(stream, Is.Not.Null);
 
 					// Define an encoding converter
 					using (StreamReader reader = new StreamReader(stream))
@@ -1476,27 +1660,27 @@ namespace ParatextImport
 					new ScrReference(45, 1, 1, ScrVers.English));
 
 				ISCTextSegment textSeg = textEnum.Next();
-				Assert.IsNotNull(textSeg, "Unable to read segment");
+				Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
 				Assert.AreEqual(@"\id", textSeg.Marker);
 				Assert.AreEqual("ROM ", textSeg.Text);
 
 				textSeg = textEnum.Next();
-				Assert.IsNotNull(textSeg, "Unable to read segment");
+				Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
 				Assert.AreEqual(@"\mt", textSeg.Marker);
 				Assert.AreEqual("\u0966\u0967\u0968\u0969\u096a\u096b\u096c\u096d\u096e\u096f ", textSeg.Text);
 
 				textSeg = textEnum.Next();
-				Assert.IsNotNull(textSeg, "Unable to read segment");
+				Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
 				Assert.AreEqual(@"\s", textSeg.Marker);
 				Assert.AreEqual("\u0492\u043a\u2013\u04e9 ", textSeg.Text);
 
 				textSeg = textEnum.Next();
-				Assert.IsNotNull(textSeg, "Unable to read segment");
+				Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
 				Assert.AreEqual(@"\c", textSeg.Marker);
 				Assert.AreEqual(@" ", textSeg.Text);
 
 				textSeg = textEnum.Next();
-				Assert.IsNotNull(textSeg, "Unable to read segment");
+				Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
 				Assert.AreEqual(@"\v", textSeg.Marker);
 				Assert.AreEqual(@" ", textSeg.Text);
 			}
@@ -1539,11 +1723,22 @@ namespace ParatextImport
 
 			// read the \id segment
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
 
+<<<<<<< HEAD:Src/ParatextImportTests/SCTextEnumTests.cs
 			// read the \mt segment which should cause an exception
 			Assert.That(() => {	textSeg = textEnum.Next(); }, Throws.TypeOf<EncodingConverterException>().With.Message.StartsWith("Encoding converter not found."));
 		}
+||||||| f013144d5:Src/ParatextImport/ParatextImportTests/SCTextEnumTests.cs
+				// read the \mt segment which should cause an exception
+				textSeg = textEnum.Next();
+			}
+=======
+			// read the \mt segment which should cause an exception
+			Assert.That(() => textSeg = textEnum.Next(),
+				Throws.TypeOf<EncodingConverterException>().With.Message.StartsWith("Encoding converter not found."));
+			}
+>>>>>>> develop:Src/ParatextImport/ParatextImportTests/SCTextEnumTests.cs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1595,97 +1790,97 @@ namespace ParatextImport
 			GC.Collect();
 
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 1 from file 1");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 1 from file 1");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("EPH ", textSeg.Text);
 			Assert.AreEqual(49001000, textSeg.FirstReference.BBCCCVVV);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 2 from file 1");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 2 from file 1");
 			Assert.AreEqual(@"\p", textSeg.Marker);
 			Assert.AreEqual(@"", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 3 from file 1");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 3 from file 1");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(@" ", textSeg.Text);
 			Assert.AreEqual(49001001, textSeg.FirstReference.BBCCCVVV);
 			Assert.AreEqual(49001001, textSeg.LastReference.BBCCCVVV);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 4 from file 1");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 4 from file 1");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(" Text ", textSeg.Text);
 			Assert.AreEqual(49001001, textSeg.FirstReference.BBCCCVVV);
 			Assert.AreEqual(49001004, textSeg.LastReference.BBCCCVVV);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 1 from file 2");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 1 from file 2");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("EPH ", textSeg.Text);
 			Assert.AreEqual(49001000, textSeg.FirstReference.BBCCCVVV);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 2 from file 2");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 2 from file 2");
 			Assert.AreEqual(@"\p", textSeg.Marker);
 			Assert.AreEqual(@"", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 3 from file 2");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 3 from file 2");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(@" ", textSeg.Text);
 			Assert.AreEqual(49002001, textSeg.FirstReference.BBCCCVVV);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 4 from file 2");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 4 from file 2");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(" More Text ", textSeg.Text);
 			Assert.AreEqual(49002001, textSeg.FirstReference.BBCCCVVV);
 			Assert.AreEqual(49002001, textSeg.LastReference.BBCCCVVV);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 1 from file 3");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 1 from file 3");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("EPH ", textSeg.Text);
 			Assert.AreEqual(49001000, textSeg.FirstReference.BBCCCVVV);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 2 from file 3");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 2 from file 3");
 			Assert.AreEqual(@"\p", textSeg.Marker);
 			Assert.AreEqual(@"", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 3 from file 3");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 3 from file 3");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(@" ", textSeg.Text);
 			Assert.AreEqual(49003001, textSeg.FirstReference.BBCCCVVV);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 4 from file 3");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 4 from file 3");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(" Last Text continued verse text ", textSeg.Text);
 			Assert.AreEqual(49003001, textSeg.FirstReference.BBCCCVVV);
 			Assert.AreEqual(49003002, textSeg.LastReference.BBCCCVVV);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 1 from file 4");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 1 from file 4");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("COL ", textSeg.Text);
 			Assert.AreEqual(51001000, textSeg.FirstReference.BBCCCVVV);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 2 from file 4");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 2 from file 4");
 			Assert.AreEqual(@"\p", textSeg.Marker);
 			Assert.AreEqual(@"", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 3 from file 4");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 3 from file 4");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(@" ", textSeg.Text);
 			Assert.AreEqual(51001001, textSeg.FirstReference.BBCCCVVV);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 4 from file 4");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 4 from file 4");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(" Colossians Text ", textSeg.Text);
 			Assert.AreEqual(51001001, textSeg.FirstReference.BBCCCVVV);
@@ -1731,7 +1926,7 @@ namespace ParatextImport
 			segment = textEnum.Next();
 			Assert.AreEqual(@"\v", segment.Marker);
 
-			Assert.IsNull(textEnum.Next());
+			Assert.That(textEnum.Next(), Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1753,22 +1948,22 @@ namespace ParatextImport
 				new ScrReference(49, 0, 0, ScrVers.English), new ScrReference(49, 1, 1, ScrVers.English));
 
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 1 from file 1");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 1 from file 1");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("EPH ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 2 from file 1");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 2 from file 1");
 			Assert.AreEqual(@"\p", textSeg.Marker);
 			Assert.AreEqual(@"", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 3 from file 1");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 3 from file 1");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(@" ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 4 from file 1");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 4 from file 1");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(" \u1234 ", textSeg.Text);
 			Assert.AreEqual(49001001, textSeg.FirstReference.BBCCCVVV);
@@ -1797,27 +1992,27 @@ namespace ParatextImport
 				new ScrReference(49, 0, 0, ScrVers.English), new ScrReference(49, 1, 1, ScrVers.English));
 
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 1");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 1");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("EPH ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 2");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 2");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(@" ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 3");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 3");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(" This ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 4");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 4");
 			Assert.AreEqual(@"\i", textSeg.Marker);
 			Assert.AreEqual("is", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 5");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 5");
 			Assert.AreEqual(@"\i*", textSeg.Marker);
 			Assert.AreEqual(" nice. ", textSeg.Text);
 		}
@@ -1882,27 +2077,27 @@ namespace ParatextImport
 				new ScrReference(49, 0, 0, ScrVers.English), new ScrReference(49, 1, 1, ScrVers.English));
 
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 1");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 1");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("EPH ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 2");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 2");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(@" ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 3");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 3");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(" This don't work", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 4");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 4");
 			Assert.AreEqual(@"\f ", textSeg.Marker);
 			Assert.AreEqual("Footnote.", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 5");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 5");
 			Assert.AreEqual(@"\fe", textSeg.Marker);
 			Assert.AreEqual(". ", textSeg.Text);
 		}
@@ -1933,27 +2128,27 @@ namespace ParatextImport
 				new ScrReference(49, 0, 0, ScrVers.English), new ScrReference(49, 1, 1, ScrVers.English));
 
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 1");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 1");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("EPH ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 2");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 2");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(@" ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 3");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 3");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(" This don't ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 4");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 4");
 			Assert.AreEqual(@"\f ", textSeg.Marker);
 			Assert.AreEqual("Footnote. ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 5");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 5");
 			Assert.AreEqual(@"\fe", textSeg.Marker);
 			Assert.AreEqual(" work. ", textSeg.Text);
 		}
@@ -1979,37 +2174,37 @@ namespace ParatextImport
 				new ScrReference(49, 0, 0, ScrVers.English), new ScrReference(49, 1, 1, ScrVers.English));
 
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 1");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 1");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("EPH ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 2");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 2");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(@" ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 3");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 3");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(" This ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 4");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 4");
 			Assert.AreEqual("%f", textSeg.Marker);
 			Assert.AreEqual("is a ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 5");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 5");
 			Assert.AreEqual("%i", textSeg.Marker);
 			Assert.AreEqual("emphasized", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 6");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 6");
 			Assert.AreEqual("%i*", textSeg.Marker);
 			Assert.AreEqual(" footnote", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 7");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 7");
 			Assert.AreEqual("%f*", textSeg.Marker);
 			Assert.AreEqual(" test. ", textSeg.Text);
 		}
@@ -2044,37 +2239,37 @@ namespace ParatextImport
 				new ScrReference(49, 0, 0, ScrVers.English), new ScrReference(49, 1, 1, ScrVers.English));
 
 			ISCTextSegment textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 1");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 1");
 			Assert.AreEqual(@"\id", textSeg.Marker);
 			Assert.AreEqual("EPH ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 2");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 2");
 			Assert.AreEqual(@"\c", textSeg.Marker);
 			Assert.AreEqual(@" ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 3");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 3");
 			Assert.AreEqual(@"\v", textSeg.Marker);
 			Assert.AreEqual(" This ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 4");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 4");
 			Assert.AreEqual("|i", textSeg.Marker);
 			Assert.AreEqual("is", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 5");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 5");
 			Assert.AreEqual("|r", textSeg.Marker);
 			Assert.AreEqual(" ", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 6");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 6");
 			Assert.AreEqual("|u", textSeg.Marker);
 			Assert.AreEqual("a", textSeg.Text);
 
 			textSeg = textEnum.Next();
-			Assert.IsNotNull(textSeg, "Unable to read segment 7");
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 7");
 			Assert.AreEqual("|r", textSeg.Marker);
 			Assert.AreEqual(" nice test. ", textSeg.Text);
 		}
@@ -2144,7 +2339,7 @@ namespace ParatextImport
 		{
 			ISCTextEnum textEnum = GetTextEnum(ImportDomain.Main,
 				new ScrReference(1, 0, 0, ScrVers.English), new ScrReference(1, 1, 1, ScrVers.English));
-			Assert.IsNull(textEnum.Next(), "Should be no segments to read");
+			Assert.That(textEnum.Next(), Is.Null, "Should be no segments to read");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2161,7 +2356,7 @@ namespace ParatextImport
 			ISCTextEnum textEnum = GetTextEnum(ImportDomain.Main,
 				new ScrReference(2, 0, 0, ScrVers.English), new ScrReference(2, 1, 1, ScrVers.English));
 
-			Assert.IsNull(textEnum.Next(), "Should be no segments to read");
+			Assert.That(textEnum.Next(), Is.Null, "Should be no segments to read");
 		}
 
 		/// ------------------------------------------------------------------------------------

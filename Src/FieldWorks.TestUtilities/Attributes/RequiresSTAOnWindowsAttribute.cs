@@ -1,4 +1,10 @@
+<<<<<<< HEAD:Src/FieldWorks.TestUtilities/Attributes/RequiresSTAOnWindowsAttribute.cs
 // Copyright (c) 2018-2020 SIL International
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/Attributes/RequiresSTAOnWindowsAttribute.cs
+// Copyright (c) 2018 SIL International
+=======
+// Copyright (c) 2018-2021 SIL International
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/Attributes/RequiresSTAOnWindowsAttribute.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,9 +29,15 @@ namespace FieldWorks.TestUtilities.Attributes
 		public RequiresSTAOnWindowsAttribute()
 		{
 			if (Platform.IsWindows)
+<<<<<<< HEAD:Src/FieldWorks.TestUtilities/Attributes/RequiresSTAOnWindowsAttribute.cs
 			{
 				Properties.Add(PropertyNames.ApartmentState, ApartmentState.STA);
 			}
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/Attributes/RequiresSTAOnWindowsAttribute.cs
+				Properties.Add("APARTMENT_STATE", ApartmentState.STA);
+=======
+				Properties.Add("ApartmentState", ApartmentState.STA);
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/Attributes/RequiresSTAOnWindowsAttribute.cs
 		}
 	}
 }

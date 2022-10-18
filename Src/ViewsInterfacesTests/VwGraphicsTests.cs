@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 		public void SimpleCreationAndRelease()
 		{
 			IVwGraphicsWin32 vwGraphics = VwGraphicsWin32Class.Create();
-			Assert.IsNotNull(vwGraphics);
+			Assert.That(vwGraphics, Is.Not.Null);
 
 			using (var gr = new GraphicsObjectFromImage())
 			{
@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 		public void GetClipRect()
 		{
 			IVwGraphicsWin32 vwGraphics = VwGraphicsWin32Class.Create();
-			Assert.IsNotNull(vwGraphics);
+			Assert.That(vwGraphics, Is.Not.Null);
 
 			using (var gr = new GraphicsObjectFromImage())
 			{
@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 		public void Clipping()
 		{
 			IVwGraphicsWin32 vwGraphics = VwGraphicsWin32Class.Create();
-			Assert.IsNotNull(vwGraphics);
+			Assert.That(vwGraphics, Is.Not.Null);
 
 			using (var gr = new GraphicsObjectFromImage())
 			{
@@ -237,7 +237,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 		public void SetClipRect()
 		{
 			IVwGraphicsWin32 vwGraphics = VwGraphicsWin32Class.Create();
-			Assert.IsNotNull(vwGraphics);
+			Assert.That(vwGraphics, Is.Not.Null);
 
 			using (var gr = new GraphicsObjectFromImage())
 			{
@@ -262,7 +262,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 		public void ComplexClipping()
 		{
 			IVwGraphicsWin32 vwGraphics = VwGraphicsWin32Class.Create();
-			Assert.IsNotNull(vwGraphics);
+			Assert.That(vwGraphics, Is.Not.Null);
 
 			using (var gr = new GraphicsObjectFromImage())
 			{
@@ -370,7 +370,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 		internal void TestGetTextExtentHelper(string testString)
 		{
 			IVwGraphicsWin32 vwGraphics = VwGraphicsWin32Class.Create();
-			Assert.IsNotNull(vwGraphics);
+			Assert.That(vwGraphics, Is.Not.Null);
 
 			using (var gr = new GraphicsObjectFromImage())
 			{
@@ -439,7 +439,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 		public void GetTextExtentWithEmptyString()
 		{
 			IVwGraphicsWin32 vwGraphics = VwGraphicsWin32Class.Create();
-			Assert.IsNotNull(vwGraphics);
+			Assert.That(vwGraphics, Is.Not.Null);
 
 			using (var gr = new GraphicsObjectFromImage())
 			{
@@ -475,7 +475,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 			const string longString = "abcdefghijklmnopqrstuvwzyzabcdefghijklmnopqrstuvwzyzabcdefghijklmnopqrstuvwzyz";
 
 			IVwGraphicsWin32 vwGraphics = VwGraphicsWin32Class.Create();
-			Assert.IsNotNull(vwGraphics);
+			Assert.That(vwGraphics, Is.Not.Null);
 
 			using (var gr = new GraphicsObjectFromImage())
 			{
@@ -524,7 +524,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 			// in the following comment
 			// https://www.jira.insitehome.org/browse/FWNX-449?focusedCommentId=108054&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-108054
 			IVwGraphicsWin32 vwGraphics = VwGraphicsWin32Class.Create();
-			Assert.IsNotNull(vwGraphics);
+			Assert.That(vwGraphics, Is.Not.Null);
 
 			const int width = 1241;
 			const int height = 56080; // something bigger than MAX_IMAGE_SIZE (32767)

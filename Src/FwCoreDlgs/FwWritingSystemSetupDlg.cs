@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			model.OnCurrentWritingSystemChanged -= OnCurrentWritingSystemChangedHandler;
 			model.CurrentWsSetupModel.CurrentItemUpdated -= OnCurrentItemUpdated;
 			BindGeneralTab(model);
-			_sortControl.BindToModel(model.CurrentWsSetupModel);
+			BindToSortTab(model);
 			_keyboardControl.BindToModel(model.CurrentWsSetupModel);
 			BindCurrentWSList(model);
 			BindHeader(model);
@@ -114,6 +114,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			_shareWithSldrCheckbox.Visible = model.ShowSharingWithSldr;
 			_shareWithSldrCheckbox.Checked = model.IsSharingWithSldr;
 			model.ShowChangeLanguage = ShowChangeLanguage;
+			model.ViewHiddenWritingSystems = ViewHiddenWritingSystems;
 			_shareWithSldrCheckbox.CheckedChanged += ShareWithSldrCheckboxCheckChanged;
 			_languageNameTextbox.TextChanged += LanguageNameTextboxOnTextChanged;
 		}
@@ -161,6 +162,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			_enableAdvanced.Visible = model.ShowAdvancedScriptRegionVariantCheckBox;
 			_enableAdvanced.Checked = model.ShowAdvancedScriptRegionVariantView;
 			_enableAdvanced.CheckedChanged += EnableAdvancedOnCheckedChanged;
+		}
+		private void BindToSortTab(FwWritingSystemSetupModel model)
+		{
+			_sortControl.UserWantsHelpWithCustomSorting += FormHelpClick;
+			_sortControl.BindToModel(model.CurrentWsSetupModel);
 		}
 
 		private void SpellingDictionaryChanged(object sender, EventArgs e)
@@ -257,9 +263,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		#endregion
 
 		#region Delegates (called by presentation model)
-		private void ShowMessageBox(string msg)
+		private bool ShowMessageBox(string msg, bool needResponse)
 		{
-			MessageBox.Show(msg, Text, MessageBoxButtons.OK);
+			return DialogResult.Yes == MessageBox.Show(msg, Text, needResponse ? MessageBoxButtons.YesNo : MessageBoxButtons.OK);
 		}
 
 		private bool ShowSharedWsChangeWarning(string originalLanguageName)
@@ -294,6 +300,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 			info = null;
 			return false;
+		}
+
+		private void ViewHiddenWritingSystems(ViewHiddenWritingSystemsModel model)
+		{
+			using (var hiddenWSDlg = new ViewHiddenWritingSystemsDlg(model, _helpTopicProvider))
+			{
+				hiddenWSDlg.ShowDialog(this);
+			}
 		}
 
 		private bool ShowModifyEncodingConverter(string originalConverter, out string selectedConverter)
@@ -402,6 +416,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (_model.IsListValid && customDigits.AreAllDigitsValid())
 			{
 				_model.Save();
+				DialogResult = DialogResult.OK;
 				Close();
 			}
 			else
@@ -424,6 +439,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					customDigits.HighlightProblemDigits();
 					_tabControl.SelectedTab = _numbersTab;
 				}
+				DialogResult = DialogResult.None;
 			}
 		}
 
@@ -442,7 +458,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			foreach (var item in _model.GetAddMenuItems())
 			{
-				_addMenuStrip.Items.Add(new ToolStripMenuItem(item.MenuText, null, item.ClickHandler));
+				_addMenuStrip.Items.Add(new ToolStripMenuItem(item.MenuText, null, item.ClickHandler) { ToolTipText = item.ToolTip });
 				_addMenuStrip.Show(_addWsButton, new Point(0, _addWsButton.Height));
 			}
 		}
@@ -512,9 +528,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					foreach (var item in _model.GetRightClickMenuItems())
 					{
 						var menuItem = new ToolStripMenuItem(item.MenuText, null, item.ClickHandler)
-						{
-							Enabled = item.IsEnabled
-						};
+							{
+								Enabled = item.IsEnabled,
+								ToolTipText = item.ToolTip
+							};
 						_addMenuStrip.Items.Add(menuItem);
 						_addMenuStrip.Show(listBox, e.Location);
 					}

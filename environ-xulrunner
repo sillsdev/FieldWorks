@@ -1,6 +1,6 @@
 if [ "$RUNMODE" = "INSTALLED" ]
 then
-	GECKOFX="/usr/lib/fieldworks"
+	GECKOFX="${INSTALLATION_PREFIX}/lib/fieldworks"
 else
 	GECKOFX="${BASE}/Output_${ARCH}/${BUILD}/${FRAMEWORK_VERSION}"
 fi

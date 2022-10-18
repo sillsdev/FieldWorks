@@ -100,7 +100,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var styles = GetAvailableStyles(view);
 
 			// The first character style should be (none), specified by null
-			Assert.IsNull(styles[0].Style);
+			Assert.That(styles[0].Style, Is.Null);
 
 			// The rest should be character styles
 			for (var i = 1; i < styles.Count; i++)
@@ -720,7 +720,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			using (var view = controller.View)
 			{
 				var optionsView = GetSenseOptionsView(view);
-				Assert.IsNotNull(optionsView, "DictionaryNodeSenseOptions should cause SenseOptionsView to be created");
+				Assert.That(optionsView, Is.Not.Null, "DictionaryNodeSenseOptions should cause SenseOptionsView to be created");
 				Assert.IsTrue(optionsView.SenseInPara, "checkbox set properly for showing senses in paragraph for Sense");
 				Assert.IsTrue(optionsView.FirstSenseInline, "checkbox for showing first senses in line with the entry");
 				Assert.AreEqual("", optionsView.BeforeText, "proper text before number loads for Sense");
@@ -737,7 +737,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			using (var view = controller2.View)
 			{
 				var optionsView = GetSenseOptionsView(view);
-				Assert.IsNotNull(optionsView, "DictionaryNodeSenseOptions should cause SenseOptionsView to be created");
+				Assert.That(optionsView, Is.Not.Null, "DictionaryNodeSenseOptions should cause SenseOptionsView to be created");
 				Assert.IsFalse(optionsView.SenseInPara, "checkbox set properly for showing senses in paragraph for Subsense");
 				Assert.AreEqual("", optionsView.BeforeText, "proper text before number loads for Subsense");
 				Assert.AreEqual(") ", optionsView.AfterText, "proper text after number loads for Subsense");
@@ -862,7 +862,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 				var optionsView = GetSenseOptionsView(view);
 				var realView = optionsView as SenseOptionsView;
-				Assert.IsNotNull(realView);
+				Assert.That(realView, Is.Not.Null);
 				var outputNumberingStyle = realView.DropdownNumberingStyles.Cast<NumberingStyleComboItem>().ToList();
 				Assert.AreEqual(expectedNumberingStyle.Count(), outputNumberingStyle.Count, "Sense number's numbering style should be same count.");
 				Assert.AreEqual(expectedNumberingStyle.First().Label, outputNumberingStyle.First().Label, "Sense number's numbering style should have 'none' option.");
@@ -874,7 +874,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 				optionsView = GetSenseOptionsView(view);
 				realView = optionsView as SenseOptionsView;
-				Assert.IsNotNull(realView);
+				Assert.That(realView, Is.Not.Null);
 				outputNumberingStyle = realView.DropdownNumberingStyles.Cast<NumberingStyleComboItem>().ToList();
 				Assert.AreEqual(expectedNumberingStyle.Count, outputNumberingStyle.Count, "SubSense number's numbering style should be same count.");
 				Assert.AreEqual(expectedNumberingStyle.First().Label, outputNumberingStyle.First().Label, "SubSense number's numbering style should have 'none' option.");
@@ -886,7 +886,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 				optionsView = GetSenseOptionsView(view);
 				realView = optionsView as SenseOptionsView;
-				Assert.IsNotNull(realView);
+				Assert.That(realView, Is.Not.Null);
 				outputNumberingStyle = realView.DropdownNumberingStyles.Cast<NumberingStyleComboItem>().ToList();
 				Assert.AreEqual(expectedNumberingStyle.Count(), outputNumberingStyle.Count, "SubSubSense number's numbering style should be same count.");
 				Assert.AreEqual(expectedNumberingStyle.First().Label, outputNumberingStyle.First().Label, "SubSubSense number's numbering style should have 'none' option.");

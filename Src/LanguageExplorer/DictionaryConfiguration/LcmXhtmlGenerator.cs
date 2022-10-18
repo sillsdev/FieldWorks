@@ -1,6 +1,6 @@
-// // Copyright (c) $year$ SIL International
-// // This software is licensed under the LGPL, version 2.1 or later
-// // (http://www.gnu.org/licenses/lgpl-2.1.html)
+// Copyright (c) 2014-$year$ SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
@@ -8,8 +8,16 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Web.UI.WebControls;
 using System.Xml;
+<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/LcmXhtmlGenerator.cs
 using LanguageExplorer.Controls.XMLViews;
+||||||| f013144d5:Src/xWorks/LcmXhtmlGenerator.cs
+using SIL.FieldWorks.Common.Controls;
+=======
+using Icu.Collation;
+using SIL.FieldWorks.Common.Controls;
+>>>>>>> develop:Src/xWorks/LcmXhtmlGenerator.cs
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
@@ -28,14 +36,32 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <summary>
 		/// This is the limit for the number of entries allowed on a single page of the output (used only when generating internal previews)
 		/// </summary>
+<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/LcmXhtmlGenerator.cs
 		internal const int EntriesPerPage = 1000;
+||||||| f013144d5:Src/xWorks/LcmXhtmlGenerator.cs
+		public const int EntriesPerPage = 1000;
+=======
+#if DEBUG
+		// Assembling fragments and letter headings takes a long time when debugging, but doesn't seem to be a problem otherwise.
+		// Spare developers some pain until resolving this becomes a priority.
+		public const int EntriesPerPage = 100;
+#else
+		public const int EntriesPerPage = 1000;
+#endif
+>>>>>>> develop:Src/xWorks/LcmXhtmlGenerator.cs
 
 
 		/// <summary>
 		/// Saves the generated content in the Temp directory, to a unique but discoverable and somewhat stable location.
 		/// </summary>
 		/// <returns>The path to the XHTML file</returns>
+<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/LcmXhtmlGenerator.cs
 		public static string SavePreviewHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, IPropertyTable propertyTable, LcmCache cache, IRecordList recordList,
+||||||| f013144d5:Src/xWorks/LcmXhtmlGenerator.cs
+		public static string SavePreviewHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, PropertyTable propertyTable,
+=======
+		public static string SavePreviewHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, XCore.PropertyTable propertyTable,
+>>>>>>> develop:Src/xWorks/LcmXhtmlGenerator.cs
 			IThreadedProgress progress = null, int entriesPerPage = EntriesPerPage)
 		{
 			var preferredPath = GetPreferredPreviewPath(configuration, propertyTable.GetValue<LcmCache>("cache"), entryHvos.Length == 1);
@@ -70,8 +96,16 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// Saves the generated content into the given xhtml and css file paths for all the entries in
 		/// the given collection.
 		/// </summary>
+<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/LcmXhtmlGenerator.cs
 		internal static void SavePublishedHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, int entriesPerPage,
 			DictionaryConfigurationModel configuration, IPropertyTable propertyTable, LcmCache cache, IRecordList recordList, string xhtmlPath, IThreadedProgress progress = null)
+||||||| f013144d5:Src/xWorks/LcmXhtmlGenerator.cs
+		public static void SavePublishedHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, int entriesPerPage,
+			DictionaryConfigurationModel configuration, PropertyTable propertyTable, string xhtmlPath, IThreadedProgress progress = null)
+=======
+		public static void SavePublishedHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, int entriesPerPage,
+			DictionaryConfigurationModel configuration, XCore.PropertyTable propertyTable, string xhtmlPath, IThreadedProgress progress = null)
+>>>>>>> develop:Src/xWorks/LcmXhtmlGenerator.cs
 		{
 			var entryCount = entryHvos.Length;
 			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
@@ -83,8 +117,16 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				var readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);
 				var custCssPath = CssGenerator.CopyCustomCssAndGetPath(Path.GetDirectoryName(xhtmlPath), configDir);
+<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/LcmXhtmlGenerator.cs
 				var settings = new GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(xhtmlPath),
 					ConfiguredLcmGenerator.IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css");
+||||||| f013144d5:Src/xWorks/LcmXhtmlGenerator.cs
+				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(xhtmlPath),
+					ConfiguredLcmGenerator.IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css");
+=======
+				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(xhtmlPath),
+					ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), Path.GetFileName(cssPath) == "configured.css");
+>>>>>>> develop:Src/xWorks/LcmXhtmlGenerator.cs
 				GenerateOpeningHtml(cssPath, custCssPath, settings, xhtmlWriter);
 				var currentPageBounds = GetPageForCurrentEntry(settings, entryHvos, entriesPerPage);
 				GenerateTopOfPageButtonsIfNeeded(settings, entryHvos, entriesPerPage, currentPageBounds, xhtmlWriter, cssWriter);
@@ -120,18 +162,37 @@ namespace LanguageExplorer.DictionaryConfiguration
 				ConfiguredLcmGenerator.SpawnEntryGenerationThreadsAndWait(entryActions, progress);
 				// Generate the letter headers and insert the document fragments into the full xhtml file
 				if (progress != null)
+<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/LcmXhtmlGenerator.cs
 				{
 					progress.Message = DictionaryConfigurationStrings.ksArrangingDisplayFragments;
 				}
+||||||| f013144d5:Src/xWorks/LcmXhtmlGenerator.cs
+					progress.Message = xWorksStrings.ksArrangingDisplayFragments;
+=======
+					progress.Message = xWorksStrings.ksArrangingDisplayFragments;
+
+				var wsString = entryContents.Length > 0 ? ConfiguredLcmGenerator.GetWsForEntryType(entryContents[0].Item1, settings.Cache) : null;
+				var col = FwUtils.GetCollatorForWs(wsString);
+
+>>>>>>> develop:Src/xWorks/LcmXhtmlGenerator.cs
 				foreach (var entryAndXhtml in entryContents)
 				{
+<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/LcmXhtmlGenerator.cs
 					if (wantLetterHeaders &&
 						!String.IsNullOrEmpty(entryAndXhtml.Item2.ToString()))
 					{
 						GenerateLetterHeaderIfNeeded(entryAndXhtml.Item1, ref lastHeader, xhtmlWriter, settings);
 					}
+||||||| f013144d5:Src/xWorks/LcmXhtmlGenerator.cs
+					if (wantLetterHeaders && !String.IsNullOrEmpty(entryAndXhtml.Item2.ToString()))
+						GenerateLetterHeaderIfNeeded(entryAndXhtml.Item1, ref lastHeader, xhtmlWriter, settings);
+=======
+					if (wantLetterHeaders && !string.IsNullOrEmpty(entryAndXhtml.Item2.ToString()))
+						GenerateLetterHeaderIfNeeded(entryAndXhtml.Item1, ref lastHeader, xhtmlWriter, col, settings, clerk);
+>>>>>>> develop:Src/xWorks/LcmXhtmlGenerator.cs
 					xhtmlWriter.WriteRaw(entryAndXhtml.Item2.ToString());
 				}
+				col?.Dispose();
 				GenerateBottomOfPageButtonsIfNeeded(settings, entryHvos, entriesPerPage, currentPageBounds, xhtmlWriter);
 				GenerateClosingHtml(xhtmlWriter);
 				xhtmlWriter.Flush();
@@ -155,19 +216,33 @@ namespace LanguageExplorer.DictionaryConfiguration
 			return !settings.ExportPath.StartsWith(Path.Combine(Path.GetTempPath(), "DictionaryPreview"));
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/LcmXhtmlGenerator.cs
 		internal static void GenerateLetterHeaderIfNeeded(ICmObject entry, ref string lastHeader, XmlWriter xhtmlWriter, GeneratorSettings settings)
+||||||| f013144d5:Src/xWorks/LcmXhtmlGenerator.cs
+		internal static void GenerateLetterHeaderIfNeeded(ICmObject entry, ref string lastHeader, XmlWriter xhtmlWriter, ConfiguredLcmGenerator.GeneratorSettings settings)
+=======
+		internal static void GenerateLetterHeaderIfNeeded(ICmObject entry, ref string lastHeader, XmlWriter xhtmlWriter, Collator headwordWsCollator, ConfiguredLcmGenerator.GeneratorSettings settings, RecordClerk clerk = null)
+>>>>>>> develop:Src/xWorks/LcmXhtmlGenerator.cs
 		{
 			// If performance is an issue these dummy's can be stored between calls
-			var dummyOne = new Dictionary<string, ISet<string>>();
+			var dummyOne = new Dictionary<string, Dictionary<string, ConfiguredExport.CollationLevel>>();
 			var dummyTwo = new Dictionary<string, Dictionary<string, string>>();
 			var dummyThree = new Dictionary<string, ISet<string>>();
 			var cache = settings.Cache;
 			var wsString = ConfiguredLcmGenerator.GetWsForEntryType(entry, settings.Cache);
+<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/LcmXhtmlGenerator.cs
 			var firstLetter = ConfiguredExport.GetLeadChar(ConfiguredLcmGenerator.GetHeadwordForLetterHead(entry), wsString, dummyOne, dummyTwo, dummyThree, cache);
+||||||| f013144d5:Src/xWorks/LcmXhtmlGenerator.cs
+			var firstLetter = ConfiguredExport.GetLeadChar(ConfiguredLcmGenerator.GetHeadwordForLetterHead(entry), wsString, dummyOne, dummyTwo, dummyThree,
+				cache);
+=======
+			var firstLetter = ConfiguredExport.GetLeadChar(ConfiguredLcmGenerator.GetSortWordForLetterHead(entry, clerk), wsString, dummyOne, dummyTwo, dummyThree,
+				headwordWsCollator, cache);
+>>>>>>> develop:Src/xWorks/LcmXhtmlGenerator.cs
 			if (firstLetter != lastHeader && !string.IsNullOrEmpty(firstLetter))
 			{
 				var headerTextBuilder = new StringBuilder();
-				var upperCase = Icu.UnicodeString.ToTitle(firstLetter, wsString);
+				var upperCase = new CaseFunctions(cache.ServiceLocator.WritingSystemManager.Get(wsString)).ToTitle(firstLetter);
 				var lowerCase = firstLetter.Normalize();
 				headerTextBuilder.Append(upperCase);
 				if (lowerCase != upperCase)
@@ -198,7 +273,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// Generates self-contained XHTML for a single entry for, eg, the preview panes in Lexicon Edit and the Dictionary Config dialog
 		/// </summary>
 		/// <returns>The HTML as a string</returns>
+<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/LcmXhtmlGenerator.cs
 		public static string GenerateEntryHtmlWithStyles(ICmObject entry, DictionaryConfigurationModel configuration, DictionaryPublicationDecorator pubDecorator, IPropertyTable propertyTable)
+||||||| f013144d5:Src/xWorks/LcmXhtmlGenerator.cs
+		public static string GenerateEntryHtmlWithStyles(ICmObject entry, DictionaryConfigurationModel configuration,
+																		 DictionaryPublicationDecorator pubDecorator, PropertyTable propertyTable)
+=======
+		public static string GenerateEntryHtmlWithStyles(ICmObject entry, DictionaryConfigurationModel configuration,
+																		 DictionaryPublicationDecorator pubDecorator, XCore.PropertyTable propertyTable)
+>>>>>>> develop:Src/xWorks/LcmXhtmlGenerator.cs
 		{
 			if (entry == null)
 			{
@@ -219,7 +302,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 			using (var cssWriter = new StreamWriter(previewCssPath, false, Encoding.UTF8))
 			{
 				var readOnlyPropTable = new ReadOnlyPropertyTable(propertyTable);
+<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/LcmXhtmlGenerator.cs
 				var exportSettings = new GeneratorSettings(propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache), readOnlyPropTable, false, false, null, ConfiguredLcmGenerator.IsNormalRtl(readOnlyPropTable));
+||||||| f013144d5:Src/xWorks/LcmXhtmlGenerator.cs
+				var exportSettings = new ConfiguredLcmGenerator.GeneratorSettings(readOnlyPropTable.GetValue<LcmCache>("cache"), readOnlyPropTable, false, false, null,
+					ConfiguredLcmGenerator.IsNormalRtl(readOnlyPropTable));
+=======
+				var exportSettings = new ConfiguredLcmGenerator.GeneratorSettings(readOnlyPropTable.GetValue<LcmCache>("cache"), readOnlyPropTable, false, false, null,
+					ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropTable, configuration));
+>>>>>>> develop:Src/xWorks/LcmXhtmlGenerator.cs
 				GenerateOpeningHtml(previewCssPath, custCssPath, exportSettings, writer);
 				var content = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, configuration, pubDecorator, exportSettings);
 				writer.WriteRaw(content);
@@ -255,9 +346,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			xhtmlWriter.WriteEndElement(); //</link>
 			GenerateWritingSystemsMetadata(exportSettings, xhtmlWriter);
 			xhtmlWriter.WriteStartElement("title");
-			// Use the WriteRaw, WriteFullEndElement hack to avoid a self closing tag which is invalid xhtml. This empty title is here to make more valid xhtml.
-			xhtmlWriter.WriteRaw("");
-			xhtmlWriter.WriteFullEndElement(); //</title>
+			// cssPath should have the same filename as the current dictionary or reversal view
+			xhtmlWriter.WriteString($"{Path.GetFileNameWithoutExtension(cssPath)} - {exportSettings.Cache.ProjectId.Name}");
+			xhtmlWriter.WriteEndElement(); //</title>
 			xhtmlWriter.WriteEndElement(); //</head>
 			xhtmlWriter.WriteStartElement("body");
 			if (exportSettings.RightToLeft)
@@ -460,10 +551,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private static string GeneratePageButtonText(int firstEntryId, int lastEntryId, GeneratorSettings settings, bool isFirst)
 		{
+			var clerk = settings.PropertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 			var firstEntry = settings.Cache.ServiceLocator.GetObject(firstEntryId);
 			var lastEntry = settings.Cache.ServiceLocator.GetObject(lastEntryId);
-			var firstLetters = GetIndexLettersOfHeadword(ConfiguredLcmGenerator.GetHeadwordForLetterHead(firstEntry), isFirst);
-			var lastLetters = GetIndexLettersOfHeadword(ConfiguredLcmGenerator.GetHeadwordForLetterHead(lastEntry));
+			var firstLetters = GetIndexLettersOfSortWord(ConfiguredLcmGenerator.GetSortWordForLetterHead(firstEntry, clerk), isFirst);
+			var lastLetters = GetIndexLettersOfSortWord(ConfiguredLcmGenerator.GetSortWordForLetterHead(lastEntry, clerk));
 			return firstEntryId == lastEntryId ? firstLetters : firstLetters + " .. " + lastLetters;
 		}
 
@@ -494,21 +586,33 @@ namespace LanguageExplorer.DictionaryConfiguration
 		}
 
 		/// <summary>
-		/// Return the first two letters of headword (or just one letter if headword is one character long, or if justFirstLetter is true
+		/// Return the first two letters of sort word (or just one letter if sort word is one character long, or if justFirstLetter is true
 		/// </summary>
-		private static string GetIndexLettersOfHeadword(string headWord, bool justFirstLetter = false)
+		private static string GetIndexLettersOfSortWord(string sortWord, bool justFirstLetter = false)
 		{
 			// I don't know if we can have an empty headword. If we can then return empty string instead of crashing.
+<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/LcmXhtmlGenerator.cs
 			if (headWord.Length == 0)
 			{
 				return string.Empty;
 			}
 			var length = ConfiguredExport.GetLetterLengthAt(headWord, 0);
 			if (headWord.Length > length && !justFirstLetter)
+||||||| f013144d5:Src/xWorks/LcmXhtmlGenerator.cs
+			if (headWord.Length == 0)
+				return String.Empty;
+			var length = ConfiguredExport.GetLetterLengthAt(headWord, 0);
+			if (headWord.Length > length && !justFirstLetter)
+=======
+			if (sortWord.Length == 0)
+				return String.Empty;
+			var length = ConfiguredExport.GetLetterLengthAt(sortWord, 0);
+			if (sortWord.Length > length && !justFirstLetter)
+>>>>>>> develop:Src/xWorks/LcmXhtmlGenerator.cs
 			{
-				length += ConfiguredExport.GetLetterLengthAt(headWord, length);
+				length += ConfiguredExport.GetLetterLengthAt(sortWord, length);
 			}
-			return TsStringUtils.Compose(headWord.Substring(0, length));
+			return TsStringUtils.Compose(sortWord.Substring(0, length));
 		}
 
 		private static List<Tuple<int, int>> GetPageRanges(int[] entryHvos, int entriesPerPage)
@@ -741,7 +845,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			((XmlFragmentWriter)writer).Writer.WriteAttributeString("style", css);
 		}
 
-		public void BeginLink(IFragmentWriter writer, Guid destination)
+		public void StartLink(IFragmentWriter writer, Guid destination)
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement("a");
@@ -765,7 +869,79 @@ namespace LanguageExplorer.DictionaryConfiguration
 			xw.WriteEndElement();
 		}
 
-		public void BeginEntry(IFragmentWriter writer, string className, Guid entryGuid, int index)
+		public void StartTable(IFragmentWriter writer)
+		{
+			((XmlFragmentWriter)writer).Writer.WriteStartElement("table");
+		}
+
+		public void AddTableTitle(IFragmentWriter writer, string content)
+		{
+			var xw = ((XmlFragmentWriter)writer).Writer;
+			xw.WriteStartElement("caption");
+			xw.WriteRaw(content);
+			xw.WriteEndElement(); // </caption>
+		}
+
+		public void StartTableBody(IFragmentWriter writer)
+		{
+			((XmlFragmentWriter)writer).Writer.WriteStartElement("tbody");
+		}
+
+		public void StartTableRow(IFragmentWriter writer)
+		{
+			((XmlFragmentWriter)writer).Writer.WriteStartElement("tr");
+		}
+
+		/// <summary>
+		/// Adds a &lt;td&gt; element (or &lt;th&gt; if isHead is true).
+		/// If isRightAligned is true, adds the appropriate style element.
+		/// </summary>
+		public void AddTableCell(IFragmentWriter writer, bool isHead, int colSpan, HorizontalAlign alignment, string content)
+		{
+			var xw = ((XmlFragmentWriter)writer).Writer;
+			xw.WriteStartElement(isHead ? "th" : "td");
+			if (colSpan > 1)
+			{
+				xw.WriteAttributeString("colspan", colSpan.ToString());
+			}
+			switch (alignment)
+			{
+				case HorizontalAlign.NotSet:
+					break;
+				case HorizontalAlign.Left:
+					xw.WriteAttributeString("style", "text-align: left;");
+					break;
+				case HorizontalAlign.Center:
+					xw.WriteAttributeString("style", "text-align: center;");
+					break;
+				case HorizontalAlign.Right:
+					xw.WriteAttributeString("style", "text-align: right;");
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(alignment), alignment, null);
+			}
+			xw.WriteRaw(content);
+			// WriteFullEndElement in case there is no content
+			xw.WriteFullEndElement(); // </td> or </th>
+		}
+
+		public void EndTableRow(IFragmentWriter writer)
+		{
+			((XmlFragmentWriter)writer).Writer.WriteEndElement(); // should be </tr>
+		}
+
+		public void EndTableBody(IFragmentWriter writer)
+		{
+			// WriteFullEndElement in case there is no content
+			((XmlFragmentWriter)writer).Writer.WriteFullEndElement(); // should be </tbody>
+		}
+
+		public void EndTable(IFragmentWriter writer)
+		{
+			((XmlFragmentWriter)writer).Writer.WriteEndElement(); // should be </table>
+		}
+
+		public void StartEntry(IFragmentWriter writer, string className, Guid entryGuid, int index, RecordClerk clerk)
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement("div");
@@ -857,16 +1033,22 @@ namespace LanguageExplorer.DictionaryConfiguration
 		}
 
 		public string AddLexReferences(bool generateLexType, string lexTypeContent, string className,
-			string referencesContent)
+			string referencesContent, bool typeBefore)
 		{
 			var bldr = new StringBuilder(100);
-			// Generate the factored ref types element
-			if (generateLexType)
+			// Generate the factored ref types element (if before).
+			if (generateLexType && typeBefore)
 			{
 				bldr.Append(WriteProcessedObject(false, lexTypeContent, className));
 			}
 			// Then add all the contents for the LexReferences (e.g. headwords)
 			bldr.Append(referencesContent);
+			// Generate the factored ref types element (if after).
+			if (generateLexType && !typeBefore)
+			{
+				bldr.Append(WriteProcessedObject(false, lexTypeContent, className));
+			}
+
 			return bldr.ToString();
 		}
 
@@ -889,6 +1071,34 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			// No additional wrapping required for the xhtml
 			return fileContent;
+		}
+
+		public string GenerateErrorContent(StringBuilder badStrBuilder)
+		{
+			return $"<span>\u0FFF\u0FFF\u0FFF<!-- Error generating content for string: '{badStrBuilder}'" +
+				   $" invalid surrogate pairs replaced with \\u0fff --></span>";
+		}
+
+		public string GenerateVideoLinkContent(string className, string mediaId,
+			string srcAttribute, string caption)
+		{
+			var bldr = new StringBuilder();
+			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
+			{
+				// This creates a link that will open the video in the same window as the dictionary view/preview
+				// refreshing will bring it back to the dictionary
+				xw.WriteStartElement("a");
+				xw.WriteAttributeString("id", mediaId);
+				xw.WriteAttributeString("class", className);
+				xw.WriteAttributeString("href", srcAttribute);
+				if (!string.IsNullOrEmpty(caption))
+					xw.WriteString(caption);
+				else
+					xw.WriteRaw("");
+				xw.WriteFullEndElement();
+				xw.Flush();
+				return bldr.ToString();
+			}
 		}
 
 		public string AddCollectionItem(bool isBlock, string collectionItemClass, string content)

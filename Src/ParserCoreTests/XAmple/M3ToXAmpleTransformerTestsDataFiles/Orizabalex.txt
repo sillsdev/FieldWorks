@@ -173,7 +173,7 @@
 \lx 13208
 \g POSS:1SG
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 13205
 \fd InflectionFS13209
 \a n {13273} / _ [13144]  | / _ [V] 
@@ -187,7 +187,7 @@
 \lx 22998
 \g POSS:1SG
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 22966
 \fd InflectionFS22999
 \a n {13273} / _ [13144]  | / _ [V] 
@@ -210,7 +210,7 @@
 \lx 13228
 \g POSS:1PL
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 13205
 \fd InflectionFS13229
 \a t {13275} / _ [13144]  | / _ [V] 
@@ -224,7 +224,7 @@
 \lx 23004
 \g POSS:1PL
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 22966
 \fd InflectionFS23005
 \a t {13275} / _ [13144]  | / _ [V] 
@@ -238,7 +238,7 @@
 \lx 13237
 \g POSS:2SG
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 13205
 \fd InflectionFS13238
 \a m {13276} / _ [13144]  | / _ [V] 
@@ -252,7 +252,7 @@
 \lx 22991
 \g POSS:2SG
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 22966
 \fd InflectionFS22992
 \a m {13276} / _ [13144]  | / _ [V] 
@@ -266,7 +266,7 @@
 \lx 13247
 \g POSS:2PL
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 13205
 \fd InflectionFS13248
 \a amo {13249}
@@ -275,7 +275,7 @@
 \lx 22968
 \g POSS:2PL
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 22966
 \fd InflectionFS22969
 \a amo {13249}
@@ -284,7 +284,7 @@
 \lx 13256
 \g POSS:3SG
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 13205
 \fd InflectionFS13257
 \a i {13258}
@@ -293,7 +293,7 @@
 \lx 22976
 \g POSS:3SG
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 22966
 \fd InflectionFS22977
 \a i {13258}
@@ -302,7 +302,7 @@
 \lx 13266
 \g POSS:3PL
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 13205
 \fd InflectionFS13267
 \a im {13369} / _ p  | / _ p 
@@ -320,7 +320,7 @@
 \lx 22985
 \g POSS:3PL
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 22966
 \fd InflectionFS22986
 \a im {13369} / _ p  | / _ p 
@@ -356,7 +356,7 @@
 \lx 13332
 \g POSS:Unspec
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 13205
 \fd InflectionFS13333
 \a tee {13334}
@@ -365,7 +365,7 @@
 \lx 20169
 \g POSS:Unspec
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17007
 \fd InflectionFS20170
 \a tee {13334}
@@ -374,7 +374,7 @@
 \lx 22944
 \g POSS:Unspec
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 22936
 \fd InflectionFS22945
 \a tee {13334}
@@ -383,7 +383,7 @@
 \lx 23011
 \g POSS:Unspec
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 22966
 \fd InflectionFS23012
 \a tee {13334}
@@ -1258,7 +1258,7 @@
 \lx 16971
 \g SUBJ:1.SG
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 16932
 \fd InflectionFS16972
 \a n {17934} / _ [13144]  | / _ [V] 
@@ -1272,7 +1272,7 @@
 \lx 17107
 \g SUBJ:1.SG
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17102
 \fd InflectionFS17108
 \mp FromExcpFeat31275Plus
@@ -1288,7 +1288,7 @@
 \lx 17123
 \g SUBJ:1.SG
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17122
 \fd InflectionFS17124
 \a n {17934} / _ [13144]  | / _ [V] 
@@ -1302,7 +1302,7 @@
 \lx 16980
 \g SUBJ:2.SG
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 16932
 \fd InflectionFS16981
 \a t {17935} / _ [13144]  | / _ [V] 
@@ -1316,7 +1316,7 @@
 \lx 17111
 \g SUBJ:2.SG
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17102
 \fd InflectionFS17112
 \mp FromExcpFeat31275Plus
@@ -1332,7 +1332,7 @@
 \lx 16989
 \g SUBJ:2.PL
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 16932
 \fd InflectionFS16990
 \a am {16996} / _ p  | / _ p 
@@ -1346,7 +1346,7 @@
 \lx 17113
 \g SUBJ:2.PL
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17102
 \fd InflectionFS17114
 \mp FromExcpFeat31275Plus
@@ -1362,7 +1362,7 @@
 \lx 16999
 \g SUBJ:1.PL
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 16932
 \fd InflectionFS17000
 \a t {17936} / _ [13144]  | / _ [V] 
@@ -1376,7 +1376,7 @@
 \lx 17109
 \g SUBJ:1.PL
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17102
 \fd InflectionFS17110
 \mp FromExcpFeat31275Plus
@@ -1392,7 +1392,7 @@
 \lx 17127
 \g SUBJ:1.PL
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17122
 \fd InflectionFS17128
 \a t {17936} / _ [13144]  | / _ [V] 
@@ -1406,7 +1406,7 @@
 \lx 17010
 \g OBJ:1.SG
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17007
 \fd InflectionFS17011
 \a nech {17012}
@@ -1415,7 +1415,7 @@
 \lx 17020
 \g OBJ:1.PL
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17007
 \fd InflectionFS17021
 \a tech {17022}
@@ -1424,7 +1424,7 @@
 \lx 17029
 \g OBJ:2.SG
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17007
 \fd InflectionFS17030
 \a mitz {17031}
@@ -1433,7 +1433,7 @@
 \lx 17038
 \g OBJ:2.PL
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17007
 \fd InflectionFS17039
 \a amech {17040}
@@ -1442,7 +1442,7 @@
 \lx 17047
 \g OBJ:3
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17007
 \fd InflectionFS17048
 \a ki {18183}
@@ -1454,7 +1454,7 @@
 \lx 17056
 \g OBJ:3.PL
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17053
 \fd InflectionFS17057
 \a im {17059} / _ [13144]  | / _ [V] 
@@ -1472,7 +1472,7 @@
 \lx 17064
 \g SUBJ:2.SG;OBJ:1.SG
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17061
 \fd InflectionFS17065
 \a tech {17066}
@@ -1481,7 +1481,7 @@
 \lx 17077
 \g SUBJ:2.PL;OBJ:1.SG
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17061
 \fd InflectionFS17078
 \a antech {17079}
@@ -1490,7 +1490,7 @@
 \lx 17090
 \g SUBJ:2.PL;OBJ:1.SG
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17061
 \fd InflectionFS17091
 \a tech {17092}
@@ -1499,7 +1499,7 @@
 \lx 17131
 \g SUBJ:2.IMPV
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17164
 \fd InflectionFS17132
 \a xi {17133}
@@ -1794,7 +1794,7 @@
 \lx 18397
 \g REFL
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17007
 \a mo {18399}
 \eType prefix
@@ -1873,7 +1873,7 @@
 \lx 18566
 \g OBJ:3UNSPEC
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17007
 \fd InflectionFS18567
 \mp FromExcpFeat57399Plus
@@ -1884,7 +1884,7 @@
 \lx 23019
 \g OBJ:3UNSPEC
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 22936
 \mp FromExcpFeat57399Plus
 \mcc 23019 +/ _ ... {ExcpFeat57399Plus} +/ _ ... {ToExcpFeat57399Plus}
@@ -1894,7 +1894,7 @@
 \lx 23021
 \g OBJ:3UNSPEC
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 22966
 \a tla {18568}
 \eType prefix
@@ -2065,7 +2065,7 @@
 \lx 20769
 \g PAST
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 20766
 \fd InflectionFS20770
 \a 0 {20776} / # _ amech  | / # _ amech 
@@ -2659,7 +2659,7 @@
 \lx 23220
 \g REDUP
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 23222
 \fd InflectionFS23221
 \a [13145^1][13144^1]  {22901} / _ [13145^1][13144^1]  | / _ [C^1][V^1] 
@@ -5570,7 +5570,7 @@
 \lx 24692
 \g DIST
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 24689
 \a om {66660} / _ p  | / _ p 
 		
@@ -5583,7 +5583,7 @@
 \lx 24697
 \g PROX
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 24689
 \fd InflectionFS24698
 \a val {24699}

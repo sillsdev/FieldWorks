@@ -2,10 +2,13 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SIL.FieldWorks.Common.FwUtils.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="UpdateGlobalWSStore" Description="Setting controling the updating of the Global WS Store" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="System.Boolean" Scope="User">
+    <Setting Name="UpdateGlobalWSStore" Description="Setting controlling the updating of the Global WS Store" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="Reporting" Description="Setting to store Reporting options" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="SIL.Reporting.ReportingSettings" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Update" Description="Setting controlling getting updates" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="SIL.Settings.UpdateSettings" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="CallUpgrade" Description="Setting indicating that the Settings need to be upgraded" Provider="SIL.Settings.CrossPlatformSettingsProvider" Type="System.Boolean" Scope="User">

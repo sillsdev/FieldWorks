@@ -1,4 +1,10 @@
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/HeadwordNumbersControllerTests.cs
 // Copyright (c) 2017-2020 SIL International
+||||||| f013144d5:Src/xWorks/xWorksTests/HeadwordNumbersControllerTests.cs
+﻿// Copyright (c) 2017 SIL International
+=======
+// Copyright (c) 2017 SIL International
+>>>>>>> develop:Src/xWorks/xWorksTests/HeadwordNumbersControllerTests.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 

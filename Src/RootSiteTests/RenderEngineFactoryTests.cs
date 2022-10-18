@@ -33,8 +33,16 @@ namespace SIL.FieldWorks.Common.RootSites
 					var chrp = new LgCharRenderProps { ws = ws.Handle, szFaceName = new ushort[32] };
 					MarshalEx.StringToUShort("Arial", chrp.szFaceName);
 					gm.VwGraphics.SetupGraphics(ref chrp);
+<<<<<<< HEAD:Src/RootSiteTests/RenderEngineFactoryTests.cs
 					var engine = reFactory.get_Renderer(ws, gm.VwGraphics);
 					Assert.IsNotNull(engine);
+||||||| f013144d5:Src/Common/SimpleRootSite/SimpleRootSiteTests/RenderEngineFactoryTests.cs
+					IRenderEngine engine = reFactory.get_Renderer(ws, gm.VwGraphics);
+					Assert.IsNotNull(engine);
+=======
+					IRenderEngine engine = reFactory.get_Renderer(ws, gm.VwGraphics);
+					Assert.That(engine, Is.Not.Null);
+>>>>>>> develop:Src/Common/SimpleRootSite/SimpleRootSiteTests/RenderEngineFactoryTests.cs
 					Assert.AreSame(wsManager, engine.WritingSystemFactory);
 					Assert.IsInstanceOf(typeof(UniscribeEngine), engine);
 					wsManager.Save();
@@ -65,15 +73,23 @@ namespace SIL.FieldWorks.Common.RootSites
 					var chrp = new LgCharRenderProps { ws = ws.Handle, szFaceName = new ushort[32] };
 					MarshalEx.StringToUShort("Charis SIL", chrp.szFaceName);
 					gm.VwGraphics.SetupGraphics(ref chrp);
+<<<<<<< HEAD:Src/RootSiteTests/RenderEngineFactoryTests.cs
 					var engine = reFactory.get_Renderer(ws, gm.VwGraphics);
 					Assert.IsNotNull(engine);
+||||||| f013144d5:Src/Common/SimpleRootSite/SimpleRootSiteTests/RenderEngineFactoryTests.cs
+					IRenderEngine engine = reFactory.get_Renderer(ws, gm.VwGraphics);
+					Assert.IsNotNull(engine);
+=======
+					IRenderEngine engine = reFactory.get_Renderer(ws, gm.VwGraphics);
+					Assert.That(engine, Is.Not.Null);
+>>>>>>> develop:Src/Common/SimpleRootSite/SimpleRootSiteTests/RenderEngineFactoryTests.cs
 					Assert.AreSame(wsManager, engine.WritingSystemFactory);
 					Assert.IsInstanceOf(typeof(UniscribeEngine), engine);
 
 					ws.IsGraphiteEnabled = true;
 					gm.VwGraphics.SetupGraphics(ref chrp);
 					engine = reFactory.get_Renderer(ws, gm.VwGraphics);
-					Assert.IsNotNull(engine);
+					Assert.That(engine, Is.Not.Null);
 					Assert.AreSame(wsManager, engine.WritingSystemFactory);
 					Assert.IsInstanceOf(typeof(GraphiteEngine), engine);
 					wsManager.Save();

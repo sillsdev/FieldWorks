@@ -1,8 +1,19 @@
+<<<<<<< HEAD
 // Copyright (c) 2012-2020 SIL International
+||||||| f013144d5
+// Copyright (c) 2012-2019 SIL International
+=======
+// Copyright (c) 2012-2021 SIL International
+>>>>>>> develop
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+<<<<<<< HEAD
 using FieldWorks.TestUtilities.Attributes;
+||||||| f013144d5
+using NUnit.Framework;
+=======
+>>>>>>> develop
 using SIL.LCModel.Core.Attributes;
 using SIL.LCModel.Utils.Attributes;
 using SIL.TestUtilities;
@@ -33,13 +44,22 @@ using SIL.TestUtilities;
 // Handles any unhandled exceptions thrown on Windows Forms threads
 [assembly: HandleApplicationThreadException]
 
-// NOTE: it is important that OfflineSldr comes before InitializeIcu!
+// Initialize ICU
+[assembly: InitializeIcu(IcuVersion = 70)]
+
 // Turns the SLDR API into offline mode
 [assembly: OfflineSldr]
 
+<<<<<<< HEAD
 // Initialize ICU
 //[assembly: InitializeIcu(IcuVersion = 54)]
 
+||||||| f013144d5
+// Initialize ICU
+[assembly: InitializeIcu(IcuVersion = 54)]
+
+=======
+>>>>>>> develop
 // Allow creating COM objects from manifest file important that it comes after InitializeIcu
 [assembly: CreateComObjectsFromManifest]
 

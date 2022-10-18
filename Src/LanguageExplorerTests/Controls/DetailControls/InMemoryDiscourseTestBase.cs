@@ -72,5 +72,19 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			return new ChartLocation(row, icol);
 		}
+<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/InMemoryDiscourseTestBase.cs
+||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/InMemoryDiscourseTestBase.cs
+
+		#endregion
+
+		#region test data creation
+
+
+		#endregion
+
+=======
+
+		#endregion
+>>>>>>> develop:Src/LexText/Discourse/DiscourseTests/InMemoryDiscourseTestBase.cs
 	}
 }

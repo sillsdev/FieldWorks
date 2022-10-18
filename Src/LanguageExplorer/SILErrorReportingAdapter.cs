@@ -1,4 +1,10 @@
+<<<<<<< HEAD:Src/LanguageExplorer/SILErrorReportingAdapter.cs
 // Copyright (c) 2013-2020 SIL International
+||||||| f013144d5:Src/xWorks/SilErrorReportingAdapter.cs
+﻿// Copyright (c) 2013-2017 SIL International
+=======
+// Copyright (c) 2013-2022 SIL International
+>>>>>>> develop:Src/xWorks/SilErrorReportingAdapter.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,7 +23,15 @@ namespace LanguageExplorer
 	/// using the normal FieldWorks error handling system and reporting dialogs. When you
 	/// create a Palaso dialog, create an instance of this class, passing it the dialog.
 	/// </summary>
+<<<<<<< HEAD:Src/LanguageExplorer/SILErrorReportingAdapter.cs
 	internal sealed class SILErrorReportingAdapter : IErrorReporter, IDisposable
+||||||| f013144d5:Src/xWorks/SilErrorReportingAdapter.cs
+	/// ------------------------------------------------------------------------------------
+	class SilErrorReportingAdapter : IErrorReporter, IDisposable
+=======
+	/// ------------------------------------------------------------------------------------
+	internal class SilErrorReportingAdapter : IErrorReporter, IDisposable
+>>>>>>> develop:Src/xWorks/SilErrorReportingAdapter.cs
 	{
 		private Form m_parentForm;
 		private RegistryKey m_registryKey;
@@ -40,18 +54,45 @@ namespace LanguageExplorer
 			throw e; // I think this will ultimately show the green-screen (unless something catches it)
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorer/SILErrorReportingAdapter.cs
 		/// <summary />
 		public ErrorResult NotifyUserOfProblem(IRepeatNoticePolicy policy, string alternateButton1Label, ErrorResult resultIfAlternateButtonPressed, string message)
+||||||| f013144d5:Src/xWorks/SilErrorReportingAdapter.cs
+		public ErrorResult NotifyUserOfProblem(IRepeatNoticePolicy policy, string alternateButton1Label,
+			ErrorResult resultIfAlternateButtonPressed, string message)
+=======
+		public void NotifyUserOfProblem(IRepeatNoticePolicy policy, Exception exception, string message)
+		{
+			if (policy.ShouldShowMessage(message))
+				ErrorReporter.ReportException(new Exception(message, exception), m_registryKey,
+					m_supportEmailAddress, m_parentForm, false);
+		}
+
+		public ErrorResult NotifyUserOfProblem(IRepeatNoticePolicy policy, string alternateButton1Label,
+			ErrorResult resultIfAlternateButtonPressed, string message)
+>>>>>>> develop:Src/xWorks/SilErrorReportingAdapter.cs
 		{
 			return policy.ShouldShowMessage(message) && ErrorReporter.ReportException(new Exception(message), m_registryKey, m_supportEmailAddress, m_parentForm, false)
 				? ErrorResult.Abort : ErrorResult.Ignore;
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorer/SILErrorReportingAdapter.cs
 		/// <summary />
 		public void ReportNonFatalException(Exception exception, IRepeatNoticePolicy policy)
+||||||| f013144d5:Src/xWorks/SilErrorReportingAdapter.cs
+		public void ReportNonFatalException(Exception exception, IRepeatNoticePolicy policy)
+=======
+		public void ReportNonFatalException(Exception exception, IRepeatNoticePolicy policy = null)
+>>>>>>> develop:Src/xWorks/SilErrorReportingAdapter.cs
 		{
+<<<<<<< HEAD:Src/LanguageExplorer/SILErrorReportingAdapter.cs
 			if (policy.ShouldShowErrorReportDialog(exception))
 			{
+||||||| f013144d5:Src/xWorks/SilErrorReportingAdapter.cs
+			if (policy.ShouldShowErrorReportDialog(exception))
+=======
+			if (policy == null || policy.ShouldShowErrorReportDialog(exception))
+>>>>>>> develop:Src/xWorks/SilErrorReportingAdapter.cs
 				ErrorReporter.ReportException(exception, m_registryKey, m_supportEmailAddress, m_parentForm, false);
 			}
 		}

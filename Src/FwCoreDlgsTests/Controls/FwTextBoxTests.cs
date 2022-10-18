@@ -22,8 +22,14 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 		private int m_hvoEnglishWs;
 		#endregion
 
+<<<<<<< HEAD:Src/FwCoreDlgsTests/Controls/FwTextBoxTests.cs
 		/// <summary />
 		[OneTimeSetUp]
+||||||| f013144d5:Src/Common/Controls/Widgets/WidgetsTests/FwTextBoxTests.cs
+		[TestFixtureSetUp]
+=======
+		[OneTimeSetUp]
+>>>>>>> develop:Src/Common/Controls/Widgets/WidgetsTests/FwTextBoxTests.cs
 		public void FixtureSetup()
 		{
 			m_wsManager = new WritingSystemManager();

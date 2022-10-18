@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+	<ItemGroup>
+		<UsingNamespaces Include="SIL.LCModel.Core.KernelInterfaces" />
+		<UsingNamespaces Include="SIL.LCModel.Utils" />
+	</ItemGroup>
+	<ItemGroup>
+		<ViewsIdhFiles Include="$([System.IO.Path]::Combine($(MSBuildProjectDirectory), '../../views/Render.idh'))"/>
+		<ViewsIdhFiles Include="$([System.IO.Path]::Combine($(MSBuildProjectDirectory), '../../views/Views.idh'))"/>
+		<ViewsIdhFiles Include="$([System.IO.Path]::Combine($(MSBuildProjectDirectory), '../../CommonCOMDlgs/CmnFwDlgs.idh'))"/>
+	</ItemGroup>
+	<ItemGroup>
+		<ViewsInputs Include="@(ViewsIdhFiles)" />
+		<ViewsInputs Include="@(ViewsSources)" />
+	</ItemGroup>
+	<Target Name="ViewsCs" Inputs="@(ViewsInputs);$(OutDir)/../Common/ViewsTlb.idl" Outputs="Views.cs">
+		<PropertyGroup>
+			<IdlImpVer>3.0.1-beta0008</IdlImpVer>
+			<ViewsTlbSrc>$([System.IO.Path]::GetFullPath('$(OutDir)/../Common/ViewsTlb.idl'))</ViewsTlbSrc>
+			<ViewsRefsJson>$([System.IO.Path]::GetFullPath('$(OutDir)../Common/FwKernelTlb.json'))</ViewsRefsJson>
+			<IdlImporterXmlPath>$([System.IO.Path]::GetFullPath('$(OutDir)../../packages/SIL.IdlImporter.$(IdlImpVer)/build/IDLImporter.xml'))</IdlImporterXmlPath>
+		</PropertyGroup>
+				<!-- Install our dotnet global tool later used for generating Views.cs in the ViewsInterfaces project -->
+		<Exec Command="dotnet tool update --global SIL.IdlImporter.Tool --version $(IdlImpVer)" />
+		<Exec Command="idlimport /c $(IdlImporterXmlPath) /o $(MSBuildProjectDirectory)\Views.cs /i &quot;@(ViewsIdhFiles)&quot; /n SIL.FieldWorks.Common.ViewsInterfaces /u &quot;@(UsingNamespaces)&quot; /r $(ViewsRefsJson) $(ViewsTlbSrc)" />
+	</Target>
+
+	<Target Name="AfterClean">
+		<Delete Files="@(OutputFiles)" ContinueOnError="true"/>
+		<Delete Files="Views.cs;$(OutDir)/../Common/ViewsTlb.iip;$(OutDir)/../Common/ViewsTlb.json" ContinueOnError="true"/>
+	</Target>
+	<Target Name="BeforeBuild" DependsOnTargets="ViewsCs">
+	</Target>
+	<Target Name="AfterBuild">
+	</Target>
+</Project>

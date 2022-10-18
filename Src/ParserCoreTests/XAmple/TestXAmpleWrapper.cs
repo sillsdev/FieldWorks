@@ -29,9 +29,15 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 		public void TestInit()
 		{
 			using (var wrapper = InitHelper())
+<<<<<<< HEAD:Src/ParserCoreTests/XAmple/TestXAmpleWrapper.cs
 			{
 				Assert.IsNotNull(wrapper);
 			}
+||||||| f013144d5:Src/LexText/ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapperTests/TestXAmpleWrapper.cs
+				Assert.IsNotNull(wrapper);
+=======
+				Assert.That(wrapper, Is.Not.Null);
+>>>>>>> develop:Src/LexText/ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapperTests/TestXAmpleWrapper.cs
 		}
 
 		[Test]
@@ -40,8 +46,16 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			using (var xAmple = InitHelper())
 			{
 				LoadFilesHelper(xAmple);
+<<<<<<< HEAD:Src/ParserCoreTests/XAmple/TestXAmpleWrapper.cs
 				var parsedWord = xAmple.ParseWord("Hello");
 				Assert.IsNotNull(parsedWord);
+||||||| f013144d5:Src/LexText/ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapperTests/TestXAmpleWrapper.cs
+				string parsedWord = xAmple.ParseWord("Hello");
+				Assert.IsNotNull(parsedWord);
+=======
+				string parsedWord = xAmple.ParseWord("Hello");
+				Assert.That(parsedWord, Is.Not.Null);
+>>>>>>> develop:Src/LexText/ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapperTests/TestXAmpleWrapper.cs
 				Assert.IsNotEmpty(parsedWord);
 			}
 		}
@@ -52,8 +66,16 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			using (var xAmple = InitHelper())
 			{
 				LoadFilesHelper(xAmple);
+<<<<<<< HEAD:Src/ParserCoreTests/XAmple/TestXAmpleWrapper.cs
 				var tracedWord = xAmple.TraceWord("Hello", "Hello");
 				Assert.IsNotNull(tracedWord);
+||||||| f013144d5:Src/LexText/ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapperTests/TestXAmpleWrapper.cs
+				string tracedWord = xAmple.TraceWord("Hello", "Hello");
+				Assert.IsNotNull(tracedWord);
+=======
+				string tracedWord = xAmple.TraceWord("Hello", "Hello");
+				Assert.That(tracedWord, Is.Not.Null);
+>>>>>>> develop:Src/LexText/ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapperTests/TestXAmpleWrapper.cs
 				Assert.IsNotEmpty(tracedWord);
 			}
 		}

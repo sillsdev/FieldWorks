@@ -65,8 +65,14 @@ namespace SIL.FieldWorks
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 			// Don't fade in on Linux to work-around for timer issue with UpdateOpacityCallback, fixing FWNX-959.
+<<<<<<< HEAD:Src/FieldWorks/RealSplashScreen.cs
 			if (Platform.IsUnix)
 			{
+||||||| f013144d5:Src/FwCoreDlgs/RealSplashScreen.cs
+			if (MiscUtils.IsUnix)
+=======
+			if (Platform.IsUnix)
+>>>>>>> develop:Src/FwCoreDlgs/RealSplashScreen.cs
 				Opacity = 1;
 			}
 

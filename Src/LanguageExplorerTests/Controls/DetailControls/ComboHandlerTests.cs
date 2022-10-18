@@ -1,4 +1,10 @@
+<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/ComboHandlerTests.cs
 // Copyright (c) 2015-2020 SIL International
+||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/ComboHandlerTests.cs
+﻿// Copyright (c) 2015 SIL International
+=======
+// Copyright (c) 2015 SIL International
+>>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/ComboHandlerTests.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,6 +17,13 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
+<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/ComboHandlerTests.cs
+||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/ComboHandlerTests.cs
+using XCore;
+=======
+using SIL.LCModel.Core.Text;
+using XCore;
+>>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/ComboHandlerTests.cs
 
 namespace LanguageExplorerTests.Controls.DetailControls
 {
@@ -120,6 +133,39 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var vwsel = MockRepository.GenerateMock<IVwSelection>();
 			vwsel.Stub(s => s.IsValid).Return(false);
 			Assert.That(() => InterlinComboHandler.MakeCombo(null, null, vwsel, null, true), Throws.ArgumentException);
+		}
+
+		[Test]
+		public void ChooseAnalysisHandler_UsesDefaultSenseWhenSenseRAIsNull()
+		{
+			// Mock the various model objects to avoid having to create entries,
+			// senses, texts, analysis and morph bundles when we really just need to test
+			// the behaviour around a specific set of conditions
+			var glossString = MockRepository.GenerateStub<IMultiUnicode>();
+			glossString.Stub(g => g.get_String(Cache.DefaultAnalWs))
+				.Return(TsStringUtils.MakeString("hello", Cache.DefaultAnalWs));
+			var formString = MockRepository.GenerateStub<IMultiString>();
+			formString.Stub(f => f.get_String(Cache.DefaultVernWs))
+				.Return(TsStringUtils.MakeString("hi", Cache.DefaultVernWs));
+			var sense = MockRepository.GenerateStub<ILexSense>();
+			sense.Stub(s => s.Gloss).Return(glossString);
+			var bundle = MockRepository.GenerateStub<IWfiMorphBundle>();
+			bundle.Stub(b => b.Form).Return(formString);
+			bundle.Stub(b => b.DefaultSense).Return(sense);
+			var bundleList = MockRepository.GenerateStub<ILcmOwningSequence<IWfiMorphBundle>>();
+			bundleList.Stub(x => x.Count).Return(1);
+			bundleList[0] = bundle;
+			var wfiAnalysis = MockRepository.GenerateStub<IWfiAnalysis>();
+			wfiAnalysis.Stub(x => x.MorphBundlesOS).Return(bundleList);
+			// SUT
+			var result = ChooseAnalysisHandler.MakeAnalysisStringRep(wfiAnalysis, Cache, false,
+				Cache.DefaultVernWs);
+			// Verify that the form value of the IWfiMorphBundle is displayed (test verification)
+			Assert.That(result.Text, Does.Contain("hi"));
+			// Verify that the sense reference in the bundle is null (key condition for the test)
+			Assert.That(bundle.SenseRA, Is.Null);
+			// Verify that the gloss for the DefaultSense is displayed (key test data)
+			Assert.That(result.Text, Does.Contain("hello"));
 		}
 	}
 }

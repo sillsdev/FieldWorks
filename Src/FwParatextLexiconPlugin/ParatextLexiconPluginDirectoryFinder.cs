@@ -34,7 +34,28 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public static string DataDirectoryLocalMachine => GetDirectoryLocalMachine(RootDataDir, Path.Combine(LcmFileHelper.CommonApplicationData, SilDir, FieldWorksDir));
 
+<<<<<<< HEAD
 		public static string CodeDirectory => GetDirectory(RootCodeDir, Platform.IsUnix ? "/usr/share/fieldworks" : FileLocationUtilities.DirectoryOfTheApplicationExecutable);
+||||||| f013144d5
+		public static string CodeDirectory
+		{
+			get
+			{
+				return GetDirectory(RootCodeDir, MiscUtils.IsUnix ? "/usr/share/fieldworks"
+					: Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)));
+			}
+		}
+=======
+		public static string CodeDirectory
+		{
+			get
+			{
+				string linuxDir = Environment.GetEnvironmentVariable("FW_ROOTCODE") ?? "/usr/share/fieldworks";
+				return GetDirectory(RootCodeDir, Platform.IsUnix ? linuxDir
+					: Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)));
+			}
+		}
+>>>>>>> develop
 
 		private static string GetDirectory(string registryValue, string defaultDir)
 		{

@@ -230,9 +230,21 @@ namespace LanguageExplorer.Controls
 				{
 					d.TopLineText = topMessage;
 					d.EmailAddress = emailAddress;
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/UsageEmailDialog.cs
 					d.EmailSubject = $"{applicationName} {version} Report {launchCount} Launches";
 					var bldr = new StringBuilder();
 					bldr.AppendFormat("<report app='{0}' version='{1}' linux='{2}'>", applicationName, version, Platform.IsUnix);
+||||||| f013144d5:Src/Utilities/Reporting/UsageEmailDialog.cs
+					d.EmailSubject = string.Format("{0} {1} Report {2} Launches", applicationName, version, launchCount);
+					StringBuilder bldr = new StringBuilder();
+					bldr.AppendFormat("<report app='{0}' version='{1}' linux='{2}'>", applicationName,
+						version, MiscUtils.IsUnix);
+=======
+					d.EmailSubject = string.Format("{0} {1} Report {2} Launches", applicationName, version, launchCount);
+					StringBuilder bldr = new StringBuilder();
+					bldr.AppendFormat("<report app='{0}' version='{1}' linux='{2}'>", applicationName,
+						version, Platform.IsUnix);
+>>>>>>> develop:Src/Utilities/Reporting/UsageEmailDialog.cs
 					bldr.AppendFormat("<stat type='launches' value='{0}'/>", launchCount);
 					if (launchCount > 1)
 					{

@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 #line 1 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+||||||| f013144d5
+#line 1 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+=======
+#line 1 "C:\\Repositories\\fwmeta\\fw\\src\\Kernel\\FwKernelTlb.idl"
+>>>>>>> develop
 
 
 
@@ -14,7 +20,13 @@ import "oaidl.idl";
 import "ocidl.idl";
 import "objidl.idl";
 
+<<<<<<< HEAD
 #line 1 "d:\\fwrepo\\fw\\src\\Kernel\\common.idh"
+||||||| f013144d5
+#line 1 "c:\\fwrepo\\fw\\src\\kernel\\common.idh"
+=======
+#line 1 "c:\\repositories\\fwmeta\\fw\\src\\kernel\\common.idh"
+>>>>>>> develop
 
 
 
@@ -117,11 +129,23 @@ cpp_quote("// This is for code that uses a 64-bit integer for SilTime.")
 cpp_quote("typedef __int64 SilTime;")
 cpp_quote("#endif")
 cpp_quote("")
+<<<<<<< HEAD
 #line 17 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+||||||| f013144d5
+#line 17 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+=======
+#line 17 "C:\\Repositories\\fwmeta\\fw\\src\\Kernel\\FwKernelTlb.idl"
+>>>>>>> develop
 
 cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("F1EF76E0-BE04-11d3-8D9A-005004DEFEC4") cpp_quote(",") cpp_quote("FwKernelLib") cpp_quote(");") [ uuid(F1EF76E0-BE04-11d3-8D9A-005004DEFEC4), version(1.0), helpstring("FieldWorks Kernel") ] library FwKernelLib
 {
+<<<<<<< HEAD
 	#line 1 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernel.idh"
+||||||| f013144d5
+	#line 1 "c:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+=======
+	#line 1 "c:\\repositories\\fwmeta\\fw\\src\\kernel\\FwKernel.idh"
+>>>>>>> develop
 
 
 
@@ -554,7 +578,13 @@ cpp_quote("ATTACH_GUID_TO_CLASS(class,") cpp_quote("CF0F1C0B-0E44-4C1E-9912-2048
 {
 	interface IActionHandler;
 };
+<<<<<<< HEAD
 #line 434 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernel.idh"
+||||||| f013144d5
+#line 434 "c:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+=======
+#line 434 "c:\\repositories\\fwmeta\\fw\\src\\kernel\\FwKernel.idh"
+>>>>>>> develop
 
 
 
@@ -1722,9 +1752,19 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IComDisposable") cp
 
 
 
+<<<<<<< HEAD
 #line 1602 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernel.idh"
 #line 21 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 	#line 1 "d:\\fwrepo\\fw\\src\\Kernel\\TextServ.idh"
+||||||| f013144d5
+#line 1602 "c:\\fwrepo\\fw\\src\\kernel\\FwKernel.idh"
+#line 21 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
+=======
+#line 1602 "c:\\repositories\\fwmeta\\fw\\src\\kernel\\FwKernel.idh"
+#line 21 "C:\\Repositories\\fwmeta\\fw\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\repositories\\fwmeta\\fw\\src\\kernel\\TextServ.idh"
+>>>>>>> develop
 
 
 
@@ -3185,10 +3225,24 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwStylesheet") cpp
 
 
 
+<<<<<<< HEAD
 #line 1462 "d:\\fwrepo\\fw\\src\\Kernel\\TextServ.idh"
+||||||| f013144d5
+#line 1462 "c:\\fwrepo\\fw\\src\\kernel\\TextServ.idh"
+=======
+#line 1462 "c:\\repositories\\fwmeta\\fw\\src\\kernel\\TextServ.idh"
+>>>>>>> develop
 };
+<<<<<<< HEAD
 #line 22 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
 	#line 1 "d:\\fwrepo\\fw\\src\\Kernel\\Language.idh"
+||||||| f013144d5
+#line 22 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\fwrepo\\fw\\src\\kernel\\Language.idh"
+=======
+#line 22 "C:\\Repositories\\fwmeta\\fw\\src\\Kernel\\FwKernelTlb.idl"
+	#line 1 "c:\\repositories\\fwmeta\\fw\\src\\kernel\\Language.idh"
+>>>>>>> develop
 
 
 
@@ -3440,5 +3494,11 @@ cpp_quote("GENERIC_DECLARE_SMART_INTERFACE_PTR(") cpp_quote("IVwStylesheet") cpp
 		[propput] HRESULT UserWs(
 			[in] int ws);
 	};
+<<<<<<< HEAD
 #line 23 "d:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+||||||| f013144d5
+#line 23 "C:\\fwrepo\\fw\\src\\Kernel\\FwKernelTlb.idl"
+=======
+#line 23 "C:\\Repositories\\fwmeta\\fw\\src\\Kernel\\FwKernelTlb.idl"
+>>>>>>> develop
 };

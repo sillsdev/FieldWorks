@@ -97,7 +97,7 @@ namespace LanguageExplorerTests.Impls
 				VerifyFindNext(collectorEnv, m_para2.Hvo, 44, 45);
 				VerifyFindNext(collectorEnv, m_para2.Hvo, 52, 53);
 				VerifyFindNext(collectorEnv, m_para2.Hvo, 64, 65);
-				Assert.IsNull(collectorEnv.FindNext(m_sel));
+				Assert.That(collectorEnv.FindNext(m_sel), Is.Null);
 
 				// Make sure nothing got replaced by accident.
 				Assert.AreEqual("This is some text so that we can test the find functionality.", m_para1.Contents.Text);
@@ -125,7 +125,7 @@ namespace LanguageExplorerTests.Impls
 				VerifyFindNext(collectorEnv, m_para2.Hvo, 44, 45);
 				VerifyFindNext(collectorEnv, m_para2.Hvo, 52, 53);
 				VerifyFindNext(collectorEnv, m_para2.Hvo, 64, 65);
-				Assert.IsNull(collectorEnv.FindNext(m_sel));
+				Assert.That(collectorEnv.FindNext(m_sel), Is.Null);
 
 				// Make sure nothing got replaced by accident.
 				Assert.AreEqual("This is some text so that we can test the find functionality.", m_para1.Contents.Text);
@@ -143,8 +143,16 @@ namespace LanguageExplorerTests.Impls
 		/// <param name="ichLimExpected">The ich lim expected.</param>
 		private void VerifyFindNext(FindCollectorEnv collectorEnv, int hvoExpected, int ichMinExpected, int ichLimExpected)
 		{
+<<<<<<< HEAD:Src/LanguageExplorerTests/Impls/FindCollectorEnvTests.cs
 			var foundLocation = collectorEnv.FindNext(m_sel);
 			Assert.IsNotNull(foundLocation);
+||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FindCollectorEnvTests.cs
+			CollectorEnv.LocationInfo foundLocation = collectorEnv.FindNext(m_sel);
+			Assert.IsNotNull(foundLocation);
+=======
+			CollectorEnv.LocationInfo foundLocation = collectorEnv.FindNext(m_sel);
+			Assert.That(foundLocation, Is.Not.Null);
+>>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FindCollectorEnvTests.cs
 			Assert.AreEqual(1, foundLocation.m_location.Length);
 			Assert.AreEqual(hvoExpected, foundLocation.TopLevelHvo);
 			Assert.AreEqual(StTextTags.kflidParagraphs, foundLocation.m_location[0].tag);

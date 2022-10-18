@@ -4,8 +4,13 @@
 
 using System;
 using NUnit.Framework;
+<<<<<<< HEAD:Src/FieldWorks.TestUtilities/Attributes/InitializeFwRegistryHelperAttribute.cs
 using SIL.FieldWorks.Common.FwUtils;
 using NUnit.Framework.Interfaces;
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/Attributes/InitializeFwRegistryHelperAttribute.cs
+=======
+using NUnit.Framework.Interfaces;
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/Attributes/InitializeFwRegistryHelperAttribute.cs
 
 namespace FieldWorks.TestUtilities.Attributes
 {
@@ -23,10 +28,18 @@ namespace FieldWorks.TestUtilities.Attributes
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class)]
 	public class InitializeFwRegistryHelperAttribute: TestActionAttribute
 	{
+<<<<<<< HEAD:Src/FieldWorks.TestUtilities/Attributes/InitializeFwRegistryHelperAttribute.cs
 		/// <inheritdoc />
 		public override void BeforeTest(ITest testDetails)
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/Attributes/InitializeFwRegistryHelperAttribute.cs
+		/// <summary/>
+		public override void BeforeTest(TestDetails testDetails)
+=======
+		/// <summary/>
+		public override void BeforeTest(ITest test)
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/Attributes/InitializeFwRegistryHelperAttribute.cs
 		{
-			base.BeforeTest(testDetails);
+			base.BeforeTest(test);
 			FwRegistryHelper.Initialize();
 		}
 	}

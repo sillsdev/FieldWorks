@@ -208,8 +208,8 @@
 	<value>3</value>
   </data>
   <data name="mainMessage.Text" xml:space="preserve">
-	<value>The writing system {0} and all text in the writing system will be deleted permanently.
-Are you sure you wish to delete the writing system?</value>
+	<value>The writing system {0} and all text in the writing system, including {0} text embedded in other writing systems, will be deleted permanently.
+Are you sure you want to delete the writing system?</value>
   </data>
   <data name="&gt;&gt;mainMessage.Name" xml:space="preserve">
 	<value>mainMessage</value>

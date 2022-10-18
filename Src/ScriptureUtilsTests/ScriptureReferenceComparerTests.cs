@@ -178,7 +178,13 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[Test]
 		public void InvalidReferenceX()
 		{
+<<<<<<< HEAD:Src/ScriptureUtilsTests/ScriptureReferenceComparerTests.cs
 			Assert.That(() => { m_comparer.Compare(067000999, 001001001); }, Throws.TypeOf<ArgumentException>());
+||||||| f013144d5:Src/Common/ScriptureUtils/ScriptureUtilsTests/ScriptureReferenceComparerTests.cs
+			m_comparer.Compare(067000999, 001001001);
+=======
+			Assert.That(() => m_comparer.Compare(067000999, 001001001), Throws.ArgumentException);
+>>>>>>> develop:Src/Common/ScriptureUtils/ScriptureUtilsTests/ScriptureReferenceComparerTests.cs
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -189,7 +195,13 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[Test]
 		public void InvalidReferenceY()
 		{
+<<<<<<< HEAD:Src/ScriptureUtilsTests/ScriptureReferenceComparerTests.cs
 			Assert.That(() => { m_comparer.Compare(001001001, 067000999); }, Throws.TypeOf<ArgumentException>());
+||||||| f013144d5:Src/Common/ScriptureUtils/ScriptureUtilsTests/ScriptureReferenceComparerTests.cs
+			m_comparer.Compare(001001001, 067000999);
+=======
+			Assert.That(() => m_comparer.Compare(001001001, 067000999), Throws.ArgumentException);
+>>>>>>> develop:Src/Common/ScriptureUtils/ScriptureUtilsTests/ScriptureReferenceComparerTests.cs
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -200,7 +212,13 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[Test]
 		public void InvalidType()
 		{
+<<<<<<< HEAD:Src/ScriptureUtilsTests/ScriptureReferenceComparerTests.cs
 			Assert.That(() => { m_comparer.Compare(01001001, Guid.NewGuid()); }, Throws.TypeOf<ArgumentException>());
+||||||| f013144d5:Src/Common/ScriptureUtils/ScriptureUtilsTests/ScriptureReferenceComparerTests.cs
+			m_comparer.Compare(01001001, Guid.NewGuid());
+=======
+			Assert.That(() => m_comparer.Compare(01001001, Guid.NewGuid()), Throws.ArgumentException);
+>>>>>>> develop:Src/Common/ScriptureUtils/ScriptureUtilsTests/ScriptureReferenceComparerTests.cs
 		}
 	}
 }

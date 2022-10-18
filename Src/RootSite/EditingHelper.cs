@@ -713,8 +713,60 @@ namespace SIL.FieldWorks.Common.RootSites
 					// need to call ScrollSelectionIntoView below
 					break;
 			}
+<<<<<<< HEAD:Src/RootSite/EditingHelper.cs
 			var rootb = Callbacks.EditedRootBox;
 			if (Platform.IsUnix && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left || e.KeyCode == Keys.F7 || e.KeyCode == Keys.F8) && ss == VwShiftStatus.kfssNone)
+||||||| f013144d5:Src/Common/SimpleRootSite/EditingHelper.cs
+			else if (e.KeyCode == Keys.Home && ss == VwShiftStatus.kfssControl)
+			{
+				// Control home is supposed to scroll all the way to the top
+				Callbacks.ScrollToTop();
+				return;
+			}
+			else if (e.KeyCode == Keys.PageDown &&
+				(ss == VwShiftStatus.kfssNone || ss == VwShiftStatus.kfssShift))
+			{
+				Callbacks.ScrollPosition = new Point(-Callbacks.ScrollPosition.X,
+					-Callbacks.ScrollPosition.Y + Control.Height);
+				// need to call ScrollSelectionIntoView below
+			}
+			else if (e.KeyCode == Keys.PageUp &&
+				(ss == VwShiftStatus.kfssNone || ss == VwShiftStatus.kfssShift))
+			{
+				Callbacks.ScrollPosition = new Point(-Callbacks.ScrollPosition.X,
+					-Callbacks.ScrollPosition.Y - Control.Height);
+				// need to call ScrollSelectionIntoView below
+			}
+
+			IVwRootBox rootb = Callbacks.EditedRootBox;
+			if (MiscUtils.IsUnix && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left ||
+				  e.KeyCode == Keys.F7 || e.KeyCode == Keys.F8) && ss == VwShiftStatus.kfssNone)
+=======
+			else if (e.KeyCode == Keys.Home && ss == VwShiftStatus.kfssControl)
+			{
+				// Control home is supposed to scroll all the way to the top
+				Callbacks.ScrollToTop();
+				return;
+			}
+			else if (e.KeyCode == Keys.PageDown &&
+				(ss == VwShiftStatus.kfssNone || ss == VwShiftStatus.kfssShift))
+			{
+				Callbacks.ScrollPosition = new Point(-Callbacks.ScrollPosition.X,
+					-Callbacks.ScrollPosition.Y + Control.Height);
+				// need to call ScrollSelectionIntoView below
+			}
+			else if (e.KeyCode == Keys.PageUp &&
+				(ss == VwShiftStatus.kfssNone || ss == VwShiftStatus.kfssShift))
+			{
+				Callbacks.ScrollPosition = new Point(-Callbacks.ScrollPosition.X,
+					-Callbacks.ScrollPosition.Y - Control.Height);
+				// need to call ScrollSelectionIntoView below
+			}
+
+			IVwRootBox rootb = Callbacks.EditedRootBox;
+			if (Platform.IsUnix && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left ||
+				  e.KeyCode == Keys.F7 || e.KeyCode == Keys.F8) && ss == VwShiftStatus.kfssNone)
+>>>>>>> develop:Src/Common/SimpleRootSite/EditingHelper.cs
 			{
 				// FWNX-456 fix for refreshing lines that cursor is not properly invalidating
 				if (Control is SimpleRootSite controlAsSimpleRootSite)

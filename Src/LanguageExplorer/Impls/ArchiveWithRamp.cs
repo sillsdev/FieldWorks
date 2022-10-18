@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2020 SIL International
+// Copyright (c) 2013-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -73,7 +73,7 @@ namespace LanguageExplorer.Impls
 					var backup = backups.GetBackupFile(projName, fileDate, true);
 					if (backup != null)
 					{
-						m_lblMostRecentBackup.Text = fileDate.ToString(Thread.CurrentThread.CurrentCulture);
+						m_lblMostRecentBackup.Text = fileDate.ToString(Thread.CurrentThread.CurrentUICulture);
 						m_lastBackupFile = backup.File;
 						return;
 					}

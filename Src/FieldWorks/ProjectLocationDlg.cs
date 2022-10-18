@@ -56,7 +56,13 @@ namespace SIL.FieldWorks
 			{
 				var newFolder = m_tbProjectsFolder.Text;
 				var oldFolder = FwDirectoryFinder.ProjectsDirectory;
+<<<<<<< HEAD:Src/FieldWorks/ProjectLocationDlg.cs
 				if (!Platform.IsUnix)
+||||||| f013144d5:Src/FwCoreDlgs/ProjectLocationDlg.cs
+				if(!MiscUtils.IsUnix)
+=======
+				if(!Platform.IsUnix)
+>>>>>>> develop:Src/FwCoreDlgs/ProjectLocationDlg.cs
 				{
 					newFolder = newFolder.ToLowerInvariant();
 					oldFolder = oldFolder.ToLowerInvariant();
@@ -79,9 +85,17 @@ namespace SIL.FieldWorks
 					{
 						foreach (var file in Directory.GetFiles(path))
 						{
+<<<<<<< HEAD:Src/FieldWorks/ProjectLocationDlg.cs
 							var filename = file;
 							if (!Platform.IsUnix)
 							{
+||||||| f013144d5:Src/FwCoreDlgs/ProjectLocationDlg.cs
+							string filename = file;
+							if(!MiscUtils.IsUnix)
+=======
+							string filename = file;
+							if(!Platform.IsUnix)
+>>>>>>> develop:Src/FwCoreDlgs/ProjectLocationDlg.cs
 								filename = filename.ToLowerInvariant();
 							}
 							if (filename.EndsWith(".fwdata"))

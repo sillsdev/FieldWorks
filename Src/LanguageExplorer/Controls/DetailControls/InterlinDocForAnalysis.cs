@@ -592,8 +592,18 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			ISegment nextSeg;
 			realAnalysis = null;
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/InterlinDocForAnalysis.cs
 			var currentText = (IStText)currentPara.Owner;
 			var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>;
+||||||| f013144d5:Src/LexText/Interlinear/InterlinDocForAnalysis.cs
+			var currentText = currentPara.Owner as IStText;
+			Debug.Assert(currentText != null, "Paragraph not owned by a text.");
+			var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>;
+=======
+			var currentText = currentPara.Owner as IStText;
+			Debug.Assert(currentText != null, "Paragraph not owned by a text.");
+			var lines = LineChoices.EnabledLineSpecs as IEnumerable<InterlinLineSpec>;
+>>>>>>> develop:Src/LexText/Interlinear/InterlinDocForAnalysis.cs
 			var delta = upward ? -1 : 1;
 			var nextSegIndex = delta + seg.IndexInOwner;
 			do
@@ -651,7 +661,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>The flid of the translation or note or 0 if none is found.</returns>
 		internal int GetFirstVisibleTranslationOrNoteFlid(ISegment segment, out int ws)
 		{
-			var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>;
+			var lines = LineChoices.EnabledLineSpecs as IEnumerable<InterlinLineSpec>;
 			Debug.Assert(lines != null, "Interlinear line configurations not enumerable 2");
 			var annotations = lines.SkipWhile(line => line.WordLevel).ToList();
 			var tryAnnotationIndex = lines.Count() - annotations.Count();
@@ -1001,10 +1011,28 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (!haveLineInfo)
 				{
 					return ArrowChange.None;
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/InterlinDocForAnalysis.cs
 				}
 				var lines = (IEnumerable<InterlinLineSpec>)LineChoices.m_specs; // so we can use linq
 				var isUpMove = DetectUpMove(e, lines, lineNum, curSeg, curNoteIndex, where, isRightToLeft, out var isUpNewSeg);
 				var isDownNewSeg = false;
+||||||| f013144d5:Src/LexText/Interlinear/InterlinDocForAnalysis.cs
+
+				var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>; // so we can use linq
+				Debug.Assert(lines != null, "Interlinear line configurations not enumerable");
+				bool isUpNewSeg;
+				bool isUpMove = DetectUpMove(e, lines, lineNum, curSeg, curNoteIndex, where, isRightToLeft, out isUpNewSeg);
+
+				bool isDownNewSeg = false;
+=======
+
+				var lines = LineChoices.EnabledLineSpecs as IEnumerable<InterlinLineSpec>; // so we can use linq
+				Debug.Assert(lines != null, "Interlinear line configurations not enumerable");
+				bool isUpNewSeg;
+				bool isUpMove = DetectUpMove(e, lines, lineNum, curSeg, curNoteIndex, where, isRightToLeft, out isUpNewSeg);
+
+				bool isDownNewSeg = false;
+>>>>>>> develop:Src/LexText/Interlinear/InterlinDocForAnalysis.cs
 				if (!isUpMove)
 				{
 					// might be a downward move
@@ -1073,7 +1101,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			Debug.Assert(para != null, "Tried to move to a null paragraph ind=" + paragraphInd);
 			Debug.Assert(seg != null, "Tried to move to a null segment ind=" + seg.IndexInOwner + " in para " + paragraphInd);
 			// get the "next" segment with a real analysis or real translation or note
-			var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>; // so we can use linq
+			var lines = LineChoices.EnabledLineSpecs as IEnumerable<InterlinLineSpec>; // so we can use linq
 			while (true)
 			{
 				seg = GetNextSegment(para, seg, moveUp, out var realAnalysis);
@@ -1200,8 +1228,16 @@ namespace LanguageExplorer.Controls.DetailControls
 				hasFollowingAnnotation = HasVisibleTranslationOrNote(curSeg, annotationsAfter);
 			}
 			else
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/InterlinDocForAnalysis.cs
 			{   // this is the last translation or note and it can't be a null note because it was selected
 				var noteIsLastAnnotation = LineChoices[LineChoices.Count - 1].Flid == InterlinLineChoices.kflidNote;
+||||||| f013144d5:Src/LexText/Interlinear/InterlinDocForAnalysis.cs
+			{	// this is the last translation or note and it can't be a null note because it was selected
+				bool noteIsLastAnnotation = LineChoices[LineChoices.Count - 1].Flid == InterlinLineChoices.kflidNote;
+=======
+			{	// this is the last translation or note and it can't be a null note because it was selected
+				bool noteIsLastAnnotation = LineChoices.EnabledLineSpecs[LineChoices.EnabledCount - 1].Flid == InterlinLineChoices.kflidNote;
+>>>>>>> develop:Src/LexText/Interlinear/InterlinDocForAnalysis.cs
 				hasFollowingAnnotation = noteIsLastAnnotation && curNoteIndex < curSeg.NotesOS.Count - 1;
 			}
 			var hasDownMotion = e.KeyCode == Keys.Down || (TextIsRightToLeft
@@ -1288,13 +1324,25 @@ namespace LanguageExplorer.Controls.DetailControls
 					return false;
 			}
 			if (wid > 0)
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/InterlinDocForAnalysis.cs
 			{
 				lineNum = LineChoices.IndexOf(id, wid);
 			}
+||||||| f013144d5:Src/LexText/Interlinear/InterlinDocForAnalysis.cs
+				lineNum = LineChoices.IndexOf(id, wid);
+=======
+				lineNum = LineChoices.IndexInEnabled(id, wid);
+>>>>>>> develop:Src/LexText/Interlinear/InterlinDocForAnalysis.cs
 			if (lineNum == -1)
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/InterlinDocForAnalysis.cs
 			{
 				lineNum = LineChoices.IndexOf(id);
 			}
+||||||| f013144d5:Src/LexText/Interlinear/InterlinDocForAnalysis.cs
+				lineNum = LineChoices.IndexOf(id);
+=======
+				lineNum = LineChoices.IndexInEnabled(id);
+>>>>>>> develop:Src/LexText/Interlinear/InterlinDocForAnalysis.cs
 			return true;
 		}
 
@@ -1656,6 +1704,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				if (rgsli[i].tag == StTxtParaTags.kflidSegments)
 				{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/InterlinDocForAnalysis.cs
 					itagSegments = i;
 					break;
 				}
@@ -1688,6 +1737,99 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					m_cpropPrevForInsert = i;
 					break;
+||||||| f013144d5:Src/LexText/Interlinear/InterlinDocForAnalysis.cs
+					var helper = SelectionHelper.GetSelectionInfo(tsi.Selection, this);
+					int wsField = 0;
+					if (tsi.TssAnchor != null && tsi.TssAnchor.Length > 0)
+						wsField = TsStringUtils.GetWsAtOffset(tsi.TssAnchor, 0);
+					else
+						return;
+					var rgsli = helper.GetLevelInfo(SelectionHelper.SelLimitType.Anchor);
+					var itagSegments = -1;
+					for (var i = rgsli.Length; --i >= 0; )
+					{
+						if (rgsli[i].tag == StTxtParaTags.kflidSegments)
+						{
+							itagSegments = i;
+							break;
+						}
+					}
+					if (itagSegments >= 0)
+					{
+						int hvoSeg = rgsli[itagSegments].hvo;
+						var annType = freeAnn.AnnotationTypeRA;
+						int idx = 0;
+						var choices = Vc.LineChoices;
+						for (int i = choices.FirstFreeformIndex; i < choices.Count; )
+						{
+							var ffAannType = Vc.SegDefnFromFfFlid(choices[i].Flid);
+							if (ffAannType == annType)
+							{
+								idx = i;
+								break; // And that's where we want our selection!!
+							}
+							// Adjacent WSS of the same annotation count as only ONE object in the display.
+							// So we advance i over as many items in m_choices as there are adjacent Wss
+							// of the same flid.
+							i += choices.AdjacentWssAtIndex(i, hvoSeg).Length;
+						}
+						int[] rgws = choices.AdjacentWssAtIndex(idx, hvoSeg);
+						for (int i = 0; i < rgws.Length; ++i)
+						{
+							if (rgws[i] == wsField)
+							{
+								m_cpropPrevForInsert = i;
+								break;
+							}
+						}
+					}
+=======
+					var helper = SelectionHelper.GetSelectionInfo(tsi.Selection, this);
+					int wsField = 0;
+					if (tsi.TssAnchor != null && tsi.TssAnchor.Length > 0)
+						wsField = TsStringUtils.GetWsAtOffset(tsi.TssAnchor, 0);
+					else
+						return;
+					var rgsli = helper.GetLevelInfo(SelectionHelper.SelLimitType.Anchor);
+					var itagSegments = -1;
+					for (var i = rgsli.Length; --i >= 0; )
+					{
+						if (rgsli[i].tag == StTxtParaTags.kflidSegments)
+						{
+							itagSegments = i;
+							break;
+						}
+					}
+					if (itagSegments >= 0)
+					{
+						int hvoSeg = rgsli[itagSegments].hvo;
+						var annType = freeAnn.AnnotationTypeRA;
+						int idx = 0;
+						var choices = Vc.LineChoices;
+						for (int i = choices.FirstEnabledFreeformIndex; i < choices.EnabledCount; )
+						{
+							var ffAannType = Vc.SegDefnFromFfFlid(choices.EnabledLineSpecs[i].Flid);
+							if (ffAannType == annType)
+							{
+								idx = i;
+								break; // And that's where we want our selection!!
+							}
+							// Adjacent WSS of the same annotation count as only ONE object in the display.
+							// So we advance i over as many items in m_choices as there are adjacent Wss
+							// of the same flid.
+							i += choices.AdjacentEnabledWssAtIndex(i, hvoSeg).Length;
+						}
+						int[] rgws = choices.AdjacentEnabledWssAtIndex(idx, hvoSeg);
+						for (int i = 0; i < rgws.Length; ++i)
+						{
+							if (rgws[i] == wsField)
+							{
+								m_cpropPrevForInsert = i;
+								break;
+							}
+						}
+					}
+>>>>>>> develop:Src/LexText/Interlinear/InterlinDocForAnalysis.cs
 				}
 			}
 		}
@@ -2184,7 +2326,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				seg.NotesOS.Add(note);
 			});
 			TryHideFocusBoxAndUninstall();
-			if (Vc.LineChoices.IndexOf(InterlinLineChoices.kflidNote) < 0)
+			if (Vc.LineChoices.IndexInEnabled(InterlinLineChoices.kflidNote) < 0)
 			{
 				Vc.LineChoices.Add(InterlinLineChoices.kflidNote);
 				PersistAndDisplayChangedLineChoices();
@@ -2322,4 +2464,239 @@ namespace LanguageExplorer.Controls.DetailControls
 			Update();
 		}
 	}
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/InterlinDocForAnalysis.cs
+||||||| f013144d5:Src/LexText/Interlinear/InterlinDocForAnalysis.cs
+
+	public class InterlinDocForAnalysisVc : InterlinVc
+	{
+		public InterlinDocForAnalysisVc(LcmCache cache)
+			: base(cache)
+		{
+			FocusBoxSize = new Size(100000, 50000); // If FocusBoxAnnotation is set, this gives the size of box to make. (millipoints)
+		}
+
+		AnalysisOccurrence m_focusBoxOccurrence;
+		/// <summary>
+		/// Set the annotation that is displayed as a fix-size box on top of which the SandBox is overlayed.
+		/// Client must also do PropChanged to produce visual effect.
+		/// Size is in millipoints!
+		/// </summary>
+		/// <remarks>This can become invalid if the user deletes some text.  See FWR-3003.</remarks>
+		internal AnalysisOccurrence FocusBoxOccurrence
+		{
+			get
+			{
+				if (m_focusBoxOccurrence != null && m_focusBoxOccurrence.IsValid)
+					return m_focusBoxOccurrence;
+				m_focusBoxOccurrence = null;
+				return null;
+			}
+			set { m_focusBoxOccurrence = value; }
+		}
+
+		/// <summary>
+		/// Set the size of the space reserved for the Sandbox. Client must also do a Propchanged to trigger
+		/// visual effect.
+		/// </summary>
+		internal Size FocusBoxSize
+		{
+			get;
+			set;
+		}
+
+		protected override void AddWordBundleInternal(int hvo, IVwEnv vwenv)
+		{
+			// Determine whether it is the focus box occurrence.
+			if (FocusBoxOccurrence != null)
+			{
+				int hvoSeg, tag, ihvo;
+				vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoSeg, out tag, out ihvo);
+				if (hvoSeg == FocusBoxOccurrence.Segment.Hvo && ihvo == FocusBoxOccurrence.Index)
+				{
+					// Leave room for the Sandbox instead of displaying the internlinear data.
+					// The first argument makes it invisible in case a little bit of it shows around
+					// the sandbox.
+					// The last argument puts the 'Baseline' of the sandbox (which aligns with the base of the
+					// first line of text) an appropriate distance from the top of the Sandbox. This aligns it's
+					// top line of text properly.
+					// Enhance JohnT: 90% of font height is not always exactly right, but it's the closest
+					// I can get without a new API to get the exact ascent of the font.
+					var wsSeg = TsStringUtils.GetWsAtOffset(FocusBoxOccurrence.Segment.BaselineText, 0);
+					int dympBaseline = Common.Widgets.FontHeightAdjuster.
+						GetFontHeightForStyle("Normal", m_stylesheet, wsSeg,
+						m_cache.LanguageWritingSystemFactoryAccessor) * 9 / 10;
+					uint transparent = 0xC0000000; // FwTextColor.kclrTransparent won't convert to uint
+					vwenv.AddSimpleRect((int)transparent,
+										FocusBoxSize.Width, FocusBoxSize.Height, -(FocusBoxSize.Height - dympBaseline));
+					return;
+				}
+			}
+			base.AddWordBundleInternal(hvo, vwenv);
+		}
+
+		/// <summary>
+		/// The only property we update is a user prompt. We need to switch things back to normal if
+		/// anything was typed there, otherwise, the string has the wrong properties, and with all of it
+		/// selected, we keep typing over things.
+		/// </summary>
+		public override ITsString UpdateProp(IVwSelection vwsel, int hvo, int tag, int frag, ITsString tssVal)
+		{
+			if (tag != SimpleRootSite.kTagUserPrompt)
+				return tssVal;
+
+			// wait until an IME composition is completed before switching the user prompt to a comment
+			// field, otherwise setting the comment will terminate the composition (LT-9929)
+			if (RootSite.RootBox.IsCompositionInProgress)
+				return tssVal;
+
+			if (tssVal.Length == 0)
+			{
+				// User typed something (return?) which didn't actually put any text over the prompt.
+				// No good replacing it because we'll just get the prompt string back and won't be
+				// able to make our new selection.
+				return tssVal;
+			}
+
+			// Get information about current selection
+			SelectionHelper helper = SelectionHelper.Create(vwsel, RootSite);
+
+			var seg = (ISegment)m_coRepository.GetObject(hvo);
+
+			ITsStrBldr bldr = tssVal.GetBldr();
+			// Clear special prompt properties
+			bldr.SetIntPropValues(0, bldr.Length, SimpleRootSite.ktptUserPrompt, -1, -1);
+			bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptSpellCheck, -1, -1);
+
+			// Add the text the user just typed to the translatin - this destroys the selection
+			// because we replace the user prompt. We use the frag to note the WS of interest.
+			RootSite.RootBox.DataAccess.SetMultiStringAlt(seg.Hvo, ActiveFreeformFlid, frag, bldr.GetString());
+
+			// arrange to restore the selection (in the new property) at the end of the UOW (when the
+			// required property will have been re-established by various PropChanged calls).
+			RootSite.RequestSelectionAtEndOfUow(RootSite.RootBox, 0, helper.LevelInfo.Length, helper.LevelInfo, ActiveFreeformFlid,
+				m_cpropActiveFreeform, helper.IchAnchor, helper.Ws, helper.AssocPrev,
+				helper.GetSelProps(SelectionHelper.SelLimitType.Anchor));
+			SetActiveFreeform(0, 0, 0, 0); // AFTER request selection, since it clears ActiveFreeformFlid.
+			return tssVal;
+		}
+	}
+=======
+
+	public class InterlinDocForAnalysisVc : InterlinVc
+	{
+		public InterlinDocForAnalysisVc(LcmCache cache)
+			: base(cache)
+		{
+			FocusBoxSize = new Size(100000, 50000); // If FocusBoxAnnotation is set, this gives the size of box to make. (millipoints)
+		}
+
+		AnalysisOccurrence m_focusBoxOccurrence;
+		/// <summary>
+		/// Set the annotation that is displayed as a fix-size box on top of which the SandBox is overlayed.
+		/// Client must also do PropChanged to produce visual effect.
+		/// Size is in millipoints!
+		/// </summary>
+		/// <remarks>This can become invalid if the user deletes some text.  See FWR-3003.</remarks>
+		internal AnalysisOccurrence FocusBoxOccurrence
+		{
+			get
+			{
+				if (m_focusBoxOccurrence != null && m_focusBoxOccurrence.IsValid)
+					return m_focusBoxOccurrence;
+				m_focusBoxOccurrence = null;
+				return null;
+			}
+			set { m_focusBoxOccurrence = value; }
+		}
+
+		/// <summary>
+		/// Set the size of the space reserved for the Sandbox. Client must also do a Propchanged to trigger
+		/// visual effect.
+		/// </summary>
+		internal Size FocusBoxSize
+		{
+			get;
+			set;
+		}
+
+		protected override void AddWordBundleInternal(int hvo, IVwEnv vwenv)
+		{
+			// Determine whether it is the focus box occurrence.
+			if (FocusBoxOccurrence != null)
+			{
+				int hvoSeg, tag, ihvo;
+				vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoSeg, out tag, out ihvo);
+				if (hvoSeg == FocusBoxOccurrence.Segment.Hvo && ihvo == FocusBoxOccurrence.Index)
+				{
+					// Leave room for the Sandbox instead of displaying the internlinear data.
+					// The first argument makes it invisible in case a little bit of it shows around
+					// the sandbox.
+					// The last argument puts the 'Baseline' of the sandbox (which aligns with the base of the
+					// first line of text) an appropriate distance from the top of the Sandbox. This aligns it's
+					// top line of text properly.
+					// Enhance JohnT: 90% of font height is not always exactly right, but it's the closest
+					// I can get without a new API to get the exact ascent of the font.
+					var wsSeg = TsStringUtils.GetWsAtOffset(FocusBoxOccurrence.Segment.BaselineText, 0);
+					int dympBaseline = Common.Widgets.FontHeightAdjuster.
+						GetFontHeightForStyle("Normal", m_stylesheet, wsSeg,
+						m_cache.LanguageWritingSystemFactoryAccessor) * 9 / 10;
+					uint transparent = 0xC0000000; // FwTextColor.kclrTransparent won't convert to uint
+					vwenv.AddSimpleRect((int)transparent,
+										FocusBoxSize.Width, FocusBoxSize.Height, -(FocusBoxSize.Height - dympBaseline));
+					return;
+				}
+			}
+			base.AddWordBundleInternal(hvo, vwenv);
+		}
+
+		/// <summary>
+		/// Clear two properties when the first character is typed over a user prompt: user prompt and disable spell check.
+		/// We need to switch things back to normal; otherwise, the string has the wrong properties, and with all of it
+		/// selected, we keep typing over things.
+		/// </summary>
+		public override ITsString UpdateProp(IVwSelection vwsel, int hvo, int tag, int frag, ITsString tssVal)
+		{
+			if (tag != SimpleRootSite.kTagUserPrompt)
+				return tssVal;
+
+			// wait until an IME composition is completed before switching the user prompt to a comment
+			// field, otherwise setting the comment will terminate the composition (LT-9929)
+			if (RootSite.RootBox.IsCompositionInProgress)
+				return tssVal;
+
+			if (tssVal.Length == 0)
+			{
+				// User typed something (return?) which didn't actually put any text over the prompt.
+				// No good replacing it because we'll just get the prompt string back and won't be
+				// able to make our new selection.
+				return tssVal;
+			}
+
+			// Get information about current selection
+			var helper = SelectionHelper.Create(vwsel, RootSite);
+
+			var seg = (ISegment)m_coRepository.GetObject(hvo);
+
+			var bldr = tssVal.GetBldr();
+			// Clear special prompt properties
+			bldr.SetIntPropValues(0, bldr.Length, SimpleRootSite.ktptUserPrompt, -1, -1);
+			bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptSpellCheck, -1, -1);
+			var tssNew = bldr.GetString();
+
+			// Add the text the user just typed to the translation. This destroys the selection
+			// because we replace the user prompt. We use the frag to note the WS of interest.
+			RootSite.RootBox.DataAccess.SetMultiStringAlt(seg.Hvo, ActiveFreeformFlid, frag, tssNew);
+
+			// REVIEW (Hasso) 2021.02: When do we need to restore the selection and Freeform?
+			// REVIEW (cont): It seems if the user has just typed a character that replaces the selected prompt string, there will be no selection.
+			// REVIEW (cont): The Interlinear Free Translation field works just fine without these two lines.
+			// Arrange to restore the selection (in the new property) at the end of the UOW (when the
+			// required property will have been re-established by various PropChanged calls).
+			RootSite.RequestSelectionAtEndOfUow(RootSite.RootBox, 0, helper.LevelInfo.Length, helper.LevelInfo, ActiveFreeformFlid,
+				m_cpropActiveFreeform, helper.IchAnchor, helper.Ws, helper.AssocPrev, tssNew.FetchRunInfoAt(helper.IchAnchor, out _));
+			SetActiveFreeform(0, 0, 0, 0); // AFTER request selection, since it clears ActiveFreeformFlid.
+			return tssNew;
+		}
+	}
+>>>>>>> develop:Src/LexText/Interlinear/InterlinDocForAnalysis.cs
 }

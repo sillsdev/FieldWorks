@@ -18,6 +18,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 	[TestFixture]
 	public class M3ToXAmpleTransformerTests
 	{
+<<<<<<< HEAD:Src/ParserCoreTests/XAmple/M3ToXAmpleTransformerTests.cs
 		private string m_sM3FXTDump;
 		private string m_sM3FXTCircumfixDump;
 		private string m_sM3FXTCircumfixInfixDump;
@@ -37,6 +38,54 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 		private XslCompiledTransform m_lexTransform;
 		private XslCompiledTransform m_gramTransform;
 		private bool m_fResultMatchesExpected = true;
+||||||| f013144d5:Src/LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTests.cs
+		string m_sM3FXTDump;
+		string m_sM3FXTCircumfixDump;
+		string m_sM3FXTCircumfixInfixDump;
+		string m_sM3FXTCliticDump;
+		string m_sM3FXTFullRedupDump;
+		string m_sM3FXTConceptualIntroDump;
+		string m_sM3FXTStemNameDump;
+		string m_sM3FXTStemName2Dump;
+		string m_sM3FXTStemName3Dump;
+		string m_sM3FXTRootCliticEnvsDump;
+		string m_sM3FXTCliticEnvsDump;
+		string m_sM3FXTAffixAlloFeatsDump;
+		string m_sM3FXTLatinDump;
+		string m_sM3FXTIrregularlyInflectedFormsDump;
+		readonly Dictionary<string, XPathDocument> m_mapXmlDocs = new Dictionary<string, XPathDocument>();
+
+		XslCompiledTransform m_adTransform;
+		XslCompiledTransform m_lexTransform;
+		XslCompiledTransform m_gramTransform;
+
+		bool m_fResultMatchesExpected = true;
+
+=======
+		string m_sM3FXTDump;
+		string m_sM3FXTCircumfixDump;
+		string m_sM3FXTCircumfixInfixDump;
+		string m_sM3FXTCliticDump;
+		string m_sM3FXTFullRedupDump;
+		string m_sM3FXTConceptualIntroDump;
+		string m_sM3FXTStemNameDump;
+		string m_sM3FXTStemName2Dump;
+		string m_sM3FXTStemName3Dump;
+		string m_sM3FXTRootCliticEnvsDump;
+		string m_sM3FXTCliticEnvsDump;
+		string m_sM3FXTAffixAlloFeatsDump;
+		string m_sM3FXTLatinDump;
+		string m_sM3FXTIrregularlyInflectedFormsDump;
+		private string m_sAbazaOrderClassPlayDump;
+		readonly Dictionary<string, XPathDocument> m_mapXmlDocs = new Dictionary<string, XPathDocument>();
+
+		XslCompiledTransform m_adTransform;
+		XslCompiledTransform m_lexTransform;
+		XslCompiledTransform m_gramTransform;
+
+		bool m_fResultMatchesExpected = true;
+
+>>>>>>> develop:Src/LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTests.cs
 		/// <summary>
 		/// Location of test files
 		/// </summary>
@@ -66,6 +115,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			m_sM3FXTAffixAlloFeatsDump = Path.Combine(m_sTestPath, "TestAffixAllomorphFeatsParserFxtResult.xml");
 			m_sM3FXTLatinDump = Path.Combine(m_sTestPath, "LatinParserFxtResult.xml");
 			m_sM3FXTIrregularlyInflectedFormsDump = Path.Combine(m_sTestPath, "IrregularlyInflectedFormsParserFxtResult.xml");
+			m_sAbazaOrderClassPlayDump = Path.Combine(m_sTestPath, "Abaza-OrderclassPlay.xml");
 
 			SetupXmlDocument(m_sM3FXTDump);
 			SetupXmlDocument(m_sM3FXTCircumfixDump);
@@ -81,6 +131,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			SetupXmlDocument(m_sM3FXTAffixAlloFeatsDump);
 			SetupXmlDocument(m_sM3FXTLatinDump);
 			SetupXmlDocument(m_sM3FXTIrregularlyInflectedFormsDump);
+			SetupXmlDocument(m_sAbazaOrderClassPlayDump);
 		}
 
 		private void SetupXmlDocument(string filepath)
@@ -134,6 +185,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			ApplyTransform(m_sM3FXTRootCliticEnvsDump, m_lexTransform, "RootCliticEnvsLexicon.txt");
 			ApplyTransform(m_sM3FXTAffixAlloFeatsDump, m_lexTransform, "AffixAlloFeatsLexicon.txt");
 			ApplyTransform(m_sM3FXTIrregularlyInflectedFormsDump, m_lexTransform, "IrregularlyInflectedFormsLexicon.txt");
+			ApplyTransform(m_sAbazaOrderClassPlayDump, m_lexTransform, "Abaza-OrderclassPlaylex.txt");
 		}
 
 		/// <summary>

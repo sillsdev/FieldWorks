@@ -272,7 +272,7 @@ inline BSTR AsciiToBstr(const char * pch)
 // Create a new BSTR from a UnicodeString (this is an ICU class).
 inline BSTR UnicodeStringToBstr(UnicodeString & ust)
 {
-	BSTR bstr = ::SysAllocStringLen(ust.getBuffer(), ust.length());
+	BSTR bstr = ::SysAllocStringLen(reinterpret_cast<const wchar*>(ust.getBuffer()), ust.length());
 	if (!bstr)
 		ThrowHr(WarnHr(E_OUTOFMEMORY), L"UnicodeStringToBstr");
 	return bstr;

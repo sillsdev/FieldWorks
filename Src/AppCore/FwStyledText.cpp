@@ -297,7 +297,7 @@ public:
 				SmartBstr sbstr;
 				CheckHr(ptpb->GetStrPropValue(ktptFontFamily, &sbstr));
 				if (cchFF == sbstr.Length() &&
-					u_strncmp(sbstr.Chars(), m_stu.Chars() + m_ich, cchFF) == 0)
+					u_strncmp(reinterpret_cast<const UChar*>(sbstr.Chars()), reinterpret_cast<const UChar*>(m_stu.Chars() + m_ich), cchFF) == 0)
 				{
 					m_stu.SetAt(m_ich - 1, '\0'); // change length to zero.
 					m_stu.Replace(m_ich , m_ich + cchFF, (OLECHAR *)NULL, 0);
@@ -781,7 +781,7 @@ void FwStyledText::ZapWsStyle(StrUni & stuWsStyle, int tpt, int nVar, int nVal)
 		else
 		{
 			*pchNew++ = (OLECHAR) stuFF.Length();
-			u_strcpy(pchNew, stuFF.Chars());
+			u_strcpy(reinterpret_cast<UChar*>(pchNew), reinterpret_cast<const UChar*>(stuFF.Chars()));
 			pchNew += stuFF.Length();
 		}
 
@@ -1108,7 +1108,7 @@ StrUni FwStyledText::EncodeFontPropsString(Vector<WsStyleInfo> & vesi, bool fFor
 		if (stuFont == "<default>")	// ENHANCE JohnL(?): remove when we support 3 default fonts
 			stuFont = static_cast<OLECHAR *>(g_pszDefaultSerif);
 		*pch++ = (OLECHAR) stuFont.Length();
-		u_strcpy(pch, stuFont.Chars());
+		u_strcpy(reinterpret_cast<UChar*>(pch), reinterpret_cast<const UChar*>(stuFont.Chars()));
 		pch += stuFont.Length();
 
 		if (esi.m_stuFontVar.Length())
@@ -1116,7 +1116,7 @@ StrUni FwStyledText::EncodeFontPropsString(Vector<WsStyleInfo> & vesi, bool fFor
 			*pch++ = (OLECHAR) -1; // 1 additional string property
 			*pch++ = (OLECHAR) ktptFontVariations;
 			*pch++ = (OLECHAR) esi.m_stuFontVar.Length();
-			u_strcpy(pch, esi.m_stuFontVar.Chars());
+			u_strcpy(reinterpret_cast<UChar*>(pch), reinterpret_cast<const UChar*>(esi.m_stuFontVar.Chars()));
 			pch += esi.m_stuFontVar.Length();
 		}
 		// Enhance: add any other string properties in the same way as ktptFontVariations.

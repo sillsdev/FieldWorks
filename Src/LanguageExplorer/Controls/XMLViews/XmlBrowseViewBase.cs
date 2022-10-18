@@ -1586,6 +1586,67 @@ namespace LanguageExplorer.Controls.XMLViews
 			return true;
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/XmlBrowseViewBase.cs
+||||||| f013144d5:Src/Common/Controls/XMLViews/XmlBrowseViewBase.cs
+		/// <summary>
+		/// Tries to be smart about whether our RootSite should print or not.
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
+		public override bool OnPrint(object args)
+		{
+			CheckDisposed();
+
+			var tool = m_propertyTable.GetValue<MultiPane>("currentContentControlObject", null);
+			if (tool != null)
+			{
+				// We want to print only if this tool is selected for printing, or if nothing has been selected.
+				// or if no default has been specified.
+				if ((tool).PrintPane == m_id ||
+					(tool).PrintPane == "")
+				{
+					return base.OnPrint(args);
+				}
+				// allow the specified default RootSite to Print.
+				return false;
+			}
+			else
+			{
+				// It's not a MultiPane, so we should just have one RootSite to Print.
+				return base.OnPrint(args);
+			}
+		}
+
+=======
+		/// <summary>
+		/// Tries to be smart about whether our RootSite should print or not.
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
+		public override bool OnPrint(object args)
+		{
+			CheckDisposed();
+
+			if (m_propertyTable.GetValue<Control>("currentContentControlObject", null) is MultiPane tool)
+			{
+				// We want to print only if this tool is selected for printing, or if nothing has been selected.
+				// or if no default has been specified.
+				if (tool.PrintPane == m_id ||
+					tool.PrintPane == "")
+				{
+					return base.OnPrint(args);
+				}
+				// allow the specified default RootSite to Print.
+				return false;
+			}
+			else
+			{
+				// It's not a MultiPane, so we should just have one RootSite to Print.
+				return base.OnPrint(args);
+			}
+		}
+
+>>>>>>> develop:Src/Common/Controls/XMLViews/XmlBrowseViewBase.cs
 		/// <remarks>
 		/// The ScrollBar.Maximum is equal to the maxUserReachable + ScrollBar.LargeChange - 1, which
 		/// in this implementation is also equal to RootBox.Height - MeanRowHeight - 1 in cases

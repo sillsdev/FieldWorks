@@ -261,6 +261,10 @@
     <value>User_Interface/Menus/File/Page_Setup/Page_Setup_Text_tab.htm</value>
     <comment>help topic ID for page setup dialog, text tab</comment>
   </data>
+  <data name="khtpHiddenWritingSystems" xml:space="preserve">
+    <value>Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Hide_or_show_a_writing_system.htm</value>
+    <comment>help topic ID for the View Hidden Writing Systems dialog</comment>
+  </data>
   <data name="khtpProjectProperties_WritingSystem" xml:space="preserve">
     <value>Advanced_Tasks/Writing_Systems/Writing_Systems_overview.htm</value>
     <comment>help topic ID for project properties dialog-writing system tab</comment>

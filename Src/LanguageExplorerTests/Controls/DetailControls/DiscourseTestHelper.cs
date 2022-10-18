@@ -148,12 +148,26 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		internal IDsConstChart SetupAChart()
 		{
 			// Note: do this AFTER creating the template, which may also create the DiscourseData object.
-			Assert.IsNotNull(Cache.LangProject, "No LangProject in the cache!");
+			Assert.That(Cache.LangProject, Is.Not.Null, "No LangProject in the cache!");
 			var data = Cache.LangProject.DiscourseDataOA;
+<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseTestHelper.cs
 			Assert.IsNotNull(data, "No DiscourseData object!");
 			Chart = Cache.ServiceLocator.GetInstance<IDsConstChartFactory>().Create(data, m_stText, m_template);
 			Logic.Chart = Chart;
 			Logic.Ribbon.CacheRibbonItems(new List<AnalysisOccurrence>());
+||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseTestHelper.cs
+			Assert.IsNotNull(data, "No DiscourseData object!");
+			m_chart = Cache.ServiceLocator.GetInstance<IDsConstChartFactory>().Create(
+				data, m_stText, m_template);
+			Logic.Chart = m_chart;
+			m_logic.Ribbon.CacheRibbonItems(new List<AnalysisOccurrence>());
+=======
+			Assert.That(data, Is.Not.Null, "No DiscourseData object!");
+			m_chart = Cache.ServiceLocator.GetInstance<IDsConstChartFactory>().Create(
+				data, m_stText, m_template);
+			Logic.Chart = m_chart;
+			m_logic.Ribbon.CacheRibbonItems(new List<AnalysisOccurrence>());
+>>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseTestHelper.cs
 			Cache.LangProject.GetDefaultChartMarkers();
 			return Chart;
 		}
@@ -181,7 +195,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 				+ "<column name=\"postnuc\"/>"
 				+ "</template>");
 			m_template = Cache.LangProject.CreateChartTemplate(doc.DocumentElement);
-			m_allColumns = Logic.AllColumns(m_template);
+			m_allColumns = ConstituentChartLogic.CollectColumns(m_template);
 			allCols = m_allColumns;
 			return m_template;
 		}
@@ -443,8 +457,18 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		internal IConstChartTag MakeChartMarker(IConstChartRow row, int icol, ICmPossibility marker)
 		{
 			Assert.Less(icol, m_allColumns.Count, "Invalid column index");
+<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseTestHelper.cs
 			Assert.IsNotNull(marker, "Invalid marker.");
 			return m_ccTagFact.Create(row, row.CellsOS.Count, m_allColumns[icol], marker);
+||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseTestHelper.cs
+			Assert.IsNotNull(marker, "Invalid marker.");
+			var cct = m_ccTagFact.Create(row, row.CellsOS.Count, m_allColumns[icol], marker);
+			return cct;
+=======
+			Assert.That(marker, Is.Not.Null, "Invalid marker.");
+			var cct = m_ccTagFact.Create(row, row.CellsOS.Count, m_allColumns[icol], marker);
+			return cct;
+>>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseTestHelper.cs
 		}
 
 		/// <summary>
@@ -462,8 +486,18 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		internal IConstChartMovedTextMarker MakeMovedTextMarker(IConstChartRow row, int icol, IConstChartWordGroup target, bool fPreposed)
 		{
 			Assert.Less(icol, m_allColumns.Count, "Invalid column index");
+<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseTestHelper.cs
 			Assert.IsNotNull(target, "Can't make a MovedTextMarker with no target WordGroup");
 			return m_mtmFact.Create(row, row.CellsOS.Count, m_allColumns[icol], fPreposed, target);
+||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseTestHelper.cs
+			Assert.IsNotNull(target, "Can't make a MovedTextMarker with no target WordGroup");
+			var ccmtm = m_mtmFact.Create(row, row.CellsOS.Count, m_allColumns[icol], fPreposed, target);
+			return ccmtm;
+=======
+			Assert.That(target, Is.Not.Null, "Can't make a MovedTextMarker with no target WordGroup");
+			var ccmtm = m_mtmFact.Create(row, row.CellsOS.Count, m_allColumns[icol], fPreposed, target);
+			return ccmtm;
+>>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseTestHelper.cs
 		}
 
 		/// <summary>
@@ -539,8 +573,16 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			var crows = Chart.RowsOS.Count;
 			Assert.IsTrue(index <= crows);
+<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseTestHelper.cs
 			var row = Chart.RowsOS[index];
 			Assert.IsNotNull(row, "Invalid Row object!");
+||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseTestHelper.cs
+			var row = m_chart.RowsOS[index];
+			Assert.IsNotNull(row, "Invalid Row object!");
+=======
+			var row = m_chart.RowsOS[index];
+			Assert.That(row, Is.Not.Null, "Invalid Row object!");
+>>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseTestHelper.cs
 			Assert.AreEqual(rowNumber, row.Label.Text, "Row has wrong number!");
 			Assert.AreEqual(ccellParts, row.CellsOS.Count, "Row has wrong number of cell parts.");
 		}
@@ -552,10 +594,18 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			var crows = Chart.RowsOS.Count;
 			Assert.IsTrue(index < crows, "Invalid row index.");
+<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseTestHelper.cs
 			var row = Chart.RowsOS[index];
 			Assert.IsNotNull(row, "Invalid Row object!");
+||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseTestHelper.cs
+			var row = m_chart.RowsOS[index];
+			Assert.IsNotNull(row, "Invalid Row object!");
+=======
+			var row = m_chart.RowsOS[index];
+			Assert.That(row, Is.Not.Null, "Invalid Row object!");
+>>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseTestHelper.cs
 			var ccellParts = row.CellsOS.Count;
-			Assert.IsNotNull(row.Label.Text, "Row has no number!");
+			Assert.That(row.Label.Text, Is.Not.Null, "Row has no number!");
 			Assert.AreEqual(cellParts.Length, row.CellsOS.Count);
 			for (var i = 0; i < ccellParts; i++)
 			{
@@ -576,8 +626,16 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			var crows = Chart.RowsOS.Count;
 			Assert.IsTrue(index < crows, "Invalid row index.");
+<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseTestHelper.cs
 			var row = Chart.RowsOS[index];
 			Assert.IsNotNull(row, "Invalid Row object!");
+||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseTestHelper.cs
+			var row = m_chart.RowsOS[index];
+			Assert.IsNotNull(row, "Invalid Row object!");
+=======
+			var row = m_chart.RowsOS[index];
+			Assert.That(row, Is.Not.Null, "Invalid Row object!");
+>>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseTestHelper.cs
 			Assert.AreEqual(ep, row.EndParagraph, "EndParagraph property is wrong");
 			Assert.AreEqual(es, row.EndSentence, "EndSentence property is wrong");
 			Assert.AreEqual(sdcg, row.StartDependentClauseGroup, "StartDependentClauseGroup property is wrong");
@@ -592,22 +650,38 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			var cellPart = VerifyCellPartBasic(irow, icellPart, column);
 			var wordGroup = cellPart as IConstChartWordGroup;
-			Assert.IsNotNull(wordGroup, "Not a valid CCWordGroup cell part!");
+			Assert.That(wordGroup, Is.Not.Null, "Not a valid CCWordGroup cell part!");
 			var cellWords = wordGroup.GetOccurrences();
 			Assert.AreEqual(words, cellWords, "WordGroup has the wrong words");
 		}
 
 		private IConstituentChartCellPart VerifyCellPartBasic(int irow, int icellPart, ICmPossibility column)
 		{
+<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseTestHelper.cs
 			Assert.IsNotNull(column, "Cell Part must be assigned to some column!");
 			var crows = Chart.RowsOS.Count;
+||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseTestHelper.cs
+			Assert.IsNotNull(column, "Cell Part must be assigned to some column!");
+			var crows = m_chart.RowsOS.Count;
+=======
+			Assert.That(column, Is.Not.Null, "Cell Part must be assigned to some column!");
+			var crows = m_chart.RowsOS.Count;
+>>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseTestHelper.cs
 			Assert.IsTrue(irow < crows);
+<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseTestHelper.cs
 			var row = Chart.RowsOS[irow];
 			Assert.IsNotNull(row, "Invalid row object!");
+||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseTestHelper.cs
+			var row = m_chart.RowsOS[irow];
+			Assert.IsNotNull(row, "Invalid row object!");
+=======
+			var row = m_chart.RowsOS[irow];
+			Assert.That(row, Is.Not.Null, "Invalid row object!");
+>>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseTestHelper.cs
 			var ccellParts = row.CellsOS.Count;
 			Assert.IsTrue(icellPart < ccellParts);
 			var cellPart = row.CellsOS[icellPart];
-			Assert.IsNotNull(cellPart.ColumnRA, "Invalid column object!");
+			Assert.That(cellPart.ColumnRA, Is.Not.Null, "Invalid column object!");
 			Assert.AreEqual(column.Hvo, cellPart.ColumnRA.Hvo);
 			return cellPart;
 		}
@@ -619,10 +693,10 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		/// </summary>
 		internal void VerifyMarkerCellPart(int irow, int icellpart, ICmPossibility column, ICmPossibility marker)
 		{
-			Assert.IsNotNull(marker, "CCTag must have a CmPossibility");
+			Assert.That(marker, Is.Not.Null, "CCTag must have a CmPossibility");
 			var cellPart = VerifyCellPartBasic(irow, icellpart, column) as IConstChartTag;
-			Assert.IsNotNull(cellPart, "Cell part should be a ConstChartTag!");
-			Assert.IsNotNull(cellPart.TagRA, "ConstChartTag is not assigned a possibility");
+			Assert.That(cellPart, Is.Not.Null, "Cell part should be a ConstChartTag!");
+			Assert.That(cellPart.TagRA, Is.Not.Null, "ConstChartTag is not assigned a possibility");
 			Assert.AreEqual(marker.Hvo, cellPart.TagRA.Hvo);
 		}
 
@@ -633,8 +707,8 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		internal void VerifyMissingMarker(int irow, int icellPart, ICmPossibility column)
 		{
 			var cellPart = VerifyCellPartBasic(irow, icellPart, column) as IConstChartTag;
-			Assert.IsNotNull(cellPart, "Cell part should be a ConstChartTag!");
-			Assert.IsNull(cellPart.TagRA, "Missing Marker should not be assigned a Tag possibility!");
+			Assert.That(cellPart, Is.Not.Null, "Cell part should be a ConstChartTag!");
+			Assert.That(cellPart.TagRA, Is.Null, "Missing Marker should not be assigned a Tag possibility!");
 		}
 
 		/// <summary>
@@ -644,10 +718,10 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		/// </summary>
 		internal void VerifyMovedTextMarker(int irow, int icellPart, ICmPossibility column, IConstChartWordGroup wordGroup, bool fPrepose)
 		{
-			Assert.IsNotNull(wordGroup, "CCMTMarker must refer to a wordgroup");
+			Assert.That(wordGroup, Is.Not.Null, "CCMTMarker must refer to a wordgroup");
 			var cellPart = VerifyCellPartBasic(irow, icellPart, column) as IConstChartMovedTextMarker;
-			Assert.IsNotNull(cellPart, "Cell part should be a ConstChartMovedTextMarker!");
-			Assert.IsNotNull(cellPart.WordGroupRA, "MovedText Marker does not refer to a word group");
+			Assert.That(cellPart, Is.Not.Null, "Cell part should be a ConstChartMovedTextMarker!");
+			Assert.That(cellPart.WordGroupRA, Is.Not.Null, "MovedText Marker does not refer to a word group");
 			Assert.AreEqual(wordGroup.Hvo, cellPart.WordGroupRA.Hvo);
 			Assert.AreEqual(fPrepose, cellPart.Preposed, "MTMarker is not pointing the right direction!");
 		}
@@ -659,11 +733,23 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		/// </summary>
 		internal void VerifyDependentClauseMarker(int irow, int icellPart, ICmPossibility column, IConstChartRow[] depClauses)
 		{
-			Assert.IsNotNull(depClauses, "CCClauseMarker must refer to some rows");
+			Assert.That(depClauses, Is.Not.Null, "CCClauseMarker must refer to some rows");
 			var cellPart = VerifyCellPartBasic(irow, icellPart, column) as IConstChartClauseMarker;
+<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseTestHelper.cs
 			Assert.IsNotNull(cellPart, "Cell part should be a ConstChartClauseMarker!");
 			Assert.IsNotNull(cellPart.DependentClausesRS, "Clause Marker does not refer to any rows");
 			Assert.AreEqual(depClauses.Length, cellPart.DependentClausesRS.Count, "Clause marker points to wrong number of rows");
+||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseTestHelper.cs
+			Assert.IsNotNull(cellPart, "Cell part should be a ConstChartClauseMarker!");
+			Assert.IsNotNull(cellPart.DependentClausesRS, "Clause Marker does not refer to any rows");
+			Assert.AreEqual(depClauses.Length, cellPart.DependentClausesRS.Count,
+				"Clause marker points to wrong number of rows");
+=======
+			Assert.That(cellPart, Is.Not.Null, "Cell part should be a ConstChartClauseMarker!");
+			Assert.That(cellPart.DependentClausesRS, Is.Not.Null, "Clause Marker does not refer to any rows");
+			Assert.AreEqual(depClauses.Length, cellPart.DependentClausesRS.Count,
+				"Clause marker points to wrong number of rows");
+>>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseTestHelper.cs
 			for (var i = 0; i < depClauses.Length; i++ )
 			{
 				Assert.AreEqual(depClauses[i].Hvo, cellPart.DependentClausesRS[i].Hvo, $"Clause array doesn't match at index {i}");

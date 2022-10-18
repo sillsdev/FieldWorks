@@ -2,7 +2,14 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+<<<<<<< HEAD:Src/FwUtilsTests/TempSFFileMakerTests.cs
 using System;
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/TempSFFileMakerTests.cs
+using System;
+using System.IO;
+=======
+using System.IO;
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/TempSFFileMakerTests.cs
 using System.Text;
 using NUnit.Framework;
 using SIL.LCModel.Utils;
@@ -25,8 +32,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void TestCreateFileNullSILBookId()
 		{
+<<<<<<< HEAD:Src/FwUtilsTests/TempSFFileMakerTests.cs
 			var testFileMaker = new TempSFFileMaker();
 			Assert.That(() => { testFileMaker.CreateFile(null, null); }, Throws.TypeOf<ArgumentNullException>());
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/TempSFFileMakerTests.cs
+			TempSFFileMaker testFileMaker = new TempSFFileMaker();
+			testFileMaker.CreateFile(null, null);
+=======
+			Assert.That(() => new TempSFFileMaker().CreateFile(null, null), Throws.ArgumentNullException);
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/TempSFFileMakerTests.cs
 		}
 
 		/// <summary>

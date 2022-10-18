@@ -23,21 +23,23 @@ else
 	OPTIMIZATIONS = -O3
 endif
 
+PACKAGES := icu-i18n
+
 INCLUDES := -I$(KERNEL_SRC) -I$(GENERIC_SRC) $(DEBUG_INCLUDES)
 
-INCLUDES := $(shell icu-config --cppflags) \
-	$(INCLUDES) \
+INCLUDES := $(INCLUDES) \
 	-I$(FWINCLUDE) \
 	-I$(COM_OUT_DIR) \
 	-I$(WIN32MORE_INC) \
 	-I$(COM_INC) \
-	-I$(WIN32BASE_INC)
+	-I$(WIN32BASE_INC) \
+	$(shell pkg-config --cflags $(PACKAGES)) \
 
 LDLIBS := $(LDLIBS) \
 	-L$(WIN32MORE_LIB) -lWin32More \
 	-L$(COM_LIB) -lcom \
 	-L$(WIN32BASE_LIB) -lWin32Base \
-	$(shell icu-config --ldflags) \
+	$(shell pkg-config --libs $(PACKAGES)) \
 	-ldl
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD

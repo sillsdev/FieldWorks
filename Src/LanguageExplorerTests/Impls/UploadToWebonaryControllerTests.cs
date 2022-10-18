@@ -79,6 +79,7 @@ namespace LanguageExplorerTests.Impls
 		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
+<<<<<<< HEAD:Src/LanguageExplorerTests/Impls/UploadToWebonaryControllerTests.cs
 			try
 			{
 				ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
@@ -92,6 +93,15 @@ namespace LanguageExplorerTests.Impls
 			{
 				base.FixtureTeardown();
 			}
+||||||| f013144d5:Src/xWorks/xWorksTests/UploadToWebonaryControllerTests.cs
+			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
+			base.FixtureTeardown();
+			Dispose();
+=======
+			ConfiguredLcmGenerator.Init();
+			base.FixtureTeardown();
+			Dispose();
+>>>>>>> develop:Src/xWorks/xWorksTests/UploadToWebonaryControllerTests.cs
 		}
 
 		#region disposal
@@ -160,7 +170,7 @@ namespace LanguageExplorerTests.Impls
 				mockView.Model.Configurations = testConfig;
 				mockView.Model.Reversals = reversalConfig;
 				// Build model sufficient to generate xhtml and css
-				ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
+				ConfiguredLcmGenerator.Init();
 				var mainHeadwordNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "HeadWord",
@@ -289,8 +299,8 @@ namespace LanguageExplorerTests.Impls
 			{
 				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes("webonary:webonary")));
 				var responseText = ConnectAndUpload(client);
-				Assert.That(responseText, Is.Not.StringContaining("authentication failed"));
-				Assert.That(responseText, Is.Not.StringContaining("Wrong username or password"));
+				Assert.That(responseText, Does.Not.Contain("authentication failed"));
+				Assert.That(responseText, Does.Not.Contain("Wrong username or password"));
 			}
 		}
 
@@ -303,7 +313,7 @@ namespace LanguageExplorerTests.Impls
 			{
 				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes("webonary:webonary")));
 				var responseText = ConnectAndUpload(client);
-				Assert.That(responseText, Is.StringContaining("extracted successfully"));
+				Assert.That(responseText, Does.Contain("extracted successfully"));
 			}
 		}
 
@@ -781,7 +791,31 @@ namespace LanguageExplorerTests.Impls
 			/// <summary>
 			/// URI to upload data to.
 			/// </summary>
+<<<<<<< HEAD:Src/LanguageExplorerTests/Impls/UploadToWebonaryControllerTests.cs
 			private string UploadURI { get; set; }
+||||||| f013144d5:Src/xWorks/xWorksTests/UploadToWebonaryControllerTests.cs
+			public string UploadURI { get; set; }
+
+			/// <summary>
+			/// This constructor should be used in tests that will actually hit a server, and are marked [ByHand]
+			/// </summary>
+			public MockUploadToWebonaryController(LcmCache cache, PropertyTable propertyTable, Mediator mediator)
+				: base(cache, propertyTable, mediator)
+			{
+			}
+=======
+			public string UploadURI { get; set; }
+
+			internal override bool UseJsonApi => false;
+
+			/// <summary>
+			/// This constructor should be used in tests that will actually hit a server, and are marked [ByHand]
+			/// </summary>
+			public MockUploadToWebonaryController(LcmCache cache, PropertyTable propertyTable, Mediator mediator)
+				: base(cache, propertyTable, mediator)
+			{
+			}
+>>>>>>> develop:Src/xWorks/xWorksTests/UploadToWebonaryControllerTests.cs
 
 			/// <summary>
 			/// Tests using this constructor do not need to be marked [ByHand]; an exception, response, and response code can all be set.
@@ -797,10 +831,24 @@ namespace LanguageExplorerTests.Impls
 			/// </summary>
 			private sealed class MockWebonaryClient : IWebonaryClient
 			{
+<<<<<<< HEAD:Src/LanguageExplorerTests/Impls/UploadToWebonaryControllerTests.cs
 				private readonly WebonaryException _exceptionResponse;
 				private readonly object _responseContents;
+||||||| f013144d5:Src/xWorks/xWorksTests/UploadToWebonaryControllerTests.cs
+				private readonly WebonaryClient.WebonaryException _exceptionResponse;
+				private readonly object _responseContents;
+=======
+				private readonly WebonaryClient.WebonaryException _exceptionResponse;
+				private readonly byte[] _responseContents;
+>>>>>>> develop:Src/xWorks/xWorksTests/UploadToWebonaryControllerTests.cs
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/Impls/UploadToWebonaryControllerTests.cs
 				internal MockWebonaryClient(WebonaryException exceptionResponse, object responseContents, HttpStatusCode responseStatus)
+||||||| f013144d5:Src/xWorks/xWorksTests/UploadToWebonaryControllerTests.cs
+				public MockWebonaryClient(WebonaryClient.WebonaryException exceptionResponse, object responseContents, HttpStatusCode responseStatus)
+=======
+				public MockWebonaryClient(WebonaryClient.WebonaryException exceptionResponse, byte[] responseContents, HttpStatusCode responseStatus)
+>>>>>>> develop:Src/xWorks/xWorksTests/UploadToWebonaryControllerTests.cs
 				{
 					_exceptionResponse = exceptionResponse;
 					_responseContents = responseContents;
@@ -857,14 +905,14 @@ namespace LanguageExplorerTests.Impls
 				{
 					if (_exceptionResponse != null)
 						throw _exceptionResponse;
-					return (string)_responseContents;
+					return Encoding.UTF8.GetString(_responseContents);
 				}
 
 				private byte[] MockByteArrayResponse()
 				{
 					if (_exceptionResponse != null)
 						throw _exceptionResponse;
-					return (byte[])_responseContents;
+					return _responseContents;
 				}
 			}
 

@@ -2247,8 +2247,17 @@ namespace LCMBrowser
 		/// </summary>
 		private bool ValidateGenDate(IInspectorObject io, ICmObject obj, PropertyInfo pi, int mdy, out GenDate genDate)
 		{
+<<<<<<< HEAD
 			DateTime dt1, dt;
 			GenDate genDate1;
+||||||| f013144d5
+			System.DateTime dt1, dt;
+			var genDate1 = new GenDate();
+			string tempDate = "";
+=======
+			var genDate1 = new GenDate();
+			string tempDate = "";
+>>>>>>> develop
 			if (io.ParentInspectorObject != null && io.ParentInspectorObject.Flid > 0)
 			{
 				genDate1 = m_silDataAccessManaged.get_GenDateProp(obj.Hvo, io.ParentInspectorObject.Flid);

@@ -425,6 +425,21 @@ DoSemanticDomain
 	  </SemanticDomains>
 	</xsl:if>
 </xsl:template>
+
+<xsl:template name="DoDialectLabels">
+	<xsl:param name="marker" />	<!-- dle for entry, dls for sense -->
+	<xsl:if test="$marker">
+	  <DialectLabels>
+		<xsl:for-each select="$marker">
+		  <Link>
+			<xsl:attribute name="ws"><xsl:value-of select="@ws"/></xsl:attribute>
+			<xsl:attribute name="abbr"><xsl:value-of select="."/></xsl:attribute>
+			<xsl:attribute name="name"><xsl:value-of select="."/></xsl:attribute>
+		  </Link>
+		</xsl:for-each>
+	  </DialectLabels>
+	</xsl:if>
+</xsl:template>
 <!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 DoEntryResidue
@@ -525,6 +540,9 @@ DoEntry
 	  <xsl:call-template name="DoDateModified"/>
 	  <xsl:call-template name="DoEtymology"/>		<!-- Add to subentry -->
 	  <xsl:call-template name="DoPronunciation"/>		<!-- Add to subentry -->
+	  <xsl:call-template name="DoDialectLabels">
+		<xsl:with-param name="marker" select="dle" />
+	  </xsl:call-template>
 
 	  <xsl:if test="lex">
 		<xsl:call-template name="DoMSAs">
@@ -798,7 +816,9 @@ DoEntry
 		  <xsl:call-template name="DoEtymology"/>		<!-- Add to subentry -->
 		  <xsl:call-template name="DoPronunciation"/>		<!-- Add to subentry -->
 		  <xsl:call-template name="DoCitationForm"/>		<!-- Added to subentry too -->
-
+		  <xsl:call-template name="DoDialectLabels">
+			<xsl:with-param name="marker" select="dle" />
+		  </xsl:call-template>
 		</LexEntry>
 	  </xsl:for-each>
 	</xsl:if>
@@ -1293,6 +1313,9 @@ DoSenseFields
 
 	<!-- do the LexicalRelations -->
 	<xsl:call-template name="DoLexicalRelations"/>
+	<xsl:call-template name="DoDialectLabels">
+		<xsl:with-param name="marker" select="dls" />
+	</xsl:call-template>
 </xsl:template>
 <!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -9,7 +9,7 @@
 \lx 14645
 \g 1SgPoss
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 14672
 \a no {14646}
 \eType prefix
@@ -17,7 +17,7 @@
 \lx 14649
 \g 2SgdPoss
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 14672
 \a mo {14650}
 \eType prefix
@@ -25,7 +25,7 @@
 \lx 14653
 \g 3SgPoss
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 14672
 \a i {14654}
 \eType prefix
@@ -33,7 +33,7 @@
 \lx 14657
 \g 1PlPoss
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 14672
 \a to {14658}
 \eType prefix
@@ -41,7 +41,7 @@
 \lx 14661
 \g 2PlPoss
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 14672
 \a amo {14662}
 \eType prefix
@@ -49,7 +49,7 @@
 \lx 14665
 \g 3PlPoss
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 14672
 \a in {14666}
 \eType prefix
@@ -65,7 +65,7 @@
 \lx 14786
 \g 1SgSubj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 14846
 \a ni {14787}
 \eType prefix
@@ -73,7 +73,7 @@
 \lx 16554
 \g 1SgSubj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 16553
 \a ni {14787}
 \eType prefix
@@ -81,7 +81,7 @@
 \lx 14792
 \g 2SgSubj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 14846
 \a ti {14793}
 \eType prefix
@@ -89,7 +89,7 @@
 \lx 14796
 \g 1PlSubj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 14811
 \a ti {14797}
 \eType prefix
@@ -97,7 +97,7 @@
 \lx 14800
 \g 2PlSubj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 14811
 \a an {14801}
 \eType prefix
@@ -120,7 +120,7 @@
 \lx 14864
 \g 3M
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 14925
 \a i {14865}
 \eType prefix
@@ -128,7 +128,7 @@
 \lx 14868
 \g FUT
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 14926
 \a n {14869}
 \eType prefix
@@ -187,7 +187,7 @@
 \lx 14944
 \g Fut
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 14968
 \a q {14969} ICA14966 +/ _ ... {InflClass14966} +/ _ ... {ToInflClass14966}
 \a w {15820} ICA14965 +/ _ ... {InflClass14965} +/ _ ... {ToInflClass14965} / _ [14900]  | / _ [V] 
@@ -506,7 +506,7 @@
 \lx 15838
 \g Pres
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 15835
 \a 0 {15840} ICA15842 +/ _ ... {InflClass15842} +/ _ ... {ToInflClass15842}
 \a t {15839} ICA15841 +/ _ ... {InflClass15841} +/ _ ... {ToInflClass15841}
@@ -772,7 +772,7 @@
 \lx 16459
 \g S
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 14968
 \a s {16460}
 \eType prefix
@@ -780,7 +780,7 @@
 \lx 16463
 \g Pres
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 14968
 \a ch {16464}
 \eType prefix
@@ -848,7 +848,7 @@
 \lx 16561
 \g 3Obj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 16558
 \a k {16562}
 \eType prefix

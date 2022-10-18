@@ -8,7 +8,14 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
+<<<<<<< HEAD:Src/LanguageExplorer/SendReceive/FLExBridgeFirstSendReceiveInstructionsDlg.cs
 using SIL.PlatformUtilities;
+||||||| f013144d5:Src/LexText/Lexicon/FLExBridgeFirstSendReceiveInstructionsDlg.cs
+using XCore;
+=======
+using SIL.PlatformUtilities;
+using XCore;
+>>>>>>> develop:Src/LexText/Lexicon/FLExBridgeFirstSendReceiveInstructionsDlg.cs
 
 namespace LanguageExplorer.SendReceive
 {

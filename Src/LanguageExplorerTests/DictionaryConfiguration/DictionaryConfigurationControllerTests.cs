@@ -1,4 +1,10 @@
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/DictionaryConfigurationControllerTests.cs
 // Copyright (c) 2014-2020 SIL International
+||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
+﻿// Copyright (c) 2014-2017 SIL International
+=======
+// Copyright (c) 2014-2017 SIL International
+>>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -40,9 +46,37 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			base.TestSetup();
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/DictionaryConfigurationControllerTests.cs
 			_model = new DictionaryConfigurationModel();
 			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 			_propertyTable = _flexComponentParameters.PropertyTable;
+||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
+		[TestFixtureSetUp]
+		public override void FixtureSetup()
+		{
+			FwRegistrySettings.Init(); // This is needed for the MockFwXApp to initialize properly
+			base.FixtureSetup();
+
+			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
+			var configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
+			m_window = new MockFwXWindow(m_application, configFilePath);
+			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
+			m_propertyTable = m_window.PropTable;
+			m_window.LoadUI(configFilePath); // actually loads UI here; needed for non-null stylesheet
+=======
+		[OneTimeSetUp]
+		public override void FixtureSetup()
+		{
+			FwRegistrySettings.Init(); // This is needed for the MockFwXApp to initialize properly
+			base.FixtureSetup();
+
+			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
+			var configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
+			m_window = new MockFwXWindow(m_application, configFilePath);
+			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
+			m_propertyTable = m_window.PropTable;
+			m_window.LoadUI(configFilePath); // actually loads UI here; needed for non-null stylesheet
+>>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
 			// Add styles to the stylesheet to prevent intermittent unit test failures setting the selected index in the Styles Combobox
 			var styles = FwUtils.StyleSheetFromPropertyTable(_propertyTable).Styles;
 			styles.Add(new BaseStyleInfo { Name = "Dictionary-Normal", IsParagraphStyle = true });
@@ -50,7 +84,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			styles.Add(new BaseStyleInfo { Name = "Bulleted List", IsParagraphStyle = true });
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/DictionaryConfigurationControllerTests.cs
 		public override void TestTearDown()
+||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
+		[TestFixtureTearDown]
+		public override void FixtureTeardown()
+=======
+		[OneTimeTearDown]
+		public override void FixtureTeardown()
+>>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
 		{
 			try
 			{
@@ -481,6 +523,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var testDefaultFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
 			var testUserFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/DictionaryConfigurationControllerTests.cs
 			try
 			{
 				_model.Label = "configurationALabel";
@@ -502,6 +545,41 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				RobustIO.DeleteDirectoryAndContents(testDefaultFolder.FullName);
 				RobustIO.DeleteDirectoryAndContents(testUserFolder.FullName);
 			}
+||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
+			m_model.Label = "configurationALabel";
+			m_model.FilePath = string.Concat(Path.Combine(testDefaultFolder.FullName, "configurationA"), DictionaryConfigurationModel.FileExtension);
+			m_model.Save();
+			m_model.Label = "configurationBLabel";
+			m_model.FilePath = string.Concat(Path.Combine(testUserFolder.FullName, "configurationB"), DictionaryConfigurationModel.FileExtension);
+			m_model.Save();
+
+			// SUT
+			var labels = DictionaryConfigurationController.GetDictionaryConfigurationLabels(Cache, testDefaultFolder.FullName, testUserFolder.FullName);
+			Assert.Contains("configurationALabel", labels.Keys, "missing a label");
+			Assert.Contains("configurationBLabel", labels.Keys, "missing a label");
+			Assert.That(labels.Count, Is.EqualTo(2), "unexpected label count");
+			Assert.That(labels["configurationALabel"].FilePath,
+				Is.StringContaining(string.Concat("configurationA", DictionaryConfigurationModel.FileExtension)), "missing a file name");
+			Assert.That(labels["configurationBLabel"].FilePath,
+				Is.StringContaining(string.Concat("configurationB", DictionaryConfigurationModel.FileExtension)), "missing a file name");
+=======
+			m_model.Label = "configurationALabel";
+			m_model.FilePath = string.Concat(Path.Combine(testDefaultFolder.FullName, "configurationA"), DictionaryConfigurationModel.FileExtension);
+			m_model.Save();
+			m_model.Label = "configurationBLabel";
+			m_model.FilePath = string.Concat(Path.Combine(testUserFolder.FullName, "configurationB"), DictionaryConfigurationModel.FileExtension);
+			m_model.Save();
+
+			// SUT
+			var labels = DictionaryConfigurationController.GetDictionaryConfigurationLabels(Cache, testDefaultFolder.FullName, testUserFolder.FullName);
+			Assert.Contains("configurationALabel", labels.Keys, "missing a label");
+			Assert.Contains("configurationBLabel", labels.Keys, "missing a label");
+			Assert.That(labels.Count, Is.EqualTo(2), "unexpected label count");
+			Assert.That(labels["configurationALabel"].FilePath,
+				Does.Contain(string.Concat("configurationA", DictionaryConfigurationModel.FileExtension)), "missing a file name");
+			Assert.That(labels["configurationBLabel"].FilePath,
+				Does.Contain(string.Concat("configurationB", DictionaryConfigurationModel.FileExtension)), "missing a file name");
+>>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
 		}
 
 		/// <summary/>
@@ -805,11 +883,25 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var cfChildren = customFieldNodes[0].Children;
 				CollectionAssert.IsNotEmpty(cfChildren, "ListItem Child nodes not created");
 				Assert.AreEqual(2, cfChildren.Count, "custom list type nodes should get a child for Name and Abbreviation");
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/DictionaryConfigurationControllerTests.cs
 				Assert.That(cfChildren[0].After, Is.Null.Or.Empty, "Child nodes should have no After space");
 				CollectionAssert.IsNotEmpty(cfChildren.Where(t => t.Label == "Name" && !t.IsCustomField), "No standard Name node found on custom possibility list reference");
 				CollectionAssert.IsNotEmpty(cfChildren.Where(t => t.Label == "Abbreviation" && !t.IsCustomField), "No standard Abbreviation node found on custom possibility list reference");
+||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
+				Assert.IsNullOrEmpty(cfChildren[0].After, "Child nodes should have no After space");
+				CollectionAssert.IsNotEmpty(cfChildren.Where(t => t.Label == "Name" && !t.IsCustomField),
+					"No standard Name node found on custom possibility list reference");
+				CollectionAssert.IsNotEmpty(cfChildren.Where(t => t.Label == "Abbreviation" && !t.IsCustomField),
+					"No standard Abbreviation node found on custom possibility list reference");
+=======
+				Assert.That(cfChildren[0].After, Is.Null.Or.Empty, "Child nodes should have no After space");
+				CollectionAssert.IsNotEmpty(cfChildren.Where(t => t.Label == "Name" && !t.IsCustomField),
+					"No standard Name node found on custom possibility list reference");
+				CollectionAssert.IsNotEmpty(cfChildren.Where(t => t.Label == "Abbreviation" && !t.IsCustomField),
+					"No standard Abbreviation node found on custom possibility list reference");
+>>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
 				var wsOptions = cfChildren[0].DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-				Assert.IsNotNull(wsOptions, "No writing system node on possibility list custom node");
+				Assert.That(wsOptions, Is.Not.Null, "No writing system node on possibility list custom node");
 				CollectionAssert.IsNotEmpty(wsOptions.Options.Where(o => o.IsEnabled), "No default writing system added.");
 			}
 		}
@@ -893,6 +985,99 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/DictionaryConfigurationControllerTests.cs
+||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
+		private sealed class MockWindowSetup : IDisposable
+		{
+			private readonly MockFwXApp application;
+			private readonly MockFwXWindow window;
+
+			public Mediator Mediator { get; private set; }
+			public PropertyTable PropertyTable { get; set; }
+
+			public MockWindowSetup(LcmCache cache)
+			{
+				var manager = new MockFwManager { Cache = cache };
+				FwRegistrySettings.Init(); // Sets up fake static registry values for the MockFwXApp to use
+				application = new MockFwXApp(manager, null, null);
+				window = new MockFwXWindow(application, Path.GetTempFileName());
+				window.Init(cache); // initializes Mediator values
+				Mediator = window.Mediator;
+				PropertyTable = new PropertyTable(Mediator);
+				PropertyTable.SetProperty("cache", cache, false);
+			}
+
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				if(disposing)
+				{
+					application.Dispose();
+					window.Dispose();
+					PropertyTable.Dispose();
+					Mediator.Dispose();
+				}
+			}
+
+			~MockWindowSetup()
+			{
+				Dispose(false);
+			}
+		}
+
+=======
+		private sealed class MockWindowSetup : IDisposable
+		{
+			private readonly MockFwXApp application;
+			private readonly MockFwXWindow window;
+
+			public Mediator Mediator { get; private set; }
+			public PropertyTable PropertyTable { get; set; }
+
+			public MockWindowSetup(LcmCache cache)
+			{
+				var manager = new MockFwManager { Cache = cache };
+				FwRegistrySettings.Init(); // Sets up fake static registry values for the MockFwXApp to use
+				application = new MockFwXApp(manager, null, null);
+				window = new MockFwXWindow(application, Path.GetTempFileName());
+				window.Init(cache); // initializes Mediator values
+				Mediator = window.Mediator;
+				PropertyTable = new PropertyTable(Mediator);
+				PropertyTable.SetProperty("cache", cache, false);
+			}
+
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			private void Dispose(bool disposing)
+			{
+				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+				if(disposing)
+				{
+					application.Dispose();
+					window.Dispose();
+					PropertyTable.Dispose();
+					Mediator.Dispose();
+				}
+				FwRegistrySettings.Release();
+			}
+
+			~MockWindowSetup()
+			{
+				Dispose(false);
+			}
+		}
+
+>>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
 		/// <summary>
 		/// Ensure the string that displays the publications associated with the current dictionary configuration is correct.
 		/// </summary>
@@ -932,7 +1117,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				//SUT
 				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
 				var children = model.Parts[0].Children;
-				Assert.IsNotNull(children, "Custom Field did not add to children");
+				Assert.That(children, Is.Not.Null, "Custom Field did not add to children");
 				CollectionAssert.IsNotEmpty(children, "Custom Field did not add to children");
 				var cfNode = children[0];
 				Assert.AreEqual(cfNode.Label, "CustomString");
@@ -1147,7 +1332,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Assert.AreEqual(1, children.Count, "The only node under Main Entry should be Grouping Node (the Custom Field already under Grouping Node should not be dup'd under ME");
 				var group = children[0];
 				children = group.Children;
-				Assert.IsNotNull(children, "GroupingNode should still have children");
+				Assert.That(children, Is.Not.Null, "GroupingNode should still have children");
 				Assert.AreEqual(1, children.Count, "One CF under Grouping Node should have been retained, the other deleted");
 				var customNode = children[0];
 				Assert.AreEqual("CustomString", customNode.Label);
@@ -1461,7 +1646,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				CreateDefaultReversalIndex();
 				//SUT
 				dcc.PopulateTreeView();
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/DictionaryConfigurationControllerTests.cs
 				Assert.That(testView.PreviewData, Is.Null.Or.Empty, "Should not have created a preview");
+||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
+
+				Assert.IsNullOrEmpty(testView.PreviewData, "Should not have created a preview");
+=======
+
+				Assert.That(testView.PreviewData, Is.Null.Or.Empty, "Should not have created a preview");
+>>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
 				Assert.AreEqual(1, Cache.LangProject.LexDbOA.ReversalIndexesOC.Count);
 				Assert.AreEqual("en", Cache.LangProject.LexDbOA.ReversalIndexesOC.First().WritingSystem);
 			}
@@ -1657,43 +1850,75 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				dcc.CreateTreeOfTreeNodes(null, _model.Parts);
 				//SUT
 				var treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/DictionaryConfigurationControllerTests.cs
 				Assert.IsNull(treeNode, "No TreeNode should be selected to start out with");
+||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
+				Assert.IsNull(treeNode, "No TreeNode should be selected to start out with");
+
+=======
+				Assert.That(treeNode, Is.Null, "No TreeNode should be selected to start out with");
+
+>>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
 				dcc.SetStartingNode(null);
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/DictionaryConfigurationControllerTests.cs
 				Assert.IsNull(treeNode, "Passing a null class list should not find a TreeNode (and should not crash either)");
+||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
+				Assert.IsNull(treeNode, "Passing a null class list should not find a TreeNode (and should not crash either)");
+
+=======
+				Assert.That(treeNode, Is.Null, "Passing a null class list should not find a TreeNode (and should not crash either)");
+
+>>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
 				dcc.SetStartingNode(new List<string>());
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/DictionaryConfigurationControllerTests.cs
 				Assert.IsNull(treeNode, "Passing an empty class list should not find a TreeNode");
+||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
+				Assert.IsNull(treeNode, "Passing an empty class list should not find a TreeNode");
+
+=======
+				Assert.That(treeNode, Is.Null, "Passing an empty class list should not find a TreeNode");
+
+>>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
 				dcc.SetStartingNode(new List<string> {"something","invalid"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/DictionaryConfigurationControllerTests.cs
 				Assert.IsNull(treeNode, "Passing a totally invalid class list should not find a TreeNode");
+||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
+				Assert.IsNull(treeNode, "Passing a totally invalid class list should not find a TreeNode");
+
+=======
+				Assert.That(treeNode, Is.Null, "Passing a totally invalid class list should not find a TreeNode");
+
+>>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationControllerTests.cs
 				dcc.SetStartingNode(new List<string>{"entry","senses","sensecontent","sense","random","nonsense"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "Passing a partially valid class list should find a TreeNode");
+				Assert.That(treeNode, Is.Not.Null, "Passing a partially valid class list should find a TreeNode");
 				Assert.AreSame(sensesNode, treeNode.Tag, "Passing a partially valid class list should find the best node possible");
 				// Starting here we need to Unset the controller's SelectedNode to keep from getting false positives
 				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(new List<string> {"entry","mainheadword"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "entry/mainheadword should find a TreeNode");
+				Assert.That(treeNode, Is.Not.Null, "entry/mainheadword should find a TreeNode");
 				Assert.AreSame(headwordNode, treeNode.Tag, "entry/mainheadword should find the right TreeNode");
 				Assert.AreEqual(headwordNode.Label, treeNode.Text, "The TreeNode for entry/mainheadword should have the right Text");
 				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(new List<string> { "entry " + DictionaryConfigurationServices.CurrentSelectedEntryClass, "mainheadword" });
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "entry/mainheadword should find a TreeNode, even if this is the selected entry");
+				Assert.That(treeNode, Is.Not.Null, "entry/mainheadword should find a TreeNode, even if this is the selected entry");
 				Assert.AreSame(headwordNode, treeNode.Tag, "entry/mainheadword should find the right TreeNode");
 				Assert.AreEqual(headwordNode.Label, treeNode.Text, "The TreeNode for entry/mainheadword should have the right Text");
 				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(new List<string> {"entry","senses","sensecontent","sense","definitionorgloss"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "entry//definitionorgloss should find a TreeNode");
+				Assert.That(treeNode, Is.Not.Null, "entry//definitionorgloss should find a TreeNode");
 				Assert.AreSame(defglossNode, treeNode.Tag, "entry//definitionorgloss should find the right TreeNode");
 				Assert.AreEqual(defglossNode.Label, treeNode.Text, "The TreeNode for entry//definitionorgloss should have the right Text");
 				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(new List<string> {"entry","senses","sensecontent","sense","examples","example","translations","translation","translation"});
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "entry//translation should find a TreeNode");
+				Assert.That(treeNode, Is.Not.Null, "entry//translation should find a TreeNode");
 				Assert.AreSame(translationNode, treeNode.Tag, "entry//translation should find the right TreeNode");
 				Assert.AreEqual(translationNode.Label, treeNode.Text, "The TreeNode for entry//translation should have the right Text");
 			}
@@ -1787,10 +2012,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(entryNode, sharedNode);
 			DictionaryConfigurationController.EnsureValidStylesInModel(model, Cache);
 			//SUT
-			Assert.IsNull(entryNode.Style, "Missing style should be removed.");
-			Assert.IsNull(senseNode.Style, "Missing style should be removed.");
-			Assert.IsNull(sharedKid.Style, "Missing style should be removed.");
-			Assert.IsNull(((DictionaryNodeSenseOptions)senseNode.DictionaryNodeOptions).NumberStyle, "Missing style should be removed.");
+			Assert.That(entryNode.Style, Is.Null, "Missing style should be removed.");
+			Assert.That(senseNode.Style, Is.Null, "Missing style should be removed.");
+			Assert.That(sharedKid.Style, Is.Null, "Missing style should be removed.");
+			Assert.That(((DictionaryNodeSenseOptions)senseNode.DictionaryNodeOptions).NumberStyle, Is.Null, "Missing style should be removed.");
 		}
 
 		[Test]
@@ -2380,18 +2605,18 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				//Test normal case first
 				dcc.SetStartingNode(new List<string> { "entry", "senses", "sensecontent", "sense", "gloss" });
 				var treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "Passing a valid class list should find a TreeNode");
+				Assert.That(treeNode, Is.Not.Null, "Passing a valid class list should find a TreeNode");
 				Assert.AreSame(glossNode, treeNode.Tag, "Passing a valid class list should find the node");
 				//SUT
 				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(subSenseGloss);
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "Passing a valid class list should find a TreeNode");
+				Assert.That(treeNode, Is.Not.Null, "Passing a valid class list should find a TreeNode");
 				Assert.AreSame(subGlossNode, treeNode.Tag, "Passing a valid class list should even find the node in a referenced node");
 				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(subSenseUndefined);
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "invalid field should still find a TreeNode");
+				Assert.That(treeNode, Is.Not.Null, "invalid field should still find a TreeNode");
 				Assert.AreSame(subSensesNode, treeNode.Tag, "'undefined' field should find the closest TreeNode");
 			}
 		}
@@ -2446,17 +2671,17 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				//SUT
 				dcc.SetStartingNode(subentryGloss);
 				var treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "Passing a valid class list should find a TreeNode");
+				Assert.That(treeNode, Is.Not.Null, "Passing a valid class list should find a TreeNode");
 				Assert.AreSame(subGlossNode, treeNode.Tag, "Passing a valid class list should even find the node in a referenced node");
 				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(subentryUndefined);
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "invalid field should still find a TreeNode");
+				Assert.That(treeNode, Is.Not.Null, "invalid field should still find a TreeNode");
 				Assert.AreSame(subentriesNode, treeNode.Tag, "'undefined' field should find the closest TreeNode");
 				ClearSelectedNode(dcc);
 				dcc.SetStartingNode(subentriesClassList);
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.IsNotNull(treeNode, "should find main Subentries node");
+				Assert.That(treeNode, Is.Not.Null, "should find main Subentries node");
 				Assert.AreSame(subentriesNode, treeNode.Tag, "Passing a valid class list should find it");
 			}
 		}

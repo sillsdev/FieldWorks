@@ -1,4 +1,10 @@
+<<<<<<< HEAD:Src/LanguageExplorer/SendReceive/ObtainProjectMethod.cs
 // Copyright (c) 2013-2020 SIL International
+||||||| f013144d5:Src/Common/Controls/FwControls/ObtainProjectMethod.cs
+// Copyright (c) 2015-2019 SIL International
+=======
+// Copyright (c) 2015-2021 SIL International
+>>>>>>> develop:Src/Common/Controls/FwControls/ObtainProjectMethod.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,13 +15,19 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+<<<<<<< HEAD:Src/LanguageExplorer/SendReceive/ObtainProjectMethod.cs
+||||||| f013144d5:Src/Common/Controls/FwControls/ObtainProjectMethod.cs
+using SIL.LCModel.Core.WritingSystems;
+=======
+using DesktopAnalytics;
+using SIL.LCModel.Core.WritingSystems;
+>>>>>>> develop:Src/Common/Controls/FwControls/ObtainProjectMethod.cs
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
-using SIL.Reporting;
 
 namespace LanguageExplorer.SendReceive
 {
@@ -32,29 +44,76 @@ namespace LanguageExplorer.SendReceive
 		/// <returns>Null if the operation was cancelled or otherwise did not work. The full pathname of an fwdata file, if it did work.</returns>
 		internal static string ObtainProjectFromAnySource(Form parent, out ObtainedProjectType obtainedProjectType)
 		{
+<<<<<<< HEAD:Src/LanguageExplorer/SendReceive/ObtainProjectMethod.cs
 			const string liftVersion = "0.13_ldml3";
+||||||| f013144d5:Src/Common/Controls/FwControls/ObtainProjectMethod.cs
+			bool dummy;
+			string fwdataFileFullPathname;
+			var liftVersion = "0.13_ldml3";
+=======
+>>>>>>> develop:Src/Common/Controls/FwControls/ObtainProjectMethod.cs
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(FwDirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null,
+<<<<<<< HEAD:Src/LanguageExplorer/SendReceive/ObtainProjectMethod.cs
 				LcmCache.ModelVersion, liftVersion, null, null, out _, out var fwdataFileFullPathname);
+||||||| f013144d5:Src/Common/Controls/FwControls/ObtainProjectMethod.cs
+				LcmCache.ModelVersion, liftVersion, null, null, out dummy, out fwdataFileFullPathname);
+=======
+				LcmCache.ModelVersion, FLExBridgeHelper.LiftVersion, null, null, out _, out var projectFileFullPath);
+>>>>>>> develop:Src/Common/Controls/FwControls/ObtainProjectMethod.cs
 			if (!success)
 			{
 				ReportDuplicateBridge();
 				obtainedProjectType = ObtainedProjectType.None;
 				return null;
 			}
-			if (string.IsNullOrWhiteSpace(fwdataFileFullPathname))
+			if (string.IsNullOrWhiteSpace(projectFileFullPath))
 			{
 				obtainedProjectType = ObtainedProjectType.None;
 				return null; // user canceled.
 			}
 			obtainedProjectType = ObtainedProjectType.FieldWorks;
+<<<<<<< HEAD:Src/LanguageExplorer/SendReceive/ObtainProjectMethod.cs
 			if (fwdataFileFullPathname.EndsWith("lift"))
+||||||| f013144d5:Src/Common/Controls/FwControls/ObtainProjectMethod.cs
+
+			if (fwdataFileFullPathname.EndsWith("lift"))
+=======
+
+			if (projectFileFullPath.EndsWith("lift"))
+>>>>>>> develop:Src/Common/Controls/FwControls/ObtainProjectMethod.cs
 			{
+<<<<<<< HEAD:Src/LanguageExplorer/SendReceive/ObtainProjectMethod.cs
 				fwdataFileFullPathname = CreateProjectFromLift(parent, fwdataFileFullPathname);
+||||||| f013144d5:Src/Common/Controls/FwControls/ObtainProjectMethod.cs
+				fwdataFileFullPathname = CreateProjectFromLift(parent, helpTopicProvider, fwdataFileFullPathname);
+=======
+				projectFileFullPath = CreateProjectFromLift(parent, helpTopicProvider, projectFileFullPath);
+>>>>>>> develop:Src/Common/Controls/FwControls/ObtainProjectMethod.cs
 				obtainedProjectType = ObtainedProjectType.Lift;
 			}
+<<<<<<< HEAD:Src/LanguageExplorer/SendReceive/ObtainProjectMethod.cs
 			UsageReporter.SendEvent("OpenProject", "SendReceive", $"Create from {obtainedProjectType.ToString()} repo", $"vers: {LcmCache.ModelVersion}, {liftVersion}", 0);
 			EnsureLinkedFoldersExist(fwdataFileFullPathname);
 			return fwdataFileFullPathname;
+||||||| f013144d5:Src/Common/Controls/FwControls/ObtainProjectMethod.cs
+
+			UsageReporter.SendEvent("OpenProject", "SendReceive", string.Format("Create from {0} repo", obtainedProjectType.ToString()),
+				string.Format("vers: {0}, {1}", LcmCache.ModelVersion, liftVersion), 0);
+			EnsureLinkedFoldersExist(fwdataFileFullPathname);
+
+			return fwdataFileFullPathname;
+=======
+
+			Analytics.Track("CreateFromSRRepo", new Dictionary<string, string>
+			{
+				{ "type", obtainedProjectType.ToString() },
+				{ "modelVersion", LcmCache.ModelVersion.ToString() },
+				{ "liftVersion", FLExBridgeHelper.LiftVersion }
+			});
+			EnsureLinkedFoldersExist(projectFileFullPath);
+
+			return projectFileFullPath;
+>>>>>>> develop:Src/Common/Controls/FwControls/ObtainProjectMethod.cs
 		}
 
 		private static void EnsureLinkedFoldersExist(string fwdataFileFullPathname)

@@ -1,4 +1,10 @@
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 // Copyright (c) 2008-2020 SIL International
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+// Copyright (c) 2015-2018 SIL International
+=======
+// Copyright (c) 2015-2022 SIL International
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,49 +24,108 @@ using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 using SIL.Xml;
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+using SIL.FieldWorks.IText;
+using SIL.Utils;
+using SIL.Windows.Forms.Widgets;
+using XCore;
+=======
+using SIL.FieldWorks.IText;
+using SIL.FieldWorks.XWorks;
+using SIL.Utils;
+using SIL.Windows.Forms.Widgets;
+using XCore;
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 
 namespace LanguageExplorer.Controls.DetailControls
 {
 	/// <summary>
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 	/// A constituent chart is used to organize words (and perhaps eventually somehow morphemes)
 	/// into a table where rows roughly correspond to clauses and columns to key parts of a clause.
 	/// A typical chart has two pre-nuclear columns, three or four nuclear ones (SVO and perhaps indirect
 	/// object) and one or two post-nuclear ones.
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+	/// A constituent chart is used to organize words (and perhaps eventally somehow morphemes)
+	/// into a table where rows roughtly correspond to clauses and columns to key parts of a clause.
+	/// A typical chart has two pre-nuclear columns, three or four nuclear ones (SVO and perhaps indirect
+	/// object) and one or two post-nuclear ones.
+	///
+	/// Currently the constituent chart is displayed as a tab in the interlinear window. It is created
+	/// by reflection because it needs to refer to the interlinear assembly (in order to display words
+	/// in interlinear mode), so the interlinear assembly can't know about this one.
+=======
+	/// A constituent chart is used to organize words (and perhaps eventually somehow morphemes)
+	/// into a table where rows roughly correspond to clauses and columns to key parts of a clause.
+	/// A typical chart has two pre-nuclear columns, three or four nuclear columns (SVO and perhaps indirect
+	/// object) and one or two post-nuclear columns.
+	///
+	/// Currently the constituent chart is displayed as a tab in the interlinear window. It is created
+	/// by reflection because it needs to refer to the interlinear assembly (in order to display words
+	/// in interlinear mode), so the interlinear assembly can't know about this one.
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 	/// </summary>
 	internal partial class ConstituentChart : UserControl, IInterlinConfigurable, ISetupLineChoices, IHandleBookmark, IFlexComponent, IStyleSheet, IInterlinearConfigurator
 	{
 		#region Member Variables
 		private InterlinRibbon m_ribbon;
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 		private List<Button> m_MoveHereButtons = new List<Button>();
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+		private ConstChartBody m_body;
+		private List<Button> m_MoveHereButtons = new List<Button>();
+=======
+		private ConstChartBody m_body;
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 		// Buttons for moving ribbon text into a specific column
-		private List<Button> m_ContextMenuButtons = new List<Button>();
+		private readonly List<Button> m_MoveHereButtons = new List<Button>();
 		// Popups associated with each 'MoveHere' button
+		private readonly List<Button> m_ContextMenuButtons = new List<Button>();
 		private bool m_fContextMenuButtonsEnabled;
 		private IDsConstChart m_chart;
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 		private int m_chartHvo;
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+		private int m_chartHvo = 0;
+=======
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 		private ICmPossibility m_template;
 		private ICmPossibility[] m_allColumns;
-		private ConstituentChartLogic m_logic;
+		private readonly ConstituentChartLogic m_logic;
 		private Panel m_templateSelectionPanel;
 		private Panel m_buttonRow;
 		private Panel m_bottomStuff;
-		private SplitContainer m_topBottomSplit;
 		// m_buttonRow above m_ribbon
+		private SplitContainer m_topBottomSplit;
+		private readonly List<ChartHeaderView> m_headerColGroups = new List<ChartHeaderView>();
 		private ChartHeaderView m_headerMainCols;
-		private Panel m_topStuff;
-		// top panel has header groups, headerMainCols, and main chart
-		private int[] m_columnWidths;
 		// width of each table cell in millipoints
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 		private float m_dxpInch;
 		private bool m_fInColWidthChanged;
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+		private float m_dxpInch;
+=======
+		private int[] m_columnWidths;
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 		// DPI when m_columnWidths was computed.
+		private float m_dxpInch;
 		// left of each column in pixels. First is zero. Count is one MORE than number
 		// of columns, so last position is width of window (right of last column).
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 		private ToolTip m_toolTip;
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+		private int[] m_columnPositions;
+		private ToolTip m_toolTip;
+=======
+		private int[] m_columnPositions;
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 		// controls the popup help items for the Constituent Chart Form
+		private ToolTip m_toolTip;
 		private InterAreaBookmark m_bookmark;
-		private ILcmServiceLocator m_serviceLocator;
+		private readonly ILcmServiceLocator m_serviceLocator;
 		private XmlNode m_configurationParameters;
 		private ISharedEventHandlers _sharedEventHandlers;
 		private UiWidgetController _uiWidgetController;
@@ -70,8 +135,34 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#endregion
 
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 		/// <summary />
 		internal ConstituentChart(LcmCache cache, ISharedEventHandlers sharedEventHandlers, UiWidgetController uiWidgetController = null, ConstituentChartLogic logic = null)
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+		/// <summary>
+		/// Make one. Usually called by reflection.
+		/// </summary>
+		public ConstituentChart(LcmCache cache) : this(cache, new ConstituentChartLogic(cache))
+		{
+		}
+
+		/// <summary>
+		/// Make one. This variant is used in testing (to plug in a known logic class).
+		/// </summary>
+		internal ConstituentChart(LcmCache cache, ConstituentChartLogic logic)
+=======
+		/// <summary>
+		/// Make one. Usually called by reflection.
+		/// </summary>
+		public ConstituentChart(LcmCache cache, PropertyTable propTable) : this(cache, propTable, new ConstituentChartLogic(cache))
+		{
+		}
+
+		/// <summary>
+		/// Make one. This variant is used in testing (to plug in a known logic class).
+		/// </summary>
+		internal ConstituentChart(LcmCache cache, PropertyTable propTable, ConstituentChartLogic logic)
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 		{
 			if (logic == null)
 			{
@@ -85,11 +176,22 @@ namespace LanguageExplorer.Controls.DetailControls
 			_sharedEventHandlers.Add(Command.CmdRepeatLastMoveRight, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(RepeatLastMoveRight_Clicked, () => CanRepeatLastMoveRight));
 			Cache = cache;
 			m_serviceLocator = Cache.ServiceLocator;
+			PropertyTable = propTable;
 			m_logic = logic;
 			ForEditing = true;
 			AccessibleName = "Constituent Chart";
 			Name = "ConstituentChart";
 			Vc = new InterlinVc(Cache);
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+
+			BuildUIComponents();
+=======
+
+			BuildUIComponents();
+			ConfigPropName = "InterlinConfig_v3_Edit_ConstituentChart";
+			OldConfigPropName = "InterlinConfig_v2_Edit_ConstituentChart";
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 		}
 
 		internal bool InterlineMasterWantsExportDiscourseChartDiscourseChartMenu
@@ -324,7 +426,17 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			LineChoices = GetLineChoices();
 			Vc.LineChoices = LineChoices;
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 			using (var dlg = new ConfigureInterlinDialog(Cache, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_ribbon.Vc.LineChoices.Clone() as InterlinLineChoices))
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+
+			using (var dlg = new ConfigureInterlinDialog(Cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+				m_ribbon.Vc.LineChoices.Clone() as InterlinLineChoices))
+=======
+
+			using (var dlg = new ConfigureInterlinDialog(m_mediator, PropertyTable, Cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+				m_ribbon.Vc.LineChoices.Clone() as InterlinLineChoices))
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
@@ -400,8 +512,24 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void PersistAndDisplayChangedLineChoices()
 		{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 			PropertyTable.SetProperty(ConfigPropName, m_ribbon.Vc.LineChoices.Persist(Cache.LanguageWritingSystemFactoryAccessor), true, settingsGroup: SettingsGroup.LocalSettings);
 			PropertyTable.SetProperty(ConfigPropName, Body.LineChoices.Persist(Cache.LanguageWritingSystemFactoryAccessor), true, settingsGroup: SettingsGroup.LocalSettings);
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+			PropertyTable.SetProperty(ConfigPropName,
+				m_ribbon.Vc.LineChoices.Persist(Cache.LanguageWritingSystemFactoryAccessor),
+				PropertyTable.SettingsGroup.LocalSettings,
+				true);
+			PropertyTable.SetProperty(ConfigPropName,
+				m_body.LineChoices.Persist(Cache.LanguageWritingSystemFactoryAccessor),
+				PropertyTable.SettingsGroup.LocalSettings,
+				true);
+=======
+			PropertyTable.SetProperty(ConfigPropName,
+				m_ribbon.Vc.LineChoices.Persist(Cache.LanguageWritingSystemFactoryAccessor),
+				PropertyTable.SettingsGroup.LocalSettings,
+				true);
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 			UpdateDisplayForNewLineChoices();
 		}
 
@@ -448,11 +576,34 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void OnLayout(LayoutEventArgs e)
 		{
+			m_topBottomSplit.SplitterMoved -= RibbonSizeChanged;
 			//Call SplitLayout here to ensure Mono properly updates Splitter length
 			SplitLayout(m_topBottomSplit, e);
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 			//Mono makes SplitLayout calls while Splitter is moving so set default distance here
 			m_topBottomSplit.SplitterDistance = (int)(Height * .9);
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+			//Mono makes SplitLayout calls while Splitter is moving so set default distance here
+			m_topBottomSplit.SplitterDistance = (int) (Height * .9);
+=======
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 			base.OnLayout(e);
+			int splitterValue;
+			// use a default property unless the property has been set
+			if (PropertyTable.PropertyExists("constChartRibbonSize"))
+			{
+				// GetIntProperty will set the default value if it isn't set.
+				// OnLayout will be called several times before the final correct values are available
+				splitterValue = PropertyTable.GetIntProperty("constChartRibbonSize", 100);
+			}
+			else
+			{
+				splitterValue = (int)(Height * .9);
+			}
+
+			//Mono makes SplitLayout calls while Splitter is moving so set default distance here
+			m_topBottomSplit.SplitterDistance = splitterValue;
+			m_topBottomSplit.SplitterMoved += RibbonSizeChanged;
 		}
 
 		/// <summary>
@@ -479,6 +630,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			};
 			m_headerMainCols.Layout += m_headerMainCols_Layout;
 			m_headerMainCols.SizeChanged += m_headerMainCols_SizeChanged;
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 			m_templateSelectionPanel = new Panel()
 			{
 				Height = new Button().Height,
@@ -488,12 +640,43 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_templateSelectionPanel.Layout += TemplateSelectionPanel_Layout;
 			m_topStuff = m_topBottomSplit.Panel1;
 			m_topStuff.Controls.AddRange(new Control[] { Body, m_headerMainCols, m_templateSelectionPanel });
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+
+			m_templateSelectionPanel = new Panel() { Height = new Button().Height, Dock = DockStyle.Top, Width = 0 };
+			m_templateSelectionPanel.Layout += new LayoutEventHandler(TemplateSelectionPanel_Layout);
+
+			m_topStuff = m_topBottomSplit.Panel1;
+			m_topStuff.Controls.AddRange(new Control[] { m_body, m_headerMainCols, m_templateSelectionPanel });
+=======
+
+			m_templateSelectionPanel = new Panel { Height = new Button().Height, Dock = DockStyle.Top, Width = 0 };
+			m_templateSelectionPanel.Layout += TemplateSelectionPanel_Layout;
+
+			RebuildTopStuffUI();
+		}
+
+		private void RebuildTopStuffUI()
+		{
+			m_topBottomSplit.Panel1.Controls.Clear();
+			m_topBottomSplit.Panel1.Controls.AddRange(new Control[] { m_body, m_headerMainCols });
+			// ReSharper disable once CoVariantArrayConversion
+			m_topBottomSplit.Panel1.Controls.AddRange(m_headerColGroups.ToArray());
+			m_topBottomSplit.Panel1.Controls.Add(m_templateSelectionPanel);
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 		}
 
 		private static void TemplateSelectionPanel_Layout(object sender, EventArgs e)
 		{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 			var panel = (Panel)sender;
 			if (panel.Controls.Count == 0)
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+			var panel = sender as Panel;
+			if (panel.Controls.Count != 0)
+=======
+			var panel = (Panel)sender;
+			if (panel.Controls.Count != 0)
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 			{
 				return;
 			}
@@ -510,7 +693,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_ribbon = new InterlinRibbon(Cache, 0) { Dock = DockStyle.Fill };
 			m_ribbon.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			m_logic.Ribbon = m_ribbon;
-			m_logic.Ribbon_Changed += m_logic_Ribbon_Changed;
+			m_logic.Ribbon_Changed += OnLogicRibbonChanged;
 
 			// Holds tooltip help for 'Move Here' buttons.
 			// Set up the delays for the ToolTip.
@@ -518,7 +701,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_toolTip = new ToolTip { AutoPopDelay = 5000, InitialDelay = 1000, ReshowDelay = 500, ShowAlways = true };
 
 			m_bottomStuff = m_topBottomSplit.Panel2;
-			m_bottomStuff.Height = 100;
 			m_bottomStuff.SuspendLayout();
 
 			m_buttonRow = new Panel { Height = new Button().Height, Dock = DockStyle.Top, BackColor = Color.FromKnownColor(KnownColor.ControlLight) };
@@ -527,6 +709,11 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			m_bottomStuff.Controls.AddRange(new Control[] { m_ribbon, m_buttonRow });
 			m_bottomStuff.ResumeLayout();
+		}
+
+		private void RibbonSizeChanged(object sender, EventArgs e)
+		{
+			PropertyTable.SetProperty("constChartRibbonSize", m_topBottomSplit.SplitterDistance, false);
 		}
 
 		private const int kmaxWordforms = 20;
@@ -580,7 +767,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 		private void m_headerMainCols_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+		void m_headerMainCols_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
+=======
+		// ENHANCE (Hasso) 2022.03: handle sender != m_headerMainCols
+		private void m_headerMainCols_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 		{
 			if (m_fInColWidthChanged)
 			{
@@ -594,9 +788,15 @@ namespace LanguageExplorer.Controls.DetailControls
 				var totalWidth = 0;
 				var maxWidth = MaxUseableWidth();
 				foreach (Control ch in m_headerMainCols.Controls)
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 				{
 					totalWidth += ch.Width + 0;
 				}
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+					totalWidth += ch.Width + 0;
+=======
+					totalWidth += ch.Width;
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 				if (totalWidth > maxWidth)
 				{
 					var delta = totalWidth - maxWidth;
@@ -624,9 +824,18 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Transfer from header to variables.
 			PersistColumnWidths();
 			// Now adjust everything else
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 			ComputeButtonWidths();
 			Body.SetColWidths(m_columnWidths);
 			m_headerMainCols.UpdatePositions();
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+			ComputeButtonWidths();
+			m_body.SetColWidths(m_columnWidths);
+			m_headerMainCols.UpdatePositions();
+=======
+			SetHeaderColAndButtonWidths();
+			m_body.SetColWidths(m_columnWidths);
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 		}
 
 		private void m_headerMainCols_SizeChanged(object sender, EventArgs e)
@@ -642,22 +851,96 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary />
 		protected virtual void SetHeaderColAndButtonWidths()
 		{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 			// Do not change column widths until positions have been updated to represent template change
 			// ColumnPositions should be one longer due to fence posting
 			if (ColumnPositions != null && ColumnPositions.Length == m_headerMainCols.Controls.Count + 1)
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+			//Do not change column widths until positions have been updated to represent template change
+			//m_columnPositions should be one longer due to fenceposting
+			if (m_columnPositions != null && m_columnPositions.Length == m_headerMainCols.Controls.Count + 1)
+=======
+			// Do not change column widths until positions have been updated to represent template change
+			// m_columnPositions should be one longer due to fenceposting
+			if (m_columnPositions != null && m_columnPositions.Length == m_headerMainCols.Controls.Count + 1)
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 			{
 				m_fInColWidthChanged = true;
 				try
 				{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 					for (var i = 0; i < m_headerMainCols.Controls.Count; i++)
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+					//GetColumnWidths();
+					for (int i = 0; i < m_headerMainCols.Controls.Count; i++)
+=======
+					for (int i = 0; i < m_headerMainCols.Controls.Count; i++)
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 					{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 						var width = ColumnPositions[i + 1] - ColumnPositions[i];
 						if (m_headerMainCols[i].Width != width)
 						{
 							m_headerMainCols[i].Width = width;
 						}
 						m_headerMainCols.UpdatePositions();
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+						int width = m_columnPositions[i + 1] - m_columnPositions[i];
+						if (m_headerMainCols[i].Width != width)
+							m_headerMainCols[i].Width = width;
+=======
+						SetColumnWidthIfDifferent(m_headerMainCols[i], i, i + 1);
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 					}
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+					m_headerMainCols.UpdatePositions();
+=======
+
+					m_headerMainCols.UpdatePositions();
+
+					var offset = (NotesColumnOnRight ? 0 : 1) + (ChartIsRtL ? 0 : 1);
+					var columnGroups = m_logic.ColumnsAndGroups.Headers;
+					if (!columnGroups.Any())
+					{
+						// No columnGroups probably means no text. Nothing to recalculate since we may be in the midst of disappearing.
+						return;
+					}
+					for (var iLevel = 0; iLevel < m_headerColGroups.Count; iLevel++)
+					{
+						var levelModel = columnGroups[columnGroups.Count - 2 - iLevel];
+						var levelView = m_headerColGroups[iLevel];
+						Debug.Assert(levelView.Controls.Count == levelModel.Count + 2);
+						int iGroup = 0, iCol = 0;
+						if (!NotesColumnOnRight)
+						{
+							SetColumnWidthIfDifferent(levelView[iGroup++], iCol, ++iCol);
+						}
+						if (ChartIsRtL)
+						{
+							levelModel.Reverse();
+						}
+						else
+						{
+							// number column
+							SetColumnWidthIfDifferent(levelView[iGroup++], iCol, ++iCol);
+						}
+						while (iGroup < levelModel.Count + offset)
+						{
+							SetColumnWidthIfDifferent(levelView[iGroup], iCol, iCol += levelModel[iGroup++ - offset].ColumnCount);
+						}
+						if (ChartIsRtL)
+						{
+							// number column
+							SetColumnWidthIfDifferent(levelView[iGroup++], iCol, ++iCol);
+						}
+						if (NotesColumnOnRight)
+						{
+							SetColumnWidthIfDifferent(levelView[iGroup], iCol, ++iCol);
+						}
+						levelView.UpdatePositions();
+					}
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 				}
 				finally
 				{
@@ -666,9 +949,24 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			ComputeButtonWidths();
 			if (m_columnWidths != null)
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 			{
 				Body.SetColWidths(m_columnWidths);
 			}
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+				m_body.SetColWidths(m_columnWidths);
+=======
+			{
+				m_body.SetColWidths(m_columnWidths);
+			}
+		}
+
+		private void SetColumnWidthIfDifferent(Control control, int leftIndex, int rightIndex)
+		{
+			var width = m_columnPositions[rightIndex] - m_columnPositions[leftIndex];
+			if (control.Width != width)
+				control.Width = width;
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 		}
 
 		private int MpToPixelX(int dxmp)
@@ -698,7 +996,13 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void OnSizeChanged(EventArgs e)
 		{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 			if (m_columnWidths != null && m_chart != null && !HasPersistentColWidths)
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+			if (m_mediator != null && m_columnWidths != null && m_chart != null && !HasPersistantColWidths)
+=======
+			if (m_mediator != null && m_columnWidths != null && m_chart != null && !HasPersistentColWidths)
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 			{
 				SetDefaultColumnWidths();
 				SetHeaderColAndButtonWidths();
@@ -771,9 +1075,18 @@ namespace LanguageExplorer.Controls.DetailControls
 			return maxUsableWidth;
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 		/// Compute (or eventually retrieve from persistence) column widths,
 		/// if not already known.
 		private void GetColumnWidths()
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+		/// Compute (or eventually retrieve from persistence) column widths,
+		/// if not already known.
+		void GetColumnWidths()
+=======
+		/// <summary>Compute (or eventually retrieve from persistence) column widths, if not already known.</summary>
+		private void GetColumnWidths()
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 		{
 			if (m_allColumns == null)
 			{
@@ -807,27 +1120,69 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void ComputeButtonWidths()
 		{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 			var cPairs = m_buttonRow.Controls.Count / 2;
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+			//GetColumnWidths();
+			int cPairs = m_buttonRow.Controls.Count / 2;
+=======
+			int cPairs = m_buttonRow.Controls.Count / 2;
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 			if (cPairs == 0)
 			{
 				return;
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 			}
 			var widthBtnContextMenu = SIL.FieldWorks.Resources.ResourceHelper.ButtonMenuArrowIcon.Width + 10;
 			var ipair = 0;
 			while (ipair < cPairs)
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+			int widthBtnContextMenu = SIL.FieldWorks.Resources.ResourceHelper.ButtonMenuArrowIcon.Width + 10;
+			int ipair = 0;
+			while (ipair < cPairs)
+=======
+			var widthBtnContextMenu = Resources.ResourceHelper.ButtonMenuArrowIcon.Width + 10;
+			var offset = (NotesColumnOnRight ? 0 : 1) + (ChartIsRtL ? 0 : 1);
+			var columnNames = m_logic.AllMyColumns.Select(ConstituentChartLogic.GetColumnHeaderFrom).ToList();
+			if (!columnNames.Any())
 			{
+				// No columnNames probably means no text. Nothing to recalculate since we may be in the midst of disappearing.
+				return;
+			}
+			if (ChartIsRtL)
+			{
+				columnNames.Reverse();
+			}
+			for (var ipair = 0; ipair < cPairs; ipair++)
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
+			{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 				var c = m_buttonRow.Controls[ipair * 2];
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+				Control c = m_buttonRow.Controls[ipair * 2];
+				int offset = NotesColumnOnRight ? 0 : 1;
+				offset += ChartIsRtL ? 0 : 1;
+=======
+				Control c = m_buttonRow.Controls[ipair * 2];
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 				// main button
 				c.Left = ColumnPositions[ipair + 1] + 2;
 				// skip number column, fine tune
 				c.Width = ColumnPositions[ipair + 2] - ColumnPositions[ipair + 1] - widthBtnContextMenu;
 				// Redo button name in case some won't (or now will!) fit on the button
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 				c.Text = GetBtnName(m_headerMainCols[ipair + 1].Text, c.Width - ((Button)c).Image.Width * 2);
 				var c2 = m_buttonRow.Controls[ipair * 2 + 1];
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+				c.Text = GetBtnName(m_headerMainCols[ipair + offset].Text, c.Width - ((c as Button).Image.Width * 2));
+				Control c2 = m_buttonRow.Controls[ipair * 2 + 1];
+=======
+				c.Text = GetBtnName(columnNames[ipair], c.Width - (((Button)c).Image.Width * 2));
+				Control c2 = m_buttonRow.Controls[ipair * 2 + 1];
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 				// pull-down
 				c2.Left = c.Right;
 				c2.Width = widthBtnContextMenu;
-				ipair++;
 			}
 		}
 
@@ -842,6 +1197,238 @@ namespace LanguageExplorer.Controls.DetailControls
 			SetRoot(m_hvoRoot);
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+		/// <summary>
+		/// Set the root object.
+		/// </summary>
+		public override void SetRoot(int hvo)
+		{
+			int oldTemplateHvo = 0;
+			if (m_template != null)
+				oldTemplateHvo = m_template.Hvo;
+			// does it already have a chart? If not make one.
+			m_chart = null;
+			m_hvoRoot = hvo;
+			if (m_hvoRoot == 0)
+				RootStText = null;
+			else
+				RootStText = (IStText)Cache.ServiceLocator.ObjectRepository.GetObject(hvo);
+			if (m_hvoRoot > 0)
+			{
+				DetectAndReportTemplateProblem();
+
+				// Make sure text is parsed!
+				if (InterlinMaster.HasParagraphNeedingParse(RootStText))
+				{
+					NonUndoableUnitOfWorkHelper.Do(
+						RootStText.Cache.ActionHandlerAccessor,
+						() => InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(RootStText, false));
+				}
+
+				// We need to make or set the chart before calling NextUnusedInput.
+				FindAndCleanUpMyChart(m_hvoRoot);
+				// Sets m_chart if it finds one for hvoStText
+				if (m_chart == null)
+				{
+					CreateChartInNonUndoableUOW();
+				}
+				m_logic.Chart = m_chart;
+				var unchartedWordforms = m_logic.NextUnchartedInput(RootStText, kmaxWordforms).ToList();
+				m_ribbon.CacheRibbonItems(unchartedWordforms);
+				// Don't need PropChanged here, CacheRibbonItems handles it.
+				if (m_logic.StTextHvo != 0 && m_hvoRoot != m_logic.StTextHvo)
+				{
+					EnableAllContextButtons();
+					EnableAllMoveHereButtons();
+					m_logic.ResetRibbonLimits();
+					m_logic.CurrHighlightCells = null;
+					// Should reset highlighting (w/PropChanged)
+				}
+				// Tell the ribbon whether it needs to display and select words Right to Left or not
+				m_ribbon.SetRoot(m_hvoRoot);
+				if (m_chart.TemplateRA == null)
+					// LT-8700: if original template is deleted we might need this
+					m_chart.TemplateRA = Cache.LangProject.GetDefaultChartTemplate();
+				m_template = m_chart.TemplateRA;
+				m_logic.StTextHvo = m_hvoRoot;
+				m_allColumns = m_logic.AllColumns(m_chart.TemplateRA).ToArray();
+			}
+			else
+			{
+				// no text, so no chart
+				m_ribbon.SetRoot(0);
+				m_logic.Chart = null;
+				m_logic.StTextHvo = 0;
+				m_allColumns = new ICmPossibility[0];
+			}
+			if (m_template != null && m_template.Hvo != oldTemplateHvo)
+			{
+				m_fInColWidthChanged = true;
+				try
+				{
+					m_logic.MakeMainHeaderCols(m_headerMainCols);
+					if (m_allColumns == new ICmPossibility[0])
+						return;
+					int ccolsWanted = m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns;
+					m_columnWidths = new int[ccolsWanted];
+					m_columnPositions = new int[ccolsWanted + 1];
+					// one extra for after the last column
+					if (!RestoreColumnWidths())
+					{
+						SetDefaultColumnWidths();
+					}
+				}
+				finally
+				{
+					m_fInColWidthChanged = false;
+				}
+			}
+
+			// If necessary adjust number of buttons
+			if (m_MoveHereButtons.Count != m_allColumns.Length && hvo > 0)
+			{
+				SetupMoveHereButtonsToMatchTemplate();
+			}
+			SetHeaderColAndButtonWidths();
+
+			BuildTemplatePanel();
+
+			if (m_chart != null)
+			{
+				m_body.SetRoot(m_chart.Hvo, m_allColumns, ChartIsRtL);
+
+				GetAndScrollToBookmark();
+			}
+
+			else
+				m_body.SetRoot(0, null, false);
+		}
+
+=======
+		/// <summary>
+		/// Set the root object.
+		/// </summary>
+		public override void SetRoot(int hvo)
+		{
+			int oldTemplateHvo = 0;
+			if (m_template != null)
+				oldTemplateHvo = m_template.Hvo;
+			// does it already have a chart? If not make one.
+			m_chart = null;
+			m_hvoRoot = hvo;
+			if (m_hvoRoot == 0)
+				RootStText = null;
+			else
+				RootStText = (IStText)Cache.ServiceLocator.ObjectRepository.GetObject(hvo);
+			if (m_hvoRoot > 0)
+			{
+				DetectAndReportTemplateProblem();
+
+				// Make sure text is parsed!
+				if (InterlinMaster.HasParagraphNeedingParse(RootStText))
+				{
+					NonUndoableUnitOfWorkHelper.Do(
+						RootStText.Cache.ActionHandlerAccessor,
+						() => InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(RootStText, false));
+				}
+
+				// We need to make or set the chart before calling NextUnusedInput.
+				FindAndCleanUpMyChart(m_hvoRoot);
+				// Sets m_chart if it finds one for hvoStText
+				if (m_chart == null)
+				{
+					CreateChartInNonUndoableUOW();
+				}
+				m_logic.Chart = m_chart;
+				var unchartedWordforms = m_logic.NextUnchartedInput(RootStText, kmaxWordforms).ToList();
+				m_ribbon.CacheRibbonItems(unchartedWordforms);
+				// Don't need PropChanged here, CacheRibbonItems handles it.
+				if (m_logic.StTextHvo != 0 && m_hvoRoot != m_logic.StTextHvo)
+				{
+					EnableAllContextButtons();
+					EnableAllMoveHereButtons();
+					m_logic.ResetRibbonLimits();
+					m_logic.CurrHighlightCells = null;
+					// Should reset highlighting (w/PropChanged)
+				}
+				// Tell the ribbon whether it needs to display and select words Right to Left or not
+				m_ribbon.SetRoot(m_hvoRoot);
+				if (m_chart.TemplateRA == null)
+				{
+					// LT-8700: if original template is deleted then set to the default
+					NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor, ()=> m_chart.TemplateRA = Cache.LangProject.GetDefaultChartTemplate());
+				}
+				m_template = m_chart.TemplateRA;
+				m_logic.StTextHvo = m_hvoRoot;
+				m_allColumns = m_logic.AllMyColumns;
+			}
+			else
+			{
+				// no text, so no chart
+				m_ribbon.SetRoot(0);
+				m_logic.Chart = null;
+				m_logic.StTextHvo = 0;
+				m_allColumns = new ICmPossibility[0];
+			}
+			if (m_template != null && m_template.Hvo != oldTemplateHvo)
+			{
+				m_fInColWidthChanged = true;
+				try
+				{
+					var headers = m_logic.ColumnsAndGroups.Headers;
+					headers.Reverse();
+					m_logic.MakeHeaderColsFor(m_headerMainCols, headers.FirstOrDefault() ?? new List<MultilevelHeaderNode>(0), headers.Count == 1);
+					m_headerColGroups.ForEach(h => h.Dispose());
+					m_headerColGroups.Clear();
+					for (var i = 1; i < headers.Count; i++)
+					{
+						var headLevel = new ChartHeaderView(this) { Dock = DockStyle.Top, Height = 22 };
+						headLevel.ColumnWidthChanged += m_headerMainCols_ColumnWidthChanged;
+						// TODO (Hasso) 2022.03: register other event handlers (Layout, SizeChanged)?
+						m_logic.MakeHeaderColsFor(headLevel, headers[i], headers.Count == i + 1);
+						m_headerColGroups.Add(headLevel);
+					}
+					RebuildTopStuffUI();
+					if (m_allColumns.Length > 0)
+					{
+						var cColsWanted = m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns;
+						m_columnWidths = new int[cColsWanted];
+						// one extra for after the last column
+						m_columnPositions = new int[cColsWanted + 1];
+						if (!RestoreColumnWidths())
+						{
+							SetDefaultColumnWidths();
+						}
+					}
+				}
+				finally
+				{
+					m_fInColWidthChanged = false;
+				}
+			}
+
+			if (m_chart != null)
+			{
+				m_body.SetRoot(m_chart.Hvo, m_allColumns, ChartIsRtL);
+				GetAndScrollToBookmark();
+			}
+			else
+			{
+				m_body.SetRoot(0, null, false);
+			}
+
+			// If necessary adjust number of buttons
+			if (m_MoveHereButtons.Count != m_allColumns.Length && hvo > 0)
+			{
+				SetupMoveHereButtonsToMatchTemplate();
+			}
+			SetHeaderColAndButtonWidths();
+
+			BuildTemplatePanel();
+		}
+
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 		private void BuildTemplatePanel()
 		{
 			if (m_template == null)
@@ -874,7 +1461,21 @@ namespace LanguageExplorer.Controls.DetailControls
 			// If user chooses to add a new template then navigate them to the Text Constituent Chart Template list view
 			if (selection.SelectedItem as string == LanguageExplorerResources.ksCreateNewTemplate)
 			{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 				LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(LanguageExplorerResources.ksNewTemplateLink, new Guid()));
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+				m_mediator.PostMessage("FollowLink", new FwLinkArgs(DiscourseStrings.ksNewTemplateLink, new Guid()));
+=======
+				MessageBoxUtils.Show(selection.Parent, DiscourseStrings.ksNewConstChartMessage, DiscourseStrings.ksNewConstChartCaption, MessageBoxButtons.OK);
+				Cache.DomainDataByFlid.BeginUndoTask("Undo Insert new Text Constituent Chart Template",
+					"Redo Insert new Text Constituent Chart Template");
+				var list = Cache.LanguageProject.DiscourseDataOA.ConstChartTemplOA;
+				var newKid = list.Services.GetInstance<ICmPossibilityFactory>().Create();
+				list.PossibilitiesOS.Add(newKid);
+				RecordList.SetUpConstChartTemplateTemplate(newKid);
+				Cache.DomainDataByFlid.EndUndoTask();
+				m_mediator.PostMessage("FollowLink", new FwLinkArgs(DiscourseStrings.ksNewTemplateLink, newKid.Guid));
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 				selection.SelectedItem = m_template;
 				return;
 			}
@@ -897,7 +1498,16 @@ namespace LanguageExplorer.Controls.DetailControls
 					selectedChart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(Cache.LangProject.DiscourseDataOA, RootStText, selection.SelectedItem as ICmPossibility);
 				});
 			}
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 			m_chartHvo = selectedChart.Hvo;
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+
+
+			m_chartHvo = selectedChart.Hvo;
+=======
+
+			PropertyTable.SetProperty(GetLastChartPropForText(RootStText.Guid), selectedChart.Guid, PropertyTable.SettingsGroup.LocalSettings, false);
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 			SetRoot(m_hvoRoot);
 		}
 
@@ -999,11 +1609,19 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void CreateChartInNonUndoableUOW()
 		{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				m_chart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(Cache.LangProject.DiscourseDataOA, RootStText, Cache.LangProject.GetDefaultChartTemplate());
 			});
 			m_chartHvo = m_chart.Hvo;
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => { m_chart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(Cache.LangProject.DiscourseDataOA, RootStText, Cache.LangProject.GetDefaultChartTemplate()); });
+			m_chartHvo = m_chart.Hvo;
+=======
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => { m_chart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(Cache.LangProject.DiscourseDataOA, RootStText, Cache.LangProject.GetDefaultChartTemplate()); });
+			PropertyTable.SetProperty(GetLastChartPropForText(RootStText.Guid), m_chart.Guid, PropertyTable.SettingsGroup.LocalSettings, false);
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 		}
 
 		private void DetectAndReportTemplateProblem()
@@ -1030,9 +1648,23 @@ namespace LanguageExplorer.Controls.DetailControls
 			// disable dropdown context buttons (next to MoveHere buttons)
 			DisableAllContextButtons();
 			// create a ChartLocation for scrolling and scroll to first row
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 			Body.SelectAndScrollToLoc(new ChartLocation(rowPrec, 0), false);
 			// bookmark this location, but don't persist.
 			m_bookmark.Save(SegmentServices.FindNearestAnalysis(GetTextParagraphByIndex(iPara), offset, offset, out _), false, m_bookmark.TextIndex);
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+			m_body.SelectAndScrollToLoc(new ChartLocation(rowPrec, 0), false);
+			bool fExactMatch;
+			var occurrenceToMark = SegmentServices.FindNearestAnalysis(GetTextParagraphByIndex(iPara),
+				offset, offset, out fExactMatch);
+			m_bookmark.Save(occurrenceToMark, false, m_bookmark.TextIndex); // bookmark this location, but don't persist.
+=======
+			m_body.SelectAndScrollToLoc(new ChartLocation(rowPrec, 0), false);
+			bool fExactMatch;
+			var occurrenceToMark = SegmentServices.FindNearestAnalysis(GetTextParagraphByIndex(iPara),
+				offset, offset, out fExactMatch);
+			m_bookmark?.Save(occurrenceToMark, false, m_bookmark.TextIndex); // bookmark this location, but don't persist.
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 		}
 
 		private IStTxtPara GetTextParagraphByIndex(int iPara)
@@ -1098,10 +1730,21 @@ namespace LanguageExplorer.Controls.DetailControls
 			return m_logic.GetUnchartedWordForBookmark();
 		}
 
+		private string GetLastChartPropForText(Guid guid) => $"LastChartForText_{guid.ToString()}";
+
+		/// <summary>
+		/// Find the last chart used for this text (or the first chart available), set it in
+		/// the chart member and in the chart logic, and clean up any invalid cells
+		/// </summary>
+		/// <param name="hvoStText"></param>
 		private void FindAndCleanUpMyChart(int hvoStText)
 		{
-			foreach (var chart in Cache.LangProject.DiscourseDataOA.ChartsOC.Cast<IDsConstChart>().Where(chart => chart.BasedOnRA != null && chart.BasedOnRA.Hvo == hvoStText))
+			IDsConstChart chartToClean = null;
+			// Try to retrieve the last chart used for this text from the property table
+			var textGuid = Cache.ServiceLocator.GetObject(hvoStText).Guid;
+			if(PropertyTable.TryGetValue(GetLastChartPropForText(textGuid), out Guid chartGuid))
 			{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 				m_chart = chart;
 				m_logic.Chart = m_chart;
 				m_logic.CleanupInvalidChartCells();
@@ -1110,7 +1753,33 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					break;
 				}
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+				m_chart = chart;
+				m_logic.Chart = m_chart;
+				m_logic.CleanupInvalidChartCells();
+				//If a template change requests a specific chart, then use that one, otherwise use the last active chart
+				if (m_chart.Hvo == m_chartHvo)
+					break;
+=======
+				if (Cache.ServiceLocator.ObjectRepository.TryGetObject(chartGuid, out var chart))
+				{
+					if (chart is IDsConstChart constChart)
+					{
+						chartToClean = constChart;
+					}
+				}
+				// if that chart no longer exists clear it from the prop table
+				if (chartToClean == null)
+				{
+					PropertyTable.RemoveProperty(GetLastChartPropForText(textGuid));
+				}
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 			}
+			// Use the retrieved last chart, or pick the first valid chart for this text
+			m_logic.Chart = m_chart = chartToClean ?? Cache.LangProject.DiscourseDataOA.ChartsOC
+				.Cast<IDsConstChart>()
+				.FirstOrDefault(chart => chart.BasedOnRA != null && chart.BasedOnRA.Hvo == hvoStText);
+			m_logic.CleanupInvalidChartCells();
 		}
 
 		/// <summary>
@@ -1140,7 +1809,19 @@ namespace LanguageExplorer.Controls.DetailControls
 			return strName;
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 		private bool HasPersistentColWidths => PropertyTable.GetValue<string>(ColWidthId()) != null;
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+		bool HasPersistantColWidths
+		{
+			get { return PropertyTable.GetStringProperty(ColWidthId(), null) != null; }
+		}
+=======
+		private bool HasPersistentColWidths
+		{
+			get { return PropertyTable.GetStringProperty(ColWidthId(), null) != null; }
+		}
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 
 		/// <summary>
 		/// Restore column widths if any are persisted for this chart
@@ -1156,7 +1837,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			XDocument doc;
 			try
 			{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 				doc = XDocument.Parse(savedCols);
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+				doc = new XmlDocument();
+				doc.LoadXml(savedCols);
+=======
+				doc.LoadXml(savedCols);
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 			}
 			catch (Exception)
 			{
@@ -1225,15 +1913,42 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		// Event handler to run if Ribbon changes
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 		private void m_logic_Ribbon_Changed(object sender, EventArgs e)
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+		void m_logic_Ribbon_Changed(object sender, EventArgs e)
+=======
+		void OnLogicRibbonChanged(object sender, EventArgs e)
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 		{
 			int iPara, offset;
 			// 'out' vars for NextInputIsChOrph()
 			// Tests ribbon contents
 			if (m_logic.NextInputIsChOrph(out iPara, out offset))
 			{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 				Debug.Assert(m_bookmark != null, "Hit null bookmark. Why?");
 				m_bookmark?.Reset(m_bookmark.TextIndex);
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+				Debug.Assert(m_bookmark != null, "Hit null bookmark. Why?");
+				if (m_bookmark != null)
+					m_bookmark.Reset(m_bookmark.TextIndex);
+=======
+				if (m_bookmark != null)
+				{
+					m_bookmark.Reset(m_bookmark.TextIndex);
+				}
+				else
+				{
+					// This code path was unexpected but the conditions were seen in a crash stack
+					// from the field. We will avoid NullReference by attempting to get a bookmark to use
+					// and checking for a null bookmark in PrepareForChOrphInsert.
+					// This very well could be the right thing to do, but understanding why the bookmark is null
+					// is worthwhile
+					m_bookmark = GetAncestorBookmark(this, m_chart.BasedOnRA);
+					Debug.Fail("This is not an expected path, analyze.");
+				}
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 				// Resetting of highlight is done in the array setter now.
 				PrepareForChOrphInsert(iPara, offset);
 				// scroll to ChOrph, highlight cell possibilities, set bookmark etc.
@@ -1348,7 +2063,204 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Enhance: decide which one should have focus.
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 		public bool NotesColumnOnRight => m_headerMainCols.NotesOnRight;
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+		/// <summary>
+		///  If this control is a colleague, export Discourse should be available.
+		/// </summary>
+		/// <param name="commandObject"></param>
+		/// <param name="display"></param>
+		/// <returns></returns>
+		public bool OnDisplayExportDiscourse(object commandObject, ref UIItemDisplayProperties display)
+		{
+			display.Enabled = m_chart != null;
+			// in concordance we may have no chart if no text selected.
+			display.Visible = true;
+			return true;
+		}
+
+		/// <summary>
+		/// Implement export of discourse material.
+		/// </summary>
+		/// <param name="argument"></param>
+		/// <returns></returns>
+		public bool OnExportDiscourse(object argument)
+		{
+			// guards against LT-8309, though I could not reproduce all cases.
+			if (m_chart == null || m_body == null || m_logic == null)
+				return false;
+			using (var dlg = new DiscourseExportDialog(m_mediator, PropertyTable, m_chart.Hvo, m_body.Vc, m_logic.WsLineNumber))
+			{
+				dlg.ShowDialog(this);
+			}
+
+			return true;
+			// we handled this
+		}
+
+		public bool NotesColumnOnRight
+		{
+			get { return m_headerMainCols.NotesOnRight; }
+		}
+
+		#region IxCoreColleague Members
+
+		/// <summary>
+		/// Get things that would like to receive commands. The main chart would like to receive
+		/// Print and Edit commands.
+		/// </summary>
+		/// <returns></returns>
+		public IxCoreColleague[] GetMessageTargets()
+		{
+			return new IxCoreColleague[] { m_body, this };
+		}
+
+		/// <summary>
+		/// Basic initialization.
+		/// </summary>
+		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
+		/// <param name="configurationParameters"></param>
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		{
+			m_mediator = mediator;
+			PropertyTable = propertyTable;
+			if (PropertyTable != null)
+				m_logic.Init(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+
+			m_configurationParameters = configurationParameters;
+			InterlinLineChoices lineChoices = GetLineChoices();
+			m_body.Init(mediator, propertyTable, m_configurationParameters);
+			m_body.LineChoices = lineChoices;
+			m_ribbon.Init(mediator, propertyTable, m_configurationParameters);
+			m_ribbon.RibbonLineChoices = lineChoices;
+		}
+
+		/// <summary>
+		/// Should not be called if disposed.
+		/// </summary>
+		public bool ShouldNotCall
+		{
+			get { return IsDisposed; }
+		}
+
+
+		/// <summary>
+		/// Set/get the style sheet.
+		/// </summary>
+		public IVwStylesheet StyleSheet
+		{
+			get { return m_body.StyleSheet; }
+			set
+			{
+				m_body.StyleSheet = value;
+				var oldStyles = m_ribbon.StyleSheet;
+				m_ribbon.StyleSheet = value;
+				if (oldStyles != value)
+					m_ribbon.SelectFirstOccurence();
+				// otherwise, selection disappears.
+			}
+		}
+=======
+		/// <summary>
+		///  If this control is a colleague, export Discourse should be available.
+		/// </summary>
+		/// <param name="commandObject"></param>
+		/// <param name="display"></param>
+		/// <returns></returns>
+		public bool OnDisplayExportDiscourse(object commandObject, ref UIItemDisplayProperties display)
+		{
+			display.Enabled = m_chart != null;
+			// in concordance we may have no chart if no text selected.
+			display.Visible = true;
+			return true;
+		}
+
+		/// <summary>
+		/// Implement export of discourse material.
+		/// </summary>
+		/// <param name="argument"></param>
+		/// <returns></returns>
+		public bool OnExportDiscourse(object argument)
+		{
+			// guards against LT-8309, though I could not reproduce all cases.
+			if (m_chart == null || m_body == null || m_logic == null)
+				return false;
+			using (var dlg = new DiscourseExportDialog(m_mediator, PropertyTable, m_chart.Hvo, m_body.Vc, m_logic.WsLineNumber))
+			{
+				dlg.ShowDialog(this);
+			}
+
+			return true;
+			// we handled this
+		}
+
+		public bool NotesColumnOnRight
+		{
+			get;
+			internal set;
+		} = true;
+
+		#region IxCoreColleague Members
+
+		/// <summary>
+		/// Get things that would like to receive commands. The main chart would like to receive
+		/// Print and Edit commands.
+		/// </summary>
+		/// <returns></returns>
+		public IxCoreColleague[] GetMessageTargets()
+		{
+			return new IxCoreColleague[] { m_body, this };
+		}
+
+		/// <summary>
+		/// Basic initialization.
+		/// </summary>
+		/// <param name="mediator"></param>
+		/// <param name="propertyTable"></param>
+		/// <param name="configurationParameters"></param>
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		{
+			m_mediator = mediator;
+			PropertyTable = propertyTable;
+			if (PropertyTable != null)
+				m_logic.Init(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+
+			m_configurationParameters = configurationParameters;
+			InterlinLineChoices lineChoices = GetLineChoices();
+			m_body.Init(mediator, propertyTable, m_configurationParameters);
+			m_body.LineChoices = lineChoices;
+			m_ribbon.Init(mediator, propertyTable, m_configurationParameters);
+			m_ribbon.RibbonLineChoices = lineChoices;
+		}
+
+		/// <summary>
+		/// Should not be called if disposed.
+		/// </summary>
+		public bool ShouldNotCall
+		{
+			get { return IsDisposed; }
+		}
+
+
+		/// <summary>
+		/// Set/get the style sheet.
+		/// </summary>
+		public IVwStylesheet StyleSheet
+		{
+			get { return m_body.StyleSheet; }
+			set
+			{
+				m_body.StyleSheet = value;
+				var oldStyles = m_ribbon.StyleSheet;
+				m_ribbon.StyleSheet = value;
+				if (oldStyles != value)
+					m_ribbon.SelectFirstOccurence();
+				// otherwise, selection disappears.
+			}
+		}
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 
 		/// <summary>
 		/// For testing.
@@ -1365,15 +2277,114 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary>
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+		/// Retrieves the Line Choices from persistence, or otherwise sets them to a default option
+		/// </summary>
+		/// <param name="lineConfigPropName">The string key to retrieve Line Choices from the Property Table</param>
+		/// <param name="mode">Should always be Chart for this override</param>
+		public override InterlinLineChoices SetupLineChoices(string lineConfigPropName, InterlinLineChoices.InterlinMode mode)
+		{
+			ConfigPropName = lineConfigPropName;
+			InterlinLineChoices lineChoices;
+			if (!TryRestoreLineChoices(out lineChoices))
+			{
+				if (ForEditing)
+				{
+					lineChoices = EditableInterlinLineChoices.DefaultChoices(Cache.LangProject,
+						WritingSystemServices.kwsVern, WritingSystemServices.kwsAnal);
+					lineChoices.Mode = mode;
+					lineChoices.SetStandardChartState();
+				}
+				else
+				{
+					lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject,
+						WritingSystemServices.kwsVern, WritingSystemServices.kwsAnal, mode);
+				}
+			}
+			else if (ForEditing)
+			{
+				// just in case this hasn't been set for restored lines
+				lineChoices.Mode = mode;
+			}
+			LineChoices = lineChoices;
+			return LineChoices;
+		}
+
+		/// <summary>
+=======
+		/// The old property table key storing InterlinLineChoices used by our display.
+		/// </summary>
+		private static string OldConfigPropName
+		{
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Retrieves the Line Choices from persistence, or otherwise sets them to a default option
+		/// </summary>
+		/// <param name="lineConfigPropName">The string key to retrieve Line Choices from the Property Table</param>
+		/// <param name="oldLineConfigPropName">The old string key to retrieve Line Choices from the Property Table</param>
+		/// <param name="mode">Should always be Chart for this override</param>
+		public override InterlinLineChoices SetupLineChoices(string lineConfigPropName, string oldLineConfigPropName, InterlinLineChoices.InterlinMode mode)
+		{
+			ConfigPropName = lineConfigPropName;
+			OldConfigPropName = oldLineConfigPropName;
+			InterlinLineChoices lineChoices;
+			if (!TryRestoreLineChoices(out lineChoices))
+			{
+				if (ForEditing)
+				{
+					lineChoices = EditableInterlinLineChoices.DefaultChoices(Cache.LangProject,
+						WritingSystemServices.kwsVern, WritingSystemServices.kwsAnal);
+					lineChoices.Mode = mode;
+					lineChoices.SetStandardChartState();
+				}
+				else
+				{
+					lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject,
+						WritingSystemServices.kwsVern, WritingSystemServices.kwsAnal, mode);
+				}
+			}
+			else if (ForEditing)
+			{
+				// just in case this hasn't been set for restored lines
+				lineChoices.Mode = mode;
+			}
+			LineChoices = lineChoices;
+			return LineChoices;
+		}
+
+		/// <summary>
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 		/// Tries to retrieve the Line Choices from the Property Table and returns if it was succesful
 		/// </summary>
 		internal bool TryRestoreLineChoices(out InterlinLineChoices lineChoices)
 		{
 			lineChoices = null;
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 			var persist = PropertyTable.GetValue<string>(ConfigPropName, null, SettingsGroup.LocalSettings);
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+			var persist = PropertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+=======
+			var persist = PropertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+			if (persist == null)
+				persist = PropertyTable.GetStringProperty(OldConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 			if (persist != null)
 			{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 				lineChoices = InterlinLineChoices.Restore(persist, Cache.LanguageWritingSystemFactoryAccessor, Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinMode.Analyze, PropertyTable, ConfigPropName);
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+				lineChoices = InterlinLineChoices.Restore(persist, Cache.LanguageWritingSystemFactoryAccessor,
+					Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze, PropertyTable, ConfigPropName);
+=======
+				// Intentionally never pass OldConfigPropName into Restore to prevent corrupting it's old value with the new format.
+				lineChoices = InterlinLineChoices.Restore(persist, Cache.LanguageWritingSystemFactoryAccessor,
+					Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze, PropertyTable, ConfigPropName);
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 			}
 			return persist != null && lineChoices != null;
 		}
@@ -1387,7 +2398,16 @@ namespace LanguageExplorer.Controls.DetailControls
 			string persist = null;
 			if (PropertyTable != null)
 			{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 				persist = PropertyTable.GetValue<string>(ConfigPropName ?? "InterlinConfig_Edit_ConstituentChart", null, SettingsGroup.LocalSettings);
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+				string configPropName = (ConfigPropName == null) ? "InterlinConfig_Edit_ConstituentChart" : ConfigPropName;
+				persist = PropertyTable.GetStringProperty(configPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+=======
+				persist = PropertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+				if (persist == null)
+					persist = PropertyTable.GetStringProperty(OldConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 			}
 			InterlinLineChoices lineChoices = null;
 			if (persist != null)
@@ -1399,6 +2419,13 @@ namespace LanguageExplorer.Controls.DetailControls
 				GetLineChoice(result, lineChoices, InterlinLineChoices.kflidWord, InterlinLineChoices.kflidWordGloss);
 				return result;
 			}
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+			lineChoices = InterlinLineChoices.Restore(persist, Cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>(), Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Chart, PropertyTable, ConfigPropName);
+=======
+			// Intentionally never pass OldConfigPropName into Restore to prevent corrupting it's old value with the new format.
+			lineChoices = InterlinLineChoices.Restore(persist, Cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>(), Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Chart, PropertyTable, ConfigPropName);
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 			return lineChoices;
 		}
 
@@ -1412,10 +2439,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				if (source != null)
 				{
-					var index = source.IndexOf(flid);
+					var index = source.IndexInEnabled(flid);
 					if (index >= 0)
 					{
-						dest.Add(source[index]);
+						dest.Add(source.EnabledLineSpecs[index]);
 						return;
 					}
 				}
@@ -1424,8 +2451,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		public bool NotesDataFromPropertyTable
+		public bool NotesOnRightFromPropertyTable
 		{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 			get => PropertyTable == null || PropertyTable.GetValue("notesOnRight", true, SettingsGroup.LocalSettings);
 			set => PropertyTable?.SetProperty("notesOnRight", value, settingsGroup: SettingsGroup.LocalSettings);
 		}
@@ -1465,22 +2493,175 @@ namespace LanguageExplorer.Controls.DetailControls
 				columnHeader2.Text = LanguageExplorerResources.ksExtension;
 				Text = LanguageExplorerResources.ksExportDiscourse;
 			}
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+			get
+			{
+				return PropertyTable == null || PropertyTable.GetBoolProperty("notesOnRight",
+					true, PropertyTable.SettingsGroup.LocalSettings);
+			}
+			set
+			{
+				PropertyTable?.SetProperty("notesOnRight", value, PropertyTable.SettingsGroup.LocalSettings, false);
+			}
+		}
+=======
+			get => PropertyTable == null || PropertyTable.GetBoolProperty("notesOnRight", true, PropertyTable.SettingsGroup.LocalSettings);
+			set => PropertyTable?.SetProperty("notesOnRight", value, PropertyTable.SettingsGroup.LocalSettings, false);
+		}
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 
 			#endregion
 
 			protected override string ConfigurationFilePath => Path.Combine("Language Explorer", "Export Templates", "Discourse");
 
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 			// Items in this version are never disabled.
 			protected override bool ItemDisabled(string tag)
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+	/// <summary>
+	/// This control is used to make the column headers for a Constituent Chart.
+	/// It handles mouse events for resizing columns and
+	/// Dragging the notes column to the left or right side of the chart
+	/// </summary>
+	public class ChartHeaderView : Control
+	{
+		private ConstituentChart m_chart;
+		private bool m_notesOnRight = true;
+		private bool m_isDraggingNotes;
+		private bool m_isResizingColumn;
+		private bool m_notesWasOnRight;
+		private int m_origHeaderLeft;
+		private int m_origMouseLeft;
+		private const int kColMinimumWidth = 5;
+
+		/// <summary>
+		/// Create one and set the chart it belongs to.
+		/// </summary>
+		public ChartHeaderView(ConstituentChart chart)
+		{
+			m_chart = chart;
+		}
+
+		/// <summary>
+		/// Check to see if the object has been disposed.
+		/// All public Properties and Methods should call this
+		/// before doing anything else.
+		/// </summary>
+		public void CheckDisposed()
+		{
+			if (IsDisposed)
+				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.Control"/> and optionally releases the managed resources.
+		/// </summary>
+		/// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+		/// ------------------------------------------------------------------------------------
+		protected override void Dispose(bool disposing)
+		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			// Must not be run more than once.
+			if (IsDisposed)
+				return;
+
+			if (disposing)
+=======
+	/// <summary>
+	/// This control is used to make the column headers for a Constituent Chart.
+	/// It handles mouse events for resizing columns and
+	/// Dragging the notes column to the left or right side of the chart
+	/// </summary>
+	public class ChartHeaderView : Control
+	{
+		private ConstituentChart m_chart;
+		private bool m_isDraggingNotes;
+		private bool m_isResizingColumn;
+		private bool m_notesWasOnRight;
+		private int m_origHeaderLeft;
+		private int m_origMouseLeft;
+		private const int kColMinimumWidth = 5;
+
+		/// <summary>
+		/// Create one and set the chart it belongs to.
+		/// </summary>
+		public ChartHeaderView(ConstituentChart chart)
+		{
+			m_chart = chart;
+		}
+
+		/// <summary>
+		/// Check to see if the object has been disposed.
+		/// All public Properties and Methods should call this
+		/// before doing anything else.
+		/// </summary>
+		public void CheckDisposed()
+		{
+			if (IsDisposed)
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.Control"/> and optionally releases the managed resources.
+		/// </summary>
+		/// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+		/// ------------------------------------------------------------------------------------
+		protected override void Dispose(bool disposing)
+		{
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			// Must not be run more than once.
+			if (IsDisposed)
+				return;
+
+			if (disposing)
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 			{
 				return false;
 			}
 
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 			/// <summary>
 			/// Override to do nothing since not configuring an FXT export process.
 			/// </summary>
 			protected override void ConfigureItem(XmlDocument document, ListViewItem item, XmlNode ddNode)
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+			base.Dispose(disposing);
+		}
+
+		public bool NotesOnRight
+		{
+			get { return m_notesOnRight; }
+		}
+
+		/// <summary>
+		/// ControlList[] represents the z index, so in order to keep the draggable notes column at the top of the z order,
+		/// This custom [] is designed to be used instead representing the x order of column headers
+		/// </summary>
+		public Control this[int key]
+		{
+			get
+=======
+			base.Dispose(disposing);
+		}
+
+		private bool NotesOnRight
+		{
+			get => m_chart.NotesColumnOnRight;
+			set => m_chart.NotesColumnOnRight = value;
+		}
+
+		/// <summary>
+		/// ControlList[] represents the z index, so in order to keep the draggable notes column at the top of the z order,
+		/// This custom [] is designed to be used instead representing the x order of column headers
+		/// </summary>
+		public Control this[int key]
+		{
+			get
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 			{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
 				m_ddNodes.Add(ddNode);
 				columnHeader1.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
 			}
@@ -1494,6 +2675,15 @@ namespace LanguageExplorer.Controls.DetailControls
 				var ddNode = m_ddNodes[NodeIndex(fxtPath)];
 				var mode = XmlUtils.GetOptionalAttributeValue(ddNode, "mode", "xml");
 				using (new WaitCursor(this))
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+				if (key < 0 || key >= Controls.Count)
+					throw new IndexOutOfRangeException();
+				if (!m_notesOnRight)
+=======
+				if (key < 0 || key >= Controls.Count)
+					throw new IndexOutOfRangeException();
+				if (!NotesOnRight)
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 				{
 					try
 					{
@@ -1546,6 +2736,555 @@ namespace LanguageExplorer.Controls.DetailControls
 					writer.Close();
 				}
 			}
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChart.cs
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChart.cs
+
+			return -1;
+		}
+
+		/// <summary>
+		/// Updates the positions of all the column headers to consecutive order without gaps or overlaps
+		/// </summary>
+		public void UpdatePositions()
+		{
+			if (m_isDraggingNotes)
+				return;
+			if (Controls.Count < 2)
+				return;
+			this[0].Left = 1;
+			for (int i = 1; i < Controls.Count; i++)
+			{
+				this[i].Left = this[i - 1].Right;
+			}
+		}
+
+		/// <summary>
+		/// Moves all the other column headers to where they should be when the notes column is dropped
+		/// </summary>
+		private void UpdatePositionsExceptNotes()
+		{
+			if (m_notesOnRight)
+			{
+				Controls[1].Left = 1;
+			}
+			else
+			{
+				Controls[1].Left = Controls[0].Width;
+			}
+
+			for (int i = 2; i < Controls.Count; i++)
+			{
+				Controls[i].Left = Controls[i - 1].Right;
+			}
+		}
+
+		public event ColumnWidthChangedEventHandler ColumnWidthChanged;
+
+		/// <summary>
+		/// Resizes the identified column to the default width
+		/// </summary>
+		public void AutoResizeColumn(int iColumnChanged)
+		{
+			int num = Width / (Controls.Count + 1);
+			this[iColumnChanged].Width = num;
+			UpdatePositions();
+			ColumnWidthChanged(this, new ColumnWidthChangedEventArgs(iColumnChanged));
+		}
+
+		/// <summary>
+		/// Prepares new Control with the proper mouse events and visual elements
+		/// </summary>
+		protected override void OnControlAdded(ControlEventArgs e)
+		{
+			//Get the notes value from the property table once the first column has been added
+			if (Controls.Count == 1)
+			{
+				m_notesOnRight = m_chart.NotesDataFromPropertyTable;
+			}
+			Control newColumn = e.Control;
+			newColumn.Height = 22;
+			newColumn.MouseDown += OnColumnMouseDown;
+			newColumn.MouseMove += OnColumnMouseMove;
+			newColumn.MouseUp += OnColumnMouseUp;
+			newColumn.Paint += OnColumnPaint;
+			newColumn.DoubleClick += OnColumnDoubleClick;
+			if (newColumn is HeaderLabel)
+			{
+				((HeaderLabel)newColumn).BorderStyle = BorderStyle.None;
+			}
+		}
+
+		/// <summary>
+		/// Handles a column's double click to automatically resize the column to the left of the border clicked
+		/// </summary>
+		private void OnColumnDoubleClick(object sender, EventArgs e)
+		{
+			var header = sender as Control;
+			if (header.Cursor != Cursors.VSplit)
+			{
+				return;
+			}
+
+			int leftHeader = IndexOf(header);
+			if (m_origMouseLeft < 3)
+			{
+				leftHeader--;
+			}
+			AutoResizeColumn(leftHeader);
+		}
+
+		/// <summary>
+		/// Handles a column's mousedown to possibly enter the resizing state and store the initial coordinates
+		/// </summary>
+		private void OnColumnMouseDown(object sender, MouseEventArgs e)
+		{
+			Control header = sender as Control;
+			if (header.Cursor == Cursors.VSplit)
+			{
+				m_isResizingColumn = true;
+			}
+
+			m_origHeaderLeft = header.Left;
+			m_origMouseLeft = e.X;
+			m_notesWasOnRight = m_notesOnRight;
+			header.SuspendLayout();
+			SuspendLayout();
+		}
+
+		/// <summary>
+		/// Handles a column's mousemove to resize if in the resize state or move the notes column
+		/// </summary>
+		private void OnColumnMouseMove(object sender, MouseEventArgs e)
+		{
+			var header = sender as Control;
+			if ((e.X < 3 && header != this[0]) || (e.X > header.Width - 3))
+			{
+				header.Cursor = Cursors.VSplit;
+			}
+			else
+			{
+				header.Cursor = DefaultCursor;
+			}
+
+			if (e.Button != MouseButtons.Left) return;
+			if (m_isResizingColumn)
+			{
+				ResizeColumn(header, e);
+			}
+			else
+			{
+				MoveColumn(header, e);
+			}
+			Parent.Update();
+		}
+
+		/// <summary>
+		/// Controls MouseMove event for column header in case we are in the resize state
+		/// </summary>
+		private void ResizeColumn(Control header, MouseEventArgs e)
+		{
+			Control prevHeader;
+			int X;
+			if (m_origMouseLeft < 3)
+			{
+				prevHeader = this[IndexOf(header) - 1];
+				X = e.X + header.Left - prevHeader.Left;
+			}
+			else
+			{
+				prevHeader = header;
+				X = e.X;
+			}
+
+			prevHeader.Width = X;
+			if (prevHeader.Width < kColMinimumWidth)
+				prevHeader.Width = kColMinimumWidth;
+			UpdatePositions();
+		}
+
+		/// <summary>
+		/// Controls MouseMove event for column header in case we are in the move notes column state
+		/// </summary>
+		private void MoveColumn(Control header, MouseEventArgs e)
+		{
+			if (header.Text != DiscourseStrings.ksNotesColumnHeader) return;
+			if (header.Left < m_origHeaderLeft - 20)
+			{
+				m_notesOnRight = false;
+			}
+			else if (header.Left > m_origHeaderLeft + 20 || m_notesWasOnRight)
+			{
+				m_notesOnRight = true;
+			}
+			else
+			{
+				m_notesOnRight = false;
+			}
+			UpdatePositionsExceptNotes();
+			m_isDraggingNotes = true;
+			header.Left += (e.X - m_origMouseLeft);
+		}
+
+		/// <summary>
+		/// Handles a column's mouseup to remove any state data and finalize changes made in a mousemove
+		/// </summary>
+		private void OnColumnMouseUp(object sender, MouseEventArgs e)
+		{
+			var header = sender as Control;
+			if (m_isResizingColumn)
+			{
+				UpdatePositions();
+				ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(IndexOf(header)));
+			}
+			else if (m_isDraggingNotes)
+			{
+				header.Left = m_origHeaderLeft;
+			}
+
+			m_isDraggingNotes = false;
+			m_isResizingColumn = false;
+
+
+			UpdatePositions();
+			if (m_notesWasOnRight != NotesOnRight)
+			{
+				m_chart.NotesDataFromPropertyTable = m_notesOnRight;
+				ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(0));
+				m_chart.RefreshRoot();
+			}
+
+			header.ResumeLayout(false);
+			ResumeLayout(false);
+		}
+
+		/// <summary>
+		/// Draws the border around a column header
+		/// </summary>
+		private void OnColumnPaint(object sender, PaintEventArgs e)
+		{
+			var header = sender as Control;
+			var topLeft = new Point(0, 0);
+			var bottomRight = new Size(header.Width - 1, header.Height - 1);
+			e.Graphics.DrawRectangle(new Pen(Color.Black), new Rectangle(topLeft, bottomRight));
+		}
+
+		/// <summary>
+		/// Handles resizing of the last column if the mouse hangs over its border slightly
+		/// </summary>
+		protected override void OnMouseMove(MouseEventArgs e)
+		{
+			if (e.X < this[Controls.Count - 1].Right + 3)
+			{
+				Cursor = Cursors.VSplit;
+			}
+			else
+			{
+				Cursor = Cursors.Default;
+			}
+
+			if (!m_isResizingColumn)
+				return;
+
+			var header = this[Controls.Count - 1];
+			header.Width = e.X - header.Left;
+			if (header.Width < kColMinimumWidth)
+			{
+				header.Width = kColMinimumWidth;
+			}
+		}
+
+		protected override void OnMouseDown(MouseEventArgs e)
+		{
+			if (Cursor == Cursors.VSplit)
+			{
+				m_isResizingColumn = true;
+				SuspendLayout();
+				this[Controls.Count - 1].SuspendLayout();
+			}
+		}
+
+		protected override void OnMouseUp(MouseEventArgs e)
+		{
+			m_isResizingColumn = false;
+			ResumeLayout(false);
+			this[Controls.Count - 1].ResumeLayout(false);
+			ColumnWidthChanged(this, new ColumnWidthChangedEventArgs(Controls.Count - 1));
+=======
+
+			return -1;
+		}
+
+		/// <summary>
+		/// Updates the positions of all the column headers to consecutive order without gaps or overlaps
+		/// </summary>
+		public void UpdatePositions()
+		{
+			if (m_isDraggingNotes)
+				return;
+			if (Controls.Count < 2)
+				return;
+			this[0].Left = 1;
+			for (int i = 1; i < Controls.Count; i++)
+			{
+				this[i].Left = this[i - 1].Right;
+			}
+		}
+
+		/// <summary>
+		/// Moves all the other column headers to where they should be when the notes column is dropped
+		/// </summary>
+		private void UpdatePositionsExceptNotes()
+		{
+			if (NotesOnRight)
+			{
+				Controls[1].Left = 1;
+			}
+			else
+			{
+				Controls[1].Left = Controls[0].Width;
+			}
+
+			for (int i = 2; i < Controls.Count; i++)
+			{
+				Controls[i].Left = Controls[i - 1].Right;
+			}
+		}
+
+		public event ColumnWidthChangedEventHandler ColumnWidthChanged;
+
+		/// <summary>
+		/// Resizes the identified column to the default width
+		/// </summary>
+		public void AutoResizeColumn(int iColumnChanged)
+		{
+			int num = Width / (Controls.Count + 1);
+			this[iColumnChanged].Width = num;
+			UpdatePositions();
+			ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(iColumnChanged));
+		}
+
+		/// <summary>
+		/// Prepares new Control with the proper mouse events and visual elements
+		/// </summary>
+		protected override void OnControlAdded(ControlEventArgs e)
+		{
+			//Get the notes value from the property table once the first column has been added // REVIEW (Hasso) 2022.03: is this still our job?
+			if (Controls.Count == 1)
+			{
+				NotesOnRight = m_chart.NotesOnRightFromPropertyTable;
+			}
+			Control newColumn = e.Control;
+			newColumn.Height = 22;
+			newColumn.MouseDown += OnColumnMouseDown;
+			newColumn.MouseMove += OnColumnMouseMove;
+			newColumn.MouseUp += OnColumnMouseUp;
+			newColumn.Paint += OnColumnPaint;
+			newColumn.DoubleClick += OnColumnDoubleClick;
+			if (newColumn is HeaderLabel label)
+			{
+				label.BorderStyle = BorderStyle.None;
+			}
+		}
+
+		/// <summary>
+		/// Handles a column's double click to automatically resize the column to the left of the border clicked
+		/// </summary>
+		private void OnColumnDoubleClick(object sender, EventArgs e)
+		{
+			var header = (Control)sender;
+			if (header.Cursor != Cursors.VSplit)
+			{
+				return;
+			}
+
+			int leftHeader = IndexOf(header);
+			if (m_origMouseLeft < 3)
+			{
+				leftHeader--;
+			}
+			AutoResizeColumn(leftHeader);
+		}
+
+		/// <summary>
+		/// Handles a column's mousedown to possibly enter the resizing state and store the initial coordinates
+		/// </summary>
+		private void OnColumnMouseDown(object sender, MouseEventArgs e)
+		{
+			var header = (Control)sender;
+			if (header.Cursor == Cursors.VSplit)
+			{
+				m_isResizingColumn = true;
+			}
+
+			m_origHeaderLeft = header.Left;
+			m_origMouseLeft = e.X;
+			m_notesWasOnRight = NotesOnRight;
+			header.SuspendLayout();
+			SuspendLayout();
+		}
+
+		/// <summary>
+		/// Handles a column's mousemove to resize if in the resize state or move the notes column
+		/// </summary>
+		private void OnColumnMouseMove(object sender, MouseEventArgs e)
+		{
+			var header = (Control)sender;
+			if ((e.X < 3 && header != this[0]) || (e.X > header.Width - 3))
+			{
+				header.Cursor = Cursors.VSplit;
+			}
+			else
+			{
+				header.Cursor = DefaultCursor;
+			}
+
+			if (e.Button != MouseButtons.Left) return;
+			if (m_isResizingColumn)
+			{
+				ResizeColumn(header, e);
+			}
+			else
+			{
+				MoveColumn(header, e);
+			}
+			Parent.Update();
+		}
+
+		/// <summary>
+		/// Controls MouseMove event for column header in case we are in the resize state
+		/// </summary>
+		private void ResizeColumn(Control header, MouseEventArgs e)
+		{
+			Control prevHeader;
+			int X;
+			if (m_origMouseLeft < 3)
+			{
+				prevHeader = this[IndexOf(header) - 1];
+				X = e.X + header.Left - prevHeader.Left;
+			}
+			else
+			{
+				prevHeader = header;
+				X = e.X;
+			}
+
+			prevHeader.Width = X;
+			if (prevHeader.Width < kColMinimumWidth)
+				prevHeader.Width = kColMinimumWidth;
+			UpdatePositions();
+		}
+
+		/// <summary>
+		/// Controls MouseMove event for column header in case we are in the move notes column state
+		/// </summary>
+		private void MoveColumn(Control header, MouseEventArgs e)
+		{
+			if (header.Text != DiscourseStrings.ksNotesColumnHeader && IndexOf(header) != (NotesOnRight ? Controls.Count - 1 : 0))
+			{
+				return;
+			}
+			if (header.Left < m_origHeaderLeft - 20)
+			{
+				NotesOnRight = false;
+			}
+			else if (header.Left > m_origHeaderLeft + 20 || m_notesWasOnRight)
+			{
+				NotesOnRight = true;
+			}
+			else
+			{
+				NotesOnRight = false;
+			}
+			UpdatePositionsExceptNotes();
+			m_isDraggingNotes = true;
+			header.Left += (e.X - m_origMouseLeft);
+		}
+
+		/// <summary>
+		/// Handles a column's mouseup to remove any state data and finalize changes made in a mousemove
+		/// </summary>
+		private void OnColumnMouseUp(object sender, MouseEventArgs e)
+		{
+			var header = (Control)sender;
+			if (m_isResizingColumn)
+			{
+				UpdatePositions();
+				ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(IndexOf(header)));
+			}
+			else if (m_isDraggingNotes)
+			{
+				header.Left = m_origHeaderLeft;
+			}
+
+			m_isDraggingNotes = false;
+			m_isResizingColumn = false;
+
+
+			UpdatePositions();
+			if (m_notesWasOnRight != NotesOnRight)
+			{
+				m_chart.NotesOnRightFromPropertyTable = NotesOnRight;
+				ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(0));
+				m_chart.RefreshRoot();
+			}
+
+			header.ResumeLayout(false);
+			ResumeLayout(false);
+		}
+
+		/// <summary>
+		/// Draws the border around a column header
+		/// </summary>
+		private void OnColumnPaint(object sender, PaintEventArgs e)
+		{
+			var header = (Control)sender;
+			var topLeft = new Point(0, 0);
+			var bottomRight = new Size(header.Width - 1, header.Height - 1);
+			e.Graphics.DrawRectangle(new Pen(Color.Black), new Rectangle(topLeft, bottomRight));
+		}
+
+		/// <summary>
+		/// Handles resizing of the last column if the mouse hangs over its border slightly
+		/// </summary>
+		protected override void OnMouseMove(MouseEventArgs e)
+		{
+			if (e.X < this[Controls.Count - 1].Right + 3)
+			{
+				Cursor = Cursors.VSplit;
+			}
+			else
+			{
+				Cursor = Cursors.Default;
+			}
+
+			if (!m_isResizingColumn)
+				return;
+
+			var header = this[Controls.Count - 1];
+			header.Width = e.X - header.Left;
+			if (header.Width < kColMinimumWidth)
+			{
+				header.Width = kColMinimumWidth;
+			}
+		}
+
+		protected override void OnMouseDown(MouseEventArgs e)
+		{
+			if (Cursor == Cursors.VSplit)
+			{
+				m_isResizingColumn = true;
+				SuspendLayout();
+				this[Controls.Count - 1].SuspendLayout();
+			}
+		}
+
+		protected override void OnMouseUp(MouseEventArgs e)
+		{
+			m_isResizingColumn = false;
+			ResumeLayout(false);
+			this[Controls.Count - 1].ResumeLayout(false);
+			ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(Controls.Count - 1));
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChart.cs
 		}
 	}
 }

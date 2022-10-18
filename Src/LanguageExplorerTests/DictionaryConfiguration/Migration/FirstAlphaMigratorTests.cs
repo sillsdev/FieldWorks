@@ -355,6 +355,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				Children = new List<ConfigurableDictionaryNode> { referenceHwChild, cpFormChild }
 			};
 			cpFormChild.Parent = configParent;
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/FirstAlphaMigratorTests.cs
 			var configModel = new DictionaryConfigurationModel
 			{
 				Version = 2,
@@ -362,6 +363,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			};
 			_migrator.MigrateFrom83Alpha(configModel);
 			Assert.That(_logger.Content, Does.Contain("'Parent > Complex Form' reached the Alpha2 migration with a null FieldDescription."));
+||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/FirstAlphaMigratorTests.cs
+			var configModel = new DictionaryConfigurationModel { Version = 2, Parts = new List<ConfigurableDictionaryNode> { configParent } };
+			m_migrator.MigrateFrom83Alpha(configModel);
+			Assert.That(m_logger.Content, Is.StringContaining("'Parent > Complex Form' reached the Alpha2 migration with a null FieldDescription."));
+=======
+			var configModel = new DictionaryConfigurationModel { Version = 2, Parts = new List<ConfigurableDictionaryNode> { configParent } };
+			m_migrator.MigrateFrom83Alpha(configModel);
+			Assert.That(m_logger.Content, Does.Contain("'Parent > Complex Form' reached the Alpha2 migration with a null FieldDescription."));
+>>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/FirstAlphaMigratorTests.cs
 		}
 
 		[Test]
@@ -532,10 +542,24 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				Version = 1,
 				Parts = new List<ConfigurableDictionaryNode> { mainEntry }
 			};
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/FirstAlphaMigratorTests.cs
 			_migrator.MigrateFrom83Alpha(model);
 			Assert.That(subsenses.ReferenceItem, Does.Match("MainEntrySubsenses"));
 			Assert.That(subsubsenses.ReferenceItem, Does.Match("MainEntrySubsenses"));
 			Assert.That(subentriesUnderSenses.ReferenceItem, Does.Match("MainEntrySubentries"));
+||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/FirstAlphaMigratorTests.cs
+
+			m_migrator.MigrateFrom83Alpha(model);
+			Assert.That(subsenses.ReferenceItem, Is.StringMatching("MainEntrySubsenses"));
+			Assert.That(subsubsenses.ReferenceItem, Is.StringMatching("MainEntrySubsenses"));
+			Assert.That(subentriesUnderSenses.ReferenceItem, Is.StringMatching("MainEntrySubentries"));
+=======
+
+			m_migrator.MigrateFrom83Alpha(model);
+			Assert.That(subsenses.ReferenceItem, Does.Match("MainEntrySubsenses"));
+			Assert.That(subsubsenses.ReferenceItem, Does.Match("MainEntrySubsenses"));
+			Assert.That(subentriesUnderSenses.ReferenceItem, Does.Match("MainEntrySubentries"));
+>>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/FirstAlphaMigratorTests.cs
 			Assert.Null(subsenses.Children, "Children not removed from shared nodes");
 			Assert.Null(subsubsenses.Children, "Children not removed from shared nodes");
 			Assert.Null(subentriesUnderSenses.Children, "Children not removed from shared nodes");
@@ -1298,16 +1322,38 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			var migratedPicturesNode=model.Parts[0].Children[0];
 
 			// Sense Number should be gone
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/FirstAlphaMigratorTests.cs
 			Assert.That(migratedPicturesNode.Children[1].Label, Does.Not.Contain("Sense Number"), "Sense Number should be gone");
+||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/FirstAlphaMigratorTests.cs
+			Assert.That(migratedPicturesNode.Children[1].Label, Is.Not.StringMatching("Sense Number"), "Sense Number should be gone");
+=======
+			Assert.That(migratedPicturesNode.Children[1].Label, Is.Not.EqualTo("Sense Number"), "Sense Number should be gone");
+>>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/FirstAlphaMigratorTests.cs
 
 			// Thumbnail and Caption should still be there
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/FirstAlphaMigratorTests.cs
 			Assert.That(migratedPicturesNode.Children[0].Label, Does.Match("Thumbnail"), "Thumbnail should still be present");
 			Assert.That(migratedPicturesNode.Children[1].Label, Does.Match("Caption"), "Caption should still be present");
+||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/FirstAlphaMigratorTests.cs
+			Assert.That(migratedPicturesNode.Children[0].Label, Is.StringMatching("Thumbnail"), "Thumbnail should still be present");
+			Assert.That(migratedPicturesNode.Children[1].Label, Is.StringMatching("Caption"), "Caption should still be present");
+=======
+			Assert.That(migratedPicturesNode.Children[0].Label, Is.EqualTo("Thumbnail"), "Thumbnail should still be present");
+			Assert.That(migratedPicturesNode.Children[1].Label, Is.EqualTo("Caption"), "Caption should still be present");
+>>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/FirstAlphaMigratorTests.cs
 
 			// Headword and Gloss should now be there
 			Assert.That(migratedPicturesNode.Children.Count, Is.GreaterThanOrEqualTo(3), "Not enough child nodes. Maybe Headword and Gloss weren't added.");
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/FirstAlphaMigratorTests.cs
 			Assert.That(migratedPicturesNode.Children[2].Label, Does.Match("Headword"), "Headword not introduced");
 			Assert.That(migratedPicturesNode.Children[3].Label, Does.Match("Gloss"), "Gloss not introduced");
+||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/FirstAlphaMigratorTests.cs
+			Assert.That(migratedPicturesNode.Children[2].Label, Is.StringMatching("Headword"), "Headword not introduced");
+			Assert.That(migratedPicturesNode.Children[3].Label, Is.StringMatching("Gloss"), "Gloss not introduced");
+=======
+			Assert.That(migratedPicturesNode.Children[2].Label, Is.EqualTo("Headword"), "Headword not introduced");
+			Assert.That(migratedPicturesNode.Children[3].Label, Is.EqualTo("Gloss"), "Gloss not introduced");
+>>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/FirstAlphaMigratorTests.cs
 		}
 	}
 }

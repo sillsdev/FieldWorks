@@ -1,4 +1,10 @@
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfigurableDictionaryNodeTests.cs
 // Copyright (c) 2014-2020 SIL International
+||||||| f013144d5:Src/xWorks/xWorksTests/ConfigurableDictionaryNodeTests.cs
+﻿// Copyright (c) 2014 SIL International
+=======
+// Copyright (c) 2014 SIL International
+>>>>>>> develop:Src/xWorks/xWorksTests/ConfigurableDictionaryNodeTests.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -65,7 +71,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			if (node.DictionaryNodeOptions == null)
 			{
-				Assert.IsNull(clone.DictionaryNodeOptions);
+				Assert.That(clone.DictionaryNodeOptions, Is.Null);
 			}
 			else
 			{
@@ -87,7 +93,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			if (list == null)
 			{
-				Assert.IsNull(clone);
+				Assert.That(clone, Is.Null);
 				return;
 			}
 			Assert.That(clone.Count, Is.EqualTo(list.Count));
@@ -243,7 +249,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// SUT
 			var duplicate = groupNode.DuplicateAmongSiblings();
 			Assert.AreEqual(1, groupNode.Children.Count);
-			Assert.IsNull(duplicate.Children);
+			Assert.That(duplicate.Children, Is.Null);
 		}
 
 		[Test]
@@ -680,9 +686,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.True(child.TryGetMasterParent(out var returnedMasterParent)); // SUT
 			Assert.AreSame(masterParent, returnedMasterParent);
 			Assert.False(masterParent.TryGetMasterParent(out returnedMasterParent), "The master parent doesn't *have* a master parent, it *is* one"); // SUT
-			Assert.IsNull(returnedMasterParent, "Master Parent");
+			Assert.That(returnedMasterParent, Is.Null, "Master Parent");
 			Assert.False(root.TryGetMasterParent(out returnedMasterParent), "The root node *certainly* doesn't have a master parent"); // SUT
-			Assert.IsNull(returnedMasterParent, "Root Node");
+			Assert.That(returnedMasterParent, Is.Null, "Root Node");
 		}
 
 		[Test]

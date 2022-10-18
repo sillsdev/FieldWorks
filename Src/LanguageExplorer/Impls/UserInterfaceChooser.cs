@@ -1,8 +1,25 @@
+<<<<<<< HEAD:Src/LanguageExplorer/Impls/UserInterfaceChooser.cs
 // Copyright (c) 2007-2020 SIL International
+||||||| f013144d5:Src/Common/Controls/Widgets/UserInterfaceChooser.cs
+// Copyright (c) 2007-2013 SIL International
+=======
+// Copyright (c) 2007-2021 SIL International
+>>>>>>> develop:Src/Common/Controls/Widgets/UserInterfaceChooser.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+<<<<<<< HEAD:Src/LanguageExplorer/Impls/UserInterfaceChooser.cs
+||||||| f013144d5:Src/Common/Controls/Widgets/UserInterfaceChooser.cs
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+=======
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+>>>>>>> develop:Src/Common/Controls/Widgets/UserInterfaceChooser.cs
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -10,16 +27,33 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Icu;
+<<<<<<< HEAD:Src/LanguageExplorer/Impls/UserInterfaceChooser.cs
 using SIL.FieldWorks.Common.FwUtils;
+||||||| f013144d5:Src/Common/Controls/Widgets/UserInterfaceChooser.cs
+using SIL.LCModel.Core.Text;
+=======
+>>>>>>> develop:Src/Common/Controls/Widgets/UserInterfaceChooser.cs
 using SIL.PlatformUtilities;
 
 namespace LanguageExplorer.Impls
 {
+<<<<<<< HEAD:Src/LanguageExplorer/Impls/UserInterfaceChooser.cs
 	/// <summary >
 	/// This implements a control suitable for placing on a tab of the Tools/Options
 	/// dialog. The control is a combobox that lists the languages (writing systems) into
 	/// which the program has been (at least partially) localized. Each language name is given in
 	/// its own language and script.
+||||||| f013144d5:Src/Common/Controls/Widgets/UserInterfaceChooser.cs
+	/// ----------------------------------------------------------------------------------------
+	/// <summary>
+	///
+=======
+	/// ----------------------------------------------------------------------------------------
+	/// <summary>
+	/// a control suitable for placing on a tab of the Tools/Options dialog. The control is a
+	/// combobox that lists the languages (writing systems) into which the program has been (at
+	/// least partially) localized. Each language name is given in its own language and script.
+>>>>>>> develop:Src/Common/Controls/Widgets/UserInterfaceChooser.cs
 	/// </summary>
 	public partial class UserInterfaceChooser : ComboBox
 	{

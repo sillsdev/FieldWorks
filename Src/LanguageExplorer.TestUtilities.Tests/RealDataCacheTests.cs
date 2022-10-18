@@ -32,8 +32,18 @@ namespace LanguageExplorer.TestUtilities.Tests
 		/// <summary>
 		/// If a test overrides this, it should call this base implementation.
 		/// </summary>
+<<<<<<< HEAD:Src/LanguageExplorer.TestUtilities.Tests/RealDataCacheTests.cs
 		[OneTimeSetUp]
 		public void FixtureSetup()
+||||||| f013144d5:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
+		/// ------------------------------------------------------------------------------------
+		[TestFixtureSetUp]
+		public virtual void FixtureSetup()
+=======
+		/// ------------------------------------------------------------------------------------
+		[OneTimeSetUp]
+		public virtual void FixtureSetup()
+>>>>>>> develop:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
 		{
 			m_realDataCache = new RealDataCache
 			{
@@ -42,8 +52,16 @@ namespace LanguageExplorer.TestUtilities.Tests
 		}
 
 		/// <summary/>
+<<<<<<< HEAD:Src/LanguageExplorer.TestUtilities.Tests/RealDataCacheTests.cs
 		[OneTimeTearDown]
 		public void FixtureTearDown()
+||||||| f013144d5:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
+		[TestFixtureTearDown]
+		public virtual void FixtureTearDown()
+=======
+		[OneTimeTearDown]
+		public virtual void FixtureTearDown()
+>>>>>>> develop:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
 		{
 			m_realDataCache.Dispose();
 		}
@@ -88,6 +106,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		{
 			const int hvo = 1;
 			// Set class first, or it will throw the exception in the wrong place.
+<<<<<<< HEAD:Src/LanguageExplorer.TestUtilities.Tests/RealDataCacheTests.cs
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
 				SilDataAccess.MetaDataCache.GetClassId("ClassC"));
 			Assert.That(
@@ -95,6 +114,17 @@ namespace LanguageExplorer.TestUtilities.Tests
 				{
 					SilDataAccess.get_ObjectProp(hvo, (int)CmObjectFields.kflidCmObject_Owner);
 				}, Throws.TypeOf<KeyNotFoundException>());
+||||||| f013144d5:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
+			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassC");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
+
+			SilDataAccess.get_ObjectProp(hvo, (int)CmObjectFields.kflidCmObject_Owner);
+=======
+			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassC");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
+
+			Assert.That(() => SilDataAccess.get_ObjectProp(hvo, (int)CmObjectFields.kflidCmObject_Owner), Throws.TypeOf<KeyNotFoundException>());
+>>>>>>> develop:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
 		}
 
 		/// <summary>
@@ -131,6 +161,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		{
 			const int hvo = 1;
 			// Set class first, or it will throw the exception in the wrong place.
+<<<<<<< HEAD:Src/LanguageExplorer.TestUtilities.Tests/RealDataCacheTests.cs
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
 				SilDataAccess.MetaDataCache.GetClassId("ClassC"));
 			Assert.That(
@@ -139,6 +170,19 @@ namespace LanguageExplorer.TestUtilities.Tests
 					SilDataAccess.get_IntProp(hvo,
 						SilDataAccess.MetaDataCache.GetFieldId("ClassC", "IntProp2", false));
 				}, Throws.TypeOf<KeyNotFoundException>());
+||||||| f013144d5:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
+			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassC");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
+
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassC", "IntProp2", false);
+			SilDataAccess.get_IntProp(hvo, tag);
+=======
+			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassC");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
+
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassC", "IntProp2", false);
+			Assert.That(() => SilDataAccess.get_IntProp(hvo, tag), Throws.TypeOf<KeyNotFoundException>());
+>>>>>>> develop:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
 		}
 
 		/// <summary>
@@ -172,6 +216,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		{
 			const int hvo = 1;
 			// Set class first, or it will throw the exception in the wrong place.
+<<<<<<< HEAD:Src/LanguageExplorer.TestUtilities.Tests/RealDataCacheTests.cs
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
 				SilDataAccess.MetaDataCache.GetClassId("ClassD"));
 			Assert.That(
@@ -179,6 +224,19 @@ namespace LanguageExplorer.TestUtilities.Tests
 				{
 					SilDataAccess.get_GuidProp(hvo, (int)CmObjectFields.kflidCmObject_Guid);
 				}, Throws.TypeOf<KeyNotFoundException>());
+||||||| f013144d5:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
+			var clidLe = SilDataAccess.MetaDataCache.GetClassId("ClassD");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clidLe);
+			const int tag = (int)CmObjectFields.kflidCmObject_Guid;
+
+			SilDataAccess.get_GuidProp(hvo, tag);
+=======
+			var clidLe = SilDataAccess.MetaDataCache.GetClassId("ClassD");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clidLe);
+			const int tag = (int)CmObjectFields.kflidCmObject_Guid;
+
+			Assert.That(() => SilDataAccess.get_GuidProp(hvo, tag), Throws.TypeOf<KeyNotFoundException>());
+>>>>>>> develop:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
 		}
 
 		/// <summary>
@@ -207,6 +265,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		{
 			const int hvo = 1;
 			// Set class first, or it will throw the exception in the wrong place.
+<<<<<<< HEAD:Src/LanguageExplorer.TestUtilities.Tests/RealDataCacheTests.cs
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
 				SilDataAccess.MetaDataCache.GetClassId("ClassA"));
 			Assert.That(
@@ -215,6 +274,17 @@ namespace LanguageExplorer.TestUtilities.Tests
 					SilDataAccess.get_BooleanProp(hvo,
 						SilDataAccess.MetaDataCache.GetFieldId("ClassA", "Prop1", false));
 				}, Throws.TypeOf<KeyNotFoundException>());
+||||||| f013144d5:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
+			var clidLe = SilDataAccess.MetaDataCache.GetClassId("ClassA");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clidLe);
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassA", "Prop1", false);
+			SilDataAccess.get_BooleanProp(hvo, tag);
+=======
+			var clidLe = SilDataAccess.MetaDataCache.GetClassId("ClassA");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clidLe);
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassA", "Prop1", false);
+			Assert.That(() => SilDataAccess.get_BooleanProp(hvo, tag), Throws.TypeOf<KeyNotFoundException>());
+>>>>>>> develop:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
 		}
 
 		/// <summary>
@@ -256,6 +326,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		{
 			const int hvo = 1;
 			// Set class first, or it will throw the exception in the wrong place.
+<<<<<<< HEAD:Src/LanguageExplorer.TestUtilities.Tests/RealDataCacheTests.cs
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
 				SilDataAccess.MetaDataCache.GetClassId("ClassE"));
 			Assert.That(
@@ -264,6 +335,19 @@ namespace LanguageExplorer.TestUtilities.Tests
 					SilDataAccess.get_UnicodeProp(hvo,
 						SilDataAccess.MetaDataCache.GetFieldId("ClassE", "UnicodeProp4", false));
 				}, Throws.TypeOf<KeyNotFoundException>());
+||||||| f013144d5:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
+			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassE");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
+
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassE", "UnicodeProp4", false);
+			SilDataAccess.get_UnicodeProp(hvo, tag);
+=======
+			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassE");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
+
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassE", "UnicodeProp4", false);
+			Assert.That(() => SilDataAccess.get_UnicodeProp(hvo, tag), Throws.TypeOf<KeyNotFoundException>());
+>>>>>>> develop:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
 		}
 
 		/// <summary>
@@ -289,9 +373,19 @@ namespace LanguageExplorer.TestUtilities.Tests
 			Assert.AreEqual(ecNew.Length, len);
 			using (var arrayPtr = MarshalEx.StringToNative(len, true))
 			{
+<<<<<<< HEAD:Src/LanguageExplorer.TestUtilities.Tests/RealDataCacheTests.cs
 				Assert.That(
 					() => { SilDataAccess.UnicodePropRgch(hvo, tag, arrayPtr, len, out _); },
 					Throws.TypeOf<ArgumentException>());
+||||||| f013144d5:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
+				int cch;
+				// Should throw the exception here.
+				SilDataAccess.UnicodePropRgch(hvo, tag, arrayPtr, len, out cch);
+=======
+				int cch;
+				// Should throw the exception here.
+				Assert.That(() => SilDataAccess.UnicodePropRgch(hvo, tag, arrayPtr, len, out cch), Throws.ArgumentException);
+>>>>>>> develop:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
 			}
 		}
 
@@ -320,6 +414,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		{
 			const int hvo = 1;
 			// Set class first, or it will throw the exception in the wrong place.
+<<<<<<< HEAD:Src/LanguageExplorer.TestUtilities.Tests/RealDataCacheTests.cs
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
 				SilDataAccess.MetaDataCache.GetClassId("ClassF"));
 			Assert.That(
@@ -328,6 +423,17 @@ namespace LanguageExplorer.TestUtilities.Tests
 					SilDataAccess.get_Int64Prop(hvo,
 						SilDataAccess.MetaDataCache.GetFieldId("ClassF", "Int64Prop5", false));
 				}, Throws.TypeOf<KeyNotFoundException>());
+||||||| f013144d5:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
+			var clidLe = SilDataAccess.MetaDataCache.GetClassId("ClassF");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clidLe);
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassF", "Int64Prop5", false);
+			SilDataAccess.get_Int64Prop(hvo, tag);
+=======
+			var clidLe = SilDataAccess.MetaDataCache.GetClassId("ClassF");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clidLe);
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassF", "Int64Prop5", false);
+			Assert.That(() => SilDataAccess.get_Int64Prop(hvo, tag), Throws.TypeOf<KeyNotFoundException>());
+>>>>>>> develop:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
 		}
 
 		/// <summary>
@@ -356,6 +462,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		{
 			const int hvo = 1;
 			// Set class first, or it will throw the exception in the wrong place.
+<<<<<<< HEAD:Src/LanguageExplorer.TestUtilities.Tests/RealDataCacheTests.cs
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
 				SilDataAccess.MetaDataCache.GetClassId("ClassD"));
 			Assert.That(
@@ -364,6 +471,19 @@ namespace LanguageExplorer.TestUtilities.Tests
 					SilDataAccess.get_TimeProp(hvo,
 						SilDataAccess.MetaDataCache.GetFieldId("ClassD", "TimeProp6", false));
 				}, Throws.TypeOf<KeyNotFoundException>());
+||||||| f013144d5:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
+			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassD");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
+
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassD", "TimeProp6", false);
+			SilDataAccess.get_TimeProp(hvo, tag);
+=======
+			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassD");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
+
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassD", "TimeProp6", false);
+			Assert.That(() => SilDataAccess.get_TimeProp(hvo, tag), Throws.TypeOf<KeyNotFoundException>());
+>>>>>>> develop:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
 		}
 
 		/// <summary>
@@ -392,6 +512,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		{
 			const int hvo = 1;
 			// Set class first, or it will throw the exception in the wrong place.
+<<<<<<< HEAD:Src/LanguageExplorer.TestUtilities.Tests/RealDataCacheTests.cs
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
 				SilDataAccess.MetaDataCache.GetClassId("ClassG"));
 			Assert.That(
@@ -401,6 +522,19 @@ namespace LanguageExplorer.TestUtilities.Tests
 						SilDataAccess.MetaDataCache.GetFieldId("ClassG", "TextPropsProp7",
 							false));
 				}, Throws.TypeOf<KeyNotFoundException>());
+||||||| f013144d5:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
+			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassG");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
+
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassG", "TextPropsProp7", false);
+			SilDataAccess.get_UnknownProp(hvo, tag);
+=======
+			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassG");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
+
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassG", "TextPropsProp7", false);
+			Assert.That(() => SilDataAccess.get_UnknownProp(hvo, tag), Throws.TypeOf<KeyNotFoundException>());
+>>>>>>> develop:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
 		}
 
 		/// <summary>
@@ -414,6 +548,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
 				SilDataAccess.MetaDataCache.GetClassId("ClassE"));
 			var tsPropsBuilder = TsStringUtils.MakePropsBldr();
+<<<<<<< HEAD:Src/LanguageExplorer.TestUtilities.Tests/RealDataCacheTests.cs
 			Assert.That(
 				() =>
 				{
@@ -421,6 +556,15 @@ namespace LanguageExplorer.TestUtilities.Tests
 						SilDataAccess.MetaDataCache.GetFieldId("ClassE", "UnicodeProp4", false),
 						tsPropsBuilder.GetTextProps());
 				}, Throws.TypeOf<ArgumentException>());
+||||||| f013144d5:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
+			var props = tsPropsBuilder.GetTextProps();
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassE", "UnicodeProp4", false);
+			SilDataAccess.SetUnknown(hvo, tag, props);
+=======
+			var props = tsPropsBuilder.GetTextProps();
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassE", "UnicodeProp4", false);
+			Assert.That(() => SilDataAccess.SetUnknown(hvo, tag, props), Throws.ArgumentException);
+>>>>>>> develop:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
 		}
 
 		/// <summary>
@@ -434,6 +578,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
 				SilDataAccess.MetaDataCache.GetClassId("ClassG"));
 			var tsPropsBuilder = TsStringUtils.MakePropsBldr();
+<<<<<<< HEAD:Src/LanguageExplorer.TestUtilities.Tests/RealDataCacheTests.cs
 			Assert.That(
 				() =>
 				{
@@ -441,6 +586,13 @@ namespace LanguageExplorer.TestUtilities.Tests
 						SilDataAccess.MetaDataCache.GetFieldId("ClassG", "TextPropsProp7", false),
 						tsPropsBuilder);
 				}, Throws.TypeOf<ArgumentException>());
+||||||| f013144d5:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassG", "TextPropsProp7", false);
+			SilDataAccess.SetUnknown(hvo, tag, tsPropsBuilder);
+=======
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassG", "TextPropsProp7", false);
+			Assert.That(() => SilDataAccess.SetUnknown(hvo, tag, tsPropsBuilder), Throws.ArgumentException);
+>>>>>>> develop:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
 		}
 
 		/// <summary>
@@ -478,6 +630,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		{
 			const int hvo = 1;
 			// Set class first, or it will throw the exception in the wrong place.
+<<<<<<< HEAD:Src/LanguageExplorer.TestUtilities.Tests/RealDataCacheTests.cs
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
 				SilDataAccess.MetaDataCache.GetClassId("ClassI"));
 			Assert.That(
@@ -487,6 +640,19 @@ namespace LanguageExplorer.TestUtilities.Tests
 						SilDataAccess.MetaDataCache.GetFieldId("ClassI", "BinaryProp9", false),
 						ArrayPtr.Null, 0, out _);
 				}, Throws.TypeOf<KeyNotFoundException>());
+||||||| f013144d5:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
+			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassI");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassI", "BinaryProp9", false);
+			int chvo;
+			SilDataAccess.BinaryPropRgb(hvo, tag, ArrayPtr.Null, 0, out chvo);
+=======
+			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassI");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassI", "BinaryProp9", false);
+			int chvo;
+			Assert.That(() => SilDataAccess.BinaryPropRgb(hvo, tag, ArrayPtr.Null, 0, out chvo), Throws.TypeOf<KeyNotFoundException>());
+>>>>>>> develop:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
 		}
 
 		/// <summary>
@@ -501,10 +667,24 @@ namespace LanguageExplorer.TestUtilities.Tests
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassI", "BinaryProp9", false);
 			using (var arrayPtr = MarshalEx.ArrayToNative<int>(2))
 			{
+<<<<<<< HEAD:Src/LanguageExplorer.TestUtilities.Tests/RealDataCacheTests.cs
 				var prgb = new byte[] { 3, 4, 5 };
+||||||| f013144d5:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
+				var prgb = new byte[] { 3, 4, 5 };
+				int chvo;
+=======
+				var prgb = new byte[] {3, 4, 5};
+				int chvo;
+>>>>>>> develop:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
 				SilDataAccess.SetBinary(hvo, tag, prgb, prgb.Length);
+<<<<<<< HEAD:Src/LanguageExplorer.TestUtilities.Tests/RealDataCacheTests.cs
 				Assert.That(() => { SilDataAccess.BinaryPropRgb(hvo, tag, arrayPtr, 2, out _); },
 					Throws.TypeOf<ArgumentException>());
+||||||| f013144d5:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
+				SilDataAccess.BinaryPropRgb(hvo, tag, arrayPtr, 2, out chvo);
+=======
+				Assert.That(() => SilDataAccess.BinaryPropRgb(hvo, tag, arrayPtr, 2, out chvo), Throws.ArgumentException);
+>>>>>>> develop:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
 			}
 		}
 
@@ -534,6 +714,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		{
 			// Set class first, or it will throw an exception.
 			const int hvo = 1;
+<<<<<<< HEAD:Src/LanguageExplorer.TestUtilities.Tests/RealDataCacheTests.cs
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
 				SilDataAccess.MetaDataCache.GetClassId("ClassJ"));
 			Assert.That(
@@ -542,6 +723,17 @@ namespace LanguageExplorer.TestUtilities.Tests
 					SilDataAccess.get_StringProp(hvo,
 						SilDataAccess.MetaDataCache.GetFieldId("ClassJ", "StringProp10", false));
 				}, Throws.TypeOf<KeyNotFoundException>());
+||||||| f013144d5:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
+			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassJ");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassJ", "StringProp10", false);
+			SilDataAccess.get_StringProp(hvo, tag);
+=======
+			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassJ");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassJ", "StringProp10", false);
+			Assert.That(() => SilDataAccess.get_StringProp(hvo, tag), Throws.TypeOf<KeyNotFoundException>());
+>>>>>>> develop:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
 		}
 
 		/// <summary>
@@ -592,6 +784,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		{
 			// Set class first, or it will throw an exception.
 			const int hvo = 1;
+<<<<<<< HEAD:Src/LanguageExplorer.TestUtilities.Tests/RealDataCacheTests.cs
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
 				SilDataAccess.MetaDataCache.GetClassId("ClassK"));
 			Assert.That(
@@ -601,6 +794,21 @@ namespace LanguageExplorer.TestUtilities.Tests
 						SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11",
 							false), 0, TsStringUtils.MakeString("Verb", 1));
 				}, Throws.TypeOf<ArgumentException>());
+||||||| f013144d5:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
+			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassK");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11", false);
+
+			var tss = TsStringUtils.MakeString("Verb", 1);
+			SilDataAccess.SetMultiStringAlt(hvo, tag, 0, tss);
+=======
+			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassK");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11", false);
+
+			var tss = TsStringUtils.MakeString("Verb", 1);
+			Assert.That(() => SilDataAccess.SetMultiStringAlt(hvo, tag, 0, tss), Throws.ArgumentException);
+>>>>>>> develop:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
 		}
 
 		/// <summary>
@@ -611,6 +819,7 @@ namespace LanguageExplorer.TestUtilities.Tests
 		{
 			// Set class first, or it will throw an exception.
 			const int hvo = 1;
+<<<<<<< HEAD:Src/LanguageExplorer.TestUtilities.Tests/RealDataCacheTests.cs
 			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class,
 				SilDataAccess.MetaDataCache.GetClassId("ClassK"));
 			Assert.That(
@@ -620,6 +829,21 @@ namespace LanguageExplorer.TestUtilities.Tests
 						SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11",
 							false), -1, TsStringUtils.MakeString("Verb", 1));
 				}, Throws.TypeOf<ArgumentException>());
+||||||| f013144d5:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
+			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassK");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11", false);
+
+			var tss = TsStringUtils.MakeString("Verb", 1);
+			SilDataAccess.SetMultiStringAlt(hvo, tag, -1, tss);
+=======
+			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassK");
+			SilDataAccess.SetInt(hvo, (int)CmObjectFields.kflidCmObject_Class, clid);
+			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassK", "MultiStringProp11", false);
+
+			var tss = TsStringUtils.MakeString("Verb", 1);
+			Assert.That(() => SilDataAccess.SetMultiStringAlt(hvo, tag, -1, tss), Throws.ArgumentException);
+>>>>>>> develop:Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
 		}
 
 		/// <summary>

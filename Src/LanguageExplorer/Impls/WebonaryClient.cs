@@ -1,4 +1,10 @@
+<<<<<<< HEAD:Src/LanguageExplorer/Impls/WebonaryClient.cs
 // Copyright (c) 2016-2020 SIL International
+||||||| f013144d5:Src/xWorks/WebonaryClient.cs
+// Copyright (c) 2016 SIL International
+=======
+// Copyright (c) 2016-2021 SIL International
+>>>>>>> develop:Src/xWorks/WebonaryClient.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -21,10 +27,10 @@ namespace LanguageExplorer.Impls
 		{
 			var request = base.GetWebRequest(address);
 
-			if (request.GetType() == typeof(HttpWebRequest))
+			if (request is HttpWebRequest httpRequest)
 			{
-				((HttpWebRequest)request).Timeout = -1;
-				((HttpWebRequest)request).AllowAutoRedirect = false;
+				httpRequest.Timeout = -1;
+				httpRequest.AllowAutoRedirect = false;
 			}
 			return request;
 		}

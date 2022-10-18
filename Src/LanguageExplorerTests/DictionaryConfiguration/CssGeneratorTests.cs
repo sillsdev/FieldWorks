@@ -52,8 +52,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		private const int DoubleSpace = 2 * 10000;	// Relative line heights are in multiples of 10000.
 		private const float CssDoubleSpace = 2.0F;
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/CssGeneratorTests.cs
 		[OneTimeSetUp]
 		public override void FixtureSetup()
+||||||| f013144d5:Src/xWorks/xWorksTests/CssGeneratorTests.cs
+		[TestFixtureSetUp]
+		protected void Init()
+=======
+		[OneTimeSetUp]
+		protected void Init()
+>>>>>>> develop:Src/xWorks/xWorksTests/CssGeneratorTests.cs
 		{
 			base.FixtureSetup();
 
@@ -67,6 +75,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/CssGeneratorTests.cs
 			try
 			{
 				_owningTable.Clear();
@@ -85,15 +94,40 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				base.FixtureTeardown();
 			}
+||||||| f013144d5:Src/xWorks/xWorksTests/CssGeneratorTests.cs
+			m_application.Dispose();
+			m_window.PropTable.Dispose();
+			FwRegistrySettings.Release();
+=======
+			ConfiguredLcmGenerator.Init();
+			m_application.Dispose();
+			m_window.PropTable.Dispose();
+			FwRegistrySettings.Release();
+			base.FixtureTeardown();
+>>>>>>> develop:Src/xWorks/xWorksTests/CssGeneratorTests.cs
 		}
 
 		[SetUp]
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/CssGeneratorTests.cs
 		public override void TestSetup()
+||||||| f013144d5:Src/xWorks/xWorksTests/CssGeneratorTests.cs
+		public void ResetAssemblyFile()
+=======
+		public void Setup()
+>>>>>>> develop:Src/xWorks/xWorksTests/CssGeneratorTests.cs
 		{
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/CssGeneratorTests.cs
 			base.TestSetup();
 
 			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			if (!_lcmStyleSheet.Styles.Contains("FooStyle"))
+||||||| f013144d5:Src/xWorks/xWorksTests/CssGeneratorTests.cs
+			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
+			if (!m_styleSheet.Styles.Contains("FooStyle"))
+=======
+			ConfiguredLcmGenerator.Init();
+			if (!m_styleSheet.Styles.Contains("FooStyle"))
+>>>>>>> develop:Src/xWorks/xWorksTests/CssGeneratorTests.cs
 			{
 				GenerateStyle("FooStyle");
 			}
@@ -819,7 +853,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// Indent values are converted into pt values on export
 			var firstSenseChildCss = grandChildDeclaration[0].ToString();
 			var allOtherSenseChildrenCss = grandChildDeclaration[1].ToString();
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/CssGeneratorTests.cs
 			Assert.That(firstSenseChildCss, Does.Not.Contain(allOtherSenseChildrenCss));
+||||||| f013144d5:Src/xWorks/xWorksTests/CssGeneratorTests.cs
+			Assert.That(firstSenseChildCss, Is.Not.StringMatching(allOtherSenseChildrenCss));
+=======
+			Assert.That(firstSenseChildCss, Is.Not.EqualTo(allOtherSenseChildrenCss));
+>>>>>>> develop:Src/xWorks/xWorksTests/CssGeneratorTests.cs
 			var firstSenseIndent = parentHangingIndent - grandChildHangingIndent;
 			var otherSenseIndent = childHangingIndent - grandChildHangingIndent;
 			Assert.That(firstSenseChildCss, Contains.Substring("margin-left:" + firstSenseIndent / 1000 + "pt"));
@@ -920,8 +960,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			};
 			PopulateFieldsForTesting(entry);
 			//SUT
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/CssGeneratorTests.cs
 			var childDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(childStyle.Name, CssGenerator.DefaultStyle, headword, _lcmStyleSheet, _writingSystemManager.get_EngineOrNull(CssGenerator.DefaultStyle));
 			Assert.That(childDeclaration.ToString(), Does.Not.Contain("margin-left"));
+||||||| f013144d5:Src/xWorks/xWorksTests/CssGeneratorTests.cs
+			var childDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(childStyle.Name, CssGenerator.DefaultStyle, headword, m_propertyTable);
+			Assert.That(childDeclaration.ToString(), Is.Not.StringContaining("margin-left"));
+=======
+			var childDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(childStyle.Name, CssGenerator.DefaultStyle, headword, m_propertyTable);
+			Assert.That(childDeclaration.ToString(), Does.Not.Contain("margin-left"));
+>>>>>>> develop:Src/xWorks/xWorksTests/CssGeneratorTests.cs
 		}
 
 		[Test]
@@ -985,6 +1033,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			//SUT
 			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph-LineSpacingAtleast", CssGenerator.DefaultStyle, _lcmStyleSheet, _writingSystemManager.get_EngineOrNull(CssGenerator.DefaultStyle));
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("flex-line-height:12pt;"));
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("line-height:12pt;"));
 		}
 
 		[Test]
@@ -1162,8 +1211,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			entry.CitationForm.set_String(wsFr, TsStringUtils.MakeString("homme", wsFr));
 			//SUT
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/CssGeneratorTests.cs
 			var cssResult = GenerateCssFromConfiguration(model);
 			Assert.That(cssResult, Does.Not.Contain(".lexentry"));
+||||||| f013144d5:Src/xWorks/xWorksTests/CssGeneratorTests.cs
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			Assert.That(cssResult, Is.Not.StringContaining(".lexentry"));
+=======
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			Assert.That(cssResult, Does.Not.Contain(".lexentry"));
+>>>>>>> develop:Src/xWorks/xWorksTests/CssGeneratorTests.cs
 			Assert.That(cssResult, Contains.Substring(".bolo"));
 
 			var xhtmResult = new StringBuilder();
@@ -1208,8 +1265,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 			entry.CitationForm.set_String(wsFr, TsStringUtils.MakeString("HeadWordTest", wsFr));
 			//SUT
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/CssGeneratorTests.cs
 			var cssResult = GenerateCssFromConfiguration(model);
 			Assert.That(cssResult, Does.Not.Contain(".headword"));
+||||||| f013144d5:Src/xWorks/xWorksTests/CssGeneratorTests.cs
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			Assert.That(cssResult, Is.Not.StringContaining(".headword"));
+=======
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			Assert.That(cssResult, Does.Not.Contain(".headword"));
+>>>>>>> develop:Src/xWorks/xWorksTests/CssGeneratorTests.cs
 			Assert.That(cssResult, Contains.Substring(".tailwind"));
 
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, testParentNode, null, DefaultSettings);
@@ -2989,9 +3054,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		}
 
 		[Test]
-		public void GenerateCssForConfiguration_GenerateDictionaryNormalParagraphStyle()
+		public void GenerateCssForConfiguration_GenerateMainEntryParagraphStyle()
 		{
 			GenerateNormalStyle("Dictionary-Normal");
+			var rtlStyle = GenerateEmptyParagraphStyle("Dictionary-RTL");
+			rtlStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptRightToLeft, 0,
+				(int)TriStateBool.triTrue);
 			var testSensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses"
@@ -2999,7 +3067,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var testEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { testSensesNode }
+				Children = new List<ConfigurableDictionaryNode> { testSensesNode },
+				CSSClassNameOverride = "entry"
 			};
 			var model = new DictionaryConfigurationModel
 			{
@@ -3007,9 +3076,28 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			};
 			PopulateFieldsForTesting(testEntryNode);
 			//SUT
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/CssGeneratorTests.cs
 			var cssResult = GenerateCssFromConfiguration(model);
 			Assert.IsTrue(Regex.Match(cssResult, @"div.entry{\s*margin-left:24pt;\s*padding-right:48pt;\s*}", RegexOptions.Singleline).Success,
 							  "Generate Dictionary-Normal Paragraph Style not generated.");
+||||||| f013144d5:Src/xWorks/xWorksTests/CssGeneratorTests.cs
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			Assert.IsTrue(Regex.Match(cssResult, @"div.entry{\s*margin-left:24pt;\s*padding-right:48pt;\s*}", RegexOptions.Singleline).Success,
+							  "Generate Dictionary-Normal Paragraph Style not generated.");
+=======
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			Assert.IsTrue(
+				Regex.Match(cssResult,
+					@"div.entry{\s*margin-left:24pt;\s*padding-right:48pt;\s*}",
+					RegexOptions.Singleline).Success,
+				"Dictionary-Normal Paragraph Style not generated when main entry has no style selected.");
+			model.Parts[0].Style = "Dictionary-RTL";
+			cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			Assert.IsTrue(
+				Regex.Match(cssResult, @"div.entry{\s*direction:rtl;\s*}",
+					RegexOptions.Singleline).Success,
+				"Main Entry style was not used as the main page style");
+>>>>>>> develop:Src/xWorks/xWorksTests/CssGeneratorTests.cs
 		}
 
 		[Test]
@@ -3169,7 +3257,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var senses = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
-				CSSClassNameOverride = "Senses",
+				CSSClassNameOverride = "sensesos",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions
 				{
 					NumberStyle = "Dictionary-SenseNum",
@@ -3186,8 +3274,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(model);
 			// SUT
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/CssGeneratorTests.cs
 			var cssResult = GenerateCssFromConfiguration(model);
 			const string regexExpected = @".lexentry>\s.senses{.*counter-reset:\ssensesos;.*}.*.lexentry>\s.senses\s>\s.sensecontent:before{.*counter-increment:\ssensesos;.*content:\scounter.sensesos,\sdecimal.\s'\s';.*font-size:14pt;.*color:Green;.*}";
+||||||| f013144d5:Src/xWorks/xWorksTests/CssGeneratorTests.cs
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			const string regexExpected = @".lexentry>\s.senses{.*counter-reset:\ssensesos;.*}.*.lexentry>\s.senses\s>\s.sensecontent:before{.*counter-increment:\ssensesos;.*content:\scounter.sensesos,\sdecimal.\s'\s';.*font-size:14pt;.*color:Green;.*}";
+=======
+			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			const string regexExpected = @".lexentry>\s.sensesos{.*counter-reset:\ssensesos;.*}.*.lexentry>\s.sensesos\s>\s.sensecontent:before{.*counter-increment:\ssensesos;.*content:\scounter.sensesos,\sdecimal.\s'\s';.*font-size:14pt;.*color:Green;.*}";
+>>>>>>> develop:Src/xWorks/xWorksTests/CssGeneratorTests.cs
 			Assert.IsTrue(Regex.Match(cssResult, regexExpected, RegexOptions.Singleline).Success, "Numbering style not generated for Senses.");
 		}
 
@@ -3779,8 +3875,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				}
 			};
 			PopulateFieldsForTesting(model);
+<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/CssGeneratorTests.cs
 			var result = GenerateCssFromConfiguration(model); // SUT
 			Assert.That(result, Is.Not.Null.Or.Empty);
+||||||| f013144d5:Src/xWorks/xWorksTests/CssGeneratorTests.cs
+			var result = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable); // SUT
+			Assert.IsNotNullOrEmpty(result);
+=======
+			var result = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable); // SUT
+			Assert.That(result, Is.Not.Null.Or.Empty);
+>>>>>>> develop:Src/xWorks/xWorksTests/CssGeneratorTests.cs
 			Assert.That(TsStringUtils.MakeString(result, 1).get_IsNormalizedForm(FwNormalizationMode.knmNFC));
 		}
 

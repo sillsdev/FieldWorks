@@ -338,12 +338,48 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void soundFieldControl_SoundDeleted(object sender, EventArgs e)
 		{
-			// We don't want the file name hanging aroudn once we deleted the file.
+			// We don't want the file name hanging around once we deleted the file.
 			var sc = (ShortSoundFieldControl)sender;
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/LabeledMultiStringView.cs
 			var ws = WsForSoundField(sc, out var dummy);
 			var handle = ws?.Handle ?? 0;
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(InnerView.Cache.ActionHandlerAccessor,
 				() => InnerView.Cache.DomainDataByFlid.SetMultiStringAlt(InnerView.HvoObj, InnerView.Flid, handle, TsStringUtils.EmptyString(handle)));
+||||||| f013144d5:Src/Common/Controls/Widgets/LabeledMultiStringView.cs
+			int dummy;
+			var ws = WsForSoundField(sc, out dummy);
+			var handle = ws == null ? 0 : ws.Handle;
+			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_innerView.Cache.ActionHandlerAccessor,
+				() => m_innerView.Cache.DomainDataByFlid.SetMultiStringAlt(m_innerView.HvoObj, m_innerView.Flid, handle,
+					TsStringUtils.EmptyString(handle)));
+=======
+			int dummy;
+			var ws = WsForSoundField(sc, out dummy);
+			var handle = ws == null ? 0 : ws.Handle;
+			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_innerView.Cache.ActionHandlerAccessor,
+				() =>
+				{
+					m_innerView.Cache.DomainDataByFlid.SetMultiStringAlt(m_innerView.HvoObj,
+						m_innerView.Flid, handle,
+						TsStringUtils.EmptyString(handle));
+					SetDateModifiedOnFieldOwner(m_innerView.HvoObj, m_innerView.Cache);
+				});
+		}
+
+		private void SetDateModifiedOnFieldOwner(int multiStringFieldOwner, LcmCache cache)
+		{
+			// Some multi-strings are owned directly by the Entry, others are owned by senses, or others
+			var fieldOwner = cache.ServiceLocator.ObjectRepository.GetObject(multiStringFieldOwner);
+			while (fieldOwner != null && !(fieldOwner is ILexEntry))
+			{
+				fieldOwner = fieldOwner.Owner;
+			}
+
+			if (fieldOwner is ILexEntry entry)
+			{
+				entry.DateModified = DateTime.Now;
+			}
+>>>>>>> develop:Src/Common/Controls/Widgets/LabeledMultiStringView.cs
 		}
 
 		private void soundFieldControl_BeforeStartingToRecord(object sender, EventArgs e)
@@ -386,12 +422,35 @@ namespace LanguageExplorer.Controls.DetailControls
 			var sc = (ShortSoundFieldControl)sender;
 			var ws = WsForSoundField(sc, out _);
 			var filenameNew = Path.GetFileName(sc.Path);
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/LabeledMultiStringView.cs
 			var filenameOld = InnerView.Cache.DomainDataByFlid.get_MultiStringAlt(InnerView.HvoObj, InnerView.Flid, ws.Handle).Text ?? string.Empty;
 			if (filenameNew != filenameOld)
 			{
 				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(InnerView.Cache.ActionHandlerAccessor,
 					() => InnerView.Cache.DomainDataByFlid.SetMultiStringAlt(InnerView.HvoObj, InnerView.Flid, ws.Handle, TsStringUtils.MakeString(filenameNew, ws.Handle)));
 			}
+||||||| f013144d5:Src/Common/Controls/Widgets/LabeledMultiStringView.cs
+			var filenameOld = m_innerView.Cache.DomainDataByFlid.get_MultiStringAlt(m_innerView.HvoObj, m_innerView.Flid, ws.Handle).Text ?? "";
+			if (filenameNew != filenameOld)
+			{
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_innerView.Cache.ActionHandlerAccessor,
+					() => m_innerView.Cache.DomainDataByFlid.SetMultiStringAlt(m_innerView.HvoObj, m_innerView.Flid,
+						ws.Handle, TsStringUtils.MakeString(filenameNew, ws.Handle)));
+			}
+=======
+			var filenameOld = m_innerView.Cache.DomainDataByFlid.get_MultiStringAlt(m_innerView.HvoObj, m_innerView.Flid, ws.Handle).Text ?? "";
+			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_innerView.Cache.ActionHandlerAccessor,
+				() =>
+				{
+					if (filenameNew != filenameOld)
+					{
+						m_innerView.Cache.DomainDataByFlid.SetMultiStringAlt(m_innerView.HvoObj,
+							m_innerView.Flid,
+							ws.Handle, TsStringUtils.MakeString(filenameNew, ws.Handle));
+					}
+					SetDateModifiedOnFieldOwner(m_innerView.HvoObj, m_innerView.Cache);
+				});
+>>>>>>> develop:Src/Common/Controls/Widgets/LabeledMultiStringView.cs
 		}
 
 		#region Implementation of IPropertyTableProvider

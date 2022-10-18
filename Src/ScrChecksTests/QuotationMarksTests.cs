@@ -378,6 +378,312 @@ namespace SILUBS.ScriptureChecks
 			Assert.AreEqual(5, m_qmList.DistinctLevels);
 		}
 
+<<<<<<< HEAD:Src/ScrChecksTests/QuotationMarksTests.cs
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/QuotationMarksTests.cs
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the InvalidOpenerCloserCombinations property
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TestInvalidOpenerCloserCombinations_1()
+		{
+			m_qmList.EnsureLevelExists(3);
+			m_qmList[0].Opening = "<<";
+			m_qmList[0].Closing = ">>";
+			m_qmList[1].Opening = "<";
+			m_qmList[1].Closing = ">";
+			m_qmList[2].Opening = "<<";
+			m_qmList[2].Closing = ">>";
+			Assert.IsNull(m_qmList.InvalidOpenerCloserCombinations);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the InvalidOpenerCloserCombinations property
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TestInvalidOpenerCloserCombinations_2()
+		{
+			m_qmList.EnsureLevelExists(3);
+			m_qmList[0].Opening = "<<";
+			m_qmList[0].Closing = ">>";
+			m_qmList[1].Opening = "<";
+			m_qmList[1].Closing = ">";
+			m_qmList[2].Opening = ">>";
+			m_qmList[2].Closing = "]";
+			QuotationMarksList.InvalidComboInfo result = m_qmList.InvalidOpenerCloserCombinations;
+			Assert.IsNotNull(result);
+			Assert.AreEqual(0, result.LowerLevel);
+			Assert.IsFalse(result.LowerLevelIsOpener);
+			Assert.AreEqual(2, result.UpperLevel);
+			Assert.IsTrue(result.UpperLevelIsOpener);
+			Assert.AreEqual(">>", result.QMark);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the InvalidOpenerCloserCombinations property
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TestInvalidOpenerCloserCombinations_3()
+		{
+			m_qmList.EnsureLevelExists(3);
+			m_qmList[0].Opening = "<<";
+			m_qmList[0].Closing = ">>";
+			m_qmList[1].Opening = "<";
+			m_qmList[1].Closing = ">";
+			m_qmList[2].Opening = "[";
+			m_qmList[2].Closing = "<<";
+			QuotationMarksList.InvalidComboInfo result = m_qmList.InvalidOpenerCloserCombinations;
+			Assert.IsNotNull(result);
+			Assert.AreEqual(0, result.LowerLevel);
+			Assert.IsTrue(result.LowerLevelIsOpener);
+			Assert.AreEqual(2, result.UpperLevel);
+			Assert.IsFalse(result.UpperLevelIsOpener);
+			Assert.AreEqual("<<", result.QMark);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the InvalidOpenerCloserCombinations property
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TestInvalidOpenerCloserCombinations_4()
+		{
+			m_qmList.EnsureLevelExists(3);
+			m_qmList[0].Opening = "!";
+			m_qmList[0].Closing = "!";
+			m_qmList[1].Opening = "<";
+			m_qmList[1].Closing = ">";
+			m_qmList[2].Opening = "!";
+			m_qmList[2].Closing = "!";
+			Assert.IsNull(m_qmList.InvalidOpenerCloserCombinations);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the InvalidOpenerCloserCombinations property
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TestInvalidOpenerCloserCombinations_5()
+		{
+			m_qmList.EnsureLevelExists(3);
+			m_qmList[0].Opening = "!";
+			m_qmList[0].Closing = "!";
+			m_qmList[1].Opening = "!";
+			m_qmList[1].Closing = "!";
+			m_qmList[2].Opening = "[";
+			m_qmList[2].Closing = "]";
+			QuotationMarksList.InvalidComboInfo result = m_qmList.InvalidOpenerCloserCombinations;
+			Assert.IsNotNull(result);
+			Assert.AreEqual(0, result.LowerLevel);
+			Assert.IsTrue(result.LowerLevelIsOpener);
+			Assert.AreEqual(1, result.UpperLevel);
+			Assert.IsFalse(result.UpperLevelIsOpener);
+			Assert.AreEqual("!", result.QMark);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the InvalidOpenerCloserCombinations property
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TestInvalidOpenerCloserCombinations_6()
+		{
+			m_qmList.EnsureLevelExists(3);
+			m_qmList[0].Opening = "!";
+			m_qmList[0].Closing = "!";
+			m_qmList[1].Opening = "!";
+			m_qmList[1].Closing = "!";
+			m_qmList[2].Opening = "!";
+			m_qmList[2].Closing = "!";
+			QuotationMarksList.InvalidComboInfo result = m_qmList.InvalidOpenerCloserCombinations;
+			Assert.IsNotNull(result);
+			Assert.AreEqual(0, result.LowerLevel);
+			Assert.IsTrue(result.LowerLevelIsOpener);
+			Assert.AreEqual(1, result.UpperLevel);
+			Assert.IsFalse(result.UpperLevelIsOpener);
+			Assert.AreEqual("!", result.QMark);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the InvalidOpenerCloserCombinations property
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TestInvalidOpenerCloserCombinations_7()
+		{
+			m_qmList.EnsureLevelExists(3);
+			m_qmList[0].Opening = "<<";
+			m_qmList[0].Closing = ">>";
+			m_qmList[1].Opening = "<<";
+			m_qmList[1].Closing = ">>";
+			m_qmList[2].Opening = "<<";
+			m_qmList[2].Closing = ">>";
+			Assert.IsNull(m_qmList.InvalidOpenerCloserCombinations);
+		}
+
+		/// ------------------------------------------------------------------------------------
+=======
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the InvalidOpenerCloserCombinations property
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TestInvalidOpenerCloserCombinations_1()
+		{
+			m_qmList.EnsureLevelExists(3);
+			m_qmList[0].Opening = "<<";
+			m_qmList[0].Closing = ">>";
+			m_qmList[1].Opening = "<";
+			m_qmList[1].Closing = ">";
+			m_qmList[2].Opening = "<<";
+			m_qmList[2].Closing = ">>";
+			Assert.That(m_qmList.InvalidOpenerCloserCombinations, Is.Null);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the InvalidOpenerCloserCombinations property
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TestInvalidOpenerCloserCombinations_2()
+		{
+			m_qmList.EnsureLevelExists(3);
+			m_qmList[0].Opening = "<<";
+			m_qmList[0].Closing = ">>";
+			m_qmList[1].Opening = "<";
+			m_qmList[1].Closing = ">";
+			m_qmList[2].Opening = ">>";
+			m_qmList[2].Closing = "]";
+			QuotationMarksList.InvalidComboInfo result = m_qmList.InvalidOpenerCloserCombinations;
+			Assert.That(result, Is.Not.Null);
+			Assert.AreEqual(0, result.LowerLevel);
+			Assert.IsFalse(result.LowerLevelIsOpener);
+			Assert.AreEqual(2, result.UpperLevel);
+			Assert.IsTrue(result.UpperLevelIsOpener);
+			Assert.AreEqual(">>", result.QMark);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the InvalidOpenerCloserCombinations property
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TestInvalidOpenerCloserCombinations_3()
+		{
+			m_qmList.EnsureLevelExists(3);
+			m_qmList[0].Opening = "<<";
+			m_qmList[0].Closing = ">>";
+			m_qmList[1].Opening = "<";
+			m_qmList[1].Closing = ">";
+			m_qmList[2].Opening = "[";
+			m_qmList[2].Closing = "<<";
+			QuotationMarksList.InvalidComboInfo result = m_qmList.InvalidOpenerCloserCombinations;
+			Assert.That(result, Is.Not.Null);
+			Assert.AreEqual(0, result.LowerLevel);
+			Assert.IsTrue(result.LowerLevelIsOpener);
+			Assert.AreEqual(2, result.UpperLevel);
+			Assert.IsFalse(result.UpperLevelIsOpener);
+			Assert.AreEqual("<<", result.QMark);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the InvalidOpenerCloserCombinations property
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TestInvalidOpenerCloserCombinations_4()
+		{
+			m_qmList.EnsureLevelExists(3);
+			m_qmList[0].Opening = "!";
+			m_qmList[0].Closing = "!";
+			m_qmList[1].Opening = "<";
+			m_qmList[1].Closing = ">";
+			m_qmList[2].Opening = "!";
+			m_qmList[2].Closing = "!";
+			Assert.That(m_qmList.InvalidOpenerCloserCombinations, Is.Null);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the InvalidOpenerCloserCombinations property
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TestInvalidOpenerCloserCombinations_5()
+		{
+			m_qmList.EnsureLevelExists(3);
+			m_qmList[0].Opening = "!";
+			m_qmList[0].Closing = "!";
+			m_qmList[1].Opening = "!";
+			m_qmList[1].Closing = "!";
+			m_qmList[2].Opening = "[";
+			m_qmList[2].Closing = "]";
+			QuotationMarksList.InvalidComboInfo result = m_qmList.InvalidOpenerCloserCombinations;
+			Assert.That(result, Is.Not.Null);
+			Assert.AreEqual(0, result.LowerLevel);
+			Assert.IsTrue(result.LowerLevelIsOpener);
+			Assert.AreEqual(1, result.UpperLevel);
+			Assert.IsFalse(result.UpperLevelIsOpener);
+			Assert.AreEqual("!", result.QMark);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the InvalidOpenerCloserCombinations property
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TestInvalidOpenerCloserCombinations_6()
+		{
+			m_qmList.EnsureLevelExists(3);
+			m_qmList[0].Opening = "!";
+			m_qmList[0].Closing = "!";
+			m_qmList[1].Opening = "!";
+			m_qmList[1].Closing = "!";
+			m_qmList[2].Opening = "!";
+			m_qmList[2].Closing = "!";
+			QuotationMarksList.InvalidComboInfo result = m_qmList.InvalidOpenerCloserCombinations;
+			Assert.That(result, Is.Not.Null);
+			Assert.AreEqual(0, result.LowerLevel);
+			Assert.IsTrue(result.LowerLevelIsOpener);
+			Assert.AreEqual(1, result.UpperLevel);
+			Assert.IsFalse(result.UpperLevelIsOpener);
+			Assert.AreEqual("!", result.QMark);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the InvalidOpenerCloserCombinations property
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void TestInvalidOpenerCloserCombinations_7()
+		{
+			m_qmList.EnsureLevelExists(3);
+			m_qmList[0].Opening = "<<";
+			m_qmList[0].Closing = ">>";
+			m_qmList[1].Opening = "<<";
+			m_qmList[1].Closing = ">>";
+			m_qmList[2].Opening = "<<";
+			m_qmList[2].Closing = ">>";
+			Assert.That(m_qmList.InvalidOpenerCloserCombinations, Is.Null);
+		}
+
+		/// ------------------------------------------------------------------------------------
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/QuotationMarksTests.cs
 		/// <summary>
 		/// Tests the AddLevel method
 		/// </summary>

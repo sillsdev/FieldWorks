@@ -19,21 +19,55 @@ namespace FieldWorks.TestUtilities.Attributes
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Method, AllowMultiple = true)]
 	public class InitializeRealKeyboardControllerAttribute: TestActionAttribute
 	{
+<<<<<<< HEAD:Src/FieldWorks.TestUtilities/Attributes/InitializeRealKeyboardControllerAttribute.cs
 		/// <inheritdoc />
 		public override void BeforeTest(ITest testDetails)
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/Attributes/InitializeRealKeyboardControllerAttribute.cs
+		/// <summary>
+		/// Initialize keyboard controller
+		/// </summary>
+		public override void BeforeTest(TestDetails testDetails)
+=======
+		/// <summary>
+		/// Initialize keyboard controller
+		/// </summary>
+		public override void BeforeTest(ITest test)
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/Attributes/InitializeRealKeyboardControllerAttribute.cs
 		{
+<<<<<<< HEAD:Src/FieldWorks.TestUtilities/Attributes/InitializeRealKeyboardControllerAttribute.cs
 			base.BeforeTest(testDetails);
 
 			Keyboard.Controller?.Dispose();
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/Attributes/InitializeRealKeyboardControllerAttribute.cs
+			base.BeforeTest(testDetails);
+			if (Keyboard.Controller != null)
+				Keyboard.Controller.Dispose();
+=======
+			base.BeforeTest(test);
+			if (Keyboard.Controller != null)
+				Keyboard.Controller.Dispose();
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/Attributes/InitializeRealKeyboardControllerAttribute.cs
 
 			KeyboardController.Initialize();
-			base.BeforeTest(testDetails);
+			base.BeforeTest(test);
 		}
 
+<<<<<<< HEAD:Src/FieldWorks.TestUtilities/Attributes/InitializeRealKeyboardControllerAttribute.cs
 		/// <inheritdoc />
 		public override void AfterTest(ITest testDetails)
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/Attributes/InitializeRealKeyboardControllerAttribute.cs
+		/// <summary>
+		/// Shutdown keyboard controller
+		/// </summary>
+		public override void AfterTest(TestDetails testDetails)
+=======
+		/// <summary>
+		/// Shutdown keyboard controller
+		/// </summary>
+		public override void AfterTest(ITest test)
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/Attributes/InitializeRealKeyboardControllerAttribute.cs
 		{
-			base.AfterTest(testDetails);
+			base.AfterTest(test);
 			KeyboardController.Shutdown();
 			Keyboard.Controller = new DefaultKeyboardController();
 		}

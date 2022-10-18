@@ -602,7 +602,7 @@
     <value>4</value>
   </data>
   <data name="m_txtProjDescription.HelpString" xml:space="preserve">
-    <value>Displays a description of the open notebook for future reference in this dialog only</value>
+    <value>Displays a description of this project for future reference (only in this dialog)</value>
   </data>
   <data name="m_txtProjDescription.Location" type="System.Drawing.Point, System.Drawing">
     <value>124, 230</value>

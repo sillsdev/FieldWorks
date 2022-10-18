@@ -2320,7 +2320,7 @@ void VwEnv::IntToTsString(int nVal, ITsStrFactory * ptsf, ISilDataAccess * psda,
 	// the last value of itow_s is base not string length.
 	_itow_s(nVal, buf, 20, 10);		// ENHANCE: encoding-dependent conversion
 
-	CheckHr(ptsf->MakeStringRgch(buf, u_strlen(buf), GetUserWs(psda), pptss));
+	CheckHr(ptsf->MakeStringRgch(buf, u_strlen(reinterpret_cast<const UChar*>(buf)), GetUserWs(psda), pptss));
 }
 
 /*----------------------------------------------------------------------------------------------

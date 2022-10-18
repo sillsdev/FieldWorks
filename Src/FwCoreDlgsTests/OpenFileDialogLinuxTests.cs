@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private DummyFile m_File;
 
 		/// <summary />
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp()
 		{
 			Application.Init();
@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary />
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureTearDown()
 		{
 			m_File.Dispose();
@@ -194,23 +194,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// <summary />
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void Filter_Null()
 		{
 			using (var dlg = new DummyOpenFileDialogLinux())
 			{
-				dlg.Filter = null;
+				Assert.That(() => dlg.Filter = null, Throws.ArgumentException);
 			}
 		}
 
 		/// <summary />
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void Filter_Illegal()
 		{
 			using (var dlg = new DummyOpenFileDialogLinux())
 			{
-				dlg.Filter = "All files (*.*)";
+				Assert.That(() => dlg.Filter = "All files (*.*)", Throws.ArgumentException);
 			}
 		}
 

@@ -3,11 +3,27 @@
 /* this ALWAYS GENERATED file contains the definitions for the interfaces */
 
 
+<<<<<<< HEAD
  /* File created by MIDL compiler version 8.01.0622 */
 /* at Tue Jan 19 04:14:07 2038
+||||||| f013144d5
+ /* File created by MIDL compiler version 8.00.0603 */
+/* at Fri Sep 04 11:21:34 2020
+=======
+ /* File created by MIDL compiler version 8.00.0603 */
+/* at Wed Nov 25 07:31:15 2020
+>>>>>>> develop
  */
+<<<<<<< HEAD
 /* Compiler settings for d:\fwrepo\fw\Output\Common\FwKernelTlb.idl:
     Oicf, W1, Zp8, env=Win64 (32b run), target_arch=AMD64 8.01.0622 
+||||||| f013144d5
+/* Compiler settings for c:\fwrepo\fw\Output\Common\FwKernelTlb.idl:
+    Oicf, W1, Zp8, env=Win64 (32b run), target_arch=AMD64 8.00.0603 
+=======
+/* Compiler settings for C:\Repositories\fwmeta\fw\Output\Common\FwKernelTlb.idl:
+    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
+>>>>>>> develop
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
     VC __declspec() decoration level: 

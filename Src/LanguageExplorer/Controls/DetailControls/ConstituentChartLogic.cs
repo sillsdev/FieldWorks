@@ -1,10 +1,17 @@
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChartLogic.cs
 // Copyright (c) 2008-2020 SIL International
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChartLogic.cs
+// Copyright (c) 2015-2017 SIL International
+=======
+// Copyright (c) 2015-2022 SIL International
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChartLogic.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
@@ -47,7 +54,13 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#endregion
 
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChartLogic.cs
 		private ICmPossibility[] m_allMyColumns;
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChartLogic.cs
+		private ICmPossibility[] m_allMyColumns;
+		private ISet<int> m_indexGroupEnds; // indices of ends of column Groups (for LT-8104; setting apart Nucleus)
+=======
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChartLogic.cs
 		private int[] m_currHighlightCells; // Keeps track of highlighted cells when dealing with ChartOrphan insertion.
 
 		/// <summary>
@@ -156,14 +169,16 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				m_chart = value;
 				m_currHighlightCells = null; // otherwise we try to clear the old ones when ribbon changed event happens!
+				// REVIEW (Hasso) 2022.03: what other cached props need to be cleared here and when StTextHvo changes? (AllMyColumns, ColumnsAndGroups could be cached)
 			}
 		}
 
 		internal int StTextHvo { get; set; }
 
 		/// <summary>
-		/// Returns an array of all the columns(Hvos) for the template of the chart that this logic is initialized with.
+		/// Returns an array of all the columns for the template of the chart that this logic is initialized with.
 		/// </summary>
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChartLogic.cs
 		internal ICmPossibility[] AllMyColumns
 		{
 			get
@@ -172,11 +187,39 @@ namespace LanguageExplorer.Controls.DetailControls
 				return m_allMyColumns;
 			}
 		}
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChartLogic.cs
+		public ICmPossibility[] AllMyColumns
+		{
+			get
+			{
+				m_allMyColumns = AllColumns(m_chart.TemplateRA).ToArray();
+				return m_allMyColumns;
+			}
+		}
+=======
+		public ICmPossibility[] AllMyColumns => CollectColumns(m_chart?.TemplateRA).ToArray();
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChartLogic.cs
 
 		/// <summary>
-		/// Returns an array of all the columns for the template of the chart that are the ends of column groups.
+		/// Returns all the columns and column groups for the template of the chart that this logic is initialized with.
 		/// </summary>
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChartLogic.cs
 		internal ISet<int> GroupEndIndices { get; set; }
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChartLogic.cs
+		public ISet<int> GroupEndIndices
+		{
+			get
+			{
+				return m_indexGroupEnds;
+			}
+			set
+			{
+				m_indexGroupEnds = value;
+			}
+		}
+=======
+		public MultilevelHeaderModel ColumnsAndGroups => new MultilevelHeaderModel(m_chart?.TemplateRA);
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChartLogic.cs
 
 		/// <summary>
 		/// Return true if the specified column has automatic 'missing' markers.
@@ -335,7 +378,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			while (true)
 			{
 				var lastWordGroup = FindLastWordGroup(CellPartsInRow(latestRow));
-				if (lastWordGroup != null)
+				if (lastWordGroup?.EndSegmentRA != null)
 				{
 					var temp = new AnalysisOccurrence(lastWordGroup.EndSegmentRA, lastWordGroup.EndAnalysisIndex + 1);
 					return temp.PreviousWordform();
@@ -763,8 +806,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal ChartLocation FindChartLocOfWordform(AnalysisOccurrence point)
 		{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChartLogic.cs
 			if (m_chart == null || Chart.RowsOS.Count < 1)
 			{
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChartLogic.cs
+			if (m_chart == null || Chart.RowsOS.Count < 1)
+=======
+			if (Chart == null || Chart.RowsOS.Count < 1 || !point.IsValid)
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChartLogic.cs
 				return null;
 			}
 			Debug.Assert(point != null);
@@ -839,39 +888,70 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary>
-		/// Gets all the 'leaf' nodes in a chart template, and also the ends of column groupings.
+		/// Gets all the 'leaf' nodes in a chart template.
 		/// </summary>
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChartLogic.cs
 		internal List<ICmPossibility> AllColumns(ICmPossibility template)
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChartLogic.cs
+		/// <param name="template"></param>
+		/// <returns>List of int (hvos?)</returns>
+		public List<ICmPossibility> AllColumns(ICmPossibility template)
+=======
+		internal static List<ICmPossibility> CollectColumns(ICmPossibility template)
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChartLogic.cs
 		{
 			var result = new List<ICmPossibility>();
-			var groups = new HashSet<int>();
 			if (template == null || template.SubPossibilitiesOS.Count == 0)
 			{
 				return result; // template itself can't be a column even if no children.
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChartLogic.cs
 			}
 			CollectColumns(result, template, groups, 0);
 			GroupEndIndices = groups;
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChartLogic.cs
+			CollectColumns(result, template, groups, 0);
+			m_indexGroupEnds = groups;
+=======
+			CollectColumns(result, template);
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChartLogic.cs
 			return result;
 		}
 
 		/// <summary>
 		/// Collect (in depth-first traversal) all the leaf columns in the template.
-		/// Also (LT-8104) collect the set of column indices that are the ends of top-level column groupings.
 		/// </summary>
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChartLogic.cs
 		private static void CollectColumns(List<ICmPossibility> result, ICmPossibility template, HashSet<int> groups, int depth)
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChartLogic.cs
+		/// <param name="result"></param>
+		/// <param name="template"></param>
+		/// <param name="groups"></param>
+		/// <param name="depth"></param>
+		private void CollectColumns(List<ICmPossibility> result, ICmPossibility template, HashSet<int> groups, int depth)
+=======
+		private static void CollectColumns(List<ICmPossibility> result, ICmPossibility template)
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChartLogic.cs
 		{
 			if (template.SubPossibilitiesOS.Count == 0)
 			{
 				// Note: do NOT do add to the list if it has children...we ONLY want leaves in the result.
 				result.Add(template);
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChartLogic.cs
 				// We now collect this column index in our GroupEndsIndices even if it's a group of one.
 				if (depth == 1)
 				{
 					groups.Add(result.Count - 1);
 				}
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChartLogic.cs
+				// We now collect this column index in our GroupEndsIndices even if it's a group of one.
+				if (depth == 1)
+					groups.Add(result.Count - 1);
+=======
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChartLogic.cs
 				return;
 			}
 			foreach (var child in template.SubPossibilitiesOS)
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChartLogic.cs
 			{
 				CollectColumns(result, child, groups, depth + 1);
 			}
@@ -880,6 +960,15 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				groups.Add(result.Count - 1);
 			}
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChartLogic.cs
+				CollectColumns(result, child, groups, depth + 1);
+
+			// Collect this column index in our GroupEndsIndices if we're at the top-level.
+			if (depth == 1)
+				groups.Add(result.Count - 1);
+=======
+				CollectColumns(result, child);
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChartLogic.cs
 		}
 
 		#region actions for buttons
@@ -1378,7 +1467,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var ifirstRowToDelete = rowIndex + 1;
 			var crows = m_chart.RowsOS.Count;
 			var crowsToDelete = crows - ifirstRowToDelete;
-			var ccells = row.CellsOS.Count;
+			var ccells = row.IsValidObject ? row.CellsOS.Count : 0;
 			var ccellsToDelete = ccells - icellPart;
 			if (ccellsToDelete == 0 && crowsToDelete == 0)
 			{
@@ -1411,7 +1500,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				// Delete the redundant stuff in the current row.
 				// Have to recalculate some of the original information in case of side effects
-				ccells = row.CellsOS.Count;
+				ccells = row.IsValidObject ? row.CellsOS.Count : 0;
 				icellPart = cell.ColIndex == 0 ? 0 : FindIndexOfFirstCellPartInOrAfterColumn(cell);
 				ccellsToDelete = ccells - icellPart;
 				if (ccellsToDelete > 0)
@@ -2643,6 +2732,11 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected internal void CleanupInvalidChartCells()
 		{
+			if (m_chart == null)
+			{
+				// Hmm. Clean as a whistle!
+				return;
+			}
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				var fReported = false;
@@ -2651,6 +2745,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				// row count each time through instead of maintaining a count that can get messed up.
 				for (var irow = 0; irow < m_chart.RowsOS.Count; irow++) // not foreach here, as we may delete some as we go
 				{
+					int rowCountBefore = m_chart.RowsOS.Count;
 					var curRow = m_chart.RowsOS[irow];
 					var citems = curRow.CellsOS.Count;
 					// If there are already no items, it's presumably an empty row the user inserted manually
@@ -2669,6 +2764,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						}
 						continue;
 					}
+
 					// Under the new system, if a cellPart goes away and it's the last one, the row will go
 					// automatically. We'll want to check, though, that we aren't loading things with null refs
 					// such as MovedTextMarkers whose source WordGroup is gone or ClauseMarkers with one or more
@@ -2687,6 +2783,7 @@ namespace LanguageExplorer.Controls.DetailControls
 								continue;
 							case IConstChartClauseMarker marker:
 							{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChartLogic.cs
 								if (!marker.HasValidRefs)
 								{
 									if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, marker, ref fReported, ref ipart, ref citems))
@@ -2695,9 +2792,25 @@ namespace LanguageExplorer.Controls.DetailControls
 									}
 								}
 								continue;
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChartLogic.cs
+								if(!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
+									ref fReported, ref ipart, ref citems))
+									irow--;
+=======
+								if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
+									ref fReported, ref ipart, ref citems))
+								{
+									// If more than one row was deleted then start iterating from the beginning.
+									if (m_chart.RowsOS.Count < rowCountBefore - 1)
+										irow = -1;
+									else
+										irow--;
+								}
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChartLogic.cs
 							}
 							case IConstChartMovedTextMarker marker:
 							{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChartLogic.cs
 								if (!marker.HasValidRef)
 								{
 									if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, marker, ref fReported, ref ipart, ref citems))
@@ -2706,16 +2819,47 @@ namespace LanguageExplorer.Controls.DetailControls
 									}
 								}
 								continue;
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChartLogic.cs
+								if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
+									ref fReported, ref ipart, ref citems))
+									irow--;
+=======
+								if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
+									ref fReported, ref ipart, ref citems))
+								{
+									// If more than one row was deleted then start iterating from the beginning.
+									if (m_chart.RowsOS.Count < rowCountBefore - 1)
+										irow = -1;
+									else
+										irow--;
+								}
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChartLogic.cs
 							}
 						}
 						// Do some further checking because it's a ConstChartWordGroup.
 						var curWordGroup = (IConstChartWordGroup)curPart;
 						if (!curWordGroup.IsValidRef || !WordGroupTextMatchesChartText(curWordGroup))
 						{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChartLogic.cs
 							if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart, ref fReported, ref ipart, ref citems))
 							{
 								irow--;
 							}
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChartLogic.cs
+							if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
+								ref fReported, ref ipart, ref citems))
+								irow--;
+=======
+							if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curPart,
+								ref fReported, ref ipart, ref citems))
+							{
+								// If more than one row was deleted then start iterating from the beginning.
+								if (m_chart.RowsOS.Count < rowCountBefore - 1)
+									irow = -1;
+								else
+									irow--;
+							}
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChartLogic.cs
 							continue; // Skip to next.
 						}
 						try
@@ -2732,12 +2876,61 @@ namespace LanguageExplorer.Controls.DetailControls
 							// WfiGloss with no owner!
 						}
 						// CCWordGroup is now empty, take it out of row!
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChartLogic.cs
 						if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curWordGroup, ref fReported, ref ipart, ref citems))
 						{
 							irow--;
 						}
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChartLogic.cs
+						if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curWordGroup,
+							ref fReported, ref ipart, ref citems))
+							irow--;
+=======
+						if (!ReportWarningAndUpdateCountsRemovingCellPart(curRow, curWordGroup,
+							ref fReported, ref ipart, ref citems))
+						{
+							// If more than one row was deleted then start iterating from the beginning.
+							if (m_chart.RowsOS.Count < rowCountBefore - 1)
+								irow = -1;
+							else
+								irow--;
+						}
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChartLogic.cs
 					} // cellPart loop
 				} // row loop
+
+				// If there are no rows that have any word groups in them then the contents are not worth keeping so clear all rows
+				if (m_chart.RowsOS.Any() && m_chart.RowsOS.Sum(row => row.CellsOS.Count(c => c is IConstChartWordGroup)) == 0)
+				{
+					// Store notes before deleting the rows that contain them.
+					string path = System.IO.Path.Combine(Cache.ProjectId.ProjectFolder, "SavedNotes.txt");
+					using (StreamWriter sw = File.AppendText(path))
+					{
+						bool firstNote = true;
+						foreach (var row in m_chart.RowsOS)
+						{
+							if (row.Notes != null && row.Notes.Text != null)
+							{
+								if(firstNote)
+								{
+									sw.WriteLine("\n**********************************************************************");
+									sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd h:mm tt"));
+									firstNote = false;
+								}
+								sw.WriteLine(row.Notes.Text);
+							}
+						}
+
+						// Let the user know the location of the deleted notes.
+						if (!firstNote)
+						{
+							sw.Flush();
+							DisplayDeletedNotesLocation(path);
+						}
+					}
+
+					m_chart.RowsOS.Clear();
+				}
 				if (fReported)
 				{
 					RenumberRows(0, false); // We don't know where the change occurred. Better to be safe.
@@ -2780,6 +2973,15 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected virtual void DisplayWarning()
 		{
 			MessageBox.Show(LanguageExplorerResources.ksTextEditWarning, LanguageExplorerResources.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+		}
+
+		/// <summary>
+		/// Overidden by test subclass to not display message.
+		/// </summary>
+		protected virtual void DisplayDeletedNotesLocation(string path)
+		{
+			MessageBox.Show(String.Format(DiscourseStrings.ksDeletedNotesLocation, path), DiscourseStrings.ksInformation,
+							MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
 		/// <summary>
@@ -3619,7 +3821,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var rowDst = srcCell.Row;
 			if (icolDst < 0)
 			{
-				icolDst = m_allMyColumns.Length - 1;
+				icolDst = AllMyColumns.Length - 1;
 				rowDst = PreviousRow(srcCell.Row);
 			}
 			dstCell = new ChartLocation(rowDst, icolDst);
@@ -3635,23 +3837,437 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		#endregion context menu
 
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChartLogic.cs
 		internal void MakeMainHeaderCols(ChartHeaderView view)
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChartLogic.cs
+		#region for test only
+		static public string FTO_MovedTextMenuText
+		{
+			get { return DiscourseStrings.ksMovedFromMenuItem; }
+		}
+		static public string FTO_InsertAsClauseMenuText
+		{
+			get { return DiscourseStrings.ksMoveHereInNewClause; }
+		}
+		static public string FTO_MovedTextBefore
+		{
+			get { return DiscourseStrings.ksMovedTextBefore; }
+		}
+		static public string FTO_MovedTextAfter
+		{
+			get { return DiscourseStrings.ksMovedTextAfter; }
+		}
+		static public string FTO_InsertMissingMenuText
+		{
+			get { return DiscourseStrings.ksMarkMissingItem; }
+		}
+		static public string FTO_MakeDepClauseMenuText
+		{
+			get { return DiscourseStrings.ksMakeDepClauseMenuItem; }
+		}
+		static public string FTO_MakeSpeechClauseMenuItem
+		{
+			get { return DiscourseStrings.ksMakeSpeechClauseMenuItem; }
+		}
+		static public string FTO_MakeSongClauseMenuItem
+		{
+			get { return DiscourseStrings.ksMakeSongClauseMenuItem; }
+		}
+		static public string FTO_PreviousClauseMenuItem
+		{
+			get { return DiscourseStrings.ksPreviousClauseMenuItem; }
+		}
+		static public string FTO_NextClauseMenuItem
+		{
+			get { return DiscourseStrings.ksNextClauseMenuItem; }
+		}
+		static public string FTO_NextTwoClausesMenuItem
+		{
+			get { return DiscourseStrings.ksNextTwoClausesMenuItem; }
+		}
+		static public string FTO_NextNClausesMenuItem
+		{
+			get { return DiscourseStrings.ksNextNClausesMenuItem; }
+		}
+		static public string FTO_RowEndsParaMenuItem
+		{
+			get { return DiscourseStrings.ksRowEndsParaMenuItem; }
+		}
+		static public string FTO_RowEndsSentMenuItem
+		{
+			get { return DiscourseStrings.ksRowEndsSentMenuItem; }
+		}
+		static public string FTO_MergeAfterMenuItem
+		{
+			get { return DiscourseStrings.ksMergeAfterMenuItem; }
+		}
+		static public string FTO_MergeBeforeMenuItem
+		{
+			get { return DiscourseStrings.ksMergeBeforeMenuItem; }
+		}
+		static public string FTO_UndoMoveCellForward
+		{
+			get { return DiscourseStrings.ksUndoMoveCellForward; }
+		}
+		static public string FTO_RedoMoveCellForward
+		{
+			get { return DiscourseStrings.ksRedoMoveCellForward; }
+		}
+		static public string FTO_MoveMenuItem
+		{
+			get { return DiscourseStrings.ksMoveMenuItem; }
+		}
+		static public string FTO_ForwardMenuItem
+		{
+			get { return DiscourseStrings.ksForwardMenuItem; }
+		}
+		static public string FTO_BackMenuItem
+		{
+			get { return DiscourseStrings.ksBackMenuItem; }
+		}
+		static public string FTO_UndoMoveCellBack
+		{
+			get { return DiscourseStrings.ksUndoMoveCellBack; }
+		}
+		static public string FTO_RedoMoveCellBack
+		{
+			get { return DiscourseStrings.ksRedoMoveCellBack; }
+		}
+
+		static public string FTO_PreposeFromMenuItem
+		{
+			get { return DiscourseStrings.ksPreposeFromMenuItem; }
+		}
+		static public string FTO_PostposeFromMenuItem
+		{
+			get { return DiscourseStrings.ksPostposeFromMenuItem; }
+		}
+		static public string FTO_AnotherClause
+		{
+			get { return DiscourseStrings.ksAdvancedDlgMenuItem; }
+		}
+		static public string FTO_UndoPreposeFrom
+		{
+			get { return DiscourseStrings.ksUndoPreposeFrom; }
+		}
+		static public string FTO_RedoPreposeFrom
+		{
+			get { return DiscourseStrings.ksRedoPreposeFrom; }
+		}
+		static public string FTO_UndoPostposeFrom
+		{
+			get { return DiscourseStrings.ksUndoPostposeFrom; }
+		}
+		static public string FTO_RedoPostposeFrom
+		{
+			get { return DiscourseStrings.ksRedoPostposeFrom; }
+		}
+		static public string FTO_UndoMoveWord
+		{
+			get { return DiscourseStrings.ksUndoMoveWord; }
+		}
+		static public string FTO_RedoMoveWord
+		{
+			get { return DiscourseStrings.ksRedoMoveWord; }
+		}
+		static public string FTO_MoveWordMenuItem
+		{
+			get { return DiscourseStrings.ksMoveWordMenuItem; }
+		}
+		static public string FTO_InsertRowMenuItemAbove
+		{
+			get { return DiscourseStrings.ksInsertRowMenuItemAbove; }
+		}
+		static public string FTO_InsertRowMenuItemBelow
+		{
+			get { return DiscourseStrings.ksInsertRowMenuItemBelow; }
+		}
+		static public string FTO_UndoInsertRow
+		{
+			get { return DiscourseStrings.ksUndoInsertRow; }
+		}
+		static public string FTO_RedoInsertRow
+		{
+			get { return DiscourseStrings.ksRedoInsertRow; }
+		}
+		static public string FTO_UndoAddMarker
+		{
+			get { return DiscourseStrings.ksUndoAddMarker; }
+		}
+		static public string FTO_RedoAddMarker
+		{
+			get { return DiscourseStrings.ksRedoAddMarker; }
+		}
+		static public string FTO_ClearFromHereOnMenuItem
+		{
+			get { return DiscourseStrings.ksClearFromHereOnMenuItem; }
+		}
+		static public string FTO_UndoClearChart
+		{
+			get { return DiscourseStrings.ksUndoClearChart; }
+		}
+		static public string FTO_RedoClearChart
+		{
+			get { return DiscourseStrings.ksRedoClearChart; }
+		}
+		static public string FTO_OtherMenuItem
+		{
+			get { return DiscourseStrings.ksOtherMenuItem; }
+		}
+		static public string FTO_RedoRemoveClauseMarker
+		{
+			get { return DiscourseStrings.ksRedoRemoveClauseMarker; }
+		}
+		static public string FTO_UndoRemoveClauseMarker
+		{
+			get { return DiscourseStrings.ksUndoRemoveClauseMarker; }
+		}
+		static public string FTO_UndoMakeNewRow
+		{
+			get { return DiscourseStrings.ksUndoMakeNewRow; }
+		}
+		static public string FTO_RedoMakeNewRow
+		{
+			get { return DiscourseStrings.ksRedoMakeNewRow; }
+		}
+		#endregion for test only
+
+		internal static ListView MakeHeaderGroups()
+		{
+			ListView result = new ListView();
+
+			return result;
+		}
+
+		internal void MakeMainHeaderCols(ChartHeaderView view)
+=======
+		#region for test only
+		static public string FTO_MovedTextMenuText
+		{
+			get { return DiscourseStrings.ksMovedFromMenuItem; }
+		}
+		static public string FTO_InsertAsClauseMenuText
+		{
+			get { return DiscourseStrings.ksMoveHereInNewClause; }
+		}
+		static public string FTO_MovedTextBefore
+		{
+			get { return DiscourseStrings.ksMovedTextBefore; }
+		}
+		static public string FTO_MovedTextAfter
+		{
+			get { return DiscourseStrings.ksMovedTextAfter; }
+		}
+		static public string FTO_InsertMissingMenuText
+		{
+			get { return DiscourseStrings.ksMarkMissingItem; }
+		}
+		static public string FTO_MakeDepClauseMenuText
+		{
+			get { return DiscourseStrings.ksMakeDepClauseMenuItem; }
+		}
+		static public string FTO_MakeSpeechClauseMenuItem
+		{
+			get { return DiscourseStrings.ksMakeSpeechClauseMenuItem; }
+		}
+		static public string FTO_MakeSongClauseMenuItem
+		{
+			get { return DiscourseStrings.ksMakeSongClauseMenuItem; }
+		}
+		static public string FTO_PreviousClauseMenuItem
+		{
+			get { return DiscourseStrings.ksPreviousClauseMenuItem; }
+		}
+		static public string FTO_NextClauseMenuItem
+		{
+			get { return DiscourseStrings.ksNextClauseMenuItem; }
+		}
+		static public string FTO_NextTwoClausesMenuItem
+		{
+			get { return DiscourseStrings.ksNextTwoClausesMenuItem; }
+		}
+		static public string FTO_NextNClausesMenuItem
+		{
+			get { return DiscourseStrings.ksNextNClausesMenuItem; }
+		}
+		static public string FTO_RowEndsParaMenuItem
+		{
+			get { return DiscourseStrings.ksRowEndsParaMenuItem; }
+		}
+		static public string FTO_RowEndsSentMenuItem
+		{
+			get { return DiscourseStrings.ksRowEndsSentMenuItem; }
+		}
+		static public string FTO_MergeAfterMenuItem
+		{
+			get { return DiscourseStrings.ksMergeAfterMenuItem; }
+		}
+		static public string FTO_MergeBeforeMenuItem
+		{
+			get { return DiscourseStrings.ksMergeBeforeMenuItem; }
+		}
+		static public string FTO_UndoMoveCellForward
+		{
+			get { return DiscourseStrings.ksUndoMoveCellForward; }
+		}
+		static public string FTO_RedoMoveCellForward
+		{
+			get { return DiscourseStrings.ksRedoMoveCellForward; }
+		}
+		static public string FTO_MoveMenuItem
+		{
+			get { return DiscourseStrings.ksMoveMenuItem; }
+		}
+		static public string FTO_ForwardMenuItem
+		{
+			get { return DiscourseStrings.ksForwardMenuItem; }
+		}
+		static public string FTO_BackMenuItem
+		{
+			get { return DiscourseStrings.ksBackMenuItem; }
+		}
+		static public string FTO_UndoMoveCellBack
+		{
+			get { return DiscourseStrings.ksUndoMoveCellBack; }
+		}
+		static public string FTO_RedoMoveCellBack
+		{
+			get { return DiscourseStrings.ksRedoMoveCellBack; }
+		}
+
+		static public string FTO_PreposeFromMenuItem
+		{
+			get { return DiscourseStrings.ksPreposeFromMenuItem; }
+		}
+		static public string FTO_PostposeFromMenuItem
+		{
+			get { return DiscourseStrings.ksPostposeFromMenuItem; }
+		}
+		static public string FTO_AnotherClause
+		{
+			get { return DiscourseStrings.ksAdvancedDlgMenuItem; }
+		}
+		static public string FTO_UndoPreposeFrom
+		{
+			get { return DiscourseStrings.ksUndoPreposeFrom; }
+		}
+		static public string FTO_RedoPreposeFrom
+		{
+			get { return DiscourseStrings.ksRedoPreposeFrom; }
+		}
+		static public string FTO_UndoPostposeFrom
+		{
+			get { return DiscourseStrings.ksUndoPostposeFrom; }
+		}
+		static public string FTO_RedoPostposeFrom
+		{
+			get { return DiscourseStrings.ksRedoPostposeFrom; }
+		}
+		static public string FTO_UndoMoveWord
+		{
+			get { return DiscourseStrings.ksUndoMoveWord; }
+		}
+		static public string FTO_RedoMoveWord
+		{
+			get { return DiscourseStrings.ksRedoMoveWord; }
+		}
+		static public string FTO_MoveWordMenuItem
+		{
+			get { return DiscourseStrings.ksMoveWordMenuItem; }
+		}
+		static public string FTO_InsertRowMenuItemAbove
+		{
+			get { return DiscourseStrings.ksInsertRowMenuItemAbove; }
+		}
+		static public string FTO_InsertRowMenuItemBelow
+		{
+			get { return DiscourseStrings.ksInsertRowMenuItemBelow; }
+		}
+		static public string FTO_UndoInsertRow
+		{
+			get { return DiscourseStrings.ksUndoInsertRow; }
+		}
+		static public string FTO_RedoInsertRow
+		{
+			get { return DiscourseStrings.ksRedoInsertRow; }
+		}
+		static public string FTO_UndoAddMarker
+		{
+			get { return DiscourseStrings.ksUndoAddMarker; }
+		}
+		static public string FTO_RedoAddMarker
+		{
+			get { return DiscourseStrings.ksRedoAddMarker; }
+		}
+		static public string FTO_ClearFromHereOnMenuItem
+		{
+			get { return DiscourseStrings.ksClearFromHereOnMenuItem; }
+		}
+		static public string FTO_UndoClearChart
+		{
+			get { return DiscourseStrings.ksUndoClearChart; }
+		}
+		static public string FTO_RedoClearChart
+		{
+			get { return DiscourseStrings.ksRedoClearChart; }
+		}
+		static public string FTO_OtherMenuItem
+		{
+			get { return DiscourseStrings.ksOtherMenuItem; }
+		}
+		static public string FTO_RedoRemoveClauseMarker
+		{
+			get { return DiscourseStrings.ksRedoRemoveClauseMarker; }
+		}
+		static public string FTO_UndoRemoveClauseMarker
+		{
+			get { return DiscourseStrings.ksUndoRemoveClauseMarker; }
+		}
+		static public string FTO_UndoMakeNewRow
+		{
+			get { return DiscourseStrings.ksUndoMakeNewRow; }
+		}
+		static public string FTO_RedoMakeNewRow
+		{
+			get { return DiscourseStrings.ksRedoMakeNewRow; }
+		}
+		#endregion for test only
+
+		internal void MakeHeaderColsFor(ChartHeaderView view, List<MultilevelHeaderNode> cols, bool wantNotesLabel)
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChartLogic.cs
 		{
 			// This is actually a display method, not a true 'logic' method.
 			// That's why we need to test for RTL script.
 			view.SuspendLayout();
 			view.Controls.Clear();
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChartLogic.cs
 			if (ChartIsRtL)
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChartLogic.cs
+
+			if (ChartIsRtL)
+=======
+
+			if (wantNotesLabel)
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChartLogic.cs
 			{
 				MakeNotesColumnHeader(view);
-				MakeTemplateColumnHeaders(view);
-				MakeRowNumberColumnHeader(view);
 			}
 			else
 			{
-				MakeNotesColumnHeader(view);
-				MakeRowNumberColumnHeader(view);
-				MakeTemplateColumnHeaders(view);
+				MakeEmptyColumnHeader(view);
+			}
+
+			if (ChartIsRtL)
+			{
+				MakeTemplateColumnHeaders(view, cols);
+				// number column
+				MakeEmptyColumnHeader(view);
+			}
+			else
+			{
+				// number column
+				MakeEmptyColumnHeader(view);
+				MakeTemplateColumnHeaders(view, cols);
 			}
 			view.ResumeLayout(false);
 		}
@@ -3659,33 +4275,72 @@ namespace LanguageExplorer.Controls.DetailControls
 		private static void MakeNotesColumnHeader(ChartHeaderView view)
 		{
 			// Add one more column for notes.
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChartLogic.cs
 			var ch = new HeaderLabel
 			{
 				Text = LanguageExplorerResources.ksNotesColumnHeader
 			};
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChartLogic.cs
+			var ch = new HeaderLabel();
+			ch.Text = DiscourseStrings.ksNotesColumnHeader;
+=======
+			var ch = new HeaderLabel { Text = DiscourseStrings.ksNotesColumnHeader };
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChartLogic.cs
 			view.Controls.Add(ch);
 		}
 
-		private void MakeTemplateColumnHeaders(ChartHeaderView view)
+		private void MakeTemplateColumnHeaders(ChartHeaderView view, IEnumerable<MultilevelHeaderNode> columns)
 		{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChartLogic.cs
 			foreach (var col in ChartIsRtL ? AllMyColumns.Reverse() : AllMyColumns)
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChartLogic.cs
+			foreach (var col in ChartIsRtL? AllMyColumns.Reverse() : AllMyColumns)
+=======
+			foreach (var col in ChartIsRtL ? columns.Reverse() : columns)
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChartLogic.cs
 			{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChartLogic.cs
 				var ch = new HeaderLabel
 				{
 					// ensure NFC -- See LT-8815.
 					Text = col.Name.BestAnalysisAlternative.Text.Normalize()
 				};
 				view.Controls.Add(ch);
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChartLogic.cs
+				var ch = new HeaderLabel();
+
+				// ensure NFC -- See LT-8815.
+				//ch.Text = m_possRepo.GetObject(col.Hvo).Name.BestAnalysisAlternative.Text.Normalize();
+				ch.Text = col.Name.BestAnalysisAlternative.Text.Normalize();
+				view.Controls.Add(ch);
+=======
+				view.Controls.Add(new HeaderLabel
+				{
+					Text = GetColumnHeaderFrom(col.Item)
+				});
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChartLogic.cs
 			}
 		}
 
-		private static void MakeRowNumberColumnHeader(ChartHeaderView view)
+		/// <remarks>ensure NFC -- See LT-8815.</remarks>
+		internal static string GetColumnHeaderFrom(ICmPossibility pos) => pos?.Name.BestAnalysisAlternative.Text.Normalize();
+
+		private static void MakeEmptyColumnHeader(ChartHeaderView view)
 		{
+<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConstituentChartLogic.cs
 			var ch = new HeaderLabel
 			{
 				Text = string.Empty // otherwise default is 'column header'!
 			};
 			view.Controls.Add(ch);
+||||||| f013144d5:Src/LexText/Discourse/ConstituentChartLogic.cs
+			var ch = new HeaderLabel();
+			ch.Text = ""; // otherwise default is 'column header'!
+			view.Controls.Add(ch);
+=======
+			// default Text is 'column header'!
+			view.Controls.Add(new HeaderLabel { Text = string.Empty });
+>>>>>>> develop:Src/LexText/Discourse/ConstituentChartLogic.cs
 		}
 
 		/// <summary>

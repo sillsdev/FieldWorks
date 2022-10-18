@@ -152,8 +152,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				messageStart = messageStart.Substring(0, firstParamPos - 1);
 			}
 			var messageActual = testModel.InvalidProjectNameMessage;
+<<<<<<< HEAD:Src/FwCoreDlgsTests/FwNewLangProjectModelTests.cs
 			Assert.That(messageActual, Does.StartWith(messageStart));
 			Assert.That(messageActual, Does.Contain(FwUtilsStrings.ksIllegalNameExplanation));
+||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwNewLangProjectModelTests.cs
+			Assert.That(messageActual, Is.StringStarting(messageStart));
+			Assert.That(messageActual, Is.StringContaining(FwCoreDlgs.ksIllegalNameExplanation));
+=======
+			Assert.That(messageActual, Does.StartWith(messageStart));
+			Assert.That(messageActual, Does.Contain(FwCoreDlgs.ksIllegalNameExplanation));
+>>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwNewLangProjectModelTests.cs
 		}
 
 		/// <summary/>
@@ -172,8 +180,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				messageStart = messageStart.Substring(0, firstParamPos - 1);
 			}
 			var messageActual = testModel.InvalidProjectNameMessage;
+<<<<<<< HEAD:Src/FwCoreDlgsTests/FwNewLangProjectModelTests.cs
 			Assert.That(messageActual, Does.StartWith(messageStart));
 			Assert.That(messageActual, Does.Contain(FwUtilsStrings.ksIllegalNameExplanation));
+||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwNewLangProjectModelTests.cs
+			Assert.That(messageActual, Is.StringStarting(messageStart));
+			Assert.That(messageActual, Is.StringContaining(FwCoreDlgs.ksIllegalNameExplanation));
+=======
+			Assert.That(messageActual, Does.StartWith(messageStart));
+			Assert.That(messageActual, Does.Contain(FwCoreDlgs.ksIllegalNameExplanation));
+>>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwNewLangProjectModelTests.cs
 		}
 
 		/// <summary/>
@@ -192,8 +208,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				messageStart = messageStart.Substring(0, firstParamPos - 1);
 			}
 			var messageActual = testModel.InvalidProjectNameMessage;
+<<<<<<< HEAD:Src/FwCoreDlgsTests/FwNewLangProjectModelTests.cs
 			Assert.That(messageActual, Does.StartWith(messageStart));
 			Assert.That(messageActual, Does.Contain(FwUtilsStrings.ksIllegalNameExplanation));
+||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwNewLangProjectModelTests.cs
+			Assert.That(messageActual, Is.StringStarting(messageStart));
+			Assert.That(messageActual, Is.StringContaining(FwCoreDlgs.ksIllegalNameExplanation));
+=======
+			Assert.That(messageActual, Does.StartWith(messageStart));
+			Assert.That(messageActual, Does.Contain(FwCoreDlgs.ksIllegalNameExplanation));
+>>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwNewLangProjectModelTests.cs
 		}
 
 		/// <summary/>

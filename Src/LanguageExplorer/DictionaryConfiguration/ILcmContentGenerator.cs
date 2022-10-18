@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Web.UI.WebControls;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {
@@ -31,11 +32,19 @@ namespace LanguageExplorer.DictionaryConfiguration
 		void StartRun(IFragmentWriter writer, string writingSystem);
 		void EndRun(IFragmentWriter writer);
 		void SetRunStyle(IFragmentWriter writer, string css);
-		void BeginLink(IFragmentWriter writer, Guid destination);
+		void StartLink(IFragmentWriter writer, Guid destination);
 		void EndLink(IFragmentWriter writer);
 		void AddToRunContent(IFragmentWriter writer, string txtContent);
 		void AddLineBreakInRunContent(IFragmentWriter writer);
-		void BeginEntry(IFragmentWriter writer, string className, Guid entryGuid, int index);
+		void StartTable(IFragmentWriter writer);
+		void AddTableTitle(IFragmentWriter writer, string content);
+		void StartTableBody(IFragmentWriter writer);
+		void StartTableRow(IFragmentWriter writer);
+		void AddTableCell(IFragmentWriter writer, bool isHead, int colSpan, HorizontalAlign alignment, string content);
+		void EndTableRow(IFragmentWriter writer);
+		void EndTableBody(IFragmentWriter writer);
+		void EndTable(IFragmentWriter writer);
+		void StartEntry(IFragmentWriter writer, string className, Guid entryGuid, int index, RecordClerk clerk);
 		void AddEntryData(IFragmentWriter writer, List<string> pieces);
 		void EndEntry(IFragmentWriter writer);
 		void AddCollection(IFragmentWriter writer, bool isBlockProperty, string className, string content);
@@ -45,10 +54,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 		string AddImage(string classAttribute, string srcAttribute, string pictureGuid);
 		string AddImageCaption(string captionContent);
 		string GenerateSenseNumber(string formattedSenseNumber);
-		string AddLexReferences(bool generateLexType, string lexTypeContent, string className, string referencesContent);
+		string AddLexReferences(bool generateLexType, string lexTypeContent, string className, string referencesContent, bool typeBefore);
 		void BeginCrossReference(IFragmentWriter writer, bool isBlockProperty, string className);
 		void EndCrossReference(IFragmentWriter writer);
 		string WriteProcessedSenses(bool isBlock, string senseContent, string className, string sharedCollectionInfo);
 		string AddAudioWsContent(string wsId, Guid linkTarget, string fileContent);
+		string GenerateErrorContent(StringBuilder badStrBuilder);
+		string GenerateVideoLinkContent(string className, string mediaId, string srcAttribute,
+			string caption);
 	}
 }

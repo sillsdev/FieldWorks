@@ -5,8 +5,14 @@
 using System;
 using System.IO;
 using NUnit.Framework;
+<<<<<<< HEAD:Src/FwUtilsTests/FwDirectoryFinderTests.cs
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/FwDirectoryFinderTests.cs
+using SIL.LCModel.Utils;
+=======
+using SIL.PlatformUtilities;
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/FwDirectoryFinderTests.cs
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -39,7 +45,29 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Gets the directory where the Utils assembly is
 		/// </summary>
+<<<<<<< HEAD:Src/FwUtilsTests/FwDirectoryFinderTests.cs
 		private string UtilsAssemblyDir => Path.GetDirectoryName(typeof(FwDirectoryFinder).Assembly.CodeBase.Substring(Platform.IsUnix ? 7 : 8));
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/FwDirectoryFinderTests.cs
+		///-------------------------------------------------------------------------------------
+		private string UtilsAssemblyDir
+		{
+			get
+			{
+				return Path.GetDirectoryName(typeof(FwDirectoryFinder).Assembly.CodeBase
+					.Substring(MiscUtils.IsUnix ? 7 : 8));
+			}
+		}
+=======
+		///-------------------------------------------------------------------------------------
+		private string UtilsAssemblyDir
+		{
+			get
+			{
+				return Path.GetDirectoryName(typeof(FwDirectoryFinder).Assembly.CodeBase
+					.Substring(Platform.IsUnix ? 7 : 8));
+			}
+		}
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/FwDirectoryFinderTests.cs
 
 		/// <summary>
 		/// Tests the CodeDirectory property. This should return the DistFiles directory.

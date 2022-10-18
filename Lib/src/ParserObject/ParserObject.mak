@@ -13,11 +13,11 @@ CPP_PROJ=/nologo /W3 /GX /I "../../../Include/" /D "WIN32" /D "_MBCS" /D "_LIB" 
 
 !IF  "$(CFG)" == "Release"
 
-CPP_PROJ=$(CPP_PROJ) /MT /O2 /D "NDEBUG"
+CPP_PROJ=$(CPP_PROJ) /MD /O2 /D "NDEBUG"
 
 !ELSE
 
-CPP_PROJ=$(CPP_PROJ) /MTd /Gm /GZ /ZI /Od /D "_DEBUG"
+CPP_PROJ=$(CPP_PROJ) /MDd /Gm /GZ /ZI /Od /D "_DEBUG"
 
 !ENDIF
 

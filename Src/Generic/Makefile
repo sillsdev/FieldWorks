@@ -25,23 +25,20 @@ else
 	OPTIMIZATIONS = -O3
 endif
 
-PACKAGES := gtkmm-2.4
+PACKAGES := gtkmm-2.4 icu-i18n
 
-INCLUDES := $(shell icu-config --cppflags) \
-	 $(INCLUDES) \
+INCLUDES := $(INCLUDES) \
 	-I$(GENERIC_SRC) -I$(TLB_SRC) -I$(INCLUDE) \
 	-I$(WIN32MORE_INC) \
 	-I$(COM_INC) \
 	-I$(WIN32BASE_INC) \
 	$(shell pkg-config --cflags $(PACKAGES)) \
 
-
 LDLIBS = \
 	-L$(WIN32MORE_LIB) -lWin32More \
 	-L$(COM_LIB) -lcom \
 	-L$(WIN32BASE_LIB) -lWin32Base \
 	$(shell pkg-config --libs $(PACKAGES)) \
-	$(shell icu-config --ldflags) \
 	-ldl
 
 LINK_LIBS := \

@@ -35,7 +35,13 @@ namespace SIL.FieldWorks.Language
 		{
 			var wrappedWindow = new ManagedVwWindow();
 			Rect temp;
+<<<<<<< HEAD:Src/ManagedVwWindowTests/ManagedVwWindowTests.cs
 			Assert.That(() => { wrappedWindow.GetClientRectangle(out temp); }, Throws.TypeOf<ApplicationException>());
+||||||| f013144d5:Src/ManagedVwWindow/ManagedVwWindowTests/ManagedVwWindowTests.cs
+			wrappedWindow.GetClientRectangle(out temp);
+=======
+			Assert.That(() => wrappedWindow.GetClientRectangle(out temp), Throws.TypeOf<ApplicationException>());
+>>>>>>> develop:Src/ManagedVwWindow/ManagedVwWindowTests/ManagedVwWindowTests.cs
 		}
 	}
 }

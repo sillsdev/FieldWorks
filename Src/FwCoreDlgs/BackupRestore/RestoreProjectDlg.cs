@@ -1,9 +1,10 @@
-// Copyright (c) 2010-2020 SIL International
+// Copyright (c) 2010-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 using DialogAdapters;
 using SIL.FieldWorks.Common.FwUtils;
@@ -402,11 +403,10 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 				var backupFile = m_presenter.BackupRepository.GetBackupFile(selectedProject, backupDate, (m_lstVersions.Items.Count == 0));
 				if (backupFile != null)
 				{
-					var newItem = new ListViewItem(new[] { backupDate.ToString(), backupFile.Comment })
+					m_lstVersions.Items.Add(new ListViewItem(new[] { backupDate.ToString(Thread.CurrentThread.CurrentUICulture), backupFile.Comment })
 					{
 						Tag = backupFile
-					};
-					m_lstVersions.Items.Add(newItem);
+					});
 				}
 			}
 

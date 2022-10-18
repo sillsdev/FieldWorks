@@ -32,19 +32,43 @@ namespace FieldWorks.TestUtilities.Attributes
 			m_AdapterType = adapterType;
 		}
 
+<<<<<<< HEAD:Src/FieldWorks.TestUtilities/Attributes/SetMessageBoxAdapterAttribute.cs
 		/// <inheritdoc />
 		public override void BeforeTest(ITest testDetails)
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/Attributes/SetMessageBoxAdapterAttribute.cs
+		/// <summary>
+		/// Set the message box adapter
+		/// </summary>
+		public override void BeforeTest(TestDetails testDetails)
+=======
+		/// <summary>
+		/// Set the message box adapter
+		/// </summary>
+		public override void BeforeTest(ITest test)
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/Attributes/SetMessageBoxAdapterAttribute.cs
 		{
-			base.BeforeTest(testDetails);
+			base.BeforeTest(test);
 			m_PreviousAdapter = s_CurrentAdapter;
 			s_CurrentAdapter = (IMessageBox)Activator.CreateInstance(m_AdapterType);
 			MessageBoxUtils.SetMessageBoxAdapter(s_CurrentAdapter);
 		}
 
+<<<<<<< HEAD:Src/FieldWorks.TestUtilities/Attributes/SetMessageBoxAdapterAttribute.cs
 		/// <inheritdoc />
 		public override void AfterTest(ITest testDetails)
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/Attributes/SetMessageBoxAdapterAttribute.cs
+		/// <summary>
+		/// Restore previous message box adapter
+		/// </summary>
+		public override void AfterTest(TestDetails testDetails)
+=======
+		/// <summary>
+		/// Restore previous message box adapter
+		/// </summary>
+		public override void AfterTest(ITest test)
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/Attributes/SetMessageBoxAdapterAttribute.cs
 		{
-			base.AfterTest(testDetails);
+			base.AfterTest(test);
 
 			s_CurrentAdapter = m_PreviousAdapter;
 			if (s_CurrentAdapter != null)

@@ -61,11 +61,11 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cancel Delete Writing System.
+        ///   Looks up a localized string similar to Analysis.
         /// </summary>
-        public static string CancelDeleteWS {
+        public static string Analysis {
             get {
-                return ResourceManager.GetString("CancelDeleteWS", resourceCulture);
+                return ResourceManager.GetString("Analysis", resourceCulture);
             }
         }
         
@@ -86,15 +86,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
             get {
                 object obj = ResourceManager.GetObject("CheckBoxCheck", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The writing system {0} and all text in the writing system will no longer be deleted..
-        /// </summary>
-        public static string DataInWsWontBeDeleted {
-            get {
-                return ResourceManager.GetString("DataInWsWontBeDeleted", resourceCulture);
             }
         }
         
@@ -149,6 +140,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string khtpBulkReplaceTitle {
             get {
                 return ResourceManager.GetString("khtpBulkReplaceTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &amp;Help.
+        /// </summary>
+        public static string ks_Help {
+            get {
+                return ResourceManager.GetString("ks_Help", resourceCulture);
             }
         }
         
@@ -1221,15 +1221,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You cannot change the code of this writing system to &quot;{0}&quot; because the &quot;{1}&quot; writing system already exists..
-        /// </summary>
-        public static string kstidCantCauseDuplicateWS {
-            get {
-                return ResourceManager.GetString("kstidCantCauseDuplicateWS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to You cannot change the script, region, or variant of the default &quot;{0}&quot; (en) writing system because it is used as a fallback when other writing systems are missing text.
         ///If you would like to create a variant of {0}, click the green plus (+)..
         /// </summary>
@@ -1831,15 +1822,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Simple (Toolbox) Sort Rules Help.
-        /// </summary>
-        public static string kstidSimpleSortingHelp {
-            get {
-                return ResourceManager.GetString("kstidSimpleSortingHelp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &amp;Stop.
         /// </summary>
         public static string kstidStop {
@@ -1953,6 +1935,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string ksWhichIsComponent {
             get {
                 return ResourceManager.GetString("ksWhichIsComponent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This project already has a writing system with the language code &quot;{0}&quot; ({1}). Are you sure you want to make this change?.
+        /// </summary>
+        public static string ksWouldCauseDuplicateWSConfirm {
+            get {
+                return ResourceManager.GetString("ksWouldCauseDuplicateWSConfirm", resourceCulture);
             }
         }
         
@@ -2227,6 +2218,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Vernacular.
+        /// </summary>
+        public static string Vernacular {
+            get {
+                return ResourceManager.GetString("Vernacular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Audio for {0}.
         /// </summary>
         public static string WritingSystemList_AddAudio {
@@ -2272,6 +2272,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide {0}.
+        /// </summary>
+        public static string WritingSystemList_HideWs {
+            get {
+                return ResourceManager.GetString("WritingSystemList_HideWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Merge....
         /// </summary>
         public static string WritingSystemList_MergeWs {
@@ -2295,6 +2304,33 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string WritingSystemList_SelectAtLeastOneWs {
             get {
                 return ResourceManager.GetString("WritingSystemList_SelectAtLeastOneWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update {0}.
+        /// </summary>
+        public static string WritingSystemList_UpdateWs {
+            get {
+                return ResourceManager.GetString("WritingSystemList_UpdateWs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update this writing system with best available data..
+        /// </summary>
+        public static string WritingSystemList_UpdateWsTooltip {
+            get {
+                return ResourceManager.GetString("WritingSystemList_UpdateWsTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View hidden Writing Systems....
+        /// </summary>
+        public static string WritingSystemList_ViewHiddenWSs {
+            get {
+                return ResourceManager.GetString("WritingSystemList_ViewHiddenWSs", resourceCulture);
             }
         }
         
@@ -2336,11 +2372,38 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} (in the {1} list).
+        /// </summary>
+        public static string XInTheXList {
+            get {
+                return ResourceManager.GetString("XInTheXList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} (Original).
         /// </summary>
         public static string xOriginal {
             get {
                 return ResourceManager.GetString("xOriginal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (will be added).
+        /// </summary>
+        public static string XWillBeAdded {
+            get {
+                return ResourceManager.GetString("XWillBeAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (will be deleted).
+        /// </summary>
+        public static string XWillBeDeleted {
+            get {
+                return ResourceManager.GetString("XWillBeDeleted", resourceCulture);
             }
         }
     }

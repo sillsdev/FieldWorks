@@ -1,4 +1,10 @@
+<<<<<<< HEAD:Src/ParserCore/HermitCrab/HCLoader.cs
 // Copyright (c) 2014-2020 SIL International
+||||||| f013144d5:Src/LexText/ParserCore/HCLoader.cs
+﻿// Copyright (c) 2015-2017 SIL International
+=======
+// Copyright (c) 2015-2021 SIL International
+>>>>>>> develop:Src/LexText/ParserCore/HCLoader.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -522,8 +528,20 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			}
 			fs.Freeze();
 			hcEntry.SyntacticFeatureStruct = fs;
+<<<<<<< HEAD:Src/ParserCore/HermitCrab/HCLoader.cs
 			hcEntry.Properties["ID"] = msa.Hvo;
 			foreach (var allo in allos)
+||||||| f013144d5:Src/LexText/ParserCore/HCLoader.cs
+
+			hcEntry.Properties["ID"] = msa.Hvo;
+
+			foreach (IMoStemAllomorph allo in allos)
+=======
+
+			hcEntry.Properties[HCParser.MsaID] = msa.Hvo;
+
+			foreach (IMoStemAllomorph allo in allos)
+>>>>>>> develop:Src/LexText/ParserCore/HCLoader.cs
 			{
 				try
 				{
@@ -612,12 +630,22 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			fs.Freeze();
 			hcEntry.SyntacticFeatureStruct = fs;
 
-			hcEntry.Properties["ID"] = msa.Hvo;
+			hcEntry.Properties[HCParser.MsaID] = msa.Hvo;
 			if (inflType != null)
+<<<<<<< HEAD:Src/ParserCore/HermitCrab/HCLoader.cs
 			{
 				hcEntry.Properties["InflTypeID"] = inflType.Hvo;
 			}
 			foreach (var allo in allos)
+||||||| f013144d5:Src/LexText/ParserCore/HCLoader.cs
+				hcEntry.Properties["InflTypeID"] = inflType.Hvo;
+
+			foreach (IMoStemAllomorph allo in allos)
+=======
+				hcEntry.Properties[HCParser.InflTypeID] = inflType.Hvo;
+
+			foreach (IMoStemAllomorph allo in allos)
+>>>>>>> develop:Src/LexText/ParserCore/HCLoader.cs
 			{
 				try
 				{
@@ -666,7 +694,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 					break;
 			}
 
-			hcAllo.Properties["ID"] = allo.Hvo;
+			hcAllo.Properties[HCParser.FormID] = allo.Hvo;
 			return hcAllo;
 		}
 
@@ -794,8 +822,16 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			if (msa.FromStemNameRA != null && m_stemNames.TryGetValue(msa.FromStemNameRA, out var hcStemName))
 			{
 				mrule.RequiredStemName = hcStemName;
+<<<<<<< HEAD:Src/ParserCore/HermitCrab/HCLoader.cs
 			}
 			mrule.Properties["ID"] = msa.Hvo;
+||||||| f013144d5:Src/LexText/ParserCore/HCLoader.cs
+
+			mrule.Properties["ID"] = msa.Hvo;
+=======
+
+			mrule.Properties[HCParser.MsaID] = msa.Hvo;
+>>>>>>> develop:Src/LexText/ParserCore/HCLoader.cs
 
 			foreach (var hcAllo in LoadAffixProcessAllomorphs(msa, allos))
 			{
@@ -827,8 +863,24 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			}
 			requiredFS.Freeze();
 			mrule.RequiredSyntacticFeatureStruct = requiredFS;
+<<<<<<< HEAD:Src/ParserCore/HermitCrab/HCLoader.cs
 			var requiredMprFeatures = msa.FromProdRestrictRC.Select(prodRestrict => m_mprFeatures[prodRestrict]).ToList();
 			mrule.Properties["ID"] = msa.Hvo;
+||||||| f013144d5:Src/LexText/ParserCore/HCLoader.cs
+
+			var requiredMprFeatures = new List<MprFeature>();
+			foreach (ICmPossibility prodRestrict in msa.FromProdRestrictRC)
+				requiredMprFeatures.Add(m_mprFeatures[prodRestrict]);
+
+			mrule.Properties["ID"] = msa.Hvo;
+=======
+
+			var requiredMprFeatures = new List<MprFeature>();
+			foreach (ICmPossibility prodRestrict in msa.FromProdRestrictRC)
+				requiredMprFeatures.Add(m_mprFeatures[prodRestrict]);
+
+			mrule.Properties[HCParser.MsaID] = msa.Hvo;
+>>>>>>> develop:Src/LexText/ParserCore/HCLoader.cs
 
 			foreach (var hcAllo in LoadAffixProcessAllomorphs(msa, allos))
 			{
@@ -855,7 +907,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			requiredFS.Freeze();
 			mrule.RequiredSyntacticFeatureStruct = requiredFS;
 
-			mrule.Properties["ID"] = msa.Hvo;
+			mrule.Properties[HCParser.MsaID] = msa.Hvo;
 
 			foreach (var hcAllo in LoadAffixProcessAllomorphs(msa, allos))
 			{
@@ -877,7 +929,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			requiredFS.Freeze();
 			mrule.RequiredSyntacticFeatureStruct = requiredFS;
 
-			mrule.Properties["ID"] = msa.Hvo;
+			mrule.Properties[HCParser.MsaID] = msa.Hvo;
 
 			foreach (var hcAllo in LoadAffixProcessAllomorphs(msa, allos))
 			{
@@ -1185,16 +1237,28 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 				hcAllo.Environments.Add(new AllomorphEnvironment(m_spanFactory, ConstraintType.Require, leftEnvPattern, rightEnvPattern) {Name = name});
 			}
 
-			hcAllo.Properties["ID"] = prefixAllo.Hvo;
-			hcAllo.Properties["ID2"] = suffixAllo.Hvo;
+			hcAllo.Properties[HCParser.FormID] = prefixAllo.Hvo;
+			hcAllo.Properties[HCParser.FormID2] = suffixAllo.Hvo;
 			if (prefixEnv != null)
+<<<<<<< HEAD:Src/ParserCore/HermitCrab/HCLoader.cs
 			{
 				hcAllo.Properties["PrefixEnv"] = prefixEnv.StringRepresentation.Text;
 			}
+||||||| f013144d5:Src/LexText/ParserCore/HCLoader.cs
+				hcAllo.Properties["PrefixEnv"] = prefixEnv.StringRepresentation.Text;
+=======
+				hcAllo.Properties[HCParser.PrefixEnv] = prefixEnv.StringRepresentation.Text;
+>>>>>>> develop:Src/LexText/ParserCore/HCLoader.cs
 			if (suffixEnv != null)
+<<<<<<< HEAD:Src/ParserCore/HermitCrab/HCLoader.cs
 			{
 				hcAllo.Properties["SuffixEnv"] = suffixEnv.StringRepresentation.Text;
 			}
+||||||| f013144d5:Src/LexText/ParserCore/HCLoader.cs
+				hcAllo.Properties["SuffixEnv"] = suffixEnv.StringRepresentation.Text;
+=======
+				hcAllo.Properties[HCParser.SuffixEnv] = suffixEnv.StringRepresentation.Text;
+>>>>>>> develop:Src/LexText/ParserCore/HCLoader.cs
 			return hcAllo;
 		}
 
@@ -1293,7 +1357,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 				}
 			}
 
-			hcAllo.Properties["ID"] = allo.Hvo;
+			hcAllo.Properties[HCParser.FormID] = allo.Hvo;
 			return hcAllo;
 		}
 
@@ -1481,11 +1545,17 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 				}
 			}
 
-			hcAllo.Properties["ID"] = allo.Hvo;
+			hcAllo.Properties[HCParser.FormID] = allo.Hvo;
 			if (env != null)
+<<<<<<< HEAD:Src/ParserCore/HermitCrab/HCLoader.cs
 			{
 				hcAllo.Properties["Env"] = env.StringRepresentation.Text;
 			}
+||||||| f013144d5:Src/LexText/ParserCore/HCLoader.cs
+				hcAllo.Properties["Env"] = env.StringRepresentation.Text;
+=======
+				hcAllo.Properties[HCParser.Env] = env.StringRepresentation.Text;
+>>>>>>> develop:Src/LexText/ParserCore/HCLoader.cs
 			return hcAllo;
 		}
 
@@ -1533,7 +1603,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			requiredFS.AddValue(m_posFeature, LoadAllPartsOfSpeech(template.OwnerOfClass<IPartOfSpeech>()));
 			requiredFS.Freeze();
 			hcTemplate.RequiredSyntacticFeatureStruct = requiredFS;
-			hcTemplate.Properties["ID"] = template.Hvo;
+			hcTemplate.Properties[HCParser.TemplateID] = template.Hvo;
 
 			foreach (var slot in slots)
 			{
@@ -1603,10 +1673,10 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			}
 			mrule.Allomorphs.Add(msubrule);
 
-			mrule.Properties["InflTypeID"] = type.Hvo;
-			mrule.Properties["SlotID"] = slot.Hvo;
-			msubrule.Properties["IsNull"] = true;
-			msubrule.Properties["IsPrefix"] = isPrefix;
+			mrule.Properties[HCParser.InflTypeID] = type.Hvo;
+			mrule.Properties[HCParser.SlotID] = slot.Hvo;
+			msubrule.Properties[HCParser.IsNull] = true;
+			msubrule.Properties[HCParser.IsPrefix] = isPrefix;
 
 			return mrule;
 		}
@@ -1692,7 +1762,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 					HeadRequiredSyntacticFeatureStruct = headRequiredFS,
 					NonHeadRequiredSyntacticFeatureStruct = nonheadRequiredFS,
 					OutSyntacticFeatureStruct = outFS,
-					Properties = {{"ID", compoundRule.Hvo}}
+					Properties = {{HCParser.CRuleID, compoundRule.Hvo}}
 				};
 
 			var subrule = new CompoundingSubrule();
@@ -1744,7 +1814,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 					HeadRequiredSyntacticFeatureStruct = rightRequiredFS,
 					NonHeadRequiredSyntacticFeatureStruct = leftRequiredFS,
 					OutSyntacticFeatureStruct = outFS,
-					Properties = {{"ID", compoundRule.Hvo}}
+					Properties = {{HCParser.CRuleID, compoundRule.Hvo}}
 				};
 
 			var rightSubrule = new CompoundingSubrule();
@@ -1770,7 +1840,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 					HeadRequiredSyntacticFeatureStruct = leftRequiredFS,
 					NonHeadRequiredSyntacticFeatureStruct = rightRequiredFS,
 					OutSyntacticFeatureStruct = outFS,
-					Properties = {{"ID", compoundRule.Hvo}}
+					Properties = {{HCParser.CRuleID, compoundRule.Hvo}}
 				};
 
 			var leftSubrule = new CompoundingSubrule();
@@ -1834,7 +1904,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 				lhsPattern.Freeze();
 				hcPrule.Lhs = lhsPattern;
 			}
-			hcPrule.Properties["ID"] = prule.Hvo;
+			hcPrule.Properties[HCParser.PRuleID] = prule.Hvo;
 
 			foreach (var rhs in prule.RightHandSidesOS)
 			{
@@ -1948,7 +2018,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			pattern.Freeze();
 			hcPrule.Pattern = pattern;
 
-			hcPrule.Properties["ID"] = prule.Hvo;
+			hcPrule.Properties[HCParser.CRuleID] = prule.Hvo;
 
 			return hcPrule;
 		}

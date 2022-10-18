@@ -1729,6 +1729,9 @@
   <data name="khtpImportLIFT" xml:space="preserve">
     <value>Beginning_Tasks/Importing_Data/import_lift_lex.htm</value>
   </data>
+  <data name="khtpImportTheCombine" xml:space="preserve">
+    <value>Beginning_Tasks/Importing_Data/Import_from_The_Combine.htm</value>
+  </data>
   <data name="khtpField-posEdit-PartOfSpeech-Name" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/rlt1edc.htm</value>
     <comment>help topic for Grammar:Category Edit: Name field </comment>

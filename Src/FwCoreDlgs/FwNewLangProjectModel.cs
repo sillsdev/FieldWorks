@@ -260,7 +260,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				var e = wex.InnerException;
 				switch (e)
 				{
+<<<<<<< HEAD
 					case UnauthorizedAccessException _ when Platform.IsUnix:
+||||||| f013144d5
+					if (MiscUtils.IsUnix)
+					{
+=======
+					if (Platform.IsUnix)
+					{
+>>>>>>> develop
 						// Tell Mono user he/she needs to logout and log back in
 						MessageBoxUtils.Show(ResourceHelper.GetResourceString("ksNeedToJoinFwGroup"));
 						break;

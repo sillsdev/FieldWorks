@@ -1,4 +1,10 @@
+<<<<<<< HEAD:Src/FieldWorks.TestUtilities.Tests/FwApplicationSettingsTests.cs
 // Copyright (c) 2017-2020 SIL International
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/FwApplicationSettingsTests.cs
+﻿// Copyright (c) 2017 SIL International
+=======
+// Copyright (c) 2017-2021 SIL International
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/FwApplicationSettingsTests.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,6 +14,7 @@ using System.Xml.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Reporting;
+using SIL.Settings;
 
 namespace FieldWorks.TestUtilities.Tests
 {
@@ -33,6 +40,7 @@ namespace FieldWorks.TestUtilities.Tests
 				PreviousVersion = "Version 1.0.0"
 			};
 
+<<<<<<< HEAD:Src/FieldWorks.TestUtilities.Tests/FwApplicationSettingsTests.cs
 			var oldConfigXml = CreateOldConfig(reportingSettings, true, "keyboards", "username", "password");
 			var appSettings = new TestFwApplicationSettings
 			{
@@ -47,6 +55,36 @@ namespace FieldWorks.TestUtilities.Tests
 			Assert.That(appSettingsAsInterface.LocalKeyboards, Is.EqualTo("keyboards"));
 			Assert.That(appSettingsAsInterface.WebonaryUser, Is.EqualTo("username"));
 			Assert.That(appSettingsAsInterface.WebonaryPass, Is.EqualTo("password"));
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/FwApplicationSettingsTests.cs
+			XDocument oldConfigXml = CreateOldConfig(reportingSettings, true, "keyboards", "username", "password");
+			var appSettings = new TestFwApplicationSettings {ConfigXml = oldConfigXml};
+			appSettings.UpgradeIfNecessary();
+			Assert.That(appSettings.Reporting.Launches, Is.EqualTo(reportingSettings.Launches));
+			Assert.That(appSettings.Reporting.FirstLaunchDate, Is.EqualTo(reportingSettings.FirstLaunchDate));
+			Assert.That(appSettings.Reporting.PreviousVersion, Is.EqualTo(reportingSettings.PreviousVersion));
+			Assert.That(appSettings.UpdateGlobalWSStore, Is.True);
+			Assert.That(appSettings.LocalKeyboards, Is.EqualTo("keyboards"));
+			Assert.That(appSettings.WebonaryUser, Is.EqualTo("username"));
+			Assert.That(appSettings.WebonaryPass, Is.EqualTo("password"));
+=======
+			var updateSettings = new UpdateSettings
+			{
+				Channel = UpdateSettings.Channels.Beta,
+				Behavior = UpdateSettings.Behaviors.Notify
+			};
+
+			var oldConfigXml = CreateOldConfig(reportingSettings, updateSettings, true, "keyboards", "username", "password");
+			var appSettings = new TestFwApplicationSettings {ConfigXml = oldConfigXml};
+			appSettings.UpgradeIfNecessary();
+			Assert.That(appSettings.Reporting.Launches, Is.EqualTo(reportingSettings.Launches));
+			Assert.That(appSettings.Reporting.FirstLaunchDate, Is.EqualTo(reportingSettings.FirstLaunchDate));
+			Assert.That(appSettings.Reporting.PreviousVersion, Is.EqualTo(reportingSettings.PreviousVersion));
+			Assert.That(appSettings.Update.Behavior, Is.EqualTo(updateSettings.Behavior));
+			Assert.That(appSettings.Update.Channel, Is.EqualTo(updateSettings.Channel));
+			Assert.That(appSettings.LocalKeyboards, Is.EqualTo("keyboards"));
+			Assert.That(appSettings.WebonaryUser, Is.EqualTo("username"));
+			Assert.That(appSettings.WebonaryPass, Is.EqualTo("password"));
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/FwApplicationSettingsTests.cs
 			// check if the old config sections were removed
 			Assert.That(appSettings.ConfigXml.Root?.Element("configSections")?.Elements("sectionGroup")
 				.First(e => (string)e.Attribute("name") == "userSettings").HasElements, Is.False);
@@ -64,6 +102,7 @@ namespace FieldWorks.TestUtilities.Tests
 					new XElement("configSections",
 						new XElement("sectionGroup", new XAttribute("name", "userSettings"))),
 					new XElement("userSettings")));
+<<<<<<< HEAD:Src/FieldWorks.TestUtilities.Tests/FwApplicationSettingsTests.cs
 			var appSettings = new TestFwApplicationSettings
 			{
 				ConfigXml = oldConfigXml
@@ -75,6 +114,23 @@ namespace FieldWorks.TestUtilities.Tests
 			Assert.That(appSettingsAsInterface.LocalKeyboards, Is.Null);
 			Assert.That(appSettingsAsInterface.WebonaryUser, Is.Null);
 			Assert.That(appSettingsAsInterface.WebonaryPass, Is.Null);
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/FwApplicationSettingsTests.cs
+			var appSettings = new TestFwApplicationSettings {ConfigXml = oldConfigXml};
+			appSettings.UpgradeIfNecessary();
+			Assert.That(appSettings.Reporting, Is.Null);
+			Assert.That(appSettings.UpdateGlobalWSStore, Is.False);
+			Assert.That(appSettings.LocalKeyboards, Is.Null);
+			Assert.That(appSettings.WebonaryUser, Is.Null);
+			Assert.That(appSettings.WebonaryPass, Is.Null);
+=======
+			var appSettings = new TestFwApplicationSettings {ConfigXml = oldConfigXml};
+			appSettings.UpgradeIfNecessary();
+			Assert.That(appSettings.Reporting, Is.Null);
+			Assert.That(appSettings.Update, Is.Null);
+			Assert.That(appSettings.LocalKeyboards, Is.Null);
+			Assert.That(appSettings.WebonaryUser, Is.Null);
+			Assert.That(appSettings.WebonaryPass, Is.Null);
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/FwApplicationSettingsTests.cs
 		}
 
 		/// <summary>
@@ -83,6 +139,7 @@ namespace FieldWorks.TestUtilities.Tests
 		[Test]
 		public void UpgradeIfNecessary_OldConfigReportingMissing_OldConfigMigrated()
 		{
+<<<<<<< HEAD:Src/FieldWorks.TestUtilities.Tests/FwApplicationSettingsTests.cs
 			var oldConfigXml = CreateOldConfig(null, true, "keyboards", "username", "password");
 			var appSettings = new TestFwApplicationSettings
 			{
@@ -95,6 +152,32 @@ namespace FieldWorks.TestUtilities.Tests
 			Assert.That(appSettingsAsInterface.LocalKeyboards, Is.EqualTo("keyboards"));
 			Assert.That(appSettingsAsInterface.WebonaryUser, Is.EqualTo("username"));
 			Assert.That(appSettingsAsInterface.WebonaryPass, Is.EqualTo("password"));
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/FwApplicationSettingsTests.cs
+			XDocument oldConfigXml = CreateOldConfig(null, true, "keyboards", "username", "password");
+			var appSettings = new TestFwApplicationSettings { ConfigXml = oldConfigXml };
+			appSettings.UpgradeIfNecessary();
+			Assert.That(appSettings.Reporting, Is.Null);
+			Assert.That(appSettings.UpdateGlobalWSStore, Is.True);
+			Assert.That(appSettings.LocalKeyboards, Is.EqualTo("keyboards"));
+			Assert.That(appSettings.WebonaryUser, Is.EqualTo("username"));
+			Assert.That(appSettings.WebonaryPass, Is.EqualTo("password"));
+=======
+			var updateSettings = new UpdateSettings
+			{
+				Channel = UpdateSettings.Channels.Alpha,
+				Behavior = UpdateSettings.Behaviors.DoNotCheck
+			};
+
+			var oldConfigXml = CreateOldConfig(null, updateSettings, true, "keyboards", "username", "password");
+			var appSettings = new TestFwApplicationSettings { ConfigXml = oldConfigXml };
+			appSettings.UpgradeIfNecessary();
+			Assert.That(appSettings.Reporting, Is.Null);
+			Assert.That(appSettings.Update.Behavior, Is.EqualTo(updateSettings.Behavior));
+			Assert.That(appSettings.Update.Channel, Is.EqualTo(updateSettings.Channel));
+			Assert.That(appSettings.LocalKeyboards, Is.EqualTo("keyboards"));
+			Assert.That(appSettings.WebonaryUser, Is.EqualTo("username"));
+			Assert.That(appSettings.WebonaryPass, Is.EqualTo("password"));
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/FwApplicationSettingsTests.cs
 			// check if the old config sections were removed
 			Assert.That(appSettings.ConfigXml.Root?.Element("configSections")?.Elements("sectionGroup")
 				.First(e => (string)e.Attribute("name") == "userSettings").HasElements, Is.False);
@@ -111,12 +194,13 @@ namespace FieldWorks.TestUtilities.Tests
 			{
 				FirstLaunchDate = DateTime.Now.AddYears(-1),
 				HaveShowRegistrationDialog = false,
-				Launches = 100,
+				Launches = 120,
 				OkToPingBasicUsageData = true,
 				PreviousLaunchDate = DateTime.Now.AddDays(-1),
 				PreviousVersion = "Version 1.0.0"
 			};
 
+<<<<<<< HEAD:Src/FieldWorks.TestUtilities.Tests/FwApplicationSettingsTests.cs
 			var oldConfigXml = CreateOldConfig(reportingSettings, true, "keyboards", null, "password");
 			var appSettings = new TestFwApplicationSettings
 			{
@@ -131,13 +215,52 @@ namespace FieldWorks.TestUtilities.Tests
 			Assert.That(appSettingsAsInterface.LocalKeyboards, Is.EqualTo("keyboards"));
 			Assert.That(appSettingsAsInterface.WebonaryUser, Is.Null);
 			Assert.That(appSettingsAsInterface.WebonaryPass, Is.EqualTo("password"));
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/FwApplicationSettingsTests.cs
+			XDocument oldConfigXml = CreateOldConfig(reportingSettings, true, "keyboards", null, "password");
+			var appSettings = new TestFwApplicationSettings { ConfigXml = oldConfigXml };
+			appSettings.UpgradeIfNecessary();
+			Assert.That(appSettings.Reporting.Launches, Is.EqualTo(reportingSettings.Launches));
+			Assert.That(appSettings.Reporting.FirstLaunchDate, Is.EqualTo(reportingSettings.FirstLaunchDate));
+			Assert.That(appSettings.Reporting.PreviousVersion, Is.EqualTo(reportingSettings.PreviousVersion));
+			Assert.That(appSettings.UpdateGlobalWSStore, Is.True);
+			Assert.That(appSettings.LocalKeyboards, Is.EqualTo("keyboards"));
+			Assert.That(appSettings.WebonaryUser, Is.Null);
+			Assert.That(appSettings.WebonaryPass, Is.EqualTo("password"));
+=======
+			var updateSettings = new UpdateSettings
+			{
+				Channel = UpdateSettings.Channels.Stable,
+				Behavior = UpdateSettings.Behaviors.Download
+			};
+
+			var oldConfigXml = CreateOldConfig(reportingSettings, updateSettings, true, "keyboards", null, "password");
+			var appSettings = new TestFwApplicationSettings { ConfigXml = oldConfigXml };
+			appSettings.UpgradeIfNecessary();
+			Assert.That(appSettings.Reporting.Launches, Is.EqualTo(reportingSettings.Launches));
+			Assert.That(appSettings.Reporting.FirstLaunchDate, Is.EqualTo(reportingSettings.FirstLaunchDate));
+			Assert.That(appSettings.Reporting.PreviousVersion, Is.EqualTo(reportingSettings.PreviousVersion));
+			Assert.That(appSettings.Update.Behavior, Is.EqualTo(updateSettings.Behavior));
+			Assert.That(appSettings.Update.Channel, Is.EqualTo(updateSettings.Channel));
+			Assert.That(appSettings.LocalKeyboards, Is.EqualTo("keyboards"));
+			Assert.That(appSettings.WebonaryUser, Is.Null);
+			Assert.That(appSettings.WebonaryPass, Is.EqualTo("password"));
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/FwApplicationSettingsTests.cs
 			// check if the old config sections were removed
 			Assert.That(appSettings.ConfigXml.Root?.Element("configSections")?.Elements("sectionGroup")
 				.First(e => (string)e.Attribute("name") == "userSettings").HasElements, Is.False);
 			Assert.That(appSettings.ConfigXml.Root?.Element("userSettings")?.HasElements, Is.False);
 		}
 
+<<<<<<< HEAD:Src/FieldWorks.TestUtilities.Tests/FwApplicationSettingsTests.cs
 		private static XDocument CreateOldConfig(ReportingSettings reportingSettings, bool? updateGlobalWSStore, string localKeyboards, string webonaryUser, string webonaryPass)
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/FwApplicationSettingsTests.cs
+		private static XDocument CreateOldConfig(ReportingSettings reportingSettings, bool? updateGlobalWSStore, string localKeyboards,
+			string webonaryUser, string webonaryPass)
+=======
+		private static XDocument CreateOldConfig(ReportingSettings reportingSettings,
+			UpdateSettings updateSettings, bool? updateGlobalWSStore, string localKeyboards,
+			string webonaryUser, string webonaryPass)
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/FwApplicationSettingsTests.cs
 		{
 			var settingsElem = new XElement("SIL.CoreImpl.Properties.Settings",
 				CreateStringSettingElement("IsBTE", false),
@@ -148,6 +271,19 @@ namespace FieldWorks.TestUtilities.Tests
 				settingsElem.Add(new XElement("setting", new XAttribute("name", "Reporting"), new XAttribute("serializeAs", "Xml"),
 					new XElement("value", XElement.Parse(XmlSerializationHelper.SerializeToString(reportingSettings)))));
 			}
+<<<<<<< HEAD:Src/FieldWorks.TestUtilities.Tests/FwApplicationSettingsTests.cs
+||||||| f013144d5:Src/Common/FwUtils/FwUtilsTests/FwApplicationSettingsTests.cs
+
+=======
+
+			if (updateSettings != null)
+			{
+				settingsElem.Add(new XElement("setting", new XAttribute("name", "Update"), new XAttribute("serializeAs", "Xml"),
+					new XElement("value", XElement.Parse(XmlSerializationHelper.SerializeToString(updateSettings)))));
+			}
+
+			// Leave this obsolete value in in the old config to test that it doesn't cause problems
+>>>>>>> develop:Src/Common/FwUtils/FwUtilsTests/FwApplicationSettingsTests.cs
 			if (updateGlobalWSStore != null)
 			{
 				settingsElem.Add(CreateStringSettingElement("UpdateGlobalWSStore", updateGlobalWSStore));

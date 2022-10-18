@@ -1,4 +1,10 @@
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 // Copyright (c) 2011-2020 SIL International
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+﻿// Copyright (c) 2011-2013 SIL International
+=======
+// Copyright (c) 2011-2021 SIL International
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -323,12 +329,9 @@ namespace LanguageExplorerTests.LIFT
 		}
 		#endregion
 
-		private static string LiftFolder { get; set; }
-
-		private static readonly Random TestNameRandomizer = new Random((int)DateTime.Now.Ticks);
-
-		private static string CreateInputFile(IList<string> data)
+		private static string CreateInputFile(IList<string> data, string[] audioFilesToFake = null)
 		{
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 			LiftFolder = Path.Combine(Path.GetTempPath(), "xxyyTestLIFTImport");
 			if (Directory.Exists(LiftFolder))
 			{
@@ -336,15 +339,46 @@ namespace LanguageExplorerTests.LIFT
 			}
 			Directory.CreateDirectory(LiftFolder);
 			var path = Path.Combine(LiftFolder, $"LiftTest{TestNameRandomizer.Next(1000)}.lift");
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+			LiftFolder = Path.Combine(Path.GetTempPath(), "xxyyTestLIFTImport");
+			if (Directory.Exists(LiftFolder))
+				Directory.Delete(LiftFolder, true);
+			Directory.CreateDirectory(LiftFolder);
+			var path = Path.Combine(LiftFolder, String.Format("LiftTest{0}.lift", TestNameRandomizer.Next(1000)));
+=======
+			var liftFolder = Path.Combine(Path.GetTempPath(), "LiftImportTests", Path.GetRandomFileName());
+			if (Directory.Exists(liftFolder))
+				Directory.Delete(liftFolder, true);
+			Directory.CreateDirectory(liftFolder);
+			if (audioFilesToFake != null)
+			{
+				var audioPath = Path.Combine(liftFolder, "audio");
+				Directory.CreateDirectory(audioPath);
+				foreach (var fakeAudioFile in audioFilesToFake)
+				{
+					FileUtils.WriteStringToFile(Path.Combine(audioPath, fakeAudioFile), "fake audio file", Encoding.ASCII);
+				}
+			}
+			var path = Path.Combine(liftFolder, "LiftTest.lift");
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			CreateLiftInputFile(path, data);
 			return path;
 		}
 
-		private static string CreateInputRangesFile(IList<string> data)
+		private static string CreateInputRangesFile(IList<string> data, string liftFolder)
 		{
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 			LiftFolder = Path.Combine(Path.GetTempPath(), "xxyyTestLIFTImport");
 			Assert.True(Directory.Exists(LiftFolder));
 			var path = Path.Combine(LiftFolder, $"LiftTest{TestNameRandomizer.Next(1000)}.lift-ranges");
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+			LiftFolder = Path.Combine(Path.GetTempPath(), "xxyyTestLIFTImport");
+			Assert.True(Directory.Exists(LiftFolder));
+			var path = Path.Combine(LiftFolder, String.Format("LiftTest{0}.lift-ranges", TestNameRandomizer.Next(1000)));
+=======
+			Assert.True(Directory.Exists(liftFolder));
+			var path = Path.Combine(liftFolder, "LiftTest.lift-ranges");
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			CreateLiftInputFile(path, data);
 			return path;
 		}
@@ -402,9 +436,9 @@ namespace LanguageExplorerTests.LIFT
 			return logfile;
 		}
 
-		private static void CreateDummyFile(string folder, string filename)
+		private static void CreateDummyFile(string liftFolder, string folder, string filename)
 		{
-			CreateDummyFile(Path.Combine(Path.Combine(LiftFolder, folder), filename));
+			CreateDummyFile(Path.Combine(Path.Combine(liftFolder, folder), filename));
 		}
 
 		private static void CreateDummyFile(string path)
@@ -418,6 +452,7 @@ namespace LanguageExplorerTests.LIFT
 			}
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 		/// <summary>
 		/// First test of LIFT import: four simple entries.
 		/// (This was also a convenient point to check handling of a lexical relation with
@@ -427,6 +462,11 @@ namespace LanguageExplorerTests.LIFT
 		public void TestLiftImport1()
 		{
 			string[] liftData1 =
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+		static private readonly string[] s_LiftData1 =
+=======
+		private static readonly string[] s_LiftData1 =
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 		{
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
@@ -530,18 +570,27 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(0, repoEntry.Count);
 			Assert.AreEqual(0, repoSense.Count);
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 			var sOrigFile = CreateInputFile(liftData1);
 			CreateDummyFile("pictures", "Desert.jpg");
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+			var sOrigFile = CreateInputFile(s_LiftData1);
+			CreateDummyFile("pictures", "Desert.jpg");
+=======
+			var sOrigFile = CreateInputFile(s_LiftData1);
+			var liftFolder = Path.GetDirectoryName(sOrigFile);
+			CreateDummyFile(liftFolder, "pictures", "Desert.jpg");
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			var myPicRelativePath = Path.Combine("subfolder","MyPic.jpg");
-			CreateDummyFile("pictures", myPicRelativePath);
-			CreateDummyFile("audio", "Sleep Away.mp3");
-			CreateDummyFile("audio", "hombre634407358826681759.wav");
-			CreateDummyFile("audio", "male adult634407358826681760.wav");
-			CreateDummyFile("others", "SomeFile.txt");
+			CreateDummyFile(liftFolder, "pictures", myPicRelativePath);
+			CreateDummyFile(liftFolder, "audio", "Sleep Away.mp3");
+			CreateDummyFile(liftFolder, "audio", "hombre634407358826681759.wav");
+			CreateDummyFile(liftFolder, "audio", "male adult634407358826681760.wav");
+			CreateDummyFile(liftFolder, "others", "SomeFile.txt");
 
 			var logFile = TryImport(sOrigFile, 4);
 			File.Delete(sOrigFile);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(4, repoEntry.Count);
 			Assert.AreEqual(4, repoSense.Count);
@@ -552,16 +601,14 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			var sense0 = entry.SensesOS[0];
 			Assert.AreEqual(sense0.Guid, new Guid("f63f1ccf-3d50-417e-8024-035d999d48bc"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("root", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("hombre", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
 			Assert.AreEqual("hombre634407358826681759.wav", entry.LexemeFormOA.Form.get_String(m_audioWsCode).Text);
-			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Noun", (sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
+			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			Assert.That(((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
+			Assert.AreEqual("Noun", ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("man", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("male adult human link", sense0.Definition.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("male adult634407358826681760.wav", sense0.Definition.get_String(m_audioWsCode).Text);
@@ -596,15 +643,13 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			sense0 = entry.SensesOS[0];
 			Assert.AreEqual(sense0.Guid, new Guid("cf6680cc-faeb-4bd2-90ec-0be5dcdcc6af"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("root", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("mujer", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Noun", (sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
+			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			Assert.That(((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
+			Assert.AreEqual("Noun", ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("woman", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("female adult human", sense0.Definition.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual(2, sense0.SemanticDomainsRC.Count);
@@ -625,15 +670,13 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			sense0 = entry.SensesOS[0];
 			Assert.AreEqual(sense0.Guid, new Guid("04545fa2-e24c-446e-928c-2a13710359b3"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("niño".Normalize(NormalizationForm.FormD), entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Noun", (sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
+			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			Assert.That(((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
+			Assert.AreEqual("Noun", ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("boy", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("male human child", sense0.Definition.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual(2, sense0.SemanticDomainsRC.Count);
@@ -654,15 +697,14 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			sense0 = entry.SensesOS[0];
 			Assert.AreEqual(sense0.Guid, new Guid("db9d3790-2f5c-4d99-b9fc-3b21b47fa505"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("niña".Normalize(NormalizationForm.FormD), entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Noun", (sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
+			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			var pos = ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA;
+			Assert.That(pos, Is.Not.Null);
+			Assert.AreEqual("Noun", pos.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("girl", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("female human child", sense0.Definition.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual(2, sense0.SemanticDomainsRC.Count);
@@ -693,6 +735,7 @@ namespace LanguageExplorerTests.LIFT
 			Assert.That(File.Exists(Path.Combine(Path.Combine(MockLinkedFilesFolder, folder), filename)), Is.True);
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 		/// <summary>
 		/// Second test of LIFT import: more complex and variant entries.
 		/// </summary>
@@ -700,6 +743,12 @@ namespace LanguageExplorerTests.LIFT
 		public void TestLiftImport2()
 		{
 			string[] liftData2 = {
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+		static private readonly string[] s_LiftData2 = new[]
+		{
+=======
+		private static readonly string[] s_LiftData2 = {
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
@@ -774,7 +823,7 @@ namespace LanguageExplorerTests.LIFT
 			var sOrigFile = CreateInputFile(liftData2);
 			var logFile = TryImport(sOrigFile, 4);
 			File.Delete(sOrigFile);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(4, repoEntry.Count);
 			Assert.AreEqual(3, repoSense.Count);
@@ -783,21 +832,19 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			var sense = entry.SensesOS[0];
 			Assert.AreEqual(sense.Guid, new Guid("f722992a-cfdc-41ec-9c46-f927f02d68ef"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("house", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Noun", (sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
+			Assert.That(sense.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
+			Assert.AreEqual("Noun", ((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("house", sense.Gloss.AnalysisDefaultWritingSystem.Text);
-			Assert.IsNull(sense.Definition.AnalysisDefaultWritingSystem.Text);
+			Assert.That(sense.Definition.AnalysisDefaultWritingSystem.Text, Is.Null);
 			Assert.AreEqual(0, sense.SemanticDomainsRC.Count);
 			Assert.AreEqual(1, entry.AlternateFormsOS.Count);
 			var allo = entry.AlternateFormsOS[0] as IMoStemAllomorph;
-			Assert.IsNotNull(allo);
+			Assert.That(allo, Is.Not.Null);
 			Assert.AreEqual("ouse", allo.Form.VernacularDefaultWritingSystem.Text);
 			Assert.AreEqual("stem", allo.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual(1, allo.PhoneEnvRC.Count);
@@ -805,8 +852,14 @@ namespace LanguageExplorerTests.LIFT
 			foreach (var x in allo.PhoneEnvRC)
 			{
 				env = x;
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 			}
 			Assert.IsNotNull(env);
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+			Assert.IsNotNull(env);
+=======
+			Assert.That(env, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			Assert.AreEqual("/[C]_", env.StringRepresentation.Text);
 			Assert.AreEqual(0, entry.EntryRefsOS.Count);
 
@@ -814,17 +867,15 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			sense = entry.SensesOS[0];
 			Assert.AreEqual(sense.Guid, new Guid("d3ed09c5-8757-41cb-849d-a24e6200caf4"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("green", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Adjective", (sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
+			Assert.That(sense.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
+			Assert.AreEqual("Adjective", ((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("green", sense.Gloss.AnalysisDefaultWritingSystem.Text);
-			Assert.IsNull(sense.Definition.AnalysisDefaultWritingSystem.Text);
+			Assert.That(sense.Definition.AnalysisDefaultWritingSystem.Text, Is.Null);
 			Assert.AreEqual(0, sense.SemanticDomainsRC.Count);
 			Assert.AreEqual(0, entry.EntryRefsOS.Count);
 
@@ -832,17 +883,15 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			sense = entry.SensesOS[0];
 			Assert.AreEqual(sense.Guid, new Guid("cf2ac6f4-01d8-47ed-9b41-25b6e727097f"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("greenhouse", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Noun", (sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
-			Assert.IsNull(sense.Gloss.AnalysisDefaultWritingSystem.Text);
-			Assert.IsNull(sense.Definition.AnalysisDefaultWritingSystem.Text);
+			Assert.That(sense.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
+			Assert.AreEqual("Noun", ((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
+			Assert.That(sense.Gloss.AnalysisDefaultWritingSystem.Text, Is.Null);
+			Assert.That(sense.Definition.AnalysisDefaultWritingSystem.Text, Is.Null);
 			Assert.AreEqual(0, sense.SemanticDomainsRC.Count);
 			Assert.AreEqual(2, entry.EntryRefsOS.Count);
 			var lexref = entry.EntryRefsOS[0];
@@ -871,8 +920,8 @@ namespace LanguageExplorerTests.LIFT
 
 			Assert.IsTrue(repoEntry.TryGetObject(new Guid("58f978d2-2cb2-4506-9a47-63c5454f0065"), out entry));
 			Assert.AreEqual(0, entry.SensesOS.Count);
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("hoose", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
 			Assert.AreEqual(1, entry.EntryRefsOS.Count);
@@ -887,10 +936,17 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(0, lexref.PrimaryLexemesRS.Count);
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 		[Test]
 		public void TestImportOutOfOrderRelation()
 		{
 			string[] outOfOrderRelation = {
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+		static private readonly string[] s_outOfOrderRelation = new[]
+		{
+=======
+		private static readonly string[] s_outOfOrderRelation = {
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
@@ -929,7 +985,7 @@ namespace LanguageExplorerTests.LIFT
 			var sOrigFile = CreateInputFile(outOfOrderRelation);
 			var logFile = TryImport(sOrigFile, 1);
 			File.Delete(sOrigFile);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(2, repoSense.Count);
@@ -945,6 +1001,138 @@ namespace LanguageExplorerTests.LIFT
 			Assert.That(targets.Skip(1).First(), Is.EqualTo(sense1), "Both senses should be present in targets");
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+		static private readonly string[] s_LiftData3a = new[]
+		{
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
+			"<header>",
+			"<ranges/>",
+			"<fields/>",
+			"</header>",
+			"<entry dateCreated=\"2011-03-01T22:26:47Z\" dateModified=\"2011-03-01T22:41:41Z\" guid=\"69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\" id=\"house_69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>house</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"stem\"></trait>",
+			"<variant>",
+			"<trait name=\"paradigm\" value=\"sing\"/>",
+			"<form lang=\"fr\"><text>ouse</text></form>",
+			"</variant>",
+			"<sense id=\"house_f722992a-cfdc-41ec-9c46-f927f02d68ef\">",
+			"<grammatical-info value=\"Noun\">",
+			"</grammatical-info>",
+			"<gloss lang=\"en\"><text>house</text></gloss>",
+			"</sense>",
+			"</entry>",
+			"<entry dateCreated=\"2011-03-01T22:27:13Z\" dateModified=\"2011-03-01T22:27:13Z\" guid=\"67940acb-9252-4941-bfb3-3ace4e1bda7a\" id=\"green_67940acb-9252-4941-bfb3-3ace4e1bda7a\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>green</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"stem\"></trait>",
+			"<sense id=\"green_d3ed09c5-8757-41cb-849d-a24e6200caf4\">",
+			"<grammatical-info value=\"Adjective\">",
+			"</grammatical-info>",
+			"<gloss lang=\"en\"><text>green</text></gloss>",
+			"</sense>",
+			"</entry>"
+		};
+
+		private const string sLiftData3b =
+			"<entry dateCreated=\"2011-03-01T22:27:46Z\" dateModified=\"{0}\" guid=\"67113a7f-e448-43e7-87cf-6d3a46ee10ec\" id=\"greenhouse_67113a7f-e448-43e7-87cf-6d3a46ee10ec\">";
+		static private readonly string[] s_LiftData3c = new[]
+		{
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>greenhouse</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"stem\"></trait>",
+			"<relation type=\"_component-lexeme\" ref=\"green_67940acb-9252-4941-bfb3-3ace4e1bda7a\" order=\"0\">",
+			"</relation>",
+			"<relation type=\"_component-lexeme\" ref=\"house_69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\" order=\"1\">",
+			"</relation>",
+			"<sense id=\"greenhouse_cf2ac6f4-01d8-47ed-9b41-25b6e727097f\">",
+			"<grammatical-info value=\"Noun\">",
+			"</grammatical-info>",
+			"</sense>",
+			"</entry>",
+			"<entry dateCreated=\"2011-03-01T22:28:56Z\" dateModified=\"2011-03-01T22:29:07Z\" guid=\"58f978d2-2cb2-4506-9a47-63c5454f0065\" id=\"hoose_58f978d2-2cb2-4506-9a47-63c5454f0065\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>hoose</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"stem\"></trait>",
+			"<relation type=\"_component-lexeme\" ref=\"house_69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\">",
+			"</relation>",
+			"</entry>",
+			"</lift>"
+		};
+
+		///--------------------------------------------------------------------------------------
+=======
+		private static readonly string[] s_LiftData3a = {
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
+			"<header>",
+			"<ranges/>",
+			"<fields/>",
+			"</header>",
+			"<entry dateCreated=\"2011-03-01T22:26:47Z\" dateModified=\"2011-03-01T22:41:41Z\" guid=\"69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\" id=\"house_69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>house</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"stem\"></trait>",
+			"<variant>",
+			"<trait name=\"paradigm\" value=\"sing\"/>",
+			"<form lang=\"fr\"><text>ouse</text></form>",
+			"</variant>",
+			"<sense id=\"house_f722992a-cfdc-41ec-9c46-f927f02d68ef\">",
+			"<grammatical-info value=\"Noun\">",
+			"</grammatical-info>",
+			"<gloss lang=\"en\"><text>house</text></gloss>",
+			"</sense>",
+			"</entry>",
+			"<entry dateCreated=\"2011-03-01T22:27:13Z\" dateModified=\"2011-03-01T22:27:13Z\" guid=\"67940acb-9252-4941-bfb3-3ace4e1bda7a\" id=\"green_67940acb-9252-4941-bfb3-3ace4e1bda7a\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>green</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"stem\"></trait>",
+			"<sense id=\"green_d3ed09c5-8757-41cb-849d-a24e6200caf4\">",
+			"<grammatical-info value=\"Adjective\">",
+			"</grammatical-info>",
+			"<gloss lang=\"en\"><text>green</text></gloss>",
+			"</sense>",
+			"</entry>"
+		};
+
+		private const string sLiftData3b =
+			"<entry dateCreated=\"2011-03-01T22:27:46Z\" dateModified=\"{0}\" guid=\"67113a7f-e448-43e7-87cf-6d3a46ee10ec\" id=\"greenhouse_67113a7f-e448-43e7-87cf-6d3a46ee10ec\">";
+		private static readonly string[] s_LiftData3c = {
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>greenhouse</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"stem\"></trait>",
+			"<relation type=\"_component-lexeme\" ref=\"green_67940acb-9252-4941-bfb3-3ace4e1bda7a\" order=\"0\">",
+			"</relation>",
+			"<relation type=\"_component-lexeme\" ref=\"house_69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\" order=\"1\">",
+			"</relation>",
+			"<sense id=\"greenhouse_cf2ac6f4-01d8-47ed-9b41-25b6e727097f\">",
+			"<grammatical-info value=\"Noun\">",
+			"</grammatical-info>",
+			"</sense>",
+			"</entry>",
+			"<entry dateCreated=\"2011-03-01T22:28:56Z\" dateModified=\"2011-03-01T22:29:07Z\" guid=\"58f978d2-2cb2-4506-9a47-63c5454f0065\" id=\"hoose_58f978d2-2cb2-4506-9a47-63c5454f0065\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>hoose</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"stem\"></trait>",
+			"<relation type=\"_component-lexeme\" ref=\"house_69ccc807-f3d1-44cb-b79a-e8d416b0d7c1\">",
+			"</relation>",
+			"</entry>",
+			"</lift>"
+		};
+
+		///--------------------------------------------------------------------------------------
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 		/// <summary>
 		/// Third test of LIFT import: minimally specified complex and variant entries.
 		/// </summary>
@@ -961,7 +1149,7 @@ namespace LanguageExplorerTests.LIFT
 			var sOrigFile = CreateInputFile(GetLift3Strings("2011-03-01T22:28:00Z"));
 			var logFile = TryImport(sOrigFile, 4);
 			File.Delete(sOrigFile);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(4, repoEntry.Count);
 			Assert.AreEqual(3, repoSense.Count);
@@ -970,23 +1158,21 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			var sense = entry.SensesOS[0];
 			Assert.AreEqual(sense.Guid, new Guid("f722992a-cfdc-41ec-9c46-f927f02d68ef"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("house", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Noun", (sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
+			Assert.That(sense.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
+			Assert.AreEqual("Noun", ((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("house", sense.Gloss.AnalysisDefaultWritingSystem.Text);
-			Assert.IsNull(sense.Definition.AnalysisDefaultWritingSystem.Text);
+			Assert.That(sense.Definition.AnalysisDefaultWritingSystem.Text, Is.Null);
 			Assert.AreEqual(0, sense.SemanticDomainsRC.Count);
 			Assert.AreEqual(1, entry.AlternateFormsOS.Count);
 			var allo = entry.AlternateFormsOS[0] as IMoStemAllomorph;
-			Assert.IsNotNull(allo);
+			Assert.That(allo, Is.Not.Null);
 			Assert.AreEqual("ouse", allo.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNull(allo.MorphTypeRA);
+			Assert.That(allo.MorphTypeRA, Is.Null);
 			Assert.AreEqual(0, allo.PhoneEnvRC.Count);
 			Assert.AreEqual("<lift-residue><trait name=\"paradigm\" value=\"sing\" />" + Environment.NewLine + "</lift-residue>", allo.LiftResidue);
 			Assert.AreEqual(0, entry.EntryRefsOS.Count);
@@ -995,17 +1181,15 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			sense = entry.SensesOS[0];
 			Assert.AreEqual(sense.Guid, new Guid("d3ed09c5-8757-41cb-849d-a24e6200caf4"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("green", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Adjective", (sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
+			Assert.That(sense.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
+			Assert.AreEqual("Adjective", ((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("green", sense.Gloss.AnalysisDefaultWritingSystem.Text);
-			Assert.IsNull(sense.Definition.AnalysisDefaultWritingSystem.Text);
+			Assert.That(sense.Definition.AnalysisDefaultWritingSystem.Text, Is.Null);
 			Assert.AreEqual(0, sense.SemanticDomainsRC.Count);
 			Assert.AreEqual(0, entry.EntryRefsOS.Count);
 
@@ -1013,17 +1197,15 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			sense = entry.SensesOS[0];
 			Assert.AreEqual(sense.Guid, new Guid("cf2ac6f4-01d8-47ed-9b41-25b6e727097f"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("greenhouse", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.IsNotNull(sense.MorphoSyntaxAnalysisRA as IMoStemMsa);
-			// ReSharper disable PossibleNullReferenceException
-			Assert.IsNotNull((sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
-			Assert.AreEqual("Noun", (sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			// ReSharper restore PossibleNullReferenceException
-			Assert.IsNull(sense.Gloss.AnalysisDefaultWritingSystem.Text);
-			Assert.IsNull(sense.Definition.AnalysisDefaultWritingSystem.Text);
+			Assert.That(sense.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
+			Assert.AreEqual("Noun", ((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
+			Assert.That(sense.Gloss.AnalysisDefaultWritingSystem.Text, Is.Null);
+			Assert.That(sense.Definition.AnalysisDefaultWritingSystem.Text, Is.Null);
 			Assert.AreEqual(0, sense.SemanticDomainsRC.Count);
 			Assert.AreEqual(1, entry.EntryRefsOS.Count);
 			var lexref = entry.EntryRefsOS[0];
@@ -1037,8 +1219,8 @@ namespace LanguageExplorerTests.LIFT
 
 			Assert.IsTrue(repoEntry.TryGetObject(new Guid("58f978d2-2cb2-4506-9a47-63c5454f0065"), out entry));
 			Assert.AreEqual(0, entry.SensesOS.Count);
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("hoose", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
 			Assert.AreEqual(1, entry.EntryRefsOS.Count);
@@ -1115,10 +1297,16 @@ namespace LanguageExplorerTests.LIFT
 			return liftData3A.Concat(new[] { modString }).Concat(liftData3C).ToArray();
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 		[Test]
 		public void LiftDoesNotImportTabs()
 		{
 			string[] tabInput = {"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+		private string[] tabInput = new string[] {"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+=======
+		private string[] tabInput = {"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
 			"<ranges/>",
@@ -1146,9 +1334,27 @@ namespace LanguageExplorerTests.LIFT
 			"</entry>",
 			"</lift>"
 		};
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 			var sOrigFile = CreateInputFile(tabInput);
 			var logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepNew, 1);
 			Assert.IsNotNull(logFile);
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+
+		[Test]
+		public void LiftDoesNotImportTabs()
+		{
+			string sOrigFile = CreateInputFile(tabInput);
+			string logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
+			Assert.IsNotNull(logFile);
+=======
+
+		[Test]
+		public void LiftDoesNotImportTabs()
+		{
+			string sOrigFile = CreateInputFile(tabInput);
+			string logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
+			Assert.That(logFile, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			File.Delete(logFile);
 			File.Delete(sOrigFile);
 
@@ -1158,6 +1364,51 @@ namespace LanguageExplorerTests.LIFT
 
 			Assert.That(entry.SensesOS[0].Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("  man"));
 			Assert.That(entry.SensesOS[0].Definition.AnalysisDefaultWritingSystem.Text, Is.EqualTo("\u2028 male adult human link"));
+		}
+
+		[Test]
+		public void LiftAudioFilesMoved()
+		{
+			var tabInput = new string[] {"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"TheCombine\" version=\"0.13\">",
+				"<header>",
+				"<ranges/>",
+				"<fields/>",
+				"</header>",
+				"<entry dateCreated=\"2011-03-01T18:09:46Z\" dateModified=\"2011-03-01T18:30:07Z\" guid=\"ecfbe958-36a1-4b82-bb69-ca5210355401\" id=\"hombre_ecfbe958-36a1-4b82-bb69-ca5210355400\">",
+				"<lexical-unit>",
+				"<form lang=\"fr\"><text>hombre</text></form>",
+				"</lexical-unit>",
+				"<trait name=\"morph-type\" value=\"root\"></trait>",
+				"<pronunciation>",
+				"<form lang=\"fr\"><text>ombre1</text></form>",
+				"<media href=\"Sleep Away.mp3\">",
+				"</media>",
+				"</pronunciation>",
+				"<sense id=\"hombre_f63f1ccf-3d50-417e-8024-035d999d48bc\">",
+				"<grammatical-info value=\"Noun\">",
+				"</grammatical-info>",
+				"<gloss lang=\"en\"><text>man</text></gloss>",
+				"<definition>",
+				"<form lang=\"en\"><text>",
+				"male adulthuman<span href=\"file://others/SomeFile.txt\" class=\"Hyperlink\">link</span></text></form>",
+				"</definition>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
+			};
+
+			var sOrigFile = CreateInputFile(tabInput, new []{ "Sleep Away.mp3" });
+			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
+			Assert.That(logFile, Is.Not.Null);
+			File.Delete(logFile);
+			File.Delete(sOrigFile);
+
+			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+			ILexEntry entry;
+			Assert.IsTrue(repoEntry.TryGetObject(new Guid("ecfbe958-36a1-4b82-bb69-ca5210355401"), out entry));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("hombre"));
+			Assert.That(entry.PronunciationsOS[0].MediaFilesOS[0].MediaFileRA.AbsoluteInternalPath, Is.SamePath(Path.Combine(Cache.LangProject.LinkedFilesRootDir, "AudioVisual", "Sleep Away.mp3")));
 		}
 
 		[Test]
@@ -1172,19 +1423,35 @@ namespace LanguageExplorerTests.LIFT
 
 			var sOrigFile = CreateInputFile(GetLift3Strings("2011-03-01T22:28:00Z"));
 			var logFile = TryImport(sOrigFile, 4);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			File.Delete(sOrigFile);
 
 			Assert.IsTrue(repoEntry.TryGetObject(new Guid("67113a7f-e448-43e7-87cf-6d3a46ee10ec"), out var entry));
 			Assert.AreEqual(1, entry.EntryRefsOS.Count);
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 			Assert.IsNotNull(logFile);
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+			var temp = entry.EntryRefsOS[0];
+			Assert.IsNotNull(logFile);
+=======
+			var temp = entry.EntryRefsOS[0];
+			Assert.That(logFile, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			File.Delete(logFile);
 			// Importing twice should not create duplicates. Note that we use a slightly different date here
 			sOrigFile = CreateInputFile(GetLift3Strings("2011-03-01T22:30:00Z"));
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 			logFile = TryImport(sOrigFile, null, MergeStyle.MsKeepNew, 4);
 			Assert.IsNotNull(logFile);
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+			logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 4);
+			Assert.IsNotNull(logFile);
+=======
+			logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 4);
+			Assert.That(logFile, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			File.Delete(logFile);
 			File.Delete(sOrigFile);
 
@@ -1196,6 +1463,7 @@ namespace LanguageExplorerTests.LIFT
 
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 		/// <summary>
 		/// Fourth test of LIFT import: test importing multi-paragraph text with various CR/LF
 		/// combinations.
@@ -1206,6 +1474,12 @@ namespace LanguageExplorerTests.LIFT
 		public void TestLiftImport4()
 		{
 			string[] liftData4 = {
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+		static private readonly string[] s_LiftData4 = new[]
+		{
+=======
+		private static readonly string[] s_LiftData4 = {
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
@@ -1244,7 +1518,7 @@ namespace LanguageExplorerTests.LIFT
 			var s_newLine = Environment.NewLine;
 			const string s_cr = "\r";
 			const string s_lf = "\n";
-// ReSharper restore InconsistentNaming
+			// ReSharper restore InconsistentNaming
 
 			SetWritingSystems("es");
 
@@ -1262,7 +1536,7 @@ namespace LanguageExplorerTests.LIFT
 			var sOrigFile = CreateInputFile(liftData4);
 			var logFile = TryImport(sOrigFile, 1);
 			File.Delete(sOrigFile);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
@@ -1272,8 +1546,8 @@ namespace LanguageExplorerTests.LIFT
 			Assert.IsTrue(repoEntry.TryGetObject(new Guid("ecfbe958-36a1-4b82-bb69-ca5210355400"), out var entry));
 			Assert.AreEqual(1, entry.SensesOS.Count);
 			Assert.AreEqual(entry.SensesOS[0].Guid, new Guid("f63f1ccf-3d50-417e-8024-035d999d48bc"));
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("root", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("hombre", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
 			var actualDefn = entry.SensesOS[0].Definition.AnalysisDefaultWritingSystem.Text;
@@ -1281,10 +1555,11 @@ namespace LanguageExplorerTests.LIFT
 			var doc = new XmlDocument();
 			doc.LoadXml(expectedXmlDefn);
 			var expectedDefn = doc.SelectSingleNode("form/text");
-			Assert.IsNotNull(expectedDefn);
+			Assert.That(expectedDefn, Is.Not.Null);
 			Assert.AreEqual(expectedDefn.InnerText, actualDefn, "Mismatched definition.");
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 		/// <summary>
 		/// LIFT import: Test import of Custom Fields which contain strings
 		/// </summary>
@@ -1292,6 +1567,12 @@ namespace LanguageExplorerTests.LIFT
 		public void TestLiftImport5_CustomFieldsStringsAndMultiUnicode()
 		{
 			string[] liftData5 = {
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+		static private readonly string[] s_LiftData5 = new[]
+		{
+=======
+		private static readonly string[] s_LiftData5 = {
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
@@ -1421,7 +1702,7 @@ namespace LanguageExplorerTests.LIFT
 
 			var logFile = TryImport(sOrigFile, 2);
 			File.Delete(sOrigFile);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(2, repoEntry.Count);
 			Assert.AreEqual(2, repoSense.Count);
@@ -1440,15 +1721,39 @@ namespace LanguageExplorerTests.LIFT
 			m_customFieldSenseIds = GetCustomFlidsOfObject(sense0);
 			VerifyCustomField(sense0, customData, m_customFieldSenseIds["CustomFldSense"]);
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 			Assert.IsNotNull(entry.LexemeFormOA);
 			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+			//===================================================================================
+			Assert.IsNotNull(entry.LexemeFormOA);
+			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+=======
+			//===================================================================================
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("Babababa", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
 			// ReSharper disable PossibleNullReferenceException
 			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
 			Assert.AreEqual("Noun", (sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
 			// ReSharper restore PossibleNullReferenceException
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
+			// ReSharper disable PossibleNullReferenceException
+			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
+			Assert.AreEqual("Noun",
+							(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
+			// ReSharper restore PossibleNullReferenceException
+=======
+			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			var pos = ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA;
+			Assert.That(pos, Is.Not.Null);
+			Assert.AreEqual("Noun", pos.Name.AnalysisDefaultWritingSystem.Text);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			Assert.AreEqual("Papi", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
 			m_customFieldEntryIds = GetCustomFlidsOfObject(entry);
 			customData = new CustomFieldData()
@@ -1530,6 +1835,7 @@ namespace LanguageExplorerTests.LIFT
 			VerifyCustomField(form, customData, m_customFieldAllomorphsIds["CustomFldAllomorphSingle"]);
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 		/// <summary>
 		/// LIFT import: Test import of GenDate's and Numbers
 		/// </summary>
@@ -1537,6 +1843,12 @@ namespace LanguageExplorerTests.LIFT
 		public void TestLiftImport6_CustomFieldsNumberGenDate()
 		{
 			string[] liftData6 = {
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+		private static readonly string[] s_LiftData6 = new[]
+		{
+=======
+		private static readonly string[] s_LiftData6 = {
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
@@ -1646,7 +1958,7 @@ namespace LanguageExplorerTests.LIFT
 
 			var logFile = TryImport(sOrigFile, 1);
 			File.Delete(sOrigFile);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
@@ -1656,15 +1968,39 @@ namespace LanguageExplorerTests.LIFT
 			var sense0 = entry.SensesOS[0];
 			Assert.AreEqual(sense0.Guid, new Guid("9d6c600b-192a-4eec-980b-a605173ba5e3"));
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 			Assert.IsNotNull(entry.LexemeFormOA);
 			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+			//===================================================================================
+			Assert.IsNotNull(entry.LexemeFormOA);
+			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+=======
+			//===================================================================================
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("Baba", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
 			// ReSharper disable PossibleNullReferenceException
 			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
 			Assert.AreEqual("NounPerson", (sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
 			// ReSharper restore PossibleNullReferenceException
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
+			// ReSharper disable PossibleNullReferenceException
+			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
+			Assert.AreEqual("NounPerson",
+							(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
+			// ReSharper restore PossibleNullReferenceException
+=======
+			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			var pos = ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA;
+			Assert.That(pos, Is.Not.Null);
+			Assert.AreEqual("NounPerson", pos.Name.AnalysisDefaultWritingSystem.Text);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			Assert.AreEqual("Pops", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
 
 			VerifyCustomFieldsEntry(entry);
@@ -1743,7 +2079,7 @@ namespace LanguageExplorerTests.LIFT
 			var customFieldIds2 = new Dictionary<string, int>();
 			var customFieldIds = new List<int>();
 			var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
-			Assert.IsNotNull(mdc);
+			Assert.That(mdc, Is.Not.Null);
 			foreach (var flid in mdc.GetFields(obj.ClassID, true, (int)CellarPropertyTypeFilter.All))
 			{
 				var fieldName = mdc.GetFieldName(flid);
@@ -1761,27 +2097,51 @@ namespace LanguageExplorerTests.LIFT
 		{
 			switch (obj)
 			{
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 				case ILexEntry lexEntry:
 				{
 					Assert.That(lexEntry.LiftResidue, Does.Not.Contain(fieldData.CustomFieldname));
 					break;
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+				var entry = (ILexEntry)obj;
+				Assert.That(entry.LiftResidue, Is.Not.StringContaining(fieldData.CustomFieldname));
+=======
+				var entry = (ILexEntry)obj;
+				Assert.That(entry.LiftResidue, Does.Not.Contain(fieldData.CustomFieldname));
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			}
 				case ILexSense lexSense:
 			{
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 					Assert.That(lexSense.LiftResidue, Does.Not.Contain(fieldData.CustomFieldname));
 					break;
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+				var sense = (ILexSense)obj;
+				Assert.That(sense.LiftResidue, Is.Not.StringContaining(fieldData.CustomFieldname));
+=======
+				var sense = (ILexSense)obj;
+				Assert.That(sense.LiftResidue, Does.Not.Contain(fieldData.CustomFieldname));
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			}
 				case ILexExampleSentence exampleSentence:
 			{
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 					Assert.That(exampleSentence.LiftResidue, Does.Not.Contain(fieldData.CustomFieldname));
 					break;
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+				var example = (ILexExampleSentence)obj;
+				Assert.That(example.LiftResidue, Is.Not.StringContaining(fieldData.CustomFieldname));
+=======
+				var example = (ILexExampleSentence)obj;
+				Assert.That(example.LiftResidue, Does.Not.Contain(fieldData.CustomFieldname));
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			}
 			}
 
 			var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
-			Assert.IsNotNull(mdc);
+			Assert.That(mdc, Is.Not.Null);
 			var sda = Cache.DomainDataByFlid as ISilDataAccessManaged;
-			Assert.IsNotNull(sda);
+			Assert.That(sda, Is.Not.Null);
 
 			var fieldName = mdc.GetFieldName(flid);
 			Assert.AreEqual(fieldData.CustomFieldname, fieldName);
@@ -1800,7 +2160,7 @@ namespace LanguageExplorerTests.LIFT
 					//    "<form lang=\"en\"><text>Allomorph multi English</text></form>",
 					//</field>
 					var tssMultiString = Cache.DomainDataByFlid.get_MultiStringProp(obj.Hvo, flid);
-					Assert.IsNotNull(tssMultiString);
+					Assert.That(tssMultiString, Is.Not.Null);
 					//Assert.IsTrue(tssMultiString.StringCount >0);
 
 						for (var i = 0; i < tssMultiString.StringCount; ++i)
@@ -1876,7 +2236,7 @@ namespace LanguageExplorerTests.LIFT
 			//"<trait name=\"CustomFldEntry GenDate\" value=\"201105232\"/>",
 			//   '-'(BC and ''AD) 2011 05(May) 11(Day) 2(GenDate.PrecisionType (Before, Exact, Approximate, After)
 			var sValue = fieldData.GenDateLiftFormat;
-			Assert.IsNotNull(sValue);
+			Assert.That(sValue, Is.Not.Null);
 			var liftGenDate = LiftExporter.GetGenDateFromInt(Convert.ToInt32(sValue));
 			Assert.AreEqual(liftGenDate.Precision, genDate.Precision);
 			Assert.AreEqual(liftGenDate.IsAD, genDate.IsAD);
@@ -1885,6 +2245,7 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(liftGenDate.Day, genDate.Day);
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 		/// <summary>
 		/// LIFT Import:  test import of Custom Lists from the Ranges file.
 		/// Also test the import of field definitions for custom fields
@@ -1953,6 +2314,12 @@ namespace LanguageExplorerTests.LIFT
 			"</lift>"
 			};
 			string[] liftRangeData7 = {
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+		private static readonly string[] s_LiftRangeData7 = new[]
+		{
+=======
+		private static readonly string[] s_LiftRangeData7 = {
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->",
 			"<lift-ranges>",
@@ -2111,6 +2478,153 @@ namespace LanguageExplorerTests.LIFT
 			"</range>",
 			"</lift-ranges>"
 		};
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+
+		private static readonly string[] s_LiftData7 = new[]
+		{
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
+			"<header>",
+			"<ranges>",
+				"<range id=\"semantic-domain-ddp4\" href=\"file://C:/junk.lift-ranges\"/>",
+				"<range id=\"CustomCmPossibiltyList\" href=\"file://C:/junk.lift-ranges\"/>",
+				"<range id=\"CustomList Number2 \" href=\"file://C:/junk.lift-ranges\"/>",
+				"<range id=\"status\" href=\"file://C:/junk.lift-ranges\"/>",
+			"</ranges>",
+			"<fields>",
+			@"<field tag=""ExampleStatus"">",
+			@"<form lang=""en""><text></text></form>",
+			@"<form lang=""qaa-x-spec""><text>Class=LexExampleSentence; Type=ReferenceAtom; WsSelector=kwsAnal; DstCls=CmPossibility; range=status</text></form>",
+			@"</field>",
+			"<field tag=\"import-residue\">",
+			"<form lang=\"en\"><text>This records residue left over from importing a standard format file into FieldWorks (or LinguaLinks).</text></form>",
+			"</field>",
+			"<field tag=\"CustomFld ListSingle\">",
+			"<form lang=\"en\"><text></text></form>",
+			"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceAtomic; DstCls=CmPossibility; range=semantic-domain-ddp4</text></form>",
+			"</field>",
+			"<field tag=\"CustomFld ListMulti\">",
+			"<form lang=\"en\"><text></text></form>",
+			"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceCollection; DstCls=CmPossibility; range=semantic-domain-ddp4</text></form>",
+			"</field>",
+			"<field tag=\"CustomFld CmPossibilityCustomList\">",
+			"<form lang=\"en\"><text></text></form>",
+			"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceAtomic; DstCls=CmPossibility; range=CustomCmPossibiltyList</text></form>",
+			"</field>",
+			"<field tag=\"CustomFld CustomList2\">",
+			"<form lang=\"en\"><text>This is to ensure we import correctly.</text></form>",
+			"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceAtomic; DstCls=CmPossibility; range=CustomList Number2 </text></form>",
+			"</field>",
+			"</fields>",
+			"</header>",
+			"<entry dateCreated=\"2011-05-31T21:21:28Z\" dateModified=\"2011-06-06T20:03:42Z\" id=\"Baba_aef5e807-c841-4f35-9591-c8a998dc2465\" guid=\"aef5e807-c841-4f35-9591-c8a998dc2465\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>Baba</text></form>",
+			"</lexical-unit>",
+			"<trait  name=\"morph-type\" value=\"stem\"/>",
+			"<trait name=\"CustomFld ListSingle\" value=\"Reptile\"/>",
+			"<trait name=\"CustomFld ListMulti\" value=\"Universe, creation\"/>",
+			"<trait name=\"CustomFld ListMulti\" value=\"Sun\"/>",
+			"<trait name=\"CustomFld CmPossibilityCustomList\" value=\"list item 1\"/>",
+			"<trait name=\"CustomFld CustomList2\" value=\"cstm list item 2\"/>",
+			"<sense id=\"5741255b-0563-49e0-8839-98bdb8c73f48\">",
+			"<grammatical-info value=\"NounFamily\">",
+			"</grammatical-info>",
+			"<gloss lang=\"en\"><text>Papi</text></gloss>",
+			@"<example>",
+			@"<form lang=""fr""><text>a complex example</text></form>",
+			@"<trait name=""do-not-publish-in"" value=""School Dictionary""/>",
+			@"<trait name=""ExampleStatus"" value=""Pending""/>",
+			@"</example>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// LIFT Import:  test import of Custom Lists from the Ranges file.
+		/// Also test the import of field definitions for custom fields
+		/// which contain CmPossibility list data and verify that the data is correct too.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void TestLiftImport7_CustomLists_and_CustomFieldsWithListData()
+		{
+=======
+
+		private static readonly string[] s_LiftData7 = {
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
+			"<header>",
+			"<ranges>",
+				"<range id=\"semantic-domain-ddp4\" href=\"file://C:/junk.lift-ranges\"/>",
+				"<range id=\"CustomCmPossibiltyList\" href=\"file://C:/junk.lift-ranges\"/>",
+				"<range id=\"CustomList Number2 \" href=\"file://C:/junk.lift-ranges\"/>",
+				"<range id=\"status\" href=\"file://C:/junk.lift-ranges\"/>",
+			"</ranges>",
+			"<fields>",
+			@"<field tag=""ExampleStatus"">",
+			@"<form lang=""en""><text></text></form>",
+			@"<form lang=""qaa-x-spec""><text>Class=LexExampleSentence; Type=ReferenceAtom; WsSelector=kwsAnal; DstCls=CmPossibility; range=status</text></form>",
+			@"</field>",
+			"<field tag=\"import-residue\">",
+			"<form lang=\"en\"><text>This records residue left over from importing a standard format file into FieldWorks (or LinguaLinks).</text></form>",
+			"</field>",
+			"<field tag=\"CustomFld ListSingle\">",
+			"<form lang=\"en\"><text></text></form>",
+			"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceAtomic; DstCls=CmPossibility; range=semantic-domain-ddp4</text></form>",
+			"</field>",
+			"<field tag=\"CustomFld ListMulti\">",
+			"<form lang=\"en\"><text></text></form>",
+			"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceCollection; DstCls=CmPossibility; range=semantic-domain-ddp4</text></form>",
+			"</field>",
+			"<field tag=\"CustomFld CmPossibilityCustomList\">",
+			"<form lang=\"en\"><text></text></form>",
+			"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceAtomic; DstCls=CmPossibility; range=CustomCmPossibiltyList</text></form>",
+			"</field>",
+			"<field tag=\"CustomFld CustomList2\">",
+			"<form lang=\"en\"><text>This is to ensure we import correctly.</text></form>",
+			"<form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=ReferenceAtomic; DstCls=CmPossibility; range=CustomList Number2 </text></form>",
+			"</field>",
+			"</fields>",
+			"</header>",
+			"<entry dateCreated=\"2011-05-31T21:21:28Z\" dateModified=\"2011-06-06T20:03:42Z\" id=\"Baba_aef5e807-c841-4f35-9591-c8a998dc2465\" guid=\"aef5e807-c841-4f35-9591-c8a998dc2465\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>Baba</text></form>",
+			"</lexical-unit>",
+			"<trait  name=\"morph-type\" value=\"stem\"/>",
+			"<trait name=\"CustomFld ListSingle\" value=\"Reptile\"/>",
+			"<trait name=\"CustomFld ListMulti\" value=\"Universe, creation\"/>",
+			"<trait name=\"CustomFld ListMulti\" value=\"Sun\"/>",
+			"<trait name=\"CustomFld CmPossibilityCustomList\" value=\"list item 1\"/>",
+			"<trait name=\"CustomFld CustomList2\" value=\"cstm list item 2\"/>",
+			"<sense id=\"5741255b-0563-49e0-8839-98bdb8c73f48\">",
+			"<grammatical-info value=\"NounFamily\">",
+			"</grammatical-info>",
+			"<gloss lang=\"en\"><text>Papi</text></gloss>",
+			@"<example>",
+			@"<form lang=""fr""><text>a complex example</text></form>",
+			@"<trait name=""do-not-publish-in"" value=""School Dictionary""/>",
+			@"<trait name=""ExampleStatus"" value=""Pending""/>",
+			@"</example>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// LIFT Import:  test import of Custom Lists from the Ranges file.
+		/// Also test the import of field definitions for custom fields
+		/// which contain CmPossibility list data and verify that the data is correct too.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void TestLiftImport7_CustomLists_and_CustomFieldsWithListData()
+		{
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			SetWritingSystems("fr");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -2122,12 +2636,18 @@ namespace LanguageExplorerTests.LIFT
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(liftData7);
 			//Create the LIFT ranges file
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 			var sOrigRangesFile = CreateInputRangesFile(liftRangeData7);
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+			var sOrigRangesFile = CreateInputRangesFile(s_LiftRangeData7);
+=======
+			var sOrigRangesFile = CreateInputRangesFile(s_LiftRangeData7, Path.GetDirectoryName(sOrigFile));
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 
 			var logFile = TryImportWithRanges(sOrigFile, sOrigRangesFile, 1);
 			File.Delete(sOrigFile);
 			File.Delete(sOrigRangesFile);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
@@ -2137,15 +2657,39 @@ namespace LanguageExplorerTests.LIFT
 			var sense0 = entry.SensesOS[0];
 			Assert.AreEqual(sense0.Guid, new Guid("5741255b-0563-49e0-8839-98bdb8c73f48"));
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 			Assert.IsNotNull(entry.LexemeFormOA);
 			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+			//===================================================================================
+			Assert.IsNotNull(entry.LexemeFormOA);
+			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+=======
+			//===================================================================================
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("Baba", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
 			// ReSharper disable PossibleNullReferenceException
 			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
 			Assert.AreEqual("NounFamily", (sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
 			// ReSharper restore PossibleNullReferenceException
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+			Assert.IsNotNull(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa);
+			// ReSharper disable PossibleNullReferenceException
+			Assert.IsNotNull((sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA);
+			Assert.AreEqual("NounFamily",
+							(sense0.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
+			// ReSharper restore PossibleNullReferenceException
+=======
+			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
+			var pos = ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA;
+			Assert.That(pos, Is.Not.Null);
+			Assert.AreEqual("NounFamily", pos.Name.AnalysisDefaultWritingSystem.Text);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			Assert.AreEqual("Papi", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
 
 			// Verify example was imported
@@ -2217,7 +2761,7 @@ namespace LanguageExplorerTests.LIFT
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(inflectionLiftData);
 			//Create the LIFT ranges file
-			var sOrigRangesFile = CreateInputRangesFile(inflectionLiftRangeData);
+			var sOrigRangesFile = CreateInputRangesFile(inflectionLiftRangeData, Path.GetDirectoryName(sOrigFile));
 
 			var logFile = TryImportWithRanges(sOrigFile, sOrigRangesFile, 1);
 			File.Delete(sOrigFile);
@@ -2425,11 +2969,21 @@ namespace LanguageExplorerTests.LIFT
 			//ranges file
 			var semanticDomainsList = Cache.LanguageProject.SemanticDomainListOA;
 			var item = semanticDomainsList.FindOrCreatePossibility("Universe, creation", Cache.DefaultAnalWs);
-			Assert.IsNotNull(item);
+			Assert.That(item, Is.Not.Null);
 			Assert.AreEqual("63403699-07c1-43f3-a47c-069d6e4316e5", item.Guid.ToString());
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 			item = semanticDomainsList.FindOrCreatePossibility("Universe, creation" + StringUtils.kszObject + "Sky", Cache.DefaultAnalWs);
 			Assert.IsNotNull(item);
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+			item = semanticDomainsList.FindOrCreatePossibility("Universe, creation" + StringUtils.kszObject + "Sky",
+				Cache.DefaultAnalWs);
+			Assert.IsNotNull(item);
+=======
+			item = semanticDomainsList.FindOrCreatePossibility("Universe, creation" + StringUtils.kszObject + "Sky",
+				Cache.DefaultAnalWs);
+			Assert.That(item, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			Assert.AreEqual("999581c4-1611-4acb-ae1b-5e6c1dfe6f0c", item.Guid.ToString());
 
 			//FLEX does not allow users to add new morph-types.  However LIFT import will add new morph-types if
@@ -2437,7 +2991,7 @@ namespace LanguageExplorerTests.LIFT
 			//Here we test that standard morph-types were not changed but a new was was added.
 			var morphTylesList = Cache.LanguageProject.LexDbOA.MorphTypesOA;
 			var morphType = morphTylesList.FindOrCreatePossibility("klingongtype", Cache.DefaultAnalWs);
-			Assert.IsNotNull(morphType);
+			Assert.That(morphType, Is.Not.Null);
 			Assert.AreEqual("49343092-A48B-4c73-92B5-7603DF372D8B".ToLowerInvariant(), morphType.Guid.ToString().ToLowerInvariant());
 			Assert.AreEqual("Does this thing kling or clingy thingy.", morphType.Description.BestAnalysisVernacularAlternative.Text);
 			Assert.AreEqual("spok", morphType.Abbreviation.BestAnalysisVernacularAlternative.Text);
@@ -2587,6 +3141,7 @@ namespace LanguageExplorerTests.LIFT
 			return XmlUtils.MakeSafeXmlAttribute(tss.Text);
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 		/// <summary>
 		/// LIFT Import:  test import of Location List from the Ranges file (and that we can link to one).
 		/// </summary>
@@ -2594,6 +3149,12 @@ namespace LanguageExplorerTests.LIFT
 		public void TestLiftImportLocationList()
 		{
 			string[] liftDataLocations = {
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+		private static readonly string[] s_LiftDataLocations = new[]
+		{
+=======
+		private static readonly string[] s_LiftDataLocations = {
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.0.1.40602\" version=\"0.13\">",
 			"<header>",
@@ -2652,7 +3213,16 @@ namespace LanguageExplorerTests.LIFT
 			"</entry>",
 			"</lift>"
 		};
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 			string[] liftRangeDataLocations = {
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+
+		private static readonly string[] s_LiftRangeDataLocations = new[]
+		{
+=======
+
+		private static readonly string[] s_LiftRangeDataLocations = {
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 				"<!-- See http://code.google.com/p/lift-standard for more information on the format used here. -->",
 				"<lift-ranges>",
@@ -2711,12 +3281,18 @@ namespace LanguageExplorerTests.LIFT
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(liftDataLocations);
 			//Create the LIFT ranges file
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 			var sOrigRangesFile = CreateInputRangesFile(liftRangeDataLocations);
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+			var sOrigRangesFile = CreateInputRangesFile(s_LiftRangeDataLocations);
+=======
+			var sOrigRangesFile = CreateInputRangesFile(s_LiftRangeDataLocations, Path.GetDirectoryName(sOrigFile));
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 
 			var logFile = TryImportWithRanges(sOrigFile, sOrigRangesFile, 1);
 			File.Delete(sOrigFile);
 			File.Delete(sOrigRangesFile);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
@@ -2745,6 +3321,105 @@ namespace LanguageExplorerTests.LIFT
 			Assert.That(location, Is.EqualTo(village));
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+		private static readonly string[] s_LiftData8 = new[]
+		{
+			"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+			"<lift producer=\"SIL.FLEx 7.1.0.40722\" version=\"0.13\">",
+			"  <header>",
+			"    <fields>",
+			"      <field tag=\"Long Text\">",
+			"        <form lang=\"en\"><text>This field contains structured text.</text></form>",
+			"        <form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=OwningAtomic; DstCls=StText</text></form>",
+			"      </field>",
+			"    </fields>",
+			"  </header>",
+			"  <entry dateCreated=\"2011-06-27T21:45:52Z\" dateModified=\"2011-06-29T14:57:28Z\" id=\"apa_494616cc-2f23-4877-a109-1a6c1db0887e\" guid=\"494616cc-2f23-4877-a109-1a6c1db0887e\">",
+			"    <lexical-unit>",
+			"      <form lang=\"fr\"><text>apa</text></form>",
+			"    </lexical-unit>",
+			"    <trait  name=\"morph-type\" value=\"stem\"/>",
+			"    <field type=\"Long Text\">",
+			"      <form lang=\"en\"><text><span class=\"Bulleted List\"><span lang=\"en\">This is a test of sorts.  This field can contain </span><span lang=\"en\" class=\"Emphasized Text\">multiple</span><span lang=\"en\"> paragraphs.</span></span>\u2029",
+			"<span class=\"Bulleted List\"><span lang=\"en\">For example, this is the second paragraph already.</span></span>\u2029",
+			"<span class=\"Normal\"><span lang=\"en\">This third paragraph is back in the normal (default) paragraph style, and some character </span><span lang=\"en\" class=\"Emphasized Text\">formatting</span><span lang=\"en\"> to produce </span><span lang=\"en\" class=\"Strong\">multiple</span><span lang=\"en\"> spans within the paragraph.</span></span></text></form>",
+			"    </field>",
+			"    <sense id=\"3e0ae703-db7f-4687-9cf5-481524095905\">",
+			"      <grammatical-info value=\"Pronoun\">",
+			"      </grammatical-info>",
+			"      <gloss lang=\"en\"><text>this</text></gloss>",
+			"    </sense>",
+			"  </entry>",
+			"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"test_241cffca-3062-4b1c-8f9f-ab8ed07eb7bd\" guid=\"241cffca-3062-4b1c-8f9f-ab8ed07eb7bd\">",
+			"    <lexical-unit>",
+			"      <form lang=\"fr\"><text>test</text></form>",
+			"    </lexical-unit>",
+			"    <trait  name=\"morph-type\" value=\"stem\"/>",
+			"    <field type=\"Long Text\">",
+			"      <form lang=\"en\"><text><span lang=\"en\">This test paragraph does not have a style explicitly assigned.</span>\u2029",
+			"<span lang=\"en\">This test paragraph has </span><span lang=\"en\" class=\"Strong\">some</span><span lang=\"en\"> </span><span lang=\"en\" class=\"Emphasized Text\">character</span><span lang=\"en\"> formatting.</span>\u2029",
+			"<span class=\"Block Quote\"><span lang=\"en\">This paragraph has a paragraph style applied.</span></span></text></form>",
+			"    </field>",
+			"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
+			"      <grammatical-info value=\"Noun\">",
+			"      </grammatical-info>",
+			"      <gloss lang=\"en\"><text>test</text></gloss>",
+			"    </sense>",
+			"  </entry>",
+			"</lift>"
+		};
+
+		///--------------------------------------------------------------------------------------
+=======
+		private static readonly string[] s_LiftData8 = {
+			"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+			"<lift producer=\"SIL.FLEx 7.1.0.40722\" version=\"0.13\">",
+			"  <header>",
+			"    <fields>",
+			"      <field tag=\"Long Text\">",
+			"        <form lang=\"en\"><text>This field contains structured text.</text></form>",
+			"        <form lang=\"qaa-x-spec\"><text>Class=LexEntry; Type=OwningAtomic; DstCls=StText</text></form>",
+			"      </field>",
+			"    </fields>",
+			"  </header>",
+			"  <entry dateCreated=\"2011-06-27T21:45:52Z\" dateModified=\"2011-06-29T14:57:28Z\" id=\"apa_494616cc-2f23-4877-a109-1a6c1db0887e\" guid=\"494616cc-2f23-4877-a109-1a6c1db0887e\">",
+			"    <lexical-unit>",
+			"      <form lang=\"fr\"><text>apa</text></form>",
+			"    </lexical-unit>",
+			"    <trait  name=\"morph-type\" value=\"stem\"/>",
+			"    <field type=\"Long Text\">",
+			"      <form lang=\"en\"><text><span class=\"Bulleted List\"><span lang=\"en\">This is a test of sorts.  This field can contain </span><span lang=\"en\" class=\"Emphasized Text\">multiple</span><span lang=\"en\"> paragraphs.</span></span>\u2029",
+			"<span class=\"Bulleted List\"><span lang=\"en\">For example, this is the second paragraph already.</span></span>\u2029",
+			"<span class=\"Normal\"><span lang=\"en\">This third paragraph is back in the normal (default) paragraph style, and some character </span><span lang=\"en\" class=\"Emphasized Text\">formatting</span><span lang=\"en\"> to produce </span><span lang=\"en\" class=\"Strong\">multiple</span><span lang=\"en\"> spans within the paragraph.</span></span></text></form>",
+			"    </field>",
+			"    <sense id=\"3e0ae703-db7f-4687-9cf5-481524095905\">",
+			"      <grammatical-info value=\"Pronoun\">",
+			"      </grammatical-info>",
+			"      <gloss lang=\"en\"><text>this</text></gloss>",
+			"    </sense>",
+			"  </entry>",
+			"  <entry dateCreated=\"2011-06-29T15:58:03Z\" dateModified=\"2011-06-29T15:58:03Z\" id=\"test_241cffca-3062-4b1c-8f9f-ab8ed07eb7bd\" guid=\"241cffca-3062-4b1c-8f9f-ab8ed07eb7bd\">",
+			"    <lexical-unit>",
+			"      <form lang=\"fr\"><text>test</text></form>",
+			"    </lexical-unit>",
+			"    <trait  name=\"morph-type\" value=\"stem\"/>",
+			"    <field type=\"Long Text\">",
+			"      <form lang=\"en\"><text><span lang=\"en\">This test paragraph does not have a style explicitly assigned.</span>\u2029",
+			"<span lang=\"en\">This test paragraph has </span><span lang=\"en\" class=\"Strong\">some</span><span lang=\"en\"> </span><span lang=\"en\" class=\"Emphasized Text\">character</span><span lang=\"en\"> formatting.</span>\u2029",
+			"<span class=\"Block Quote\"><span lang=\"en\">This paragraph has a paragraph style applied.</span></span></text></form>",
+			"    </field>",
+			"    <sense id=\"2759532a-26db-4850-9cba-b3684f0a3f5f\">",
+			"      <grammatical-info value=\"Noun\">",
+			"      </grammatical-info>",
+			"      <gloss lang=\"en\"><text>test</text></gloss>",
+			"    </sense>",
+			"  </entry>",
+			"</lift>"
+		};
+
+		///--------------------------------------------------------------------------------------
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 		/// <summary>
 		/// LIFT Import:  test import of custom fields representing StText data.
 		/// Also test the import of field definitions for custom fields which contain StText data
@@ -2765,7 +3440,7 @@ namespace LanguageExplorerTests.LIFT
 
 			var logFile = TryImport(sOrigFile, 2);
 			File.Delete(sOrigFile);
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 
 			var flidCustom = Cache.MetaDataCacheAccessor.GetFieldId("LexEntry", "Long Text", false);
@@ -2788,11 +3463,19 @@ namespace LanguageExplorerTests.LIFT
 			var hvo = Cache.DomainDataByFlid.get_ObjectProp(entry2.Hvo, flidCustom);
 			Assert.AreNotEqual(0, hvo, "The second entry has a value in the \"Long Text\" custom field.");
 			var text = Cache.ServiceLocator.ObjectRepository.GetObject(hvo) as IStText;
-			Assert.IsNotNull(text);
+			Assert.That(text, Is.Not.Null);
 			Assert.AreEqual(3, text.ParagraphsOS.Count, "The first Long Text field should have three paragraphs.");
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 			Assert.IsNull(text.ParagraphsOS[0].StyleName);
 			var tisb = TsStringUtils.MakeIncStrBldr();
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+			Assert.IsNull(text.ParagraphsOS[0].StyleName);
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
+=======
+			Assert.That(text.ParagraphsOS[0].StyleName, Is.Null);
+			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsEn);
 			tisb.Append("This test paragraph does not have a style explicitly assigned.");
@@ -2800,11 +3483,11 @@ namespace LanguageExplorerTests.LIFT
 			tisb.Clear();
 			tisb.ClearProps();
 			var para = text.ParagraphsOS[0] as IStTxtPara;
-			Assert.IsNotNull(para);
+			Assert.That(para, Is.Not.Null);
 			Assert.AreEqual(tss.Text, para.Contents.Text);
 			Assert.IsTrue(tss.Equals(para.Contents), "The first paragraph (second entry) contents should have all its formatting.");
 
-			Assert.IsNull(text.ParagraphsOS[1].StyleName);
+			Assert.That(text.ParagraphsOS[1].StyleName, Is.Null);
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsEn);
 			tisb.Append("This test paragraph has ");
 			tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Strong");
@@ -2819,7 +3502,7 @@ namespace LanguageExplorerTests.LIFT
 			tisb.Clear();
 			tisb.ClearProps();
 			para = text.ParagraphsOS[1] as IStTxtPara;
-			Assert.IsNotNull(para);
+			Assert.That(para, Is.Not.Null);
 			Assert.AreEqual(tss.Text, para.Contents.Text);
 			Assert.IsTrue(tss.Equals(para.Contents), "The second paragraph (second entry) contents should have all its formatting.");
 
@@ -2830,7 +3513,7 @@ namespace LanguageExplorerTests.LIFT
 			tisb.Clear();
 			tisb.ClearProps();
 			para = text.ParagraphsOS[2] as IStTxtPara;
-			Assert.IsNotNull(para);
+			Assert.That(para, Is.Not.Null);
 			Assert.AreEqual(tss.Text, para.Contents.Text);
 			Assert.IsTrue(tss.Equals(para.Contents), "The third paragraph (second entry) contents should have all its formatting.");
 		}
@@ -2918,9 +3601,9 @@ namespace LanguageExplorerTests.LIFT
 			var hvo = Cache.DomainDataByFlid.get_ObjectProp(entry1.Hvo, flidCustom);
 			Assert.AreNotEqual(0, hvo, "The first entry has a value in the \"Long Text\" custom field.");
 			var text = Cache.ServiceLocator.ObjectRepository.GetObject(hvo) as IStText;
-			Assert.IsNotNull(text);
+			Assert.That(text, Is.Not.Null);
 			var para = text.ParagraphsOS[3] as IStTxtPara;
-			Assert.IsNotNull(para);
+			Assert.That(para, Is.Not.Null);
 			Assert.AreEqual("Numbered List", para.StyleName);
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var tss = TsStringUtils.MakeString("This is the fourth paragraph.", wsEn);
@@ -2954,6 +3637,7 @@ namespace LanguageExplorerTests.LIFT
 			VerifyFirstEntryStTextDataImportExact(repoEntry, 3, flidCustom);
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 		/// <summary>
 		/// LIFT Import:  test import of inflection feature with empty value. Lose it!
 		/// </summary>
@@ -2961,6 +3645,12 @@ namespace LanguageExplorerTests.LIFT
 		public void TestLiftImportEmptyInflectionFeature()
 		{
 			string[] liftData9 = {
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+		static private readonly string[] s_LiftData9 = new[]
+		{
+=======
+		private static readonly string[] s_LiftData9 = {
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.2.4.41019\" version=\"0.13\">",
 			"<header>",
@@ -3017,8 +3707,18 @@ namespace LanguageExplorerTests.LIFT
 			var hvo = Cache.DomainDataByFlid.get_ObjectProp(entry1.Hvo, flidCustom);
 			Assert.AreNotEqual(0, hvo, "The first entry has a value in the \"Long Text\" custom field.");
 			var text = Cache.ServiceLocator.ObjectRepository.GetObject(hvo) as IStText;
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 			Assert.IsNotNull(text);
 			Assert.AreEqual(cpara, text.ParagraphsOS.Count, $"The first Long Text field should have {cpara} paragraphs.");
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+			Assert.IsNotNull(text);
+			Assert.AreEqual(cpara, text.ParagraphsOS.Count,
+				String.Format("The first Long Text field should have {0} paragraphs.", cpara));
+=======
+			Assert.That(text, Is.Not.Null);
+			Assert.AreEqual(cpara, text.ParagraphsOS.Count,
+				String.Format("The first Long Text field should have {0} paragraphs.", cpara));
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			Assert.AreEqual("Bulleted List", text.ParagraphsOS[0].StyleName);
 			var tisb = TsStringUtils.MakeIncStrBldr();
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
@@ -3032,7 +3732,7 @@ namespace LanguageExplorerTests.LIFT
 			tisb.Clear();
 			tisb.ClearProps();
 			var para = text.ParagraphsOS[0] as IStTxtPara;
-			Assert.IsNotNull(para);
+			Assert.That(para, Is.Not.Null);
 			Assert.AreEqual(tss.Text, para.Contents.Text);
 			Assert.IsTrue(tss.Equals(para.Contents), "The first paragraph contents should have all its formatting.");
 
@@ -3043,7 +3743,7 @@ namespace LanguageExplorerTests.LIFT
 			tisb.Clear();
 			tisb.ClearProps();
 			para = text.ParagraphsOS[1] as IStTxtPara;
-			Assert.IsNotNull(para);
+			Assert.That(para, Is.Not.Null);
 			Assert.AreEqual(tss.Text, para.Contents.Text);
 			Assert.IsTrue(tss.Equals(para.Contents), "The second paragraph contents should have all its formatting.");
 
@@ -3062,7 +3762,7 @@ namespace LanguageExplorerTests.LIFT
 			tisb.Clear();
 			tisb.ClearProps();
 			para = text.ParagraphsOS[2] as IStTxtPara;
-			Assert.IsNotNull(para);
+			Assert.That(para, Is.Not.Null);
 			Assert.AreEqual(tss.Text, para.Contents.Text);
 			Assert.IsTrue(tss.Equals(para.Contents), "The third paragraph contents should have all its formatting.");
 		}
@@ -3080,7 +3780,7 @@ namespace LanguageExplorerTests.LIFT
 			sense0.MorphoSyntaxAnalysisRA = msa;
 
 			var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
-			Assert.IsNotNull(mdc);
+			Assert.That(mdc, Is.Not.Null);
 			var flidCustom = mdc.AddCustomField("LexEntry", "Long Text", CellarPropertyType.OwningAtomic, StTextTags.kClassId);
 			var hvoText = Cache.DomainDataByFlid.MakeNewObject(StTextTags.kClassId, entry0.Hvo, flidCustom, -2);
 			var text = Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(hvoText);
@@ -3211,14 +3911,34 @@ namespace LanguageExplorerTests.LIFT
 			{
 				switch (i)
 				{
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 					case 0:
 					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+=======
+					attr = form.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 					Assert.IsTrue(attr.Value.Equals("en"));
 					text = form.XPathSelectElement("text");
 					Assert.IsTrue(text.Value.Equals("anatomy"));
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 						break;
 					case 1:
 					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+				}
+				if (i == 1)
+				{
+					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+=======
+				}
+				if (i == 1)
+				{
+					attr = form.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
 					text = form.XPathSelectElement("text");
 					Assert.IsTrue(text.Value.Equals("Kalaba anatomy"));
@@ -3234,14 +3954,34 @@ namespace LanguageExplorerTests.LIFT
 			{
 				switch (i)
 				{
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 					case 0:
 					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+=======
+					attr = form.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 					Assert.IsTrue(attr.Value.Equals("en"));
 					text = form.XPathSelectElement("text");
 					Assert.IsTrue(text.Value.Equals("Anat"));
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 						break;
 					case 1:
 					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+				}
+				if (i == 1)
+				{
+					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+=======
+				}
+				if (i == 1)
+				{
+					attr = form.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
 					text = form.XPathSelectElement("text");
 					Assert.IsTrue(text.Value.Equals("Kalaba Anat"));
@@ -3256,7 +3996,8 @@ namespace LanguageExplorerTests.LIFT
 			{
 				if (i == 0)
 				{
-					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+					attr = form.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
 					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
 					text = form.XPathSelectElement("text");
 					Assert.IsTrue(text.Value.Equals("Kalaba anatomy definition"));
@@ -3278,7 +4019,8 @@ namespace LanguageExplorerTests.LIFT
 		{
 			var entry = data.XPathSelectElement("//*[name()='entry' and @guid='a9628929-4561-4afc-b097-88c9bb6df5e9']");
 			var lexUnitForm = entry.XPathSelectElement("lexical-unit/form");
-			var attr = lexUnitForm.Attribute("lang"); Assert.IsNotNull(attr); //lang
+			var attr = lexUnitForm.Attribute("lang");
+			Assert.That(attr, Is.Not.Null); //lang
 			Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
 
 			var definition = entry.XPathSelectElement("sense/definition");
@@ -3288,22 +4030,55 @@ namespace LanguageExplorerTests.LIFT
 				XElement span;
 				switch (i)
 				{
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 					case 0:
 					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //en
+=======
+					attr = form.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 					Assert.IsTrue(attr.Value.Equals("en"));
 					span = form.XPathSelectElement("text/span");
-					attr = span.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
+					attr = span.Attribute("lang");
+					Assert.That(attr, Is.Not.Null); //qaa-x-kal
 					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 						break;
 					case 1:
 					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+				}
+				else if (i == 1)
+				{
+					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
+=======
+				}
+				else if (i == 1)
+				{
+					attr = form.Attribute("lang"); Assert.That(attr, Is.Not.Null); //qaa-x-kal
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
 					span = form.XPathSelectElement("text/span");
-					attr = span.Attribute("lang"); Assert.IsNotNull(attr); //en
+					attr = span.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
 					Assert.IsTrue(attr.Value.Equals("en"));
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 						break;
 					case 2:
 					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //es
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+				}
+				else if (i == 2)
+				{
+					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //es
+=======
+				}
+				else if (i == 2)
+				{
+					attr = form.Attribute("lang"); Assert.That(attr, Is.Not.Null); //es
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 					Assert.IsTrue(attr.Value.Equals("es"));
 						break;
 				}
@@ -3324,11 +4099,23 @@ namespace LanguageExplorerTests.LIFT
 				{
 					case 0:
 					attr = form.Attribute("lang");
-					Assert.IsNotNull(attr); //en
+					Assert.That(attr, Is.Not.Null); //en
 					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 						break;
 					case 1:
 					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+				}
+				if (i == 1)
+				{
+					attr = form.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
+=======
+				}
+				if (i == 1)
+				{
+					attr = form.Attribute("lang"); Assert.That(attr, Is.Not.Null); //qaa-x-kal
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 					Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal"));
 						break;
 				}
@@ -3343,22 +4130,52 @@ namespace LanguageExplorerTests.LIFT
 				XElement glossText;
 				switch (i)
 				{
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 					case 0:
 					attr = gloss.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+					attr = gloss.Attribute("lang"); Assert.IsNotNull(attr); //qaa-x-kal
+=======
+					attr = gloss.Attribute("lang"); Assert.That(attr, Is.Not.Null); //qaa-x-kal
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
-					glossText = gloss.XPathSelectElement("text");Assert.IsNotNull(glossText);
+					glossText = gloss.XPathSelectElement("text");Assert.That(glossText, Is.Not.Null);
 					Assert.IsTrue(glossText.Value.Equals("KalabaGloss"));
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 						break;
 					case 1:
 					attr = gloss.Attribute("lang"); Assert.IsNotNull(attr);
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+				}
+				if (i == 1)
+				{
+					attr = gloss.Attribute("lang"); Assert.IsNotNull(attr);
+=======
+				}
+				if (i == 1)
+				{
+					attr = gloss.Attribute("lang"); Assert.That(attr, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 					Assert.IsTrue(attr.Value.Equals("en"));
-					glossText = gloss.XPathSelectElement("text"); Assert.IsNotNull(glossText);
+					glossText = gloss.XPathSelectElement("text"); Assert.That(glossText, Is.Not.Null);
 					Assert.IsTrue(glossText.Value.Equals("EnglishGLoss"));
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 						break;
 					case 2:
 					attr = gloss.Attribute("lang"); Assert.IsNotNull(attr);
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+				}
+				if (i == 2)
+				{
+					attr = gloss.Attribute("lang"); Assert.IsNotNull(attr);
+=======
+				}
+				if (i == 2)
+				{
+					attr = gloss.Attribute("lang"); Assert.That(attr, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 					Assert.IsTrue(attr.Value.Equals("es"));
-					glossText = gloss.XPathSelectElement("text"); Assert.IsNotNull(glossText);
+					glossText = gloss.XPathSelectElement("text"); Assert.That(glossText, Is.Not.Null);
 					Assert.IsTrue(glossText.Value.Equals("SpanishGloss"));
 						break;
 				}
@@ -3367,7 +4184,8 @@ namespace LanguageExplorerTests.LIFT
 			}
 
 			var definitionForm = entry.XPathSelectElement("sense/definition/form");
-			attr = definitionForm.Attribute("lang"); Assert.IsNotNull(attr); //en
+			attr = definitionForm.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
 			Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
 			var definitionText = entry.XPathSelectElement("sense/definition/form/text");
 			i = 0;
@@ -3375,33 +4193,105 @@ namespace LanguageExplorerTests.LIFT
 			{
 				switch (i)
 				{
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 					case 0:
 					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+=======
+					attr = spanInDefn.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 					Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal"));
 					Assert.IsTrue(spanInDefn.Value.Equals("KalabaIPAspan"));
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 						break;
 					case 1:
 					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+				}
+				else if (i == 1)
+				{
+					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+=======
+				}
+				else if (i == 1)
+				{
+					attr = spanInDefn.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 					Assert.IsTrue(attr.Value.Equals("en"));
 					Assert.IsTrue(spanInDefn.Value.Equals("EnglishSpan"));
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 						break;
 					case 2:
 					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+				}
+				else if (i == 2)
+				{
+					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+=======
+				}
+				else if (i == 2)
+				{
+					attr = spanInDefn.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 					Assert.IsTrue(attr.Value.Equals("es"));
 					Assert.IsTrue(spanInDefn.Value.Equals("SpanishSpan"));
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 						break;
 					case 3:
 					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+				}
+				else if (i == 3)
+				{
+					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+=======
+				}
+				else if (i == 3)
+				{
+					attr = spanInDefn.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 					Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal-emic"));
 					Assert.IsTrue(spanInDefn.Value.Equals("KalabaPhonemic"));
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 						break;
 					case 4:
 					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+				}
+				else if (i == 4)
+				{
+					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+=======
+				}
+				else if (i == 4)
+				{
+					attr = spanInDefn.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 					Assert.IsTrue(attr.Value.Equals("qaa-x-Lomwe"));
 					Assert.IsTrue(spanInDefn.Value.Equals("Lomwe Span"));
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 						break;
 					case 5:
 					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+				}
+				else if (i == 5)
+				{
+					attr = spanInDefn.Attribute("lang"); Assert.IsNotNull(attr); //en
+=======
+				}
+				else if (i == 5)
+				{
+					attr = spanInDefn.Attribute("lang");
+					Assert.That(attr, Is.Not.Null);
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 					Assert.IsTrue(attr.Value.Equals("qaa-x-AveryLon"));
 					Assert.IsTrue(spanInDefn.Value.Equals("AveryLongWSName span"));
 						break;
@@ -3419,15 +4309,16 @@ namespace LanguageExplorerTests.LIFT
 
 			var language = data.XPathSelectElement("//*[name()='language']");
 			var attr = language.Attribute("type");
-			Assert.IsNotNull(attr, "The ldml file for Kalaba should have a language element with at type");
+			Assert.That(attr, Is.Not.Null, "The ldml file for Kalaba should have a language element with at type");
 			Assert.IsTrue(attr.Value.Equals("qaa"), "Language type attribute should be 'qaa'.");
 
 			var variant = data.XPathSelectElement("//*[name()='variant']");
 			attr = variant.Attribute("type");
-			Assert.IsNotNull(attr, "The ldml file for Kalaba should have a language element with at type");
+			Assert.That(attr, Is.Not.Null, "The ldml file for Kalaba should have a language element with at type");
 			Assert.IsTrue(attr.Value.Equals("x-kal"), "Variante type attribute should be 'x-kal'.");
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 		/// <summary>
 		/// LIFT Import:  test import of Publish In data in entries, senses and example sentences.
 		/// Also test the import of the Publications list.
@@ -3436,6 +4327,12 @@ namespace LanguageExplorerTests.LIFT
 		public void TestLiftImportOfPublicationSettings()
 		{
 			string[] publicationTestData = {
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+		private static readonly string[] s_PublicationLiftRangeData = new[]
+		{
+=======
+		private static readonly string[] s_PublicationLiftRangeData = {
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 				"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
 				"<header>",
@@ -3510,6 +4407,101 @@ namespace LanguageExplorerTests.LIFT
 
 			"</lift-ranges>"
 		};
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+
+		static private readonly string[] s_PublicationTestData = new[]
+		{
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
+			"<header>",
+			"<ranges>",
+			"<range id=\"do-not-publish-in\" href=\"\"/>",
+			"</ranges>",
+			"<fields/>",
+			"</header>",
+			"<entry dateCreated=\"2013-01-29T08:53:26Z\" dateModified=\"2013-01-29T08:10:28Z\" id=\"baba_f8506500-d17c-4c1b-b05d-ea57f562cb1c\" guid=\"f8506500-d17c-4c1b-b05d-ea57f562cb1c\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>baba</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"stem\"/>",
+			"<trait name=\"do-not-publish-in\" value=\"Main Dictionary\"/>",
+			"<sense id=\"62fc5222-aa72-40bb-b3f1-24569bb94042\" dateCreated=\"2013-01-29T08:55:26Z\" dateModified=\"2013-01-29T08:15:28Z\">",
+			"<grammatical-info value=\"Noun\">",
+			"</grammatical-info>",
+			"<gloss lang=\"en\"><text>dad</text></gloss>",
+			"<gloss lang=\"fr\"><text>papi</text></gloss>",
+			"<definition>",
+			"<form lang=\"en\"><text>male parent</text></form>",
+			"<form lang=\"fr\"><text>parent masculin</text></form>",
+			"</definition>",
+			"<trait name=\"do-not-publish-in\" value=\"Pocket\"/>",
+			"<example>",
+			"<form lang=\"en\"><text>Example Sentence</text></form>",
+			"<trait name=\"do-not-publish-in\" value=\"Main Dictionary\"/>",
+			"<trait name=\"do-not-publish-in\" value=\"Pocket\"/>",
+			"</example>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// LIFT Import:  test import of Publish In data in entries, senses and example sentences.
+		/// Also test the import of the Publications list.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void TestLiftImportOfPublicationSettings()
+		{
+=======
+
+		private static readonly string[] s_PublicationTestData = {
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+			"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
+			"<header>",
+			"<ranges>",
+			"<range id=\"do-not-publish-in\" href=\"\"/>",
+			"</ranges>",
+			"<fields/>",
+			"</header>",
+			"<entry dateCreated=\"2013-01-29T08:53:26Z\" dateModified=\"2013-01-29T08:10:28Z\" id=\"baba_f8506500-d17c-4c1b-b05d-ea57f562cb1c\" guid=\"f8506500-d17c-4c1b-b05d-ea57f562cb1c\">",
+			"<lexical-unit>",
+			"<form lang=\"fr\"><text>baba</text></form>",
+			"</lexical-unit>",
+			"<trait name=\"morph-type\" value=\"stem\"/>",
+			"<trait name=\"do-not-publish-in\" value=\"Main Dictionary\"/>",
+			"<sense id=\"62fc5222-aa72-40bb-b3f1-24569bb94042\" dateCreated=\"2013-01-29T08:55:26Z\" dateModified=\"2013-01-29T08:15:28Z\">",
+			"<grammatical-info value=\"Noun\">",
+			"</grammatical-info>",
+			"<gloss lang=\"en\"><text>dad</text></gloss>",
+			"<gloss lang=\"fr\"><text>papi</text></gloss>",
+			"<definition>",
+			"<form lang=\"en\"><text>male parent</text></form>",
+			"<form lang=\"fr\"><text>parent masculin</text></form>",
+			"</definition>",
+			"<trait name=\"do-not-publish-in\" value=\"Pocket\"/>",
+			"<example>",
+			"<form lang=\"en\"><text>Example Sentence</text></form>",
+			"<trait name=\"do-not-publish-in\" value=\"Main Dictionary\"/>",
+			"<trait name=\"do-not-publish-in\" value=\"Pocket\"/>",
+			"</example>",
+			"</sense>",
+			"</entry>",
+			"</lift>"
+		};
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// LIFT Import:  test import of Publish In data in entries, senses and example sentences.
+		/// Also test the import of the Publications list.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void TestLiftImportOfPublicationSettings()
+		{
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			SetWritingSystems("fr");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -3524,7 +4516,13 @@ namespace LanguageExplorerTests.LIFT
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(publicationTestData);
 			//Create the LIFT ranges file
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 			var sOrigRangesFile = CreateInputRangesFile(publicationLiftRangeData);
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+			var sOrigRangesFile = CreateInputRangesFile(s_PublicationLiftRangeData);
+=======
+			var sOrigRangesFile = CreateInputRangesFile(s_PublicationLiftRangeData, Path.GetDirectoryName(sOrigFile));
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 
 			// SUT
 			var logFile = TryImportWithRanges(sOrigFile, sOrigRangesFile, 1);
@@ -3532,7 +4530,7 @@ namespace LanguageExplorerTests.LIFT
 			File.Delete(sOrigRangesFile);
 
 			// Verification
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
@@ -3544,8 +4542,8 @@ namespace LanguageExplorerTests.LIFT
 			Assert.AreEqual(1, sense0.ExamplesOS.Count);
 			var example0 = sense0.ExamplesOS[0];
 
-			Assert.IsNotNull(entry.LexemeFormOA);
-			Assert.IsNotNull(entry.LexemeFormOA.MorphTypeRA);
+			Assert.That(entry.LexemeFormOA, Is.Not.Null);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
 			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("baba", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
 
@@ -3609,7 +4607,7 @@ namespace LanguageExplorerTests.LIFT
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(customListLiftData);
 			//Create the LIFT ranges file
-			var sOrigRangesFile = CreateInputRangesFile(customListRanges);
+			var sOrigRangesFile = CreateInputRangesFile(customListRanges, Path.GetDirectoryName(sOrigFile));
 
 			// prove that our setup is good and we are importing these objects
 			Assert.Throws<KeyNotFoundException>(()=>Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(customListGuid)));
@@ -3621,7 +4619,7 @@ namespace LanguageExplorerTests.LIFT
 			File.Delete(sOrigRangesFile);
 
 			// Verification
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 
 			var customList = Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(customListGuid)) as ICmPossibilityList;
@@ -3631,6 +4629,7 @@ namespace LanguageExplorerTests.LIFT
 			Assert.IsTrue(customListItem is ICmCustomItem);
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 		/// <summary>
 		/// LIFT Import:  test importing data where a phrase has a variant that is also a phrase,
 		/// but where there is existing data claiming the allomorph is an affix phrase.
@@ -3642,6 +4641,12 @@ namespace LanguageExplorerTests.LIFT
 		public void TestLiftImportChangingAffixToStem()
 		{
 			string[] badMorphTypeTestData = {
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+		static private readonly string[] s_BadMorphTypeTestData = new[]
+		{
+=======
+		private static readonly string[] s_BadMorphTypeTestData = {
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
 			"<header>",
@@ -3697,7 +4702,7 @@ namespace LanguageExplorerTests.LIFT
 			File.Delete(sOrigFile);
 
 			// Verification
-			Assert.IsNotNull(logFile);
+			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
 			Assert.AreEqual(1, repoEntry.Count);
 			Assert.AreEqual(1, repoSense.Count);
@@ -3707,6 +4712,7 @@ namespace LanguageExplorerTests.LIFT
 			Assert.That(entry.AlternateFormsOS.First().LiftResidue, Does.Contain("look for this"));
 		}
 
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
 		/// <summary>
 		/// Test LIFT merger for problems merging pronunciations.
 		/// To produce the problem that led to this test, an entry with one or formless pronunciation
@@ -3716,6 +4722,12 @@ namespace LanguageExplorerTests.LIFT
 		public void TestLiftMergeOfPronunciations()
 		{
 			string[] liftPronunciations = {
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+		static private readonly string[] s_LiftPronunciations = new[]
+		{
+=======
+		private static readonly string[] s_LiftPronunciations = {
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 			"<lift producer=\"SIL.FLEx 8.0.3.41457\" version=\"0.13\">",
 			"<header>",
@@ -3745,6 +4757,67 @@ namespace LanguageExplorerTests.LIFT
 			"</entry>",
 			"</lift>"
 		};
+<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftMergerTests.cs
+||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
+
+		private string[] _minimalLiftData  = new[]
+			{
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
+				"<header>",
+				"<fields/>",
+				"</header>",
+				"<entry dateCreated=\"2013-01-29T08:53:26Z\" dateModified=\"2013-01-29T08:10:28Z\" id=\"baba_aef5e807-c841-4f35-9591-c8a998dc2465\" guid=\"aef5e807-c841-4f35-9591-c8a998dc2465\">",
+				"<lexical-unit>",
+				"<form lang=\"fr\"><text>baba baba</text></form>",
+				"</lexical-unit>",
+				"<sense id=\"$guid2\" dateCreated=\"2013-01-29T08:55:26Z\" dateModified=\"2013-01-29T08:15:28Z\">",
+				"<gloss lang=\"en\"><text>dad</text></gloss>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
+			};
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test LIFT merger for problems merging pronunciations.
+		/// To produce the problem that led to this test, an entry with one or formless pronunciation
+		/// gets merged with a LIFT file that has the same entry with other pronunciations. (LT-14725)
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void TestLiftMergeOfPronunciations()
+		{
+=======
+
+		private string[] _minimalLiftData  = {
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
+				"<header>",
+				"<fields/>",
+				"</header>",
+				"<entry dateCreated=\"2013-01-29T08:53:26Z\" dateModified=\"2013-01-29T08:10:28Z\" id=\"baba_aef5e807-c841-4f35-9591-c8a998dc2465\" guid=\"aef5e807-c841-4f35-9591-c8a998dc2465\">",
+				"<lexical-unit>",
+				"<form lang=\"fr\"><text>baba baba</text></form>",
+				"</lexical-unit>",
+				"<sense id=\"$guid2\" dateCreated=\"2013-01-29T08:55:26Z\" dateModified=\"2013-01-29T08:15:28Z\">",
+				"<gloss lang=\"en\"><text>dad</text></gloss>",
+				"</sense>",
+				"</entry>",
+				"</lift>"
+			};
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test LIFT merger for problems merging pronunciations.
+		/// To produce the problem that led to this test, an entry with one or formless pronunciation
+		/// gets merged with a LIFT file that has the same entry with other pronunciations. (LT-14725)
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void TestLiftMergeOfPronunciations()
+		{
+>>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftMergerTests.cs
 			SetWritingSystems("fr es");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
@@ -4034,7 +5107,7 @@ namespace LanguageExplorerTests.LIFT
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(_minimalLiftData);
 			//Create the LIFT ranges file
-			var sOrigRangesFile = CreateInputRangesFile(noNameRangeData);
+			var sOrigRangesFile = CreateInputRangesFile(noNameRangeData, Path.GetDirectoryName(sOrigFile));
 
 			var logFile = TryImport(sOrigFile, sOrigRangesFile, MergeStyle.MsKeepNew, 1);
 			File.Delete(sOrigFile);
@@ -4076,7 +5149,7 @@ namespace LanguageExplorerTests.LIFT
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(_minimalLiftData);
 			//Create the LIFT ranges file
-			var sOrigRangesFile = CreateInputRangesFile(noNameRangeData1);
+			var sOrigRangesFile = CreateInputRangesFile(noNameRangeData1, Path.GetDirectoryName(sOrigFile));
 
 			TryImport(sOrigFile, sOrigRangesFile, MergeStyle.MsKeepNew, 1);
 			File.Delete(sOrigFile);
@@ -4127,7 +5200,7 @@ namespace LanguageExplorerTests.LIFT
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(_minimalLiftData);
 			//Create the LIFT ranges file
-			var sOrigRangesFile = CreateInputRangesFile(moreCompleteRangeData);
+			var sOrigRangesFile = CreateInputRangesFile(moreCompleteRangeData, Path.GetDirectoryName(sOrigFile));
 
 			var logFile = TryImport(sOrigFile, sOrigRangesFile, MergeStyle.MsKeepNew, 1);
 			File.Delete(sOrigFile);

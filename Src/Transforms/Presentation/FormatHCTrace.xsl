@@ -56,6 +56,7 @@ Main template
 	<xsl:template match="Wordform">
 		<html>
 			<head>
+				<meta charset="UTF-8" />
 				<xsl:call-template name="Script"/>
 				<style type="text/css">
 					.interblock {
@@ -423,7 +424,7 @@ ShowMsaInfo
 	-->
 	<xsl:template name="Script">
 		<script language="JavaScript" id="clientEventHandlersJS">
-			<xsl:text>
+			<xsl:text disable-output-escaping="yes">
 	function ButtonShowDetails()
 	{
 	if (TraceSection.style.display == 'none')
