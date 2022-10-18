@@ -452,7 +452,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Publications = new List<string> { "Main Dictionary", "unknown pub 1", "unknown pub 2" },
 				FilePath = Path.GetTempPath() + configFilename
 			};
-			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigPath, _controller._configurations, anotherAlreadyExistingModel);
+			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigPath, _controller._configurations,
+				anotherAlreadyExistingModel);
 			FileUtils.WriteStringToFile(anotherAlreadyExistingModel.FilePath, "arbitrary file content", Encoding.UTF8);
 
 			_controller._configurations.Add(alreadyExistingModelWithSameLabel);
@@ -521,19 +522,19 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			// Import a Dictionary view into a Dictionary area
 			_controller.PrepareImport(_zipFile);
-			Assert.IsNotNull(_controller.NewConfigToImport, "Dictionary configuration should have been prepared for import, since we requested to import the right kind of configuration (Dictionary into Dictionary area).");
+			Assert.That(_controller.NewConfigToImport, Is.Not.Null, "Dictionary configuration should have been prepared for import, since we requested to import the right kind of configuration (Dictionary into Dictionary area).");
 
 			// Import a Dictionary view into a ReversalIndex area
 			_reversalController.PrepareImport(_zipFile);
-			Assert.IsNull(_reversalController.NewConfigToImport, "No configuration to import should have been prepared since the wrong type of configuration was requested to be imported (Dictionary into Reversal area).");
+			Assert.That(_reversalController.NewConfigToImport, Is.Null, "No configuration to import should have been prepared since the wrong type of configuration was requested to be imported (Dictionary into Reversal area).");
 
 			// Import a Reversal view into a Dictionary area
 			_controller.PrepareImport(_reversalZipFile);
-			Assert.IsNull(_controller.NewConfigToImport, "No configuration to import should have been prepared since the wrong type of configuration was requested to be imported (Reversal into Dictionary area).");
+			Assert.That(_controller.NewConfigToImport, Is.Null, "No configuration to import should have been prepared since the wrong type of configuration was requested to be imported (Reversal into Dictionary area).");
 
 			// Import a Reversal view into a ReversalIndex area
 			_reversalController.PrepareImport(_reversalZipFile);
-			Assert.IsNotNull(_reversalController.NewConfigToImport, "Reversal configuration should have been prepared for import, since we requested to import the right kind of configuration (Reversal into Reversal area).");
+			Assert.That(_reversalController.NewConfigToImport, Is.Not.Null, "Reversal configuration should have been prepared for import, since we requested to import the right kind of configuration (Reversal into Reversal area).");
 		}
 
 		/// <summary>

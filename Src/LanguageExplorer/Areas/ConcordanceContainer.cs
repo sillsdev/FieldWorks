@@ -2,10 +2,18 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
+using DialogAdapters;
+using LanguageExplorer.Areas.TextsAndWords;
 using LanguageExplorer.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SILLanguageExplorer.Areas.TextsAndWords.Tools;
+using FileMode = System.IO.FileMode;
 
 namespace LanguageExplorer.Areas
 {
@@ -15,15 +23,56 @@ namespace LanguageExplorer.Areas
 	/// </summary>
 	internal class ConcordanceContainer : MultiPane, IRefreshableRoot
 	{
+		private RecordBrowseView WordOccuranceList => ReCurseControls<RecordBrowseView>(Panel1);
+
 		/// <summary />
 		internal ConcordanceContainer(MultiPaneParameters parameters)
 			: base(parameters)
 		{
 		}
+		/// <summary>
+		/// Initialize a FLEx component with the basic interfaces.
+		/// </summary>
+		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
+		public override void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		{
+			base.InitializeFlexComponent(flexComponentParameters);
+
+			var concControl = ReCurseControls<ConcordanceControlBase>(this);
+			var toolMenuHelper = new UserControlUiWidgetParameterObject(concControl);
+			toolMenuHelper.MenuItemsForUserControl[MainMenu.File].Add(Command.CmdExportConcordanceResults, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(OnExportConcordanceResults, () => UiWidgetServices.CanSeeAndDo));
+		}
+
+		private void OnExportConcordanceResults(object sender, EventArgs e)
+		{
+			string fileName;
+			using (var dlg = new SaveFileDialogAdapter())
+			{
+				dlg.AddExtension = true;
+				dlg.DefaultExt = "csv";
+				dlg.Filter = TextAndWordsResources.ksConcordanceExportFilter;
+				dlg.Title = TextAndWordsResources.ksConcordanceExportTitle;
+				dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+				if (dlg.ShowDialog(this) != DialogResult.OK)
+					return;
+				fileName = dlg.FileName;
+			}
+			DesktopAnalytics.Analytics.Track("ExportConcordanceResults", new Dictionary<string, string>());
+
+			using (var fs = new FileStream(fileName, FileMode.Create))
+			using (var textWriter = new StreamWriter(fs))
+			{
+				var exporter = new ConcordanceResultsExporter(textWriter,
+				WordOccuranceList.BrowseViewer.BrowseView.Vc,
+				WordOccuranceList.BrowseViewer.BrowseView.DataAccess,
+				WordOccuranceList.BrowseViewer.BrowseView.RootObjectHvo);
+				exporter.Export();
+			}
+		}
 
 		public bool RefreshDisplay()
 		{
-			var concordanceControl = ReCurseControls(this);
+			ConcordanceControlBase concordanceControl = ReCurseControls<ConcordanceControlBase>(this);
 			if (concordanceControl != null)
 			{
 				concordanceControl.RefreshDisplay();
@@ -34,19 +83,21 @@ namespace LanguageExplorer.Areas
 		}
 
 		/// <summary>
+		/// TODO: Justify this method's existance through testing. The comment below is historical, the new Pub/Sub system may not need this, or may have
+		///       a better solution.
 		/// This method will handle the RefreshDisplay calls for all the child controls of the ConcordanceContainer, the ConcordanceControl needs to be
-		/// refreshed last because its interaction with the Mediator will update the other views, if it isn't called last then the caches and contents
-		/// of the other views will be inconsistent with the ConcordanceControl and will lead to crashes or incorrect display behavior.
+		/// refreshed last because its interaction with the Mediator system will update the other views, if it isn't called last then the caches and contents
+		/// of the other views could be inconsistent with the ConcordanceControl and will lead to crashes or incorrect display behavior.
 		/// </summary>
 		/// <param name="parentControl">The control to Recurse</param>
-		private static ConcordanceControlBase ReCurseControls(Control parentControl)
+		private static T ReCurseControls<T>(Control parentControl) where T : Control
 		{
-			ConcordanceControlBase concordanceControl = null;
+			T concordanceControl = default(T);
 			foreach (Control control in parentControl.Controls)
 			{
-				if (control is ConcordanceControlBase concordanceControlBase)
+				if (control is T)
 				{
-					concordanceControl = concordanceControlBase;
+					concordanceControl = control as T;
 					continue;
 				}
 				var cv = control as IClearValues;
@@ -56,19 +107,20 @@ namespace LanguageExplorer.Areas
 				{
 					childrenRefreshed = refreshable.RefreshDisplay();
 				}
-				if (childrenRefreshed)
+				if (!childrenRefreshed)
 				{
-					continue;
-				}
-				//Recurse into the child controls, make sure we only have one concordanceControl
-				if (concordanceControl == null)
-				{
-					concordanceControl = ReCurseControls(control);
-				}
-				else
-				{
-					var thereCanBeOnlyOne = ReCurseControls(control);
-					Debug.Assert(thereCanBeOnlyOne == null, "Two concordance controls in the same window is not supported. One won't refresh properly.");
+					//Review: Randy had added a continue here...why?
+					//Recurse into the child controls, make sure we only have one concordanceControl
+					if(concordanceControl == null)
+					{
+						concordanceControl = ReCurseControls<T>(control);
+					}
+					else
+					{
+						var thereCanBeOnlyOne = ReCurseControls<T>(control);
+						Debug.Assert(thereCanBeOnlyOne == null,
+									 "Two concordance controls in the same window is not supported. One won't refresh properly.");
+					}
 				}
 			}
 			return concordanceControl;

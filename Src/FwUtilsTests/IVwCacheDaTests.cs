@@ -21,9 +21,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 	[TestFixture]
 	public class IVwCacheDaCppTests
 	{
-		// NB: m_ISilDataAccess and m_IVwCacheDa are exactly the same object.
+		// NB: m_ISilDataAccess and m_IVwCacheDa are exactly the same object; however,
 		// they could be C# or C++, depending on if the main is is IVwCacheDaCppTests
-		// or IVwCacheDaCSharpTests, however.
+		// or IVwCacheDaCSharpTests.
 		/// <summary>The ISilDataAccess object</summary>
 		protected ISilDataAccess m_ISilDataAccess;
 		/// <summary>The IVwCacheDa object</summary>
@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					ex = e;
 				}
-				Assert.IsNotNull(ex);
+				Assert.That(ex, Is.Not.Null);
 				Assert.AreEqual(typeof(ArgumentException), ex.GetType());
 
 				// test VecItem
@@ -127,7 +127,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					ex = e;
 				}
-				Assert.IsNotNull(ex);
+				Assert.That(ex, Is.Not.Null);
 				Assert.AreEqual(typeof(ArgumentException), ex.GetType());
 
 				// test Vector size
@@ -275,7 +275,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void UnicodeProp()
 		{
 			var strNew = m_ISilDataAccess.get_UnicodeProp(1119, 2229);
-			Assert.IsNull(strNew);
+			Assert.That(strNew, Is.Null);
 
 			var str = "UnicodeTest";
 			m_IVwCacheDa.CacheUnicodeProp(1119, 2229, str, str.Length);
@@ -295,7 +295,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void UnknownProp()
 		{
 			var obj = m_ISilDataAccess.get_UnknownProp(1120, 2220);
-			Assert.IsNull(obj);
+			Assert.That(obj, Is.Null);
 
 			var propsBldr = TsStringUtils.MakePropsBldr();
 			var ttp = propsBldr.GetTextProps();

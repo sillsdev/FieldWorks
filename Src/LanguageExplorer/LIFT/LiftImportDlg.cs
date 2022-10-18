@@ -1,8 +1,9 @@
-// Copyright (c) 2008-2020 SIL International
+// Copyright (c) 2008-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -94,6 +95,9 @@ namespace LanguageExplorer.LIFT
 			{
 				return;
 			}
+
+			TrackingHelper.TrackImport("lexicon", "Lift", ImportExportStep.Attempted,
+				new Dictionary<string, string> { { "style", Enum.GetName(typeof(MergeStyle), m_msImport) } });
 			DoImport();
 			DialogResult = DialogResult.OK;
 			if (!string.IsNullOrEmpty(m_sLogFile))
@@ -177,13 +181,35 @@ namespace LanguageExplorer.LIFT
 				// Create a temporary directory %temp%\TempForLIFTImport. Migrate as necessary and import from this
 				// directory. Directory is left after import is done in case it is needed, but will be deleted next time
 				// if it exists.
+				// LT-20954 Limits copy TempForLIFTImport to file.lift, file.lift-ranges, and WritingSytems, pictures,
+				// and audio dirs to avoid copying oodles of files when lift file is in Documents or similar dirs and
+				// strange errors that resulted from this.
 				var sLIFTfolder = Path.GetDirectoryName(sOrigFile);
 				var sLIFTtempFolder = Path.Combine(Path.GetTempPath(), "TempForLIFTImport");
 				if (Directory.Exists(sLIFTtempFolder))
 				{
 					Directory.Delete(sLIFTtempFolder, true);
 				}
-				DirectoryHelper.Copy(sLIFTfolder, sLIFTtempFolder, true);
+				Directory.CreateDirectory(sLIFTtempFolder);
+				var sDestFile = Path.Combine(sLIFTtempFolder, Path.GetFileName(sOrigFile));
+				RobustFile.Copy(sOrigFile, sDestFile, true);
+				var sRangeFile = sOrigFile + "-ranges";
+				if (File.Exists(sRangeFile))
+				{
+					sDestFile = Path.Combine(sLIFTtempFolder, Path.GetFileName(sRangeFile));
+					DirectoryHelper.Copy(sRangeFile, sDestFile, true);
+
+				}
+				string[] sDirsToCopy = { "WritingSystems", "audio", "pictures" };
+				foreach (string sdir in sDirsToCopy)
+				{
+					var sSourceFolder = Path.Combine(sLIFTfolder, sdir);
+					if (Directory.Exists(sSourceFolder) == true)
+					{
+						var sDestFolder = Path.Combine(sLIFTtempFolder, sdir);
+						DirectoryHelper.Copy(sSourceFolder, sDestFolder, true);
+					}
+				}
 				// Older LIFT files had ldml files in root directory. If found, move them to WritingSystem folder.
 				if (Directory.GetFiles(sLIFTtempFolder, "*.ldml").Length > 0)
 				{
@@ -246,11 +272,14 @@ namespace LanguageExplorer.LIFT
 					File.Move(sFilename, sTempMigrated);
 				}
 				flexImporter.ProcessPendingRelations(m_progressDlg);
+				TrackingHelper.TrackImport("lexicon", "Lift", ImportExportStep.Succeeded);
 				return flexImporter.DisplayNewListItems(sOrigFile, cEntries);
 			}
 			catch (Exception error)
 			{
-				var sMsg = string.Format(LiftResources.ksLIFTImportProblem, sOrigFile, error.Message);
+				TrackingHelper.TrackImport("lexicon", "Lift", ImportExportStep.Failed);
+				string sMsg = string.Format(LiftResources.ksLIFTImportProblem,
+					sOrigFile, error.Message);
 				try
 				{
 					var bldr = new StringBuilder();
@@ -272,6 +301,7 @@ namespace LanguageExplorer.LIFT
 				}
 				catch
 				{
+					// Crashes trying to log errors should be ignored
 				}
 				MessageBox.Show(sMsg, LiftResources.ksProblemImporting, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return null;

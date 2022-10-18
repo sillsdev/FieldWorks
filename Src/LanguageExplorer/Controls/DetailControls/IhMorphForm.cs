@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2020 SIL International
+// Copyright (c) 2006-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -75,7 +75,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			AddIfNotPresent(tssForm, wordform);
 			ComboList.SelectedIndex = IndexOfCurrentItem;
 			// Add any relevant 'other case' forms.
-			var cf = new CaseFunctions(m_caches.MainCache.ServiceLocator.WritingSystemManager.Get(m_sandbox.RawWordformWs).IcuLocale);
+			var cf = new CaseFunctions(m_caches.MainCache.ServiceLocator.WritingSystemManager.Get(m_sandbox.RawWordformWs));
 			switch (m_sandbox.CaseStatus)
 			{
 				case StringCaseStatus.allLower:

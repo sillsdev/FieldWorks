@@ -145,7 +145,7 @@ namespace SIL.FieldWorks
 		public void CleanUpNameForType_EmptyName()
 		{
 			var proj = new ProjectId(string.Empty, null);
-			Assert.IsNull(proj.Path);
+			Assert.That(proj.Path, Is.Null);
 			Assert.AreEqual(BackendProviderType.kXML, proj.Type);
 			Assert.IsFalse(proj.IsValid);
 		}

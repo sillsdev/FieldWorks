@@ -28,8 +28,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected virtual string BasicNodeString => Label.AsTss.Text;
 
-		/// <summary />
-		public LabelNode(ObjectLabel label, IVwStylesheet stylesheet, bool displayUsage)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="LabelNode"/> class.
+		/// </summary>
+		/// <param name="label"/>
+		/// <param name="stylesheet"/>
+		/// <param name="displayUsage"><c>true</c> if usage statistics will be displayed; otherwise, <c>false</c>.</param>
+		/// <param name="initialize"><c>true</c> This constructor should do the initialization.
+		///                          <c>false</c> Do not do the initialization, let the caller do it.</param>
+		public LabelNode(ObjectLabel label, IVwStylesheet stylesheet, bool displayUsage, bool initialize = true)
 		{
 			Tag = label;
 			m_stylesheet = stylesheet;
@@ -42,7 +49,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				NodeFont = GetVernacularFont(label.Cache.WritingSystemFactory, wsVern, stylesheet);
 			}
 			SetNodeText();
-			if (label.HaveSubItems)
+			if (initialize && label.HaveSubItems)
 			{
 				// this is a hack to make the node expandable before we have filled in any
 				// actual children
@@ -167,7 +174,8 @@ namespace LanguageExplorer.Controls.XMLViews
 				return;
 			}
 			Nodes.Clear(); // get rid of the dummy.
-			AddSecondaryNodes(this, Nodes, chosenObjs);
+
+			AddSecondaryNodes(this, chosenObjs);
 			foreach (var label in ((ObjectLabel)Tag).SubItems)
 			{
 				if (!WantNodeForLabel(label))
@@ -180,7 +188,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					node.Checked = chosenObjs.Contains(label.Object);
 				}
 				Nodes.Add(node);
-				AddSecondaryNodes(node, node.Nodes, chosenObjs);
+				AddSecondaryNodes(node, chosenObjs);
 				if (recursively)
 				{
 					node.AddChildren(true, chosenObjs);
@@ -199,7 +207,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Adds the secondary nodes.
 		/// </summary>
-		public virtual void AddSecondaryNodes(LabelNode node, TreeNodeCollection nodes, IEnumerable<ICmObject> chosenObjs)
+		public virtual void AddSecondaryNodes(LabelNode node, IEnumerable<ICmObject> chosenObjs)
 		{
 			// default is to do nothing
 		}
@@ -229,7 +237,7 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (!fExpanded)
 			{
 				Nodes.Clear();
-				nodeRepresentingCurrentChoice = AddSecondaryNodesAndLookForSelected(this, Nodes, nodeRepresentingCurrentChoice, objToSelect, ownershipStack, chosenObjs);
+				nodeRepresentingCurrentChoice = AddSecondaryNodesAndLookForSelected(this, nodeRepresentingCurrentChoice, objToSelect, chosenObjs);
 				foreach (var label in ((ObjectLabel)Tag).SubItems)
 				{
 					if (!WantNodeForLabel(label))
@@ -243,7 +251,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 					Nodes.Add(node);
 					nodeRepresentingCurrentChoice = CheckForSelection(label, objToSelect, node, nodeRepresentingCurrentChoice);
-					nodeRepresentingCurrentChoice = AddSecondaryNodesAndLookForSelected(node, node.Nodes, nodeRepresentingCurrentChoice, objToSelect, ownershipStack, chosenObjs);
+					nodeRepresentingCurrentChoice = AddSecondaryNodesAndLookForSelected(node, nodeRepresentingCurrentChoice, objToSelect, chosenObjs);
 				}
 			}
 			else
@@ -272,12 +280,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		}
 
 		/// <summary>
-		/// Add secondary nodes to tree at nodes (and check any that occur in rghvoChosen),
+		/// Add secondary nodes to tree (and check any that occur in rghvoChosen),
 		/// and return the one whose hvo is hvoToSelect, or nodeRepresentingCurrentChoice
 		/// if none match.
 		/// </summary>
-		public virtual LabelNode AddSecondaryNodesAndLookForSelected(LabelNode node, TreeNodeCollection nodes, LabelNode nodeRepresentingCurrentChoice, ICmObject objToSelect,
-			Stack<ICmObject> ownershipStack, IEnumerable<ICmObject> chosenObjs)
+		public virtual LabelNode AddSecondaryNodesAndLookForSelected(LabelNode node, LabelNode nodeRepresentingCurrentChoice, ICmObject objToSelect,
+			IEnumerable<ICmObject> chosenObjs)
 		{
 			// default is to do nothing
 			return nodeRepresentingCurrentChoice;

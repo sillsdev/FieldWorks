@@ -6,15 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.Collections;
-using SIL.HermitCrab;
-using SIL.HermitCrab.MorphologicalRules;
-using SIL.HermitCrab.PhonologicalRules;
+using SIL.Extensions;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
-using SIL.Machine.Annotations;
+using SIL.Machine.DataStructures;
 using SIL.Machine.FeatureModel;
+using SIL.Machine.Morphology.HermitCrab;
+using SIL.Machine.Morphology.HermitCrab.MorphologicalRules;
+using SIL.Machine.Morphology.HermitCrab.PhonologicalRules;
 using FS = System.Collections.Generic.Dictionary<string, object>;
 
 namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
@@ -81,7 +81,6 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			}
 		}
 
-		private SpanFactory<ShapeNode> m_spanFactory;
 		private readonly List<Tuple<LoadErrorType, ICmObject>> m_loadErrors = new List<Tuple<LoadErrorType, ICmObject>>();
 		private Language m_lang;
 		private IPartOfSpeech m_noun;
@@ -95,7 +94,6 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			m_spanFactory = new ShapeSpanFactory();
 		}
 
 		protected override void CreateTestData()
@@ -401,7 +399,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 		private void LoadLanguage()
 		{
 			m_loadErrors.Clear();
-			m_lang = HCLoader.Load(m_spanFactory, Cache, new TestHCLoadErrorLogger(m_loadErrors));
+			m_lang = HCLoader.Load(Cache, new TestHCLoadErrorLogger(m_loadErrors));
 		}
 
 		[Test]

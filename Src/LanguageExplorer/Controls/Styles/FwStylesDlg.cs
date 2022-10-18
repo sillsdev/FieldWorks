@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2020 SIL International
+// Copyright (c) 2006-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -225,7 +225,12 @@ namespace LanguageExplorer.Controls.Styles
 			set
 			{
 				m_styleListHelper.SelectedStyleName = value;
-				if (m_styleListHelper.SelectedStyle != null)
+				if (m_styleListHelper.SelectedStyle == null)
+				{
+					// LT-20566: hide tabs if no style is selected (e.g. if a placeholder string is passed)
+					SetUpForUneditableStyle();
+				}
+				else
 				{
 					m_styleListHelper_StyleChosen(null, m_styleListHelper.SelectedStyle);
 				}
@@ -317,7 +322,7 @@ namespace LanguageExplorer.Controls.Styles
 			// If the new style is Default Paragraph Characters then disable everything
 			if (newStyle.IsDefaultParaCharsStyle)
 			{
-				FillForDefaultParagraphCharacters();
+				SetUpForUneditableStyle();
 				return;
 			}
 			// If the font tab was taken off for default paragraph characters, then
@@ -396,9 +401,9 @@ namespace LanguageExplorer.Controls.Styles
 		}
 
 		/// <summary>
-		/// Sets up the dialog to have default paragraph characters selected
+		/// Sets up the dialog to have Default Paragraph Characters or no style selected
 		/// </summary>
-		private void FillForDefaultParagraphCharacters()
+		private void SetUpForUneditableStyle()
 		{
 			RemoveParagraphStyleTabs();
 			if (m_tabControl.TabPages.Contains(m_tbFont))

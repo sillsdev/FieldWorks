@@ -9,22 +9,21 @@
 
   <ItemGroup>
     <PackageReference Include="Encoding-Converters-Core" Version="0.0.8" PrivateAssets="native" />
-    <PackageReference Include="Geckofx45" Version="45.0.34" Condition="'$(OS)'!='Unix' And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)'!='X64'" GeneratePathProperty="true" />
-    <PackageReference Include="Geckofx45.64" Version="45.0.34" Condition="'$(OS)'!='Unix' And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)'=='X64'" GeneratePathProperty="true" />
-    <PackageReference Include="Geckofx45.32.Linux" Version="45.0.37" Condition="'$(OS)'=='Unix' And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)'!='X64'" GeneratePathProperty="true" />
-    <PackageReference Include="Geckofx45.64.Linux" Version="45.0.37" Condition="'$(OS)'=='Unix' And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)'=='X64'" GeneratePathProperty="true" />
-    <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="All" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="SIL.Archiving" Version="9.0.0-beta0076" />
-    <PackageReference Include="SIL.Chorus.App" Version="5.0.0-beta0010" />
-    <PackageReference Include="SIL.Core" Version="9.0.0-beta0076" />
+    <PackageReference Include="CsvHelper" Version="29.0.0" />
+    <PackageReference Include="Geckofx60.64" Version="60.0.55" GeneratePathProperty="true" />
+    <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="SIL.Archiving" Version="11.0.0-beta0041" />
+    <PackageReference Include="SIL.Chorus.App" Version="5.0.0" />
+    <PackageReference Include="SIL.Core" Version="11.0.0-beta0041" />
     <PackageReference Include="SIL.ExCSS" Version="2.0.2" />
-    <PackageReference Include="SIL.LCModel" Version="10.2.0-beta0002" GeneratePathProperty="true" />
-    <PackageReference Include="SIL.LCModel.FixData" Version="10.2.0-beta0002" />
-    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0002" GeneratePathProperty="true" />
-    <PackageReference Include="SIL.Media" Version="9.0.0-beta0076" />
-    <PackageReference Include="SIL.Windows.Forms.GeckoBrowserAdapter" Version="9.0.0-beta0076" />
+    <PackageReference Include="SIL.LCModel" Version="10.2.0-beta0059" GeneratePathProperty="true" />
+    <PackageReference Include="SIL.LCModel.FixData" Version="10.2.0-beta0059" />
+    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0059" GeneratePathProperty="true" />
+    <PackageReference Include="SIL.Media" Version="11.0.0-beta0041" />
+    <PackageReference Include="SIL.Windows.Forms.GeckoBrowserAdapter" Version="11.0.0-beta0041" />
     <PackageReference Include="TreeViewAdv" Version="1.7.0" />
+    <PackageReference Include="WindowsShortcutFactory" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,29 +34,6 @@
     <ProjectReference Include="..\ParatextImport\ParatextImport.csproj" />
     <ProjectReference Include="..\ParserCore\ParserCore.csproj" />
     <ProjectReference Include="..\RootSite\RootSite.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Interop.IWshRuntimeLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>false</SpecificVersion>
-      <EmbedInteropTypes>true</EmbedInteropTypes>
-      <HintPath>..\..\Bin\Interop.IWshRuntimeLibrary.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="MsHtmHstInterop, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>false</SpecificVersion>
-      <EmbedInteropTypes>true</EmbedInteropTypes>
-      <HintPath>..\..\Bin\MsHtmHstInterop.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="ECInterfaces" Condition="'$(OS)'=='Unix'">
-      <HintPath>/usr/lib/fieldworks/ECInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="SilEncConverters40" Condition="'$(OS)'=='Unix'">
-      <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Design" />
-    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 
   <Target Name="GeneratePartsAndLayoutFiles" BeforeTargets="CoreCompile">
@@ -80,8 +56,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="System.Design" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Controls\MGA\MGAStrings.Designer.cs">
-    <Compile Include="UtilityTools\UtilityRepository.cs" />
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>MGAStrings.resx</DependentUpon>
@@ -96,6 +75,15 @@
     </Compile>
   </ItemGroup>
 
+  <!-- The GeckoFx60 package does not successfully copy these files even though it was intended to do so -->
+  <Target Name="CopyGeckoSupportFiles" BeforeTargets="Build">
+    <ItemGroup>
+     <FirefoxFiles Include="$(PkgGeckoFx60_64)/content/Firefox/*.*" />
+    </ItemGroup>
+    <MakeDir Directories="$(OutputPath)/Firefox" />
+    <Copy SourceFiles="@(FirefoxFiles)" DestinationFolder="$(OutputPath)/Firefox" SkipUnchangedFiles="true" />
+  </Target>
+  
   <Target Name="CopyLcmFiles" BeforeTargets="Build">
     <Copy SourceFiles="@(SilLCModelTemplates)" DestinationFolder="../../DistFiles/Templates" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(SilLCModelStylesDtd)" DestinationFolder="../../DistFiles" SkipUnchangedFiles="true" />
@@ -105,32 +93,8 @@
     </ItemGroup>
     <Copy SourceFiles="@(IcuDataFiles)" DestinationFolder="../../DistFiles/Icu54/%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
-
-  <Target Name="CopyGeckoFxSupportFiles" AfterTargets="CopyFilesToOutputDirectory">
-    <!-- This copy is necessary because the Geckofx45.targets uses a deprecated method of copying files -->
-    <PropertyGroup>
-      <!-- NOTE: when building with mono 5 GeneratePathProperty doesn't work -->
-      <PkgGeckofx45_32_Linux Condition="'$(PkgGeckofx45_32_Linux)'==''">$(HOME)/.nuget/packages/geckofx45.32.linux/45.0.37</PkgGeckofx45_32_Linux>
-      <PkgGeckofx45_64_Linux Condition="'$(PkgGeckofx45_64_Linux)'==''">$(HOME)/.nuget/packages/geckofx45.64.linux/45.0.37</PkgGeckofx45_64_Linux>
-    </PropertyGroup>
-    <!-- NOTE: we can't use "$(Platform)!='x64'" because Platform is AnyCPU! -->
-    <ItemGroup Condition="'$(OS)'!='Unix'">
-       <Firefox Include="$(PkgGeckofx45)/content/Firefox/*.*" Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)'!='X64'" />
-       <Firefox Include="$(PkgGeckofx45_64)/content/Firefox/*.*" Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)'=='X64'" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(OS)'=='Unix'">
-       <Firefox Include="$(PkgGeckofx45_32_Linux)/content/Firefox*/*.*" Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)'!='X64'" />
-       <Firefox Include="$(PkgGeckofx45_64_Linux)/content/Firefox*/*.*" Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)'=='X64'" />
-    </ItemGroup>
-    <Message Text="Copying Gecko Files" />
-    <Copy SourceFiles="@(Firefox)" DestinationFolder="$(OutputPath)/Firefox" SkipUnchangedFiles="true" />
+  
+  <Target Name="CopyNHunspellFiles" BeforeTargets="GenerateBindingRedirects">
+    <Copy SourceFiles="$(PkgNHunspell)/content/Hunspellx64.dll" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" />
   </Target>
-
-  <Target Name="BuildXslAssemblies" Inputs="@(PresentationXslFiles)" Outputs="$(OutputPath)/PresentationTransforms.dll" BeforeTargets="CoreCompile">
-    <!-- Mono doesn't have an XSL compiler so we just put the XSLs in a resource assembly -->
-    <Csc TargetType="library" OutputAssembly="$(OutputPath)/PresentationTransforms.dll" Optimize="true" Platform="AnyCPU" Resources="@(PresentationXslFiles)" Condition="'$(OS)'=='Unix'" />
-    <!-- The WindowsSDK_ExecutablePath_x64 does not contain the xsltc executable, but the x86 path contains one that can build a 64bit assembly -->
-    <Exec Command="&quot;$(WindowsSDK_ExecutablePath_x86)\xsltc.exe&quot; /settings:document /platform:$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture) /out:$(OutputPath)\PresentationTransforms.dll @(PresentationXslFiles, ' ')" Condition="'$(OS)'!='Unix'" />
-  </Target>
-
 </Project>

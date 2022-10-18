@@ -500,4 +500,9 @@
   <data name="ksUndoDuplicate" xml:space="preserve">
     <value>Undo Duplicate {0}</value>
   </data>
+  <data name="InvalidUSFM_TextAfterTR" xml:space="preserve">
+    <value>Invalid USFM: \tr should be followed by \tc# or \th#, but found
+"{0}".
+See USFM documentation for help.</value>
+  </data>
 </root>

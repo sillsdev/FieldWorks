@@ -6,11 +6,15 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Security.Policy;
 using System.Windows.Forms;
+using LanguageExplorer;
+using LanguageExplorer.Impls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Reporting;
+using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks
 {
@@ -219,6 +223,12 @@ namespace SIL.FieldWorks
 		{
 			DlgResult = ButtonPress.Import;
 			Hide();
+		}
+		private void m_btnOptions_Click(object sender, EventArgs e)
+		{
+			var optionsDlg = new LexOptionsDlg();
+			optionsDlg.InitHelpTopicOnly(m_helpTopicProvider);
+			optionsDlg.Show(this);
 		}
 
 		/// <summary>

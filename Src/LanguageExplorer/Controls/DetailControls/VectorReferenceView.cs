@@ -283,13 +283,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			visible = false;
 			// Fundamentally, we can handle either reference sequence properties or ones we are explicitly told
 			// to create VirtualPropOrderings for.
-			// Some slices disabled LT-18266
-			var rootFieldNameCandidates = new HashSet<string> { "Complex Forms", "Compare" };
-			var typeCandidates = new HashSet<string> { "LexReferenceTreeBranchesView", "LexReferenceSequenceView" };
-			if (!RootPropertyIsRealRefSequence() && !RootPropertySupportsVirtualOrdering() || rootFieldNameCandidates.Contains(m_rootFieldName) || typeCandidates.Contains(GetType().Name))
+			// Some slices disabled (LT-18266, LT-20512)
+			if (!RootPropertyIsRealRefSequence() && !RootPropertySupportsVirtualOrdering() ||
+				m_rootFieldName == "Complex Forms" || m_rootFieldName == "Compare" ||
+				GetType().Name == "LexReferenceCollectionView" || GetType().Name == "LexReferenceTreeBranchesView")
 			{
 				return false;
 			}
+
 			visible = true; // Command makes sense even if we can't actually do it now.
 			if (RootBox.Selection == null)
 			{

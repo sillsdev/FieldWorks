@@ -20,20 +20,20 @@ namespace FieldWorks.TestUtilities.Attributes
 	public class InitializeRealKeyboardControllerAttribute: TestActionAttribute
 	{
 		/// <inheritdoc />
-		public override void BeforeTest(ITest testDetails)
+		public override void BeforeTest(ITest test)
 		{
-			base.BeforeTest(testDetails);
+			base.BeforeTest(test);
 
 			Keyboard.Controller?.Dispose();
 
 			KeyboardController.Initialize();
-			base.BeforeTest(testDetails);
+			base.BeforeTest(test);
 		}
 
 		/// <inheritdoc />
-		public override void AfterTest(ITest testDetails)
+		public override void AfterTest(ITest test)
 		{
-			base.AfterTest(testDetails);
+			base.AfterTest(test);
 			KeyboardController.Shutdown();
 			Keyboard.Controller = new DefaultKeyboardController();
 		}

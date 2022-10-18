@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2020 SIL International
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -23,23 +23,47 @@ namespace LanguageExplorerTests.Impls
 	public class LexImportTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		[Test]
+		public void ImportDialectLabels()
+		{
+			var factory = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
+			var alabama = factory.Create();
+			var georgia = factory.Create();
+			Cache.LangProject.LexDbOA.DialectLabelsOA.PossibilitiesOS.Add(alabama);
+			Cache.LangProject.LexDbOA.DialectLabelsOA.PossibilitiesOS.Add(georgia);
+			var wsEn = Cache.ServiceLocator.WritingSystemManager.get_Engine("en").Handle;
+			alabama.Name.set_String(wsEn, "Alabama");
+			georgia.Name.set_String(wsEn,"Georgia");
+			var entryWithDialect = @"\lx jeetyet
+\dle Alabama
+\ge didyoueatyet
+\dls Georgia";
+			DoImport(entryWithDialect, MakeDefaultFields(), 1);
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().First();
+			Assert.That(entry.DialectLabelsRS.Count, Is.EqualTo(1));
+			Assert.That(entry.DialectLabelsRS.FirstOrDefault()?.Name?.get_String(wsEn)?.Text, Is.EqualTo("Alabama"));
+			Assert.That(entry.SensesOS[0].DialectLabelsRS.Count, Is.EqualTo(1));
+			Assert.That(entry.SensesOS[0].DialectLabelsRS.FirstOrDefault()?.Name?.get_String(wsEn)?.Text, Is.EqualTo("Georgia"));
+		}
+
+		[Test]
 		public void ImportHomographs_AllNumbered_OutOfOrder()
 		{
-			const string allNumbered_OutOfOrder = @"\lx aha
-\hm 2
-\de two
-\lx aha
-\hm 1
-\de one
-\lx aha
-\hm 3
-\de three
-\lx bahaa
-\mn aha3
-\lx bahaaa
-\mn aha1
-\lx bahaaaa
-\mn aha2";
+			string allNumbered_OutOfOrder =
+			@"\lx aha
+			\hm 2
+			\de two
+			\lx aha
+			\hm 1
+			\de one
+			\lx aha
+			\hm 3
+			\de three
+			\lx bahaa
+			\mn aha3
+			\lx bahaaa
+			\mn aha1
+			\lx bahaaaa
+			\mn aha2";
 			DoImport(allNumbered_OutOfOrder, MakeDefaultFields(), 6);
 
 			VerifyHomographNumber("one", 1);
@@ -289,10 +313,12 @@ namespace LanguageExplorerTests.Impls
 			var sfmInfo = new List<FieldHierarchyInfo>
 			{
 				new FieldHierarchyInfo("lx", "lex", "Vernacular", true, "Entry"),
+				new FieldHierarchyInfo("dle", "dle", "English", true, "Entry"),
 				new FieldHierarchyInfo("hm", "hom", "English", false, "Entry"),
 				new FieldHierarchyInfo("de", "def", "English", true, "Sense"),
 				new FieldHierarchyInfo("ge", "glos", "English", true, "Sense"),
 				new FieldHierarchyInfo("ps", "pos", "English", true, "Sense"),
+				new FieldHierarchyInfo("dls", "dls", "English", true, "Sense"),
 				new FieldHierarchyInfo("mn", "meref", "Vernacular", false, "Entry")
 			};
 			var variantInfo = new FieldHierarchyInfo("va", "var", "Vernacular", true, "Variant");

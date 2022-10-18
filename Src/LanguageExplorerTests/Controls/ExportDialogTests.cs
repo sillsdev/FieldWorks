@@ -1,11 +1,13 @@
-// Copyright (c) 2010-2020 SIL International
+// Copyright (c) 2010-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Threading;
 using LanguageExplorer.Controls;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -509,7 +511,8 @@ namespace LanguageExplorerTests.Controls
 				File.Delete(tempPath);
 				Assert.That(result, Does.Contain("What words refer to the sun?"));
 				Assert.That(result, Does.Not.Contain("1.1.1.11.1.1.1"), "should not output double abbr for en");
-				Assert.That(result, Does.Not.Contain("class: english"), "English should not give anything the missing translation style");
+				Assert.That(result, Does.Not.Contain("class: english"),
+					"English should not give anything the missing translation style");
 
 				wss.Clear();
 				wss.Add(m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("fr"));
@@ -544,9 +547,13 @@ namespace LanguageExplorerTests.Controls
 		/// <summary>
 		/// Tests the method ExportTranslatedLists.
 		/// </summary>
-		[Test]
-		public void ExportTranslatedLists()
+		///--------------------------------------------------------------------------------------
+		[TestCase("de", ".", ".")]
+		[TestCase("en", "/", ":")]
+		public void ExportTranslatedLists(string culture, string dateSep, string timeSep)
 		{
+			Thread.CurrentThread.CurrentCulture = new CultureInfo(culture) { DateTimeFormat = { DateSeparator = dateSep, TimeSeparator = timeSep } };
+
 			Assert.AreEqual(2, m_cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Count, "The number of top-level semantic domains");
 			var repoSemDom = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			Assert.AreEqual(11, repoSemDom.Count, "The total number of semantic domains");
@@ -563,7 +570,7 @@ namespace LanguageExplorerTests.Controls
 				{
 					w.Close();
 					Assert.AreEqual("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", r.ReadLine());
-					StringAssert.StartsWith("<Lists date=\"", r.ReadLine());
+					Assert.That(r.ReadLine(), Does.Match(@"^<Lists date=""\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z"">$"));
 					Assert.AreEqual("<List owner=\"LangProject\" field=\"SemanticDomainList\" itemClass=\"CmSemanticDomain\">", r.ReadLine());
 					Assert.AreEqual("<Name>", r.ReadLine());
 					Assert.AreEqual("<AUni ws=\"en\">Semantic Domains</AUni>", r.ReadLine());
@@ -1077,13 +1084,13 @@ namespace LanguageExplorerTests.Controls
 			{
 				m_cache.LangProject.SemanticDomainListOA.Name.set_String(wsFr, "Domaines sémantiques");
 				var sem1 = repoSemDom.GetObject(new Guid("63403699-07C1-43F3-A47C-069D6E4316E5"));
-				Assert.IsNotNull(sem1);
+				Assert.That(sem1, Is.Not.Null);
 				sem1.Name.set_String(wsFr, "L'univers physique");
 				sem1.QuestionsOS[0].Question.set_String(wsFr, "Quels sont les mots qui font référence à tout ce qu'on peut voir?");
 				sem1.QuestionsOS[0].ExampleWords.set_String(wsFr, "univers, ciel, terre");
 				sem1.QuestionsOS[0].ExampleSentences.set_String(wsFr, "Le rôle du prophète est alors de réveiller le courage et la foi en Dieu.");
 				var sem11 = sem1.SubPossibilitiesOS[0] as ICmSemanticDomain;
-				Assert.IsNotNull(sem11);
+				Assert.That(sem11, Is.Not.Null);
 				sem11.Name.set_String(wsFr, "Ciel");
 				sem11.QuestionsOS[0].Question.set_String(wsFr, "Quels sont les mots qui signifient le ciel?");
 				sem11.QuestionsOS[0].ExampleWords.set_String(wsFr, "ciel, firmament");

@@ -105,8 +105,10 @@ namespace LanguageExplorer.Controls
 			{
 				try
 				{
+					var txt = m_exportList.SelectedItems[0]?.SubItems[0].Text; // read txt here to prevent access to m_exportList on another thread
+					TrackingHelper.TrackExport("textsWords", txt, ImportExportStep.Launched);
 					var fxtPath = (string)m_exportList.SelectedItems[0].Tag; // read fxtPath here to prevent access to m_exportList on another thread
-					dlg.RunTask(DoExportWithProgress, outPath, fxtPath);
+					dlg.RunTask(DoExportWithProgress, outPath, fxtPath, txt);
 				}
 				finally
 				{
@@ -118,6 +120,7 @@ namespace LanguageExplorer.Controls
 		private object DoExportWithProgress(IThreadedProgress progressDlg, params object[] args)
 		{
 			var outPath = (string)args[0];
+			var txt = (string)args[2];
 			if (m_objs.Count == 0)
 			{
 				m_objs.Add(m_objRoot);
@@ -187,9 +190,11 @@ namespace LanguageExplorer.Controls
 							}
 							break;
 					}
+					TrackingHelper.TrackExport("textsWords", txt, ImportExportStep.Succeeded);
 				}
 				catch (Exception e)
 				{
+					TrackingHelper.TrackExport("textsWords", txt, ImportExportStep.Failed);
 					MessageBox.Show(this, string.Format(LanguageExplorerResources.ksExportErrorMsg, e.Message));
 				}
 			}

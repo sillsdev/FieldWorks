@@ -618,6 +618,25 @@ namespace LanguageExplorer.Controls.XMLViews
 			set => _columnSpecificationElements = value;
 		}
 
+		/// <returns>
+		/// A list of the labels for the visible columns in their configured order
+		/// </returns>
+		public static List<string> GetHeaderLabels(XmlBrowseViewVc vc, StringTable stringTable)
+		{
+			var headerLabelList = new List<string>();
+			foreach (var col in vc.ColumnSpecs)
+			{
+				var label = XmlUtils.GetOptionalAttributeValue(col, "label", null);
+				if(stringTable != null)
+				{
+					label = stringTable.LocalizeAttributeValue(label);
+				}
+				headerLabelList.Add( label ??	XmlUtils.GetMandatoryAttributeValue(col, "label"));
+			}
+
+			return headerLabelList;
+		}
+
 		protected internal List<XElement> PossibleColumnSpecs { get; protected set; }
 
 		internal ISortItemProvider SortItemProvider
@@ -1461,8 +1480,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				catch
 				{
-					// REVIEW: Why are we catching all errors?
-					// JohnT: one reason might be that the above will fail if the link is to another project.
+					// Catch exceptions to give the baseclass a chance
 					// Review: would we be better to use the default? That is now smart about
 					// local links, albeit by a rather more awkward route because of dependency problems.
 				}

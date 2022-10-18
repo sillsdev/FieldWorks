@@ -84,23 +84,28 @@
 			Registry checks prevent installing over existing versions (newer or older). Empty GUID's prevent uninstalling or repairing. -->
 		<Component Id="AndikaFont" Guid="">
 			<Condition>NOT (ANDIKAINSTALLED or ANDIKABOLDINSTALLED or ANDIKAITALICINSTALLED or ANDIKABOLDITALICINSTALLED)</Condition>
-			<File Id="Andika" TrueType="yes" Source="!(wix.FONTDIR)\Andika-R.ttf"/>
+			<File Id="AndikaBold" TrueType="yes" Source="!(wix.FONTDIR)\Andika-Bold.ttf"/>
+			<File Id="AndikaBoldItalic" TrueType="yes" Source="!(wix.FONTDIR)\Andika-BoldItalic.ttf"/>
+			<File Id="AndikaItalic" TrueType="yes" Source="!(wix.FONTDIR)\Andika-Italic.ttf"/>
+			<File Id="Andika" TrueType="yes" Source="!(wix.FONTDIR)\Andika-Regular.ttf"/>
 		</Component>
 		<Component Id="CharisFont" Guid="">
 			<Condition>NOT (CHARISINSTALLED or CHARISBOLDINSTALLED or CHARISITALICINSTALLED or CHARISBOLDITALICINSTALLED)</Condition>
-			<File Id="CharisBold" TrueType="yes" Source="!(wix.FONTDIR)\CharisSIL-B.ttf"/>
-			<File Id="CharisBoldItalic" TrueType="yes" Source="!(wix.FONTDIR)\CharisSIL-BI.ttf"/>
-			<File Id="CharisItalic" TrueType="yes" Source="!(wix.FONTDIR)\CharisSIL-I.ttf"/>
-			<File Id="Charis" TrueType="yes" Source="!(wix.FONTDIR)\CharisSIL-R.ttf"/>
+			<File Id="CharisBold" TrueType="yes" Source="!(wix.FONTDIR)\CharisSIL-Bold.ttf"/>
+			<File Id="CharisBoldItalic" TrueType="yes" Source="!(wix.FONTDIR)\CharisSIL-BoldItalic.ttf"/>
+			<File Id="CharisItalic" TrueType="yes" Source="!(wix.FONTDIR)\CharisSIL-Italic.ttf"/>
+			<File Id="Charis" TrueType="yes" Source="!(wix.FONTDIR)\CharisSIL-Regular.ttf"/>
 		</Component>
 		<Component Id="DoulosFont" Guid="">
 			<Condition>NOT (DOULOSINSTALLED or DOULOSBOLDINSTALLED or DOULOSITALICINSTALLED or DOULOSBOLDITALICINSTALLED)</Condition>
-			<File Id="Doulos" TrueType="yes" Source="!(wix.FONTDIR)\DoulosSIL-R.ttf"/>
+			<File Id="Doulos" TrueType="yes" Source="!(wix.FONTDIR)\DoulosSIL-Regular.ttf"/>
 		</Component>
 		<Component Id="GentiumPlusFont" Guid="">
 			<Condition>NOT (GENTIUMPLUSINSTALLED or GENTIUMPLUSBOLDINSTALLED or GENTIUMPLUSITALICINSTALLED or GENTIUMPLUSBOLDITALICINSTALLED)</Condition>
-			<File Id="GentiumPlusItalic" TrueType="yes" Source="!(wix.FONTDIR)\GentiumPlus-I.ttf"/>
-			<File Id="GentiumPlus" TrueType="yes" Source="!(wix.FONTDIR)\GentiumPlus-R.ttf"/>
+			<File Id="GentiumPlusBold" TrueType="yes" Source="!(wix.FONTDIR)\GentiumPlus-Bold.ttf"/>
+			<File Id="GentiumPlusBoldItalic" TrueType="yes" Source="!(wix.FONTDIR)\GentiumPlus-BoldItalic.ttf"/>
+			<File Id="GentiumPlusItalic" TrueType="yes" Source="!(wix.FONTDIR)\GentiumPlus-Italic.ttf"/>
+			<File Id="GentiumPlus" TrueType="yes" Source="!(wix.FONTDIR)\GentiumPlus-Regular.ttf"/>
 		</Component>
 		<Component Id="QuiviraFont" Guid="">
 			<Condition>NOT QUIVIRAINSTALLED</Condition>

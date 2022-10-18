@@ -383,7 +383,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				Assert.AreEqual(pubs[i], newConfig.Publications[i], "Publications were not copied");
 			}
-			Assert.IsNull(newConfig.FilePath, "Path should be null to signify that it should be generated on rename");
+			Assert.That(newConfig.FilePath, Is.Null, "Path should be null to signify that it should be generated on rename");
 			Assert.True(_controller.IsDirty, "Made changes; should be dirty");
 		}
 

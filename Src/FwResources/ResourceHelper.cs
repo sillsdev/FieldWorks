@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2020 SIL International
+// Copyright (c) 2004-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -94,11 +94,27 @@ namespace SIL.FieldWorks.Resources
 
 		internal static ResourceHelperImpl Helper
 		{
-			get => s_form ?? (s_form = new ResourceHelperImpl());
+			get
+			{
+				var sForm = SingletonsContainer.Get<ResourceHelperImpl>();
+				if (sForm == null)
+				{
+					sForm = new ResourceHelperImpl();
+					SingletonsContainer.Add(sForm);
+				}
+
+				return sForm;
+			}
 			set
 			{
-				s_form?.Dispose();
-				s_form = value;
+				var sForm = SingletonsContainer.Get<ResourceHelperImpl>();
+				if (sForm != null)
+				{
+					SingletonsContainer.Remove(sForm);
+					sForm.Dispose();
+				}
+				sForm = value;
+				SingletonsContainer.Add(sForm);
 			}
 		}
 

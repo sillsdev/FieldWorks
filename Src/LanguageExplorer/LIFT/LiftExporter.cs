@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2020 SIL International
+// Copyright (c) 2011-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -226,8 +227,8 @@ namespace LanguageExplorer.LIFT
 
 		private void WriteLiftEntry(TextWriter w, ILexEntry entry)
 		{
-			var dateCreated = entry.DateCreated.ToUniversalTime().ToString("yyyy-MM-ddTHH':'mm':'ssZ");
-			var dateModified = entry.DateModified.ToUniversalTime().ToString("yyyy-MM-ddTHH':'mm':'ssZ");
+			var dateCreated = entry.DateCreated.ToLiftDateTimeFormat();
+			var dateModified = entry.DateModified.ToLiftDateTimeFormat();
 			var sGuid = entry.Guid.ToString();
 			var sId = MakeSafeAndNormalizedAttribute(entry.LIFTid);
 			if (entry.HomographNumber != 0)

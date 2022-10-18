@@ -98,7 +98,7 @@ namespace Paratext8Plugin
 
 				public string EndMarker => ptToken.EndMarker;
 
-				public TokenType Type => (TokenType)Enum.Parse(typeof(TokenType), ptToken.Type.ToString());
+				public TokenType Type { get { return Enum.TryParse(ptToken.Type.ToString(), out TokenType outValue) ? outValue : TokenType.Unknown; } }
 
 				public object CoreToken => ptToken;
 
@@ -231,7 +231,7 @@ namespace Paratext8Plugin
 			return Name;
 		}
 
-		public string JoinedNameAndFullName => pt8Object.ToString();
+		public string JoinedNameAndFullName { get { return pt8Object.FullName; } }
 
 		public string FileNamePrePart => throw new NotImplementedException("Filename parts changed for PT8. Unnecessary perhaps?");
 

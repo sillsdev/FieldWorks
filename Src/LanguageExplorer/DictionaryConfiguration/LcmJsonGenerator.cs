@@ -8,6 +8,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Web.UI.WebControls;
+using Icu.Collation;
 using LanguageExplorer.Controls.XMLViews;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -23,10 +26,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 	/// a robust implementation that will always generate correct .json given any <code>LCMCache</code> and
 	/// <code>DictionaryConfigurationModel</code>
 	/// </summary>
+	/// <remarks>All methods in this class need to be thread safe</remarks>
 	internal sealed class LcmJsonGenerator : ILcmContentGenerator
 	{
 		private LcmCache Cache { get; }
-
+		private readonly ThreadLocal<StringBuilder> m_runBuilder = new ThreadLocal<StringBuilder>(()=> new StringBuilder());
+		private Collator m_headwordWsCollator;
 		internal LcmJsonGenerator(LcmCache cache)
 		{
 			Cache = cache;
@@ -48,6 +53,17 @@ namespace LanguageExplorer.DictionaryConfiguration
 			audioObject.id = safeAudioId;
 			audioObject.src = srcAttribute.Replace("\\", "/"); // expecting relative paths only
 			return WriteProcessedObject(false, audioObject.ToString(), "value");
+		}
+
+		public string GenerateVideoLinkContent(string className, string mediaId,
+			string srcAttribute,
+			string caption)
+		{
+			// TODO: Work out any required changes for webonary to play the video with the webonary team
+			dynamic videoObject = new JObject();
+			videoObject.id = mediaId;
+			videoObject.src = srcAttribute.Replace("\\", "/"); // expecting relative paths only
+			return WriteProcessedObject(false, videoObject.ToString(), "value");
 		}
 
 		public string WriteProcessedObject(bool isBlock, string elementContent, string className)
@@ -93,7 +109,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public string AddCollectionItem(bool isBlock, string className, string content)
 		{
-			return $"{{{content}}},";
+			return string.IsNullOrEmpty(content)? string.Empty : $"{{{content}}},";
 		}
 
 		public string AddProperty(string className, bool isBlockProperty, string content)
@@ -116,7 +132,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public void StartBiDiWrapper(IFragmentWriter writer, bool rightToLeft)
 		{
-			((JsonFragmentWriter)writer).InsertJsonProperty("rtl", rightToLeft.ToString());
 		}
 
 		public void EndBiDiWrapper(IFragmentWriter writer)
@@ -132,13 +147,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public void AddToRunContent(IFragmentWriter writer, string txtContent)
 		{
-			((JsonFragmentWriter)writer).InsertJsonProperty("value", txtContent);
+			m_runBuilder.Value.Append(txtContent);
 		}
 
 		public void EndRun(IFragmentWriter writer)
 		{
+			((JsonFragmentWriter)writer).InsertJsonProperty("value", m_runBuilder.ToString());
 			((JsonFragmentWriter)writer).EndObject();
 			((JsonFragmentWriter)writer).InsertRawJson(",");
+			m_runBuilder.Value.Clear();
 		}
 
 		public void SetRunStyle(IFragmentWriter writer, string css)
@@ -149,7 +166,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 		}
 
-		public void BeginLink(IFragmentWriter writer, Guid destination)
+		public void StartLink(IFragmentWriter writer, Guid destination)
 		{
 			((JsonFragmentWriter)writer).InsertJsonProperty("guid", "g" + destination);
 		}
@@ -160,10 +177,50 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public void AddLineBreakInRunContent(IFragmentWriter writer)
 		{
-			throw new NotImplementedException("Line breaks in strings aren't supported in the json generator yet.");
+			m_runBuilder.Value.Append("\n");
 		}
 
-		public void BeginEntry(IFragmentWriter xw, string className, Guid entryGuid, int index)
+		public void StartTable(IFragmentWriter writer)
+		{
+			// TODO: decide on a useful json representation for tables
+		}
+
+		public void AddTableTitle(IFragmentWriter writer, string content)
+		{
+			// TODO: decide on a useful json representation for tables
+		}
+
+		public void StartTableBody(IFragmentWriter writer)
+		{
+			// TODO: decide on a useful json representation for tables
+		}
+
+		public void StartTableRow(IFragmentWriter writer)
+		{
+			// TODO: decide on a useful json representation for tables
+		}
+
+		public void AddTableCell(IFragmentWriter writer, bool isHead, int colSpan, HorizontalAlign alignment, string content)
+		{
+			// TODO: decide on a useful json representation for tables
+		}
+
+		public void EndTableRow(IFragmentWriter writer)
+		{
+			// TODO: decide on a useful json representation for tables
+		}
+
+		public void EndTableBody(IFragmentWriter writer)
+		{
+			// TODO: decide on a useful json representation for tables
+		}
+
+		public void EndTable(IFragmentWriter writer)
+		{
+			// TODO: decide on a useful json representation for tables
+		}
+
+		public void StartEntry(IFragmentWriter xw, string className, Guid entryGuid, int index, IRecordList recordList)
 		{
 			var jsonWriter = (JsonFragmentWriter)xw;
 			jsonWriter.StartObject();
@@ -171,11 +228,21 @@ namespace LanguageExplorer.DictionaryConfiguration
 			jsonWriter.InsertJsonProperty("guid", "g" + entryGuid);
 			// get the index character (letter header) for this entry
 			var entry = Cache.ServiceLocator.GetObject(entryGuid);
-			var indexChar = ConfiguredExport.GetLeadChar(ConfiguredLcmGenerator.GetHeadwordForLetterHead(entry),
-				ConfiguredLcmGenerator.GetWsForEntryType(entry, Cache),
-				new Dictionary<string, ISet<string>>(),
+			var headwordWs = ConfiguredLcmGenerator.GetWsForEntryType(entry, Cache);
+
+			if (!jsonWriter.collatorCache.TryGetValue(headwordWs, out var col))
+			{
+				col = FwUtils.GetCollatorForWs(headwordWs);
+
+				jsonWriter.collatorCache[headwordWs] = col;
+			}
+
+			var indexChar = ConfiguredExport.GetLeadChar(
+				ConfiguredLcmGenerator.GetSortWordForLetterHead(entry, recordList),
+				headwordWs,
+				new Dictionary<string, Dictionary<string, ConfiguredExport.CollationLevel>>(),
 				new Dictionary<string, Dictionary<string, string>>(),
-				new Dictionary<string, ISet<string>>(), Cache);
+				new Dictionary<string, ISet<string>>(), col, Cache);
 			jsonWriter.InsertJsonProperty("letterHead", indexChar);
 			jsonWriter.InsertJsonProperty("sortIndex", index);
 			jsonWriter.InsertRawJson(",");
@@ -222,8 +289,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public void WriteProcessedContents(IFragmentWriter writer, string contents)
 		{
-			// Try not to double up, but do try to end content with a ',' for building up objects
-			((JsonFragmentWriter)writer).InsertRawJson(contents.TrimEnd(',') + ",");
+			if (!string.IsNullOrEmpty(contents))
+			{
+				// Try not to double up, but do try to end content with a ',' for building up objects
+				((JsonFragmentWriter)writer).InsertRawJson(contents.TrimEnd(',') + ",");
+			}
 		}
 
 		public string AddImage(string classAttribute, string srcAttribute, string pictureGuid)
@@ -251,15 +321,16 @@ namespace LanguageExplorer.DictionaryConfiguration
 			return formattedSenseNumber;
 		}
 
-		public string AddLexReferences(bool generateLexType, string lexTypeContent, string className, string referencesContent)
+		public string AddLexReferences(bool generateLexType, string lexTypeContent, string className,
+			string referencesContent, bool typeBefore)
 		{
 			var bldr = new StringBuilder();
 			var sw = new StringWriter(bldr);
 			using (var xw = new JsonTextWriter(sw))
 			{
 				xw.WriteStartObject();
-				// Write properties related to the factored type (if any).
-				if (!generateLexType)
+				// Write properties related to the factored type (if any and if before).
+				if (generateLexType && typeBefore)
 				{
 					xw.WritePropertyName("referenceType");
 					xw.WriteValue(lexTypeContent);
@@ -269,6 +340,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 				xw.WriteStartArray();
 				xw.WriteRaw(referencesContent);
 				xw.WriteEndArray();
+				// Write properties related to the factored type (if any and if after).
+				if (generateLexType && !typeBefore)
+				{
+					xw.WritePropertyName("referenceType");
+					xw.WriteValue(lexTypeContent);
+				}
+
 				xw.WriteEndObject();
 				xw.WriteRaw(",");
 				xw.Flush();
@@ -302,7 +380,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 			return $"{{\"guid\":\"g{linkTarget}\",\"lang\":\"{wsId}\",{fileContent}}}";
 		}
 
-		public string AddSenseData(string senseNumberSpan, bool isBlock, Guid ownerGuid, string senseContent, string className)
+		public string GenerateErrorContent(StringBuilder badStrBuilder)
+		{
+			// We can't generate comments in json - But adding unicode tofu in front of the cleaned bad string should help
+			// highlight the problem content without crashing the user or blocking the rest of the export
+			return $"\\u+0FFF\\u+0FFF\\u+0FFF{badStrBuilder}";
+		}
+
+		public string AddSenseData(string senseNumberSpan, bool isBlock, Guid ownerGuid,
+			string senseContent, string className)
 		{
 			var bldr = new StringBuilder();
 			var sw = new StringWriter(bldr);
@@ -329,6 +415,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			private readonly JsonTextWriter _jsonWriter;
 			private readonly StringWriter _stringWriter;
 			private bool _isDisposed;
+			internal Dictionary<string, Collator> collatorCache = new Dictionary<string, Collator>();
 
 			public JsonFragmentWriter(StringBuilder bldr)
 			{
@@ -338,6 +425,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 			public void Dispose()
 			{
+				foreach (var cachEntry in collatorCache.Values)
+				{
+					cachEntry?.Dispose();
+				}
 				Dispose(true);
 				GC.SuppressFinalize(this);
 			}
@@ -430,9 +521,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				var readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);
 				var settings = new GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(jsonPath),
-					ConfiguredLcmGenerator.IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css") { ContentGenerator = new LcmJsonGenerator(cache)};
+					ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), Path.GetFileName(cssPath) == "configured.css") { ContentGenerator = new LcmJsonGenerator(cache)};
 				var displayXhtmlSettings = new GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(jsonPath),
-						ConfiguredLcmGenerator.IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css");
+					ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), Path.GetFileName(cssPath) == "configured.css");
 				var entryContents = new Tuple<ICmObject, StringBuilder, StringBuilder>[entryCount];
 				var entryActions = new List<Action>();
 				// For every entry in the page generate an action that will produce the xhtml document fragment for that entry
@@ -514,14 +605,16 @@ namespace LanguageExplorer.DictionaryConfiguration
 			int[] entryHvos,
 			string configPath,
 			string exportPath,
-			LcmCache cache)
+			LcmCache cache,
+			IRecordList recordList)
 		{
 			dynamic dictionaryMetaData = new JObject();
 			dictionaryMetaData._id = siteName;
 			dynamic mainLanguageData = new JObject();
+			mainLanguageData.title = cache.LangProject.DefaultVernacularWritingSystem.DisplayLabel;
 			mainLanguageData.lang = cache.LangProject.DefaultVernacularWritingSystem.Id;
 			//mainLanguageData.title = Enhance: Add new field to dialog for title?
-			mainLanguageData.letters = JArray.FromObject(GenerateLetterHeaders(entryHvos, cache));
+			mainLanguageData.letters = JArray.FromObject(GenerateLetterHeaders(entryHvos, cache, recordList));
 			var customDictionaryCss = CssGenerator.CopyCustomCssAndGetPath(exportPath, configPath);
 			var cssFiles = new JArray();
 			cssFiles.Add("configured.css");
@@ -555,9 +648,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		}
 
 
-		public static JArray GenerateReversalLetterHeaders(string siteName, string writingSystem, int[] entryIds, LcmCache cache)
+		public static JArray GenerateReversalLetterHeaders(string siteName, string writingSystem, int[] entryIds, LcmCache cache, IRecordList recordList)
 		{
-			return JArray.FromObject(GenerateLetterHeaders(entryIds, cache));
+			return JArray.FromObject(GenerateLetterHeaders(entryIds, cache, recordList));
 		}
 
 		/// <summary>
@@ -582,25 +675,29 @@ namespace LanguageExplorer.DictionaryConfiguration
 			return listArray;
 		}
 
-		private static List<string> GenerateLetterHeaders(int[] entriesToSave, LcmCache cache)
+		private static List<string> GenerateLetterHeaders(int[] entriesToSave, LcmCache cache, IRecordList recordList)
 		{
 			// These maps act as a cache to improve performance for discovering the index character for each headword
-			var wsDigraphMap = new Dictionary<string, ISet<string>>();
+			var wsDigraphMap = new Dictionary<string, Dictionary<string, ConfiguredExport.CollationLevel>>();
 			var wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
 			var wsIgnorableMap = new Dictionary<string, ISet<string>>();
 			var wsString = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultVernWs);
 			var letters = new List<string>();
+			var col = FwUtils.GetCollatorForWs(wsString);
+
 			foreach (var entryHvo in entriesToSave)
 			{
 				var entry = cache.ServiceLocator.GetObject(entryHvo);
-				var firstLetter = ConfiguredExport.GetLeadChar(ConfiguredLcmGenerator.GetHeadwordForLetterHead(entry),
-					wsString, wsDigraphMap, wsCharEquivalentMap, wsIgnorableMap, cache);
+				var firstLetter = ConfiguredExport.GetLeadChar(ConfiguredLcmGenerator.GetSortWordForLetterHead(entry, recordList),
+					wsString, wsDigraphMap, wsCharEquivalentMap, wsIgnorableMap, col, cache);
 				if (letters.Contains(firstLetter))
 				{
 					continue;
 				}
 				letters.Add(firstLetter);
 			}
+			// Dispose of the collator if we created one
+			col?.Dispose();
 			return letters;
 		}
 	}

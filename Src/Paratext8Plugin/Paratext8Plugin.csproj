@@ -7,15 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="All" />
-    <PackageReference Include="icu.net" Version="2.7.1" />
-    <PackageReference Include="ParatextData" Version="9.2.5-beta1" />
-    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="4.7.0"/>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Windows.Forms" />
+    <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
+    <PackageReference Include="ParatextData" Version="9.2.6.2" />
+    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -117,38 +117,68 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="label1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="mainLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
+    <value>1</value>
   </data>
-  <data name="label1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="mainBrowser.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 0</value>
+  <data name="mainBrowser.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 34</value>
   </data>
-  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>698, 23</value>
+  <data name="mainBrowser.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>10, 10, 10, 10</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="label1.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+  <data name="mainBrowser.Size" type="System.Drawing.Size, System.Drawing">
+    <value>694, 316</value>
   </data>
-  <data name="label1.Text" xml:space="preserve">
-    <value>Choose the lines you wish to display and the order in which to display them. Some restrictions apply in editable views.</value>
+  <data name="mainBrowser.TabIndex" type="System.Int32, mscorlib">
+    <value>22</value>
   </data>
-  <data name="&gt;&gt;label1.Name" xml:space="preserve">
-    <value>label1</value>
+  <data name="&gt;&gt;mainBrowser.Name" xml:space="preserve">
+    <value>mainBrowser</value>
   </data>
-  <data name="&gt;&gt;label1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;mainBrowser.Type" xml:space="preserve">
+    <value>SIL.Windows.Forms.HtmlBrowser.XWebBrowser, SIL.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+  <data name="&gt;&gt;mainBrowser.Parent" xml:space="preserve">
     <value>mainLayoutPanel</value>
   </data>
-  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;mainBrowser.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="description.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="description.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 0</value>
+  </data>
+  <data name="description.Size" type="System.Drawing.Size, System.Drawing">
+    <value>698, 23</value>
+  </data>
+  <data name="description.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="description.Text" xml:space="preserve">
+    <value>Select the writing systems to display for each line. Drag the lines to reorder them. Some restrictions apply in editable views.</value>
+  </data>
+  <data name="&gt;&gt;description.Name" xml:space="preserve">
+    <value>description</value>
+  </data>
+  <data name="&gt;&gt;description.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;description.Parent" xml:space="preserve">
+    <value>mainLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;description.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="buttonLayoutPanel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
   <data name="helpButton.AccessibleName" xml:space="preserve">
     <value>OK</value>
@@ -156,8 +186,11 @@
   <data name="helpButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
   </data>
+  <data name="helpButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="helpButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>617, 3</value>
+    <value>633, 3</value>
   </data>
   <data name="helpButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -186,8 +219,11 @@
   <data name="cancelButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
   </data>
+  <data name="cancelButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="cancelButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>536, 3</value>
+    <value>552, 3</value>
   </data>
   <data name="cancelButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -216,8 +252,11 @@
   <data name="okButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
   </data>
+  <data name="okButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="okButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>455, 3</value>
+    <value>471, 3</value>
   </data>
   <data name="okButton.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -240,38 +279,17 @@
   <data name="&gt;&gt;okButton.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="mainBrowser.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Left, Right</value>
-  </data>
-  <data name="mainBrowser.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 33</value>
-  </data>
-  <data name="mainBrowser.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>10, 10, 10, 10</value>
-  </data>
-  <data name="mainBrowser.Size" type="System.Drawing.Size, System.Drawing">
-    <value>684, 300</value>
-  </data>
-  <data name="mainBrowser.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;mainBrowser.Name" xml:space="preserve">
-    <value>mainBrowser</value>
-  </data>
-  <data name="&gt;&gt;mainBrowser.Type" xml:space="preserve">
-    <value>SIL.Windows.Forms.HtmlBrowser.XWebBrowser, SIL.Windows.Forms, Version=4.2.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;mainBrowser.Parent" xml:space="preserve">
-    <value>mainLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;mainBrowser.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="buttonLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
   </data>
   <data name="buttonLayoutPanel.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
     <value>RightToLeft</value>
   </data>
   <data name="buttonLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 346</value>
+    <value>0, 360</value>
+  </data>
+  <data name="buttonLayoutPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
   </data>
   <data name="buttonLayoutPanel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 0, 0, 0</value>
@@ -280,7 +298,7 @@
     <value>No</value>
   </data>
   <data name="buttonLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>698, 29</value>
+    <value>714, 30</value>
   </data>
   <data name="buttonLayoutPanel.TabIndex" type="System.Int32, mscorlib">
     <value>21</value>
@@ -300,29 +318,32 @@
   <data name="mainLayoutPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="mainLayoutPanel.FlowDirection" type="System.Windows.Forms.FlowDirection, System.Windows.Forms">
-    <value>TopDown</value>
-  </data>
   <data name="mainLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
+  <data name="mainLayoutPanel.RowCount" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
   <data name="mainLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>701, 390</value>
+    <value>714, 390</value>
   </data>
   <data name="mainLayoutPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>20</value>
+    <value>0</value>
   </data>
   <data name="&gt;&gt;mainLayoutPanel.Name" xml:space="preserve">
     <value>mainLayoutPanel</value>
   </data>
   <data name="&gt;&gt;mainLayoutPanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mainLayoutPanel.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;mainLayoutPanel.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="mainLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="mainBrowser" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="description" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="buttonLayoutPanel" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Absolute,24,Percent,100,Absolute,30" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -331,7 +352,7 @@
     <value>5, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>701, 390</value>
+    <value>714, 390</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

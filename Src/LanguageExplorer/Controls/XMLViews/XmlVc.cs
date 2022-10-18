@@ -1345,6 +1345,7 @@ namespace LanguageExplorer.Controls.XMLViews
 								string formattedDateTime;
 								try
 								{
+									// "G" format takes user's system ShortDate format appended by system LongTime format.
 									formattedDateTime = dt.ToString(format ?? "G", DateTimeFormatInfo.CurrentInfo);
 								}
 								catch (FormatException e)

@@ -4,8 +4,10 @@ NDependOut/
 FWXml.xpr
 GeneratedAssemblyInfo.cs
 Collection.cpp
+*.binlog
 .vs/
 .idea/
+_IsIncrementalBuild
 Build/FieldWorks.targets
 Build/GlobalInclude.properties
 Build/LibraryDevelopment.properties
@@ -40,6 +42,7 @@ Lib/debug/unit++.pdb
 Lib/release/DebugProcs.lib
 Lib/release/Generic.lib
 Lib/release/unit++.lib
+Lib/release/unit++.pdb
 DistFiles/Parts/Generated.fwlayout
 Src/Ethnologue/GeneratedEthnologue.cs
 Src/FwParatextLexiconPlugin/GeneratedParatextLexiconPluginRegistryHelper.cs
@@ -104,6 +107,7 @@ Lib/src/Enchant/fieldworks-enchant-1.6.1/
 Src/Kernel/libFwKernel
 Src/views/libViews
 Src/views/libVwGraphics
+Src/views/Test/Release/
 Src/views/Test/x64/
 Src/views/x64
 Bin/src/CodeGen/CodeGen

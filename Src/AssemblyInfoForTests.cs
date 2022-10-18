@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2020 SIL International
+// Copyright (c) 2012-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -33,12 +33,11 @@ using SIL.TestUtilities;
 // Handles any unhandled exceptions thrown on Windows Forms threads
 [assembly: HandleApplicationThreadException]
 
-// NOTE: it is important that OfflineSldr comes before InitializeIcu!
+// Initialize ICU
+[assembly: InitializeIcu(IcuVersion = 70)]
+
 // Turns the SLDR API into offline mode
 [assembly: OfflineSldr]
-
-// Initialize ICU
-//[assembly: InitializeIcu(IcuVersion = 54)]
 
 // Allow creating COM objects from manifest file important that it comes after InitializeIcu
 [assembly: CreateComObjectsFromManifest]

@@ -13,4 +13,6 @@
 	<SetProperty Id="OVRAPPFOLDER" Value="[$(var.PFDir)]\SIL\$(var.SafeApplicationName) $(var.MajorVersion)\" Before="AppSearch"/>
 	<SetProperty Id="OVRHARVESTDATAFOLDER" Value="[CommonAppDataFolder]SIL" Before="AppSearch"/>
 	<SetProperty Id="OVRDATAFOLDER" Value="[CommonAppDataFolder]SIL\FieldWorks\Projects" Before="AppSearch"/>
+	<SetProperty Id="QtExecCmdLine" Value="&quot;cmd&quot; /c (set ICU_DATA=[OVRHARVESTDATAFOLDER]\Icu70) &amp; &quot;[APPFOLDER]\UnicodeCharEditor.exe&quot; -i" Before="InstallFinalize" Sequence="execute"/>
+	<CustomAction Id="LaunchUnicodeCharEditor" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="immediate" Return="check"/>
 </Include>

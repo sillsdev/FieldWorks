@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <UseWindowsForms>true</UseWindowsForms>
@@ -10,8 +10,8 @@
   <ItemGroup>
     <PackageReference Include="DialogAdapters.Gtk2" Version="0.1.11" />
     <PackageReference Include="Encoding-Converters-Core" Version="0.0.8" />
-    <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="All" />
-    <PackageReference Include="SIL.Windows.Forms.WritingSystems" Version="9.0.0-beta0076" />
+    <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
+    <PackageReference Include="SIL.Windows.Forms.WritingSystems" Version="11.0.0-beta0041" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,11 +26,11 @@
   <ItemGroup>
     <Reference Include="ECInterfaces" Condition="'$(OS)'=='Unix'">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>/usr/lib/fieldworks/ECInterfaces.dll</HintPath>
+      <HintPath>$(installation_prefix)/lib/fieldworks/ECInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="SilEncConverters40" Condition="'$(OS)'=='Unix'">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
+      <HintPath>$(installation_prefix)/lib/fieldworks/SilEncConverters40.dll</HintPath>
     </Reference>
     <Reference Include="System.Design" />
   </ItemGroup>

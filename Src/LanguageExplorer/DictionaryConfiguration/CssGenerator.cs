@@ -79,9 +79,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				GenerateCssForWsSpanWithNormalStyle(styleSheet, cache, fwStyleSheet);
 			}
-			if (fwStyleSheet.Styles.Contains(DictionaryNormal))
+			var entryBaseStyle = ConfiguredLcmGenerator.GetEntryStyle(model);
+			if (fwStyleSheet.Styles.Contains(entryBaseStyle))
 			{
-				GenerateDictionaryNormalParagraphCss(styleSheet, cache, fwStyleSheet);
+				GenerateDictionaryNormalParagraphCss(styleSheet, cache, fwStyleSheet, entryBaseStyle);
 			}
 			if (fwStyleSheet.Styles.Contains(LetterHeadingStyleName))
 			{
@@ -132,14 +133,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 			GenerateCssForWritingSystems("span", "Normal", styleSheet, cache, fwStyleSheet);
 		}
 
-		private static void GenerateDictionaryNormalParagraphCss(StyleSheet styleSheet, LcmCache cache, LcmStyleSheet fwStyleSheet)
+		private static void GenerateDictionaryNormalParagraphCss(StyleSheet styleSheet, LcmCache cache, LcmStyleSheet fwStyleSheet, string entryBaseStyle)
 		{
 			var dictNormalRule = new StyleRule { Value = "div.entry" };
-			var dictNormalStyle = GenerateCssStyleFromLcmStyleSheet(DictionaryNormal, 0, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(0));
+			var dictNormalStyle = GenerateCssStyleFromLcmStyleSheet(entryBaseStyle, 0, fwStyleSheet, cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(0));
 			dictNormalRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictNormalStyle));
 			styleSheet.Rules.Add(dictNormalRule);
 			// Then generate the rules for all the writing system overrides
-			GenerateCssForWritingSystems("div.entry span", DictionaryNormal, styleSheet, cache, fwStyleSheet);
+			GenerateCssForWritingSystems("div.entry span", entryBaseStyle, styleSheet, cache, fwStyleSheet);
 		}
 
 		private static void GenerateDictionaryMinorParagraphCss(StyleSheet styleSheet, LcmCache cache, LcmStyleSheet fwStyleSheet, DictionaryConfigurationModel model)
@@ -1099,10 +1100,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			if (exportStyleInfo.HasLineSpacing)
 			{
 				var lineHeight = new Property("line-height");
-				if (!exportStyleInfo.LineSpacing.m_relative && exportStyleInfo.LineSpacing.m_lineHeight >= 0)
-				{
-					lineHeight = new Property("flex-line-height");
-				}
 				//m_relative means single, 1.5 or double line spacing was chosen. The CSS should be a number
 				if (exportStyleInfo.LineSpacing.m_relative)
 				{
@@ -1112,7 +1109,17 @@ namespace LanguageExplorer.DictionaryConfiguration
 				}
 				else
 				{
+					// Note: In Flex a user can set 'at least' or 'exactly' for line heights. These are differentiated using negative and positive
+					// values in LineSpacing.m_lineHeight.
+					// There is no reasonable way to handle the 'exactly' option in css so both will behave the same for html views and exports
 					lineHeight.Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(Math.Abs(exportStyleInfo.LineSpacing.m_lineHeight)));
+					if (exportStyleInfo.LineSpacing.m_lineHeight >= 0)
+					{
+						// The flex-line-height property is used here for continued Pathway export support
+						var flexLineHeight = new Property("flex-line-height");
+						flexLineHeight.Term = lineHeight.Term;
+						declaration.Add(flexLineHeight);
+					}
 				}
 				declaration.Add(lineHeight);
 			}
@@ -1152,8 +1159,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 					if (node != null)
 					{
 						var selectedNumStyle = NumberingStylesCollection[numScheme];
-						declaration.Add(new Property("counter-increment") { Term = new PrimitiveTerm(UnitType.Attribute, " " + node.Label.ToLower()) });
-						declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.Attribute, $" counter({node.Label.ToLower()}, {selectedNumStyle}) {@"' '"}") });
+
+						if (string.IsNullOrEmpty(node.CSSClassNameOverride))
+							node.CSSClassNameOverride = GetClassAttributeForConfig(node);
+
+						declaration.Add(new Property("counter-increment") { Term = new PrimitiveTerm(UnitType.Attribute, " " + node.CSSClassNameOverride) });
+						declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.Attribute, string.Format(" counter({0}, {1}) {2}", node.CSSClassNameOverride, selectedNumStyle, @"' '")) });
 					}
 				}
 			}

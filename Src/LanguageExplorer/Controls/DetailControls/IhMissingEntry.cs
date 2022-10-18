@@ -308,7 +308,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// we prevent the selection in our HandleComboSelChange override.
 			AddItemToComboList(LanguageExplorerResources.ksAllomorphOf_, OnSelectAllomorphOf, disabledItemProperties, disabledItemProperties == null);
 			// If the morpheme line is hidden, give the user the option to edit morph breaks.
-			if (m_sandbox.InterlinLineChoices.IndexOf(InterlinLineChoices.kflidMorphemes) < 0)
+			if (m_sandbox.InterlinLineChoices.IndexInEnabled(InterlinLineChoices.kflidMorphemes) < 0)
 			{
 				AddItemToComboList("-------", null, null, false);
 				AddItemToComboList(LanguageExplorerResources.ksEditMorphBreaks_, OnSelectEditMorphBreaks, null, true);

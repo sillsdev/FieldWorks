@@ -13,6 +13,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using Icu.Normalization;
+using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
@@ -34,7 +35,7 @@ namespace LanguageExplorer.Controls
 	/// a new XDumper should be created for each export, unless you know that nothing has changed in the database
 	/// in between.
 	/// </summary>
-	internal sealed class XDumper
+	internal  class XDumper
 	{
 		/// <summary />
 		internal event ProgressHandler UpdateProgress;
@@ -2951,7 +2952,7 @@ namespace LanguageExplorer.Controls
 			return GetStringOfProperty(propertyObject, -1);
 		}
 
-		private string GetStringOfProperty(object propertyObject, int alternative)
+		protected string GetStringOfProperty(object propertyObject, int alternative)
 		{
 			if (propertyObject == null)
 			{
@@ -3005,7 +3006,9 @@ namespace LanguageExplorer.Controls
 				{
 					dt = dt.ToLocalTime();
 				}
-				return dt.ToString(alternative == 1 ? "yyyy-MM-dd" : "dd/MMM/yyyy");
+				// REVIEW (Hasso) 2022.08: where is this use of `alternative` documented? (alternative is usually a WS Handle)
+				return alternative == 1 ? dt.ToISO8601TimeFormatDateOnlyString() : dt.ToString("dd/MMM/yyyy");
+
 			}
 			if (type == typeof(Guid))
 			{
@@ -3018,7 +3021,7 @@ namespace LanguageExplorer.Controls
 			throw new FwConfigurationException($"Sorry, XDumper can not yet handle attributes of this class: '{type}'.");
 		}
 
-		private string ConvertNoneFoundStringToBlank(string str)
+		private static string ConvertNoneFoundStringToBlank(string str)
 		{
 			// at least for the Morph Sketch, we do not want to see lots of asterisks.
 			// rather, we check for blanks and convert blanks to appropriate text

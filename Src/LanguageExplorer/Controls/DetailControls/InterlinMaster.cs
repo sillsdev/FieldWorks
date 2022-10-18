@@ -193,7 +193,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			InitializeInterlinearTabControl(site);
 			if (site is ISetupLineChoices interlinearView)
 			{
-				interlinearView.SetupLineChoices($"InterlinConfig_{(interlinearView.ForEditing ? "Edit" : "Doc")}_{InterlinearTab}", GetLineMode());
+				interlinearView.SetupLineChoices($"InterlinConfig_v3_{(interlinearView.ForEditing ? "Edit" : "Doc")}_{InterlinearTab}",
+								  $"InterlinConfig_v2_{(interlinearView.ForEditing ? "Edit" : "Doc")}_{InterlinearTab}",
+												 GetLineMode());
 			}
 			// Review: possibly need to do SetPaneSizeAndRoot
 			if (site != null)
@@ -458,13 +460,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					if (ichEnd == -1)
 					{
 						ichEnd = 0;
-					}
-					if (iPara == ((IStText)para.Owner).ParagraphsOS.Count - 1 && ichAnchor == ichEnd && ichAnchor == para.Contents.Length)
-					{
-						// Special case, IP at the very end, we probably just typed it or pasted it, select the FIRST word of the text.
-						// FWR-723.
-						iPara = 0;
-						ichAnchor = ichEnd = 0;
 					}
 				}
 			}
@@ -907,10 +902,10 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				if (stText.ParagraphsOS.Count == 1 && ((IStTxtPara)stText.ParagraphsOS[0]).Contents.Length == 0)
 				{
-					// If we have restarted FLEx since this text was created, the WS has been lost and replaced with the global default of English.
-					// If this is the case, default to the Default Vernacular WS (LT-15688)
-					var globalDefaultWs = Cache.ServiceLocator.WritingSystemManager.Get("en").Handle;
-					if (stText.MainWritingSystem == globalDefaultWs)
+					// If we have restarted FLEx since this text was created, the WS has been lost and replaced with the userWs.
+					// If this is the case, default to the Default Vernacular WS (LT-15688 & LT-20837)
+					var userWs = Cache.ServiceLocator.WritingSystemManager.UserWs;
+					if (stText.MainWritingSystem == userWs)
 					{
 						NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => ((IStTxtPara)stText.ParagraphsOS[0]).Contents = TsStringUtils.MakeString(string.Empty, Cache.DefaultVernWs));
 					}

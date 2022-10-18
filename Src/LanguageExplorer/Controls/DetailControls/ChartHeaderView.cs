@@ -53,7 +53,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.Dispose(disposing);
 		}
 
-		internal bool NotesOnRight { get; set; } = true;
+		private bool NotesOnRight
+		{
+			get => m_chart.NotesColumnOnRight;
+			set => m_chart.NotesColumnOnRight = value;
+		}
 
 		/// <summary>
 		/// ControlList[] represents the z index, so in order to keep the draggable notes column at the top of the z order,
@@ -136,10 +140,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected override void OnControlAdded(ControlEventArgs e)
 		{
-			//Get the notes value from the property table once the first column has been added
+			//Get the notes value from the property table once the first column has been added // REVIEW (Hasso) 2022.03: is this still our job?
 			if (Controls.Count == 1)
 			{
-				NotesOnRight = m_chart.NotesDataFromPropertyTable;
+				NotesOnRight = m_chart.NotesOnRightFromPropertyTable;
 			}
 			var newColumn = e.Control;
 			newColumn.Height = 22;
@@ -274,7 +278,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private void OnColumnMouseUp(object sender, MouseEventArgs e)
 		{
-			var header = sender as Control;
+			var header = (Control)sender;
 			if (m_isResizingColumn)
 			{
 				UpdatePositions();
@@ -289,7 +293,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			UpdatePositions();
 			if (m_notesWasOnRight != NotesOnRight)
 			{
-				m_chart.NotesDataFromPropertyTable = NotesOnRight;
+				m_chart.NotesOnRightFromPropertyTable = NotesOnRight;
 				ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(0));
 				m_chart.RefreshRoot();
 			}
@@ -303,7 +307,10 @@ namespace LanguageExplorer.Controls.DetailControls
 		private void OnColumnPaint(object sender, PaintEventArgs e)
 		{
 			var header = (Control)sender;
-			e.Graphics.DrawRectangle(new Pen(Color.Black), new Rectangle(new Point(0, 0), new Size(header.Width - 1, header.Height - 1)));
+			using(var pen = new Pen(Color.Black))
+			{
+				e.Graphics.DrawRectangle(pen, new Rectangle(new Point(0, 0), new Size(header.Width - 1, header.Height - 1)));
+			}
 		}
 
 		/// <summary>

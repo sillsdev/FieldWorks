@@ -67,6 +67,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
+			ConfiguredLcmGenerator.Init();
 			try
 			{
 				_owningTable.Clear();
@@ -80,7 +81,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			catch (Exception err)
 			{
 				throw new Exception($"Error in running {GetType().Name} FixtureTeardown method.", err);
-		}
+			}
 			finally
 			{
 				base.FixtureTeardown();
@@ -92,7 +93,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			base.TestSetup();
 
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
+			ConfiguredLcmGenerator.Init();
 			if (!_lcmStyleSheet.Styles.Contains("FooStyle"))
 			{
 				GenerateStyle("FooStyle");
@@ -819,7 +820,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// Indent values are converted into pt values on export
 			var firstSenseChildCss = grandChildDeclaration[0].ToString();
 			var allOtherSenseChildrenCss = grandChildDeclaration[1].ToString();
-			Assert.That(firstSenseChildCss, Does.Not.Contain(allOtherSenseChildrenCss));
+			Assert.That(firstSenseChildCss, Is.Not.EqualTo(allOtherSenseChildrenCss));
 			var firstSenseIndent = parentHangingIndent - grandChildHangingIndent;
 			var otherSenseIndent = childHangingIndent - grandChildHangingIndent;
 			Assert.That(firstSenseChildCss, Contains.Substring("margin-left:" + firstSenseIndent / 1000 + "pt"));
@@ -985,6 +986,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			//SUT
 			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph-LineSpacingAtleast", CssGenerator.DefaultStyle, _lcmStyleSheet, _writingSystemManager.get_EngineOrNull(CssGenerator.DefaultStyle));
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("flex-line-height:12pt;"));
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("line-height:12pt;"));
 		}
 
 		[Test]
@@ -2989,9 +2991,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		}
 
 		[Test]
-		public void GenerateCssForConfiguration_GenerateDictionaryNormalParagraphStyle()
+		public void GenerateCssForConfiguration_GenerateMainEntryParagraphStyle()
 		{
 			GenerateNormalStyle("Dictionary-Normal");
+			var rtlStyle = GenerateEmptyParagraphStyle("Dictionary-RTL");
+			rtlStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptRightToLeft, 0,
+				(int)TriStateBool.triTrue);
 			var testSensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses"
@@ -2999,7 +3004,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var testEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { testSensesNode }
+				Children = new List<ConfigurableDictionaryNode> { testSensesNode },
+				CSSClassNameOverride = "entry"
 			};
 			var model = new DictionaryConfigurationModel
 			{
@@ -3008,8 +3014,17 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			PopulateFieldsForTesting(testEntryNode);
 			//SUT
 			var cssResult = GenerateCssFromConfiguration(model);
-			Assert.IsTrue(Regex.Match(cssResult, @"div.entry{\s*margin-left:24pt;\s*padding-right:48pt;\s*}", RegexOptions.Singleline).Success,
-							  "Generate Dictionary-Normal Paragraph Style not generated.");
+			Assert.IsTrue(
+				Regex.Match(cssResult,
+					@"div.entry{\s*margin-left:24pt;\s*padding-right:48pt;\s*}",
+					RegexOptions.Singleline).Success,
+				"Dictionary-Normal Paragraph Style not generated when main entry has no style selected.");
+			model.Parts[0].Style = "Dictionary-RTL";
+			cssResult = GenerateCssFromConfiguration(model);
+			Assert.IsTrue(
+				Regex.Match(cssResult, @"div.entry{\s*direction:rtl;\s*}",
+					RegexOptions.Singleline).Success,
+				"Main Entry style was not used as the main page style");
 		}
 
 		[Test]
@@ -3169,7 +3184,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var senses = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
-				CSSClassNameOverride = "Senses",
+				CSSClassNameOverride = "sensesos",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions
 				{
 					NumberStyle = "Dictionary-SenseNum",
@@ -3187,7 +3202,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = GenerateCssFromConfiguration(model);
-			const string regexExpected = @".lexentry>\s.senses{.*counter-reset:\ssensesos;.*}.*.lexentry>\s.senses\s>\s.sensecontent:before{.*counter-increment:\ssensesos;.*content:\scounter.sensesos,\sdecimal.\s'\s';.*font-size:14pt;.*color:Green;.*}";
+			const string regexExpected = @".lexentry>\s.sensesos{.*counter-reset:\ssensesos;.*}.*.lexentry>\s.sensesos\s>\s.sensecontent:before{.*counter-increment:\ssensesos;.*content:\scounter.sensesos,\sdecimal.\s'\s';.*font-size:14pt;.*color:Green;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regexExpected, RegexOptions.Singleline).Success, "Numbering style not generated for Senses.");
 		}
 

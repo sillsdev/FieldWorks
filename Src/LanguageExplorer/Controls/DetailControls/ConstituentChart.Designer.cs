@@ -24,6 +24,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (disposing)
 			{
 				components?.Dispose();
+				m_topBottomSplit.SplitterMoved -= RibbonSizeChanged;
 				m_toolTip?.Dispose();
 				_sharedEventHandlers.Remove(Command.CmdRepeatLastMoveLeft);
 				_sharedEventHandlers.Remove(Command.CmdRepeatLastMoveRight);

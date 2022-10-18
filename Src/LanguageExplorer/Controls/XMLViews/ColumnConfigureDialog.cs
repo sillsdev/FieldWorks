@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -36,20 +37,26 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal FwOverrideComboBox wsCombo;
 		private Label label3;
 		internal ListView currentList;
-		private List<XElement> m_possibleColumns;
-		private readonly LcmCache m_cache;
+
+		List<XElement> m_possibleColumns;
+		readonly LcmCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
-		private bool m_fUpdatingWsCombo; // true during UpdateWsCombo
-		private WsComboContent m_wccCurrent = WsComboContent.kwccNone;
+
+		bool m_fUpdatingWsCombo = false; // true during UpdateWsCombo
+
+		WsComboContent m_wccCurrent = WsComboContent.kwccNone;
+
 		internal ListView optionsList;
 		private HelpProvider helpProvider;
 		private IContainer components;
 		private ColumnHeader columnHeader1;
 		private PictureBox blkEditIcon;
 		private Label blkEditText;
+
 		private ImageList imageList1;
 		private ImageList imageList2;
-		private bool showBulkEditIcons;
+
+		private bool showBulkEditIcons = false;
 
 		/// <summary>
 		/// Construct a column configure dialog. It is passed a list of XmlNodes that
@@ -219,7 +226,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Initialize the combo box for the standard set of writing systems.
 		/// </summary>
-		public static void AddWritingSystemsToCombo(LcmCache cache, ComboBox.ObjectCollection items, WsComboContent contentToAdd)
+		public static void AddWritingSystemsToCombo(LcmCache cache,
+			IList items, WsComboContent contentToAdd)
 		{
 			AddWritingSystemsToCombo(cache, items, contentToAdd, false, false);
 		}
@@ -245,7 +253,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// adds all reasonable single generic items not already included by skipDefaults.
 		/// Ignored if skipDefaults is true.</param>
 		/// <remarks>This is static because ConfigureInterlinDialog uses it</remarks>
-		public static void AddWritingSystemsToCombo(LcmCache cache, ComboBox.ObjectCollection items, WsComboContent contentToAdd, bool skipDefaults, bool allowMultiple)
+		public static void AddWritingSystemsToCombo(LcmCache cache,
+			IList items, WsComboContent contentToAdd, bool skipDefaults,
+			bool allowMultiple)
 		{
 			var sAllAnal = XMLViewsStrings.ksAllAnal;
 			var sAllAnalVern = XMLViewsStrings.ksAllAnalVern;
@@ -407,11 +417,11 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Adds the writing systems to combo.
 		/// </summary>
-		public static void AddWritingSystemsToCombo(LcmCache cache, ComboBox.ObjectCollection items, IEnumerable<CoreWritingSystemDefinition> wss)
+		public static void AddWritingSystemsToCombo(LcmCache cache, IList items, IEnumerable<CoreWritingSystemDefinition> wss)
 		{
 			foreach (var ws in wss)
 			{
-				items.Add(new WsComboItem(ws.DisplayLabel, ws.Id));
+				items.Add(new WsComboItem(ws.DisplayLabel, ws.Id, ws.Abbreviation));
 			}
 		}
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2020 SIL International
+// Copyright (c) 2014-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
+using Icu.Collation;
 using LanguageExplorer;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
@@ -32,6 +33,7 @@ using SIL.LCModel.Utils;
 using SIL.Linq;
 using SIL.PlatformUtilities;
 using SIL.TestUtilities;
+using SIL.WritingSystems;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
@@ -42,7 +44,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		private IRecordListRepositoryForTools _recordListRepositoryForTools;
 		private IRecordList _recordList;
 		private StatusBar _statusBar;
-		private int _wsEn, _wsFr, _wsHe;
+		private int _wsEn, _wsFr;
 		private const string xpathThruSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']";
 		private const string TestVariantName = "Crazy Variant";
 		private StringBuilder XHTMLStringBuilder { get; set; }
@@ -61,10 +63,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			if (!styles.Contains(DictionaryNormal))
 			{
 				styles.Add(new BaseStyleInfo { Name = DictionaryNormal });
-		}
+			}
 			_recordListRepositoryForTools = _flexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository);
 			_statusBar = StatusBarPanelServices.CreateStatusBarFor_TESTS();
-			_recordList = CreateRecordList();
+			_recordList = CreateRecordList(Cache, _flexComponentParameters, _statusBar);
 			_recordListRepositoryForTools.AddRecordList(_recordList);
 			_recordListRepositoryForTools.ActiveRecordList = _recordList;
 			_flexComponentParameters.PropertyTable.SetProperty(LanguageExplorerConstants.ToolChoice, LanguageExplorerConstants.LexiconDictionaryMachineName);
@@ -73,23 +75,24 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			_wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 		}
 
-		private IRecordList CreateRecordList()
+		internal static IRecordList CreateRecordList(LcmCache cache, FlexComponentParameters flexComponentParameters, StatusBar statusBar)
 		{
-			var recordList = new RecordList(LanguageExplorerConstants.Entries, _statusBar, Cache.GetManagedSilDataAccess(), false,
-				new VectorPropertyParameterObject(Cache.LanguageProject.LexDbOA, "Entries", Cache.MetaDataCacheAccessor.GetFieldId2(Cache.LanguageProject.LexDbOA.ClassID, "Entries", false)),
+			var recordList = new RecordList(LanguageExplorerConstants.Entries, statusBar, cache.GetManagedSilDataAccess(), false,
+				new VectorPropertyParameterObject(cache.LanguageProject.LexDbOA, "Entries", cache.MetaDataCacheAccessor.GetFieldId2(cache.LanguageProject.LexDbOA.ClassID, "Entries", false)),
 				new Dictionary<string, PropertyRecordSorter>
 		{
 					{ AreaServices.Default, new PropertyRecordSorter(AreaServices.ShortName) },
 					{ "PrimaryGloss", new PropertyRecordSorter("PrimaryGloss") }
 				});
 			recordList.SortName = "Headword";
-			recordList.InitializeFlexComponent(_flexComponentParameters);
+			recordList.InitializeFlexComponent(flexComponentParameters);
 			return recordList;
 		}
 
 		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
+			FwRegistrySettings.Release();
 			try
 			{
 				_statusBar?.Dispose();
@@ -341,7 +344,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var variant = CreateInterestingLexEntry(Cache);
 			// we need a real Variant Type to pass the list options test
 			CreateVariantForm(Cache, entry, variant, "Spelling Variant");
-																		  // Create a folder in the project to hold the media files
+			// Create a folder in the project to hold the media files
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
 			// Create and fill in the media files
@@ -445,7 +448,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//keep the xml valid (single root element)
 			XHTMLStringBuilder.AppendLine("<TESTWRAPPER>");
-															//SUT
+			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 			XHTMLStringBuilder.Append(result);
 			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryTwo, mainEntryNode, null, settings);
@@ -548,7 +551,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//keep the xml valid (single root element)
 			XHTMLStringBuilder.AppendLine("<TESTWRAPPER>");
-															//SUT
+			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 			XHTMLStringBuilder.Append(result);
 			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryTwo, mainEntryNode, null, settings);
@@ -1177,6 +1180,69 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(gramAbbr1, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(gramAbbr2, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(gramName1, 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(gramName2, 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_DontDisplayNotSure()
+		{
+			var gramAbbrNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "InterlinearAbbrTSS",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var gramNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "InterlinearNameTSS",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var gramInfoNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				CSSClassNameOverride = "MorphoSyntaxAnalysis",
+				Children = new List<ConfigurableDictionaryNode> { gramAbbrNode, gramNameNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				DictionaryNodeOptions = GetSenseNodeOptions(),
+				Children = new List<ConfigurableDictionaryNode> { gramInfoNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			var entry = CreateInterestingLexEntry(Cache);
+
+			ILangProject lp = Cache.LangProject;
+
+			ILcmOwningSequence<ICmPossibility> posSeq = lp.PartsOfSpeechOA.PossibilitiesOS;
+			IPartOfSpeech pos = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+			posSeq.Add(pos);
+
+			var sense = entry.SensesOS.First();
+
+			var msa = Cache.ServiceLocator.GetInstance<IMoInflAffMsaFactory>().Create();
+			entry.MorphoSyntaxAnalysesOC.Add(msa);
+			sense.MorphoSyntaxAnalysisRA = msa;
+
+			msa.PartOfSpeechRA = pos;
+			msa.PartOfSpeechRA.Abbreviation.set_String(wsFr, "<Not Sure>");
+
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+			// SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
+
+			const string gramAbbr1 = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearabbrtss']/span[@lang='fr']/span[@lang='fr' and text()='<Not Sure>']";
+			const string gramAbbr2 = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearabbrtss']/span[@lang='fr']/span[@lang='en' and text()=':Any']";
+			const string gramName1 = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearnametss']/span[@lang='fr']/span[@lang='fr' and text()='<Not Sure>']";
+			const string gramName2 = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearnametss']/span[@lang='fr']/span[@lang='en' and text()=':Any']";
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(gramAbbr1, 0);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(gramAbbr2, 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(gramName1, 0);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(gramName2, 1);
 		}
 
@@ -3710,10 +3776,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var otherMainEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			CreateComplexForm(Cache, mainEntry, referencedEntry, true);
-			CreateLexicalReference(otherMainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, otherMainEntry, referencedEntry, refTypeName);
 
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var revNameNode = new ConfigurableDictionaryNode
 			{
@@ -3804,9 +3870,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var formNode = new ConfigurableDictionaryNode
 			{
@@ -3848,9 +3914,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var formNode = new ConfigurableDictionaryNode
 			{
@@ -3899,9 +3965,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var formNode = new ConfigurableDictionaryNode
 			{
@@ -3954,9 +4020,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var nameNode = new ConfigurableDictionaryNode
 			{
@@ -3997,9 +4063,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			const string refTypeRevName = "epyTfeRtseT";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var nameNode = new ConfigurableDictionaryNode
 			{
@@ -4040,9 +4106,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			const string refTypeRevName = "sURsyoT";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var nameNode = new ConfigurableDictionaryNode
 			{
@@ -4083,9 +4149,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			const string refTypeRevName = "sURsyoT";
-			CreateLexicalReference(mainEntry.SensesOS.First(), referencedEntry, refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, mainEntry.SensesOS.First(), referencedEntry, refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var nameNode = new ConfigurableDictionaryNode
 			{
@@ -4132,10 +4198,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var referencedEntry2 = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			const string refTypeRevName = "sURsyoT";
-			CreateLexicalReference(mainEntry.SensesOS.First(), referencedEntry1, refTypeName, refTypeRevName);
-			CreateLexicalReference(mainEntry.SensesOS.First(), referencedEntry2, refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, mainEntry.SensesOS.First(), referencedEntry1, refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, mainEntry.SensesOS.First(), referencedEntry2, refTypeName, refTypeRevName);
 			var refType1 = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType1);
+			Assert.That(refType1, Is.Not.Null);
 			var nameNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "OwnerType",
@@ -4178,9 +4244,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			const string refTypeRevName = "sURsyoT";
-			CreateLexicalReference(mainEntry, referencedEntry.SensesOS.First(), refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry.SensesOS.First(), refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var nameNode = new ConfigurableDictionaryNode
 			{
@@ -4229,12 +4295,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			const string comRefTypeRevName = "cp";
 			const string etyRefTypeName = "Etymology";
 			const string etyRefTypeRevName = "ety";
-			CreateLexicalReference(mainEntry, compareReferencedEntry, comRefTypeName, comRefTypeRevName);
-			CreateLexicalReference(mainEntry, etymologyReferencedEntry, etyRefTypeName, etyRefTypeRevName);
+			CreateLexicalReference(Cache, mainEntry, compareReferencedEntry, comRefTypeName, comRefTypeRevName);
+			CreateLexicalReference(Cache, mainEntry, etymologyReferencedEntry, etyRefTypeName, etyRefTypeRevName);
 			var comRefType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == comRefTypeName);
 			var etyRefType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == etyRefTypeName);
-			Assert.IsNotNull(comRefType);
-			Assert.IsNotNull(etyRefType);
+			Assert.That(comRefType, Is.Not.Null);
+			Assert.That(etyRefType, Is.Not.Null);
 
 			var nameNode = new ConfigurableDictionaryNode
 			{
@@ -4290,9 +4356,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var legEntry = CreateInterestingLexEntry(Cache, thirdWord, "leg");
 			const string refTypeName = "Part";
 			const string refTypeRevName = "Whole";
-			CreateLexicalReference(bodyEntry, armEntry.SensesOS.First(), legEntry.SensesOS.First(), refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, bodyEntry, armEntry.SensesOS.First(), legEntry.SensesOS.First(), refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var headwordNode = new ConfigurableDictionaryNode
 			{
@@ -4363,9 +4429,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var legEntry = CreateInterestingLexEntry(Cache, "jambe", "leg");
 			const string refTypeName = "Part";
 			const string refTypeRevName = "Whole";
-			CreateLexicalReference(firstEntry, firstEntry.SensesOS[0].SensesOS[0], legEntry.SensesOS.First(), refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, firstEntry, firstEntry.SensesOS[0].SensesOS[0], legEntry.SensesOS.First(), refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var headwordNode = new ConfigurableDictionaryNode
 			{
@@ -4427,9 +4493,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			AddSenseToEntry(firstEntry, "b2", _wsEn, Cache);
 			const string refTypeName = "Part";
 			const string refTypeRevName = "Whole";
-			CreateLexicalReference(firstEntry.SensesOS[0], firstEntry.SensesOS[1], refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, firstEntry.SensesOS[0], firstEntry.SensesOS[1], refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var headwordNode = new ConfigurableDictionaryNode
 			{
@@ -4553,7 +4619,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var variantForm = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, variantForm);
 			var notCrazyVariant = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.FirstOrDefault(variant => variant.Name.BestAnalysisAlternative.Text != TestVariantName);
-			Assert.IsNotNull(notCrazyVariant);
+			Assert.That(notCrazyVariant, Is.Not.Null);
 			var rcfsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
@@ -4635,7 +4701,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var complexFormRef = CreateComplexForm(Cache, mainEntry, complexForm, false);
 			var complexRefName = complexFormRef.ComplexEntryTypesRS[0].Name.BestAnalysisAlternative.Text;
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS.First(complex => complex.Name.BestAnalysisAlternative.Text != complexRefName);
-			Assert.IsNotNull(notComplexTypePoss);
+			Assert.That(notComplexTypePoss, Is.Not.Null);
 			var rcfsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VisibleComplexFormBackRefs",
@@ -4665,9 +4731,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(notComplexTypePoss);
+			Assert.That(notComplexTypePoss, Is.Not.Null);
 			var entryReferenceNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MinimalLexReferences",
@@ -4701,9 +4767,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName, "ReverseName");
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName, "ReverseName");
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(notComplexTypePoss);
+			Assert.That(notComplexTypePoss, Is.Not.Null);
 			var entryReferenceNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MinimalLexReferences",
@@ -4741,9 +4807,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName, "ReverseName");
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName, "ReverseName");
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(notComplexTypePoss);
+			Assert.That(notComplexTypePoss, Is.Not.Null);
 			var entryReferenceNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MinimalLexReferences",
@@ -4781,9 +4847,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName, "ReverseName");
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName, "ReverseName");
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(notComplexTypePoss);
+			Assert.That(notComplexTypePoss, Is.Not.Null);
 			var entryReferenceNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MinimalLexReferences",
@@ -4826,9 +4892,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			lrt.Name.set_String(Cache.DefaultAnalWs, "NotOurTestRefType");
 
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text != refTypeName);
-			Assert.IsNotNull(notComplexTypePoss);
+			Assert.That(notComplexTypePoss, Is.Not.Null);
 			var entryReferenceNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MinimalLexReferences",
@@ -4858,9 +4924,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(notComplexTypePoss);
+			Assert.That(notComplexTypePoss, Is.Not.Null);
 			var entryReferenceNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MinimalLexReferences",
@@ -4889,7 +4955,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var variantForm = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, variantForm);
 			var notCrazyVariant = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.FirstOrDefault(variant => variant.Name.BestAnalysisAlternative.Text != TestVariantName);
-			Assert.IsNotNull(notCrazyVariant);
+			Assert.That(notCrazyVariant, Is.Not.Null);
 			var variantsNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "VariantFormEntryBackRefs",
@@ -4933,7 +4999,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var variantForm = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, variantForm);
 			var crazyVariant = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.FirstOrDefault(variant => variant.Name.BestAnalysisAlternative.Text == TestVariantName);
-			Assert.IsNotNull(crazyVariant);
+			Assert.That(crazyVariant, Is.Not.Null);
 
 			var variantFormTypeNameNode = new ConfigurableDictionaryNode
 			{
@@ -4976,7 +5042,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var variantForm = CreateInterestingLexEntry(Cache);
 			CreateVariantForm(Cache, mainEntry, variantForm);
 			var crazyVariant = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS.FirstOrDefault(variant => variant.Name.BestAnalysisAlternative.Text == TestVariantName);
-			Assert.IsNotNull(crazyVariant);
+			Assert.That(crazyVariant, Is.Not.Null);
 
 			var headwordNode = new ConfigurableDictionaryNode
 			{
@@ -5069,12 +5135,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfNoPreviousHeader()
 		{
 			var entry = CreateInterestingLexEntry(Cache);
+			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			using (var col = new CollatorForTest(vernWs))
 			using (var xhtmlWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				string last = null;
 				xhtmlWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, col, DefaultSettings);
 				xhtmlWriter.WriteEndElement();
 				xhtmlWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='C c']";
@@ -5086,12 +5154,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfPreviousHeaderDoesNotMatch()
 		{
 			var entry = CreateInterestingLexEntry(Cache);
+			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			using (var col = new CollatorForTest(vernWs))
 			using (var xhtmlWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				var last = "A a";
 				xhtmlWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, col, DefaultSettings);
 				xhtmlWriter.WriteEndElement();
 				xhtmlWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='C c']";
@@ -5103,12 +5173,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderForSuffixWithNewBaseLetter()
 		{
 			var entry = CreateInterestingSuffix(Cache, " ba");
+			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			using (var col = new CollatorForTest(vernWs))
 			using (var xhtmlWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				var last = "A a";
 				xhtmlWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, col, DefaultSettings);
 				xhtmlWriter.WriteEndElement();
 				xhtmlWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='B b']";
@@ -5120,19 +5192,111 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void GenerateLetterHeaderIfNeeded_GeneratesNoHeaderIfPreviousHeaderDoesMatch()
 		{
 			var entry = CreateInterestingLexEntry(Cache);
+			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			using (var col = new CollatorForTest(vernWs))
 			using (var xhtmlWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				var last = "A a";
 				xhtmlWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, DefaultSettings);
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, col, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, col, DefaultSettings);
 				xhtmlWriter.WriteEndElement();
 				xhtmlWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='C c']";
 				const string proveOnlyOneHeader = "//div[@class='letHead']/span[@class='letter']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(proveOnlyOneHeader, 1);
+			}
+		}
+
+		[Test]
+		public void GenerateLetterHeaderIfNeeded_WSHasCaseAlias_GeneratesHeadingWithCorrectPair()
+		{
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("tkr", out var wsDef);
+			wsDef.CaseAlias = "tur";
+			Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem = wsDef;
+			var dotlessEntry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(dotlessEntry, "Ia", wsDef.Handle);
+			var dottedEntry1 = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(dottedEntry1, "\u0130brahim", wsDef.Handle);
+			var dottedEntry2 = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(dottedEntry2, "icaza", wsDef.Handle);
+			using (var col = new CollatorForTest(wsDef.Id))
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				// SUT
+				string last = null;
+				XHTMLWriter.WriteStartElement("TestElement");
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(dotlessEntry, ref last, XHTMLWriter, col, DefaultSettings, _recordList);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(dottedEntry1, ref last, XHTMLWriter, col, DefaultSettings, _recordList);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(dottedEntry2, ref last, XHTMLWriter, col, DefaultSettings, _recordList);
+				XHTMLWriter.WriteEndElement();
+				XHTMLWriter.Flush();
+				const string dotlessHeadingXpath = "//div[@class='letHead']/span[@class='letter' and @lang='tkr' and text()='I \u0131']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(dotlessHeadingXpath, 1);
+				const string dottedHeadingXpath = "//div[@class='letHead']/span[@class='letter' and @lang='tkr' and text()='\u0130 i']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(dottedHeadingXpath, 1);
+			}
+		}
+
+		[Test]
+		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderLexemeFormSorting()
+		{
+			var entry = CreateInterestingLexEntry(Cache);
+			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			AddLexemeFormToEntry(entry, "LexFormStr", Cache);
+			using (var col = new CollatorForTest(vernWs))
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				// SUT
+				string last = null;
+				XHTMLWriter.WriteStartElement("TestElement");
+				string oldSort = _recordList.SortName;
+				try
+				{
+					_recordList.SortName = "Lexeme Form";
+					LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings, _recordList);
+				}
+				finally
+				{
+					_recordList.SortName = oldSort;
+				}
+
+				XHTMLWriter.WriteEndElement();
+				XHTMLWriter.Flush();
+				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='L l']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
+			}
+		}
+
+		[Test]
+		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderCitationFormSorting()
+		{
+			var entry = CreateInterestingLexEntry(Cache, "CitFormStr");
+			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			AddLexemeFormToEntry(entry, "LexFormStr", Cache);
+			using (var col = new CollatorForTest(vernWs))
+			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
+			{
+				// SUT
+				string last = null;
+				XHTMLWriter.WriteStartElement("TestElement");
+				string oldSort = _recordList.SortName;
+				try
+				{
+					_recordList.SortName = "Citation Form";
+					LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings, _recordList);
+				}
+				finally
+				{
+					_recordList.SortName = oldSort;
+				}
+
+				XHTMLWriter.WriteEndElement();
+				XHTMLWriter.Flush();
+				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='C c']";
+				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
 			}
 		}
 
@@ -5597,6 +5761,93 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_CustomFieldInGroupingNodeGeneratesContent()
+		{
+			using (var customField = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+				CellarPropertyType.String, Guid.Empty))
+			{
+				var customFieldNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomString",
+					IsCustomField = true
+				};
+				var groupingNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomGroup",
+					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
+					DictionaryNodeOptions = new DictionaryNodeGroupingOptions()
+				};
+				var mainEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { groupingNode },
+					FieldDescription = "LexEntry"
+				};
+				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+				var testEntry = CreateInterestingLexEntry(Cache);
+				const string customData = "I am custom data";
+				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+
+				// Set custom field data
+				Cache.MainCacheAccessor.SetString(testEntry.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+				//SUT
+				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+				var customDataPath = $"/div[@class='lexentry']/span[@class='grouping_customgroup']/span[@class='customstring']/span[text()='" + customData + "']";
+				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
+			}
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_CustomFieldInNestedGroupingNodeGeneratesContent()
+		{
+			using (var customField = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0,
+				CellarPropertyType.String, Guid.Empty))
+			{
+				var customFieldNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomString",
+					IsCustomField = true
+				};
+				var groupingNode3 = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomGroup",
+					Children = new List<ConfigurableDictionaryNode> { customFieldNode },
+					DictionaryNodeOptions = new DictionaryNodeGroupingOptions()
+				};
+				var groupingNode2 = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomGroup",
+					Children = new List<ConfigurableDictionaryNode> { groupingNode3 },
+					DictionaryNodeOptions = new DictionaryNodeGroupingOptions()
+				};
+				var groupingNode1 = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "CustomGroup",
+					Children = new List<ConfigurableDictionaryNode> { groupingNode2 },
+					DictionaryNodeOptions = new DictionaryNodeGroupingOptions()
+				};
+				var mainEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { groupingNode1 },
+					FieldDescription = "LexEntry"
+				};
+				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+				var testEntry = CreateInterestingLexEntry(Cache);
+				const string customData = "This is custom data";
+				var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+
+				// Set custom field data
+				Cache.MainCacheAccessor.SetString(testEntry.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+				//SUT
+				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+				const string grpXPath = "/span[@class='grouping_customgroup']";
+				var customDataPath = $"/div[@class='lexentry']{grpXPath}{grpXPath}{grpXPath}/span[@class='customstring']/span[text()='{customData}']";
+				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
+			}
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_GetPropertyTypeForConfigurationNode_StringCustomFieldIsPrimitive()
 		{
 			using (var customField = new CustomFieldForTest(Cache, "CustomString", Cache.MetaDataCacheAccessor.GetClassId("LexEntry"), 0, CellarPropertyType.String, Guid.Empty))
@@ -5811,7 +6062,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				var testEntry = CreateInterestingLexEntry(Cache);
 				var refdEntry = CreateInterestingLexEntry(Cache);
-				CreateLexicalReference(testEntry, refdEntry, refType);
+				CreateLexicalReference(Cache, testEntry, refdEntry, refType);
 				var lexrefType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(r => r.Name.BestAnalysisAlternative.Text == refType);
 				crossRefs.DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
@@ -5870,7 +6121,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				var testEntry = CreateInterestingLexEntry(Cache);
 				var refdEntry = CreateInterestingLexEntry(Cache);
-				CreateLexicalReference(testEntry, refdEntry.SensesOS[0], refType);
+				CreateLexicalReference(Cache, testEntry, refdEntry.SensesOS[0], refType);
 				var lexrefType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(r => r.Name.BestAnalysisAlternative.Text == refType);
 				crossRefs.DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
@@ -6261,7 +6512,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var variant = CreateInterestingLexEntry(Cache);
 			// we need a real Variant Type to pass the list options test
 			CreateVariantForm(Cache, entry, variant, "Spelling Variant");
-																		  // Create a folder in the project to hold the media files
+			// Create a folder in the project to hold the media files
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
 			// Create and fill in the media files
@@ -6347,8 +6598,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 			var variant = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(Cache, entry, variant, "Spelling Variant"); // we need a real Variant Type to pass the list options test
-																		  // Create a folder in the project to hold the media files
+			// we need a real Variant Type to pass the list options test
+			CreateVariantForm(Cache, entry, variant, "Spelling Variant");
+			// Create a folder in the project to hold the media files
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
 			// Create and fill in the media files
@@ -6441,7 +6693,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var variant = CreateInterestingLexEntry(Cache);
 			// we need a real Variant Type to pass the list options test
 			CreateVariantForm(Cache, entry, variant, "Spelling Variant");
-																		  // Create a folder in the project to hold the media files
+			// Create a folder in the project to hold the media files
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
 			// Create and fill in the media files
@@ -8186,9 +8438,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var cssPath = Path.ChangeExtension(xhtmlPath, "css");
 				var css = File.ReadAllText(cssPath);
 				// verify that the css file contains a line similar to: @media screen {
-				Assert.IsTrue(Regex.Match(css, @"@media\s*screen\s*{\s*\.pages\s*{\s*display:\s*table;\s*width:\s*100%;").Success, "Css for page buttons did not generate a screen-only rule");
+				Assert.That(css, Does.Match(@"@media\s*screen\s*{\s*\.pages\s*{\s*display:\s*table;\s*width:\s*100%;"),
+								  "Css for page buttons did not generate a screen-only rule");
 				// verify that the css file contains a line similar to: @media print {
-				Assert.IsTrue(Regex.Match(css, @"@media\s*print\s*{\s*\.pages\s*{\s*display:\s*none;\s*}").Success, "Css for page buttons did not generate a print-only rule");
+				Assert.That(css, Does.Match(@"@media\s*print\s*{\s*\.pages\s*{\s*display:\s*none;\s*}"),
+								  "Css for page buttons did not generate a print-only rule");
 			}
 			finally
 			{
@@ -8326,6 +8580,30 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var xhtml = File.ReadAllText(xhtmlPath);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath("//div[@entry]", 0);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath("//*[@page]", 0);
+			}
+			finally
+			{
+				DeleteTempXhtmlAndCssFiles(xhtmlPath);
+			}
+		}
+
+		[Test]
+		public void SavePublishedHtmlWithStyles_ProducesDocumentTitle()
+		{
+			var entry = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(entry, "femme", _wsFr);
+			const string configName = "Test Config Name";
+			var model = CreateInterestingConfigurationModel(Cache, _flexComponentParameters.PropertyTable);
+			model.FilePath = "/nowhere/" + configName + LanguageExplorerConstants.DictionaryConfigurationFileExtension;
+			string xhtmlPath = null;
+			try
+			{
+				//SUT
+				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { entry.Hvo }, null, model, _flexComponentParameters.PropertyTable, Cache, _recordList);
+				// Since this is for the LexEdit Preview, the config name will be appended with '-Preview'
+				// Note: because the project name is the file name, and there is no file behind our cache, Name is the empty string
+				var xpath = $"/html/head/title[text()='{configName}-Preview - {Cache.ProjectId.Name}']";
+				AssertThatXmlIn.File(xhtmlPath).HasSpecifiedNumberOfMatchesForXpath(xpath, 1);
 			}
 			finally
 			{
@@ -8562,8 +8840,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
-			var multiRunString = MakeBidirectionalTss(new[] { "דוד", " et ", "דניאל" });
-			entry.Bibliography.set_String(_wsHe, multiRunString);
+			var multiRunString = MakeBidirectionalTss(new[] { "דוד", " et ", "דניאל" }, Cache);
+			var wsHe = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("he");
+			entry.Bibliography.set_String(wsHe, multiRunString);
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
 			const string nestedEn = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@dir='rtl']/span[@lang='en']/span[@dir='ltr']";
@@ -8590,11 +8869,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
-			var multiRunString = MakeBidirectionalTss(new[] { "ירמיהו", " was a bullfrog." });
-			entry.Bibliography.set_String(_wsHe, multiRunString);
+			var multiRunString = MakeBidirectionalTss(new[] { "ירמיהו", " was a bullfrog." }, Cache);
+			var wsHe = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("he");
+			entry.Bibliography.set_String(wsHe, multiRunString);
 			// Right-to-Left
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null, true);
 																															 //SUT
+			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 			const string nestedEn = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@lang='en']/span[@dir='ltr']";
 			const string nestedHe = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@lang='he']";
@@ -8671,7 +8952,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var comRefType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryCollection, comRefTypeName, "cf", string.Empty, string.Empty);
 			CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry3, compareReferencedEntry2 });
 			CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry5, compareReferencedEntry4, compareReferencedEntry1 });
-			Assert.IsNotNull(comRefType);
+			Assert.That(comRefType, Is.Not.Null);
 
 			var mainEntryNode = ModelForCrossReferences(new[] { comRefType.Guid.ToString() });
 			// SUT
@@ -9002,9 +9283,70 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 
 				// Test that variantformentrybackref items are in alphabetical order
-				Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture), Is.LessThan(result.IndexOf("headwordB", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
-				Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture), Is.LessThan(result.IndexOf("headwordC", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
-				Assert.That(result.IndexOf("headwordC", StringComparison.InvariantCulture), Is.LessThan(result.IndexOf("headwordD", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
+				Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf("headwordB", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
+				Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf("headwordC", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
+				Assert.That(result.IndexOf("headwordC", StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf("headwordD", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
+
+				// Test that variantformentrybackref is before variantentrytypes. LT-20622 Order of Type and Form is important.
+				Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf("variantentrytypes", StringComparison.InvariantCulture)), "variant form not before variant type");
+
+			}
+		}
+
+		/// <summary>
+		/// LT-20622 Order of Type and Form is important.
+		/// </summary>
+		[Test]
+		public void GenerateXHTMLForEntry_TypeBeforeForm()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+
+			using (CreateVariantForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordA"), new Guid("00000000-0000-0000-0000-000000000001")))
+			{
+				var variantTypeNameNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "Name",
+					DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+				};
+				var variantTypeNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "VariantEntryTypesRS",
+					CSSClassNameOverride = "variantentrytypes",
+					Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
+				};
+				var formNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "OwningEntry",
+					SubField = "MLHeadWord",
+					IsEnabled = true,
+					DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+				};
+				var variantFormNode = new ConfigurableDictionaryNode
+				{
+					DictionaryNodeOptions = GetFullyEnabledListOptions(Cache, ListIds.Variant),
+					FieldDescription = "VariantFormEntryBackRefs",
+					Children = new List<ConfigurableDictionaryNode> { variantTypeNode, formNode }
+				};
+				var mainEntryNode = new ConfigurableDictionaryNode
+				{
+					Children = new List<ConfigurableDictionaryNode> { variantFormNode },
+					FieldDescription = "LexEntry"
+				};
+
+				DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
+				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
+
+				//SUT
+				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
+
+				// Test that variantentrytypes is before variantformentrybackref
+				Assert.That(result.IndexOf("variantentrytypes", StringComparison.InvariantCulture),
+					Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "variant type not before variant form");
 			}
 		}
 
@@ -9246,8 +9588,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 			var variant = CreateInterestingLexEntry(Cache);
-			CreateVariantForm(Cache, entry, variant, "Spelling Variant"); // we need a real Variant Type to pass the list options test
-																		  // Create a folder in the project to hold the media files
+			// we need a real Variant Type to pass the list options test
+			CreateVariantForm(Cache, entry, variant, "Spelling Variant");
+			// Create a folder in the project to hold the media files
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
 			// Create and fill in the media files
@@ -9273,10 +9616,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[TestCase("\ud81b\udf00\ud81b\udf55", false, "\ud81b\udf00\ud81b\udf55")]
 		[TestCase("a\ud81b\udf55", false, "a\ud81b\udf55")]
 		[TestCase("\ud81b\udf00test", false, "\ud81b\udf00t")]
-		public void GetIndexLettersOfHeadword(string headWord, bool onlyFirstLetter, string expected)
+		public void GetIndexLettersOfSortWord(string sortWord, bool onlyFirstLetter, string expected)
 		{
-			var actual = typeof(LcmXhtmlGenerator).GetMethod("GetIndexLettersOfHeadword", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] {headWord, onlyFirstLetter});
-			Assert.AreEqual(expected, actual, $"{onlyFirstLetter} {headWord}");
+			var actual = typeof(LcmXhtmlGenerator)
+				.GetMethod("GetIndexLettersOfSortWord", BindingFlags.NonPublic | BindingFlags.Static)
+				.Invoke(null, new object[] { sortWord, onlyFirstLetter });
+			Assert.AreEqual(expected, actual, $"{onlyFirstLetter} {sortWord}");
 		}
 
 
@@ -9297,7 +9642,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// SUT
 			LcmXhtmlGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo }, settings, currentPage, adjacentPage, 2,
 				out var current, out var adjacent);
-			Assert.IsNull(adjacent, "The Adjacent page should have been consumed into the current page");
+			Assert.That(adjacent, Is.Null, "The Adjacent page should have been consumed into the current page");
 			Assert.AreEqual(0, current.Item1, "Current page should start at 0");
 			Assert.AreEqual(2, current.Item2, "Current page should end at 2");
 		}
@@ -9318,7 +9663,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, "");
 			// SUT
 			LcmXhtmlGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo }, settings, currentPage, adjPage, 2, out var current, out var adjacent);
-			Assert.IsNull(adjacent, "The Adjacent page should have been consumed into the current page");
+			Assert.That(adjacent, Is.Null, "The Adjacent page should have been consumed into the current page");
 			Assert.AreEqual(0, current.Item1, "Current page should start at 0");
 			Assert.AreEqual(2, current.Item2, "Current page should end at 2");
 		}
@@ -9475,7 +9820,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Assert.AreEqual(2, entries.Count, "Not enough entries generated");
 				Assert.That(entries[0], Does.Contain(thirdEntry.HeadWord.Text));
 				Assert.That(entries[1], Does.Contain(fourthEntry.HeadWord.Text));
-				Assert.IsNull(adjacent);
+				Assert.That(adjacent, Is.Null);
 			}
 			finally
 			{
@@ -9544,6 +9889,37 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var tsResult = TsStringUtils.MakeString(result, Cache.DefaultAnalWs);
 			Assert.False(TsStringUtils.IsNullOrEmpty(tsResult), "Results should have been generated");
 			Assert.That(tsResult.get_IsNormalizedForm(FwNormalizationMode.knmNFC), "Resulting XHTML should be NFComposed");
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_CompareRelations_ComplexSituation_CustomSort()
+		{
+			CoreWritingSystemDefinition ws = Cache.LangProject.DefaultVernacularWritingSystem;
+			var customRule = new IcuRulesCollationDefinition("standard")
+			{
+				IcuRules = "& [last tertiary ignorable] = ‘",
+				OwningWritingSystemDefinition = ws
+			};
+			customRule.Validate(out _);
+			ws.DefaultCollation = customRule;
+			var mainEntry = CreateInterestingLexEntry(Cache, "MainEntry");
+
+			var compareReferencedEntry1 = CreateInterestingLexEntry(Cache, "atest", "atest comparable");
+			var compareReferencedEntry2 = CreateInterestingLexEntry(Cache, "ctest", "ctest comparable");
+			var compareReferencedEntry3 = CreateInterestingLexEntry(Cache, "‘mtest", "‘mtest comparable");
+			var compareReferencedEntry4 = CreateInterestingLexEntry(Cache, "ztest", "ztest comparable");
+			const string comRefTypeName = "Compare";
+			var comRefType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryCollection, comRefTypeName, "cf", string.Empty, string.Empty);
+			CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry4, compareReferencedEntry1, compareReferencedEntry3, compareReferencedEntry2 });
+			Assert.That(comRefType, Is.Not.Null);
+
+			var mainEntryNode = ModelForCrossReferences(new[] { comRefType.Guid.ToString() });
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, DefaultSettings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(CrossRefOwnerTypeXpath(comRefTypeName), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(1, "atest"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(2, "ctest"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(3, "‘mtest"), 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(4, "ztest"), 1);
 		}
 
 		private static void DeleteTempXhtmlAndCssFiles(string xhtmlPath)
@@ -9663,6 +10039,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		/// <param name="cache"></param>
 		/// <param name="headword">Optional: defaults to 'Citation'</param>
 		/// <param name="gloss">Optional: defaults to 'gloss'</param>
+		/// <param name="definition">Optional: default is to omit</param>
 		/// <returns></returns>
 		internal static ILexEntry CreateInterestingLexEntry(LcmCache cache, string headword = "Citation", string gloss = "gloss", string definition = null)
 			{
@@ -9726,7 +10103,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		internal static ILexEntryRef CreateVariantForm(LcmCache cache, IVariantComponentLexeme main, ILexEntry variantForm, string type = TestVariantName)
 		{
 			var owningList = cache.LangProject.LexDbOA.VariantEntryTypesOA;
-			Assert.IsNotNull(owningList, "No VariantEntryTypes property on Lexicon object.");
+			Assert.That(owningList, Is.Not.Null, "No VariantEntryTypes property on Lexicon object.");
 			var varType = owningList.ReallyReallyAllPossibilities.LastOrDefault(poss => poss.Name.AnalysisDefaultWritingSystem.Text == type) as ILexEntryType;
 			if (varType == null && type != null) // if this type doesn't exist, create it
 			{
@@ -9793,14 +10170,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		/// If refTypeReverseName is specified, generates a Ref of an Asymmetric Type (EntryOrSenseTree) with the specified reverse name;
 		/// otherwise, generates a Ref of a Symmetric Type (EntryOrSenseSequence).
 		/// </summary>
-		private void CreateLexicalReference(ICmObject mainEntry, ICmObject referencedForm, string refTypeName, string refTypeReverseName = null)
+		internal void CreateLexicalReference(LcmCache cache, ICmObject mainEntry, ICmObject referencedForm, string refTypeName, string refTypeReverseName = null)
 		{
-			CreateLexicalReference(mainEntry, referencedForm, null, refTypeName, refTypeReverseName);
+			CreateLexicalReference(cache, mainEntry, referencedForm, null, refTypeName, refTypeReverseName);
 		}
 
-		private void CreateLexicalReference(ICmObject firstEntry, ICmObject secondEntry, ICmObject thirdEntry, string refTypeName, string refTypeReverseName = null)
+		private void CreateLexicalReference(LcmCache cache, ICmObject firstEntry, ICmObject secondEntry, ICmObject thirdEntry, string refTypeName, string refTypeReverseName = null)
 		{
-			CreateLexicalReference(Cache, firstEntry, secondEntry, thirdEntry, _wsEn, refTypeName, refTypeReverseName);
+			CreateLexicalReference(cache, firstEntry, secondEntry, thirdEntry, _wsEn, refTypeName, refTypeReverseName);
 		}
 
 		internal static void CreateLexicalReference(LcmCache cache, ICmObject firstEntry, ICmObject secondEntry, ICmObject thirdEntry, int wsEn, string refTypeName, string refTypeReverseName = null)
@@ -9840,15 +10217,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var lrt = cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
 			referencePossibilities.Add(lrt);
 			lrt.MappingType = (int)type;
-			lrt.Name.set_String(wsEn, name);
-			lrt.Abbreviation.set_String(wsEn, abbr);
+			lrt.Name.set_String(cache.DefaultAnalWs, name);
+			lrt.Abbreviation.set_String(cache.DefaultAnalWs, abbr);
 			if (!string.IsNullOrEmpty(revName))
 			{
-				lrt.ReverseName.set_String(wsEn, revName);
+				lrt.ReverseName.set_String(cache.DefaultAnalWs, revName);
 			}
 			if (!string.IsNullOrEmpty(revAbbr))
 			{
-				lrt.ReverseAbbreviation.set_String(wsEn, revAbbr);
+				lrt.ReverseAbbreviation.set_String(cache.DefaultAnalWs, revAbbr);
 			}
 			return lrt;
 		}
@@ -9872,10 +10249,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			return DictionaryConfigurationImportController.AddPublicationType(name, cache);
 		}
 
-		private static void AddHeadwordToEntry(ILexEntry entry, string headword, int wsId)
+		internal static void AddHeadwordToEntry(ILexEntry entry, string headword, int wsId)
 		{
 			// The headword field is special: it uses Citation if available, or LexemeForm if Citation isn't filled in
 			entry.CitationForm.set_String(wsId, TsStringUtils.MakeString(headword, wsId));
+		}
+
+		internal static void AddLexemeFormToEntry(ILexEntry entry, string lexemeForm, LcmCache cache)
+		{
+			entry.LexemeFormOA = cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
+			entry.LexemeFormOA.Form.SetVernacularDefaultWritingSystem(lexemeForm);
 		}
 
 		internal static ILexPronunciation AddPronunciationToEntry(ILexEntry entry, string content, int wsId, LcmCache cache)
@@ -10006,31 +10389,36 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			return builder.GetString();
 		}
 
-		private ITsString MakeBidirectionalTss(IEnumerable<string> content)
+		/// <remarks>Automatically alternates runs between 'he' (Hebrew) and 'en'.</remarks>
+		internal static ITsString MakeBidirectionalTss(IEnumerable<string> content, LcmCache cache)
 		{
-			EnsureHebrewExists();
+			var wsHe = EnsureHebrewExists(cache);
+			var wsEn = cache.ServiceLocator.WritingSystems.AllWritingSystems
+				.First(ws => ws.Id == "en").Handle;
 			// automatically alternates runs between 'en' and 'he' (Hebrew)
 			var tsFact = TsStringUtils.TsStrFactory;
-			var lastWs = _wsEn;
+			var lastWs = wsEn;
 			var builder = tsFact.GetIncBldr();
 			foreach (var runContent in content)
 			{
-				lastWs = lastWs == _wsEn ? _wsHe : _wsEn; // switch ws for each run
+				lastWs = lastWs == wsEn ? wsHe : wsEn; // switch ws for each run
 				builder.AppendTsString(tsFact.MakeString(runContent, lastWs));
 			}
 			return builder.GetString();
 		}
 
-		private void EnsureHebrewExists()
+		private static int EnsureHebrewExists(LcmCache cache)
 		{
-			if (_wsHe > 0)
-			{
-				return;
-			}
-			var wsManager = Cache.ServiceLocator.WritingSystemManager;
-			wsManager.GetOrSet("he", out var hebrew);
+			var heWs =
+				cache.ServiceLocator.WritingSystems.AllWritingSystems.FirstOrDefault(ws =>
+					ws.Id == "he");
+			if (heWs != null)
+				return heWs.Handle;
+			var wsManager = cache.ServiceLocator.WritingSystemManager;
+			CoreWritingSystemDefinition hebrew;
+			wsManager.GetOrSet("he", out hebrew);
 			hebrew.RightToLeftScript = true;
-			_wsHe = hebrew.Handle;
+			return hebrew.Handle;
 		}
 
 		private void SetDictionaryNormalDirection(InheritableStyleProp<TriStateBool> rightToLeft)
@@ -10166,6 +10554,32 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			entry.MorphoSyntaxAnalysesOC.Add(msa);
 			msa.PartOfSpeechRA = pos;
 			return msa;
+		}
+	}
+
+	internal class CollatorForTest : IDisposable
+	{
+		private Collator collator;
+
+		public static implicit operator Collator(CollatorForTest col) => col.collator;
+
+		public CollatorForTest(string vernWs)
+		{
+			Collator col = null;
+			try
+			{
+				var icuLocale = new Icu.Locale(vernWs).Name;
+				col = Collator.Create(icuLocale);
+			}
+			catch (Exception)
+			{
+				// no Collator can be created, not fatal, just means people might not like their letter headers
+			}
+		}
+
+		public void Dispose()
+		{
+			collator?.Dispose();
 		}
 	}
 }

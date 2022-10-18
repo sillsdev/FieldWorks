@@ -849,7 +849,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			var filename = Environment.OSVersion.Platform == PlatformID.Unix ? "/junk.jpg" : "c:\\junk.jpg";
 			var pict = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(filename, TsStringUtils.MakeString("Test picture", Cache.DefaultVernWs), CmFolderTags.LocalPictures);
-			Assert.IsNotNull(pict);
+			Assert.That(pict, Is.Not.Null);
 
 			ShowForm(TestLanguages.English, DisplayType.kNormal);
 			var mockedSelection = MockRepository.GenerateMock<IVwSelection>();
@@ -1045,7 +1045,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.AreEqual(DummyBasicView.kSecondParaEng.Substring(5) + DummyBasicView.kSecondParaEng, para2.Contents.Text);
 			Assert.AreEqual("BT1", para1.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text);
 			Assert.AreEqual("BT2", para1.SegmentsOS[1].FreeTranslation.AnalysisDefaultWritingSystem.Text);
-			Assert.IsNull(para2.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text);
+			Assert.That(para2.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text, Is.Null);
 			Assert.AreEqual("BT3", para2.SegmentsOS[1].FreeTranslation.AnalysisDefaultWritingSystem.Text);
 		}
 #endregion

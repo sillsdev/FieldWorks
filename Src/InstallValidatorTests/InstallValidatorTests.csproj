@@ -6,13 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="All" />
+    <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.9.0" />
-    <PackageReference Include="SIL.FwBuildTasks.Lib" Version="10.0.1-beta0003" />
-    <PackageReference Include="SIL.TestUtilities" Version="9.0.0-beta0076" />
+    <PackageReference Include="SIL.TestUtilities" Version="11.0.0-beta0041" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Build\Src\FwBuildTasks\FwBuildTasks.csproj" />
     <ProjectReference Include="..\InstallValidator\InstallValidator.csproj" />
   </ItemGroup>
 

@@ -164,10 +164,10 @@ std::vector<OLECHAR> StringTable::ConvertUtf8ToUtf16(const std::string& _value)
 
 	// Pre-flight conversion to resize target buffer to correct length.
 	value16.resize(UnicodeConverter::Convert(_value.data(), _value.size(),
-		&value16[0], value16.size()));  // Note: Target buffer length is 0 for pre-flight.
+		reinterpret_cast<UChar *>(&value16[0]), value16.size()));  // Note: Target buffer length is 0 for pre-flight.
 
 	// Repeat conversion with target buffer of correct length.
-	UnicodeConverter::Convert(_value.data(), _value.size(), &value16[0], value16.size());
+	UnicodeConverter::Convert(_value.data(), _value.size(), reinterpret_cast<UChar *>(&value16[0]), value16.size());
 
 	return value16;
 }

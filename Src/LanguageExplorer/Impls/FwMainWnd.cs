@@ -15,7 +15,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using DialogAdapters;
-using IWshRuntimeLibrary;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
@@ -43,6 +42,8 @@ using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Reporting;
+using WindowsShortcutFactory;
+using static System.Windows.Forms.LinkLabel;
 using File = System.IO.File;
 using FileUtils = SIL.LCModel.Utils.FileUtils;
 using Win32 = SIL.FieldWorks.Common.FwUtils.Win32;
@@ -222,6 +223,7 @@ namespace LanguageExplorer.Impls
 					{ Command.CmdImportSFMLexicon, CmdImportSFMLexicon },
 					{ Command.CmdImportLinguaLinksData, CmdImportLinguaLinksData },
 					{ Command.CmdImportLiftData, CmdImportLiftData },
+					{ Command.CmdImportCombineData, CmdImportCombineData },
 					{ Command.CmdImportInterlinearSfm, CmdImportInterlinearSfm },
 					{ Command.CmdImportWordsAndGlossesSfm, CmdImportWordsAndGlossesSfm },
 					{ Command.CmdImportInterlinearData, CmdImportInterlinearData },
@@ -918,7 +920,11 @@ namespace LanguageExplorer.Impls
 				if (!_toolsReportedToday.Contains(toolName))
 				{
 					_toolsReportedToday.Add(toolName);
-					UsageReporter.SendNavigationNotice("SwitchToTool/{0}/{1}", areaName, toolName);
+					DesktopAnalytics.Analytics.Track("SwitchToTool", new Dictionary<string, string>
+					{
+						{"area", areaName},
+						{"tool", toolName}
+					});
 				}
 
 				_currentTool.Activate(_majorFlexComponentParameters);
@@ -2274,21 +2280,25 @@ namespace LanguageExplorer.Impls
 			}
 			else
 			{
-				WshShell shell = new WshShell();
-				var filename = _flexApp.Cache.ProjectId.UiName;
-				filename = Path.ChangeExtension(filename, "lnk");
-				var linkPath = Path.Combine(directory, filename);
-				var link = (IWshShortcut)shell.CreateShortcut(linkPath);
-				if (link.FullName != linkPath)
+				try
+				{
+					var filename = _flexApp.Cache.ProjectId.UiName;
+					filename = Path.ChangeExtension(filename, "lnk");
+					var linkPath = Path.Combine(directory, filename);
+					using var shortcut = new WindowsShortcut
+					{
+						Path = _flexApp.ProductExecutableFile,
+						Description = description,
+						Arguments = applicationArguments,
+						IconLocation = _flexApp.ProductExecutableFile + ",0"
+					};
+
+					shortcut.Save(linkPath);
+				}
+				catch
 				{
 					MessageBox.Show(ActiveForm, string.Format(LanguageExplorerResources.ksCannotCreateShortcut, _flexApp.ProductExecutableFile + " " + applicationArguments), LanguageExplorerResources.ksCannotCreateShortcutCaption, MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-					return;
 				}
-				link.TargetPath = _flexApp.ProductExecutableFile;
-				link.Arguments = applicationArguments;
-				link.Description = description;
-				link.IconLocation = link.TargetPath + ",0";
-				link.Save();
 			}
 		}
 

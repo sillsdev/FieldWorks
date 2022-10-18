@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2020 SIL International
+// Copyright (c) 2010-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		private void ReadDataFromUnicodeFiles()
 		{
-			var icuDir = CustomIcu.DefaultDataDirectory;
+			var icuDir = PUAInstaller.IcuDir;
 			if (string.IsNullOrEmpty(icuDir))
 			{
 				throw new Exception("An error occurred: ICU directory not found. Registry value for ICU not set?");
@@ -116,6 +116,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			var unicodeDataFilename = Path.Combine(icuDir, "UnicodeDataOverrides.txt");
 			if (!File.Exists(unicodeDataFilename))
 			{
+				LogFile.AddErrorLine($"{unicodeDataFilename} is not present. Skipping overrides");
 				return;
 			}
 			using (var reader = File.OpenText(unicodeDataFilename))
@@ -405,7 +406,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			get
 			{
-				var icuDir = CustomIcu.DefaultDataDirectory;
+				var icuDir = PUAInstaller.IcuDir;
 				if (string.IsNullOrEmpty(icuDir))
 				{
 					throw new Exception("An error occurred: ICU directory not found. Registry value for ICU not set?");
@@ -415,7 +416,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				{
 					icuDir = icuDir.Substring(0, icuDir.Length - 1);
 				}
-				return Path.GetDirectoryName(icuDir);   // strip the ICU specific subdirectory (FWR-2803)
+				// icuDir is in a form similar to "C:\ProgramData\SIL\Icu54". We need to
+				// strip off  the "Icuxx" directory (FWR-2803, LT-20599).
+				return Path.GetDirectoryName(icuDir);
 			}
 		}
 
@@ -423,11 +426,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 		private void m_btnSave_Click(object sender, EventArgs e)
 		{
-			if (m_dictCustomChars.Count == 0)
-			{
-				return;
-			}
-
 			var customCharsFile = CustomCharsFile;
 			string oldFile = null;
 			if (File.Exists(customCharsFile))
@@ -552,7 +550,16 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// Get the name of the help file.
 		/// </summary>
 		public string HelpFile => Path.Combine(FwDirectoryFinder.CodeDirectory, GetHelpString(FwUtilsConstants.UserHelpFile));
-
 		#endregion
+
+		private void info_Click(object sender, EventArgs e)
+		{
+			MessageBoxUtils.Show(this,
+				$"Icu Version: {CustomIcu.Version}{Environment.NewLine}" +
+				$"ICU_DATA location: {CustomIcu.DefaultDataDirectory}{Environment.NewLine}" +
+				$"Logging: {LogFile.IsLogging} [run with -l to turn on logging, or -v for verbose]{Environment.NewLine}" +
+				$"Log file location: {LogFile.LogPath}",
+				"Details");
+		}
 	}
 }

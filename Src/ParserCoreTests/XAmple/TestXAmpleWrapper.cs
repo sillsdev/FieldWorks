@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 		{
 			using (var wrapper = InitHelper())
 			{
-				Assert.IsNotNull(wrapper);
+				Assert.That(wrapper, Is.Not.Null);
 			}
 		}
 
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			{
 				LoadFilesHelper(xAmple);
 				var parsedWord = xAmple.ParseWord("Hello");
-				Assert.IsNotNull(parsedWord);
+				Assert.That(parsedWord, Is.Not.Null);
 				Assert.IsNotEmpty(parsedWord);
 			}
 		}
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			{
 				LoadFilesHelper(xAmple);
 				var tracedWord = xAmple.TraceWord("Hello", "Hello");
-				Assert.IsNotNull(tracedWord);
+				Assert.That(tracedWord, Is.Not.Null);
 				Assert.IsNotEmpty(tracedWord);
 			}
 		}

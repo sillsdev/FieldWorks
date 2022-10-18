@@ -95,6 +95,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		internal void DoImport()
 		{
+			TrackingHelper.TrackImport("dictionary", "DictionaryConfiguration", ImportExportStep.Launched);
+
 			Debug.Assert(NewConfigToImport != null);
 			ImportCustomFields(_importLiftLocation);
 			// If the configuration to import has the same label as an existing configuration in the project folder
@@ -147,7 +149,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 					? DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName
 					: DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
 			var isCustomizedOriginal = DictionaryConfigurationManagerController.IsConfigurationACustomizedOriginal(NewConfigToImport, configDir, _cache);
-			UsageReporter.SendEvent("DictionaryConfigurationImport", "Import", "Import Config", $"Import of [{configType}{(isCustomizedOriginal ? string.Empty : "-Custom")}]:{(ImportHappened ? "succeeded" : "failed")}", 0);
+			TrackingHelper.TrackImport("dictionary", "DictionaryConfiguration",
+				ImportHappened ? ImportExportStep.Succeeded : ImportExportStep.Failed,
+				new Dictionary<string, string>
+				{
+					{ "configType", configType.ToString() },
+					{ "isCustom", isCustomizedOriginal.ToString() }
+				});
 		}
 
 		private void ImportStyles(string importStylesLocation)

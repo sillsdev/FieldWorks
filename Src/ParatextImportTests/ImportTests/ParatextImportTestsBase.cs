@@ -556,7 +556,7 @@ namespace ParatextImport.ImportTests
 			}
 			else
 			{
-				Assert.IsNull(footnote.FootnoteMarker.Text);
+				Assert.That(footnote.FootnoteMarker.Text, Is.Null);
 			}
 			ILcmOwningSequence<IStPara> footnoteParas = footnote.ParagraphsOS;
 			Assert.AreEqual(1, footnoteParas.Count);
@@ -577,7 +577,7 @@ namespace ParatextImport.ImportTests
 			else
 			{
 				Assert.AreEqual(1, para.TranslationsOC.Count);
-				Assert.IsNull(para.GetBT().Translation.AnalysisDefaultWritingSystem.Text);
+				Assert.That(para.GetBT().Translation.AnalysisDefaultWritingSystem.Text, Is.Null);
 			}
 		}
 

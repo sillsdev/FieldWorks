@@ -20,17 +20,17 @@ namespace FieldWorks.TestUtilities.Attributes
 	public class HandleApplicationThreadExceptionAttribute : TestActionAttribute
 	{
 		/// <inheritdoc />
-		public override void BeforeTest(ITest testDetails)
+		public override void BeforeTest(ITest test)
 		{
-			base.BeforeTest(testDetails);
+			base.BeforeTest(test);
 
 			Application.ThreadException += OnThreadException;
 		}
 
 		/// <inheritdoc />
-		public override void AfterTest(ITest testDetails)
+		public override void AfterTest(ITest test)
 		{
-			base.AfterTest(testDetails);
+			base.AfterTest(test);
 
 			Application.ThreadException -= OnThreadException;
 		}

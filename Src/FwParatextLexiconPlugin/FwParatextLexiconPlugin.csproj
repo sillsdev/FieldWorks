@@ -4,21 +4,17 @@
     <UseWindowsForms>true</UseWindowsForms>
     <AssemblyName>FwParatextLexiconPluginInternal</AssemblyName>
     <RootNamespace>SIL.FieldWorks.ParatextLexiconPlugin</RootNamespace>
-    <Description>FwParatextLexiconPlugin</Description>
-    <NoWarn>1701;1702;67</NoWarn>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>67</NoWarn>
+    <!-- If ILRepackTargetsFile is not specified, ILRepack will automatically try to repack the entire output directory -->
+    <ILRepackTargetsFile>$(MSBuildThisFileFullPath)</ILRepackTargetsFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="All" />
+    <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
     <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" PrivateAssets="All" />
-    <PackageReference Include="ParatextData" Version="9.2.5-beta1" />
-    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0002" />
+    <PackageReference Include="ParatextData" Version="9.2.6.2" />
+    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0059" />
     <PackageReference Include="System.DirectoryServices.AccountManagement" Version="4.7.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 
   <ItemGroup>
@@ -79,7 +75,7 @@
       <RepackAssemblies Include="$(OutputPath)/SIL.LCModel.Utils.dll" />
       <RepackAssemblies Include="$(OutputPath)/SIL.Machine.dll" />
       <RepackAssemblies Include="$(OutputPath)/SIL.WritingSystems.dll" />
-      <RepackAssemblies Include="$(OutputPath)/SIL.HermitCrab.dll" />
+      <RepackAssemblies Include="$(OutputPath)/SIL.Machine.Morphology.HermitCrab.dll" />
       <RepackAssemblies Include="$(OutputPath)/SIL.Lexicon.dll" />
       <RepackAssemblies Include="$(OutputPath)/ParserCore.dll" />
       <RepackAssemblies Include="$(OutputPath)/FwUtils.dll" />

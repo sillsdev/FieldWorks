@@ -29,7 +29,7 @@ using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorerTests.Impls
 {
-#if RANDYTODO
+	#if RANDYTODO_OR_JASONTODO
 	public class UploadToWebonaryControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
 		private bool _isDisposed;
@@ -81,7 +81,7 @@ namespace LanguageExplorerTests.Impls
 		{
 			try
 			{
-				ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
+				ConfiguredLcmGenerator.Init();
 				Dispose();
 			}
 			catch (Exception err)
@@ -160,7 +160,7 @@ namespace LanguageExplorerTests.Impls
 				mockView.Model.Configurations = testConfig;
 				mockView.Model.Reversals = reversalConfig;
 				// Build model sufficient to generate xhtml and css
-				ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
+				ConfiguredLcmGenerator.Init();
 				var mainHeadwordNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "HeadWord",
@@ -289,8 +289,8 @@ namespace LanguageExplorerTests.Impls
 			{
 				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes("webonary:webonary")));
 				var responseText = ConnectAndUpload(client);
-				Assert.That(responseText, Is.Not.StringContaining("authentication failed"));
-				Assert.That(responseText, Is.Not.StringContaining("Wrong username or password"));
+				Assert.That(responseText, Does.Not.Contain("authentication failed"));
+				Assert.That(responseText, Does.Not.Contain("Wrong username or password"));
 			}
 		}
 
@@ -303,7 +303,7 @@ namespace LanguageExplorerTests.Impls
 			{
 				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes("webonary:webonary")));
 				var responseText = ConnectAndUpload(client);
-				Assert.That(responseText, Is.StringContaining("extracted successfully"));
+				Assert.That(responseText, Does.Contain("extracted successfully"));
 			}
 		}
 
@@ -312,11 +312,11 @@ namespace LanguageExplorerTests.Impls
 		[Ignore("Used for manual testing against a real Webonary instance")]
 		public void RealUploadWithBadDataReportsErrorInProcessing()
 		{
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator))
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable))
 			{
 				var view = new MockWebonaryDlg
 				{
-					Model = new UploadToWebonaryModel(m_propertyTable)
+					Model = new UploadToWebonaryModel(_flexComponentParameters.PropertyTable)
 					{
 						UserName = "webonary",
 						Password = "webonary"
@@ -339,7 +339,7 @@ namespace LanguageExplorerTests.Impls
 		[Ignore("Takes too long to timeout. Enable if want to test.")]
 		public void RealUploadToWebonaryHandlesNetworkErrors()
 		{
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator))
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable))
 			{
 				var view = new MockWebonaryDlg();
 				var filepath = "../../Src/xWorks/xWorksTests/lubwisi-d-new.zip";
@@ -660,13 +660,13 @@ namespace LanguageExplorerTests.Impls
 		public void DeleteDictionaryHandles404()
 		{
 			// Test with an exception which indicates a redirect should happen
-			var redirectException = new WebonaryClient.WebonaryException(new WebException("File Not Found"));
+			var redirectException = new WebonaryException(new WebException("File Not Found"));
 			redirectException.StatusCode = HttpStatusCode.NotFound;
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, redirectException, new byte[0], HttpStatusCode.NotFound))
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, redirectException, new byte[0], HttpStatusCode.NotFound))
 			{
 				var view = new MockWebonaryDlg()
 				{
-					Model = new UploadToWebonaryModel(m_propertyTable)
+					Model = new UploadToWebonaryModel(_flexComponentParameters.PropertyTable)
 					{
 						SiteName = "test-india",
 						UserName = "software",
@@ -684,11 +684,11 @@ namespace LanguageExplorerTests.Impls
 			var responseString = "Deleted 1000 files";
 			var response = Encoding.UTF8.GetBytes(responseString);
 			// Test with an exception which indicates a redirect should happen
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, response))
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, null, response))
 			{
 				var view = new MockWebonaryDlg()
 				{
-					Model = new UploadToWebonaryModel(m_propertyTable)
+					Model = new UploadToWebonaryModel(_flexComponentParameters.PropertyTable)
 					{
 						SiteName = "test-india",
 						UserName = "software",
@@ -781,7 +781,17 @@ namespace LanguageExplorerTests.Impls
 			/// <summary>
 			/// URI to upload data to.
 			/// </summary>
-			private string UploadURI { get; set; }
+			public string UploadURI { get; set; }
+
+			internal override bool UseJsonApi => false;
+
+			/// <summary>
+			/// This constructor should be used in tests that will actually hit a server, and are marked [ByHand]
+			/// </summary>
+			public MockUploadToWebonaryController(LcmCache cache, IPropertyTable propertyTable)
+				: base(cache, propertyTable, null)
+			{
+			}
 
 			/// <summary>
 			/// Tests using this constructor do not need to be marked [ByHand]; an exception, response, and response code can all be set.
@@ -798,9 +808,8 @@ namespace LanguageExplorerTests.Impls
 			private sealed class MockWebonaryClient : IWebonaryClient
 			{
 				private readonly WebonaryException _exceptionResponse;
-				private readonly object _responseContents;
-
-				internal MockWebonaryClient(WebonaryException exceptionResponse, object responseContents, HttpStatusCode responseStatus)
+				private readonly byte[] _responseContents;
+				internal MockWebonaryClient(WebonaryException exceptionResponse, byte[] responseContents, HttpStatusCode responseStatus)
 				{
 					_exceptionResponse = exceptionResponse;
 					_responseContents = responseContents;
@@ -857,14 +866,14 @@ namespace LanguageExplorerTests.Impls
 				{
 					if (_exceptionResponse != null)
 						throw _exceptionResponse;
-					return (string)_responseContents;
+					return Encoding.UTF8.GetString(_responseContents);
 				}
 
 				private byte[] MockByteArrayResponse()
 				{
 					if (_exceptionResponse != null)
 						throw _exceptionResponse;
-					return (byte[])_responseContents;
+					return _responseContents;
 				}
 			}
 
@@ -961,5 +970,5 @@ namespace LanguageExplorerTests.Impls
 			}
 		}
 	}
-#endif
+	#endif
 }

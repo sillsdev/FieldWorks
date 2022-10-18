@@ -13,6 +13,9 @@ namespace LanguageExplorer.LIFT
 		/// <summary>When there's a conflict, keep both the existing data and the data in the LIFT file.</summary>
 		MsKeepBoth = 3,
 		/// <summary>Throw away any existing entries/senses/... that are not in the LIFT file.</summary>
-		MsKeepOnlyNew = 4
+		MsKeepOnlyNew = 4,
+		/// <summary>When there's a conflict, keep the data in the LIFT file. Throw away moved entries/senses/.
+		/// This import was designed to import data from The Combine</summary>
+		MsTheCombine = 5
 	}
 }

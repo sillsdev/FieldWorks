@@ -17,7 +17,7 @@ namespace SIL.FieldWorks.Resources
 		#region Construction and destruction
 
 		/// <summary />
-		internal ResourceHelperImpl()
+		public ResourceHelperImpl()
 		{
 			InitializeComponent();
 		}

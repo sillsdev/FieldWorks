@@ -1,7 +1,5 @@
-// SilSidePane, Copyright 2010-2020 SIL International. All rights reserved.
-// SilSidePane is licensed under the Code Project Open License (CPOL), <http://www.codeproject.com/info/cpol10.aspx>.
-// Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
-// Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
+// Copyright (c) 2016 SIL International
+// SilOutlookBar is licensed under the MIT license.
 
 using System.Collections;
 using LanguageExplorer.Impls.SilSidePane;
@@ -53,7 +51,7 @@ namespace LanguageExplorerTests.Impls.SilSidePane
 			using (var dialog = new NavPaneOptionsDlg(_tabs))
 			{
 				dialog.Show();
-				Assert.IsNotNull(dialog);
+				Assert.That(dialog, Is.Not.Null);
 			}
 		}
 
@@ -63,7 +61,7 @@ namespace LanguageExplorerTests.Impls.SilSidePane
 			using (var dialog = new NavPaneOptionsDlg(null))
 			{
 				dialog.Show();
-				Assert.IsNotNull(dialog);
+				Assert.That(dialog, Is.Not.Null);
 			}
 		}
 
@@ -200,7 +198,7 @@ namespace LanguageExplorerTests.Impls.SilSidePane
 			using (var dialog = new NavPaneOptionsDlg(_tabs))
 			{
 				dialog.Show();
-				Assert.IsNull(dialog.tabListBox.SelectedItem, "This test doesn't make sense if a tab is selected");
+				Assert.That(dialog.tabListBox.SelectedItem, Is.Null, "This test doesn't make sense if a tab is selected");
 				Assert.False(dialog.btn_Down.Enabled, "Down button should be disabled when no tab is selected");
 				Assert.False(dialog.btn_Up.Enabled, "Up button should be disabled when no tab is selected");
 			}
@@ -248,7 +246,7 @@ namespace LanguageExplorerTests.Impls.SilSidePane
 				dialog.tabListBox.SetSelected(1, true);
 				// Click Reset
 				dialog.btn_Reset.PerformClick();
-				Assert.IsNull(dialog.tabListBox.SelectedItem, "This test doesn't make sense if a tab is selected");
+				Assert.That(dialog.tabListBox.SelectedItem, Is.Null, "This test doesn't make sense if a tab is selected");
 				Assert.False(dialog.btn_Down.Enabled, "Down button should be disabled when no tab is selected");
 				Assert.False(dialog.btn_Up.Enabled, "Up button should be disabled when no tab is selected");
 			}

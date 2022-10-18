@@ -250,6 +250,15 @@ namespace SIL.FieldWorks.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Hide_or_show_a_writing_system.htm.
+        /// </summary>
+        internal static string khtpHiddenWritingSystems {
+            get {
+                return ResourceManager.GetString("khtpHiddenWritingSystems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Using_Tools/Lexicon_tools/Lexicon_Edit/Create_a_lexical_entry.htm.
         /// </summary>
         internal static string khtpInsertEntry {

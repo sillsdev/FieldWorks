@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			Debug.Assert(domTemplate.Root != null);
 			// get top level POS that has at least one template with slots
 			foreach (var templateElem in domTemplate.Root.Elements("PartsOfSpeech").Elements("PartOfSpeech")
-				.Where(pe => pe.Elements("AffixTemplates").Elements("MoInflAffixTemplate").Any(te => te.Element("PrefixSlots") != null || te.Element("SuffixSlots") != null)))
+				.Where(pe => pe.DescendantsAndSelf().Elements("AffixTemplates").Elements("MoInflAffixTemplate").Any(te => te.Element("PrefixSlots") != null || te.Element("SuffixSlots") != null)))
 			{
 				// transform the POS that has templates to GAFAWS format
 				var gafawsFile = m_database + "gafawsData.xml";

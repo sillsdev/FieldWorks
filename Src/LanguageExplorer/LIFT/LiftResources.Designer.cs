@@ -406,11 +406,29 @@ namespace LanguageExplorer.LIFT {
         ///   Looks up a localized string similar to Something went wrong while FieldWorks was attempting to import {0}.
         ///{1}
         ///
-        ///A stack dump has been copied to the clipboard.  Please email it and your LIFT file to Flex_Errors@sil.org so that we can improve the program..
+        ///A stack dump has been copied to the clipboard.  Please email it and your LIFT file to flex_errors@sil.org so that we can improve the program..
         /// </summary>
         internal static string ksLIFTImportProblem {
             get {
                 return ResourceManager.GetString("ksLIFTImportProblem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following unknown morph-types were found in the imported file:.
+        /// </summary>
+        internal static string ksUnknownMorphTypes {
+            get {
+                return ResourceManager.GetString("ksUnknownMorphTypes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Something is wrong with the data in {0}. If it was a zip file exported from The Combine please contact us at flex_errors@sil.org.
+        /// </summary>
+        internal static string ksLIFTCombineImportProblem {
+            get {
+                return ResourceManager.GetString("ksLIFTCombineImportProblem", resourceCulture);
             }
         }
         
@@ -667,15 +685,6 @@ namespace LanguageExplorer.LIFT {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following unknown morph-types were found in the imported file:.
-        /// </summary>
-        internal static string ksUnknownMorphTypes {
-            get {
-                return ResourceManager.GetString("ksUnknownMorphTypes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The following Usage Types were added to the language project:.
         /// </summary>
         internal static string ksUsageTypesAdded {
@@ -735,6 +744,11 @@ namespace LanguageExplorer.LIFT {
         internal static string openFileDialog1_Title {
             get {
                 return ResourceManager.GetString("openFileDialog1_Title", resourceCulture);
+            }
+        }
+		  internal static string openFileDialog1_Zip_Filter {
+            get {
+                return ResourceManager.GetString("openFileDialog1_Zip_Filter", resourceCulture);
             }
         }
     }

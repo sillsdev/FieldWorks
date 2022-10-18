@@ -136,7 +136,7 @@
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="m_btnOK.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
+    <value>31</value>
   </data>
   <data name="m_btnOK.Text" xml:space="preserve">
     <value>OK</value>
@@ -169,7 +169,7 @@
     <value>75, 23</value>
   </data>
   <data name="m_btnCancel.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
+    <value>32</value>
   </data>
   <data name="m_btnCancel.Text" xml:space="preserve">
     <value>Cancel</value>
@@ -199,7 +199,7 @@
     <value>75, 23</value>
   </data>
   <data name="m_btnHelp.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
+    <value>33</value>
   </data>
   <data name="m_btnHelp.Text" xml:space="preserve">
     <value>Help</value>
@@ -216,6 +216,96 @@
   <data name="&gt;&gt;m_btnHelp.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="&gt;&gt;llPrivacy.Name" xml:space="preserve">
+    <value>llPrivacy</value>
+  </data>
+  <data name="&gt;&gt;llPrivacy.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;llPrivacy.Parent" xml:space="preserve">
+    <value>m_tabPrivacy</value>
+  </data>
+  <data name="&gt;&gt;llPrivacy.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;PrivacyText.Name" xml:space="preserve">
+    <value>PrivacyText</value>
+  </data>
+  <data name="&gt;&gt;PrivacyText.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;PrivacyText.Parent" xml:space="preserve">
+    <value>m_tabPrivacy</value>
+  </data>
+  <data name="&gt;&gt;PrivacyText.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;m_okToPingCheckBox.Name" xml:space="preserve">
+    <value>m_okToPingCheckBox</value>
+  </data>
+  <data name="&gt;&gt;m_okToPingCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_okToPingCheckBox.Parent" xml:space="preserve">
+    <value>m_tabPrivacy</value>
+  </data>
+  <data name="&gt;&gt;m_okToPingCheckBox.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="m_tabPrivacy.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="m_tabPrivacy.Size" type="System.Drawing.Size, System.Drawing">
+    <value>351, 195</value>
+  </data>
+  <data name="m_tabPrivacy.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="m_tabPrivacy.Text" xml:space="preserve">
+    <value>Privacy</value>
+  </data>
+  <data name="&gt;&gt;m_tabPrivacy.Name" xml:space="preserve">
+    <value>m_tabPrivacy</value>
+  </data>
+  <data name="&gt;&gt;m_tabPrivacy.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tabPrivacy.Parent" xml:space="preserve">
+    <value>tabControl1</value>
+  </data>
+  <data name="&gt;&gt;m_tabPrivacy.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="llPrivacy.AccessibleDescription" xml:space="preserve">
+    <value>Link to our Privacy Policy</value>
+  </data>
+  <data name="llPrivacy.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="llPrivacy.Location" type="System.Drawing.Point, System.Drawing">
+    <value>33, 165</value>
+  </data>
+  <data name="llPrivacy.Size" type="System.Drawing.Size, System.Drawing">
+    <value>277, 13</value>
+  </data>
+  <data name="llPrivacy.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="llPrivacy.Text" xml:space="preserve">
+    <value>https://software.sil.org/language-software-privacy-policy/</value>
+  </data>
+  <data name="&gt;&gt;llPrivacy.Name" xml:space="preserve">
+    <value>llPrivacy</value>
+  </data>
+  <data name="&gt;&gt;llPrivacy.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;llPrivacy.Parent" xml:space="preserve">
+    <value>m_tabPrivacy</value>
+  </data>
+  <data name="&gt;&gt;llPrivacy.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="PrivacyText.Location" type="System.Drawing.Point, System.Drawing">
     <value>33, 47</value>
   </data>
@@ -230,9 +320,7 @@
   </data>
   <data name="PrivacyText.Text" xml:space="preserve">
     <value>No personally identifiable information is sent. 
-Global statistics gathered in this way will help with future development.
-The statistics may be made available to trusted partner organizations and summarized for sponsors.
-Usage details will not be made available to third parties (except in the unlikely event that it is required by law)</value>
+These anonymous statistics will help with future development.</value>
   </data>
   <data name="&gt;&gt;PrivacyText.Name" xml:space="preserve">
     <value>PrivacyText</value>
@@ -244,7 +332,7 @@ Usage details will not be made available to third parties (except in the unlikel
     <value>m_tabPrivacy</value>
   </data>
   <data name="&gt;&gt;PrivacyText.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="m_okToPingCheckBox.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -274,19 +362,10 @@ Usage details will not be made available to third parties (except in the unlikel
     <value>m_tabPrivacy</value>
   </data>
   <data name="&gt;&gt;m_okToPingCheckBox.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="m_tabPrivacy.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
-  </data>
-  <data name="m_tabPrivacy.Size" type="System.Drawing.Size, System.Drawing">
-    <value>351, 195</value>
-  </data>
-  <data name="m_tabPrivacy.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
-  <data name="m_tabPrivacy.Text" xml:space="preserve">
-    <value>Privacy</value>
+  <data name="&gt;&gt;m_labelPluginRights.Name" xml:space="preserve">
+    <value>m_labelPluginRights</value>
   </data>
   <data name="&gt;&gt;m_tabPrivacy.Name" xml:space="preserve">
     <value>m_tabPrivacy</value>
@@ -300,8 +379,164 @@ Usage details will not be made available to third parties (except in the unlikel
   <data name="&gt;&gt;m_tabPrivacy.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="m_labelPluginRights.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_labelPluginRights.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_labelPluginRights.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 24</value>
+  </data>
+  <data name="m_labelPluginRights.Size" type="System.Drawing.Size, System.Drawing">
+    <value>149, 13</value>
+  </data>
+  <data name="m_labelPluginRights.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="m_labelPluginRights.Text" xml:space="preserve">
+    <value>(Requires Administrator rights.)</value>
+  </data>
+  <data name="&gt;&gt;m_labelPluginRights.Name" xml:space="preserve">
+    <value>m_labelPluginRights</value>
+  </data>
+  <data name="&gt;&gt;m_labelPluginRights.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_labelPluginRights.Parent" xml:space="preserve">
+    <value>m_tabPlugins</value>
+  </data>
+  <data name="&gt;&gt;m_labelPluginRights.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="m_labelPluginBlurb.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_labelPluginBlurb.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_labelPluginBlurb.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 7</value>
+  </data>
+  <data name="m_labelPluginBlurb.Size" type="System.Drawing.Size, System.Drawing">
+    <value>259, 13</value>
+  </data>
+  <data name="m_labelPluginBlurb.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="m_labelPluginBlurb.Text" xml:space="preserve">
+    <value>Check a plugin to install it, or uncheck it to uninstall it.</value>
+  </data>
+  <data name="&gt;&gt;m_labelPluginBlurb.Name" xml:space="preserve">
+    <value>m_labelPluginBlurb</value>
+  </data>
+  <data name="&gt;&gt;m_labelPluginBlurb.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_labelPluginBlurb.Parent" xml:space="preserve">
+    <value>m_tabPlugins</value>
+  </data>
+  <data name="&gt;&gt;m_labelPluginBlurb.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_lvPlugins.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 42</value>
+  </data>
+  <data name="m_lvPlugins.Size" type="System.Drawing.Size, System.Drawing">
+    <value>348, 135</value>
+  </data>
+  <data name="m_lvPlugins.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_lvPlugins.Name" xml:space="preserve">
+    <value>m_lvPlugins</value>
+  </data>
+  <data name="&gt;&gt;m_lvPlugins.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lvPlugins.Parent" xml:space="preserve">
+    <value>m_tabPlugins</value>
+  </data>
+  <data name="&gt;&gt;m_lvPlugins.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="m_chName.Text" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="m_chName.Width" type="System.Int32, mscorlib">
+    <value>119</value>
+  </data>
+  <data name="m_chDescription.Text" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="m_chDescription.Width" type="System.Int32, mscorlib">
+    <value>225</value>
+  </data>
   <data name="m_tabInterface.AccessibleName" xml:space="preserve">
     <value>tabInterface</value>
+  </data>
+  <data name="&gt;&gt;m_autoOpenCheckBox.Name" xml:space="preserve">
+    <value>m_autoOpenCheckBox</value>
+  </data>
+  <data name="&gt;&gt;m_autoOpenCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_autoOpenCheckBox.Parent" xml:space="preserve">
+    <value>m_tabInterface</value>
+  </data>
+  <data name="&gt;&gt;m_autoOpenCheckBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;label4.Name" xml:space="preserve">
+    <value>label4</value>
+  </data>
+  <data name="&gt;&gt;label4.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label4.Parent" xml:space="preserve">
+    <value>m_tabInterface</value>
+  </data>
+  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Name" xml:space="preserve">
+    <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Parent" xml:space="preserve">
+    <value>m_tabInterface</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="m_tabInterface.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="m_tabInterface.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="m_tabInterface.Size" type="System.Drawing.Size, System.Drawing">
+    <value>351, 195</value>
+  </data>
+  <data name="m_tabInterface.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="m_tabInterface.Text" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="&gt;&gt;m_tabInterface.Name" xml:space="preserve">
+    <value>m_tabInterface</value>
+  </data>
+  <data name="&gt;&gt;m_tabInterface.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tabInterface.Parent" xml:space="preserve">
+    <value>tabControl1</value>
+  </data>
+  <data name="&gt;&gt;m_tabInterface.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="m_autoOpenCheckBox.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -364,40 +599,52 @@ always open the last edited project automatically</value>
   <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="updateGlobalWS.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="&gt;&gt;m_userInterfaceChooser.Name" xml:space="preserve">
+    <value>m_userInterfaceChooser</value>
   </data>
-  <data name="updateGlobalWS.CheckAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>TopLeft</value>
+  <data name="&gt;&gt;m_userInterfaceChooser.Type" xml:space="preserve">
+    <value>SIL.FieldWorks.Common.Widgets.UserInterfaceChooser, Widgets, Version=9.1.5.25352, Culture=neutral, PublicKeyToken=null</value>
   </data>
-  <data name="updateGlobalWS.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
+  <data name="&gt;&gt;m_userInterfaceChooser.Parent" xml:space="preserve">
+    <value>groupBox1</value>
   </data>
-  <data name="updateGlobalWS.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 132</value>
+  <data name="&gt;&gt;m_userInterfaceChooser.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
-  <data name="updateGlobalWS.Size" type="System.Drawing.Size, System.Drawing">
-    <value>275, 17</value>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+    <value>label3</value>
   </data>
-  <data name="updateGlobalWS.TabIndex" type="System.Int32, mscorlib">
-    <value>12</value>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="updateGlobalWS.Text" xml:space="preserve">
-    <value>Do not copy writing system changes to other projects</value>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+    <value>groupBox1</value>
   </data>
-  <data name="updateGlobalWS.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>TopLeft</value>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
-  <data name="&gt;&gt;updateGlobalWS.Name" xml:space="preserve">
-    <value>updateGlobalWS</value>
+  <data name="groupBox1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 7</value>
   </data>
-  <data name="&gt;&gt;updateGlobalWS.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="groupBox1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>339, 94</value>
   </data>
-  <data name="&gt;&gt;updateGlobalWS.Parent" xml:space="preserve">
+  <data name="groupBox1.TabIndex" type="System.Int32, mscorlib">
+    <value>14</value>
+  </data>
+  <data name="groupBox1.Text" xml:space="preserve">
+    <value>User Interface:</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Name" xml:space="preserve">
+    <value>groupBox1</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBox1.Parent" xml:space="preserve">
     <value>m_tabInterface</value>
   </data>
-  <data name="&gt;&gt;updateGlobalWS.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;groupBox1.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
   <data name="m_userInterfaceChooser.AccessibleName" xml:space="preserve">
@@ -454,59 +701,146 @@ always open the last edited project automatically</value>
   <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="groupBox1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 7</value>
-  </data>
-  <data name="groupBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>339, 94</value>
-  </data>
-  <data name="groupBox1.TabIndex" type="System.Int32, mscorlib">
-    <value>14</value>
-  </data>
-  <data name="groupBox1.Text" xml:space="preserve">
-    <value>User Interface:</value>
-  </data>
-  <data name="&gt;&gt;groupBox1.Name" xml:space="preserve">
-    <value>groupBox1</value>
-  </data>
-  <data name="&gt;&gt;groupBox1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;groupBox1.Parent" xml:space="preserve">
-    <value>m_tabInterface</value>
-  </data>
-  <data name="&gt;&gt;groupBox1.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="m_tabInterface.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
-  </data>
-  <data name="m_tabInterface.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 3, 3, 3</value>
-  </data>
-  <data name="m_tabInterface.Size" type="System.Drawing.Size, System.Drawing">
-    <value>351, 195</value>
-  </data>
-  <data name="m_tabInterface.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="m_tabInterface.Text" xml:space="preserve">
-    <value>General</value>
-  </data>
-  <data name="&gt;&gt;m_tabInterface.Name" xml:space="preserve">
-    <value>m_tabInterface</value>
-  </data>
-  <data name="&gt;&gt;m_tabInterface.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_tabInterface.Parent" xml:space="preserve">
-    <value>tabControl1</value>
-  </data>
-  <data name="&gt;&gt;m_tabInterface.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <data name="tabControl1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="m_textChannelDescription.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 47</value>
+  </data>
+  <data name="m_textChannelDescription.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_textChannelDescription.Size" type="System.Drawing.Size, System.Drawing">
+    <value>309, 67</value>
+  </data>
+  <data name="m_textChannelDescription.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;m_textChannelDescription.Name" xml:space="preserve">
+    <value>m_textChannelDescription</value>
+  </data>
+  <data name="&gt;&gt;m_textChannelDescription.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_textChannelDescription.Parent" xml:space="preserve">
+    <value>gbUpdateChannel</value>
+  </data>
+  <data name="&gt;&gt;m_textChannelDescription.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="m_cbUpdateChannel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 19</value>
+  </data>
+  <data name="m_cbUpdateChannel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>196, 21</value>
+  </data>
+  <data name="m_cbUpdateChannel.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;m_cbUpdateChannel.Name" xml:space="preserve">
+    <value>m_cbUpdateChannel</value>
+  </data>
+  <data name="&gt;&gt;m_cbUpdateChannel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_cbUpdateChannel.Parent" xml:space="preserve">
+    <value>gbUpdateChannel</value>
+  </data>
+  <data name="&gt;&gt;m_cbUpdateChannel.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="gbUpdateChannel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 47</value>
+  </data>
+  <data name="gbUpdateChannel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>322, 120</value>
+  </data>
+  <data name="gbUpdateChannel.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="gbUpdateChannel.Text" xml:space="preserve">
+    <value>Which updates would you like?</value>
+  </data>
+  <data name="&gt;&gt;gbUpdateChannel.Name" xml:space="preserve">
+    <value>gbUpdateChannel</value>
+  </data>
+  <data name="&gt;&gt;gbUpdateChannel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;gbUpdateChannel.Parent" xml:space="preserve">
+    <value>m_tabUpdates</value>
+  </data>
+  <data name="&gt;&gt;gbUpdateChannel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="m_okToAutoupdate.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_okToAutoupdate.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt</value>
+  </data>
+  <data name="m_okToAutoupdate.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_okToAutoupdate.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 24</value>
+  </data>
+  <data name="m_okToAutoupdate.MaximumSize" type="System.Drawing.Size, System.Drawing">
+    <value>320, 60</value>
+  </data>
+  <data name="m_okToAutoupdate.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>330, 19</value>
+  </data>
+  <data name="m_okToAutoupdate.Size" type="System.Drawing.Size, System.Drawing">
+    <value>330, 19</value>
+  </data>
+  <data name="m_okToAutoupdate.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="m_okToAutoupdate.Text" xml:space="preserve">
+    <value>Automatically download updates for FieldWorks</value>
+  </data>
+  <data name="m_okToAutoupdate.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>BottomLeft</value>
+  </data>
+  <data name="&gt;&gt;m_okToAutoupdate.Name" xml:space="preserve">
+    <value>m_okToAutoupdate</value>
+  </data>
+  <data name="&gt;&gt;m_okToAutoupdate.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_okToAutoupdate.Parent" xml:space="preserve">
+    <value>m_tabUpdates</value>
+  </data>
+  <data name="&gt;&gt;m_okToAutoupdate.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_tabUpdates.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 22</value>
+  </data>
+  <data name="m_tabUpdates.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 3, 3, 3</value>
+  </data>
+  <data name="m_tabUpdates.Size" type="System.Drawing.Size, System.Drawing">
+    <value>351, 195</value>
+  </data>
+  <data name="m_tabUpdates.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="m_tabUpdates.Text" xml:space="preserve">
+    <value>Updates</value>
+  </data>
+  <data name="&gt;&gt;m_tabUpdates.Name" xml:space="preserve">
+    <value>m_tabUpdates</value>
+  </data>
+  <data name="&gt;&gt;m_tabUpdates.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_tabUpdates.Parent" xml:space="preserve">
+    <value>tabControl1</value>
+  </data>
+  <data name="&gt;&gt;m_tabUpdates.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
   <data name="tabControl1.Location" type="System.Drawing.Point, System.Drawing">
     <value>13, 13</value>

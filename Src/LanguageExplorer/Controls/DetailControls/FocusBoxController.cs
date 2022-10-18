@@ -1033,7 +1033,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var wf = analysis.Wordform;
 			// analysis is either a WfiAnalysis or WfiGloss; find the actual analysis.
 			var wa = (IWfiAnalysis)(analysis is IWfiAnalysis ? analysis : analysis.Owner);
-			foreach (InterlinLineSpec spec in _lineChoices)
+			foreach (InterlinLineSpec spec in _lineChoices.EnabledLineSpecs)
 			{
 				// see if the information required for this linespec is present.
 				switch (spec.Flid)

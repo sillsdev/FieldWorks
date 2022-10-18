@@ -629,7 +629,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		private ILexEntry AddOneVariantToHimbiliraSense()
 		{
 			ILexEntry result = null;
-			var entry = Cache.LangProject.LexDbOA.Entries.First(e => e.HeadWord.Text == "*himbilira");
+			var entry = Cache.LangProject.LexDbOA.Entries.First(e => e.HeadWord.Text == "himbilira");
 			var rootMT = GetMorphTypeOrCreateOne("root");
 			var spellVar = GetVariantTypeOrCreateOne("Spelling Variant");
 			var verbPOS = GetGrammaticalCategoryOrCreateOne("verb", Cache.LangProject.PartsOfSpeechOA);
@@ -919,7 +919,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.AreEqual("Pronunciation-Location", _bulkEditBarForTests.SelectedTargetFieldItem.ToString());
 			// check number of options and first is "jungle" (or Empty?)
 			var listChoiceControl = _bulkEditBarForTests.GetTabControlChild("m_listChoiceControl") as FwComboBox;
-			Assert.IsNotNull(listChoiceControl);
+			Assert.That(listChoiceControl, Is.Not.Null);
 			// expect to have some options.
 			Assert.Less(2, listChoiceControl.Items.Count);
 			// expect the first option to be of class CmLocation
@@ -1196,7 +1196,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				_browseViewerForTests.OnUncheckAll();
 				_browseViewerForTests.SetCheckedItems(new List<int>(new[] {variantEntryRef.Hvo}));
-				Assert.IsNullOrEmpty(variantEntryRef.Summary.AnalysisDefaultWritingSystem.Text);
+				Assert.That(variantEntryRef.Summary.AnalysisDefaultWritingSystem.Text, Is.Null.Or.Empty);
 				_bulkEditBarForTests.ClickPreview(); // make sure we don't crash clicking preview button.
 				_bulkEditBarForTests.ClickApply();
 				var result = variantEntry.EntryRefsOS[0].Summary.AnalysisDefaultWritingSystem.Text;
@@ -1280,7 +1280,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.AreEqual("Is Abstract Form (Allomorph)", _bulkEditBarForTests.SelectedTargetFieldItem.ToString());
 			// check number of options and second is "yes"
 			var listChoiceControl = _bulkEditBarForTests.GetTabControlChild("m_listChoiceControl") as ComboBox;
-			Assert.IsNotNull(listChoiceControl);
+			Assert.That(listChoiceControl, Is.Not.Null);
 			// expect to have some options (yes & no).
 			Assert.AreEqual(2, listChoiceControl.Items.Count);
 			var item = listChoiceControl.Items[1] as IntComboItem;
@@ -1363,7 +1363,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.AreEqual("Spelling Variant", firstVariantRefType.Name.AnalysisDefaultWritingSystem.Text);
 			// check number of options
 			var listChoiceControl = _bulkEditBarForTests.CurrentBulkEditSpecControl as ComplexListChooserBEditControl;
-			Assert.IsNotNull(listChoiceControl);
+			Assert.That(listChoiceControl, Is.Not.Null);
 			// check browse view class changed to LexPronunciation
 			Assert.AreEqual(LexEntryRefTags.kClassId, _browseViewerForTests.ListItemsClass);
 			// check that clerk list has also changed.

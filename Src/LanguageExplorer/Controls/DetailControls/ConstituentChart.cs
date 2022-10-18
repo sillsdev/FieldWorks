@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2020 SIL International
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -32,35 +32,32 @@ namespace LanguageExplorer.Controls.DetailControls
 	{
 		#region Member Variables
 		private InterlinRibbon m_ribbon;
-		private List<Button> m_MoveHereButtons = new List<Button>();
 		// Buttons for moving ribbon text into a specific column
-		private List<Button> m_ContextMenuButtons = new List<Button>();
+		private readonly List<Button> m_MoveHereButtons = new List<Button>();
 		// Popups associated with each 'MoveHere' button
+		private readonly List<Button> m_ContextMenuButtons = new List<Button>();
 		private bool m_fContextMenuButtonsEnabled;
 		private IDsConstChart m_chart;
-		private int m_chartHvo;
 		private ICmPossibility m_template;
 		private ICmPossibility[] m_allColumns;
-		private ConstituentChartLogic m_logic;
+		private readonly ConstituentChartLogic m_logic;
 		private Panel m_templateSelectionPanel;
 		private Panel m_buttonRow;
 		private Panel m_bottomStuff;
-		private SplitContainer m_topBottomSplit;
 		// m_buttonRow above m_ribbon
+		private SplitContainer m_topBottomSplit;
+		private readonly List<ChartHeaderView> m_headerColGroups = new List<ChartHeaderView>();
 		private ChartHeaderView m_headerMainCols;
-		private Panel m_topStuff;
-		// top panel has header groups, headerMainCols, and main chart
-		private int[] m_columnWidths;
 		// width of each table cell in millipoints
 		private float m_dxpInch;
+		private int[] m_columnWidths;
 		private bool m_fInColWidthChanged;
-		// DPI when m_columnWidths was computed.
 		// left of each column in pixels. First is zero. Count is one MORE than number
 		// of columns, so last position is width of window (right of last column).
-		private ToolTip m_toolTip;
 		// controls the popup help items for the Constituent Chart Form
+		private ToolTip m_toolTip;
 		private InterAreaBookmark m_bookmark;
-		private ILcmServiceLocator m_serviceLocator;
+		private readonly ILcmServiceLocator m_serviceLocator;
 		private XmlNode m_configurationParameters;
 		private ISharedEventHandlers _sharedEventHandlers;
 		private UiWidgetController _uiWidgetController;
@@ -90,6 +87,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			AccessibleName = "Constituent Chart";
 			Name = "ConstituentChart";
 			Vc = new InterlinVc(Cache);
+			BuildUIComponents();
+			ConfigPropName = "InterlinConfig_v3_Edit_ConstituentChart";
+			OldConfigPropName = "InterlinConfig_v2_Edit_ConstituentChart";
 		}
 
 		internal bool InterlineMasterWantsExportDiscourseChartDiscourseChartMenu
@@ -195,7 +195,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				m_template = m_chart.TemplateRA;
 				m_logic.StTextHvo = m_hvoRoot;
-				m_allColumns = m_logic.AllColumns(m_chart.TemplateRA).ToArray();
+				m_allColumns = m_logic.AllMyColumns;
 			}
 			else
 			{
@@ -210,12 +210,22 @@ namespace LanguageExplorer.Controls.DetailControls
 				m_fInColWidthChanged = true;
 				try
 				{
-					m_logic.MakeMainHeaderCols(m_headerMainCols);
-					if (m_allColumns == new ICmPossibility[0])
+					var headers = m_logic.ColumnsAndGroups.Headers;
+					headers.Reverse();
+					m_logic.MakeHeaderColsFor(m_headerMainCols, headers[0], headers.Count == 1);
+					m_headerColGroups.ForEach(h => h.Dispose());
+					m_headerColGroups.Clear();
+					for (var i = 1; i < headers.Count; i++)
 					{
-						return;
+						var headLevel = new ChartHeaderView(this) { Dock = DockStyle.Top, Height = 22 };
+						headLevel.ColumnWidthChanged += m_headerMainCols_ColumnWidthChanged; // TODO (Hasso) 2022.03: register other event handlers (Layout, SizeChanged)?
+						m_logic.MakeHeaderColsFor(headLevel, headers[i], headers.Count == i + 1);
+						m_headerColGroups.Add(headLevel);
 					}
-					var ccolsWanted = m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns;
+					RebuildTopStuffUI();
+					if (m_allColumns == new ICmPossibility[0])
+						return;
+					int ccolsWanted = m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns;
 					m_columnWidths = new int[ccolsWanted];
 					ColumnPositions = new int[ccolsWanted + 1];
 					// one extra for after the last column
@@ -257,7 +267,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		/// <param name="lineConfigPropName">The string key to retrieve Line Choices from the Property Table</param>
 		/// <param name="mode">Should always be Chart for this override</param>
-		public InterlinLineChoices SetupLineChoices(string lineConfigPropName, InterlinMode mode)
+		public InterlinLineChoices SetupLineChoices(string lineConfigPropName, string oldPropName, InterlinMode mode)
 		{
 			ConfigPropName = lineConfigPropName;
 			if (!TryRestoreLineChoices(out var lineChoices))
@@ -324,7 +334,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			LineChoices = GetLineChoices();
 			Vc.LineChoices = LineChoices;
-			using (var dlg = new ConfigureInterlinDialog(Cache, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_ribbon.Vc.LineChoices.Clone() as InterlinLineChoices))
+			using (var dlg = new ConfigureInterlinDialog(Cache, PropertyTable, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), m_ribbon.Vc.LineChoices.Clone() as InterlinLineChoices))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
@@ -448,11 +458,26 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void OnLayout(LayoutEventArgs e)
 		{
+			m_topBottomSplit.SplitterMoved -= RibbonSizeChanged;
 			//Call SplitLayout here to ensure Mono properly updates Splitter length
 			SplitLayout(m_topBottomSplit, e);
-			//Mono makes SplitLayout calls while Splitter is moving so set default distance here
-			m_topBottomSplit.SplitterDistance = (int)(Height * .9);
 			base.OnLayout(e);
+			int splitterValue;
+			// use a default property unless the property has been set
+			if (PropertyTable.PropertyExists("constChartRibbonSize"))
+			{
+				// GetIntProperty will set the default value if it isn't set.
+				// OnLayout will be called several times before the final correct values are available
+				splitterValue = PropertyTable.GetValue("constChartRibbonSize", 100);
+			}
+			else
+			{
+				splitterValue = (int)(Height * .9);
+			}
+
+			//Mono makes SplitLayout calls while Splitter is moving so set default distance here
+			m_topBottomSplit.SplitterDistance = splitterValue;
+			m_topBottomSplit.SplitterMoved += RibbonSizeChanged;
 		}
 
 		/// <summary>
@@ -479,15 +504,25 @@ namespace LanguageExplorer.Controls.DetailControls
 			};
 			m_headerMainCols.Layout += m_headerMainCols_Layout;
 			m_headerMainCols.SizeChanged += m_headerMainCols_SizeChanged;
-			m_templateSelectionPanel = new Panel()
-			{
-				Height = new Button().Height,
-				Dock = DockStyle.Top,
-				Width = 0
-			};
+
+			m_templateSelectionPanel = new Panel { Height = new Button().Height, Dock = DockStyle.Top, Width = 0 };
 			m_templateSelectionPanel.Layout += TemplateSelectionPanel_Layout;
-			m_topStuff = m_topBottomSplit.Panel1;
-			m_topStuff.Controls.AddRange(new Control[] { Body, m_headerMainCols, m_templateSelectionPanel });
+
+			RebuildTopStuffUI();
+		}
+
+		private void RebuildTopStuffUI()
+		{
+			m_topBottomSplit.Panel1.Controls.Clear();
+			m_topBottomSplit.Panel1.Controls.AddRange(
+				new Control[]
+				{
+					Body,
+					m_headerMainCols
+				});
+			// ReSharper disable once CoVariantArrayConversion
+			m_topBottomSplit.Panel1.Controls.AddRange(m_headerColGroups.ToArray());
+			m_topBottomSplit.Panel1.Controls.Add(m_templateSelectionPanel);
 		}
 
 		private static void TemplateSelectionPanel_Layout(object sender, EventArgs e)
@@ -510,7 +545,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_ribbon = new InterlinRibbon(Cache, 0) { Dock = DockStyle.Fill };
 			m_ribbon.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 			m_logic.Ribbon = m_ribbon;
-			m_logic.Ribbon_Changed += m_logic_Ribbon_Changed;
+			m_logic.Ribbon_Changed += OnLogicRibbonChanged;
 
 			// Holds tooltip help for 'Move Here' buttons.
 			// Set up the delays for the ToolTip.
@@ -518,7 +553,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_toolTip = new ToolTip { AutoPopDelay = 5000, InitialDelay = 1000, ReshowDelay = 500, ShowAlways = true };
 
 			m_bottomStuff = m_topBottomSplit.Panel2;
-			m_bottomStuff.Height = 100;
 			m_bottomStuff.SuspendLayout();
 
 			m_buttonRow = new Panel { Height = new Button().Height, Dock = DockStyle.Top, BackColor = Color.FromKnownColor(KnownColor.ControlLight) };
@@ -527,6 +561,11 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			m_bottomStuff.Controls.AddRange(new Control[] { m_ribbon, m_buttonRow });
 			m_bottomStuff.ResumeLayout();
+		}
+
+		private void RibbonSizeChanged(object sender, EventArgs e)
+		{
+			PropertyTable.SetProperty("constChartRibbonSize", m_topBottomSplit.SplitterDistance, false);
 		}
 
 		private const int kmaxWordforms = 20;
@@ -827,7 +866,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				// pull-down
 				c2.Left = c.Right;
 				c2.Width = widthBtnContextMenu;
-				ipair++;
 			}
 		}
 
@@ -874,7 +912,15 @@ namespace LanguageExplorer.Controls.DetailControls
 			// If user chooses to add a new template then navigate them to the Text Constituent Chart Template list view
 			if (selection.SelectedItem as string == LanguageExplorerResources.ksCreateNewTemplate)
 			{
-				LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(LanguageExplorerResources.ksNewTemplateLink, new Guid()));
+				MessageBoxUtils.Show(selection.Parent, LanguageExplorerResources.ksNewConstChartMessage, LanguageExplorerResources.ksNewConstChartCaption, MessageBoxButtons.OK);
+				Cache.DomainDataByFlid.BeginUndoTask("Undo Insert new Text Constituent Chart Template",
+					"Redo Insert new Text Constituent Chart Template");
+				var list = Cache.LanguageProject.DiscourseDataOA.ConstChartTemplOA;
+				var newKid = list.Services.GetInstance<ICmPossibilityFactory>().Create();
+				list.PossibilitiesOS.Add(newKid);
+				InterlinearTextsRecordList.SetUpConstChartTemplateTemplate(newKid);
+				Cache.DomainDataByFlid.EndUndoTask();
+				LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(LanguageExplorerResources.ksNewTemplateLink, newKid.Guid));
 				selection.SelectedItem = m_template;
 				return;
 			}
@@ -897,7 +943,8 @@ namespace LanguageExplorer.Controls.DetailControls
 					selectedChart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(Cache.LangProject.DiscourseDataOA, RootStText, selection.SelectedItem as ICmPossibility);
 				});
 			}
-			m_chartHvo = selectedChart.Hvo;
+
+			PropertyTable.SetProperty(GetLastChartPropForText(RootStText.Guid), selectedChart.Guid, true, false, SettingsGroup.LocalSettings);
 			SetRoot(m_hvoRoot);
 		}
 
@@ -1003,7 +1050,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				m_chart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(Cache.LangProject.DiscourseDataOA, RootStText, Cache.LangProject.GetDefaultChartTemplate());
 			});
-			m_chartHvo = m_chart.Hvo;
+			PropertyTable.SetProperty(GetLastChartPropForText(RootStText.Guid), m_chart.Guid, true, false, SettingsGroup.LocalSettings);
 		}
 
 		private void DetectAndReportTemplateProblem()
@@ -1032,7 +1079,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// create a ChartLocation for scrolling and scroll to first row
 			Body.SelectAndScrollToLoc(new ChartLocation(rowPrec, 0), false);
 			// bookmark this location, but don't persist.
-			m_bookmark.Save(SegmentServices.FindNearestAnalysis(GetTextParagraphByIndex(iPara), offset, offset, out _), false, m_bookmark.TextIndex);
+			m_bookmark?.Save(SegmentServices.FindNearestAnalysis(GetTextParagraphByIndex(iPara), offset, offset, out _), false, m_bookmark.TextIndex);
 		}
 
 		private IStTxtPara GetTextParagraphByIndex(int iPara)
@@ -1098,19 +1145,38 @@ namespace LanguageExplorer.Controls.DetailControls
 			return m_logic.GetUnchartedWordForBookmark();
 		}
 
+		private string GetLastChartPropForText(Guid guid) => $"LastChartForText_{guid.ToString()}";
+
+		/// <summary>
+		/// Find the last chart used for this text (or the first chart available), set it in
+		/// the chart member and in the chart logic, and clean up any invalid cells
+		/// </summary>
+		/// <param name="hvoStText"></param>
 		private void FindAndCleanUpMyChart(int hvoStText)
 		{
-			foreach (var chart in Cache.LangProject.DiscourseDataOA.ChartsOC.Cast<IDsConstChart>().Where(chart => chart.BasedOnRA != null && chart.BasedOnRA.Hvo == hvoStText))
+			IDsConstChart chartToClean = null;
+			// Try to retrieve the last chart used for this text from the property table
+			var textGuid = Cache.ServiceLocator.GetObject(hvoStText).Guid;
+			if(PropertyTable.TryGetValue(GetLastChartPropForText(textGuid), out Guid chartGuid))
 			{
-				m_chart = chart;
-				m_logic.Chart = m_chart;
-				m_logic.CleanupInvalidChartCells();
-				//If a template change requests a specific chart, then use that one, otherwise use the last active chart
-				if (m_chart.Hvo == m_chartHvo)
+				if (Cache.ServiceLocator.ObjectRepository.TryGetObject(chartGuid, out var chart))
 				{
-					break;
+					if (chart is IDsConstChart constChart)
+					{
+						chartToClean = constChart;
+					}
+				}
+				// if that chart no longer exists clear it from the prop table
+				if (chartToClean == null)
+				{
+					PropertyTable.RemoveProperty(GetLastChartPropForText(textGuid));
 				}
 			}
+			// Use the retrieved last chart, or pick the first valid chart for this text
+			m_logic.Chart = m_chart = chartToClean ?? Cache.LangProject.DiscourseDataOA.ChartsOC
+				.Cast<IDsConstChart>()
+				.FirstOrDefault(chart => chart.BasedOnRA != null && chart.BasedOnRA.Hvo == hvoStText);
+			m_logic.CleanupInvalidChartCells();
 		}
 
 		/// <summary>
@@ -1225,15 +1291,27 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		// Event handler to run if Ribbon changes
-		private void m_logic_Ribbon_Changed(object sender, EventArgs e)
+		void OnLogicRibbonChanged(object sender, EventArgs e)
 		{
 			int iPara, offset;
 			// 'out' vars for NextInputIsChOrph()
 			// Tests ribbon contents
 			if (m_logic.NextInputIsChOrph(out iPara, out offset))
 			{
-				Debug.Assert(m_bookmark != null, "Hit null bookmark. Why?");
-				m_bookmark?.Reset(m_bookmark.TextIndex);
+				if (m_bookmark != null)
+				{
+					m_bookmark.Reset(m_bookmark.TextIndex);
+				}
+				else
+				{
+					// This code path was unexpected but the conditions were seen in a crash stack
+					// from the field. We will avoid NullReference by attempting to get a bookmark to use
+					// and checking for a null bookmark in PrepareForChOrphInsert.
+					// This very well could be the right thing to do, but understanding why the bookmark is null
+					// is worthwhile
+					m_bookmark = GetAncestorBookmark(this, m_chart.BasedOnRA);
+					Debug.Fail("This is not an expected path, analyze.");
+				}
 				// Resetting of highlight is done in the array setter now.
 				PrepareForChOrphInsert(iPara, offset);
 				// scroll to ChOrph, highlight cell possibilities, set bookmark etc.
@@ -1348,7 +1426,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Enhance: decide which one should have focus.
 		}
 
-		public bool NotesColumnOnRight => m_headerMainCols.NotesOnRight;
+		public bool NotesColumnOnRight
+		{
+			get;
+			internal set;
+		} = true;
 
 		/// <summary>
 		/// For testing.
@@ -1365,15 +1447,30 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary>
+		/// The old property table key storing InterlinLineChoices used by our display.
+		/// </summary>
+		private static string OldConfigPropName
+		{
+			get;
+			set;
+		}
+
+		/// <summary>
 		/// Tries to retrieve the Line Choices from the Property Table and returns if it was succesful
 		/// </summary>
 		internal bool TryRestoreLineChoices(out InterlinLineChoices lineChoices)
 		{
 			lineChoices = null;
 			var persist = PropertyTable.GetValue<string>(ConfigPropName, null, SettingsGroup.LocalSettings);
+			if (persist == null)
+			{
+				persist = PropertyTable.GetValue<string>(OldConfigPropName, null, SettingsGroup.LocalSettings);
+			}
 			if (persist != null)
 			{
-				lineChoices = InterlinLineChoices.Restore(persist, Cache.LanguageWritingSystemFactoryAccessor, Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinMode.Analyze, PropertyTable, ConfigPropName);
+				// Intentionally never pass OldConfigPropName into Restore to prevent corrupting it's old value with the new format.
+				lineChoices = InterlinLineChoices.Restore(persist, Cache.LanguageWritingSystemFactoryAccessor,
+					Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinMode.Analyze, PropertyTable, ConfigPropName);
 			}
 			return persist != null && lineChoices != null;
 		}
@@ -1387,7 +1484,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			string persist = null;
 			if (PropertyTable != null)
 			{
-				persist = PropertyTable.GetValue<string>(ConfigPropName ?? "InterlinConfig_Edit_ConstituentChart", null, SettingsGroup.LocalSettings);
+				persist = PropertyTable.GetValue<string>(ConfigPropName, null, SettingsGroup.LocalSettings);
+				if (persist == null)
+				{
+					persist = PropertyTable.GetValue<string>(OldConfigPropName, null, SettingsGroup.LocalSettings);
+				}
 			}
 			InterlinLineChoices lineChoices = null;
 			if (persist != null)
@@ -1399,6 +1500,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				GetLineChoice(result, lineChoices, InterlinLineChoices.kflidWord, InterlinLineChoices.kflidWordGloss);
 				return result;
 			}
+			// Intentionally never pass OldConfigPropName into Restore to prevent corrupting it's old value with the new format.
+			lineChoices = InterlinLineChoices.Restore(persist, Cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>(), Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinMode.Chart, PropertyTable, ConfigPropName);
 			return lineChoices;
 		}
 
@@ -1412,10 +1515,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				if (source != null)
 				{
-					var index = source.IndexOf(flid);
+					var index = source.IndexInEnabled(flid);
 					if (index >= 0)
 					{
-						dest.Add(source[index]);
+						dest.Add(source.EnabledLineSpecs[index]);
 						return;
 					}
 				}
@@ -1424,7 +1527,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		public bool NotesDataFromPropertyTable
+		public bool NotesOnRightFromPropertyTable
 		{
 			get => PropertyTable == null || PropertyTable.GetValue("notesOnRight", true, SettingsGroup.LocalSettings);
 			set => PropertyTable?.SetProperty("notesOnRight", value, settingsGroup: SettingsGroup.LocalSettings);
@@ -1521,7 +1624,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 			private int NodeIndex(string tag)
 			{
-				var file = tag.Substring(tag.LastIndexOf('\\') + 1);
+				var file = tag.Substring(tag.LastIndexOfAny(new[] { '\\', '/' }) + 1);
 				for (var i = 0; i < m_ddNodes.Count; i++)
 				{
 					var fileN = m_ddNodes[i].BaseURI.Substring(m_ddNodes[i].BaseURI.LastIndexOf('/') + 1);
@@ -1537,12 +1640,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				using (var writer = new XmlTextWriter(fileName, System.Text.Encoding.UTF8))
 				{
-					writer.WriteStartDocument();
-					writer.WriteStartElement("document");
 					exporter = new DiscourseExporter(m_cache, writer, m_hvoRoot, m_vc, m_wsLineNumber);
 					exporter.ExportDisplay();
-					writer.WriteEndElement();
-					writer.WriteEndDocument();
 					writer.Close();
 				}
 			}

@@ -1,8 +1,9 @@
-// Copyright (c) 2002-2020 SIL International
+// Copyright (c) 2002-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -273,14 +274,24 @@ namespace LanguageExplorer.Impls
 				lblName.Text = viProvider.ProductName;
 				lblAppVersion.Text = viProvider.ApplicationVersion;
 				lblFwVersion.Text = viProvider.MajorVersion;
-				// List the copyright information
-				var acknowlegements = AcknowledgementsProvider.CollectAcknowledgements();
-				var list = acknowlegements.Keys.ToList();
+
+				Dictionary<string, AcknowledgementAttribute> acknowledgements;
+				try
+				{
+					AppDomain.CurrentDomain.AssemblyResolve += ResolveFailedAssemblyLoadsByName;
+					// List the copyright information
+					acknowledgements = AcknowledgementsProvider.CollectAcknowledgements();
+				}
+				finally
+				{
+					AppDomain.CurrentDomain.AssemblyResolve -= ResolveFailedAssemblyLoadsByName;
+				}
+				var list = acknowledgements.Keys.ToList();
 				list.Sort();
 				var text = viProvider.CopyrightString + Environment.NewLine + viProvider.LicenseString + Environment.NewLine + viProvider.LicenseURL;
 				foreach (var key in list)
 				{
-					text += "\r\n" + "\r\n" + key + "\r\n" + acknowlegements[key].Copyright + " " + acknowlegements[key].Url + " " + acknowlegements[key].LicenseUrl;
+					text += "\r\n" + "\r\n" + key + "\r\n" + acknowledgements[key].Copyright + " " + acknowledgements[key].Url + " " + acknowledgements[key].LicenseUrl;
 				}
 				txtCopyright.Text = text;
 				// Set the title bar text
@@ -307,6 +318,13 @@ namespace LanguageExplorer.Impls
 			{
 				Console.WriteLine("HelpAbout ignoring exception: " + ex);
 			}
+		}
+
+		private Assembly ResolveFailedAssemblyLoadsByName(object sender, ResolveEventArgs args)
+		{
+			var assemblyName = args.Name.Split(',')[0];
+			var outputPath = Path.GetDirectoryName(ProductExecutableAssembly.Location);
+			return Assembly.LoadFile(Path.Combine(outputPath, assemblyName) + ".dll");
 		}
 		#endregion
 

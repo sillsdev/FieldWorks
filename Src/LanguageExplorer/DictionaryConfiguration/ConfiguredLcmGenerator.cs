@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2020 SIL International
+// Copyright (c) 2014-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,8 +11,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
-using System.Xml;
+using System.Web.UI.WebControls;
+using ExCSS;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.Filters;
 using SIL.Code;
@@ -27,6 +29,7 @@ using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using FileUtils = SIL.LCModel.Utils.FileUtils;
+using UnitType = ExCSS.UnitType;
 
 namespace LanguageExplorer.DictionaryConfiguration
 {
@@ -41,6 +44,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 		internal const string LoudSpeaker = "\uD83D\uDD0A";
 
 		internal const string MovieCamera = "\U0001F3A5";
+
+		/// <summary>
+		/// Line-Separator Decimal Code
+		/// </summary>
+		private const char TxtLineSplit = (char)8232;
+
+
+		// A sanity check regex. Verifies that we are looking at a potential start of a table
+		private static readonly Regex USFMTableStart = new Regex(@"\A(\\d|\\tr)\s");
 
 		/// <summary>
 		/// The Assembly that the model Types should be loaded from. Allows test code to introduce a test model.
@@ -58,7 +70,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// The number of entries to add to a page when the user asks to see 'a few more'
 		/// </summary>
 		/// <remarks>internal to facilitate unit tests</remarks>
-		internal static int EntriesToAddCount { get; set; }
+		internal static int EntriesToAddCount { get; }
 
 		private static Dictionary<ConfigurableDictionaryNode, PropertyType> _configNodeToTypeMap = new Dictionary<ConfigurableDictionaryNode, PropertyType>();
 
@@ -67,25 +79,31 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		static ConfiguredLcmGenerator()
 		{
-			AssemblyFile = "SIL.LCModel";
+			Init();
 			EntriesToAddCount = 5;
 		}
 
-		internal static bool IsNormalRtl(IReadonlyPropertyTable readOnlyPropertyTable)
+		/// <summary>
+		/// Sets initial values (or resets them after tests)
+		/// </summary>
+		internal static void Init()
 		{
-			// Right-to-Left for the overall layout is determined by Dictionary-Normal
-			// Some tests don't have the expected style.
-			var styleSheet = FwUtils.StyleSheetFromPropertyTable(readOnlyPropertyTable);
-			if (styleSheet != null)
-			{
-				if (styleSheet.Styles.Contains("Dictionary-Normal"))
-				{
-					var normalStyle = styleSheet.Styles["Dictionary-Normal"];
-					var dictionaryNormalStyle = new ExportStyleInfo(normalStyle);
-					return dictionaryNormalStyle.DirectionIsRightToLeft == TriStateBool.triTrue; // default is LTR
-				}
-			}
-			return true; // default is LTR
+			AssemblyFile = "SIL.LCModel";
+		}
+
+		internal static bool IsEntryStyleRtl(ReadOnlyPropertyTable propertyTable, DictionaryConfigurationModel model)
+		{
+			// Right-to-Left for the overall layout is determined by Dictionary-Normal - or the user selected style for Main Entry
+			var mainEntryStyle = GetEntryStyle(model);
+			var entryStyle = new ExportStyleInfo(FwUtils.StyleSheetFromPropertyTable(propertyTable).Styles[mainEntryStyle]);
+			return entryStyle.DirectionIsRightToLeft == TriStateBool.triTrue; // default is LTR
+		}
+
+		internal static string GetEntryStyle(DictionaryConfigurationModel model)
+		{
+			return model.Parts.FirstOrDefault(part => part.IsMainEntry)?.Style
+				?? "Dictionary-Normal";
+
 		}
 
 		private static bool IsCanceling(IThreadedProgress progress)
@@ -147,13 +165,57 @@ namespace LanguageExplorer.DictionaryConfiguration
 		}
 
 		/// <summary>
-		/// To generating the letter headings, we need to check the first character of the "headword," which is a different
-		/// field for ILexEntry and IReversalIndexEntry. Get the headword starting from entry-type-agnostic.
+		/// Get the sort word that will be used to generate the letter headings. The sort word can come from a different
+		/// field depending on the sort column.
 		/// </summary>
-		/// <returns>the "headword" in NFD (the heading letter must be normalized to NFC before writing to XHTML, per LT-18177)</returns>
-		internal static string GetHeadwordForLetterHead(ICmObject entry)
+		/// <returns>the sort word in NFD (the heading letter must be normalized to NFC before writing to XHTML, per LT-18177)</returns>
+		internal static string GetSortWordForLetterHead(ICmObject entry, IRecordList recordList)
 		{
-			return (entry as ILexEntry)?.HomographForm.TrimStart() ?? (entry as IReversalIndexEntry)?.ReversalForm.BestAnalysisAlternative.Text.TrimStart() ?? string.Empty;
+			var lexEntry = entry as ILexEntry;
+
+			// Reversal Indexes - We are always using the same sorting, regardless of the sort column that
+			// was selected.  So always return the same word for the letter head.
+			if (lexEntry == null)
+			{
+				// When viewing the Reversal Indexes the sort column always comes back as "Form",
+				// regardless of which column was selected for the sort. If for some cases this assumption changes
+				// then we need to assess if those cases should be returning a different property for the sort word.
+				if (recordList?.SortName != null)
+				{
+					Debug.Assert(recordList.SortName.StartsWith("Form"),
+						"Should we be getting the letter headers from the sort column: " +
+						recordList.SortName);
+				}
+
+				var revEntry = entry as IReversalIndexEntry;
+				return revEntry != null ? revEntry.ReversalForm.BestAnalysisAlternative.Text.TrimStart() : string.Empty;
+			}
+
+			if (recordList?.SortName != null)
+			{
+				// Lexeme Form
+				if (recordList.SortName.StartsWith("Lexeme Form"))
+				{
+					string retStr = lexEntry.LexemeFormOA?.Form?.VernacularDefaultWritingSystem?.Text?.TrimStart();
+					return retStr != null ? retStr : string.Empty;
+				}
+
+				// Citation Form
+				if (recordList.SortName.StartsWith("Citation Form"))
+				{
+					string retStr = lexEntry.CitationForm?.UserDefaultWritingSystem?.Text?.TrimStart();
+					return (retStr != null && retStr != "***") ? retStr : string.Empty;
+				}
+
+				// If we get here and have a sort name other than "Headword" then it should have
+				// it's own conditional check and use a different lexEntry field to get the sort word.
+				Debug.Assert(recordList.SortName.StartsWith("Headword"),
+					"We should be getting the letter headers from the sort column: " +
+					recordList.SortName);
+			}
+
+			// Headword - Default to using the "Headword" sort word.
+			return  lexEntry.HomographForm.TrimStart();
 		}
 
 		/// <summary>
@@ -240,7 +302,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var bldr = new StringBuilder();
 			using (var xw = settings.ContentGenerator.CreateWriter(bldr))
 			{
-				settings.ContentGenerator.BeginEntry(xw, GetClassNameAttributeForConfig(configuration), entry.Guid, index);
+				var recordList = settings.ReadOnlyPropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
+				settings.ContentGenerator.StartEntry(xw, GetClassNameAttributeForConfig(configuration), entry.Guid, index, recordList);
 				settings.ContentGenerator.AddEntryData(xw, pieces);
 				settings.ContentGenerator.EndEntry(xw);
 				xw.Flush();
@@ -390,16 +453,14 @@ namespace LanguageExplorer.DictionaryConfiguration
 					if (fileProperty != null && !string.IsNullOrEmpty(internalPath))
 					{
 						var srcAttr = GenerateSrcAttributeForMediaFromFilePath(internalPath, "AudioVisual", settings);
-						if (IsVideo(fileProperty.InternalPath))
-						{
-							return GenerateXHTMLForVideoFile(fileProperty.ClassName, srcAttr, MovieCamera);
-						}
 						fileOwner = field as ICmObject;
+						// the XHTML id attribute must be unique. The owning ICmMedia has a unique guid.
+						// The ICmFile is used for all references to the same file within the project, so its guid is not unique.
 						if (fileOwner != null)
 						{
-							// the XHTML id attribute must be unique. The owning ICmMedia has a unique guid.
-							// The ICmFile is used for all references to the same file within the project, so its guid is not unique.
-							return GenerateXHTMLForAudioFile(fileProperty.ClassName, fileOwner.Guid.ToString(), srcAttr, LoudSpeaker, settings);
+							return IsVideo(fileProperty.InternalPath)
+								? GenerateXHTMLForVideoFile(fileProperty.ClassName, fileOwner.Guid.ToString(), srcAttr, MovieCamera, settings)
+								: GenerateXHTMLForAudioFile(fileProperty.ClassName, fileOwner.Guid.ToString(), srcAttr, LoudSpeaker, settings);
 						}
 					}
 					return string.Empty;
@@ -512,32 +573,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 			return true;
 		}
 
-		private static string GenerateXHTMLForVideoFile(string className, string srcAttribute, string caption)
+		private static string GenerateXHTMLForVideoFile(string className, string mediaId, string srcAttribute, string caption, GeneratorSettings settings)
 		{
 			if (string.IsNullOrEmpty(srcAttribute) && string.IsNullOrEmpty(caption))
-			{
 				return string.Empty;
-			}
-			var bldr = new StringBuilder();
-			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
-			{
-				// This creates a link that will open the video in the same window as the dictionary view/preview
-				// refreshing will bring it back to the dictionary
-				xw.WriteStartElement("a");
-				xw.WriteAttributeString("class", className);
-				xw.WriteAttributeString("href", srcAttribute);
-				if (!string.IsNullOrEmpty(caption))
-				{
-					xw.WriteString(caption);
-				}
-				else
-				{
-					xw.WriteRaw(string.Empty);
-				}
-				xw.WriteFullEndElement();
-				xw.Flush();
-				return bldr.ToString();
-			}
+			// This creates a link that will open the video in the same window as the dictionary view/preview
+			// refreshing will bring it back to the dictionary
+			return settings.ContentGenerator.GenerateVideoLinkContent(className, GetSafeXHTMLId(mediaId), srcAttribute, caption);
 		}
 
 		private static bool IsVideo(string fileName)
@@ -648,14 +690,18 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		private static string GetClassNameForCustomFieldParent(ConfigurableDictionaryNode customFieldNode, IFwMetaDataCacheManaged metaDataCacheAccessor)
 		{
-			// If the parent node of the custom field represents a collection, calling GetTypeForConfigurationNode
-			// with the parent node returns the collection type. We want the type of the elements in the collection.
-			var parentNodeType = GetTypeForConfigurationNode(customFieldNode.Parent, metaDataCacheAccessor, out _);
+			// Use the type of the nearest ancestor that is not a grouping node
+			var parentNode = customFieldNode.Parent;
+			for (; parentNode.DictionaryNodeOptions is DictionaryNodeGroupingOptions; parentNode = parentNode.Parent) { }
+			var parentNodeType = GetTypeForConfigurationNode(parentNode, metaDataCacheAccessor, out _);
 			if (parentNodeType == null)
 			{
 				Debug.Assert(parentNodeType != null, "Unable to find type for configuration node");
 				return string.Empty;
 			}
+
+			// If the parent node of the custom field represents a collection, calling GetTypeForConfigurationNode
+			// with the parent node returns the collection type. We want the type of the elements in the collection.
 			if (IsCollectionType(parentNodeType))
 			{
 				parentNodeType = parentNodeType.GetGenericArguments()[0];
@@ -1296,7 +1342,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 						? GenerateCollectionItemContent(typeNode, pubDecorator, lexEntryType, lexEntryType.Owner, settings)
 						: null;
 					var className = generateLexType ? GetClassNameAttributeForConfig(typeNode) : null;
-					var refsByType = settings.ContentGenerator.AddLexReferences(generateLexType, lexTypeContent, className, innerBldr.ToString());
+					var refsByType = settings.ContentGenerator.AddLexReferences(generateLexType,
+						lexTypeContent, className, innerBldr.ToString(), IsTypeBeforeForm(config));
 					bldr.Append(refsByType);
 				}
 			}
@@ -1754,7 +1801,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private static int CompareLexRefTargets(Tuple<ISenseOrEntry, ILexReference> lhs, Tuple<ISenseOrEntry, ILexReference> rhs)
 		{
-			return string.Compare(lhs.Item1.HeadWord.Text, rhs.Item1.HeadWord.Text, StringComparison.CurrentCultureIgnoreCase);
+			var wsId = lhs.Item1.Item.Cache.ServiceLocator.WritingSystemManager.Get(lhs.Item1.HeadWord.get_WritingSystem(0));
+			var comparer = new WritingSystemComparer(wsId);
+			var result = comparer.Compare(lhs.Item1.HeadWord.Text, rhs.Item1.HeadWord.Text);
+			return result;
 		}
 
 		/// <returns>Content for Targets and nodes, except Type, which is returned in ref string typeXHTML</returns>
@@ -2340,6 +2390,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 					}
 				}
 			}
+			else if (config.IsCustomField && IsUSFM(fieldValue.Text))
+			{
+				return GenerateTablesFromUSFM(fieldValue, config, settings, writingSystem);
+			}
 			else
 			{
 				// use the passed in writing system unless null
@@ -2364,8 +2418,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 						for (var i = 0; i < fieldValue.RunCount; i++)
 						{
 							var text = fieldValue.get_RunText(i);
+
+							// If the text is "<Not Sure>" then don't display any text.
+							if (text == LCModelStrings.NotSure)
+								text = String.Empty;
+
 							var props = fieldValue.get_Properties(i);
-							var style = props.GetStrPropValue((int) FwTextPropType.ktptNamedStyle);
+							var style = props.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
 							writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(fieldValue.get_WritingSystem(i));
 							GenerateRunWithPossibleLink(settings, writingSystem, writer, style, text, linkTarget, rightToLeft);
 						}
@@ -2399,8 +2458,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 							badStrBuilder.Append(unicodeChars.GetTextElement());
 						}
 					}
-					//FIXME: The error content here needs to come from the settings.ContentGenerator implementation (won't work for json)
-					return $"<span>\u0FFF\u0FFF\u0FFF<!-- Error generating content for string: '{badStrBuilder}' invalid surrogate pairs replaced with \\u0fff --></span>";
+
+					return settings.ContentGenerator.GenerateErrorContent(badStrBuilder);
 				}
 			}
 			return string.Empty;
@@ -2431,13 +2490,12 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 			if (linkDestination != Guid.Empty)
 			{
-				settings.ContentGenerator.BeginLink(writer, linkDestination);
+				settings.ContentGenerator.StartLink(writer, linkDestination);
 			}
-			const char txtlineSplit = (char)8232; //Line-Separator Decimal Code
-			if (text.Contains(txtlineSplit))
+			if (text.Contains(TxtLineSplit))
 			{
-				var txtContents = text.Split(txtlineSplit);
-				for (var i = 0; i < txtContents.Count(); i++)
+				var txtContents = text.Split(TxtLineSplit);
+				for (int i = 0; i < txtContents.Count(); i++)
 				{
 					settings.ContentGenerator.AddToRunContent(writer, txtContents[i]);
 					if (i == txtContents.Count() - 1)
@@ -2462,22 +2520,18 @@ namespace LanguageExplorer.DictionaryConfiguration
 			settings.ContentGenerator.EndRun(writer);
 		}
 
-		/// <summary>
-		/// This method Generate XHTML for Audio file
-		/// </summary>
 		/// <param name="classname">value for class attribute for audio tag</param>
 		/// <param name="audioId">value for Id attribute for audio tag</param>
 		/// <param name="srcAttribute">Source location path for audio file</param>
-		/// <param name="caption">Innertext for hyperlink</param>
-		/// <param name="settings"></param>
-		/// <returns></returns>
-		private static string GenerateXHTMLForAudioFile(string classname, string audioId, string srcAttribute, string caption, GeneratorSettings settings)
+		/// <param name="audioIcon">Inner text for hyperlink (unicode icon for audio)</param>
+		/// <param name="settings"/>
+		private static string GenerateXHTMLForAudioFile(string classname,
+			string audioId, string srcAttribute, string audioIcon, GeneratorSettings settings)
 		{
-			if (string.IsNullOrEmpty(audioId) && string.IsNullOrEmpty(srcAttribute) && string.IsNullOrEmpty(caption))
-			{
+			if (string.IsNullOrEmpty(audioId) && string.IsNullOrEmpty(srcAttribute) && string.IsNullOrEmpty(audioIcon))
 				return string.Empty;
-			}
-			return settings.ContentGenerator.GenerateAudioLinkContent(classname, srcAttribute, caption, GetSafeXHTMLId(audioId));
+			var safeAudioId = GetSafeXHTMLId(audioId);
+			return settings.ContentGenerator.GenerateAudioLinkContent(classname, srcAttribute, audioIcon, safeAudioId);
 		}
 
 		private static string GetSafeXHTMLId(string audioId)
@@ -2485,6 +2539,191 @@ namespace LanguageExplorer.DictionaryConfiguration
 			// Prepend a letter, since some filenames start with digits, which gives an invalid id
 			// Are there other characters that are unsafe in XHTML Ids or Javascript?
 			return "g" + audioId.Replace(" ", "_").Replace("'", "_");
+		}
+
+		/// <summary>
+		/// Determines whether the candidate string should be parsed as USFM.
+		/// As of 2021.06, only strings beginning with \d (descriptive title) or \tr (table row) are supported by this code.
+		/// </summary>
+		private static bool IsUSFM(string candidate)
+		{
+			return USFMTableStart.IsMatch(candidate);
+		}
+
+		private static string GenerateTablesFromUSFM(ITsString usfm, ConfigurableDictionaryNode config, GeneratorSettings settings, string writingSystem)
+		{
+			var delimiters = new Regex(@"\\d\s").Matches(usfm.Text);
+
+			// If there is only one table, generate it
+			if (delimiters.Count == 0 || delimiters.Count == 1 && delimiters[0].Index == 0)
+			{
+				return GenerateTableFromUSFM(usfm, config, settings, writingSystem);
+			}
+
+			var bldr = new StringBuilder();
+			// If there is a table before the first title, generate it
+			if (delimiters[0].Index > 0)
+			{
+				bldr.Append(GenerateTableFromUSFM(usfm.GetSubstring(0, delimiters[0].Index), config, settings, writingSystem));
+			}
+
+			for (var i = 0; i < delimiters.Count; i++)
+			{
+				var lim = i == delimiters.Count - 1 ? usfm.Length : delimiters[i + 1].Index;
+				bldr.Append(GenerateTableFromUSFM(usfm.GetSubstring(delimiters[i].Index, lim), config, settings, writingSystem));
+			}
+
+			return bldr.ToString();
+		}
+
+		private static string GenerateTableFromUSFM(ITsString usfm, ConfigurableDictionaryNode config, GeneratorSettings settings, string writingSystem)
+		{
+			var bldr = new StringBuilder();
+			using (var writer = settings.ContentGenerator.CreateWriter(bldr))
+			{
+				// Regular expression to match the end of a string or a table row marker at the end of a title or row
+				const string usfmRowTerminator = @"(?=\\tr\s|$)";
+
+				// Regular expression to match at the beginning of the string a \d followed by one or more spaces
+				// then grouping any number of characters as 'contents' until encountering any number of spaces followed
+				// by \tr or the end of the string
+				const string usfmHeaderGroup = @"(?<header>\A\\d\s+(?<contents>.*?)\s*" + usfmRowTerminator + ")";
+
+				// Match the header optionally, then capture any contents found between \tr tags or between \tr and the end of the string
+				// in groups labeled 'rowcontents' - The header including the sfm and spaces is captured as header and the row with the
+				// sfm and surrounding space is captured as <row>
+				var usfmTableRegEx = new Regex(usfmHeaderGroup + @"?(?<row>\\tr\s+(?<rowcontents>.*?)" + usfmRowTerminator + ")?", RegexOptions.Compiled | RegexOptions.Singleline);
+				var usfmText = usfm.Text;
+				var fancyMatch = usfmTableRegEx.Matches(usfmText);
+				var headerContent = fancyMatch.Count > 0 && fancyMatch[0].Groups["contents"].Success ? fancyMatch[0].Groups["contents"].Captures[0] : null;
+				var rows = from Match match in fancyMatch
+					where match.Success && match.Groups["rowcontents"].Success
+					select match.Groups["rowcontents"] into rowContentsGroup
+					select new Tuple<int, int>(rowContentsGroup.Index, rowContentsGroup.Index + rowContentsGroup.Length);
+
+				settings.ContentGenerator.StartTable(writer);
+				if (headerContent != null && headerContent.Length > 0)
+				{
+					var title = usfm.GetSubstring(headerContent.Index, headerContent.Index + headerContent.Length);
+					GenerateTableTitle(title, writer, config, settings, writingSystem);
+				}
+				settings.ContentGenerator.StartTableBody(writer);
+				foreach(var row in rows)
+				{
+					GenerateTableRow(usfm.GetSubstring(row.Item1, row.Item2), writer, config, settings, writingSystem);
+				}
+				settings.ContentGenerator.EndTableBody(writer);
+				settings.ContentGenerator.EndTable(writer);
+				writer.Flush();
+			}
+			return bldr.ToString();
+			// TODO (Hasso) 2021.06: impl for JSON
+		}
+
+		/// <summary>
+		/// Generate the table title from USFM (\d descriptive title in USFM)
+		/// </summary>
+		private static void GenerateTableTitle(ITsString title, IFragmentWriter writer,
+			ConfigurableDictionaryNode config, GeneratorSettings settings, string writingSystem)
+		{
+			settings.ContentGenerator.AddTableTitle(writer, GenerateXHTMLForString(title, config, settings, writingSystem));
+		}
+
+		/// <remarks>
+		/// rowUSFM should have at least one leading whitespace character so that the regular expression matches the first \tc# or \th#
+		/// </remarks>>
+		private static void GenerateTableRow(ITsString rowUSFM, IFragmentWriter writer,
+			ConfigurableDictionaryNode config, GeneratorSettings settings, string writingSystem)
+		{
+			var usfmText = rowUSFM.Text;
+			if (string.IsNullOrEmpty(usfmText))
+			{
+				return;
+			}
+
+			settings.ContentGenerator.StartTableRow(writer);
+			var rowToCellsRegex = new Regex(
+				@"\\t(?<tag>c|h)(?<align>r|c|l)?((?<min>\d+)(-(?<lim>\d+))?)?(\s+|$)(?<content>.*?)\s*(?=\\t(c|h)(r|c|l)?(\d+(-\d+)?)?\s|$)",
+				RegexOptions.Compiled | RegexOptions.Singleline);
+			var cellMatches = rowToCellsRegex.Matches(usfmText);
+			var cells = new List<Match>(from Match match in cellMatches where match.Success && match.Groups["content"].Success select match);
+
+			// check for extra text before the first cell
+			if (cells.Count == 0 || cells[0].Index > 0)
+			{
+				var junk = cells.Count == 0 ? usfmText : usfmText.Remove(cells[0].Index).Trim();
+				if (new Regex(@"\A\\(t((h|c)(r|c|l)?(\d+(-\d*)?)?)?)?$").IsMatch(junk))
+				{
+					// The user seems to be starting to type a valid marker; call attention to its location
+					GenerateError(junk, writer, settings);
+				}
+				else
+				{
+					// Yes, this strips all WS and formatting information, but for an error message, I'm not sure that we care
+					GenerateError(string.Format(DictionaryConfigurationStrings.InvalidUSFM_TextAfterTR, junk), writer, settings);
+				}
+			}
+
+			foreach (var cell in cells)
+			{
+				var contentsGroup = cell.Groups["content"];
+				var cellLim = contentsGroup.Index + contentsGroup.Length;
+				var contentXHTML = GenerateXHTMLForString(rowUSFM.GetSubstring(contentsGroup.Index, cellLim), config, settings, writingSystem);
+				var alignment = HorizontalAlign.NotSet;
+				if (cell.Groups["align"].Success)
+				{
+					switch (cell.Groups["align"].Value)
+					{
+						case "r":
+							alignment = HorizontalAlign.Right;
+							break;
+						case "c":
+							alignment = HorizontalAlign.Center;
+							break;
+						case "l":
+							alignment = HorizontalAlign.Left;
+							break;
+					}
+				}
+
+				var colSpan = 1;
+				if (cell.Groups["lim"].Success)
+				{
+					// Add one because the range includes both ends
+					colSpan = int.Parse(cell.Groups["lim"].Value) - int.Parse(cell.Groups["min"].Value) + 1;
+				}
+				settings.ContentGenerator.AddTableCell(writer, cell.Groups["tag"].Value.Equals("h"), colSpan, alignment, contentXHTML);
+			}
+			settings.ContentGenerator.EndTableRow(writer);
+		}
+
+		private static void GenerateError(string text, IFragmentWriter writer, GeneratorSettings settings)
+		{
+			var writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(settings.Cache.WritingSystemFactory.UserWs);
+			settings.ContentGenerator.StartRun(writer, writingSystem);
+			// Make the error red and slightly larger than the surrounding text
+			var css = new StyleDeclaration
+			{
+				new ExCSS.Property("color") { Term = new HtmlColor(222, 0, 0) },
+				new ExCSS.Property("font-size") { Term = new PrimitiveTerm(UnitType.Ems, 1.5f) }
+			};
+			settings.ContentGenerator.SetRunStyle(writer, css.ToString());
+			if (text.Contains(TxtLineSplit))
+			{
+				var txtContents = text.Split(TxtLineSplit);
+				for (var i = 0; i < txtContents.Length; i++)
+				{
+					settings.ContentGenerator.AddToRunContent(writer, txtContents[i]);
+					if (i == txtContents.Length - 1)
+						break;
+					settings.ContentGenerator.AddLineBreakInRunContent(writer);
+				}
+			}
+			else
+			{
+				settings.ContentGenerator.AddToRunContent(writer, text);
+			}
+			settings.ContentGenerator.EndRun(writer);
 		}
 
 		internal static bool IsBlockProperty(ConfigurableDictionaryNode config)
@@ -2530,6 +2769,33 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var decorator = new DictionaryPublicationDecorator(cache, activeRecordList.VirtualListPublisher, activeRecordList.VirtualFlid, currentPublication);
 			entriesToSave = decorator.GetEntriesToPublish(propertyTable, activeRecordList.VirtualFlid, dictionaryType);
 			return decorator;
+		}
+
+		/// <summary>
+		/// Determines if Variant Type comes before or after Variant Form.
+		/// </summary>
+		/// <param name="config"></param>
+		/// <returns>Returns True if Variant Type is before Variant Form.</returns>
+		private static bool IsTypeBeforeForm(ConfigurableDictionaryNode config)
+		{
+			bool typeBefore = true;
+
+			// Determine if 'Variant Type' should be before or after 'Variant Form'.
+			ConfigurableDictionaryNode node = null;
+			var variantOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
+			if (variantOptions != null && variantOptions.ListId == ListIds.Variant)
+			{
+				node = config.ReferencedOrDirectChildren.FirstOrDefault(x => ((x.FieldDescription == "VariantEntryTypesRS") || (x.FieldDescription == "OwningEntry")));
+				if (node != null)
+				{
+					if (node.FieldDescription == "OwningEntry")
+					{
+						typeBefore = false;
+					}
+				}
+			}
+
+			return typeBefore;
 		}
 	}
 }

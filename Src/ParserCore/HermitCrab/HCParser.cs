@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2020 SIL International
+// Copyright (c) 2014-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -12,13 +12,13 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.HermitCrab;
-using SIL.HermitCrab.MorphologicalRules;
-using SIL.HermitCrab.PhonologicalRules;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
+using SIL.Machine.Morphology.HermitCrab;
+using SIL.Machine.Morphology.HermitCrab.MorphologicalRules;
+using SIL.Machine.Morphology.HermitCrab.PhonologicalRules;
 using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
@@ -28,16 +28,29 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 		private readonly LcmCache m_cache;
 		private Morpher m_morpher;
 		private Language m_language;
-		private readonly SpanFactory<ShapeNode> m_spanFactory;
 		private readonly ITraceManager m_traceManager;
 		private readonly string m_outputDirectory;
 		private ParserModelChangeListener m_changeListener;
 		private bool m_forceUpdate;
 
+		internal const string CRuleID = "ID";
+		internal const string FormID = "ID";
+		internal const string FormID2 = "ID2";
+		internal const string InflTypeID = "InflTypeID";
+		internal const string MsaID = "ID";
+		internal const string PRuleID = "ID";
+		internal const string SlotID = "SlotID";
+		internal const string TemplateID = "ID";
+
+		internal const string IsNull = "IsNull";
+		internal const string IsPrefix = "IsPrefix";
+		internal const string Env = "Env";
+		internal const string PrefixEnv = "PrefixEnv";
+		internal const string SuffixEnv = "SuffixEnv";
+
 		public HCParser(LcmCache cache)
 		{
 			m_cache = cache;
-			m_spanFactory = new ShapeSpanFactory();
 			m_traceManager = new FwXmlTraceManager(m_cache.ServiceLocator);
 			m_outputDirectory = Path.GetTempPath();
 			m_changeListener = new ParserModelChangeListener(m_cache);
@@ -133,7 +146,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
 				writer.WriteStartElement("LoadErrors");
-				m_language = HCLoader.Load(m_spanFactory, m_cache, new XmlHCLoadErrorLogger(writer));
+				m_language = HCLoader.Load(m_cache, new XmlHCLoadErrorLogger(writer));
 				writer.WriteEndElement();
 				var parserParamsElem = XElement.Parse(m_cache.LanguageProject.MorphologicalDataOA.ParserParameters);
 				var delReappsElem = parserParamsElem.Elements("ParserParameters").Elements("HC").Elements("DelReapps").FirstOrDefault();
@@ -142,7 +155,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 					delReapps = (int)delReappsElem;
 				}
 			}
-			m_morpher = new Morpher(m_spanFactory, m_traceManager, m_language) { DeletionReapplications = delReapps };
+			m_morpher = new Morpher(m_traceManager, m_language) { DeletionReapplications = delReapps };
 		}
 
 		private XDocument ParseToXml(string form, bool tracing, IEnumerable<int> selectTraceMorphs)
@@ -157,8 +170,8 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 				if (selectTraceMorphs != null)
 				{
 					var selectTraceMorphsSet = new HashSet<int>(selectTraceMorphs);
-					m_morpher.LexEntrySelector = entry => selectTraceMorphsSet.Contains((int)entry.Properties["MsaID"]);
-					m_morpher.RuleSelector = rule => !(rule is Morpheme mrule) || selectTraceMorphsSet.Contains((int)mrule.Properties["MsaID"]);
+					m_morpher.LexEntrySelector = entry => selectTraceMorphsSet.Contains((int)entry.Properties[MsaID]);
+					m_morpher.RuleSelector = rule => !(rule is Morpheme morphRule) || selectTraceMorphsSet.Contains((int)morphRule.Properties[MsaID]);
 				}
 				else
 				{
@@ -275,13 +288,13 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			foreach (var morph in ws.Morphs)
 			{
 				var allomorph = ws.GetAllomorph(morph);
-				var formID = (int?)allomorph.Properties["ID"] ?? 0;
+				var formID = (int?)allomorph.Properties[FormID] ?? 0;
 				if (formID == 0)
 				{
 					continue;
 				}
-				var formID2 = (int?)allomorph.Properties["ID2"] ?? 0;
-				var formStr = ws.Shape.GetNodes(morph.Span).ToString(ws.Stratum.CharacterDefinitionTable, false);
+				var formID2 = (int?)allomorph.Properties[FormID2] ?? 0;
+				var formStr = ws.Shape.GetNodes(morph.Range).ToString(ws.Stratum.CharacterDefinitionTable, false);
 				int curFormID;
 				if (!morphs.TryGetValue(allomorph.Morpheme, out var morphInfo))
 				{
@@ -304,14 +317,14 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 					return false;
 				}
 
-				var msaID = (int)allomorph.Morpheme.Properties["ID"];
+				var msaID = (int)allomorph.Morpheme.Properties[MsaID];
 				if (!m_cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>().TryGetObject(msaID, out var msa))
 				{
 					result = null;
 					return false;
 				}
 
-				var inflTypeID = (int?)allomorph.Morpheme.Properties["InflTypeID"] ?? 0;
+				var inflTypeID = (int?)allomorph.Morpheme.Properties[InflTypeID] ?? 0;
 				ILexEntryInflType inflType = null;
 				if (inflTypeID > 0 && !m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(inflTypeID, out inflType))
 				{
@@ -668,7 +681,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			{
 				var trace = new XElement("WordSynthesisTrace",
 					CreateAllomorphElement(input.RootAllomorph),
-					new XElement("MorphologicalRules", input.MorphologicalRules.Select(CreateMorphologicalRuleElement)));
+					new XElement("MorphologicalRules", input.Stratum.MorphologicalRules.Select(CreateMorphologicalRuleElement)));
 				var curTrace = (XElement)input.CurrentTrace;
 				var lookupTrace = (XElement)curTrace.LastNode;
 				lookupTrace.Add(trace);
@@ -850,17 +863,17 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 				((XElement)input.CurrentTrace).Add(trace);
 			}
 
-			void ITraceManager.ParseBlocked(IHCRule rule, Word output)
+			void ITraceManager.Blocked(IHCRule rule, Word output)
 			{
 			}
 
-			void ITraceManager.ParseSuccessful(Language lang, Word output)
+			void ITraceManager.Successful(Language lang, Word output)
 			{
 				((XElement)output.CurrentTrace).Add(new XElement("ParseCompleteTrace", new XAttribute("success", true),
 					CreateWordElement("Result", output, false)));
 			}
 
-			void ITraceManager.ParseFailed(Language lang, Word word, FailureReason reason, Allomorph allomorph, object failureObj)
+			void ITraceManager.Failed(Language lang, Word word, FailureReason reason, Allomorph allomorph, object failureObj)
 			{
 				XElement trace;
 				switch (reason)
@@ -1042,6 +1055,11 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 					return null;
 				}
 				return HCParser.CreateAllomorphElement("Allomorph", form, msa, inflType, formID2 != 0);
+			}
+
+			object ITraceManager.GenerateWords(Language lang)
+			{
+				throw new NotImplementedException();
 			}
 		}
 	}

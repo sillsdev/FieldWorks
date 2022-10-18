@@ -3448,6 +3448,15 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You must open a project before configuring plugins..
+        /// </summary>
+        internal static string OpenAProjectBeforeConfiguringPlugins {
+            get {
+                return ResourceManager.GetString("OpenAProjectBeforeConfiguringPlugins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;parameters id=&quot;lexentryMatchList&quot; listItemsClass=&quot;LexEntry&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;LexEntry-Plural&quot; editable=&quot;false&quot;&gt;
         ///  &lt;columns&gt;
@@ -3627,6 +3636,87 @@ namespace LanguageExplorer.Controls {
         internal static string Show_in_Phonemes_list {
             get {
                 return ResourceManager.GetString("Show_in_Phonemes_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ZIP files|*.zip|All files|*.*.
+        /// </summary>
+        internal static string openFileDialog1_Zip_Filter {
+            get {
+                return ResourceManager.GetString("openFileDialog1_Zip_Filter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restart FieldWorks for these settings to take effect..
+        /// </summary>
+        internal static string RestartToForSettingsToTakeEffect_Content {
+            get {
+                return ResourceManager.GetString("RestartToForSettingsToTakeEffect_Content", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restart required.
+        /// </summary>
+        internal static string RestartToForSettingsToTakeEffect_Title {
+            get {
+                return ResourceManager.GetString("RestartToForSettingsToTakeEffect_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alpha.
+        /// </summary>
+        internal static string UpdatesAlpha {
+            get {
+                return ResourceManager.GetString("UpdatesAlpha", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alpha updates have bugs. Choose this channel only if your tech support person recommended it to you..
+        /// </summary>
+        internal static string UpdatesAlphaDescription {
+            get {
+                return ResourceManager.GetString("UpdatesAlphaDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Beta.
+        /// </summary>
+        internal static string UpdatesBeta {
+            get {
+                return ResourceManager.GetString("UpdatesBeta", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Beta updates are recommended for users who want to try the latest features and don&apos;t mind a few minor bugs..
+        /// </summary>
+        internal static string UpdatesBetaDescription {
+            get {
+                return ResourceManager.GetString("UpdatesBetaDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stable (recommended).
+        /// </summary>
+        internal static string UpdatesStable {
+            get {
+                return ResourceManager.GetString("UpdatesStable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stable updates are recommended for all users. If you&apos;re not sure which channel to choose, choose Stable..
+        /// </summary>
+        internal static string UpdatesStableDescription {
+            get {
+                return ResourceManager.GetString("UpdatesStableDescription", resourceCulture);
             }
         }
     }

@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2020 SIL International
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,8 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using LanguageExplorer.Areas.Lexicon;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -19,6 +21,7 @@ namespace LanguageExplorer.Controls.DetailControls
 {
 	internal sealed class ConstChartVc : InterlinVc
 	{
+		// ReSharper disable InconsistentNaming - we like our constants to begin with k
 		internal const int kfragChart = 3000000; // should be distinct from ones used in InterlinVc
 		internal const int kfragChartRow = 3000001;
 		internal const int kfragCellPart = 3000002;
@@ -27,34 +30,41 @@ namespace LanguageExplorer.Controls.DetailControls
 		const int kfragPossibility = 3000005;
 		internal const int kfragNotesString = 3000007;
 		internal const int kfragPrintChart = 3000009;
-		const int kfragTemplateHeader = 3000010;
-		internal const int kfragColumnGroupHeader = 3000011;
 		const int kfragClauseLabels = 3000012;
 		internal const int kfragComment = 3000013;
 		internal const int kfragMTMarker = 3000014;
-		VwLength[] m_colWidths;
-		internal ConstChartBody m_chart;
-		Dictionary<string, ITsTextProps> m_formatProps;
-		Dictionary<string, string> m_brackets;
+		private const int kflidDepClauses = ConstChartClauseMarkerTags.kflidDependentClauses;
+		// ReSharper restore InconsistentNaming
+
+		/// <summary>
+		/// Right-to-Left Mark; for flipping individual characters.
+		/// </summary>
+		internal const char RLM = '\x200F';
+
+		private VwLength[] m_colWidths;
+		internal ConstChartBody m_body;
+		private Dictionary<string, ITsTextProps> m_formatProps;
+		private Dictionary<string, string> m_brackets;
 		private readonly IConstChartRowRepository m_rowRepo;
 		private readonly IConstChartWordGroupRepository m_wordGrpRepo;
 		private readonly IConstituentChartCellPartRepository m_partRepo;
-		private const int kflidDepClauses = ConstChartClauseMarkerTags.kflidDependentClauses;
 		internal ITsString m_sMovedTextBefore;
 		internal ITsString m_sMovedTextAfter;
 		private bool m_fIsAnalysisWsGraphiteEnabled;
 
-		internal ConstChartVc(ConstChartBody chart)
-			: base(chart.Cache)
+		internal ConstChartVc(ConstChartBody body)
+			: base(body.Cache)
 		{
-			m_chart = chart;
-			m_cache = m_chart.Cache;
+			m_body = body;
+			m_cache = m_body.Cache;
 			SpaceString = TsStringUtils.MakeString(" ", m_cache.DefaultAnalWs);
 			m_rowRepo = m_cache.ServiceLocator.GetInstance<IConstChartRowRepository>();
 			m_wordGrpRepo = m_cache.ServiceLocator.GetInstance<IConstChartWordGroupRepository>();
 			m_partRepo = m_cache.ServiceLocator.GetInstance<IConstituentChartCellPartRepository>();
-			m_sMovedTextBefore = TsStringUtils.MakeString(LanguageExplorerResources.ksMovedTextBefore, m_cache.DefaultUserWs);
-			m_sMovedTextAfter = TsStringUtils.MakeString(LanguageExplorerResources.ksMovedTextAfter, m_cache.DefaultUserWs);
+			m_sMovedTextBefore = TsStringUtils.MakeString(LanguageExplorerResources.ksMovedTextBefore,
+				m_cache.DefaultUserWs);
+			m_sMovedTextAfter = TsStringUtils.MakeString(LanguageExplorerResources.ksMovedTextAfter,
+				m_cache.DefaultUserWs);
 			LoadFormatProps();
 		}
 
@@ -70,17 +80,20 @@ namespace LanguageExplorer.Controls.DetailControls
 				var color = XmlUtils.GetOptionalAttributeValue(item, "color", null);
 				if (color != null)
 				{
-					bldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, ColorVal(color.Trim()));
+					bldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault,
+						ColorVal(color.Trim()));
 				}
 				var underlinecolor = XmlUtils.GetOptionalAttributeValue(item, "underlinecolor", null);
 				if (underlinecolor != null)
 				{
-					bldr.SetIntPropValues((int)FwTextPropType.ktptUnderColor, (int)FwTextPropVar.ktpvDefault, ColorVal(underlinecolor.Trim()));
+					bldr.SetIntPropValues((int)FwTextPropType.ktptUnderColor, (int)FwTextPropVar.ktpvDefault,
+						ColorVal(underlinecolor.Trim()));
 				}
 				var underline = XmlUtils.GetOptionalAttributeValue(item, "underline", null);
 				if (underline != null)
 				{
-					bldr.SetIntPropValues((int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvEnum, InterpretUnderlineType(underline.Trim()));
+					bldr.SetIntPropValues((int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvEnum,
+						InterpretUnderlineType(underline.Trim()));
 				}
 				var fontsize = XmlUtils.GetOptionalAttributeValue(item, "fontsize", null);
 				if (fontsize != null)
@@ -94,28 +107,31 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 					else
 					{
-						bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, Convert.ToInt32(sval));
+						bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint,
+							Convert.ToInt32(sval));
 					}
 				}
 				var bold = XmlUtils.GetOptionalAttributeValue(item, "bold", null);
 				if (bold == "true")
 				{
-					bldr.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvInvert);
+					bldr.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum,
+						(int)FwTextToggleVal.kttvInvert);
 				}
 				var italic = XmlUtils.GetOptionalAttributeValue(item, "italic", null);
 				if (italic == "true")
 				{
-					bldr.SetIntPropValues((int)FwTextPropType.ktptItalic, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvInvert);
+					bldr.SetIntPropValues((int)FwTextPropType.ktptItalic, (int)FwTextPropVar.ktpvEnum,
+						(int)FwTextToggleVal.kttvInvert);
 				}
 				var brackets = XmlUtils.GetOptionalAttributeValue(item, "brackets", null);
 				if (brackets != null && brackets.Trim().Length == 2)
 				{
-					m_brackets[item.Name.LocalName] = brackets.Trim();
+					m_brackets[item.Name.ToString()] = brackets.Trim();
 				}
-				m_formatProps[item.Name.LocalName] = bldr.GetTextProps();
+				m_formatProps[item.Name.ToString()] = bldr.GetTextProps();
 			}
 			m_fIsAnalysisWsGraphiteEnabled = m_cache.LanguageProject.DefaultAnalysisWritingSystem.IsGraphiteEnabled;
-			if (m_chart.IsRightToLeft)
+			if (m_body.IsRightToLeft)
 			{
 				SwapMovedTextMarkers();
 			}
@@ -196,7 +212,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// (Default) width of the number column (in millipoints).
 		/// </summary>
-		internal int NumColWidth => m_chart.NumColWidth;
+		internal int NumColWidth => m_body.NumColWidth;
 
 		/// <summary>
 		/// Set the column widths (in millipoints).
@@ -210,73 +226,49 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			switch (frag)
 			{
-				case kfragPrintChart: // the whole chart with headings for printing.
+				case kfragPrintChart: // the whole chart with headers for printing.
+					// This is used only for printing and exporting; the on-screen headers use separate code
 					if (hvo == 0)
 					{
 						return;
 					}
-					PrintColumnGroupHeaders(hvo, vwenv);
-					PrintIndividualColumnHeaders(hvo, vwenv);
+					for (var headerDepth = 0; headerDepth < m_body.Logic.ColumnsAndGroups.Headers.Count; headerDepth++)
+					{
+						PrintAnyLevelColumnHeaders(hvo, vwenv, headerDepth);
+					}
 					// Rest is same as kfragChart
 					DisplayChartBody(vwenv);
 					break;
-				case kfragTemplateHeader: // Display the template as group headers.
-					vwenv.AddObjVecItems(CmPossibilityTags.kflidSubPossibilities, this, kfragColumnGroupHeader);
-					break;
-				// This is only used for printing, the headers in the screen version are a separate control.
-				case kfragColumnGroupHeader:
-					var ccols = vwenv.DataAccess.get_VecSize(hvo, CmPossibilityTags.kflidSubPossibilities);
-					// If there are no subitems, we still want a blank cell as a placeholder.
-					MakeCellsMethod.OpenStandardCell(vwenv, Math.Max(ccols, 1), true);
-					if (ccols > 0)
-					{
-						// It's a group, include its name
-						var possGroup = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(hvo);
-						vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalCenter);
-						vwenv.OpenParagraph();
-						vwenv.AddString(possGroup.Name.BestAnalysisAlternative);
-						vwenv.CloseParagraph();
-					}
-					vwenv.CloseTableCell();
-					break;
-				case kfragChart: // the whole chart, a DsConstChart.
+				case kfragChart: // the whole chart (except headers), a DsConstChart.
 					if (hvo == 0)
-					{
 						return;
-					}
 					DisplayChartBody(vwenv);
 					break;
 				case kfragChartRow: // one row, a ConstChartRow
 					{
 						MakeTableAndRowWithStdWidths(vwenv, hvo, false);
+
 						MakeCells(vwenv, hvo);
 						vwenv.CloseTableRow();
 						vwenv.CloseTable();
 					}
 					break;
 				case kfragCellPart: // a single group of words, the contents of one cell.
-					if (m_chart.Logic.IsWordGroup(hvo))
-					{
+					if (m_body.Logic.IsWordGroup(hvo))
 						DisplayWordforms(vwenv, hvo);
-					}
 					else
 					{
 						// it's a moved text or clause reference placeholder.
-						if (m_chart.Logic.IsClausePlaceholder(hvo, out var hvoClause))
-						{
+						if (m_body.Logic.IsClausePlaceholder(hvo, out var hvoClause))
 							DisplayClausePlaceholder(vwenv, hvoClause);
-						}
 						else
-						{
 							DisplayMovedTextTag(hvo, vwenv);
-						}
 					}
 					break;
-				case kfragMovedTextCellPart:
-					// a single group of words (ConstChartWordGroup),
-					// the contents of one cell, which is considered moved-within-line.
-					// Can't be a placeholder.
-					var formatTag = m_chart.Logic.MovedTextTag(hvo);
+				case kfragMovedTextCellPart: // a single group of words (ConstChartWordGroup),
+											 // the contents of one cell, which is considered moved-within-line.
+											 // Can't be a placeholder.
+					var formatTag = m_body.Logic.MovedTextTag(hvo);
 					ApplyFormatting(vwenv, formatTag);
 					vwenv.OpenSpan();
 					InsertOpenBracket(vwenv, formatTag);
@@ -284,9 +276,8 @@ namespace LanguageExplorer.Controls.DetailControls
 					InsertCloseBracket(vwenv, formatTag);
 					vwenv.CloseSpan();
 					break;
-				case kfragChartListItem:
-					// a single ConstChartTag, referring to a list item.
-					// can't be a placeholder.
+				case kfragChartListItem: // a single ConstChartTag, referring to a list item.
+										 // can't be a placeholder.
 					ApplyFormatting(vwenv, "marker");
 					vwenv.OpenSpan();
 					InsertOpenBracket(vwenv, "marker");
@@ -294,8 +285,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					InsertCloseBracket(vwenv, "marker");
 					vwenv.CloseSpan();
 					break;
-				case kfragPossibility:
-					// A CmPossibility, show it's abbreviation
+				case kfragPossibility: // A CmPossibility, show it's abbreviation
 					var flid = CmPossibilityTags.kflidAbbreviation;
 					var retWs = WritingSystemServices.ActualWs(m_cache, WritingSystemServices.kwsFirstAnal, hvo, flid);
 					if (retWs == 0)
@@ -306,12 +296,9 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 					// Unless we didn't get anything, go ahead and insert the best option we found.
 					if (retWs != 0)
-					{
 						vwenv.AddStringAltMember(flid, retWs, this);
-					}
 					break;
-				case kfragBundle:
-					// One annotated word bundle; hvo is IAnalysis object. Overrides behavior of InterlinVc
+				case kfragBundle: // One annotated word bundle; hvo is IAnalysis object. Overrides behavior of InterlinVc
 					AddWordBundleInternal(hvo, vwenv);
 					break;
 				case kfragNotesString: // notes text
@@ -325,7 +312,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					Debug.Assert(mtt != null, "Invalid MovedTextMarker?");
 					vwenv.AddString(mtt.Preposed ? m_sMovedTextBefore : m_sMovedTextAfter);
 					// Need to regenerate this if the row my WordGroup is in changes.
-					vwenv.NoteDependency(new[] { mtt.WordGroupRA.Owner.Hvo }, new int[] { ConstChartRowTags.kflidCells }, 1);
+					vwenv.NoteDependency(new[] { mtt.WordGroupRA.Owner.Hvo }, new[] { ConstChartRowTags.kflidCells }, 1);
 					break;
 				default:
 					base.Display(vwenv, hvo, frag);
@@ -344,7 +331,9 @@ namespace LanguageExplorer.Controls.DetailControls
 				ConstChartWordGroupTags.kflidEndAnalysisIndex
 			};
 			NoteWordGroupDependencies(vwenv, hvoWordGrp, wordGrpFlidArray);
+
 			var wordGrp = m_wordGrpRepo.GetObject(hvoWordGrp);
+
 			foreach (var point in wordGrp.GetOccurrences())
 			{
 				SetupAndOpenInnerPile(vwenv);
@@ -379,78 +368,57 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Setup a box with 5 under and trailing, plus leading alignment, and open the inner pile
 		/// </summary>
-		/// <param name="vwenv"></param>
 		protected override void SetupAndOpenInnerPile(IVwEnv vwenv)
 		{
 			// Make an 'inner pile' to contain the wordform and its interlinear.
 			// Give whatever box we make 5 points of separation from whatever follows.
-			vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, 5000);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing,
+				(int)FwTextPropVar.ktpvMilliPoint, 5000);
 			// 5 points below also helps space out the paragraph.
-			vwenv.set_IntProperty((int)FwTextPropType.ktptMarginBottom, (int)FwTextPropVar.ktpvMilliPoint, 5000);
-			vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalLeading);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptMarginBottom,
+				(int)FwTextPropVar.ktpvMilliPoint, 5000);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum,
+				(int)FwTextAlign.ktalLeading);
 			vwenv.OpenInnerPile();
 		}
 
-		private void PrintIndividualColumnHeaders(int hvo, IVwEnv vwenv)
+		private void PrintAnyLevelColumnHeaders(int chartHvo, IVwEnv vwEnv, int depth)
 		{
 			var analWs = m_cache.DefaultAnalWs;
-			var oldEnv = vwenv;
-			MakeTableAndRowWithStdWidths(vwenv, hvo, true);
-			vwenv = new ChartRowEnvDecorator(vwenv); // in case this is a RTL chart
-			((ChartRowEnvDecorator)vwenv).IsRtL = m_chart.IsRightToLeft;
-			MakeCellsMethod.OpenRowNumberCell(vwenv); // blank cell under header for row numbers
-			vwenv.CloseTableCell();
-			PrintTemplateColumnHeaders(vwenv, analWs);
-			MakeCellsMethod.OpenStandardCell(vwenv, 1, false); // blank cell below Notes header
-			vwenv.CloseTableCell();
-			((ChartRowEnvDecorator)vwenv).FlushDecorator(); // if RTL, put out headers reversed
-			vwenv = oldEnv; // remove Decorator
-			vwenv.CloseTableRow();
-			vwenv.CloseTable();
-		}
 
-		private void PrintTemplateColumnHeaders(IVwEnv vwenv, int analWs)
-		{
-			for (var icol = 0; icol < m_chart.AllColumns.Length; icol++)
+			MakeTableAndRowWithStdWidths(vwEnv, chartHvo, true);
+			var rtlDecorator = new ChartRowEnvDecorator(vwEnv) { IsRtL = m_body.IsRightToLeft }; // in case this is a RTL chart
+			if (!(m_body.Chart.NotesColumnOnRight ^ m_body.IsRightToLeft))
+				PrintNotesCellHeader(rtlDecorator, analWs, depth == 0);
+			PrintRowNumCellHeader(rtlDecorator); // column header for row numbers
+			// for each column or placeholder at this level
+			foreach (var header in m_body.Logic.ColumnsAndGroups.Headers[depth])
 			{
-				PrintOneTemplateHeader(vwenv, analWs, icol);
+				MakeCellsMethod.OpenStandardCell(rtlDecorator, header.ColumnCount, header.IsLastInGroup);
+				if (header.Label != null)
+				{
+					rtlDecorator.AddString(header.Label);
+				}
+				rtlDecorator.CloseTableCell();
 			}
+			if (m_body.Chart.NotesColumnOnRight ^ m_body.IsRightToLeft)
+				PrintNotesCellHeader(rtlDecorator, analWs, depth == 0);
+			rtlDecorator.FlushDecorator(); // if RTL, put out headers reversed
+			vwEnv.CloseTableRow();
+			vwEnv.CloseTable();
 		}
 
-		private void PrintOneTemplateHeader(IVwEnv vwenv, int analWs, int icol)
+		private static void PrintNotesCellHeader(IVwEnv vwenv, int analWs, bool wantLabel)
 		{
-			MakeCellsMethod.OpenStandardCell(vwenv, 1, m_chart.Logic.GroupEndIndices.Contains(icol));
-			vwenv.AddString(TsStringUtils.MakeString(m_chart.Logic.GetColumnLabel(icol), analWs));
+			MakeCellsMethod.OpenStandardCell(vwenv, 1, true);
+			if (wantLabel)
+				vwenv.AddString(TsStringUtils.MakeString(LanguageExplorerResources.ksNotesColumnHeader, analWs));
 			vwenv.CloseTableCell();
 		}
 
-		private void PrintColumnGroupHeaders(int hvo, IVwEnv vwenv)
+		private static void PrintRowNumCellHeader(IVwEnv vwenv)
 		{
-			var analWs = m_cache.DefaultAnalWs;
-			var oldEnv = vwenv; // store this for later
-			MakeTableAndRowWithStdWidths(vwenv, hvo, true);
-			vwenv = new ChartRowEnvDecorator(vwenv); // in case this is a RTL chart
-			((ChartRowEnvDecorator)vwenv).IsRtL = m_chart.IsRightToLeft;
-			PrintRowNumCellHeader(vwenv, analWs);
-			vwenv.AddObjProp(DsChartTags.kflidTemplate, this, kfragTemplateHeader);
-			PrintNotesCellHeader(vwenv, analWs);
-			((ChartRowEnvDecorator)vwenv).FlushDecorator(); // if it is a RTL chart, put it out reversed.
-			vwenv = oldEnv; // remove Decorator
-			vwenv.CloseTableRow();
-			vwenv.CloseTable();
-		}
-
-		private static void PrintNotesCellHeader(IVwEnv vwenv, int analWs)
-		{
-			MakeCellsMethod.OpenStandardCell(vwenv, 1, false);
-			vwenv.AddString(TsStringUtils.MakeString(LanguageExplorerResources.ksNotesColumnHeader, analWs));
-			vwenv.CloseTableCell();
-		}
-
-		private static void PrintRowNumCellHeader(IVwEnv vwenv, int analWs)
-		{
-			MakeCellsMethod.OpenRowNumberCell(vwenv); // header for row numbers
-			vwenv.AddString(TsStringUtils.MakeString("#", analWs));
+			MakeCellsMethod.OpenRowNumberCell(vwenv);
 			vwenv.CloseTableCell();
 		}
 
@@ -459,7 +427,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// hvo is a ConstChartMovedTextMarker
 			var mtt = m_partRepo.GetObject(hvo) as IConstChartMovedTextMarker;
 			Debug.Assert(mtt != null, "Hvo is not for a MovedText Marker.");
-			var formatTag1 = m_chart.Logic.MovedTextTag(mtt.WordGroupRA.Hvo) + "Mkr";
+			var formatTag1 = m_body.Logic.MovedTextTag(mtt.WordGroupRA.Hvo) + "Mkr";
 			ApplyFormatting(vwenv, formatTag1);
 			vwenv.OpenSpan();
 			InsertOpenBracket(vwenv, formatTag1);
@@ -482,6 +450,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <summary>
 		/// Make a 'standard' row. Used for both header and body.
 		/// </summary>
+		/// <param name="vwenv"></param>
+		/// <param name="hvo"></param>
+		/// <param name="fHeader">true if it is a header; hvo is a chart instead of a row.</param>
 		private void MakeTableAndRowWithStdWidths(IVwEnv vwenv, int hvo, bool fHeader)
 		{
 			IConstChartRow row = null;
@@ -508,30 +479,41 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				SetRowStyle(vwenv, row);
 			}
-			var fpos = VwFramePosition.kvfpVsides;
+			var framePosition = VwFramePosition.kvfpVsides;
 			if (fHeader)
 			{
-				fpos = (VwFramePosition)((int)fpos | (int)VwFramePosition.kvfpAbove);
+				framePosition = (VwFramePosition)((int)framePosition | (int)VwFramePosition.kvfpAbove);
 			}
 			else
 			{
-				vwenv.GetOuterObject(0, out var hvoOuter, out var tagOuter, out var ihvoRow);
-				if (ihvoRow == 0)
+				vwenv.GetOuterObject(0, out var hvoOuter, out var tagOuter, out var iHvoRow);
+				if (iHvoRow == 0)
 				{
-					fpos = (VwFramePosition)((int)fpos | (int)VwFramePosition.kvfpAbove);
+					framePosition = (VwFramePosition)((int)framePosition | (int)VwFramePosition.kvfpAbove);
 				}
-				if (ihvoRow == vwenv.DataAccess.get_VecSize(hvoOuter, tagOuter) - 1 || row.EndParagraph)
+				if (iHvoRow == vwenv.DataAccess.get_VecSize(hvoOuter, tagOuter) - 1
+					|| row.EndParagraph)
 				{
-					fpos = (VwFramePosition)((int)fpos | (int)VwFramePosition.kvfpBelow);
+					framePosition = (VwFramePosition)((int)framePosition | (int)VwFramePosition.kvfpBelow);
 				}
 			}
 			// We seem to typically inherit a white background as a side effect of setting our stylesheet,
-			// but borders on table rows don't show through if backcolor is set to white, because the
+			// but borders on table rows don't show through if BackColor is set to white, because the
 			// cells entirely cover the row (LT-9068). So force the back color to be transparent, and allow
 			// the row border to show through the cell.
-			var fRtL = m_chart.IsRightToLeft;
-			vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, (int)FwTextColor.kclrTransparent);
-			vwenv.OpenTable(m_chart.AllColumns.Length + ConstituentChartLogic.NumberOfExtraColumns, tableWidth, 1500, fRtL ? VwAlignment.kvaRight : VwAlignment.kvaLeft, fpos, VwRule.kvrlNone, 0, 2000, true);
+			var fRtL = m_body.IsRightToLeft;
+			vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor,
+				(int)FwTextPropVar.ktpvDefault,
+				(int)FwTextColor.kclrTransparent);
+			vwenv.OpenTable(m_body.AllColumns.Length + ConstituentChartLogic.NumberOfExtraColumns,
+				tableWidth,
+				1500, // borderWidth
+				fRtL ? VwAlignment.kvaRight : VwAlignment.kvaLeft, // Handle RTL
+				framePosition,
+				VwRule.kvrlNone,
+				0, // cell spacing
+				2000, // cell padding
+				true); // selections limited to one cell.
 			if (m_colWidths == null)
 			{
 				if (fRtL)
@@ -547,9 +529,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			else
 			{
-				foreach (var colWidth in m_colWidths)
+				//do not make columns until m_colWidths has been updated for new Template
+				if (m_colWidths.Length == m_body.AllColumns.Length + ConstituentChartLogic.NumberOfExtraColumns)
 				{
-					vwenv.MakeColumns(1, colWidth);
+					foreach (var colWidth in m_colWidths)
+					{
+						vwenv.MakeColumns(1, colWidth);
+					}
 				}
 			}
 			// Set row bottom border color and size of table body rows
@@ -557,13 +543,19 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				if (row.EndSentence)
 				{
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.Black));
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 1000);
+					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderColor,
+						(int)FwTextPropVar.ktpvDefault,
+						(int)ColorUtil.ConvertColorToBGR(Color.Black));
+					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderBottom,
+						(int)FwTextPropVar.ktpvMilliPoint, 1000);
 				}
 				else
 				{
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.LightGray));
-					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, 500);
+					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderColor,
+						(int)FwTextPropVar.ktpvDefault,
+						(int)ColorUtil.ConvertColorToBGR(Color.LightGray));
+					vwenv.set_IntProperty((int)FwTextPropType.ktptBorderBottom,
+						(int)FwTextPropVar.ktpvMilliPoint, 500);
 				}
 			}
 
@@ -572,13 +564,10 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void MakeColumnsOtherThanRowNum(IVwEnv vwenv)
 		{
-			var colWidth = new VwLength
-			{
-				nVal = 1,
-				unit = VwUnit.kunRelative
-			};
-			const int followingCols = ConstituentChartLogic.NumberOfExtraColumns - ConstituentChartLogic.indexOfFirstTemplateColumn;
-			vwenv.MakeColumns(m_chart.AllColumns.Length + followingCols, colWidth);
+			var colWidth = new VwLength { nVal = 1, unit = VwUnit.kunRelative };
+			const int followingCols = ConstituentChartLogic.NumberOfExtraColumns -
+									  ConstituentChartLogic.indexOfFirstTemplateColumn;
+			vwenv.MakeColumns(m_body.AllColumns.Length + followingCols, colWidth);
 		}
 
 		private void MakeRowNumColumn(IVwEnv vwenv)
@@ -600,20 +589,19 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			switch (frag)
 			{
-				case kfragClauseLabels:
-					// hvo is ConstChartClauseMarker pointing at a group of rows (at least one).
-					// Enhance JohnT: this assumes it is always a contiguous list.
+				case kfragClauseLabels: // hvo is ConstChartClauseMarker pointing at a group of rows (at least one).
+										// Enhance JohnT: this assumes it is always a contiguous list.
 					var sda = vwenv.DataAccess;
-					var chvo = sda.get_VecSize(hvo, kflidDepClauses);
+					var vecSize = sda.get_VecSize(hvo, kflidDepClauses);
 					var hvoFirst = sda.get_VecItem(hvo, kflidDepClauses, 0);
 					vwenv.AddObj(hvoFirst, this, kfragComment);
-					if (chvo == 1)
+					if (vecSize == 1)
 					{
 						break;
 					}
-					var shyphen = TsStringUtils.MakeString("-", m_cache.DefaultAnalWs);
-					vwenv.AddString(shyphen);
-					var hvoLast = sda.get_VecItem(hvo, kflidDepClauses, chvo - 1);
+					var sHyphen = TsStringUtils.MakeString("-", m_cache.DefaultAnalWs);
+					vwenv.AddString(sHyphen);
+					var hvoLast = sda.get_VecItem(hvo, kflidDepClauses, vecSize - 1);
 					vwenv.AddObj(hvoLast, this, kfragComment);
 					break;
 				default:
@@ -628,7 +616,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal void MakeCells(IVwEnv vwenv, int hvoRow)
 		{
-			new MakeCellsMethod(this, m_cache, vwenv, hvoRow).Run(m_chart.IsRightToLeft);
+			new MakeCellsMethod(this, m_cache, vwenv, hvoRow).Run(m_body.IsRightToLeft);
 		}
 
 		// In this chart this only gets invoked for the baseline. It is currently always black.
@@ -641,12 +629,15 @@ namespace LanguageExplorer.Controls.DetailControls
 		protected override void FormatGloss(IVwEnv vwenv, int ws)
 		{
 			// Gloss should not inherit any underline setting from baseline
-			vwenv.set_IntProperty((int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvEnum, (int)FwUnderlineType.kuntNone);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvEnum,
+				(int)FwUnderlineType.kuntNone);
 			ApplyFormatting(vwenv, "gloss");
 		}
 
 		// This used to be kAnnotationColor. I'm a little confused as to its actual meaning here.
+		// ReSharper disable InconsistentNaming - kWordformColor is like a constant
 		private readonly int kWordformColor = (int)ColorUtil.ConvertColorToBGR(Color.DarkGray);
+		// ReSharper restore InconsistentNaming
 
 		/// <summary>
 		/// A nasty kludge, but everything gray should also be underlined.
@@ -656,7 +647,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			base.SetColor(vwenv, color);
 			if (color == kWordformColor)
 			{
-				vwenv.set_IntProperty((int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvEnum, (int)FwUnderlineType.kuntNone);
+				vwenv.set_IntProperty((int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvEnum,
+					(int)FwUnderlineType.kuntNone);
 			}
 		}
 
@@ -695,18 +687,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		internal void InsertOpenBracket(IVwEnv vwenv, string key)
 		{
 			if (!m_brackets.TryGetValue(key, out var bracket))
-			{
 				return;
-			}
 			InsertOpenBracketInternal(vwenv, bracket, false);
 		}
 
 		internal void AddRtLOpenBracketWithRLMs(IVwEnv vwenv, string key)
 		{
 			if (!m_brackets.TryGetValue(key, out var bracket))
-			{
 				return;
-			}
 			InsertOpenBracketInternal(vwenv, bracket, true);
 		}
 
@@ -716,13 +704,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			var sFormat = "{0}";
 			if (fRtL)
 			{
-				sFormat = m_chart.RLM + sFormat + m_chart.RLM;
+				sFormat = RLM + sFormat + RLM;
+				// TODO (Hasso) 2022.03: For RTL prints (not exports), the brackets are in the right place, but facing the wrong way. This is true even when it shouldn't be.
 				if (m_fIsAnalysisWsGraphiteEnabled)
-				{
 					index = 1;
-				}
 			}
-			vwenv.AddString(TsStringUtils.MakeString(string.Format(sFormat, bracket.Substring(index, 1)), m_cache.DefaultAnalWs));
+			var sBracket = TsStringUtils.MakeString(string.Format(sFormat, bracket.Substring(index, 1)), m_cache.DefaultAnalWs);
+			vwenv.AddString(sBracket);
 		}
 
 		internal void InsertCloseBracket(IVwEnv vwenv, string key)
@@ -749,7 +737,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var sFormat = "{0}";
 			if (fRtL)
 			{
-				sFormat = m_chart.RLM + sFormat + m_chart.RLM;
+				sFormat = RLM + sFormat + RLM;
 				if (m_fIsAnalysisWsGraphiteEnabled)
 				{
 					index = 0;
@@ -816,7 +804,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				m_partRepo = m_cache.ServiceLocator.GetInstance<IConstituentChartCellPartRepository>();
 
 				// Decorator makes sure that things get put out in the right order if chart is RtL
-				m_chartBody = baseObj.m_chart;
+				m_chartBody = baseObj.m_body;
 				m_vwenv = new ChartRowEnvDecorator(vwenv);
 
 				m_hvoRow = hvo;
@@ -1268,7 +1256,9 @@ namespace LanguageExplorer.Controls.DetailControls
 					// use m_vwenv.set_IntProperty to set ktptBackColor for cells where the ChOrph could be inserted
 					m_vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.LightGreen));
 				}
-				OpenStandardCell(m_vwenv, ccols, m_chartBody.Logic.GroupEndIndices.Contains(icol));
+
+				var columnsRow = m_chartBody.Logic.ColumnsAndGroups.Headers.Last();
+				OpenStandardCell(m_vwenv, ccols, columnsRow[icol].IsLastInGroup);
 			}
 
 			private void OpenNoteCell()

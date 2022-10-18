@@ -48,6 +48,7 @@ Last reviewed:
 #pragma once
 #ifndef _OLESTRINGLITERAL_H_
 #define _OLESTRINGLITERAL_H_
+#include <unicode/umachine.h>
 
 class OleStringLiteral
 {
@@ -55,7 +56,7 @@ public:
 #if defined(_WIN32) || defined(_M_X64)
 	typedef wchar_t uchar_t;
 #else
-	typedef unsigned short uchar_t;
+	typedef uint_least16_t uchar_t;
 #endif
 
 	OleStringLiteral(const wchar_t* s)
@@ -78,6 +79,12 @@ public:
 	{
 		return original();
 	}
+
+	operator const UChar* () const
+	{
+		return reinterpret_cast<const UChar*>(copy());
+	}
+
 #if !defined(_WIN32) && !defined(_M_X64)
 	operator const uchar_t* () const
 	{

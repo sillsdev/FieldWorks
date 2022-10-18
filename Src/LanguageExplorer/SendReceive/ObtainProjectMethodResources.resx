@@ -132,4 +132,16 @@ If you don't see any FLExBridge windows open, it may just be that FLExBridge is 
     <value>Creating a project to import LIFT data into</value>
     <comment>Displayed in a progress dialog when getting a LIFT repository to make a new local project</comment>
   </data>
+  <data name="WriteEverything" xml:space="preserve">
+    <value>Write Everything</value>
+  </data>
+  <data name="WriteEverythingUseThisWhen" xml:space="preserve">
+    <value>Run this whenever you want to write out all CmObjects in the system. This will fix Send/Receive failures if basic attributes were somehow lost in the fwdata file, or if the fwdata file contains dates in invalid formats.</value>
+  </data>
+  <data name="WriteEverythingThisUtilityAttemptsTo" xml:space="preserve">
+    <value>This utility writes all CmObjects out fresh, as if they had all been modified. (It does not update their date modified)</value>
+  </data>
+  <data name="WriteEverythingCannotUndo" xml:space="preserve">
+    <value>This operation cannot be undone, since it makes no changes.</value>
+  </data>
 </root>

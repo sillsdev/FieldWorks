@@ -470,7 +470,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// 
 			// _okBtn
 			// 
-			this._okBtn.DialogResult = System.Windows.Forms.DialogResult.OK;
 			resources.ApplyResources(this._okBtn, "_okBtn");
 			this._okBtn.Name = "_okBtn";
 			this._okBtn.UseVisualStyleBackColor = true;
@@ -493,6 +492,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.MinimizeBox = false;
 			this.Name = "FwWritingSystemSetupDlg";
 			this.ShowIcon = false;
+			this.ShowInTaskbar = false;
 			this._mainLayoutPanel.ResumeLayout(false);
 			this.splitContainer2.Panel1.ResumeLayout(false);
 			this.splitContainer2.Panel2.ResumeLayout(false);

@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2020 SIL International
+// Copyright (c) 2010-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using SIL.Code;
+using SIL.Extensions;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -130,6 +131,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
+		/// Gets the build number of the base installer (used for downloading patches)
+		/// </summary>
+		public int BaseBuildNumber
+		{
+			get
+			{
+				var baseBuildAtt = m_assembly.GetCustomAttributes(typeof(AssemblyMetadataAttribute)).Cast<AssemblyMetadataAttribute>()
+					.FirstOrDefault(att => "BaseBuildNumber".Equals(att.Key)) ;
+				return int.TryParse(baseBuildAtt?.Value, out var baseBuildNum) ? baseBuildNum : 0;
+			}
+		}
+		/// <summary>
 		/// Gets a user-friendly version of the application.
 		/// </summary>
 		public string ApplicationVersion
@@ -155,7 +168,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 				var buildSuffix = string.Empty;
 #if DEBUG
-				buildSuffix = "(Debug version)";
+				buildSuffix = " (Debug version)";
 #endif
 				return string.Format(FwUtilsStrings.kstidAppVersionFmt, appVersion, productDate, $"{bitness}{buildSuffix}");
 			}
@@ -191,7 +204,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					if (date > 0)
 					{
 						var dt = DateTime.FromOADate(date);
-						productDate = dt.ToString("yyyy/MM/dd");
+						productDate = dt.ToISO8601TimeFormatDateOnlyString();
 					}
 
 					goto case 1;
@@ -211,7 +224,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				// Set the Fieldworks version text
+				// Set the FieldWorks version text
 				ParseInformationalVersion(m_assembly, out var productVersion, out _);
 				// Fill the expected parts to document and avoid a crash if we get an odd informational version
 				var versionParts = new [] {"MAJOR", "MINOR", "REVISION", "BUILDNUMBER", "STABILITY"};
@@ -219,6 +232,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Array.Copy(realParts, versionParts, Math.Min(realParts.Length, versionParts.Length));
 
 				return string.Format(FwUtilsStrings.kstidMajorVersionFmt, $"{versionParts[0]}.{versionParts[1]} {versionParts[4]}");
+			}
+		}
+
+		/// <summary>The date this version of FieldWorks was built, or the date of the first FieldWorks checkin</summary>
+		internal DateTime ApparentBuildDate
+		{
+			get
+			{
+				ParseInformationalVersion(m_assembly, out _, out var date);
+				return string.IsNullOrEmpty(date) ? new DateTime(2001, 06, 23) : DateTime.Parse(date);
 			}
 		}
 

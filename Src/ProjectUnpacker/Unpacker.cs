@@ -5,9 +5,8 @@
 using System;
 using System.Resources;
 using System.IO;
-using Microsoft.Win32;
 using ICSharpCode.SharpZipLib.Zip;
-using SIL.LCModel.Utils;
+using Microsoft.Win32;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.PlatformUtilities;

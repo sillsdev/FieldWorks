@@ -6,9 +6,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
@@ -841,18 +841,17 @@ namespace LanguageExplorer.SfmToXml
 
 		private static void WriteOutputFileComment(string sfmFileName, string mappingFileName, string outputFileName, XmlTextWriter xmlOutput)
 		{
-			var nl = Environment.NewLine;
-			var comments = nl;
-			comments += " ================================================================" + nl;
-			comments += " " + DateTime.Now + nl;
-			comments += " Created by " + Assembly.GetExecutingAssembly().ToString() + nl;
-			comments += nl;
-			comments += " The command line parameters were :" + nl;
-			comments += "  sfmFileName : " + MakeValidXMLComment(sfmFileName) + nl;
-			comments += "  mappingFile : " + MakeValidXMLComment(mappingFileName) + nl;
-			comments += "  xmlOutput   : " + MakeValidXMLComment(outputFileName) + nl;
-			comments += " ================================================================" + nl;
-			xmlOutput.WriteComment(comments);
+			var comments = new StringBuilder().AppendLine();
+			comments.AppendLine(" ================================================================");
+			comments.Append(" ").AppendLine(System.DateTime.Now.ToString(CultureInfo.InvariantCulture));
+			comments.Append(" Created by ").AppendLine(System.Reflection.Assembly.GetExecutingAssembly().ToString());
+			comments.AppendLine();
+			comments.AppendLine(" The command line parameters were :");
+			comments.Append("  sfmFileName : ").AppendLine(MakeValidXMLComment(sfmFileName));
+			comments.Append("  mappingFile : ").AppendLine(MakeValidXMLComment(mappingFileName));
+			comments.Append("  xmlOutput   : ").AppendLine(MakeValidXMLComment(outputFileName));
+			comments.AppendLine(" ================================================================");
+			xmlOutput.WriteComment(comments.ToString());
 		}
 
 		protected bool ReadFieldDescriptions(XmlDocument xmlMap)
@@ -1316,7 +1315,7 @@ namespace LanguageExplorer.SfmToXml
 					var dt = DateTime.Parse(convertedDataString);
 					if (dt.Year < 1800)
 					{
-						throw new Exception();
+						throw new Exception($"Year must be at least 1800 but was {dt.Year}"); // SQL Server insists year >= 1753 for datetime.  See LT-8073.
 					}
 					var newDate = dt.ToString("yyy-MM-dd hh:mm:ss.fff");
 					convertedDataString = convertedDataString.Replace(Environment.NewLine, string.Empty);

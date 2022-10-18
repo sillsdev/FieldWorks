@@ -1298,16 +1298,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			var migratedPicturesNode=model.Parts[0].Children[0];
 
 			// Sense Number should be gone
-			Assert.That(migratedPicturesNode.Children[1].Label, Does.Not.Contain("Sense Number"), "Sense Number should be gone");
+			Assert.That(migratedPicturesNode.Children[1].Label, Is.Not.EqualTo("Sense Number"), "Sense Number should be gone");
 
 			// Thumbnail and Caption should still be there
-			Assert.That(migratedPicturesNode.Children[0].Label, Does.Match("Thumbnail"), "Thumbnail should still be present");
-			Assert.That(migratedPicturesNode.Children[1].Label, Does.Match("Caption"), "Caption should still be present");
+			Assert.That(migratedPicturesNode.Children[0].Label, Is.EqualTo("Thumbnail"), "Thumbnail should still be present");
+			Assert.That(migratedPicturesNode.Children[1].Label, Is.EqualTo("Caption"), "Caption should still be present");
 
 			// Headword and Gloss should now be there
 			Assert.That(migratedPicturesNode.Children.Count, Is.GreaterThanOrEqualTo(3), "Not enough child nodes. Maybe Headword and Gloss weren't added.");
-			Assert.That(migratedPicturesNode.Children[2].Label, Does.Match("Headword"), "Headword not introduced");
-			Assert.That(migratedPicturesNode.Children[3].Label, Does.Match("Gloss"), "Gloss not introduced");
+			Assert.That(migratedPicturesNode.Children[2].Label, Is.EqualTo("Headword"), "Headword not introduced");
+			Assert.That(migratedPicturesNode.Children[3].Label, Is.EqualTo("Gloss"), "Gloss not introduced");
 		}
 	}
 }

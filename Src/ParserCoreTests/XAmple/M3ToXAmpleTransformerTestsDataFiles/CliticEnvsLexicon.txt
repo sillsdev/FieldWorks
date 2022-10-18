@@ -376,7 +376,7 @@
 \lx 18128
 \g Neg
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 18131
 \a نَوا {17510}
 \eType prefix
@@ -400,7 +400,7 @@
 \lx 17899
 \g Sbjv/Imp
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17896
 \fd InflectionFS19374
 \a بو {19324} / #_ [24174][23357]  | / #_ [C] [Vav] 
@@ -426,7 +426,7 @@
 \lx 18132
 \g Sbjv/Imp
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 18131
 \fd InflectionFS19360
 \a بو {19324} / #_ [24174][23357]  | / #_ [C] [Vav] 
@@ -484,7 +484,7 @@
 \lx 19013
 \g Perfv
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17580
 \fd InflectionFS19362
 \a بو {21461} / #_ [24174][23357]  | / #_ [C] [Vav] 
@@ -1688,7 +1688,7 @@
 \lx 68263
 \g Neg
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17580
 \fd InflectionFS68264
 \a نو {68261} / #_ [24174][23357]  | / #_ [C] [Vav] 
@@ -1710,7 +1710,7 @@
 \lx 68267
 \g Neg
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 17896
 \fd InflectionFS68284
 \a نو {68261} / #_ [24174][23357]  | / #_ [C] [Vav] 
@@ -1732,7 +1732,7 @@
 \lx 68269
 \g Neg
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 18131
 \fd InflectionFS68282
 \a نو {68261} / #_ [24174][23357]  | / #_ [C] [Vav] 
@@ -1754,7 +1754,7 @@
 \lx 68271
 \g Neg
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 28419
 \fd InflectionFS68280
 \a نو {68261} / #_ [24174][23357]  | / #_ [C] [Vav] 
@@ -1776,7 +1776,7 @@
 \lx 68273
 \g Neg
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 28420
 \fd InflectionFS68278
 \a نو {68261} / #_ [24174][23357]  | / #_ [C] [Vav] 
@@ -1798,7 +1798,7 @@
 \lx 68275
 \g Neg
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 68224
 \fd InflectionFS68276
 \a نو {68261} / #_ [24174][23357]  | / #_ [C] [Vav] 

@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					MarshalEx.StringToUShort("Arial", chrp.szFaceName);
 					gm.VwGraphics.SetupGraphics(ref chrp);
 					var engine = reFactory.get_Renderer(ws, gm.VwGraphics);
-					Assert.IsNotNull(engine);
+					Assert.That(engine, Is.Not.Null);
 					Assert.AreSame(wsManager, engine.WritingSystemFactory);
 					Assert.IsInstanceOf(typeof(UniscribeEngine), engine);
 					wsManager.Save();
@@ -66,14 +66,14 @@ namespace SIL.FieldWorks.Common.RootSites
 					MarshalEx.StringToUShort("Charis SIL", chrp.szFaceName);
 					gm.VwGraphics.SetupGraphics(ref chrp);
 					var engine = reFactory.get_Renderer(ws, gm.VwGraphics);
-					Assert.IsNotNull(engine);
+					Assert.That(engine, Is.Not.Null);
 					Assert.AreSame(wsManager, engine.WritingSystemFactory);
 					Assert.IsInstanceOf(typeof(UniscribeEngine), engine);
 
 					ws.IsGraphiteEnabled = true;
 					gm.VwGraphics.SetupGraphics(ref chrp);
 					engine = reFactory.get_Renderer(ws, gm.VwGraphics);
-					Assert.IsNotNull(engine);
+					Assert.That(engine, Is.Not.Null);
 					Assert.AreSame(wsManager, engine.WritingSystemFactory);
 					Assert.IsInstanceOf(typeof(GraphiteEngine), engine);
 					wsManager.Save();

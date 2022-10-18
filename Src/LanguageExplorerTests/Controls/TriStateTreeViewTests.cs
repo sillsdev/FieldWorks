@@ -292,14 +292,14 @@ namespace LanguageExplorerTests.Controls
 
 			Assert.AreEqual(1, list.Length);
 			Assert.AreEqual(list[0], dNode);
-			Assert.IsNotNull(list[0] as DummyTreeNode1);
+			Assert.That(list[0], Is.TypeOf<DummyTreeNode1>());
 
 			// Get Unchecked nodes of type DummyTreeNode2.
 			list = m_treeView.GetNodesOfTypeWithState(typeof(DummyTreeNode2), TriStateTreeViewCheckState.Unchecked);
 
 			Assert.AreEqual(1, list.Length);
 			Assert.AreEqual(list[0], c2Node);
-			Assert.IsNotNull(list[0] as DummyTreeNode2);
+			Assert.That(list[0], Is.TypeOf<DummyTreeNode2>());
 
 			// Get nodes of type DummyTreeNode2 regardless of check state (Unchecked, Checked or Grayed).
 			list = m_treeView.GetNodesOfTypeWithState(typeof(DummyTreeNode2), TriStateTreeViewCheckState.Unchecked | TriStateTreeViewCheckState.Checked);
@@ -307,8 +307,8 @@ namespace LanguageExplorerTests.Controls
 			Assert.AreEqual(2, list.Length);
 			Assert.AreEqual(list[0], c1Node);
 			Assert.AreEqual(list[1], c2Node);
-			Assert.IsNotNull(list[0] as DummyTreeNode2);
-			Assert.IsNotNull(list[1] as DummyTreeNode2);
+			Assert.That(list[0], Is.TypeOf<DummyTreeNode2>());
+			Assert.That(list[1], Is.TypeOf<DummyTreeNode2>());
 
 			// Get nodes of type TreeNode regardless of check state (Unchecked, Checked or Grayed).
 			list = m_treeView.GetNodesOfTypeWithState(typeof(TreeNode), TriStateTreeViewCheckState.GrayChecked);
@@ -316,8 +316,8 @@ namespace LanguageExplorerTests.Controls
 			Assert.AreEqual(2, list.Length);
 			Assert.AreEqual(list[0], m_aNode);
 			Assert.AreEqual(list[1], m_bNode);
-			Assert.IsNotNull(list[0]);
-			Assert.IsNotNull(list[1]);
+			Assert.That(list[0], Is.TypeOf<TreeNode>());
+			Assert.That(list[1], Is.TypeOf<TreeNode>());
 		}
 
 		/// <summary>

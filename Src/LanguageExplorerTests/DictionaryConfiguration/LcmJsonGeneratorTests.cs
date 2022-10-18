@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using LanguageExplorer;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.TestUtilities;
@@ -15,10 +16,12 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
+using SIL.TestUtilities;
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
@@ -26,7 +29,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 	class LcmJsonGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private FlexComponentParameters _flexComponentParameters;
-		private int m_wsEn, m_wsFr;
+		private IRecordListRepositoryForTools _recordListRepositoryForTools;
+		private IRecordList _recordList;
+		private StatusBar _statusBar;
+		private int _wsEn, _wsFr;
 
 		private const string DictionaryNormal = "Dictionary-Normal";
 
@@ -48,11 +54,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				styles.Add(new BaseStyleInfo { Name = DictionaryNormal });
 			}
-
+			_recordListRepositoryForTools = _flexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository);
+			_statusBar = StatusBarPanelServices.CreateStatusBarFor_TESTS();
+			_recordList = ConfiguredXHTMLGeneratorTests.CreateRecordList(Cache, _flexComponentParameters, _statusBar);
+			_recordListRepositoryForTools.AddRecordList(_recordList);
+			_recordListRepositoryForTools.ActiveRecordList = _recordList;
 			_flexComponentParameters.PropertyTable.SetProperty(LanguageExplorerConstants.ToolChoice, LanguageExplorerConstants.LexiconDictionaryMachineName);
 			Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests/TestData/");
-			m_wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			m_wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			_wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			_wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 		}
 
 		/// <inheritdoc />
@@ -60,7 +70,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			try
 			{
+				_statusBar?.Dispose();
+				_recordListRepositoryForTools?.Dispose();
 				TestSetupServices.DisposeTrash(_flexComponentParameters);
+				_statusBar = null;
+				_recordList = null;
+				_flexComponentParameters = null;
 			}
 			catch (Exception err)
 			{
@@ -181,8 +196,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			sense.MorphoSyntaxAnalysisRA = msa;
 
 			msa.PartOfSpeechRA = pos;
-			msa.PartOfSpeechRA.Abbreviation.set_String(m_wsEn, "Blah");
-			ConfiguredXHTMLGeneratorTests.AddSenseToEntry(entry, "second sense", m_wsEn, Cache);
+			msa.PartOfSpeechRA.Abbreviation.set_String(_wsEn, "Blah");
+			ConfiguredXHTMLGeneratorTests.AddSenseToEntry(entry, "second sense", _wsEn, Cache);
 			var secondMsa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
 			var secondSense = entry.SensesOS[1];
 			entry.MorphoSyntaxAnalysesOC.Add(secondMsa);
@@ -260,11 +275,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// The second example of the first sense should not be published at all, since it is not published in main and
 			// its owner is not published in test.
 			var entryCorps = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "corps", "body");
-			var pronunciation = ConfiguredXHTMLGeneratorTests.AddPronunciationToEntry(entryCorps, "pronunciation", m_wsFr, Cache);
-			var exampleCorpsBody1 = ConfiguredXHTMLGeneratorTests.AddExampleToSense(Cache, entryCorps.SensesOS[0], "Le corps est gros.", m_wsFr, "The body is big.", m_wsEn);
-			var exampleCorpsBody2 = ConfiguredXHTMLGeneratorTests.AddExampleToSense(Cache, entryCorps.SensesOS[0], "Le corps est esprit.", m_wsFr, "The body is spirit.", m_wsEn);
-			ConfiguredXHTMLGeneratorTests.AddSenseToEntry(entryCorps, "corpse", m_wsEn, Cache);
-			ConfiguredXHTMLGeneratorTests.AddExampleToSense(Cache, entryCorps.SensesOS[1], "Le corps est mort.", m_wsFr, "The corpse is dead.", m_wsEn);
+			var pronunciation = ConfiguredXHTMLGeneratorTests.AddPronunciationToEntry(entryCorps, "pronunciation", _wsFr, Cache);
+			var exampleCorpsBody1 = ConfiguredXHTMLGeneratorTests.AddExampleToSense(Cache, entryCorps.SensesOS[0], "Le corps est gros.", _wsFr, "The body is big.", _wsEn);
+			var exampleCorpsBody2 = ConfiguredXHTMLGeneratorTests.AddExampleToSense(Cache, entryCorps.SensesOS[0], "Le corps est esprit.", _wsFr, "The body is spirit.", _wsEn);
+			ConfiguredXHTMLGeneratorTests.AddSenseToEntry(entryCorps, "corpse", _wsEn, Cache);
+			ConfiguredXHTMLGeneratorTests.AddExampleToSense(Cache, entryCorps.SensesOS[1], "Le corps est mort.", _wsFr, "The corpse is dead.", _wsEn);
 
 			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
 			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
@@ -282,9 +297,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			// This entry is published only in main, together with its sense and example.
 			var entryBras = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "bras", "arm");
-			ConfiguredXHTMLGeneratorTests.AddExampleToSense(Cache, entryBras.SensesOS[0], "Mon bras est casse.", m_wsFr, "My arm is broken.", m_wsEn);
-			ConfiguredXHTMLGeneratorTests.AddSenseToEntry(entryBras, "hand", m_wsEn, Cache);
-			ConfiguredXHTMLGeneratorTests.AddExampleToSense(Cache, entryBras.SensesOS[1], "Mon bras va bien.", m_wsFr, "My arm is fine.", m_wsEn);
+			ConfiguredXHTMLGeneratorTests.AddExampleToSense(Cache, entryBras.SensesOS[0], "Mon bras est casse.", _wsFr, "My arm is broken.", _wsEn);
+			ConfiguredXHTMLGeneratorTests.AddSenseToEntry(entryBras, "hand", _wsEn, Cache);
+			ConfiguredXHTMLGeneratorTests.AddExampleToSense(Cache, entryBras.SensesOS[1], "Mon bras va bien.", _wsFr, "My arm is fine.", _wsEn);
 			entryBras.DoNotPublishInRC.Add(typeTest);
 			entryBras.SensesOS[0].DoNotPublishInRC.Add(typeTest);
 			entryBras.SensesOS[1].DoNotPublishInRC.Add(typeTest);
@@ -293,7 +308,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 			// This entry is published only in test, together with its sense and example.
 			var entryOreille = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "oreille", "ear");
-			ConfiguredXHTMLGeneratorTests.AddExampleToSense(Cache, entryOreille.SensesOS[0], "Lac Pend d'Oreille est en Idaho.", m_wsFr, "Lake Pend d'Oreille is in Idaho.", m_wsEn);
+			ConfiguredXHTMLGeneratorTests.AddExampleToSense(Cache, entryOreille.SensesOS[0], "Lac Pend d'Oreille est en Idaho.", _wsFr, "Lake Pend d'Oreille is in Idaho.", _wsEn);
 			entryOreille.DoNotPublishInRC.Add(typeMain);
 			entryOreille.SensesOS[0].DoNotPublishInRC.Add(typeMain);
 			//exampleOreille1.DoNotPublishInRC.Add(typeMain); -- should not show in main because its owner is not shown there
@@ -450,10 +465,79 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 								  "\"entry\": [{\"lang\":\"fr\",\"value\":\"entry\"}],\"senses\": [{\"guid\":\"g" +
 								  entryEntry.Guid + "\",\"definitionorgloss\": [{\"lang\":\"en\",\"value\":\"entry\"}]}]," +
 								  "\"subentries\": [{\"subentry\": [{\"lang\":\"fr\",\"value\":\"mainsubentry\"}]}]," +
-								  "\"variantformentrybackrefs\": [{\"references\":[{\"headword\": [{\"lang\":\"fr\",\"guid\": \"g" + bizarroVariant.Guid +
-								  "\", \"value\":\"bizarre\"}]}]}]}";
+								  "\"variantformentrybackrefs\": [{\"referenceType\":\"{\\\"name\\\": [{\\\"lang\\\":\\\"en\\\"," +
+								  "\\\"value\\\":\\\"Spelling Variant\\\"}],},\",\"references\":[{\"headword\": [{\"lang\":\"fr\",\"guid\": \"g" +
+								  bizarroVariant.Guid + "\", \"value\":\"bizarre\"}]}]}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(output, expected);
+		}
+
+		[Test]
+		public void GenerateJsonForEntry_TypeAfterForm()
+		{
+			var typeMain = ConfiguredXHTMLGeneratorTests.CreatePublicationType("main", Cache);
+
+			var entryEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "entry", "entry");
+			var entryMainsubentry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "mainsubentry", "mainsubentry");
+			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, entryEntry, entryMainsubentry, true);
+
+			var bizarroVariant = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "bizarre", "myVariant");
+			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, entryEntry, bizarroVariant, "Spelling Variant");
+
+			// Note that the decorators must be created (or refreshed) *after* the data exists.
+			int flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var pubMain = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual, typeMain);
+
+			var variantFormNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				CSSClassNameOverride = "headword",
+				SubField = "HeadWordRef",
+				IsEnabled = true,
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "vernacular" })
+			};
+			var variantTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				IsEnabled = true,
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var variantTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
+			};
+			var variantNodeTypeAfter = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				Children = new List<ConfigurableDictionaryNode> { variantFormNode, variantTypeNode },
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(Cache, ListIds.Variant)
+			};
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "entry"
+			};
+			var mainEntryNodeTypeAfter = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, variantNodeTypeAfter },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNodeTypeAfter);
+
+			//SUT
+			var outputTypeAfter = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryEntry, mainEntryNodeTypeAfter, pubMain, DefaultSettings, 0);
+			Assert.That(outputTypeAfter, Is.Not.Null.Or.Empty);
+			var expectedResultsTypeAfter = "{\"xhtmlTemplate\": \"lexentry\",\"guid\":\"g" + entryEntry.Guid + "\",\"letterHead\": \"e\",\"sortIndex\": 0," +
+								  "\"entry\": [{\"lang\":\"fr\",\"value\":\"entry\"}]," +
+								  "\"variantformentrybackrefs\": [{\"references\":[{\"headword\": [{\"lang\":\"fr\",\"guid\": \"g" +
+								  bizarroVariant.Guid + "\", \"value\":\"bizarre\"}]}]," +
+								  "\"referenceType\":\"{\\\"name\\\": [{\\\"lang\\\":\\\"en\\\",\\\"value\\\":\\\"Spelling Variant\\\"}],},\"}]}";
+			var expectedTypeAfter = (JObject)JsonConvert.DeserializeObject(expectedResultsTypeAfter, new JsonSerializerSettings { Formatting = Formatting.None });
+			VerifyJson(outputTypeAfter, expectedTypeAfter);
 		}
 
 		[Test]
@@ -489,6 +573,64 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		}
 
 		[Test]
+		public void GenerateJsonForEntry_SensibleJsonForVideoFiles()
+		{
+			var entryCorps = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "corps", "body");
+			var pronunciation = ConfiguredXHTMLGeneratorTests.AddPronunciationToEntry(entryCorps, "pronunciation", _wsFr, Cache);
+			ConfiguredXHTMLGeneratorTests.AddSenseToEntry(entryCorps, "corpse", _wsEn, Cache);
+			var mainMediaFile = Cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
+			pronunciation.MediaFilesOS.Add(mainMediaFile);
+			var mainFile = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			var localMediaFolder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(localMediaFolder);
+			localMediaFolder.FilesOC.Add(mainFile);
+			// InternalPath is null by default, but trying to set it to null throws an exception
+			mainFile.InternalPath = "fileName.mp4";
+			mainMediaFile.MediaFileRA = mainFile;
+
+			var mediaFileNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MediaFileRA",
+				IsEnabled = true
+			};
+			var mediaNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MediaFilesOS",
+				CSSClassNameOverride = "mediafiles",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { mediaFileNode }
+			};
+			var mainPronunciationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "PronunciationsOS",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "pronunciations",
+				Children = new List<ConfigurableDictionaryNode> { mediaNode }
+			};
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				CSSClassNameOverride = "entry"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, mainPronunciationsNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			//SUT
+			var output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryCorps, mainEntryNode, DefaultDecorator, DefaultSettings, 0);
+			Assert.That(output, Is.Not.Null.Or.Empty);
+			var expectedResults = "{\"xhtmlTemplate\":\"lexentry\",\"guid\":\"g" + entryCorps.Guid + "\",\"letterHead\":\"c\",\"sortIndex\":0," +
+								  "\"entry\": [{\"lang\":\"fr\",\"value\":\"corps\"}]," +
+								  "\"pronunciations\": [{\"mediafiles\": [{\"value\": {\"id\":\"g" + mainMediaFile.Guid + "\",\"src\": \"AudioVisual/fileName.mp4\"}}]}]}";
+			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
+			VerifyJson(output, expected);
+		}
+
+		[Test]
 		public void GenerateJsonForEntry_SenseNumbersGeneratedForMultipleSenses()
 		{
 			var wsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" });
@@ -507,7 +649,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
-			ConfiguredXHTMLGeneratorTests.AddSenseToEntry(testEntry, "second gloss", m_wsEn, Cache);
+			ConfiguredXHTMLGeneratorTests.AddSenseToEntry(testEntry, "second gloss", _wsEn, Cache);
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, DefaultSettings, 0);
 			var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""g" + testEntry.Guid + @""",""letterHead"": ""c"",""sortIndex"": 0,""senses"":[{""senseNumber"":""1"",
@@ -533,14 +675,40 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
-			var englishStr = TsStringUtils.MakeString("English", m_wsEn);
-			var frenchString = TsStringUtils.MakeString("French with  embedded", m_wsFr);
+			var englishStr = TsStringUtils.MakeString("English", _wsEn);
+			var frenchString = TsStringUtils.MakeString("French with  embedded", _wsFr);
 			var multiRunString = frenchString.Insert(12, englishStr);
-			entry.Bibliography.set_String(m_wsFr, multiRunString);
+			entry.Bibliography.set_String(_wsFr, multiRunString);
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings, 0);
 			var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""g" + entry.Guid + @""",""letterHead"": ""c"",""sortIndex"": 0,""bib"": [{""lang"":""fr"",""value"":""French with ""},
 				{""lang"":""en"",""value"":""English""},{""lang"":""fr"",""value"":"" embedded""}]}";
+			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
+			VerifyJson(result, expected);
+		}
+
+		[Test]
+		public void GenerateJsonForEntry_UnicodeLineBreak_GeneratesValidJson()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Bibliography",
+				CSSClassNameOverride = "bib",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr", "en" })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var englishStr = TsStringUtils.MakeString("English\u2028with line break", _wsEn);
+			entry.Bibliography.set_String(_wsFr, englishStr);
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings, 0);
+			var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""g" + entry.Guid + @""",""letterHead"": ""c"",""sortIndex"": 0,
+				""bib"": [{""lang"":""en"",""value"":""English\nwith line break""}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
 		}
@@ -552,9 +720,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var referencedEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			const string refTypeRevName = "sURsyoT";
-			ConfiguredXHTMLGeneratorTests.CreateLexicalReference(Cache, mainEntry.SensesOS.First(), referencedEntry, null, m_wsEn, refTypeName, refTypeRevName);
+			ConfiguredXHTMLGeneratorTests.CreateLexicalReference(Cache, mainEntry.SensesOS.First(), referencedEntry, null, _wsEn, refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
-			Assert.IsNotNull(refType);
+			Assert.That(refType, Is.Not.Null);
 
 			var nameNode = new ConfigurableDictionaryNode
 			{
@@ -588,6 +756,49 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, DefaultSettings, 0);
 			var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""g" + mainEntry.Guid + @""",""letterHead"": ""c"",""sortIndex"": 0,
 				""sensesos"": [{""lexsensereferences"": [{""ownertype_name"": [{""lang"":""en"",""value"":""TestRefType""}]}]}]}";
+			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
+			VerifyJson(result, expected);
+		}
+
+		[Test]
+		public void GenerateJsonForEntry_EmptyNameOnLexicalRelation_GeneratesEmptyButValidContent()
+		{
+			var mainEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var referencedEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			ConfiguredXHTMLGeneratorTests.CreateLexicalReference(Cache, mainEntry.SensesOS.First(), referencedEntry, null, _wsEn, "");
+			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(pos => pos.Name.BestAnalysisAlternative.Text == "***");
+			var nameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwnerType",
+				SubField = "Name",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" })
+			};
+			var referencesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexSenseReferences",
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = ListIds.Sense,
+					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { refType.Guid.ToString() })
+				},
+				Children = new List<ConfigurableDictionaryNode> { nameNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				Children = new List<ConfigurableDictionaryNode> { referencesNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(mainEntry, mainEntryNode, null, DefaultSettings, 0);
+			var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""g" + mainEntry.Guid + @""",""letterHead"": ""c"",""sortIndex"": 0,
+				""sensesos"": [{""lexsensereferences"": [{}]}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
 		}
@@ -662,7 +873,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var mainEntryNode = ConfiguredXHTMLGeneratorTests.CreatePictureModel();
 			var testEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
-			ConfiguredXHTMLGeneratorTests.AddSenseToEntry(testEntry, "second", m_wsEn, Cache);
+			ConfiguredXHTMLGeneratorTests.AddSenseToEntry(testEntry, "second", _wsEn, Cache);
 			var sense = testEntry.SensesOS[0];
 			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
 			sense.PicturesOS.Add(sensePic);
@@ -788,8 +999,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			var testEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			var siteName = "test";
-			var json = LcmJsonGenerator.GenerateDictionaryMetaData(siteName, new[] { "mainentry.xhtml" }, new List<DictionaryConfigurationModel>(), new []{ testEntry.Hvo }, null, null, Cache);
-			var expectedResults = @"{""_id"":""" + siteName + @""",""mainLanguage"":{""lang"":""fr"",""letters"":[""c""],""cssFiles"":[""configured.css""]},""partsOfSpeech"":[],""semanticDomains"":[],
+			var json = LcmJsonGenerator.GenerateDictionaryMetaData(siteName, new[] { "mainentry.xhtml" }, new List<DictionaryConfigurationModel>(), new []{ testEntry.Hvo }, null, null, Cache, _recordList);
+			var expectedResults = @"{""_id"":""" + siteName + @""",""mainLanguage"":{""title"":""French"",""lang"":""fr"",""letters"":[""c""],""cssFiles"":[""configured.css""]},""partsOfSpeech"":[],""semanticDomains"":[],
 				""xhtmlTemplates"": [""mainentry.xhtml""]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(json.ToString(), expected);
@@ -805,14 +1016,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var noun = possFact.Create();
 			Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Add(domainOne);
 			Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Add(noun);
-			domainOne.Abbreviation.set_String(m_wsEn, "9.0");
-			domainOne.Name.set_String(m_wsEn, "CustomDomain");
-			noun.Abbreviation.set_String(m_wsEn, "n");
-			noun.Name.set_String(m_wsEn, "noun");
+			domainOne.Abbreviation.set_String(_wsEn, "9.0");
+			domainOne.Name.set_String(_wsEn, "CustomDomain");
+			noun.Abbreviation.set_String(_wsEn, "n");
+			noun.Name.set_String(_wsEn, "noun");
 			var siteName = "test";
 			var json = LcmJsonGenerator.GenerateDictionaryMetaData(siteName, new []{ "mainentry.xhtml" },
-				new List<DictionaryConfigurationModel>(), new[] { testEntry.Hvo }, null, null, Cache);
-			var expectedResults = @"{""_id"":""test"",""mainLanguage"":{""lang"":""fr"",""letters"":[""c""],""cssFiles"":[""configured.css""]},
+				new List<DictionaryConfigurationModel>(), new[] { testEntry.Hvo }, null, null, Cache, _recordList);
+			var expectedResults = @"{""_id"":""test"",""mainLanguage"":{""title"":""French"",""lang"":""fr"",""letters"":[""c""],""cssFiles"":[""configured.css""]},
 				""partsOfSpeech"":[{""lang"":""en"",""abbreviation"":""n"",""name"":""noun"",""guid"":""g" + noun.Guid + @"""}],
 				""semanticDomains"":[{""lang"":""en"",""abbreviation"":""9.0"",""name"":""CustomDomain"",""guid"":""g" + domainOne.Guid + @"""}],
 				""xhtmlTemplates"": [""mainentry.xhtml""]}";
@@ -900,6 +1111,34 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.AreEqual(0, result[0].Count, "entries");
 		}
 
+		[Test]
+		public void GenerateXHTMLForEntry_EmbeddedWritingSystemOfOppositeDirectionGeneratesCorrectResult()
+		{
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Bibliography",
+				CSSClassNameOverride = "bib",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "he" })
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var multiRunString = ConfiguredXHTMLGeneratorTests.MakeBidirectionalTss(new[] { "דוד", " et ", "דניאל" }, Cache);
+			var wsHe = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("he");
+			entry.Bibliography.set_String(wsHe, multiRunString);
+			//SUT
+
+			var json = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
+			var expectedResults = @"{""xhtmlTemplate"":""lexentry"",""guid"":""g" + entry.Guid + @""",""letterHead"":""c"",""sortIndex"":-1,
+				""bib"": [{""lang"":""he"",""value"":""דוד""},{""lang"":""en"",""value"":"" et ""},{""lang"":""he"",""value"":""דניאל""}],}";
+			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
+			VerifyJson(json, expected);
+		}
+
 		/// <summary>
 		/// Verifies the json data generated is equivalent to the expected result
 		/// </summary>
@@ -908,7 +1147,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			// TODO: use Json FluentAssert library
 			dynamic jsonResult = JsonConvert.DeserializeObject(actual, new JsonSerializerSettings { Formatting = Formatting.None });
 			string actualReformatted = JsonConvert.SerializeObject(jsonResult, Formatting.Indented);
-			Console.WriteLine(actualReformatted);
 			Assert.That(actualReformatted, Is.EqualTo(JsonConvert.SerializeObject(expected, Formatting.Indented)));
 		}
 	}

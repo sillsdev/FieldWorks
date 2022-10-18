@@ -74,8 +74,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary>
-		/// The only property we update is a user prompt. We need to switch things back to normal if
-		/// anything was typed there, otherwise, the string has the wrong properties, and with all of it
+		/// Clear two properties when the first character is typed over a user prompt: user prompt and disable spell check.
+		/// We need to switch things back to normal; otherwise, the string has the wrong properties, and with all of it
 		/// selected, we keep typing over things.
 		/// </summary>
 		public override ITsString UpdateProp(IVwSelection vwsel, int hvo, int tag, int frag, ITsString tssVal)
@@ -101,18 +101,21 @@ namespace LanguageExplorer.Controls.DetailControls
 			var helper = SelectionHelper.Create(vwsel, RootSite);
 			var seg = (ISegment)m_coRepository.GetObject(hvo);
 			var bldr = tssVal.GetBldr();
-			// Clear special prompt properties
-			bldr.SetIntPropValues(0, bldr.Length, SimpleRootSite.ktptUserPrompt, -1, -1);
-			bldr.SetIntPropValues(0, bldr.Length, (int)FwTextPropType.ktptSpellCheck, -1, -1);
-			// Add the text the user just typed to the translatin - this destroys the selection
+			var tssNew = bldr.GetString();
+
+			// Add the text the user just typed to the translation. This destroys the selection
 			// because we replace the user prompt. We use the frag to note the WS of interest.
-			RootSite.RootBox.DataAccess.SetMultiStringAlt(seg.Hvo, ActiveFreeformFlid, frag, bldr.GetString());
-			// arrange to restore the selection (in the new property) at the end of the UOW (when the
+			RootSite.RootBox.DataAccess.SetMultiStringAlt(seg.Hvo, ActiveFreeformFlid, frag, tssNew);
+
+			// REVIEW (Hasso) 2021.02: When do we need to restore the selection and Freeform?
+			// REVIEW (cont): It seems if the user has just typed a character that replaces the selected prompt string, there will be no selection.
+			// REVIEW (cont): The Interlinear Free Translation field works just fine without these two lines.
+			// Arrange to restore the selection (in the new property) at the end of the UOW (when the
 			// required property will have been re-established by various PropChanged calls).
-			RootSite.RequestSelectionAtEndOfUow(RootSite.RootBox, 0, helper.LevelInfo.Length, helper.LevelInfo, ActiveFreeformFlid, m_cpropActiveFreeform, helper.IchAnchor, helper.Ws,
-				helper.AssocPrev, helper.GetSelProps(SelLimitType.Anchor));
+			RootSite.RequestSelectionAtEndOfUow(RootSite.RootBox, 0, helper.LevelInfo.Length, helper.LevelInfo, ActiveFreeformFlid,
+				m_cpropActiveFreeform, helper.IchAnchor, helper.Ws, helper.AssocPrev, tssNew.FetchRunInfoAt(helper.IchAnchor, out _));
 			SetActiveFreeform(0, 0, 0, 0); // AFTER request selection, since it clears ActiveFreeformFlid.
-			return tssVal;
+			return tssNew;
 		}
 	}
 }

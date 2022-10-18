@@ -27,24 +27,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		private readonly LcmCache m_cache;
 		private readonly IVwViewConstructor m_vc;
 		private readonly HashSet<int> m_usedWritingSystems = new HashSet<int>();
-		private int m_wsGloss;
-		private readonly List<string> m_glossesInCellCollector = new List<string>();
-		private readonly List<int> m_frags = new List<int>();
+		private readonly List<ITsString> m_glossesInCellCollector = new List<ITsString>();
+		private readonly Stack<int> m_frags = new Stack<int>();
 		private readonly IDsConstChart m_chart;
 		private readonly IConstChartRowRepository m_rowRepo;
-		private enum TitleStage
-		{
-			ktsStart,
-			ktsGotFirstRowGroups,
-			ktsGotNotesHeaderCell,
-			ktsStartedSecondHeaderRow,
-			ktsFinishedHeaders
-		}
-		// 0 = start, 1 = got first level titles, 2 = opened notes cell, 3 = opened first cell in in 2nd row,
-		// 4 = ended that got first real row (and later).
-		private TitleStage m_titleStage = TitleStage.ktsStart;
+		private int m_titleRowCount;
 		private bool m_fNextCellReversed;
-		private readonly int m_wsLineNumber; // ws to use for line numbers.
+
+		private readonly int m_wsLineNumber; // ws to use for line numbers. REVIEW (Hasso) 2022.02: use or lose?
 
 		internal DiscourseExporter(LcmCache cache, XmlWriter writer, int hvoRoot, IVwViewConstructor vc, int wsLineNumber)
 			: base(null, cache.MainCacheAccessor, hvoRoot)
@@ -95,12 +85,14 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal void ExportDisplay()
 		{
+			m_writer.WriteStartDocument();
+			m_writer.WriteStartElement("document");
 			m_writer.WriteStartElement("chart");
-			m_writer.WriteStartElement("row"); // first header
-			m_writer.WriteAttributeString("type", "title1");
 			m_vc.Display(this, OpenObject, ConstChartVc.kfragPrintChart);
-			m_writer.WriteEndElement();
+			m_writer.WriteEndElement(); // chart
 			WriteLanguages();
+			m_writer.WriteEndElement(); // document
+			m_writer.WriteEndDocument();
 		}
 
 		/// <summary>
@@ -152,7 +144,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		private int TopFragment => m_frags.Any() ? m_frags[m_frags.Count - 1] : 0;
+		private int TopFragment => m_frags.Count == 0 ? 0 : m_frags.Peek();
 
 		public override void AddStringAltMember(int tag, int ws, IVwViewConstructor vwvc)
 		{
@@ -169,8 +161,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 					break;
 				case WfiGlossTags.kflidForm:
-					m_wsGloss = ws;
-					m_glossesInCellCollector.Add(DataAccess.get_MultiStringAlt(OpenObject, tag, m_wsGloss).Text ?? string.Empty);
+					m_glossesInCellCollector.Add(m_cache.MainCacheAccessor.get_MultiStringAlt(CurrentObject(), tag, ws));
 					break;
 				case ConstChartTagTags.kflidTag:
 					WriteStringProp(tag, "lit", ws); // missing marker.
@@ -263,9 +254,9 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void AddObj(int hvoItem, IVwViewConstructor vc, int frag)
 		{
-			m_frags.Add(frag);
-			base.AddObj(hvoItem, vc, frag);
-			m_frags.RemoveAt(m_frags.Count - 1);
+			m_frags.Push(frag);
+			base.AddObj (hvoItem, vc, frag);
+			m_frags.Pop();
 		}
 
 		public override void AddString(ITsString tss)
@@ -289,7 +280,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			else if (text == "***")
 			{
-				m_glossesInCellCollector.Add(tss.Text);
+				m_glossesInCellCollector.Add(tss);
 			}
 			else
 			{
@@ -337,9 +328,9 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public override void AddObjProp(int tag, IVwViewConstructor vc, int frag)
 		{
-			m_frags.Add(frag);
+			m_frags.Push(frag);
 			base.AddObjProp(tag, vc, frag);
-			m_frags.RemoveAt(m_frags.Count - 1);
+			m_frags.Pop();
 		}
 
 		/// <summary>
@@ -348,24 +339,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override void OpenTableCell(int nRowSpan, int nColSpan)
 		{
-			switch (m_titleStage)
-			{
-				case TitleStage.ktsStart when m_frags.Any() && m_frags[m_frags.Count - 1] == ConstChartVc.kfragColumnGroupHeader:
-					// got the first group header
-					m_titleStage = TitleStage.ktsGotFirstRowGroups;
-					break;
-				case TitleStage.ktsGotFirstRowGroups when !m_frags.Any():
-					// got the column groups, no longer in that, next thing is the notes header
-					m_titleStage = TitleStage.ktsGotNotesHeaderCell;
-					break;
-				case TitleStage.ktsGotNotesHeaderCell:
-					// got the one last cell on the very first row, now starting the second row, close first and make a new row.
-					m_writer.WriteEndElement();  // terminate the first header row.
-					m_writer.WriteStartElement("row"); // second row headers
-					m_writer.WriteAttributeString("type", "title2");
-					m_titleStage = TitleStage.ktsStartedSecondHeaderRow;
-					break;
-			}
 			m_writer.WriteStartElement("cell");
 			if (m_fNextCellReversed)
 			{
@@ -387,9 +360,9 @@ namespace LanguageExplorer.Controls.DetailControls
 				foreach (var gloss in m_glossesInCellCollector)
 				{
 					m_writer.WriteStartElement("gloss");
-					var icuCode = m_cache.WritingSystemFactory.GetStrFromWs(m_wsGloss);
+					var icuCode = m_cache.WritingSystemFactory.GetStrFromWs(gloss.get_WritingSystem(0));
 					m_writer.WriteAttributeString("lang", icuCode);
-					m_writer.WriteString(gloss);
+					m_writer.WriteString(gloss.Text ?? string.Empty);
 					m_writer.WriteEndElement(); // gloss
 				}
 				// glosses
@@ -401,70 +374,47 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_writer.WriteEndElement(); // cell
 		}
 
+		public override void OpenTableRow()
+		{
+			m_writer.WriteStartElement("row");
+
+			switch (TopFragment)
+			{
+				case ConstChartVc.kfragChartRow:
+					var row = m_rowRepo.GetObject(CurrentObject());
+					if (row.EndParagraph)
+						m_writer.WriteAttributeString("endPara", "true");
+					else if (row.EndSentence)
+						m_writer.WriteAttributeString("endSent", "true");
+					var clauseType = ConstChartVc.GetRowStyleName(row);
+					m_writer.WriteAttributeString("type", clauseType);
+					var label = row.Label.Text;
+					if (!string.IsNullOrEmpty(label))
+						m_writer.WriteAttributeString("id", label);
+					break;
+				default:
+					// Not a chart row; this must be a title row
+					m_writer.WriteAttributeString("type", $"title{++m_titleRowCount}");
+					break;
+			}
+
+			base.OpenTableRow();
+		}
+
+		public override void CloseTableRow()
+		{
+			base.CloseTableRow();
+			m_writer.WriteEndElement(); // row
+		}
+
 		/// <summary>
 		/// overridden to maintain the frags array.
 		/// </summary>
 		public override void AddObjVecItems(int tag, IVwViewConstructor vc, int frag)
 		{
-			m_frags.Add(frag);
-			base.AddObjVecItems(tag, vc, frag);
-			m_frags.RemoveAt(m_frags.Count - 1);
-		}
-
-		/// <summary>
-		/// Called whenever we start the display of an object, we currently use it to catch the start of
-		/// a row, based on the frag. Overriding OpenTableRow() might be more natural, but I was trying to
-		/// minimize changes to other DLLs, and those routines are not currently virtual in the base class.
-		/// </summary>
-		protected override void OpenTheObject(int hvo, int ihvo)
-		{
-			var frag = m_frags[m_frags.Count - 1];
-			switch (frag)
-			{
-				case ConstChartVc.kfragChartRow:
-					if (m_titleStage == TitleStage.ktsStartedSecondHeaderRow)
-					{
-						// This is the best way I've found to detect the end of the second header row
-						// and terminate it.
-						m_titleStage = TitleStage.ktsFinishedHeaders;
-						m_writer.WriteEndElement();
-					}
-					m_writer.WriteStartElement("row");
-					var row = m_rowRepo.GetObject(hvo);
-					if (row.EndParagraph)
-					{
-						m_writer.WriteAttributeString("endPara", "true");
-					}
-					else if (row.EndSentence)
-					{
-						m_writer.WriteAttributeString("endSent", "true");
-					}
-					var clauseType = ConstChartVc.GetRowStyleName(row);
-					m_writer.WriteAttributeString("type", clauseType);
-					var label = row.Label.Text;
-					if (!string.IsNullOrEmpty(label))
-					{
-						m_writer.WriteAttributeString("id", label);
-					}
-					break;
-				default:
-					break;
-			}
-			base.OpenTheObject(hvo, ihvo);
-		}
-
-		protected override void CloseTheObject()
-		{
-			base.CloseTheObject();
-			var frag = m_frags[m_frags.Count - 1];
-			switch (frag)
-			{
-				case ConstChartVc.kfragChartRow:
-					m_writer.WriteEndElement(); // row
-					break;
-				default:
-					break;
-			}
+			m_frags.Push(frag);
+			base.AddObjVecItems (tag, vc, frag);
+			m_frags.Pop();
 		}
 	}
 }

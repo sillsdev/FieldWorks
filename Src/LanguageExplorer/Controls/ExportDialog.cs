@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -95,6 +96,8 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		private Container components = null;
 		private List<ListViewItem> m_exportItems;
+
+		private const string OtherExportsFilename = "OtherExports.xml";
 
 		/// <summary />
 		internal ExportDialog()
@@ -268,6 +271,7 @@ namespace LanguageExplorer.Controls
 			this.m_exportList.MinimumSize = new Size(256, 183);
 			this.m_exportList.MultiSelect = false;
 			this.m_exportList.Name = "m_exportList";
+			this.m_exportList.ListViewItemSorter = new ExportListComparer();
 			this.m_exportList.Sorting = SortOrder.Ascending;
 			this.m_exportList.UseCompatibleStateImageBehavior = false;
 			this.m_exportList.View = View.Details;
@@ -338,6 +342,42 @@ namespace LanguageExplorer.Controls
 
 		}
 		#endregion
+
+		/// <summary>
+		/// This class exists for the sole purpose of sorting Other Exports to the end.
+		/// </summary>
+		private sealed class ExportListComparer : IComparer
+		{
+			public int Compare(object x, object y)
+			{
+				var leftItem = (ListViewItem)x;
+				var rightItem = (ListViewItem)y;
+
+				if (leftItem == null)
+				{
+					return -1;
+				}
+
+				if (rightItem == null)
+				{
+					return 1;
+				}
+
+				if (leftItem.SubItems[0] == rightItem.SubItems[0])
+					return 0;
+				if (((string)leftItem.Tag).EndsWith(OtherExportsFilename))
+				{
+					return 1;
+				}
+
+				if (((string)rightItem.Tag).EndsWith(OtherExportsFilename))
+				{
+					return -1;
+				}
+
+				return string.Compare(leftItem.SubItems[0].Text, rightItem.SubItems[0].Text, StringComparison.Ordinal);
+			}
+		}
 
 		/// <summary>
 		/// In case the requested export requires a particular view and we aren't showing it, create a temporary one
@@ -613,12 +653,24 @@ namespace LanguageExplorer.Controls
 		{
 			var fxtPath = (string)m_exportItems[0].Tag;
 			var ft = m_rgFxtTypes[FxtIndex(fxtPath)];
+			var exportType = m_exportItems[0]?.SubItems[0].Text;
 			using (new WaitCursor(this))
 			using (var progressDlg = new ProgressDialogWithTask(this))
 			{
 				try
 				{
-					UsageReporter.SendEvent(m_areaOrig + @"Export", @"Export", ft.m_ft.ToString(), $"{ft.m_sDataType} {ft.m_sFormat} {(ft.m_filtered ? "filtered" : "unfiltered")}", 0);
+					TrackingHelper.TrackExport(m_areaOrig, exportType,
+						ImportExportStep.Launched,
+						new Dictionary<string, string>
+						{
+							{
+								"format", ft.m_sFormat
+							},
+							{
+								"filtered", ft.m_filtered.ToString()
+							}
+						});
+
 					switch (ft.m_ft)
 					{
 						case FxtTypes.kftFxt:
@@ -676,9 +728,11 @@ namespace LanguageExplorer.Controls
 							progressDlg.RunTask(true, ExportGrammarSketch, outPath, ft.m_sDataType, ft.m_sXsltFiles);
 							break;
 					}
+					TrackingHelper.TrackExport(m_areaOrig, exportType, ImportExportStep.Succeeded);
 				}
 				catch (WorkerThreadException e)
 				{
+					TrackingHelper.TrackExport(m_areaOrig, exportType, ImportExportStep.Failed);
 					if (e.InnerException is CancelException)
 					{
 						MessageBox.Show(this, e.InnerException.Message);
@@ -1151,8 +1205,9 @@ namespace LanguageExplorer.Controls
 		{
 			//enable unless the type is pathway & pathway is not installed, or if the type is lift and it is filtered, but there is no filter available, or if the filter excludes all items
 			var fFilterAvailable = DetermineIfFilterIsAvailable();
-			return ft == FxtTypes.kftPathway && !IsPathwayInstalled || ft == FxtTypes.kftLift && isFiltered && fFilterAvailable || ft == FxtTypes.kftConfigured
-			       && (formatType == "htm" || formatType == "sfm") || ft == FxtTypes.kftReversal && formatType == "sfm";
+			return (ft == FxtTypes.kftPathway && !IsPathwayInstalled) ||
+				   (ft == FxtTypes.kftLift && isFiltered && fFilterAvailable) ||
+				   (ft == FxtTypes.kftFxt && formatType == "any");
 		}
 
 		private bool DetermineIfFilterIsAvailable()

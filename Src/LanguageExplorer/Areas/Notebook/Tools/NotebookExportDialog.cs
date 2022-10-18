@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
+using SIL.Extensions;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -124,7 +125,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 			using (var writer = new StreamWriter(outPath)) // defaults to UTF-8
 			{
 				writer.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-				writer.WriteLine("<Notebook exportVersion=\"2.0\" project=\"{0}\" dateExported=\"{1:yyyy-MM-ddThh:mm:ss}\">", m_cache.ProjectId.UiName, DateTime.Now);
+				writer.WriteLine("<Notebook exportVersion=\"2.0\" project=\"{0}\" dateExported=\"{1}\">",
+					m_cache.ProjectId.UiName, DateTime.Now.ToISO8601TimeFormatNoTimeZoneString());
 				progress.Message = "Exporting data records...";
 				ExportRecords(writer, progress);
 				progress.Message = "Exporting writing systems...";
@@ -280,7 +282,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 
 		private void ExportRecord(TextWriter writer, IRnGenericRec record, int level)
 		{
-			writer.WriteLine("<Entry level=\"{0}\" dateCreated=\"{1:yyyy-MM-ddThh:mm:ss}\" dateModified=\"{2:yyyy-MM-ddThh:mm:ss}\" guid=\"{3}\">", level, record.DateCreated, record.DateModified, record.Guid);
+			writer.WriteLine("<Entry level=\"{0}\" dateCreated=\"{1:yyyy-MM-ddThh:mm:ss}\" dateModified=\"{2:yyyy-MM-ddThh:mm:ss}\" guid=\"{3}\">",
+				level,
+				record.DateCreated.ToISO8601TimeFormatNoTimeZoneString(),
+				record.DateModified.ToISO8601TimeFormatNoTimeZoneString(),
+				record.Guid);
 
 			ExportString(writer, record.Title, "Title");
 

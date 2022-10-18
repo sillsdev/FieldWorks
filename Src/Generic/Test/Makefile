@@ -20,7 +20,7 @@ else
 	OPTIMIZATIONS = -O3
 endif
 
-PACKAGES = gtkmm-2.4
+PACKAGES = gtkmm-2.4 icu-i18n
 
 INCLUDES := -I$(GENERIC_SRC) -I$(GENERIC_SRC)/Test \
 
@@ -32,7 +32,6 @@ INCLUDES := \
 	-I$(WIN32MORE_INC) \
 	-I$(COM_INC) \
 	-I$(WIN32BASE_INC) \
-	$(shell icu-config --cppflags) \
 	-I$(FWINCLUDE) \
 	$(shell pkg-config --cflags $(PACKAGES)) \
 
@@ -43,7 +42,6 @@ LDLIBS := \
 	-L$(COM_LIB) -lcom \
 	-L$(WIN32BASE_LIB) -lWin32Base \
 	$(shell pkg-config --libs $(PACKAGES)) \
-	$(shell icu-config --ldflags) \
 	-lexpat -ldl \
 
 CPPFLAGS = $(DEFINES) $(INCLUDES) -MMD
@@ -103,7 +101,7 @@ test: $(PROGS)
 		FW_ROOT=$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/DistFiles/) \
 		FW_ROOTCODE=$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/DistFiles/) \
 		COMPONENTS_MAP_PATH=$(shell $(BUILD_ROOT)/Bin/abs.py $(OUT_DIR)) \
-		LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(shell icu-config --prefix)/lib:$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/../COM/build$(ARCH)/lib) \
+		LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(shell pkg-config icu-i18n --variable=prefix)/lib:$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/../COM/build$(ARCH)/lib) \
 		./$$PROG || echo $$PROG failed; \
 	done
 
@@ -113,7 +111,7 @@ check: all
 	FW_ROOT=$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/DistFiles/) \
 	FW_ROOTCODE=$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/DistFiles/) \
 	COMPONENTS_MAP_PATH=$(shell $(BUILD_ROOT)/Bin/abs.py $(OUT_DIR)) \
-	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(shell icu-config --prefix)/lib:$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/../COM/build$(ARCH)/lib) \
+	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(shell pkg-config icu-i18n --variable=prefix)/lib:$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/../COM/build$(ARCH)/lib) \
 	./testGenericLib
 
 clean:

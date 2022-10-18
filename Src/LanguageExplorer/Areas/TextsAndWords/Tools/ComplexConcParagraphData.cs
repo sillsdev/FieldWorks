@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using SIL.Collections;
+using SIL.Extensions;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
@@ -16,13 +17,13 @@ using SIL.Machine.FeatureModel;
 
 namespace LanguageExplorer.Areas.TextsAndWords.Tools
 {
-	public class ComplexConcParagraphData : IAnnotatedData<ShapeNode>, IDeepCloneable<ComplexConcParagraphData>
+	public class ComplexConcParagraphData : IAnnotatedData<ShapeNode>
 	{
-		public ComplexConcParagraphData(SpanFactory<ShapeNode> spanFactory, FeatureSystem featSys, IStTxtPara para)
+		public ComplexConcParagraphData(FeatureSystem featSys, IStTxtPara para)
 		{
 			Paragraph = para;
-			Shape = new Shape(spanFactory, begin => new ShapeNode(spanFactory, FeatureStruct.New(featSys).Symbol("bdry").Symbol("paraBdry").Value));
-			if (GenerateShape(spanFactory, featSys))
+			Shape = new Shape(begin => new ShapeNode(FeatureStruct.New(featSys).Symbol("bdry").Symbol("paraBdry").Value));
+			if (GenerateShape(featSys))
 			{
 				return;
 			}
@@ -37,13 +38,13 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 				}
 			});
 			Shape.Clear();
-			if (!GenerateShape(spanFactory, featSys))
+			if (!GenerateShape(featSys))
 			{
 				throw new InvalidOperationException("A paragraph cannot be parsed properly.");
 			}
 		}
 
-		private bool GenerateShape(SpanFactory<ShapeNode> spanFactory, FeatureSystem featSys)
+		private bool GenerateShape(FeatureSystem featSys)
 		{
 			Shape.Add(FeatureStruct.New(featSys).Symbol("bdry").Symbol("wordBdry").Value);
 			var typeFeat = featSys.GetFeature<SymbolicFeature>("type");
@@ -144,7 +145,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 									morphFS.AddValue(inflFeat, inflFS);
 									if (wordInflFS == null)
 									{
-										wordInflFS = inflFS.DeepClone();
+										wordInflFS = inflFS.Clone();
 									}
 									else
 									{
@@ -224,7 +225,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 				{
 					continue; // guard against LT-14549 crash
 				}
-				var tagAnn = new Annotation<ShapeNode>(spanFactory.Create(beginAnnotation.Span.Start, endAnnotation.Span.End), FeatureStruct.New(featSys).Symbol("ttag").Symbol(tagType.Hvo.ToString(CultureInfo.InvariantCulture)).Value)
+				var tagAnn = new Annotation<ShapeNode>(Range<ShapeNode>.Create(beginAnnotation.Range.Start, endAnnotation.Range.End), FeatureStruct.New(featSys).Symbol("ttag").Symbol(tagType.Hvo.ToString(CultureInfo.InvariantCulture)).Value)
 				{
 					Data = tag
 				};
@@ -236,7 +237,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 		private ComplexConcParagraphData(ComplexConcParagraphData paraData)
 		{
 			Paragraph = paraData.Paragraph;
-			Shape = paraData.Shape.DeepClone();
+			Shape = paraData.Shape.Clone();
 		}
 
 		/// <summary>
@@ -342,7 +343,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 					case IFsClosedValue closedVal when closedVal.FeatureRA != null && closedVal.ValueRA != null:
 					{
 						var symFeat = featSys.GetFeature<SymbolicFeature>(closedVal.FeatureRA.Hvo.ToString(CultureInfo.InvariantCulture));
-						if (symFeat.PossibleSymbols.TryGetValue(closedVal.ValueRA.Hvo.ToString(CultureInfo.InvariantCulture), out var symbol))
+						if (symFeat.PossibleSymbols.TryGet(closedVal.ValueRA.Hvo.ToString(CultureInfo.InvariantCulture), out var symbol))
 						{
 							featStruct.AddValue(symFeat, symbol);
 						}
@@ -358,7 +359,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 
 		public IStTxtPara Paragraph { get; }
 
-		public SIL.Machine.Annotations.Span<ShapeNode> Span => Shape.Span;
+		public Range<ShapeNode> Range => Shape.Range;
 
 		public AnnotationList<ShapeNode> Annotations => Shape.Annotations;
 

@@ -12,6 +12,7 @@
 *.ldml -whitespace
 *.patch -whitespace
 *.proj -whitespace
+*.props -whitespace
 *.ReSharper -whitespace
 *.resx -whitespace
 *.settings -whitespace
@@ -28,4 +29,6 @@ RealSplashScreen.cs -whitespace
 run-app -whitespace
 Bin/ilrepack-assemblies -whitespace
 *.json -whitespace
+*.js -whitespace
 GitVersion.yml -whitespace
+Src/LexText/ParserCore/ParserCoreTests/**/*.txt -whitespace

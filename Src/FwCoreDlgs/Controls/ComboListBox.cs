@@ -307,8 +307,8 @@ namespace SIL.FieldWorks.FwCoreDlgs.Controls
 			if (m_activateOnShow)
 			{
 				FocusAndCapture();
-				HideComboBoxForm += HideComboBox;
 			}
+			HideComboBoxForm += HideComboBox;
 		}
 
 		private const int SW_SHOWNOACTIVATE = 4;

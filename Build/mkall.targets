@@ -33,6 +33,7 @@
 			UseNUnit3Xml="false"
 			Verbose="true"
 			Force32Bit="$(useNUnit-x86)"
+			ContinueOnError="true"
 			ExcludeCategory="$(excludedCategories)"
 			FudgeFactor="$(timeoutFudgeFactor)"
 			Timeout="54000000">
@@ -53,17 +54,25 @@
 		<CatenateFiles SourceFiles="@(CompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 	</Target>
 
-	<Target Name="copyIcuFiles" Condition="'$(OS)'!='Unix'">
+	<Target Name="copyIcuFiles" DependsOnTargets="copyIcuDlls">
+		<ItemGroup>
+			<IcuData Include="$(SilLcModelCoreIcuDataFilesFolder)/**/*"/>
+			<IcuLibLibsX64 Include="$(IcuFwLibDirectoryX64)icudt.lib"/>
+			<IcuLibLibsX64 Include="$(IcuFwLibDirectoryX64)icuin.lib"/>
+			<IcuLibLibsX64 Include="$(IcuFwLibDirectoryX64)icuuc.lib"/>
+		</ItemGroup>
+		<Copy SourceFiles="@(IcuData)" DestinationFolder="$(dir-icuData)/%(recursiveDir)" SkipUnchangedFiles="true" />
+		<Copy SourceFiles="@(IcuLibLibsX64)" DestinationFolder="$(dir-fwlib)" SkipUnchangedFiles="true" />
+	</Target>
+
+	<Target Name="copyIcuDlls" Condition="'$(OS)'=='Windows_NT'">
 		<!-- Need these files in the lib/${Platform} folder for RegFree to load the FwKernel.dll and Views.dll successfully -->
-		<ItemGroup Condition="'$(OS)'=='Windows_NT'">
-			<IcuLibsX86 Include="$(IcuFwRuntimeWinX86)icu*.dll" />
+		<ItemGroup>
 			<IcuLibsX64 Include="$(IcuFwRuntimeWinX64)icu*.dll" />
 		</ItemGroup>
 
 		<Message Text="From $(fwrt)/packages/Icu4c.Win.Fw.Lib.$(IcuWinFwLibVersion)/runtimes/win7-$(Platform)/native/ to $(dir-outputBase)/lib/$(Platform)"/>
-		<Copy SourceFiles="@(IcuLibsX86)" DestinationFolder="$(dir-outputBase)/lib/x86" SkipUnchangedFiles="true" />
-		<Copy SourceFiles="@(IcuLibsX64)" DestinationFolder="$(dir-outputBase)/lib/x64" SkipUnchangedFiles="true" />
-
+		<Copy SourceFiles="@(IcuLibsX64)" DestinationFolder="$(dir-outputBase)/lib/win-x64" SkipUnchangedFiles="true" />
 	</Target>
 
 	<Target Name="CopyKernelInterfaces">
@@ -87,13 +96,16 @@
 			Fragments="@(Fragments)" Platform="$(Platform)" MSBuildArchitecture="$(Platform)"/>
 	</Target>
 
-	<Target Name="DebugProcs" DependsOnTargets="initLinux;initWindows;CopyKernelInterfaces">
+	<Target Name="DebugProcs" DependsOnTargets="initLinux;initWindows;copyIcuFiles;CopyKernelInterfaces">
+		<Error
+			Text="Icu lib directory not defined in IcuFwLibDirectoryX64 (check nuget package), build will fail."
+			Condition="'$(IcuFwLibDirectoryX64)'==''" />
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\DebugProcs\DebugProcs.mak"
 				Configuration="$(config-capital)"
 				BuildRoot="$(fwrt)"
 				BuildArch="'$(Platform)'"
-				Macros="EXTRA_INCLUDE=$(IcuFwIncludeDirectory) EXTRA_LINK_OPTS=/LIBPATH:$(IcuFwLibDirectory)"
+				Macros="EXTRA_INCLUDE=$(IcuFwIncludeDirectory) EXTRA_LINK_OPTS=/LIBPATH:$(IcuFwLibDirectoryX64)"
 				WorkingDirectory="$(fwrt)\Src\DebugProcs"/>
 		<Make Condition="'$(OS)'=='Unix'"
 				Makefile="$(fwrt)/Src/DebugProcs/Makefile"
@@ -124,7 +136,7 @@
 				Configuration="$(config-capital)"
 				BuildRoot="$(fwrt)"
 				BuildArch="'$(Platform)'"
-				Macros="EXTRA_INCLUDE=$(IcuFwIncludeDirectory) EXTRA_LINK_OPTS=/LIBPATH:$(IcuFwLibDirectory)"
+				Macros="EXTRA_INCLUDE=$(IcuFwIncludeDirectory) EXTRA_LINK_OPTS=/LIBPATH:$(IcuFwLibDirectoryX64)"
 				WorkingDirectory="$(fwrt)\Bin"/>
 		<Make Condition="'$(OS)'=='Unix'"
 				Makefile="$(fwrt)/Src/Generic/Test/Makefile"
@@ -155,14 +167,14 @@
 			Configuration="$(config-capital)"
 			BuildRoot="$(fwrt)"
 			BuildArch="'$(Platform)'"
-			Macros="EXTRA_INCLUDE=$(IcuFwIncludeDirectory) EXTRA_LINK_OPTS=/LIBPATH:$(IcuFwLibDirectory)"
+			Macros="EXTRA_INCLUDE=$(IcuFwIncludeDirectory) EXTRA_LINK_OPTS=/LIBPATH:$(IcuFwLibDirectoryX64)"
 			WorkingDirectory="$(fwrt)\Src\Kernel"/>
 		<Make Condition="'$(OS)'=='Unix'"
 			Makefile="$(fwrt)/Src/Kernel/Makefile"
 			Configuration="$(config-capital)" Target="$(make-target)"
 			BuildRoot="$(fwrt)"
 			WorkingDirectory="$(fwrt)/Src/Kernel"/>
-		<RegFree Executable="$(dir-outputBase)\FwKernel.dll" Output="$(dir-outputBase)\FwKernel.X.manifest" Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)"  MSBuildArchitecture="$(Platform)"/>
+		<RegFree Executable="$(dir-outputBase)\FwKernel.dll" Output="$(dir-outputBase)\FwKernel.X.manifest" Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)" MSBuildArchitecture="$(Platform)"/>
 		<Message Text="Finished building FwKernel."/>
 	</Target>
 
@@ -182,7 +194,7 @@
 			Configuration="$(config-capital)"
 			BuildRoot="$(fwrt)"
 			BuildArch="'$(Platform)'"
-			Macros="EXTRA_INCLUDE=$(IcuFwIncludeDirectory) EXTRA_LINK_OPTS=/LIBPATH:$(IcuFwLibDirectory)"
+			Macros="EXTRA_INCLUDE=$(IcuFwIncludeDirectory) EXTRA_LINK_OPTS=/LIBPATH:$(IcuFwLibDirectoryX64)"
 			WorkingDirectory="$(fwrt)\Src\views"/>
 		<Make Condition="'$(OS)'=='Unix'"
 			Makefile="$(fwrt)/Src/views/Makefile"
@@ -199,7 +211,7 @@
 				Configuration="$(config-capital)"
 				BuildRoot="$(fwrt)"
 				BuildArch="'$(Platform)'"
-				Macros="EXTRA_INCLUDE=$(IcuFwIncludeDirectory) EXTRA_LINK_OPTS=/LIBPATH:$(IcuFwLibDirectory)"
+				Macros="EXTRA_INCLUDE=$(IcuFwIncludeDirectory) EXTRA_LINK_OPTS=/LIBPATH:$(IcuFwLibDirectoryX64)"
 				WorkingDirectory="$(fwrt)\Bin"/>
 		<Make Condition="'$(OS)'=='Unix'"
 				Makefile="$(fwrt)/Src/views/Test/Makefile"
@@ -329,49 +341,62 @@
 
 	<Target Name="setKeysInHKCU" DependsOnTargets="GenerateVersionFiles" Condition="'$(packaging)' != 'yes'">
 		<Message Text="Setting registry values for $(fwrt)."/>
+		<!-- Using the OS-appropriate directory separator character is required for some unit tests to pass -->
 		<WriteRegistry Hive="CurrentUser"
-			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\FieldWorks\$(GitVersion_Major)\RootCodeDir"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE/SIL/FieldWorks/$(GitVersion_Major)/RootCodeDir"
 			Value="$(dir-fwdistfiles)"/>
 		<WriteRegistry Hive="CurrentUser"
-			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\FieldWorks\$(GitVersion_Major)\RootDataDir"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE/SIL/FieldWorks/$(GitVersion_Major)/RootDataDir"
 			Value="$(dir-fwdistfiles)"/>
 		<WriteRegistry Hive="CurrentUser"
-			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\FieldWorks\$(GitVersion_Major)\ProjectsDir"
-			Value="$(dir-fwdistfiles)\Projects"/>
+			Key="$(BUILDAGENT_HKCU)SOFTWARE/SIL/FieldWorks/$(GitVersion_Major)/ProjectsDir"
+			Value="$([System.IO.Path]::Combine(&quot;$(dir-fwdistfiles)&quot;, &quot;Projects&quot;))"/>
 		<WriteRegistry Hive="CurrentUser"
-			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\Icu$(IcuVersion)DataDir"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE/SIL/Icu$(IcuVersion)DataDir"
 			Value="$(dir-icuData)"/>
 		<WriteRegistry Hive="CurrentUser"
-			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\RootDir"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE/SIL/SilEncConverters40/RootDir"
 			Value="$(dir-outputBase)"
 			Condition="'$(OS)'=='Windows_NT'"/>
 		<WriteRegistry Hive="CurrentUser"
-			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE/SIL/SilEncConverters40/DeveloperPluginDir"
 			Value="$(dir-outputBase)\EC\Plugins"
 			Condition="'$(OS)'=='Windows_NT'"/>
 		<WriteRegistry Hive="CurrentUser"
-			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\RootDir"
-			Value="/usr/lib/fieldworks"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE/SIL/SilEncConverters40/RootDir"
+			Value="$(installation_prefix)/lib/fieldworks"
 			Condition="'$(OS)'=='Unix'"/>
 		<WriteRegistry Hive="CurrentUser"
-			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\SilEncConverters40\DeveloperPluginDir"
-			Value="/usr/lib/fieldworks/EC/Plugins"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE/SIL/SilEncConverters40/DeveloperPluginDir"
+			Value="$(installation_prefix)/lib/fieldworks/EC/Plugins"
 			Condition="'$(OS)'=='Unix'"/>
 
 		<MakeDir Directories="$(fwrt)/DistFiles/SIL/Repository"/>
 		<WriteRegistry Hive="CurrentUser"
-			Key="$(BUILDAGENT_HKCU)SOFTWARE\SIL\EncodingConverterRepository\Registry"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE/SIL/EncodingConverterRepository/Registry"
 			Value="$(fwrt)/DistFiles/SIL/Repository/mappingRegistry.xml"/>
+
+		<!-- Register silfw:// link protocol -->
+		<WriteRegistry Hive="CurrentUser"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE/Classes/silfw/"
+			Value="URL:SILFW Protocol"/>
+		<WriteRegistry Hive="CurrentUser"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE/Classes/silfw/URL Protocol"/>
+		<WriteRegistry Hive="CurrentUser"
+			Key="$(BUILDAGENT_HKCU)SOFTWARE/Classes/silfw/shell/open/command/"
+			Value='"$(dir-outputBase)/FieldWorks.exe" %1'/>
 	</Target>
 
 	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
-		<Exec Command='$(NuGetCommand) install SIL.FwBuildTasks -version $(FwBuildTasksVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/SIL.FwBuildTasks.$(FwBuildTasksVersion)')"/>
-		<Exec Command='$(NuGetCommand) install Icu4c.Win.Fw.Lib -version $(IcuWinFwLibVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/Icu4c.Win.Fw.Lib.$(IcuWinFwLibVersion)')"/>
+		<MSBuild Projects="$(fwrt)/Build/Src/FwBuildTasks/FwBuildTasks.csproj" Targets="Restore;Build;CopyOutputToBuild" Properties="Configuration=Debug;Platform=Any CPU" Condition="!Exists('$(fwrt)/Build/FwBuildTasks.dll')"/>
 		<Exec Command='$(NuGetCommand) install GitVersion.MsBuild -version $(GitVersionMsBuildVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/GitVersion.MsBuild.$(GitVersionMsBuildVersion)')"/>
+		<Exec Command='$(NuGetCommand) install Icu4c.Win.Fw.Lib -version $(IcuWinFwLibVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/Icu4c.Win.Fw.Lib.$(IcuWinFwLibVersion)')"/>
 		<!-- Install NUnit.Console which has the required extensions as dependencies -->
 		<Exec Command='$(NuGetCommand) install NUnit.Console -version $(NunitConsoleVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/NUnit.Console.$(NunitConsoleVersion)')" />
 		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -version $(SilBuildTasksVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/SIL.BuildTasks.$(SilBuildTasksVersion)')" />
-		<!-- SIL.Lib is needed for the ParatextPlugin -->
+		<!-- LCModel.Core contains ICU data -->
+		<Exec Command='$(NuGetCommand) install SIL.LCModel.Core -version $(LcmVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/SIL.LCModel.Core.$(LcmVersion)')"/>
+		<!-- SIL.Lib is needed for the ParatextPlugin. REVIEW (Hasso) 2022.10: then shouldn't it instead be a dependency of ParatextPlugin? -->
 		<Exec Command='$(NuGetCommand) install SIL.Lib -version $(SilLibVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/SIL.Lib.$(SilLibVersion)')" />
 	</Target>
 </Project>

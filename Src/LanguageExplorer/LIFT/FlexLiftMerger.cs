@@ -1396,7 +1396,7 @@ namespace LanguageExplorer.LIFT
 			MergeInMultiUnicode(feat.Abbreviation, FsFeatDefnTags.kflidAbbreviation, abbrev, feat.Guid);
 			MergeInMultiUnicode(feat.Name, FsFeatDefnTags.kflidName, label, feat.Guid);
 			MergeInMultiString(feat.Description, FsFeatDefnTags.kflidDescription, description, feat.Guid);
-			if (fNew || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
+			if (fNew || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				if (!string.IsNullOrEmpty(sCatalogId))
 				{
@@ -1447,7 +1447,7 @@ namespace LanguageExplorer.LIFT
 			{
 				return;     // The user didn't give a type -- see LT-15112.
 			}
-			if (featComplex.TypeRA == null || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
+			if (featComplex.TypeRA == null || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				if (m_mapIdFeatStrucType.TryGetValue(sComplexType, out var featType))
 				{
@@ -1465,14 +1465,14 @@ namespace LanguageExplorer.LIFT
 		/// </summary>
 		private void FinishMergingOpenFeatDefn(IFsOpenFeature featOpen, int nWsSelector, string sWs)
 		{
-			if (featOpen.WsSelector == 0 || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
+			if (featOpen.WsSelector == 0 || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				if (nWsSelector != 0)
 				{
 					featOpen.WsSelector = nWsSelector;
 				}
 			}
-			if (string.IsNullOrEmpty(featOpen.WritingSystem) || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
+			if (string.IsNullOrEmpty(featOpen.WritingSystem) || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				if (!string.IsNullOrEmpty(sWs))
 				{
@@ -1487,7 +1487,7 @@ namespace LanguageExplorer.LIFT
 		/// </summary>
 		private void FinishMergingClosedFeatDefn(IFsClosedFeature featClosed, List<string> rgsValues, string id)
 		{
-			if (featClosed.ValuesOC.Count == 0 || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
+			if (featClosed.ValuesOC.Count == 0 || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				var rgsMissing = new List<string>(rgsValues.Count);
 				foreach (var sAbbr in rgsValues)
@@ -1653,14 +1653,14 @@ namespace LanguageExplorer.LIFT
 			MergeInMultiUnicode(featType.Abbreviation, FsFeatDefnTags.kflidAbbreviation, abbrev, featType.Guid);
 			MergeInMultiUnicode(featType.Name, FsFeatDefnTags.kflidName, label, featType.Guid);
 			MergeInMultiString(featType.Description, FsFeatDefnTags.kflidDescription, description, featType.Guid);
-			if (featType.CatalogSourceId == null || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
+			if (featType.CatalogSourceId == null || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				if (!string.IsNullOrEmpty(sCatalogId))
 				{
 					featType.CatalogSourceId = sCatalogId;
 				}
 			}
-			if (featType.FeaturesRS.Count == 0 || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
+			if (featType.FeaturesRS.Count == 0 || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				featType.FeaturesRS.Clear();
 				foreach (var sVal in rgsFeatures)
@@ -1761,7 +1761,7 @@ namespace LanguageExplorer.LIFT
 			MergeInMultiUnicode(val.Abbreviation, FsSymFeatValTags.kflidAbbreviation, abbrev, val.Guid);
 			MergeInMultiUnicode(val.Name, FsSymFeatValTags.kflidName, label, val.Guid);
 			MergeInMultiString(val.Description, FsSymFeatValTags.kflidDescription, description, val.Guid);
-			if (fNew || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew)
+			if (fNew || m_msImport == MergeStyle.MsKeepNew || m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				if (!string.IsNullOrEmpty(sCatalogId))
 				{
@@ -2214,7 +2214,7 @@ namespace LanguageExplorer.LIFT
 				}
 			}
 			// If we're keeping only the imported data, delete any unused senses.
-			if (m_msImport == MergeStyle.MsKeepOnlyNew)
+			if (m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				foreach (var hvo in le.SensesOS.ToHvoArray())
 				{
@@ -2831,6 +2831,7 @@ namespace LanguageExplorer.LIFT
 						}
 						break;
 					case MergeStyle.MsKeepNew:
+					case MergeStyle.MsTheCombine:
 						// Replace old paragraph contents with the new.  If there are extra old paragraphs,
 						// keep them.  (This decision is apt to change.)
 						for (var i = 0; i < cparaNew; ++i)
@@ -4140,7 +4141,7 @@ namespace LanguageExplorer.LIFT
 				}
 			}
 			// If we're keeping only the imported data, delete any unused subsense.
-			if (m_msImport == MergeStyle.MsKeepOnlyNew)
+			if (m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				foreach (var hvo in ls.SensesOS.ToHvoArray())
 				{
@@ -9847,10 +9848,13 @@ namespace LanguageExplorer.LIFT
 			progress.Message = LiftResources.ksWritingAccumulatedResidue;
 			WriteAccumulatedResidue();
 			// If we're keeping only the imported data, erase any unused entries or senses.
-			if (m_msImport == MergeStyle.MsKeepOnlyNew)
+			if (m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
 			{
 				progress.Message = LiftResources.ksDeletingUnwantedEntries;
-				GatherUnwantedObjects(originalLexEntryRefs, originalLexRefs); //at this point any LexRefs which haven't been matched are dead.
+				if (m_msImport == MergeStyle.MsKeepOnlyNew)
+				{
+					GatherUnwantedObjects(originalLexEntryRefs, originalLexRefs); //at this point any LexRefs which haven't been matched are dead.
+				}
 				DeleteUnwantedObjects();
 			}
 			// Now that the relations have all been set, it's safe to set the entry

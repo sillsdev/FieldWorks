@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2020 SIL International
+// Copyright (c) 2010-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,10 +20,13 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 	internal sealed class PUAInstaller
 	{
 		private readonly Dictionary<int, PUACharacter> m_dictCustomChars = new Dictionary<int, PUACharacter>();
-		private string m_icuDir;
+		private static string m_icuDir;
 		private string m_icuDataDir;
 
-		private string IcuDir
+		/// <summary>
+		/// Get the pathname of the Icu folder (similar to "C:\ProgramData\SIL\Icu54")
+		/// </summary>
+		public static string IcuDir
 		{
 			get
 			{
@@ -34,6 +37,14 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 					{
 						throw new DirectoryNotFoundException("ICU directory not found. Registry value for ICU not set?");
 					}
+
+					// There is ambiguity about whether the ICU_DATA directory should point to the icudt{icuver}l folder, or its base
+					// Since we can't seem to make up our mind handle both
+					if (!Directory.Exists(Path.Combine(m_icuDir, "data")))
+					{
+						m_icuDir = Path.GetDirectoryName(m_icuDir);
+					}
+
 					if (!Directory.Exists(m_icuDir))
 					{
 						throw new DirectoryNotFoundException($"ICU directory does not exist at {m_icuDir}. Registry value for ICU set incorrectly?");
@@ -315,6 +326,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 			// run it to generate the canonical binary data.
 			var args = $@" -o ""{nfcBinaryFileName}"" ""{nfcTxtFileName}"" ""{nfcHebrewFileName}"" ""{nfcOverridesFileName}""";
+			LogFile.AddVerboseLine($"Executing gennorm: {genNorm2} {args}");
 			RunProcess(genNorm2, args);
 
 			// run it again to generate the non-canonical binary data.
@@ -352,7 +364,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				{
 					var stdOutput = gennormProcess.StandardOutput.ReadToEnd();
 					var stdError = gennormProcess.StandardError.ReadToEnd();
-					if (LogFile.IsLogging())
+					if (LogFile.IsLogging)
 					{
 						LogFile.AddErrorLine("Error running gennorm2:");
 						LogFile.AddErrorLine(stdOutput);
@@ -376,33 +388,33 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			}
 			var codeBaseUri = typeof(PUAInstaller).Assembly.CodeBase;
 			var path = Path.GetDirectoryName(FileUtils.StripFilePrefix(codeBaseUri));
-			var x86Path = Path.Combine(path, "lib", "x86", exeName + ".exe");
-			var x64Path = Path.Combine(path, "lib", "x64", exeName + ".exe");
-			var barePath = Path.Combine(path, exeName + ".exe");
-			return File.Exists(x86Path) ? x86Path : File.Exists(x64Path) ? x86Path : barePath;
+			// REVIEW (Hasso) 2022.11: the dependency that installs these insists on putting them in lib\win-x64 instead of lib\x64.
+			// In FW9.1, when were copying them explicitly in mkall.targets, they were in lib\x64. Should they be moved back?
+			path = Path.Combine(path, "lib", $"win-{(Environment.Is64BitProcess ? "x64" : "x86")}", $"{exeName}.exe");
+			return path;
 		}
 
-		///  <summary>
-		///  Inserts the given PUADefinitions (any Unicode character) into the UnicodeData.txt file.
+		/// <summary>
+		/// Inserts the given PUADefinitions (any Unicode character) into the UnicodeData.txt file.
 		///
-		///  This accounts for all the cases of inserting into the "first/last" blocks.  That
-		///  is, it will split the blocks into two or move the first and last tags to allow a
-		///  codepoint to be inserted correctly.
+		/// This accounts for all the cases of inserting into the "first/last" blocks.  That
+		/// is, it will split the blocks into two or move the first and last tags to allow a
+		/// codepoint to be inserted correctly.
 		///
-		///  Also, this accounts for Hexadecimal strings that are within the unicode range, not
-		///  just four digit unicode files.
+		/// Also, this accounts for Hexadecimal strings that are within the unicode range, not
+		/// just four digit unicode files.
 		///
-		///  <list type="number">
-		///  <listheader>Assumptions made about the format</listheader>
-		///  <item>The codepoints are in order</item>
-		///  <item>There first last block will always have no space between the word first and the following ">"</item>
-		///  <item>No other data entries contain the word first followed by a ">"</item>
-		///  <item>There will always be a "last" on the line directly after a "first".</item>
-		///  </list>
+		/// <list type="number">
+		/// <listheader>Assumptions made about the format</listheader>
+		/// <item>The codepoints are in order</item>
+		/// <item>There first last block will always have no space between the word first and the following ">"</item>
+		/// <item>No other data entries contain the word first followed by a ">"</item>
+		/// <item>There will always be a "last" on the line directly after a "first".</item>
+		/// </list>
 		///
-		///  </summary>
-		///  <remarks>
-		///  Pseudocode for inserting lines:
+		/// </summary>
+		/// <remarks>
+		/// Pseudocode for inserting lines:
 		/// 	if the unicodePoint	is a first tag
 		/// 		Get	first and last uncodePoint range
 		/// 		Stick into array all the xmlPoints that fit within the uncodePoint range
@@ -415,10 +427,10 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// 	else
 		/// 		do nothing except write	the	line
 		/// </remarks>
-		///  <param name="puaDefinitions">A list of PUADefinitions to insert into UnicodeDataOverrides.txt.</param>
+		/// <param name="puaDefinitions">A list of PUADefinitions to insert into UnicodeDataOverrides.txt.</param>
 		/// <param name="comment"></param>
 		/// <param name="originalOverrides">original to merge into</param>
-		///  <param name="outputOverrides">where to write output</param>
+		/// <param name="outputOverrides">where to write output</param>
 		private static void InsertCharacters(IReadOnlyList<IPuaCharacter> puaDefinitions, string comment, string originalOverrides, string outputOverrides)
 		{
 			// Open the file for reading and writing
@@ -436,7 +448,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 					var lastCode = 0;
 					// Start looking at the first codepoint
 					var codeIndex = 0;
-					var newCode = Convert.ToInt32(puaDefinitions[codeIndex].CodePoint, 16);
+					var newCode = puaDefinitions.Count > 0 ? Convert.ToInt32(puaDefinitions[codeIndex].CodePoint, 16) : 0;
 
 					//While there is a line to be read in the file
 					while ((line = reader.ReadLine()) != null)
@@ -446,7 +458,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 						{
 							continue;
 						}
-						if (line.StartsWith("Code") || line.StartsWith("block")) // header line or special instruction
+						if (line.StartsWith("Code") || line.StartsWith("block") || puaDefinitions.Count == 0) // header line or special instruction, or all overrides removed
 						{
 							writer.WriteLine(line);
 							continue;
@@ -519,7 +531,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		/// </summary>
 		private static void LogCodepoint(string code)
 		{
-			if (LogFile.IsLogging())
+			if (LogFile.IsLogging)
 			{
 				LogFile.AddErrorLine("Storing definition for Unicode character: " + code);
 			}
@@ -549,7 +561,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			var fi = new FileInfo(inName);
 			if (fi.Length > 0)
 			{
-				if (LogFile.IsLogging())
+				if (LogFile.IsLogging)
 				{
 					LogFile.AddVerboseLine($"Copying: <{inName}> to <{outName}> <{overwrite}>");
 				}
@@ -562,7 +574,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		}
 
 		///<summary />
-		///<returns>whether the file was found and successfully deleted</returns>
 		private static void SafeDeleteFile(string file)
 		{
 			try
@@ -576,12 +587,11 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		}
 
 		///<summary />
-		///<returns>whether the file was found and successfully deleted</returns>
 		private static void DeleteFile(string file)
 		{
 			if (!File.Exists(file))
 			{
-				if (LogFile.IsLogging())
+				if (LogFile.IsLogging)
 				{
 					LogFile.AddVerboseLine($"Tried to delete file that didn't exist:<{file}>");
 				}
@@ -590,7 +600,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			}
 			File.SetAttributes(file, FileAttributes.Normal);
 			File.Delete(file);
-			if (LogFile.IsLogging())
+			if (LogFile.IsLogging)
 			{
 				LogFile.AddVerboseLine($"Removed file:<{file}>");
 			}

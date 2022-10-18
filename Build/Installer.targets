@@ -7,8 +7,9 @@
 	<PropertyGroup>
 		<ApplicationName>FieldWorks Language Explorer</ApplicationName>
 		<SafeApplicationName>FieldWorks</SafeApplicationName> <!-- should not contain any spaces or illegal filename characters -->
-		<CopyrightYear>2020</CopyrightYear>
+		<CopyrightYear>2021</CopyrightYear>
 		<Manufacturer>SIL International</Manufacturer>
+		<SafeManufacturer>SIL</SafeManufacturer>
 	</PropertyGroup>
 
 	<!-- Installers use release builds, we require the config property to be set, this sets the Configuration for use in this file.
@@ -18,19 +19,19 @@
 	</PropertyGroup>
 
 	<!-- ########################################################################################################## -->
-	<!-- ### PRODUCT ID GUID definition : This value must be unique for each base build.  Furthermore, every    ### -->
+	<!-- ### PRODUCT ID GUID definition : This value must be UNIQUE for each base build.  Furthermore, every    ### -->
 	<!-- ### base build must get its own unique third number (minor version) in the version number sequence.    ### -->
 	<!-- ########################################################################################################## -->
 
 	<!-- $(ApplicationName) 1.0.0.X ($(ApplicationName) build)-->
 	<PropertyGroup>
-		<ProductIdGuid>1619DAC6-E9EB-48D4-83E6-5FC6E84E02AD</ProductIdGuid>
+		<ProductIdGuid>94AD0E99-6FCF-41C5-8D32-9C68283C850C</ProductIdGuid>
 	</PropertyGroup>
 
 	<!-- ########################################################################################################## -->
-	<!-- ### UPGRADE CODE GUID definition : This value must be the same for every version of this product.      ### -->
+	<!-- ### UPGRADE CODE GUID definition : This value must be THE SAME for every version of this product.      ### -->
 	<!-- ### Each product should have its own upgrade code.  This allows installers and patches to upgrade      ### -->
-	<!-- ### one another because they share a common upgrade code.                                              ### -->
+	<!-- ### one another because they share a common upgrade code. DON'T EVEN THINK about changing this.        ### -->
 	<!-- ########################################################################################################## -->
 	<PropertyGroup>
 		<UpgradeCodeGuid>1092269F-9EA1-419B-8685-90203F83E254</UpgradeCodeGuid>
@@ -100,8 +101,8 @@
 	<Target Name="BuildProduct" DependsOnTargets="CleanInstaller;ProductCompile"/>
 
 	<Target Name="RequirePlatform">
-		<Error Text="The Platform property must be set on the command line to x86 or x64."  Condition="'$(Platform)' == ''" />
-		<Error Text="Installer must be run for release builds [config=$(config)]"  Condition="'$(config)' != 'release'" />
+		<Error Text="The Platform property must be set on the command line to x86 or x64." Condition="'$(Platform)' == ''" />
+		<Error Text="Installer must be run for release builds [config=$(config)]" Condition="'$(config)' != 'release'" />
 	</Target>
 	<!-- ########################################################################################################## -->
 	<!-- ### Compile Targets                                                                                    ### -->
@@ -149,12 +150,6 @@
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Fonts\Raw\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\.git\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\OcmFrame\**\*"/> <!-- directory used only on Linux -->
-			<!-- No longer want TE helps, but they are not yet removed from the Helps repo. -->
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\FieldWorks_Translation_Editor_Help.chm"/>
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\Using_Styles.chm"/> <!-- TE-specific per LT-18363 -->
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\Translation Editor\**\*"/>
-			<!-- End: No longer want TE helps, but they are not yet removed from the Helps repo. -->
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Icu54.zip"/>
 			<!-- Exclude old demo movies. The current movies are online. -->
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Language Explorer\Movies\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\libxample32.so"/> <!-- Linux file -->
@@ -166,6 +161,13 @@
 			<DeveloperFiles Include="$(fwrt)\DistFiles\TECkit\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\TxtConv.exe"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Windows\**\*"/>
+			<DevTestArtifacts Include="$(OutputDirForConfig)\*Tests.*"/>
+			<DevTestArtifacts Include="$(OutputDirForConfig)\test*"/>
+			<DevTestArtifacts Include="$(OutputDirForConfig)\*.vrs"/> <!-- versification files from some unit tests -->
+			<DevTestArtifacts Include="$(OutputDirForConfig)\Castle.Core.dll"/>
+			<DevTestArtifacts Include="$(OutputDirForConfig)\Moq.dll"/>
+			<DevTestArtifacts Include="$(OutputDirForConfig)\System.Runtime.CompilerServices.Unsafe.dll"/>
+			<DevTestArtifacts Include="$(OutputDirForConfig)\System.Threading.Tasks.Extensions.dll"/>
 			<FontFiles Include="$(fwrt)\DistFiles\Fonts\Raw\Quivira.otf"/>
 			<FontFiles Include="$(DownloadsDir)\Fonts\**\*.ttf"/>
 			<FontDocumentation Include="$(DownloadsDir)\Fonts\*\*.txt"/>
@@ -216,8 +218,6 @@
 			<MergeModules Include="$(OutputDirForConfig)\EncConvertersAppDataMover40*"/>
 			<MergeModules Include="$(OutputDirForConfig)\FieldWorks.vshost.*"/>
 			<MergeModules Include="$(OutputDirForConfig)\FormsTester.*"/>
-			<MergeModules Include="$(OutputDirForConfig)\Geckofx-Core.dll"/> <!-- Installed by EC merge modules-->
-			<MergeModules Include="$(OutputDirForConfig)\Geckofx-Winforms.dll"/> <!-- Installed by EC merge modules-->
 			<MergeModules Include="$(OutputDirForConfig)\Good.xml"/>
 			<MergeModules Include="$(OutputDirForConfig)\IcuConvEC.dll"/> <!-- Installed by EC merge modules-->
 			<MergeModules Include="$(OutputDirForConfig)\IcuEC.dll"/> <!-- Installed by EC merge modules-->
@@ -249,9 +249,8 @@
 			<L10nFilesWithRecursiveDirs Include="$(OutputDirForConfig)\**\*" Exclude="@(BinFiles)"/>
 			<!-- Now that we've used BinFiles to exclude all non-l10n files from L10nFilesWithRecursiveDirs,
 				we can remove MergeModules, etc., from BinFiles (MergeModules belong in neither ItemGroup). -->
+			<BinFiles Remove="@(DevTestArtifacts)"/>
 			<BinFiles Remove="@(MergeModules)"/>
-			<BinFiles Remove="$(OutputDirForConfig)\*Tests.*"/>
-			<BinFiles Remove="$(OutputDirForConfig)\test*"/>
 			<BinFiles Include="$(fwrt)\DistFiles\**\*" Exclude="@(DeveloperFiles);@(IcuDataFiles)"/>
 			<BinFiles Include="$(fwrt)\License.htm"/> <!-- install the license -->
 			<!-- Files with special install locations or steps -->
@@ -345,79 +344,51 @@
 		</PropertyGroup>
 		<!-- .NET 4.8 -->
 		<DownloadFile Address="https://go.microsoft.com/fwlink/?linkid=2088631"
-			LocalFilename="ndp48-x86-x64-allos-enu.exe"
-			Condition="!Exists('$(WixLibsDir)/ndp48-x86-x64-allos-enu.exe')" DownloadsDir="$(WixLibsDir)" />
-		<!-- 32-bit VC redistributables -->
-		<DownloadFile Address="https://download.microsoft.com/download/1/1/1/1116b75a-9ec3-481a-a3c8-1777b5381140/vcredist_x86.exe"
-			LocalFilename="vcredist_2008_x86.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2008_x86.exe') And $(Platform)!='x64'"
-			DownloadsDir="$(WixLibsDir)"/>			<!-- VisualC++ 8 runtime -->
-		<DownloadFile Address="https://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe"
-			LocalFilename="vcredist_x86.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_x86.exe') And $(Platform)!='x64'"
-			DownloadsDir="$(WixLibsDir)"/>			<!-- VisualC++ 10 runtime -->
-		<DownloadFile Address="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe"
-			LocalFilename="vcredist_2012_x86.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2012_x86.exe') And $(Platform)!='x64'"
-			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 11 runtime -->
-		<DownloadFile Address="http://download.microsoft.com/download/0/5/6/056dcda9-d667-4e27-8001-8a0c6971d6b1/vcredist_x86.exe"
-			LocalFilename="vcredist_2013_x86.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2013_x86.exe') And $(Platform)!='x64'"
-			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 12 runtime -->
-		<DownloadFile Address="https://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x86.exe"
-			LocalFilename="vcredist_2015_x86.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2015_x86.exe') And $(Platform)!='x64'"
-			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 14 runtime -->
-		<DownloadFile Address="https://download.visualstudio.microsoft.com/download/pr/11687613/88b50ce70017bf10f2d56d60fcba6ab1/VC_redist.x86.exe"
-			LocalFilename="vcredist_2017_x86.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2017_x86.exe') And $(Platform)!='x64'"
-			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 14.1 runtime -->
-		<!-- 64-bit VC redistributables -->
-		<DownloadFile Address="https://download.microsoft.com/download/d/2/4/d242c3fb-da5a-4542-ad66-f9661d0a8d19/vcredist_x64.exe"
-			LocalFilename="vcredist_2008_x64.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2008_x64.exe') And $(Platform)=='x64'"
-			DownloadsDir="$(WixLibsDir)"/>			<!-- VisualC++ 8 runtime -->
-		<DownloadFile Address="https://download.microsoft.com/download/3/2/2/3224B87F-CFA0-4E70-BDA3-3DE650EFEBA5/vcredist_x64.exe"
-			LocalFilename="vcredist_x64.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_x64.exe') And $(Platform)=='x64'"
-			DownloadsDir="$(WixLibsDir)"/>			<!-- VisualC++ 10 runtime -->
+			LocalFilename="$(WixLibsDir)ndp48-x86-x64-allos-enu.exe"
+			Condition="!Exists('$(WixLibsDir)/ndp48-x86-x64-allos-enu.exe')" />
+		<!-- VC redistributables -->
+		<!-- VisualC++ 8 runtime -->
+		<DownloadFile Address="https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x64.exe"
+			LocalFilename="$(WixLibsDir)vcredist_2008_x64.exe"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2008_x64.exe')"/>
+		<!-- VisualC++ 10 runtime -->		
+		<DownloadFile Address="https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe"
+			LocalFilename="$(WixLibsDir)vcredist_2010_x64.exe"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2010_x64.exe')"/>
+		<!-- VisualC++ 11 runtime -->
 		<DownloadFile Address="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe"
-			LocalFilename="vcredist_2012_x64.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2012_x64.exe') And $(Platform)=='x64'"
-			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 11 runtime -->
-		<DownloadFile Address="https://download.microsoft.com/download/2/E/6/2E61CFA4-993B-4DD4-91DA-3737CD5CD6E3/vcredist_x64.exe"
-			LocalFilename="vcredist_2013_x64.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2013_x64.exe') And $(Platform)=='x64'"
-			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 12 runtime -->
-		<DownloadFile Address="https://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x64.exe"
-			LocalFilename="vcredist_2015_x64.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2015_x64.exe') And $(Platform)=='x64'"
-			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 14 runtime -->
-		<DownloadFile Address="https://download.visualstudio.microsoft.com/download/pr/11687625/2cd2dba5748dc95950a5c42c2d2d78e4/VC_redist.x64.exe"
-			LocalFilename="vcredist_2017_x64.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2017_x64.exe') And $(Platform)=='x64'"
-			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 14.1 runtime -->
+			LocalFilename="$(WixLibsDir)vcredist_2012_x64.exe"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2012_x64.exe')"/>
+		<!-- VisualC++ 12 runtime -->
+		<DownloadFile Address="https://download.microsoft.com/download/0/5/6/056DCDA9-D667-4E27-8001-8A0C6971D6B1/vcredist_x64.exe"
+			LocalFilename="$(WixLibsDir)vcredist_2013_x64.exe"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2013_x64.exe')"/>
+		<!-- VisualC++ 14.1 runtime -->
+		<DownloadFile Address="https://download.visualstudio.microsoft.com/download/pr/36e45907-8554-4390-ba70-9f6306924167/97CC5066EB3C7246CF89B735AE0F5A5304A7EE33DC087D65D9DFF3A1A73FE803/VC_redist.x64.exe"
+			LocalFilename="$(WixLibsDir)vcredist_2015-19_x64.exe"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2015-19_x64.exe')"/>
 		<!-- FLEx Bridge -->
+		<!-- Always download to get the latest version -->
 		<DownloadFile Address="https://build.palaso.org/guestAuth/repository/download/FLExBridgeDevelopWin32InstallerSansPublish/.lastSuccessful/FLExBridge_Offline.exe"
-			DownloadsDir="$(WixLibsDir)"/> <!-- always download to get the latest version -->
+			LocalFilename="$(WixLibsDir)/FLExBridge_Offline.exe"/>
 	</Target>
 
 	<Target Name="DownloadAndUnzipFonts" Condition="'$(disableDownloads)'!='true'">
 		<MakeDir Directories="$(DownloadsDir)" Condition="!Exists('$(DownloadsDir)')"/>
 		<!-- Note: we are downloading quivira but also leaving it checked in in case the website disappears. -->
-		<DownloadFile Address="http://www.quivira-font.com/files/Quivira.otf" DownloadsDir="$(fwrt)/DistFiles/Fonts/Raw"
+		<DownloadFile Address="http://www.quivira-font.com/files/Quivira.otf" LocalFilename="$(fwrt)/DistFiles/Fonts/Raw/Quivira.otf"
 			ContinueOnError="true"/>
 		<!-- TODO (Hasso) 2018.07: download latest version from wirl (LT-19288) -->
-		<DownloadFile Address="https://software.sil.org/downloads/r/andika/Andika-5.000.zip" DownloadsDir="$(DownloadsDir)"
-			Condition="!Exists('$(DownloadsDir)/Andika-5.000.zip')"/>
-		<DownloadFile Address="https://software.sil.org/downloads/r/charis/CharisSIL-5.000.zip" DownloadsDir="$(DownloadsDir)"
-			Condition="!Exists('$(DownloadsDir)/CharisSIL-5.000.zip')"/>
-		<DownloadFile Address="https://software.sil.org/downloads/r/doulos/DoulosSIL-5.000.zip" DownloadsDir="$(DownloadsDir)"
-			Condition="!Exists('$(DownloadsDir)/DoulosSIL-5.000.zip')"/>
-		<DownloadFile Address="https://software.sil.org/downloads/r/gentium/GentiumPlus-5.000.zip" DownloadsDir="$(DownloadsDir)"
-			Condition="!Exists('$(DownloadsDir)/GentiumPlus-5.000.zip')"/>
+		<DownloadFile Address="https://software.sil.org/downloads/r/andika/Andika-6.101.zip" LocalFilename="$(DownloadsDir)/Andika-6.101.zip"
+			Condition="!Exists('$(DownloadsDir)/Andika-6.101.zip')"/>
+		<DownloadFile Address="https://software.sil.org/downloads/r/charis/CharisSIL-6.101.zip" LocalFilename="$(DownloadsDir)/CharisSIL-6.101.zip"
+			Condition="!Exists('$(DownloadsDir)/CharisSIL-6.101.zip')"/>
+		<DownloadFile Address="https://software.sil.org/downloads/r/doulos/DoulosSIL-6.101.zip" LocalFilename="$(DownloadsDir)/DoulosSIL-6.101.zip"
+			Condition="!Exists('$(DownloadsDir)/DoulosSIL-6.101.zip')"/>
+		<DownloadFile Address="https://software.sil.org/downloads/r/gentium/GentiumPlus-6.101.zip" LocalFilename="$(DownloadsDir)/GentiumPlus-6.101.zip"
+			Condition="!Exists('$(DownloadsDir)/GentiumPlus-6.101.zip')"/>
 		<ItemGroup>
-			<ZippedFonts Include="Andika-5.000;CharisSIL-5.000;DoulosSIL-5.000;GentiumPlus-5.000"/>
+			<ZippedFonts Include="Andika-6.101;CharisSIL-6.101;DoulosSIL-6.101;GentiumPlus-6.101"/>
 		</ItemGroup>
 		<Unzip ZipFilename="$(DownloadsDir)/%(ZippedFonts.Identity).zip" ToDir="$(DownloadsDir)/Fonts"
 			Condition="!Exists('$(DownloadsDir)/Fonts/%(ZippedFonts.Identity)')"/>
@@ -427,8 +398,8 @@
 	<!-- ### Build Wix Product Targets                                                                          ### -->
 	<!-- ########################################################################################################## -->
 	<PropertyGroup>
-		<Arch Condition="'$(Platform)' != 'x64'">x86</Arch> <!-- Handle x86 and WIN32 -->
-		<Arch Condition="'$(Platform)' == 'x64'">x64</Arch>
+		<Arch>x64</Arch>
+		<Base Condition="'$(BaseBuildish)' != ''">b$(BaseBuildish)_</Base>
 	</PropertyGroup>
 
 	<Target Name="BuildProductBaseMsi" DependsOnTargets="InstallerVersionNumbers">
@@ -436,9 +407,10 @@
 		<PropertyGroup>
 			<MsiFile>$(SafeApplicationName)_$(Revision).msi</MsiFile>
 			<BaseBuildDir>$(InstallerDir)/BaseInstallerBuild</BaseBuildDir>
-			<BaseBuildArgs>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" $(Arch)</BaseBuildArgs>
+			<BaseBuildArgs>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" $(SafeManufacturer) $(Arch)</BaseBuildArgs>
 		</PropertyGroup>
-		<Exec WorkingDirectory="$(BaseBuildDir)" Command="buildBaseInstaller.bat $(BaseBuildArgs)" />
+		<!-- Suppress ICE30 because we and Encoding Converters MM both install Geckofx, resulting in an ICE warning for double ref counting -->
+		<Exec WorkingDirectory="$(BaseBuildDir)" Command="(set SuppressICE=-sice:ICE30) &amp; buildBaseInstaller.bat $(BaseBuildArgs)" />
 
 		<ItemGroup>
 			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.exe"/>
@@ -457,7 +429,7 @@
 		<PropertyGroup>
 			<MspFile>$(SafeApplicationName)_$(BuildVersion).msp</MspFile>
 			<PatchDir>$(InstallerDir)/CreateUpdatePatch</PatchDir>
-			<PatchArgs>"$(ApplicationName)" $(SafeApplicationName) $(BaseVersion) $(BuildVersion) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)" $(Arch)</PatchArgs>
+			<PatchArgs>"$(ApplicationName)" $(SafeApplicationName) $(BaseVersion) $(BuildVersion) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)" $(SafeManufacturer) $(Arch)</PatchArgs>
 		</PropertyGroup>
 
 		<Exec WorkingDirectory="$(PatchDir)" Command="buildPatch.bat $(PatchArgs)"/>
@@ -465,6 +437,6 @@
 		<ItemGroup>
 			<PatchFiles Include="$(PatchDir)/**/*.msp"/>
 		</ItemGroup>
-		<Move SourceFiles="@(PatchFiles)" DestinationFiles="@(PatchFiles -> '$(InstallersBaseDir)\%(Filename)_$(Arch)%(Extension)')"/>
+		<Move SourceFiles="@(PatchFiles)" DestinationFiles="@(PatchFiles -> '$(InstallersBaseDir)\%(Filename)_$(Base)$(Arch)%(Extension)')"/>
 	</Target>
 </Project>

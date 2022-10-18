@@ -436,7 +436,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected override void GetPrintInfo(out int hvo, out IVwViewConstructor vc, out int frag, out IVwStylesheet ss)
 		{
-			base.GetPrintInfo(out hvo, out vc, out frag, out ss);
+			base.GetPrintInfo(out hvo, out vc, out _, out ss);
 			frag = ConstChartVc.kfragPrintChart;
 		}
 

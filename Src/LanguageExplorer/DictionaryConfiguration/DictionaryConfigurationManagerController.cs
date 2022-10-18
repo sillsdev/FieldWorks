@@ -12,6 +12,7 @@ using System.Xml.Serialization;
 using Ionic.Zip;
 using LanguageExplorer.LIFT;
 using SIL.Code;
+using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
@@ -507,7 +508,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			using (var saveDialog = new DialogAdapters.SaveFileDialogAdapter())
 			{
 				saveDialog.Title = DictionaryConfigurationStrings.kstidChooseExportFile;
-				saveDialog.FileName = StringUtils.FilterForFileName(SelectedConfiguration + "_FLEx-Dictionary-Configuration_" + DateTime.Now.ToString("yyyy-MM-dd"), disallowedCharacters);
+				saveDialog.FileName = StringUtils.FilterForFileName(SelectedConfiguration + "_FLEx-Dictionary-Configuration_" + DateTime.Now.ToISO8601TimeFormatDateOnlyString(), disallowedCharacters);
 				saveDialog.DefaultExt = "zip";
 				saveDialog.AddExtension = true;
 				saveDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);

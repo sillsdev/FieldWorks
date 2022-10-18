@@ -338,12 +338,33 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void soundFieldControl_SoundDeleted(object sender, EventArgs e)
 		{
-			// We don't want the file name hanging aroudn once we deleted the file.
+			// We don't want the file name hanging around once we deleted the file.
 			var sc = (ShortSoundFieldControl)sender;
-			var ws = WsForSoundField(sc, out var dummy);
-			var handle = ws?.Handle ?? 0;
+			var ws = WsForSoundField(sc, out _);
+			var handle = ws == null ? 0 : ws.Handle;
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(InnerView.Cache.ActionHandlerAccessor,
-				() => InnerView.Cache.DomainDataByFlid.SetMultiStringAlt(InnerView.HvoObj, InnerView.Flid, handle, TsStringUtils.EmptyString(handle)));
+				() =>
+				{
+					InnerView.Cache.DomainDataByFlid.SetMultiStringAlt(InnerView.HvoObj,
+						InnerView.Flid, handle,
+						TsStringUtils.EmptyString(handle));
+					SetDateModifiedOnFieldOwner(InnerView.HvoObj, InnerView.Cache);
+				});
+		}
+
+		private void SetDateModifiedOnFieldOwner(int multiStringFieldOwner, LcmCache cache)
+		{
+			// Some multi-strings are owned directly by the Entry, others are owned by senses, or others
+			var fieldOwner = cache.ServiceLocator.ObjectRepository.GetObject(multiStringFieldOwner);
+			while (fieldOwner != null && !(fieldOwner is ILexEntry))
+			{
+				fieldOwner = fieldOwner.Owner;
+			}
+
+			if (fieldOwner is ILexEntry entry)
+			{
+				entry.DateModified = DateTime.Now;
+			}
 		}
 
 		private void soundFieldControl_BeforeStartingToRecord(object sender, EventArgs e)
@@ -387,11 +408,17 @@ namespace LanguageExplorer.Controls.DetailControls
 			var ws = WsForSoundField(sc, out _);
 			var filenameNew = Path.GetFileName(sc.Path);
 			var filenameOld = InnerView.Cache.DomainDataByFlid.get_MultiStringAlt(InnerView.HvoObj, InnerView.Flid, ws.Handle).Text ?? string.Empty;
-			if (filenameNew != filenameOld)
-			{
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(InnerView.Cache.ActionHandlerAccessor,
-					() => InnerView.Cache.DomainDataByFlid.SetMultiStringAlt(InnerView.HvoObj, InnerView.Flid, ws.Handle, TsStringUtils.MakeString(filenameNew, ws.Handle)));
-			}
+			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(InnerView.Cache.ActionHandlerAccessor,
+				() =>
+				{
+					if (filenameNew != filenameOld)
+					{
+						InnerView.Cache.DomainDataByFlid.SetMultiStringAlt(InnerView.HvoObj,
+							InnerView.Flid,
+							ws.Handle, TsStringUtils.MakeString(filenameNew, ws.Handle));
+					}
+					SetDateModifiedOnFieldOwner(InnerView.HvoObj, InnerView.Cache);
+				});
 		}
 
 		#region Implementation of IPropertyTableProvider

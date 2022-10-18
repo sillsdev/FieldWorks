@@ -84,7 +84,9 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			RuleFormulaControl.InsertionControl.Show();
 			Height = DesiredHeight(RuleFormulaControl.RootSite);
 			// FWNX-753 called attention to misbehavior around here.
-			if (Platform.IsMono && RuleFormulaControl.Height != Height && RuleFormulaControl.Height == oldHeight)
+			if (Platform.IsMono &&
+				RuleFormulaControl.Height != Height &&
+				RuleFormulaControl.Height == oldHeight)
 			{
 				SetSubcontrolHeights(this, oldHeight, Height);
 			}

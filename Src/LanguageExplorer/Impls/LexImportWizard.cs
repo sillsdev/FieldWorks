@@ -1561,16 +1561,15 @@ namespace LanguageExplorer.Impls
 			var dbImportName = m_DatabaseFileName.Text;
 			if (dbImportName != string.Empty)   // has value to save
 			{
-				using (var key = m_app.SettingsKey)
+				// SettingsKey is long lived and should not be disposed of here
+				var settingsKey = m_app.SettingsKey;
+				if (settingsKey == null)
 				{
-					if (key == null)
-					{
-						return;
-					}
-
-					// save it as the most recent dictionary file for import
-					key.SetValue("LatestImportDictFile", dbImportName);
+					return;
 				}
+
+				// save it as the most recent dictionary file for import
+				settingsKey.SetValue("LatestImportDictFile", dbImportName);
 				var dbHash = dbImportName.GetHashCode().ToString();
 				// save it to the folder of imported dictionary files
 				using (var key = m_app.SettingsKey.CreateSubKey("ImportDictFiles"))

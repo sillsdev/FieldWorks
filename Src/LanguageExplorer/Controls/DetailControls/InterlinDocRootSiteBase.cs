@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2020 SIL International
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -561,9 +561,9 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private string GetAppropriateLineLabel(InterlinLineChoices curLineChoices, int ilineChoice)
 		{
-			var curSpec = curLineChoices[ilineChoice];
+			var curSpec = curLineChoices.EnabledLineSpecs[ilineChoice];
 			var result = curLineChoices.LabelFor(curSpec.Flid);
-			if (curLineChoices.RepetitionsOfFlid(curSpec.Flid) > 1)
+			if (curLineChoices.EnabledRepetitionsOfFlid(curSpec.Flid) > 1)
 			{
 				result += "(" + curSpec.WsLabel(Cache).Text + ")";
 			}
@@ -572,9 +572,15 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void AddAdditionalWsMenuItem(ToolStripMenuItem addSubMenu, InterlinLineChoices curLineChoices, int ilineChoice)
 		{
-			var curSpec = curLineChoices[ilineChoice];
+			var curSpec = curLineChoices.EnabledLineSpecs[ilineChoice];
+
+			// Do not add other writing systems for customs.
+			var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
+			if (mdc.FieldExists(curSpec.Flid) && mdc.IsCustom(curSpec.Flid))
+				return;
+
 			var choices = GetWsComboItems(curSpec);
-			var curFlidDisplayedWss = curLineChoices.OtherWritingSystemsForFlid(curSpec.Flid, 0);
+			var curFlidDisplayedWss = curLineChoices.OtherEnabledWritingSystemsForFlid(curSpec.Flid, 0);
 			var curRealWs = GetRealWsFromSpec(curSpec);
 			if (!curFlidDisplayedWss.Contains(curRealWs))
 			{
@@ -665,7 +671,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		private static IEnumerable<LineOption> GetUnusedSpecs(InterlinLineChoices curLineChoices)
 		{
 			var allOptions = curLineChoices.LineOptions();
-			var optionsUsed = curLineChoices.ItemsWithFlids(allOptions.Select(lineOption => lineOption.Flid).ToArray());
+			var optionsUsed = curLineChoices.EnabledItemsWithFlids(allOptions.Select(lineOption => lineOption.Flid).ToArray());
 			return allOptions.Where(option => optionsUsed.All(spec => spec.Flid != option.Flid)).ToList();
 		}
 
@@ -676,7 +682,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var ilineToHide = (int)(((ToolStripMenuItem)sender).Tag);
 			if (Vc.LineChoices.Clone() is InterlinLineChoices newLineChoices)
 			{
-				newLineChoices.Remove(newLineChoices[ilineToHide]);
+				newLineChoices.Remove(newLineChoices.EnabledLineSpecs[ilineToHide]);
 				UpdateForNewLineChoices(newLineChoices);
 			}
 			RemoveContextButtonIfPresent(); // it will still have a spurious choice to hide the line we just hid; clicking may crash.
@@ -725,9 +731,12 @@ namespace LanguageExplorer.Controls.DetailControls
 				return; // Impossible?
 			}
 			var flid = menuItem.Flid;
-			if (Vc.LineChoices.Clone() is InterlinLineChoices newLineChoices && m_cache.GetManagedMetaDataCache().FieldExists(flid))
+			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
+			var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
+			// Some virtual Ids such as -61 and 103 create standard items. so add those.
+			if (newLineChoices != null && (mdc.FieldExists(flid) || (flid <= InterlinLineChoices.kfragFeatureLine)))
 			{
-				newLineChoices.Add(flid);
+				newLineChoices.Add(flid, 0, true);
 				UpdateForNewLineChoices(newLineChoices);
 			}
 		}
@@ -758,14 +767,21 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private string ConfigPropName { get; set; }
 
-		/// <summary />
+		/// <summary>
+		/// The old property table key storing InterlinLineChoices used by our display.
+		/// </summary>
+		private static string OldConfigPropName { get; set; }
+
+		/// <summary/>
 		/// <param name="lineConfigPropName">the key used to store/restore line configuration settings.</param>
+		/// <param name="oldLineConfigPropName">the old key used to restore line configuration settings.</param>
 		/// <param name="mode"></param>
-		/// <returns></returns>
-		public InterlinLineChoices SetupLineChoices(string lineConfigPropName, InterlinMode mode)
+		public InterlinLineChoices SetupLineChoices(string lineConfigPropName, string oldLineConfigPropName, InterlinMode mode)
 		{
 			ConfigPropName = lineConfigPropName;
-			if (!TryRestoreLineChoices(out var lineChoices))
+			OldConfigPropName = oldLineConfigPropName;
+			InterlinLineChoices lineChoices;
+			if (!TryRestoreLineChoices(out lineChoices))
 			{
 				if (ForEditing)
 				{
@@ -806,9 +822,14 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			lineChoices = null;
 			var persist = PropertyTable.GetValue<string>(ConfigPropName, SettingsGroup.LocalSettings);
+			if (persist == null)
+				persist = PropertyTable.GetValue<string>(OldConfigPropName, null, SettingsGroup.LocalSettings);
+
 			if (persist != null)
 			{
-				lineChoices = InterlinLineChoices.Restore(persist, m_cache.LanguageWritingSystemFactoryAccessor, m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs, InterlinMode.Analyze, PropertyTable, ConfigPropName);
+				// Intentionally never pass OldConfigPropName into Restore to prevent corrupting it's old value with the new format.
+				lineChoices = InterlinLineChoices.Restore(persist, m_cache.LanguageWritingSystemFactoryAccessor,
+					m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs, InterlinMode.Analyze, PropertyTable, ConfigPropName);
 			}
 			return persist != null && lineChoices != null;
 		}
@@ -818,7 +839,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		void IInterlinearConfigurator.ConfigureInterlinear()
 		{
-			using (var dlg = new ConfigureInterlinDialog(m_cache, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), Vc.LineChoices.Clone() as InterlinLineChoices))
+			using (var dlg = new ConfigureInterlinDialog(m_cache, PropertyTable, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), Vc.LineChoices.Clone() as InterlinLineChoices))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{

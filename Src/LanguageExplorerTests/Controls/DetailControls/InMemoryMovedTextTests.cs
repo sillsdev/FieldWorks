@@ -4,9 +4,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using LanguageExplorer.Controls.DetailControls;
 using NUnit.Framework;
 using SIL.LCModel;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorerTests.Controls.DetailControls
@@ -952,15 +954,84 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		}
 
 		/// <summary>
+		/// Verify that all rows are cleared if No cells are valid, even if there was a note on a row
+		/// </summary>
+		[Test]
+		public void AllChartRowsClearedIfNoValidCells()
+		{
+			var allParaOccurrences = m_helper.MakeAnalysesUsedN(2);
+			var row0 = m_helper.MakeRow1a();
+			var row1 = m_helper.MakeSecondRow();
+			m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
+			m_helper.MakeWordGroup(row1, 0, allParaOccurrences[1], allParaOccurrences[1]);
+			m_helper.MakeDependentClauseMarker(row1, 1, new[] { row0 }, ClauseTypes.Song);
+			row1.Notes = TsStringUtils.MakeString("This is a test note", Cache.DefaultAnalWs);
+			// now that we have rows with words grouped and a note, blow away the paragraphs they all hang on
+			var occuranceParagraphs = new HashSet<IStTxtPara>();
+			occuranceParagraphs.UnionWith(
+				allParaOccurrences.Select(occurrance => occurrance.Paragraph));
+			foreach (var para in occuranceParagraphs)
+			{
+				para.Delete();
+			}
+			EndSetupTask(); // SUT has its own UOW
+
+			// SUT
+			m_logic.CleanupInvalidChartCells();
+
+			// Verify that the rows are gone
+			CollectionAssert.IsEmpty(m_helper.Chart.RowsOS);
+		}
+
+		/// <summary>
+		/// Verify that all rows are cleared if No cells are valid, even if there is a
+		/// earlier row '1a' that has a dependency on a later row '1b'.
+		/// </summary>
+		[Test]
+		public void AllChartRowsClearedIfDependency()
+		{
+			var allParaOccurrences = m_helper.MakeAnalysesUsedN(4);
+			var row1a = m_helper.MakeRow1a();
+			var row1b = m_helper.MakeSecondRow();
+			var row2 = m_helper.MakeRow("2");
+			var row3 = m_helper.MakeRow("3");
+			m_helper.MakeWordGroup(row1a, 0, allParaOccurrences[0], allParaOccurrences[0]);
+			m_helper.MakeWordGroup(row1b, 0, allParaOccurrences[1], allParaOccurrences[1]);
+			m_helper.MakeWordGroup(row2, 0, allParaOccurrences[2], allParaOccurrences[2]);
+			m_helper.MakeWordGroup(row3, 0, allParaOccurrences[3], allParaOccurrences[3]);
+
+			// Make row1a dependent on row1b.
+			m_helper.MakeDependentClauseMarker(row1a, 1, new[] { row1b }, ClauseTypes.Dependent);
+
+			// now that we have rows with words grouped and a dependency, blow away the paragraphs the word groups hang on
+			var occuranceParagraphs = new HashSet<IStTxtPara>();
+			occuranceParagraphs.UnionWith(
+				allParaOccurrences.Select(occurrance => occurrance.Paragraph));
+			foreach (var para in occuranceParagraphs)
+			{
+				para.Delete();
+			}
+			EndSetupTask(); // SUT has its own UOW
+
+			// Note: When this method iterates through the rows it doesn't delete row1a until the iteration
+			//       where row1b is deleted.  Then they are both deleted.
+			m_logic.CleanupInvalidChartCells();
+
+			// Verify that the rows are gone
+			CollectionAssert.IsEmpty(m_helper.Chart.RowsOS);
+		}
+
+		/// <summary>
 		/// If we load a ListMarker (points to a Possibility), or a ChartTag which is a missing marker,
 		/// or a DepClause marker, we don't want CheckForInvalidNonWordGroupCellParts() to mess with them.
 		/// </summary>
 		[Test]
 		public void CheckForValidMarkersOnLoad()
 		{
-			var allParaOccurrences = m_helper.MakeAnalysesUsedN(0);
+			var allParaOccurrences = m_helper.MakeAnalysesUsedN(1);
 			var row0 = m_helper.MakeRow1a();
 			var row1 = m_helper.MakeSecondRow();
+			m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
 
 			m_helper.MakeChartMarker(row0, 1, m_helper.GetAMarker());
 			m_helper.MakeMissingMarker(row1, 0);
@@ -974,9 +1045,11 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_logic.CleanupInvalidChartCells();
 
 			// Verify
-			AssertUsedAnalyses(allParaOccurrences, 0); // no change in ribbon
-			Assert.AreEqual(cfirstRow, row0.CellsOS.Count, "Shouldn't have changed number of cells in first row.");
-			Assert.AreEqual(c2ndRow, row1.CellsOS.Count, "Shouldn't have changed number of cells in second row.");
+			AssertUsedAnalyses(allParaOccurrences, 1); // no change in ribbon
+			Assert.AreEqual(cfirstRow, row0.CellsOS.Count,
+				"Shouldn't have changed number of cells in first row.");
+			Assert.AreEqual(c2ndRow, row1.CellsOS.Count,
+				"Shouldn't have changed number of cells in second row.");
 		}
 
 		/// <summary>

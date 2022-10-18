@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2020 SIL International
+// Copyright (c) 2013-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -41,16 +41,25 @@ namespace LanguageExplorer
 		}
 
 		/// <summary />
-		public ErrorResult NotifyUserOfProblem(IRepeatNoticePolicy policy, string alternateButton1Label, ErrorResult resultIfAlternateButtonPressed, string message)
+		public void NotifyUserOfProblem(IRepeatNoticePolicy policy, Exception exception, string message)
+		{
+			if (policy.ShouldShowMessage(message))
+				ErrorReporter.ReportException(new Exception(message, exception), m_registryKey,
+					m_supportEmailAddress, m_parentForm, false);
+		}
+
+		/// <summary />
+		public ErrorResult NotifyUserOfProblem(IRepeatNoticePolicy policy, string alternateButton1Label,
+			ErrorResult resultIfAlternateButtonPressed, string message)
 		{
 			return policy.ShouldShowMessage(message) && ErrorReporter.ReportException(new Exception(message), m_registryKey, m_supportEmailAddress, m_parentForm, false)
 				? ErrorResult.Abort : ErrorResult.Ignore;
 		}
 
 		/// <summary />
-		public void ReportNonFatalException(Exception exception, IRepeatNoticePolicy policy)
+		public void ReportNonFatalException(Exception exception, IRepeatNoticePolicy policy = null)
 		{
-			if (policy.ShouldShowErrorReportDialog(exception))
+			if (policy == null || policy.ShouldShowErrorReportDialog(exception))
 			{
 				ErrorReporter.ReportException(exception, m_registryKey, m_supportEmailAddress, m_parentForm, false);
 			}

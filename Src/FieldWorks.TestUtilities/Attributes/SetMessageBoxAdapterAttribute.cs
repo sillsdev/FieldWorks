@@ -33,18 +33,18 @@ namespace FieldWorks.TestUtilities.Attributes
 		}
 
 		/// <inheritdoc />
-		public override void BeforeTest(ITest testDetails)
+		public override void BeforeTest(ITest test)
 		{
-			base.BeforeTest(testDetails);
+			base.BeforeTest(test);
 			m_PreviousAdapter = s_CurrentAdapter;
 			s_CurrentAdapter = (IMessageBox)Activator.CreateInstance(m_AdapterType);
 			MessageBoxUtils.SetMessageBoxAdapter(s_CurrentAdapter);
 		}
 
 		/// <inheritdoc />
-		public override void AfterTest(ITest testDetails)
+		public override void AfterTest(ITest test)
 		{
-			base.AfterTest(testDetails);
+			base.AfterTest(test);
 
 			s_CurrentAdapter = m_PreviousAdapter;
 			if (s_CurrentAdapter != null)

@@ -73,7 +73,7 @@ namespace LanguageExplorer
 			{
 				var cache = _propertyTable.GetValue<LcmCache>(FwUtilsConstants.cache);
 				ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(_propertyTable, out var entriesToSave, LanguageExplorerConstants.DictionaryType, cache, _propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList);
-				return LcmJsonGenerator.GenerateDictionaryMetaData(siteName, templateFileNames, reversals, entriesToSave, configPath, exportPath, cache);
+				return LcmJsonGenerator.GenerateDictionaryMetaData(siteName, templateFileNames, reversals, entriesToSave, configPath, exportPath, cache, _propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList);
 			}
 		}
 	}

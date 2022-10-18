@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2020 SIL International
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -34,8 +34,17 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		{
 			base.FixtureSetup();
 
+			ConfiguredLcmGenerator.Init();
+			FwRegistrySettings.Init();
 			m_wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			m_wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+		}
+
+		[OneTimeTearDown]
+		public override void FixtureTeardown()
+		{
+			base.FixtureTeardown();
+			FwRegistrySettings.Release();
 		}
 
 		public override void TestSetup()
@@ -68,7 +77,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_LexemeFormConfigurationGeneratesCorrectResult()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var reversalFormNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalForm",
@@ -102,7 +110,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_PrimaryEntryReferencesWork_ComplexFormOfEntry()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry("spokesmanRevForm", "porte-parole", "spokesman:gloss");
 			var sense = reversalEntry.SensesRS.First();
@@ -123,7 +130,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_PrimaryEntryReferencesWork_ComplexFormOfSense()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry("spokesmanRevForm", "porte-parole", "spokesman:gloss");
 			var sense = reversalEntry.SensesRS.First();
@@ -141,7 +147,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_PrimaryEntryReferencesWork_VariantFormOfSense()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry("speechRevForm", "parol", "speech:gloss");
 			var variantEntry = reversalEntry.SensesRS.First().Owner as ILexEntry;
@@ -159,7 +164,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_PrimaryEntryReferencesWork_VariantFormOfEntry()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry("speechRevForm", "parol", "speech:gloss");
 			var variantEntry = reversalEntry.SensesRS.First().Owner as ILexEntry;
@@ -178,7 +182,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_PrimaryEntryReferences_Ordered()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var mainRevEntryNode = PreparePrimaryEntryReferencesConfigSetup();
 			var reversalEntry = CreateInterestingEnglishReversalEntry();
 			var primaryEntry = reversalEntry.SensesRS.First().Entry;
@@ -282,12 +285,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfNoPreviousHeader()
 		{
 			var entry = CreateInterestingEnglishReversalEntry();
+			var englishWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
+			using (var col = new CollatorForTest(englishWs))
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				string last = null;
 				XHTMLWriter.WriteStartElement("TestElement");
-				Assert.DoesNotThrow(() => LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings));
+				Assert.DoesNotThrow(() => LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings));
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='en' and text()='R r']";
@@ -299,13 +304,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfPreviousHeaderDoesNotMatch()
 		{
-			var entry = CreateInterestingEnglishReversalEntry();
+			var entry = CreateInterestingEnglishReversalEntry(); var englishWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
+			using (var col = new CollatorForTest(englishWs))
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				var last = "A a";
 				XHTMLWriter.WriteStartElement("TestElement");
-				Assert.DoesNotThrow(() => LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings));
+				Assert.DoesNotThrow(() => LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings));
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='en' and text()='R r']";
@@ -316,14 +322,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateLetterHeaderIfNeeded_GeneratesNoHeaderIfPreviousHeaderDoesMatch()
 		{
-			var entry = CreateInterestingEnglishReversalEntry();
+			var entry = CreateInterestingEnglishReversalEntry(); var englishWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id;
+			using (var col = new CollatorForTest(englishWs))
 			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				var last = "A a";
 				XHTMLWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='en' and text()='R r']";
@@ -337,7 +344,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_ReversalStringGeneratesContent()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var formNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalForm",
@@ -372,7 +378,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_SenseNumbersGeneratedForMultipleReferencedSenses()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalName",
@@ -438,7 +443,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_VernacularFormWithSubSenses()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalName",
@@ -494,7 +498,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_VernacularFormWithSubSensesinReversalSubEntry()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var headwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "ReversalName",
@@ -556,7 +559,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateXHTMLForEntry_SameGramInfoCollapsesOnDemand()
 		{
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
 			var defOrGlossNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "DefinitionOrGloss",

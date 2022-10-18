@@ -19,6 +19,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 {

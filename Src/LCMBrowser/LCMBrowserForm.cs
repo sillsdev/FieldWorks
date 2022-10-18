@@ -2247,7 +2247,6 @@ namespace LCMBrowser
 		/// </summary>
 		private bool ValidateGenDate(IInspectorObject io, ICmObject obj, PropertyInfo pi, int mdy, out GenDate genDate)
 		{
-			DateTime dt1, dt;
 			GenDate genDate1;
 			if (io.ParentInspectorObject != null && io.ParentInspectorObject.Flid > 0)
 			{

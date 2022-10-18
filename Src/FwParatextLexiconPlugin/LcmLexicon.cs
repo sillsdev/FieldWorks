@@ -21,10 +21,11 @@ using SIL.LCModel;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using SIL.Machine.Morphology;
 using SIL.ObjectModel;
-using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
+using WordAnalysis = Paratext.LexicalContracts.WordAnalysis;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {

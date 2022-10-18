@@ -36,7 +36,7 @@ namespace SILUBS.ScriptureChecks
 		[Test]
 		public void LoadTest()
 		{
-			Assert.IsNotNull(m_pairList);
+			Assert.That(m_pairList, Is.Not.Null);
 			Assert.AreEqual(3, m_pairList.Count);
 
 			Assert.AreEqual("[", m_pairList[0].Open);
@@ -106,13 +106,13 @@ namespace SILUBS.ScriptureChecks
 		public void GetPairForOpenTest()
 		{
 			Assert.AreEqual(m_pairList[0], m_pairList.GetPairForOpen("["));
-			Assert.IsNull(m_pairList.GetPairForOpen("]"));
+			Assert.That(m_pairList.GetPairForOpen("]"), Is.Null);
 
 			Assert.AreEqual(m_pairList[1], m_pairList.GetPairForOpen("{"));
-			Assert.IsNull(m_pairList.GetPairForOpen("}"));
+			Assert.That(m_pairList.GetPairForOpen("}"), Is.Null);
 
 			Assert.AreEqual(m_pairList[2], m_pairList.GetPairForOpen("("));
-			Assert.IsNull(m_pairList.GetPairForOpen(")"));
+			Assert.That(m_pairList.GetPairForOpen(")"), Is.Null);
 		}
 
 		/// <summary>
@@ -122,13 +122,13 @@ namespace SILUBS.ScriptureChecks
 		public void GetPairForCloseTest()
 		{
 			Assert.AreEqual(m_pairList[0], m_pairList.GetPairForClose("]"));
-			Assert.IsNull(m_pairList.GetPairForClose("["));
+			Assert.That(m_pairList.GetPairForClose("["), Is.Null);
 
 			Assert.AreEqual(m_pairList[1], m_pairList.GetPairForClose("}"));
-			Assert.IsNull(m_pairList.GetPairForClose("{"));
+			Assert.That(m_pairList.GetPairForClose("{"), Is.Null);
 
 			Assert.AreEqual(m_pairList[2], m_pairList.GetPairForClose(")"));
-			Assert.IsNull(m_pairList.GetPairForClose("("));
+			Assert.That(m_pairList.GetPairForClose("("), Is.Null);
 		}
 
 		/// <summary>

@@ -33,8 +33,8 @@ namespace ParatextImport
 
 			Difference clonedDiff = diff.Clone();
 
-			Assert.AreEqual(1001001, (int)clonedDiff.RefStart);
-			Assert.AreEqual(1001030, (int)clonedDiff.RefEnd);
+			Assert.That((int)clonedDiff.RefStart, Is.EqualTo(1001001));
+			Assert.That((int)clonedDiff.RefEnd, Is.EqualTo(1001030));
 			Assert.AreSame(paras[0], clonedDiff.ParaCurr);
 			Assert.AreEqual(1, clonedDiff.IchMinCurr);
 			Assert.AreEqual(99, clonedDiff.IchLimCurr);
@@ -43,8 +43,8 @@ namespace ParatextImport
 			Assert.AreEqual(88, clonedDiff.IchLimRev);
 			//Assert.AreEqual(987654321, clonedDiff.hvoAddedSection);
 			Assert.AreEqual(DifferenceType.PictureDifference, clonedDiff.DiffType);
-			Assert.IsNull(clonedDiff.SubDiffsForParas);
-			Assert.IsNull(clonedDiff.SubDiffsForORCs);
+			Assert.That(clonedDiff.SubDiffsForParas, Is.Null);
+			Assert.That(clonedDiff.SubDiffsForORCs, Is.Null);
 			Assert.AreEqual("Whatever", clonedDiff.StyleNameCurr);
 			Assert.AreEqual("Whateverelse", clonedDiff.StyleNameRev);
 			Assert.AreEqual("Esperanto", clonedDiff.WsNameCurr);
@@ -89,13 +89,13 @@ namespace ParatextImport
 
 			Assert.AreEqual(2, clonedDiff.SubDiffsForORCs.Count);
 			Assert.AreEqual(1, clonedDiff.SubDiffsForORCs[0].SubDiffsForORCs.Count);
-			Assert.IsNull(clonedDiff.SubDiffsForORCs[1].SubDiffsForORCs);
-			Assert.IsNull(clonedDiff.SubDiffsForORCs[0].SubDiffsForORCs[0].SubDiffsForORCs);
+			Assert.That(clonedDiff.SubDiffsForORCs[1].SubDiffsForORCs, Is.Null);
+			Assert.That(clonedDiff.SubDiffsForORCs[0].SubDiffsForORCs[0].SubDiffsForORCs, Is.Null);
 
 			Assert.AreEqual(2, clonedDiff.SubDiffsForParas.Count);
 			Assert.AreEqual(1, clonedDiff.SubDiffsForParas[0].SubDiffsForParas.Count);
-			Assert.IsNull(clonedDiff.SubDiffsForParas[1].SubDiffsForParas);
-			Assert.IsNull(clonedDiff.SubDiffsForParas[0].SubDiffsForParas[0].SubDiffsForParas);
+			Assert.That(clonedDiff.SubDiffsForParas[1].SubDiffsForParas, Is.Null);
+			Assert.That(clonedDiff.SubDiffsForParas[0].SubDiffsForParas[0].SubDiffsForParas, Is.Null);
 		}
 	}
 }

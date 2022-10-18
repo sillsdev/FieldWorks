@@ -41,7 +41,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				// clear out the WordGloss line(s).
 				var sda = m_caches.DataAccess;
-				foreach (var wsId in m_sandbox.InterlinLineChoices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
+				foreach (var wsId in m_sandbox.InterlinLineChoices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 				{
 					sda.SetMultiStringAlt(m_hvoSbWord, SandboxBase.ktagSbWordGloss, wsId, TsStringUtils.MakeString(string.Empty, wsId));
 					sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, m_hvoSbWord, SandboxBase.ktagSbWordGloss, wsId, 0, 0);

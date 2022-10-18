@@ -31,8 +31,8 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 		{
 			using (var wrapper = CreateXAmpleDllWrapper())
 			{
-				Assert.IsNotNull(wrapper);
-		}
+				Assert.That(wrapper, Is.Not.Null);
+			}
 		}
 
 		[Test]
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			using (var wrapper = CreateXAmpleDllWrapper())
 			{
 				LoadFilesHelper(wrapper);
-		}
+			}
 		}
 
 		[Test]
@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			using (var wrapper = CreateXAmpleDllWrapper())
 			{
 				wrapper.SetParameter("MaxAnalysesToReturn", "3");
-		}
+			}
 		}
 
 		[Test]
@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			using (var wrapper = CreateXAmpleDllWrapper())
 			{
 				Assert.AreNotEqual(IntPtr.Zero, wrapper.GetSetup());
-		}
+			}
 		}
 
 		[Test]
@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			using (var wrapper = CreateXAmpleDllWrapper())
 			{
 				Assert.That(() => { wrapper.SetLogFile(Path.GetTempFileName()); }, Throws.TypeOf<NotImplementedException>());
-		}
+			}
 		}
 
 		[Test]
@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 				LoadFilesHelper(wrapper);
 				var parsedString = wrapper.ParseString("Hello");
 				Assert.IsNotEmpty(parsedString);
-				Assert.IsNotNull(parsedString);
+				Assert.That(parsedString, Is.Not.Null);
 			}
 		}
 
@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 				LoadFilesHelper(wrapper);
 				var tracedString = wrapper.TraceString("Hello", "Hello");
 				Assert.IsNotEmpty(tracedString);
-				Assert.IsNotNull(tracedString);
+				Assert.That(tracedString, Is.Not.Null);
 			}
 		}
 

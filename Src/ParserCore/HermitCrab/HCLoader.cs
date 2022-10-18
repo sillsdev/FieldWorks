@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2020 SIL International
+// Copyright (c) 2014-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,23 +11,25 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.Collections;
-using SIL.HermitCrab;
-using SIL.HermitCrab.MorphologicalRules;
-using SIL.HermitCrab.PhonologicalRules;
+using SIL.Extensions;
 using SIL.LCModel;
 using SIL.LCModel.Core.Phonology;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.Machine.Annotations;
+using SIL.Machine.DataStructures;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Matching;
+using SIL.Machine.Morphology.HermitCrab;
+using SIL.Machine.Morphology.HermitCrab.MorphologicalRules;
+using SIL.Machine.Morphology.HermitCrab.PhonologicalRules;
 
 namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 {
 	internal sealed class HCLoader
 	{
-		internal static Language Load(SpanFactory<ShapeNode> spanFactory, LcmCache cache, IHCLoadErrorLogger logger)
+		internal static Language Load(LcmCache cache, IHCLoadErrorLogger logger)
 		{
-			var loader = new HCLoader(spanFactory, cache, logger);
+			var loader = new HCLoader(cache, logger);
 			loader.LoadLanguage();
 			return loader.m_language;
 		}
@@ -38,7 +40,6 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			"ο", "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω"
 		};
 
-		private readonly SpanFactory<ShapeNode> m_spanFactory;
 		private readonly LcmCache m_cache;
 		private readonly Dictionary<IMoForm, List<Allomorph>> m_allomorphs;
 		private readonly Dictionary<IMoMorphSynAnalysis, List<Morpheme>> m_morphemes;
@@ -66,9 +67,8 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 		private CharacterDefinition m_null;
 		private CharacterDefinition m_morphBdry;
 
-		private HCLoader(SpanFactory<ShapeNode> spanFactory, LcmCache cache, IHCLoadErrorLogger logger)
+		private HCLoader(LcmCache cache, IHCLoadErrorLogger logger)
 		{
-			m_spanFactory = spanFactory;
 			m_cache = cache;
 			m_logger = logger;
 			m_allomorphs = new Dictionary<IMoForm, List<Allomorph>>();
@@ -490,7 +490,11 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			if (hcEntry.Allomorphs.Count > 0)
 			{
 				stratum.Entries.Add(hcEntry);
-				m_morphemes.GetValue(msa, () => new List<Morpheme>()).Add(hcEntry);
+				if(!m_morphemes.TryGetValue(msa, out var morphValue))
+				{
+					m_morphemes[msa] = morphValue = new List<Morpheme>();
+				}
+				morphValue.Add(hcEntry);
 			}
 		}
 
@@ -522,14 +526,14 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			}
 			fs.Freeze();
 			hcEntry.SyntacticFeatureStruct = fs;
-			hcEntry.Properties["ID"] = msa.Hvo;
+			hcEntry.Properties[HCParser.MsaID] = msa.Hvo;
 			foreach (var allo in allos)
 			{
 				try
 				{
 					var hcAllo = LoadRootAllomorph(allo, msa);
 					hcEntry.Allomorphs.Add(hcAllo);
-					m_allomorphs.GetValue(allo, () => new List<Allomorph>()).Add(hcAllo);
+					m_allomorphs.GetOrCreate(allo, () => new List<Allomorph>()).Add(hcAllo);
 				}
 				catch (InvalidShapeException ise)
 				{
@@ -564,7 +568,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 				if (prepend != "***")
 				{
 					glossSB.Append(prepend);
-			}
+				}
 			}
 			glossSB.Append(GetGloss(msa));
 			if (inflType != null)
@@ -573,7 +577,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 				if (append != "***")
 				{
 					glossSB.Append(append);
-			}
+				}
 			}
 			hcEntry.Gloss = glossSB.ToString();
 			var fs = new FeatureStruct();
@@ -602,8 +606,8 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 					else
 					{
 						headFS.Add(inflFS);
+					}
 				}
-			}
 			}
 			if (headFS != null)
 			{
@@ -612,18 +616,19 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			fs.Freeze();
 			hcEntry.SyntacticFeatureStruct = fs;
 
-			hcEntry.Properties["ID"] = msa.Hvo;
+			hcEntry.Properties[HCParser.MsaID] = msa.Hvo;
 			if (inflType != null)
 			{
-				hcEntry.Properties["InflTypeID"] = inflType.Hvo;
+				hcEntry.Properties[HCParser.InflTypeID] = inflType.Hvo;
 			}
+
 			foreach (var allo in allos)
 			{
 				try
 				{
 					var hcAllo = LoadRootAllomorph(allo, msa);
 					hcEntry.Allomorphs.Add(hcAllo);
-					m_allomorphs.GetValue(allo, () => new List<Allomorph>()).Add(hcAllo);
+					m_allomorphs.GetOrCreate(allo, () => new List<Allomorph>()).Add(hcAllo);
 				}
 				catch (InvalidShapeException ise)
 				{
@@ -644,7 +649,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 				if (IsValidEnvironment(env.StringRepresentation.Text, out var error))
 				{
 					var contexts = SplitEnvironment(env);
-					hcAllo.Environments.Add(new AllomorphEnvironment(m_spanFactory, ConstraintType.Require, LoadEnvironmentPattern(contexts.Item1, true),
+					hcAllo.Environments.Add(new AllomorphEnvironment(ConstraintType.Require, LoadEnvironmentPattern(contexts.Item1, true),
 						LoadEnvironmentPattern(contexts.Item2, false))
 					{ Name = env.StringRepresentation.Text });
 				}
@@ -666,7 +671,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 					break;
 			}
 
-			hcAllo.Properties["ID"] = allo.Hvo;
+			hcAllo.Properties[HCParser.FormID] = allo.Hvo;
 			return hcAllo;
 		}
 
@@ -747,7 +752,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			if (rule.Allomorphs.Count > 0)
 			{
 				stratum?.MorphologicalRules.Add(rule);
-				m_morphemes.GetValue(msa, () => new List<Morpheme>()).Add(rule);
+				m_morphemes.GetOrCreate(msa, () => new List<Morpheme>()).Add(rule);
 			}
 		}
 
@@ -795,7 +800,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			{
 				mrule.RequiredStemName = hcStemName;
 			}
-			mrule.Properties["ID"] = msa.Hvo;
+			mrule.Properties[HCParser.MsaID] = msa.Hvo;
 
 			foreach (var hcAllo in LoadAffixProcessAllomorphs(msa, allos))
 			{
@@ -828,7 +833,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			requiredFS.Freeze();
 			mrule.RequiredSyntacticFeatureStruct = requiredFS;
 			var requiredMprFeatures = msa.FromProdRestrictRC.Select(prodRestrict => m_mprFeatures[prodRestrict]).ToList();
-			mrule.Properties["ID"] = msa.Hvo;
+			mrule.Properties[HCParser.MsaID] = msa.Hvo;
 
 			foreach (var hcAllo in LoadAffixProcessAllomorphs(msa, allos))
 			{
@@ -855,7 +860,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			requiredFS.Freeze();
 			mrule.RequiredSyntacticFeatureStruct = requiredFS;
 
-			mrule.Properties["ID"] = msa.Hvo;
+			mrule.Properties[HCParser.MsaID] = msa.Hvo;
 
 			foreach (var hcAllo in LoadAffixProcessAllomorphs(msa, allos))
 			{
@@ -877,7 +882,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			requiredFS.Freeze();
 			mrule.RequiredSyntacticFeatureStruct = requiredFS;
 
-			mrule.Properties["ID"] = msa.Hvo;
+			mrule.Properties[HCParser.MsaID] = msa.Hvo;
 
 			foreach (var hcAllo in LoadAffixProcessAllomorphs(msa, allos))
 			{
@@ -913,7 +918,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 									{
 										hcAllo.RequiredMprFeatures.AddRange(requiredMprFeatures);
 									}
-									m_allomorphs.GetValue(entry.LexemeFormOA, () => new List<Allomorph>()).Add(hcAllo);
+									m_allomorphs.GetOrCreate(entry.LexemeFormOA, () => new List<Allomorph>()).Add(hcAllo);
 								}
 								catch (InvalidShapeException ise)
 								{
@@ -943,7 +948,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 								{
 									hcAffixProcessAllo.RequiredMprFeatures.AddRange(LoadAllInflClasses(affixProcess.InflectionClassesRC));
 								}
-								m_allomorphs.GetValue(allo, () => new List<Allomorph>()).Add(hcAffixProcessAllo);
+								m_allomorphs.GetOrCreate(allo, () => new List<Allomorph>()).Add(hcAffixProcessAllo);
 							}
 							catch (InvalidShapeException ise)
 							{
@@ -981,7 +986,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 									}
 									requiredFS.Freeze();
 									hcAffixAllo.RequiredSyntacticFeatureStruct = requiredFS;
-									m_allomorphs.GetValue(allo, () => new List<Allomorph>()).Add(hcAffixAllo);
+									m_allomorphs.GetOrCreate(allo, () => new List<Allomorph>()).Add(hcAffixAllo);
 								}
 								catch (InvalidShapeException ise)
 								{
@@ -1002,7 +1007,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 								try
 								{
 									hcStemAllo = LoadFormAffixProcessAllomorph(allo, env);
-									m_allomorphs.GetValue(allo, () => new List<Allomorph>()).Add(hcStemAllo);
+									m_allomorphs.GetOrCreate(allo, () => new List<Allomorph>()).Add(hcStemAllo);
 								}
 								catch (InvalidShapeException ise)
 								{
@@ -1182,18 +1187,18 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 				{
 					name = $"{prefixEnv.StringRepresentation.Text}, {suffixEnv.StringRepresentation.Text}";
 				}
-				hcAllo.Environments.Add(new AllomorphEnvironment(m_spanFactory, ConstraintType.Require, leftEnvPattern, rightEnvPattern) {Name = name});
+				hcAllo.Environments.Add(new AllomorphEnvironment(ConstraintType.Require, leftEnvPattern, rightEnvPattern) {Name = name});
 			}
 
-			hcAllo.Properties["ID"] = prefixAllo.Hvo;
-			hcAllo.Properties["ID2"] = suffixAllo.Hvo;
+			hcAllo.Properties[HCParser.FormID] = prefixAllo.Hvo;
+			hcAllo.Properties[HCParser.FormID2] = suffixAllo.Hvo;
 			if (prefixEnv != null)
 			{
-				hcAllo.Properties["PrefixEnv"] = prefixEnv.StringRepresentation.Text;
+				hcAllo.Properties[HCParser.PrefixEnv] = prefixEnv.StringRepresentation.Text;
 			}
 			if (suffixEnv != null)
 			{
-				hcAllo.Properties["SuffixEnv"] = suffixEnv.StringRepresentation.Text;
+				hcAllo.Properties[HCParser.SuffixEnv] = suffixEnv.StringRepresentation.Text;
 			}
 			return hcAllo;
 		}
@@ -1293,7 +1298,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 				}
 			}
 
-			hcAllo.Properties["ID"] = allo.Hvo;
+			hcAllo.Properties[HCParser.FormID] = allo.Hvo;
 			return hcAllo;
 		}
 
@@ -1442,7 +1447,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 
 						if (!string.IsNullOrEmpty(contexts.Item2))
 						{
-							hcAllo.Environments.Add(new AllomorphEnvironment(m_spanFactory, ConstraintType.Require, null, LoadEnvironmentPattern(contexts.Item2, false)) {Name = env.StringRepresentation.Text});
+							hcAllo.Environments.Add(new AllomorphEnvironment(ConstraintType.Require, null, LoadEnvironmentPattern(contexts.Item2, false)) {Name = env.StringRepresentation.Text});
 						}
 						break;
 
@@ -1475,16 +1480,16 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 
 						if (!string.IsNullOrEmpty(contexts.Item1))
 						{
-							hcAllo.Environments.Add(new AllomorphEnvironment(m_spanFactory, ConstraintType.Require, LoadEnvironmentPattern(contexts.Item1, true), null) {Name = env.StringRepresentation.Text});
+							hcAllo.Environments.Add(new AllomorphEnvironment(ConstraintType.Require, LoadEnvironmentPattern(contexts.Item1, true), null) {Name = env.StringRepresentation.Text});
 						}
 						break;
 				}
 			}
 
-			hcAllo.Properties["ID"] = allo.Hvo;
+			hcAllo.Properties[HCParser.FormID] = allo.Hvo;
 			if (env != null)
 			{
-				hcAllo.Properties["Env"] = env.StringRepresentation.Text;
+				hcAllo.Properties[HCParser.Env] = env.StringRepresentation.Text;
 			}
 			return hcAllo;
 		}
@@ -1533,7 +1538,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			requiredFS.AddValue(m_posFeature, LoadAllPartsOfSpeech(template.OwnerOfClass<IPartOfSpeech>()));
 			requiredFS.Freeze();
 			hcTemplate.RequiredSyntacticFeatureStruct = requiredFS;
-			hcTemplate.Properties["ID"] = template.Hvo;
+			hcTemplate.Properties[HCParser.TemplateID] = template.Hvo;
 
 			foreach (var slot in slots)
 			{
@@ -1603,10 +1608,10 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			}
 			mrule.Allomorphs.Add(msubrule);
 
-			mrule.Properties["InflTypeID"] = type.Hvo;
-			mrule.Properties["SlotID"] = slot.Hvo;
-			msubrule.Properties["IsNull"] = true;
-			msubrule.Properties["IsPrefix"] = isPrefix;
+			mrule.Properties[HCParser.InflTypeID] = type.Hvo;
+			mrule.Properties[HCParser.SlotID] = slot.Hvo;
+			msubrule.Properties[HCParser.IsNull] = true;
+			msubrule.Properties[HCParser.IsPrefix] = isPrefix;
 
 			return mrule;
 		}
@@ -1692,7 +1697,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 					HeadRequiredSyntacticFeatureStruct = headRequiredFS,
 					NonHeadRequiredSyntacticFeatureStruct = nonheadRequiredFS,
 					OutSyntacticFeatureStruct = outFS,
-					Properties = {{"ID", compoundRule.Hvo}}
+					Properties = {{HCParser.CRuleID, compoundRule.Hvo}}
 				};
 
 			var subrule = new CompoundingSubrule();
@@ -1744,7 +1749,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 					HeadRequiredSyntacticFeatureStruct = rightRequiredFS,
 					NonHeadRequiredSyntacticFeatureStruct = leftRequiredFS,
 					OutSyntacticFeatureStruct = outFS,
-					Properties = {{"ID", compoundRule.Hvo}}
+					Properties = {{HCParser.CRuleID, compoundRule.Hvo}}
 				};
 
 			var rightSubrule = new CompoundingSubrule();
@@ -1770,7 +1775,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 					HeadRequiredSyntacticFeatureStruct = leftRequiredFS,
 					NonHeadRequiredSyntacticFeatureStruct = rightRequiredFS,
 					OutSyntacticFeatureStruct = outFS,
-					Properties = {{"ID", compoundRule.Hvo}}
+					Properties = {{HCParser.CRuleID, compoundRule.Hvo}}
 				};
 
 			var leftSubrule = new CompoundingSubrule();
@@ -1834,7 +1839,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 				lhsPattern.Freeze();
 				hcPrule.Lhs = lhsPattern;
 			}
-			hcPrule.Properties["ID"] = prule.Hvo;
+			hcPrule.Properties[HCParser.PRuleID] = prule.Hvo;
 
 			foreach (var rhs in prule.RightHandSidesOS)
 			{
@@ -1948,7 +1953,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 			pattern.Freeze();
 			hcPrule.Pattern = pattern;
 
-			hcPrule.Properties["ID"] = prule.Hvo;
+			hcPrule.Properties[HCParser.CRuleID] = prule.Hvo;
 
 			return hcPrule;
 		}
@@ -2307,7 +2312,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 					{
 						var hcFeature = featSys.GetFeature<SymbolicFeature>("feat" + closedValue.FeatureRA.Hvo);
 						// TODO: should we display something to the user if a FS has an invalid value?
-						if (hcFeature.PossibleSymbols.TryGetValue("sym" + closedValue.ValueRA.Hvo, out var symbol))
+						if (hcFeature.PossibleSymbols.TryGet("sym" + closedValue.ValueRA.Hvo, out var symbol))
 						{
 							hcFS.AddValue(hcFeature, symbol);
 					}
@@ -2446,7 +2451,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.HermitCrab
 
 		private void LoadCharacterDefinitionTable(IPhPhonemeSet phonemeSet)
 		{
-			m_table = new CharacterDefinitionTable(m_spanFactory) {Name = phonemeSet.Name.BestAnalysisAlternative.Text};
+			m_table = new CharacterDefinitionTable() {Name = phonemeSet.Name.BestAnalysisAlternative.Text};
 			foreach (var phoneme in phonemeSet.PhonemesOC)
 			{
 				FeatureStruct fs = null;

@@ -42,7 +42,7 @@ namespace LanguageExplorer.Controls.XMLViews
 
 		/// <summary>
 		/// In this class we want only those nodes that have interesting leaves somewhere.
-		/// Unfortunately this method is duplicated on LeafLabelNode. I can't see a clean way to
+		/// Unfortunately this method is duplicated on LeafChooser. I can't see a clean way to
 		/// avoid this.
 		/// </summary>
 		public override bool WantNodeForLabel(ObjectLabel label)
@@ -61,17 +61,34 @@ namespace LanguageExplorer.Controls.XMLViews
 
 			/// <summary />
 			public LeafLabelNode(ObjectLabel label, IVwStylesheet stylesheet, bool displayUsage, int leafFlid)
-				: base(label, stylesheet, displayUsage)
+				: base(label, stylesheet, displayUsage, false)
 			{
 				m_leafFlid = leafFlid;
+
+				bool haveSubItems = false;
+				// Inflection Classes
+				if (m_leafFlid == PartOfSpeechTags.kflidInflectionClasses &&
+					label is CmPossibilityLabel cmPoss &&
+					cmPoss.Possibility is IPartOfSpeech partOfSpeech)
+					haveSubItems = partOfSpeech.InflectionClassesOC.Count > 0;
+				// Other Classes
+				else
+					haveSubItems = label.HaveSubItems;
+
+				if (haveSubItems)
+				{
+					// this is a hack to make the node expandable before we have filled in any
+					// actual children
+					Nodes.Add(new TreeNode("should not see this"));
+				}
 			}
 
 			/// <summary>
 			/// Adds the secondary nodes.
 			/// </summary>
-			public override void AddSecondaryNodes(LabelNode node, TreeNodeCollection nodes, IEnumerable<ICmObject> chosenObjs)
+			public override void AddSecondaryNodes(LabelNode node, IEnumerable<ICmObject> chosenObjs)
 			{
-				AddSecondaryNodesAndLookForSelected(node, nodes, null, null, null, chosenObjs);
+				AddSecondaryNodesAndLookForSelected(node, null, null, chosenObjs);
 			}
 
 			/// <summary>
@@ -79,7 +96,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			/// and return the one whose hvo is hvoToSelect, or nodeRepresentingCurrentChoice
 			/// if none match.
 			/// </summary>
-			public override LabelNode AddSecondaryNodesAndLookForSelected(LabelNode node, TreeNodeCollection nodes, LabelNode nodeRepresentingCurrentChoice, ICmObject objToSelect, Stack<ICmObject> ownershipStack, IEnumerable<ICmObject> chosenObjs)
+			public override LabelNode AddSecondaryNodesAndLookForSelected(LabelNode node,
+				LabelNode nodeRepresentingCurrentChoice, ICmObject objToSelect, IEnumerable<ICmObject> chosenObjs)
 			{
 				var result = nodeRepresentingCurrentChoice; // result unless we match hvoToSelect
 				var label = (ObjectLabel)Tag;
@@ -102,21 +120,6 @@ namespace LanguageExplorer.Controls.XMLViews
 					}
 				}
 				return result;
-			}
-
-			/// <summary>
-			/// In this class we want only those nodes that have interesting leaves somewhere.
-			/// Unfortunately this method is duplicated on LeafChooser. I can't see a clean way to
-			/// avoid this.
-			/// </summary>
-			public override bool WantNodeForLabel(ObjectLabel label)
-			{
-				return base.WantNodeForLabel(label) && (HasLeaves(label) || label.SubItems.Any(WantNodeForLabel));
-			}
-
-			private bool HasLeaves(ObjectLabel label)
-			{
-				return label.Cache.DomainDataByFlid.get_VecSize(label.Object.Hvo, m_leafFlid) > 0;
 			}
 		}
 	}

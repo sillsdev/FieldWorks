@@ -48,6 +48,7 @@ namespace LanguageExplorer
 			CmdImportSFMLexicon,
 			CmdImportLinguaLinksData,
 			CmdImportLiftData,
+			CmdImportCombineData,
 			CmdImportInterlinearSfm,
 			CmdImportWordsAndGlossesSfm,
 			CmdImportInterlinearData,
@@ -58,6 +59,7 @@ namespace LanguageExplorer
 		// Separator6 goes here
 		CmdExportInterlinear,
 		CmdExportDiscourseChart,
+		CmdExportConcordanceResults,
 		CmdClose,
 
 		/// <summary>

@@ -107,7 +107,7 @@ namespace LanguageExplorer.Areas
 				return;
 			}
 			var column = m_possRepo.GetObject(hvoMove);
-			if (column.CheckAndReportProtectedChartColumn())
+			if (column.OwningPossibility != null && column.CheckAndReportProtectedChartColumn())
 			{
 				return;
 			}

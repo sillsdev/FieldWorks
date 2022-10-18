@@ -2,20 +2,20 @@
 <Project InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 	<PropertyGroup>
-		<IcuVersion>54</IcuVersion>
-		<FwBuildTasksVersion>10.0.1-beta0010</FwBuildTasksVersion>
-		<IcuWinFwLibVersion>54.1.30-beta</IcuWinFwLibVersion>
-		<GitVersionMsBuildVersion>5.7.0</GitVersionMsBuildVersion>
+		<GitVersionMsBuildVersion>5.10.3</GitVersionMsBuildVersion>
+		<IcuVersion>70</IcuVersion>
+		<IcuWinFwLibVersion>70.1.123</IcuWinFwLibVersion>
+		<LcmVersion>10.2.0-beta0059</LcmVersion>
 		<NunitConsoleVersion>3.12.0</NunitConsoleVersion>
 		<SilBuildTasksVersion>2.5.0</SilBuildTasksVersion>
 		<SilLibVersion>6.0.11</SilLibVersion>
 
 		<fwrt>$([System.IO.Directory]::GetParent($(MSBuildProjectDirectory)))</fwrt>
 		<fwrt Condition="'$(fwrt)' == ''">$(MSBuildThisFileDirectory)..</fwrt>
-		<FwBuildTasksProps>$(fwrt)/packages/SIL.FwBuildTasks.$(FwBuildTasksVersion)/build/SIL.FwBuildTasks.props</FwBuildTasksProps>
-		<IcuWinFwLibTargets>$(fwrt)/packages/Icu4c.Win.Fw.Lib.$(IcuWinFwLibVersion)/build/Icu4c.Win.Fw.Lib.props</IcuWinFwLibTargets>
 		<GitVersionMsBuildProps>$(fwrt)/packages/GitVersion.MsBuild.$(GitVersionMsBuildVersion)/build/GitVersion.MsBuild.props</GitVersionMsBuildProps>
 		<GitVersionMsBuildTargets>$(fwrt)/packages/GitVersion.MsBuild.$(GitVersionMsBuildVersion)/build/GitVersion.MsBuild.targets</GitVersionMsBuildTargets>
+		<IcuWinFwLibProps>$(fwrt)/packages/Icu4c.Win.Fw.Lib.$(IcuWinFwLibVersion)/build/Icu4c.Win.Fw.Lib.props</IcuWinFwLibProps>
+		<LcmCoreProps>$(fwrt)/packages/SIL.LCModel.Core.$(LcmVersion)/buildMultiTargeting/SIL.LCModel.Core.props</LcmCoreProps>
 		<SilBuildTaskProps>$(fwrt)/packages/SIL.BuildTasks.$(SilBuildTasksVersion)/build/SIL.BuildTasks.props</SilBuildTaskProps>
 		<NUnit3ConsolePath>$(fwrt)/packages/NUnit.ConsoleRunner.$(NunitConsoleVersion)/tools</NUnit3ConsolePath>
 		<Nunit3Console>$(NUnit3ConsolePath)/nunit3-console.exe</Nunit3Console>
@@ -26,14 +26,15 @@
 			call this build script again so that the files exist when we import them. If they
 			all already exist we can just continue with our build.
 		-->
-		<RestartBuild Condition="(Exists('$(FwBuildTasksProps)') And Exists('$(IcuWinFwLibTargets)') And Exists('$(GitVersionMsBuildProps)') And Exists('$(SilBuildTaskProps)') And Exists('$(NUnit3Console)')) Or '$(IsReentry)'=='true'">false</RestartBuild>
-		<RestartBuild Condition="(!Exists('$(FwBuildTasksProps)') Or !Exists('$(IcuWinFwLibTargets)') Or !Exists('$(GitVersionMsBuildProps)') Or !Exists('$(SilBuildTaskProps)') Or !Exists('$(NUnit3Console)')) And '$(IsReentry)'!='true'">true</RestartBuild>
+		<RestartBuild Condition="(Exists('$(GitVersionMsBuildProps)') And Exists('$(IcuWinFwLibTargets)') And Exists('$(SilBuildTaskProps)') And Exists('$(NUnit3Console)')) Or '$(IsReentry)'=='true'">false</RestartBuild>
+		<RestartBuild Condition="(!Exists('$(GitVersionMsBuildProps)') Or !Exists('$(IcuWinFwLibTargets)') Or !Exists('$(SilBuildTaskProps)') Or !Exists('$(NUnit3Console)')) And '$(IsReentry)'!='true'">true</RestartBuild>
 	</PropertyGroup>
 
-	<Import Project="$(FwBuildTasksProps)" Condition="Exists('$(FwBuildTasksProps)')" />
-	<Import Project="$(IcuWinFwLibTargets)" Condition="Exists('$(IcuWinFwLibTargets)')" />
 	<Import Project="$(GitVersionMsBuildProps)" Condition="Exists('$(GitVersionMsBuildProps)')" />
 	<Import Project="$(GitVersionMsBuildTargets)" Condition="Exists('$(GitVersionMsBuildTargets)')" />
+	<Import Project="$(IcuWinFwLibProps)" Condition="Exists('$(IcuWinFwLibProps)')" />
+	<Import Project="$(IcuWinFwLibTargets)" Condition="Exists('$(IcuWinFwLibTargets)')" />
+	<Import Project="$(LcmCoreProps)" Condition="Exists('$(LcmCoreProps)')" />
 	<Import Project="$(SilBuildTaskProps)" Condition="Exists('$(SilBuildTaskProps)')" />
 
 	<!-- config is generally either Debug or Release, but might be Bounds or Profile. -->
@@ -105,10 +106,12 @@
 	</Choose>
 
 	<Target Name="Setup">
-		<CallTarget Targets="RestoreBuildTasks" Condition="!Exists('$(FwBuildTasksProps)')"/>
-		<CallTarget Targets="SetupInternal" Condition="!$(RestartBuild)" />
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="SetupInternal"
-			Properties="IsReentry=true" Condition="$(RestartBuild)" />
+		<CallTarget Targets="RestoreBuildTasks" />
+		<CallTarget Targets="SetupInternal"/><!-- Condition="!$(RestartBuild)" /-->
+		<!-- NB (Hasso) 2022.11: If we restart the build to call SetupInternal,
+			none of the properties get passed back out to the main build, so we start copying output files to C:\ -->
+		<!-- <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="SetupInternal"
+			Properties="IsReentry=true" Condition="$(RestartBuild)" /> -->
 	</Target>
 
   <Target Name="SetupInternal" DependsOnTargets="RestoreBuildTasks"><!-- cannot depend on GenerateVersionFiles, because that creates a file in Output/Common which CleanAll deletes -->
@@ -117,55 +120,35 @@
 	<GenerateFwTargets TimeoutValuesFilePath="$(MSBuildThisFileDirectory)/TestTimeoutValues.xml"
 		NUnitConsolePath="$(MSBuildThisFileDirectory)../packages/NUnit.ConsoleRunner.$(NunitConsoleVersion)/tools" />
 
-	<CpuArchitecture>
-		<Output TaskParameter="Value" PropertyName="arch"/>
-	</CpuArchitecture>
-
 	<PropertyGroup>
-		<dir-separator Condition="'$(OS)'!='Windows_NT'">/</dir-separator>
-		<dir-separator Condition="'$(OS)'=='Windows_NT'">\</dir-separator>
-		<dir-fwobj>$(fwrt)$(dir-separator)Obj_$(arch)</dir-fwobj>
-		<dir-fwoutput Condition="'$(OS)'!='Windows_NT'">$(fwrt)/Output_$(arch)</dir-fwoutput>
-		<dir-fwoutput Condition="'$(OS)'=='Windows_NT'">$(fwrt)\Output</dir-fwoutput>
-		<dir-outputBase>$(dir-fwoutput)$(dir-separator)$(config-capital)</dir-outputBase>
-		<dir-fwoutputCommon>$(dir-fwoutput)$(dir-separator)Common</dir-fwoutputCommon>
+		<dir-fwobj>$([System.IO.Path]::Combine($(fwrt),Obj))</dir-fwobj>
+		<dir-fwoutput >$([System.IO.Path]::Combine($(fwrt),Output))</dir-fwoutput>
+		<dir-outputBase>$([System.IO.Path]::Combine($(dir-fwoutput),$(config-capital)))</dir-outputBase>
+		<dir-fwoutputCommon>$([System.IO.Path]::Combine($(dir-fwoutput),Common))</dir-fwoutputCommon>
 		<dir-buildOutputInterop>$(dir-outputBase)</dir-buildOutputInterop>
-		<dir-fwoutputlib>$(fwrt)$(dir-separator)Lib</dir-fwoutputlib>
-		<dir-fwoutputlibBase>$(dir-fwoutputlib)$(dir-separator)$(config-capital)</dir-fwoutputlibBase>
-		<dir-fwoutputlibPlatform Condition="'$(OS)'!='Windows_NT'">$(dir-fwoutputlib)/linux</dir-fwoutputlibPlatform>
-		<dir-fwoutputlibPlatform Condition="'$(OS)'=='Windows_NT'">$(dir-fwoutputlib)\windows</dir-fwoutputlibPlatform>
-		<dir-fwinstall>$(dir-fwoutput)$(dir-separator)install</dir-fwinstall>
-		<dir-fwdistfiles>$(fwrt)$(dir-separator)DistFiles</dir-fwdistfiles>
-		<dir-fwdistfiles>$(fwrt)$(dir-separator)DistFiles</dir-fwdistfiles>
-		<dir-icuData>$(dir-fwdistfiles)$(dir-separator)Icu$(IcuVersion)</dir-icuData>
-		<!-- where to find the COM library on Linux -->
-		<com_dir Condition="'$(OS)'!='Windows_NT'">$([System.IO.Directory]::GetParent($(fwrt)))/libcom/COM</com_dir>
-		<com_lib Condition="'$(OS)'!='Windows_NT'">$(com_dir)/build$(arch)/src/.libs</com_lib>
-		<!-- where to find the ICU files on Linux - requires libicu54-fw and icu54-bin-fw packages -->
-		<icu_lib Condition="'$(OS)'!='Windows_NT'">/usr/lib/fieldworks/lib/</icu_lib>
-		<icu_bin Condition="'$(OS)'!='Windows_NT'">/usr/lib/fieldworks/icu-bin/</icu_bin>
+		<dir-fwlib>$([System.IO.Path]::Combine($(fwrt),Lib))</dir-fwlib>
+		<dir-fwinstall>$([System.IO.Path]::Combine($(dir-fwoutput),install))</dir-fwinstall>
+		<dir-fwdistfiles>$([System.IO.Path]::Combine($(fwrt),DistFiles))</dir-fwdistfiles>
+		<dir-icuData>$([System.IO.Path]::Combine($(dir-fwdistfiles),Icu$(IcuVersion)))</dir-icuData>
 		<msbuild-props>Configuration=$(config-capital);ReferencePath=$(dir-outputBase);ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch=None</msbuild-props>
 
 		<excludedCategories>LongRunning,ByHand,SmokeTest</excludedCategories>
 		<excludedCategories Condition="'$(desktopNotAvailable)'=='true'">$(excludedCategories),DesktopRequired</excludedCategories>
 		<excludedCategories Condition="'$(runAllTests)'!=''">ByHand,SmokeTest</excludedCategories>
-		<excludedCategories Condition="'$(arch)'=='x86_64'">$(excludedCategories),ExcludeOnLinux64</excludedCategories>
 	</PropertyGroup>
 
 	<!-- Set some environment variables needed by make (or nmake) -->
-	<SetEnvVar Variable="PATH" Value="$(dir-outputBase):$(icu_lib):$(icu_bin):$(PATH)" Condition="'$(OS)'=='Unix'"/>
-	<SetEnvVar Variable="PATH" Value="$(dir-outputBase);$(PATH);$(dir-outputBase)/lib/$(Arch)" Condition="'$(OS)'=='Windows_NT'"/>
+	<SetEnvVar Variable="PATH" Value="$(dir-outputBase);$(PATH);$(dir-outputBase)/lib/win-x64" Condition="'$(OS)'=='Windows_NT'"/>
 	<SetEnvVar Variable="BUILD_TYPE" Value="$(build-type)"/>
 	<SetEnvVar Variable="BUILD_CONFIG" Value="$(config-capital)" />
 	<SetEnvVar Variable="BUILD_ROOT" Value="$(fwrt)" />
 	<SetEnvVar Variable="ICU_DATA" Value="$(fwrt)/DistFiles/Icu$(IcuVersion)" />
 
-	<!-- Set some environment variables needed on Linux. -->
-	<SetEnvVar Variable="LD_LIBRARY_PATH" Value="$(com_lib):$(com_dir)/build$(arch)/lib:$(icu_lib):$(dir-outputBase):$(LD_LIBRARY_PATH)" Condition="'$(OS)'=='Unix'"/>
-	<SetEnvVar Variable="MONO_PATH" Value="$(dir-fwdistfiles):$(dir-outputBase)" Condition="'$(OS)'=='Unix'"/>
-	<SetEnvVar Variable="MONO_REGISTRY_PATH" Value="$(dir-fwoutput)/registry" Condition="'$(OS)'=='Unix'"/>
-	<SetEnvVar Variable="COMPONENTS_MAP_PATH" Value="$(dir-outputBase)" Condition="'$(OS)'=='Unix'"/>
-	<SetEnvVar Variable="MONO_RUNTIME_EXECUTABLE_PATH" Value="$(MONO_PREFIX)/bin/mono" Condition="'$(OS)'=='Unix'"/>
+	<!-- Copy ICU header files -->
+    <ItemGroup>
+      <Icu4cIncludes Include="$(IcuFwIncludeDirectory)unicode/*.h" />
+    </ItemGroup>
+    <Copy SourceFiles="@(Icu4cIncludes)" DestinationFolder="$(fwrt)/Include/unicode" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 
 	<!-- Copy dependencies needed for ParatextPlugin -->
 	<ItemGroup>
@@ -191,28 +174,14 @@
 
   <Target Name="MakeDirs" DependsOnTargets="Setup;DeleteTestFiles" Condition="'$(action)'!='clean'">
 	<MakeDir Directories="$(dir-fwobj);$(dir-outputBase);$(dir-fwoutputCommon)"/>
-	<!-- extra directory (and symbolic links) needed for Linux -->
-	<MakeDir Directories="$(fwrt)/Output" Condition="!Exists('$(fwrt)/Output') And '$(OS)'=='Unix'"/>
-	<Exec Condition="!Exists('$(fwrt)/Output/$(config-capital)') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/$(config-capital) $(fwrt)/Output/$(config-capital)"/>
-	<Exec Condition="!Exists('$(fwrt)/Output/$(config-lower)') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/$(config-capital) $(fwrt)/Output/$(config-lower)"/>
-	<Exec Condition="!Exists('$(fwrt)/Output/Common') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/Common $(fwrt)/Output/Common"/>
-	<Exec Condition="!Exists('$(fwrt)/Output/common') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/Common $(fwrt)/Output/common"/>
-	<Exec Condition="!Exists('$(fwrt)/Output/XMI') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/XMI"/>
-	<Exec Condition="!Exists('$(fwrt)/Output/xmi') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/xmi"/>
   </Target>
 
 	<!-- Generate Output/Common/bldinc.h from Src/bldinc.h -->
-	<ItemGroup>
-		<BldIncTemplate Include="../Src/bldinc.h"/>
-		<BldIncOutput Include="../Output/Common/bldinc.h"/>
-		<VersionPropertiesFile Include="../Output/Common/Version.txt"/>
-	</ItemGroup>
+	<PropertyGroup>
+		<BldIncTemplate>../Src/bldinc.h</BldIncTemplate>
+		<BldIncOutput>../Output/Common/bldinc.h</BldIncOutput>
+		<VersionPropertiesFile>../Output/Common/Version.txt</VersionPropertiesFile>
+	</PropertyGroup>
 	<!--
 		Don't use Inputs and Outputs on the GenerateVersionFiles Target.  (Substitute won't
 		write the file if it hasn't changed, but the AssemblyFileVersion datestamp field should
@@ -224,9 +193,9 @@
 			Properties="IsReentry=true" Condition="$(RestartBuild)" />
 	</Target>
 	<Target Name="GenerateVersionFilesInternal" DependsOnTargets="MakeDirs;GetVersion" Condition="'$(action)'!='clean'">
-		<WriteLinesToFile File="@(VersionPropertiesFile)" Lines="FWMAJOR=$(GitVersion_Major);FWMINOR=$(GitVersion_Minor);FWREVISION=$(GitVersion_Patch)" Overwrite="true" />
-		<Substitute Template="@(BldIncTemplate)" Symbols="@(VersionPropertiesFile)"
-			Output="@(BldIncOutput)" Condition="'$(action)'!='clean' And Exists('../Output/Common')"/>
+		<WriteLinesToFile File="$(VersionPropertiesFile)" Lines="FWMAJOR=$(GitVersion_Major);FWMINOR=$(GitVersion_Minor);FWREVISION=$(GitVersion_Patch)" Overwrite="true" />
+		<Substitute Template="$(BldIncTemplate)" Symbols="$(VersionPropertiesFile)"
+			Output="$(BldIncOutput)" Condition="'$(action)'!='clean' And Exists('../Output/Common')"/>
 
 		<Message Text="Updated bldinc.h"/>
 	</Target>
@@ -237,23 +206,14 @@
 	<action Condition="'$(action)'==''">build</action>
 	<!-- target is one of the targets in the build system. -->
 	<target Condition="'$(target)'==''">all</target>
-	<platform Condition="'$(platform)'=='' And '$(OS)'!='Windows_NT'">UNIX</platform>
 	<platform Condition="'$(platform)'=='' And '$(OS)'=='Windows_NT'">WIN32</platform>
 	<verbose Condition="'$(verbose)'==''">false</verbose>
 	<buildtlb Condition="'$(buildtlb)'==''">false</buildtlb>
-	<!-- Gendarme rule set. See Build/Gendarme.MsBuild/fw-gendarme-rules.xml for possible values. -->
-	<verifyset Condition="'$(verifyset)'==''">dispose</verifyset>
-	<verifyset-test Condition="'$(verifyset-test)'==''">dispose-test</verifyset-test>
-	<verifyfail Condition="'$(verifyfail)'==''">true</verifyfail>
-	<autoUpdateIgnores Condition="'$(autoUpdateIgnores)'==''">false</autoUpdateIgnores>
 	<!-- <warningsAsErrors Condition="'$(warningsAsErrors)'==''">TreatWarningsAsErrors=true</warningsAsErrors> -->
 	<timeoutFudgeFactor Condition="'$(timeoutFudgeFactor)'==''">1</timeoutFudgeFactor>
-	<useNUnit-x86 Condition="'$(OS)'=='Windows_NT' And '$(Platform)'!='x64'">true</useNUnit-x86>
-	<useNUnit-x86 Condition="'$(OS)'!='Windows_NT' Or '$(Platform)'=='x64'">false</useNUnit-x86>
+	<useNUnit-x86 >false</useNUnit-x86>
 	<defines Condition="'$(config-lower)'=='release'">TRACE;CODE_ANALYSIS</defines>
 	<defines Condition="'$(config-lower)'!='release'">DEBUG;TRACE;CODE_ANALYSIS</defines>
-	<IcuFwLibDirectory Condition="'$(Platform)'!='x64'">$(IcuFwLibDirectoryx86)</IcuFwLibDirectory>
-	<IcuFwLibDirectory Condition="'$(Platform)'=='x64'">$(IcuFwLibDirectoryx64)</IcuFwLibDirectory>
   </PropertyGroup>
 
   <Choose>

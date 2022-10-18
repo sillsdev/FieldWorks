@@ -8,8 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="All" />
-    <PackageReference Include="SIL.FwBuildTasks" Version="10.0.0" PrivateAssets="All" />
+    <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
     <PackageReference Include="vswhere" Version="2.8.4" PrivateAssets="All" />
   </ItemGroup>
 

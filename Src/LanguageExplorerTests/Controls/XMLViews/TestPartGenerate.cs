@@ -69,7 +69,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 					+ "</column> "
 				+ "</generate>");
 			var source = TestUtilities.GetRootNode(docSrc, "generate");
-			Assert.IsNotNull(source);
+			Assert.That(source, Is.Not.Null);
 
 			var generator = new PartGenerator(Cache, source);
 
@@ -132,7 +132,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 				+ "</column> "
 				+ "</generate>");
 			var source = TestUtilities.GetRootNode(docSrc, "generate");
-			Assert.IsNotNull(source);
+			Assert.That(source, Is.Not.Null);
 
 			var generator = new PartGenerator(Cache, source);
 
@@ -194,7 +194,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 					+ "<dummy4/> "
 				+ "</root>");
 			var source = TestUtilities.GetRootNode(docSrc, "root");
-			Assert.IsNotNull(source);
+			Assert.That(source, Is.Not.Null);
 
 			var nodes = PartGenerator.GetGeneratedChildren(source, Cache);
 

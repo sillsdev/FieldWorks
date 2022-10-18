@@ -282,7 +282,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected virtual int LabelRGBFor(int choiceIndex)
 		{
-			return LabelRGBFor(LineChoices[choiceIndex]);
+			return LabelRGBFor(LineChoices.EnabledLineSpecs[choiceIndex]);
 		}
 
 		protected virtual int LabelRGBFor(InterlinLineSpec spec)
@@ -445,7 +445,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						var chvoGlosses = wa.MeaningsOC.Count;
 						for (var i = 0; i < Cache.LanguageProject.AnalysisWsIds().Length; ++i)
 						{
-							SetColor(vwenv, LabelRGBFor(LineChoices.IndexOf(InterlinLineChoices.kflidWordGloss, Cache.LanguageProject.AnalysisWsIds()[i])));
+							SetColor(vwenv, LabelRGBFor(LineChoices.IndexInEnabled(InterlinLineChoices.kflidWordGloss, Cache.LanguageProject.AnalysisWsIds()[i])));
 							if (chvoGlosses == 0)
 							{
 								// There are no glosses, display something indicating it is missing.
@@ -545,24 +545,24 @@ namespace LanguageExplorer.Controls.DetailControls
 						// Displaying one ws of the  form of a WfiGloss.
 						vwenv.AddStringAltMember(WfiGlossTags.kflidForm, Cache.LanguageProject.AnalysisWsIds()[frag - kfragWordGlossWs], this);
 					}
-					else if (frag >= kfragLineChoices && frag < kfragLineChoices + LineChoices.Count)
+					else if (frag >= kfragLineChoices && frag < kfragLineChoices + LineChoices.EnabledCount)
 					{
-						var spec = LineChoices[frag - kfragLineChoices];
+						var spec = LineChoices.EnabledLineSpecs[frag - kfragLineChoices];
 						var ws = GetRealWsOrBestWsForContext(hvo, spec); // can be vernacular or analysis
 						if (ws > 0)
 						{
 							vwenv.AddStringAltMember(spec.StringFlid, ws, this);
 						}
 					}
-					else if (frag >= kfragAnalysisCategoryChoices && frag < kfragAnalysisCategoryChoices + LineChoices.Count)
+					else if (frag >= kfragAnalysisCategoryChoices && frag < kfragAnalysisCategoryChoices + LineChoices.EnabledCount)
 					{
 						AddAnalysisPos(vwenv, hvo, hvo, frag - kfragAnalysisCategoryChoices);
 					}
-					else if (frag >= kfragMorphFormChoices && frag < kfragMorphFormChoices + LineChoices.Count)
+					else if (frag >= kfragMorphFormChoices && frag < kfragMorphFormChoices + LineChoices.EnabledCount)
 					{
-						DisplayMorphForm(vwenv, hvo, GetRealWsOrBestWsForContext(hvo, LineChoices[frag - kfragMorphFormChoices]));
+						DisplayMorphForm(vwenv, hvo, GetRealWsOrBestWsForContext(hvo, LineChoices.EnabledLineSpecs[frag - kfragMorphFormChoices]));
 					}
-					else if (frag >= kfragSegFfChoices && frag < kfragSegFfChoices + LineChoices.Count)
+					else if (frag >= kfragSegFfChoices && frag < kfragSegFfChoices + LineChoices.EnabledCount)
 					{
 						AddFreeformComment(vwenv, hvo, frag - kfragSegFfChoices);
 					}
@@ -629,7 +629,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected virtual void AddFreeformComment(IVwEnv vwenv, int hvoSeg, int lineChoiceIndex)
 		{
-			var wssAnalysis = LineChoices.AdjacentWssAtIndex(lineChoiceIndex, hvoSeg);
+			var wssAnalysis = LineChoices.AdjacentEnabledWssAtIndex(lineChoiceIndex, hvoSeg);
 			if (wssAnalysis.Length == 0)
 			{
 				return;
@@ -640,7 +640,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			string label;
 			int flid;
 			var exporter = vwenv as InterlinearExporter;
-			switch (LineChoices[lineChoiceIndex].Flid)
+			switch (LineChoices.EnabledLineSpecs[lineChoiceIndex].Flid)
 			{
 				case InterlinLineChoices.kflidFreeTrans:
 					label = LanguageExplorerResources.ksFree_;
@@ -697,7 +697,10 @@ namespace LanguageExplorer.Controls.DetailControls
 					vwenv.AddString(m_tssSpace);
 					AddTssDirForWs(vwenv, wsVernPara);
 					SetNoteLabelProps(vwenv);
-					vwenv.AddString(m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[0], m_cache.DefaultUserWs));
+					var abbrevLabel = m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[0], m_cache.DefaultUserWs);
+					var abbrevBldr = abbrevLabel.GetBldr();
+					AddLineIndexProperty(abbrevBldr, lineChoiceIndex);
+					vwenv.AddString(abbrevBldr.GetString());
 				}
 				AddTssDirForWs(vwenv, wsVernPara);
 				vwenv.AddString(m_tssSpace);
@@ -718,7 +721,10 @@ namespace LanguageExplorer.Controls.DetailControls
 				else
 				{
 					SetNoteLabelProps(vwenv);
-					vwenv.AddString(m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[0], m_cache.DefaultUserWs));
+					var abbrevLabel = m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[0], m_cache.DefaultUserWs);
+					var abbrevBldr = abbrevLabel.GetBldr();
+					AddLineIndexProperty(abbrevBldr, lineChoiceIndex);
+					vwenv.AddString(abbrevBldr.GetString());
 					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
 					// label width unfortunately does not include trailing space.
@@ -753,7 +759,10 @@ namespace LanguageExplorer.Controls.DetailControls
 					AddTssDirForWs(vwenv, wsVernPara); // REVIEW (Hasso) 2018.01: two in a row RTL flags seems redundant.
 					AddTssDirForWs(vwenv, wsVernPara);
 					SetNoteLabelProps(vwenv);
-					vwenv.AddString(m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[i], m_cache.DefaultUserWs));
+					var abbrevLabel = m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[i], m_cache.DefaultUserWs);
+					var abbrevBldr = abbrevLabel.GetBldr();
+					AddLineIndexProperty(abbrevBldr, lineChoiceIndex + i);
+					vwenv.AddString(abbrevBldr.GetString());
 					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
 					AddTssDirForWs(vwenv, wsVernPara);
@@ -764,7 +773,10 @@ namespace LanguageExplorer.Controls.DetailControls
 					vwenv.AddString(m_tssSpace);
 					AddTssDirForWs(vwenv, wsVernPara);
 					SetNoteLabelProps(vwenv);
-					vwenv.AddString(m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[i], m_cache.DefaultUserWs));
+					var abbrevLabel = m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[i], m_cache.DefaultUserWs);
+					var abbrevBldr = abbrevLabel.GetBldr();
+					AddLineIndexProperty(abbrevBldr, lineChoiceIndex + i);
+					vwenv.AddString(abbrevBldr.GetString());
 					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
 					AddTssDirForWs(vwenv, wsVernPara);
@@ -1039,8 +1051,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, 10000);
 			vwenv.OpenInnerPile();
-			var first = LineChoices.FirstMorphemeIndex;
-			var last = LineChoices.LastMorphemeIndex;
+			var first = LineChoices.FirstEnabledMorphemeIndex;
+			var last = LineChoices.LastEnabledMorphemeIndex;
 			IMoForm mf = null;
 			if (wmb != null)
 			{
@@ -1054,7 +1066,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			for (var i = first; i <= last; i++)
 			{
-				var spec = LineChoices[i];
+				var spec = LineChoices.EnabledLineSpecs[i];
 				SetColor(vwenv, LabelRGBFor(spec));
 				switch (spec.Flid)
 				{
@@ -1185,7 +1197,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal bool DisplayLexGlossWithInflType(IVwEnv vwenv, ILexEntry possibleVariant, ILexSense sense, InterlinLineSpec spec, ILexEntryInflType inflType)
 		{
-			var iLineChoice = LineChoices.IndexOf(spec);
+			var iLineChoice = LineChoices.IndexInEnabled(spec);
 			if (!possibleVariant.IsVariantOfSenseOrOwnerEntry(sense, out var ler))
 			{
 				return false;
@@ -1308,9 +1320,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			vwenv.set_IntProperty((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 			vwenv.set_IntProperty((int)FwTextPropType.ktptMarginBottom, (int)FwTextPropVar.ktpvMilliPoint, 5000); // default spacing is fine for all embedded paragraphs.
 			vwenv.OpenInnerPile();
-			for (var i = 0; i < LineChoices.Count; i++)
+			for (var i = 0; i < LineChoices.EnabledCount; i++)
 			{
-				var spec = LineChoices[i];
+				var spec = LineChoices.EnabledLineSpecs[i];
 				if (!spec.WordLevel)
 				{
 					break;
@@ -1318,7 +1330,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				SetColor(vwenv, LabelRGBFor(spec));
 				var tss = MakeUiElementString(LineChoices.LabelFor(spec.Flid), wsUI, null);
 				var bldr = tss.GetBldr();
-				if (LineChoices.RepetitionsOfFlid(spec.Flid) > 1)
+				if (LineChoices.EnabledRepetitionsOfFlid(spec.Flid) > 1)
 				{
 					bldr.Append(spaceStr);
 					bldr.Append(spec.WsLabel(cache));
@@ -1423,10 +1435,10 @@ namespace LanguageExplorer.Controls.DetailControls
 						throw new Exception("invalid type used for word analysis");
 				}
 				m_defaultObj = coRepository.GetObject(m_hvoDefault);
-				for (var i = 0; i < m_choices.Count;)
+				for (var i = 0; i < m_choices.EnabledCount;)
 				{
 					m_this.CurrentLine = i;
-					var spec = m_choices[i];
+					var spec = m_choices.EnabledLineSpecs[i];
 					if (!spec.WordLevel)
 					{
 						break;
@@ -1434,7 +1446,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					if (spec.MorphemeLevel)
 					{
 						DisplayMorphemes();
-						while (i < m_choices.Count && m_choices[i].MorphemeLevel)
+						while (i < m_choices.EnabledCount && m_choices.EnabledLineSpecs[i].MorphemeLevel)
 						{
 							i++;
 						}
@@ -1482,7 +1494,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						}
 					}
 
-					if (m_this.GetRealWsOrBestWsForContext(m_hvoWordform, m_choices[choiceIndex]) == m_analysisOccurrence.BaselineWs)
+					if (m_this.GetRealWsOrBestWsForContext(m_hvoWordform, m_choices.EnabledLineSpecs[choiceIndex]) == m_analysisOccurrence.BaselineWs)
 					{
 						m_vwenv.AddString(baseLineForm);
 					}
@@ -1662,9 +1674,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			// Add them in the order specified. Each iteration adds a group with the same flid but (typically)
 			// different writing systems.
-			for (var ispec = LineChoices.FirstFreeformIndex; ispec < LineChoices.Count; ispec += LineChoices.AdjacentWssAtIndex(ispec, hvoSeg).Length)
+			for (var ispec = LineChoices.FirstEnabledFreeformIndex; ispec < LineChoices.EnabledCount; ispec += LineChoices.AdjacentEnabledWssAtIndex(ispec, hvoSeg).Length)
 			{
-				var flid = LineChoices[ispec].Flid;
+				var flid = LineChoices.EnabledLineSpecs[ispec].Flid;
 				switch (flid)
 				{
 					case InterlinLineChoices.kflidFreeTrans:
@@ -1690,7 +1702,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected virtual void AddCustomFreeFormComment(IVwEnv vwenv, int hvoSeg, int lineChoiceIndex)
 		{
-			var wssAnalysis = LineChoices.AdjacentWssAtIndex(lineChoiceIndex, hvoSeg);
+			var wssAnalysis = LineChoices.AdjacentEnabledWssAtIndex(lineChoiceIndex, hvoSeg);
 			if (wssAnalysis.Length == 0)
 			{
 				return;
@@ -1702,7 +1714,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			vwenv.OpenDiv();
 			SetParaDirectionAndAlignment(vwenv, wssAnalysis[0]);
 			vwenv.OpenMappedPara();
-			var customCommentFlid = LineChoices[lineChoiceIndex].Flid;
+			var customCommentFlid = LineChoices.EnabledLineSpecs[lineChoiceIndex].Flid;
 			SetNoteLabelProps(vwenv);
 			// REVIEW: Should we set the label to a special color as well?
 			var tssLabel = MakeUiElementString(m_cache.MetaDataCacheAccessor.GetFieldLabel(customCommentFlid) + " ", m_cache.DefaultUserWs, propsBldr => propsBldr.SetIntPropValues((int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn));
@@ -1823,7 +1835,13 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override int EstimateHeight(int hvo, int frag, int dxAvailWidth)
 		{
-			var obj = m_cache.ServiceLocator.ObjectRepository.GetObject(hvo);
+			// We can get in here on a UnitOfWorkHelper.Dispose() call where a VwLazyBox still
+			// contains deleted HVO's, so return zero. Later, before we paint, the VwLazyBox's
+			// are either getting deleted or their hvo lists are getting cleaned up. LT-20881
+			ICmObject obj = null;
+			if (!m_cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out obj))
+				return 0;
+
 			switch (frag)
 			{
 				// If you change this, remember that an estimate that is too HIGH just means it takes a few iterations
@@ -1870,7 +1888,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var length = seg.BaselineText.Length;
 			var width = length * kPixelsPerChar + kPixelsForRowLabels;
 			var rows = dxAvailWidth / width + 1;
-			return rows * LineChoices.Count * kPixelsPerLine;
+			return rows * LineChoices.EnabledCount * kPixelsPerLine;
 		}
 
 		/// <summary>
@@ -2025,7 +2043,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		protected virtual void FormatGloss(IVwEnv vwenv, int ws)
 		{
-			SetColor(vwenv, LabelRGBFor(LineChoices.IndexOf(InterlinLineChoices.kflidWordGloss, ws)));
+			SetColor(vwenv, LabelRGBFor(LineChoices.IndexInEnabled(InterlinLineChoices.kflidWordGloss, ws)));
 		}
 
 		/// <summary>

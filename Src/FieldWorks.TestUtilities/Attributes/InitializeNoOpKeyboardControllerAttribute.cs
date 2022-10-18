@@ -20,9 +20,9 @@ namespace FieldWorks.TestUtilities.Attributes
 	public class InitializeNoOpKeyboardControllerAttribute: TestActionAttribute
 	{
 		/// <inheritdoc />
-		public override void BeforeTest(ITest testDetails)
+		public override void BeforeTest(ITest test)
 		{
-			base.BeforeTest(testDetails);
+			base.BeforeTest(test);
 			// If we already have a keyboard controller we'd better dispose it or we'll end up with missing dispose calls.
 			if (Keyboard.Controller != null)
 			{
@@ -33,10 +33,10 @@ namespace FieldWorks.TestUtilities.Attributes
 		}
 
 		/// <inheritdoc />
-		public override void AfterTest(ITest testDetails)
+		public override void AfterTest(ITest test)
 		{
 			// Shut down (and implicitly dispose) the keyboard controller we created.
-			base.AfterTest(testDetails);
+			base.AfterTest(test);
 			KeyboardController.Shutdown();
 			Keyboard.Controller = new DefaultKeyboardController();
 		}

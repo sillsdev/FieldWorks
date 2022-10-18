@@ -5,10 +5,10 @@
     <RootNamespace>NUnitReport</RootNamespace>
     <Description>Generate a report of passed and failed unit tests</Description>
     <Product>NUnitReport</Product>
+    <OutputPath>../Output/$(Product)</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" Version="5.6.9" PrivateAssets="All" />
     <PackageReference Include="SIL.FwBuildTasks.Lib" Version="10.0.0" />
   </ItemGroup>
 
@@ -18,10 +18,10 @@
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
   </ItemGroup>
 
-  <Target Name="CopyOutputToBuild" AfterTargets="CoreBuild">
+  <Target Name="CopyOutputToBuild">
     <ItemGroup>
       <FilesToCopy Include="$(OutputPath)/**/*.*" />
     </ItemGroup>
-    <Copy SourceFiles="@(FilesToCopy)" DestinationFolder="../.." />
+    <Copy SourceFiles="@(FilesToCopy)" DestinationFolder="../.."/>
   </Target>
 </Project>

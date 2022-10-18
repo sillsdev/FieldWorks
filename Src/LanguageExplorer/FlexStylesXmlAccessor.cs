@@ -17,6 +17,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Xml.XPath;
 using SIL.Code;
+using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
@@ -139,7 +140,7 @@ namespace LanguageExplorer
 		{
 			writer.WriteAttributeString("DTDver", DtdRequiredVersion);
 			writer.WriteAttributeString("label", "Flex Dictionary");
-			writer.WriteAttributeString("date", DateTime.UtcNow.ToString("yyyy-MM-dd"));
+			writer.WriteAttributeString("date", DateTime.UtcNow.ToISO8601TimeFormatDateOnlyString());
 			writer.WriteStartElement("markup");
 			writer.WriteAttributeString("version", GetVersion(_sourceStyles).ToString());
 			foreach (var style in StyleCollection)

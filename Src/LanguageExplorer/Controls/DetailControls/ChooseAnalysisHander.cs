@@ -350,7 +350,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				tsb.Replace(ichMinMsa, ichMinMsa, interlinName, posTextProperties);
 
 				//add sense
-				var sense = mb.SenseRA;
+				var sense = mb.SenseRA ?? mb.DefaultSense;
 				tsb.Replace(tsb.Length, tsb.Length, " ", null);
 				var ichMinSense = tsb.Length;
 				if (sense != null)

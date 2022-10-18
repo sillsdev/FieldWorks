@@ -8,23 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Encoding-Converters-Core" Version="0.0.8" PrivateAssets="native" />
-    <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="All" />
+    <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\FwCoreDlgs\FwCoreDlgs.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="ECInterfaces" Condition="'$(OS)'=='Unix'">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>/usr/lib/fieldworks/ECInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="SilEncConverters40" Condition="'$(OS)'=='Unix'">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 
   <ItemGroup>

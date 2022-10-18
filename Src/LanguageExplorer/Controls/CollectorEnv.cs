@@ -448,7 +448,7 @@ namespace LanguageExplorer.Controls
 		}
 
 		/// <summary />
-		public void CloseTableRow()
+		public virtual void CloseTableRow()
 		{
 			CloseFlowObject();
 		}

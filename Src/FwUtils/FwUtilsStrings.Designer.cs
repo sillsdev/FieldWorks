@@ -61,11 +61,38 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to FieldWorks will attempt to install the update from {0}, but you will need to restart FieldWorks yourself after the update is complete..
+        /// </summary>
+        public static string CannotRestartAutomaticallyMessage {
+            get {
+                return ResourceManager.GetString("CannotRestartAutomaticallyMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error converting wav file to mp3 {0}{1}{2}.
         /// </summary>
         public static string ConvertBytesToMp3_BadWavFile {
             get {
                 return ResourceManager.GetString("ConvertBytesToMp3_BadWavFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could Not Update Automatically.
+        /// </summary>
+        public static string CouldNotUpdateAutomaticallyCaption {
+            get {
+                return ResourceManager.GetString("CouldNotUpdateAutomaticallyCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FieldWorks could not be updated automatically. Please close all FieldWorks windows and install the update from {0}.
+        /// </summary>
+        public static string CouldNotUpdateAutomaticallyFileXMessage {
+            get {
+                return ResourceManager.GetString("CouldNotUpdateAutomaticallyFileXMessage", resourceCulture);
             }
         }
         
@@ -106,11 +133,29 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Corrupt Settings File Detected.
+        /// </summary>
+        public static string ksCorruptSettingsFileCaption {
+            get {
+                return ResourceManager.GetString("ksCorruptSettingsFileCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create Reversal.
         /// </summary>
         public static string ksCreateReversal {
             get {
                 return ResourceManager.GetString("ksCreateReversal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FieldWorks has detected one or more corrupted settings files. These files will be safely deleted. If you have been using different keyboards to input text, these may be reset to default values. Please restore them yourself..
+        /// </summary>
+        public static string ksDeleteAndReportCorruptSettingsFile {
+            get {
+                return ResourceManager.GetString("ksDeleteAndReportCorruptSettingsFile", resourceCulture);
             }
         }
         
@@ -416,6 +461,33 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This update contains a Send/Receive model change. If you are using Send/Receive with other FieldWorks users, everyone will need to update so you can continue to see each other&apos;s changes. (You will still be able to open your projects in FieldWorks {0}.).
+        /// </summary>
+        public static string ModelChangeFBButNotFW {
+            get {
+                return ResourceManager.GetString("ModelChangeFBButNotFW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This update contains a FieldWorks model change. After installing it, you will not be able to open your projects with older versions of FieldWorks. If you are using Send/Receive with other FieldWorks users, everyone will need to update so you can continue to see each other&apos;s changes..
+        /// </summary>
+        public static string ModelChangeLCM {
+            get {
+                return ResourceManager.GetString("ModelChangeLCM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This update contains a LIFT or LDML model change. If you are using Send/Receive with WeSay, WeSay users will need to update so you can continue to see each other&apos;s changes..
+        /// </summary>
+        public static string ModelChangeLIFT {
+            get {
+                return ResourceManager.GetString("ModelChangeLIFT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Punctuation in custom field name.
         /// </summary>
         public static string PunctInfieldNameCaption {
@@ -444,11 +516,56 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Restart to Update.
+        /// </summary>
+        public static string RestartToUpdateCaption {
+            get {
+                return ResourceManager.GetString("RestartToUpdateCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To install this update, restart FieldWorks at your convenience..
+        /// </summary>
+        public static string RestartToUpdatePrompt {
+            get {
+                return ResourceManager.GetString("RestartToUpdatePrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Undo {0}.
         /// </summary>
         public static string Undo_0 {
             get {
                 return ResourceManager.GetString("Undo_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A FieldWorks update has been downloaded (version {1}; you currently have {0})..
+        /// </summary>
+        public static string UpdateDownloadedVersionYCurrentX {
+            get {
+                return ResourceManager.GetString("UpdateDownloadedVersionYCurrentX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update FieldWorks Now?.
+        /// </summary>
+        public static string UpdateNowCaption {
+            get {
+                return ResourceManager.GetString("UpdateNowCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want to install it now? (You will need to grant permission to the installer.).
+        /// </summary>
+        public static string UpdateNowPrompt {
+            get {
+                return ResourceManager.GetString("UpdateNowPrompt", resourceCulture);
             }
         }
     }

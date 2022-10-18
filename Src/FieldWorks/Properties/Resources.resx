@@ -143,10 +143,6 @@
     <value>Loading Project {0}...</value>
     <comment>Splash screen message</comment>
   </data>
-  <data name="kstidGlobalWsChangedMsg" xml:space="preserve">
-    <value>The following writing systems were updated in another project. Would you like to use those changes in this project ({1}) too?
-{0}</value>
-  </data>
   <data name="kstidCacheInitFailure" xml:space="preserve">
     <value>Unable to initialize the data.</value>
     <comment>Message shown on the Unable to Open Project dialog box when the cache cannot be initialized.</comment>
@@ -184,9 +180,6 @@
   </data>
   <data name="ksDoYouWantToMigrate" xml:space="preserve">
     <value>Do you want to migrate existing projects from an older version of FieldWorks?</value>
-  </data>
-  <data name="kstidGlobalWsChangedCaption" xml:space="preserve">
-    <value>Global Writing Systems Changed</value>
   </data>
   <data name="ksCannotMoveProjects" xml:space="preserve">
     <value>FieldWorks is unable to move the following projects to the new location.</value>
@@ -285,6 +278,14 @@ We don't know why this happens. If you have any idea what recently changed on yo
   <data name="ksLinkedFilesFolder" xml:space="preserve">
     <value>Linked Files Folder</value>
     <comment>Caption for folder dialog, when setting a new LangProject.LinkedFilesRootDir value</comment>
+  </data>
+  <data name="AutomaticUpdatesCaption" xml:space="preserve">
+    <value>Automatic Updates</value>
+  </data>
+  <data name="AutomaticUpdatesMessage" xml:space="preserve">
+    <value>Would you like FieldWorks to download updates automatically?
+(To configure update settings, go to Tools-&gt;Options-&gt;Updates.)</value>
+    <comment>Question asked on first launch. Options are Yes and No.</comment>
   </data>
   <data name="ksCorruptSettingsFileCaption" xml:space="preserve">
     <value>Corrupt Settings File Detected</value>

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?if $(sys.BUILDARCH) = x64 ?>
-<?define CFDir = CommonFiles64Folder?>
+<?define EncodingConvertersPath = "..\..\packages\Encoding-Converters-Core.0.2.28\MergeModules\x64" ?>
 <?else?>
-<?define CFDir = CommonFilesFolder?>
+<?define EncodingConvertersPath = "..\..\packages\Encoding-Converters-Core.0.2.28\MergeModules\x86" ?>
 <?endif?>
-<?define EncodingConvertersPath = "..\..\packages\Encoding-Converters-Core.0.0.6\MergeModules" ?>
 <!-- REVIEW (Hasso) 2018.07: if this file gets too long, it can be split into separate files for MergeModules, L10n, and possibly others. -->
 <Include>
 	<?ifdef MASTERBUILDDIR?>
@@ -13,18 +12,16 @@
 	<WixVariable Id="RootObjectsDir" Value="$(var.UPDATEBUILDDIR)\.."/>
 	<?endif?>
 
-	<DirectoryRef Id="$(var.PFDir)">
-		<Directory Id="$(var.CFDir)">
-			<Directory Id="SIL" Name="SIL">
-				<Component Id="vs_piaredist.exe" Guid="69E34503-AFF1-455d-8B02-38EC1EC156C2">
-					<File Id="vs_piaredist.exe" Name="vs_piaredist.exe" ReadOnly="yes" Source="!(wix.RootObjectsDir)\vs_piaredist.exe"/>
-				</Component>
-				<?if $(sys.BUILDARCH) = x64 ?>
-				<Merge Id="TECkit_DLLs" Language="1033" SourceFile="$(var.EncodingConvertersPath)\TECkit64bitDLLsMM.msm" DiskId="1"/>
-				<?else?>
-				<Merge Id="TECkit_DLLs" Language="1033" SourceFile="$(var.EncodingConvertersPath)\TECkitDLLsMM.msm" DiskId="1"/>
-				<?endif?>
-			</Directory>
+	<DirectoryRef Id="$(var.CFDir)">
+		<Directory Id="SIL" Name="SIL">
+			<Component Id="vs_piaredist.exe" Guid="69E34503-AFF1-455d-8B02-38EC1EC156C2">
+				<File Id="vs_piaredist.exe" Name="vs_piaredist.exe" ReadOnly="yes" Source="!(wix.RootObjectsDir)\vs_piaredist.exe"/>
+			</Component>
+			<?if $(sys.BUILDARCH) = x64 ?>
+			<Merge Id="TECkit_DLLs" Language="1033" SourceFile="$(var.EncodingConvertersPath)\TECkit64bitDllsMM.msm" DiskId="1"/>
+			<?else?>
+			<Merge Id="TECkit_DLLs" Language="1033" SourceFile="$(var.EncodingConvertersPath)\TECkitDLLsMM.msm" DiskId="1"/>
+			<?endif?>
 		</Directory>
 	</DirectoryRef>
 
@@ -36,13 +33,19 @@
 			<Environment Id="FwInstallDir" Name="FIELDWORKSDIR" Action="set" System="yes" Value="[APPFOLDER]" />
 		</Component>
 		<Component Id="FwIcuData" Guid="34CB7CF2-6D44-488D-A497-E3EE42C95290">
-			<Environment Id="FwIcuData" Name="ICU_DATA" Action="set" System="yes" Value="[OVRHARVESTDATAFOLDER]\Icu54\icudt54l" />
+			<!-- When this value is updated, update the value passed to UnicodeCharEditor in the post-install step in Overrides.wxi, too -->
+			<Environment Id="FwIcuData" Name="ICU_DATA" Action="set" System="yes" Value="[OVRHARVESTDATAFOLDER]\Icu70" />
+		</Component>
+		<Component Id="WebonaryApiToggle" Guid="27CAE356-14F7-4908-91C1-DD897B166A6D">
+			<!-- Enable the cloud api upload. Remove it or set it to nothing to disable it. -->
+			<Environment Id="WebonaryApiToggle" Name="WEBONARY_API" Action="set" System="yes" Value="true" />
 		</Component>
 	</DirectoryRef>
 	<ComponentGroup Id="FwEnvironmentVars">
 		<ComponentRef Id="FwPath"/>
 		<ComponentRef Id="FwInstallDir"/>
 		<ComponentRef Id="FwIcuData"/>
+		<ComponentRef Id="WebonaryApiToggle"/>
 	</ComponentGroup>
 
 	<DirectoryRef Id="ProgramMenuFolder">
@@ -85,16 +88,16 @@
 			<Component Id="StartMenuFontsShortcut" Guid="C3300D43-CBD9-4244-AFBE-35B9FF3C01BA">
 				<Shortcut Id="AndikaDocShortcut"
 					Name="Andika Documentation"
-					Target="[APPFOLDER]Fonts\Andika-5.000\README.txt"/>
+					Target="[APPFOLDER]Fonts\Andika-6.101\README.txt"/>
 				<Shortcut Id="CharisSILDocShortcut"
 					Name="Charis SIL Documentation"
-					Target="[APPFOLDER]Fonts\CharisSIL-5.000\README.txt"/>
+					Target="[APPFOLDER]Fonts\CharisSIL-6.101\README.txt"/>
 				<Shortcut Id="DoulosSILDocShortcut"
 					Name="Doulos SIL Documentation"
-					Target="[APPFOLDER]Fonts\DoulosSIL-5.000\README.txt"/>
+					Target="[APPFOLDER]Fonts\DoulosSIL-6.101\README.txt"/>
 				<Shortcut Id="GentiumPlusDocShortcut"
 					Name="Gentium Plus Documentation"
-					Target="[APPFOLDER]Fonts\GentiumPlus-5.000\README.txt"/>
+					Target="[APPFOLDER]Fonts\GentiumPlus-6.101\README.txt"/>
 				<RemoveFolder Id="RemoveSILProgramMenuFolder" Directory="SILProgramMenuFolder" On="uninstall"/>
 				<!-- The KeyPath for this component is required to be a registry key under HKCU -->
 				<RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.SafeApplicationName)$(var.MajorVersion)FontDocu" Name="installed" Type="integer" Value="1" KeyPath="yes"/>

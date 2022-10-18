@@ -19,16 +19,15 @@
       "arguments": " --debug ../../NUnit.Runners.Net4.2.6.4/tools/nunit-console.exe -run=SIL.FieldWorks.Common.Widgets.FwListBoxTests.Add_EmptyObjectCollection_CollectionContainsSingleElement WidgetsTests.dll",
       "env": {
         "DISPLAY": ":0",
-        "GDK_SHARP": "/usr/lib/cli/gdk-sharp-2.0/",
-        "PATH": "/opt/mono5-dbg/bin:/opt/mono5-sil/bin:${workspaceRoot}/Output_x86_64/Debug/net462:/usr/lib/fieldworks/icu-bin:${workspaceRoot}/../libcom/COM/buildx86_64/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
-        "LD_LIBRARY_PATH": "/opt/mono5-dbg/lib:/opt/mono5-sil/lib:/usr/lib/fieldworks:${workspaceRoot}/Output_x86_64/Debug/net462:/usr/lib/fieldworks/lib:${workspaceRoot}/../libcom/COM/buildx86_64/lib:${workspaceRoot}/Output_x86_64/Debug/net462/Firefox-Linux64:/usr/lib",
+        "PATH": "/opt/mono5-dbg/bin:/opt/mono5-sil/bin:${workspaceRoot}/Output_x86_64/Debug:/usr/lib/fieldworks/icu-bin:${workspaceRoot}/../libcom/COM/buildx86_64/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "LD_LIBRARY_PATH": "/opt/mono5-dbg/lib:/opt/mono5-sil/lib:/usr/lib/fieldworks:${workspaceRoot}/Output_x86_64/Debug:/usr/lib/fieldworks/lib:${workspaceRoot}/../libcom/COM/buildx86_64/lib:${workspaceRoot}/Output_x86_64/Debug/Firefox-Linux64:/usr/lib",
         "FW_ROOT": "${workspaceRoot}/DistFiles",
         "FW_ROOTCODE": "${workspaceRoot}/DistFiles",
         "FW_ROOTDATA": "${workspaceRoot}/DistFiles",
         "FW_CommonAppData": "${workspaceRoot}/Output_x86_64/VarLibFieldworks",
         "MONO_REGISTRY_PATH": "${workspaceRoot}/Output_x86_64/registry",
         "MONO_GAC_PREFIX": "/opt/mono5-dbg:/opt/mono5-sil:/usr/lib/fieldworks:/usr",
-        "MONO_PATH": "${workspaceRoot}/DistFiles:${workspaceRoot}/Output_x86_64/Debug/net462:/usr/lib/cli/gdk-sharp-2.0/:/usr/lib/fieldworks",
+        "MONO_PATH": "${workspaceRoot}/DistFiles:${workspaceRoot}/Output_x86_64/Debug:/usr/lib/fieldworks",
         "MONO_TRACE_LISTENER": "Console.Out"
       }
     },
@@ -64,52 +63,112 @@
     },
     */
     {
-			"name": "Launch FW",
-			"env": {
-				// Use Flexbridge from code, rather than a package, if desired.
-				"FLEXBRIDGEDIR": "${workspaceRoot}/../flexbridge/output/DebugMono",
-				// Display on main display :0, or on a Xephyr :2.
-				"DISPLAY": ":0",
-				// Help FW+PT find FW. This could be set in environ, but because it needs set on a user's machine independently of environ, it's set here.
-				"FIELDWORKSDIR": "${workspaceRoot}/Output/Debug/net462",
-				// When launching FieldWorks, use this mono.
-				"PATH": "/opt/mono5-sil/bin:${env:PATH}",
-				// Path to the rest of the necessary enviromnent settings for FieldWorks. This is handled by a mono wrapper script in /opt.
-				"MONO_ENVIRON": "${workspaceRoot}/environ"
-			},
-			"type": "mono",
-			"request": "launch",
-			"program": "${workspaceRoot}/Output/Debug/net462/FieldWorks.exe",
-			"cwd": "${workspaceRoot}"
-		},
-		{
-			"name": "Launch unit tests",
-			"env": {
-				// Use Flexbridge from code, rather than a package, if desired.
-				"FLEXBRIDGEDIR": "${workspaceRoot}/../flexbridge/output/DebugMono",
-				// Display on main display :0, or on a Xephyr :2.
-				"DISPLAY": ":0",
-				// Help FW+PT find FW. This could be set in environ, but because it needs set on a user's machine independently of environ, it's set here.
-				"FIELDWORKSDIR": "${workspaceRoot}/Output/Debug/net462",
-				// When launching FieldWorks, use this mono.
-				"PATH": "/opt/mono5-sil/bin:${env:PATH}",
-				// Path to the rest of the necessary enviromnent settings for FieldWorks. This is handled by a mono wrapper script in /opt.
-				"MONO_ENVIRON": "${workspaceRoot}/environ"
-			},
-			"type": "mono",
-			"request": "launch",
-			"program": "${workspaceRoot}/Bin/NUnit/bin/nunit.exe",
-			"args": [
-			],
-			"cwd": "${workspaceRoot}/Output/Debug/net462",
-			"console": "integratedTerminal"
-		},
-		{
-			"name": "Attach",
-			"type": "mono",
-			"request": "attach",
-			"address": "localhost",
-			"port": 55555
-		}
-	]
+      "name": "Launch FW from workspace",
+      "env": {
+        // Use Flexbridge from code, rather than a package, if desired.
+        "FLEXBRIDGEDIR": "${workspaceRoot}/../flexbridge/output/Debug/net461",
+        // Send and receive to the QA LanguageForge server instead of production, if desired.
+        "LANGUAGEFORGESERVER": "-qa.languageforge.org",
+        // Display on main display :0, or on a Xephyr :2.
+        "DISPLAY": ":0",
+        // Help FW+PT find FW. This could be set in environ, but because it needs set on a user's machine independently of environ, it's set here.
+        "FIELDWORKSDIR": "${workspaceRoot}/Output/Debug",
+        // When launching FieldWorks, use this mono.
+        "PATH": "/opt/mono5-sil/bin:${env:PATH}",
+        // Path to the rest of the necessary enviromnent settings for FieldWorks. This is handled by a mono wrapper script in /opt.
+        "MONO_ENVIRON": "${workspaceRoot}/environ",
+        // Make FB listen for debugger attach, and Chorus print hg debugging info.
+        "CHORUSDEBUGGING": "true",
+      },
+      "type": "mono",
+      "request": "launch",
+      "program": "${workspaceRoot}/Output/Debug/FieldWorks.exe",
+      "cwd": "${workspaceRoot}"
+      // Optionally first build recently changed files.
+      // "preLaunchTask": "build recent"
+    },
+    {
+      "name": "Launch FW from flatpak (to attach debugger)",
+      "env": {
+        // Use Flexbridge from code, rather than a package, if desired.
+        // "FLEXBRIDGEDIR": "${workspaceRoot}/../flexbridge/output/Debug/net461",
+        // Display on main display :0, or on a Xephyr :2.
+        "DISPLAY": ":0",
+        // Help FW+PT find FW. This could be set in environ, but because it needs set on a user's machine independently of environ, it's set here.
+        "FIELDWORKSDIR": "${workspaceRoot}/Output/Debug",
+        // When launching FieldWorks, use this mono.
+        // "PATH": "/opt/mono5-sil/bin:${env:PATH}",
+        // Path to the rest of the necessary enviromnent settings for FieldWorks. This is handled by a mono wrapper script in /opt.
+        //"MONO_ENVIRON": "${workspaceRoot}/environ"
+        "CHORUSDEBUGGING": "true",
+      },
+      "type": "gdb",
+      "request": "launch",
+      "target": "/usr/bin/flatpak",
+      // Use suspend=y to pause until a debugger attaches
+      "arguments": "run --devel --env=FW_DEBUG=true --env=FW_MONO_OPTS=--debugger-agent=address=127.0.0.1:55555,transport=dt_socket,server=y,suspend=n org.sil.FieldWorks",
+      "cwd": "${workspaceRoot}"
+    },
+    {
+      "name": "Launch unit tests",
+      "env": {
+        // Use Flexbridge from code, rather than a package, if desired.
+        "FLEXBRIDGEDIR": "${workspaceRoot}/../flexbridge/output/Debug/net461",
+        // Display on main display :0, or on a Xephyr :2.
+        "DISPLAY": ":0",
+        // Help FW+PT find FW. This could be set in environ, but because it needs set on a user's machine independently of environ, it's set here.
+        "FIELDWORKSDIR": "${workspaceRoot}/Output/Debug",
+        // When launching FieldWorks, use this mono.
+        "PATH": "/opt/mono5-sil/bin:${env:PATH}",
+        // Path to the rest of the necessary enviromnent settings for FieldWorks. This is handled by a mono wrapper script in /opt.
+        "MONO_ENVIRON": "${workspaceRoot}/environ"
+      },
+      "type": "mono",
+      "request": "launch",
+      "program": "${workspaceRoot}/Bin/NUnit/bin/nunit.exe",
+      "args": [
+      ],
+      "cwd": "${workspaceRoot}/Output/Debug",
+      "console": "integratedTerminal"
+    },
+    // To debug FW managed code in flatpak, run FieldWorks using the following, and then start the debugger:
+    //   flatpak run --devel --env=FW_DEBUG=true --env=FW_MONO_OPTS=--debugger-agent=address=127.0.0.1:55555,transport=dt_socket,server=y,suspend=n org.sil.FieldWorks
+    {
+      "name": "Attach to local (such as flatpak)",
+      "type": "mono",
+      "request": "attach",
+      "address": "localhost",
+      "port": 55555
+    },
+    // To debug FW unmanaged code in flatpak, run using:
+    //   flatpak run --devel --env=FW_DEBUG=true --env=FW_COMMAND_PREFIX="gdbserver 127.0.0.1:9999" --env=FW_MONO_COMMAND=/app/bin/mono-sgen org.sil.FieldWorks
+    {
+      "type": "gdb",
+      "request": "attach",
+      "name": "Attach to local gdbserver",
+      "executable": "/opt/mono5-sil/bin/mono-sgen",
+      "target": "127.0.0.1:9999",
+      "remote": true,
+      "cwd": "${workspaceRoot}/Output_x86_64/Debug",
+      "gdbpath": "/usr/bin/gdb",
+      "autorun": [
+        "set sysroot target:/",
+        // Map source build location to where it is on your workstation to help breakpoints
+        // ( https://sourceware.org/gdb/onlinedocs/gdb/Source-Path.html#index-default-source-path-substitution ).
+        "set substitute-path /run/build/fieldworks ${workspaceRoot}/.."
+      ]
+    },
+    // To debug unmanaged code from testViews use this target after running:
+    // ./run-in-environ gdbserver 127.0.0.1:9999 ../Output/Debug/testViews
+    {
+      "type": "gdb",
+      "request": "attach",
+      "name": "Attach to 'testViews' in gdbserver",
+      "executable": "~/fwroot/fw/Output/Debug/testViews",
+      "target": "127.0.0.1:9999",
+      "remote": true,
+      "cwd": "${workspaceRoot}/Output_x86_64/Debug",
+      "gdbpath": "/usr/bin/gdb",
+    },
+  ]
 }

@@ -545,10 +545,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			{
 				using (new WaitCursor())
 				{
+					// The original check, not recursive.
+					clickNode.AddChildren(true, new HashSet<ICmObject>()); // All have to exist to get checked/unchecked
+
 					if (e.Action != TreeViewAction.Unknown)
 					{
-						// The original check, not recursive.
-						clickNode.AddChildren(true, new HashSet<ICmObject>()); // All have to exist to get checked/unchecked
 						if (!clickNode.IsExpanded)
 						{
 							clickNode.Expand(); // open up at least one level to show effects.

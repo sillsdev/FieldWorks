@@ -200,12 +200,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			m_lexicon.AddLexeme(lex);
 
 			lex = m_lexicon[lex.Id];
-			Assert.IsNotNull(lex);
+			Assert.That(lex, Is.Not.Null);
 			Assert.AreEqual(LexemeType.Stem, lex.Type);
 			Assert.AreEqual("a", lex.LexicalForm);
 
 			Lexeme lex2 = m_lexicon.CreateLexeme(LexemeType.Suffix, "monkey");
-			Assert.IsNull(m_lexicon[lex2.Id]);
+			Assert.That(m_lexicon[lex2.Id], Is.Null);
 		}
 
 		/// <summary>
@@ -390,12 +390,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			m_lexicon.AddLexeme(lex);
 
 			lex = m_lexicon[new LexemeKey(LexemeType.Stem, "Vacaci\u00f3n").Id];
-			Assert.IsNotNull(lex);
+			Assert.That(lex, Is.Not.Null);
 			Assert.AreEqual(LexemeType.Stem, lex.Type);
 			Assert.AreEqual("Vacaci\u00f3n", lex.LexicalForm);
 
 			LexiconSense sense = lex.AddSense();
-			Assert.IsNotNull(sense);
+			Assert.That(sense, Is.Not.Null);
 
 			LanguageText gloss = sense.AddGloss("en", "D\u00f3nde");
 
@@ -521,7 +521,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			// Nothing found
 			Lexeme matchingLexeme = m_lexicon.FindClosestMatchingLexeme("a");
-			Assert.IsNull(matchingLexeme);
+			Assert.That(matchingLexeme, Is.Null);
 
 			// Found by simple lexicon lookup
 			Lexeme lexeme = m_lexicon.CreateLexeme(LexemeType.Stem, "a");

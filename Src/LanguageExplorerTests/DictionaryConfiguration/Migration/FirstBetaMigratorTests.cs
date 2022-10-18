@@ -973,12 +973,12 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			// and that there ARE only 7 nodes.
 			Assert.AreEqual(7, etymChildren.Count);
 			var configNode = etymChildren.Find(node => node.Label == "Preceding Annotation");
-			Assert.IsNotNull(configNode, "Should have added Preceding Annotation node");
+			Assert.That(configNode, Is.Not.Null, "Should have added Preceding Annotation node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("PrecComment"));
 			Assert.That(configNode.IsEnabled, Is.True, "PrecComment node should be enabled");
 			TestForWritingSystemOptionsType(configNode, WritingSystemType.Analysis);
 			configNode = etymChildren.Find(node => node.Label == "Source Language");
-			Assert.IsNotNull(configNode, "Should have added Source Language node");
+			Assert.That(configNode, Is.Not.Null, "Should have added Source Language node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("LanguageRS"));
 			Assert.That(configNode.IsEnabled, Is.True, "Language node should be enabled");
 			Assert.True(configNode.IsEnabled, "Source Language node should be enabled by default");
@@ -990,35 +990,35 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			var childNodes = configNode.Children;
 			Assert.That(childNodes.Count, Is.EqualTo(2), "We ought to have Abbreviation and Name nodes here");
 			var abbrNode = childNodes.Find(n => n.Label == "Abbreviation");
-			Assert.IsNotNull(abbrNode, "Source Language should have an Abbrevation node");
+			Assert.That(abbrNode, Is.Not.Null, "Source Language should have an Abbrevation node");
 			Assert.True(abbrNode.IsEnabled, "Abbrevation node should be enabled by default");
 			TestForWritingSystemOptionsType(abbrNode, WritingSystemType.Analysis);
 			var nameNode = childNodes.Find(n => n.Label == "Name");
-			Assert.IsNotNull(nameNode, "Source Language should have an Name node");
+			Assert.That(nameNode, Is.Not.Null, "Source Language should have an Name node");
 			Assert.False(nameNode.IsEnabled, "Name node should not be enabled by default");
 			TestForWritingSystemOptionsType(nameNode, WritingSystemType.Analysis);
 			var langNotesNode = etymChildren.Find(node => node.FieldDescription == "LanguageNotes");
 			Assert.That(langNotesNode.IsEnabled, Is.True, "LanguageNotes node should be enabled by default");
 			TestForWritingSystemOptionsType(langNotesNode, WritingSystemType.Analysis);
 			configNode = etymChildren.Find(node => node.Label == "Source Form");
-			Assert.IsNotNull(configNode, "Should have changed the name of the old Etymological Form node");
+			Assert.That(configNode, Is.Not.Null, "Should have changed the name of the old Etymological Form node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("Form"));
 			Assert.That(configNode.IsEnabled, Is.True, "Form node should be enabled");
 			TestForWritingSystemOptionsType(configNode, WritingSystemType.Both);
 			configNode = etymChildren.Find(node => node.Label == "Gloss");
-			Assert.IsNotNull(configNode, "Should still have the Gloss node");
+			Assert.That(configNode, Is.Not.Null, "Should still have the Gloss node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("Gloss"));
 			Assert.That(configNode.IsEnabled, Is.True, "Gloss node should be enabled");
 			TestForWritingSystemOptionsType(configNode, WritingSystemType.Analysis);
 			configNode = etymChildren.Find(node => node.Label == "Following Comment");
-			Assert.IsNotNull(configNode, "Should have changed the name of the old Comment node");
+			Assert.That(configNode, Is.Not.Null, "Should have changed the name of the old Comment node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("Comment"));
 			Assert.That(configNode.IsEnabled, Is.False, "Comment node should NOT be enabled");
 			TestForWritingSystemOptionsType(configNode, WritingSystemType.Analysis);
 			configNode = etymChildren.Find(node => node.Label == "Note");
-			Assert.IsNull(configNode, "Should NOT add Note node to configurations");
+			Assert.That(configNode, Is.Null, "Should NOT add Note node to configurations");
 			configNode = etymChildren.Find(node => node.Label == "Bibliographic Source");
-			Assert.IsNotNull(configNode, "Should have added Bibliographic Source node");
+			Assert.That(configNode, Is.Not.Null, "Should have added Bibliographic Source node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("Bibliography"));
 			Assert.That(configNode.IsEnabled, Is.False, "Bibliography node should not be enabled");
 			TestForWritingSystemOptionsType(configNode, WritingSystemType.Analysis);
@@ -1169,7 +1169,7 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			Assert.AreEqual("Entry", etymologyNode.FieldDescription, "Should have changed 'Owner' field for reversal to 'Entry'");
 			Assert.AreEqual("etymologies", etymologyNode.CSSClassNameOverride, "Should have changed CSS override");
 			Assert.AreEqual(7, etymologyNode.Children.Count, "There should be 7 nodes after the conversion.");
-			Assert.IsNull(etymologyNode.DictionaryNodeOptions, "Improper options added to etymology sequence node.");
+			Assert.That(etymologyNode.DictionaryNodeOptions, Is.Null, "Improper options added to etymology sequence node.");
 		}
 
 		[Test]

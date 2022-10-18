@@ -338,12 +338,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				yield return new ScriptListItem(CurrentWs.Script);
 			}
-			foreach (var script in StandardSubtags.RegisteredScripts)
+			foreach (var script in StandardSubtags.RegisteredScripts.Where(s => !s.IsDeprecated))
 			{
-				if (script.IsDeprecated)
-				{
-					continue;
-				}
 				yield return new ScriptListItem(script);
 			}
 			yield return new ScriptListItem(_privateUseQaaaScript);
@@ -358,12 +354,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				yield return new RegionListItem(CurrentWs.Region);
 			}
-			foreach (var region in StandardSubtags.RegisteredRegions)
+			foreach (var region in StandardSubtags.RegisteredRegions.Where(r => !r.IsDeprecated))
 			{
-				if (region.IsDeprecated)
-				{
-					continue;
-				}
 				yield return new RegionListItem(region);
 			}
 			yield return new RegionListItem(_privateUseQMRegion);

@@ -592,8 +592,9 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			ISegment nextSeg;
 			realAnalysis = null;
-			var currentText = (IStText)currentPara.Owner;
-			var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>;
+			var currentText = currentPara.Owner as IStText;
+			Debug.Assert(currentText != null, "Paragraph not owned by a text.");
+			var lines = LineChoices.EnabledLineSpecs as IEnumerable<InterlinLineSpec>;
 			var delta = upward ? -1 : 1;
 			var nextSegIndex = delta + seg.IndexInOwner;
 			do
@@ -651,7 +652,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// <returns>The flid of the translation or note or 0 if none is found.</returns>
 		internal int GetFirstVisibleTranslationOrNoteFlid(ISegment segment, out int ws)
 		{
-			var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>;
+			var lines = LineChoices.EnabledLineSpecs as IEnumerable<InterlinLineSpec>;
 			Debug.Assert(lines != null, "Interlinear line configurations not enumerable 2");
 			var annotations = lines.SkipWhile(line => line.WordLevel).ToList();
 			var tryAnnotationIndex = lines.Count() - annotations.Count();
@@ -1002,9 +1003,12 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					return ArrowChange.None;
 				}
-				var lines = (IEnumerable<InterlinLineSpec>)LineChoices.m_specs; // so we can use linq
-				var isUpMove = DetectUpMove(e, lines, lineNum, curSeg, curNoteIndex, where, isRightToLeft, out var isUpNewSeg);
-				var isDownNewSeg = false;
+
+				var lines = LineChoices.EnabledLineSpecs as IEnumerable<InterlinLineSpec>; // so we can use linq
+				Debug.Assert(lines != null, "Interlinear line configurations not enumerable");
+				bool isUpMove = DetectUpMove(e, lines, lineNum, curSeg, curNoteIndex, where, isRightToLeft, out var isUpNewSeg);
+
+				bool isDownNewSeg = false;
 				if (!isUpMove)
 				{
 					// might be a downward move
@@ -1073,7 +1077,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			Debug.Assert(para != null, "Tried to move to a null paragraph ind=" + paragraphInd);
 			Debug.Assert(seg != null, "Tried to move to a null segment ind=" + seg.IndexInOwner + " in para " + paragraphInd);
 			// get the "next" segment with a real analysis or real translation or note
-			var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>; // so we can use linq
+			var lines = LineChoices.EnabledLineSpecs as IEnumerable<InterlinLineSpec>; // so we can use linq
 			while (true)
 			{
 				seg = GetNextSegment(para, seg, moveUp, out var realAnalysis);
@@ -1201,7 +1205,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			else
 			{   // this is the last translation or note and it can't be a null note because it was selected
-				var noteIsLastAnnotation = LineChoices[LineChoices.Count - 1].Flid == InterlinLineChoices.kflidNote;
+				var noteIsLastAnnotation = LineChoices.EnabledLineSpecs[LineChoices.EnabledCount - 1].Flid == InterlinLineChoices.kflidNote;
 				hasFollowingAnnotation = noteIsLastAnnotation && curNoteIndex < curSeg.NotesOS.Count - 1;
 			}
 			var hasDownMotion = e.KeyCode == Keys.Down || (TextIsRightToLeft
@@ -1289,11 +1293,11 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			if (wid > 0)
 			{
-				lineNum = LineChoices.IndexOf(id, wid);
+				lineNum = LineChoices.IndexInEnabled(id, wid);
 			}
 			if (lineNum == -1)
 			{
-				lineNum = LineChoices.IndexOf(id);
+				lineNum = LineChoices.IndexInEnabled(id);
 			}
 			return true;
 		}
@@ -1668,9 +1672,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			var annType = freeAnn.AnnotationTypeRA;
 			var idx = 0;
 			var choices = Vc.LineChoices;
-			for (var i = choices.FirstFreeformIndex; i < choices.Count;)
+			for (var i = choices.FirstEnabledFreeformIndex; i < choices.EnabledCount;)
 			{
-				var ffAannType = Vc.SegDefnFromFfFlid(choices[i].Flid);
+				var ffAannType = Vc.SegDefnFromFfFlid(choices.EnabledLineSpecs[i].Flid);
 				if (ffAannType == annType)
 				{
 					idx = i;
@@ -1679,9 +1683,9 @@ namespace LanguageExplorer.Controls.DetailControls
 				// Adjacent WSS of the same annotation count as only ONE object in the display.
 				// So we advance i over as many items in m_choices as there are adjacent Wss
 				// of the same flid.
-				i += choices.AdjacentWssAtIndex(i, hvoSeg).Length;
+				i += choices.AdjacentEnabledWssAtIndex(i, hvoSeg).Length;
 			}
-			var rgws = choices.AdjacentWssAtIndex(idx, hvoSeg);
+			var rgws = choices.AdjacentEnabledWssAtIndex(idx, hvoSeg);
 			for (var i = 0; i < rgws.Length; ++i)
 			{
 				if (rgws[i] == wsField)
@@ -2184,7 +2188,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				seg.NotesOS.Add(note);
 			});
 			TryHideFocusBoxAndUninstall();
-			if (Vc.LineChoices.IndexOf(InterlinLineChoices.kflidNote) < 0)
+			if (Vc.LineChoices.IndexInEnabled(InterlinLineChoices.kflidNote) < 0)
 			{
 				Vc.LineChoices.Add(InterlinLineChoices.kflidNote);
 				PersistAndDisplayChangedLineChoices();

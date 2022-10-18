@@ -472,10 +472,10 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 		public void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, string analysisWs)
 		{
-			Assert.IsNotNull(obj, "Must initialize with an object and flid.");
+			Assert.That(obj, Is.Not.Null, "Must initialize with an object and flid.");
 			Assert.Greater(flid, 0, "Must initialize with an object and flid.");
 			Assert.That(fieldName, Is.Not.Null.Or.Empty, "Must initialize with a field name.");
-				Initialize(cache, obj, flid, fieldName, null, string.Empty, analysisWs);
+			Initialize(cache, obj, flid, fieldName, null, string.Empty, analysisWs);
 		}
 	}
 

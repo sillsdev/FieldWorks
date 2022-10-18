@@ -256,7 +256,7 @@ namespace LanguageExplorer
 
 				//now switch to the next step
 				m_currentStepStartFraction += m_currentStepExpectedFractionOfTotal;
-				m_currentStepStartTime = ElapsedMilliSeconds();
+				m_currentStepStartTime = ElapsedMilliseconds();
 
 				//if we have seen the step before
 				if ((1 + m_stepIndex) <= m_expectedStepDurations.Count)
@@ -278,7 +278,7 @@ namespace LanguageExplorer
 
 			// Utility function to return elapsed Milliseconds since the
 			// SplashScreen was launched.
-			private double ElapsedMilliSeconds()
+			private double ElapsedMilliseconds()
 			{
 				var ts = DateTime.Now - m_startTime;
 				return ts.TotalMilliseconds;
@@ -286,7 +286,7 @@ namespace LanguageExplorer
 
 			private double ElapsedTimeDoingThisStep()
 			{
-				return ElapsedMilliSeconds() - m_currentStepStartTime;
+				return ElapsedMilliseconds() - m_currentStepStartTime;
 			}
 
 			// Function to read the checkpoint intervals from the previous invocation of the
@@ -319,7 +319,7 @@ namespace LanguageExplorer
 			private void StoreIncrements()
 			{
 				var stepTimes = string.Empty;
-				var actualElapsedMilliseconds = ElapsedMilliSeconds();
+				var actualElapsedMilliseconds = ElapsedMilliseconds();
 				stepTimes = m_actualStepDurations.Aggregate(stepTimes, (current, actualStepDuration) => current + (actualStepDuration.ToString("0.####", System.Globalization.NumberFormatInfo.InvariantInfo) + " "));
 				SetStringRegistryValue(REGVALUE_PB_STEP_DURATIONS, m_taskLabel, stepTimes);
 				SetStringRegistryValue(REGVALUE_PB_TOTAL_TIME, m_taskLabel, actualElapsedMilliseconds.ToString("#.000000", System.Globalization.NumberFormatInfo.InvariantInfo));

@@ -1,16 +1,17 @@
-// Copyright (c) 2012-2020 SIL International
+// Copyright (c) 2012-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework.Interfaces;
 using System;
 using System.Runtime.InteropServices;
+// ReSharper disable InconsistentNaming
 
 namespace FieldWorks.TestUtilities.Attributes
 {
 	/// <summary>
 	/// NUnit helper attribute that optionally redirects HKCU to a subkey so that multiple
-	/// builds can run in parallel. Depending on wether the environment variable
+	/// builds can run in parallel. Depending on whether the environment variable
 	/// BUILDAGENT_SUBKEY is set the registry tree HKCU is redirected to a temporary key.
 	/// This means that for the life of the process everything it attempts to read or write to
 	/// HKCU/X will go to/come from tempKey/X. When running on Jenkins each build will have a
@@ -44,9 +45,9 @@ namespace FieldWorks.TestUtilities.Attributes
 		private static string TmpRegistryKey => $@"Software\SIL\BuildAgents\{KeyPart}\HKCU";
 
 		/// <inheritdoc />
-		public override void BeforeTest(ITest testDetails)
+		public override void BeforeTest(ITest test)
 		{
-			base.BeforeTest(testDetails);
+			base.BeforeTest(test);
 
 			if (Environment.OSVersion.Platform != PlatformID.Unix && !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BUILDAGENT_SUBKEY")))
 			{
@@ -57,14 +58,14 @@ namespace FieldWorks.TestUtilities.Attributes
 		}
 
 		/// <inheritdoc />
-		public override void AfterTest(ITest testDetails)
+		public override void AfterTest(ITest test)
 		{
 			if (Environment.OSVersion.Platform != PlatformID.Unix && !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BUILDAGENT_SUBKEY")))
 			{
 				// End redirection. Otherwise test might fail when we run them multiple times in NUnit.
 				RegOverridePredefKey(HKEY_CURRENT_USER, UIntPtr.Zero);
 			}
-			base.AfterTest(testDetails);
+			base.AfterTest(test);
 		}
 
 		/// <inheritdoc />

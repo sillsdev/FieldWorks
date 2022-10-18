@@ -196,7 +196,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected bool m_fMakeRootWhenHandleIsCreated = true;
 
 		private int m_lastVerticalScrollPosition = 1;
-		private bool m_fDisposed;
 
 		private OrientationManager m_orientationManager;
 		private ISubscriber m_subscriber;
@@ -380,8 +379,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			PropertyTable = null;
 			Publisher = null;
 			Subscriber = null;
-
-			m_fDisposed = true;
 		}
 
 		/// <summary>

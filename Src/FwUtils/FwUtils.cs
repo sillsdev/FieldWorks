@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using Icu.Collation;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
@@ -21,6 +22,7 @@ using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Reporting;
+using SIL.Settings;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -207,6 +209,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// ICU_DATA should point to the directory that contains nfc_fw.nrm and nfkc_fw.nrm
 			// (i.e. icudt54l).
 			CustomIcu.InitIcuDataDir();
+		}
+
+		/// <summary>
+		/// Creates a collator using Icu Locale for the writing system if possible
+		/// </summary>
+		/// <returns>A collator for the writing system, or null</returns>
+		public static Collator GetCollatorForWs(string sWs)
+		{
+			Collator col = null;
+			try
+			{
+				var icuLocale = new Icu.Locale(sWs).Name;
+				col = Collator.Create(icuLocale);
+			}
+			catch (Exception)
+			{
+				// If we can't create a collator for this writing system cache a null, we won't be able to next time either
+			}
+
+			return col;
 		}
 
 		/// <summary>
@@ -556,13 +578,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 								applicationSettings.WebonaryPass = (string)valueElem;
 								break;
 							case "Reporting":
-								var reader = valueElem.CreateReader();
-								reader.MoveToContent();
-								var xml = reader.ReadInnerXml();
-								applicationSettings.Reporting = Xml.XmlSerializationHelper.DeserializeFromString<ReportingSettings>(xml);
+								using(var reader = valueElem.CreateReader())
+								{
+									reader.MoveToContent();
+									var xml = reader.ReadInnerXml();
+									applicationSettings.Reporting = Xml.XmlSerializationHelper.DeserializeFromString<ReportingSettings>(xml);
+								}
 								break;
 							case "LocalKeyboards":
 								applicationSettings.LocalKeyboards = (string)valueElem;
+								break;
+							case "Update":
+								using(var reader = valueElem.CreateReader())
+								{
+									reader.MoveToContent();
+									var xml = reader.ReadInnerXml();
+									applicationSettings.Update = Xml.XmlSerializationHelper.DeserializeFromString<UpdateSettings>(xml);
+								}
 								break;
 						}
 					}

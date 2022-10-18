@@ -1,9 +1,14 @@
-// Copyright (c) 2013-2020 SIL International
+// Copyright (c) 2013-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
 using LanguageExplorer.Controls.XMLViews;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorerTests.Controls.XMLViews
 {
@@ -129,6 +134,51 @@ namespace LanguageExplorerTests.Controls.XMLViews
 ".Replace("'", "\"");
 			var output = XmlBrowseViewVc.FixVersion16Columns(input);
 			Assert.That(output, Is.EqualTo(expectedOutput), "$ws= should be added to various fields");
+		}
+
+		[Test]
+		public void GetHeaderLabels_ReturnsColumnSpecLabels()
+		{
+			var testColumns =
+@"<columns>
+	<column label='Ref' width='60000'>
+		<span>
+			<properties>
+				<editable value='false'/>
+			</properties>
+			<string class='FakeOccurrence' field='Reference' ws='$ws=best vernoranal'/>
+		</span>
+	</column>
+	<column label='Occurrence' sortType='occurrenceInContext' width='415000' multipara='true'>
+		<concpara min='FakeOccurrence.BeginOffset' lim='FakeOccurrence.EndOffset' align='144000'>
+			<properties>
+				<editable value='false'/>
+			</properties>
+			<obj class='FakeOccurrence' field='TextObject' layout='empty'>
+				<choice>
+				<where is='StTxtPara'>
+					<string class='StTxtPara' field='Contents' ws='$ws=best vernacular'/>
+				</where>
+				<where is='CmPicture'>
+					<string class='CmPicture' field='Caption' ws='vernacular'/>
+				</where>
+				</choice>
+			</obj>
+		</concpara>
+	</column>
+</columns>";
+
+			var columnDoc = new XmlDocument();
+			columnDoc.LoadXml(testColumns);
+			var xElem = XElement.Load(columnDoc.DocumentElement.CreateNavigator().ReadSubtree());
+			var testVc = new XmlBrowseViewVc
+			{
+				ColumnSpecs = xElem.DescendantsAndSelf("column").ToList()
+			};
+
+			var columnLabels = XmlBrowseViewVc.GetHeaderLabels(testVc, StringTable.Table);
+
+			CollectionAssert.AreEqual(new List<string> { "Ref", "Occurrence" }, columnLabels);
 		}
 	}
 }

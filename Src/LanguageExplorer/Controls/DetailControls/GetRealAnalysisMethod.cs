@@ -131,7 +131,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				return m_wf;
 			}
 			// Update the wordform with any additional wss.
-			var wordformWss = m_choices.OtherWritingSystemsForFlid(InterlinLineChoices.kflidWord, 0);
+			var wordformWss = m_choices.OtherEnabledWritingSystemsForFlid(InterlinLineChoices.kflidWord, 0);
 			// we need another way to detect the static ws for kflidWord.
 			foreach (var wsId in wordformWss)
 			{
@@ -273,7 +273,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// We may need to create a new WfiAnalysis based on whether we have any sandbox gloss content.
 			var fNeedGloss = false;
 			var fWordGlossLineIsShowing = false; // Set to 'true' if the wrod gloss line is included in the m_choices fields.
-			foreach (InterlinLineSpec ilc in m_choices)
+			foreach (InterlinLineSpec ilc in m_choices.EnabledLineSpecs)
 			{
 				if (ilc.Flid == InterlinLineChoices.kflidWordGloss)
 				{
@@ -284,7 +284,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (fWordGlossLineIsShowing)
 			{
 				// flag that we need to create wfi gloss information if any configured word gloss lines have content.
-				if (m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss).Any(wsId => m_sda.get_MultiStringAlt(m_hvoSbWord, SandboxBase.ktagSbWordGloss, wsId).Length > 0))
+				if (m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss).Any(wsId => m_sda.get_MultiStringAlt(m_hvoSbWord, SandboxBase.ktagSbWordGloss, wsId).Length > 0))
 				{
 					fNeedGloss = true;
 				}
@@ -508,7 +508,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				gloss = wgFactory.Create();
 				m_wa.MeaningsOC.Add(gloss);
 			}
-			foreach (var wsId in m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
+			foreach (var wsId in m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 			{
 				var tssGloss = m_sda.get_MultiStringAlt(m_hvoSbWord, SandboxBase.ktagSbWordGloss, wsId);
 				if (!tssGloss.Equals(gloss.Form.get_String(wsId)))
@@ -521,7 +521,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void CopyGlossesToSense(ILexSense sense)
 		{
-			foreach (var wsId in m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
+			foreach (var wsId in m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 			{
 				UpdateMlaIfDifferent(m_hvoSbWord, SandboxBase.ktagSbWordGloss, wsId, sense.Hvo, LexSenseTags.kflidGloss);
 			}
@@ -529,7 +529,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void CopyGlossesToWfiGloss(IWfiGloss gloss)
 		{
-			foreach (var wsId in m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
+			foreach (var wsId in m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 			{
 				UpdateMlaIfDifferent(m_hvoSbWord, SandboxBase.ktagSbWordGloss, wsId, gloss.Hvo, WfiGlossTags.kflidForm);
 			}
@@ -689,7 +689,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				return false;
 			}
 			// compare our gloss information.
-			return m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss).All(wsId => IsMlSame(m_hvoSbWord, SandboxBase.ktagSbWordGloss, wsId, morphItem.m_hvoSense, LexSenseTags.kflidGloss));
+			return m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss).All(wsId => IsMlSame(m_hvoSbWord, SandboxBase.ktagSbWordGloss, wsId, morphItem.m_hvoSense, LexSenseTags.kflidGloss));
 		}
 
 		protected void BuildMorphLists()
@@ -739,7 +739,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private void EnsureCorrectMorphForms()
 		{
-			var otherWss = m_choices.OtherWritingSystemsForFlid(InterlinLineChoices.kflidMorphemes, 0);
+			var otherWss = m_choices.OtherEnabledWritingSystemsForFlid(InterlinLineChoices.kflidMorphemes, 0);
 			foreach (var wsId in otherWss)
 			{
 				for (var imorph = 0; imorph < m_cmorphs; imorph++)
@@ -770,7 +770,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal IWfiGloss FindMatchingGloss()
 		{
-			var wsIds = m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss);
+			var wsIds = m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss);
 			var sda = m_sda;
 			var wfiAnalysis = m_wa;
 			var hvoWord = m_hvoSbWord;
@@ -895,7 +895,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private bool MatchesCurrentGlosses(IWfiGloss gloss)
 		{
-			foreach (var wsId in m_choices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
+			foreach (var wsId in m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 			{
 				var tssGloss = m_sda.get_MultiStringAlt(m_hvoSbWord, SandboxBase.ktagSbWordGloss, wsId);
 				if (!tssGloss.Equals(gloss.Form.get_String(wsId)))

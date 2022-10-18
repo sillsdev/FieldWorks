@@ -8,7 +8,6 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Windows.Forms;
 using DialogAdapters;
-using Mono.Unix;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
@@ -56,7 +55,7 @@ namespace SIL.FieldWorks
 			{
 				var newFolder = m_tbProjectsFolder.Text;
 				var oldFolder = FwDirectoryFinder.ProjectsDirectory;
-				if (!Platform.IsUnix)
+				if(!Platform.IsUnix)
 				{
 					newFolder = newFolder.ToLowerInvariant();
 					oldFolder = oldFolder.ToLowerInvariant();
@@ -128,52 +127,46 @@ namespace SIL.FieldWorks
 				}
 				pathToTest = Path.GetDirectoryName(pathToTest);
 			}
-			if (Platform.IsWindows)
+			// Check the OS file permissions for the folder
+			var accessControlList = Directory.GetAccessControl(pathToTest);
+			var accessRules = accessControlList.GetAccessRules(true, true, typeof(SecurityIdentifier));
+			var readAllowed = false;
+			var writeAllowed = false;
+			foreach (FileSystemAccessRule rule in accessRules)
 			{
-				// Check the OS file permissions for the folder
-				var accessControlList = Directory.GetAccessControl(pathToTest);
-				var accessRules = accessControlList.GetAccessRules(true, true, typeof(SecurityIdentifier));
-				var readAllowed = false;
-				var writeAllowed = false;
-				foreach (FileSystemAccessRule rule in accessRules)
+				//If we find one that matches the identity we are looking for
+				using (var currentUserIdentity = WindowsIdentity.GetCurrent())
 				{
-					//If we find one that matches the identity we are looking for
-					using (var currentUserIdentity = WindowsIdentity.GetCurrent())
+					var userName = currentUserIdentity.User.Value;
+					if (rule.IdentityReference.Value.Equals(userName, StringComparison.CurrentCultureIgnoreCase) ||
+						currentUserIdentity.Groups.Contains(rule.IdentityReference))
 					{
-						var userName = currentUserIdentity.User.Value;
-						if (rule.IdentityReference.Value.Equals(userName, StringComparison.CurrentCultureIgnoreCase) ||
-							currentUserIdentity.Groups.Contains(rule.IdentityReference))
+						if ((FileSystemRights.Read & rule.FileSystemRights) == FileSystemRights.Read)
 						{
-							if ((FileSystemRights.Read & rule.FileSystemRights) == FileSystemRights.Read)
+							switch (rule.AccessControlType)
 							{
-								switch (rule.AccessControlType)
-								{
-									case AccessControlType.Allow:
-										readAllowed = true;
-										break;
-									case AccessControlType.Deny:
-										return false;
-								}
+								case AccessControlType.Allow:
+									readAllowed = true;
+									break;
+								case AccessControlType.Deny:
+									return false;
 							}
-							if ((FileSystemRights.Write & rule.FileSystemRights) == FileSystemRights.Write)
+						}
+						if ((FileSystemRights.Write & rule.FileSystemRights) == FileSystemRights.Write)
+						{
+							switch (rule.AccessControlType)
 							{
-								switch (rule.AccessControlType)
-								{
-									case AccessControlType.Allow:
-										writeAllowed = true;
-										break;
-									case AccessControlType.Deny:
-										return false;
-								}
+								case AccessControlType.Allow:
+									writeAllowed = true;
+									break;
+								case AccessControlType.Deny:
+									return false;
 							}
 						}
 					}
 				}
-				return readAllowed && writeAllowed;
 			}
-			// Linux
-			var ufi = new UnixDirectoryInfo(pathToTest);
-			return ufi.CanAccess(Mono.Unix.Native.AccessModes.R_OK) && ufi.CanAccess(Mono.Unix.Native.AccessModes.W_OK); // accessible for writing
+			return readAllowed && writeAllowed;
 		}
 
 		/// <summary>

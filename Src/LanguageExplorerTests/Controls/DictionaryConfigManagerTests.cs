@@ -255,7 +255,7 @@ namespace LanguageExplorerTests.Controls
 			m_testPresenter.StubConfigDict.TryGetValue(stest2, out var item);
 			Assert.IsFalse(item.IsNew, "Old item should not be marked as New.");
 			var configItem = GetKeyFromValue("Copy of " + stest1);
-			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
+			Assert.That(configItem, Is.Not.Null, "Didn't find an item with the right Name.");
 			Assert.IsTrue(configItem.IsNew, "New item should be marked as New.");
 			Assert.AreEqual(stest2, configItem.CopyOf, "New item should be marked as a 'Copy of' old item.");
 			Assert.AreEqual(stest2, m_testPresenter.StubOrigView, "Copy should not have changed original view.");
@@ -286,7 +286,7 @@ namespace LanguageExplorerTests.Controls
 			// Verify1
 			Assert.AreEqual(cnt + 1, m_testPresenter.StubConfigDict.Count, "Should have added a new item.");
 			var configItem = GetKeyFromValue("Copy of " + stest1);
-			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
+			Assert.That(configItem, Is.Not.Null, "Didn't find an item with the right Name.");
 
 			// SUT2
 			m_testPresenter.CopyConfigItem(configItem.UniqueCode);
@@ -373,7 +373,7 @@ namespace LanguageExplorerTests.Controls
 			// Verify1
 			Assert.AreEqual(cnt + 1, m_testPresenter.StubConfigDict.Count, "Should have gained a copied item.");
 			var configItem = GetKeyFromValue(newName);
-			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
+			Assert.That(configItem, Is.Not.Null, "Didn't find an item with the right Name.");
 			Assert.IsTrue(configItem.IsNew, "New item should be marked as New.");
 			Assert.AreEqual(stest2, configItem.CopyOf, "New item should be marked as a 'Copy of' old item.");
 			Assert.AreEqual(stest2, m_testPresenter.StubOrigView, "Copy should not have changed original view.");
@@ -406,7 +406,7 @@ namespace LanguageExplorerTests.Controls
 			// Verify1
 			Assert.AreEqual(cnt + 1, m_testPresenter.StubConfigDict.Count, "Should have gained a copied item.");
 			var configItem = GetKeyFromValue(newName);
-			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
+			Assert.That(configItem, Is.Not.Null, "Didn't find an item with the right Name.");
 			Assert.IsTrue(configItem.IsNew, "New item should be marked as New.");
 			Assert.AreEqual(stest2, configItem.CopyOf, "New item should be marked as a 'Copy of' old item.");
 			Assert.AreEqual(stest2, m_testPresenter.StubOrigView, "Copy should not have changed original view.");
@@ -442,9 +442,11 @@ namespace LanguageExplorerTests.Controls
 			// Verify1
 			Assert.AreEqual(1, m_testPresenter.NewConfigurationViews.Count(), "Wrong number of new items.");
 			var configItem = GetKeyFromValue("Copy of " + sname2);
-			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
-			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.NewConfigurationViews.First().Item1, "Wrong unique code reported for new item.");
-			Assert.AreEqual(sid2, m_testPresenter.NewConfigurationViews.First().Item2, "Wrong Copy Of reported for new item.");
+			Assert.That(configItem, Is.Not.Null, "Didn't find an item with the right Name.");
+			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.NewConfigurationViews.First().Item1,
+				"Wrong unique code reported for new item.");
+			Assert.AreEqual(sid2, m_testPresenter.NewConfigurationViews.First().Item2,
+				"Wrong Copy Of reported for new item.");
 			Assert.AreEqual(1, m_testPresenter.RenamedExistingViews.Count());
 			Assert.AreEqual(sid2, m_testPresenter.RenamedExistingViews.First().Item1, "Wrong item reported as renamed.");
 			Assert.AreEqual(newName, m_testPresenter.RenamedExistingViews.First().Item2, "Wrong new name reported for renamed item.");
@@ -481,12 +483,17 @@ namespace LanguageExplorerTests.Controls
 			// Verify1
 			Assert.AreEqual(1, m_testPresenter.NewConfigurationViews.Count(), "Wrong number of new items.");
 			var configItem = GetKeyFromValue("Copy of " + sname2);
-			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
-			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.NewConfigurationViews.First().Item1, "Wrong unique code reported for new item.");
-			Assert.AreEqual(sid2, m_testPresenter.NewConfigurationViews.First().Item2, "Wrong Copy Of reported for new item.");
-			Assert.IsNull(m_testPresenter.RenamedExistingViews, "Deleted view should not be reported as renamed too.");
-			Assert.AreEqual(1, m_testPresenter.ConfigurationViewsToDelete.Count(), "Wrong number of deleted items.");
-			Assert.AreEqual(sid2, m_testPresenter.ConfigurationViewsToDelete.First(), "Wrong item reported as deleted.");
+			Assert.That(configItem, Is.Not.Null, "Didn't find an item with the right Name.");
+			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.NewConfigurationViews.First().Item1,
+				"Wrong unique code reported for new item.");
+			Assert.AreEqual(sid2, m_testPresenter.NewConfigurationViews.First().Item2,
+				"Wrong Copy Of reported for new item.");
+			Assert.IsNull(m_testPresenter.RenamedExistingViews,
+				"Deleted view should not be reported as renamed too.");
+			Assert.AreEqual(1, m_testPresenter.ConfigurationViewsToDelete.Count(),
+				"Wrong number of deleted items.");
+			Assert.AreEqual(sid2, m_testPresenter.ConfigurationViewsToDelete.First(),
+				"Wrong item reported as deleted.");
 		}
 
 		/// <summary>

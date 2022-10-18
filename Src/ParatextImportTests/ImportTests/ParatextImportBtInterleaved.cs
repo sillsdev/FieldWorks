@@ -76,7 +76,7 @@ namespace ParatextImport.ImportTests
 			// begin first section (intro material)
 			// ************** process an intro section head, test MakeSection() method ************
 			m_importer.ProcessSegment("Kintro Ksection", @"\is");
-			Assert.IsNotNull(m_importer.CurrentSection);
+			Assert.That(m_importer.CurrentSection, Is.Not.Null);
 			// verify state of NormalParaStrBldr
 			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
 			VerifyBldrRun(0, "Kintro Ksection", null);
@@ -246,7 +246,7 @@ namespace ParatextImport.ImportTests
 
 			// This scripture section heading has no BT
 			Assert.AreEqual(1, heading.TranslationsOC.Count);
-			Assert.IsNull(heading.TranslationsOC.ToArray()[0].Translation.AnalysisDefaultWritingSystem.Text);
+			Assert.That(heading.TranslationsOC.ToArray()[0].Translation.AnalysisDefaultWritingSystem.Text, Is.Null);
 
 			// ************** process a chapter *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 2, 0);
@@ -824,7 +824,7 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(1, footnotePara.TranslationsOC.Count);
 			footnoteBT = footnotePara.TranslationsOC.ToArray()[0];
 			tssFootnoteBT = footnoteBT.Translation.get_String(m_wsAnal);
-			Assert.IsNull(tssFootnoteBT.Text);
+			Assert.That(tssFootnoteBT.Text, Is.Null);
 
 			// *************** Verify second paragraph ***************
 			// verify that the verse text of the second scripture para is in the db correctly
@@ -2102,10 +2102,11 @@ namespace ParatextImport.ImportTests
 			// Then try to add a back translation
 			m_importer.ProcessSegment("Main Title", @"\btmt");
 
-			Assert.That(() => { m_importer.FinalizeImport(); }, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(@"Back translation not part of a paragraph:(\r)?\n" +
-			@"\tMain Title(\r)?\n" +
-			@"\t\(Style: Title Main\)(\r)?\n" +
-			@"Attempting to read EXO"));
+			Assert.That(() => m_importer.FinalizeImport(), Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(
+				@"Back translation not part of a paragraph:(\r)?\n" +
+				@"\tMain Title(\r)?\n" +
+				@"\t\(Style: Title Main\)(\r)?\n" +
+				"Attempting to read EXO"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2302,7 +2303,8 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id");
 			m_importer.ProcessSegment("A ", @"\mt");
-			Assert.That(() => { m_importer.ProcessSegment("B ", @"\btp"); }, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match("Back translation does not correspond to the " +
+			Assert.That(() => m_importer.ProcessSegment("B ", @"\btp"), Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(
+				"Back translation does not correspond to the " +
 				"preceding vernacular paragraph:(\\r)?\\n\\t\\\\btp B (\\r)?\\n" +
 				"The style for a back translation paragraph must match the style for the " +
 				"vernacular paragraph. A back translation paragraph must belong to the " +
@@ -2839,9 +2841,8 @@ namespace ParatextImport.ImportTests
 
 			// ************** process a section head (for 1:1) *********************
 			m_importer.ProcessSegment("Kscripture Ksection", @"\s");
-			Assert.That(() => { m_importer.ProcessSegment("Scripture Section", @"\bts"); }, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match("No corresponding vernacular book for back translation.(\r)?\n" +
-			"Attempting to read EXO"));
-			// Shouldn't get here
+			Assert.That(() => m_importer.ProcessSegment("Scripture Section", @"\bts"), Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(
+				"No corresponding vernacular book for back translation.(\r)?\nAttempting to read EXO"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2866,9 +2867,8 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
 
 			// ************** process a back trans main title *********************
-			Assert.That(() => { m_importer.ProcessSegment("We're gonna die!", @"\btmt"); ; }, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match("No corresponding vernacular book for back translation.(\r)?\n" +
-			"Attempting to read EXO"));
-			// Shouldn't get here
+			Assert.That(()=> m_importer.ProcessSegment("We're gonna die!", @"\btmt"), Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(
+				"No corresponding vernacular book for back translation.(\r)?\nAttempting to read EXO"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2896,9 +2896,8 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("vamos a morir", @"\mt");
 
 			// ************** process a back trans main title *********************
-			Assert.That(() => { m_importer.ProcessSegment("We're gonna die!", @"\btmt"); }, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match("No corresponding vernacular book for back translation.(\r)?\n" +
-			"Attempting to read EXO"));
-			// Shouldn't get here
+			Assert.That(() => m_importer.ProcessSegment("We're gonna die!", @"\btmt"), Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(
+				"No corresponding vernacular book for back translation.(\r)?\nAttempting to read EXO"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3242,7 +3241,7 @@ namespace ParatextImport.ImportTests
 			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
 			Assert.AreEqual("Primera Seccion", para.Contents.Text);
 			Assert.AreEqual(1, para.TranslationsOC.Count);
-			Assert.IsNull(para.TranslationsOC.ToArray()[0].Translation.AnalysisDefaultWritingSystem.Text);
+			Assert.That(para.TranslationsOC.ToArray()[0].Translation.AnalysisDefaultWritingSystem.Text, Is.Null);
 			Assert.AreEqual(4, section.ContentOA.ParagraphsOS.Count);
 			// paragraph 1
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];

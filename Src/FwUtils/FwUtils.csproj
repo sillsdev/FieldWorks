@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <UseWindowsForms>true</UseWindowsForms>
@@ -9,10 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="All" />
+    <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
     <PackageReference Include="NAudio.Lame" Version="1.1.6" />
-    <PackageReference Include="SIL.Core" Version="9.0.0-beta0076" />
+    <PackageReference Include="SIL.Core" Version="11.0.0-beta0041" />
+    <PackageReference Include="SIL.DesktopAnalytics" Version="3.0.3" />
     <PackageReference Include="SIL.FLExBridge.IPCFramework" Version="1.1.0" />
+    <PackageReference Include="SIL.Windows.Forms" Version="11.0.0-beta0041" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,7 +46,7 @@
 
   <ItemGroup>
     <EmbeddedResource Update="FwUtilsStrings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>FwUtilsStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>

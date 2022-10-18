@@ -32,6 +32,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 		private string m_sM3FXTAffixAlloFeatsDump;
 		private string m_sM3FXTLatinDump;
 		private string m_sM3FXTIrregularlyInflectedFormsDump;
+		private string m_sAbazaOrderClassPlayDump;
 		private readonly Dictionary<string, XPathDocument> m_mapXmlDocs = new Dictionary<string, XPathDocument>();
 		private XslCompiledTransform m_adTransform;
 		private XslCompiledTransform m_lexTransform;
@@ -66,6 +67,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			m_sM3FXTAffixAlloFeatsDump = Path.Combine(m_sTestPath, "TestAffixAllomorphFeatsParserFxtResult.xml");
 			m_sM3FXTLatinDump = Path.Combine(m_sTestPath, "LatinParserFxtResult.xml");
 			m_sM3FXTIrregularlyInflectedFormsDump = Path.Combine(m_sTestPath, "IrregularlyInflectedFormsParserFxtResult.xml");
+			m_sAbazaOrderClassPlayDump = Path.Combine(m_sTestPath, "Abaza-OrderclassPlay.xml");
 
 			SetupXmlDocument(m_sM3FXTDump);
 			SetupXmlDocument(m_sM3FXTCircumfixDump);
@@ -81,6 +83,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			SetupXmlDocument(m_sM3FXTAffixAlloFeatsDump);
 			SetupXmlDocument(m_sM3FXTLatinDump);
 			SetupXmlDocument(m_sM3FXTIrregularlyInflectedFormsDump);
+			SetupXmlDocument(m_sAbazaOrderClassPlayDump);
 		}
 
 		private void SetupXmlDocument(string filepath)
@@ -134,6 +137,7 @@ namespace SIL.FieldWorks.WordWorks.Parser.XAmple
 			ApplyTransform(m_sM3FXTRootCliticEnvsDump, m_lexTransform, "RootCliticEnvsLexicon.txt");
 			ApplyTransform(m_sM3FXTAffixAlloFeatsDump, m_lexTransform, "AffixAlloFeatsLexicon.txt");
 			ApplyTransform(m_sM3FXTIrregularlyInflectedFormsDump, m_lexTransform, "IrregularlyInflectedFormsLexicon.txt");
+			ApplyTransform(m_sAbazaOrderClassPlayDump, m_lexTransform, "Abaza-OrderclassPlaylex.txt");
 		}
 
 		/// <summary>

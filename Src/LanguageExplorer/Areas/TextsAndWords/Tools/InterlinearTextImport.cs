@@ -85,7 +85,11 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 
 		internal bool ImportInterlinear(IThreadedProgress progress, Stream birdData, int allottedProgress, out IText firstNewText)
 		{
-			return ImportInterlinear(new ImportInterlinearOptions { Progress = progress, BirdData = birdData, AllottedProgress = allottedProgress }, out firstNewText);
+			return ImportInterlinear(new ImportInterlinearOptions
+				{
+					Progress = progress, BirdData = birdData, AllottedProgress = allottedProgress, AnalysesLevel = ImportAnalysesLevel.WordGloss
+				},
+				out firstNewText);
 		}
 
 		/// <summary>

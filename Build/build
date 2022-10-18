@@ -1,8 +1,0 @@
-#!/bin/bash
-
-BUILD=msbuild
-PLATFORM=$(test `arch` = x86_64 && echo x64 || echo x86)
-
-"$(dirname "$0")"/Agent/install-deps --verify
-"$(dirname "$0")"/run-in-environ $BUILD "/t:refreshTargets" && \
-"$(dirname "$0")"/run-in-environ $BUILD /p:Platform=$PLATFORM "$@"
