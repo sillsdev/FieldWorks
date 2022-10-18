@@ -78,35 +78,19 @@ VIEWS_SRC = $(SRC)/$(VIEWS_NAME)
 # Include user specific settings
 -include $(BUILD_ROOT)/Bld/_user.mak.lnx
 
-<<<<<<< HEAD
-FW_ICU_DIR = /usr/lib/fieldworks
-ICU_INSTALL_DIR ?= $(shell $(FW_ICU_DIR)/icu-bin/icu-config --prefix)
-# ENHANCE: have the icu54-bin-fw package install in bin instead of icu-bin and use `icu-config --bindir`
-||||||| f013144d5
-ICU_INSTALL_DIR ?= $(shell icu-config --prefix)
-# ENHANCE: have the icu54-bin-fw package install in bin instead of icu-bin and use `icu-config --bindir`
-=======
 # fw-icu needs to take precedence in PKG_CONFIG_PATH in order for pkg-config to
 # refer to it, for it to be used. For example,
 #   PKG_CONFIG_PATH=/usr/lib/fieldworks/lib/pkgconfig \
 #     pkg-config icu-i18n --variable=prefix
+FW_ICU_DIR = /usr/lib/fieldworks
+# ICU_INSTALL_DIR ?= $(shell $(FW_ICU_DIR)/icu-bin/icu-config --prefix) # change in proto-FW-10, prior to ICU 54->70 upgrade
 ICU_INSTALL_DIR ?= $(shell pkg-config icu-i18n --variable=prefix)
 # ENHANCE: have the icuNN-bin-fw package install in bin instead of icu-bin and use `pkg-config icu-i18n --variable=bindir`
->>>>>>> develop
 ICU_BIN_DIR = $(ICU_INSTALL_DIR)/icu-bin
 ICU_LIB_DIR = $(shell $(ICU_INSTALL_DIR)/icu-bin/icu-config --libdir)
 
-<<<<<<< HEAD
-# Use our own icu-config by putting it first in the path
-PATH := $(ICU_BIN_DIR):$(PATH):$(shell $(BUILD_ROOT)/Bin/abs.py "$(BUILD_ROOT)/Bin")
-||||||| f013144d5
-# Use our own icu-config by putting it first in the path
-PATH := $(ICU_BIN_DIR):$(PATH):$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/Bin)
-
-=======
 # REVIEW: Is it still needed to append BUILD_ROOT/Bin to PATH?
-PATH := $(PATH):$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/Bin)
->>>>>>> develop
+PATH := $(PATH):$(shell $(BUILD_ROOT)/Bin/abs.py "$(BUILD_ROOT)/Bin")
 export PATH
 
 LD_LIBRARY_PATH := $(LD_LIBRARY_PATH):$(ICU_LIB_DIR):$(COM_LIB)

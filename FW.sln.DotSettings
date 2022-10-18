@@ -269,42 +269,25 @@
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Dont/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Ethnologue/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=etic/@EntryIndexedValue">True</s:Boolean>
-<<<<<<< HEAD
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=allomorph/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=analyses/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=box_0020at_0020/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=eme_002E_000D_000A_0009_0009/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=enclitics/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=Fieldworks/@EntryIndexedValue">True</s:Boolean>
-||||||| f013144d5
-=======
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=fenceposting/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=fieldworks/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=Flatpak/@EntryIndexedValue">True</s:Boolean>
->>>>>>> develop
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Fieldworks/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=flid/@EntryIndexedValue">True</s:Boolean>
-<<<<<<< HEAD
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=fwdata/@EntryIndexedValue">True</s:Boolean>
-||||||| f013144d5
-=======
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Flatpak/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=fonipa/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Freeform/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=fwdata/@EntryIndexedValue">True</s:Boolean>
->>>>>>> develop
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=FWNX/@EntryIndexedValue">True</s:Boolean>
-<<<<<<< HEAD
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Geckofx/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=HKCU/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=HKEY/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=HKML/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=hvos/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=nt_0020w/@EntryIndexedValue">True</s:Boolean>
-||||||| f013144d5
-=======
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=Geckofx/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=HKCU/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=HKEY/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=HKLM/@EntryIndexedValue">True</s:Boolean>
->>>>>>> develop
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=inferable/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Interlin/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=interlinearization/@EntryIndexedValue">True</s:Boolean>
@@ -326,12 +309,7 @@
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Preposed/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=strikethrough/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=subdirectory/@EntryIndexedValue">True</s:Boolean>
-<<<<<<< HEAD
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=Paratext/@EntryIndexedValue">True</s:Boolean>
-||||||| f013144d5
-=======
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=subentries/@EntryIndexedValue">True</s:Boolean>
->>>>>>> develop
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Subentry/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Subitem/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=subitems/@EntryIndexedValue">True</s:Boolean>
@@ -345,15 +323,9 @@
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=unwire/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=vwenv/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Webonary/@EntryIndexedValue">True</s:Boolean>
-<<<<<<< HEAD
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=WEBONARYSERVER/@EntryIndexedValue">True</s:Boolean>
-</wpf:ResourceDictionary>
-||||||| f013144d5
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=WEBONARYSERVER/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
-=======
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=WEBONARYSERVER/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=wordform/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Wordforms/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=WS_0027s/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/UserDictionary/Words/=Zxxx/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
->>>>>>> develop
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Zxxx/@EntryIndexedValue">True</s:Boolean>
+</wpf:ResourceDictionary>

@@ -19,8 +19,8 @@
       "arguments": " --debug ../../NUnit.Runners.Net4.2.6.4/tools/nunit-console.exe -run=SIL.FieldWorks.Common.Widgets.FwListBoxTests.Add_EmptyObjectCollection_CollectionContainsSingleElement WidgetsTests.dll",
       "env": {
         "DISPLAY": ":0",
-        "PATH": "/opt/mono5-dbg/bin:/opt/mono5-sil/bin:${workspaceRoot}/Output_x86_64/Debug/net462:/usr/lib/fieldworks/icu-bin:${workspaceRoot}/../libcom/COM/buildx86_64/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
-        "LD_LIBRARY_PATH": "/opt/mono5-dbg/lib:/opt/mono5-sil/lib:/usr/lib/fieldworks:${workspaceRoot}/Output_x86_64/Debug/net462:/usr/lib/fieldworks/lib:${workspaceRoot}/../libcom/COM/buildx86_64/lib:${workspaceRoot}/Output_x86_64/Debug/net462/Firefox-Linux64:/usr/lib",
+        "PATH": "/opt/mono5-dbg/bin:/opt/mono5-sil/bin:${workspaceRoot}/Output_x86_64/Debug:/usr/lib/fieldworks/icu-bin:${workspaceRoot}/../libcom/COM/buildx86_64/bin:/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "LD_LIBRARY_PATH": "/opt/mono5-dbg/lib:/opt/mono5-sil/lib:/usr/lib/fieldworks:${workspaceRoot}/Output_x86_64/Debug:/usr/lib/fieldworks/lib:${workspaceRoot}/../libcom/COM/buildx86_64/lib:${workspaceRoot}/Output_x86_64/Debug/Firefox-Linux64:/usr/lib",
         "FW_ROOT": "${workspaceRoot}/DistFiles",
         "FW_ROOTCODE": "${workspaceRoot}/DistFiles",
         "FW_ROOTDATA": "${workspaceRoot}/DistFiles",
