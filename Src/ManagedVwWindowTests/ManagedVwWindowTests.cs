@@ -34,8 +34,7 @@ namespace SIL.FieldWorks.Language
 		public void NotSettingWindowTest()
 		{
 			var wrappedWindow = new ManagedVwWindow();
-			Rect temp;
-			Assert.That(() => wrappedWindow.GetClientRectangle(out temp), Throws.TypeOf<ApplicationException>());
+			Assert.That(() => wrappedWindow.GetClientRectangle(out var _temp), Throws.TypeOf<ApplicationException>());
 		}
 	}
 }
