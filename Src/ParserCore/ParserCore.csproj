@@ -1,5 +1,5 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Condition="'$(WindowsSDK_ExecutablePath_x86)' ==''" Project="$(VCTargetsPath)\Microsoft.Cpp.WindowsSDK.props" />
   <PropertyGroup>
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>SIL.FieldWorks.WordWorks.Parser</RootNamespace>
@@ -60,6 +60,6 @@
     <!-- Mono doesn't have an XSL compiler so we just put the XSLs in a resource assembly -->
     <Csc TargetType="library" OutputAssembly="$(OutputPath)/ApplicationTransforms.dll" Optimize="true" Platform="AnyCPU" Resources="@(ApplicationXslFiles)" Condition="'$(OS)'=='Unix'" />
     <!-- The WindowsSDK_ExecutablePath_x64 does not contain the xsltc executable, but the x86 path contains one that can build a 64bit assembly -->
-  <Exec Command="&quot;$(WindowsSDK_ExecutablePath_x86)\xsltc.exe&quot; /settings:document /platform:$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture) /out:$(OutputPath)\ApplicationTransforms.dll $(ApplicationTransformsPath)\FxtM3MorphologySketch.xsl $(ApplicationTransformsPath)\FxtM3ParserToGAFAWS.xsl $(ApplicationTransformsPath)\FxtM3ParserToToXAmpleGrammar.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleADCtl.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleLex.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl" Condition="'$(OS)'!='Unix'" />
+    <Exec Command="xsltc.exe /settings:document /platform:$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture) /out:$(OutputPath)\ApplicationTransforms.dll $(ApplicationTransformsPath)\FxtM3MorphologySketch.xsl $(ApplicationTransformsPath)\FxtM3ParserToGAFAWS.xsl $(ApplicationTransformsPath)\FxtM3ParserToToXAmpleGrammar.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleADCtl.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleLex.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl" Condition="'$(OS)'!='Unix'" EnvironmentVariables="PATH=$(WindowsSDK_ExecutablePath_x86.Replace(';','%3B'))" />
   </Target>
 </Project>
