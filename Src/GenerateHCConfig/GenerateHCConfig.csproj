@@ -14,30 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-<<<<<<< HEAD
     <ProjectReference Include="..\ParserCore\ParserCore.csproj" />
-||||||| f013144d5
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="ConsoleLogger.cs" />
-    <Compile Include="NullFdoDirectories.cs" />
-    <Compile Include="NullThreadedProgress.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="ProjectIdentifier.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-=======
-    <None Include="App.config" />
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="ConsoleLogger.cs" />
-    <Compile Include="NullFdoDirectories.cs" />
-    <Compile Include="NullThreadedProgress.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="ProjectIdentifier.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
->>>>>>> develop
   </ItemGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)../../Build/RegFree.targets" Condition="'$(OS)'=='Windows_NT'" />
