@@ -1,0 +1,9 @@
+Code-Review+2: Hasso Pape <hasso_pape@sil.org>
+Verified+1: Hasso Pape <hasso_pape@sil.org>
+Verified+1: Jason Naylor <jason_naylor@sil.org>
+Verified-Linux+1: Jason Naylor <jason_naylor@sil.org>
+Submitted-by: Jason Naylor <jason_naylor@sil.org>
+Submitted-at: Wed, 19 Oct 2022 19:50:54 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/c/FieldWorks/+/8987
+Project: FieldWorks
+Branch: refs/heads/feature/MergeIntoRXWC
