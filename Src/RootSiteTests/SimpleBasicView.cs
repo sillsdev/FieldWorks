@@ -329,7 +329,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		public override void RequestSelectionAtEndOfUow(IVwRootBox rootb, int ihvoRoot, int cvlsi, SelLevInfo[] rgvsli, int tagTextProp, int cpropPrevious, int ich, int wsAlt, bool fAssocPrev, ITsTextProps selProps)
 		{
 			Assert.AreEqual(RootBox, rootb);
-			Assert.IsNull(RequestedSelectionAtEndOfUow);
+			Assert.That(RequestedSelectionAtEndOfUow, Is.Null);
 
 			RequestedSelectionAtEndOfUow = new SelectionHelper
 			{

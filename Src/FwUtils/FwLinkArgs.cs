@@ -103,7 +103,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// (cf. LT-7847)
 		/// </summary>
 		public string Tag { get; protected set; } = string.Empty;
-		#endregion  Properties
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Display an error message if there is a failure.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool DisplayErrorMsg { get; set; } = true;
+
+#endregion  Properties
 
 		#region Construction and Initialization
 
