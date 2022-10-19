@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -9,6 +9,6 @@
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="All" />
     <PackageReference Include="SIL.LCModel.FixData" Version="10.2.0-beta0002" />
-    <PackageReference Include="SIL.Windows.Forms" Version="9.0.0-beta0076" />
+    <PackageReference Include="SIL.Windows.Forms" Version="11.0.0-beta0041" />
   </ItemGroup>
 </Project>

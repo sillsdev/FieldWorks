@@ -9,7 +9,7 @@
     <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.9.0" />
     <PackageReference Include="SIL.FwBuildTasks.Lib" Version="10.0.1-beta0003" />
-    <PackageReference Include="SIL.TestUtilities" Version="9.0.0-beta0076" />
+    <PackageReference Include="SIL.TestUtilities" Version="11.0.0-beta0041" />
   </ItemGroup>
 
   <ItemGroup>

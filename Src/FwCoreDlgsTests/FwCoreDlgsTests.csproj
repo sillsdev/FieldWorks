@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <UseWindowsForms>true</UseWindowsForms>
@@ -12,8 +12,8 @@
     <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="All" />
     <PackageReference Include="SIL.LCModel.Core.Tests" Version="10.2.0-beta0002" />
     <PackageReference Include="SIL.LCModel.Utils.Tests" Version="10.2.0-beta0002" />
-    <PackageReference Include="SIL.TestUtilities" Version="9.0.0-beta0076" />
-    <PackageReference Include="SIL.WritingSystems.Tests" Version="9.0.0-beta0076" />
+    <PackageReference Include="SIL.TestUtilities" Version="11.0.0-beta0041" />
+    <PackageReference Include="SIL.WritingSystems.Tests" Version="11.0.0-beta0041" />
 
     <Reference Include="SilEncConverters40" Condition="'$(OS)'=='Unix'">
       <SpecificVersion>False</SpecificVersion>
