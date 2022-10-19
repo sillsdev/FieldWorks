@@ -2487,7 +2487,8 @@ namespace LanguageExplorer.Controls.XMLViews
 				//Change the Title from "Find and Replace" to "Bulk Replace Setup"
 				findDlg.Text = string.Format(XMLViewsStrings.khtpBulkReplaceTitle);
 				var app = PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
-				findDlg.SetDialogValues(m_cache, Pattern, m_bv.BrowseView.StyleSheet, FindForm(), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), app);
+				findDlg.SetDialogValues(m_cache, Pattern, m_bv.BrowseView.StyleSheet,
+					FindForm(), PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), app, ws);
 				findDlg.RestoreAndPersistSettingsIn(PropertyTable);
 				// Set this AFTER it has the correct WSF!
 				findDlg.ReplaceText = TssReplace;
@@ -2622,7 +2623,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				}
 				catch
 				{
-					Debug.Fail($"There was an error creating Delete combo item for column ({selectedItem.ColumnIndex})", optionLabel);
+					Debug.Fail($"There was an error creating Delete combo item for column ({selectedItem.ColumnIndex} - {optionLabel})");
 					// skip buggy column
 					continue;
 				}

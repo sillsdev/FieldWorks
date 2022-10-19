@@ -453,22 +453,9 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("ipo", out var wsDef);
 			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsDef);
 			string entryLetter = "\U00016F00\U00016F51\U00016F61\U00016F90";
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/XMLViews/ConfiguredExportTests.cs
 			var wsDigraphMap = new Dictionary<string, ISet<string>>();
 			var wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
 			var wsIgnorableCharMap = new Dictionary<string, ISet<string>>();
-			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar(entryLetter, "ipo", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, Cache));
-			Assert.AreEqual(data.Length, 2, "Surrogate pair should contains 2 characters");
-||||||| f013144d5:Src/Common/Controls/XMLViews/XMLViewsTests/ConfiguredExportTests.cs
-			Dictionary<string, ISet<string>> wsDigraphMap = new Dictionary<string, ISet<string>>();
-			Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
-			Dictionary<string, ISet<string>> wsIgnorableCharMap = new Dictionary<string, ISet<string>>();
-			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar(entryLetter, "ipo", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, Cache));
-			Assert.AreEqual(data.Length, 2, "Surrogate pair should contains 2 characters");
-=======
-			Dictionary<string, Dictionary<string, ConfiguredExport.CollationLevel>> wsDigraphMap = new Dictionary<string, Dictionary<string, ConfiguredExport.CollationLevel>>();
-			Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
-			Dictionary<string, ISet<string>> wsIgnorableCharMap = new Dictionary<string, ISet<string>>();
 			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar(entryLetter, "ipo", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, null, Cache));
 			Assert.That(data.Length, Is.EqualTo(2), "Surrogate pair should contains 2 characters");
 		}

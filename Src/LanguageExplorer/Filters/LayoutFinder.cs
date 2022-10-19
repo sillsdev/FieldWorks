@@ -84,6 +84,10 @@ namespace LanguageExplorer.Filters
 						case "integer":
 							result = new IntCompareFinder(cache, layoutName, columnSpecificationElement, app);
 							break;
+						case "occurrenceInContext":
+							// LT-8457: Context should be considered only following the occurrence; preceding context should be ignored.
+							result = new OccurrenceInContextFinder(cache, layoutName, colSpec, app);
+							break;
 						case "date":
 						case "YesNo":
 						case "stringList":

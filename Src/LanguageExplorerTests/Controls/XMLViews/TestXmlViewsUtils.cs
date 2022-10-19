@@ -30,10 +30,10 @@ namespace LanguageExplorerTests.Controls.XMLViews
 				+ "</column>");
 
 			var source = TestUtilities.GetRootNode(docSrc, "column");
-			Assert.IsNotNull(source);
+			Assert.That(source, Is.Not.Null);
 
 			var output = XmlViewsUtils.CopyWithParamDefaults(source);
-			Assert.IsNotNull(output);
+			Assert.That(output, Is.Not.Null);
 			Assert.IsFalse(source == output);
 
 			var docExpected = XDocument.Parse(
@@ -57,7 +57,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 				+ "</column>");
 
 			var source = TestUtilities.GetRootNode(docSrc, "column");
-			Assert.IsNotNull(source);
+			Assert.That(source, Is.Not.Null);
 			var output = XmlViewsUtils.CopyWithParamDefaults(source);
 			Assert.IsTrue(source == output);
 		}
@@ -73,7 +73,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 				+ "</column>");
 
 			var source = TestUtilities.GetRootNode(docSrc, "column");
-			Assert.IsNotNull(source);
+			Assert.That(source, Is.Not.Null);
 			Assert.IsTrue(XmlViewsUtils.HasParam(source));
 
 			var paramList = XmlViewsUtils.FindParams(source);

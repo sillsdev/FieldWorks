@@ -246,8 +246,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public static string DateTimeCompString(DateTime dt)
 		{
-			// "u" is: 2000-08-17 23:32:32Z
-			return dt.ToString("u", DateTimeFormatInfo.InvariantInfo);
+			return dt.ToISO8601TimeFormatWithUTCString(); // 2000-08-17T23:32:32Z
 		}
 
 		/// <summary>
