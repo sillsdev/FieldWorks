@@ -26,5 +26,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		void Save();
 		/// <summary />
 		void DeleteCorruptedSettingsFilesIfPresent();
+
+		/// <summary>
+		/// Setting controlling getting updates
+		/// </summary>
+		public Settings.UpdateSettings Update { get; set; }
 	}
 }
