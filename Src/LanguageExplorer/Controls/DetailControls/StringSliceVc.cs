@@ -199,7 +199,8 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					if (url.StartsWith(FwLinkArgs.kFwUrlPrefix))
 					{
-						LinkHandler.PublishFollowLinkMessage(m_publisher, new FwLinkArgs(url));
+						FwLinkArgs linkArgs = new FwLinkArgs(url) { DisplayErrorMsg = false };
+						LinkHandler.PublishFollowLinkMessage(m_publisher, linkArgs);
 						return;
 					}
 				}
