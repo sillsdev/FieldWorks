@@ -20,22 +20,17 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		public void Step(int amount)
 		{
 			Position += amount * StepSize;
-			//Progress.Mgr.Incr(amount * StepSize);
 		}
 
 		public string Title { get; set; }
 
 		public string Message
 		{
-			//get { return Progress.Mgr.Text; }
-			//set { Progress.Mgr.Text = value; }
 			get; set;
 		}
 
 		public int Position
 		{
-			//get { return Progress.Mgr.Value; }
-			//set { Progress.Mgr.Value = value; }
 			get; set;
 		}
 
@@ -68,25 +63,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		public object RunTask(bool fDisplayUi, Func<IThreadedProgress, object[], object> backgroundTask, params object[] parameters)
 		{
-			object result = backgroundTask(this, parameters);
-			//if (Progress.Mgr.InProgress)
-			//{
-			//    result = backgroundTask(this, parameters);
-			//}
-			//else
-			//{
-			//    ProgressUtils.Execute(Title, AllowCancel ? CancelModes.Cancelable : CancelModes.NonCancelable, () =>
-			//        {
-			//            if (!IsIndeterminate)
-			//                Progress.Mgr.Begin(Minimum, Maximum);
-
-			//            result = backgroundTask(this, parameters);
-
-			//            if (!IsIndeterminate)
-			//                Progress.Mgr.End();
-			//        });
-			//}
-			return result;
+			return backgroundTask(this, parameters);
 		}
 
 		public bool Canceled

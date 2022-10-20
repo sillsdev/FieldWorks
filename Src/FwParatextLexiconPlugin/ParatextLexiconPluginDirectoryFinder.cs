@@ -4,11 +4,13 @@
 
 using System;
 using System.IO;
+using System.Reflection;
 using Microsoft.Win32;
 using SIL.IO;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
+using FileUtils = SIL.LCModel.Utils.FileUtils;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
@@ -33,19 +35,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		public static string DataDirectory => GetDirectory(RootDataDir, Path.Combine(LcmFileHelper.CommonApplicationData, SilDir, FieldWorksDir));
 
 		public static string DataDirectoryLocalMachine => GetDirectoryLocalMachine(RootDataDir, Path.Combine(LcmFileHelper.CommonApplicationData, SilDir, FieldWorksDir));
-
-<<<<<<< HEAD
-		public static string CodeDirectory => GetDirectory(RootCodeDir, Platform.IsUnix ? "/usr/share/fieldworks" : FileLocationUtilities.DirectoryOfTheApplicationExecutable);
-||||||| f013144d5
-		public static string CodeDirectory
-		{
-			get
-			{
-				return GetDirectory(RootCodeDir, MiscUtils.IsUnix ? "/usr/share/fieldworks"
-					: Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)));
-			}
-		}
-=======
 		public static string CodeDirectory
 		{
 			get
@@ -55,7 +44,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 					: Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase)));
 			}
 		}
->>>>>>> develop
 
 		private static string GetDirectory(string registryValue, string defaultDir)
 		{

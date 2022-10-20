@@ -16,13 +16,8 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Utils;
-<<<<<<< HEAD
 using SIL.ObjectModel;
 using SIL.PlatformUtilities;
-||||||| f013144d5
-=======
-using SIL.PlatformUtilities;
->>>>>>> develop
 using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin

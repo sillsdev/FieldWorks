@@ -21,23 +21,10 @@ using SIL.LCModel;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-<<<<<<< HEAD:Src/FwParatextLexiconPlugin/LcmLexicon.cs
-||||||| f013144d5:Src/FwParatextLexiconPlugin/FdoLexicon.cs
-using SIL.FieldWorks.WordWorks.Parser;
-=======
 using SIL.LCModel.Utils;
-using SIL.FieldWorks.WordWorks.Parser;
->>>>>>> develop:Src/FwParatextLexiconPlugin/FdoLexicon.cs
 using SIL.Machine.Morphology;
 using SIL.ObjectModel;
-<<<<<<< HEAD:Src/FwParatextLexiconPlugin/LcmLexicon.cs
-using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
-||||||| f013144d5:Src/FwParatextLexiconPlugin/FdoLexicon.cs
-using SIL.LCModel.Utils;
-=======
-using SIL.PlatformUtilities;
->>>>>>> develop:Src/FwParatextLexiconPlugin/FdoLexicon.cs
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
