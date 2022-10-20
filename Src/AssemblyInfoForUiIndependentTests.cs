@@ -22,13 +22,3 @@ using SIL.TestUtilities;
 // NOTE: it is important that OfflineSldr comes before InitializeIcu!
 // Turns the SLDR API into offline mode
 [assembly: OfflineSldr]
-<<<<<<< HEAD
-
-// Initialize ICU
-//[assembly: InitializeIcu(IcuVersion = 54)]
-||||||| f013144d5
-
-// Initialize ICU
-[assembly: InitializeIcu(IcuVersion = 54)]
-=======
->>>>>>> develop

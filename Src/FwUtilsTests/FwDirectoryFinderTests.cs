@@ -31,14 +31,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void TestFixtureSetup()
 		{
 			FwRegistryHelper.SetRegistryHelper(new DummyFwRegistryHelper());
-			FwRegistryHelper.FieldWorksRegistryKey.SetValue("RootDataDir", Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "..", "..", "..", "DistFiles")));
-			FwRegistryHelper.FieldWorksRegistryKey.SetValue("RootCodeDir", Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "..", "..", "..", "DistFiles")));
+			FwRegistryHelper.FieldWorksRegistryKey.SetValue("RootDataDir", DistFilesDir);
+			FwRegistryHelper.FieldWorksRegistryKey.SetValue("RootCodeDir", DistFilesDir);
 		}
 
 		/// <summary>
 		/// Gets the directory where the Utils assembly is
 		/// </summary>
-		private string UtilsAssemblyDir => Path.GetDirectoryName(typeof(FwDirectoryFinder).Assembly.CodeBase.Substring(Platform.IsUnix ? 7 : 8));
+		private static readonly string UtilsAssemblyDir = Path.GetDirectoryName(typeof(FwDirectoryFinder).Assembly.CodeBase.Substring(Platform.IsUnix ? 7 : 8));
+
+		private static readonly string FwRoot = Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "..", ".."));
+
+		private static readonly string DistFilesDir = Path.Combine(FwRoot, "DistFiles");
 
 		/// <summary>
 		/// Tests the CodeDirectory property. This should return the DistFiles directory.
@@ -46,7 +50,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void CodeDirectory()
 		{
-			Assert.That(FwDirectoryFinder.CodeDirectory, Is.SamePath(Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "..", "..", "..", "DistFiles"))));
+			Assert.That(FwDirectoryFinder.CodeDirectory, Is.SamePath(DistFilesDir));
 		}
 
 		/// <summary>
@@ -102,16 +106,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void DataDirectory()
 		{
-			Assert.That(FwDirectoryFinder.DataDirectory, Is.SamePath(Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "..", "..", "..", "DistFiles"))));
+			Assert.That(FwDirectoryFinder.DataDirectory, Is.SamePath(DistFilesDir));
 		}
 
 		/// <summary>
-		/// Tests the SourceDirectory property. This should return the DistFiles directory.
+		/// Tests the SourceDirectory property. This should return the Src directory.
 		/// </summary>
 		[Test]
 		public void SourceDirectory()
 		{
-			Assert.That(FwDirectoryFinder.SourceDirectory, Is.SamePath(Path.GetFullPath(Path.Combine(UtilsAssemblyDir, "..", "..", "..", "Src"))));
+			Assert.That(FwDirectoryFinder.SourceDirectory, Is.SamePath(Path.Combine(FwRoot, "Src")));
 		}
 
 		/// <summary>
