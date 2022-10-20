@@ -1,10 +1,4 @@
-<<<<<<< HEAD
-// Copyright (c) 2017-2020 SIL International
-||||||| f013144d5
-// Copyright (c) 2017 SIL International
-=======
 // Copyright (c) 2017-2022 SIL International
->>>>>>> develop
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -61,16 +55,9 @@ namespace Paratext8Plugin
 
 		public IScrText MakeScrText(string projectName)
 		{
-<<<<<<< HEAD
-			var scrText = ScrTextCollection.Find(projectName);
-			return scrText == null ? null : new PT8ScrTextWrapper(scrText);
-||||||| f013144d5
-			return string.IsNullOrEmpty(projectName) ? new PT8ScrTextWrapper(new ScrText()) : new PT8ScrTextWrapper(new ScrText(projectName));
-=======
 			return string.IsNullOrEmpty(projectName)
 				? new PT8ScrTextWrapper(new ScrText(RegistrationInfo.DefaultUser))
 				: new PT8ScrTextWrapper(new ScrText(projectName, RegistrationInfo.DefaultUser));
->>>>>>> develop
 		}
 
 		/// <summary/>

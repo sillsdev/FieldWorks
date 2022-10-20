@@ -207,8 +207,16 @@ namespace Paratext8Plugin
 		[SetUp]
 		public void Setup()
 		{
-			if (!ParatextInfo.IsParatextInstalled)
-				Assert.Ignore("Paratext is not installed");
+			try
+			{
+				if (!ParatextInfo.IsParatextInstalled)
+					Assert.Ignore("Paratext is not installed");
+			}
+			catch (Exception)
+			{
+				Assert.Ignore("ParatextData can't tell us if PT is installed.");
+			}
+
 			m_ptHelper = new MockParatext8Helper();
 			ParatextHelper.Manager.SetParatextHelperAdapter(m_ptHelper);
 			var mockScrTextCollection = new MockScrTextCollectionImpl();
