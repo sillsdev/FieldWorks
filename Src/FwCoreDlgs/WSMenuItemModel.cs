@@ -10,10 +10,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// This class models a menu item for interacting with the the writing system model.
 	/// It holds the string to display in the menu item and the event handler for the menu item click.
 	/// </summary>
-	internal sealed class WSMenuItemModel : Tuple<string, EventHandler, bool>
+	internal sealed class WSMenuItemModel : Tuple<string, EventHandler, bool, string>
 	{
 		/// <summary/>
-		internal WSMenuItemModel(string menuText, EventHandler clickHandler, bool enabled = true) : base(menuText, clickHandler, enabled)
+		public WSMenuItemModel(string menuText, EventHandler clickHandler, bool enabled = true, string toolTip = null) : base(menuText, clickHandler, enabled, toolTip)
 		{
 		}
 
@@ -25,5 +25,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// <summary/>
 		internal bool IsEnabled => Item3;
+
+		/// <summary/>
+		public string ToolTip => Item4;
 	}
 }

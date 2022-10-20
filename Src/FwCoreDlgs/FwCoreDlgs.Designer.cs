@@ -144,6 +144,15 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &amp;Close.
+        /// </summary>
+        public static string ks_Close {
+            get {
+                return ResourceManager.GetString("ks_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &amp;Help.
         /// </summary>
         public static string ks_Help {

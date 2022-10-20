@@ -12,10 +12,9 @@ using System.Resources;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using DialogAdapters;
 using ECInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
@@ -158,7 +157,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			System.Windows.Forms.Label label2;
 			System.Windows.Forms.Label label3;
 			System.Windows.Forms.HelpProvider helpProvider1;
-			this.outputFontCombo = new SIL.FieldWorks.Common.Controls.FwOverrideComboBox();
+			this.outputFontCombo = new FwOverrideComboBox();
 			this.convertButton = new System.Windows.Forms.Button();
 			this.OutputPanel = new System.Windows.Forms.Panel();
 			this.saveFileButton = new System.Windows.Forms.Button();
@@ -478,7 +477,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	}
 
 	/// <summary></summary>
-	public class SampleVc : FwBaseVc
+	internal class SampleVc : FwBaseVc
 	{
 		private string m_fontName;
 
@@ -526,7 +525,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	}
 
 	/// <summary></summary>
-	public class SampleView : SimpleRootSite
+	internal class SampleView : SimpleRootSite
 	{
 		string m_fontName;
 		SampleVc m_svc;
@@ -591,13 +590,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_fontName;
 			}
 			set
 			{
-				CheckDisposed();
-
 				m_fontName = value;
 				m_svc.FontName = value;
 				if (Enabled)
@@ -610,12 +606,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			get
 			{
-				CheckDisposed();
 				return m_hvoRoot;
 			}
 			set
 			{
-				CheckDisposed();
 				m_hvoRoot = value;
 			}
 		}
@@ -625,8 +619,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public void Clear(bool fReconstruct)
 		{
-			CheckDisposed();
-
 			if (m_sda == null)
 			{
 				var cda = VwCacheDaClass.Create();
@@ -652,8 +644,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="tss"></param>
 		public void AddPara(ITsString tss)
 		{
-			CheckDisposed();
-
 			int hvoPara = m_hvoNextPara++;
 			m_cd.CacheStringProp(hvoPara, (int)SampleTags.ktagParaContents, tss);
 		}
@@ -665,8 +655,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <param name="para"></param>
 		public void AddPara(string para)
 		{
-			CheckDisposed();
-
 			AddPara(TsStringUtils.MakeString(para, WritingSystemFactory.UserWs));
 		}
 
@@ -676,8 +664,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public void CompleteSetText()
 		{
-			CheckDisposed();
-
 			int[] rghvo = new int[m_hvoNextPara - khvoFirstPara];
 			for (int i = 0; i < rghvo.Length; ++i)
 				rghvo[i] = i + khvoFirstPara;
@@ -694,8 +680,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public override void MakeRoot()
 		{
-			CheckDisposed();
-
 			if (!GotCacheOrWs || DesignMode)
 				return;
 
@@ -705,8 +689,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_svc.FontName = m_fontName;
 
 			Clear(false);
-			m_rootb.DataAccess = m_sda;
-			m_rootb.SetRootObject(m_hvoRoot, m_svc, (int)SampleFrags.kfrText, null);
+			RootBox.DataAccess = m_sda;
+			RootBox.SetRootObject(m_hvoRoot, m_svc, (int)SampleFrags.kfrText, null);
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
 		}
 

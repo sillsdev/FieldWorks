@@ -15,6 +15,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
+using SIL.FieldWorks.FwCoreDlgs;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -114,7 +115,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				else
 				{
 					// Client should make sure it is a valid id. Failing this, make a warning.
-					Text = FwCoreDlgControls.kstidError;
+					Text = Strings.kstidError;
 				}
 			}
 		}
@@ -175,13 +176,13 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				// If it used to say "built in" change it to "none", otherwise,
 				// they are changing from one custom locale to another, leave the
 				// current selection alone.
-				if (Text == FwCoreDlgControls.kstidBuiltIn)
-					Text = FwCoreDlgControls.kstid_None;
+				if (Text == FwCoreDlgs.FwCoreDlgs.kstidBuiltIn)
+					Text = Strings.kstid_None;
 				Enabled = true;
 			}
 			else
 			{
-				Text = FwCoreDlgControls.kstidBuiltIn;
+				Text = FwCoreDlgs.FwCoreDlgs.kstidBuiltIn;
 				Enabled = false;
 			}
 		}
@@ -312,7 +313,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 
 			// Sort the items in each menu.
 			m_mainItems.Sort();
-			var NoneData = new LocaleMenuItemData(FwCoreDlgControls.kstid_None, FwCoreDlgControls.kstid_None);
+			var NoneData = new LocaleMenuItemData(Strings.kstid_None, Strings.kstid_None);
 			var NoneItem = new ToolStripMenuItem(NoneData.m_displayName, null, ItemClickHandler);
 			menu.Items.Add(NoneItem); // This goes strictly at the beginning, irrespective of sorting
 
@@ -351,10 +352,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 		private void ItemClickHandler(Object sender, EventArgs e)
 		{
 			var mi = (ToolStripMenuItem) sender;
-			if (mi.Text == FwCoreDlgControls.kstid_None)
+			if (mi.Text == Strings.kstid_None)
 			{
 				m_selectedLocale = null;
-				Text = FwCoreDlgControls.kstid_None;
+				Text = Strings.kstid_None;
 				OnLocaleSelected(new EventArgs());
 				return;
 			}
@@ -453,7 +454,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			if (overflowNeeded)
 			{
 				// Don't dispose overflow here because that will prevent it from working.
-				ToolStripMenuItem overflow = new ToolStripMenuItem(FwCoreDlgControls.kstid_More, Images.arrowright);
+				ToolStripMenuItem overflow = new ToolStripMenuItem(Strings.kstid_More, Images.arrowright);
 				overflow.ImageScaling = ToolStripItemImageScaling.None;
 				overflow.ImageAlign = ContentAlignment.MiddleCenter;
 				overflow.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;

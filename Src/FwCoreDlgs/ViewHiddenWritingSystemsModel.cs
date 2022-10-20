@@ -18,10 +18,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	public class ViewHiddenWritingSystemsModel
 	{
 		/// <summary/>
-		public FwWritingSystemSetupModel.ConfirmDeleteWritingSystemDelegate ConfirmDeleteWritingSystem;
+		internal FwWritingSystemSetupModel.ConfirmDeleteWritingSystemDelegate ConfirmDeleteWritingSystem;
 
 		/// <summary/>
-		public readonly FwWritingSystemSetupModel.ListType ListType;
+		internal readonly FwWritingSystemSetupModel.ListType ListType;
 
 		private readonly WritingSystemManager m_WSMgr;
 
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public IEnumerable<CoreWritingSystemDefinition> DeletedWritingSystems => Items.Where(i => i.WillDelete).Select(i => i.WS);
 
 		/// <summary/>
-		public ViewHiddenWritingSystemsModel(FwWritingSystemSetupModel.ListType type, LcmCache cache = null,
+		internal ViewHiddenWritingSystemsModel(FwWritingSystemSetupModel.ListType type, LcmCache cache = null,
 			ICollection<CoreWritingSystemDefinition> alreadyInList = null, ICollection<string> alreadyDeletedIds = null)
 		{
 			ListType = type;

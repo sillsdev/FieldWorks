@@ -1,10 +1,4 @@
-<<<<<<< HEAD
-// Copyright (c) 2019-2020 SIL International
-||||||| f013144d5
-// Copyright (c) 2019 SIL International
-=======
-// Copyright (c) 2019-2021 SIL International
->>>>>>> develop
+// Copyright (c) 2019-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -90,33 +84,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		public event EventHandler WritingSystemUpdated;
 
-<<<<<<< HEAD
-		/// <summary/>
-		internal delegate void ShowMessageBoxDelegate(string message);
-||||||| f013144d5
-		/// <summary/>
-		public delegate void ShowMessageBoxDelegate(string message);
-=======
 		/// <param name="message">the  message to display</param>
 		/// <param name="needResponse">True if the user needs to provide a response (Yes or No); false otherwise (only an OK button is shown)</param>
 		/// <returns>True if the user clicks Yes</returns>
 		public delegate bool ShowMessageBoxDelegate(string message, bool needResponse = false);
->>>>>>> develop
 
 		/// <summary/>
 		internal delegate bool ChangeLanguageDelegate(out LanguageInfo info);
 
 		/// <summary/>
-<<<<<<< HEAD
-		internal delegate void ValidCharacterDelegate();
-||||||| f013144d5
-		public delegate void ValidCharacterDelegate();
-=======
 		public delegate void ViewHiddenWritingSystemsDelegate(ViewHiddenWritingSystemsModel model);
 
 		/// <summary/>
-		public delegate void ValidCharacterDelegate();
->>>>>>> develop
+		internal delegate void ValidCharacterDelegate();
 
 		/// <summary/>
 		internal delegate bool ModifyConvertersDelegate(string originalConverter, out string selectedConverter);
@@ -142,31 +122,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		internal delegate bool ConfirmClearAdvancedDelegate();
 
-<<<<<<< HEAD
-		/// <summary/>
-		internal ShowMessageBoxDelegate ShowMessageBox;
-||||||| f013144d5
-		/// <summary/>
-		public ShowMessageBoxDelegate ShowMessageBox;
-=======
 		/// <returns>True if the user clicks Yes</returns>
-		public ShowMessageBoxDelegate ShowMessageBox;
->>>>>>> develop
+		internal ShowMessageBoxDelegate ShowMessageBox;
 
 		/// <summary/>
 		internal ChangeLanguageDelegate ShowChangeLanguage;
 
 		/// <summary/>
-<<<<<<< HEAD
-		internal ValidCharacterDelegate ShowValidCharsEditor;
-||||||| f013144d5
-		public ValidCharacterDelegate ShowValidCharsEditor;
-=======
 		public ViewHiddenWritingSystemsDelegate ViewHiddenWritingSystems;
 
 		/// <summary/>
-		public ValidCharacterDelegate ShowValidCharsEditor;
->>>>>>> develop
+		internal ValidCharacterDelegate ShowValidCharsEditor;
 
 		/// <summary/>
 		internal ModifyConvertersDelegate ShowModifyEncodingConverters;
@@ -476,29 +442,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		internal string WritingSystemName => _currentWs.DisplayLabel;
 
-		/// <summary/>
-<<<<<<< HEAD
-		internal string EthnologueLabel => $"Ethnologue entry for {LanguageCode}";
-||||||| f013144d5
-		public string EthnologueLabel
-		{
-			get { return string.Format("Ethnologue entry for {0}", LanguageCode); }
-		}
-=======
-		public string EthnologueLabel => string.Format(FwCoreDlgs.ksWSPropEthnologueEntryFor, LanguageCode);
->>>>>>> develop
+		internal string EthnologueLabel => string.Format(FwCoreDlgs.ksWSPropEthnologueEntryFor, LanguageCode);
 
 		/// <summary/>
-<<<<<<< HEAD
 		internal string EthnologueLink => $"https://www.ethnologue.com/show_language.asp?code={LanguageCode}";
-||||||| f013144d5
-		public string EthnologueLink
-		{
-			get { return string.Format("https://www.ethnologue.com/show_language.asp?code={0}", LanguageCode); }
-		}
-=======
-		public string EthnologueLink => $"https://www.ethnologue.com/show_language.asp?code={LanguageCode}";
->>>>>>> develop
 
 		/// <summary/>
 		internal int CurrentWritingSystemIndex => WorkingList.FindIndex(ws => ws.WorkingWs == _currentWs);
@@ -521,47 +468,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					return;
 				}
-<<<<<<< HEAD
-				var languagesToChange = new List<WSListItemModel>(WorkingList.Where(ws => ws.WorkingWs.LanguageName == _languageName));
-				if (!IetfLanguageTag.TryGetSubtags(info.LanguageTag, out var languageSubtag, out var scriptSubtag, out var regionSubtag, out _))
-				{
-					return;
-				}
-				languageSubtag = new LanguageSubtag(languageSubtag, info.DesiredName);
-				if (!CheckChangingWSForSRProject())
-				{
-					return;
-				}
-||||||| f013144d5
-				var languagesToChange = new List<WSListItemModel>(WorkingList.Where(ws => ws.WorkingWs.LanguageName == _languageName));
-				LanguageSubtag languageSubtag;
-				ScriptSubtag scriptSubtag;
-				RegionSubtag regionSubtag;
-				IEnumerable<VariantSubtag> variantSubtags;
-				if (!IetfLanguageTag.TryGetSubtags(info.LanguageTag, out languageSubtag, out scriptSubtag, out regionSubtag, out variantSubtags))
-					return;
-				languageSubtag = new LanguageSubtag(languageSubtag, info.DesiredName);
-
-				if (!CheckChangingWSForSRProject(languageSubtag))
-					return;
-=======
-
 				var languagesToChange = new List<WSListItemModel>(WorkingList.Where(ws => ws.WorkingWs.LanguageName == _languageName));
 				languageSubtag = new LanguageSubtag(languageSubtag, info.DesiredName);
 				var oldDefaultScriptSubtag = IetfLanguageTag.GetScriptSubtag(languagesToChange[0].WorkingWs.Language.Code);
 
->>>>>>> develop
 				foreach (var ws in languagesToChange)
 				{
 					ws.WorkingWs.Language = languageSubtag;
-<<<<<<< HEAD
-					if (ws.WorkingWs.Script == null)
-					{
-||||||| f013144d5
-					if (ws.WorkingWs.Script == null)
-=======
 					if (ws.WorkingWs.Script == null || ws.WorkingWs.Script == oldDefaultScriptSubtag)
->>>>>>> develop
+					{
 						ws.WorkingWs.Script = scriptSubtag;
 					}
 					if (ws.WorkingWs.Region == null)
@@ -625,23 +540,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				var newWritingSystems = new List<CoreWritingSystemDefinition>();
 				// Adjust the homograph writing system after possibly interacting with the user
 				HandleHomographWsChanges(_homographWsWasTopVern, WorkingList, Cache?.LangProject.HomographWs, _homographWsWasInCurrent);
-<<<<<<< HEAD
-				// Handle any deleted writing systems
-				DeleteWritingSystems(currentWritingSystems, allWritingSystems, otherWritingSystems, WorkingList.Select(ws => ws.WorkingWs));
-				for (int workinglistIndex = 0, curIndex = 0; workinglistIndex < WorkingList.Count; ++workinglistIndex)
-||||||| f013144d5
-
-				// Handle any deleted writing systems
-				DeleteWritingSystems(currentWritingSystems, allWritingSystems, otherWritingSystems, WorkingList.Select(ws => ws.WorkingWs));
-
-				for (int workinglistIndex = 0, curIndex = 0; workinglistIndex < WorkingList.Count; ++workinglistIndex)
-=======
 
 				// Handle hidden and deleted writing systems
 				RemoveWritingSystems(currentWritingSystems, allWritingSystems, otherWritingSystems, WorkingList.Select(ws => ws.WorkingWs));
 
 				for (int workingListIndex = 0, curIndex = 0; workingListIndex < WorkingList.Count; ++workingListIndex)
->>>>>>> develop
 				{
 					var wsListItem = WorkingList[workingListIndex];
 					var workingWs = wsListItem.WorkingWs;
@@ -781,16 +684,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-<<<<<<< HEAD
-		private void DeleteWritingSystems(ICollection<CoreWritingSystemDefinition> currentWritingSystems, ICollection<CoreWritingSystemDefinition> allWritingSystems,
-			ICollection<CoreWritingSystemDefinition> otherWritingSystems, IEnumerable<CoreWritingSystemDefinition> workingWritingSystems)
-||||||| f013144d5
-		private bool DeleteWritingSystems(
-			ICollection<CoreWritingSystemDefinition> currentWritingSystems,
-			ICollection<CoreWritingSystemDefinition> allWritingSystems,
-			ICollection<CoreWritingSystemDefinition> otherWritingSystems,
-			IEnumerable<CoreWritingSystemDefinition> workingWritingSystems)
-=======
 		/// <summary>
 		/// Hide any writing systems that were removed from the active list.
 		/// If any are marked for deletion and are not in the other list, delete their data, too.
@@ -804,27 +697,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ICollection<CoreWritingSystemDefinition> allWritingSystems,
 			ICollection<CoreWritingSystemDefinition> otherWritingSystems,
 			IEnumerable<CoreWritingSystemDefinition> workingWritingSystems)
->>>>>>> develop
 		{
-<<<<<<< HEAD
-			// Delete any writing systems that were removed from the active list and are not present in the other list
-			var deletedWsIds = new List<string>();
-			var deletedWritingSystems = new List<CoreWritingSystemDefinition>(allWritingSystems);
-			deletedWritingSystems.RemoveAll(ws => workingWritingSystems.Any(wws => wws.Id == ws.Id));
-			foreach (var deleteCandidate in deletedWritingSystems)
-||||||| f013144d5
-			var atLeastOneDeleted = false;
-			// Delete any writing systems that were removed from the active list and are not present in the other list
-			var deletedWsIds = new List<string>();
-			var deletedWritingSystems = new List<CoreWritingSystemDefinition>(allWritingSystems);
-			deletedWritingSystems.RemoveAll(ws => workingWritingSystems.Any(wws => wws.Id == ws.Id));
-			foreach (var deleteCandidate in deletedWritingSystems)
-=======
 			var removedWritingSystems = new List<CoreWritingSystemDefinition>(allWritingSystems);
 			removedWritingSystems.RemoveAll(ws => workingWritingSystems.Any(wws => wws.Id == ws.Id));
 			_wsIdsToDelete.RemoveAll(wsId => workingWritingSystems.Any(wws => wws.Id == wsId));
 			foreach (var deleteCandidate in removedWritingSystems)
->>>>>>> develop
 			{
 				currentWritingSystems.Remove(deleteCandidate);
 				allWritingSystems.Remove(deleteCandidate);
@@ -844,14 +721,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					&& !_mergedWritingSystems.Keys.Contains(deleteCandidate))
 				{
 					WritingSystemServices.DeleteWritingSystem(Cache, deleteCandidate);
-<<<<<<< HEAD
-					deletedWsIds.Add(deleteCandidate.Id);
-||||||| f013144d5
-					deletedWsIds.Add(deleteCandidate.Id);
-					atLeastOneDeleted = true;
-=======
 					deletedWsIds.Add(deleteCandidateId);
->>>>>>> develop
 				}
 			}
 			if (deletedWsIds.Any())
@@ -876,13 +746,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var addIpaInputSystem = FwCoreDlgs.WritingSystemList_AddIpa;
 			var addAudioInputSystem = FwCoreDlgs.WritingSystemList_AddAudio;
 			var addDialect = FwCoreDlgs.WritingSystemList_AddDialect;
-<<<<<<< HEAD
-			const string addNewLanguage = "Add new language...";
-||||||| f013144d5
-			var addNewLanguage = "Add new language...";
-=======
 			var addNewLanguage = FwCoreDlgs.WritingSystemList_AddNewLanguage;
->>>>>>> develop
 			var menuItemList = new List<WSMenuItemModel>();
 			if (!ListHasIpaForSelectedWs())
 			{
@@ -914,19 +778,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				menuItemList.Add(new WSMenuItemModel(mergeWritingSystem, MergeWritingSystem));
 			}
-<<<<<<< HEAD
-			menuItemList.Add(new WSMenuItemModel(string.Format(deleteWritingSystem, CurrentWsSetupModel.CurrentDisplayLabel), DeleteCurrentWritingSystem, CanDelete()));
-||||||| f013144d5
-			menuItemList.Add(new WSMenuItemModel(string.Format(deleteWritingSystem, CurrentWsSetupModel.CurrentDisplayLabel),
-				DeleteCurrentWritingSystem, CanDelete()));
-=======
 			menuItemList.Add(new WSMenuItemModel(string.Format(updateWritingSystem, CurrentWsSetupModel.CurrentDisplayLabel),
 				UpdateCurrentWritingSystem, !IsCurrentWsNew(), FwCoreDlgs.WritingSystemList_UpdateWsTooltip));
 			menuItemList.Add(new WSMenuItemModel(string.Format(hideWritingSystem, CurrentWsSetupModel.CurrentDisplayLabel),
 				HideCurrentWritingSystem, CanDelete() && !IsCurrentWsNew()));
 			menuItemList.Add(new WSMenuItemModel(string.Format(deleteWritingSystem, CurrentWsSetupModel.CurrentDisplayLabel),
 				DeleteCurrentWritingSystem, CanDelete()));
->>>>>>> develop
 			return menuItemList;
 		}
 
@@ -977,15 +834,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				CurrentWsListChanged = true;
 			}
-<<<<<<< HEAD
-			if (otherList.Contains(_currentWs) // will be hidden, not deleted
-				|| IsCurrentWsNew() // it hasn't been created yet, so it has no data
-				|| ConfirmDeleteWritingSystem(CurrentWsSetupModel.CurrentDisplayLabel)) // prompt the user to delete the WS and its data
-||||||| f013144d5
-			if (otherList.Contains(_currentWs) || // will be hidden, not deleted
-				IsCurrentWsNew() || // it hasn't been created yet, so it has no data
-				ConfirmDeleteWritingSystem(CurrentWsSetupModel.CurrentDisplayLabel)) // prompt the user to delete the WS and its data
-=======
 			WorkingList.RemoveAt(CurrentWritingSystemIndex);
 			SelectWs(WorkingList.First().WorkingWs);
 		}
@@ -993,7 +841,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void UpdateCurrentWritingSystem(object sender, EventArgs e)
 		{
 			if (Cache != null)
->>>>>>> develop
 			{
 				var langTag = WorkingList[CurrentWritingSystemIndex].WorkingWs.LanguageTag;
 				Cache.UpdateWritingSystemsFromGlobalStore(langTag);
@@ -1035,80 +882,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				return;
 			}
-<<<<<<< HEAD
 			if (ShowChangeLanguage(out var langInfo))
-||||||| f013144d5
-
-			LanguageInfo langInfo;
-			if (ShowChangeLanguage(out langInfo))
-=======
-
-			if (ShowChangeLanguage(out var langInfo))
->>>>>>> develop
 			{
-<<<<<<< HEAD
-				WSListItemModel wsListItem;
-				if (_wsManager.TryGet(langInfo.LanguageTag, out var wsDef))
-				{
-					// (LT-19728) At this point, wsDef is a live reference to an actual WS in this project.
-					// We don't want the user modifying plain English, or modifying any WS without performing the necessary update steps,
-					// so create a "new dialect" (if the selected WS is already in the current list)
-					// or set the OriginalWS and create a copy for editing (if this is the first instance of the selected WS in the current list)
-					if (WorkingList.Any(wItem => wItem.WorkingWs == wsDef))
-					{
-						// The requested WS already exists in the list; create a dialect
-						AddDialectOf(wsDef);
-						return;
-					}
-					// Set the WS up as an existing WS, the same way as existings WS's are set up when the dialog is opened:
-					// (later in this method, we set wsDef's Language Name to the user's DesiredName. This needs to happen on the working WS)
-					var origWs = wsDef;
-					wsDef = new CoreWritingSystemDefinition(wsDef, true);
-					wsListItem = new WSListItemModel(true, origWs, wsDef);
-				}
-				else
-				{
-					wsDef = _wsManager.Set(langInfo.LanguageTag);
-					wsListItem = new WSListItemModel(true, null, wsDef);
-				}
-				wsDef.Language = new LanguageSubtag(wsDef.Language, langInfo.DesiredName);
-				WorkingList.Insert(CurrentWritingSystemIndex + 1, wsListItem);
-				CurrentWsListChanged = true;
-				SelectWs(wsDef);
-||||||| f013144d5
-				CoreWritingSystemDefinition wsDef;
-				WSListItemModel wsListItem;
-				if (_wsManager.TryGet(langInfo.LanguageTag, out wsDef))
-				{
-					// (LT-19728) At this point, wsDef is a live reference to an actual WS in this project.
-					// We don't want the user modifying plain English, or modifying any WS without performing the necessary update steps,
-					// so create a "new dialect" (if the selected WS is already in the current list)
-					// or set the OriginalWS and create a copy for editing (if this is the first instance of the selected WS in the current list)
-					if (WorkingList.Any(wItem => wItem.WorkingWs == wsDef))
-					{
-						// The requested WS already exists in the list; create a dialect
-						AddDialectOf(wsDef);
-						return;
-					}
-					// Set the WS up as an existing WS, the same way as existings WS's are set up when the dialog is opened:
-					// (later in this method, we set wsDef's Language Name to the user's DesiredName. This needs to happen on the working WS)
-					var origWs = wsDef;
-					wsDef = new CoreWritingSystemDefinition(wsDef, true);
-					wsListItem = new WSListItemModel(true, origWs, wsDef);
-				}
-				else
-				{
-					wsDef = _wsManager.Set(langInfo.LanguageTag);
-					wsListItem = new WSListItemModel(true, null, wsDef);
-				}
-
-				wsDef.Language = new LanguageSubtag(wsDef.Language, langInfo.DesiredName);
-				WorkingList.Insert(CurrentWritingSystemIndex + 1, wsListItem);
-				CurrentWsListChanged = true;
-				SelectWs(wsDef);
-=======
 				AddNewLanguage(langInfo);
->>>>>>> develop
 			}
 		}
 
@@ -1330,193 +1106,4 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			return languageAndCountry.ToString();
 		}
 	}
-<<<<<<< HEAD
 }
-||||||| f013144d5
-
-	/// <summary>
-	/// This class models a menu item for interacting with the the writing system model.
-	/// It holds the string to display in the menu item and the event handler for the menu item click.
-	/// </summary>
-	public class WSMenuItemModel : Tuple<string, EventHandler, bool>
-	{
-		/// <summary/>
-		public WSMenuItemModel(string menuText, EventHandler clickHandler, bool enabled = true) : base(menuText, clickHandler, enabled)
-		{
-		}
-
-		/// <summary/>
-		public string MenuText => Item1;
-
-		/// <summary/>
-		public EventHandler ClickHandler => Item2;
-
-		/// <summary/>
-		public bool IsEnabled => Item3;
-	}
-
-	/// <summary>
-	/// This class models a list item for a writing system.
-	/// The boolean indicates if the item is in the Current list and should be ticked in the UI.
-	/// </summary>
-	public class WSListItemModel : Tuple<bool, CoreWritingSystemDefinition, CoreWritingSystemDefinition>
-	{
-		/// <summary/>
-		public WSListItemModel(bool isInCurrent, CoreWritingSystemDefinition originalWsDef, CoreWritingSystemDefinition workingWs) : base(isInCurrent, originalWsDef, workingWs)
-		{
-		}
-
-		/// <summary/>
-		public bool InCurrentList => Item1;
-
-		/// <summary/>
-		public CoreWritingSystemDefinition WorkingWs => Item3;
-
-		/// <summary/>
-		public CoreWritingSystemDefinition OriginalWs => Item2;
-
-		/// <summary/>
-		public override string ToString()
-		{
-			return WorkingWs.DisplayLabel;
-		}
-	}
-
-	/// <summary/>
-	public class SpellingDictionaryItem : Tuple<string, string>, IEquatable<SpellingDictionaryItem>
-	{
-		/// <summary/>
-		public SpellingDictionaryItem(string item1, string item2) : base(item1, item2)
-		{
-		}
-
-		/// <summary/>
-		public string Name => Item1;
-
-		/// <summary/>
-		public string Id => Item2;
-
-		/// <summary/>
-		public override string ToString()
-		{
-			return Name;
-		}
-
-		/// <summary/>
-		public bool Equals(SpellingDictionaryItem other)
-		{
-			return Id.Equals(other?.Id);
-		}
-
-		/// <summary/>
-		public override bool Equals(object obj)
-		{
-			if (ReferenceEquals(null, obj)) return false;
-			if (ReferenceEquals(this, obj)) return true;
-			if (obj.GetType() != this.GetType()) return false;
-			return Equals((SpellingDictionaryItem) obj);
-		}
-
-		/// <summary/>
-		public override int GetHashCode()
-		{
-			return Id.GetHashCode();
-		}
-	}
-}
-=======
-
-	/// <summary>
-	/// This class models a menu item for interacting with the the writing system model.
-	/// It holds the string to display in the menu item and the event handler for the menu item click.
-	/// </summary>
-	public class WSMenuItemModel : Tuple<string, EventHandler, bool, string>
-	{
-		/// <summary/>
-		public WSMenuItemModel(string menuText, EventHandler clickHandler, bool enabled = true, string toolTip = null) : base(menuText, clickHandler, enabled, toolTip)
-		{
-		}
-
-		/// <summary/>
-		public string MenuText => Item1;
-
-		/// <summary/>
-		public EventHandler ClickHandler => Item2;
-
-		/// <summary/>
-		public bool IsEnabled => Item3;
-
-		/// <summary/>
-		public string ToolTip => Item4;
-	}
-
-	/// <summary>
-	/// This class models a list item for a writing system.
-	/// The boolean indicates if the item is in the Current list and should be ticked in the UI.
-	/// </summary>
-	public class WSListItemModel : Tuple<bool, CoreWritingSystemDefinition, CoreWritingSystemDefinition>
-	{
-		/// <summary/>
-		public WSListItemModel(bool isInCurrent, CoreWritingSystemDefinition originalWsDef, CoreWritingSystemDefinition workingWs) : base(isInCurrent, originalWsDef, workingWs)
-		{
-		}
-
-		/// <summary/>
-		public bool InCurrentList => Item1;
-
-		/// <summary/>
-		public CoreWritingSystemDefinition WorkingWs => Item3;
-
-		/// <summary/>
-		public CoreWritingSystemDefinition OriginalWs => Item2;
-
-		/// <summary/>
-		public override string ToString()
-		{
-			return WorkingWs.DisplayLabel;
-		}
-	}
-
-	/// <summary/>
-	public class SpellingDictionaryItem : Tuple<string, string>, IEquatable<SpellingDictionaryItem>
-	{
-		/// <summary/>
-		public SpellingDictionaryItem(string item1, string item2) : base(item1, item2)
-		{
-		}
-
-		/// <summary/>
-		public string Name => Item1;
-
-		/// <summary/>
-		public string Id => Item2;
-
-		/// <summary/>
-		public override string ToString()
-		{
-			return Name;
-		}
-
-		/// <summary/>
-		public bool Equals(SpellingDictionaryItem other)
-		{
-			return Id.Equals(other?.Id);
-		}
-
-		/// <summary/>
-		public override bool Equals(object obj)
-		{
-			if (ReferenceEquals(null, obj)) return false;
-			if (ReferenceEquals(this, obj)) return true;
-			if (obj.GetType() != this.GetType()) return false;
-			return Equals((SpellingDictionaryItem) obj);
-		}
-
-		/// <summary/>
-		public override int GetHashCode()
-		{
-			return Id.GetHashCode();
-		}
-	}
-}
->>>>>>> develop
