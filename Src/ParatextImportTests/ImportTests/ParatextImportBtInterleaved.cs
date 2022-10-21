@@ -2102,20 +2102,11 @@ namespace ParatextImport.ImportTests
 			// Then try to add a back translation
 			m_importer.ProcessSegment("Main Title", @"\btmt");
 
-<<<<<<< HEAD:Src/ParatextImportTests/ImportTests/ParatextImportBtInterleaved.cs
-			Assert.That(() => { m_importer.FinalizeImport(); }, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(@"Back translation not part of a paragraph:(\r)?\n" +
-			@"\tMain Title(\r)?\n" +
-			@"\t\(Style: Title Main\)(\r)?\n" +
-			@"Attempting to read EXO"));
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/ImportTests/ParatextImportBtInterleaved.cs
-			m_importer.FinalizeImport();
-=======
 			Assert.That(() => m_importer.FinalizeImport(), Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(
 				@"Back translation not part of a paragraph:(\r)?\n" +
 				@"\tMain Title(\r)?\n" +
 				@"\t\(Style: Title Main\)(\r)?\n" +
 				"Attempting to read EXO"));
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/ImportTests/ParatextImportBtInterleaved.cs
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2312,16 +2303,6 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id");
 			m_importer.ProcessSegment("A ", @"\mt");
-<<<<<<< HEAD:Src/ParatextImportTests/ImportTests/ParatextImportBtInterleaved.cs
-			Assert.That(() => { m_importer.ProcessSegment("B ", @"\btp"); }, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match("Back translation does not correspond to the " +
-				"preceding vernacular paragraph:(\\r)?\\n\\t\\\\btp B (\\r)?\\n" +
-				"The style for a back translation paragraph must match the style for the " +
-				"vernacular paragraph. A back translation paragraph must belong to the " +
-				"immediately preceding vernacular paragraph.(\\r)?\\nThe style \"Paragraph\" " +
-				"does not match the vernacular paragraph style \"Title Main\".(\\r)?\\nAttempting to read EXO"));
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/ImportTests/ParatextImportBtInterleaved.cs
-			m_importer.ProcessSegment("B ", @"\btp");
-=======
 			Assert.That(() => m_importer.ProcessSegment("B ", @"\btp"), Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(
 				"Back translation does not correspond to the " +
 				"preceding vernacular paragraph:(\\r)?\\n\\t\\\\btp B (\\r)?\\n" +
@@ -2329,7 +2310,6 @@ namespace ParatextImport.ImportTests
 				"vernacular paragraph. A back translation paragraph must belong to the " +
 				"immediately preceding vernacular paragraph.(\\r)?\\nThe style \"Paragraph\" " +
 				"does not match the vernacular paragraph style \"Title Main\".(\\r)?\\nAttempting to read EXO"));
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/ImportTests/ParatextImportBtInterleaved.cs
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2861,20 +2841,8 @@ namespace ParatextImport.ImportTests
 
 			// ************** process a section head (for 1:1) *********************
 			m_importer.ProcessSegment("Kscripture Ksection", @"\s");
-<<<<<<< HEAD:Src/ParatextImportTests/ImportTests/ParatextImportBtInterleaved.cs
-			Assert.That(() => { m_importer.ProcessSegment("Scripture Section", @"\bts"); }, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match("No corresponding vernacular book for back translation.(\r)?\n" +
-			"Attempting to read EXO"));
-			// Shouldn't get here
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/ImportTests/ParatextImportBtInterleaved.cs
-			m_importer.ProcessSegment("Scripture Section", @"\bts");
-
-			// ************** finalize **************
-			m_importer.FinalizeImport();
-			// Shouldn't get here
-=======
 			Assert.That(() => m_importer.ProcessSegment("Scripture Section", @"\bts"), Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(
 				"No corresponding vernacular book for back translation.(\r)?\nAttempting to read EXO"));
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/ImportTests/ParatextImportBtInterleaved.cs
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2899,20 +2867,8 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
 
 			// ************** process a back trans main title *********************
-<<<<<<< HEAD:Src/ParatextImportTests/ImportTests/ParatextImportBtInterleaved.cs
-			Assert.That(() => { m_importer.ProcessSegment("We're gonna die!", @"\btmt"); ; }, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match("No corresponding vernacular book for back translation.(\r)?\n" +
-			"Attempting to read EXO"));
-			// Shouldn't get here
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/ImportTests/ParatextImportBtInterleaved.cs
-			m_importer.ProcessSegment("We're gonna die!", @"\btmt");
-
-			// ************** finalize **************
-			m_importer.FinalizeImport();
-			// Shouldn't get here
-=======
 			Assert.That(()=> m_importer.ProcessSegment("We're gonna die!", @"\btmt"), Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(
 				"No corresponding vernacular book for back translation.(\r)?\nAttempting to read EXO"));
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/ImportTests/ParatextImportBtInterleaved.cs
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2940,20 +2896,8 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("vamos a morir", @"\mt");
 
 			// ************** process a back trans main title *********************
-<<<<<<< HEAD:Src/ParatextImportTests/ImportTests/ParatextImportBtInterleaved.cs
-			Assert.That(() => { m_importer.ProcessSegment("We're gonna die!", @"\btmt"); }, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match("No corresponding vernacular book for back translation.(\r)?\n" +
-			"Attempting to read EXO"));
-			// Shouldn't get here
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/ImportTests/ParatextImportBtInterleaved.cs
-			m_importer.ProcessSegment("We're gonna die!", @"\btmt");
-
-			// ************** finalize **************
-			m_importer.FinalizeImport();
-			// Shouldn't get here
-=======
 			Assert.That(() => m_importer.ProcessSegment("We're gonna die!", @"\btmt"), Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(
 				"No corresponding vernacular book for back translation.(\r)?\nAttempting to read EXO"));
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/ImportTests/ParatextImportBtInterleaved.cs
 		}
 
 		/// ------------------------------------------------------------------------------------

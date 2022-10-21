@@ -33,16 +33,8 @@ namespace ParatextImport
 
 			Difference clonedDiff = diff.Clone();
 
-<<<<<<< HEAD:Src/ParatextImportTests/DifferenceTests.cs
-			Assert.AreEqual(1001001, (int)clonedDiff.RefStart);
-			Assert.AreEqual(1001030, (int)clonedDiff.RefEnd);
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/DifferenceTests.cs
-			Assert.AreEqual(1001001, clonedDiff.RefStart);
-			Assert.AreEqual(1001030, clonedDiff.RefEnd);
-=======
 			Assert.That((int)clonedDiff.RefStart, Is.EqualTo(1001001));
 			Assert.That((int)clonedDiff.RefEnd, Is.EqualTo(1001030));
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/DifferenceTests.cs
 			Assert.AreSame(paras[0], clonedDiff.ParaCurr);
 			Assert.AreEqual(1, clonedDiff.IchMinCurr);
 			Assert.AreEqual(99, clonedDiff.IchLimCurr);
@@ -61,82 +53,6 @@ namespace ParatextImport
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-<<<<<<< HEAD:Src/ParatextImportTests/DifferenceTests.cs
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/DifferenceTests.cs
-		/// Tests cloning differences when Difference contains sections.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("Enable when added sections are stored in array")]
-		public void Clone_WithSections()
-		{
-			// wish we had a simpler constructor
-			//Difference diffA = new Difference(
-			//    new ScrReference(1, 1, 1, ScrVers.English), new ScrReference(1, 1, 30, ScrVers.English),
-			//    DifferenceType.SectionAddedToCurrent,
-			//    new int[] {6, 7, 8},
-			//    4712, 11);
-			////diff.SectionsCurr = new int[] {6, 7, 8};
-
-			//Difference clonedDiff = diffA.Clone();
-
-			//Assert.AreEqual(1001001, clonedDiff.RefStart);
-			//Assert.AreEqual(1001030, clonedDiff.RefEnd);
-			//Assert.AreEqual(DifferenceType.SectionAddedToCurrent, (DifferenceType)clonedDiff.DiffType);
-			//Assert.AreEqual(6, clonedDiff.SectionsCurr[0]);
-			//Assert.AreEqual(7, clonedDiff.SectionsCurr[1]);
-			//Assert.AreEqual(8, clonedDiff.SectionsCurr[2]);
-			//Assert.AreEqual(0, clonedDiff.ParaCurr);
-			//Assert.AreEqual(0, clonedDiff.IchMinCurr);
-			//Assert.AreEqual(0, clonedDiff.IchLimCurr);
-			//Assert.AreEqual(4712, clonedDiff.ParaRev);
-			//Assert.AreEqual(11, clonedDiff.IchMinRev);
-			//Assert.AreEqual(11, clonedDiff.IchLimRev);
-			//Assert.IsNull(clonedDiff.SubDifferences);
-			//Assert.IsNull(clonedDiff.StyleNameCurr);
-			//Assert.IsNull(clonedDiff.StyleNameRev);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-=======
-		/// Tests cloning differences when Difference contains sections.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		[Ignore("Enable when added sections are stored in array")]
-		public void Clone_WithSections()
-		{
-			// wish we had a simpler constructor
-			//Difference diffA = new Difference(
-			//    new ScrReference(1, 1, 1, ScrVers.English), new ScrReference(1, 1, 30, ScrVers.English),
-			//    DifferenceType.SectionAddedToCurrent,
-			//    new int[] {6, 7, 8},
-			//    4712, 11);
-			////diff.SectionsCurr = new int[] {6, 7, 8};
-
-			//Difference clonedDiff = diffA.Clone();
-
-			//Assert.AreEqual(1001001, clonedDiff.RefStart);
-			//Assert.AreEqual(1001030, clonedDiff.RefEnd);
-			//Assert.AreEqual(DifferenceType.SectionAddedToCurrent, (DifferenceType)clonedDiff.DiffType);
-			//Assert.AreEqual(6, clonedDiff.SectionsCurr[0]);
-			//Assert.AreEqual(7, clonedDiff.SectionsCurr[1]);
-			//Assert.AreEqual(8, clonedDiff.SectionsCurr[2]);
-			//Assert.AreEqual(0, clonedDiff.ParaCurr);
-			//Assert.AreEqual(0, clonedDiff.IchMinCurr);
-			//Assert.AreEqual(0, clonedDiff.IchLimCurr);
-			//Assert.AreEqual(4712, clonedDiff.ParaRev);
-			//Assert.AreEqual(11, clonedDiff.IchMinRev);
-			//Assert.AreEqual(11, clonedDiff.IchLimRev);
-			//Assert.That(clonedDiff.SubDifferences, Is.Null);
-			//Assert.That(clonedDiff.StyleNameCurr, Is.Null);
-			//Assert.That(clonedDiff.StyleNameRev, Is.Null);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/DifferenceTests.cs
 		/// Tests cloning differences when Difference contains multiple SubDifferences
 		/// </summary>
 		/// ------------------------------------------------------------------------------------

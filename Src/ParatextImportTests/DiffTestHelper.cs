@@ -163,27 +163,19 @@ namespace ParatextImport
 		{
 			Difference subDiff = rootDiff.SubDiffsForORCs[iSubDiff];
 			// verify the basics
-<<<<<<< HEAD:Src/ParatextImportTests/DiffTestHelper.cs
-			Assert.AreEqual(0, (int)subDiff.RefStart);
-			Assert.AreEqual(0, (int)subDiff.RefEnd);
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/DiffTestHelper.cs
-			Assert.AreEqual(0, subDiff.RefStart);
-			Assert.AreEqual(0, subDiff.RefEnd);
-=======
 			Assert.That((int)subDiff.RefStart, Is.EqualTo(0));
 			Assert.That((int)subDiff.RefEnd, Is.EqualTo(0));
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/DiffTestHelper.cs
-			Assert.AreEqual(DifferenceType.NoDifference, subDiff.DiffType);
+			Assert.That(subDiff.DiffType, Is.EqualTo(DifferenceType.NoDifference));
 
 			// the Current para stuff
-			Assert.AreEqual(((IScrTxtPara)footnoteCurr.ParagraphsOS[0]), subDiff.ParaCurr);
-			Assert.AreEqual(0, subDiff.IchMinCurr);
+			Assert.That(subDiff.ParaCurr, Is.EqualTo((IScrTxtPara)footnoteCurr.ParagraphsOS[0]));
+			Assert.That(subDiff.IchMinCurr, Is.EqualTo(0));
 			Assert.AreEqual(((IScrTxtPara)footnoteCurr.ParagraphsOS[0]).Contents.Length, subDiff.IchLimCurr);
 
 			// the Revision para stuff
-			Assert.AreEqual(null, subDiff.ParaRev);
-			Assert.AreEqual(0, subDiff.IchMinRev);
-			Assert.AreEqual(0, subDiff.IchLimRev);
+			Assert.That(subDiff.ParaRev, Is.Null);
+			Assert.That(subDiff.IchMinRev, Is.EqualTo(0));
+			Assert.That(subDiff.IchLimRev, Is.EqualTo(0));
 
 			// style names should be null
 			Assert.That(subDiff.StyleNameCurr, Is.Null);
@@ -197,8 +189,8 @@ namespace ParatextImport
 			Assert.That(subDiff.SubDiffsForORCs, Is.Null);
 
 			//check the root difference for consistency with this subDiff
-			Assert.IsTrue(rootDiff.DiffType == DifferenceType.TextDifference ||
-				rootDiff.DiffType == DifferenceType.FootnoteAddedToCurrent);
+			Assert.That(rootDiff.DiffType == DifferenceType.TextDifference ||
+				rootDiff.DiffType == DifferenceType.FootnoteAddedToCurrent, Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -213,16 +205,8 @@ namespace ParatextImport
 		{
 			Difference subDiff = rootDiff.SubDiffsForORCs[iSubDiff];
 			// verify the basics
-<<<<<<< HEAD:Src/ParatextImportTests/DiffTestHelper.cs
-			Assert.AreEqual(0, (int)subDiff.RefStart);
-			Assert.AreEqual(0, (int)subDiff.RefEnd);
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/DiffTestHelper.cs
-			Assert.AreEqual(0, subDiff.RefStart);
-			Assert.AreEqual(0, subDiff.RefEnd);
-=======
 			Assert.That((int)subDiff.RefStart, Is.EqualTo(0));
 			Assert.That((int)subDiff.RefEnd, Is.EqualTo(0));
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/DiffTestHelper.cs
 			Assert.AreEqual(DifferenceType.NoDifference, subDiff.DiffType);
 
 			// the Current para stuff
@@ -721,16 +705,8 @@ namespace ParatextImport
 			string verseText, int iVerseStart, bool fIsChapter, bool fIsHeading, int iSection)
 		{
 			Assert.AreEqual(para, scrVerse.Para);
-<<<<<<< HEAD:Src/ParatextImportTests/DiffTestHelper.cs
-			Assert.AreEqual(startRef, (int)scrVerse.StartRef);
-			Assert.AreEqual(endRef, (int)scrVerse.EndRef);
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/DiffTestHelper.cs
-			Assert.AreEqual(startRef, scrVerse.StartRef);
-			Assert.AreEqual(endRef, scrVerse.EndRef);
-=======
 			Assert.That((int)scrVerse.StartRef, Is.EqualTo(startRef));
 			Assert.That((int)scrVerse.EndRef, Is.EqualTo(endRef));
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/DiffTestHelper.cs
 			Assert.AreEqual(verseText, scrVerse.Text.Text);
 			Assert.AreEqual(iVerseStart, scrVerse.VerseStartIndex);
 			Assert.AreEqual(fIsChapter, scrVerse.ChapterNumberRun);

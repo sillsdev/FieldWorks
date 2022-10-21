@@ -1533,18 +1533,7 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-<<<<<<< HEAD:Src/ParatextImportTests/ImportTests/ParatextImportParatext6Tests.cs
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/ImportTests/ParatextImportParatext6Tests.cs
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
-		[ExpectedException(typeof(ScriptureUtilsException),
-		   ExpectedMessage = "Back translation not part of a paragraph:(\\r)?\\n" +
-			"\\tThis is default paragraph characters (\\r)?\\n" +
-			"\\t\\(Style: Default Paragraph Characters\\)(\\r)?\\n" +
-			"Attempting to read GEN",
-			MatchType = MessageMatch.Regex)]
-=======
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/ImportTests/ParatextImportParatext6Tests.cs
 		public void BackTranslationNonInterleaved_DefaultParaCharsStart()
 		{
 			m_importer.Settings.SetMapping(MappingSet.Main,
@@ -1584,63 +1573,10 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 			m_importer.ProcessSegment("This is default paragraph characters ", @"\nt");
-<<<<<<< HEAD:Src/ParatextImportTests/ImportTests/ParatextImportParatext6Tests.cs
 			Assert.That(() => { m_importer.ProcessSegment("Title ", @"\mt"); }, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match("Back translation not part of a paragraph:(\\r)?\\n" +
 			"\\tThis is default paragraph characters (\\r)?\\n" +
 			"\\t\\(Style: Default Paragraph Characters\\)(\\r)?\\n" +
 			"Attempting to read GEN"));
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/ImportTests/ParatextImportParatext6Tests.cs
-			m_importer.ProcessSegment("Title ", @"\mt");
-			m_importer.ProcessSegment("First Section ", @"\s");
-			m_importer.ProcessSegment("", @"\p");
-			m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 0);
-			m_importer.TextSegment.LastReference = new BCVRef(1, 1, 0);
-			m_importer.ProcessSegment("", @"\c");
-			m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 1);
-			m_importer.TextSegment.LastReference = new BCVRef(1, 1, 1);
-			m_importer.ProcessSegment("First verse ", @"\v");
-			m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 2);
-			m_importer.TextSegment.LastReference = new BCVRef(1, 1, 2);
-			m_importer.ProcessSegment("Second verse ", @"\v");
-
-			// ************** finalize **************
-			m_importer.FinalizeImport();
-
-			Assert.AreEqual(1, genesis.SectionsOS.Count); // minor sanity check
-
-			Assert.AreEqual(1, genesis.TitleOA.ParagraphsOS.Count);
-			IStTxtPara titlePara = (IStTxtPara)genesis.TitleOA.ParagraphsOS[0];
-			Assert.AreEqual(1, titlePara.TranslationsOC.Count);
-			ICmTranslation titleTranslation = titlePara.TranslationsOC.ToArray()[0];
-			Assert.AreEqual("Title",
-				titleTranslation.Translation.get_String(m_wsAnal).Text);
-
-			// Check first section
-			IScrSection section = genesis.SectionsOS[0];
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
-			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("Primera Seccion", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
-			ICmTranslation translation = para.TranslationsOC.ToArray()[0];
-			Assert.AreEqual("First Section",
-				translation.Translation.get_String(m_wsAnal).Text);
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
-			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11Primer versiculo 2Segundo versiculo", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
-			translation = para.TranslationsOC.ToArray()[0];
-			Assert.AreEqual("11First verse 2Second verse",
-				translation.Translation.get_String(m_wsAnal).Text);
-=======
-
-			// For some reason, starting in 2022-01, this message has a Unix newline even on Windows. If it changes back soon,
-			// we can switch to regular expression matching to save the maintenance.
-			Assert.That(() => m_importer.ProcessSegment("Title ", @"\mt"), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(string.Format(
-				"Back translation not part of a paragraph:\n" +
-				"\tThis is default paragraph characters {0}" +
-				"\t(Style: Default Paragraph Characters){0}" +
-				"Attempting to read GEN", Environment.NewLine)));
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/ImportTests/ParatextImportParatext6Tests.cs
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1839,15 +1775,7 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-<<<<<<< HEAD:Src/ParatextImportTests/ImportTests/ParatextImportParatext6Tests.cs
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/ImportTests/ParatextImportParatext6Tests.cs
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: ParaText Dependency")]
-		[ExpectedException(typeof(ScriptureUtilsException),
-			ExpectedMessage = "No corresponding vernacular book for back translation.(\\r)?\\nAttempting to read GEN",
-			MatchType = MessageMatch.Regex)]
-=======
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/ImportTests/ParatextImportParatext6Tests.cs
 		public void BackTranslationNonInterleaved_NoCorrespondingBook()
 		{
 			m_importer.Settings.ImportTranslation = false;
@@ -1858,21 +1786,9 @@ namespace ParatextImport.ImportTests
 			m_importer.CurrentImportDomain = ImportDomain.BackTrans;
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
-<<<<<<< HEAD:Src/ParatextImportTests/ImportTests/ParatextImportParatext6Tests.cs
-			 // no text provided in segment, just the refs
-			Assert.That(() => { m_importer.ProcessSegment("", @"\id"); }, Throws.TypeOf<ScriptureUtilsException>().With.Message.Match("No corresponding vernacular book for back translation.(\\r)?\\nAttempting to read GEN"));
-			// Shouldn't get here
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/ImportTests/ParatextImportParatext6Tests.cs
-			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-
-			// ************** finalize **************
-			m_importer.FinalizeImport();
-			// Shouldn't get here
-=======
 			// no text provided in segment, just the refs
 			Assert.That(() => m_importer.ProcessSegment("", @"\id"), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(
 					$"No corresponding vernacular book for back translation.{Environment.NewLine}Attempting to read GEN"));
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/ImportTests/ParatextImportParatext6Tests.cs
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3141,15 +3057,6 @@ namespace ParatextImport.ImportTests
 				m_importer.ProcessSegment("First verse ", @"\v");
 				m_importer.ProcessSegment("BT for first photo", @"\fig");
 			}
-<<<<<<< HEAD:Src/ParatextImportTests/ImportTests/ParatextImportParatext6Tests.cs
-
-			// ************** finalize **************
-			var exception = Assert.Throws<ScriptureUtilsException>(()=>m_importer.FinalizeImport());
-			Assert.AreEqual(exception.ErrorCode, SUE_ErrorCode.BackTransMissingVernPicture,
-				"The import should have thrown a missing picture exception.");
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/ImportTests/ParatextImportParatext6Tests.cs
-=======
-
 			// ************** finalize **************
 			// For some reason, starting in 2022-01, this message has a Unix newline even on Windows. If it changes back soon,
 			// we can switch to regular expression matching to save the maintenance.
@@ -3158,7 +3065,6 @@ namespace ParatextImport.ImportTests
 				"A back translation picture must correspond to a picture in the corresponding vernacular paragraph." +
 				"{1}{1}\\fig {0}{1}Attempting to read GEN  Chapter: 1  Verse: 1",
 				Path.Combine(Path.GetTempPath(), "BT for first photo"), Environment.NewLine)));
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/ImportTests/ParatextImportParatext6Tests.cs
 		}
 
 		/// ------------------------------------------------------------------------------------

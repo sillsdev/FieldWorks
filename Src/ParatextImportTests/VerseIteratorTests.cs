@@ -51,16 +51,8 @@ namespace ParatextImport
 			// Verify section 1 heading
 			ScrVerse scrVerse = m_bookMerger.NextVerseInStText();
 			Assert.AreEqual(section1.HeadingOA[0], scrVerse.Para);
-<<<<<<< HEAD:Src/ParatextImportTests/VerseIteratorTests.cs
-			Assert.AreEqual(01002001, (int)scrVerse.StartRef);
-			Assert.AreEqual(01002001, (int)scrVerse.EndRef);
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/VerseIteratorTests.cs
-			Assert.AreEqual(01002001, scrVerse.StartRef);
-			Assert.AreEqual(01002001, scrVerse.EndRef);
-=======
 			Assert.That((int)scrVerse.StartRef, Is.EqualTo(01002001));
 			Assert.That((int)scrVerse.EndRef, Is.EqualTo(01002001));
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/VerseIteratorTests.cs
 			Assert.AreEqual("My aching head!", scrVerse.Text.Text);
 			Assert.That(scrVerse.VerseStartIndex, Is.EqualTo(0));
 
@@ -74,45 +66,21 @@ namespace ParatextImport
 			// Verify section 1 content
 			scrVerse = m_bookMerger.NextVerseInStText();
 			Assert.AreEqual(hvoS1Para, scrVerse.Para);
-<<<<<<< HEAD:Src/ParatextImportTests/VerseIteratorTests.cs
-			Assert.AreEqual(01002001, (int)scrVerse.StartRef);
-			Assert.AreEqual(01002001, (int)scrVerse.EndRef);
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/VerseIteratorTests.cs
-			Assert.AreEqual(01002001, scrVerse.StartRef);
-			Assert.AreEqual(01002001, scrVerse.EndRef);
-=======
 			Assert.That((int)scrVerse.StartRef, Is.EqualTo(01002001));
 			Assert.That((int)scrVerse.EndRef, Is.EqualTo(01002001));
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/VerseIteratorTests.cs
 			Assert.AreEqual("2Verse 1. ", scrVerse.Text.Text);
 			Assert.That(scrVerse.VerseStartIndex, Is.EqualTo(0));
 			Assert.That(scrVerse.TextStartIndex, Is.EqualTo(1));
 
 			scrVerse = m_bookMerger.NextVerseInStText();
-<<<<<<< HEAD:Src/ParatextImportTests/VerseIteratorTests.cs
-			Assert.AreEqual(01002002, (int)scrVerse.StartRef);
-			Assert.AreEqual(01002002, (int)scrVerse.EndRef);
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/VerseIteratorTests.cs
-			Assert.AreEqual(01002002, scrVerse.StartRef);
-			Assert.AreEqual(01002002, scrVerse.EndRef);
-=======
 			Assert.That((int)scrVerse.StartRef, Is.EqualTo(01002002));
 			Assert.That((int)scrVerse.EndRef, Is.EqualTo(01002002));
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/VerseIteratorTests.cs
 			Assert.AreEqual("2Verse 2. ", scrVerse.Text.Text);
 			Assert.That(scrVerse.VerseStartIndex, Is.EqualTo(10));
 
 			scrVerse = m_bookMerger.NextVerseInStText();
-<<<<<<< HEAD:Src/ParatextImportTests/VerseIteratorTests.cs
-			Assert.AreEqual(01002003, (int)scrVerse.StartRef);
-			Assert.AreEqual(01002004, (int)scrVerse.EndRef);
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/VerseIteratorTests.cs
-			Assert.AreEqual(01002003, scrVerse.StartRef);
-			Assert.AreEqual(01002004, scrVerse.EndRef);
-=======
 			Assert.That((int)scrVerse.StartRef, Is.EqualTo(01002003));
 			Assert.That((int)scrVerse.EndRef, Is.EqualTo(01002004));
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/VerseIteratorTests.cs
 			Assert.AreEqual("3-4Verse 3-4.", scrVerse.Text.Text);
 			Assert.That(scrVerse.VerseStartIndex, Is.EqualTo(20));
 
@@ -151,31 +119,15 @@ namespace ParatextImport
 			// Verify section 1 content
 			ScrVerse scrVerse = m_bookMerger.NextVerseInStText();
 			Assert.AreEqual(hvoS1Para, scrVerse.Para);
-<<<<<<< HEAD:Src/ParatextImportTests/VerseIteratorTests.cs
-			Assert.AreEqual(01001001, (int)scrVerse.StartRef);
-			Assert.AreEqual(01001001, (int)scrVerse.EndRef);
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/VerseIteratorTests.cs
-			Assert.AreEqual(01001001, scrVerse.StartRef);
-			Assert.AreEqual(01001001, scrVerse.EndRef);
-=======
 			Assert.That((int)scrVerse.StartRef, Is.EqualTo(01001001));
 			Assert.That((int)scrVerse.EndRef, Is.EqualTo(01001001));
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/VerseIteratorTests.cs
 			Assert.AreEqual("Some initial text. ", scrVerse.Text.Text);
 			Assert.That(scrVerse.VerseStartIndex, Is.EqualTo(0));
 
 			scrVerse = m_bookMerger.NextVerseInStText();
 			Assert.AreEqual(hvoS1Para, scrVerse.Para);
-<<<<<<< HEAD:Src/ParatextImportTests/VerseIteratorTests.cs
-			Assert.AreEqual(01001005, (int)scrVerse.StartRef);
-			Assert.AreEqual(01001006, (int)scrVerse.EndRef);
-||||||| f013144d5:Src/ParatextImport/ParatextImportTests/VerseIteratorTests.cs
-			Assert.AreEqual(01001005, scrVerse.StartRef);
-			Assert.AreEqual(01001006, scrVerse.EndRef);
-=======
 			Assert.That((int)scrVerse.StartRef, Is.EqualTo(01001005));
 			Assert.That((int)scrVerse.EndRef, Is.EqualTo(01001006));
->>>>>>> develop:Src/ParatextImport/ParatextImportTests/VerseIteratorTests.cs
 			Assert.AreEqual("5-6Verses 5-6.", scrVerse.Text.Text);
 			Assert.That(scrVerse.VerseStartIndex, Is.EqualTo(19));
 
