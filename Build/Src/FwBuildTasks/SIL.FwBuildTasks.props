@@ -8,7 +8,6 @@
   <UsingTask TaskName="ComputerName" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
   <UsingTask TaskName="CpuArchitecture" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
   <UsingTask TaskName="DownloadFile" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
-  <UsingTask TaskName="DownloadFilesFromTeamCity" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
   <UsingTask TaskName="ExtractIIDs" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll"/>
   <UsingTask TaskName="ForceDelete" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
   <UsingTask TaskName="GenerateFwTargets" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
