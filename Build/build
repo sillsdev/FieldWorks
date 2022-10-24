@@ -24,10 +24,11 @@ PLATFORM=$(test `arch` = x86_64 && echo x64 || echo x86)
 
 set -x
 
-# Use xbuild for CheckDevelopmentPropertiesFile since mono5-sil msbuild has trouble. When move to mono6, may be able to use msbuild again.
 
 ./Agent/install-deps --verify
 ./run-in-environ $BUILD "/t:RestoreNuGetPackages"
+# Use xbuild for CheckDevelopmentPropertiesFile since mono5-sil msbuild has
+# trouble. When move to mono6, may be able to use msbuild again.
 ./run-in-environ xbuild "/t:CheckDevelopmentPropertiesFile"
 ./run-in-environ $BUILD "/t:refreshTargets"
 ./run-in-environ $BUILD /p:Platform=$PLATFORM "$@"
