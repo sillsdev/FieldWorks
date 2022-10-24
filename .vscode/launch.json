@@ -154,7 +154,10 @@
     // Or open the flatpak with:
     //   flatpak-builder --run build-dir org.sil.FieldWorks.yml bash
     //   and then in the flatpak environment, run the following, and then start the debugger:
-    //   FW_MONO_OPTS=--debugger-agent=address=127.0.0.1:55001,transport=dt_socket,server=y,suspend=y fieldworks-flex
+    //   FW_MONO_OPTS=--debugger-agent=address=127.0.0.1:55001,transport=dt_socket,server=y,suspend=n fieldworks-flex
+    // To listen for debug attachment of FW managed code running not in flatpak, run:
+    //   cd /usr/lib/fieldworks && export RUNMODE=INSTALLED && source environ &&
+    //   mono --debugger-agent=address=127.0.0.1:55001,transport=dt_socket,server=y,suspend=n FieldWorks.exe
     {
       "name": "Attach to local C# (such as flatpak)",
       "type": "mono",
