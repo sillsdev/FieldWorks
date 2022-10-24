@@ -377,8 +377,7 @@
 
 	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
 		<!-- REVIEW (Hasso) 2022.10: this could be simply FwBuildTasks, w/o SIL., since it's not its own package -->
-		<!-- REVIEW (Hasso) 2022.10: we could probably build only the tasks themselves here; the full sln w/ tests is overkill -->
-		<MSBuild Projects="$(fwrt)/Build/Src/FwBuildTasks/SIL.FwBuildTasks.sln" Targets="Restore;Build" Properties="Configuration=Debug;Platform=Any CPU" Condition="!Exists('$(fwrt)/Build/Src/FwBuildTasks/artifacts/Debug/SIL.FwBuildTasks.dll')"/>
+		<MSBuild Projects="$(fwrt)/Build/Src/FwBuildTasks/SIL.FwBuildTasks/SIL.FwBuildTasks.csproj" Targets="Restore;Build" Properties="Configuration=Debug;Platform=Any CPU" Condition="!Exists('$(fwrt)/Build/Src/FwBuildTasks/artifacts/Debug/SIL.FwBuildTasks.dll')"/>
 		<Exec Command='$(NuGetCommand) install Icu4c.Win.Fw.Lib -version $(IcuWinFwLibVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/Icu4c.Win.Fw.Lib.$(IcuWinFwLibVersion)')"/>
 		<Exec Command='$(NuGetCommand) install GitVersion.MsBuild -version $(GitVersionMsBuildVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/GitVersion.MsBuild.$(GitVersionMsBuildVersion)')"/>
 		<!-- Install NUnit.Console which has the required extensions as dependencies -->

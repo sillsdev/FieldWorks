@@ -1,38 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net461</TargetFrameworks>
-    <RootNamespace>SIL.FieldWorks.Build.Tasks</RootNamespace>
-    <Configurations>Debug;Release</Configurations>
+    <RootNamespace>SIL.FieldWorks.Build.Tasks.FwBuildTasksTests</RootNamespace>
     <Description>FwBuildTasksTests</Description>
-    <Company>SIL International</Company>
-    <Authors>SIL International</Authors>
-    <Product>FieldWorks</Product>
-    <Copyright>Copyright © 2010-2022 SIL International</Copyright>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/sillsdev/SIL.FwBuildTasks</PackageProjectUrl>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <OutputPath>../artifacts/$(Configuration)</OutputPath>
-    <PackageOutputPath>../artifacts/</PackageOutputPath>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>../SIL.FwBuildTasks.snk</AssemblyOriginatorKeyFile>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <AppendToReleaseNotesProperty><![CDATA[
-See full changelog at https://github.com/sillsdev/SIL.FwBuildTasks/blob/main/CHANGELOG.md]]>
-    </AppendToReleaseNotesProperty>
-    <UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
-    <ChangelogFile>../CHANGELOG.md</ChangelogFile>
-    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
     <PackageReference Include="SIL.ReleaseTasks" Version="2.5.0" PrivateAssets="All" />
-    <PackageReference Include="SIL.TestUtilities" Version="10.0.0" />
+    <PackageReference Include="SIL.TestUtilities" Version="11.0.0-beta0041" />
   </ItemGroup>
 
   <ItemGroup>

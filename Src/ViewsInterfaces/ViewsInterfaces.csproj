@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="All" />
+    <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
     <!-- On Linux, we don't use a nuget package for Icu4c but a Debian package -->
     <PackageReference Include="Icu4c.Win.Fw.Bin" Version="70.1.123" />
     <PackageReference Include="Icu4c.Win.Fw.Lib" Version="70.1.123" />

@@ -1,38 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net461</TargetFrameworks>
     <RootNamespace>SIL.FieldWorks.Build.Tasks</RootNamespace>
-    <Configurations>Debug;Release</Configurations>
     <Description>Additional msbuild tasks for FieldWorks</Description>
-    <Company>SIL International</Company>
-    <Authors>SIL International</Authors>
-    <Product>FieldWorks</Product>
-    <Copyright>Copyright © 2010-2022 SIL International</Copyright>
-    <PackageLicenseExpression>LGPL-2.1-or-later</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/sillsdev/SIL.FwBuildTasks</PackageProjectUrl>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <OutputPath>../artifacts/$(Configuration)</OutputPath>
-    <PackageOutputPath>../artifacts/</PackageOutputPath>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>../SIL.FwBuildTasks.snk</AssemblyOriginatorKeyFile>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <AppendToReleaseNotesProperty><![CDATA[
-See full changelog at https://github.com/sillsdev/SIL.FwBuildTasks/blob/main/CHANGELOG.md]]>
-    </AppendToReleaseNotesProperty>
-    <UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
-    <ChangelogFile>../CHANGELOG.md</ChangelogFile>
-    <IsTool>true</IsTool>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="nugetAssets\**" />
-    <EmbeddedResource Remove="nugetAssets\**" />
-    <None Remove="nugetAssets\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />

@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="All" />
+    <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
     <PackageReference Include="ParatextData" Version="9.2.5-beta1" />
     <PackageReference Include="SIL.LCModel.Core.Tests" Version="10.2.0-beta0002" />
     <PackageReference Include="SIL.LCModel.Tests" Version="10.2.0-beta0002" />

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <UseWindowsForms>true</UseWindowsForms>
@@ -13,8 +13,8 @@
     <PackageReference Include="Geckofx45.64" Version="45.0.34" Condition="'$(OS)'!='Unix' And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)'=='X64'" GeneratePathProperty="true" />
     <PackageReference Include="Geckofx45.32.Linux" Version="45.0.37" Condition="'$(OS)'=='Unix' And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)'!='X64'" GeneratePathProperty="true" />
     <PackageReference Include="Geckofx45.64.Linux" Version="45.0.37" Condition="'$(OS)'=='Unix' And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)'=='X64'" GeneratePathProperty="true" />
-    <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="All" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="SIL.Archiving" Version="11.0.0-beta0041" />
     <PackageReference Include="SIL.Chorus.App" Version="5.0.0-beta0010" />
     <PackageReference Include="SIL.Core" Version="11.0.0-beta0041" />
@@ -81,7 +81,6 @@
 
   <ItemGroup>
     <Compile Update="Controls\MGA\MGAStrings.Designer.cs">
-    <Compile Include="UtilityTools\UtilityRepository.cs" />
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>MGAStrings.resx</DependentUpon>
