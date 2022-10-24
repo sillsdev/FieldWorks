@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2020 SIL International
+// Copyright (c) 2017-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,6 +6,7 @@ using System.IO;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Reporting;
+using SIL.Settings;
 
 namespace FieldWorks.TestUtilities
 {
@@ -52,6 +53,8 @@ namespace FieldWorks.TestUtilities
 		{
 			// Do nothing.
 		}
+
+		public UpdateSettings Update { get; set; }
 
 		/// <summary />
 		internal XDocument ConfigXml { get; set; }

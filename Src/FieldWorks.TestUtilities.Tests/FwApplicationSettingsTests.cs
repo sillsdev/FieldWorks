@@ -82,8 +82,7 @@ namespace FieldWorks.TestUtilities.Tests
 			Assert.That(appSettingsAsInterface.LocalKeyboards, Is.Null);
 			Assert.That(appSettingsAsInterface.WebonaryUser, Is.Null);
 			Assert.That(appSettingsAsInterface.WebonaryPass, Is.Null);
-			Assert.That(appSettingsAsInterface.Update.Behavior, Is.Null);
-			Assert.That(appSettingsAsInterface.Update.Channel, Is.Null);
+			Assert.That(appSettingsAsInterface.Update, Is.Null);
 
 		}
 
