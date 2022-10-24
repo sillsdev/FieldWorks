@@ -10,13 +10,11 @@ set -xueo pipefail
 
 script_dir="$(readlink --canonicalize $(dirname "$0"))"
 repo_root="$(readlink --canonicalize "${script_dir}/..")"
-fw_registry_utils_dir="${repo_root}/Bin"
-dist_files_dir="${repo_root}/DistFiles"
 CONFIGURATION="${CONFIGURATION-Debug}"
 output_configuration_dir="${repo_root}/Output/${CONFIGURATION}"
-ec_plugin_dir="/usr/lib/fieldworks/EC/Plugins"
-ec_root_dir="/usr/lib/fieldworks"
 cd "${repo_root}/"
+
+Build/set-registry
 
 FLEXBRIDGE_CONFIGURATION="${FLEXBRIDGE_CONFIGURATION-Debug}"
 export FLEXBRIDGEDIR="${FLEXBRIDGEDIR-${repo_root}/../flexbridge/output/${FLEXBRIDGE_CONFIGURATION}/net461}"
@@ -25,32 +23,6 @@ export FLEXBRIDGE_DEBUG=true
 export SIL_REPORTING_LOGGING=foreground
 
 source environ
-
-WriteKey() {
-  mono "${fw_registry_utils_dir}/WriteKey.exe" "$@"
-}
-
-ReadKey() {
-  mono "${fw_registry_utils_dir}/ReadKey.exe" "$@"
-}
-
-for registry in LM CU; do
-  WriteKey ${registry} "Software/SIL/FieldWorks/9" "RootCodeDir" "${dist_files_dir}"
-  WriteKey ${registry} "Software/SIL/SilEncConverters40" "PluginDir" "${ec_plugin_dir}"
-  WriteKey ${registry} "Software/SIL/SilEncConverters40" "RootDir" "${ec_root_dir}"
-  # It's not clear if "Primary Interop Assemblies" is being used by anything
-  # other than NMock.
-  WriteKey ${registry} "Software/Microsoft/.NETFramework/AssemblyFolders" \
-    "Primary Interop Assemblies" "${output_configuration_dir}"
-  devPluginDir="$(ReadKey ${registry} "Software/SIL/SilEncConverters40" "DeveloperPluginDir" 2>/dev/null || true)"
-  if [[ ${devPluginDir} != "" ]]; then
-    newValue="${ec_plugin_dir}"
-    echo "Warning: Registry setting ${registry} Software/SIL/SilEncConverters40" \
-    "DeveloperPluginDir is set. Its value is \'${devPluginDir}\'." \
-    "Changing it to \'${newValue}\'."
-    WriteKey ${registry} "Software/SIL/SilEncConverters40" "DeveloperPluginDir" "${newValue}"
-  fi
-done
 
 FW_EXE="${output_configuration_dir}/FieldWorks.exe"
 env | sort

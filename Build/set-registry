@@ -1,0 +1,48 @@
+#!/bin/bash
+#
+# Set registry values for running FieldWorks or unit tests in Linux from a
+# development source tree
+#
+# Copyright (c) 2022 SIL International
+# This software is licensed under the LGPL, version 2.1 or later
+# (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+set -xueo pipefail
+
+script_dir="$(readlink --canonicalize $(dirname "$0"))"
+repo_root="$(readlink --canonicalize "${script_dir}/..")"
+fw_registry_utils_dir="${repo_root}/Bin"
+dist_files_dir="${repo_root}/DistFiles"
+CONFIGURATION="${CONFIGURATION-Debug}"
+output_configuration_dir="${repo_root}/Output/${CONFIGURATION}"
+ec_plugin_dir="/app/lib/fieldworks/EC/Plugins"
+ec_root_dir="/app/lib/fieldworks"
+cd "${repo_root}/"
+
+source environ
+
+WriteKey() {
+  mono "${fw_registry_utils_dir}/WriteKey.exe" "$@"
+}
+
+ReadKey() {
+  mono "${fw_registry_utils_dir}/ReadKey.exe" "$@"
+}
+
+for registry in LM CU; do
+  WriteKey ${registry} "Software/SIL/FieldWorks/9" "RootCodeDir" "${dist_files_dir}"
+  WriteKey ${registry} "Software/SIL/SilEncConverters40" "PluginDir" "${ec_plugin_dir}"
+  WriteKey ${registry} "Software/SIL/SilEncConverters40" "RootDir" "${ec_root_dir}"
+  # It's not clear if "Primary Interop Assemblies" is being used by anything
+  # other than NMock.
+  WriteKey ${registry} "Software/Microsoft/.NETFramework/AssemblyFolders" \
+    "Primary Interop Assemblies" "${output_configuration_dir}"
+  devPluginDir="$(ReadKey ${registry} "Software/SIL/SilEncConverters40" "DeveloperPluginDir" 2>/dev/null || true)"
+  if [[ ${devPluginDir} != "" ]]; then
+    newValue="${ec_plugin_dir}"
+    echo "Warning: Registry setting ${registry} Software/SIL/SilEncConverters40" \
+    "DeveloperPluginDir is set. Its value is \'${devPluginDir}\'." \
+    "Changing it to \'${newValue}\'."
+    WriteKey ${registry} "Software/SIL/SilEncConverters40" "DeveloperPluginDir" "${newValue}"
+  fi
+done
