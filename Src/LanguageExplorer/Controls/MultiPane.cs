@@ -385,7 +385,7 @@ namespace LanguageExplorer.Controls
 		/// Initialize a FLEx component with the basic interfaces.
 		/// </summary>
 		/// <param name="flexComponentParameters">Parameter object that contains the required three interfaces.</param>
-		public void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
+		public virtual void InitializeFlexComponent(FlexComponentParameters flexComponentParameters)
 		{
 			FlexComponentParameters.CheckInitializationValues(flexComponentParameters, new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 

@@ -166,24 +166,12 @@ namespace LanguageExplorer.Controls.XMLViews
 				foreach (var node in doc.Root.XPathSelectElements("//column"))
 				{
 					if (IsValidColumnSpec(node))
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/XmlBrowseViewVc.cs
 					{
 						_columnSpecificationElements.Add(node);
 					}
 				}
 			}
 			m_madeUpFieldIdentifier = madeUpFieldIdentifier;
-||||||| f013144d5:Src/Common/Controls/XMLViews/XmlBrowseViewBaseVc.cs
-					m_columns.Add(node);
-			}
-			}
-			m_fakeFlid = fakeFlid;
-=======
-						m_columns.Add(node);
-				}
-			}
-			m_fakeFlid = fakeFlid;
->>>>>>> develop:Src/Common/Controls/XMLViews/XmlBrowseViewBaseVc.cs
 			SetupSelectColumn();
 		}
 
@@ -630,64 +618,26 @@ namespace LanguageExplorer.Controls.XMLViews
 			set => _columnSpecificationElements = value;
 		}
 
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/XmlBrowseViewVc.cs
-		protected internal List<XElement> PossibleColumnSpecs { get; protected set; }
-||||||| f013144d5:Src/Common/Controls/XMLViews/XmlBrowseViewBaseVc.cs
-		internal virtual List<XmlNode> ColumnSpecs
-		{
-			get
-			{
-				return m_columns;
-			}
-			set
-			{
-				m_columns = value;
-			}
-		}
-
-		internal List<XmlNode> PossibleColumnSpecs
-		{
-			get
-			{
-				return m_possibleColumns;
-			}
-		}
-=======
 		/// <returns>
 		/// A list of the labels for the visible columns in their configured order
 		/// </returns>
-		public static List<string> GetHeaderLabels(XmlBrowseViewBaseVc vc)
+		public static List<string> GetHeaderLabels(XmlBrowseViewVc vc, StringTable stringTable)
 		{
 			var headerLabelList = new List<string>();
 			foreach (var col in vc.ColumnSpecs)
 			{
-				headerLabelList.Add(XmlUtils.GetLocalizedAttributeValue(col, "label", null) ??
-					XmlUtils.GetMandatoryAttributeValue(col, "label"));
+				var label = XmlUtils.GetOptionalAttributeValue(col, "label", null);
+				if(stringTable != null)
+				{
+					label = stringTable.LocalizeAttributeValue(label);
+				}
+				headerLabelList.Add( label ??	XmlUtils.GetMandatoryAttributeValue(col, "label"));
 			}
 
 			return headerLabelList;
 		}
 
-		internal virtual List<XmlNode> ColumnSpecs
-		{
-			get
-			{
-				return m_columns;
-			}
-			set
-			{
-				m_columns = value;
-			}
-		}
-
-		internal List<XmlNode> PossibleColumnSpecs
-		{
-			get
-			{
-				return m_possibleColumns;
-			}
-		}
->>>>>>> develop:Src/Common/Controls/XMLViews/XmlBrowseViewBaseVc.cs
+		protected internal List<XElement> PossibleColumnSpecs { get; protected set; }
 
 		internal ISortItemProvider SortItemProvider
 		{
@@ -1524,32 +1474,15 @@ namespace LanguageExplorer.Controls.XMLViews
 				{
 					if (url.StartsWith(FwLinkArgs.kFwUrlPrefix))
 					{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/XmlBrowseViewVc.cs
 						LinkHandler.PublishFollowLinkMessage(m_xbv.Publisher, new FwLinkArgs(url));
 						return;
-||||||| f013144d5:Src/Common/Controls/XMLViews/XmlBrowseViewBaseVc.cs
-						m_xbv.Mediator.SendMessage("FollowLink", new FwLinkArgs(url));
-						return;
-=======
-						FwLinkArgs linkArgs = new FwLinkArgs(url);
-						linkArgs.DisplayErrorMsg = false;
-						if (m_xbv.Mediator.SendMessage("FollowLink", linkArgs))
-							return;
->>>>>>> develop:Src/Common/Controls/XMLViews/XmlBrowseViewBaseVc.cs
 					}
 				}
 				catch
 				{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/XmlBrowseViewVc.cs
-					// REVIEW: Why are we catching all errors?
-					// JohnT: one reason might be that the above will fail if the link is to another project.
+					// Catch exceptions to give the baseclass a chance
 					// Review: would we be better to use the default? That is now smart about
 					// local links, albeit by a rather more awkward route because of dependency problems.
-||||||| f013144d5:Src/Common/Controls/XMLViews/XmlBrowseViewBaseVc.cs
-					// REVIEW: Why are we catching all errors?
-=======
-					// Catch exceptions so we can try using the base class.
->>>>>>> develop:Src/Common/Controls/XMLViews/XmlBrowseViewBaseVc.cs
 				}
 			}
 			base.DoHotLinkAction(strData, sda);

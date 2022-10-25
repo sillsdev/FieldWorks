@@ -117,6 +117,8 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
+		internal bool Enabled { get; set; }
+
 		internal ITsString WsLabel(LcmCache cache)
 		{
 			if (m_tssWsLabel != null)

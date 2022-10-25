@@ -342,6 +342,9 @@ A stack dump has been copied to the clipboard.  Please email it and your LIFT fi
   <data name="openFileDialog1_Filter" xml:space="preserve">
     <value>LIFT files|*.lift|XML files|*.xml|All files|*.*</value>
   </data>
+  <data name="openFileDialog1_Zip_Filter" xml:space="preserve">
+    <value>ZIP files|*.zip|All files|*.*</value>
+  </data>
   <data name="openFileDialog1_Title" xml:space="preserve">
     <value>Open Lexicon Interchange FormaT File</value>
   </data>

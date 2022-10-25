@@ -370,4 +370,10 @@
   <data name="ksToSpecifyAConcordance_" xml:space="preserve">
     <value>To specify a Concordance, select a line in which to search and enter the text to search for.</value>
   </data>
+  <data name="ksConcordanceExportFilter" xml:space="preserve">
+    <value>CSV Files (*.csv)|*.csv|All files (*.*)|*.*</value>
+  </data>
+  <data name="ksConcordanceExportTitle" xml:space="preserve">
+    <value>Export Concordance Results</value>
+  </data>
 </root>

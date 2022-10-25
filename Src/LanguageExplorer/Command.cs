@@ -58,6 +58,7 @@ namespace LanguageExplorer
 		// Separator6 goes here
 		CmdExportInterlinear,
 		CmdExportDiscourseChart,
+		CmdExportConcordanceResults,
 		CmdClose,
 
 		/// <summary>

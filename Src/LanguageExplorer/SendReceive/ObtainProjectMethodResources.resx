@@ -125,40 +125,12 @@ You probably have a Conflict Report open. It will need to be closed before you c
 -- View Conflict Report (can't have two open)
 If you don't see any FLExBridge windows open, it may just be that FLExBridge is still shutting down. Please wait 15 seconds and try again.</value>
   </data>
-<<<<<<< HEAD:Src/LanguageExplorer/SendReceive/ObtainProjectMethodResources.resx
   <data name="kFlexBridge" xml:space="preserve">
     <value>FLExBridge</value>
-||||||| f013144d5:Src/Utilities/FixFwDataDll/Strings.resx
-  <data name="ksUseThisWhen" xml:space="preserve">
-    <value>Use this when a project is throwing exceptions such as "Key 62c22e20-8d8a-42bf-a54c-e21529284f2d not found in identity map...", and you suspect the data has been corrupted somehow.</value>
-=======
-  <data name="ksErrorFixerUseThisWhen" xml:space="preserve">
-    <value>Use this when a project is throwing exceptions such as "Key 62c22e20-8d8a-42bf-a54c-e21529284f2d not found in identity map...", and you suspect the data has been corrupted somehow.</value>
->>>>>>> develop:Src/Utilities/FixFwDataDll/Strings.resx
   </data>
-<<<<<<< HEAD:Src/LanguageExplorer/SendReceive/ObtainProjectMethodResources.resx
   <data name="ksCreatingLiftProject" xml:space="preserve">
     <value>Creating a project to import LIFT data into</value>
     <comment>Displayed in a progress dialog when getting a LIFT repository to make a new local project</comment>
-||||||| f013144d5:Src/Utilities/FixFwDataDll/Strings.resx
-  <data name="ksThisUtilityAttemptsTo" xml:space="preserve">
-    <value>This utility attempts to fix various errors in a FieldWorks project file.  The project must not be open, and must be in the fwdata (XML) format.</value>
-  </data>
-  <data name="ksCannotUndo" xml:space="preserve">
-    <value>If this utility fails, you will need to go back to a previously saved version of the chosen database.</value>
-  </data>
-  <data name="ksErrorsFoundOrFixed" xml:space="preserve">
-    <value>Errors found or fixed</value>
-=======
-  <data name="ksErrorFixerThisUtilityAttemptsTo" xml:space="preserve">
-    <value>This utility attempts to fix various errors in a FieldWorks project file.  The project must not be open, and must be in the fwdata (XML) format.</value>
-  </data>
-  <data name="ksErrorFixerCannotUndo" xml:space="preserve">
-    <value>If this utility fails, you will need to go back to a previously saved version of the chosen database.</value>
-  </data>
-  <data name="ksErrorsFoundOrFixed" xml:space="preserve">
-    <value>Errors found or fixed</value>
->>>>>>> develop:Src/Utilities/FixFwDataDll/Strings.resx
   </data>
   <data name="WriteEverything" xml:space="preserve">
     <value>Write Everything</value>

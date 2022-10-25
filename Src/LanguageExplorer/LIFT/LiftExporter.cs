@@ -1,10 +1,4 @@
-<<<<<<< HEAD:Src/LanguageExplorer/LIFT/LiftExporter.cs
-// Copyright (c) 2011-2020 SIL International
-||||||| f013144d5:Src/LexText/LexTextControls/LiftExporter.cs
-// Copyright (c) 2011-2013 SIL International
-=======
 // Copyright (c) 2011-2022 SIL International
->>>>>>> develop:Src/LexText/LexTextControls/LiftExporter.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -28,30 +22,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
-<<<<<<< HEAD:Src/LanguageExplorer/LIFT/LiftExporter.cs
 using SIL.Xml;
-||||||| f013144d5:Src/LexText/LexTextControls/LiftExporter.cs
-using System.Text;
-using SIL.LCModel.Application.ApplicationServices;
-using System.Windows.Forms;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
-=======
-using System.Text;
-using SIL.LCModel.Application.ApplicationServices;
-using System.Windows.Forms;
-using SIL.Extensions;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
->>>>>>> develop:Src/LexText/LexTextControls/LiftExporter.cs
 
 namespace LanguageExplorer.LIFT
 {

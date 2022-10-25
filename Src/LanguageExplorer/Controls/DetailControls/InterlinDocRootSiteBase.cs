@@ -1,10 +1,4 @@
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/InterlinDocRootSiteBase.cs
-// Copyright (c) 2009-2020 SIL International
-||||||| f013144d5:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
-// Copyright (c) 2015-2018 SIL International
-=======
-// Copyright (c) 2015-2021 SIL International
->>>>>>> develop:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -91,15 +85,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			// We want to get notified when anything changes.
 			m_sda = m_cache.MainCacheAccessor;
 			m_sda.AddNotification(this);
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/InterlinDocRootSiteBase.cs
-||||||| f013144d5:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
-
-			Vc.ShowMorphBundles = m_propertyTable.GetBoolProperty("ShowMorphBundles", true);
-=======
-
-			// PropertyTable can be null when the root site exists inside a dialog (LT-20412)
-			Vc.ShowMorphBundles = m_propertyTable?.GetBoolProperty("ShowMorphBundles", true) ?? true;
->>>>>>> develop:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
 			Vc.LineChoices = LineChoices;
 			Vc.ShowDefaultSense = true;
 			RootBox.DataAccess = m_cache.MainCacheAccessor;
@@ -578,14 +563,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			var curSpec = curLineChoices.EnabledLineSpecs[ilineChoice];
 			var result = curLineChoices.LabelFor(curSpec.Flid);
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/InterlinDocRootSiteBase.cs
-			if (curLineChoices.RepetitionsOfFlid(curSpec.Flid) > 1)
-			{
-||||||| f013144d5:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
-			if (curLineChoices.RepetitionsOfFlid(curSpec.Flid) > 1)
-=======
 			if (curLineChoices.EnabledRepetitionsOfFlid(curSpec.Flid) > 1)
->>>>>>> develop:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
+			{
 				result += "(" + curSpec.WsLabel(Cache).Text + ")";
 			}
 			return result;
@@ -692,20 +671,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		private static IEnumerable<LineOption> GetUnusedSpecs(InterlinLineChoices curLineChoices)
 		{
 			var allOptions = curLineChoices.LineOptions();
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/InterlinDocRootSiteBase.cs
-			var optionsUsed = curLineChoices.ItemsWithFlids(allOptions.Select(lineOption => lineOption.Flid).ToArray());
+			var optionsUsed = curLineChoices.EnabledItemsWithFlids(allOptions.Select(lineOption => lineOption.Flid).ToArray());
 			return allOptions.Where(option => optionsUsed.All(spec => spec.Flid != option.Flid)).ToList();
-||||||| f013144d5:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
-			var optionsUsed = curLineChoices.ItemsWithFlids(
-				allOptions.Select(lineOption => lineOption.Flid).ToArray());
-			return allOptions.Where(option => !optionsUsed.Any(
-				spec => spec.Flid == option.Flid)).ToList();
-=======
-			var optionsUsed = curLineChoices.EnabledItemsWithFlids(
-				allOptions.Select(lineOption => lineOption.Flid).ToArray());
-			return allOptions.Where(option => !optionsUsed.Any(
-				spec => spec.Flid == option.Flid)).ToList();
->>>>>>> develop:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
 		}
 
 		#region Menu Event Handlers
@@ -764,17 +731,10 @@ namespace LanguageExplorer.Controls.DetailControls
 				return; // Impossible?
 			}
 			var flid = menuItem.Flid;
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/InterlinDocRootSiteBase.cs
-			if (Vc.LineChoices.Clone() is InterlinLineChoices newLineChoices && m_cache.GetManagedMetaDataCache().FieldExists(flid))
-||||||| f013144d5:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
-			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
-			if (newLineChoices != null && ((IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor).FieldExists(flid))
-=======
 			var newLineChoices = Vc.LineChoices.Clone() as InterlinLineChoices;
 			var mdc = (IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor;
 			// Some virtual Ids such as -61 and 103 create standard items. so add those.
-			if (newLineChoices != null && (mdc.FieldExists(flid) || (flid <= ComplexConcPatternVc.kfragFeatureLine)))
->>>>>>> develop:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
+			if (newLineChoices != null && (mdc.FieldExists(flid) || (flid <= kfragFeatureLine)))
 			{
 				newLineChoices.Add(flid, 0, true);
 				UpdateForNewLineChoices(newLineChoices);
@@ -807,43 +767,21 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private string ConfigPropName { get; set; }
 
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/InterlinDocRootSiteBase.cs
-		/// <summary />
-||||||| f013144d5:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
-		/// <summary>
-		/// </summary>
-=======
 		/// <summary>
 		/// The old property table key storing InterlinLineChoices used by our display.
 		/// </summary>
 		private static string OldConfigPropName { get; set; }
 
-		/// <summary>
-		/// </summary>
->>>>>>> develop:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
+		/// <summary/>
 		/// <param name="lineConfigPropName">the key used to store/restore line configuration settings.</param>
 		/// <param name="oldLineConfigPropName">the old key used to restore line configuration settings.</param>
 		/// <param name="mode"></param>
-		/// <returns></returns>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/InterlinDocRootSiteBase.cs
-		public InterlinLineChoices SetupLineChoices(string lineConfigPropName, InterlinMode mode)
-||||||| f013144d5:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
-		public InterlinLineChoices SetupLineChoices(string lineConfigPropName, InterlinLineChoices.InterlinMode mode)
-=======
-		public InterlinLineChoices SetupLineChoices(string lineConfigPropName, string oldLineConfigPropName, InterlinLineChoices.InterlinMode mode)
->>>>>>> develop:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
+		public InterlinLineChoices SetupLineChoices(string lineConfigPropName, string oldLineConfigPropName, InterlinMode mode)
 		{
 			ConfigPropName = lineConfigPropName;
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/InterlinDocRootSiteBase.cs
-			if (!TryRestoreLineChoices(out var lineChoices))
-||||||| f013144d5:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
-			InterlinLineChoices lineChoices;
-			if (!TryRestoreLineChoices(out lineChoices))
-=======
 			OldConfigPropName = oldLineConfigPropName;
 			InterlinLineChoices lineChoices;
 			if (!TryRestoreLineChoices(out lineChoices))
->>>>>>> develop:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
 			{
 				if (ForEditing)
 				{
@@ -883,28 +821,15 @@ namespace LanguageExplorer.Controls.DetailControls
 		internal bool TryRestoreLineChoices(out InterlinLineChoices lineChoices)
 		{
 			lineChoices = null;
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/InterlinDocRootSiteBase.cs
 			var persist = PropertyTable.GetValue<string>(ConfigPropName, SettingsGroup.LocalSettings);
-||||||| f013144d5:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
-			var persist = m_propertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
-=======
-			var persist = m_propertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
 			if (persist == null)
-				persist = m_propertyTable.GetStringProperty(OldConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+				persist = PropertyTable.GetValue<string>(OldConfigPropName, null, SettingsGroup.LocalSettings);
 
->>>>>>> develop:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
 			if (persist != null)
 			{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/InterlinDocRootSiteBase.cs
-				lineChoices = InterlinLineChoices.Restore(persist, m_cache.LanguageWritingSystemFactoryAccessor, m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs, InterlinMode.Analyze, PropertyTable, ConfigPropName);
-||||||| f013144d5:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
-				lineChoices = InterlinLineChoices.Restore(persist, m_cache.LanguageWritingSystemFactoryAccessor,
-					m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze, m_propertyTable, ConfigPropName);
-=======
 				// Intentionally never pass OldConfigPropName into Restore to prevent corrupting it's old value with the new format.
 				lineChoices = InterlinLineChoices.Restore(persist, m_cache.LanguageWritingSystemFactoryAccessor,
-					m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze, m_propertyTable, ConfigPropName);
->>>>>>> develop:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
+					m_cache.LangProject, WritingSystemServices.kwsVernInParagraph, m_cache.DefaultAnalWs, InterlinMode.Analyze, PropertyTable, ConfigPropName);
 			}
 			return persist != null && lineChoices != null;
 		}
@@ -914,15 +839,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		void IInterlinearConfigurator.ConfigureInterlinear()
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/InterlinDocRootSiteBase.cs
-			using (var dlg = new ConfigureInterlinDialog(m_cache, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), Vc.LineChoices.Clone() as InterlinLineChoices))
-||||||| f013144d5:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
-			using (var dlg = new ConfigureInterlinDialog(this.m_cache, this.m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
-				this.Vc.LineChoices.Clone() as InterlinLineChoices))
-=======
-			using (var dlg = new ConfigureInterlinDialog(m_mediator, m_propertyTable, this.m_cache, this.m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
-				this.Vc.LineChoices.Clone() as InterlinLineChoices))
->>>>>>> develop:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
+			using (var dlg = new ConfigureInterlinDialog(m_cache, PropertyTable, PropertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider), Vc.LineChoices.Clone() as InterlinLineChoices))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
@@ -1275,7 +1192,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Used for Interlinear context menu items to Add a new WritingSystem
 		/// for a flid that is already visible.
 		/// </summary>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/InterlinDocRootSiteBase.cs
 		private sealed class AddWritingSystemMenuItem : ToolStripMenuItem
 		{
 			/// <summary />
@@ -1284,17 +1200,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				Flid = flid;
 				Ws = ws;
 			}
-||||||| f013144d5:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
-		bool ForEditing { get; set; }
-		InterlinLineChoices SetupLineChoices(string lineConfigPropName,
-			InterlinLineChoices.InterlinMode mode);
-	}
-=======
-		bool ForEditing { get; set; }
-		InterlinLineChoices SetupLineChoices(string lineConfigPropName, string oldLineConfigPropName,
-			InterlinLineChoices.InterlinMode mode);
-	}
->>>>>>> develop:Src/LexText/Interlinear/InterlinDocRootSiteBase.cs
 
 			protected override void Dispose(bool disposing)
 			{

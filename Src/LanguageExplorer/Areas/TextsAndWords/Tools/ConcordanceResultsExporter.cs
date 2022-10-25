@@ -5,27 +5,26 @@
 using System.Globalization;
 using System.IO;
 using CsvHelper;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.RootSites;
+using LanguageExplorer.Controls.XMLViews;
 using SIL.LCModel.Core.KernelInterfaces;
 
-namespace SIL.FieldWorks.IText
+namespace SILLanguageExplorer.Areas.TextsAndWords.Tools
 {
 	/// <summary>
 	/// Write out a csv file with the ConcordanceResults (used by both ConcordanceTool and ComplexConcordanceTool)
 	/// </summary>
-	class ConcordanceResultsExporter : CollectorEnv
+	class ConcordanceResultsExporter : LanguageExplorer.Controls.CollectorEnv
 	{
 		private TextWriter Writer { get; }
 		private CsvWriter Csv { get; }
-		private XmlBrowseViewBaseVc VC { get; }
+		private XmlBrowseViewVc VC { get; }
 		/// <summary>
 		/// CsvWriter expects empty cells to be written. Keep track of when a cell is written.
 		/// If a cell is being closed and nothing was written to it, then write a empty string.
 		/// </summary>
 		private bool HasCellBeenWritten { get; set; }
 
-		public ConcordanceResultsExporter(TextWriter writer, XmlBrowseViewBaseVc vc, ISilDataAccess sda, int hvoRoot) : base(null, sda, hvoRoot)
+		public ConcordanceResultsExporter(TextWriter writer, XmlBrowseViewVc vc, ISilDataAccess sda, int hvoRoot) : base(null, sda, hvoRoot)
 		{
 			Writer = writer;
 			Csv = new CsvWriter(Writer, CultureInfo.InvariantCulture);
@@ -36,7 +35,7 @@ namespace SIL.FieldWorks.IText
 
 		private void WriteHeader()
 		{
-			foreach (var columnLabel in XmlBrowseViewBaseVc.GetHeaderLabels(VC))
+			foreach (var columnLabel in XmlBrowseViewVc.GetHeaderLabels(VC))
 			{
 				Csv.WriteField(columnLabel);
 			}
@@ -45,7 +44,7 @@ namespace SIL.FieldWorks.IText
 
 		public void Export()
 		{
-			VC.Display(this, m_hvoCurr, 100000);
+			VC.Display(this, CurrentObject(), 100000);
 			Csv.Flush();
 		}
 

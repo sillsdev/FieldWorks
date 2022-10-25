@@ -707,18 +707,6 @@
     <value>Input File Contents Changed</value>
     <comment>MessageBox caption</comment>
   </data>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/LanguageExplorerControls.resx
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControls.resx
-  <data name="ksImportingFrom0" xml:space="preserve">
-    <value>Importing from {0}</value>
-  </data>
-  <data name="ksLIFTImportProblem" xml:space="preserve">
-    <value>Something went wrong while FieldWorks was attempting to import {0}.
-{1}
-
-A stack dump has been copied to the clipboard.  Please email it and your LIFT file to Flex_Errors@sil.org so that we can improve the program.</value>
-  </data>
-=======
   <data name="ksImportingFrom0" xml:space="preserve">
     <value>Importing from {0}</value>
   </data>
@@ -731,7 +719,6 @@ A stack dump has been copied to the clipboard.  Please email it and your LIFT fi
   <data name="ksLIFTCombineImportProblem" xml:space="preserve">
     <value>Something is wrong with the data in {0}. If it was a zip file exported from The Combine please contact us at flex_errors@sil.org</value>
   </data>
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControls.resx
   <data name="ksImportError" xml:space="preserve">
     <value>Import Error</value>
   </data>
@@ -1024,69 +1011,6 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
     <value>{{0}} New {0} List Items</value>
     <comment>{{0}} is a placeholder for the count.  {0} is the name of a custom list, or at least a list not normally referenced by the data notebook.</comment>
   </data>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/LanguageExplorerControls.resx
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControls.resx
-  <data name="ksRnLinkFieldOptions" xml:space="preserve">
-    <value>Link field options</value>
-    <comment>used in AnthroFieldMappingDlg</comment>
-  </data>
-  <data name="ksUnknownMorphTypes" xml:space="preserve">
-    <value>The following unknown morph-types were found in the imported file:</value>
-  </data>
-  <data name="ksName" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="ksReferenceCount" xml:space="preserve">
-    <value>Reference Count</value>
-  </data>
-  <data name="ksAddedToCombinedCollection" xml:space="preserve">
-    <value>{0} added to the {1} of {2}.</value>
-  </data>
-  <data name="ksCombinedCollections" xml:space="preserve">
-    <value>Combined Collections</value>
-  </data>
-  <data name="ksAddedItem" xml:space="preserve">
-    <value>Added Item</value>
-  </data>
-  <data name="openFileDialog1_Title" xml:space="preserve">
-    <value>Open Lexicon Interchange FormaT File</value>
-  </data>
-  <data name="openFileDialog1_Filter" xml:space="preserve">
-    <value>LIFT files|*.lift|XML files|*.xml|All files|*.*</value>
-  </data>
-=======
-  <data name="ksRnLinkFieldOptions" xml:space="preserve">
-    <value>Link field options</value>
-    <comment>used in AnthroFieldMappingDlg</comment>
-  </data>
-  <data name="ksUnknownMorphTypes" xml:space="preserve">
-    <value>The following unknown morph-types were found in the imported file:</value>
-  </data>
-  <data name="ksName" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="ksReferenceCount" xml:space="preserve">
-    <value>Reference Count</value>
-  </data>
-  <data name="ksAddedToCombinedCollection" xml:space="preserve">
-    <value>{0} added to the {1} of {2}.</value>
-  </data>
-  <data name="ksCombinedCollections" xml:space="preserve">
-    <value>Combined Collections</value>
-  </data>
-  <data name="ksAddedItem" xml:space="preserve">
-    <value>Added Item</value>
-  </data>
-  <data name="openFileDialog1_Title" xml:space="preserve">
-    <value>Open Lexicon Interchange FormaT File</value>
-  </data>
-  <data name="openFileDialog1_Filter" xml:space="preserve">
-    <value>LIFT files|*.lift|XML files|*.xml|All files|*.*</value>
-  </data>
-  <data name="openFileDialog1_Zip_Filter" xml:space="preserve">
-    <value>ZIP files|*.zip|All files|*.*</value>
-  </data>
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControls.resx
   <data name="ksErrorAccessingEncodingConverters" xml:space="preserve">
     <value>Error Accessing Encoding Converters</value>
   </data>
@@ -1142,24 +1066,10 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
     <value>Title (of text)</value>
     <comment>name for SFM import field; name matches enumeration member name</comment>
   </data>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/LanguageExplorerControls.resx
   <data name="ksUpdateGlobalWsTooltip" xml:space="preserve">
     <value>Consultants or people who work on several unrelated projects may want to select this.</value>
     <comment>Tools-Options checkbox tooltip</comment>
   </data>
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControls.resx
-  <data name="ksPeopleAdded" xml:space="preserve">
-    <value>The following People were added to the language project:</value>
-  </data>
-  <data name="ksUpdateGlobalWsTooltip" xml:space="preserve">
-    <value>Consultants or people who work on several unrelated projects may want to select this.</value>
-    <comment>Tools-Options checkbox tooltip</comment>
-  </data>
-=======
-  <data name="ksPeopleAdded" xml:space="preserve">
-    <value>The following People were added to the language project:</value>
-  </data>
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControls.resx
   <data name="ksUserInterfaceTooltip" xml:space="preserve">
     <value>You can add other language options by running the installer, using Modify, and choosing to install Language Packs. See Help for details.</value>
   </data>
@@ -1216,7 +1126,39 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
     <value>&amp;Next &gt;</value>
     <comment>Text for the Next buttons on wizards.</comment>
   </data>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/LanguageExplorerControls.resx
+  <data name="RestartToForSettingsToTakeEffect_Content" xml:space="preserve">
+    <value>Restart FieldWorks for these settings to take effect.</value>
+    <comment>Message box contents when a user changes a setting requiring a restart in Tools-&gt;Options</comment>
+  </data>
+  <data name="RestartToForSettingsToTakeEffect_Title" xml:space="preserve">
+    <value>Restart required</value>
+    <comment>Message box title when a user changes a setting requiring a restart in Tools-&gt;Options</comment>
+  </data>
+  <data name="OpenAProjectBeforeConfiguringPlugins" xml:space="preserve">
+    <value>You must open a project before configuring plugins.</value>
+    <comment>Message shown in the Tools-&gt;Options-&gt;Plugins dialog tab when plugins cannot be configured.</comment>
+  </data>
+  <data name="UpdatesStable" xml:space="preserve">
+    <value>Stable (recommended)</value>
+    <comment>Describes versions of the software that are safe for all users. Shown in the Tools-&gt;Options-&gt;Updates-&gt; dialog tab, in the update channel chooser.</comment>
+  </data>
+  <data name="UpdatesBeta" xml:space="preserve">
+    <value>Beta</value>
+    <comment>Describes versions of the software that have new features that may have bugs. Shown in the Tools-&gt;Options-&gt;Updates-&gt; dialog tab, in the update channel chooser.</comment>
+  </data>
+  <data name="UpdatesAlpha" xml:space="preserve">
+    <value>Alpha</value>
+    <comment>Describes versions of the software that have experimental features and a lot of bugs. Shown in the Tools-&gt;Options-&gt;Updates-&gt; dialog tab, in the update channel chooser.</comment>
+  </data>
+  <data name="UpdatesStableDescription" xml:space="preserve">
+    <value>Stable updates are recommended for all users. If you're not sure which channel to choose, choose Stable.</value>
+  </data>
+  <data name="UpdatesBetaDescription" xml:space="preserve">
+    <value>Beta updates are recommended for users who want to try the latest features and don't mind a few minor bugs.</value>
+  </data>
+  <data name="UpdatesAlphaDescription" xml:space="preserve">
+    <value>Alpha updates have bugs. Choose this channel only if your tech support person recommended it to you.</value>
+  </data>
   <data name="kstidWizStepLabel" xml:space="preserve">
     <value>Step {0} of {1}</value>
     <comment>Text and format of label on wizards indicating what step user is on out of total number of steps.</comment>
@@ -1519,41 +1461,3 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
     <comment>The name of a dictionary configuration/view</comment>
   </data>
 </root>
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControls.resx
-</root>
-=======
-  <data name="RestartToForSettingsToTakeEffect_Content" xml:space="preserve">
-    <value>Restart FieldWorks for these settings to take effect.</value>
-    <comment>Message box contents when a user changes a setting requiring a restart in Tools-&gt;Options</comment>
-  </data>
-  <data name="RestartToForSettingsToTakeEffect_Title" xml:space="preserve">
-    <value>Restart required</value>
-    <comment>Message box title when a user changes a setting requiring a restart in Tools-&gt;Options</comment>
-  </data>
-  <data name="OpenAProjectBeforeConfiguringPlugins" xml:space="preserve">
-    <value>You must open a project before configuring plugins.</value>
-    <comment>Message shown in the Tools-&gt;Options-&gt;Plugins dialog tab when plugins cannot be configured.</comment>
-  </data>
-  <data name="UpdatesStable" xml:space="preserve">
-    <value>Stable (recommended)</value>
-    <comment>Describes versions of the software that are safe for all users. Shown in the Tools-&gt;Options-&gt;Updates-&gt; dialog tab, in the update channel chooser.</comment>
-  </data>
-  <data name="UpdatesBeta" xml:space="preserve">
-    <value>Beta</value>
-    <comment>Describes versions of the software that have new features that may have bugs. Shown in the Tools-&gt;Options-&gt;Updates-&gt; dialog tab, in the update channel chooser.</comment>
-  </data>
-  <data name="UpdatesAlpha" xml:space="preserve">
-    <value>Alpha</value>
-    <comment>Describes versions of the software that have experimental features and a lot of bugs. Shown in the Tools-&gt;Options-&gt;Updates-&gt; dialog tab, in the update channel chooser.</comment>
-  </data>
-  <data name="UpdatesStableDescription" xml:space="preserve">
-    <value>Stable updates are recommended for all users. If you're not sure which channel to choose, choose Stable.</value>
-  </data>
-  <data name="UpdatesBetaDescription" xml:space="preserve">
-    <value>Beta updates are recommended for users who want to try the latest features and don't mind a few minor bugs.</value>
-  </data>
-  <data name="UpdatesAlphaDescription" xml:space="preserve">
-    <value>Alpha updates have bugs. Choose this channel only if your tech support person recommended it to you.</value>
-  </data>
-</root>
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControls.resx

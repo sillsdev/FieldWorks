@@ -4,125 +4,46 @@
 
 using System;
 using System.Collections.Generic;
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-using System.ComponentModel;
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-using System.ComponentModel;
-using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls; // for XmlViews stuff, especially borrowed form ColumnConfigureDialog
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.Common.FwUtils;
-=======
-using System.Collections.ObjectModel;
-using System.Windows.Forms;
-using SIL.FieldWorks.Common.Controls; // for XmlViews stuff, especially borrowed form ColumnConfigureDialog
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.Common.FwUtils;
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-using System.Text;
-using ExCSS;
-=======
 using DesktopAnalytics;
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 using Gecko;
 using Gecko.DOM;
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
 using LanguageExplorer.Controls.XMLViews;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-using SIL.LCModel.Core.Text;
-=======
-using SIL.LCModel.Infrastructure;
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 using SIL.LCModel.Utils;
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-using SIL.Windows.Forms.HtmlBrowser;
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-using SIL.Windows.Forms.HtmlBrowser;
 using Directory = System.IO.Directory;
-using Property = ExCSS.Property;
-using StyleSheet = ExCSS.StyleSheet;
-=======
-using Directory = System.IO.Directory;
-using XCore;
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
+using SIL.LCModel.Infrastructure;
+using System.Collections.ObjectModel;
 
 namespace LanguageExplorer.Controls.DetailControls
 {
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
 	/// <summary />
-	internal sealed class ConfigureInterlinDialog : Form
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-	/// <summary>
-	/// Summary description for ConfigureInterlinDialog.
-	/// </summary>
-	public class ConfigureInterlinDialog : Form
-=======
-	/// <summary>
-	/// Summary description for ConfigureInterlinDialog.
-	/// </summary>
-	public partial class ConfigureInterlinDialog : Form
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
+	internal sealed partial class ConfigureInterlinDialog : Form
 	{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-		private Label label1;
-		private Button helpButton;
-		private Button cancelButton;
-		private Button okButton;
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-		private Label label1;
-		private Button helpButton;
-		private Button cancelButton;
-		private Button okButton;
 
-=======
-
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 		private const string s_helpTopic = "khtpConfigureInterlinearLines";
 		private HelpProvider helpProvider;
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-		private Dictionary<WsComboContent, ComboBox.ObjectCollection> m_cachedComboContentForColumns;
-		private IContainer components;
-		private bool m_fUpdatingWsCombo = false; // true during UpdateWsCombo
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-
-		private Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection> m_cachedComboContentForColumns;
-		private IContainer components;
-
-		bool m_fUpdatingWsCombo = false; // true during UpdateWsCombo
-=======
 
 		private const string PersistProviderID = "ConfigureInterlinearLines";
-		private PersistenceProvider m_persistProvider;
+		private IPersistenceProvider m_persistProvider;
 
-		private Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection> m_cachedComboContentForColumns;
+		private Dictionary<WsComboContent, ComboBox.ObjectCollection> m_cachedComboContentForColumns;
 
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private ComboBox wsCombo;
 		private List<WsComboItem> m_columns;
+		private InterlinLineChoices m_choices;
 
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-		internal ConfigureInterlinDialog(LcmCache cache, IHelpTopicProvider helpTopicProvider, InterlinLineChoices choices)
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-		public ConfigureInterlinDialog(LcmCache cache, IHelpTopicProvider helpTopicProvider,
-			InterlinLineChoices choices)
-=======
-		public ConfigureInterlinDialog(Mediator mediator, PropertyTable propertyTable, LcmCache cache, IHelpTopicProvider helpTopicProvider,
-			InterlinLineChoices choices)
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
+		internal InterlinLineChoices Choices => m_choices;
+
+		internal ConfigureInterlinDialog(LcmCache cache, IPropertyTable propertyTable, IHelpTopicProvider helpTopicProvider, InterlinLineChoices choices)
 		{
 			InitializeComponent();
 			wsCombo = new ComboBox();
@@ -136,20 +57,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-			m_cachedComboContentForColumns = new Dictionary<WsComboContent, ComboBox.ObjectCollection>();
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-			m_cachedComboContentForColumns = new Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection>();
-=======
-			m_persistProvider = new PersistenceProvider(mediator, propertyTable, PersistProviderID);
+			m_persistProvider = PersistenceProviderFactory.CreatePersistenceProvider(propertyTable, PersistProviderID);
 			m_persistProvider.RestoreWindowSettings(PersistProviderID, this);
 
-			m_cachedComboContentForColumns = new Dictionary<ColumnConfigureDialog.WsComboContent, ComboBox.ObjectCollection>();
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
+			m_cachedComboContentForColumns = new Dictionary<WsComboContent, ComboBox.ObjectCollection>();
 			m_columns = new List<WsComboItem>();
 
 			m_cache = cache;
-			Choices = choices;
+			m_choices = choices;
 
 			InitColumnDictionary();
 			InitColumns();
@@ -164,186 +79,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			browser.DomContentChanged += Browser_DomContentChanged;
 			Analytics.Track("ConfigureInterlinear", new Dictionary<string, string> {
 			{
-					"interlinearMode", Enum.GetName(typeof(InterlinLineChoices.InterlinMode), choices.Mode)
+					"interlinearMode", Enum.GetName(typeof(InterlinMode), choices.Mode)
 			}});
 		}
 
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigureInterlinDialog));
-			this.label1 = new System.Windows.Forms.Label();
-			this.helpButton = new System.Windows.Forms.Button();
-			this.cancelButton = new System.Windows.Forms.Button();
-			this.okButton = new System.Windows.Forms.Button();
-			this.mainBrowser = new SIL.Windows.Forms.HtmlBrowser.XWebBrowser();
-			this.mainLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this.buttonLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this.mainLayoutPanel.SuspendLayout();
-			this.buttonLayoutPanel.SuspendLayout();
-			this.SuspendLayout();
-			//
-			// label1
-			//
-			resources.ApplyResources(this.label1, "label1");
-			this.label1.Name = "label1";
-			//
-			// helpButton
-			//
-			resources.ApplyResources(this.helpButton, "helpButton");
-			this.helpButton.Name = "helpButton";
-			this.helpButton.Click += new System.EventHandler(this.HelpButton_Click);
-			//
-			// cancelButton
-			//
-			resources.ApplyResources(this.cancelButton, "cancelButton");
-			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cancelButton.Name = "cancelButton";
-			//
-			// okButton
-			//
-			resources.ApplyResources(this.okButton, "okButton");
-			this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.okButton.Name = "okButton";
-			this.okButton.Click += OkButton_Click;
-			//
-			// mainBrowser
-			//
-			resources.ApplyResources(this.mainBrowser, "mainBrowser");
-			this.mainBrowser.IsWebBrowserContextMenuEnabled = false;
-			this.mainBrowser.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-			this.mainBrowser.Margin = new Padding(10, 10, 10, 10);
-			this.mainBrowser.Height = 300;
-			this.mainBrowser.Name = "mainBrowser";
-			//
-			// mainLayoutPanel
-			//
-			this.mainLayoutPanel.Controls.Add(this.label1);
-			this.mainLayoutPanel.Controls.Add(this.mainBrowser);
-			this.mainLayoutPanel.Controls.Add(this.buttonLayoutPanel);
-			resources.ApplyResources(this.mainLayoutPanel, "mainLayoutPanel");
-			this.mainLayoutPanel.Name = "mainLayoutPanel";
-			//
-			// buttonLayoutPanel
-			//
-			this.buttonLayoutPanel.Controls.Add(this.helpButton);
-			this.buttonLayoutPanel.Controls.Add(this.cancelButton);
-			this.buttonLayoutPanel.Controls.Add(this.okButton);
-			resources.ApplyResources(this.buttonLayoutPanel, "buttonLayoutPanel");
-			this.buttonLayoutPanel.Name = "buttonLayoutPanel";
-			//
-			// ConfigureInterlinDialog
-			//
-			this.AcceptButton = this.okButton;
-			resources.ApplyResources(this, "$this");
-			this.CancelButton = this.cancelButton;
-			this.Controls.Add(this.mainLayoutPanel);
-			this.Name = "ConfigureInterlinDialog";
-			this.FormBorderStyle = FormBorderStyle.FixedDialog;
-			this.MaximizeBox = false;
-			this.MinimizeBox = false;
-			this.mainLayoutPanel.ResumeLayout(false);
-			this.buttonLayoutPanel.ResumeLayout(false);
-			this.ResumeLayout(false);
-
-		}
-		#endregion
-
-		internal InterlinLineChoices Choices { get; }
-
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigureInterlinDialog));
-			this.label1 = new System.Windows.Forms.Label();
-			this.helpButton = new System.Windows.Forms.Button();
-			this.cancelButton = new System.Windows.Forms.Button();
-			this.okButton = new System.Windows.Forms.Button();
-			this.mainBrowser = new SIL.Windows.Forms.HtmlBrowser.XWebBrowser();
-			this.mainLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this.buttonLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this.mainLayoutPanel.SuspendLayout();
-			this.buttonLayoutPanel.SuspendLayout();
-			this.SuspendLayout();
-			//
-			// label1
-			//
-			resources.ApplyResources(this.label1, "label1");
-			this.label1.Name = "label1";
-			//
-			// helpButton
-			//
-			resources.ApplyResources(this.helpButton, "helpButton");
-			this.helpButton.Name = "helpButton";
-			this.helpButton.Click += new System.EventHandler(this.HelpButton_Click);
-			//
-			// cancelButton
-			//
-			resources.ApplyResources(this.cancelButton, "cancelButton");
-			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cancelButton.Name = "cancelButton";
-			//
-			// okButton
-			//
-			resources.ApplyResources(this.okButton, "okButton");
-			this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.okButton.Name = "okButton";
-			this.okButton.Click += OkButton_Click;
-			//
-			// mainBrowser
-			//
-			resources.ApplyResources(this.mainBrowser, "mainBrowser");
-			this.mainBrowser.IsWebBrowserContextMenuEnabled = false;
-			this.mainBrowser.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-			this.mainBrowser.Margin = new Padding(10, 10, 10, 10);
-			this.mainBrowser.Height = 300;
-			this.mainBrowser.Name = "mainBrowser";
-			//
-			// mainLayoutPanel
-			//
-			this.mainLayoutPanel.Controls.Add(this.label1);
-			this.mainLayoutPanel.Controls.Add(this.mainBrowser);
-			this.mainLayoutPanel.Controls.Add(this.buttonLayoutPanel);
-			resources.ApplyResources(this.mainLayoutPanel, "mainLayoutPanel");
-			this.mainLayoutPanel.Name = "mainLayoutPanel";
-			//
-			// buttonLayoutPanel
-			//
-			this.buttonLayoutPanel.Controls.Add(this.helpButton);
-			this.buttonLayoutPanel.Controls.Add(this.cancelButton);
-			this.buttonLayoutPanel.Controls.Add(this.okButton);
-			resources.ApplyResources(this.buttonLayoutPanel, "buttonLayoutPanel");
-			this.buttonLayoutPanel.Name = "buttonLayoutPanel";
-			//
-			// ConfigureInterlinDialog
-			//
-			this.AcceptButton = this.okButton;
-			resources.ApplyResources(this, "$this");
-			this.CancelButton = this.cancelButton;
-			this.Controls.Add(this.mainLayoutPanel);
-			this.Name = "ConfigureInterlinDialog";
-			this.FormBorderStyle = FormBorderStyle.FixedDialog;
-			this.MaximizeBox = false;
-			this.MinimizeBox = false;
-			this.mainLayoutPanel.ResumeLayout(false);
-			this.buttonLayoutPanel.ResumeLayout(false);
-			this.ResumeLayout(false);
-
-		}
-		#endregion
-
-=======
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 		/// <summary>
 		/// Saves the generated content in the temp directory, to a unique but discoverable and somewhat stable location.
 		/// </summary>
@@ -375,12 +114,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (htmlPath == null)
 			{
 				throw new ArgumentNullException();
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
 			}
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-
-=======
-
 			using (var fileStream = new StreamWriter(htmlPath))
 			{
 				SavePublishedHtmlAndCss(fileStream);
@@ -388,32 +122,21 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 		}
 
-		internal void SavePublishedHtmlAndCss(StreamWriter fileStream)
+		private void SavePublishedHtmlAndCss(StreamWriter fileStream)
 		{
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 			// Make the HTML write nicely
 			var htmlWriterSettings = new XmlWriterSettings()
 			{
 				Indent = true,
 				IndentChars = "    "
 			};
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-			var cssPath = Path.Combine(FwDirectoryFinder.TemplateDirectory, "ConfigureInterlinear", "ConfigureInterlinear.css");
-			using (var htmlWriter = XmlWriter.Create(htmlPath, htmlWriterSettings))
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-
-			var cssPath = FwDirectoryFinder.TemplateDirectory + Path.DirectorySeparatorChar +
-				"ConfigureInterlinear" + Path.DirectorySeparatorChar + "ConfigureInterlinear.css";
-			using (var htmlWriter = XmlWriter.Create(htmlPath, htmlWriterSettings))
-=======
 
 			var cssPath = FwDirectoryFinder.TemplateDirectory + Path.DirectorySeparatorChar +
 				"ConfigureInterlinear" + Path.DirectorySeparatorChar + "ConfigureInterlinear.css";
 			using (var htmlWriter = XmlWriter.Create(fileStream, htmlWriterSettings))
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 			{
 				GenerateOpeningHtml(htmlWriter, cssPath);
-				GenerateHtmlTable(htmlWriter, Choices.Mode);
+				GenerateHtmlTable(htmlWriter, m_choices.Mode);
 				GenerateClosingHtml(htmlWriter);
 				htmlWriter.Flush();
 			}
@@ -483,44 +206,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// Creates the main table to contain the choices and checkboxes.
 		/// If isTextChart is true, the table is written accordingly.
 		/// </summary>
-		/// <param name="htmlWriter">The XmlWriter to write the HTML</param>
-		/// <param name="mode">The InterlinMode of the choices</param>
 		private void GenerateHtmlTable(XmlWriter htmlWriter, InterlinMode mode)
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-			var rowChoicesList = InitRowChoices();
-			htmlWriter.WriteStartElement("table");
-			htmlWriter.WriteStartElement("thead");
-			// The first th is for the outer .grab elements
-			// The second th is for the inner .grab elements
-			// The third th is a blank one for the row lables (Word, Word Gloss, etc.)
-			htmlWriter.WriteStartElement("tr");
-			htmlWriter.WriteStartElement("th");
-			htmlWriter.WriteFullEndElement(); // </th>
-			htmlWriter.WriteStartElement("th");
-			htmlWriter.WriteFullEndElement(); // </th>
-			htmlWriter.WriteStartElement("th");
-			htmlWriter.WriteAttributeString("class", "mainTh");
-			htmlWriter.WriteFullEndElement(); // </th>
-			GenerateWsTableColumns(htmlWriter, "mainTh");
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-			var rowChoicesList = InitRowChoices();
-
-			htmlWriter.WriteStartElement("table");
-			htmlWriter.WriteStartElement("thead");
-			// The first th is for the outer .grab elements
-			// The second th is for the inner .grab elements
-			// The third th is a blank one for the row lables (Word, Word Gloss, etc.)
-			htmlWriter.WriteStartElement("tr");
-			htmlWriter.WriteStartElement("th");
-			htmlWriter.WriteFullEndElement(); // </th>
-			htmlWriter.WriteStartElement("th");
-			htmlWriter.WriteFullEndElement(); // </th>
-			htmlWriter.WriteStartElement("th");
-			htmlWriter.WriteAttributeString("class", "mainTh");
-			htmlWriter.WriteFullEndElement(); // </th>
-			GenerateWsTableColumns(htmlWriter, "mainTh");
-=======
 			var rowChoicesList = InitRowChoices(m_choices);
 
 			htmlWriter.WriteStartElement("div");
@@ -530,18 +217,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			htmlWriter.WriteStartElement("div");
 			htmlWriter.WriteAttributeString("class", "hamburger header");
 			htmlWriter.WriteAttributeString("id", "header-hamburger-1");
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 			htmlWriter.WriteFullEndElement(); // </tr>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-			htmlWriter.WriteFullEndElement(); // </thead>
-			htmlWriter.WriteStartElement("tbody");
-			if (mode != InterlinMode.Chart)
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-			htmlWriter.WriteFullEndElement(); // </thead>
-			htmlWriter.WriteStartElement("tbody");
-
-			if (mode != InterlinLineChoices.InterlinMode.Chart)
-=======
 			htmlWriter.WriteStartElement("div");
 			htmlWriter.WriteAttributeString("class", "hamburger header");
 			htmlWriter.WriteAttributeString("id", "header-hamburger-2");
@@ -553,85 +229,10 @@ namespace LanguageExplorer.Controls.DetailControls
 			GenerateWsTableColumns(htmlWriter, "header");
 
 			foreach (var rowChoice in rowChoicesList)
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 			{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-				// The UI needs to enforce the way morpheme-level options are ordered, so morpheme-level options are linked
-				// together as one unit. The Literal Translation, Free Translation, and Note options are in their own table
-				// because they must remain on the bottom of the options list.
-				foreach (var currentRow in rowChoicesList)
-				{
-					if (currentRow.Count > 1 && (currentRow.First.Value.Item2.MorphemeLevel && currentRow.First.Value.Item2.WordLevel)) // Morpheme-level option
-					{
-						GenerateTableRowWithClusterTable(htmlWriter, currentRow, "clusterTable");
-					}
-					else if (currentRow.Count == 1)
-					{
-						GenerateNormalTableRow(htmlWriter, currentRow.First.Value, true);
-					}
-				}
-				// </tbody>
-				htmlWriter.WriteFullEndElement();
-				// </table>
-				htmlWriter.WriteFullEndElement();
-				// The Literal Translation, Free Translation, and Note options are grouped in a separate table.
-				GenerateNonWordLevelLineOptions(htmlWriter, "specialTable", "clusterTable", rowChoicesList.Last.Value, 3);
-			}
-			else
-			{
-				foreach (var currentRow in rowChoicesList)
-				{
-					if (currentRow.First.Value.Item2.MorphemeLevel) // The morpheme-level options are in a separate table
-					{
-						GenerateMorphemeLevelTable(htmlWriter, currentRow);
-					}
-					else
-					{
-						GenerateTableRowWithClusterTable(htmlWriter, currentRow, "clusterTable hasDashedLine");
-					}
-				}
-				htmlWriter.WriteFullEndElement(); // </tbody>
-				htmlWriter.WriteFullEndElement(); // </table>
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-				// The UI needs to enforce the way morpheme-level options are ordered, so morpheme-level options are linked
-				// together as one unit. The Literal Translation, Free Translation, and Note options are in their own table
-				// because they must remain on the bottom of the options list.
-				foreach (var currentRow in rowChoicesList)
-				{
-					if (currentRow.Count > 1 && (currentRow.First.Value.Item2.MorphemeLevel && currentRow.First.Value.Item2.WordLevel)) // Morpheme-level option
-					{
-						GenerateTableRowWithClusterTable(htmlWriter, currentRow, "clusterTable");
-					}
-					else if (currentRow.Count == 1)
-					{
-						GenerateNormalTableRow(htmlWriter, currentRow.First.Value, true);
-					}
-				}
-				htmlWriter.WriteFullEndElement(); // </tbody>
-				htmlWriter.WriteFullEndElement(); // </table>
-				// The Literal Translation, Free Translation, and Note options are grouped in a separate table.
-				GenerateNonWordLevelLineOptions(htmlWriter, "specialTable", "clusterTable",
-					rowChoicesList.Last.Value, 3);
-			}
-			else
-			{
-				foreach (var currentRow in rowChoicesList)
-				{
-					if (currentRow.First.Value.Item2.MorphemeLevel) // The morpheme-level options are in a separate table
-					{
-						GenerateMorphemeLevelTable(htmlWriter, currentRow);
-					}
-					else
-					{
-						GenerateTableRowWithClusterTable(htmlWriter, currentRow, "clusterTable hasDashedLine");
-					}
-				}
-				htmlWriter.WriteFullEndElement(); // </tbody>
-				htmlWriter.WriteFullEndElement(); // </table>
-=======
 				rowChoice.GenerateRow(htmlWriter, m_columns, m_cache, m_choices);
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 			}
+
 			htmlWriter.WriteFullEndElement(); // </div>
 		}
 
@@ -640,57 +241,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal sealed class InterlinearTableGroup
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-			htmlWriter.WriteStartElement("tr");
-			htmlWriter.WriteStartElement("td");
-			htmlWriter.WriteAttributeString("class", "grab specialGrab");
-			htmlWriter.WriteRaw("&#8801;");
-			htmlWriter.WriteFullEndElement(); // </td>
-			htmlWriter.WriteStartElement("td");
-			htmlWriter.WriteAttributeString("class", "specialTD");
-			htmlWriter.WriteAttributeString("colspan", (m_columns.Count + 2).ToString());
-			htmlWriter.WriteStartElement("table");
-			htmlWriter.WriteAttributeString("class", "clusterTable");
-			htmlWriter.WriteStartElement("thead");
-			htmlWriter.WriteStartElement("tr");
-			htmlWriter.WriteStartElement("th");
-			htmlWriter.WriteFullEndElement(); // </th>
-			htmlWriter.WriteStartElement("th");
-			htmlWriter.WriteAttributeString("class", "mainTh");
-			htmlWriter.WriteFullEndElement(); // </th>
-			GenerateWsTableColumns(htmlWriter, "mainTh");
-			htmlWriter.WriteFullEndElement(); // </tr>
-			htmlWriter.WriteFullEndElement(); // </thead>
-			htmlWriter.WriteStartElement("tbody");
-			var morphemesOrLexGlossWasDrawn = false;
-			foreach (var row in tableRowData)
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-			htmlWriter.WriteStartElement("tr");
-			htmlWriter.WriteStartElement("td");
-			htmlWriter.WriteAttributeString("class", "grab specialGrab");
-			htmlWriter.WriteRaw("&#8801;");
-			htmlWriter.WriteFullEndElement(); // </td>
-			htmlWriter.WriteStartElement("td");
-			htmlWriter.WriteAttributeString("class", "specialTD");
-			htmlWriter.WriteAttributeString("colspan", (m_columns.Count + 2).ToString());
-
-			htmlWriter.WriteStartElement("table");
-			htmlWriter.WriteAttributeString("class", "clusterTable");
-			htmlWriter.WriteStartElement("thead");
-			htmlWriter.WriteStartElement("tr");
-			htmlWriter.WriteStartElement("th");
-			htmlWriter.WriteFullEndElement(); // </th>
-			htmlWriter.WriteStartElement("th");
-			htmlWriter.WriteAttributeString("class", "mainTh");
-			htmlWriter.WriteFullEndElement(); // </th>
-			GenerateWsTableColumns(htmlWriter, "mainTh");
-			htmlWriter.WriteFullEndElement(); // </tr>
-			htmlWriter.WriteFullEndElement(); // </thead>
-			htmlWriter.WriteStartElement("tbody");
-
-			var morphemesOrLexGlossWasDrawn = false;
-			foreach (var row in tableRowData)
-=======
 
 			private InterlinearTableRow FirstRow;
 
@@ -700,14 +250,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			private List<InterlinearTableRow> RemainingRows = new List<InterlinearTableRow>();
 
 			public InterlinearTableGroup(InterlinearTableRow row)
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 			{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-				if ((row.Item1.Flid == InterlinLineChoices.kflidMorphemes || row.Item1.Flid == InterlinLineChoices.kflidLexGloss) && !morphemesOrLexGlossWasDrawn)
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-				if ((row.Item1.Flid == InterlinLineChoices.kflidMorphemes ||
-					row.Item1.Flid == InterlinLineChoices.kflidLexGloss) && !morphemesOrLexGlossWasDrawn)
-=======
 				FirstRow = row;
 			}
 
@@ -719,16 +262,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			private bool IsSegmentRow(InterlinearTableRow row, InterlinLineChoices choices)
 			{
 				if (row.HasSpecs)
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 				{
 					return !row.FirstSpec.WordLevel;
 				}
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-				else if ((row.Item1.Flid == InterlinLineChoices.kflidMorphemes || row.Item1.Flid == InterlinLineChoices.kflidLexGloss) && morphemesOrLexGlossWasDrawn)
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-				else if ((row.Item1.Flid == InterlinLineChoices.kflidMorphemes ||
-						row.Item1.Flid == InterlinLineChoices.kflidLexGloss) && morphemesOrLexGlossWasDrawn)
-=======
 				return !choices.CreateSpec(row.Flid, 0).WordLevel;
 			}
 
@@ -738,7 +274,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			private bool IsMorphemeRow(InterlinearTableRow row, InterlinLineChoices choices)
 			{
 				if (row.HasSpecs)
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 				{
 					return row.FirstSpec.MorphemeLevel;
 				}
@@ -764,22 +299,6 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 				}
 			}
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-			htmlWriter.WriteFullEndElement(); // </tr>
-			htmlWriter.WriteFullEndElement(); // </tbody>
-			htmlWriter.WriteFullEndElement(); // </table>
-			htmlWriter.WriteFullEndElement(); // </td>
-			htmlWriter.WriteFullEndElement(); // </tr>
-		}
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-
-			htmlWriter.WriteFullEndElement(); // </tr>
-			htmlWriter.WriteFullEndElement(); // </tbody>
-			htmlWriter.WriteFullEndElement(); // </table>
-			htmlWriter.WriteFullEndElement(); // </td>
-			htmlWriter.WriteFullEndElement(); // </tr>
-		}
-=======
 
 			public void GenerateRow(XmlWriter htmlWriter,
 				List<WsComboItem> columns,
@@ -829,7 +348,6 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				htmlWriter.WriteFullEndElement(); // </div>
 			}
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 
 			/// <summary>
 			/// Generates a Table Row which can be reordered to anywhere else in the table
@@ -945,158 +463,20 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		internal static IEnumerable<InterlinearTableGroup> InitRowChoices(InterlinLineChoices choices)
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-			var rowChoicesList = new LinkedList<LinkedList<Tuple<LineOption, InterlinLineSpec>>>();
-			if (Choices.Mode != InterlinMode.Chart)
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-			var rowChoicesList = new LinkedList<LinkedList<Tuple<LineOption, InterlinLineSpec>>>();
-			if (m_choices.Mode != InterlinLineChoices.InterlinMode.Chart)
-=======
 			var rowChoices = new List<InterlinearTableGroup>();
 			var remainingChoiceRows = new Queue<InterlinearTableRow>();
 			var lineOptions = choices.ConfigurationLineOptions;
 			foreach (var lineOption in lineOptions)
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 			{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-				var choiceIndex = 0;
-				while (choiceIndex < Choices.AllLineOptions.Count)
-				{
-					var currentRowChoiceList = new LinkedList<Tuple<LineOption, InterlinLineSpec>>();
-					var rowChoice = new LinkedListNode<Tuple<LineOption, InterlinLineSpec>>(new Tuple<LineOption, InterlinLineSpec>(Choices.AllLineOptions[choiceIndex], Choices.AllLineSpecs[choiceIndex]));
-					currentRowChoiceList.AddLast(rowChoice);
-					if (Choices.AllLineSpecs[choiceIndex].MorphemeLevel && Choices.AllLineSpecs[choiceIndex].WordLevel || !Choices.AllLineSpecs[choiceIndex].WordLevel)
-					{
-						var incremented = choiceIndex + 1;
-						if (incremented < Choices.AllLineSpecs.Count)
-						{
-							var isNextChoiceValid = Choices.AllLineSpecs[incremented].MorphemeLevel && Choices.AllLineSpecs[incremented].WordLevel
-													|| !Choices.AllLineSpecs[incremented].WordLevel;
-							while (isNextChoiceValid)
-							{
-								currentRowChoiceList.AddLast(new Tuple<LineOption, InterlinLineSpec>(Choices.AllLineOptions[incremented], Choices.AllLineSpecs[incremented++]));
-								if (incremented >= Choices.AllLineOptions.Count || !Choices.AllLineSpecs[incremented].MorphemeLevel && Choices.AllLineSpecs[incremented].WordLevel)
-								{
-									isNextChoiceValid = false;
-								}
-							}
-							choiceIndex = incremented;
-						}
-					}
-					else
-					{
-						choiceIndex++;
-					}
-					rowChoicesList.AddLast(currentRowChoiceList);
-				}
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-				var choiceIndex = 0;
-				while (choiceIndex < m_choices.AllLineOptions.Count)
-				{
-					var currentRowChoiceList = new LinkedList<Tuple<LineOption, InterlinLineSpec>>();
-					var rowChoice = new LinkedListNode<Tuple<LineOption, InterlinLineSpec>>(new Tuple<LineOption, InterlinLineSpec>(m_choices.AllLineOptions[choiceIndex], m_choices.AllLineSpecs[choiceIndex]));
-					currentRowChoiceList.AddLast(rowChoice);
-					if (m_choices.AllLineSpecs[choiceIndex].MorphemeLevel && m_choices.AllLineSpecs[choiceIndex].WordLevel
-						|| !m_choices.AllLineSpecs[choiceIndex].WordLevel) // Either Morphemes, Lex. Gloss, etc. OR Notes, Literal Translation, etc...
-					{
-						var incremented = choiceIndex + 1;
-						if (incremented < m_choices.AllLineSpecs.Count)
-						{
-							var isNextChoiceValid = (m_choices.AllLineSpecs[incremented].MorphemeLevel && m_choices.AllLineSpecs[incremented].WordLevel)
-													|| !m_choices.AllLineSpecs[incremented].WordLevel;
-
-							while (isNextChoiceValid)
-							{
-								currentRowChoiceList.AddLast(new Tuple<LineOption, InterlinLineSpec>(m_choices.AllLineOptions[incremented], m_choices.AllLineSpecs[incremented++]));
-								if (incremented >= m_choices.AllLineOptions.Count || !m_choices.AllLineSpecs[incremented].MorphemeLevel && m_choices.AllLineSpecs[incremented].WordLevel)
-									isNextChoiceValid = false;
-							}
-							choiceIndex = incremented;
-						}
-					}
-					else
-					{
-						choiceIndex++;
-					}
-					rowChoicesList.AddLast(currentRowChoiceList);
-				}
-=======
 				remainingChoiceRows.Enqueue(new InterlinearTableRow(new Tuple<LineOption, InterlinLineSpec[]>(lineOption,
 					choices.EnabledLineSpecs.Where(spec => spec.Flid == lineOption.Flid).ToArray())));
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 			}
 			do
 			{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-				var choiceIndex = 0;
-				while (choiceIndex < Choices.AllLineOptions.Count)
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-				var choiceIndex = 0;
-				while (choiceIndex < m_choices.AllLineOptions.Count)
-=======
 				var row = new InterlinearTableGroup(remainingChoiceRows.Dequeue());
 				if (row.IsSection(choices))
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 				{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-					var currentRowChoiceList = new LinkedList<Tuple<LineOption, InterlinLineSpec>>();
-					var rowChoice = new LinkedListNode<Tuple<LineOption, InterlinLineSpec>>(new Tuple<LineOption, InterlinLineSpec>(Choices.AllLineOptions[choiceIndex], Choices.AllLineSpecs[choiceIndex]));
-					currentRowChoiceList.AddLast(rowChoice);
-					if (Choices.AllLineSpecs[choiceIndex].WordLevel) // Word and Morpheme-level stuff
-					{
-						var incremented = choiceIndex + 1;
-						if (incremented < Choices.AllLineSpecs.Count)
-						{
-							var initialOptionIsWordLevel = Choices.AllLineSpecs[choiceIndex].WordLevel && !Choices.AllLineSpecs[choiceIndex].MorphemeLevel;
-							var isNextChoiceValid = Choices.AllLineSpecs[incremented].WordLevel;
-							while (isNextChoiceValid)
-							{
-								currentRowChoiceList.AddLast(new Tuple<LineOption, InterlinLineSpec>(Choices.AllLineOptions[incremented], Choices.AllLineSpecs[incremented++]));
-								if (incremented >= Choices.AllLineSpecs.Count || initialOptionIsWordLevel && Choices.AllLineSpecs[incremented].MorphemeLevel || !Choices.AllLineSpecs[incremented].WordLevel)
-								{
-									isNextChoiceValid = false;
-								}
-							}
-							choiceIndex = incremented;
-						}
-					}
-					else
-					{
-						choiceIndex++;
-					}
-					rowChoicesList.AddLast(currentRowChoiceList);
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-					var currentRowChoiceList = new LinkedList<Tuple<LineOption, InterlinLineSpec>>();
-					var rowChoice = new LinkedListNode<Tuple<LineOption, InterlinLineSpec>>(new Tuple<LineOption, InterlinLineSpec>(m_choices.AllLineOptions[choiceIndex], m_choices.AllLineSpecs[choiceIndex]));
-					currentRowChoiceList.AddLast(rowChoice);
-					if (m_choices.AllLineSpecs[choiceIndex].WordLevel) // Word and Morpheme-level stuff
-					{
-						var incremented = choiceIndex + 1;
-						if (incremented < m_choices.AllLineSpecs.Count)
-						{
-							var initialOptionIsWordLevel = m_choices.AllLineSpecs[choiceIndex].WordLevel &&
-															!m_choices.AllLineSpecs[choiceIndex].MorphemeLevel;
-
-							var isNextChoiceValid = m_choices.AllLineSpecs[incremented].WordLevel;
-
-							while (isNextChoiceValid)
-							{
-								currentRowChoiceList.AddLast(new Tuple<LineOption, InterlinLineSpec>(m_choices.AllLineOptions[incremented], m_choices.AllLineSpecs[incremented++]));
-								if (incremented >= m_choices.AllLineSpecs.Count ||
-									initialOptionIsWordLevel && m_choices.AllLineSpecs[incremented].MorphemeLevel || !m_choices.AllLineSpecs[incremented].WordLevel)
-									isNextChoiceValid = false;
-							}
-							choiceIndex = incremented;
-						}
-					}
-					else
-					{
-						choiceIndex++;
-					}
-					rowChoicesList.AddLast(currentRowChoiceList);
-=======
 					row.FillSection(remainingChoiceRows, choices);
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 				}
 				rowChoices.Add(row);
 			} while (remainingChoiceRows.Any());
@@ -1120,321 +500,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-		/// Generates a Table Row which can be reordered to anywhere else in the table
-		/// </summary>
-		private void GenerateNormalTableRow(XmlWriter htmlWriter, Tuple<LineOption, InterlinLineSpec> rowDataTuple, bool needsBlankTdBefore)
-		{
-			htmlWriter.WriteStartElement("tr");
-			htmlWriter.WriteAttributeString("id", rowDataTuple.Item1.Flid.ToString());
-			htmlWriter.WriteAttributeString("class", "row");
-			if (needsBlankTdBefore)
-			{
-				htmlWriter.WriteStartElement("td");
-				htmlWriter.WriteAttributeString("class", "noBorder");
-				htmlWriter.WriteFullEndElement(); // </td>
-			}
-			htmlWriter.WriteStartElement("td");
-			htmlWriter.WriteAttributeString("class", "grab");
-			htmlWriter.WriteRaw("&#8801;"); // hamburger-looking character
-			htmlWriter.WriteFullEndElement(); // </td>
-			htmlWriter.WriteStartElement("td");
-			htmlWriter.WriteAttributeString("class", "lineChoice");
-			htmlWriter.WriteRaw(rowDataTuple.Item1.Label);
-			htmlWriter.WriteFullEndElement(); // </td>
-			GenerateCheckboxes(htmlWriter, rowDataTuple.Item2);
-			htmlWriter.WriteFullEndElement(); // </tr>
-		}
-
-		/// <summary>
-		/// Generates a sub-table row which can be re-ordered as a whole like a normal table row
-		/// but the internal elements can only be re-ordered among themselves
-		/// </summary>
-		private void GenerateClusterTable(XmlWriter htmlWriter, LinkedList<Tuple<LineOption, InterlinLineSpec>> rowData, string tableId, string tableClass = "clusterTable")
-		{
-			htmlWriter.WriteStartElement("table");
-			htmlWriter.WriteAttributeString("class", tableClass);
-			htmlWriter.WriteAttributeString("id", tableId);
-			htmlWriter.WriteStartElement("thead");
-			htmlWriter.WriteStartElement("tr");
-			htmlWriter.WriteStartElement("th");
-			htmlWriter.WriteFullEndElement(); // </th>
-			htmlWriter.WriteStartElement("th");
-			if (Choices.Mode == InterlinMode.Chart)
-			{
-				htmlWriter.WriteAttributeString("class", "mainTh");
-			}
-			htmlWriter.WriteFullEndElement(); // </th>
-			GenerateWsTableColumns(htmlWriter, Choices.Mode == InterlinMode.Chart ? "mainTh" : "");
-			htmlWriter.WriteFullEndElement(); // </tr>
-			htmlWriter.WriteFullEndElement(); // </thead>
-			htmlWriter.WriteStartElement("tbody");
-			foreach (var dataTuple in rowData)
-			{
-				GenerateNormalTableRow(htmlWriter, dataTuple, false);
-			}
-			htmlWriter.WriteFullEndElement(); // </tbody>
-			htmlWriter.WriteFullEndElement(); // </table>
-		}
-
-		/// <summary>
-		/// Generates Literal Translation, Free Translation, and Notes in a separate table
-		/// </summary>
-		private void GenerateNonWordLevelLineOptions(XmlWriter htmlWriter, string tableId, string tableClass, LinkedList<Tuple<LineOption, InterlinLineSpec>> rowData, int numOfBlankColumns = 0)
-		{
-			htmlWriter.WriteStartElement("table");
-			htmlWriter.WriteAttributeString("id", tableId);
-			htmlWriter.WriteAttributeString("class", tableClass);
-			htmlWriter.WriteStartElement("thead");
-			htmlWriter.WriteStartElement("tr");
-			for (var i = 0; i < numOfBlankColumns; i++)
-			{
-				htmlWriter.WriteStartElement("th");
-				htmlWriter.WriteFullEndElement(); // </th>
-			}
-			GenerateWsTableColumns(htmlWriter, "");
-			htmlWriter.WriteFullEndElement(); // </tr>
-			htmlWriter.WriteFullEndElement(); // </thead>
-			htmlWriter.WriteStartElement("tbody");
-			foreach (var row in rowData)
-			{
-				GenerateNormalTableRow(htmlWriter, new Tuple<LineOption, InterlinLineSpec>(row.Item1, row.Item2), true);
-			}
-			htmlWriter.WriteFullEndElement(); // </tbody>
-			htmlWriter.WriteFullEndElement(); // </table>
-		}
-
-		/// <summary>
-		/// Determines if the spec's ComboContent is contained in one of the cached keys of m_cachedComboContentForColumns.
-		/// If it is, then loop through each column to determine if a checkbox is needed. Otherwise, write the td with no checkbox.
-		/// </summary>
-		/// <param name="htmlWriter">The XmlWriter to write the HTML</param>
-		/// <param name="spec">The InterlinLineSpec that contains the ComboContent</param>
-		private void GenerateCheckboxes(XmlWriter htmlWriter, InterlinLineSpec spec)
-		{
-			ComboBox.ObjectCollection objectCollection = null;
-			if (m_cachedComboContentForColumns.ContainsKey(spec.ComboContent))
-			{
-				objectCollection = m_cachedComboContentForColumns[spec.ComboContent];
-			}
-			if (objectCollection != null)
-			{
-				foreach (var column in m_columns)
-				{
-					if (objectCollection.Contains(column))
-					{
-						var id = spec.Flid + "%" + column.WritingSystem;
-						GenerateCheckbox(htmlWriter, id, column.WritingSystemType);
-					}
-					else
-					{
-						GenerateCheckbox(htmlWriter, "", column.WritingSystemType, true);
-					}
-				}
-			}
-			else
-			{
-				foreach (var column in m_columns)
-				{
-					GenerateCheckbox(htmlWriter, "", column.WritingSystemType, true);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Creates a new td with a checkbox if isEmptyTd is false. If isEmptyTd is true, then it creates
-		/// a td with no checkbox. If a className is given, then it adds the class to the td to show
-		/// a separation/distinction between the writing systems. id is typically the flid and ws
-		/// together. If blank, no id is written.
-		/// </summary>
-		/// <param name="htmlWriter">The XmlWriter to write the HTML</param>
-		/// <param name="id">The id for the checkbox to be written</param>
-		/// <param name="isEmptyTd">If true, a td is written with no checkbox</param>
-		/// <param name="className">The name of the class to attach to the td</param>
-		private void GenerateCheckbox(XmlWriter htmlWriter, string id, string className, bool isEmptyTd = false)
-		{
-			if (htmlWriter == null)
-			{
-				return;
-			}
-			htmlWriter.WriteStartElement("td");
-			htmlWriter.WriteAttributeString("class", className);
-			if (!isEmptyTd)
-			{
-				htmlWriter.WriteStartElement("input");
-				htmlWriter.WriteAttributeString("type", "checkbox");
-				htmlWriter.WriteAttributeString("id", id);
-				htmlWriter.WriteAttributeString("class", "checkBox");
-				htmlWriter.WriteAttributeString("name", id.Split('%')[0] + "[]");
-				if (Choices.IndexOf(int.Parse(id.Split('%')[0]), int.Parse(id.Split('%')[1]), true) != -1) // If the option is in m_choices, check it
-				{
-					htmlWriter.WriteAttributeString("checked", "checked");
-				}
-				htmlWriter.WriteEndElement(); // /> <--- End input element
-			}
-			htmlWriter.WriteFullEndElement(); // </td>
-		}
-
-		/// <summary>
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-		/// Generates a Table Row which can be reordered to anywhere else in the table
-		/// </summary>
-		private void GenerateNormalTableRow(XmlWriter htmlWriter, Tuple<LineOption, InterlinLineSpec> rowDataTuple, bool needsBlankTdBefore)
-		{
-			htmlWriter.WriteStartElement("tr");
-			htmlWriter.WriteAttributeString("id", rowDataTuple.Item1.Flid.ToString());
-			htmlWriter.WriteAttributeString("class", "row");
-			if (needsBlankTdBefore)
-			{
-				htmlWriter.WriteStartElement("td");
-				htmlWriter.WriteAttributeString("class", "noBorder");
-				htmlWriter.WriteFullEndElement(); // </td>
-			}
-			htmlWriter.WriteStartElement("td");
-			htmlWriter.WriteAttributeString("class", "grab");
-			htmlWriter.WriteRaw("&#8801;"); // hamburger-looking character
-			htmlWriter.WriteFullEndElement(); // </td>
-			htmlWriter.WriteStartElement("td");
-			htmlWriter.WriteAttributeString("class", "lineChoice");
-			htmlWriter.WriteRaw(rowDataTuple.Item1.Label);
-			htmlWriter.WriteFullEndElement(); // </td>
-			GenerateCheckboxes(htmlWriter, rowDataTuple.Item2);
-			htmlWriter.WriteFullEndElement(); // </tr>
-		}
-
-		/// <summary>
-		/// Generates a sub-table row which can be re-ordered as a whole like a normal table row
-		/// but the internal elements can only be re-ordered among themselves
-		/// </summary>
-		private void GenerateClusterTable(XmlWriter htmlWriter, LinkedList<Tuple<LineOption, InterlinLineSpec>> rowData, string tableId, string tableClass = "clusterTable")
-		{
-			htmlWriter.WriteStartElement("table");
-			htmlWriter.WriteAttributeString("class", tableClass);
-			htmlWriter.WriteAttributeString("id", tableId);
-			htmlWriter.WriteStartElement("thead");
-			htmlWriter.WriteStartElement("tr");
-			htmlWriter.WriteStartElement("th");
-			htmlWriter.WriteFullEndElement(); // </th>
-			htmlWriter.WriteStartElement("th");
-			if (m_choices.Mode == InterlinLineChoices.InterlinMode.Chart)
-				htmlWriter.WriteAttributeString("class", "mainTh");
-			htmlWriter.WriteFullEndElement(); // </th>
-			GenerateWsTableColumns(htmlWriter, m_choices.Mode == InterlinLineChoices.InterlinMode.Chart ? "mainTh" : "");
-			htmlWriter.WriteFullEndElement(); // </tr>
-			htmlWriter.WriteFullEndElement(); // </thead>
-			htmlWriter.WriteStartElement("tbody");
-			foreach (var dataTuple in rowData)
-			{
-				GenerateNormalTableRow(htmlWriter, dataTuple, false);
-			}
-			htmlWriter.WriteFullEndElement(); // </tbody>
-			htmlWriter.WriteFullEndElement(); // </table>
-		}
-
-		/// <summary>
-		/// Generates Literal Translation, Free Translation, and Notes in a separate table
-		/// </summary>
-		private void GenerateNonWordLevelLineOptions(XmlWriter htmlWriter, string tableId, string tableClass, LinkedList<Tuple<LineOption, InterlinLineSpec>> rowData,
-			int numOfBlankColumns = 0)
-		{
-			htmlWriter.WriteStartElement("table");
-			htmlWriter.WriteAttributeString("id", tableId);
-			htmlWriter.WriteAttributeString("class", tableClass);
-			htmlWriter.WriteStartElement("thead");
-			htmlWriter.WriteStartElement("tr");
-			for (var i = 0; i < numOfBlankColumns; i++)
-			{
-				htmlWriter.WriteStartElement("th");
-				htmlWriter.WriteFullEndElement(); // </th>
-			}
-			GenerateWsTableColumns(htmlWriter, "");
-			htmlWriter.WriteFullEndElement(); // </tr>
-			htmlWriter.WriteFullEndElement(); // </thead>
-			htmlWriter.WriteStartElement("tbody");
-			foreach (var row in rowData)
-			{
-				var tuple = new Tuple<LineOption, InterlinLineSpec>(row.Item1,
-					row.Item2);
-				GenerateNormalTableRow(htmlWriter, tuple, true);
-			}
-			htmlWriter.WriteFullEndElement(); // </tbody>
-			htmlWriter.WriteFullEndElement(); // </table>
-		}
-
-		/// <summary>
-		/// Determines if the spec's ComboContent is contained in one of the cached keys of m_cachedComboContentForColumns.
-		/// If it is, then loop through each column to determine if a checkbox is needed. Otherwise, write the td with no checkbox.
-		/// </summary>
-		/// <param name="htmlWriter">The XmlWriter to write the HTML</param>
-		/// <param name="spec">The InterlinLineSpec that contains the ComboContent</param>
-		private void GenerateCheckboxes(XmlWriter htmlWriter, InterlinLineSpec spec)
-		{
-			ComboBox.ObjectCollection objectCollection = null;
-
-			if (m_cachedComboContentForColumns.ContainsKey(spec.ComboContent))
-				objectCollection = m_cachedComboContentForColumns[spec.ComboContent];
-
-			if (objectCollection != null)
-			{
-				foreach (var column in m_columns)
-				{
-					if (objectCollection.Contains(column))
-					{
-						var id = spec.Flid + "%" + column.WritingSystem;
-						GenerateCheckbox(htmlWriter, id, column.WritingSystemType);
-					}
-					else
-					{
-						GenerateCheckbox(htmlWriter, "", column.WritingSystemType, true);
-					}
-				}
-			}
-			else
-			{
-				foreach (var column in m_columns)
-				{
-					GenerateCheckbox(htmlWriter, "", column.WritingSystemType, true);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Creates a new td with a checkbox if isEmptyTd is false. If isEmptyTd is true, then it creates
-		/// a td with no checkbox. If a className is given, then it adds the class to the td to show
-		/// a separation/distinction between the writing systems. id is typically the flid and ws
-		/// together. If blank, no id is written.
-		/// </summary>
-		/// <param name="htmlWriter">The XmlWriter to write the HTML</param>
-		/// <param name="id">The id for the checkbox to be written</param>
-		/// <param name="isEmptyTd">If true, a td is written with no checkbox</param>
-		/// <param name="className">The name of the class to attach to the td</param>
-		private void GenerateCheckbox(XmlWriter htmlWriter, string id, string className, bool isEmptyTd = false)
-		{
-			if (htmlWriter == null)
-				return;
-			htmlWriter.WriteStartElement("td");
-			htmlWriter.WriteAttributeString("class", className);
-
-			if (!isEmptyTd)
-			{
-				var flid = int.Parse(id.Split('%')[0]);
-				var ws = int.Parse(id.Split('%')[1]);
-
-				htmlWriter.WriteStartElement("input");
-				htmlWriter.WriteAttributeString("type", "checkbox");
-				htmlWriter.WriteAttributeString("id", id);
-				htmlWriter.WriteAttributeString("class", "checkBox");
-				htmlWriter.WriteAttributeString("name", id.Split('%')[0] + "[]");
-				if (m_choices.IndexOf(flid, ws, true) != -1) // If the option is in m_choices, check it
-					htmlWriter.WriteAttributeString("checked", "checked");
-				htmlWriter.WriteEndElement(); // /> <--- End input element
-			}
-			htmlWriter.WriteFullEndElement(); // </td>
-		}
-
-		/// <summary>
-=======
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 		/// Includes the last JavaScript file needed for the jQuery UI sortable and then closes the last HTML elements.
 		/// </summary>
 		/// <param name="htmlWriter">The XmlWriter to write the HTML</param>
@@ -1442,18 +507,12 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			var javascriptFilePaths = GetFilePaths();
 			// If we're working with a text chart, we need to enforce the UI constraints for checkboxes.
-			if (Choices.Mode == InterlinMode.Chart)
+			if (m_choices.Mode == InterlinMode.Chart)
 			{
 				CreateScriptElement(htmlWriter, GetPathFromFile(javascriptFilePaths, "scriptForChart.js")); // scriptForChart.js
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
 			}
-			CreateScriptElement(htmlWriter, GetPathFromFile(javascriptFilePaths, "script.js")); // script.js
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-			CreateScriptElement(htmlWriter, GetPathFromFile(javascriptFilePaths, "script.js")); // script.js
-=======
 			CreateScriptElement(htmlWriter, GetPathFromFile(javascriptFilePaths, "dragula.min.js"));
 			CreateScriptElement(htmlWriter, GetPathFromFile(javascriptFilePaths, "configureInterlinearLines.js"));
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 			htmlWriter.WriteFullEndElement(); // </body>
 			htmlWriter.WriteFullEndElement(); // </html>
 		}
@@ -1480,45 +539,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 
 		/// <summary>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-		/// Finds the line choices in m_choices with the given flids and then sets the new order.
-		/// </summary>
-		/// <param name="lineChoicesFlids">The array containing the flids of the line choices</param>
-		private void ReorderLineChoices(int[] lineChoicesFlids)
-		{
-			Choices.AllLineOptions = lineChoicesFlids.Select(choice => Choices.AllLineOptions.Find(x => x.Flid == choice)).Where(optionToMove => optionToMove != null).ToList();
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-		/// Finds the line choices in m_choices with the given flids and then sets the new order.
-		/// </summary>
-		/// <param name="lineChoicesFlids">The array containing the flids of the line choices</param>
-		private void ReorderLineChoices(int[] lineChoicesFlids)
-		{
-			var newOrderOfLineOptions = lineChoicesFlids.Select(choice => m_choices.AllLineOptions.Find(x => x.Flid == choice)).Where(optionToMove => optionToMove != null).ToList();
-			m_choices.AllLineOptions = newOrderOfLineOptions;
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-=======
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-		}
-
-		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		protected override void Dispose(bool disposing)
@@ -1539,36 +559,10 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		internal void InitColumnDictionary()
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-			foreach (var spec in Choices.AllLineSpecs)
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-			get
-			{
-				CheckDisposed();
-
-				return m_choices;
-			}
-		}
-
-		public void InitColumnDictionary()
-		{
-			foreach (var spec in m_choices.AllLineSpecs)
-=======
-			get
-			{
-				CheckDisposed();
-
-				return m_choices;
-			}
-		}
-
-		public void InitColumnDictionary()
-		{
 			// Cache the baseline and best analysis no matter what we see in the specs
-			WsComboItems(ColumnConfigureDialog.WsComboContent.kwccVernacularInParagraph);
-			WsComboItems(ColumnConfigureDialog.WsComboContent.kwccBestAnalysis);
+			WsComboItems(WsComboContent.kwccVernacularInParagraph);
+			WsComboItems(WsComboContent.kwccBestAnalysis);
 			foreach (var spec in m_choices.EnabledLineSpecs)
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 			{
 				WsComboItems(spec.ComboContent);
 			}
@@ -1578,7 +572,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			m_columns.Clear();
 
-			if (Choices.Mode != InterlinMode.Chart)
+			if (m_choices.Mode != InterlinMode.Chart)
 			{
 				var vernacularInParaWss = m_cachedComboContentForColumns[WsComboContent.kwccVernacularInParagraph];
 				var bestAnalysisWss = m_cachedComboContentForColumns[WsComboContent.kwccBestAnalysis];
@@ -1730,19 +724,8 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			using (var context = new AutoJSContext(((GeckoWebBrowser)mainBrowser.NativeBrowser).Window))
 			{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-				context.EvaluateScript("getNumOfCheckedBoxes()", out var checkedBoxes);
-				var numOfCheckedBoxes = Convert.ToInt32(checkedBoxes);
-				okButton.Enabled = numOfCheckedBoxes > 0;
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-				string checkedBoxes;
-				context.EvaluateScript("getNumOfCheckedBoxes()", out checkedBoxes);
-				var numOfCheckedBoxes = Convert.ToInt32(checkedBoxes);
-				okButton.Enabled = numOfCheckedBoxes > 0;
-=======
 				context.EvaluateScript("anyCheckboxSelected()", out var anyChecked);
 				okButton.Enabled = Convert.ToBoolean(anyChecked);
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 			}
 		}
 
@@ -1757,88 +740,35 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		private void OkButton_Click(object sender, EventArgs e)
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-			var checkBoxes = (mainBrowser.NativeBrowser as GeckoWebBrowser)?.Document.GetElementsByClassName("checkBox");
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-			var checkBoxes =
-				(mainBrowser.NativeBrowser as GeckoWebBrowser)?.Document.GetElementsByClassName("checkBox");
-
-=======
 			m_persistProvider.PersistWindowSettings(PersistProviderID, this);
 
 			var checkBoxes =
 				(mainBrowser.NativeBrowser as GeckoWebBrowser)?.Document.GetElementsByClassName("checkBox");
 
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 			if (checkBoxes == null)
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
+			{
 				return;
-
-			using (var context = new AutoJSContext(((GeckoWebBrowser) mainBrowser.NativeBrowser).Window.DomWindow))
-=======
-				return;
+			}
 
 			List<int> orderedFlids;
 			using (var context = new AutoJSContext(((GeckoWebBrowser)mainBrowser.NativeBrowser).Window.DomWindow))
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 			{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-				return;
-			}
-			using (var context = new AutoJSContext(((GeckoWebBrowser)mainBrowser.NativeBrowser).Window.DomWindow))
-			{
-				context.EvaluateScript(@"getRows()", out var rows);
-				ReorderLineChoices(Array.ConvertAll(rows.Split(','), int.Parse));
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-				string rows;
-				context.EvaluateScript(@"getRows()", out rows);
-				ReorderLineChoices(Array.ConvertAll(rows.Split(','), int.Parse));
-=======
 				string rows;
 				context.EvaluateScript(@"getRows()", out rows);
 				orderedFlids = Array.ConvertAll(rows.Split(','), int.Parse).ToList();
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 			}
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-			Choices.m_specs.Clear();
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-
-			m_choices.m_specs.Clear();
-=======
 
 			// Get all of the specs with the new enabled (checked) value.
 			// (The Flid order is correct but the order of the writing systems are not.)
 			List<InterlinLineSpec> newLineSpecsUnordered = new List<InterlinLineSpec>();
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 			foreach (var checkBox in checkBoxes)
 			{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/ConfigureInterlinDialog.cs
-				var element = (GeckoInputElement)checkBox;
-				var flidAndWs = element.GetAttribute("id").Split('%');
-				if (element.Checked)
-				{
-					Choices.m_specs.Add(Choices.CreateSpec(int.Parse(flidAndWs[0]), int.Parse(flidAndWs[1])));
-				}
-||||||| f013144d5:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
-				var element = (GeckoInputElement) checkBox;
-				var elementId = element.GetAttribute("id");
-				var flidAndWs = elementId.Split('%');
-				var flid = int.Parse(flidAndWs[0]);
-				var ws = int.Parse(flidAndWs[1]);
-
-				if (element.Checked)
-				{
-					m_choices.m_specs.Add(m_choices.CreateSpec(flid, ws));
-				}
-=======
 				var element = (GeckoInputElement)checkBox;
 				var elementId = element.GetAttribute("id");
 				var flidAndWs = elementId.Split('%');
 				var flid = int.Parse(flidAndWs[0]);
 				var ws = int.Parse(flidAndWs[1]);
 				newLineSpecsUnordered.Add(m_choices.CreateSpec(flid, ws, element.Checked));
->>>>>>> develop:Src/LexText/Interlinear/ConfigureInterlinDialog.cs
 			}
 
 			OrderAllSpecs(m_choices, orderedFlids, newLineSpecsUnordered);
@@ -1909,7 +839,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		public int Flid => _lineInfo.Item1.Flid;
 		public string Label => _lineInfo.Item1.Label;
-		public ColumnConfigureDialog.WsComboContent ComboContent { get; set; }
+		public WsComboContent ComboContent { get; set; }
 		public bool HasSpecs => _lineInfo.Item2.Length > 0;
 		public InterlinLineSpec FirstSpec => _lineInfo.Item2?[0];
 	}

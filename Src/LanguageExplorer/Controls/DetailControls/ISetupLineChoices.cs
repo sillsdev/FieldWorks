@@ -10,6 +10,6 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// True if we will be doing editing (display sandbox, restrict field order choices, etc.).
 		/// </summary>
 		bool ForEditing { get; set; }
-		InterlinLineChoices SetupLineChoices(string lineConfigPropName, InterlinMode mode);
+		InterlinLineChoices SetupLineChoices(string lineConfigPropName, string oldConfigPropName, InterlinMode mode);
 	}
 }

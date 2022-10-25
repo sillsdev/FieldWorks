@@ -11,25 +11,11 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-<<<<<<< HEAD:Src/LanguageExplorer/Areas/Notebook/NotebookImportWiz.cs
 using DialogAdapters;
 using LanguageExplorer.Controls;
 using LanguageExplorer.SfmToXml;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
-||||||| f013144d5:Src/LexText/LexTextControls/DataNotebook/NotebookImportWiz.cs
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Controls.FileDialog;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
-=======
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Controls.FileDialog;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
->>>>>>> develop:Src/LexText/LexTextControls/DataNotebook/NotebookImportWiz.cs
 using SIL.FieldWorks.FwCoreDlgs.BackupRestore;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel;
@@ -37,27 +23,11 @@ using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
-<<<<<<< HEAD:Src/LanguageExplorer/Areas/Notebook/NotebookImportWiz.cs
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Xml;
 using SilEncConverters40;
-||||||| f013144d5:Src/LexText/LexTextControls/DataNotebook/NotebookImportWiz.cs
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.Utils;
-using XCore;
-=======
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
-using SIL.LCModel.Utils;
-using SIL.PlatformUtilities;
-using SIL.Utils;
-using SilEncConverters40;
-using XCore;
->>>>>>> develop:Src/LexText/LexTextControls/DataNotebook/NotebookImportWiz.cs
 
 namespace LanguageExplorer.Areas.Notebook
 {
@@ -1799,29 +1769,7 @@ namespace LanguageExplorer.Areas.Notebook
 		{
 			if (m_viewProcess == null || m_viewProcess.HasExited)
 			{
-<<<<<<< HEAD:Src/LanguageExplorer/Areas/Notebook/NotebookImportWiz.cs
 				m_viewProcess = Process.Start(Platform.IsUnix ? "xdg-open" : Path.Combine(FwDirectoryFinder.CodeDirectory, "ZEdit.exe"), m_sSfmDataFile);
-||||||| f013144d5:Src/LexText/LexTextControls/DataNotebook/NotebookImportWiz.cs
-				if (MiscUtils.IsUnix)
-					// Open SFM file from users default text editor (FWNX-834)
-					m_viewProcess = Process.Start(
-						"xdg-open",
-						m_sSfmDataFile);
-				else
-					m_viewProcess = Process.Start(
-						Path.Combine(FwDirectoryFinder.CodeDirectory, "ZEdit.exe"),
-						m_sSfmDataFile);
-=======
-				if (Platform.IsUnix)
-					// Open SFM file from users default text editor (FWNX-834)
-					m_viewProcess = Process.Start(
-						"xdg-open",
-						m_sSfmDataFile);
-				else
-					m_viewProcess = Process.Start(
-						Path.Combine(FwDirectoryFinder.CodeDirectory, "ZEdit.exe"),
-						m_sSfmDataFile);
->>>>>>> develop:Src/LexText/LexTextControls/DataNotebook/NotebookImportWiz.cs
 			}
 		}
 

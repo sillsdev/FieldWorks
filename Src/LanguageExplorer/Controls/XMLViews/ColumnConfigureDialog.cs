@@ -37,20 +37,26 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal FwOverrideComboBox wsCombo;
 		private Label label3;
 		internal ListView currentList;
-		private List<XElement> m_possibleColumns;
-		private readonly LcmCache m_cache;
+
+		List<XElement> m_possibleColumns;
+		readonly LcmCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
-		private bool m_fUpdatingWsCombo; // true during UpdateWsCombo
-		private WsComboContent m_wccCurrent = WsComboContent.kwccNone;
+
+		bool m_fUpdatingWsCombo = false; // true during UpdateWsCombo
+
+		WsComboContent m_wccCurrent = WsComboContent.kwccNone;
+
 		internal ListView optionsList;
 		private HelpProvider helpProvider;
 		private IContainer components;
 		private ColumnHeader columnHeader1;
 		private PictureBox blkEditIcon;
 		private Label blkEditText;
+
 		private ImageList imageList1;
 		private ImageList imageList2;
-		private bool showBulkEditIcons;
+
+		private bool showBulkEditIcons = false;
 
 		/// <summary>
 		/// Construct a column configure dialog. It is passed a list of XmlNodes that
@@ -220,15 +226,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Initialize the combo box for the standard set of writing systems.
 		/// </summary>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ColumnConfigureDialog.cs
-		public static void AddWritingSystemsToCombo(LcmCache cache, ComboBox.ObjectCollection items, WsComboContent contentToAdd)
-||||||| f013144d5:Src/Common/Controls/XMLViews/ColumnConfigureDialog.cs
-		public static void AddWritingSystemsToCombo(LcmCache cache,
-			ComboBox.ObjectCollection items, WsComboContent contentToAdd)
-=======
 		public static void AddWritingSystemsToCombo(LcmCache cache,
 			IList items, WsComboContent contentToAdd)
->>>>>>> develop:Src/Common/Controls/XMLViews/ColumnConfigureDialog.cs
 		{
 			AddWritingSystemsToCombo(cache, items, contentToAdd, false, false);
 		}
@@ -254,17 +253,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// adds all reasonable single generic items not already included by skipDefaults.
 		/// Ignored if skipDefaults is true.</param>
 		/// <remarks>This is static because ConfigureInterlinDialog uses it</remarks>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ColumnConfigureDialog.cs
-		public static void AddWritingSystemsToCombo(LcmCache cache, ComboBox.ObjectCollection items, WsComboContent contentToAdd, bool skipDefaults, bool allowMultiple)
-||||||| f013144d5:Src/Common/Controls/XMLViews/ColumnConfigureDialog.cs
-		public static void AddWritingSystemsToCombo(LcmCache cache,
-			ComboBox.ObjectCollection items, WsComboContent contentToAdd, bool skipDefaults,
-			bool allowMultiple)
-=======
 		public static void AddWritingSystemsToCombo(LcmCache cache,
 			IList items, WsComboContent contentToAdd, bool skipDefaults,
 			bool allowMultiple)
->>>>>>> develop:Src/Common/Controls/XMLViews/ColumnConfigureDialog.cs
 		{
 			var sAllAnal = XMLViewsStrings.ksAllAnal;
 			var sAllAnalVern = XMLViewsStrings.ksAllAnalVern;
@@ -426,34 +417,12 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Adds the writing systems to combo.
 		/// </summary>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ColumnConfigureDialog.cs
-		public static void AddWritingSystemsToCombo(LcmCache cache, ComboBox.ObjectCollection items, IEnumerable<CoreWritingSystemDefinition> wss)
-||||||| f013144d5:Src/Common/Controls/XMLViews/ColumnConfigureDialog.cs
-		/// <param name="cache">The cache.</param>
-		/// <param name="items">The items.</param>
-		/// <param name="wss">The ws array.</param>
-		/// ------------------------------------------------------------------------------------
-		public static void AddWritingSystemsToCombo(LcmCache cache, ComboBox.ObjectCollection items, IEnumerable<CoreWritingSystemDefinition> wss)
-=======
-		/// <param name="cache">The cache.</param>
-		/// <param name="items">The items.</param>
-		/// <param name="wss">The ws array.</param>
-		/// ------------------------------------------------------------------------------------
 		public static void AddWritingSystemsToCombo(LcmCache cache, IList items, IEnumerable<CoreWritingSystemDefinition> wss)
->>>>>>> develop:Src/Common/Controls/XMLViews/ColumnConfigureDialog.cs
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ColumnConfigureDialog.cs
 			foreach (var ws in wss)
 			{
-				items.Add(new WsComboItem(ws.DisplayLabel, ws.Id));
-			}
-||||||| f013144d5:Src/Common/Controls/XMLViews/ColumnConfigureDialog.cs
-			foreach (CoreWritingSystemDefinition ws in wss)
-				items.Add(new WsComboItem(ws.DisplayLabel, ws.Id));
-=======
-			foreach (CoreWritingSystemDefinition ws in wss)
 				items.Add(new WsComboItem(ws.DisplayLabel, ws.Id, ws.Abbreviation));
->>>>>>> develop:Src/Common/Controls/XMLViews/ColumnConfigureDialog.cs
+			}
 		}
 
 		private void InitChoicesList()
@@ -1429,225 +1398,4 @@ namespace LanguageExplorer.Controls.XMLViews
 			#endregion
 		}
 	}
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ColumnConfigureDialog.cs
 }
-||||||| f013144d5:Src/Common/Controls/XMLViews/ColumnConfigureDialog.cs
-
-	/// <summary>
-	/// Used for items in optionsList
-	/// </summary>
-	class OptionListItem
-	{
-		XmlNode m_item;
-		public OptionListItem(XmlNode item)
-		{
-			m_item = item;
-		}
-
-		public XmlNode Item
-		{
-			get { return m_item; }
-		}
-
-		public override string ToString()
-		{
-			return XmlUtils.GetMandatoryAttributeValue(m_item, "label");
-		}
-
-	}
-
-	/// <summary>
-	///
-	/// </summary>
-	public class WsComboItem
-	{
-		private readonly string m_name;
-		private readonly string m_id;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="WsComboItem"/> class.
-		/// </summary>
-		/// <param name="name">The name.</param>
-		/// <param name="id">The writing system ID.</param>
-		public WsComboItem(string name, string id)
-		{
-			m_name = name;
-			m_id = id;
-		}
-
-		/// <summary>
-		/// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
-		/// </summary>
-		/// <returns>
-		/// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
-		/// </returns>
-		public override string ToString()
-		{
-			return m_name;
-		}
-
-		/// <summary>
-		/// Returns true if the given object is a WsComboItem and the name and id match this WsComboItem.
-		/// </summary>
-		/// <param name="obj">The object to compare</param>
-		/// <returns>True if equal, false if not equal</returns>
-		public override bool Equals(object obj)
-		{
-			var item = obj as WsComboItem;
-			return item != null &&
-				   m_name == item.m_name &&
-				   m_id == item.m_id;
-		}
-
-		/// <summary>
-		/// Implemented for the Equals method.
-		/// </summary>
-		/// <returns></returns>
-		public override int GetHashCode()
-		{
-			var hashCode = 641297398;
-			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(m_name);
-			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(m_id);
-			return hashCode;
-		}
-
-		/// <summary>
-		/// Gets the writing system identifier.
-		/// </summary>
-		/// <value>The writing system identifier.</value>
-		public string Id
-		{
-			get { return m_id;}
-		}
-
-		/// <summary>
-		/// Stores the handle of the writing system.
-		/// </summary>
-		public int WritingSystem { get; set; }
-
-		/// <summary>
-		/// Stores the type of the writing system (vernacular, analysis, or both)
-		/// </summary>
-		public string WritingSystemType { get; set; }
-	}
-}
-=======
-
-	/// <summary>
-	/// Used for items in optionsList
-	/// </summary>
-	class OptionListItem
-	{
-		XmlNode m_item;
-		public OptionListItem(XmlNode item)
-		{
-			m_item = item;
-		}
-
-		public XmlNode Item
-		{
-			get { return m_item; }
-		}
-
-		public override string ToString()
-		{
-			return XmlUtils.GetMandatoryAttributeValue(m_item, "label");
-		}
-
-	}
-
-	/// <summary>
-	///
-	/// </summary>
-	public class WsComboItem
-	{
-		private readonly string m_name;
-		private readonly string m_id;
-		private readonly string m_abbreviation;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="WsComboItem"/> class.
-		/// </summary>
-		/// <param name="name">The name.</param>
-		/// <param name="id">The writing system ID.</param>
-		/// <param name="abbreviation">The abbreviation (defaults to null).</param>
-		public WsComboItem(string name, string id, string abbreviation=null)
-		{
-			m_name = name;
-			m_id = id;
-			m_abbreviation = abbreviation;
-		}
-
-		/// <summary>
-		/// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
-		/// </summary>
-		/// <returns>
-		/// A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
-		/// </returns>
-		public override string ToString()
-		{
-			return m_name;
-		}
-
-		/// <summary>
-		/// Gets the abbreviation.
-		/// If no abbreviation exists then the name is returned.
-		/// </summary>
-		public string Abbreviation
-		{
-			get
-			{
-				if (String.IsNullOrEmpty(m_abbreviation))
-					return m_name;
-				return m_abbreviation;
-			}
-		}
-
-		/// <summary>
-		/// Returns true if the given object is a WsComboItem and the name, id, and abbreviation match this WsComboItem.
-		/// </summary>
-		/// <param name="obj">The object to compare</param>
-		/// <returns>True if equal, false if not equal</returns>
-		public override bool Equals(object obj)
-		{
-			var item = obj as WsComboItem;
-			return item != null &&
-				   m_name == item.m_name &&
-				   m_id == item.m_id &&
-				   Abbreviation == item.Abbreviation;
-		}
-
-		/// <summary>
-		/// Implemented for the Equals method.
-		/// </summary>
-		/// <returns></returns>
-		public override int GetHashCode()
-		{
-			var hashCode = 641297398;
-			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(m_name);
-			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(m_id);
-			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Abbreviation);
-			return hashCode;
-		}
-
-		/// <summary>
-		/// Gets the writing system identifier.
-		/// </summary>
-		/// <value>The writing system identifier.</value>
-		public string Id
-		{
-			get { return m_id;}
-		}
-
-		/// <summary>
-		/// Stores the handle of the writing system.
-		/// </summary>
-		public int WritingSystem { get; set; }
-
-		/// <summary>
-		/// Stores the type of the writing system (vernacular, analysis, or both)
-		/// </summary>
-		public string WritingSystemType { get; set; }
-	}
-}
->>>>>>> develop:Src/Common/Controls/XMLViews/ColumnConfigureDialog.cs

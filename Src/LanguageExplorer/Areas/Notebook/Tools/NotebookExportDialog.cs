@@ -9,29 +9,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-<<<<<<< HEAD:Src/LanguageExplorer/Areas/Notebook/Tools/NotebookExportDialog.cs
 using LanguageExplorer.Controls;
-using SIL.FieldWorks.FwCoreDlgs;
-||||||| f013144d5:Src/xWorks/NotebookExportDialog.cs
-using System.Xml;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
-=======
-using System.Xml;
 using SIL.Extensions;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
->>>>>>> develop:Src/xWorks/NotebookExportDialog.cs
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.Cellar;
@@ -145,15 +125,8 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 			using (var writer = new StreamWriter(outPath)) // defaults to UTF-8
 			{
 				writer.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-<<<<<<< HEAD:Src/LanguageExplorer/Areas/Notebook/Tools/NotebookExportDialog.cs
-				writer.WriteLine("<Notebook exportVersion=\"2.0\" project=\"{0}\" dateExported=\"{1:yyyy-MM-ddThh:mm:ss}\">", m_cache.ProjectId.UiName, DateTime.Now);
-||||||| f013144d5:Src/xWorks/NotebookExportDialog.cs
-				writer.WriteLine("<Notebook exportVersion=\"2.0\" project=\"{0}\" dateExported=\"{1}\">",
-					m_cache.ProjectId.UiName, DateTime.Now.ToString("yyyy-MM-ddThh:mm:ss"));
-=======
 				writer.WriteLine("<Notebook exportVersion=\"2.0\" project=\"{0}\" dateExported=\"{1}\">",
 					m_cache.ProjectId.UiName, DateTime.Now.ToISO8601TimeFormatNoTimeZoneString());
->>>>>>> develop:Src/xWorks/NotebookExportDialog.cs
 				progress.Message = "Exporting data records...";
 				ExportRecords(writer, progress);
 				progress.Message = "Exporting writing systems...";
@@ -309,23 +282,11 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 
 		private void ExportRecord(TextWriter writer, IRnGenericRec record, int level)
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/Areas/Notebook/Tools/NotebookExportDialog.cs
-			writer.WriteLine("<Entry level=\"{0}\" dateCreated=\"{1:yyyy-MM-ddThh:mm:ss}\" dateModified=\"{2:yyyy-MM-ddThh:mm:ss}\" guid=\"{3}\">", level, record.DateCreated, record.DateModified, record.Guid);
-||||||| f013144d5:Src/xWorks/NotebookExportDialog.cs
-			writer.WriteLine(
-				"<Entry level=\"{0}\" dateCreated=\"{1}\" dateModified=\"{2}\" guid=\"{3}\">",
-				level,
-				record.DateCreated.ToString("yyyy-MM-ddThh:mm:ss"),
-				record.DateModified.ToString("yyyy-MM-ddThh:mm:ss"),
-				record.Guid);
-=======
-			writer.WriteLine(
-				"<Entry level=\"{0}\" dateCreated=\"{1}\" dateModified=\"{2}\" guid=\"{3}\">",
+			writer.WriteLine("<Entry level=\"{0}\" dateCreated=\"{1:yyyy-MM-ddThh:mm:ss}\" dateModified=\"{2:yyyy-MM-ddThh:mm:ss}\" guid=\"{3}\">",
 				level,
 				record.DateCreated.ToISO8601TimeFormatNoTimeZoneString(),
 				record.DateModified.ToISO8601TimeFormatNoTimeZoneString(),
 				record.Guid);
->>>>>>> develop:Src/xWorks/NotebookExportDialog.cs
 
 			ExportString(writer, record.Title, "Title");
 
