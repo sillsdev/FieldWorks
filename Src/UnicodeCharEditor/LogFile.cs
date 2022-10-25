@@ -8,7 +8,6 @@ using System.Globalization;
 using System.IO;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
-using SIL.Program;
 
 namespace SIL.FieldWorks.UnicodeCharEditor
 {
@@ -44,7 +43,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		}
 
 		/// <summary />
-		internal static bool IsLogging()
+		internal static bool IsLogging
 		{
 			get => GetLogFile().Logging;
 			set => GetLogFile().Logging = value;
@@ -72,7 +71,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		}
 
 		/// <summary/>
-		public static string LogPath => GetLogFile().LogPath;
+		public static string LogPath => GetLogFile().LogFilePath;
 
 		#endregion
 
@@ -80,30 +79,26 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		{
 			private StreamWriter m_file;
 
-			internal bool Logging { get; }
-			internal bool VerboseLogging { get; }
-			public string LogPath => m_sFileName;
+			internal bool Logging { get; set; }
+			internal bool VerboseLogging { get; set; }
+			internal string LogFilePath { get; }
 
 			#region Internal methods to do the work
 			public LogFileImpl()
 			{
 				Logging = true;
 				VerboseLogging = true;
-				m_file = null;
 
-				m_sFileName = Path.Combine(Directory.GetCurrentDirectory(), "UnicodeCharEditorLog.txt");
+				LogFilePath = Path.Combine(Directory.GetCurrentDirectory(), "UnicodeCharEditorLog.txt");
 				try
 				{
-					if (m_sFileName != null)
-						m_file = new StreamWriter(m_sFileName, true) { AutoFlush = true};
-										m_file = new StreamWriter(sFileName, true) { AutoFlush = true };
-									}
+					m_file = new StreamWriter(LogFilePath, true) { AutoFlush = true };
 					AddLineX("----- LogFile Object Created -----", false);
 				}
 				catch (Exception e)
 				{
-					Console.WriteLine("An error occurred: '{0}'", e);
-					sFileName = string.Empty;   // can't log with exception somewhere...
+					Console.WriteLine(@"An error occurred: '{0}'", e);
+					LogFilePath = string.Empty;   // can't log with exception somewhere...
 					Logging = false;
 				}
 			}
