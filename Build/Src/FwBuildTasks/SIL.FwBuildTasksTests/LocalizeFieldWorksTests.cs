@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2020 SIL International
+// Copyright (c) 2015-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var doc = new XDocument(
 				new XElement(ns + "Project",
 					new XAttribute("DefaultTargets", "Build"),
-					new XAttribute("ToolsVersion", "4.0"),
+					new XAttribute("ToolsVersion", "Current"),
 					new XElement(ns + "PropertyGroup",
 						new XElement(ns + "RootNamespace",
 							new XText("SIL." + project)),
