@@ -28,8 +28,8 @@ if exist "%VcVarsLoc%" (
 )
 
 
-if "%arch%" == "x86" set MsBuild="%InstallDir%\MSBuild\Current\Bin\msbuild.exe")
-if "%arch%" == "x64" set MsBuild="%InstallDir%\MSBuild\Current\Bin\amd64\msbuild.exe")
+if "%arch%" == "x86" set MsBuild="%InstallDir%\MSBuild\Current\Bin\msbuild.exe"
+if "%arch%" == "x64" set MsBuild="%InstallDir%\MSBuild\Current\Bin\amd64\msbuild.exe"
 
 set KEY_NAME="HKLM\SOFTWARE\WOW6432Node\Microsoft\Microsoft SDKs\Windows\v10.0"
 set VALUE_NAME=InstallationFolder
