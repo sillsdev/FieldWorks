@@ -13,7 +13,6 @@
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
     <PackageReference Include="SIL.Chorus.l10ns" Version="3.0.1" GeneratePathProperty="true" />
-    <PackageReference Include="SIL.FwBuildTasks" Version="10.0.0" PrivateAssets="All" />
     <PackageReference Include="SIL.libpalaso.l10ns" Version="6.0.0" GeneratePathProperty="true" />
     <PackageReference Include="vswhere" Version="2.8.4" PrivateAssets="All" />
     <Reference Include="System.Runtime.Remoting" />

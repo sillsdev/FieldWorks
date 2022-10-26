@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Encoding-Converters-Core" Version="0.0.8" PrivateAssets="native" />
+    <PackageReference Include="Encoding-Converters-Core" Version="0.5.1" PrivateAssets="native" />
     <PackageReference Include="Geckofx45" Version="45.0.34" Condition="'$(OS)'!='Unix' And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)'!='X64'" GeneratePathProperty="true" />
     <PackageReference Include="Geckofx45.64" Version="45.0.34" Condition="'$(OS)'!='Unix' And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)'=='X64'" GeneratePathProperty="true" />
     <PackageReference Include="Geckofx45.32.Linux" Version="45.0.37" Condition="'$(OS)'=='Unix' And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)'!='X64'" GeneratePathProperty="true" />
@@ -16,7 +16,7 @@
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="SIL.Archiving" Version="11.0.0-beta0041" />
-    <PackageReference Include="SIL.Chorus.App" Version="5.0.0-beta0010" />
+    <PackageReference Include="SIL.Chorus.App" Version="5.0.0" />
     <PackageReference Include="SIL.Core" Version="11.0.0-beta0041" />
     <PackageReference Include="SIL.ExCSS" Version="2.0.2" />
     <PackageReference Include="SIL.LCModel" Version="10.2.0-beta0056" GeneratePathProperty="true" />
