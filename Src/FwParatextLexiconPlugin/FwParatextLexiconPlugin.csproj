@@ -11,7 +11,7 @@
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
     <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" PrivateAssets="All" />
     <PackageReference Include="ParatextData" Version="9.2.5-beta1" />
-    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0002" />
+    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0056" />
     <PackageReference Include="System.DirectoryServices.AccountManagement" Version="4.7.0" />
   </ItemGroup>
 

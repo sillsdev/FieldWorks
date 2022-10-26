@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
-    <PackageReference Include="SIL.LCModel.Core.Tests" Version="10.2.0-beta0002" />
+    <PackageReference Include="SIL.LCModel.Core.Tests" Version="10.2.0-beta0056" />
   </ItemGroup>
 
   <ItemGroup>
