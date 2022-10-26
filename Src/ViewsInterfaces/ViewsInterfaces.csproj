@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../../Build/Src/FwBuildTasks/SIL.FwBuildTasks.props"/>
 
   <PropertyGroup>
     <RootNamespace>SIL.FieldWorks.Common.ViewsInterfaces</RootNamespace>

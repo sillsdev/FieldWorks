@@ -11,7 +11,6 @@
 
 		<fwrt>$([System.IO.Directory]::GetParent($(MSBuildProjectDirectory)))</fwrt>
 		<fwrt Condition="'$(fwrt)' == ''">$(MSBuildThisFileDirectory)..</fwrt>
-		<FwBuildTasksProps>$(fwrt)/Build/Src/FwBuildTasks/SIL.FwBuildTasks.props</FwBuildTasksProps>
 		<IcuWinFwLibTargets>$(fwrt)/packages/Icu4c.Win.Fw.Lib.$(IcuWinFwLibVersion)/build/Icu4c.Win.Fw.Lib.props</IcuWinFwLibTargets>
 		<GitVersionMsBuildProps>$(fwrt)/packages/GitVersion.MsBuild.$(GitVersionMsBuildVersion)/build/GitVersion.MsBuild.props</GitVersionMsBuildProps>
 		<GitVersionMsBuildTargets>$(fwrt)/packages/GitVersion.MsBuild.$(GitVersionMsBuildVersion)/build/GitVersion.MsBuild.targets</GitVersionMsBuildTargets>
@@ -25,11 +24,10 @@
 			call this build script again so that the files exist when we import them. If they
 			all already exist we can just continue with our build.
 		-->
-		<RestartBuild Condition="(Exists('$(FwBuildTasksProps)') And Exists('$(IcuWinFwLibTargets)') And Exists('$(GitVersionMsBuildProps)') And Exists('$(SilBuildTaskProps)') And Exists('$(NUnit3Console)')) Or '$(IsReentry)'=='true'">false</RestartBuild>
-		<RestartBuild Condition="(!Exists('$(FwBuildTasksProps)') Or !Exists('$(IcuWinFwLibTargets)') Or !Exists('$(GitVersionMsBuildProps)') Or !Exists('$(SilBuildTaskProps)') Or !Exists('$(NUnit3Console)')) And '$(IsReentry)'!='true'">true</RestartBuild>
+		<RestartBuild Condition="(Exists('$(IcuWinFwLibTargets)') And Exists('$(GitVersionMsBuildProps)') And Exists('$(SilBuildTaskProps)') And Exists('$(NUnit3Console)')) Or '$(IsReentry)'=='true'">false</RestartBuild>
+		<RestartBuild Condition="(!Exists('$(IcuWinFwLibTargets)') Or !Exists('$(GitVersionMsBuildProps)') Or !Exists('$(SilBuildTaskProps)') Or !Exists('$(NUnit3Console)')) And '$(IsReentry)'!='true'">true</RestartBuild>
 	</PropertyGroup>
 
-	<Import Project="$(FwBuildTasksProps)" Condition="Exists('$(FwBuildTasksProps)')" />
 	<Import Project="$(IcuWinFwLibTargets)" Condition="Exists('$(IcuWinFwLibTargets)')" />
 	<Import Project="$(GitVersionMsBuildProps)" Condition="Exists('$(GitVersionMsBuildProps)')" />
 	<Import Project="$(GitVersionMsBuildTargets)" Condition="Exists('$(GitVersionMsBuildTargets)')" />
