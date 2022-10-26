@@ -1,0 +1,8 @@
+Code-Review+2: Mark Kidder <mark_kidder@sil.org>
+Verified+1: Hasso Pape <hasso_pape@sil.org>
+Verified-Linux+1: Hasso Pape <hasso_pape@sil.org>
+Submitted-by: Hasso Pape <hasso_pape@sil.org>
+Submitted-at: Wed, 26 Oct 2022 13:05:40 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/c/FieldWorks/+/9015
+Project: FieldWorks
+Branch: refs/heads/feature/MergeIntoRXWC
