@@ -1592,43 +1592,6 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/LanguageExplorerControls.Designer.cs
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControls.Designer.cs
-        ///   Looks up a localized string similar to Something went wrong while FieldWorks was attempting to import {0}.
-        ///{1}
-        ///
-        ///A stack dump has been copied to the clipboard.  Please email it and your LIFT file to Flex_Errors@sil.org so that we can improve the program..
-        /// </summary>
-        internal static string ksLIFTImportProblem {
-            get {
-                return ResourceManager.GetString("ksLIFTImportProblem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-=======
-        ///   Looks up a localized string similar to Something is wrong with the data in {0}. If it was a zip file exported from The Combine please contact us at flex_errors@sil.org.
-        /// </summary>
-        internal static string ksLIFTCombineImportProblem {
-            get {
-                return ResourceManager.GetString("ksLIFTCombineImportProblem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Something went wrong while FieldWorks was attempting to import {0}.
-        ///{1}
-        ///
-        ///A stack dump has been copied to the clipboard.  Please email it and your LIFT file to Flex_Errors@sil.org so that we can improve the program..
-        /// </summary>
-        internal static string ksLIFTImportProblem {
-            get {
-                return ResourceManager.GetString("ksLIFTImportProblem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControls.Designer.cs
         ///   Looks up a localized string similar to The {0} I need is not shown in the Catalog. Create a custom {1}..
         /// </summary>
         internal static string ksLinkText {
@@ -3251,7 +3214,6 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/LanguageExplorerControls.Designer.cs
         ///   Looks up a localized string similar to Consultants or people who work on several unrelated projects may want to select this..
         /// </summary>
         internal static string ksUpdateGlobalWsTooltip {
@@ -3261,54 +3223,6 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControls.Designer.cs
-        ///   Looks up a localized string similar to The following unknown morph-types were found in the imported file:.
-        /// </summary>
-        internal static string ksUnknownMorphTypes {
-            get {
-                return ResourceManager.GetString("ksUnknownMorphTypes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Consultants or people who work on several unrelated projects may want to select this..
-        /// </summary>
-        internal static string ksUpdateGlobalWsTooltip {
-            get {
-                return ResourceManager.GetString("ksUpdateGlobalWsTooltip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following Usage Types were added to the language project:.
-        /// </summary>
-        internal static string ksUsageTypesAdded {
-            get {
-                return ResourceManager.GetString("ksUsageTypesAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-=======
-        ///   Looks up a localized string similar to The following unknown morph-types were found in the imported file:.
-        /// </summary>
-        internal static string ksUnknownMorphTypes {
-            get {
-                return ResourceManager.GetString("ksUnknownMorphTypes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following Usage Types were added to the language project:.
-        /// </summary>
-        internal static string ksUsageTypesAdded {
-            get {
-                return ResourceManager.GetString("ksUsageTypesAdded", resourceCulture);
-            }
-        }
-        
-        /// <summary>
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControls.Designer.cs
         ///   Looks up a localized string similar to Use Allomorph.
         /// </summary>
         internal static string ksUseAllomorph {
@@ -3534,15 +3448,6 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/LanguageExplorerControls.Designer.cs
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters id=&quot;lexentryMatchList&quot; listItemsClass=&quot;LexEntry&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;LexEntry-Plural&quot; editable=&quot;false&quot;&gt;
-        ///  &lt;columns&gt;
-        ///    &lt;column label=&quot;Headword&quot; sortmethod=&quot;FullSortKey&quot; ws=&quot;$ws=best vernoranal&quot; editable=&quot;false&quot; width=&quot;68000&quot; layout=&quot;EntryHeadwordForFindEntry&quot;/&gt;
-        ///    &lt;column label=&quot;Lexeme Form&quot; visibility=&quot;menu&quot; common=&quot;true&quot; sortmethod=&quot;MorphSortKey&quot; ws=&quot;$ws=best vernoranal [rest of string was truncated]&quot;;.
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControls.Designer.cs
-        ///   Looks up a localized string similar to LIFT files|*.lift|XML files|*.xml|All files|*.*.
-=======
         ///   Looks up a localized string similar to You must open a project before configuring plugins..
         /// </summary>
         internal static string OpenAProjectBeforeConfiguringPlugins {
@@ -3552,8 +3457,11 @@ namespace LanguageExplorer.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to LIFT files|*.lift|XML files|*.xml|All files|*.*.
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControls.Designer.cs
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;parameters id=&quot;lexentryMatchList&quot; listItemsClass=&quot;LexEntry&quot; filterBar=&quot;false&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;LexEntry-Plural&quot; editable=&quot;false&quot;&gt;
+        ///  &lt;columns&gt;
+        ///    &lt;column label=&quot;Headword&quot; sortmethod=&quot;FullSortKey&quot; ws=&quot;$ws=best vernoranal&quot; editable=&quot;false&quot; width=&quot;68000&quot; layout=&quot;EntryHeadwordForFindEntry&quot;/&gt;
+        ///    &lt;column label=&quot;Lexeme Form&quot; visibility=&quot;menu&quot; common=&quot;true&quot; sortmethod=&quot;MorphSortKey&quot; ws=&quot;$ws=best vernoranal [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string MatchingEntriesGuiControlParameters {
             get {

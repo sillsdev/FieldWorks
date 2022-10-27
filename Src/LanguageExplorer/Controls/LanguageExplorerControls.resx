@@ -710,15 +710,6 @@
   <data name="ksImportingFrom0" xml:space="preserve">
     <value>Importing from {0}</value>
   </data>
-  <data name="ksLIFTImportProblem" xml:space="preserve">
-    <value>Something went wrong while FieldWorks was attempting to import {0}.
-{1}
-
-A stack dump has been copied to the clipboard.  Please email it and your LIFT file to Flex_Errors@sil.org so that we can improve the program.</value>
-  </data>
-  <data name="ksLIFTCombineImportProblem" xml:space="preserve">
-    <value>Something is wrong with the data in {0}. If it was a zip file exported from The Combine please contact us at flex_errors@sil.org</value>
-  </data>
   <data name="ksImportError" xml:space="preserve">
     <value>Import Error</value>
   </data>

@@ -318,29 +318,9 @@ namespace LanguageExplorer.Controls
 					break;
 			}
 			// (LT-9374) Export Variant Type information for variants
-			if (vc is InterlinVc interlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + interlinVc.LineChoices.Count)
+			if (vc is InterlinVc interlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + interlinVc.LineChoices.EnabledCount)
 			{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/InterlinearExporter.cs
-				var spec = interlinVc.LineChoices[frag - InterlinVc.kfragLineChoices];
-||||||| f013144d5:Src/LexText/Interlinear/InterlinearExporter.cs
-				m_fDoingVariantTypes = true;
-				OpenItem("variantTypes");
-				string icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs);
-				m_writer.WriteAttributeString("lang", icuCode);
-			}
-			if (vc is InterlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + (vc as InterlinVc).LineChoices.Count)
-			{
-				var spec = (vc as InterlinVc).LineChoices[frag - InterlinVc.kfragLineChoices];
-=======
-				m_fDoingVariantTypes = true;
-				OpenItem("variantTypes");
-				string icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs);
-				m_writer.WriteAttributeString("lang", icuCode);
-			}
-			if (vc is InterlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + (vc as InterlinVc).LineChoices.EnabledCount)
-			{
-				var spec = (vc as InterlinVc).LineChoices.EnabledLineSpecs[frag - InterlinVc.kfragLineChoices];
->>>>>>> develop:Src/LexText/Interlinear/InterlinearExporter.cs
+				var spec = interlinVc.LineChoices.EnabledLineSpecs[frag - InterlinVc.kfragLineChoices];
 				if (spec.Flid == InterlinLineChoices.kflidLexGloss)
 				{
 					OpenItem("gls");
@@ -349,41 +329,7 @@ namespace LanguageExplorer.Controls
 			base.AddObj(hvoItem, vc, frag);
 			switch (frag)
 			{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/InterlinearExporter.cs
 				case (int)VcFrags.kfragHeadWord:
-||||||| f013144d5:Src/LexText/Interlinear/InterlinearExporter.cs
-				CloseItem();
-				m_fDoingHeadword = false;
-				m_fDoingHomographNumber = false;
-				WritePendingItem("hn", ref m_tssPendingHomographNumber);
-			}
-			if (frag == (int)SIL.FieldWorks.FdoUi.LexEntryVc.kfragVariantTypes)
-			{
-				CloseItem();
-				m_fDoingVariantTypes = false;
-			}
-			if (vc is InterlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + (vc as InterlinVc).LineChoices.Count)
-			{
-				var spec = (vc as InterlinVc).LineChoices[frag - InterlinVc.kfragLineChoices];
-				if (spec.Flid == InterlinLineChoices.kflidLexGloss)
-				{
-=======
-				CloseItem();
-				m_fDoingHeadword = false;
-				m_fDoingHomographNumber = false;
-				WritePendingItem("hn", ref m_tssPendingHomographNumber);
-			}
-			if (frag == (int)SIL.FieldWorks.FdoUi.LexEntryVc.kfragVariantTypes)
-			{
-				CloseItem();
-				m_fDoingVariantTypes = false;
-			}
-			if (vc is InterlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + (vc as InterlinVc).LineChoices.EnabledCount)
-			{
-				var spec = (vc as InterlinVc).LineChoices.EnabledLineSpecs[frag - InterlinVc.kfragLineChoices];
-				if (spec.Flid == InterlinLineChoices.kflidLexGloss)
-				{
->>>>>>> develop:Src/LexText/Interlinear/InterlinearExporter.cs
 					CloseItem();
 					m_fDoingHeadword = false;
 					m_fDoingHomographNumber = false;
@@ -394,11 +340,11 @@ namespace LanguageExplorer.Controls
 					m_fDoingVariantTypes = false;
 					break;
 			}
-			if (!(vc is InterlinVc) || frag < InterlinVc.kfragLineChoices || frag >= InterlinVc.kfragLineChoices + ((InterlinVc)vc).LineChoices.Count)
+			if (!(vc is InterlinVc) || frag < InterlinVc.kfragLineChoices || frag >= InterlinVc.kfragLineChoices + ((InterlinVc)vc).LineChoices.EnabledCount)
 			{
 				return;
 			}
-			if (((InterlinVc)vc).LineChoices[frag - InterlinVc.kfragLineChoices].Flid == InterlinLineChoices.kflidLexGloss)
+			if (((InterlinVc)vc).LineChoices.EnabledLineSpecs[frag - InterlinVc.kfragLineChoices].Flid == InterlinLineChoices.kflidLexGloss)
 			{
 				CloseItem();
 			}
@@ -821,54 +767,10 @@ namespace LanguageExplorer.Controls
 		/// </summary>
 		private sealed class InterlinearExporterForElan : InterlinearExporter
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/InterlinearExporter.cs
 			private const int kDocVersion = 2;
 			internal InterlinearExporterForElan(LcmCache cache, XmlWriter writer, ICmObject objRoot, InterlinLineChoices lineChoices, InterlinVc vc)
 				: base(cache, writer, objRoot, lineChoices, vc)
-||||||| f013144d5:Src/LexText/Interlinear/InterlinearExporter.cs
-		}
-
-		public override void WriteBeginDocument()
-		{
-			base.WriteBeginDocument();
-			m_writer.WriteAttributeString("version", kDocVersion.ToString());
-		}
-
-		protected override void WriteStartParagraph(int hvo)
-		{
-			base.WriteStartParagraph(hvo);
-			WriteGuidAttributeForObj(hvo);
-		}
-
-		protected override void WriteStartPhrase(int hvo)
-		{
-			base.WriteStartPhrase(hvo);
-			WriteGuidAttributeForObj(hvo);
-			ISegment phrase = m_repoObj.GetObject(hvo) as ISegment;
-			if(phrase != null && phrase.MediaURIRA != null)
-=======
-		}
-
-		public override void WriteBeginDocument()
-		{
-			base.WriteBeginDocument();
-			m_writer.WriteAttributeString("version", kDocVersion.ToString());
-		}
-
-		protected override void WriteStartParagraph(int hvo)
-		{
-			base.WriteStartParagraph(hvo);
-			WriteGuidAttributeForObj(hvo);
-		}
-
-		protected override void WriteStartPhrase(int hvo)
-		{
-			base.WriteStartPhrase(hvo);
-			WriteGuidAttributeForObj(hvo);
-			if(m_repoObj.GetObject(hvo) is ISegment phrase)
->>>>>>> develop:Src/LexText/Interlinear/InterlinearExporter.cs
 			{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/InterlinearExporter.cs
 			}
 
 			internal override void WriteBeginDocument()
@@ -887,35 +789,22 @@ namespace LanguageExplorer.Controls
 			{
 				base.WriteStartPhrase(hvo);
 				WriteGuidAttributeForObj(hvo);
-				var phrase = m_repoObj.GetObject(hvo) as ISegment;
-				if (phrase?.MediaURIRA == null)
+				if(m_repoObj.GetObject(hvo) is ISegment phrase)
 				{
-					return;
-				}
-				m_writer.WriteAttributeString("begin-time-offset", phrase.BeginTimeOffset);
-				m_writer.WriteAttributeString("end-time-offset", phrase.EndTimeOffset);
-				if (phrase.SpeakerRA != null)
-||||||| f013144d5:Src/LexText/Interlinear/InterlinearExporter.cs
-				m_writer.WriteAttributeString("begin-time-offset", phrase.BeginTimeOffset);
-				m_writer.WriteAttributeString("end-time-offset", phrase.EndTimeOffset);
-				if (phrase.SpeakerRA != null)
-=======
-				if (phrase.MediaURIRA != null)
->>>>>>> develop:Src/LexText/Interlinear/InterlinearExporter.cs
-				{
-					m_writer.WriteAttributeString("begin-time-offset", phrase.BeginTimeOffset);
-					m_writer.WriteAttributeString("end-time-offset", phrase.EndTimeOffset);
-					if (phrase.SpeakerRA != null)
+					if (phrase.MediaURIRA != null)
 					{
-						m_writer.WriteAttributeString("speaker", phrase.SpeakerRA.Name.BestVernacularAlternative.Text);
+						m_writer.WriteAttributeString("begin-time-offset", phrase.BeginTimeOffset);
+						m_writer.WriteAttributeString("end-time-offset", phrase.EndTimeOffset);
+						if (phrase.SpeakerRA != null)
+						{
+							m_writer.WriteAttributeString("speaker", phrase.SpeakerRA.Name.BestVernacularAlternative.Text);
+						}
+						m_writer.WriteAttributeString("media-file", phrase.MediaURIRA.Guid.ToString());
 					}
-					m_writer.WriteAttributeString("media-file", phrase.MediaURIRA.Guid.ToString());
+
+					WriteItem("txt", phrase.BaselineText);
 				}
-
-				WriteItem("txt", phrase.BaselineText);
-
 			}
-
 			protected override void WriteStartWord(int hvo)
 			{
 				base.WriteStartWord(hvo);

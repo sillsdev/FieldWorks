@@ -1,23 +1,10 @@
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/FwHelpAbout.cs
-// Copyright (c) 2002-2020 SIL International
-||||||| f013144d5:Src/FwCoreDlgs/FwHelpAbout.cs
-// Copyright (c) 2002-2018 SIL International
-=======
-// Copyright (c) 2002-2021 SIL International
->>>>>>> develop:Src/FwCoreDlgs/FwHelpAbout.cs
+// Copyright (c) 2002-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/FwHelpAbout.cs
 using System.ComponentModel;
 using System.Diagnostics;
-||||||| f013144d5:Src/FwCoreDlgs/FwHelpAbout.cs
-using System.Collections.Generic;
-=======
-using System.Collections.Generic;
-using System.Diagnostics;
->>>>>>> develop:Src/FwCoreDlgs/FwHelpAbout.cs
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -68,15 +55,7 @@ namespace LanguageExplorer.Impls
 			m_sAvailableMemoryFmt = edtAvailableMemory.Text;
 			m_sTitleFmt = Text;
 			m_sAvailableDiskSpaceFmt = edtAvailableDiskSpace.Text;
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/FwHelpAbout.cs
 			if (Platform.IsUnix)
-||||||| f013144d5:Src/FwCoreDlgs/FwHelpAbout.cs
-
-			if (MiscUtils.IsUnix)
-=======
-
-			if (Platform.IsUnix)
->>>>>>> develop:Src/FwCoreDlgs/FwHelpAbout.cs
 			{
 				// Link to System Monitor
 				// Hide memory and disk usage fields and show a link to
@@ -294,16 +273,6 @@ namespace LanguageExplorer.Impls
 				lblName.Text = viProvider.ProductName;
 				lblAppVersion.Text = viProvider.ApplicationVersion;
 				lblFwVersion.Text = viProvider.MajorVersion;
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/FwHelpAbout.cs
-				// List the copyright information
-				var acknowlegements = AcknowledgementsProvider.CollectAcknowledgements();
-				var list = acknowlegements.Keys.ToList();
-||||||| f013144d5:Src/FwCoreDlgs/FwHelpAbout.cs
-
-				// List the copyright information
-				var acknowlegements = AcknowledgementsProvider.CollectAcknowledgements();
-				var list = acknowlegements.Keys.ToList();
-=======
 
 				Dictionary<string, AcknowledgementAttribute> acknowledgements;
 				try
@@ -317,7 +286,6 @@ namespace LanguageExplorer.Impls
 					AppDomain.CurrentDomain.AssemblyResolve -= ResolveFailedAssemblyLoadsByName;
 				}
 				var list = acknowledgements.Keys.ToList();
->>>>>>> develop:Src/FwCoreDlgs/FwHelpAbout.cs
 				list.Sort();
 				var text = viProvider.CopyrightString + Environment.NewLine + viProvider.LicenseString + Environment.NewLine + viProvider.LicenseURL;
 				foreach (var key in list)
@@ -364,16 +332,8 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		private static void HandleSystemMonitorLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/FwHelpAbout.cs
 			const string program = "gnome-system-monitor";
 			using (var process = new Process())
-||||||| f013144d5:Src/FwCoreDlgs/FwHelpAbout.cs
-			var program = "gnome-system-monitor";
-			using (var process = MiscUtils.RunProcess(program, null, null))
-=======
-			var program = "gnome-system-monitor";
-			using (var process = new Process().RunProcess(program, null, null))
->>>>>>> develop:Src/FwCoreDlgs/FwHelpAbout.cs
 			{
 				process.RunProcess(program, null, null);
 				Thread.Sleep(300);

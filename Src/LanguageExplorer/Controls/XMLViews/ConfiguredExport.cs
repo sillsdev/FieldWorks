@@ -8,42 +8,19 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
 using System.Xml.Linq;
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-using System.Xml;
-using System.Diagnostics;
-=======
-using System.Xml;
-using System.Diagnostics;
-using System.Linq;
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 using Icu.Collation;
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgs;
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel.Utils;
-=======
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.LCModel.Utils;
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using SIL.WritingSystems;
@@ -60,17 +37,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		private string m_sFormat;
 		private StringCollection m_rgElementTags = new StringCollection();
 		private StringCollection m_rgClassNames = new StringCollection();
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-
-		enum CurrentContext
-		{
-			unknown = 0,
-			insideObject = 1,
-			insideProperty = 2,
-			insideLink = 3,
-		};
-=======
 
 		enum CurrentContext
 		{
@@ -97,7 +63,6 @@ namespace LanguageExplorer.Controls.XMLViews
 			primary = 1
 		}
 
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 		private CurrentContext m_cc = CurrentContext.unknown;
 		private string m_sTimeField;
 		private Dictionary<int, string> m_dictWsStr = new Dictionary<int, string>();
@@ -106,13 +71,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Map from a writing system to its set of digraphs (or multigraphs) used in sorting.
 		/// </summary>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-		private Dictionary<string, ISet<string>> m_mapWsDigraphs = new Dictionary<string, ISet<string>>();
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-		Dictionary<string, ISet<string>> m_mapWsDigraphs = new Dictionary<string, ISet<string>>();
-=======
-		Dictionary<string, Dictionary<string, CollationLevel>> m_mapWsDigraphs = new Dictionary<string, Dictionary<string, CollationLevel>>();
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
+		private Dictionary<string, Dictionary<string, CollationLevel>> m_mapWsDigraphs = new Dictionary<string, Dictionary<string, CollationLevel>>();
 		/// <summary>
 		/// Map from a writing system to its map of equivalent graphs/multigraphs used in sorting.
 		/// </summary>
@@ -120,43 +79,20 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Map of characters to ignore for writing systems
 		/// </summary>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-		private Dictionary<string, ISet<string>> m_mapWsIgnorables = new Dictionary<string, ISet<string>>();
-		private string m_sWsVern;
-		private string m_sWsRevIdx;
-		private Dictionary<int, string> m_dictCustomUserLabels = new Dictionary<int, string>();
-		private string m_sActiveParaStyle;
-		private Dictionary<XElement, string> m_mapXnToCssClass = new Dictionary<XElement, string>();
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-		Dictionary<string, ISet<string>> m_mapWsIgnorables = new Dictionary<string, ISet<string>>();
-
-		private string m_sWsVern = null;
-		private string m_sWsRevIdx = null;
-		Dictionary<int, string> m_dictCustomUserLabels = new Dictionary<int, string>();
-		string m_sActiveParaStyle;
-		Dictionary<XmlNode, string> m_mapXnToCssClass = new Dictionary<XmlNode, string>();
-=======
 		Dictionary<string, ISet<string>> m_mapWsIgnorables = new Dictionary<string, ISet<string>>();
 
 		private CoreWritingSystemDefinition m_wsVern;
 		private CoreWritingSystemDefinition m_wsRevIdx;
 		Dictionary<int, string> m_dictCustomUserLabels = new Dictionary<int, string>();
 		string m_sActiveParaStyle;
-		Dictionary<XmlNode, string> m_mapXnToCssClass = new Dictionary<XmlNode, string>();
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
+		Dictionary<XElement, string> m_mapXnToCssClass = new Dictionary<XElement, string>();
 		private XhtmlHelper m_xhtml;
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
 		private CssType m_cssType = CssType.Dictionary;
 		private bool m_fCancel;
 		private string m_stylePara;
 		private string m_delayedItemNumberClass;
 		private ITsString m_delayedItemNumberValue;
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-		private XhtmlHelper.CssType m_cssType = XhtmlHelper.CssType.Dictionary;
-=======
-		private XhtmlHelper.CssType m_cssType = XhtmlHelper.CssType.Dictionary;
 		private Dictionary<string, Collator> m_wsCollators = new Dictionary<string, Collator>();
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 
 		/// <summary />
 		public event ProgressHandler UpdateProgress;
@@ -580,75 +516,21 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (string.IsNullOrEmpty(sEntry))
 			{
 				return;
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
 			}
-			if (m_sWsVern == null)
-			{
-				m_sWsVern = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
-			}
-			WriteLetterHeadIfNeeded(sEntry, m_sWsVern);
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-			if (m_sWsVern == null)
-				m_sWsVern = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
-			WriteLetterHeadIfNeeded(sEntry, m_sWsVern);
-=======
 			if (m_wsVern == null)
+			{
 				m_wsVern = m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
+			}
 			WriteLetterHeadIfNeeded(sEntry, m_wsVern);
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 		}
 
 		private void WriteLetterHeadIfNeeded(string sEntry, CoreWritingSystemDefinition ws)
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-			var sLower = GetLeadChar(CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sEntry), sWs);
-			var sTitle = Icu.UnicodeString.ToTitle(sLower, sWs);
+			var sLower = GetLeadChar(CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sEntry), ws.Id);
+			var sTitle = Icu.UnicodeString.ToTitle(sLower, ws.Id);
 			if (sTitle == m_schCurrent)
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-			string sLower = GetLeadChar(CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sEntry), sWs);
-			string sTitle = Icu.UnicodeString.ToTitle(sLower, sWs);
-			if (sTitle != m_schCurrent)
-=======
-			string sLower = GetLeadChar(CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sEntry), ws.Id);
-			string sTitle = new CaseFunctions(ws).ToTitle(sLower);
-			if (sTitle != m_schCurrent)
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 			{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
 				return;
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-				if (m_schCurrent.Length > 0)
-					m_writer.WriteLine("</div>");	// for letData
-				m_writer.WriteLine("<div class=\"letHead\">");
-				var sb = new StringBuilder();
-				if (!String.IsNullOrEmpty(sTitle) && sTitle != sLower)
-				{
-					sb.Append(sTitle.Normalize());
-					sb.Append(' ');
-				}
-				if (!String.IsNullOrEmpty(sLower))
-					sb.Append(sLower.Normalize());
-				m_writer.WriteLine("<div class=\"letter\">{0}</div>", XmlUtils.MakeSafeXml(sb.ToString()));
-				m_writer.WriteLine("</div>");
-				m_writer.WriteLine("<div class=\"letData\">");
-				m_schCurrent = sTitle;
-=======
-				if (m_schCurrent.Length > 0)
-					m_writer.WriteLine("</div>");	// for letData
-				m_writer.WriteLine("<div class=\"letHead\">");
-				var sb = new StringBuilder();
-				if (!string.IsNullOrEmpty(sTitle) && sTitle != sLower)
-				{
-					sb.Append(sTitle.Normalize());
-					sb.Append(' ');
-				}
-				if (!string.IsNullOrEmpty(sLower))
-					sb.Append(sLower.Normalize());
-				m_writer.WriteLine("<div class=\"letter\">{0}</div>", XmlUtils.MakeSafeXml(sb.ToString()));
-				m_writer.WriteLine("</div>");
-				m_writer.WriteLine("<div class=\"letData\">");
-				m_schCurrent = sTitle;
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 			}
 			if (m_schCurrent.Length > 0)
 			{
@@ -677,16 +559,9 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public string GetLeadChar(string headwordNFD, string sWs)
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-			return GetLeadChar(sEntryNFD, sWs, m_mapWsDigraphs, m_mapWsMapChars, m_mapWsIgnorables, m_cache);
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-			return GetLeadChar(sEntryNFD, sWs, m_mapWsDigraphs, m_mapWsMapChars, m_mapWsIgnorables,
-									 m_cache);
-=======
 			var sortKeyCollator = GetCollator(sWs);
 			return GetLeadChar(headwordNFD, sWs, m_mapWsDigraphs, m_mapWsMapChars, m_mapWsIgnorables, sortKeyCollator,
 									 m_cache);
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 		}
 
 		private Collator GetCollator(string sWs)
@@ -697,7 +572,7 @@ namespace LanguageExplorer.Controls.XMLViews
 				return col;
 			}
 
-			col = FwUtils.FwUtils.GetCollatorForWs(sWs);
+			col = FwUtils.GetCollatorForWs(sWs);
 
 			m_wsCollators[sWs] = col;
 			return col;
@@ -714,18 +589,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="wsIgnorableCharMap">Map of writing system to ignorable characters for that ws </param>
 		/// <param name="sortKeyCollator">A collator for the writing system to use to find sort keys</param>
 		/// <param name="cache"></param>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-		/// <returns>The character sEntryNFD is being sorted under in the dictionary.</returns>
-		public static string GetLeadChar(string sEntryNFD, string sWs, Dictionary<string, ISet<string>> wsDigraphMap, Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
-													Dictionary<string, ISet<string>> wsIgnorableCharMap, LcmCache cache)
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-		/// <returns>The character sEntryNFD is being sorted under in the dictionary.</returns>
-		public static string GetLeadChar(string sEntryNFD, string sWs,
-													Dictionary<string, ISet<string>> wsDigraphMap,
-													Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
-													Dictionary<string, ISet<string>> wsIgnorableCharMap,
-													LcmCache cache)
-=======
 		/// <returns>The character headwordNFD is being sorted under in the dictionary.</returns>
 		public static string GetLeadChar(string headwordNFD, string sWs,
 													Dictionary<string, Dictionary<string, CollationLevel>> wsDigraphMap,
@@ -733,126 +596,39 @@ namespace LanguageExplorer.Controls.XMLViews
 													Dictionary<string, ISet<string>> wsIgnorableCharMap,
 													Collator sortKeyCollator,
 													LcmCache cache)
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-			if (string.IsNullOrEmpty(sEntryNFD))
+			if (string.IsNullOrEmpty(headwordNFD))
 			{
 				return string.Empty;
 			}
-			var sEntryPre = Icu.UnicodeString.ToLower(sEntryNFD, sWs);
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-			if (string.IsNullOrEmpty(sEntryNFD))
-				return "";
-			string sEntryPre = Icu.UnicodeString.ToLower(sEntryNFD, sWs);
-			Dictionary<string, string> mapChars;
-=======
-			if (string.IsNullOrEmpty(headwordNFD))
-				return "";
 			var ws = cache.ServiceLocator.WritingSystemManager.Get(sWs);
 			var cf = new CaseFunctions(ws);
 			var headwordLC = cf.ToLower(headwordNFD);
-			Dictionary<string, string> mapChars;
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 			// List of characters to ignore in creating letter heads.
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-			var sortChars = GetDigraphs(sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, cache, out var mapChars, out var chIgnoreList);
+			var sortChars = GetDigraphs(ws, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, out var mapChars, out var chIgnoreList);
 			var sEntry = string.Empty;
-			if (chIgnoreList != null) // this list was built in GetDigraphs()
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-			ISet<string> chIgnoreList;
-			ISet<string> sortChars = GetDigraphs(sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, cache, out mapChars, out chIgnoreList);
-			string sEntry = String.Empty;
-			if (chIgnoreList != null) // this list was built in GetDigraphs()
-=======
-			ISet<string> chIgnoreList;
-			ISet<string> sortChars = GetDigraphs(ws, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, out mapChars, out chIgnoreList);
-			if (chIgnoreList != null && chIgnoreList.Any()) // this list was built in GetDigraphs()
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
+			if (chIgnoreList != null && chIgnoreList.Count > 0) // this list was built in GetDigraphs()
 			{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-				foreach (var ch in sEntryPre)
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-				foreach (char ch in sEntryPre)
-=======
 				// sort the ignorable set with the longest first to avoid edge case where one ignorable
 				// string starts with a shorter ignorable string.
 				// eg. 'a' and 'aa'
-				var ignorablesLongToShort = from s in chIgnoreList.ToList()
+				var ignorablesLongToShort = from s in chIgnoreList.ToArray()
 					orderby s.Length descending
 					select s;
 				foreach (var ignorableString in ignorablesLongToShort)
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 				{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-					if (!(chIgnoreList.Contains(ch.ToString(CultureInfo.InvariantCulture))))
-					{
-						sEntry += ch;
-					}
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-					if(!(chIgnoreList.Contains(ch.ToString(CultureInfo.InvariantCulture))))
-						sEntry += ch;
-=======
 					// if the headword starts with the ignorable chop it off.
 					if (headwordLC.StartsWith(ignorableString))
 					{
 						headwordLC = headwordLC.Substring(ignorableString.Length);
 						break;
 					}
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 				}
 			}
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-			else
-			{
-				sEntry = sEntryPre;
-			}
-			if (string.IsNullOrEmpty(sEntry))
+			if (string.IsNullOrEmpty(headwordLC))
 			{
 				return string.Empty; // check again
 			}
-			var sEntryT = sEntry;
-			bool fChanged;
-			var map = mapChars;
-			// This loop replaces each occurence of equivalent characters in sEntry
-			// with the representative of its equivalence class// replace subsorting chars by their main sort char. a << 'a << ^a, etc. are replaced by a.
-			do
-			{
-				foreach (var key in map.Keys)
-				{
-					sEntry = sEntry.Replace(key, map[key]);
-				}
-				fChanged = sEntryT != sEntry;
-				if (sEntry.Length > sEntryT.Length && map == mapChars)
-				{
-					// Rules like a -> a' repeat infinitely! To truncate this eliminate any rule whose output contains an input.
-					map = new Dictionary<string, string>(mapChars);
-					foreach (var kvp in mapChars)
-					{
-						foreach (var key1 in mapChars.Keys)
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-			else
-				sEntry = sEntryPre;
-			if (string.IsNullOrEmpty(sEntry))
-				return ""; // check again
-			string sEntryT = sEntry;
-			bool fChanged = false;
-			var map = mapChars;
-			do  // This loop replaces each occurance of equivalent characters in sEntry
-				// with the representative of its equivalence class
-			{   // replace subsorting chars by their main sort char. a << 'a << ^a, etc. are replaced by a.
-				foreach (string key in map.Keys)
-					sEntry = sEntry.Replace(key, map[key]);
-				fChanged = sEntryT != sEntry;
-				if (sEntry.Length > sEntryT.Length && map == mapChars)
-				{   // Rules like a -> a' repeat infinitely! To truncate this eliminate any rule whose output contains an input.
-					map = new Dictionary<string, string>(mapChars);
-					foreach (var kvp in mapChars)
-					{
-						foreach (var key1 in mapChars.Keys)
-=======
-			if (string.IsNullOrEmpty(headwordLC))
-				return ""; // check again
 
 			// If the headword begins with a primary digraph then use that as the first character without doing any replacement.
 			string firstChar = null;
@@ -868,17 +644,20 @@ namespace LanguageExplorer.Controls.XMLViews
 				var headwordBeforeEquivalence = headwordLC;
 				bool changed;
 				var map = mapChars;
-				do // This loop replaces each occurrence of equivalent characters in headwordLC
-					// with the representative of its equivalence class
-				{   // replace subsorting chars by their main sort char. a << 'a << ^a, etc. are replaced by a.
+				// This loop replaces each occurrence of equivalent characters in headwordLC
+				// with the representative of its equivalence class
+				// replace subsorting chars by their main sort char. a << 'a << ^a, etc. are replaced by a.
+				do
+				{
 					foreach (string key in map.Keys)
+					{
 						headwordLC = headwordLC.Replace(key, map[key]);
+					}
 					changed = headwordBeforeEquivalence != headwordLC;
 					if (headwordLC.Length > headwordBeforeEquivalence.Length && map == mapChars)
 					{   // Rules like a -> a' repeat infinitely! To truncate this eliminate any rule whose output contains an input.
 						map = new Dictionary<string, string>(mapChars);
 						foreach (var kvp in mapChars)
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 						{
 							foreach (var key1 in mapChars.Keys)
 							{
@@ -890,50 +669,6 @@ namespace LanguageExplorer.Controls.XMLViews
 							}
 						}
 					}
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-				}
-				sEntryT = sEntry;
-			} while (fChanged);
-			var cnt = GetLetterLengthAt(sEntry, 0);
-			var sFirst = sEntry.Substring(0, cnt);
-			foreach (var sChar in sortChars)
-			{
-				if (sEntry.StartsWith(sChar))
-				{
-					if (sFirst.Length < sChar.Length)
-					{
-						sFirst = sChar;
-					}
-				}
-			}
-			// We don't want sFirst for an ignored first character or digraph.
-			Collator col;
-			try
-			{
-				var icuLocale = new Icu.Locale(sWs).Name;
-				col = Collator.Create(icuLocale);
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-				}
-				sEntryT = sEntry;
-			} while (fChanged);
-			int cnt = GetLetterLengthAt(sEntry, 0);
-			string sFirst = sEntry.Substring(0, cnt);
-			foreach (string sChar in sortChars)
-			{
-				if (sEntry.StartsWith(sChar))
-				{
-					if (sFirst.Length < sChar.Length)
-						sFirst = sChar;
-				}
-			}
-			// We don't want sFirst for an ignored first character or digraph.
-
-			Collator col;
-			try
-			{
-				string icuLocale = new Icu.Locale(sWs).Name;
-				col = Collator.Create(icuLocale);
-=======
 
 					headwordBeforeEquivalence = headwordLC;
 				} while (changed);
@@ -948,38 +683,15 @@ namespace LanguageExplorer.Controls.XMLViews
 							firstChar = sortChar;
 					}
 				}
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 			}
 
 			// We don't want firstChar for an ignored first character or digraph.
 			if (sortKeyCollator != null)
 			{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-				return sFirst;
-			}
-			try
-			{
-				var ka = col.GetSortKey(sFirst).KeyData;
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-				return sFirst;
-			}
-			try
-			{
-				byte[] ka = col.GetSortKey(sFirst).KeyData;
-=======
 				byte[] ka = sortKeyCollator.GetSortKey(firstChar).KeyData;
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 				if (ka.Length > 0 && ka[0] == 1)
 				{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-					var sT = sEntry.Substring(sFirst.Length);
-					return GetLeadChar(sT, sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, cache);
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-					string sT = sEntry.Substring(sFirst.Length);
-					return GetLeadChar(sT, sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, cache);
-=======
 					return GetLeadChar(headwordLC.Substring(firstChar.Length), sWs, wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, sortKeyCollator, cache);
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 				}
 			}
 			return firstChar;
@@ -1004,15 +716,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		internal ISet<string> GetDigraphs(CoreWritingSystemDefinition ws,
 			out Dictionary<string, string> mapChars, out ISet<string> chIgnoreSet)
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-			return GetDigraphs(sWs, m_mapWsDigraphs, m_mapWsMapChars, m_mapWsIgnorables, m_cache, out mapChars, out chIgnoreSet);
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-			return GetDigraphs(sWs, m_mapWsDigraphs, m_mapWsMapChars, m_mapWsIgnorables, m_cache, out mapChars,
-									 out chIgnoreSet);
-=======
-			return GetDigraphs(ws, m_mapWsDigraphs, m_mapWsMapChars, m_mapWsIgnorables, out mapChars,
-									 out chIgnoreSet);
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
+			return GetDigraphs(ws, m_mapWsDigraphs, m_mapWsMapChars, m_mapWsIgnorables, out mapChars, out chIgnoreSet);
 		}
 
 		/// <summary>
@@ -1026,36 +730,17 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <param name="mapChars">Set of character equivalences</param>
 		/// <param name="chIgnoreSet">Set of characters to ignore</param>
 		/// <returns></returns>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-		internal static ISet<string> GetDigraphs(string sWs, Dictionary<string, ISet<string>> wsDigraphMap, Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
-			Dictionary<string, ISet<string>> wsIgnorableCharMap, LcmCache cache, out Dictionary<string, string> mapChars, out ISet<string> chIgnoreSet)
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-		internal static ISet<string> GetDigraphs(string sWs,
-			Dictionary<string, ISet<string>> wsDigraphMap,
-			Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
-			Dictionary<string, ISet<string>> wsIgnorableCharMap,
-			LcmCache cache,
-			out Dictionary<string, string> mapChars,
-			out ISet<string> chIgnoreSet)
-=======
 		internal static ISet<string> GetDigraphs(CoreWritingSystemDefinition ws,
 			Dictionary<string, Dictionary<string, CollationLevel>> wsDigraphMap,
 			Dictionary<string, Dictionary<string, string>> wsCharEquivalentMap,
 			Dictionary<string, ISet<string>> wsIgnorableCharMap,
 			out Dictionary<string, string> mapChars,
 			out ISet<string> chIgnoreSet)
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 		{
 			var sWs = ws.Id;
 			// Collect the digraph and character equivalence maps and the ignorable character set
 			// the first time through. There after, these maps and lists are just retrieved.
 			chIgnoreSet = new HashSet<string>(); // if ignorable chars get through they can become letter heads! LT-11172
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-			ISet<string> digraphs;
-=======
-			Dictionary<string, CollationLevel> digraphs;
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 			// Are the maps and ignorables already setup for the taking?
 			if (wsDigraphMap.TryGetValue(sWs, out var digraphs))
 			{
@@ -1066,39 +751,14 @@ namespace LanguageExplorer.Controls.XMLViews
 			}
 			digraphs = new Dictionary<string, CollationLevel>();
 			mapChars = new Dictionary<string, string>();
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-			var ws = cache.ServiceLocator.WritingSystemManager.Get(sWs);
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-			CoreWritingSystemDefinition ws = cache.ServiceLocator.WritingSystemManager.Get(sWs);
 
-=======
-
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 			wsDigraphMap[sWs] = digraphs;
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-			if (ws.DefaultCollation is SimpleRulesCollationDefinition simpleCollation)
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-
-			var simpleCollation = ws.DefaultCollation as SimpleRulesCollationDefinition;
-			if (simpleCollation != null)
-=======
 
 			switch (ws.DefaultCollation)
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 			{
 				case SimpleRulesCollationDefinition simpleCollation:
 				{
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-					var rules = simpleCollation.SimpleRules.Replace(" ", "=");
-					var primaryParts = rules.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-					foreach (var part in primaryParts)
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-					string rules = simpleCollation.SimpleRules.Replace(" ", "=");
-					string[] primaryParts = rules.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
-					foreach (var part in primaryParts)
-=======
 					if (!string.IsNullOrEmpty(simpleCollation.SimpleRules))
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 					{
 						string rules = simpleCollation.SimpleRules.Replace(" ", "=");
 						string[] primaryParts = rules.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
@@ -1111,15 +771,7 @@ namespace LanguageExplorer.Controls.XMLViews
 					break;
 				}
 				// is this a custom ICU collation?
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
-				var icuCollation = ws.DefaultCollation as IcuRulesCollationDefinition;
-				if (!string.IsNullOrEmpty(icuCollation?.IcuRules))
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-				var icuCollation = ws.DefaultCollation as IcuRulesCollationDefinition;
-				if (icuCollation != null && !string.IsNullOrEmpty(icuCollation.IcuRules))
-=======
 				case IcuRulesCollationDefinition icuCollation when !string.IsNullOrEmpty(icuCollation.IcuRules):
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 				{
 					// prime with empty ws in case all the rules affect only the ignore set
 					wsCharEquivalentMap[sWs] = mapChars;
@@ -1137,14 +789,8 @@ namespace LanguageExplorer.Controls.XMLViews
 						{
 							rule = ProcessAdvancedSyntacticalElements(chIgnoreSet, rule);
 						}
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
 						if (string.IsNullOrEmpty(rule.Trim()))
 						{
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-						if (String.IsNullOrEmpty(rule.Trim()))
-=======
-						if (string.IsNullOrEmpty(rule.Trim()))
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 							continue;
 						}
 						rule = rule.Replace("<<<", "=");
@@ -1180,15 +826,9 @@ namespace LanguageExplorer.Controls.XMLViews
 						foreach (var part in primaryParts)
 						{
 							if (rule.Contains("<"))
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
 							{
-								BuildDigraphSet(part, sWs, wsDigraphMap);
-							}
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-								BuildDigraphSet(part, sWs, wsDigraphMap);
-=======
 								BuildDigraphSet(part, ws, wsDigraphMap);
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
+							}
 							MapRuleCharsToPrimary(part, sWs, wsCharEquivalentMap);
 						}
 					}
@@ -1280,14 +920,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			foreach (var character in part.Split('='))
 			{
 				var sGraph = character.Trim();
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
 				if (string.IsNullOrEmpty(sGraph))
 				{
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-				if (String.IsNullOrEmpty(sGraph))
-=======
-				if (string.IsNullOrEmpty(sGraph))
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 					continue;
 				}
 				sGraph = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sGraph);
@@ -1342,49 +976,21 @@ namespace LanguageExplorer.Controls.XMLViews
 			var obj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoItem);
 			var objOwner = obj.Owner;
 			if (!(objOwner is IReversalIndex))
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
 			{
 				return;     // subentries shouldn't trigger letter head change!
 			}
 			var entry = (IReversalIndexEntry)obj;
 			var idx = (IReversalIndex)objOwner;
-			var ws = m_cache.ServiceLocator.WritingSystemManager.Get(idx.WritingSystem);
-			var sEntry = entry.ReversalForm.get_String(ws.Handle).Text;
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-				return;		// subentries shouldn't trigger letter head change!
-
-			var entry = (IReversalIndexEntry) obj;
-			var idx = (IReversalIndex) objOwner;
-			CoreWritingSystemDefinition ws = m_cache.ServiceLocator.WritingSystemManager.Get(idx.WritingSystem);
-			string sEntry = entry.ReversalForm.get_String(ws.Handle).Text;
-=======
-				return;		// subentries shouldn't trigger letter head change!
-
-			var entry = (IReversalIndexEntry) obj;
-			var idx = (IReversalIndex) objOwner;
 			if (m_wsRevIdx == null)
+			{
 				m_wsRevIdx = m_cache.ServiceLocator.WritingSystemManager.Get(idx.WritingSystem);
-			string sEntry = entry.ReversalForm.get_String(m_wsRevIdx.Handle).Text;
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
+			}
+			var sEntry = entry.ReversalForm.get_String(m_wsRevIdx.Handle).Text;
 			if (string.IsNullOrEmpty(sEntry))
 			{
 				return;
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/ConfiguredExport.cs
 			}
-			if (string.IsNullOrEmpty(m_sWsRevIdx))
-			{
-				m_sWsRevIdx = ws.Id;
-			}
-			WriteLetterHeadIfNeeded(sEntry, m_sWsRevIdx);
-||||||| f013144d5:Src/Common/Controls/XMLViews/ConfiguredExport.cs
-
-			if (string.IsNullOrEmpty(m_sWsRevIdx))
-				m_sWsRevIdx = ws.Id;
-			WriteLetterHeadIfNeeded(sEntry, m_sWsRevIdx);
-=======
-
 			WriteLetterHeadIfNeeded(sEntry, m_wsRevIdx);
->>>>>>> develop:Src/Common/Controls/XMLViews/ConfiguredExport.cs
 		}
 
 		private void WriteClassEndTag(CurrentContext ccOld)
@@ -1930,14 +1536,6 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		public void APictureIsBeingAdded()
 		{
-		}
-
-		private enum CurrentContext
-		{
-			unknown = 0,
-			insideObject = 1,
-			insideProperty = 2,
-			insideLink = 3,
 		}
 	}
 }

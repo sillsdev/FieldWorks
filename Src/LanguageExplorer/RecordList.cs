@@ -2153,7 +2153,7 @@ namespace LanguageExplorer
 			return af;
 		}
 
-		private ICmObject CreateNewObject(int hvoOwner, IList<ClassAndPropInfo> cpiPath)
+		protected virtual ICmObject CreateNewObject(int hvoOwner, IList<ClassAndPropInfo> cpiPath)
 		{
 			if (cpiPath.Count > 2)
 			{

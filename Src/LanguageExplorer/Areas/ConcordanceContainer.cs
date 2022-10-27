@@ -50,7 +50,7 @@ namespace LanguageExplorer.Areas
 			{
 				dlg.AddExtension = true;
 				dlg.DefaultExt = "csv";
-				dlg.Filter = TextAndWordsResources.ksConcordanceExportFilter; TODO: Complete merge of these strings
+				dlg.Filter = TextAndWordsResources.ksConcordanceExportFilter;
 				dlg.Title = TextAndWordsResources.ksConcordanceExportTitle;
 				dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
 				if (dlg.ShowDialog(this) != DialogResult.OK)

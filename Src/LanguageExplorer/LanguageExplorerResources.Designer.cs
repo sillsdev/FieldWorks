@@ -1776,6 +1776,15 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Deleted notes have been saved in {0}.
+        /// </summary>
+        internal static string ksDeletedNotesLocation {
+            get {
+                return ResourceManager.GetString("ksDeletedNotesLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Entries and Senses that are not used in interlinear.
         /// </summary>
         internal static string ksDeleteEntriesSenses {
@@ -3087,6 +3096,33 @@ namespace LanguageExplorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Column Group {0}.
+        /// </summary>
+        internal static string ksColumnGroupX {
+            get {
+                return ResourceManager.GetString("ksColumnGroupX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Column {0}.
+        /// </summary>
+        internal static string ksColumnX {
+            get {
+                return ResourceManager.GetString("ksColumnX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New Template.
+        /// </summary>
+        internal static string ksNewTemplate {
+            get {
+                return ResourceManager.GetString("ksNewTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to    New word gloss.
         /// </summary>
         internal static string ksNewWordGloss {
@@ -4371,7 +4407,24 @@ namespace LanguageExplorer {
                 return ResourceManager.GetString("kstidUnspecified", resourceCulture);
             }
         }
+        /// <summary>
+        ///   Looks up a localized string similar to Information.
+        /// </summary>
+        internal static string ksNewConstChartCaption {
+            get {
+                return ResourceManager.GetString("ksNewConstChartCaption", resourceCulture);
+            }
+        }
         
+        /// <summary>
+        ///   Looks up a localized string similar to You will now be taken to a new empty chart template. Give the template a name and create groups and rows. Then, click the &quot;Back&quot; button on the toolbar to return to where you were working. The new chart template will then be available for you to choose..
+        /// </summary>
+        internal static string ksNewConstChartMessage {
+            get {
+                return ResourceManager.GetString("ksNewConstChartMessage", resourceCulture);
+            }
+        }
+  
         /// <summary>
         ///   Looks up a localized string similar to Title.
         /// </summary>

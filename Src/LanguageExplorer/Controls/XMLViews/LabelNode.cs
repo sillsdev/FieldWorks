@@ -1,10 +1,4 @@
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/LabelNode.cs
 // Copyright (c) 2006-2020 SIL International
-||||||| f013144d5:Src/Common/Controls/XMLViews/LabelNode.cs
-﻿// Copyright (c) 2015 SIL International
-=======
-// Copyright (c) 2015 SIL International
->>>>>>> develop:Src/Common/Controls/XMLViews/LabelNode.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -34,28 +28,15 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// </summary>
 		protected virtual string BasicNodeString => Label.AsTss.Text;
 
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/LabelNode.cs
-		/// <summary />
-		public LabelNode(ObjectLabel label, IVwStylesheet stylesheet, bool displayUsage)
-||||||| f013144d5:Src/Common/Controls/XMLViews/LabelNode.cs
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LabelNode"/> class.
 		/// </summary>
-		/// <param name="label">The label.</param>
-		/// <param name="stylesheet">The stylesheet.</param>
-		/// <param name="displayUsage"><c>true</c> if usage statistics will be displayed; otherwise, <c>false</c>.</param>
-		public LabelNode(ObjectLabel label, IVwStylesheet stylesheet, bool displayUsage)
-=======
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LabelNode"/> class.
-		/// </summary>
-		/// <param name="label">The label.</param>
-		/// <param name="stylesheet">The stylesheet.</param>
+		/// <param name="label"/>
+		/// <param name="stylesheet"/>
 		/// <param name="displayUsage"><c>true</c> if usage statistics will be displayed; otherwise, <c>false</c>.</param>
 		/// <param name="initialize"><c>true</c> This constructor should do the initialization.
 		///                          <c>false</c> Do not do the initialization, let the caller do it.</param>
 		public LabelNode(ObjectLabel label, IVwStylesheet stylesheet, bool displayUsage, bool initialize = true)
->>>>>>> develop:Src/Common/Controls/XMLViews/LabelNode.cs
 		{
 			Tag = label;
 			m_stylesheet = stylesheet;
@@ -68,14 +49,8 @@ namespace LanguageExplorer.Controls.XMLViews
 				NodeFont = GetVernacularFont(label.Cache.WritingSystemFactory, wsVern, stylesheet);
 			}
 			SetNodeText();
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/LabelNode.cs
-			if (label.HaveSubItems)
-			{
-||||||| f013144d5:Src/Common/Controls/XMLViews/LabelNode.cs
-			if (label.HaveSubItems)
-=======
 			if (initialize && label.HaveSubItems)
->>>>>>> develop:Src/Common/Controls/XMLViews/LabelNode.cs
+			{
 				// this is a hack to make the node expandable before we have filled in any
 				// actual children
 				Nodes.Add(new TreeNode("should not see this"));
@@ -199,18 +174,9 @@ namespace LanguageExplorer.Controls.XMLViews
 				return;
 			}
 			Nodes.Clear(); // get rid of the dummy.
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/LabelNode.cs
-			AddSecondaryNodes(this, Nodes, chosenObjs);
-			foreach (var label in ((ObjectLabel)Tag).SubItems)
-||||||| f013144d5:Src/Common/Controls/XMLViews/LabelNode.cs
-
-			AddSecondaryNodes(this, Nodes, chosenObjs);
-			foreach (ObjectLabel label in ((ObjectLabel)Tag).SubItems)
-=======
 
 			AddSecondaryNodes(this, chosenObjs);
-			foreach (ObjectLabel label in ((ObjectLabel)Tag).SubItems)
->>>>>>> develop:Src/Common/Controls/XMLViews/LabelNode.cs
+			foreach (var label in ((ObjectLabel)Tag).SubItems)
 			{
 				if (!WantNodeForLabel(label))
 				{
@@ -241,18 +207,7 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// <summary>
 		/// Adds the secondary nodes.
 		/// </summary>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/LabelNode.cs
-		public virtual void AddSecondaryNodes(LabelNode node, TreeNodeCollection nodes, IEnumerable<ICmObject> chosenObjs)
-||||||| f013144d5:Src/Common/Controls/XMLViews/LabelNode.cs
-		/// <param name="node">The node.</param>
-		/// <param name="nodes">The nodes.</param>
-		/// <param name="chosenObjs">The chosen objects.</param>
-		public virtual void AddSecondaryNodes(LabelNode node, TreeNodeCollection nodes, IEnumerable<ICmObject> chosenObjs)
-=======
-		/// <param name="node">The node.</param>
-		/// <param name="chosenObjs">The chosen objects.</param>
 		public virtual void AddSecondaryNodes(LabelNode node, IEnumerable<ICmObject> chosenObjs)
->>>>>>> develop:Src/Common/Controls/XMLViews/LabelNode.cs
 		{
 			// default is to do nothing
 		}
@@ -282,18 +237,8 @@ namespace LanguageExplorer.Controls.XMLViews
 			if (!fExpanded)
 			{
 				Nodes.Clear();
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/LabelNode.cs
-				nodeRepresentingCurrentChoice = AddSecondaryNodesAndLookForSelected(this, Nodes, nodeRepresentingCurrentChoice, objToSelect, ownershipStack, chosenObjs);
+				nodeRepresentingCurrentChoice = AddSecondaryNodesAndLookForSelected(this, nodeRepresentingCurrentChoice, objToSelect, chosenObjs);
 				foreach (var label in ((ObjectLabel)Tag).SubItems)
-||||||| f013144d5:Src/Common/Controls/XMLViews/LabelNode.cs
-				nodeRepresentingCurrentChoice = AddSecondaryNodesAndLookForSelected(this,
-					Nodes, nodeRepresentingCurrentChoice, objToSelect, ownershipStack, chosenObjs);
-				foreach (ObjectLabel label in ((ObjectLabel) Tag).SubItems)
-=======
-				nodeRepresentingCurrentChoice = AddSecondaryNodesAndLookForSelected(this,
-					nodeRepresentingCurrentChoice, objToSelect, chosenObjs);
-				foreach (ObjectLabel label in ((ObjectLabel) Tag).SubItems)
->>>>>>> develop:Src/Common/Controls/XMLViews/LabelNode.cs
 				{
 					if (!WantNodeForLabel(label))
 					{
@@ -305,22 +250,8 @@ namespace LanguageExplorer.Controls.XMLViews
 						node.Checked = chosenObjs.Contains(label.Object);
 					}
 					Nodes.Add(node);
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/LabelNode.cs
 					nodeRepresentingCurrentChoice = CheckForSelection(label, objToSelect, node, nodeRepresentingCurrentChoice);
-					nodeRepresentingCurrentChoice = AddSecondaryNodesAndLookForSelected(node, node.Nodes, nodeRepresentingCurrentChoice, objToSelect, ownershipStack, chosenObjs);
-||||||| f013144d5:Src/Common/Controls/XMLViews/LabelNode.cs
-					nodeRepresentingCurrentChoice = CheckForSelection(label, objToSelect,
-						node, nodeRepresentingCurrentChoice);
-					nodeRepresentingCurrentChoice = AddSecondaryNodesAndLookForSelected(
-						node, node.Nodes, nodeRepresentingCurrentChoice, objToSelect,
-						ownershipStack, chosenObjs);
-=======
-					nodeRepresentingCurrentChoice = CheckForSelection(label, objToSelect,
-						node, nodeRepresentingCurrentChoice);
-					nodeRepresentingCurrentChoice = AddSecondaryNodesAndLookForSelected(
-						node, nodeRepresentingCurrentChoice, objToSelect,
-						chosenObjs);
->>>>>>> develop:Src/Common/Controls/XMLViews/LabelNode.cs
+					nodeRepresentingCurrentChoice = AddSecondaryNodesAndLookForSelected(node, nodeRepresentingCurrentChoice, objToSelect, chosenObjs);
 				}
 			}
 			else
@@ -353,30 +284,8 @@ namespace LanguageExplorer.Controls.XMLViews
 		/// and return the one whose hvo is hvoToSelect, or nodeRepresentingCurrentChoice
 		/// if none match.
 		/// </summary>
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/XMLViews/LabelNode.cs
-		public virtual LabelNode AddSecondaryNodesAndLookForSelected(LabelNode node, TreeNodeCollection nodes, LabelNode nodeRepresentingCurrentChoice, ICmObject objToSelect,
-			Stack<ICmObject> ownershipStack, IEnumerable<ICmObject> chosenObjs)
-||||||| f013144d5:Src/Common/Controls/XMLViews/LabelNode.cs
-		/// <param name="node">node to be added</param>
-		/// <param name="nodes">where to add it</param>
-		/// <param name="nodeRepresentingCurrentChoice">The node representing current choice.</param>
-		/// <param name="objToSelect">The obj to select.</param>
-		/// <param name="ownershipStack">The ownership stack.</param>
-		/// <param name="chosenObjs">The chosen objects.</param>
-		/// <returns></returns>
-		public virtual LabelNode AddSecondaryNodesAndLookForSelected(LabelNode node,
-			TreeNodeCollection nodes, LabelNode nodeRepresentingCurrentChoice,
-			ICmObject objToSelect, Stack<ICmObject> ownershipStack, IEnumerable<ICmObject> chosenObjs)
-=======
-		/// <param name="node">node to be added</param>
-		/// <param name="nodeRepresentingCurrentChoice">The node representing current choice.</param>
-		/// <param name="objToSelect">The obj to select.</param>
-		/// <param name="chosenObjs">The chosen objects.</param>
-		/// <returns></returns>
-		public virtual LabelNode AddSecondaryNodesAndLookForSelected(LabelNode node,
-			LabelNode nodeRepresentingCurrentChoice,
-			ICmObject objToSelect, IEnumerable<ICmObject> chosenObjs)
->>>>>>> develop:Src/Common/Controls/XMLViews/LabelNode.cs
+		public virtual LabelNode AddSecondaryNodesAndLookForSelected(LabelNode node, LabelNode nodeRepresentingCurrentChoice, ICmObject objToSelect,
+			IEnumerable<ICmObject> chosenObjs)
 		{
 			// default is to do nothing
 			return nodeRepresentingCurrentChoice;

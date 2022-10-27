@@ -467,6 +467,9 @@
     <value>This will delete all of the data from your chart! Are you sure?</value>
     <comment>Dialog warning. Responses are Yes/No.</comment>
   </data>
+  <data name="ksDeletedNotesLocation" xml:space="preserve">
+    <value>Deleted notes have been saved in {0}</value>
+  </data>
   <data name="ADeletedObject" xml:space="preserve">
     <value>A deleted object</value>
   </data>
@@ -1010,6 +1013,14 @@ If you click No, you will see various options for starting work in Language Expl
   <data name="ksUndoLastRowInSent" xml:space="preserve">
     <value>Undo Last Row in Sentence</value>
   </data>
+  <data name="ksNewConstChartCaption" xml:space="preserve">
+    <value>Information</value>
+    <comment>Title of informational message box shown from 'Add a new Template' in the Text Chart tab of interlinear</comment>
+  </data>
+  <data name="ksNewConstChartMessage" xml:space="preserve">
+    <value>You will now be taken to a new empty chart template. Give the template a name and create groups and rows. Then, click the "Back" button on the toolbar to return to where you were working. The new chart template will then be available for you to choose.</value>
+    <comment>Informational message shown when the user chooses 'Add a new Template' in the Text Chart tab of interlinear</comment>
+  </data>
   <data name="ksUnknownBasedOnStyle" xml:space="preserve">
     <value>Unrecognized basedOn style for {0} style in {2}: {1}</value>
     <comment>Error message when processing an XML file to create factory styles.</comment>
@@ -1131,6 +1142,18 @@ This version of the program requires version {1}.</value>
   </data>
   <data name="ksNewTemplateLink" xml:space="preserve">
     <value>charttempEdit</value>
+  </data>
+  <data name="ksNewTemplate" xml:space="preserve">
+    <value>New Template</value>
+    <comment>Name for a new discourse chart template when it is created.</comment>
+  </data>
+  <data name="ksColumnGroupX" xml:space="preserve">
+    <value>Column Group {0}</value>
+    <comment>Used to populate a discourse chart template template. {0} is the index of the column group, such as "2"</comment>
+  </data>
+  <data name="ksColumnX" xml:space="preserve">
+    <value>Column {0}</value>
+    <comment>Used to populate a discourse chart template template. {0} is the index of the column and its group, such as "2.1"</comment>
   </data>
   <data name="SortReversalSubentries_Label" xml:space="preserve">
     <value>Sort Reversal Subentries</value>

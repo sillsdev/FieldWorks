@@ -8,17 +8,8 @@ using System.Windows.Forms;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/Slices/RuleFormulaSlice.cs
 using SIL.LCModel;
 using SIL.PlatformUtilities;
-||||||| f013144d5:Src/LexText/Morphology/RuleFormulaSlice.cs
-using SIL.LCModel.Utils;
-using XCore;
-=======
-using SIL.LCModel.Utils;
-using SIL.PlatformUtilities;
-using XCore;
->>>>>>> develop:Src/LexText/Morphology/RuleFormulaSlice.cs
 
 namespace LanguageExplorer.Controls.DetailControls.Slices
 {
@@ -93,17 +84,9 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			RuleFormulaControl.InsertionControl.Show();
 			Height = DesiredHeight(RuleFormulaControl.RootSite);
 			// FWNX-753 called attention to misbehavior around here.
-<<<<<<< HEAD:Src/LanguageExplorer/Controls/DetailControls/Slices/RuleFormulaSlice.cs
-			if (Platform.IsMono && RuleFormulaControl.Height != Height && RuleFormulaControl.Height == oldHeight)
-||||||| f013144d5:Src/LexText/Morphology/RuleFormulaSlice.cs
-			if (MiscUtils.IsMono &&
-				RuleFormulaControl.Height != Height &&
-				RuleFormulaControl.Height == oldHeight)
-=======
 			if (Platform.IsMono &&
 				RuleFormulaControl.Height != Height &&
 				RuleFormulaControl.Height == oldHeight)
->>>>>>> develop:Src/LexText/Morphology/RuleFormulaSlice.cs
 			{
 				SetSubcontrolHeights(this, oldHeight, Height);
 			}

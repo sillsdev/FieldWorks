@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -38,6 +39,42 @@ namespace LanguageExplorer
 				return baseStatus;
 			}
 			return string.Format(LanguageExplorerResources.ksSomeTexts, interestingTexts.CoreTexts.Count, interestingTexts.AllCoreTexts.Count()) + (string.IsNullOrEmpty(baseStatus) ? string.Empty : "; " + baseStatus);
+		}
+
+		protected override ICmObject CreateNewObject(int hvoOwner, IList<ClassAndPropInfo> cpiPath)
+		{
+			var newPossibility = base.CreateNewObject(hvoOwner, cpiPath) as ICmPossibility;
+			// If this is a Text Discourse Chart Template, populate it with sample column groups and columns (LT-20768)
+			if (OwningObject.OwningFlid == DsDiscourseDataTags.kflidConstChartTempl && newPossibility != null)
+			{
+				if (newPossibility.Owner is ICmPossibilityList)
+				{
+					SetUpConstChartTemplateTemplate(newPossibility);
+				}
+			}
+			return newPossibility;
+		}
+
+		/// <summary>
+		/// Populates a discourse chart template with sample column groups and columns so that users have an idea what to do with it (LT-20768)
+		/// </summary>
+		/// <remarks>
+		/// The names of the template template parts are in the UI language, but they are stored in the default analysis WS. This could be problematic in
+		/// the unlikely case that the default analysis WS font doesn't have characters for the UI language data. But this is unlikely, and the labels
+		/// are temporary.
+		/// </remarks>
+		public static void SetUpConstChartTemplateTemplate(ICmPossibility templateRoot)
+		{
+			var factory = templateRoot.Services.GetInstance<ICmPossibilityFactory>();
+			var analWS = templateRoot.Services.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+			templateRoot.Name.set_String(analWS, LanguageExplorerResources.ksNewTemplate);
+
+			var group1 = factory.Create(Guid.NewGuid(), templateRoot);
+			group1.Name.set_String(analWS, string.Format(LanguageExplorerResources.ksColumnGroupX, 1));
+			for (var i = 1; i <= 2; i++)
+			{
+				factory.Create(Guid.NewGuid(), group1).Name.set_String(analWS, string.Format(LanguageExplorerResources.ksColumnX, $"1.{i}"));
+			}
 		}
 
 		/// <summary>

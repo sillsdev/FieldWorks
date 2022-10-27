@@ -235,7 +235,7 @@
     <value>Something went wrong while FieldWorks was attempting to import {0}.
 {1}
 
-A stack dump has been copied to the clipboard.  Please email it and your LIFT file to Flex_Errors@sil.org so that we can improve the program.</value>
+A stack dump has been copied to the clipboard.  Please email it and your LIFT file to flex_errors@sil.org so that we can improve the program.</value>
   </data>
   <data name="ksLoadingVariousLists" xml:space="preserve">
     <value>Loading various lists for lookup during import...</value>
