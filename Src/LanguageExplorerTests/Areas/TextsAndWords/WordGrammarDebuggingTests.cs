@@ -61,15 +61,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		/// <summary>
 		/// Fixtures setup method
 		/// </summary>
-<<<<<<< HEAD:Src/LanguageExplorerTests/Areas/TextsAndWords/WordGrammarDebuggingTests.cs
 		[OneTimeSetUp]
-||||||| f013144d5:Src/LexText/ParserUI/ParserUITests/WordGrammarDebuggingTests.cs
-		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
-=======
-		/// ------------------------------------------------------------------------------------
-		[OneTimeSetUp]
->>>>>>> develop:Src/LexText/ParserUI/ParserUITests/WordGrammarDebuggingTests.cs
 		public void FixtureSetup()
 		{
 			_baseTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory, TestUtilities.LanguageExplorerTests, "Areas", "TextsAndWords");
@@ -90,15 +82,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords
 		/// <summary>
 		/// Delete any files that we may have created.
 		/// </summary>
-<<<<<<< HEAD:Src/LanguageExplorerTests/Areas/TextsAndWords/WordGrammarDebuggingTests.cs
 		[OneTimeTearDown]
-||||||| f013144d5:Src/LexText/ParserUI/ParserUITests/WordGrammarDebuggingTests.cs
-		/// ------------------------------------------------------------------------------------
-		[TestFixtureTearDown]
-=======
-		/// ------------------------------------------------------------------------------------
-		[OneTimeTearDown]
->>>>>>> develop:Src/LexText/ParserUI/ParserUITests/WordGrammarDebuggingTests.cs
 		public void FixtureTeardown()
 		{
 			if (File.Exists(m_sResultTransform))

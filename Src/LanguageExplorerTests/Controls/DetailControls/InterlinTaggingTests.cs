@@ -45,20 +45,8 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, DoSetupFixture);
 		}
 
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/InterlinTaggingTests.cs
 		/// <summary />
 		[OneTimeTearDown]
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/InterlinTaggingTests.cs
-		/// <summary>
-		///
-		/// </summary>
-		[TestFixtureTearDown]
-=======
-		/// <summary>
-		///
-		/// </summary>
-		[OneTimeTearDown]
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/InterlinTaggingTests.cs
 		public override void FixtureTeardown()
 		{
 			m_textsDefn = null;

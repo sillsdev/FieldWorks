@@ -610,22 +610,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 			}
 		}
 
-<<<<<<< HEAD:Src/LanguageExplorerTests/Areas/TextsAndWords/Tools/ImportInterlinearAnalysesTests.cs
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/ImportInterlinearAnalysesTests.cs
-		[Test, Ignore]
-		public void ImportNewUserConfirmedWordGlossMergeIntoAnalysisMatchingStemOfExistingAnalysis()
-		{
-
-		}
-
-=======
-		//[Test]
-		//public void ImportNewUserConfirmedWordGlossMergeIntoAnalysisMatchingStemOfExistingAnalysis()
-		//{
-		// TODO
-		//}
-
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/ImportInterlinearAnalysesTests.cs
 		[Test]
 		public void ImportUnknownPhraseWholeSegmentNoVersion_MakesSeparateWords()
 		{

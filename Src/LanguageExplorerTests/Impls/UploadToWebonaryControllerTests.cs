@@ -322,11 +322,11 @@ namespace LanguageExplorerTests.Impls
 		[Ignore("Used for manual testing against a real Webonary instance")]
 		public void RealUploadWithBadDataReportsErrorInProcessing()
 		{
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator))
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable))
 			{
 				var view = new MockWebonaryDlg
 				{
-					Model = new UploadToWebonaryModel(m_propertyTable)
+					Model = new UploadToWebonaryModel(_flexComponentParameters.PropertyTable)
 					{
 						UserName = "webonary",
 						Password = "webonary"
@@ -349,7 +349,7 @@ namespace LanguageExplorerTests.Impls
 		[Ignore("Takes too long to timeout. Enable if want to test.")]
 		public void RealUploadToWebonaryHandlesNetworkErrors()
 		{
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator))
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable))
 			{
 				var view = new MockWebonaryDlg();
 				var filepath = "../../Src/xWorks/xWorksTests/lubwisi-d-new.zip";
@@ -672,11 +672,11 @@ namespace LanguageExplorerTests.Impls
 			// Test with an exception which indicates a redirect should happen
 			var redirectException = new WebonaryClient.WebonaryException(new WebException("File Not Found"));
 			redirectException.StatusCode = HttpStatusCode.NotFound;
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, redirectException, new byte[0], HttpStatusCode.NotFound))
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, redirectException, new byte[0], HttpStatusCode.NotFound))
 			{
 				var view = new MockWebonaryDlg()
 				{
-					Model = new UploadToWebonaryModel(m_propertyTable)
+					Model = new UploadToWebonaryModel(_flexComponentParameters.PropertyTable)
 					{
 						SiteName = "test-india",
 						UserName = "software",
@@ -694,11 +694,11 @@ namespace LanguageExplorerTests.Impls
 			var responseString = "Deleted 1000 files";
 			var response = Encoding.UTF8.GetBytes(responseString);
 			// Test with an exception which indicates a redirect should happen
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, response))
+			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, null, response))
 			{
 				var view = new MockWebonaryDlg()
 				{
-					Model = new UploadToWebonaryModel(m_propertyTable)
+					Model = new UploadToWebonaryModel(_flexComponentParameters.PropertyTable)
 					{
 						SiteName = "test-india",
 						UserName = "software",
@@ -791,19 +791,6 @@ namespace LanguageExplorerTests.Impls
 			/// <summary>
 			/// URI to upload data to.
 			/// </summary>
-<<<<<<< HEAD:Src/LanguageExplorerTests/Impls/UploadToWebonaryControllerTests.cs
-			private string UploadURI { get; set; }
-||||||| f013144d5:Src/xWorks/xWorksTests/UploadToWebonaryControllerTests.cs
-			public string UploadURI { get; set; }
-
-			/// <summary>
-			/// This constructor should be used in tests that will actually hit a server, and are marked [ByHand]
-			/// </summary>
-			public MockUploadToWebonaryController(LcmCache cache, PropertyTable propertyTable, Mediator mediator)
-				: base(cache, propertyTable, mediator)
-			{
-			}
-=======
 			public string UploadURI { get; set; }
 
 			internal override bool UseJsonApi => false;
@@ -811,11 +798,10 @@ namespace LanguageExplorerTests.Impls
 			/// <summary>
 			/// This constructor should be used in tests that will actually hit a server, and are marked [ByHand]
 			/// </summary>
-			public MockUploadToWebonaryController(LcmCache cache, PropertyTable propertyTable, Mediator mediator)
-				: base(cache, propertyTable, mediator)
+			public MockUploadToWebonaryController(LcmCache cache, PropertyTable propertyTable)
+				: base(cache, propertyTable)
 			{
 			}
->>>>>>> develop:Src/xWorks/xWorksTests/UploadToWebonaryControllerTests.cs
 
 			/// <summary>
 			/// Tests using this constructor do not need to be marked [ByHand]; an exception, response, and response code can all be set.
@@ -831,24 +817,9 @@ namespace LanguageExplorerTests.Impls
 			/// </summary>
 			private sealed class MockWebonaryClient : IWebonaryClient
 			{
-<<<<<<< HEAD:Src/LanguageExplorerTests/Impls/UploadToWebonaryControllerTests.cs
-				private readonly WebonaryException _exceptionResponse;
-				private readonly object _responseContents;
-||||||| f013144d5:Src/xWorks/xWorksTests/UploadToWebonaryControllerTests.cs
-				private readonly WebonaryClient.WebonaryException _exceptionResponse;
-				private readonly object _responseContents;
-=======
 				private readonly WebonaryClient.WebonaryException _exceptionResponse;
 				private readonly byte[] _responseContents;
->>>>>>> develop:Src/xWorks/xWorksTests/UploadToWebonaryControllerTests.cs
-
-<<<<<<< HEAD:Src/LanguageExplorerTests/Impls/UploadToWebonaryControllerTests.cs
-				internal MockWebonaryClient(WebonaryException exceptionResponse, object responseContents, HttpStatusCode responseStatus)
-||||||| f013144d5:Src/xWorks/xWorksTests/UploadToWebonaryControllerTests.cs
-				public MockWebonaryClient(WebonaryClient.WebonaryException exceptionResponse, object responseContents, HttpStatusCode responseStatus)
-=======
-				public MockWebonaryClient(WebonaryClient.WebonaryException exceptionResponse, byte[] responseContents, HttpStatusCode responseStatus)
->>>>>>> develop:Src/xWorks/xWorksTests/UploadToWebonaryControllerTests.cs
+				internal MockWebonaryClient(WebonaryClient.WebonaryException exceptionResponse, byte[] responseContents, HttpStatusCode responseStatus)
 				{
 					_exceptionResponse = exceptionResponse;
 					_responseContents = responseContents;

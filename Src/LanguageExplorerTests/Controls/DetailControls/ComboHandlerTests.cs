@@ -1,10 +1,4 @@
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/ComboHandlerTests.cs
-// Copyright (c) 2015-2020 SIL International
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/ComboHandlerTests.cs
-﻿// Copyright (c) 2015 SIL International
-=======
-// Copyright (c) 2015 SIL International
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/ComboHandlerTests.cs
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,13 +11,8 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/ComboHandlerTests.cs
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/ComboHandlerTests.cs
-using XCore;
-=======
 using SIL.LCModel.Core.Text;
 using XCore;
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/ComboHandlerTests.cs
 
 namespace LanguageExplorerTests.Controls.DetailControls
 {

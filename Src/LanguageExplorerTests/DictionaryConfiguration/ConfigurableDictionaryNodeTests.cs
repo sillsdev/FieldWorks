@@ -1,10 +1,4 @@
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfigurableDictionaryNodeTests.cs
-// Copyright (c) 2014-2020 SIL International
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfigurableDictionaryNodeTests.cs
-﻿// Copyright (c) 2014 SIL International
-=======
-// Copyright (c) 2014 SIL International
->>>>>>> develop:Src/xWorks/xWorksTests/ConfigurableDictionaryNodeTests.cs
+// Copyright (c) 2014-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 

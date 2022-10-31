@@ -1,10 +1,4 @@
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/InMemoryLogicTest.cs
-// Copyright (c) 2008-2020 SIL International
-||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/InMemoryLogicTest.cs
-// Copyright (c) 2015 SIL International
-=======
 // Copyright (c) 2015-2022 SIL International
->>>>>>> develop:Src/LexText/Discourse/DiscourseTests/InMemoryLogicTest.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,23 +20,10 @@ namespace LanguageExplorerTests.Controls.DetailControls
 	[TestFixture]
 	internal class InMemoryLogicTest : InMemoryDiscourseTestBase
 	{
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/InMemoryLogicTest.cs
-		IDsConstChart m_chart;
-		ICmPossibility m_template;
-		TestCCLogic m_logic;
-		List<ICmPossibility> m_allColumns;
-||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/InMemoryLogicTest.cs
-		IDsConstChart m_chart;
-		ICmPossibility m_template;
-		TestCCLogic m_logic;
-		MockRibbon m_mockRibbon;
-		List<ICmPossibility> m_allColumns;
-=======
 		private IDsConstChart m_chart;
 		private ICmPossibility m_template;
 		private TestCCLogic m_logic;
 		private List<ICmPossibility> m_allColumns;
->>>>>>> develop:Src/LexText/Discourse/DiscourseTests/InMemoryLogicTest.cs
 
 		#region Test setup
 
@@ -132,16 +113,8 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		[Test]
 		public void CreateDefTemplate()
 		{
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/InMemoryLogicTest.cs
-			Assert.IsNotNull(Cache.LangProject.GetDefaultChartTemplate()); // minimally exercises the method
-			// However, the guts of the method is a call to CreateTemplate, so we should get
-||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/InMemoryLogicTest.cs
-			Assert.IsNotNull(Cache.LangProject.GetDefaultChartTemplate()); // minimally exercises the method
-			// Howerver, the guts of the method is a call to CreateTemplate, so we should get
-=======
 			Assert.That(Cache.LangProject.GetDefaultChartTemplate(), Is.Not.Null); // minimally exercises the method
 			// However, the guts of the method is a call to CreateTemplate, so we should get
->>>>>>> develop:Src/LexText/Discourse/DiscourseTests/InMemoryLogicTest.cs
 			// better repeatability by testing the results of the CreateTemplate call in our
 			// fixture setup.
 			Assert.That(m_template, Is.Not.Null);

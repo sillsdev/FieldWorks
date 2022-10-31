@@ -4,12 +4,8 @@
 
 using System;
 using System.Collections.Generic;
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/InMemoryMovedTextTests.cs
-using LanguageExplorer.Controls.DetailControls;
-||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/InMemoryMovedTextTests.cs
-=======
 using System.Linq;
->>>>>>> develop:Src/LexText/Discourse/DiscourseTests/InMemoryMovedTextTests.cs
+using LanguageExplorer.Controls.DetailControls;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
@@ -1049,23 +1045,11 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_logic.CleanupInvalidChartCells();
 
 			// Verify
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/InMemoryMovedTextTests.cs
-			AssertUsedAnalyses(allParaOccurrences, 0); // no change in ribbon
-			Assert.AreEqual(cfirstRow, row0.CellsOS.Count, "Shouldn't have changed number of cells in first row.");
-			Assert.AreEqual(c2ndRow, row1.CellsOS.Count, "Shouldn't have changed number of cells in second row.");
-||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/InMemoryMovedTextTests.cs
-			AssertUsedAnalyses(allParaOccurrences, 0); // no change in ribbon
-			Assert.AreEqual(cfirstRow, row0.CellsOS.Count,
-				"Shouldn't have changed number of cells in first row.");
-			Assert.AreEqual(c2ndRow, row1.CellsOS.Count,
-				"Shouldn't have changed number of cells in second row.");
-=======
 			AssertUsedAnalyses(allParaOccurrences, 1); // no change in ribbon
 			Assert.AreEqual(cfirstRow, row0.CellsOS.Count,
 				"Shouldn't have changed number of cells in first row.");
 			Assert.AreEqual(c2ndRow, row1.CellsOS.Count,
 				"Shouldn't have changed number of cells in second row.");
->>>>>>> develop:Src/LexText/Discourse/DiscourseTests/InMemoryMovedTextTests.cs
 		}
 
 		/// <summary>

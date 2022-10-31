@@ -143,16 +143,8 @@ namespace LanguageExplorerTests.Impls
 		/// <param name="ichLimExpected">The ich lim expected.</param>
 		private void VerifyFindNext(FindCollectorEnv collectorEnv, int hvoExpected, int ichMinExpected, int ichLimExpected)
 		{
-<<<<<<< HEAD:Src/LanguageExplorerTests/Impls/FindCollectorEnvTests.cs
 			var foundLocation = collectorEnv.FindNext(m_sel);
-			Assert.IsNotNull(foundLocation);
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FindCollectorEnvTests.cs
-			CollectorEnv.LocationInfo foundLocation = collectorEnv.FindNext(m_sel);
-			Assert.IsNotNull(foundLocation);
-=======
-			CollectorEnv.LocationInfo foundLocation = collectorEnv.FindNext(m_sel);
 			Assert.That(foundLocation, Is.Not.Null);
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FindCollectorEnvTests.cs
 			Assert.AreEqual(1, foundLocation.m_location.Length);
 			Assert.AreEqual(hvoExpected, foundLocation.TopLevelHvo);
 			Assert.AreEqual(StTextTags.kflidParagraphs, foundLocation.m_location[0].tag);

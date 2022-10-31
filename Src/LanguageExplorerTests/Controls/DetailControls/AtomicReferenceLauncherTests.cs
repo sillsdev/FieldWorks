@@ -148,16 +148,8 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			Assert.That(obj, Is.Not.Null, "Must initialize with an object and flid.");
 			Assert.Greater(flid, 0, "Must initialize with an object and flid.");
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/AtomicReferenceLauncherTests.cs
 			Assert.That(fieldName, Is.Not.Null.Or.Empty, "Must initialize with a field name.");
-				Initialize(cache, obj, flid, fieldName, null, "", analysisWs);
-||||||| f013144d5:Src/Common/Controls/DetailControls/DetailControlsTests/AtomicReferenceLauncherTests.cs
-			Assert.IsNotNullOrEmpty(fieldName, "Must initialize with a field name.");
-			Initialize(cache, obj, flid, fieldName, null, null, null, "", analysisWs);
-=======
-			Assert.That(fieldName, Is.Not.Null.Or.Empty, "Must initialize with a field name.");
-			Initialize(cache, obj, flid, fieldName, null, null, null, "", analysisWs);
->>>>>>> develop:Src/Common/Controls/DetailControls/DetailControlsTests/AtomicReferenceLauncherTests.cs
+			Initialize(cache, obj, flid, fieldName, null, "", analysisWs);
 		}
 	}
 

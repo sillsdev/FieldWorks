@@ -1,25 +1,8 @@
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/XMLViews/XmlBrowseViewBaseVcTests.cs
-// Copyright (c) 2013-2020 SIL International
-||||||| f013144d5:Src/Common/Controls/XMLViews/XMLViewsTests/XmlBrowseViewBaseVcTests.cs
-﻿// Copyright (c) 2015 SIL International
-=======
-// Copyright (c) 2015 SIL International
->>>>>>> develop:Src/Common/Controls/XMLViews/XMLViewsTests/XmlBrowseViewBaseVcTests.cs
+// Copyright (c) 2013-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/XMLViews/XmlBrowseViewBaseVcTests.cs
 using LanguageExplorer.Controls.XMLViews;
-||||||| f013144d5:Src/Common/Controls/XMLViews/XMLViewsTests/XmlBrowseViewBaseVcTests.cs
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-=======
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml;
->>>>>>> develop:Src/Common/Controls/XMLViews/XMLViewsTests/XmlBrowseViewBaseVcTests.cs
 using NUnit.Framework;
 
 namespace LanguageExplorerTests.Controls.XMLViews

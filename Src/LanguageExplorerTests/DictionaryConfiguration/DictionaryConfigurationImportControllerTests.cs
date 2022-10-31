@@ -452,18 +452,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				Publications = new List<string> { "Main Dictionary", "unknown pub 1", "unknown pub 2" },
 				FilePath = Path.GetTempPath() + configFilename
 			};
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/DictionaryConfigurationImportControllerTests.cs
-			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigPath, _controller._configurations, anotherAlreadyExistingModel);
-			FileUtils.WriteStringToFile(anotherAlreadyExistingModel.FilePath, "arbitrary file content", Encoding.UTF8);
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationImportControllerTests.cs
-			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigPath, _controller._configurations,
-				anotherAlreadyExistingModel);
-			FileUtils.WriteStringtoFile(anotherAlreadyExistingModel.FilePath, "arbitrary file content", Encoding.UTF8);
-=======
 			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigPath, _controller._configurations,
 				anotherAlreadyExistingModel);
 			FileUtils.WriteStringToFile(anotherAlreadyExistingModel.FilePath, "arbitrary file content", Encoding.UTF8);
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationImportControllerTests.cs
 
 			_controller._configurations.Add(alreadyExistingModelWithSameLabel);
 			_controller._configurations.Add(anotherAlreadyExistingModel);
@@ -555,16 +546,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var configFile = FileUtils.GetTempFile("unittest.xml");
 			const string xmlOpenTagsThruRoot = @"<?xml version=""1.0"" encoding=""utf-8""?>
 			<DictionaryConfiguration name=""Root"" allPublications=""true"" isRootBased=""true"" version=""1"" lastModified=""2014-02-13"">";
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/DictionaryConfigurationImportControllerTests.cs
 			const string xmlCloseTagsFromRoot = "</DictionaryConfiguration>";
 			FileUtils.WriteStringToFile(configFile, xmlOpenTagsThruRoot +
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationImportControllerTests.cs
-			const string XmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
-			FileUtils.WriteStringtoFile(configFile, XmlOpenTagsThruRoot +
-=======
-			const string XmlCloseTagsFromRoot = @"</DictionaryConfiguration>";
-			FileUtils.WriteStringToFile(configFile, XmlOpenTagsThruRoot +
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationImportControllerTests.cs
 				"<ConfigurationItem name=\"Main Entry\" style=\"Dictionary-Normal\" styleType=\"paragraph\" isEnabled=\"true\" field=\"LexEntry\" cssClassNameOverride=\"entry\"></ConfigurationItem>"
 				+ xmlCloseTagsFromRoot, Encoding.UTF8);
 			_controller._temporaryImportConfigLocation = configFile;

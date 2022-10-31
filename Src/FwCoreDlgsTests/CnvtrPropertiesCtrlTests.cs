@@ -29,15 +29,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Creates and loads a set of dummy converters to test the
 		/// <see cref="CnvtrPropertiesCtrl"/> class.
 		/// </summary>
-<<<<<<< HEAD:Src/FwCoreDlgsTests/CnvtrPropertiesCtrlTests.cs
 		[OneTimeSetUp]
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/CnvtrPropertiesCtrlTests.cs
-		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
-=======
-		/// ------------------------------------------------------------------------------------
-		[OneTimeSetUp]
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/CnvtrPropertiesCtrlTests.cs
 		public void FixtureSetup()
 		{
 			var encConverters = new EncConverters();
@@ -235,15 +227,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// ICU converters we ship.
 			Assert.AreEqual("ISO-8859-1", ((CnvtrSpecComboItem)m_myCtrl.cboSpec.SelectedItem).Specs, "Selected spec should be ISO-8859-1 for ZZZUnitTestICU");
 			Assert.IsTrue(m_myCtrl.cboConversion.SelectedItem is CnvtrDataComboItem, "Conversion type should be selected for ZZZUnitTestICU");
-<<<<<<< HEAD:Src/FwCoreDlgsTests/CnvtrPropertiesCtrlTests.cs
-			Assert.AreEqual(ConvType.Legacy_to_from_Unicode, ((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type, "Selected Conversion type should be Legacy_to_from_Unicode for IZZZUnitTestICU");
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/CnvtrPropertiesCtrlTests.cs
-			Assert.AreEqual(ConvType.Legacy_to_from_Unicode,
-				((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type, "Selected Conversion type should be Legacy_to_from_Unicode for IZZZUnitTestICU");
-=======
 			Assert.AreEqual(encConverterStoredType,
 				((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type, "Selected Conversion type should match the value stored in EncConverters for ZZZUnitTestICU");
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/CnvtrPropertiesCtrlTests.cs
 			Assert.AreEqual("ZZZUnitTestICU", m_myCtrl.txtName.Text, "Displayed converter should be ZZZUnitTestICU");
 		}
 

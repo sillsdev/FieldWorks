@@ -83,23 +83,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		/// <summary>
 		/// Test must preload Clicked Cell, and Eligible Rows and then call this.
 		/// </summary>
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/AdvancedMTDialogLogicTests.cs
-		private void SetupParameterObject(IConstChartWordGroup[] affectedGroupsArray)
-||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/AdvancedMTDialogLogicTests.cs
-		/// <param name="group"></param>
-		void SetupParameterObject(IConstChartWordGroup group)
-		{
-			SetupParamObjBase();
-			Assert.IsNotNull(group, "Invalid CCWordGroup.");
-			m_sentElem.AffectedWordGroups.Add(group);
-		}
-
-		/// <summary>
-		/// Test must preload Clicked Cell, and Eligible Rows and then call this.
-		/// </summary>
-		/// <param name="affectedGroupsArray"></param>
-		void SetupParameterObject(IConstChartWordGroup[] affectedGroupsArray)
-=======
 		/// <param name="group"></param>
 		void SetupParameterObject(IConstChartWordGroup group)
 		{
@@ -113,7 +96,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		/// </summary>
 		/// <param name="affectedGroupsArray"></param>
 		void SetupParameterObject(IConstChartWordGroup[] affectedGroupsArray)
->>>>>>> develop:Src/LexText/Discourse/DiscourseTests/AdvancedMTDialogLogicTests.cs
 		{
 			SetupParamObjBase();
 			Assert.That(affectedGroupsArray, Is.Not.Null, "Empty parameter array.");
