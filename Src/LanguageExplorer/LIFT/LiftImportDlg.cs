@@ -1,10 +1,4 @@
-<<<<<<< HEAD:Src/LanguageExplorer/LIFT/LiftImportDlg.cs
-// Copyright (c) 2008-2020 SIL International
-||||||| f013144d5:Src/LexText/LexTextControls/LiftImportDlg.cs
-// Copyright (c) 2008-2013 SIL International
-=======
-// Copyright (c) 2008-2021 SIL International
->>>>>>> develop:Src/LexText/LexTextControls/LiftImportDlg.cs
+// Copyright (c) 2008-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -100,15 +94,10 @@ namespace LanguageExplorer.LIFT
 			if (!btnOK.Enabled)
 			{
 				return;
-<<<<<<< HEAD:Src/LanguageExplorer/LIFT/LiftImportDlg.cs
-			}
-||||||| f013144d5:Src/LexText/LexTextControls/LiftImportDlg.cs
-=======
 			}
 
 			TrackingHelper.TrackImport("lexicon", "Lift", ImportExportStep.Attempted,
-				new Dictionary<string, string> { { "style", Enum.GetName(typeof(FlexLiftMerger.MergeStyle), m_msImport) } });
->>>>>>> develop:Src/LexText/LexTextControls/LiftImportDlg.cs
+				new Dictionary<string, string> { { "style", Enum.GetName(typeof(MergeStyle), m_msImport) } });
 			DoImport();
 			DialogResult = DialogResult.OK;
 			if (!string.IsNullOrEmpty(m_sLogFile))
@@ -200,20 +189,15 @@ namespace LanguageExplorer.LIFT
 				if (Directory.Exists(sLIFTtempFolder))
 				{
 					Directory.Delete(sLIFTtempFolder, true);
-<<<<<<< HEAD:Src/LanguageExplorer/LIFT/LiftImportDlg.cs
 				}
-				DirectoryHelper.Copy(sLIFTfolder, sLIFTtempFolder, true);
-||||||| f013144d5:Src/LexText/LexTextControls/LiftImportDlg.cs
-				LdmlFileBackup.CopyDirectory(sLIFTfolder, sLIFTtempFolder);
-=======
 				Directory.CreateDirectory(sLIFTtempFolder);
 				var sDestFile = Path.Combine(sLIFTtempFolder, Path.GetFileName(sOrigFile));
-				LdmlFileBackup.CopyFile(sOrigFile, sDestFile);
+				RobustFile.Copy(sOrigFile, sDestFile, true);
 				var sRangeFile = sOrigFile + "-ranges";
-				if(File.Exists(sRangeFile))
+				if (File.Exists(sRangeFile))
 				{
 					sDestFile = Path.Combine(sLIFTtempFolder, Path.GetFileName(sRangeFile));
-					LdmlFileBackup.CopyFile(sRangeFile, sDestFile);
+					DirectoryHelper.Copy(sRangeFile, sDestFile, true);
 
 				}
 				string[] sDirsToCopy = { "WritingSystems", "audio", "pictures" };
@@ -223,10 +207,9 @@ namespace LanguageExplorer.LIFT
 					if (Directory.Exists(sSourceFolder) == true)
 					{
 						var sDestFolder = Path.Combine(sLIFTtempFolder, sdir);
-						LdmlFileBackup.CopyDirectory(sSourceFolder, sDestFolder);
+						DirectoryHelper.Copy(sSourceFolder, sDestFolder, true);
 					}
 				}
->>>>>>> develop:Src/LexText/LexTextControls/LiftImportDlg.cs
 				// Older LIFT files had ldml files in root directory. If found, move them to WritingSystem folder.
 				if (Directory.GetFiles(sLIFTtempFolder, "*.ldml").Length > 0)
 				{
@@ -294,16 +277,9 @@ namespace LanguageExplorer.LIFT
 			}
 			catch (Exception error)
 			{
-<<<<<<< HEAD:Src/LanguageExplorer/LIFT/LiftImportDlg.cs
-				var sMsg = string.Format(LiftResources.ksLIFTImportProblem, sOrigFile, error.Message);
-||||||| f013144d5:Src/LexText/LexTextControls/LiftImportDlg.cs
-				string sMsg = String.Format(LexTextControls.ksLIFTImportProblem,
-					sOrigFile, error.Message);
-=======
 				TrackingHelper.TrackImport("lexicon", "Lift", ImportExportStep.Failed);
-				string sMsg = String.Format(LexTextControls.ksLIFTImportProblem,
+				string sMsg = string.Format(LiftResources.ksLIFTImportProblem,
 					sOrigFile, error.Message);
->>>>>>> develop:Src/LexText/LexTextControls/LiftImportDlg.cs
 				try
 				{
 					var bldr = new StringBuilder();
@@ -320,15 +296,8 @@ namespace LanguageExplorer.LIFT
 					else
 					{
 						progressDlg.SynchronizeInvoke.Invoke(() => ClipboardUtils.SetDataObject(bldr.ToString(), true));
-<<<<<<< HEAD:Src/LanguageExplorer/LIFT/LiftImportDlg.cs
 					}
 					Logger.WriteEvent(bldr.ToString());
-||||||| f013144d5:Src/LexText/LexTextControls/LiftImportDlg.cs
-						Logger.WriteEvent(bldr.ToString());
-=======
-					Logger.WriteEvent(bldr.ToString());
-					}
->>>>>>> develop:Src/LexText/LexTextControls/LiftImportDlg.cs
 				}
 				catch
 				{
