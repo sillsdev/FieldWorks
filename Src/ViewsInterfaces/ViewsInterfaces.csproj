@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="../../Build/Src/FwBuildTasks/SIL.FwBuildTasks.props"/>
+  <Import Project="../../Build/Src/FwBuildTasks/SIL.FwBuildTasks.props" />
 
   <PropertyGroup>
     <RootNamespace>SIL.FieldWorks.Common.ViewsInterfaces</RootNamespace>
@@ -12,9 +12,9 @@
     <!-- On Linux, we don't use a nuget package for Icu4c but a Debian package -->
     <PackageReference Include="Icu4c.Win.Fw.Bin" Version="70.1.123" />
     <PackageReference Include="Icu4c.Win.Fw.Lib" Version="70.1.123" />
-    <PackageReference Include="SIL.LCModel" Version="10.2.0-beta0056" />
-    <PackageReference Include="SIL.LCModel.Build.Tasks" Version="10.2.0-beta0056" PrivateAssets="All" />
-    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0056" />
+    <PackageReference Include="SIL.LCModel" Version="10.2.0-beta0059" />
+    <PackageReference Include="SIL.LCModel.Build.Tasks" Version="10.2.0-beta0059" PrivateAssets="All" />
+    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0059" />
   </ItemGroup>
 
   <ItemGroup>

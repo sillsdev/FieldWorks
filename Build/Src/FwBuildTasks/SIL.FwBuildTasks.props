@@ -21,6 +21,7 @@
   <UsingTask TaskName="Make" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
   <UsingTask TaskName="Md5Checksum" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
   <UsingTask TaskName="NormalizeLocales" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll"/>
+  <!-- REVIEW (Hasso) 2022.10: redundant to SIL.BuildTasks.NUnit? Used? -->
   <UsingTask TaskName="NUnit" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
   <UsingTask TaskName="ParentDirectory" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />
   <UsingTask TaskName="ParseVersionNumbers" AssemblyFile="$(FwBuildTasksPath)/SIL.FwBuildTasks.dll" />

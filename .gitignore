@@ -4,6 +4,7 @@ NDependOut/
 FWXml.xpr
 GeneratedAssemblyInfo.cs
 Collection.cpp
+*.binlog
 .vs/
 .idea/
 Build/FieldWorks.targets
