@@ -1,30 +1,11 @@
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/SilSidePane/ListViewItemArea.cs
-// SilSidePane, Copyright 2008-2020 SIL International. All rights reserved.
-// SilSidePane is licensed under the Code Project Open License (CPOL), <http://www.codeproject.com/info/cpol10.aspx>.
-// Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
-// Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
-||||||| f013144d5:Src/XCore/SilSidePane/ListViewItemArea.cs
-// SilSidePane, Copyright 2008-2016 SIL International. All rights reserved.
-// SilSidePane is licensed under the Code Project Open License (CPOL), <http://www.codeproject.com/info/cpol10.aspx>.
-// Derived from OutlookBar v2 2005 <http://www.codeproject.com/KB/vb/OutlookBar.aspx>, Copyright 2007 by Star Vega.
-// Changed in 2008 and 2009 by SIL International to convert to C# and add more functionality.
-=======
 // Copyright (c) 2016 SIL International
 // SilOutlookBar is licensed under the MIT license.
->>>>>>> develop:Src/XCore/SilSidePane/ListViewItemArea.cs
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/SilSidePane/ListViewItemArea.cs
-using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
-||||||| f013144d5:Src/XCore/SilSidePane/ListViewItemArea.cs
-using SIL.LCModel.Utils;
-=======
-using SIL.PlatformUtilities;
->>>>>>> develop:Src/XCore/SilSidePane/ListViewItemArea.cs
 
 namespace LanguageExplorer.Impls.SilSidePane
 {
@@ -43,7 +24,6 @@ namespace LanguageExplorer.Impls.SilSidePane
 			Items = new List<Item>();
 			_smallImageList = new ImageList();
 			_largeImageList = new ImageList();
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/SilSidePane/ListViewItemArea.cs
 			ItemSelectionChanged += HandleWidgetSelectionChanged;
 			View = View.List;
 			Name = "sidepane_listview";
@@ -57,33 +37,6 @@ namespace LanguageExplorer.Impls.SilSidePane
 			{
 				LabelWrap = false;      // Fix FWNX-739 as best we can (no ellipsis when trimming like in Windows).
 			}
-||||||| f013144d5:Src/XCore/SilSidePane/ListViewItemArea.cs
-
-			base.ItemSelectionChanged += HandleWidgetSelectionChanged;
-			base.View = View.List;
-			base.Name = "sidepane_listview";
-			base.Dock = DockStyle.Fill;
-			base.MultiSelect = false;
-			base.Tag = null;
-			base.SmallImageList = _smallImageList;
-			base.LargeImageList = _largeImageList;
-			base.HideSelection = false;
-			if (MiscUtils.IsUnix)
-				base.LabelWrap = false;		// Fix FWNX-739 as best we can (no ellipsis when trimming like in Windows).
-=======
-
-			base.ItemSelectionChanged += HandleWidgetSelectionChanged;
-			base.View = View.List;
-			base.Name = "sidepane_listview";
-			base.Dock = DockStyle.Fill;
-			base.MultiSelect = false;
-			base.Tag = null;
-			base.SmallImageList = _smallImageList;
-			base.LargeImageList = _largeImageList;
-			base.HideSelection = false;
-			if (Platform.IsUnix)
-				base.LabelWrap = false;		// Fix FWNX-739 as best we can (no ellipsis when trimming like in Windows).
->>>>>>> develop:Src/XCore/SilSidePane/ListViewItemArea.cs
 		}
 
 		/// <inheritdoc />

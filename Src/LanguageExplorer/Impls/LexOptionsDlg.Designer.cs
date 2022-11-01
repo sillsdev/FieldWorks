@@ -1,24 +1,10 @@
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/LexOptionsDlg.Designer.cs
-// Copyright (c) 2007-2020 SIL International
-||||||| f013144d5:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
-// Copyright (c) 2015 SIL International
-=======
-// Copyright (c) 2015-2021 SIL International
->>>>>>> develop:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
+// Copyright (c) 2007-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/LexOptionsDlg.Designer.cs
 using System.Diagnostics;
 
 namespace LanguageExplorer.Impls
-||||||| f013144d5:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
-namespace SIL.FieldWorks.LexText.Controls
-=======
-using System.Windows.Forms;
-
-namespace SIL.FieldWorks.LexText.Controls
->>>>>>> develop:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
 {
 	partial class LexOptionsDlg
 	{
@@ -63,15 +49,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_tabPrivacy = new System.Windows.Forms.TabPage();
 			this.llPrivacy = new System.Windows.Forms.LinkLabel();
 			this.PrivacyText = new System.Windows.Forms.TextBox();
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/LexOptionsDlg.Designer.cs
-||||||| f013144d5:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
-			this.m_tabPlugins = new System.Windows.Forms.TabPage();
-			this.m_lvPlugins = new System.Windows.Forms.ListView();
-			this.m_chName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.m_chDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.m_labelPluginBlurb = new System.Windows.Forms.Label();
-			this.m_labelRights = new System.Windows.Forms.Label();
-=======
 			this.m_okToPingCheckBox = new System.Windows.Forms.CheckBox();
 			this.m_tabPlugins = new System.Windows.Forms.TabPage();
 			this.m_labelPluginRights = new System.Windows.Forms.Label();
@@ -79,27 +56,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_lvPlugins = new System.Windows.Forms.ListView();
 			this.m_chName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.m_chDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
->>>>>>> develop:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
 			this.m_tabInterface = new System.Windows.Forms.TabPage();
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/LexOptionsDlg.Designer.cs
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.m_userInterfaceChooser = new UserInterfaceChooser();
-			this.updateGlobalWS = new System.Windows.Forms.CheckBox();
-			this.label4 = new System.Windows.Forms.Label();
-||||||| f013144d5:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.label3 = new System.Windows.Forms.Label();
-			this.m_userInterfaceChooser = new SIL.FieldWorks.Common.Widgets.UserInterfaceChooser();
-			this.updateGlobalWS = new System.Windows.Forms.CheckBox();
-			this.label4 = new System.Windows.Forms.Label();
-=======
->>>>>>> develop:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
 			this.m_autoOpenCheckBox = new System.Windows.Forms.CheckBox();
 			this.label4 = new System.Windows.Forms.Label();
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.m_userInterfaceChooser = new SIL.FieldWorks.Common.Widgets.UserInterfaceChooser();
-			this.label3 = new System.Windows.Forms.Label();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.m_tabUpdates = new System.Windows.Forms.TabPage();
 			this.gbUpdateChannel = new System.Windows.Forms.GroupBox();
@@ -167,50 +129,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_okToPingCheckBox.Name = "m_okToPingCheckBox";
 			this.m_okToPingCheckBox.UseVisualStyleBackColor = true;
 			// 
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/LexOptionsDlg.Designer.cs
-||||||| f013144d5:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
-			// m_tabPlugins
-			// 
-			this.m_tabPlugins.Controls.Add(this.m_labelRights);
-			this.m_tabPlugins.Controls.Add(this.m_labelPluginBlurb);
-			this.m_tabPlugins.Controls.Add(this.m_lvPlugins);
-			resources.ApplyResources(this.m_tabPlugins, "m_tabPlugins");
-			this.m_tabPlugins.Name = "m_tabPlugins";
-			this.m_tabPlugins.UseVisualStyleBackColor = true;
-			// 
-			// m_lvPlugins
-			// 
-			this.m_lvPlugins.CheckBoxes = true;
-			this.m_lvPlugins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.m_chName,
-            this.m_chDescription});
-			this.m_lvPlugins.FullRowSelect = true;
-			this.m_lvPlugins.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			resources.ApplyResources(this.m_lvPlugins, "m_lvPlugins");
-			this.m_lvPlugins.MultiSelect = false;
-			this.m_lvPlugins.Name = "m_lvPlugins";
-			this.m_lvPlugins.UseCompatibleStateImageBehavior = false;
-			this.m_lvPlugins.View = System.Windows.Forms.View.Details;
-			// 
-			// m_chName
-			// 
-			resources.ApplyResources(this.m_chName, "m_chName");
-			// 
-			// m_chDescription
-			// 
-			resources.ApplyResources(this.m_chDescription, "m_chDescription");
-			// 
-			// m_labelPluginBlurb
-			// 
-			resources.ApplyResources(this.m_labelPluginBlurb, "m_labelPluginBlurb");
-			this.m_labelPluginBlurb.Name = "m_labelPluginBlurb";
-			// 
-			// m_labelRights
-			// 
-			resources.ApplyResources(this.m_labelRights, "m_labelRights");
-			this.m_labelRights.Name = "m_labelRights";
-			// 
-=======
 			// m_tabPlugins
 			// 
 			this.m_tabPlugins.Controls.Add(this.m_labelPluginRights);
@@ -253,7 +171,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			// 
 			resources.ApplyResources(this.m_chDescription, "m_chDescription");
 			// 
->>>>>>> develop:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
 			// m_tabInterface
 			// 
 			resources.ApplyResources(this.m_tabInterface, "m_tabInterface");
@@ -380,22 +297,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		private System.Windows.Forms.TabPage m_tabPrivacy;
 		private System.Windows.Forms.TextBox PrivacyText;
 		private System.Windows.Forms.CheckBox m_okToPingCheckBox;
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/LexOptionsDlg.Designer.cs
-||||||| f013144d5:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
-		private System.Windows.Forms.TabPage m_tabPlugins;
-		private System.Windows.Forms.Label m_labelRights;
-		private System.Windows.Forms.Label m_labelPluginBlurb;
-		private System.Windows.Forms.ListView m_lvPlugins;
-		private System.Windows.Forms.ColumnHeader m_chName;
-		private System.Windows.Forms.ColumnHeader m_chDescription;
-=======
 		private System.Windows.Forms.TabPage m_tabPlugins;
 		private System.Windows.Forms.Label m_labelPluginRights;
 		private System.Windows.Forms.Label m_labelPluginBlurb;
 		private System.Windows.Forms.ListView m_lvPlugins;
 		private System.Windows.Forms.ColumnHeader m_chName;
 		private System.Windows.Forms.ColumnHeader m_chDescription;
->>>>>>> develop:Src/LexText/LexTextControls/LexOptionsDlg.Designer.cs
 		private System.Windows.Forms.TabPage m_tabInterface;
 		private System.Windows.Forms.CheckBox m_autoOpenCheckBox;
 		private System.Windows.Forms.Label label4;

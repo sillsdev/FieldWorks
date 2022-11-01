@@ -18,13 +18,8 @@ using LanguageExplorer.DictionaryConfiguration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SIL.Code;
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/UploadToWebonaryController.cs
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
-||||||| f013144d5:Src/xWorks/UploadToWebonaryController.cs
-=======
-using SIL.FieldWorks.Common.FwUtils;
->>>>>>> develop:Src/xWorks/UploadToWebonaryController.cs
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 
@@ -45,17 +40,9 @@ namespace LanguageExplorer.Impls
 		/// </summary>
 		protected Func<IWebonaryClient> CreateWebClient = () => new WebonaryClient { Encoding = Encoding.UTF8 };
 
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/UploadToWebonaryController.cs
 		public IPropertyTable PropertyTable { get; }
 
 		public UploadToWebonaryController(LcmCache cache, IPropertyTable propertyTable, StatusBar statusBar)
-||||||| f013144d5:Src/xWorks/UploadToWebonaryController.cs
-		public PropertyTable PropertyTable { private get; set; }
-
-		public UploadToWebonaryController(LcmCache cache, PropertyTable propertyTable, Mediator mediator)
-=======
-		public UploadToWebonaryController(LcmCache cache, PropertyTable propertyTable, Mediator mediator)
->>>>>>> develop:Src/xWorks/UploadToWebonaryController.cs
 		{
 			_cache = cache;
 			PropertyTable = propertyTable;
@@ -184,14 +171,8 @@ namespace LanguageExplorer.Impls
 				dynamic fileToSign = new JObject();
 				// ReSharper disable once AssignNullToNotNullAttribute - This file has a filename, the OS told us so.
 				var relativeFilePath = Path.Combine(model.SiteName, subFolder, Path.GetFileName(file));
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/UploadToWebonaryController.cs
 				if (Platform.IsWindows)
 				{
-||||||| f013144d5:Src/xWorks/UploadToWebonaryController.cs
-				if (MiscUtils.IsWindows)
-=======
-				if (Platform.IsWindows)
->>>>>>> develop:Src/xWorks/UploadToWebonaryController.cs
 					relativeFilePath = relativeFilePath.Replace('\\', '/');
 				}
 				fileToSign.objectId = relativeFilePath;
@@ -199,22 +180,14 @@ namespace LanguageExplorer.Impls
 				var signedUrl = PostContentToWebonary(model, webonaryView, "post/file", fileToSign);
 				if (string.IsNullOrEmpty(signedUrl))
 				{
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/UploadToWebonaryController.cs
-					webonaryView.UpdateStatus(string.Format(LanguageExplorerResources.ksPutFilesToWebonaryFailed, relativeFilePath));
-					return false;
-||||||| f013144d5:Src/xWorks/UploadToWebonaryController.cs
-					webonaryView.UpdateStatus(string.Format(xWorksStrings.ksPutFilesToWebonaryFailed, relativeFilePath));
-					return false;
-=======
 					// Sleep briefly and try one more time (To compensate for a potential lambda cold start)
 					Thread.Sleep(500);
 					signedUrl = PostContentToWebonary(model, webonaryView, "post/file", fileToSign);
 					if (string.IsNullOrEmpty(signedUrl))
 					{
-						webonaryView.UpdateStatus(string.Format(xWorksStrings.ksPutFilesToWebonaryFailed, relativeFilePath));
+						webonaryView.UpdateStatus(string.Format(LanguageExplorerResources.ksPutFilesToWebonaryFailed, relativeFilePath));
 						return false;
 					}
->>>>>>> develop:Src/xWorks/UploadToWebonaryController.cs
 				}
 				allFilesSucceeded &= UploadFileToWebonary(signedUrl, file, webonaryView);
 				webonaryView.UpdateStatus(string.Format(LanguageExplorerResources.ksPutFilesToWebonaryUploaded, Path.GetFileName(file)));
@@ -518,14 +491,8 @@ namespace LanguageExplorer.Impls
 
 		public void UploadToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view)
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/UploadToWebonaryController.cs
-			view.UpdateStatus(LanguageExplorerResources.ksUploadingToWebonary);
-||||||| f013144d5:Src/xWorks/UploadToWebonaryController.cs
-			view.UpdateStatus(xWorksStrings.ksUploadingToWebonary);
-=======
 			TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Launched);
-			view.UpdateStatus(xWorksStrings.ksUploadingToWebonary);
->>>>>>> develop:Src/xWorks/UploadToWebonaryController.cs
+			view.UpdateStatus(LanguageExplorerResources.ksUploadingToWebonary);
 			view.SetStatusCondition(WebonaryStatusCondition.None);
 			if (string.IsNullOrEmpty(model.SiteName))
 			{
@@ -557,10 +524,6 @@ namespace LanguageExplorer.Impls
 				view.SetStatusCondition(WebonaryStatusCondition.Error);
 				return;
 			}
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/UploadToWebonaryController.cs
-||||||| f013144d5:Src/xWorks/UploadToWebonaryController.cs
-
-=======
 
 			TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Attempted,
 				new Dictionary<string, string>
@@ -569,87 +532,46 @@ namespace LanguageExplorer.Impls
 						"cloudApi", UseJsonApi.ToString()
 					}
 				});
->>>>>>> develop:Src/xWorks/UploadToWebonaryController.cs
 			var tempDirectoryForExport = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 			Directory.CreateDirectory(tempDirectoryForExport);
 			if (UseJsonApi)
 			{
 				try
 				{
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/UploadToWebonaryController.cs
-					view.UpdateStatus(string.Format(LanguageExplorerResources.UploadToWebonary_DeletingProjFiles, Environment.NewLine, deleteResponse));
-				}
-				var configuration = model.Configurations[model.SelectedConfiguration];
-				var templateFileNames = GenerateConfigurationTemplates(configuration, _cache, tempDirectoryForExport);
-				view.UpdateStatus(LanguageExplorerResources.ksPreparingDataForWebonary);
-				var metadataContent = GenerateDictionaryMetadataContent(model, templateFileNames, tempDirectoryForExport);
-				view.UpdateStatus(LanguageExplorerResources.ksWebonaryFinishedDataPrep);
-				var entries = _exportService.ExportConfiguredJson(tempDirectoryForExport, configuration);
-				var allRequestsSucceeded = PostEntriesToWebonary(model, view, entries, false);
-||||||| f013144d5:Src/xWorks/UploadToWebonaryController.cs
-					view.UpdateStatus(string.Format(xWorksStrings.UploadToWebonary_DeletingProjFiles, Environment.NewLine, deleteResponse));
-				}
-				var configuration = model.Configurations[model.SelectedConfiguration];
-				var templateFileNames = GenerateConfigurationTemplates(configuration, m_cache, tempDirectoryForExport);
-				view.UpdateStatus(xWorksStrings.ksPreparingDataForWebonary);
-				var metadataContent = GenerateDictionaryMetadataContent(model, templateFileNames, tempDirectoryForExport);
-				view.UpdateStatus(xWorksStrings.ksWebonaryFinishedDataPrep);
-				var entries = m_exportService.ExportConfiguredJson(tempDirectoryForExport, configuration);
-				var allRequestsSucceeded = PostEntriesToWebonary(model, view, entries, false);
-=======
 					var deleteResponse =
 						DeleteContentFromWebonary(model, view, "delete/dictionary");
 					if (deleteResponse != string.Empty)
 					{
 						view.UpdateStatus(string.Format(
-							xWorksStrings.UploadToWebonary_DeletingProjFiles, Environment.NewLine,
+							LanguageExplorerResources.UploadToWebonary_DeletingProjFiles, Environment.NewLine,
 							deleteResponse));
 					}
->>>>>>> develop:Src/xWorks/UploadToWebonaryController.cs
 
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/UploadToWebonaryController.cs
-				foreach (var selectedReversal in model.SelectedReversals)
-				{
-					var writingSystem = model.Reversals[selectedReversal].WritingSystem;
-					entries = _exportService.ExportConfiguredReversalJson(tempDirectoryForExport, writingSystem, out var entryIds, model.Reversals[selectedReversal]);
-					allRequestsSucceeded &= PostEntriesToWebonary(model, view, entries, true);
-					var reversalLetters = LcmJsonGenerator.GenerateReversalLetterHeaders(model.SiteName, writingSystem, entryIds, _cache);
-					AddReversalHeadword(metadataContent, writingSystem, reversalLetters);
-||||||| f013144d5:Src/xWorks/UploadToWebonaryController.cs
-				foreach (var selectedReversal in model.SelectedReversals)
-				{
-					int[] entryIds;
-					var writingSystem = model.Reversals[selectedReversal].WritingSystem;
-					entries = m_exportService.ExportConfiguredReversalJson(tempDirectoryForExport, writingSystem, out entryIds, model.Reversals[selectedReversal]);
-					allRequestsSucceeded &= PostEntriesToWebonary(model, view, entries, true);
-					var reversalLetters = LcmJsonGenerator.GenerateReversalLetterHeaders(model.SiteName, writingSystem, entryIds, m_cache);
-					AddReversalHeadword(metadataContent, writingSystem, reversalLetters);
-=======
 					var configuration = model.Configurations[model.SelectedConfiguration];
 					var templateFileNames =
-						GenerateConfigurationTemplates(configuration, m_cache,
+						GenerateConfigurationTemplates(configuration, _cache,
 							tempDirectoryForExport);
-					view.UpdateStatus(xWorksStrings.ksPreparingDataForWebonary);
+					view.UpdateStatus(LanguageExplorerResources.ksPreparingDataForWebonary);
 					var metadataContent = GenerateDictionaryMetadataContent(model,
 						templateFileNames, tempDirectoryForExport);
-					view.UpdateStatus(xWorksStrings.ksWebonaryFinishedDataPrep);
+					view.UpdateStatus(LanguageExplorerResources.ksWebonaryFinishedDataPrep);
 					var entries =
-						m_exportService.ExportConfiguredJson(tempDirectoryForExport,
+						_exportService.ExportConfiguredJson(tempDirectoryForExport,
 							configuration);
 					var allRequestsSucceeded = PostEntriesToWebonary(model, view, entries, false);
 
-					var reversalClerk = RecordClerk.FindClerk(m_propertyTable, "AllReversalEntries");
+					var reversalList = PropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository)?.GetRecordList("AllReversalEntries");
 					foreach (var selectedReversal in model.SelectedReversals)
 					{
 						int[] entryIds;
 						var writingSystem = model.Reversals[selectedReversal].WritingSystem;
-						entries = m_exportService.ExportConfiguredReversalJson(
+						entries = _exportService.ExportConfiguredReversalJson(
 							tempDirectoryForExport, writingSystem, out entryIds,
 							model.Reversals[selectedReversal]);
 						allRequestsSucceeded &= PostEntriesToWebonary(model, view, entries, true);
 						var reversalLetters =
 							LcmJsonGenerator.GenerateReversalLetterHeaders(model.SiteName,
-								writingSystem, entryIds, m_cache, reversalClerk);
+								writingSystem, entryIds, _cache, reversalList);
 						AddReversalHeadword(metadataContent, writingSystem, reversalLetters);
 					}
 
@@ -660,28 +582,19 @@ namespace LanguageExplorer.Impls
 					allRequestsSucceeded &= !string.IsNullOrEmpty(postResult);
 					if (allRequestsSucceeded)
 					{
-						view.UpdateStatus(xWorksStrings.ksWebonaryUploadSuccessful);
+						view.UpdateStatus(LanguageExplorerResources.ksWebonaryUploadSuccessful);
 						view.SetStatusCondition(WebonaryStatusCondition.Success);
 						TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Succeeded);
 					}
->>>>>>> develop:Src/xWorks/UploadToWebonaryController.cs
 				}
 				catch (Exception e)
 				{
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/UploadToWebonaryController.cs
-					view.UpdateStatus(LanguageExplorerResources.ksWebonaryUploadSuccessful);
-					view.SetStatusCondition(WebonaryStatusCondition.Success);
-||||||| f013144d5:Src/xWorks/UploadToWebonaryController.cs
-					view.UpdateStatus(xWorksStrings.ksWebonaryUploadSuccessful);
-					view.SetStatusCondition(WebonaryStatusCondition.Success);
-=======
 					//TODO: i18n this error string
 					view.UpdateStatus("Unexpected error encountered while uploading to webonary.");
 					view.UpdateStatus(e.Message);
 					view.UpdateStatus(e.StackTrace);
 					view.SetStatusCondition(WebonaryStatusCondition.Error);
 					TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Failed);
->>>>>>> develop:Src/xWorks/UploadToWebonaryController.cs
 				}
 			}
 			else

@@ -1,24 +1,10 @@
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/UserInterfaceChooser.Designer.cs
-// Copyright (c) 2007-2020 SIL International
-||||||| f013144d5:Src/Common/Controls/Widgets/UserInterfaceChooser.Designer.cs
-// Copyright (c) 2015 SIL International
-=======
-// Copyright (c) 2007-2021 SIL International
->>>>>>> develop:Src/Common/Controls/Widgets/UserInterfaceChooser.Designer.cs
+// Copyright (c) 2007-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-<<<<<<< HEAD:Src/LanguageExplorer/Impls/UserInterfaceChooser.Designer.cs
 using System.Diagnostics;
 
 namespace LanguageExplorer.Impls
-||||||| f013144d5:Src/Common/Controls/Widgets/UserInterfaceChooser.Designer.cs
-using SIL.PlatformUtilities;
-
-namespace SIL.FieldWorks.Common.Widgets
-=======
-namespace SIL.FieldWorks.Common.Widgets
->>>>>>> develop:Src/Common/Controls/Widgets/UserInterfaceChooser.Designer.cs
 {
 	partial class UserInterfaceChooser
 	{
