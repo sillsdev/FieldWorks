@@ -24,7 +24,7 @@
 		<CpuArchitecture>
 			<Output TaskParameter="Value" PropertyName="arch" />
 		</CpuArchitecture>
-		<Exec Command='"$(VSWhereDir)vswhere.exe" -version "[15.0,16.999)" -latest -property installationPath' ConsoleToMSBuild="true" EchoOff="true" StandardOutputImportance="Normal">
+		<Exec Command='"$(VSWhereDir)vswhere.exe" -version "17" -latest -property installationPath' ConsoleToMSBuild="true" EchoOff="true" StandardOutputImportance="Normal">
 			<Output TaskParameter="ConsoleOutput" PropertyName="InstallationPath" />
 		</Exec>
 		<Exec Command="$(MSBuildThisFileDirectory)regfree.bat -outputresource:$(TargetFileName) -manifest $(TargetFileName).manifest"
