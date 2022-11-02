@@ -12,20 +12,7 @@ using System.Xml;
 using System.Xml.Schema;
 using LanguageExplorer.Areas.TextsAndWords.Tools;
 using NUnit.Framework;
-<<<<<<< HEAD:Src/LanguageExplorerTests/Areas/TextsAndWords/Tools/BIRDFormatImportTests.cs
 using SIL.FieldWorks.Common.FwUtils;
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/BIRDFormatImportTests.cs
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-=======
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.IText.FlexInterlinModel;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/BIRDFormatImportTests.cs
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
@@ -160,40 +147,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 		}
 
 		[Test]
-<<<<<<< HEAD:Src/LanguageExplorerTests/Areas/TextsAndWords/Tools/BIRDFormatImportTests.cs
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/BIRDFormatImportTests.cs
-		[Ignore("EricP: Add valid ScrBook values to the schema? (e.g. GEN, MAT)...or reference an external schema for those?")]
-		public void InvalidScrBookAttributeValue()
-		{
-			const string xml = "<document>" +
-							"<interlinear-text scrBook='invalid'/>" +
-						 "</document>";
-
-			XmlReader xmlReader = GetXmlReaderForTest(xml);
-			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!MiscUtils.IsMono)
-				Assert.That(ex.Message, Is.EqualTo("The 'scrSectionType' attribute is invalid - The value 'invalid' is invalid according to its datatype 'scrSectionTypes' - The Enumeration constraint failed."));
-		}
-
-		[Test]
-=======
-		[Ignore("EricP: Add valid ScrBook values to the schema? (e.g. GEN, MAT)...or reference an external schema for those?")]
-		public void InvalidScrBookAttributeValue()
-		{
-			const string xml = "<document>" +
-							"<interlinear-text scrBook='invalid'/>" +
-						 "</document>";
-
-			XmlReader xmlReader = GetXmlReaderForTest(xml);
-			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!Platform.IsMono)
-				Assert.That(ex.Message, Is.EqualTo("The 'scrSectionType' attribute is invalid - The value 'invalid' is invalid according to its datatype 'scrSectionTypes' - The Enumeration constraint failed."));
-		}
-
-		[Test]
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/BIRDFormatImportTests.cs
 		public void ValidateScrSectionTypeAttributes()
 		{
 			const string xml = "<document>" +
@@ -215,17 +168,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 
 			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-<<<<<<< HEAD:Src/LanguageExplorerTests/Areas/TextsAndWords/Tools/BIRDFormatImportTests.cs
 			Assert.That(ex.Message, Is.EqualTo("The 'scrSectionType' attribute is invalid - The value 'invalid' is invalid according to its datatype 'scrSectionTypes' - The Enumeration constraint failed."));
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/BIRDFormatImportTests.cs
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!MiscUtils.IsMono)
-				Assert.That(ex.Message, Is.EqualTo("The 'scrSectionType' attribute is invalid - The value 'invalid' is invalid according to its datatype 'scrSectionTypes' - The Enumeration constraint failed."));
-=======
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!Platform.IsMono)
-				Assert.That(ex.Message, Is.EqualTo("The 'scrSectionType' attribute is invalid - The value 'invalid' is invalid according to its datatype 'scrSectionTypes' - The Enumeration constraint failed."));
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/BIRDFormatImportTests.cs
 		}
 
 		[Test]
@@ -249,17 +192,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 
 			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-<<<<<<< HEAD:Src/LanguageExplorerTests/Areas/TextsAndWords/Tools/BIRDFormatImportTests.cs
 			Assert.That(ex.Message, Is.EqualTo("The required attribute 'chapter' is missing."));
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/BIRDFormatImportTests.cs
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!MiscUtils.IsMono)
-				Assert.That(ex.Message, Is.EqualTo("The required attribute 'chapter' is missing."));
-=======
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!Platform.IsMono)
-				Assert.That(ex.Message, Is.EqualTo("The required attribute 'chapter' is missing."));
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/BIRDFormatImportTests.cs
 		}
 
 		[Test]
@@ -271,17 +204,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 
 			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-<<<<<<< HEAD:Src/LanguageExplorerTests/Areas/TextsAndWords/Tools/BIRDFormatImportTests.cs
 			Assert.That(ex.Message, Is.EqualTo("The required attribute 'verse' is missing."));
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/BIRDFormatImportTests.cs
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!MiscUtils.IsMono)
-				Assert.That(ex.Message, Is.EqualTo("The required attribute 'verse' is missing."));
-=======
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!Platform.IsMono)
-				Assert.That(ex.Message, Is.EqualTo("The required attribute 'verse' is missing."));
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/BIRDFormatImportTests.cs
 		}
 
 		[Test]
@@ -293,17 +216,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 
 			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-<<<<<<< HEAD:Src/LanguageExplorerTests/Areas/TextsAndWords/Tools/BIRDFormatImportTests.cs
 			Assert.That(ex.Message, Is.EqualTo("The element 'words' has invalid child element 'scrMilestone'. List of possible elements expected: 'word'."));
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/BIRDFormatImportTests.cs
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!MiscUtils.IsMono)
-				Assert.That(ex.Message, Is.EqualTo("The element 'words' has invalid child element 'scrMilestone'. List of possible elements expected: 'word'."));
-=======
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!Platform.IsMono)
-				Assert.That(ex.Message, Is.EqualTo("The element 'words' has invalid child element 'scrMilestone'. List of possible elements expected: 'word'."));
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/BIRDFormatImportTests.cs
 		}
 
 		[Test]
@@ -315,17 +228,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 
 			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-<<<<<<< HEAD:Src/LanguageExplorerTests/Areas/TextsAndWords/Tools/BIRDFormatImportTests.cs
 			Assert.That(ex.Message, Is.EqualTo("The 'chapter' attribute is invalid - The value 'one' is invalid according to its datatype 'http://www.w3.org/2001/XMLSchema:integer' - The string 'one' is not a valid Integer value."));
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/BIRDFormatImportTests.cs
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!MiscUtils.IsMono)
-				Assert.That(ex.Message, Is.EqualTo("The 'chapter' attribute is invalid - The value 'one' is invalid according to its datatype 'http://www.w3.org/2001/XMLSchema:integer' - The string 'one' is not a valid Integer value."));
-=======
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!Platform.IsMono)
-				Assert.That(ex.Message, Is.EqualTo("The 'chapter' attribute is invalid - The value 'one' is invalid according to its datatype 'http://www.w3.org/2001/XMLSchema:integer' - The string 'one' is not a valid Integer value."));
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/BIRDFormatImportTests.cs
 		}
 
 		[Test]
@@ -337,14 +240,6 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 
 			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-<<<<<<< HEAD:Src/LanguageExplorerTests/Areas/TextsAndWords/Tools/BIRDFormatImportTests.cs
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/BIRDFormatImportTests.cs
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!MiscUtils.IsMono)
-=======
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!Platform.IsMono)
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/BIRDFormatImportTests.cs
 				Assert.That(ex.Message, Is.EqualTo("The 'verse' attribute is invalid - The value 'one' is invalid according to its datatype 'http://www.w3.org/2001/XMLSchema:integer' - The string 'one' is not a valid Integer value."));
 		}
 
@@ -383,17 +278,7 @@ namespace LanguageExplorerTests.Areas.TextsAndWords.Tools
 
 			var xmlReader = GetXmlReaderForTest(xml);
 			var ex = Assert.Throws<XmlSchemaValidationException>(() => ReadXmlForValidation(xmlReader));
-<<<<<<< HEAD:Src/LanguageExplorerTests/Areas/TextsAndWords/Tools/BIRDFormatImportTests.cs
 			Assert.That(ex.Message, Is.EqualTo("The 'analysisStatus' attribute is invalid - The value 'invalid' is invalid according to its datatype 'analysisStatusTypes' - The Enumeration constraint failed."));
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/BIRDFormatImportTests.cs
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!MiscUtils.IsMono)
-				Assert.That(ex.Message, Is.EqualTo("The 'analysisStatus' attribute is invalid - The value 'invalid' is invalid according to its datatype 'analysisStatusTypes' - The Enumeration constraint failed."));
-=======
-			// TODO-Linux: The message on Mono doesn't state the failing attribute
-			if (!Platform.IsMono)
-				Assert.That(ex.Message, Is.EqualTo("The 'analysisStatus' attribute is invalid - The value 'invalid' is invalid according to its datatype 'analysisStatusTypes' - The Enumeration constraint failed."));
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/BIRDFormatImportTests.cs
 		}
 
 		[Test]

@@ -4,21 +4,9 @@
 
 using System;
 using System.Collections.Generic;
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/InterlinLineChoicesTests.cs
 using LanguageExplorer.Controls.DetailControls;
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
-=======
-using System.Collections.ObjectModel;
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
 using NUnit.Framework;
 using SIL.LCModel;
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/InterlinLineChoicesTests.cs
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
-using SIL.LCModel.Core.KernelInterfaces;
-=======
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.KernelInterfaces;
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
@@ -88,25 +76,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			Assert.AreEqual(1, choices.FirstEnabledMorphemeIndex);
 			Assert.AreEqual(1, choices.FirstEnabledLexEntryIndex);
 
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/InterlinLineChoicesTests.cs
-			Assert.IsTrue(choices[1].LexEntryLevel);    // lex entries
-			Assert.IsTrue(choices[2].LexEntryLevel);    // lex pos
-			Assert.IsTrue(choices[3].LexEntryLevel);    // lex gloss
-			Assert.IsTrue(choices[4].LexEntryLevel);    // lex gloss
-			Assert.IsFalse(choices[0].LexEntryLevel);   // word
-			Assert.IsFalse(choices[5].LexEntryLevel);   // word gloss
-			Assert.IsFalse(choices[6].LexEntryLevel);   // word pos
-			Assert.IsFalse(choices[7].LexEntryLevel);   // free trans
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
-			Assert.IsTrue(choices[1].LexEntryLevel);	// lex entries
-			Assert.IsTrue(choices[2].LexEntryLevel);	// lex pos
-			Assert.IsTrue(choices[3].LexEntryLevel);	// lex gloss
-			Assert.IsTrue(choices[4].LexEntryLevel);	// lex gloss
-			Assert.IsFalse(choices[0].LexEntryLevel);	// word
-			Assert.IsFalse(choices[5].LexEntryLevel);	// word gloss
-			Assert.IsFalse(choices[6].LexEntryLevel);	// word pos
-			Assert.IsFalse(choices[7].LexEntryLevel);	// free trans
-=======
 			Assert.IsTrue(choices.EnabledLineSpecs[1].LexEntryLevel);   // lex entries
 			Assert.IsTrue(choices.EnabledLineSpecs[2].LexEntryLevel);   // lex pos
 			Assert.IsTrue(choices.EnabledLineSpecs[3].LexEntryLevel);	// lex gloss
@@ -115,25 +84,12 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			Assert.IsFalse(choices.EnabledLineSpecs[5].LexEntryLevel);	// word gloss
 			Assert.IsFalse(choices.EnabledLineSpecs[6].LexEntryLevel);	// word pos
 			Assert.IsFalse(choices.EnabledLineSpecs[7].LexEntryLevel);	// free trans
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
 
 			choices.Add(InterlinLineChoices.kflidMorphemes);
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/InterlinLineChoicesTests.cs
-			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices[1].Flid);
-			Assert.AreEqual(1, choices.FirstMorphemeIndex); // morpheme line
-			Assert.AreEqual(2, choices.FirstLexEntryIndex); // lex entry
-			Assert.IsFalse(choices[1].LexEntryLevel);   // morphemes
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
-			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices[1].Flid);
-			Assert.AreEqual(1, choices.FirstMorphemeIndex);	// morpheme line
-			Assert.AreEqual(2, choices.FirstLexEntryIndex);	// lex entry
-			Assert.IsFalse(choices[1].LexEntryLevel);	// morphemes
-=======
 			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices.EnabledLineSpecs[5].Flid);
 			Assert.AreEqual(1, choices.FirstEnabledMorphemeIndex);	// first morpheme group line
 			Assert.AreEqual(1, choices.FirstEnabledLexEntryIndex);	// lex entry
 			Assert.IsFalse(choices.EnabledLineSpecs[5].LexEntryLevel);	// morphemes
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
 		}
 		[Test]
 		public void AddRemoveEditFields()
@@ -156,23 +112,11 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			Assert.AreEqual(InterlinLineChoices.kflidFreeTrans, choices.EnabledLineSpecs[5].Flid);
 
 			// We can't remove the Word line.
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/InterlinLineChoicesTests.cs
-			Assert.IsFalse(choices.OkToRemove(choices[0], out var msg));
-			Assert.IsNotNull(msg);
-			// Add another word line and make sure we can remove one of them.
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
-			string msg;
-			Assert.IsFalse(choices.OkToRemove(choices[0], out msg));
-			Assert.IsNotNull(msg);
-			// Add another word line and make sure we can remove one of them.
-=======
-			string msg;
-			Assert.IsFalse(choices.OkToRemove(choices.EnabledLineSpecs[0], out msg));
+			Assert.IsFalse(choices.OkToRemove(choices.EnabledLineSpecs[0], out var msg));
 			Assert.That(msg, Is.Not.Null);
 
 			// Cannot add duplicates.
 			var beforeCount = choices.AllLineSpecs.Count;
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
 			choices.Add(InterlinLineChoices.kflidWord);
 			Assert.AreEqual(beforeCount, choices.AllLineSpecs.Count);
 
@@ -236,24 +180,12 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		[Test]
 		public void MoveWsRowsUp()
 		{
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/InterlinLineChoicesTests.cs
-			var choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-			// To make it less confusing, here we add them in an order that does not produce
-			// reordering.
-			MakeStandardState(choices);
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
-			InterlinLineChoices choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-			// To make it less confusing, here we add them in an order that does not produce
-			// reordering.
-			MakeStandardState(choices);
-=======
 			const int fakeSecondWs = 90008;
 			InterlinLineChoices choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
 			choices.Add(InterlinLineChoices.kflidWord); // 0
 			choices.Add(InterlinLineChoices.kflidWordPos); // 1
 			choices.Add(InterlinLineChoices.kflidWordGloss, kwsAnalysis); // 2
 			choices.Add(InterlinLineChoices.kflidWordGloss, fakeSecondWs); // 3
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
 
 			Assert.That(choices.OkToMoveUp(0), Is.False); // words line already at top
 			Assert.That(choices.OkToMoveUp(1), Is.False);
@@ -269,33 +201,12 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		[Test]
 		public void MoveWsRowsDown()
 		{
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/InterlinLineChoicesTests.cs
-			InterlinLineChoices choices = new EditableInterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-			// To make it less confusing, here we add them in an order that does not produce
-			// reordering.
-			MakeStandardState(choices);
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
-			InterlinLineChoices choices = new EditableInterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-			// To make it less confusing, here we add them in an order that does not produce
-			// reordering.
-			MakeStandardState(choices);
-			//choices.Add(InterlinLineChoices.kflidWord); // 0
-			//choices.Add(InterlinLineChoices.kflidMorphemes); // 1
-			//choices.Add(InterlinLineChoices.kflidLexEntries); //2
-			//choices.Add(InterlinLineChoices.kflidLexGloss); //3
-			//choices.Add(InterlinLineChoices.kflidLexPos); //4
-			//choices.Add(InterlinLineChoices.kflidWordGloss); //5
-			//choices.Add(InterlinLineChoices.kflidWordPos); //6
-			//choices.Add(InterlinLineChoices.kflidFreeTrans); //7
-			//choices.Add(InterlinLineChoices.kflidLitTrans); //8
-=======
 			const int fakeSecondWs = 90008;
 			InterlinLineChoices choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
 			choices.Add(InterlinLineChoices.kflidWord); // 0
 			choices.Add(InterlinLineChoices.kflidWordGloss, kwsAnalysis); // 1
 			choices.Add(InterlinLineChoices.kflidWordGloss, fakeSecondWs); // 2
 			choices.Add(InterlinLineChoices.kflidWordPos); // 3
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
 
 			Assert.That(choices.OkToMoveDown(0), Is.False);
 			Assert.That(choices.OkToMoveDown(1), Is.True);
@@ -307,15 +218,8 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			Assert.That(choices.EnabledLineSpecs[2].Flid, Is.EqualTo(InterlinLineChoices.kflidWordGloss));
 			Assert.That(choices.EnabledLineSpecs[2].WritingSystem, Is.EqualTo(kwsAnalysis));
 		}
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/InterlinLineChoicesTests.cs
 
 		private static void MakeStandardState(InterlinLineChoices choices)
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
-		private void MakeStandardState(InterlinLineChoices choices)
-=======
-
-		private void MakeStandardState(InterlinLineChoices choices)
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
 		{
 			choices.Add(InterlinLineChoices.kflidWord); // 0
 			choices.Add(InterlinLineChoices.kflidMorphemes); // 1
@@ -327,250 +231,18 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			choices.Add(InterlinLineChoices.kflidFreeTrans); //7
 			choices.Add(InterlinLineChoices.kflidLitTrans); //8
 		}
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/InterlinLineChoicesTests.cs
-
-		[Test]
-		public void MoveDown()
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
-		[Test]
-		public void MoveDown()
-=======
 
 		[TestCase(false)]
 		[TestCase(true)]
 		public void MoveDown(bool editable)
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
 		{
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/InterlinLineChoicesTests.cs
-			var choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
-			InterlinLineChoices choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-=======
 			var choices = editable
 				? new EditableInterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis)
 				: new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
 			// To make it less confusing, here we add them in an order that does not produce
 			// reordering.
 			MakeStandardState(choices);
 
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/InterlinLineChoicesTests.cs
-			// lit trans can move up
-			Assert.IsTrue(choices.OkToMoveDown(0)); // most moves are OK in non-edit mode
-			Assert.IsTrue(choices.OkToMoveDown(1));
-			Assert.IsTrue(choices.OkToMoveDown(2));
-			Assert.IsTrue(choices.OkToMoveDown(3));
-			Assert.IsTrue(choices.OkToMoveDown(4)); // whole morph bundle will move down
-			Assert.IsTrue(choices.OkToMoveDown(5));
-			Assert.IsFalse(choices.OkToMoveDown(6)); // Would put FF out of order
-			Assert.IsTrue(choices.OkToMoveDown(7));
-			Assert.IsFalse(choices.OkToMoveDown(8));
-
-			choices.MoveDown(0);
-			// morphemes is now top
-			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices[0].Flid);
-			// Word moved down to position 4
-			Assert.AreEqual(InterlinLineChoices.kflidWord, choices[4].Flid);
-			// Lex Gloss (to pick just one) also moved up
-			Assert.AreEqual(InterlinLineChoices.kflidLexGloss, choices[2].Flid);
-
-			choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-			MakeStandardState(choices);
-			choices.MoveDown(1);
-			// nothing complicated, two items changed place.
-			Assert.AreEqual(InterlinLineChoices.kflidLexEntries, choices[1].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices[2].Flid);
-
-			choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-			MakeStandardState(choices);
-			choices.MoveDown(4);
-			// Moves past whole morpheme bundle
-			Assert.AreEqual(InterlinLineChoices.kflidWordGloss, choices[1].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices[2].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidLexEntries, choices[3].Flid);
-
-			choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-			MakeStandardState(choices);
-			choices.MoveDown(5);
-			// nothing complicated, two items changed place.
-			Assert.AreEqual(InterlinLineChoices.kflidWordPos, choices[5].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidWordGloss, choices[6].Flid);
-
-			choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-			MakeStandardState(choices);
-			choices.MoveDown(7);
-			// nothing complicated, two items changed place.
-			Assert.AreEqual(InterlinLineChoices.kflidLitTrans, choices[7].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidFreeTrans, choices[8].Flid);
-		}
-		[Test]
-		public void EditMoveDown()
-		{
-			InterlinLineChoices choices = new EditableInterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-			// To make it less confusing, here we add them in an order that does not produce
-			// reordering.
-			MakeStandardState(choices);
-
-			Assert.IsTrue(choices.OkToMoveDown(0)); // word line
-			Assert.IsTrue(choices.OkToMoveDown(1)); // morphemes
-			Assert.IsTrue(choices.OkToMoveDown(2)); // lex entries
-			Assert.IsTrue(choices.OkToMoveDown(3));  // lex gloss
-			Assert.IsTrue(choices.OkToMoveDown(4));  // lex pos -- whole morph bundle moves down
-			Assert.IsTrue(choices.OkToMoveDown(5));  // Word gloss
-			Assert.IsFalse(choices.OkToMoveDown(6)); // Word pos can't go past free
-			Assert.IsTrue(choices.OkToMoveDown(7));  // free trans
-			Assert.IsFalse(choices.OkToMoveDown(8)); // lit trans -- last can't go down
-
-			choices.MoveDown(3);
-			// nothing complicated, two items changed place.
-			Assert.AreEqual(InterlinLineChoices.kflidLexPos, choices[3].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidLexGloss, choices[4].Flid);
-
-			choices = new EditableInterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-			MakeStandardState(choices);
-			choices.MoveDown(4);
-			// Moves past whole morpheme bundle
-			Assert.AreEqual(InterlinLineChoices.kflidWordGloss, choices[1].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices[2].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidLexEntries, choices[3].Flid);
-
-			// Now, the morphemes line can move up, to move the whole bundle.
-			Assert.IsTrue(choices.OkToMoveDown(1)); // morphemes line now below word gloss.
-			choices.MoveDown(1); // whole bundle moves.
-			Assert.AreEqual(InterlinLineChoices.kflidWordGloss, choices[5].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices[1].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidLexEntries, choices[2].Flid);
-
-			choices = new EditableInterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-			MakeStandardState(choices);
-			choices.MoveDown(5);
-			// nothing complicated, two items changed place.
-			Assert.AreEqual(InterlinLineChoices.kflidWordPos, choices[5].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidWordGloss, choices[6].Flid);
-
-			choices = new EditableInterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-			MakeStandardState(choices);
-			choices.MoveDown(7);
-			// nothing complicated, two items changed place.
-			Assert.AreEqual(InterlinLineChoices.kflidLitTrans, choices[7].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidFreeTrans, choices[8].Flid);
-
-			// Left out a lot of the complicated cases, since move down is just implemented
-			// as an inverse MoveUp.
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
-			// lit trans can move up
-			Assert.IsTrue(choices.OkToMoveDown(0)); // most moves are OK in non-edit mode
-			Assert.IsTrue(choices.OkToMoveDown(1));
-			Assert.IsTrue(choices.OkToMoveDown(2));
-			Assert.IsTrue(choices.OkToMoveDown(3));
-			Assert.IsTrue(choices.OkToMoveDown(4)); // whole morph bundle will move down
-			Assert.IsTrue(choices.OkToMoveDown(5));
-			Assert.IsFalse(choices.OkToMoveDown(6)); // Would put FF out of order
-			Assert.IsTrue(choices.OkToMoveDown(7));
-			Assert.IsFalse(choices.OkToMoveDown(8));
-
-			choices.MoveDown(0);
-			// morphemes is now top
-			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices[0].Flid);
-			// Word moved down to position 4
-			Assert.AreEqual(InterlinLineChoices.kflidWord, choices[4].Flid);
-			// Lex Gloss (to pick just one) also moved up
-			Assert.AreEqual(InterlinLineChoices.kflidLexGloss, choices[2].Flid);
-
-			choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-			MakeStandardState(choices);
-			choices.MoveDown(1);
-			// nothing complicated, two items changed place.
-			Assert.AreEqual(InterlinLineChoices.kflidLexEntries, choices[1].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices[2].Flid);
-
-			choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-			MakeStandardState(choices);
-			choices.MoveDown(4);
-			// Moves past whole morpheme bundle
-			Assert.AreEqual(InterlinLineChoices.kflidWordGloss, choices[1].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices[2].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidLexEntries, choices[3].Flid);
-
-			choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-			MakeStandardState(choices);
-			choices.MoveDown(5);
-			// nothing complicated, two items changed place.
-			Assert.AreEqual(InterlinLineChoices.kflidWordPos, choices[5].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidWordGloss, choices[6].Flid);
-
-			choices = new InterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-			MakeStandardState(choices);
-			choices.MoveDown(7);
-			// nothing complicated, two items changed place.
-			Assert.AreEqual(InterlinLineChoices.kflidLitTrans, choices[7].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidFreeTrans, choices[8].Flid);
-		}
-		[Test]
-		public void EditMoveDown()
-		{
-			InterlinLineChoices choices = new EditableInterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-			// To make it less confusing, here we add them in an order that does not produce
-			// reordering.
-			MakeStandardState(choices);
-
-			//choices.Add(InterlinLineChoices.kflidWord); // 0
-			//choices.Add(InterlinLineChoices.kflidMorphemes); // 1
-			//choices.Add(InterlinLineChoices.kflidLexEntries); //2
-			//choices.Add(InterlinLineChoices.kflidLexGloss); //3
-			//choices.Add(InterlinLineChoices.kflidLexPos); //4
-			//choices.Add(InterlinLineChoices.kflidWordGloss); //5
-			//choices.Add(InterlinLineChoices.kflidWordPos); //6
-			//choices.Add(InterlinLineChoices.kflidFreeTrans); //7
-			//choices.Add(InterlinLineChoices.kflidLitTrans); //8
-
-			Assert.IsTrue(choices.OkToMoveDown(0)); // word line
-			Assert.IsTrue(choices.OkToMoveDown(1)); // morphemes
-			Assert.IsTrue(choices.OkToMoveDown(2)); // lex entries
-			Assert.IsTrue(choices.OkToMoveDown(3));  // lex gloss
-			Assert.IsTrue(choices.OkToMoveDown(4));	 // lex pos -- whole morph bundle moves down
-			Assert.IsTrue(choices.OkToMoveDown(5));  // Word gloss
-			Assert.IsFalse(choices.OkToMoveDown(6)); // Word pos can't go past free
-			Assert.IsTrue(choices.OkToMoveDown(7));	 // free trans
-			Assert.IsFalse(choices.OkToMoveDown(8)); // lit trans -- last can't go down
-
-			choices.MoveDown(3);
-			// nothing complicated, two items changed place.
-			Assert.AreEqual(InterlinLineChoices.kflidLexPos, choices[3].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidLexGloss, choices[4].Flid);
-
-			choices = new EditableInterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-			MakeStandardState(choices);
-			choices.MoveDown(4);
-			// Moves past whole morpheme bundle
-			Assert.AreEqual(InterlinLineChoices.kflidWordGloss, choices[1].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices[2].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidLexEntries, choices[3].Flid);
-
-			// Now, the morphemes line can move up, to move the whole bundle.
-			Assert.IsTrue(choices.OkToMoveDown(1)); // morphemes line now below word gloss.
-			choices.MoveDown(1); // whole bundle moves.
-			Assert.AreEqual(InterlinLineChoices.kflidWordGloss, choices[5].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, choices[1].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidLexEntries, choices[2].Flid);
-
-			choices = new EditableInterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-			MakeStandardState(choices);
-			choices.MoveDown(5);
-			// nothing complicated, two items changed place.
-			Assert.AreEqual(InterlinLineChoices.kflidWordPos, choices[5].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidWordGloss, choices[6].Flid);
-
-			choices = new EditableInterlinLineChoices(m_lp, kwsVernInPara, kwsAnalysis);
-			MakeStandardState(choices);
-			choices.MoveDown(7);
-			// nothing complicated, two items changed place.
-			Assert.AreEqual(InterlinLineChoices.kflidLitTrans, choices[7].Flid);
-			Assert.AreEqual(InterlinLineChoices.kflidFreeTrans, choices[8].Flid);
-
-			// Left out a lot of the complicated cases, since move down is just implemented
-			// as an inverse MoveUp.
-=======
 			// Nothing can move because there are no rows with multiple writing systems
 			Assert.That(choices.OkToMoveDown(0), Is.False);
 			Assert.That(choices.OkToMoveDown(1), Is.False);
@@ -581,7 +253,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			Assert.That(choices.OkToMoveDown(6), Is.False);
 			Assert.That(choices.OkToMoveDown(7), Is.False);
 			Assert.That(choices.OkToMoveDown(8), Is.False);
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
 		}
 
 		[Test]
@@ -930,13 +601,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 			var choices = new InterlinLineChoices(m_lp, wsFrn, wsEng);
 			MakeStandardState(choices);
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/InterlinLineChoicesTests.cs
 			var spec = choices[1];
-||||||| f013144d5:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
-			InterlinLineSpec spec = choices[1];
-=======
-			InterlinLineSpec spec = choices.EnabledLineSpecs[1];
->>>>>>> develop:Src/LexText/Interlinear/ITextDllTests/InterlinLineChoicesTests.cs
 			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, spec.Flid);
 			// The StringFlid for this line spec always corresponds to a MoForm
 			Assert.AreEqual(MoFormTags.kflidForm, spec.StringFlid);

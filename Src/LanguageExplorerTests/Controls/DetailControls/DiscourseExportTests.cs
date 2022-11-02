@@ -1,21 +1,11 @@
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseExportTests.cs
-// Copyright (c) 2008-2020 SIL International
-||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
-// Copyright (c) 2015 SIL International
-=======
 // Copyright (c) 2015-2022 SIL International
->>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.IO;
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseExportTests.cs
-using System.Text;
-||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
-=======
 using System.Linq;
->>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
+using System.Text;
 using System.Xml;
 using LanguageExplorer.Controls.DetailControls;
 using LanguageExplorer.Impls;
@@ -41,12 +31,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		private ConstituentChart m_constChart;
 		private ICmPossibility m_templateRoot;
 		private List<ICmPossibility> m_allColumns;
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseExportTests.cs
 		private FlexComponentParameters _flexComponentParameters;
-||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
-=======
-		private PropertyTable m_propertyTable;
->>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
 
 		protected override void CreateTestData()
 		{
@@ -57,21 +42,11 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			m_templateRoot = m_helper.MakeTemplate(out m_allColumns);
 			// Note: do this AFTER creating the template, which may also create the DiscourseData object.
 			m_chart = m_helper.SetupAChart();
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseExportTests.cs
 			// Just in case it is called more than once.
 			TestSetupServices.DisposeTrash(_flexComponentParameters);
 			_flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			m_constChart = new ConstituentChart(Cache, new SharedEventHandlers(), logic: m_logic);
 			m_constChart.InitializeFlexComponent(_flexComponentParameters);
-||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
-
-			m_constChart = new ConstituentChart(Cache, m_logic);
-			m_constChart.Init(null, null, null);
-=======
-			m_propertyTable = new PropertyTable(null);
-			m_constChart = new ConstituentChart(Cache, m_propertyTable, m_logic);
-			m_constChart.Init(null, null, null);
->>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
 			m_chartBody = m_constChart.Body;
 			m_chartBody.Cache = Cache; // don't know why constructor doesn't do this, but it doesn't.
 
@@ -153,14 +128,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			m_chartBody.Dispose();
 			m_constChart.Dispose();
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseExportTests.cs
 			TestSetupServices.DisposeTrash(_flexComponentParameters);
 			_flexComponentParameters = null;
 
-||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
-=======
-			m_propertyTable.Dispose();
->>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
 			base.TestTearDown();
 		}
 
@@ -199,165 +169,13 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			using (var vc = new ConstChartVc(m_chartBody) {LineChoices = m_chartBody.LineChoices})
 			using (var exporter = new DiscourseExporter(Cache, writer, m_chart.Hvo, vc, Cache.DefaultAnalWs))
 			{
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseExportTests.cs
-				//Set up some cells.
-				var allParaOccurrences = m_helper.MakeAnalysesUsedN(6);
-
-				// Make last analysis point to WfiWordform instead of WfiGloss
-				var lastOccurrence = allParaOccurrences[5];
-				var wordform = (lastOccurrence.Analysis as IWfiGloss).Wordform;
-				lastOccurrence.Segment.AnalysesRS.Replace(1, 0, new List<ICmObject> { wordform });
-				// This block makes the first row, puts WordGroups in cells 1 and 2, and list refs in cells 1 and 2
-				var row0 = m_helper.MakeFirstRow();
-				var movedItem = allParaOccurrences[1];
-				m_helper.MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
-				var marker = m_helper.GetAMarker();
-				m_helper.MakeChartMarker(row0, 1, marker);
-				m_helper.MakeWordGroup(row0, 2, movedItem, movedItem);
-				var marker2 = m_helper.GetAnotherMarker();
-
-				m_helper.MakeChartMarker(row0, 2, marker2);
-				m_helper.MakeChartMarker(row0, 2, marker);
-				m_helper.MakeWordGroup(row0, 3, lastOccurrence, lastOccurrence);
-				// Now another row, and cell 4 on the first has a ref to it. The new row has a WordGroup with two
-				// wordforms in cell 1. The cell is two columns wide, being merged with the previous cell.
-				var row1 = m_helper.MakeSecondRow();
-				m_helper.MakeDependentClauseMarker(row0, 4, new[] { row1 }, ClauseTypes.Song);
-				var cellPart1_1 = m_helper.MakeWordGroup(row1, 1, allParaOccurrences[2], allParaOccurrences[3]);
-				cellPart1_1.MergesBefore = true;
-
-				// Let's have some notes on row 0.
-				row0.Notes = TsStringUtils.MakeString("This is a test note", Cache.DefaultAnalWs);
-
-				// And some moved text in row 1
-				var cellPart1_2 = m_helper.MakeWordGroup(row1, 2, allParaOccurrences[4], allParaOccurrences[4]);
-				m_helper.MakeMovedTextMarker(row1, 3, cellPart1_2, true);
-
-				// We need four rows to properly test the variations on endPara/endSent
-				var row2 = m_helper.MakeRow(m_chart, "2");
-				row2.EndSentence = true;
-				var row3 = m_helper.MakeRow(m_chart, "3");
-				row3.EndSentence = true;
-				row3.EndParagraph = true;
-				m_helper.MakeRow(m_chart, "4");
-
-				using (var writer = new XmlTextWriter(stream, Encoding.UTF8))
-||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
-				//Set up some cells.
-				var allParaOccurrences = m_helper.MakeAnalysesUsedN(6);
-
-				// Make last analysis point to WfiWordform instead of WfiGloss
-				var lastOccurrence = allParaOccurrences[5];
-				var wordform = (lastOccurrence.Analysis as IWfiGloss).Wordform;
-				lastOccurrence.Segment.AnalysesRS.Replace(1, 0, new List<ICmObject> { wordform });
-				// This block makes the first row, puts WordGroups in cells 1 and 2, and list refs in cells 1 and 2
-				var row0 = m_helper.MakeFirstRow();
-				var movedItem = allParaOccurrences[1];
-				var cellPart0_1 = m_helper.MakeWordGroup(row0, 1, allParaOccurrences[0], allParaOccurrences[0]);
-				var marker = m_helper.GetAMarker();
-				var cellPart0_1b = m_helper.MakeChartMarker(row0, 1, marker);
-				var cellPart0_2 = m_helper.MakeWordGroup(row0, 2, movedItem, movedItem);
-				var marker2 = m_helper.GetAnotherMarker();
-				var cellPart0_2b = m_helper.MakeChartMarker(row0, 2, marker2);
-				var cellPart0_2c = m_helper.MakeChartMarker(row0, 2, marker);
-				var cellPart0_3 = m_helper.MakeWordGroup(row0, 3, lastOccurrence, lastOccurrence);
-
-				// Now another row, and cell 4 on the first has a ref to it. The new row has a WordGroup with two
-				// wordforms in cell 1. The cell is two columns wide, being merged with the previous cell.
-				var row1 = m_helper.MakeSecondRow();
-				m_helper.MakeDependentClauseMarker(row0, 4, new[] { row1 }, ClauseTypes.Song);
-				var cellPart1_1 = m_helper.MakeWordGroup(row1, 1, allParaOccurrences[2], allParaOccurrences[3]);
-				cellPart1_1.MergesBefore = true;
-
-				// Let's have some notes on row 0.
-				//var notesText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
-				row0.Notes = TsStringUtils.MakeString("This is a test note", Cache.DefaultAnalWs);
-				//var notesPara = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
-				//notesText.ParagraphsOS.Add(notesPara);
-				//notesPara.Contents = ;
-
-				// And some moved text in row 1
-				var cellPart1_2 = m_helper.MakeWordGroup(row1, 2, allParaOccurrences[4], allParaOccurrences[4]);
-				m_helper.MakeMovedTextMarker(row1, 3, cellPart1_2, true);
-
-				// We need four rows to properly test the variations on endPara/endSent
-				var row2 = m_helper.MakeRow(m_chart, "2");
-				row2.EndSentence = true;
-				var row3 = m_helper.MakeRow(m_chart, "3");
-				row3.EndSentence = true;
-				row3.EndParagraph = true;
-				m_helper.MakeRow(m_chart, "4");
-
-				using (var writer = new XmlTextWriter(stream, Encoding.UTF8))
-=======
 				// SUT
 				exporter.ExportDisplay();
 				// Close makes the stream unusable; Flush the writer and reset the stream position to 0
 				writer.Flush();
 				stream.Position = 0;
 				using (var reader = new StreamReader(stream, Encoding.UTF8))
->>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
 				{
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseExportTests.cs
-					var vc = new ConstChartVc(m_chartBody);
-					vc.LineChoices = m_chartBody.LineChoices;
-					using (var exporter = new DiscourseExporter(Cache, writer, m_chart.Hvo, vc, Cache.DefaultAnalWs))
-					{
-						writer.WriteStartDocument();
-						writer.WriteStartElement("document");
-						exporter.ExportDisplay();
-						writer.WriteEndElement();
-						writer.WriteEndDocument();
-						writer.Flush();
-						// Close makes it unusable
-						stream.Position = 0;
-						using (var reader = new StreamReader(stream, Encoding.UTF8))
-						{
-							var result = reader.ReadToEnd();
-							var doc = new XmlDocument();
-							doc.LoadXml(result);
-							var docNode = doc.DocumentElement;
-							Assert.AreEqual("document", docNode.Name);
-							var chartNode = VerifyNode("chart", docNode, 0, "chart", 7, 0);
-							VerifyTitleRow(chartNode);
-							VerifyTitle2Row(chartNode);
-							VerifyFirstDataRow(chartNode);
-							VerifySecondDataRow(chartNode);
-							var thirdRow = VerifyNode("row", chartNode, 4, "row", 8, 3);
-							AssertAttr(thirdRow, "endSent", "true");
-							var fourthRow = VerifyNode("row", chartNode, 5, "row", 8, 3);
-							AssertAttr(fourthRow, "endPara", "true");
-||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
-					using (var vc = new ConstChartVc(m_chartBody))
-					{
-						vc.LineChoices = m_chartBody.LineChoices;
-						using (var exporter = new DiscourseExporter(Cache, writer, m_chart.Hvo, vc, Cache.DefaultAnalWs))
-						{
-							writer.WriteStartDocument();
-							writer.WriteStartElement("document");
-							exporter.ExportDisplay();
-							writer.WriteEndElement();
-							writer.WriteEndDocument();
-							writer.Flush();
-							// Close makes it unuseable
-							stream.Position = 0;
-							using (var reader = new StreamReader(stream, Encoding.UTF8))
-							{
-								var result = reader.ReadToEnd();
-								var doc = new XmlDocument();
-								doc.LoadXml(result);
-								var docNode = doc.DocumentElement;
-								Assert.AreEqual("document", docNode.Name);
-								var chartNode = VerifyNode("chart", docNode, 0, "chart", 7, 0);
-								VerifyTitleRow(chartNode);
-								VerifyTitle2Row(chartNode);
-								VerifyFirstDataRow(chartNode);
-								VerifySecondDataRow(chartNode);
-								var thirdRow = VerifyNode("row", chartNode, 4, "row", 8, 3);
-								AssertAttr(thirdRow, "endSent", "true");
-								var fourthRow = VerifyNode("row", chartNode, 5, "row", 8, 3);
-								AssertAttr(fourthRow, "endPara", "true");
-=======
 					var result = reader.ReadToEnd();
 					var doc = new XmlDocument();
 					doc.LoadXml(result);
@@ -372,32 +190,12 @@ namespace LanguageExplorerTests.Controls.DetailControls
 					AssertAttr(thirdRow, "endSent", "true");
 					var fourthRow = VerifyNode("row", chartNode, 5, "row", 8, 3);
 					AssertAttr(fourthRow, "endPara", "true");
->>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
 
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseExportTests.cs
-							var langNode = VerifyNode("languages", docNode, 1, "languages", 2, 0);
-							var enNode = VerifyNode("english lang node", langNode, 0, "language", 0, 2);
-							AssertAttr(enNode, "lang", "en");
-							AssertAttr(enNode, "font", null);
-							// don't verify exact font, may depend on installation.
-						}
-					}
-||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
-							var langNode = VerifyNode("languages", docNode, 1, "languages", 2, 0);
-								var enNode = VerifyNode("english lang node", langNode, 0, "language", 0, 2);
-								AssertAttr(enNode, "lang", "en");
-								AssertAttr(enNode, "font", null);
-								// don't verify exact font, may depend on installation.
-							}
-						}
-					}
-=======
 					var langNode = VerifyNode("languages", docNode, 1, "languages", 2, 0);
 					var enNode = VerifyNode("english lang node", langNode, 0, "language", 0, 2);
 					AssertAttr(enNode, "lang", "en");
 					AssertAttr(enNode, "font", null);
 					// don't verify exact font, may depend on installation.
->>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
 				}
 			}
 		}
@@ -554,22 +352,12 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			VerifyNode("main in 2/1", cell1, 0, "main", 3, 0);
 			AssertAttr(cell1, "reversed", "true");
 			AssertAttr(cell1, "cols", "2");
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseExportTests.cs
-			AssertMainChild(cell1, 0, "lit", new[] { "noSpaceAfter", "lang" }, new[] { "true", "en" }, "[");
-			AssertMainChild(cell1, 1, "word", new[] { "lang" }, new[] { "fr" }, "paragraph");
-			AssertMainChild(cell1, 2, "word", new[] { "lang" }, new[] { "fr" }, "one");
-||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
-			AssertMainChild(cell1, 0, "lit", new string[] { "noSpaceAfter", "lang" }, new string[] { "true", "en" }, "[");
-			AssertMainChild(cell1, 1, "word", new string[] { "lang" }, new string[] { "fr" }, "paragraph");
-			AssertMainChild(cell1, 2, "word", new string[] { "lang" }, new string[] { "fr" }, "one");
-=======
 			// TODO (Hasso) 2022.03: for RTL, <lit/> should come after <word/>s instead (since this is actually the last cell).
 			// TODO (cont): In real life, XLingPaper exports look wrong on both ends, even though the test somehow passes.
 			AssertMainChild(cell1, 0, "lit", new[] { isRtl ? "noSpaceBefore" : "noSpaceAfter", "lang" }, new[] { "true", "en" },
 				isRtl ? $"{ConstChartVc.RLM}]{ConstChartVc.RLM}" : "[");
 			AssertMainChild(cell1, 1, "word", new[] { "lang" }, new[] { "fr" }, "paragraph");
 			AssertMainChild(cell1, 2, "word", new[] { "lang" }, new[] { "fr" }, "one");
->>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
 			var glosses1 = VerifyNode("glosses cell 1/2", cell1, 1, "glosses", 2, 0);
 			var gloss1_1 = VerifyNode("second gloss in 1/2", glosses1, 1, "gloss", 1, 1);
 			AssertAttr(gloss1_1, "lang", "en");
@@ -595,19 +383,11 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			//            <lit noSpaceBefore="true" lang="en">]</lit>
 			//        </main>
 			//    </cell>
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseExportTests.cs
-			var cell3 = AssertCellMainChild(row, 3, 1, null, 2, "moveMkr", "Preposed", "en");
-			AssertMainChild(cell3, 1, "lit", new[] { "noSpaceBefore", "lang" }, new[] { "true", "en" }, "]");
-||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
-			var cell3 = AssertCellMainChild(row, 3, 1, null, 2, "moveMkr", "Preposed", "en");
-			AssertMainChild(cell3, 1, "lit", new string[] { "noSpaceBefore", "lang" }, new string[] { "true", "en" }, "]");
-=======
 			var cell3 = VerifyNode("close clause node in row 2", row, iCols[3], "cell", 1, 1);
 			var idxInCell3 = ComputeColumnIndices(2, true, isRtl);
 			AssertMainChild(cell3, idxInCell3[0], "moveMkr", new[] { "lang" }, new[] { "en" }, "Preposed");
 			AssertMainChild(cell3, idxInCell3[1], "lit", new[] { isRtl ? "noSpaceAfter" : "noSpaceBefore", "lang" }, new[] { "true", "en" },
 				isRtl ? $"{ConstChartVc.RLM}[{ConstChartVc.RLM}" : "]");
->>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
 			//    <cell cols="1">
 			//        <main />
 			//    </cell>
@@ -767,17 +547,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			VerifyCellOrPlaceholder(titleRow, isNotesOnRight ? 6 : 0, 1, "postnuc", "en", titleRowCount == 0);
 		}
 
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseExportTests.cs
-		/// <summary>
-		/// Assert that parent has a "cell" child at index index, occupying ccols columns,
-		/// which has a child called "main" with one child called "lit" with innerText inner
-		/// in language lang
-		/// </summary>
-||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
-		// Assert that parent has a "cell" child at index index, occupying ccols columns,
-		// which has a child called "main" with one child called "lit" with innerText inner
-		// in language lang
-=======
 		private void VerifyColumnGroupTitleRow(XmlNode chartNode, int titleRowCount, bool isNotesOnRight, bool isRtl)
 		{
 			//<row type="title1">
@@ -855,7 +624,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		/// Assert that parent has a "cell" child at index index, occupying ccols columns,
 		/// which has a child called "main" with one child called "lit" with innerText inner in language lang
 		/// </summary>
->>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
 		private void AssertCellMainLit(XmlNode parent, int index, int ccols, string inner, string lang)
 		{
 			AssertCellMainChild(parent, index, ccols, null, 1, "lit", inner, lang);
@@ -890,68 +658,6 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			}
 			return cell;
 		}
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DetailControls/DiscourseExportTests.cs
-
-		private void VerifyTitleRow(XmlNode chartNode)
-		{
-			//<row type="title1">
-			//    <cell cols="1">
-			//        <main>
-			//            <lit lang="en">#</lit>
-			//        </main>
-			//    </cell>
-			//    <cell cols="2">
-			//        <main>
-			//            <lit lang="en">prenuclear</lit>
-			//        </main>
-			//    </cell>
-			// ...nucleus/3...
-			//    <cell cols="1">
-			//        <main>
-			//            <lit lang="en">Notes</lit>
-			//        </main>
-			//    </cell>
-			//</row>
-
-			var titleRow = VerifyNode("title1", chartNode, 0, "row", 5, 1);
-			AssertAttr(titleRow, "type", "title1");
-			AssertCellMainLit(titleRow, 0, 1, "#", "en");
-			AssertCellMainLit(titleRow, 1, 2, "prenuclear", "en");
-			AssertCellMainLit(titleRow, 4, 1, "Notes", "en");
-		}
-||||||| f013144d5:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
-
-		private void VerifyTitleRow(XmlNode chartNode)
-		{
-			//<row type="title1">
-			//    <cell cols="1">
-			//        <main>
-			//            <lit lang="en">#</lit>
-			//        </main>
-			//    </cell>
-			//    <cell cols="2">
-			//        <main>
-			//            <lit lang="en">prenuclear</lit>
-			//        </main>
-			//    </cell>
-			// ...nucleus/3...
-			//    <cell cols="1">
-			//        <main>
-			//            <lit lang="en">Notes</lit>
-			//        </main>
-			//    </cell>
-			//</row>
-
-			var titleRow = VerifyNode("title1", chartNode, 0, "row", 5, 1);
-			AssertAttr(titleRow, "type", "title1");
-			//XmlNode cell1 = VerifyNode("title1cell1", titleRow, 0, "cell", 1, 1);
-			//Assert.AreEqual("#", cell1.InnerText);
-			AssertCellMainLit(titleRow, 0, 1, "#", "en");
-			AssertCellMainLit(titleRow, 1, 2, "prenuclear", "en");
-			AssertCellMainLit(titleRow, 4, 1, "Notes", "en");
-		}
-=======
->>>>>>> develop:Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
 		#endregion
 	}
 }
