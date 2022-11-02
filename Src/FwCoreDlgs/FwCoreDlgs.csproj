@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="DialogAdapters.Gtk2" Version="0.1.11" />
-    <PackageReference Include="Encoding-Converters-Core" Version="0.5.1" />
+    <PackageReference Include="Encoding-Converters-Core" Version="0.0.8" />
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
     <PackageReference Include="SIL.Windows.Forms.WritingSystems" Version="11.0.0-beta0041" />
   </ItemGroup>

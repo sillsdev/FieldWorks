@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Encoding-Converters-Core" Version="0.5.1" PrivateAssets="native" />
+    <PackageReference Include="Encoding-Converters-Core" Version="0.0.8" PrivateAssets="native" />
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
   </ItemGroup>
 
