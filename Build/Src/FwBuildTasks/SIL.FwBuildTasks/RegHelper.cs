@@ -68,6 +68,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		public void Dispose(bool fDisposing)
 		{
+			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
 			if (!IsDisposed)
 			{
 				if (IsRedirected && !RedirectRegistryFailed)

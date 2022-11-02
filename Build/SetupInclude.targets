@@ -2,18 +2,20 @@
 <Project InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 	<PropertyGroup>
+		<GitVersionMsBuildVersion>5.10.3</GitVersionMsBuildVersion>
 		<IcuVersion>70</IcuVersion>
 		<IcuWinFwLibVersion>70.1.123</IcuWinFwLibVersion>
-		<GitVersionMsBuildVersion>5.7.0</GitVersionMsBuildVersion>
+		<LcmVersion>10.2.0-beta0059</LcmVersion>
 		<NunitConsoleVersion>3.12.0</NunitConsoleVersion>
 		<SilBuildTasksVersion>2.5.0</SilBuildTasksVersion>
 		<SilLibVersion>6.0.11</SilLibVersion>
 
 		<fwrt>$([System.IO.Directory]::GetParent($(MSBuildProjectDirectory)))</fwrt>
 		<fwrt Condition="'$(fwrt)' == ''">$(MSBuildThisFileDirectory)..</fwrt>
-		<IcuWinFwLibTargets>$(fwrt)/packages/Icu4c.Win.Fw.Lib.$(IcuWinFwLibVersion)/build/Icu4c.Win.Fw.Lib.props</IcuWinFwLibTargets>
 		<GitVersionMsBuildProps>$(fwrt)/packages/GitVersion.MsBuild.$(GitVersionMsBuildVersion)/build/GitVersion.MsBuild.props</GitVersionMsBuildProps>
 		<GitVersionMsBuildTargets>$(fwrt)/packages/GitVersion.MsBuild.$(GitVersionMsBuildVersion)/build/GitVersion.MsBuild.targets</GitVersionMsBuildTargets>
+		<IcuWinFwLibProps>$(fwrt)/packages/Icu4c.Win.Fw.Lib.$(IcuWinFwLibVersion)/build/Icu4c.Win.Fw.Lib.props</IcuWinFwLibProps>
+		<LcmCoreProps>$(fwrt)/packages/SIL.LCModel.Core.$(LcmVersion)/buildMultiTargeting/SIL.LCModel.Core.props</LcmCoreProps>
 		<SilBuildTaskProps>$(fwrt)/packages/SIL.BuildTasks.$(SilBuildTasksVersion)/build/SIL.BuildTasks.props</SilBuildTaskProps>
 		<NUnit3ConsolePath>$(fwrt)/packages/NUnit.ConsoleRunner.$(NunitConsoleVersion)/tools</NUnit3ConsolePath>
 		<Nunit3Console>$(NUnit3ConsolePath)/nunit3-console.exe</Nunit3Console>
@@ -24,13 +26,15 @@
 			call this build script again so that the files exist when we import them. If they
 			all already exist we can just continue with our build.
 		-->
-		<RestartBuild Condition="(Exists('$(IcuWinFwLibTargets)') And Exists('$(GitVersionMsBuildProps)') And Exists('$(SilBuildTaskProps)') And Exists('$(NUnit3Console)')) Or '$(IsReentry)'=='true'">false</RestartBuild>
-		<RestartBuild Condition="(!Exists('$(IcuWinFwLibTargets)') Or !Exists('$(GitVersionMsBuildProps)') Or !Exists('$(SilBuildTaskProps)') Or !Exists('$(NUnit3Console)')) And '$(IsReentry)'!='true'">true</RestartBuild>
+		<RestartBuild Condition="(Exists('$(GitVersionMsBuildProps)') And Exists('$(IcuWinFwLibTargets)') And Exists('$(SilBuildTaskProps)') And Exists('$(NUnit3Console)')) Or '$(IsReentry)'=='true'">false</RestartBuild>
+		<RestartBuild Condition="(!Exists('$(GitVersionMsBuildProps)') Or !Exists('$(IcuWinFwLibTargets)') Or !Exists('$(SilBuildTaskProps)') Or !Exists('$(NUnit3Console)')) And '$(IsReentry)'!='true'">true</RestartBuild>
 	</PropertyGroup>
 
-	<Import Project="$(IcuWinFwLibTargets)" Condition="Exists('$(IcuWinFwLibTargets)')" />
 	<Import Project="$(GitVersionMsBuildProps)" Condition="Exists('$(GitVersionMsBuildProps)')" />
 	<Import Project="$(GitVersionMsBuildTargets)" Condition="Exists('$(GitVersionMsBuildTargets)')" />
+	<Import Project="$(IcuWinFwLibProps)" Condition="Exists('$(IcuWinFwLibProps)')" />
+	<Import Project="$(IcuWinFwLibTargets)" Condition="Exists('$(IcuWinFwLibTargets)')" />
+	<Import Project="$(LcmCoreProps)" Condition="Exists('$(LcmCoreProps)')" />
 	<Import Project="$(SilBuildTaskProps)" Condition="Exists('$(SilBuildTaskProps)')" />
 
 	<!-- config is generally either Debug or Release, but might be Bounds or Profile. -->
@@ -114,8 +118,7 @@
 
 	<!-- refresh the FieldWorks.targets file that gets loaded -->
 	<GenerateFwTargets TimeoutValuesFilePath="$(MSBuildThisFileDirectory)/TestTimeoutValues.xml"
-		NUnitConsolePath="$(MSBuildThisFileDirectory)../packages/NUnit.ConsoleRunner.$(NunitConsoleVersion)/tools"
-		ContinueOnError="true" /> <!-- TODO (Hasso) 2022.10: remove this when errors are resolved -->
+		NUnitConsolePath="$(MSBuildThisFileDirectory)../packages/NUnit.ConsoleRunner.$(NunitConsoleVersion)/tools" />
 
 	<CpuArchitecture>
 		<Output TaskParameter="Value" PropertyName="arch"/>
@@ -135,7 +138,6 @@
 		<dir-fwoutputlibPlatform Condition="'$(OS)'!='Windows_NT'">$(dir-fwoutputlib)/linux</dir-fwoutputlibPlatform>
 		<dir-fwoutputlibPlatform Condition="'$(OS)'=='Windows_NT'">$(dir-fwoutputlib)\windows</dir-fwoutputlibPlatform>
 		<dir-fwinstall>$(dir-fwoutput)$(dir-separator)install</dir-fwinstall>
-		<dir-fwdistfiles>$(fwrt)$(dir-separator)DistFiles</dir-fwdistfiles>
 		<dir-fwdistfiles>$(fwrt)$(dir-separator)DistFiles</dir-fwdistfiles>
 		<dir-icuData>$(dir-fwdistfiles)$(dir-separator)Icu$(IcuVersion)</dir-icuData>
 		<!-- where to find the COM library on Linux -->

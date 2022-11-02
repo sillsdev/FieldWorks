@@ -388,9 +388,10 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			}
 			var codeBaseUri = typeof(PUAInstaller).Assembly.CodeBase;
 			var path = Path.GetDirectoryName(FileUtils.StripFilePrefix(codeBaseUri));
-			var x86Path = Path.Combine(path, "lib", "x86", exeName + ".exe");
-			var x64Path = Path.Combine(path, "lib", "x64", exeName + ".exe");
-			return Environment.Is64BitProcess ? x64Path : x86Path;
+			// REVIEW (Hasso) 2022.11: the dependency that installs these insists on putting them in lib\win-x64 instead of lib\x64.
+			// In FW9.1, when were copying them explicitly in mkall.targets, they were in lib\x64. Should they be moved back?
+			path = Path.Combine(path, "lib", $"win-{(Environment.Is64BitProcess ? "x64" : "x86")}", $"{exeName}.exe");
+			return path;
 		}
 
 		/// <summary>

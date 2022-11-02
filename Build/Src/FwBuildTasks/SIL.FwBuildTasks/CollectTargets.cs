@@ -143,8 +143,7 @@ namespace SIL.FieldWorks.Build.Tasks
 						Log.LogError("GenerateFwTargets", null, null,
 							filename, lineNumber, 0, 0, 0,
 							$"Error reading project references from {Path.GetFileName(filename)}. Invalid XML file?{Environment.NewLine}{e}");
-						//throw new StopTaskException(e);
-						return;
+						throw new StopTaskException(e);
 					}
 				}
 				reader.Close();
@@ -166,7 +165,7 @@ namespace SIL.FieldWorks.Build.Tasks
 				Log.LogError("GenerateFwTargets", null, null, projectFile, 0, 0, 0, 0,
 					$"Error reading project name table from {Path.GetFileName(projectFile)}. Invalid XML file? {e.Message}");
 
-				//throw new StopTaskException(e);
+				throw new StopTaskException(e);
 			}
 		}
 

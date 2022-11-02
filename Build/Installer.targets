@@ -150,12 +150,6 @@
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Fonts\Raw\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\.git\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\OcmFrame\**\*"/> <!-- directory used only on Linux -->
-			<!-- No longer want TE helps, but they are not yet removed from the Helps repo. -->
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\FieldWorks_Translation_Editor_Help.chm"/>
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\Using_Styles.chm"/> <!-- TE-specific per LT-18363 -->
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\Translation Editor\**\*"/>
-			<!-- End: No longer want TE helps, but they are not yet removed from the Helps repo. -->
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Icu54.zip"/>
 			<!-- Exclude old demo movies. The current movies are online. -->
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Language Explorer\Movies\**\*"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\libxample32.so"/> <!-- Linux file -->

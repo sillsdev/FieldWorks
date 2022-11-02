@@ -53,9 +53,16 @@
 		<CatenateFiles SourceFiles="@(CompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 	</Target>
 
-	<Target Name="copyIcuFiles" Condition="'$(OS)'!='Unix'">
+	<Target Name="copyIcuFiles" DependsOnTargets="copyIcuDlls">
+		<ItemGroup>
+			<IcuData Include="$(SilLcModelCoreIcuDataFilesFolder)/**/*"/>
+		</ItemGroup>
+		<Copy SourceFiles="@(IcuData)" DestinationFolder="$(dir-icuData)/%(recursiveDir)" SkipUnchangedFiles="true" />
+	</Target>
+
+	<Target Name="copyIcuDlls" Condition="'$(OS)'=='Windows_NT'">
 		<!-- Need these files in the lib/${Platform} folder for RegFree to load the FwKernel.dll and Views.dll successfully -->
-		<ItemGroup Condition="'$(OS)'=='Windows_NT'">
+		<ItemGroup>
 			<IcuLibsX86 Include="$(IcuFwRuntimeWinX86)icu*.dll" />
 			<IcuLibsX64 Include="$(IcuFwRuntimeWinX64)icu*.dll" />
 		</ItemGroup>
@@ -378,12 +385,14 @@
 	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
 		<!-- REVIEW (Hasso) 2022.10: this could be simply FwBuildTasks, w/o SIL., since it's not its own package -->
 		<MSBuild Projects="$(fwrt)/Build/Src/FwBuildTasks/SIL.FwBuildTasks/SIL.FwBuildTasks.csproj" Targets="Restore;Build" Properties="Configuration=Debug;Platform=Any CPU" Condition="!Exists('$(fwrt)/Build/Src/FwBuildTasks/artifacts/Debug/SIL.FwBuildTasks.dll')"/>
-		<Exec Command='$(NuGetCommand) install Icu4c.Win.Fw.Lib -version $(IcuWinFwLibVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/Icu4c.Win.Fw.Lib.$(IcuWinFwLibVersion)')"/>
 		<Exec Command='$(NuGetCommand) install GitVersion.MsBuild -version $(GitVersionMsBuildVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/GitVersion.MsBuild.$(GitVersionMsBuildVersion)')"/>
+		<Exec Command='$(NuGetCommand) install Icu4c.Win.Fw.Lib -version $(IcuWinFwLibVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/Icu4c.Win.Fw.Lib.$(IcuWinFwLibVersion)')"/>
 		<!-- Install NUnit.Console which has the required extensions as dependencies -->
 		<Exec Command='$(NuGetCommand) install NUnit.Console -version $(NunitConsoleVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/NUnit.Console.$(NunitConsoleVersion)')" />
 		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -version $(SilBuildTasksVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/SIL.BuildTasks.$(SilBuildTasksVersion)')" />
-		<!-- SIL.Lib is needed for the ParatextPlugin -->
+		<!-- LCModel.Core contains ICU data -->
+		<Exec Command='$(NuGetCommand) install SIL.LCModel.Core -version $(LcmVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/SIL.LCModel.Core.$(LcmVersion)')"/>
+		<!-- SIL.Lib is needed for the ParatextPlugin. REVIEW (Hasso) 2022.10: then shouldn't it instead be a dependency of ParatextPlugin? -->
 		<Exec Command='$(NuGetCommand) install SIL.Lib -version $(SilLibVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/SIL.Lib.$(SilLibVersion)')" />
 	</Target>
 </Project>
