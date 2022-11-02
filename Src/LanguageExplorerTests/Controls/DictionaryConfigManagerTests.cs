@@ -442,23 +442,11 @@ namespace LanguageExplorerTests.Controls
 			// Verify1
 			Assert.AreEqual(1, m_testPresenter.NewConfigurationViews.Count(), "Wrong number of new items.");
 			var configItem = GetKeyFromValue("Copy of " + sname2);
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DictionaryConfigManagerTests.cs
-			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
-			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.NewConfigurationViews.First().Item1, "Wrong unique code reported for new item.");
-			Assert.AreEqual(sid2, m_testPresenter.NewConfigurationViews.First().Item2, "Wrong Copy Of reported for new item.");
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigManagerTests.cs
-			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
-			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.NewConfigurationViews.First().Item1,
-				"Wrong unique code reported for new item.");
-			Assert.AreEqual(sid2, m_testPresenter.NewConfigurationViews.First().Item2,
-				"Wrong Copy Of reported for new item.");
-=======
 			Assert.That(configItem, Is.Not.Null, "Didn't find an item with the right Name.");
 			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.NewConfigurationViews.First().Item1,
 				"Wrong unique code reported for new item.");
 			Assert.AreEqual(sid2, m_testPresenter.NewConfigurationViews.First().Item2,
 				"Wrong Copy Of reported for new item.");
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigManagerTests.cs
 			Assert.AreEqual(1, m_testPresenter.RenamedExistingViews.Count());
 			Assert.AreEqual(sid2, m_testPresenter.RenamedExistingViews.First().Item1, "Wrong item reported as renamed.");
 			Assert.AreEqual(newName, m_testPresenter.RenamedExistingViews.First().Item2, "Wrong new name reported for renamed item.");
@@ -495,26 +483,6 @@ namespace LanguageExplorerTests.Controls
 			// Verify1
 			Assert.AreEqual(1, m_testPresenter.NewConfigurationViews.Count(), "Wrong number of new items.");
 			var configItem = GetKeyFromValue("Copy of " + sname2);
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/DictionaryConfigManagerTests.cs
-			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
-			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.NewConfigurationViews.First().Item1, "Wrong unique code reported for new item.");
-			Assert.AreEqual(sid2, m_testPresenter.NewConfigurationViews.First().Item2, "Wrong Copy Of reported for new item.");
-			Assert.IsNull(m_testPresenter.RenamedExistingViews, "Deleted view should not be reported as renamed too.");
-			Assert.AreEqual(1, m_testPresenter.ConfigurationViewsToDelete.Count(), "Wrong number of deleted items.");
-			Assert.AreEqual(sid2, m_testPresenter.ConfigurationViewsToDelete.First(), "Wrong item reported as deleted.");
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigManagerTests.cs
-			Assert.IsNotNull(configItem, "Didn't find an item with the right Name.");
-			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.NewConfigurationViews.First().Item1,
-				"Wrong unique code reported for new item.");
-			Assert.AreEqual(sid2, m_testPresenter.NewConfigurationViews.First().Item2,
-				"Wrong Copy Of reported for new item.");
-			Assert.IsNull(m_testPresenter.RenamedExistingViews,
-				"Deleted view should not be reported as renamed too.");
-			Assert.AreEqual(1, m_testPresenter.ConfigurationViewsToDelete.Count(),
-				"Wrong number of deleted items.");
-			Assert.AreEqual(sid2, m_testPresenter.ConfigurationViewsToDelete.First(),
-				"Wrong item reported as deleted.");
-=======
 			Assert.That(configItem, Is.Not.Null, "Didn't find an item with the right Name.");
 			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.NewConfigurationViews.First().Item1,
 				"Wrong unique code reported for new item.");
@@ -526,7 +494,6 @@ namespace LanguageExplorerTests.Controls
 				"Wrong number of deleted items.");
 			Assert.AreEqual(sid2, m_testPresenter.ConfigurationViewsToDelete.First(),
 				"Wrong item reported as deleted.");
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigManagerTests.cs
 		}
 
 		/// <summary>

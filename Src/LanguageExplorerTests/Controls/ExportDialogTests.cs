@@ -1,30 +1,18 @@
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/ExportDialogTests.cs
-// Copyright (c) 2010-2020 SIL International
-||||||| f013144d5:Src/xWorks/xWorksTests/ExportDialogTests.cs
-﻿// Copyright (c) 2010-2017 SIL International
-=======
 // Copyright (c) 2010-2022 SIL International
->>>>>>> develop:Src/xWorks/xWorksTests/ExportDialogTests.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Threading;
 using LanguageExplorer.Controls;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/ExportDialogTests.cs
-||||||| f013144d5:Src/xWorks/xWorksTests/ExportDialogTests.cs
-using System.Collections.Generic;
-=======
-using System.Collections.Generic;
-using System.Globalization;
-using System.Threading;
->>>>>>> develop:Src/xWorks/xWorksTests/ExportDialogTests.cs
 using SIL.LCModel.Infrastructure;
 
 namespace LanguageExplorerTests.Controls
@@ -521,21 +509,10 @@ namespace LanguageExplorerTests.Controls
 					result = reader.ReadToEnd();
 				}
 				File.Delete(tempPath);
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/ExportDialogTests.cs
-				Assert.That(result, Does.Contain("What words refer to the sun?"));
-				Assert.That(result, Does.Not.Contain("1.1.1.11.1.1.1"), "should not output double abbr for en");
-				Assert.That(result, Does.Not.Contain("class: english"), "English should not give anything the missing translation style");
-||||||| f013144d5:Src/xWorks/xWorksTests/ExportDialogTests.cs
-				Assert.That(result, Is.StringContaining("What words refer to the sun?"));
-				Assert.That(result, Is.Not.StringContaining("1.1.1.11.1.1.1"), "should not output double abbr for en");
-				Assert.That(result, Is.Not.StringContaining("class: english"),
-					"English should not give anything the missing translation style");
-=======
 				Assert.That(result, Does.Contain("What words refer to the sun?"));
 				Assert.That(result, Does.Not.Contain("1.1.1.11.1.1.1"), "should not output double abbr for en");
 				Assert.That(result, Does.Not.Contain("class: english"),
 					"English should not give anything the missing translation style");
->>>>>>> develop:Src/xWorks/xWorksTests/ExportDialogTests.cs
 
 				wss.Clear();
 				wss.Add(m_cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("fr"));
@@ -570,19 +547,10 @@ namespace LanguageExplorerTests.Controls
 		/// <summary>
 		/// Tests the method ExportTranslatedLists.
 		/// </summary>
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/ExportDialogTests.cs
-		[Test]
-		public void ExportTranslatedLists()
-||||||| f013144d5:Src/xWorks/xWorksTests/ExportDialogTests.cs
-		///--------------------------------------------------------------------------------------
-		[Test]
-		public void ExportTranslatedLists()
-=======
 		///--------------------------------------------------------------------------------------
 		[TestCase("de", ".", ".")]
 		[TestCase("en", "/", ":")]
 		public void ExportTranslatedLists(string culture, string dateSep, string timeSep)
->>>>>>> develop:Src/xWorks/xWorksTests/ExportDialogTests.cs
 		{
 			Thread.CurrentThread.CurrentCulture = new CultureInfo(culture) { DateTimeFormat = { DateSeparator = dateSep, TimeSeparator = timeSep } };
 
@@ -1115,30 +1083,14 @@ namespace LanguageExplorerTests.Controls
 			using (new UndoableUnitOfWorkHelper(m_cache.ActionHandlerAccessor, "Undo test", "Redo test"))
 			{
 				m_cache.LangProject.SemanticDomainListOA.Name.set_String(wsFr, "Domaines sémantiques");
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/ExportDialogTests.cs
 				var sem1 = repoSemDom.GetObject(new Guid("63403699-07C1-43F3-A47C-069D6E4316E5"));
-				Assert.IsNotNull(sem1);
-||||||| f013144d5:Src/xWorks/xWorksTests/ExportDialogTests.cs
-				ICmSemanticDomain sem1 = repoSemDom.GetObject(new Guid("63403699-07C1-43F3-A47C-069D6E4316E5"));
-				Assert.IsNotNull(sem1);
-=======
-				ICmSemanticDomain sem1 = repoSemDom.GetObject(new Guid("63403699-07C1-43F3-A47C-069D6E4316E5"));
 				Assert.That(sem1, Is.Not.Null);
->>>>>>> develop:Src/xWorks/xWorksTests/ExportDialogTests.cs
 				sem1.Name.set_String(wsFr, "L'univers physique");
 				sem1.QuestionsOS[0].Question.set_String(wsFr, "Quels sont les mots qui font référence à tout ce qu'on peut voir?");
 				sem1.QuestionsOS[0].ExampleWords.set_String(wsFr, "univers, ciel, terre");
 				sem1.QuestionsOS[0].ExampleSentences.set_String(wsFr, "Le rôle du prophète est alors de réveiller le courage et la foi en Dieu.");
-<<<<<<< HEAD:Src/LanguageExplorerTests/Controls/ExportDialogTests.cs
 				var sem11 = sem1.SubPossibilitiesOS[0] as ICmSemanticDomain;
-				Assert.IsNotNull(sem11);
-||||||| f013144d5:Src/xWorks/xWorksTests/ExportDialogTests.cs
-				ICmSemanticDomain sem11 = sem1.SubPossibilitiesOS[0] as ICmSemanticDomain;
-				Assert.IsNotNull(sem11);
-=======
-				ICmSemanticDomain sem11 = sem1.SubPossibilitiesOS[0] as ICmSemanticDomain;
 				Assert.That(sem11, Is.Not.Null);
->>>>>>> develop:Src/xWorks/xWorksTests/ExportDialogTests.cs
 				sem11.Name.set_String(wsFr, "Ciel");
 				sem11.QuestionsOS[0].Question.set_String(wsFr, "Quels sont les mots qui signifient le ciel?");
 				sem11.QuestionsOS[0].ExampleWords.set_String(wsFr, "ciel, firmament");
