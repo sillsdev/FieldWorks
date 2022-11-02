@@ -50,6 +50,8 @@ set OAPERUSERTLIBREG=1
 echo Building using `%MsBuild%`
 REM Run the next target only if the previous target succeeded
 (
+	%MsBuild% FieldWorks.proj /t:RestoreBuildTasks
+) && (
 	%MsBuild% FieldWorks.proj /t:refreshTargets
 ) && (
 	%MsBuild% FieldWorks.proj %*

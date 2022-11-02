@@ -102,10 +102,12 @@
 	</Choose>
 
 	<Target Name="Setup">
-		<CallTarget Targets="RestoreBuildTasks" Condition="!Exists('$(FwBuildTasksProps)')"/>
-		<CallTarget Targets="SetupInternal" Condition="!$(RestartBuild)" />
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="SetupInternal"
-			Properties="IsReentry=true" Condition="$(RestartBuild)" />
+		<CallTarget Targets="RestoreBuildTasks" />
+		<CallTarget Targets="SetupInternal"/><!-- Condition="!$(RestartBuild)" /-->
+		<!-- NB (Hasso) 2022.11: If we restart the build to call SetupInternal,
+			none of the properties get passed back out to the main build, so we start copying output files to C:\ -->
+		<!-- <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="SetupInternal"
+			Properties="IsReentry=true" Condition="$(RestartBuild)" /> -->
 	</Target>
 
   <Target Name="SetupInternal" DependsOnTargets="RestoreBuildTasks"><!-- cannot depend on GenerateVersionFiles, because that creates a file in Output/Common which CleanAll deletes -->
