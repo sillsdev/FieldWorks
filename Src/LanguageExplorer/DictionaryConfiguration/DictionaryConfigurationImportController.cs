@@ -10,12 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/DictionaryConfigurationImportController.cs
 using DialogAdapters;
-||||||| f013144d5:Src/xWorks/DictionaryConfigurationImportController.cs
-=======
-using DesktopAnalytics;
->>>>>>> develop:Src/xWorks/DictionaryConfigurationImportController.cs
 using Ionic.Zip;
 using LanguageExplorer.LIFT;
 using SIL.FieldWorks.Common.FwUtils;
@@ -154,13 +149,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 					? DictionaryConfigurationServices.ReversalIndexConfigurationDirectoryName
 					: DictionaryConfigurationServices.DictionaryConfigurationDirectoryName);
 			var isCustomizedOriginal = DictionaryConfigurationManagerController.IsConfigurationACustomizedOriginal(NewConfigToImport, configDir, _cache);
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/DictionaryConfigurationImportController.cs
-			UsageReporter.SendEvent("DictionaryConfigurationImport", "Import", "Import Config", $"Import of [{configType}{(isCustomizedOriginal ? string.Empty : "-Custom")}]:{(ImportHappened ? "succeeded" : "failed")}", 0);
-||||||| f013144d5:Src/xWorks/DictionaryConfigurationImportController.cs
-			UsageReporter.SendEvent("DictionaryConfigurationImport", "Import", "Import Config",
-				string.Format("Import of [{0}{1}]:{2}",
-					configType, isCustomizedOriginal ? string.Empty : "-Custom", ImportHappened ? "succeeded" : "failed"), 0);
-=======
 			TrackingHelper.TrackImport("dictionary", "DictionaryConfiguration",
 				ImportHappened ? ImportExportStep.Succeeded : ImportExportStep.Failed,
 				new Dictionary<string, string>
@@ -168,7 +156,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 					{ "configType", configType.ToString() },
 					{ "isCustom", isCustomizedOriginal.ToString() }
 				});
->>>>>>> develop:Src/xWorks/DictionaryConfigurationImportController.cs
 		}
 
 		private void ImportStyles(string importStylesLocation)

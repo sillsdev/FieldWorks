@@ -44,7 +44,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		void EndTableRow(IFragmentWriter writer);
 		void EndTableBody(IFragmentWriter writer);
 		void EndTable(IFragmentWriter writer);
-		void StartEntry(IFragmentWriter writer, string className, Guid entryGuid, int index, RecordClerk clerk);
+		void StartEntry(IFragmentWriter writer, string className, Guid entryGuid, int index, IRecordList recordList);
 		void AddEntryData(IFragmentWriter writer, List<string> pieces);
 		void EndEntry(IFragmentWriter writer);
 		void AddCollection(IFragmentWriter writer, bool isBlockProperty, string className, string content);

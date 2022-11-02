@@ -8,24 +8,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/LcmJsonGenerator.cs
-using LanguageExplorer.Controls.XMLViews;
-||||||| f013144d5:Src/xWorks/LcmJsonGenerator.cs
-=======
 using System.Threading;
 using System.Web.UI.WebControls;
 using Icu.Collation;
->>>>>>> develop:Src/xWorks/LcmJsonGenerator.cs
+using LanguageExplorer.Controls.XMLViews;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/LcmJsonGenerator.cs
 using SIL.FieldWorks.Common.FwUtils;
-||||||| f013144d5:Src/xWorks/LcmJsonGenerator.cs
-using SIL.FieldWorks.Common.Controls;
-=======
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwUtils;
->>>>>>> develop:Src/xWorks/LcmJsonGenerator.cs
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 
@@ -37,26 +26,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 	/// a robust implementation that will always generate correct .json given any <code>LCMCache</code> and
 	/// <code>DictionaryConfigurationModel</code>
 	/// </summary>
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/LcmJsonGenerator.cs
-	internal sealed class LcmJsonGenerator : ILcmContentGenerator
-||||||| f013144d5:Src/xWorks/LcmJsonGenerator.cs
-	public class LcmJsonGenerator : ILcmContentGenerator
-=======
 	/// <remarks>All methods in this class need to be thread safe</remarks>
-	public class LcmJsonGenerator : ILcmContentGenerator
->>>>>>> develop:Src/xWorks/LcmJsonGenerator.cs
+	internal sealed class LcmJsonGenerator : ILcmContentGenerator
 	{
 		private LcmCache Cache { get; }
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/LcmJsonGenerator.cs
-
-		internal LcmJsonGenerator(LcmCache cache)
-||||||| f013144d5:Src/xWorks/LcmJsonGenerator.cs
-		public LcmJsonGenerator(LcmCache cache)
-=======
 		private readonly ThreadLocal<StringBuilder> m_runBuilder = new ThreadLocal<StringBuilder>(()=> new StringBuilder());
 		private Collator m_headwordWsCollator;
-		public LcmJsonGenerator(LcmCache cache)
->>>>>>> develop:Src/xWorks/LcmJsonGenerator.cs
+		internal LcmJsonGenerator(LcmCache cache)
 		{
 			Cache = cache;
 		}
@@ -244,7 +220,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			// TODO: decide on a useful json representation for tables
 		}
 
-		public void StartEntry(IFragmentWriter xw, string className, Guid entryGuid, int index, RecordClerk clerk)
+		public void StartEntry(IFragmentWriter xw, string className, Guid entryGuid, int index, IRecordList recordList)
 		{
 			var jsonWriter = (JsonFragmentWriter)xw;
 			jsonWriter.StartObject();
@@ -262,7 +238,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			}
 
 			var indexChar = ConfiguredExport.GetLeadChar(
-				ConfiguredLcmGenerator.GetSortWordForLetterHead(entry, clerk),
+				ConfiguredLcmGenerator.GetSortWordForLetterHead(entry, recordList),
 				headwordWs,
 				new Dictionary<string, Dictionary<string, ConfiguredExport.CollationLevel>>(),
 				new Dictionary<string, Dictionary<string, string>>(),
@@ -345,15 +321,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 			return formattedSenseNumber;
 		}
 
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/LcmJsonGenerator.cs
-		public string AddLexReferences(bool generateLexType, string lexTypeContent, string className, string referencesContent)
-||||||| f013144d5:Src/xWorks/LcmJsonGenerator.cs
-		public string AddLexReferences(bool generateLexType, string lexTypeContent, string className,
-			string referencesContent)
-=======
 		public string AddLexReferences(bool generateLexType, string lexTypeContent, string className,
 			string referencesContent, bool typeBefore)
->>>>>>> develop:Src/xWorks/LcmJsonGenerator.cs
 		{
 			var bldr = new StringBuilder();
 			var sw = new StringWriter(bldr);
@@ -411,12 +380,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			return $"{{\"guid\":\"g{linkTarget}\",\"lang\":\"{wsId}\",{fileContent}}}";
 		}
 
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/LcmJsonGenerator.cs
-		public string AddSenseData(string senseNumberSpan, bool isBlock, Guid ownerGuid, string senseContent, string className)
-||||||| f013144d5:Src/xWorks/LcmJsonGenerator.cs
-		public string AddSenseData(string senseNumberSpan, bool isBlock, Guid ownerGuid,
-			string senseContent, string className)
-=======
 		public string GenerateErrorContent(StringBuilder badStrBuilder)
 		{
 			// We can't generate comments in json - But adding unicode tofu in front of the cleaned bad string should help
@@ -426,7 +389,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public string AddSenseData(string senseNumberSpan, bool isBlock, Guid ownerGuid,
 			string senseContent, string className)
->>>>>>> develop:Src/xWorks/LcmJsonGenerator.cs
 		{
 			var bldr = new StringBuilder();
 			var sw = new StringWriter(bldr);
@@ -450,20 +412,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		public class JsonFragmentWriter : IFragmentWriter
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/LcmJsonGenerator.cs
 			private readonly JsonTextWriter _jsonWriter;
 			private readonly StringWriter _stringWriter;
 			private bool _isDisposed;
-||||||| f013144d5:Src/xWorks/LcmJsonGenerator.cs
-			private JsonTextWriter jsonWriter;
-			private StringWriter stringWriter;
-			private bool isDisposed;
-=======
-			private JsonTextWriter jsonWriter;
-			private StringWriter stringWriter;
-			private bool isDisposed;
 			internal Dictionary<string, Collator> collatorCache = new Dictionary<string, Collator>();
->>>>>>> develop:Src/xWorks/LcmJsonGenerator.cs
 
 			public JsonFragmentWriter(StringBuilder bldr)
 			{
@@ -568,22 +520,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
 				var readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/LcmJsonGenerator.cs
 				var settings = new GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(jsonPath),
-					ConfiguredLcmGenerator.IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css") { ContentGenerator = new LcmJsonGenerator(cache)};
-				var displayXhtmlSettings = new GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(jsonPath),
-						ConfiguredLcmGenerator.IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css");
-||||||| f013144d5:Src/xWorks/LcmJsonGenerator.cs
-				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(jsonPath),
-					ConfiguredLcmGenerator.IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css") { ContentGenerator = new LcmJsonGenerator(cache)};
-				var displayXhtmlSettings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(jsonPath),
-						ConfiguredLcmGenerator.IsNormalRtl(readOnlyPropertyTable), Path.GetFileName(cssPath) == "configured.css");
-=======
-				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(jsonPath),
 					ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), Path.GetFileName(cssPath) == "configured.css") { ContentGenerator = new LcmJsonGenerator(cache)};
-				var displayXhtmlSettings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(jsonPath),
-						ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), Path.GetFileName(cssPath) == "configured.css");
->>>>>>> develop:Src/xWorks/LcmJsonGenerator.cs
+				var displayXhtmlSettings = new GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(jsonPath),
+					ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), Path.GetFileName(cssPath) == "configured.css");
 				var entryContents = new Tuple<ICmObject, StringBuilder, StringBuilder>[entryCount];
 				var entryActions = new List<Action>();
 				// For every entry in the page generate an action that will produce the xhtml document fragment for that entry
@@ -666,7 +606,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			string configPath,
 			string exportPath,
 			LcmCache cache,
-			RecordClerk clerk)
+			IRecordList recordList)
 		{
 			dynamic dictionaryMetaData = new JObject();
 			dictionaryMetaData._id = siteName;
@@ -674,7 +614,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			mainLanguageData.title = cache.LangProject.DefaultVernacularWritingSystem.DisplayLabel;
 			mainLanguageData.lang = cache.LangProject.DefaultVernacularWritingSystem.Id;
 			//mainLanguageData.title = Enhance: Add new field to dialog for title?
-			mainLanguageData.letters = JArray.FromObject(GenerateLetterHeaders(entryHvos, cache, clerk));
+			mainLanguageData.letters = JArray.FromObject(GenerateLetterHeaders(entryHvos, cache, recordList));
 			var customDictionaryCss = CssGenerator.CopyCustomCssAndGetPath(exportPath, configPath);
 			var cssFiles = new JArray();
 			cssFiles.Add("configured.css");
@@ -708,9 +648,9 @@ namespace LanguageExplorer.DictionaryConfiguration
 		}
 
 
-		public static JArray GenerateReversalLetterHeaders(string siteName, string writingSystem, int[] entryIds, LcmCache cache, RecordClerk clerk)
+		public static JArray GenerateReversalLetterHeaders(string siteName, string writingSystem, int[] entryIds, LcmCache cache, IRecordList recordList)
 		{
-			return JArray.FromObject(GenerateLetterHeaders(entryIds, cache, clerk));
+			return JArray.FromObject(GenerateLetterHeaders(entryIds, cache, recordList));
 		}
 
 		/// <summary>
@@ -735,7 +675,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			return listArray;
 		}
 
-		private static List<string> GenerateLetterHeaders(int[] entriesToSave, LcmCache cache, RecordClerk clerk)
+		private static List<string> GenerateLetterHeaders(int[] entriesToSave, LcmCache cache, IRecordList recordList)
 		{
 			// These maps act as a cache to improve performance for discovering the index character for each headword
 			var wsDigraphMap = new Dictionary<string, Dictionary<string, ConfiguredExport.CollationLevel>>();
@@ -748,7 +688,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			foreach (var entryHvo in entriesToSave)
 			{
 				var entry = cache.ServiceLocator.GetObject(entryHvo);
-				var firstLetter = ConfiguredExport.GetLeadChar(ConfiguredLcmGenerator.GetSortWordForLetterHead(entry, clerk),
+				var firstLetter = ConfiguredExport.GetLeadChar(ConfiguredLcmGenerator.GetSortWordForLetterHead(entry, recordList),
 					wsString, wsDigraphMap, wsCharEquivalentMap, wsIgnorableMap, col, cache);
 				if (letters.Contains(firstLetter))
 				{

@@ -1,10 +1,4 @@
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/Migration/PreHistoricMigrator.cs
-// Copyright (c) 2017-2020 SIL International
-||||||| f013144d5:Src/xWorks/DictionaryConfigurationMigrators/PreHistoricMigrator.cs
-// Copyright (c) 2017 SIL International
-=======
 // Copyright (c) 2017-2022 SIL International
->>>>>>> develop:Src/xWorks/DictionaryConfigurationMigrators/PreHistoricMigrator.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -82,44 +76,7 @@ namespace LanguageExplorer.DictionaryConfiguration.Migration
 			m_partInventory = Inventory.GetInventory("parts", Cache.ProjectId.Name);
 			if (!ConfigsNeedMigratingFromPre83())
 			{
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/Migration/PreHistoricMigrator.cs
 				return;
-||||||| f013144d5:Src/xWorks/DictionaryConfigurationMigrators/PreHistoricMigrator.cs
-				m_logger.WriteLine(string.Format("{0}: Old configurations were found in need of migration. - {1}",
-					appVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss")));
-				var projectPath = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
-
-				m_logger.WriteLine("Migrating dictionary configurations");
-				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.DictionaryConfigurationDirectoryName;
-				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
-				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-					"Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations",
-					Cache.ActionHandlerAccessor, PerformMigrationUOW);
-				m_logger.WriteLine(string.Format("Migrating Reversal Index configurations, if any - {0}",
-					DateTime.Now.ToString("h:mm:ss")));
-				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName;
-				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
-				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-					"Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations",
-					Cache.ActionHandlerAccessor, PerformMigrationUOW);
-=======
-				m_logger.WriteLine($"{appVersion}: Old configurations were found in need of migration. - {DateTime.Now:yyyy MMM d h:mm:ss tt}");
-				var projectPath = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
-
-				m_logger.WriteLine("Migrating dictionary configurations");
-				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.DictionaryConfigurationDirectoryName;
-				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
-				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-					"Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations",
-					Cache.ActionHandlerAccessor, PerformMigrationUOW);
-				m_logger.WriteLine(string.Format("Migrating Reversal Index configurations, if any - {0}",
-					DateTime.Now.ToLongTimeString()));
-				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName;
-				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
-				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-					"Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations",
-					Cache.ActionHandlerAccessor, PerformMigrationUOW);
->>>>>>> develop:Src/xWorks/DictionaryConfigurationMigrators/PreHistoricMigrator.cs
 			}
 			m_logger.WriteLine($"{AppVersion}: Old configurations were found in need of migration. - {DateTime.Now:yyyy MMM d h:mm:ss}");
 			var projectPath = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);

@@ -1,10 +1,4 @@
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/ConfiguredLcmGenerator.cs
-// Copyright (c) 2014-2020 SIL International
-||||||| f013144d5:Src/xWorks/ConfiguredLcmGenerator.cs
-// Copyright (c) 2014-2019 SIL International
-=======
-// Copyright (c) 2014-2021 SIL International
->>>>>>> develop:Src/xWorks/ConfiguredLcmGenerator.cs
+// Copyright (c) 2014-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,16 +13,10 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/ConfiguredLcmGenerator.cs
-using System.Xml;
-using LanguageExplorer.Controls.XMLViews;
-using LanguageExplorer.Filters;
-||||||| f013144d5:Src/xWorks/ConfiguredLcmGenerator.cs
-using System.Xml;
-=======
 using System.Web.UI.WebControls;
 using ExCSS;
->>>>>>> develop:Src/xWorks/ConfiguredLcmGenerator.cs
+using LanguageExplorer.Controls.XMLViews;
+using LanguageExplorer.Filters;
 using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -95,36 +83,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 			EntriesToAddCount = 5;
 		}
 
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/ConfiguredLcmGenerator.cs
-		internal static bool IsNormalRtl(IReadonlyPropertyTable readOnlyPropertyTable)
-||||||| f013144d5:Src/xWorks/ConfiguredLcmGenerator.cs
-		internal static bool IsNormalRtl(ReadOnlyPropertyTable propertyTable)
-=======
 		/// <summary>
 		/// Sets initial values (or resets them after tests)
 		/// </summary>
 		internal static void Init()
->>>>>>> develop:Src/xWorks/ConfiguredLcmGenerator.cs
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/ConfiguredLcmGenerator.cs
-			// Right-to-Left for the overall layout is determined by Dictionary-Normal
-			// Some tests don't have the expected style.
-			var styleSheet = FwUtils.StyleSheetFromPropertyTable(readOnlyPropertyTable);
-			if (styleSheet != null)
-			{
-				if (styleSheet.Styles.Contains("Dictionary-Normal"))
-				{
-					var normalStyle = styleSheet.Styles["Dictionary-Normal"];
-					var dictionaryNormalStyle = new ExportStyleInfo(normalStyle);
-					return dictionaryNormalStyle.DirectionIsRightToLeft == TriStateBool.triTrue; // default is LTR
-				}
-			}
-			return true; // default is LTR
-||||||| f013144d5:Src/xWorks/ConfiguredLcmGenerator.cs
-			// Right-to-Left for the overall layout is determined by Dictionary-Normal
-			var dictionaryNormalStyle = new ExportStyleInfo(FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable).Styles["Dictionary-Normal"]);
-			return dictionaryNormalStyle.DirectionIsRightToLeft == TriStateBool.triTrue; // default is LTR
-=======
 			AssemblyFile = "SIL.LCModel";
 		}
 
@@ -132,7 +95,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			// Right-to-Left for the overall layout is determined by Dictionary-Normal - or the user selected style for Main Entry
 			var mainEntryStyle = GetEntryStyle(model);
-			var entryStyle = new ExportStyleInfo(FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable).Styles[mainEntryStyle]);
+			var entryStyle = new ExportStyleInfo(FwUtils.StyleSheetFromPropertyTable(propertyTable).Styles[mainEntryStyle]);
 			return entryStyle.DirectionIsRightToLeft == TriStateBool.triTrue; // default is LTR
 		}
 
@@ -140,7 +103,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 		{
 			return model.Parts.FirstOrDefault(part => part.IsMainEntry)?.Style
 				?? "Dictionary-Normal";
->>>>>>> develop:Src/xWorks/ConfiguredLcmGenerator.cs
+
 		}
 
 		private static bool IsCanceling(IThreadedProgress progress)
@@ -206,19 +169,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// field depending on the sort column.
 		/// </summary>
 		/// <returns>the sort word in NFD (the heading letter must be normalized to NFC before writing to XHTML, per LT-18177)</returns>
-		internal static string GetSortWordForLetterHead(ICmObject entry, RecordClerk clerk)
+		internal static string GetSortWordForLetterHead(ICmObject entry, IRecordList recordList)
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/ConfiguredLcmGenerator.cs
-			return (entry as ILexEntry)?.HomographForm.TrimStart() ?? (entry as IReversalIndexEntry)?.ReversalForm.BestAnalysisAlternative.Text.TrimStart() ?? string.Empty;
-||||||| f013144d5:Src/xWorks/ConfiguredLcmGenerator.cs
-			var lexEntry = entry as ILexEntry;
-			if (lexEntry == null)
-			{
-				var revEntry = entry as IReversalIndexEntry;
-				return revEntry != null ? revEntry.ReversalForm.BestAnalysisAlternative.Text.TrimStart() : string.Empty;
-			}
-			return lexEntry.HomographForm.TrimStart();
-=======
 			var lexEntry = entry as ILexEntry;
 
 			// Reversal Indexes - We are always using the same sorting, regardless of the sort column that
@@ -228,28 +180,28 @@ namespace LanguageExplorer.DictionaryConfiguration
 				// When viewing the Reversal Indexes the sort column always comes back as "Form",
 				// regardless of which column was selected for the sort. If for some cases this assumption changes
 				// then we need to assess if those cases should be returning a different property for the sort word.
-				if (clerk?.SortName != null)
+				if (recordList?.SortName != null)
 				{
-					Debug.Assert(clerk.SortName.StartsWith("Form"),
+					Debug.Assert(recordList.SortName.StartsWith("Form"),
 						"Should we be getting the letter headers from the sort column: " +
-						clerk.SortName);
+						recordList.SortName);
 				}
 
 				var revEntry = entry as IReversalIndexEntry;
 				return revEntry != null ? revEntry.ReversalForm.BestAnalysisAlternative.Text.TrimStart() : string.Empty;
 			}
 
-			if (clerk?.SortName != null)
+			if (recordList?.SortName != null)
 			{
 				// Lexeme Form
-				if (clerk.SortName.StartsWith("Lexeme Form"))
+				if (recordList.SortName.StartsWith("Lexeme Form"))
 				{
 					string retStr = lexEntry.LexemeFormOA?.Form?.VernacularDefaultWritingSystem?.Text?.TrimStart();
 					return retStr != null ? retStr : string.Empty;
 				}
 
 				// Citation Form
-				if (clerk.SortName.StartsWith("Citation Form"))
+				if (recordList.SortName.StartsWith("Citation Form"))
 				{
 					string retStr = lexEntry.CitationForm?.UserDefaultWritingSystem?.Text?.TrimStart();
 					return (retStr != null && retStr != "***") ? retStr : string.Empty;
@@ -257,14 +209,13 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 				// If we get here and have a sort name other than "Headword" then it should have
 				// it's own conditional check and use a different lexEntry field to get the sort word.
-				Debug.Assert(clerk.SortName.StartsWith("Headword"),
+				Debug.Assert(recordList.SortName.StartsWith("Headword"),
 					"We should be getting the letter headers from the sort column: " +
-					clerk.SortName);
+					recordList.SortName);
 			}
 
 			// Headword - Default to using the "Headword" sort word.
 			return  lexEntry.HomographForm.TrimStart();
->>>>>>> develop:Src/xWorks/ConfiguredLcmGenerator.cs
 		}
 
 		/// <summary>
@@ -273,18 +224,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 		internal static string GetWsForEntryType(ICmObject entry, LcmCache cache)
 		{
 			var wsString = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultVernWs);
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/ConfiguredLcmGenerator.cs
 			if (entry is IReversalIndexEntry reversalIndexEntry)
 			{
 				wsString = reversalIndexEntry.SortKeyWs;
 			}
-||||||| f013144d5:Src/xWorks/ConfiguredLcmGenerator.cs
-			if (entry is IReversalIndexEntry)
-				wsString = ((IReversalIndexEntry)entry).SortKeyWs;
-=======
-			if (entry is IReversalIndexEntry revEntry)
-				wsString = revEntry.SortKeyWs;
->>>>>>> develop:Src/xWorks/ConfiguredLcmGenerator.cs
 			return wsString;
 		}
 
@@ -359,8 +302,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 			var bldr = new StringBuilder();
 			using (var xw = settings.ContentGenerator.CreateWriter(bldr))
 			{
-				var clerk = settings.PropertyTable.GetValue<RecordClerk>("ActiveClerk", null);
-				settings.ContentGenerator.StartEntry(xw, GetClassNameAttributeForConfig(configuration), entry.Guid, index, clerk);
+				var recordList = settings.ReadOnlyPropertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).ActiveRecordList;
+				settings.ContentGenerator.StartEntry(xw, GetClassNameAttributeForConfig(configuration), entry.Guid, index, recordList);
 				settings.ContentGenerator.AddEntryData(xw, pieces);
 				settings.ContentGenerator.EndEntry(xw);
 				xw.Flush();
@@ -510,16 +453,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 					if (fileProperty != null && !string.IsNullOrEmpty(internalPath))
 					{
 						var srcAttr = GenerateSrcAttributeForMediaFromFilePath(internalPath, "AudioVisual", settings);
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/ConfiguredLcmGenerator.cs
-						if (IsVideo(fileProperty.InternalPath))
-						{
-							return GenerateXHTMLForVideoFile(fileProperty.ClassName, srcAttr, MovieCamera);
-						}
-||||||| f013144d5:Src/xWorks/ConfiguredLcmGenerator.cs
-						if (IsVideo(fileProperty.InternalPath))
-							return GenerateXHTMLForVideoFile(fileProperty.ClassName, srcAttr, MovieCamera);
-=======
->>>>>>> develop:Src/xWorks/ConfiguredLcmGenerator.cs
 						fileOwner = field as ICmObject;
 						// the XHTML id attribute must be unique. The owning ICmMedia has a unique guid.
 						// The ICmFile is used for all references to the same file within the project, so its guid is not unique.
@@ -642,57 +575,11 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 		private static string GenerateXHTMLForVideoFile(string className, string mediaId, string srcAttribute, string caption, GeneratorSettings settings)
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/ConfiguredLcmGenerator.cs
-			if (string.IsNullOrEmpty(srcAttribute) && string.IsNullOrEmpty(caption))
-			{
-				return string.Empty;
-			}
-			var bldr = new StringBuilder();
-			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
-			{
-				// This creates a link that will open the video in the same window as the dictionary view/preview
-				// refreshing will bring it back to the dictionary
-				xw.WriteStartElement("a");
-				xw.WriteAttributeString("class", className);
-				xw.WriteAttributeString("href", srcAttribute);
-				if (!string.IsNullOrEmpty(caption))
-				{
-					xw.WriteString(caption);
-				}
-				else
-				{
-					xw.WriteRaw(string.Empty);
-				}
-				xw.WriteFullEndElement();
-				xw.Flush();
-				return bldr.ToString();
-			}
-||||||| f013144d5:Src/xWorks/ConfiguredLcmGenerator.cs
-			if (String.IsNullOrEmpty(srcAttribute) && String.IsNullOrEmpty(caption))
-				return String.Empty;
-			var bldr = new StringBuilder();
-			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
-			{
-				// This creates a link that will open the video in the same window as the dictionary view/preview
-				// refreshing will bring it back to the dictionary
-				xw.WriteStartElement("a");
-				xw.WriteAttributeString("class", className);
-				xw.WriteAttributeString("href", srcAttribute);
-				if (!String.IsNullOrEmpty(caption))
-					xw.WriteString(caption);
-				else
-					xw.WriteRaw("");
-				xw.WriteFullEndElement();
-				xw.Flush();
-				return bldr.ToString();
-			}
-=======
 			if (string.IsNullOrEmpty(srcAttribute) && string.IsNullOrEmpty(caption))
 				return string.Empty;
 			// This creates a link that will open the video in the same window as the dictionary view/preview
 			// refreshing will bring it back to the dictionary
 			return settings.ContentGenerator.GenerateVideoLinkContent(className, GetSafeXHTMLId(mediaId), srcAttribute, caption);
->>>>>>> develop:Src/xWorks/ConfiguredLcmGenerator.cs
 		}
 
 		private static bool IsVideo(string fileName)
@@ -803,21 +690,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// </summary>
 		private static string GetClassNameForCustomFieldParent(ConfigurableDictionaryNode customFieldNode, IFwMetaDataCacheManaged metaDataCacheAccessor)
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/ConfiguredLcmGenerator.cs
-			// If the parent node of the custom field represents a collection, calling GetTypeForConfigurationNode
-			// with the parent node returns the collection type. We want the type of the elements in the collection.
-			var parentNodeType = GetTypeForConfigurationNode(customFieldNode.Parent, metaDataCacheAccessor, out _);
-||||||| f013144d5:Src/xWorks/ConfiguredLcmGenerator.cs
-			Type unneeded;
-			// If the parent node of the custom field represents a collection, calling GetTypeForConfigurationNode
-			// with the parent node returns the collection type. We want the type of the elements in the collection.
-			var parentNodeType = GetTypeForConfigurationNode(customFieldNode.Parent, cache, out unneeded);
-=======
 			// Use the type of the nearest ancestor that is not a grouping node
 			var parentNode = customFieldNode.Parent;
 			for (; parentNode.DictionaryNodeOptions is DictionaryNodeGroupingOptions; parentNode = parentNode.Parent) { }
-			var parentNodeType = GetTypeForConfigurationNode(parentNode, cache, out _);
->>>>>>> develop:Src/xWorks/ConfiguredLcmGenerator.cs
+			var parentNodeType = GetTypeForConfigurationNode(parentNode, metaDataCacheAccessor, out _);
 			if (parentNodeType == null)
 			{
 				Debug.Assert(parentNodeType != null, "Unable to find type for configuration node");
@@ -1466,15 +1342,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 						? GenerateCollectionItemContent(typeNode, pubDecorator, lexEntryType, lexEntryType.Owner, settings)
 						: null;
 					var className = generateLexType ? GetClassNameAttributeForConfig(typeNode) : null;
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/ConfiguredLcmGenerator.cs
-					var refsByType = settings.ContentGenerator.AddLexReferences(generateLexType, lexTypeContent, className, innerBldr.ToString());
-||||||| f013144d5:Src/xWorks/ConfiguredLcmGenerator.cs
-					var refsByType = settings.ContentGenerator.AddLexReferences(generateLexType,
-						lexTypeContent, className, innerBldr.ToString());
-=======
 					var refsByType = settings.ContentGenerator.AddLexReferences(generateLexType,
 						lexTypeContent, className, innerBldr.ToString(), IsTypeBeforeForm(config));
->>>>>>> develop:Src/xWorks/ConfiguredLcmGenerator.cs
 					bldr.Append(refsByType);
 				}
 			}
@@ -2589,17 +2458,8 @@ namespace LanguageExplorer.DictionaryConfiguration
 							badStrBuilder.Append(unicodeChars.GetTextElement());
 						}
 					}
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/ConfiguredLcmGenerator.cs
-					//FIXME: The error content here needs to come from the settings.ContentGenerator implementation (won't work for json)
-					return $"<span>\u0FFF\u0FFF\u0FFF<!-- Error generating content for string: '{badStrBuilder}' invalid surrogate pairs replaced with \\u0fff --></span>";
-||||||| f013144d5:Src/xWorks/ConfiguredLcmGenerator.cs
-					//FIXME: The error content here needs to come from the settings.ContentGenerator implementation (won't work for json)
-					return string.Format("<span>\u0FFF\u0FFF\u0FFF<!-- Error generating content for string: '{0}' invalid surrogate pairs replaced with \\u0fff --></span>",
-						badStrBuilder);
-=======
 
 					return settings.ContentGenerator.GenerateErrorContent(badStrBuilder);
->>>>>>> develop:Src/xWorks/ConfiguredLcmGenerator.cs
 				}
 			}
 			return string.Empty;
@@ -2632,26 +2492,10 @@ namespace LanguageExplorer.DictionaryConfiguration
 			{
 				settings.ContentGenerator.StartLink(writer, linkDestination);
 			}
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/ConfiguredLcmGenerator.cs
-			const char txtlineSplit = (char)8232; //Line-Separator Decimal Code
-			if (text.Contains(txtlineSplit))
-||||||| f013144d5:Src/xWorks/ConfiguredLcmGenerator.cs
-			const char txtlineSplit = (Char)8232; //Line-Seperator Decimal Code
-			if (text.Contains(txtlineSplit))
-=======
 			if (text.Contains(TxtLineSplit))
->>>>>>> develop:Src/xWorks/ConfiguredLcmGenerator.cs
 			{
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/ConfiguredLcmGenerator.cs
-				var txtContents = text.Split(txtlineSplit);
-				for (var i = 0; i < txtContents.Count(); i++)
-||||||| f013144d5:Src/xWorks/ConfiguredLcmGenerator.cs
-				var txtContents = text.Split(txtlineSplit);
-				for (int i = 0; i < txtContents.Count(); i++)
-=======
 				var txtContents = text.Split(TxtLineSplit);
 				for (int i = 0; i < txtContents.Count(); i++)
->>>>>>> develop:Src/xWorks/ConfiguredLcmGenerator.cs
 				{
 					settings.ContentGenerator.AddToRunContent(writer, txtContents[i]);
 					if (i == txtContents.Count() - 1)
@@ -2679,40 +2523,15 @@ namespace LanguageExplorer.DictionaryConfiguration
 		/// <param name="classname">value for class attribute for audio tag</param>
 		/// <param name="audioId">value for Id attribute for audio tag</param>
 		/// <param name="srcAttribute">Source location path for audio file</param>
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/ConfiguredLcmGenerator.cs
-		/// <param name="caption">Innertext for hyperlink</param>
-		/// <param name="settings"></param>
-		/// <returns></returns>
-		private static string GenerateXHTMLForAudioFile(string classname, string audioId, string srcAttribute, string caption, GeneratorSettings settings)
-||||||| f013144d5:Src/xWorks/ConfiguredLcmGenerator.cs
-		/// <param name="caption">Innertext for hyperlink</param>
-		/// <returns></returns>
-		private static string GenerateXHTMLForAudioFile(string classname,
-			string audioId, string srcAttribute, string caption, GeneratorSettings settings)
-=======
 		/// <param name="audioIcon">Inner text for hyperlink (unicode icon for audio)</param>
 		/// <param name="settings"/>
 		private static string GenerateXHTMLForAudioFile(string classname,
 			string audioId, string srcAttribute, string audioIcon, GeneratorSettings settings)
->>>>>>> develop:Src/xWorks/ConfiguredLcmGenerator.cs
 		{
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/ConfiguredLcmGenerator.cs
-			if (string.IsNullOrEmpty(audioId) && string.IsNullOrEmpty(srcAttribute) && string.IsNullOrEmpty(caption))
-			{
-				return string.Empty;
-			}
-			return settings.ContentGenerator.GenerateAudioLinkContent(classname, srcAttribute, caption, GetSafeXHTMLId(audioId));
-||||||| f013144d5:Src/xWorks/ConfiguredLcmGenerator.cs
-			if (String.IsNullOrEmpty(audioId) && String.IsNullOrEmpty(srcAttribute) && String.IsNullOrEmpty(caption))
-				return String.Empty;
-			var safeAudioId = GetSafeXHTMLId(audioId);
-			return settings.ContentGenerator.GenerateAudioLinkContent(classname, srcAttribute, caption, safeAudioId);
-=======
 			if (string.IsNullOrEmpty(audioId) && string.IsNullOrEmpty(srcAttribute) && string.IsNullOrEmpty(audioIcon))
 				return string.Empty;
 			var safeAudioId = GetSafeXHTMLId(audioId);
 			return settings.ContentGenerator.GenerateAudioLinkContent(classname, srcAttribute, audioIcon, safeAudioId);
->>>>>>> develop:Src/xWorks/ConfiguredLcmGenerator.cs
 		}
 
 		private static string GetSafeXHTMLId(string audioId)
@@ -2841,7 +2660,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 				else
 				{
 					// Yes, this strips all WS and formatting information, but for an error message, I'm not sure that we care
-					GenerateError(string.Format(xWorksStrings.InvalidUSFM_TextAfterTR, junk), writer, settings);
+					GenerateError(string.Format(DictionaryConfigurationStrings.InvalidUSFM_TextAfterTR, junk), writer, settings);
 				}
 			}
 
@@ -2951,54 +2770,6 @@ namespace LanguageExplorer.DictionaryConfiguration
 			entriesToSave = decorator.GetEntriesToPublish(propertyTable, activeRecordList.VirtualFlid, dictionaryType);
 			return decorator;
 		}
-<<<<<<< HEAD:Src/LanguageExplorer/DictionaryConfiguration/ConfiguredLcmGenerator.cs
-||||||| f013144d5:Src/xWorks/ConfiguredLcmGenerator.cs
-
-		public class GeneratorSettings
-		{
-			public ILcmContentGenerator ContentGenerator = new LcmXhtmlGenerator();
-			public LcmCache Cache { get; }
-			public ReadOnlyPropertyTable PropertyTable { get; }
-			public bool UseRelativePaths { get; }
-			public bool CopyFiles { get; }
-			public string ExportPath { get; }
-			public bool RightToLeft { get; }
-			public bool IsWebExport { get; }
-			public bool IsTemplate { get; }
-
-			public GeneratorSettings(LcmCache cache, PropertyTable propertyTable, bool relativePaths,bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false)
-				: this(cache, propertyTable == null ? null : new ReadOnlyPropertyTable(propertyTable), relativePaths, copyFiles, exportPath, rightToLeft, isWebExport)
-			{
-			}
-
-
-			public GeneratorSettings(LcmCache cache, ReadOnlyPropertyTable propertyTable, bool relativePaths, bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false, bool isTemplate = false)
-			{
-				if (cache == null || propertyTable == null)
-				{
-					throw new ArgumentNullException();
-				}
-				Cache = cache;
-				PropertyTable = propertyTable;
-				UseRelativePaths = relativePaths;
-				CopyFiles = copyFiles;
-				ExportPath = exportPath;
-				RightToLeft = rightToLeft;
-				IsWebExport = isWebExport;
-				IsTemplate = isTemplate;
-			}
-		}
-
-		/// <remarks>
-		/// Presently, this handles only Sense Info, but if other info needs to be handed down the call stack in the future, we could rename this
-		/// </remarks>
-		internal struct SenseInfo
-		{
-			public int SenseCounter { get; set; }
-			public string SenseOutlineNumber { get; set; }
-			public string ParentSenseNumberingStyle { get; set; }
-		}
-=======
 
 		/// <summary>
 		/// Determines if Variant Type comes before or after Variant Form.
@@ -3012,7 +2783,7 @@ namespace LanguageExplorer.DictionaryConfiguration
 			// Determine if 'Variant Type' should be before or after 'Variant Form'.
 			ConfigurableDictionaryNode node = null;
 			var variantOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
-			if (variantOptions != null && variantOptions.ListId == DictionaryNodeListOptions.ListIds.Variant)
+			if (variantOptions != null && variantOptions.ListId == ListIds.Variant)
 			{
 				node = config.ReferencedOrDirectChildren.FirstOrDefault(x => ((x.FieldDescription == "VariantEntryTypesRS") || (x.FieldDescription == "OwningEntry")));
 				if (node != null)
@@ -3026,51 +2797,5 @@ namespace LanguageExplorer.DictionaryConfiguration
 
 			return typeBefore;
 		}
-
-		public class GeneratorSettings
-		{
-			public ILcmContentGenerator ContentGenerator = new LcmXhtmlGenerator();
-			public LcmCache Cache { get; }
-			public ReadOnlyPropertyTable PropertyTable { get; }
-			public bool UseRelativePaths { get; }
-			public bool CopyFiles { get; }
-			public string ExportPath { get; }
-			public bool RightToLeft { get; }
-			public bool IsWebExport { get; }
-			public bool IsTemplate { get; }
-
-			public GeneratorSettings(LcmCache cache, PropertyTable propertyTable, bool relativePaths,bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false)
-				: this(cache, propertyTable == null ? null : new ReadOnlyPropertyTable(propertyTable), relativePaths, copyFiles, exportPath, rightToLeft, isWebExport)
-			{
-			}
-
-
-			public GeneratorSettings(LcmCache cache, ReadOnlyPropertyTable propertyTable, bool relativePaths, bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false, bool isTemplate = false)
-			{
-				if (cache == null || propertyTable == null)
-				{
-					throw new ArgumentNullException();
-				}
-				Cache = cache;
-				PropertyTable = propertyTable;
-				UseRelativePaths = relativePaths;
-				CopyFiles = copyFiles;
-				ExportPath = exportPath;
-				RightToLeft = rightToLeft;
-				IsWebExport = isWebExport;
-				IsTemplate = isTemplate;
-			}
-		}
-
-		/// <remarks>
-		/// Presently, this handles only Sense Info, but if other info needs to be handed down the call stack in the future, we could rename this
-		/// </remarks>
-		internal struct SenseInfo
-		{
-			public int SenseCounter { get; set; }
-			public string SenseOutlineNumber { get; set; }
-			public string ParentSenseNumberingStyle { get; set; }
-		}
->>>>>>> develop:Src/xWorks/ConfiguredLcmGenerator.cs
 	}
 }
