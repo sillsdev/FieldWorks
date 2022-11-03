@@ -6,15 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Xml;
+using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.Extensions;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
-using SIL.Windows.Forms;
 using SIL.Windows.Forms.WritingSystems;
 using SIL.WritingSystems;
 using SIL.WritingSystems.Tests;
@@ -1482,14 +1482,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void Save_HiddenWsDeleted_WsDeleted()
 		{
-			using (var mediator = new Mediator())
+			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
+			try
 			{
-				var deleteListener = new WSDeletedListener(mediator);
+				var deleteListener = new WSDeletedListener(flexComponentParameters);
 				var ws = GetOrSetWs("doa");
 				Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create().CitationForm.set_String(ws.Handle, "some data");
 				Cache.ActionHandlerAccessor.EndUndoTask();
 				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular,
-					Cache.ServiceLocator.WritingSystemManager, Cache, mediator)
+					Cache.ServiceLocator.WritingSystemManager, Cache, flexComponentParameters.Publisher)
 				{
 					ViewHiddenWritingSystems = model =>
 						model.Items.Add(new HiddenWSListItemModel(ws, false) { WillDelete = true })
@@ -1502,19 +1503,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				CollectionAssert.AreEqual(new[] {"doa"}, deleteListener.DeletedWSs);
 				Assert.That(WritingSystemServices.FindAllWritingSystemsWithText(Cache), Is.Not.Contains(ws.Handle));
 			}
+			finally
+			{
+				TestSetupServices.DisposeTrash(flexComponentParameters);
+			}
 		}
 
 		[TestCase(FwWritingSystemSetupModel.ListType.Vernacular, "fr")]
 		[TestCase(FwWritingSystemSetupModel.ListType.Analysis, "tpi")]
 		public void Save_DeletedWs_WsDeleted(FwWritingSystemSetupModel.ListType type, string wsId)
 		{
-			using (var mediator = new Mediator())
+			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
+			try
 			{
-				var deleteListener = new WSDeletedListener(mediator);
+				var deleteListener = new WSDeletedListener(flexComponentParameters);
 				SetUpProjectWithData();
 				Cache.ActionHandlerAccessor.EndUndoTask();
 				var wasDeleteConfirmed = false;
-				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache, mediator)
+				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache, flexComponentParameters.Publisher)
 				{
 					ConfirmDeleteWritingSystem = label =>
 					{
@@ -1546,6 +1552,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				CollectionAssert.AreEqual(new[] {wsId}, deleteListener.DeletedWSs);
 				Assert.That(WritingSystemServices.FindAllWritingSystemsWithText(Cache), Is.Not.Contains(GetOrSetWs(wsId).Handle));
 			}
+			finally
+			{
+				TestSetupServices.DisposeTrash(flexComponentParameters);
+			}
 		}
 
 		[Test]
@@ -1553,9 +1563,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			[Values(FwWritingSystemSetupModel.ListType.Vernacular, FwWritingSystemSetupModel.ListType.Analysis)]
 			FwWritingSystemSetupModel.ListType type)
 		{
-			using (var mediator = new Mediator())
+			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
+			try
 			{
-				var deleteListener = new WSDeletedListener(mediator);
+				var deleteListener = new WSDeletedListener(flexComponentParameters);
 				SetupHomographLanguagesInCache();
 				var fr = GetOrSetWs("fr");
 				Cache.LangProject.AnalysisWritingSystems.Add(fr);
@@ -1563,7 +1574,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				entry.Comment.set_String(fr.Handle, "commentary");
 				Cache.ActionHandlerAccessor.EndUndoTask();
 				var wasDeleteConfirmed = false;
-				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache, mediator)
+				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache, flexComponentParameters.Publisher)
 				{
 					ConfirmDeleteWritingSystem = label =>
 					{
@@ -1584,18 +1595,23 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				Assert.AreEqual(fr.Handle, comment.get_WritingSystemAt(0));
 				Assert.AreEqual("commentary", comment.Text);
 			}
+			finally
+			{
+				TestSetupServices.DisposeTrash(flexComponentParameters);
+			}
 		}
 
 		[TestCase(FwWritingSystemSetupModel.ListType.Vernacular, "fr")]
 		[TestCase(FwWritingSystemSetupModel.ListType.Analysis, "tpi")]
 		public void Save_HiddenWs_WsHidden(FwWritingSystemSetupModel.ListType type, string wsId)
 		{
-			using (var mediator = new Mediator())
+			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
+			try
 			{
-				var deleteListener = new WSDeletedListener(mediator);
+				var deleteListener = new WSDeletedListener(flexComponentParameters);
 				SetUpProjectWithData();
 				Cache.ActionHandlerAccessor.EndUndoTask();
-				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache, mediator);
+				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache, flexComponentParameters.Publisher);
 				testModel.SelectWs(wsId);
 
 				// SUT: click Hide, then save
@@ -1606,18 +1622,23 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				CollectionAssert.IsEmpty(deleteListener.DeletedWSs);
 				AssertProjectDataIntact();
 			}
+			finally
+			{
+				TestSetupServices.DisposeTrash(flexComponentParameters);
+			}
 		}
 
 		[TestCase(FwWritingSystemSetupModel.ListType.Vernacular, "fr")]
 		[TestCase(FwWritingSystemSetupModel.ListType.Analysis, "tpi")]
 		public void Save_WsDeletedRestoredAndHidden_WsHidden(FwWritingSystemSetupModel.ListType type, string wsId)
 		{
-			using (var mediator = new Mediator())
+			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
+			try
 			{
-				var deleteListener = new WSDeletedListener(mediator);
+				var deleteListener = new WSDeletedListener(flexComponentParameters);
 				SetUpProjectWithData();
 				Cache.ActionHandlerAccessor.EndUndoTask();
-				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache, mediator)
+				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache, flexComponentParameters.Publisher)
 				{
 					AddNewVernacularLanguageWarning = () => true,
 					ConfirmDeleteWritingSystem = label => true,
@@ -1642,19 +1663,24 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				CollectionAssert.IsEmpty(deleteListener.DeletedWSs);
 				AssertProjectDataIntact();
 			}
+			finally
+			{
+				TestSetupServices.DisposeTrash(flexComponentParameters);
+			}
 		}
 
 		[TestCase(FwWritingSystemSetupModel.ListType.Vernacular, "fr")]
 		[TestCase(FwWritingSystemSetupModel.ListType.Analysis, "tpi")]
 		public void Save_WsDeletedAndRestored_NoChange(FwWritingSystemSetupModel.ListType type, string wsId)
 		{
-			using (var mediator = new Mediator())
+			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
+			try
 			{
 				var ws = GetOrSetWs(wsId);
-				var deleteListener = new WSDeletedListener(mediator);
+				var deleteListener = new WSDeletedListener(flexComponentParameters);
 				SetUpProjectWithData();
 				Cache.ActionHandlerAccessor.EndUndoTask();
-				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache, mediator)
+				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache, flexComponentParameters.Publisher)
 				{
 					AddNewVernacularLanguageWarning = () => true,
 					ConfirmDeleteWritingSystem = label => true,
@@ -1680,6 +1706,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				Assert.AreEqual("en tpi", Cache.LangProject.AnalysisWss, "Both should remain after save");
 				CollectionAssert.IsEmpty(deleteListener.DeletedWSs);
 				AssertProjectDataIntact();
+			}
+			finally
+			{
+				TestSetupServices.DisposeTrash(flexComponentParameters);
 			}
 		}
 
@@ -1930,32 +1960,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			private IWritingSystemRepository Repo { get; }
 		}
 
-		private class WSDeletedListener : IxCoreColleague
+		private class WSDeletedListener
 		{
 			public List<string> DeletedWSs { get; } = new List<string>();
 
-			public WSDeletedListener(Mediator mediator)
+			public WSDeletedListener(FlexComponentParameters flexComponentParameters)
 			{
-				Init(mediator, null, null);
+				flexComponentParameters.Subscriber.Subscribe("WritingSystemDeleted", OnWritingSystemDeleted);
 			}
 
 			public void OnWritingSystemDeleted(object param)
 			{
 				DeletedWSs.AddRange((string[])param);
 			}
-
-			public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
-			{
-				mediator.AddColleague(this);
-			}
-
-			public IxCoreColleague[] GetMessageTargets()
-			{
-				return new IxCoreColleague[] { this };
-			}
-
-			public bool ShouldNotCall => false;
-			public int Priority => (int)ColleaguePriority.High;
 		}
 	}
 }
