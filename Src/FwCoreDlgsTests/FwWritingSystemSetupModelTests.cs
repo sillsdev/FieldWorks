@@ -1,10 +1,4 @@
-<<<<<<< HEAD:Src/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-// Copyright (c) 2019-2020 SIL International
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-// Copyright (c) 2019 SIL International
-=======
-// Copyright (c) 2019-2021 SIL International
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
+// Copyright (c) 2019-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,10 +14,10 @@ using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
+using SIL.Windows.Forms;
 using SIL.Windows.Forms.WritingSystems;
 using SIL.WritingSystems;
 using SIL.WritingSystems.Tests;
-using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -247,21 +241,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "en", "fr" }, new[] { "en", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, type);
 			var menu = testModel.GetRightClickMenuItems();
-<<<<<<< HEAD:Src/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(menu.Count, Is.EqualTo(1));
-			Assert.That(menu.First().IsEnabled, Is.EqualTo(canDelete), "English can be deleted from the Vernacular but not the Analysis WS List");
-			Assert.That(menu.First().MenuText, Does.Match("Delete English"));
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(menu.Count, Is.EqualTo(1));
-			Assert.That(menu.First().IsEnabled, Is.EqualTo(canDelete), "English can be deleted from the Vernacular but not the Analysis WS List");
-			Assert.That(menu.First().MenuText, Is.StringMatching("Delete English"));
-=======
 			Assert.That(!menu.Any(m => m.MenuText.Contains("Merge")));
 			Assert.That(menu.First(m => m.MenuText.StartsWith("Hide")).IsEnabled, Is.EqualTo(canDelete), "English can be hidden from the Vernacular but not the Analysis WS List");
 			Assert.That(menu.First(m => m.MenuText.StartsWith("Hide")).MenuText, /* REVIEW (Hasso) contain? */ Is.EqualTo("Hide English"));
 			Assert.That(menu.First(m => m.MenuText.StartsWith("Delete")).IsEnabled, Is.EqualTo(canDelete), "English can be deleted from the Vernacular but not the Analysis WS List");
 			Assert.That(menu.First(m => m.MenuText.StartsWith("Delete")).MenuText, /* REVIEW (Hasso) contain? */ Is.EqualTo("Delete English"));
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 		}
 
 		[Test]
@@ -270,15 +254,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var container = new TestWSContainer(new[] { "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			var menu = testModel.GetRightClickMenuItems();
-<<<<<<< HEAD:Src/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(menu.Count, Is.EqualTo(1));
-			Assert.IsFalse(menu.First().IsEnabled);
-			Assert.That(menu.First().MenuText, Does.Match("Delete French"));
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(menu.Count, Is.EqualTo(1));
-			Assert.IsFalse(menu.First().IsEnabled);
-			Assert.That(menu.First().MenuText, Is.StringMatching("Delete French"));
-=======
 			Assert.That(menu.Count, Is.EqualTo(3));
 			Assert.IsFalse(menu.First(m => m.MenuText.StartsWith("Hide")).IsEnabled);
 			Assert.That(menu.First(m => m.MenuText.StartsWith("Hide")).MenuText, /* REVIEW (Hasso) contain? */ Is.EqualTo("Hide French"));
@@ -307,7 +282,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var menu = testModel.GetRightClickMenuItems();
 			Assert.That(menu.First(m => m.MenuText.StartsWith("Update")).IsEnabled, Is.True, "Update should be enabled");
 			Assert.That(menu.First(m => m.MenuText.StartsWith("Hide")).IsEnabled, Is.True, "Hide should be enabled");
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 		}
 
 		[Test]
@@ -592,19 +566,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			addMenuItems.First(item => item.MenuText.Contains("Audio")).ClickHandler.Invoke(this, new EventArgs());
 			testModel.SelectWs("en");
 			// SUT
-<<<<<<< HEAD:Src/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			var mergeTargets = testModel.MergeTargets.ToList();
-			Assert.That(mergeTargets.Count, Is.EqualTo(1));
-			Assert.That(mergeTargets.First().WorkingWs.LanguageTag, Does.Match("fr"));
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			var mergeTargets = testModel.MergeTargets;
-			Assert.That(mergeTargets.Count(), Is.EqualTo(1));
-			Assert.That(mergeTargets.First().WorkingWs.LanguageTag, Is.StringMatching("fr"));
-=======
 			var mergeTargets = testModel.MergeTargets.ToArray();
 			Assert.That(mergeTargets.Length, Is.EqualTo(1));
 			Assert.That(mergeTargets[0].WorkingWs.LanguageTag, /* REVIEW (Hasso) contain? */ Is.EqualTo("fr"));
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 		}
 
 		[Test]
@@ -620,13 +584,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Add an audio writing system because it currently doesn't require a cache to create properly
 			addMenuItems.First(item => item.MenuText.Contains("Audio")).ClickHandler.Invoke(this, new EventArgs());
 			Assert.That(testModel.CurrentWsSetupModel.CurrentLanguageTag, Is.EqualTo("en-Zxxx-x-audio"));
-<<<<<<< HEAD:Src/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(testModel.LanguageName, Does.Match("Testing"));
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(testModel.LanguageName, Is.StringMatching("Testing"));
-=======
 			Assert.That(testModel.LanguageName, /* REVIEW (Hasso) contain? */ Is.EqualTo("Testing"));
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 		}
 
 		[Test]
@@ -643,13 +601,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Add a variation writing system because it doesn't currently require a cache to create properly
 			addMenuItems.First(item => item.MenuText.Contains("variation")).ClickHandler.Invoke(this, new EventArgs());
 			Assert.That(testModel.CurrentWritingSystemIndex, Is.Not.EqualTo(origEnIndex));
-<<<<<<< HEAD:Src/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(testModel.LanguageName, Does.Match("Testing"));
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(testModel.LanguageName, Is.StringMatching("Testing"));
-=======
 			Assert.That(testModel.LanguageName, /* REVIEW (Hasso) contain? */ Is.EqualTo("Testing"));
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 		}
 
 		[Test]
@@ -738,18 +690,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			};
 			// verify that the container WorkingWs defs have not changed
 			Assert.AreEqual("fr", container.VernacularWritingSystems.First().Abbreviation);
-<<<<<<< HEAD:Src/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.AreEqual("standard", container.VernacularWritingSystems.First().DefaultCollationType);
-			Assert.IsNull(container.VernacularWritingSystems.First().DefaultCollation);
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.AreEqual("standard",
-				container.VernacularWritingSystems.First().DefaultCollationType);
-			Assert.IsNull(container.VernacularWritingSystems.First().DefaultCollation);
-=======
 			Assert.AreEqual("standard",
 				container.VernacularWritingSystems.First().DefaultCollationType);
 			Assert.That(container.VernacularWritingSystems.First().DefaultCollation, Is.Null);
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 			testModel.Save();
 			// verify that the container WorkingWs defs have changed
 			mockWsManager.VerifyAllExpectations();
@@ -834,13 +777,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var container = new TestWSContainer(new [] { "en" }, new [] { "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, type);
-<<<<<<< HEAD:Src/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 			Assert.That(testModel.Title, Does.Contain($"{type} Writing System Properties"));
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(testModel.Title, Is.StringContaining(string.Format("{0} Writing System Properties", type)));
-=======
-			Assert.That(testModel.Title, Does.Contain(string.Format("{0} Writing System Properties", type)));
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 		}
 
 		[Test]
@@ -856,16 +793,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				"Changing the name should not change the language to private use");
 			testModel.SelectWs("en");
 			Assert.AreEqual(newLangName, testModel.CurrentWsSetupModel.CurrentLanguageName);
-<<<<<<< HEAD:Src/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(testModel.CurrentWsSetupModel.CurrentLanguageTag, Does.Match("en"));
-			Assert.That(testModel.LanguageCode, Does.Not.Contain("qaa"),
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(testModel.CurrentWsSetupModel.CurrentLanguageTag, Is.StringMatching("en"));
-			Assert.That(testModel.LanguageCode, Is.Not.StringContaining("qaa"),
-=======
 			Assert.That(testModel.CurrentWsSetupModel.CurrentLanguageTag, /* REVIEW (Hasso) contain? */ Is.EqualTo("en"));
 			Assert.That(testModel.LanguageCode, Does.Not.Contain("qaa"),
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 				"Changing the name should not change the language to private use");
 			testModel.SelectWs("en-fonipa");
 			Assert.AreEqual(newLangName, testModel.CurrentWsSetupModel.CurrentLanguageName);
@@ -1130,13 +1059,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			};
 			var converters = testModel.GetEncodingConverters();
 			Assert.AreEqual(1, converters.Count);
-<<<<<<< HEAD:Src/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(converters.First(), Does.Match("\\<None\\>"));
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(converters.First(), Is.StringMatching("\\<None\\>"));
-=======
 			Assert.That(converters.First(), /* REVIEW (Hasso) contain? */ Is.EqualTo("<None>"));
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 		}
 
 		[Test]
@@ -1149,13 +1072,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				ShowModifyEncodingConverters = TestShowModifyConverters
 			};
 			testModel.ModifyEncodingConverters();
-<<<<<<< HEAD:Src/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(testModel.CurrentLegacyConverter, Does.Match("Test"));
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(testModel.CurrentLegacyConverter, Is.StringMatching("Test"));
-=======
 			Assert.That(testModel.CurrentLegacyConverter, /* REVIEW (Hasso) contain? */ Is.EqualTo("Test"));
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 		}
 
 		[Test]
@@ -1169,13 +1086,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				CurrentLegacyConverter = "Test2"
 			};
 			testModel.ModifyEncodingConverters();
-<<<<<<< HEAD:Src/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(testModel.CurrentLegacyConverter, Does.Match("Test2"));
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(testModel.CurrentLegacyConverter, Is.StringMatching("Test2"));
-=======
 			Assert.That(testModel.CurrentLegacyConverter, /* REVIEW (Hasso) contain? */ Is.EqualTo("Test2"));
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 		}
 
 		[Test]
@@ -1200,22 +1111,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
 			// Verify that the custom system returns custom digits
 			Assert.That(testModel.CurrentWsSetupModel.CurrentNumberingSystemDefinition.IsCustom, Is.True);
-<<<<<<< HEAD:Src/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(testModel.CurrentWsSetupModel.CurrentNumberingSystemDefinition.Digits, Does.Match("abcdefghij"));
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(testModel.CurrentWsSetupModel.CurrentNumberingSystemDefinition.Digits, Is.StringMatching("abcdefghij"));
-=======
 			Assert.That(testModel.CurrentWsSetupModel.CurrentNumberingSystemDefinition.Digits, /* REVIEW (Hasso) contain? */ Is.EqualTo("abcdefghij"));
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 			// Test switching to default switches back to default digits
 			testModel.CurrentWsSetupModel.CurrentNumberingSystemDefinition = NumberingSystemDefinition.Default;
-<<<<<<< HEAD:Src/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(testModel.CurrentWsSetupModel.CurrentNumberingSystemDefinition.Digits, Does.Match("0123456789"));
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			Assert.That(testModel.CurrentWsSetupModel.CurrentNumberingSystemDefinition.Digits, Is.StringMatching("0123456789"));
-=======
 			Assert.That(testModel.CurrentWsSetupModel.CurrentNumberingSystemDefinition.Digits, /* REVIEW (Hasso) contain? */ Is.EqualTo("0123456789"));
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 		}
 
 		[Test]
@@ -1307,18 +1206,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void CurrentWsListChanged_DeleteSelected_Returns_True()
 		{
 			var container = new TestWSContainer(new[] { "en", "fr", "en-Zxxx-x-audio" });
-<<<<<<< HEAD:Src/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular)
 			{
 				ConfirmDeleteWritingSystem = label => true
 			};
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
-			testModel.ConfirmDeleteWritingSystem = label => { return true; };
-=======
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular);
-			testModel.ConfirmDeleteWritingSystem = label => true;
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 			var menu = testModel.GetRightClickMenuItems();
 			menu.First(item => item.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
 			Assert.IsTrue(testModel.CurrentWsListChanged);
@@ -1331,18 +1222,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void DeleteSelected_SaveDoesNotCrashWithNoCache()
 		{
 			var container = new TestWSContainer(new[] { "en", "fr" });
-<<<<<<< HEAD:Src/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager())
 			{
 				ConfirmDeleteWritingSystem = label => true
 			};
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager());
-			testModel.ConfirmDeleteWritingSystem = label => { return true; };
-=======
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager());
-			testModel.ConfirmDeleteWritingSystem = label => true;
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 			var menu = testModel.GetRightClickMenuItems();
 			menu.First(item => item.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
 			Assert.DoesNotThrow(() => testModel.Save());
@@ -1357,20 +1240,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void MergeSelected_SaveDoesNotCrashWithNoCache()
 		{
 			var container = new TestWSContainer(new[] { "es", "fr" });
-<<<<<<< HEAD:Src/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager())
 			{
-				ConfirmDeleteWritingSystem = label => true,
 				ConfirmMergeWritingSystem = (string merge, out CoreWritingSystemDefinition tag) =>
 				{
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager());
-			testModel.ConfirmDeleteWritingSystem = label => { return true; };
-			testModel.ConfirmMergeWritingSystem = (string merge, out CoreWritingSystemDefinition tag) => {
-=======
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager());
-			testModel.ConfirmMergeWritingSystem = (string merge, out CoreWritingSystemDefinition tag) => {
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 				tag = container.CurrentVernacularWritingSystems.First();
 				return true;
 				}
@@ -1959,22 +1832,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private CoreWritingSystemDefinition GetOrSetWs(string code)
 		{
-<<<<<<< HEAD:Src/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			if (!Cache.ServiceLocator.WritingSystemManager.TryGet(code, out var ws))
-			{
-				ws = Cache.ServiceLocator.WritingSystemManager.Create(code);
-			}
-			Cache.ServiceLocator.WritingSystemManager.Set(ws);
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-			CoreWritingSystemDefinition ws;
-			if (!Cache.ServiceLocator.WritingSystemManager.TryGet(code, out ws))
-			{
-				ws = Cache.ServiceLocator.WritingSystemManager.Create(code);
-			}
-			Cache.ServiceLocator.WritingSystemManager.Set(ws);
-=======
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet(code, out var ws);
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
 			return ws;
 		}
 
@@ -1990,15 +1848,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			return false;
 		}
 
-<<<<<<< HEAD:Src/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-		private sealed class TestWSContainer : IWritingSystemContainer
-||||||| f013144d5:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
-		internal class TestWSContainer : IWritingSystemContainer
-=======
 		[SuppressMessage("ReSharper", "InconsistentNaming")]
 		[SuppressMessage("ReSharper", "UnassignedGetOnlyAutoProperty")]
-		internal class TestWSContainer : IWritingSystemContainer
->>>>>>> develop:Src/FwCoreDlgs/FwCoreDlgsTests/FwWritingSystemSetupModelTests.cs
+		private sealed class TestWSContainer : IWritingSystemContainer
 		{
 			private readonly List<CoreWritingSystemDefinition> _vernacular = new List<CoreWritingSystemDefinition>();
 			private readonly List<CoreWritingSystemDefinition> _analysis = new List<CoreWritingSystemDefinition>();
