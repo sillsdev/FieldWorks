@@ -3,7 +3,7 @@
   <PropertyGroup>
     <RootNamespace>SIL.FieldWorks.Build.Tasks.FwBuildTasksTests</RootNamespace>
     <Description>FwBuildTasksTests</Description>
-    <OutputPath>../artifacts/$(Configuration)</OutputPath>
+    <OutputPath>../Output/$(Description)</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SIL.FwBuildTasks\SIL.FwBuildTasks.csproj" />
+    <ProjectReference Include="..\FwBuildTasks\FwBuildTasks.csproj" />
   </ItemGroup>
 
 </Project>

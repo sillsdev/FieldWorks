@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30717.126
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33103.184
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{17900626-4B86-43DA-B451-3E093B50B08B}"
 EndProject
@@ -136,9 +136,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFolder", "SolutionF
 		ReadMe.md = ReadMe.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SIL.FwBuildTasks", "Build\Src\FwBuildTasks\SIL.FwBuildTasks\SIL.FwBuildTasks.csproj", "{0AC0D47D-DA3E-49C7-A3A0-EF47A48878C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FwBuildTasks", "Build\Src\FwBuildTasks\FwBuildTasks.csproj", "{0AC0D47D-DA3E-49C7-A3A0-EF47A48878C8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SIL.FwBuildTasksTests", "Build\Src\FwBuildTasks\SIL.FwBuildTasksTests\SIL.FwBuildTasksTests.csproj", "{3C43FF2A-D1DC-46E4-A326-DD6D5A853BA2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FwBuildTasksTests", "Build\Src\FwBuildTasksTests\FwBuildTasksTests.csproj", "{3C43FF2A-D1DC-46E4-A326-DD6D5A853BA2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildTasks", "BuildTasks", "{40B4AE61-81DC-4C08-9D1B-D61203AD2F1D}"
 EndProject
@@ -1118,11 +1118,17 @@ Global
 		{0AC0D47D-DA3E-49C7-A3A0-EF47A48878C8}.Bounds|x86.ActiveCfg = Debug|Any CPU
 		{0AC0D47D-DA3E-49C7-A3A0-EF47A48878C8}.Bounds|x86.Build.0 = Debug|Any CPU
 		{0AC0D47D-DA3E-49C7-A3A0-EF47A48878C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AC0D47D-DA3E-49C7-A3A0-EF47A48878C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0AC0D47D-DA3E-49C7-A3A0-EF47A48878C8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0AC0D47D-DA3E-49C7-A3A0-EF47A48878C8}.Debug|x64.Build.0 = Debug|Any CPU
 		{0AC0D47D-DA3E-49C7-A3A0-EF47A48878C8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0AC0D47D-DA3E-49C7-A3A0-EF47A48878C8}.Debug|x86.Build.0 = Debug|Any CPU
 		{0AC0D47D-DA3E-49C7-A3A0-EF47A48878C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AC0D47D-DA3E-49C7-A3A0-EF47A48878C8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0AC0D47D-DA3E-49C7-A3A0-EF47A48878C8}.Release|x64.ActiveCfg = Release|Any CPU
+		{0AC0D47D-DA3E-49C7-A3A0-EF47A48878C8}.Release|x64.Build.0 = Release|Any CPU
 		{0AC0D47D-DA3E-49C7-A3A0-EF47A48878C8}.Release|x86.ActiveCfg = Release|Any CPU
+		{0AC0D47D-DA3E-49C7-A3A0-EF47A48878C8}.Release|x86.Build.0 = Release|Any CPU
 		{3C43FF2A-D1DC-46E4-A326-DD6D5A853BA2}.Bounds|Any CPU.ActiveCfg = Debug|Any CPU
 		{3C43FF2A-D1DC-46E4-A326-DD6D5A853BA2}.Bounds|Any CPU.Build.0 = Debug|Any CPU
 		{3C43FF2A-D1DC-46E4-A326-DD6D5A853BA2}.Bounds|x64.ActiveCfg = Debug|Any CPU

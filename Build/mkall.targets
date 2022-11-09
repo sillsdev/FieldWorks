@@ -383,8 +383,7 @@
 	</Target>
 
 	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
-		<!-- REVIEW (Hasso) 2022.10: this could be simply FwBuildTasks, w/o SIL., since it's not its own package -->
-		<MSBuild Projects="$(fwrt)/Build/Src/FwBuildTasks/SIL.FwBuildTasks/SIL.FwBuildTasks.csproj" Targets="Restore;Build" Properties="Configuration=Debug;Platform=Any CPU" Condition="!Exists('$(fwrt)/Build/Src/FwBuildTasks/artifacts/Debug/SIL.FwBuildTasks.dll')"/>
+		<MSBuild Projects="$(fwrt)/Build/Src/FwBuildTasks/FwBuildTasks.csproj" Targets="Restore;Build;CopyOutputToBuild" Properties="Configuration=Debug;Platform=Any CPU" Condition="!Exists('$(fwrt)/Build/FwBuildTasks.dll')"/>
 		<Exec Command='$(NuGetCommand) install GitVersion.MsBuild -version $(GitVersionMsBuildVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/GitVersion.MsBuild.$(GitVersionMsBuildVersion)')"/>
 		<Exec Command='$(NuGetCommand) install Icu4c.Win.Fw.Lib -version $(IcuWinFwLibVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/Icu4c.Win.Fw.Lib.$(IcuWinFwLibVersion)')"/>
 		<!-- Install NUnit.Console which has the required extensions as dependencies -->

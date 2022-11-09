@@ -3,7 +3,8 @@
   <PropertyGroup>
     <RootNamespace>SIL.FieldWorks.Build.Tasks</RootNamespace>
     <Description>Additional msbuild tasks for FieldWorks</Description>
-    <OutputPath>../artifacts/$(Configuration)</OutputPath>
+    <Product>FwBuildTasks</Product>
+    <OutputPath>../Output/$(Product)</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,4 +15,10 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 
+  <Target Name="CopyOutputToBuild">
+    <ItemGroup>
+      <FilesToCopy Include="$(OutputPath)/**/*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(FilesToCopy)" DestinationFolder="../.."/>
+  </Target>
 </Project>

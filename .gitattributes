@@ -12,6 +12,7 @@
 *.ldml -whitespace
 *.patch -whitespace
 *.proj -whitespace
+*.props -whitespace
 *.ReSharper -whitespace
 *.resx -whitespace
 *.settings -whitespace
