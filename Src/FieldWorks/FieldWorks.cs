@@ -21,14 +21,10 @@ using System.Security;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 using System.Xml;
 using System.Xml.Linq;
-using DialogAdapters;
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-=======
 using DesktopAnalytics;
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
+using DialogAdapters;
 using Gecko;
 using L10NSharp;
 using LanguageExplorer;
@@ -51,27 +47,12 @@ using SIL.LCModel.DomainServices.DataMigration;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 using SIL.Reporting;
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-using SIL.Utils;
-=======
 using SIL.Settings;
-using SIL.Utils;
 using SIL.Windows.Forms;
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 using SIL.Windows.Forms.HtmlBrowser;
 using SIL.Windows.Forms.Keyboarding;
 using SIL.WritingSystems;
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-using XCore;
-using ConfigurationException = SIL.Reporting.ConfigurationException;
-=======
-using XCore;
-using ConfigurationException = SIL.Reporting.ConfigurationException;
-using PropertyTable = XCore.PropertyTable;
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 
 namespace SIL.FieldWorks
 {
@@ -167,150 +148,17 @@ namespace SIL.FieldWorks
 				XWebBrowser.DefaultBrowserType = XWebBrowser.BrowserType.GeckoFx;
 				#endregion Initialize XULRunner
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
-				Logger.WriteEvent("Starting app");
-				SetGlobalExceptionHandler();
-				SetupErrorReportInformation();
-				InitializeLocalizationManager();
-
-				// Invoke does nothing directly, but causes BroadcastEventWindow to be initialized
-				// on this thread to prevent race conditions on shutdown.See TE-975
-				// See http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=911603&SiteID=1
-				// TODO-Linux: uses mono feature that is not implemented. What are the implications of this? Review.
-				if (Platform.IsDotNet)
-				{
-					SystemEvents.InvokeOnEventsThread(new Action(DoNothing));
-				}
-
-				ThreadHelper = new ThreadHelper();
-
-				// ENHANCE (TimS): Another idea for ensuring that we have only one process started for
-				// this project is to use a Mutex. They can be used for cross-process resource access
-				// and would probably be less error-prone then our current implementation since it
-				// doesn't use TCP connections which can get hampered by firewalls. We would probably still
-				// need our current listener functionality for communicating with the other FW process,
-				// so it may not buy us much.
-				// See http://kristofverbiest.blogspot.com/2008/11/creating-single-instance-application.html.
-
-				// Make sure we do this ASAP. If another FieldWorks.exe is started we need
-				// to make sure it can find this one to ask about its project. (FWR-595)
-				CreateRemoteRequestListener();
-
-#if DEBUG
-				WriteExecutablePathSettingForDevs();
-#endif
-
-				if (IsInSingleFWProccessMode())
-				{
-					Logger.WriteEvent("Exiting: Detected single process mode");
-					return 0;
-				}
-
-				if (MigrateProjectsTo70())
-				{
-					Logger.WriteEvent("Migration to Version 7 was still needed.");
-				}
-
-				// Enable visual styles. Ignored on Windows 2000. Needs to be called before
-				// we create any controls! Unfortunately, this alone is not good enough. We
-				// also need to use a manifest, because some ListView and TreeView controls
-				// in native code do not have icons if we just use this method. This is caused
-				// by a bug in XP.
-				Application.EnableVisualStyles();
-
-				FwUtils.InitializeIcu();
-
-				// initialize the SLDR
-				Sldr.Initialize();
-
-				// initialize Palaso keyboarding
-				KeyboardController.Initialize();
-
-				var appArgs = new FwAppArgs(rgArgs);
-				s_noUserInterface = appArgs.NoUserInterface;
-				InAppServerMode = appArgs.AppServerMode;
-
-				s_ui = new FwLcmUI(GetHelpTopicProvider(), ThreadHelper);
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-				Logger.WriteEvent("Starting app");
-				SetGlobalExceptionHandler();
-				SetupErrorReportInformation();
-				InitializeLocalizationManager();
-
-				// Invoke does nothing directly, but causes BroadcastEventWindow to be initialized
-				// on this thread to prevent race conditions on shutdown.See TE-975
-				// See http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=911603&SiteID=1
-				// TODO-Linux: uses mono feature that is not implemented. What are the implications of this? Review.
-				if (MiscUtils.IsDotNet)
-					SystemEvents.InvokeOnEventsThread(new Action(DoNothing));
-
-				s_threadHelper = new ThreadHelper();
-
-				// ENHANCE (TimS): Another idea for ensuring that we have only one process started for
-				// this project is to use a Mutex. They can be used for cross-process resource access
-				// and would probably be less error-prone then our current implementation since it
-				// doesn't use TCP connections which can get hampered by firewalls. We would probably still
-				// need our current listener functionality for communicating with the other FW process,
-				// so it may not buy us much.
-				// See http://kristofverbiest.blogspot.com/2008/11/creating-single-instance-application.html.
-
-				// Make sure we do this ASAP. If another FieldWorks.exe is started we need
-				// to make sure it can find this one to ask about its project. (FWR-595)
-				CreateRemoteRequestListener();
-
-#if DEBUG
-				WriteExecutablePathSettingForDevs();
-#endif
-
-				if (IsInSingleFWProccessMode())
-				{
-					Logger.WriteEvent("Exiting: Detected single process mode");
-					return 0;
-				}
-
-				if (MigrateProjectsTo70())
-				{
-					Logger.WriteEvent("Migration to Version 7 was still needed.");
-				}
-
-				// Enable visual styles. Ignored on Windows 2000. Needs to be called before
-				// we create any controls! Unfortunately, this alone is not good enough. We
-				// also need to use a manifest, because some ListView and TreeView controls
-				// in native code do not have icons if we just use this method. This is caused
-				// by a bug in XP.
-				Application.EnableVisualStyles();
-
-				FwUtils.InitializeIcu();
-
-				// initialize the SLDR
-				Sldr.Initialize();
-
-				// initialize Palaso keyboarding
-				KeyboardController.Initialize();
-
-				FwAppArgs appArgs = new FwAppArgs(rgArgs);
-				s_noUserInterface = appArgs.NoUserInterface;
-				s_appServerMode = appArgs.AppServerMode;
-
-				s_ui = new FwLcmUI(GetHelpTopicProvider(), s_threadHelper);
-=======
 				// Only the first FieldWorks process should notify the user of updates. If the user wants to open multiple projects before restarting
 				// for updates, skip the nagging dialogs.
 				var shouldCheckForUpdates = Platform.IsWindows && !TryFindExistingProcess();
 				// FlexibleMessageBoxes for updates are shown before the main window is shown. Show them in the taskbar so they don't get lost.
 				FlexibleMessageBox.ShowInTaskbar = true;
 				FlexibleMessageBox.MaxWidthFactor = 0.4;
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 
 				s_appSettings = new FwApplicationSettings();
 				s_appSettings.DeleteCorruptedSettingsFilesIfPresent();
 				s_appSettings.UpgradeIfNecessary();
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
-				var reportingSettings = s_appSettings.Reporting;
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-				ReportingSettings reportingSettings = s_appSettings.Reporting;
-=======
 				if (s_appSettings.Update == null && Platform.IsWindows)
 				{
 					s_appSettings.Update = new UpdateSettings
@@ -324,7 +172,6 @@ namespace SIL.FieldWorks
 				}
 
 				var reportingSettings = s_appSettings.Reporting;
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 				if (reportingSettings == null)
 				{
 					// Note: to simulate this, currently it works to delete all subfolders of
@@ -334,18 +181,10 @@ namespace SIL.FieldWorks
 					s_appSettings.Reporting = reportingSettings; //to avoid a defect in Settings rely on the Save in the code below
 				}
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
-				// Allow developers and testers to avoid cluttering our analytics by setting an environment variable (FEEDBACK = false)
-				var feedbackEnvVar = Environment.GetEnvironmentVariable("FEEDBACK");
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-				// Allow develpers and testers to avoid cluttering our analytics by setting an environment variable (FEEDBACK = false)
-				string feedbackEnvVar = Environment.GetEnvironmentVariable("FEEDBACK");
-=======
 				// REVIEW (Hasso) 2021.07: should checking FEEDBACK be centralized? Besides enabling and disabling analytics,
 				// it could be used to select an analytics channel.
 				// Allow developers and testers to avoid cluttering our analytics by setting an environment variable (FEEDBACK = false)
 				var feedbackEnvVar = Environment.GetEnvironmentVariable("FEEDBACK");
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 				if (feedbackEnvVar != null)
 				{
 					feedbackEnvVar = feedbackEnvVar.ToLowerInvariant();
@@ -362,30 +201,6 @@ namespace SIL.FieldWorks
 #endif
 				using (new Analytics(analyticsKey, new UserInfo(), sendFeedback))
 				{
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
-					ShowCommandLineHelp();
-					return 0;
-				}
-				else if (!string.IsNullOrEmpty(appArgs.ChooseProjectFile))
-				{
-					var projId = ChooseLangProject();
-					if (projId == null)
-					{
-						return 1; // User probably canceled
-					}
-					try
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-					ShowCommandLineHelp();
-					return 0;
-				}
-				else if (!string.IsNullOrEmpty(appArgs.ChooseProjectFile))
-				{
-					ProjectId projId = ChooseLangProject(null, GetHelpTopicProvider());
-					if (projId == null)
-						return 1; // User probably canceled
-					try
-=======
-
 					Logger.WriteEvent("Starting app");
 					SetGlobalExceptionHandler();
 					SetupErrorReportInformation();
@@ -398,7 +213,7 @@ namespace SIL.FieldWorks
 					if (Platform.IsDotNet)
 						SystemEvents.InvokeOnEventsThread(new Action(DoNothing));
 
-					s_threadHelper = new ThreadHelper();
+					ThreadHelper = new ThreadHelper();
 
 					// ENHANCE (TimS): Another idea for ensuring that we have only one process started for
 					// this project is to use a Mutex. They can be used for cross-process resource access
@@ -417,7 +232,6 @@ namespace SIL.FieldWorks
 	#endif
 
 					if (IsInSingleFWProccessMode())
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 					{
 						Logger.WriteEvent("Exiting: Detected single process mode");
 						return 0;
@@ -428,44 +242,15 @@ namespace SIL.FieldWorks
 						Logger.WriteEvent("Migration to Version 7 was still needed.");
 					}
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
-				if (!SetUICulture(appArgs))
-				{
-					return 0; // Error occurred and user chose not to continue.
-				}
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-				if (!SetUICulture(appArgs))
-					return 0; // Error occurred and user chose not to continue.
-=======
 					// Enable visual styles. Ignored on Windows 2000. Needs to be called before
 					// we create any controls! Unfortunately, this alone is not good enough. We
 					// also need to use a manifest, because some ListView and TreeView controls
 					// in native code do not have icons if we just use this method. This is caused
 					// by a bug in XP.
 					Application.EnableVisualStyles();
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 
 					FwUtils.InitializeIcu();
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
-				if (!string.IsNullOrEmpty(appArgs.BackupFile))
-				{
-					LaunchRestoreFromCommandLine(appArgs);
-					if (s_flexApp == null)
-					{
-						return 0; // Restore was cancelled or failed, or another process took care of it.
-					}
-					if (!string.IsNullOrEmpty(s_LinkDirChangedTo))
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-				s_fwManager = new FieldWorksManager();
-
-				if (!string.IsNullOrEmpty(appArgs.BackupFile))
-				{
-					LaunchRestoreFromCommandLine(appArgs);
-					if (s_flexApp == null)
-						return 0; // Restore was cancelled or failed, or another process took care of it.
-					if (!string.IsNullOrEmpty(s_LinkDirChangedTo))
-=======
 					// initialize the SLDR
 					Sldr.Initialize();
 
@@ -474,9 +259,9 @@ namespace SIL.FieldWorks
 
 					FwAppArgs appArgs = new FwAppArgs(rgArgs);
 					s_noUserInterface = appArgs.NoUserInterface;
-					s_appServerMode = appArgs.AppServerMode;
+					InAppServerMode = appArgs.AppServerMode;
 
-					s_ui = new FwLcmUI(GetHelpTopicProvider(), s_threadHelper);
+					s_ui = new FwLcmUI(GetHelpTopicProvider(), ThreadHelper);
 
 					// e.g. the first time the user runs FW9, we need to copy a bunch of registry keys
 					// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/9 or
@@ -485,17 +270,9 @@ namespace SIL.FieldWorks
 					FwRegistryHelper.UpgradeUserSettingsIfNeeded();
 
 					if (appArgs.ShowHelp)
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 					{
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
-						NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => Cache.LangProject.LinkedFilesRootDir = s_LinkDirChangedTo);
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-						NonUndoableUnitOfWorkHelper.Do(s_cache.ActionHandlerAccessor,
-							() => s_cache.LangProject.LinkedFilesRootDir = s_LinkDirChangedTo);
-=======
 						ShowCommandLineHelp();
 						return 0;
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 					}
 
 					if (shouldCheckForUpdates)
@@ -503,7 +280,7 @@ namespace SIL.FieldWorks
 
 					if (!string.IsNullOrEmpty(appArgs.ChooseProjectFile))
 					{
-						ProjectId projId = ChooseLangProject(null, GetHelpTopicProvider());
+						ProjectId projId = ChooseLangProject();
 						if (projId == null)
 							return 1; // User probably canceled
 						try
@@ -533,8 +310,6 @@ namespace SIL.FieldWorks
 						return 0;
 					}
 
-					s_fwManager = new FieldWorksManager();
-
 					if (!string.IsNullOrEmpty(appArgs.BackupFile))
 					{
 						LaunchRestoreFromCommandLine(appArgs);
@@ -542,15 +317,15 @@ namespace SIL.FieldWorks
 							return 0; // Restore was cancelled or failed, or another process took care of it.
 						if (!string.IsNullOrEmpty(s_LinkDirChangedTo))
 						{
-							NonUndoableUnitOfWorkHelper.Do(s_cache.ActionHandlerAccessor,
-								() => s_cache.LangProject.LinkedFilesRootDir = s_LinkDirChangedTo);
+							NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
+								() => Cache.LangProject.LinkedFilesRootDir = s_LinkDirChangedTo);
 						}
 					}
 					else if (!LaunchApplicationFromCommandLine(appArgs))
 						return 0; // Didn't launch, but probably not a serious error
 
 					// Create a listener for this project for applications using FLEx as a LexicalProvider.
-					LexicalProviderManager.StartLexicalServiceProvider(s_projectId, s_cache);
+					LexicalProviderManager.StartLexicalServiceProvider(Project, Cache);
 
 					if (Platform.IsMono)
 						UglyHackForXkbIndicator();
@@ -561,36 +336,6 @@ namespace SIL.FieldWorks
 					// Application was started successfully, so start the message loop
 					Application.Run();
 				}
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
-				else if (!LaunchApplicationFromCommandLine(appArgs))
-				{
-					return 0; // Didn't launch, but probably not a serious error
-				}
-
-				// Create a listener for this project for applications using FLEx as a LexicalProvider.
-				LexicalProviderManager.StartLexicalServiceProvider(Project, Cache);
-
-				if (Platform.IsMono)
-				{
-					UglyHackForXkbIndicator();
-				}
-
-				// Application was started successfully, so start the message loop
-				Application.Run();
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-				else if (!LaunchApplicationFromCommandLine(appArgs))
-					return 0; // Didn't launch, but probably not a serious error
-
-				// Create a listener for this project for applications using FLEx as a LexicalProvider.
-				LexicalProviderManager.StartLexicalServiceProvider(s_projectId, s_cache);
-
-				if (MiscUtils.IsMono)
-					UglyHackForXkbIndicator();
-
-				// Application was started successfully, so start the message loop
-				Application.Run();
-=======
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 			}
 			catch (ApplicationException ex)
 			{
@@ -709,25 +454,6 @@ namespace SIL.FieldWorks
 			return true;
 		}
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		private static void WarnUserAboutFailedLiftImportIfNecessary(FwApp fwApp)
-		{
-			var mainWindow = fwApp.ActiveMainWindow as IFwMainWnd;
-			if(mainWindow != null)
-			{
-				mainWindow.Mediator.SendMessage("WarnUserAboutFailedLiftImportIfNecessary", null);
-			}
-		}
-
-=======
-		private static void WarnUserAboutFailedLiftImportIfNecessary(FwApp fwApp)
-		{
-			var mainWindow = fwApp.ActiveMainWindow as IFwMainWnd;
-			mainWindow?.Mediator.SendMessage("WarnUserAboutFailedLiftImportIfNecessary", null);
-		}
-
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 		private static bool IsSharedXmlBackendNeeded(ProjectId projectId)
 		{
 			if (!LcmSettings.IsProjectSharingEnabled(projectId.ProjectFolder))
@@ -861,15 +587,7 @@ namespace SIL.FieldWorks
 		}
 #endregion
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 		#region Properties
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		#region Properties
-		/// ------------------------------------------------------------------------------------
-=======
-#region Properties
-		/// ------------------------------------------------------------------------------------
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 		/// <summary>
 		/// Gets a value indicating whether FieldWorks can be automatically shut down (as happens
 		/// after 30 minutes when running in server mode).
@@ -925,22 +643,10 @@ namespace SIL.FieldWorks
 				var thisProcess = Process.GetCurrentProcess();
 				try
 				{
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 					var thisProcessName = Assembly.GetExecutingAssembly().GetName().Name;
 					var thisSid = FwUtils.GetUserForProcess(thisProcess);
 					var processes = Process.GetProcessesByName(thisProcessName).ToList();
 					if (Platform.IsUnix)
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-					string thisProcessName = Assembly.GetExecutingAssembly().GetName().Name;
-					string thisSid = FwUtils.GetUserForProcess(thisProcess);
-					List<Process> processes = Process.GetProcessesByName(thisProcessName).ToList();
-					if (MiscUtils.IsUnix)
-=======
-					string thisProcessName = Assembly.GetExecutingAssembly().GetName().Name;
-					string thisSid = FwUtils.GetUserForProcess(thisProcess);
-					List<Process> processes = Process.GetProcessesByName(thisProcessName).ToList();
-					if (Platform.IsUnix)
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 					{
 						processes.AddRange(Process.GetProcesses().Where(p => p.ProcessName.Contains("mono")
 							&& p.Modules.Cast<ProcessModule>().Any(m => m.ModuleName == (thisProcessName + ".exe"))));
@@ -958,14 +664,6 @@ namespace SIL.FieldWorks
 		}
 #endregion
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		#region Public Methods
-		/// -----------------------------------------------------------------------------------
-=======
-#region Public Methods
-		/// -----------------------------------------------------------------------------------
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 		/// <summary>
 		/// Starts the specified FieldWorks application.
 		/// </summary>
@@ -1060,22 +758,8 @@ namespace SIL.FieldWorks
 				return projects;
 			}
 		}
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		#endregion
-=======
-#endregion
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 		#region Cache Creation and Handling
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		#region Cache Creation and Handling
-		/// ------------------------------------------------------------------------------------
-=======
-#region Cache Creation and Handling
-		/// ------------------------------------------------------------------------------------
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 		/// <summary>
 		/// Creates a cache used for accessing the specified project.
 		/// </summary>
@@ -1271,15 +955,7 @@ namespace SIL.FieldWorks
 		}
 #endregion
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 		#region Top-level exception handling
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		#region Top-level exception handling
-		/// ------------------------------------------------------------------------------------
-=======
-#region Top-level exception handling
-		/// ------------------------------------------------------------------------------------
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 		/// <summary>
 		/// Sets the exception handler.
 		/// </summary>
@@ -1303,30 +979,12 @@ namespace SIL.FieldWorks
 		/// </summary>
 		private static void HandleUnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
-			if (e.ExceptionObject is Exception exception)
-			{
-				DisplayError(exception, e.IsTerminating);
-			}
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-			if (e.ExceptionObject is Exception)
-				DisplayError(e.ExceptionObject as Exception, e.IsTerminating);
-=======
 			if (e.ExceptionObject is Exception exception)
 			{
 				Analytics.ReportException(exception, GetInnerExceptionInfo(exception));
 				DisplayError(exception, e.IsTerminating);
 			}
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 			else
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
-			{
-				DisplayError(new ApplicationException($"Got unknown exception: {e.ExceptionObject}"), false);
-			}
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-				DisplayError(new ApplicationException(string.Format("Got unknown exception: {0}",
-					e.ExceptionObject)), false);
-=======
 			{
 				Analytics.ReportException(new Exception("Unknown Exception"),
 					new Dictionary<string, string>
@@ -1372,7 +1030,6 @@ namespace SIL.FieldWorks
 			}
 
 			return extraInfo;
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 		}
 
 		/// <summary>
@@ -1550,15 +1207,7 @@ namespace SIL.FieldWorks
 		}
 #endregion
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 		#region Splash screen
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		#region Splash screen
-		/// ------------------------------------------------------------------------------------
-=======
-#region Splash screen
-		/// ------------------------------------------------------------------------------------
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 		/// <summary>
 		/// Displays the splash screen
 		/// </summary>
@@ -1603,15 +1252,7 @@ namespace SIL.FieldWorks
 
 #endregion
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 		#region Internal Project Handling Methods
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		#region Internal Project Handling Methods
-		/// ------------------------------------------------------------------------------------
-=======
-#region Internal Project Handling Methods
-		/// ------------------------------------------------------------------------------------
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 		/// <summary>
 		/// Determines the project that will be run by reading the command-line parameters.
 		/// If no project is found on the command-line parameters, then the Welcome to
@@ -1886,15 +1527,7 @@ namespace SIL.FieldWorks
 		}
 #endregion
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 		#region Project UI handling methods
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		#region Project UI handling methods
-		/// ------------------------------------------------------------------------------------
-=======
-#region Project UI handling methods
-		/// ------------------------------------------------------------------------------------
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 		/// <summary>
 		/// Displays fieldworks welcome dialog.
 		/// </summary>
@@ -2030,53 +1663,24 @@ namespace SIL.FieldWorks
 							if (!FwNewLangProject.CheckProjectDirectory(null, helpTopicProvider))
 							{
 								break;
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 							}
 							// If the user cancels the send/receive, this null will result in a return to the welcome dialog.
 							projectToTry = null;
-							// Hard to say what Form.ActiveForm is here. The splash and welcome dlgs are both gone.
-							var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm, out var obtainedProjectType);
-							if (!string.IsNullOrEmpty(projectDataPathname))
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-							ObtainedProjectType obtainedProjectType;
-							projectToTry = null; // If the user cancels the send/receive, this null will result in a return to the welcome dialog.
-							// Hard to say what Form.ActiveForm is here. The splash and welcome dlgs are both gone.
-							var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm,
-								helpTopicProvider, out obtainedProjectType);
-							if (!string.IsNullOrEmpty(projectDataPathname))
-=======
-							ObtainedProjectType obtainedProjectType;
-							projectToTry = null; // If the user cancels the send/receive, this null will result in a return to the welcome dialog.
 							try
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 							{
 								// Form.ActiveForm is null here, because the splash and welcome dlgs are both gone.
-								var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm,
-									helpTopicProvider, out obtainedProjectType);
+								var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm, out var obtainedProjectType);
 								if (!string.IsNullOrEmpty(projectDataPathname))
 								{
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
-									var activeWindowInterface = (IFwMainWnd)activeWindow;
-									activeWindowInterface.PropertyTable.SetProperty(LanguageExplorerConstants.LastBridgeUsed,
-										obtainedProjectType == ObtainedProjectType.Lift ? LanguageExplorerConstants.LiftBridge : LanguageExplorerConstants.FLExBridge,
-										true, settingsGroup: SettingsGroup.LocalSettings);
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-									var activeWindowInterface = (IFwMainWnd)activeWindow;
-									activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
-										obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
-										PropertyTable.SettingsGroup.LocalSettings,
-										true);
-=======
 									projectToTry = new ProjectId(BackendProviderType.kXML, projectDataPathname);
 									var activeWindow = startingApp.ActiveMainWindow;
 									if (activeWindow != null)
 									{
 										var activeWindowInterface = (IFwMainWnd)activeWindow;
-										activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
-											obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
-											PropertyTable.SettingsGroup.LocalSettings, true);
+										activeWindowInterface.PropertyTable.SetProperty(LanguageExplorerConstants.LastBridgeUsed,
+											obtainedProjectType == ObtainedProjectType.Lift ? LanguageExplorerConstants.LiftBridge : LanguageExplorerConstants.FLExBridge,
+											true, settingsGroup: SettingsGroup.LocalSettings);
 									}
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 								}
 							}
 							catch (Exception e)
@@ -2093,7 +1697,6 @@ namespace SIL.FieldWorks
 								var projectLaunched = LaunchProject(args, ref projectToTry);
 								if (projectLaunched)
 								{
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 									Project = projectToTry; // Window is open on this project, we must not try to initialize it again.
 									var mainWindow = Form.ActiveForm;
 									if (mainWindow is IFwMainWnd fwMainWnd)
@@ -2104,19 +1707,6 @@ namespace SIL.FieldWorks
 									{
 										return null;
 									}
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-										((IxWindow) mainWindow).Mediator.SendMessage("SFMImport", null);
-=======
-									s_projectId = projectToTry; // Window is open on this project, we must not try to initialize it again.
-									if (Form.ActiveForm is IxWindow mainWindow)
-									{
-										mainWindow.Mediator.SendMessage("SFMImport", null);
-									}
-									else
-									{
-										return null;
-									}
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 								}
 								else
 								{
@@ -2304,63 +1894,9 @@ namespace SIL.FieldWorks
 				HandleRestoreRequest(dialogOwner, new FwRestoreProjectSettings(dlg.Settings));
 			}
 		}
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 		#endregion
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Archive selected project files using RAMP
-		/// </summary>
-		/// <param name="fwApp"></param>
-		/// <param name="dialogOwner"></param>
-		/// <returns>The list of files to archive</returns>
-		/// ------------------------------------------------------------------------------------
-		internal static List<string> ArchiveProjectWithRamp(Form dialogOwner, FwApp fwApp)
-		{
-			using (var dlg = new ArchiveWithRamp(Cache, fwApp))
-			{
-				if (dlg.ShowDialog(dialogOwner) == DialogResult.OK)
-				{
-					return dlg.FilesToArchive;
-				}
-			}
-			return null;
-		}
-		#endregion
-=======
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Archive selected project files using RAMP
-		/// </summary>
-		/// <param name="fwApp"></param>
-		/// <param name="dialogOwner"></param>
-		/// <returns>The list of files to archive</returns>
-		/// ------------------------------------------------------------------------------------
-		internal static List<string> ArchiveProjectWithRamp(Form dialogOwner, FwApp fwApp)
-		{
-			using (var dlg = new ArchiveWithRamp(Cache, fwApp))
-			{
-				if (dlg.ShowDialog(dialogOwner) == DialogResult.OK)
-				{
-					return dlg.FilesToArchive;
-				}
-			}
-			return null;
-		}
-#endregion
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
-
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 		#region Project location methods
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		#region Project location methods
-		/// ------------------------------------------------------------------------------------
-=======
-#region Project location methods
-		/// ------------------------------------------------------------------------------------
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 		/// <summary>
 		/// Displays the Project Location dialog box
 		/// </summary>
@@ -2372,23 +1908,7 @@ namespace SIL.FieldWorks
 		{
 			using (var dlg = new ProjectLocationDlg(app, cache))
 			{
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 				if (dlg.ShowDialog(dialogOwner) != DialogResult.OK)
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-			if (dlg.ShowDialog(dialogOwner) != DialogResult.OK)
-				return;
-			string projectPath = fwApp.Cache.ProjectId.Path;
-			string parentDirectory = Path.GetDirectoryName(fwApp.Cache.ProjectId.ProjectFolder);
-			string projectsDirectory = FwDirectoryFinder.ProjectsDirectory;
-				if (!MiscUtils.IsUnix)
-=======
-			if (dlg.ShowDialog(dialogOwner) != DialogResult.OK)
-				return;
-			string projectPath = fwApp.Cache.ProjectId.Path;
-			string parentDirectory = Path.GetDirectoryName(fwApp.Cache.ProjectId.ProjectFolder);
-			string projectsDirectory = FwDirectoryFinder.ProjectsDirectory;
-				if (!Platform.IsUnix)
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 				{
 					return;
 				}
@@ -2505,18 +2025,10 @@ namespace SIL.FieldWorks
 					case DriveType.Fixed:
 					case DriveType.Network:
 					case DriveType.Removable:
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 						if (Platform.IsUnix)
 						{
 							driveMounts.Add(driveInfo.Name + (driveInfo.Name.EndsWith("/") ? "" : "/"));    // ensure terminated with a slash
 						}
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-						if (MiscUtils.IsUnix)
-							driveMounts.Add(d.Name + (d.Name.EndsWith("/") ? "" : "/"));	// ensure terminated with a slash
-=======
-						if (Platform.IsUnix)
-							driveMounts.Add(d.Name + (d.Name.EndsWith("/") ? "" : "/"));	// ensure terminated with a slash
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 						else
 						{
 							driveMounts.Add(driveInfo.Name.ToLowerInvariant());     // Windows produces C:\ D:\ etc.
@@ -2703,15 +2215,7 @@ namespace SIL.FieldWorks
 		}
 #endregion
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 		#region Project Migration Methods
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		#region Project Migration Methods
-		/// ------------------------------------------------------------------------------------
-=======
-#region Project Migration Methods
-		/// ------------------------------------------------------------------------------------
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 		/// <summary>
 		/// Migrates the user's databases to FieldWorks 7.0+ if they haven't yet migrated
 		/// successfully (and the user actually wants to migrate).
@@ -2765,15 +2269,7 @@ namespace SIL.FieldWorks
 		}
 #endregion
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 		#region Backup/Restore-related methods
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		#region Backup/Restore-related methods
-		/// ------------------------------------------------------------------------------------
-=======
-#region Backup/Restore-related methods
-		/// ------------------------------------------------------------------------------------
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 		/// <summary>
 		/// Handles a request to restore a project. This method is thread safe.
 		/// </summary>
@@ -2970,12 +2466,8 @@ namespace SIL.FieldWorks
 			if (sharedXmlBackendCommitLogSize > 0)
 			{
 				settings.SharedXMLBackendCommitLogSize = sharedXmlBackendCommitLogSize;
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 			}
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-			settings.UpdateGlobalWSStore = s_appSettings.UpdateGlobalWSStore;
-=======
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
+
 			return settings;
 		}
 
@@ -2992,15 +2484,7 @@ namespace SIL.FieldWorks
 		}
 #endregion
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 		#region Link Handling Methods
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		#region Link Handling Methods
-		/// ------------------------------------------------------------------------------------
-=======
-#region Link Handling Methods
-		/// ------------------------------------------------------------------------------------
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 		/// <summary>
 		/// Handles a link request. This handles determining the correct application to start
 		/// up and for the correct project. This method is thread safe.
@@ -3144,15 +2628,7 @@ namespace SIL.FieldWorks
 		}
 #endregion
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 		#region Event Handlers
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		#region Event Handlers
-		/// ------------------------------------------------------------------------------------
-=======
-#region Event Handlers
-		/// ------------------------------------------------------------------------------------
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 		/// <summary>
 		/// Handles the Activated event of FieldWorks Main Windows.
 		/// </summary>
@@ -3189,16 +2665,8 @@ namespace SIL.FieldWorks
 		}
 #endregion
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 		#region Window Handling Methods
 
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		#region Window Handling Methods
-		/// ------------------------------------------------------------------------------------
-=======
-#region Window Handling Methods
-		/// ------------------------------------------------------------------------------------
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 		/// <summary>
 		/// Creates a new main window and initializes it. The specified App is responsible for
 		/// creating the proper main window type.
@@ -3281,15 +2749,7 @@ namespace SIL.FieldWorks
 		}
 #endregion
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 		#region Application Management Methods
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		#region Application Management Methods
-		/// ------------------------------------------------------------------------------------
-=======
-#region Application Management Methods
-		/// ------------------------------------------------------------------------------------
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 		/// <summary>
 		/// Starts or activates an application requested from another process. This method is
 		/// thread safe.
@@ -3590,15 +3050,7 @@ namespace SIL.FieldWorks
 		}
 #endregion
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 		#region Remote Process Handling Methods
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		#region Remote Process Handling Methods
-		/// ------------------------------------------------------------------------------------
-=======
-#region Remote Process Handling Methods
-		/// ------------------------------------------------------------------------------------
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 		/// <summary>
 		/// Determines whether any FW process is in "single user mode".
 		/// </summary>
@@ -3683,10 +3135,6 @@ namespace SIL.FieldWorks
 			});
 		}
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		/// ------------------------------------------------------------------------------------
-=======
 		/// <summary>
 		/// Tries to find any existing FieldWorks process
 		/// </summary>
@@ -3698,8 +3146,6 @@ namespace SIL.FieldWorks
 			return RunOnRemoteClients(kFwRemoteRequest, requestor => true);
 		}
 
-		/// ------------------------------------------------------------------------------------
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 		/// <summary>
 		/// Creates a remoting server to listen for events from other instances.
 		/// </summary>
@@ -3836,15 +3282,7 @@ namespace SIL.FieldWorks
 
 #endregion
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 		#region Other Private/Internal Methods
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		#region Other Private/Internal Methods
-		/// ------------------------------------------------------------------------------------
-=======
-#region Other Private/Internal Methods
-		/// ------------------------------------------------------------------------------------
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 		/// <summary>
 		/// Get the directory this assembly is located in
 		/// </summary>
@@ -3926,68 +3364,14 @@ namespace SIL.FieldWorks
 		/// </summary>
 		private static void SetupErrorReportInformation()
 		{
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
-			var version = Version;
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-			string version = Version;
-=======
 			var entryAssembly = Assembly.GetEntryAssembly();
 			var version = entryAssembly == null
 				? Version
 				: new VersionInfoProvider(entryAssembly, true).ApplicationVersion;
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 			if (version != null)
 			{
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
-				// Extract the fourth (and final) field of the version to get a date value.
-				var ich = version.IndexOf('.');
-				if (ich >= 0)
-				{
-					ich = version.IndexOf('.', ich + 1);
-				}
-				if (ich >= 0)
-				{
-					ich = version.IndexOf('.', ich + 1);
-				}
-				if (ich >= 0)
-				{
-					var iDate = Convert.ToInt32(version.Substring(ich + 1));
-					if (iDate > 0)
-					{
-						var oadate = Convert.ToDouble(iDate);
-						var dt = DateTime.FromOADate(oadate);
-						version += $"  {dt:yyyy/MM/dd}";
-					}
-				}
-#if DEBUG
-				version += "  (Debug version)";
-#endif
-				ErrorReporter.AddProperty("Version", version);
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-				// Extract the fourth (and final) field of the version to get a date value.
-				int ich = version.IndexOf('.');
-				if (ich >= 0)
-					ich = version.IndexOf('.', ich + 1);
-				if (ich >= 0)
-					ich = version.IndexOf('.', ich + 1);
-				if (ich >= 0)
-				{
-					int iDate = Convert.ToInt32(version.Substring(ich + 1));
-					if (iDate > 0)
-					{
-						double oadate = Convert.ToDouble(iDate);
-						DateTime dt = DateTime.FromOADate(oadate);
-						version += string.Format("  {0}", dt.ToString("yyyy/MM/dd"));
-					}
-				}
-#if DEBUG
-				version += "  (Debug version)";
-#endif
-				ErrorReporter.AddProperty("Version", version);
-=======
 				// The property "Version" would be overwritten when Palaso adds the standard properties
 				ErrorReporter.AddProperty("FWVersion", version);
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 			}
 			ErrorReporter.AddProperty("CommandLine", Environment.CommandLine);
 			ErrorReporter.AddProperty("CurrentDirectory", Environment.CurrentDirectory);
@@ -4354,39 +3738,7 @@ namespace SIL.FieldWorks
 			MessageBox.Show(helpMessage, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 		/// <summary>
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Ask user whether to use newer version of writing systems (presumably changed by some
-		/// other Palaso app or some other FW project).
-		/// </summary>
-		/// <param name="wsLabel">The display name (and other information) for the updated
-		/// writing systems (a list of them, possibly).</param>
-		/// <param name="projectName">Name of the project where we might switch to the newer writing system.</param>
-		/// <returns><c>true</c> to accept newer version; <c>false</c> otherwise</returns>
-		/// ------------------------------------------------------------------------------------
-		private static bool ComplainToUserAboutNewWs(string wsLabel, string projectName)
-		{
-			// Assume they want the WS updated when we're not supposed to show a UI.
-			if (s_noUserInterface)
-				return true;
-
-			string text = string.Format(Properties.Resources.kstidGlobalWsChangedMsg, wsLabel, projectName);
-			string caption = Properties.Resources.kstidGlobalWsChangedCaption;
-			Form owner = s_splashScreen != null ? s_splashScreen.Form : Form.ActiveForm;
-
-			return ThreadHelper.ShowMessageBox(owner, text, caption, MessageBoxButtons.YesNo,
-				MessageBoxIcon.Question) == DialogResult.Yes;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-=======
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 		/// Close any main windows.  This is needed to implement changing the projects folder
 		/// location when multiple projects are running.  (See FWR-2287.)
 		/// </summary>
@@ -4394,7 +3746,6 @@ namespace SIL.FieldWorks
 		{
 			CloseAllMainWindowsForApp(s_flexApp);
 		}
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
 		#endregion
 
 		/// <summary>
@@ -4422,6 +3773,13 @@ namespace SIL.FieldWorks
 			{
 				get => m_settings.Reporting;
 				set => m_settings.Reporting = value;
+			}
+
+			/// <inheritdoc />
+			UpdateSettings IFwApplicationSettings.Update
+			{
+				get => m_settings.Update;
+				set => m_settings.Update = value;
 			}
 
 			/// <inheritdoc />
@@ -4953,16 +4311,5 @@ namespace SIL.FieldWorks
 			}
 			#endregion
 		}
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-		#endregion
-=======
-#endregion
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 	}
-<<<<<<< HEAD:Src/FieldWorks/FieldWorks.cs
-||||||| f013144d5:Src/Common/FieldWorks/FieldWorks.cs
-	#endregion
-=======
-#endregion
->>>>>>> develop:Src/Common/FieldWorks/FieldWorks.cs
 }
