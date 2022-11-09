@@ -1,10 +1,4 @@
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
-// Copyright (c) 2014-2020 SIL International
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-// Copyright (c) 2014-2019 SIL International
-=======
 // Copyright (c) 2014-2022 SIL International
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,39 +8,17 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-using System.Text.RegularExpressions;
-=======
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 using System.Xml;
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
+using Icu.Collation;
 using LanguageExplorer;
 using LanguageExplorer.Areas;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.Filters;
 using LanguageExplorer.TestUtilities;
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-=======
-using Icu.Collation;
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 using NUnit.Framework;
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-using SIL.Linq;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Framework;
-using SIL.LCModel.Core.KernelInterfaces;
-=======
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.Framework;
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.IO;
 using SIL.LCModel;
@@ -57,29 +29,17 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 using SIL.LCModel.Utils;
-using SIL.Linq;
-using SIL.PlatformUtilities;
-using SIL.TestUtilities;
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-using SIL.TestUtilities;
-using SIL.LCModel.Utils;
-using XCore;
-=======
 using SIL.Linq;
 using SIL.PlatformUtilities;
 using SIL.TestUtilities;
 using SIL.WritingSystems;
-using XCore;
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 
 namespace LanguageExplorerTests.DictionaryConfiguration
 {
 	[TestFixture]
 	public class ConfiguredXHTMLGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 		private FlexComponentParameters _flexComponentParameters;
 		private IRecordListRepositoryForTools _recordListRepositoryForTools;
 		private IRecordList _recordList;
@@ -87,66 +47,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		private int _wsEn, _wsFr, _wsHe;
 		private const string xpathThruSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']";
 		private const string TestVariantName = "Crazy Variant";
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-		private int m_wsEn, m_wsFr, m_wsHe;
-
-		private FwXApp m_application;
-		private FwXWindow m_window;
-		private PropertyTable m_propertyTable;
-		private Mediator m_mediator;
-		private RecordClerk m_Clerk;
-
-=======
-		private int m_wsEn, m_wsFr;
-
-		private FwXApp m_application;
-		private FwXWindow m_window;
-		private XCore.PropertyTable m_propertyTable;
-		private Mediator m_mediator;
-		private RecordClerk m_Clerk;
-
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 		private StringBuilder XHTMLStringBuilder { get; set; }
 		private const string DictionaryNormal = "Dictionary-Normal";
 		private BaseStyleInfo DictionaryNormalStyle => FwUtils.StyleSheetFromPropertyTable(_flexComponentParameters.PropertyTable).Styles[DictionaryNormal];
 		private GeneratorSettings DefaultSettings => new GeneratorSettings(Cache, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null);
 		private DictionaryPublicationDecorator DefaultDecorator => new DictionaryPublicationDecorator(Cache, Cache.GetManagedSilDataAccess(), Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
 
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 		[OneTimeSetUp]
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-		private ConfiguredLcmGenerator.GeneratorSettings DefaultSettings
-		{
-			get { return new ConfiguredLcmGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null); }
-		}
-
-		private DictionaryPublicationDecorator DefaultDecorator
-		{
-			get
-			{
-				return new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
-					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			}
-		}
-
-		[TestFixtureSetUp]
-=======
-		private ConfiguredLcmGenerator.GeneratorSettings DefaultSettings
-		{
-			get { return new ConfiguredLcmGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null); }
-		}
-
-		private DictionaryPublicationDecorator DefaultDecorator
-		{
-			get
-			{
-				return new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor,
-					Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries);
-			}
-		}
-
-		[OneTimeSetUp]
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -156,10 +63,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			if (!styles.Contains(DictionaryNormal))
 			{
 				styles.Add(new BaseStyleInfo { Name = DictionaryNormal });
-		}
+			}
 			_recordListRepositoryForTools = _flexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository);
 			_statusBar = StatusBarPanelServices.CreateStatusBarFor_TESTS();
-			_recordList = CreateRecordList();
+			_recordList = CreateRecordList(Cache, _flexComponentParameters, _statusBar);
 			_recordListRepositoryForTools.AddRecordList(_recordList);
 			_recordListRepositoryForTools.ActiveRecordList = _recordList;
 			_flexComponentParameters.PropertyTable.SetProperty(LanguageExplorerConstants.ToolChoice, LanguageExplorerConstants.LexiconDictionaryMachineName);
@@ -168,47 +75,25 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			_wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 		}
 
-		private IRecordList CreateRecordList()
+		internal static IRecordList CreateRecordList(LcmCache cache, FlexComponentParameters flexComponentParameters, StatusBar statusBar)
 		{
-			var recordList = new RecordList(LanguageExplorerConstants.Entries, _statusBar, Cache.GetManagedSilDataAccess(), false,
-				new VectorPropertyParameterObject(Cache.LanguageProject.LexDbOA, "Entries", Cache.MetaDataCacheAccessor.GetFieldId2(Cache.LanguageProject.LexDbOA.ClassID, "Entries", false)),
+			var recordList = new RecordList(LanguageExplorerConstants.Entries, statusBar, cache.GetManagedSilDataAccess(), false,
+				new VectorPropertyParameterObject(cache.LanguageProject.LexDbOA, "Entries", cache.MetaDataCacheAccessor.GetFieldId2(cache.LanguageProject.LexDbOA.ClassID, "Entries", false)),
 				new Dictionary<string, PropertyRecordSorter>
 		{
 					{ AreaServices.Default, new PropertyRecordSorter(AreaServices.ShortName) },
 					{ "PrimaryGloss", new PropertyRecordSorter("PrimaryGloss") }
 				});
 			recordList.SortName = "Headword";
-			recordList.InitializeFlexComponent(_flexComponentParameters);
+			recordList.InitializeFlexComponent(flexComponentParameters);
 			return recordList;
 		}
 
 		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
-			try
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-			base.FixtureTeardown();
-			Dispose();
-		}
-
-		#region disposal
-		protected virtual void Dispose(bool disposing)
-		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (disposing)
-=======
-			base.FixtureTeardown();
 			FwRegistrySettings.Release();
-			Dispose();
-		}
-
-		#region disposal
-		protected virtual void Dispose(bool disposing)
-		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (disposing)
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
+			try
 			{
 				_statusBar?.Dispose();
 				_recordListRepositoryForTools?.Dispose();
@@ -237,19 +122,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 		public override void TestTearDown()
 		{
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 			try
 		{
 				XHTMLStringBuilder = null;
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-			// Specific tests override this, reset to SIL.LCModel.dll needed by most tests in the file
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
-		}
-=======
-			// Specific tests override this, reset to SIL.LCModel.dll needed by most tests in the file
-			ConfiguredLcmGenerator.Init();
-		}
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 
 				// Specific tests override this, reset to SIL.LCModel.dll needed by most tests in the file
 				ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
@@ -467,18 +342,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 			var variant = CreateInterestingLexEntry(Cache);
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
-			// we need a real Variant Type to pass the list options test
-			CreateVariantForm(Cache, entry, variant, "Spelling Variant");
-																		  // Create a folder in the project to hold the media files
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-			CreateVariantForm(Cache, entry, variant, "Spelling Variant"); // we need a real Variant Type to pass the list options test
-																		  // Create a folder in the project to hold the media files
-=======
 			// we need a real Variant Type to pass the list options test
 			CreateVariantForm(Cache, entry, variant, "Spelling Variant");
 			// Create a folder in the project to hold the media files
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
 			// Create and fill in the media files
@@ -579,21 +445,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var entryOne = CreateInterestingLexEntry(Cache);
 			var entryTwo = CreateInterestingLexEntry(Cache);
 
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//keep the xml valid (single root element)
 			XHTMLStringBuilder.AppendLine("<TESTWRAPPER>");
-															//SUT
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
-			XHTMLStringBuilder.AppendLine("<TESTWRAPPER>"); //keep the xml valid (single root element)
-															//SUT
-=======
-			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
-			//keep the xml valid (single root element)
-			XHTMLStringBuilder.AppendLine("<TESTWRAPPER>");
 			//SUT
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 			XHTMLStringBuilder.Append(result);
 			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryTwo, mainEntryNode, null, settings);
@@ -693,21 +548,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var entryOneId = entryOne.Guid;
 			var entryTwoId = entryTwo.Guid;
 
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//keep the xml valid (single root element)
 			XHTMLStringBuilder.AppendLine("<TESTWRAPPER>");
-															//SUT
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
-			XHTMLStringBuilder.AppendLine("<TESTWRAPPER>"); //keep the xml valid (single root element)
-															//SUT
-=======
-			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
-			//keep the xml valid (single root element)
-			XHTMLStringBuilder.AppendLine("<TESTWRAPPER>");
 			//SUT
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryOne, mainEntryNode, null, settings);
 			XHTMLStringBuilder.Append(result);
 			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryTwo, mainEntryNode, null, settings);
@@ -1388,7 +1232,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			msa.PartOfSpeechRA = pos;
 			msa.PartOfSpeechRA.Abbreviation.set_String(wsFr, "<Not Sure>");
 
-			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			// SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
 
@@ -4451,36 +4295,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			const string comRefTypeRevName = "cp";
 			const string etyRefTypeName = "Etymology";
 			const string etyRefTypeRevName = "ety";
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 			CreateLexicalReference(mainEntry, compareReferencedEntry, comRefTypeName, comRefTypeRevName);
 			CreateLexicalReference(mainEntry, etymologyReferencedEntry, etyRefTypeName, etyRefTypeRevName);
 			var comRefType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == comRefTypeName);
 			var etyRefType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == etyRefTypeName);
-			Assert.IsNotNull(comRefType);
-			Assert.IsNotNull(etyRefType);
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-			CreateLexicalReference(Cache, mainEntry, compareReferencedEntry, comRefTypeName, comRefTypeRevName);
-			CreateLexicalReference(Cache, mainEntry, etymologyReferencedEntry, etyRefTypeName, etyRefTypeRevName);
-			var comRefType =
-				Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(
-					poss => poss.Name.BestAnalysisAlternative.Text == comRefTypeName);
-			var etyRefType =
-				Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(
-					poss => poss.Name.BestAnalysisAlternative.Text == etyRefTypeName);
-			Assert.IsNotNull(comRefType);
-			Assert.IsNotNull(etyRefType);
-=======
-			CreateLexicalReference(Cache, mainEntry, compareReferencedEntry, comRefTypeName, comRefTypeRevName);
-			CreateLexicalReference(Cache, mainEntry, etymologyReferencedEntry, etyRefTypeName, etyRefTypeRevName);
-			var comRefType =
-				Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(
-					poss => poss.Name.BestAnalysisAlternative.Text == comRefTypeName);
-			var etyRefType =
-				Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(
-					poss => poss.Name.BestAnalysisAlternative.Text == etyRefTypeName);
 			Assert.That(comRefType, Is.Not.Null);
 			Assert.That(etyRefType, Is.Not.Null);
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 
 			var nameNode = new ConfigurableDictionaryNode
 			{
@@ -5315,34 +5135,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfNoPreviousHeader()
 		{
 			var entry = CreateInterestingLexEntry(Cache);
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
-			using (var xhtmlWriter = XmlWriter.Create(XHTMLStringBuilder))
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
-=======
 			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
 			using (var col = new CollatorForTest(vernWs))
-			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
+			using (var xhtmlWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				string last = null;
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 				xhtmlWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, col, DefaultSettings);
 				xhtmlWriter.WriteEndElement();
 				xhtmlWriter.Flush();
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-				XHTMLWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
-				XHTMLWriter.WriteEndElement();
-				XHTMLWriter.Flush();
-=======
-				XHTMLWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings, m_Clerk);
-				XHTMLWriter.WriteEndElement();
-				XHTMLWriter.Flush();
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='C c']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
 			}
@@ -5352,34 +5154,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderIfPreviousHeaderDoesNotMatch()
 		{
 			var entry = CreateInterestingLexEntry(Cache);
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
-			using (var xhtmlWriter = XmlWriter.Create(XHTMLStringBuilder))
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
-=======
 			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
 			using (var col = new CollatorForTest(vernWs))
-			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
+			using (var xhtmlWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				var last = "A a";
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 				xhtmlWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, col, DefaultSettings);
 				xhtmlWriter.WriteEndElement();
 				xhtmlWriter.Flush();
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-				XHTMLWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
-				XHTMLWriter.WriteEndElement();
-				XHTMLWriter.Flush();
-=======
-				XHTMLWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings, m_Clerk);
-				XHTMLWriter.WriteEndElement();
-				XHTMLWriter.Flush();
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='C c']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
 			}
@@ -5389,34 +5173,16 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void GenerateLetterHeaderIfNeeded_GeneratesHeaderForSuffixWithNewBaseLetter()
 		{
 			var entry = CreateInterestingSuffix(Cache, " ba");
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
-			using (var xhtmlWriter = XmlWriter.Create(XHTMLStringBuilder))
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
-=======
 			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
 			using (var col = new CollatorForTest(vernWs))
-			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
+			using (var xhtmlWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				var last = "A a";
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 				xhtmlWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, col, DefaultSettings);
 				xhtmlWriter.WriteEndElement();
 				xhtmlWriter.Flush();
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-				XHTMLWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
-				XHTMLWriter.WriteEndElement();
-				XHTMLWriter.Flush();
-=======
-				XHTMLWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings, m_Clerk);
-				XHTMLWriter.WriteEndElement();
-				XHTMLWriter.Flush();
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='B b']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
 			}
@@ -5425,39 +5191,18 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[Test]
 		public void GenerateLetterHeaderIfNeeded_GeneratesNoHeaderIfPreviousHeaderDoesMatch()
 		{
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 			var entry = CreateInterestingLexEntry(Cache);
-			using (var xhtmlWriter = XmlWriter.Create(XHTMLStringBuilder))
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-			var entry = CreateInterestingLexEntry(Cache);
-			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
-=======
-			var entry = CreateInterestingLexEntry(Cache); var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
+			var vernWs = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Id;
 			using (var col = new CollatorForTest(vernWs))
-			using (var XHTMLWriter = XmlWriter.Create(XHTMLStringBuilder))
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
+			using (var xhtmlWriter = XmlWriter.Create(XHTMLStringBuilder))
 			{
 				// SUT
 				var last = "A a";
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 				xhtmlWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, DefaultSettings);
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, col, DefaultSettings);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, xhtmlWriter, col, DefaultSettings);
 				xhtmlWriter.WriteEndElement();
 				xhtmlWriter.Flush();
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-				XHTMLWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, DefaultSettings);
-				XHTMLWriter.WriteEndElement();
-				XHTMLWriter.Flush();
-=======
-				XHTMLWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings, m_Clerk);
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings, m_Clerk);
-				XHTMLWriter.WriteEndElement();
-				XHTMLWriter.Flush();
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='fr' and text()='C c']";
 				const string proveOnlyOneHeader = "//div[@class='letHead']/span[@class='letter']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
@@ -5483,9 +5228,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				// SUT
 				string last = null;
 				XHTMLWriter.WriteStartElement("TestElement");
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(dotlessEntry, ref last, XHTMLWriter, col, DefaultSettings, m_Clerk);
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(dottedEntry1, ref last, XHTMLWriter, col, DefaultSettings, m_Clerk);
-				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(dottedEntry2, ref last, XHTMLWriter, col, DefaultSettings, m_Clerk);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(dotlessEntry, ref last, XHTMLWriter, col, DefaultSettings, _recordList);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(dottedEntry1, ref last, XHTMLWriter, col, DefaultSettings, _recordList);
+				LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(dottedEntry2, ref last, XHTMLWriter, col, DefaultSettings, _recordList);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				const string dotlessHeadingXpath = "//div[@class='letHead']/span[@class='letter' and @lang='tkr' and text()='I \u0131']";
@@ -5507,15 +5252,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				// SUT
 				string last = null;
 				XHTMLWriter.WriteStartElement("TestElement");
-				string oldSort = m_Clerk.SortName;
+				string oldSort = _recordList.SortName;
 				try
 				{
-					m_Clerk.SortName = "Lexeme Form";
-					LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings, m_Clerk);
+					_recordList.SortName = "Lexeme Form";
+					LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings, _recordList);
 				}
 				finally
 				{
-					m_Clerk.SortName = oldSort;
+					_recordList.SortName = oldSort;
 				}
 
 				XHTMLWriter.WriteEndElement();
@@ -5537,15 +5282,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				// SUT
 				string last = null;
 				XHTMLWriter.WriteStartElement("TestElement");
-				string oldSort = m_Clerk.SortName;
+				string oldSort = _recordList.SortName;
 				try
 				{
-					m_Clerk.SortName = "Citation Form";
-					LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings, m_Clerk);
+					_recordList.SortName = "Citation Form";
+					LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings, _recordList);
 				}
 				finally
 				{
-					m_Clerk.SortName = oldSort;
+					_recordList.SortName = oldSort;
 				}
 
 				XHTMLWriter.WriteEndElement();
@@ -5657,14 +5402,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(filePath));
 				var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[starts-with(@src, '" + pictureRelativePath + "')]";
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 				if (!Platform.IsUnix)
 				{
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-				if (!MiscUtils.IsUnix)
-=======
-				if (!Platform.IsUnix)
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 1);
 				}
 				// that src starts with a string, and escaping any Windows path separators
@@ -5702,14 +5441,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(filePath));
 				var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[starts-with(@src, '" + pictureRelativePath + "')]";
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 				if (!Platform.IsUnix)
 				{
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-				if (!MiscUtils.IsUnix)
-=======
-				if (!Platform.IsUnix)
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 1);
 				}
 				// that src starts with a string, and escaping any Windows path separators
@@ -5772,14 +5505,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				// The second file with the same name should have had something appended to the end of the filename but the initial filename should match both entries
 				var filenameWithoutExtension = Path.GetFileNameWithoutExtension(pictureRelativePath);
 				var pictureStartsWith = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[contains(@src, '" + filenameWithoutExtension + "')]";
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 				if (!Platform.IsUnix)
 				{
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-				if (!MiscUtils.IsUnix)
-=======
-				if (!Platform.IsUnix)
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureStartsWith, 2);
 				}
 				// that src contains a string
@@ -5829,14 +5556,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(fileName));
 				const string pictureXPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img";
 				var pictureWithComposedPath = pictureXPath + "[contains(@src, '" + pictureRelativePath + "')]";
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 				if (!Platform.IsUnix)
 				{
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-				if (!MiscUtils.IsUnix)
-=======
-				if (!Platform.IsUnix)
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 2);
 				}
 				else
@@ -5993,14 +5714,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(fileName));
 				var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[contains(@src, '" + pictureRelativePath + "')]";
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 				if (!Platform.IsUnix)
 				{
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-				if (!MiscUtils.IsUnix)
-=======
-				if (!Platform.IsUnix)
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 2);
 				}
 				// that src starts with string, and escaping Windows directory separators
@@ -6074,7 +5789,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 				// Set custom field data
 				Cache.MainCacheAccessor.SetString(testEntry.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
-				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				var customDataPath = $"/div[@class='lexentry']/span[@class='grouping_customgroup']/span[@class='customstring']/span[text()='" + customData + "']";
@@ -6123,7 +5838,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 				// Set custom field data
 				Cache.MainCacheAccessor.SetString(testEntry.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
-				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 				const string grpXPath = "/span[@class='grouping_customgroup']";
@@ -6795,18 +6510,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 			var variant = CreateInterestingLexEntry(Cache);
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
-			// we need a real Variant Type to pass the list options test
-			CreateVariantForm(Cache, entry, variant, "Spelling Variant");
-																		  // Create a folder in the project to hold the media files
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-			CreateVariantForm(Cache, entry, variant, "Spelling Variant"); // we need a real Variant Type to pass the list options test
-																		  // Create a folder in the project to hold the media files
-=======
 			// we need a real Variant Type to pass the list options test
 			CreateVariantForm(Cache, entry, variant, "Spelling Variant");
 			// Create a folder in the project to hold the media files
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
 			// Create and fill in the media files
@@ -6985,18 +6691,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
 			var variant = CreateInterestingLexEntry(Cache);
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
-			// we need a real Variant Type to pass the list options test
-			CreateVariantForm(Cache, entry, variant, "Spelling Variant");
-																		  // Create a folder in the project to hold the media files
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-			CreateVariantForm(Cache, entry, variant, "Spelling Variant"); // we need a real Variant Type to pass the list options test
-																		  // Create a folder in the project to hold the media files
-=======
 			// we need a real Variant Type to pass the list options test
 			CreateVariantForm(Cache, entry, variant, "Spelling Variant");
 			// Create a folder in the project to hold the media files
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 			Cache.LangProject.MediaOC.Add(folder);
 			// Create and fill in the media files
@@ -8020,15 +7717,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 			//SUT
 			var output = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entryCorps, mainEntryNode, pubEverything, settings);
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 			Assert.That(output, Is.Not.Null.Or.Empty);
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-			Console.WriteLine(output);
-			Assert.IsNotNullOrEmpty(output);
-=======
-			Console.WriteLine(output);
-			Assert.That(output, Is.Not.Null.Or.Empty);
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 			// Verify that the unfiltered output displays everything.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchPronunciation, 1);
@@ -8547,20 +8236,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 			const string senseXpath = "div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='gloss']/span[@lang='en' and text()='gloss']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseXpath, 1);
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 			Assert.That(result, Does.Not.Contain(@"<div class=['""]paracontinuation['""]\s*/>"), "Empty Self closing <div> element should not generated after senses in paragraph");
 			Assert.That(result, Does.Not.Contain(@"<div class=['""]paracontinuation['""]\s*></div>"), "Empty <div> element should not be generated after senses in paragraph");
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-			Assert.That(result, Is.Not.StringMatching(@"<div class=['""]paracontinuation['""]\s*/>"),
-				"Empty Self closing <div> element should not generated after senses in paragraph");
-			Assert.That(result, Is.Not.StringMatching(@"<div class=['""]paracontinuation['""]\s*></div>"),
-				"Empty <div> element should not be generated after senses in paragraph");
-=======
-			Assert.That(result, Does.Not.Match(@"<div class=['""]paracontinuation['""]\s*/>"),
-				"Empty Self closing <div> element should not generated after senses in paragraph");
-			Assert.That(result, Does.Not.Match(@"<div class=['""]paracontinuation['""]\s*></div>"),
-				"Empty <div> element should not be generated after senses in paragraph");
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 		}
 
 		[Test]
@@ -8761,25 +8438,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var cssPath = Path.ChangeExtension(xhtmlPath, "css");
 				var css = File.ReadAllText(cssPath);
 				// verify that the css file contains a line similar to: @media screen {
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
-				Assert.IsTrue(Regex.Match(css, @"@media\s*screen\s*{\s*\.pages\s*{\s*display:\s*table;\s*width:\s*100%;").Success, "Css for page buttons did not generate a screen-only rule");
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-				Assert.IsTrue(Regex.Match(css, @"@media\s*screen\s*{\s*\.pages\s*{\s*display:\s*table;\s*width:\s*100%;").Success,
-								  "Css for page buttons did not generate a screen-only rule");
-=======
 				Assert.That(css, Does.Match(@"@media\s*screen\s*{\s*\.pages\s*{\s*display:\s*table;\s*width:\s*100%;"),
 								  "Css for page buttons did not generate a screen-only rule");
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 				// verify that the css file contains a line similar to: @media print {
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
-				Assert.IsTrue(Regex.Match(css, @"@media\s*print\s*{\s*\.pages\s*{\s*display:\s*none;\s*}").Success, "Css for page buttons did not generate a print-only rule");
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-				Assert.IsTrue(Regex.Match(css, @"@media\s*print\s*{\s*\.pages\s*{\s*display:\s*none;\s*}").Success,
-								  "Css for page buttons did not generate a print-only rule");
-=======
 				Assert.That(css, Does.Match(@"@media\s*print\s*{\s*\.pages\s*{\s*display:\s*none;\s*}"),
 								  "Css for page buttons did not generate a print-only rule");
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 			}
 			finally
 			{
@@ -8928,15 +8591,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		public void SavePublishedHtmlWithStyles_ProducesDocumentTitle()
 		{
 			var entry = CreateInterestingLexEntry(Cache);
-			AddHeadwordToEntry(entry, "femme", m_wsFr);
+			AddHeadwordToEntry(entry, "femme", _wsFr);
 			const string configName = "Test Config Name";
-			var model = CreateInterestingConfigurationModel(Cache, m_propertyTable);
-			model.FilePath = "/nowhere/" + configName + DictionaryConfigurationModel.FileExtension;
+			var model = CreateInterestingConfigurationModel(Cache, _flexComponentParameters.PropertyTable);
+			model.FilePath = "/nowhere/" + configName + LanguageExplorerConstants.DictionaryConfigurationFileExtension;
 			string xhtmlPath = null;
 			try
 			{
 				//SUT
-				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { entry.Hvo }, null, model, m_propertyTable);
+				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { entry.Hvo }, null, model, _flexComponentParameters.PropertyTable, Cache, _recordList);
 				// Since this is for the LexEdit Preview, the config name will be appended with '-Preview'
 				// Note: because the project name is the file name, and there is no file behind our cache, Name is the empty string
 				var xpath = $"/html/head/title[text()='{configName}-Preview - {Cache.ProjectId.Name}']";
@@ -9177,17 +8840,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
-			var multiRunString = MakeBidirectionalTss(new[] { "דוד", " et ", "דניאל" });
-			entry.Bibliography.set_String(_wsHe, multiRunString);
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-			var multiRunString = MakeBidirectionalTss(new[] { "דוד", " et ", "דניאל" });
-			entry.Bibliography.set_String(m_wsHe, multiRunString);
-=======
-			var multiRunString = MakeBidirectionalTss(new[] { "דוד", " et ", "דניאל" }, Cache);
+			var multiRunString = MakeBidirectionalTss(new[] { "דוד", " et ", "דניאל" }, Cache, _wsEn, ref _wsHe);
 			var wsHe = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("he");
 			entry.Bibliography.set_String(wsHe, multiRunString);
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
 			const string nestedEn = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@dir='rtl']/span[@lang='en']/span[@dir='ltr']";
@@ -9214,21 +8869,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
-			var multiRunString = MakeBidirectionalTss(new[] { "ירמיהו", " was a bullfrog." });
-			entry.Bibliography.set_String(_wsHe, multiRunString);
-			// Right-to-Left
-			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null, true);
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-			var multiRunString = MakeBidirectionalTss(new[] { "ירמיהו", " was a bullfrog." });
-			entry.Bibliography.set_String(m_wsHe, multiRunString);
-			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, true); // Right-to-Left
-=======
-			var multiRunString = MakeBidirectionalTss(new[] { "ירמיהו", " was a bullfrog." }, Cache);
+			var multiRunString = MakeBidirectionalTss(new[] { "ירמיהו", " was a bullfrog." }, Cache, _wsEn, ref _wsHe);
 			var wsHe = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("he");
 			entry.Bibliography.set_String(wsHe, multiRunString);
-			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, true); // Right-to-Left
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
+			// Right-to-Left
+			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null, true);
 																															 //SUT
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings);
@@ -9638,18 +9283,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
 
 				// Test that variantformentrybackref items are in alphabetical order
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
-				Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture), Is.LessThan(result.IndexOf("headwordB", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
-				Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture), Is.LessThan(result.IndexOf("headwordC", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
-				Assert.That(result.IndexOf("headwordC", StringComparison.InvariantCulture), Is.LessThan(result.IndexOf("headwordD", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-				Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
-					Is.LessThan(result.IndexOf("headwordB", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
-				Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
-					Is.LessThan(result.IndexOf("headwordC", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
-				Assert.That(result.IndexOf("headwordC", StringComparison.InvariantCulture),
-					Is.LessThan(result.IndexOf("headwordD", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
-=======
 				Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
 					Is.LessThan(result.IndexOf("headwordB", StringComparison.InvariantCulture)), "variant form not sorted in expected order");
 				Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
@@ -9694,7 +9327,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				};
 				var variantFormNode = new ConfigurableDictionaryNode
 				{
-					DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant, Cache),
+					DictionaryNodeOptions = GetFullyEnabledListOptions(Cache, ListIds.Variant),
 					FieldDescription = "VariantFormEntryBackRefs",
 					Children = new List<ConfigurableDictionaryNode> { variantTypeNode, formNode }
 				};
@@ -9706,7 +9339,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 
 				DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
 				CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+				var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, null);
 
 				//SUT
 				var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
@@ -9714,7 +9347,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				// Test that variantentrytypes is before variantformentrybackref
 				Assert.That(result.IndexOf("variantentrytypes", StringComparison.InvariantCulture),
 					Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "variant type not before variant form");
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 			}
 		}
 
@@ -9986,20 +9618,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[TestCase("\ud81b\udf00test", false, "\ud81b\udf00t")]
 		public void GetIndexLettersOfSortWord(string sortWord, bool onlyFirstLetter, string expected)
 		{
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
-			var actual = typeof(LcmXhtmlGenerator).GetMethod("GetIndexLettersOfHeadword", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] {headWord, onlyFirstLetter});
-			Assert.AreEqual(expected, actual, $"{onlyFirstLetter} {headWord}");
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-			var actual = typeof(LcmXhtmlGenerator)
-				.GetMethod("GetIndexLettersOfHeadword", BindingFlags.NonPublic | BindingFlags.Static)
-				.Invoke(null, new object[] { headWord, onlyFirstLetter });
-			Assert.AreEqual(expected, actual, $"{onlyFirstLetter} {headWord}");
-=======
 			var actual = typeof(LcmXhtmlGenerator)
 				.GetMethod("GetIndexLettersOfSortWord", BindingFlags.NonPublic | BindingFlags.Static)
 				.Invoke(null, new object[] { sortWord, onlyFirstLetter });
 			Assert.AreEqual(expected, actual, $"{onlyFirstLetter} {sortWord}");
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 		}
 
 
@@ -10019,16 +9641,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, "");
 			// SUT
 			LcmXhtmlGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo }, settings, currentPage, adjacentPage, 2,
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 				out var current, out var adjacent);
-			Assert.IsNull(adjacent, "The Adjacent page should have been consumed into the current page");
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-				out current, out adjacent);
-			Assert.IsNull(adjacent, "The Adjacent page should have been consumed into the current page");
-=======
-				out current, out adjacent);
 			Assert.That(adjacent, Is.Null, "The Adjacent page should have been consumed into the current page");
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 			Assert.AreEqual(0, current.Item1, "Current page should start at 0");
 			Assert.AreEqual(2, current.Item2, "Current page should end at 2");
 		}
@@ -10048,18 +9662,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var adjPage = new Tuple<int, int>(0, 1);
 			var settings = new GeneratorSettings(Cache, _flexComponentParameters.PropertyTable, false, false, "");
 			// SUT
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
 			LcmXhtmlGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo }, settings, currentPage, adjPage, 2, out var current, out var adjacent);
-			Assert.IsNull(adjacent, "The Adjacent page should have been consumed into the current page");
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-			LcmXhtmlGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo }, settings, currentPage, adjPage, 2,
-				out current, out adjacent);
-			Assert.IsNull(adjacent, "The Adjacent page should have been consumed into the current page");
-=======
-			LcmXhtmlGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo }, settings, currentPage, adjPage, 2,
-				out current, out adjacent);
 			Assert.That(adjacent, Is.Null, "The Adjacent page should have been consumed into the current page");
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 			Assert.AreEqual(0, current.Item1, "Current page should start at 0");
 			Assert.AreEqual(2, current.Item2, "Current page should end at 2");
 		}
@@ -10214,19 +9818,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 				var entries = LcmXhtmlGenerator.GenerateNextFewEntries(pubEverything, new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, configPath,
 					settings, currentPage, adjPage, 2, out _, out var adjacent);
 				Assert.AreEqual(2, entries.Count, "Not enough entries generated");
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
-				Assert.That(entries[0], Does.Contain(thirdEntry.HeadWord.Text));
-				Assert.That(entries[1], Does.Contain(fourthEntry.HeadWord.Text));
-				Assert.IsNull(adjacent);
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-				Assert.That(entries[0], Is.StringContaining(thirdEntry.HeadWord.Text));
-				Assert.That(entries[1], Is.StringContaining(fourthEntry.HeadWord.Text));
-				Assert.IsNull(adjacent);
-=======
 				Assert.That(entries[0], Does.Contain(thirdEntry.HeadWord.Text));
 				Assert.That(entries[1], Does.Contain(fourthEntry.HeadWord.Text));
 				Assert.That(adjacent, Is.Null);
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
 			}
 			finally
 			{
@@ -10297,12 +9891,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			Assert.That(tsResult.get_IsNormalizedForm(FwNormalizationMode.knmNFC), "Resulting XHTML should be NFComposed");
 		}
 
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredXHTMLGeneratorTests.cs
-		private static void DeleteTempXhtmlAndCssFiles(string xhtmlPath)
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
-		[Test]
-		public void GenerateXHTMLTemplate_OnlyGeneratesSelectedParts()
-=======
 		[Test]
 		public void GenerateXHTMLForEntry_CompareRelations_ComplexSituation_CustomSort()
 		{
@@ -10321,7 +9909,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var compareReferencedEntry3 = CreateInterestingLexEntry(Cache, "‘mtest", "‘mtest comparable");
 			var compareReferencedEntry4 = CreateInterestingLexEntry(Cache, "ztest", "ztest comparable");
 			const string comRefTypeName = "Compare";
-			var comRefType = CreateLexRefType(Cache, LexRefTypeTags.MappingTypes.kmtEntryCollection, comRefTypeName, "cf", string.Empty, string.Empty);
+			var comRefType = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryCollection, comRefTypeName, "cf", string.Empty, string.Empty);
 			CreateLexReference(comRefType, new List<ICmObject> { mainEntry, compareReferencedEntry4, compareReferencedEntry1, compareReferencedEntry3, compareReferencedEntry2 });
 			Assert.That(comRefType, Is.Not.Null);
 
@@ -10334,9 +9922,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(4, "ztest"), 1);
 		}
 
-		[Test]
-		public void GenerateXHTMLTemplate_OnlyGeneratesSelectedParts()
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredXHTMLGeneratorTests.cs
+		private static void DeleteTempXhtmlAndCssFiles(string xhtmlPath)
 		{
 			if (string.IsNullOrEmpty(xhtmlPath))
 			{
@@ -10668,6 +10254,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			entry.CitationForm.set_String(wsId, TsStringUtils.MakeString(headword, wsId));
 		}
 
+		internal static void AddLexemeFormToEntry(ILexEntry entry, string lexemeForm, LcmCache cache)
+		{
+			entry.LexemeFormOA = cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
+			entry.LexemeFormOA.Form.SetVernacularDefaultWritingSystem(lexemeForm);
+		}
+
 		internal static ILexPronunciation AddPronunciationToEntry(ILexEntry entry, string content, int wsId, LcmCache cache)
 		{
 			var pronunciation = cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
@@ -10796,31 +10388,31 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			return builder.GetString();
 		}
 
-		private ITsString MakeBidirectionalTss(IEnumerable<string> content)
+		internal static ITsString MakeBidirectionalTss(IEnumerable<string> content, LcmCache cache, int wsEn, ref int wsHe)
 		{
-			EnsureHebrewExists();
+			EnsureHebrewExists(cache, ref wsHe);
 			// automatically alternates runs between 'en' and 'he' (Hebrew)
 			var tsFact = TsStringUtils.TsStrFactory;
-			var lastWs = _wsEn;
+			var lastWs = wsEn;
 			var builder = tsFact.GetIncBldr();
 			foreach (var runContent in content)
 			{
-				lastWs = lastWs == _wsEn ? _wsHe : _wsEn; // switch ws for each run
+				lastWs = lastWs == wsEn ? wsHe : wsEn; // switch ws for each run
 				builder.AppendTsString(tsFact.MakeString(runContent, lastWs));
 			}
 			return builder.GetString();
 		}
 
-		private void EnsureHebrewExists()
+		private static void EnsureHebrewExists(LcmCache cache, ref int wsHe)
 		{
-			if (_wsHe > 0)
+			if (wsHe > 0)
 			{
 				return;
 			}
-			var wsManager = Cache.ServiceLocator.WritingSystemManager;
+			var wsManager = cache.ServiceLocator.WritingSystemManager;
 			wsManager.GetOrSet("he", out var hebrew);
 			hebrew.RightToLeftScript = true;
-			_wsHe = hebrew.Handle;
+			wsHe = hebrew.Handle;
 		}
 
 		private void SetDictionaryNormalDirection(InheritableStyleProp<TriStateBool> rightToLeft)

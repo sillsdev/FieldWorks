@@ -26,7 +26,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/ConfiguredLcmGeneratorTests.cs
 			try
 			{
 				TestSetupServices.DisposeTrash(_flexComponentParameters);
@@ -38,17 +37,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			}
 			finally
 			{
+				ConfiguredLcmGenerator.Init();
 				base.FixtureTeardown();
+				FwRegistrySettings.Release();
 			}
-||||||| f013144d5:Src/xWorks/xWorksTests/ConfiguredLcmGeneratorTests.cs
-			base.FixtureTeardown();
-			Dispose();
-=======
-			ConfiguredLcmGenerator.Init();
-			base.FixtureTeardown();
-			FwRegistrySettings.Release();
-			Dispose();
->>>>>>> develop:Src/xWorks/xWorksTests/ConfiguredLcmGeneratorTests.cs
 		}
 
 		[OneTimeSetUp]
