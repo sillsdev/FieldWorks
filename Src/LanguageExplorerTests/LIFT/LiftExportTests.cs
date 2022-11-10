@@ -1,10 +1,4 @@
-<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftExportTests.cs
-// Copyright (c) 2011-2020 SIL International
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
-// Copyright (c) 2011-2013 SIL International
-=======
 // Copyright (c) 2011-2022 SIL International
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -17,19 +11,7 @@ using System.Linq;
 using System.Xml;
 using LanguageExplorer.LIFT;
 using NUnit.Framework;
-<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftExportTests.cs
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-=======
 using SIL.Extensions;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.IO;
 using SIL.LCModel;
@@ -473,13 +455,8 @@ namespace LanguageExplorerTests.LIFT
 		private string MockProjectFolder { get; set; }
 		private string MockLinkedFilesFolder { get; set; }
 		private int m_audioWsCode;
-<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftExportTests.cs
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
-
-=======
 		private TraceListener[] m_listeners;
 
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
 		private ISilDataAccessManaged m_sda;
 		private ILexEntry m_entryTest;
 		private ILexEntry m_entryThis;
@@ -506,16 +483,12 @@ namespace LanguageExplorerTests.LIFT
 		private int m_flidLongText;
 
 		#region Setup and Helper Methods
-
-<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftExportTests.cs
 		public override void TestSetup()
 		{
 			base.TestSetup();
 			CreateMockCache();
 		}
 
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
-=======
 		[OneTimeSetUp]
 		public void DisableTraceLoggers()
 		{
@@ -530,7 +503,6 @@ namespace LanguageExplorerTests.LIFT
 			Debug.Listeners.AddRange(m_listeners);
 		}
 
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
 		/// <summary>
 		/// Setup method: create a memory-only mock cache and empty language project.
 		/// </summary>
@@ -790,15 +762,7 @@ namespace LanguageExplorerTests.LIFT
 		private void AddCustomFields()
 		{
 			m_sda = m_cache.DomainDataByFlid as ISilDataAccessManaged;
-<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftExportTests.cs
-			Assert.IsNotNull(m_sda);
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
-			Assert.IsNotNull(m_sda);
-			//---------------------------------------------------------------------------------------------------
-=======
 			Assert.That(m_sda, Is.Not.Null);
-			//---------------------------------------------------------------------------------------------------
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
 			AddCustomFieldsInLexEntry();
 			AddCustomFieldsInLexSense();
 			AddCustomFieldsInExampleSentence();
@@ -1269,31 +1233,15 @@ namespace LanguageExplorerTests.LIFT
 			foreach (XmlNode xentry in entries)
 			{
 				var sCreated = XmlUtils.GetOptionalAttributeValue(xentry, "dateCreated");
-<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftExportTests.cs
-				Assert.IsNotNull(sCreated, "an LIFT <entry> should have a dateCreated attribute");
-				var dtCreated = DateTime.ParseExact(sCreated, formats, new DateTimeFormatInfo(), DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
-				Assert.IsNotNull(sCreated, "an LIFT <entry> should have a dateCreated attribute");
-				var dtCreated = DateTime.ParseExact(sCreated, formats, new DateTimeFormatInfo(),
-													DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
-=======
 				Assert.That(sCreated, Is.Not.Null, "an LIFT <entry> should have a dateCreated attribute");
 				var dtCreated = DateTime.ParseExact(sCreated, DateTimeExtensions.ISO8601TimeFormatWithUTC, new DateTimeFormatInfo(),
 													DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
 				var delta = DateTime.UtcNow - dtCreated;
 				Assert.Greater(300, delta.TotalSeconds);
 				Assert.LessOrEqual(0, delta.TotalSeconds);  // allow time for breakpoints in debugging...
 				var sModified = XmlUtils.GetOptionalAttributeValue(xentry, "dateModified");
-<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftExportTests.cs
-				var dtModified = DateTime.ParseExact(sModified, formats, new DateTimeFormatInfo(), DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
-				var dtModified = DateTime.ParseExact(sModified, formats, new DateTimeFormatInfo(),
-													 DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
-=======
 				var dtModified = DateTime.ParseExact(sModified, DateTimeExtensions.ISO8601TimeFormatWithUTC, new DateTimeFormatInfo(),
 													 DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
 				delta = DateTime.UtcNow - dtModified;
 				Assert.Greater(300, delta.TotalSeconds);
 				Assert.LessOrEqual(0, delta.TotalSeconds);
@@ -1334,22 +1282,8 @@ namespace LanguageExplorerTests.LIFT
 				Assert.AreEqual(1, senselist.Count);
 				var xsense = senselist[0];
 				sId = XmlUtils.GetOptionalAttributeValue(xsense, "id");
-<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftExportTests.cs
-				Assert.IsNotNull(sId);
-				guid = sId.Contains("_") ? new Guid(sId.Substring(sId.LastIndexOf('_') + 1)) : new Guid(sId);
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
-				Assert.IsNotNull(sId);
-				if (sId.Contains("_"))
-					guid = new Guid(sId.Substring(sId.LastIndexOf('_')+1));
-				else
-					guid = new Guid(sId);
-=======
 				Assert.That(sId, Is.Not.Null);
-				if (sId.Contains("_"))
-					guid = new Guid(sId.Substring(sId.LastIndexOf('_')+1));
-				else
-					guid = new Guid(sId);
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
+				guid = sId.Contains("_") ? new Guid(sId.Substring(sId.LastIndexOf('_') + 1)) : new Guid(sId);
 				ILexSense sense;
 				Assert.IsTrue(repoSense.TryGetObject(guid, out sense));
 				Assert.AreEqual(entry.SensesOS[0], sense);
@@ -1363,13 +1297,7 @@ namespace LanguageExplorerTests.LIFT
 				var xgloss = xsense.SelectSingleNode("gloss");
 				Assert.That(xgloss, Is.Not.Null);
 				sLang = XmlUtils.GetOptionalAttributeValue(xgloss, "lang");
-<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftExportTests.cs
 				Assert.That(sLang,Is.Not.Null.Or.Empty);
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
-				Assert.IsNotNullOrEmpty(sLang);
-=======
-				Assert.That(sLang, Is.Not.Null.Or.Empty);
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
 				var glossWs = m_cache.WritingSystemFactory.get_Engine(sLang);
 				Assert.AreEqual(m_cache.DefaultAnalWs, glossWs.Handle);
 				Assert.AreEqual(sense.Gloss.AnalysisDefaultWritingSystem.Text, xgloss.FirstChild.InnerText);
@@ -1496,15 +1424,9 @@ namespace LanguageExplorerTests.LIFT
 					VerifyTsString(xnote, m_cache.DefaultAnalWs, entry.Restrictions.AnalysisDefaultWritingSystem);
 				}
 				else
-<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftExportTests.cs
 				{
-					Assert.IsNull(sType, "Unrecognized type attribute");
-				}
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
-					Assert.IsNull(sType, "Unrecognized type attribute");
-=======
 					Assert.That(sType, Is.Null, "Unrecognized type attribute");
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
+				}
 			}
 			VerifyEntryCustomFields(xentry, entry);
 			VerifyAllomorphCustomFields(xentry, entry);
@@ -1563,43 +1485,21 @@ namespace LanguageExplorerTests.LIFT
 					VerifyAudio(kcustomMultiFileName);
 				}
 				else
-<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftExportTests.cs
 				{
-					Assert.IsNull(sType, "Unrecognized type attribute");
-				}
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
-					Assert.IsNull(sType, "Unrecognized type attribute");
-=======
 					Assert.That(sType, Is.Null, "Unrecognized type attribute");
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
+				}
 			}
 
 			var xtraits = xentry.SelectNodes("trait");
 			Assert.That(xtraits, Is.Not.Null);
 			var sda = m_cache.DomainDataByFlid as ISilDataAccessManaged;
-<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftExportTests.cs
-			Assert.IsNotNull(sda);
-			var listIndex = 0;
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
-			Assert.IsNotNull(sda);
-			int listIndex = 0;
-=======
 			Assert.That(sda, Is.Not.Null);
-			int listIndex = 0;
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
+			var listIndex = 0;
 			foreach (XmlNode xtrait in xtraits)
 			{
 				var sName = XmlUtils.GetOptionalAttributeValue(xtrait, "name");
-<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftExportTests.cs
-				Assert.IsNotNull(sName);
-				switch (sName)
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
-				Assert.IsNotNull(sName);
-				if (sName == "CustomField3-LexEntry Date")
-=======
 				Assert.That(sName, Is.Not.Null);
-				if (sName == "CustomField3-LexEntry Date")
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
+				switch (sName)
 				{
 					case "CustomField3-LexEntry Date":
 					{
@@ -1677,17 +1577,9 @@ namespace LanguageExplorerTests.LIFT
 					VerifyTsString(xfield, m_cache.DefaultAnalWs, tssString);
 				}
 				else
-<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftExportTests.cs
 				{
-					Assert.IsNull(sType, "Unrecognized type attribute");
-				}
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
-					Assert.IsNull(sType, "Unrecognized type attribute");
-
-=======
 					Assert.That(sType, Is.Null, "Unrecognized type attribute");
-
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
+				}
 			}
 		}
 
@@ -1712,7 +1604,6 @@ namespace LanguageExplorerTests.LIFT
 			foreach (XmlNode xnote in xnotes)
 			{
 				var sType = XmlUtils.GetOptionalAttributeValue(xnote, "type");
-<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftExportTests.cs
 				switch (sType)
 				{
 					case null:
@@ -1746,56 +1637,9 @@ namespace LanguageExplorerTests.LIFT
 						VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.SocioLinguisticsNote.AnalysisDefaultWritingSystem);
 						break;
 					default:
-						Assert.IsNull(sType, "Unrecognized type attribute");
+						Assert.That(sType, Is.Null, "Unrecognized type attribute");
 						break;
 				}
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
-				if (sType == null)
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.GeneralNote.AnalysisDefaultWritingSystem);
-				else if (sType == "anthropology")
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.AnthroNote.AnalysisDefaultWritingSystem);
-				else if (sType == "bibliography")
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.Bibliography.AnalysisDefaultWritingSystem);
-				else if (sType == "discourse")
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.DiscourseNote.AnalysisDefaultWritingSystem);
-				else if (sType == "encyclopedic")
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.EncyclopedicInfo.AnalysisDefaultWritingSystem);
-				else if (sType == "grammar")
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.GrammarNote.AnalysisDefaultWritingSystem);
-				else if (sType == "phonology")
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.PhonologyNote.AnalysisDefaultWritingSystem);
-				else if (sType == "restrictions")
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.Restrictions.AnalysisDefaultWritingSystem);
-				else if (sType == "semantics")
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.SemanticsNote.AnalysisDefaultWritingSystem);
-				else if (sType == "sociolinguistics")
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.SocioLinguisticsNote.AnalysisDefaultWritingSystem);
-				else
-					Assert.IsNull(sType, "Unrecognized type attribute");
-=======
-				if (sType == null)
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.GeneralNote.AnalysisDefaultWritingSystem);
-				else if (sType == "anthropology")
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.AnthroNote.AnalysisDefaultWritingSystem);
-				else if (sType == "bibliography")
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.Bibliography.AnalysisDefaultWritingSystem);
-				else if (sType == "discourse")
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.DiscourseNote.AnalysisDefaultWritingSystem);
-				else if (sType == "encyclopedic")
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.EncyclopedicInfo.AnalysisDefaultWritingSystem);
-				else if (sType == "grammar")
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.GrammarNote.AnalysisDefaultWritingSystem);
-				else if (sType == "phonology")
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.PhonologyNote.AnalysisDefaultWritingSystem);
-				else if (sType == "restrictions")
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.Restrictions.AnalysisDefaultWritingSystem);
-				else if (sType == "semantics")
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.SemanticsNote.AnalysisDefaultWritingSystem);
-				else if (sType == "sociolinguistics")
-					VerifyTsString(xnote, m_cache.DefaultAnalWs, sense.SocioLinguisticsNote.AnalysisDefaultWritingSystem);
-				else
-					Assert.That(sType, Is.Null, "Unrecognized type attribute");
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
 			}
 			VerifySenseCustomFields(xsense, sense);
 			VerifyExampleSentenceCustomFields(xsense, sense);
@@ -1846,15 +1690,9 @@ namespace LanguageExplorerTests.LIFT
 					VerifyTsString(xfield, m_cache.DefaultVernWs, tssString);
 				}
 				else
-<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftExportTests.cs
 				{
-					Assert.IsNull(sType, "Unrecognized type attribute");
-				}
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
-					Assert.IsNull(sType, "Unrecognized type attribute");
-=======
 					Assert.That(sType, Is.Null, "Unrecognized type attribute");
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
+				}
 			}
 			//<trait name="CustomField2-LexSense Integer" value="5"></trait>
 			var xtraits = xsense.SelectNodes("trait");
@@ -1868,16 +1706,8 @@ namespace LanguageExplorerTests.LIFT
 			foreach (XmlNode xtrait in xtraits)
 			{
 				var sName = XmlUtils.GetOptionalAttributeValue(xtrait, "name");
-<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftExportTests.cs
-				Assert.IsNotNull(sName);
-				switch (sName)
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
-				Assert.IsNotNull(sName);
-				if (sName == "CustomField2-LexSense Integer")
-=======
 				Assert.That(sName, Is.Not.Null);
-				if (sName == "CustomField2-LexSense Integer")
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
+				switch (sName)
 				{
 					case "CustomField2-LexSense Integer":
 					{
@@ -1897,41 +1727,9 @@ namespace LanguageExplorerTests.LIFT
 						break;
 					}
 					default:
-						Assert.IsNull(sName, "Unrecognized type attribute");
+						Assert.That(sName, Is.Null, "Unrecognized type attribute");
 						break;
 				}
-<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftExportTests.cs
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
-				else if (sName == "do-not-publish-in")
-				{
-					continue; // already verified elsewhere
-				}
-				else if (sName == "domain-type")
-				{
-					var possHvo = m_sda.get_VecItem(sense.Hvo, flidOfDomainTypes, listIndex);
-					var strPoss = LiftExporter.GetPossibilityBestAlternative(possHvo, m_cache);
-					listIndex++;
-					var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
-					Assert.AreEqual(strPoss, sValue);
-				}
-				else
-					Assert.IsNull(sName, "Unrecognized type attribute");
-=======
-				else if (sName == "do-not-publish-in")
-				{
-					continue; // already verified elsewhere
-				}
-				else if (sName == "domain-type")
-				{
-					var possHvo = m_sda.get_VecItem(sense.Hvo, flidOfDomainTypes, listIndex);
-					var strPoss = LiftExporter.GetPossibilityBestAlternative(possHvo, m_cache);
-					listIndex++;
-					var sValue = XmlUtils.GetOptionalAttributeValue(xtrait, "value");
-					Assert.AreEqual(strPoss, sValue);
-				}
-				else
-					Assert.That(sName, Is.Null, "Unrecognized type attribute");
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
 			}
 		}
 
@@ -1966,16 +1764,8 @@ namespace LanguageExplorerTests.LIFT
 				foreach (XmlNode xfield in xfields)
 				{
 					var sType = XmlUtils.GetOptionalAttributeValue(xfield, "type");
-<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftExportTests.cs
-					Assert.IsNotNull(sType);
-					switch (sType)
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
-					Assert.IsNotNull(sType);
-					if (sType == "CustomField1-Example")
-=======
 					Assert.That(sType, Is.Not.Null);
-					if (sType == "CustomField1-Example")
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
+					switch (sType)
 					{
 						case "CustomField1-Example":
 						{
@@ -1990,27 +1780,9 @@ namespace LanguageExplorerTests.LIFT
 							break;
 						}
 						default:
-							Assert.IsNull(sType, "Unrecognized type attribute");
+							Assert.That(sType, Is.Null, "Unrecognized type attribute");
 							break;
 					}
-<<<<<<< HEAD:Src/LanguageExplorerTests/LIFT/LiftExportTests.cs
-||||||| f013144d5:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
-					else if (sType == "CustomField2-Example Multi")
-					{
-						var tssMultiString = m_cache.DomainDataByFlid.get_MultiStringProp(sense.ExamplesOS[0].Hvo, m_customFieldExampleSentencesIds[1]);
-						VerifyMultiStringAnalVern(xfield, tssMultiString, false);
-					}
-					else
-						Assert.IsNull(sType, "Unrecognized type attribute");
-=======
-					else if (sType == "CustomField2-Example Multi")
-					{
-						var tssMultiString = m_cache.DomainDataByFlid.get_MultiStringProp(sense.ExamplesOS[0].Hvo, m_customFieldExampleSentencesIds[1]);
-						VerifyMultiStringAnalVern(xfield, tssMultiString, false);
-					}
-					else
-						Assert.That(sType, Is.Null, "Unrecognized type attribute");
->>>>>>> develop:Src/LexText/LexTextControls/LexTextControlsTests/LiftExportTests.cs
 				}
 			}
 		}
