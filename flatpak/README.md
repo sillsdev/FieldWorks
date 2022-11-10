@@ -16,6 +16,10 @@ flatpak --user remote-add --if-not-exists flathub \
 flatpak --user install flathub org.gnome.Sdk//3.36
 flatpak --user install flathub org.gnome.Platform//3.36
 flatpak update
+# Use flatpak-builder from flathub since the fix at
+# https://github.com/flatpak/flatpak-builder/pull/497 is not yet available in
+# the .deb package.
+flatpak install flathub org.flatpak.Builder
 ```
 
 #### Optional dependencies
