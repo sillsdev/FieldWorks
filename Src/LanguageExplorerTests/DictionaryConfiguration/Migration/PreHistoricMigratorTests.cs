@@ -46,17 +46,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		private const string MinorEntryComplexXpath = "//ConfigurationItem[@name='" + MinorEntryComplexLabel + "']";
 		private const string MinorEntryVariantXpath = "//ConfigurationItem[@name='" + MinorEntryVariantLabel + "']";
 
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/PreHistoricMigratorTests.cs
 		#region Overrides of LcmTestBase
 
 		public override void TestSetup()
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
-		[TestFixtureSetUp]
-		protected void Init()
-=======
-		[OneTimeSetUp]
-		protected void Init()
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
 		{
 			base.TestSetup();
 
@@ -70,15 +62,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			_migrator = new PreHistoricMigrator(string.Empty, Cache, null, _flexComponentParameters.PropertyTable);
 		}
 
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/PreHistoricMigratorTests.cs
 		public override void TestTearDown()
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
-		[TestFixtureTearDown]
-		protected void TearDown()
-=======
-		[OneTimeTearDown]
-		protected void TearDown()
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
 		{
 			try
 			{
@@ -588,19 +572,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/PreHistoricMigratorTests.cs
-			var wsOpts = (DictionaryNodeWritingSystemOptions)configNode.DictionaryNodeOptions;
+			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Analysis);
-			Assert.IsNotNull(wsOpts.Options, "analysis choice did not result in any options being created.");
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
-			Assert.IsNotNull(wsOpts.Options, "analysis choice did not result in any options being created.");
-=======
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
 			Assert.That(wsOpts.Options, Is.Not.Null, "analysis choice did not result in any options being created.");
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
 		}
 
 		///<summary/>
@@ -612,19 +586,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/PreHistoricMigratorTests.cs
-			var wsOpts = (DictionaryNodeWritingSystemOptions)configNode.DictionaryNodeOptions;
+			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Vernacular);
-			Assert.IsNotNull(wsOpts.Options, "vernacular choice did not result in any options being created.");
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
-			Assert.IsNotNull(wsOpts.Options, "vernacular choice did not result in any options being created.");
-=======
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
 			Assert.That(wsOpts.Options, Is.Not.Null, "vernacular choice did not result in any options being created.");
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
 		}
 
 		///<summary/>
@@ -636,22 +600,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/PreHistoricMigratorTests.cs
-			var wsOpts = (DictionaryNodeWritingSystemOptions)configNode.DictionaryNodeOptions;
+			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Both);
-			Assert.IsNotNull(wsOpts.Options, "vernacular analysis choice did not result in any options being created.");
-			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "vernacular"), "vernacular choice was not migrated.");
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Both);
-			Assert.IsNotNull(wsOpts.Options, "vernacular analysis choice did not result in any options being created.");
-			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "vernacular"), "vernacular choice was not migrated.");
-=======
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Both);
 			Assert.That(wsOpts.Options, Is.Not.Null, "vernacular analysis choice did not result in any options being created.");
 			Assert.That(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "vernacular"), Is.Not.Null, "vernacular choice was not migrated.");
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
 		}
 
 		///<summary/>
@@ -663,22 +615,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/PreHistoricMigratorTests.cs
-			var wsOpts = (DictionaryNodeWritingSystemOptions)configNode.DictionaryNodeOptions;
+			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Pronunciation);
-			Assert.IsNotNull(wsOpts.Options, "pronunciation choice did not result in any options being created.");
-			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "pronunciation"), "pronunciation choice was not migrated.");
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation);
-			Assert.IsNotNull(wsOpts.Options, "pronunciation choice did not result in any options being created.");
-			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "pronunciation"), "pronunciation choice was not migrated.");
-=======
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation);
 			Assert.That(wsOpts.Options, Is.Not.Null, "pronunciation choice did not result in any options being created.");
 			Assert.That(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "pronunciation"), Is.Not.Null, "pronunciation choice was not migrated.");
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
 		}
 
 		///<summary/>
@@ -690,22 +630,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/PreHistoricMigratorTests.cs
-			var wsOpts = (DictionaryNodeWritingSystemOptions)configNode.DictionaryNodeOptions;
+			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Both);
-			Assert.IsNotNull(wsOpts.Options, "analysis vernacular choice did not result in any options being created.");
-			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "analysis"), "analysis choice was not migrated.");
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Both);
-			Assert.IsNotNull(wsOpts.Options, "analysis vernacular choice did not result in any options being created.");
-			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "analysis"), "analysis choice was not migrated.");
-=======
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Both);
 			Assert.That(wsOpts.Options, Is.Not.Null, "analysis vernacular choice did not result in any options being created.");
 			Assert.That(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "analysis"), Is.Not.Null, "analysis choice was not migrated.");
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
 		}
 
 		///<summary/>
@@ -717,22 +645,10 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/PreHistoricMigratorTests.cs
-			var wsOpts = (DictionaryNodeWritingSystemOptions)configNode.DictionaryNodeOptions;
+			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Vernacular);
-			Assert.IsNotNull(wsOpts.Options, "French choice did not result in any options being created.");
-			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "fr"), "French choice was not migrated.");
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
-			Assert.IsNotNull(wsOpts.Options, "French choice did not result in any options being created.");
-			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "fr"), "French choice was not migrated.");
-=======
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
 			Assert.That(wsOpts.Options, Is.Not.Null, "French choice did not result in any options being created.");
 			Assert.That(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "fr"), Is.Not.Null, "French choice was not migrated.");
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
 		}
 
 		///<summary/>
@@ -744,25 +660,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
 			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/PreHistoricMigratorTests.cs
-			var wsOpts = (DictionaryNodeWritingSystemOptions)configNode.DictionaryNodeOptions;
+			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			Assert.AreEqual(wsOpts.WsType, WritingSystemType.Vernacular);
-			Assert.IsNotNull(wsOpts.Options, "two languages did not result in ws options being created");
-			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "fr"), "French choice was not migrated.");
-			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "hi"), "hi choice was not migrated.");
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
-			Assert.IsNotNull(wsOpts.Options, "two languages did not result in ws options being created");
-			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "fr"), "French choice was not migrated.");
-			Assert.IsNotNull(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "hi"), "hi choice was not migrated.");
-=======
-			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
 			Assert.That(wsOpts.Options, Is.Not.Null, "two languages did not result in ws options being created");
 			Assert.That(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "fr"), Is.Not.Null, "French choice was not migrated.");
 			Assert.That(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "hi"), Is.Not.Null, "hi choice was not migrated.");
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
 		}
 
 		///<summary/>
@@ -977,32 +879,13 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			};
 			ConfigurableDictionaryNode configNode = null;
 			const string styleName = "Dictionary-SenseNumber";
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/PreHistoricMigratorTests.cs
 			var senseStyle = _lcmStyleSheet.FindStyle(styleName);
-			Assert.IsNull(senseStyle, "Sense number should not exist before conversion for a valid test.");
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
-			var senseStyle = m_styleSheet.FindStyle(styleName);
-			Assert.IsNull(senseStyle, "Sense number should not exist before conversion for a valid test.");
-=======
-			var senseStyle = m_styleSheet.FindStyle(styleName);
 			Assert.That(senseStyle, Is.Null, "Sense number should not exist before conversion for a valid test.");
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
-
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
 			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName);
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/PreHistoricMigratorTests.cs
 			senseStyle = _lcmStyleSheet.FindStyle(styleName);
-			Assert.IsNotNull(senseStyle, "Sense number should have been created by the migrator.");
-			var usefulStyle = _lcmStyleSheet.Styles[styleName];
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
-			senseStyle = m_styleSheet.FindStyle(styleName);
-			Assert.IsNotNull(senseStyle, "Sense number should have been created by the migrator.");
-			var usefulStyle = m_styleSheet.Styles[styleName];
-=======
-			senseStyle = m_styleSheet.FindStyle(styleName);
 			Assert.That(senseStyle, Is.Not.Null, "Sense number should have been created by the migrator.");
-			var usefulStyle = m_styleSheet.Styles[styleName];
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
+			var usefulStyle = _lcmStyleSheet.Styles[styleName];
 			Assert.IsTrue(usefulStyle.DefaultCharacterStyleInfo.Bold.Value, "bold was not turned on in the created style.");
 			Assert.IsFalse(usefulStyle.DefaultCharacterStyleInfo.Italic.Value, "italic was not turned off in the created style.");
 			Assert.AreEqual(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, "arial", "arial font not used");
@@ -1030,46 +913,20 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			ConfigurableDictionaryNode configNode = null;
 			const string styleName = "Dictionary-SenseNumber";
 			const string styleName2 = "Dictionary-SenseNumber-2";
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/PreHistoricMigratorTests.cs
 			var senseStyle = _lcmStyleSheet.FindStyle(styleName);
 			var senseStyle2 = _lcmStyleSheet.FindStyle(styleName2);
-			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
-			Assert.IsNull(senseStyle2, "Second sense number style should not exist before conversion for a valid test.");
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
-			var senseStyle = m_styleSheet.FindStyle(styleName);
-			var senseStyle2 = m_styleSheet.FindStyle(styleName2);
-			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
-			Assert.IsNull(senseStyle2, "Second sense number style should not exist before conversion for a valid test.");
-=======
-			var senseStyle = m_styleSheet.FindStyle(styleName);
-			var senseStyle2 = m_styleSheet.FindStyle(styleName2);
 			Assert.That(senseStyle, Is.Null, "Sense number style should not exist before conversion for a valid test.");
 			Assert.That(senseStyle2, Is.Null, "Second sense number style should not exist before conversion for a valid test.");
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
 
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
 			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName);
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode2));
 			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName2);
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/PreHistoricMigratorTests.cs
 			senseStyle = _lcmStyleSheet.FindStyle(styleName);
 			senseStyle2 = _lcmStyleSheet.FindStyle(styleName2);
-			Assert.IsNotNull(senseStyle, "Sense number should have been created by the migrator.");
-			Assert.IsNotNull(senseStyle2, "Sense number should have been created by the migrator.");
-			var usefulStyle = _lcmStyleSheet.Styles[styleName];
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
-			senseStyle = m_styleSheet.FindStyle(styleName);
-			senseStyle2 = m_styleSheet.FindStyle(styleName2);
-			Assert.IsNotNull(senseStyle, "Sense number should have been created by the migrator.");
-			Assert.IsNotNull(senseStyle2, "Sense number should have been created by the migrator.");
-			var usefulStyle = m_styleSheet.Styles[styleName];
-=======
-			senseStyle = m_styleSheet.FindStyle(styleName);
-			senseStyle2 = m_styleSheet.FindStyle(styleName2);
 			Assert.That(senseStyle, Is.Not.Null, "Sense number should have been created by the migrator.");
 			Assert.That(senseStyle2, Is.Not.Null, "Sense number should have been created by the migrator.");
-			var usefulStyle = m_styleSheet.Styles[styleName];
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
+			var usefulStyle = _lcmStyleSheet.Styles[styleName];
 			Assert.IsTrue(usefulStyle.DefaultCharacterStyleInfo.Bold.Value, "bold was not turned on in the created style.");
 			Assert.IsFalse(usefulStyle.DefaultCharacterStyleInfo.Italic.Value, "italic was not turned off in the created style.");
 			Assert.AreEqual(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, "arial", "arial font not used");
@@ -1094,25 +951,11 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			};
 			ConfigurableDictionaryNode configNode = null;
 			const string styleName = "Dictionary-SenseNumber";
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/PreHistoricMigratorTests.cs
 			var lastStyleName = $"Dictionary-SenseNumber-{1 + senseNumberOptions.Length}";
 			var senseStyle = _lcmStyleSheet.FindStyle(styleName);
 			var senseStyle2 = _lcmStyleSheet.FindStyle(lastStyleName);
-			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
-			Assert.IsNull(senseStyle2, "Second sense number style should not exist before conversion for a valid test.");
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
-			var lastStyleName = String.Format("Dictionary-SenseNumber-{0}", 1 + senseNumberOptions.Length);
-			var senseStyle = m_styleSheet.FindStyle(styleName);
-			var senseStyle2 = m_styleSheet.FindStyle(lastStyleName);
-			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
-			Assert.IsNull(senseStyle2, "Second sense number style should not exist before conversion for a valid test.");
-=======
-			var lastStyleName = String.Format("Dictionary-SenseNumber-{0}", 1 + senseNumberOptions.Length);
-			var senseStyle = m_styleSheet.FindStyle(styleName);
-			var senseStyle2 = m_styleSheet.FindStyle(lastStyleName);
 			Assert.That(senseStyle, Is.Null, "Sense number style should not exist before conversion for a valid test.");
 			Assert.That(senseStyle2, Is.Null, "Second sense number style should not exist before conversion for a valid test.");
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
 
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
 			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName);
@@ -1143,19 +986,9 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			const string styleName = "Dictionary-SenseNumber";
 			var senseStyle = _lcmStyleSheet.FindStyle(styleName);
 			const string styleName2 = "Dictionary-SenseNumber-2";
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/PreHistoricMigratorTests.cs
 			var senseStyle2 = _lcmStyleSheet.FindStyle(styleName2);
-			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
-			Assert.IsNull(senseStyle2, "A second sense number style should not exist before conversion for a valid test.");
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
-			var senseStyle2 = m_styleSheet.FindStyle(styleName2);
-			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
-			Assert.IsNull(senseStyle2, "A second sense number style should not exist before conversion for a valid test.");
-=======
-			var senseStyle2 = m_styleSheet.FindStyle(styleName2);
 			Assert.That(senseStyle, Is.Null, "Sense number style should not exist before conversion for a valid test.");
 			Assert.That(senseStyle2, Is.Null, "A second sense number style should not exist before conversion for a valid test.");
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
 
 			foreach(var option in senseNumberOptions)
 			{
@@ -1187,46 +1020,20 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 			ConfigurableDictionaryNode configNode = null;
 			const string styleName = "Dictionary-SenseNumber";
 			const string styleName2 = "Dictionary-SenseNumber-2";
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/PreHistoricMigratorTests.cs
 			var senseStyle = _lcmStyleSheet.FindStyle(styleName);
 			var senseStyle2 = _lcmStyleSheet.FindStyle(styleName2);
-			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
-			Assert.IsNull(senseStyle2, "Second sense number style should not exist before conversion for a valid test.");
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
-			var senseStyle = m_styleSheet.FindStyle(styleName);
-			var senseStyle2 = m_styleSheet.FindStyle(styleName2);
-			Assert.IsNull(senseStyle, "Sense number style should not exist before conversion for a valid test.");
-			Assert.IsNull(senseStyle2, "Second sense number style should not exist before conversion for a valid test.");
-=======
-			var senseStyle = m_styleSheet.FindStyle(styleName);
-			var senseStyle2 = m_styleSheet.FindStyle(styleName2);
 			Assert.That(senseStyle, Is.Null, "Sense number style should not exist before conversion for a valid test.");
 			Assert.That(senseStyle2, Is.Null, "Second sense number style should not exist before conversion for a valid test.");
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
 
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
 			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName);
 			Assert.DoesNotThrow(() => configNode = _migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode2));
 			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName2);
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/PreHistoricMigratorTests.cs
 			senseStyle = _lcmStyleSheet.FindStyle(styleName);
 			senseStyle2 = _lcmStyleSheet.FindStyle(styleName2);
-			Assert.IsNotNull(senseStyle, "Sense number should have been created by the migrator.");
-			Assert.IsNotNull(senseStyle2, "Sense number should have been created by the migrator.");
-			var usefulStyle = _lcmStyleSheet.Styles[styleName];
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
-			senseStyle = m_styleSheet.FindStyle(styleName);
-			senseStyle2 = m_styleSheet.FindStyle(styleName2);
-			Assert.IsNotNull(senseStyle, "Sense number should have been created by the migrator.");
-			Assert.IsNotNull(senseStyle2, "Sense number should have been created by the migrator.");
-			var usefulStyle = m_styleSheet.Styles[styleName];
-=======
-			senseStyle = m_styleSheet.FindStyle(styleName);
-			senseStyle2 = m_styleSheet.FindStyle(styleName2);
 			Assert.That(senseStyle, Is.Not.Null, "Sense number should have been created by the migrator.");
 			Assert.That(senseStyle2, Is.Not.Null, "Sense number should have been created by the migrator.");
-			var usefulStyle = m_styleSheet.Styles[styleName];
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
+			var usefulStyle = _lcmStyleSheet.Styles[styleName];
 			Assert.AreEqual(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, "arial", "arial font not used");
 			usefulStyle = _lcmStyleSheet.Styles[styleName2];
 			Assert.AreEqual(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, "notarial", "notarial font not used in second style");
@@ -1875,7 +1682,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 
 				_migrator.CopyNewDefaultsIntoConvertedModel(convertedMinorEntry, defaultMinorEntry);
 				string cssResults = null;
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/PreHistoricMigratorTests.cs
 				Assert.DoesNotThrow(() => cssResults = CssGenerator.GenerateCssFromConfiguration(convertedMinorEntry, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable)));
 				Assert.That(cssResults, Does.Contain(HwBefore));
 				Assert.That(cssResults, Does.Contain(HwBetween));
@@ -1883,23 +1689,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 				Assert.That(cssResults, Does.Contain(GlsBefore));
 				Assert.That(cssResults, Does.Contain(GlsBetween));
 				Assert.That(cssResults, Does.Contain(GlsAfter));
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
-				Assert.DoesNotThrow(()=>cssResults = CssGenerator.GenerateCssFromConfiguration(convertedMinorEntry, new ReadOnlyPropertyTable(m_propertyTable)));
-				Assert.That(cssResults, Is.StringContaining(HwBefore));
-				Assert.That(cssResults, Is.StringContaining(HwBetween));
-				Assert.That(cssResults, Is.StringContaining(HwAfter));
-				Assert.That(cssResults, Is.StringContaining(GlsBefore));
-				Assert.That(cssResults, Is.StringContaining(GlsBetween));
-				Assert.That(cssResults, Is.StringContaining(GlsAfter));
-=======
-				Assert.DoesNotThrow(()=>cssResults = CssGenerator.GenerateCssFromConfiguration(convertedMinorEntry, new ReadOnlyPropertyTable(m_propertyTable)));
-				Assert.That(cssResults, Does.Contain(HwBefore));
-				Assert.That(cssResults, Does.Contain(HwBetween));
-				Assert.That(cssResults, Does.Contain(HwAfter));
-				Assert.That(cssResults, Does.Contain(GlsBefore));
-				Assert.That(cssResults, Does.Contain(GlsBetween));
-				Assert.That(cssResults, Does.Contain(GlsAfter));
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/PreHistoricMigratorTests.cs
 			}
 		}
 

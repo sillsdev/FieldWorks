@@ -29,58 +29,6 @@ namespace LanguageExplorerTests.DictionaryConfiguration.Migration
 		private const string ReferencedComplexForms = "VisibleComplexFormBackRefs";
 		private const string OtherRefdComplexForms = "ComplexFormsNotSubentries";
 
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/FirstBetaMigratorTests.cs
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/FirstBetaMigratorTests.cs
-		private MockFwXApp m_application;
-		private string m_configFilePath;
-		private MockFwXWindow m_window;
-		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
-
-		[TestFixtureSetUp]
-		public override void FixtureSetup()
-		{
-			base.FixtureSetup();
-			Cache.ProjectId.Path = Path.Combine(Path.GetTempPath(), Cache.ProjectId.Name, Cache.ProjectId.Name + ".junk");
-			FwRegistrySettings.Init();
-			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
-			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
-			m_window = new MockFwXWindow(m_application, m_configFilePath);
-			m_window.Init(Cache); // initializes Mediator values
-			m_mediator = m_window.Mediator;
-			m_mediator.AddColleague(new StubContentControlProvider());
-			m_window.LoadUI(m_configFilePath); // actually loads UI here; needed for non-null stylesheet
-			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application, Cache.ProjectId.Path);
-			m_propertyTable = m_window.PropTable;
-		}
-
-		[TestFixtureTearDown]
-=======
-		private MockFwXApp m_application;
-		private string m_configFilePath;
-		private MockFwXWindow m_window;
-		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
-
-		[OneTimeSetUp]
-		public override void FixtureSetup()
-		{
-			base.FixtureSetup();
-			Cache.ProjectId.Path = Path.Combine(Path.GetTempPath(), Cache.ProjectId.Name, Cache.ProjectId.Name + ".junk");
-			FwRegistrySettings.Init();
-			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
-			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
-			m_window = new MockFwXWindow(m_application, m_configFilePath);
-			m_window.Init(Cache); // initializes Mediator values
-			m_mediator = m_window.Mediator;
-			m_mediator.AddColleague(new StubContentControlProvider());
-			m_window.LoadUI(m_configFilePath); // actually loads UI here; needed for non-null stylesheet
-			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application, Cache.ProjectId.Path);
-			m_propertyTable = m_window.PropTable;
-		}
-
-		[OneTimeTearDown]
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/FirstBetaMigratorTests.cs
 		public override void FixtureTeardown()
 		{
 			try
@@ -619,13 +567,7 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			};
 			var rootDefault = _migrator.LoadBetaDefaultForAlphaConfig(rootModel); // SUT
 			Assert.IsTrue(rootDefault.IsRootBased);
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/FirstBetaMigratorTests.cs
 			Assert.That(rootDefault.Label, Does.Contain(DictionaryConfigurationServices.RootFileName));
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/FirstBetaMigratorTests.cs
-			Assert.That(rootDefault.Label, Is.StringContaining(DictionaryConfigurationMigrator.RootFileName));
-=======
-			Assert.That(rootDefault.Label, Does.Contain(DictionaryConfigurationMigrator.RootFileName));
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/FirstBetaMigratorTests.cs
 
 			var subEntry = new ConfigurableDictionaryNode
 			{
@@ -652,16 +594,8 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 				}
 			};
 
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/FirstBetaMigratorTests.cs
 			var hybridDefault = _migrator.LoadBetaDefaultForAlphaConfig(hybridModel); // SUT
 			Assert.That(hybridDefault.Label, Does.Contain("Hybrid"));
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/FirstBetaMigratorTests.cs
-			var hybridDefault = m_migrator.LoadBetaDefaultForAlphaConfig(hybridModel); // SUT
-			Assert.That(hybridDefault.Label, Is.StringContaining("Hybrid"));
-=======
-			var hybridDefault = m_migrator.LoadBetaDefaultForAlphaConfig(hybridModel); // SUT
-			Assert.That(hybridDefault.Label, Does.Contain("Hybrid"));
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/FirstBetaMigratorTests.cs
 
 			var stemModel = new DictionaryConfigurationModel
 			{
@@ -681,16 +615,8 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 					}
 				}
 			};
-<<<<<<< HEAD:Src/LanguageExplorerTests/DictionaryConfiguration/Migration/FirstBetaMigratorTests.cs
 			var stemDefault = _migrator.LoadBetaDefaultForAlphaConfig(stemModel); // SUT
 			Assert.That(stemDefault.Label, Does.Contain("Lexeme"));
-||||||| f013144d5:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/FirstBetaMigratorTests.cs
-			var stemDefault = m_migrator.LoadBetaDefaultForAlphaConfig(stemModel); // SUT
-			Assert.That(stemDefault.Label, Is.StringContaining("Lexeme"));
-=======
-			var stemDefault = m_migrator.LoadBetaDefaultForAlphaConfig(stemModel); // SUT
-			Assert.That(stemDefault.Label, Does.Contain("Lexeme"));
->>>>>>> develop:Src/xWorks/xWorksTests/DictionaryConfigurationMigrators/FirstBetaMigratorTests.cs
 		}
 
 		[Test]
