@@ -29,7 +29,7 @@ using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorerTests.Impls
 {
-#if RANDYTODO
+	#if RANDYTODO_OR_JASONTODO
 	public class UploadToWebonaryControllerTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
 		private bool _isDisposed;
@@ -79,10 +79,9 @@ namespace LanguageExplorerTests.Impls
 		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
-<<<<<<< HEAD:Src/LanguageExplorerTests/Impls/UploadToWebonaryControllerTests.cs
 			try
 			{
-				ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
+				ConfiguredLcmGenerator.Init();
 				Dispose();
 			}
 			catch (Exception err)
@@ -93,15 +92,6 @@ namespace LanguageExplorerTests.Impls
 			{
 				base.FixtureTeardown();
 			}
-||||||| f013144d5:Src/xWorks/xWorksTests/UploadToWebonaryControllerTests.cs
-			ConfiguredLcmGenerator.AssemblyFile = "SIL.LCModel";
-			base.FixtureTeardown();
-			Dispose();
-=======
-			ConfiguredLcmGenerator.Init();
-			base.FixtureTeardown();
-			Dispose();
->>>>>>> develop:Src/xWorks/xWorksTests/UploadToWebonaryControllerTests.cs
 		}
 
 		#region disposal
@@ -670,7 +660,7 @@ namespace LanguageExplorerTests.Impls
 		public void DeleteDictionaryHandles404()
 		{
 			// Test with an exception which indicates a redirect should happen
-			var redirectException = new WebonaryClient.WebonaryException(new WebException("File Not Found"));
+			var redirectException = new WebonaryException(new WebException("File Not Found"));
 			redirectException.StatusCode = HttpStatusCode.NotFound;
 			using (var controller = new MockUploadToWebonaryController(Cache, _flexComponentParameters.PropertyTable, redirectException, new byte[0], HttpStatusCode.NotFound))
 			{
@@ -798,8 +788,8 @@ namespace LanguageExplorerTests.Impls
 			/// <summary>
 			/// This constructor should be used in tests that will actually hit a server, and are marked [ByHand]
 			/// </summary>
-			public MockUploadToWebonaryController(LcmCache cache, PropertyTable propertyTable)
-				: base(cache, propertyTable)
+			public MockUploadToWebonaryController(LcmCache cache, IPropertyTable propertyTable)
+				: base(cache, propertyTable, null)
 			{
 			}
 
@@ -817,9 +807,9 @@ namespace LanguageExplorerTests.Impls
 			/// </summary>
 			private sealed class MockWebonaryClient : IWebonaryClient
 			{
-				private readonly WebonaryClient.WebonaryException _exceptionResponse;
+				private readonly WebonaryException _exceptionResponse;
 				private readonly byte[] _responseContents;
-				internal MockWebonaryClient(WebonaryClient.WebonaryException exceptionResponse, byte[] responseContents, HttpStatusCode responseStatus)
+				internal MockWebonaryClient(WebonaryException exceptionResponse, byte[] responseContents, HttpStatusCode responseStatus)
 				{
 					_exceptionResponse = exceptionResponse;
 					_responseContents = responseContents;
@@ -980,5 +970,5 @@ namespace LanguageExplorerTests.Impls
 			}
 		}
 	}
-#endif
+	#endif
 }
