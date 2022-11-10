@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
-    <!-- On Linux, we don't use a nuget package for Icu4c but a Debian package -->
     <PackageReference Include="Icu4c.Win.Fw.Bin" Version="70.1.123" />
     <PackageReference Include="Icu4c.Win.Fw.Lib" Version="70.1.123" />
     <PackageReference Include="SIL.LCModel" Version="10.2.0-beta0059" />
@@ -48,87 +47,15 @@
     </ItemGroup>
   </Target>
 
-  <PropertyGroup>
-    <buildtlb Condition="'$(buildtlb)'==''">false</buildtlb>
-    <ContinueIfOutOfDate Condition="!$(buildtlb)">false</ContinueIfOutOfDate>
-    <ContinueIfOutOfDate Condition="$(buildtlb)">true</ContinueIfOutOfDate>
-  </PropertyGroup>
-
   <Target Name="CopyKernelFiles">
     <!-- Copy the .idh files from liblcm into the Kernel project so that it can use them when it builds -->
     <Copy SourceFiles="@(SilLcModelCoreKernelInterfaces)" DestinationFolder="../Kernel" />
-  </Target>
-
-  <Target Name="Prepare" DependsOnTargets="CopyKernelFiles">
-    <ItemGroup>
-      <LinuxCommonFiles Include="../../Lib/linux/Common/*.*" />
-    </ItemGroup>
-    <MakeDir Directories="$(OutputCommonPath)" />
-    <Copy SourceFiles="@(LinuxCommonFiles)" DestinationFolder="$(OutputCommonPath)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix' Or $(buildtlb)" />
   </Target>
 
 
   <Target Name="CustomClean" AfterTargets="Clean">
     <Delete Files="@(OutputFiles)" ContinueOnError="true" />
     <Delete Files="Views.cs;$(OutputCommonPath)ViewsTlb.iip;$(OutputCommonPath)ViewsTlb.json" ContinueOnError="true" />
-  </Target>
-
-  <!--
-    On Linux we can't generate TLBs, so we do that on Windows and check them in.
-    But this means that whenever the *.idh files change we have to regenerate these
-    files.  This task checks that they are up-to-date and fails the build early on
-    if they are outdated.  We have to use unix line endings so that we get the same
-    checksum on both Windows and Linux.
-  -->
-  <ItemGroup>
-    <IdhFiles Include="@(SilLcModelCoreKernelInterfaces)" />
-    <IdhFiles Include="../views/Render.idh" />
-    <IdhFiles Include="../views/Views.idh" />
-    <IdhFiles Include="../views/ViewsTlb.idl" />
-    <FilesToDeleteInOutputCommon Include="$(OutputCommonPath)*.*" Exclude="$(OutputCommonPath)bldinc.h" Condition="Exists('$(OutputCommonPath)')" />
-  </ItemGroup>
-
-  <Target Name="verifyTLBsUpToDate" DependsOnTargets="GenerateCellarConstants" AfterTargets="CoreCompile">
-    <CatenateFiles SourceFiles="@(IdhFiles)" TargetFile="$(OutputCommonPath)idhfiles" UseUnixNewlines="true" />
-    <Md5Checksum SourceFile="$(OutputCommonPath)idhfiles" />
-    <VerifyFilesIdentical FirstFile="$(OutputCommonPath)idhfiles.MD5" SecondFile="../../Lib/linux/Common/idhfiles.MD5" ErrorMessage="TLB files are out of date. Please run 'msbuild /t:generateLinuxIdlFiles /p:buildtlb=true'." ContinueOnError="$(ContinueIfOutOfDate)">
-      <Output TaskParameter="Result" PropertyName="VerifyFilesIdentical" />
-    </VerifyFilesIdentical>
-    <CallTarget Targets="generateLinuxIdlFiles" Condition="!$(VerifyFilesIdentical)" />
-  </Target>
-
-  <Target Name="generateLinuxIdlFiles" DependsOnTargets="generateLinuxIdlFiles-Linux;generateLinuxIdlFiles-Windows;CopyKernelFiles">
-    <ItemGroup>
-      <TlbFiles Include="$(OutputCommonPath)*Tlb.h;$(OutputCommonPath)*Tlb.idl;$(OutputCommonPath)*Tlb.tlb" />
-    </ItemGroup>
-
-    <!-- The new idl related files got built by the generateLinuxIdlFiles-* targets
-      (without WIN32 defined). The thing left to do is to copy them to the right
-      directory. -->
-    <Copy SourceFiles="@(TlbFiles)" DestinationFolder="../../Lib/linux/Common" />
-
-    <!--We also need to extract the interface GUIDs for Linux -->
-    <Message Text="Extracting iids for use on Linux..." />
-    <ExtractIIDs Input="$(OutputCommonPath)FwKernelTlb.h" Output="../Kernel/FwKernel_GUIDs.cpp" />
-    <ExtractIIDs Input="$(OutputCommonPath)ViewsTlb.h" Output="../views/Views_GUIDs.cpp" LinesToInsertAtTop="#include &quot;FwKernelTlb.h&quot;" />
-    <Copy SourceFiles="$(OutputCommonPath)../idhfiles.MD5" DestinationFolder="../../Lib/linux/Common" />
-
-    <!-- Above we generated special IDL related files in Output/Common to save for linux.
-      We delete them here so that later in the build the ordinary Windows ones will
-      be built. -->
-    <Delete Files="FilesToDeleteInOutputCommon" Condition="'$(OS)'!='Unix'" />
-  </Target>
-
-  <!-- Build TLB files on a Windows machine for use on Linux -->
-  <Target Name="generateLinuxIdlFiles-Linux" Condition="'$(OS)'=='Unix'">
-    <!-- on Linux we run 'make idl' which calls remote-midl on a Windows machine -->
-    <Make Makefile="IDLMakefile" Target="all" Configuration="$(Configuration)" BuildRoot="../.." WorkingDirectory="$(MSBuildThisFileDirectory)" />
-  </Target>
-  <Target Name="generateLinuxIdlFiles-Windows" Condition="'$(OS)'!='Unix'">
-    <!-- on Windows we can directly create the necessary files. We pass
-      the property build4ux=1 so that we don't define WIN32. -->
-    <!-- <Delete Files="@(FilesToDeleteInOutputCommon)" /> -->
-    <MSBuild Projects="../../Build/FieldWorks.proj" Targets="mktlbs" Properties="build4ux=1" BuildInParallel="false" />
   </Target>
 
   <ItemGroup>
