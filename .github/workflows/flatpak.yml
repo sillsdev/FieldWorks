@@ -49,12 +49,9 @@ jobs:
               wget 'https://github.com/sillsdev/flathub/releases' || exit 1
               wget 'https://api.github.com/repos/sillsdev/flathub/releases' || exit 1
               wget 'https://api.nuget.org/v3/index.json' || exit 1
-              # Fetching Geckofx45 can fail even if fetching the index.json succeeds.
-              wget 'https://api.nuget.org/v3-flatcontainer/Geckofx45.64.Linux/45.0.21/Geckofx45.64.Linux.45.0.21.nupkg' || exit 1
               wget 'https://flathub.org/repo/flathub.flatpakrepo' || exit 1
             ) && break
             echo "Failed attempt ${attempt}"
-            sudo tee -a /etc/hosts <<< '152.199.4.184 api.nuget.org'
             sleep 1m
           done
       - name: Increase available disk space
