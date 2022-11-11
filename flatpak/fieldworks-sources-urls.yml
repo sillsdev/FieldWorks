@@ -174,15 +174,15 @@
 - dest: fw/Downloads
   sha512: f942c1130fd4bf5df1e8ef27112d64137176540067ed35a938bc7e011aadd1c1a579e5fbb1bf08bd6aadac702d192a5cb991b1de11cb78a97387240fb6e862e9
   type: file
-  url: https://build.palaso.org/guestAuth/repository/download/bt279/.lastSuccessful/IPCFramework.dll
+  url: https://build.palaso.org/guestAuth/repository/download/bt279/fw-9.0.11.tcbuildtag/IPCFramework.dll
 - dest: fw/Downloads
   sha512: 8702c2e3c30f6572fefbd118fb0d0a9e085cb861f8162078bc0ed7ff2ae77d2b4841b548acddae3d3a51671cd31558a2cdd4e1bafbd4e40857d0004e4b0690ed
   type: file
-  url: https://build.palaso.org/guestAuth/repository/download/bt395/.lastSuccessful/ExCSS.dll
+  url: https://build.palaso.org/guestAuth/repository/download/bt395/fw-9.0.11.tcbuildtag/ExCSS.dll
 - dest: fw/Downloads
   sha512: 9227e36238c867601604a4260e60763ab6c1a1ac317c9ad33b1360051e169a9ad7993b330473e9dd7862a6dad3c5b6a56d6a5a87c07e2dd2800108826fdf644c
   type: file
-  url: https://build.palaso.org/guestAuth/repository/download/bt395/.lastSuccessful/ExCSS.dll.mdb
+  url: https://build.palaso.org/guestAuth/repository/download/bt395/fw-9.0.11.tcbuildtag/ExCSS.dll.mdb
 - dest: fw/Downloads
   sha512: 09d2356e0b5378d14c5fbbf54b7162b003e3b55b9728ea96aed76f33f6bd2c5ac486f63bbf5c6472e90f6f2c3a28ab5e426b675b9d687ee5a357d59788b2e4b3
   type: file

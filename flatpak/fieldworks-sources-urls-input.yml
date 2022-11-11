@@ -50,12 +50,12 @@
     - LibChorus.dll
     - Vulcan.Uczniowie.HelpProvider.dll
 - name: IPCFramework
-  baseurl: https://build.palaso.org/guestAuth/repository/download/bt279/.lastSuccessful/
+  baseurl: https://build.palaso.org/guestAuth/repository/download/bt279/fw-9.0.11.tcbuildtag/
   dest: fw/Downloads
   files:
     - IPCFramework.dll
 - name: ExCss
-  baseurl: https://build.palaso.org/guestAuth/repository/download/bt395/.lastSuccessful/
+  baseurl: https://build.palaso.org/guestAuth/repository/download/bt395/fw-9.0.11.tcbuildtag/
   dest: fw/Downloads
   files:
     - ExCSS.dll

@@ -1,10 +1,10 @@
 - type: shell
   commands:
-    - echo >build/FLExBridge.files -e "F\t15\thttps://build.palaso.org/guestAuth/repository/download/bt216/latest.lastSuccessful/Chorus_Help.chm\tlib/common/Chorus_Help.chm"
+    - echo >build/FLExBridge.files -e "F\t15\thttps://build.palaso.org/guestAuth/repository/download/bt216/fw-9.1.1.tcbuildtag/Chorus_Help.chm\tlib/common/Chorus_Help.chm"
 - dest: lib/common/
   sha512: b431100c7b1698b94cd08cbcffab6d0190f0a1521722c7d9d2103a89bfb26c81a5fe7de10736b90a4c34be6a38786a2b999a42591505ccbee838f8b7664d9597
   type: file
-  url: https://build.palaso.org/guestAuth/repository/download/bt216/latest.lastSuccessful/Chorus_Help.chm
+  url: https://build.palaso.org/guestAuth/repository/download/bt216/fw-9.1.1.tcbuildtag/Chorus_Help.chm
 - type: shell
   commands:
     - |
