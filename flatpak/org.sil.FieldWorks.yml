@@ -336,6 +336,9 @@ modules:
             # Branch gnome-3-36
             commit: d0bd232482302a28ff444c27c91b0bf82bb7f365
       - name: mono5-sil
+        config-opts:
+          # Build successfully with gcc >9.
+          - --enable-minimal=aot
         cleanup:
           # Not cleaning away lib/mono/4.5/mcs* because mcs.exe is used in SFM import.
           - "/include"
