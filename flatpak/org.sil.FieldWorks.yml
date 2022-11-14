@@ -25,7 +25,7 @@ app-id: org.sil.FieldWorks
 # org.gnome.Platform provides some pieces that we would need to manually specify
 # if we use org.freedesktop.Platform.
 runtime: org.gnome.Platform
-runtime-version: "3.36"
+runtime-version: "42"
 sdk: org.gnome.Sdk
 
 finish-args:
@@ -49,17 +49,16 @@ finish-args:
   - --filesystem=/tmp
   # As a language-documentation tool, FieldWorks allows a user to assign
   # specific keyboard input methods to specific writing systems, and then
-  # automatically switches between those keyboards when the user moves between
-  # fields for the different writing systems. For example, writing a lexeme form
-  # in the vernacular language, and then using the analysis language in the
-  # gloss field. This feature uses the desktop environment's list of defined
-  # keyboard input methods, as well as notifying the desktop environment about
-  # what keyboard was switched to.
-  # Allow interacting with Gnome Shell keyboard switcher.
-  - --talk-name=org.gnome.Shell
+  # automatically switches between those keyboards when the user moves
+  # between fields for the different writing systems. For example, writing
+  # a lexeme form in the vernacular language, and then switching to the
+  # input method for the analysis language when moving to the gloss field.
+  # FieldWorks queries the list of configured input methods, and sets the
+  # current one. This involves reading or writing GSettings on the host,
+  # such as org.freedesktop.ibus.general engines-order and
+  # org.gnome.desktop.input-sources sources.
   # Allow launching of keyboard configuration tools, such as Keyman
   # Configration, and gnome-control-center to the input sources area.
-  # Allow querying ibus preload-engines list of keyboards.
   # Allow applying user keyboard mapping modifications.
   - --talk-name=org.freedesktop.Flatpak
   # FieldWorks uses FlexBridge to synchronize data over the network or by USB
@@ -132,8 +131,8 @@ modules:
         dest: libcom
         url: https://github.com/sillsdev/libcom.git
         # Branch develop
-        tag: fieldworks-9.0.17
-        commit: 035225805e477061e9a2d72180a96bcaa7cc1952
+        tag: fieldworks-9.0.17.1
+        commit: f0515addbe45ccc5cea946fb1e478d8a50851647
       - type: git
         dest: fw/DistFiles/Helps
         url: https://github.com/sillsdev/FwHelps.git
@@ -190,9 +189,10 @@ modules:
           # Don't ship.
           - "*"
         sources:
-          - type: archive
-            url: https://boostorg.jfrog.io/artifactory/main/release/1.71.0/source/boost_1_71_0.tar.bz2
-            sha512: b7937d50c4512cf13cadd0ca829de36cf2cbc6fb788f45b1d4565ad0753e2b206c545125a5862016c2f16016f2e4a6b687928963b466fff17c3e0a4437142c20
+          - type: git
+            url: https://github.com/boostorg/boost.git
+            tag: boost-1.80.0
+            commit: 32da69a36f84c5255af8a994951918c258bac601
       - name: dbus-glib
         # For Gecko.
         cleanup:
@@ -234,8 +234,6 @@ modules:
             buildsystem: meson
             config-opts:
               - -Dbuild-documentation=false
-              - -Dbuild-demos=false
-              - -Dbuild-tests=false
             cleanup:
               - "/include"
               - "/lib/*/include"
@@ -243,15 +241,14 @@ modules:
             sources:
               - type: git
                 url: https://gitlab.gnome.org/GNOME/atkmm.git
-                tag: "2.28.1"
-                commit: 5d8721c5619b0d9c904f669f712db1d9ca7107f9
+                tag: "2.28.3"
+                commit: f925dec906324b724b9309726a2c40086ced430a
             modules:
               - name: glibmm
                 buildsystem: meson
                 config-opts:
                   - -Dbuild-documentation=false
-                  - -Dbuild-demos=false
-                  - -Dbuild-tests=false
+                  - -Dbuild-examples=false
                 cleanup:
                   - "/include"
                   - "/lib/*/include"
@@ -260,8 +257,8 @@ modules:
                 sources:
                   - type: git
                     url: https://gitlab.gnome.org/GNOME/glibmm.git
-                    tag: "2.64.2"
-                    commit: e775940669cb6d93f37ddc2b4cd7da446dfa482c
+                    tag: "2.66.5"
+                    commit: aa64515a9fa6f4a8aacab77aadea31a9541496ab
                 modules:
                   - name: libsigc++-2.0
                     config-opts:
@@ -273,8 +270,8 @@ modules:
                     sources:
                       - type: git
                         url: https://github.com/libsigcplusplus/libsigcplusplus.git
-                        tag: "2.10.2"
-                        commit: 06fabac512bf81164d5b01f877927cb39e9db864
+                        tag: "2.10.8"
+                        commit: 4bb3060056adeba0bf3be0ddf5e5c9f0d9d5b29a
                     modules:
                       - name: mm-common
                         buildsystem: meson
@@ -282,14 +279,12 @@ modules:
                           - "*"
                         sources:
                           - type: archive
-                            url: https://download.gnome.org/sources/mm-common/1.0/mm-common-1.0.2.tar.xz
-                            sha256: a2a99f3fa943cf662f189163ed39a2cfc19a428d906dd4f92b387d3659d1641d
+                            url: https://download.gnome.org/sources/mm-common/1.0/mm-common-1.0.4.tar.xz
+                            sha256: e954c09b4309a7ef93e13b69260acdc5738c907477eb381b78bb1e414ee6dbd8
           - name: pangomm
             buildsystem: meson
             config-opts:
               - -Dbuild-documentation=false
-              - -Dbuild-demos=false
-              - -Dbuild-tests=false
             cleanup:
               - "/include"
               - "/lib/*/include"
@@ -297,13 +292,12 @@ modules:
             sources:
               - type: git
                 url: https://gitlab.gnome.org/GNOME/pangomm.git
-                tag: "2.42.1"
-                commit: 7dfc6c3372faaa4a7c492d08f09881b02095145b
+                tag: "2.46.3"
+                commit: 1712231caf8886d73bd64964814793f19f6e1d70
             modules:
               - name: cairomm
                 config-opts:
                   - --disable-documentation
-                  - --disable-demos
                   - --disable-tests
                 cleanup:
                   - "/include"
@@ -312,8 +306,8 @@ modules:
                 sources:
                   - type: git
                     url: https://github.com/freedesktop/cairomm.git
-                    # Branch cairomm-1-12
-                    commit: e9ef515b7b8db5b4f024ddfefe5dfc03f2b8ccea
+                    # Branch cairomm-1-14
+                    commit: b6b7e0ba65d8362c2f13b17570302015ae7222b4
       - name: wget
         buildsystem: autotools
         cleanup:
@@ -751,6 +745,13 @@ modules:
           - type: archive
             url: https://xorg.freedesktop.org/releases/individual/data/xkeyboard-config/xkeyboard-config-2.34.tar.gz
             sha512: 8ddb21da44dd22dedd3206990c54ce3f91cd3081f4fc8c4a49f6f0b49d91a865df530c1d30a7ca0054526462cfb7aab24b13c07d5370af7d2041f270684944af
+      - name: zenity
+        buildsystem: meson
+        sources:
+          - type: git
+            url: https://gitlab.gnome.org/GNOME/zenity.git
+            tag: "3.43.0"
+            commit: 01e6d92f23f49414ba8ec4c5b3daf49222c1e31d
       # FieldWorks is used to describe languages using various writing
       # systems. Include some fonts.
       - name: fonts-sil-doulos

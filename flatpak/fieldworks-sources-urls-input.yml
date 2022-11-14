@@ -1,5 +1,5 @@
 - name: libpalaso
-  baseurl: https://build.palaso.org/guestAuth/repository/download/Libpalaso_Palaso60linuxContinuous/fw-9.0.18.2.tcbuildtag/
+  baseurl: https://build.palaso.org/guestAuth/repository/download/Libpalaso_Palaso60linuxContinuous/fw-9.0.18.3.tcbuildtag/
   dest: fw/Downloads
   files:
     - SIL.Core.dll

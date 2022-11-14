@@ -291,7 +291,7 @@
 		<PalasoBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Libpalaso_PalasoWin60Continuous</PalasoBuildType>
 		<!-- bt322 is the master branch build of Palaso for Linux development. Update when appropriate. -->
 		<PalasoBuildType Condition="'$(OS)'=='Unix'">Libpalaso_Palaso60linuxContinuous</PalasoBuildType>
-		<PalasoBuildTag>fw-9.0.18.2.tcbuildtag</PalasoBuildTag>
+		<PalasoBuildTag>fw-9.0.18.3.tcbuildtag</PalasoBuildTag>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
 		<IPCFrameworkBuildType Condition="'$(OS)'=='Windows_NT'">bt278</IPCFrameworkBuildType>
