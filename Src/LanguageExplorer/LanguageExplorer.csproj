@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <UseWindowsForms>true</UseWindowsForms>
@@ -24,6 +24,7 @@
     <PackageReference Include="SIL.Media" Version="11.0.0-beta0041" />
     <PackageReference Include="SIL.Windows.Forms.GeckoBrowserAdapter" Version="11.0.0-beta0041" />
     <PackageReference Include="TreeViewAdv" Version="1.7.0" />
+    <PackageReference Include="WindowsShortcutFactory" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,6 +54,10 @@
     <EmbeddedResource Include="Controls/MGA/Radio.bmp" />
     <EmbeddedResource Include="Controls/MGA/RadioSelected.bmp" />
     <EmbeddedResource Include="Controls/MGA/UserChoice.bmp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Design" />
   </ItemGroup>
 
   <ItemGroup>

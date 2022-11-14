@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Gecko;
-using MsHtmHstInterop;
 
 namespace LanguageExplorer.Controls
 {
@@ -68,12 +67,10 @@ namespace LanguageExplorer.Controls
 
 		/// <summary>
 		/// The HTML text of the document currently loaded in the browser
-		/// TODO: implement get for GeckoFX browser
 		/// </summary>
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string DocumentText
 		{
-			// TODO pH 2013.09: GeckoFX implementation
 			get => @"<!DOCTYPE HTML><HTML/>";
 			set => Browser.LoadHtml(value, null);
 		}
@@ -127,45 +124,6 @@ namespace LanguageExplorer.Controls
 		{
 			// Let the owning class know
 			OnHCBeforeNavigate(new HtmlControlEventArgs(url));
-		}
-
-		/// <summary>
-		/// Get key state.
-		/// </summary>
-		[DllImport("User32.dll")]
-		public static extern short GetAsyncKeyState(int vKey);
-
-		/// <summary>
-		/// Allow a select set of keys be active when using the IDocHostUIHandler interface
-		/// </summary>
-		/// <param name="lpmsg">the message/key combination</param>
-		public void AllowKeysForIDocHostUIHandler(tagMSG lpmsg)
-		{
-			const int WM_KEYDOWN = 0x0100;
-			const int VK_CONTROL = 0x11;
-			if (lpmsg.message == WM_KEYDOWN)
-			{
-				switch (lpmsg.wParam)
-				{
-					case (uint)Keys.Down:       // all of these are the same: allow them to have their normal function
-					case (uint)Keys.Up:
-					case (uint)Keys.Left:
-					case (uint)Keys.Right:
-					case (uint)Keys.PageDown:
-					case (uint)Keys.PageUp:
-						throw new COMException("", 1);  // returns HRESULT = S_FALSE
-					case (uint) Keys.F:			// all of these are the same: allow these control key sequences
-					case (uint) Keys.End:
-					case (uint) Keys.Home:
-						if (GetAsyncKeyState(VK_CONTROL) < 0)
-						{
-							throw new COMException("", 1); // returns HRESULT = S_FALSE
-						}
-						break;
-					default:
-						break; // do nothing
-				}
-			}
 		}
 
 		/// <summary>

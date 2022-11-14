@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Windows.Forms;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;

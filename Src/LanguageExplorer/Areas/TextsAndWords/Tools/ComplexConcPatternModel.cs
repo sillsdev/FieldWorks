@@ -21,7 +21,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 	public class ComplexConcPatternModel
 	{
 		private readonly ComplexConcPatternSda m_sda;
-		private readonly SpanFactory<ShapeNode> m_spanFactory;
 		private Matcher<ComplexConcParagraphData, ShapeNode> m_matcher;
 		private readonly LcmCache m_cache;
 		private FeatureSystem m_featSys;
@@ -35,7 +34,6 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 		{
 			m_cache = cache;
 			Root = root;
-			m_spanFactory = new ShapeSpanFactory();
 			m_sda = new ComplexConcPatternSda(cache.GetManagedSilDataAccess(), Root);
 		}
 
@@ -87,7 +85,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 				{
 					var closedFeat = (IFsClosedFeature)feature;
 					m_featSys.Add(new SymbolicFeature(closedFeat.Hvo.ToString(CultureInfo.InvariantCulture), closedFeat.ValuesOC.Select(sym =>
-						new FeatureSymbol(sym.Hvo.ToString(CultureInfo.InvariantCulture), sym.Abbreviation.BestAnalysisAlternative.Text)).Concat(new FeatureSymbol(closedFeat.Hvo.ToString(CultureInfo.InvariantCulture) + "_us", "unspecified")))
+						new FeatureSymbol(sym.Hvo.ToString(CultureInfo.InvariantCulture), sym.Abbreviation.BestAnalysisAlternative.Text)).Append(new FeatureSymbol(closedFeat.Hvo.ToString(CultureInfo.InvariantCulture) + "_us", "unspecified")))
 					{
 						Description = closedFeat.Abbreviation.BestAnalysisAlternative.Text,
 						DefaultSymbolID = closedFeat.Hvo.ToString(CultureInfo.InvariantCulture) + "_us"
@@ -96,7 +94,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 			}
 			var pattern = new Pattern<ComplexConcParagraphData, ShapeNode>();
 			pattern.Children.Add(Root.GeneratePattern(m_featSys));
-			m_matcher = new Matcher<ComplexConcParagraphData, ShapeNode>(m_spanFactory, pattern, new MatcherSettings<ShapeNode> { UseDefaults = true });
+			m_matcher = new Matcher<ComplexConcParagraphData, ShapeNode>(pattern, new MatcherSettings<ShapeNode> { UseDefaults = true });
 		}
 
 		public IEnumerable<IParaFragment> Search(IStText text)
@@ -112,17 +110,17 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 				try
 				{
 					IParaFragment lastFragment = null;
-					var data = new ComplexConcParagraphData(m_spanFactory, m_featSys, para);
+					var data = new ComplexConcParagraphData(m_featSys, para);
 					var match = m_matcher.Match(data);
 					while (match.Success)
 					{
-						if (match.Span.Start == match.Span.End && ((FeatureSymbol)match.Span.Start.Annotation.FeatureStruct
+						if (match.Range.Start == match.Range.End && ((FeatureSymbol)match.Range.Start.Annotation.FeatureStruct
 								.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
 						{
 							match = match.NextMatch();
 							continue;
 						}
-						var startNode = match.Span.Start;
+						var startNode = match.Range.Start;
 						if (((FeatureSymbol)startNode.Annotation.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
 						{
 							startNode = startNode.Next;
@@ -133,7 +131,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 							startAnn = startAnn.Parent;
 						}
 						var startAnalysis = (Tuple<IAnalysis, int, int>)startAnn.Data;
-						var endNode = match.Span.End;
+						var endNode = match.Range.End;
 						if (((FeatureSymbol)endNode.Annotation.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
 						{
 							endNode = endNode.Prev;
@@ -169,7 +167,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 
 		private static Match<ComplexConcParagraphData, ShapeNode> GetNextMatch(Match<ComplexConcParagraphData, ShapeNode> match)
 		{
-			var nextNode = match.Span.GetEnd(match.Matcher.Direction);
+			var nextNode = match.Range.GetEnd(match.Matcher.Direction);
 			if (((FeatureSymbol)nextNode.Annotation.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID != "bdry")
 			{
 				nextNode = nextNode.GetNext(match.Matcher.Direction);

@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Xml.Linq;
 using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.XMLViews;
+using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -86,7 +87,7 @@ namespace LanguageExplorer.Filters
 							break;
 						case "occurrenceInContext":
 							// LT-8457: Context should be considered only following the occurrence; preceding context should be ignored.
-							result = new OccurrenceInContextFinder(cache, layoutName, colSpec, app);
+							result = new OccurrenceInContextFinder(cache, layoutName, columnSpecificationElement, app);
 							break;
 						case "date":
 						case "YesNo":

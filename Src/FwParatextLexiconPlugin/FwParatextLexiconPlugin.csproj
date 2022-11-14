@@ -73,7 +73,7 @@
       <RepackAssemblies Include="$(OutputPath)/SIL.LCModel.Utils.dll" />
       <RepackAssemblies Include="$(OutputPath)/SIL.Machine.dll" />
       <RepackAssemblies Include="$(OutputPath)/SIL.WritingSystems.dll" />
-      <RepackAssemblies Include="$(OutputPath)/SIL.HermitCrab.dll" />
+      <RepackAssemblies Include="$(OutputPath)/SIL.Machine.Morphology.HermitCrab.dll" />
       <RepackAssemblies Include="$(OutputPath)/SIL.Lexicon.dll" />
       <RepackAssemblies Include="$(OutputPath)/ParserCore.dll" />
       <RepackAssemblies Include="$(OutputPath)/FwUtils.dll" />

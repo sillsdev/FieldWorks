@@ -726,7 +726,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 			// Scroll only if current element is not visible on browser window
 			if (currElementTop < browser.Window.ScrollY || currElementBottom > (browser.Window.ScrollY + browser.Height))
 			{
-				browser.Window.ScrollTo(0, yPosition);
+				browser.Window.ScrollTo(0, (int)yPosition);
 			}
 			AddClassToHtmlElement(currSelectedByGuid, DictionaryConfigurationServices.CurrentSelectedEntryClass);
 			m_selectedObjectID = currentObjectGuid;

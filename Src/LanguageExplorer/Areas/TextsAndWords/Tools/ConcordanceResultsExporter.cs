@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using CsvHelper;
 using LanguageExplorer.Controls.XMLViews;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SILLanguageExplorer.Areas.TextsAndWords.Tools
@@ -18,6 +19,7 @@ namespace SILLanguageExplorer.Areas.TextsAndWords.Tools
 		private TextWriter Writer { get; }
 		private CsvWriter Csv { get; }
 		private XmlBrowseViewVc VC { get; }
+
 		/// <summary>
 		/// CsvWriter expects empty cells to be written. Keep track of when a cell is written.
 		/// If a cell is being closed and nothing was written to it, then write a empty string.
@@ -35,7 +37,7 @@ namespace SILLanguageExplorer.Areas.TextsAndWords.Tools
 
 		private void WriteHeader()
 		{
-			foreach (var columnLabel in XmlBrowseViewVc.GetHeaderLabels(VC))
+			foreach (var columnLabel in XmlBrowseViewVc.GetHeaderLabels(VC, StringTable.Table))
 			{
 				Csv.WriteField(columnLabel);
 			}

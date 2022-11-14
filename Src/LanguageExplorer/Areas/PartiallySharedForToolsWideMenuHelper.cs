@@ -10,6 +10,7 @@ using LanguageExplorer.Controls;
 using LanguageExplorer.Controls.DetailControls;
 using SIL.Code;
 using SIL.Collections;
+using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 

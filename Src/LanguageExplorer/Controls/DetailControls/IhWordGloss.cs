@@ -26,7 +26,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				return;
 			}
 			m_sandbox.WordGlossHvo = item.Hvo;
-			foreach (var ws in m_sandbox.InterlinLineChoices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
+			foreach (var ws in m_sandbox.InterlinLineChoices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 			{
 				var tss = item.Hvo == 0 ? TsStringUtils.EmptyString(ws) : m_caches.MainCache.MainCacheAccessor.get_MultiStringAlt(item.Hvo, WfiGlossTags.kflidForm, ws);
 				m_caches.DataAccess.SetMultiStringAlt(m_hvoSbWord, SandboxBase.ktagSbWordGloss, ws, tss);
@@ -77,7 +77,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void AddComboItems(ref int hvoEmptyGloss, ITsStrBldr tsb, IWfiAnalysis wa)
 		{
-			var wsids = m_sandbox.InterlinLineChoices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss);
+			var wsids = m_sandbox.InterlinLineChoices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss);
 			foreach (var gloss in wa.MeaningsOC)
 			{
 				var glossCount = 0;

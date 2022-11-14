@@ -3,8 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Xml;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Filters;
+using System.Xml.Linq;
+using LanguageExplorer;
+using LanguageExplorer.Filters;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -15,7 +17,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// However, for sorting, the context should not take precedence over the occurrence itself (as leading context normally would if the string is
 	/// considered as a whole). This StringFinder returns the occurrence itself and any trailing context.
 	/// </summary>
-	public class OccurrenceInContextFinder : LayoutFinder
+	internal class OccurrenceInContextFinder : LayoutFinder
 	{
 		// ENHANCE (Hasso) 2022.03: perhaps the better way to get these flids is to call GetFieldId on the decorator, passing these class and field names,
 		// but I'm not sure which I like less: trying to figure out how to get all of the pieces the "right way", hard-coding the field names and trying to find the decorator,
@@ -29,13 +31,8 @@ namespace SIL.FieldWorks.Common.Controls
 		private const int kflidEndOffset = 899927;
 
 		/// <inheritdoc/>
-		public OccurrenceInContextFinder(LcmCache cache, string layoutName, XmlNode colSpec, IApp app)
+		public OccurrenceInContextFinder(LcmCache cache, string layoutName, XElement colSpec, IApp app)
 			: base(cache, layoutName, colSpec, app)
-		{
-		}
-
-		/// <summary>Default constructor for persistence</summary>
-		public OccurrenceInContextFinder()
 		{
 		}
 

@@ -5,6 +5,8 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using LanguageExplorer;
+using LanguageExplorer.Controls.DetailControls;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -79,7 +81,7 @@ namespace SIL.FieldWorks.Discourse
 
 		private void SetupMissingMarker()
 		{
-			m_missMkr = TsStringUtils.MakeString(DiscourseStrings.ksMissingMarker, m_cache.DefaultAnalWs);
+			m_missMkr = TsStringUtils.MakeString(LanguageExplorerResources.ksMissingMarker, m_cache.DefaultAnalWs);
 		}
 
 		/// <summary>
@@ -303,8 +305,8 @@ namespace SIL.FieldWorks.Discourse
 		{
 			if (!m_body.BadChart)
 			{
-				MessageBox.Show(DiscourseStrings.ksFoundAndFixingInvalidDataCells,
-					DiscourseStrings.ksInvalidInternalConstituentChartData,
+				MessageBox.Show(LanguageExplorerResources.ksFoundAndFixingInvalidDataCells,
+					LanguageExplorerResources.ksInvalidInternalConstituentChartData,
 					MessageBoxButtons.OK, MessageBoxIcon.Information);
 				m_body.BadChart = true;
 			}

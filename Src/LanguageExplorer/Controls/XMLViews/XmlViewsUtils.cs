@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 using LanguageExplorer.Filters;
+using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;

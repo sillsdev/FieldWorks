@@ -75,10 +75,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_brackets = new Dictionary<string, string>();
 			foreach (var item in XDocument.Parse(LanguageExplorerResources.ConstituentChartStyleInfo).Root.Elements())
 			{
-				if (item is XComment)
-				{
-					continue;
-				}
 				var bldr = TsStringUtils.MakePropsBldr();
 				var color = XmlUtils.GetOptionalAttributeValue(item, "color", null);
 				if (color != null)
@@ -415,7 +411,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			MakeCellsMethod.OpenStandardCell(vwenv, 1, true);
 			if (wantLabel)
-				vwenv.AddString(TsStringUtils.MakeString(LexiconResources.ksNotesColumnHeader, analWs));
+				vwenv.AddString(TsStringUtils.MakeString(LanguageExplorerResources.ksNotesColumnHeader, analWs));
 			vwenv.CloseTableCell();
 		}
 

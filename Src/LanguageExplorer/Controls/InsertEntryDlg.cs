@@ -28,7 +28,6 @@ using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.PlatformUtilities;
 using SIL.Windows.Forms;
-using SimpleMonitor = SIL.Collections.SimpleMonitor;
 
 namespace LanguageExplorer.Controls
 {

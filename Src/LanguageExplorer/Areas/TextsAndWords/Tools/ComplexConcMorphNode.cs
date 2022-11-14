@@ -46,7 +46,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 			if (Category != null)
 			{
 				var catFeat = featSys.GetFeature<SymbolicFeature>("cat");
-				var symbols = Category.ReallyReallyAllPossibilities.Concat(Category).Select(pos => catFeat.PossibleSymbols[pos.Hvo.ToString(CultureInfo.InvariantCulture)]);
+				var symbols = Category.ReallyReallyAllPossibilities.Append(Category).Select(pos => catFeat.PossibleSymbols[pos.Hvo.ToString(CultureInfo.InvariantCulture)]);
 				if (NegateCategory)
 				{
 					symbols = catFeat.PossibleSymbols.Except(symbols);

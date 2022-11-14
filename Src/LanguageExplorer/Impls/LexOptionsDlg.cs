@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Forms;
 using LanguageExplorer.Controls;
@@ -10,6 +11,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
+using SIL.Settings;
 
 namespace LanguageExplorer.Impls
 {
@@ -33,7 +35,6 @@ namespace LanguageExplorer.Impls
 				ReshowDelay = 500,
 				IsBalloon = true
 			};
-			_optionsTooltip.SetToolTip(updateGlobalWS, LanguageExplorerControls.ksUpdateGlobalWsTooltip);
 			_optionsTooltip.SetToolTip(groupBox1, LanguageExplorerControls.ksUserInterfaceTooltip);
 		}
 
@@ -47,12 +48,43 @@ namespace LanguageExplorer.Impls
 			m_autoOpenCheckBox.Checked = AutoOpenLastProject;
 			var appSettings = m_propertyTable.GetValue<IFwApplicationSettings>(FwUtilsConstants.AppSettings);
 			m_okToPingCheckBox.Checked = appSettings.Reporting.OkToPingBasicUsageData;
+			if (Platform.IsWindows)
+			{
+				if (appSettings.Update == null)
+				{
+					// REVIEW (Hasso) 2021.07: we could default to Notify as soon as we implement it, but our low-bandwidth
+					// users wouldn't appreciate automatic downloads of hundreds of megabytes w/o express consent.
+					// TODO (before sending to users): appSettings.Update = new UpdateSettings { Behavior = UpdateSettings.Behaviors.DoNotCheck };
+					appSettings.Update = new UpdateSettings { Channel = UpdateSettings.Channels.Nightly };
+				}
+				m_okToAutoupdate.Checked = appSettings.Update.Behavior != UpdateSettings.Behaviors.DoNotCheck;
+
+				m_cbUpdateChannel.Items.AddRange(new object[]
+				{
+					UpdateSettings.Channels.Stable, UpdateSettings.Channels.Beta, UpdateSettings.Channels.Alpha
+				});
+				// Enable the nightly channel if it is already selected or if this is a tester machine (testers must set the FEEDBACK env var)
+				if (appSettings.Update.Channel == UpdateSettings.Channels.Nightly || Environment.GetEnvironmentVariable("FEEDBACK") != null)
+				{
+					m_cbUpdateChannel.Items.Add(UpdateSettings.Channels.Nightly);
+				}
+				m_cbUpdateChannel.SelectedItem = appSettings.Update.Channel;
+			}
+			else
+			{
+				m_tabUpdates.Visible = false;
+			}
 		}
 
 		private void m_btnOK_Click(object sender, EventArgs e)
 		{
 			var appSettings = m_propertyTable.GetValue<IFwApplicationSettings>(FwUtilsConstants.AppSettings);
 			appSettings.Reporting.OkToPingBasicUsageData = m_okToPingCheckBox.Checked;
+			if (Platform.IsWindows)
+			{
+				appSettings.Update.Behavior = m_okToAutoupdate.Checked ? UpdateSettings.Behaviors.Download : UpdateSettings.Behaviors.DoNotCheck;
+				appSettings.Update.Channel = (UpdateSettings.Channels)Enum.Parse(typeof(UpdateSettings.Channels), m_cbUpdateChannel.Text);
+			}
 			NewUserWs = m_userInterfaceChooser.NewUserWs;
 			if (m_sUserWs != NewUserWs)
 			{
@@ -76,7 +108,6 @@ namespace LanguageExplorer.Impls
 				// Reload the string table with the appropriate language data.
 				StringTable.Table.Reload(NewUserWs);
 			}
-			appSettings.UpdateGlobalWSStore = !updateGlobalWS.Checked;
 			appSettings.Save();
 			AutoOpenLastProject = m_autoOpenCheckBox.Checked;
 			DialogResult = DialogResult.OK;
@@ -116,8 +147,6 @@ namespace LanguageExplorer.Impls
 			m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			m_sUserWs = m_cache.ServiceLocator.WritingSystemManager.UserWritingSystem.Id;
 			NewUserWs = m_sUserWs;
-			var appSettings = m_propertyTable.GetValue<IFwApplicationSettings>(FwUtilsConstants.AppSettings);
-			updateGlobalWS.Checked = !appSettings.UpdateGlobalWSStore;
 			m_userInterfaceChooser.Init(m_sUserWs);
 			if (m_helpTopicProvider == null)
 			{
@@ -135,7 +164,28 @@ namespace LanguageExplorer.Impls
 
 		public string NewUserWs { get; private set; }
 
-		private void updateGlobalWS_MouseHover(object sender, EventArgs e)
-		{ }
+		private void PrivacyLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			using (Process.Start(llPrivacy.Text)) { }
+		}
+
+		/// <remarks>REVIEW (Hasso) 2021.07: is there a better secret handshake for adding "Nightly"? Considering:
+		/// * Ctrl-Shift-Click (L10nSharp uses Alt-Shift-Click; this avoids collisions)
+		/// * Ctrl-(Shift-)N (for Nightly)
+		/// * Type "nightly" (would require some keeping trackâ€”ugh)
+		/// * Set some environment variable (FEEDBACK=QA_CHANNEL or NIGHTLYPATCHES=ON)
+		/// </remarks>
+		private void m_cbUpdateChannel_KeyPress(object sender, KeyPressEventArgs e)
+		{
+			// If the user pressed Ctrl+Shift+N, add and select the Nightly channel
+			if (e.KeyChar == 14 /* ASCII 14 is ^N */ && (ModifierKeys & Keys.Shift) == Keys.Shift)
+			{
+				if (!m_cbUpdateChannel.Items.Contains(UpdateSettings.Channels.Nightly))
+				{
+					m_cbUpdateChannel.Items.Add(UpdateSettings.Channels.Nightly);
+				}
+				m_cbUpdateChannel.SelectedItem = UpdateSettings.Channels.Nightly;
+			}
+		}
 	}
 }
