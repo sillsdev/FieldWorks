@@ -161,8 +161,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 					break;
 				case WfiGlossTags.kflidForm:
-					m_wsGloss = ws;
-					m_glossesInCellCollector.Add(DataAccess.get_MultiStringAlt(OpenObject, tag, m_wsGloss).Text ?? string.Empty);
+					m_glossesInCellCollector.Add(m_cache.MainCacheAccessor.get_MultiStringAlt(CurrentObject(), tag, ws));
 					break;
 				case ConstChartTagTags.kflidTag:
 					WriteStringProp(tag, "lit", ws); // missing marker.
@@ -281,7 +280,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			else if (text == "***")
 			{
-				m_glossesInCellCollector.Add(tss.Text);
+				m_glossesInCellCollector.Add(tss);
 			}
 			else
 			{
@@ -382,7 +381,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			switch (TopFragment)
 			{
 				case ConstChartVc.kfragChartRow:
-					var row = m_rowRepo.GetObject(m_hvoCurr);
+					var row = m_rowRepo.GetObject(CurrentObject());
 					if (row.EndParagraph)
 						m_writer.WriteAttributeString("endPara", "true");
 					else if (row.EndSentence)
