@@ -30,7 +30,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return false;
 			}
-			if (spec.Flid == kflidWord && spec.WritingSystem == m_wsDefVern && ItemsWithFlids(new int[] { kflidWord }, new int[] { m_wsDefVern }).Count < 2)
+			if (spec.Flid == kflidWord && spec.WritingSystem == m_wsDefVern)
 			{
 				message = LanguageExplorerResources.ksNeedWordLine;
 				return false;

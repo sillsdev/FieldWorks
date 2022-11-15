@@ -283,7 +283,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				var sda = Caches.DataAccess;
 				// See if any alternate writing systems of word line are filled in.
-				var wordformWss = InterlinLineChoices.OtherWritingSystemsForFlid(InterlinLineChoices.kflidWord, 0);
+				var wordformWss = InterlinLineChoices.OtherEnabledWritingSystemsForFlid(InterlinLineChoices.kflidWord, 0);
 				if (wordformWss.Any(wsId => sda.get_MultiStringAlt(kSbWord, ktagSbWordForm, wsId).Length > 0))
 				{
 					return false;
@@ -333,7 +333,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		internal bool HasWordGloss()
 		{
 			var sda = Caches.DataAccess;
-			return InterlinLineChoices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss).Any(wsId => sda.get_MultiStringAlt(kSbWord, ktagSbWordGloss, wsId).Length > 0);
+			return InterlinLineChoices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss).Any(wsId => sda.get_MultiStringAlt(kSbWord, ktagSbWordGloss, wsId).Length > 0);
 		}
 
 		/// <summary>
@@ -609,7 +609,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				// only the first Morpheme line is currently displaying prefix/postfix.
 				var currentLine = GetLineOfCurrentSelection();
-				return currentLine != -1 && InterlinLineChoices.IsFirstOccurrenceOfFlid(currentLine)
+				return currentLine != -1 && InterlinLineChoices.IsFirstEnabledOccurrenceOfFlid(currentLine)
 					? tsi.ContainingObjectTag(1) == ktagSbMorphForm && Caches.DataAccess.get_StringProp(tsi.ContainingObject(1), ktagSbMorphPrefix).Length == 0 : tsi.IchAnchor == 0;
 			}
 		}
@@ -640,7 +640,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				// only the first Morpheme line is currently displaying prefix/postfix.
 				var currentLine = GetLineOfCurrentSelection();
-				return currentLine != -1 && InterlinLineChoices.IsFirstOccurrenceOfFlid(currentLine)
+				return currentLine != -1 && InterlinLineChoices.IsFirstEnabledOccurrenceOfFlid(currentLine)
 					? tsi.ContainingObjectTag(1) == ktagSbMorphForm && Caches.DataAccess.get_StringProp(tsi.ContainingObject(1), ktagSbMorphPostfix).Length == 0 : tsi.AnchorLength == tsi.IchEnd;
 			}
 		}
@@ -1102,7 +1102,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					{
 						var hvoPos = Caches.FindOrCreateSec(msaReal.Hvo, kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
 
-						foreach (var ws in InterlinLineChoices.WritingSystemsForFlid(InterlinLineChoices.kflidLexPos, true))
+						foreach (var ws in InterlinLineChoices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidLexPos, true))
 						{
 							// Since ws maybe ksFirstAnal/ksFirstVern, we need to get what is actually
 							// used in order to retrieve the data in Vc.Display().  See LT_7976.
@@ -1388,7 +1388,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// get first line index if it isn't specified.
 			if (lineIndex < 0)
 			{
-				lineIndex = InterlinLineChoices.IndexOf(InterlinLineChoices.kflidWordGloss);
+				lineIndex = InterlinLineChoices.IndexInEnabled(InterlinLineChoices.kflidWordGloss);
 				if (lineIndex < 0)
 				{
 					return false;
@@ -1402,7 +1402,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void GetWordGlossInfo(int lineIndex, out int glossLength, out int cpropPrevious)
 		{
-			var ws = InterlinLineChoices[lineIndex].WritingSystem;
+			var ws = InterlinLineChoices.EnabledLineSpecs[lineIndex].WritingSystem;
 			glossLength = 0;
 			// InterlinLineChoices.kflidWordGloss, ktagSbWordGloss
 			if (WordGlossHvo != 0)
@@ -1415,7 +1415,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				glossLength = 0;
 			}
 
-			cpropPrevious = InterlinLineChoices.PreviousOccurrences(lineIndex);
+			cpropPrevious = InterlinLineChoices.PreviousEnabledOccurrences(lineIndex);
 		}
 
 		/// <summary>
@@ -1444,7 +1444,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			cda.CacheStringAlt(hvoEntry, ktagSbNamedObjName, wsVern, LexEntryVc.GetLexEntryTss(Cache, hvoEntryToDisplay, wsVern, ler));
 			cda.CacheObjProp(hvoMbSec, ktagSbMorphEntry, hvoEntry);
 			cda.CacheIntProp(hvoEntry, ktagSbNamedObjGuess, fGuessing);
-			var writingSystems = InterlinLineChoices.OtherWritingSystemsForFlid(InterlinLineChoices.kflidLexEntries, 0);
+			var writingSystems = InterlinLineChoices.OtherEnabledWritingSystemsForFlid(InterlinLineChoices.kflidLexEntries, 0);
 			if (!writingSystems.Any())
 			{
 				return;
@@ -1556,7 +1556,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				return; // this form never occurs anywhere, can't supply any default.
 			}
-			var otherWritingSystemsForMorphForm = InterlinLineChoices.OtherWritingSystemsForFlid(InterlinLineChoices.kflidMorphemes, RawWordformWs);
+			var otherWritingSystemsForMorphForm = InterlinLineChoices.OtherEnabledWritingSystemsForFlid(InterlinLineChoices.kflidMorphemes, RawWordformWs);
 			if (otherWritingSystemsForMorphForm.Any())
 			{
 				var hvoSbForm = Caches.DataAccess.get_ObjectProp(hvoMorph, ktagSbMorphForm);
@@ -1700,7 +1700,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			if (defMsaReal != null)
 			{
 				var hvoNewPos = Caches.FindOrCreateSec(defMsaReal.Hvo, kclsidSbNamedObj, kSbWord, ktagSbWordDummy);
-				foreach (var ws in InterlinLineChoices.WritingSystemsForFlid(InterlinLineChoices.kflidLexPos, true))
+				foreach (var ws in InterlinLineChoices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidLexPos, true))
 				{
 					// Since ws maybe ksFirstAnal/ksFirstVern, we need to get what is actually
 					// used in order to retrieve the data in Vc.Display().  See LT_7976.
@@ -2129,9 +2129,9 @@ namespace LanguageExplorer.Controls.DetailControls
 					currentLineIndex = 0;
 					break;
 				case ktagSbWordForm: // Wordform
-					currentLineIndex = InterlinLineChoices.IndexOf(InterlinLineChoices.kflidWord, ws);
+					currentLineIndex = InterlinLineChoices.IndexInEnabled(InterlinLineChoices.kflidWord, ws);
 					// try selecting the icon.
-					if (increment < 0 && InterlinLineChoices.IsFirstOccurrenceOfFlid(currentLineIndex))
+					if (increment < 0 && InterlinLineChoices.IsFirstEnabledOccurrenceOfFlid(currentLineIndex))
 					{
 						startLineIndex = currentLineIndex;
 					}
@@ -2143,7 +2143,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					Debug.Assert(false);
 					break;
 				case ktagMorphFormIcon:
-					currentLineIndex = InterlinLineChoices.IndexOf(InterlinLineChoices.kflidMorphemes);
+					currentLineIndex = InterlinLineChoices.IndexInEnabled(InterlinLineChoices.kflidMorphemes);
 					if (increment > 0 && !fOnNextLine)
 					{
 						iNextMorphIndex = 0;
@@ -2157,21 +2157,21 @@ namespace LanguageExplorer.Controls.DetailControls
 					NextPositionForLexEntryText(increment, fOnNextLine, fIsPictureSel, out currentLineIndex, out startLineIndex, ref iNextMorphIndex);
 					break;
 				case ktagMorphEntryIcon:
-					currentLineIndex = InterlinLineChoices.FirstLexEntryIndex;
+					currentLineIndex = InterlinLineChoices.FirstEnabledLexEntryIndex;
 					if (!fOnNextLine)
 					{
 						startLineIndex = currentLineIndex;  // try on the same line.
 					}
 					break;
 				case ktagSbWordGloss:
-					currentLineIndex = InterlinLineChoices.IndexOf(InterlinLineChoices.kflidWordGloss, ws);
-					if (increment < 0 && m_vc.ShowWordGlossIcon && InterlinLineChoices.PreviousOccurrences(currentLineIndex) == 0)
+					currentLineIndex = InterlinLineChoices.IndexInEnabled(InterlinLineChoices.kflidWordGloss, ws);
+					if (increment < 0 && m_vc.ShowWordGlossIcon && InterlinLineChoices.PreviousEnabledOccurrences(currentLineIndex) == 0)
 					{
 						startLineIndex = currentLineIndex;
 					}
 					break;
 				case ktagWordGlossIcon: // line 6, word gloss.
-					currentLineIndex = InterlinLineChoices.IndexOf(InterlinLineChoices.kflidWordGloss);
+					currentLineIndex = InterlinLineChoices.IndexInEnabled(InterlinLineChoices.kflidWordGloss);
 					if (increment > 0)
 					{
 						fSkipIcon = true;
@@ -2179,18 +2179,18 @@ namespace LanguageExplorer.Controls.DetailControls
 					}
 					break;
 				case ktagMissingWordPos: // line 7, word POS, missing
-					currentLineIndex = InterlinLineChoices.IndexOf(InterlinLineChoices.kflidWordPos);
+					currentLineIndex = InterlinLineChoices.IndexInEnabled(InterlinLineChoices.kflidWordPos);
 					if (increment < 0)
 					{
 						startLineIndex = currentLineIndex;
 					}
 					break;
 				case ktagWordPosIcon:
-					currentLineIndex = InterlinLineChoices.IndexOf(InterlinLineChoices.kflidWordPos);
+					currentLineIndex = InterlinLineChoices.IndexInEnabled(InterlinLineChoices.kflidWordPos);
 					break;
 				case ktagSbMorphPrefix:
 				case ktagSbMorphPostfix:
-					currentLineIndex = InterlinLineChoices.IndexOf(InterlinLineChoices.kflidMorphemes);
+					currentLineIndex = InterlinLineChoices.IndexInEnabled(InterlinLineChoices.kflidMorphemes);
 					if (!fOnNextLine)
 					{
 						startLineIndex = currentLineIndex;
@@ -2204,10 +2204,10 @@ namespace LanguageExplorer.Controls.DetailControls
 						switch (tagObjProp)
 						{
 							case ktagSbMorphForm:
-								currentLineIndex = InterlinLineChoices.IndexOf(InterlinLineChoices.kflidMorphemes, ws);
+								currentLineIndex = InterlinLineChoices.IndexInEnabled(InterlinLineChoices.kflidMorphemes, ws);
 								if (fOnNextLine)
 								{
-									if (increment < 0 && InterlinLineChoices.IsFirstOccurrenceOfFlid(currentLineIndex))
+									if (increment < 0 && InterlinLineChoices.IsFirstEnabledOccurrenceOfFlid(currentLineIndex))
 									{
 										// try selecting the icon.
 										iNextMorphIndex = -1;
@@ -2225,7 +2225,7 @@ namespace LanguageExplorer.Controls.DetailControls
 								NextPositionForLexEntryText(increment, fOnNextLine, fIsPictureSel, out currentLineIndex, out startLineIndex, ref iNextMorphIndex);
 								break;
 							case ktagSbWordPos: // line 7, WordPos.
-								currentLineIndex = InterlinLineChoices.IndexOf(InterlinLineChoices.kflidWordPos);
+								currentLineIndex = InterlinLineChoices.IndexInEnabled(InterlinLineChoices.kflidWordPos);
 								// try selecting the icon.
 								if (increment < 0 && !fIsPictureSel)
 								{
@@ -2259,9 +2259,9 @@ namespace LanguageExplorer.Controls.DetailControls
 			var nextLine = startLineIndex;
 			if (startLineIndex < 0)
 			{
-				nextLine = InterlinLineChoices.Count - 1;
+				nextLine = InterlinLineChoices.EnabledCount - 1;
 			}
-			if (InterlinLineChoices[nextLine].Flid == InterlinLineChoices.kflidWordGloss || InterlinLineChoices[nextLine].Flid == InterlinLineChoices.kflidMorphemes)
+			if (InterlinLineChoices.EnabledLineSpecs[nextLine].Flid == InterlinLineChoices.kflidWordGloss || InterlinLineChoices.EnabledLineSpecs[nextLine].Flid == InterlinLineChoices.kflidMorphemes)
 			{
 				fSkipIcon = true;
 			}
@@ -2374,7 +2374,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						return true;
 					}
 					// move to the start of the next morpheme.
-					SelectAtStartOfMorph(index + 1, InterlinLineChoices.PreviousOccurrences(currentLineIndex));
+					SelectAtStartOfMorph(index + 1, InterlinLineChoices.PreviousEnabledOccurrences(currentLineIndex));
 				}
 				else
 				{
@@ -2385,7 +2385,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						return true;
 					}
 					// move to the end of the previous morpheme.
-					SelectAtEndOfMorph(index - 1, InterlinLineChoices.PreviousOccurrences(currentLineIndex));
+					SelectAtEndOfMorph(index - 1, InterlinLineChoices.PreviousEnabledOccurrences(currentLineIndex));
 				}
 
 				return true;
@@ -2666,14 +2666,14 @@ namespace LanguageExplorer.Controls.DetailControls
 			{
 				// since we're in the gloss tab first try to select the text of the word gloss,
 				// for speed-glossing (LT-8371)
-				var startingIndex = InterlinLineChoices.IndexOf(InterlinLineChoices.kflidWordGloss);
+				var startingIndex = InterlinLineChoices.IndexInEnabled(InterlinLineChoices.kflidWordGloss);
 				if (startingIndex != -1)
 				{
 					SelectOnOrBeyondLine(startingIndex, 1, -1, true, false);
 					return;
 				}
 				// next try for WordPos
-				startingIndex = InterlinLineChoices.IndexOf(InterlinLineChoices.kflidWordPos);
+				startingIndex = InterlinLineChoices.IndexInEnabled(InterlinLineChoices.kflidWordPos);
 				if (startingIndex != -1)
 				{
 					SelectOnOrBeyondLine(startingIndex, 1, -1, false, false);
@@ -2742,7 +2742,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void NextPositionForLexEntryText(int increment, bool fOnNextLine, bool fIsPictureSel, out int currentLineIndex, out int startLineIndex, ref int iNextMorphIndex)
 		{
-			currentLineIndex = InterlinLineChoices.IndexOf(InterlinLineChoices.kflidLexEntries);
+			currentLineIndex = InterlinLineChoices.IndexInEnabled(InterlinLineChoices.kflidLexEntries);
 			if (increment < 0 && !fIsPictureSel)
 			{
 				// try selecting the icon just before the current selection.
@@ -2813,19 +2813,19 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			if (!fWrapToNextLine)
 			{
-				limitLine = increment > 0 ? InterlinLineChoices.Count : -1;
+				limitLine = increment > 0 ? InterlinLineChoices.EnabledCount : -1;
 			}
 			var fFirstTime = fWrapToNextLine;
 			for (var ispec = startLine; fFirstTime || ispec != limitLine; ispec += increment, fFirstTime = false)
 			{
 				var ispecOrig = ispec;
-				if (ispec == InterlinLineChoices.Count)
+				if (ispec == InterlinLineChoices.EnabledCount)
 				{
 					ispec = 0; // wrap around to top
 				}
 				if (ispec < 0)
 				{
-					ispec = InterlinLineChoices.Count - 1; // wrap around to bottom.
+					ispec = InterlinLineChoices.EnabledCount - 1; // wrap around to bottom.
 				}
 				if (ispec != ispecOrig)
 				{
@@ -2835,11 +2835,11 @@ namespace LanguageExplorer.Controls.DetailControls
 						return false;
 					}
 				}
-				var spec = InterlinLineChoices[ispec];
+				var spec = InterlinLineChoices.EnabledLineSpecs[ispec];
 				switch (spec.Flid)
 				{
 					case InterlinLineChoices.kflidWord:
-						if (!fSkipIconToTextField && InterlinLineChoices.PreviousOccurrences(ispec) == 0)
+						if (!fSkipIconToTextField && InterlinLineChoices.PreviousEnabledOccurrences(ispec) == 0)
 						{
 							if (ShowAnalysisCombo)
 							{
@@ -2851,7 +2851,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						else
 						{
 							// make a selection in an alternative writing system.
-							MoveSelection(new SelLevInfo[0], ktagSbWordForm, InterlinLineChoices.PreviousOccurrences(ispec));
+							MoveSelection(new SelLevInfo[0], ktagSbWordForm, InterlinLineChoices.PreviousEnabledOccurrences(ispec));
 							return true;
 						}
 					case InterlinLineChoices.kflidMorphemes:
@@ -2863,7 +2863,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 						if (iMorph >= 0 && iMorph < cMorphs)
 						{
-							SelectAtStartOfMorph(iMorph, InterlinLineChoices.PreviousOccurrences(ispec));
+							SelectAtStartOfMorph(iMorph, InterlinLineChoices.PreviousEnabledOccurrences(ispec));
 						}
 						else
 						{
@@ -2873,7 +2873,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					case InterlinLineChoices.kflidLexEntries:
 					case InterlinLineChoices.kflidLexGloss:
 					case InterlinLineChoices.kflidLexPos:
-						if (ispec != InterlinLineChoices.FirstLexEntryIndex)
+						if (ispec != InterlinLineChoices.FirstEnabledLexEntryIndex)
 						{
 							break;
 						}
@@ -2888,7 +2888,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						}
 						return true;
 					case InterlinLineChoices.kflidWordGloss:
-						if (!fSkipIconToTextField && m_vc.ShowWordGlossIcon && InterlinLineChoices.PreviousOccurrences(ispec) == 0)
+						if (!fSkipIconToTextField && m_vc.ShowWordGlossIcon && InterlinLineChoices.PreviousEnabledOccurrences(ispec) == 0)
 						{
 							SelectIcon(ktagWordGlossIcon);
 						}
@@ -2904,7 +2904,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						}
 						return true;
 					case InterlinLineChoices.kflidWordPos:
-						if (InterlinLineChoices.PreviousOccurrences(ispec) != 0)
+						if (InterlinLineChoices.PreviousEnabledOccurrences(ispec) != 0)
 						{
 							break;
 						}
@@ -2931,7 +2931,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		}
 		private bool SelectAtStartOfMorph(int index, int cprevOccurrences)
 		{
-			if (InterlinLineChoices.IndexOf(InterlinLineChoices.kflidMorphemes) < 0)
+			if (InterlinLineChoices.IndexInEnabled(InterlinLineChoices.kflidMorphemes) < 0)
 			{
 				return false;
 			}
@@ -2974,7 +2974,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				selectIndexMorph[1].tag = ktagSbWordMorphs;
 				selectIndexMorph[1].ihvo = index;
 				var hvoNamedObj = sda.get_ObjectProp(hvoMorph, ktagSbMorphForm);
-				var matchingSpecs = InterlinLineChoices.ItemsWithFlids(new[] { InterlinLineChoices.kflidMorphemes });
+				var matchingSpecs = InterlinLineChoices.EnabledItemsWithFlids(new[] { InterlinLineChoices.kflidMorphemes });
 				var specMorphemes = matchingSpecs[cPrevOccurrences];
 				var ws = specMorphemes.WritingSystem;
 				if (specMorphemes.IsMagicWritingSystem)
@@ -3075,7 +3075,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						return true;
 					}
 					// move to the end of the previous morpheme.
-					SelectAtEndOfMorph(index - 1, InterlinLineChoices.PreviousOccurrences(currentLineIndex));
+					SelectAtEndOfMorph(index - 1, InterlinLineChoices.PreviousEnabledOccurrences(currentLineIndex));
 				}
 				else
 				{
@@ -3086,7 +3086,7 @@ namespace LanguageExplorer.Controls.DetailControls
 						return true;
 					}
 					// move to the start of the next morpheme.
-					SelectAtStartOfMorph(index + 1, InterlinLineChoices.PreviousOccurrences(currentLineIndex));
+					SelectAtStartOfMorph(index + 1, InterlinLineChoices.PreviousEnabledOccurrences(currentLineIndex));
 				}
 
 				return true;
@@ -3459,7 +3459,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		internal void ClearAllGlosses()
 		{
 			var cda = (IVwCacheDa)Caches.DataAccess;
-			foreach (var wsId in InterlinLineChoices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss, true))
+			foreach (var wsId in InterlinLineChoices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss, true))
 			{
 				cda.CacheStringAlt(kSbWord, ktagSbWordGloss, wsId, TsStringUtils.EmptyString(wsId));
 			}
@@ -4543,9 +4543,9 @@ namespace LanguageExplorer.Controls.DetailControls
 								vwenv.set_IntProperty((int)FwTextPropType.ktptAlign, (int)FwTextPropVar.ktpvEnum, (int)FwTextAlign.ktalRight);
 							}
 							vwenv.OpenInnerPile();
-							for (var ispec = 0; ispec < m_choices.Count;)
+							for (var ispec = 0; ispec < m_choices.EnabledCount;)
 							{
-								var spec = m_choices[ispec];
+								var spec = m_choices.EnabledLineSpecs[ispec];
 								if (!spec.WordLevel)
 								{
 									break;
@@ -4553,7 +4553,7 @@ namespace LanguageExplorer.Controls.DetailControls
 								if (spec.MorphemeLevel)
 								{
 									DisplayMorphBundles(vwenv, hvo);
-									ispec = m_choices.LastMorphemeIndex + 1;
+									ispec = m_choices.LastEnabledMorphemeIndex + 1;
 									continue;
 								}
 								switch (spec.Flid)
@@ -4580,14 +4580,14 @@ namespace LanguageExplorer.Controls.DetailControls
 						case kfragMorph: // The bundle of 4 lines representing a morpheme.
 							vwenv.set_IntProperty((int)FwTextPropType.ktptMarginTrailing, (int)FwTextPropVar.ktpvMilliPoint, 10000);
 							vwenv.OpenInnerPile();
-							for (var ispec = m_choices.FirstMorphemeIndex; ispec <= m_choices.LastMorphemeIndex; ispec++)
+							for (var ispec = m_choices.FirstEnabledMorphemeIndex; ispec <= m_choices.LastEnabledMorphemeIndex; ispec++)
 							{
 								var tagLexEntryIcon = 0;
-								if (m_choices.FirstLexEntryIndex == ispec)
+								if (m_choices.FirstEnabledLexEntryIndex == ispec)
 								{
 									tagLexEntryIcon = ktagMorphEntryIcon;
 								}
-								var spec = m_choices[ispec];
+								var spec = m_choices.EnabledLineSpecs[ispec];
 								switch (spec.Flid)
 								{
 									case InterlinLineChoices.kflidMorphemes:
@@ -4607,9 +4607,9 @@ namespace LanguageExplorer.Controls.DetailControls
 							vwenv.CloseInnerPile();
 							break;
 						default:
-							if (frag >= kfragNamedObjectNameChoices && frag < kfragNamedObjectNameChoices + m_choices.Count)
+							if (frag >= kfragNamedObjectNameChoices && frag < kfragNamedObjectNameChoices + m_choices.EnabledCount)
 							{
-								vwenv.AddStringAltMember(ktagSbNamedObjName, GetActualWs(hvo, ktagSbNamedObjName, m_choices[frag - kfragNamedObjectNameChoices].WritingSystem), this);
+								vwenv.AddStringAltMember(ktagSbNamedObjName, GetActualWs(hvo, ktagSbNamedObjName, m_choices.EnabledLineSpecs[frag - kfragNamedObjectNameChoices].WritingSystem), this);
 							}
 							else
 							{
@@ -4679,19 +4679,19 @@ namespace LanguageExplorer.Controls.DetailControls
 				return wsActual;
 			}
 
-			private void DisplayMorphForm(IVwEnv vwenv, int frag, int choiceIndex)
+			private void DisplayMorphForm(IVwEnv vwenv, int frag, int enabledChoiceIndex)
 			{
 				// Allow editing of the morpheme breakdown line.
-				SetColor(vwenv, m_choices.LabelRGBFor(choiceIndex));
+				SetColor(vwenv, m_choices.LabelRGBForEnabled(enabledChoiceIndex));
 				// On this line we want an icon only for the first column (and only if it is the first
 				// occurrence of the flid).
-				var fWantIcon = IsMorphemeFormEditable && frag == kfragFirstMorph && m_choices.IsFirstOccurrenceOfFlid(choiceIndex);
+				var fWantIcon = IsMorphemeFormEditable && frag == kfragFirstMorph && m_choices.IsFirstEnabledOccurrenceOfFlid(enabledChoiceIndex);
 				if (!fWantIcon)
 				{
 					SetIndentForMissingIcon(vwenv);
 				}
 				vwenv.OpenParagraph();
-				var fFirstMorphLine = m_choices.IndexOf(InterlinLineChoices.kflidMorphemes) == choiceIndex;
+				var fFirstMorphLine = m_choices.IndexInEnabled(InterlinLineChoices.kflidMorphemes) == enabledChoiceIndex;
 				if (fWantIcon) // Review JohnT: should we do the 'edit box' for all first columns?
 				{
 					AddPullDownIcon(vwenv, ktagMorphFormIcon);
@@ -4705,7 +4705,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, krgbEditable);
 				}
 				// Per LT-14891, morpheme form is not editable except for the default vernacular.
-				if (IsMorphemeFormEditable && m_choices.IsFirstOccurrenceOfFlid(choiceIndex))
+				if (IsMorphemeFormEditable && m_choices.IsFirstEnabledOccurrenceOfFlid(enabledChoiceIndex))
 				{
 					MakeNextFlowObjectEditable(vwenv);
 				}
@@ -4720,7 +4720,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					vwenv.AddStringProp(ktagSbMorphPrefix, this);
 				}
 				// This is never missing, but may, or may not, be editable.
-				vwenv.AddObjProp(ktagSbMorphForm, this, kfragNamedObjectNameChoices + choiceIndex);
+				vwenv.AddObjProp(ktagSbMorphForm, this, kfragNamedObjectNameChoices + enabledChoiceIndex);
 				if (fFirstMorphLine)
 				{
 					vwenv.AddStringProp(ktagSbMorphPostfix, this);
@@ -4737,7 +4737,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				AddOptionalNamedObj(vwenv, hvo, ktagSbWordPos, ktagMissingWordPos, kfragMissingWordPos, ktagWordPosIcon, choiceIndex);
 			}
 
-			private void DisplayWordGloss(IVwEnv vwenv, int ws, int choiceIndex)
+			private void DisplayWordGloss(IVwEnv vwenv, int ws, int enabledChoiceIndex)
 			{
 				// Count how many glosses there are for the current analysis:
 				var cGlosses = 0;
@@ -4748,10 +4748,10 @@ namespace LanguageExplorer.Controls.DetailControls
 				{
 					cGlosses = wa.MeaningsOC.Count;
 				}
-				SetColor(vwenv, m_choices.LabelRGBFor(choiceIndex));
+				SetColor(vwenv, m_choices.LabelRGBForEnabled(enabledChoiceIndex));
 				// Icon only if we want icons at all (currently always true) and there is at least one WfiGloss to choose
 				// and this is the first word gloss line.
-				var fWantIcon = m_fIconsForAnalysisChoices && (cGlosses > 0 || m_sandbox.ShouldAddWordGlossToLexicon) && m_choices.IsFirstOccurrenceOfFlid(choiceIndex);
+				var fWantIcon = m_fIconsForAnalysisChoices && (cGlosses > 0 || m_sandbox.ShouldAddWordGlossToLexicon) && m_choices.IsFirstEnabledOccurrenceOfFlid(enabledChoiceIndex);
 				// If there isn't going to be an icon, add an indent.
 				if (!fWantIcon)
 				{
@@ -4814,7 +4814,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				MakeNextFlowObjectReadOnly(vwenv);
 				if (vwenv.DataAccess.get_VecSize(hvo, ktagSbWordMorphs) == 0)
 				{
-					SetColor(vwenv, m_choices.LabelRGBFor(m_choices.IndexOf(InterlinLineChoices.kflidMorphemes)));
+					SetColor(vwenv, m_choices.LabelRGBForEnabled(m_choices.IndexInEnabled(InterlinLineChoices.kflidMorphemes)));
 					vwenv.AddProp(ktagMissingMorphs, this, kfragMissingMorphs);
 					// Blank lines to fill up the gap; LexEntry line
 					vwenv.AddString(m_tssEmptyVern);
@@ -4924,13 +4924,13 @@ namespace LanguageExplorer.Controls.DetailControls
 			/// <param name="dummyFrag"></param>
 			/// <param name="tagIcon">If non-zero, display a pull-down icon before the item, marked with this tag.</param>
 			/// <param name="ws">which alternative of the name to display</param>
-			/// <param name="choiceIndex">which item in m_choices this comes from. The icon is displayed
+			/// <param name="enabledChoiceIndex">which enabled item in m_choices this comes from. The icon is displayed
 			/// only if it is the first one for its flid.</param>
-			private void AddOptionalNamedObj(IVwEnv vwenv, int hvo, int tag, int dummyTag, int dummyFrag, int tagIcon, int choiceIndex)
+			private void AddOptionalNamedObj(IVwEnv vwenv, int hvo, int tag, int dummyTag, int dummyFrag, int tagIcon, int enabledChoiceIndex)
 			{
 				var hvoNo = vwenv.DataAccess.get_ObjectProp(hvo, tag);
-				SetColor(vwenv, m_choices.LabelRGBFor(choiceIndex));
-				var fWantIcon = tagIcon != 0 && m_choices.IsFirstOccurrenceOfFlid(choiceIndex);
+				SetColor(vwenv, m_choices.LabelRGBForEnabled(enabledChoiceIndex));
+				var fWantIcon = tagIcon != 0 && m_choices.IsFirstEnabledOccurrenceOfFlid(enabledChoiceIndex);
 				if (m_fIconsForAnalysisChoices && !fWantIcon)
 				{
 					// This line does not have one, but add some white space to line things up.
@@ -4950,7 +4950,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				}
 				else
 				{
-					vwenv.AddObjProp(tag, this, kfragNamedObjectNameChoices + choiceIndex);
+					vwenv.AddObjProp(tag, this, kfragNamedObjectNameChoices + enabledChoiceIndex);
 				}
 				vwenv.CloseParagraph();
 			}

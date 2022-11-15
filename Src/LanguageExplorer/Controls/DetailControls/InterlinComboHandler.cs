@@ -694,7 +694,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			var sda = m_caches.DataAccess;
 			m_caches.DataAccess.SetInt(m_hvoSbWord, SandboxBase.ktagSbWordGlossGuess, 1);
 			var hvoRealSense = m_caches.RealHvo(hvoSbRootSense);
-			foreach (var wsId in m_sandbox.InterlinLineChoices.WritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
+			foreach (var wsId in m_sandbox.InterlinLineChoices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
 			{
 				// Update the guess, by copying the glosses of the SbNamedObj representing the sense
 				// to the word gloss property.
