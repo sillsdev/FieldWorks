@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using LanguageExplorer.Areas.Lexicon;
@@ -1255,7 +1256,9 @@ namespace LanguageExplorer.Controls.DetailControls
 					// use m_vwenv.set_IntProperty to set ktptBackColor for cells where the ChOrph could be inserted
 					m_vwenv.set_IntProperty((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, (int)ColorUtil.ConvertColorToBGR(Color.LightGreen));
 				}
-				OpenStandardCell(m_vwenv, ccols, m_chartBody.Logic.GroupEndIndices.Contains(icol));
+
+				var columnsRow = m_chartBody.Logic.ColumnsAndGroups.Headers.Last();
+				OpenStandardCell(m_vwenv, ccols, columnsRow[icol].IsLastInGroup);
 			}
 
 			private void OpenNoteCell()
