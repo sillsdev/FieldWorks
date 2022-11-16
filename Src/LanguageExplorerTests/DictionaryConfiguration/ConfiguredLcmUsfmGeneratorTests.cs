@@ -5,15 +5,17 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using LanguageExplorer;
+using LanguageExplorer.DictionaryConfiguration;
+using LanguageExplorer.Impls;
+using LanguageExplorerTests.DictionaryConfiguration;
 using NUnit.Framework;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.TestUtilities;
-using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -41,7 +43,7 @@ namespace SIL.FieldWorks.XWorks
 		private int m_wsEn;
 
 		private ConfigurableDictionaryNode m_configNode;
-		private ConfiguredLcmGenerator.GeneratorSettings m_settings;
+		private GeneratorSettings m_settings;
 
 		private PropertyTable m_propertyTable;
 		private FwXApp m_application;
@@ -59,7 +61,7 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable = m_window.PropTable;
 
 			m_configNode = CreateInterestingEntryNode();
-			m_settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			m_settings = new GeneratorSettings(Cache, m_propertyTable, false, false, null);
 
 			m_wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			m_usfmField = new CustomFieldForTest(Cache, USFMFieldName, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"),
@@ -413,7 +415,7 @@ namespace SIL.FieldWorks.XWorks
 			var entry = CreateInterestingLexEntry($"{TR} {junk}");
 			// SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings);
-			var expected = string.Format(xWorksStrings.InvalidUSFM_TextAfterTR, junk);
+			var expected = string.Format(DictionaryConfigurationStrings.InvalidUSFM_TextAfterTR, junk);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField +
 				$"//span[{StyleBigRed} and text() = '{expected}']", 1);
 			Assert.That(result, Does.Not.Contain("/>"));
@@ -428,7 +430,7 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, m_configNode, null, m_settings);
 
-			var expected = string.Format(xWorksStrings.InvalidUSFM_TextAfterTR, junk);
+			var expected = string.Format(DictionaryConfigurationStrings.InvalidUSFM_TextAfterTR, junk);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField +
 				$"//span[{StyleBigRed} and text() = '{expected}']", 1);
 			Assert.That(result, Does.Not.Contain("/>"));
