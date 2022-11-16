@@ -219,6 +219,19 @@ namespace LanguageExplorer.Impls
 
 		#endregion
 
+		/// <summary>
+		/// Used for situations where a project is not yet loaded, as in the Welcome screen
+		/// </summary>
+		internal void InitHelpTopicOnly(IHelpTopicProvider provider)
+		{
+			m_helpTopicProvider = provider;
+			_helpProvider = new HelpProvider
+			{
+				HelpNamespace = m_helpTopicProvider.HelpFile
+			};
+			_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
+			_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
+		}
 		public string NewUserWs { get; private set; }
 
 		private void PrivacyLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
