@@ -2268,8 +2268,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				if (bldr.Length > 0)
 				{
-					// Do we not have/want a class from the config node?
-					return settings.ContentGenerator.WriteProcessedObject(true, bldr.ToString(), null);
+					return settings.ContentGenerator.WriteProcessedCollection(true, bldr.ToString(), GetClassNameAttributeForConfig(config));
 				}
 				return String.Empty;
 			}

@@ -441,7 +441,7 @@ namespace SIL.FieldWorks.XWorks
 			return morph;
 		}
 
-		private static IStText CreateMultiParaText(string content, LcmCache cache)
+		internal static IStText CreateMultiParaText(string content, LcmCache cache)
 		{
 			var text = cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 			//cache.LangProject.
