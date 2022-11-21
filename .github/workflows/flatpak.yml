@@ -144,10 +144,6 @@ jobs:
         run: |
           set -xueo pipefail
           cd "${FLATPAK_DIR}"
-          flatpak --user remote-add --no-gpg-verify --if-not-exists \
-            local-repo ./local-repo
-          flatpak --user install --or-update --noninteractive local-repo \
-            org.sil.FieldWorks org.sil.FieldWorks.Debug
           base_package_name="fieldworks-${{ env.PACKAGE_VERSION }}"
           flatpak build-bundle           ./local-repo "${base_package_name}.flatpak"        org.sil.FieldWorks
           flatpak build-bundle --runtime ./local-repo "${base_package_name}-Debug.flatpak"  org.sil.FieldWorks.Debug
