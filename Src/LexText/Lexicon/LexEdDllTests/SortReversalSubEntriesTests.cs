@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,6 +6,7 @@ using NUnit.Framework;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel;
 using SIL.FieldWorks.XWorks.LexEd;
+using SIL.LCModel.DomainServices;
 
 namespace LexEdDllTests
 {
@@ -43,7 +44,24 @@ namespace LexEdDllTests
 			CollectionAssert.AreEqual(reversalMainEntry.SubentriesOS, new[] { subEntryA, subEntryB, subEntryZ });
 		}
 
-		protected IReversalIndexEntry CreateReversalIndexEntry(string riForm)
+		[Test]
+		public void SortReversalSubEntries_FallsBackWithoutCrashingOnFancyWritingSystem()
+		{
+			// Create en-x-srt ws and reversal to go with it
+			WritingSystemServices.FindOrCreateWritingSystem(Cache, TestDirectoryFinder.TemplateDirectory, "en-x-srt", true, false, out var enSrtWs);
+			var revIndex = m_revIndexRepo.FindOrCreateIndexForWs(enSrtWs.Handle);
+			var reversalMainEntry = CreateReversalIndexEntry("a");
+			var subEntryZ = CreateReversalIndexSubEntry("z", reversalMainEntry);
+			var subEntryB = CreateReversalIndexSubEntry("b", reversalMainEntry);
+			var subEntryA = CreateReversalIndexSubEntry("a", reversalMainEntry);
+			// Verify initial incorrect order
+			CollectionAssert.AreEqual(reversalMainEntry.SubentriesOS, new[] { subEntryZ, subEntryB, subEntryA });
+			// SUT
+			SortReversalSubEntries.SortReversalSubEntriesInPlace(Cache);
+			CollectionAssert.AreEqual(reversalMainEntry.SubentriesOS, new[] { subEntryA, subEntryB, subEntryZ });
+		}
+
+	  protected IReversalIndexEntry CreateReversalIndexEntry(string riForm)
 		{
 			var revIndexEntry = m_revIndexEntryFactory.Create();
 			var wsObj = Cache.LanguageProject.DefaultAnalysisWritingSystem;
