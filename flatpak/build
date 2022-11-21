@@ -51,13 +51,9 @@ perl -pi -e \
 # Using --no-shallow-clone for flexbridge for GitVersion.
 flatpak run org.flatpak.Builder --user --state-dir="${STATE_DIR}" \
   --repo="${REPO_DIR}" --keep-build-dirs --no-shallow-clone \
-  --force-clean "${BUILD_DIR}" org.sil.FieldWorks.yml "$@"
+  --disable-updates --force-clean --install-deps-from=flathub \
+  "${BUILD_DIR}" org.sil.FieldWorks.yml "$@"
 flatpak --user remote-add --no-gpg-verify --if-not-exists \
   local-repo "${REPO_DIR}"
-# If a FieldWorks flatpak is already installed, such as from a downloaded
-# .flatpak file, remove it so we don't fail to install what we just built.
-flatpak remove --assumeyes \
-  org.sil.FieldWorks org.sil.FieldWorks.Debug org.sil.FieldWorks.Locale ||
-    echo "flatpak packages were not already installed."
-flatpak --user install --or-update --noninteractive local-repo \
-  org.sil.FieldWorks org.sil.FieldWorks.Debug
+flatpak --user install --reinstall --or-update --noninteractive local-repo \
+  org.sil.FieldWorks org.sil.FieldWorks.Locale org.sil.FieldWorks.Debug
