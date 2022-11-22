@@ -2448,7 +2448,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Upload successful. Preparing your data for publication. This may take several minutes to a few hours depending on the size of your dictionary. You will receive an email when the process is complete. You can examine the progress on the admin page of your Webonary site. You may now safely close this dialog..
+        ///   Looks up a localized string similar to Upload successful. Preparing your data for publication. Please check your Webonary site. You may now safely close this dialog..
         /// </summary>
         internal static string ksWebonaryUploadSuccessful {
             get {
@@ -3004,6 +3004,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string WantContinue {
             get {
                 return ResourceManager.GetString("WantContinue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unexpected error encountered while uploading to webonary..
+        /// </summary>
+        internal static string Webonary_UnexpectedUploadError {
+            get {
+                return ResourceManager.GetString("Webonary_UnexpectedUploadError", resourceCulture);
             }
         }
         

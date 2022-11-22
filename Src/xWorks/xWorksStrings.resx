@@ -1015,7 +1015,7 @@ See USFM documentation for help.</value>
     <comment>Message displayed in Upload to Webonary dialog when there is an error connecting. {0} is a newline; {1} is the HTTP status code (e.g. 404); {2} is the error message.</comment>
   </data>
   <data name="ksWebonaryUploadSuccessful" xml:space="preserve">
-    <value>Upload successful. Preparing your data for publication. This may take several minutes to a few hours depending on the size of your dictionary. You will receive an email when the process is complete. You can examine the progress on the admin page of your Webonary site. You may now safely close this dialog.</value>
+    <value>Upload successful. Preparing your data for publication. Please check your Webonary site. You may now safely close this dialog.</value>
   </data>
   <data name="ksWebonaryUploadSuccessfulErrorProcessing" xml:space="preserve">
     <value>The upload was successful; however, there were errors processing your data.</value>
@@ -1255,5 +1255,8 @@ See USFM documentation for help.</value>
   </data>
   <data name="ImportTranslatedGramCatsPrompt" xml:space="preserve">
     <value>Importing translated grammatical category content will update all grammatical categories (parts of speech) in this project with the latest translations for all Analysis Writing Systems, including English.</value>
+  </data>
+  <data name="Webonary_UnexpectedUploadError" xml:space="preserve">
+    <value>Unexpected error encountered while uploading to webonary.</value>
   </data>
 </root>

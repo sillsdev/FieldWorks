@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Web;
+using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SIL.Code;
@@ -585,10 +586,11 @@ namespace SIL.FieldWorks.XWorks
 				}
 				catch (Exception e)
 				{
-					//TODO: i18n this error string
-					view.UpdateStatus("Unexpected error encountered while uploading to webonary.");
-					view.UpdateStatus(e.Message);
-					view.UpdateStatus(e.StackTrace);
+					using (var reporter = new SilErrorReportingAdapter(view as Form, m_propertyTable))
+					{
+						reporter.ReportNonFatalExceptionWithMessage(e, xWorksStrings.Webonary_UnexpectedUploadError);
+					}
+					view.UpdateStatus(xWorksStrings.Webonary_UnexpectedUploadError);
 					view.SetStatusCondition(WebonaryStatusCondition.Error);
 					TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Failed);
 				}
