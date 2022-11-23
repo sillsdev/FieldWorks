@@ -3582,7 +3582,7 @@ namespace SIL.FieldWorks.IText
 			}
 
 			// REVIEW: do we need to worry about changing the previous and next words?
-			LoadRealDataIntoSec(true, false, false);
+			LoadRealDataIntoSec(!IsNewAnalysisSelected(handler), false, false);
 			OnUpdateEdited();
 			m_fShowAnalysisCombo = true; // we must want this icon, because we were previously showing it!
 			m_rootb.Reconstruct();
@@ -3601,6 +3601,12 @@ namespace SIL.FieldWorks.IText
 			}
 			if (!fMadeSelection)
 				MakeDefaultSelection();
+		}
+
+		private bool IsNewAnalysisSelected(ChooseAnalysisHandler handler)
+		{
+			// SetupCombo sets this tag for the New Analysis menu item
+			return handler.SelectedItem?.Tag == WfiWordformTags.kClassId;
 		}
 
 		// This just makes the combo visible again. It is more common to tell the ComboHandler
