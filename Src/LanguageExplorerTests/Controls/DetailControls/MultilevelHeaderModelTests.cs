@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using LanguageExplorerTests.Controls.DetailControls;
 using NUnit.Framework;
 using SIL.LCModel;
 
@@ -15,7 +16,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			if (m_actionHandler.CurrentDepth == 0)
 				m_actionHandler.BeginUndoTask("undoSetup", "redoSetup");
-			m_helper = new DiscourseTestHelper(Cache) { Logic = new TestCCLogic(Cache) };
+			m_helper = new DiscourseTestHelper(Cache) { Logic = new TestCCLogic(Cache, null, null) };
 			m_helper.MakeTemplate(out _);
 		}
 

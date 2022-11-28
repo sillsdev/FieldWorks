@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Xml;
+using System.Xml.Linq;
 using LanguageExplorer.Controls.XMLViews;
 using LanguageExplorer.TestUtilities;
 using NUnit.Framework;
@@ -14,6 +14,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.WritingSystems;
+using static LanguageExplorer.Controls.XMLViews.ConfiguredExport;
 
 namespace LanguageExplorerTests.Controls.XMLViews
 {
@@ -206,12 +207,11 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			ws.DefaultCollation = new IcuRulesCollationDefinition("standard") { IcuRules = "&[last tertiary ignorable] ='eb-'='oba-'='ba-'" };
 
 			var exporter = new ConfiguredExport(null, null, 0);
-			string output;
 			using (var stream = new MemoryStream())
 			{
 				using (var writer = new StreamWriter(stream))
 				{
-					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
+					exporter.Initialize(Cache, _flexComponentParameters.PropertyTable, writer, null, "xhtml", null, "dicBody");
 					Dictionary<string, string> mapChars = null;
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
@@ -358,7 +358,7 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			Cache.ServiceLocator.WritingSystemManager.GetOrSet("ipo", out var wsDef);
 			Cache.ServiceLocator.WritingSystems.AddToCurrentVernacularWritingSystems(wsDef);
 			string entryLetter = "\U00016F00\U00016F51\U00016F61\U00016F90";
-			var wsDigraphMap = new Dictionary<string, ISet<string>>();
+			var wsDigraphMap = new Dictionary<string, Dictionary<string, CollationLevel>>();
 			var wsCharEquivalentMap = new Dictionary<string, Dictionary<string, string>>();
 			var wsIgnorableCharMap = new Dictionary<string, ISet<string>>();
 			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar(entryLetter, "ipo", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, null, Cache));
@@ -413,7 +413,6 @@ namespace LanguageExplorerTests.Controls.XMLViews
 			var wsIgnorableCharMap = new Dictionary<string, ISet<string>>();
 			Assert.DoesNotThrow(() => data = ConfiguredExport.GetLeadChar(headword, "tkr", wsDigraphMap, wsCharEquivalentMap, wsIgnorableCharMap, null, Cache));
 			Assert.That(data, Is.EqualTo("\u0131"), "When using Azerbaijani casing, dotted and undotted I's are different letters.");
->>>>>>> develop:Src/Common/Controls/XMLViews/XMLViewsTests/ConfiguredExportTests.cs
 		}
 
 		/// <summary>

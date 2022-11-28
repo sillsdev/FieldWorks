@@ -14,7 +14,6 @@ using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
-using XCore;
 // ReSharper disable PossibleNullReferenceException - we trust that XML documents are well formed.
 
 namespace LanguageExplorerTests.Controls.DetailControls
@@ -163,10 +162,10 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			m_constChart.NotesColumnOnRight = isNotesOnRight;
 			m_chartBody.IsRightToLeft = isRtl;
+			var vc = new ConstChartVc(m_chartBody) { LineChoices = m_chartBody.LineChoices };
 
 			using (var stream = new MemoryStream())
 			using (var writer = new XmlTextWriter(stream, Encoding.UTF8))
-			using (var vc = new ConstChartVc(m_chartBody) {LineChoices = m_chartBody.LineChoices})
 			using (var exporter = new DiscourseExporter(Cache, writer, m_chart.Hvo, vc, Cache.DefaultAnalWs))
 			{
 				// SUT
@@ -205,9 +204,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			UngroupColumnsInTemplate();
 
+			var vc = new ConstChartVc(m_chartBody) { LineChoices = m_chartBody.LineChoices };
 			using (var stream = new MemoryStream())
 			using (var writer = new XmlTextWriter(stream, Encoding.UTF8))
-			using (var vc = new ConstChartVc(m_chartBody) {LineChoices = m_chartBody.LineChoices})
 			using (var exporter = new DiscourseExporter(Cache, writer, m_chart.Hvo, vc, Cache.DefaultAnalWs))
 			{
 				// SUT
@@ -245,9 +244,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		{
 			PlaceTemplateUnderStoryNode();
 
+			var vc = new ConstChartVc(m_chartBody) { LineChoices = m_chartBody.LineChoices };
 			using (var stream = new MemoryStream())
 			using (var writer = new XmlTextWriter(stream, Encoding.UTF8))
-			using (var vc = new ConstChartVc(m_chartBody) {LineChoices = m_chartBody.LineChoices})
 			using (var exporter = new DiscourseExporter(Cache, writer, m_chart.Hvo, vc, Cache.DefaultAnalWs))
 			{
 				// SUT
@@ -289,9 +288,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		[Test]
 		public void DisplayChartBody()
 		{
+			var vc = new ConstChartVc(m_chartBody) { LineChoices = m_chartBody.LineChoices };
 			using (var stream = new MemoryStream())
 			using (var writer = new XmlTextWriter(stream, Encoding.UTF8))
-			using (var vc = new ConstChartVc(m_chartBody) {LineChoices = m_chartBody.LineChoices})
 			using (var exporter = new DiscourseExporter(Cache, writer, m_chart.Hvo, vc, Cache.DefaultAnalWs))
 			{
 				writer.WriteStartDocument();

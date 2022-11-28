@@ -12,7 +12,6 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgs.Controls;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
-using XCore;
 
 namespace LanguageExplorerTests.Controls.DetailControls
 {

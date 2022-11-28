@@ -13,6 +13,7 @@
   <ItemGroup>
     <PackageReference Include="Encoding-Converters-Core" Version="0.0.8" />
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
+    <PackageReference Include="Moq" Version="4.18.2" />
     <PackageReference Include="SIL.LCModel.Core.Tests" Version="10.2.0-beta0059" />
     <PackageReference Include="SIL.LCModel.Tests" Version="10.2.0-beta0059" />
     <PackageReference Include="SIL.LCModel.Utils.Tests" Version="10.2.0-beta0059" />
