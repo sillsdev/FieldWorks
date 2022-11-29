@@ -8,6 +8,7 @@ using System.IO;
 using LanguageExplorer;
 using LanguageExplorer.DictionaryConfiguration;
 using LanguageExplorer.Impls;
+using LanguageExplorer.TestUtilities;
 using LanguageExplorerTests.DictionaryConfiguration;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -44,24 +45,16 @@ namespace SIL.FieldWorks.XWorks
 
 		private ConfigurableDictionaryNode m_configNode;
 		private GeneratorSettings m_settings;
-
-		private PropertyTable m_propertyTable;
-		private FwXApp m_application;
-		private FwXWindow m_window;
+		private FlexComponentParameters _flexComponentParameters;
 
 		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
 			FwRegistrySettings.Init();
-			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
-			var configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
-			m_window = new MockFwXWindow(m_application, configFilePath);
-			((MockFwXWindow)m_window).Init(Cache); // initializes Mediator values
-			m_propertyTable = m_window.PropTable;
-
+			_flexComponentParameters = TestSetupServices.SetupEverything(Cache);
 			m_configNode = CreateInterestingEntryNode();
-			m_settings = new GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			m_settings = new GeneratorSettings(Cache, new ReadOnlyPropertyTable(_flexComponentParameters.PropertyTable), false, false, null);
 
 			m_wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			m_usfmField = new CustomFieldForTest(Cache, USFMFieldName, Cache.MetaDataCacheAccessor.GetClassId("LexEntry"),
@@ -71,6 +64,8 @@ namespace SIL.FieldWorks.XWorks
 		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
+			TestSetupServices.DisposeTrash(_flexComponentParameters);
+			_flexComponentParameters = null;
 			Dispose();
 			FwRegistrySettings.Release();
 			base.FixtureTeardown();
@@ -85,9 +80,6 @@ namespace SIL.FieldWorks.XWorks
 			if (disposing && !IsDisposed)
 			{
 				m_usfmField?.Dispose();
-				m_application?.Dispose();
-				m_window?.Dispose();
-				m_propertyTable?.Dispose();
 			}
 			IsDisposed = true;
 		}
