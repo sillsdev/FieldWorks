@@ -4,9 +4,12 @@
 
 using System.Collections.Generic;
 using System.Reflection;
+using System.Windows.Forms;
 using LanguageExplorer.Controls.Styles;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 
 namespace LanguageExplorerTests.Controls.Styles
@@ -86,8 +89,8 @@ namespace LanguageExplorerTests.Controls.Styles
 			var stylesheet = new LcmStyleSheet();
 			stylesheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 
-			var sut = new DummyFwStylesDlg(null, Cache, stylesheet, false, false, "Normal", 0, MsrSysType.Cm,
-				selectedStyle, string.Empty, 0, null, null);
+			var sut = new DummyFwStylesDlg(null, Cache, stylesheet, false, false, "Normal", MsrSysType.Cm,
+				selectedStyle, string.Empty, null, null);
 
 			Assert.That(sut.TabControl.TabCount, Is.EqualTo(visibleTabs));
 			Assert.That(sut.TabControl.TabPages, Contains.Item(sut.TbGeneral), "The General tab should always be visible");
@@ -109,12 +112,12 @@ namespace LanguageExplorerTests.Controls.Styles
 			/// <inheritdoc/>
 			public DummyFwStylesDlg(IVwRootSite rootSite, LcmCache cache, LcmStyleSheet styleSheet,
 				bool defaultRightToLeft, bool showBiDiLabels, string normalStyleName,
-				int customUserLevel, MsrSysType userMeasurementType, string paraStyleName,
-				string charStyleName, int hvoRootObject, IApp app,
+				MsrSysType userMeasurementType, string paraStyleName,
+				string charStyleName, IApp app,
 				IHelpTopicProvider helpTopicProvider)
 				: base(rootSite, cache, styleSheet, defaultRightToLeft, showBiDiLabels,
-					normalStyleName, customUserLevel, userMeasurementType, paraStyleName,
-					charStyleName, hvoRootObject, app, helpTopicProvider)
+					normalStyleName, userMeasurementType, paraStyleName,
+					charStyleName, app, helpTopicProvider)
 			{
 			}
 

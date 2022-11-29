@@ -2,8 +2,13 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
 using LanguageExplorer.Controls.XMLViews;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace LanguageExplorerTests.Controls.XMLViews
 {
@@ -165,13 +170,13 @@ namespace LanguageExplorerTests.Controls.XMLViews
 
 			var columnDoc = new XmlDocument();
 			columnDoc.LoadXml(testColumns);
-			columnDoc.SelectNodes("column");
-			var testVc = new XmlBrowseViewBaseVc
+			var xElem = XElement.Load(columnDoc.DocumentElement.CreateNavigator().ReadSubtree());
+			var testVc = new XmlBrowseViewVc
 			{
-				ColumnSpecs = new List<XmlNode>(columnDoc.DocumentElement.GetElementsByTagName("column").OfType<XmlNode>())
+				ColumnSpecs = xElem.DescendantsAndSelf("column").ToList()
 			};
 
-			var columnLabels = XmlBrowseViewBaseVc.GetHeaderLabels(testVc);
+			var columnLabels = XmlBrowseViewVc.GetHeaderLabels(testVc, StringTable.Table);
 
 			CollectionAssert.AreEqual(new List<string> { "Ref", "Occurrence" }, columnLabels);
 		}

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using LanguageExplorer.Controls.DetailControls;
+using LanguageExplorer.Controls.XMLViews;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel;
@@ -19,7 +21,7 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void InitRowChoices_MorphemesHaveOwnTable()
 		{
-			var morphemeRows = new InterlinLineChoices(Cache, Cache.WritingSystemFactory.GetWsFromStr("fr"), Cache.WritingSystemFactory.GetWsFromStr("en"), InterlinLineChoices.InterlinMode.Analyze);
+			var morphemeRows = new InterlinLineChoices(Cache, Cache.WritingSystemFactory.GetWsFromStr("fr"), Cache.WritingSystemFactory.GetWsFromStr("en"), InterlinMode.Analyze);
 			morphemeRows.SetStandardState();
 			// Verify preconditions
 			Assert.That(morphemeRows.EnabledLineSpecs.Count, Is.EqualTo(8));
@@ -58,12 +60,12 @@ namespace SIL.FieldWorks.IText
 					var customRow = new InterlinLineChoices(Cache,
 						Cache.WritingSystemFactory.GetWsFromStr("fr"),
 						Cache.WritingSystemFactory.GetWsFromStr("en"),
-						InterlinLineChoices.InterlinMode.Analyze);
+						InterlinMode.Analyze);
 					customRow.Add(cf.Flid);
 					Assert.That(customRow.EnabledLineSpecs.Count, Is.EqualTo(1));
 					Assert.That(customRow.EnabledLineSpecs[0].WordLevel, Is.False);
 					Assert.That(customRow.EnabledLineSpecs[0].ComboContent,
-						Is.EqualTo(ColumnConfigureDialog.WsComboContent.kwccAnalysis));
+						Is.EqualTo(WsComboContent.kwccAnalysis));
 					// Set up two column combo items for analysis, one with the default ws handle, and one with indonesian
 					// the WritingSystemType and the WritingSystem(Handle) are used by the code to determine if a checkbox is needed
 					var columns = new List<WsComboItem>
@@ -126,12 +128,12 @@ namespace SIL.FieldWorks.IText
 					var customRow = new InterlinLineChoices(Cache,
 						Cache.WritingSystemFactory.GetWsFromStr("fr"),
 						Cache.WritingSystemFactory.GetWsFromStr("en"),
-						InterlinLineChoices.InterlinMode.Analyze);
+						InterlinMode.Analyze);
 					customRow.Add(cf.Flid);
 					Assert.That(customRow.EnabledLineSpecs.Count, Is.EqualTo(1));
 					Assert.That(customRow.EnabledLineSpecs[0].WordLevel, Is.False);
 					Assert.That(customRow.EnabledLineSpecs[0].ComboContent,
-						Is.EqualTo(ColumnConfigureDialog.WsComboContent.kwccAnalysis));
+						Is.EqualTo(WsComboContent.kwccAnalysis));
 					// Set up three column combo items:
 					//   One with the default analysis ws handle and a Type of "both" (both Analysis and Vernacular)
 					//   One with the default vernacular ws handle and a Type of "both" (both Analysis and Vernacular)
@@ -188,7 +190,7 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void InitRowChoices_ChartChoices()
 		{
-			var morphemeRows = new InterlinLineChoices(Cache, Cache.WritingSystemFactory.GetWsFromStr("fr"), Cache.WritingSystemFactory.GetWsFromStr("en"), InterlinLineChoices.InterlinMode.Chart);
+			var morphemeRows = new InterlinLineChoices(Cache, Cache.WritingSystemFactory.GetWsFromStr("fr"), Cache.WritingSystemFactory.GetWsFromStr("en"), InterlinMode.Chart);
 			morphemeRows.SetStandardChartState();
 			// Verify preconditions
 			Assert.That(morphemeRows.EnabledLineSpecs.Count, Is.EqualTo(6));

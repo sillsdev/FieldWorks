@@ -3,7 +3,9 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.IO;
+using LanguageExplorer.Controls.XMLViews;
 using NUnit.Framework;
+using SILLanguageExplorer.Areas.TextsAndWords.Tools;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.Text;
 
@@ -16,7 +18,7 @@ namespace SIL.FieldWorks.IText
 		{
 			using (var writer = new StringWriter())
 			{
-				var exporter = new ConcordanceResultsExporter(writer, new XmlBrowseViewBaseVc(), null, 1);
+				var exporter = new ConcordanceResultsExporter(writer, new XmlBrowseViewVc(), null, 1);
 				exporter.AddString(new TsStrBldr().Append("Row1Cell1", 1).GetString());
 				exporter.CloseTableCell();
 				exporter.AddString(new TsStrBldr().Append("Row1Cell2", 1).GetString());
@@ -48,7 +50,7 @@ namespace SIL.FieldWorks.IText
 		{
 			using (var writer = new StringWriter())
 			{
-				var exporter = new ConcordanceResultsExporter(writer, new XmlBrowseViewBaseVc(), null, 1);
+				var exporter = new ConcordanceResultsExporter(writer, new XmlBrowseViewVc(), null, 1);
 				exporter.AddString(new TsStrBldr().Append("ViolinCell0", 1).GetString());
 				exporter.CloseTableCell();
 				exporter.AddString(new TsStrBldr().Append("Cell\r\n1", 1).GetString());

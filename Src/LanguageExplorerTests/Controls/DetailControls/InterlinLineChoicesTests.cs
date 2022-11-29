@@ -4,9 +4,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using LanguageExplorer.Controls.DetailControls;
 using NUnit.Framework;
 using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
@@ -601,7 +603,7 @@ namespace LanguageExplorerTests.Controls.DetailControls
 
 			var choices = new InterlinLineChoices(m_lp, wsFrn, wsEng);
 			MakeStandardState(choices);
-			var spec = choices[1];
+			var spec = choices.EnabledLineSpecs[1];
 			Assert.AreEqual(InterlinLineChoices.kflidMorphemes, spec.Flid);
 			// The StringFlid for this line spec always corresponds to a MoForm
 			Assert.AreEqual(MoFormTags.kflidForm, spec.StringFlid);
