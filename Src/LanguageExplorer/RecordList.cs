@@ -3028,6 +3028,8 @@ namespace LanguageExplorer
 		/// </summary>
 		protected virtual void ReloadList()
 		{
+			// Currently only used for unit testing Reload behavior
+			Publisher.Publish(new PublisherParameterObject("ReloadListCalled"));
 			// Skip multiple reloads and reloading when our record list is not active.
 			if (m_reloadingList)
 			{
