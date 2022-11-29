@@ -22,6 +22,7 @@ using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Reporting;
+using SIL.Settings;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -577,13 +578,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 								applicationSettings.WebonaryPass = (string)valueElem;
 								break;
 							case "Reporting":
-								var reader = valueElem.CreateReader();
-								reader.MoveToContent();
-								var xml = reader.ReadInnerXml();
-								applicationSettings.Reporting = Xml.XmlSerializationHelper.DeserializeFromString<ReportingSettings>(xml);
+								using(var reader = valueElem.CreateReader())
+								{
+									reader.MoveToContent();
+									var xml = reader.ReadInnerXml();
+									applicationSettings.Reporting = Xml.XmlSerializationHelper.DeserializeFromString<ReportingSettings>(xml);
+								}
 								break;
 							case "LocalKeyboards":
 								applicationSettings.LocalKeyboards = (string)valueElem;
+								break;
+							case "Update":
+								using(var reader = valueElem.CreateReader())
+								{
+									reader.MoveToContent();
+									var xml = reader.ReadInnerXml();
+									applicationSettings.Update = Xml.XmlSerializationHelper.DeserializeFromString<UpdateSettings>(xml);
+								}
 								break;
 						}
 					}
