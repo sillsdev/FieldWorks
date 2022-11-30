@@ -33,7 +33,7 @@ on:
 jobs:
   flatpak:
     name: "Flatpak"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     timeout-minutes: 210
     env:
       FLATPAK_DIR: "${{github.workspace}}/flatpak"
