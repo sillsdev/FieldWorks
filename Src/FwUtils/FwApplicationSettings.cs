@@ -62,19 +62,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// LT-18723 Upgrade m_settings to generate the user.config file for FLEx 9.0
 				m_settings.Save();
 				m_settings.Upgrade();
-				string baseConfigFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+				var baseConfigFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
 					Application.CompanyName, Application.ProductName);
 
 				if (Directory.Exists(baseConfigFolder))
 				{
 					// For some reason the version returned from Assembly.GetExecutingAssembly.GetName().Version does not return the
 					// exact same version number that was written by m_settings.Upgrade() so we find it by looking for the lastest version
-					List<string> directoryList = new List<string>(Directory.EnumerateDirectories(baseConfigFolder));
+					var directoryList = new List<string>(Directory.EnumerateDirectories(baseConfigFolder));
 					directoryList.Sort();
-					string pathToPreviousSettingsFile = Path.Combine(directoryList[directoryList.Count - 1],"user.config");
-					using (var stream = new FileStream(pathToPreviousSettingsFile, FileMode.Open))
+					var pathToPreviousSettingsFile = Path.Combine(directoryList[directoryList.Count - 1],"user.config");
+					if (File.Exists(pathToPreviousSettingsFile))
 					{
-						MigrateIfNecessary(stream);
+						using (var stream = new FileStream(pathToPreviousSettingsFile, FileMode.Open))
+						{
+							MigrateIfNecessary(stream);
+						}
 					}
 				}
 				m_settings.CallUpgrade = false;
