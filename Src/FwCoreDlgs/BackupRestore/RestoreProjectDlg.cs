@@ -11,7 +11,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.DomainServices.BackupRestore;
 using SIL.FieldWorks.Resources;
 using SIL.Reporting;
-using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 {
@@ -59,7 +58,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		private readonly RestoreProjectSettings m_settings;
 		private readonly string m_fmtUseOriginalName;
 		private OpenFileDialogAdapter m_openFileDlg;
-		private char[] m_invalidCharArray;
 
 		#endregion
 
@@ -128,13 +126,6 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 			m_settings = new RestoreProjectSettings(FwDirectoryFinder.ProjectsDirectory);
 			m_txtOtherProjectName.KeyPress += m_txtOtherProjectName_KeyPress;
 			m_txtOtherProjectName.TextChanged += m_txtOtherProjectName_TextChanged;
-			GetIllegalProjectNameChars();
-		}
-
-		private void GetIllegalProjectNameChars()
-		{
-			m_invalidCharArray = MiscUtils.GetInvalidProjectNameChars(
-				MiscUtils.FilenameFilterStrength.kFilterProjName).ToCharArray();
 		}
 
 		#endregion
