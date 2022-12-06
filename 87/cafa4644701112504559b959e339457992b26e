@@ -1,0 +1,8 @@
+Code-Review+2: Mark Kidder <mark_kidder@sil.org>
+Verified+1: Jason Naylor <jason_naylor@sil.org>
+Verified-Linux+1: Jason Naylor <jason_naylor@sil.org>
+Submitted-by: Jason Naylor <jason_naylor@sil.org>
+Submitted-at: Tue, 06 Dec 2022 13:50:44 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/c/FieldWorks/+/9112
+Project: FieldWorks
+Branch: refs/heads/feature/MergeIntoRXWC
