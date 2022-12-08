@@ -21,14 +21,11 @@
 	</Target>
 
 	<Target Name="AttachManifest" Condition="'$(OS)'=='Windows_NT'" AfterTargets="CoreBuild" DependsOnTargets="CreateManifest">
-		<CpuArchitecture>
-			<Output TaskParameter="Value" PropertyName="arch" />
-		</CpuArchitecture>
 		<Exec Command='"$(VSWhereDir)vswhere.exe" -version "17" -latest -property installationPath' ConsoleToMSBuild="true" EchoOff="true" StandardOutputImportance="Normal">
 			<Output TaskParameter="ConsoleOutput" PropertyName="InstallationPath" />
 		</Exec>
 		<Exec Command="$(MSBuildThisFileDirectory)regfree.bat -outputresource:$(TargetFileName) -manifest $(TargetFileName).manifest"
-			EnvironmentVariables="InstallDir=&quot;$(InstallationPath)&quot;;arch=$(arch)"
+			EnvironmentVariables="InstallDir=&quot;$(InstallationPath)&quot;"
 			WorkingDirectory="$(TargetDir)"/>
 	</Target>
 </Project>

@@ -2,8 +2,6 @@
   <UsingTask TaskName="CatenateFiles" AssemblyFile="FwBuildTasks.dll" />
   <UsingTask TaskName="Clouseau" AssemblyFile="FwBuildTasks.dll" />
   <UsingTask TaskName="ComputerName" AssemblyFile="FwBuildTasks.dll" />
-  <!-- REVIEW (Hasso) 2022.10: redundant to SIL.BuildTasks.CpuArchitecture? -->
-  <UsingTask TaskName="CpuArchitecture" AssemblyFile="FwBuildTasks.dll" />
   <!-- REVIEW (Hasso) 2022.10: redundant to SIL.BuildTasks.DownloadFile? -->
   <UsingTask TaskName="DownloadFile" AssemblyFile="FwBuildTasks.dll" />
   <UsingTask TaskName="ExtractIIDs" AssemblyFile="FwBuildTasks.dll"/>
@@ -19,9 +17,7 @@
   <UsingTask TaskName="Make" AssemblyFile="FwBuildTasks.dll" />
   <UsingTask TaskName="Md5Checksum" AssemblyFile="FwBuildTasks.dll" />
   <UsingTask TaskName="NormalizeLocales" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="ParentDirectory" AssemblyFile="FwBuildTasks.dll" />
   <UsingTask TaskName="ParseVersionNumbers" AssemblyFile="FwBuildTasks.dll" />
-  <UsingTask TaskName="PathCombine" AssemblyFile="FwBuildTasks.dll" />
   <UsingTask TaskName="PoToXml" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="RegFree" AssemblyFile="FwBuildTasks.dll" />
   <UsingTask TaskName="RegisterForTests" AssemblyFile="FwBuildTasks.dll" />

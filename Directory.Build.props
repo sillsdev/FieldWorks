@@ -2,6 +2,7 @@
 	<PropertyGroup>
 		<!-- Switched to net472 instead of net462 - 4.6.x is missing /usr/lib/mono/4.6*/Facades/netstandard.dll which causes build failures -->
 		<TargetFrameworks>net472</TargetFrameworks>
+		<RuntimeIdentifier>win10-x64</RuntimeIdentifier>
 		<Configurations>Debug;Release</Configurations>
 		<Description>FieldWorks</Description>
 		<Company>SIL International</Company>
@@ -11,12 +12,9 @@
 		<OutputPath>../../Output/$(Configuration)</OutputPath>
 		<TargetDir>$(OutputPath)</TargetDir>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 		<LangVersion>8</LangVersion>
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 		<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-		<!-- On Linux we explictly set the _MicrosoftNetSdkWindowsDesktop property to true - we
-			use Mono and know that it supports Winforms. If we start to compile with .NET Core/
-			.NET 5 we might have to change this... -->
-		<_MicrosoftNetSdkWindowsDesktop Condition="'$(OS)'=='Unix'">true</_MicrosoftNetSdkWindowsDesktop>
 	</PropertyGroup>
 </Project>

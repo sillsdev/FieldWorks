@@ -5,6 +5,6 @@ REM is that we don't know the path to the Win 10 SDK (which contains mt.exe)
 REM if we build from the IDE. This batch file sets the environment variables
 REM and then calls mt.exe
 
-call %InstallDir%\VC\Auxiliary\Build\vcvarsall.bat %arch% > nul
+call %InstallDir%\VC\Auxiliary\Build\vcvarsall.bat x64 > nul
 
-"%WindowsSdkVerBinPath%%arch%\mt.exe" -nologo %*
+"%WindowsSdkVerBinPath%x64\mt.exe" -nologo %*

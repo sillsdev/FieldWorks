@@ -15,21 +15,18 @@ for /f "usebackq tokens=1* delims=: " %%i in (`vswhere -version "17.0" -latest -
   if /i "%%i"=="catalog_productLineVersion" set VSVersion=%%j
 )
 
-if "%arch%" == "" set arch=x86
-
 REM run Microsoft's batch file to set all the environment variables and path necessary to build a C++ app
 set VcVarsLoc=%InstallDir%\VC\Auxiliary\Build\vcvarsall.bat
 
 if exist "%VcVarsLoc%" (
-  call "%VcVarsLoc%" %arch%
+  call "%VcVarsLoc%" x64
 ) else (
   echo "Could not find: %VcVarsLoc% something is wrong with the Visual Studio installation"
   GOTO End
 )
 
 
-if "%arch%" == "x86" set MsBuild="%InstallDir%\MSBuild\Current\Bin\msbuild.exe"
-if "%arch%" == "x64" set MsBuild="%InstallDir%\MSBuild\Current\Bin\amd64\msbuild.exe"
+set MsBuild="%InstallDir%\MSBuild\Current\Bin\amd64\msbuild.exe"
 
 set KEY_NAME="HKLM\SOFTWARE\WOW6432Node\Microsoft\Microsoft SDKs\Windows\v10.0"
 set VALUE_NAME=InstallationFolder
@@ -37,7 +34,7 @@ set VALUE_NAME=InstallationFolder
 REG QUERY %KEY_NAME% /S /v %VALUE_NAME%
 FOR /F "tokens=2* delims= " %%1 IN (
   'REG QUERY %KEY_NAME% /v %VALUE_NAME%') DO SET pInstallDir=%%2
-SET PATH=%PATH%;%pInstallDir%bin\%arch%;
+SET PATH=%PATH%;%pInstallDir%bin\x64;
 
 set VALUE_NAME=ProductVersion
 REG QUERY %KEY_NAME% /S /v %VALUE_NAME%

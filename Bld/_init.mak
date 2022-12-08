@@ -6,7 +6,6 @@
 #
 # BUILD_ROOT: Typically "C:\FW-WW"
 # BUILD_TYPE: b, d, r, p
-# BUILD_ARCH: x86, x64
 # BUILD_CONFIG: Bounds, Debug, Release, Profile
 # BUILD_OUTPUT: Typically "C:\FW-WW\Output"
 # BUILD_EXTENSION: exe, dll, lib, ocx, (or empty indicating no main target)
@@ -41,13 +40,8 @@ OUT_DIR=$(BUILD_OUTPUT)\$(BUILD_CONFIG)
 !ENDIF
 !ENDIF
 
-!IF "$(ARCH)"=="x64" || "$(BUILD_ARCH)"=="x64"
 MIDL_ARCH=x64
 LINK_ARCH=x64
-!ELSE
-MIDL_ARCH=win32
-LINK_ARCH=x86
-!ENDIF
 
 !IF "$(OBJ_DIR)"==""
 OBJ_DIR=$(BUILD_ROOT)\Obj

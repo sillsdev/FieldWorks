@@ -10,8 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Encoding-Converters-Core" Version="0.0.8" PrivateAssets="native" />
     <PackageReference Include="CsvHelper" Version="29.0.0" />
-    <PackageReference Include="Geckofx60.32" Version="60.0.55" Condition="'$(arch)'=='x86'" GeneratePathProperty="true" />
-    <PackageReference Include="Geckofx60.64" Version="60.0.55" Condition="'$(arch)'=='x64'" GeneratePathProperty="true" />
+    <PackageReference Include="Geckofx60.64" Version="60.0.55" GeneratePathProperty="true" />
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="SIL.Archiving" Version="11.0.0-beta0041" />
@@ -78,10 +77,8 @@
 
   <!-- The GeckoFx60 package does not successfully copy these files even though it was intended to do so -->
   <Target Name="CopyGeckoSupportFiles" BeforeTargets="Build">
-    <Error Text="Platform not defined in $(arch), dependency copying will fail." Condition="'$(arch)'==''" />
     <ItemGroup>
-     <FirefoxFiles Include="$(PkgGeckoFx60_32)/content/Firefox/*.*" Condition="'$(arch)'=='x86'"/>
-     <FirefoxFiles Include="$(PkgGeckoFx60_64)/content/Firefox/*.*" Condition="'$(arch)'=='x64'"/>
+     <FirefoxFiles Include="$(PkgGeckoFx60_64)/content/Firefox/*.*" />
     </ItemGroup>
     <MakeDir Directories="$(OutputPath)/Firefox" />
     <Copy SourceFiles="@(FirefoxFiles)" DestinationFolder="$(OutputPath)/Firefox" SkipUnchangedFiles="true" />

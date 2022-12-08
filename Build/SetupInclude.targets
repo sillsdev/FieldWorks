@@ -120,62 +120,31 @@
 	<GenerateFwTargets TimeoutValuesFilePath="$(MSBuildThisFileDirectory)/TestTimeoutValues.xml"
 		NUnitConsolePath="$(MSBuildThisFileDirectory)../packages/NUnit.ConsoleRunner.$(NunitConsoleVersion)/tools" />
 
-	<CpuArchitecture>
-		<Output TaskParameter="Value" PropertyName="arch"/>
-	</CpuArchitecture>
-
 	<PropertyGroup>
-		<dir-separator Condition="'$(OS)'!='Windows_NT'">/</dir-separator>
-		<dir-separator Condition="'$(OS)'=='Windows_NT'">\</dir-separator>
-		<dir-fwobj>$(fwrt)$(dir-separator)Obj_$(arch)</dir-fwobj>
-		<dir-fwoutput Condition="'$(OS)'!='Windows_NT'">$(fwrt)/Output_$(arch)</dir-fwoutput>
-		<dir-fwoutput Condition="'$(OS)'=='Windows_NT'">$(fwrt)\Output</dir-fwoutput>
-		<dir-outputBase>$(dir-fwoutput)$(dir-separator)$(config-capital)</dir-outputBase>
-		<dir-fwoutputCommon>$(dir-fwoutput)$(dir-separator)Common</dir-fwoutputCommon>
+		<dir-fwobj>$([System.IO.Path]::Combine($(fwrt),Obj))</dir-fwobj>
+		<dir-fwoutput >$([System.IO.Path]::Combine($(fwrt),Output))</dir-fwoutput>
+		<dir-outputBase>$([System.IO.Path]::Combine($(dir-fwoutput),$(config-capital)))</dir-outputBase>
+		<dir-fwoutputCommon>$([System.IO.Path]::Combine($(dir-fwoutput),Common))</dir-fwoutputCommon>
 		<dir-buildOutputInterop>$(dir-outputBase)</dir-buildOutputInterop>
-		<dir-fwoutputlib>$(fwrt)$(dir-separator)Lib</dir-fwoutputlib>
-		<dir-fwoutputlibBase>$(dir-fwoutputlib)$(dir-separator)$(config-capital)</dir-fwoutputlibBase>
-		<dir-fwoutputlibPlatform Condition="'$(OS)'!='Windows_NT'">$(dir-fwoutputlib)/linux</dir-fwoutputlibPlatform>
-		<dir-fwoutputlibPlatform Condition="'$(OS)'=='Windows_NT'">$(dir-fwoutputlib)\windows</dir-fwoutputlibPlatform>
-		<dir-fwinstall>$(dir-fwoutput)$(dir-separator)install</dir-fwinstall>
-		<dir-fwdistfiles>$(fwrt)$(dir-separator)DistFiles</dir-fwdistfiles>
-		<dir-icuData>$(dir-fwdistfiles)$(dir-separator)Icu$(IcuVersion)</dir-icuData>
-		<!-- where to find the COM library on Linux -->
-		<com_dir Condition="'$(OS)'!='Windows_NT'">$([System.IO.Directory]::GetParent($(fwrt)))/libcom/COM</com_dir>
-		<com_lib Condition="'$(OS)'!='Windows_NT'">$(com_dir)/build$(arch)/src/.libs</com_lib>
-		<!-- where to find the ICU files on Linux - requires libicu54-fw and icu54-bin-fw packages -->
-		<icu_lib Condition="'$(OS)'!='Windows_NT'">/usr/lib/fieldworks/lib/</icu_lib>
-		<icu_bin Condition="'$(OS)'!='Windows_NT'">/usr/lib/fieldworks/icu-bin/</icu_bin>
+		<dir-fwoutputlib>$([System.IO.Path]::Combine($(fwrt),Lib)))</dir-fwoutputlib>
+		<dir-fwoutputlibBase>$([System.IO.Path]::Combine($(dir-fwoutputlib),$(config-capital)))</dir-fwoutputlibBase>
+		<dir-fwoutputlibPlatform>$([System.IO.Path]::Combine($(dir-fwoutputlib),windows))</dir-fwoutputlibPlatform>
+		<dir-fwinstall>$([System.IO.Path]::Combine($(dir-fwoutput),install))</dir-fwinstall>
+		<dir-fwdistfiles>$([System.IO.Path]::Combine($(fwrt),DistFiles))</dir-fwdistfiles>
+		<dir-icuData>$([System.IO.Path]::Combine($(dir-fwdistfiles),Icu$(IcuVersion)))</dir-icuData>
 		<msbuild-props>Configuration=$(config-capital);ReferencePath=$(dir-outputBase);ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch=None</msbuild-props>
 
 		<excludedCategories>LongRunning,ByHand,SmokeTest</excludedCategories>
 		<excludedCategories Condition="'$(desktopNotAvailable)'=='true'">$(excludedCategories),DesktopRequired</excludedCategories>
 		<excludedCategories Condition="'$(runAllTests)'!=''">ByHand,SmokeTest</excludedCategories>
-		<excludedCategories Condition="'$(arch)'=='x86_64'">$(excludedCategories),ExcludeOnLinux64</excludedCategories>
 	</PropertyGroup>
-	<!-- Area of filesystem where FieldWorks and its dependencies are being installed. This
-	is /usr when installed from a .deb package, or /app when using flatpak. -->
-	<CreateProperty Condition="'$(OS)'!='Windows_NT'" Value="/usr">
-	  <Output TaskParameter="Value" PropertyName="installation_prefix"/>
-	</CreateProperty>
-	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="">
-	  <Output TaskParameter="Value" PropertyName="installation_prefix"/>
-	</CreateProperty>
 
 	<!-- Set some environment variables needed by make (or nmake) -->
-	<SetEnvVar Variable="PATH" Value="$(dir-outputBase):$(icu_lib):$(icu_bin):$(PATH)" Condition="'$(OS)'=='Unix'"/>
-	<SetEnvVar Variable="PATH" Value="$(dir-outputBase);$(PATH);$(dir-outputBase)/lib/$(Arch)" Condition="'$(OS)'=='Windows_NT'"/>
+	<SetEnvVar Variable="PATH" Value="$(dir-outputBase);$(PATH);$(dir-outputBase)/lib/win-x64" Condition="'$(OS)'=='Windows_NT'"/>
 	<SetEnvVar Variable="BUILD_TYPE" Value="$(build-type)"/>
 	<SetEnvVar Variable="BUILD_CONFIG" Value="$(config-capital)" />
 	<SetEnvVar Variable="BUILD_ROOT" Value="$(fwrt)" />
 	<SetEnvVar Variable="ICU_DATA" Value="$(fwrt)/DistFiles/Icu$(IcuVersion)" />
-
-	<!-- Set some environment variables needed on Linux. -->
-	<SetEnvVar Variable="LD_LIBRARY_PATH" Value="$(com_lib):$(com_dir)/build$(arch)/lib:$(icu_lib):$(dir-outputBase):$(LD_LIBRARY_PATH)" Condition="'$(OS)'=='Unix'"/>
-	<SetEnvVar Variable="MONO_PATH" Value="$(dir-fwdistfiles):$(dir-outputBase)" Condition="'$(OS)'=='Unix'"/>
-	<SetEnvVar Variable="MONO_REGISTRY_PATH" Value="$(dir-fwoutput)/registry" Condition="'$(OS)'=='Unix'"/>
-	<SetEnvVar Variable="COMPONENTS_MAP_PATH" Value="$(dir-outputBase)" Condition="'$(OS)'=='Unix'"/>
-	<SetEnvVar Variable="MONO_RUNTIME_EXECUTABLE_PATH" Value="$(MONO_PREFIX)/bin/mono" Condition="'$(OS)'=='Unix'"/>
 
 	<!-- Copy ICU header files -->
     <ItemGroup>
@@ -207,20 +176,6 @@
 
   <Target Name="MakeDirs" DependsOnTargets="Setup;DeleteTestFiles" Condition="'$(action)'!='clean'">
 	<MakeDir Directories="$(dir-fwobj);$(dir-outputBase);$(dir-fwoutputCommon)"/>
-	<!-- extra directory (and symbolic links) needed for Linux -->
-	<MakeDir Directories="$(fwrt)/Output" Condition="!Exists('$(fwrt)/Output') And '$(OS)'=='Unix'"/>
-	<Exec Condition="!Exists('$(fwrt)/Output/$(config-capital)') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/$(config-capital) $(fwrt)/Output/$(config-capital)"/>
-	<Exec Condition="!Exists('$(fwrt)/Output/$(config-lower)') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/$(config-capital) $(fwrt)/Output/$(config-lower)"/>
-	<Exec Condition="!Exists('$(fwrt)/Output/Common') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/Common $(fwrt)/Output/Common"/>
-	<Exec Condition="!Exists('$(fwrt)/Output/common') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/Common $(fwrt)/Output/common"/>
-	<Exec Condition="!Exists('$(fwrt)/Output/XMI') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/XMI"/>
-	<Exec Condition="!Exists('$(fwrt)/Output/xmi') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/xmi"/>
   </Target>
 
 	<!-- Generate Output/Common/bldinc.h from Src/bldinc.h -->
@@ -253,23 +208,14 @@
 	<action Condition="'$(action)'==''">build</action>
 	<!-- target is one of the targets in the build system. -->
 	<target Condition="'$(target)'==''">all</target>
-	<platform Condition="'$(platform)'=='' And '$(OS)'!='Windows_NT'">UNIX</platform>
 	<platform Condition="'$(platform)'=='' And '$(OS)'=='Windows_NT'">WIN32</platform>
 	<verbose Condition="'$(verbose)'==''">false</verbose>
 	<buildtlb Condition="'$(buildtlb)'==''">false</buildtlb>
-	<!-- Gendarme rule set. See Build/Gendarme.MsBuild/fw-gendarme-rules.xml for possible values. -->
-	<verifyset Condition="'$(verifyset)'==''">dispose</verifyset>
-	<verifyset-test Condition="'$(verifyset-test)'==''">dispose-test</verifyset-test>
-	<verifyfail Condition="'$(verifyfail)'==''">true</verifyfail>
-	<autoUpdateIgnores Condition="'$(autoUpdateIgnores)'==''">false</autoUpdateIgnores>
 	<!-- <warningsAsErrors Condition="'$(warningsAsErrors)'==''">TreatWarningsAsErrors=true</warningsAsErrors> -->
 	<timeoutFudgeFactor Condition="'$(timeoutFudgeFactor)'==''">1</timeoutFudgeFactor>
-	<useNUnit-x86 Condition="'$(OS)'=='Windows_NT' And '$(Platform)'!='x64'">true</useNUnit-x86>
-	<useNUnit-x86 Condition="'$(OS)'!='Windows_NT' Or '$(Platform)'=='x64'">false</useNUnit-x86>
+	<useNUnit-x86 >false</useNUnit-x86>
 	<defines Condition="'$(config-lower)'=='release'">TRACE;CODE_ANALYSIS</defines>
 	<defines Condition="'$(config-lower)'!='release'">DEBUG;TRACE;CODE_ANALYSIS</defines>
-	<IcuFwLibDirectory Condition="'$(Platform)'!='x64'">$(IcuFwLibDirectoryx86)</IcuFwLibDirectory>
-	<IcuFwLibDirectory Condition="'$(Platform)'=='x64'">$(IcuFwLibDirectoryx64)</IcuFwLibDirectory>
   </PropertyGroup>
 
   <Choose>

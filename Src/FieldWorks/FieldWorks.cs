@@ -3821,9 +3821,12 @@ namespace SIL.FieldWorks
 					var directoryList = new List<string>(Directory.EnumerateDirectories(baseConfigFolder));
 					directoryList.Sort();
 					var pathToPreviousSettingsFile = Path.Combine(directoryList[directoryList.Count - 1], "user.config");
-					using (var stream = new FileStream(pathToPreviousSettingsFile, FileMode.Open))
+					if (File.Exists(pathToPreviousSettingsFile))
 					{
-						FwUtils.MigrateIfNecessary(stream, this);
+						using (var stream = new FileStream(pathToPreviousSettingsFile, FileMode.Open))
+						{
+							FwUtils.MigrateIfNecessary(stream, this);
+						}
 					}
 				}
 				m_settings.CallUpgrade = false;

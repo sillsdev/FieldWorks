@@ -63,14 +63,11 @@
 	<Target Name="copyIcuDlls" Condition="'$(OS)'=='Windows_NT'">
 		<!-- Need these files in the lib/${Platform} folder for RegFree to load the FwKernel.dll and Views.dll successfully -->
 		<ItemGroup>
-			<IcuLibsX86 Include="$(IcuFwRuntimeWinX86)icu*.dll" />
 			<IcuLibsX64 Include="$(IcuFwRuntimeWinX64)icu*.dll" />
 		</ItemGroup>
 
 		<Message Text="From $(fwrt)/packages/Icu4c.Win.Fw.Lib.$(IcuWinFwLibVersion)/runtimes/win7-$(Platform)/native/ to $(dir-outputBase)/lib/$(Platform)"/>
-		<Copy SourceFiles="@(IcuLibsX86)" DestinationFolder="$(dir-outputBase)/lib/x86" SkipUnchangedFiles="true" />
-		<Copy SourceFiles="@(IcuLibsX64)" DestinationFolder="$(dir-outputBase)/lib/x64" SkipUnchangedFiles="true" />
-
+		<Copy SourceFiles="@(IcuLibsX64)" DestinationFolder="$(dir-outputBase)/lib/win-x64" SkipUnchangedFiles="true" />
 	</Target>
 
 	<Target Name="CopyKernelInterfaces">
@@ -95,12 +92,15 @@
 	</Target>
 
 	<Target Name="DebugProcs" DependsOnTargets="initLinux;initWindows;CopyKernelInterfaces">
+		<Error
+			Text="Icu lib directory not defined in IcuFwLibDirectoryX64 (check nuget package), build will fail."
+			Condition="'$(IcuFwLibDirectoryX64)'==''" />
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\DebugProcs\DebugProcs.mak"
 				Configuration="$(config-capital)"
 				BuildRoot="$(fwrt)"
 				BuildArch="'$(Platform)'"
-				Macros="EXTRA_INCLUDE=$(IcuFwIncludeDirectory) EXTRA_LINK_OPTS=/LIBPATH:$(IcuFwLibDirectory)"
+				Macros="EXTRA_INCLUDE=$(IcuFwIncludeDirectory) EXTRA_LINK_OPTS=/LIBPATH:$(IcuFwLibDirectoryX64)"
 				WorkingDirectory="$(fwrt)\Src\DebugProcs"/>
 		<Make Condition="'$(OS)'=='Unix'"
 				Makefile="$(fwrt)/Src/DebugProcs/Makefile"
@@ -131,7 +131,7 @@
 				Configuration="$(config-capital)"
 				BuildRoot="$(fwrt)"
 				BuildArch="'$(Platform)'"
-				Macros="EXTRA_INCLUDE=$(IcuFwIncludeDirectory) EXTRA_LINK_OPTS=/LIBPATH:$(IcuFwLibDirectory)"
+				Macros="EXTRA_INCLUDE=$(IcuFwIncludeDirectory) EXTRA_LINK_OPTS=/LIBPATH:$(IcuFwLibDirectoryX64)"
 				WorkingDirectory="$(fwrt)\Bin"/>
 		<Make Condition="'$(OS)'=='Unix'"
 				Makefile="$(fwrt)/Src/Generic/Test/Makefile"
@@ -162,7 +162,7 @@
 			Configuration="$(config-capital)"
 			BuildRoot="$(fwrt)"
 			BuildArch="'$(Platform)'"
-			Macros="EXTRA_INCLUDE=$(IcuFwIncludeDirectory) EXTRA_LINK_OPTS=/LIBPATH:$(IcuFwLibDirectory)"
+			Macros="EXTRA_INCLUDE=$(IcuFwIncludeDirectory) EXTRA_LINK_OPTS=/LIBPATH:$(IcuFwLibDirectoryX64)"
 			WorkingDirectory="$(fwrt)\Src\Kernel"/>
 		<Make Condition="'$(OS)'=='Unix'"
 			Makefile="$(fwrt)/Src/Kernel/Makefile"
@@ -189,7 +189,7 @@
 			Configuration="$(config-capital)"
 			BuildRoot="$(fwrt)"
 			BuildArch="'$(Platform)'"
-			Macros="EXTRA_INCLUDE=$(IcuFwIncludeDirectory) EXTRA_LINK_OPTS=/LIBPATH:$(IcuFwLibDirectory)"
+			Macros="EXTRA_INCLUDE=$(IcuFwIncludeDirectory) EXTRA_LINK_OPTS=/LIBPATH:$(IcuFwLibDirectoryX64)"
 			WorkingDirectory="$(fwrt)\Src\views"/>
 		<Make Condition="'$(OS)'=='Unix'"
 			Makefile="$(fwrt)/Src/views/Makefile"
@@ -206,7 +206,7 @@
 				Configuration="$(config-capital)"
 				BuildRoot="$(fwrt)"
 				BuildArch="'$(Platform)'"
-				Macros="EXTRA_INCLUDE=$(IcuFwIncludeDirectory) EXTRA_LINK_OPTS=/LIBPATH:$(IcuFwLibDirectory)"
+				Macros="EXTRA_INCLUDE=$(IcuFwIncludeDirectory) EXTRA_LINK_OPTS=/LIBPATH:$(IcuFwLibDirectoryX64)"
 				WorkingDirectory="$(fwrt)\Bin"/>
 		<Make Condition="'$(OS)'=='Unix'"
 				Makefile="$(fwrt)/Src/views/Test/Makefile"
