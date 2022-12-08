@@ -668,7 +668,7 @@
 			<NuGottenFiles Include="$(PackagesDir)/NAudio.Lame.1.1.5/lib/netstandard2.0/NAudio.Lame.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/NAudio.Lame.1.1.5/build/libmp3lame.32.dll" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'"/>
 			<NuGottenFiles Include="$(PackagesDir)/NAudio.Lame.1.1.5/build/libmp3lame.64.dll" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'"/>
-			<NuGottenFiles Include="$(PackagesDir)/Newtonsoft.Json.13.0.1/lib/net45/Newtonsoft.Json.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/Newtonsoft.Json.13.0.2/lib/net45/Newtonsoft.Json.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/Paratext.LexicalContracts.dll" />
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/ParatextData.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/PtxUtils.dll"/>
