@@ -461,8 +461,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			m_topBottomSplit.SplitterMoved -= RibbonSizeChanged;
 			//Call SplitLayout here to ensure Mono properly updates Splitter length
 			SplitLayout(m_topBottomSplit, e);
-			//Mono makes SplitLayout calls while Splitter is moving so set default distance here
-			m_topBottomSplit.SplitterDistance = (int)(Height * .9);
 			base.OnLayout(e);
 			int splitterValue;
 			// use a default property unless the property has been set

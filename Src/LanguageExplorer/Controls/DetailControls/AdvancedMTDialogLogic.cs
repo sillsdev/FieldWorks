@@ -192,7 +192,7 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			// TODO GordonM: make it work for an array of WordGroups?
 			CacheWordGroupOccurrencesForRibbon();
-			DlgRibbon.SetRoot(m_wordGroup.Hvo);
+			DlgRibbon.SetRoot(m_wordGroup.EndSegmentRA.OwnerOfClass<IStText>().Hvo);
 		}
 
 		/// <summary>
