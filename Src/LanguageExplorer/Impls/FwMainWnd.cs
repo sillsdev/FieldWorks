@@ -919,7 +919,11 @@ namespace LanguageExplorer.Impls
 				if (!_toolsReportedToday.Contains(toolName))
 				{
 					_toolsReportedToday.Add(toolName);
-					UsageReporter.SendNavigationNotice("SwitchToTool/{0}/{1}", areaName, toolName);
+					DesktopAnalytics.Analytics.Track("SwitchToTool", new Dictionary<string, string>
+					{
+						{"area", areaName},
+						{"tool", toolName}
+					});
 				}
 
 				_currentTool.Activate(_majorFlexComponentParameters);
