@@ -47,7 +47,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 		private LcmCache _cache;
 		private RecordBrowseView _currentBrowseView;
 		private Dictionary<int, XElement> _configurationNodes = new Dictionary<int, XElement>(3);
-		private Dictionary<int, IRecordList> _recordLists = new Dictionary<int, IRecordList>(3);
+		private IRecordList _recordList;
 		private XMLViewsDataCache _specialSda;
 		private int _currentSourceMadeUpFieldIdentifier;
 		private const string HelpTopic = "khtpAssignAnalysisUsage";
@@ -158,18 +158,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 			var configurationElement = XElement.Parse(TextAndWordsResources.WordformInSegmentsOccurrenceList);
 			configurationElement.Add(concordanceColumnsElement);
 			// And create the RecordLists.
-			var recordList = PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(SegmentOccurrencesOfWfiWordform, _mainWindowStatusBar, SegmentOccurrencesOfWfiWordformFactoryMethod);
-			_recordLists[WfiWordformTags.kClassId] = recordList;
 			_configurationNodes[WfiWordformTags.kClassId] = configurationElement;
 			configurationElement = XElement.Parse(TextAndWordsResources.AnalysisInSegmentsOccurrenceList);
 			configurationElement.Add(concordanceColumnsElement);
-			recordList = PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(SegmentOccurrencesOfWfiWordform, _mainWindowStatusBar, SegmentOccurrencesOfWfiAnalysisFactoryMethod);
-			_recordLists[WfiAnalysisTags.kClassId] = recordList;
 			_configurationNodes[WfiAnalysisTags.kClassId] = configurationElement;
 			configurationElement = XElement.Parse(TextAndWordsResources.GlossInSegmentsOccurrenceList);
 			configurationElement.Add(concordanceColumnsElement);
-			recordList = PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(SegmentOccurrencesOfWfiWordform, _mainWindowStatusBar, SegmentOccurrencesOfWfiGlossFactoryMethod);
-			_recordLists[WfiGlossTags.kClassId] = recordList;
 			_configurationNodes[WfiGlossTags.kClassId] = configurationElement;
 			tvSource.Font = new Font(MiscUtils.StandardSansSerif, 9);
 			tvTarget.Font = new Font(MiscUtils.StandardSansSerif, 9);
@@ -315,19 +309,12 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 				_currentBrowseView.BrowseViewer.SelectionChanged -= BrowseViewer_SelectionChanged;
 				PropertyTable.RemoveProperty("IgnoreStatusPanel");
 				Subscriber.Unsubscribe("DialogFilterStatus", DialogFilterStatus_Handler);
-				var repository = PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository);
-				foreach (var recordList in _recordLists.Values)
-				{
-					repository.RemoveRecordList(recordList);
-					recordList.Dispose();
-				}
-				_recordLists.Clear();
+				DisposeRecordList();
 				_configurationNodes.Clear();
 			}
 			base.Dispose(disposing);
 
 			helpProvider = null;
-			_recordLists = null;
 			_wordform = null;
 			_cache = null;
 			_currentBrowseView = null;
@@ -339,6 +326,14 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 			_mainWindowStatusBar = null;
 		}
 
+		private void DisposeRecordList()
+		{
+			var repository =
+				PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants
+					.RecordListRepository);
+			repository.RemoveRecordList(_recordList);
+			_recordList.Dispose();
+		}
 		#endregion Construction, Initialization, Disposal
 
 		#region Windows Form Designer generated code
@@ -522,30 +517,30 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 					_currentBrowseView = null;
 				}
 				XElement configurationElement;
-				IRecordList recordList;
 				var selObj = (IAnalysis)tvSource.SelectedNode.Tag;
+				DisposeRecordList();
 				switch (selObj.ClassID)
 				{
 					default:
 						throw new InvalidOperationException("Class not recognized.");
 					case WfiWordformTags.kClassId:
 						configurationElement = _configurationNodes[WfiWordformTags.kClassId];
-						recordList = _recordLists[WfiWordformTags.kClassId];
+						_recordList = PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(SegmentOccurrencesOfWfiWordform, _mainWindowStatusBar, SegmentOccurrencesOfWfiWordformFactoryMethod);
 						break;
 					case WfiAnalysisTags.kClassId:
 						configurationElement = _configurationNodes[WfiAnalysisTags.kClassId];
-						recordList = _recordLists[WfiAnalysisTags.kClassId];
+						_recordList = PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(SegmentOccurrencesOfWfiWordform, _mainWindowStatusBar, SegmentOccurrencesOfWfiAnalysisFactoryMethod);
 						break;
 					case WfiGlossTags.kClassId:
 						configurationElement = _configurationNodes[WfiGlossTags.kClassId];
-						recordList = _recordLists[WfiGlossTags.kClassId];
+						_recordList = PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(SegmentOccurrencesOfWfiWordform, _mainWindowStatusBar, SegmentOccurrencesOfWfiGlossFactoryMethod);
 						break;
 				}
-				recordList.OwningObject = selObj;
-				_currentBrowseView = new RecordBrowseView(configurationElement, _cache, recordList);
+
+				_currentBrowseView = new RecordBrowseView(configurationElement, _cache, _recordList);
 				_currentBrowseView.InitializeFlexComponent(new FlexComponentParameters(PropertyTable, Publisher, Subscriber));
 				// Ensure that the list gets updated whenever it's reloaded.  See LT-8661.
-				var sPropName = recordList.Id + "_AlwaysRecomputeVirtualOnReloadList";
+				var sPropName = _recordList.Id + "_AlwaysRecomputeVirtualOnReloadList";
 				PropertyTable.SetProperty(sPropName, true);
 				_currentBrowseView.Dock = DockStyle.Fill;
 				_pnlConcBrowseHolder.Controls.Add(_currentBrowseView);
@@ -650,8 +645,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 					// Make sure the correct updated occurrences will be computed when needed in Refresh of the
 					// occurrences pane and anywhere else.
 					concSda.UpdateExactAnalysisOccurrences(src);
-					var recordList = _recordLists[newTarget.ClassID];
-					var recordListSda = (ConcDecorator)((DomainDataByFlidDecoratorBase)recordList.VirtualListPublisher).BaseSda;
+					var recordListSda = (ConcDecorator)((DomainDataByFlidDecoratorBase)_recordList.VirtualListPublisher).BaseSda;
 					recordListSda.UpdateExactAnalysisOccurrences(newTarget);
 				});
 				CheckAssignBtnEnabling();

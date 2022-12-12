@@ -850,7 +850,7 @@ namespace LanguageExplorer.Areas.TextsAndWords
 			{
 				return caseFunctions;
 			}
-			caseFunctions = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(ws).IcuLocale);
+			caseFunctions = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(ws));
 			m_caseFunctions[ws] = caseFunctions;
 			return caseFunctions;
 		}
