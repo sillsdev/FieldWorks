@@ -48,6 +48,7 @@ namespace LanguageExplorer
 			CmdImportSFMLexicon,
 			CmdImportLinguaLinksData,
 			CmdImportLiftData,
+			CmdImportCombineData,
 			CmdImportInterlinearSfm,
 			CmdImportWordsAndGlossesSfm,
 			CmdImportInterlinearData,

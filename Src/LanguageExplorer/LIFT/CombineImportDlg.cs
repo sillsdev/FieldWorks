@@ -18,45 +18,43 @@ using SIL.Lift.Parsing;
 using SIL.Lift.Validation;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
-using SIL.Utils;
-using XCore;
 using Ionic.Zip;
 using System.Linq;
-using SIL.FieldWorks.Common.Controls.FileDialog;
+using DialogAdapters;
+using SIL.FieldWorks.FwCoreDlgs;
+using SIL.IO;
+using FileUtils = SIL.LCModel.Utils.FileUtils;
 
-namespace SIL.FieldWorks.LexText.Controls
+namespace LanguageExplorer.LIFT
 {
 	public partial class CombineImportDlg : Form, IFwExtension
 	{
 		private LcmCache m_cache;
-		private PropertyTable m_propertyTable;
+		private IPropertyTable m_propertyTable;
 		private IThreadedProgress m_progressDlg;
 		string m_sLogFile;      // name of HTML log file (if successful).
 
-		private FlexLiftMerger.MergeStyle m_msImport = FlexLiftMerger.MergeStyle.MsTheCombine;
+		private MergeStyle m_msImport = MergeStyle.MsTheCombine;
 
 		public CombineImportDlg()
 		{
 			InitializeComponent();
 			openFileDialog = new OpenFileDialogAdapter
 			{
-				Title = LexTextControls.openFileDialog1_Title,
+				Title = LiftResources.openFileDialog1_Title,
 				Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(
-					LexTextControls.openFileDialog1_Zip_Filter)
+					LiftResources.openFileDialog1_Zip_Filter)
 			};
 		}
 
 		/// <summary>
 		/// From IFwExtension
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <param name="mediator"></param>
-		/// <param name="propertyTable"></param>
-		void IFwExtension.Init(LcmCache cache, Mediator mediator, PropertyTable propertyTable)
+		void IFwExtension.Init(LcmCache cache, IPropertyTable propertyTable, IPublisher publisher)
 		{
 			m_cache = cache;
 			m_propertyTable = propertyTable;
-			var previousFileName = m_propertyTable.GetStringProperty(FilePropertyName, null);
+			var previousFileName = propertyTable.GetValue<string>(FilePropertyName, null);
 			if (!string.IsNullOrEmpty(previousFileName))
 			{
 				tbPath.Text = previousFileName;
@@ -113,7 +111,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (btnOK.Enabled)
 			{
 				m_propertyTable.SetProperty(FilePropertyName, tbPath.Text, true);
-				m_propertyTable.SetPropertyPersistence(FilePropertyName, true);
 			}
 		}
 
@@ -133,7 +130,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					progressDlg.Maximum = 100;
 					progressDlg.AllowCancel = true;
 					progressDlg.Restartable = true;
-					progressDlg.Title = String.Format(LexTextControls.ksImportingFrom0, tbPath.Text);
+					progressDlg.Title = string.Format(LanguageExplorerResources.ksImportingFrom0, tbPath.Text);
 					try
 					{
 						m_cache.DomainDataByFlid.BeginNonUndoableTask();
@@ -174,9 +171,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			catch (Exception error)
 			{
-				var message = string.Format(LexTextControls.ksLIFTCombineImportProblem,
+				var message = string.Format(LiftResources.ksLIFTCombineImportProblem,
 					originalFile, error.Message);
-				MessageBox.Show(message, LexTextControls.ksProblemImporting,
+				MessageBox.Show(message, LiftResources.ksProblemImporting,
 					MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return "";
 			}
@@ -206,7 +203,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					Directory.Delete(combineTempFolder, true);
 				Directory.CreateDirectory(combineTempFolder);
 
-				LdmlFileBackup.CopyFile(originalFile, tempFileName);
+				RobustFile.Copy(originalFile, tempFileName);
 
 				var tempLiftFile = PrepareImport(tempFileName, originalFile);
 				if (string.IsNullOrWhiteSpace(tempLiftFile))
@@ -218,7 +215,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					return null;
 
 				// Import the Combine file and ranges file.
-				m_progressDlg.Message = LexTextControls.ksLoadingVariousLists;
+				m_progressDlg.Message = LiftResources.ksLoadingVariousLists;
 				var flexImporter = new FlexLiftMerger(m_cache, m_msImport, true);
 				var parser = new LiftParser<LiftObject, CmLiftEntry, CmLiftSense, CmLiftExample>(flexImporter);
 				parser.SetTotalNumberSteps += Parser_SetNumberOfSteps;
@@ -241,7 +238,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			catch (Exception error)
 			{
 				TrackingHelper.TrackImport("lexicon", "Combine", ImportExportStep.Failed);
-				var errorMessage = string.Format(LexTextControls.ksLIFTImportProblem,
+				var errorMessage = string.Format(LiftResources.ksLIFTImportProblem,
 					originalFile, error.Message);
 				try
 				{
@@ -266,7 +263,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					// Exceptions while trying to build a nice error message can be ignored
 				}
-				MessageBox.Show(errorMessage, LexTextControls.ksProblemImporting,
+				MessageBox.Show(errorMessage, LiftResources.ksProblemImporting,
 					MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return null;
 			}
@@ -276,7 +273,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			try
 			{
-				m_progressDlg.Message = LexTextControls.ksValidatingInputFile;
+				m_progressDlg.Message = LiftResources.ksValidatingInputFile;
 				Validator.CheckLiftWithPossibleThrow(fileName);
 				return true;
 			}
@@ -286,23 +283,23 @@ namespace SIL.FieldWorks.LexText.Controls
 				string message;
 				if (combineProducer == null)
 				{
-					message = string.Format(LexTextControls.ksFileNotALIFTFile, originalFileName);
+					message = string.Format(LiftResources.ksFileNotALIFTFile, originalFileName);
 				}
 				else if (fileName == originalFileName)
 				{
-					message = string.Format(LexTextControls.ksInvalidLiftFile, originalFileName, combineProducer);
+					message = string.Format(LiftResources.ksInvalidLiftFile, originalFileName, combineProducer);
 				}
 				else
 				{
-					message = string.Format(LexTextControls.ksInvalidMigratedLiftFile, originalFileName, combineProducer);
+					message = string.Format(LiftResources.ksInvalidMigratedLiftFile, originalFileName, combineProducer);
 				}
 				// Show the pretty yellow semi-crash dialog box, with instructions for the
 				// user to report the error. Then ask the user whether to continue.
 				IApp app = m_propertyTable.GetValue<IApp>("App");
 				ErrorReporter.ReportException(new Exception(message, lfe), app.SettingsKey,
 					m_propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress, this, false);
-				return MessageBox.Show(LexTextControls.ksContinueLiftImportQuestion,
-					LexTextControls.ksProblemImporting,
+				return MessageBox.Show(LiftResources.ksContinueLiftImportQuestion,
+					LiftResources.ksProblemImporting,
 					MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
 			}
 		}

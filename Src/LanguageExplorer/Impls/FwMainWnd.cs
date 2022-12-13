@@ -223,6 +223,7 @@ namespace LanguageExplorer.Impls
 					{ Command.CmdImportSFMLexicon, CmdImportSFMLexicon },
 					{ Command.CmdImportLinguaLinksData, CmdImportLinguaLinksData },
 					{ Command.CmdImportLiftData, CmdImportLiftData },
+					{ Command.CmdImportCombineData, CmdImportCombineData },
 					{ Command.CmdImportInterlinearSfm, CmdImportInterlinearSfm },
 					{ Command.CmdImportWordsAndGlossesSfm, CmdImportWordsAndGlossesSfm },
 					{ Command.CmdImportInterlinearData, CmdImportInterlinearData },

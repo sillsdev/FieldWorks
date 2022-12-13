@@ -45,6 +45,7 @@ namespace LanguageExplorer.Impls
 			this.CmdImportSFMLexicon = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdImportLinguaLinksData = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdImportLiftData = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdImportCombineData = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdImportInterlinearSfm = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdImportWordsAndGlossesSfm = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdImportInterlinearData = new System.Windows.Forms.ToolStripMenuItem();
@@ -541,6 +542,13 @@ namespace LanguageExplorer.Impls
 			this.CmdImportLiftData.Name = "CmdImportLiftData";
 			this.CmdImportLiftData.Size = new System.Drawing.Size(273, 22);
 			this.CmdImportLiftData.Text = "L&IFT Lexicon...";
+			this.CmdImportLiftData.Visible = false;
+			// 
+			// CmdImportCombineData
+			// 
+			this.CmdImportLiftData.Name = "CmdImportCombineData";
+			this.CmdImportLiftData.Size = new System.Drawing.Size(273, 22);
+			this.CmdImportLiftData.Text = "_Combine Import...";
 			this.CmdImportLiftData.Visible = false;
 			// 
 			// CmdImportInterlinearSfm
@@ -3210,6 +3218,7 @@ namespace LanguageExplorer.Impls
 		private ToolStripButton Toolbar_CmdBreakPhraseButton;
 		private ToolStripMenuItem CmdImportLinguaLinksData;
 		private ToolStripMenuItem CmdImportLiftData;
+		private ToolStripMenuItem CmdImportCombineData;
 		private ToolStripMenuItem CmdImportInterlinearSfm;
 		private ToolStripMenuItem CmdImportWordsAndGlossesSfm;
 		private ToolStripMenuItem CmdImportInterlinearData;

@@ -232,6 +232,8 @@ namespace LanguageExplorer.Areas.Lexicon
 				fileMenuItemsForTool.Add(Command.CmdImportLinguaLinksData, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportLinguaLinksData_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				// <item command="CmdImportLiftData" />
 				fileMenuItemsForTool.Add(Command.CmdImportLiftData, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportLiftData_Clicked, () => UiWidgetServices.CanSeeAndDo));
+
+				fileMenuItemsForTool.Add(Command.CmdImportCombineData, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportCombineData_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				majorFlexComponentParameters.UiWidgetController.AddHandlers(areaUiWidgetParameterObject);
 			}
 
@@ -251,6 +253,13 @@ namespace LanguageExplorer.Areas.Lexicon
 			private void ImportLiftData_Clicked(object sender, EventArgs e)
 			{
 				using (var importWizardDlg = new LiftImportDlg())
+				{
+					AreaServices.HandleDlg(importWizardDlg, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.FlexApp, _majorFlexComponentParameters.MainWindow, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, _majorFlexComponentParameters.FlexComponentParameters.Publisher);
+				}
+			}
+			private void ImportCombineData_Clicked(object sender, EventArgs e)
+			{
+				using (var importWizardDlg = new CombineImportDlg())
 				{
 					AreaServices.HandleDlg(importWizardDlg, _majorFlexComponentParameters.LcmCache, _majorFlexComponentParameters.FlexApp, _majorFlexComponentParameters.MainWindow, _majorFlexComponentParameters.FlexComponentParameters.PropertyTable, _majorFlexComponentParameters.FlexComponentParameters.Publisher);
 				}

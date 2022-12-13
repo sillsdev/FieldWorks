@@ -746,5 +746,10 @@ namespace LanguageExplorer.LIFT {
                 return ResourceManager.GetString("openFileDialog1_Title", resourceCulture);
             }
         }
+		  internal static string openFileDialog1_Zip_Filter {
+            get {
+                return ResourceManager.GetString("openFileDialog1_Zip_Filter", resourceCulture);
+            }
+        }
     }
 }
