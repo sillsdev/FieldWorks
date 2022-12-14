@@ -408,7 +408,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 						{
 							tempFile.Dispose();
 						}
-						Assert.IsNull(result, "When no configurations have the publication null should be returned.");
+						Assert.That(result, Is.Null, "When no configurations have the publication null should be returned.");
 					}
 					finally
 					{
@@ -448,7 +448,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					_flexComponentParameters.PropertyTable.SetProperty("DictionaryPublicationLayout", nonMatchedConfigFile.Path);
 					// SUT
 					var validConfig = docView.GetValidConfigurationForPublication("TestPub");
-					Assert.That(validConfig, Is.Not.StringContaining(nonMatchedConfigFile.Path));
+					Assert.That(validConfig, Does.Not.Contain(nonMatchedConfigFile.Path));
 					Assert.That(validConfig, Does.Contain(matchedConfigFile.Path));
 				}
 			}

@@ -44,7 +44,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		private IRecordListRepositoryForTools _recordListRepositoryForTools;
 		private IRecordList _recordList;
 		private StatusBar _statusBar;
-		private int _wsEn, _wsFr, _wsHe;
+		private int _wsEn, _wsFr;
 		private const string xpathThruSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']";
 		private const string TestVariantName = "Crazy Variant";
 		private StringBuilder XHTMLStringBuilder { get; set; }
@@ -3776,7 +3776,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var otherMainEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			CreateComplexForm(Cache, mainEntry, referencedEntry, true);
-			CreateLexicalReference(otherMainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, otherMainEntry, referencedEntry, refTypeName);
 
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.That(refType, Is.Not.Null);
@@ -3870,7 +3870,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.That(refType, Is.Not.Null);
 
@@ -3914,7 +3914,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.That(refType, Is.Not.Null);
 
@@ -3965,7 +3965,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.That(refType, Is.Not.Null);
 
@@ -4020,7 +4020,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.That(refType, Is.Not.Null);
 
@@ -4063,7 +4063,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			const string refTypeRevName = "epyTfeRtseT";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.That(refType, Is.Not.Null);
 
@@ -4106,7 +4106,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			const string refTypeRevName = "sURsyoT";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.That(refType, Is.Not.Null);
 
@@ -4149,7 +4149,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			const string refTypeRevName = "sURsyoT";
-			CreateLexicalReference(mainEntry.SensesOS.First(), referencedEntry, refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, mainEntry.SensesOS.First(), referencedEntry, refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.That(refType, Is.Not.Null);
 
@@ -4198,8 +4198,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var referencedEntry2 = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			const string refTypeRevName = "sURsyoT";
-			CreateLexicalReference(mainEntry.SensesOS.First(), referencedEntry1, refTypeName, refTypeRevName);
-			CreateLexicalReference(mainEntry.SensesOS.First(), referencedEntry2, refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, mainEntry.SensesOS.First(), referencedEntry1, refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, mainEntry.SensesOS.First(), referencedEntry2, refTypeName, refTypeRevName);
 			var refType1 = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.That(refType1, Is.Not.Null);
 			var nameNode = new ConfigurableDictionaryNode
@@ -4244,7 +4244,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
 			const string refTypeRevName = "sURsyoT";
-			CreateLexicalReference(mainEntry, referencedEntry.SensesOS.First(), refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry.SensesOS.First(), refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.That(refType, Is.Not.Null);
 
@@ -4295,8 +4295,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			const string comRefTypeRevName = "cp";
 			const string etyRefTypeName = "Etymology";
 			const string etyRefTypeRevName = "ety";
-			CreateLexicalReference(mainEntry, compareReferencedEntry, comRefTypeName, comRefTypeRevName);
-			CreateLexicalReference(mainEntry, etymologyReferencedEntry, etyRefTypeName, etyRefTypeRevName);
+			CreateLexicalReference(Cache, mainEntry, compareReferencedEntry, comRefTypeName, comRefTypeRevName);
+			CreateLexicalReference(Cache, mainEntry, etymologyReferencedEntry, etyRefTypeName, etyRefTypeRevName);
 			var comRefType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == comRefTypeName);
 			var etyRefType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == etyRefTypeName);
 			Assert.That(comRefType, Is.Not.Null);
@@ -4356,7 +4356,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var legEntry = CreateInterestingLexEntry(Cache, thirdWord, "leg");
 			const string refTypeName = "Part";
 			const string refTypeRevName = "Whole";
-			CreateLexicalReference(bodyEntry, armEntry.SensesOS.First(), legEntry.SensesOS.First(), refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, bodyEntry, armEntry.SensesOS.First(), legEntry.SensesOS.First(), refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.That(refType, Is.Not.Null);
 
@@ -4429,7 +4429,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var legEntry = CreateInterestingLexEntry(Cache, "jambe", "leg");
 			const string refTypeName = "Part";
 			const string refTypeRevName = "Whole";
-			CreateLexicalReference(firstEntry, firstEntry.SensesOS[0].SensesOS[0], legEntry.SensesOS.First(), refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, firstEntry, firstEntry.SensesOS[0].SensesOS[0], legEntry.SensesOS.First(), refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.That(refType, Is.Not.Null);
 
@@ -4493,7 +4493,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			AddSenseToEntry(firstEntry, "b2", _wsEn, Cache);
 			const string refTypeName = "Part";
 			const string refTypeRevName = "Whole";
-			CreateLexicalReference(firstEntry.SensesOS[0], firstEntry.SensesOS[1], refTypeName, refTypeRevName);
+			CreateLexicalReference(Cache, firstEntry.SensesOS[0], firstEntry.SensesOS[1], refTypeName, refTypeRevName);
 			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.That(refType, Is.Not.Null);
 
@@ -4731,7 +4731,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.That(notComplexTypePoss, Is.Not.Null);
 			var entryReferenceNode = new ConfigurableDictionaryNode
@@ -4767,7 +4767,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName, "ReverseName");
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName, "ReverseName");
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.That(notComplexTypePoss, Is.Not.Null);
 			var entryReferenceNode = new ConfigurableDictionaryNode
@@ -4807,7 +4807,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName, "ReverseName");
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName, "ReverseName");
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.That(notComplexTypePoss, Is.Not.Null);
 			var entryReferenceNode = new ConfigurableDictionaryNode
@@ -4847,7 +4847,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName, "ReverseName");
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName, "ReverseName");
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.That(notComplexTypePoss, Is.Not.Null);
 			var entryReferenceNode = new ConfigurableDictionaryNode
@@ -4892,7 +4892,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			lrt.Name.set_String(Cache.DefaultAnalWs, "NotOurTestRefType");
 
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text != refTypeName);
 			Assert.That(notComplexTypePoss, Is.Not.Null);
 			var entryReferenceNode = new ConfigurableDictionaryNode
@@ -4924,7 +4924,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			var referencedEntry = CreateInterestingLexEntry(Cache);
 			const string refTypeName = "TestRefType";
-			CreateLexicalReference(mainEntry, referencedEntry, refTypeName);
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
 			var notComplexTypePoss = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(refType => refType.Name.BestAnalysisAlternative.Text == refTypeName);
 			Assert.That(notComplexTypePoss, Is.Not.Null);
 			var entryReferenceNode = new ConfigurableDictionaryNode
@@ -6062,7 +6062,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				var testEntry = CreateInterestingLexEntry(Cache);
 				var refdEntry = CreateInterestingLexEntry(Cache);
-				CreateLexicalReference(testEntry, refdEntry, refType);
+				CreateLexicalReference(Cache, testEntry, refdEntry, refType);
 				var lexrefType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(r => r.Name.BestAnalysisAlternative.Text == refType);
 				crossRefs.DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
@@ -6121,7 +6121,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			{
 				var testEntry = CreateInterestingLexEntry(Cache);
 				var refdEntry = CreateInterestingLexEntry(Cache);
-				CreateLexicalReference(testEntry, refdEntry.SensesOS[0], refType);
+				CreateLexicalReference(Cache, testEntry, refdEntry.SensesOS[0], refType);
 				var lexrefType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(r => r.Name.BestAnalysisAlternative.Text == refType);
 				crossRefs.DictionaryNodeOptions = new DictionaryNodeListOptions
 				{
@@ -8840,7 +8840,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
-			var multiRunString = MakeBidirectionalTss(new[] { "דוד", " et ", "דניאל" }, Cache, _wsEn, ref _wsHe);
+			var multiRunString = MakeBidirectionalTss(new[] { "דוד", " et ", "דניאל" }, Cache);
 			var wsHe = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("he");
 			entry.Bibliography.set_String(wsHe, multiRunString);
 			//SUT
@@ -8869,7 +8869,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = CreateInterestingLexEntry(Cache);
-			var multiRunString = MakeBidirectionalTss(new[] { "ירמיהו", " was a bullfrog." }, Cache, _wsEn, ref _wsHe);
+			var multiRunString = MakeBidirectionalTss(new[] { "ירמיהו", " was a bullfrog." }, Cache);
 			var wsHe = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("he");
 			entry.Bibliography.set_String(wsHe, multiRunString);
 			// Right-to-Left
@@ -10039,6 +10039,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		/// <param name="cache"></param>
 		/// <param name="headword">Optional: defaults to 'Citation'</param>
 		/// <param name="gloss">Optional: defaults to 'gloss'</param>
+		/// <param name="definition">Optional: default is to omit</param>
 		/// <returns></returns>
 		internal static ILexEntry CreateInterestingLexEntry(LcmCache cache, string headword = "Citation", string gloss = "gloss", string definition = null)
 			{
@@ -10102,7 +10103,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		internal static ILexEntryRef CreateVariantForm(LcmCache cache, IVariantComponentLexeme main, ILexEntry variantForm, string type = TestVariantName)
 		{
 			var owningList = cache.LangProject.LexDbOA.VariantEntryTypesOA;
-			Assert.IsNotNull(owningList, "No VariantEntryTypes property on Lexicon object.");
+			Assert.That(owningList, Is.Not.Null, "No VariantEntryTypes property on Lexicon object.");
 			var varType = owningList.ReallyReallyAllPossibilities.LastOrDefault(poss => poss.Name.AnalysisDefaultWritingSystem.Text == type) as ILexEntryType;
 			if (varType == null && type != null) // if this type doesn't exist, create it
 			{
@@ -10169,14 +10170,14 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		/// If refTypeReverseName is specified, generates a Ref of an Asymmetric Type (EntryOrSenseTree) with the specified reverse name;
 		/// otherwise, generates a Ref of a Symmetric Type (EntryOrSenseSequence).
 		/// </summary>
-		private void CreateLexicalReference(ICmObject mainEntry, ICmObject referencedForm, string refTypeName, string refTypeReverseName = null)
+		internal void CreateLexicalReference(LcmCache cache, ICmObject mainEntry, ICmObject referencedForm, string refTypeName, string refTypeReverseName = null)
 		{
-			CreateLexicalReference(mainEntry, referencedForm, null, refTypeName, refTypeReverseName);
+			CreateLexicalReference(cache, mainEntry, referencedForm, null, refTypeName, refTypeReverseName);
 		}
 
-		private void CreateLexicalReference(ICmObject firstEntry, ICmObject secondEntry, ICmObject thirdEntry, string refTypeName, string refTypeReverseName = null)
+		private void CreateLexicalReference(LcmCache cache, ICmObject firstEntry, ICmObject secondEntry, ICmObject thirdEntry, string refTypeName, string refTypeReverseName = null)
 		{
-			CreateLexicalReference(Cache, firstEntry, secondEntry, thirdEntry, _wsEn, refTypeName, refTypeReverseName);
+			CreateLexicalReference(cache, firstEntry, secondEntry, thirdEntry, _wsEn, refTypeName, refTypeReverseName);
 		}
 
 		internal static void CreateLexicalReference(LcmCache cache, ICmObject firstEntry, ICmObject secondEntry, ICmObject thirdEntry, int wsEn, string refTypeName, string refTypeReverseName = null)
@@ -10216,15 +10217,15 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			var lrt = cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
 			referencePossibilities.Add(lrt);
 			lrt.MappingType = (int)type;
-			lrt.Name.set_String(wsEn, name);
-			lrt.Abbreviation.set_String(wsEn, abbr);
+			lrt.Name.set_String(cache.DefaultAnalWs, name);
+			lrt.Abbreviation.set_String(cache.DefaultAnalWs, abbr);
 			if (!string.IsNullOrEmpty(revName))
 			{
-				lrt.ReverseName.set_String(wsEn, revName);
+				lrt.ReverseName.set_String(cache.DefaultAnalWs, revName);
 			}
 			if (!string.IsNullOrEmpty(revAbbr))
 			{
-				lrt.ReverseAbbreviation.set_String(wsEn, revAbbr);
+				lrt.ReverseAbbreviation.set_String(cache.DefaultAnalWs, revAbbr);
 			}
 			return lrt;
 		}
@@ -10248,7 +10249,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			return DictionaryConfigurationImportController.AddPublicationType(name, cache);
 		}
 
-		private static void AddHeadwordToEntry(ILexEntry entry, string headword, int wsId)
+		internal static void AddHeadwordToEntry(ILexEntry entry, string headword, int wsId)
 		{
 			// The headword field is special: it uses Citation if available, or LexemeForm if Citation isn't filled in
 			entry.CitationForm.set_String(wsId, TsStringUtils.MakeString(headword, wsId));
@@ -10388,9 +10389,12 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			return builder.GetString();
 		}
 
-		internal static ITsString MakeBidirectionalTss(IEnumerable<string> content, LcmCache cache, int wsEn, ref int wsHe)
+		/// <remarks>Automatically alternates runs between 'he' (Hebrew) and 'en'.</remarks>
+		internal static ITsString MakeBidirectionalTss(IEnumerable<string> content, LcmCache cache)
 		{
-			EnsureHebrewExists(cache, ref wsHe);
+			var wsHe = EnsureHebrewExists(cache);
+			var wsEn = cache.ServiceLocator.WritingSystems.AllWritingSystems
+				.First(ws => ws.Id == "en").Handle;
 			// automatically alternates runs between 'en' and 'he' (Hebrew)
 			var tsFact = TsStringUtils.TsStrFactory;
 			var lastWs = wsEn;
@@ -10403,16 +10407,18 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			return builder.GetString();
 		}
 
-		private static void EnsureHebrewExists(LcmCache cache, ref int wsHe)
+		private static int EnsureHebrewExists(LcmCache cache)
 		{
-			if (wsHe > 0)
-			{
-				return;
-			}
+			var heWs =
+				cache.ServiceLocator.WritingSystems.AllWritingSystems.FirstOrDefault(ws =>
+					ws.Id == "he");
+			if (heWs != null)
+				return heWs.Handle;
 			var wsManager = cache.ServiceLocator.WritingSystemManager;
-			wsManager.GetOrSet("he", out var hebrew);
+			CoreWritingSystemDefinition hebrew;
+			wsManager.GetOrSet("he", out hebrew);
 			hebrew.RightToLeftScript = true;
-			wsHe = hebrew.Handle;
+			return hebrew.Handle;
 		}
 
 		private void SetDictionaryNormalDirection(InheritableStyleProp<TriStateBool> rightToLeft)

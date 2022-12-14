@@ -32,7 +32,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 		private IRecordListRepositoryForTools _recordListRepositoryForTools;
 		private IRecordList _recordList;
 		private StatusBar _statusBar;
-		private int _wsEn, _wsFr, _wsHe;
+		private int _wsEn, _wsFr;
 
 		private const string DictionaryNormal = "Dictionary-Normal";
 
@@ -1127,7 +1127,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
-			var multiRunString = ConfiguredXHTMLGeneratorTests.MakeBidirectionalTss(new[] { "דוד", " et ", "דניאל" }, Cache, _wsEn, ref _wsHe);
+			var multiRunString = ConfiguredXHTMLGeneratorTests.MakeBidirectionalTss(new[] { "דוד", " et ", "דניאל" }, Cache);
 			var wsHe = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("he");
 			entry.Bibliography.set_String(wsHe, multiRunString);
 			//SUT
