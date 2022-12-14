@@ -136,7 +136,8 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 				// Jump only if we need to; unnecessary refreshes prevent audio from playing when the user clicks an audio link (LT-19967)
 				if (objectRepository.TryGetObject(destinationGuid, out var obj))
 				{
-					recordList.JumpToRecord(obj.Hvo);
+					if (recordList.JumpToTargetWillChangeIndex(obj.Hvo))
+						recordList.JumpToRecord(obj.Hvo);
 				}
 				else if (element is GeckoAnchorElement)
 				{
