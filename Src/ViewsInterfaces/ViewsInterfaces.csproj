@@ -43,6 +43,7 @@
 		<Exec Command="dotnet tool update --global SIL.IdlImporter.Tool --version $(IdlImpVer)" />
 		<Exec Command="idlimport /c &quot;$(IdlImporterXmlPath)&quot; /o $(MSBuildProjectDirectory)\Views.cs /i &quot;@(ViewsIdhFiles)&quot; /n SIL.FieldWorks.Common.ViewsInterfaces /u &quot;@(UsingNamespaces)&quot; /r &quot;$(ViewsRefsJson)&quot; &quot;$(ViewsTlbSrc)&quot;" />
     <ItemGroup>
+	  <!-- REVIEW (Hasso) 2022.12: there are three warnings about this being included multiple times, but removing it causes different problems. -->
       <Compile Include="$(MSBuildProjectDirectory)\Views.cs"/>
     </ItemGroup>
   </Target>

@@ -89,7 +89,6 @@ namespace LanguageExplorer.Impls
 
 				m_cbUpdateChannel.Items.AddRange(m_channels.Values.ToArray());
 				// Enable the nightly channel only if it is already selected
-				if (appSettings.Update.Channel == UpdateSettings.Channels.Nightly)
 				if (appSettings.Update.Channel == UpdateSettings.Channels.Nightly || appSettings.Update.Channel == UpdateSettings.Channels.Testing)
 				{
 					m_cbUpdateChannel.Items.Add(m_NightlyChannel);
