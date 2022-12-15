@@ -24,36 +24,42 @@ namespace LanguageExplorerTests.Controls.DetailControls.Slices
 		[Test]
 		public void SettingTargetToReplaceWholeInRelationWithOnlyOnePartDoesNotDeleteRelation()
 		{
-			var lrtrl = new TestLrtrl();
-			UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler, () =>
+			using (var lrtrl = new TestLrtrl())
 			{
-				// Set up a part-whole type lexical relation and two lexical entries indicating that "nose" is a part of "face".
-				var lrt = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
-				if (Cache.LangProject.LexDbOA.ReferencesOA == null)
+				UndoableUnitOfWorkHelper.Do("undo", "redo", m_actionHandler, () =>
 				{
-					// default state of cache may not have the PL we need to own our lexical relation type...if not create it.
-					Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-				}
-				Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(lrt);
-				lrt.MappingType = (int)LexRefTypeTags.MappingTypes.kmtSenseAsymmetricPair; // e.g., part/whole
-				var face = MakeEntry("face", "front of head");
-				var nose = MakeEntry("nose", "pointy bit on front");
-				var rel = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
-				lrt.MembersOC.Add(rel);
-				rel.TargetsRS.Add(face);
-				rel.TargetsRS.Add(nose);
-				// Here is an alternative 'whole' to be the root that 'nose' belongs to.
-				var head = MakeEntry("head", "thing on top of body");
-				// Now we want to configure the Lrtrl so that setting its target to 'head' will replace 'face' with 'head'.
-				lrtrl.SetObject(rel);
-				lrtrl.Child = nose; // the part for which we are changing the whole
-				// This is the operation we want to test
-				lrtrl.SetTarget(head);
-				Assert.That(rel.IsValidObject);
-				Assert.That(rel.TargetsRS, Has.Count.EqualTo(2));
-				Assert.That(rel.TargetsRS[0], Is.EqualTo(head));
-				Assert.That(rel.TargetsRS[1], Is.EqualTo(nose));
-			});
+					// Set up a part-whole type lexical relation and two lexical entries indicating that "nose" is a part of "face".
+					var lrt = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+					if (Cache.LangProject.LexDbOA.ReferencesOA == null)
+					{
+						// default state of cache may not have the PL we need to own our lexical relation type...if not create it.
+						Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator
+							.GetInstance<ICmPossibilityListFactory>().Create();
+					}
+
+					Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Add(lrt);
+					lrt.MappingType =
+						(int)LexRefTypeTags.MappingTypes
+							.kmtSenseAsymmetricPair; // e.g., part/whole
+					var face = MakeEntry("face", "front of head");
+					var nose = MakeEntry("nose", "pointy bit on front");
+					var rel = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
+					lrt.MembersOC.Add(rel);
+					rel.TargetsRS.Add(face);
+					rel.TargetsRS.Add(nose);
+					// Here is an alternative 'whole' to be the root that 'nose' belongs to.
+					var head = MakeEntry("head", "thing on top of body");
+					// Now we want to configure the Lrtrl so that setting its target to 'head' will replace 'face' with 'head'.
+					lrtrl.SetObject(rel);
+					lrtrl.Child = nose; // the part for which we are changing the whole
+					// This is the operation we want to test
+					lrtrl.SetTarget(head);
+					Assert.That(rel.IsValidObject);
+					Assert.That(rel.TargetsRS, Has.Count.EqualTo(2));
+					Assert.That(rel.TargetsRS[0], Is.EqualTo(head));
+					Assert.That(rel.TargetsRS[1], Is.EqualTo(nose));
+				});
+			}
 		}
 
 		private ILexEntry MakeEntry(string lf, string gloss)

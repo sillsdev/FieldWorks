@@ -47,9 +47,6 @@ namespace LanguageExplorer.SendReceive
 		private IFlexApp FlexApp { get; set; }
 		private LcmCache Cache { get; set; }
 
-		// For send/receive involving LIFT projects, use the lift version "0.13_ldml3" so the version 3 ldml files will exist on a different chorus branch
-		private const string LiftModelVersion = "0.13_ldml3";
-
 		private const string NoBridgeUsedYet = "NoBridgeUsedYet";
 
 		/// <summary />
@@ -159,13 +156,12 @@ namespace LanguageExplorer.SendReceive
 		private void HelpAboutFLEXBridge_Click(object sender, EventArgs e)
 		{
 			FLExBridgeHelper.LaunchFieldworksBridge(Cache.GetFullProjectFileName(), LanguageExplorerConstants.SendReceiveUser, FLExBridgeHelper.AboutFLExBridge,
-				null, LcmCache.ModelVersion, LiftModelVersion, null, null, out _, out _);
+				null, LcmCache.ModelVersion, FLExBridgeHelper.LiftVersion, null, null, out _, out _);
 		}
 
 		private void CheckForFlexBridgeUpdates_Click(object sender, EventArgs e)
 		{
-			FLExBridgeHelper.LaunchFieldworksBridge(Cache.GetFullProjectFileName(), LanguageExplorerConstants.SendReceiveUser, FLExBridgeHelper.CheckForUpdates,
-				null, LcmCache.ModelVersion, LiftModelVersion, null, null, out _, out _);
+			Process.Start("https://software.sil.org/fieldworks/support/using-sendreceive/flex-bridge/");
 		}
 
 		private void HelpChorus_Click(object sender, EventArgs eventArgs)
@@ -569,7 +565,7 @@ namespace LanguageExplorer.SendReceive
 				using (CopyDictionaryConfigFileToTemp(projectFolder))
 				{
 					var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, LanguageExplorerConstants.SendReceiveUser, FLExBridgeHelper.SendReceive, null, LcmCache.ModelVersion,
-						LiftModelVersion, Cache.LangProject.DefaultVernacularWritingSystem.Id, null, out dataChanged, out _);
+						FLExBridgeHelper.LiftVersion, Cache.LangProject.DefaultVernacularWritingSystem.Id, null, out dataChanged, out _);
 					if (!success)
 					{
 						ReportDuplicateBridge();
@@ -722,7 +718,7 @@ namespace LanguageExplorer.SendReceive
 			{
 				FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
 				var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension),
-					LanguageExplorerConstants.SendReceiveUser, FLExBridgeHelper.ConflictViewer, null, LcmCache.ModelVersion, LiftModelVersion, null,
+					LanguageExplorerConstants.SendReceiveUser, FLExBridgeHelper.ConflictViewer, null, LcmCache.ModelVersion, FLExBridgeHelper.LiftVersion, null,
 					() => BroadcastMasterRefresh(Publisher), out _, out _);
 				if (!success)
 				{
@@ -1041,7 +1037,7 @@ namespace LanguageExplorer.SendReceive
 				}
 				StopParser(Publisher);
 				var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, null, FLExBridgeHelper.ObtainLift, null,
-					LcmCache.ModelVersion, LiftModelVersion, null, null, out _, out _liftPathname);
+					LcmCache.ModelVersion, FLExBridgeHelper.LiftVersion, null, null, out _, out _liftPathname);
 				if (!success || string.IsNullOrEmpty(_liftPathname))
 				{
 					_liftPathname = null;
@@ -1067,7 +1063,7 @@ namespace LanguageExplorer.SendReceive
 			{
 				FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
 				var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.GetFullProjectFileName(), LanguageExplorerConstants.SendReceiveUser, FLExBridgeHelper.LiftConflictViewer,
-					null, LcmCache.ModelVersion, LiftModelVersion, null, () => BroadcastMasterRefresh(Publisher), out _, out _);
+					null, LcmCache.ModelVersion, FLExBridgeHelper.LiftVersion, null, () => BroadcastMasterRefresh(Publisher), out _, out _);
 				if (!success)
 				{
 					ReportDuplicateBridge();
@@ -1107,7 +1103,7 @@ namespace LanguageExplorer.SendReceive
 				}
 				// flexbridge -p <path to fwdata file> -u <username> -v move_lift -g Langprojguid
 				var success = FLExBridgeHelper.LaunchFieldworksBridge(Cache.GetFullProjectFileName(), LanguageExplorerConstants.SendReceiveUser, FLExBridgeHelper.MoveLift,
-					Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), LcmCache.ModelVersion, "0.13", null, null, out _, out _liftPathname); // _liftPathname will be null, if no repo was moved.
+					Cache.LanguageProject.Guid.ToString().ToLowerInvariant(), LcmCache.ModelVersion, FLExBridgeHelper.LiftVersion, null, null, out _, out _liftPathname); // _liftPathname will be null, if no repo was moved.
 				if (!success)
 				{
 					ReportDuplicateBridge();
@@ -1338,7 +1334,7 @@ namespace LanguageExplorer.SendReceive
 				// Have FLEx Bridge do its 'undo'
 				// flexbridge -p <project folder name> #-u username -v undo_export_lift)
 				FLExBridgeHelper.LaunchFieldworksBridge(Cache.ProjectId.ProjectFolder, LanguageExplorerConstants.SendReceiveUser, FLExBridgeHelper.UndoExportLift, null, LcmCache.ModelVersion,
-					LiftModelVersion, null, null, out _, out _);
+					FLExBridgeHelper.LiftVersion, null, null, out _, out _);
 			}
 
 			/// <summary>
@@ -1466,7 +1462,7 @@ namespace LanguageExplorer.SendReceive
 				// flexbridge -p <path to fwdata/fwdb file> -u <username> -v send_receive_lift
 				var success = FLExBridgeHelper.LaunchFieldworksBridge(fullProjectFileName, LanguageExplorerConstants.SendReceiveUser,
 					FLExBridgeHelper.SendReceiveLift, // May create a new lift repo in the process of doing the S/R. Or, it may just use the extant lift repo.
-					null, LcmCache.ModelVersion, "0.13", Cache.LangProject.DefaultVernacularWritingSystem.Id, null, out dataChanged, out _);
+					null, LcmCache.ModelVersion, FLExBridgeHelper.LiftVersion, Cache.LangProject.DefaultVernacularWritingSystem.Id, null, out dataChanged, out _);
 				if (!success)
 				{
 					ReportDuplicateBridge();

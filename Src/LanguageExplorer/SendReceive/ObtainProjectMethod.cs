@@ -32,7 +32,6 @@ namespace LanguageExplorer.SendReceive
 		/// <returns>Null if the operation was cancelled or otherwise did not work. The full pathname of an fwdata file, if it did work.</returns>
 		internal static string ObtainProjectFromAnySource(Form parent, out ObtainedProjectType obtainedProjectType)
 		{
-			const string liftVersion = "0.13_ldml3";
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(FwDirectoryFinder.ProjectsDirectory, null, FLExBridgeHelper.Obtain, null,
 				LcmCache.ModelVersion, FLExBridgeHelper.LiftVersion, null, null, out _, out var projectFileFullPath);
 			if (!success)
