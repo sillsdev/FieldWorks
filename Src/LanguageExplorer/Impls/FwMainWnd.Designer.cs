@@ -546,10 +546,10 @@ namespace LanguageExplorer.Impls
 			// 
 			// CmdImportCombineData
 			// 
-			this.CmdImportLiftData.Name = "CmdImportCombineData";
-			this.CmdImportLiftData.Size = new System.Drawing.Size(273, 22);
-			this.CmdImportLiftData.Text = "_Combine Import...";
-			this.CmdImportLiftData.Visible = false;
+			this.CmdImportCombineData.Name = "CmdImportCombineData";
+			this.CmdImportCombineData.Size = new System.Drawing.Size(273, 22);
+			this.CmdImportCombineData.Text = "&Combine Import...";
+			this.CmdImportCombineData.Visible = false;
 			// 
 			// CmdImportInterlinearSfm
 			// 
