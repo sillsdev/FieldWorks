@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Icu.Collation;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -22,6 +23,7 @@ using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
+using SIL.WritingSystems;
 using Rect = SIL.FieldWorks.Common.ViewsInterfaces.Rect;
 
 namespace LanguageExplorer.Controls.DetailControls
@@ -257,7 +259,7 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		protected CaseFunctions VernCaseFuncs(ITsString tss)
 		{
-			return new CaseFunctions(Caches.MainCache.ServiceLocator.WritingSystemManager.Get(TsStringUtils.GetWsAtOffset(tss, 0)).IcuLocale);
+			return new CaseFunctions(Caches.MainCache.ServiceLocator.WritingSystemManager.Get(TsStringUtils.GetWsAtOffset(tss, 0)));
 		}
 
 		protected bool ComboOnMouseHover => false;
@@ -1609,25 +1611,39 @@ namespace LanguageExplorer.Controls.DetailControls
 		{
 			// Find all the matching morphs and count how often used in WfiAnalyses
 			var ws = RawWordformWs;
+			// Use ICU Rules if available, otherwise default search
+			var wsObj = Cache.ServiceLocator.WritingSystemManager.Get(ws);
+			var rules = wsObj.DefaultCollation as IcuRulesCollationDefinition;
+			var srules = rules != null && rules.IsValid ? rules.IcuRules : string.Empty;
 			// Fix FWR-2098 GJM: The definition of 'IsAmbiguousWith' seems not to include 'IsSameAs'.
-			var morphs = (Cache.ServiceLocator.GetInstance<IMoFormRepository>().AllInstances().Where(mf => mf.Form.get_String(ws).Text == form && mf.MorphTypeRA != null && (mf.MorphTypeRA == mmt || mf.MorphTypeRA.IsAmbiguousWith(mmt)))).ToList();
-			if (morphs.Count == 1)
+			using (var icuCollator = new RuleBasedCollator(srules))
 			{
-				return morphs.First(); // special case: we can avoid the cost of figuring ReferringObjects.
-			}
-			IMoForm bestMorph = null;
-			var bestMorphCount = -1;
-			foreach (var mf in morphs)
-			{
-				var count = (mf.ReferringObjects.Where(source => source is IWfiMorphBundle)).Count();
-				if (count <= bestMorphCount)
+				var morphs = (Cache.ServiceLocator.GetInstance<IMoFormRepository>().AllInstances()
+					.Where(mf =>
+						icuCollator.Compare(mf.Form.get_String(ws).Text, form) == 0 && mf.MorphTypeRA != null &&
+						(mf.MorphTypeRA == mmt || mf.MorphTypeRA.IsAmbiguousWith(mmt)))).ToList();
+
+				if (morphs.Count == 1)
 				{
-					continue;
+					// special case: we can avoid the cost of figuring ReferringObjects.
+					return morphs.First();
 				}
-				bestMorphCount = count;
-				bestMorph = mf;
+
+				IMoForm bestMorph = null;
+				var bestMorphCount = -1;
+				foreach (var mf in morphs)
+				{
+					var count = (mf.ReferringObjects.Where(source => source is IWfiMorphBundle)).Count();
+					if (count <= bestMorphCount)
+					{
+						continue;
+					}
+
+					bestMorphCount = count;
+					bestMorph = mf;
+				}
+				return bestMorph;
 			}
-			return bestMorph;
 		}
 
 		/// <summary>
@@ -3267,7 +3283,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			var handler = (ChooseAnalysisHandler)sender;
 			var chosenAnalysis = handler.GetAnalysisTree();
 			CurrentAnalysisTree = chosenAnalysis;
-			var fLookForDefaults = true;
 			if (CurrentAnalysisTree.Analysis == null)
 			{
 				// 'Use default analysis'. This can normally be achieved by loading data
@@ -3277,14 +3292,9 @@ namespace LanguageExplorer.Controls.DetailControls
 				// displayed.)
 				CurrentAnalysisTree.Analysis = m_wordformOriginal;
 			}
-			else
-			{
-				// If the user chose an analysis we do not want to fill content in with defaults, use what they picked
-				fLookForDefaults = false;
-			}
 
 			// REVIEW: do we need to worry about changing the previous and next words?
-			LoadRealDataIntoSec(fLookForDefaults, false, false);
+			LoadRealDataIntoSec(true, false, false);
 			OnUpdateEdited();
 			ShowAnalysisCombo = true; // we must want this icon, because we were previously showing it!
 			RootBox.Reconstruct();

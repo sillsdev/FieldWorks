@@ -75,7 +75,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			AddIfNotPresent(tssForm, wordform);
 			ComboList.SelectedIndex = IndexOfCurrentItem;
 			// Add any relevant 'other case' forms.
-			var cf = new CaseFunctions(m_caches.MainCache.ServiceLocator.WritingSystemManager.Get(m_sandbox.RawWordformWs).IcuLocale);
+			var cf = new CaseFunctions(m_caches.MainCache.ServiceLocator.WritingSystemManager.Get(m_sandbox.RawWordformWs));
 			switch (m_sandbox.CaseStatus)
 			{
 				case StringCaseStatus.allLower:

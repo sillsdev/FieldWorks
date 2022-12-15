@@ -56,6 +56,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 				m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>(LanguageExplorerConstants.HelpTopicProvider);
 			}
 			SetDialogTitle();
+			TrackingHelper.TrackImport("textsWords", "SFM", ImportExportStep.Launched);
 		}
 
 		private void m_browseInputFilesButton_Click(object sender, EventArgs e)
@@ -543,6 +544,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 
 		protected override void OnFinishButton()
 		{
+			TrackingHelper.TrackImport("textsWords", "SFM", ImportExportStep.Attempted);
 			base.OnFinishButton();
 			SaveSettings();
 			if (string.IsNullOrEmpty(m_fileListBox.Text))
@@ -577,6 +579,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 				var recordList = m_propertyTable.GetValue<IRecordListRepository>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LanguageExplorerConstants.InterlinearTexts);
 				recordList?.JumpToRecord(m_firstNewText.ContentsOA.Hvo);
 			}
+			TrackingHelper.TrackImport("textsWords", "SFM", m_firstNewText == null ? ImportExportStep.Failed : ImportExportStep.Succeeded);
 		}
 		IText m_firstNewText;
 		private List<InterlinearMapping> m_oldMappings;

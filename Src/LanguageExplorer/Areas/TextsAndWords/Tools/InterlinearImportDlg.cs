@@ -65,8 +65,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 					};
 					try
 					{
-						var fSuccess = (bool)dlg.RunTask(true, import.ImportInterlinear, m_tbFilename.Text);
-						if (fSuccess)
+						TrackingHelper.TrackImport("textsWords", "FlexText", ImportExportStep.Launched);
+						var importSucceeded = (bool)dlg.RunTask(true, import.ImportInterlinear, m_tbFilename.Text);
+						if (importSucceeded)
 						{
 							DialogResult = DialogResult.OK; // only 'OK' if not exception
 							var firstNewText = import.FirstNewText;
@@ -82,6 +83,9 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 							message += m_messages.ToString();
 							MessageBox.Show(this, message, ITextStrings.ksImportFailed, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 						}
+
+						TrackingHelper.TrackImport("textsWords", "FlexText",
+							importSucceeded ? ImportExportStep.Succeeded : ImportExportStep.Failed);
 						Close();
 					}
 					catch (WorkerThreadException ex)
@@ -89,6 +93,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 						Debug.WriteLine("Error: " + ex.InnerException.Message);
 						MessageBox.Show(ex.InnerException.Message, ITextStrings.ksUnhandledError, MessageBoxButtons.OK, MessageBoxIcon.Error);
 						DialogResult = DialogResult.Cancel; // only 'OK' if not exception
+						TrackingHelper.TrackImport("textsWords", "FlexText", ImportExportStep.Failed);
 						Close();
 					}
 				}
