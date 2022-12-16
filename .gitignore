@@ -42,6 +42,7 @@ Lib/debug/unit++.pdb
 Lib/release/DebugProcs.lib
 Lib/release/Generic.lib
 Lib/release/unit++.lib
+Lib/release/unit++.pdb
 DistFiles/Parts/Generated.fwlayout
 Src/Ethnologue/GeneratedEthnologue.cs
 Src/FwParatextLexiconPlugin/GeneratedParatextLexiconPluginRegistryHelper.cs
