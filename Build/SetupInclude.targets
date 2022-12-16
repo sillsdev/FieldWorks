@@ -179,11 +179,11 @@
   </Target>
 
 	<!-- Generate Output/Common/bldinc.h from Src/bldinc.h -->
-	<ItemGroup>
-		<BldIncTemplate Include="../Src/bldinc.h"/>
-		<BldIncOutput Include="../Output/Common/bldinc.h"/>
-		<VersionPropertiesFile Include="../Output/Common/Version.txt"/>
-	</ItemGroup>
+	<PropertyGroup>
+		<BldIncTemplate>../Src/bldinc.h</BldIncTemplate>
+		<BldIncOutput>../Output/Common/bldinc.h</BldIncOutput>
+		<VersionPropertiesFile>../Output/Common/Version.txt</VersionPropertiesFile>
+	</PropertyGroup>
 	<!--
 		Don't use Inputs and Outputs on the GenerateVersionFiles Target.  (Substitute won't
 		write the file if it hasn't changed, but the AssemblyFileVersion datestamp field should
@@ -195,9 +195,9 @@
 			Properties="IsReentry=true" Condition="$(RestartBuild)" />
 	</Target>
 	<Target Name="GenerateVersionFilesInternal" DependsOnTargets="MakeDirs;GetVersion" Condition="'$(action)'!='clean'">
-		<WriteLinesToFile File="@(VersionPropertiesFile)" Lines="FWMAJOR=$(GitVersion_Major);FWMINOR=$(GitVersion_Minor);FWREVISION=$(GitVersion_Patch)" Overwrite="true" />
-		<Substitute Template="@(BldIncTemplate)" Symbols="@(VersionPropertiesFile)"
-			Output="@(BldIncOutput)" Condition="'$(action)'!='clean' And Exists('../Output/Common')"/>
+		<WriteLinesToFile File="$(VersionPropertiesFile)" Lines="FWMAJOR=$(GitVersion_Major);FWMINOR=$(GitVersion_Minor);FWREVISION=$(GitVersion_Patch)" Overwrite="true" />
+		<Substitute Template="$(BldIncTemplate)" Symbols="$(VersionPropertiesFile)"
+			Output="$(BldIncOutput)" Condition="'$(action)'!='clean' And Exists('../Output/Common')"/>
 
 		<Message Text="Updated bldinc.h"/>
 	</Target>

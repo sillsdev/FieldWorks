@@ -21,8 +21,8 @@
 	</PropertyGroup>
 
 	<Target Name="InstallOvercrowdin">
-		<!-- Install overcrowdin, or update if already installed. -->
-		<Exec WorkingDirectory="$(fwrt)" Command="dotnet tool update -g overcrowdin || dotnet tool install -g overcrowdin"/>
+		<!-- Install overcrowdin, or update if already installed. Ignore errors if already installed. -->
+		<Exec WorkingDirectory="$(fwrt)" Command="dotnet tool update -g overcrowdin || where overcrowdin"/>
 	</Target>
 
 	<!-- Update localizable files in Crowdin -->

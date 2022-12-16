@@ -79,31 +79,6 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			return poStrings;
 		}
 
-		/// <summary>
-		/// Returns a string like "FieldWorks 4.0.1"
-		/// </summary>
-		private static string GetFieldWorksVersion(string fwRoot)
-		{
-			var sMajor = "?";
-			var sMinor = "?";
-			var sRevision = "?";
-			var sFile = Path.Combine(fwRoot, "Build/GlobalInclude.properties");
-			if (fwRoot == "/home/testing/fw" && !File.Exists(sFile))
-				return "FieldWorks 1.2.3";
-			var xdoc = XDocument.Load(sFile);
-			// ReSharper disable once PossibleNullReferenceException
-			foreach (var elt in xdoc.Root.Elements())
-			{
-				switch (elt.Name.LocalName)
-				{
-					case "FWMAJOR": sMajor = elt.Value; break;
-					case "FWMINOR": sMinor = elt.Value; break;
-					case "FWREVISION": sRevision = elt.Value; break;
-				}
-			}
-			return $"FieldWorks {sMajor}.{sMinor}.{sRevision}";
-		}
-
 		private static void WritePoHeader(TextWriter writer, string fwRoot, string locale)
 		{
 			writer.WriteLine("");   // StreamWriter writes a BOM for UTF-8: put it on a line by itself.
@@ -121,8 +96,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			POString.WriteQuotedLine("", writer);
 			writer.Write("msgstr ");
 			POString.WriteQuotedLine("", writer);
-			var sVersion = GetFieldWorksVersion(fwRoot);
-			POString.WriteQuotedLine($@"Project-Id-Version: {sVersion}\n", writer);
+			POString.WriteQuotedLine($@"Project-Id-Version: FieldWorks\n", writer);
 			POString.WriteQuotedLine(@"Report-Msgid-Bugs-To: FlexErrors@sil.org\n", writer);
 			POString.WriteQuotedLine($@"POT-Creation-Date: {sTime}\n", writer);
 			POString.WriteQuotedLine(@"PO-Revision-Date: \n", writer);
