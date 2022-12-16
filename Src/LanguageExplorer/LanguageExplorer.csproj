@@ -93,4 +93,8 @@
     </ItemGroup>
     <Copy SourceFiles="@(IcuDataFiles)" DestinationFolder="../../DistFiles/Icu54/%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
+  
+  <Target Name="CopyNHunspellFiles" BeforeTargets="GenerateBindingRedirects">
+    <Copy SourceFiles="$(PkgNHunspell)/content/Hunspellx64.dll" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" />
+  </Target>
 </Project>

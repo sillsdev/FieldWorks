@@ -33,6 +33,7 @@
 			UseNUnit3Xml="false"
 			Verbose="true"
 			Force32Bit="$(useNUnit-x86)"
+			ContinueOnError="true"
 			ExcludeCategory="$(excludedCategories)"
 			FudgeFactor="$(timeoutFudgeFactor)"
 			Timeout="54000000">

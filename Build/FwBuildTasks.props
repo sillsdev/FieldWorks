@@ -2,8 +2,6 @@
   <UsingTask TaskName="CatenateFiles" AssemblyFile="FwBuildTasks.dll" />
   <UsingTask TaskName="Clouseau" AssemblyFile="FwBuildTasks.dll" />
   <UsingTask TaskName="ComputerName" AssemblyFile="FwBuildTasks.dll" />
-  <!-- REVIEW (Hasso) 2022.10: redundant to SIL.BuildTasks.DownloadFile? -->
-  <UsingTask TaskName="DownloadFile" AssemblyFile="FwBuildTasks.dll" />
   <UsingTask TaskName="ExtractIIDs" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll" />
   <UsingTask TaskName="GenerateFwTargets" AssemblyFile="FwBuildTasks.dll" />
