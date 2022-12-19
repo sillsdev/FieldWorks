@@ -24,26 +24,27 @@
     <ViewsInputs Include="@(ViewsSourceIdl)" />
   </ItemGroup>
 
-	<Target Name="GenerateViewsCs" Inputs="@(ViewsInputs)" Outputs="Views.cs" BeforeTargets="CoreCompile">
-		<ItemGroup>
-			<UsingNamespaces Include="SIL.LCModel.Core.KernelInterfaces" />
-			<UsingNamespaces Include="SIL.LCModel.Utils" />
-		</ItemGroup>
-		<PropertyGroup>
-			<IdlImpVer>3.0.1-beta0008</IdlImpVer> <!-- Pin to beta0008 because following versions generate a Views.cs that doesn't compile. -->
-			<ViewsSourceIdlProp>@(ViewsSourceIdl)</ViewsSourceIdlProp>
-			<ViewsTlbSrc>$([System.IO.Path]::GetFullPath('$(ViewsSourceIdlProp)'))</ViewsTlbSrc>
-			<ViewsRefsJson>$(PkgSIL_LCModel_Core)\contentFiles\KernelInterfaces\FwKernelTlb.json</ViewsRefsJson>
-			<IdlImporterXmlPath>$(PkgSIL_LCModel_Build_Tasks)\tools\net461\IDLImporter.xml</IdlImporterXmlPath>
-		</PropertyGroup>
-		<Error Condition="!Exists('$(ViewsTlbSrc)')" Text="ViewsTlbSrc file:'$(ViewsTlbSrc)' is missing." />
-		<Error Condition="!Exists('$(ViewsRefsJson)')" Text="ViewsRefsJson file:'$(ViewsRefsJson)' is missing." />
-		<Error Condition="!Exists('$(IdlImporterXmlPath)')" Text="IdlImporterXml file: '$(IdlImporterXmlPath)' is missing." />
-		<!-- Install our dotnet global tool used for generating Views.cs in the ViewsInterfaces project -->
-		<Exec Command="dotnet tool update --global SIL.IdlImporter.Tool --version $(IdlImpVer)" />
-		<Exec Command="idlimport /c &quot;$(IdlImporterXmlPath)&quot; /o $(MSBuildProjectDirectory)\Views.cs /i &quot;@(ViewsIdhFiles)&quot; /n SIL.FieldWorks.Common.ViewsInterfaces /u &quot;@(UsingNamespaces)&quot; /r &quot;$(ViewsRefsJson)&quot; &quot;$(ViewsTlbSrc)&quot;" />
+  <Target Name="GenerateViewsCs" Inputs="@(ViewsInputs)" Outputs="Views.cs" BeforeTargets="CoreCompile">
     <ItemGroup>
-	  <!-- REVIEW (Hasso) 2022.12: there are three warnings about this being included multiple times, but removing it causes different problems. -->
+      <UsingNamespaces Include="SIL.LCModel.Core.KernelInterfaces" />
+      <UsingNamespaces Include="SIL.LCModel.Utils" />
+    </ItemGroup>
+    <PropertyGroup>
+      <IdlImpVer>3.0.1-beta0008</IdlImpVer> <!-- Pin to 3.0.1-beta0008 because following versions generate a Views.cs that doesn't compile. -->
+      <ViewsSourceIdlProp>@(ViewsSourceIdl)</ViewsSourceIdlProp>
+      <ViewsTlbSrc>$([System.IO.Path]::GetFullPath('$(ViewsSourceIdlProp)'))</ViewsTlbSrc>
+      <ViewsRefsJson>$(PkgSIL_LCModel_Core)\contentFiles\KernelInterfaces\FwKernelTlb.json</ViewsRefsJson>
+      <IdlImporterXmlPath>$(PkgSIL_LCModel_Build_Tasks)\tools\net461\IDLImporter.xml</IdlImporterXmlPath>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(ViewsTlbSrc)')" Text="ViewsTlbSrc file:'$(ViewsTlbSrc)' is missing." />
+    <Error Condition="!Exists('$(ViewsRefsJson)')" Text="ViewsRefsJson file:'$(ViewsRefsJson)' is missing." />
+    <Error Condition="!Exists('$(IdlImporterXmlPath)')" Text="IdlImporterXml file: '$(IdlImporterXmlPath)' is missing." />
+    <!-- Install our dotnet global tool used for generating Views.cs in the ViewsInterfaces project -->
+    <!-- Installing in net461 builds works, but installing in net472 builds fails, claiming to require net7. Install only if needed. -->
+    <Exec Command="where idlimport || dotnet tool update --global SIL.IdlImporter.Tool --version $(IdlImpVer)" />
+    <Exec Command="idlimport /c &quot;$(IdlImporterXmlPath)&quot; /o $(MSBuildProjectDirectory)\Views.cs /i &quot;@(ViewsIdhFiles)&quot; /n SIL.FieldWorks.Common.ViewsInterfaces /u &quot;@(UsingNamespaces)&quot; /r &quot;$(ViewsRefsJson)&quot; &quot;$(ViewsTlbSrc)&quot;" />
+    <ItemGroup>
+      <!-- REVIEW (Hasso) 2022.12: there are three warnings about this being included multiple times, but removing it causes different problems. -->
       <Compile Include="$(MSBuildProjectDirectory)\Views.cs"/>
     </ItemGroup>
   </Target>
