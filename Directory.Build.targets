@@ -1,9 +1,0 @@
-<Project>
-  <Target Name="CopyIcuIncludes" BeforeTargets="PrepareForBuild" Condition="'$(IcuFwIncludeDirectory)'!=''">
-    <ItemGroup>
-      <Icu4cIncludes Include="$(IcuFwIncludeDirectory)unicode/*.h" />
-    </ItemGroup>
-    <Error Condition="'@(Icu4cIncludes)'==''" Text="No files found matching $(IcuFwIncludeDirectory)unicode/*.h" />
-    <Copy SourceFiles="@(Icu4cIncludes)" DestinationFolder="$(MSBuildThisFileDirectory)Include/unicode" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-  </Target>
-</Project>

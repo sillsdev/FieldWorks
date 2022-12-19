@@ -23,7 +23,6 @@
     <None Include="FwKernel.def">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="FwKernelPs.idl">
@@ -37,8 +36,5 @@
     <ClCompile Include="dlldatax.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="icu4c.readme.txt" />
   </ItemGroup>
 </Project>
