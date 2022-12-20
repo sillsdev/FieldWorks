@@ -697,7 +697,10 @@ namespace LanguageExplorer.Controls.DetailControls
 					vwenv.AddString(m_tssSpace);
 					AddTssDirForWs(vwenv, wsVernPara);
 					SetNoteLabelProps(vwenv);
-					vwenv.AddString(m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[0], m_cache.DefaultUserWs));
+					var abbrevLabel = m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[0], m_cache.DefaultUserWs);
+					var abbrevBldr = abbrevLabel.GetBldr();
+					AddLineIndexProperty(abbrevBldr, lineChoiceIndex);
+					vwenv.AddString(abbrevBldr.GetString());
 				}
 				AddTssDirForWs(vwenv, wsVernPara);
 				vwenv.AddString(m_tssSpace);
@@ -718,7 +721,10 @@ namespace LanguageExplorer.Controls.DetailControls
 				else
 				{
 					SetNoteLabelProps(vwenv);
-					vwenv.AddString(m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[0], m_cache.DefaultUserWs));
+					var abbrevLabel = m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[0], m_cache.DefaultUserWs);
+					var abbrevBldr = abbrevLabel.GetBldr();
+					AddLineIndexProperty(abbrevBldr, lineChoiceIndex);
+					vwenv.AddString(abbrevBldr.GetString());
 					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
 					// label width unfortunately does not include trailing space.
@@ -753,7 +759,10 @@ namespace LanguageExplorer.Controls.DetailControls
 					AddTssDirForWs(vwenv, wsVernPara); // REVIEW (Hasso) 2018.01: two in a row RTL flags seems redundant.
 					AddTssDirForWs(vwenv, wsVernPara);
 					SetNoteLabelProps(vwenv);
-					vwenv.AddString(m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[i], m_cache.DefaultUserWs));
+					var abbrevLabel = m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[i], m_cache.DefaultUserWs);
+					var abbrevBldr = abbrevLabel.GetBldr();
+					AddLineIndexProperty(abbrevBldr, lineChoiceIndex + i);
+					vwenv.AddString(abbrevBldr.GetString());
 					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
 					AddTssDirForWs(vwenv, wsVernPara);
@@ -764,7 +773,10 @@ namespace LanguageExplorer.Controls.DetailControls
 					vwenv.AddString(m_tssSpace);
 					AddTssDirForWs(vwenv, wsVernPara);
 					SetNoteLabelProps(vwenv);
-					vwenv.AddString(m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[i], m_cache.DefaultUserWs));
+					var abbrevLabel = m_cache.ServiceLocator.WritingSystemManager.WsLabel(wssAnalysis[i], m_cache.DefaultUserWs);
+					var abbrevBldr = abbrevLabel.GetBldr();
+					AddLineIndexProperty(abbrevBldr, lineChoiceIndex + i);
+					vwenv.AddString(abbrevBldr.GetString());
 					AddTssDirForWs(vwenv, wsVernPara);
 					vwenv.AddString(m_tssSpace);
 					AddTssDirForWs(vwenv, wsVernPara);
@@ -1823,7 +1835,13 @@ namespace LanguageExplorer.Controls.DetailControls
 		/// </summary>
 		public override int EstimateHeight(int hvo, int frag, int dxAvailWidth)
 		{
-			var obj = m_cache.ServiceLocator.ObjectRepository.GetObject(hvo);
+			// We can get in here on a UnitOfWorkHelper.Dispose() call where a VwLazyBox still
+			// contains deleted HVO's, so return zero. Later, before we paint, the VwLazyBox's
+			// are either getting deleted or their hvo lists are getting cleaned up. LT-20881
+			ICmObject obj = null;
+			if (!m_cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out obj))
+				return 0;
+
 			switch (frag)
 			{
 				// If you change this, remember that an estimate that is too HIGH just means it takes a few iterations

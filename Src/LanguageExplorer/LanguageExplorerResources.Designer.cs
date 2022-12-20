@@ -2413,11 +2413,22 @@ namespace LanguageExplorer {
                 return ResourceManager.GetString("ksGloss", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Help....
-        /// </summary>
-        internal static string ksHelp {
+
+		/// <summary>
+		///   Looks up a localized string similar to Lex. Gram. Info..
+		/// </summary>
+		internal static string ksGramInfo
+		{
+			get
+			{
+				return ResourceManager.GetString("ksGramInfo", resourceCulture);
+			}
+		}
+
+		/// <summary>
+		///   Looks up a localized string similar to Help....
+		/// </summary>
+		internal static string ksHelp {
             get {
                 return ResourceManager.GetString("ksHelp", resourceCulture);
             }

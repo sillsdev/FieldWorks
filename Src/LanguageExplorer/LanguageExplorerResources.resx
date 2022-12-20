@@ -2333,4 +2333,8 @@ you expect.</value>
   <data name="SomethingWentWrongTryingToPrintDict" xml:space="preserve">
     <value>Something went wrong trying to print. An operation may have timed out. You may be able to export your dictionary from the File menu and print it using your browser.</value>
   </data>
+  <data name="ksGramInfo" xml:space="preserve">
+    <value>Lex. Gram. Info.</value>
+    <comment>short for Grammatical Information; note indentation formed by leading spaces</comment>
+  </data>
 </root>

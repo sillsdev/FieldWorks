@@ -552,7 +552,7 @@ namespace LanguageExplorer.Controls.DetailControls
 					new LineOption(kflidMorphemes, LanguageExplorerResources.ksMorphemes),
 					new LineOption(kflidLexGloss, LanguageExplorerResources.ksGloss),
 					new LineOption(kflidLexEntries, LanguageExplorerResources.ksLexEntries),
-					// new LineOption(kflidLexPos, LanguageExplorerResources.ksGramInfo) TODO: Finish merge from ITextStrings
+					new LineOption(kflidLexPos, LanguageExplorerResources.ksGramInfo)
 				}.Union(customLineOptions).ToArray();
 			}
 
@@ -561,7 +561,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				 new LineOption(kflidMorphemes, LanguageExplorerResources.ksMorphemes),
 				 new LineOption(kflidLexEntries, LanguageExplorerResources.ksLexEntries),
 				 new LineOption(kflidLexGloss, LanguageExplorerResources.ksLexGloss),
-				 // new LineOption(kflidLexPos, LanguageExplorerResources.ksGramInfo), TODO: Finish merge from ITextStrings
+				 new LineOption(kflidLexPos, LanguageExplorerResources.ksGramInfo),
 				 new LineOption(kflidWordGloss,
 					mode == InterlinMode.GlossAddWordsToLexicon ? LanguageExplorerResources.ksLexWordGloss : LanguageExplorerResources.ksWordGloss),
 				 new LineOption(kflidWordPos,
