@@ -9,12 +9,13 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Xml;
 
+using LanguageExplorer.Controls;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Utils;
 
-namespace SIL.FieldWorks.Common.FXT
+namespace LanguageExplorerTests.Controls
 {
 	[TestFixture]
 	public class DumperTests : MemoryOnlyBackendProviderTestBase
@@ -22,7 +23,7 @@ namespace SIL.FieldWorks.Common.FXT
 		/// <summary>
 		/// any filters that we want, for example, to only output items which satisfy their constraint.
 		/// </summary>
-		protected IFilterStrategy[] m_filters;
+		//protected IFilterStrategy[] m_filters;
 		private int m_germanId;
 		private int m_frenchId;
 
