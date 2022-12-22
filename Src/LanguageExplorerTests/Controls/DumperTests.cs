@@ -23,7 +23,6 @@ namespace LanguageExplorerTests.Controls
 		/// <summary>
 		/// any filters that we want, for example, to only output items which satisfy their constraint.
 		/// </summary>
-		//protected IFilterStrategy[] m_filters;
 		private int m_germanId;
 		private int m_frenchId;
 
