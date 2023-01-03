@@ -204,7 +204,7 @@
     <value>Redo Bulk Edit Reversal Entry POS</value>
   </data>
   <data name="ksWhatIsWriteAllObjects" xml:space="preserve">
-    <value>This utility writes all CmObjects out fresh, as if they had all been modified.</value>
+    <value>This utility writes all CmObjects out fresh, as if they had all been modified. (It does not update their date modified)</value>
   </data>
   <data name="ksInitializingLayouts_" xml:space="preserve">
     <value>Initializing Layouts...</value>
@@ -533,7 +533,7 @@
     <value>You cannot use 'Undo' to cancel the effect of this utility. You would need to go back to a previously saved version of the database.</value>
   </data>
   <data name="ksWhenToWriteAllObjects" xml:space="preserve">
-    <value>Run this whenever you want to write out all CmObjects in the system. This will fix S/R failures if basic attributes were somehow lost in the fwdata file.</value>
+    <value>Run this whenever you want to write out all CmObjects in the system. This will fix S/R failures if basic attributes were somehow lost in the fwdata file, or if the fwdata file contains dates in invalid formats.</value>
   </data>
   <data name="Grammar" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>images\Grammar.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
