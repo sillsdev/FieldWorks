@@ -1,0 +1,9 @@
+Code-Review+2: Hasso Pape <hasso_pape@sil.org>
+Verified-Linux+1: Hasso Pape <hasso_pape@sil.org>
+Code-Review-1: Jenkins CI <jenkins@sil.org>
+Verified+1: Hasso Pape <hasso_pape@sil.org>
+Submitted-by: Hasso Pape <hasso_pape@sil.org>
+Submitted-at: Tue, 03 Jan 2023 22:26:50 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/c/FieldWorks/+/9152
+Project: FieldWorks
+Branch: refs/heads/feature/MergeIntoRXWC
