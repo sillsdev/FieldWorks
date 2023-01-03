@@ -112,8 +112,9 @@ jobs:
           sudo flatpak install --noninteractive flathub \
             org.gnome.Platform//3.36 \
             org.gnome.Sdk//3.36
-          # Use flatpak-builder from flathub; see README.md.
-          sudo flatpak install --noninteractive flathub org.flatpak.Builder
+          # Work around submodule file: problem until .deb package includes
+          # the fix for https://github.com/flatpak/flatpak-builder/issues/495 .
+          git config --global protocol.file.allow always
       - name: Build flatpak package
         run: |
           set -xueo pipefail
@@ -122,7 +123,7 @@ jobs:
           perl -pi -e \
             "s/(\s*).*FW-Auto-Head.*/\$1commit: $(git rev-parse HEAD) # FW-Auto-Head: Generated line. See build script./" \
             org.sil.FieldWorks.yml
-          flatpak run org.flatpak.Builder --verbose --user --sandbox --ccache \
+          flatpak-builder --verbose --user --sandbox --ccache \
             --repo=local-repo --keep-build-dirs --force-clean \
             build-dir org.sil.FieldWorks.yml
       - name: Determine package version
