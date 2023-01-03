@@ -34,7 +34,7 @@ namespace LanguageExplorerTests.Controls
 			m_germanId = Cache.WritingSystemFactory.GetWsFromStr("de");
 			m_frenchId = Cache.WritingSystemFactory.GetWsFromStr("fr");
 
-#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO
+#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO (LT-21114)
 			Cache.LangProject.MainCountry.set_String(m_germanId, TsStringUtils.MakeString("bestAnalName-german", m_germanId));
 			Cache.LangProject.MainCountry.set_String(m_frenchId, TsStringUtils.MakeString("frenchNameOfProject", m_frenchId));
 			Cache.LangProject.WorldRegion.set_String(m_germanId, TsStringUtils.MakeString("arctic-german", m_germanId));
@@ -63,7 +63,7 @@ namespace LanguageExplorerTests.Controls
 			Assert.That(result, Does.EndWith("1984"));
 		}
 
-#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO
+#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO (LT-21114)
 		[Test]
 		public void CanFindTemplateForExactMatch()
 		{
