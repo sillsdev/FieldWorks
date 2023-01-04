@@ -142,8 +142,7 @@ namespace FwBuildTasks
 			}
 			catch (Exception e)
 			{
-				Log.LogMessage(MessageImportance.High, "Generating {0} from {1} threw an exception {2}", Output,
-						template, e.Message);
+				Log.LogError("Generating {0} from {1} threw an exception {2}", Output, template, e.Message);
 				return false;
 			}
 			return true;

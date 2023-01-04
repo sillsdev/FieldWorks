@@ -57,8 +57,12 @@
 	<Target Name="copyIcuFiles" DependsOnTargets="copyIcuDlls">
 		<ItemGroup>
 			<IcuData Include="$(SilLcModelCoreIcuDataFilesFolder)/**/*"/>
+			<IcuLibLibsX64 Include="$(IcuFwLibDirectoryX64)icudt.lib"/>
+			<IcuLibLibsX64 Include="$(IcuFwLibDirectoryX64)icuin.lib"/>
+			<IcuLibLibsX64 Include="$(IcuFwLibDirectoryX64)icuuc.lib"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(IcuData)" DestinationFolder="$(dir-icuData)/%(recursiveDir)" SkipUnchangedFiles="true" />
+		<Copy SourceFiles="@(IcuLibLibsX64)" DestinationFolder="$(dir-fwlib)" SkipUnchangedFiles="true" />
 	</Target>
 
 	<Target Name="copyIcuDlls" Condition="'$(OS)'=='Windows_NT'">
@@ -92,7 +96,7 @@
 			Fragments="@(Fragments)" Platform="$(Platform)" MSBuildArchitecture="$(Platform)"/>
 	</Target>
 
-	<Target Name="DebugProcs" DependsOnTargets="initLinux;initWindows;CopyKernelInterfaces">
+	<Target Name="DebugProcs" DependsOnTargets="initLinux;initWindows;copyIcuFiles;CopyKernelInterfaces">
 		<Error
 			Text="Icu lib directory not defined in IcuFwLibDirectoryX64 (check nuget package), build will fail."
 			Condition="'$(IcuFwLibDirectoryX64)'==''" />

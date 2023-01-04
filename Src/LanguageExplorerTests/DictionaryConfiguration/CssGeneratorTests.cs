@@ -81,7 +81,7 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 			catch (Exception err)
 			{
 				throw new Exception($"Error in running {GetType().Name} FixtureTeardown method.", err);
-		}
+			}
 			finally
 			{
 				base.FixtureTeardown();

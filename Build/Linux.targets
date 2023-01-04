@@ -45,7 +45,7 @@
 		<Exec Command="make V=1 externaltargets" WorkingDirectory="$(fwrt)" Condition="'$(action)'!='clean'"/>
 		<!--		<Exec Command="make V=1 externaltargets-test" WorkingDirectory="$(fwrt)"
 		IgnoreStandardErrorWarningFormat="true" Condition="'$(action)'=='test'"/> -->
-		<CreateItem Include="$(dir-fwoutputlibPlatform)/Release/*.*">
+		<CreateItem Include="$(dir-fwlib)/linux/Release/*.*">
 			<Output TaskParameter="Include" ItemName="LinuxReleaseLibs"/>
 		</CreateItem>
 		<Copy SourceFiles="@(LinuxReleaseLibs)"

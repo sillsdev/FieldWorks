@@ -126,9 +126,7 @@
 		<dir-outputBase>$([System.IO.Path]::Combine($(dir-fwoutput),$(config-capital)))</dir-outputBase>
 		<dir-fwoutputCommon>$([System.IO.Path]::Combine($(dir-fwoutput),Common))</dir-fwoutputCommon>
 		<dir-buildOutputInterop>$(dir-outputBase)</dir-buildOutputInterop>
-		<dir-fwoutputlib>$([System.IO.Path]::Combine($(fwrt),Lib)))</dir-fwoutputlib>
-		<dir-fwoutputlibBase>$([System.IO.Path]::Combine($(dir-fwoutputlib),$(config-capital)))</dir-fwoutputlibBase>
-		<dir-fwoutputlibPlatform>$([System.IO.Path]::Combine($(dir-fwoutputlib),windows))</dir-fwoutputlibPlatform>
+		<dir-fwlib>$([System.IO.Path]::Combine($(fwrt),Lib))</dir-fwlib>
 		<dir-fwinstall>$([System.IO.Path]::Combine($(dir-fwoutput),install))</dir-fwinstall>
 		<dir-fwdistfiles>$([System.IO.Path]::Combine($(fwrt),DistFiles))</dir-fwdistfiles>
 		<dir-icuData>$([System.IO.Path]::Combine($(dir-fwdistfiles),Icu$(IcuVersion)))</dir-icuData>

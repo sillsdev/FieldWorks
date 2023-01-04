@@ -111,6 +111,10 @@ namespace FwBuildTasks
 			}
 			// Fall Back to the install directory
 			var vcInstallDir = Environment.GetEnvironmentVariable("VCINSTALLDIR");
+			if (vcInstallDir == null)
+			{
+				Log.LogError("ToolPath undefined: add ToolPath property (location of nmake) to Make call");
+			}
 			ToolPath = Path.Combine(vcInstallDir, "bin");
 		}
 
