@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			if (m_actionHandler.CurrentDepth == 0)
 				m_actionHandler.BeginUndoTask("undoSetup", "redoSetup");
-			m_helper = new DiscourseTestHelper(Cache) { Logic = new TestCCLogic(Cache, null, null) };
+			m_helper = new DiscourseTestHelper(Cache) { Logic = new TestCCLogic(Cache) };
 			m_helper.MakeTemplate(out _);
 		}
 

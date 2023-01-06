@@ -23,6 +23,10 @@ namespace LanguageExplorerTests.Controls.DetailControls
 		internal bool m_fRecordMergeCellContents; // set true to log MergeCellContents.
 		internal bool m_fRecordBasicEdits; // set true for logging most low-level operations.
 		private bool m_isRtL; // set true to test RTL context menus, etc.
+		internal TestCCLogic(LcmCache cache)
+			: base(cache)
+		{
+		}
 
 		internal TestCCLogic(LcmCache cache, IDsConstChart chart, IStText stText)
 			: base(cache, chart, stText.Hvo)
