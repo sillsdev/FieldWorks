@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2020 SIL International
+// Copyright (c) 2015-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -71,7 +71,6 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		{
 			var projectFile = Directory.GetFiles(projectFolder, "*.csproj").First(); // called only if there is exactly one.
 			var doc = XDocument.Load(projectFile);
-			XNamespace ns = @"http://schemas.microsoft.com/developer/msbuild/2003";
 
 			var resxFiles = GetResXFiles(projectFolder);
 			if (resxFiles.Count == 0)
@@ -80,8 +79,8 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var resourceInfo = new ResourceInfo {
 				ProjectFolder = projectFolder,
 				ResXFiles = resxFiles,
-				RootNameSpace = doc.Descendants(ns + "RootNamespace").First().Value,
-				AssemblyName = doc.Descendants(ns + "AssemblyName").First().Value
+				RootNameSpace = doc.Descendants("RootNamespace").First().Value,
+				AssemblyName = doc.Descendants("AssemblyName").FirstOrDefault()?.Value ?? Path.GetFileNameWithoutExtension(projectFile)
 			};
 
 			return resourceInfo;
