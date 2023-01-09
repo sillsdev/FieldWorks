@@ -31,12 +31,14 @@ namespace SIL.FieldWorks.XWorks
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
+			var flexComponentParameters = TestSetupServices.SetupEverything(Cache, false);
 			_statusBar = StatusBarPanelServices.CreateStatusBarFor_TESTS();
-			_recordList = RecordListActivator.AllReversalEntriesFactoryMethod(Cache, flexComponentParameters, "AllReversalEntries", _statusBar);
 			Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "LanguageExplorerTests/TestData/");
 			m_wsEn = Cache.DefaultAnalWs;
 			SetupReversalFactoriesAndRepositories();
+			flexComponentParameters.PropertyTable.SetProperty(LanguageExplorerConstants.ReversalIndexGuid, m_revIndexRepo.FindOrCreateIndexForWs(m_wsEn).Guid.ToString());
+			flexComponentParameters.PropertyTable.SetProperty(FwUtilsConstants.cache, Cache);
+			_recordList = flexComponentParameters.PropertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository).GetRecordList(LanguageExplorerConstants.AllReversalEntries, _statusBar, RecordListActivator.AllReversalEntriesFactoryMethod);
 		}
 
 		[SetUp]
