@@ -49,21 +49,21 @@ namespace LanguageExplorerTests.Impls
 		public void ImportHomographs_AllNumbered_OutOfOrder()
 		{
 			string allNumbered_OutOfOrder =
-			@"\lx aha
-			\hm 2
-			\de two
-			\lx aha
-			\hm 1
-			\de one
-			\lx aha
-			\hm 3
-			\de three
-			\lx bahaa
-			\mn aha3
-			\lx bahaaa
-			\mn aha1
-			\lx bahaaaa
-			\mn aha2";
+@"\lx aha
+\hm 2
+\de two
+\lx aha
+\hm 1
+\de one
+\lx aha
+\hm 3
+\de three
+\lx bahaa
+\mn aha3
+\lx bahaaa
+\mn aha1
+\lx bahaaaa
+\mn aha2";
 			DoImport(allNumbered_OutOfOrder, MakeDefaultFields(), 6);
 
 			VerifyHomographNumber("one", 1);
