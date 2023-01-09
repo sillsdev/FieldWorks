@@ -105,7 +105,7 @@
 	</Target>
 
 	<Target Name="updateOneTemplateLdmlFile">
-		<DownloadFile Address="$(SldrUrl)$(Locale)" LocalFilename="$(fwrt)/DistFiles/Templates/$(Locale).ldml"/>
+		<DownloadFile Address="$(SldrUrl)$(Locale)" LocalFilename="$(fwrt)/DistFiles/Templates/$(Locale).ldml" ContinueOnError="true"/>
 	</Target>
 
 	<!-- Create and zip LocalizedLists-*.xml files to DistFiles/Templates -->
