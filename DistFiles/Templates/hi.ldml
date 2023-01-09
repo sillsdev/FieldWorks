@@ -26775,7 +26775,7 @@ Warnings: All cp values have U+FE0F characters removed. See /annotationsDerived/
 			]]></cr>
 		</collation>
 		<collation type="standard"/>
-		<collation type="standard" references="McGregor: Oxford Hindi-English Dictionary ISBN:019864339X Gatzlaff-Hälsig: Handwörterbuch Hindi-Deutsch ISBN:3875481771 http://www.eki.ee/wgrs/rom1_hi.pdf" sil:modified="true" xmlns:sil="urn://www.sil.org/ldml/0.1">
+		<collation xmlns:sil="urn://www.sil.org/ldml/0.1" type="standard" references="McGregor: Oxford Hindi-English Dictionary ISBN:019864339X Gatzlaff-Hälsig: Handwörterbuch Hindi-Deutsch ISBN:3875481771 http://www.eki.ee/wgrs/rom1_hi.pdf" sil:modified="true">
 			<cr><![CDATA[
 				[normalization on]
 				[reorder Deva Beng Guru Gujr Orya Taml Telu Knda Mlym Sinh]

@@ -27321,7 +27321,7 @@ Warnings: All cp values have U+FE0F characters removed. See /annotationsDerived/
 				=ᅴ
 			]]></cr>
 		</collation>
-		<collation type="search" sil:modified="true" xmlns:sil="urn://www.sil.org/ldml/0.1">
+		<collation xmlns:sil="urn://www.sil.org/ldml/0.1" type="search" sil:modified="true">
 			<cr><![CDATA[
 				[normalization on]
 				# root search, suppress contractions for Thai, Lao, Tai Viet, New Tai Lue
@@ -27462,7 +27462,7 @@ Warnings: All cp values have U+FE0F characters removed. See /annotationsDerived/
 			]]></cr>
 		</collation>
 		<collation type="standard"/>
-		<collation type="standard" sil:modified="true" xmlns:sil="urn://www.sil.org/ldml/0.1">
+		<collation xmlns:sil="urn://www.sil.org/ldml/0.1" type="standard" sil:modified="true">
 			<cr><![CDATA[
 				[reorder Latn Cyrl]
 				&C<ç<<<Ç

@@ -26768,7 +26768,7 @@ Warnings: All cp values have U+FE0F characters removed. See /annotationsDerived/
 			]]></cr>
 		</collation>
 		<collation type="standard"/>
-		<collation type="standard" references="http://www.panl10n.net/english/outputs/Pakistan/Urdu-Encoding-Collation.pdf" sil:modified="true" xmlns:sil="urn://www.sil.org/ldml/0.1">
+		<collation xmlns:sil="urn://www.sil.org/ldml/0.1" type="standard" references="http://www.panl10n.net/english/outputs/Pakistan/Urdu-Encoding-Collation.pdf" sil:modified="true">
 			<cr><![CDATA[
 				[reorder Arab]
 				&ا<<أ<آ<ب<بھ<پ<پھ<ت<تھ<ٹ<ٹھ<ث<ج<جھ<چ<چھ<ح<خ<د<دھ<ڈ<ڈھ<ذ<ر<رھ<ڑ<ڑھ<ز<ژ<س<ش<ص<ض<ط<ظ
