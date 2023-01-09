@@ -87,7 +87,6 @@ namespace LanguageExplorer.Controls.DetailControls
 			AccessibleName = "Constituent Chart";
 			Name = "ConstituentChart";
 			Vc = new InterlinVc(Cache);
-			BuildUIComponents();
 			ConfigPropName = "InterlinConfig_v3_Edit_ConstituentChart";
 			OldConfigPropName = "InterlinConfig_v2_Edit_ConstituentChart";
 		}

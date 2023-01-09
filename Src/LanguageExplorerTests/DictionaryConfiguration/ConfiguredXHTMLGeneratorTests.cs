@@ -84,8 +84,8 @@ namespace LanguageExplorerTests.DictionaryConfiguration
 					{ AreaServices.Default, new PropertyRecordSorter(AreaServices.ShortName) },
 					{ "PrimaryGloss", new PropertyRecordSorter("PrimaryGloss") }
 				});
-			recordList.SortName = "Headword";
 			recordList.InitializeFlexComponent(flexComponentParameters);
+			recordList.SortName = "Headword";
 			return recordList;
 		}
 

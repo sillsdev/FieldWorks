@@ -25,8 +25,9 @@ namespace LanguageExplorerTests.Controls.DetailControls
 			var flexComponentParameters = TestSetupServices.SetupTestTriumvirate();
 			try
 			{
-				using (new ConstituentChart(Cache, new SharedEventHandlers()))
+				using (var chart = new ConstituentChart(Cache, new SharedEventHandlers()))
 				{
+					chart.InitializeFlexComponent(flexComponentParameters);
 				}
 			}
 			finally
