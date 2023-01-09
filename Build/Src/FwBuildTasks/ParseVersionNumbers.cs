@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 SIL International
+// Copyright (c) 2018-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -24,9 +24,6 @@ namespace SIL.FieldWorks.Build.Tasks
 		[Output]
 		public string Revision { get; set; }
 
-		[Output]
-		public string Descriptor { get; set; }
-
 		public override bool Execute()
 		{
 			Dictionary<string, string> symbols;
@@ -35,7 +32,6 @@ namespace SIL.FieldWorks.Build.Tasks
 				Major = symbols["FWMAJOR"];
 				Minor = symbols["FWMINOR"];
 				Revision = symbols["FWREVISION"];
-				Descriptor = symbols["FWBETAVERSION"];
 				return true;
 			}
 			return false;
