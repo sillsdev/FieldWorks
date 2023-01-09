@@ -7,7 +7,7 @@
 	<PropertyGroup>
 		<ApplicationName>FieldWorks Language Explorer</ApplicationName>
 		<SafeApplicationName>FieldWorks</SafeApplicationName> <!-- should not contain any spaces or illegal filename characters -->
-		<CopyrightYear>2021</CopyrightYear>
+		<CopyrightYear>2023</CopyrightYear>
 		<Manufacturer>SIL International</Manufacturer>
 		<SafeManufacturer>SIL</SafeManufacturer>
 	</PropertyGroup>
@@ -45,8 +45,10 @@
 		<CompGGS>0F585175-1649-46D2-A5B7-A79E47809361</CompGGS>
 	</PropertyGroup>
 
+	<!-- REVIEW (Hasso) 2023.01: if we are happy with GitVersion, we can get rid of this target, since the version
+		numbers are already in the environment at $(GitVersion_Major,Minor,Patch). -->
 	<Target Name="VersionNumbers" DependsOnTargets="GenerateVersionFiles">
-		<ParseVersionNumbers VersionInfo="@(VersionSymbols)">
+		<ParseVersionNumbers VersionInfo="$(VersionPropertiesFile)">
 			<Output TaskParameter="Major" PropertyName="MajorVersionSegment" />
 			<Output TaskParameter="Minor" PropertyName="MinorVersionSegment" />
 			<Output TaskParameter="Revision" PropertyName="PatchVersionSegment" />
