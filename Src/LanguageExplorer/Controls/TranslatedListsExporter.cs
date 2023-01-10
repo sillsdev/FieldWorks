@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using SIL.Extensions;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
@@ -76,7 +77,7 @@ namespace LanguageExplorer.Controls
 		internal void ExportTranslatedLists(TextWriter w)
 		{
 			w.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			w.WriteLine("<Lists date=\"{0}\">", DateTime.Now);
+			w.WriteLine("<Lists date=\"{0}\">", DateTime.UtcNow.ToISO8601TimeFormatWithUTCString());
 			foreach (var list in m_lists)
 			{
 				ExportTranslatedList(w, list);
