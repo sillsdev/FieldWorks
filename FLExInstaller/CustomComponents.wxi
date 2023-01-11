@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?if $(sys.BUILDARCH) = x64 ?>
-<?define EncodingConvertersPath = "..\..\packages\Encoding-Converters-Core.0.2.28\MergeModules\x64" ?>
-<?else?>
-<?define EncodingConvertersPath = "..\..\packages\Encoding-Converters-Core.0.2.28\MergeModules\x86" ?>
-<?endif?>
+<?define EncodingConvertersPath = "$(env.USERPROFILE)\.nuget\packages\encoding-converters-core\0.2.28\MergeModules\x64" ?>
 <!-- REVIEW (Hasso) 2018.07: if this file gets too long, it can be split into separate files for MergeModules, L10n, and possibly others. -->
 <Include>
 	<?ifdef MASTERBUILDDIR?>
@@ -17,11 +13,7 @@
 			<Component Id="vs_piaredist.exe" Guid="69E34503-AFF1-455d-8B02-38EC1EC156C2">
 				<File Id="vs_piaredist.exe" Name="vs_piaredist.exe" ReadOnly="yes" Source="!(wix.RootObjectsDir)\vs_piaredist.exe"/>
 			</Component>
-			<?if $(sys.BUILDARCH) = x64 ?>
 			<Merge Id="TECkit_DLLs" Language="1033" SourceFile="$(var.EncodingConvertersPath)\TECkit64bitDllsMM.msm" DiskId="1"/>
-			<?else?>
-			<Merge Id="TECkit_DLLs" Language="1033" SourceFile="$(var.EncodingConvertersPath)\TECkitDLLsMM.msm" DiskId="1"/>
-			<?endif?>
 		</Directory>
 	</DirectoryRef>
 
@@ -110,17 +102,10 @@
 	</ComponentGroup>
 
 	<DirectoryRef  Id='APPFOLDER'>
-		<?if $(sys.BUILDARCH) = x64 ?>
 		<Merge Id="CC_DLL" Language="1033" SourceFile="$(var.EncodingConvertersPath)\CcDLLs64bitMM.msm" DiskId="1"/>
 		<Merge Id="EncConverters_Common" Language="1033" SourceFile="$(var.EncodingConvertersPath)\EC_40_64bit_MM.msm" DiskId="1"/>
 		<Merge Id="PerlEC" Language="1033" SourceFile="$(var.EncodingConvertersPath)\PerlEc64bitMM.msm" DiskId="1"/>
 		<Merge Id="PythonEC" Language="1033" SourceFile="$(var.EncodingConvertersPath)\PythonEc64bitMM.msm" DiskId="1"/>
-		<?else?>
-		<Merge Id="CC_DLL" Language="1033" SourceFile="$(var.EncodingConvertersPath)\CcDLLsMM.msm" DiskId="1"/>
-		<Merge Id="EncConverters_Common" Language="1033" SourceFile="$(var.EncodingConvertersPath)\EC_40_MM.msm" DiskId="1"/>
-		<Merge Id="PerlEC" Language="1033" SourceFile="$(var.EncodingConvertersPath)\PerlEcMM.msm" DiskId="1"/>
-		<Merge Id="PythonEC" Language="1033" SourceFile="$(var.EncodingConvertersPath)\PythonEcMM.msm" DiskId="1"/>
-		<?endif?>
 
 		<Component Id="FieldWorks.exe" Guid="95461FE1-FA63-4D76-B32B-89A478EDA5C6">
 			<File Id="FieldWorks.exe" Name="FieldWorks.exe" Source="!(wix.RootObjectsDir)\FieldWorks.exe" ReadOnly="yes" Checksum="yes" KeyPath="yes" Assembly=".net" AssemblyApplication="FieldWorks.exe" AssemblyManifest="FieldWorks.exe">
@@ -175,8 +160,9 @@
 		<Component Id="RegisterICUFolder" Guid="FD94075E-CB26-4C7A-ADF4-B920FC1B25D1">
 			<RegistryValue Name="ICU54DataDir" Root="HKLM"  Key="Software\SIL" Type="string" KeyPath="yes" Value="[OVRHARVESTDATAFOLDER]\Icu54" />
 		</Component>
-		<!-- Paratext is currently only a 32-bit application. Because FieldWorks is available as a 64-bit application,
-			write these folder locations to both registry spaces so that Paratext can find them. -->
+		<!-- Paratext 8 is a 32-bit application. Because FieldWorks is a 64-bit application,
+			write these folder locations to both registry spaces so that Paratext 8 can find them.
+			Paratext 9.1 and onward are only 64-bit. When Paratext 8 support is dropped, these keys can be, too. -->
 		<?if $(sys.BUILDARCH) = x64 ?>
 		<Component Id='RegKeys32' Guid='5B50B537-2A4A-47AC-9041-F296E9B3E310'>
 			<RegistryKey Root='HKLM' Key='SOFTWARE\WOW6432Node\[REGISTRYKEY]' ForceDeleteOnUninstall='yes'>
