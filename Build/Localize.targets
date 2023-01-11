@@ -21,8 +21,9 @@
 	</PropertyGroup>
 
 	<Target Name="InstallOvercrowdin">
-		<!-- Install overcrowdin, or update if already installed. Ignore errors if already installed. -->
-		<Exec WorkingDirectory="$(fwrt)" Command="dotnet tool update -g overcrowdin || where overcrowdin"/>
+		<!-- Install overcrowdin if needed. We used to update each time, but overcrowdin is no longer actively developed,
+			and on 2023-01-11, the FW build server stopped letting us ignore update errors for netcoreapp2.1 tools. -->
+		<Exec WorkingDirectory="$(fwrt)" Command="where overcrowdin || dotnet tool update -g overcrowdin"/>
 	</Target>
 
 	<!-- Update localizable files in Crowdin -->
