@@ -5,6 +5,7 @@
     <RootNamespace>SIL.FieldWorks.Common.ViewsInterfaces</RootNamespace>
     <Description>ViewsInterfaces</Description>
     <OutputCommonPath>../../Output/Common/</OutputCommonPath>
+    <NoWarn>$(NoWarn);CS2002</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,7 +14,7 @@
     <PackageReference Include="Icu4c.Win.Fw.Lib" Version="70.1.123" />
     <PackageReference Include="SIL.LCModel" Version="10.2.0-beta0059" />
     <PackageReference Include="SIL.LCModel.Build.Tasks" Version="10.2.0-beta0059" GeneratePathProperty="true" PrivateAssets="All" />
-    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0059"  GeneratePathProperty="true"/>
+    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0059" GeneratePathProperty="true" />
   </ItemGroup>
   
   <ItemGroup>
@@ -44,9 +45,10 @@
     <Exec Command="where idlimport || dotnet tool update --global SIL.IdlImporter.Tool --version $(IdlImpVer)" />
     <Exec Command="idlimport /c &quot;$(IdlImporterXmlPath)&quot; /o $(MSBuildProjectDirectory)\Views.cs /i &quot;@(ViewsIdhFiles)&quot; /n SIL.FieldWorks.Common.ViewsInterfaces /u &quot;@(UsingNamespaces)&quot; /r &quot;$(ViewsRefsJson)&quot; &quot;$(ViewsTlbSrc)&quot;" />
     <ItemGroup>
-      <!-- REVIEW (Hasso) 2022.12: there are three warnings about this being included multiple times, but removing it causes different problems. -->
-      <Compile Include="$(MSBuildProjectDirectory)\Views.cs"/>
-    </ItemGroup>
+      <!-- (Hasso) 2022.12: there are three CS2002 warnings about this being included multiple times (for each project that references this one),
+        but removing this include causes it not to be included. -->
+      <Compile Include="$(MSBuildProjectDirectory)\Views.cs" />
+   </ItemGroup>
   </Target>
 
   <Target Name="CopyKernelFiles">

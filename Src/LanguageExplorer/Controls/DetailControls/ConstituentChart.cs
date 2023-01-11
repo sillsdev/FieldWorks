@@ -917,7 +917,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				var list = Cache.LanguageProject.DiscourseDataOA.ConstChartTemplOA;
 				var newKid = list.Services.GetInstance<ICmPossibilityFactory>().Create();
 				list.PossibilitiesOS.Add(newKid);
-				InterlinearTextsRecordList.SetUpConstChartTemplateTemplate(newKid);
+				RecordList.SetUpConstChartTemplateTemplate(newKid);
 				Cache.DomainDataByFlid.EndUndoTask();
 				LinkHandler.PublishFollowLinkMessage(Publisher, new FwLinkArgs(LanguageExplorerResources.ksNewTemplateLink, newKid.Guid));
 				selection.SelectedItem = m_template;
