@@ -1,0 +1,3 @@
+<!-- If ILRepackTargetsFile is not specified, ILRepack will automatically try to repack the entire output directory. -->
+<!-- Specifying the project  file itself as the ILRepackTargets file causes a circular reference warning. -->
+<!-- The actual ILRepack target is in the project file. -->

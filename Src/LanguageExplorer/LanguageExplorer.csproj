@@ -30,7 +30,6 @@
     <ProjectReference Include="..\..\Lib\src\FormLanguageSwitch\FormLanguageSwitch.csproj" />
     <ProjectReference Include="..\FwCoreDlgs\FwCoreDlgs.csproj" />
     <ProjectReference Include="..\FwResources\FwResources.csproj" />
-    <ProjectReference Include="..\FwUtils\FwUtils.csproj" />
     <ProjectReference Include="..\ParatextImport\ParatextImport.csproj" />
     <ProjectReference Include="..\ParserCore\ParserCore.csproj" />
     <ProjectReference Include="..\RootSite\RootSite.csproj" />

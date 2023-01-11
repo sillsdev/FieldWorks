@@ -6,7 +6,7 @@
     <RootNamespace>SIL.FieldWorks.ParatextLexiconPlugin</RootNamespace>
     <NoWarn>67</NoWarn>
     <!-- If ILRepackTargetsFile is not specified, ILRepack will automatically try to repack the entire output directory -->
-    <ILRepackTargetsFile>$(MSBuildThisFileFullPath)</ILRepackTargetsFile>
+    <ILRepackTargetsFile>DummyILRepack.targets</ILRepackTargetsFile>
   </PropertyGroup>
 
   <ItemGroup>

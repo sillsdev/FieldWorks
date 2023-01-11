@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <UseWindowsForms>true</UseWindowsForms>
@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FwUtils\FwUtils.csproj" />
-    <ProjectReference Include="..\ViewsInterfaces\ViewsInterfaces.csproj" />
   </ItemGroup>
 
   <ItemGroup>

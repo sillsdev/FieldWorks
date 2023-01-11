@@ -704,7 +704,9 @@ namespace SIL.FieldWorks
 				};
 				return Process.Start(startInfo);
 			}
+#pragma warning disable CS0168 // unused variable exception, in Release builds
 			catch (Exception exception)
+#pragma warning restore CS0168
 			{
 #if DEBUG
 				if (Platform.IsMono)
