@@ -4,6 +4,7 @@
     <RootNamespace>LanguageExplorerTests</RootNamespace>
     <Description>LanguageExplorerTests</Description>
     <NoWarn>649</NoWarn>
+    <!--<AppConfig>..\AppForTests.config</AppConfig>-->
   </PropertyGroup>
 
   <ItemGroup>
