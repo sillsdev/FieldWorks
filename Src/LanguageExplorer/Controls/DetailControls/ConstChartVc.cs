@@ -913,10 +913,17 @@ namespace LanguageExplorer.Controls.DetailControls
 					// pathological case...cell part is out of order or its column has been deleted.
 					// Maybe the user re-ordered the columns??
 					// Anyway, we'll let it go into the current cell.
-					var column = m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(m_hvoCurCellCol);
+					if (!m_cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().TryGetObject(m_hvoCurCellCol, out var column))
+					{
+						column = m_chartBody.AllColumns[0];
+					}
 					ReportAndFixBadCellPart(hvoCellPart, column);
-					AddCellPartToCell(cellPart);
-					return;
+					if (hvoColContainingCellPart == m_hvoCurCellCol)
+					{
+						// same column; just add to the already-open cell
+						AddCellPartToCell(cellPart);
+						return;
+					}
 				}
 				// changed column (or started first column). Close the current cell if one is open, and figure out
 				// how many cells wide the new one needs to be.
