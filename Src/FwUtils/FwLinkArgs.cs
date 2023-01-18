@@ -129,7 +129,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_toolName = toolName;
 			TargetGuid = targetGuid;
 			Tag = tag ?? string.Empty;
-			Validate(this);
 		}
 
 		/// <summary />
