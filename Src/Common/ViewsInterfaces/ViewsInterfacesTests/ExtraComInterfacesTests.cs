@@ -79,7 +79,6 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 	{
 		/// <summary/>
 		[Test]
-		[ExpectedException(typeof(COMException))]
 		public void ComRelease()
 		{
 			ILgWritingSystemFactoryBuilder lefBuilder = LgWritingSystemFactoryBuilderClass.Create();
@@ -87,7 +86,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 			Assert.AreEqual(true, Marshal.IsComObject(lefBuilder), "#1");
 			Assert.AreEqual(0, Marshal.ReleaseComObject(lefBuilder), "#2");
 			lefBuilder = null;
-			myref.ShutdownAllFactories();
+			Assert.That(() => myref.ShutdownAllFactories(), Throws.TypeOf<COMException>());
 		}
 	}
 }

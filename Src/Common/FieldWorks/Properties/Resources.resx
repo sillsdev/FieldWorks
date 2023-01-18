@@ -319,4 +319,12 @@ We don't know why this happens. If you have any idea what recently changed on yo
     <value>Linked Files Folder</value>
     <comment>Caption for folder dialog, when setting a new LangProject.LinkedFilesRootDir value</comment>
   </data>
+  <data name="AutomaticUpdatesCaption" xml:space="preserve">
+    <value>Automatic Updates</value>
+  </data>
+  <data name="AutomaticUpdatesMessage" xml:space="preserve">
+    <value>Would you like FieldWorks to download updates automatically?
+(To configure update settings, go to Tools-&gt;Options-&gt;Updates.)</value>
+    <comment>Question asked on first launch. Options are Yes and No.</comment>
+  </data>
 </root>

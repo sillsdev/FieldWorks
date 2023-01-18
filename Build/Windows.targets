@@ -6,7 +6,7 @@
 
 	<!-- call preparatory Windows targets -->
 	<Target Name="initWindows" Condition="'$(OS)'=='Windows_NT'"
-			DependsOnTargets="Initialize;RegisterEncConvertersDlls;BuildWindowsXslAssemblies;graphite2Windows;Unit++">
+			DependsOnTargets="Initialize;BuildWindowsXslAssemblies;graphite2Windows;Unit++">
 	</Target>
 
 	<Target Name="cleanWindows" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="clean-graphite2Windows">
@@ -21,9 +21,7 @@
 	</Target>
 	<!-- Define Encoding Converters files needed for building and running tests -->
 	<PropertyGroup>
-		<ECNugetVersion>0.0.6</ECNugetVersion>
-		<ECArch Condition="'$(arch)'!='x64'">Win32</ECArch>
-		<ECArch Condition="'$(arch)'=='x64'">x64</ECArch>
+		<ECNugetVersion>0.2.28</ECNugetVersion>
 	</PropertyGroup>
 	<ItemGroup>
 		<ECWindowsFiles Include="CcEC.dll" />
@@ -49,6 +47,9 @@
 		<ECWindowsFiles Include="libgcc_s_sjlj-1.dll" Condition="'$(arch)'!='x64'"/>
 		<ECWindowsFiles Include="libgcc_s_seh-1.dll" Condition="'$(arch)'=='x64'"/>
 		<ECWindowsFiles Include="libstdc++-6.dll" />
+		<ECWindowsFiles Include="icudt68.dll" />
+		<ECWindowsFiles Include="icuin68.dll" />
+		<ECWindowsFiles Include="icuuc68.dll" />
 
 		<ECPlugins Include="CC 4.0.0.0 Plugin Details.xml" />
 		<ECPlugins Include="EC 4.0.0.0 Plugin Details.xml" />
@@ -58,24 +59,10 @@
 		<ECPlugins Include="SIEC 4.0.0.0 Plugin Details.xml" />
 	</ItemGroup>
 
-	<Target Name="RegisterEncConvertersDlls" Condition="'$(OS)'=='Windows_NT'">
-		<ItemGroup>
-			<ConverterDlls Include="$(fwrt)/packages/Encoding-Converters-Core.$(ECNugetVersion)/lib/net40/$(ECArch)/EcInterfaces.dll"/>
-			<ConverterDlls Include="$(fwrt)/packages/Encoding-Converters-Core.$(ECNugetVersion)/lib/net40/$(ECArch)/SilEncConverters40.dll"/>
-		</ItemGroup>
-		<Copy SourceFiles="@(ConverterDlls)"
-			  DestinationFolder="$(dir-outputBase)"
-			  SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"
-			  Condition="'$(action)'!='clean'"/>
-	</Target>
-
 	<!-- Only Windows has the xsltc tool for compiling XSLs -->
 	<PropertyGroup>
 		<ApplicationTransformsPath>$(fwrt)\Src\Transforms\Application</ApplicationTransformsPath>
 		<PresentationTransformsPath>$(fwrt)\Src\Transforms\Presentation</PresentationTransformsPath>
-		<!-- The default platform is WIN32 which is not a valid platform argument for xltc.exe -->
-		<PlatformForExec Condition="'$(Platform)'!='x64'">x86</PlatformForExec>
-		<PlatformForExec Condition="'$(Platform)'=='x64'">x64</PlatformForExec>
 	</PropertyGroup>
 	<ItemGroup>
 		<ApplicationTransforms Include="$(ApplicationTransformsPath)\*.xsl" />
@@ -83,8 +70,8 @@
 	</ItemGroup>
 	<Target Name="BuildWindowsXslAssemblies" Inputs="@(ApplicationTransforms);@(PresentationTransforms)" Outputs="$(dir-outputBase)\ApplicationTransforms.dll;$(dir-outputBase)\PresentationTransforms.dll" Condition="'$(action)'!='clean'">
 	<!-- The WindowsSDK_ExecutablePath_x64 does not contain the xsltc executable, but the x86 path contains one that can build a 64bit assembly -->
-		<Exec Command="&quot;$(WindowsSDK_ExecutablePath_x86)\xsltc.exe&quot; /settings:document /platform:$(PlatformForExec) /out:$(dir-outputBase)\ApplicationTransforms.dll $(ApplicationTransformsPath)\FxtM3MorphologySketch.xsl $(ApplicationTransformsPath)\FxtM3ParserToGAFAWS.xsl $(ApplicationTransformsPath)\FxtM3ParserToToXAmpleGrammar.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleADCtl.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleLex.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl" />
-		<Exec Command="&quot;$(WindowsSDK_ExecutablePath_x86)\xsltc.exe&quot; /settings:document /platform:$(PlatformForExec) /out:$(dir-outputBase)\PresentationTransforms.dll $(PresentationTransformsPath)\FormatHCTrace.xsl $(PresentationTransformsPath)\FormatXAmpleParse.xsl $(PresentationTransformsPath)\FormatXAmpleTrace.xsl $(PresentationTransformsPath)\FormatXAmpleWordGrammarDebuggerResult.xsl $(PresentationTransformsPath)\XLingPap1.xsl" />
+		<Exec Command="&quot;$(WindowsSDK_ExecutablePath_x86)\xsltc.exe&quot; /settings:document /platform:$(arch) /out:$(dir-outputBase)\ApplicationTransforms.dll $(ApplicationTransformsPath)\FxtM3MorphologySketch.xsl $(ApplicationTransformsPath)\FxtM3ParserToGAFAWS.xsl $(ApplicationTransformsPath)\FxtM3ParserToToXAmpleGrammar.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleADCtl.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleLex.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl" />
+		<Exec Command="&quot;$(WindowsSDK_ExecutablePath_x86)\xsltc.exe&quot; /settings:document /platform:$(arch) /out:$(dir-outputBase)\PresentationTransforms.dll $(PresentationTransformsPath)\FormatHCTrace.xsl $(PresentationTransformsPath)\FormatXAmpleParse.xsl $(PresentationTransformsPath)\FormatXAmpleTrace.xsl $(PresentationTransformsPath)\FormatXAmpleWordGrammarDebuggerResult.xsl $(PresentationTransformsPath)\XLingPap1.xsl" />
 	</Target>
 
 	<ItemGroup>

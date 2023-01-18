@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -365,7 +365,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			// TODO GordonM: make it work for an array of WordGroups?
 			CacheWordGroupOccurrencesForRibbon();
-			m_ribbon.SetRoot(m_wordGroup.Hvo);
+			m_ribbon.SetRoot(m_wordGroup.EndSegmentRA.OwnerOfClass<IStText>().Hvo);
 		}
 
 		/// <summary>

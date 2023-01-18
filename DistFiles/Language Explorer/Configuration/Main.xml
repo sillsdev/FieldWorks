@@ -98,6 +98,11 @@
 				<dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.LiftImportDlg"/>
 			</parameters>
 		</command>
+		<command id="CmdImportCombineData" label="Lexicon from The _Combine..." message="LaunchConnectedDialog">
+			<parameters>
+				<dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.CombineImportDlg"/>
+			</parameters>
+		</command>
 		<command id="CmdImportTranslatedLists" label="_Translated List Content" message="ImportTranslatedLists"/>
 		<command id="CmdImportTranslatedGramCats" label="Translated _Grammatical Category Content" message="ImportTranslatedGramCats"/>
 		<command id="CmdExport" label="_Export..." message="Export"/>
@@ -413,6 +418,7 @@
 				<item command="CmdImportSFMLexicon"/>
 				<item command="CmdImportLinguaLinksData"/>
 				<item command="CmdImportLiftData"/>
+				<item command="CmdImportCombineData"/>
 				<item command="CmdImportInterlinearSfm"/>
 				<item command="CmdImportWordsAndGlossesSfm"/>
 				<item command="CmdImportInterlinearData"/>
@@ -924,9 +930,9 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 	<!-- ************************ defaultProperties *********************** -->
 	<!-- ********************************************************** -->
 	<!--set the value of some simple properties to the defaults we want in the case that
-	   this is the first time the user has run the program, or the settings file is missing,
-	   or the program was launched with the shift key down
-	   Also for each area, the default tool is defined.-->
+		this is the first time the user has run the program, or the settings file is missing,
+		or the program was launched with the shift key down
+		Also for each area, the default tool is defined.-->
 	<defaultProperties>
 		<include path="Lexicon/areaConfiguration.xml" query="root/defaultProperties/*"/>
 		<include path="Words/areaConfiguration.xml" query="root/defaultProperties/*"/>

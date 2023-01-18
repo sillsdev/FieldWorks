@@ -1,4 +1,4 @@
-// Copyright (c) 2016 SIL International
+// Copyright (c) 2016-2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Resources;
 using System.Windows.Forms;
 using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Controls;
@@ -27,7 +26,7 @@ using WeifenLuo.WinFormsUI.Docking;
 namespace LCMBrowser
 {
 	/// <summary/>
-	public partial class LCMBrowserForm : ObjectBrowser, IHelpTopicProvider
+	public partial class LCMBrowserForm : ObjectBrowser
 	{
 		#region Data members
 
@@ -49,8 +48,6 @@ namespace LCMBrowser
 		private InspectorWnd m_repositoryWnd;
 		private int saveClid;
 		private string FileName = string.Empty;
-		//private FwTextBox m_textBox;
-		//private System.Windows.Forms.Panel panel1;
 
 		ToolStripMenuItem m_cmnuAddObject;
 		ToolStripMenuItem m_cmnuMoveObjectUp;
@@ -68,10 +65,6 @@ namespace LCMBrowser
 		ToolStripMenuItem m_mnuClassProperties;
 		ToolStripTextBox m_tstxtGuidSrch;
 		ToolStripLabel m_tslblGuidSrch;
-
-		private static ResourceManager s_helpResources;
-
-		private string m_sHelpTopic = "khtpMainFDOBrowser";
 
 		#endregion Data members
 
@@ -361,7 +354,7 @@ namespace LCMBrowser
 				// Init backend data provider
 				// TODO: Get the correct ICU local for the user writing system
 
-				var ui = new FwLcmUI(this, this);
+				var ui = new FwLcmUI(HelpTopicProviderBase.Instance, this);
 				if (isMemoryBEP)
 				{
 					m_cache = LcmCache.CreateCacheWithNewBlankLangProj(new BrowserProjectId(bepType, null), "en", "en", "en", ui,
@@ -2202,7 +2195,6 @@ namespace LCMBrowser
 		private bool ValidateGenDate(IInspectorObject io, IInspectorObject ioParent, ICmObject obj,
 										PropertyInfo pi, int mdy, out GenDate genDate)
 		{
-			System.DateTime dt1, dt;
 			var genDate1 = new GenDate();
 			string tempDate = "";
 			if (io.ParentInspectorObject != null && io.ParentInspectorObject.Flid > 0)
@@ -2468,32 +2460,5 @@ namespace LCMBrowser
 				}
 			}
 		}
-
-		#region Implementation of IHelpTopicProvider
-
-		///<summary>
-		/// Get the indicated help string.
-		/// </summary>
-		public string GetHelpString(string sPropName)
-		{
-			if (s_helpResources == null)
-			{
-				s_helpResources = new ResourceManager(
-					"FDOBrowser.Properties.Resources", Assembly.GetExecutingAssembly());
-			}
-			if (sPropName == null)
-				return "NullStringID";
-			return s_helpResources.GetString(sPropName);
-		}
-
-		///<summary>
-		/// Get the name of the help file.
-		/// </summary>
-		public string HelpFile
-		{
-			get { return Path.Combine(FwDirectoryFinder.CodeDirectory, GetHelpString("UserHelpFile")); }
-		}
-
-		#endregion
 	}
 }

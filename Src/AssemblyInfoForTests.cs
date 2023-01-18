@@ -1,8 +1,7 @@
-// Copyright (c) 2012-2017 SIL International
+// Copyright (c) 2012-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using NUnit.Framework;
 using SIL.LCModel.Core.Attributes;
 using SIL.FieldWorks.Common.FwUtils.Attributes;
 using SIL.LCModel.Utils.Attributes;
@@ -22,23 +21,23 @@ using SIL.TestUtilities;
 // Initialize registry helper
 [assembly: InitializeFwRegistryHelper]
 
-// Initialize ICU
-[assembly: InitializeIcu(IcuVersion = 54)]
-
 // Redirect HKCU if environment variable BUILDAGENT_SUBKEY is set
 [assembly: RedirectHKCU]
 
-// Allow creating COM objects from manifest file
-[assembly: CreateComObjectsFromManifest]
-
 // Initialize a do-nothing keyboard controller
 [assembly: InitializeNoOpKeyboardController]
-
-// Turns the SLDR API into offline mode
-[assembly: OfflineSldr]
 
 // Suppresses error beeps
 [assembly: SuppressErrorBeeps]
 
 // Handles any unhandled exceptions thrown on Windows Forms threads
 [assembly: HandleApplicationThreadException]
+
+// Initialize ICU
+[assembly: InitializeIcu(IcuVersion = 70)]
+
+// Turns the SLDR API into offline mode
+[assembly: OfflineSldr]
+
+// Allow creating COM objects from manifest file important that it comes after InitializeIcu
+[assembly: CreateComObjectsFromManifest]

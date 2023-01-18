@@ -730,6 +730,9 @@
 
 A stack dump has been copied to the clipboard.  Please email it and your LIFT file to Flex_Errors@sil.org so that we can improve the program.</value>
   </data>
+  <data name="ksLIFTCombineImportProblem" xml:space="preserve">
+    <value>Something is wrong with the data in {0}. If it was a zip file exported from The Combine please contact us at flex_errors@sil.org</value>
+  </data>
   <data name="ksImportError" xml:space="preserve">
     <value>Import Error</value>
   </data>
@@ -1239,6 +1242,9 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   <data name="openFileDialog1_Filter" xml:space="preserve">
     <value>LIFT files|*.lift|XML files|*.xml|All files|*.*</value>
   </data>
+  <data name="openFileDialog1_Zip_Filter" xml:space="preserve">
+    <value>ZIP files|*.zip|All files|*.*</value>
+  </data>
   <data name="ksErrorAccessingEncodingConverters" xml:space="preserve">
     <value>Error Accessing Encoding Converters</value>
   </data>
@@ -1353,5 +1359,38 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
   </data>
   <data name="ksDialectsAdded" xml:space="preserve">
     <value>The following Dialect labels were added to the language project:</value>
+  </data>
+  <data name="RestartToForSettingsToTakeEffect_Content" xml:space="preserve">
+    <value>Restart FieldWorks for these settings to take effect.</value>
+    <comment>Message box contents when a user changes a setting requiring a restart in Tools-&gt;Options</comment>
+  </data>
+  <data name="RestartToForSettingsToTakeEffect_Title" xml:space="preserve">
+    <value>Restart required</value>
+    <comment>Message box title when a user changes a setting requiring a restart in Tools-&gt;Options</comment>
+  </data>
+  <data name="OpenAProjectBeforeConfiguringPlugins" xml:space="preserve">
+    <value>You must open a project before configuring plugins.</value>
+    <comment>Message shown in the Tools-&gt;Options-&gt;Plugins dialog tab when plugins cannot be configured.</comment>
+  </data>
+  <data name="UpdatesStable" xml:space="preserve">
+    <value>Stable (recommended)</value>
+    <comment>Describes versions of the software that are safe for all users. Shown in the Tools-&gt;Options-&gt;Updates-&gt; dialog tab, in the update channel chooser.</comment>
+  </data>
+  <data name="UpdatesBeta" xml:space="preserve">
+    <value>Beta</value>
+    <comment>Describes versions of the software that have new features that may have bugs. Shown in the Tools-&gt;Options-&gt;Updates-&gt; dialog tab, in the update channel chooser.</comment>
+  </data>
+  <data name="UpdatesAlpha" xml:space="preserve">
+    <value>Alpha</value>
+    <comment>Describes versions of the software that have experimental features and a lot of bugs. Shown in the Tools-&gt;Options-&gt;Updates-&gt; dialog tab, in the update channel chooser.</comment>
+  </data>
+  <data name="UpdatesStableDescription" xml:space="preserve">
+    <value>Stable updates are recommended for all users. If you're not sure which channel to choose, choose Stable.</value>
+  </data>
+  <data name="UpdatesBetaDescription" xml:space="preserve">
+    <value>Beta updates are recommended for users who want to try the latest features and don't mind a few minor bugs.</value>
+  </data>
+  <data name="UpdatesAlphaDescription" xml:space="preserve">
+    <value>Alpha updates have bugs. Choose this channel only if your tech support person recommended it to you.</value>
   </data>
 </root>

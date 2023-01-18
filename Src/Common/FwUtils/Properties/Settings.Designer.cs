@@ -12,7 +12,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.9.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -20,6 +20,23 @@ namespace SIL.FieldWorks.Common.FwUtils.Properties {
         public static Settings Default {
             get {
                 return defaultInstance;
+            }
+        }
+        
+        /// <summary>
+        /// Setting controlling the updating of the Global WS Store
+        /// </summary>
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsProviderAttribute(typeof(SIL.Settings.CrossPlatformSettingsProvider))]
+        [global::System.Configuration.SettingsDescriptionAttribute("Setting controlling the updating of the Global WS Store")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UpdateGlobalWSStore {
+            get {
+                return ((bool)(this["UpdateGlobalWSStore"]));
+            }
+            set {
+                this["UpdateGlobalWSStore"] = value;
             }
         }
         
@@ -36,6 +53,22 @@ namespace SIL.FieldWorks.Common.FwUtils.Properties {
             }
             set {
                 this["Reporting"] = value;
+            }
+        }
+        
+        /// <summary>
+        /// Setting controlling getting updates
+        /// </summary>
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsProviderAttribute(typeof(SIL.Settings.CrossPlatformSettingsProvider))]
+        [global::System.Configuration.SettingsDescriptionAttribute("Setting controlling getting updates")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::SIL.Settings.UpdateSettings Update {
+            get {
+                return ((global::SIL.Settings.UpdateSettings)(this["Update"]));
+            }
+            set {
+                this["Update"] = value;
             }
         }
         

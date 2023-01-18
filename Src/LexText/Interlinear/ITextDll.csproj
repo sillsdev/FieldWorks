@@ -87,7 +87,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>  
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <OutputPath>..\..\..\Output\Debug\</OutputPath>
     <BaseAddress>285212672</BaseAddress>
@@ -135,14 +135,39 @@
     <Reference Include="Aga.Controls">
       <HintPath>..\..\..\DistFiles\Aga.Controls.dll</HintPath>
     </Reference>
+    <Reference Include="CsvHelper, Version=28.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\CsvHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="DesktopAnalytics, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\DesktopAnalytics.dll</HintPath>
+    </Reference>
+    <Reference Include="ExCSS, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\ExCSS.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Core">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\Geckofx-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Geckofx-Winforms">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\Geckofx-Winforms.dll</HintPath>
+    </Reference>
     <Reference Include="ManagedLgIcuCollator, Version=9.0.0.29078, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\ManagedLgIcuCollator.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms, Version=4.2.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\SIL.Windows.Forms.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Windows.Forms.Keyboarding, Version=3.1.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SIL.Windows.Forms.Keyboarding.dll</HintPath>
     </Reference>
+    <Reference Include="System.Configuration" />
     <Reference Include="ViewsInterfaces, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -183,9 +208,13 @@
       <HintPath>..\..\..\Output\Debug\LexTextControls.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CommonServiceLocator, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <Package>/home/eberhard/repogit/Calgary/WW/Output_x86_64/Debug/Microsoft.Practices.ServiceLocation.dll</Package>
+      <HintPath>..\..\..\Output\Debug\CommonServiceLocator.dll</HintPath>
+    </Reference>
+    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\NETStandard.Library.NETFramework.2.0.0-preview2-25405-01\build\net461\lib\netstandard.dll</HintPath>
     </Reference>
     <Reference Include="ParatextShared, Version=7.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -237,7 +266,7 @@
     </Reference>
     <Reference Include="ECInterfaces" Condition="'$(OS)'=='Unix'">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>/usr/lib/fieldworks/ECInterfaces.dll</HintPath>
+      <HintPath>$(installation_prefix)/lib/fieldworks/ECInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="FwCoreDlgControls, Version=6.9.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
@@ -257,7 +286,7 @@
     </Reference>
     <Reference Include="SilEncConverters40" Condition="'$(OS)'=='Unix'">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
+      <HintPath>$(installation_prefix)/lib/fieldworks/SilEncConverters40.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -375,9 +404,13 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ComplexConcPatternVc.cs" />
+    <Compile Include="ConcordanceResultsExporter.cs" />
     <Compile Include="ConcordanceWordList.cs" />
     <Compile Include="ConfigureInterlinDialog.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConfigureInterlinDialog.Designer.cs">
+      <DependentUpon>ConfigureInterlinDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="CreateAllomorphTypeMismatchDlg.cs">
       <SubType>Form</SubType>
@@ -406,6 +439,7 @@
     <Compile Include="FocusBoxController.Designer.cs">
       <DependentUpon>FocusBoxController.cs</DependentUpon>
     </Compile>
+    <Compile Include="IInterlinConfigurable.cs" />
     <Compile Include="ImageHolder.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -470,6 +504,7 @@
     <Compile Include="InterlinTaggingChild.Designer.cs">
       <DependentUpon>InterlinTaggingChild.cs</DependentUpon>
     </Compile>
+    <Compile Include="InterlinTaggingVc.cs" />
     <Compile Include="InterlinVc.cs">
       <SubType>Code</SubType>
     </Compile>

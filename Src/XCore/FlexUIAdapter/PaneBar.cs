@@ -341,6 +341,10 @@ namespace XCore
 
 		private void ClearMainPanelControls()
 		{
+			var panelMainControls = new Control[m_panelMain.Controls.Count];
+			m_panelMain.Controls.CopyTo(panelMainControls, 0);
+			foreach (var control in panelMainControls)
+				control.Dispose();
 			m_panelMain.Controls.Clear();
 			m_propertiesToWatch.Clear();
 		}

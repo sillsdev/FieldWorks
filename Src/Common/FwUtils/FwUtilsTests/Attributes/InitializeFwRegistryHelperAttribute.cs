@@ -4,6 +4,7 @@
 
 using System;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 
 namespace SIL.FieldWorks.Common.FwUtils.Attributes
 {
@@ -24,9 +25,9 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 	public class InitializeFwRegistryHelperAttribute: TestActionAttribute
 	{
 		/// <summary/>
-		public override void BeforeTest(TestDetails testDetails)
+		public override void BeforeTest(ITest test)
 		{
-			base.BeforeTest(testDetails);
+			base.BeforeTest(test);
 			FwRegistryHelper.Initialize();
 		}
 	}

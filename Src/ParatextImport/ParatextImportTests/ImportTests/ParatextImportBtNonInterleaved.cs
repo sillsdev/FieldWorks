@@ -110,8 +110,7 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual("back trans", btTss.get_RunText(2));
 			ITsTextProps ttpRun3 = btTss.get_Properties(2);
 			Assert.AreEqual(null, ttpRun3.GetStrPropValue((int)FwTextPropType.ktptNamedStyle));
-			int nVar;
-			Assert.AreEqual(m_wsAnal, ttpRun3.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+			Assert.AreEqual(m_wsAnal, ttpRun3.GetIntPropValues((int)FwTextPropType.ktptWs, out _));
 
 			// Check Spanish BT
 			btTss = trans.Translation.get_String(wsSpanish);
@@ -120,7 +119,7 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual("retrotraduccion", btTss.get_RunText(2));
 			ttpRun3 = btTss.get_Properties(2);
 			Assert.AreEqual(null, ttpRun3.GetStrPropValue((int)FwTextPropType.ktptNamedStyle));
-			Assert.AreEqual(wsSpanish, ttpRun3.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+			Assert.AreEqual(wsSpanish, ttpRun3.GetIntPropValues((int)FwTextPropType.ktptWs, out _));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -675,7 +674,7 @@ namespace ParatextImport.ImportTests
 			// Check the BT of these two paragraphs
 			Assert.AreEqual(1, para.TranslationsOC.Count);
 			ICmTranslation trans1 = para.GetBT();
-			Assert.IsNotNull(trans1);
+			Assert.That(trans1, Is.Not.Null);
 			ITsString tss1 = trans1.Translation.AnalysisDefaultWritingSystem;
 			//Assert.AreEqual(7, tss1.RunCount);
 			AssertEx.RunIsCorrect(tss1, 0, "1", ScrStyleNames.ChapterNumber, m_wsAnal);
@@ -705,12 +704,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ScriptureUtilsException),
-			ExpectedMessage = "Back translation does not correspond to a vernacular paragraph:(\\r)?\\n" +
-			"\\tFirst Scripture Section(\\r)?\\n" +
-			"The style for a back translation paragraph must match the style for the corresponding vernacular paragraph.(\\r)?\\n" +
-			"No vernacular paragraph could be found having style \"Section Head\" and containing \"EXO 1:1\".",
-			MatchType = MessageMatch.Regex)]
 		public void SectionHeadTypeMismatch()
 		{
 			// Set up the vernacular to match the BT we will import.
@@ -742,7 +735,11 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("First Scripture Section", @"\bts");
 
 			// ************** finalize **************
-			m_importer.FinalizeImport();
+			Assert.That(() => m_importer.FinalizeImport(), Throws.TypeOf<ScriptureUtilsException>().With.Message.Match(
+				@"Back translation does not correspond to a vernacular paragraph:(\r)?\n" +
+				@"\tFirst Scripture Section(\r)?\n" +
+				@"The style for a back translation paragraph must match the style for the corresponding vernacular paragraph.(\r)?\n" +
+				@"No vernacular paragraph could be found having style ""Section Head"" and containing ""EXO 1:1""."));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -803,7 +800,7 @@ namespace ParatextImport.ImportTests
 			// Check the BT of the content paragraph
 			Assert.AreEqual(1, para.TranslationsOC.Count);
 			ICmTranslation trans1 = para.GetBT();
-			Assert.IsNotNull(trans1);
+			Assert.That(trans1, Is.Not.Null);
 			ITsString tss1 = trans1.Translation.AnalysisDefaultWritingSystem;
 			AssertEx.RunIsCorrect(tss1, 0, "1", ScrStyleNames.ChapterNumber, m_wsAnal);
 			AssertEx.RunIsCorrect(tss1, 1, "1", ScrStyleNames.VerseNumber, m_wsAnal);

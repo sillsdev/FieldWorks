@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Fixtures setup method
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			m_sTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory,
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Delete any files that we may have created.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureTeardown()
 		{
 			if (File.Exists(m_sResultTransform))

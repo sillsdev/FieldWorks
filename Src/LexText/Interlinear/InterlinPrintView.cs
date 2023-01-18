@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		protected override void MakeVc()
 		{
-			m_vc = new InterlinPrintVc(m_cache);
+			Vc = new InterlinPrintVc(m_cache);
 		}
 
 		/// <summary>

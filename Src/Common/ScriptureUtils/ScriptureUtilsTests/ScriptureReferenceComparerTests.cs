@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// Setup the test fixture.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			m_comparer = new ScriptureReferenceComparer(new DummyScrProjMetaDataProvider(), true);
@@ -176,10 +176,9 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void InvalidReferenceX()
 		{
-			m_comparer.Compare(067000999, 001001001);
+			Assert.That(() => m_comparer.Compare(067000999, 001001001), Throws.ArgumentException);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -188,10 +187,9 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void InvalidReferenceY()
 		{
-			m_comparer.Compare(001001001, 067000999);
+			Assert.That(() => m_comparer.Compare(001001001, 067000999), Throws.ArgumentException);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -200,10 +198,9 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void InvalidType()
 		{
-			m_comparer.Compare(01001001, Guid.NewGuid());
+			Assert.That(() => m_comparer.Compare(01001001, Guid.NewGuid()), Throws.ArgumentException);
 		}
 	}
 }

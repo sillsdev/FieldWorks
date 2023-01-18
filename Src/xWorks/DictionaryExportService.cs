@@ -1,11 +1,14 @@
-﻿// Copyright (c) 2016 SIL International
+// Copyright (c) 2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
+using Newtonsoft.Json.Linq;
+using SIL.Code;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using XCore;
@@ -20,6 +23,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private const string DictionaryType = "Dictionary";
 		private const string ReversalType = "Reversal Index";
+		private const int BatchSize = 50; // number of entries to send to Webonary in a single post
 
 		public DictionaryExportService(PropertyTable propertyTable, Mediator mediator)
 		{
@@ -32,7 +36,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			int[] entries;
 			using(ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
-				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entries, DictionaryType);
+				ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entries, DictionaryType);
 			return entries.Count(e => IsGenerated(m_cache, config, e));
 		}
 
@@ -43,9 +47,9 @@ namespace SIL.FieldWorks.XWorks
 		internal static bool IsGenerated(LcmCache cache, DictionaryConfigurationModel config, int hvo)
 		{
 			var entry = (ILexEntry)cache.ServiceLocator.GetObject(hvo);
-			if (ConfiguredXHTMLGenerator.IsMainEntry(entry, config))
-				return config.Parts[0].IsEnabled && (!entry.ComplexFormEntryRefs.Any() || ConfiguredXHTMLGenerator.IsListItemSelectedForExport(config.Parts[0], entry));
-			return entry.PublishAsMinorEntry && config.Parts.Skip(1).Any(part => ConfiguredXHTMLGenerator.IsListItemSelectedForExport(part, entry));
+			if (ConfiguredLcmGenerator.IsMainEntry(entry, config))
+				return config.Parts[0].IsEnabled && (!entry.ComplexFormEntryRefs.Any() || ConfiguredLcmGenerator.IsListItemSelectedForExport(config.Parts[0], entry));
+			return entry.PublishAsMinorEntry && config.Parts.Skip(1).Any(part => ConfiguredLcmGenerator.IsListItemSelectedForExport(part, entry));
 		}
 
 		/// <summary>
@@ -58,7 +62,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var relevantReversalIndexesAndTheirCounts = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances()
 					.Select(repo => m_cache.ServiceLocator.GetObject(repo.Guid) as IReversalIndex)
-					.Where(ri => ri != null && selectedReversalIndexes.Contains(ri.ShortName))
+					.Where(ri => ri != null && selectedReversalIndexes.Any(s => s.Contains(ri.ShortName)))
 					.ToDictionary(ri => ri.ShortName, CountReversalIndexEntries);
 
 				return new SortedDictionary<string,int> (relevantReversalIndexesAndTheirCounts);
@@ -69,7 +73,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			int[] entries;
 			using (ReversalIndexActivator.ActivateReversalIndex(ri.Guid, m_propertyTable))
-				ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entries, ReversalType);
+				ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entries, ReversalType);
 			return entries.Length;
 		}
 
@@ -97,11 +101,35 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ExportConfiguredXhtml(string xhtmlPath, DictionaryConfigurationModel configuration, string exportType, IThreadedProgress progress)
 		{
-			int[] entriesToSave;
-			var publicationDecorator = ConfiguredXHTMLGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entriesToSave, exportType);
+			var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, exportType);
 			if (progress != null)
 				progress.Maximum = entriesToSave.Length;
-			ConfiguredXHTMLGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, xhtmlPath, progress);
+			LcmXhtmlGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, xhtmlPath, progress);
+		}
+
+		public List<JArray> ExportConfiguredJson(string folderPath, DictionaryConfigurationModel configuration)
+		{
+			using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
+			{
+				var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable,
+					out var entriesToSave, DictionaryType);
+				return LcmJsonGenerator.SavePublishedJsonWithStyles(entriesToSave, publicationDecorator, BatchSize, configuration, m_propertyTable,
+					Path.Combine(folderPath, "configured.json"), null);
+			}
+		}
+
+		public List<JArray> ExportConfiguredReversalJson(string folderPath, string reversalWs, out int[] entryIds,
+			DictionaryConfigurationModel configuration = null, IThreadedProgress progress = null)
+		{
+			Guard.AgainstNull(reversalWs, nameof(reversalWs));
+			using (ClerkActivator.ActivateClerkMatchingExportType(ReversalType, m_propertyTable, m_mediator))
+			using (ReversalIndexActivator.ActivateReversalIndex(reversalWs, m_propertyTable, m_cache))
+			{
+				var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable,
+						out entryIds, ReversalType);
+				return LcmJsonGenerator.SavePublishedJsonWithStyles(entryIds, publicationDecorator, BatchSize,
+					configuration, m_propertyTable, Path.Combine(folderPath, $"reversal_{reversalWs}.json"), null);
+			}
 		}
 
 		private sealed class ClerkActivator : IDisposable
@@ -289,6 +317,19 @@ namespace SIL.FieldWorks.XWorks
 				// Don't publish the property change: doing so may refresh the Dictionary (or Reversal) preview in the main window;
 				// we want to activate the Publication for export purposes only.
 				m_propertyTable.SetProperty("SelectedPublication", publication, false);
+			}
+		}
+
+		public JObject ExportDictionaryContentJson(string siteName,
+			IEnumerable<string> templateFileNames,
+			IEnumerable<DictionaryConfigurationModel> reversals,
+			string configPath = null, string exportPath = null)
+		{
+			using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
+			{
+				ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, DictionaryType);
+				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+				return LcmJsonGenerator.GenerateDictionaryMetaData(siteName, templateFileNames, reversals, entriesToSave, configPath, exportPath, m_cache, clerk);
 			}
 		}
 	}

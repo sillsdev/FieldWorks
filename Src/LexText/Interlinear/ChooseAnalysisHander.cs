@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// this is something of a hack until we convert to using a style sheet
 		/// </summary>
-		static protected int s_baseFontSize = 12;
+		protected static int s_baseFontSize = 12;
 
 		/// <summary>
 		/// This fires when the user selects an item in the menu.
@@ -332,7 +332,7 @@ namespace SIL.FieldWorks.IText
 
 		// Generate a suitable string representation of a WfiGloss.
 		// Todo: finish implementing (add the gloss!)
-		static internal ITsString MakeGlossStringRep(IWfiGloss wg, LcmCache fdoCache, bool fUseStyleSheet)
+		internal static ITsString MakeGlossStringRep(IWfiGloss wg, LcmCache fdoCache, bool fUseStyleSheet)
 		{
 			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 			var wa = wg.Owner as IWfiAnalysis;
@@ -360,7 +360,7 @@ namespace SIL.FieldWorks.IText
 		}
 
 		// Make a string representing a WfiAnalysis, suitable for use in a combo box item.
-		static internal ITsString MakeAnalysisStringRep(IWfiAnalysis wa, LcmCache fdoCache, bool fUseStyleSheet, int wsVern)
+		internal static ITsString MakeAnalysisStringRep(IWfiAnalysis wa, LcmCache fdoCache, bool fUseStyleSheet, int wsVern)
 		{
 			//			ITsTextProps boldItalicAnalysis = BoldItalicAnalysis(fdoCache);
 			//			ITsTextProps italicAnalysis = ItalicAnalysis(fdoCache, Sandbox.SandboxVc.krgbRed);
@@ -424,7 +424,7 @@ namespace SIL.FieldWorks.IText
 				tsb.Replace(ichMinMsa, ichMinMsa, interlinName, posTextProperties);
 
 				//add sense
-				var sense = mb.SenseRA;
+				var sense = mb.SenseRA ?? mb.DefaultSense;
 				tsb.Replace(tsb.Length, tsb.Length, " ", null);
 				int ichMinSense = tsb.Length;
 				if (sense != null)

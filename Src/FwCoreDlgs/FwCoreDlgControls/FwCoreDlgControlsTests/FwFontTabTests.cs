@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			// Select a font name for the style (which will call the event handler
 			// m_cboFontNames_SelectedIndexChanged).
 			var cboFontNames = ReflectionHelper.GetField(m_fontTab, "m_cboFontNames") as FwInheritablePropComboBox;
-			Assert.IsNotNull(cboFontNames);
+			Assert.That(cboFontNames, Is.Not.Null);
 			cboFontNames.AdjustedSelectedIndex = 1;
 			// Make sure we successfully set the font for this user-defined character style.
 			Assert.IsTrue(charStyleInfo.FontInfoForWs(-1).m_fontName.IsExplicit);

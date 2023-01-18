@@ -68,9 +68,9 @@ namespace SIL.FieldWorks.IText
 			{
 				firstEntry.MoveNext();
 				var imported = firstEntry.Current;
-				Assert.IsNotNull(imported);
+				Assert.That(imported, Is.Not.Null);
 				var para = imported.ContentsOA.ParagraphsOS[0] as IStTxtPara;
-				Assert.IsNotNull(para);
+				Assert.That(para, Is.Not.Null);
 				Assert.That(para.Analyses.Count(), Is.EqualTo(1));
 				var wfiWord = para.Analyses.First().Wordform;
 				int wsWordform = wsf.get_Engine("en").Handle;
@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.IText
 				AssertHumanApprovedOpinion(wfiWord, wfiAnalysis);
 
 				var at = new AnalysisTree(para.Analyses.First());
-				Assert.IsNotNull(at.Gloss, "IAnalysis should be WfiGloss");
+				Assert.That(at.Gloss, Is.Not.Null, "IAnalysis should be WfiGloss");
 				Assert.That(at.Gloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
 
 				Assert.That(Cache.ServiceLocator.GetInstance<IWfiGlossRepository>().Count, Is.EqualTo(1));
@@ -132,15 +132,15 @@ namespace SIL.FieldWorks.IText
 			{
 				firstEntry.MoveNext();
 				var imported = firstEntry.Current;
-				Assert.IsNotNull(imported);
+				Assert.That(imported, Is.Not.Null);
 				var para = imported.ContentsOA.ParagraphsOS[0] as IStTxtPara;
-				Assert.IsNotNull(para);
+				Assert.That(para, Is.Not.Null);
 				Assert.That(para.Analyses.Count(), Is.EqualTo(1));
 				int wsWordform = wsf.get_Engine("en").Handle;
 				Assert.That(para.Analyses.First().Wordform.Form.get_String(wsWordform).Text,
 					Is.EqualTo("supercalifragilisticexpialidocious"));
 				var at = new AnalysisTree(para.Analyses.First());
-				Assert.IsNotNull(at.Gloss, "IAnalysis should be WfiGloss");
+				Assert.That(at.Gloss, Is.Not.Null, "IAnalysis should be WfiGloss");
 				Assert.That(at.Gloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
 
 				// make sure we also created a morpheme form
@@ -181,15 +181,15 @@ namespace SIL.FieldWorks.IText
 			{
 				firstEntry.MoveNext();
 				var imported = firstEntry.Current;
-				Assert.IsNotNull(imported);
+				Assert.That(imported, Is.Not.Null);
 				var para = imported.ContentsOA.ParagraphsOS[0] as IStTxtPara;
-				Assert.IsNotNull(para);
+				Assert.That(para, Is.Not.Null);
 				Assert.That(para.Analyses.Count(), Is.EqualTo(1));
 				int wsWordform = wsf.get_Engine("en").Handle;
 				Assert.That(para.Analyses.First().Wordform.Form.get_String(wsWordform).Text,
 					Is.EqualTo("supercalifragilisticexpialidocious"));
 				var at = new AnalysisTree(para.Analyses.First());
-				Assert.IsNotNull(at.Gloss, "IAnalysis should be WfiGloss");
+				Assert.That(at.Gloss, Is.Not.Null, "IAnalysis should be WfiGloss");
 				Assert.That(at.Gloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
 				Assert.That(at.Gloss.Form.get_String(wsf.get_Engine("fr").Handle).Text, Is.EqualTo("absierd"));
 
@@ -225,14 +225,14 @@ namespace SIL.FieldWorks.IText
 			{
 				firstEntry.MoveNext();
 				var imported = firstEntry.Current;
-				Assert.IsNotNull(imported);
+				Assert.That(imported, Is.Not.Null);
 				var para = imported.ContentsOA.ParagraphsOS[0] as IStTxtPara;
-				Assert.IsNotNull(para);
+				Assert.That(para, Is.Not.Null);
 				Assert.That(para.Analyses.Count(), Is.EqualTo(1));
 				Assert.That(para.Analyses.First().Wordform.Form.get_String(wsf.get_Engine("en").Handle).Text,
 					Is.EqualTo("supercalifragilisticexpialidocious"));
 				var at = new AnalysisTree(para.Analyses.First());
-				Assert.IsNull(at.Gloss, "Analysis should not be WfiGloss");
+				Assert.That(at.Gloss, Is.Null, "Analysis should not be WfiGloss");
 				// assert that nothing else was created
 				Assert.That(Cache.ServiceLocator.GetInstance<IWfiGlossRepository>().Count, Is.EqualTo(0));
 				Assert.That(Cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().Count, Is.EqualTo(0));
@@ -287,22 +287,22 @@ namespace SIL.FieldWorks.IText
 			{
 				firstEntry.MoveNext();
 				var imported = firstEntry.Current;
-				Assert.IsNotNull(imported);
+				Assert.That(imported, Is.Not.Null);
 				var importedPara = imported.ContentsOA.ParagraphsOS[0] as IStTxtPara;
-				Assert.IsNotNull(importedPara);
+				Assert.That(importedPara, Is.Not.Null);
 
 				// make sure we've added the expected word gloss
 				Assert.That(importedPara.SegmentsOS[0].AnalysesRS.Count, Is.EqualTo(1));
 				var importedAnalysis = importedPara.SegmentsOS[0].AnalysesRS[0];
 				var importedWord = importedAnalysis.Wordform;
 				var at = new AnalysisTree(importedAnalysis);
-				Assert.IsNotNull(at.Gloss, "IAnalysis should be WfiGloss");
+				Assert.That(at.Gloss, Is.Not.Null, "IAnalysis should be WfiGloss");
 				var importedGloss = at.Gloss;
 				Assert.That(importedGloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
 
 				Assert.That(importedPara.Guid.Equals(para.Guid));
 				at = new AnalysisTree(para.Analyses.First());
-				Assert.IsNotNull(at.Gloss, "IAnalysis should be WfiGloss");
+				Assert.That(at.Gloss, Is.Not.Null, "IAnalysis should be WfiGloss");
 				var gloss = at.Gloss;
 				Assert.That(gloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
 
@@ -368,9 +368,9 @@ namespace SIL.FieldWorks.IText
 			{
 				firstEntry.MoveNext();
 				var imported = firstEntry.Current;
-				Assert.IsNotNull(imported);
+				Assert.That(imported, Is.Not.Null);
 				var importedPara = imported.ContentsOA.ParagraphsOS[0] as IStTxtPara;
-				Assert.IsNotNull(importedPara);
+				Assert.That(importedPara, Is.Not.Null);
 
 				// make sure we've added the expected word gloss
 				Assert.That(importedPara.SegmentsOS[0].AnalysesRS.Count, Is.EqualTo(1));
@@ -378,13 +378,13 @@ namespace SIL.FieldWorks.IText
 				var importedWord = importedAnalysis.Wordform;
 				Assert.That(importedWord.Guid, Is.EqualTo(word.Guid));
 				var at = new AnalysisTree(importedAnalysis);
-				Assert.IsNotNull(at.Gloss, "IAnalysis should be WfiGloss");
+				Assert.That(at.Gloss, Is.Not.Null, "IAnalysis should be WfiGloss");
 				var importedGloss = at.Gloss;
 				Assert.That(importedGloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
 
 				Assert.That(importedPara.Guid.Equals(para.Guid));
 				at = new AnalysisTree(para.Analyses.First());
-				Assert.IsNotNull(at.Gloss, "IAnalysis should be WfiGloss");
+				Assert.That(at.Gloss, Is.Not.Null, "IAnalysis should be WfiGloss");
 				var gloss = at.Gloss;
 				Assert.That(gloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
 
@@ -453,16 +453,16 @@ namespace SIL.FieldWorks.IText
 			{
 				firstEntry.MoveNext();
 				var imported = firstEntry.Current;
-				Assert.IsNotNull(imported);
+				Assert.That(imported, Is.Not.Null);
 				var importedPara = imported.ContentsOA.ParagraphsOS[0] as IStTxtPara;
-				Assert.IsNotNull(importedPara);
+				Assert.That(importedPara, Is.Not.Null);
 
 				// make sure we've skipped the expected word gloss
 				Assert.That(importedPara.SegmentsOS[0].AnalysesRS.Count, Is.EqualTo(1));
 				var skippedAnalysis = importedPara.SegmentsOS[0].AnalysesRS[0];
 				var skippedWord = skippedAnalysis.Wordform;
 				var at = new AnalysisTree(skippedAnalysis);
-				Assert.IsNotNull(at.Gloss, "IAnalysis should be WfiGloss");
+				Assert.That(at.Gloss, Is.Not.Null, "IAnalysis should be WfiGloss");
 				var skippedGloss = at.Gloss;
 				Assert.That(skippedGloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absirdo"));
 				Assert.That(skippedWord.Guid, Is.EqualTo(segGuid));
@@ -531,9 +531,9 @@ namespace SIL.FieldWorks.IText
 			{
 				firstEntry.MoveNext();
 				var imported = firstEntry.Current;
-				Assert.IsNotNull(imported);
+				Assert.That(imported, Is.Not.Null);
 				var importedPara = imported.ContentsOA.ParagraphsOS[0] as IStTxtPara;
-				Assert.IsNotNull(importedPara);
+				Assert.That(importedPara, Is.Not.Null);
 
 				// assert that nothing was created
 				Assert.That(Cache.ServiceLocator.GetInstance<IWfiGlossRepository>().Count, Is.EqualTo(1));
@@ -545,7 +545,7 @@ namespace SIL.FieldWorks.IText
 				var skippedAnalysis = importedPara.SegmentsOS[0].AnalysesRS[0];
 				var skippedWord = skippedAnalysis.Wordform;
 				var at = new AnalysisTree(skippedAnalysis);
-				Assert.IsNotNull(at.Gloss, "IAnalysis should be WfiGloss");
+				Assert.That(at.Gloss, Is.Not.Null, "IAnalysis should be WfiGloss");
 				var skippedGloss = at.Gloss;
 				Assert.That(skippedGloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
 				Assert.That(skippedWord.Guid, Is.EqualTo(word.Guid));
@@ -610,9 +610,9 @@ namespace SIL.FieldWorks.IText
 			{
 				firstEntry.MoveNext();
 				var imported = firstEntry.Current;
-				Assert.IsNotNull(imported);
+				Assert.That(imported, Is.Not.Null);
 				var importedPara = imported.ContentsOA.ParagraphsOS[0] as IStTxtPara;
-				Assert.IsNotNull(importedPara);
+				Assert.That(importedPara, Is.Not.Null);
 
 				// assert that new Analysis was created
 				Assert.That(Cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().Count, Is.EqualTo(2));
@@ -622,7 +622,7 @@ namespace SIL.FieldWorks.IText
 				var importedAnalysis = importedPara.SegmentsOS[0].AnalysesRS[0];
 				var skippedWord = importedAnalysis.Wordform;
 				var at = new AnalysisTree(importedAnalysis);
-				Assert.IsNotNull(at.Gloss, "IAnalysis should be WfiGloss");
+				Assert.That(at.Gloss, Is.Not.Null, "IAnalysis should be WfiGloss");
 				var newGloss = at.Gloss;
 				Assert.That(newGloss.Form.get_String(wsf.get_Engine("pt").Handle).Text, Is.EqualTo("absurdo"));
 				Assert.That(skippedWord.Guid, Is.EqualTo(word.Guid));
@@ -642,11 +642,11 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		[Test, Ignore]
-		public void ImportNewUserConfirmedWordGlossMergeIntoAnalysisMatchingStemOfExistingAnalysis()
-		{
-
-		}
+		//[Test]
+		//public void ImportNewUserConfirmedWordGlossMergeIntoAnalysisMatchingStemOfExistingAnalysis()
+		//{
+		// TODO
+		//}
 
 		[Test]
 		public void ImportUnknownPhraseWholeSegmentNoVersion_MakesSeparateWords()

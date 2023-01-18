@@ -61,33 +61,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Valid_Characters_dialog_box/Add_or_modify_custom_characters.htm.
-        /// </summary>
-        internal static string khtpUnicodeEditorCharTab {
-            get {
-                return ResourceManager.GetString("khtpUnicodeEditorCharTab", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to /Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Private_Use_Area_character_properties.htm.
-        /// </summary>
-        internal static string khtpWsAddPUAChar {
-            get {
-                return ResourceManager.GetString("khtpWsAddPUAChar", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to /Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Private_Use_Area_character_properties.htm.
-        /// </summary>
-        internal static string khtpWsModifyPUAChar {
-            get {
-                return ResourceManager.GetString("khtpWsModifyPUAChar", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to FieldWorks cannot complete saving some changes to the character data because at least one file ({0}) is in use by another FieldWorks program.  Please stop all FieldWorks programs other than your current program, then click &quot;Retry&quot; to try again..
         /// </summary>
         internal static string ksCannotCompleteChanges {
@@ -192,15 +165,6 @@ namespace SIL.FieldWorks.UnicodeCharEditor.Properties {
         internal static string kstidOverwriteUserCode {
             get {
                 return ResourceManager.GetString("kstidOverwriteUserCode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to \Helps\FieldWorks_Language_Explorer_Help.chm.
-        /// </summary>
-        internal static string UserHelpFile {
-            get {
-                return ResourceManager.GetString("UserHelpFile", resourceCulture);
             }
         }
     }

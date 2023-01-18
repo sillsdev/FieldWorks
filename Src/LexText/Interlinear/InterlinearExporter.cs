@@ -286,7 +286,7 @@ namespace SIL.FieldWorks.IText
 			WriteItem(itemType, tss);
 		}
 
-		private void WriteItem(string itemType, ITsString tss)
+		protected void WriteItem(string itemType, ITsString tss)
 		{
 			m_writer.WriteStartElement("item");
 			m_writer.WriteAttributeString("type", itemType);
@@ -355,9 +355,9 @@ namespace SIL.FieldWorks.IText
 				string icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(m_cache.DefaultAnalWs);
 				m_writer.WriteAttributeString("lang", icuCode);
 			}
-			if (vc is InterlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + (vc as InterlinVc).LineChoices.Count)
+			if (vc is InterlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + (vc as InterlinVc).LineChoices.EnabledCount)
 			{
-				var spec = (vc as InterlinVc).LineChoices[frag - InterlinVc.kfragLineChoices];
+				var spec = (vc as InterlinVc).LineChoices.EnabledLineSpecs[frag - InterlinVc.kfragLineChoices];
 				if (spec.Flid == InterlinLineChoices.kflidLexGloss)
 				{
 					OpenItem("gls");
@@ -376,9 +376,9 @@ namespace SIL.FieldWorks.IText
 				CloseItem();
 				m_fDoingVariantTypes = false;
 			}
-			if (vc is InterlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + (vc as InterlinVc).LineChoices.Count)
+			if (vc is InterlinVc && frag >= InterlinVc.kfragLineChoices && frag < InterlinVc.kfragLineChoices + (vc as InterlinVc).LineChoices.EnabledCount)
 			{
-				var spec = (vc as InterlinVc).LineChoices[frag - InterlinVc.kfragLineChoices];
+				var spec = (vc as InterlinVc).LineChoices.EnabledLineSpecs[frag - InterlinVc.kfragLineChoices];
 				if (spec.Flid == InterlinLineChoices.kflidLexGloss)
 				{
 					CloseItem();
@@ -820,16 +820,21 @@ namespace SIL.FieldWorks.IText
 		{
 			base.WriteStartPhrase(hvo);
 			WriteGuidAttributeForObj(hvo);
-			ISegment phrase = m_repoObj.GetObject(hvo) as ISegment;
-			if(phrase != null && phrase.MediaURIRA != null)
+			if(m_repoObj.GetObject(hvo) is ISegment phrase)
 			{
-				m_writer.WriteAttributeString("begin-time-offset", phrase.BeginTimeOffset);
-				m_writer.WriteAttributeString("end-time-offset", phrase.EndTimeOffset);
-				if (phrase.SpeakerRA != null)
+				if (phrase.MediaURIRA != null)
 				{
-					m_writer.WriteAttributeString("speaker", phrase.SpeakerRA.Name.BestVernacularAlternative.Text);
+					m_writer.WriteAttributeString("begin-time-offset", phrase.BeginTimeOffset);
+					m_writer.WriteAttributeString("end-time-offset", phrase.EndTimeOffset);
+					if (phrase.SpeakerRA != null)
+					{
+						m_writer.WriteAttributeString("speaker", phrase.SpeakerRA.Name.BestVernacularAlternative.Text);
+					}
+					m_writer.WriteAttributeString("media-file", phrase.MediaURIRA.Guid.ToString());
 				}
-				m_writer.WriteAttributeString("media-file", phrase.MediaURIRA.Guid.ToString());
+
+				WriteItem("txt", phrase.BaselineText);
+
 			}
 		}
 

@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class xWorksStrings {
@@ -174,6 +174,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ClickToJumpTo {
             get {
                 return ResourceManager.GetString("ClickToJumpTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There was a problem printing your dictionary. You can try again, but it may be too large for FieldWorks to print. For large dictionaries, FieldWorks can instead generate a PDF for you to print. You can control the maximum number of entries FieldWorks will try to print using the environment variable {0} (you will need to restart FieldWorks for changes to take effect)..
+        /// </summary>
+        internal static string COMExceptionPrintingLargeDictionary {
+            get {
+                return ResourceManager.GetString("COMExceptionPrintingLargeDictionary", resourceCulture);
             }
         }
         
@@ -537,6 +546,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The dictionary is now ready to print. Click OK to proceed to the Print dialog..
+        /// </summary>
+        internal static string FinishedGeneratingEntries {
+            get {
+                return ResourceManager.GetString("FinishedGeneratingEntries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to First Analysis Writing System.
         /// </summary>
         internal static string FirstAnalysisWs {
@@ -632,6 +650,17 @@ namespace SIL.FieldWorks.XWorks {
         internal static string InvalidRootConfigurationNode {
             get {
                 return ResourceManager.GetString("InvalidRootConfigurationNode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid USFM: \tr should be followed by \tc# or \th#, but found
+        ///&quot;{0}&quot;.
+        ///See USFM documentation for help..
+        /// </summary>
+        internal static string InvalidUSFM_TextAfterTR {
+            get {
+                return ResourceManager.GetString("InvalidUSFM_TextAfterTR", resourceCulture);
             }
         }
         
@@ -843,7 +872,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You cannot promote part of one discourse chart template to a new template. In fact, currently we do not support having more than one template at all..
+        ///   Looks up a localized string similar to You cannot promote part of one discourse chart template to a new template..
         /// </summary>
         internal static string ksCantPromoteGroupToTemplate {
             get {
@@ -920,6 +949,24 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ksChooseLIFTFolderTitle {
             get {
                 return ResourceManager.GetString("ksChooseLIFTFolderTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Column Group {0}.
+        /// </summary>
+        internal static string ksColumnGroupX {
+            get {
+                return ResourceManager.GetString("ksColumnGroupX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Column {0}.
+        /// </summary>
+        internal static string ksColumnX {
+            get {
+                return ResourceManager.GetString("ksColumnX", resourceCulture);
             }
         }
         
@@ -1591,6 +1638,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to New Template.
+        /// </summary>
+        internal static string ksNewTemplate {
+            get {
+                return ResourceManager.GetString("ksNewTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No.
         /// </summary>
         internal static string ksNo {
@@ -1753,6 +1809,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Preparing data to send to webonary (this could take some time)....
+        /// </summary>
+        internal static string ksPreparingDataForWebonary {
+            get {
+                return ResourceManager.GetString("ksPreparingDataForWebonary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Preparing to display the publication view.
         /// </summary>
         internal static string ksPreparingPublicationDisplay {
@@ -1798,6 +1863,24 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to upload {0}..
+        /// </summary>
+        internal static string ksPutFilesToWebonaryFailed {
+            get {
+                return ResourceManager.GetString("ksPutFilesToWebonaryFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Uploaded {0}..
+        /// </summary>
+        internal static string ksPutFilesToWebonaryUploaded {
+            get {
+                return ResourceManager.GetString("ksPutFilesToWebonaryUploaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Record.
         /// </summary>
         internal static string ksRecord {
@@ -1839,6 +1922,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string ksRedoDeleteMediaLink {
             get {
                 return ResourceManager.GetString("ksRedoDeleteMediaLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redo Duplicate {0}.
+        /// </summary>
+        internal static string ksRedoDuplicate {
+            get {
+                return ResourceManager.GetString("ksRedoDuplicate", resourceCulture);
             }
         }
         
@@ -2202,6 +2294,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Undo Duplicate {0}.
+        /// </summary>
+        internal static string ksUndoDuplicate {
+            get {
+                return ResourceManager.GetString("ksUndoDuplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Undo Insert {0}.
         /// </summary>
         internal static string ksUndoInsert {
@@ -2338,7 +2439,16 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Upload successful. Preparing your data for publication. This may take several minutes to a few hours depending on the size of your dictionary. You will receive an email when the process is complete. You can examine the progress on the admin page of your Webonary site. You may now safely close this dialog..
+        ///   Looks up a localized string similar to Finished preparing data..
+        /// </summary>
+        internal static string ksWebonaryFinishedDataPrep {
+            get {
+                return ResourceManager.GetString("ksWebonaryFinishedDataPrep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upload successful. Preparing your data for publication. Please check your Webonary site. You may now safely close this dialog..
         /// </summary>
         internal static string ksWebonaryUploadSuccessful {
             get {
@@ -2406,6 +2516,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string LowerCaseEntry {
             get {
                 return ResourceManager.GetString("LowerCaseEntry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A component of FieldWorks, {0}, is missing. This prevents printing. Antivirus software sometimes removes files. You may need technical help to repair the FieldWorks installation and protect this file from being deleted again..
+        /// </summary>
+        internal static string MissingGeckofxHtmlToPdf {
+            get {
+                return ResourceManager.GetString("MissingGeckofxHtmlToPdf", resourceCulture);
             }
         }
         
@@ -2487,6 +2606,24 @@ namespace SIL.FieldWorks.XWorks {
         internal static string Promote {
             get {
                 return ResourceManager.GetString("Promote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generate all entries before printing?.
+        /// </summary>
+        internal static string promptGenerateAllEntriesBeforePrinting {
+            get {
+                return ResourceManager.GetString("promptGenerateAllEntriesBeforePrinting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are {1} entries that match the current filter and publication, but to improve performance, only {0} entries are displayed at a time. Do you want to generate all {1} entries so they are available to print at the same time?.
+        /// </summary>
+        internal static string promptGenerateAllEntriesBeforePrinting_ShowingXofX {
+            get {
+                return ResourceManager.GetString("promptGenerateAllEntriesBeforePrinting_ShowingXofX", resourceCulture);
             }
         }
         
@@ -2699,6 +2836,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Something went wrong trying to print. An operation may have timed out. You may be able to export your dictionary from the File menu and print it using your browser..
+        /// </summary>
+        internal static string SomethingWentWrongTryingToPrintDict {
+            get {
+                return ResourceManager.GetString("SomethingWentWrongTryingToPrintDict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sorted by {0}.
         /// </summary>
         internal static string SortedBy {
@@ -2816,6 +2962,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Server deleting project files{0}{1}.
+        /// </summary>
+        internal static string UploadToWebonary_DeletingProjFiles {
+            get {
+                return ResourceManager.GetString("UploadToWebonary_DeletingProjFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} view.
         /// </summary>
         internal static string UploadToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration {
@@ -2853,11 +3008,11 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://www.webonary.org/{0}.
+        ///   Looks up a localized string similar to Unexpected error encountered while uploading to webonary..
         /// </summary>
-        internal static string WebonarySiteURLFormat {
+        internal static string Webonary_UnexpectedUploadError {
             get {
-                return ResourceManager.GetString("WebonarySiteURLFormat", resourceCulture);
+                return ResourceManager.GetString("Webonary_UnexpectedUploadError", resourceCulture);
             }
         }
         

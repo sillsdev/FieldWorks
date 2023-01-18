@@ -291,7 +291,7 @@ namespace FwBuildTasks
 					{
 						LoadProjectFile(m_mapProjFile[project]);
 
-						var isTestProject = project.EndsWith("Tests") || project == "TestManager" || project == "ProjectUnpacker";
+						var isTestProject = project.EndsWith("Tests") || project == "TestManager";
 
 						// <Choose> to define DefineConstants
 						writer.WriteLine("\t<Choose>");
@@ -376,11 +376,11 @@ namespace FwBuildTasks
 
 						if (isTestProject)
 						{
-							// <NUnit> task
+							// <NUnit3> task
 							writer.WriteLine($"\t\t<Message Text=\"Running unit tests for {project}\" />");
-							writer.WriteLine("\t\t<NUnit Condition=\"'$(action)'=='test'\"");
+							writer.WriteLine("\t\t<NUnit3 Condition=\"'$(action)'=='test'\"");
 							writer.WriteLine($"\t\t\tAssemblies=\"$(dir-outputBase)/{project}.dll\"");
-							writer.WriteLine("\t\t\tToolPath=\"$(fwrt)/Bin/NUnit/bin\"");
+							writer.WriteLine("\t\t\tToolPath=\"$(PackagesDir)/NUnit.ConsoleRunner.3.12.0/tools\"");
 							writer.WriteLine("\t\t\tWorkingDirectory=\"$(dir-outputBase)\"");
 							writer.WriteLine($"\t\t\tOutputXmlFile=\"$(dir-outputBase)/{project}.dll-nunit-output.xml\"");
 							writer.WriteLine("\t\t\tForce32Bit=\"$(useNUnit-x86)\"");
@@ -392,7 +392,7 @@ namespace FwBuildTasks
 							writer.WriteLine("\t\t\tFudgeFactor=\"$(timeoutFudgeFactor)\"");
 							writer.WriteLine($"\t\t\tTimeout=\"{TimeoutForProject(project)}\">");
 							writer.WriteLine("\t\t\t<Output TaskParameter=\"FailedSuites\" ItemName=\"FailedSuites\"/>");
-							writer.WriteLine("\t\t</NUnit>");
+							writer.WriteLine("\t\t</NUnit3>");
 							writer.WriteLine($"\t\t<Message Text=\"Finished building {project}.\" Condition=\"'$(action)'!='test'\"/>");
 							writer.WriteLine($"\t\t<Message Text=\"Finished building {project} and running tests.\" Condition=\"'$(action)'=='test'\"/>");
 							// Generate dotCover task
@@ -464,7 +464,7 @@ namespace FwBuildTasks
 			writer.WriteLine($"\t\t<Message Text=\"Running coverage analysis for {string.Join(", ", projects)}\" Condition=\"'$(action)'=='cover'\"/>");
 			writer.WriteLine("\t\t<GenerateTestCoverageReport Condition=\"'$(action)'=='cover'\"");
 			writer.WriteLine($"\t\t\tAssemblies=\"{assemblyList}\"");
-			writer.WriteLine("\t\t\tNUnitConsoleExe=\"$(fwrt)/Bin/NUnit/bin/nunit-console-x86.exe\"");
+			writer.WriteLine("\t\t\tNUnitConsoleExe=\"$(PackagesDir)/NUnit.ConsoleRunner.3.12.0/tools/nunit3-console.exe\"");
 			writer.WriteLine("\t\t\tDotCoverExe=\"$(DOTCOVER_HOME)/dotcover.exe\"");
 			writer.WriteLine("\t\t\tWorkingDirectory=\"$(dir-outputBase)\"");
 			writer.WriteLine($"\t\t\tOutputXmlFile=\"$(dir-outputBase)/{outputXml}\"/>");

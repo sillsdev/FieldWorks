@@ -649,7 +649,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			bool fAssocPrev, ITsTextProps selProps)
 		{
 			Assert.AreEqual(RootBox, rootb);
-			Assert.IsNull(RequestedSelectionAtEndOfUow);
+			Assert.That(RequestedSelectionAtEndOfUow, Is.Null);
 
 			RequestedSelectionAtEndOfUow = new SelectionHelper();
 			RequestedSelectionAtEndOfUow.RootSite = this;

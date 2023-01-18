@@ -484,6 +484,24 @@ namespace SIL.FieldWorks.IText {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CSV Files (*.csv)|*.csv|All files (*.*)|*.*.
+        /// </summary>
+        internal static string ksConcordanceExportFilter {
+            get {
+                return ResourceManager.GetString("ksConcordanceExportFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export Concordance Results.
+        /// </summary>
+        internal static string ksConcordanceExportTitle {
+            get {
+                return ResourceManager.GetString("ksConcordanceExportTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Concorded on {0}.
         /// </summary>
         internal static string ksConcordedOn0 {

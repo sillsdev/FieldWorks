@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,88 +16,163 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.IText;
+using SIL.FieldWorks.XWorks;
 using SIL.Utils;
+using SIL.Windows.Forms.Widgets;
 using XCore;
 
 namespace SIL.FieldWorks.Discourse
 {
 	/// <summary>
-	/// A constituent chart is used to organize words (and perhaps eventally somehow morphemes)
-	/// into a table where rows roughtly correspond to clauses and columns to key parts of a clause.
-	/// A typical chart has two pre-nuclear columns, three or four nuclear ones (SVO and perhaps indirect
-	/// object) and one or two post-nuclear ones.
+	/// A constituent chart is used to organize words (and perhaps eventually somehow morphemes)
+	/// into a table where rows roughly correspond to clauses and columns to key parts of a clause.
+	/// A typical chart has two pre-nuclear columns, three or four nuclear columns (SVO and perhaps indirect
+	/// object) and one or two post-nuclear columns.
 	///
 	/// Currently the constituent chart is displayed as a tab in the interlinear window. It is created
 	/// by reflection because it needs to refer to the interlinear assembly (in order to display words
 	/// in interlinear mode), so the interlinear assembly can't know about this one.
 	/// </summary>
-	public partial class ConstituentChart : InterlinDocChart, IInterlinearTabControl, IHandleBookmark, IxCoreColleague, IStyleSheet
+	public partial class ConstituentChart : InterlinDocChart, IHandleBookmark, IxCoreColleague, IStyleSheet
 	{
-
 		#region Member Variables
 		private InterlinRibbon m_ribbon;
 		private ConstChartBody m_body;
-		private List<Button> m_MoveHereButtons = new List<Button>();
 		// Buttons for moving ribbon text into a specific column
-		private List<Button> m_ContextMenuButtons = new List<Button>();
+		private readonly List<Button> m_MoveHereButtons = new List<Button>();
 		// Popups associated with each 'MoveHere' button
+		private readonly List<Button> m_ContextMenuButtons = new List<Button>();
 		private bool m_fContextMenuButtonsEnabled;
 		private IDsConstChart m_chart;
 		private ICmPossibility m_template;
 		private ICmPossibility[] m_allColumns;
-		private ConstituentChartLogic m_logic;
+		private readonly ConstituentChartLogic m_logic;
+		private Panel m_templateSelectionPanel;
 		private Panel m_buttonRow;
 		private Panel m_bottomStuff;
 		// m_buttonRow above m_ribbon
+		private SplitContainer m_topBottomSplit;
+		private readonly List<ChartHeaderView> m_headerColGroups = new List<ChartHeaderView>();
 		private ChartHeaderView m_headerMainCols;
-		private Panel m_topStuff;
-		// top panel has header groups, headerMainCols, and main chart
-		private int[] m_columnWidths;
 		// width of each table cell in millipoints
-		private float m_dxpInch;
+		private int[] m_columnWidths;
 		// DPI when m_columnWidths was computed.
+		private float m_dxpInch;
 		// left of each column in pixels. First is zero. Count is one MORE than number
 		// of columns, so last position is width of window (right of last column).
 		private int[] m_columnPositions;
-		private ToolTip m_toolTip;
 		// controls the popup help items for the Constituent Chart Form
+		private ToolTip m_toolTip;
 		private InterAreaBookmark m_bookmark;
-		// To keep track of where we are in the text between panes (and areas)
-		internal LcmCache m_cache;
-		private ILcmServiceLocator m_serviceLocator;
+		private readonly ILcmServiceLocator m_serviceLocator;
 		private XmlNode m_configurationParameters;
+		private Mediator m_mediator;
 		#endregion
 
 		/// <summary>
 		/// Make one. Usually called by reflection.
 		/// </summary>
-		public ConstituentChart(LcmCache cache) : this(cache, new ConstituentChartLogic(cache))
+		public ConstituentChart(LcmCache cache, PropertyTable propTable) : this(cache, propTable, new ConstituentChartLogic(cache))
 		{
 		}
 
 		/// <summary>
 		/// Make one. This variant is used in testing (to plug in a known logic class).
 		/// </summary>
-		internal ConstituentChart(LcmCache cache, ConstituentChartLogic logic)
+		internal ConstituentChart(LcmCache cache, PropertyTable propTable, ConstituentChartLogic logic)
 		{
-			m_cache = cache;
-			m_serviceLocator = m_cache.ServiceLocator;
+			Cache = cache;
+			m_serviceLocator = Cache.ServiceLocator;
+			PropertyTable = propTable;
 			m_logic = logic;
+			ForEditing = true;
+			Name = "ConstituentChart";
+			Vc = new InterlinVc(Cache);
 
 			BuildUIComponents();
+			ConfigPropName = "InterlinConfig_v3_Edit_ConstituentChart";
+			OldConfigPropName = "InterlinConfig_v2_Edit_ConstituentChart";
+		}
+
+		/// <summary>
+		/// This is for setting Vc.LineChoices even before we have a valid vc.
+		/// </summary>
+		protected InterlinLineChoices LineChoices { get; set; }
+
+		/// <summary>
+		///  Launch the Configure interlinear dialog and deal with the results.
+		/// </summary>
+		public override bool OnConfigureInterlinear(object argument)
+		{
+			LineChoices = GetLineChoices();
+			Vc.LineChoices = LineChoices;
+
+			using (var dlg = new ConfigureInterlinDialog(m_mediator, PropertyTable, Cache, PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"),
+				m_ribbon.Vc.LineChoices.Clone() as InterlinLineChoices))
+			{
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					UpdateForNewLineChoices(dlg.Choices);
+				}
+
+				return true; // We handled this
+			}
+		}
+
+		/// <summary>
+		/// Persist the new line choices and
+		/// Reconstruct the document based on the given newChoices for interlinear lines.
+		/// </summary>
+		internal virtual void UpdateForNewLineChoices(InterlinLineChoices newChoices)
+		{
+			LineChoices = newChoices;
+			m_ribbon.Vc.LineChoices = newChoices;
+			m_body.LineChoices = newChoices;
+
+			PersistAndDisplayChangedLineChoices();
+		}
+
+		internal void PersistAndDisplayChangedLineChoices()
+		{
+			PropertyTable.SetProperty(ConfigPropName,
+				m_ribbon.Vc.LineChoices.Persist(Cache.LanguageWritingSystemFactoryAccessor),
+				PropertyTable.SettingsGroup.LocalSettings,
+				true);
+			UpdateDisplayForNewLineChoices();
+		}
+
+		/// <summary>
+		/// Do whatever is necessary to display new line choices.
+		/// </summary>
+		private void UpdateDisplayForNewLineChoices()
+		{
+			if (m_ribbon.RootBox == null || m_body.RootBox == null)
+				return;
+			m_ribbon.RootBox.Reconstruct();
+			m_body.RootBox.Reconstruct();
 		}
 
 		private void BuildUIComponents()
 		{
 			SuspendLayout();
 
+			m_topBottomSplit = new SplitContainer();
+			m_topBottomSplit.Layout += SplitLayout;
 			BuildBottomStuffUI();
 			BuildTopStuffUI();
-			Controls.AddRange(new Control[] { m_topStuff, m_bottomStuff });
+			m_topBottomSplit.Orientation = Orientation.Horizontal;
+			Controls.Add(m_topBottomSplit);
 
 			Dock = DockStyle.Fill;
 
 			ResumeLayout();
+		}
+
+		private void SplitLayout(object sender, LayoutEventArgs e)
+		{
+			var container = (SplitContainer)sender;
+			container.Width = Width;
+			container.Height = Height;
 		}
 
 		protected override void OnLoad(EventArgs e)
@@ -105,37 +180,91 @@ namespace SIL.FieldWorks.Discourse
 			base.OnLoad(e);
 			// We don't want to know about column width changes until after we're initialized and have restored original widths.
 			m_headerMainCols.ColumnWidthChanged += m_headerMainCols_ColumnWidthChanged;
-			m_headerMainCols.ColumnWidthChanging += m_headerMainCols_ColumnWidthChanging;
+		}
+
+		protected override void OnLayout(LayoutEventArgs e)
+		{
+			m_topBottomSplit.SplitterMoved -= RibbonSizeChanged;
+			//Call SplitLayout here to ensure Mono properly updates Splitter length
+			SplitLayout(m_topBottomSplit, e);
+			base.OnLayout(e);
+			int splitterValue;
+			// use a default property unless the property has been set
+			if (PropertyTable.PropertyExists("constChartRibbonSize"))
+			{
+				// GetIntProperty will set the default value if it isn't set.
+				// OnLayout will be called several times before the final correct values are available
+				splitterValue = PropertyTable.GetIntProperty("constChartRibbonSize", 100);
+			}
+			else
+			{
+				splitterValue = (int)(Height * .9);
+			}
+
+			//Mono makes SplitLayout calls while Splitter is moving so set default distance here
+			m_topBottomSplit.SplitterDistance = splitterValue;
+			m_topBottomSplit.SplitterMoved += RibbonSizeChanged;
+		}
+
+		/// <summary>
+		/// Method called by Mediator to refresh view after Undoable UOW is completed
+		/// Method name is defined by a mediator message posted in ConstituentChartLogic.changeTemplate_Click
+		/// </summary>
+		public virtual void OnTemplateChanged(string name)
+		{
+			SetRoot(m_hvoRoot);
 		}
 
 		private void BuildTopStuffUI()
 		{
-			m_body = new ConstChartBody(m_logic, this) { Cache = m_cache, Dock = DockStyle.Fill };
+			m_body = new ConstChartBody(m_logic, this) { Cache = Cache, Dock = DockStyle.Fill };
 
 			// Seems to be right (cf BrowseViewer) but not ideal.
-			m_headerMainCols = new ChartHeaderView(this) { Dock = DockStyle.Top,
-				View = View.Details, Height = 22, Scrollable = false,
-				AllowColumnReorder = false };
+			m_headerMainCols = new ChartHeaderView(this) { Dock = DockStyle.Top, Height = 22 };
 			m_headerMainCols.Layout += m_headerMainCols_Layout;
 			m_headerMainCols.SizeChanged += m_headerMainCols_SizeChanged;
 
-			m_topStuff = new Panel { Dock = DockStyle.Fill };
-			m_topStuff.Controls.AddRange(new Control[] { m_body, m_headerMainCols });
+			m_templateSelectionPanel = new Panel { Height = new Button().Height, Dock = DockStyle.Top, Width = 0 };
+			m_templateSelectionPanel.Layout += TemplateSelectionPanel_Layout;
+
+			RebuildTopStuffUI();
+		}
+
+		private void RebuildTopStuffUI()
+		{
+			m_topBottomSplit.Panel1.Controls.Clear();
+			m_topBottomSplit.Panel1.Controls.AddRange(new Control[] { m_body, m_headerMainCols });
+			// ReSharper disable once CoVariantArrayConversion
+			m_topBottomSplit.Panel1.Controls.AddRange(m_headerColGroups.ToArray());
+			m_topBottomSplit.Panel1.Controls.Add(m_templateSelectionPanel);
+		}
+
+		private void TemplateSelectionPanel_Layout(object sender, EventArgs e)
+		{
+			var panel = (Panel)sender;
+			if (panel.Controls.Count != 0)
+			{
+				var templateButton = panel.Controls[0];
+				templateButton.SuspendLayout();
+				templateButton.Width = new Button().Width * 2;
+				templateButton.Left = panel.Width - templateButton.Width;
+				templateButton.ResumeLayout();
+			}
 		}
 
 		private void BuildBottomStuffUI()
 		{
 			// fills the 'bottom stuff'
-			m_ribbon = new InterlinRibbon(m_cache, 0) { Dock = DockStyle.Fill };
+			m_ribbon = new InterlinRibbon(Cache, 0) { Dock = DockStyle.Fill };
 			m_logic.Ribbon = m_ribbon;
-			m_logic.Ribbon_Changed += m_logic_Ribbon_Changed;
+			m_logic.Ribbon_Changed += OnLogicRibbonChanged;
 
 			// Holds tooltip help for 'Move Here' buttons.
 			// Set up the delays for the ToolTip.
 			// Force the ToolTip text to be displayed whether or not the form is active.
 			m_toolTip = new ToolTip { AutoPopDelay = 5000, InitialDelay = 1000, ReshowDelay = 500, ShowAlways = true };
 
-			m_bottomStuff = new Panel { Height = 100, Dock = DockStyle.Bottom };
+			m_bottomStuff = m_topBottomSplit.Panel2;
 			m_bottomStuff.SuspendLayout();
 
 			m_buttonRow = new Panel { Height = new Button().Height, Dock = DockStyle.Top, BackColor = Color.FromKnownColor(KnownColor.ControlLight) };
@@ -146,18 +275,10 @@ namespace SIL.FieldWorks.Discourse
 			m_bottomStuff.ResumeLayout();
 		}
 
-		LcmCache IInterlinearTabControl.Cache
+		private void RibbonSizeChanged(object sender, EventArgs e)
 		{
-			get { return m_cache; }
-			set { m_cache = value; }
+			PropertyTable.SetProperty("constChartRibbonSize", m_topBottomSplit.SplitterDistance, false);
 		}
-
-		//#region kflid Constants
-
-		//const int kflidRows = DsConstChartTags.kflidRows;
-		//const int kflidParagraphs = StTextTags.kflidParagraphs;
-
-		//#endregion
 
 		private const int kmaxWordforms = 20;
 
@@ -257,39 +378,8 @@ namespace SIL.FieldWorks.Discourse
 			return true;
 		}
 
-		// padding (pixels) to autoresize column width to prevent wrapping
-		private const int kColPadding = 4;
-
-		internal void m_headerMainCols_ColumnAutoResize(int icolChanged)
-		{
-			var maxWidth = MaxUseableWidth();
-			// Determine content width and try to set column to that width
-			var changingColHdr = m_headerMainCols.Columns[icolChanged];
-			int colWidth = m_body.GetColumnContentsWidth(icolChanged);
-			// "real" column width
-			if (colWidth == 0)
-				// no content in this column, resize to header
-				m_headerMainCols.AutoResizeColumn(icolChanged, ColumnHeaderAutoResizeStyle.HeaderSize);
-			else
-			{
-				colWidth += kColPadding;
-				int cLimit = maxWidth / 2;
-				// limit resize to half of available width
-				changingColHdr.Width = (colWidth > cLimit) ? cLimit : colWidth;
-			}
-		}
-
-		/// <summary>
-		/// Whether or not Layout events for m_headerMainCols should be ignored. See FWNX-945.
-		/// </summary>
-		bool m_fIgnoreLayout;
-
-		void m_headerMainCols_ColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
-		{
-			m_fIgnoreLayout = true;
-		}
-
-		void m_headerMainCols_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
+		// ENHANCE (Hasso) 2022.03: handle sender != m_headerMainCols
+		private void m_headerMainCols_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
 		{
 			if (m_fInColWidthChanged)
 				return;
@@ -297,11 +387,11 @@ namespace SIL.FieldWorks.Discourse
 			try
 			{
 				int icolChanged = e.ColumnIndex;
-				int ccol = m_headerMainCols.Columns.Count;
+				int ccol = m_headerMainCols.Controls.Count;
 				int totalWidth = 0;
 				int maxWidth = MaxUseableWidth();
-				foreach (ColumnHeader ch in m_headerMainCols.Columns)
-					totalWidth += ch.Width + 0;
+				foreach (Control ch in m_headerMainCols.Controls)
+					totalWidth += ch.Width;
 				if (totalWidth > maxWidth)
 				{
 					int delta = totalWidth - maxWidth;
@@ -310,7 +400,7 @@ namespace SIL.FieldWorks.Discourse
 					while (remainingCols > 0)
 					{
 						int deltaThis = delta / remainingCols;
-						m_headerMainCols.Columns[icolAdjust].Width -= deltaThis;
+						m_headerMainCols[icolAdjust].Width -= deltaThis;
 						delta -= deltaThis;
 						icolAdjust++;
 						remainingCols--;
@@ -327,9 +417,8 @@ namespace SIL.FieldWorks.Discourse
 			// Transfer from header to variables.
 			PersistColumnWidths();
 			// Now adjust everything else
-			ComputeButtonWidths();
+			SetHeaderColAndButtonWidths();
 			m_body.SetColWidths(m_columnWidths);
-			m_fIgnoreLayout = false;
 		}
 
 		void m_headerMainCols_SizeChanged(object sender, EventArgs e)
@@ -339,27 +428,66 @@ namespace SIL.FieldWorks.Discourse
 
 		void m_headerMainCols_Layout(object sender, LayoutEventArgs e)
 		{
-			// Unlike .NET, Mono fires Layout during column resizing. Ignore it. FWNX-945.
-			if (m_fIgnoreLayout)
-				return;
-
 			SetHeaderColAndButtonWidths();
 		}
 
 		/// <summary/>
 		protected virtual void SetHeaderColAndButtonWidths()
 		{
-			if (m_columnPositions != null)
+			// Do not change column widths until positions have been updated to represent template change
+			// m_columnPositions should be one longer due to fenceposting
+			if (m_columnPositions != null && m_columnPositions.Length == m_headerMainCols.Controls.Count + 1)
 			{
 				m_fInColWidthChanged = true;
 				try
 				{
-					//GetColumnWidths();
-					for (int i = 0; i < m_headerMainCols.Columns.Count; i++)
+					for (int i = 0; i < m_headerMainCols.Controls.Count; i++)
 					{
-						int width = m_columnPositions[i + 1] - m_columnPositions[i];
-						if (m_headerMainCols.Columns[i].Width != width)
-							m_headerMainCols.Columns[i].Width = width;
+						SetColumnWidthIfDifferent(m_headerMainCols[i], i, i + 1);
+					}
+
+					m_headerMainCols.UpdatePositions();
+
+					var offset = (NotesColumnOnRight ? 0 : 1) + (ChartIsRtL ? 0 : 1);
+					var columnGroups = m_logic.ColumnsAndGroups.Headers;
+					if (!columnGroups.Any())
+					{
+						// No columnGroups probably means no text. Nothing to recalculate since we may be in the midst of disappearing.
+						return;
+					}
+					for (var iLevel = 0; iLevel < m_headerColGroups.Count; iLevel++)
+					{
+						var levelModel = columnGroups[columnGroups.Count - 2 - iLevel];
+						var levelView = m_headerColGroups[iLevel];
+						Debug.Assert(levelView.Controls.Count == levelModel.Count + 2);
+						int iGroup = 0, iCol = 0;
+						if (!NotesColumnOnRight)
+						{
+							SetColumnWidthIfDifferent(levelView[iGroup++], iCol, ++iCol);
+						}
+						if (ChartIsRtL)
+						{
+							levelModel.Reverse();
+						}
+						else
+						{
+							// number column
+							SetColumnWidthIfDifferent(levelView[iGroup++], iCol, ++iCol);
+						}
+						while (iGroup < levelModel.Count + offset)
+						{
+							SetColumnWidthIfDifferent(levelView[iGroup], iCol, iCol += levelModel[iGroup++ - offset].ColumnCount);
+						}
+						if (ChartIsRtL)
+						{
+							// number column
+							SetColumnWidthIfDifferent(levelView[iGroup++], iCol, ++iCol);
+						}
+						if (NotesColumnOnRight)
+						{
+							SetColumnWidthIfDifferent(levelView[iGroup], iCol, ++iCol);
+						}
+						levelView.UpdatePositions();
 					}
 				}
 				finally
@@ -369,7 +497,16 @@ namespace SIL.FieldWorks.Discourse
 			}
 			ComputeButtonWidths();
 			if (m_columnWidths != null)
+			{
 				m_body.SetColWidths(m_columnWidths);
+			}
+		}
+
+		private void SetColumnWidthIfDifferent(Control control, int leftIndex, int rightIndex)
+		{
+			var width = m_columnPositions[rightIndex] - m_columnPositions[leftIndex];
+			if (control.Width != width)
+				control.Width = width;
 		}
 
 		int MpToPixelX(int dxmp)
@@ -397,7 +534,7 @@ namespace SIL.FieldWorks.Discourse
 
 		protected override void OnSizeChanged(EventArgs e)
 		{
-			if (m_mediator != null && m_columnWidths != null && m_chart != null && !HasPersistantColWidths)
+			if (m_mediator != null && m_columnWidths != null && m_chart != null && !HasPersistentColWidths)
 			{
 				SetDefaultColumnWidths();
 				SetHeaderColAndButtonWidths();
@@ -470,22 +607,21 @@ namespace SIL.FieldWorks.Discourse
 			return maxUsableWidth;
 		}
 
-		/// Compute (or eventually retrieve from persistence) column widths,
-		/// if not already known.
-		void GetColumnWidths()
+		/// <summary>Compute (or eventually retrieve from persistence) column widths, if not already known.</summary>
+		private void GetColumnWidths()
 		{
 			if (m_allColumns == null)
 				return; // no cols, can't do anything useful.
 
-			if (m_headerMainCols != null && m_headerMainCols.Columns.Count == m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns)
+			if (m_headerMainCols != null && m_headerMainCols.Controls.Count == m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns)
 			{
 				// Take it from the headers if we have them set up already.
 				m_columnWidths = new int[m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns];
 				m_columnPositions = new int[m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns + 1];
-				var ccol = m_headerMainCols.Columns.Count;
+				var ccol = m_headerMainCols.Controls.Count;
 				for (var icol = 0; icol < ccol; icol++)
 				{
-					var width = m_headerMainCols.Columns[icol].Width;
+					var width = m_headerMainCols[icol].Width;
 					// The column seems to be really one pixel wider than the column width of the header,
 					// possibly because of the boundary line width.
 					m_columnPositions[icol + 1] = m_columnPositions[icol] + width + 0;
@@ -506,26 +642,34 @@ namespace SIL.FieldWorks.Discourse
 
 		private void ComputeButtonWidths()
 		{
-			//GetColumnWidths();
 			int cPairs = m_buttonRow.Controls.Count / 2;
 			if (cPairs == 0)
 				return;
-			int widthBtnContextMenu = SIL.FieldWorks.Resources.ResourceHelper.ButtonMenuArrowIcon.Width + 10;
-			int ipair = 0;
-			while (ipair < cPairs)
+			var widthBtnContextMenu = Resources.ResourceHelper.ButtonMenuArrowIcon.Width + 10;
+			var offset = (NotesColumnOnRight ? 0 : 1) + (ChartIsRtL ? 0 : 1);
+			var columnNames = m_logic.AllMyColumns.Select(ConstituentChartLogic.GetColumnHeaderFrom).ToList();
+			if (!columnNames.Any())
+			{
+				// No columnNames probably means no text. Nothing to recalculate since we may be in the midst of disappearing.
+				return;
+			}
+			if (ChartIsRtL)
+			{
+				columnNames.Reverse();
+			}
+			for (var ipair = 0; ipair < cPairs; ipair++)
 			{
 				Control c = m_buttonRow.Controls[ipair * 2];
 				// main button
-				c.Left = m_columnPositions[ipair + 1] + 2;
+				c.Left = m_columnPositions[ipair + offset] + 2;
 				// skip number column, fine tune
-				c.Width = m_columnPositions[ipair + 2] - m_columnPositions[ipair + 1] - widthBtnContextMenu;
+				c.Width = m_columnPositions[ipair + offset + 1] - m_columnPositions[ipair + offset] - widthBtnContextMenu;
 				// Redo button name in case some won't (or now will!) fit on the button
-				c.Text = GetBtnName(m_headerMainCols.Columns[ipair + 1].Text, c.Width - ((c as Button).Image.Width * 2));
+				c.Text = GetBtnName(columnNames[ipair], c.Width - (((Button)c).Image.Width * 2));
 				Control c2 = m_buttonRow.Controls[ipair * 2 + 1];
 				// pull-down
 				c2.Left = c.Right;
 				c2.Width = widthBtnContextMenu;
-				ipair++;
 			}
 		}
 
@@ -543,31 +687,31 @@ namespace SIL.FieldWorks.Discourse
 			{
 				if (RootStText == null || !RootStText.IsValidObject)
 					return false;
-				var defWs = m_cache.ServiceLocator.WritingSystemManager.Get(RootStText.MainWritingSystem);
+				var defWs = Cache.ServiceLocator.WritingSystemManager.Get(RootStText.MainWritingSystem);
 				return defWs.RightToLeftScript;
 			}
+		}
+
+		public void RefreshRoot()
+		{
+			SetRoot(m_hvoRoot);
 		}
 
 		/// <summary>
 		/// Set the root object.
 		/// </summary>
-		public void SetRoot(int hvo)
+		public override void SetRoot(int hvo)
 		{
 			int oldTemplateHvo = 0;
 			if (m_template != null)
 				oldTemplateHvo = m_template.Hvo;
 			// does it already have a chart? If not make one.
 			m_chart = null;
-			// in case of previous call.
-			if (m_cache.LangProject.DiscourseDataOA == null)
-			{
-				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () => { m_template = m_cache.LangProject.GetDefaultChartTemplate(); });
-			}
 			m_hvoRoot = hvo;
 			if (m_hvoRoot == 0)
 				RootStText = null;
 			else
-				RootStText = (IStText)m_cache.ServiceLocator.ObjectRepository.GetObject(hvo);
+				RootStText = (IStText)Cache.ServiceLocator.ObjectRepository.GetObject(hvo);
 			if (m_hvoRoot > 0)
 			{
 				DetectAndReportTemplateProblem();
@@ -602,11 +746,13 @@ namespace SIL.FieldWorks.Discourse
 				// Tell the ribbon whether it needs to display and select words Right to Left or not
 				m_ribbon.SetRoot(m_hvoRoot);
 				if (m_chart.TemplateRA == null)
-					// LT-8700: if original template is deleted we might need this
-					m_chart.TemplateRA = m_cache.LangProject.GetDefaultChartTemplate();
+				{
+					// LT-8700: if original template is deleted then set to the default
+					NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Cache.ActionHandlerAccessor, ()=> m_chart.TemplateRA = Cache.LangProject.GetDefaultChartTemplate());
+				}
 				m_template = m_chart.TemplateRA;
 				m_logic.StTextHvo = m_hvoRoot;
-				m_allColumns = m_logic.AllColumns(m_chart.TemplateRA).ToArray();
+				m_allColumns = m_logic.AllMyColumns;
 			}
 			else
 			{
@@ -621,16 +767,30 @@ namespace SIL.FieldWorks.Discourse
 				m_fInColWidthChanged = true;
 				try
 				{
-					m_logic.MakeMainHeaderCols(m_headerMainCols);
-					if (m_allColumns == new ICmPossibility[0])
-						return;
-					int ccolsWanted = m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns;
-					m_columnWidths = new int[ccolsWanted];
-					m_columnPositions = new int[ccolsWanted + 1];
-					// one extra for after the last column
-					if (!RestoreColumnWidths())
+					var headers = m_logic.ColumnsAndGroups.Headers;
+					headers.Reverse();
+					m_logic.MakeHeaderColsFor(m_headerMainCols, headers.FirstOrDefault() ?? new List<MultilevelHeaderNode>(0), headers.Count == 1);
+					m_headerColGroups.ForEach(h => h.Dispose());
+					m_headerColGroups.Clear();
+					for (var i = 1; i < headers.Count; i++)
 					{
-						SetDefaultColumnWidths();
+						var headLevel = new ChartHeaderView(this) { Dock = DockStyle.Top, Height = 22 };
+						headLevel.ColumnWidthChanged += m_headerMainCols_ColumnWidthChanged;
+						// TODO (Hasso) 2022.03: register other event handlers (Layout, SizeChanged)?
+						m_logic.MakeHeaderColsFor(headLevel, headers[i], headers.Count == i + 1);
+						m_headerColGroups.Add(headLevel);
+					}
+					RebuildTopStuffUI();
+					if (m_allColumns.Length > 0)
+					{
+						var cColsWanted = m_allColumns.Length + ConstituentChartLogic.NumberOfExtraColumns;
+						m_columnWidths = new int[cColsWanted];
+						// one extra for after the last column
+						m_columnPositions = new int[cColsWanted + 1];
+						if (!RestoreColumnWidths())
+						{
+							SetDefaultColumnWidths();
+						}
 					}
 				}
 				finally
@@ -638,15 +798,16 @@ namespace SIL.FieldWorks.Discourse
 					m_fInColWidthChanged = false;
 				}
 			}
+
 			if (m_chart != null)
 			{
 				m_body.SetRoot(m_chart.Hvo, m_allColumns, ChartIsRtL);
-
 				GetAndScrollToBookmark();
 			}
-
 			else
+			{
 				m_body.SetRoot(0, null, false);
+			}
 
 			// If necessary adjust number of buttons
 			if (m_MoveHereButtons.Count != m_allColumns.Length && hvo > 0)
@@ -654,6 +815,85 @@ namespace SIL.FieldWorks.Discourse
 				SetupMoveHereButtonsToMatchTemplate();
 			}
 			SetHeaderColAndButtonWidths();
+
+			BuildTemplatePanel();
+		}
+
+		private void BuildTemplatePanel()
+		{
+			if (m_template == null)
+				return;
+			if (m_templateSelectionPanel.Controls.Count > 0)
+			{
+				((ComboBox)m_templateSelectionPanel.Controls[0]).SelectedItem = m_template;
+				return;
+			}
+			ComboBox templateButton = new ComboBox();
+			m_templateSelectionPanel.Controls.Add(templateButton);
+			templateButton.Layout += TemplateDropDownMenu_Layout;
+			templateButton.Left = m_templateSelectionPanel.Width - templateButton.Width;
+			templateButton.DropDownStyle = ComboBoxStyle.DropDownList;
+			templateButton.SelectionChangeCommitted += TemplateSelectionChanged;
+			foreach (var chartTemplate in ((ICmPossibilityList)m_template.Owner).PossibilitiesOS)
+			{
+				templateButton.Items.Add(chartTemplate);
+			}
+			templateButton.SelectedItem = m_template;
+			templateButton.Items.Add(DiscourseStrings.ksCreateNewTemplate);
+		}
+
+		private void TemplateSelectionChanged(object sender, EventArgs e)
+		{
+			var selection = (ComboBox)sender;
+			var template = selection.SelectedItem as ICmPossibility;
+
+			//If user chooses to add a new template then navigate them to the Text Constituent Chart Template list view
+			if (selection.SelectedItem as string == DiscourseStrings.ksCreateNewTemplate)
+			{
+				MessageBoxUtils.Show(selection.Parent, DiscourseStrings.ksNewConstChartMessage, DiscourseStrings.ksNewConstChartCaption, MessageBoxButtons.OK);
+				Cache.DomainDataByFlid.BeginUndoTask("Undo Insert new Text Constituent Chart Template",
+					"Redo Insert new Text Constituent Chart Template");
+				var list = Cache.LanguageProject.DiscourseDataOA.ConstChartTemplOA;
+				var newKid = list.Services.GetInstance<ICmPossibilityFactory>().Create();
+				list.PossibilitiesOS.Add(newKid);
+				RecordList.SetUpConstChartTemplateTemplate(newKid);
+				Cache.DomainDataByFlid.EndUndoTask();
+				m_mediator.PostMessage("FollowLink", new FwLinkArgs(DiscourseStrings.ksNewTemplateLink, newKid.Guid));
+				selection.SelectedItem = m_template;
+				return;
+			}
+
+			//Return if user selects current template
+			if (template == m_template)
+			{
+				return;
+			}
+
+			//Detect if there is already a chart created for the given text and template
+			IDsConstChart selectedChart = null;
+			foreach (var chart in Cache.LangProject.DiscourseDataOA.ChartsOC.Cast<IDsConstChart>().Where(chart => chart.BasedOnRA != null && chart.BasedOnRA == RootStText && chart.TemplateRA == template))
+			{
+				selectedChart = chart;
+			}
+
+			//If there is no such chart, then create one
+			if (selectedChart == null)
+			{
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				{
+					selectedChart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(
+						Cache.LangProject.DiscourseDataOA, RootStText, selection.SelectedItem as ICmPossibility);
+				});
+			}
+
+			PropertyTable.SetProperty(GetLastChartPropForText(RootStText.Guid), selectedChart.Guid, PropertyTable.SettingsGroup.LocalSettings, false);
+			SetRoot(m_hvoRoot);
+		}
+
+		private void TemplateDropDownMenu_Layout(object sender, EventArgs e)
+		{
+			var button = sender as ComboBox;
+			button.Left = m_templateSelectionPanel.Width - button.Width;
 		}
 
 		/// <summary>
@@ -692,13 +932,13 @@ namespace SIL.FieldWorks.Discourse
 			{
 				// Remove MoveHere button
 				var lastButton = m_MoveHereButtons[m_MoveHereButtons.Count - 1];
-				lastButton.Click -= new EventHandler(btnMoveHere_Click);
+				lastButton.Click -= btnMoveHere_Click;
 				m_buttonRow.Controls.Remove(lastButton);
 				m_MoveHereButtons.Remove(lastButton);
 
 				// Remove Context Menu button
 				var lastBtnContextMenu = m_ContextMenuButtons[m_ContextMenuButtons.Count - 1];
-				lastBtnContextMenu.Click -= new EventHandler(btnContextMenu_Click);
+				lastBtnContextMenu.Click -= btnContextMenu_Click;
 				m_buttonRow.Controls.Remove(lastBtnContextMenu);
 				m_ContextMenuButtons.Remove(lastBtnContextMenu);
 			}
@@ -707,7 +947,7 @@ namespace SIL.FieldWorks.Discourse
 			{
 				// Install MoveHere button
 				var newButton = new Button();
-				newButton.Click += new EventHandler(btnMoveHere_Click);
+				newButton.Click += btnMoveHere_Click;
 				var sColName = m_logic.GetColumnLabel(m_MoveHereButtons.Count);
 				// Holds column name while setting buttons
 				m_buttonRow.Controls.Add(newButton);
@@ -729,7 +969,7 @@ namespace SIL.FieldWorks.Discourse
 
 				// Install context menu button
 				var newBtnContextMenu = new Button();
-				newBtnContextMenu.Click += new EventHandler(btnContextMenu_Click);
+				newBtnContextMenu.Click += btnContextMenu_Click;
 				newBtnContextMenu.Image = SIL.FieldWorks.Resources.ResourceHelper.ButtonMenuArrowIcon;
 				m_buttonRow.Controls.Add(newBtnContextMenu);
 				m_ContextMenuButtons.Add(newBtnContextMenu);
@@ -744,19 +984,16 @@ namespace SIL.FieldWorks.Discourse
 
 		private void CreateChartInNonUndoableUOW()
 		{
-			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () => { m_chart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(m_cache.LangProject.DiscourseDataOA, RootStText, m_cache.LangProject.GetDefaultChartTemplate()); });
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => { m_chart = m_serviceLocator.GetInstance<IDsConstChartFactory>().Create(Cache.LangProject.DiscourseDataOA, RootStText, Cache.LangProject.GetDefaultChartTemplate()); });
+			PropertyTable.SetProperty(GetLastChartPropForText(RootStText.Guid), m_chart.Guid, PropertyTable.SettingsGroup.LocalSettings, false);
 		}
 
 		private void DetectAndReportTemplateProblem()
 		{
-			var templates = m_cache.LangProject.DiscourseDataOA.ConstChartTemplOA.PossibilitiesOS;
+			var templates = Cache.LangProject.DiscourseDataOA.ConstChartTemplOA.PossibilitiesOS;
 			if (templates.Count == 0 || templates[0].SubPossibilitiesOS.Count == 0)
 			{
 				MessageBox.Show(this, DiscourseStrings.ksNoColumns, DiscourseStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			}
-			if (templates.Count != 1)
-			{
-				MessageBox.Show(this, DiscourseStrings.ksOnlyOneTemplateAllowed, DiscourseStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}
 
@@ -779,7 +1016,7 @@ namespace SIL.FieldWorks.Discourse
 			bool fExactMatch;
 			var occurrenceToMark = SegmentServices.FindNearestAnalysis(GetTextParagraphByIndex(iPara),
 				offset, offset, out fExactMatch);
-			m_bookmark.Save(occurrenceToMark, false, m_bookmark.TextIndex); // bookmark this location, but don't persist.
+			m_bookmark?.Save(occurrenceToMark, false, m_bookmark.TextIndex); // bookmark this location, but don't persist.
 		}
 
 		private IStTxtPara GetTextParagraphByIndex(int iPara)
@@ -795,7 +1032,10 @@ namespace SIL.FieldWorks.Discourse
 		{
 			if (m_MoveHereButtons.Count <= 0)
 				return;
-			Debug.Assert(m_MoveHereButtons.Count == goodColumns.Length);
+			//This method is called multiple times and sometimes on the early calls the data does not agree
+			//if so, wait until a later call to enable buttons
+			if (m_MoveHereButtons.Count != goodColumns.Length)
+				return;
 			for (var icol = 0; icol < goodColumns.Length; icol++)
 				m_MoveHereButtons[icol].Enabled = goodColumns[icol];
 		}
@@ -855,17 +1095,38 @@ namespace SIL.FieldWorks.Discourse
 			return m_logic.GetUnchartedWordForBookmark();
 		}
 
+		private string GetLastChartPropForText(Guid guid) => $"LastChartForText_{guid.ToString()}";
+
+		/// <summary>
+		/// Find the last chart used for this text (or the first chart available), set it in
+		/// the chart member and in the chart logic, and clean up any invalid cells
+		/// </summary>
+		/// <param name="hvoStText"></param>
 		private void FindAndCleanUpMyChart(int hvoStText)
 		{
-			foreach (var chart in m_cache.LangProject.DiscourseDataOA.ChartsOC.Cast<IDsConstChart>().Where(chart => chart.BasedOnRA != null && chart.BasedOnRA.Hvo == hvoStText))
+			IDsConstChart chartToClean = null;
+			// Try to retrieve the last chart used for this text from the property table
+			var textGuid = Cache.ServiceLocator.GetObject(hvoStText).Guid;
+			if(PropertyTable.TryGetValue(GetLastChartPropForText(textGuid), out Guid chartGuid))
 			{
-				m_chart = chart;
-				m_logic.Chart = m_chart;
-				m_logic.CleanupInvalidChartCells();
-				// Enhance GordonM: Eventually we may have to allow > 1 chart per text
-				// Then we'll need to take out this break.
-				break;
+				if (Cache.ServiceLocator.ObjectRepository.TryGetObject(chartGuid, out var chart))
+				{
+					if (chart is IDsConstChart constChart)
+					{
+						chartToClean = constChart;
+					}
+				}
+				// if that chart no longer exists clear it from the prop table
+				if (chartToClean == null)
+				{
+					PropertyTable.RemoveProperty(GetLastChartPropForText(textGuid));
+				}
 			}
+			// Use the retrieved last chart, or pick the first valid chart for this text
+			m_logic.Chart = m_chart = chartToClean ?? Cache.LangProject.DiscourseDataOA.ChartsOC
+				.Cast<IDsConstChart>()
+				.FirstOrDefault(chart => chart.BasedOnRA != null && chart.BasedOnRA.Hvo == hvoStText);
+			m_logic.CleanupInvalidChartCells();
 		}
 
 		/// <summary>
@@ -889,26 +1150,25 @@ namespace SIL.FieldWorks.Discourse
 			return strName;
 		}
 
-		bool HasPersistantColWidths
+		private bool HasPersistentColWidths
 		{
-			get { return m_propertyTable.GetStringProperty(ColWidthId(), null) != null; }
+			get { return PropertyTable.GetStringProperty(ColWidthId(), null) != null; }
 		}
 
 		/// <summary>
 		/// Restore column widths if any are persisted for this chart
 		/// </summary>
 		/// <returns>true if it found a valid set of widths.</returns>
-		bool RestoreColumnWidths()
+		private bool RestoreColumnWidths()
 		{
 			if (m_mediator == null)
 				return false;
-			string savedCols = m_propertyTable.GetStringProperty(ColWidthId(), null);
+			string savedCols = PropertyTable.GetStringProperty(ColWidthId(), null);
 			if (savedCols == null)
 				return false;
 			XmlDocument doc = new XmlDocument();
 			try
 			{
-				doc = new XmlDocument();
 				doc.LoadXml(savedCols);
 			}
 			catch (Exception)
@@ -948,7 +1208,7 @@ namespace SIL.FieldWorks.Discourse
 			}
 			colList.Append("</root>");
 			var cwId = ColWidthId();
-			m_propertyTable.SetProperty(cwId, colList.ToString(), true);
+			PropertyTable.SetProperty(cwId, colList.ToString(), true);
 		}
 
 		private string ColWidthId()
@@ -974,16 +1234,27 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		// Event handler to run if Ribbon changes
-		void m_logic_Ribbon_Changed(object sender, EventArgs e)
+		void OnLogicRibbonChanged(object sender, EventArgs e)
 		{
 			int iPara, offset;
 			// 'out' vars for NextInputIsChOrph()
 			// Tests ribbon contents
 			if (m_logic.NextInputIsChOrph(out iPara, out offset))
 			{
-				Debug.Assert(m_bookmark != null, "Hit null bookmark. Why?");
 				if (m_bookmark != null)
+				{
 					m_bookmark.Reset(m_bookmark.TextIndex);
+				}
+				else
+				{
+					// This code path was unexpected but the conditions were seen in a crash stack
+					// from the field. We will avoid NullReference by attempting to get a bookmark to use
+					// and checking for a null bookmark in PrepareForChOrphInsert.
+					// This very well could be the right thing to do, but understanding why the bookmark is null
+					// is worthwhile
+					m_bookmark = GetAncestorBookmark(this, m_chart.BasedOnRA);
+					Debug.Fail("This is not an expected path, analyze.");
+				}
 				// Resetting of highlight is done in the array setter now.
 				PrepareForChOrphInsert(iPara, offset);
 				// scroll to ChOrph, highlight cell possibilities, set bookmark etc.
@@ -1048,8 +1319,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			if (m_chart != null && m_MoveHereButtons.Count > 0)
 			{
-				Debug.Assert(m_MoveHereButtons.Count == m_logic.AllMyColumns.Length);
-				for (int icol = 0; icol < m_logic.AllMyColumns.Length; icol++)
+				for (int icol = 0; icol < m_MoveHereButtons.Count; icol++)
 					m_MoveHereButtons[icol].Enabled = true;
 			}
 		}
@@ -1065,7 +1335,7 @@ namespace SIL.FieldWorks.Discourse
 			Button btn = sender as Button;
 			int icol = GetColumnOfButton(btn);
 			DisposeContextMenu(this, new EventArgs());
-			m_contextMenuStrip = m_logic.MakeContextMenu(icol);
+			m_contextMenuStrip = m_logic.InsertIntoChartContextMenu(icol);
 			m_contextMenuStrip.Closed += contextMenuStrip_Closed; // dispose when no longer needed (but not sooner! needed after this returns)
 			m_contextMenuStrip.Show(btn, new Point(0, btn.Height));
 		}
@@ -1120,7 +1390,7 @@ namespace SIL.FieldWorks.Discourse
 			// guards against LT-8309, though I could not reproduce all cases.
 			if (m_chart == null || m_body == null || m_logic == null)
 				return false;
-			using (var dlg = new DiscourseExportDialog(m_mediator, m_propertyTable, m_chart.Hvo, m_body.Vc, m_logic.WsLineNumber))
+			using (var dlg = new DiscourseExportDialog(m_mediator, PropertyTable, m_chart.Hvo, m_body.Vc, m_logic.WsLineNumber))
 			{
 				dlg.ShowDialog(this);
 			}
@@ -1128,6 +1398,12 @@ namespace SIL.FieldWorks.Discourse
 			return true;
 			// we handled this
 		}
+
+		public bool NotesColumnOnRight
+		{
+			get;
+			internal set;
+		} = true;
 
 		#region IxCoreColleague Members
 
@@ -1150,15 +1426,16 @@ namespace SIL.FieldWorks.Discourse
 		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
 			m_mediator = mediator;
-			m_propertyTable = propertyTable;
-			if (m_propertyTable != null)
-				m_logic.Init(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+			PropertyTable = propertyTable;
+			if (PropertyTable != null)
+				m_logic.Init(PropertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
 
 			m_configurationParameters = configurationParameters;
 			InterlinLineChoices lineChoices = GetLineChoices();
 			m_body.Init(mediator, propertyTable, m_configurationParameters);
 			m_body.LineChoices = lineChoices;
-			m_ribbon.LineChoices = lineChoices;
+			m_ribbon.Init(mediator, propertyTable, m_configurationParameters);
+			m_ribbon.RibbonLineChoices = lineChoices;
 		}
 
 		/// <summary>
@@ -1196,55 +1473,131 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		/// <summary>
-		/// This means it copies settings from the edit tab (in the same view).
-		/// Perversely these settings are saved with the 'doc' name.
+		/// The property table key storing InterlinLineChoices used by our display.
 		/// </summary>
 		private static string ConfigPropName
 		{
-			get { return "InterlinConfig_Doc"; }
-		}
-
-		private Mediator m_mediator;
-		private PropertyTable m_propertyTable;
-
-		private InterlinLineChoices GetLineChoices()
-		{
-			var result = new InterlinLineChoices(m_cache.LangProject, m_cache.DefaultVernWs, m_cache.DefaultAnalWs);
-			string persist = null;
-			if (m_propertyTable != null)
-			{
-				persist = m_propertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
-			}
-			InterlinLineChoices lineChoices = null;
-			if (persist != null)
-			{
-				lineChoices = InterlinLineChoices.Restore(persist, m_cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>(), m_cache.LangProject, m_cache.DefaultVernWs, m_cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze, m_propertyTable, ConfigPropName);
-			}
-			GetLineChoice(result, lineChoices, InterlinLineChoices.kflidWord);
-			GetLineChoice(result, lineChoices, InterlinLineChoices.kflidWordGloss);
-			return result;
+			get;
+			set;
 		}
 
 		/// <summary>
-		/// Make sure there is SOME lineChoice for the specified flid in m_lineChoices.
-		/// If lineChoices is non-null and contains one for the right flid, choose the first.
+		/// The old property table key storing InterlinLineChoices used by our display.
 		/// </summary>
-		/// <param name="dest"></param>
-		/// <param name="source"></param>
-		/// <param name="flid"></param>
-		private static void GetLineChoice(InterlinLineChoices dest, InterlinLineChoices source, int flid)
+		private static string OldConfigPropName
 		{
-			if (source != null)
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Retrieves the Line Choices from persistence, or otherwise sets them to a default option
+		/// </summary>
+		/// <param name="lineConfigPropName">The string key to retrieve Line Choices from the Property Table</param>
+		/// <param name="oldLineConfigPropName">The old string key to retrieve Line Choices from the Property Table</param>
+		/// <param name="mode">Should always be Chart for this override</param>
+		public override InterlinLineChoices SetupLineChoices(string lineConfigPropName, string oldLineConfigPropName, InterlinLineChoices.InterlinMode mode)
+		{
+			ConfigPropName = lineConfigPropName;
+			OldConfigPropName = oldLineConfigPropName;
+			InterlinLineChoices lineChoices;
+			if (!TryRestoreLineChoices(out lineChoices))
 			{
-				var index = source.IndexOf(flid);
-				if (index >= 0)
+				if (ForEditing)
 				{
-					dest.Add(source[index]);
-					return;
+					lineChoices = EditableInterlinLineChoices.DefaultChoices(Cache.LangProject,
+						WritingSystemServices.kwsVern, WritingSystemServices.kwsAnal);
+					lineChoices.Mode = mode;
+					lineChoices.SetStandardChartState();
+				}
+				else
+				{
+					lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject,
+						WritingSystemServices.kwsVern, WritingSystemServices.kwsAnal, mode);
 				}
 			}
-			// Last resort.
-			dest.Add(flid);
+			else if (ForEditing)
+			{
+				// just in case this hasn't been set for restored lines
+				lineChoices.Mode = mode;
+			}
+			LineChoices = lineChoices;
+			return LineChoices;
+		}
+
+		/// <summary>
+		/// Tries to retrieve the Line Choices from the Property Table and returns if it was succesful
+		/// </summary>
+		internal bool TryRestoreLineChoices(out InterlinLineChoices lineChoices)
+		{
+			lineChoices = null;
+			var persist = PropertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+			if (persist == null)
+				persist = PropertyTable.GetStringProperty(OldConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+
+			if (persist != null)
+			{
+				// Intentionally never pass OldConfigPropName into Restore to prevent corrupting it's old value with the new format.
+				lineChoices = InterlinLineChoices.Restore(persist, Cache.LanguageWritingSystemFactoryAccessor,
+					Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze, PropertyTable, ConfigPropName);
+			}
+			return persist != null && lineChoices != null;
+		}
+
+		/// <summary>
+		/// Gets the Line Choices stored in the property table
+		/// </summary>
+		private InterlinLineChoices GetLineChoices()
+		{
+			var result = new InterlinLineChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Chart);
+			string persist = null;
+			if (PropertyTable != null)
+			{
+				persist = PropertyTable.GetStringProperty(ConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+				if (persist == null)
+					persist = PropertyTable.GetStringProperty(OldConfigPropName, null, PropertyTable.SettingsGroup.LocalSettings);
+			}
+			InterlinLineChoices lineChoices = null;
+
+			if (persist == null)
+			{
+				GetLineChoice(result, lineChoices,
+					InterlinLineChoices.kflidWord,
+					InterlinLineChoices.kflidWordGloss);
+				return result;
+			}
+			// Intentionally never pass OldConfigPropName into Restore to prevent corrupting it's old value with the new format.
+			lineChoices = InterlinLineChoices.Restore(persist, Cache.ServiceLocator.GetInstance<ILgWritingSystemFactory>(), Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Chart, PropertyTable, ConfigPropName);
+			return lineChoices;
+		}
+
+		/// <summary>
+		/// Make sure there is SOME lineChoice for the one of the specified flids.
+		/// If lineChoices is non-null and contains one for the right flid, choose the first.
+		/// </summary>
+		private static void GetLineChoice(InterlinLineChoices dest, InterlinLineChoices source, params int[] flids)
+		{
+			foreach (int flid in flids)
+			{
+				if (source != null)
+				{
+					var index = source.IndexInEnabled(flid);
+					if (index >= 0)
+					{
+						dest.Add(source.EnabledLineSpecs[index]);
+						return;
+					}
+				}
+
+				// Last resort.
+				dest.Add(flid);
+			}
+		}
+
+		public bool NotesOnRightFromPropertyTable
+		{
+			get => PropertyTable == null || PropertyTable.GetBoolProperty("notesOnRight", true, PropertyTable.SettingsGroup.LocalSettings);
+			set => PropertyTable?.SetProperty("notesOnRight", value, PropertyTable.SettingsGroup.LocalSettings, false);
 		}
 
 		#endregion
@@ -1252,18 +1605,23 @@ namespace SIL.FieldWorks.Discourse
 	} // End Constituent Chart class
 
 	/// <summary>
-	/// This subclass of ListView is used to make the column headers for a Constituent Chart.
-	/// It's main function is to handle double-clicks on column boundaries so the chart (which is neither
-	/// a ListView nor a BrowseViewer) can resize its columns.
+	/// This control is used to make the column headers for a Constituent Chart.
+	/// It handles mouse events for resizing columns and
+	/// Dragging the notes column to the left or right side of the chart
 	/// </summary>
-	public class ChartHeaderView : ListView
+	public class ChartHeaderView : Control
 	{
 		private ConstituentChart m_chart;
+		private bool m_isDraggingNotes;
+		private bool m_isResizingColumn;
+		private bool m_notesWasOnRight;
+		private int m_origHeaderLeft;
+		private int m_origMouseLeft;
+		private const int kColMinimumWidth = 5;
 
 		/// <summary>
 		/// Create one and set the chart it belongs to.
 		/// </summary>
-		/// <param name="chart"></param>
 		public ChartHeaderView(ConstituentChart chart)
 		{
 			m_chart = chart;
@@ -1277,18 +1635,18 @@ namespace SIL.FieldWorks.Discourse
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.ListView"/> and optionally releases the managed resources.
+		/// Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.Control"/> and optionally releases the managed resources.
 		/// </summary>
 		/// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
 		/// ------------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
@@ -1301,39 +1659,316 @@ namespace SIL.FieldWorks.Discourse
 			base.Dispose(disposing);
 		}
 
-		const int WM_NOTIFY = 0x004E;
-		const int HDN_FIRST = -300;
-		const int HDN_DIVIDERDBLCLICKW = (HDN_FIRST - 25);
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Overrides <see cref="M:System.Windows.Forms.Control.WndProc(System.Windows.Forms.Message@)"/>.
-		/// </summary>
-		/// <param name="m">The Windows <see cref="T:System.Windows.Forms.Message"/> to process.</param>
-		/// ------------------------------------------------------------------------------------
-		protected override void WndProc(ref Message m)
+		private bool NotesOnRight
 		{
-			switch (m.Msg)
-			{
-			case WM_NOTIFY:
-				Win32.NMHEADER nmhdr = (Win32.NMHEADER)m.GetLParam(typeof(Win32.NMHEADER));
-				switch (nmhdr.hdr.code)
-				{
-				case HDN_DIVIDERDBLCLICKW:
-					// double-click on line between column headers.
-					// adjust width of column to match item of greatest length.
-					m_chart.m_headerMainCols_ColumnAutoResize(nmhdr.iItem);
-					break;
-				default:
-					base.WndProc(ref m);
-					break;
-				}
+			get => m_chart.NotesColumnOnRight;
+			set => m_chart.NotesColumnOnRight = value;
+		}
 
-				break;
-			default:
-				base.WndProc(ref m);
-				break;
+		/// <summary>
+		/// ControlList[] represents the z index, so in order to keep the draggable notes column at the top of the z order,
+		/// This custom [] is designed to be used instead representing the x order of column headers
+		/// </summary>
+		public Control this[int key]
+		{
+			get
+			{
+				if (key < 0 || key >= Controls.Count)
+					throw new IndexOutOfRangeException();
+				if (!NotesOnRight)
+				{
+					return Controls[key];
+				}
+				return Controls[(key + 1) % Controls.Count];
 			}
+		}
+
+		/// <summary>
+		/// New IndexOf to complement custom []
+		/// </summary>
+		private int IndexOf(Control c)
+		{
+			for (int i = 0; i < Controls.Count; i++)
+			{
+				if (this[i] == c)
+				{
+					return i;
+				}
+			}
+
+			return -1;
+		}
+
+		/// <summary>
+		/// Updates the positions of all the column headers to consecutive order without gaps or overlaps
+		/// </summary>
+		public void UpdatePositions()
+		{
+			if (m_isDraggingNotes)
+				return;
+			if (Controls.Count < 2)
+				return;
+			this[0].Left = 1;
+			for (int i = 1; i < Controls.Count; i++)
+			{
+				this[i].Left = this[i - 1].Right;
+			}
+		}
+
+		/// <summary>
+		/// Moves all the other column headers to where they should be when the notes column is dropped
+		/// </summary>
+		private void UpdatePositionsExceptNotes()
+		{
+			if (NotesOnRight)
+			{
+				Controls[1].Left = 1;
+			}
+			else
+			{
+				Controls[1].Left = Controls[0].Width;
+			}
+
+			for (int i = 2; i < Controls.Count; i++)
+			{
+				Controls[i].Left = Controls[i - 1].Right;
+			}
+		}
+
+		public event ColumnWidthChangedEventHandler ColumnWidthChanged;
+
+		/// <summary>
+		/// Resizes the identified column to the default width
+		/// </summary>
+		public void AutoResizeColumn(int iColumnChanged)
+		{
+			int num = Width / (Controls.Count + 1);
+			this[iColumnChanged].Width = num;
+			UpdatePositions();
+			ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(iColumnChanged));
+		}
+
+		/// <summary>
+		/// Prepares new Control with the proper mouse events and visual elements
+		/// </summary>
+		protected override void OnControlAdded(ControlEventArgs e)
+		{
+			//Get the notes value from the property table once the first column has been added // REVIEW (Hasso) 2022.03: is this still our job?
+			if (Controls.Count == 1)
+			{
+				NotesOnRight = m_chart.NotesOnRightFromPropertyTable;
+			}
+			Control newColumn = e.Control;
+			newColumn.Height = 22;
+			newColumn.MouseDown += OnColumnMouseDown;
+			newColumn.MouseMove += OnColumnMouseMove;
+			newColumn.MouseUp += OnColumnMouseUp;
+			newColumn.Paint += OnColumnPaint;
+			newColumn.DoubleClick += OnColumnDoubleClick;
+			if (newColumn is HeaderLabel label)
+			{
+				label.BorderStyle = BorderStyle.None;
+			}
+		}
+
+		/// <summary>
+		/// Handles a column's double click to automatically resize the column to the left of the border clicked
+		/// </summary>
+		private void OnColumnDoubleClick(object sender, EventArgs e)
+		{
+			var header = (Control)sender;
+			if (header.Cursor != Cursors.VSplit)
+			{
+				return;
+			}
+
+			int leftHeader = IndexOf(header);
+			if (m_origMouseLeft < 3)
+			{
+				leftHeader--;
+			}
+			AutoResizeColumn(leftHeader);
+		}
+
+		/// <summary>
+		/// Handles a column's mousedown to possibly enter the resizing state and store the initial coordinates
+		/// </summary>
+		private void OnColumnMouseDown(object sender, MouseEventArgs e)
+		{
+			var header = (Control)sender;
+			if (header.Cursor == Cursors.VSplit)
+			{
+				m_isResizingColumn = true;
+			}
+
+			m_origHeaderLeft = header.Left;
+			m_origMouseLeft = e.X;
+			m_notesWasOnRight = NotesOnRight;
+			header.SuspendLayout();
+			SuspendLayout();
+		}
+
+		/// <summary>
+		/// Handles a column's mousemove to resize if in the resize state or move the notes column
+		/// </summary>
+		private void OnColumnMouseMove(object sender, MouseEventArgs e)
+		{
+			var header = (Control)sender;
+			if ((e.X < 3 && header != this[0]) || (e.X > header.Width - 3))
+			{
+				header.Cursor = Cursors.VSplit;
+			}
+			else
+			{
+				header.Cursor = DefaultCursor;
+			}
+
+			if (e.Button != MouseButtons.Left) return;
+			if (m_isResizingColumn)
+			{
+				ResizeColumn(header, e);
+			}
+			else
+			{
+				MoveColumn(header, e);
+			}
+			Parent.Update();
+		}
+
+		/// <summary>
+		/// Controls MouseMove event for column header in case we are in the resize state
+		/// </summary>
+		private void ResizeColumn(Control header, MouseEventArgs e)
+		{
+			Control prevHeader;
+			int X;
+			if (m_origMouseLeft < 3)
+			{
+				prevHeader = this[IndexOf(header) - 1];
+				X = e.X + header.Left - prevHeader.Left;
+			}
+			else
+			{
+				prevHeader = header;
+				X = e.X;
+			}
+
+			prevHeader.Width = X;
+			if (prevHeader.Width < kColMinimumWidth)
+				prevHeader.Width = kColMinimumWidth;
+			UpdatePositions();
+		}
+
+		/// <summary>
+		/// Controls MouseMove event for column header in case we are in the move notes column state
+		/// </summary>
+		private void MoveColumn(Control header, MouseEventArgs e)
+		{
+			if (header.Text != DiscourseStrings.ksNotesColumnHeader && IndexOf(header) != (NotesOnRight ? Controls.Count - 1 : 0))
+			{
+				return;
+			}
+			if (header.Left < m_origHeaderLeft - 20)
+			{
+				NotesOnRight = false;
+			}
+			else if (header.Left > m_origHeaderLeft + 20 || m_notesWasOnRight)
+			{
+				NotesOnRight = true;
+			}
+			else
+			{
+				NotesOnRight = false;
+			}
+			UpdatePositionsExceptNotes();
+			m_isDraggingNotes = true;
+			header.Left += (e.X - m_origMouseLeft);
+		}
+
+		/// <summary>
+		/// Handles a column's mouseup to remove any state data and finalize changes made in a mousemove
+		/// </summary>
+		private void OnColumnMouseUp(object sender, MouseEventArgs e)
+		{
+			var header = (Control)sender;
+			if (m_isResizingColumn)
+			{
+				UpdatePositions();
+				ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(IndexOf(header)));
+			}
+			else if (m_isDraggingNotes)
+			{
+				header.Left = m_origHeaderLeft;
+			}
+
+			m_isDraggingNotes = false;
+			m_isResizingColumn = false;
+
+
+			UpdatePositions();
+			if (m_notesWasOnRight != NotesOnRight)
+			{
+				m_chart.NotesOnRightFromPropertyTable = NotesOnRight;
+				ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(0));
+				m_chart.RefreshRoot();
+			}
+
+			header.ResumeLayout(false);
+			ResumeLayout(false);
+		}
+
+		/// <summary>
+		/// Draws the border around a column header
+		/// </summary>
+		private void OnColumnPaint(object sender, PaintEventArgs e)
+		{
+			var header = (Control)sender;
+			var topLeft = new Point(0, 0);
+			var bottomRight = new Size(header.Width - 1, header.Height - 1);
+			e.Graphics.DrawRectangle(new Pen(Color.Black), new Rectangle(topLeft, bottomRight));
+		}
+
+		/// <summary>
+		/// Handles resizing of the last column if the mouse hangs over its border slightly
+		/// </summary>
+		protected override void OnMouseMove(MouseEventArgs e)
+		{
+			if (e.X < this[Controls.Count - 1].Right + 3)
+			{
+				Cursor = Cursors.VSplit;
+			}
+			else
+			{
+				Cursor = Cursors.Default;
+			}
+
+			if (!m_isResizingColumn)
+				return;
+
+			var header = this[Controls.Count - 1];
+			header.Width = e.X - header.Left;
+			if (header.Width < kColMinimumWidth)
+			{
+				header.Width = kColMinimumWidth;
+			}
+		}
+
+		protected override void OnMouseDown(MouseEventArgs e)
+		{
+			if (Cursor == Cursors.VSplit)
+			{
+				m_isResizingColumn = true;
+				SuspendLayout();
+				this[Controls.Count - 1].SuspendLayout();
+			}
+		}
+
+		protected override void OnMouseUp(MouseEventArgs e)
+		{
+			m_isResizingColumn = false;
+			ResumeLayout(false);
+			this[Controls.Count - 1].ResumeLayout(false);
+			ColumnWidthChanged?.Invoke(this, new ColumnWidthChangedEventArgs(Controls.Count - 1));
 		}
 	}
 }

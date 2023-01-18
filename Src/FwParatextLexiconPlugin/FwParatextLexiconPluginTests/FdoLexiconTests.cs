@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		public void SetUp()
 		{
 			// Force initialization in ILRepacked SIL.WritingSystems assembly,
-			// even if a referenced SIl.WritingSystems assembly somewhere down
+			// even if a referenced SIL.WritingSystems assembly somewhere down
 			// the dependency chain, that we won't be using, was initialized.
 			if (!Sldr.IsInitialized)
 			{
@@ -112,8 +112,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		[Test]
 		public void AddingSenseAddsLexeme()
 		{
-			Lexeme lex = m_lexicon.CreateLexeme(LexemeType.Word, "a");
-			LexiconSense sense = lex.AddSense();
+			Lexeme lex = m_lexicon.CreateLexeme(LexemeType.Word, "a"); // Creates lexeme, but does not add it (verified in another test)
+			LexiconSense sense = lex.AddSense(); // SUT: Lexeme is added by adding the Sense
 			sense.AddGloss("en", "test");
 
 			Assert.AreEqual(1, m_lexicon.Lexemes.Count());
@@ -127,9 +127,33 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		}
 
 		/// <summary>
-		/// Test that homograph increments
+		/// Test that adding a Lexeme results in ImportResidue for the LexEntry that is created.
 		/// </summary>
 		[Test]
+		public void AddingLexemeOrSenseSetsImportResidue()
+		{
+			var lex = m_lexicon.CreateLexeme(LexemeType.Stem, "a"); // Creates lexeme, but does not add it (verified in another test)
+			lex.AddSense();
+
+			var lexEntryRepo = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances();
+			var lexEntry = lexEntryRepo.FirstOrDefault(entry =>
+				entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text == "a");
+			var sense = lex.AddSense(); // SUT: Lexeme is added by adding the Sense
+			sense.AddGloss("en", "test");
+
+			Assert.AreEqual(1, m_lexicon.Lexemes.Count());
+
+			lex = m_lexicon[lex.Id]; // Make sure we're using the one stored in the lexicon
+			Assert.AreEqual("a", lex.LexicalForm, "Failure in test setup");
+			Assert.AreEqual(1, lex.Senses.Count(), "Failure in test setup");
+			Assert.That(lexEntry.ImportResidue.Text, Is.EqualTo(FdoLexicon.AddedByParatext));
+			Assert.That(lexEntry.SensesOS[0].ImportResidue.Text, Is.EqualTo(FdoLexicon.AddedByParatext));
+	  }
+
+		/// <summary>
+	  /// Test that homograph increments
+	  /// </summary>
+	  [Test]
 		public void HomographsIncrement()
 		{
 			Lexeme lex = m_lexicon.CreateLexeme(LexemeType.Stem, "a");
@@ -199,12 +223,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			m_lexicon.AddLexeme(lex);
 
 			lex = m_lexicon[lex.Id];
-			Assert.IsNotNull(lex);
+			Assert.That(lex, Is.Not.Null);
 			Assert.AreEqual(LexemeType.Stem, lex.Type);
 			Assert.AreEqual("a", lex.LexicalForm);
 
 			Lexeme lex2 = m_lexicon.CreateLexeme(LexemeType.Suffix, "monkey");
-			Assert.IsNull(m_lexicon[lex2.Id]);
+			Assert.That(m_lexicon[lex2.Id], Is.Null);
 		}
 
 		/// <summary>
@@ -389,12 +413,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			m_lexicon.AddLexeme(lex);
 
 			lex = m_lexicon[new LexemeKey(LexemeType.Stem, "Vacaci\u00f3n").Id];
-			Assert.IsNotNull(lex);
+			Assert.That(lex, Is.Not.Null);
 			Assert.AreEqual(LexemeType.Stem, lex.Type);
 			Assert.AreEqual("Vacaci\u00f3n", lex.LexicalForm);
 
 			LexiconSense sense = lex.AddSense();
-			Assert.IsNotNull(sense);
+			Assert.That(sense, Is.Not.Null);
 
 			LanguageText gloss = sense.AddGloss("en", "D\u00f3nde");
 
@@ -518,7 +542,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			// Nothing found
 			Lexeme matchingLexeme = m_lexicon.FindClosestMatchingLexeme("a");
-			Assert.IsNull(matchingLexeme);
+			Assert.That(matchingLexeme, Is.Null);
 
 			// Found by simple lexicon lookup
 			Lexeme lexeme = m_lexicon.CreateLexeme(LexemeType.Stem, "a");

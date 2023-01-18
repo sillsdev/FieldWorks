@@ -1249,8 +1249,8 @@ namespace LCMBrowser
 
 			if (tpt == (int)FwTextPropType.ktptWs)
 			{
-				CoreWritingSystemDefinition ws = cache.ServiceLocator.WritingSystemManager.Get(Value);
-				m_toStringValue += "  {" + ws + "}";
+				var ws = cache.ServiceLocator.WritingSystemManager.Get(Value);
+				m_toStringValue += "  {" + ws.DisplayLabel + "}";
 			}
 		}
 

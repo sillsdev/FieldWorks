@@ -6,13 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Utils;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
 using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace ParatextImport.ImportTests
 {
@@ -614,7 +615,7 @@ namespace ParatextImport.ImportTests
 			if (sMarker != "a")
 			{
 				if (sMarker == null)
-					Assert.IsNull(footnote.FootnoteMarker.Text);
+					Assert.That(footnote.FootnoteMarker.Text, Is.Null);
 				else
 				{
 					AssertEx.RunIsCorrect(footnote.FootnoteMarker, 0,
@@ -1287,7 +1288,7 @@ namespace ParatextImport.ImportTests
 		[Test]
 		public void EnsurePictureFilePathIsRooted_Rooted()
 		{
-			string fileName = MiscUtils.IsUnix ? "P0|/tmp/mypic.jpg|P2|P3|P4"
+			string fileName = Platform.IsUnix ? "P0|/tmp/mypic.jpg|P2|P3|P4"
 				: @"P0|c:\temp\mypic.jpg|P2|P3|P4";
 			Assert.AreEqual(fileName,
 				ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted",
@@ -1505,7 +1506,7 @@ namespace ParatextImport.ImportTests
 			// ************** process an intro section head, test MakeSection() method ************
 			m_importer.ProcessSegment("Background Material", @"\is");
 			Assert.AreEqual(2, m_importer.BookNumber);
-			Assert.IsNotNull(m_importer.CurrentSection);
+			Assert.That(m_importer.CurrentSection, Is.Not.Null);
 			// verify state of NormalParaStrBldr
 			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
 			VerifyBldrRun(0, "Background Material", null);
@@ -2359,10 +2360,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ScriptureUtilsException),
-			 ExpectedMessage = "Book introduction within Scripture text.(\\r)?\\n(\\r)?\\n" +
-			 "\\\\ip Bad intro para(\\r)?\\nAttempting to read EXO  Chapter: 1  Verse: 1",
-			 MatchType = MessageMatch.Regex)]
 		public void FailWhenImplicitIntroSectionFollowsScripture()
 		{
 			m_importer.Settings.ImportBackTranslation = true;
@@ -2374,7 +2371,9 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("A", @"\s");
 			m_importer.ProcessSegment("My para", @"\p");
 			m_importer.ProcessSegment("B", @"\s");
-			m_importer.ProcessSegment("Bad intro para", @"\ip");
+			Assert.That(() => m_importer.ProcessSegment("Bad intro para", @"\ip"), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(
+				string.Format(@"Book introduction within Scripture text.{0}{0}\ip Bad intro para{0}Attempting to read EXO  Chapter: 1  Verse: 1",
+					Environment.NewLine)));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2384,10 +2383,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ScriptureUtilsException),
-		   ExpectedMessage = "Book introduction within Scripture text.(\\r)?\\n(\\r)?\\n" +
-		   "\\\\ip Bad intro para(\\r)?\\nAttempting to read EXO  Chapter: 1  Verse: 1",
-		   MatchType = MessageMatch.Regex)]
 		public void FailWhenIntroParaFollowsScripture()
 		{
 			m_importer.Settings.ImportBackTranslation = true;
@@ -2398,7 +2393,9 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("", @"\id");
 			m_importer.ProcessSegment("A", @"\s");
 			m_importer.ProcessSegment("My para", @"\p");
-			m_importer.ProcessSegment("Bad intro para", @"\ip");
+			Assert.That(() => m_importer.ProcessSegment("Bad intro para", @"\ip"), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(
+				string.Format(@"Book introduction within Scripture text.{0}{0}\ip Bad intro para{0}Attempting to read EXO  Chapter: 1  Verse: 1",
+					Environment.NewLine)));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2408,10 +2405,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ScriptureUtilsException),
-			ExpectedMessage = "Book introduction within Scripture text.(\\r)?\\n(\\r)?\\n" +
-			"\\\\is B(\\r)?\\nAttempting to read EXO  Chapter: 1  Verse: 1",
-			MatchType = MessageMatch.Regex)]
 		public void FailWhenIntroSectionFollowsEmptyScriptureSection()
 		{
 			m_importer.Settings.ImportBackTranslation = true;
@@ -2421,7 +2414,8 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id");
 			m_importer.ProcessSegment("A", @"\s");
-			m_importer.ProcessSegment("B", @"\is");
+			Assert.That(() => m_importer.ProcessSegment("B", @"\is"), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(string.Format(
+				@"Book introduction within Scripture text.{0}{0}\is B{0}Attempting to read EXO  Chapter: 1  Verse: 1", Environment.NewLine)));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2431,10 +2425,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ScriptureUtilsException),
-			ExpectedMessage = "Book introduction within Scripture text.(\\r)?\\n(\\r)?\\n" +
-			"\\\\is B(\\r)?\\nAttempting to read EXO  Chapter: 1  Verse: 1",
-			MatchType = MessageMatch.Regex)]
 		public void FailWhenIntroSectionFollowsNotImportedNormalScriptureSection()
 		{
 			m_importer.Settings.ImportBackTranslation = true;
@@ -2448,7 +2438,8 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("", @"\id");
 			m_importer.ProcessSegment("A", @"\s");
 			m_importer.ProcessSegment("My para", @"\p");
-			m_importer.ProcessSegment("B", @"\is");
+			Assert.That(() => m_importer.ProcessSegment("B", @"\is"), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(string.Format(
+				@"Book introduction within Scripture text.{0}{0}\is B{0}Attempting to read EXO  Chapter: 1  Verse: 1", Environment.NewLine)));
 		}
 
 
@@ -2459,10 +2450,6 @@ namespace ParatextImport.ImportTests
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ScriptureUtilsException),
-			ExpectedMessage = "Book introduction within Scripture text.(\\r)?\\n(\\r)?\\n" +
-			"\\\\is B(\\r)?\\nAttempting to read EXO  Chapter: 1  Verse: 1",
-			MatchType = MessageMatch.Regex)]
 		public void FailWhenIntroSectionFollowsNormalScriptureSection()
 		{
 			m_importer.Settings.ImportBackTranslation = true;
@@ -2473,7 +2460,8 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("", @"\id");
 			m_importer.ProcessSegment("A", @"\s");
 			m_importer.ProcessSegment("My para", @"\p");
-			m_importer.ProcessSegment("B", @"\is");
+			Assert.That(() => m_importer.ProcessSegment("B", @"\is"), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(string.Format(
+				@"Book introduction within Scripture text.{0}{0}\is B{0}Attempting to read EXO  Chapter: 1  Verse: 1", Environment.NewLine)));
 		}
 		#endregion
 
@@ -2918,7 +2906,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("EXO This is the book of Exodus", @"\id");
 
-			Assert.IsNotNull(m_importer.ScrBook);
+			Assert.That(m_importer.ScrBook, Is.Not.Null);
 			Assert.AreEqual(2, m_importer.ScrBook.CanonicalNum);
 			Assert.AreEqual("This is the book of Exodus", m_importer.ScrBook.IdText);
 		}
@@ -2957,7 +2945,7 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual(null, m_importer.ScrBook.Name.VernacularDefaultWritingSystem.Text);
 			Assert.AreEqual(1, m_importer.ScrBook.TitleOA.ParagraphsOS.Count);
 			Assert.AreEqual(2, m_importer.BookNumber);
-			Assert.IsNotNull(m_importer.CurrentSection);
+			Assert.That(m_importer.CurrentSection, Is.Not.Null);
 		}
 
 		#endregion
@@ -3260,7 +3248,7 @@ namespace ParatextImport.ImportTests
 
 			// Verify the imported data
 			mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
-			Assert.IsNotNull(mark, "Book not created");
+			Assert.That(mark, Is.Not.Null, "Book not created");
 			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
 			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
@@ -3328,7 +3316,7 @@ namespace ParatextImport.ImportTests
 
 			// Verify the imported data
 			mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
-			Assert.IsNotNull(mark, "Book not created");
+			Assert.That(mark, Is.Not.Null, "Book not created");
 			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
 			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
@@ -3404,7 +3392,7 @@ namespace ParatextImport.ImportTests
 
 			// Verify the imported data
 			mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
-			Assert.IsNotNull(mark, "Book not created");
+			Assert.That(mark, Is.Not.Null, "Book not created");
 			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
 			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
@@ -3611,7 +3599,7 @@ namespace ParatextImport.ImportTests
 			IScrSection section = book.SectionsOS[0];
 			Assert.AreEqual(9, section.ContentOA.ParagraphsOS.Count);
 			IStTxtPara stanzaBreakPara = (IStTxtPara)section.ContentOA.ParagraphsOS[4];
-			Assert.IsNull(stanzaBreakPara.Contents.Text);
+			Assert.That(stanzaBreakPara.Contents.Text, Is.Null);
 			Assert.AreEqual("Stanza Break",
 				stanzaBreakPara.StyleRules.GetStrPropValue((int)FwTextPropType.ktptNamedStyle));
 		}
@@ -4247,12 +4235,12 @@ namespace ParatextImport.ImportTests
 				m_importer.FindCorrespondingFootnote(3456, ScrStyleNames.NormalFootnoteParagraph));
 			Assert.AreEqual(((FootnoteInfo)footnotes[0]).footnote,
 				m_importer.FindCorrespondingFootnote(7890, ScrStyleNames.NormalFootnoteParagraph));
-			Assert.IsNull(m_importer.FindCorrespondingFootnote(3456, "Note Cross-Reference Paragraph"));
+			Assert.That(m_importer.FindCorrespondingFootnote(3456, "Note Cross-Reference Paragraph"), Is.Null);
 			Assert.AreEqual(((FootnoteInfo)footnotes[1]).footnote,
 				m_importer.FindCorrespondingFootnote(3456, ScrStyleNames.NormalFootnoteParagraph));
 			Assert.AreEqual(((FootnoteInfo)footnotes[2]).footnote,
 				m_importer.FindCorrespondingFootnote(3456, "Note Cross-Reference Paragraph"));
-			Assert.IsNull(m_importer.FindCorrespondingFootnote(3456, "Note Cross-Reference Paragraph"));
+			Assert.That(m_importer.FindCorrespondingFootnote(3456, "Note Cross-Reference Paragraph"), Is.Null);
 			Assert.AreEqual(((FootnoteInfo)footnotes[1]).footnote,
 				m_importer.FindCorrespondingFootnote(7890, ScrStyleNames.NormalFootnoteParagraph));
 		}
@@ -4279,7 +4267,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 0);
 			m_importer.ProcessSegment("", @"\c");
 			m_importer.ProcessSegment("", @"\p");
-			string fileName = MiscUtils.IsUnix ? "/the Answer is 42.jpg" : @"Q:\the\Answer\is\42.jpg";
+			string fileName = Platform.IsUnix ? "/the Answer is 42.jpg" : @"Q:\the\Answer\is\42.jpg";
 			m_importer.ProcessSegment("User-supplied picture|" +  fileName +
 				"|col|EXO 1--1||Caption for junk.jpg|", @"\fig");
 			m_importer.FinalizeImport();
@@ -4477,7 +4465,7 @@ namespace ParatextImport.ImportTests
 				ICmPicture picture = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(guid);
 				try
 				{
-					Assert.IsNull(picture.Caption.VernacularDefaultWritingSystem.Text);
+					Assert.That(picture.Caption.VernacularDefaultWritingSystem.Text, Is.Null);
 					Assert.IsTrue(picture.PictureFileRA.InternalPath == picture.PictureFileRA.AbsoluteInternalPath);
 					Assert.IsTrue(picture.PictureFileRA.InternalPath.IndexOf("junk") >= 0);
 					Assert.IsTrue(picture.PictureFileRA.InternalPath.EndsWith(".jpg"));
@@ -4523,7 +4511,7 @@ namespace ParatextImport.ImportTests
 				m_importer.ProcessSegment("", @"\c");
 				m_importer.ProcessSegment("", @"\p");
 				m_importer.ProcessSegment(filemaker.Filename, @"\cat");
-				string fileName = MiscUtils.IsUnix ? "/MissingPicture.jpg" : @"c:\MissingPicture.jpg";
+				string fileName = Platform.IsUnix ? "/MissingPicture.jpg" : @"c:\MissingPicture.jpg";
 				m_importer.ProcessSegment(fileName, @"\cat");
 				m_importer.FinalizeImport();
 				IScrBook exodus = m_importer.UndoInfo.ImportedVersion.BooksOS[0];
@@ -4539,17 +4527,17 @@ namespace ParatextImport.ImportTests
 				ICmPicture picture = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(guid);
 				try
 				{
-					Assert.IsNull(picture.Caption.VernacularDefaultWritingSystem.Text);
+					Assert.That(picture.Caption.VernacularDefaultWritingSystem.Text, Is.Null);
 					Assert.IsTrue(picture.PictureFileRA.InternalPath == picture.PictureFileRA.AbsoluteInternalPath);
 					Assert.IsTrue(picture.PictureFileRA.InternalPath.IndexOf("junk") >= 0);
 					Assert.IsTrue(picture.PictureFileRA.InternalPath.EndsWith(".jpg"));
 					byte odt = Convert.ToByte(sObjData[0]);
 					Assert.AreEqual((byte)FwObjDataTypes.kodtGuidMoveableObjDisp, odt);
-					Assert.IsNull(picture.Description.AnalysisDefaultWritingSystem.Text);
+					Assert.That(picture.Description.AnalysisDefaultWritingSystem.Text, Is.Null);
 					Assert.AreEqual(PictureLayoutPosition.CenterInColumn, picture.LayoutPos);
 					Assert.AreEqual(100, picture.ScaleFactor);
 					Assert.AreEqual(PictureLocationRangeType.AfterAnchor, picture.LocationRangeType);
-					Assert.IsNull(picture.PictureFileRA.Copyright.VernacularDefaultWritingSystem.Text);
+					Assert.That(picture.PictureFileRA.Copyright.VernacularDefaultWritingSystem.Text, Is.Null);
 				}
 				finally
 				{
@@ -4563,34 +4551,25 @@ namespace ParatextImport.ImportTests
 				sObjData = tss.get_Properties(2).GetStrPropValue((int)FwTextPropType.ktptObjData);
 				guid = MiscUtils.GetGuidFromObjData(sObjData.Substring(1));
 				picture = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(guid);
-				Assert.IsNull(picture.Caption.VernacularDefaultWritingSystem.Text);
+				Assert.That(picture.Caption.VernacularDefaultWritingSystem.Text, Is.Null);
 				Assert.IsTrue(picture.PictureFileRA.InternalPath == picture.PictureFileRA.AbsoluteInternalPath);
 				Assert.AreEqual(fileName, picture.PictureFileRA.InternalPath);
 				Assert.AreEqual((byte)FwObjDataTypes.kodtGuidMoveableObjDisp, Convert.ToByte(sObjData[0]));
-				Assert.IsNull(picture.Description.AnalysisDefaultWritingSystem.Text);
+				Assert.That(picture.Description.AnalysisDefaultWritingSystem.Text, Is.Null);
 				Assert.AreEqual(PictureLayoutPosition.CenterInColumn, picture.LayoutPos);
 				Assert.AreEqual(100, picture.ScaleFactor);
 				Assert.AreEqual(PictureLocationRangeType.AfterAnchor, picture.LocationRangeType);
-				Assert.IsNull(picture.PictureFileRA.Copyright.VernacularDefaultWritingSystem.Text);
+				Assert.That(picture.PictureFileRA.Copyright.VernacularDefaultWritingSystem.Text, Is.Null);
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test that importing the following data works:
-		///   \cat
-		/// Jira number is TE-7928
+		/// Tests that importing a figure with an invalid filename throws an exception (TE-7928)
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ScriptureUtilsException),
-		   ExpectedMessage = "Invalid figure file name property(\\r)?\\n(\\r)?\\n" +
-		   "\\\\cat InvalidFile|junk\u0000jpg||(\\r)?\\n" +
-		   "Attempting to read EXO  Chapter: 1  Verse: 1",
-		   MatchType = MessageMatch.Regex)]
 		public void HandleToolboxStylePictures_InvalidFigFilename()
 		{
-			using (DummyFileMaker filemaker = new DummyFileMaker("junk.jpg", true))
+			using (new DummyFileMaker("junk.jpg", true))
 			{
 				// initialize - process a \id segment to establish a book
 				m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
@@ -4603,9 +4582,12 @@ namespace ParatextImport.ImportTests
 				m_importer.ProcessSegment("", @"\c");
 				m_importer.ProcessSegment("", @"\p");
 
-				// Linux Invalid filename chars are only null and /,
-				m_importer.ProcessSegment(MiscUtils.IsUnix ? "InvalidFile|junk\u0000jpg||" : "InvalidFile|.jpg||",
-					@"\cat");
+				// Unix invalid filename chars are only null and /,
+				var invalidFile = Platform.IsUnix ? "InvalidFile|junk\u0000jpg||" : "InvalidFile|.jpg||";
+				Assert.That(() => m_importer.ProcessSegment(invalidFile, @"\cat"),
+					Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(string.Format(
+						@"Invalid figure file name property{0}{0}\cat {1}{0}Attempting to read EXO  Chapter: 1  Verse: 1",
+						Environment.NewLine, invalidFile)));
 			}
 		}
 
@@ -4650,11 +4632,11 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual("MissingPictureInImport.bmp", picture.PictureFileRA.InternalPath);
 			byte odt = Convert.ToByte(sObjData[0]);
 			Assert.AreEqual((byte)FwObjDataTypes.kodtGuidMoveableObjDisp, odt);
-			Assert.IsNull(picture.Description.AnalysisDefaultWritingSystem.Text);
+			Assert.That(picture.Description.AnalysisDefaultWritingSystem.Text, Is.Null);
 			Assert.AreEqual(PictureLayoutPosition.CenterInColumn, picture.LayoutPos);
 			Assert.AreEqual(100, picture.ScaleFactor);
 			Assert.AreEqual(PictureLocationRangeType.AfterAnchor, picture.LocationRangeType);
-			Assert.IsNull(picture.PictureFileRA.Copyright.VernacularDefaultWritingSystem.Text);
+			Assert.That(picture.PictureFileRA.Copyright.VernacularDefaultWritingSystem.Text, Is.Null);
 
 			// Make sure the second picture (also missing) is okay
 			sObjData = tss.get_Properties(2).GetStrPropValue((int)FwTextPropType.ktptObjData);
@@ -4663,11 +4645,11 @@ namespace ParatextImport.ImportTests
 			Assert.AreEqual("Caption for missing picture 2", picture.Caption.VernacularDefaultWritingSystem.Text);
 			Assert.AreEqual("MissingPictureInImport.bmp", picture.PictureFileRA.InternalPath);
 			Assert.AreEqual((byte)FwObjDataTypes.kodtGuidMoveableObjDisp, Convert.ToByte(sObjData[0]));
-			Assert.IsNull(picture.Description.AnalysisDefaultWritingSystem.Text);
+			Assert.That(picture.Description.AnalysisDefaultWritingSystem.Text, Is.Null);
 			Assert.AreEqual(PictureLayoutPosition.CenterInColumn, picture.LayoutPos);
 			Assert.AreEqual(100, picture.ScaleFactor);
 			Assert.AreEqual(PictureLocationRangeType.AfterAnchor, picture.LocationRangeType);
-			Assert.IsNull(picture.PictureFileRA.Copyright.VernacularDefaultWritingSystem.Text);
+			Assert.That(picture.PictureFileRA.Copyright.VernacularDefaultWritingSystem.Text, Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -4834,12 +4816,12 @@ namespace ParatextImport.ImportTests
 		{
 			// set Doxology to being used (negative userlevel)
 			IStStyle style = m_styleSheet.FindStyle("Doxology");
-			Assert.IsNotNull(style, "Doxology was not found!");
+			Assert.That(style, Is.Not.Null, "Doxology was not found!");
 			style.UserLevel = (style.UserLevel > 0 ? -style.UserLevel : style.UserLevel);
 
 			// make sure styles aren't being used
 			style = m_styleSheet.FindStyle("Intro Paragraph");
-			Assert.IsNotNull(style, "Intro Paragraph was not found!");
+			Assert.That(style, Is.Not.Null, "Intro Paragraph was not found!");
 			if (style.UserLevel < 0)
 				style.UserLevel = -style.UserLevel;
 			style = m_styleSheet.FindStyle("Title Main");
@@ -4866,27 +4848,27 @@ namespace ParatextImport.ImportTests
 			m_importer.FinalizeImport();
 
 			style = m_styleSheet.FindStyle("Title Main");
-			Assert.IsNotNull(style, "Title Main was not found!");
+			Assert.That(style, Is.Not.Null, "Title Main was not found!");
 			Assert.AreEqual(0, style.UserLevel, "should stay 0");
 
 			style = m_styleSheet.FindStyle("Section Head");
-			Assert.IsNotNull(style, "Section Head was not found!");
+			Assert.That(style, Is.Not.Null, "Section Head was not found!");
 			Assert.AreEqual(0, style.UserLevel, "should stay 0");
 
 			style = m_styleSheet.FindStyle("Line3");
-			Assert.IsNotNull(style, "Line3 was not found!");
+			Assert.That(style, Is.Not.Null, "Line3 was not found!");
 			Assert.AreEqual(-2, style.UserLevel, "should be changed to being used");
 
 			style = m_styleSheet.FindStyle("Doxology");
-			Assert.IsNotNull(style, "Doxology was not found!");
+			Assert.That(style, Is.Not.Null, "Doxology was not found!");
 			Assert.AreEqual(-3, style.UserLevel, "should stay as being used");
 
 			style = m_styleSheet.FindStyle("List Item3");
-			Assert.IsNotNull(style, "List Item3 was not found!");
+			Assert.That(style, Is.Not.Null, "List Item3 was not found!");
 			Assert.AreEqual(-4, style.UserLevel, "should be changed to being used");
 
 			style = m_styleSheet.FindStyle("Intro Paragraph");
-			Assert.IsNotNull(style, "Intro Paragraph was not found!");
+			Assert.That(style, Is.Not.Null, "Intro Paragraph was not found!");
 			Assert.AreEqual(2, style.UserLevel, "should not be changed to being used");
 		}
 		#endregion
@@ -5230,7 +5212,7 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
 			Assert.AreEqual(2, m_importer.BookNumber);
 			// verify that a new book was added to the DB
-			Assert.IsNull(m_scr.FindBook(2));
+			Assert.That(m_scr.FindBook(2), Is.Null);
 
 			// ************** process a chapter *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 0);
@@ -5317,7 +5299,7 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
 			Assert.AreEqual(1, m_importer.BookNumber);
 			// verify that a new book was added to the DB
-			Assert.IsNotNull(m_scr.FindBook(1));
+			Assert.That(m_scr.FindBook(1), Is.Not.Null);
 
 			// ************** process a chapter *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 1, 0);
@@ -5380,8 +5362,8 @@ namespace ParatextImport.ImportTests
 			}
 			else
 			{
-				Assert.IsNull(annotation.BeginObjectRA);
-				Assert.IsNull(annotation.EndObjectRA);
+				Assert.That(annotation.BeginObjectRA, Is.Null);
+				Assert.That(annotation.EndObjectRA, Is.Null);
 			}
 			Assert.AreEqual(startScrRef, annotation.BeginRef);
 			Assert.AreEqual(endScrRef, annotation.EndRef);
@@ -5525,12 +5507,12 @@ namespace ParatextImport.ImportTests
 						break;
 				}
 			}
-			Assert.IsNotNull(verse1Note, "Note for verse 1 not found.");
+			Assert.That(verse1Note, Is.Not.Null, "Note for verse 1 not found.");
 			Assert.AreEqual(1, numVerse1Notes, "There should be exactly one note for verse 1");
 			Assert.AreEqual(origNote1.Hvo, verse1Note.Hvo,
 				"The original note should still be the only note on verse 1");
 
-			Assert.IsNotNull(verse2Note, "Note for verse 2 not found.");
+			Assert.That(verse2Note, Is.Not.Null, "Note for verse 2 not found.");
 			Assert.AreEqual(origNote2.Hvo, verse2Note.Hvo,
 				"The original note should still be the only note on verse 2");
 		}
@@ -5652,10 +5634,10 @@ namespace ParatextImport.ImportTests
 				Assert.AreEqual(para.Hvo, annotation.BeginObjectRA.Hvo);
 				Assert.AreEqual(para.Hvo, annotation.EndObjectRA.Hvo);
 				Assert.AreEqual(annotation.BeginRef, annotation.EndRef);
-				Assert.IsNotNull(annotation.DiscussionOA, "Should have an StText");
+				Assert.That(annotation.DiscussionOA, Is.Not.Null, "Should have an StText");
 				Assert.AreEqual(1, annotation.DiscussionOA.ParagraphsOS.Count);
 				IStTxtPara annPara = (IStTxtPara)annotation.DiscussionOA.ParagraphsOS[0];
-				Assert.IsNotNull(annPara.StyleRules, "should have a paragraph style");
+				Assert.That(annPara.StyleRules, Is.Not.Null, "should have a paragraph style");
 				Assert.AreEqual(ScrStyleNames.Remark,
 					annPara.StyleRules.GetStrPropValue(
 					(int)FwTextPropType.ktptNamedStyle));
@@ -5717,8 +5699,8 @@ namespace ParatextImport.ImportTests
 			m_importer.FinalizeImport();
 
 			// verify that a new book was NOT created
-			Assert.IsNull(m_importer.ScrBook);
-			Assert.IsNull(m_scr.FindBook(2));
+			Assert.That(m_importer.ScrBook, Is.Null);
+			Assert.That(m_scr.FindBook(2), Is.Null);
 			VerifySimpleAnnotation(0, 2001002, "This is an annotation", NoteType.Translator);
 		}
 		/// ------------------------------------------------------------------------------------
@@ -5763,8 +5745,8 @@ namespace ParatextImport.ImportTests
 			m_importer.FinalizeImport();
 
 			// verify that a new book was NOT created
-			Assert.IsNull(m_importer.ScrBook);
-			Assert.IsNull(m_scr.FindBook(2));
+			Assert.That(m_importer.ScrBook, Is.Null);
+			Assert.That(m_scr.FindBook(2), Is.Null);
 			VerifySimpleAnnotation(0, 2001002, "This is an annotation", NoteType.Translator);
 		}
 		#endregion
@@ -5793,11 +5775,11 @@ namespace ParatextImport.ImportTests
 				// Ignore this kind of exception -- it was expected
 			}
 
-			Assert.IsNotNull(m_importer.UndoInfo);
-			Assert.IsNotNull(m_importer.CurrentSection);
-			Assert.IsNotNull(m_importer.CurrentSection.HeadingOA);
+			Assert.That(m_importer.UndoInfo, Is.Not.Null);
+			Assert.That(m_importer.CurrentSection, Is.Not.Null);
+			Assert.That(m_importer.CurrentSection.HeadingOA, Is.Not.Null);
 			Assert.AreEqual(1, m_importer.CurrentSection.HeadingOA.ParagraphsOS.Count);
-			Assert.IsNotNull(m_importer.CurrentSection.ContentOA);
+			Assert.That(m_importer.CurrentSection.ContentOA, Is.Not.Null);
 			Assert.AreEqual(1, m_importer.CurrentSection.ContentOA.ParagraphsOS.Count);
 		}
 		#endregion

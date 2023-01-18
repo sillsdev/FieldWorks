@@ -229,6 +229,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_app = propertyTable.GetValue<IApp>("App");
 				m_stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			}
+			TrackingHelper.TrackImport("lexicon", "SFM", ImportExportStep.Launched);
+
 			m_dirtyInputFile = true;
 			m_dirtyMapFile = true;
 //			m_hasShownIFMs = false;
@@ -755,7 +757,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			return sbHelp.ToString();
 		}
 
-		//string m_lastCFCRC = "";
 		List<uint> m_lastCrcs = new List<uint>();
 		public Sfm2Xml.ILexImportFields ReadCustomFieldsFromDB(out bool changed)
 		{
@@ -765,9 +766,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			// FieldDescription.ClearDataAbout(m_cache);
 			foreach (FieldDescription fd in FieldDescription.FieldDescriptors(m_cache))
 			{
-				if (fd.IsCustomField && fd.Class > 4999 && fd.Class < 6000)
+				if (fd.IsCustomField && fd.Class > 4999 && fd.Class < 6000 && TryConvertFieldDescriptionToLexImportField(fd, out var lif))
 				{
-					Sfm2Xml.LexImportCustomField lif = FieldDescriptionToLexImportField(fd);
 					System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
 
 					string helpString = GetCustomFieldHelp(fd);
@@ -1939,6 +1939,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (UsesInvalidFileNames(false))
 				return;
 
+			TrackingHelper.TrackImport("lexicon", "SFM", ImportExportStep.Attempted);
+
 			base.OnFinishButton();
 
 			bool runToCompletion = true;
@@ -1971,7 +1973,14 @@ namespace SIL.FieldWorks.LexText.Controls
 						m_chkCreateMissingLinks.Checked);
 
 					if (fRet)
-						DialogResult = DialogResult.OK;	// only 'OK' if not exception
+					{
+						TrackingHelper.TrackImport("lexicon", "SFM", ImportExportStep.Succeeded);
+						DialogResult = DialogResult.OK; // only 'OK' if not exception
+					}
+					else
+					{
+						TrackingHelper.TrackImport("lexicon", "SFM", ImportExportStep.Failed);
+					}
 				}
 			}
 		}
@@ -2058,14 +2067,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			string dbImportName = m_DatabaseFileName.Text;
 			if (dbImportName != string.Empty)	// has value to save
 			{
-				using (RegistryKey key = m_app.SettingsKey)
-				{
-					if (key == null)
-						return;
+				RegistryKey settingsKey = m_app.SettingsKey;
+				if (settingsKey == null)
+					return;
 
-					// save it as the most recent dictionary file for import
-					key.SetValue("LatestImportDictFile", dbImportName);
-				}
+				// save it as the most recent dictionary file for import
+				settingsKey.SetValue("LatestImportDictFile", dbImportName);
 
 				string dbHash = dbImportName.GetHashCode().ToString();
 
@@ -4224,52 +4231,48 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private LexImportCustomField FieldDescriptionToLexImportField(FieldDescription fd)
+		private static bool TryConvertFieldDescriptionToLexImportField(FieldDescription fd, out LexImportCustomField lif)
 		{
-			string sig = "";
+			var sig = string.Empty;
 			switch (fd.Type)
 			{
 				case CellarPropertyType.MultiUnicode:
-				sig = "MultiUnicode";
+					sig = "MultiUnicode";
 					break;
 				case CellarPropertyType.String:
-				sig = "string";
+					sig = "string";
 					break;
 				case CellarPropertyType.OwningAtomic:
-					if (fd.DstCls == StTextTags.kClassId)
-					{
-				sig = "text";
-					}
-					break;
+					//if (fd.DstCls == StTextTags.kClassId)
+					//{
+					//	sig = "text";
+					//}
+					goto case CellarPropertyType.Nil;
 				case CellarPropertyType.ReferenceAtomic:
 					if (fd.ListRootId != Guid.Empty)
 					{
-				sig = "ListRef";
+						sig = "ListRef";
 					}
 					break;
 				case CellarPropertyType.ReferenceCollection:
 					if (fd.ListRootId != Guid.Empty)
 					{
-				sig = "ListMultiRef";
+						sig = "ListMultiRef";
 					}
 					break;
-			// JohnT: added  GenDate and Numeric and Integer to prevent the crash in LT-11188.
-			// Not sure these string values are actually used for anything; if they are, it might be a problem,
-			// because I haven't been able to track down how or where they are used.
+				// JohnT: added  GenDate and Numeric and Integer to prevent the crash in LT-11188.
+				// Hasso (2021.05): some property types cannot be imported. Don't lie to the users and drop their data (LT-18536, LT-20281)
 				case CellarPropertyType.GenDate:
-				sig = "Date";
-					break;
 				case CellarPropertyType.Integer:
-				sig = "Integer";
-					break;
 				case CellarPropertyType.Numeric:
-				sig = "Number";
-					break;
+				case CellarPropertyType.Nil:
+					lif = null;
+					return false;
 				default:
-				throw new Exception("Error converting custom field to LexImportField - unexpected signature");
+					throw new Exception("Error converting custom field to LexImportField - unexpected signature");
 			}
 
-			LexImportCustomField lif = new LexImportCustomField(
+			lif = new LexImportCustomField(
 				fd.Class,
 				"NOT SURE YET _ Set In The Calling method???",
 				//fd.CustomId,
@@ -4284,12 +4287,12 @@ namespace SIL.FieldWorks.LexText.Controls
 				sig.StartsWith("List"),
 				true,	//(sig == "MultiUnicode") ? true : false,
 				false,
-				"MDFVALUE");
-			lif.ListRootId = fd.ListRootId;
+				"MDFVALUE"){
+					ListRootId = fd.ListRootId
+			};
 			if (sig.StartsWith("List"))
 				lif.IsAbbrField = true;
-			////lif.CustomFieldID = fd.CustomId;	// save the guid for this field
-			return lif;
+			return true;
 		}
 	}
 }

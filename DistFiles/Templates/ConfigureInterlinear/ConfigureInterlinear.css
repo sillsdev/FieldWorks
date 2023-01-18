@@ -1,0 +1,30 @@
+﻿/*
+Copyright (c) 2018 SIL International
+This software is licensed under the LGPL, version 2.1 or later
+(http://www.gnu.org/licenses/lgpl-2.1.html)
+*/
+body{
+	margin:0px;
+	font-family:sans-serif;
+}
+
+.morpheme-row {
+	background:#c18cb1;
+}
+
+.word-row {
+	background:	#c8c8c8;
+}
+.word-gloss-rows {
+	background: #5e9eff;
+}
+
+.grid-cell {
+  border-top: 1px solid #dfdfdf;
+  border-left: 1px solid #dfdfdf;
+  flex: 1;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.gu-mirror{position:fixed!important;margin:0!important;z-index:9999!important;opacity:.8}.gu-hide{display:none!important}.gu-unselectable{-webkit-user-select:none!important;-moz-user-select:none!important;-ms-user-select:none!important;user-select:none!important}.gu-transit{opacity:.2}

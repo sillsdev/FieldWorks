@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -318,7 +319,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Initialize the combo box for the standard set of writing systems.
 		/// </summary>
 		public static void AddWritingSystemsToCombo(LcmCache cache,
-			ComboBox.ObjectCollection items, WsComboContent contentToAdd)
+			IList items, WsComboContent contentToAdd)
 		{
 			AddWritingSystemsToCombo(cache, items, contentToAdd, false, false);
 		}
@@ -346,7 +347,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Ignored if skipDefaults is true.</param>
 		/// <remarks>This is static because ConfigureInterlinDialog uses it</remarks>
 		public static void AddWritingSystemsToCombo(LcmCache cache,
-			ComboBox.ObjectCollection items, WsComboContent contentToAdd, bool skipDefaults,
+			IList items, WsComboContent contentToAdd, bool skipDefaults,
 			bool allowMultiple)
 		{
 			string sAllAnal = XMLViewsStrings.ksAllAnal;
@@ -536,10 +537,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="items">The items.</param>
 		/// <param name="wss">The ws array.</param>
 		/// ------------------------------------------------------------------------------------
-		public static void AddWritingSystemsToCombo(LcmCache cache, ComboBox.ObjectCollection items, IEnumerable<CoreWritingSystemDefinition> wss)
+		public static void AddWritingSystemsToCombo(LcmCache cache, IList items, IEnumerable<CoreWritingSystemDefinition> wss)
 		{
 			foreach (CoreWritingSystemDefinition ws in wss)
-				items.Add(new WsComboItem(ws.DisplayLabel, ws.Id));
+				items.Add(new WsComboItem(ws.DisplayLabel, ws.Id, ws.Abbreviation));
 		}
 
 		void InitChoicesList()
@@ -1562,6 +1563,7 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 	}
+
 	/// <summary>
 	///
 	/// </summary>
@@ -1569,16 +1571,21 @@ namespace SIL.FieldWorks.Common.Controls
 	{
 		private readonly string m_name;
 		private readonly string m_id;
+		private readonly string m_abbreviation;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="WsComboItem"/> class.
 		/// </summary>
 		/// <param name="name">The name.</param>
 		/// <param name="id">The writing system ID.</param>
-		public WsComboItem(string name, string id)
+		/// <param name="abbreviation">The abbreviation (defaults to null).</param>
+		public WsComboItem(string name, string id, string abbreviation=null)
 		{
 			m_name = name;
 			m_id = id;
+			m_abbreviation = abbreviation;
 		}
+
 		/// <summary>
 		/// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
 		/// </summary>
@@ -1589,6 +1596,48 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			return m_name;
 		}
+
+		/// <summary>
+		/// Gets the abbreviation.
+		/// If no abbreviation exists then the name is returned.
+		/// </summary>
+		public string Abbreviation
+		{
+			get
+			{
+				if (String.IsNullOrEmpty(m_abbreviation))
+					return m_name;
+				return m_abbreviation;
+			}
+		}
+
+		/// <summary>
+		/// Returns true if the given object is a WsComboItem and the name, id, and abbreviation match this WsComboItem.
+		/// </summary>
+		/// <param name="obj">The object to compare</param>
+		/// <returns>True if equal, false if not equal</returns>
+		public override bool Equals(object obj)
+		{
+			var item = obj as WsComboItem;
+			return item != null &&
+				   m_name == item.m_name &&
+				   m_id == item.m_id &&
+				   Abbreviation == item.Abbreviation;
+		}
+
+		/// <summary>
+		/// Implemented for the Equals method.
+		/// </summary>
+		/// <returns></returns>
+		public override int GetHashCode()
+		{
+			var hashCode = 641297398;
+			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(m_name);
+			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(m_id);
+			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Abbreviation);
+			return hashCode;
+		}
+
 		/// <summary>
 		/// Gets the writing system identifier.
 		/// </summary>
@@ -1597,5 +1646,15 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			get { return m_id;}
 		}
+
+		/// <summary>
+		/// Stores the handle of the writing system.
+		/// </summary>
+		public int WritingSystem { get; set; }
+
+		/// <summary>
+		/// Stores the type of the writing system (vernacular, analysis, or both)
+		/// </summary>
+		public string WritingSystemType { get; set; }
 	}
 }

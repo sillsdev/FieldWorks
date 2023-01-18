@@ -1,18 +1,8 @@
-// Copyright (c) 2007-2013 SIL International
+// Copyright (c) 2007-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: UserInterfaceChooser.cs
-// Responsibility: Steve McConnel
-//
-// <remarks>
-// This implements a control suitable for placing on a tab of the Tools/Options
-// dialog.  The control is a combobox that lists the languages (writing systems) into
-// which the program has been (at least partially) localized.  Each language name is given in
-// its own language and script.
-// </remarks>
+
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -20,14 +10,15 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using Icu;
-using SIL.LCModel.Core.Text;
 using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Widgets
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	///
+	/// a control suitable for placing on a tab of the Tools/Options dialog. The control is a
+	/// combobox that lists the languages (writing systems) into which the program has been (at
+	/// least partially) localized. Each language name is given in its own language and script.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	public partial class UserInterfaceChooser : ComboBox

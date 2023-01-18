@@ -75,7 +75,7 @@
 \lx 15348
 \g PAST
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 15332
 \a pst {15350} MSEnvFS15354
 \a past {15349} MSEnvFSNot15354

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -11,7 +11,6 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <AssemblyName>FwBuildTasks</AssemblyName>
     <CodePage>65001</CodePage>
-    <OldToolsVersion>2.0</OldToolsVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -53,7 +52,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework">
-      <HintPath>..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\packages\NUnit.3.13.3\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SIL.TestUtilities">
@@ -71,6 +70,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="FwBuildTasksTests\LocalizerTests.cs" />
+    <Compile Include="FwBuildTasksTests\ProjectLocalizerTests.cs" />
     <Compile Include="FwBuildTasksTests\XliffToGoldEticTests.cs" />
     <Compile Include="FwBuildTasksTests\GoldEticToXliffTests.cs" />
     <Compile Include="FwBuildTasksTests\LocalizeListsTests.cs" />
@@ -117,7 +118,6 @@
     <Compile Include="Substitute.cs" />
     <Compile Include="FwBuildTasksTests\TaskTestUtils.cs" />
     <Compile Include="UnzipTask.cs" />
-    <Compile Include="NUnit.cs" />
     <Compile Include="Misc.cs" />
     <Compile Include="CollectTargets.cs" />
     <Compile Include="BuildUtils.cs" />
@@ -150,6 +150,11 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">

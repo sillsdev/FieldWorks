@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.IText
 
 		internal void SuppressResettingGuesses(Action task)
 		{
-			m_vc.Decorator.SuppressResettingGuesses(task);
+			Vc.Decorator.SuppressResettingGuesses(task);
 		}
 
 		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		protected override void MakeVc()
 		{
-			m_vc = new InterlinDocForAnalysisVc(m_cache);
+			Vc = new InterlinDocForAnalysisVc(m_cache);
 		}
 
 		#region Overrides of RootSite
@@ -196,8 +196,8 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		protected override void OnLostFocus(EventArgs e)
 		{
-			if (m_vc != null)
-				m_vc.SetActiveFreeform(0, 0, 0, 0);
+			if (Vc != null)
+				Vc.SetActiveFreeform(0, 0, 0, 0);
 			base.OnLostFocus(e);
 		}
 
@@ -243,7 +243,7 @@ namespace SIL.FieldWorks.IText
 				}
 				return;
 			}
-			if (!m_vc.CanBeAnalyzed(target))
+			if (!Vc.CanBeAnalyzed(target))
 				return;
 #if DEBUG
 			// test preconditions.
@@ -318,9 +318,9 @@ namespace SIL.FieldWorks.IText
 		// Set the VC size to match the FocusBox. Return true if it changed.
 		bool SetFocusBoxSizeForVc()
 		{
-			if (m_vc == null || ExistingFocusBox == null)
+			if (Vc == null || ExistingFocusBox == null)
 				return false;
-			var interlinDocForAnalysisVc = m_vc as InterlinDocForAnalysisVc;
+			var interlinDocForAnalysisVc = Vc as InterlinDocForAnalysisVc;
 			if (interlinDocForAnalysisVc == null)
 				return false; // testing only? Anyway nothing can change.
 			//FocusBox.PerformLayout();
@@ -496,7 +496,7 @@ namespace SIL.FieldWorks.IText
 			realAnalysis = null;
 			var currentText = currentPara.Owner as IStText;
 			Debug.Assert(currentText != null, "Paragraph not owned by a text.");
-			var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>;
+			var lines = LineChoices.EnabledLineSpecs as IEnumerable<InterlinLineSpec>;
 			var delta = upward ? -1 : 1;
 			var nextSegIndex = delta + seg.IndexInOwner;
 			do
@@ -554,7 +554,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns>The flid of the translation or note or 0 if none is found.</returns>
 		internal int GetFirstVisibleTranslationOrNoteFlid(ISegment segment, out int ws)
 		{
-			var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>;
+			var lines = LineChoices.EnabledLineSpecs as IEnumerable<InterlinLineSpec>;
 			Debug.Assert(lines != null, "Interlinear line configurations not enumerable 2");
 			var annotations = lines.SkipWhile(line => line.WordLevel);
 			int tryAnnotationIndex = lines.Count() - annotations.Count();
@@ -726,7 +726,7 @@ namespace SIL.FieldWorks.IText
 			// Enhance JohnT: ideally we would probably figure this margin
 			// to exactly match the margin between words set by the VC.
 			int left = rcPrimary.left;
-			if (m_vc.RightToLeft)
+			if (Vc.RightToLeft)
 				left += 8;
 			return new Point(left, rcPrimary.top);
 		}
@@ -783,13 +783,13 @@ namespace SIL.FieldWorks.IText
 		{
 			get
 			{
-				return ((InterlinDocForAnalysisVc) m_vc).FocusBoxOccurrence;
+				return ((InterlinDocForAnalysisVc) Vc).FocusBoxOccurrence;
 			}
 			set
 			{
-				if (m_vc == null)
+				if (Vc == null)
 					return;
-				((InterlinDocForAnalysisVc)m_vc).FocusBoxOccurrence = value;
+				((InterlinDocForAnalysisVc)Vc).FocusBoxOccurrence = value;
 				m_propertyTable.SetProperty("TextSelectedWord",
 					value != null && value.HasWordform ? value.Analysis.Wordform : null,
 					true);
@@ -964,7 +964,7 @@ namespace SIL.FieldWorks.IText
 				if (!haveLineInfo)
 					return ArrowChange.None;
 
-				var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>; // so we can use linq
+				var lines = LineChoices.EnabledLineSpecs as IEnumerable<InterlinLineSpec>; // so we can use linq
 				Debug.Assert(lines != null, "Interlinear line configurations not enumerable");
 				bool isUpNewSeg;
 				bool isUpMove = DetectUpMove(e, lines, lineNum, curSeg, curNoteIndex, where, isRightToLeft, out isUpNewSeg);
@@ -1029,7 +1029,7 @@ namespace SIL.FieldWorks.IText
 			Debug.Assert(para != null, "Tried to move to a null paragraph ind=" + paragraphInd);
 			Debug.Assert(seg != null, "Tried to move to a null segment ind=" + seg.IndexInOwner + " in para " + paragraphInd);
 			// get the "next" segment with a real analysis or real translation or note
-			var lines = LineChoices.m_specs as IEnumerable<InterlinLineSpec>; // so we can use linq
+			var lines = LineChoices.EnabledLineSpecs as IEnumerable<InterlinLineSpec>; // so we can use linq
 			while (true)
 			{
 				AnalysisOccurrence realAnalysis;
@@ -1157,7 +1157,7 @@ namespace SIL.FieldWorks.IText
 			}
 			else
 			{	// this is the last translation or note and it can't be a null note because it was selected
-				bool noteIsLastAnnotation = LineChoices[LineChoices.Count - 1].Flid == InterlinLineChoices.kflidNote;
+				bool noteIsLastAnnotation = LineChoices.EnabledLineSpecs[LineChoices.EnabledCount - 1].Flid == InterlinLineChoices.kflidNote;
 				hasFollowingAnnotation = noteIsLastAnnotation && curNoteIndex < curSeg.NotesOS.Count - 1;
 			}
 			bool hasDownMotion = (e.KeyCode == Keys.Down) ||
@@ -1233,20 +1233,20 @@ namespace SIL.FieldWorks.IText
 				case kTagUserPrompt: // user prompt property for empty translation annotations
 					// Is this free or literal?
 					hasPrompt = true;
-					id = m_vc.ActiveFreeformFlid;
+					id = Vc.ActiveFreeformFlid;
 					id = (id == SegmentTags.kflidLiteralTranslation) ?
 						InterlinLineChoices.kflidLitTrans : InterlinLineChoices.kflidFreeTrans;
 					if (wid == 0)
-						wid = m_vc.ActiveFreeformWs;
+						wid = Vc.ActiveFreeformWs;
 					where = WhichEnd.Both;
 					break;
 				default: // not expected
 					return false;
 			}
 			if (wid > 0)
-				lineNum = LineChoices.IndexOf(id, wid);
+				lineNum = LineChoices.IndexInEnabled(id, wid);
 			if (lineNum == -1)
-				lineNum = LineChoices.IndexOf(id);
+				lineNum = LineChoices.IndexInEnabled(id);
 			return true;
 		}
 
@@ -1372,7 +1372,7 @@ namespace SIL.FieldWorks.IText
 				index++;
 				int ind = forward ? index : seg.AnalysesRS.Count - index;
 				realAnalysis = new AnalysisOccurrence(seg, ind);
-				if (m_vc.CanBeAnalyzed(realAnalysis))
+				if (Vc.CanBeAnalyzed(realAnalysis))
 				{
 					found = true;
 					break; // found the first or last real analysis
@@ -1511,7 +1511,7 @@ namespace SIL.FieldWorks.IText
 					else if (analysis is IWfiAnalysis || analysis is IWfiWordform)
 					{
 						// check if we have a guess cached with a gloss. (LT-9973)
-						int guessHvo = m_vc.GetGuess(analysis);
+						int guessHvo = Vc.GetGuess(analysis);
 						if (guessHvo != 0)
 						{
 							var guess = Cache.ServiceLocator.ObjectRepository.GetObject(guessHvo) as IWfiGloss;
@@ -1539,7 +1539,7 @@ namespace SIL.FieldWorks.IText
 			// is being changed.  See LT-9421.
 			SetCpropPreviousForInsert();
 			var helper = SelectionHelper.Create(this);
-			int flid = m_vc.ActiveFreeformFlid;
+			int flid = Vc.ActiveFreeformFlid;
 			UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoSetTransFromWordGlosses,
 				ITextStrings.ksRedoSetTransFromWordGlosses,
 				Cache.ActionHandlerAccessor,
@@ -1616,10 +1616,10 @@ namespace SIL.FieldWorks.IText
 						int hvoSeg = rgsli[itagSegments].hvo;
 						var annType = freeAnn.AnnotationTypeRA;
 						int idx = 0;
-						var choices = m_vc.LineChoices;
-						for (int i = choices.FirstFreeformIndex; i < choices.Count; )
+						var choices = Vc.LineChoices;
+						for (int i = choices.FirstEnabledFreeformIndex; i < choices.EnabledCount; )
 						{
-							var ffAannType = m_vc.SegDefnFromFfFlid(choices[i].Flid);
+							var ffAannType = Vc.SegDefnFromFfFlid(choices.EnabledLineSpecs[i].Flid);
 							if (ffAannType == annType)
 							{
 								idx = i;
@@ -1628,9 +1628,9 @@ namespace SIL.FieldWorks.IText
 							// Adjacent WSS of the same annotation count as only ONE object in the display.
 							// So we advance i over as many items in m_choices as there are adjacent Wss
 							// of the same flid.
-							i += choices.AdjacentWssAtIndex(i, hvoSeg).Length;
+							i += choices.AdjacentEnabledWssAtIndex(i, hvoSeg).Length;
 						}
-						int[] rgws = choices.AdjacentWssAtIndex(idx, hvoSeg);
+						int[] rgws = choices.AdjacentEnabledWssAtIndex(idx, hvoSeg);
 						for (int i = 0; i < rgws.Length; ++i)
 						{
 							if (rgws[i] == wsField)
@@ -1733,7 +1733,7 @@ namespace SIL.FieldWorks.IText
 				}
 				else if (flid != kTagUserPrompt)
 				{
-					m_vc.SetActiveFreeform(0, 0, 0, 0); // clear any current prompt.
+					Vc.SetActiveFreeform(0, 0, 0, 0); // clear any current prompt.
 				}
 				// do not extend the selection for a user prompt if the user is currently entering an IME composition,
 				// since we are about to switch the prompt to a real comment field
@@ -1761,7 +1761,7 @@ namespace SIL.FieldWorks.IText
 		private void SetupTranslationPrompt(SelectionHelper helper, int flid)
 		{
 			IVwSelection sel;
-			m_vc.SetActiveFreeform(helper.LevelInfo[0].hvo, flid, helper.Ws, helper.NumberOfPreviousProps);
+			Vc.SetActiveFreeform(helper.LevelInfo[0].hvo, flid, helper.Ws, helper.NumberOfPreviousProps);
 			helper.SetTextPropId(SelectionHelper.SelLimitType.Anchor, kTagUserPrompt);
 			helper.SetTextPropId(SelectionHelper.SelLimitType.End, kTagUserPrompt);
 			helper.NumberOfPreviousProps = 0; // only ever one occurrence of prompt.
@@ -1854,7 +1854,7 @@ namespace SIL.FieldWorks.IText
 
 		protected virtual FocusBoxController CreateFocusBoxInternal()
 		{
-			return new FocusBoxControllerForDisplay(m_mediator, m_propertyTable, m_styleSheet, LineChoices, m_vc.RightToLeft);
+			return new FocusBoxControllerForDisplay(m_mediator, m_propertyTable, m_styleSheet, LineChoices, Vc.RightToLeft);
 		}
 
 		/// <summary>
@@ -1863,7 +1863,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns>true, if it could hide the sandbox. false, if it was not installed.</returns>
 		internal override bool TryHideFocusBoxAndUninstall()
 		{
-			if (m_vc == null)
+			if (Vc == null)
 			{
 				// we're pretty well hidden already if we don't have a view
 				return false;
@@ -2208,9 +2208,9 @@ namespace SIL.FieldWorks.IText
 				});
 
 			TryHideFocusBoxAndUninstall();
-			if (m_vc.LineChoices.IndexOf(InterlinLineChoices.kflidNote) < 0)
+			if (Vc.LineChoices.IndexInEnabled(InterlinLineChoices.kflidNote) < 0)
 			{
-				m_vc.LineChoices.Add(InterlinLineChoices.kflidNote);
+				Vc.LineChoices.Add(InterlinLineChoices.kflidNote);
 				PersistAndDisplayChangedLineChoices();
 			}
 
@@ -2237,14 +2237,14 @@ namespace SIL.FieldWorks.IText
 
 		internal void RecordGuessIfNotKnown(AnalysisOccurrence selected)
 		{
-			if (m_vc != null) // I think this only happens in tests.
-				m_vc.RecordGuessIfNotKnown(selected);
+			if (Vc != null) // I think this only happens in tests.
+				Vc.RecordGuessIfNotKnown(selected);
 		}
 
 		internal IAnalysis GetGuessForWordform(IWfiWordform wf, int ws)
 		{
-			if (m_vc != null)
-				return m_vc.GetGuessForWordform(wf, ws);
+			if (Vc != null)
+				return Vc.GetGuessForWordform(wf, ws);
 			return null;
 		}
 
@@ -2324,7 +2324,7 @@ namespace SIL.FieldWorks.IText
 							IAnalysis occAn = occ.Analysis; // averts “Access to the modified closure” warning in resharper
 							if (occAn is IWfiAnalysis || occAn is IWfiWordform)
 							{   // this is an analysis or a wordform
-								int hvo = m_vc.GetGuess(occAn);
+								int hvo = Vc.GetGuess(occAn);
 								if (occAn.Hvo != hvo)
 								{   // this is a guess, so approve it
 									// 1) A second occurence of a word that has had a lexicon entry or sense created for it.

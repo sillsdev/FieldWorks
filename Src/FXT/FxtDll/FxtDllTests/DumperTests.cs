@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2003-2010 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,11 +11,11 @@ using System.Xml;
 
 using NUnit.Framework;
 using SIL.LCModel;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.FXT
 {
-#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO
 	[TestFixture]
 	public class DumperTests : MemoryOnlyBackendProviderTestBase
 	{
@@ -34,15 +34,36 @@ namespace SIL.FieldWorks.Common.FXT
 			m_germanId = Cache.WritingSystemFactory.GetWsFromStr("de");
 			m_frenchId = Cache.WritingSystemFactory.GetWsFromStr("fr");
 
-			ITsStrFactory tsf = Cache.TsStrFactory;
-			Cache.LangProject.MainCountry.set_String(m_germanId, tsf.MakeString("bestAnalName-german", m_germanId));
-			Cache.LangProject.MainCountry.set_String(m_frenchId, tsf.MakeString("frenchNameOfProject", m_frenchId));
-			Cache.LangProject.WorldRegion.set_String(m_germanId, tsf.MakeString("arctic-german", m_germanId));
-			Cache.LangProject.LexDbOA.Name.set_String(m_frenchId, tsf.MakeString("frenchLexDBName", m_frenchId));
+#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO
+			Cache.LangProject.MainCountry.set_String(m_germanId, TsStringUtils.MakeString("bestAnalName-german", m_germanId));
+			Cache.LangProject.MainCountry.set_String(m_frenchId, TsStringUtils.MakeString("frenchNameOfProject", m_frenchId));
+			Cache.LangProject.WorldRegion.set_String(m_germanId, TsStringUtils.MakeString("arctic-german", m_germanId));
+			Cache.LangProject.LexDbOA.Name.set_String(m_frenchId, TsStringUtils.MakeString("frenchLexDBName", m_frenchId));
 			//clear the first analysis alternative
 			Cache.LangProject.MainCountry.AnalysisDefaultWritingSystem = null;
+#endif
 		}
 
+		[Test]
+		public void GetStringOfProperty_Ws1()
+		{
+			Assert.That(new TestDumper(Cache).GetStringOfProperty_(new DateTime(1984, 04, 26, 13, 32, 04), 1), Is.EqualTo("1984-04-26"));
+		}
+
+		/// <remarks>
+		/// This test was written in 2022-08 after over a decade of no tests for this project.
+		/// For reasons unknown to Hasso (2022.08), the specified format is dd/MMM/yyyy, but the returned format is dd-MMM-yyyy.
+		/// </remarks>
+		[Test]
+		public void GetStringOfProperty_WsNot1()
+		{
+			var result = new TestDumper(Cache).GetStringOfProperty_(new DateTime(1984, 04, 26, 13, 32, 04), m_germanId);
+			Assert.That(result, Does.StartWith("26"));
+			Assert.That(result, Does.Contain("Apr"));
+			Assert.That(result, Does.EndWith("1984"));
+		}
+
+#if WANTTESTPORT //(FLEx) Need to port these tests to the new FDO
 		[Test]
 		public void CanFindTemplateForExactMatch()
 		{
@@ -105,10 +126,11 @@ namespace SIL.FieldWorks.Common.FXT
 			Assert.AreEqual("bestAnalName-german", attr);
 		}
 
-		[Test, ExpectedException(typeof(RuntimeConfigurationException))]
+		[Test]
 		public void MissingClassTemplatesThrowsInStrictMode()
 		{
-			GetResultString("<objAtomic objProperty='WordformInventoryOA'/>", "", "requireClassTemplatesForEverything='true'");
+			Assert.That(() => GetResultString("<objAtomic objProperty='WordformInventoryOA'/>", "", "requireClassTemplatesForEverything='true'"),
+				Throws.TypeOf<RuntimeConfigurationException>());
 		}
 
 
@@ -184,7 +206,7 @@ namespace SIL.FieldWorks.Common.FXT
 			doc.LoadXml(result);
 			string attr = doc.ChildNodes[0].Attributes["superDuperRef"].Value;
 
-			Assert.IsNotNull(new Guid(attr));
+			Assert.That(new Guid(attr), Is.Not.Null);
 		}
 
 		[Test]
@@ -195,7 +217,7 @@ namespace SIL.FieldWorks.Common.FXT
 			doc.LoadXml(result);
 			string attr = doc.ChildNodes[0].Attributes["hvoRef"].Value;
 
-			Assert.IsNotNull(int.Parse(attr));
+			Assert.That(int.Parse(attr), Is.Not.Null);
 		}
 
 
@@ -203,7 +225,7 @@ namespace SIL.FieldWorks.Common.FXT
 		public void OutputGuidOfOwnerAsAttribute()
 		{
 			Assert.AreEqual(Cache.LangProject.Hvo, Cache.LangProject.WordformInventoryOA.Owner.Hvo);
-			Assert.IsNotNull(Cache.LangProject.WordformInventoryOA);
+			Assert.That(Cache.LangProject.WordformInventoryOA, Is.Not.Null);
 			Assert.Greater(Cache.LangProject.WordformInventoryOA.Owner.Hvo, 0);
 			string result = GetResultString("<objAtomic objProperty='WordformInventoryOA'/>",
 			   "<class name='WordformInventory'><wfi><attributeIndirect  name='parent' simpleProperty='Guid' target='Owner'/></wfi></class>");
@@ -251,6 +273,13 @@ namespace SIL.FieldWorks.Common.FXT
 			dumper.Go(entry as CmObject, writer, new IFilterStrategy[] { });
 			return builder.ToString();
 		}
-	}
 #endif
+	}
+
+	internal class TestDumper : XDumper
+	{
+		public TestDumper(LcmCache cache) : base (cache){}
+
+		public string GetStringOfProperty_(object property, int ws) => base.GetStringOfProperty(property, ws);
+	}
 }

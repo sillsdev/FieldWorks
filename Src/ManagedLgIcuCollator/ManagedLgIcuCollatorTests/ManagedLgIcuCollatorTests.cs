@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.Language
 		public void OpenTest()
 		{
 			using (var icuCollator = ManagedLgIcuCollatorInitializerHelper())
-				Assert.IsNotNull(icuCollator);
+				Assert.That(icuCollator, Is.Not.Null);
 		}
 
 		[Test()]
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.Language
 		{
 			using (var icuCollator = ManagedLgIcuCollatorInitializerHelper())
 			{
-				Assert.IsNotNull(icuCollator);
+				Assert.That(icuCollator, Is.Not.Null);
 
 				icuCollator.Close();
 			}
@@ -57,19 +57,18 @@ namespace SIL.FieldWorks.Language
 
 		[Test()]
 		[Category("ByHand")]
-		[ExpectedException(typeof(NotImplementedException))]
 		public void GetSortKeyTest()
 		{
 			using (var icuCollator = ManagedLgIcuCollatorInitializerHelper())
 			{
-				Assert.IsNotNull(icuCollator);
+				Assert.That(icuCollator, Is.Not.Null);
 
 				var options = new LgCollatingOptions();
 
 				string result = icuCollator.get_SortKey("abc", options);
 				Assert.IsNotEmpty(result);
 
-				icuCollator.Close();
+				Assert.That(() => icuCollator.Close(), Throws.TypeOf<NotImplementedException>());
 			}
 		}
 
@@ -79,12 +78,12 @@ namespace SIL.FieldWorks.Language
 		{
 			using (var icuCollator= ManagedLgIcuCollatorInitializerHelper())
 			{
-				Assert.IsNotNull(icuCollator);
+				Assert.That(icuCollator, Is.Not.Null);
 
 				var options = new LgCollatingOptions();
 
 				object obj = icuCollator.get_SortKeyVariant("abc", options);
-				Assert.IsNotNull(obj);
+				Assert.That(obj, Is.Not.Null);
 
 				icuCollator.Close();
 			}
@@ -92,15 +91,15 @@ namespace SIL.FieldWorks.Language
 
 		[Test()]
 		[Category("ByHand")]
-		[ExpectedException(typeof(NotImplementedException))]
 		public void GetSortKeyRgchTest()
 		{
 			using (var icuCollator = ManagedLgIcuCollatorInitializerHelper())
 			{
-				Assert.IsNotNull(icuCollator);
+				Assert.That(icuCollator, Is.Not.Null);
 
 				int cchOut;
-				icuCollator.SortKeyRgch(null, 0, new LgCollatingOptions(), 0, null, out cchOut);
+				Assert.That(() => icuCollator.SortKeyRgch(null, 0, new LgCollatingOptions(), 0, null, out cchOut),
+					Throws.TypeOf<NotImplementedException>());
 			}
 		}
 
@@ -110,7 +109,7 @@ namespace SIL.FieldWorks.Language
 		{
 			using (var icuCollator = ManagedLgIcuCollatorInitializerHelper())
 			{
-				Assert.IsNotNull(icuCollator);
+				Assert.That(icuCollator, Is.Not.Null);
 
 				var options = new LgCollatingOptions();
 
@@ -137,7 +136,7 @@ namespace SIL.FieldWorks.Language
 		{
 			using (var icuCollator = ManagedLgIcuCollatorInitializerHelper())
 			{
-				Assert.IsNotNull(icuCollator);
+				Assert.That(icuCollator, Is.Not.Null);
 
 				var options = new LgCollatingOptions();
 
@@ -158,7 +157,7 @@ namespace SIL.FieldWorks.Language
 		{
 			using (var icuCollator = ManagedLgIcuCollatorInitializerHelper())
 			{
-				Assert.IsNotNull(icuCollator);
+				Assert.That(icuCollator, Is.Not.Null);
 
 				var options = new LgCollatingOptions();
 
@@ -197,7 +196,7 @@ namespace SIL.FieldWorks.Language
 		{
 			using (var icuCollator = ManagedLgIcuCollatorInitializerHelper())
 			{
-				Assert.IsNotNull(icuCollator);
+				Assert.That(icuCollator, Is.Not.Null);
 
 				var options = new LgCollatingOptions();
 

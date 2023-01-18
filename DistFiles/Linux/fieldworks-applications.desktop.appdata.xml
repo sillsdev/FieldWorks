@@ -3,7 +3,7 @@
 <component type="desktop">
 	<id>fieldworks-applications.desktop</id>
 	<metadata_license>CC-BY-SA-3.0</metadata_license>
-	<project_license>LGPL-2.1+ and CPOL-1.02</project_license>
+	<project_license>LGPL-2.1+ and MIT</project_license>
 	<name>FieldWorks Language Explorer</name>
 	<summary>Suite of programs to manage language and cultural data</summary>
 

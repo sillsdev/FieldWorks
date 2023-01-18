@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -27,14 +27,14 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Don't use the real file system
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			FileUtils.Manager.SetFileAdapter(new MockFileOS());
 		}
 
 		/// <summary/>
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureTeardown()
 		{
 			FileUtils.Manager.Reset();
@@ -44,37 +44,33 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Tests creating a MetaDataCache with no input pathname to the XML file.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void CreateMetaDataCacheNoFile()
 		{
-			MetaDataCache.CreateMetaDataCache(null);
+			Assert.That(() =>  MetaDataCache.CreateMetaDataCache(null), Throws.ArgumentNullException);
 		}
 
 		/// <summary>
 		/// Tests creating a MetaDataCache with non-existant input pathname to the XML file.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void CreateMetaDataCacheEmptyPathname()
 		{
-			MetaDataCache.CreateMetaDataCache("");
+			Assert.That(() =>  MetaDataCache.CreateMetaDataCache(""), Throws.ArgumentException);
 		}
 
 		/// <summary>
 		/// Tests creating a MetaDataCache with non-existant input pathname to the XML file.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(FileNotFoundException))]
 		public void CreateMetaDataCacheBadPathname()
 		{
-			MetaDataCache.CreateMetaDataCache("MyBadpathname");
+			Assert.That(() => MetaDataCache.CreateMetaDataCache("MyBadpathname"), Throws.TypeOf<FileNotFoundException>());
 		}
 
 		/// <summary>
 		/// Tests creating a MetaDataCache with non-existant input pathname to the XML file.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(XmlException))]
 		public void CreateMetaDataCacheNotXMLData()
 		{
 			// <?xml version="1.0" encoding="utf-8"?>
@@ -87,7 +83,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			}
 			try
 			{
-				MetaDataCache.CreateMetaDataCache(bogusDataPathname);
+				Assert.That(() =>  MetaDataCache.CreateMetaDataCache(bogusDataPathname), Throws.TypeOf<XmlException>());
 			}
 			finally
 			{
@@ -99,7 +95,6 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Tests creating a MetaDataCache with non-existant input pathname to the XML file.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void CreateMetaDataCacheWrongXMLData()
 		{
 			const string bogusDataPathname = "Bogus.xml";
@@ -112,7 +107,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			}
 			try
 			{
-				MetaDataCache.CreateMetaDataCache(bogusDataPathname);
+				Assert.That(() =>  MetaDataCache.CreateMetaDataCache(bogusDataPathname), Throws.ArgumentException);
 			}
 			finally
 			{
@@ -174,7 +169,6 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Tests attempting to initialize a MetaDataCache twice with the same XML file.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void CreateMetaDataCacheDuplicateFiles()
 		{
 			const string bogusDataPathname = "Good.xml";
@@ -204,7 +198,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			}
 			try
 			{
-				mdc.InitXml(bogusDataPathname, false);
+				Assert.That(() => mdc.InitXml(bogusDataPathname, false), Throws.ArgumentException);
 			}
 			finally
 			{
@@ -216,7 +210,6 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Tests creating a MetaDataCache with duplicate classes defined in an XML file.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void CreateMetaDataCacheDuplicateClassesInXmlFile()
 		{
 			const string bogusDataPathname = "Bogus.xml";
@@ -233,7 +226,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			}
 			try
 			{
-				MetaDataCache.CreateMetaDataCache(bogusDataPathname);
+				Assert.That(() =>  MetaDataCache.CreateMetaDataCache(bogusDataPathname), Throws.ArgumentException);
 			}
 			finally
 			{
@@ -245,7 +238,6 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Tests creating a MetaDataCache with duplicate classes defined in different XML files.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void CreateMetaDataCacheDuplicateClassesInTwoFiles()
 		{
 			var bogusDataPathname = "Good.xml";
@@ -281,7 +273,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			}
 			try
 			{
-				mdc.InitXml(bogusDataPathname, false);
+				Assert.That(() => mdc.InitXml(bogusDataPathname, false), Throws.ArgumentException);
 			}
 			finally
 			{
@@ -335,7 +327,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// If a test overrides this, it should call this base implementation.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public virtual void FixtureSetup()
 		{
 			FileUtils.Manager.SetFileAdapter(new MockFileOS());
@@ -347,7 +339,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		}
 
 		/// <summary/>
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public virtual void FixtureTearDown()
 		{
 			FileUtils.Manager.Reset();
@@ -404,10 +396,9 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// This should test for any case where the given flid is not valid.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void GetClsNameForBadFlidTest()
 		{
-			m_metaDataCache.GetOwnClsName(50);
+			Assert.That(() => m_metaDataCache.GetOwnClsName(50), Throws.ArgumentException);
 		}
 
 		/// <summary>
@@ -469,7 +460,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetFieldLabelIsNullTest()
 		{
-			Assert.IsNull(m_metaDataCache.GetFieldLabel(59003), "Field label not null.");
+			Assert.That(m_metaDataCache.GetFieldLabel(59003), Is.Null, "Field label not null.");
 		}
 
 		/// <summary>
@@ -478,7 +469,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetFieldHelpIsNullTest()
 		{
-			Assert.IsNull(m_metaDataCache.GetFieldHelp(59003), "Field help not null.");
+			Assert.That(m_metaDataCache.GetFieldHelp(59003), Is.Null, "Field help not null.");
 		}
 
 		/// <summary>
@@ -487,7 +478,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetFieldXmlIsNullTest()
 		{
-			Assert.IsNull(m_metaDataCache.GetFieldXml(59003), "Field XML not null.");
+			Assert.That(m_metaDataCache.GetFieldXml(59003), Is.Null, "Field XML not null.");
 		}
 
 		/// <summary>
@@ -570,10 +561,9 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Check for validity of adding the given clid to an illegal field of 0.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void get_IsValidClassBadTest()
 		{
-			m_metaDataCache.get_IsValidClass(0, 0);
+			Assert.That(() => m_metaDataCache.get_IsValidClass(0, 0), Throws.ArgumentException);
 		}
 	}
 
@@ -620,10 +610,9 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Check for finding the class name based on the given clid.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void GetBaseClsIdBadTest()
 		{
-			m_metaDataCache.GetBaseClsId(0);
+			Assert.That(() => m_metaDataCache.GetBaseClsId(0), Throws.ArgumentException);
 		}
 
 		/// <summary>
@@ -640,10 +629,9 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Check for finding the class name based on the given clid.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void GetBaseClsNameBadTest()
 		{
-			m_metaDataCache.GetBaseClsName(0);
+			Assert.That(() => m_metaDataCache.GetBaseClsName(0), Throws.ArgumentException);
 		}
 
 		/// <summary>
@@ -704,13 +692,13 @@ namespace SIL.FieldWorks.CacheLightTests
 		///
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void GetFieldsBadTest()
 		{
 			using (var flids = MarshalEx.ArrayToNative<int>(500))
 			{
 				int countAllFlidsOut = 1;
-				m_metaDataCache.GetFields(49, true, (int)CellarPropertyTypeFilter.All, countAllFlidsOut, flids);
+				Assert.That(() => m_metaDataCache.GetFields(49, true, (int)CellarPropertyTypeFilter.All,
+					countAllFlidsOut, flids), Throws.ArgumentException);
 			}
 		}
 	}
@@ -739,10 +727,9 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Tests GetClassId with an invalid class name
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void GetClassId_Invalid()
 		{
-			m_metaDataCache.GetClassId("NonExistantClassName");
+			Assert.That(() => m_metaDataCache.GetClassId("NonExistantClassName"), Throws.ArgumentException);
 		}
 
 		/// <summary>
@@ -986,70 +973,65 @@ namespace SIL.FieldWorks.CacheLightTests
 		/// Check for case where the specified class for the new virtual field doesn't exist.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void AddVirtualPropNoClassTest()
 		{
 			const int flid = 2000000002;
 			const int type = (int)CellarPropertyType.Image;
 			const string className = "BogusClass";
 			const string fieldName = "NewImageVP";
-			m_metaDataCache.AddVirtualProp(className, fieldName, flid, type);
+			Assert.That(() => m_metaDataCache.AddVirtualProp(className, fieldName, flid, type), Throws.ArgumentException);
 		}
 
 		/// <summary>
 		/// Check for case where the specified field name for the new virtual field exists.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void AddVirtualPropFieldExistsTest()
 		{
 			const int flid = 2000000003;
 			const int type = (int)CellarPropertyType.Image;
 			const string className = "ClassK";
 			const string fieldName = "MultiStringProp11";
-			m_metaDataCache.AddVirtualProp(className, fieldName, flid, type);
+			Assert.That(() => m_metaDataCache.AddVirtualProp(className, fieldName, flid, type), Throws.ArgumentException);
 		}
 
 		/// <summary>
 		/// Check for case where the specified flid for the new virtual field exists.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void AddVirtualPropFlidExistsTest()
 		{
 			var flid = m_metaDataCache.GetFieldId("ClassB", "WhoCares", true);
 			const int type = (int)CellarPropertyType.Image;
 			const string className = "ClassB";
 			const string fieldName = "NewName";
-			m_metaDataCache.AddVirtualProp(className, fieldName, flid, type);
+			Assert.That(() => m_metaDataCache.AddVirtualProp(className, fieldName, flid, type), Throws.ArgumentException);
 		}
 
 		/// <summary>
 		/// Check for case where the specified flid for the new virtual field exists.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void AddVirtualPropInvalidLowFieldTypeTest()
 		{
 			const int flid = 2000000004;
 			const int type = 0;
 			const string className = "ClassB";
 			const string fieldName = "NewName";
-			m_metaDataCache.AddVirtualProp(className, fieldName, flid, type);
+			Assert.That(() => m_metaDataCache.AddVirtualProp(className, fieldName, flid, type), Throws.ArgumentException);
 		}
 
 		/// <summary>
 		/// Check for case where the specified flid for the new virtual field exists.
 		/// </summary>
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void AddVirtualPropInvalidHighFieldTypeTest()
 		{
 			const int flid = 2000000005;
 			const int type = 1000;
 			const string className = "ClassB";
 			const string fieldName = "NewName";
-			m_metaDataCache.AddVirtualProp(className, fieldName, flid, type);
+			Assert.That(() => m_metaDataCache.AddVirtualProp(className, fieldName, flid, type), Throws.ArgumentException);
 		}
 	}
 

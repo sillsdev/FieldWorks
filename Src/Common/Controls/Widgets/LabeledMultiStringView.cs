@@ -364,14 +364,34 @@ namespace SIL.FieldWorks.Common.Widgets
 
 		void soundFieldControl_SoundDeleted(object sender, EventArgs e)
 		{
-			// We don't want the file name hanging aroudn once we deleted the file.
+			// We don't want the file name hanging around once we deleted the file.
 			var sc = (ShortSoundFieldControl)sender;
 			int dummy;
 			var ws = WsForSoundField(sc, out dummy);
 			var handle = ws == null ? 0 : ws.Handle;
 			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_innerView.Cache.ActionHandlerAccessor,
-				() => m_innerView.Cache.DomainDataByFlid.SetMultiStringAlt(m_innerView.HvoObj, m_innerView.Flid, handle,
-					TsStringUtils.EmptyString(handle)));
+				() =>
+				{
+					m_innerView.Cache.DomainDataByFlid.SetMultiStringAlt(m_innerView.HvoObj,
+						m_innerView.Flid, handle,
+						TsStringUtils.EmptyString(handle));
+					SetDateModifiedOnFieldOwner(m_innerView.HvoObj, m_innerView.Cache);
+				});
+		}
+
+		private void SetDateModifiedOnFieldOwner(int multiStringFieldOwner, LcmCache cache)
+		{
+			// Some multi-strings are owned directly by the Entry, others are owned by senses, or others
+			var fieldOwner = cache.ServiceLocator.ObjectRepository.GetObject(multiStringFieldOwner);
+			while (fieldOwner != null && !(fieldOwner is ILexEntry))
+			{
+				fieldOwner = fieldOwner.Owner;
+			}
+
+			if (fieldOwner is ILexEntry entry)
+			{
+				entry.DateModified = DateTime.Now;
+			}
 		}
 
 		void soundFieldControl_BeforeStartingToRecord(object sender, EventArgs e)
@@ -420,12 +440,17 @@ namespace SIL.FieldWorks.Common.Widgets
 			var ws = WsForSoundField(sc, out dummy);
 			var filenameNew = Path.GetFileName(sc.Path);
 			var filenameOld = m_innerView.Cache.DomainDataByFlid.get_MultiStringAlt(m_innerView.HvoObj, m_innerView.Flid, ws.Handle).Text ?? "";
-			if (filenameNew != filenameOld)
-			{
-				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_innerView.Cache.ActionHandlerAccessor,
-					() => m_innerView.Cache.DomainDataByFlid.SetMultiStringAlt(m_innerView.HvoObj, m_innerView.Flid,
-						ws.Handle, TsStringUtils.MakeString(filenameNew, ws.Handle)));
-			}
+			NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_innerView.Cache.ActionHandlerAccessor,
+				() =>
+				{
+					if (filenameNew != filenameOld)
+					{
+						m_innerView.Cache.DomainDataByFlid.SetMultiStringAlt(m_innerView.HvoObj,
+							m_innerView.Flid,
+							ws.Handle, TsStringUtils.MakeString(filenameNew, ws.Handle));
+					}
+					SetDateModifiedOnFieldOwner(m_innerView.HvoObj, m_innerView.Cache);
+				});
 		}
 
 		/// <summary>

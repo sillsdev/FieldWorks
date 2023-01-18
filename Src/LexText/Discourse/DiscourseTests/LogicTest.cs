@@ -192,6 +192,24 @@ namespace SIL.FieldWorks.Discourse
 		#region tests (and private verify methods for ONE test only).
 
 		[Test]
+		public void LogicWithNullChart_ColumnsAndGroups_IsEmpty()
+		{
+			m_logic.Chart = null;
+			Assert.DoesNotThrow(() => { var _ = m_logic.ColumnsAndGroups.Headers; },
+				"Null chart in logic should not cause crash. Data changes can invalidate the chart leaving the logic with a null chart temporarily.");
+			Assert.That(m_logic.ColumnsAndGroups.Headers, Is.Empty);
+		}
+
+		[Test]
+		public void LogicWithNullChart_AllMyColumns_IsEmpty()
+		{
+			m_logic.Chart = null;
+			Assert.DoesNotThrow(() => { var _ = m_logic.AllMyColumns; },
+				"Null chart in logic should not cause crash. Data changes can invalidate the chart leaving the logic with a null chart temporarily.");
+			Assert.That(m_logic.AllMyColumns, Is.Empty);
+		}
+
+		[Test]
 		public void MoveWithNoSelectionAvailable()
 		{
 			// We've set everything up except some input wordforms. We should get an error message.
@@ -752,9 +770,9 @@ namespace SIL.FieldWorks.Discourse
 			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
 			Cache.ActionHandlerAccessor.Undo();
 			VerifyRow(0, "1a", 1);
-			Assert.IsNotNull(row0.CellsOS, "Should be a CellPart here.");
+			Assert.That(row0.CellsOS, Is.Not.Null, "Should be a CellPart here.");
 			var cellPartUndo = row0.CellsOS[0] as IConstChartWordGroup;
-			Assert.IsNotNull(cellPartUndo);
+			Assert.That(cellPartUndo, Is.Not.Null);
 			Assert.AreEqual(allParaOccurrences[0].Analysis.Hvo, cellPartUndo.GetOccurrences()[0].Analysis.Hvo);
 
 			// And now Redo

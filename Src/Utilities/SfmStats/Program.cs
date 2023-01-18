@@ -1,9 +1,10 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.IO;
 
@@ -73,7 +74,7 @@ namespace SfmStats
 			sb.AppendFormat("{0}{1}", "------------------------------------------------------------------------------", nl);
 			sb.AppendFormat("{0}{1}{2}", "- This output has been created by ", name, nl);
 			sb.AppendFormat("{0}{1}{2}", "- From the input file: ", m_FileName, nl);
-			sb.AppendFormat("{0}{1}{2}", "- On: ", DateTime.Now.ToString(), nl);
+			sb.AppendFormat("{0}{1}{2}", "- On: ", DateTime.Now.ToString(CultureInfo.InvariantCulture), nl);
 			sb.AppendFormat("{0}{1}", "------------------------------------------------------------------------------", nl);
 			return sb.ToString();
 		}

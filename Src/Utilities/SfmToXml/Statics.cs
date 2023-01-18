@@ -1,10 +1,11 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Collections.Generic;
 using System.Collections;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace Sfm2Xml
 {
@@ -150,7 +151,7 @@ namespace Sfm2Xml
 			string nl = System.Environment.NewLine;
 			System.Text.StringBuilder XMLText = new System.Text.StringBuilder(8192);
 
-			AddSectionComment("Created via the Lexical Import process: " + System.DateTime.Now.ToString(), ref XMLText);
+			AddSectionComment("Created via the Lexical Import process: " + System.DateTime.Now.ToString(CultureInfo.InvariantCulture), ref XMLText);
 			XMLText.Append("<sfmMapping version=\""+MapFileVersion+"\">" + nl);			// Start of the map file
 			// ====================================================================
 			// Global Settings section of XML map file

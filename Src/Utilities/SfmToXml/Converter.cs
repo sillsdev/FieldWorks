@@ -1,4 +1,4 @@
-// Copyright (c) 2017 SIL International
+// Copyright (c) 2017-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,6 +8,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Text;
 using System.Xml;
 using ECInterfaces;
 using SilEncConverters40;
@@ -43,19 +45,16 @@ namespace Sfm2Xml
 		private string m_HierarchyLevelName;	// name of object
 		private ArrayList m_pendingSfms;	// list of PendingSfmData to be output still
 		private bool m_containsUniqueSfm;	// true if this already contains a unique sfm
-//		private bool m_isClosed;			// true if this entry is unable to accept data: IE it's closed
 
 		/// <summary>
 		/// Create a ClsPathObject with the given name
 		/// </summary>
-		/// <param name="name"></param>
 		public ClsPathObject(string name)
 		{
 			m_InUseSfms = new Hashtable();
 			m_HierarchyLevelName = name;
 			m_pendingSfms = new ArrayList();
 			m_containsUniqueSfm = false;
-//			m_isClosed = false;
 		}
 
 		/// <summary>
@@ -121,11 +120,6 @@ namespace Sfm2Xml
 		}
 
 		public bool AlreadContainsUniqueSfm { get { return m_containsUniqueSfm; }}
-//		public bool IsClosed
-//		{
-//			get { return m_isClosed;}
-//			set { m_isClosed = value; }
-//		}
 
 		/// <summary>
 		/// return true if the sfm is in the list of used sfm's
@@ -1098,18 +1092,17 @@ namespace Sfm2Xml
 		private void WriteOutputFileComment(string SfmFileName, string MappingFileName,
 			string OutputFileName, System.Xml.XmlTextWriter xmlOutput)
 		{
-			string nl = System.Environment.NewLine;
-			string comments = nl;
-			comments += " ================================================================" + nl;
-			comments += " " + System.DateTime.Now.ToString() + nl;
-			comments += " Created by " + System.Reflection.Assembly.GetExecutingAssembly().ToString() + nl;
-			comments +=  nl;
-			comments += " The command line parameters were :" + nl;
-			comments += "  sfmFileName : " + MakeValidXMLComment(SfmFileName) + nl;
-			comments += "  mappingFile : " + MakeValidXMLComment(MappingFileName) + nl;
-			comments += "  xmlOutput   : " + MakeValidXMLComment(OutputFileName) + nl;
-			comments += " ================================================================" + nl;
-			xmlOutput.WriteComment(comments);
+			var comments = new StringBuilder().AppendLine();
+			comments.AppendLine(" ================================================================");
+			comments.Append(" ").AppendLine(System.DateTime.Now.ToString(CultureInfo.InvariantCulture));
+			comments.Append(" Created by ").AppendLine(System.Reflection.Assembly.GetExecutingAssembly().ToString());
+			comments.AppendLine();
+			comments.AppendLine(" The command line parameters were :");
+			comments.Append("  sfmFileName : ").AppendLine(MakeValidXMLComment(SfmFileName));
+			comments.Append("  mappingFile : ").AppendLine(MakeValidXMLComment(MappingFileName));
+			comments.Append("  xmlOutput   : ").AppendLine(MakeValidXMLComment(OutputFileName));
+			comments.AppendLine(" ================================================================");
+			xmlOutput.WriteComment(comments.ToString());
 		}
 
 		protected bool ReadFieldDescriptions(System.Xml.XmlDocument xmlMap)
@@ -2178,7 +2171,7 @@ namespace Sfm2Xml
 				{
 					DateTime dt = System.DateTime.Parse(convertedDataString);
 					if (dt.Year < 1800)
-						throw new Exception();	// SQL Server insists year >= 1753 for datetime.  See LT-8073.
+						throw new Exception($"Year must be at least 1800 but was {dt.Year}"); // SQL Server insists year >= 1753 for datetime.  See LT-8073.
 					string newDate = dt.ToString("yyy-MM-dd hh:mm:ss.fff");
 					convertedDataString = convertedDataString.Replace(System.Environment.NewLine, "");	// remove newlines
 

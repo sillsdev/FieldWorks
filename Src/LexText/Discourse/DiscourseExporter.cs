@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -29,25 +29,14 @@ namespace SIL.FieldWorks.Discourse
 		private readonly LcmCache m_cache;
 		private readonly IVwViewConstructor m_vc;
 		private readonly HashSet<int> m_usedWritingSystems = new HashSet<int>();
-		private int m_wsGloss;
-		private readonly List<string> m_glossesInCellCollector = new List<string>();
-		private readonly List<int> m_frags = new List<int>();
+		private readonly List<ITsString> m_glossesInCellCollector = new List<ITsString>();
+		private readonly Stack<int> m_frags = new Stack<int>();
 		private readonly IDsConstChart m_chart;
 		private readonly IConstChartRowRepository m_rowRepo;
-		private enum TitleStage
-		{
-			ktsStart,
-			ktsGotFirstRowGroups,
-			ktsGotNotesHeaderCell,
-			ktsStartedSecondHeaderRow,
-			ktsFinishedHeaders
-		}
-		// 0 = start, 1 = got first level titles, 2 = opened notes cell, 3 = opened first cell in in 2nd row,
-		// 4 = ended that got first real row (and later).
-		private TitleStage m_titleStage = TitleStage.ktsStart;
+		private int m_titleRowCount;
 		private bool m_fNextCellReversed;
 
-		private readonly int m_wsLineNumber; // ws to use for line numbers.
+		private readonly int m_wsLineNumber; // ws to use for line numbers. REVIEW (Hasso) 2022.02: use or lose?
 
 		public DiscourseExporter(LcmCache cache, XmlWriter writer, int hvoRoot, IVwViewConstructor vc,
 			int wsLineNumber)
@@ -93,12 +82,14 @@ namespace SIL.FieldWorks.Discourse
 
 		public void ExportDisplay()
 		{
+			m_writer.WriteStartDocument();
+			m_writer.WriteStartElement("document");
 			m_writer.WriteStartElement("chart");
-			m_writer.WriteStartElement("row"); // first header
-			m_writer.WriteAttributeString("type", "title1");
-			m_vc.Display(this, this.OpenObject, ConstChartVc.kfragPrintChart);
-			m_writer.WriteEndElement();
+			m_vc.Display(this, OpenObject, ConstChartVc.kfragPrintChart);
+			m_writer.WriteEndElement(); // chart
 			WriteLanguages();
+			m_writer.WriteEndElement(); // document
+			m_writer.WriteEndDocument();
 		}
 
 		/// <summary>
@@ -150,15 +141,7 @@ namespace SIL.FieldWorks.Discourse
 			}
 		}
 
-		int TopFragment
-		{
-			get
-			{
-				if (m_frags.Count == 0)
-					return 0;
-				return m_frags[m_frags.Count - 1];
-			}
-		}
+		private int TopFragment => m_frags.Count == 0 ? 0 : m_frags.Peek();
 
 		public override void AddStringAltMember(int tag, int ws, IVwViewConstructor _vwvc)
 		{
@@ -171,11 +154,7 @@ namespace SIL.FieldWorks.Discourse
 						WriteStringProp(tag, "word", ws);
 					break;
 				case WfiGlossTags.kflidForm:
-					m_wsGloss = ws;
-					var val = m_sda.get_MultiStringAlt(m_hvoCurr, tag, m_wsGloss).Text;
-					if (val == null)
-						val = "";
-					m_glossesInCellCollector.Add(val);
+					m_glossesInCellCollector.Add(m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws));
 					break;
 				case ConstChartTagTags.kflidTag:
 					WriteStringProp(tag, "lit", ws); // missing marker.
@@ -226,8 +205,7 @@ namespace SIL.FieldWorks.Discourse
 		private static int GetWsFromTsString(ITsString tss)
 		{
 			ITsTextProps ttp = tss.get_PropertiesAt(0);
-			int var;
-			return ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out var);
+			return ttp.GetIntPropValues((int)FwTextPropType.ktptWs, out _);
 		}
 
 		public override void set_IntProperty(int tpt, int tpv, int nValue)
@@ -271,9 +249,9 @@ namespace SIL.FieldWorks.Discourse
 
 		public override void AddObj(int hvoItem, IVwViewConstructor vc, int frag)
 		{
-			m_frags.Add(frag);
+			m_frags.Push(frag);
 			base.AddObj (hvoItem, vc, frag);
-			m_frags.RemoveAt(m_frags.Count - 1);
+			m_frags.Pop();
 		}
 
 		public override void AddString(ITsString tss)
@@ -294,7 +272,7 @@ namespace SIL.FieldWorks.Discourse
 				WriteWordForm("word", tss, ws, m_frags.Contains(ConstChartVc.kfragMovedTextCellPart) ? "moved" : null);
 			}
 			else if (text == "***")
-				m_glossesInCellCollector.Add(tss.Text);
+				m_glossesInCellCollector.Add(tss);
 			else
 			{
 				m_writer.WriteStartElement("lit");
@@ -308,12 +286,8 @@ namespace SIL.FieldWorks.Discourse
 
 		private void WriteMTMarker(ITsString tss)
 		{
-			ITsString newTss;
 			var ws = GetWsFromTsString(tss);
-			if (tss == ((ConstChartVc)m_vc).m_sMovedTextBefore)
-				newTss = TsStringUtils.MakeString("Preposed", ws);
-			else
-				newTss = TsStringUtils.MakeString("Postposed", ws);
+			var newTss = TsStringUtils.MakeString(tss.Equals(((ConstChartVc)m_vc).m_sMovedTextBefore) ? "Preposed" : "Postposed", ws);
 			var hvoTarget = m_sda.get_ObjectProp(m_hvoCurr,
 					ConstChartMovedTextMarkerTags.kflidWordGroup); // the CCWordGroup we refer to
 			if (ConstituentChartLogic.HasPreviousMovedItemOnLine(m_chart, hvoTarget))
@@ -329,7 +303,6 @@ namespace SIL.FieldWorks.Discourse
 		/// used in the discourse chart.
 		/// The default is nothing added, indicating that white space IS needed.
 		/// </summary>
-		/// <param name="lit"></param>
 		private void MarkNeedsSpace(string lit)
 		{
 			if (lit.StartsWith("]") || lit.StartsWith(")"))
@@ -340,47 +313,17 @@ namespace SIL.FieldWorks.Discourse
 
 		public override void AddObjProp(int tag, IVwViewConstructor vc, int frag)
 		{
-			m_frags.Add(frag);
-			switch (frag)
-			{
-				default:
-					break;
-			}
+			m_frags.Push(frag);
 			base.AddObjProp(tag, vc, frag);
-			switch (frag)
-			{
-				default:
-					break;
-			}
-			m_frags.RemoveAt(m_frags.Count - 1);
+			m_frags.Pop();
 		}
 
 		/// <summary>
 		/// Here we build the main structure of the chart as a collection of cells. We have to be a bit tricky about
 		/// generating the header.
 		/// </summary>
-		/// <param name="nRowSpan"></param>
-		/// <param name="nColSpan"></param>
 		public override void OpenTableCell(int nRowSpan, int nColSpan)
 		{
-			if (m_titleStage == TitleStage.ktsStart && m_frags.Count > 0 && m_frags[m_frags.Count - 1] == ConstChartVc.kfragColumnGroupHeader)
-			{
-				// got the first group header
-				m_titleStage = TitleStage.ktsGotFirstRowGroups;
-			}
-			else if (m_titleStage == TitleStage.ktsGotFirstRowGroups && m_frags.Count == 0)
-			{
-				// got the column groups, no longer in that, next thing is the notes header
-				m_titleStage = TitleStage.ktsGotNotesHeaderCell;
-			}
-			else if (m_titleStage == TitleStage.ktsGotNotesHeaderCell)
-			{
-				// got the one last cell on the very first row, now starting the second row, close first and make a new row.
-				m_writer.WriteEndElement();  // terminate the first header row.
-				m_writer.WriteStartElement("row"); // second row headers
-				m_writer.WriteAttributeString("type", "title2");
-				m_titleStage = TitleStage.ktsStartedSecondHeaderRow;
-			}
 			m_writer.WriteStartElement("cell");
 			if (m_fNextCellReversed)
 			{
@@ -402,9 +345,9 @@ namespace SIL.FieldWorks.Discourse
 				foreach (var gloss in m_glossesInCellCollector)
 				{
 					m_writer.WriteStartElement("gloss");
-					var icuCode = m_cache.WritingSystemFactory.GetStrFromWs(m_wsGloss);
+					var icuCode = m_cache.WritingSystemFactory.GetStrFromWs(gloss.get_WritingSystem(0));
 					m_writer.WriteAttributeString("lang", icuCode);
-					m_writer.WriteString(gloss);
+					m_writer.WriteString(gloss.Text ?? string.Empty);
 					m_writer.WriteEndElement(); // gloss
 				}
 				m_writer.WriteEndElement(); // glosses
@@ -415,6 +358,39 @@ namespace SIL.FieldWorks.Discourse
 			m_writer.WriteEndElement(); // cell
 		}
 
+		public override void OpenTableRow()
+		{
+			m_writer.WriteStartElement("row");
+
+			switch (TopFragment)
+			{
+				case ConstChartVc.kfragChartRow:
+					var row = m_rowRepo.GetObject(m_hvoCurr);
+					if (row.EndParagraph)
+						m_writer.WriteAttributeString("endPara", "true");
+					else if (row.EndSentence)
+						m_writer.WriteAttributeString("endSent", "true");
+					var clauseType = ConstChartVc.GetRowStyleName(row);
+					m_writer.WriteAttributeString("type", clauseType);
+					var label = row.Label.Text;
+					if (!string.IsNullOrEmpty(label))
+						m_writer.WriteAttributeString("id", label);
+					break;
+				default:
+					// Not a chart row; this must be a title row
+					m_writer.WriteAttributeString("type", $"title{++m_titleRowCount}");
+					break;
+			}
+
+			base.OpenTableRow();
+		}
+
+		public override void CloseTableRow()
+		{
+			base.CloseTableRow();
+			m_writer.WriteEndElement(); // row
+		}
+
 		/// <summary>
 		/// overridden to maintain the frags array.
 		/// </summary>
@@ -423,63 +399,9 @@ namespace SIL.FieldWorks.Discourse
 		/// <param name="frag"></param>
 		public override void AddObjVecItems(int tag, IVwViewConstructor vc, int frag)
 		{
-			m_frags.Add(frag);
+			m_frags.Push(frag);
 			base.AddObjVecItems (tag, vc, frag);
-			m_frags.RemoveAt(m_frags.Count - 1);
+			m_frags.Pop();
 		}
-
-		/// <summary>
-		/// Called whenever we start the display of an object, we currently use it to catch the start of
-		/// a row, basedon the frag. Overriding OpenTableRow() might be more natural, but I was trying to
-		/// minimize changes to other DLLs, and those routines are not currently virtual in the base class.
-		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="ihvo"></param>
-		protected override void OpenTheObject(int hvo, int ihvo)
-		{
-			int frag = m_frags[m_frags.Count - 1];
-			switch (frag)
-			{
-				case ConstChartVc.kfragChartRow:
-					if (m_titleStage == TitleStage.ktsStartedSecondHeaderRow)
-					{
-						// This is the best way I've found to detect the end of the second header row
-						// and terminate it.
-						m_titleStage = TitleStage.ktsFinishedHeaders;
-						m_writer.WriteEndElement();
-					}
-					m_writer.WriteStartElement("row");
-					var row = m_rowRepo.GetObject(hvo);
-					if (row.EndParagraph)
-						m_writer.WriteAttributeString("endPara", "true");
-					else if (row.EndSentence)
-						m_writer.WriteAttributeString("endSent", "true");
-					//ConstChartVc vc = m_vc as ConstChartVc;
-					var clauseType = ConstChartVc.GetRowStyleName(row);
-					m_writer.WriteAttributeString("type", clauseType);
-					var label = row.Label.Text;
-					if (!String.IsNullOrEmpty(label))
-						m_writer.WriteAttributeString("id", label);
-					break;
-				default:
-					break;
-			}
-			base.OpenTheObject(hvo, ihvo);
-		}
-
-		protected override void CloseTheObject()
-		{
-			base.CloseTheObject();
-			int frag = m_frags[m_frags.Count - 1];
-			switch (frag)
-			{
-				case ConstChartVc.kfragChartRow:
-					m_writer.WriteEndElement(); // row
-					break;
-				default:
-					break;
-			}
-		}
-
 	}
 }

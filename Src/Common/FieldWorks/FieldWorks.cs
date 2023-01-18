@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2020 SIL International
+// Copyright (c) 2010-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,6 +20,7 @@ using System.Security;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using DesktopAnalytics;
 using Gecko;
 using L10NSharp;
 using Microsoft.Win32;
@@ -46,12 +47,15 @@ using SIL.Keyboarding;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
+using SIL.Settings;
 using SIL.Utils;
+using SIL.Windows.Forms;
 using SIL.Windows.Forms.HtmlBrowser;
 using SIL.Windows.Forms.Keyboarding;
 using SIL.WritingSystems;
 using XCore;
 using ConfigurationException = SIL.Reporting.ConfigurationException;
+using PropertyTable = XCore.PropertyTable;
 
 namespace SIL.FieldWorks
 {
@@ -141,7 +145,7 @@ namespace SIL.FieldWorks
 			// Add lib/{x86,x64} to PATH so that C++ code can find ICU dlls
 			var newPath = $"{pathName}{Path.PathSeparator}{Environment.GetEnvironmentVariable("PATH")}";
 			Environment.SetEnvironmentVariable("PATH", newPath);
-			Icu.Wrapper.ConfineIcuVersions(54);
+			Icu.Wrapper.ConfineIcuVersions(70);
 			// ICU will be initialized further down (by calling FwUtils.InitializeIcu())
 			FwRegistryHelper.Initialize();
 
@@ -156,185 +160,203 @@ namespace SIL.FieldWorks
 				}
 				Xpcom.Initialize(firefoxPath);
 				GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
+				GeckoPreferences.User["print.show_print_progress"] = false;
 				// Set default browser for XWebBrowser to use GeckoFX.
 				// This can still be changed per instance by passing a parameter to the constructor.
 				XWebBrowser.DefaultBrowserType = XWebBrowser.BrowserType.GeckoFx;
-#endregion Initialize XULRunner
+				#endregion Initialize XULRunner
 
-				Logger.WriteEvent("Starting app");
-				SetGlobalExceptionHandler();
-				SetupErrorReportInformation();
-				InitializeLocalizationManager();
-
-				// Invoke does nothing directly, but causes BroadcastEventWindow to be initialized
-				// on this thread to prevent race conditions on shutdown.See TE-975
-				// See http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=911603&SiteID=1
-				// TODO-Linux: uses mono feature that is not implemented. What are the implications of this? Review.
-				if (MiscUtils.IsDotNet)
-					SystemEvents.InvokeOnEventsThread(new Action(DoNothing));
-
-				s_threadHelper = new ThreadHelper();
-
-				// ENHANCE (TimS): Another idea for ensuring that we have only one process started for
-				// this project is to use a Mutex. They can be used for cross-process resource access
-				// and would probably be less error-prone then our current implementation since it
-				// doesn't use TCP connections which can get hampered by firewalls. We would probably still
-				// need our current listener functionality for communicating with the other FW process,
-				// so it may not buy us much.
-				// See http://kristofverbiest.blogspot.com/2008/11/creating-single-instance-application.html.
-
-				// Make sure we do this ASAP. If another FieldWorks.exe is started we need
-				// to make sure it can find this one to ask about its project. (FWR-595)
-				CreateRemoteRequestListener();
-
-#if DEBUG
-				WriteExecutablePathSettingForDevs();
-#endif
-
-				if (IsInSingleFWProccessMode())
-				{
-					Logger.WriteEvent("Exiting: Detected single process mode");
-					return 0;
-				}
-
-				if (MigrateProjectsTo70())
-				{
-					Logger.WriteEvent("Migration to Version 7 was still needed.");
-				}
-
-				// Enable visual styles. Ignored on Windows 2000. Needs to be called before
-				// we create any controls! Unfortunately, this alone is not good enough. We
-				// also need to use a manifest, because some ListView and TreeView controls
-				// in native code do not have icons if we just use this method. This is caused
-				// by a bug in XP.
-				Application.EnableVisualStyles();
-
-				FwUtils.InitializeIcu();
-
-				// initialize the SLDR
-				Sldr.Initialize();
-
-				// initialize Palaso keyboarding
-				KeyboardController.Initialize();
-
-				FwAppArgs appArgs = new FwAppArgs(rgArgs);
-				s_noUserInterface = appArgs.NoUserInterface;
-				s_appServerMode = appArgs.AppServerMode;
-
-				s_ui = new FwLcmUI(GetHelpTopicProvider(), s_threadHelper);
+				// Only the first FieldWorks process should notify the user of updates. If the user wants to open multiple projects before restarting
+				// for updates, skip the nagging dialogs.
+				var shouldCheckForUpdates = Platform.IsWindows && !TryFindExistingProcess();
+				// FlexibleMessageBoxes for updates are shown before the main window is shown. Show them in the taskbar so they don't get lost.
+				FlexibleMessageBox.ShowInTaskbar = true;
+				FlexibleMessageBox.MaxWidthFactor = 0.4;
 
 				s_appSettings = new FwApplicationSettings();
 				s_appSettings.DeleteCorruptedSettingsFilesIfPresent();
 				s_appSettings.UpgradeIfNecessary();
 
-				ReportingSettings reportingSettings = s_appSettings.Reporting;
+				if (s_appSettings.Update == null && Platform.IsWindows)
+				{
+					s_appSettings.Update = new UpdateSettings
+					{
+						Behavior = DialogResult.Yes == FlexibleMessageBox.Show(
+								Properties.Resources.AutomaticUpdatesMessage, Properties.Resources.AutomaticUpdatesCaption, MessageBoxButtons.YesNo,
+								options: FlexibleMessageBoxOptions.AlwaysOnTop)
+							? UpdateSettings.Behaviors.Download
+							: UpdateSettings.Behaviors.DoNotCheck
+					};
+				}
+
+				var reportingSettings = s_appSettings.Reporting;
 				if (reportingSettings == null)
 				{
 					// Note: to simulate this, currently it works to delete all subfolders of
-					// (e.g.) C:\Users\thomson\AppData\Local\SIL\FieldWorks.exe_Url_tdkbegygwiuamaf3mokxurci022yv1kn
-					// That guid may depend on version or something similar; it's some artifact of how the Settings persists.
+					// (e.g.) C:\Users\thomson\AppData\Local\SIL\SIL FieldWorks\ (in the past, they were under FieldWorks.exe_Url_tdkbegygwiuamaf3mokxurci022yv1kn)
 					s_noPreviousReportingSettings = true;
 					reportingSettings = new ReportingSettings();
 					s_appSettings.Reporting = reportingSettings; //to avoid a defect in Settings rely on the Save in the code below
 				}
 
-				// Allow develpers and testers to avoid cluttering our analytics by setting an environment variable (FEEDBACK = false)
-				string feedbackEnvVar = Environment.GetEnvironmentVariable("FEEDBACK");
+				// REVIEW (Hasso) 2021.07: should checking FEEDBACK be centralized? Besides enabling and disabling analytics,
+				// it could be used to select an analytics channel.
+				// Allow developers and testers to avoid cluttering our analytics by setting an environment variable (FEEDBACK = false)
+				var feedbackEnvVar = Environment.GetEnvironmentVariable("FEEDBACK");
 				if (feedbackEnvVar != null)
 				{
-					reportingSettings.OkToPingBasicUsageData = feedbackEnvVar.ToLower().Equals("true") || feedbackEnvVar.ToLower().Equals("yes");
+					feedbackEnvVar = feedbackEnvVar.ToLowerInvariant();
+					reportingSettings.OkToPingBasicUsageData = feedbackEnvVar.Equals("true") || feedbackEnvVar.Equals("yes") || feedbackEnvVar.Equals("on");
 				}
 
-				// Note that in FLEx we are using this flag to indicate whether we can send usage data at all.
-				// Despite its name, Cambell says this is the original intent (I think there may have been
-				// some thought of adding flags one day to control sending more detailed info, but if 'basic
-				// navigation' is suppressed nothing is sent). May want to consider renaming to something like
-				// OkToPingAtAll, but that affects other Palaso clients.
-				// The usage reporter does not currently send anything at all if the flag is false, but to make
-				// sure, we don't even initialize reporting if it is false.
-				// (Note however that it starts out true. Thus, typically a few pings will be sent
-				// on the very first startup, before the user gets a chance to disable it.)
-				if (reportingSettings.OkToPingBasicUsageData)
-				{
-					UsageReporter.Init(reportingSettings, "flex.palaso.org", "UA-39238981-3",
+				s_appSettings.Save();
 #if DEBUG
-						true
+				const string analyticsKey = "ddkPyi0BMbFRyOC5PLuCKHVbJH2yI9Cu";
+				const bool sendFeedback = true;
 #else
-						false
+				const string analyticsKey = "ddkPyi0BMbFRyOC5PLuCKHVbJH2yI9Cu"; // TODO: replace with production key after initial testing period
+				var sendFeedback = reportingSettings.OkToPingBasicUsageData;
 #endif
-						);
-					// Init updates various things in the ReportingSettings, such as the number of times
-					// the application has been launched and the 'previous' version.
-					s_appSettings.Save();
-				}
-
-				// e.g. the first time the user runs FW9, we need to copy a bunch of registry keys
-				// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/9 or
-				// from HKCU/Software/SIL/FieldWorks/8 -> FieldWorks/9 and
-				// from HKCU/Software/WOW6432Node/SIL/FieldWorks -> HKCU/Software/SIL/FieldWorks
-				FwRegistryHelper.UpgradeUserSettingsIfNeeded();
-
-				if (appArgs.ShowHelp)
+				using (new Analytics(analyticsKey, new UserInfo(), sendFeedback))
 				{
-					ShowCommandLineHelp();
-					return 0;
-				}
-				else if (!string.IsNullOrEmpty(appArgs.ChooseProjectFile))
-				{
-					ProjectId projId = ChooseLangProject(null, GetHelpTopicProvider());
-					if (projId == null)
-						return 1; // User probably canceled
-					try
+
+					Logger.WriteEvent("Starting app");
+					SetGlobalExceptionHandler();
+					SetupErrorReportInformation();
+					InitializeLocalizationManager();
+
+					// Invoke does nothing directly, but causes BroadcastEventWindow to be initialized
+					// on this thread to prevent race conditions on shutdown.See TE-975
+					// See http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=911603&SiteID=1
+					// TODO-Linux: uses mono feature that is not implemented. What are the implications of this? Review.
+					if (Platform.IsDotNet)
+						SystemEvents.InvokeOnEventsThread(new Action(DoNothing));
+
+					s_threadHelper = new ThreadHelper();
+
+					// ENHANCE (TimS): Another idea for ensuring that we have only one process started for
+					// this project is to use a Mutex. They can be used for cross-process resource access
+					// and would probably be less error-prone then our current implementation since it
+					// doesn't use TCP connections which can get hampered by firewalls. We would probably still
+					// need our current listener functionality for communicating with the other FW process,
+					// so it may not buy us much.
+					// See http://kristofverbiest.blogspot.com/2008/11/creating-single-instance-application.html.
+
+					// Make sure we do this ASAP. If another FieldWorks.exe is started we need
+					// to make sure it can find this one to ask about its project. (FWR-595)
+					CreateRemoteRequestListener();
+
+	#if DEBUG
+					WriteExecutablePathSettingForDevs();
+	#endif
+
+					if (IsInSingleFWProccessMode())
 					{
-						// Use PipeHandle because this will probably be used to locate a named pipe using
-						// PipeHandle as the identifier.
-						File.WriteAllText(appArgs.ChooseProjectFile, projId.Handle, Encoding.UTF8);
+						Logger.WriteEvent("Exiting: Detected single process mode");
+						return 0;
 					}
-					catch (Exception e)
+
+					if (MigrateProjectsTo70())
 					{
-						Logger.WriteError(e);
-						return 2;
+						Logger.WriteEvent("Migration to Version 7 was still needed.");
 					}
-					return 0;
-				}
 
-				if (!SetUICulture(appArgs))
-					return 0; // Error occurred and user chose not to continue.
+					// Enable visual styles. Ignored on Windows 2000. Needs to be called before
+					// we create any controls! Unfortunately, this alone is not good enough. We
+					// also need to use a manifest, because some ListView and TreeView controls
+					// in native code do not have icons if we just use this method. This is caused
+					// by a bug in XP.
+					Application.EnableVisualStyles();
 
-				if (FwRegistryHelper.FieldWorksRegistryKeyLocalMachine == null && FwRegistryHelper.FieldWorksRegistryKey == null)
-				{
-					// See LT-14461. Some users have managed to get their computers into a state where
-					// neither HKML nor HKCU registry entries can be read. We don't know how this is possible.
-					// This is so far the best we can do.
-					var expected = "HKEY_LOCAL_MACHINE/Software/SIL/FieldWorks/" + FwRegistryHelper.FieldWorksRegistryKeyName;
-					MessageBoxUtils.Show(string.Format(Properties.Resources.ksHklmProblem, expected), Properties.Resources.ksHklmCaption);
-					return 0;
-				}
+					FwUtils.InitializeIcu();
 
-				s_fwManager = new FieldWorksManager();
+					// initialize the SLDR
+					Sldr.Initialize();
 
-				if (!string.IsNullOrEmpty(appArgs.BackupFile))
-				{
-					LaunchRestoreFromCommandLine(appArgs);
-					if (s_flexApp == null)
-						return 0; // Restore was cancelled or failed, or another process took care of it.
-					if (!string.IsNullOrEmpty(s_LinkDirChangedTo))
+					// initialize Palaso keyboarding
+					KeyboardController.Initialize();
+
+					FwAppArgs appArgs = new FwAppArgs(rgArgs);
+					s_noUserInterface = appArgs.NoUserInterface;
+					s_appServerMode = appArgs.AppServerMode;
+
+					s_ui = new FwLcmUI(GetHelpTopicProvider(), s_threadHelper);
+
+					// e.g. the first time the user runs FW9, we need to copy a bunch of registry keys
+					// from HKCU/Software/SIL/FieldWorks/7.0 -> FieldWorks/9 or
+					// from HKCU/Software/SIL/FieldWorks/8 -> FieldWorks/9 and
+					// from HKCU/Software/WOW6432Node/SIL/FieldWorks -> HKCU/Software/SIL/FieldWorks
+					FwRegistryHelper.UpgradeUserSettingsIfNeeded();
+
+					if (appArgs.ShowHelp)
 					{
-						NonUndoableUnitOfWorkHelper.Do(s_cache.ActionHandlerAccessor,
-							() => s_cache.LangProject.LinkedFilesRootDir = s_LinkDirChangedTo);
+						ShowCommandLineHelp();
+						return 0;
 					}
+
+					if (shouldCheckForUpdates)
+						FwUpdater.InstallDownloadedUpdate();
+
+					if (!string.IsNullOrEmpty(appArgs.ChooseProjectFile))
+					{
+						ProjectId projId = ChooseLangProject(null, GetHelpTopicProvider());
+						if (projId == null)
+							return 1; // User probably canceled
+						try
+						{
+							// Use PipeHandle because this will probably be used to locate a named pipe using
+							// PipeHandle as the identifier.
+							File.WriteAllText(appArgs.ChooseProjectFile, projId.Handle, Encoding.UTF8);
+						}
+						catch (Exception e)
+						{
+							Logger.WriteError(e);
+							return 2;
+						}
+						return 0;
+					}
+
+					if (!SetUICulture(appArgs))
+						return 0; // Error occurred and user chose not to continue.
+
+					if (FwRegistryHelper.FieldWorksRegistryKeyLocalMachine == null && FwRegistryHelper.FieldWorksRegistryKey == null)
+					{
+						// See LT-14461. Some users have managed to get their computers into a state where
+						// neither HKLM nor HKCU registry entries can be read. We don't know how this is possible.
+						// This is so far the best we can do.
+						var expected = "HKEY_LOCAL_MACHINE/Software/SIL/FieldWorks/" + FwRegistryHelper.FieldWorksRegistryKeyName;
+						MessageBoxUtils.Show(string.Format(Properties.Resources.ksHklmProblem, expected), Properties.Resources.ksHklmCaption);
+						return 0;
+					}
+
+					s_fwManager = new FieldWorksManager();
+
+					if (!string.IsNullOrEmpty(appArgs.BackupFile))
+					{
+						LaunchRestoreFromCommandLine(appArgs);
+						if (s_flexApp == null)
+							return 0; // Restore was cancelled or failed, or another process took care of it.
+						if (!string.IsNullOrEmpty(s_LinkDirChangedTo))
+						{
+							NonUndoableUnitOfWorkHelper.Do(s_cache.ActionHandlerAccessor,
+								() => s_cache.LangProject.LinkedFilesRootDir = s_LinkDirChangedTo);
+						}
+					}
+					else if (!LaunchApplicationFromCommandLine(appArgs))
+						return 0; // Didn't launch, but probably not a serious error
+
+					// Create a listener for this project for applications using FLEx as a LexicalProvider.
+					LexicalProviderManager.StartLexicalServiceProvider(s_projectId, s_cache);
+
+					if (Platform.IsMono)
+						UglyHackForXkbIndicator();
+
+					if (shouldCheckForUpdates)
+						FwUpdater.CheckForUpdates(s_ui);
+
+					// Application was started successfully, so start the message loop
+					Application.Run();
 				}
-				else if (!LaunchApplicationFromCommandLine(appArgs))
-					return 0; // Didn't launch, but probably not a serious error
-
-				// Create a listener for this project for applications using FLEx as a LexicalProvider.
-				LexicalProviderManager.StartLexicalServiceProvider(s_projectId, s_cache);
-
-				if (MiscUtils.IsMono)
-					UglyHackForXkbIndicator();
-
-				// Application was started successfully, so start the message loop
-				Application.Run();
 			}
 			catch (ApplicationException ex)
 			{
@@ -432,10 +454,7 @@ namespace SIL.FieldWorks
 		private static void WarnUserAboutFailedLiftImportIfNecessary(FwApp fwApp)
 		{
 			var mainWindow = fwApp.ActiveMainWindow as IFwMainWnd;
-			if(mainWindow != null)
-			{
-				mainWindow.Mediator.SendMessage("WarnUserAboutFailedLiftImportIfNecessary", null);
-			}
+			mainWindow?.Mediator.SendMessage("WarnUserAboutFailedLiftImportIfNecessary", null);
 		}
 
 		private static bool IsSharedXmlBackendNeeded(ProjectId projectId)
@@ -573,9 +592,9 @@ namespace SIL.FieldWorks
 		public static void DoNothing()
 		{
 		}
-		#endregion
+#endregion
 
-		#region Properties
+#region Properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether FieldWorks can be automatically shut down (as happens
@@ -692,7 +711,7 @@ namespace SIL.FieldWorks
 					string thisProcessName = Assembly.GetExecutingAssembly().GetName().Name;
 					string thisSid = FwUtils.GetUserForProcess(thisProcess);
 					List<Process> processes = Process.GetProcessesByName(thisProcessName).ToList();
-					if (MiscUtils.IsUnix)
+					if (Platform.IsUnix)
 					{
 						processes.AddRange(Process.GetProcesses().Where(p => p.ProcessName.Contains("mono")
 							&& p.Modules.Cast<ProcessModule>().Any(m => m.ModuleName == (thisProcessName + ".exe"))));
@@ -712,9 +731,9 @@ namespace SIL.FieldWorks
 				return existingProcesses;
 			}
 		}
-		#endregion
+#endregion
 
-		#region Public Methods
+#region Public Methods
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Starts the specified FieldWorks application.
@@ -785,9 +804,9 @@ namespace SIL.FieldWorks
 
 			return projects;
 		}
-		#endregion
+#endregion
 
-		#region Cache Creation and Handling
+#region Cache Creation and Handling
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates a cache used for accessing the specified project.
@@ -975,9 +994,9 @@ namespace SIL.FieldWorks
 			}
 			return null;
 		}
-		#endregion
+#endregion
 
-		#region Top-level exception handling
+#region Top-level exception handling
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Sets the exception handler.
@@ -1007,11 +1026,57 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static void HandleUnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
-			if (e.ExceptionObject is Exception)
-				DisplayError(e.ExceptionObject as Exception, e.IsTerminating);
+			if (e.ExceptionObject is Exception exception)
+			{
+				Analytics.ReportException(exception, GetInnerExceptionInfo(exception));
+				DisplayError(exception, e.IsTerminating);
+			}
 			else
+			{
+				Analytics.ReportException(new Exception("Unknown Exception"),
+					new Dictionary<string, string>
+					{
+						{
+							"isTerminating", e.IsTerminating.ToString()
+						},
+						{
+							"unknownExceptionType", e.ExceptionObject.GetType().FullName
+						}
+					});
 				DisplayError(new ApplicationException(string.Format("Got unknown exception: {0}",
 					e.ExceptionObject)), false);
+			}
+		}
+
+		/// <summary>
+		/// Gather inner exception information to pass into the analytics
+		/// </summary>
+		/// <returns>A dictionary with inner exception properties, or null if there is no inner exception</returns>
+		private static Dictionary<string, string> GetInnerExceptionInfo(Exception exception)
+		{
+			Dictionary<string, string> extraInfo = null;
+			if (exception.InnerException != null)
+			{
+				// Recurse into the InnerException property and return the inner most exception that actually has
+				// a useful stacktrace.
+				var innerMost = exception.InnerException;
+				while (innerMost.InnerException != null
+					   && !string.IsNullOrEmpty(innerMost.InnerException.StackTrace))
+				{
+					innerMost = innerMost.InnerException;
+				}
+				extraInfo = new Dictionary<string, string>
+				{
+					{
+						"Inner Exception", innerMost.Message
+					},
+					{
+						"Inner Exception Stack", innerMost.StackTrace
+					}
+				};
+			}
+
+			return extraInfo;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1024,6 +1089,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static void HandleTopLevelError(object sender, ThreadExceptionEventArgs eventArgs)
 		{
+			Analytics.ReportException(eventArgs.Exception, GetInnerExceptionInfo(eventArgs.Exception));
 			if (FwUtils.IsUnsupportedCultureException(eventArgs.Exception)) // LT-8248
 			{
 				Logger.WriteEvent("Unsupported culture: " + eventArgs.Exception.Message);
@@ -1208,9 +1274,9 @@ namespace SIL.FieldWorks
 				return true;
 			}
 		}
-		#endregion
+#endregion
 
-		#region Splash screen
+#region Splash screen
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Displays the splash screen
@@ -1256,9 +1322,9 @@ namespace SIL.FieldWorks
 			}
 		}
 
-		#endregion
+#endregion
 
-		#region Internal Project Handling Methods
+#region Internal Project Handling Methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines the project that will be run by reading the command-line parameters.
@@ -1555,9 +1621,9 @@ namespace SIL.FieldWorks
 			WritingSystemManager manager = s_cache.ServiceLocator.WritingSystemManager;
 			manager.LocalStoreFolder = Path.Combine(s_projectId.ProjectFolder, "WritingSystemStore");
 		}
-		#endregion
+#endregion
 
-		#region Project UI handling methods
+#region Project UI handling methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Displays fieldworks welcome dialog.
@@ -1600,7 +1666,7 @@ namespace SIL.FieldWorks
 				// reset our projectId.
 				projectToTry = lastProjectId;
 
-				using (WelcomeToFieldWorksDlg dlg = new WelcomeToFieldWorksDlg(helpTopicProvider, exception, s_noPreviousReportingSettings))
+				using (var dlg = new WelcomeToFieldWorksDlg(helpTopicProvider, exception, s_noPreviousReportingSettings))
 				{
 					if (exception != null)
 					{
@@ -1637,7 +1703,7 @@ namespace SIL.FieldWorks
 					bool gotAutoOpenSetting = false;
 					if (startingApp.RegistrySettings != null) // may be null if disposed after canceled restore.
 					{
-					dlg.OpenLastProjectCheckboxIsChecked = GetAutoOpenRegistrySetting(startingApp);
+						dlg.OpenLastProjectCheckboxIsChecked = GetAutoOpenRegistrySetting(startingApp);
 						gotAutoOpenSetting = true;
 					}
 					dlg.StartPosition = FormStartPosition.CenterScreen;
@@ -1646,7 +1712,9 @@ namespace SIL.FieldWorks
 					// We get the app each time through the loop because a failed Restore operation can dispose it.
 					var app = GetOrCreateApplication(args);
 					if (gotAutoOpenSetting)
-					app.RegistrySettings.AutoOpenLastEditedProject = dlg.OpenLastProjectCheckboxIsChecked;
+					{
+						app.RegistrySettings.AutoOpenLastEditedProject = dlg.OpenLastProjectCheckboxIsChecked;
+					}
 					switch (dlg.DlgResult)
 					{
 						case WelcomeToFieldWorksDlg.ButtonPress.New:
@@ -1685,45 +1753,52 @@ namespace SIL.FieldWorks
 								break;
 							ObtainedProjectType obtainedProjectType;
 							projectToTry = null; // If the user cancels the send/receive, this null will result in a return to the welcome dialog.
-							// Hard to say what Form.ActiveForm is here. The splash and welcome dlgs are both gone.
-							var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm,
-								helpTopicProvider, out obtainedProjectType);
-							if (!string.IsNullOrEmpty(projectDataPathname))
+							try
 							{
-								projectToTry = new ProjectId(BackendProviderType.kXML, projectDataPathname);
-								var activeWindow = startingApp.ActiveMainWindow;
-								if (activeWindow != null)
+								// Form.ActiveForm is null here, because the splash and welcome dlgs are both gone.
+								var projectDataPathname = ObtainProjectMethod.ObtainProjectFromAnySource(Form.ActiveForm,
+									helpTopicProvider, out obtainedProjectType);
+								if (!string.IsNullOrEmpty(projectDataPathname))
 								{
-									var activeWindowInterface = (IFwMainWnd)activeWindow;
-									activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
-										obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
-										PropertyTable.SettingsGroup.LocalSettings,
-										true);
+									projectToTry = new ProjectId(BackendProviderType.kXML, projectDataPathname);
+									var activeWindow = startingApp.ActiveMainWindow;
+									if (activeWindow != null)
+									{
+										var activeWindowInterface = (IFwMainWnd)activeWindow;
+										activeWindowInterface.PropTable.SetProperty("LastBridgeUsed",
+											obtainedProjectType == ObtainedProjectType.Lift ? "LiftBridge" : "FLExBridge",
+											PropertyTable.SettingsGroup.LocalSettings, true);
+									}
 								}
+							}
+							catch (Exception e)
+							{
+								ErrorReporter.AddProperty("FLEXBRIDGEDIR", Environment.GetEnvironmentVariable("FLEXBRIDGEDIR"));
+								ErrorReporter.AddProperty("FLExBridgeFolder", FwDirectoryFinder.FlexBridgeFolder);
+								SafelyReportException(e, null, false);
 							}
 							break;
 						case WelcomeToFieldWorksDlg.ButtonPress.Import:
 							projectToTry = CreateNewProject(dlg, app, helpTopicProvider);
 							if (projectToTry != null)
 							{
-							var projectLaunched = LaunchProject(args, ref projectToTry);
+								var projectLaunched = LaunchProject(args, ref projectToTry);
 								if (projectLaunched)
-							{
-								s_projectId = projectToTry; // Window is open on this project, we must not try to initialize it again.
-								var mainWindow = Form.ActiveForm;
-									if (mainWindow is IxWindow)
 								{
-										((IxWindow) mainWindow).Mediator.SendMessage("SFMImport", null);
+									s_projectId = projectToTry; // Window is open on this project, we must not try to initialize it again.
+									if (Form.ActiveForm is IxWindow mainWindow)
+									{
+										mainWindow.Mediator.SendMessage("SFMImport", null);
+									}
+									else
+									{
+										return null;
+									}
 								}
 								else
 								{
 									return null;
 								}
-							}
-							else
-							{
-								return null;
-							}
 							}
 							break;
 					}
@@ -1942,9 +2017,9 @@ namespace SIL.FieldWorks
 			}
 			return null;
 		}
-		#endregion
+#endregion
 
-		#region Project location methods
+#region Project location methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Displays the Project Location dialog box
@@ -1962,7 +2037,7 @@ namespace SIL.FieldWorks
 			string projectPath = fwApp.Cache.ProjectId.Path;
 			string parentDirectory = Path.GetDirectoryName(fwApp.Cache.ProjectId.ProjectFolder);
 			string projectsDirectory = FwDirectoryFinder.ProjectsDirectory;
-				if (!MiscUtils.IsUnix)
+				if (!Platform.IsUnix)
 				{
 					parentDirectory = parentDirectory.ToLowerInvariant();
 					projectsDirectory = projectsDirectory.ToLowerInvariant();
@@ -2031,7 +2106,7 @@ namespace SIL.FieldWorks
 			}
 			string oldRoot = null;
 			string newRoot = null;
-			if (!MiscUtils.IsUnix)
+			if (!Platform.IsUnix)
 			{
 				oldPath = oldPath.ToLowerInvariant();
 				newPath = newPath.ToLowerInvariant();
@@ -2063,7 +2138,7 @@ namespace SIL.FieldWorks
 					case DriveType.Fixed:
 					case DriveType.Network:
 					case DriveType.Removable:
-						if (MiscUtils.IsUnix)
+						if (Platform.IsUnix)
 							driveMounts.Add(d.Name + (d.Name.EndsWith("/") ? "" : "/"));	// ensure terminated with a slash
 						else
 							driveMounts.Add(d.Name.ToLowerInvariant());		// Windows produces C:\ D:\ etc.
@@ -2192,7 +2267,7 @@ namespace SIL.FieldWorks
 				bldr.Append(Properties.Resources.ksYouCanTryToMoveProjects);
 				MessageBox.Show(bldr.ToString(), Properties.Resources.ksProblemsMovingProjects);
 			}
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				if (projectPath.StartsWith(oldFolderForProjects))
 				{
@@ -2265,9 +2340,9 @@ namespace SIL.FieldWorks
 				// Don't need to worry about deleting here, it will happen in original caller.
 			}
 		}
-		#endregion
+#endregion
 
-		#region Project Migration Methods
+#region Project Migration Methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Migrates the user's databases to FieldWorks 7.0+ if they haven't yet migrated
@@ -2315,9 +2390,9 @@ namespace SIL.FieldWorks
 			}
 			return true;
 		}
-		#endregion
+#endregion
 
-		#region Backup/Restore-related methods
+#region Backup/Restore-related methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles a request to restore a project. This method is thread safe.
@@ -2551,9 +2626,9 @@ namespace SIL.FieldWorks
 				return requestor.HandleRestoreProjectRequest(settings);
 			});
 		}
-		#endregion
+#endregion
 
-		#region Link Handling Methods
+#region Link Handling Methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles a link request. This handles determining the correct application to start
@@ -2703,9 +2778,9 @@ namespace SIL.FieldWorks
 			});
 			app.UpdateExternalLinks(sLinkedFilesRootDir);
 		}
-		#endregion
+#endregion
 
-		#region Event Handlers
+#region Event Handlers
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the Activated event of FieldWorks Main Windows.
@@ -2737,9 +2812,9 @@ namespace SIL.FieldWorks
 				s_activeMainWnd = null;
 			}
 		}
-		#endregion
+#endregion
 
-		#region Window Handling Methods
+#region Window Handling Methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Creates a new main window and initializes it. The specified App is responsible for
@@ -2829,9 +2904,9 @@ namespace SIL.FieldWorks
 				mainWnd.Invoke((Action) (() => ExceptionHelper.LogAndIgnoreErrors(wnd.Close)));
 			}
 		}
-		#endregion
+#endregion
 
-		#region Application Management Methods
+#region Application Management Methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Starts or activates an application requested from another process. This method is
@@ -2948,7 +3023,7 @@ namespace SIL.FieldWorks
 			}
 			catch (StartupException sue)
 			{
-				if (MiscUtils.IsUnix && sue.InnerException is UnauthorizedAccessException)
+				if (Platform.IsUnix && sue.InnerException is UnauthorizedAccessException)
 				{
 					// Tell Mono user he/she needs to logout and log back in
 					MessageBox.Show(ResourceHelper.GetResourceString("ksNeedToJoinFwGroup"));
@@ -3129,9 +3204,9 @@ namespace SIL.FieldWorks
 				// and another
 			}
 		}
-		#endregion
+#endregion
 
-		#region Remote Process Handling Methods
+#region Remote Process Handling Methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determines whether any FW process is in "single user mode".
@@ -3216,6 +3291,17 @@ namespace SIL.FieldWorks
 				s_fWaitingForUserOrOtherFw = false;
 				return (isMyProject == ProjectMatch.ItsMyProject);
 			});
+		}
+
+		/// <summary>
+		/// Tries to find any existing FieldWorks process
+		/// </summary>
+		/// <returns>
+		/// True if another existing process was found, false otherwise
+		/// </returns>
+		private static bool TryFindExistingProcess()
+		{
+			return RunOnRemoteClients(kFwRemoteRequest, requestor => true);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3347,9 +3433,25 @@ namespace SIL.FieldWorks
 			return requestor;
 		}
 
-		#endregion
+#endregion
 
-		#region Other Private/Internal Methods
+#region Other Private/Internal Methods
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Get the directory this assembly is located in
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private static string DirectoryOfThisAssembly
+		{
+			get
+			{
+				var codeBase = Assembly.GetExecutingAssembly().CodeBase;
+				var uri = new UriBuilder(codeBase);
+				var path = Uri.UnescapeDataString(uri.Path);
+				return Path.GetDirectoryName(path);
+			}
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Releases unmanaged and managed resources
@@ -3377,17 +3479,6 @@ namespace SIL.FieldWorks
 			s_threadHelper = null;
 
 			FwRegistrySettings.Release();
-		}
-
-		private static string DirectoryOfThisAssembly
-		{
-			get
-			{
-				var codeBase = Assembly.GetExecutingAssembly().CodeBase;
-				var uri = new UriBuilder(codeBase);
-				var path = Uri.UnescapeDataString(uri.Path);
-				return Path.GetDirectoryName(path);
-			}
 		}
 
 #if DEBUG
@@ -3418,8 +3509,7 @@ namespace SIL.FieldWorks
 		/// <summary>
 		/// Gets a HelpTopicProvider for the specified application if possible. Falls back to
 		/// getting the HelpTopicProvider for another application if the requested one is not
-		/// installed. Will not return null (but it could throw an exception if no FW app is
-		/// installed).
+		/// installed. Will not return null.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		internal static IHelpTopicProvider GetHelpTopicProvider()
@@ -3436,36 +3526,21 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static void SetupErrorReportInformation()
 		{
-			string version = Version;
+			var entryAssembly = Assembly.GetEntryAssembly();
+			var version = entryAssembly == null
+				? Version
+				: new VersionInfoProvider(entryAssembly, true).ApplicationVersion;
 			if (version != null)
 			{
-				// Extract the fourth (and final) field of the version to get a date value.
-				int ich = version.IndexOf('.');
-				if (ich >= 0)
-					ich = version.IndexOf('.', ich + 1);
-				if (ich >= 0)
-					ich = version.IndexOf('.', ich + 1);
-				if (ich >= 0)
-				{
-					int iDate = Convert.ToInt32(version.Substring(ich + 1));
-					if (iDate > 0)
-					{
-						double oadate = Convert.ToDouble(iDate);
-						DateTime dt = DateTime.FromOADate(oadate);
-						version += string.Format("  {0}", dt.ToString("yyyy/MM/dd"));
-					}
-				}
-#if DEBUG
-				version += "  (Debug version)";
-#endif
-				ErrorReporter.AddProperty("Version", version);
+				// The property "Version" would be overwritten when Palaso adds the standard properties
+				ErrorReporter.AddProperty("FWVersion", version);
 			}
 			ErrorReporter.AddProperty("CommandLine", Environment.CommandLine);
 			ErrorReporter.AddProperty("CurrentDirectory", Environment.CurrentDirectory);
 			ErrorReporter.AddProperty("MachineName", Environment.MachineName);
 			ErrorReporter.AddProperty("OSVersion", Environment.OSVersion.ToString());
 			ErrorReporter.AddProperty("OSRelease", ErrorReport.GetOperatingSystemLabel());
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				var packageVersions = LinuxPackageUtils.FindInstalledPackages("fieldworks-applications*");
 				if (packageVersions.Count() > 0)
@@ -3493,7 +3568,6 @@ namespace SIL.FieldWorks
 			ErrorReporter.AddProperty("Culture", CultureInfo.CurrentCulture.ToString());
 			using (Bitmap bm = new Bitmap(10, 10))
 			{
-
 				ErrorReporter.AddProperty("ScreenDpiX", bm.HorizontalResolution.ToString());
 				ErrorReporter.AddProperty("ScreenDpiY", bm.VerticalResolution.ToString());
 			}
@@ -3535,14 +3609,21 @@ namespace SIL.FieldWorks
 				var fieldWorksFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 				var versionObj = Assembly.LoadFrom(Path.Combine(fieldWorksFolder ?? string.Empty, "Chorus.exe")).GetName().Version;
 				var version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
-				LocalizationManager.Create(TranslationMemory.XLiff, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName,
+				// First create localization manager for Chorus with english
+				LocalizationManager.Create(TranslationMemory.XLiff, "en",
 					"Chorus", "Chorus", version, installedL10nBaseDir, userL10nBaseDir, null, "flex_localization@sil.org", "Chorus", "LibChorus");
-
-				var uiLanguageId = LocalizationManager.UILanguageId;
+				// Now that we have one manager initialized check and see if the users UI language has
+				// localizations available
+				var uiCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+				if (LocalizationManager.GetUILanguages(true).Any(lang => lang.TwoLetterISOLanguageName == uiCulture))
+				{
+					// If it is switch to using that instead of english
+					LocalizationManager.SetUILanguage(uiCulture, true);
+				}
 
 				versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
 				version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
-				LocalizationManager.Create(TranslationMemory.XLiff, uiLanguageId, "Palaso", "Palaso", version, installedL10nBaseDir,
+				LocalizationManager.Create(TranslationMemory.XLiff, LocalizationManager.UILanguageId, "Palaso", "Palaso", version, installedL10nBaseDir,
 					userL10nBaseDir, null, "flex_localization@sil.org", "SIL.Windows.Forms");
 			}
 			catch (Exception e)
@@ -3840,7 +3921,7 @@ namespace SIL.FieldWorks
 		{
 			CloseAllMainWindowsForApp(s_flexApp);
 		}
-		#endregion
+#endregion
 	}
-	#endregion
+#endregion
 }

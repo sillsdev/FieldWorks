@@ -1,9 +1,7 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
-// File: LexEntryUi.cs
-// Responsibility: ?
 // Last reviewed: Steve Miller (FindEntryForWordform only)
 // --------------------------------------------------------------------------------------------
 using System;
@@ -193,55 +191,6 @@ namespace SIL.FieldWorks.FdoUi
 				}
 			}
 			DisplayEntries(cache, owner, mediator, propertyTable, helpProvider, helpFileKey, tssWf, wfa);
-		}
-
-		internal static void DisplayEntry(LcmCache cache, IWin32Window owner, Mediator mediator, PropertyTable propertyTable,
-			IHelpTopicProvider helpProvider, string helpFileKey, ITsString tssWfIn)
-		{
-			ITsString tssWf = tssWfIn;
-			LexEntryUi leui = null;
-			try
-			{
-				leui = FindEntryForWordform(cache, tssWf);
-
-				// if we do not find a match for the word then try converting it to lowercase and see if there
-				// is an entry in the lexicon for the Wordform in lowercase. This is needed for occurences of
-				// words which are capitalized at the beginning of sentences.  LT-7444 RickM
-				if (leui == null)
-				{
-					//We need to be careful when converting to lowercase therefore use Icu.ToLower()
-					//get the WS of the tsString
-					int wsWf = TsStringUtils.GetWsAtOffset(tssWf, 0);
-					//use that to get the locale for the WS, which is used for
-					string wsLocale = cache.ServiceLocator.WritingSystemManager.Get(wsWf).IcuLocale;
-					string sLower = Icu.UnicodeString.ToLower(tssWf.Text, wsLocale);
-					ITsTextProps ttp = tssWf.get_PropertiesAt(0);
-					tssWf = TsStringUtils.MakeString(sLower, ttp);
-					leui = FindEntryForWordform(cache, tssWf);
-				}
-
-				EnsureWindowConfiguration(propertyTable);
-				IVwStylesheet styleSheet = GetStyleSheet(cache, propertyTable);
-				if (leui == null)
-				{
-					ILexEntry entry = ShowFindEntryDialog(cache, mediator, propertyTable, tssWf, owner);
-					if (entry == null)
-					{
-						return;
-					}
-					leui = new LexEntryUi(entry);
-				}
-				if (mediator != null)
-					leui.Mediator = mediator;
-				if (propertyTable != null)
-					leui.PropTable = propertyTable;
-				leui.ShowSummaryDialog(owner, tssWf, helpProvider, helpFileKey, styleSheet);
-			}
-			finally
-			{
-				if (leui != null)
-					leui.Dispose();
-			}
 		}
 
 		// Currently only called from WCF (11/21/2013 - AP)

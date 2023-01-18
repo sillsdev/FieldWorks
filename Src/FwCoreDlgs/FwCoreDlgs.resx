@@ -235,7 +235,7 @@ If you would like to create a variant of {0}, click the green plus (+).</value>
   </data>
   <data name="kstidMessageWarning" xml:space="preserve">
     <value>Warning, you must select "false" (why do we even have a button???)</value>
-    <comment>A test warning message.</comment>
+    <comment>A test warning message. Do not localize.</comment>
   </data>
   <data name="kstidErrorNewDb" xml:space="preserve">
     <value>Can't create new database: {0}</value>
@@ -786,9 +786,6 @@ Enter a shorter name.</value>
   <data name="kstidIcuSortingHelp" xml:space="preserve">
     <value>For each code point that is out of order, add a collation rule to specify how the code point is to be ordered. For example:{0}{0}   &amp;N&lt;ñ&lt;&lt;&lt;Ñ{0}   &amp;C&lt;ch&lt;&lt;&lt;Ch&lt;&lt;&lt;CH{0}   &amp;l&lt;ll&lt;&lt;&lt;Ll&lt;&lt;&lt;LL{0}{0}would produce traditional Spanish collation where ñ follows n, ch follows c, and ll follows l.</value>
     <comment>Displayed in label next to ICU sorting text box in Writing System Properties dialog. {0} is the carriage return and new line characters.</comment>
-  </data>
-  <data name="kstidSimpleSortingHelp" xml:space="preserve">
-    <value>Simple (Toolbox) Sort Rules Help</value>
   </data>
   <data name="kstidDeleteWritingSystemCaption" xml:space="preserve">
     <value>Delete Writing System</value>

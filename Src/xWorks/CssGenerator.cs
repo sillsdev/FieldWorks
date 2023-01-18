@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ExCSS;
@@ -84,8 +85,9 @@ namespace SIL.FieldWorks.XWorks
 			if (propStyleSheet.Styles.Contains("Normal"))
 				GenerateCssForWsSpanWithNormalStyle(styleSheet, propertyTable);
 
-			if (propStyleSheet.Styles.Contains(DictionaryNormal))
-				GenerateDictionaryNormalParagraphCss(styleSheet, propertyTable);
+			var entryBaseStyle = ConfiguredLcmGenerator.GetEntryStyle(model);
+			if (propStyleSheet.Styles.Contains(entryBaseStyle))
+				GenerateDictionaryNormalParagraphCss(styleSheet, propertyTable, entryBaseStyle);
 
 			if (propStyleSheet.Styles.Contains(LetterHeadingStyleName))
 			{
@@ -136,14 +138,14 @@ namespace SIL.FieldWorks.XWorks
 			GenerateCssForWritingSystems("span", "Normal", styleSheet, propertyTable);
 		}
 
-		private static void GenerateDictionaryNormalParagraphCss(StyleSheet styleSheet, ReadOnlyPropertyTable propertyTable)
+		private static void GenerateDictionaryNormalParagraphCss(StyleSheet styleSheet, ReadOnlyPropertyTable propertyTable, string entryBaseStyle)
 		{
 			var dictNormalRule = new StyleRule { Value = "div.entry" };
-			var dictNormalStyle = GenerateCssStyleFromLcmStyleSheet(DictionaryNormal, 0, propertyTable);
+			var dictNormalStyle = GenerateCssStyleFromLcmStyleSheet(entryBaseStyle, 0, propertyTable);
 			dictNormalRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictNormalStyle));
 			styleSheet.Rules.Add(dictNormalRule);
 			// Then generate the rules for all the writing system overrides
-			GenerateCssForWritingSystems("div.entry span", DictionaryNormal, styleSheet, propertyTable);
+			GenerateCssForWritingSystems("div.entry span", entryBaseStyle, styleSheet, propertyTable);
 		}
 
 		private static void GenerateDictionaryMinorParagraphCss(StyleSheet styleSheet, ReadOnlyPropertyTable propertyTable, DictionaryConfigurationModel model)
@@ -191,7 +193,7 @@ namespace SIL.FieldWorks.XWorks
 					var wsaudioRule = new StyleRule {Value = String.Format("a.{0}:after", aws.LanguageTag)};
 					wsaudioRule.Declarations.Properties.Add(new Property("content")
 					{
-						Term = new PrimitiveTerm(UnitType.String, ConfiguredXHTMLGenerator.LoudSpeaker)
+						Term = new PrimitiveTerm(UnitType.String, ConfiguredLcmGenerator.LoudSpeaker)
 					});
 					styleSheet.Rules.Add(wsaudioRule);
 					wsaudioRule = new StyleRule {Value = String.Format("a.{0}", aws.LanguageTag)};
@@ -666,7 +668,7 @@ namespace SIL.FieldWorks.XWorks
 					var betweenSelector = String.Format("{0}> {1}>{2}+{2}:before", parentSelector, collectionSelector, itemSelector);
 					ConfigurableDictionaryNode dummy;
 					// use default (class-named) between selector for factored references, because "span+span" erroneously matches Type spans
-					if (configNode.DictionaryNodeOptions != null && !ConfiguredXHTMLGenerator.IsFactoredReference(configNode, out dummy))
+					if (configNode.DictionaryNodeOptions != null && !ConfiguredLcmGenerator.IsFactoredReference(configNode, out dummy))
 					{
 						var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 						var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
@@ -764,7 +766,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var parent = configNode.Parent;
 			ConfigurableDictionaryNode typeNode;
-			return parent != null && ConfiguredXHTMLGenerator.IsFactoredReference(parent, out typeNode) && ReferenceEquals(typeNode, configNode);
+			return parent != null && ConfiguredLcmGenerator.IsFactoredReference(parent, out typeNode) && ReferenceEquals(typeNode, configNode);
 		}
 
 		/// <summary>
@@ -801,25 +803,25 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		private static string SelectClassName(ConfigurableDictionaryNode configNode, LcmCache cache = null)
 		{
-			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode, cache);
+			var type = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(configNode, cache);
 			return SelectClassName(configNode, type);
 		}
 
-		private static string SelectClassName(ConfigurableDictionaryNode configNode, ConfiguredXHTMLGenerator.PropertyType type)
+		private static string SelectClassName(ConfigurableDictionaryNode configNode, ConfiguredLcmGenerator.PropertyType type)
 		{
 			switch(type)
 			{
-				case ConfiguredXHTMLGenerator.PropertyType.CollectionType:
+				case ConfiguredLcmGenerator.PropertyType.CollectionType:
 				{
 					// for collections we generate a css selector to match each item e.g '.senses .sense'
 					return string.Format(".{0} .{1}", GetClassAttributeForConfig(configNode), GetClassAttributeForCollectionItem(configNode));
 				}
-				case ConfiguredXHTMLGenerator.PropertyType.CmPictureType:
+				case ConfiguredLcmGenerator.PropertyType.CmPictureType:
 				{
 					return " img"; // Pictures are written out as img tags
 				}
-				case ConfiguredXHTMLGenerator.PropertyType.PrimitiveType:
-				case ConfiguredXHTMLGenerator.PropertyType.MoFormType:
+				case ConfiguredLcmGenerator.PropertyType.PrimitiveType:
+				case ConfiguredLcmGenerator.PropertyType.MoFormType:
 				{
 					// for multi-lingual strings each language's string will have the contents generated in a span
 					if(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions)
@@ -869,8 +871,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </remarks>
 		private static string SelectBareClassName(ConfigurableDictionaryNode configNode, LcmCache cache = null)
 		{
-			var type = ConfiguredXHTMLGenerator.GetPropertyTypeForConfigurationNode(configNode, cache);
-			if (type == ConfiguredXHTMLGenerator.PropertyType.CollectionType)
+			var type = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(configNode, cache);
+			if (type == ConfiguredLcmGenerator.PropertyType.CollectionType)
 				return "." + GetClassAttributeForConfig(configNode);
 			return SelectClassName(configNode, type);
 		}
@@ -1054,8 +1056,6 @@ namespace SIL.FieldWorks.XWorks
 			if(exportStyleInfo.HasLineSpacing)
 			{
 				var lineHeight = new Property("line-height");
-				if (!exportStyleInfo.LineSpacing.m_relative && exportStyleInfo.LineSpacing.m_lineHeight >= 0)
-					lineHeight = new Property("flex-line-height");
 				//m_relative means single, 1.5 or double line spacing was chosen. The CSS should be a number
 				if(exportStyleInfo.LineSpacing.m_relative)
 				{
@@ -1065,7 +1065,17 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
+					// Note: In Flex a user can set 'at least' or 'exactly' for line heights. These are differentiated using negative and positive
+					// values in LineSpacing.m_lineHeight.
+					// There is no reasonable way to handle the 'exactly' option in css so both will behave the same for html views and exports
 					lineHeight.Term = new PrimitiveTerm(UnitType.Point, MilliPtToPt(Math.Abs(exportStyleInfo.LineSpacing.m_lineHeight)));
+					if (exportStyleInfo.LineSpacing.m_lineHeight >= 0)
+					{
+						// The flex-line-height property is used here for continued Pathway export support
+						var flexLineHeight = new Property("flex-line-height");
+						flexLineHeight.Term = lineHeight.Term;
+						declaration.Add(flexLineHeight);
+					}
 				}
 				declaration.Add(lineHeight);
 			}
@@ -1105,8 +1115,12 @@ namespace SIL.FieldWorks.XWorks
 					if (node != null)
 					{
 						string selectedNumStyle = NumberingStylesCollection[numScheme];
-						declaration.Add(new Property("counter-increment") { Term = new PrimitiveTerm(UnitType.Attribute, " " + node.Label.ToLower()) });
-						declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.Attribute, string.Format(" counter({0}, {1}) {2}", node.Label.ToLower(), selectedNumStyle, @"' '")) });
+
+						if (string.IsNullOrEmpty(node.CSSClassNameOverride))
+							node.CSSClassNameOverride = GetClassAttributeForConfig(node);
+
+						declaration.Add(new Property("counter-increment") { Term = new PrimitiveTerm(UnitType.Attribute, " " + node.CSSClassNameOverride) });
+						declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.Attribute, string.Format(" counter({0}, {1}) {2}", node.CSSClassNameOverride, selectedNumStyle, @"' '")) });
 					}
 				}
 			}
@@ -1650,6 +1664,38 @@ namespace SIL.FieldWorks.XWorks
 			public float Margin { get; private set; }
 			public float TextIndent { get; private set; }
 			public ConfigurableDictionaryNode Ancestor { get; private set; }
+		}
+
+		/// <summary>
+		/// Method to copy the custom Css file from Project folder to the Temp folder for FieldWorks preview and export
+		/// </summary>
+		/// <param name="projectPath">path where the custom css file should be found</param>
+		/// <param name="exportPath">destination folder for the copy</param>
+		/// <param name="custCssFileName"></param>
+		/// <returns>full path to the custom css file or empty string if no copy happened</returns>
+		internal static string CopyCustomCssToTempFolder(string projectPath, string exportPath, string custCssFileName)
+		{
+			if (exportPath == null || projectPath == null)
+				return string.Empty;
+			var custCssProjectPath = Path.Combine(projectPath, custCssFileName);
+			if (!File.Exists(custCssProjectPath))
+				return string.Empty;
+			var custCssTempPath = Path.Combine(exportPath, custCssFileName);
+			File.Copy(custCssProjectPath, custCssTempPath, true);
+			return custCssTempPath;
+		}
+
+		public static string CopyCustomCssAndGetPath(string destinationFolder, string configDir)
+		{
+			string custCssPath = string.Empty;
+			var projType = string.IsNullOrEmpty(configDir) ? null : new DirectoryInfo(configDir).Name;
+			if (!string.IsNullOrEmpty(projType))
+			{
+				var cssName = projType == "Dictionary" ? "ProjectDictionaryOverrides.css" : "ProjectReversalOverrides.css";
+				custCssPath = CopyCustomCssToTempFolder(configDir, destinationFolder, cssName);
+			}
+
+			return custCssPath;
 		}
 	}
 }

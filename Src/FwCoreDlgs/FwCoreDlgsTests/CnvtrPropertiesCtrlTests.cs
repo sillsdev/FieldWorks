@@ -182,7 +182,7 @@ namespace AddConverterDlgTests
 		/// <see cref="CnvtrPropertiesCtrl"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			var encConverters = new EncConverters();
@@ -245,7 +245,7 @@ namespace AddConverterDlgTests
 		/// <summary>
 		/// Clean up after running all the tests.
 		/// </summary>
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureTeardown()
 		{
 			EncConverters encConverters;
@@ -379,6 +379,7 @@ namespace AddConverterDlgTests
 		[Test]
 		public void SelectMapping_IcuConversion()
 		{
+			var encConverterStoredType = m_myCtrl.Converters.GetMapByName("ZZZUnitTestICU").ConversionType;
 			m_myCtrl.SelectMapping("ZZZUnitTestICU");
 			Assert.IsTrue(m_myCtrl.cboConverter.SelectedItem is CnvtrTypeComboItem, "Should be able to select ZZZUnitTestICU");
 			Assert.AreEqual(ConverterType.ktypeIcuConvert, ((CnvtrTypeComboItem)m_myCtrl.cboConverter.SelectedItem).Type, "Selected item should be ICU converter for ZZZUnitTestICU");
@@ -390,8 +391,8 @@ namespace AddConverterDlgTests
 			// ICU converters we ship.
 			Assert.AreEqual("ISO-8859-1", ((CnvtrSpecComboItem)m_myCtrl.cboSpec.SelectedItem).Specs, "Selected spec should be ISO-8859-1 for ZZZUnitTestICU");
 			Assert.IsTrue(m_myCtrl.cboConversion.SelectedItem is CnvtrDataComboItem, "Conversion type should be selected for ZZZUnitTestICU");
-			Assert.AreEqual(ConvType.Legacy_to_from_Unicode,
-				((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type, "Selected Conversion type should be Legacy_to_from_Unicode for IZZZUnitTestICU");
+			Assert.AreEqual(encConverterStoredType,
+				((CnvtrDataComboItem)m_myCtrl.cboConversion.SelectedItem).Type, "Selected Conversion type should match the value stored in EncConverters for ZZZUnitTestICU");
 			Assert.AreEqual("ZZZUnitTestICU", m_myCtrl.txtName.Text, "Displayed converter should be ZZZUnitTestICU");
 		}
 

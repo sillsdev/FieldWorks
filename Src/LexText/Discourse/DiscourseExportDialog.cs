@@ -150,7 +150,7 @@ namespace SIL.FieldWorks.Discourse
 
 		protected int NodeIndex(string tag)
 		{
-			var file = tag.Substring(tag.LastIndexOf('\\') + 1);
+			var file = tag.Substring(tag.LastIndexOfAny(new[] { '\\', '/' }) + 1);
 			for (var i = 0; i < m_ddNodes.Count; i++)
 			{
 				var fileN = m_ddNodes[i].BaseURI.Substring(m_ddNodes[i].BaseURI.LastIndexOf('/') + 1);
@@ -166,12 +166,8 @@ namespace SIL.FieldWorks.Discourse
 
 			using (var writer = new XmlTextWriter(fileName, System.Text.Encoding.UTF8))
 			{
-				writer.WriteStartDocument();
-				writer.WriteStartElement("document");
 				exporter = new DiscourseExporter(m_cache, writer, m_hvoRoot, m_vc, m_wsLineNumber);
 				exporter.ExportDisplay();
-				writer.WriteEndElement();
-				writer.WriteEndDocument();
 				writer.Close();
 			}
 			return true;

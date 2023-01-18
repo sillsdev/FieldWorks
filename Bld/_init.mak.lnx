@@ -78,11 +78,14 @@ VIEWS_SRC = $(SRC)/$(VIEWS_NAME)
 # Include user specific settings
 -include $(BUILD_ROOT)/Bld/_user.mak.lnx
 
-ICU_INSTALL_DIR ?= $(shell icu-config --prefix)
-# ENHANCE: have the icu54-bin-fw package install in bin instead of icu-bin and use `icu-config --bindir`
+# fw-icu needs to take precedence in PKG_CONFIG_PATH in order for pkg-config to
+# refer to it, for it to be used. For example,
+#   PKG_CONFIG_PATH=/usr/lib/fieldworks/lib/pkgconfig \
+#     pkg-config icu-i18n --variable=prefix
+ICU_INSTALL_DIR ?= $(shell pkg-config icu-i18n --variable=prefix)
+# ENHANCE: have the icuNN-bin-fw package install in bin instead of icu-bin and use `pkg-config icu-i18n --variable=bindir`
 ICU_BIN_DIR = $(ICU_INSTALL_DIR)/icu-bin
 
-# Use our own icu-config by putting it first in the path
-PATH := $(ICU_BIN_DIR):$(PATH):$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/Bin)
-
+# REVIEW: Is it still needed to append BUILD_ROOT/Bin to PATH?
+PATH := $(PATH):$(shell $(BUILD_ROOT)/Bin/abs.py $(BUILD_ROOT)/Bin)
 export PATH

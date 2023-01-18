@@ -24,11 +24,20 @@ changed_dirs_with_projects=$(for dir in $changed_dirs; do
 	# Look in the parent directory to build projects that have source files in sub directories, like FDO.
 	[ -e "$dir"/../*.csproj ] && (cd "$dir"/.. && pwd)
 done)
-/usr/bin/time -f "$program_name: Total time elapsed %E." cat <(for dir in $changed_dirs_with_projects; do
-	(. environ && cd "$dir" && msbuild /p:Platform=$PLATFORM || (echo "$program_name: Error building project $(basename "$dir"). Continuing ..."; sleep 5s))
-done)
+
+build_problems=0
+for dir in $changed_dirs_with_projects; do
+  if !(. environ && cd "${dir}" && msbuild /p:Platform=${PLATFORM}); then
+	((build_problems++))
+	echo "${program_name}: Error building project $(basename "${dir}"). Continuing ..."
+	sleep 5s
+  fi
+done
+
 projects=$(for dir in $changed_dirs_with_projects; do
 	basename "$dir"
 done)
-echo $program_name: Finished at $(date +"%F %T").
-echo $program_name: Built projects: $projects
+echo $program_name: Finished at $(date +"%F %T"). Build problems: ${build_problems}. Processed projects: $projects
+if ((build_problems > 0)); then
+  exit 1
+fi

@@ -38,7 +38,7 @@ namespace XCore
 		/// settings files. These will be cleaned up in the fixture teardown.
 		/// </summary>
 		//--------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetUp()
 		{
 			// load a persisted version of the property table.
@@ -85,7 +85,7 @@ namespace XCore
 		/// Needed to remove temporary settings folder.
 		/// </summary>
 		//--------------------------------------------------------------------------------------
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureTearDown()
 		{
 			try
@@ -866,9 +866,9 @@ namespace XCore
 			var notDefault = "NotDefault";
 			var roPropTable = new ReadOnlyPropertyTable(m_propertyTable);
 			// Initial conditions
-			Assert.IsNull(m_propertyTable.GetValue<string>(noSuchPropName));
+			Assert.That(m_propertyTable.GetValue<string>(noSuchPropName), Is.Null);
 			var getResult = roPropTable.GetStringProperty(noSuchPropName, myDefault);
-			Assert.IsNull(m_propertyTable.GetValue<string>(noSuchPropName), "Default should not have been set in the property table.");
+			Assert.That(m_propertyTable.GetValue<string>(noSuchPropName), Is.Null, "Default should not have been set in the property table.");
 			Assert.AreEqual(myDefault, getResult, "Default value not returned.");
 			m_propertyTable.SetProperty(noSuchPropName, notDefault, false);
 			Assert.AreEqual(roPropTable.GetStringProperty(noSuchPropName, myDefault), notDefault, "Default was used instead of value from property table.");

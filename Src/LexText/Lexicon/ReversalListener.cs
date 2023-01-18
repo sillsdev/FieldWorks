@@ -413,17 +413,33 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// This looks like our best chance to update a global "Current Reversal Index Writing System" value.
 			WritingSystemServices.CurrentReversalWsId = Cache.WritingSystemFactory.GetWsFromStr(ri.WritingSystem);
 
-			ICmObject newOwningObj = NewOwningObject(ri);
-			if (newOwningObj != OwningObject)
+			// Set the override writing system. LT-21198
+			var layoutFinder = ((Sorter as GenRecordSorter)?.Comparer as StringFinderCompare)?.Finder as LayoutFinder;
+			if (layoutFinder?.Vc != null)
 			{
-				UpdateFiltersAndSortersIfNeeded(); // Load the index-specific sorter
-				OnChangeSorter(); // Update the column headers with sort arrows
-				OwningObject = newOwningObj; // This automatically reloads (and sorts) the list
-				m_propertyTable.SetProperty("ActiveClerkOwningObject", newOwningObj, true);
-				m_propertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
-				m_mediator.SendMessage("ClerkOwningObjChanged", this);
+				layoutFinder.Vc.OverrideWs = WritingSystemServices.CurrentReversalWsId;
 			}
-			m_mediator.SendMessage("MasterRefresh", null);
+
+			try
+			{
+				ICmObject newOwningObj = NewOwningObject(ri);
+				if (newOwningObj != OwningObject)
+				{
+					UpdateFiltersAndSortersIfNeeded(); // Load the index-specific sorter
+					OnChangeSorter(); // Update the column headers with sort arrows
+					OwningObject = newOwningObj; // This automatically reloads (and sorts) the list
+					m_propertyTable.SetProperty("ActiveClerkOwningObject", newOwningObj, true);
+					m_propertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
+					m_mediator.SendMessage("ClerkOwningObjChanged", this);
+				}
+			}
+			finally
+			{
+				if (layoutFinder?.Vc != null)
+				{
+					layoutFinder.Vc.OverrideWs = 0;
+				}
+			}
 		}
 
 		/// <summary>

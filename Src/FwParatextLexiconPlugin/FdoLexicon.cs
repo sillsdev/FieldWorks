@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,15 +18,17 @@ using SIL.LCModel;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Machine.Morphology;
 using SIL.ObjectModel;
-using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
 	internal class FdoLexicon : DisposableBase, Lexicon, WordAnalyses, IVwNotifyChange
 	{
+		internal const string AddedByParatext = "Added by Paratext";
 		private IParser m_parser;
 		private readonly LcmCache m_cache;
 		private readonly string m_scrTextName;
@@ -311,7 +313,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				string url = string.Format("silfw://localhost/link?app=flex&database={0}&tool={1}&guid={2}",
 					HttpUtility.UrlEncode(m_cache.ProjectId.Name), HttpUtility.UrlEncode(toolName), HttpUtility.UrlEncode(guid));
 				// TODO: this would probably be faster if we directly called the RPC socket if FW is already open
-				if (MiscUtils.IsUnix)
+				if (Platform.IsUnix)
 				{
 					string libPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
 					using (Process.Start(Path.Combine(libPath, "run-app"), string.Format("FieldWorks.exe {0}", url))) {}
@@ -672,6 +674,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			ITsString tss = TsStringUtils.MakeString(key.LexicalForm.Normalize(NormalizationForm.FormD), DefaultVernWs);
 			var msa = new SandboxGenericMSA {MsaType = (key.Type == LexemeType.Stem) ? MsaType.kStem : MsaType.kUnclassified};
 			ILexEntry entry = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(GetMorphTypeForLexemeType(key.Type), tss, (ITsString) null, msa);
+			entry.ImportResidue = TsStringUtils.MakeString(AddedByParatext, Cache.DefaultAnalWs);
 			m_homographNumbers.GetOrCreateValue(entry).Number = key.Homograph;
 
 			var homographKey = new LexemeKey(key.Type, key.LexicalForm);

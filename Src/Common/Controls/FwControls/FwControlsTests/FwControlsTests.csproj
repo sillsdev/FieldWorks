@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -14,6 +14,7 @@
     <AssemblyName>FwControlsTests</AssemblyName>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
+    <AppConfig>..\..\..\..\AppForTests.config</AppConfig>
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
@@ -164,7 +165,7 @@
     </Reference>
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
-      <HintPath>..\..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\..\packages\NUnit.3.13.3\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="SIL.TestUtilities, Version=3.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -191,9 +192,20 @@
     <Reference Include="FwUtilsTests">
       <HintPath>..\..\..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
     </Reference>
+    <Reference Include="AtkSharp">
+      <HintPath>..\..\..\..\..\packages\AtkSharp-signed.3.22.24.37\lib\netstandard2.0\AtkSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="GdkSharp">
+      <HintPath>..\..\..\..\packages\GdkSharp-signed.3.22.24.37\lib\netstandard2.0\GdkSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="GLibSharp">
+      <HintPath>..\..\..\..\..\packages\GLibSharp-signed.3.22.24.37\lib\netstandard2.0\GLibSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="GtkSharp">
+      <HintPath>..\..\..\..\..\packages\GtkSharp-signed.3.22.24.37\lib\netstandard2.0\GtkSharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <Compile Include="..\..\..\..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
@@ -209,6 +221,7 @@
     </Compile>
     <Compile Include="ObtainProjectMethodTests.cs" />
     <Compile Include="FwSplitContainerTests.cs" />
+    <Compile Include="OpenFileDialogLinuxTests.cs" />
     <Compile Include="PersistenceTest.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -251,4 +264,8 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Target Name="AfterBuild">
+    <!-- This monkey patch should keep our program from crashing on startup until we can update to .NET 4.6.2 and fix it right -->
+    <Copy SourceFiles="..\..\..\..\..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll" DestinationFolder="$(OutputPath)" />
+  </Target>
 </Project>

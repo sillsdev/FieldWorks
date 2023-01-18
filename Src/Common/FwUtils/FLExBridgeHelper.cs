@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,13 +14,14 @@ using SIL.LCModel;
 using SIL.LCModel.Utils;
 using IPCFramework;
 using SIL.PlatformUtilities;
+using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
 	/// <summary>
 	/// Utility methods for FLExBridge interaction
 	/// </summary>
-	public class FLExBridgeHelper
+	public static class FLExBridgeHelper
 	{
 		#region These are the available '-v' parameter options:
 		/// <summary>
@@ -97,8 +98,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// constant for launching the bridge in the move lift mode
 		/// </summary>
 		/// <remarks>
-		/// <para>Instruct FLEx Bridge to try and move an extant repository from the old location to the new,
-		/// if the old one exists. FLEx should not use this option, if the new repository already exists.</para>
+		/// <para>Instruct FLEx Bridge to try to move an extant repository from the old location to the new,
+		/// if the old one exists. FLEx should not use this option if the new repository already exists.</para>
 		/// <para>The related '-p' option (required) will give the pathname of the xml fwdata file. The new repository location is returned, if it was moved, other wise null is returned.</para>
 		/// <para>This option must also use the '-g' command line argument which gives FLEx Bridge the language project's guid,
 		/// which is used to find the correct lift repository.</para>
@@ -127,7 +128,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// constant for locating the nested lift repository (within the "OtherRepositories" path of a project).
 		/// See also SIL.FieldWorks.FDO.LcmFileHelper.OtherRepositories
 		/// </summary>
-		public const string LIFT = @"LIFT";
+		public const string LIFT = "LIFT";
+
+		/// <summary>
+		/// The Chorus branch name for LIFT projects must include the LDML version (LT-18674)
+		/// </summary>
+		public const string LiftVersion = "0.13_ldml3";
+
+		/// <summary>
+		/// The FLEx Bridge Data Version is part of the Chorus branch name. It must be the same for all users who are collaborating on a project.
+		/// </summary>
+		public static string FlexBridgeDataVersion { get; }
 
 		/// <summary>
 		/// Event handler delegate that passes a jump URL.
@@ -149,6 +160,36 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static bool _receivedChanges; // true if changes merged via FLExBridgeService.BridgeWorkComplete()
 		private static string _projectName; // fw proj path via FLExBridgeService.InformFwProjectName()
 		private static string _pipeID;
+
+		static FLExBridgeHelper()
+		{
+			var fbDllWithConstantsPath = Path.Combine(FwDirectoryFinder.FlexBridgeFolder, "LibFLExBridge-ChorusPlugin.dll");
+			if (File.Exists(fbDllWithConstantsPath))
+			{
+				var fbAssemblyWithConstants = Assembly.ReflectionOnlyLoadFrom(fbDllWithConstantsPath);
+				FlexBridgeDataVersion = fbAssemblyWithConstants
+					.GetType("LibFLExBridgeChorusPlugin.Infrastructure.FlexBridgeConstants")
+					?.GetField("FlexBridgeDataVersion", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
+					// When FLEx Bridge is available but the version cannot be determined (such as for FB 3.1 and earlier),
+					// set the data version to an empty string. This will trigger the assert to let developers know if this becomes a problem again,
+					// and will also let users know that updating FLEx Bridge will require everyone to update at the same time (LT-20019, LT-20778)
+					?.GetRawConstantValue() as string ?? string.Empty;
+			}
+			else
+			{
+				FlexBridgeDataVersion = null;
+			}
+#if DEBUG
+			// Don't pester developers who haven't set FLEx Bridge up.
+			if (File.Exists(FullFieldWorksBridgePath()))
+			{
+				// This is not unit testable on build agents because they don't have FLEx Bridge installed.
+				Debug.Assert(!string.IsNullOrWhiteSpace(FlexBridgeDataVersion),
+					"FLEx Bridge has changed in a way that breaks model change warnings for automatic updates. " +
+					"Please put FlexBridgeConstants.FlexBridgeDataVersion back where FLEx is looking.");
+			}
+#endif
+		}
 
 		/// <summary>
 		/// Launches the FLExBridge application with the given commands and locks out the FLEx interface until the bridge
@@ -241,7 +282,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			ref bool changesReceived, ref string projectName)
 		{
 			string flexbridgeLauncher = FullFieldWorksBridgePath();
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				flexbridgeLauncher = FwDirectoryFinder.FlexBridgeFolder + "/flexbridge";
 			}
@@ -255,19 +296,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 			}
 
-			var nonFlexblockers = new HashSet<string>
-				{
-					ConflictViewer,
-					LiftConflictViewer,
-					AboutFLExBridge,
-					CheckForUpdates
-				};
-			if (nonFlexblockers.Contains(command))
+			var nonFlexBlockers = new HashSet<string>
+			{
+				ConflictViewer,
+				LiftConflictViewer,
+				AboutFLExBridge,
+				CheckForUpdates
+			};
+			if (nonFlexBlockers.Contains(command))
 			{
 				// This skips the piping and doesn't pause the Flex UI thread for the
 				// two 'view' options and for the 'About Flex Bridge' and 'Check for Updates'.
 				// We store the host and a callback so that, when FLExBridge quits, we can kill the host and call the callback.
-				_noBlockerHostAndCallback = new Tuple<IIPCHost, Action> (host, onNonBlockerCommandComplete);
+				_noBlockerHostAndCallback = new Tuple<IIPCHost, Action>(host, onNonBlockerCommandComplete);
 			}
 			else
 			{

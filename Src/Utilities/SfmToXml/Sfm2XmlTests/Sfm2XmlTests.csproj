@@ -9,6 +9,7 @@
     <RootNamespace>Sfm2XmlTests</RootNamespace>
     <AssemblyName>Sfm2XmlTests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <AppConfig>..\..\..\AppForTests.config</AppConfig>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -63,7 +64,7 @@
       <HintPath>..\..\..\..\Output\Debug\ECInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\packages\NUnit.3.13.3\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="Sfm2Xml">
       <HintPath>..\..\..\..\Output\Debug\Sfm2Xml.dll</HintPath>
@@ -78,7 +79,7 @@
     </Reference>
     <Reference Include="SilEncConverters40" Condition="'$(OS)'=='Unix'">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
+      <HintPath>$(installation_prefix)/lib/fieldworks/SilEncConverters40.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

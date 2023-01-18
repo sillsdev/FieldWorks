@@ -537,7 +537,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Instantiate a TestXCoreApp object.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public virtual void FixtureInit()
 		{
 			FwRegistrySettings.Init();
@@ -579,7 +579,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Especially since the splash screen it puts up needs to be closed.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureCleanUp()
 		{
 			TearDown();
@@ -665,14 +665,14 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		protected IMoMorphType GetMorphTypeOrCreateOne(string morphTypeName)
 		{
-			Assert.IsNotNull(m_possFact, "Fixture Initialization is not complete.");
-			Assert.IsNotNull(m_window, "No window.");
+			Assert.That(m_possFact, Is.Not.Null, "Fixture Initialization is not complete.");
+			Assert.That(m_window, Is.Not.Null, "No window.");
 			var poss = m_possRepo.AllInstances().Where(
 				someposs => someposs.Name.AnalysisDefaultWritingSystem.Text == morphTypeName).FirstOrDefault();
 			if (poss != null)
 				return poss as IMoMorphType;
 			var owningList = Cache.LangProject.LexDbOA.MorphTypesOA;
-			Assert.IsNotNull(owningList, "No MorphTypes property on Lexicon object.");
+			Assert.That(owningList, Is.Not.Null, "No MorphTypes property on Lexicon object.");
 			var ws = Cache.DefaultAnalWs;
 			poss = m_possFact.Create(new Guid(), owningList);
 			poss.Name.set_String(ws, morphTypeName);
@@ -687,15 +687,15 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		protected ILexEntryType GetVariantTypeOrCreateOne(string variantTypeName)
 		{
-			Assert.IsNotNull(m_possFact, "Fixture Initialization is not complete.");
-			Assert.IsNotNull(m_window, "No window.");
+			Assert.That(m_possFact, Is.Not.Null, "Fixture Initialization is not complete.");
+			Assert.That(m_window, Is.Not.Null, "No window.");
 			var poss = m_possRepo.AllInstances().Where(
 				someposs => someposs.Name.AnalysisDefaultWritingSystem.Text == variantTypeName).FirstOrDefault();
 			if (poss != null)
 				return poss as ILexEntryType;
 			// shouldn't get past here; they're already defined.
 			var owningList = Cache.LangProject.LexDbOA.VariantEntryTypesOA;
-			Assert.IsNotNull(owningList, "No VariantEntryTypes property on Lexicon object.");
+			Assert.That(owningList, Is.Not.Null, "No VariantEntryTypes property on Lexicon object.");
 			var ws = Cache.DefaultAnalWs;
 			poss = m_possFact.Create(new Guid(), owningList);
 			poss.Name.set_String(ws, variantTypeName);
@@ -783,7 +783,7 @@ namespace SIL.FieldWorks.XWorks
 			string lexForm, IMoMorphType morphTypePoss, string gloss, IPartOfSpeech categoryPoss,
 			ILexEntryType varType)
 		{
-			Assert.IsNotNull(varType, "Need a variant entry type!");
+			Assert.That(varType, Is.Not.Null, "Need a variant entry type!");
 			var msa = new SandboxGenericMSA { MainPOS = categoryPoss };
 			var comp = new LexEntryComponents { MorphType = morphTypePoss, MSA = msa };
 			comp.GlossAlternatives.Add(TsStringUtils.MakeString(gloss, Cache.DefaultAnalWs));

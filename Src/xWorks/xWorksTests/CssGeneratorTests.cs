@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.XWorks
 		private const int DoubleSpace = 2 * 10000;	// Relative line heights are in multiples of 10000.
 		private const float CssDoubleSpace = 2.0F;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		protected void Init()
 		{
 			FwRegistrySettings.Init();
@@ -70,27 +70,29 @@ namespace SIL.FieldWorks.XWorks
 			m_owningTable = new StyleInfoTable("AbbySomebody", Cache.ServiceLocator.WritingSystemManager);
 		}
 
-		[TestFixtureTearDown]
-		protected void TearDown()
+		[OneTimeTearDown]
+		public override void FixtureTeardown()
 		{
+			ConfiguredLcmGenerator.Init();
 			m_application.Dispose();
 			m_window.PropTable.Dispose();
 			FwRegistrySettings.Release();
+			base.FixtureTeardown();
 		}
 
 		[SetUp]
-		public void ResetAssemblyFile()
+		public void Setup()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "SIL.LCModel";
+			ConfiguredLcmGenerator.Init();
 			if (!m_styleSheet.Styles.Contains("FooStyle"))
 			{
 				GenerateStyle("FooStyle");
 			}
 		}
 
-		private ConfiguredXHTMLGenerator.GeneratorSettings DefaultSettings
+		private ConfiguredLcmGenerator.GeneratorSettings DefaultSettings
 		{
-			get { return new ConfiguredXHTMLGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null); }
+			get { return new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null); }
 		}
 
 		[Test]
@@ -451,8 +453,8 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 				Assert.That(cssResult, Contains.Substring(".lexentry> .senses:after"));
-				Assert.That(cssResult, Is.Not.StringContaining(".lexentry> .senses .sense:after"));
-				Assert.That(cssResult, Is.Not.StringContaining(".lexentry> .senses .sense:last-child:after"));
+				Assert.That(cssResult, Does.Not.Contain(".lexentry> .senses .sense:after"));
+				Assert.That(cssResult, Does.Not.Contain(".lexentry> .senses .sense:last-child:after"));
 			}
 		}
 
@@ -828,7 +830,7 @@ namespace SIL.FieldWorks.XWorks
 			// Indent values are converted into pt values on export
 			var firstSenseChildCss = grandChildDeclaration[0].ToString();
 			var allOtherSenseChildrenCss = grandChildDeclaration[1].ToString();
-			Assert.That(firstSenseChildCss, Is.Not.StringMatching(allOtherSenseChildrenCss));
+			Assert.That(firstSenseChildCss, Is.Not.EqualTo(allOtherSenseChildrenCss));
 			var firstSenseIndent = parentHangingIndent - grandChildHangingIndent;
 			var otherSenseIndent = childHangingIndent - grandChildHangingIndent;
 			Assert.That(firstSenseChildCss, Contains.Substring("margin-left:" + firstSenseIndent / 1000 + "pt"));
@@ -931,7 +933,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var childDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(childStyle.Name, CssGenerator.DefaultStyle, headword, m_propertyTable);
-			Assert.That(childDeclaration.ToString(), Is.Not.StringContaining("margin-left"));
+			Assert.That(childDeclaration.ToString(), Does.Not.Contain("margin-left"));
 		}
 
 		[Test]
@@ -995,12 +997,13 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var styleDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet("Dictionary-Paragraph-LineSpacingAtleast", CssGenerator.DefaultStyle, m_propertyTable);
 			Assert.That(styleDeclaration.ToString(), Contains.Substring("flex-line-height:12pt;"));
+			Assert.That(styleDeclaration.ToString(), Contains.Substring("line-height:12pt;"));
 		}
 
 		[Test]
 		public void GenerateCssForConfiguration_ConfigWithCharStyleWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			GenerateStyle("Dictionary-Headword");
 			var headwordNode = new ConfigurableDictionaryNode
 			{
@@ -1021,7 +1024,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleWsOverrideWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("WsStyleTest");
 			var fontInfo = new FontInfo();
 			fontInfo.m_italic.ExplicitValue = false; //override the italic value to false
@@ -1049,7 +1052,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_ConfigWithParaStyleWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			GenerateParagraphStyle("Dictionary-Paragraph-Border");
 			var minorEntryNode = new ConfigurableDictionaryNode
 			{
@@ -1111,7 +1114,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForStyleName_DefaultVernMagicConfigResultsInRealLanguageCss()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			GenerateParagraphStyle("VernacularStyle");
 			var testNode = new ConfigurableDictionaryNode
 			{
@@ -1135,7 +1138,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForStyleName_DefaultAnalysisMagicConfigResultsInRealLanguageCss()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			GenerateParagraphStyle("AnalysisStyle");
 			var testNode = new ConfigurableDictionaryNode
 			{
@@ -1188,14 +1191,14 @@ namespace SIL.FieldWorks.XWorks
 			entry.CitationForm.set_String(wsFr, TsStringUtils.MakeString("homme", wsFr));
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.That(cssResult, Is.Not.StringContaining(".lexentry"));
+			Assert.That(cssResult, Does.Not.Contain(".lexentry"));
 			Assert.That(cssResult, Contains.Substring(".bolo"));
 
 			var xhtmResult = new StringBuilder();
 			using (var XHTMLWriter = XmlWriter.Create(xhtmResult))
 			{
 				XHTMLWriter.WriteStartElement("body");
-				var content = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testNode, null, DefaultSettings);
+				var content = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, testNode, null, DefaultSettings);
 				XHTMLWriter.WriteRaw(content);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
@@ -1234,10 +1237,10 @@ namespace SIL.FieldWorks.XWorks
 			entry.CitationForm.set_String(wsFr, TsStringUtils.MakeString("HeadWordTest", wsFr));
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.That(cssResult, Is.Not.StringContaining(".headword"));
+			Assert.That(cssResult, Does.Not.Contain(".headword"));
 			Assert.That(cssResult, Contains.Substring(".tailwind"));
 
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testParentNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, testParentNode, null, DefaultSettings);
 			const string positiveTest = "//*[@class='tailwind']";
 			const string negativeTest = "//*[@class='headword']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(negativeTest);
@@ -1278,7 +1281,7 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .gloss"));
 
-			var result = ConfiguredXHTMLGenerator.GenerateXHTMLForEntry(entry, testEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, testEntryNode, null, DefaultSettings);
 			const string positiveTest = "/*[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='gloss']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(positiveTest, 1);
 		}
@@ -1286,7 +1289,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleSubscriptWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("subscript");
 			var fontInfo = new FontInfo();
 			fontInfo.m_superSub.ExplicitValue = FwSuperscriptVal.kssvSub;
@@ -1313,7 +1316,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleSuperscriptWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("superscript");
 			var fontInfo = new FontInfo();
 			fontInfo.m_superSub.ExplicitValue = FwSuperscriptVal.kssvSuper;
@@ -1340,7 +1343,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleBasicUnderlineWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("underline");
 			var fontInfo = new FontInfo();
 			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntSingle;
@@ -1366,7 +1369,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleDoubleUnderlineWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("doubleline");
 			var fontInfo = new FontInfo();
 			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntDouble;
@@ -1392,7 +1395,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleDashedUnderlineWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("dashed");
 			var fontInfo = new FontInfo();
 			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntDashed;
@@ -1418,7 +1421,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleStrikethroughWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("strike");
 			var fontInfo = new FontInfo();
 			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntStrikethrough;
@@ -1444,7 +1447,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleDottedUnderlineWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("dotted");
 			var fontInfo = new FontInfo();
 			fontInfo.m_underline.ExplicitValue = FwUnderlineType.kuntDotted;
@@ -1470,7 +1473,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleDisableSuperWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("notsosuper");
 			var fontInfo = new FontInfo();
 			fontInfo.m_superSub.ExplicitValue = FwSuperscriptVal.kssvOff;
@@ -1578,7 +1581,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var refTypeNode = new ConfigurableDictionaryNode
 			{
-				FieldDescription = ConfiguredXHTMLGenerator.LookupComplexEntryType,
+				FieldDescription = ConfiguredLcmGenerator.LookupComplexEntryType,
 				CSSClassNameOverride = "complexformtypes",
 				Children = new List<ConfigurableDictionaryNode> { revAbbrevNode }
 			};
@@ -2184,7 +2187,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateCssForConfiguration_CharStyleFontFeaturesWorks()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var style = GenerateStyle("underline");
 			var fontInfo = new FontInfo { m_features = { ExplicitValue = "smcps=1,Eng=2" } };
 			style.SetWsStyle(fontInfo, Cache.DefaultVernWs);
@@ -2527,7 +2530,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var classAttribute = CssGenerator.GetClassAttributeForConfig(form);
-			Assert.That(classAttribute, Is.StringMatching("owningentry_headword"));
+			Assert.That(classAttribute, Does.Match("owningentry_headword"));
 		}
 
 		/// <summary>
@@ -2541,7 +2544,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var classAttribute = CssGenerator.GetClassAttributeForConfig(form);
 			// Should be headword and should definitely not have owningentry present.
-			Assert.That(classAttribute, Is.StringMatching("headword"));
+			Assert.That(classAttribute, Does.Match("headword"));
 		}
 
 		/// <summary>
@@ -2557,7 +2560,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var classAttribute = CssGenerator.GetClassAttributeForConfig(entry);
-			Assert.That(classAttribute, Is.StringMatching("lexentry"));
+			Assert.That(classAttribute, Does.Match("lexentry"));
 		}
 
 		/// <summary>
@@ -2576,7 +2579,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var classAttribute = CssGenerator.GetClassAttributeForConfig(entry);
-			Assert.That(classAttribute, Is.StringMatching("originalfield_dup"));
+			Assert.That(classAttribute, Does.Match("originalfield_dup"));
 		}
 
 		/// <summary>
@@ -2596,7 +2599,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var classAttribute = CssGenerator.GetClassAttributeForConfig(entry);
-			Assert.That(classAttribute, Is.StringMatching("override_dup"));
+			Assert.That(classAttribute, Does.Match("override_dup"));
 		}
 
 		/// <summary>
@@ -2607,7 +2610,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			TestStyle style = GenerateStyle("Normal");
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var pictureFileNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA" };
 			var senseNumberNode = new ConfigurableDictionaryNode { FieldDescription = "SenseNumberTSS"};
 			var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", Style = "Normal" };
@@ -2657,7 +2660,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			TestStyle style = GenerateStyle("Normal");
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 			var pictureFileNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA" };
 			var senseNumberNode = new ConfigurableDictionaryNode
 			{
@@ -2728,7 +2731,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			TestStyle style = GenerateStyle("Normal");
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 
 			var memberNode = new ConfigurableDictionaryNode
 			{
@@ -2778,7 +2781,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			TestStyle style = GenerateStyle("Normal");
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 
 			var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", Style = "Normal" };
 			var headwordNode = new ConfigurableDictionaryNode {
@@ -2956,9 +2959,12 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void GenerateCssForConfiguration_GenerateDictionaryNormalParagraphStyle()
+		public void GenerateCssForConfiguration_GenerateMainEntryParagraphStyle()
 		{
 			GenerateNormalStyle("Dictionary-Normal");
+			var rtlStyle = GenerateEmptyParagraphStyle("Dictionary-RTL");
+			rtlStyle.SetExplicitParaIntProp((int)FwTextPropType.ktptRightToLeft, 0,
+				(int)TriStateBool.triTrue);
 			var testSensesNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Senses"
@@ -2966,7 +2972,8 @@ namespace SIL.FieldWorks.XWorks
 			var testEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { testSensesNode }
+				Children = new List<ConfigurableDictionaryNode> { testSensesNode },
+				CSSClassNameOverride = "entry"
 			};
 			var model = new DictionaryConfigurationModel
 			{
@@ -2975,8 +2982,17 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(testEntryNode);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.IsTrue(Regex.Match(cssResult, @"div.entry{\s*margin-left:24pt;\s*padding-right:48pt;\s*}", RegexOptions.Singleline).Success,
-							  "Generate Dictionary-Normal Paragraph Style not generated.");
+			Assert.IsTrue(
+				Regex.Match(cssResult,
+					@"div.entry{\s*margin-left:24pt;\s*padding-right:48pt;\s*}",
+					RegexOptions.Singleline).Success,
+				"Dictionary-Normal Paragraph Style not generated when main entry has no style selected.");
+			model.Parts[0].Style = "Dictionary-RTL";
+			cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			Assert.IsTrue(
+				Regex.Match(cssResult, @"div.entry{\s*direction:rtl;\s*}",
+					RegexOptions.Singleline).Success,
+				"Main Entry style was not used as the main page style");
 		}
 
 		[Test]
@@ -3135,7 +3151,7 @@ namespace SIL.FieldWorks.XWorks
 			var senses = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "SensesOS",
-				CSSClassNameOverride = "Senses",
+				CSSClassNameOverride = "sensesos",
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions
 				{
 					NumberStyle = "Dictionary-SenseNum",
@@ -3153,7 +3169,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			const string regexExpected = @".lexentry>\s.senses{.*counter-reset:\ssensesos;.*}.*.lexentry>\s.senses\s>\s.sensecontent:before{.*counter-increment:\ssensesos;.*content:\scounter.sensesos,\sdecimal.\s'\s';.*font-size:14pt;.*color:Green;.*}";
+			const string regexExpected = @".lexentry>\s.sensesos{.*counter-reset:\ssensesos;.*}.*.lexentry>\s.sensesos\s>\s.sensecontent:before{.*counter-increment:\ssensesos;.*content:\scounter.sensesos,\sdecimal.\s'\s';.*font-size:14pt;.*color:Green;.*}";
 			Assert.IsTrue(Regex.Match(cssResult, regexExpected, RegexOptions.Singleline).Success, "Numbering style not generated for Senses.");
 		}
 
@@ -3744,7 +3760,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			PopulateFieldsForTesting(model);
 			var result = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable); // SUT
-			Assert.IsNotNullOrEmpty(result);
+			Assert.That(result, Is.Not.Null.Or.Empty);
 			Assert.That(TsStringUtils.MakeString(result, 1).get_IsNormalizedForm(FwNormalizationMode.knmNFC));
 		}
 
@@ -4099,8 +4115,8 @@ namespace SIL.FieldWorks.XWorks
 					}
 				case (FwUnderlineType.kuntNone):
 					{
-						Assert.That(css, Is.Not.StringContaining("border-bottom:"), "underline should not have been applied");
-						Assert.That(css, Is.Not.StringContaining("text-decoration:underline"), "underline should not have been applied");
+						Assert.That(css, Does.Not.Contain("border-bottom:"), "underline should not have been applied");
+						Assert.That(css, Does.Not.Contain("text-decoration:underline"), "underline should not have been applied");
 						break;
 					}
 				case (FwUnderlineType.kuntStrikethrough):

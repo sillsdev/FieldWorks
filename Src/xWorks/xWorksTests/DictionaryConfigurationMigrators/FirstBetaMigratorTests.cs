@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		private Mediator m_mediator;
 		private PropertyTable m_propertyTable;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			m_propertyTable = m_window.PropTable;
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			RobustIO.DeleteDirectoryAndContents(Cache.ProjectId.Path);
@@ -514,12 +514,12 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			var reversalModel = new DictionaryConfigurationModel { WritingSystem = "en" };
 			var reversalDefault = m_migrator.LoadBetaDefaultForAlphaConfig(reversalModel); // SUT
 			Assert.IsTrue(reversalDefault.IsReversal);
-			Assert.That(reversalDefault.Label, Is.StringContaining("Reversal"));
+			Assert.That(reversalDefault.Label, Does.Contain("Reversal"));
 
 			var rootModel = new DictionaryConfigurationModel { IsRootBased = true };
 			var rootDefault = m_migrator.LoadBetaDefaultForAlphaConfig(rootModel); // SUT
 			Assert.IsTrue(rootDefault.IsRootBased);
-			Assert.That(rootDefault.Label, Is.StringContaining(DictionaryConfigurationMigrator.RootFileName));
+			Assert.That(rootDefault.Label, Does.Contain(DictionaryConfigurationMigrator.RootFileName));
 
 			var subEntry = new ConfigurableDictionaryNode
 			{
@@ -543,7 +543,7 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			};
 
 			var hybridDefault = m_migrator.LoadBetaDefaultForAlphaConfig(hybridModel); // SUT
-			Assert.That(hybridDefault.Label, Is.StringContaining("Hybrid"));
+			Assert.That(hybridDefault.Label, Does.Contain("Hybrid"));
 
 			var stemModel = new DictionaryConfigurationModel
 			{
@@ -557,7 +557,7 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 				}
 			};
 			var stemDefault = m_migrator.LoadBetaDefaultForAlphaConfig(stemModel); // SUT
-			Assert.That(stemDefault.Label, Is.StringContaining("Lexeme"));
+			Assert.That(stemDefault.Label, Does.Contain("Lexeme"));
 		}
 
 		[Test]
@@ -639,13 +639,13 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			var migratedExtendedNoteNode = alphaModel.Parts[0].Children[0].Children[0];
 
 			// Parent Node is Extended Note
-			Assert.That(migratedExtendedNoteNode.Label, Is.StringMatching("Extended Note"), "Extended Note not migrated");
+			Assert.That(migratedExtendedNoteNode.Label, Does.Match("Extended Note"), "Extended Note not migrated");
 
 			// Children Nodes are Note Type, Discussion, Example Sentence, Translations
-			Assert.That(migratedExtendedNoteNode.Children[0].Label, Is.StringMatching("Note Type"), "Note Type not migrated");
-			Assert.That(migratedExtendedNoteNode.Children[1].Label, Is.StringMatching("Discussion"), "Discussion not migrated");
-			Assert.That(migratedExtendedNoteNode.Children[2].Children[0].Label, Is.StringMatching("Example Sentence"), "Example Sentence not migrated");
-			Assert.That(migratedExtendedNoteNode.Children[2].Children[1].Label, Is.StringMatching("Translations"), "Translations not migrated");
+			Assert.That(migratedExtendedNoteNode.Children[0].Label, Does.Match("Note Type"), "Note Type not migrated");
+			Assert.That(migratedExtendedNoteNode.Children[1].Label, Does.Match("Discussion"), "Discussion not migrated");
+			Assert.That(migratedExtendedNoteNode.Children[2].Children[0].Label, Does.Match("Example Sentence"), "Example Sentence not migrated");
+			Assert.That(migratedExtendedNoteNode.Children[2].Children[1].Label, Does.Match("Translations"), "Translations not migrated");
 		}
 
 		[Test]
@@ -898,12 +898,12 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			// and that there ARE only 7 nodes.
 			Assert.AreEqual(7, etymChildren.Count);
 			var configNode = etymChildren.Find(node => node.Label == "Preceding Annotation");
-			Assert.IsNotNull(configNode, "Should have added Preceding Annotation node");
+			Assert.That(configNode, Is.Not.Null, "Should have added Preceding Annotation node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("PrecComment"));
 			Assert.That(configNode.IsEnabled, Is.True, "PrecComment node should be enabled");
 			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
 			configNode = etymChildren.Find(node => node.Label == "Source Language");
-			Assert.IsNotNull(configNode, "Should have added Source Language node");
+			Assert.That(configNode, Is.Not.Null, "Should have added Source Language node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("LanguageRS"));
 			Assert.That(configNode.IsEnabled, Is.True, "Language node should be enabled");
 			Assert.True(configNode.IsEnabled, "Source Language node should be enabled by default");
@@ -915,35 +915,35 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			var childNodes = configNode.Children;
 			Assert.That(childNodes.Count, Is.EqualTo(2), "We ought to have Abbreviation and Name nodes here");
 			var abbrNode = childNodes.Find(n => n.Label == "Abbreviation");
-			Assert.IsNotNull(abbrNode, "Source Language should have an Abbrevation node");
+			Assert.That(abbrNode, Is.Not.Null, "Source Language should have an Abbrevation node");
 			Assert.True(abbrNode.IsEnabled, "Abbrevation node should be enabled by default");
 			TestForWritingSystemOptionsType(abbrNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
 			var nameNode = childNodes.Find(n => n.Label == "Name");
-			Assert.IsNotNull(nameNode, "Source Language should have an Name node");
+			Assert.That(nameNode, Is.Not.Null, "Source Language should have an Name node");
 			Assert.False(nameNode.IsEnabled, "Name node should not be enabled by default");
 			TestForWritingSystemOptionsType(nameNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
 			var langNotesNode = etymChildren.Find(node => node.FieldDescription == "LanguageNotes");
 			Assert.That(langNotesNode.IsEnabled, Is.True, "LanguageNotes node should be enabled by default");
 			TestForWritingSystemOptionsType(langNotesNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
 			configNode = etymChildren.Find(node => node.Label == "Source Form");
-			Assert.IsNotNull(configNode, "Should have changed the name of the old Etymological Form node");
+			Assert.That(configNode, Is.Not.Null, "Should have changed the name of the old Etymological Form node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("Form"));
 			Assert.That(configNode.IsEnabled, Is.True, "Form node should be enabled");
 			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Both);
 			configNode = etymChildren.Find(node => node.Label == "Gloss");
-			Assert.IsNotNull(configNode, "Should still have the Gloss node");
+			Assert.That(configNode, Is.Not.Null, "Should still have the Gloss node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("Gloss"));
 			Assert.That(configNode.IsEnabled, Is.True, "Gloss node should be enabled");
 			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
 			configNode = etymChildren.Find(node => node.Label == "Following Comment");
-			Assert.IsNotNull(configNode, "Should have changed the name of the old Comment node");
+			Assert.That(configNode, Is.Not.Null, "Should have changed the name of the old Comment node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("Comment"));
 			Assert.That(configNode.IsEnabled, Is.False, "Comment node should NOT be enabled");
 			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
 			configNode = etymChildren.Find(node => node.Label == "Note");
-			Assert.IsNull(configNode, "Should NOT add Note node to configurations");
+			Assert.That(configNode, Is.Null, "Should NOT add Note node to configurations");
 			configNode = etymChildren.Find(node => node.Label == "Bibliographic Source");
-			Assert.IsNotNull(configNode, "Should have added Bibliographic Source node");
+			Assert.That(configNode, Is.Not.Null, "Should have added Bibliographic Source node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("Bibliography"));
 			Assert.That(configNode.IsEnabled, Is.False, "Bibliography node should not be enabled");
 			TestForWritingSystemOptionsType(configNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
@@ -1098,7 +1098,7 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			Assert.AreEqual("Entry", etymologyNode.FieldDescription, "Should have changed 'Owner' field for reversal to 'Entry'");
 			Assert.AreEqual("etymologies", etymologyNode.CSSClassNameOverride, "Should have changed CSS override");
 			Assert.AreEqual(7, etymologyNode.Children.Count, "There should be 7 nodes after the conversion.");
-			Assert.IsNull(etymologyNode.DictionaryNodeOptions, "Improper options added to etymology sequence node.");
+			Assert.That(etymologyNode.DictionaryNodeOptions, Is.Null, "Improper options added to etymology sequence node.");
 		}
 
 		[Test]

@@ -137,10 +137,6 @@
 	<value>Warning: You are changing a definition of a custom character you've already defined.</value>
 	<comment>Displayed at bottom of PUA Character dialog when showing an existing user-defined character.</comment>
   </data>
-  <data name="UserHelpFile" xml:space="preserve">
-	<value>\Helps\FieldWorks_Language_Explorer_Help.chm</value>
-	<comment>will backslashes work on Linux?</comment>
-  </data>
   <data name="ksDoYouWantToSave" xml:space="preserve">
 	<value>Do you want to save the changes you have made?</value>
   </data>
@@ -161,14 +157,5 @@
   </data>
   <data name="ksErrorOccurredInstalling" xml:space="preserve">
 	<value>An error occurred installing the new set of custom character definitions.  This failure is likely due to some program locking the ICU files. Make sure you stop all other FieldWorks programs and any others using ICU, then click "Retry" to try again.</value>
-  </data>
-  <data name="khtpWsModifyPUAChar" xml:space="preserve">
-	<value>/Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Private_Use_Area_character_properties.htm</value>
-  </data>
-  <data name="khtpUnicodeEditorCharTab" xml:space="preserve">
-	<value>/Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Valid_Characters_dialog_box/Add_or_modify_custom_characters.htm</value>
-  </data>
-  <data name="khtpWsAddPUAChar" xml:space="preserve">
-	<value>/Advanced_Tasks/Writing_Systems/Modifying_a_Writing_System/Private_Use_Area_character_properties.htm</value>
   </data>
 </root>

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+// Copyright (c) 2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -246,7 +246,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var elements = new List<GeckoElement>();
 			var desiredClass = CssGenerator.GetClassAttributeForConfig(selectedNode);
-			if (ConfiguredXHTMLGenerator.IsCollectionNode(selectedNode, cache))
+			if (ConfiguredLcmGenerator.IsCollectionNode(selectedNode, cache))
 				desiredClass = CssGenerator.GetClassAttributeForCollectionItem(selectedNode);
 			foreach (var span in parent.GetElementsByTagName("span"))
 			{

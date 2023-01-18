@@ -5339,7 +5339,7 @@ bool StrUtil::NormalizeStrUni(StrUni & stu, UNormalizationMode nm)
 		fOk = U_SUCCESS(uerr);
 		Assert(fOk);
 		if (fOk)
-			stu.Assign(output.getBuffer(), output.length());
+			stu.Assign(reinterpret_cast<const wchar*>(output.getBuffer()), output.length());
 	}
 
 	return fOk;
@@ -5423,7 +5423,7 @@ void StrUtil::StoreUtf16FromUtf8(const char * prgch, int cch, StrUni & stu, bool
 std::wstring wstring(const OLECHAR* prgch, int cch)
 {
 	if (cch < 0)
-		cch = u_strlen(prgch);
+		cch = u_strlen(reinterpret_cast<const UChar*>(prgch));
 
 	// Template wstring constructor
 	return std::wstring(prgch, prgch + cch); // ToDo: proper conversion using ICU

@@ -164,11 +164,11 @@ DEFS=$(DEFS) /D_WINDOWS=1 /D_AFXDLL=1
 DEFS=$(DEFS) /D_AFXDLL=1 /D_WINDLL=1 /D_USRDLL=1 /DUSING_MFC=1
 CL_OPTS=$(CL_OPTS) /MD
 !ELSE IF "$(BUILD_TYPE)"=="d"
-CL_OPTS=$(CL_OPTS) /MTd /RTC1
+CL_OPTS=$(CL_OPTS) /MDd /RTC1
 !ELSE IF "$(BUILD_TYPE)"=="b"
-CL_OPTS=$(CL_OPTS) /MTd
+CL_OPTS=$(CL_OPTS) /MDd
 !ELSE
-CL_OPTS=$(CL_OPTS) /MT
+CL_OPTS=$(CL_OPTS) /MD
 !ENDIF
 
 # JohnT: /EHa is required so that our code that converts C exceptions (access violation, div by zero)
@@ -181,13 +181,13 @@ PREPROCESS_OPTS=/E
 !IF "$(BUILD_CONFIG)"=="Bounds"
 LINK_OPTS=$(LINK_OPTS) /out:"$@" /machine:$(LINK_ARCH) /incremental:no\
 	/map:$(INT_DIR)\$(@B).map /nod:dbguuid.lib /subsystem:windows\
-	/NODEFAULTLIB:LIBC /NODEFAULTLIB:MSVCRT\
+	/NODEFAULTLIB:LIBCMT /VERBOSE \
 	/LIBPATH:"C:\Program Files\Common Files\Compuware\NMShared" \
 	/LIBPATH:"$(BUILD_ROOT)\Lib\$(BUILD_CONFIG)" /LIBPATH:"$(BUILD_ROOT)\Lib"
 !ELSE
 LINK_OPTS=$(LINK_OPTS) /out:"$@" /machine:$(LINK_ARCH) /incremental:no\
 	/map:$(INT_DIR)\$(@B).map /nod:dbguuid.lib /subsystem:windows\
-	/NODEFAULTLIB:LIBC /NODEFAULTLIB:MSVCRT\
+	/NODEFAULTLIB:LIBCMT /VERBOSE \
 	/LIBPATH:"$(BUILD_ROOT)\Lib\$(BUILD_CONFIG)" /LIBPATH:"$(BUILD_ROOT)\Lib"
 !ENDIF
 

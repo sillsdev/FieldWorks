@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -39,31 +39,20 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This is done before the entire set of tests is run.
 		/// </summary>
-		[TestFixtureSetUp]
-		public void ReveralEntriesFixtureInit()
+		[OneTimeSetUp]
+		public override void FixtureInit()
 		{
+			base.FixtureInit();
 			SetupReversalFactoriesAndRepositories();
+			CreateAndInitializeNewWindow();
 		}
 
 		private void SetupReversalFactoriesAndRepositories()
 		{
-			Assert.True(Cache != null, "No cache yet!?");
+			Assert.That(Cache, Is.Not.Null, "No cache yet!?");
 			m_revIndexEntryFactory = Cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>();
 			m_revIndexFactory = Cache.ServiceLocator.GetInstance<IReversalIndexFactory>();
 			m_revIndexRepo = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
-		}
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Setup is done before each test is run.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		[SetUp]
-		public void Initialize()
-		{
-			//Rick: So far the tests in this file are very basic.
-			//I would suggest looking in BulkEditBarTests.cs to expand the capabilities of these tests.
-			CreateAndInitializeNewWindow();
 		}
 
 		/// <summary>
@@ -71,57 +60,73 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected void CreateTestData()
 		{
-			var rootMT = GetMorphTypeOrCreateOne("root");
+			var rootMorphType = GetMorphTypeOrCreateOne("root");
 			var adjPOS = GetGrammaticalCategoryOrCreateOne("adjective", Cache.LangProject.PartsOfSpeechOA);
 
+			// REVIEW (Hasso) 2022.08: This ILexEntry is never used; is it necessary for the test?
 			// le='pus' mtype='root' Sense1(gle='green' pos='adj.')
-			var lexEntry = AddLexeme(m_createdObjectList, "pus", rootMT, "green", adjPOS);
+			AddLexeme(m_createdObjectList, "pus", rootMorphType, "green", adjPOS);
 
-			var revEntry = GetOrCreateReversalIndexEntry(m_createdObjectList);
-
-			m_revIndex = AddReversalIndex(m_createdObjectList, revEntry);
+			m_revIndex = CreateReversalIndex();
 		}
 
-		protected IReversalIndex AddReversalIndex(List<ICmObject> addList, IReversalIndexEntry revIndexEntry)
+		protected IReversalIndex CreateReversalIndex()
 		{
-			Assert.IsNotNull(m_revIndexFactory, "Fixture Initialization is not complete.");
-			Assert.IsNotNull(m_window, "No window.");
+			Assert.That(m_revIndexFactory, Is.Not.Null, "Fixture Initialization is not complete.");
+			Assert.That(m_window, Is.Not.Null, "No window.");
 
 			//create a reversal index for this project.
 			var wsObj = Cache.LanguageProject.DefaultAnalysisWritingSystem;
-			IReversalIndex revIndex = m_revIndexRepo.FindOrCreateIndexForWs(wsObj.Handle);
-			//Add an entry to the Reveral index
-			revIndex.EntriesOC.Add(revIndexEntry);
-
-			addList.Add(revIndex);
+			var revIndex = m_revIndexRepo.FindOrCreateIndexForWs(wsObj.Handle);
+			m_createdObjectList.Add(revIndex);
 			return revIndex;
 		}
 
-		protected IReversalIndexEntry GetOrCreateReversalIndexEntry(List<ICmObject> addList)
+		protected IReversalIndexEntry CreateAndAddReversalIndexEntry(IReversalIndex revIndex = null)
 		{
-			Assert.IsNotNull(m_revIndexEntryFactory, "Fixture Initialization is not complete.");
-			Assert.IsNotNull(m_window, "No window.");
+			revIndex = revIndex ?? m_revIndex ?? (m_revIndex = CreateReversalIndex());
+			Assert.That(m_revIndexEntryFactory, Is.Not.Null, "Fixture Initialization is not complete.");
 
 			var revIndexEntry = m_revIndexEntryFactory.Create();
-
-			addList.Add(revIndexEntry);
+			m_createdObjectList.Add(revIndexEntry);
+			revIndex.EntriesOC.Add(revIndexEntry);
 			return revIndexEntry;
 		}
 
-		/// <summary>
-		/// Setup is done after each test is run.
-		/// </summary>
+		protected List<IReversalIndexEntry> AddSomeReversalEntries(int cRevEntries = 5)
+		{
+			var entries = new List<IReversalIndexEntry>(cRevEntries);
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				for (var i = 0; i < cRevEntries; i++)
+				{
+					entries.Add(CreateAndAddReversalIndexEntry());
+				}
+			});
+			return entries;
+		}
+
+		protected void ClearReversalEntries()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				m_revIndex.AllEntries.ForEach(e => e.Delete());
+			});
+		}
+
+		[SetUp]
+		public override void TestSetup()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => CreateAndAddReversalIndexEntry());
+		}
+
 		[TearDown]
-		public void CleanUp()
+		public override void TestTearDown()
 		{
 			UndoAllActions();
 			// delete property table settings.
 			m_propertyTable.RemoveLocalAndGlobalSettings();
-			if (m_window != null)
-			{
-				m_window.Dispose();
-				m_window = null;
-			}
+			base.TestTearDown();
 		}
 
 		private void UndoAllActions()
@@ -156,11 +161,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (!obj.IsValidObject)
 					continue; // owned object could have been deleted already by owner
-				if (obj is IMoMorphType || obj is IPartOfSpeech)
-					continue; // these don't need to be deleted between tests
-				if (obj is ILexEntry)
+				if (obj is ILexEntry || obj is IReversalIndexEntry)
 					obj.Delete();
-				// Some types won't get deleted directly (e.g. ILexSense),
+				// Some types won't get deleted directly (e.g. ILexSense, IMoMorphType, IPartOfSpeech),
 				// but should get deleted by their owner.
 			}
 		}
@@ -175,6 +178,9 @@ namespace SIL.FieldWorks.XWorks
 		#endregion Setup and Teardown
 	}
 
+	/// <remarks>
+	/// Rick (2013.07): So far the tests in this file are very basic. I would suggest looking in BulkEditBarTests.cs to expand the capabilities of these tests.
+	/// </remarks>
 	[TestFixture]
 	public class AllReversalEntriesRecordListTests : AllReversalEntriesRecordListTestBase
 	{
@@ -191,16 +197,16 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void AllReversalIndexes_Init_Test()
 		{
-			const string reversalIndexClerk = @"
+			const string recordListXmlFrag = @"
 <recordList owner='ReversalIndex' property='AllEntries'>
 	<dynamicloaderinfo assemblyPath='LexEdDll.dll' class='SIL.FieldWorks.XWorks.LexEd.AllReversalEntriesRecordList' />
 </recordList>";
 			XmlDocument doc = new XmlDocument();
-			doc.LoadXml(reversalIndexClerk);
-			XmlNode newNode = doc.DocumentElement;
+			doc.LoadXml(recordListXmlFrag);
+			XmlNode recordListNode = doc.DocumentElement;
 			using (var list = new AllReversalEntriesRecordList())
 			{
-				list.Init(Cache, m_mediator, m_propertyTable, newNode);
+				list.Init(Cache, m_mediator, m_propertyTable, recordListNode);
 
 				Assert.IsNull(list.OwningObject,
 					"When AllReversalEntriesRecordList is called and the Clerk is null then the OwningObject should not be set, i.e. left as Null");

@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		private int m_wsEn;
 		private int m_wsFr;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void SetUpFixture()
 		{
 			m_wsEn = Cache.WritingSystemFactory.get_Engine("en-US").Handle;
@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			InnerLabeledMultiStringView.EliminateExtraStyleAndWsInfo(Cache.MetaDataCacheAccessor, args, LexEntryTags.kflidLiftResidue);
 			string differences;
 			Assert.False(TsStringHelper.TsStringsAreEqual(m_tss, args.TsString, out differences), differences);
-			Assert.That(differences, Is.StringContaining("TsStrings have different number of runs"));
+			Assert.That(differences, Does.Contain("TsStrings have different number of runs"));
 		}
 
 		[Test]
@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			InnerLabeledMultiStringView.EliminateExtraStyleAndWsInfo(Cache.MetaDataCacheAccessor, args, LexEntryTags.kflidCitationForm);
 			string differences;
 			Assert.False(TsStringHelper.TsStringsAreEqual(m_tss, args.TsString, out differences), differences);
-			Assert.That(differences, Is.StringContaining("TsStrings have different number of runs"));
+			Assert.That(differences, Does.Contain("TsStrings have different number of runs"));
 		}
 
 		[Test]

@@ -227,8 +227,8 @@ namespace SIL.FieldWorks.Common.Controls
 				foreach (XmlNode node in doc.DocumentElement.SelectNodes("//column"))
 				{
 					if (IsValidColumnSpec(node))
-					m_columns.Add(node);
-			}
+						m_columns.Add(node);
+				}
 			}
 			m_fakeFlid = fakeFlid;
 			SetupSelectColumn();
@@ -762,6 +762,21 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
+		/// <returns>
+		/// A list of the labels for the visible columns in their configured order
+		/// </returns>
+		public static List<string> GetHeaderLabels(XmlBrowseViewBaseVc vc)
+		{
+			var headerLabelList = new List<string>();
+			foreach (var col in vc.ColumnSpecs)
+			{
+				headerLabelList.Add(XmlUtils.GetLocalizedAttributeValue(col, "label", null) ??
+					XmlUtils.GetMandatoryAttributeValue(col, "label"));
+			}
+
+			return headerLabelList;
+		}
+
 		internal virtual List<XmlNode> ColumnSpecs
 		{
 			get
@@ -1008,6 +1023,13 @@ namespace SIL.FieldWorks.Common.Controls
 			get { return m_wsForce; }
 			set { m_wsForce = value; }
 		}
+
+		/// <summary>
+		/// If we are uploading multiple reversals to Webonary then the writing system can be different for
+		/// each reversal.  OverrideWs is a hack to allow cell data to be generated using the writing system
+		/// for the current reversal (instead of using the writing system for the displayed column). LT-21198
+		/// </summary>
+		public int OverrideWs { get; set; }
 
 		private void AddTableCell(IVwEnv vwenv, int hvo, int index, int hvoRoot, int icolActive, int cAdjCol, int icol)
 		{
@@ -1392,7 +1414,18 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (node.Name == "column")
 				{
-					SetForcedWs(node);
+					// Unfortunately this method is called to generate non-displayed data (data that is
+					// uploaded to Webonary).  If we are uploading multiple reversals then the writing system
+					// can be different for each reversal.  OverrideWs is the reversal writing system (instead
+					// of using the writing system for the displayed column). LT-21198
+					if (OverrideWs != 0)
+					{
+						WsForce = OverrideWs;
+					}
+					else
+					{
+						SetForcedWs(node);
+					}
 				}
 				OpenOuterParts(outerParts, vwenv, hvo);
 				if (hvoToDisplay == hvo)
@@ -1738,13 +1771,15 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					if (url.StartsWith(FwLinkArgs.kFwUrlPrefix))
 					{
-						m_xbv.Mediator.SendMessage("FollowLink", new FwLinkArgs(url));
-						return;
+						FwLinkArgs linkArgs = new FwLinkArgs(url);
+						linkArgs.DisplayErrorMsg = false;
+						if (m_xbv.Mediator.SendMessage("FollowLink", linkArgs))
+							return;
 					}
 				}
 				catch
 				{
-					// REVIEW: Why are we catching all errors?
+					// Catch exceptions so we can try using the base class.
 				}
 			}
 			base.DoHotLinkAction(strData, sda);

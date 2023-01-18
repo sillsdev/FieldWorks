@@ -14,6 +14,7 @@ using System.IO;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Text;
 using SIL.FieldWorks.Common.Controls;
+using SIL.LCModel.FixData;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.FixData
@@ -80,9 +81,9 @@ namespace SIL.FieldWorks.FixData
 		public void OnSelection()
 		{
 			Debug.Assert(m_dlg != null);
-			m_dlg.WhenDescription = Strings.ksUseThisWhen;
-			m_dlg.WhatDescription = Strings.ksThisUtilityAttemptsTo;
-			m_dlg.RedoDescription = Strings.ksCannotUndo;
+			m_dlg.WhenDescription = Strings.ksErrorFixerUseThisWhen;
+			m_dlg.WhatDescription = Strings.ksErrorFixerThisUtilityAttemptsTo;
+			m_dlg.RedoDescription = Strings.ksErrorFixerCannotUndo;
 		}
 
 		/// <summary>

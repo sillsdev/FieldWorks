@@ -18,7 +18,7 @@
 \lx 069aee8f-8b79-4f8f-afb5-2c433ec4a9e1
 \g 1SgSubj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 42b52eed-0970-438d-9608-a03fc8c35855
 \a ni {bd771cf4-d7f4-4993-8399-f47217237d42}
 \eType prefix
@@ -26,7 +26,7 @@
 \lx be41902f-590a-44a4-99d0-c511fa0f65e7
 \g 3SgObj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 395e7178-199d-415a-a5b4-f8f3196a93f2
 \a hin {7a65c6a5-6ee8-4ff7-be7b-9341ed39ac0e} / _ [a27edaa2-622e-4a0d-9a13-df381910e509]  | / _ [+cor,+vd] 
 		
@@ -247,7 +247,7 @@
 \lx 1af70026-0364-402d-9937-246ca89cfdab
 \g 2SgSubj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 42b52eed-0970-438d-9608-a03fc8c35855
 \a ti {bdb0119f-9017-4ce5-8201-ca76a95417e8}
 \eType prefix
@@ -255,7 +255,7 @@
 \lx d4ec9b02-9a91-418f-ac42-9a79438b88e2
 \g 1PlSubj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 42b52eed-0970-438d-9608-a03fc8c35855
 \a mo {7ea5c25b-bae2-44fc-8f65-0c3b176e662b}
 \eType prefix
@@ -263,7 +263,7 @@
 \lx 3c2b9e2f-405c-4416-bae8-e50b95fb3b6d
 \g 2PlSubj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 42b52eed-0970-438d-9608-a03fc8c35855
 \a se {b32483b8-9835-47fb-adcb-9d4a2642cf91}
 \eType prefix
@@ -271,7 +271,7 @@
 \lx 8c98c459-33a4-41ad-9f06-217348bb18e5
 \g 1SgObj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 395e7178-199d-415a-a5b4-f8f3196a93f2
 \a mi {3cbec368-e525-45b3-afd6-ff295b7ac96d}
 \eType prefix
@@ -279,7 +279,7 @@
 \lx 99b44a20-3fc6-43d7-9271-bffb30c2d66c
 \g 2SgObj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 395e7178-199d-415a-a5b4-f8f3196a93f2
 \a yu {b3a11d22-1904-435f-986f-b5d152cdeb37}
 \eType prefix
@@ -287,7 +287,7 @@
 \lx e4f26931-0e18-42a6-b898-8dc0d3746276
 \g 1PlObj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 395e7178-199d-415a-a5b4-f8f3196a93f2
 \a us {7abe65e5-c5de-469d-8431-2e3ca34bd49a}
 \eType prefix
@@ -295,7 +295,7 @@
 \lx cf730e86-e5a8-4405-956e-e66417e51d68
 \g 2PlObj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 395e7178-199d-415a-a5b4-f8f3196a93f2
 \a yul {f72d6a4e-d591-4ad2-bbdc-ec9d39cc54c7}
 \eType prefix
@@ -303,7 +303,7 @@
 \lx d170e517-38e1-4167-8e6c-14e03fbc0c11
 \g 3PlObj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 395e7178-199d-415a-a5b4-f8f3196a93f2
 \a dem {5b408299-855a-4806-9a89-9f71a7655846} / _ b  | / _ b 
 		
@@ -449,7 +449,7 @@
 \lx f40536b7-4578-412a-bc75-52fbf10ca62d
 \g 3PlSubj
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 42b52eed-0970-438d-9608-a03fc8c35855
 \a de {3f212d8c-4673-4f6f-ad2b-93a366ac812f}
 \eType prefix

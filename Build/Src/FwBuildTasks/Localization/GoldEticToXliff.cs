@@ -62,7 +62,8 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 		internal static Dictionary<string, XDocument> ConvertGoldEticToXliff(string inFileName, XDocument goldEtic)
 		{
-			// Determine available WS's based on the first item. All others should have the same WS's.
+			// Determine available WS's based on the first item. Until 2020, all others had the same WS's.
+			// ENHANCE (Hasso) 2020.10: perform a deep search for other WS's, at least in terms.
 			var firstItemTerms = goldEtic.XPathSelectElement("/eticPOSList/item")?.XPathSelectElements("term").ToList();
 			if (firstItemTerms == null)
 			{
@@ -108,7 +109,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 					var transUnit = XElement.Parse(string.Format(XliffUtils.TransUnitTemplate, $"{guid}_{id}{eltMap.IdSuffix}", sourceTxt));
 					if (targetLang != WsEn)
 					{
-						var val = item.XPathSelectElement($"{eltMap.ElementName}[@ws='{targetLang}']").Value;
+						var val = item.XPathSelectElement($"{eltMap.ElementName}[@ws='{targetLang}']")?.Value;
 						if (!string.IsNullOrWhiteSpace(val))
 						{
 							transUnit.Add(XElement.Parse(string.Format(XliffUtils.FinalTargetTemplate, val)));

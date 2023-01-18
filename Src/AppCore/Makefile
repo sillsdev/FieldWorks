@@ -16,7 +16,7 @@ AFLIB_SRC = $(APPCORE_SRC)/AfLib
 VIEWS_LIB = $(VIEWS_SRC)/lib
 GR2_INC = $(BUILD_ROOT)/Lib/src/graphite2/include
 
-PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 cairomm-1.0
+PACKAGES = glib-2.0 gtk+-2.0 glibmm-2.4 gtkmm-2.4 cairomm-1.0 icu-i18n
 
 ifeq ($(BUILD_CONFIG),Debug)
 	DEBUG_LIBS = $(OUT_DIR)/libDebugProcs.a
@@ -37,14 +37,12 @@ INCLUDES := $(INCLUDES) \
 	-I$(COM_INC) \
 	-I$(WIN32BASE_INC) \
 	$(shell pkg-config --cflags $(PACKAGES)) \
-	$(shell icu-config --cppflags) \
 
 LDLIBS = \
 	-L$(WIN32MORE_LIB) -lWin32More \
 	-L$(COM_LIB) -lcom \
 	-L$(WIN32BASE_LIB) -lWin32Base \
 	$(shell pkg-config --libs $(PACKAGES)) \
-	$(shell icu-config --ldflags) \
 	-ldl
 
 ifeq ($(BUILD_CONFIG),Debug)

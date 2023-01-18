@@ -18,7 +18,7 @@ namespace SIL.FieldWorks
 		private int _enWsId;
 
 		/// <summary/>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();

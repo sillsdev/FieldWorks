@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2017 SIL International
+// Copyright (c) 2005-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,8 +16,8 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Xsl;
 using Microsoft.Win32;
+using SIL.Extensions;
 using SIL.LCModel.Core.Text;
-using SIL.Reporting;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -754,16 +754,26 @@ namespace SIL.FieldWorks.XWorks
 
 		protected void DoExport(string outPath, bool fLiftOutput)
 		{
-			string fxtPath = (string)m_exportItems[0].Tag;
-			FxtType ft = m_rgFxtTypes[FxtIndex(fxtPath)];
+			var fxtPath = (string)m_exportItems[0].Tag;
+			var ft = m_rgFxtTypes[FxtIndex(fxtPath)];
+			var exportType = m_exportItems[0]?.SubItems[0].Text;
 			using (new WaitCursor(this))
 				using (var progressDlg = new ProgressDialogWithTask(this))
 				{
-				UsageReporter.SendEvent(m_areaOrig + @"Export", @"Export", ft.m_ft.ToString(),
-					string.Format("{0} {1} {2}", ft.m_sDataType, ft.m_sFormat, ft.m_filtered ? "filtered" : "unfiltered"), 0);
+					TrackingHelper.TrackExport(m_areaOrig, exportType,
+						ImportExportStep.Launched,
+						new Dictionary<string, string>
+						{
+							{
+								"format", ft.m_sFormat
+							},
+							{
+								"filtered", ft.m_filtered.ToString()
+							}
+						});
 					try
 					{
-						progressDlg.Title = String.Format(xWorksStrings.Exporting0,
+						progressDlg.Title = string.Format(xWorksStrings.Exporting0,
 							m_exportItems[0].SubItems[0].Text);
 						progressDlg.Message = xWorksStrings.Exporting_;
 
@@ -829,9 +839,11 @@ namespace SIL.FieldWorks.XWorks
 								progressDlg.RunTask(true, ExportGrammarSketch, outPath, ft.m_sDataType, ft.m_sXsltFiles);
 								break;
 						}
+						TrackingHelper.TrackExport(m_areaOrig, exportType, ImportExportStep.Succeeded);
 					}
 					catch (WorkerThreadException e)
 					{
+						TrackingHelper.TrackExport(m_areaOrig, exportType, ImportExportStep.Failed);
 						if (e.InnerException is CancelException)
 						{
 							MessageBox.Show(this, e.InnerException.Message);
@@ -1542,7 +1554,7 @@ namespace SIL.FieldWorks.XWorks
 			public void ExportTranslatedLists(TextWriter w)
 			{
 				w.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-				w.WriteLine("<Lists date=\"{0}\">", DateTime.Now);
+				w.WriteLine("<Lists date=\"{0}\">", DateTime.Now.ToISO8601TimeFormatWithUTCString());
 				foreach (var list in m_lists)
 					ExportTranslatedList(w, list);
 				w.WriteLine("</Lists>");

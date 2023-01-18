@@ -140,6 +140,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return m_tag;
 			}
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Display an error message if there is a failure.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool DisplayErrorMsg { get; set; } = true;
+
 		#endregion  Properties
 
 		#region Construction and Initialization

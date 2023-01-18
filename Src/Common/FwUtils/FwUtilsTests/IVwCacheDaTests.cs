@@ -23,9 +23,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 	[TestFixture]
 	public class IVwCacheDaCppTests
 	{
-		// NB: m_ISilDataAccess and m_IVwCacheDa are exactly the same object.
-		// they could be C# or C++, depeding on if the main is is IVwCacheDaCppTests
-		// or IVwCacheDaCSharpTests, however.
+		// NB: m_ISilDataAccess and m_IVwCacheDa are exactly the same object; however,
+		// they could be C# or C++, depending on if the main is is IVwCacheDaCppTests
+		// or IVwCacheDaCSharpTests.
 		/// <summary>The ISilDataAccess object</summary>
 		protected ISilDataAccess m_ISilDataAccess;
 		/// <summary>The IVwCacheDa object</summary>
@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					ex = e;
 				}
-				Assert.IsNotNull(ex);
+				Assert.That(ex, Is.Not.Null);
 				Assert.AreEqual(typeof(ArgumentException), ex.GetType());
 
 				// test VecItem
@@ -132,7 +132,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					ex = e;
 				}
-				Assert.IsNotNull(ex);
+				Assert.That(ex, Is.Not.Null);
 				Assert.AreEqual(typeof(ArgumentException), ex.GetType());
 
 				// test Vector size
@@ -179,16 +179,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(COMException))]
 		public void BinaryProp_BufferToSmall()
 		{
-			byte[] prgb2 = new byte[] { 6, 7, 8, 9 };
-			m_IVwCacheDa.CacheBinaryProp(1112, 2221, prgb2, prgb2.Length);
-			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(10))
+			Assert.That(() =>
 			{
-				int chvo;
-				m_ISilDataAccess.BinaryPropRgb(1112, 2221, arrayPtr, 2, out chvo);
-			}
+				byte[] prgb2 = new byte[] { 6, 7, 8, 9 };
+				m_IVwCacheDa.CacheBinaryProp(1112, 2221, prgb2, prgb2.Length);
+				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(10))
+				{
+					int chvo;
+					m_ISilDataAccess.BinaryPropRgb(1112, 2221, arrayPtr, 2, out chvo);
+				}
+			}, Throws.TypeOf<COMException>());
 		}
 
 
@@ -295,7 +297,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void MultiStringAlt()
 		{
 			ITsString tsStringNew = m_ISilDataAccess.get_MultiStringAlt(1117, 2227, 7);
-			Assert.IsNotNull(tsStringNew);
+			Assert.That(tsStringNew, Is.Not.Null);
 			Assert.AreEqual(0, tsStringNew.Length);
 
 			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
@@ -314,7 +316,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(tsString, tsStringNew);
 
 			tsStringNew = m_ISilDataAccess.get_MultiStringAlt(1117, 2227, 8);
-			Assert.IsNotNull(tsStringNew);
+			Assert.That(tsStringNew, Is.Not.Null);
 			Assert.AreEqual(0, tsStringNew.Length);
 		}
 
@@ -385,7 +387,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void UnicodeProp()
 		{
 			string strNew = m_ISilDataAccess.get_UnicodeProp(1119, 2229);
-			Assert.IsNull(strNew);
+			Assert.That(strNew, Is.Null);
 
 			string str = "UnicodeTest";
 			m_IVwCacheDa.CacheUnicodeProp(1119, 2229, str, str.Length);
@@ -407,7 +409,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void UnknownProp()
 		{
 			object obj = m_ISilDataAccess.get_UnknownProp(1120, 2220);
-			Assert.IsNull(obj);
+			Assert.That(obj, Is.Null);
 
 			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			ITsTextProps ttp = propsBldr.GetTextProps();

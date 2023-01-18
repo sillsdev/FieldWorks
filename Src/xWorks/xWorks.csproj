@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -148,17 +148,27 @@
     <Reference Include="Accessibility">
       <Name>Accessibility</Name>
     </Reference>
-    <Reference Include="DotNetZip">
-      <HintPath>..\..\packages\DotNetZip.1.11.0\lib\net20\DotNetZip.dll</HintPath>
+    <Reference Include="DesktopAnalytics, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\DesktopAnalytics.dll</HintPath>
     </Reference>
+    <Reference Include="DotNetZip">
+      <HintPath>..\..\packages\DotNetZip.1.13.7\lib\net40\DotNetZip.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="NAudio, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NAudio.1.10.0\lib\net35\NAudio.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="ViewsInterfaces, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -220,9 +230,9 @@
     <Reference Include="LexTextControls, Version=7.1.0.28634, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="CommonServiceLocator, Version=1.4.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <HintPath>..\..\Output\Debug\CommonServiceLocator.dll</HintPath>
     </Reference>
     <Reference Include="Reporting, Version=1.0.3685.30341, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\Reporting.dll</HintPath>
@@ -308,7 +318,7 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="DialogAdapters">
-      <HintPath>..\..\packages\DialogAdapters.0.1.0.32308\lib\net45\DialogAdapters.dll</HintPath>
+      <HintPath>..\..\packages\DialogAdapters.0.1.11\lib\net461\DialogAdapters.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -321,7 +331,7 @@
     <Compile Include="Archiving\ArchivingExtensions.cs" />
     <Compile Include="Archiving\ReapRamp.cs" />
     <Compile Include="ConfigurableDictionaryNode.cs" />
-    <Compile Include="ConfiguredXHTMLGenerator.cs" />
+    <Compile Include="ConfiguredLcmGenerator.cs" />
     <Compile Include="HeadWordNumbersController.cs" />
     <Compile Include="HeadWordNumbersDlg.cs">
       <SubType>Form</SubType>
@@ -407,6 +417,9 @@
     <Compile Include="IDictionaryConfigurationView.cs" />
     <Compile Include="DictionaryNodeOptions.cs" />
     <Compile Include="GlobalSettingServices.cs" />
+    <Compile Include="ILcmContentGenerator.cs" />
+    <Compile Include="LcmJsonGenerator.cs" />
+    <Compile Include="LcmXhtmlGenerator.cs" />
     <Compile Include="ReversalIndexServices.cs" />
     <Compile Include="SilErrorReportingAdapter.cs" />
     <Compile Include="IDictionaryDetailsView.cs" />
@@ -491,6 +504,7 @@
     <Compile Include="NotebookExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="TreeBarHandlerUtils.cs" />
     <Compile Include="UploadToWebonaryController.cs" />
     <Compile Include="UploadToWebonaryDlg.cs">
       <SubType>Form</SubType>
@@ -595,6 +609,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryConfigurationTreeControl.resx">
       <DependentUpon>DictionaryConfigurationTreeControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="DictionaryDetailsView\GroupingOptionsView.resx">
       <DependentUpon>GroupingOptionsView.cs</DependentUpon>

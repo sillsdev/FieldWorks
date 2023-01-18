@@ -170,9 +170,9 @@ namespace SIL.FieldWorks.Discourse
 		internal IDsConstChart SetupAChart()
 		{
 			// Note: do this AFTER creating the template, which may also create the DiscourseData object.
-			Assert.IsNotNull(Cache.LangProject, "No LangProject in the cache!");
+			Assert.That(Cache.LangProject, Is.Not.Null, "No LangProject in the cache!");
 			var data = Cache.LangProject.DiscourseDataOA;
-			Assert.IsNotNull(data, "No DiscourseData object!");
+			Assert.That(data, Is.Not.Null, "No DiscourseData object!");
 			m_chart = Cache.ServiceLocator.GetInstance<IDsConstChartFactory>().Create(
 				data, m_stText, m_template);
 			Logic.Chart = m_chart;
@@ -204,7 +204,7 @@ namespace SIL.FieldWorks.Discourse
 				+ "<column name=\"postnuc\"/>"
 				+ "</template>");
 			m_template = Cache.LangProject.CreateChartTemplate(doc.DocumentElement);
-			m_allColumns = Logic.AllColumns(m_template);
+			m_allColumns = ConstituentChartLogic.CollectColumns(m_template);
 			allCols = m_allColumns;
 			return m_template;
 		}
@@ -487,7 +487,7 @@ namespace SIL.FieldWorks.Discourse
 		internal IConstChartTag MakeChartMarker(IConstChartRow row, int icol, ICmPossibility marker)
 		{
 			Assert.Less(icol, m_allColumns.Count, "Invalid column index");
-			Assert.IsNotNull(marker, "Invalid marker.");
+			Assert.That(marker, Is.Not.Null, "Invalid marker.");
 			var cct = m_ccTagFact.Create(row, row.CellsOS.Count, m_allColumns[icol], marker);
 			return cct;
 		}
@@ -517,7 +517,7 @@ namespace SIL.FieldWorks.Discourse
 			IConstChartWordGroup target, bool fPreposed)
 		{
 			Assert.Less(icol, m_allColumns.Count, "Invalid column index");
-			Assert.IsNotNull(target, "Can't make a MovedTextMarker with no target WordGroup");
+			Assert.That(target, Is.Not.Null, "Can't make a MovedTextMarker with no target WordGroup");
 			var ccmtm = m_mtmFact.Create(row, row.CellsOS.Count, m_allColumns[icol], fPreposed, target);
 			return ccmtm;
 		}
@@ -608,7 +608,7 @@ namespace SIL.FieldWorks.Discourse
 			var crows = m_chart.RowsOS.Count;
 			Assert.IsTrue(index <= crows);
 			var row = m_chart.RowsOS[index];
-			Assert.IsNotNull(row, "Invalid Row object!");
+			Assert.That(row, Is.Not.Null, "Invalid Row object!");
 			Assert.AreEqual(rowNumber, row.Label.Text, "Row has wrong number!");
 			Assert.AreEqual(ccellParts, row.CellsOS.Count, "Row has wrong number of cell parts.");
 		}
@@ -623,9 +623,9 @@ namespace SIL.FieldWorks.Discourse
 			var crows = m_chart.RowsOS.Count;
 			Assert.IsTrue(index < crows, "Invalid row index.");
 			var row = m_chart.RowsOS[index];
-			Assert.IsNotNull(row, "Invalid Row object!");
+			Assert.That(row, Is.Not.Null, "Invalid Row object!");
 			var ccellParts = row.CellsOS.Count;
-			Assert.IsNotNull(row.Label.Text, "Row has no number!");
+			Assert.That(row.Label.Text, Is.Not.Null, "Row has no number!");
 			Assert.AreEqual(cellParts.Length, row.CellsOS.Count);
 			for (var i = 0; i < ccellParts; i++)
 				Assert.AreEqual(cellParts[i].Hvo, row.CellsOS[i].Hvo, string.Format("Wrong CellPart at index i={0}", i));
@@ -645,7 +645,7 @@ namespace SIL.FieldWorks.Discourse
 			var crows = m_chart.RowsOS.Count;
 			Assert.IsTrue(index < crows, "Invalid row index.");
 			var row = m_chart.RowsOS[index];
-			Assert.IsNotNull(row, "Invalid Row object!");
+			Assert.That(row, Is.Not.Null, "Invalid Row object!");
 			Assert.AreEqual(ep, row.EndParagraph, "EndParagraph property is wrong");
 			Assert.AreEqual(es, row.EndSentence, "EndSentence property is wrong");
 			Assert.AreEqual(sdcg, row.StartDependentClauseGroup, "StartDependentClauseGroup property is wrong");
@@ -664,22 +664,22 @@ namespace SIL.FieldWorks.Discourse
 		{
 			var cellPart = VerifyCellPartBasic(irow, icellPart, column);
 			var wordGroup = cellPart as IConstChartWordGroup;
-			Assert.IsNotNull(wordGroup, "Not a valid CCWordGroup cell part!");
+			Assert.That(wordGroup, Is.Not.Null, "Not a valid CCWordGroup cell part!");
 			var cellWords = wordGroup.GetOccurrences();
 			Assert.AreEqual(words, cellWords, "WordGroup has the wrong words");
 		}
 
 		private IConstituentChartCellPart VerifyCellPartBasic(int irow, int icellPart, ICmPossibility column)
 		{
-			Assert.IsNotNull(column, "Cell Part must be assigned to some column!");
+			Assert.That(column, Is.Not.Null, "Cell Part must be assigned to some column!");
 			var crows = m_chart.RowsOS.Count;
 			Assert.IsTrue(irow < crows);
 			var row = m_chart.RowsOS[irow];
-			Assert.IsNotNull(row, "Invalid row object!");
+			Assert.That(row, Is.Not.Null, "Invalid row object!");
 			var ccellParts = row.CellsOS.Count;
 			Assert.IsTrue(icellPart < ccellParts);
 			var cellPart = row.CellsOS[icellPart];
-			Assert.IsNotNull(cellPart.ColumnRA, "Invalid column object!");
+			Assert.That(cellPart.ColumnRA, Is.Not.Null, "Invalid column object!");
 			Assert.AreEqual(column.Hvo, cellPart.ColumnRA.Hvo);
 			return cellPart;
 		}
@@ -695,10 +695,10 @@ namespace SIL.FieldWorks.Discourse
 		/// <param name="marker"></param>
 		internal void VerifyMarkerCellPart(int irow, int icellpart, ICmPossibility column, ICmPossibility marker)
 		{
-			Assert.IsNotNull(marker, "CCTag must have a CmPossibility");
+			Assert.That(marker, Is.Not.Null, "CCTag must have a CmPossibility");
 			var cellPart = VerifyCellPartBasic(irow, icellpart, column) as IConstChartTag;
-			Assert.IsNotNull(cellPart, "Cell part should be a ConstChartTag!");
-			Assert.IsNotNull(cellPart.TagRA, "ConstChartTag is not assigned a possibility");
+			Assert.That(cellPart, Is.Not.Null, "Cell part should be a ConstChartTag!");
+			Assert.That(cellPart.TagRA, Is.Not.Null, "ConstChartTag is not assigned a possibility");
 			Assert.AreEqual(marker.Hvo, cellPart.TagRA.Hvo);
 		}
 
@@ -712,8 +712,8 @@ namespace SIL.FieldWorks.Discourse
 		internal void VerifyMissingMarker(int irow, int icellPart, ICmPossibility column)
 		{
 			var cellPart = VerifyCellPartBasic(irow, icellPart, column) as IConstChartTag;
-			Assert.IsNotNull(cellPart, "Cell part should be a ConstChartTag!");
-			Assert.IsNull(cellPart.TagRA, "Missing Marker should not be assigned a Tag possibility!");
+			Assert.That(cellPart, Is.Not.Null, "Cell part should be a ConstChartTag!");
+			Assert.That(cellPart.TagRA, Is.Null, "Missing Marker should not be assigned a Tag possibility!");
 		}
 
 		/// <summary>
@@ -728,10 +728,10 @@ namespace SIL.FieldWorks.Discourse
 		/// <param name="fPrepose"></param>
 		internal void VerifyMovedTextMarker(int irow, int icellPart, ICmPossibility column, IConstChartWordGroup wordGroup, bool fPrepose)
 		{
-			Assert.IsNotNull(wordGroup, "CCMTMarker must refer to a wordgroup");
+			Assert.That(wordGroup, Is.Not.Null, "CCMTMarker must refer to a wordgroup");
 			var cellPart = VerifyCellPartBasic(irow, icellPart, column) as IConstChartMovedTextMarker;
-			Assert.IsNotNull(cellPart, "Cell part should be a ConstChartMovedTextMarker!");
-			Assert.IsNotNull(cellPart.WordGroupRA, "MovedText Marker does not refer to a word group");
+			Assert.That(cellPart, Is.Not.Null, "Cell part should be a ConstChartMovedTextMarker!");
+			Assert.That(cellPart.WordGroupRA, Is.Not.Null, "MovedText Marker does not refer to a word group");
 			Assert.AreEqual(wordGroup.Hvo, cellPart.WordGroupRA.Hvo);
 			Assert.AreEqual(fPrepose, cellPart.Preposed, "MTMarker is not pointing the right direction!");
 		}
@@ -747,10 +747,10 @@ namespace SIL.FieldWorks.Discourse
 		/// <param name="depClauses"></param>
 		internal void VerifyDependentClauseMarker(int irow, int icellPart, ICmPossibility column, IConstChartRow[] depClauses)
 		{
-			Assert.IsNotNull(depClauses, "CCClauseMarker must refer to some rows");
+			Assert.That(depClauses, Is.Not.Null, "CCClauseMarker must refer to some rows");
 			var cellPart = VerifyCellPartBasic(irow, icellPart, column) as IConstChartClauseMarker;
-			Assert.IsNotNull(cellPart, "Cell part should be a ConstChartClauseMarker!");
-			Assert.IsNotNull(cellPart.DependentClausesRS, "Clause Marker does not refer to any rows");
+			Assert.That(cellPart, Is.Not.Null, "Cell part should be a ConstChartClauseMarker!");
+			Assert.That(cellPart.DependentClausesRS, Is.Not.Null, "Clause Marker does not refer to any rows");
 			Assert.AreEqual(depClauses.Length, cellPart.DependentClausesRS.Count,
 				"Clause marker points to wrong number of rows");
 			for (var i = 0; i < depClauses.Length; i++ )

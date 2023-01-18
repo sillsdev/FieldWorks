@@ -7390,7 +7390,7 @@ void VwTextSelection::DoUpdateProp(VwRootBox * prootb, HVO hvo, PropTag tag, VwN
 #if defined(WIN32) || defined(WIN64)
 				if (wcscmp(sbstrOld.Chars(), sbstrNew.Chars()) != 0)
 #else
-				if (u_strcmp(sbstrOld.Chars(), sbstrNew.Chars()) != 0)
+				if (u_strcmp(reinterpret_cast<const UChar*>(sbstrOld.Chars()), reinterpret_cast<const UChar*>(sbstrNew.Chars())) != 0)
 #endif
 				{
 					// There's a difference.

@@ -1,4 +1,4 @@
-// Copyright (c) 2017 SIL International
+// Copyright (c) 2017-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using Paratext.Data;
+using Paratext.Data.Users;
 using PtxUtils;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.Scripture;
@@ -15,7 +16,7 @@ using SIL.Scripture;
 namespace Paratext8Plugin
 {
 	/// <summary>
-	/// Class wrapping the Paratext8 API for intereacting with scripture data.
+	/// Class wrapping the Paratext8 API for interacting with scripture data.
 	/// </summary>
 	[Export(typeof(ScriptureProvider.IScriptureProvider))]
 	[ExportMetadata("Version", "8")]
@@ -54,7 +55,9 @@ namespace Paratext8Plugin
 
 		public IScrText MakeScrText(string projectName)
 		{
-			return string.IsNullOrEmpty(projectName) ? new PT8ScrTextWrapper(new ScrText()) : new PT8ScrTextWrapper(new ScrText(projectName));
+			return string.IsNullOrEmpty(projectName)
+				? new PT8ScrTextWrapper(new ScrText(RegistrationInfo.DefaultUser))
+				: new PT8ScrTextWrapper(new ScrText(projectName, RegistrationInfo.DefaultUser));
 		}
 
 		/// <summary/>
@@ -69,7 +72,21 @@ namespace Paratext8Plugin
 			get { return IsInstalled ? ParatextInfo.ParatextVersion : new Version(); }
 		}
 
-		public bool IsInstalled { get { return ParatextInfo.IsParatextInstalled; } }
+		public bool IsInstalled
+		{
+			get
+			{
+				try
+				{
+					return ParatextInfo.IsParatextInstalled;
+				}
+				catch (Exception)
+				{
+					// If ParatextInfo crashes determining the installed version we'll just say no
+					return false;
+				}
+			}
+		}
 	}
 
 	public class PT8ParserStateWrapper : ScriptureProvider.IScriptureProviderParserState

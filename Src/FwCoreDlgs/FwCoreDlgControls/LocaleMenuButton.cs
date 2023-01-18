@@ -14,6 +14,7 @@ using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.FwCoreDlgControls
 {
@@ -339,7 +340,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 				}
 			}
 
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 				menu.ShowWithOverflow(this, new Point(0, Height));
 			else
 				menu.Show(this, new Point(0, Height));

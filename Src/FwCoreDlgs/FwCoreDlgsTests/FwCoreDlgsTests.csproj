@@ -165,6 +165,9 @@
     <Reference Include="SIL.WritingSystems.Tests">
       <HintPath>..\..\..\Output\Debug\SIL.WritingSystems.Tests.dll</HintPath>
     </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
@@ -181,7 +184,7 @@
     </Reference>
     <Reference Include="ECInterfaces" Condition="'$(OS)'=='Unix'">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>/usr/lib/fieldworks/ECInterfaces.dll</HintPath>
+      <HintPath>$(installation_prefix)/lib/fieldworks/ECInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel">
       <Name>SIL.LCModel</Name>
@@ -220,12 +223,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CommonServiceLocator, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\DistFiles\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\CommonServiceLocator.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework, Version=2.5.3.9345, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
-      <HintPath>..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\..\packages\NUnit.3.13.3\lib\net45\nunit.framework.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="RootSite">
@@ -255,7 +258,7 @@
     </Reference>
     <Reference Include="SilEncConverters40" Condition="'$(OS)'=='Unix'">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>/usr/lib/fieldworks/SilEncConverters40.dll</HintPath>
+      <HintPath>$(installation_prefix)/lib/fieldworks/SilEncConverters40.dll</HintPath>
     </Reference>
     <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

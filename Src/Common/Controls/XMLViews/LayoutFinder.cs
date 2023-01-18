@@ -29,7 +29,8 @@ namespace SIL.FieldWorks.Common.Controls
 		IStoresLcmCache, IStoresDataAccess
 	{
 		#region Data members
-		internal ISilDataAccess m_sda;
+		/// <summary/>
+		protected internal ISilDataAccess m_sda;
 		internal string m_layoutName;
 		internal IFwMetaDataCache m_mdc;
 		internal LcmCache m_cache;
@@ -77,7 +78,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="app">The application.</param>
 		/// <returns>finder for colSpec</returns>
 		/// ------------------------------------------------------------------------------------
-		static public IStringFinder CreateFinder(LcmCache cache, XmlNode colSpec,
+		public static IStringFinder CreateFinder(LcmCache cache, XmlNode colSpec,
 			XmlBrowseViewBaseVc vc, IApp app)
 		{
 			string layoutName = XmlUtils.GetOptionalAttributeValue(colSpec, "layout");
@@ -94,6 +95,10 @@ namespace SIL.FieldWorks.Common.Controls
 				{
 					case "integer":
 						result = new IntCompareFinder(cache, layoutName, colSpec, app);
+						break;
+					case "occurrenceInContext":
+						// LT-8457: Context should be considered only following the occurrence; preceding context should be ignored.
+						result = new OccurrenceInContextFinder(cache, layoutName, colSpec, app);
 						break;
 					case "date":
 					case "YesNo":
@@ -128,13 +133,16 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		internal XmlBrowseViewBaseVc Vc
+		/// <summary>
+		/// Get/Set the XmlBrowseViewBaseVc.
+		/// </summary>
+		public XmlBrowseViewBaseVc Vc
 		{
 			get
 			{
 				return m_vc;
 			}
-			set
+			internal set
 			{
 				m_vc = value;
 				m_sda = m_vc.DataAccess;

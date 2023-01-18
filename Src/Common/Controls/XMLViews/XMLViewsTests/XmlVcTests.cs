@@ -52,7 +52,7 @@ namespace XMLViewsTests
 		/// Fixture setup
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -111,7 +111,7 @@ namespace XMLViewsTests
 		/// Teardown
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
 			FileUtils.Manager.Reset();

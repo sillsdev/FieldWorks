@@ -174,7 +174,7 @@ namespace ParatextImport
 			// think we want (a segment that starts at ichMin) and set the free translation
 			// of that segment.
 			ISegment foundSegment = para.SegmentsOS.FirstOrDefault(segment => segment.BeginOffset == ichMin);
-			Assert.IsNotNull(foundSegment, "Failed to find a segment at " + ichMin + " for paragraph with contents: " + para.Contents.Text);
+			Assert.That(foundSegment, Is.Not.Null, "Failed to find a segment at " + ichMin + " for paragraph with contents: " + para.Contents.Text);
 
 			INote note = null;
 			if (!string.IsNullOrEmpty(freeTrans))

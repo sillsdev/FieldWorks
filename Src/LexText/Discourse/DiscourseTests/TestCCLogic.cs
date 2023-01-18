@@ -56,6 +56,14 @@ namespace SIL.FieldWorks.Discourse
 			// Do nothing.
 		}
 
+		/// <summary>
+		/// Override to NOT display information for tests.
+		/// </summary>
+		protected override void DisplayDeletedNotesLocation(string path)
+		{
+			// Do nothing.
+		}
+
 		#region protected methods we want to test
 
 		internal List<IConstChartRow> CallCollectEligRows(ChartLocation cell, bool fPrepose)

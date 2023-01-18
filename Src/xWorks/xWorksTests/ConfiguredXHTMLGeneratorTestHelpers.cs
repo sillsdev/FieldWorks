@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.XWorks
 			return model;
 		}
 
-		private static ConfigurableDictionaryNode CreatePictureModel()
+		internal static ConfigurableDictionaryNode CreatePictureModel()
 		{
 			var thumbNailNode = new ConfigurableDictionaryNode
 			{
@@ -117,6 +117,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="cache"></param>
 		/// <param name="headword">Optional: defaults to 'Citation'</param>
 		/// <param name="gloss">Optional: defaults to 'gloss'</param>
+		/// <param name="definition">Optional: default is to omit</param>
 		/// <returns></returns>
 		internal static ILexEntry CreateInterestingLexEntry(LcmCache cache, string headword = "Citation", string gloss = "gloss", string definition = null)
 		{
@@ -130,7 +131,7 @@ namespace SIL.FieldWorks.XWorks
 			return entry;
 		}
 
-		private static int EnsureWritingSystemSetup(LcmCache cache, string wsStr, bool isVernacular)
+		internal static int EnsureWritingSystemSetup(LcmCache cache, string wsStr, bool isVernacular)
 		{
 			var wsFact = cache.WritingSystemFactory;
 			var result = wsFact.GetWsFromStr(wsStr);
@@ -219,7 +220,7 @@ namespace SIL.FieldWorks.XWorks
 		internal static ILexEntryRef CreateVariantForm(LcmCache cache, IVariantComponentLexeme main, ILexEntry variantForm, string type = TestVariantName)
 		{
 			var owningList = cache.LangProject.LexDbOA.VariantEntryTypesOA;
-			Assert.IsNotNull(owningList, "No VariantEntryTypes property on Lexicon object.");
+			Assert.That(owningList, Is.Not.Null, "No VariantEntryTypes property on Lexicon object.");
 			var varType = owningList.ReallyReallyAllPossibilities.LastOrDefault(poss => poss.Name.AnalysisDefaultWritingSystem.Text == type) as ILexEntryType;
 			if (varType == null && type != null) // if this type doesn't exist, create it
 			{
@@ -280,20 +281,20 @@ namespace SIL.FieldWorks.XWorks
 		/// If refTypeReverseName is specified, generates a Ref of an Asymmetric Type (EntryOrSenseTree) with the specified reverse name;
 		/// otherwise, generates a Ref of a Symmetric Type (EntryOrSenseSequence).
 		/// </summary>
-		private void CreateLexicalReference(ICmObject mainEntry, ICmObject referencedForm, string refTypeName, string refTypeReverseName = null)
+		internal static void CreateLexicalReference(LcmCache cache, ICmObject mainEntry, ICmObject referencedForm, string refTypeName, string refTypeReverseName = null)
 		{
-			CreateLexicalReference(mainEntry, referencedForm, null, refTypeName, refTypeReverseName);
+			CreateLexicalReference(cache, mainEntry, referencedForm, null, refTypeName, refTypeReverseName);
 		}
 
-		private void CreateLexicalReference(ICmObject firstEntry, ICmObject secondEntry, ICmObject thirdEntry, string refTypeName, string refTypeReverseName = null)
+		private static void CreateLexicalReference(LcmCache cache, ICmObject firstEntry, ICmObject secondEntry, ICmObject thirdEntry, string refTypeName, string refTypeReverseName = null)
 		{
-			var lrt = CreateLexRefType(LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence, refTypeName, "", refTypeReverseName, "");
+			var lrt = CreateLexRefType(cache, LexRefTypeTags.MappingTypes.kmtEntryOrSenseSequence, refTypeName, "", refTypeReverseName, "");
 			if (!string.IsNullOrEmpty(refTypeReverseName))
 			{
-				lrt.ReverseName.set_String(Cache.DefaultAnalWs, refTypeReverseName);
+				lrt.ReverseName.set_String(cache.DefaultAnalWs, refTypeReverseName);
 				lrt.MappingType = (int)MappingTypes.kmtEntryOrSenseTree;
 			}
-			var lexRef = Cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
+			var lexRef = cache.ServiceLocator.GetInstance<ILexReferenceFactory>().Create();
 			lrt.MembersOC.Add(lexRef);
 			lexRef.TargetsRS.Add(firstEntry);
 			lexRef.TargetsRS.Add(secondEntry);
@@ -301,26 +302,26 @@ namespace SIL.FieldWorks.XWorks
 				lexRef.TargetsRS.Add(thirdEntry);
 		}
 
-		private ILexRefType CreateLexRefType(LexRefTypeTags.MappingTypes type, string name, string abbr, string revName, string revAbbr)
+		private static ILexRefType CreateLexRefType(LcmCache cache, LexRefTypeTags.MappingTypes type, string name, string abbr, string revName, string revAbbr)
 		{
-			if (Cache.LangProject.LexDbOA.ReferencesOA == null)
+			if (cache.LangProject.LexDbOA.ReferencesOA == null)
 			{
-				Cache.LangProject.LexDbOA.ReferencesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				cache.LangProject.LexDbOA.ReferencesOA = cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
 			}
-			var referencePossibilities = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS;
+			var referencePossibilities = cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS;
 			if (referencePossibilities.Any(r => r.Name.BestAnalysisAlternative.Text == name))
 			{
 				return referencePossibilities.First(r => r.Name.BestAnalysisAlternative.Text == name) as ILexRefType;
 			}
-			var lrt = Cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
+			var lrt = cache.ServiceLocator.GetInstance<ILexRefTypeFactory>().Create();
 			referencePossibilities.Add(lrt);
 			lrt.MappingType = (int)type;
-			lrt.Name.set_String(m_wsEn, name);
-			lrt.Abbreviation.set_String(m_wsEn, abbr);
+			lrt.Name.set_String(cache.DefaultAnalWs, name);
+			lrt.Abbreviation.set_String(cache.DefaultAnalWs, abbr);
 			if (!string.IsNullOrEmpty(revName))
-				lrt.ReverseName.set_String(m_wsEn, revName);
+				lrt.ReverseName.set_String(cache.DefaultAnalWs, revName);
 			if (!string.IsNullOrEmpty(revAbbr))
-				lrt.ReverseAbbreviation.set_String(m_wsEn, revAbbr);
+				lrt.ReverseAbbreviation.set_String(cache.DefaultAnalWs, revAbbr);
 			return lrt;
 		}
 
@@ -336,18 +337,24 @@ namespace SIL.FieldWorks.XWorks
 				lexRef.TargetsRS.Add(senseOrEntry);
 		}
 
-		private ICmPossibility CreatePublicationType(string name)
+		internal static ICmPossibility CreatePublicationType(string name, LcmCache cache)
 		{
-			return DictionaryConfigurationImportController.AddPublicationType(name, Cache);
+			return DictionaryConfigurationImportController.AddPublicationType(name, cache);
 		}
 
-		private static void AddHeadwordToEntry(ILexEntry entry, string headword, int wsId)
+		internal static void AddHeadwordToEntry(ILexEntry entry, string headword, int wsId)
 		{
 			// The headword field is special: it uses Citation if available, or LexemeForm if Citation isn't filled in
 			entry.CitationForm.set_String(wsId, TsStringUtils.MakeString(headword, wsId));
 		}
 
-		private static ILexPronunciation AddPronunciationToEntry(ILexEntry entry, string content, int wsId, LcmCache cache)
+		internal static void AddLexemeFormToEntry(ILexEntry entry, string lexemeForm, LcmCache cache)
+		{
+			entry.LexemeFormOA = cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>().Create();
+			entry.LexemeFormOA.Form.SetVernacularDefaultWritingSystem(lexemeForm);
+		}
+
+		internal static ILexPronunciation AddPronunciationToEntry(ILexEntry entry, string content, int wsId, LcmCache cache)
 		{
 			var pronunciation = cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
 			entry.PronunciationsOS.Add(pronunciation);
@@ -355,7 +362,7 @@ namespace SIL.FieldWorks.XWorks
 			return pronunciation;
 		}
 
-		private static void AddSenseToEntry(ILexEntry entry, string gloss, int wsId, LcmCache cache, string definition = null)
+		internal static void AddSenseToEntry(ILexEntry entry, string gloss, int wsId, LcmCache cache, string definition = null)
 		{
 			var senseFactory = cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			var sense = senseFactory.Create();
@@ -402,16 +409,16 @@ namespace SIL.FieldWorks.XWorks
 			subSensesOne.Gloss.set_String(m_wsEn, TsStringUtils.MakeString(gloss, m_wsEn));
 		}
 
-		private ILexExampleSentence AddExampleToSense(ILexSense sense, string content, string translation = null)
+		internal static ILexExampleSentence AddExampleToSense(ILexSense sense, string content, LcmCache cache, int vern, int analy, string translation = null)
 		{
-			var exampleFact = Cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();
+			var exampleFact = cache.ServiceLocator.GetInstance<ILexExampleSentenceFactory>();
 			var example = exampleFact.Create(new Guid(), sense);
-			example.Example.set_String(m_wsFr, TsStringUtils.MakeString(content, m_wsFr));
+			example.Example.set_String(vern, TsStringUtils.MakeString(content, vern));
 			if (translation != null)
 			{
-				var type = Cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation);
-				var cmTranslation = Cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(example, type);
-				cmTranslation.Translation.set_String(m_wsEn, TsStringUtils.MakeString(translation, m_wsEn));
+				var type = cache.ServiceLocator.GetInstance<ICmPossibilityRepository>().GetObject(CmPossibilityTags.kguidTranFreeTranslation);
+				var cmTranslation = cache.ServiceLocator.GetInstance<ICmTranslationFactory>().Create(example, type);
+				cmTranslation.Translation.set_String(analy, TsStringUtils.MakeString(translation, analy));
 				example.TranslationsOC.Add(cmTranslation);
 			}
 			return example;
@@ -434,7 +441,7 @@ namespace SIL.FieldWorks.XWorks
 			return morph;
 		}
 
-		private static IStText CreateMultiParaText(string content, LcmCache cache)
+		internal static IStText CreateMultiParaText(string content, LcmCache cache)
 		{
 			var text = cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 			//cache.LangProject.
@@ -469,30 +476,35 @@ namespace SIL.FieldWorks.XWorks
 			return builder.GetString();
 		}
 
-		private ITsString MakeBidirectionalTss(IEnumerable<string> content)
+		internal static ITsString MakeBidirectionalTss(IEnumerable<string> content, LcmCache cache)
 		{
-			EnsureHebrewExists();
+			var wsHe = EnsureHebrewExists(cache);
+			var wsEn = cache.ServiceLocator.WritingSystems.AllWritingSystems
+				.First(ws => ws.Id == "en").Handle;
 			// automatically alternates runs between 'en' and 'he' (Hebrew)
 			var tsFact = TsStringUtils.TsStrFactory;
-			var lastWs = m_wsEn;
+			var lastWs = wsEn;
 			var builder = tsFact.GetIncBldr();
 			foreach (var runContent in content)
 			{
-				lastWs = lastWs == m_wsEn ? m_wsHe : m_wsEn; // switch ws for each run
+				lastWs = lastWs == wsEn ? wsHe : wsEn; // switch ws for each run
 				builder.AppendTsString(tsFact.MakeString(runContent, lastWs));
 			}
 			return builder.GetString();
 		}
 
-		private void EnsureHebrewExists()
+		private static int EnsureHebrewExists(LcmCache cache)
 		{
-			if (m_wsHe > 0)
-				return;
-			var wsManager = Cache.ServiceLocator.WritingSystemManager;
+			var heWs =
+				cache.ServiceLocator.WritingSystems.AllWritingSystems.FirstOrDefault(ws =>
+					ws.Id == "he");
+			if (heWs != null)
+				return heWs.Handle;
+			var wsManager = cache.ServiceLocator.WritingSystemManager;
 			CoreWritingSystemDefinition hebrew;
 			wsManager.GetOrSet("he", out hebrew);
 			hebrew.RightToLeftScript = true;
-			m_wsHe = hebrew.Handle;
+			return hebrew.Handle;
 		}
 
 		private void SetDictionaryNormalDirection(InheritableStyleProp<TriStateBool> rightToLeft)
@@ -556,9 +568,9 @@ namespace SIL.FieldWorks.XWorks
 			return listOptions;
 		}
 
-		public DictionaryNodeOptions GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds listName)
+		public static DictionaryNodeOptions GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds listName, LcmCache cache)
 		{
-			return GetFullyEnabledListOptions(Cache, listName);
+			return GetFullyEnabledListOptions(cache, listName);
 		}
 
 		public static DictionaryNodeOptions GetFullyEnabledListOptions(LcmCache cache, DictionaryNodeListOptions.ListIds listName)

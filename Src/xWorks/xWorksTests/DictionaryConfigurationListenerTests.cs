@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+// Copyright (c) 2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,10 +18,10 @@ namespace SIL.FieldWorks.XWorks
 		#region Context
 		private PropertyTable m_propertyTable;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public new void FixtureSetup()
 		{
-			// We won't call Init since XWorksAppTestBase's TestFixtureSetUp calls it.
+			// We won't call Init since XWorksAppTestBase's OneTimeSetUp calls it.
 		}
 		#endregion
 
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable), Is.EqualTo(projectConfigDir), "did not return expected directory");
 
 				m_propertyTable.SetProperty("currentContentControl", "somethingElse", true);
-				Assert.IsNull(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable), "Other areas should cause null return");
+				Assert.That(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable), Is.Null, "Other areas should cause null return");
 			}
 		}
 
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual("Reversal Index", DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), "did not return expected type");
 
 			m_propertyTable.SetProperty("currentContentControl", "somethingElse", true);
-			Assert.IsNull(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), "Other areas should return null");
+			Assert.That(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(m_propertyTable), Is.Null, "Other areas should return null");
 		}
 
 		[Test]
@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_propertyTable), Is.EqualTo(configDir), "did not return expected directory");
 
 			m_propertyTable.SetProperty("currentContentControl", "somethingElse", true);
-			Assert.IsNull(DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_propertyTable), "Other areas should cause null return");
+			Assert.That(DictionaryConfigurationListener.GetDefaultConfigurationDirectory(m_propertyTable), Is.Null, "Other areas should cause null return");
 		}
 
 		#region Context

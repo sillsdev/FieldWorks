@@ -27,7 +27,7 @@ namespace FlexPathwayPluginTests
 		/// <summary>
 		/// Runs before all tests. CompanyName must be forced b/c Resharper sets it to itself
 		/// </summary>
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void TestFixtureSetup()
 		{
 			var path = String.Format("LexText{0}FlexPathwayPlugin{0}FlexPathwayPluginTests{0}Input", Path.DirectorySeparatorChar);

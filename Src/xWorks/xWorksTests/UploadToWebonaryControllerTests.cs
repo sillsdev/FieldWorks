@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.XWorks
 		private RecordClerk m_Clerk;
 
 		#region Environment
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
@@ -108,10 +108,10 @@ namespace SIL.FieldWorks.XWorks
 			m_owningTable.Add(CssGenerator.DictionaryNormal, dictNormStyle);
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public override void FixtureTeardown()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "SIL.LCModel";
+			ConfiguredLcmGenerator.Init();
 			base.FixtureTeardown();
 			Dispose();
 		}
@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.XWorks
 				mockView.Model.Configurations = testConfig;
 				mockView.Model.Reversals = reversalConfig;
 				// Build model sufficient to generate xhtml and css
-				ConfiguredXHTMLGenerator.AssemblyFile = "SIL.LCModel";
+				ConfiguredLcmGenerator.Init();
 				var mainHeadwordNode = new ConfigurableDictionaryNode
 				{
 					FieldDescription = "HeadWord",
@@ -304,8 +304,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes("webonary:webonary")));
 				var responseText = ConnectAndUpload(client);
-				Assert.That(responseText, Is.Not.StringContaining("authentication failed"));
-				Assert.That(responseText, Is.Not.StringContaining("Wrong username or password"));
+				Assert.That(responseText, Does.Not.Contain("authentication failed"));
+				Assert.That(responseText, Does.Not.Contain("Wrong username or password"));
 			}
 		}
 
@@ -318,7 +318,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes("webonary:webonary")));
 				var responseText = ConnectAndUpload(client);
-				Assert.That(responseText, Is.StringContaining("extracted successfully"));
+				Assert.That(responseText, Does.Contain("extracted successfully"));
 			}
 		}
 
@@ -685,6 +685,50 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual("Main Dictionary", m_propertyTable.GetStringProperty("SelectedPublication", null), "Didn't reset publication");
 		}
 
+		[Test]
+		public void DeleteDictionaryHandles404()
+		{
+			// Test with an exception which indicates a redirect should happen
+			var redirectException = new WebonaryClient.WebonaryException(new WebException("File Not Found"));
+			redirectException.StatusCode = HttpStatusCode.NotFound;
+			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, redirectException, new byte[0], HttpStatusCode.NotFound))
+			{
+				var view = new MockWebonaryDlg()
+				{
+					Model = new UploadToWebonaryModel(m_propertyTable)
+					{
+						SiteName = "test-india",
+						UserName = "software",
+						Password = "4APItesting"
+					}
+				};
+				controller.DeleteContentFromWebonary(view.Model, view, "delete/dictionary");
+				Assert.That(!view.StatusStrings.Any(s => s.ToLower().Contains("exception")));
+			}
+		}
+
+		[Test]
+		public void DeleteDictionaryResponseReturnedAsString()
+		{
+			var responseString = "Deleted 1000 files";
+			var response = Encoding.UTF8.GetBytes(responseString);
+			// Test with an exception which indicates a redirect should happen
+			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, response))
+			{
+				var view = new MockWebonaryDlg()
+				{
+					Model = new UploadToWebonaryModel(m_propertyTable)
+					{
+						SiteName = "test-india",
+						UserName = "software",
+						Password = "4APItesting"
+					}
+				};
+				var result = controller.DeleteContentFromWebonary(view.Model, view, "delete/dictionary");
+				Assert.That(result, Does.Contain(responseString));
+			}
+		}
+
 		#region Helpers
 		/// <summary/>
 		private MockWebonaryDlg SetUpView()
@@ -699,7 +743,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public UploadToWebonaryModel SetUpModel()
 		{
-			ConfiguredXHTMLGenerator.AssemblyFile = "xWorksTests";
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
 
 			var testConfig = new Dictionary<string, DictionaryConfigurationModel>();
 			testConfig["Test Config"] = new DictionaryConfigurationModel
@@ -763,6 +807,8 @@ namespace SIL.FieldWorks.XWorks
 			/// </summary>
 			public string UploadURI { get; set; }
 
+			internal override bool UseJsonApi => false;
+
 			/// <summary>
 			/// This constructor should be used in tests that will actually hit a server, and are marked [ByHand]
 			/// </summary>
@@ -812,15 +858,48 @@ namespace SIL.FieldWorks.XWorks
 					Dispose(false);
 				}
 
-				public WebHeaderCollection Headers { get; private set; }
-				public byte[] UploadFileToWebonary(string address, string fileName)
+				public WebHeaderCollection Headers { get; }
+
+				public byte[] UploadFileToWebonary(string address, string fileName, string method = null)
+				{
+					return MockByteArrayResponse();
+				}
+
+				public HttpStatusCode ResponseStatusCode { get; }
+
+				public string PostDictionaryMetadata(string address, string postBody)
+				{
+					return MockStringResponse();
+				}
+
+				public string PostEntry(string address, string postBody, bool isReversal)
+				{
+					return MockStringResponse();
+				}
+
+				public byte[] DeleteContent(string targetURI)
+				{
+					return MockByteArrayResponse();
+				}
+
+				public string GetSignedUrl(string address, string filePath)
+				{
+					return MockStringResponse();
+				}
+
+				private string MockStringResponse()
+				{
+					if (_exceptionResponse != null)
+						throw _exceptionResponse;
+					return Encoding.UTF8.GetString(_responseContents);
+				}
+
+				private byte[] MockByteArrayResponse()
 				{
 					if (_exceptionResponse != null)
 						throw _exceptionResponse;
 					return _responseContents;
 				}
-
-				public HttpStatusCode ResponseStatusCode { get; private set; }
 			}
 
 			internal override string DestinationURI(string siteName)

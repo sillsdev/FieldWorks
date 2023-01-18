@@ -169,30 +169,42 @@ namespace SIL.FieldWorks.IText
 			if (site is ISetupLineChoices)
 			{
 				var interlinearView = site as ISetupLineChoices;
-				string lineChoicesKey = "InterlinConfig_" + (interlinearView.ForEditing ? "Edit" : "Doc") + "_" + InterlinearTab;
-				InterlinLineChoices.InterlinMode mode = GetLineMode();
-				interlinearView.SetupLineChoices(lineChoicesKey, mode);
+				interlinearView.SetupLineChoices($"InterlinConfig_v3_{(interlinearView.ForEditing ? "Edit" : "Doc")}_{InterlinearTab}",
+												 $"InterlinConfig_v2_{(interlinearView.ForEditing ? "Edit" : "Doc")}_{InterlinearTab}",
+												 GetLineMode());
 			}
 			// Review: possibly need to do SetPaneSizeAndRoot
-			if (site != null && site is IChangeRootObject)
+			if (site is IChangeRootObject rootObject)
 			{
-				if (site is Control) (site as Control).SuspendLayout();
-				(site as IChangeRootObject).SetRoot(RootStTextHvo);
-				if (site is Control) (site as Control).ResumeLayout();
+				if (rootObject is Control)
+				{
+					(rootObject as Control).SuspendLayout();
+				}
+				rootObject.SetRoot(RootStTextHvo);
+				if (rootObject is Control)
+				{
+					(rootObject as Control).ResumeLayout();
+				}
 			}
 		}
 
 		internal InterlinLineChoices.InterlinMode GetLineMode()
 		{
-			if (m_tabCtrl.SelectedIndex == (int)TabPageSelection.Gloss)
+			switch (m_tabCtrl.SelectedIndex)
 			{
-				return m_propertyTable.GetBoolProperty(InterlinDocForAnalysis.ksPropertyAddWordsToLexicon, false) ?
-					InterlinLineChoices.InterlinMode.GlossAddWordsToLexicon : InterlinLineChoices.InterlinMode.Gloss;
+				case (int)TabPageSelection.Gloss:
+					return m_propertyTable.GetBoolProperty(InterlinDocForAnalysis.ksPropertyAddWordsToLexicon, false) ?
+						InterlinLineChoices.InterlinMode.GlossAddWordsToLexicon : InterlinLineChoices.InterlinMode.Gloss;
+
+				case (int)TabPageSelection.ConstituentChart:
+					return InterlinLineChoices.InterlinMode.Chart;
+
+				case (int)TabPageSelection.TaggingView:
+					return InterlinLineChoices.InterlinMode.Gloss;
+
+				default:
+					return InterlinLineChoices.InterlinMode.Analyze;
 			}
-			if (m_tabCtrl.SelectedIndex == (int)TabPageSelection.TaggingView ||
-				m_tabCtrl.SelectedIndex == (int)TabPageSelection.ConstituentChart)
-				return InterlinLineChoices.InterlinMode.Gloss;
-			return InterlinLineChoices.InterlinMode.Analyze;
 		}
 
 		protected override void OnHandleCreated(EventArgs e)
@@ -412,13 +424,6 @@ namespace SIL.FieldWorks.IText
 						ichAnchor = 0;
 					if (ichEnd == -1)
 						ichEnd = 0;
-					if (iPara == ((IStText)para.Owner).ParagraphsOS.Count - 1 && ichAnchor == ichEnd && ichAnchor == para.Contents.Length)
-					{
-						// Special case, IP at the very end, we probably just typed it or pasted it, select the FIRST word of the text.
-						// FWR-723.
-						iPara = 0;
-						ichAnchor = ichEnd = 0;
-					}
 				}
 			}
 			if (iPara >= 0)
@@ -622,7 +627,7 @@ namespace SIL.FieldWorks.IText
 		{
 			m_constChartPane = (InterlinDocChart)DynamicLoader.CreateObject("Discourse.dll",
 																		"SIL.FieldWorks.Discourse.ConstituentChart",
-																		new object[] { Cache });
+																		new object[] { Cache, m_propertyTable });
 			SetupChartPane();
 			m_tpCChart.Controls.Add(m_constChartPane);
 			if (m_styleSheet != null)
@@ -963,10 +968,10 @@ namespace SIL.FieldWorks.IText
 				}
 				if (stText.ParagraphsOS.Count == 1 && ((IStTxtPara)stText.ParagraphsOS[0]).Contents.Length == 0)
 				{
-					// If we have restarted FLEx since this text was created, the WS has been lost and replaced with the global default of English.
-					// If this is the case, default to the Default Vernacular WS (LT-15688)
-					var globalDefaultWs = Cache.ServiceLocator.WritingSystemManager.Get("en").Handle;
-					if(stText.MainWritingSystem == globalDefaultWs)
+					// If we have restarted FLEx since this text was created, the WS has been lost and replaced with the userWs.
+					// If this is the case, default to the Default Vernacular WS (LT-15688 & LT-20837)
+					var userWs = Cache.ServiceLocator.WritingSystemManager.UserWs;
+					if(stText.MainWritingSystem == userWs)
 					{
 						NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 							((IStTxtPara)stText.ParagraphsOS[0]).Contents = TsStringUtils.MakeString(string.Empty, Cache.DefaultVernWs));
@@ -1254,8 +1259,8 @@ namespace SIL.FieldWorks.IText
 			ref UIItemDisplayProperties display)
 		{
 			bool fShouldDisplay = (CurrentInterlinearTabControl != null &&
-				CurrentInterlinearTabControl is InterlinDocRootSiteBase &&
-				!(CurrentInterlinearTabControl is InterlinDocChart));
+				(CurrentInterlinearTabControl is InterlinDocRootSiteBase ||
+				CurrentInterlinearTabControl is InterlinDocChart));
 			display.Visible = fShouldDisplay;
 			display.Enabled = fShouldDisplay;
 			return true;
@@ -1269,6 +1274,8 @@ namespace SIL.FieldWorks.IText
 		{
 			if (CurrentInterlinearTabControl != null && CurrentInterlinearTabControl is InterlinDocRootSiteBase)
 				(CurrentInterlinearTabControl as InterlinDocRootSiteBase).OnConfigureInterlinear(argument);
+			else if (CurrentInterlinearTabControl != null && CurrentInterlinearTabControl is InterlinDocChart)
+				(CurrentInterlinearTabControl as InterlinDocChart).OnConfigureInterlinear(argument);
 
 			return true; // We handled this
 		}

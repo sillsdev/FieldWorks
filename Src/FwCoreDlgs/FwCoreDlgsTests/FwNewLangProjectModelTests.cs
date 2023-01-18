@@ -162,8 +162,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			var messageActual = testModel.InvalidProjectNameMessage;
-			Assert.That(messageActual, Is.StringStarting(messageStart));
-			Assert.That(messageActual, Is.StringContaining(FwCoreDlgs.ksIllegalNameExplanation));
+			Assert.That(messageActual, Does.StartWith(messageStart));
+			Assert.That(messageActual, Does.Contain(FwCoreDlgs.ksIllegalNameExplanation));
 		}
 
 		/// <summary/>
@@ -183,8 +183,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			var messageActual = testModel.InvalidProjectNameMessage;
-			Assert.That(messageActual, Is.StringStarting(messageStart));
-			Assert.That(messageActual, Is.StringContaining(FwCoreDlgs.ksIllegalNameExplanation));
+			Assert.That(messageActual, Does.StartWith(messageStart));
+			Assert.That(messageActual, Does.Contain(FwCoreDlgs.ksIllegalNameExplanation));
 		}
 
 		/// <summary/>
@@ -204,8 +204,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			var messageActual = testModel.InvalidProjectNameMessage;
-			Assert.That(messageActual, Is.StringStarting(messageStart));
-			Assert.That(messageActual, Is.StringContaining(FwCoreDlgs.ksIllegalNameExplanation));
+			Assert.That(messageActual, Does.StartWith(messageStart));
+			Assert.That(messageActual, Does.Contain(FwCoreDlgs.ksIllegalNameExplanation));
 		}
 
 		/// <summary/>

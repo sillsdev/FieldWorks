@@ -1902,15 +1902,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Simple (Toolbox) Sort Rules Help.
-        /// </summary>
-        public static string kstidSimpleSortingHelp {
-            get {
-                return ResourceManager.GetString("kstidSimpleSortingHelp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &amp;Stop.
         /// </summary>
         public static string kstidStop {

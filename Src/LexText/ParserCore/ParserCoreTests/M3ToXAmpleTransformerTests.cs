@@ -38,6 +38,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		string m_sM3FXTAffixAlloFeatsDump;
 		string m_sM3FXTLatinDump;
 		string m_sM3FXTIrregularlyInflectedFormsDump;
+		private string m_sAbazaOrderClassPlayDump;
 		readonly Dictionary<string, XPathDocument> m_mapXmlDocs = new Dictionary<string, XPathDocument>();
 
 		XslCompiledTransform m_adTransform;
@@ -55,7 +56,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		protected string m_sLexTransform;
 		protected string m_sGramTransform;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			m_sTestPath = Path.Combine(FwDirectoryFinder.SourceDirectory, "LexText", "ParserCore", "ParserCoreTests", "M3ToXAmpleTransformerTestsDataFiles");
@@ -81,6 +82,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_sM3FXTAffixAlloFeatsDump = Path.Combine(m_sTestPath, "TestAffixAllomorphFeatsParserFxtResult.xml");
 			m_sM3FXTLatinDump = Path.Combine(m_sTestPath, "LatinParserFxtResult.xml");
 			m_sM3FXTIrregularlyInflectedFormsDump = Path.Combine(m_sTestPath, "IrregularlyInflectedFormsParserFxtResult.xml");
+			m_sAbazaOrderClassPlayDump = Path.Combine(m_sTestPath, "Abaza-OrderclassPlay.xml");
 
 			SetupXmlDocument(m_sM3FXTDump);
 			SetupXmlDocument(m_sM3FXTCircumfixDump);
@@ -96,6 +98,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			SetupXmlDocument(m_sM3FXTAffixAlloFeatsDump);
 			SetupXmlDocument(m_sM3FXTLatinDump);
 			SetupXmlDocument(m_sM3FXTIrregularlyInflectedFormsDump);
+			SetupXmlDocument(m_sAbazaOrderClassPlayDump);
 		}
 
 		private void SetupXmlDocument(string filepath)
@@ -152,6 +155,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ApplyTransform(m_sM3FXTRootCliticEnvsDump, m_lexTransform, "RootCliticEnvsLexicon.txt");
 			ApplyTransform(m_sM3FXTAffixAlloFeatsDump, m_lexTransform, "AffixAlloFeatsLexicon.txt");
 			ApplyTransform(m_sM3FXTIrregularlyInflectedFormsDump, m_lexTransform, "IrregularlyInflectedFormsLexicon.txt");
+			ApplyTransform(m_sAbazaOrderClassPlayDump, m_lexTransform, "Abaza-OrderclassPlaylex.txt");
 		}
 		/// <summary>
 		/// Test creating the word grammar file

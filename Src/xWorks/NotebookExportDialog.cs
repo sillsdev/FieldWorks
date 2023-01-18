@@ -15,6 +15,7 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.Extensions;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -163,7 +164,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				writer.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 				writer.WriteLine("<Notebook exportVersion=\"2.0\" project=\"{0}\" dateExported=\"{1}\">",
-					m_cache.ProjectId.UiName, DateTime.Now.ToString("yyyy-MM-ddThh:mm:ss"));
+					m_cache.ProjectId.UiName, DateTime.Now.ToISO8601TimeFormatNoTimeZoneString());
 				progress.Message = "Exporting data records...";
 				ExportRecords(writer, progress);
 				progress.Message = "Exporting writing systems...";
@@ -384,8 +385,8 @@ namespace SIL.FieldWorks.XWorks
 			writer.WriteLine(
 				"<Entry level=\"{0}\" dateCreated=\"{1}\" dateModified=\"{2}\" guid=\"{3}\">",
 				level,
-				record.DateCreated.ToString("yyyy-MM-ddThh:mm:ss"),
-				record.DateModified.ToString("yyyy-MM-ddThh:mm:ss"),
+				record.DateCreated.ToISO8601TimeFormatNoTimeZoneString(),
+				record.DateModified.ToISO8601TimeFormatNoTimeZoneString(),
 				record.Guid);
 
 			ExportString(writer, record.Title, "Title");

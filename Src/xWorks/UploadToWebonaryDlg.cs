@@ -10,8 +10,8 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Utils;
 using SIL.Windows.Forms;
+using SIL.PlatformUtilities;
 using PropertyTable = XCore.PropertyTable;
 
 namespace SIL.FieldWorks.XWorks
@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			InitializeComponent();
 
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 				MinimumSize = new Size(MinimumSize.Width, MinimumSize.Height + m_additionalMinimumHeightForMono);
 
 			m_controller = controller;
@@ -93,7 +93,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private void siteNameBox_TextChanged(object sender, EventArgs e)
 		{
-			webonarySiteURLLabel.Text = string.Format(xWorksStrings.WebonarySiteURLFormat, webonarySiteNameTextbox.Text);
+			var subDomain = m_controller.UseJsonApi ? "cloud-api" : "www";
+			// ReSharper disable once LocalizableElement -- this is the *world-wide* web, not a LAN.
+			webonarySiteURLLabel.Text = $"https://{subDomain}.{UploadToWebonaryController.Server}/{webonarySiteNameTextbox.Text}";
 		}
 
 		private void UpdateEntriesToBePublishedLabel()
@@ -281,14 +283,17 @@ namespace SIL.FieldWorks.XWorks
 			// or maximized the form, and later reduces the height or unmaximizes the form
 			// after clicking Publish.
 
-			var allButTheLogRowHeight = this.tableLayoutPanel.GetRowHeights().Sum() - this.tableLayoutPanel.GetRowHeights().Last();
-			var fudge = this.Height - this.tableLayoutPanel.Height;
-			var minimumFormHeightToShowLog = allButTheLogRowHeight + this.outputLogTextbox.MinimumSize.Height + fudge;
-			if (MiscUtils.IsUnix)
+			var allButTheLogRowHeight = tableLayoutPanel.GetRowHeights().Sum() - tableLayoutPanel.GetRowHeights().Last();
+			var fudge = Height - tableLayoutPanel.Height;
+			var minimumFormHeightToShowLog = allButTheLogRowHeight + outputLogTextbox.MinimumSize.Height + fudge;
+			if (Platform.IsUnix)
 				minimumFormHeightToShowLog += m_additionalMinimumHeightForMono;
-			this.MinimumSize = new Size(this.MinimumSize.Width, minimumFormHeightToShowLog);
+			MinimumSize = new Size(MinimumSize.Width, minimumFormHeightToShowLog);
 
-			m_controller.UploadToWebonary(Model, this);
+			using (new WaitCursor(this))
+			{
+				m_controller.UploadToWebonary(Model, this);
+			}
 		}
 
 		private void helpButton_Click(object sender, EventArgs e)
@@ -317,17 +322,18 @@ namespace SIL.FieldWorks.XWorks
 			{
 				case WebonaryStatusCondition.Success:
 					// Green
-					newColor = System.Drawing.ColorTranslator.FromHtml("#b8ffaa");
+					newColor = ColorTranslator.FromHtml("#b8ffaa");
 					break;
 				case WebonaryStatusCondition.Error:
 					// Red
-					newColor = System.Drawing.ColorTranslator.FromHtml("#ffaaaa");
+					newColor = ColorTranslator.FromHtml("#ffaaaa");
 					break;
 				case WebonaryStatusCondition.None:
-				default:
 					// Grey
-					newColor = System.Drawing.ColorTranslator.FromHtml("#dcdad5");
+					newColor = ColorTranslator.FromHtml("#dcdad5");
 					break;
+				default:
+					throw new ArgumentException("Unhandled WebonaryStatusCondition", nameof(condition));
 			}
 			outputLogTextbox.BackColor = newColor;
 		}
@@ -358,7 +364,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// On Linux, when reducing the height of the dialog, the output log doesn't shrink with it.
 			// Set its height back to something smaller to keep the whole control visible. It will expand as appropriate.
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 				outputLogTextbox.Size = new Size(outputLogTextbox.Size.Width, outputLogTextbox.MinimumSize.Height);
 		}
 	}

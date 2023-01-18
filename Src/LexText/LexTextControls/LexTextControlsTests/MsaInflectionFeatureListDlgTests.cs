@@ -135,7 +135,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			foreach (IFsFeatureSpecification spec in specCol)
 			{
 				IFsComplexValue complex = spec as IFsComplexValue;
-				Assert.IsNotNull(complex, "complex feature value is null and should not be");
+				Assert.That(complex, Is.Not.Null, "complex feature value is null and should not be");
 				Assert.AreEqual("subject agreement", complex.FeatureRA.Name.AnalysisDefaultWritingSystem.Text, "Expected complex feature name");
 				IFsFeatStruc fsNested = complex.ValueOA as IFsFeatStruc;
 				ILcmOwningCollection<IFsFeatureSpecification> fsNestedCol = fsNested.FeatureSpecsOC;
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				foreach (IFsFeatureSpecification specNested in fsNestedCol)
 				{
 					IFsClosedValue closed = specNested as IFsClosedValue;
-					Assert.IsNotNull(closed, "closed feature value is null and should not be");
+					Assert.That(closed, Is.Not.Null, "closed feature value is null and should not be");
 					if (!(((closed.FeatureRA.Name.AnalysisDefaultWritingSystem.Text == "gender") &&
 							(closed.ValueRA.Name.AnalysisDefaultWritingSystem.Text == "feminine gender")) ||
 						  ((closed.FeatureRA.Name.AnalysisDefaultWritingSystem.Text == "person") &&

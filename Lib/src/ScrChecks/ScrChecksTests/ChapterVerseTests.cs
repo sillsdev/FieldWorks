@@ -31,7 +31,7 @@ namespace SILUBS.ScriptureChecks
 		/// Initializes the versification tables.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
 			BCVRefTests.InitializeVersificationTable();

@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -82,6 +83,66 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				var message = Assert.Throws<ArgumentException>(() =>
 					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath(), null)).Message;
 				StringAssert.Contains("Source file has an unexpected list count.", message);
+			}
+		}
+
+		[Test]
+		public void SplitSourceLists_InvalidListsToIncludeThrows()
+		{
+			const string oneListXml = "<Lists><List /></Lists>";
+			using (var stringReader = new StringReader(oneListXml))
+			using (var xmlReader = new XmlTextReader(stringReader))
+			{
+				var message = Assert.Throws<ArgumentException>(() =>
+					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath(), null,
+						new List<string> {"ArgumentIsNotRight"}, null)).Message;
+				StringAssert.Contains("ListsToInclude is expecting one or more .xlf file names",
+					message);
+			}
+		}
+
+		[Test]
+		public void SplitSourceLists_MissingIncludeListThrows()
+		{
+			const string oneListXml = "<Lists><List owner='LangProject' field='SemanticDomainList'/></Lists>";
+			using (var stringReader = new StringReader(oneListXml))
+			using (var xmlReader = new XmlTextReader(stringReader))
+			{
+				var message = Assert.Throws<ArgumentException>(() =>
+					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath(), null,
+						new List<string> { LocalizeLists.AnthropologyCategories }))?.Message;
+				StringAssert.Contains("Source file does not have content for all lists to include", message);
+				StringAssert.Contains(LocalizeLists.AnthropologyCategories, message);
+			}
+		}
+
+		[Test]
+		public void SplitSourceLists_MissingRequestedListThrows()
+		{
+			const string oneListXml = "<Lists><List/></Lists>";
+			using (var stringReader = new StringReader(oneListXml))
+			using (var xmlReader = new XmlTextReader(stringReader))
+			{
+				var message = Assert.Throws<ArgumentException>(() =>
+					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath(), LocalizeLists.AcademicDomains))?.Message;
+				StringAssert.Contains("Source file has an unexpected list count.", message);
+			}
+		}
+
+		[Test]
+		public void SplitSourceLists_SingleListExportsOnlyRequestedList()
+		{
+			const string oneListXml = "<Lists><List owner='LangProject' field='SemanticDomainList'/><List owner='LangProject' field='PartsOfSpeech'/></Lists>";
+			using (var stringReader = new StringReader(oneListXml))
+			using (var xmlReader = new XmlTextReader(stringReader))
+			{
+				var tempOutputForTest =
+					Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+				Directory.CreateDirectory(tempOutputForTest);
+				LocalizeLists.SplitLists(xmlReader, tempOutputForTest, null,
+					new List<string> { LocalizeLists.SemanticDomains });
+				Assert.That(Directory.EnumerateFiles(tempOutputForTest).Count(), Is.EqualTo(1));
+				Directory.Delete(tempOutputForTest, true);
 			}
 		}
 
@@ -1053,7 +1114,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		/// <summary>
 		/// Test with an export of TranslatedLists from FieldWorks (you must add a second analysis language to enable this option)
 		/// </summary>
-		[Ignore]
+		[Ignore("Facilitates human inspection of output files")]
 		[Category("ByHand")]
 		[Test]
 		public void IntegrationTest()

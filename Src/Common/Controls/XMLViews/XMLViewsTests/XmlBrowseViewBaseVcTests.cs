@@ -1,11 +1,10 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 
@@ -112,7 +111,7 @@ namespace XMLViewsTests
 			Assert.That(output, Is.EqualTo(expectedOutput), "displayNameProperty should be added");
 		}
 
-				[Test]
+		[Test]
 		public void MigrateVersion16Columns_ConfigureWs()
 		{
 			var input = @"
@@ -133,6 +132,51 @@ namespace XMLViewsTests
 ".Replace("'", "\"");
 			var output = XmlBrowseViewBaseVc.FixVersion16Columns(input);
 			Assert.That(output, Is.EqualTo(expectedOutput), "$ws= should be added to various fields");
+		}
+
+		[Test]
+		public void GetHeaderLabels_ReturnsColumnSpecLabels()
+		{
+			var testColumns =
+@"<columns>
+	<column label='Ref' width='60000'>
+		<span>
+			<properties>
+				<editable value='false'/>
+			</properties>
+			<string class='FakeOccurrence' field='Reference' ws='$ws=best vernoranal'/>
+		</span>
+	</column>
+	<column label='Occurrence' sortType='occurrenceInContext' width='415000' multipara='true'>
+		<concpara min='FakeOccurrence.BeginOffset' lim='FakeOccurrence.EndOffset' align='144000'>
+			<properties>
+				<editable value='false'/>
+			</properties>
+			<obj class='FakeOccurrence' field='TextObject' layout='empty'>
+				<choice>
+				<where is='StTxtPara'>
+					<string class='StTxtPara' field='Contents' ws='$ws=best vernacular'/>
+				</where>
+				<where is='CmPicture'>
+					<string class='CmPicture' field='Caption' ws='vernacular'/>
+				</where>
+				</choice>
+			</obj>
+		</concpara>
+	</column>
+</columns>";
+
+			var columnDoc = new XmlDocument();
+			columnDoc.LoadXml(testColumns);
+			columnDoc.SelectNodes("column");
+			var testVc = new XmlBrowseViewBaseVc
+			{
+				ColumnSpecs = new List<XmlNode>(columnDoc.DocumentElement.GetElementsByTagName("column").OfType<XmlNode>())
+			};
+
+			var columnLabels = XmlBrowseViewBaseVc.GetHeaderLabels(testVc);
+
+			CollectionAssert.AreEqual(new List<string> { "Ref", "Occurrence" }, columnLabels);
 		}
 	}
 }

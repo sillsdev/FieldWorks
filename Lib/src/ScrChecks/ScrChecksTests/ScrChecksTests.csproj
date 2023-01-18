@@ -10,6 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SILUBS.ScriptureChecks</RootNamespace>
     <AssemblyName>ScrChecksTests</AssemblyName>
+    <AppConfig>..\..\..\..\Src\AppForTests.config</AppConfig>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -112,11 +113,10 @@
     <Reference Include="System.Xml" />
     <Reference Include="nunit.framework">
       <Name>nunit.framework</Name>
-      <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\packages\NUnit.3.13.3\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <Compile Include="ChapterVerseTests.cs" />
     <Compile Include="CharactersCheckUnitTest.cs" />
     <Compile Include="QuotationCheckSilUnitTest.cs" />

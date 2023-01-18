@@ -123,6 +123,7 @@ namespace SIL.FieldWorks.Discourse
 				m_ribbonValues.Add(hvoOcc);
 				m_cachedRibbonWords[hvoOcc] = wordForm as LocatedAnalysisOccurrence;
 			}
+
 			return m_ribbonValues.ToArray();
 		}
 

@@ -22,6 +22,7 @@ Export using the Multi-Dictionary Formatter lexeme-based standard. This exports 
 		<objVector objProperty="EtymologyOS"/>
 		<objVector objProperty="LexEntryReferences" virtual="true"/>
 		<multilingualStringElement name="co" simpleProperty="Comment"/>
+		<objVector objProperty="DialectLabelsRS" classtag="DialectLabelEntry"/>
 		<generateCustom class="LexEntry" fieldType="mlstring">
 			<customMultilingualStringElement name="${sfm}" field="${fieldName}"/>
 		</generateCustom>
@@ -75,6 +76,7 @@ Export using the Multi-Dictionary Formatter lexeme-based standard. This exports 
 		<multilingualStringElement name="nt" simpleProperty="GeneralNote"/>
 		<objVector objProperty="PicturesOS"/>
 		<objVector objProperty="SemanticDomainsRC"/>
+		<objVector objProperty="DialectLabelsRS" classtag="DialectLabelSense"/>
 		<generateCustom class="LexSense" fieldType="mlstring">
 			<customMultilingualStringElement name="${sfm}" field="${fieldName}"/>
 		</generateCustom>
@@ -193,6 +195,16 @@ Export using the Multi-Dictionary Formatter lexeme-based standard. This exports 
 
 	<class name="CmPossibility">
 		<string simpleProperty="Name" ws="analysis"/>
+	</class>
+	<class name="CmPossibility-DialectLabelEntry">
+		<element name="dle">
+			<string simpleProperty="Name" ws="analysis"/>
+		</element>
+	</class>
+	<class name="CmPossibility-DialectLabelSense">
+		<element name="dls">
+			<string simpleProperty="Name" ws="analysis"/>
+		</element>
 	</class>
 
 </template>

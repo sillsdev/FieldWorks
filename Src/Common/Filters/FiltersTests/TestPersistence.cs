@@ -279,51 +279,51 @@ namespace SIL.FieldWorks.Filters
 			m_objectsToDispose.Add(andFilterOut);
 			andFilterOut.Cache = Cache;
 
-			Assert.IsNotNull(andFilterOut);
+			Assert.That(andFilterOut, Is.Not.Null);
 
 			FilterBarCellFilter rangeIntFilterOut =
 				andFilterOut.Filters[0] as FilterBarCellFilter;
 			// todo
-			Assert.IsNotNull(rangeIntFilterOut);
+			Assert.That(rangeIntFilterOut, Is.Not.Null);
 
 			OwnIntPropFinder ownIntFinderOut = rangeIntFilterOut.Finder as OwnIntPropFinder;
-			Assert.IsNotNull(ownIntFinderOut);
+			Assert.That(ownIntFinderOut, Is.Not.Null);
 			Assert.AreEqual(551, ownIntFinderOut.Flid);
 
 			RangeIntMatcher rangeIntMatchOut = rangeIntFilterOut.Matcher as RangeIntMatcher;
-			Assert.IsNotNull(rangeIntMatchOut);
+			Assert.That(rangeIntMatchOut, Is.Not.Null);
 			Assert.AreEqual(5, rangeIntMatchOut.Min);
 			Assert.AreEqual(23, rangeIntMatchOut.Max);
 			Assert.IsTrue(tssLabel.Equals(rangeIntMatchOut.Label));
 
 			NotEqualIntMatcher notEqualMatchOut = GetMatcher(andFilter, 1) as NotEqualIntMatcher;
-			Assert.IsNotNull(notEqualMatchOut);
+			Assert.That(notEqualMatchOut, Is.Not.Null);
 			Assert.AreEqual(77, notEqualMatchOut.NotEqualValue);
 
 			ExactMatcher exactMatchOut = GetMatcher(andFilter, 2) as ExactMatcher;
-			Assert.IsNotNull(exactMatchOut);
+			Assert.That(exactMatchOut, Is.Not.Null);
 			Assert.AreEqual("hello", exactMatchOut.Pattern.Pattern.Text);
 
 			BeginMatcher beginMatchOut = GetMatcher(andFilter, 3) as BeginMatcher;
-			Assert.IsNotNull(beginMatchOut);
+			Assert.That(beginMatchOut, Is.Not.Null);
 			Assert.AreEqual("goodbye", beginMatchOut.Pattern.Pattern.Text);
 
 			EndMatcher endMatchOut = GetMatcher(andFilter, 4) as EndMatcher;
-			Assert.IsNotNull(endMatchOut);
+			Assert.That(endMatchOut, Is.Not.Null);
 			Assert.AreEqual("exit", endMatchOut.Pattern.Pattern.Text);
 
 			AnywhereMatcher anywhereMatchOut = GetMatcher(andFilter, 5) as AnywhereMatcher;
-			Assert.IsNotNull(anywhereMatchOut);
+			Assert.That(anywhereMatchOut, Is.Not.Null);
 			Assert.AreEqual("whatever", anywhereMatchOut.Pattern.Pattern.Text);
 
 			BlankMatcher blankMatchOut = GetMatcher(andFilter, 6) as BlankMatcher;
-			Assert.IsNotNull(blankMatchOut);
+			Assert.That(blankMatchOut, Is.Not.Null);
 
 			NonBlankMatcher nonBlankMatchOut = GetMatcher(andFilter, 7) as NonBlankMatcher;
-			Assert.IsNotNull(nonBlankMatchOut);
+			Assert.That(nonBlankMatchOut, Is.Not.Null);
 
 			InvertMatcher invertMatchOut = GetMatcher(andFilter, 8) as InvertMatcher;
-			Assert.IsNotNull(invertMatchOut);
+			Assert.That(invertMatchOut, Is.Not.Null);
 
 			OwnMlPropFinder mlPropFinderOut = GetFinder(andFilter, 2) as OwnMlPropFinder;
 			Assert.AreEqual(m_sda, mlPropFinderOut.DataAccess);
@@ -359,10 +359,10 @@ namespace SIL.FieldWorks.Filters
 			// 7, 8 are duplicates
 
 			NullFilter nullFilterOut = andFilter.Filters[9] as NullFilter;
-			Assert.IsNotNull(nullFilterOut);
+			Assert.That(nullFilterOut, Is.Not.Null);
 
 			ProblemAnnotationFilter pafOut = andFilter.Filters[10] as ProblemAnnotationFilter;
-			Assert.IsNotNull(pafOut);
+			Assert.That(pafOut, Is.Not.Null);
 			Assert.AreEqual(5002, pafOut.ClassIds[0]);
 			Assert.AreEqual(5016, pafOut.ClassIds[1]);
 		}

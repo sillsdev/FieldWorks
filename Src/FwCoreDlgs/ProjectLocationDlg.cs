@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				var newFolder = m_tbProjectsFolder.Text;
 				var oldFolder = FwDirectoryFinder.ProjectsDirectory;
-				if(!MiscUtils.IsUnix)
+				if(!Platform.IsUnix)
 				{
 					newFolder = newFolder.ToLowerInvariant();
 					oldFolder = oldFolder.ToLowerInvariant();
@@ -95,7 +95,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						foreach(string file in Directory.GetFiles(path))
 						{
 							string filename = file;
-							if(!MiscUtils.IsUnix)
+							if(!Platform.IsUnix)
 								filename = filename.ToLowerInvariant();
 							if(filename.EndsWith(".fwdata"))
 							{

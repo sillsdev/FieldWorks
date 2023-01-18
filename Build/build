@@ -9,6 +9,10 @@ echo
 BUILD=msbuild
 PLATFORM=$(test `arch` = x86_64 && echo x64 || echo x86)
 
+# Optionally skip question about local libraries and set to use downloaded artifacts by running
+#   ./run-in-environ msbuild /t:WriteNonlocalDevelopmentPropertiesFile
+# The setting and paths can later be changed by editing LibraryDevelopment.properties
+
 # Use xbuild for CheckDevelopmentPropertiesFile since mono5-sil msbuild has trouble. When move to mono6, may be able to use msbuild again.
 
 "$(dirname "$0")"/Agent/install-deps --verify

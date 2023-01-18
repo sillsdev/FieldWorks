@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -6,7 +6,6 @@
 // Unit tests for GlossListBox and GlossListTreeView
 // </remarks>
 
-using System;
 using System.IO;
 using System.Xml;
 using NUnit.Framework;
@@ -69,21 +68,18 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			XmlNode node = m_doc.SelectSingleNode("//item[@id='cAdjAgr']/item[@target='tCommonAgr']/item[@target='fGender']/item[@target='vMasc']");
 			GlossListBoxItem glbiNew = new GlossListBoxItem(Cache, node, ".", "", false);
 			GlossListBoxItem glbiConflict;
-			bool fResult = m_LabelGlosses.NewItemConflictsWithExtantItem(glbiNew, out glbiConflict);
-			string sMsg;
-			if (glbiConflict != null)
-				sMsg = String.Format("Masculine gender should not conflict, but did with {0}.", glbiConflict.Abbrev);
-			else
-				sMsg = "Masculine gender should not conflict";
+			var fResult = m_LabelGlosses.NewItemConflictsWithExtantItem(glbiNew, out glbiConflict);
+			var sMsg = glbiConflict != null
+				? $"Masculine gender should not conflict, but did with {glbiConflict.Abbrev}."
+				: "Masculine gender should not conflict";
 			Assert.IsFalse(fResult, sMsg);
 			// check a non-terminal node, so no conflict
 			node = m_doc.SelectSingleNode("//item[@id='fDeg']");
 			glbiNew = new GlossListBoxItem(Cache, node, ".", "", false);
 			fResult = m_LabelGlosses.NewItemConflictsWithExtantItem(glbiNew, out glbiConflict);
-			if (glbiConflict != null)
-			sMsg = String.Format("Feature degree should not conflict, but did with {0}", glbiConflict.Abbrev);
-			else
-				sMsg = "Feature degree should not conflict";
+			sMsg = glbiConflict != null
+				? $"Feature degree should not conflict, but did with {glbiConflict.Abbrev}"
+				: "Feature degree should not conflict";
 			Assert.IsFalse(fResult, sMsg);
 			// check another terminal node with same parent, so there is conflict
 			node = m_doc.SelectSingleNode("//item[@id='vComp']");
@@ -152,11 +148,11 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			Assert.AreEqual("adj.r", strCheckBoxes);
 		}
 		[Test]
-		public void GetTreeNonExistantAttrTest()
+		public void GetTreeNonExistentAttrTest()
 		{
 
 			XmlNode treeTop = dom.SelectSingleNode(m_sTopOfList);
-			Assert.IsNull(XmlUtils.GetAttributeValue(treeTop, "nonExistant"), "Expected null object");
+			Assert.That(XmlUtils.GetAttributeValue(treeTop, "nonExtant"), Is.Null, "Expected null object");
 		}
 		[Test]
 		public void TreeNodeBitmapTest()

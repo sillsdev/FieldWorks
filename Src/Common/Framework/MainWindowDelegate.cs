@@ -10,19 +10,20 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
+using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.FwCoreDlgControls;
 using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
-using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.Framework
 {
@@ -877,7 +878,7 @@ namespace SIL.FieldWorks.Common.Framework
 				"kstidCreateShortcutLinkDescription", Cache.ProjectId.UiName,
 				m_app.ApplicationName);
 
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 				return CreateProjectLauncher(arguments, description, directory);
 
 			return CreateProjectShortcut(arguments, description, directory);

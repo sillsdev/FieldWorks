@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -476,7 +476,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			fs.Freeze();
 			hcEntry.SyntacticFeatureStruct = fs;
 
-			hcEntry.Properties["ID"] = msa.Hvo;
+			hcEntry.Properties[HCParser.MsaID] = msa.Hvo;
 
 			foreach (IMoStemAllomorph allo in allos)
 			{
@@ -550,9 +550,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			fs.Freeze();
 			hcEntry.SyntacticFeatureStruct = fs;
 
-			hcEntry.Properties["ID"] = msa.Hvo;
+			hcEntry.Properties[HCParser.MsaID] = msa.Hvo;
 			if (inflType != null)
-				hcEntry.Properties["InflTypeID"] = inflType.Hvo;
+				hcEntry.Properties[HCParser.InflTypeID] = inflType.Hvo;
 
 			foreach (IMoStemAllomorph allo in allos)
 			{
@@ -604,7 +604,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					break;
 			}
 
-			hcAllo.Properties["ID"] = allo.Hvo;
+			hcAllo.Properties[HCParser.FormID] = allo.Hvo;
 			return hcAllo;
 		}
 
@@ -725,7 +725,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (msa.FromStemNameRA != null && m_stemNames.TryGetValue(msa.FromStemNameRA, out hcStemName))
 				mrule.RequiredStemName = hcStemName;
 
-			mrule.Properties["ID"] = msa.Hvo;
+			mrule.Properties[HCParser.MsaID] = msa.Hvo;
 
 			foreach (AffixProcessAllomorph hcAllo in LoadAffixProcessAllomorphs(msa, allos))
 			{
@@ -758,7 +758,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			foreach (ICmPossibility prodRestrict in msa.FromProdRestrictRC)
 				requiredMprFeatures.Add(m_mprFeatures[prodRestrict]);
 
-			mrule.Properties["ID"] = msa.Hvo;
+			mrule.Properties[HCParser.MsaID] = msa.Hvo;
 
 			foreach (AffixProcessAllomorph hcAllo in LoadAffixProcessAllomorphs(msa, allos))
 			{
@@ -783,7 +783,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			requiredFS.Freeze();
 			mrule.RequiredSyntacticFeatureStruct = requiredFS;
 
-			mrule.Properties["ID"] = msa.Hvo;
+			mrule.Properties[HCParser.MsaID] = msa.Hvo;
 
 			foreach (AffixProcessAllomorph hcAllo in LoadAffixProcessAllomorphs(msa, allos))
 				mrule.Allomorphs.Add(hcAllo);
@@ -801,7 +801,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			requiredFS.Freeze();
 			mrule.RequiredSyntacticFeatureStruct = requiredFS;
 
-			mrule.Properties["ID"] = msa.Hvo;
+			mrule.Properties[HCParser.MsaID] = msa.Hvo;
 
 			foreach (AffixProcessAllomorph hcAllo in LoadAffixProcessAllomorphs(msa, allos))
 				mrule.Allomorphs.Add(hcAllo);
@@ -1086,12 +1086,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				hcAllo.Environments.Add(new AllomorphEnvironment(m_spanFactory, ConstraintType.Require, leftEnvPattern, rightEnvPattern) {Name = name});
 			}
 
-			hcAllo.Properties["ID"] = prefixAllo.Hvo;
-			hcAllo.Properties["ID2"] = suffixAllo.Hvo;
+			hcAllo.Properties[HCParser.FormID] = prefixAllo.Hvo;
+			hcAllo.Properties[HCParser.FormID2] = suffixAllo.Hvo;
 			if (prefixEnv != null)
-				hcAllo.Properties["PrefixEnv"] = prefixEnv.StringRepresentation.Text;
+				hcAllo.Properties[HCParser.PrefixEnv] = prefixEnv.StringRepresentation.Text;
 			if (suffixEnv != null)
-				hcAllo.Properties["SuffixEnv"] = suffixEnv.StringRepresentation.Text;
+				hcAllo.Properties[HCParser.SuffixEnv] = suffixEnv.StringRepresentation.Text;
 			return hcAllo;
 		}
 
@@ -1196,7 +1196,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 
-			hcAllo.Properties["ID"] = allo.Hvo;
+			hcAllo.Properties[HCParser.FormID] = allo.Hvo;
 			return hcAllo;
 		}
 
@@ -1366,9 +1366,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 
-			hcAllo.Properties["ID"] = allo.Hvo;
+			hcAllo.Properties[HCParser.FormID] = allo.Hvo;
 			if (env != null)
-				hcAllo.Properties["Env"] = env.StringRepresentation.Text;
+				hcAllo.Properties[HCParser.Env] = env.StringRepresentation.Text;
 			return hcAllo;
 		}
 
@@ -1417,7 +1417,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			requiredFS.AddValue(m_posFeature, LoadAllPartsOfSpeech(template.OwnerOfClass<IPartOfSpeech>()));
 			requiredFS.Freeze();
 			hcTemplate.RequiredSyntacticFeatureStruct = requiredFS;
-			hcTemplate.Properties["ID"] = template.Hvo;
+			hcTemplate.Properties[HCParser.TemplateID] = template.Hvo;
 
 			foreach (IMoInflAffixSlot slot in slots)
 			{
@@ -1481,10 +1481,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			mrule.Allomorphs.Add(msubrule);
 
-			mrule.Properties["InflTypeID"] = type.Hvo;
-			mrule.Properties["SlotID"] = slot.Hvo;
-			msubrule.Properties["IsNull"] = true;
-			msubrule.Properties["IsPrefix"] = isPrefix;
+			mrule.Properties[HCParser.InflTypeID] = type.Hvo;
+			mrule.Properties[HCParser.SlotID] = slot.Hvo;
+			msubrule.Properties[HCParser.IsNull] = true;
+			msubrule.Properties[HCParser.IsPrefix] = isPrefix;
 
 			return mrule;
 		}
@@ -1560,7 +1560,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					HeadRequiredSyntacticFeatureStruct = headRequiredFS,
 					NonHeadRequiredSyntacticFeatureStruct = nonheadRequiredFS,
 					OutSyntacticFeatureStruct = outFS,
-					Properties = {{"ID", compoundRule.Hvo}}
+					Properties = {{HCParser.CRuleID, compoundRule.Hvo}}
 				};
 
 			var subrule = new CompoundingSubrule();
@@ -1605,7 +1605,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					HeadRequiredSyntacticFeatureStruct = rightRequiredFS,
 					NonHeadRequiredSyntacticFeatureStruct = leftRequiredFS,
 					OutSyntacticFeatureStruct = outFS,
-					Properties = {{"ID", compoundRule.Hvo}}
+					Properties = {{HCParser.CRuleID, compoundRule.Hvo}}
 				};
 
 			var rightSubrule = new CompoundingSubrule();
@@ -1630,7 +1630,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					HeadRequiredSyntacticFeatureStruct = leftRequiredFS,
 					NonHeadRequiredSyntacticFeatureStruct = rightRequiredFS,
 					OutSyntacticFeatureStruct = outFS,
-					Properties = {{"ID", compoundRule.Hvo}}
+					Properties = {{HCParser.CRuleID, compoundRule.Hvo}}
 				};
 
 			var leftSubrule = new CompoundingSubrule();
@@ -1692,7 +1692,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				lhsPattern.Freeze();
 				hcPrule.Lhs = lhsPattern;
 			}
-			hcPrule.Properties["ID"] = prule.Hvo;
+			hcPrule.Properties[HCParser.PRuleID] = prule.Hvo;
 
 			foreach (IPhSegRuleRHS rhs in prule.RightHandSidesOS)
 			{
@@ -1793,7 +1793,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			pattern.Freeze();
 			hcPrule.Pattern = pattern;
 
-			hcPrule.Properties["ID"] = prule.Hvo;
+			hcPrule.Properties[HCParser.CRuleID] = prule.Hvo;
 
 			return hcPrule;
 		}

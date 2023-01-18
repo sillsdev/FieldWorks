@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private static List<string> s_foldersToDelete = new List<string>();
 
 		/// <summary></summary>
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void FixtureTearDown()
 		{
 			CleanUpTempFolders();

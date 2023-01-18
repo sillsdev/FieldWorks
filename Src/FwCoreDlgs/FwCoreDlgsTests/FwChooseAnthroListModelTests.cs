@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var model = new FwChooseAnthroListModel();
 			model.CurrentList = choice;
-			Assert.That(model.AnthroFileName, Is.StringEnding(expectedFileName));
+			Assert.That(model.AnthroFileName, Does.EndWith(expectedFileName));
 		}
 
 		/// <summary/>

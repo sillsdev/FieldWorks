@@ -288,7 +288,7 @@ namespace ParatextImport
 			// Display the ImportedBooks dialog if we imported any vernacular Scripture.
 			if (m_undoImportManager.ImportedBooks.Any(x => x.Value))
 			{
-				DisplayImportedBooksDlg(m_undoImportManager.BackupVersion);
+				SaveImportedBooks(m_undoImportManager.BackupVersion);
 			}
 
 			m_undoImportManager.RemoveEmptyBackupSavedVersion();
@@ -366,12 +366,9 @@ namespace ParatextImport
 		/// </summary>
 		/// <param name="backupSavedVersion">The saved version for backups of any overwritten
 		/// books.</param>
-		protected virtual void DisplayImportedBooksDlg(IScrDraft backupSavedVersion)
+		protected virtual void SaveImportedBooks(IScrDraft backupSavedVersion)
 		{
-			using (var dlg = new ImportedBooks(Cache, ImportedVersion, backupSavedVersion, UndoManager.ImportedBooks.Keys, m_helpTopicProvider, m_app))
-			{
-				dlg.ShowOrSave(m_mainWnd, true);
-			}
+			ImportedBooks.SaveImportedBooks(Cache, ImportedVersion, backupSavedVersion, UndoManager.ImportedBooks.Keys, m_mainWnd);
 		}
 		#endregion
 	}

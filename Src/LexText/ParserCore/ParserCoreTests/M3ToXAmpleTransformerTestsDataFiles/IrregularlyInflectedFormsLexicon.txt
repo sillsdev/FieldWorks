@@ -49,7 +49,7 @@
 \lx 1542
 \g 1s
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 1230
 \a di {8707}
 \eType prefix
@@ -110,7 +110,7 @@
 \lx 6001
 \g 1
 \c W/W
-\o -NaN -NaN 
+\o NaN NaN 
 \wc 1230
 \a pa {8617}
 \eType prefix

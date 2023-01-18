@@ -120,7 +120,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			// We expect the contents to remain unchanged.
 			Assert.AreEqual(2, m_cache.get_VecSize(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas));
-			Assert.IsNull(m_basicView.RequestedSelectionAtEndOfUow);
+			Assert.That(m_basicView.RequestedSelectionAtEndOfUow, Is.Null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -169,7 +169,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			Assert.AreEqual(hvoTitlePara1, m_cache.get_VecItem(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 2));
 			Assert.AreEqual(hvoTitlePara2, m_cache.get_VecItem(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 3));
 
-			Assert.IsNotNull(m_basicView.RequestedSelectionAtEndOfUow);
+			Assert.That(m_basicView.RequestedSelectionAtEndOfUow, Is.Not.Null);
 			// WANTTESTPORT: (Common) FWR-1649 Check properties of RequestedSelectionAtEndOfUow
 		}
 		#endregion
@@ -192,7 +192,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_SelectionHelper = new DummySelectionHelper(null, m_basicView);
 			SetSelection(0, 0, 0, 0, 1, 6, 6, true);
 			IVwSelection vwsel = m_SelectionHelper.SetSelection(true);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
 			m_basicView.EditingHelper.GoToNextPara();
 
@@ -222,7 +222,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_SelectionHelper = new DummySelectionHelper(null, m_basicView);
 			SetSelection(0, 0, 1, 0, 2, 6, 6, true);
 			IVwSelection vwsel = m_SelectionHelper.SetSelection(true);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
 			m_basicView.EditingHelper.GoToNextPara();
 
@@ -260,7 +260,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_SelectionHelper = new DummySelectionHelper(null, m_basicView);
 			SetSelection(0, 1, 0, 0, 2, 0, 0, true);
 			IVwSelection vwsel = m_SelectionHelper.SetSelection(true);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
 			m_basicView.EditingHelper.GoToNextPara();
 
@@ -289,7 +289,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_SelectionHelper = new DummySelectionHelper(null, m_basicView);
 			SetSelection(0, 0, 0, 0, 0, 0, 0, true);
 			IVwSelection vwsel = m_SelectionHelper.SetSelection(true);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
 			m_basicView.EditingHelper.GoToNextPara();
 
@@ -317,7 +317,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_SelectionHelper = new DummySelectionHelper(null, m_basicView);
 			SetSelection(0, 1, 1, 0, 2, 6, 0, true);
 			IVwSelection vwsel = m_SelectionHelper.SetSelection(true);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
 			m_basicView.EditingHelper.GoToNextPara();
 
@@ -355,7 +355,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetSelection(0, 0, 0, 0, 2, 1, 1, false); // Set end
 			SetSelection(0, 1, 0, 0, 1, 12, 12, true); // Set anchor
 			IVwSelection vwsel = m_SelectionHelper.SetSelection(true);
-			Assert.IsNotNull(vwsel, "No selection made");
+			Assert.That(vwsel, Is.Not.Null, "No selection made");
 			m_basicView.EditingHelper.GoToNextPara();
 
 			// We expect that the selection will be at the start of the second paragraph in
@@ -438,13 +438,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			EditingHelper.SetTsStringOnClipboard(incStrBldr.GetString(), false, wsManager);
 
 			var tss = m_basicView.EditingHelper.GetTsStringFromClipboard(wsManager);
-			Assert.IsNotNull(tss, "Couldn't get TsString from clipboard");
+			Assert.That(tss, Is.Not.Null, "Couldn't get TsString from clipboard");
 			Assert.AreEqual(2, tss.RunCount);
 			Assert.AreEqual("Gogomer ", tss.get_RunText(0));
 			Assert.AreEqual("cucumber", tss.get_RunText(1));
 
 			var newDataObj = ClipboardUtils.GetDataObject();
-			Assert.IsNotNull(newDataObj, "Couldn't get DataObject from clipboard");
+			Assert.That(newDataObj, Is.Not.Null, "Couldn't get DataObject from clipboard");
 			Assert.AreEqual("Gogomer cucumber", newDataObj.GetData("Text"));
 		}
 		/// <summary>
@@ -463,7 +463,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			var tss = TsStringUtils.MakeString(input, wsEng);
 			EditingHelper.SetTsStringOnClipboard(tss, false, wsManager);
 			var newDataObj = ClipboardUtils.GetDataObject();
-			Assert.IsNotNull(newDataObj, "Couldn't get DataObject from clipboard");
+			Assert.That(newDataObj, Is.Not.Null, "Couldn't get DataObject from clipboard");
 			Assert.AreEqual(originalInput, newDataObj.GetData("Text"));
 		}
 	}

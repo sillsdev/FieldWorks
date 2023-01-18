@@ -141,7 +141,7 @@ namespace XCore
 		}
 	}
 
-	//!!!!!!!!!!!!!!!!!1
+	//!!!!!!!!!!!!!!!!!
 	//listSets objects are currently unused, as we are just accessing the raw XML for now.
 	//I have not figured out whether this raw approach will last once we have dynamic lists
 	//randy, now please resist the temptation to delete this stuff

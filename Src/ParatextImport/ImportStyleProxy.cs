@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Diagnostics;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -427,8 +428,22 @@ namespace ParatextImport
 				m_ttpFormattingProps = tsPropsBldr.GetTextProps(); // default properties
 			}
 
+			// Check for an existing style with the same name
+			m_style = m_LcmStyleSheet.FindStyle(m_sStyleName);
+
+			if (m_style != null)
+			{
+				if (m_style.Type != m_StyleType || !m_style.Rules.Equals(m_ttpFormattingProps))
+				{
+					throw new ArgumentException(
+						$"Conflicting style data found on Paratext Import. Two {m_sStyleName} found with different properties.");
+				}
+				// We already have this style - just use it
+				return;
+			}
+
 			// Get an hvo for the new style
-			int hvoStyle = m_LcmStyleSheet.MakeNewStyle();
+			var hvoStyle = m_LcmStyleSheet.MakeNewStyle();
 			m_style = m_LcmStyleSheet.Cache.ServiceLocator.GetInstance<IStStyleRepository>().GetObject(hvoStyle);
 
 			// PutStyle() adds the style to the stylesheet. we'll give it the properties we

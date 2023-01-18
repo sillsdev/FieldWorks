@@ -593,7 +593,7 @@ namespace TestViews
 				COMBINING_MACRON L"C" COMBINING_OVERLINE COMBINING_LEFT_HALF_RING_BELOW L"XYZ"
 				BREVE L"GAP" SPACE COMBINING_BREVE L"QED" MUSICAL_SYMBOL_MINIMA;
 			// outputs. All reorder overline and half ring.
-			OleStringLiteral rgpsz[] = {
+			StrUni rgpsz[] = {
 				// knmNFD: decompose A_WITH_DIAERESIS_AND_MACRON
 				L"abcA" COMBINING_DIAERESIS COMBINING_MACRON L"A" COMBINING_DIAERESIS
 					COMBINING_MACRON L"C" COMBINING_LEFT_HALF_RING_BELOW COMBINING_OVERLINE
@@ -656,7 +656,7 @@ namespace TestViews
 					sta.Format("BasicNormalization itss=%d: get_Normalization(inm=%d)",
 						itss, inm);
 					unitpp::assert_true(sta.Chars(),
-						u_strcmp(sbstrResult.Chars(), rgpsz[inm]) == 0);
+						u_strcmp(reinterpret_cast<const UChar*>(sbstrResult.Chars()), reinterpret_cast<const UChar*>(rgpsz[inm].Chars())) == 0);
 					ITsTextPropsPtr qttpInput;
 					ITsTextPropsPtr qttpResult;
 					hr = rgqtssInput[itss]->get_PropertiesAt(0, &qttpInput);
@@ -718,7 +718,7 @@ namespace TestViews
 			// Also test that it is correctly found to be already in NFD.
 			// String should have an A in one run followed by a combining diaresis in another.
 			StrUni stuInput1 = L"A" COMBINING_DIAERESIS;
-			OleStringLiteral rgpsz[] = {
+			StrUni rgpsz[] = {
 				// knmNFD: no change
 				L"A" COMBINING_DIAERESIS,
 				// knmNFKD: no change
@@ -752,7 +752,7 @@ namespace TestViews
 				SmartBstr sbstrResult;
 				hr = qtssResult->get_Text(&sbstrResult);
 				unitpp::assert_true("get_NormalizedForm(split run composition)",
-					u_strcmp(sbstrResult.Chars(), rgpsz[inm]) == 0);
+					u_strcmp(reinterpret_cast<const UChar*>(sbstrResult.Chars()), reinterpret_cast<const UChar*>(rgpsz[inm].Chars())) == 0);
 			}
 		}
 		/*--------------------------------------------------------------------------------------
@@ -770,7 +770,7 @@ namespace TestViews
 			// to A_WITH_DOT_BELOW, if they have the same properties.
 			StrUni stuInput1 = L"a" COMBINING_DIAERESIS COMBINING_DOT_BELOW
 				a_WITH_DIAERESIS COMBINING_DOT_BELOW;
-			OleStringLiteral rgpsz[] = {
+			StrUni rgpsz[] = {
 				// knmNFD: decompose a_WITH_DIAERESIS, reorder both sequences
 				L"a" COMBINING_DOT_BELOW COMBINING_DIAERESIS
 				L"a" COMBINING_DOT_BELOW COMBINING_DIAERESIS,
@@ -816,7 +816,7 @@ namespace TestViews
 				hr = qtssResult->get_Text(&sbstrResult);
 				sta.Format("ReorderingRuns inm=%d: get_NormalizedForm()", inm);
 				unitpp::assert_true(sta.Chars(),
-					u_strcmp(sbstrResult.Chars(), rgpsz[inm]) == 0);
+					u_strcmp(reinterpret_cast<const UChar*>(sbstrResult.Chars()), reinterpret_cast<const UChar*>(rgpsz[inm].Chars())) == 0);
 				int crun;
 				hr = qtssResult->get_RunCount(&crun);
 				sta.Format("ReorderingRuns inm=%d: get_RunCount()", inm);
@@ -856,7 +856,7 @@ namespace TestViews
 			StrUni stuInput1 = L"a" COMBINING_DIAERESIS COMBINING_DIAERESIS COMBINING_DIAERESIS
 				COMBINING_DOT_BELOW
 				a_WITH_DIAERESIS COMBINING_DOT_BELOW;
-			OleStringLiteral rgpsz[] = {
+			StrUni rgpsz[] = {
 				// knmNFD: decompose a_WITH_DIAERESIS, reorder both sequences
 				L"a" COMBINING_DOT_BELOW COMBINING_DIAERESIS COMBINING_DIAERESIS
 					COMBINING_DIAERESIS L"a" COMBINING_DOT_BELOW COMBINING_DIAERESIS,
@@ -905,7 +905,7 @@ namespace TestViews
 				hr = qtssResult->get_Text(&sbstrResult);
 				sta.Format("ReorderingRuns inm=%d: get_NormalizedForm()", inm);
 				unitpp::assert_true(sta.Chars(),
-					u_strcmp(sbstrResult.Chars(), rgpsz[inm]) == 0);
+					u_strcmp(reinterpret_cast<const UChar*>(sbstrResult.Chars()), reinterpret_cast<const UChar*>(rgpsz[inm].Chars())) == 0);
 				int crun;
 				hr = qtssResult->get_RunCount(&crun);
 				sta.Format("ReorderingRuns inm=%d: get_RunCount()", inm);
@@ -944,7 +944,7 @@ namespace TestViews
 			// The macron will be in a different run; so while the first two compression
 			// schemes produce a single character, NFSC should produce 2.
 			StrUni stuInput1 = LATIN_CAPITAL_A COMBINING_DIAERESIS COMBINING_MACRON;
-			OleStringLiteral rgpsz[] = {
+			StrUni rgpsz[] = {
 				// knmNFD:
 				LATIN_CAPITAL_A COMBINING_DIAERESIS COMBINING_MACRON,
 				// knmNFKD:
@@ -983,7 +983,7 @@ namespace TestViews
 				SmartBstr sbstrResult;
 				hr = qtssResult->get_Text(&sbstrResult);
 				sta.Format("get_NormalizedForm(partial composition) inm=%d", inm);
-				unitpp::assert_true(sta.Chars(), u_strcmp(sbstrResult.Chars(), rgpsz[inm]) == 0);
+				unitpp::assert_true(sta.Chars(), u_strcmp(reinterpret_cast<const UChar*>(sbstrResult.Chars()), reinterpret_cast<const UChar*>(rgpsz[inm].Chars())) == 0);
 				int crun;
 				hr = qtssResult->get_RunCount(&crun);
 				unitpp::assert_eq("number of runs", rgcRun[inm], crun);

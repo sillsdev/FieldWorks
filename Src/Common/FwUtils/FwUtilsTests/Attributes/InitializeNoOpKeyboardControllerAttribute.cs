@@ -4,6 +4,7 @@
 
 using System;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 using SIL.Keyboarding;
 using SIL.Windows.Forms.Keyboarding;
 
@@ -24,9 +25,9 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		/// <summary>
 		/// Create a dummy keyboard controller
 		/// </summary>
-		public override void BeforeTest(TestDetails testDetails)
+		public override void BeforeTest(ITest test)
 		{
-			base.BeforeTest(testDetails);
+			base.BeforeTest(test);
 			// If we already have a keyboard controller we'd better dispose it or we'll end up with missing dispose calls.
 			if (Keyboard.Controller != null)
 				Keyboard.Controller.Dispose();
@@ -38,11 +39,11 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 		/// <summary>
 		/// Unset keyboard controller
 		/// </summary>
-		public override void AfterTest(TestDetails testDetails)
+		public override void AfterTest(ITest test)
 		{
 			// Shut down (and implicitly dispose) the keyboard controller we created.
 
-			base.AfterTest(testDetails);
+			base.AfterTest(test);
 			KeyboardController.Shutdown();
 			Keyboard.Controller = new DefaultKeyboardController();
 		}

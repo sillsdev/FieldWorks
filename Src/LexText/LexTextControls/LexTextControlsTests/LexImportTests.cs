@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -22,6 +22,29 @@ namespace LexTextControlsTests
 	[TestFixture]
 	public class LexImportTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
+		[Test]
+		public void ImportDialectLabels()
+		{
+			var factory = Cache.ServiceLocator.GetInstance<ICmPossibilityFactory>();
+			var alabama = factory.Create();
+			var georgia = factory.Create();
+			Cache.LangProject.LexDbOA.DialectLabelsOA.PossibilitiesOS.Add(alabama);
+			Cache.LangProject.LexDbOA.DialectLabelsOA.PossibilitiesOS.Add(georgia);
+			var wsEn = Cache.ServiceLocator.WritingSystemManager.get_Engine("en").Handle;
+			alabama.Name.set_String(wsEn, "Alabama");
+			georgia.Name.set_String(wsEn,"Georgia");
+			var entryWithDialect = @"\lx jeetyet
+\dle Alabama
+\ge didyoueatyet
+\dls Georgia";
+			DoImport(entryWithDialect, MakeDefaultFields(), 1);
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().First();
+			Assert.That(entry.DialectLabelsRS.Count, Is.EqualTo(1));
+			Assert.That(entry.DialectLabelsRS.FirstOrDefault()?.Name?.get_String(wsEn)?.Text, Is.EqualTo("Alabama"));
+			Assert.That(entry.SensesOS[0].DialectLabelsRS.Count, Is.EqualTo(1));
+			Assert.That(entry.SensesOS[0].DialectLabelsRS.FirstOrDefault()?.Name?.get_String(wsEn)?.Text, Is.EqualTo("Georgia"));
+		}
+
 		private string allNumbered_OutOfOrder =
 @"\lx aha
 \hm 2
@@ -302,10 +325,12 @@ namespace LexTextControlsTests
 		{
 			var sfmInfo = new List<FieldHierarchyInfo>();
 			sfmInfo.Add(new FieldHierarchyInfo("lx", "lex", "Vernacular", true, "Entry"));
+			sfmInfo.Add(new FieldHierarchyInfo("dle", "dle", "English", true, "Entry"));
 			sfmInfo.Add(new FieldHierarchyInfo("hm", "hom", "English", false, "Entry"));
 			sfmInfo.Add(new FieldHierarchyInfo("de", "def", "English", true, "Sense"));
 			sfmInfo.Add(new FieldHierarchyInfo("ge", "glos", "English", true, "Sense"));
 			sfmInfo.Add(new FieldHierarchyInfo("ps", "pos", "English", true, "Sense"));
+			sfmInfo.Add(new FieldHierarchyInfo("dls", "dls", "English", true, "Sense"));
 			sfmInfo.Add(new FieldHierarchyInfo("mn", "meref", "Vernacular", false, "Entry"));
 			var variantInfo = new FieldHierarchyInfo("va", "var", "Vernacular", true, "Variant");
 			sfmInfo.Add(variantInfo);

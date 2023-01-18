@@ -255,6 +255,12 @@ Are you SURE you want to delete the field {0}?</value>
   <data name="ksRedoInsert" xml:space="preserve">
     <value>Redo Insert {0}</value>
   </data>
+  <data name="ksUndoDuplicate" xml:space="preserve">
+    <value>Undo Duplicate {0}</value>
+  </data>
+  <data name="ksRedoDuplicate" xml:space="preserve">
+    <value>Redo Duplicate {0}</value>
+  </data>
   <data name="UndoDelete0" xml:space="preserve">
     <value>Undo Delete {0}</value>
   </data>
@@ -406,13 +412,25 @@ Are you SURE you want to delete the field {2}?</value>
     <value>&amp;Display each Extended Note in a paragraph</value>
   </data>
   <data name="ksCantPromoteGroupToTemplate" xml:space="preserve">
-    <value>You cannot promote part of one discourse chart template to a new template. In fact, currently we do not support having more than one template at all.</value>
+    <value>You cannot promote part of one discourse chart template to a new template.</value>
   </data>
   <data name="ksErrorCaption" xml:space="preserve">
     <value>Error</value>
   </data>
   <data name="ksTemplateTooDeep" xml:space="preserve">
     <value>A discourse chart template can only have three levels (template, column group, and column).</value>
+  </data>
+  <data name="ksNewTemplate" xml:space="preserve">
+    <value>New Template</value>
+    <comment>Name for a new discourse chart template when it is created.</comment>
+  </data>
+  <data name="ksColumnGroupX" xml:space="preserve">
+    <value>Column Group {0}</value>
+    <comment>Used to populate a discourse chart template template. {0} is the index of the column group, such as "2"</comment>
+  </data>
+  <data name="ksColumnX" xml:space="preserve">
+    <value>Column {0}</value>
+    <comment>Used to populate a discourse chart template template. {0} is the index of the column and its group, such as "2.1"</comment>
   </data>
   <data name="MoveDown" xml:space="preserve">
     <value>Move Down</value>
@@ -885,6 +903,11 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>The root node in your configured view is invalid. The field attribute '{0}' must match a class name.</value>
     <comment>low priority for localizing, helpful to developers of dictionary configuration files, hopefully users will never see this.</comment>
   </data>
+  <data name="InvalidUSFM_TextAfterTR" xml:space="preserve">
+    <value>Invalid USFM: \tr should be followed by \tc# or \th#, but found
+"{0}".
+See USFM documentation for help.</value>
+  </data>
   <data name="NoConfigsMatchPub" xml:space="preserve">
     <value>No views match the current publication.</value>
     <comment>If a user selects a publication, but has deselected that publication from all their configured views, this will be the content of the dictionary preview pane.</comment>
@@ -992,7 +1015,7 @@ If you are not the one designated user who adds fields, or you are making some o
     <comment>Message displayed in Upload to Webonary dialog when there is an error connecting. {0} is a newline; {1} is the HTTP status code (e.g. 404); {2} is the error message.</comment>
   </data>
   <data name="ksWebonaryUploadSuccessful" xml:space="preserve">
-    <value>Upload successful. Preparing your data for publication. This may take several minutes to a few hours depending on the size of your dictionary. You will receive an email when the process is complete. You can examine the progress on the admin page of your Webonary site. You may now safely close this dialog.</value>
+    <value>Upload successful. Preparing your data for publication. Please check your Webonary site. You may now safely close this dialog.</value>
   </data>
   <data name="ksWebonaryUploadSuccessfulErrorProcessing" xml:space="preserve">
     <value>The upload was successful; however, there were errors processing your data.</value>
@@ -1047,6 +1070,28 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Preparing to display the publication view</value>
     <comment>this is the title for a progress report dialog</comment>
   </data>
+  <data name="promptGenerateAllEntriesBeforePrinting" xml:space="preserve">
+    <value>Generate all entries before printing?</value>
+    <comment>dialog title</comment>
+  </data>
+  <data name="promptGenerateAllEntriesBeforePrinting_ShowingXofX" xml:space="preserve">
+    <value>There are {1} entries that match the current filter and publication, but to improve performance, only {0} entries are displayed at a time. Do you want to generate all {1} entries so they are available to print at the same time?</value>
+    <comment>Message shown when the user chooses Print in the Dictionary view, and not all entries are being shown. Options are Yes and No.</comment>
+  </data>
+  <data name="FinishedGeneratingEntries" xml:space="preserve">
+    <value>The dictionary is now ready to print. Click OK to proceed to the Print dialog.</value>
+  </data>
+  <data name="COMExceptionPrintingLargeDictionary" xml:space="preserve">
+    <value>There was a problem printing your dictionary. You can try again, but it may be too large for FieldWorks to print. For large dictionaries, FieldWorks can instead generate a PDF for you to print. You can control the maximum number of entries FieldWorks will try to print using the environment variable {0} (you will need to restart FieldWorks for changes to take effect).</value>
+    <comment>{0} is the name of the environment variable.</comment>
+  </data>
+  <data name="MissingGeckofxHtmlToPdf" xml:space="preserve">
+    <value>A component of FieldWorks, {0}, is missing. This prevents printing. Antivirus software sometimes removes files. You may need technical help to repair the FieldWorks installation and protect this file from being deleted again.</value>
+    <comment>{0} is the name of the missing file.</comment>
+  </data>
+  <data name="SomethingWentWrongTryingToPrintDict" xml:space="preserve">
+    <value>Something went wrong trying to print. An operation may have timed out. You may be able to export your dictionary from the File menu and print it using your browser.</value>
+  </data>
   <data name="ksSubsenseNumberConfig" xml:space="preserve">
     <value>Subsense Number Configuration</value>
   </data>
@@ -1096,10 +1141,6 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="toApplyForWebonaryAccountLink" xml:space="preserve">
     <value>https://www.webonary.org/</value>
     <comment>URL in toApplyForWebonaryAccountExplanation.</comment>
-  </data>
-  <data name="WebonarySiteURLFormat" xml:space="preserve">
-    <value>https://www.webonary.org/{0}</value>
-    <comment>URL to a specific Webonary site. {0} is the name of the site, usually the language.</comment>
   </data>
   <data name="ConfigureHomograph_ConfigDescription" xml:space="preserve">
     <value>These settings affect the current {0} view:{1}{2}</value>
@@ -1189,10 +1230,33 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Reset this view</value>
     <comment>Used in Dictionary Config Mgr dialog</comment>
   </data>
+  <data name="UploadToWebonary_DeletingProjFiles" xml:space="preserve">
+    <value>Server deleting project files{0}{1}</value>
+    <comment>Displayed when upload to webonary is deleting a project with many files</comment>
+  </data>
+  <data name="ksPreparingDataForWebonary" xml:space="preserve">
+    <value>Preparing data to send to webonary (this could take some time)...</value>
+    <comment>Message displayed in Upload to Webonary when content is being generated</comment>
+  </data>
+  <data name="ksWebonaryFinishedDataPrep" xml:space="preserve">
+    <value>Finished preparing data.</value>
+    <comment>Message displayed in Upload to Webonary when data generation is complete</comment>
+  </data>
+  <data name="ksPutFilesToWebonaryUploaded" xml:space="preserve">
+    <value>Uploaded {0}.</value>
+    <comment>Status text printed when a file is uploaded to webonary successfully</comment>
+  </data>
+  <data name="ksPutFilesToWebonaryFailed" xml:space="preserve">
+    <value>Failed to upload {0}.</value>
+    <comment>Status text displayed when a file fails to upload to webonary</comment>
+  </data>
   <data name="ImportTranslatedGramCats" xml:space="preserve">
     <value>Update Grammatical Categories</value>
   </data>
   <data name="ImportTranslatedGramCatsPrompt" xml:space="preserve">
     <value>Importing translated grammatical category content will update all grammatical categories (parts of speech) in this project with the latest translations for all Analysis Writing Systems, including English.</value>
+  </data>
+  <data name="Webonary_UnexpectedUploadError" xml:space="preserve">
+    <value>Unexpected error encountered while uploading to webonary.</value>
   </data>
 </root>

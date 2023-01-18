@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2013 SIL International
+// Copyright (c) 2008-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -9,6 +9,7 @@
 // <remarks>
 // </remarks>
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -112,7 +113,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			UpdateButtons();
 			if (!btnOK.Enabled)
+			{
 				return;
+			}
+
+			TrackingHelper.TrackImport("lexicon", "Lift", ImportExportStep.Attempted,
+				new Dictionary<string, string> { { "style", Enum.GetName(typeof(FlexLiftMerger.MergeStyle), m_msImport) } });
 			DoImport();
 			this.DialogResult = DialogResult.OK;
 			if (!String.IsNullOrEmpty(m_sLogFile))
@@ -198,11 +204,33 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Create a temporary directory %temp%\TempForLIFTImport. Migrate as necessary and import from this
 				// directory. Directory is left after import is done in case it is needed, but will be deleted next time
 				// if it exists.
+				// LT-20954 Limits copy TempForLIFTImport to file.lift, file.lift-ranges, and WritingSytems, pictures,
+				// and audio dirs to avoid copying oodles of files when lift file is in Documents or similar dirs and
+				// strange errors that resulted from this.
 				var sLIFTfolder = Path.GetDirectoryName(sOrigFile);
 				var sLIFTtempFolder = Path.Combine(Path.GetTempPath(), "TempForLIFTImport");
 				if (Directory.Exists(sLIFTtempFolder) == true)
 					Directory.Delete(sLIFTtempFolder, true);
-				LdmlFileBackup.CopyDirectory(sLIFTfolder, sLIFTtempFolder);
+				Directory.CreateDirectory(sLIFTtempFolder);
+				var sDestFile = Path.Combine(sLIFTtempFolder, Path.GetFileName(sOrigFile));
+				LdmlFileBackup.CopyFile(sOrigFile, sDestFile);
+				var sRangeFile = sOrigFile + "-ranges";
+				if(File.Exists(sRangeFile))
+				{
+					sDestFile = Path.Combine(sLIFTtempFolder, Path.GetFileName(sRangeFile));
+					LdmlFileBackup.CopyFile(sRangeFile, sDestFile);
+
+				}
+				string[] sDirsToCopy = { "WritingSystems", "audio", "pictures" };
+				foreach (string sdir in sDirsToCopy)
+				{
+					var sSourceFolder = Path.Combine(sLIFTfolder, sdir);
+					if (Directory.Exists(sSourceFolder) == true)
+					{
+						var sDestFolder = Path.Combine(sLIFTtempFolder, sdir);
+						LdmlFileBackup.CopyDirectory(sSourceFolder, sDestFolder);
+					}
+				}
 				// Older LIFT files had ldml files in root directory. If found, move them to WritingSystem folder.
 				if (Directory.GetFiles(sLIFTtempFolder, "*.ldml").Length > 0)
 				{
@@ -263,10 +291,12 @@ namespace SIL.FieldWorks.LexText.Controls
 					File.Move(sFilename, sTempMigrated);
 				}
 				flexImporter.ProcessPendingRelations(m_progressDlg);
+				TrackingHelper.TrackImport("lexicon", "Lift", ImportExportStep.Succeeded);
 				return flexImporter.DisplayNewListItems(sOrigFile, cEntries);
 			}
 			catch (Exception error)
 			{
+				TrackingHelper.TrackImport("lexicon", "Lift", ImportExportStep.Failed);
 				string sMsg = String.Format(LexTextControls.ksLIFTImportProblem,
 					sOrigFile, error.Message);
 				try
@@ -283,11 +313,14 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
 						ClipboardUtils.SetDataObject(bldr.ToString(), true);
 					else
+					{
 						progressDlg.SynchronizeInvoke.Invoke(() => ClipboardUtils.SetDataObject(bldr.ToString(), true));
-						Logger.WriteEvent(bldr.ToString());
+					Logger.WriteEvent(bldr.ToString());
+					}
 				}
 				catch
 				{
+					// Crashes trying to log errors should be ignored
 				}
 				MessageBox.Show(sMsg, LexTextControls.ksProblemImporting,
 					MessageBoxButtons.OK, MessageBoxIcon.Warning);

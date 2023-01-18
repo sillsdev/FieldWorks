@@ -280,7 +280,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			// Make an XmlView which displays that object using the specified layout.
 			XmlView xv = new XmlView(hvoRoot, "publishFound", false, sda);
 			xv.Cache = cache;
-			xv.Mediator = m_mediator;
+			xv.Init(m_mediator, m_propertyTable, null);
 			xv.StyleSheet = styleSheet;
 			return xv;
 		}

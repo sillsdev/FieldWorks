@@ -1,9 +1,6 @@
-// Copyright (c) 2011-2013 SIL International
+// Copyright (c) 2011-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: LiftExporter.cs
-// Responsibility: mcconnel
 
 using System;
 using System.Collections.Generic;
@@ -20,6 +17,7 @@ using SIL.LCModel.Utils;
 using System.Text;
 using SIL.LCModel.Application.ApplicationServices;
 using System.Windows.Forms;
+using SIL.Extensions;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -227,8 +225,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void WriteLiftEntry(TextWriter w, ILexEntry entry)
 		{
-			var dateCreated = entry.DateCreated.ToUniversalTime().ToString("yyyy-MM-ddTHH':'mm':'ssZ");
-			var dateModified = entry.DateModified.ToUniversalTime().ToString("yyyy-MM-ddTHH':'mm':'ssZ");
+			var dateCreated = entry.DateCreated.ToLiftDateTimeFormat();
+			var dateModified = entry.DateModified.ToLiftDateTimeFormat();
 			var sGuid = entry.Guid.ToString();
 			var sId = MakeSafeAndNormalizedAttribute(entry.LIFTid);
 			if (entry.HomographNumber != 0)

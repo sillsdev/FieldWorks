@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
@@ -28,11 +27,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void TestCreateFileNullSILBookId()
 		{
-			TempSFFileMaker testFileMaker = new TempSFFileMaker();
-			testFileMaker.CreateFile(null, null);
+			Assert.That(() => new TempSFFileMaker().CreateFile(null, null), Throws.ArgumentNullException);
 		}
 
 		/// ------------------------------------------------------------------------------------

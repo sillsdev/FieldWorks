@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.Discourse
 			: base(stylesheet, sda, hvoRoot, graphics, icolumn)
 		{
 			m_vc = vc;
-			m_cLines = m_vc.LineChoices.Count;
+			m_cLines = m_vc.LineChoices.EnabledCount;
 			m_paraWidths = new int[m_cLines];
 		}
 

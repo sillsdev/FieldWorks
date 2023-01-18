@@ -250,7 +250,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		protected Mediator m_mediator;
 		/// <summary>
-		/// The proerty Table provided by XCoreColleague.Init.
+		/// The property Table provided by XCoreColleague.Init.
 		/// </summary>
 		protected PropertyTable m_propertyTable;
 		/// <summary>
@@ -2194,7 +2194,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					if (dlg.ShowDialog() != DialogResult.OK)
 						return true;
 
-					if (MiscUtils.IsUnix)
+					if (Platform.IsUnix)
 					{
 						using (PageSetupDialog pageDlg = new PageSetupDialog())
 						{

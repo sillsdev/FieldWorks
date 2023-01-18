@@ -842,7 +842,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (DesignMode)
 				return;
 
-			if (MiscUtils.IsUnix)
+			if (Platform.IsUnix)
 			{
 				// on unix we don't support getting Glyph's from the font.
 				// The results i m_chars is only currently used be CalcCellSize

@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,11 +18,10 @@ namespace SIL.FieldWorks.Discourse
 	[TestFixture]
 	public class InMemoryLogicTest : InMemoryDiscourseTestBase
 	{
-		IDsConstChart m_chart;
-		ICmPossibility m_template;
-		TestCCLogic m_logic;
-		MockRibbon m_mockRibbon;
-		List<ICmPossibility> m_allColumns;
+		private IDsConstChart m_chart;
+		private ICmPossibility m_template;
+		private TestCCLogic m_logic;
+		private List<ICmPossibility> m_allColumns;
 
 		#region Test setup
 
@@ -31,7 +30,7 @@ namespace SIL.FieldWorks.Discourse
 			base.CreateTestData();
 			m_logic = new TestCCLogic(Cache, m_chart, m_stText);
 			m_helper.Logic = m_logic;
-			m_logic.Ribbon = m_mockRibbon = new MockRibbon(Cache, m_stText.Hvo);
+			m_logic.Ribbon = new MockRibbon(Cache, m_stText.Hvo);
 			m_template = m_helper.MakeTemplate(out m_allColumns);
 			// Note: do this AFTER creating the template, which may also create the DiscourseData object.
 			m_chart = m_helper.SetupAChart();
@@ -45,7 +44,7 @@ namespace SIL.FieldWorks.Discourse
 		private static void VerifyMenuItemTextAndChecked(ToolStripItem item1, string text, bool fIsChecked)
 		{
 			var item = item1 as ToolStripMenuItem;
-			Assert.IsNotNull(item, "menu item should be ToolStripMenuItem");
+			Assert.That(item, Is.Not.Null, "menu item should be ToolStripMenuItem");
 			Assert.AreEqual(text, item.Text);
 			Assert.AreEqual(fIsChecked, item.Checked, text + " should be in the expected check state");
 		}
@@ -116,11 +115,11 @@ namespace SIL.FieldWorks.Discourse
 		[Test]
 		public void CreateDefTemplate()
 		{
-			Assert.IsNotNull(Cache.LangProject.GetDefaultChartTemplate()); // minimally exercises the method
-			// Howerver, the guts of the method is a call to CreateTemplate, so we should get
+			Assert.That(Cache.LangProject.GetDefaultChartTemplate(), Is.Not.Null); // minimally exercises the method
+			// However, the guts of the method is a call to CreateTemplate, so we should get
 			// better repeatability by testing the results of the CreateTemplate call in our
 			// fixture setup.
-			Assert.IsNotNull(m_template);
+			Assert.That(m_template, Is.Not.Null);
 			Assert.AreEqual(3, m_template.SubPossibilitiesOS.Count);
 			Assert.AreEqual(2, m_template.SubPossibilitiesOS[0].SubPossibilitiesOS.Count);
 			Assert.AreEqual("default", m_template.Name.AnalysisDefaultWritingSystem.Text);
@@ -128,10 +127,10 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		[Test]
-		public void AllColumns()
+		public void AllMyColumns()
 		{
-			var cols = m_logic.AllColumns(m_template);
-			Assert.AreEqual(6, cols.Count);
+			var cols = m_logic.AllMyColumns;
+			Assert.AreEqual(6, cols.Length);
 			Assert.AreEqual(m_template.SubPossibilitiesOS[0].SubPossibilitiesOS[0].Hvo, cols[0].Hvo);
 			Assert.AreEqual(m_template.SubPossibilitiesOS[2].Hvo, cols[5].Hvo);
 		}
@@ -140,7 +139,7 @@ namespace SIL.FieldWorks.Discourse
 		public void MakeContextMenuCol0()
 		{
 			m_helper.MakeDefaultChartMarkers();
-			using (var strip = m_logic.MakeContextMenu(0))
+			using (var strip = m_logic.InsertIntoChartContextMenu(0))
 			{
 				// Expecting something like
 				//	"Insert as moved from..."
@@ -165,7 +164,7 @@ namespace SIL.FieldWorks.Discourse
 		public void MakeContextMenuCol3()
 		{
 			m_helper.MakeDefaultChartMarkers();
-			using (var strip = m_logic.MakeContextMenu(2))
+			using (var strip = m_logic.InsertIntoChartContextMenu(2))
 			{
 				// Expecting something like
 				//	"Insert as moved from..."
@@ -472,14 +471,25 @@ namespace SIL.FieldWorks.Discourse
 		}
 
 		[Test]
-		public void InsertRowMenuItem()
+		public void InsertRowMenuItemAbove()
 		{
 			var allParaOccurrences = m_helper.MakeAnalysesUsedN(1);
 			var row0 = m_helper.MakeFirstRow();
 			m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
 			// Test a cell with words.
 			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 1)))
-				AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_InsertRowMenuItem, 0);
+				AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_InsertRowMenuItemAbove, 0);
+		}
+
+		[Test]
+		public void InsertRowMenuItemBelow()
+		{
+			var allParaOccurrences = m_helper.MakeAnalysesUsedN(1);
+			var row0 = m_helper.MakeFirstRow();
+			m_helper.MakeWordGroup(row0, 0, allParaOccurrences[0], allParaOccurrences[0]);
+			// Test a cell with words.
+			using (var strip = m_logic.MakeCellContextMenu(MakeLocObj(row0, 1)))
+				AssertHasMenuWithText(strip.Items, ConstituentChartLogic.FTO_InsertRowMenuItemBelow, 0);
 		}
 
 		/// <summary>
@@ -575,7 +585,7 @@ namespace SIL.FieldWorks.Discourse
 			var result = m_logic.FindWhereToAddWords(3, out whereToInsert, out existingWordGroupToAppendTo);
 			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(1, whereToInsert, "should insert at end, after 1 existing wordform");
-			Assert.IsNull(existingWordGroupToAppendTo);
+			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
 		[Test]
@@ -591,7 +601,7 @@ namespace SIL.FieldWorks.Discourse
 			var result = m_logic.FindWhereToAddWords(3, out whereToInsert, out existingWordGroupToAppendTo);
 			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(2, whereToInsert, "should insert at end, after 2 existing wordforms");
-			Assert.IsNull(existingWordGroupToAppendTo);
+			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
 		/// <summary>
@@ -610,7 +620,7 @@ namespace SIL.FieldWorks.Discourse
 			var result = m_logic.FindWhereToAddWords(0, out whereToInsert, out existingWordGroupToAppendTo);
 			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kMakeNewRow, result);
 			Assert.AreEqual(0, whereToInsert, "should insert at start of new row");
-			Assert.IsNull(existingWordGroupToAppendTo);
+			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
 		[Test]
@@ -626,7 +636,7 @@ namespace SIL.FieldWorks.Discourse
 			var result = m_logic.FindWhereToAddWords(4, out whereToInsert, out existingWordGroupToAppendTo);
 			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kMakeNewRow, result);
 			Assert.AreEqual(0, whereToInsert, "should insert at start of new row");
-			Assert.IsNull(existingWordGroupToAppendTo);
+			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
 		[Test]
@@ -642,7 +652,7 @@ namespace SIL.FieldWorks.Discourse
 			var result = m_logic.FindWhereToAddWords(5, out whereToInsert, out existingWordGroupToAppendTo);
 			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(row0.CellsOS.Count, whereToInsert, "should insert at end of row");
-			Assert.IsNull(existingWordGroupToAppendTo);
+			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
 		[Test]
@@ -658,7 +668,7 @@ namespace SIL.FieldWorks.Discourse
 			var result = m_logic.FindWhereToAddWords(5, out whereToInsert, out existingWordGroupToAppendTo);
 			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(row0.CellsOS.Count, whereToInsert, "should insert at end of row");
-			Assert.IsNull(existingWordGroupToAppendTo);
+			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
 		[Test]
@@ -674,7 +684,7 @@ namespace SIL.FieldWorks.Discourse
 			var result = m_logic.FindWhereToAddWords(0, out whereToInsert, out existingWordGroupToAppendTo);
 			Assert.AreEqual(ConstituentChartLogic.FindWhereToAddResult.kInsertWordGrpInRow, result);
 			Assert.AreEqual(0, whereToInsert, "should insert at start of row");
-			Assert.IsNull(existingWordGroupToAppendTo);
+			Assert.That(existingWordGroupToAppendTo, Is.Null);
 		}
 
 		[Test]
@@ -952,7 +962,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			m_logic.SetScriptRtL();
 			m_helper.MakeDefaultChartMarkers();
-			using (var strip = m_logic.MakeContextMenu(0))
+			using (var strip = m_logic.InsertIntoChartContextMenu(0))
 			{
 				// Expecting something like
 				//	"Insert as moved from..."
