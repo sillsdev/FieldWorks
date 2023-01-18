@@ -46,6 +46,14 @@ namespace SIL.FieldWorks.XWorks
 		{
 			base.TestSetup();
 			_recordList.ActivateUI(false);
+			AddSomeReversalEntries(1);
+		}
+
+		[TearDown]
+		public void TearDown()
+		{
+			base.TestTearDown();
+			ClearReversalEntries();
 		}
 
 		[OneTimeTearDown]
@@ -74,7 +82,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private IReversalIndexEntry CreateAndAddReversalIndexEntry(IReversalIndex revIndex = null)
 		{
-			revIndex = revIndex ?? m_revIndex ?? (m_revIndex = CreateReversalIndex());
+			revIndex ??= m_revIndex ?? (m_revIndex = CreateReversalIndex());
 			Assert.That(m_revIndexEntryFactory, Is.Not.Null, "Fixture Initialization is not complete.");
 
 			var revIndexEntry = m_revIndexEntryFactory.Create();
@@ -94,6 +102,13 @@ namespace SIL.FieldWorks.XWorks
 			});
 			return entries;
 		}
+		private void ClearReversalEntries()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				m_revIndex.AllEntries.ForEach(e => e.Delete());
+			});
+		}
 		/// <summary>
 		/// Finish loading the list for tests that need it, then reset the reload count
 		/// </summary>
@@ -112,12 +127,13 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void Reload_NoInsertionsOrDeletions_NoReloads()
 		{
+			AddSomeReversalEntries(1);
 			FinishLoadingAndAssertPreconditions();
 
 			var reloadCounter = new ReloadCounter(_recordList);
 
 			// SUT
-			_recordList.PropChanged(_recordList.OwningObject.Hvo, _recordList.OwningObject.OwningFlid, 0, 0, 0);
+			_recordList.PropChanged(_recordList.OwningObject.Hvo, ReversalIndexTags.kflidEntries, 0, 0, 0);
 
 			Assert.That(reloadCounter.ReloadCallCount, Is.EqualTo(0));
 			Assert.That(reloadCounter.ReloadEventCount, Is.EqualTo(0));
@@ -127,11 +143,11 @@ namespace SIL.FieldWorks.XWorks
 		public void Reload_OneExistingItem_Reloads()
 		{
 			FinishLoadingAndAssertPreconditions();
-			Assert.That(_recordList.HasEmptyList, Is.False, "One item should have been added by per-test setup");
+			Assert.That(_recordList.ListSize, Is.EqualTo(1), "One item should have been added by per-test setup");
 
 			var reloadCounter = new ReloadCounter(_recordList);
 			// SUT
-			_recordList.PropChanged(_recordList.OwningObject.Hvo, _recordList.OwningObject.OwningFlid, 0, 1, 1);
+			_recordList.PropChanged(_recordList.OwningObject.Hvo, ReversalIndexTags.kflidEntries, 0, 1, 1);
 
 			Assert.That(reloadCounter.ReloadCallCount, Is.EqualTo(1));
 		}
@@ -145,7 +161,7 @@ namespace SIL.FieldWorks.XWorks
 			var reloadCounter = new ReloadCounter(_recordList);
 
 			// SUT
-			_recordList.PropChanged(_recordList.OwningObject.Hvo, _recordList.OwningObject.OwningFlid, 0, 0, 0);
+			_recordList.PropChanged(_recordList.OwningObject.Hvo, ReversalIndexTags.kflidEntries, 0, 0, 0);
 
 			Assert.That(reloadCounter.ReloadCallCount, Is.EqualTo(1));
 		}
@@ -179,7 +195,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var reloadCounter = new ReloadCounter(_recordList);
 			// SUT
-			_recordList.PropChanged(_recordList.OwningObject.Hvo, _recordList.OwningObject.OwningFlid, 0, 1, 1);
+			_recordList.PropChanged(_recordList.OwningObject.Hvo, ReversalIndexTags.kflidEntries, 0, 1, 1);
 
 			Assert.That(reloadCounter.ReloadCallCount, Is.EqualTo(0));
 			Assert.That(reloadCounter.ReloadEventCount, Is.EqualTo(1));
@@ -193,7 +209,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var reloadCounter = new ReloadCounter(_recordList);
 			// SUT
-			_recordList.PropChanged(_recordList.OwningObject.Hvo, _recordList.OwningObject.OwningFlid, 1, 2, 3);
+			_recordList.PropChanged(_recordList.OwningObject.Hvo, ReversalIndexTags.kflidEntries, 1, 2, 3);
 
 			Assert.That(reloadCounter.ReloadCallCount, Is.EqualTo(1));
 		}
@@ -226,7 +242,7 @@ namespace SIL.FieldWorks.XWorks
 				deletable.ForEach(e => e.Delete());
 			});
 
-			Assert.That(reloadCounter.ReloadCallCount, Is.EqualTo(0), "Simply deleting a few items should't require the entire list to be reloaded");
+			Assert.That(reloadCounter.ReloadCallCount, Is.EqualTo(0), "Simply deleting a few items shouldn't require the entire list to be reloaded");
 			Assert.That(reloadCounter.ReloadEventCount, Is.EqualTo(1), "Removing items should trigger a reloaded event");
 			Assert.That(_recordList.ListSize, Is.EqualTo(7), "Deletable items should have been deleted");
 		}
@@ -253,27 +269,20 @@ namespace SIL.FieldWorks.XWorks
 		public void ListLoadingSuppressed()
 		{
 			var reloadCounter = new ReloadCounter(_recordList);
-			Assert.That(_recordList.RequestedLoadWhileSuppressed, Is.True, "Lists start with a pending reload");
-			Assert.That(_recordList.ListLoadingSuppressed, Is.True, "Lists start with loading suppressed");
-			// Set to false w/o the side effect of reloading
-			_recordList.ListLoadingSuppressed = false;
-			Assert.That(_recordList.RequestedLoadWhileSuppressed, Is.True, "Reload should still be pending");
-			Assert.That(reloadCounter.ReloadCallCount, Is.EqualTo(0), "Shouldn't have reloaded");
-			Assert.That(reloadCounter.ReloadEventCount, Is.EqualTo(0), "How did that happen?");
-
+			Assert.That(_recordList.RequestedLoadWhileSuppressed, Is.False, "After ActivateUI is called a Reload happens and this is false");
+			Assert.That(_recordList.ListLoadingSuppressed, Is.False, "Lists start with loading suppressed");
+			// Suppress list loading and then request a reload
 			_recordList.ListLoadingSuppressed = true;
-			Assert.That(_recordList.RequestedLoadWhileSuppressed, Is.False, "Haven't tried to reload since suppressing");
-			_recordList.UpdateList(false);
-			Assert.That(_recordList.RequestedLoadWhileSuppressed, Is.True, "Requested Load While Suppressed");
+			Assert.That(_recordList.RequestedLoadWhileSuppressed, Is.False, "Reload should still be pending");
+			_recordList.ReloadIfNeeded();
+			Assert.That(_recordList.RequestedLoadWhileSuppressed, Is.True, "Should be true as we requested a reload, while suppressed.");
 			Assert.That(reloadCounter.ReloadEventCount, Is.EqualTo(0), "Shouldn't have actually reloaded");
-
 			_recordList.ListLoadingSuppressed = false;
 			Assert.That(reloadCounter.ReloadCallCount, Is.EqualTo(2), "Setting suppression to false should have triggered the suppressed reload");
 			Assert.That(reloadCounter.ReloadEventCount, Is.EqualTo(1), "Setting suppression to false should have triggered the suppressed reload");
 			Assert.That(_recordList.RequestedLoadWhileSuppressed, Is.False, "The requested reload has completed; the request can be forgotten");
-
 			_recordList.RequestedLoadWhileSuppressed = true;
-			_recordList.UpdateList(false);
+			_recordList.ReloadIfNeeded();
 			Assert.That(reloadCounter.ReloadEventCount, Is.EqualTo(2), "should have reloaded as requested");
 			Assert.That(_recordList.RequestedLoadWhileSuppressed, Is.False, "Reload should have cleared the reload requested");
 		}
@@ -286,7 +295,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(_recordList.IsActiveInGui, Is.False, "Clerk starts inactive");
 			_recordList.ListLoadingSuppressed = false;
 			_recordList.RequestedLoadWhileSuppressed = false;
-			_recordList.UpdateList(false);
+			_recordList.ReloadIfNeeded();
 			Assert.That(_recordList.RequestedLoadWhileSuppressed, Is.True, "Requested Load While Inactive");
 			Assert.That(reloadCounter.ReloadEventCount, Is.EqualTo(0), "Shouldn't have actually reloaded");
 		}
@@ -298,7 +307,7 @@ namespace SIL.FieldWorks.XWorks
 			public ReloadCounter(IRecordList recordList)
 			{
 				this.recordList = recordList;
-				recordList.Subscriber.Subscribe("SaveScrollPosition", IncrementReloadEvent); // SaveScrollPosition is fired only when an actual reload happens
+				recordList.Subscriber.Subscribe("RestoreScrollPosition", IncrementReloadEvent); // RestoreScrollPosition is fired only when an actual reload happens
 				recordList.Subscriber.Subscribe("ReloadListCalled", IncrementReloadCall);
 			}
 

@@ -831,20 +831,16 @@ namespace LanguageExplorer
 				if (!m_suppressingLoadList)
 				{
 					UninstallWindowActivated();
-				}
-				if (m_suppressingLoadList)
-				{
-					// We were previously NOT suppressing it; init the flag
-					m_requestedLoadWhileSuppressed = false;
-				}
-				else
-				{
-					// We just stopped suppressing it; if necessary, load now.
 					if (m_requestedLoadWhileSuppressed)
 					{
 						m_requestedLoadWhileSuppressed = false;
 						ForceReloadList();
 					}
+				}
+				else
+				{
+					// We were previously NOT suppressing it; init the flag
+					m_requestedLoadWhileSuppressed = false;
 				}
 			}
 		}
