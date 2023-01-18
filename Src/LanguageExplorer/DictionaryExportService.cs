@@ -113,10 +113,11 @@ namespace LanguageExplorer
 
 		public List<JArray> ExportConfiguredJson(string folderPath, DictionaryConfigurationModel configuration)
 		{
-			using (var recordListActivator = RecordListActivator.ActivateRecordListMatchingExportType(LanguageExplorerConstants.DictionaryType, _statusBar, _propertyTable))
+			using (RecordListActivator.ActivateRecordListMatchingExportType(LanguageExplorerConstants.DictionaryType, _statusBar, _propertyTable))
 			{
+				var activeRecordListRepository = _propertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository);
 				var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(_propertyTable, out var entriesToSave,
-					LanguageExplorerConstants.DictionaryType, Cache, recordListActivator.ActiveRecordList);
+					LanguageExplorerConstants.DictionaryType, Cache, activeRecordListRepository.ActiveRecordList);
 				return LcmJsonGenerator.SavePublishedJsonWithStyles(entriesToSave, publicationDecorator, BatchSize, configuration, _propertyTable,
 					Path.Combine(folderPath, "configured.json"), null);
 			}
@@ -126,10 +127,11 @@ namespace LanguageExplorer
 			DictionaryConfigurationModel configuration = null, IThreadedProgress progress = null)
 		{
 			Guard.AgainstNull(reversalWs, nameof(reversalWs));
-			using (var recordListActivator = RecordListActivator.ActivateRecordListMatchingExportType(LanguageExplorerConstants.ReversalType, _statusBar, _propertyTable))
+			using (RecordListActivator.ActivateRecordListMatchingExportType(LanguageExplorerConstants.ReversalType, _statusBar, _propertyTable))
 			using (ReversalIndexActivator.ActivateReversalIndex(reversalWs, _propertyTable, Cache, MyRecordList))
 			{
-				var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(_propertyTable, out entryIds, LanguageExplorerConstants.ReversalType, Cache, recordListActivator.ActiveRecordList);
+				var activeRecordListRepository = _propertyTable.GetValue<IRecordListRepositoryForTools>(LanguageExplorerConstants.RecordListRepository);
+				var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(_propertyTable, out entryIds, LanguageExplorerConstants.ReversalType, Cache, activeRecordListRepository.ActiveRecordList);
 				return LcmJsonGenerator.SavePublishedJsonWithStyles(entryIds, publicationDecorator, BatchSize, configuration, _propertyTable, Path.Combine(folderPath, $"reversal_{reversalWs}.json"), null);
 			}
 		}
