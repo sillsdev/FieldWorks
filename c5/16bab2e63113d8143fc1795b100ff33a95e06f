@@ -1,0 +1,8 @@
+Verified+1: Hasso Pape <hasso_pape@sil.org>
+Code-Review+2: Hasso Pape <hasso_pape@sil.org>
+Verified-Linux+1: Hasso Pape <hasso_pape@sil.org>
+Submitted-by: Hasso Pape <hasso_pape@sil.org>
+Submitted-at: Wed, 18 Jan 2023 21:26:35 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/c/FieldWorks/+/9182
+Project: FieldWorks
+Branch: refs/heads/feature/ReplaceXmlWindowConfiguration
