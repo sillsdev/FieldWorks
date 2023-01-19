@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2020 SIL International
+// Copyright (c) 2010-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -60,8 +60,7 @@ namespace SIL.FieldWorks
 		{
 			InitializeComponent();
 			//hide the FLExBridge related link and image if unavailable
-			m_linkOpenBridgeProject.Visible = File.Exists(FLExBridgeHelper.FullFieldWorksBridgePath());
-			pictureBox1.Visible = File.Exists(FLExBridgeHelper.FullFieldWorksBridgePath());
+			m_linkOpenBridgeProject.Visible = pictureBox1.Visible = FLExBridgeHelper.IsFlexBridgeInstalled;
 		}
 
 		/// <summary />
@@ -226,10 +225,6 @@ namespace SIL.FieldWorks
 		{
 			// If the FLExBridge image is not displayed, collapse its panel.
 			OpenBridgeProjectContainer.Panel1Collapsed = !pictureBox1.Visible;
-			if (m_linkOpenBridgeProject.Visible)
-			{
-				m_linkOpenBridgeProject.Enabled = false;
-			}
 
 			// Load projects.
 			foreach (var projectPathname in Directory.GetDirectories(FwDirectoryFinder.ProjectsDirectory))

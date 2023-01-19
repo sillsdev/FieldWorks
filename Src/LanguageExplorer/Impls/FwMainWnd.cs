@@ -1352,7 +1352,7 @@ namespace LanguageExplorer.Impls
 			_viewHelper = new ActiveViewHelper(this);
 			_writingSystemListHandler = new WritingSystemListHandler(this, Cache, Subscriber, Toolbar_WritingSystemList, WritingSystemMenu);
 			_combinedStylesListHandler = new CombinedStylesListHandler(this, Subscriber, _stylesheet, Toolbar_CombinedStylesList);
-			_sendReceiveToolStripMenuItem.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled();
+			_sendReceiveToolStripMenuItem.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled;
 			var mainMenus = new Dictionary<MainMenu, ToolStripMenuItem>
 			{
 				{ MainMenu.File, _fileToolStripMenuItem },
@@ -1385,7 +1385,7 @@ namespace LanguageExplorer.Impls
 			_parserMenuManager.InitializeFlexComponent(_majorFlexComponentParameters.FlexComponentParameters);
 			if (_sendReceiveToolStripMenuItem.Enabled)
 			{
-				// No need for it, if FB isn't even installed.
+				// No need for it if FLEx Bridge isn't installed.
 				_sendReceiveMenuManager = new SendReceiveMenuManager(IdleQueue, this, _flexApp, Cache, globalUiWidgetParameterObject);
 				_sendReceiveMenuManager.InitializeFlexComponent(flexComponentParameters);
 			}

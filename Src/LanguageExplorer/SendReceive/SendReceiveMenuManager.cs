@@ -519,7 +519,7 @@ namespace LanguageExplorer.SendReceive
 
 			private Tuple<bool, bool> CanDoCmdViewMessages => new Tuple<bool, bool>(true, NotesFileIsPresent(Cache, false));
 
-			private Tuple<bool, bool> CanDoCmdObtainAnyFlexBridgeProject => new Tuple<bool, bool>(true, IsConfiguredForSR(Cache.ProjectId.ProjectFolder) && FLExBridgeHelper.FixItAppExists);
+			private static Tuple<bool, bool> CanDoCmdObtainAnyFlexBridgeProject => new Tuple<bool, bool>(true, FLExBridgeHelper.FixItAppExists);
 
 			private Tuple<bool, bool> CanDoCmdObtainFirstFlexBridgeProject => new Tuple<bool, bool>(true, !IsConfiguredForSR(Cache.ProjectId.ProjectFolder));
 

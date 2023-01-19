@@ -66,7 +66,7 @@ namespace SIL.FieldWorks
 			};
 			_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(_helpTopic));
 			_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
-			receiveButton.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled();
+			receiveButton.Enabled = FLExBridgeHelper.IsFlexBridgeInstalled;
 		}
 
 		internal bool OpenLastProjectCheckboxIsChecked

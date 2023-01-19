@@ -107,14 +107,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string MoveLift = "move_lift";
 
 		/// <summary>
-		/// constant for launching the bridge in the "Check for Updates" mode
-		/// </summary>
-		/// <remarks>
-		/// <para>Instruct FLEx Bridge to show its "Check for Updates" information.</para>
-		/// </remarks>
-		public const string CheckForUpdates = "check_for_updates";
-
-		/// <summary>
 		/// constant for launching the bridge in the "About FLEx Bridge" mode
 		/// </summary>
 		/// <remarks>
@@ -174,7 +166,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 #if DEBUG
 			// Don't pester developers who haven't set FLEx Bridge up.
-			if (File.Exists(FullFieldWorksBridgePath()))
+			if (IsFlexBridgeInstalled)
 			{
 				// This is not unit testable on build agents because they don't have FLEx Bridge installed.
 				Debug.Assert(!string.IsNullOrWhiteSpace(FlexBridgeDataVersion),
@@ -295,8 +287,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				ConflictViewer,
 				LiftConflictViewer,
-				AboutFLExBridge,
-				CheckForUpdates
+				AboutFLExBridge
 			};
 			if (nonFlexBlockers.Contains(command))
 			{
@@ -406,10 +397,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Determines if FLExBridge is installed.
 		/// </summary>
 		/// <returns><c>true</c> if is flex bridge installed; otherwise, <c>false</c>.</returns>
-		public static bool IsFlexBridgeInstalled()
-		{
-			return FileUtils.FileExists(FullFieldWorksBridgePath()); // Flex Bridge exe has to exist
-		}
+		public static bool IsFlexBridgeInstalled => FileUtils.FileExists(FullFieldWorksBridgePath()); // Flex Bridge exe has to exist
+
 
 		/// <summary>
 		/// Answer whether the project appears to have a FLEx repo. This is currently determined by its having a .hg folder.
