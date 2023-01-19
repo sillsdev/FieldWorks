@@ -186,7 +186,7 @@ namespace LanguageExplorerTests.Controls.DetailControls.Slices
 			_dataTree.InitializeFlexComponent(_flexComponentParameters);
 			_slice = GenerateSlice(Cache, _dataTree);
 			_slice.InitializeFlexComponent(_flexComponentParameters);
-			var node = TestUtilities.CreateXmlElementFromOuterXmlOf("<seq field=\"Pronunciations\" layout=\"Normal\" ghost=\"Form\" ghostWs=\"pronunciation\" ghostLabel=\"Pronunciation\" menu=\"mnuDataTree_Pronunciation\" />");
+			var node = TestUtilities.CreateXmlElementFromOuterXmlOf("<seq field=\"Pronunciations\" layout=\"Normal\" ghost=\"Form\" ghostWs=\"pronunciation\" ghostLabel=\"Pronunciation\" menu=\"mnuDataTree-Pronunciation\" />");
 			const int indent = 0;
 			var insertPosition = 0;
 			const int flidEmptyProp = 5002031; // runtime flid of ghost field

@@ -218,7 +218,7 @@
 	<bin class="MoForm">
 		<part id="MoForm-Detail-AsLexemeForm" type="Detail">
 			<slice field="Form" label="Form" editor="multistring" ws="all vernacular" weight="light"
-				   menu="mnuDataTree_LexemeForm" contextMenu="mnuDataTree_LexemeFormContext" spell="no">
+				   menu="mnuDataTree-LexemeForm" contextMenu="mnuDataTree-LexemeFormContext" spell="no">
 				<properties>
 					<bold value="on"/>
 					<fontsize value="120%"/>
@@ -236,7 +236,7 @@
 		</part>
 
 		<part id="MoForm-Detail-PhoneEnvBasic" type="Detail">
-			<slice field="PhoneEnv" label="Environments" editor="phoneEnvReference" menu="mnuDataTree_Environments_Insert" helpTopicID="khtpField-LexEntry-Environments">
+			<slice field="PhoneEnv" label="Environments" editor="phoneEnvReference" menu="mnuDataTree-Environments-Insert" helpTopicID="khtpField-LexEntry-Environments">
 				<deParams ws="analysis vernacular"/>
 				<chooserInfo text="The following well-formed environments have been specified in the grammar area." guicontrol="EnvironmentFlatList">
 					<chooserLink type="goto" label="Edit the Environments" tool="EnvironmentEdit"/>
@@ -244,7 +244,7 @@
 			</slice>
 		</part>
 		<part id="MoForm-Detail-PhoneEnv" type="Detail">
-			<slice field="PhoneEnv" label="Environments" editor="phoneEnvReference" menu="mnuDataTree_Environments_Insert">
+			<slice field="PhoneEnv" label="Environments" editor="phoneEnvReference" menu="mnuDataTree-Environments-Insert">
 				<deParams ws="analysis vernacular"/>
 				<chooserInfo text="The following well-formed environments have been specified in the grammar area." guicontrol="EnvironmentFlatList">
 					<chooserLink type="goto" label="Edit the Environments" tool="EnvironmentEdit"/>
@@ -280,7 +280,7 @@
 
 		<part id="MoForm-Detail-AsVariantForm" type="Detail">
 			<slice field="Form" label="Form" editor="multistring" ws="all vernacular" weight="field" spell="no"
-				   menu="mnuDataTree_VariantForm" contextMenu="mnuDataTree_VariantFormContext"
+				   menu="mnuDataTree-VariantForm" contextMenu="mnuDataTree-VariantFormContext"
 				   helpTopicID="khtpField-lexiconEdit-LexEntryRef-VariantLevel-MoStemAllomorph-Form">
 				<properties>
 					<bold value="on"/>
@@ -380,7 +380,7 @@
 	</bin>
 	<bin class="MoAffixAllomorph">
 		<part id="MoAffixAllomorph-Detail-PhoneEnv" type="Detail">
-			<slice field="PhoneEnv" label="Environments" editor="phoneEnvReference" menu="mnuDataTree_Environments_Insert"
+			<slice field="PhoneEnv" label="Environments" editor="phoneEnvReference" menu="mnuDataTree-Environments-Insert"
 				   helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-PhoneEnv">
 				<deParams ws="analysis vernacular"/>
 				<chooserInfo text="The following well-formed environments have been specified in the grammar area." guicontrol="EnvironmentFlatList">
@@ -424,7 +424,7 @@
   </bin>
 	<bin class="MoStemAllomorph">
 		<part id="MoStemAllomorph-Detail-PhoneEnv" type="Detail">
-			<slice field="PhoneEnv" label="Environments" editor="phoneEnvReference" menu="mnuDataTree_Environments_Insert">
+			<slice field="PhoneEnv" label="Environments" editor="phoneEnvReference" menu="mnuDataTree-Environments-Insert">
 				<deParams ws="analysis vernacular"/>
 				<chooserInfo text="The following well-formed environments have been specified in the grammar area." guicontrol="EnvironmentFlatList">
 					<chooserLink type="goto" label="Edit the Environments" tool="EnvironmentEdit"/>
@@ -2561,7 +2561,7 @@
 			<slice field="Description" label="Description" editor="multistring" ws="all analysis"/>
 		</part>
 		<part id="PhEnvironment-Detail-StringRepresentation" type="detail">
-			<slice field="StringRepresentation" label="String Representation" editor="phenvstrrepresentation" menu="mnuDataTree_StringRepresentation_Insert">
+			<slice field="StringRepresentation" label="String Representation" editor="phenvstrrepresentation" menu="mnuDataTree-StringRepresentation-Insert">
 				<deParams ws="vernacular"/>
 			</slice>
 		</part>
@@ -2776,10 +2776,10 @@
 	</bin>
 	<bin class="PhCode">
 		<part id="PhCode-Detail-Representation" type="Detail">
-			<slice field="Representation" label="Grapheme" editor="multistring" ws="all vernacular" menu="mnuDataTree_Phoneme_Code"/>
+			<slice field="Representation" label="Grapheme" editor="multistring" ws="all vernacular" menu="mnuDataTree-Phoneme-Code"/>
 		</part>
 		<part id="PhCode-Jt-Representation" type="JtView">
-			<string field="Representation" ws="vernacular" menu="mnuDataTree_Phoneme_Code"/>
+			<string field="Representation" ws="vernacular" menu="mnuDataTree-Phoneme-Code"/>
 		</part>
 	</bin>
 

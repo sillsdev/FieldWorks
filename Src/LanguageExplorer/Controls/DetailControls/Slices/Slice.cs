@@ -93,7 +93,11 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 				{
 					hotlinksMenuId = XmlUtils.GetOptionalAttributeValue(CallerNode, HotlinksAttributeName, string.Empty);
 				}
-				return string.IsNullOrWhiteSpace(hotlinksMenuId) ? ContextMenuName.nullValue : (ContextMenuName)Enum.Parse(typeof(ContextMenuName), hotlinksMenuId);
+				if (string.IsNullOrWhiteSpace(hotlinksMenuId))
+				{
+					return ContextMenuName.nullValue;
+				}
+				return hotlinksMenuId;
 			}
 		}
 
@@ -113,7 +117,12 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 						leftEdgeMenuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, MenuAttributeName, string.Empty);
 					}
 				}
-				return string.IsNullOrWhiteSpace(leftEdgeMenuId) ? ContextMenuName.nullValue : (ContextMenuName)Enum.Parse(typeof(ContextMenuName), leftEdgeMenuId);
+
+				if (string.IsNullOrWhiteSpace(leftEdgeMenuId))
+				{
+					return ContextMenuName.nullValue;
+				}
+				return leftEdgeMenuId;
 			}
 		}
 
@@ -121,10 +130,10 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 		{
 			get
 			{
-				var contextMenuId = (ContextMenuName)Enum.Parse(typeof(ContextMenuName), XmlUtils.GetOptionalAttributeValue(ConfigurationNode, ContextMenuAttributeName, ContextMenuName.nullValue.ToString()));
+				var contextMenuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, ContextMenuAttributeName, ContextMenuName.nullValue.ToString());
 				if (contextMenuId == ContextMenuName.nullValue)
 				{
-					contextMenuId = (ContextMenuName)Enum.Parse(typeof(ContextMenuName), XmlUtils.GetOptionalAttributeValue(CallerNode, ContextMenuAttributeName, ContextMenuName.nullValue.ToString()));
+					contextMenuId = XmlUtils.GetOptionalAttributeValue(CallerNode, ContextMenuAttributeName, ContextMenuName.nullValue.ToString());
 				}
 				return contextMenuId; // It may still be string.Empty.
 			}
