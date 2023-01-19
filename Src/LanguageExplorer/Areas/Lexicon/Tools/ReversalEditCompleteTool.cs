@@ -49,7 +49,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 			MultiPaneFactory.RemoveFromParentAndDispose(majorFlexComponentParameters.MainCollapsingSplitContainer, ref _multiPane);
 
 			// Dispose after the main UI stuff.
-			_toolMenuHelper.Dispose();
+			_toolMenuHelper?.Dispose();
 
 			DocView = null;
 			_toolMenuHelper = null;

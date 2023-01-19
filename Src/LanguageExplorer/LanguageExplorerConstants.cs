@@ -61,7 +61,7 @@ namespace LanguageExplorer
 		internal const string LexiconBrowseMachineName = "lexiconBrowse";
 		internal const string LexiconBrowseUiName = "Browse";
 		internal const string LexiconDictionaryMachineName = "lexiconDictionary";
-		internal const string LexiconDictionaryUiName = "XhtmlDocView: Dictionary";
+		internal const string LexiconDictionaryUiName = "Dictionary";
 		internal const string RapidDataEntryMachineName = "rapidDataEntry";
 		internal const string RapidDataEntryUiName = "Collect Words";
 		internal const string LexiconClassifiedDictionaryMachineName = "lexiconClassifiedDictionary";

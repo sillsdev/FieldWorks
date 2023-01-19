@@ -190,7 +190,7 @@ namespace LanguageExplorer.Areas.Lexicon
 		protected override void UpdateHeaderVisibility()
 		{
 			var window = m_propertyTable.GetValue<IFwMainWnd>(FwUtilsConstants.window);
-			if (window == null)
+			if (window?.RecordBarControl == null)
 			{
 				return;
 			}
