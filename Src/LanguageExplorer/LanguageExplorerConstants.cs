@@ -61,7 +61,7 @@ namespace LanguageExplorer
 		internal const string LexiconBrowseMachineName = "lexiconBrowse";
 		internal const string LexiconBrowseUiName = "Browse";
 		internal const string LexiconDictionaryMachineName = "lexiconDictionary";
-		internal const string LexiconDictionaryUiName = "HANGS (XhtmlDocView): Dictionary";
+		internal const string LexiconDictionaryUiName = "XhtmlDocView: Dictionary";
 		internal const string RapidDataEntryMachineName = "rapidDataEntry";
 		internal const string RapidDataEntryUiName = "Collect Words";
 		internal const string LexiconClassifiedDictionaryMachineName = "lexiconClassifiedDictionary";
@@ -69,7 +69,7 @@ namespace LanguageExplorer
 		internal const string BulkEditEntriesOrSensesMachineName = "bulkEditEntriesOrSenses";
 		internal const string BulkEditEntriesOrSensesUiName = "CRASHES (5002 vs 5035): Bulk Edit Entries";
 		internal const string ReversalEditCompleteMachineName = "reversalEditComplete";
-		internal const string ReversalEditCompleteUiName = "HANGS (XhtmlDocView): Reversal Indexes";
+		internal const string ReversalEditCompleteUiName = "CRASHES (XhtmlDocView): Reversal Indexes";
 		internal const string ReversalBulkEditReversalEntriesMachineName = "reversalBulkEditReversalEntries";
 		internal const string ReversalBulkEditReversalEntriesUiName = "Bulk Edit Reversal Entries";
 		#endregion Lexicon area

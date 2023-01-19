@@ -402,16 +402,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <exception cref="WorkerThreadException">Wraps any exception thrown by the background task</exception>
 		public object RunTask(bool fDisplayUi, Func<IThreadedProgress, object[], object> backgroundTask, params object[] parameters)
 		{
-			var ret = backgroundTask(this, parameters);
 			if (m_progressDialog.Visible)
 			{
 				var nMin = Minimum;
 				var nMax = Maximum;
 				Position = nMin;
 				Minimum = nMin;
+				// Review: Should SynchronizeInvoke.InvokeRequired be checked here
+				// to make sure the backgroundTask is run with proper thread safety?
+				var taskObj = backgroundTask(this, parameters);
 				Maximum = nMax;
 				Position = nMax;
-				return ret;
+				return taskObj;
 			}
 
 			Debug.Assert(m_fCreatedProgressDlg);
