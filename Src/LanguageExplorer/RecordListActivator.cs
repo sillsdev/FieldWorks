@@ -171,6 +171,12 @@ namespace LanguageExplorer
 				var layoutName = Path.Combine(LcmFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder), "ReversalIndex", revIdx.ShortName + LanguageExplorerConstants.DictionaryConfigurationFileExtension);
 				flexComponentParameters.PropertyTable.SetProperty("ReversalIndexPublicationLayout", layoutName, true, true);
 			}
+			else
+			{
+				revIdx = cache.ServiceLocator.GetAllInstances<IReversalIndex>().FirstOrDefault();
+				revIdx ??= cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(cache.DefaultAnalWs);
+			}
+
 			return new AllReversalEntriesRecordList(statusBar, cache.ServiceLocator, cache.ServiceLocator.GetInstance<ISilDataAccessManaged>(), revIdx);
 		}
 
