@@ -60,7 +60,7 @@ namespace SIL.FieldWorks
 		{
 			InitializeComponent();
 			//hide the FLExBridge related link and image if unavailable
-			m_linkOpenBridgeProject.Visible = pictureBox1.Visible = FLExBridgeHelper.IsFlexBridgeInstalled;
+			m_linkOpenBridgeProject.Visible = m_picBoxChorusBridge.Visible = FLExBridgeHelper.IsFlexBridgeInstalled;
 		}
 
 		/// <summary />
@@ -224,7 +224,7 @@ namespace SIL.FieldWorks
 		private void ChooseLangProjectDialog_Load(object sender, EventArgs e)
 		{
 			// If the FLExBridge image is not displayed, collapse its panel.
-			OpenBridgeProjectContainer.Panel1Collapsed = !pictureBox1.Visible;
+			OpenBridgeProjectContainer.Panel1Collapsed = !m_picBoxChorusBridge.Visible;
 
 			// Load projects.
 			foreach (var projectPathname in Directory.GetDirectories(FwDirectoryFinder.ProjectsDirectory))

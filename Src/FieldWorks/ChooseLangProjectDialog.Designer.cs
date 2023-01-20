@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2020 SIL International
+// Copyright (c) 2010-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks
 			this.m_tblLayoutProjects = new System.Windows.Forms.TableLayoutPanel();
 			this.m_tblLayoutOuter = new System.Windows.Forms.TableLayoutPanel();
 			this.OpenBridgeProjectContainer = new System.Windows.Forms.SplitContainer();
-			this.pictureBox1 = new System.Windows.Forms.PictureBox();
+			this.m_picBoxChorusBridge = new System.Windows.Forms.PictureBox();
 			this.OpenProjectLinksLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			((System.ComponentModel.ISupportInitialize)(this.m_splitContainer)).BeginInit();
 			this.m_splitContainer.Panel2.SuspendLayout();
@@ -56,7 +56,7 @@ namespace SIL.FieldWorks
 			this.OpenBridgeProjectContainer.Panel1.SuspendLayout();
 			this.OpenBridgeProjectContainer.Panel2.SuspendLayout();
 			this.OpenBridgeProjectContainer.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.m_picBoxChorusBridge)).BeginInit();
 			this.OpenProjectLinksLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -150,19 +150,19 @@ namespace SIL.FieldWorks
 			// 
 			// OpenBridgeProjectContainer.Panel1
 			// 
-			this.OpenBridgeProjectContainer.Panel1.Controls.Add(this.pictureBox1);
+			this.OpenBridgeProjectContainer.Panel1.Controls.Add(this.m_picBoxChorusBridge);
 			// 
 			// OpenBridgeProjectContainer.Panel2
 			// 
 			this.OpenBridgeProjectContainer.Panel2.Controls.Add(this.OpenProjectLinksLayoutPanel);
 			this.m_tblLayoutOuter.SetRowSpan(this.OpenBridgeProjectContainer, 2);
 			// 
-			// pictureBox1
+			// m_picBoxChorusBridge
 			// 
-			resources.ApplyResources(this.pictureBox1, "pictureBox1");
-			this.pictureBox1.Image = global::SIL.FieldWorks.Properties.Resources.Receive;
-			this.pictureBox1.Name = "pictureBox1";
-			this.pictureBox1.TabStop = false;
+			resources.ApplyResources(this.m_picBoxChorusBridge, "m_picBoxChorusBridge");
+			this.m_picBoxChorusBridge.Image = global::SIL.FieldWorks.Properties.Resources.Receive;
+			this.m_picBoxChorusBridge.Name = "m_picBoxChorusBridge";
+			this.m_picBoxChorusBridge.TabStop = false;
 			// 
 			// OpenProjectLinksLayoutPanel
 			// 
@@ -195,7 +195,7 @@ namespace SIL.FieldWorks
 			this.OpenBridgeProjectContainer.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.OpenBridgeProjectContainer)).EndInit();
 			this.OpenBridgeProjectContainer.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.m_picBoxChorusBridge)).EndInit();
 			this.OpenProjectLinksLayoutPanel.ResumeLayout(false);
 			this.OpenProjectLinksLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
@@ -214,7 +214,7 @@ namespace SIL.FieldWorks
 		private System.Windows.Forms.SplitContainer m_splitContainer;
 		private System.Windows.Forms.TableLayoutPanel m_tblLayoutProjects;
 		private System.Windows.Forms.TableLayoutPanel m_tblLayoutOuter;
-		private System.Windows.Forms.PictureBox pictureBox1;
+		private System.Windows.Forms.PictureBox m_picBoxChorusBridge;
 		private System.Windows.Forms.SplitContainer OpenBridgeProjectContainer;
 		private System.Windows.Forms.TableLayoutPanel OpenProjectLinksLayoutPanel;
 	}

@@ -65,8 +65,8 @@ namespace LanguageExplorer.Impls
 			this.CmdObtainAnyFlexBridgeProject = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdObtainLiftProject = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSendReceiveMenuSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-			this.CmdObtainFirstFlexBridgeProject = new System.Windows.Forms.ToolStripMenuItem();
-			this.CmdObtainFirstLiftProject = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdFLExBridgeFirstSend = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdLiftBridgeFirstSend = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSendReceiveMenuSeparator3 = new System.Windows.Forms.ToolStripSeparator();
 			this.CmdHelpChorus = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdCheckForFlexBridgeUpdates = new System.Windows.Forms.ToolStripMenuItem();
@@ -630,8 +630,8 @@ namespace LanguageExplorer.Impls
             this.CmdObtainAnyFlexBridgeProject,
             this.CmdObtainLiftProject,
             this.toolStripSendReceiveMenuSeparator2,
-            this.CmdObtainFirstFlexBridgeProject,
-            this.CmdObtainFirstLiftProject,
+            this.CmdFLExBridgeFirstSend,
+            this.CmdLiftBridgeFirstSend,
             this.toolStripSendReceiveMenuSeparator3,
             this.CmdHelpChorus,
             this.CmdCheckForFlexBridgeUpdates,
@@ -707,25 +707,25 @@ namespace LanguageExplorer.Impls
 			this.toolStripSendReceiveMenuSeparator2.Size = new System.Drawing.Size(336, 6);
 			this.toolStripSendReceiveMenuSeparator2.Visible = false;
 			// 
-			// CmdObtainFirstFlexBridgeProject
+			// CmdFLExBridgeFirstSend
 			// 
-			this.CmdObtainFirstFlexBridgeProject.Image = ((System.Drawing.Image)(resources.GetObject("CmdObtainFirstFlexBridgeProject.Image")));
-			this.CmdObtainFirstFlexBridgeProject.Name = "CmdObtainFirstFlexBridgeProject";
-			this.CmdObtainFirstFlexBridgeProject.Size = new System.Drawing.Size(339, 22);
-			this.CmdObtainFirstFlexBridgeProject.Text = "Send this &Project for the first time...";
-			this.CmdObtainFirstFlexBridgeProject.ToolTipText = "Creates a full project repository for this project for the first time (other proj" +
+			this.CmdFLExBridgeFirstSend.Image = ((System.Drawing.Image)(resources.GetObject("CmdFLExBridgeFirstSend.Image")));
+			this.CmdFLExBridgeFirstSend.Name = "CmdFLExBridgeFirstSend";
+			this.CmdFLExBridgeFirstSend.Size = new System.Drawing.Size(339, 22);
+			this.CmdFLExBridgeFirstSend.Text = "Send this &Project for the first time...";
+			this.CmdFLExBridgeFirstSend.ToolTipText = "Creates a full project repository for this project for the first time (other proj" +
     "ect members will use \"Get Project\")";
-			this.CmdObtainFirstFlexBridgeProject.Visible = false;
+			this.CmdFLExBridgeFirstSend.Visible = false;
 			// 
-			// CmdObtainFirstLiftProject
+			// CmdLiftBridgeFirstSend
 			// 
-			this.CmdObtainFirstLiftProject.Image = ((System.Drawing.Image)(resources.GetObject("CmdObtainFirstLiftProject.Image")));
-			this.CmdObtainFirstLiftProject.Name = "CmdObtainFirstLiftProject";
-			this.CmdObtainFirstLiftProject.Size = new System.Drawing.Size(339, 22);
-			this.CmdObtainFirstLiftProject.Text = "Send this &Lexicon for the first time (to WeSay)...";
-			this.CmdObtainFirstLiftProject.ToolTipText = "Creates a LIFT repository for the lexical data in this project for the first time" +
+			this.CmdLiftBridgeFirstSend.Image = ((System.Drawing.Image)(resources.GetObject("CmdLiftBridgeFirstSend.Image")));
+			this.CmdLiftBridgeFirstSend.Name = "CmdLiftBridgeFirstSend";
+			this.CmdLiftBridgeFirstSend.Size = new System.Drawing.Size(339, 22);
+			this.CmdLiftBridgeFirstSend.Text = "Send this &Lexicon for the first time (to WeSay)...";
+			this.CmdLiftBridgeFirstSend.ToolTipText = "Creates a LIFT repository for the lexical data in this project for the first time" +
     " (for use with WeSay and other LIFT programs)";
-			this.CmdObtainFirstLiftProject.Visible = false;
+			this.CmdLiftBridgeFirstSend.Visible = false;
 			// 
 			// toolStripSendReceiveMenuSeparator3
 			// 
@@ -3233,8 +3233,8 @@ namespace LanguageExplorer.Impls
 		private ToolStripMenuItem CmdObtainAnyFlexBridgeProject;
 		private ToolStripMenuItem CmdObtainLiftProject;
 		private ToolStripSeparator toolStripSendReceiveMenuSeparator2;
-		private ToolStripMenuItem CmdObtainFirstFlexBridgeProject;
-		private ToolStripMenuItem CmdObtainFirstLiftProject;
+		private ToolStripMenuItem CmdFLExBridgeFirstSend;
+		private ToolStripMenuItem CmdLiftBridgeFirstSend;
 		private ToolStripSeparator toolStripSendReceiveMenuSeparator3;
 		private ToolStripMenuItem CmdHelpChorus;
 		private ToolStripMenuItem CmdCheckForFlexBridgeUpdates;

@@ -521,7 +521,7 @@ namespace LanguageExplorer.SendReceive
 
 			private static Tuple<bool, bool> CanDoCmdObtainAnyFlexBridgeProject => new Tuple<bool, bool>(true, FLExBridgeHelper.FixItAppExists);
 
-			private Tuple<bool, bool> CanDoCmdObtainFirstFlexBridgeProject => new Tuple<bool, bool>(true, !IsConfiguredForSR(Cache.ProjectId.ProjectFolder));
+			private Tuple<bool, bool> CanDoCmdFLExBridgeFirstSend => new Tuple<bool, bool>(true, !IsConfiguredForSR(Cache.ProjectId.ProjectFolder));
 
 			#region Implementation of IBridge
 			/// <inheritdoc />
@@ -611,7 +611,7 @@ namespace LanguageExplorer.SendReceive
 				srMenuDictionary.Add(Command.CmdFLExBridge, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(S_R_FlexBridge_Click, () => CanDoCmdFLExBridge));
 				srMenuDictionary.Add(Command.CmdViewMessages, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ViewMessages_FlexBridge_Click, () => CanDoCmdViewMessages));
 				srMenuDictionary.Add(Command.CmdObtainAnyFlexBridgeProject, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ObtainAnyFlexBridgeProject_Click, () => CanDoCmdObtainAnyFlexBridgeProject));
-				srMenuDictionary.Add(Command.CmdObtainFirstFlexBridgeProject, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(SendFlexBridgeFirstTime_Click, () => CanDoCmdObtainFirstFlexBridgeProject));
+				srMenuDictionary.Add(Command.CmdFLExBridgeFirstSend, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(SendFlexBridgeFirstTime_Click, () => CanDoCmdFLExBridgeFirstSend));
 			}
 			#endregion
 
@@ -861,7 +861,7 @@ namespace LanguageExplorer.SendReceive
 
 			private Tuple<bool, bool> CanDoCmdObtainLiftProject => new Tuple<bool, bool>(true, !Directory.Exists(GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder)));
 
-			private Tuple<bool, bool> CanDoCmdObtainFirstLiftProject => new Tuple<bool, bool>(true, !_oldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString()) && !SendReceiveMenuManager.IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder));
+			private Tuple<bool, bool> CanDoCmdLiftBridgeFirstSend => new Tuple<bool, bool>(true, !_oldLiftBridgeProjects.Contains(Cache.LangProject.Guid.ToString()) && !SendReceiveMenuManager.IsConfiguredForLiftSR(Cache.ProjectId.ProjectFolder));
 
 			#region Implementation of IBridge
 			/// <inheritdoc />
@@ -917,7 +917,7 @@ namespace LanguageExplorer.SendReceive
 				srMenuDictionary.Add(Command.CmdLiftBridge, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(S_R_LiftBridge_Click, () => CanDoCmdLiftBridge));
 				srMenuDictionary.Add(Command.CmdViewLiftMessages, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ViewMessages_LiftBridge_Click, () => CanDoCmdViewLiftMessages));
 				srMenuDictionary.Add(Command.CmdObtainLiftProject, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ObtainLiftBridgeProject_Click, () => CanDoCmdObtainLiftProject));
-				srMenuDictionary.Add(Command.CmdObtainFirstLiftProject, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(SendLiftBridgeFirstTime_Click, () => CanDoCmdObtainFirstLiftProject));
+				srMenuDictionary.Add(Command.CmdLiftBridgeFirstSend, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(SendLiftBridgeFirstTime_Click, () => CanDoCmdLiftBridgeFirstSend));
 			}
 			#endregion
 

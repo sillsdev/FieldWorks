@@ -73,8 +73,8 @@ namespace LanguageExplorer
 		CmdObtainAnyFlexBridgeProject,
 		CmdObtainLiftProject,
 		// Separator2 goes here
-		CmdObtainFirstFlexBridgeProject,
-		CmdObtainFirstLiftProject,
+		CmdFLExBridgeFirstSend,
+		CmdLiftBridgeFirstSend,
 		// Separator3 goes here
 		CmdHelpChorus,
 		CmdCheckForFlexBridgeUpdates,

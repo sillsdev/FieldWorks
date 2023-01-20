@@ -246,7 +246,7 @@ namespace LanguageExplorer.Impls
 				new List<ToolStripMenuItem> { CmdObtainAnyFlexBridgeProject, CmdObtainLiftProject });
 			var separatorCache2 = new SeparatorMenuBundle(toolStripSendReceiveMenuSeparator2,
 				separatorCache1,
-				new List<ToolStripMenuItem> { CmdObtainFirstFlexBridgeProject, CmdObtainFirstLiftProject });
+				new List<ToolStripMenuItem> { CmdFLExBridgeFirstSend, CmdLiftBridgeFirstSend });
 			var separatorCache3 = new SeparatorMenuBundle(toolStripSendReceiveMenuSeparator3,
 				separatorCache2,
 				new List<ToolStripMenuItem> { CmdHelpChorus, CmdCheckForFlexBridgeUpdates, CmdHelpAboutFLEXBridge });
@@ -266,8 +266,8 @@ namespace LanguageExplorer.Impls
 				{Command.CmdObtainAnyFlexBridgeProject, CmdObtainAnyFlexBridgeProject},
 				{Command.CmdObtainLiftProject, CmdObtainLiftProject},
 				{Command.Separator2, toolStripSendReceiveMenuSeparator2},
-				{Command.CmdObtainFirstFlexBridgeProject, CmdObtainFirstFlexBridgeProject},
-				{Command.CmdObtainFirstLiftProject, CmdObtainFirstLiftProject},
+				{Command.CmdFLExBridgeFirstSend, CmdFLExBridgeFirstSend},
+				{Command.CmdLiftBridgeFirstSend, CmdLiftBridgeFirstSend},
 				{Command.Separator3, toolStripSendReceiveMenuSeparator3},
 				{Command.CmdHelpChorus, CmdHelpChorus},
 				{Command.CmdCheckForFlexBridgeUpdates, CmdCheckForFlexBridgeUpdates},
