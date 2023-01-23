@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <UseWindowsForms>true</UseWindowsForms>
@@ -12,9 +12,9 @@
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
     <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" PrivateAssets="All" />
-    <PackageReference Include="ParatextData" Version="9.2.6.2" />
-    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0059" />
-    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="4.7.0" />
+    <PackageReference Include="ParatextData" Version="9.3.0.9" />
+    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0067" />
+    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>

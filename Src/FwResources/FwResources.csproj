@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <UseWindowsForms>true</UseWindowsForms>
@@ -10,7 +10,7 @@
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="3.1.5" /> <!-- Microsoft.Extensions.DependencyModel 3.1.5 is needed by Paratext refs in other projects, but LCM's reference to 2.0.4 breaks Nuget -->
-    <PackageReference Include="SIL.LCModel" Version="10.2.0-beta0059" />
+    <PackageReference Include="SIL.LCModel" Version="10.2.0-beta0067" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" /><!-- to match a transitive dependency of LanguageExplorerTests -->
   </ItemGroup>
 

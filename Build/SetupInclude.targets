@@ -4,8 +4,8 @@
 	<PropertyGroup>
 		<GitVersionMsBuildVersion>5.10.3</GitVersionMsBuildVersion>
 		<IcuVersion>70</IcuVersion>
-		<IcuWinFwLibVersion>70.1.123</IcuWinFwLibVersion>
-		<LcmVersion>10.2.0-beta0059</LcmVersion>
+		<IcuWinFwLibVersion>70.1.152</IcuWinFwLibVersion>
+		<LcmVersion>10.2.0-beta0067</LcmVersion>
 		<NunitConsoleVersion>3.12.0</NunitConsoleVersion>
 		<SilBuildTasksVersion>2.5.0</SilBuildTasksVersion>
 		<SilLibVersion>6.0.11</SilLibVersion>

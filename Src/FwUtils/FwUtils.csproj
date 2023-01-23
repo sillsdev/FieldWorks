@@ -11,10 +11,10 @@
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
     <PackageReference Include="NAudio.Lame" Version="1.1.6" />
-    <PackageReference Include="SIL.Core" Version="11.0.0-beta0041" />
+    <PackageReference Include="SIL.Core" Version="11.0.0" />
     <PackageReference Include="SIL.DesktopAnalytics" Version="3.0.3" />
-    <PackageReference Include="SIL.FLExBridge.IPCFramework" Version="1.1.0" />
-    <PackageReference Include="SIL.Windows.Forms" Version="11.0.0-beta0041" />
+    <PackageReference Include="SIL.FLExBridge.IPCFramework" Version="1.1.1-beta0001" />
+    <PackageReference Include="SIL.Windows.Forms" Version="11.0.0" />
   </ItemGroup>
 
   <ItemGroup>

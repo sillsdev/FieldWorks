@@ -10,11 +10,11 @@
 
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
-    <PackageReference Include="Icu4c.Win.Fw.Bin" Version="70.1.123" />
-    <PackageReference Include="Icu4c.Win.Fw.Lib" Version="70.1.123" />
-    <PackageReference Include="SIL.LCModel" Version="10.2.0-beta0059" />
-    <PackageReference Include="SIL.LCModel.Build.Tasks" Version="10.2.0-beta0059" GeneratePathProperty="true" PrivateAssets="All" />
-    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0059" GeneratePathProperty="true" />
+    <PackageReference Include="Icu4c.Win.Fw.Bin" Version="70.1.152" />
+    <PackageReference Include="Icu4c.Win.Fw.Lib" Version="70.1.152" />
+    <PackageReference Include="SIL.LCModel" Version="10.2.0-beta0067" />
+    <PackageReference Include="SIL.LCModel.Build.Tasks" Version="10.2.0-beta0067" GeneratePathProperty="true" PrivateAssets="All" />
+    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0067" GeneratePathProperty="true" />
   </ItemGroup>
   
   <ItemGroup>

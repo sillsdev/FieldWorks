@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			commandLineParser.Arguments.Add(verboseArg);
 			commandLineParser.Arguments.Add(cleanupArg);
 			commandLineParser.Certifications.Add(new ArgumentGroupCertification(new Argument[] { cleanupArg, installArg },
-				EArgumentGroupCondition.OneOreNoneUsed));
+				EArgumentGroupCondition.OneOrNoneUsed));
 			Form window = null;
 			var needCleanup = true;
 			try

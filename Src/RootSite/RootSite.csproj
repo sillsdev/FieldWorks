@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <UseWindowsForms>true</UseWindowsForms>
@@ -9,9 +9,9 @@
 
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
-    <PackageReference Include="ibusdotnet" Version="2.0.3" />
-    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0059" />
-    <PackageReference Include="SIL.Windows.Forms.Keyboarding" Version="11.0.0-beta0041" />
+    <PackageReference Include="ibusdotnet" Version="2.1.0-beta.19" />
+    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0067" />
+    <PackageReference Include="SIL.Windows.Forms.Keyboarding" Version="11.0.0" />
   </ItemGroup>
 
   <ItemGroup>
