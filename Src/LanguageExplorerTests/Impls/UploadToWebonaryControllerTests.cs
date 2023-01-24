@@ -893,7 +893,7 @@ namespace LanguageExplorerTests.Impls
 		{
 			private const string m_contentControlDictionary =
 				@"<control>
-					<parameters PaneBarGroupId='PaneBar_Dictionary'>
+					<parameters PaneBarGroupId='PaneBar-Dictionary'>
 						<control>
 							<parameters area='lexicon' clerk='entries' />
 						</control>

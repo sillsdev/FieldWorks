@@ -107,7 +107,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 				new XAttribute("label", roledPartic.RoleRA.Name.BestAnalysisAlternative.Text),
 				new XAttribute("field", "Participants"),
 				new XAttribute("editor", "possVectorReference"),
-				new XAttribute("menu", "mnuDataTree_Participants"));
+				new XAttribute("menu", "mnuDataTree-Participants"));
 			foreach (var childNode in node.Elements())
 			{
 				sliceElem.Add(XElement.Parse(childNode.GetOuterXml()));

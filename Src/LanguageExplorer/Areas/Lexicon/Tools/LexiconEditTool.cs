@@ -1654,7 +1654,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 				#region left edge menus
 
 				// 1. <part id="MoForm-Detail-AsLexemeForm" type="Detail">
-				//		Needs: menu="mnuDataTree_LexemeForm".
+				//		Needs: menu="mnuDataTree-LexemeForm".
 				_dataTree.DataTreeSliceContextMenuParameterObject.LeftEdgeContextMenuFactory.RegisterLeftEdgeContextMenuCreatorMethod(ContextMenuName.mnuDataTree_LexemeForm, Create_mnuDataTree_LexemeForm);
 				// 2. <part ref="PhoneEnvBasic" visibility="ifdata"/>
 				//		Needs: menu="mnuDataTree_Environments_Insert".

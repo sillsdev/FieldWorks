@@ -173,7 +173,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			// Theoretically, "editorSlice" will be reset to some other value in the following switch statement.
 			// Otherwise, the original code would not have worked.
 			var editorSlice = string.Empty;
-			var sMenu = "mnuDataTree_DeleteAddLexReference";
+			var sMenu = "mnuDataTree-DeleteAddLexReference";
 			// generate Xml for a specific slice matching this reference
 			switch ((LexRefTypeTags.MappingTypes)lrt.MappingType)
 			{
@@ -190,18 +190,18 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSensePair:
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseAsymmetricPair: // Entry or sense Pair with different forward/Reverse names
 					editorSlice = "lexreferencepair";
-					sMenu = "mnuDataTree_DeleteReplaceLexReference";
+					sMenu = "mnuDataTree-DeleteReplaceLexReference";
 					break;
 				case LexRefTypeTags.MappingTypes.kmtSenseTree:
 					if (fTreeRoot)
 					{
 						editorSlice = "lexreferencetreebranches";
-						sMenu = "mnuDataTree_DeleteAddLexReference";
+						sMenu = "mnuDataTree-DeleteAddLexReference";
 					}
 					else
 					{
 						editorSlice = "lexreferencetreeroot";
-						sMenu = "mnuDataTree_DeleteReplaceLexReference";
+						sMenu = "mnuDataTree-DeleteReplaceLexReference";
 					}
 					break;
 				case LexRefTypeTags.MappingTypes.kmtSenseSequence:
@@ -211,47 +211,47 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryCollection:
 					editorSlice = "lexreferencecollection";
-					sMenu = "mnuDataTree_DeleteAddLexReference";
+					sMenu = "mnuDataTree-DeleteAddLexReference";
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryUnidirectional:
 					editorSlice = "lexreferenceunidirectional";
-					sMenu = "mnuDataTree_DeleteAddLexReference";
+					sMenu = "mnuDataTree-DeleteAddLexReference";
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryTree:
 					if (fTreeRoot)
 					{
 						editorSlice = "lexreferencetreebranches";
-						sMenu = "mnuDataTree_DeleteAddLexReference";
+						sMenu = "mnuDataTree-DeleteAddLexReference";
 					}
 					else
 					{
 						editorSlice = "lexreferencetreeroot";
-						sMenu = "mnuDataTree_DeleteReplaceLexReference";
+						sMenu = "mnuDataTree-DeleteReplaceLexReference";
 					}
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseCollection:
 					editorSlice = "lexreferencecollection";
 					if (MyCmObject is ILexEntry)
 					{
-						sMenu = "mnuDataTree_DeleteAddLexReference";
+						sMenu = "mnuDataTree-DeleteAddLexReference";
 					}
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseUnidirectional:
 					editorSlice = "lexreferenceunidirectional";
 					if (MyCmObject is ILexEntry)
 					{
-						sMenu = "mnuDataTree_DeleteAddLexReference";
+						sMenu = "mnuDataTree-DeleteAddLexReference";
 					}
 					break;
 				case LexRefTypeTags.MappingTypes.kmtEntryOrSenseTree:
 					if (MyCmObject is ILexEntry)
 					{
-						sMenu = "mnuDataTree_DeleteAddLexReference";
+						sMenu = "mnuDataTree-DeleteAddLexReference";
 					}
 					if (fTreeRoot)
 					{
 						editorSlice = "lexreferencetreebranches";
-						sMenu = "mnuDataTree_DeleteAddLexReference";
+						sMenu = "mnuDataTree-DeleteAddLexReference";
 					}
 					else
 					{

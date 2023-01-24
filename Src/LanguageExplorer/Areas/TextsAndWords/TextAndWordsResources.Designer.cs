@@ -89,7 +89,7 @@ namespace LanguageExplorer.Areas.TextsAndWords {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters persistContext=&quot;normalEdit&quot; suppressInfoBar=&quot;false&quot; layout=&quot;Normal&quot; treeBarAvailability=&quot;NotAllowed&quot; PaneBarGroupId=&quot;PaneBar_WordformDetail&quot; altTitleId=&quot;WfiWordform-Full&quot; defaultLabelWidth=&quot;100&quot; /&gt;.
+        ///&lt;parameters persistContext=&quot;normalEdit&quot; suppressInfoBar=&quot;false&quot; layout=&quot;Normal&quot; treeBarAvailability=&quot;NotAllowed&quot; PaneBarGroupId=&quot;PaneBar-WordformDetail&quot; altTitleId=&quot;WfiWordform-Full&quot; defaultLabelWidth=&quot;100&quot; /&gt;.
         /// </summary>
         internal static string AnalysesRecordEditViewParameters {
             get {

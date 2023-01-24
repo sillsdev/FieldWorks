@@ -346,7 +346,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 				var lastKey = Key[Key.Length - 1] as XElement;
 				// This is a horrible kludge to implement LT-9620 and catch the fact that we are changing the list
 				// of current pronunciation writing systems, and update the database.
-				if (lastKey != null && XmlUtils.GetOptionalAttributeValue(lastKey, "menu") == "mnuDataTree_Pronunciation")
+				if (lastKey != null && XmlUtils.GetOptionalAttributeValue(lastKey, "menu") == "mnuDataTree-Pronunciation")
 				{
 					UpdatePronunciationWritingSystems(wssToDisplay);
 				}
