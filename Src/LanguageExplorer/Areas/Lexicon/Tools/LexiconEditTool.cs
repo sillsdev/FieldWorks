@@ -261,7 +261,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 				// Start: <menu id="mnuBrowseView" (partial) >
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuBrowseView.ToString()
+					Name = ContextMenuName.mnuBrowseView
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
@@ -628,12 +628,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_VariantSpec(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_VariantSpec, $"Expected argument value of '{ContextMenuName.mnuDataTree_VariantSpec.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_VariantSpec, $"Expected argument value of '{ContextMenuName.mnuDataTree_VariantSpec}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_VariantSpec">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_VariantSpec.ToString()
+					Name = ContextMenuName.mnuDataTree_VariantSpec
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(5);
 
@@ -682,12 +682,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ComplexFormSpec(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ComplexFormSpec, $"Expected argument value of '{ContextMenuName.mnuDataTree_ComplexFormSpec.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ComplexFormSpec, $"Expected argument value of '{ContextMenuName.mnuDataTree_ComplexFormSpec}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_ComplexFormSpec">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_ComplexFormSpec.ToString()
+					Name = ContextMenuName.mnuDataTree_ComplexFormSpec
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -717,12 +717,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Pronunciation(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_AlternateForms, $"Expected argument value of '{ContextMenuName.mnuDataTree_AlternateForms.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_AlternateForms, $"Expected argument value of '{ContextMenuName.mnuDataTree_AlternateForms}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_Pronunciation">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_AlternateForms.ToString()
+					Name = ContextMenuName.mnuDataTree_AlternateForms
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(2);
 				// <item command="CmdDataTree_Insert_Pronunciation"/>
@@ -778,7 +778,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_Etymology_Hotlinks(ISlice slice, ContextMenuName hotlinksMenuId)
 			{
-				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_Etymology_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_Etymology_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
+				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_Etymology_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_Etymology_Hotlinks}', but got '{hotlinksMenuId}' instead.");
 
 				var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 				// <item command="CmdDataTree_Insert_Etymology"/>
@@ -789,12 +789,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Etymology(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Etymology, $"Expected argument value of '{ContextMenuName.mnuDataTree_Etymology.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Etymology, $"Expected argument value of '{ContextMenuName.mnuDataTree_Etymology}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_Etymology">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_Etymology.ToString()
+					Name = ContextMenuName.mnuDataTree_Etymology
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(6);
 
@@ -846,13 +846,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeleteAddLexReference(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_DeleteAddLexReference, $"Expected argument value of '{ContextMenuName.mnuDataTree_DeleteAddLexReference.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_DeleteAddLexReference, $"Expected argument value of '{ContextMenuName.mnuDataTree_DeleteAddLexReference}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_DeleteAddLexReference">
 				// This menu and its commands are shared
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_DeleteAddLexReference.ToString()
+					Name = ContextMenuName.mnuDataTree_DeleteAddLexReference
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
@@ -872,13 +872,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeleteReplaceLexReference(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_DeleteReplaceLexReference, $"Expected argument value of '{ContextMenuName.mnuDataTree_DeleteReplaceLexReference.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_DeleteReplaceLexReference, $"Expected argument value of '{ContextMenuName.mnuDataTree_DeleteReplaceLexReference}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_DeleteReplaceLexReference">
 				// This menu and its commands are shared
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_DeleteReplaceLexReference.ToString()
+					Name = ContextMenuName.mnuDataTree_DeleteReplaceLexReference
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
@@ -1071,7 +1071,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_ExtendedNote_Hotlinks(ISlice slice, ContextMenuName hotlinksMenuId)
 			{
-				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_ExtendedNote_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_ExtendedNote_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
+				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_ExtendedNote_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_ExtendedNote_Hotlinks}', but got '{hotlinksMenuId}' instead.");
 
 				var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -1083,7 +1083,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_Sense_Hotlinks(ISlice slice, ContextMenuName hotlinksMenuId)
 			{
-				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_Sense_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_Sense_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
+				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_Sense_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_Sense_Hotlinks}', but got '{hotlinksMenuId}' instead.");
 
 				var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(2);
 
@@ -1179,13 +1179,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_CmMedia(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_CmMedia, $"Expected argument value of '{ContextMenuName.mnuDataTree_CmMedia.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_CmMedia, $"Expected argument value of '{ContextMenuName.mnuDataTree_CmMedia}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_CmMedia">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_CmMedia.ToString()
+					Name = ContextMenuName.mnuDataTree_CmMedia
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -1214,13 +1214,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Translation(ISlice slice, ContextMenuName contextMenuId)
 			{
 				// <menu id="mnuDataTree_Translation">
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Translation, $"Expected argument value of '{ContextMenuName.mnuDataTree_Translation.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Translation, $"Expected argument value of '{ContextMenuName.mnuDataTree_Translation}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_Translations">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_Translations.ToString()
+					Name = ContextMenuName.mnuDataTree_Translations
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(7);
 
@@ -1234,13 +1234,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Translations(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Translations, $"Expected argument value of '{ContextMenuName.mnuDataTree_Translations.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Translations, $"Expected argument value of '{ContextMenuName.mnuDataTree_Translations}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_Translations">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_Translations.ToString()
+					Name = ContextMenuName.mnuDataTree_Translations
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(7);
 
@@ -1254,13 +1254,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Examples(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Examples, $"Expected argument value of '{ContextMenuName.mnuDataTree_Examples.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Examples, $"Expected argument value of '{ContextMenuName.mnuDataTree_Examples}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_Examples">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_Examples.ToString()
+					Name = ContextMenuName.mnuDataTree_Examples
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(7);
 
@@ -1277,13 +1277,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ExtendedNotes(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ExtendedNotes, $"Expected argument value of '{ContextMenuName.mnuDataTree_ExtendedNotes.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ExtendedNotes, $"Expected argument value of '{ContextMenuName.mnuDataTree_ExtendedNotes}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_ExtendedNotes">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_ExtendedNotes.ToString()
+					Name = ContextMenuName.mnuDataTree_ExtendedNotes
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -1302,13 +1302,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ExtendedNote(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ExtendedNote, $"Expected argument value of '{ContextMenuName.mnuDataTree_ExtendedNote.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ExtendedNote, $"Expected argument value of '{ContextMenuName.mnuDataTree_ExtendedNote}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_ExtendedNote">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_ExtendedNote.ToString()
+					Name = ContextMenuName.mnuDataTree_ExtendedNote
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(6);
 
@@ -1347,13 +1347,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ExtendedNote_Examples(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ExtendedNote_Examples, $"Expected argument value of '{ContextMenuName.mnuDataTree_ExtendedNote_Examples.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ExtendedNote_Examples, $"Expected argument value of '{ContextMenuName.mnuDataTree_ExtendedNote_Examples}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_ExtendedNote_Examples">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_ExtendedNote_Examples.ToString()
+					Name = ContextMenuName.mnuDataTree_ExtendedNote_Examples
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(5);
 
@@ -1385,13 +1385,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Picture(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Picture, $"Expected argument value of '{ContextMenuName.mnuDataTree_Picture.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Picture, $"Expected argument value of '{ContextMenuName.mnuDataTree_Picture}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_Picture">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_Picture.ToString()
+					Name = ContextMenuName.mnuDataTree_Picture
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(6);
 
@@ -1447,13 +1447,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Subsenses(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Subsenses, $"Expected argument value of '{ContextMenuName.mnuDataTree_Subsenses.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Subsenses, $"Expected argument value of '{ContextMenuName.mnuDataTree_Subsenses}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_Subsenses">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_Subsenses.ToString()
+					Name = ContextMenuName.mnuDataTree_Subsenses
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -1467,13 +1467,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Example(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Example, $"Expected argument value of '{ContextMenuName.mnuDataTree_Example.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Example, $"Expected argument value of '{ContextMenuName.mnuDataTree_Example}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_Example">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_Example.ToString()
+					Name = ContextMenuName.mnuDataTree_Example
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(7);
 
@@ -1510,12 +1510,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Sense(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Sense, $"Expected argument value of '{ContextMenuName.mnuDataTree_Sense.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Sense, $"Expected argument value of '{ContextMenuName.mnuDataTree_Sense}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_Sense">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_Sense.ToString()
+					Name = ContextMenuName.mnuDataTree_Sense
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(21);
 
@@ -1676,12 +1676,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_LexemeForm(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_LexemeForm, $"Expected argument value of '{ContextMenuName.mnuDataTree_LexemeForm.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_LexemeForm, $"Expected argument value of '{ContextMenuName.mnuDataTree_LexemeForm}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_LexemeForm">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_LexemeForm.ToString()
+					Name = ContextMenuName.mnuDataTree_LexemeForm
 				};
 				var entry = (ILexEntry)_recordList.CurrentObject;
 				var hasAllomorphs = entry.AlternateFormsOS.Any();
@@ -1820,13 +1820,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private static Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Environments_Insert(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Environments_Insert, $"Expected argument value of '{ContextMenuName.mnuDataTree_Environments_Insert.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Environments_Insert, $"Expected argument value of '{ContextMenuName.mnuDataTree_Environments_Insert}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_Environments_Insert">
 				// This "mnuDataTree_Environments_Insert" menu is used in four places.
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_Environments_Insert.ToString()
+					Name = ContextMenuName.mnuDataTree_Environments_Insert
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(5);
 
@@ -1839,12 +1839,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_LexemeFormContext_RightClick(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_LexemeFormContext, $"Expected argument value of '{ContextMenuName.mnuDataTree_LexemeFormContext}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_LexemeFormContext, $"Expected argument value of '{ContextMenuName.mnuDataTree_LexemeFormContext}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_LexemeFormContext">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_LexemeFormContext.ToString()
+					Name = ContextMenuName.mnuDataTree_LexemeFormContext
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 
@@ -1902,12 +1902,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_CitationFormContext(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_CitationFormContext, $"Expected argument value of '{ContextMenuName.mnuDataTree_CitationFormContext.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_CitationFormContext, $"Expected argument value of '{ContextMenuName.mnuDataTree_CitationFormContext}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_CitationFormContext">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_CitationFormContext.ToString()
+					Name = ContextMenuName.mnuDataTree_CitationFormContext
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -1954,12 +1954,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_AffixProcess(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_AffixProcess, $"Expected argument value of '{ContextMenuName.mnuDataTree_AffixProcess.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_AffixProcess, $"Expected argument value of '{ContextMenuName.mnuDataTree_AffixProcess}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_AffixProcess">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_AffixProcess.ToString()
+					Name = ContextMenuName.mnuDataTree_AffixProcess
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(8);
 
@@ -2030,12 +2030,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_VariantForm(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_VariantForm, $"Expected argument value of '{ContextMenuName.mnuDataTree_VariantForm.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_VariantForm, $"Expected argument value of '{ContextMenuName.mnuDataTree_VariantForm}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_VariantForm">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_VariantForm.ToString()
+					Name = ContextMenuName.mnuDataTree_VariantForm
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(4);
 
@@ -2085,12 +2085,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_AlternateForm(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_AlternateForm, $"Expected argument value of '{ContextMenuName.mnuDataTree_AlternateForm.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_AlternateForm, $"Expected argument value of '{ContextMenuName.mnuDataTree_AlternateForm}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_AlternateForm">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_AlternateForm.ToString()
+					Name = ContextMenuName.mnuDataTree_AlternateForm
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(5);
 
@@ -2123,12 +2123,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Allomorph(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Allomorph, $"Expected argument value of '{ContextMenuName.mnuDataTree_Allomorph.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Allomorph, $"Expected argument value of '{ContextMenuName.mnuDataTree_Allomorph}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_Allomorph">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_VariantForms.ToString()
+					Name = ContextMenuName.mnuDataTree_VariantForms
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(10);
 
@@ -2211,12 +2211,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_VariantForms(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_VariantForms, $"Expected argument value of '{ContextMenuName.mnuDataTree_VariantForms.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_VariantForms, $"Expected argument value of '{ContextMenuName.mnuDataTree_VariantForms}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_VariantForms">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_VariantForms.ToString()
+					Name = ContextMenuName.mnuDataTree_VariantForms
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -2230,7 +2230,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_VariantForms_Hotlinks(ISlice slice, ContextMenuName hotlinksMenuId)
 			{
-				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_VariantForms_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_VariantForms_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
+				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_VariantForms_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_VariantForms_Hotlinks}', but got '{hotlinksMenuId}' instead.");
 
 				var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 				// NB: "CmdDataTree_Insert_VariantForm" is also used in two ordinary slice menus, which are defined in this class, so no need to add to shares.
@@ -2243,12 +2243,12 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_AlternateForms(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_AlternateForms, $"Expected argument value of '{ContextMenuName.mnuDataTree_AlternateForms.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_AlternateForms, $"Expected argument value of '{ContextMenuName.mnuDataTree_AlternateForms}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_AlternateForms">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_AlternateForms.ToString()
+					Name = ContextMenuName.mnuDataTree_AlternateForms
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(2);
 
@@ -2274,7 +2274,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_AlternateForms_Hotlinks(ISlice slice, ContextMenuName hotlinksMenuId)
 			{
-				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_AlternateForms_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_AlternateForms_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
+				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_AlternateForms_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_AlternateForms_Hotlinks}', but got '{hotlinksMenuId}' instead.");
 
 				var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 

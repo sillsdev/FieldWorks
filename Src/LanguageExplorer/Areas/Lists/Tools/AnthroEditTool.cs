@@ -204,12 +204,12 @@ namespace LanguageExplorer.Areas.Lists.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubAnthroCategory(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubAnthroCategory, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubAnthroCategory.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubAnthroCategory, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubAnthroCategory}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_SubAnthroCategory">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_SubAnthroCategory.ToString()
+					Name = ContextMenuName.mnuDataTree_SubAnthroCategory
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 

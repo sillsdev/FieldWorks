@@ -226,13 +226,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_StringRepresentation_Insert(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_StringRepresentation_Insert, $"Expected argument value of '{ContextMenuName.mnuDataTree_StringRepresentation_Insert.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_StringRepresentation_Insert, $"Expected argument value of '{ContextMenuName.mnuDataTree_StringRepresentation_Insert}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_StringRepresentation_Insert">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_StringRepresentation_Insert.ToString()
+					Name = ContextMenuName.mnuDataTree_StringRepresentation_Insert
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(5);
 
@@ -249,7 +249,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools
 				// Start: <menu id="mnuBrowseView" (partial) >
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuBrowseView.ToString()
+					Name = ContextMenuName.mnuBrowseView
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 

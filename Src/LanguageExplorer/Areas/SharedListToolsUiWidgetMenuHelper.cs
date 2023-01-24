@@ -149,13 +149,13 @@ namespace LanguageExplorer.Areas
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeletePossibility(ISlice slice, ContextMenuName contextMenuId)
 		{
-			Require.That(contextMenuId == ContextMenuName.mnuDataTree_DeletePossibility, $"Expected argument value of '{ContextMenuName.mnuDataTree_DeletePossibility.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+			Require.That(contextMenuId == ContextMenuName.mnuDataTree_DeletePossibility, $"Expected argument value of '{ContextMenuName.mnuDataTree_DeletePossibility}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree_DeletePossibility">
 			// This menu and its commands are shared
 			var contextMenuStrip = new ContextMenuStrip
 			{
-				Name = ContextMenuName.mnuDataTree_DeletePossibility.ToString()
+				Name = ContextMenuName.mnuDataTree_DeletePossibility
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -173,12 +173,12 @@ namespace LanguageExplorer.Areas
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubPossibilities(ISlice slice, ContextMenuName contextMenuId)
 		{
-			Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubPossibilities, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubPossibilities.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+			Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubPossibilities, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubPossibilities}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree_SubPossibilities">
 			var contextMenuStrip = new ContextMenuStrip
 			{
-				Name = ContextMenuName.mnuDataTree_SubPossibilities.ToString()
+				Name = ContextMenuName.mnuDataTree_SubPossibilities
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -194,12 +194,12 @@ namespace LanguageExplorer.Areas
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_POS_SubPossibilities(ISlice slice, ContextMenuName contextMenuId)
 		{
-			Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_SubPossibilities, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_SubPossibilities.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+			Require.That(contextMenuId == ContextMenuName.mnuDataTree_POS_SubPossibilities, $"Expected argument value of '{ContextMenuName.mnuDataTree_POS_SubPossibilities}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuDataTree_POS_SubPossibilities">
 			var contextMenuStrip = new ContextMenuStrip
 			{
-				Name = ContextMenuName.mnuDataTree_POS_SubPossibilities.ToString()
+				Name = ContextMenuName.mnuDataTree_POS_SubPossibilities
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 

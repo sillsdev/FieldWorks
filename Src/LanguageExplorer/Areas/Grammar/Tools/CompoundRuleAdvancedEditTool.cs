@@ -219,7 +219,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools
 				// Start: <menu id="mnuBrowseView" (partial) >
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuBrowseView.ToString()
+					Name = ContextMenuName.mnuBrowseView
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>

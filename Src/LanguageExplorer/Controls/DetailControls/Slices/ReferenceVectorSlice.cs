@@ -92,13 +92,13 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 
 		public Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuReorderVector(ContextMenuName contextMenuId)
 		{
-			Require.That(contextMenuId == ContextMenuName.mnuReorderVector, $"Expected argument value of '{ContextMenuName.mnuReorderVector.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+			Require.That(contextMenuId == ContextMenuName.mnuReorderVector, $"Expected argument value of '{ContextMenuName.mnuReorderVector}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuReorderVector">
 			// This menu and its commands are shared
 			var contextMenuStrip = new ContextMenuStrip
 			{
-				Name = ContextMenuName.mnuReorderVector.ToString()
+				Name = ContextMenuName.mnuReorderVector
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 

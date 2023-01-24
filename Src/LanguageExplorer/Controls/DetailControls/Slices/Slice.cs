@@ -130,10 +130,10 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 		{
 			get
 			{
-				var contextMenuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, ContextMenuAttributeName, ContextMenuName.nullValue.ToString());
+				var contextMenuId = XmlUtils.GetOptionalAttributeValue(ConfigurationNode, ContextMenuAttributeName, ContextMenuName.nullValue);
 				if (contextMenuId == ContextMenuName.nullValue)
 				{
-					contextMenuId = XmlUtils.GetOptionalAttributeValue(CallerNode, ContextMenuAttributeName, ContextMenuName.nullValue.ToString());
+					contextMenuId = XmlUtils.GetOptionalAttributeValue(CallerNode, ContextMenuAttributeName, ContextMenuName.nullValue);
 				}
 				return contextMenuId; // It may still be string.Empty.
 			}

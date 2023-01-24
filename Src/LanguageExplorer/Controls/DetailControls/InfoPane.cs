@@ -265,13 +265,13 @@ namespace LanguageExplorer.Controls.DetailControls
 
 				private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuTextInfo_Notebook(ISlice slice, ContextMenuName contextMenuId)
 				{
-					Require.That(contextMenuId == ContextMenuName.mnuTextInfo_Notebook, $"Expected argument value of '{ContextMenuName.mnuTextInfo_Notebook.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+					Require.That(contextMenuId == ContextMenuName.mnuTextInfo_Notebook, $"Expected argument value of '{ContextMenuName.mnuTextInfo_Notebook}', but got '{contextMenuId}' instead.");
 
 					// Start: <menu id="mnuTextInfo_Notebook">
 
 					var contextMenuStrip = new ContextMenuStrip
 					{
-						Name = ContextMenuName.mnuTextInfo_Notebook.ToString()
+						Name = ContextMenuName.mnuTextInfo_Notebook
 					};
 					var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 					// <item command="CmdJumpToNotebook"/>

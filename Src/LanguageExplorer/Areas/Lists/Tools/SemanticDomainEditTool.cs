@@ -223,12 +223,12 @@ namespace LanguageExplorer.Areas.Lists.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubSemanticDomain(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubSemanticDomain, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubSemanticDomain.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubSemanticDomain, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubSemanticDomain}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_SubSemanticDomain">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_SubSemanticDomain.ToString()
+					Name = ContextMenuName.mnuDataTree_SubSemanticDomain
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -244,12 +244,12 @@ namespace LanguageExplorer.Areas.Lists.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_InsertQuestion(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_InsertQuestion, $"Expected argument value of '{ContextMenuName.mnuDataTree_InsertQuestion.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_InsertQuestion, $"Expected argument value of '{ContextMenuName.mnuDataTree_InsertQuestion}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_InsertQuestion">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_InsertQuestion.ToString()
+					Name = ContextMenuName.mnuDataTree_InsertQuestion
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -277,12 +277,12 @@ namespace LanguageExplorer.Areas.Lists.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_DeleteQuestion(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_DeleteQuestion, $"Expected argument value of '{ContextMenuName.mnuDataTree_DeleteQuestion.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_DeleteQuestion, $"Expected argument value of '{ContextMenuName.mnuDataTree_DeleteQuestion}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree-Delete-Question">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_DeleteQuestion.ToString()
+					Name = ContextMenuName.mnuDataTree_DeleteQuestion
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 

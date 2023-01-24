@@ -100,13 +100,13 @@ namespace LanguageExplorer.Areas
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuReferenceChoices(ISlice slice, ContextMenuName contextMenuId)
 		{
-			Require.That(contextMenuId == ContextMenuName.mnuReferenceChoices, $"Expected argument value of '{ContextMenuName.mnuReferenceChoices.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+			Require.That(contextMenuId == ContextMenuName.mnuReferenceChoices, $"Expected argument value of '{ContextMenuName.mnuReferenceChoices}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuReferenceChoices">
 
 			var contextMenuStrip = new ContextMenuStrip
 			{
-				Name = ContextMenuName.mnuReferenceChoices.ToString()
+				Name = ContextMenuName.mnuReferenceChoices
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(42);
 			/*
@@ -739,13 +739,13 @@ namespace LanguageExplorer.Areas
 
 		private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> PopupContextMenuCreatorMethod_mnuEnvReferenceChoices(ISlice slice, ContextMenuName contextMenuId)
 		{
-			Require.That(contextMenuId == ContextMenuName.mnuEnvReferenceChoices, $"Expected argument value of '{ContextMenuName.mnuEnvReferenceChoices.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+			Require.That(contextMenuId == ContextMenuName.mnuEnvReferenceChoices, $"Expected argument value of '{ContextMenuName.mnuEnvReferenceChoices}', but got '{contextMenuId}' instead.");
 
 			// Start: <menu id="mnuEnvReferenceChoices">
 
 			var contextMenuStrip = new ContextMenuStrip
 			{
-				Name = ContextMenuName.mnuEnvReferenceChoices.ToString()
+				Name = ContextMenuName.mnuEnvReferenceChoices
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(8);
 

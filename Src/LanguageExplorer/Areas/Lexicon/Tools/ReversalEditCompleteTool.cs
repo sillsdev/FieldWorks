@@ -234,13 +234,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoveReversalIndexEntry(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_MoveReversalIndexEntry, $"Expected argument value of '{ContextMenuName.mnuDataTree_MoveReversalIndexEntry.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_MoveReversalIndexEntry, $"Expected argument value of '{ContextMenuName.mnuDataTree_MoveReversalIndexEntry}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_MoveReversalIndexEntry">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_MoveReversalIndexEntry.ToString()
+					Name = ContextMenuName.mnuDataTree_MoveReversalIndexEntry
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(8);
 				using (var imageHolder = new ImageHolder())
@@ -389,13 +389,13 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_InsertReversalSubentry(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_InsertReversalSubentry, $"Expected argument value of '{ContextMenuName.mnuDataTree_InsertReversalSubentry.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_InsertReversalSubentry, $"Expected argument value of '{ContextMenuName.mnuDataTree_InsertReversalSubentry}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_InsertReversalSubentry">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_InsertReversalSubentry.ToString()
+					Name = ContextMenuName.mnuDataTree_InsertReversalSubentry
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -409,7 +409,7 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 
 			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_InsertReversalSubentry_Hotlinks(ISlice slice, ContextMenuName hotlinksMenuId)
 			{
-				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_InsertReversalSubentry_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_InsertReversalSubentry_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
+				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_InsertReversalSubentry_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_InsertReversalSubentry_Hotlinks}', but got '{hotlinksMenuId}' instead.");
 
 				var hotlinksMenuItemList = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 

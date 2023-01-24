@@ -2422,7 +2422,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			}
 			ContextMenuStrip = new ContextMenuStrip
 			{
-				Name = ContextMenuName.mnuObjectChoices.ToString()
+				Name = ContextMenuName.mnuObjectChoices
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(19);
 			/*

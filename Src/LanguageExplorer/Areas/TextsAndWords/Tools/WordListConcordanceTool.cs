@@ -303,7 +303,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools
 				// Start: <menu id="mnuBrowseView" (partial) >
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuBrowseView.ToString()
+					Name = ContextMenuName.mnuBrowseView
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(3);
 

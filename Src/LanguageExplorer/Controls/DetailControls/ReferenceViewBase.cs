@@ -94,7 +94,7 @@ namespace LanguageExplorer.Controls.DetailControls
 				if (_rightClickTuple == null)
 				{
 					// Nobody home (the menu).
-					MessageBox.Show($"Popup menu: '{ContextMenuName.mnuReferenceChoices.ToString()}' not found.{Environment.NewLine}{Environment.NewLine}Register a creator method for it in dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.", "Implement missing popup menu", MessageBoxButtons.OK);
+					MessageBox.Show($"Popup menu: '{ContextMenuName.mnuReferenceChoices}' not found.{Environment.NewLine}{Environment.NewLine}Register a creator method for it in dataTree.DataTreeStackContextMenuFactory.RightClickPopupMenuFactory.", "Implement missing popup menu", MessageBoxButtons.OK);
 					return true;
 				}
 				if (_rightClickTuple.Item1.Items.Count > 0)

@@ -235,13 +235,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_Delete_ClosedFeature_Value_Values(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ClosedFeature_Value, $"Expected argument value of '{ContextMenuName.mnuDataTree_ClosedFeature_Value.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ClosedFeature_Value, $"Expected argument value of '{ContextMenuName.mnuDataTree_ClosedFeature_Value}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_ClosedFeature_Value">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_ClosedFeature_Value.ToString()
+					Name = ContextMenuName.mnuDataTree_ClosedFeature_Value
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -255,13 +255,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_ClosedFeature_Values(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ClosedFeature_Values, $"Expected argument value of '{ContextMenuName.mnuDataTree_ClosedFeature_Values.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_ClosedFeature_Values, $"Expected argument value of '{ContextMenuName.mnuDataTree_ClosedFeature_Values}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_ClosedFeature_Values">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_Phoneme_Codes.ToString()
+					Name = ContextMenuName.mnuDataTree_Phoneme_Codes
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -279,7 +279,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools
 				// Start: <menu id="mnuBrowseView" (partial) >
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuBrowseView.ToString()
+					Name = ContextMenuName.mnuBrowseView
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>

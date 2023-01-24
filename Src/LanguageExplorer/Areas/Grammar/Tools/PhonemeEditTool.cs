@@ -211,13 +211,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Phoneme_Codes(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Phoneme_Codes, $"Expected argument value of '{ContextMenuName.mnuDataTree_Phoneme_Codes.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Phoneme_Codes, $"Expected argument value of '{ContextMenuName.mnuDataTree_Phoneme_Codes}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_Phoneme_Codes">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_Phoneme_Codes.ToString()
+					Name = ContextMenuName.mnuDataTree_Phoneme_Codes
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -231,13 +231,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Phoneme_Code(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Phoneme_Code, $"Expected argument value of '{ContextMenuName.mnuDataTree_Phoneme_Code.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Phoneme_Code, $"Expected argument value of '{ContextMenuName.mnuDataTree_Phoneme_Code}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_Phoneme_Code">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_Phoneme_Code.ToString()
+					Name = ContextMenuName.mnuDataTree_Phoneme_Code
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -255,7 +255,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools
 				// Start: <menu id="mnuBrowseView" (partial) >
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuBrowseView.ToString()
+					Name = ContextMenuName.mnuBrowseView
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>

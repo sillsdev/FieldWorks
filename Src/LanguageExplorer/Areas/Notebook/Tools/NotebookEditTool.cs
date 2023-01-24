@@ -365,13 +365,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Participants(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Participants, $"Expected argument value of '{ContextMenuName.mnuDataTree_Participants.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Participants, $"Expected argument value of '{ContextMenuName.mnuDataTree_Participants}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_Participants">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_Participants.ToString()
+					Name = ContextMenuName.mnuDataTree_Participants
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -403,13 +403,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubRecords(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubRecords, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubRecords.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubRecords, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubRecords}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_SubRecords">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_SubRecords.ToString()
+					Name = ContextMenuName.mnuDataTree_SubRecords
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -423,13 +423,13 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_SubRecordSummary(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubRecordSummary, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubRecordSummary.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubRecordSummary, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubRecordSummary}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_SubRecordSummary">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_Participants.ToString()
+					Name = ContextMenuName.mnuDataTree_Participants
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(6);
 
@@ -586,7 +586,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 
 			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_Subrecord_Hotlinks(ISlice slice, ContextMenuName hotlinksMenuId)
 			{
-				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_Subrecord_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_Subrecord_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
+				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_Subrecord_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_Subrecord_Hotlinks}', but got '{hotlinksMenuId}' instead.");
 
 				/*
 					<command id="CmdDataTree_Insert_Subrecord" label="Insert _Subrecord" message="InsertItemInVector">
@@ -598,7 +598,7 @@ namespace LanguageExplorer.Areas.Notebook.Tools
 
 			private List<Tuple<ToolStripMenuItem, EventHandler>> Create_mnuDataTree_SubRecords_Hotlinks(ISlice slice, ContextMenuName hotlinksMenuId)
 			{
-				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_SubRecords_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubRecords_Hotlinks.ToString()}', but got '{hotlinksMenuId.ToString()}' instead.");
+				Require.That(hotlinksMenuId == ContextMenuName.mnuDataTree_SubRecords_Hotlinks, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubRecords_Hotlinks}', but got '{hotlinksMenuId}' instead.");
 
 				/*
 					<command id="CmdDataTree_Insert_Subrecord" label="Insert _Subrecord" message="InsertItemInVector"> // Shared locally

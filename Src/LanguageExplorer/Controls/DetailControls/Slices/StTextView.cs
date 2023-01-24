@@ -155,7 +155,7 @@ namespace LanguageExplorer.Controls.DetailControls.Slices
 			// Start: <menu id="mnuStTextChoices">
 			ContextMenuStrip = new ContextMenuStrip
 			{
-				Name = ContextMenuName.mnuStTextChoices.ToString()
+				Name = ContextMenuName.mnuStTextChoices
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(6);
 			/*

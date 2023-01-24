@@ -260,7 +260,7 @@ namespace LanguageExplorer.Areas.Lists.Tools
 				// Start: <menu id="mnuBrowseView" (partial) >
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuBrowseView.ToString()
+					Name = ContextMenuName.mnuBrowseView
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -311,12 +311,12 @@ namespace LanguageExplorer.Areas.Lists.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoveMainReversalPOS(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_MoveMainReversalPOS, $"Expected argument value of '{ContextMenuName.mnuDataTree_MoveMainReversalPOS.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_MoveMainReversalPOS, $"Expected argument value of '{ContextMenuName.mnuDataTree_MoveMainReversalPOS}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_MoveMainReversalPOS">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_MoveMainReversalPOS.ToString()
+					Name = ContextMenuName.mnuDataTree_MoveMainReversalPOS
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(4);
 
@@ -360,12 +360,12 @@ namespace LanguageExplorer.Areas.Lists.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_MoveReversalPOS(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_MoveReversalPOS, $"Expected argument value of '{ContextMenuName.mnuDataTree_MoveReversalPOS.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_MoveReversalPOS, $"Expected argument value of '{ContextMenuName.mnuDataTree_MoveReversalPOS}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_MoveReversalPOS">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_MoveReversalPOS.ToString()
+					Name = ContextMenuName.mnuDataTree_MoveReversalPOS
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(5);
 

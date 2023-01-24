@@ -211,12 +211,12 @@ namespace LanguageExplorer.Areas.Lists.Tools
 					// I'm not sure how one can reasonable insert an instance of CmLocation into a list of LexEntryType instance, given that the list should prevent that.
 					<menu id="mnuDataTree_SubLocation">
 				*/
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubLocation, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubLocation.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_SubLocation, $"Expected argument value of '{ContextMenuName.mnuDataTree_SubLocation}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_SubLocation">
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_SubLocation.ToString()
+					Name = ContextMenuName.mnuDataTree_SubLocation
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 

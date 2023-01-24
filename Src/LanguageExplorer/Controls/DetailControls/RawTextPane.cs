@@ -602,7 +602,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Start: <menu id="mnuIText_RawText">;
 			ContextMenuStrip = new ContextMenuStrip
 			{
-				Name = ContextMenuName.mnuIText_RawText.ToString()
+				Name = ContextMenuName.mnuIText_RawText
 			};
 			var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(7);
 			// <item command="CmdCut" />

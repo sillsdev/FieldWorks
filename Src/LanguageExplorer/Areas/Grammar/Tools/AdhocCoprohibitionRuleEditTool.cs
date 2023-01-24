@@ -238,13 +238,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Delete_Adhoc_Morpheme(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Delete_Adhoc_Morpheme, $"Expected argument value of '{ContextMenuName.mnuDataTree_Delete_Adhoc_Morpheme.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Delete_Adhoc_Morpheme, $"Expected argument value of '{ContextMenuName.mnuDataTree_Delete_Adhoc_Morpheme}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_Delete_Adhoc_Morpheme">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_Delete_Adhoc_Morpheme.ToString()
+					Name = ContextMenuName.mnuDataTree_Delete_Adhoc_Morpheme
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -258,13 +258,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Delete_Adhoc_Allomorph(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Delete_Adhoc_Allomorph, $"Expected argument value of '{ContextMenuName.mnuDataTree_Delete_Adhoc_Allomorph.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Delete_Adhoc_Allomorph, $"Expected argument value of '{ContextMenuName.mnuDataTree_Delete_Adhoc_Allomorph}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_Delete_Adhoc_Allomorph">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_Delete_Adhoc_Allomorph.ToString()
+					Name = ContextMenuName.mnuDataTree_Delete_Adhoc_Allomorph
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -278,13 +278,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Delete_Adhoc_Group(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Delete_Adhoc_Group, $"Expected argument value of '{ContextMenuName.mnuDataTree_Delete_Adhoc_Group.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Delete_Adhoc_Group, $"Expected argument value of '{ContextMenuName.mnuDataTree_Delete_Adhoc_Group}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_Delete_Adhoc_Group">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_Delete_Adhoc_Group.ToString()
+					Name = ContextMenuName.mnuDataTree_Delete_Adhoc_Group
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -298,13 +298,13 @@ namespace LanguageExplorer.Areas.Grammar.Tools
 
 			private Tuple<ContextMenuStrip, List<Tuple<ToolStripMenuItem, EventHandler>>> Create_mnuDataTree_Adhoc_Group_Members(ISlice slice, ContextMenuName contextMenuId)
 			{
-				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Adhoc_Group_Members, $"Expected argument value of '{ContextMenuName.mnuDataTree_Adhoc_Group_Members.ToString()}', but got '{contextMenuId.ToString()}' instead.");
+				Require.That(contextMenuId == ContextMenuName.mnuDataTree_Adhoc_Group_Members, $"Expected argument value of '{ContextMenuName.mnuDataTree_Adhoc_Group_Members}', but got '{contextMenuId}' instead.");
 
 				// Start: <menu id="mnuDataTree_Adhoc_Group_Members">
 
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuDataTree_Adhoc_Group_Members.ToString()
+					Name = ContextMenuName.mnuDataTree_Adhoc_Group_Members
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 
@@ -408,7 +408,7 @@ namespace LanguageExplorer.Areas.Grammar.Tools
 				// Start: <menu id="mnuBrowseView" (partial) >
 				var contextMenuStrip = new ContextMenuStrip
 				{
-					Name = ContextMenuName.mnuBrowseView.ToString()
+					Name = ContextMenuName.mnuBrowseView
 				};
 				var menuItems = new List<Tuple<ToolStripMenuItem, EventHandler>>(1);
 				// <command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
