@@ -10,7 +10,7 @@
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
     <PackageReference Include="ibusdotnet" Version="2.1.0-beta.19" />
-    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0067" />
+    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0068" />
     <PackageReference Include="SIL.Windows.Forms.Keyboarding" Version="11.0.0" />
   </ItemGroup>
 

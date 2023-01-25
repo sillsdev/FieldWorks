@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
-    <PackageReference Include="SIL.LCModel" Version="10.2.0-beta0067" />
+    <PackageReference Include="SIL.LCModel" Version="10.2.0-beta0068" />
     <PackageReference Include="SIL.Machine.Morphology.HermitCrab" Version="2.5.12" />
     <PackageReference Include="SIL.Paradigm.GAFAWSAnalysis" Version="1.0.2" />
   </ItemGroup>

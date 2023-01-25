@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
-    <PackageReference Include="SIL.LCModel.FixData" Version="10.2.0-beta0067" />
+    <PackageReference Include="SIL.LCModel.FixData" Version="10.2.0-beta0068" />
     <PackageReference Include="SIL.Windows.Forms" Version="11.0.0" />
   </ItemGroup>
 </Project>

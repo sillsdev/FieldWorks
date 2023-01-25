@@ -11,10 +11,10 @@
   <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="5.10.3" PrivateAssets="All" />
     <!-- Needed to guarantee that the Template file is available for unit tests -->
-    <PackageReference Include="SIL.LCModel" Version="10.2.0-beta0067" GeneratePath="true" />
-    <PackageReference Include="SIL.LCModel.Core.Tests" Version="10.2.0-beta0067" />
-    <PackageReference Include="SIL.LCModel.Tests" Version="10.2.0-beta0067" />
-    <PackageReference Include="SIL.LCModel.Utils.Tests" Version="10.2.0-beta0067" />
+    <PackageReference Include="SIL.LCModel" Version="10.2.0-beta0068" GeneratePath="true" />
+    <PackageReference Include="SIL.LCModel.Core.Tests" Version="10.2.0-beta0068" />
+    <PackageReference Include="SIL.LCModel.Tests" Version="10.2.0-beta0068" />
+    <PackageReference Include="SIL.LCModel.Utils.Tests" Version="10.2.0-beta0068" />
     <PackageReference Include="SIL.TestUtilities" Version="11.0.0" />
     <PackageReference Include="SIL.Windows.Forms.Keyboarding" Version="11.0.0" />
   </ItemGroup>

@@ -17,9 +17,9 @@
     <PackageReference Include="SIL.Chorus.App" Version="5.1.0-beta0028" />
     <PackageReference Include="SIL.Core" Version="11.0.0" />
     <PackageReference Include="SIL.ExCSS" Version="2.0.2" />
-    <PackageReference Include="SIL.LCModel" Version="10.2.0-beta0067" GeneratePathProperty="true" />
-    <PackageReference Include="SIL.LCModel.FixData" Version="10.2.0-beta0067" />
-    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0067" GeneratePathProperty="true" />
+    <PackageReference Include="SIL.LCModel" Version="10.2.0-beta0068" GeneratePathProperty="true" />
+    <PackageReference Include="SIL.LCModel.FixData" Version="10.2.0-beta0068" />
+    <PackageReference Include="SIL.LCModel.Core" Version="10.2.0-beta0068" GeneratePathProperty="true" />
     <PackageReference Include="SIL.Media" Version="11.0.0" />
     <PackageReference Include="SIL.Windows.Forms.GeckoBrowserAdapter" Version="11.0.0" />
     <PackageReference Include="TreeViewAdv" Version="1.7.0" />
