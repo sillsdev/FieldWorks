@@ -851,17 +851,27 @@ namespace LanguageExplorer.Controls.DetailControls
 				return;
 			}
 			var widthBtnContextMenu = SIL.FieldWorks.Resources.ResourceHelper.ButtonMenuArrowIcon.Width + 10;
-			var ipair = 0;
-			while (ipair < cPairs)
+			var offset = (NotesColumnOnRight ? 0 : 1) + (ChartIsRtL ? 0 : 1);
+			var columnNames = m_logic.AllMyColumns.Select(ConstituentChartLogic.GetColumnHeaderFrom).ToList();
+			if (!columnNames.Any())
 			{
-				var c = m_buttonRow.Controls[ipair * 2];
+				// No columnNames probably means no text. Nothing to recalculate since we may be in the midst of disappearing.
+				return;
+			}
+			if (ChartIsRtL)
+			{
+				columnNames.Reverse();
+			}
+			for (var ipair = 0; ipair < cPairs; ipair++)
+			{
+				Control c = m_buttonRow.Controls[ipair * 2];
 				// main button
-				c.Left = ColumnPositions[ipair + 1] + 2;
+				c.Left = ColumnPositions[ipair + offset] + 2;
 				// skip number column, fine tune
-				c.Width = ColumnPositions[ipair + 2] - ColumnPositions[ipair + 1] - widthBtnContextMenu;
+				c.Width = ColumnPositions[ipair + offset + 1] - ColumnPositions[ipair + offset] - widthBtnContextMenu;
 				// Redo button name in case some won't (or now will!) fit on the button
-				c.Text = GetBtnName(m_headerMainCols[ipair + 1].Text, c.Width - ((Button)c).Image.Width * 2);
-				var c2 = m_buttonRow.Controls[ipair * 2 + 1];
+				c.Text = GetBtnName(columnNames[ipair], c.Width - (((Button)c).Image.Width * 2));
+				Control c2 = m_buttonRow.Controls[ipair * 2 + 1];
 				// pull-down
 				c2.Left = c.Right;
 				c2.Width = widthBtnContextMenu;
