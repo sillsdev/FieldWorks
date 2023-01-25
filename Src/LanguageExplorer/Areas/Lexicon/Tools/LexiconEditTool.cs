@@ -376,8 +376,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 					{
 						_dataTree.GotoFirstSlice();
 						currentSlice = _dataTree.CurrentSlice;
+						// If there are no slices, currentSlice will still be null.
 					}
-					if (currentSlice.MyCmObject == null)
+					if (currentSlice?.MyCmObject == null)
 					{
 						return false;
 					}
