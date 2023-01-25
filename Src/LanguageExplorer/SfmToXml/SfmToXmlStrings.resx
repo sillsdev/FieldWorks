@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -381,10 +381,6 @@
   </data>
   <data name="CurrentSFM1JumpsTooManyLevels" xml:space="preserve">
     <value>***Error in SFM file at line {0}: current SFM '{1}' jumps too many levels in the hierarchy.</value>
-    <comment>message for log file</comment>
-  </data>
-  <data name="InputProcessingHasBeenPostponedForHeadWord" xml:space="preserve">
-    <value>The input file processing has been postponed until a new head word is started.</value>
     <comment>message for log file</comment>
   </data>
   <data name="Skipped0LinesOfInputDueToError" xml:space="preserve">

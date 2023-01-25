@@ -430,15 +430,6 @@ namespace LanguageExplorer.SfmToXml {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The input file processing has been postponed until a new head word is started..
-        /// </summary>
-        internal static string InputProcessingHasBeenPostponedForHeadWord {
-            get {
-                return ResourceManager.GetString("InputProcessingHasBeenPostponedForHeadWord", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to {0} invalid codepoints have been logged. Additional invalid codepoints will not be logged, but will be dropped from the imported text...
         /// </summary>
         internal static string InvalidCodepointsHaveBeenLogged {
