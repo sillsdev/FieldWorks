@@ -381,8 +381,8 @@ namespace LanguageExplorer.Controls.DetailControls
 
 		private void UpdateButtonState()
 		{
-			// only update button state when we're fully installed.
-			if (InterlinWordControl == null || InterlinDoc == null || !InterlinDoc.IsFocusBoxInstalled)
+			// only update button state when we're fully installed and visible.
+			if (InterlinWordControl == null || InterlinDoc == null || !InterlinDoc.IsFocusBoxInstalled || !Visible)
 			{
 				return;
 			}
