@@ -8,7 +8,7 @@
 		<Company>SIL International</Company>
 		<Authors>SIL International</Authors>
 		<Product>FieldWorks</Product>
-		<Copyright>Copyright © 2010-2021 SIL International</Copyright>
+		<Copyright>Copyright © 2002-2023 SIL International</Copyright>
 		<OutputPath>../../Output/$(Configuration)</OutputPath>
 		<TargetDir>$(OutputPath)</TargetDir>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

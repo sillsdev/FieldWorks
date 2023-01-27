@@ -180,6 +180,8 @@
 	<PropertyGroup>
 		<BldIncTemplate>../Src/bldinc.h</BldIncTemplate>
 		<BldIncOutput>../Output/Common/bldinc.h</BldIncOutput>
+		<CmnAssemblyInfoTemplate>../Src/CommonAssemblyInfoTemplate.cs</CmnAssemblyInfoTemplate>
+		<CmnAssemblyInfoOutput>../Src/CommonAssemblyInfo.cs</CmnAssemblyInfoOutput>
 		<VersionPropertiesFile>../Output/Common/Version.txt</VersionPropertiesFile>
 	</PropertyGroup>
 	<!--
@@ -194,10 +196,10 @@
 	</Target>
 	<Target Name="GenerateVersionFilesInternal" DependsOnTargets="MakeDirs;GetVersion" Condition="'$(action)'!='clean'">
 		<WriteLinesToFile File="$(VersionPropertiesFile)" Lines="FWMAJOR=$(GitVersion_Major);FWMINOR=$(GitVersion_Minor);FWREVISION=$(GitVersion_Patch)" Overwrite="true" />
-		<Substitute Template="$(BldIncTemplate)" Symbols="$(VersionPropertiesFile)"
-			Output="$(BldIncOutput)" Condition="'$(action)'!='clean' And Exists('../Output/Common')"/>
+		<Substitute Template="$(BldIncTemplate)" Symbols="$(VersionPropertiesFile)" Output="$(BldIncOutput)" Condition="Exists('../Output/Common')"/>
+		<Substitute Template="$(CmnAssemblyInfoTemplate)" Symbols="$(VersionPropertiesFile)" Output="$(CmnAssemblyInfoOutput)"/>
 
-		<Message Text="Updated bldinc.h"/>
+		<Message Text="Updated bldinc.h and UncommonAssemblyInfo.cs"/>
 	</Target>
 
   <PropertyGroup>

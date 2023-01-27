@@ -87,12 +87,22 @@ namespace FwBuildTasks
 				regex = new Regex("\\$BUILDNUMBER");
 				fileContents = regex.Replace(fileContents, buildNumber);
 
+				// If BaseBuildish is set, this is a patch build: use BaseBuildish;
+				// otherwise, this is a base build: use BUILD_NUMBER
+				var baseBuildNumber = Environment.GetEnvironmentVariable("BaseBuildish");
+				if (string.IsNullOrEmpty(baseBuildNumber))
+				{
+					baseBuildNumber = buildNumber;
+				}
+				regex = new Regex("\\$BASEBUILDNUMBER");
+				fileContents = regex.Replace(fileContents, baseBuildNumber);
+
 				regex = new Regex("\\$GENERATEDFILECOMMENT");
 				if (regex.IsMatch(fileContents))
 				{
 					fileContents = regex.Replace(fileContents,
-						string.Format("This file is generated from {0}. Do NOT modify!",
-						Path.GetFileName(template)));
+						string.Format("This file is generated from {0} by {1}. Do NOT modify!",
+						Path.GetFileName(template), GetType().FullName));
 					addedComment = true;
 				}
 

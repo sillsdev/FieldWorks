@@ -6,6 +6,10 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{17900626-4B86-43DA-B451-3E093B50B08B}"
 	ProjectSection(SolutionItems) = preProject
 		Src\AppForTests.config = Src\AppForTests.config
+		Src\AssemblyInfoForTests.cs = Src\AssemblyInfoForTests.cs
+		Src\AssemblyInfoForUiIndependentTests.cs = Src\AssemblyInfoForUiIndependentTests.cs
+		Src\CommonAssemblyInfoTemplate.cs = Src\CommonAssemblyInfoTemplate.cs
+		Src\StaAppForTests.config = Src\StaAppForTests.config
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FieldWorks", "Src\FieldWorks\FieldWorks.csproj", "{7CE209AF-EB05-4584-9444-966C0978757F}"
