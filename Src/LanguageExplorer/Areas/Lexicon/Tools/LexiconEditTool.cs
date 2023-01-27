@@ -556,9 +556,9 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 					var currentObject = _recordList.CurrentObject;
 					if (currentObject == null)
 					{
-						enabled = false; // should never happen, but nothing we can do if it does!
+						enabled = false; // this can happen if there are no entries
 					}
-					var currentEntry = currentObject as ILexEntry ?? currentObject.OwnerOfClass(LexEntryTags.kClassId) as ILexEntry;
+					var currentEntry = currentObject as ILexEntry ?? currentObject?.OwnerOfClass(LexEntryTags.kClassId) as ILexEntry;
 					if (currentEntry == null)
 					{
 						enabled = false;
