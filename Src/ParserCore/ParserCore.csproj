@@ -49,17 +49,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ApplicationXslFiles Include="../Transforms/Application/*.xsl" />
+    <!-- Passing all .xsl files in this folder worked in FW 9.1, but now there are compile errors in CalculateStemNamesUsedInLexicalEntries.xsl.
+      TODO (Hasso) 2023.02: CalculateStemNamesUsedInLexicalEntries.xsl is included in FxtM3ParserToXAmpleADCtl.xsl and FxtM3ParserToToXAmpleGrammar.xsl;
+      TODO: make it work. -->
+    <ApplicationXslFiles Include="../Transforms/Application/*.xsl" Exclude="../Transforms/Application/CalculateStemNamesUsedInLexicalEntries.xsl" />
   </ItemGroup>
-    <!-- Only Windows has the xsltc tool for compiling XSLs -->
-  <PropertyGroup>
-    <ApplicationTransformsPath>../Transforms/Application</ApplicationTransformsPath>
-  </PropertyGroup>
 
+  <!-- This parallels the BuildXslAssemblies target for PresentationTransforms in LanguageExplorer -->
   <Target Name="BuildXslAssemblies" Inputs="@(ApplicationXslFiles)" Outputs="$(OutputPath)/ApplicationTransforms.dll" BeforeTargets="CoreCompile">
     <!-- Mono doesn't have an XSL compiler so we just put the XSLs in a resource assembly -->
     <Csc TargetType="library" OutputAssembly="$(OutputPath)/ApplicationTransforms.dll" Optimize="true" Platform="AnyCPU" Resources="@(ApplicationXslFiles)" Condition="'$(OS)'=='Unix'" />
+    <!-- Only Windows has the xsltc tool for compiling XSLs -->
     <!-- The WindowsSDK_ExecutablePath_x64 does not contain the xsltc executable, but the x86 path contains one that can build a 64bit assembly -->
-    <Exec Command="xsltc.exe /settings:document /platform:$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture) /out:$(OutputPath)\ApplicationTransforms.dll $(ApplicationTransformsPath)\FxtM3MorphologySketch.xsl $(ApplicationTransformsPath)\FxtM3ParserToGAFAWS.xsl $(ApplicationTransformsPath)\FxtM3ParserToToXAmpleGrammar.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleADCtl.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleLex.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl" Condition="'$(OS)'!='Unix'" EnvironmentVariables="PATH=$(WindowsSDK_ExecutablePath_x86.Replace(';','%3B'))" />
+    <Exec Command="xsltc.exe /settings:document /platform:x64 /out:$(OutputPath)\ApplicationTransforms.dll @(ApplicationXslFiles, ' ')" Condition="'$(OS)'!='Unix'" EnvironmentVariables="PATH=$(WindowsSDK_ExecutablePath_x86.Replace(';','%3B'))" />
   </Target>
 </Project>

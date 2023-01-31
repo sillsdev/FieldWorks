@@ -96,4 +96,13 @@
   <Target Name="CopyNHunspellFiles" BeforeTargets="GenerateBindingRedirects">
     <Copy SourceFiles="$(PkgNHunspell)/content/Hunspellx64.dll" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" />
   </Target>
+
+  <!-- This parallels the BuildXslAssemblies target for ApplicationTransforms in ParserCore -->
+  <Target Name="BuildXslAssemblies" Inputs="@(PresentationXslFiles)" Outputs="$(OutputPath)/PresentationTransforms.dll" BeforeTargets="CoreCompile">
+    <!-- Mono doesn't have an XSL compiler so we just put the XSLs in a resource assembly -->
+    <Csc TargetType="library" OutputAssembly="$(OutputPath)/PresentationTransforms.dll" Optimize="true" Platform="AnyCPU" Resources="@(PresentationXslFiles)" Condition="'$(OS)'=='Unix'" />
+    <!-- Only Windows has the xsltc tool for compiling XSLs -->
+    <!-- The WindowsSDK_ExecutablePath_x64 does not contain the xsltc executable, but the x86 path contains one that can build a 64bit assembly -->
+    <Exec Command="xsltc.exe /settings:document /platform:x64 /out:$(OutputPath)\PresentationTransforms.dll @(PresentationXslFiles, ' ')" Condition="'$(OS)'!='Unix'" EnvironmentVariables="PATH=$(WindowsSDK_ExecutablePath_x86.Replace(';','%3B'))" />
+  </Target>
 </Project>
