@@ -514,6 +514,7 @@ namespace LanguageExplorer.Impls
             this.CmdImportSFMLexicon,
             this.CmdImportLinguaLinksData,
             this.CmdImportLiftData,
+            this.CmdImportCombineData,
             this.CmdImportInterlinearSfm,
             this.CmdImportWordsAndGlossesSfm,
             this.CmdImportInterlinearData,
