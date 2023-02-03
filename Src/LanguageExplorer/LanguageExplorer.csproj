@@ -64,14 +64,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>MGAStrings.resx</DependentUpon>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Controls\MGA\MGAStrings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>MGAStrings.resx</DependentUpon>
-    </Compile>
+    <!-- TODO (Hasso) 2023.02: find any string.resx files that need updating -->
   </ItemGroup>
 
   <!-- The GeckoFx60 package does not successfully copy these files even though it was intended to do so -->

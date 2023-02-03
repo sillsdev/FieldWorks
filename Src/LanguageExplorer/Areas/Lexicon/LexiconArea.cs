@@ -227,12 +227,9 @@ namespace LanguageExplorer.Areas.Lexicon
 				// Set up File->Export menu, which is visible and enabled in all lexicon area tools, using the default event handler.
 				_fileExportMenuHelper.SetupFileExportMenu(areaUiWidgetParameterObject);
 				var fileMenuItemsForTool = areaUiWidgetParameterObject.MenuItemsForArea[MainMenu.File];
-				// Add two lexicon area-wide import options.
-				// <item command="CmdImportLinguaLinksData" />
+				// Add lexicon area-wide import options.
 				fileMenuItemsForTool.Add(Command.CmdImportLinguaLinksData, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportLinguaLinksData_Clicked, () => UiWidgetServices.CanSeeAndDo));
-				// <item command="CmdImportLiftData" />
 				fileMenuItemsForTool.Add(Command.CmdImportLiftData, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportLiftData_Clicked, () => UiWidgetServices.CanSeeAndDo));
-
 				fileMenuItemsForTool.Add(Command.CmdImportCombineData, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(ImportCombineData_Clicked, () => UiWidgetServices.CanSeeAndDo));
 				majorFlexComponentParameters.UiWidgetController.AddHandlers(areaUiWidgetParameterObject);
 			}

@@ -10,7 +10,8 @@ so that $BASEBUILDNUMBER can be updated by a custom build task
 (Currently Substitute in MSBuild).
 
 REVIEW (Hasso) 2023.01: this assembly info is no longer common, since only one project needs it.
-Should this file be renamed or moved?
+It could be included in each project for consistency; see LT-21309.
+Should this file be included in each project, renamed, or moved?
 ----------------------------------------------------------------------------------------------*/
 using System.Reflection;
 

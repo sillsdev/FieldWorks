@@ -1,4 +1,6 @@
+mode: ContinuousDeployment
 increment: Patch
 assembly-versioning-scheme: MajorMinor
+assembly-file-versioning-format: '{Major}.{Minor}.{Patch}.{WeightedPreReleaseNumber}'
 # Tell gitversion to use a version number >= next-version
 next-version: 10.0.0
