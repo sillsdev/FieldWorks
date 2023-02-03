@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Code-Review+2: Hasso Pape <hasso_pape@sil.org>
+Verified-Linux+1: Hasso Pape <hasso_pape@sil.org>
+Submitted-by: Hasso Pape <hasso_pape@sil.org>
+Submitted-at: Fri, 03 Feb 2023 23:01:06 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/c/FieldWorks/+/9221
+Project: FieldWorks
+Branch: refs/heads/feature/ReplaceXmlWindowConfiguration
