@@ -127,7 +127,7 @@ rule {Fully analyzed stem with a final inflectional template 102}
   <Full stemNameInfo morphoSyntax> = <103_0 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:45022] -> ([morphoSyntax:[43158 : [ 43159:43161]]] )))
 rule {Fully analyzed stem with a final inflectional template 44999}
   Full =  Stem 45000_0
@@ -146,7 +146,7 @@ rule {Fully analyzed stem with a final inflectional template 44999}
   <Full stemNameInfo morphoSyntax> = <45000_0 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:44981] -> ([morphoSyntax:[43158 : [ 43159:43160]]] ))
 				 & ( ([stemName:45022] -> ([morphoSyntax:[43158 : [ 43159:43161]]] ))))
 rule {Fully analyzed stem with a final inflectional template 156}
