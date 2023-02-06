@@ -280,6 +280,8 @@ rule {Fully analyzed stem with a non-final inflectional template <xsl:value-of s
 			   </xsl:call-template>
 			   <xsl:call-template name="StemNameConstraints">
 				  <xsl:with-param name="posID" select="$posID"/>
+				  <xsl:with-param name="leftNT" select="'Stem_1'"/>
+				  <xsl:with-param name="rightNT" select="'Stem_2'"/>
 			   </xsl:call-template>
 			   <xsl:call-template name="AffixAlloWithFeaturesConstraints">
 				  <xsl:with-param name="sNonTerm" select="'Stem_1'"/>
@@ -2241,20 +2243,32 @@ StemNameDefaultLogicalConstraint
 StemNameConstraints
 	if needed, build stem name contraints
 		Parameters: posID = ID of current PartOfSpeech
+			leftNT = left non-terminal symbol to use
+			rightNT = right non-terminal symbol to use
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -->
    <xsl:template name="StemNameConstraints">
 	  <xsl:param name="posID"/>
+	  <xsl:param name="leftNT" select="'Full'"/>
+	  <xsl:param name="rightNT" select="'Stem'"/>
 	  <xsl:variable name="bPOSorParentHasStemNames">
 		 <xsl:call-template name="POSorParentHasStemNames">
 			<xsl:with-param name="posID" select="$posID"/>
 		 </xsl:call-template>
 	  </xsl:variable>
 	  <xsl:if test="contains($bPOSorParentHasStemNames, 'Y')">
-  &lt;Full stemNameInfo stemName&gt;       = &lt;Stem stemName&gt;
+		 <xsl:text>
+  &lt;</xsl:text>
+		 <xsl:value-of select="$leftNT"/>
+		 <xsl:text> stemNameInfo stemName&gt;       = &lt;</xsl:text>
+		 <xsl:value-of select="$rightNT"/>
+		 <xsl:text> stemName&gt;
 				  | stem name logical constraint
- &lt;Full stemNameInfo&gt; == (
-  <xsl:call-template name="StemNameLogicalConstraint">
+  &lt;</xsl:text>
+		 <xsl:value-of select="$leftNT"/>
+		 <xsl:text> stemNameInfo&gt; == (
+  </xsl:text>
+		 <xsl:call-template name="StemNameLogicalConstraint">
 			<xsl:with-param name="posID" select="$posID"/>
 			<xsl:with-param name="origPosID" select="$posID"/>
 		 </xsl:call-template>
@@ -2278,7 +2292,7 @@ StemNameLogicalConstraint
 	  <xsl:param name="posID"/>
 	  <xsl:param name="bContinues"/>
 	  <xsl:param name="origPosID"/>
-	  <xsl:variable name="stemNames" select="key('POSID', $posID)/StemNames/MoStemName[descendant::FsClosedValue]"/>
+	<xsl:variable name="stemNames" select="key('POSID', $posID)/StemNames/MoStemName[descendant::FsClosedValue]"/>
 	  <xsl:for-each select="$stemNames">
 		 <!-- nested items need to be enclosed in parens -->
 		 <xsl:if test="position()!=1 or $bContinues='Y'">

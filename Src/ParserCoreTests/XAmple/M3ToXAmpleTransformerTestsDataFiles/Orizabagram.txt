@@ -370,7 +370,7 @@ rule {Fully analyzed stem with a final inflectional template 16931}
   <Full stemNameInfo morphoSyntax> = <16933_0 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -408,7 +408,7 @@ rule {Fully analyzed stem with a final inflectional template 22719}
   <Full stemNameInfo morphoSyntax> = <22008_1 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -446,7 +446,7 @@ rule {Fully analyzed stem with a final inflectional template 20765}
   <Full stemNameInfo morphoSyntax> = <22008_0 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -489,7 +489,7 @@ rule {Fully analyzed stem with a final inflectional template 22730}
   <Full stemNameInfo morphoSyntax> = <16933_1 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -522,7 +522,7 @@ rule {Fully analyzed stem with a final inflectional template 17170}
   <Full stemNameInfo morphoSyntax> = <17165_0 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -555,7 +555,7 @@ rule {Fully analyzed stem with a final inflectional template 17169}
   <Full stemNameInfo morphoSyntax> = <17142_0 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -598,7 +598,7 @@ rule {Fully analyzed stem with a final inflectional template 17006}
   <Full stemNameInfo morphoSyntax> = <16933_0 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -636,7 +636,7 @@ rule {Fully analyzed stem with a final inflectional template 17060}
   <Full stemNameInfo morphoSyntax> = <16933_0 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -684,7 +684,7 @@ rule {Fully analyzed stem with a final inflectional template 22742}
   <Full stemNameInfo morphoSyntax> = <22008_1 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -727,7 +727,7 @@ rule {Fully analyzed stem with a final inflectional template 22743}
   <Full stemNameInfo morphoSyntax> = <22008_1 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -775,7 +775,7 @@ rule {Fully analyzed stem with a final inflectional template 20774}
   <Full stemNameInfo morphoSyntax> = <22008_0 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -818,7 +818,7 @@ rule {Fully analyzed stem with a final inflectional template 20775}
   <Full stemNameInfo morphoSyntax> = <22008_0 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -871,7 +871,7 @@ rule {Fully analyzed stem with a final inflectional template 22744}
   <Full stemNameInfo morphoSyntax> = <16933_1 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -919,7 +919,7 @@ rule {Fully analyzed stem with a final inflectional template 22745}
   <Full stemNameInfo morphoSyntax> = <16933_1 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -962,7 +962,7 @@ rule {Fully analyzed stem with a final inflectional template 17163}
   <Full stemNameInfo morphoSyntax> = <17165_0 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -1005,7 +1005,7 @@ rule {Fully analyzed stem with a final inflectional template 17121}
   <Full stemNameInfo morphoSyntax> = <17142_0 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -1058,7 +1058,7 @@ rule {Fully analyzed stem with a final inflectional template 58164}
   <Full stemNameInfo morphoSyntax> = <16933_1 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -1106,7 +1106,7 @@ rule {Fully analyzed stem with a final inflectional template 22935}
   <Full stemNameInfo morphoSyntax> = <16933_0 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -1149,7 +1149,7 @@ rule {Fully analyzed stem with a final inflectional template 22953}
   <Full stemNameInfo morphoSyntax> = <16933_0 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -1202,7 +1202,7 @@ rule {Fully analyzed stem with a final inflectional template 22954}
   <Full stemNameInfo morphoSyntax> = <22008_1 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -1250,7 +1250,7 @@ rule {Fully analyzed stem with a final inflectional template 22955}
   <Full stemNameInfo morphoSyntax> = <22008_1 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -1303,7 +1303,7 @@ rule {Fully analyzed stem with a final inflectional template 22956}
   <Full stemNameInfo morphoSyntax> = <22008_0 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -1351,7 +1351,7 @@ rule {Fully analyzed stem with a final inflectional template 22957}
   <Full stemNameInfo morphoSyntax> = <22008_0 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -1409,7 +1409,7 @@ rule {Fully analyzed stem with a final inflectional template 22958}
   <Full stemNameInfo morphoSyntax> = <16933_1 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -1462,7 +1462,7 @@ rule {Fully analyzed stem with a final inflectional template 22959}
   <Full stemNameInfo morphoSyntax> = <16933_1 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -1510,7 +1510,7 @@ rule {Fully analyzed stem with a final inflectional template 22960}
   <Full stemNameInfo morphoSyntax> = <17165_0 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
@@ -1558,7 +1558,7 @@ rule {Fully analyzed stem with a final inflectional template 22962}
   <Full stemNameInfo morphoSyntax> = <17142_0 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:66683] -> ([morphoSyntax:[ 16944:20772 20800:20801]]  / ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] ))))
 				 & ( ([stemName:66696] -> ([morphoSyntax:[ 17137:66715]]  / ([morphoSyntax:[ 20800:20806]] )))
 				 & ( ([stemName:66698] -> ([morphoSyntax:[ 20800:22738]]  / ([morphoSyntax:[ 20800:66721]] )))
