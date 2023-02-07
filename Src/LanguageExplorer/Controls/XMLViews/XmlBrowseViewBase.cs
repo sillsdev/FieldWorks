@@ -827,7 +827,11 @@ namespace LanguageExplorer.Controls.XMLViews
 			m_id = XmlUtils.GetOptionalAttributeValue(_configParamsElement, "id");
 			if (string.IsNullOrWhiteSpace(m_id))
 			{
-				throw new ArgumentNullException("No id element which is required.");
+				m_id = XmlUtils.GetOptionalAttributeValue(_configParamsElement, "toolId");
+				if (string.IsNullOrWhiteSpace(m_id))
+				{
+					throw new ArgumentNullException("No id element which is required.");
+				}
 			}
 			m_bv = bv;
 			m_cache = cache;
