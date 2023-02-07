@@ -69,7 +69,6 @@ namespace LanguageExplorer
 			Guard.AgainstNull(cache, nameof(cache));
 			Guard.AgainstNull(objList, nameof(objList));
 			Guard.AgainstNull(helpTopicProvider, nameof(helpTopicProvider));
-
 			_treeTexts.App = app;
 			_treeTexts.Cache = cache;
 			_cache = cache;
@@ -314,9 +313,9 @@ namespace LanguageExplorer
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FilterTextsDialog));
+			this._treeTexts = new TextsTriStateTreeView();
 			this._treeViewLabel = new System.Windows.Forms.Label();
 			this._btnOK = new System.Windows.Forms.Button();
-			this._treeTexts = new TextsTriStateTreeView();
 			this._helpProvider = new System.Windows.Forms.HelpProvider();
 			this._btnCancel = new System.Windows.Forms.Button();
 			this._btnHelp = new System.Windows.Forms.Button();
@@ -334,7 +333,6 @@ namespace LanguageExplorer
 			resources.ApplyResources(this._btnOK, "_btnOK");
 			this._btnOK.Name = "_btnOK";
 			this._helpProvider.SetShowHelp(this._btnOK, ((bool)(resources.GetObject("_btnOK.ShowHelp"))));
-			this._btnHelp.Click += new System.EventHandler(this.OnOk);
 			//
 			// _treeTexts
 			//
@@ -362,18 +360,18 @@ namespace LanguageExplorer
 			this.AcceptButton = this._btnOK;
 			this.CancelButton = this._btnCancel;
 			resources.ApplyResources(this, "$this");
-			this.Controls.Add(this._treeTexts);
-			this.Controls.Add(this._treeViewLabel);
-			this.Controls.Add(this._btnOK);
 			this.Controls.Add(this._btnHelp);
+			this.Controls.Add(this._treeViewLabel);
+			this.Controls.Add(this._treeTexts);
+			this.Controls.Add(this._btnOK);
 			this.Controls.Add(this._btnCancel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "FilterTextsDialog";
-			// ReSharper disable once PossibleNullReferenceException
 			this._helpProvider.SetShowHelp(this, ((bool)(resources.GetObject("$this.ShowHelp"))));
 			this.ResumeLayout(false);
+
 		}
 	}
 }
