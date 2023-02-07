@@ -22,6 +22,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.Reporting;
 
@@ -3367,6 +3368,205 @@ namespace LanguageExplorer
 				++i;
 			}
 			return -1;
+		}
+
+		/// <summary>
+		/// Return the Flid for the model property that this vector represents.
+		/// </summary>
+		internal int GetFlidOfVectorFromName(string name, string owner, out ICmObject owningObject)
+		{
+			owningObject = null;
+			int realFlid = 0;
+			switch (name)
+			{
+				default:
+					// REVIEW (TimS): This code was added as a way to include information easier in
+					// XCore.  Is this a good idea or should we just add another case statement each
+					// time a new name is needed?
+					try
+					{
+						// ENHANCE (TimS): The same method of getting the flid could be done to
+						// get the owner.
+						switch (owner)
+						{
+							case "LangProject":
+								owningObject = m_cache.LanguageProject;
+								break;
+							case "LexDb":
+								owningObject = m_cache.LanguageProject.LexDbOA;
+								break;
+							case "RnResearchNbk":
+								owningObject = m_cache.LanguageProject.ResearchNotebookOA;
+								break;
+							case "DsDiscourseData":
+								owningObject = m_cache.LanguageProject.DiscourseDataOA;
+								break;
+							default:
+								Debug.Assert(false, "Illegal owner specified for possibility list.");
+								break;
+						}
+						realFlid = VirtualListPublisher.MetaDataCache.GetFieldId(owningObject.ClassName, name, true);
+					}
+					catch (Exception e)
+					{
+						throw new ConfigurationException("The field '" + name + "' with owner '" +
+							owner + "' has not been implemented in the switch statement " +
+							"in RecordList.GetVectorFromName().", e);
+					}
+					break;
+
+				// Other supported stuff
+				case "Entries":
+					if (owner == "ReversalIndex")
+					{
+						if (m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.Count > 0)
+						{
+							owningObject = m_cache.LanguageProject.LexDbOA.ReversalIndexesOC.ToArray()[0];
+							realFlid = ReversalIndexTags.kflidEntries;
+						}
+					}
+					else
+					{
+						owningObject = m_cache.LanguageProject.LexDbOA;
+						realFlid = m_cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+					}
+					break;
+				case "Scripture_0_0_Content": // StText that is contents of first section of first book.
+					try
+					{
+						var sb = m_cache.LanguageProject.TranslatedScriptureOA.ScriptureBooksOS[0];
+						var ss = sb.SectionsOS[0];
+						owningObject = ss.ContentOA;
+					}
+					catch (NullReferenceException)
+					{
+						Trace.Fail("Could not get the test Scripture object.  Your language project might not have one (or their could have been some other error).  Try TestLangProj.");
+						throw;
+					}
+					realFlid = StTextTags.kflidParagraphs;
+					break;
+				case "Texts":
+					owningObject = m_cache.LanguageProject;
+					realFlid = m_cache.ServiceLocator.GetInstance<Virtuals>().LangProjTexts;
+					break;
+				case "MsFeatureSystem":
+					owningObject = m_cache.LanguageProject;
+					realFlid = LangProjectTags.kflidMsFeatureSystem;
+					break;
+
+				// phonology
+				case "Phonemes":
+					if (m_cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Count == 0)
+					{
+						// Pathological...this helps the memory-only backend mainly, but makes others self-repairing.
+						NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor,
+						   () =>
+						   {
+							   m_cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS.Add(
+								   m_cache.ServiceLocator.GetInstance<IPhPhonemeSetFactory>().Create());
+						   });
+					}
+					owningObject = m_cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0];
+					realFlid = PhPhonemeSetTags.kflidPhonemes;
+					break;
+				case "BoundaryMarkers":
+					owningObject = m_cache.LanguageProject.PhonologicalDataOA.PhonemeSetsOS[0];
+					realFlid = PhPhonemeSetTags.kflidBoundaryMarkers;
+					break;
+				case "Environments":
+					owningObject = m_cache.LanguageProject.PhonologicalDataOA;
+					realFlid = PhPhonDataTags.kflidEnvironments;
+					break;
+				case "NaturalClasses":
+					owningObject = m_cache.LanguageProject.PhonologicalDataOA;
+					realFlid = PhPhonDataTags.kflidNaturalClasses;
+					break;
+
+				case "PhonologicalFeatures":
+					owningObject = m_cache.LangProject.PhFeatureSystemOA;
+					realFlid = FsFeatureSystemTags.kflidFeatures;
+					break;
+
+				case "PhonologicalRules":
+					owningObject = m_cache.LangProject.PhonologicalDataOA;
+					realFlid = PhPhonDataTags.kflidPhonRules;
+					break;
+
+				// morphology
+				case "AdhocCoprohibitions":
+					owningObject = m_cache.LanguageProject.MorphologicalDataOA;
+					realFlid = MoMorphDataTags.kflidAdhocCoProhibitions;
+					break;
+				case "CompoundRules":
+					owningObject = m_cache.LanguageProject.MorphologicalDataOA;
+					realFlid = MoMorphDataTags.kflidCompoundRules;
+					break;
+
+				case "Features":
+					owningObject = m_cache.LanguageProject.MsFeatureSystemOA;
+					realFlid = FsFeatureSystemTags.kflidFeatures;
+					break;
+
+				case "FeatureTypes":
+					owningObject = m_cache.LanguageProject.MsFeatureSystemOA;
+					realFlid = FsFeatureSystemTags.kflidTypes;
+					break;
+
+				case "ProdRestrict":
+					owningObject = m_cache.LanguageProject.MorphologicalDataOA;
+					realFlid = MoMorphDataTags.kflidProdRestrict;
+					break;
+
+				case "Problems":
+					owningObject = m_cache.LanguageProject;
+					realFlid = LangProjectTags.kflidAnnotations;
+					break;
+				case "Wordforms":
+					owningObject = m_cache.LanguageProject;
+					//realFlid = m_cache.MetaDataCacheAccessor.GetFieldId("LangProject", "Wordforms", false);
+					realFlid = ObjectListPublisher.OwningFlid;
+					break;
+				case "ReversalIndexes":
+					{
+						owningObject = m_cache.LanguageProject.LexDbOA;
+						realFlid = m_cache.DomainDataByFlid.MetaDataCache.GetFieldId("LexDb", "CurrentReversalIndices", false);
+						break;
+					}
+
+				//dependent properties
+				case "Analyses":
+					{
+						//TODO: HACK! making it show the first one.
+						var wfRepository = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
+						if (wfRepository.Count > 0)
+							owningObject = wfRepository.AllInstances().First();
+						realFlid = WfiWordformTags.kflidAnalyses;
+						break;
+					}
+				case "SemanticDomainList":
+					owningObject = m_cache.LanguageProject.SemanticDomainListOA;
+					realFlid = CmPossibilityListTags.kflidPossibilities;
+					break;
+				case "AllSenses":
+				case "AllEntryRefs":
+					{
+						owningObject = m_cache.LanguageProject.LexDbOA;
+						realFlid = m_cache.DomainDataByFlid.MetaDataCache.GetFieldId("LexDb", name, false);
+						// Todo: something about initial sorting...
+						break;
+					}
+#if NEEDED // not ported from old FW because not currently used.
+				case "AllPossibleAllomorphs":
+					{
+						owningObject = m_cache.LangProject.LexDbOA;
+						realFlid = BaseVirtualHandler.GetInstalledHandlerTag(m_cache, "LexDb", "AllPossibleAllomorphs");
+						// Todo: something about initial sorting...
+						break;
+					}
+#endif
+			}
+
+			return realFlid;
 		}
 
 		protected virtual void InitLoad(bool loadList)

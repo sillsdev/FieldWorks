@@ -449,9 +449,10 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 				{
 					m_prevFlid = m_flid;
 					TargetFlid = newTargetFlid;
+					string sourceFieldName = GetSourceFieldName(newListItemsClass, newTargetFlid);
 					// m_owningObject is *always* the LexDB. All of the properties in PartOwnershipTree/ClassOwnershipTree
 					// are virtual properties of the LexDb.
-					m_flid = newTargetFlid;
+					m_flid = GetFlidOfVectorFromName(sourceFieldName, LexDbTags.kClassName, out ICmObject owningObject);
 					if (!m_reloadNeededForProperty.ContainsKey(m_flid))
 					{
 						m_reloadNeededForProperty.Add(m_flid, false);
@@ -626,6 +627,70 @@ namespace LanguageExplorer.Areas.Lexicon.Tools
 					itemsInSourceFlid.Add(itemAndSourceTag.Key);
 				}
 				return sourceFlidsToItems;
+			}
+
+			/// <summary>
+			/// Get the name of the SourceField.
+			/// </summary>
+			/// <remarks>
+			/// This functionality was based on PartOwnershipTree.GetSourceFieldName() in 9.1 and
+			/// the <clerk id="entriesOrChildren"> section in areaConfiguration.xml, also in 9.1.
+			/// </remarks>
+			public string GetSourceFieldName(int targetClsId, int targetFieldId)
+			{
+				string flidName;
+				string targetClassName = m_cache.DomainDataByFlid.MetaDataCache.GetClassName(targetClsId);
+
+				switch (targetClassName)
+				{
+					case "LexEntry": // 5002
+						flidName = "Entries";
+						break;
+					case "LexEntryRef":
+						flidName = "AllEntryRefs";
+
+						// Check if ther is an alternamte source field that should be used instead.
+						if (targetFieldId != 0)
+						{
+							var targetFieldName = m_cache.MetaDataCacheAccessor.GetFieldName(targetFieldId);
+							if (targetFieldName == "ComplexEntryTypes")
+							{
+								flidName = "AllComplexEntryRefPropertyTargets";
+							}
+							else if (targetFieldName == "VariantEntryTypes")
+							{
+								flidName = "AllVariantEntryRefPropertyTargets";
+							}
+						}
+						break;
+					case "LexPronunciation":
+						flidName = "AllPossiblePronunciations";
+						break;
+					case "LexEtymology":
+						flidName = "AllPossibleEtymologies";
+						break;
+					case "MoForm": // 5035
+						flidName = "AllPossibleAllomorphs";
+						break;
+					case "LexSense": // 5016
+						flidName = "AllSenses";
+						break;
+					case "LexExampleSentence": // 5004
+						flidName = "AllExampleSentenceTargets";
+						break;
+					case "CmTranslation":
+						flidName = "AllExampleTranslationTargets";
+						break;
+					case "LexExtendedNote":
+						flidName = "AllExtendedNoteTargets";
+						break;
+					case "CmPicture":
+						flidName = "AllPossiblePictures";
+						break;
+					default:
+						throw new ApplicationException("Need to add support for targetClsId: " + targetClsId + "  targetClassName: " + targetClassName);
+				}
+				return flidName;
 			}
 
 			/// <summary>
