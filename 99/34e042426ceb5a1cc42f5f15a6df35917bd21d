@@ -1,0 +1,9 @@
+Code-Review+2: Mark Kidder <mark_kidder@sil.org>
+Verified-Linux+1: Hasso Pape <hasso_pape@sil.org>
+Verified+1: Jason Naylor <jason_naylor@sil.org>
+Verified+1: Jenkins CI <jenkins@sil.org>
+Submitted-by: Jason Naylor <jason_naylor@sil.org>
+Submitted-at: Tue, 07 Feb 2023 18:34:21 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/c/FieldWorks/+/9227
+Project: FieldWorks
+Branch: refs/heads/feature/ReplaceXmlWindowConfiguration
