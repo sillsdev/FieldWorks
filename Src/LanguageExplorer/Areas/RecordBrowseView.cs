@@ -464,7 +464,7 @@ namespace LanguageExplorer.Areas
 			}
 			if (string.IsNullOrEmpty(titleStr))
 			{
-				XmlViewsUtils.TryFindPluralFormFromFlid(MyRecordList.VirtualListPublisher.MetaDataCache, MyRecordList.OwningFlid, out titleStr);
+				XmlViewsUtils.TryFindPluralFormFromFlid(MyRecordList.VirtualListPublisher.MetaDataCache, MyRecordList.Flid, out titleStr);
 			}
 			var fBaseCalled = false;
 			if (string.IsNullOrEmpty(titleStr))

@@ -56,7 +56,7 @@ namespace LanguageExplorer
 		bool OnRefresh(object argument);
 		void OnSorterChanged(IRecordSorter sorter, string sortName, bool isDefaultSort);
 		ICmObject OwningObject { get; set; }
-		int OwningFlid { get; }
+		int Flid { get; }
 		IRecordList ParentList { get; }
 		string PersistedIndexProperty { get; }
 		void PersistListOn(string pathname);

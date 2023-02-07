@@ -67,7 +67,7 @@ namespace LanguageExplorer
 		internal const string LexiconClassifiedDictionaryMachineName = "lexiconClassifiedDictionary";
 		internal const string LexiconClassifiedDictionaryUiName = "Classified Dictionary";
 		internal const string BulkEditEntriesOrSensesMachineName = "bulkEditEntriesOrSenses";
-		internal const string BulkEditEntriesOrSensesUiName = "CRASHES (5002 vs 5035): Bulk Edit Entries";
+		internal const string BulkEditEntriesOrSensesUiName = "Bulk Edit Entries";
 		internal const string ReversalEditCompleteMachineName = "reversalEditComplete";
 		internal const string ReversalEditCompleteUiName = "Reversal Indexes";
 		internal const string ReversalBulkEditReversalEntriesMachineName = "reversalBulkEditReversalEntries";

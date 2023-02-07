@@ -2874,9 +2874,9 @@ very simple minor adjustments. ;)"
 					{
 						// Try to dig out the class the hard way from the MDC, if possible.
 						var managedMetaDataCache = Cache.GetManagedMetaDataCache();
-						if (managedMetaDataCache.FieldExists(activeRecordList.OwningFlid))
+						if (managedMetaDataCache.FieldExists(activeRecordList.Flid))
 						{
-							deleteText = string.Format(deleteTextBase, managedMetaDataCache.GetDstClsName(activeRecordList.OwningFlid));
+							deleteText = string.Format(deleteTextBase, managedMetaDataCache.GetDstClsName(activeRecordList.Flid));
 						}
 						else if (managedMetaDataCache.FieldExists(activeRecordList.VirtualFlid))
 						{

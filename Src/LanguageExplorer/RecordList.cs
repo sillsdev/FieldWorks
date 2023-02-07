@@ -1212,7 +1212,7 @@ namespace LanguageExplorer
 			}
 		}
 
-		public int OwningFlid { get; }
+		public int Flid => m_flid;
 
 		public IRecordList ParentList { get; }
 
