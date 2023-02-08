@@ -30,5 +30,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		public FwUpdate Choice => lbChooseVersion.SelectedItem as FwUpdate;
+
+		private void lbChooseVersion_DoubleClick(object sender, System.EventArgs e)
+		{
+			DialogResult = DialogResult.OK;
+		}
 	}
 }
