@@ -133,10 +133,6 @@ namespace LanguageExplorer
 		private IRecordFilter _defaultFilter;
 		private string _defaultSortLabel;
 		/// <summary>
-		/// true during delete and insert and ShowRecord calls caused by them.
-		/// </summary>
-		private bool _suppressSaveOnChangeRecord;
-		/// <summary>
 		/// All of the sorters for the record list.
 		/// </summary>
 		protected Dictionary<string, PropertyRecordSorter> _allSorters;
@@ -1320,7 +1316,7 @@ namespace LanguageExplorer
 
 		public void SaveOnChangeRecord()
 		{
-			if (_suppressSaveOnChangeRecord || m_cache == null)
+			if (SuppressSaveOnChangeRecord || m_cache == null)
 			{
 				return;
 			}
@@ -1350,7 +1346,7 @@ namespace LanguageExplorer
 			}
 			UpdateStatusBarForRecordBar();
 			// This is used by DependentRecordLists
-			var rni = new RecordNavigationInfo(this, _suppressSaveOnChangeRecord, SkipShowRecord, suppressFocusChange);
+			var rni = new RecordNavigationInfo(this, SuppressSaveOnChangeRecord, SkipShowRecord, suppressFocusChange);
 			PropertyTable.SetProperty(RecordListSelectedObjectPropertyId(Id), rni, false, settingsGroup: SettingsGroup.LocalSettings);
 			UpdateSelectionForRecordBar();
 			// We want an auto-save when we process the change record UNLESS we are deleting or inserting an object,
@@ -1406,6 +1402,11 @@ namespace LanguageExplorer
 
 		public IRecordList SubservientRecordList => _subservientRecordList;
 
+		/// <summary>
+		/// Set to true for delete and insert operations and their corresponding ShowRecord calls to avoid interrupting the unit of work
+		/// with an unnecessary save.
+		/// </summary>
+		/// <remarks>Consider refactoring to avoid the need for this boolean. There may be an event based solution possible.</remarks>
 		public bool SuppressSaveOnChangeRecord { get; set; }
 
 		public bool SuspendLoadingRecordUntilOnJumpToRecord

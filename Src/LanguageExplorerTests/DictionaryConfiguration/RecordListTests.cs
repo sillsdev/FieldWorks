@@ -300,6 +300,24 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(reloadCounter.ReloadEventCount, Is.EqualTo(0), "Shouldn't have actually reloaded");
 		}
 
+		/// <summary>
+		/// Verify that suppressing SaveOnChangeRecord avoids crashes in surrounding units of work.
+		/// (SuppressSaveOnChangeRecord exists to prevent this in code paths that delete or insert records)
+		/// </summary>
+		[Test]
+		public void SuppressSaveOnChangeRecordWorks()
+		{
+			Assert.DoesNotThrow(() =>
+			{
+				using (new NonUndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor))
+				{
+					_recordList.SuppressSaveOnChangeRecord = true;
+					// This call will end the unit of work prematurely if not suppressed
+					_recordList.SaveOnChangeRecord();
+				}
+			});
+		}
+
 		private class ReloadCounter
 		{
 			private IRecordList recordList;
