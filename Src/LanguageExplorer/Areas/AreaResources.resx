@@ -431,4 +431,10 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="ksSpecifyConcordanceCriteria" xml:space="preserve">
     <value>Specify Concordance Criteria</value>
   </data>
+  <data name="ksDuplicateTextConstituentChartTemplate" xml:space="preserve">
+    <value>Duplicate Text Constituent Chart Template</value>
+  </data>
+  <data name="ksInsertItem" xml:space="preserve">
+    <value>Insert Item</value>
+  </data>
 </root>

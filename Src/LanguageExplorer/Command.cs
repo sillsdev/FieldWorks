@@ -178,6 +178,7 @@ namespace LanguageExplorer
 		CmdAddToLexicon,
 		CmdInsertPossibility,
 		CmdDataTree_Insert_Possibility,
+		CmdDuplicatePossibility,
 		CmdInsertFeatureType,
 		CmdAddCustomList,
 		CmdDataTree_Insert_POS_AffixTemplate,

@@ -2337,4 +2337,7 @@ you expect.</value>
     <value>Lex. Gram. Info.</value>
     <comment>short for Grammatical Information; note indentation formed by leading spaces</comment>
   </data>
+  <data name="FWCopy" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>images\Framework\FWCopy.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

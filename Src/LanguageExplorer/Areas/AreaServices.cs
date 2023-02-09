@@ -43,6 +43,7 @@ namespace LanguageExplorer.Areas
 		internal const string Promote = "Promote";
 		internal const string List_Item = "List Item";
 		internal const string Subitem = "Subitem";
+		internal const string Duplicate = "Duplicate";
 		internal const string EntriesOrChildren = "entriesOrChildren";
 		internal const string ConcOccurrences = "ConcOccurrences";
 		#endregion Random strings
@@ -144,6 +145,12 @@ namespace LanguageExplorer.Areas
 		{
 			ResetInsertUiWidgetsText(uiWidgetController.InsertMenuDictionary[Command.CmdDataTree_Insert_Possibility], newText,
 				uiWidgetController.InsertToolBarDictionary[Command.CmdDataTree_Insert_Possibility], String.IsNullOrWhiteSpace(newToolTipText) ? newText : newToolTipText);
+		}
+
+		internal static void ResetMainPossibilityDuplicateUiWidgetsText(UiWidgetController uiWidgetController, string newText, string newToolTipText = null)
+		{
+			ResetInsertUiWidgetsText(uiWidgetController.InsertMenuDictionary[Command.CmdDuplicatePossibility], newText,
+				uiWidgetController.InsertToolBarDictionary[Command.CmdDuplicatePossibility], String.IsNullOrWhiteSpace(newToolTipText) ? newText : newToolTipText);
 		}
 
 		private static void ResetInsertUiWidgetsText(ToolStripItem menu, string newText, ToolStripItem toolBarButton, string newToolTipText)

@@ -158,6 +158,7 @@ namespace LanguageExplorer.Impls
 			this.CmdAddToLexicon = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdInsertPossibility = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdDataTree_Insert_Possibility = new System.Windows.Forms.ToolStripMenuItem();
+			this.CmdDuplicatePossibility = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdAddCustomList = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdDataTree_Insert_POS_AffixTemplate = new System.Windows.Forms.ToolStripMenuItem();
 			this.CmdDataTree_Insert_POS_AffixSlot = new System.Windows.Forms.ToolStripMenuItem();
@@ -301,6 +302,7 @@ namespace LanguageExplorer.Impls
 			this.Toolbar_CmdLexiconLookup = new System.Windows.Forms.ToolStripButton();
 			this.Toolbar_CmdInsertPossibility = new System.Windows.Forms.ToolStripButton();
 			this.Toolbar_CmdDataTree_Insert_Possibility = new System.Windows.Forms.ToolStripButton();
+			this.Toolbar_CmdDuplicatePossibility = new System.Windows.Forms.ToolStripButton();
 			this.Toolbar_CmdInsertEndocentricCompound = new System.Windows.Forms.ToolStripButton();
 			this.Toolbar_CmdInsertExocentricCompound = new System.Windows.Forms.ToolStripButton();
 			this.Toolbar_CmdInsertExceptionFeature = new System.Windows.Forms.ToolStripButton();
@@ -1339,6 +1341,7 @@ namespace LanguageExplorer.Impls
             this.CmdAddToLexicon,
             this.CmdInsertPossibility,
             this.CmdDataTree_Insert_Possibility,
+			this.CmdDuplicatePossibility,
             this.CmdAddCustomList,
             this.CmdDataTree_Insert_POS_AffixTemplate,
             this.CmdDataTree_Insert_POS_AffixSlot,
@@ -1555,6 +1558,15 @@ namespace LanguageExplorer.Impls
 			this.CmdDataTree_Insert_Possibility.Size = new System.Drawing.Size(300, 26);
 			this.CmdDataTree_Insert_Possibility.Text = "Subitem";
 			this.CmdDataTree_Insert_Possibility.Visible = false;
+			// 
+			// CmdDuplicatePossibility
+			// 
+			this.CmdDuplicatePossibility.Image = global::LanguageExplorer.LanguageExplorerResources.FWCopy;
+			this.CmdDuplicatePossibility.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.CmdDuplicatePossibility.Name = "CmdDuplicatePossibility";
+			this.CmdDuplicatePossibility.Size = new System.Drawing.Size(300, 26);
+			this.CmdDuplicatePossibility.Text = "Duplicate";
+			this.CmdDuplicatePossibility.Visible = false;
 			// 
 			// CmdAddCustomList
 			// 
@@ -2636,6 +2648,7 @@ namespace LanguageExplorer.Impls
             this.Toolbar_CmdLexiconLookup,
             this.Toolbar_CmdInsertPossibility,
             this.Toolbar_CmdDataTree_Insert_Possibility,
+			this.Toolbar_CmdDuplicatePossibility,
             this.Toolbar_CmdInsertEndocentricCompound,
             this.Toolbar_CmdInsertExocentricCompound,
             this.Toolbar_CmdInsertExceptionFeature,
@@ -2826,6 +2839,16 @@ namespace LanguageExplorer.Impls
 			this.Toolbar_CmdDataTree_Insert_Possibility.Size = new System.Drawing.Size(23, 22);
 			this.Toolbar_CmdDataTree_Insert_Possibility.ToolTipText = "Subitem";
 			this.Toolbar_CmdDataTree_Insert_Possibility.Visible = false;
+			// 
+			// Toolbar_CmdDuplicatePossibility
+			// 
+			this.Toolbar_CmdDuplicatePossibility.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.Toolbar_CmdDuplicatePossibility.Image = global::LanguageExplorer.LanguageExplorerResources.FWCopy;
+			this.Toolbar_CmdDuplicatePossibility.ImageTransparentColor = System.Drawing.Color.Fuchsia;
+			this.Toolbar_CmdDuplicatePossibility.Name = "Toolbar_CmdDuplicatePossibility";
+			this.Toolbar_CmdDuplicatePossibility.Size = new System.Drawing.Size(23, 22);
+			this.Toolbar_CmdDuplicatePossibility.ToolTipText = "Duplicate {0}.";
+			this.Toolbar_CmdDuplicatePossibility.Visible = false;
 			// 
 			// Toolbar_CmdInsertEndocentricCompound
 			// 
@@ -3278,6 +3301,7 @@ namespace LanguageExplorer.Impls
 		private ToolStripMenuItem CmdInsertHumanApprovedAnalysis;
 		private ToolStripMenuItem CmdInsertPossibility;
 		private ToolStripMenuItem CmdDataTree_Insert_Possibility;
+		private ToolStripMenuItem CmdDuplicatePossibility;
 		private ToolStripMenuItem CmdAddCustomList;
 		private ToolStripMenuItem CmdDataTree_Insert_POS_AffixTemplate;
 		private ToolStripMenuItem CmdDataTree_Insert_POS_AffixSlot;
@@ -3331,6 +3355,7 @@ namespace LanguageExplorer.Impls
 		private ToolStripButton Toolbar_CmdLexiconLookup;
 		private ToolStripButton Toolbar_CmdInsertPossibility;
 		private ToolStripButton Toolbar_CmdDataTree_Insert_Possibility;
+		private ToolStripButton Toolbar_CmdDuplicatePossibility;
 		private ToolStripButton Toolbar_CmdInsertEndocentricCompound;
 		private ToolStripButton Toolbar_CmdInsertExocentricCompound;
 		private ToolStripButton Toolbar_CmdInsertExceptionFeature;

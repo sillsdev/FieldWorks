@@ -108,13 +108,18 @@ namespace LanguageExplorer.Areas
 						// <command id="CmdInsertPossibility" label="_Item" message="InsertItemInVector" icon="AddItem">
 						insertMenuDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPossibility_Click, () => UiWidgetServices.CanSeeAndDo));
 						insertToolbarDictionary.Add(Command.CmdInsertPossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdInsertPossibility_Click, () => UiWidgetServices.CanSeeAndDo));
-						AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, names[AreaServices.List_Item]);
+						AreaServices.ResetMainPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, names[AreaServices.List_Item], AreaResources.ksInsertItem);
 						break;
 					case Command.CmdDataTree_Insert_Possibility: // Add to Hashset
 						// <command id="CmdDataTree_Insert_Possibility" label="Insert subitem" message="DataTreeInsert" icon="AddSubItem">
 						insertMenuDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Possibility_Click, () => CanCmdDataTree_Insert_Possibility));
 						insertToolbarDictionary.Add(Command.CmdDataTree_Insert_Possibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDataTree_Insert_Possibility_Click, () => CanCmdDataTree_Insert_Possibility));
-						AreaServices.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, names[AreaServices.Subitem]);
+						AreaServices.ResetSubitemPossibilityInsertUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, names[AreaServices.Subitem], AreaResources.Insert_Subitem);
+						break;
+					case Command.CmdDuplicatePossibility:
+						insertMenuDictionary.Add(Command.CmdDuplicatePossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDuplicatePossibility_Click, () => UiWidgetServices.CanSeeAndDo));
+						insertToolbarDictionary.Add(Command.CmdDuplicatePossibility, new Tuple<EventHandler, Func<Tuple<bool, bool>>>(CmdDuplicatePossibility_Click, () => UiWidgetServices.CanSeeAndDo));
+						AreaServices.ResetMainPossibilityDuplicateUiWidgetsText(_majorFlexComponentParameters.UiWidgetController, names[AreaServices.Duplicate]);
 						break;
 					default:
 						throw new ArgumentOutOfRangeException($"Don't know how to process command: '{command.ToString()}'");
@@ -270,6 +275,11 @@ namespace LanguageExplorer.Areas
 			{
 				_recordList.UpdateRecordTreeBar();
 			}
+		}
+
+		private void CmdDuplicatePossibility_Click(object sender, EventArgs e)
+		{
+			// TODO - Add Duplicate functionality.
 		}
 
 		#region Implementation of IDisposable

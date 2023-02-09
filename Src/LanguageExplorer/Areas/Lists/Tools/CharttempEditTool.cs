@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Drawing;
@@ -187,8 +188,20 @@ namespace LanguageExplorer.Areas.Lists.Tools
 
 			private void SetupToolUiWidgets(ITool tool)
 			{
+				var names = new Dictionary<string, string>()
+				{
+					{ AreaServices.List_Item, AreaResources.Item },
+					{ AreaServices.Subitem, AreaResources.Subitem },
+					{ AreaServices.Duplicate, AreaResources.ksDuplicateTextConstituentChartTemplate },
+				};
+
+				var commands = new HashSet<Command>
+				{
+					Command.CmdInsertPossibility, Command.CmdDataTree_Insert_Possibility, Command.CmdDuplicatePossibility
+				};
+
 				var toolUiWidgetParameterObject = new ToolUiWidgetParameterObject(tool);
-				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject);
+				_sharedListToolsUiWidgetMenuHelper.SetupToolUiWidgets(toolUiWidgetParameterObject, names, commands);
 				_majorFlexComponentParameters.UiWidgetController.AddHandlers(toolUiWidgetParameterObject);
 			}
 

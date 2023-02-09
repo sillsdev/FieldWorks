@@ -59,12 +59,33 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Areas\AreaResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AreaResources.resx</DependentUpon>
+    </Compile>
     <Compile Update="Controls\MGA\MGAStrings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>MGAStrings.resx</DependentUpon>
     </Compile>
+    <Compile Update="LanguageExplorerResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LanguageExplorerResources.resx</DependentUpon>
+    </Compile>
     <!-- TODO (Hasso) 2023.02: find any string.resx files that need updating -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Areas\AreaResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AreaResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="LanguageExplorerResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>LanguageExplorerResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
   <!-- The GeckoFx60 package does not successfully copy these files even though it was intended to do so -->
