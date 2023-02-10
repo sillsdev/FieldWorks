@@ -685,7 +685,7 @@ namespace LanguageExplorer.Controls.DetailControls
 			// Add handler stuff from this class and possibly from subclasses.
 			SetupUiWidgets(userController);
 			_majorFlexComponentParameters.UiWidgetController.AddHandlers(userController);
-			if (m_tcPane != null && m_tcPane.Visible)
+			if (m_tcPane != null && !m_tcPane.Visible)
 			{
 				// Making the tab control currently requires this first...
 				m_tcPane.StyleSheet = m_styleSheet;
