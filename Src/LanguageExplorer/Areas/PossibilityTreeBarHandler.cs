@@ -31,6 +31,7 @@ namespace LanguageExplorer.Areas
 
 		internal void ForcePopulateRecordBar(IRecordList list)
 		{
+			HasProcessedList = false;
 			MyRecordList = null;
 			PopulateRecordBar(list);
 		}

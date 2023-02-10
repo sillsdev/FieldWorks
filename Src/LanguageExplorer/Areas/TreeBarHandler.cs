@@ -24,7 +24,7 @@ namespace LanguageExplorer.Areas
 		protected bool m_hierarchical;
 		protected bool m_includeAbbr;
 		protected string m_bestWS;
-		protected bool _hasProcessedList;
+		protected bool HasProcessedList { get; set; }
 		protected Dictionary<int, TreeNode> m_hvoToTreeNodeTable = new Dictionary<int, TreeNode>();
 		private TreeNode m_dragHiliteNode; // node that currently has background set to show drag destination
 		private TreeNode m_clickNode; // node the user mouse-downed on
@@ -84,7 +84,7 @@ namespace LanguageExplorer.Areas
 
 		public virtual void PopulateRecordBar(IRecordList list)
 		{
-			if (!_hasProcessedList)
+			if (!HasProcessedList)
 			{
 				PopulateRecordBar(list, Editable);
 			}
@@ -248,7 +248,7 @@ namespace LanguageExplorer.Areas
 
 		protected void PopulateRecordBar(IRecordList recordList, bool editable)
 		{
-			if (_hasProcessedList)
+			if (HasProcessedList)
 			{
 				return;
 			}
@@ -312,7 +312,7 @@ namespace LanguageExplorer.Areas
 				UpdateSelection(recordList.CurrentObject);
 				m_tree.EndUpdate();
 			}
-			_hasProcessedList = true;
+			HasProcessedList = true;
 		}
 
 		private void ContextMenuStrip_Opened(object sender, EventArgs e)
