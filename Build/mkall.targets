@@ -398,5 +398,8 @@
 		<Exec Command='$(NuGetCommand) install SIL.LCModel.Core -version $(LcmVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/SIL.LCModel.Core.$(LcmVersion)')"/>
 		<!-- SIL.Lib is needed for the ParatextPlugin. REVIEW (Hasso) 2022.10: then shouldn't it instead be a dependency of ParatextPlugin? -->
 		<Exec Command='$(NuGetCommand) install SIL.Lib -version $(SilLibVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/SIL.Lib.$(SilLibVersion)')" />
+		<!-- Chorus and Palaso localizations -->
+		<Exec Command='$(NuGetCommand) install SIL.Chorus.l10ns -version $(SilChorusL10nsVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/SIL.Chorus.l10ns.$(SilChorusL10nsVersion)')" />
+		<Exec Command='$(NuGetCommand) install SIL.libpalaso.l10ns -version $(SilLibpalasoL10nsVersion) -solutionDirectory "$(fwrt)"' Condition="!Exists('$(fwrt)/packages/SIL.libpalaso.l10ns.$(SilLibpalasoL10nsVersion)')" />
 	</Target>
 </Project>

@@ -8,7 +8,9 @@
 		<LcmVersion>10.2.0-beta0068</LcmVersion>
 		<NunitConsoleVersion>3.12.0</NunitConsoleVersion>
 		<SilBuildTasksVersion>2.5.0</SilBuildTasksVersion>
+		<SilChorusL10nsVersion>3.0.1</SilChorusL10nsVersion>
 		<SilLibVersion>6.0.11</SilLibVersion>
+		<SilLibpalasoL10nsVersion>9.0.1-beta0011</SilLibpalasoL10nsVersion>
 
 		<fwrt>$([System.IO.Directory]::GetParent($(MSBuildProjectDirectory)))</fwrt>
 		<fwrt Condition="'$(fwrt)' == ''">$(MSBuildThisFileDirectory)..</fwrt>

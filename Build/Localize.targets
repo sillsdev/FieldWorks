@@ -3,7 +3,7 @@
 
 	<!-- Localize strings-en.xml, lists, and all resx files -->
 	<Target Name="localize" DependsOnTargets="localize-source;localize-binaries"/>
-	<Target Name="localize-source" DependsOnTargets="Initialize;downloadTranslatedFiles;combineGOLDEtic;zipLocalizedLists;processLanguages-source" Condition="'$(DisableLocalization)'!='true'"/>
+	<Target Name="localize-source" DependsOnTargets="Initialize;downloadTranslatedFiles;copyLibL10ns;combineGOLDEtic;zipLocalizedLists;processLanguages-source" Condition="'$(DisableLocalization)'!='true'"/>
 	<Target Name="localize-binaries" DependsOnTargets="Initialize;processLanguages-binaries" Condition="'$(DisableLocalization)'!='true'"/>
 
 	<PropertyGroup>
@@ -72,6 +72,22 @@
 			Properties="Locale=%(LocaleDirs.Filename)"/>
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="updateOneTemplateLdmlFile"
 			Properties="Locale=en"/>
+	</Target>
+
+	<Target Name="copyLibL10ns">
+		<PropertyGroup>
+			<ChorusL10nsNugetDir>$(fwrt)/packages/SIL.Chorus.l10ns.$(SilChorusL10nsVersion)</ChorusL10nsNugetDir>
+			<PalasoL10nsNugetDir>$(fwrt)/packages/SIL.libpalaso.l10ns.$(SilLibpalasoL10nsVersion)</PalasoL10nsNugetDir>
+		</PropertyGroup>
+		<Error Text="Chorus L10ns package missing (expected to find them in $(ChorusL10nsNugetDir))!" Condition="!Exists('$(ChorusL10nsNugetDir)')" />
+		<Error Text="Palaso L10ns package missing (expected to find them in $(PalasoL10nsNugetDir))!" Condition="!Exists('$(PalasoL10nsNugetDir)')" />
+		<ItemGroup>
+			<XliffFiles Include="$(ChorusL10nsNugetDir)/content/**/*.xlf"/>
+			<XliffFiles Include="$(PalasoL10nsNugetDir)/content/**/*.xlf"/>
+		</ItemGroup>
+		<Copy SourceFiles="@(XliffFiles)"
+			DestinationFiles="@(XliffFiles->'$(LibL10nsDirectory)/%(Filename)%(Extension)')"
+			SkipUnchangedFiles="true"/>
 	</Target>
 
 	<!-- Each downloaded translation needs the following post-processing:
