@@ -1,65 +1,65 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="LCMBrowser.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="ShowCmObjectProperties" Type="System.Boolean" Scope="User">
+    <Setting Name="ShowCmObjectProperties" Type="System.Boolean" Provider="SIL.Settings.CrossPlatformSettingsProvider" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="ModelWndSplitterLocation" Type="System.Int32" Scope="User">
+    <Setting Name="ModelWndSplitterLocation" Type="System.Int32" Provider="SIL.Settings.CrossPlatformSettingsProvider" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="ModelWndCol0Width" Type="System.Int32" Scope="User">
+    <Setting Name="ModelWndCol0Width" Type="System.Int32" Provider="SIL.Settings.CrossPlatformSettingsProvider" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="ModelWndCol1Width" Type="System.Int32" Scope="User">
+    <Setting Name="ModelWndCol1Width" Type="System.Int32" Provider="SIL.Settings.CrossPlatformSettingsProvider" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="ModelWndCol3Width" Type="System.Int32" Scope="User">
+    <Setting Name="ModelWndCol3Width" Type="System.Int32" Provider="SIL.Settings.CrossPlatformSettingsProvider" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="ModelWndCol4Width" Type="System.Int32" Scope="User">
+    <Setting Name="ModelWndCol4Width" Type="System.Int32" Provider="SIL.Settings.CrossPlatformSettingsProvider" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="ModelWndCol2Width" Type="System.Int32" Scope="User">
+    <Setting Name="ModelWndCol2Width" Type="System.Int32" Provider="SIL.Settings.CrossPlatformSettingsProvider" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="MainWndLocation" Type="System.Drawing.Point" Scope="User">
+    <Setting Name="MainWndLocation" Type="System.Drawing.Point" Provider="SIL.Settings.CrossPlatformSettingsProvider" Scope="User">
       <Value Profile="(Default)">0, 0</Value>
     </Setting>
-    <Setting Name="MainWndSize" Type="System.Drawing.Size" Scope="User">
+    <Setting Name="MainWndSize" Type="System.Drawing.Size" Provider="SIL.Settings.CrossPlatformSettingsProvider" Scope="User">
       <Value Profile="(Default)">0, 0</Value>
     </Setting>
-    <Setting Name="UseShading" Type="System.Boolean" Scope="User">
+    <Setting Name="UseShading" Type="System.Boolean" Provider="SIL.Settings.CrossPlatformSettingsProvider" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="ShadeColor" Type="System.Drawing.Color" Scope="User">
+    <Setting Name="ShadeColor" Type="System.Drawing.Color" Provider="SIL.Settings.CrossPlatformSettingsProvider" Scope="User">
       <Value Profile="(Default)">Gainsboro</Value>
     </Setting>
-    <Setting Name="RUFile1" Type="System.String" Scope="User">
+    <Setting Name="RUFile1" Type="System.String" Provider="SIL.Settings.CrossPlatformSettingsProvider" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="RUFile2" Type="System.String" Scope="User">
+    <Setting Name="RUFile2" Type="System.String" Provider="SIL.Settings.CrossPlatformSettingsProvider" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="RUFile3" Type="System.String" Scope="User">
+    <Setting Name="RUFile3" Type="System.String" Provider="SIL.Settings.CrossPlatformSettingsProvider" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="RUFile4" Type="System.String" Scope="User">
+    <Setting Name="RUFile4" Type="System.String" Provider="SIL.Settings.CrossPlatformSettingsProvider" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="RUFile5" Type="System.String" Scope="User">
+    <Setting Name="RUFile5" Type="System.String" Provider="SIL.Settings.CrossPlatformSettingsProvider" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="RUFile6" Type="System.String" Scope="User">
+    <Setting Name="RUFile6" Type="System.String" Provider="SIL.Settings.CrossPlatformSettingsProvider" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="RUFile7" Type="System.String" Scope="User">
+    <Setting Name="RUFile7" Type="System.String" Provider="SIL.Settings.CrossPlatformSettingsProvider" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="RUFile8" Type="System.String" Scope="User">
+    <Setting Name="RUFile8" Type="System.String" Provider="SIL.Settings.CrossPlatformSettingsProvider" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="RUFile9" Type="System.String" Scope="User">
+    <Setting Name="RUFile9" Type="System.String" Provider="SIL.Settings.CrossPlatformSettingsProvider" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>
