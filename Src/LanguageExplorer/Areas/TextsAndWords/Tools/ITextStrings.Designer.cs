@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ITextStrings {
@@ -79,7 +79,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Results may be incomplete.
+        ///   Looks up a localized string similar to Results may be incomplete..
         /// </summary>
         internal static string ComplexConcControl_ResultsMayBeIncomplete {
             get {
@@ -448,7 +448,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  is used in one of your texts as an analysis writing system, but it is not currently part of your FieldWorks project.  Would you like to add it?  
+        ///   Looks up a localized string similar to  is used in one of your texts as an analysis writing system, but it is not currently part of your FieldWorks project.  Would you like to add it?
         ///Click &quot;OK&quot; to add it as a analysis writing system.
         ///Click &quot;Cancel&quot; to abort this import..
         /// </summary>
@@ -522,7 +522,7 @@ namespace LanguageExplorer.Areas.TextsAndWords.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  is used in one of your texts as a vernacular writing system, but it is not currently part of your FieldWorks project.  Would you like to add it?  
+        ///   Looks up a localized string similar to  is used in one of your texts as a vernacular writing system, but it is not currently part of your FieldWorks project.  Would you like to add it?
         ///Click &quot;OK&quot; to add it as a vernacular writing system.
         ///Click &quot;Cancel&quot; to abort this import..
         /// </summary>

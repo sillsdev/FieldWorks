@@ -19,7 +19,7 @@ namespace LanguageExplorer.LIFT {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class LiftResources {
@@ -403,6 +403,15 @@ namespace LanguageExplorer.LIFT {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Something is wrong with the data in {0}. If it was a zip file exported from The Combine please contact us at flex_errors@sil.org.
+        /// </summary>
+        internal static string ksLIFTCombineImportProblem {
+            get {
+                return ResourceManager.GetString("ksLIFTCombineImportProblem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Something went wrong while FieldWorks was attempting to import {0}.
         ///{1}
         ///
@@ -411,24 +420,6 @@ namespace LanguageExplorer.LIFT {
         internal static string ksLIFTImportProblem {
             get {
                 return ResourceManager.GetString("ksLIFTImportProblem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following unknown morph-types were found in the imported file:.
-        /// </summary>
-        internal static string ksUnknownMorphTypes {
-            get {
-                return ResourceManager.GetString("ksUnknownMorphTypes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Something is wrong with the data in {0}. If it was a zip file exported from The Combine please contact us at flex_errors@sil.org.
-        /// </summary>
-        internal static string ksLIFTCombineImportProblem {
-            get {
-                return ResourceManager.GetString("ksLIFTCombineImportProblem", resourceCulture);
             }
         }
         
@@ -685,6 +676,15 @@ namespace LanguageExplorer.LIFT {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The following unknown morph-types were found in the imported file:.
+        /// </summary>
+        internal static string ksUnknownMorphTypes {
+            get {
+                return ResourceManager.GetString("ksUnknownMorphTypes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The following Usage Types were added to the language project:.
         /// </summary>
         internal static string ksUsageTypesAdded {
@@ -746,7 +746,11 @@ namespace LanguageExplorer.LIFT {
                 return ResourceManager.GetString("openFileDialog1_Title", resourceCulture);
             }
         }
-		  internal static string openFileDialog1_Zip_Filter {
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ZIP files|*.zip|All files|*.*.
+        /// </summary>
+        internal static string openFileDialog1_Zip_Filter {
             get {
                 return ResourceManager.GetString("openFileDialog1_Zip_Filter", resourceCulture);
             }

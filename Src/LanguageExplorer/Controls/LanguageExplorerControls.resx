@@ -710,9 +710,6 @@
   <data name="ksImportingFrom0" xml:space="preserve">
     <value>Importing from {0}</value>
   </data>
-  <data name="ksImportError" xml:space="preserve">
-    <value>Import Error</value>
-  </data>
   <data name="ksSettingsSaveFileSameAsDatabaseFile" xml:space="preserve">
     <value>The settings save file ({0}) must not be the same as the database file ({1})!</value>
   </data>

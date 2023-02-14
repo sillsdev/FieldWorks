@@ -19,7 +19,7 @@ namespace LanguageExplorer.SendReceive {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ObtainProjectMethodResources {
@@ -89,6 +89,42 @@ namespace LanguageExplorer.SendReceive {
         internal static string ksCreatingLiftProject {
             get {
                 return ResourceManager.GetString("ksCreatingLiftProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Write Everything.
+        /// </summary>
+        internal static string WriteEverything {
+            get {
+                return ResourceManager.GetString("WriteEverything", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This operation cannot be undone, since it makes no changes..
+        /// </summary>
+        internal static string WriteEverythingCannotUndo {
+            get {
+                return ResourceManager.GetString("WriteEverythingCannotUndo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This utility writes all CmObjects out fresh, as if they had all been modified. (It does not update their date modified).
+        /// </summary>
+        internal static string WriteEverythingThisUtilityAttemptsTo {
+            get {
+                return ResourceManager.GetString("WriteEverythingThisUtilityAttemptsTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Run this whenever you want to write out all CmObjects in the system. This will fix Send/Receive failures if basic attributes were somehow lost in the fwdata file, or if the fwdata file contains dates in invalid formats..
+        /// </summary>
+        internal static string WriteEverythingUseThisWhen {
+            get {
+                return ResourceManager.GetString("WriteEverythingUseThisWhen", resourceCulture);
             }
         }
     }

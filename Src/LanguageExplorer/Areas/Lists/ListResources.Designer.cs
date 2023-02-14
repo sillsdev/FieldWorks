@@ -19,7 +19,7 @@ namespace LanguageExplorer.Areas.Lists {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ListResources {
@@ -289,11 +289,11 @@ namespace LanguageExplorer.Areas.Lists {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters id=&quot;featureTypesList&quot; filterBar=&quot;true&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;FsFeatStrucType-Plural&quot; editable=&quot;false&quot;&gt;
+        ///&lt;parameters id=&quot;featureTypesList&quot; wantFilterBar=&quot;true&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;FsFeatStrucType-Plural&quot; editable=&quot;false&quot;&gt;
         ///	&lt;columns&gt;
         ///		&lt;!-- explicit layout of these columns (rather than having a layout attribute) causes display problems in Mono/Linux --&gt;
         ///		&lt;column label=&quot;Name&quot; ws=&quot;$ws=best analysis&quot; width=&quot;50%&quot; field=&quot;Name&quot; layout=&quot;Name&quot;/&gt;
-        ///		&lt;column label=&quot;Abbreviation&quot; width=&quot;50%&quot; ws=&quot;$ws=best analysis&quot; field= [rest of string was truncated]&quot;;.
+        ///		&lt;column label=&quot;Abbreviation&quot; width=&quot;50%&quot; ws=&quot;$ws=best analysis&quot; fi [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string FeatureTypesAdvancedEditBrowseViewParameters {
             get {
@@ -719,11 +719,11 @@ namespace LanguageExplorer.Areas.Lists {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
-        ///&lt;parameters filterBar=&quot;true&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;PartOfSpeech-Plural&quot; editable=&quot;false&quot;&gt;
+        ///&lt;parameters wantFilterBar=&quot;true&quot; treeBarAvailability=&quot;NotAllowed&quot; defaultCursor=&quot;Arrow&quot; hscroll=&quot;true&quot; altTitleId=&quot;PartOfSpeech-Plural&quot; editable=&quot;false&quot;&gt;
         ///	&lt;columns&gt;
         ///		&lt;!-- explicit layout of these columns (rather than having a layout attribute) causes display problems in Mono/Linux --&gt;
         ///		&lt;column label=&quot;Name&quot; ws=&quot;$ws=best analysis&quot; width=&quot;50%&quot; field=&quot;Name&quot; layout=&quot;Name&quot;/&gt;
-        ///		&lt;column label=&quot;Abbreviation&quot; width=&quot;50%&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Abbreviation&quot; layout=&quot;Ab [rest of string was truncated]&quot;;.
+        ///		&lt;column label=&quot;Abbreviation&quot; width=&quot;50%&quot; ws=&quot;$ws=best analysis&quot; field=&quot;Abbreviation&quot; layout [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ReversalToolReversalIndexPOSBrowseViewParameters {
             get {

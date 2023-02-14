@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <RootNamespace>LanguageExplorerTests</RootNamespace>
@@ -38,11 +38,35 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Controls\XMLViews\XmlViewsResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>XmlViewsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="LanguageExplorerTestsResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>LanguageExplorerTestsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="..\AssemblyInfoForTests.cs">
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <None Update="Impls\SilSidePane\whitepixel.bmp" CopyToOutputDirectory="Always" Link="%(Filename)%(Extension)" />
     <None Update="Impls\SilSidePane\DefaultIcon.ico" CopyToOutputDirectory="Always" Link="%(Filename)%(Extension)" />
     <Content Include="Controls\XMLViews\Resources\TextCacheModel_LanguageExplorer.xml" CopyToOutputDirectory="Always" Link="%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Controls\XMLViews\XmlViewsResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XmlViewsResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="LanguageExplorerTestsResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LanguageExplorerTestsResources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

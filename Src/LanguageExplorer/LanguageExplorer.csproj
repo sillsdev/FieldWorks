@@ -55,6 +55,93 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Areas\AreaResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AreaResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Areas\Grammar\Tools\GrammarResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>GrammarResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Areas\Lexicon\LexEntryImages.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>LexEntryImages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Areas\Lexicon\LexiconResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>LexEntryImages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Areas\Lists\ListResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ListResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Areas\Notebook\NotebookResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>NotebookResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Areas\TextsAndWords\TextAndWordsResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>TextAndWordsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Areas\TextsAndWords\Tools\ComplexConcordanceResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ComplexConcordanceResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Areas\TextsAndWords\Tools\ITextStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ITextStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Controls\DetailControls\DetailControlsStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DetailControlsStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Controls\MGA\MGAStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MGAStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Controls\Styles\ColorPickerStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ColorPickerStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Controls\XMLViews\XMLViewsStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>XMLViewsStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="DictionaryConfiguration\DictionaryConfigurationStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DictionaryConfigurationStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Filters\FiltersStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>FiltersStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Impls\SilSidePane\SilSidePane.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SilSidePane.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="LanguageExplorerResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>LanguageExplorerResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="LIFT\LiftResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>LiftResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ParserUIStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ParserUIStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SendReceive\ObtainProjectMethodResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ObtainProjectMethodResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SfmToXml\SfmToXmlStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SfmToXmlStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="System.Design" />
   </ItemGroup>
 
@@ -64,28 +151,102 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>AreaResources.resx</DependentUpon>
     </Compile>
+    <Compile Update="Areas\Grammar\Tools\GrammarResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>GrammarResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Areas\Lexicon\LexEntryImages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LexEntryImages.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Areas\Lists\ListResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ListResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Areas\Notebook\NotebookResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NotebookResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Areas\TextsAndWords\TextAndWordsResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TextAndWordsResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Areas\TextsAndWords\Tools\ComplexConcordanceResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ComplexConcordanceResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Areas\TextsAndWords\Tools\ITextStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ITextStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\DetailControls\DetailControlsStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DetailControlsStrings.resx</DependentUpon>
+    </Compile>
     <Compile Update="Controls\MGA\MGAStrings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>MGAStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\Styles\ColorPickerStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ColorPickerStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\XMLViews\XMLViewsStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XMLViewsStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Update="DictionaryConfiguration\DictionaryConfigurationStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DictionaryConfigurationStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Filters\FiltersStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>FiltersStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Impls\SilSidePane\SilSidePane.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SilSidePane.resx</DependentUpon>
     </Compile>
     <Compile Update="LanguageExplorerResources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>LanguageExplorerResources.resx</DependentUpon>
     </Compile>
+    <Compile Update="LIFT\LiftResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LiftResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="ParserUIStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ParserUIStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Update="SendReceive\ObtainProjectMethodResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ObtainProjectMethodResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="SfmToXml\SfmToXmlStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SfmToXmlStrings.resx</DependentUpon>
+    </Compile>
     <!-- TODO (Hasso) 2023.02: find any string.resx files that need updating -->
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Areas\AreaResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>AreaResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="LanguageExplorerResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>LanguageExplorerResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
 
   <!-- The GeckoFx60 package does not successfully copy these files even though it was intended to do so -->
