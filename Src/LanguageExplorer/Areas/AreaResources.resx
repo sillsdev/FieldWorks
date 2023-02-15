@@ -437,4 +437,10 @@ If you are not the one designated user who adds fields, or you are making some o
   <data name="ksInsertItem" xml:space="preserve">
     <value>Insert Item</value>
   </data>
+  <data name="ksRedoDuplicate" xml:space="preserve">
+    <value>Redo Duplicate {0}</value>
+  </data>
+  <data name="ksUndoDuplicate" xml:space="preserve">
+    <value>Undo Duplicate {0}</value>
+  </data>
 </root>

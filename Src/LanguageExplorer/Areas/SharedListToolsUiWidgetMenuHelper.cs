@@ -279,7 +279,26 @@ namespace LanguageExplorer.Areas
 
 		private void CmdDuplicatePossibility_Click(object sender, EventArgs e)
 		{
-			// TODO - Add Duplicate functionality.
+			UowHelpers.UndoExtension(AreaResources.Item, _majorFlexComponentParameters.LcmCache.ActionHandlerAccessor, () =>
+			{
+				_recordList.SuppressSaveOnChangeRecord = true;
+				try
+				{
+					const int subitemFlid = 7004;
+					ICmPossibility original = (ICmPossibility)_recordList.CurrentObject;
+					if (original.OwningFlid != subitemFlid && !original.ShortNameTSS.Text.Equals("???")) // Don't duplicate subitems or unnamed items
+						TreeBarHandlerUtils.Tree_Duplicate(original, 0, _majorFlexComponentParameters.LcmCache);
+				}
+				catch (ApplicationException ae)
+				{
+					throw new ApplicationException("Could not duplicate the item.", ae);
+				}
+				finally
+				{
+					_recordList.SuppressSaveOnChangeRecord = false;
+				}
+			});
+			_recordList.UpdateRecordTreeBar();
 		}
 
 		#region Implementation of IDisposable

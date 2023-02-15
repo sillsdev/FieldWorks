@@ -677,6 +677,15 @@ namespace LanguageExplorer.Areas {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Redo Duplicate {0}.
+        /// </summary>
+        internal static string ksRedoDuplicate {
+            get {
+                return ResourceManager.GetString("ksRedoDuplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Single-line Text.
         /// </summary>
         internal static string ksSingleLineText {
@@ -715,6 +724,15 @@ namespace LanguageExplorer.Areas {
         internal static string kstCustomFieldSendReceive {
             get {
                 return ResourceManager.GetString("kstCustomFieldSendReceive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo Duplicate {0}.
+        /// </summary>
+        internal static string ksUndoDuplicate {
+            get {
+                return ResourceManager.GetString("ksUndoDuplicate", resourceCulture);
             }
         }
         
