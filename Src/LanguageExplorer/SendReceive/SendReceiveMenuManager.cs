@@ -29,6 +29,7 @@ using SIL.Lift.Migration;
 using SIL.Lift.Parsing;
 using SIL.Lift.Validation;
 using SIL.PlatformUtilities;
+using SIL.Reporting;
 
 namespace LanguageExplorer.SendReceive
 {
@@ -697,16 +698,29 @@ namespace LanguageExplorer.SendReceive
 
 			private void ObtainAnyFlexBridgeProject_Click(object sender, EventArgs e)
 			{
-				var newprojectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(PropertyTable.GetValue<Form>(FwUtilsConstants.window), out var obtainedProjectType);
-				if (string.IsNullOrEmpty(newprojectPathname))
+				var newProjectPathname = ObtainProjectMethod.ObtainProjectFromAnySource(PropertyTable.GetValue<Form>(FwUtilsConstants.window), out var obtainedProjectType);
+				if (string.IsNullOrEmpty(newProjectPathname))
 				{
 					return; // We dealt with it.
 				}
 				PropertyTable.SetProperty(LanguageExplorerConstants.LastBridgeUsed, obtainedProjectType == ObtainedProjectType.Lift ? LanguageExplorerConstants.LiftBridge : LanguageExplorerConstants.FLExBridge, true, settingsGroup: SettingsGroup.LocalSettings);
-				var fieldWorksAssembly = Assembly.Load("FieldWorks.exe");
-				var fieldWorksType = fieldWorksAssembly.GetType("SIL.FieldWorks.FieldWorks");
-				var methodInfo = fieldWorksType.GetMethod("OpenNewProject", BindingFlags.Static | BindingFlags.Public);
-				methodInfo.Invoke(null, new object[] { new ProjectId(newprojectPathname) });
+				// We are calling ourselves by reflection to avoid a circular dependency.
+				const string type = "SIL.FieldWorks.FieldWorks";
+				const string method = "OpenNewProject";
+				const BindingFlags flags = BindingFlags.Static | BindingFlags.NonPublic;
+				var fieldWorksAssembly = Assembly.GetEntryAssembly();
+				var fieldWorksType = fieldWorksAssembly?.GetType(type);
+				var methodInfo = fieldWorksType?.GetMethod(method, flags);
+				if (methodInfo != null)
+				{
+					methodInfo.Invoke(null, new object[] { new ProjectId(newProjectPathname) });
+				}
+				else
+				{
+					var app = PropertyTable.GetValue<IApp>(LanguageExplorerConstants.App);
+					ErrorReporter.ReportException(new EntryPointNotFoundException($"Missing or moved method: {flags} {type}.{method}"),
+						app.SettingsKey, app.SupportEmailAddress, Form.ActiveForm, false);
+				}
 			}
 
 			private void S_R_FlexBridge_Click(object sender, EventArgs e)
