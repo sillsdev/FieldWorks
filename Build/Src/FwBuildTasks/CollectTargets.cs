@@ -352,17 +352,17 @@ namespace SIL.FieldWorks.Build.Tasks
 						writer.WriteLine("\t\t\tProperties=\"$(msbuild-props);IntermediateOutputPath=$(dir-fwobj){0}{1}{0};DefineConstants=$({2}Defines);$(warningsAsErrors);WarningLevel=4\"/>",
 							Path.DirectorySeparatorChar, GetProjectSubDir(project), projectProperty);
 						// <Clouseau> verification task
-						writer.WriteLine($"\t\t<Clouseau Condition=\"'$(Configuration)' == 'Debug'\" AssemblyPathname=\"$(dir-outputBaseFramework)/{GetAssemblyName(project)}\"/>");
+						writer.WriteLine($"\t\t<Clouseau Condition=\"'$(Configuration)' == 'Debug'\" AssemblyPathname=\"$(dir-outputBase)/{GetAssemblyName(project)}\"/>");
 
 						if (isTestProject)
 						{
 							// <NUnit> task
 							writer.WriteLine($"\t\t<Message Text=\"Running unit tests for {project}\" />");
 							writer.WriteLine("\t\t<NUnit3 Condition=\"'$(action)'=='test'\"");
-							writer.WriteLine($"\t\t\tAssemblies=\"$(dir-outputBaseFramework)/{project}.dll\"");
+							writer.WriteLine($"\t\t\tAssemblies=\"$(dir-outputBase)/{project}.dll\"");
 							writer.WriteLine($"\t\t\tToolPath=\"{m_NUnitConsolePath}\"");
-							writer.WriteLine("\t\t\tWorkingDirectory=\"$(dir-outputBaseFramework)\"");
-							writer.WriteLine($"\t\t\tOutputXmlFile=\"$(dir-outputBaseFramework)/{project}.dll-nunit-output.xml\"");
+							writer.WriteLine("\t\t\tWorkingDirectory=\"$(dir-outputBase)\"");
+							writer.WriteLine($"\t\t\tOutputXmlFile=\"$(dir-outputBase)/{project}.dll-nunit-output.xml\"");
 							writer.WriteLine("\t\t\tForce32Bit=\"$(useNUnit-x86)\"");
 							writer.WriteLine("\t\t\tExcludeCategory=\"$(excludedCategories)\"");
 							// Don't continue on error. NUnit returns 0 even if there are failed tests.
@@ -434,14 +434,14 @@ namespace SIL.FieldWorks.Build.Tasks
 
 		private void GenerateDotCoverTask(TextWriter writer, IEnumerable<string> projects, string outputXml)
 		{
-			var assemblyList = projects.Aggregate("", (current, proj) => current + $"$(dir-outputBaseFramework)/{proj}.dll;");
+			var assemblyList = projects.Aggregate("", (current, proj) => current + $"$(dir-outputBase)/{proj}.dll;");
 			writer.WriteLine($"\t\t<Message Text=\"Running coverage analysis for {string.Join(", ", projects)}\" Condition=\"'$(action)'=='cover'\"/>");
 			writer.WriteLine( "\t\t<GenerateTestCoverageReport Condition=\"'$(action)'=='cover'\"");
 			writer.WriteLine($"\t\t\tAssemblies=\"{assemblyList}\"");
 			writer.WriteLine( $"\t\t\tNUnitConsoleExe=\"{m_NUnitConsolePath}nunit3-console.exe\"");
 			writer.WriteLine( "\t\t\tDotCoverExe=\"$(DOTCOVER_HOME)/dotcover.exe\"");
-			writer.WriteLine( "\t\t\tWorkingDirectory=\"$(dir-outputBaseFramework)\"");
-			writer.WriteLine($"\t\t\tOutputXmlFile=\"$(dir-outputBaseFramework)/{outputXml}\"/>");
+			writer.WriteLine( "\t\t\tWorkingDirectory=\"$(dir-outputBase)\"");
+			writer.WriteLine($"\t\t\tOutputXmlFile=\"$(dir-outputBase)/{outputXml}\"/>");
 		}
 
 		/// <summary>
