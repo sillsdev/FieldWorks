@@ -67,6 +67,7 @@ Main template
    <xsl:template match="/word">
 	  <html>
 		 <head>
+		 <meta charset="UTF-8"/>
 		 </head>
 		 <body>
 			<h1>
