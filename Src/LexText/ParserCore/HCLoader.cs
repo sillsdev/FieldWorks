@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2021 SIL International
+// Copyright (c) 2015-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -2257,15 +2257,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static IMoInflClass GetDefaultInflClass(IPartOfSpeech pos)
 		{
-			if (pos.DefaultInflectionClassRA != null)
-				return pos.DefaultInflectionClassRA;
-			foreach (IPartOfSpeech child in pos.SubPossibilitiesOS.Cast<IPartOfSpeech>())
+			while (true)
 			{
-				IMoInflClass defInflClass = GetDefaultInflClass(child);
-				if (defInflClass != null)
-					return defInflClass;
+				if (pos.DefaultInflectionClassRA != null)
+				{
+					return pos.DefaultInflectionClassRA;
+				}
+				if (!(pos.Owner is IPartOfSpeech parentPos))
+				{
+					return null;
+				}
+				pos = parentPos;
 			}
-			return null;
 		}
 
 		private static void LoadFeatureSystem(IFsFeatureSystem featSys, FeatureSystem hcFeatSys)
