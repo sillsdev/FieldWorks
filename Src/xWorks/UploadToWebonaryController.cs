@@ -108,7 +108,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return m_exportService.ExportDictionaryContentJson(model.SiteName, templateFileNames,
 				model.Reversals.Where(kvp => model.SelectedReversals.Contains(kvp.Key)).Select(kvp => kvp.Value),
-				model.Configurations[model.SelectedConfiguration].FilePath,
 				tempDirectoryForExport);
 		}
 

@@ -597,7 +597,6 @@ namespace SIL.FieldWorks.XWorks
 			IEnumerable<string> templateFileNames,
 			IEnumerable<DictionaryConfigurationModel> reversals,
 			int[] entryHvos,
-			string configPath,
 			string exportPath,
 			LcmCache cache,
 			RecordClerk clerk)
@@ -610,12 +609,12 @@ namespace SIL.FieldWorks.XWorks
 			//mainLanguageData.title = Enhance: Add new field to dialog for title?
 			var wsString = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultVernWs);
 			mainLanguageData.letters = JArray.FromObject(GenerateLetterHeaders(entryHvos, cache, clerk, wsString));
-			var customDictionaryCss = CssGenerator.CopyCustomCssAndGetPath(exportPath, configPath);
+			var customDictionaryCss = CssGenerator.CopyCustomCssAndGetPath(exportPath, cache, false);
 			var cssFiles = new JArray();
 			cssFiles.Add("configured.css");
 			if (!string.IsNullOrEmpty(customDictionaryCss))
 			{
-				cssFiles.Add(customDictionaryCss);
+				cssFiles.Add(Path.GetFileName(customDictionaryCss));
 			}
 			mainLanguageData.cssFiles = cssFiles;
 			dictionaryMetaData.mainLanguage = mainLanguageData;
@@ -627,7 +626,7 @@ namespace SIL.FieldWorks.XWorks
 					dynamic revJson = new JObject();
 					revJson.lang = reversal.WritingSystem;
 					revJson.title = reversal.Label;
-					var custReversalCss = CssGenerator.CopyCustomCssAndGetPath(exportPath, Path.GetDirectoryName(reversal.FilePath));
+					var custReversalCss = CssGenerator.CopyCustomCssAndGetPath(exportPath,  cache, true);
 					revJson.cssFiles = new JArray(new object[] { $"reversal_{reversal.WritingSystem}.css", Path.GetFileName(custReversalCss) });
 					reversalArray.Add(revJson);
 				}
