@@ -252,9 +252,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// It probably can't ever be null or empty, but let's be as robust as possible.
 			var locale = Thread.CurrentThread.CurrentUICulture.Name;
 
-			// Mono doesn't have a plain "zh" locale.  It needs the country code for Chinese.  See FWNX-1255.
-			if (!Platform.IsMono || locale != "zh-CN")
+			// We don't use a plain "zh" locale.  Mono etc. need the country code for Chinese.  See FWNX-1255.
+			if (locale != "zh-CN")
+			{
 				locale = string.IsNullOrWhiteSpace(locale) ? "en" : locale.Split('-')[0];
+			}
 			AddArg(ref args, "-locale", locale);
 
 			if (_noBlockerHostAndCallback != null)
