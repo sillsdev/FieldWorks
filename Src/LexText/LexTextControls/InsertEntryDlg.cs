@@ -11,7 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using Microsoft.Win32;
-using SIL.Collections;
+using SIL.Code;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;

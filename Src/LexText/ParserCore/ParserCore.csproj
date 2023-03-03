@@ -189,17 +189,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\CommonServiceLocator.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Collections, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SIL.Collections.dll</HintPath>
-    </Reference>
     <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SIL.Core.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.HermitCrab, Version=1.0.5294.2277, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SIL.Machine.Morphology.HermitCrab">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SIL.HermitCrab.dll</HintPath>
+      <HintPath>..\..\..\Output\Debug\SIL.Machine.Morphology.HermitCrab.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Machine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

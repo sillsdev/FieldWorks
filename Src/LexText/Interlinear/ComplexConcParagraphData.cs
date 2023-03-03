@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
@@ -17,16 +17,16 @@ using SIL.Machine.FeatureModel;
 
 namespace SIL.FieldWorks.IText
 {
-	public class ComplexConcParagraphData : IAnnotatedData<ShapeNode>, IDeepCloneable<ComplexConcParagraphData>
+	public class ComplexConcParagraphData : IAnnotatedData<ShapeNode>
 	{
 		private readonly Shape m_shape;
 		private readonly IStTxtPara m_para;
 
-		public ComplexConcParagraphData(SpanFactory<ShapeNode> spanFactory, FeatureSystem featSys, IStTxtPara para)
+		public ComplexConcParagraphData(FeatureSystem featSys, IStTxtPara para)
 		{
 			m_para = para;
-			m_shape = new Shape(spanFactory, begin => new ShapeNode(spanFactory, FeatureStruct.New(featSys).Symbol("bdry").Symbol("paraBdry").Value));
-			if (!GenerateShape(spanFactory, featSys))
+			m_shape = new Shape(begin => new ShapeNode(FeatureStruct.New(featSys).Symbol("bdry").Symbol("paraBdry").Value));
+			if (!GenerateShape(featSys))
 			{
 				// if there are any analyses that are out-of-sync with the baseline, we force a parse
 				// and try again, somehow this can happen even though we have already parsed all
@@ -39,12 +39,12 @@ namespace SIL.FieldWorks.IText
 					}
 				});
 				m_shape.Clear();
-				if (!GenerateShape(spanFactory, featSys))
+				if (!GenerateShape(featSys))
 					throw new InvalidOperationException("A paragraph cannot be parsed properly.");
 			}
 		}
 
-		private bool GenerateShape(SpanFactory<ShapeNode> spanFactory, FeatureSystem featSys)
+		private bool GenerateShape(FeatureSystem featSys)
 		{
 			m_shape.Add(FeatureStruct.New(featSys).Symbol("bdry").Symbol("wordBdry").Value);
 			var typeFeat = featSys.GetFeature<SymbolicFeature>("type");
@@ -142,7 +142,7 @@ namespace SIL.FieldWorks.IText
 								{
 									morphFS.AddValue(inflFeat, inflFS);
 									if (wordInflFS == null)
-										wordInflFS = inflFS.DeepClone();
+										wordInflFS = inflFS.Clone();
 									else
 										wordInflFS.Union(inflFS);
 								}
@@ -213,7 +213,7 @@ namespace SIL.FieldWorks.IText
 				ICmPossibility tagType = tag.TagRA;
 				if (tagType == null || beginAnnotation == null || endAnnotation == null)
 					continue; // guard against LT-14549 crash
-				Annotation<ShapeNode> tagAnn = new Annotation<ShapeNode>(spanFactory.Create(beginAnnotation.Span.Start, endAnnotation.Span.End),
+				Annotation<ShapeNode> tagAnn = new Annotation<ShapeNode>(Range<ShapeNode>.Create(beginAnnotation.Range.Start, endAnnotation.Range.End),
 					FeatureStruct.New(featSys).Symbol("ttag").Symbol(tagType.Hvo.ToString(CultureInfo.InvariantCulture)).Value) { Data = tag };
 				m_shape.Annotations.Add(tagAnn, false);
 			}
@@ -223,8 +223,8 @@ namespace SIL.FieldWorks.IText
 
 		private ComplexConcParagraphData(ComplexConcParagraphData paraData)
 		{
-			m_para = paraData.m_para;
-			m_shape = paraData.m_shape.DeepClone();
+			m_para = paraData.Paragraph;
+			m_shape = paraData.Shape.Clone();
 		}
 
 		/// <summary>
@@ -330,7 +330,7 @@ namespace SIL.FieldWorks.IText
 					{
 						var symFeat = featSys.GetFeature<SymbolicFeature>(closedVal.FeatureRA.Hvo.ToString(CultureInfo.InvariantCulture));
 						FeatureSymbol symbol;
-						if (symFeat.PossibleSymbols.TryGetValue(closedVal.ValueRA.Hvo.ToString(CultureInfo.InvariantCulture), out symbol))
+						if (symFeat.PossibleSymbols.TryGet(closedVal.ValueRA.Hvo.ToString(CultureInfo.InvariantCulture), out symbol))
 							featStruct.AddValue(symFeat, symbol);
 					}
 				}
@@ -348,9 +348,9 @@ namespace SIL.FieldWorks.IText
 			get { return m_para; }
 		}
 
-		public Span<ShapeNode> Span
+		public Range<ShapeNode> Range
 		{
-			get { return m_shape.Span; }
+			get { return m_shape.Range; }
 		}
 
 		public AnnotationList<ShapeNode> Annotations

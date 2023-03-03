@@ -23,6 +23,7 @@ using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Machine.Morphology;
 using SIL.ObjectModel;
 using SIL.PlatformUtilities;
+using WordAnalysis = Paratext.LexicalContracts.WordAnalysis;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {

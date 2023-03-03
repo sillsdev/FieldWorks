@@ -78,11 +78,8 @@
     <Reference Include="ParserCore">
       <HintPath>..\..\Output\Debug\ParserCore.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Collections">
-      <HintPath>..\..\Output\Debug\SIL.Collections.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.HermitCrab">
-      <HintPath>..\..\Output\Debug\SIL.HermitCrab.dll</HintPath>
+    <Reference Include="SIL.Machine.Morphology.HermitCrab">
+      <HintPath>..\..\Output\Debug\SIL.Machine.Morphology.HermitCrab.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Machine">
       <HintPath>..\..\Output\Debug\SIL.Machine.dll</HintPath>
