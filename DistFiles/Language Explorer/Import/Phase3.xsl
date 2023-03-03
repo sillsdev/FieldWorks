@@ -817,7 +817,7 @@ DoEntry
 		  <xsl:call-template name="DoPronunciation"/>		<!-- Add to subentry -->
 		  <xsl:call-template name="DoCitationForm"/>		<!-- Added to subentry too -->
 		  <xsl:call-template name="DoDialectLabels">
-			<xsl:with-param name="marker" select="dle" />
+			<xsl:with-param name="marker" select="sdle" />
 		  </xsl:call-template>
 		</LexEntry>
 	  </xsl:for-each>
