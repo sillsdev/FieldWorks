@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.XWorks
 		private const string WebonaryPublication = "WebonaryPublication_ProjectSetting";
 		private const string WebonaryConfiguration = "WebonaryConfiguration_ProjectSetting";
 		//  Unicode line break to insert between reversals
-		private const string ReversalSeperator = "\u2028";
+		private const string ReversalSeparator = "\u2028";
 
 		private string m_selectedPublication;
 
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private string CombineReversalSettingStrings(IEnumerable<string> selectedReversals)
 		{
-			return String.Join<string>(ReversalSeperator, selectedReversals);
+			return String.Join<string>(ReversalSeparator, selectedReversals);
 		}
 
 		/// <summary>
@@ -153,7 +153,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if(!string.IsNullOrEmpty(savedReversalList))
 			{
-				return savedReversalList.Split(new[] { ReversalSeperator }, StringSplitOptions.RemoveEmptyEntries);
+				return savedReversalList.Split(new[] { ReversalSeparator }, StringSplitOptions.RemoveEmptyEntries);
 			}
 			return null;
 		}

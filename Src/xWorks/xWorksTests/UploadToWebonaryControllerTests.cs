@@ -148,6 +148,14 @@ namespace SIL.FieldWorks.XWorks
 		#endregion disposal
 		#endregion Environment
 
+		[TestCase("English", "english")]
+		[TestCase(UploadToWebonaryController.WebonaryOrg + "/thAI", "thai")]
+		[TestCase("httpS://www.Webonary.org/tPi", "tpi")]
+		public void NormalizeSiteName(string userEntered, string expected)
+		{
+			Assert.That(UploadToWebonaryController.NormalizeSiteName(userEntered), Is.EqualTo(expected));
+		}
+
 		[Test]
 		public void UploadToWebonaryUsesViewConfigAndPub()
 		{
@@ -417,7 +425,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// The webonary server has an automatic redirection for non-existant sites. This tests both ways that information can be returned.
+		/// The webonary server has an automatic redirection for non-existent sites. This tests both ways that information can be returned.
 		/// </summary>
 		[Test]
 		public void UploadToWebonaryReportsIncorrectSiteName()
@@ -431,7 +439,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						SiteName = "test",
 						UserName = "software",
-						Password = "4APItesting"
+						Password = "4API-testing"
 					}
 				};
 				controller.UploadToWebonary("fakefile.zip", view.Model, view);
@@ -449,7 +457,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						SiteName = "test",
 						UserName = "software",
-						Password = "4APItesting"
+						Password = "4API-testing"
 					}
 				};
 				controller.UploadToWebonary("fakefile.zip", view.Model, view);
@@ -470,7 +478,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						SiteName = "test-india",
 						UserName = "software",
-						Password = "4APItesting"
+						Password = "4API-testing"
 					}
 				};
 				controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view.Model, view);
@@ -633,8 +641,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var view = SetUpView();
 			var model = view.Model;
-			model.SiteName = "mySiteName";
-			var expectedFilename = "mySiteName.zip";
+			model.SiteName = "my-site-name";
+			var expectedFilename = "my-site-name.zip";
 			var actualFilename = UploadToWebonaryController.UploadFilename(model, view);
 			Assert.That(actualFilename, Is.EqualTo(expectedFilename), "Incorrect filename for webonary export.");
 		}
@@ -659,11 +667,11 @@ namespace SIL.FieldWorks.XWorks
 		[TestCase("my*Site")]
 		[TestCase("my/Site")]
 		[TestCase("my:Site")]
-		public void UploadFilename_FailsForInvalidCharactersInSitename(string sitename)
+		public void UploadFilename_FailsForInvalidCharactersInSiteName(string siteName)
 		{
 			var view = SetUpView();
 			var model = view.Model;
-			model.SiteName = sitename;
+			model.SiteName = siteName;
 
 			// SUT
 			var result = UploadToWebonaryController.UploadFilename(model, view);
@@ -673,7 +681,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void ResetsProptablesPublicationOnExit()
+		public void ResetsPropTablesPublicationOnExit()
 		{
 			var originalPub = m_propertyTable.GetStringProperty("SelectedPublication", "Main Dictionary");
 			m_propertyTable.SetProperty("SelectedPublication", originalPub, false); // just in case we fell back on the default
@@ -699,7 +707,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						SiteName = "test-india",
 						UserName = "software",
-						Password = "4APItesting"
+						Password = "4API-testing"
 					}
 				};
 				controller.DeleteContentFromWebonary(view.Model, view, "delete/dictionary");
@@ -710,7 +718,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void DeleteDictionaryResponseReturnedAsString()
 		{
-			var responseString = "Deleted 1000 files";
+			const string responseString = "Deleted 1000 files";
 			var response = Encoding.UTF8.GetBytes(responseString);
 			// Test with an exception which indicates a redirect should happen
 			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, response))
@@ -721,7 +729,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						SiteName = "test-india",
 						UserName = "software",
-						Password = "4APItesting"
+						Password = "4API-testing"
 					}
 				};
 				var result = controller.DeleteContentFromWebonary(view.Model, view, "delete/dictionary");
