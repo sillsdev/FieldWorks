@@ -7130,6 +7130,134 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(result, Is.Null.Or.Empty);
 		}
 
+		// Continue to generate the reference even if we are hiding the minor entry (useful for preview).
+		[Test]
+		public void GenerateXHTMLForEntry_GenerateReferenceForHiddenEntry()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+			var variantEntry = CreateInterestingLexEntry(Cache);
+			var variantEntryRef = CreateVariantForm(Cache, lexentry, variantEntry);
+			variantEntryRef.VariantEntryTypesRS[0] = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0] as ILexEntryType;
+
+			var variantFormNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				CSSClassNameOverride = "headword",
+				SubField = "HeadWordRef",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "vernacular" })
+			};
+			var variantTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var variantTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
+			};
+			var variantNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNode, variantFormNode },
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant, Cache)
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { variantNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode },
+				IsRootBased = false
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, false, false);
+			const string withReference = "/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='headword']/span[@lang='fr']/span[@lang='fr']/a[@href]";
+
+			// When not hiding minor entries this should generate the reference.
+			variantEntryRef.HideMinorEntry = 0;
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(lexentry, model, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 2);
+
+			//SUT
+			// When hiding minor entries this should still generate the reference.
+			variantEntryRef.HideMinorEntry = 1;
+			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(lexentry, model, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 2);
+		}
+
+		// Don't generate the reference if we are hiding minor entries AND we are publishing to Webonary.
+		[Test]
+		public void GenerateXHTMLForEntry_DontGenerateReference()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+			var variantEntry = CreateInterestingLexEntry(Cache);
+			var variantEntryRef = CreateVariantForm(Cache, lexentry, variantEntry);
+			variantEntryRef.VariantEntryTypesRS[0] = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0] as ILexEntryType;
+
+			var variantFormNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				CSSClassNameOverride = "headword",
+				SubField = "HeadWordRef",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "vernacular" })
+			};
+			var variantTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var variantTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
+			};
+			var variantNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNode, variantFormNode },
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant, Cache)
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { variantNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode },
+				IsRootBased = false
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+
+			variantEntryRef.HideMinorEntry = 1;
+			const string withReference = "/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='headword']/span[@lang='fr']/span[@lang='fr']/a[@href]";
+			const string withoutReference = "/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='headword']/span[@lang='fr']/span[@lang='fr']";
+
+			// When hiding minor entries this should still generate the reference (if not publishing to Webonary).
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, false, false);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(lexentry, model, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 2);
+
+			//SUT
+			// When hiding minor entries and publishing to Webonary this should NOT generate the reference.
+			settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, false, true);
+			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(lexentry, model, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 0);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withoutReference, 2);
+		}
+
 		public enum FormType { Specified, Unspecified, None }
 
 		[Test]

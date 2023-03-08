@@ -2189,7 +2189,17 @@ namespace SIL.FieldWorks.XWorks
 				if (field is ILexEntry)
 					guid = ((ILexEntry)field).Guid;
 				else if (field is ILexEntryRef)
-					guid = ((ILexEntryRef)field).OwningEntry.Guid;
+				{
+					// Don't generate the reference if we are not going to publish the entry to Webonary.
+					if (settings.IsWebExport && !((ILexEntryRef)field).OwningEntry.PublishAsMinorEntry)
+					{
+						guid = Guid.Empty;
+					}
+					else
+					{
+						guid = ((ILexEntryRef)field).OwningEntry.Guid;
+					}
+				}
 				else if (field is ISenseOrEntry)
 					guid = ((ISenseOrEntry)field).EntryGuid;
 				else if (field is ILexSense)
