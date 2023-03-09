@@ -104,10 +104,25 @@
 		<Error Text="The Platform property must be set on the command line to x86 or x64."  Condition="'$(Platform)' == ''" />
 		<Error Text="Installer must be run for release builds [config=$(config)]"  Condition="'$(config)' != 'release'" />
 	</Target>
+
+	<!--
+		Removing files breaks the ability to patch and requires a new Base build to update.
+		To improve our user experience we may want to delay making a new Base build so this target adds zero byte files to
+		replace files that were removed (for instance during a library update).
+		A base build should warn if we have 'RemovedSinceLastBase' items to help us remember to clear these out.
+	-->
+	<Target Name="RescuePatching">
+		<ItemGroup>
+			<RemovedSinceLastBase Include="$(dir-outputBase)/SIL.HermitCrab.dll" />
+			<RemovedSinceLastBase Include="$(dir-outputBase)/SIL.Collections.dll" />
+			<RemovedSinceLastBase Include="$(dir-outputBase)/QuickGraph.dll" />
+		</ItemGroup>
+		<WriteLinesToFile File="%(RemovedSinceLastBase.FullPath)" Lines="" />
+	</Target>
 	<!-- ########################################################################################################## -->
 	<!-- ### Compile Targets                                                                                    ### -->
 	<!-- ########################################################################################################## -->
-	<Target Name="ProductCompile" DependsOnTargets="remakefw">
+	<Target Name="ProductCompile" DependsOnTargets="remakefw;RescuePatching">
 		<MSBuild Projects="$(InstallerDir)/CustomActions/CustomActions.sln" Targets="CustomActions" Properties="Configuration=Release;Platform=x86"/>
 	</Target>
 
@@ -431,6 +446,7 @@
 	</PropertyGroup>
 
 	<Target Name="BuildProductBaseMsi" DependsOnTargets="InstallerVersionNumbers">
+		<Warning Text="RemovedSinceLastBase should be cleared out before making a new base build." Condition="'@(RemovedSinceLastBase)' != ''" />
 		<Message Text="Building FieldWorks Base Msi for $(Arch)" Condition="'$(action)'!='test'"/>
 		<PropertyGroup>
 			<MsiFile>$(SafeApplicationName)_$(Revision).msi</MsiFile>
@@ -439,7 +455,6 @@
 		</PropertyGroup>
 		<!-- Suppress ICE30 because we and Encoding Converters MM both install Geckofx, resulting in an ICE warning for double ref counting -->
 		<Exec WorkingDirectory="$(BaseBuildDir)" Command="(set SuppressICE=-sice:ICE30) &amp; buildBaseInstaller.bat $(BaseBuildArgs)" />
-
 		<ItemGroup>
 			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.exe"/>
 			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.msi"/>
