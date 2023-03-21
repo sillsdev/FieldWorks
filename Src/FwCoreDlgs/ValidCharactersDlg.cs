@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2019 SIL International
+// Copyright (c) 2008-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -584,7 +584,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private const int kiTabBasedOn = 0;
 		private const int kiTabManual = 1;
 		private const int kiTabData = 2;
-		private const int kiTabUnicode = 3;
 		private const int kiCharCol = 0;
 		private const int kiCharCodeCol = 1;
 		private const int kiCharCountCol = 2;
@@ -670,9 +669,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_wsManager = cache.ServiceLocator.WritingSystemManager;
 
 			m_lblWsName.Text = string.Format(m_lblWsName.Text, wsName);
-
-			// TE-6839: Temporarily remove Unicode tab (not yet implemented).
-			tabCtrlAddFrom.TabPages.Remove(tabCtrlAddFrom.TabPages[kiTabUnicode]);
 
 			m_fntForSpecialChar = new Font(SystemFonts.IconTitleFont.FontFamily, 8f);
 			Font fnt = new Font(m_ws.DefaultFontName, 16);
@@ -965,10 +961,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 						m_validCharsGridMngr.AddCharacters(chars);
 					}
-
-					break;
-
-				case kiTabUnicode:
 					break;
 			}
 
@@ -1312,9 +1304,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				case kiTabData:
 					btnAddCharacters.Enabled = (gridCharInventory.RowCount > 0);
 					break;
-
-				case kiTabUnicode:
-					break;
 			}
 			if (fUseWsKeyboard)
 				m_ws.LocalKeyboard.Activate();
@@ -1639,9 +1628,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					break;
 				case kiTabData:
 					helpTopicKey = "khtpValidCharsTabData";
-					break;
-				case kiTabUnicode:		//This tab is not currently visible so this help topic does not exist yet.
-					helpTopicKey = "khtpValidCharsTabUnicode";
 					break;
 			}
 
