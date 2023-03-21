@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2008-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -75,8 +75,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.colCharCode = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.colCount = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.colStatus = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.tabUnicode = new System.Windows.Forms.TabPage();
-			this.label3 = new System.Windows.Forms.Label();
 			this.splitValidCharsOuter = new System.Windows.Forms.SplitContainer();
 			this.splitValidCharsInner = new System.Windows.Forms.SplitContainer();
 			this.pnlWordForming = new SIL.FieldWorks.Common.Controls.FwPanel();
@@ -112,7 +110,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			((System.ComponentModel.ISupportInitialize)(this.txtManualCharEntry)).BeginInit();
 			this.tabData.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gridCharInventory)).BeginInit();
-			this.tabUnicode.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitValidCharsOuter)).BeginInit();
 			this.splitValidCharsOuter.Panel1.SuspendLayout();
 			this.splitValidCharsOuter.SuspendLayout();
@@ -251,7 +248,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.tabCtrlAddFrom.Controls.Add(this.tabBasedOn);
 			this.tabCtrlAddFrom.Controls.Add(this.tabManual);
 			this.tabCtrlAddFrom.Controls.Add(this.tabData);
-			this.tabCtrlAddFrom.Controls.Add(this.tabUnicode);
 			resources.ApplyResources(this.tabCtrlAddFrom, "tabCtrlAddFrom");
 			this.tabCtrlAddFrom.Name = "tabCtrlAddFrom";
 			this.tabCtrlAddFrom.SelectedIndex = 0;
@@ -560,18 +556,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.colStatus.Name = "colStatus";
 			this.colStatus.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
 			// 
-			// tabUnicode
-			// 
-			this.tabUnicode.Controls.Add(this.label3);
-			resources.ApplyResources(this.tabUnicode, "tabUnicode");
-			this.tabUnicode.Name = "tabUnicode";
-			this.tabUnicode.UseVisualStyleBackColor = true;
-			// 
-			// label3
-			// 
-			resources.ApplyResources(this.label3, "label3");
-			this.label3.Name = "label3";
-			// 
 			// splitValidCharsOuter
 			// 
 			resources.ApplyResources(this.splitValidCharsOuter, "splitValidCharsOuter");
@@ -799,8 +783,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			((System.ComponentModel.ISupportInitialize)(this.txtManualCharEntry)).EndInit();
 			this.tabData.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.gridCharInventory)).EndInit();
-			this.tabUnicode.ResumeLayout(false);
-			this.tabUnicode.PerformLayout();
 			this.splitValidCharsOuter.Panel1.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.splitValidCharsOuter)).EndInit();
 			this.splitValidCharsOuter.ResumeLayout(false);
@@ -830,7 +812,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.ComboBox cboSortOrder;
 		private System.Windows.Forms.Label lblValidChars;
 		private System.Windows.Forms.TabPage tabData;
-		private System.Windows.Forms.TabPage tabUnicode;
 		private SIL.FieldWorks.Common.Controls.CharacterGrid chrGridWordForming;
 		private System.Windows.Forms.TextBox txtLanguageFile;
 		private System.Windows.Forms.RadioButton rdoLanguageFile;
@@ -841,7 +822,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.Panel panel1;
 		private SIL.FieldWorks.Common.Widgets.FwTextBox txtManualCharEntry;
 		private System.Windows.Forms.Label lblSingle;
-		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.DataGridView gridCharInventory;
 		private System.Windows.Forms.SplitContainer splitContainerOuter;
 		private System.Windows.Forms.Panel panel2;
