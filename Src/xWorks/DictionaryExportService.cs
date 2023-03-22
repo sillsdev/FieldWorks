@@ -323,13 +323,13 @@ namespace SIL.FieldWorks.XWorks
 		public JObject ExportDictionaryContentJson(string siteName,
 			IEnumerable<string> templateFileNames,
 			IEnumerable<DictionaryConfigurationModel> reversals,
-			string configPath = null, string exportPath = null)
+			string exportPath = null)
 		{
 			using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
 			{
 				ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, DictionaryType);
 				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
-				return LcmJsonGenerator.GenerateDictionaryMetaData(siteName, templateFileNames, reversals, entriesToSave, configPath, exportPath, m_cache, clerk);
+				return LcmJsonGenerator.GenerateDictionaryMetaData(siteName, templateFileNames, reversals, entriesToSave, exportPath, m_cache, clerk);
 			}
 		}
 	}

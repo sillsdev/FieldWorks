@@ -174,16 +174,6 @@ namespace SIL.FieldWorks.XWorks
 			// was selected.  So always return the same word for the letter head.
 			if (lexEntry == null)
 			{
-				// When viewing the Reversal Indexes the sort column always comes back as "Form",
-				// regardless of which column was selected for the sort. If for some cases this assumption changes
-				// then we need to assess if those cases should be returning a different property for the sort word.
-				if (clerk?.SortName != null)
-				{
-					Debug.Assert(clerk.SortName.StartsWith("Form"),
-						"Should we be getting the letter headers from the sort column: " +
-						clerk.SortName);
-				}
-
 				var revEntry = entry as IReversalIndexEntry;
 				return revEntry != null ? revEntry.ReversalForm.BestAnalysisAlternative.Text.TrimStart() : string.Empty;
 			}
@@ -203,12 +193,6 @@ namespace SIL.FieldWorks.XWorks
 					string retStr = lexEntry.CitationForm?.UserDefaultWritingSystem?.Text?.TrimStart();
 					return (retStr != null && retStr != "***") ? retStr : string.Empty;
 				}
-
-				// If we get here and have a sort name other than "Headword" then it should have
-				// it's own conditional check and use a different lexEntry field to get the sort word.
-				Debug.Assert(clerk.SortName.StartsWith("Headword"),
-					"We should be getting the letter headers from the sort column: " +
-					clerk.SortName);
 			}
 
 			// Headword - Default to using the "Headword" sort word.
@@ -2205,7 +2189,17 @@ namespace SIL.FieldWorks.XWorks
 				if (field is ILexEntry)
 					guid = ((ILexEntry)field).Guid;
 				else if (field is ILexEntryRef)
-					guid = ((ILexEntryRef)field).OwningEntry.Guid;
+				{
+					// Don't generate the reference if we are not going to publish the entry to Webonary.
+					if (settings.IsWebExport && !((ILexEntryRef)field).OwningEntry.PublishAsMinorEntry)
+					{
+						guid = Guid.Empty;
+					}
+					else
+					{
+						guid = ((ILexEntryRef)field).OwningEntry.Guid;
+					}
+				}
 				else if (field is ISenseOrEntry)
 					guid = ((ISenseOrEntry)field).EntryGuid;
 				else if (field is ILexSense)
@@ -2268,8 +2262,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				if (bldr.Length > 0)
 				{
-					// Do we not have/want a class from the config node?
-					return settings.ContentGenerator.WriteProcessedObject(true, bldr.ToString(), null);
+					return settings.ContentGenerator.WriteProcessedCollection(true, bldr.ToString(), GetClassNameAttributeForConfig(config));
 				}
 				return String.Empty;
 			}

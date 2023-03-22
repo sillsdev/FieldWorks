@@ -44,14 +44,14 @@
 			Properties="Configuration=$(ConfigName);Platform=$(Platform)"/>
 		<!--Build the LCM library-->
 		<MakeDir Directories="$(LcmArtifactsDir)" />
-		<MakeDir Directories="$(LcmArtifactsDir)/../../lib/downloads/$(Platform)" Condition="'$(OS)'=='Windows_NT' "/>
-		<Copy SourceFiles="@(PalasoFileNamesForLL -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(LcmArtifactsDir)/../../lib/downloads" />
+		<MakeDir Directories="$(LcmRootDir)/lib/downloads/$(Platform)" Condition="'$(OS)'=='Windows_NT' "/>
+		<Copy SourceFiles="@(PalasoFileNamesForLL -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(LcmRootDir)/lib/downloads" />
 		<Message Text="Building liblcm. Artifacts will be put into: $(LcmArtifactsDir)" />
-		<MSBuild Projects="$(LcmArtifactsDir)/../../LCM.sln"
+		<MSBuild Projects="$(LcmRootDir)/LCM.sln"
 			Targets="Rebuild"
 			Properties="Configuration=Debug;Platform=$(LiblcmPlatform);UseLocalFiles=True"
 			ToolsVersion="15.0" Condition="'$(OS)'=='Windows_NT'" />
-		<Exec Command="$(LcmArtifactsDir)/../../build.sh Debug Rebuild True" Condition="'$(OS)'!='Windows_NT'"/>
+		<Exec Command="$(LcmRootDir)/build.sh Debug Rebuild True" Condition="'$(OS)'!='Windows_NT'"/>
 		<!--Build the Chorus library-->
 		<MakeDir Directories="$(ChorusArtifactsDir)" />
 		<Copy SourceFiles="@(PalasoFileNamesForLL -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(ChorusArtifactsDir)/../../lib/$(ConfigName)" />

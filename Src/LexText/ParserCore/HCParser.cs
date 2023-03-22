@@ -12,7 +12,7 @@ using System.Xml;
 using System.Xml.Linq;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
-using SIL.HermitCrab;
+using SIL.Machine.Morphology.HermitCrab;
 using SIL.Machine.Annotations;
 using SIL.ObjectModel;
 
@@ -23,7 +23,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly LcmCache m_cache;
 		private Morpher m_morpher;
 		private Language m_language;
-		private readonly SpanFactory<ShapeNode> m_spanFactory;
 		private readonly FwXmlTraceManager m_traceManager;
 		private readonly string m_outputDirectory;
 		private ParserModelChangeListener m_changeListener;
@@ -47,7 +46,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public HCParser(LcmCache cache)
 		{
 			m_cache = cache;
-			m_spanFactory = new ShapeSpanFactory();
 			m_traceManager = new FwXmlTraceManager(m_cache);
 			m_outputDirectory = Path.GetTempPath();
 			m_changeListener = new ParserModelChangeListener(m_cache);
@@ -147,14 +145,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
 				writer.WriteStartElement("LoadErrors");
-				m_language = HCLoader.Load(m_spanFactory, m_cache, new XmlHCLoadErrorLogger(writer));
+				m_language = HCLoader.Load(m_cache, new XmlHCLoadErrorLogger(writer));
 				writer.WriteEndElement();
 				XElement parserParamsElem = XElement.Parse(m_cache.LanguageProject.MorphologicalDataOA.ParserParameters);
 				XElement delReappsElem = parserParamsElem.Elements("ParserParameters").Elements("HC").Elements("DelReapps").FirstOrDefault();
 				if (delReappsElem != null)
 					delReapps = (int) delReappsElem;
 			}
-			m_morpher = new Morpher(m_spanFactory, m_traceManager, m_language) { DeletionReapplications = delReapps };
+			m_morpher = new Morpher(m_traceManager, m_language) { DeletionReapplications = delReapps };
 		}
 
 		private XDocument ParseToXml(string form, bool tracing, IEnumerable<int> selectTraceMorphs)
@@ -287,7 +285,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (formID == 0)
 					continue;
 				var formID2 = (int?) allomorph.Properties[FormID2] ?? 0;
-				string formStr = ws.Shape.GetNodes(morph.Span).ToString(ws.Stratum.CharacterDefinitionTable, false);
+				string formStr = ws.Shape.GetNodes(morph.Range).ToString(ws.Stratum.CharacterDefinitionTable, false);
 				int curFormID;
 				MorphInfo morphInfo;
 				if (!morphs.TryGetValue(allomorph.Morpheme, out morphInfo))

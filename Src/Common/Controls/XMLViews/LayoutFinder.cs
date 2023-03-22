@@ -133,13 +133,16 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		internal XmlBrowseViewBaseVc Vc
+		/// <summary>
+		/// Get/Set the XmlBrowseViewBaseVc.
+		/// </summary>
+		public XmlBrowseViewBaseVc Vc
 		{
 			get
 			{
 				return m_vc;
 			}
-			set
+			internal set
 			{
 				m_vc = value;
 				m_sda = m_vc.DataAccess;

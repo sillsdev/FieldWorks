@@ -283,11 +283,12 @@
 
 		<!-- Versions of NuGet packages. These need to match the versions in nuget-common/packages.config -->
 		<ChorusNugetVersion>5.0.0-beta0025</ChorusNugetVersion>
-		<PalasoNugetVersion>10.1.0</PalasoNugetVersion>
+		<PalasoNugetVersion>11.0.0-beta0041</PalasoNugetVersion>
 		<Palaso4ParatextNugetVersion>8.1.0-beta0035</Palaso4ParatextNugetVersion>
 		<ParatextNugetVersion>9.2.6.2</ParatextNugetVersion>
-		<LcmNugetVersion>10.2.0-beta0053</LcmNugetVersion>
+		<LcmNugetVersion>10.2.0-beta0056</LcmNugetVersion>
 		<IcuNugetVersion>70.1.123</IcuNugetVersion>
+		<HermitCrabNugetVersion>2.5.13</HermitCrabNugetVersion>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
 		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
 		<IPCFrameworkBuildType Condition="'$(OS)'=='Windows_NT'">bt278</IPCFrameworkBuildType>
@@ -301,8 +302,6 @@
 		<ExCssBuildType Condition="'$(OS)'=='Unix'">bt395</ExCssBuildType>
 		<ExCss Condition="'$(OS)'=='Unix'">ExCSS</ExCss>
 		<ExCssBuildTag>.lastSuccessful</ExCssBuildTag>
-		<HermitCrabBuildType>bt410</HermitCrabBuildType>
-		<HermitCrabBuildTag>.lastSuccessful</HermitCrabBuildTag>
 		<GeckoFxHtmlToPdfBuildType Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'">GeckofxHtmlToPdf_GeckofxHtmlToPdfGeckofx60Win32continuous</GeckoFxHtmlToPdfBuildType>
 		<GeckoFxHtmlToPdfBuildType Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'">GeckofxHtmlToPdf_Win64_continuous</GeckoFxHtmlToPdfBuildType>
 		<GeckoFxHtmlToPdfBuildType Condition="'$(OS)'=='Unix'">GeckofxHtmlToPdf_GeckofxHtmlToPdfXenial64Geckofx60continuous</GeckoFxHtmlToPdfBuildType>
@@ -385,7 +384,10 @@
 		<LcmOutputBaseFiles Include="NHunspell.dll" Condition="'$(OS)'=='Windows_NT'" />
 		<LcmOutputBaseFiles Include="CommonServiceLocator.dll" />
 		<LcmOutputBaseFiles Include="protobuf-net.dll" />
+		<LcmOutputBaseFiles Include="Sandwych.Quickgraph.Core.dll" />
 		<LcmOutputBaseFiles Include="StructureMap.dll" />
+		<LcmOutputBaseFiles Include="SIL.Machine.dll" />
+		<LcmOutputBaseFiles Include="SIL.Machine.Morphology.HermitCrab.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.FixData.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.Tests.dll" />
@@ -454,9 +456,6 @@
 		<Message Text="Downloading artifacts for $(ExCss)."/>
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ExCssBuildType)" Tag="$(ExCssBuildTag)" Artifacts="$(ExCss).dll;$(ExCss).$(DebugInfo)" DownloadsDir="$(DownloadsDir)"/>
 
-		<Message Text="Downloading artifacts for HermitCrab." />
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(HermitCrabBuildType)" Tag="$(HermitCrabBuildTag)" Artifacts="QuickGraph.dll;SIL.Machine.dll;SIL.Collections.dll;SIL.HermitCrab.dll" DownloadsDir="$(DownloadsDir)"/>
-
 		<Message Text="Downloading artifacts for geckofxHtmlToPdf." />
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(GeckoFxHtmlToPdfBuildType)" Tag="$(GeckoFxHtmlToPdfBuildTag)" Artifacts="GeckofxHtmlToPdf.exe;GeckofxHtmlToPdf.exe.config;Args.dll" DownloadsDir="$(DownloadsDir)"/>
 
@@ -504,7 +503,7 @@
 			<SILNugetPackages Include="NHunspell.Patched"><Version>1.2.5554</Version><Path>lib/net/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="NHunspell.Patched"><Version>1.2.5554</Version><Path>runtimes/win7-$(Platform)/native/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="protobuf-net"><Version>2.4.6</Version><Path>lib/net40/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="SharpZipLib"><Version>1.0.0</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SharpZipLib"><Version>1.4.0</Version><Path>lib/netstandard2.0/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="structuremap.patched"><Version>4.7.3</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="System.CodeDom"><Version>4.4.0</Version><Path>lib/netstandard2.0/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<!-- Palaso and related packages -->
@@ -540,6 +539,10 @@
 			<SILNugetPackages Include="SIL.Chorus.ChorusHub"  Condition="'$(OS)'=='Unix'"><Version>$(ChorusNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="Autofac"><Version>2.6.3.862</Version><Path>lib/NET40/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="Vulcan.Uczniowie.HelpProvider"><Version>1.0.16</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
+			<!-- HermitCrab and related packages -->
+			<SILNugetPackages Include="SIL.Machine.Morphology.HermitCrab"><Version>$(HermitCrabNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Machine"><Version>$(HermitCrabNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="Sandwych.Quickgraph.Core"><Version>1.0.0</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 		</ItemGroup>
 	</Target>
 
@@ -566,10 +569,6 @@
 		<DownloadedFiles Include="$(DownloadsDir)/NetLoc.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/ParatextShared.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/Utilities.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/QuickGraph.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Machine.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.Collections.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/SIL.HermitCrab.dll"/>
 	</ItemGroup>
 
 	<Target Name="CopyDlls" DependsOnTargets="downloadDlls;copyLibL10ns">
@@ -668,7 +667,7 @@
 			<NuGottenFiles Include="$(PackagesDir)/NAudio.Lame.1.1.5/lib/netstandard2.0/NAudio.Lame.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/NAudio.Lame.1.1.5/build/libmp3lame.32.dll" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'"/>
 			<NuGottenFiles Include="$(PackagesDir)/NAudio.Lame.1.1.5/build/libmp3lame.64.dll" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'"/>
-			<NuGottenFiles Include="$(PackagesDir)/Newtonsoft.Json.13.0.1/lib/net45/Newtonsoft.Json.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/Newtonsoft.Json.13.0.2/lib/net45/Newtonsoft.Json.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/Paratext.LexicalContracts.dll" />
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/ParatextData.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/PtxUtils.dll"/>

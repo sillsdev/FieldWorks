@@ -24,8 +24,6 @@
 		<ListsDirectory>$(L10nsBaseDir)/lists</ListsDirectory>
 		<GoldEticDir>$(ListsDirectory)/GramCats</GoldEticDir>
 		<MessagesPot>$(L10nsBaseDir)/messages.pot</MessagesPot>
-		<!-- Normalizing the LCM path is necessary, because on Linux, if ./artifacts doesn't exist, neither does ./artifacts/.. -->
-		<LcmRootDir>$([System.IO.Path]::GetFullPath(&quot;$(LcmLocalArtifactsDir)/../..&quot;))</LcmRootDir>
 		<LcmSrcDir>$(LcmRootDir)/src</LcmSrcDir>
 		<CrowdinZip>$(DownloadsDir)/Crowdin.zip</CrowdinZip>
 		<OnFailedCrowdinDownload Condition="Exists('$(CrowdinZip)')">WarnAndContinue</OnFailedCrowdinDownload>
@@ -61,7 +59,9 @@
 	</Target>
 
 	<Target Name="VerifyLcmCloned">
-		<Error Text="To update localizations, liblcm must be cloned locally. Run 'build /t:UpdateDevelopmentPropertiesFile' to set the liblcm location. LcmSrcDir '$(LcmSrcDir)' was not found. LcmLocalArtifactsDir is '$(LcmLocalArtifactsDir)'."
+		<Error Text="LcmSrcDir '$(LcmSrcDir)' was not found.
+			To update localizations, liblcm must be cloned locally to the location specified by %24LcmRootDir
+			(historically set in $(MSBuildThisFileDirectory)LibraryDevelopment.properties; now an environment variable)."
 			Condition="!Exists('$(LcmSrcDir)')"/>
 	</Target>
 

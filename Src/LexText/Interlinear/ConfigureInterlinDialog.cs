@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2022 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,6 +13,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml;
 using DesktopAnalytics;
 using Gecko;
@@ -116,7 +117,7 @@ namespace SIL.FieldWorks.IText
 			if (htmlPath == null)
 				throw new ArgumentNullException();
 
-			using (var fileStream = new StreamWriter(htmlPath))
+			using (var fileStream = new StreamWriter(htmlPath, false, Encoding.UTF8))
 			{
 				SavePublishedHtmlAndCss(fileStream);
 

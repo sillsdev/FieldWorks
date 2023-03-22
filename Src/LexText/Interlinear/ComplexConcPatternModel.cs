@@ -10,7 +10,7 @@ using System.Linq;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
@@ -22,7 +22,6 @@ namespace SIL.FieldWorks.IText
 	{
 		private readonly ComplexConcPatternNode m_root;
 		private readonly ComplexConcPatternSda m_sda;
-		private readonly SpanFactory<ShapeNode> m_spanFactory;
 		private Matcher<ComplexConcParagraphData, ShapeNode> m_matcher;
 		private readonly LcmCache m_cache;
 		private FeatureSystem m_featSys;
@@ -36,7 +35,6 @@ namespace SIL.FieldWorks.IText
 		{
 			m_cache = cache;
 			m_root = root;
-			m_spanFactory = new ShapeSpanFactory();
 			m_sda = new ComplexConcPatternSda((ISilDataAccessManaged) cache.DomainDataByFlid, m_root);
 		}
 
@@ -120,7 +118,7 @@ namespace SIL.FieldWorks.IText
 
 			var pattern = new Pattern<ComplexConcParagraphData, ShapeNode>();
 			pattern.Children.Add(m_root.GeneratePattern(m_featSys));
-			m_matcher = new Matcher<ComplexConcParagraphData, ShapeNode>(m_spanFactory, pattern, new MatcherSettings<ShapeNode> {UseDefaults = true});
+			m_matcher = new Matcher<ComplexConcParagraphData, ShapeNode>(pattern, new MatcherSettings<ShapeNode> {UseDefaults = true});
 		}
 
 		public IEnumerable<IParaFragment> Search(IStText text)
@@ -135,19 +133,19 @@ namespace SIL.FieldWorks.IText
 				try
 				{
 					IParaFragment lastFragment = null;
-					var data = new ComplexConcParagraphData(m_spanFactory, m_featSys, para);
+					var data = new ComplexConcParagraphData(m_featSys, para);
 					Match<ComplexConcParagraphData, ShapeNode> match = m_matcher.Match(data);
 					while (match.Success)
 					{
-						if (match.Span.Start == match.Span.End
-							&& ((FeatureSymbol)match.Span.Start.Annotation.FeatureStruct
+						if (match.Range.Start == match.Range.End
+							&& ((FeatureSymbol)match.Range.Start.Annotation.FeatureStruct
 								.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
 						{
 							match = match.NextMatch();
 							continue;
 						}
 
-						ShapeNode startNode = match.Span.Start;
+						ShapeNode startNode = match.Range.Start;
 						if (((FeatureSymbol)startNode.Annotation.FeatureStruct
 							.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
 							startNode = startNode.Next;
@@ -159,7 +157,7 @@ namespace SIL.FieldWorks.IText
 
 						var startAnalysis = (Tuple<IAnalysis, int, int>)startAnn.Data;
 
-						ShapeNode endNode = match.Span.End;
+						ShapeNode endNode = match.Range.End;
 						if (((FeatureSymbol)endNode.Annotation.FeatureStruct
 							.GetValue<SymbolicFeatureValue>("type")).ID == "bdry")
 							endNode = endNode.Prev;
@@ -202,7 +200,7 @@ namespace SIL.FieldWorks.IText
 
 		private static Match<ComplexConcParagraphData, ShapeNode> GetNextMatch(Match<ComplexConcParagraphData, ShapeNode> match)
 		{
-			ShapeNode nextNode = match.Span.GetEnd(match.Matcher.Direction);
+			ShapeNode nextNode = match.Range.GetEnd(match.Matcher.Direction);
 			if (((FeatureSymbol) nextNode.Annotation.FeatureStruct.GetValue<SymbolicFeatureValue>("type")).ID != "bdry")
 				nextNode = nextNode.GetNext(match.Matcher.Direction);
 			return match.Matcher.Match(match.Input, nextNode);

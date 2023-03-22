@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2021 SIL International
+// Copyright (c) 2015-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,23 +11,25 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using SIL.Collections;
+using SIL.Extensions;
 using SIL.LCModel.Core.Phonology;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel;
-using SIL.HermitCrab;
-using SIL.HermitCrab.MorphologicalRules;
-using SIL.HermitCrab.PhonologicalRules;
 using SIL.Machine.Annotations;
+using SIL.Machine.DataStructures;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Matching;
+using SIL.Machine.Morphology.HermitCrab;
+using SIL.Machine.Morphology.HermitCrab.MorphologicalRules;
+using SIL.Machine.Morphology.HermitCrab.PhonologicalRules;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
 	public class HCLoader
 	{
-		public static Language Load(SpanFactory<ShapeNode> spanFactory, LcmCache cache, IHCLoadErrorLogger logger)
+		public static Language Load(LcmCache cache, IHCLoadErrorLogger logger)
 		{
-			var loader = new HCLoader(spanFactory, cache, logger);
+			var loader = new HCLoader(cache, logger);
 			loader.LoadLanguage();
 			return loader.m_language;
 		}
@@ -38,7 +40,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			"ο", "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω"
 		};
 
-		private readonly SpanFactory<ShapeNode> m_spanFactory;
 		private readonly LcmCache m_cache;
 		private readonly Dictionary<IMoForm, List<Allomorph>> m_allomorphs;
 		private readonly Dictionary<IMoMorphSynAnalysis, List<Morpheme>> m_morphemes;
@@ -66,9 +67,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private CharacterDefinition m_null;
 		private CharacterDefinition m_morphBdry;
 
-		private HCLoader(SpanFactory<ShapeNode> spanFactory, LcmCache cache, IHCLoadErrorLogger logger)
+		private HCLoader(LcmCache cache, IHCLoadErrorLogger logger)
 		{
-			m_spanFactory = spanFactory;
 			m_cache = cache;
 			m_logger = logger;
 			m_allomorphs = new Dictionary<IMoForm, List<Allomorph>>();
@@ -449,7 +449,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (hcEntry.Allomorphs.Count > 0)
 			{
 				stratum.Entries.Add(hcEntry);
-				m_morphemes.GetValue(msa, () => new List<Morpheme>()).Add(hcEntry);
+				m_morphemes.GetOrCreate(msa, () => new List<Morpheme>()).Add(hcEntry);
 			}
 		}
 
@@ -484,7 +484,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				{
 					RootAllomorph hcAllo = LoadRootAllomorph(allo, msa);
 					hcEntry.Allomorphs.Add(hcAllo);
-					m_allomorphs.GetValue(allo, () => new List<Allomorph>()).Add(hcAllo);
+					m_allomorphs.GetOrCreate(allo, () => new List<Allomorph>()).Add(hcAllo);
 				}
 				catch (InvalidShapeException ise)
 				{
@@ -560,7 +560,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				{
 					RootAllomorph hcAllo = LoadRootAllomorph(allo, msa);
 					hcEntry.Allomorphs.Add(hcAllo);
-					m_allomorphs.GetValue(allo, () => new List<Allomorph>()).Add(hcAllo);
+					m_allomorphs.GetOrCreate(allo, () => new List<Allomorph>()).Add(hcAllo);
 				}
 				catch (InvalidShapeException ise)
 				{
@@ -583,7 +583,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (IsValidEnvironment(env.StringRepresentation.Text, out error))
 				{
 					Tuple<string, string> contexts = SplitEnvironment(env);
-					hcAllo.Environments.Add(new AllomorphEnvironment(m_spanFactory, ConstraintType.Require, LoadEnvironmentPattern(contexts.Item1, true),
+					hcAllo.Environments.Add(new AllomorphEnvironment(ConstraintType.Require, LoadEnvironmentPattern(contexts.Item1, true),
 						LoadEnvironmentPattern(contexts.Item2, false)) { Name = env.StringRepresentation.Text });
 				}
 				else
@@ -683,7 +683,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				if (stratum != null)
 					stratum.MorphologicalRules.Add(rule);
-				m_morphemes.GetValue(msa, () => new List<Morpheme>()).Add(rule);
+				m_morphemes.GetOrCreate(msa, () => new List<Morpheme>()).Add(rule);
 			}
 		}
 
@@ -831,7 +831,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 									hcAllo = LoadCircumfixAffixProcessAllomorph(prefixAllo, prefixEnv, suffixAllo, suffixEnv);
 									if (requiredMprFeatures != null)
 										hcAllo.RequiredMprFeatures.AddRange(requiredMprFeatures);
-									m_allomorphs.GetValue(entry.LexemeFormOA, () => new List<Allomorph>()).Add(hcAllo);
+									m_allomorphs.GetOrCreate(entry.LexemeFormOA, () => new List<Allomorph>()).Add(hcAllo);
 								}
 								catch (InvalidShapeException ise)
 								{
@@ -858,7 +858,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 								hcAffixProcessAllo = LoadAffixProcessAllomorph(affixProcess);
 								if (msa is IMoInflAffMsa)
 									hcAffixProcessAllo.RequiredMprFeatures.AddRange(LoadAllInflClasses(affixProcess.InflectionClassesRC));
-								m_allomorphs.GetValue(allo, () => new List<Allomorph>()).Add(hcAffixProcessAllo);
+								m_allomorphs.GetOrCreate(allo, () => new List<Allomorph>()).Add(hcAffixProcessAllo);
 							}
 							catch (InvalidShapeException ise)
 							{
@@ -890,7 +890,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 										requiredFS.AddValue(m_headFeature, LoadFeatureStruct(affixAllo.MsEnvFeaturesOA, m_language.SyntacticFeatureSystem));
 									requiredFS.Freeze();
 									hcAffixAllo.RequiredSyntacticFeatureStruct = requiredFS;
-									m_allomorphs.GetValue(allo, () => new List<Allomorph>()).Add(hcAffixAllo);
+									m_allomorphs.GetOrCreate(allo, () => new List<Allomorph>()).Add(hcAffixAllo);
 								}
 								catch (InvalidShapeException ise)
 								{
@@ -913,7 +913,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 								try
 								{
 									hcStemAllo = LoadFormAffixProcessAllomorph(allo, env);
-									m_allomorphs.GetValue(allo, () => new List<Allomorph>()).Add(hcStemAllo);
+									m_allomorphs.GetOrCreate(allo, () => new List<Allomorph>()).Add(hcStemAllo);
 								}
 								catch (InvalidShapeException ise)
 								{
@@ -1083,7 +1083,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					name = suffixEnv.StringRepresentation.Text;
 				else
 					name = string.Format("{0}, {1}", prefixEnv.StringRepresentation.Text, suffixEnv.StringRepresentation.Text);
-				hcAllo.Environments.Add(new AllomorphEnvironment(m_spanFactory, ConstraintType.Require, leftEnvPattern, rightEnvPattern) {Name = name});
+				hcAllo.Environments.Add(new AllomorphEnvironment(ConstraintType.Require, leftEnvPattern, rightEnvPattern) {Name = name});
 			}
 
 			hcAllo.Properties[HCParser.FormID] = prefixAllo.Hvo;
@@ -1334,7 +1334,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						hcAllo.Rhs.Add(new InsertSegments(Segments("+" + form)));
 
 						if (!string.IsNullOrEmpty(contexts.Item2))
-							hcAllo.Environments.Add(new AllomorphEnvironment(m_spanFactory, ConstraintType.Require, null, LoadEnvironmentPattern(contexts.Item2, false)) {Name = env.StringRepresentation.Text});
+							hcAllo.Environments.Add(new AllomorphEnvironment(ConstraintType.Require, null, LoadEnvironmentPattern(contexts.Item2, false)) {Name = env.StringRepresentation.Text});
 						break;
 
 					case MoMorphTypeTags.kMorphPrefix:
@@ -1361,7 +1361,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						hcAllo.Rhs.Add(new CopyFromInput("stem"));
 
 						if (!string.IsNullOrEmpty(contexts.Item1))
-							hcAllo.Environments.Add(new AllomorphEnvironment(m_spanFactory, ConstraintType.Require, LoadEnvironmentPattern(contexts.Item1, true), null) {Name = env.StringRepresentation.Text});
+							hcAllo.Environments.Add(new AllomorphEnvironment(ConstraintType.Require, LoadEnvironmentPattern(contexts.Item1, true), null) {Name = env.StringRepresentation.Text});
 						break;
 				}
 			}
@@ -1665,17 +1665,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			switch (prule.Direction)
 			{
 				case 0:
-					hcPrule.Direction = Direction.LeftToRight;
+					hcPrule.Direction = Machine.DataStructures.Direction.LeftToRight;
 					hcPrule.ApplicationMode = RewriteApplicationMode.Iterative;
 					break;
 
 				case 1:
-					hcPrule.Direction = Direction.RightToLeft;
+					hcPrule.Direction = Machine.DataStructures.Direction.RightToLeft;
 					hcPrule.ApplicationMode = RewriteApplicationMode.Iterative;
 					break;
 
 				case 2:
-					hcPrule.Direction = Direction.LeftToRight;
+					hcPrule.Direction = Machine.DataStructures.Direction.LeftToRight;
 					hcPrule.ApplicationMode = RewriteApplicationMode.Simultaneous;
 					break;
 			}
@@ -1758,11 +1758,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				case 0:
 				case 2:
-					hcPrule.Direction = Direction.LeftToRight;
+					hcPrule.Direction = Machine.DataStructures.Direction.LeftToRight;
 					break;
 
 				case 1:
-					hcPrule.Direction = Direction.RightToLeft;
+					hcPrule.Direction = Machine.DataStructures.Direction.RightToLeft;
 					break;
 			}
 
@@ -2147,8 +2147,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					{
 						var hcFeature = featSys.GetFeature<SymbolicFeature>("feat" + closedValue.FeatureRA.Hvo);
 						// TODO: should we display something to the user if a FS has an invalid value?
-						FeatureSymbol symbol;
-						if (hcFeature.PossibleSymbols.TryGetValue("sym" + closedValue.ValueRA.Hvo, out symbol))
+						if (hcFeature.PossibleSymbols.TryGet("sym" + closedValue.ValueRA.Hvo, out var symbol))
 							hcFS.AddValue(hcFeature, symbol);
 					}
 					else
@@ -2257,15 +2256,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static IMoInflClass GetDefaultInflClass(IPartOfSpeech pos)
 		{
-			if (pos.DefaultInflectionClassRA != null)
-				return pos.DefaultInflectionClassRA;
-			foreach (IPartOfSpeech child in pos.SubPossibilitiesOS.Cast<IPartOfSpeech>())
+			while (true)
 			{
-				IMoInflClass defInflClass = GetDefaultInflClass(child);
-				if (defInflClass != null)
-					return defInflClass;
+				if (pos.DefaultInflectionClassRA != null)
+				{
+					return pos.DefaultInflectionClassRA;
+				}
+				if (!(pos.Owner is IPartOfSpeech parentPos))
+				{
+					return null;
+				}
+				pos = parentPos;
 			}
-			return null;
 		}
 
 		private static void LoadFeatureSystem(IFsFeatureSystem featSys, FeatureSystem hcFeatSys)
@@ -2289,7 +2291,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private void LoadCharacterDefinitionTable(IPhPhonemeSet phonemeSet)
 		{
-			m_table = new CharacterDefinitionTable(m_spanFactory) {Name = phonemeSet.Name.BestAnalysisAlternative.Text};
+			m_table = new CharacterDefinitionTable {Name = phonemeSet.Name.BestAnalysisAlternative.Text};
 			foreach (IPhPhoneme phoneme in phonemeSet.PhonemesOC)
 			{
 				FeatureStruct fs = null;

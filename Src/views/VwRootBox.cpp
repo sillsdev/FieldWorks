@@ -2121,35 +2121,6 @@ STDMETHODIMP VwRootBox::MouseDown(int xd, int yd, RECT rcSrc1, RECT rcDst1)
 			ShowSelection();
 			m_fNewSelection = true;
 		}
-		// Old code to try to make editable selection on mouse down. We now do this in mouse UP.
-		//else if (msr == kmsrNoSel)
-		//{
-		//	/*
-		//	If the user clicks over a column/row intersection which is invalid for the
-		//	entry, place the cursor into the first preceding column that is editable or
-		//	the first following editable column (should there not be any preceding
-		//	editable columns in that row).
-		//	*/
-		//	VwSelectionPtr qvwsel;
-		//	pboxClick->GetSelection(pvg, this, xd, yd, rcSrc1, rcDst1, rcSrcBox, rcDstBox,
-		//			&qvwsel);
-		//	if (qvwsel)
-		//	{
-		//		if (qvwsel->FindClosestEditableIP(pvg, rcSrc, rcDst))
-		//		{
-		//			SetSelection(qvwsel);
-		//			ShowSelection();
-		//			m_fNewSelection = true;
-		//		}
-		//		else
-		//		{
-		//			// This makes and installs a completely new selection...let qvsel die a natural death,
-		//			// don't install it.
-		//			msr = pboxClick->MakeSelection(pvg, this, xd, yd, rcSrc, rcDst, rcSrcBox, rcDstBox, true);
-		//			m_fNewSelection = true;
-		//		}
-		//	}
-		//}
 	}
 	END_COM_METHOD(g_fact, IID_IVwRootBox);
 }

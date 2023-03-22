@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,15 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.Collections;
+using SIL.Extensions;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-using SIL.HermitCrab;
-using SIL.HermitCrab.MorphologicalRules;
-using SIL.HermitCrab.PhonologicalRules;
-using SIL.Machine.Annotations;
+using SIL.Machine.Morphology.HermitCrab;
+using SIL.Machine.Morphology.HermitCrab.MorphologicalRules;
+using SIL.Machine.Morphology.HermitCrab.PhonologicalRules;
 using SIL.Machine.FeatureModel;
 using FS = System.Collections.Generic.Dictionary<string, object>;
 
@@ -82,7 +81,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		private SpanFactory<ShapeNode> m_spanFactory;
 		private readonly List<Tuple<LoadErrorType, ICmObject>> m_loadErrors = new List<Tuple<LoadErrorType, ICmObject>>();
 		private Language m_lang;
 		private IPartOfSpeech m_noun;
@@ -96,7 +94,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			m_spanFactory = new ShapeSpanFactory();
 		}
 
 		protected override void CreateTestData()
@@ -400,7 +397,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private void LoadLanguage()
 		{
 			m_loadErrors.Clear();
-			m_lang = HCLoader.Load(m_spanFactory, Cache, new TestHCLoadErrorLogger(m_loadErrors));
+			m_lang = HCLoader.Load(Cache, new TestHCLoadErrorLogger(m_loadErrors));
 		}
 
 		[Test]
@@ -1019,7 +1016,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(m_lang.Strata[0].PhonologicalRules.Count, Is.EqualTo(1));
 			var hcPrule = (RewriteRule) m_lang.Strata[0].PhonologicalRules[0];
 
-			Assert.That(hcPrule.Direction, Is.EqualTo(Direction.LeftToRight));
+			Assert.That(hcPrule.Direction, Is.EqualTo(Machine.DataStructures.Direction.LeftToRight));
 			Assert.That(hcPrule.ApplicationMode, Is.EqualTo(RewriteApplicationMode.Simultaneous));
 			Assert.That(hcPrule.Lhs.ToString(), Is.EqualTo(m_lang.Strata[0].CharacterDefinitionTable["a"].FeatureStruct + VowelFS));
 
@@ -1066,7 +1063,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(m_lang.Strata[0].PhonologicalRules.Count, Is.EqualTo(1));
 			var hcPrule = (MetathesisRule) m_lang.Strata[0].PhonologicalRules[0];
 
-			Assert.That(hcPrule.Direction, Is.EqualTo(Direction.RightToLeft));
+			Assert.That(hcPrule.Direction, Is.EqualTo(Machine.DataStructures.Direction.RightToLeft));
 			Assert.That(hcPrule.Pattern.ToString(), Is.EqualTo(string.Format("({0})({1})({2})({3})", VowelFS,
 				m_lang.Strata[0].CharacterDefinitionTable["a"].FeatureStruct, m_lang.Strata[0].CharacterDefinitionTable["t"].FeatureStruct, ConsFS)));
 			Assert.That(hcPrule.LeftSwitchName, Is.EqualTo("r"));

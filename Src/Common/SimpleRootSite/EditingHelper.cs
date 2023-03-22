@@ -21,6 +21,7 @@ using SIL.Keyboarding;
 using SIL.PlatformUtilities;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
+using SIL.Windows.Forms.Keyboarding;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -215,6 +216,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Event handler for specialized work when the selection changes.
 		/// </summary>
 		public event EventHandler<VwSelectionArgs> VwSelectionChanged;
+		/// <summary>
+		/// This event allows us to skip unnecessary (and sometimes harmful) keyboard changes when changing keyboards from the ws chooser
+		/// seen in LT-21200
+		/// </summary>
+		private event EventHandler<IVwSelection> DoSetKeyboardForSelection;
 		#endregion
 
 		#region Member variables
@@ -289,6 +295,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		public EditingHelper(IEditingCallbacks callbacks)
 		{
+			DoSetKeyboardForSelection += SetKeyboardForSelectionInternal;
 			m_callbacks = callbacks;
 			m_control = callbacks as UserControl;
 		}
@@ -368,6 +375,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (disposing)
 			{
 				// Dispose managed resources here.
+				DoSetKeyboardForSelection -= SetKeyboardForSelectionInternal;
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -2858,8 +2866,10 @@ namespace SIL.FieldWorks.Common.RootSites
 				return; //e.g, the dictionary preview pane isn't focussed and shouldn't respond.
 			if (rs == null || rs.RootBox == null || rs.RootBox.Selection == null)
 				return;
+			DoSetKeyboardForSelection -= SetKeyboardForSelectionInternal;
 			string s = rs.PropTable == null ? "-1" : rs.PropTable.GetValue("WritingSystemHvo", "-1");
 			rs.Focus();
+			DoSetKeyboardForSelection += SetKeyboardForSelectionInternal;
 			int writingSystemHvo = int.Parse(s);
 			// will get zero when the selection contains multiple ws's and the ws is
 			// in fact different from the current one
@@ -2889,8 +2899,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			try
 			{
 				m_fSettingKeyboards = true;
-				if (ws.LocalKeyboard != null)
+				if (ws.LocalKeyboard != null && !ReferenceEquals(Keyboard.Controller.ActiveKeyboard, ws.LocalKeyboard))
+				{
 					ws.LocalKeyboard.Activate();
+				}
 			}
 			catch
 			{
@@ -2929,6 +2941,11 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <param name="vwsel">Selection</param>
 		/// -----------------------------------------------------------------------------------
 		public void SetKeyboardForSelection(IVwSelection vwsel)
+		{
+			DoSetKeyboardForSelection?.Invoke(this, vwsel);
+		}
+
+		private void SetKeyboardForSelectionInternal(object _, IVwSelection vwsel)
 		{
 			CheckDisposed();
 			if (vwsel == null || Callbacks == null || !Callbacks.GotCacheOrWs)

@@ -1225,12 +1225,13 @@ namespace SIL.FieldWorks.XWorks
 				var model = new DictionaryConfigurationModel();
 				var customNode = new ConfigurableDictionaryNode { FieldDescription = "CustomString", IsCustomField = true };
 				var duplicateCustomNode = new ConfigurableDictionaryNode { Label = "CustomString", LabelSuffix = "1", FieldDescription = "CustomString", IsCustomField = true, IsDuplicate = true };
+				var duplicateCustomNode2 = new ConfigurableDictionaryNode { Label = "CustomString", LabelSuffix = "2", FieldDescription = "CustomString", IsCustomField = true, IsDuplicate = true };
 
 				var sensesNode = new ConfigurableDictionaryNode
 				{
 					Label = "Senses",
 					FieldDescription = "SensesOS",
-					Children = new List<ConfigurableDictionaryNode> {customNode, duplicateCustomNode}
+					Children = new List<ConfigurableDictionaryNode> { duplicateCustomNode2, customNode, duplicateCustomNode}
 				};
 				var entryNode = new ConfigurableDictionaryNode
 				{
@@ -1243,7 +1244,7 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache);
 
-				Assert.AreEqual(2, model.Parts[0].Children[0].Children.Count, "The Duplicate custom field should be retained");
+				Assert.AreEqual(3, model.Parts[0].Children[0].Children.Count, "The Duplicate custom field should be retained");
 			}
 		}
 

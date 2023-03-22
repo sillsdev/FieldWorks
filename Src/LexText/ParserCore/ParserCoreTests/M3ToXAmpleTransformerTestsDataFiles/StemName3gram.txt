@@ -129,7 +129,7 @@ rule {Fully analyzed stem with a final inflectional template 15313}
   <Full stemNameInfo morphoSyntax> = <15315_1 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:17837] -> ([morphoSyntax:[ 16481:16483]] ))
 				 & ( ([stemName:18510] -> ([morphoSyntax:[ 16489:16490 18512:18514]] ))
 				 & ( ([stemName:18674] -> ([morphoSyntax:[16484 : [ 16469:16471] 16489:16490 18512:18515]]  / ([morphoSyntax:[ 16489:16491]] )))
@@ -162,7 +162,7 @@ rule {Fully analyzed stem with a final inflectional template 15340}
   <Full stemNameInfo morphoSyntax> = <15342_1 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:17837] -> ([morphoSyntax:[ 16481:16483]] ))
 				 & ( ([stemName:18510] -> ([morphoSyntax:[ 16489:16490 18512:18514]] ))
 				 & ( ([stemName:18674] -> ([morphoSyntax:[16484 : [ 16469:16471] 16489:16490 18512:18515]]  / ([morphoSyntax:[ 16489:16491]] )))
@@ -190,7 +190,7 @@ rule {Fully analyzed stem with a final inflectional template 15355}
   <Full stemNameInfo morphoSyntax> = <15356_0 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:17837] -> ([morphoSyntax:[ 16481:16483]] ))
 				 & ( ([stemName:18510] -> ([morphoSyntax:[ 16489:16490 18512:18514]] ))
 				 & ( ([stemName:18674] -> ([morphoSyntax:[16484 : [ 16469:16471] 16489:16490 18512:18515]]  / ([morphoSyntax:[ 16489:16491]] )))
@@ -218,7 +218,7 @@ rule {Fully analyzed stem with a final inflectional template 15373}
   <Full stemNameInfo morphoSyntax> = <15374_0 morphoSyntax>
   <Full stemNameInfo stemName>       = <Stem stemName>
 				  | stem name logical constraint
- <Full stemNameInfo> == (
+  <Full stemNameInfo> == (
   ([stemName:17837] -> ([morphoSyntax:[ 16481:16483]] ))
 				 & ( ([stemName:18510] -> ([morphoSyntax:[ 16489:16490 18512:18514]] ))
 				 & ( ([stemName:18674] -> ([morphoSyntax:[16484 : [ 16469:16471] 16489:16490 18512:18515]]  / ([morphoSyntax:[ 16489:16491]] )))
