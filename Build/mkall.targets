@@ -286,7 +286,7 @@
 		<PalasoNugetVersion>11.0.0-beta0041</PalasoNugetVersion>
 		<Palaso4ParatextNugetVersion>8.1.0-beta0035</Palaso4ParatextNugetVersion>
 		<ParatextNugetVersion>9.2.6.2</ParatextNugetVersion>
-		<LcmNugetVersion>10.2.0-beta0056</LcmNugetVersion>
+		<LcmNugetVersion>10.2.0-beta0069</LcmNugetVersion>
 		<IcuNugetVersion>70.1.123</IcuNugetVersion>
 		<HermitCrabNugetVersion>2.5.13</HermitCrabNugetVersion>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
@@ -398,7 +398,6 @@
 		<LcmOutputBaseFiles Include="SIL.LCModel.Core.Tests.dll.config" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Build.Tasks.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.dll" />
-		<LcmOutputBaseFiles Include="SIL.LCModel.dll.config" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Tools.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Tests.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Tests.dll.config" />
@@ -437,6 +436,8 @@
 
 		<LcmIcuNrmFiles Include="IcuData/icudt$(IcuVersion)l/nfc_fw.nrm" />
 		<LcmIcuNrmFiles Include="IcuData/icudt$(IcuVersion)l/nfkc_fw.nrm" />
+
+		<LcmMissingFiles Include="SIL.LCModel.dll.config" />
 	</ItemGroup>
 
 	<Target Name="downloadDlls" DependsOnTargets="RestoreNuGetPackages;CollectAssemblyAndPdbPaths" Condition="'$(disableDownloads)'!='true'">
@@ -623,6 +624,7 @@
 		<Copy SourceFiles="@(LcmTemplatesFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/DistFiles/Templates" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(LcmIcuDataFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)/data" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(LcmIcuNrmFiles -> '$(LcmArtifactsDir)/%(Identity)')" DestinationFolder="$(fwrt)/DistFiles/Icu$(IcuVersion)/icudt$(IcuVersion)l" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Error Condition="Exists(@(LcmMissingFiles -> '$(LcmArtifactsDir)/%(Identity)'))" Text="The file '%(LcmMissingFiles.Identity)' has been reintroduced in the Nuget package and should be copied in the steps above."/>
 
 		<!-- Copy the downloaded artifacts -->
 		<Copy SourceFiles="@(PalasoFiles -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />

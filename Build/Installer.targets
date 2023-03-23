@@ -113,6 +113,7 @@
 	-->
 	<Target Name="RescuePatching">
 		<ItemGroup>
+			<RemovedSinceLastBase Include="$(dir-outputBase)/SIL.LCModel.dll.config" />
 			<RemovedSinceLastBase Include="$(dir-outputBase)/SIL.HermitCrab.dll" />
 			<RemovedSinceLastBase Include="$(dir-outputBase)/SIL.Collections.dll" />
 			<RemovedSinceLastBase Include="$(dir-outputBase)/QuickGraph.dll" />
