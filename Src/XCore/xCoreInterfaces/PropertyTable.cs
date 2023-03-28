@@ -562,7 +562,7 @@ namespace XCore
 
 			if (didChange && doBroadcastIfChanged)
 			{
-				BroadcastPropertyChange(key);
+				BroadcastPropertyChange(key, newValue);
 			}
 
 #if SHOWTRACE
@@ -573,10 +573,15 @@ namespace XCore
 #endif
 		}
 
-		private void BroadcastPropertyChange(string key)
+		private void BroadcastPropertyChange(string key, object newValue)
 		{
 			var localSettingsPrefix = GetPathPrefixForSettingsId(LocalSettingsId);
 			var propertyName = key.StartsWith(localSettingsPrefix) ? key.Remove(0, localSettingsPrefix.Length) : key;
+
+			if (!string.IsNullOrWhiteSpace(propertyName))
+			{
+				FwUtils.Publisher.Publish(new PublisherParameterObject(propertyName, newValue));
+			}
 
 			if (Mediator != null)
 			{

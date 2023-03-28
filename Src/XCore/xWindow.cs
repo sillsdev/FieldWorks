@@ -441,6 +441,8 @@ namespace XCore
 			m_mediator.SpecificToOneMainWindow = true;
 
 			InitializeComponent();
+
+			FwUtils.Subscriber.Subscribe(PropertyConstants.WritingSystemHvo, WritingSystemHvo_Changed);
 		}
 
 		/// <summary>
@@ -1318,6 +1320,7 @@ namespace XCore
 		/// </summary>
 		private void ShutDownPart1()
 		{
+			FwUtils.Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, WritingSystemHvo_Changed);
 
 			if (m_mediator != null)
 			{
@@ -1903,7 +1906,6 @@ namespace XCore
 					break;
 
 				// Refresh the Writing System and Styles Combo Boxes
-				case "WritingSystemHvo":
 				case "BestStyleName":
 					SynchronizedOnIdleTime();
 					break;
@@ -1920,6 +1922,16 @@ namespace XCore
 					}
 					break;
 			}
+		}
+
+		/// <summary>
+		/// Handle "WritingSystemHvo" message.
+		/// </summary>
+		private void WritingSystemHvo_Changed(object newValue)
+		{
+			CheckDisposed();
+			// Refresh the Writing System and Styles Combo Boxes
+			SynchronizedOnIdleTime();
 		}
 
 		/// <summary>

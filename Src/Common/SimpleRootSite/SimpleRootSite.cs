@@ -412,6 +412,8 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			if (disposing)
 			{
+				FwUtils.FwUtils.Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, WritingSystemHvo_Changed);
+
 				// Do this here, before disposing m_messageSequencer,
 				// as we still get messages during dispose.
 				// Once the the base class has shut down the window handle,
@@ -2074,10 +2076,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			CheckDisposed();
 			switch (name)
 			{
-				case "WritingSystemHvo":
-					EditingHelper.WritingSystemHvoChanged();
-					break;
-
 				case "BestStyleName":
 					EditingHelper.BestStyleNameChanged();
 					break;
@@ -2085,6 +2083,21 @@ namespace SIL.FieldWorks.Common.RootSites
 				default:
 					break;
 			}
+		}
+
+		/// <summary>
+		/// Handle "WritingSystemHvo" message.
+		/// </summary>
+		protected virtual void WritingSystemHvo_Changed(object newValue)
+		{
+			CheckDisposed();
+			if (!Focused)
+			{
+				FwUtils.FwUtils.Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, WritingSystemHvo_Changed);
+				return;
+			}
+
+			EditingHelper.WritingSystemHvoChanged();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3341,6 +3354,15 @@ namespace SIL.FieldWorks.Common.RootSites
 			Activate(VwSelectionState.vssEnabled);
 
 			EditingHelper.GotFocus();
+
+			FwUtils.FwUtils.Subscriber.Subscribe(PropertyConstants.WritingSystemHvo, WritingSystemHvo_Changed);
+		}
+
+		/// <summary />
+		protected override void OnLostFocus(EventArgs e)
+		{
+			FwUtils.FwUtils.Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, WritingSystemHvo_Changed);
+			base.OnLostFocus(e);
 		}
 
 		/// ------------------------------------------------------------------------------------
