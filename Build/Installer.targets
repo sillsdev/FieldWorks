@@ -111,13 +111,10 @@
 		replace files that were removed (for instance during a library update).
 		A base build should warn if we have 'RemovedSinceLastBase' items to help us remember to clear these out.
 	-->
+	<ItemGroup>
+		<!-- <RemovedSinceLastBase Include="$(dir-outputBase)/Example.dll" /> -->
+	</ItemGroup>
 	<Target Name="RescuePatching">
-		<ItemGroup>
-			<RemovedSinceLastBase Include="$(dir-outputBase)/SIL.LCModel.dll.config" />
-			<RemovedSinceLastBase Include="$(dir-outputBase)/SIL.HermitCrab.dll" />
-			<RemovedSinceLastBase Include="$(dir-outputBase)/SIL.Collections.dll" />
-			<RemovedSinceLastBase Include="$(dir-outputBase)/QuickGraph.dll" />
-		</ItemGroup>
 		<WriteLinesToFile File="%(RemovedSinceLastBase.FullPath)" Lines="" />
 	</Target>
 	<!-- ########################################################################################################## -->
