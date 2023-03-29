@@ -68,10 +68,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 				if (Directory.Exists(baseConfigFolder))
 				{
 					// For some reason the version returned from Assembly.GetExecutingAssembly.GetName().Version does not return the
-					// exact same version number that was written by m_settings.Upgrade() so we find it by looking for the lastest version
+					// exact same version number that was written by m_settings.Upgrade() so we find it by looking for the latest version
 					List<string> directoryList = new List<string>(Directory.EnumerateDirectories(baseConfigFolder));
 					directoryList.Sort();
-					string pathToPreviousSettingsFile = Path.Combine(directoryList[directoryList.Count - 1],"user.config");
+					var pathToPreviousSettingsFile = Path.Combine(directoryList[directoryList.Count - 1],"user.config");
 					using (var stream = new FileStream(pathToPreviousSettingsFile, FileMode.Open))
 					{
 						MigrateIfNecessary(stream);
@@ -112,10 +112,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 								XDocument.Load(stream);
 							}
 						}
+						else
+						{
+							corruptFileFound = true; // No file is just as bad as a corrupt one, we want to delete the folder
+						}
 					}
 					catch (XmlException)
 					{
 						corruptFileFound = true;
+					}
+					if (corruptFileFound)
+					{
 						Directory.Delete(highestVersionFolder, true);
 					}
 					localConfigFolders.Remove(highestVersionFolder);
@@ -123,8 +130,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 				if (corruptFileFound)
 				{
-					string caption = FwUtilsStrings.ksCorruptSettingsFileCaption;
-					string text = FwUtilsStrings.ksDeleteAndReportCorruptSettingsFile;
+					var caption = FwUtilsStrings.ksCorruptSettingsFileCaption;
+					var text = FwUtilsStrings.ksDeleteAndReportCorruptSettingsFile;
 					MessageBox.Show(text, caption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 			}

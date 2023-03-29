@@ -868,8 +868,8 @@ namespace SIL.FieldWorks.XWorks
 				changed |= UpdateCacheAndLayoutsForDeletions();
 				changed |= SaveCustomFieldsToDB();
 			}
-			if (changed)	// only fire the 'big gun' if something has actually changed
-				m_mediator.BroadcastMessage("MasterRefresh", null);
+			if (changed)    // only fire the 'big gun' if something has actually changed
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh));
 			DialogResult = DialogResult.OK;
 		}
 

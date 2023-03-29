@@ -1316,16 +1316,8 @@ namespace XCore
 						}
 						else
 						{
-							if (methodName == "OnMasterRefresh")
-							{
-								InvokeMethod(target, mi, parameterList);
-								handled = true;
-							}
-							else
-							{
-								object o = InvokeMethod(target, mi, parameterList);
-								handled = (o != null) ? (bool) o : false;
-							}
+							object o = InvokeMethod(target, mi, parameterList);
+							handled = (o != null) ? (bool) o : false;
 						}
 					}
 					else

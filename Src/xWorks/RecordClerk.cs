@@ -1531,7 +1531,7 @@ namespace SIL.FieldWorks.XWorks
 							}
 						}
 					}
-					m_mediator.SendMessage("MasterRefresh", null);
+					FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh));
 				}
 			}
 			return true; //we handled this, no need to ask anyone else.

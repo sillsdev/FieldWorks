@@ -8,5 +8,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 		public const string FollowLink = "FollowLink";
 		public const string MasterRefresh = "MasterRefresh";
+		public const string DictionaryConfigured = "DictionaryConfigured";
 	}
 }

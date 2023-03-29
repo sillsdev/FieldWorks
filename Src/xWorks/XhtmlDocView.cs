@@ -76,6 +76,15 @@ namespace SIL.FieldWorks.XWorks
 					browser.DomMouseScroll += OnMouseWheel;
 				}
 			}
+			Disposed += OnDispose;
+			FwUtils.Subscriber.Subscribe(EventConstants.DictionaryConfigured, RefreshAllContent);
+			FwUtils.Subscriber.Subscribe(EventConstants.MasterRefresh, RefreshAllContent);
+		}
+
+		private void OnDispose(object sender, EventArgs e)
+		{
+			FwUtils.Subscriber.Unsubscribe(EventConstants.DictionaryConfigured, RefreshAllContent);
+			FwUtils.Subscriber.Unsubscribe(EventConstants.MasterRefresh, RefreshAllContent);
 		}
 
 		private void OnMouseWheel(object sender, DomMouseEventArgs domMouseEventArgs)
@@ -614,7 +623,7 @@ namespace SIL.FieldWorks.XWorks
 				refreshNeeded = controller.MasterRefreshRequired;
 			}
 			if (refreshNeeded)
-				mediator.SendMessage("MasterRefresh", null);
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh));
 		}
 
 		private static void RunDiagnosticsDialogAt(object sender, EventArgs e)
@@ -1038,7 +1047,7 @@ namespace SIL.FieldWorks.XWorks
 			var currentPageRange = new Tuple<int, int>(int.Parse(currentPage.Attributes["startIndex"].NodeValue), int.Parse(currentPage.Attributes["endIndex"].NodeValue));
 			if (currentObjectIndex < currentPageRange.Item1 || currentObjectIndex > currentPageRange.Item2)
 			{
-				OnMasterRefresh(this); // Reload the page
+				RefreshAllContent(this); // Reload the page
 			}
 		}
 
@@ -1140,7 +1149,7 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion
 
-		public void OnMasterRefresh(object sender)
+		public void RefreshAllContent(object sender)
 		{
 			var currentConfig = GetCurrentConfiguration(false);
 			var currentPublication = GetCurrentPublication();

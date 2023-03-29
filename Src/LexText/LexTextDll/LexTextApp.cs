@@ -422,7 +422,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 							 dlg is LiftImportDlg || dlg is CombineImportDlg)
 					{
 						// Make everything we've imported visible.
-						wndActive.Mediator.SendMessage("MasterRefresh", wndActive);
+						FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh));
 					}
 				}
 			}

@@ -7,6 +7,7 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using XCore;
@@ -62,11 +63,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				dlg.SetDlgInfo(cache, m_mediator, m_propertyTable, m_persistProvider);
 				if (dlg.ShowDialog(Form.ActiveForm) == DialogResult.OK)
 				{
-					ILexEntry entry;
-					bool newby;
-					dlg.GetDialogInfo(out entry, out newby);
+					dlg.GetDialogInfo(out var entry, out _);
 					// No need for a PropChanged here because InsertEntryDlg takes care of that. (LT-3608)
-					m_mediator.SendMessage("MasterRefresh", null);
+					FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh));
 					m_mediator.SendMessage("JumpToRecord", entry.Hvo);
 				}
 			}

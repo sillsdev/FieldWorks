@@ -687,7 +687,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 			// Without this, stale data can still display in the BulkEditSenses tool if you
 			// recreate the deleted reversal index.
-			m_mediator.SendMessage("MasterRefresh", null);
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh));
 		}
 
 		internal static IReversalIndex ReversalIndexAfterDeletion(LcmCache cache, out int cobjNew)

@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using Gecko;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using XCore;
@@ -24,7 +25,8 @@ namespace SIL.FieldWorks.XWorks
 		private XWebBrowser m_mainView;
 		internal string m_configObjectName;
 
-		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
+		public override void Init(Mediator mediator, PropertyTable propertyTable,
+			XmlNode configurationParameters)
 		{
 			CheckDisposed();
 
@@ -40,6 +42,20 @@ namespace SIL.FieldWorks.XWorks
 			m_fullyInitialized = true;
 			// Add ourselves as a listener for changes to the item we are displaying
 			Clerk.VirtualListPublisher.AddNotification(this);
+			FwUtils.Subscriber.Subscribe(EventConstants.DictionaryConfigured, RefreshPreviewContent);
+			FwUtils.Subscriber.Subscribe(EventConstants.MasterRefresh, RefreshPreviewContent);
+		 Disposed += OnDisposed;
+		}
+
+		private void OnDisposed(object sender, EventArgs e)
+		{
+			FwUtils.Subscriber.Unsubscribe(EventConstants.DictionaryConfigured, RefreshPreviewContent);
+			FwUtils.Subscriber.Unsubscribe(EventConstants.MasterRefresh, RefreshPreviewContent);
+	  }
+
+		private void RefreshPreviewContent(object _)
+		{
+			ShowRecord();
 		}
 
 		/// <summary>

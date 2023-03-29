@@ -2028,6 +2028,7 @@ namespace SIL.FieldWorks.XWorks
 
 		protected override void XWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
+			FwUtils.Subscriber.Unsubscribe(EventConstants.MasterRefresh, OnMasterRefresh);
 			SaveSettingsNow();
 			// LT-6440
 			// In the case of a shutdown while the parser is starting, we were getting
@@ -2159,6 +2160,7 @@ namespace SIL.FieldWorks.XWorks
 			if (m_startupLink != null)
 				m_mediator.SendMessage("FollowLink", m_startupLink);
 			UpdateControls();
+			FwUtils.Subscriber.Subscribe(EventConstants.MasterRefresh, OnMasterRefresh);
 			return true;
 		}
 

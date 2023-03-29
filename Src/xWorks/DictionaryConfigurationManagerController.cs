@@ -646,9 +646,9 @@ namespace SIL.FieldWorks.XWorks
 		private void CloseDialogAndRefreshProject()
 		{
 			_view.Close();
-			if(ConfigurationViewImported != null)
-				ConfigurationViewImported();
-			_mediator.BroadcastMessage("MasterRefresh", null);
+			ConfigurationViewImported?.Invoke();
+
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh));
 		}
 
 		public bool IsConfigurationACustomizedOriginal(DictionaryConfigurationModel configuration)

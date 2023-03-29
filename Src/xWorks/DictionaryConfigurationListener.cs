@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -204,7 +204,7 @@ namespace SIL.FieldWorks.XWorks
 				refreshNeeded = controller.MasterRefreshRequired;
 			}
 			if (refreshNeeded)
-				m_mediator.SendMessage("MasterRefresh", null);
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.DictionaryConfigured));
 			return true; // message handled
 		}
 
@@ -373,7 +373,7 @@ namespace SIL.FieldWorks.XWorks
 				configuration.HomographConfiguration.HomographWritingSystem = string.Empty;
 				configuration.HomographConfiguration.CustomHomographNumbers = string.Empty;
 				configuration.Save();
-				m_mediator.SendMessage("MasterRefresh", null);
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh));
 			}
 			return true;
 		}
