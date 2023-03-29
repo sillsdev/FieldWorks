@@ -442,7 +442,8 @@ namespace XCore
 
 			InitializeComponent();
 
-			FwUtils.Subscriber.Subscribe(PropertyConstants.WritingSystemHvo, WritingSystemHvo_Changed);
+			FwUtils.Subscriber.Subscribe(PropertyConstants.BestStyleName, SynchronizedOnIdleTime);
+			FwUtils.Subscriber.Subscribe(PropertyConstants.WritingSystemHvo, SynchronizedOnIdleTime);
 		}
 
 		/// <summary>
@@ -1320,7 +1321,8 @@ namespace XCore
 		/// </summary>
 		private void ShutDownPart1()
 		{
-			FwUtils.Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, WritingSystemHvo_Changed);
+			FwUtils.Subscriber.Unsubscribe(PropertyConstants.BestStyleName, SynchronizedOnIdleTime);
+			FwUtils.Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, SynchronizedOnIdleTime);
 
 			if (m_mediator != null)
 			{
@@ -1404,7 +1406,7 @@ namespace XCore
 
 			// Get rid of the Mediator last,
 			// so anyone else who wants to access it during shutdown can.
-			// Review RandyR: Who would want to do that?
+			// Review RandyR: Who would want to do that? Response (Hasso) 2023.03: perhaps they want to remove themselves as colleagues
 			if (m_mediator != null)
 			{
 				m_mediator.Dispose();
@@ -1790,7 +1792,10 @@ namespace XCore
 			//m_mediator.AllowCommandsToExecute = true;
 		}
 
-		public void SynchronizedOnIdleTime()
+		/// <summary>
+		/// Refresh the Writing System and Styles comboboxes
+		/// </summary>
+		private void SynchronizedOnIdleTime(object _ = null)
 		{
 			CheckDisposed();
 
@@ -1905,11 +1910,6 @@ namespace XCore
 					UpdateSidebarAndRecordBarDisplay(true);
 					break;
 
-				// Refresh the Writing System and Styles Combo Boxes
-				case "BestStyleName":
-					SynchronizedOnIdleTime();
-					break;
-
 				default:
 					if (name.Length > 11 && name.Substring(0, 11) == "StatusPanel")
 					{
@@ -1922,16 +1922,6 @@ namespace XCore
 					}
 					break;
 			}
-		}
-
-		/// <summary>
-		/// Handle "WritingSystemHvo" message.
-		/// </summary>
-		private void WritingSystemHvo_Changed(object newValue)
-		{
-			CheckDisposed();
-			// Refresh the Writing System and Styles Combo Boxes
-			SynchronizedOnIdleTime();
 		}
 
 		/// <summary>

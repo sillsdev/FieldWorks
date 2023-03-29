@@ -248,7 +248,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		public event FwPasteFixTssEventHandler PasteFixTssEvent;
 
 		private bool m_fSuppressNextWritingSystemHvoChanged;
-		private bool m_fSuppressNextBestStyleNameChanged;
 		private long m_TimestampOfLastGotFocus;
 
 		/// <summary>Flag to prevent reentrancy while setting keyboard.</summary>
@@ -2982,16 +2981,13 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>
 		/// Allow a change to BestStyleName not to cause all the work in the next function.
 		/// </summary>
-		public bool SuppressNextBestStyleNameChanged
-		{
-			get { return m_fSuppressNextBestStyleNameChanged; }
-			set { m_fSuppressNextBestStyleNameChanged = value; }
-		}
+		public bool SuppressNextBestStyleNameChanged { get; set; }
+
 		internal void BestStyleNameChanged()
 		{
-			if (m_fSuppressNextBestStyleNameChanged)
+			if (SuppressNextBestStyleNameChanged)
 			{
-				m_fSuppressNextBestStyleNameChanged = false;
+				SuppressNextBestStyleNameChanged = false;
 				return;
 			}
 			// For now, we are only handling SimpleRootSite cases, e.g. for the Data Tree.
@@ -3004,10 +3000,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			// the selection changes. We have to be careful this does not trigger an attempt to
 			// modify the data.
 			if (rs != null && !rs.WasFocused())
-				return; //e.g, the dictionary preview pane isn't focussed and shouldn't respond.
-			if (rs == null || rs.RootBox == null || rs.RootBox.Selection == null)
+				return; //e.g, the dictionary preview pane isn't focused and shouldn't respond.
+			if (rs?.RootBox?.Selection == null)
 				return;
-			string styleName = rs.PropTable == null ? null : rs.PropTable.GetStringProperty("BestStyleName", null);
+			var styleName = rs.PropTable?.GetStringProperty(PropertyConstants.BestStyleName, null);
 			if (styleName == null)
 				return;
 			rs.Focus();

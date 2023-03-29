@@ -286,9 +286,8 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Receives the broadcast message "PropertyChanged"
 		/// </summary>
-		public override void OnPropertyChanged(string name)
+		public void OnPropertyChanged(string name)
 		{
-			base.OnPropertyChanged(name);
 			bool newVal; // used in two cases below
 			switch (name)
 			{

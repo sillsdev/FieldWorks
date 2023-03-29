@@ -373,11 +373,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Receives the broadcast message "PropertyChanged"
 		/// </summary>
-		public override void OnPropertyChanged(string name)
+		public void OnPropertyChanged(string name)
 		{
 			CheckDisposed();
 
-			base.OnPropertyChanged(name);
 			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
 			if(name == "ShowFailingItems-" + toolName)
 			{

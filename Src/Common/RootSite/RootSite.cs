@@ -22,6 +22,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.SpellChecking;
 using SIL.LCModel.Core.Text;
@@ -462,12 +463,12 @@ namespace SIL.FieldWorks.Common.RootSites
 				// Handles the case where m_propertyTable is null because the parent slice is null
 				if (m_propertyTable != null)
 				{
-					string oldBest = m_propertyTable.GetStringProperty("BestStyleName", null);
+					var oldBest = m_propertyTable.GetStringProperty(PropertyConstants.BestStyleName, null);
 					if (oldBest != bestStyle)
 					{
 						EditingHelper.SuppressNextBestStyleNameChanged = true;
-						m_propertyTable.SetProperty("BestStyleName", bestStyle, true);
-						m_propertyTable.SetPropertyPersistence("BestStyleName", false);
+						m_propertyTable.SetProperty(PropertyConstants.BestStyleName, bestStyle, true);
+						m_propertyTable.SetPropertyPersistence(PropertyConstants.BestStyleName, false);
 					}
 				}
 				return bestStyle;

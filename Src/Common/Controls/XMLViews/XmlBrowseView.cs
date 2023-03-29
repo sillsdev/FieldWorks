@@ -69,14 +69,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// This is invoked by the PropertyTable (because XmlBrowseView is a mediator).
 		/// </summary>
 		/// <param name="propName"></param>
-		public override void OnPropertyChanged(string propName)
+		public void OnPropertyChanged(string propName)
 		{
 			CheckDisposed();
 
 			if (propName == GetCorrespondingPropertyName("readOnlyBrowse"))
 				SetSelectedRowHighlighting();
-
-			base.OnPropertyChanged(propName);
 		}
 
 		private ITsString StripTrailingNewLine(ITsString tss)

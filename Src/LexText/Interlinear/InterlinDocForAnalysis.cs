@@ -812,7 +812,7 @@ namespace SIL.FieldWorks.IText
 
 		#region AddWordsToLexicon
 
-		public override void OnPropertyChanged(string name)
+		public void OnPropertyChanged(string name)
 		{
 			CheckDisposed();
 
@@ -837,9 +837,6 @@ namespace SIL.FieldWorks.IText
 								TriggerAnnotationSelected(saved, false);
 						}
 					}
-					break;
-				default:
-					base.OnPropertyChanged(name);
 					break;
 			}
 		}

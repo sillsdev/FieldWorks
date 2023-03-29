@@ -179,7 +179,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// This is invoked by the PropertyTable (because XmlBrowseView is a mediator).
 		/// </summary>
 		/// <param name="propName"></param>
-		public override void OnPropertyChanged(string propName)
+		public void OnPropertyChanged(string propName)
 		{
 			CheckDisposed();
 
@@ -224,8 +224,6 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				CleanupPendingEdits();
 			}
-
-			base.OnPropertyChanged(propName);
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -412,6 +412,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			if (disposing)
 			{
+				FwUtils.FwUtils.Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, BestStyleName_Changed);
 				FwUtils.FwUtils.Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, WritingSystemHvo_Changed);
 
 				// Do this here, before disposing m_messageSequencer,
@@ -2066,29 +2067,21 @@ namespace SIL.FieldWorks.Common.RootSites
 			get { return (int)ColleaguePriority.Medium; }
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Receives the xcore broadcast message "PropertyChanged"
+		/// Handle "BestStyleName" message.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public virtual void OnPropertyChanged(string name)
+		/// <remarks>Randy had a non-PubSub implementation, but we're not there yet.</remarks>
+		private void BestStyleName_Changed(object _)
 		{
 			CheckDisposed();
-			switch (name)
-			{
-				case "BestStyleName":
-					EditingHelper.BestStyleNameChanged();
-					break;
 
-				default:
-					break;
-			}
+			EditingHelper.BestStyleNameChanged();
 		}
 
 		/// <summary>
 		/// Handle "WritingSystemHvo" message.
 		/// </summary>
-		protected virtual void WritingSystemHvo_Changed(object newValue)
+		protected virtual void WritingSystemHvo_Changed(object _)
 		{
 			CheckDisposed();
 			if (!Focused)
@@ -3355,12 +3348,14 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			EditingHelper.GotFocus();
 
+			FwUtils.FwUtils.Subscriber.Subscribe(PropertyConstants.WritingSystemHvo, BestStyleName_Changed);
 			FwUtils.FwUtils.Subscriber.Subscribe(PropertyConstants.WritingSystemHvo, WritingSystemHvo_Changed);
 		}
 
 		/// <summary />
 		protected override void OnLostFocus(EventArgs e)
 		{
+			FwUtils.FwUtils.Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, BestStyleName_Changed);
 			FwUtils.FwUtils.Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, WritingSystemHvo_Changed);
 			base.OnLostFocus(e);
 		}
