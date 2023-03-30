@@ -144,6 +144,8 @@ namespace SIL.FieldWorks.XWorks
 
 			if (disposing)
 			{
+				FwUtils.Subscriber.Unsubscribe(EventConstants.FollowLink, OnFollowLink);
+
 				// Dispose managed resources here.
 				if (m_mediator != null)
 				{
@@ -189,6 +191,7 @@ namespace SIL.FieldWorks.XWorks
 			mediator.AddColleague(this);
 			m_propertyTable.SetProperty("LinkListener", this, true);
 			m_propertyTable.SetPropertyPersistence("LinkListener", false);
+			FwUtils.Subscriber.Subscribe(EventConstants.FollowLink, OnFollowLink);
 		}
 
 		/// <summary>
@@ -414,16 +417,18 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 			LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
 			Guid[] guids = (from entry in cache.LanguageProject.LexDbOA.Entries select entry.Guid).ToArray();
-			m_mediator.SendMessage("FollowLink", new FwLinkArgs("lexiconEdit", guids[guids.Length - 1]));
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink,
+				new FwLinkArgs("lexiconEdit", guids[guids.Length - 1])));
 			return true;
 		}
 
 		/// <summary>
+		/// Handle "FollowLink" message.
 		/// NOTE: This will not handle link requests for other databases/applications. To handle other
 		/// databases or applications, pass a FwAppArgs to the IFieldWorksManager.HandleLinkRequest method.
 		/// </summary>
 		/// <returns></returns>
-		public bool OnFollowLink(object lnk)
+		private void OnFollowLink(object lnk)
 		{
 			CheckDisposed();
 
@@ -431,7 +436,7 @@ namespace SIL.FieldWorks.XWorks
 			m_cBackStackOrig = m_backStack.Count;
 			m_lnkActive = lnk as FwLinkArgs;
 
-			return FollowActiveLink(true);
+			FollowActiveLink(true);
 		}
 
 		private bool FollowActiveLink(bool suspendLoadingRecord)

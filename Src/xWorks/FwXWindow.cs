@@ -2158,7 +2158,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			if (m_startupLink != null)
-				m_mediator.SendMessage("FollowLink", m_startupLink);
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, m_startupLink));
 			UpdateControls();
 			FwUtils.Subscriber.Subscribe(EventConstants.MasterRefresh, OnMasterRefresh);
 			return true;

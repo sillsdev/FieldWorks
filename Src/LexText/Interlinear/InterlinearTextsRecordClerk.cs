@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -257,7 +257,8 @@ namespace SIL.FieldWorks.IText
 			if (CurrentObject == null || CurrentObject.Hvo == 0)
 				return false;
 			if (!InDesiredTool("interlinearEdit"))
-				m_mediator.SendMessage("FollowLink", new FwLinkArgs("interlinearEdit", CurrentObject.Guid));
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink,
+					new FwLinkArgs("interlinearEdit", CurrentObject.Guid)));
 			// This is a workable alternative (where link is the one created above), but means this code has to know about the FwXApp class.
 			//(FwXApp.App as FwXApp).OnIncomingLink(link);
 			// This alternative does NOT work; it produces a deadlock...I think the remote code is waiting for the target app

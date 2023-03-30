@@ -333,8 +333,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						{
 							FwLinkArgs linkArgs = new FwLinkArgs(url);
 							linkArgs.DisplayErrorMsg = false;
-							if (m_mediator.SendMessage("FollowLink", linkArgs))
+
+							// Return after publishing if there is at least one subscriber.
+							if (FwUtils.FwUtils.Subscriber.Subscriptions.TryGetValue(EventConstants.FollowLink, out _))
+							{
+								FwUtils.FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, linkArgs));
 								return;
+							}
 						}
 					}
 					catch
