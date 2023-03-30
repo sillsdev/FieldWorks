@@ -114,7 +114,7 @@
 	<ItemGroup>
 		<!-- <RemovedSinceLastBase Include="$(dir-outputBase)/Example.dll" /> -->
 	</ItemGroup>
-	<Target Name="RescuePatching">
+	<Target Name="RescuePatching" Condition="'@(RemovedSinceLastBase)' != ''">
 		<WriteLinesToFile File="%(RemovedSinceLastBase.FullPath)" Lines="" />
 	</Target>
 	<!-- ########################################################################################################## -->
