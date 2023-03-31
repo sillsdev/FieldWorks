@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -56,10 +56,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				return;
 
 			GeckoElement elem = e.Target.CastToGeckoElement();
-			int hvo;
-			if (TryGetHvo(elem, out hvo))
-				JumpToToolBasedOnHvo(hvo);
-
 			if (elem.TagName.Equals("input", StringComparison.InvariantCultureIgnoreCase)
 				&& elem.GetAttribute("type").Equals("button", StringComparison.InvariantCultureIgnoreCase))
 			{
@@ -78,6 +74,9 @@ namespace SIL.FieldWorks.LexText.Controls
 						break;
 				}
 			}
+			int hvo;
+			if (TryGetHvo(elem, out hvo))
+				JumpToToolBasedOnHvo(hvo);
 		}
 
 		/// <summary>
@@ -138,7 +137,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			cmo = CmObjectUi.GetSelfOrParentOfClass(cmo, parentClassId);
 			if (cmo == null)
 				return; // do nothing
-			m_mediator.PostMessage("FollowLink", new FwLinkArgs(sTool, cmo.Guid));
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink,
+				new FwLinkArgs(sTool, cmo.Guid)));
 		}
 
 		/// <summary>

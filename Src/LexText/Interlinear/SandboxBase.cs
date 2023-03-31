@@ -4540,7 +4540,7 @@ namespace SIL.FieldWorks.IText
 					List<Property> additionalProps = fwLink.PropertyTableEntries;
 					if (!String.IsNullOrEmpty(concordOn))
 						additionalProps.Add(new Property("ConcordOn", concordOn));
-					m_mediator.PostMessage("FollowLink", fwLink);
+					FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, fwLink));
 					return true;
 				}
 			}

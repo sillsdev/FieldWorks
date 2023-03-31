@@ -906,7 +906,7 @@ namespace SIL.FieldWorks.XWorks
 					return false;
 
 				var fwLink = new FwLinkArgs(tool, Guid.Empty);
-				m_mediator.PostMessage("FollowLink", fwLink);
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, fwLink));
 				return true;
 			}
 			return false;

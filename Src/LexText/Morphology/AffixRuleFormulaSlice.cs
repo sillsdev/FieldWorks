@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -72,7 +72,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 			IMoModifyFromInput mapping = RuleFormulaControl.CurrentObject as IMoModifyFromInput;
-			Mediator.PostMessage("FollowLink", new FwLinkArgs("naturalClassedit", mapping.ModificationRA.Guid));
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink,
+				new FwLinkArgs("naturalClassedit", mapping.ModificationRA.Guid)));
 			return true;
 		}
 
@@ -89,7 +90,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 			IMoInsertPhones mapping = RuleFormulaControl.CurrentObject as IMoInsertPhones;
-			Mediator.PostMessage("FollowLink", new FwLinkArgs("phonemeEdit", mapping.ContentRS[0].Guid));
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink,
+				new FwLinkArgs("phonemeEdit", mapping.ContentRS[0].Guid)));
 			return true;
 		}
 	}

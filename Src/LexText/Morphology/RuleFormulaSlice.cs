@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -170,8 +170,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 			IPhSimpleContextNC ctxt = RuleFormulaControl.CurrentContext as IPhSimpleContextNC;
-			Mediator.PostMessage("FollowLink", new FwLinkArgs("naturalClassedit",
-				ctxt.FeatureStructureRA.Guid));
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink,
+				new FwLinkArgs("naturalClassedit", ctxt.FeatureStructureRA.Guid)));
 			return true;
 		}
 
@@ -188,7 +188,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			CheckDisposed();
 			IPhSimpleContextSeg ctxt = RuleFormulaControl.CurrentContext as IPhSimpleContextSeg;
-			Mediator.PostMessage("FollowLink", new FwLinkArgs("phonemeEdit", ctxt.FeatureStructureRA.Guid));
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink,
+				new FwLinkArgs("phonemeEdit", ctxt.FeatureStructureRA.Guid)));
 			return true;
 		}
 	}

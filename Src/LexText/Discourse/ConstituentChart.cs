@@ -859,8 +859,9 @@ namespace SIL.FieldWorks.Discourse
 				list.PossibilitiesOS.Add(newKid);
 				RecordList.SetUpConstChartTemplateTemplate(newKid);
 				Cache.DomainDataByFlid.EndUndoTask();
-				m_mediator.PostMessage("FollowLink", new FwLinkArgs(DiscourseStrings.ksNewTemplateLink, newKid.Guid));
 				selection.SelectedItem = m_template;
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink,
+					new FwLinkArgs(DiscourseStrings.ksNewTemplateLink, newKid.Guid)));
 				return;
 			}
 

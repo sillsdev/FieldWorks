@@ -401,7 +401,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			List<Property> additionalProps = link.PropertyTableEntries;
 			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new Property("LinkSetupInfo", "TeReviewUndecidedSpelling"));
-			m_mediator.PostMessage("FollowLink", link);
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, link));
 			return true;
 		}
 
@@ -419,7 +419,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			List<Property> additionalProps = link.PropertyTableEntries;
 			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new Property("LinkSetupInfo", "TeCorrectSpelling"));
-			m_mediator.PostMessage("FollowLink", link);
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, link));
 			return true;
 		}
 
@@ -471,7 +471,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (command.TargetId != Guid.Empty)
 			{
 				var tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
-				m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, command.TargetId));
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink,
+					new FwLinkArgs(tool, command.TargetId)));
 				command.TargetId = Guid.Empty;	// clear the target for future use.
 				return true;
 			}
@@ -777,7 +778,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (guid != Guid.Empty)
 			{
 				var tool = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "tool");
-				m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, guid));
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink,
+					new FwLinkArgs(tool, guid)));
 				return true;
 			}
 			return false;

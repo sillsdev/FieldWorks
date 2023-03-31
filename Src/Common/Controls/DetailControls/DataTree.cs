@@ -3800,7 +3800,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Guid guid = GetGuidForJumpToTool((Command) commandObject, false, out tool);
 			if (guid != Guid.Empty)
 			{
-				m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, guid));
+				FwUtils.FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink,
+					new FwLinkArgs(tool, guid)));
 				((Command)commandObject).TargetId = Guid.Empty;	// clear the target for future use.
 				return true;
 			}
@@ -3840,7 +3841,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new Property("LinkSetupInfo", linkSetupInfo));
 			additionalProps.Add(new Property("HvoOfAnthroItem", hvo.ToString(CultureInfo.InvariantCulture)));
-			m_mediator.PostMessage("FollowLink", link);
+			FwUtils.FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, link));
 		}
 
 		/// <summary>

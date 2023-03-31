@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -216,8 +216,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private void OnEditDomainsLinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			var toolName = XmlUtils.GetAttributeValue(LinkNode, "tool");
-			Mediator.PostMessage("FollowLink", new FwUtils.FwLinkArgs(toolName, new Guid()));
 			btnCancel.PerformClick();
+			FwUtils.FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink,
+				new FwUtils.FwLinkArgs(toolName, new Guid())));
 		}
 
 		public System.Xml.XmlNode LinkNode { get; set; }

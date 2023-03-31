@@ -634,7 +634,8 @@ namespace SIL.FieldWorks.FdoUi
 			var command = (Command) commandObject;
 			string tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 			var guid = GuidForJumping(commandObject);
-			m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, guid));
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink,
+				new FwLinkArgs(tool, guid)));
 			return true;
 		}
 
@@ -2488,7 +2489,7 @@ namespace SIL.FieldWorks.FdoUi
 
 			if (m_targetUi != null)
 				return m_targetUi.OnJumpToTool(commandObject);
-				return base.OnJumpToTool(commandObject);
+			return base.OnJumpToTool(commandObject);
 		}
 
 		/// <summary>
