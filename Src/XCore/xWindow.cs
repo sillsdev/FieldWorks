@@ -419,11 +419,7 @@ namespace XCore
 
 		#region Initialization
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="XCoreMainWnd"/> class.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
+		/// <summary/>
 		public XWindow()
 		{
 			AccessibleName = GetType().Name;
@@ -1195,22 +1191,6 @@ namespace XCore
 			return MakeGroupSet(m_windowConfigurationNode, adapter, elementName);
 		}
 
-		/// <summary>
-		/// sets up either the menubar, toolbar collection, or sidebar
-		/// </summary>
-		/// <param name="adaptorAssembly"></param>
-		/// <param name="m_windowConfigurationNode"></param>
-		/// <param name="elementName"></param>
-		/// <param name="adapterClass"></param>
-		/// <returns></returns>
-		protected ChoiceGroupCollection MakeMajorUIPortion(Assembly adaptorAssembly, XmlNode m_windowConfigurationNode,
-			string elementName, string adapterClass, out System.Windows.Forms.Control control)
-		{
-			IUIAdapter dummy;
-			return MakeMajorUIPortion(adaptorAssembly, m_windowConfigurationNode,
-				elementName, adapterClass, out control, out dummy);
-		}
-
 		protected ChoiceGroupCollection MakeGroupSet(XmlNode m_windowConfigurationNode, IUIAdapter adapter, string elementName)
 		{
 			XmlNode configurationNode = m_windowConfigurationNode.SelectSingleNode(elementName);
@@ -1690,106 +1670,6 @@ namespace XCore
 		public virtual void SaveSettings()
 		{
 			m_propertyTable.Save("", new string[0]);
-		}
-
-		/// <summary>
-		/// Start the window almost from scratch.
-		/// This is needed to fix the full refresh behavior of wiping out everything in the caches.
-		/// </summary>
-		protected void WarmBootPart1()
-		{
-			SaveSettings();
-
-			// Disable the mediator from processing messages.
-			if (m_mediator != null)
-			{
-				m_mediator.MainWindow = null;
-				m_mediator.ProcessMessages = false;
-				m_mediator.RemoveColleague(this);
-			}
-			// m_mainSplitContainer is the only control created and added to this.Controls in
-			// InitializeComponents().  Get rid of all the other collected controls -- they'll be
-			// recreated by LoadUIFromXmlDocument().
-			this.SuspendLayout();
-
-			List<Control> toRemove = new List<Control>();
-			foreach (Control ctrl in Controls)
-			{
-				if (ctrl != m_mainSplitContainer)
-					toRemove.Add(ctrl);
-			}
-			foreach (Control ctrl in toRemove)
-			{
-				Controls.Remove(ctrl);
-				ctrl.Dispose();
-			}
-
-			// close all dialogs owned by the main window
-			foreach (Form f in OwnedForms)
-			{
-				// Don't close the import wizard just because creating a custom field
-				// causes a full refresh.  See LT-10193.
-				if (f.Name != "LexImportWizard")
-					f.Close();
-			}
-
-			// Clear all the controls created in LoadUIFromXmlDocument().
-			m_rebarAdapter = null;
-			m_sidebarAdapter = null;
-			m_menuBarAdapter = null;
-			m_adapters.Clear();
-			m_sidebar = null;
-			m_menusChoiceGroupCollection.Clear();
-			m_menusChoiceGroupCollection = null;
-			m_sidebarChoiceGroupCollection.Clear();
-			m_sidebarChoiceGroupCollection = null;
-			m_toolbarsChoiceGroupCollection.Clear();
-			m_toolbarsChoiceGroupCollection = null;
-			m_statusPanels.Clear();     // Refresh refills the status panels.
-
-			// This is a patch - much like the one below on the mediator where it's checked for null.
-			// If we (I) knew why this was getting called 'n' times and the value was null, I'd have fixed
-			// it differently.
-			if (m_mainContentControl != null)
-			{
-				m_mainContentControl.Dispose();
-				m_mainContentControl = null;
-			}
-			// Finish destroying the old mediator, and create a new one.
-			if (m_mediator != null)
-			{
-				// First, we need to get rid of any existing ToolStripManager object!  (See LT-6481)
-				if (m_propertyTable.PropertyExists("ToolStripManager"))
-				{
-					m_propertyTable.SetPropertyDispose("ToolStripManager", true);
-				}
-				m_mediator.Dispose();
-			}
-			if (m_propertyTable != null)
-			{
-				m_propertyTable.Dispose();
-			}
-			// No broadcasting until it has our handle (see OnHandleCreated)
-			m_mediator = new Mediator
-			{
-				SpecificToOneMainWindow = true
-			};
-			m_propertyTable = new PropertyTable(m_mediator);
-			ResumeLayout();
-		}
-
-		/// <summary>
-		/// Start the window almost from scratch.
-		/// This is needed to fix the full refresh behavior of wiping out everything in the caches.
-		/// Callers may need to stuff things in the Mediator or its PropertyTable.
-		/// They should do that between calling WarmBootPart1 and this method.
-		/// </summary>
-		protected void WarmBootPart2()
-		{
-			//No. LoadUIFromXmlDocument(m_windowConfigurationNode.OwnerDocument, m_configurationPath);
-			// Rebuild the entire XML doc to support installing/uninstalling extensions.
-			LoadUI(m_configurationPath);
-			//m_mediator.AllowCommandsToExecute = true;
 		}
 
 		/// <summary>
