@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using SIL.LCModel.Core.Text;
@@ -70,6 +71,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			HvoTreeNode selectedNode = e.Node as HvoTreeNode;
 			PopupTree pt = GetPopupTree();
+			Guid linkGuid = Guid.Empty;
 
 			switch (selectedNode.Hvo)
 			{
@@ -109,8 +111,7 @@ namespace SIL.FieldWorks.LexText.Controls
 							}
 							case DialogResult.Yes:
 							{
-								// go to m_highestPOS in editor
-								m_mediator.PostMessage("FollowLink", new FwLinkArgs("posEdit", dlg.HighestPOS.Guid));
+								linkGuid = dlg.HighestPOS.Guid;
 								if (ParentForm != null && ParentForm.Modal)
 								{
 									// Close the dlg that opened the popup tree,
@@ -135,9 +136,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			// FWR-3432 - If we get here and we still haven't got a valid Hvo, don't continue
 			// on to the base method. It'll crash.
-			if (selectedNode.Hvo == kMore)
-				return;
-			base.m_treeCombo_AfterSelect(sender, e);
+			if (selectedNode.Hvo != kMore)
+				base.m_treeCombo_AfterSelect(sender, e);
+
+			if (linkGuid != Guid.Empty)
+			{
+				// go to m_highestPOS in editor
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink,
+					new FwLinkArgs("posEdit", linkGuid)));
+			}
 		}
 	}
 }

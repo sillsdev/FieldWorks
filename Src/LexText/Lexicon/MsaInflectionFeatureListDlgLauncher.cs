@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						// I'm just guessing.
 						// Also, is there some way to know the application name and tool name without hard coding them?
 						var linkJump = new FwLinkArgs("posEdit", dlg.HighestPOS.Guid);
-						m_mediator.PostMessage("FollowLink", linkJump);
+						FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, linkJump));
 					}
 					else
 					{
@@ -301,7 +301,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 											// Also, is there some way to know the application name and tool name without hard coding them?
 					*/
 					var linkJump = new FwLinkArgs("featuresAdvancedEdit", m_cache.LanguageProject.MsFeatureSystemOA.Guid);
-					m_mediator.PostMessage("FollowLink", linkJump);
+					FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, linkJump));
 					/*}
 					else
 					{

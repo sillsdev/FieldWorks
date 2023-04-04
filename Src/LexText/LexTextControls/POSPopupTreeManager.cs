@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Windows.Forms;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
@@ -116,6 +117,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected override void m_treeCombo_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			HvoTreeNode selectedNode = e.Node as HvoTreeNode;
+			Guid linkGuid = Guid.Empty;
 
 			if (selectedNode != null && selectedNode.Hvo == kMore && e.Action == TreeViewAction.ByMouse)
 			{
@@ -149,14 +151,8 @@ namespace SIL.FieldWorks.LexText.Controls
 							break;
 						case DialogResult.Yes:
 						{
-							// Post a message so that we jump to Grammar(area)/Categories tool.
-							// Do this before we close any parent dialog in case
-							// the parent wants to check to see if such a Jump is pending.
-							// NOTE: We use PostMessage here, rather than SendMessage which
-							// disposes of the PopupTree before we and/or our parents might
-							// be finished using it (cf. LT-2563).
-							m_mediator.PostMessage("FollowLink",
-								new FwLinkArgs(JumpToToolNamed, dlg.SelectedPOS.Guid));
+							linkGuid = dlg.SelectedPOS.Guid;
+
 							if (ParentForm != null && ParentForm.Modal)
 							{
 								// Close the dlg that opened the master POS dlg,
@@ -176,6 +172,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 
 			base.m_treeCombo_AfterSelect(sender, e);
+
+			if (linkGuid != Guid.Empty)
+			{
+				// Post a message so that we jump to Grammar(area)/Categories tool.
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink,
+					new FwLinkArgs(JumpToToolNamed, linkGuid)));
+			}
 		}
 	}
 }

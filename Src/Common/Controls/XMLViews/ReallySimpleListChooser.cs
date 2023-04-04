@@ -1663,26 +1663,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		/// <summary>
-		/// If the user clicked on a link label, post a message via the mediator to jump to that
-		/// location in the program.
-		/// </summary>
-		/// <returns><c>true</c> if a jump taken, <c>false</c> otherwise</returns>
-		public bool HandleAnyJump(Mediator mediator)
-		{
-			CheckDisposed();
-
-			if (mediator != null && m_linkJump != null)
-			{
-				mediator.PostMessage("FollowLink", m_linkJump);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
 		private void SimpleListChooser_Activated(object sender, EventArgs e)
 		{
 			if (m_labelsTreeView != null)

@@ -487,14 +487,6 @@ namespace SIL.FieldWorks.LexText.Controls
 						// everything should be setup with new node selected, so return.
 						break;
 					case DialogResult.Yes:
-						// represents a click on the link to create a new Grammar Category.
-						// Post a message so that we jump to Grammar(area)/Categories tool.
-						// Do this before we close any parent dialog in case
-						// the parent wants to check to see if such a Jump is pending.
-						// NOTE: We use PostMessage here, rather than SendMessage which
-						// disposes of the PopupTree before we and/or our parents might
-						// be finished using it (cf. LT-2563).
-						m_mediator.PostMessage("FollowLink", new FwLinkArgs("posEdit", dlg.SelectedPOS.Guid));
 						if (m_parentOfPopupMgr != null && m_parentOfPopupMgr.Modal)
 						{
 							// Close the dlg that opened the master POS dlg,
@@ -503,6 +495,9 @@ namespace SIL.FieldWorks.LexText.Controls
 							m_parentOfPopupMgr.DialogResult = DialogResult.Cancel;
 							m_parentOfPopupMgr.Close();
 						}
+						// represents a click on the link to create a new Grammar Category.
+						FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink,
+							new FwLinkArgs("posEdit", dlg.SelectedPOS.Guid)));
 						break;
 					default:
 						// NOTE: If the user has selected "Cancel", then don't change
