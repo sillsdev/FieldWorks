@@ -581,13 +581,15 @@ namespace XCore
 			// Some clients manage to get here by looking up a null key under local settings. Don't broadcast that.
 			if (!string.IsNullOrWhiteSpace(propertyName))
 			{
-				FwUtils.Publisher.Publish(new PublisherParameterObject(propertyName, newValue));
+				void PublishOnIdle(object sender, EventArgs e)
+				{
+					Application.Idle -= PublishOnIdle;
+					FwUtils.Publisher.Publish(new PublisherParameterObject(propertyName, newValue));
+				}
+				Application.Idle += PublishOnIdle;
 			}
 
-			if (Mediator != null)
-			{
-				Mediator.BroadcastString("OnPropertyChanged", propertyName);
-			}
+			Mediator?.BroadcastString("OnPropertyChanged", propertyName);
 		}
 
 		/// <summary>

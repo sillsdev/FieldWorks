@@ -297,14 +297,14 @@ namespace XCore
 				if (item is SeparatorChoice == false)
 					displayProperties = item.GetDisplayProperties();
 
-				// toolStrip has less items then visiable items in the ChoiceGroup so regenerate
+				// toolStrip has less items then visible items in the ChoiceGroup so regenerate
 				if (toolStrip.Items.Count <= counter)
 					return true;
 
-				// skip over seperators
-				// Note: sepeartors contained in the ChoiceGroup are only always added to the ToolStrip
-				// if they are followed by a visiable non sepeartor item.
-				// So a missing sepeartor doesn't necessary mean the toolbar needs regenerating.
+				// skip over separators
+				// Note: separators contained in the ChoiceGroup are added to the ToolStrip
+				// only if they are followed by a visible non-separator item.
+				// So a missing separator doesn't necessary mean the toolbar needs regenerating.
 				if (displayProperties == null)
 				{
 					if (toolStrip.Items[counter] is ToolStripSeparator)
