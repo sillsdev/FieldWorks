@@ -328,10 +328,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_helpProvider.SetHelpKeyword(this, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").GetHelpString(helpTopic));
 		}
 
+		public FwLinkArgs JumpLink()
+		{
+			return m_link;
+		}
+
 		public void HandleJump()
 		{
 			if (m_link != null)
-				m_mediator.PostMessage("FollowLink", m_link);
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, m_link));
 		}
 
 		void m_bvList_SelectionChanged(object sender, FwObjectSelectionEventArgs e)

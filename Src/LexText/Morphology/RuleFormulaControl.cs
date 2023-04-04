@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -569,6 +569,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var redo = string.Format(MEStrings.ksRuleRedoInsert, option);
 
 			SelectionHelper sel = SelectionHelper.Create(m_view);
+			FwLinkArgs jumpLink = null;
 			int cellId = -1;
 			int cellIndex = -1;
 			switch (option.Type)
@@ -621,7 +622,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						}
 						else if (res != DialogResult.Cancel)
 						{
-							featChooser.HandleJump();
+							jumpLink = featChooser.JumpLink();
 						}
 					}
 					break;
@@ -670,6 +671,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				// reconstruct the view and place the cursor after the newly added item
 				ReconstructView(cellId, cellIndex, false);
+			}
+
+			if (jumpLink != null)
+			{
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, jumpLink));
 			}
 		}
 
@@ -954,6 +960,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			SelectionHelper sel = SelectionHelper.Create(m_view);
 			bool reconstruct;
+			FwLinkArgs jumpLink = null;
 
 			using (var featChooser = new PhonologicalFeatureChooserDlg())
 			{
@@ -982,7 +989,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				featChooser.SetHelpTopic("khtpChoose-Grammar-PhonRules-SetPhonologicalFeatures");
 				DialogResult res = featChooser.ShowDialog();
 				if (res != DialogResult.Cancel)
-					featChooser.HandleJump();
+					jumpLink = featChooser.JumpLink();
 				reconstruct = res == DialogResult.OK;
 			}
 
@@ -991,6 +998,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				m_view.RootBox.Reconstruct();
 				sel.RestoreSelectionAndScrollPos();
+			}
+
+			if (jumpLink != null)
+			{
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, jumpLink));
 			}
 		}
 

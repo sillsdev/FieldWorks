@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Linq;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.LexText.Controls;
 using XCore;
@@ -107,6 +108,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			HvoTreeNode selectedNode = e.Node as HvoTreeNode;
 			PopupTree pt = GetPopupTree();
+			FwLinkArgs jumpLink = null;
 
 			switch (selectedNode.Hvo)
 			{
@@ -152,7 +154,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						}
 						else if (result != DialogResult.Cancel)
 						{
-							dlg.HandleJump();
+							jumpLink = dlg.JumpLink();
 						}
 						else if (result == DialogResult.Cancel)
 						{
@@ -166,9 +168,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 			// FWR-3432 - If we get here and we still haven't got a valid Hvo, don't continue
 			// on to the base method. It'll crash.
-			if (selectedNode.Hvo == kChoosePhonologicaFeatures)
-				return;
-			base.m_treeCombo_AfterSelect(sender, e);
+			if (selectedNode.Hvo != kChoosePhonologicaFeatures)
+				base.m_treeCombo_AfterSelect(sender, e);
+
+			if (jumpLink != null)
+			{
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, jumpLink));
+			}
 		}
 		#region IDisposable & Co. implementation
 		// Region last reviewed: never
