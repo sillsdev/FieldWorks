@@ -211,13 +211,13 @@ namespace SIL.FieldWorks
 
 				s_appSettings.Save();
 #if DEBUG
-				const string analyticsKey = "ddkPyi0BMbFRyOC5PLuCKHVbJH2yI9Cu";
+				const string analyticsKey = "1ea57cd5f3a23080de9276b4c9a03fbd";
 				const bool sendFeedback = true;
 #else
-				const string analyticsKey = "ddkPyi0BMbFRyOC5PLuCKHVbJH2yI9Cu"; // TODO: replace with production key after initial testing period
+				const string analyticsKey = "624c80ea22952a1a70251b8e64844d79";
 				var sendFeedback = reportingSettings.OkToPingBasicUsageData;
 #endif
-				using (new Analytics(analyticsKey, new UserInfo(), sendFeedback))
+				using (new Analytics(analyticsKey, new UserInfo(), sendFeedback, clientType: DesktopAnalytics.ClientType.Mixpanel))
 				{
 
 					Logger.WriteEvent("Starting app");

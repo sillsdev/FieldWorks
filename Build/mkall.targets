@@ -673,7 +673,8 @@
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/Paratext.LexicalContracts.dll" />
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/ParatextData.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/PtxUtils.dll"/>
-			<NuGottenFiles Include="$(PackagesDir)/SIL.DesktopAnalytics.3.0.3/lib/net461/DesktopAnalytics.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/SIL.DesktopAnalytics.4.0.0/lib/net461/DesktopAnalytics.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/mixpanel-csharp.6.0.0/lib/net461/Mixpanel.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/System.Runtime.CompilerServices.Unsafe.6.0.0/lib/net461/System.Runtime.CompilerServices.Unsafe.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/System.Threading.Tasks.Extensions.4.5.4/lib/net461/System.Threading.Tasks.Extensions.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/System.ValueTuple.4.5.0/lib/net461/System.ValueTuple.dll"/>
