@@ -412,7 +412,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			if (disposing)
 			{
-				FwUtils.FwUtils.Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, BestStyleName_Changed);
+				FwUtils.FwUtils.Subscriber.Unsubscribe(PropertyConstants.BestStyleName, BestStyleName_Changed);
 				FwUtils.FwUtils.Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, WritingSystemHvo_Changed);
 
 				// Do this here, before disposing m_messageSequencer,
@@ -2036,6 +2036,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			// Save the mediator in case a client or subclass wants it.
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
+			FwUtils.FwUtils.Subscriber.Subscribe(PropertyConstants.BestStyleName, BestStyleName_Changed);
+			FwUtils.FwUtils.Subscriber.Subscribe(PropertyConstants.WritingSystemHvo, WritingSystemHvo_Changed);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2084,11 +2086,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected virtual void WritingSystemHvo_Changed(object _)
 		{
 			CheckDisposed();
-			if (!Focused)
-			{
-				FwUtils.FwUtils.Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, WritingSystemHvo_Changed);
-				return;
-			}
 
 			EditingHelper.WritingSystemHvoChanged();
 		}
@@ -3348,16 +3345,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			EditingHelper.GotFocus();
 
-			FwUtils.FwUtils.Subscriber.Subscribe(PropertyConstants.WritingSystemHvo, BestStyleName_Changed);
-			FwUtils.FwUtils.Subscriber.Subscribe(PropertyConstants.WritingSystemHvo, WritingSystemHvo_Changed);
-		}
-
-		/// <summary />
-		protected override void OnLostFocus(EventArgs e)
-		{
-			FwUtils.FwUtils.Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, BestStyleName_Changed);
-			FwUtils.FwUtils.Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, WritingSystemHvo_Changed);
-			base.OnLostFocus(e);
 		}
 
 		/// ------------------------------------------------------------------------------------
