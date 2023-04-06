@@ -922,21 +922,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// (For internal use only.) Determine whether or not client posted a "FollowLink"
-		/// message, in which case we are about to switch tools.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private bool IsFollowLinkMsgPending
-		{
-			get
-			{
-				return (m_mediator != null) && m_mediator.IsMessageInPendingQueue("FollowLink");
-				// NOTE: if m_mediator == null, the message could still have been posted.
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets the data access (corresponds to a DB connection) for the rootbox of this
 		/// rootsite.
 		/// </summary>
@@ -3769,10 +3754,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			if (m_rootb == null || DataUpdateMonitor.IsUpdateInProgress())
 				return;
-			// If we have posted a FollowLink message, then don't process any other
-			// mouse event, since will be changing areas, invalidating our MouseEventArgs.
-			if (IsFollowLinkMsgPending)
-				return;
 
 			SwitchFocusHere();
 
@@ -3793,16 +3774,6 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				if (DataUpdateMonitor.IsUpdateInProgress())
 					return; //discard this event
-				if (IsFollowLinkMsgPending)
-				{
-					// REVIEW (TimS): This uninit graphics doesn't appear to be needed... is there
-					// a reason it was put in? It could cause problems because we init the graphics
-					// outside of this method and have no idea what might happen if this method and
-					// the method that calls this method both uninit the graphics object. Although
-					// no known problems have been seen, it was commented out.
-					//UninitGraphics();
-					return; //discard this event
-				}
 				using (new HoldGraphics(this))
 				{
 					IVwSelection sel = (IVwSelection)m_rootb.Selection;
@@ -3895,16 +3866,6 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			if (DataUpdateMonitor.IsUpdateInProgress())
 				return true; //discard this event
-			if (IsFollowLinkMsgPending)
-			{
-				// REVIEW (TimS): This uninit graphics doesn't appear to be needed... is there
-				// a reason it was put in? It could cause problems because we init the graphics
-				// outside of this method and have no idea what might happen if this method and
-				// the method that calls this method both uninit the graphics object. Although
-				// no known problems have been seen, it was commented out.
-				//UninitGraphics();
-				return true; //discard this event
-			}
 
 			return DoContextMenu(invSel, pt, rcSrcRoot, rcDstRoot);
 		}
@@ -3950,13 +3911,9 @@ namespace SIL.FieldWorks.Common.RootSites
 					}
 					if (HandleContextMenuFromKeyboard(RootBox.Selection, pt))
 						return true;
-					// These two checks are copied from OnRightMouseUp; not sure why (or whether) they are needed.
+					// This check was copied from OnRightMouseUp; not sure why (or whether) it is needed.
 					if (DataUpdateMonitor.IsUpdateInProgress())
 						return true; //discard this event
-					if (IsFollowLinkMsgPending)
-					{
-						return true; //discard this event
-					}
 					using (var hg = new HoldGraphics(this))
 					{
 						Rectangle rcSrcRoot, rcDstRoot;

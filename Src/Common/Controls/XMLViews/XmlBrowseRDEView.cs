@@ -922,7 +922,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void JumpToToolFor(ICmObject target)
 		{
-			m_mediator.PostMessage("FollowLink", new FwLinkArgs("lexiconEdit", target.Guid));
+			FwUtils.FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink,
+				new FwLinkArgs("lexiconEdit", target.Guid)));
 		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

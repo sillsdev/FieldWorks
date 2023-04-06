@@ -98,25 +98,6 @@ namespace XCore
 	/// <summary></summary>
 	public sealed class Mediator : Component
 	{
-		#region PendingMessageItem
-
-		/// <summary>
-		/// This class is used by the message queue system.
-		/// </summary>
-		private class PendingMessageItem
-		{
-			public string m_message;
-			public object m_parameter;
-
-			public PendingMessageItem(string message, object parameter)
-			{
-				m_message = message;
-				m_parameter = parameter;
-			}
-		}
-
-		#endregion #region PendingMessageItem
-
 		#region QueueItem class
 		/// <summary>
 		/// This is a simple class that contains the information that is used in the InvokeRecursively method.
@@ -479,21 +460,6 @@ namespace XCore
 				CheckDisposed();
 				return m_idleQueue;
 			}
-		}
-
-		/// <summary>
-		/// Retrieve a copy of the current queue of pending messages
-		/// </summary>
-		public bool IsMessageInPendingQueue(string message)
-		{
-			CheckDisposed();
-			foreach (var task in m_idleQueue)
-			{
-				var pmi = task.Parameter as PendingMessageItem;
-				if (pmi != null && pmi.m_message == message)
-					return true;
-			}
-			return false;
 		}
 
 		public bool ProcessMessages
@@ -968,27 +934,6 @@ namespace XCore
 			return result;
 		}
 
-		/// <summary>
-		/// This method is a replacement message for the SendMessage when the return value isn't
-		/// actually used.  It allows those messages to be defered for a different message (later).
-		/// </summary>
-		/// <param name="messageName"></param>
-		/// <param name="parameter"></param>
-		public void SendMessageDefered(string messageName, object parameter)
-		{
-			CheckDisposed();
-
-			if (!ProcessMessages)
-				return;
-
-#if DEBUG
-			if(messageName.Substring(0,2) == "On")
-				Debug.Fail("The convention is to send messages without the 'On' prefix. " +
-					"That is added by the message sending code.");
-#endif
-			AddQueueItem(new QueueItem("On" + messageName, new Type[] {typeof(object)},
-				new Object[] { parameter }, true, false));
-		}
 
 #if TESTING_PCDEFERED
 		/// <summary>
@@ -1015,30 +960,6 @@ namespace XCore
 		}
 		public delegate void PropChangedDelegate(int hvo, int tag, int ivMin, int cvIns, int cvDel);
 #endif
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Post a command to be sent during an upcoming idle moment.
-		/// </summary>
-		/// <param name="messageName"></param>
-		/// <param name="parameter"></param>
-		/// ------------------------------------------------------------------------------------
-		public void PostMessage(string messageName, object parameter)
-		{
-			CheckDisposed();
-
-			if (!ProcessMessages)
-				return;
-
-			m_idleQueue.Add(IdleQueuePriority.Medium, PostMessageOnIdle, new PendingMessageItem(messageName, parameter), false);
-		}
-
-		bool PostMessageOnIdle(object parameter)
-		{
-			var pmi = (PendingMessageItem) parameter;
-			SendMessage(pmi.m_message, pmi.m_parameter);
-			return true;
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
