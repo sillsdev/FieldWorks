@@ -110,6 +110,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			string displayWs = "analysis vernacular";
 			//string displayWs = "best analysis";
 			string postDialogMessageTrigger = null;
+			FwLinkArgs jumpLink = null;
 
 			if (m_configurationNode != null)
 			{
@@ -172,7 +173,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					return;
 
 				if (m_configurationNode != null)
-					chooser.HandleAnyJump();
+					jumpLink = chooser.JumpLink;
 
 				if (chooser.ChosenOne != null)
 					AddItem(chooser.ChosenOne.Object);
@@ -187,6 +188,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// If the configuration file says to refresh the slice list, do that now.
 			if (ChoicesMade != null)
 				ChoicesMade(this, new EventArgs());
+
+			if (jumpLink != null)
+			{
+				FwUtils.FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, jumpLink));
+			}
 		}
 
 		/// <summary>

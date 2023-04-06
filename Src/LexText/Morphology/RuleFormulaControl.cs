@@ -524,6 +524,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			var labels = ObjectLabel.CreateObjectLabels(m_cache, candidates.OrderBy(e => e.ShortName), null, displayWs);
 
+			FwLinkArgs jumpLink = null;
 			using (var chooser = new SimpleListChooser(m_persistProvider, labels,
 				m_fieldName, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
@@ -535,7 +536,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				DialogResult res = chooser.ShowDialog();
 				if (res != DialogResult.Cancel)
 				{
-					chooser.HandleAnyJump();
+					jumpLink = chooser.JumpLink;
 
 					if (chooser.ChosenOne != null)
 						selectedEnv = chooser.ChosenOne.Object as IPhEnvironment;
@@ -553,6 +554,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				});
 
 				ReconstructView(cellId, -1, true);
+			}
+
+			if (jumpLink != null)
+			{
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, jumpLink));
 			}
 		}
 
@@ -577,7 +583,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				case RuleInsertType.Phoneme:
 					IEnumerable<IPhPhoneme> phonemes = m_cache.LangProject.PhonologicalDataOA.PhonemeSetsOS[0].PhonemesOC.OrderBy(ph => ph.ShortName);
 					ICmObject phonemeObj = DisplayChooser(MEStrings.ksRulePhonemeOpt, MEStrings.ksRulePhonemeChooserLink,
-						"phonemeEdit", "RulePhonemeFlatList", phonemes);
+						"phonemeEdit", "RulePhonemeFlatList", phonemes, out jumpLink);
 					var phoneme = phonemeObj as IPhPhoneme;
 					if (phoneme == null)
 						return;
@@ -590,7 +596,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				case RuleInsertType.NaturalClass:
 					IEnumerable<IPhNaturalClass> natClasses = m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.OrderBy(natc => natc.ShortName);
 					ICmObject ncObj = DisplayChooser(MEStrings.ksRuleNCOpt, MEStrings.ksRuleNCChooserLink,
-						"naturalClassedit", "RuleNaturalClassFlatList", natClasses);
+						"naturalClassedit", "RuleNaturalClassFlatList", natClasses, out jumpLink);
 					var nc = ncObj as IPhNaturalClass;
 					if (nc == null)
 						return;
@@ -684,8 +690,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			featChooser.SetDlgInfo(m_cache, m_mediator, m_propertyTable);
 		}
 
-		protected ICmObject DisplayChooser(string fieldName, string linkText, string toolName, string guiControl, IEnumerable<ICmObject> candidates)
+		protected ICmObject DisplayChooser(string fieldName, string linkText, string toolName, string guiControl, IEnumerable<ICmObject> candidates, out FwLinkArgs jumpLink)
 		{
+			jumpLink = null;
 			ICmObject obj = null;
 
 			IEnumerable<ObjectLabel> labels = ObjectLabel.CreateObjectLabels(m_cache, candidates);
@@ -703,7 +710,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				DialogResult res = chooser.ShowDialog();
 				if (res != DialogResult.Cancel)
 				{
-					chooser.HandleAnyJump();
+					jumpLink = chooser.JumpLink;
 
 					if (chooser.ChosenOne != null)
 						obj = chooser.ChosenOne.Object;

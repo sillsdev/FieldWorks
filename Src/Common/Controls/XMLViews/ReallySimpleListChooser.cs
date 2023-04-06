@@ -1644,6 +1644,11 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
+		/// Get the link information.
+		/// </summary>
+		public FwLinkArgs JumpLink { get => m_linkJump; }
+
+		/// <summary>
 		/// If the user clicked on a link label, post a message via the mediator to jump to that
 		/// location in the program.
 		/// </summary>
@@ -1652,9 +1657,9 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			if (m_mediator != null && m_linkJump != null)
+			if (m_linkJump != null)
 			{
-				m_mediator.PostMessage("FollowLink", m_linkJump);
+				FwUtils.FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, m_linkJump));
 				return true;
 			}
 			else
@@ -2551,10 +2556,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="persistenceProvider"></param>
 		/// <param name="mediator"></param>
 		/// <param name="propertyTable"></param>
+		/// <param name="jumpLink"></param>
 		/// <returns></returns>
 		public static bool ChooseNaturalClass(IVwRootBox rootb, LcmCache cache,
-			IPersistenceProvider persistenceProvider, Mediator mediator, PropertyTable propertyTable)
+			IPersistenceProvider persistenceProvider, Mediator mediator, PropertyTable propertyTable, out FwLinkArgs jumpLink)
 		{
+			jumpLink = null;
 			IEnumerable<ObjectLabel> labels = ObjectLabel.CreateObjectLabels(cache,
 				cache.LanguageProject.PhonologicalDataOA.NaturalClassesOS, "",
 				cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Id);
@@ -2586,7 +2593,9 @@ namespace SIL.FieldWorks.Common.Controls
 				DialogResult res = chooser.ShowDialog();
 				if (DialogResult.Cancel == res)
 					return true;
-				if (chooser.HandleAnyJump())
+
+				jumpLink = chooser.JumpLink;
+				if (jumpLink != null)
 					return true;
 				if (chooser.ChosenOne != null)
 				{

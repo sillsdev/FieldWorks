@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -251,9 +251,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				if (DialogResult.Cancel == res)
 					return;
 
-				if (m_configurationNode != null)
-					chooser.HandleAnyJump();
-
 				if (chooser.ChosenObjects != null)
 				{
 					IRnRoledPartic roledPartic = null;
@@ -268,6 +265,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					});
 					ExpandNewNode(roledPartic);
 				}
+
+				if (m_configurationNode != null)
+					chooser.HandleAnyJump();
 			}
 		}
 

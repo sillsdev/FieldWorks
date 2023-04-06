@@ -313,8 +313,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 			PhoneEnvReferenceLauncher rl = (PhoneEnvReferenceLauncher)this.Control;
 			PhoneEnvReferenceView view = (PhoneEnvReferenceView)rl.MainControl;
-			return SimpleListChooser.ChooseNaturalClass(view.RootBox, m_cache,
-				m_persistenceProvider, Mediator, m_propertyTable);
+			bool ok = SimpleListChooser.ChooseNaturalClass(view.RootBox, m_cache,
+				m_persistenceProvider, Mediator, m_propertyTable, out var jumpLink);
+
+			if (jumpLink != null)
+			{
+				FwUtils.FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, jumpLink));
+			}
+
+			return ok;
 		}
 
 		/// <summary>

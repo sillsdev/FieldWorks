@@ -170,8 +170,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			StringRepSliceView view = Control as StringRepSliceView;
 			m_cache.DomainDataByFlid.BeginUndoTask(MEStrings.ksInsertNaturalClass, MEStrings.ksInsertNaturalClass);
 			bool fOk = SimpleListChooser.ChooseNaturalClass(view.RootBox, m_cache,
-				m_persistenceProvider, Mediator, m_propertyTable);
+				m_persistenceProvider, Mediator, m_propertyTable, out var jumpLink);
 			m_cache.DomainDataByFlid.EndUndoTask();
+
+			if (jumpLink != null)
+			{
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, jumpLink));
+			}
+
 			return fOk;
 		}
 
