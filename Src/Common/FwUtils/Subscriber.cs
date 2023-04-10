@@ -11,7 +11,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// <summary>
 	/// Implementation of ISubscriber interface.
 	/// </summary>
-	public sealed class Subscriber : ISubscriber
+	internal sealed class Subscriber : ISubscriber
 	{
 		private readonly Dictionary<string, HashSet<Action<object>>> _subscriptions = new Dictionary<string, HashSet<Action<object>>>();
 

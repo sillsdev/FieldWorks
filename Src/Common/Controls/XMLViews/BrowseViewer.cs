@@ -11,10 +11,11 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
+using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -1065,6 +1066,7 @@ namespace SIL.FieldWorks.Common.Controls
 			HScroll = true;
 			m_scrollContainer.ResumeLayout(false);
 			ResumeLayout(false);
+			Subscriber.Subscribe(PropertyConstants.SortedByLength, SortedFromEndChanged);
 		}
 
 		/// <summary>
@@ -1563,6 +1565,7 @@ namespace SIL.FieldWorks.Common.Controls
 					components.Dispose();
 				}
 				m_SortersToDispose.Dispose();
+				Subscriber.Unsubscribe(PropertyConstants.SortedByLength, SortedFromEndChanged);
 			}
 			m_configureButton = null;
 			m_scrollBar = null;
@@ -3228,10 +3231,13 @@ namespace SIL.FieldWorks.Common.Controls
 				case "SortedFromEnd":
 					CurrentColumnSortedFromEnd = !CurrentColumnSortedFromEnd;
 					break;
-				case "SortedByLength":
-					CurrentColumnSortedByLength = !CurrentColumnSortedByLength;
-					break;
 			}
+			SetAndRaiseSorter(Sorter, true);
+		}
+
+		private void SortedFromEndChanged(object _)
+		{
+			CurrentColumnSortedByLength = !CurrentColumnSortedByLength;
 			SetAndRaiseSorter(Sorter, true);
 		}
 
