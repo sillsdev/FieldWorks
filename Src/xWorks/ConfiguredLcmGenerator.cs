@@ -2187,11 +2187,24 @@ namespace SIL.FieldWorks.XWorks
 			if (config.IsHeadWord)
 			{
 				if (field is ILexEntry)
-					guid = ((ILexEntry)field).Guid;
+				{
+					// For Complex Forms, don't generate the reference if we are not going to publish the entry to Webonary.
+					if (settings.IsWebExport &&
+						!((ILexEntry)field).PublishAsMinorEntry &&
+						((ILexEntry)field).EntryRefsOS.Count > 0)
+					{
+						guid = Guid.Empty;
+					}
+					else
+					{
+						guid = ((ILexEntry)field).Guid;
+					}
+				}
 				else if (field is ILexEntryRef)
 				{
-					// Don't generate the reference if we are not going to publish the entry to Webonary.
-					if (settings.IsWebExport && !((ILexEntryRef)field).OwningEntry.PublishAsMinorEntry)
+					// For Variants, don't generate the reference if we are not going to publish the entry to Webonary.
+					if (settings.IsWebExport &&
+						!((ILexEntryRef)field).OwningEntry.PublishAsMinorEntry)
 					{
 						guid = Guid.Empty;
 					}

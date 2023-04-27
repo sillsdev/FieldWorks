@@ -6989,6 +6989,56 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordXpath, 1);
 		}
 
+		// ComplexForm: Don't generate the reference if we are hiding minor entries AND we are publishing to Webonary.
+		[Test]
+		public void GenerateXHTMLForEntry_ComplexFormDontGenerateReference()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+			var subentry = CreateInterestingLexEntry(Cache);
+			var subentryRef = CreateComplexForm(Cache, lexentry, subentry, true);
+
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var refTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = ConfiguredLcmGenerator.LookupComplexEntryType,
+				CSSClassNameOverride = "complexformtypes",
+			};
+			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex, Cache);
+			var subentryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { refTypeNode, headwordNode },
+				DictionaryNodeOptions = complexOptions,
+				FieldDescription = "Subentries"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { subentryNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			subentryRef.HideMinorEntry = 1;
+			const string withReference = "/div[@class='lexentry']/span[@class='subentries']/span[@class='subentry']/span[@class='headword']/span[@lang='fr']/span[@lang='fr']/a[@href]";
+			const string withoutReference = "/div[@class='lexentry']/span[@class='subentries']/span[@class='subentry']/span[@class='headword']/span[@lang='fr']/span[@lang='fr']";
+
+			// When hiding minor entries this should still generate the reference (if not publishing to Webonary).
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, false, false);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 2);
+
+			//SUT
+			// When hiding minor entries and publishing to Webonary this should NOT generate the reference.
+			settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, false, true);
+			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 0);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withoutReference, 2);
+		}
+
 		[Test]
 		public void GenerateXHTMLForEntry_GeneratesVariant_WithEmptyList()
 		{
@@ -7130,9 +7180,9 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(result, Is.Null.Or.Empty);
 		}
 
-		// Continue to generate the reference even if we are hiding the minor entry (useful for preview).
+		// Variant: Continue to generate the reference even if we are hiding the minor entry (useful for preview).
 		[Test]
-		public void GenerateXHTMLForEntry_GenerateReferenceForHiddenEntry()
+		public void GenerateXHTMLForEntry_VariantGenerateReferenceForHiddenEntry()
 		{
 			var lexentry = CreateInterestingLexEntry(Cache);
 			var variantEntry = CreateInterestingLexEntry(Cache);
@@ -7193,9 +7243,9 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 2);
 		}
 
-		// Don't generate the reference if we are hiding minor entries AND we are publishing to Webonary.
+		// Variant: Don't generate the reference if we are hiding minor entries AND we are publishing to Webonary.
 		[Test]
-		public void GenerateXHTMLForEntry_DontGenerateReference()
+		public void GenerateXHTMLForEntry_VariantDontGenerateReference()
 		{
 			var lexentry = CreateInterestingLexEntry(Cache);
 			var variantEntry = CreateInterestingLexEntry(Cache);
