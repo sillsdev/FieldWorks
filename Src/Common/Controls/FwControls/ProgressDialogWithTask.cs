@@ -689,6 +689,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="parentWindow"> </param>
 		public static void ImportTranslatedListsForWs(Form parentWindow, LcmCache cache, string ws)
 		{
+			// Return if called during project setup (before the project is created).
+			if (cache == null)
+				return;
+
 			string path = XmlTranslatedLists.TranslatedListsPathForWs(ws, FwDirectoryFinder.TemplateDirectory);
 			if (!File.Exists(path))
 				return;
