@@ -34,6 +34,7 @@ namespace SIL.FieldWorks.XWorks
 		void EndRun(IFragmentWriter writer);
 		void SetRunStyle(IFragmentWriter writer, string css);
 		void StartLink(IFragmentWriter writer, Guid destination);
+		void StartLink(IFragmentWriter writer, string externalDestination);
 		void EndLink(IFragmentWriter writer);
 		void AddToRunContent(IFragmentWriter writer, string txtContent);
 		void AddLineBreakInRunContent(IFragmentWriter writer);

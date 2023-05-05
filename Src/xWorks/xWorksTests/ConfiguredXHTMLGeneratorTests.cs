@@ -8863,7 +8863,39 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(extraDirection1);
 		}
 
-		private const string crossRefOwnerTypeXpath =
+	  [Test]
+	  public void GenerateXHTMLForEntry_EmbeddedHyperlinkGeneratesAnchor()
+	  {
+		  var headwordNode = new ConfigurableDictionaryNode
+		  {
+			  FieldDescription = "Bibliography",
+			  CSSClassNameOverride = "bib",
+			  DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+		  };
+		  var mainEntryNode = new ConfigurableDictionaryNode
+		  {
+			  Children = new List<ConfigurableDictionaryNode> { headwordNode },
+			  FieldDescription = "LexEntry"
+		  };
+		  CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+		  var entry = CreateInterestingLexEntry(Cache);
+		  var multiRunString = MakeVernTss("a link", Cache);
+		  var stringBldr = multiRunString.GetBldr();
+		  // Set the hyperlink style.
+		  stringBldr.SetStrPropValue(2, stringBldr.Length, (int)FwTextPropType.ktptNamedStyle, "Hyperlink");
+		  // Set the hyperlink data
+		  const string testUrl = "https://software.sil.org/fieldworks";
+		  // Note: There is a little wart stored in the front of external links in the string properties
+		  stringBldr.SetStrPropValue(2, stringBldr.Length, (int)FwTextPropType.ktptObjData,
+			  (char)FwObjDataTypes.kodtExternalPathName + testUrl);
+		  entry.Bibliography.set_String(m_wsFr, stringBldr.GetString());
+		  // SUT
+		  var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
+		  string nestedLink = $"/div[@class='lexentry']/span[@class='bib']/span/span/a[@href='{testUrl}']";
+		  AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(nestedLink, 1);
+	  }
+
+	  private const string crossRefOwnerTypeXpath =
 			"//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='ownertype_name']";
 
 		private static string CrossRefOwnerTypeXpath(string type)

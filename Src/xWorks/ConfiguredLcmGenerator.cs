@@ -2483,8 +2483,13 @@ namespace SIL.FieldWorks.XWorks
 
 							var props = fieldValue.get_Properties(i);
 							var style = props.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
+							string externalLink = null;
+							if (style == "Hyperlink")
+							{
+								externalLink = props.GetStrPropValue((int)FwTextPropType.ktptObjData);
+							}
 							writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(fieldValue.get_WritingSystem(i));
-							GenerateRunWithPossibleLink(settings, writingSystem, writer, style, text, linkTarget, rightToLeft);
+							GenerateRunWithPossibleLink(settings, writingSystem, writer, style, text, linkTarget, rightToLeft, externalLink);
 						}
 
 						if (fieldValue.RunCount > 1)
@@ -2530,7 +2535,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void GenerateRunWithPossibleLink(GeneratorSettings settings, string writingSystem, IFragmentWriter writer, string style,
-			string text, Guid linkDestination, bool rightToLeft)
+			string text, Guid linkDestination, bool rightToLeft, string externalLink = null)
 		{
 			settings.ContentGenerator.StartRun(writer, writingSystem);
 			var wsRtl = settings.Cache.WritingSystemFactory.get_Engine(writingSystem).RightToLeftScript;
@@ -2550,6 +2555,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				settings.ContentGenerator.StartLink(writer, linkDestination);
 			}
+			if (!string.IsNullOrEmpty(externalLink))
+			{
+				settings.ContentGenerator.StartLink(writer, externalLink.TrimStart((char)FwObjDataTypes.kodtExternalPathName));
+			}
 			if (text.Contains(TxtLineSplit))
 			{
 				var txtContents = text.Split(TxtLineSplit);
@@ -2565,7 +2574,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				settings.ContentGenerator.AddToRunContent(writer, text);
 			}
-			if (linkDestination != Guid.Empty)
+			if (linkDestination != Guid.Empty || !string.IsNullOrEmpty(externalLink))
 			{
 				settings.ContentGenerator.EndLink(writer);
 			}
