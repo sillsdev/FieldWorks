@@ -286,7 +286,7 @@
 		<PalasoNugetVersion>11.0.0-beta0041</PalasoNugetVersion>
 		<Palaso4ParatextNugetVersion>8.1.0-beta0035</Palaso4ParatextNugetVersion>
 		<ParatextNugetVersion>9.2.6.2</ParatextNugetVersion>
-		<LcmNugetVersion>10.2.0-beta0069</LcmNugetVersion>
+		<LcmNugetVersion>10.2.0-beta0072</LcmNugetVersion>
 		<IcuNugetVersion>70.1.123</IcuNugetVersion>
 		<HermitCrabNugetVersion>2.5.13</HermitCrabNugetVersion>
 		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
