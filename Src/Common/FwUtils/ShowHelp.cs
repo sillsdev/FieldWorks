@@ -89,8 +89,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return;
 			}
 
-			// Show the help. We have to use a label because without it the help is always on top of the window
-			Help.ShowHelp(new Label(), helpFile, helpTopic);
+			using (var helpLabel = new Label())
+			{
+				TrackingHelper.TrackHelpRequest(helpFile, helpTopic);
+				// Show the help. We have to use a label because without it the help is always on top of the window
+				Help.ShowHelp(helpLabel, helpFile, helpTopic);
+			}
 		}
 	}
 }
