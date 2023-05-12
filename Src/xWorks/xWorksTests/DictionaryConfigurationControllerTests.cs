@@ -1040,8 +1040,9 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "CustomString",
 				IsCustomField = true,
 				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguageswithDisplayWsAbbrev(
-					new[] { "ch", "fr", "en" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Both)
+					new[] { "ch", "fr", "en", "ru" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Both)
 			};
+
 			var entryNode = new ConfigurableDictionaryNode
 			{
 				Label = "Main Entry",
@@ -1050,9 +1051,10 @@ namespace SIL.FieldWorks.XWorks
 			};
 			model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
 			CssGeneratorTests.PopulateFieldsForTesting(model);
+			(customNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions).Options[0].IsEnabled = false;
 
 			//SUT
-			DictionaryConfigurationController.UpdateWsOptions((DictionaryNodeWritingSystemOptions)customNode.DictionaryNodeOptions, Cache);
+			var availableWSs = DictionaryConfigurationController.UpdateWsOptions((DictionaryNodeWritingSystemOptions)customNode.DictionaryNodeOptions, Cache);
 			Assert.AreEqual(1, model.Parts[0].Children.Count, "Only the existing custom field node should be present");
 			var wsOptions = model.Parts[0].Children[0].DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			Assert.NotNull(wsOptions, "Writing system options lost in merge");
@@ -1061,7 +1063,19 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsTrue(wsOptions.Options[0].IsEnabled, "Selected writing system lost in merge");
 			Assert.AreEqual("en", wsOptions.Options[1].Id);
 			Assert.IsTrue(wsOptions.Options[1].IsEnabled, "Selected writing system lost in merge");
-			Assert.AreEqual("es", wsOptions.Options[2].Id, "New writing system was not added");
+			Assert.AreEqual("ru", wsOptions.Options[2].Id, "Enabled writing system was not maintained");
+			Assert.IsTrue(wsOptions.Options[2].IsEnabled, "Selected writing system lost in merge");
+			Assert.AreEqual("es", wsOptions.Options[3].Id, "New writing system was not added");
+
+			// Check availableWSs
+			Assert.IsTrue(availableWSs.Count == 6);
+			List<string> availableWSsIds = availableWSs.Select(ws => ws.Id).ToList();
+			Assert.Contains("-2", availableWSsIds);
+			Assert.Contains("-1", availableWSsIds);
+			Assert.Contains("fr", availableWSsIds);
+			Assert.Contains("es", availableWSsIds);
+			Assert.Contains("en", availableWSsIds);
+			Assert.Contains("ru", availableWSsIds);
 		}
 
 		[Test]

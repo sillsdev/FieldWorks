@@ -1145,7 +1145,16 @@ namespace SIL.FieldWorks.XWorks
 				if (availableWSs.All(opt => opt.Id != wsOptions.Options[i].Id) &&
 					WritingSystemServices.GetMagicWsIdFromName(wsOptions.Options[i].Id) == 0)
 				{
-					wsOptions.Options.RemoveAt(i);
+					// If Enabled, then add it to availableWSs.
+					if (wsOptions.Options[i].IsEnabled)
+					{
+						availableWSs.Add(wsOptions.Options[i]);
+					}
+					// If not Enabled, then remove it from wsOptions.Options.
+					else
+					{
+						wsOptions.Options.RemoveAt(i);
+					}
 				}
 			}
 			// ensure at least one is enabled (default to the first, which is always Magic)

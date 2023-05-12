@@ -2406,7 +2406,7 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Writing systems with selected checkboxes are always displayed..
+        ///   Looks up a localized string similar to Writing systems with cleared checkboxes are displayed only for fields that are not empty..
         /// </summary>
         public static string WritingSystemList_NormalTooltip {
             get {

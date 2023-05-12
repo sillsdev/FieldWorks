@@ -985,7 +985,7 @@ Delete the existing relationship before trying to add this one again.</value>
     <comment>Message and tooltip shown when the user has cleared all writing system checkboxes and clicked OK</comment>
   </data>
   <data name="WritingSystemList_NormalTooltip" xml:space="preserve">
-    <value>Writing systems with selected checkboxes are always displayed.</value>
+    <value>Writing systems with cleared checkboxes are displayed only for fields that are not empty.</value>
     <comment>Tooltip for the writing system list in the writing system setup dialog</comment>
   </data>
   <data name="WritingSystemList_AddIpa" xml:space="preserve">
