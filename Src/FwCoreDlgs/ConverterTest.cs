@@ -167,7 +167,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			selectFileButton = new System.Windows.Forms.Button();
 			label2 = new System.Windows.Forms.Label();
 			label3 = new System.Windows.Forms.Label();
-			helpProvider1 = new HelpProvider();
+			helpProvider1 = new FlexHelpProvider();
 			this.SuspendLayout();
 			//
 			// selectFileButton

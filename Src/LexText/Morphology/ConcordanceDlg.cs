@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 
-			helpProvider = new HelpProvider();
+			helpProvider = new FlexHelpProvider();
 
 			CheckAssignBtnEnabling();
 		}

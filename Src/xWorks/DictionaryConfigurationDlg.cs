@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.XWorks
 			this.MinimumSize = new Size(m_grpConfigurationManagement.Width + 3, manageConfigs_treeDetailButton_split.Height);
 
 			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
-			m_helpProvider = new HelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };
+			m_helpProvider = new FlexHelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };
 			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			m_helpProvider.SetShowHelp(this, true);

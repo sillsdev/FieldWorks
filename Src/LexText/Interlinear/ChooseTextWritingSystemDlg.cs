@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.IText
 		{
 			InitializeComponent();
 
-			helpProvider = new HelpProvider();
+			helpProvider = new FlexHelpProvider();
 		}
 
 		/// ------------------------------------------------------------------------------------

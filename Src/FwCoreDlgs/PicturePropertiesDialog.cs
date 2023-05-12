@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (m_helpTopicProvider != null) // Could be null during tests
 			{
-				m_helpProvider = new HelpProvider();
+				m_helpProvider = new FlexHelpProvider();
 				m_helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory +
 					m_helpTopicProvider.GetHelpString("UserHelpFile");
 				m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));

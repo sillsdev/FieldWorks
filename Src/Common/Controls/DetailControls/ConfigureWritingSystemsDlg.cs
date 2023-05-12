@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			if (m_helpTopicProvider != null) // m_helpTopicProvider could be null for testing
 			{
-				m_helpProvider = new HelpProvider();
+				m_helpProvider = new FlexHelpProvider();
 				m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 				m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
 				m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);

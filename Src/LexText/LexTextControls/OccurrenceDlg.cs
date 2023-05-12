@@ -114,7 +114,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_cboMax = new System.Windows.Forms.ComboBox();
 			this.m_cboMin = new System.Windows.Forms.ComboBox();
 			this.m_btnHelp = new System.Windows.Forms.Button();
-			this.m_helpProvider = new HelpProvider();
+			this.m_helpProvider = new FlexHelpProvider();
 			this.m_bracketLabel = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			//

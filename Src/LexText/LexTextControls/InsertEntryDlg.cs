@@ -450,7 +450,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 			}
 
-			m_helpProvider = new HelpProvider();
+			m_helpProvider = new FlexHelpProvider();
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 
 			m_updateTextMonitor = new SimpleMonitor();

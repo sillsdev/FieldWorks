@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_cache = propertyTable.GetValue<LcmCache>("cache");
 
 			m_helpTopicProvider = propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
-			helpProvider = new HelpProvider();
+			helpProvider = new FlexHelpProvider();
 			helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);

@@ -133,7 +133,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			else
 			{
 				m_helpFileKey = helpFileKey;
-				this.helpProvider = new HelpProvider();
+				this.helpProvider = new FlexHelpProvider();
 				this.helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpProvider.GetHelpString("UserHelpFile");
 				this.helpProvider.SetHelpKeyword(this, m_helpProvider.GetHelpString(s_helpTopicKey));
 				this.helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
