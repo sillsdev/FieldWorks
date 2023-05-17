@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
 	<!-- Make all of FieldWorks. -->
 	<Target Name="mkall" DependsOnTargets="initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;ensureTLBsUpToDate">
 		<Message Text="Finished mkall Target."/>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
 	<PropertyGroup>
 		<LiblcmPlatform Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'">x86</LiblcmPlatform>
 		<LiblcmPlatform Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'">x64</LiblcmPlatform>
@@ -38,7 +38,7 @@
 		<MSBuild Projects="$(PalasoArtifactsDir)/../../build/Palaso.proj"
 			Targets="RestorePackages"
 			Properties="Configuration=$(ConfigName);Platform=$(LibpalasoPlatform)"
-			ToolsVersion="15.0" />
+			ToolsVersion="Current" />
 		<MSBuild Projects="$(PalasoArtifactsDir)/../../build/Palaso.proj"
 			Targets="Build"
 			Properties="Configuration=$(ConfigName);Platform=$(Platform)"/>
@@ -50,7 +50,7 @@
 		<MSBuild Projects="$(LcmRootDir)/LCM.sln"
 			Targets="Rebuild"
 			Properties="Configuration=Debug;Platform=$(LiblcmPlatform);UseLocalFiles=True"
-			ToolsVersion="15.0" Condition="'$(OS)'=='Windows_NT'" />
+			ToolsVersion="Current" Condition="'$(OS)'=='Windows_NT'" />
 		<Exec Command="$(LcmRootDir)/build.sh Debug Rebuild True" Condition="'$(OS)'!='Windows_NT'"/>
 		<!--Build the Chorus library-->
 		<MakeDir Directories="$(ChorusArtifactsDir)" />
@@ -60,7 +60,7 @@
 		<MSBuild Projects="$(ChorusArtifactsDir)/../../build/Chorus.proj"
 			Targets="RestorePackages"
 			Properties="Configuration=$(ConfigName);Platform=$(ChorusPlatform)"
-			ToolsVersion="15.0" />
+			ToolsVersion="Current" />
 		<MSBuild Projects="$(ChorusArtifactsDir)/../../build/Chorus.proj"
 			Targets="Compile"
 			Properties="Configuration=$(ConfigName);Platform=$(ChorusPlatform)"/>
