@@ -311,9 +311,6 @@
 		<Icu4cBuildTag64>fw-9.0.11.tcbuildtag</Icu4cBuildTag64>
 		<HermitCrabBuildType>bt410</HermitCrabBuildType>
 		<HermitCrabBuildTag>fw-9.0.tcbuildtag</HermitCrabBuildTag>
-		<DownloadsSilOrgDownloadUrl>http://downloads.sil.org/BuildDlls/FW8.1</DownloadsSilOrgDownloadUrl>
-		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Windows_NT'">$(DownloadsSilOrgDownloadUrl)/Windows</DownloadsSilOrgOSDownloadUrl>
-		<DownloadsSilOrgOSDownloadUrl Condition="'$(OS)'=='Unix'">$(DownloadsSilOrgDownloadUrl)/Linux</DownloadsSilOrgOSDownloadUrl>
 		<NUnitDownloadUrl>https://github.com/nunit/nunitv2/releases/download/2.6.4/NUnit-2.6.4.zip</NUnitDownloadUrl>
 		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'!='x64'">Liblcm_LiblcmWin32masterContinuous</LcmBuildType>
 		<LcmBuildType Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'">Liblcm_LiblcmWin64masterContinuous</LcmBuildType>
@@ -323,6 +320,7 @@
 		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
 		<DownloadsDir>$(fwrt)/Downloads</DownloadsDir>
+		<PackagesDir>$(fwrt)/packages</PackagesDir>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -474,15 +472,6 @@
 		<Message Text="Downloading artifacts for HermitCrab." />
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(HermitCrabBuildType)" Tag="$(HermitCrabBuildTag)" Artifacts="QuickGraph.dll;SIL.Machine.dll;SIL.Collections.dll;SIL.HermitCrab.dll" DownloadsDir="$(DownloadsDir)"/>
 
-		<Message Text="Downloading Paratext DLLs." />
-		<DownloadFile Address="$(DownloadsSilOrgDownloadUrl)/Paratext.LexicalContracts.dll" DownloadsDir="$(DownloadsDir)"/>
-		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/FormattedEditor.dll" DownloadsDir="$(DownloadsDir)"/>
-		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/HelpSystem.dll" DownloadsDir="$(DownloadsDir)"/>
-		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/HtmlEditor.dll" DownloadsDir="$(DownloadsDir)"/>
-		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/NetLoc.dll" DownloadsDir="$(DownloadsDir)"/>
-		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/ParatextShared.dll" DownloadsDir="$(DownloadsDir)"/>
-		<DownloadFile Address="$(DownloadsSilOrgOSDownloadUrl)/Utilities.dll" DownloadsDir="$(DownloadsDir)"/>
-
 		<Message Text="Downloading NUnit." />
 		<!-- Use wget to download nunit since mono 4.6 has TLS trouble. mono 5 is fine. -->
 		<Exec Command="wget '$(NUnitDownloadUrl)' -O '$(DownloadsDir)/NUnit-2.6.4.zip'" Condition="'$(OS)'!='Windows_NT'"/>
@@ -505,13 +494,6 @@
 		<!-- xBuild and MsBuild generate different case artifacts off the same solution file. (sigh) -->
 		<DownloadedFiles Include="$(DownloadsDir)/$(ExCss).dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/$(ExCss).$(DebugInfo)"/>
-		<DownloadedFiles Include="$(DownloadsDir)/FormattedEditor.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/HelpSystem.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/HtmlEditor.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/NetLoc.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/Paratext.LexicalContracts.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/ParatextShared.dll"/>
-		<DownloadedFiles Include="$(DownloadsDir)/Utilities.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/QuickGraph.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/SIL.Machine.dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/SIL.Collections.dll"/>
@@ -596,6 +578,8 @@
 			<Architecture Condition="'$(arch)'=='x86_64'">64</Architecture>
 			<Architecture Condition="'$(arch)'!='x86_64'">32</Architecture>
 			<GeckoDir Condition="'$(OS)'!='Windows_NT'">$(fwrt)/packages/Geckofx45.$(Architecture).Linux.45.0.36</GeckoDir>
+			<OsDir Condition="'$(OS)'=='Windows_NT'">win</OsDir>
+			<OsDir Condition="'$(OS)'!='Windows_NT'">linux</OsDir>
 		</PropertyGroup>
 		<ItemGroup>
 			<!-- The geckofx .dll files are actually pulled from the encoding converters package -->
@@ -615,6 +599,12 @@
 			<NuGottenFiles Include="$(fwrt)/packages\ParatextData.9.0.3\lib\net461\Paratext.LexicalContracts.dll" />
 			<NuGottenFiles Include="$(fwrt)/packages\ParatextData.9.0.3\lib\net461\ParatextData.dll"/>
 			<NuGottenFiles Include="$(fwrt)/packages\ParatextData.9.0.3\lib\net461\PtxUtils.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/SIL.ParatextShared.7.4.0.1/runtimes/$(OsDir)/lib/net40/FormattedEditor.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/SIL.ParatextShared.7.4.0.1/runtimes/$(OsDir)/lib/net40/HelpSystem.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/SIL.ParatextShared.7.4.0.1/runtimes/$(OsDir)/lib/net40/HtmlEditor.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/SIL.ParatextShared.7.4.0.1/runtimes/$(OsDir)/lib/net40/NetLoc.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/SIL.ParatextShared.7.4.0.1/runtimes/$(OsDir)/lib/net40/ParatextShared.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/SIL.ParatextShared.7.4.0.1/runtimes/$(OsDir)/lib/net40/Utilities.dll"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(NuGottenFiles)" DestinationFolder="$(dir-outputBase)/%(RecursiveDir)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
