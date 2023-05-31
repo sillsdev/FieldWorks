@@ -1383,7 +1383,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					IPhNaturalClass naturalClass = m_naturalClassLookup[ncAbbr];
 					SimpleContext ctxt;
 					TryLoadSimpleContext(naturalClass, out ctxt);
-					var pattern = new Pattern<Word, ShapeNode>(token.Substring(1, token.Length - 2).Trim(), new Constraint<Word, ShapeNode>(ctxt.FeatureStruct) {Tag = ctxt});
+					var pattern = new Pattern<Word, ShapeNode>(XmlConvert.EncodeName(token.Substring(1, token.Length - 2).Trim()), new Constraint<Word, ShapeNode>(ctxt.FeatureStruct) {Tag = ctxt});
 					pattern.Freeze();
 					yield return pattern;
 				}
@@ -1396,7 +1396,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				if (token.StartsWith("["))
 				{
-					yield return new CopyFromInput(token.Substring(1, token.Length - 2).Trim());
+					yield return new CopyFromInput(XmlConvert.EncodeName(token.Substring(1, token.Length - 2).Trim()));
 				}
 				else
 				{

@@ -564,7 +564,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			AffixProcessAllomorph hcAllo = rule.Allomorphs[0];
 			Assert.That(hcAllo.Lhs.Select(p => p.ToString()), Is.EqualTo(new[] {PrefixNull, ConsFS, VowelFS, AnyStar}));
-			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<C^1>", "<V^1>", "d", "+", "<prefixNull>", "<C^1>", "<V^1>", "<stem>"}));
+			Assert.That(hcAllo.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] { "<C_x005E_1>", "<V_x005E_1>", "d", "+", "<prefixNull>", "<C_x005E_1>", "<V_x005E_1>", "<stem>"}));
 		}
 
 		[Test]
