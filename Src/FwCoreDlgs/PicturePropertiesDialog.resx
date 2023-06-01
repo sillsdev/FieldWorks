@@ -531,6 +531,9 @@
   <data name="&gt;&gt;panelBottom.ZOrder" xml:space="preserve">
 	<value>0</value>
   </data>
+  <data name="m_grpFileLocOptions.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
   <data name="m_grpFileLocOptions.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
 	<value>GrowAndShrink</value>
   </data>
