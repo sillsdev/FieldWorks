@@ -1028,6 +1028,52 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void UpdateWsOptions_HiddenAnalysisWritingSystemsRetained()
+		{
+			CoreWritingSystemDefinition wsEs;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out wsEs);
+			Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Add(wsEs);
+			var model = new DictionaryConfigurationModel();
+			var customNode = new ConfigurableDictionaryNode()
+			{
+				Label = "CustomString",
+				FieldDescription = "CustomString",
+				IsCustomField = true,
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguageswithDisplayWsAbbrev(
+					new[] { "en" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
+			};
+
+			var entryNode = new ConfigurableDictionaryNode
+			{
+				Label = "Main Entry",
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { customNode }
+			};
+			model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+
+			// Verify test data
+			Assert.That(Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Any(ws => ws.Id == "es"), Is.False);
+			//SUT
+			var availableWSs = DictionaryConfigurationController.UpdateWsOptions((DictionaryNodeWritingSystemOptions)customNode.DictionaryNodeOptions, Cache);
+			Assert.AreEqual(1, model.Parts[0].Children.Count, "Only the existing custom field node should be present");
+			var wsOptions = model.Parts[0].Children[0].DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			Assert.That(wsOptions?.Options.Count, Is.EqualTo(2)); // should have 'default', en, and es
+			Assert.That(wsOptions, Is.Not.Null, "Writing system options lost in merge");
+			Assert.That(wsOptions.Options[0].Id, Is.EqualTo("en"),"Selected writing system lost in merge");
+			Assert.That(wsOptions.Options[0].IsEnabled, Is.True);
+			Assert.That(wsOptions.Options[1].Id, Is.EqualTo("es"), "New Analysis writing system not added");
+			Assert.That(wsOptions.Options[1].IsEnabled, Is.False);
+
+			// Check availableWSs
+			Assert.That(availableWSs.Count, Is.EqualTo(3));
+			List<string> availableWSsIds = availableWSs.Select(ws => ws.Id).ToList();
+			Assert.Contains("-1", availableWSsIds);
+			Assert.Contains("es", availableWSsIds);
+			Assert.Contains("en", availableWSsIds);
+		}
+
+		[Test]
 		public void UpdateWsOptions_OrderAndCheckMaintained()
 		{
 			CoreWritingSystemDefinition wsEs;
