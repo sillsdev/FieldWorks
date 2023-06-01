@@ -1,0 +1,155 @@
+
+\ca W Prt Linker
+ pos0 pos15953 pos38131 pos37261 pos30410 pos1615 pos48302 pos10903 pos26447 pos52787 pos24799
+\cr W W
+\cr pos30410 pos30410
+\cr pos38131 pos38131
+
+
+\maxnull 2
+\maxprops 255
+\maxp 0
+\maxi 0
+\maxs 6
+\maxr 2
+\maxn 5
+\mcl DerivAffix 543 3252 3732 6128 7078 9316 11850 16535 20282 21087 22476 23079 27158 27161 33842 37374 37546 42107 42390 43850 45920 46835 48005 49439 56175 57383 57480 58025 
+\mp Proclitic Enclitic
+\mp RootPOS0 RootPOS15953 RootPOS16137 RootPOS35692 RootPOS38131 RootPOS55981 RootPOS30164 RootPOS27448 RootPOS37261 RootPOS36826 RootPOS30410 RootPOS15378 RootPOS18885 RootPOS1615 RootPOS48302 RootPOS10903 RootPOS26447 RootPOS52787 RootPOS24799 ExcpFeat58327Plus FromExcpFeat58327Plus ToExcpFeat58327Plus ExcpFeat58299Plus FromExcpFeat58299Plus ToExcpFeat58299Plus ExcpFeat5485Plus FromExcpFeat5485Plus ToExcpFeat5485Plus ExcpFeat58173Plus FromExcpFeat58173Plus ToExcpFeat58173Plus ExcpFeat46294Plus FromExcpFeat46294Plus ToExcpFeat46294Plus ExcpFeat1084Plus FromExcpFeat1084Plus ToExcpFeat1084Plus ExcpFeat17458Plus FromExcpFeat17458Plus ToExcpFeat17458Plus ExcpFeat28765Plus FromExcpFeat28765Plus ToExcpFeat28765Plus ExcpFeat36590Plus FromExcpFeat36590Plus ToExcpFeat36590Plus ExcpFeat17327Plus FromExcpFeat17327Plus ToExcpFeat17327Plus ExcpFeat2467Plus FromExcpFeat2467Plus ToExcpFeat2467Plus ExcpFeat20097Plus FromExcpFeat20097Plus ToExcpFeat20097Plus ExcpFeat35659Plus FromExcpFeat35659Plus ToExcpFeat35659Plus ExcpFeat31809Plus FromExcpFeat31809Plus ToExcpFeat31809Plus ExcpFeat41555Plus FromExcpFeat41555Plus ToExcpFeat41555Plus ExcpFeat17723Plus FromExcpFeat17723Plus ToExcpFeat17723Plus ExcpFeat4157Plus FromExcpFeat4157Plus ToExcpFeat4157Plus StemNameAffix25517 StemNameAffix36455 StemNameAffix58193 IrregInflForm431 IrregInflForm29555 IrregInflForm36837
+\ap Bound  MSEnvPOS15953 MSEnvPOS16137 MSEnvPOS35692 MSEnvPOS38131 MSEnvPOS55981 MSEnvPOS30164 MSEnvPOS27448 MSEnvPOS37261 MSEnvPOS36826 MSEnvPOS30410 MSEnvPOS15378 MSEnvPOS18885 MSEnvPOS1615 MSEnvPOS48302 MSEnvPOS10903 MSEnvPOS26447 MSEnvPOS52787 MSEnvPOS24799 MSEnvFS55047 MSEnvFS25715 MSEnvFS18950 MSEnvFS39848 MSEnvFS1883 MSEnvFS29802 MSEnvFS11164 MSEnvFS22344 MSEnvFS12517 MSEnvFS42984 MSEnvFS41626 MSEnvFS36088 MSEnvFS12811 MSEnvFS11254 MSEnvFS5134 MSEnvFS52028 MSEnvFS13676 MSEnvFS8536 MSEnvFSNot29802Not42984 MSEnvFSNot11254 MSEnvFSNot22344 MSEnvFSNot8536 MSEnvFSNot41626 MSEnvFSNot25715Not18950Not11164Not36088 MSEnvFSNot13676 MSEnvFSNot5134Not52028 MSEnvFSNot39848Not1883 MSEnvFSNot55047Not12517Not12811  StemName25517 StemName36455 StemName58193 NotStemName25517 NotStemName36455 
+\mcc 21043 +/  ~_  30036
+\mcc 30139 +/  ~_  46245
+\mcc 46638 +/  ~_  58128
+\mcc 33842 +/ 58025 ...  ~_ 
+\mcc 33842 +/  ~_  ... 58025
+\mcc 23352 +/  ~_  43320
+\mcc 23411 +/  ~_  16535 47216
+\mcc 9558 +/  ~_  46638
+\mcc 28711 +/  ~_  46245
+\mcc 37546 +/ 12386  ~_ 
+\mcc 41743 +/  ~_  58025
+\mcc 23411 +/  ~_  19115
+\mcc 41743 +/  ~_  16535 25454
+\mcc 39153 +/  ~_  29419
+\mcc 21484 +/  ~_  57273
+\mcc 51649 +/  ~_  ... 23079
+\mcc 20282 +/  ~_  33135
+\mcc 48005 +/  ~_  44111
+\mcc 33135 +/ 46245  ~_ 
+\mcc 55239 +/  ~_  2383
+\mcc 44111 +/ 5693  ~_ 
+\mcc 44111 +/ 43691  ~_ 
+\mcc 44111 +/ 7418  ~_ 
+\ancc 7897 / _ 29424
+\ancc 43570 / _ ... 19591
+\ancc 27731 / _ ... 19591
+\ancc 43570 / _ ... 56673
+\ancc 27731 / _ ... 56673
+\ancc 20777 / _ 9618
+\scl 49087 | C
+ 
+  ̈ y ñ q b d f g j k l m n p r s t v w x z
+\scl 50391 | CA
+ 
+  ̈ y ll ñ q c ch sh b d f g j k l m n p r s t v w x z ts
+\scl 17487 | CTRSv
+ 
+  ̈ y q pt ch sh d n r
+\scl 16827 | CC
+ 
+ shp shq sht rk ny shw yts pt nk ny yn yk nq yp nn rq rp yl
+\scl 20636 | C2
+ 
+ ll ch sh ts
+\scl 13201 | :
+ 
+  ̈
+\scl 17568 | V-i
+ 
+ a e o u
+\scl 36496 | R
+ 
+ n r
+\scl 37027 | gq
+ 
+ q g
+\scl 49099 | V
+ 
+ ë ï ä a e i o u ö ü
+\pt SEC_ST
+\pt OrderPfx_ST
+	(    (left orderclassmin < current orderclassmin)
+	AND (left orderclassmax < current orderclassmax) )
+	OR (current orderclass = 0)
+	OR ((current orderclass = -1) AND (left orderclass = -1))
+	OR ((current orderclass = -1) AND (left orderclass = 0))
+OR ((current orderclass = -32000) AND (left orderclass = -32000))
+OR ((current orderclassmin = -31999) AND (current orderclassmax = -1))
+OR ((left orderclassmin = -31999) AND (left orderclassmax = -1))
+OR ((left orderclass = -1) AND (current orderclass ~= -32000)) | allow derivation outside inflection, but not outside clitics
+
+\pt Category (left tocategory is current fromcategory)
+\it SEC_ST
+\it OrderIfx_ST
+	(    (left orderclassmin < current orderclassmin)
+	AND (left orderclassmax < current orderclassmax) )
+	OR (current orderclass = 0)
+	OR ((current orderclass = -1) AND (left orderclass = -1))
+OR ((current orderclass = -32000) AND (left orderclass = -32000))
+OR ((current orderclassmin = -31999) AND (current orderclassmax = -1))
+OR ((left orderclassmin = -31999) AND (left orderclassmax = -1))
+OR ((left orderclass = -1) AND (current orderclass ~= -32000)) | allow derivation outside inflection, but not outside clitics
+OR ((current orderclass = 1) AND (left orderclass ~= 32000)) | allow derivation outside inflection, but not outside clitics
+\it Category (left tocategory is current fromcategory)
+\nt InterfixType_ST
+	 NOT (    (left    type is interfixprefix)
+		  AND (current type is interfixsuffix)
+		 )
+\rt SEC_ST
+\co only proclitics can occur left of a particle
+\rt RootCategory_ST
+  IF (current tocategory is Prt)
+THEN (left property is Proclitic)
+\st SEC_ST
+\st OrderSfx_ST
+(    (left orderclassmin < current orderclassmin)
+AND (left orderclassmax < current orderclassmax) )
+OR (current orderclass = 0)
+OR ((current orderclass = 1) AND (left orderclass = 1))
+OR ((current orderclass = 32000) AND (left orderclass = 32000))
+OR ((current orderclassmin = 1) AND (current orderclassmax = 31999))
+OR ((left orderclassmin = 1) AND (left orderclassmax = 31999))
+OR ((current orderclass = 1) AND (left orderclass ~= 32000)) | allow derivation outside inflection, but not outside clitics
+\st Category
+(((left tocategory is current fromcategory)
+OR (left tocategory is "W")
+OR (current fromcategory is "W"))
+AND
+| only enclitics can go on particles
+(  IF (left tocategory is Prt)
+THEN (current property is Enclitic)
+   ))
+\ft OrderFinal_FT
+IF   (    (current orderclass = 0)
+	  AND (NOT (current type is root))
+	  AND (FOR_SOME_LEFT  (LEFT  orderclass ~= 0))
+	  AND (FOR_SOME_RIGHT (RIGHT orderclass ~= 0))
+	 )
+THEN (   (LEFT orderclass <= RIGHT orderclass)
+	  OR (    (LEFT  orderclass = -1)
+		  AND (RIGHT orderclass ~= -32000)
+		  )
+	  OR (    (RIGHT orderclass = 1)
+		  AND (LEFT  orderclass ~= 32000)
+		  )
+	 )
+\ft BoundStemOrRoot_FT
+IF   (current property is Bound)
+THEN (NOT (    (current type is initial)
+		   AND (current type is final))
+	 )
+\ft MCC_FT
+
+\patr TreeStyle none
+\patr ShowGlosses Off
+\patr ShowFeatures On

@@ -645,7 +645,7 @@ ShowAnyFailure
 						</xsl:choose>
 					</xsl:when>
 					<xsl:when test="contains(@test,$sCategory)">
-						<xsl:value-of select="concat('A particle must stand alone or a compound linker was not in a compound', substring-after(@test,$sCategory))"/>
+						<xsl:value-of select="concat('A particle must stand alone; a compound linker was not in a compound; or if no prefixes or infixes are allowed, then the category mapping was incorrect.', substring-after(@test,$sCategory))"/>
 					</xsl:when>
 					<xsl:when test="contains(@test,$sInterfixType_ST)">
 						<xsl:text>A prefixing interfix was found before a suffixing interfix.  Prefixing interfixes may only follow suffixing interfixes.</xsl:text>
@@ -663,7 +663,7 @@ ShowAnyFailure
 						<xsl:value-of select="concat('Affix ordering was incorrect for a suffix pair', substring-after(@test,$sOrderSfx_ST))"/>
 					</xsl:when>
 					<xsl:when test="contains(@test,$sROOTS_ST)">
-						<xsl:value-of select="concat('A compound linker was not properly in a compound or there was an attempt to compound using a particle or clitic', substring-after(@test,$sROOTS_ST))"/>
+						<xsl:value-of select="concat('A compound linker was not properly in a compound; there was an attempt to compound using a particle or clitic; or if no prefixes or infixes are allowed, then the categories of the two roots were not compatible per any compound rule.', substring-after(@test,$sROOTS_ST))"/>
 					</xsl:when>
 					<xsl:when test="contains(@test,$sBoundStemRoot)">
 						<xsl:text>A bound stem or root was found completely by itself.  These must have at least one other morpheme present.</xsl:text>
@@ -683,6 +683,9 @@ ShowAnyFailure
 					</xsl:when>
 					<xsl:when test="contains(@test,$sInfixType)">
 						<xsl:value-of select="concat('Either there are no positions specified in the lexicon for this infix or the insertion type is incorrect', substring-after(@test,$sInfixEnvironment))"/>
+					</xsl:when>
+					<xsl:when test="contains(@test,'none') and ../../preceding-sibling::morph[1]/@type='nfx'">
+						<xsl:text>An interfix was found at the end of the word.  An interfix must be followed by a root or stem.</xsl:text>
 					</xsl:when>
 				</xsl:choose>
 				<xsl:text>)</xsl:text>
@@ -977,6 +980,9 @@ ShowMorph
 							<xsl:call-template name="GetVernacularFont"/>
 						</xsl:attribute>
 						<xsl:value-of select="morph/alloform"/>
+						<xsl:if test="morph[@type='nfx']">
+							<xsl:text>&#xa0;&#xa0;(interfix)</xsl:text>
+						</xsl:if>
 					</td>
 				</tr>
 				<tr>
