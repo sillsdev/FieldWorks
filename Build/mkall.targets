@@ -283,7 +283,7 @@
 
 		<!-- Versions of NuGet packages. These need to match the versions in nuget-common/packages.config -->
 		<ChorusNugetVersion>5.0.0-beta0025</ChorusNugetVersion>
-		<PalasoNugetVersion>11.0.0-beta0041</PalasoNugetVersion>
+		<PalasoNugetVersion>12.1.0-beta0020</PalasoNugetVersion>
 		<Palaso4ParatextNugetVersion>8.1.0-beta0035</Palaso4ParatextNugetVersion>
 		<ParatextNugetVersion>9.2.6.2</ParatextNugetVersion>
 		<LcmNugetVersion>10.2.0-beta0072</LcmNugetVersion>
@@ -336,6 +336,7 @@
 		<PalasoFiles Include="SIL.Lexicon.dll"/>
 		<PalasoFiles Include="SIL.TestUtilities.dll"/>
 		<PalasoFiles Include="L10NSharp.dll"/>
+		<PalasoFiles Include="Interop.WIA.dll"/>
 		<PalasoFiles Include="lib/win-x86/irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'"/>
 		<PalasoFiles Include="lib/win-x64/irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'"/>
 		<PalasoFiles Include="Enchant.Net.dll"/>
@@ -506,6 +507,8 @@
 			<SILNugetPackages Include="SIL.Lexicon"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.TestUtilities"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.Windows.Forms"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Windows.Forms" Condition="'$(Platform)'!='x64'"><Version>$(PalasoNugetVersion)</Version><Path>build/Interop.WIA.dll</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Windows.Forms" Condition="'$(Platform)'=='x64'"><Version>$(PalasoNugetVersion)</Version><Path>build/x64/Interop.WIA.dll</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="SIL.Windows.Forms.Keyboarding"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.Windows.Forms.Keyboarding"><Version>$(PalasoNugetVersion)</Version><Path>build/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="SIL.Windows.Forms.Keyboarding"><Version>$(PalasoNugetVersion)</Version><Path>contentFiles/any/any/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
@@ -513,7 +516,7 @@
 			<SILNugetPackages Include="SIL.Windows.Forms.WritingSystems"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.WritingSystems"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.WritingSystems.Tests"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="L10NSharp"><Version>5.0.0-beta0059</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
+			<SILNugetPackages Include="L10NSharp"><Version>6.0.0</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="Enchant.Net"><Version>1.4.3-beta0010</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="Enchant.Net"><Version>1.4.3-beta0010</Version><Path>contentFiles/any/any/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="NDesk.DBus"><Version>0.15.0</Version><Path>lib/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
@@ -642,6 +645,7 @@
 			<NuGottenFiles Include="$(PackagesDir)/Analytics.3.6.0/lib/net461/Analytics.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/DotNetZip.1.16.0/lib/net40/*.*"/>
 			<NuGottenFiles Include="$(PackagesDir)/icu.net.2.9.0-beta.13/lib/net451/icu.net.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/Markdig.Signed.0.30.0/lib/net452/Markdig.Signed.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/Microsoft.Extensions.DependencyModel.2.0.4/lib/net451/Microsoft.Extensions.DependencyModel.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/Microsoft.Win32.Registry.4.7.0/lib/net461/Microsoft.Win32.Registry.dll" Condition="'$(OS)'=='Windows_NT'"/>
 			<NuGottenFiles Include="$(PackagesDir)/Moq.4.17.2/lib/net45/Moq.dll"/>
@@ -664,6 +668,10 @@
 			<NuGottenFiles Include="$(PackagesDir)/SIL.ParatextShared.7.4.0.1/runtimes/$(OsDir)/lib/net40/ParatextShared.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/SIL.ParatextShared.7.4.0.1/runtimes/$(OsDir)/lib/net40/Utilities.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/mixpanel-csharp.6.0.0/lib/net461/Mixpanel.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/System.Memory.4.5.4/lib/net461/System.Memory.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/System.Net.Http.4.3.4/lib/net46/System.Net.Http.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/System.Numerics.Vectors.4.5.0/lib/net46/System.Numerics.Vectors.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/System.Resources.Extensions.4.6.0/lib/netstandard2.0/System.Resources.Extensions.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/System.Runtime.CompilerServices.Unsafe.6.0.0/lib/net461/System.Runtime.CompilerServices.Unsafe.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/System.Threading.Tasks.Extensions.4.5.4/lib/net461/System.Threading.Tasks.Extensions.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/System.ValueTuple.4.5.0/lib/net461/System.ValueTuple.dll"/>
