@@ -10054,6 +10054,48 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result[0]).HasSpecifiedNumberOfMatchesForXpath(expectedTemplate, 1);
 			AssertThatXmlIn.String(result[0]).HasSpecifiedNumberOfMatchesForXpath(expectedHwTemplate, 1);
 		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_BadWaveFileThrowsWithEntryInfo()
+		{
+			var pronunciationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "PronunciationsOS",
+				CSSClassNameOverride = "Pronunciations",
+				Children = new List<ConfigurableDictionaryNode> { CreateMediaNode() }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { pronunciationsNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var pronunciation =
+				Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
+			entry.PronunciationsOS.Add(pronunciation);
+
+			var tempWavFilePath = Path.GetTempFileName() + ".wav";
+			var badWavContainer =
+				Cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
+			pronunciation.MediaFilesOS.Add(badWavContainer);
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(folder);
+			var badWavFile =
+				Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			folder.FilesOC.Add(badWavFile);
+			badWavContainer.MediaFileRA = badWavFile;
+			File.WriteAllText(tempWavFilePath, "I am not a wave file");
+			badWavFile.InternalPath = tempWavFilePath;
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache,
+				new ReadOnlyPropertyTable(m_propertyTable), true, true,
+				Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()), false, true);
+			//SUT
+			Assert.That(
+				() => ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null,
+					settings),
+				Throws.Exception.With.Message.Contains("Exception generating entry:"));
+		}
 	}
 
 	internal class CollatorForTest : IDisposable

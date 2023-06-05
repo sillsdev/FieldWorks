@@ -270,35 +270,59 @@ namespace SIL.FieldWorks.XWorks
 			Guard.AgainstNull(configuration, nameof(configuration));
 			Guard.AgainstNull(entry, nameof(entry));
 
-			// ReSharper disable LocalizableElement, because seriously, who cares about localized exceptions?
-			if (string.IsNullOrEmpty(configuration.FieldDescription))
+			try
 			{
-				throw new ArgumentException("Invalid configuration: FieldDescription can not be null", "configuration");
-			}
-			if (entry.ClassID != settings.Cache.MetaDataCacheAccessor.GetClassId(configuration.FieldDescription))
-			{
-				throw new ArgumentException("The given argument doesn't configure this type", "configuration");
-			}
-			// ReSharper restore LocalizableElement
-			if (!configuration.IsEnabled)
-			{
-				return string.Empty;
-			}
+				// ReSharper disable LocalizableElement, because seriously, who cares about localized exceptions?
+				if (string.IsNullOrEmpty(configuration.FieldDescription))
+				{
+					throw new ArgumentException(
+						"Invalid configuration: FieldDescription can not be null",
+						"configuration");
+				}
 
-			var pieces = configuration.ReferencedOrDirectChildren
-				.Select(config => GenerateXHTMLForFieldByReflection(entry, config, publicationDecorator, settings))
-				.Where(content => !string.IsNullOrEmpty(content)).ToList();
-			if (pieces.Count == 0)
-				return string.Empty;
-			var bldr = new StringBuilder();
-			using (var xw = settings.ContentGenerator.CreateWriter(bldr))
+				if (entry.ClassID !=
+					settings.Cache.MetaDataCacheAccessor.GetClassId(
+						configuration.FieldDescription))
+				{
+					throw new ArgumentException("The given argument doesn't configure this type",
+						"configuration");
+				}
+				// ReSharper restore LocalizableElement
+
+				if (!configuration.IsEnabled)
+				{
+					return string.Empty;
+				}
+
+				var pieces = configuration.ReferencedOrDirectChildren
+					.Select(config =>
+						GenerateXHTMLForFieldByReflection(entry, config, publicationDecorator,
+							settings))
+					.Where(content => !string.IsNullOrEmpty(content)).ToList();
+				if (pieces.Count == 0)
+					return string.Empty;
+				var bldr = new StringBuilder();
+				using (var xw = settings.ContentGenerator.CreateWriter(bldr))
+				{
+					var clerk = settings.PropertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+					settings.ContentGenerator.StartEntry(xw,
+						GetClassNameAttributeForConfig(configuration), entry.Guid, index, clerk);
+					settings.ContentGenerator.AddEntryData(xw, pieces);
+					settings.ContentGenerator.EndEntry(xw);
+					xw.Flush();
+					return CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC)
+						.Normalize(bldr.ToString()); // All content should be in NFC (LT-18177)
+				}
+			}
+			catch (ArgumentException)
 			{
-				var clerk = settings.PropertyTable.GetValue<RecordClerk>("ActiveClerk", null);
-				settings.ContentGenerator.StartEntry(xw, GetClassNameAttributeForConfig(configuration), entry.Guid, index, clerk);
-				settings.ContentGenerator.AddEntryData(xw, pieces);
-				settings.ContentGenerator.EndEntry(xw);
-				xw.Flush();
-				return CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(bldr.ToString()); // All content should be in NFC (LT-18177)
+				// probably a configuration error
+				throw;
+			}
+			catch (Exception e)
+			{
+				// unknown exception, give the user the entry information in the crash message
+				throw new Exception($"Exception generating entry: {entry.SortKey}", e);
 			}
 		}
 
