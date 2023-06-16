@@ -31,6 +31,9 @@ Level Hierarchy
 <level name="Etymology" partOf="Entry Subentry" beginFields="et" additionalFields="ec eg es" multiFields="ec eg"/>
 <level name="Example" partOf="Sense" beginFields="rf xv" additionalFields="" multiFields=""/>
 <level name="ExampleTranslation" partOf="Example" beginFields="xe" additionalFields="xn xr" multiFields="xn xr"/>
+<level name="ExtendedNote" partOf="Sense" beginFields="ent end" additionalFields="" multiFields="end"/>
+<level name="ExtendedNoteExample" partOf="ExtendedNote" beginFields="enex" additionalFields="" multiFields=""/>
+<level name="ExtendedNoteExampleTranslation" partOf="ExtendedNoteExample" beginFields="entr" additionalFields="" multiFields=""/>
 <level name="Function" partOf="Sense" beginFields="lf" additionalFields="lv"/>
 <level name="SemanticDomain" partOf="Sense" beginFields="is" additionalFields="sd th"/>
 <level name="Picture" partOf="Sense" beginFields="pc" additionalFields=""/>
@@ -134,6 +137,18 @@ Field Descriptions
 </field>
 <field sfm="en" name="Encyclopedic Information" type="string" lang="National">
 <meaning app="fw.sil.org" id="enc"/>
+</field>
+<field sfm="end" name="Extended Note Discussion" type="string" lang="English">
+<meaning app="fw.sil.org" id="end"/>
+</field>
+<field sfm="ent" name="Extended Note Type" type="string" lang="English">
+<meaning app="fw.sil.org" id="ent"/>
+</field>
+<field sfm="enex" name="Extended Note Example" type="string" lang="Vernacular">
+<meaning app="fw.sil.org" id="enex"/>
+</field>
+<field sfm="entr" name="Extended Note Example Translation" type="string" lang="English">
+<meaning app="fw.sil.org" id="entr"/>
 </field>
 <field sfm="er" name="Encyclopedic Information" type="string" lang="Regional">
 <meaning app="fw.sil.org" id="enc"/>

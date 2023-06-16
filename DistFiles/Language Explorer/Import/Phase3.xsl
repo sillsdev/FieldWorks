@@ -875,6 +875,90 @@ DoExamples
 		</xsl:if>
 	</xsl:template>
 
+<!--
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+DoExtendedNote
+	process extended note
+		Parameters: none
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+-->
+<xsl:template name="DoExtendedNote">
+	<xsl:if test="ExtendedNote">
+		<xsl:for-each select="ExtendedNote">
+		  <LexExtendedNote>
+
+		  <!-- ExtendedNoteType -->
+			<xsl:for-each select="ent">
+			  <ExtendedNoteType><Link ws="{@ws}" name="{.}"/></ExtendedNoteType>
+			</xsl:for-each>
+
+		  <!-- Extended Note Discussion -->
+		  <xsl:if test="end">
+			<xsl:call-template name="DoLexSenseMultiString">
+			<xsl:with-param name="abbrNodes" select="end"/>
+			<xsl:with-param name="elementName">Discussion</xsl:with-param>
+			</xsl:call-template>
+		  </xsl:if>
+
+		<!-- Extended Note Examples -->
+		  <xsl:call-template name="DoExtendedNoteExamples">
+		  </xsl:call-template>
+		  </LexExtendedNote>
+		</xsl:for-each>
+	</xsl:if>
+</xsl:template>
+
+<!--
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+DoExtendedNoteExample
+	process extended note examples
+		Parameters: none
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+-->
+<xsl:template name="DoExtendedNoteExamples">
+	<xsl:if test="ExtendedNoteExample">
+	  <Examples>
+		<xsl:for-each select="ExtendedNoteExample">
+		  <LexExampleSentence>
+			<!-- Example -->
+			<xsl:if test="enex">
+			  <xsl:call-template name="JoinOnWS">
+			  <xsl:with-param name="abbr" select="enex"/> 			<!-- Abbr: element name to look for -->
+			  <xsl:with-param name="eNameOut">Example</xsl:with-param> <!-- eNameOut: element name to output -->
+			  </xsl:call-template>
+			</xsl:if>
+			<xsl:call-template name="DoExtendedNoteTranslations"/>
+			<xsl:if test="./ref">
+			  <Reference ws="{./ref/@ws}"><xsl:apply-templates select="./ref/*|./ref/text()" mode="IncludeIFMs"/></Reference>
+			</xsl:if>
+			<!-- Custom fields in this LexExampleSentence -->
+			<xsl:call-template name="JoinCustomOnFwid"/>
+		  </LexExampleSentence>
+		</xsl:for-each>
+	  </Examples>
+	</xsl:if>
+</xsl:template>
+
+	<xsl:template name="DoExtendedNoteTranslations">
+		<xsl:if test="ExtendedNoteExampleTranslation">
+			<Translations>
+				<xsl:for-each select="ExtendedNoteExampleTranslation">
+					<!-- Translation -->
+					<Translation>
+						<xsl:if test="entr">
+							<xsl:call-template name="JoinOnWS">
+								<xsl:with-param name="abbr" select="entr"/>
+								<!-- Abbr: element name to look for -->
+								<xsl:with-param name="eNameOut">CmTranslation</xsl:with-param>
+								<!-- eNameOut: element name to output -->
+							</xsl:call-template>
+						</xsl:if>
+					</Translation>
+				</xsl:for-each>
+			</Translations>
+		</xsl:if>
+	</xsl:template>
+
 <xsl:template match="*" mode="IncludeIFMs">
 	<xsl:copy-of select="."/>
 </xsl:template>
@@ -1301,6 +1385,7 @@ DoSenseFields
 	  <xsl:with-param name="default" select="$pos"/>
 	</xsl:call-template>
 	<xsl:call-template name="DoExamples"/>
+	<xsl:call-template name="DoExtendedNote"/>
 <!--           <xsl:call-template name="DoLexicalRelations"/>  -->
 	<xsl:call-template name="DoReversalEntries"/>
 	<xsl:call-template name="DoScientificName"/>
