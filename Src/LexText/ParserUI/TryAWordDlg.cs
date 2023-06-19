@@ -418,6 +418,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					sWord = new System.Xml.Linq.XText(sWord).ToString();  // LT-10373 XML special characters cause a crash; change it so HTML/XML works
 					sWord = sWord.Replace("\"", "&quot;");  // LT-10373 same for double quote
 					sWord = sWord.Replace(' ', '.'); // LT-7334 to allow for phrases; do this at the last minute
+					sWord = sWord.Replace("\"", "&quot;");  // LT-10373 a double quote causes a crash; change it so HTML/XML works
 					m_parserListener.Connection.TryAWordDialogIsRunning = true; // make sure this is set properly
 					m_tryAWordResult = m_parserListener.Connection.BeginTryAWord(sWord, DoTrace, selectedTraceMorphs);
 					// waiting for result, so disable Try It button
@@ -445,6 +446,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			else
 			{
 				IParserTrace trace = null;
+
 				switch (m_cache.LanguageProject.MorphologicalDataOA.ActiveParser)
 				{
 					case "XAmple":

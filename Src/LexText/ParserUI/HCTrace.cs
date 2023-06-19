@@ -4,6 +4,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Xml.Linq;
 using System.Xml.Xsl;
 using SIL.LCModel;
@@ -26,12 +27,33 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		public string CreateResultPage(PropertyTable propertyTable, XDocument result, bool isTrace)
 		{
+			result = FixAnyDoubleQuotes(result);
 			var args = new XsltArgumentList();
 			var loadErrorUri = new Uri(Path.Combine(Path.GetTempPath(),
 				propertyTable.GetValue<LcmCache>("cache").ProjectId.Name + "HCLoadErrors.xml"));
 			args.AddParam("prmHCTraceLoadErrorFile", "", loadErrorUri.AbsoluteUri);
 			args.AddParam("prmShowTrace", "", isTrace.ToString().ToLowerInvariant());
 			return TraceTransform.Transform(propertyTable, result, isTrace ? "HCTrace" : "HCParse", args);
+		}
+
+		/// <summary>
+		/// Convert any &amp;quot; sequences in the form to &quot; so it displays correctly
+		/// </summary>
+		/// <param name="result">The HermitCrab XML result</param>
+		/// <returns>Corrected result</returns>
+		private static XDocument FixAnyDoubleQuotes(XDocument result)
+		{
+			var forms = result.Descendants("Wordform");
+			var form = forms.FirstOrDefault();
+			if (form != null)
+			{
+				var attr = form.Attribute("form");
+				if (attr != null)
+				{
+					result = XAmpleTrace.FixAnyDoubleQuotes(result, attr.Value);
+				}
+			}
+			return result;
 		}
 	}
 }
