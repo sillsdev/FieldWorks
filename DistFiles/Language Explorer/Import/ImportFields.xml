@@ -1799,6 +1799,30 @@
 	  </Help>
 	</Field>
 
+	<Field MDF="\exm" id="exm" multi="yes" property="Exemplar"
+		   signature="MultiString" type="string" uiname="Exemplar">
+	  <Help>
+		<Usage>When you have a marker that describes an exemplar. This is
+		typically an inflected form discussed in this sense. This covers \oi in
+		Philippine dictionaries.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single note.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\exm mun'abatol.</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
 	<Field MDF="\ps" id="pos" list="yes" property="MorphoSyntaxAnalysis"
 		   signature="PartOfSpeech" type="string"
 		   uiname="Category (Part Of Speech)">
@@ -2518,7 +2542,7 @@
 
 		<Mapping>Yes</Mapping>
 
-		<Appends>Yes, appends field contents into a single field.</Appends>
+		<Appends>No</Appends>
 
 		<List>No</List>
 

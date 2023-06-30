@@ -884,27 +884,29 @@ DoExtendedNote
 -->
 <xsl:template name="DoExtendedNote">
 	<xsl:if test="ExtendedNote">
-		<xsl:for-each select="ExtendedNote">
-		  <LexExtendedNote>
+		<ExtendedNote>
+			<xsl:for-each select="ExtendedNote">
+			  <LexExtendedNote>
 
-		  <!-- ExtendedNoteType -->
-			<xsl:for-each select="ent">
-			  <ExtendedNoteType><Link ws="{@ws}" name="{.}"/></ExtendedNoteType>
+			  <!-- ExtendedNoteType -->
+				<xsl:for-each select="ent">
+				  <ExtendedNoteType><Link ws="{@ws}" name="{.}"/></ExtendedNoteType>
+				</xsl:for-each>
+
+			  <!-- Extended Note Discussion -->
+			  <xsl:if test="end">
+				<xsl:call-template name="DoLexSenseMultiString">
+				<xsl:with-param name="abbrNodes" select="end"/>
+				<xsl:with-param name="elementName">Discussion</xsl:with-param>
+				</xsl:call-template>
+			  </xsl:if>
+
+			<!-- Extended Note Examples -->
+			  <xsl:call-template name="DoExtendedNoteExamples">
+			  </xsl:call-template>
+			  </LexExtendedNote>
 			</xsl:for-each>
-
-		  <!-- Extended Note Discussion -->
-		  <xsl:if test="end">
-			<xsl:call-template name="DoLexSenseMultiString">
-			<xsl:with-param name="abbrNodes" select="end"/>
-			<xsl:with-param name="elementName">Discussion</xsl:with-param>
-			</xsl:call-template>
-		  </xsl:if>
-
-		<!-- Extended Note Examples -->
-		  <xsl:call-template name="DoExtendedNoteExamples">
-		  </xsl:call-template>
-		  </LexExtendedNote>
-		</xsl:for-each>
+		</ExtendedNote>
 	</xsl:if>
 </xsl:template>
 
@@ -1287,6 +1289,14 @@ DoSenseFields
 	  <xsl:call-template name="DoLexSenseMultiString">
 	  <xsl:with-param name="abbrNodes" select="enc"/>
 	  <xsl:with-param name="elementName">EncyclopedicInfo</xsl:with-param>
+	  </xsl:call-template>
+	</xsl:if>
+
+	<!-- Exemplar -->
+	<xsl:if test="exm">
+	  <xsl:call-template name="DoLexSenseMultiString">
+	  <xsl:with-param name="abbrNodes" select="exm"/>
+	  <xsl:with-param name="elementName">Exemplar</xsl:with-param>
 	  </xsl:call-template>
 	</xsl:if>
 
