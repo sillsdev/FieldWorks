@@ -1785,6 +1785,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						name = "r";
 					else if (i == indices[PhMetathesisRuleTags.kidxLeftSwitch])
 						name = "l";
+					else if (i == indices[PhMetathesisRuleTags.kidxRightEnv])
+						name = "rightEnv";
+					else if (i == indices[PhMetathesisRuleTags.kidxLeftEnv])
+						name = "leftEnv";
+					else if (i == indices[PhMetathesisRuleTags.kidxMiddle])
+						name = "middle";
+					else
+					{
+					 // Need a unique, non-null name as Hermit Crab uses a dictionary with unique keys
+					 // in AnalysisMetathesisRuleSpec() constructor
+						name = i.ToString();
+					}
 					pattern.Children.Add(new Group<Word, ShapeNode>(name, node));
 				}
 			}

@@ -11,6 +11,8 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
+using SIL.Machine.Annotations;
+using SIL.Machine.Matching;
 using SIL.Machine.Morphology.HermitCrab;
 using SIL.Machine.Morphology.HermitCrab.MorphologicalRules;
 using SIL.Machine.Morphology.HermitCrab.PhonologicalRules;
@@ -1068,6 +1070,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_lang.Strata[0].CharacterDefinitionTable["a"].FeatureStruct, m_lang.Strata[0].CharacterDefinitionTable["t"].FeatureStruct, ConsFS)));
 			Assert.That(hcPrule.LeftSwitchName, Is.EqualTo("r"));
 			Assert.That(hcPrule.RightSwitchName, Is.EqualTo("l"));
+
+			// Hermit Crab uses the group names as unique dictionary keys in AnalysisMetathesisRuleSpec() constructor.
+			// Group names of all pattern children must be non-null.
+			foreach (var child in hcPrule.Pattern.Children)
+			{
+				Assert.IsNotNull(((Group<Word,ShapeNode>) child).Name);
+			}
+			// Group names of all children must be unique.
+			var namesList = hcPrule.Pattern.Children.Select(child => new{str = ((Group<Word, ShapeNode>)child).Name});
+			var uniqueNames = namesList.Distinct();
+			Assert.That(uniqueNames.Count() == namesList.Count());
 		}
 
 		[Test]
