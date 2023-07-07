@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private string m_filePath;
 		private readonly ICmPicture m_initialPicture;
 		private FileLocationChoice m_fileLocChoice = s_defaultFileLocChoiceForSession;
-
+		private bool m_isSaveAsChosen;
 
 		private readonly LcmCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
@@ -326,6 +326,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void HandleLocationCheckedChanged(object sender, EventArgs e)
 		{
+			if (!((RadioButton)sender).Checked)
+			{
+				return;
+			}
 			m_txtDestination.Visible = m_btnBrowseDest.Visible = m_lblDestination.Visible =
 				txtFileName.Visible = lblFileName.Visible = (sender != m_rbLeave);
 			if (IsDirty)
@@ -335,10 +339,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				{
 					txtFileName.Visible = lblFileName.Visible = false;
 					txtFileName.Text = Path.GetFileName(lblSourcePath.Text);
+					m_isSaveAsChosen = false;
 				}
 				else // save as
 				{
 					txtFileName.Visible = lblFileName.Visible = true;
+					m_isSaveAsChosen = true;
 				}
 			}
 			else
@@ -381,12 +387,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		private void ApplySaveFile(CancelEventArgs e)
 		{
-			if (!FileFormatSupportsMetadata)
-			{
-				txtFileName.Text = Path.ChangeExtension(txtFileName.Text, "png");
-				m_rbMove_rbSaveAs.Checked = true;
-			}
-
 			// ReSharper disable once AssignNullToNotNullAttribute - txtFileName should always have text
 			var savePath = Path.Combine(m_txtDestination.Text, txtFileName.Text);
 			// If Save As and there is a conflict, prompt to overwrite (cancel if user clicks no)
@@ -457,11 +457,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				// A new image has been selected
 				m_isAOR = sender is ImageGalleryControl;
+				m_isSaveAsChosen = false;
 				m_filePath = imageToolbox.ImageInfo.OriginalFilePath;
 				UpdateInfoForNewPic();
 				panelFileName.Visible = true;
 				if (ImageExistsOutsideProject)
 				{
+					// rbSave is hidden if metadata is added and the original file format doesn't support it
+					m_rbCopy_rbSave.Visible = true;
 					m_fileLocChoice = s_defaultFileLocChoiceForSession;
 					ApplyFileLocationChoice();
 				}
@@ -475,6 +478,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void ImageToolbox_MetadataChanged(object sender, EventArgs e)
 		{
+			if (!FileFormatSupportsMetadata)
+			{
+				txtFileName.Text = Path.ChangeExtension(txtFileName.Text, "png");
+				m_isSaveAsChosen = m_rbMove_rbSaveAs.Checked = true;
+				m_rbCopy_rbSave.Visible = false;
+			}
 			OnDirtyChanged();
 		}
 
@@ -489,9 +498,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				m_rbMove_rbSaveAs.Text = FwCoreDlgs.ksSaveChangesAs;
 				m_rbLeave.Visible = false;
 				m_grpFileLocOptions.Visible = true;
-				// Enhance (Hasso) 2023.06: if this is only a metadata change and the original file is in the linked folder and supports metadata,
-				// Enhance (cont) choose Save
-				m_rbMove_rbSaveAs.Checked = true;
+				if (!m_isSaveAsChosen && !IsCropped && FileIsInLinkedFilesFolder(lblSourcePath.Text))
+				{
+					m_rbCopy_rbSave.Checked = true;
+				}
+				else
+				{
+					m_rbMove_rbSaveAs.Checked = true;
+				}
 			}
 			else
 			{
