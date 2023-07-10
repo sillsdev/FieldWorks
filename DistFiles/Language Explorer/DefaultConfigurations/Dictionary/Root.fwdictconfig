@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DictionaryConfiguration name="Root-based (complex forms as subentries)" allPublications="true" isRootBased="true" version="22" lastModified="2018-09-27">
+<DictionaryConfiguration name="Root-based (complex forms as subentries)" allPublications="true" isRootBased="true" version="23" lastModified="2023-07-10">
   <!-- Main entries in the dictionary have historically been written out with class="entry" -->
   <ConfigurationItem name="Main Entry" style="Dictionary-Normal" styleType="paragraph" isEnabled="true" field="LexEntry" cssClassNameOverride="entry">
 	<!-- using a different CSS Class for the main HeadWord and the HeadWords for subentries, references, and (variant|complex) forms
@@ -323,6 +323,11 @@
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Exemplar" isEnabled="false" before="" after=" " field="Exemplar">
+		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+		  <Option id="vernacular" isEnabled="true" />
+		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Definition (or Gloss)" between=" " after="" isEnabled="true" field="DefinitionOrGloss">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">

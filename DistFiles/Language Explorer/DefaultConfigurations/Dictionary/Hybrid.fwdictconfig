@@ -3,7 +3,7 @@
  xsi:noNamespaceSchemaLocation="../../Configuration/DictionaryConfiguration.xsd"
  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
  name="Hybrid (complex forms as main entries and mini subentries)"
- version="22" lastModified="2018-09-27"
+ version="23" lastModified="2023-07-10"
  allPublications="true" isRootBased="false">
 	<ConfigurationItem name="Main Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="LexEntry" cssClassNameOverride="entry">
 		<ListTypeOptions list="complex">
@@ -263,6 +263,11 @@
 						<Option id="analysis" isEnabled="true" />
 					</WritingSystemOptions>
 				</ConfigurationItem>
+			</ConfigurationItem>
+			<ConfigurationItem name="Exemplar" isEnabled="false" before="" after=" " field="Exemplar">
+				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+					<Option id="vernacular" isEnabled="true" />
+				</WritingSystemOptions>
 			</ConfigurationItem>
 			<ConfigurationItem name="Definition (or Gloss)" isEnabled="true" between=" " after="" field="DefinitionOrGloss">
 				<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">

@@ -180,6 +180,11 @@
 				<string class="LexSense" field="Gloss" ws="analysis"/>
 			</para>
 		</part>
+		<part id="LexSense-Jt-ExemplarForSense" type="jtview">
+			<para>
+				<string class="LexSense" field="Exemplar" ws="vernacular"/>
+			</para>
+		</part>
 		<part id="LexSense-Jt-DefinitionsForSense" type="jtview">
 			<para>
 				<string class="LexSense" field="Definition" ws="analysis"/>
@@ -505,7 +510,9 @@
 				</properties>
 			</slice>
 		</part>
-
+		<part id="LexSense-Detail-Exemplar" type="detail">
+			<slice field="Exemplar" label="Exemplar" editor="multistring" ws="all vernacular" menu="mnuDataTree-Help" tooltip="Examples of inflected forms for this sense." />
+		</part>
 		<part id="LexSense-Jt-GlossIfNoDefn" type="detail">
 			<if field="Definition" stringaltequals="" ws="analysis">
 				<ifnot field="Gloss" stringaltequals="" ws="analysis">

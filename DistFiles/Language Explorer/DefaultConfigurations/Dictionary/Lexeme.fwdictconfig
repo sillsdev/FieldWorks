@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DictionaryConfiguration name="Lexeme-based (complex forms as main entries)" allPublications="true" isRootBased="false" version="22" lastModified="2018-09-27">
+<DictionaryConfiguration name="Lexeme-based (complex forms as main entries)" allPublications="true" isRootBased="false" version="23" lastModified="2023-07-10">
   <!-- Main entries in the dictionary have historically been written out with class="entry" -->
   <ConfigurationItem name="Main Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="LexEntry" cssClassNameOverride="entry">
   	<ListTypeOptions list="complex">
@@ -482,6 +482,11 @@
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Exemplar" isEnabled="false" before="" after=" " field="Exemplar">
+		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+		  <Option id="vernacular" isEnabled="true" />
+		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Definition (or Gloss)" between=" " after="" isEnabled="true" field="DefinitionOrGloss">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
