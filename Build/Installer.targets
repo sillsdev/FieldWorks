@@ -25,7 +25,7 @@
 
 	<!-- $(ApplicationName) 1.0.0.X ($(ApplicationName) build)-->
 	<PropertyGroup>
-		<ProductIdGuid>E6B62961-EA79-4E29-BA9C-6E19BB62656E</ProductIdGuid>
+		<ProductIdGuid>33A550A0-0C66-4BF4-83A5-3E0031AB5193</ProductIdGuid>
 	</PropertyGroup>
 
 	<!-- ########################################################################################################## -->
@@ -112,12 +112,6 @@
 		A base build should warn if we have 'RemovedSinceLastBase' items to help us remember to clear these out.
 	-->
 	<Target Name="RescuePatching">
-		<ItemGroup>
-			<RemovedSinceLastBase Include="$(dir-outputBase)/SIL.LCModel.dll.config" />
-			<RemovedSinceLastBase Include="$(dir-outputBase)/SIL.HermitCrab.dll" />
-			<RemovedSinceLastBase Include="$(dir-outputBase)/SIL.Collections.dll" />
-			<RemovedSinceLastBase Include="$(dir-outputBase)/QuickGraph.dll" />
-		</ItemGroup>
 		<WriteLinesToFile File="%(RemovedSinceLastBase.FullPath)" Lines="" />
 	</Target>
 	<!-- ########################################################################################################## -->
