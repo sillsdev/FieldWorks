@@ -112,7 +112,10 @@
 		A base build should warn if we have 'RemovedSinceLastBase' items to help us remember to clear these out.
 	-->
 	<Target Name="RescuePatching">
-		<WriteLinesToFile File="%(RemovedSinceLastBase.FullPath)" Lines="" />
+		<!-- <ItemGroup>
+			<RemovedSinceLastBase Include="$(dir-outputBase)/Example.dll" />
+		</ItemGroup>
+		<WriteLinesToFile File="%(RemovedSinceLastBase.FullPath)" Lines="" /> -->
 	</Target>
 	<!-- ########################################################################################################## -->
 	<!-- ### Compile Targets                                                                                    ### -->
