@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -67,8 +67,16 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			get
 			{
+				// The guid key for this type is actually an Analysis - the V2 interface
+				// is trying to pick a single Lexeme to work with and that is an Analysis, not a Wordform
+				if (m_key.IsGuidKey && m_lexicon.TryGetAnalysis(m_key, out var analysis))
+				{
+					return analysis.MeaningsOC
+						.Select(gloss => new WfiGlossLexiconSense(m_lexicon, m_key, gloss))
+						.ToArray();
+				}
 				IWfiWordform wf;
-				if (!m_lexicon.TryGetWordform(m_key.LexicalForm, out wf))
+				if (!m_lexicon.TryGetWordform(m_key, out wf))
 					return Enumerable.Empty<LexiconSense>();
 
 				return wf.AnalysesOC.Where(a => a.ApprovalStatusIcon == (int) Opinions.approves).SelectMany(a => a.MeaningsOC)
@@ -93,7 +101,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			NonUndoableUnitOfWorkHelper.Do(m_lexicon.Cache.ActionHandlerAccessor, () =>
 				{
 					IWfiWordform wordform;
-					if (!m_lexicon.TryGetWordform(m_key.LexicalForm, out wordform))
+					if (!m_lexicon.TryGetWordform(m_key, out wordform))
 					{
 						wordform = m_lexicon.CreateWordform(m_key.LexicalForm);
 						lexemeAdded = true;

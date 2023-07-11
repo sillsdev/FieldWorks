@@ -282,10 +282,9 @@
 		<TeamCityUrl>https://build.palaso.org/</TeamCityUrl>
 
 		<!-- Versions of NuGet packages. These need to match the versions in nuget-common/packages.config -->
-		<ChorusNugetVersion>5.0.0-beta0025</ChorusNugetVersion>
+		<ChorusNugetVersion>5.2.0-beta0003</ChorusNugetVersion>
 		<PalasoNugetVersion>12.1.0-beta0020</PalasoNugetVersion>
-		<Palaso4ParatextNugetVersion>8.1.0-beta0035</Palaso4ParatextNugetVersion>
-		<ParatextNugetVersion>9.2.6.2</ParatextNugetVersion>
+		<ParatextNugetVersion>9.4.0.1-beta</ParatextNugetVersion>
 		<LcmNugetVersion>10.2.0-beta0072</LcmNugetVersion>
 		<IcuNugetVersion>70.1.123</IcuNugetVersion>
 		<HermitCrabNugetVersion>2.5.13</HermitCrabNugetVersion>
@@ -319,6 +318,8 @@
 		<PalasoFiles Include="SIL.Lift.dll"/>
 		<PalasoFiles Include="SIL.Media.dll"/>
 		<PalasoFiles Include="SIL.Media.dll.config" Condition="'$(OS)'=='Unix'"/>
+		<PalasoFiles Include="SIL.Scripture.dll"/>
+		<PalasoFiles Include="SIL.Scripture.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<PalasoFiles Include="SIL.Windows.Forms.dll"/>
 		<PalasoFiles Include="SIL.Windows.Forms.GeckoBrowserAdapter.dll"/>
 		<PalasoFiles Include="SIL.Archiving.dll"/>
@@ -331,6 +332,8 @@
 		<PalasoFiles Include="SIL.WritingSystems.dll"/>
 		<PalasoFiles Include="SIL.WritingSystems.Tests.dll"/>
 		<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.dll"/>
+		<PalasoFiles Include="System.Memory.dll"/>
+		<PalasoFiles Include="System.Resources.Extensions.dll"/>
 		<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.dll"/>
 		<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<PalasoFiles Include="SIL.Lexicon.dll"/>
@@ -506,6 +509,7 @@
 			<SILNugetPackages Include="SIL.Lift"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.Lexicon"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.TestUtilities"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Scripture"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.Windows.Forms"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.Windows.Forms" Condition="'$(Platform)'!='x64'"><Version>$(PalasoNugetVersion)</Version><Path>build/Interop.WIA.dll</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="SIL.Windows.Forms" Condition="'$(Platform)'=='x64'"><Version>$(PalasoNugetVersion)</Version><Path>build/x64/Interop.WIA.dll</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
@@ -516,6 +520,8 @@
 			<SILNugetPackages Include="SIL.Windows.Forms.WritingSystems"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.WritingSystems"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="SIL.WritingSystems.Tests"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
+			<SILNugetPackages Include="System.Memory"><Version>4.5.4</Version><Path>lib/net461/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="System.Resources.Extensions"><Version>4.6.0</Version><Path>lib/netstandard2.0/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="L10NSharp"><Version>6.0.0</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="Enchant.Net"><Version>1.4.3-beta0010</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="Enchant.Net"><Version>1.4.3-beta0010</Version><Path>contentFiles/any/any/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
@@ -658,6 +664,7 @@
 			<NuGottenFiles Include="$(PackagesDir)/NAudio.Lame.1.1.5/build/libmp3lame.64.dll" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'"/>
 			<NuGottenFiles Include="$(PackagesDir)/Newtonsoft.Json.13.0.2/lib/net45/Newtonsoft.Json.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/Paratext.LexicalContracts.dll" />
+			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/Paratext.LexicalContractsV2.dll" />
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/ParatextData.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/PtxUtils.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/SIL.DesktopAnalytics.4.0.0/lib/net461/DesktopAnalytics.dll"/>
@@ -668,7 +675,7 @@
 			<NuGottenFiles Include="$(PackagesDir)/SIL.ParatextShared.7.4.0.1/runtimes/$(OsDir)/lib/net40/ParatextShared.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/SIL.ParatextShared.7.4.0.1/runtimes/$(OsDir)/lib/net40/Utilities.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/mixpanel-csharp.6.0.0/lib/net461/Mixpanel.dll"/>
-			<NuGottenFiles Include="$(PackagesDir)/System.Memory.4.5.4/lib/net461/System.Memory.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/System.Numerics.Vectors.4.5.0/lib/net46/System.Numerics.Vectors.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/System.Net.Http.4.3.4/lib/net46/System.Net.Http.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/System.Numerics.Vectors.4.5.0/lib/net46/System.Numerics.Vectors.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/System.Resources.Extensions.4.6.0/lib/netstandard2.0/System.Resources.Extensions.dll"/>
@@ -679,12 +686,6 @@
 		<Copy SourceFiles="@(NuGottenForBuildTasks)" DestinationFolder="$(MSBuildThisFileDirectory)"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<Copy SourceFiles="@(NuGottenFiles)" DestinationFolder="$(dir-outputBase)/%(RecursiveDir)"
-			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
-		<!-- Copy the libpalso dlls that ParatextData depends on -->
-		<ItemGroup>
-			<ParatextDeps Include="$(PackagesDir)/SIL.*.$(Palaso4ParatextNugetVersion)/lib/net461/SIL.*" />
-		</ItemGroup>
-		<Copy SourceFiles="@(ParatextDeps)" DestinationFolder="$(dir-outputBase)/lib/ParatextDeps"
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 	</Target>
 

@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using NUnit.Framework;
 using Paratext.LexicalContracts;
@@ -148,24 +149,28 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			Assert.AreEqual(1, lex.Senses.Count(), "Failure in test setup");
 			Assert.That(lexEntry.ImportResidue.Text, Is.EqualTo(FdoLexicon.AddedByParatext));
 			Assert.That(lexEntry.SensesOS[0].ImportResidue.Text, Is.EqualTo(FdoLexicon.AddedByParatext));
-	  }
+		}
 
 		/// <summary>
-	  /// Test that homograph increments
-	  /// </summary>
-	  [Test]
+		/// Test that homograph increments
+		/// </summary>
+		[Test]
 		public void HomographsIncrement()
 		{
 			Lexeme lex = m_lexicon.CreateLexeme(LexemeType.Stem, "a");
 			Lexeme lex2 = m_lexicon.CreateLexeme(LexemeType.Stem, "a");
 
 			m_lexicon.AddLexeme(lex);
-
+			// lex2 should be identical to lex since there aren't any in the cache yet
 			Assert.AreEqual(lex.Id, lex2.Id);
 
+			// This lexeme should have a new homograph number since lex has been added to the cache
 			Lexeme lex3 = m_lexicon.CreateLexeme(LexemeType.Stem, "a");
-			Assert.AreNotEqual(lex.Id, lex3.Id);
-			Assert.AreNotEqual(lex2.Id, lex3.Id);
+			Assert.That(lex.Id, Is.Not.EqualTo(lex3.Id));
+			Assert.That(lex2.Id, Is.Not.EqualTo(lex3.Id));
+			Assert.That(lex.HomographNumber, Is.EqualTo(1));
+			Assert.That(lex2.HomographNumber, Is.EqualTo(1));
+			Assert.That(lex3.HomographNumber, Is.EqualTo(2));
 		}
 
 		/// <summary>
@@ -718,6 +723,58 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
-		#endregion
-	}
+		/// <summary/>
+		[Test]
+		public void FindAllHomographs_ReturnsAll()
+		{
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				ILexEntry entry1 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
+					m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>()
+						.GetObject(MoMorphTypeTags.kguidMorphStem),
+					TsStringUtils.MakeString("form1", m_cache.DefaultVernWs), "gloss1",
+					new SandboxGenericMSA());
+				ILexEntry entry2 = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
+					m_cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>()
+						.GetObject(MoMorphTypeTags.kguidMorphStem),
+					TsStringUtils.MakeString("form1", m_cache.DefaultVernWs), "gloss2",
+					new SandboxGenericMSA());
+			});
+			var entries = m_lexicon.FindAllHomographs(LexemeType.Stem, "form1");
+			Assert.That(entries.Count(), Is.EqualTo(2));
+		}
+
+		/// <summary/>
+		[Test]
+		public void WordAnalysesV2_WordAnalyses_ReturnsWithGlosses()
+		{
+			Lexeme lexemeA = m_lexicon.CreateLexeme(LexemeType.Stem, "a");
+			m_lexicon.AddLexeme(lexemeA);
+			Lexeme lexemePre = m_lexicon.CreateLexeme(LexemeType.Prefix, "pre");
+			m_lexicon.AddLexeme(lexemePre);
+			Lexeme lexemeSuf = m_lexicon.CreateLexeme(LexemeType.Suffix, "suf");
+			m_lexicon.AddLexeme(lexemeSuf);
+			var wordAnalysis = m_lexicon.CreateWordAnalysis("preasuf", new[] { lexemePre, lexemeA, lexemeSuf });
+			m_lexicon.AddWordAnalysis(wordAnalysis);
+			var otherAnalysis = m_lexicon.CreateWordAnalysis("preasuf", new Lexeme[] { lexemeA });
+			m_lexicon.AddWordAnalysis(otherAnalysis);
+			var analyses = m_lexicon.GetWordAnalyses("preasuf").ToArray();
+			Assert.That(analyses.Count, Is.EqualTo(2));
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				var analysis = m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances().First();
+				var gloss = m_cache.ServiceLocator.GetInstance<IWfiGlossFactory>().Create();
+				analysis.MeaningsOC.Add(gloss);
+				gloss.Form.SetAnalysisDefaultWritingSystem("how glossy");
+			});
+
+			var lexiconAnalyses = ((WordAnalysesV2)m_lexicon).WordAnalyses;
+			Assert.That(lexiconAnalyses.Count(), Is.EqualTo(2));
+			Assert.DoesNotThrow(()=>lexiconAnalyses.First().GetEnumerator());
+			Assert.That(lexiconAnalyses.First().Glosses.Count(), Is.EqualTo(1));
+			Assert.That(lexiconAnalyses.First().Glosses.First().Text, Is.EqualTo("how glossy"));
+	  }
+
+	  #endregion
+   }
 }
