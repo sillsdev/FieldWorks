@@ -32,6 +32,7 @@ using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using XCore;
 using FileUtils = SIL.LCModel.Utils.FileUtils;
+using Property = ExCSS.Property;
 using UnitType = ExCSS.UnitType;
 
 namespace SIL.FieldWorks.XWorks
@@ -384,7 +385,18 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-				var property = entryType.GetProperty(config.FieldDescription);
+				MemberInfo property;
+				if (IsExtensionMethod(config.FieldDescription))
+				{
+					var extensionType = GetExtensionMethodType(config.FieldDescription);
+					property = extensionType.GetMethod(
+						GetExtensionMethodName(config.FieldDescription),
+						BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+				}
+				else
+				{
+					property = entryType.GetProperty(config.FieldDescription);
+				}
 				if (property == null)
 				{
 #if DEBUG
@@ -393,7 +405,7 @@ namespace SIL.FieldWorks.XWorks
 #endif
 					return string.Empty;
 				}
-				propertyValue = property.GetValue(field, new object[] { });
+				propertyValue = GetValueFromMember(property, field);
 				GetSortedReferencePropertyValue(config, ref propertyValue, field);
 			}
 			// If the property value is null there is nothing to generate
@@ -1047,7 +1059,7 @@ namespace SIL.FieldWorks.XWorks
 					var property = GetProperty(lookupType, node);
 					if (property != null)
 					{
-						fieldType = property.PropertyType;
+						fieldType = GetTypeFromMember(property);
 					}
 					else
 					{
@@ -1068,6 +1080,68 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			return fieldType;
+		}
+
+		private static bool IsExtensionMethod(string fieldDescription)
+		{
+			return fieldDescription.StartsWith("@extension:");
+		}
+
+		private static string GetExtensionMethodName(string fieldDescription)
+		{
+			return fieldDescription.Split('.').Last();
+		}
+
+		private static Type GetExtensionMethodType(string fieldDescription)
+		{
+			var lengthOfMethodName = fieldDescription.LastIndexOf('.') - "@extension:".Length;
+			var typeName = fieldDescription.Substring("@extension:".Length, lengthOfMethodName);
+			var type = Type.GetType(typeName);
+			if (type != null) return type;
+			foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
+			{
+				type = a.GetType(typeName);
+				if (type != null)
+				{
+					return type;
+				}
+			}
+			return null;
+		}
+
+		private static Type GetTypeFromMember(MemberInfo property)
+		{
+			switch (property.MemberType)
+			{
+				case MemberTypes.Property:
+				{
+					return ((PropertyInfo)property).PropertyType;
+				}
+				case MemberTypes.Method:
+				{
+					return ((MethodInfo)property).ReturnType;
+				}
+				default:
+					return null;
+			}
+		}
+
+		private static object GetValueFromMember(MemberInfo property, object instance)
+		{
+			switch (property.MemberType)
+			{
+				case MemberTypes.Property:
+				{
+					return ((PropertyInfo)property).GetValue(instance, new object[] {});
+				}
+				case MemberTypes.Method:
+				{
+					// Execute the presumed extension method (passing the instance as the 'this' parameter)
+					return ((MethodInfo)property).Invoke(instance, new object[] {instance});
+				}
+				default:
+					return null;
+			}
 		}
 
 		private static Type GetCustomFieldType(Type lookupType, ConfigurableDictionaryNode config, LcmCache cache)
@@ -1139,10 +1213,10 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="lookupType"></param>
 		/// <param name="node"></param>
 		/// <returns></returns>
-		private static PropertyInfo GetProperty(Type lookupType, ConfigurableDictionaryNode node)
+		private static MemberInfo GetProperty(Type lookupType, ConfigurableDictionaryNode node)
 		{
 			string propertyOfInterest;
-			PropertyInfo propInfo;
+			MemberInfo propInfo;
 			var typesToCheck = new Stack<Type>();
 			typesToCheck.Push(lookupType);
 			do
@@ -1160,7 +1234,18 @@ namespace SIL.FieldWorks.XWorks
 						current = property.PropertyType;
 					}
 				}
-				propInfo = current.GetProperty(propertyOfInterest, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+				if (IsExtensionMethod(propertyOfInterest))
+				{
+					var extensionType = GetExtensionMethodType(propertyOfInterest);
+					propInfo = extensionType?.GetMethod(
+						GetExtensionMethodName(propertyOfInterest),
+						BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+				}
+				else
+				{
+					propInfo = current.GetProperty(propertyOfInterest, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+				}
 				if (propInfo == null)
 				{
 					foreach (var i in current.GetInterfaces())

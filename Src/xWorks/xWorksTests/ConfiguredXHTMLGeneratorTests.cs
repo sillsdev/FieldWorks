@@ -5121,6 +5121,53 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_PictureWithCreator()
+		{
+			 var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			 var thumbNailNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA", CSSClassNameOverride = "photo" };
+			 var creatorNode = new ConfigurableDictionaryNode { FieldDescription = "@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.Creator", CSSClassNameOverride = "creator"};
+			 var pictureNode = new ConfigurableDictionaryNode
+			 {
+				DictionaryNodeOptions = new DictionaryNodePictureOptions(),
+				FieldDescription = "PicturesOfSenses",
+				CSSClassNameOverride = "Pictures",
+				Children = new List<ConfigurableDictionaryNode> { thumbNailNode, creatorNode }
+			 };
+			 var sensesNode = new ConfigurableDictionaryNode
+			 {
+				FieldDescription = "Senses",
+			 };
+			 var mainEntryNode = new ConfigurableDictionaryNode
+			 {
+				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode },
+				FieldDescription = "LexEntry"
+			 };
+			 CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			 var testEntry = CreateInterestingLexEntry(Cache);
+			 var sense = testEntry.SensesOS[0];
+			 var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			 sense.PicturesOS.Add(sensePic);
+			 var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			 sensePic.Caption.set_String(wsEn, TsStringUtils.MakeString("caption", wsEn));
+			 var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			 var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			 Cache.LangProject.MediaOC.Add(folder);
+			 folder.FilesOC.Add(pic);
+			 string path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/ImageFiles/test_auth_copy_license.jpg");
+			 pic.InternalPath = path;
+			 sensePic.PictureFileRA = pic;
+
+			 var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			 //SUT
+			 var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+			 const string oneSenseWithPicture = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/img[@class='photo' and @id]";
+			 const string oneSenseWithPictureCaption = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='creator' and text()='Jason Naylor']";
+			 //This assert is dependent on the specific entry data created in CreateInterestingLexEntry
+			 AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPicture, 1);
+			 AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPictureCaption, 1);
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_PictureWithNonUnicodePathLinksCorrectly()
 		{
 			var mainEntryNode = CreatePictureModel();

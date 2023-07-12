@@ -386,6 +386,52 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GetPropertyTypeForConfigurationNode_ExtensionMethodToString()
+		{
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
+			var memberNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "@extension:SIL.FieldWorks.XWorks.TestExtensionMethod.Creator",
+			};
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestPictureClass",
+				Children = new List<ConfigurableDictionaryNode> { memberNode },
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
+			var result = ConfiguredLcmGenerator.PropertyType.InvalidProperty;
+			// SUT
+			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(memberNode));
+			Assert.That(result, Is.EqualTo(ConfiguredLcmGenerator.PropertyType.PrimitiveType));
+		}
+
+		[Test]
+		public void GetPropertyTypeForConfigurationNode_ExtensionMethodMissingMethodDoesNotThrow()
+		{
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
+			var missingClassMember = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "@extension:SIL.FieldWorks.XWorks.MissingClass.Creator",
+			};
+			var missingMethodMember = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "@extension:SIL.FieldWorks.XWorks.TestPictureClass.MissingMethod",
+			};
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestPictureClass",
+				Children = new List<ConfigurableDictionaryNode> { missingClassMember, missingMethodMember },
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
+			var result = ConfiguredLcmGenerator.PropertyType.PrimitiveType;
+		 // SUT
+		 Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(missingClassMember));
+		 Assert.That(result, Is.EqualTo(ConfiguredLcmGenerator.PropertyType.InvalidProperty));
+		 Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(missingMethodMember));
+		 Assert.That(result, Is.EqualTo(ConfiguredLcmGenerator.PropertyType.InvalidProperty));
+		}
+
+		[Test]
 		public void IsMainEntry_ReturnsFalseForMinorEntry()
 		{
 			var mainEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);

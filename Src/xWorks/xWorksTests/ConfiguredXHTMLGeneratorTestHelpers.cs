@@ -684,5 +684,13 @@ namespace SIL.FieldWorks.XWorks
 	{
 		public ILcmList<ICmPicture> Pictures { get; set; }
 	}
+
+	internal static class TestExtensionMethod
+	{
+		static string Creator(this TestPictureClass extend)
+		{
+			return "bob";
+		}
+	}
 	#endregion
 }

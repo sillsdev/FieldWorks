@@ -3,7 +3,7 @@
  xsi:noNamespaceSchemaLocation="../../Configuration/DictionaryConfiguration.xsd"
  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
  name="Hybrid (complex forms as main entries and mini subentries)"
- version="23" lastModified="2023-07-10"
+ version="24" lastModified="2023-07-12"
  allPublications="true" isRootBased="false">
 	<ConfigurationItem name="Main Entry" isEnabled="true" style="Dictionary-Normal" styleType="paragraph" field="LexEntry" cssClassNameOverride="entry">
 		<ListTypeOptions list="complex">
@@ -1128,6 +1128,8 @@
 					<Option id="analysis" isEnabled="true"/>
 				</WritingSystemOptions>
 			</ConfigurationItem>
+			<ConfigurationItem name="Creator" before=" " after="," isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.Creator" cssClassNameOverride="creator"/>
+			<ConfigurationItem name="Copyright/License" before=" " after="" isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.CopyrightAndLicense" cssClassNameOverride="license" />
 		</ConfigurationItem>
 	</ConfigurationItem>
 	<ConfigurationItem name="Minor Entry (Variants)" isEnabled="true" style="Dictionary-Minor" styleType="paragraph" field="LexEntry" cssClassNameOverride="minorentryvariant">
