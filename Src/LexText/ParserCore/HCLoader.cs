@@ -1421,7 +1421,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			foreach (IMoInflAffixSlot slot in slots)
 			{
-				ILexEntryInflType type = slot.ReferringObjects.OfType<ILexEntryInflType>().FirstOrDefault();
+				IEnumerable<ILexEntryInflType> types = slot.ReferringObjects.OfType<ILexEntryInflType>();
 				var rules = new List<MorphemicMorphologicalRule>();
 				foreach (IMoInflAffMsa msa in slot.Affixes)
 				{
@@ -1430,11 +1430,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					{
 						foreach (AffixProcessRule mrule in morphemes.OfType<AffixProcessRule>())
 						{
-							if (type != null)
+							if (types.Any())
 							{
-								// block slot from applying to irregularly inflected forms
-								foreach (AffixProcessAllomorph allo in mrule.Allomorphs)
-									allo.ExcludedMprFeatures.Add(m_mprFeatures[type]);
+								foreach (ILexEntryInflType t in types)
+								{
+									// block slot from applying to irregularly inflected forms
+									foreach (AffixProcessAllomorph allo in mrule.Allomorphs)
+										allo.ExcludedMprFeatures.Add(m_mprFeatures[t]);
+								}
 							}
 							rules.Add(mrule);
 						}
@@ -1443,10 +1446,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 				// add a null affix to the required slot so that irregularly inflected forms can parse correctly
 				// TODO: this really should be handled using rule blocking in HC
-				if (type != null && !slot.Optional)
-					rules.Add(LoadNullAffixProcessRule(type, template, slot));
+				if (types.Any() && !slot.Optional)
+					foreach (ILexEntryInflType t in types)
+						rules.Add(LoadNullAffixProcessRule(t, template, slot));
 
-				hcTemplate.Slots.Add(new AffixTemplateSlot(rules) {Name = slot.Name.BestAnalysisAlternative.Text, Optional = slot.Optional});
+				hcTemplate.Slots.Add(new AffixTemplateSlot(rules) { Name = slot.Name.BestAnalysisAlternative.Text, Optional = slot.Optional });
 			}
 
 			return hcTemplate;

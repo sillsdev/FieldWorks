@@ -169,7 +169,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					m_morpher.LexEntrySelector = entry => selectTraceMorphsSet.Contains((int) entry.Properties[MsaID]);
 					m_morpher.RuleSelector = rule =>
 					{
-						if (rule is Morpheme mRule)
+						// Need to check if the rule is a morpheme and if it has a non-null msa id.
+						// If the rule comes from an irregularly inflected form, msa id will be null.
+						if (rule is Morpheme mRule && mRule.Properties[MsaID] != null)
 						{
 							return selectTraceMorphsSet.Contains((int)mRule.Properties[MsaID]);
 						}
