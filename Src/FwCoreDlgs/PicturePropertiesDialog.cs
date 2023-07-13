@@ -16,6 +16,7 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using SIL.Reporting;
+using SIL.Windows.Forms.ClearShare;
 using SIL.Windows.Forms.ImageToolbox;
 using SIL.Windows.Forms.ImageToolbox.ImageGallery;
 
@@ -50,6 +51,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		#region Private properties and backing variables
 		private Size m_imageInitialSize;
+
+		/// <summary>True if the image has no license and the user has not selected one, either</summary>
+		private bool m_isSuggestingLicense;
 
 		/// <remarks>
 		/// For some reason, when switching to the crop control from the Art Of Reading gallery chooser, metadata is marked dirty.
@@ -187,7 +191,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(string.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -300,6 +304,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			if (DialogResult == DialogResult.OK)
 			{
+				if (m_isSuggestingLicense)
+				{
+					// The user didn't select a license; don't save one
+					imageToolbox.ImageInfo.Metadata.License = new NullLicense();
+					imageToolbox.ImageInfo.Metadata.HasChanges = false;
+				}
 				if (!m_rbLeave.Checked && !ValidateDestinationFolder(m_txtDestination.Text))
 				{
 					e.Cancel = true;
@@ -478,6 +488,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void ImageToolbox_MetadataChanged(object sender, EventArgs e)
 		{
+			m_isSuggestingLicense = false;
 			if (!FileFormatSupportsMetadata)
 			{
 				txtFileName.Text = Path.ChangeExtension(txtFileName.Text, "png");
@@ -552,6 +563,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 			}
 
+			if (imageToolbox.ImageInfo.Metadata.IsLicenseNotSet)
+			{
+				imageToolbox.ImageInfo.Metadata.License = CreativeCommonsLicense.FromToken("cc0");
+				m_isSuggestingLicense = true;
+			}
+			else
+			{
+				m_isSuggestingLicense = false;
+			}
 			// Palaso always sets HasChanges=true, but a freshly-selected image has no changes. In the future, we may wish to
 			// investigate a change in Palaso (https://github.com/sillsdev/libpalaso/issues/1268) ~Hasso, 2023.06
 			imageToolbox.ImageInfo.Metadata.HasChanges = false;
