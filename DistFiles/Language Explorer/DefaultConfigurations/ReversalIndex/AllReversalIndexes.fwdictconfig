@@ -948,6 +948,11 @@
 						</WritingSystemOptions>
 					</ConfigurationItem>
 				</ConfigurationItem>
+				<ConfigurationItem name="Exemplar" isEnabled="false" before="" after=" " field="Exemplar">
+					<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+						<Option id="vernacular" isEnabled="true" />
+					</WritingSystemOptions>
+				</ConfigurationItem>
 				<ConfigurationItem name="Definition (or Gloss)" isEnabled="false" before=" " between=" " after="" field="DefinitionOrGloss">
 					<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
 						<Option id="reversal" isEnabled="true" />

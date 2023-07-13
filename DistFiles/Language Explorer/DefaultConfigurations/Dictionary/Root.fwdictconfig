@@ -1387,6 +1387,11 @@
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  </ConfigurationItem>
+	  <ConfigurationItem name="Exemplar" isEnabled="false" before="" after=" " field="Exemplar">
+		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+		  <Option id="vernacular" isEnabled="true" />
+		</WritingSystemOptions>
+	  </ConfigurationItem>
 	  <ConfigurationItem name="Definition (or Gloss)" between=" " after="" isEnabled="true" field="DefinitionOrGloss">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 		  <Option id="all analysis" isEnabled="true"/>
@@ -2411,6 +2416,11 @@
 			<Option id="analysis" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
+	  </ConfigurationItem>
+	  <ConfigurationItem name="Exemplar" isEnabled="false" before="" after=" " field="Exemplar">
+		<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+		  <Option id="vernacular" isEnabled="true" />
+		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Definition (or Gloss)" between=" " after="" isEnabled="true" field="DefinitionOrGloss">
 		<WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
@@ -3844,6 +3854,11 @@
 			</WritingSystemOptions>
 		  </ConfigurationItem>
 		</ConfigurationItem>
+		<ConfigurationItem name="Exemplar" isEnabled="false" before="" after=" " field="Exemplar">
+		  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+		    <Option id="vernacular" isEnabled="true" />
+		  </WritingSystemOptions>
+	    </ConfigurationItem>
 		<ConfigurationItem name="Definition (or Gloss)" between=" " after="" isEnabled="true" field="DefinitionOrGloss">
 		  <WritingSystemOptions writingSystemType="analysis" displayWSAbreviation="false">
 			<Option id="all analysis" isEnabled="true"/>
