@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Linq;
 using SIL.Windows.Forms.ClearShare;
 
 namespace SIL.FieldWorks.XWorks
@@ -22,7 +21,10 @@ namespace SIL.FieldWorks.XWorks
 	   public static string CopyrightAndLicense(this LCModel.ICmPicture picture)
 	   {
 		   var metadata = Metadata.FromFile(picture.PictureFileRA.AbsoluteInternalPath);
-		   return string.Join(", ", metadata.ShortCopyrightNotice, metadata.License.Token);
+		   // As of 2023.07, the only implementation that actually uses the language list is CustomLicense w/o custom text,
+		   // which our UI seems to prevent users from creating.
+		   var license = metadata.License.GetMinimalFormForCredits(new[] { "en" }, out _);
+		   return string.IsNullOrEmpty(license) ? metadata.ShortCopyrightNotice : string.Join(", ", metadata.ShortCopyrightNotice, license);
 	   }
    }
 }
