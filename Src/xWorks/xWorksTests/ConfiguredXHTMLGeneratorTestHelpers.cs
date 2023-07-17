@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,6 +16,7 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using XCore;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -439,6 +440,32 @@ namespace SIL.FieldWorks.XWorks
 			Cache.MainCacheAccessor.SetString(env.Hvo, stringRepresentationFlid, TsStringUtils.MakeString("phoneyEnv", m_wsEn));
 
 			return morph;
+		}
+
+		internal static ICmPicture CreatePicture(LcmCache cache, bool exists = true, string caption = "caption", string ws = "en")
+		{
+			var pic = cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			if (caption != null)
+			{
+				var wsHandle = cache.WritingSystemFactory.GetWsFromStr(ws);
+				pic.Caption.set_String(wsHandle, TsStringUtils.MakeString("caption", wsHandle));
+			}
+			var file = cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			if (cache.LangProject.MediaOC.Any())
+			{
+				cache.LangProject.MediaOC.First().FilesOC.Add(file);
+			}
+			else
+			{
+				var folder = cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+				cache.LangProject.MediaOC.Add(folder);
+				folder.FilesOC.Add(file);
+			}
+			file.InternalPath = exists
+				? Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/ImageFiles/test_auth_copy_license.jpg")
+				: "does/not/exist.jpg";
+			pic.PictureFileRA = file;
+			return pic;
 		}
 
 		internal static IStText CreateMultiParaText(string content, LcmCache cache)

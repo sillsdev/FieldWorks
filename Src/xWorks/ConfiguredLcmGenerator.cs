@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2021 SIL International
+// Copyright (c) 2014-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -30,9 +30,9 @@ using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
+using SIL.Reporting;
 using XCore;
 using FileUtils = SIL.LCModel.Utils.FileUtils;
-using Property = ExCSS.Property;
 using UnitType = ExCSS.UnitType;
 
 namespace SIL.FieldWorks.XWorks
@@ -1783,6 +1783,11 @@ namespace SIL.FieldWorks.XWorks
 		private static string GeneratePictureContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
 			object item, GeneratorSettings settings)
 		{
+			if (item is ICmPicture cmPic && !File.Exists(cmPic.PictureFileRA.AbsoluteInternalPath))
+			{
+				Logger.WriteEvent($"Skipping generating picture because it does not exist at {cmPic.PictureFileRA.AbsoluteInternalPath}");
+				return string.Empty;
+			}
 			var bldr = new StringBuilder();
 			var contentGenerator = settings.ContentGenerator;
 			using (var writer = contentGenerator.CreateWriter(bldr))

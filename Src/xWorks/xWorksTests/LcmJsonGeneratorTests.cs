@@ -1,4 +1,4 @@
-// Copyright (c) 2020 SIL International
+// Copyright (c) 2020-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,14 +16,13 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
-using SIL.TestUtilities;
 using XCore;
 using Formatting = Newtonsoft.Json.Formatting;
+// ReSharper disable StringLiteralTypo
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -291,23 +290,15 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			var sense = entry.SensesOS[0];
-			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			var sensePic = ConfiguredXHTMLGeneratorTests.CreatePicture(Cache);
 			sense.PicturesOS.Add(sensePic);
-			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			sensePic.Caption.set_String(wsEn, TsStringUtils.MakeString("caption", wsEn));
-			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
-			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
-			Cache.LangProject.MediaOC.Add(folder);
-			folder.FilesOC.Add(pic);
-			pic.InternalPath = "picture";
-			sensePic.PictureFileRA = pic;
 
 			var settings = DefaultSettings;
 
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings, 0);
 			var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""g" + entry.Guid + @""",""letterHead"": ""c"",""sortIndex"": 0,
-				""pictures"": [{""guid"":""g" + sensePic.Guid + @""",""src"":""pictures/picture"",
+				""pictures"": [{""guid"":""g" + sensePic.Guid + @""",""src"":""pictures/test_auth_copy_license.jpg"",
 				""sensenumber"": [{""lang"":""en"",""value"":""1""}],""caption"": [{""lang"":""en"",""value"":""caption""}]}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);

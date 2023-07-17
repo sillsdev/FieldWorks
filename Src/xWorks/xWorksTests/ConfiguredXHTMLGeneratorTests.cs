@@ -28,6 +28,7 @@ using SIL.PlatformUtilities;
 using SIL.TestUtilities;
 using SIL.WritingSystems;
 using XCore;
+// ReSharper disable StringLiteralTypo
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -5099,16 +5100,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 			var sense = testEntry.SensesOS[0];
-			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
-			sense.PicturesOS.Add(sensePic);
-			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			sensePic.Caption.set_String(wsEn, TsStringUtils.MakeString("caption", wsEn));
-			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
-			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
-			Cache.LangProject.MediaOC.Add(folder);
-			folder.FilesOC.Add(pic);
-			pic.InternalPath = "picture";
-			sensePic.PictureFileRA = pic;
+			sense.PicturesOS.Add(CreatePicture(Cache));
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
@@ -5121,50 +5113,74 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateXHTMLForEntry_PictureFileMissing()
+		{
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var thumbNailNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA", CSSClassNameOverride = "photo" };
+			var senseNumberNode = new ConfigurableDictionaryNode { FieldDescription = "SenseNumberTSS", CSSClassNameOverride = "sensenumber" };
+			var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", DictionaryNodeOptions = wsOpts };
+			var pictureNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodePictureOptions(),
+				FieldDescription = "PicturesOfSenses",
+				CSSClassNameOverride = "Pictures",
+				Children = new List<ConfigurableDictionaryNode> { thumbNailNode, senseNumberNode, captionNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = CreateInterestingLexEntry(Cache);
+			var sense = testEntry.SensesOS[0];
+			sense.PicturesOS.Add(CreatePicture(Cache, false));
+
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+			Assert.That(result, Is.Empty);
+		}
+
+		[Test]
 		public void GenerateXHTMLForEntry_PictureWithCreator()
 		{
-			 var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
-			 var thumbNailNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA", CSSClassNameOverride = "photo" };
-			 var creatorNode = new ConfigurableDictionaryNode { FieldDescription = "@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.Creator", CSSClassNameOverride = "creator"};
-			 var pictureNode = new ConfigurableDictionaryNode
-			 {
+			var thumbNailNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA", CSSClassNameOverride = "photo" };
+			var creatorNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.Creator",
+				CSSClassNameOverride = "creator"
+			};
+			var pictureNode = new ConfigurableDictionaryNode
+			{
 				DictionaryNodeOptions = new DictionaryNodePictureOptions(),
 				FieldDescription = "PicturesOfSenses",
 				CSSClassNameOverride = "Pictures",
 				Children = new List<ConfigurableDictionaryNode> { thumbNailNode, creatorNode }
-			 };
-			 var sensesNode = new ConfigurableDictionaryNode
-			 {
-				FieldDescription = "Senses",
-			 };
-			 var mainEntryNode = new ConfigurableDictionaryNode
-			 {
+			};
+			var sensesNode = new ConfigurableDictionaryNode { FieldDescription = "Senses" };
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
 				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode },
 				FieldDescription = "LexEntry"
-			 };
-			 CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-			 var testEntry = CreateInterestingLexEntry(Cache);
-			 var sense = testEntry.SensesOS[0];
-			 var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
-			 sense.PicturesOS.Add(sensePic);
-			 var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			 sensePic.Caption.set_String(wsEn, TsStringUtils.MakeString("caption", wsEn));
-			 var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
-			 var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
-			 Cache.LangProject.MediaOC.Add(folder);
-			 folder.FilesOC.Add(pic);
-			 string path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/ImageFiles/test_auth_copy_license.jpg");
-			 pic.InternalPath = path;
-			 sensePic.PictureFileRA = pic;
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = CreateInterestingLexEntry(Cache);
+			var sense = testEntry.SensesOS[0];
+			sense.PicturesOS.Add(CreatePicture(Cache));
 
-			 var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
-			 //SUT
-			 var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
-			 const string oneSenseWithPicture = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/img[@class='photo' and @id]";
-			 const string oneSenseWithPictureCaption = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='creator' and text()='Jason Naylor']";
-			 //This assert is dependent on the specific entry data created in CreateInterestingLexEntry
-			 AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPicture, 1);
-			 AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPictureCaption, 1);
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+			const string oneSenseWithPicture = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/img[@class='photo' and @id]";
+			const string oneSenseWithPictureCaption = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='creator' and text()='Jason Naylor']";
+			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPicture, 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPictureCaption, 1);
 		}
 
 		[Test]
@@ -7545,9 +7561,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseToEntry(entryCorps, "corpse", m_wsEn, Cache);
 			AddExampleToSense(entryCorps.SensesOS[1], "Le corps est mort.", Cache, m_wsFr, m_wsEn, "The corpse is dead.");
 
-			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
-			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			sensePic.Caption.set_String(wsFr, TsStringUtils.MakeString("caption", wsFr));
+			var sensePic = CreatePicture(Cache, ws: "fr");
 			entryCorps.SensesOS[0].PicturesOS.Add(sensePic);
 
 			Pronunciation.DoNotPublishInRC.Add(typeTest);
