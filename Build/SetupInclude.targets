@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
-	<UsingTask TaskName="Substitute" AssemblyFile="FwBuildTasks.dll"/>
-	<UsingTask TaskName="GetSpecialFolderPath" AssemblyFile="FwBuildTasks.dll"/>
 
 	<PropertyGroup>
 		<IcuVersion>70</IcuVersion>
+
+		<fwrt>$([System.IO.Directory]::GetParent($(MSBuildProjectDirectory)))</fwrt>
+		<fwrt Condition="'$(fwrt)' == ''">$(MSBuildThisFileDirectory)..</fwrt>
 	</PropertyGroup>
 
 	<!-- config is generally either Debug or Release, but might be Bounds or Profile. -->
@@ -75,13 +76,8 @@
 		</Otherwise>
 	</Choose>
 
-  <Target Name="Setup"><!-- cannot depend on GenerateVersionFiles, because that creates a file in Output/Common which CleanAll deletes -->
 
-	<!-- set fwrt to the proper value before we do anything else. -->
-	<ParentDirectory CurrentDirectory="$(MSBuildProjectDirectory)">
-	  <Output TaskParameter="Value" PropertyName="fwrt"/>
-	</ParentDirectory>
-
+  <Target Name="Setup" Condition="Exists('FwBuildTasks.dll')"><!-- cannot depend on GenerateVersionFiles, because that creates a file in Output/Common which CleanAll deletes -->
 	<!-- This is less pretty then I would like since xbuild doesn't support relational operators in conditions -->
 	<PropertyGroup Condition="'$(OS)'!='Windows_NT'">
 		<ToolsVersion>14.0</ToolsVersion>

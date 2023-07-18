@@ -56,6 +56,8 @@ echo Building using `%MsBuild%`
 set all_args=%*
 REM Run the next target only if the previous target succeeded
 (
+	%MsBuild% Src\FwBuildTasks\FwBuildTasks.sln /t:Restore;Build /p:Platform="Any CPU"
+) && (
 	if "%all_args:disableDownloads=%"=="%all_args%" %MsBuild% FieldWorks.proj /t:RestoreNuGetPackages
 ) && (
 	%MsBuild% FieldWorks.proj /t:CheckDevelopmentPropertiesFile

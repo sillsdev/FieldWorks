@@ -1,9 +1,8 @@
-// Copyright (c) 2021 SIL International
+﻿// Copyright (c) 2021-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
-using SIL.FieldWorks.Build.Tasks.Localization;
 
 namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 {
@@ -16,7 +15,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		[TestCase("10.2.0-beta007", "10.2.0.7")]
 		public static void ParseInformationVersion(string infoVersion, string versionVersion)
 		{
-			var sut = new Localizer();
+			var sut = new Localization.Localizer();
 			sut.ParseInformationVersion(infoVersion);
 			Assert.That(sut.InformationVersion, Is.EqualTo(infoVersion), "info");
 			Assert.That(sut.Version, Is.EqualTo(versionVersion), "version");
