@@ -1128,8 +1128,8 @@
 					<Option id="analysis" isEnabled="true"/>
 				</WritingSystemOptions>
 			</ConfigurationItem>
-			<ConfigurationItem name="Creator" before=" " after="," isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.Creator" cssClassNameOverride="creator"/>
-			<ConfigurationItem name="Copyright/License" before=" " after="" isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.CopyrightAndLicense" cssClassNameOverride="license" />
+			<ConfigurationItem name="Creator" before=" " after="," isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.Creator" cssClassNameOverride="creator" />
+			<ConfigurationItem name="Copyright &amp; License" before=" " after="" isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.CopyrightAndLicense" cssClassNameOverride="license" />
 		</ConfigurationItem>
 	</ConfigurationItem>
 	<ConfigurationItem name="Minor Entry (Variants)" isEnabled="true" style="Dictionary-Minor" styleType="paragraph" field="LexEntry" cssClassNameOverride="minorentryvariant">
@@ -2127,6 +2127,8 @@
 					<Option id="analysis" isEnabled="true"/>
 				</WritingSystemOptions>
 			</ConfigurationItem>
+			<ConfigurationItem name="Creator" before=" " after="," isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.Creator" cssClassNameOverride="creator" />
+			<ConfigurationItem name="Copyright &amp; License" before=" " after="" isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.CopyrightAndLicense" cssClassNameOverride="license" />
 		</ConfigurationItem>
 	</ConfigurationItem>
 	<SharedItems>
@@ -3635,6 +3637,8 @@
 						<Option id="analysis" isEnabled="true"/>
 					</WritingSystemOptions>
 				</ConfigurationItem>
+				<ConfigurationItem name="Creator" before=" " after="," isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.Creator" cssClassNameOverride="creator" />
+				<ConfigurationItem name="Copyright &amp; License" before=" " after="" isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.CopyrightAndLicense" cssClassNameOverride="license" />
 			</ConfigurationItem>
 			<ConfigurationItem name="Minor Subsubentries" styleType="character" before=" " between="; " after="" isEnabled="true" style="Dictionary-Subsubentry" field="Subentries">
 				<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="true">

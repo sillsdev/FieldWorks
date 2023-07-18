@@ -1018,7 +1018,7 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Creator" before=" " after="," isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.Creator" cssClassNameOverride="creator" />
-	  <ConfigurationItem name="Copyright/License" before=" " after="" isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.CopyrightAndLicense" cssClassNameOverride="license" />
+	  <ConfigurationItem name="Copyright &amp; License" before=" " after="" isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.CopyrightAndLicense" cssClassNameOverride="license" />
 	</ConfigurationItem>
   </ConfigurationItem>
   <!-- Minor entries in the dictionary have historically been written out with class="minorentry" -->
@@ -1963,6 +1963,8 @@
 		  <Option id="analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
+	  <ConfigurationItem name="Creator" before=" " after="," isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.Creator" cssClassNameOverride="creator" />
+	  <ConfigurationItem name="Copyright &amp; License" before=" " after="" isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.CopyrightAndLicense" cssClassNameOverride="license" />
 	</ConfigurationItem>
   </ConfigurationItem>
   <SharedItems>

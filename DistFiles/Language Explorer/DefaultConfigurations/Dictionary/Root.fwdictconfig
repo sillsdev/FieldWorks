@@ -885,7 +885,7 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Creator" before=" " after="," isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.Creator" cssClassNameOverride="creator" />
-	  <ConfigurationItem name="Copyright/License" before=" " after="" isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.CopyrightAndLicense" cssClassNameOverride="license" />
+	  <ConfigurationItem name="Copyright &amp; License" before=" " after="" isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.CopyrightAndLicense" cssClassNameOverride="license" />
 	</ConfigurationItem>
 	<ConfigurationItem name="Subentries" style="Dictionary-Subentry" styleType="paragraph" before="  " isEnabled="true" field="Subentries">
 	  <ComplexFormOptions list="complex" displayEachComplexFormInParagraph="true">
@@ -1933,6 +1933,8 @@
 		  <Option id="analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
+	  <ConfigurationItem name="Creator" before=" " after="," isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.Creator" cssClassNameOverride="creator" />
+	  <ConfigurationItem name="Copyright &amp; License" before=" " after="" isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.CopyrightAndLicense" cssClassNameOverride="license" />
 	</ConfigurationItem>
 	</ConfigurationItem>
   <!-- Minor entries in the dictionary have historically been written out with class="minorentry" -->
@@ -2963,6 +2965,8 @@
 		  <Option id="analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
+	  <ConfigurationItem name="Creator" before=" " after="," isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.Creator" cssClassNameOverride="creator" />
+	  <ConfigurationItem name="Copyright &amp; License" before=" " after="" isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.CopyrightAndLicense" cssClassNameOverride="license" />
 	</ConfigurationItem>
   </ConfigurationItem>
   <SharedItems>
@@ -4405,6 +4409,8 @@
 		  <Option id="analysis" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
+	  <ConfigurationItem name="Creator" before=" " after="," isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.Creator" cssClassNameOverride="creator" />
+	  <ConfigurationItem name="Copyright &amp; License" before=" " after="" isEnabled="true" field="@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.CopyrightAndLicense" cssClassNameOverride="license" />
 	  </ConfigurationItem>
 	  <ConfigurationItem name="Subsubentries" styleType="character" before="  " isEnabled="true" field="Subentries">
 		<ComplexFormOptions list="complex" displayEachComplexFormInParagraph="false">
