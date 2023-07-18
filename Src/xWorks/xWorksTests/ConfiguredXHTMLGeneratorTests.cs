@@ -805,7 +805,7 @@ namespace SIL.FieldWorks.XWorks
 			// then when we generate XHTML for Main Dictionary, the shared grammatical info
 			// (shared between the other two senses) should cause the gramm. info to be
 			// put out front.
-			var mainDict = CreatePublicationType("Main Dictionary", Cache);
+			var mainDict = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0];
 			thirdSense.DoNotPublishInRC.Add(mainDict);
 
 			// create decorator
@@ -1369,7 +1369,7 @@ namespace SIL.FieldWorks.XWorks
 			// LT-19073: Definition and gloss display behaviour for LT-7445 should apply to "Definition (or Gloss)" field in Referenced Complex Froms.
 			// Check that different combinations of present or missing definition have successful fallback to gloss, and independently of other senses.
 
-			var typeMain = CreatePublicationType("main", Cache);
+			var typeMain = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0];
 
 			var entryEntry = CreateInterestingLexEntry(Cache, "entry");
 
@@ -7555,6 +7555,8 @@ namespace SIL.FieldWorks.XWorks
 			// The second example of the first sense should not be published at all, since it is not published in main and
 			// its owner is not published in test.
 			var entryCorps = CreateInterestingLexEntry(Cache, "corps", "body");
+			entryCorps.DoNotPublishInRC.Remove(typeMain);
+			entryCorps.DoNotPublishInRC.Remove(typeTest);
 			var Pronunciation = AddPronunciationToEntry(entryCorps, "pronunciation", m_wsFr, Cache);
 			var exampleCorpsBody1 = AddExampleToSense(entryCorps.SensesOS[0], "Le corps est gros.", Cache, m_wsFr, m_wsEn, "The body is big.");
 			var exampleCorpsBody2 = AddExampleToSense(entryCorps.SensesOS[0], "Le corps est esprit.", Cache, m_wsFr, m_wsEn, "The body is spirit.");
@@ -7575,6 +7577,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// This entry is published only in main, together with its sense and example.
 			var entryBras = CreateInterestingLexEntry(Cache, "bras", "arm");
+			entryBras.DoNotPublishInRC.Remove(typeMain);
 			AddExampleToSense(entryBras.SensesOS[0], "Mon bras est casse.", Cache, m_wsFr, m_wsEn, "My arm is broken.");
 			AddSenseToEntry(entryBras, "hand", m_wsEn, Cache);
 			AddExampleToSense(entryBras.SensesOS[1], "Mon bras va bien.", Cache, m_wsFr, m_wsEn, "My arm is fine.");
@@ -7589,18 +7592,25 @@ namespace SIL.FieldWorks.XWorks
 			AddExampleToSense(entryOreille.SensesOS[0], "Lac Pend d'Oreille est en Idaho.", Cache, m_wsFr, m_wsEn, "Lake Pend d'Oreille is in Idaho.");
 			entryOreille.DoNotPublishInRC.Add(typeMain);
 			entryOreille.SensesOS[0].DoNotPublishInRC.Add(typeMain);
+			entryOreille.DoNotPublishInRC.Remove(typeTest);
+			entryOreille.SensesOS[0].DoNotPublishInRC.Remove(typeTest);
 			//exampleOreille1.DoNotPublishInRC.Add(typeMain); -- should not show in main because its owner is not shown there
 
 			var entryEntry = CreateInterestingLexEntry(Cache, "entry", "entry");
+			entryEntry.DoNotPublishInRC.Remove(typeMain);
+			entryEntry.DoNotPublishInRC.Remove(typeTest);
 			var entryMainsubentry = CreateInterestingLexEntry(Cache, "mainsubentry", "mainsubentry");
+			entryMainsubentry.DoNotPublishInRC.Remove(typeMain);
 			entryMainsubentry.DoNotPublishInRC.Add(typeTest);
 			CreateComplexForm(Cache, entryEntry, entryMainsubentry, true);
 
 			var entryTestsubentry = CreateInterestingLexEntry(Cache, "testsubentry", "testsubentry");
 			entryTestsubentry.DoNotPublishInRC.Add(typeMain);
+			entryTestsubentry.DoNotPublishInRC.Remove(typeTest);
 			CreateComplexForm(Cache, entryEntry, entryTestsubentry, true);
 			var bizarroVariant = CreateInterestingLexEntry(Cache, "bizarre", "myVariant");
 			CreateVariantForm(Cache, entryEntry, bizarroVariant, "Spelling Variant");
+			bizarroVariant.DoNotPublishInRC.Remove(typeMain);
 			bizarroVariant.DoNotPublishInRC.Add(typeTest);
 
 			// Note that the decorators must be created (or refreshed) *after* the data exists.
@@ -7999,7 +8009,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_GeneratesComplexFormEntryTypesLabelWithNoRepetition()
 		{
-			var typeMain = CreatePublicationType("main", Cache);
+			var typeMain = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0];
 
 			var entryEntry = CreateInterestingLexEntry(Cache, "entry");
 
@@ -8060,7 +8070,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_GeneratesComplexFormEntryTypesAndNamesGroup()
 		{
-			var typeMain = CreatePublicationType("main", Cache);
+			var typeMain = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0];
 
 			var entryEntry = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(entryEntry, "entry", m_wsFr);
