@@ -7,7 +7,7 @@
 	<PropertyGroup>
 		<ApplicationName>FieldWorks Language Explorer</ApplicationName>
 		<SafeApplicationName>FieldWorks</SafeApplicationName> <!-- should not contain any spaces or illegal filename characters -->
-		<CopyrightYear>2021</CopyrightYear>
+		<CopyrightYear>2023</CopyrightYear>
 		<Manufacturer>SIL International</Manufacturer>
 		<SafeManufacturer>SIL</SafeManufacturer>
 	</PropertyGroup>
@@ -16,16 +16,6 @@
 	(this will get used by CallTarget as well as DependsOnTargets but not MSBuild) -->
 	<PropertyGroup>
 		<Configuration>Release</Configuration>
-	</PropertyGroup>
-
-	<!-- ########################################################################################################## -->
-	<!-- ### PRODUCT ID GUID definition : This value must be UNIQUE for each base build.  Furthermore, every    ### -->
-	<!-- ### base build must get its own unique third number (minor version) in the version number sequence.    ### -->
-	<!-- ########################################################################################################## -->
-
-	<!-- $(ApplicationName) 1.0.0.X ($(ApplicationName) build)-->
-	<PropertyGroup>
-		<ProductIdGuid>33A550A0-0C66-4BF4-83A5-3E0031AB5193</ProductIdGuid>
 	</PropertyGroup>
 
 	<!-- ########################################################################################################## -->
@@ -445,6 +435,10 @@
 	<Target Name="BuildProductBaseMsi" DependsOnTargets="InstallerVersionNumbers">
 		<Warning Text="RemovedSinceLastBase should be cleared out before making a new base build." Condition="'@(RemovedSinceLastBase)' != ''" />
 		<Message Text="Building FieldWorks Base Msi for $(Arch)" Condition="'$(action)'!='test'"/>
+		<MSBuild.ExtensionPack.Framework.Guid TaskAction="Create">
+			<Output TaskParameter="FormattedGuidString" PropertyName="ProductIdGuid"/>
+		</MSBuild.ExtensionPack.Framework.Guid>
+		<Message Text="Generated GUID '$(ProductIdGuid)'"/>
 		<PropertyGroup>
 			<MsiFile>$(SafeApplicationName)_$(Revision).msi</MsiFile>
 			<BaseBuildDir>$(InstallerDir)/BaseInstallerBuild</BaseBuildDir>
@@ -459,12 +453,16 @@
 		<Move SourceFiles="@(InstallerFiles)" DestinationFiles="@(InstallerFiles -> '$(InstallersBaseDir)\%(Filename)_$(Arch)%(Extension)')"/>
 
 		<WriteLinesToFile File="$(AppBuildDir)/version" Overwrite="true" Lines="$(BuildVersion)" />
+		<WriteLinesToFile File="$(AppBuildDir)/ProductIdGuid" Overwrite="true" Lines="$(ProductIdGuid)" />
 	</Target>
 
 	<Target Name="BuildProductPatchMsp" DependsOnTargets="InstallerVersionNumbers">
 	<!-- TODO: work on Patch process -->
 		<ReadLinesFromFile File="$(AppBuildMasterDir)/version">
 			<Output TaskParameter="Lines" PropertyName="BaseVersion" />
+		</ReadLinesFromFile>
+		<ReadLinesFromFile File="$(AppBuildMasterDir)/ProductIdGuid">
+			<Output TaskParameter="Lines" PropertyName="ProductIdGuid" />
 		</ReadLinesFromFile>
 		<PropertyGroup>
 			<MspFile>$(SafeApplicationName)_$(BuildVersion).msp</MspFile>
