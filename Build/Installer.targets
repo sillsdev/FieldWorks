@@ -7,7 +7,6 @@
 	<PropertyGroup>
 		<ApplicationName>FieldWorks Language Explorer</ApplicationName>
 		<SafeApplicationName>FieldWorks</SafeApplicationName> <!-- should not contain any spaces or illegal filename characters -->
-		<CopyrightYear>2023</CopyrightYear>
 		<Manufacturer>SIL International</Manufacturer>
 		<SafeManufacturer>SIL</SafeManufacturer>
 	</PropertyGroup>
