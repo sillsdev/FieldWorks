@@ -16,6 +16,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.LexText;
@@ -1498,8 +1499,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (!string.IsNullOrEmpty(e.JumpUrl))
 			{
 				var args = new LocalLinkArgs { Link = e.JumpUrl };
-				if (_mediator != null)
-					_mediator.SendMessage("HandleLocalHotlink", args);
+				Publisher.Publish(new PublisherParameterObject(EventConstants.HandleLocalHotlink, args));
 			}
 		}
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.FieldWorks.FdoUi;
@@ -32,7 +33,7 @@ namespace SIL.FieldWorks.XWorks
 	/// LinkListenerListener handles Hyper linking and history
 	/// See the class comment on FwLinkArgs for details on how all the parts of hyperlinking work.
 	/// </summary>
-	[XCore.MediatorDispose]
+	[MediatorDispose]
 	public class LinkListener : IxCoreColleague, IDisposable
 	{
 		const int kmaxDepth = 50;		// Limit the stacks to 50 elements (LT-729).
@@ -137,14 +138,15 @@ namespace SIL.FieldWorks.XWorks
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (m_isDisposed)
 				return;
 
 			if (disposing)
 			{
-				FwUtils.Subscriber.Unsubscribe(EventConstants.FollowLink, OnFollowLink);
+				Subscriber.Unsubscribe(EventConstants.FollowLink, OnFollowLink);
+				Subscriber.Unsubscribe(EventConstants.HandleLocalHotlink, HandleLocalHotlink);
 
 				// Dispose managed resources here.
 				if (m_mediator != null)
@@ -191,7 +193,8 @@ namespace SIL.FieldWorks.XWorks
 			mediator.AddColleague(this);
 			m_propertyTable.SetProperty("LinkListener", this, true);
 			m_propertyTable.SetPropertyPersistence("LinkListener", false);
-			FwUtils.Subscriber.Subscribe(EventConstants.FollowLink, OnFollowLink);
+			Subscriber.Subscribe(EventConstants.FollowLink, OnFollowLink);
+			Subscriber.Subscribe(EventConstants.HandleLocalHotlink, HandleLocalHotlink);
 		}
 
 		/// <summary>
@@ -223,16 +226,13 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Handle the specified link if it is local.
 		/// </summary>
-		/// <param name="source"></param>
-		/// <returns></returns>
-		public bool OnHandleLocalHotlink(object source)
+		private void HandleLocalHotlink(object source)
 		{
-			LocalLinkArgs args = source as LocalLinkArgs;
-			if (args == null)
-				return true; // we can't handle it, but probably no one else can either. Maybe should crash?
+			if (!(source is LocalLinkArgs args))
+				return; // we can't handle it. Maybe should crash?
 			var url = args.Link;
 			if(!url.StartsWith(FwLinkArgs.kFwUrlPrefix))
-				return true; // we can't handle it, but no other colleague can either. Needs to launch whatever can (see VwBaseVc.DoHotLinkAction).
+				return; // we can't handle it. Needs to launch whatever can (see VwBaseVc.DoHotLinkAction).
 			try
 			{
 				var fwargs = new FwAppArgs(new[] {url});
@@ -247,7 +247,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Something went wrong, probably its not a kind of link we understand.
 			}
-			return true;
 		}
 
 		private bool SameDatabase(FwAppArgs fwargs, LcmCache cache)
@@ -417,7 +416,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 			LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
 			Guid[] guids = (from entry in cache.LanguageProject.LexDbOA.Entries select entry.Guid).ToArray();
-			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink,
+			Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink,
 				new FwLinkArgs("lexiconEdit", guids[guids.Length - 1])));
 			return true;
 		}

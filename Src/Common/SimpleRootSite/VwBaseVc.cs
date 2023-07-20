@@ -1,24 +1,15 @@
-// Copyright (c) 2002-2013 SIL International
+// Copyright (c) 2002-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: VwBaseVc.cs
-// Responsibility: Eberhard Beilharz
-// Last reviewed:
-//
-// <remarks>
-// This provides a base class for implementing IVwViewConstructor.
-// It raises a NotImplementedException for all methods (which returns E_NOTIMPL to the COM
-// object).
-// </remarks>
 
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
 using XCore;
 
@@ -26,7 +17,8 @@ namespace SIL.FieldWorks.Common.RootSites
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// This provides a base class for implementing IVwViewConstructor
+	/// This provides a base class for implementing IVwViewConstructor.
+	/// It raises a NotImplementedException for all methods (which returns E_NOTIMPL to the COM object).
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	public abstract class VwBaseVc : IVwViewConstructor
@@ -53,7 +45,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Creates a new VwBaseVc
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public VwBaseVc()
+		protected VwBaseVc()
 		{
 		}
 
@@ -63,7 +55,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// <param name="wsDefault">The default ws.</param>
 		/// ------------------------------------------------------------------------------------
-		public VwBaseVc(int wsDefault)
+		protected VwBaseVc(int wsDefault)
 		{
 			m_wsDefault = wsDefault;
 		}
@@ -243,12 +235,11 @@ namespace SIL.FieldWorks.Common.RootSites
 				}
 
 				// See if we can handle it (via our own LinkListener) without starting a process.
-				var args = new LocalLinkArgs() {Link = url};
-				if (Mediator != null)
+				var args = new LocalLinkArgs { Link = url };
+				Publisher.Publish(new PublisherParameterObject(EventConstants.HandleLocalHotlink, args));
+				if (args.LinkHandledLocally)
 				{
-					Mediator.SendMessage("HandleLocalHotlink", args);
-					if (args.LinkHandledLocally)
-						return;
+					return;
 				}
 
 				// Review JohnT: do we need to do some validation here?
