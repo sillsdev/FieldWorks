@@ -6,8 +6,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 {
 	public static class EventConstants
 	{
+		public const string DictionaryConfigured = "DictionaryConfigured";
 		public const string FollowLink = "FollowLink";
 		public const string MasterRefresh = "MasterRefresh";
-		public const string DictionaryConfigured = "DictionaryConfigured";
+		public const string RegisterHelpTargetWithId = "RegisterHelpTargetWithId";
 	}
 }

@@ -12,6 +12,7 @@ using System;
 using System.Diagnostics;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -150,10 +151,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
 
 			PhoneEnvReferenceLauncher launcher = (PhoneEnvReferenceLauncher)this.Control;
-			Mediator.SendMessage("RegisterHelpTargetWithId",
-				new object[]{launcher.Controls[1], caption, HelpId}, false);
-			Mediator.SendMessage("RegisterHelpTargetWithId",
-				new object[]{launcher.Controls[0], caption, HelpId, "Button"}, false);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.RegisterHelpTargetWithId,
+				new object[]{launcher.Controls[1], caption, HelpId}));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.RegisterHelpTargetWithId,
+				new object[]{launcher.Controls[0], caption, HelpId, "Button"}));
 		}
 
 		/// <summary>
@@ -318,7 +319,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			if (jumpLink != null)
 			{
-				FwUtils.FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, jumpLink));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, jumpLink));
 			}
 
 			return ok;

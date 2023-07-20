@@ -16,6 +16,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.Utils;
 using XCore;
@@ -274,10 +275,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
 					var vrl = (VectorReferenceLauncher)Control;
-					Mediator.SendMessage("RegisterHelpTargetWithId",
-						new object[]{vrl.Controls[1], caption, HelpId}, false);
-					Mediator.SendMessage("RegisterHelpTargetWithId",
-						new object[]{vrl.Controls[0], caption, HelpId, "Button"}, false);
+					Publisher.Publish(new PublisherParameterObject(EventConstants.RegisterHelpTargetWithId,
+						new object[]{vrl.Controls[1], caption, HelpId}));
+					Publisher.Publish(new PublisherParameterObject(EventConstants.RegisterHelpTargetWithId,
+						new object[]{vrl.Controls[0], caption, HelpId, "Button"}));
 				}
 			}
 		}

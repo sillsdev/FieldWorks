@@ -128,6 +128,8 @@ namespace XCore
 
 			if (disposing)
 			{
+				FwUtils.Subscriber.Unsubscribe(EventConstants.RegisterHelpTargetWithId, RegisterHelpTargetWithId);
+
 				// Dispose managed resources here.
 				if (m_mediator != null)
 				{
@@ -185,6 +187,7 @@ namespace XCore
 			//m_items = m_document.SelectNodes("strings/item");
 
 			ShowAlways = m_propertyTable.GetBoolProperty("ShowBalloonHelp", true);
+			FwUtils.Subscriber.Subscribe(EventConstants.RegisterHelpTargetWithId, RegisterHelpTargetWithId);
 		}
 
 		public	IxCoreColleague[] GetMessageTargets()
@@ -321,11 +324,11 @@ namespace XCore
 		//	0) the target control
 		//	1) the id to use when looking up the help text
 		//	2) (optional) a string to concatenate to the Id for a more specific help message, if it exists.
-		public bool OnRegisterHelpTargetWithId(object argument)
+		private void RegisterHelpTargetWithId(object argument)
 		{
 			CheckDisposed();
 			object[] arguments= (object[])argument;
-			System.Diagnostics.Debug.Assert( arguments.Length == 3 || arguments.Length == 4,"OnRegisterHelpTargetWithId Expects  three or four arguments");
+			System.Diagnostics.Debug.Assert( arguments.Length == 3 || arguments.Length == 4,"RegisterHelpTargetWithId Expects  three or four arguments");
 
 			Control target = (Control) arguments[0];
 			string caption = (string) arguments[1];
@@ -346,7 +349,6 @@ namespace XCore
 			SetHelps(target, caption, text);
 
 			AddControls(target, helpid, caption, text);
-			return true;	//we handled this.
 		}
 
 		/// summary>

@@ -16,6 +16,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -534,8 +535,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				if (m_mediator != null) // helpful for robustness and testing.
 				{
 					string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
-					m_mediator.SendMessage("RegisterHelpTargetWithId",
-						new object[] { Control, caption, HelpId }, false);
+					Publisher.Publish(new PublisherParameterObject(EventConstants.RegisterHelpTargetWithId,
+						new object[] { Control, caption, HelpId }));
 				}
 			}
 		}

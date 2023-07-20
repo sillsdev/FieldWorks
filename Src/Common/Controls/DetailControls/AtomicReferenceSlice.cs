@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.Utils;
 
@@ -212,10 +213,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
 			var launcher = (AtomicReferenceLauncher)Control;
-			Mediator.SendMessage("RegisterHelpTargetWithId",
-				new object[]{launcher.AtomicRefViewControl, caption, HelpId}, false);
-			Mediator.SendMessage("RegisterHelpTargetWithId",
-				new object[]{launcher.PanelControl, caption, HelpId, "Button"}, false);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.RegisterHelpTargetWithId,
+				new object[]{launcher.AtomicRefViewControl, caption, HelpId}));
+			Publisher.Publish(new PublisherParameterObject(EventConstants.RegisterHelpTargetWithId,
+				new object[]{launcher.PanelControl, caption, HelpId, "Button"}));
 		}
 
 		#region IVwNotifyChange Members

@@ -12,7 +12,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// <summary>
 	/// Implementation of IPublisher interface.
 	/// </summary>
-	public sealed class Publisher : IPublisher
+	internal sealed class Publisher : IPublisher
 	{
 		private ISubscriber _subscriber;
 

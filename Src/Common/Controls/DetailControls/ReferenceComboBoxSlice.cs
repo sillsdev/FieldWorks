@@ -15,6 +15,7 @@ using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.Utils;
 using XCore;
@@ -205,11 +206,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (Control != null)
 			{
 				string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
-				Mediator.SendMessage("RegisterHelpTargetWithId",
-					new object[]{m_combo.Controls[0], caption, HelpId}, false);
-				//balloon was making it hard to actually click this
-				//Mediator.SendMessage("RegisterHelpTargetWithId",
-				//	new object[]{launcher.Controls[1], caption, HelpId, "Button"}, false);
+				Publisher.Publish(new PublisherParameterObject(EventConstants.RegisterHelpTargetWithId,
+					new object[]{m_combo.Controls[0], caption, HelpId}));
 			}
 		}
 	}

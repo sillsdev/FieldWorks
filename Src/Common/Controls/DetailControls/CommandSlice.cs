@@ -7,6 +7,8 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Diagnostics;
 using XCore;
+using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -105,9 +107,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 			if (Control != null)//grouping nodes do not have a control
 			{
-				Mediator.SendMessage("RegisterHelpTargetWithId",
-					new object[]{Control, ConfigurationNode.Attributes["label"].Value, HelpId},
-					false);
+				Publisher.Publish(new PublisherParameterObject(EventConstants.RegisterHelpTargetWithId,
+					new object[]{Control, ConfigurationNode.Attributes["label"].Value, HelpId}));
 			}
 		}
 
