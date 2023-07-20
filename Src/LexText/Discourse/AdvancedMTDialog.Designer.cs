@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.Discourse
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AdvancedMTDialog));
-			this.helpProvider = new HelpProvider();
+			this.helpProvider = new FlexHelpProvider();
 			this.m_rowLabel = new System.Windows.Forms.Label();
 			this.m_columnLabel = new System.Windows.Forms.Label();
 			this.m_rowsCombo = new System.Windows.Forms.ComboBox();

@@ -15,8 +15,8 @@ Preamble
 -->
    <!-- Using keys instead of IDs (so no DTD or XSD required) -->
    <xsl:key name="LexSenseID" match="LexSense" use="@Id"/>
-   <xsl:key name="MSAID" match="MorphoSyntaxAnalysis" use="@dst"/>
-   <xsl:key name="POSID" match="PartOfSpeech" use="@Id"/>
+	<xsl:key name="MSAID" match="MorphoSyntaxAnalysis" use="@dst"/>
+	<xsl:key name="POSID" match="PartOfSpeech" use="@Id"/>
 	<!-- global variables (to improve efficiency) -->
 	<xsl:variable name="LexEntries" select="/M3Dump/Lexicon/Entries/LexEntry"/>
 	<xsl:variable name="MoStemMsas" select="/M3Dump/Lexicon/MorphoSyntaxAnalyses/MoStemMsa"/>
@@ -32,83 +32,10 @@ Preamble
 	<xsl:variable name="MoMorphAdhocProhibs" select="/M3Dump/AdhocCoProhibitions/descendant-or-self::MoMorphAdhocProhib"/>
 
 	<xsl:variable name="ProdRestricts" select="/M3Dump/ProdRestrict"/>
-	<xsl:variable name="MoAffixAllomorphs" select="/M3Dump/Lexicon/Allomorphs/MoAffixAllomorph"/>
-	<xsl:variable name="PartsOfSpeech" select="/M3Dump/PartsOfSpeech/PartOfSpeech"/>
-	<xsl:variable name="MoEndoCompounds" select="/M3Dump/CompoundRules/MoEndoCompound"/>
-	<xsl:variable name="MoExoCompounds" select="/M3Dump/CompoundRules/MoExoCompound"/>
-	<xsl:variable name="MoMorphTypes" select="/M3Dump/MoMorphTypes/MoMorphType"/>
-	<!-- Old files have a single level of ParserParameters.  New output may have two levels (ParserParameters/ParserParameters). -->
-	<xsl:variable name="XAmple" select="/M3Dump/ParserParameters//XAmple"/>
 	<!-- included stylesheets (i.e. things common to other style sheets) -->
-	<xsl:include href="MorphTypeGuids.xsl"/>
    <xsl:include href="CalculateStemNamesUsedInLexicalEntries.xsl"/>
    <xsl:include href="XAmpleTemplateVariables.xsl"/>
-   <!-- Parameters that can be set by user.  -->
-   <xsl:param name="prmMaxInfixes">
-	  <xsl:choose>
-		 <xsl:when test="$XAmple/MaxInfixes">
-			 <xsl:value-of select="$XAmple/MaxInfixes"/>
-		 </xsl:when>
-		 <xsl:when test="$MoMorphTypes[Name='infix']">1</xsl:when>
-		 <xsl:otherwise>0</xsl:otherwise>
-	  </xsl:choose>
-   </xsl:param>
-   <xsl:param name="prmMaxNull">
-	  <xsl:choose>
-		 <xsl:when test="$XAmple/MaxNulls">
-			<xsl:value-of select="$XAmple/MaxNulls"/>
-		 </xsl:when>
-		 <xsl:otherwise>1</xsl:otherwise>
-	  </xsl:choose>
-   </xsl:param>
-   <xsl:param name="prmMaxPrefixes">
-	  <xsl:choose>
-		 <xsl:when test="$XAmple/MaxPrefixes">
-			<xsl:value-of select="$XAmple/MaxPrefixes"/>
-		 </xsl:when>
-		 <xsl:otherwise>5</xsl:otherwise>
-	  </xsl:choose>
-   </xsl:param>
-   <xsl:param name="prmMaxRoots">
-	  <xsl:choose>
-		 <xsl:when test="$XAmple/MaxRoots">
-			<xsl:value-of select="$XAmple/MaxRoots"/>
-		 </xsl:when>
-		 <xsl:when test="$MoEndoCompounds | $MoExoCompounds">
-			<xsl:choose>
-			   <xsl:when test="$MoEndoCompounds/Linker | $MoExoCompounds/Linker">3</xsl:when>
-			   <xsl:otherwise>2</xsl:otherwise>
-			</xsl:choose>
-		 </xsl:when>
-		 <xsl:otherwise>1</xsl:otherwise>
-	  </xsl:choose>
-   </xsl:param>
-   <xsl:param name="prmMaxSuffixes">
-	  <xsl:choose>
-		 <xsl:when test="$XAmple/MaxSuffixes">
-			<xsl:value-of select="$XAmple/MaxSuffixes"/>
-		 </xsl:when>
-		 <xsl:otherwise>5</xsl:otherwise>
-	  </xsl:choose>
-   </xsl:param>
-   <xsl:param name="prmMaxInterfixes">
-	  <xsl:choose>
-		 <xsl:when test="$XAmple/MaxInterfixes">
-			<xsl:variable name="sValue" select="$XAmple/MaxInterfixes"/>
-			<xsl:choose>
-			   <xsl:when test="$sValue!=0">
-				  <xsl:value-of select="$sValue"/>
-			   </xsl:when>
-			   <xsl:otherwise>
-				  <xsl:call-template name="DetermineMaxInterfixes"/>
-			   </xsl:otherwise>
-			</xsl:choose>
-		 </xsl:when>
-		 <xsl:otherwise>
-			<xsl:call-template name="DetermineMaxInterfixes"/>
-		 </xsl:otherwise>
-	  </xsl:choose>
-   </xsl:param>
+	<xsl:include href="FxtM3ParserCommon.xsl"/>
    <xsl:param name="bMorphnameIsMsaId">y</xsl:param>
    <!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -116,9 +43,31 @@ Main template
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -->
    <xsl:template match="/">
+   <xsl:text>
 \ca W Prt Linker
-\cr W W
-<xsl:if test="$MoEndoCompounds/Linker | $MoExoCompounds/Linker">
+</xsl:text>
+	<xsl:if test="$bSuffixingOnly='Y'">
+		<xsl:text> pos0</xsl:text>
+		<xsl:for-each select="$PartsOfSpeech">
+			<xsl:variable name="posid" select="@Id"/>
+			<xsl:if test="not($PartsOfSpeech/SubPossibilities[@dst=$posid])">
+				<xsl:text> pos</xsl:text>
+				<xsl:value-of select="@Id"/>
+			</xsl:if>
+		</xsl:for-each>
+		<xsl:text>&#xa;</xsl:text>
+	</xsl:if>
+	<xsl:text>\cr W W
+</xsl:text>
+	<xsl:if test="$bSuffixingOnly='Y'">
+		<xsl:for-each select="($MoEndoCompounds | $MoExoCompounds)[1]">
+			<xsl:call-template name="OutputCompoundRootPairs">
+				<xsl:with-param name="compoundRule" select="."/>
+				<xsl:with-param name="sExistingPairs" select="''"/>
+			</xsl:call-template>
+		</xsl:for-each>
+	</xsl:if>
+	<xsl:if test="$MoEndoCompounds/Linker | $MoExoCompounds/Linker">
 \cr W Linker
 \cr Linker W
 </xsl:if>
@@ -467,7 +416,7 @@ OR ((current orderclassmin = -31999) AND (current orderclassmax = -1))
 OR ((left orderclassmin = -31999) AND (left orderclassmax = -1))
 OR ((left orderclass = -1) AND (current orderclass ~= -32000)) | allow derivation outside inflection, but not outside clitics
 OR ((current orderclass = 1) AND (left orderclass ~= 32000)) | allow derivation outside inflection, but not outside clitics
-\it Category
+\it Category (left tocategory is current fromcategory)
 \nt InterfixType_ST
 	 NOT (    (left    type is interfixprefix)
 		  AND (current type is interfixsuffix)
@@ -510,7 +459,7 @@ THEN
 	   )
 </xsl:for-each>   ) -->
 	  <!--		</xsl:if> -->
-\st SEC_ST
+<xsl:text>\st SEC_ST
 \st OrderSfx_ST
 (    (left orderclassmin &lt; current orderclassmin)
 AND (left orderclassmax &lt; current orderclassmax) )
@@ -520,14 +469,31 @@ OR ((current orderclass = 32000) AND (left orderclass = 32000))
 OR ((current orderclassmin = 1) AND (current orderclassmax = 31999))
 OR ((left orderclassmin = 1) AND (left orderclassmax = 31999))
 OR ((current orderclass = 1) AND (left orderclass ~= 32000)) | allow derivation outside inflection, but not outside clitics
-\st SuffixCategory_ST
-   (left tocategory is current fromcategory)
+\st Category
+</xsl:text>
+	<xsl:choose>
+		<xsl:when test="$bSuffixingOnly='N'">
+			<xsl:text>(left tocategory is current fromcategory)
 OR
-   | only enclitics can go on particles
-   (  IF (left tocategory is Prt)
-	THEN (current property is Enclitic)
+| only enclitics can go on particles
+(  IF (left tocategory is Prt)
+THEN (current property is Enclitic)
    )
-\ft OrderFinal_FT
+</xsl:text>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:text>(((left tocategory is current fromcategory)
+OR (left tocategory is "W")
+OR (current fromcategory is "W"))
+AND
+| only enclitics can go on particles
+(  IF (left tocategory is Prt)
+THEN (current property is Enclitic)
+   ))
+</xsl:text>
+		</xsl:otherwise>
+	</xsl:choose>
+<xsl:text>\ft OrderFinal_FT
 IF   (    (current orderclass = 0)
 	  AND (NOT (current type is root))
 	  AND (FOR_SOME_LEFT  (LEFT  orderclass ~= 0))
@@ -551,7 +517,8 @@ THEN (NOT (    (current type is initial)
 \patr TreeStyle none
 \patr ShowGlosses Off
 \patr ShowFeatures On
-</xsl:template>
+</xsl:text>
+   </xsl:template>
    <!--
 	  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	  AllosNotConditionedByFeats
@@ -597,23 +564,27 @@ CountInstancesOfStringInString
 	  </xsl:variable>
 	  <xsl:value-of select="string-length($sCountHolder)"/>
    </xsl:template>
-   <!--
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-DetermineMaxInterfixes
-	Determine max interfixes value based on data
-		Parameters: none
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
--->
-   <xsl:template name="DetermineMaxInterfixes">
-	  <xsl:variable name="sPfxNfx" select="$MoMorphTypes[@Guid=$sPrefixingInterfix]/@Id"/>
-	  <xsl:variable name="sIfxNfx" select="$MoMorphTypes[@Guid=$sInfixingInterfix]/@Id"/>
-	  <xsl:variable name="sSfxNfx" select="$MoMorphTypes[@Guid=$sSuffixingInterfix]/@Id"/>
-	  <xsl:choose>
-		 <xsl:when test="$MoAffixAllomorphs[@MorphType=$sPfxNfx or @MorphType=$sIfxNfx or @MorphType=$sSfxNfx]">1</xsl:when>
-		 <xsl:otherwise>0</xsl:otherwise>
-	  </xsl:choose>
-   </xsl:template>
-   <!--
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		GetCompoundPOSId
+		get top level POS Id for a portion of a compound rule pair
+		Parameters: posid = the Id of one portion of the rule
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template name="GetCompoundPOSId">
+		<xsl:param name="posid"/>
+		<xsl:choose>
+			<xsl:when test="$posid=0">
+				<xsl:text>0</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:call-template name="GetTopLevelPOSId">
+					<xsl:with-param name="pos" select="key('POSID',$posid)"/>
+				</xsl:call-template>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 NestedPOSids
 	Recursive pass through PartOfSpeech to add additional clauses to compound
@@ -633,7 +604,59 @@ NestedPOSids
 		 </xsl:call-template>
 	  </xsl:for-each>
    </xsl:template>
-   <!--
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		OutputCompoundRootPairs
+		Output compound rule statements for compound rule category pairs
+		Parameters: compoundRule = current compound rule
+		sExistingPairs = list of pairs already handled
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template name="OutputCompoundRootPairs">
+		<xsl:param name="compoundRule"/>
+		<xsl:param name="sExistingPairs"/>
+		<xsl:if test="$compoundRule">
+			<xsl:variable name="leftPosId">
+				<xsl:call-template name="GetCompoundPOSId">
+					<xsl:with-param name="posid" select="$MoStemMsas[@Id=$compoundRule/LeftMsa/@dst]/@PartOfSpeech"/>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:variable name="rightPosId">
+				<xsl:call-template name="GetCompoundPOSId">
+					<xsl:with-param name="posid" select="$MoStemMsas[@Id=$compoundRule/RightMsa/@dst]/@PartOfSpeech"/>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:variable name="thisPair">
+				<xsl:text>|</xsl:text>
+				<xsl:value-of select="$leftPosId"/>
+				<xsl:text>/</xsl:text>
+				<xsl:value-of select="$rightPosId"/>
+				<xsl:text>|</xsl:text>
+			</xsl:variable>
+			<xsl:if test="not(contains($sExistingPairs,$thisPair))">
+				<xsl:text>\cr pos</xsl:text>
+				<xsl:value-of select="$leftPosId"/>
+				<xsl:text> pos</xsl:text>
+				<xsl:value-of select="$rightPosId"/>
+				<xsl:text>&#xa;</xsl:text>
+			</xsl:if>
+			<xsl:variable name="sPairs">
+				<xsl:choose>
+					<xsl:when test="contains($sExistingPairs,$thisPair)">
+						<xsl:value-of select="$sExistingPairs"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="concat($sExistingPairs,$thisPair)"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:call-template name="OutputCompoundRootPairs">
+				<xsl:with-param name="compoundRule" select="$compoundRule/following-sibling::*[1]"/>
+				<xsl:with-param name="sExistingPairs" select="$sPairs"/>
+			</xsl:call-template>
+		</xsl:if>
+	</xsl:template>
+	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 OutputUniqueStrings
 	Routine to output a list of strings, only using those strings which are unique

@@ -228,6 +228,9 @@
     <Compile Include="ActivationContextHelper.cs" />
     <Compile Include="AlphaOutline.cs" />
     <Compile Include="EventConstants.cs" />
+    <Compile Include="FlexHelpProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="FwUpdateChooserDlg.cs">
       <SubType>Form</SubType>
     </Compile>

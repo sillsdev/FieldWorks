@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 	/// functions. Do not use yield statements, instead add all objects to a collection and return the collection.
 	/// </summary>
 	[LexiconPlugin(ID = "FieldWorks", DisplayName = "FieldWorks Language Explorer")]
-	public class FwLexiconPlugin : DisposableBase, LexiconPlugin
+	public class FwLexiconPlugin : DisposableBase, LexiconPlugin, LexiconPluginV2
 	{
 		private const int CacheSize = 5;
 		private readonly FdoLexiconCollection m_lexiconCache;
@@ -101,6 +101,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
+		LexiconV2 LexiconPluginV2.GetLexicon(string scrTextName, string projectId, string langId)
+		{
+			return GetFdoLexicon(scrTextName, projectId, langId);
+		}
+
 		/// <summary>
 		/// Chooses the lexical project.
 		/// </summary>
@@ -141,6 +146,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// <param name="langId">The language identifier.</param>
 		/// <returns></returns>
 		public WordAnalyses GetWordAnalyses(string scrTextName, string projectId, string langId)
+		{
+			return GetFdoLexicon(scrTextName, projectId, langId);
+		}
+
+		WordAnalysesV2 LexiconPluginV2.GetWordAnalyses(string scrTextName, string projectId, string langId)
 		{
 			return GetFdoLexicon(scrTextName, projectId, langId);
 		}

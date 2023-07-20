@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.XWorks
 			// Make a help topic ID
 			m_helpTopicId = generateChooserHelpTopicID(m_objType);
 
-			m_helpProvider = new HelpProvider
+			m_helpProvider = new FlexHelpProvider
 			{
 				HelpNamespace = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile
 			};

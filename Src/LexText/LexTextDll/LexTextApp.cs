@@ -740,6 +740,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 				// to perform some behaviors (such as refresh by pressing F5) while the modal dialog is visible,
 				// which can be bad. So, we just create a dummy control and pass that in as the parent.
 				Help.ShowHelp(new Control(), HelpFile);
+				TrackingHelper.TrackHelpRequest(HelpFile, "Help (Browse)");
 			}
 			catch(Exception)
 			{
@@ -909,6 +910,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 					{
 					}
 				}
+				TrackingHelper.TrackHelpRequest(path, Path.GetFileName(path));
 			}
 			catch (T e)
 			{

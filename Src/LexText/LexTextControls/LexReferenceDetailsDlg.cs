@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		public LexReferenceDetailsDlg(IHelpTopicProvider helpTopicProvider) : this()
 		{
 			m_helpTopicProvider = helpTopicProvider;
-			helpProvider = new HelpProvider();
+			helpProvider = new FlexHelpProvider();
 			helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
 			helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);

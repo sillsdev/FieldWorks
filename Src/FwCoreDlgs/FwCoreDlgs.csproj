@@ -448,6 +448,9 @@
     <Compile Include="MoveOrCopyFilesDlg.Designer.cs">
       <DependentUpon>MoveOrCopyFilesDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="PicturePropertiesDialog.Designer.cs">
+      <DependentUpon>PicturePropertiesDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="ProjectLocationDlg.cs">
       <SubType>Form</SubType>
     </Compile>

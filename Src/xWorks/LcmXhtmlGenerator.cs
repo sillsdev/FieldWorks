@@ -737,7 +737,15 @@ namespace SIL.FieldWorks.XWorks
 			xw.WriteAttributeString("href", "#g" + destination);
 		}
 
-		public void EndLink(IFragmentWriter writer)
+		public void StartLink(IFragmentWriter writer, string externalLink)
+		{
+			var xw = ((XmlFragmentWriter)writer).Writer;
+			xw.WriteStartElement("a");
+			xw.WriteAttributeString("href", externalLink);
+			xw.WriteAttributeString("target", "_blank");
+	  }
+
+	  public void EndLink(IFragmentWriter writer)
 		{
 			((XmlFragmentWriter)writer).Writer.WriteEndElement(); // </a>
 		}

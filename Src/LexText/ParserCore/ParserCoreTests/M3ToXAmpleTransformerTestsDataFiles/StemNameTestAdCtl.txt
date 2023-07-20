@@ -1,4 +1,4 @@
-﻿
+
 \ca W Prt Linker
 \cr W W
 
@@ -67,7 +67,7 @@ OR ((current orderclassmin = -31999) AND (current orderclassmax = -1))
 OR ((left orderclassmin = -31999) AND (left orderclassmax = -1))
 OR ((left orderclass = -1) AND (current orderclass ~= -32000)) | allow derivation outside inflection, but not outside clitics
 OR ((current orderclass = 1) AND (left orderclass ~= 32000)) | allow derivation outside inflection, but not outside clitics
-\it Category
+\it Category (left tocategory is current fromcategory)
 \nt InterfixType_ST
 	 NOT (    (left    type is interfixprefix)
 		  AND (current type is interfixsuffix)
@@ -77,7 +77,6 @@ OR ((current orderclass = 1) AND (left orderclass ~= 32000)) | allow derivation 
 \rt RootCategory_ST
   IF (current tocategory is Prt)
 THEN (left property is Proclitic)
-
 \st SEC_ST
 \st OrderSfx_ST
 (    (left orderclassmin < current orderclassmin)
@@ -88,12 +87,12 @@ OR ((current orderclass = 32000) AND (left orderclass = 32000))
 OR ((current orderclassmin = 1) AND (current orderclassmax = 31999))
 OR ((left orderclassmin = 1) AND (left orderclassmax = 31999))
 OR ((current orderclass = 1) AND (left orderclass ~= 32000)) | allow derivation outside inflection, but not outside clitics
-\st SuffixCategory_ST
-   (left tocategory is current fromcategory)
+\st Category
+(left tocategory is current fromcategory)
 OR
-   | only enclitics can go on particles
-   (  IF (left tocategory is Prt)
-	THEN (current property is Enclitic)
+| only enclitics can go on particles
+(  IF (left tocategory is Prt)
+THEN (current property is Enclitic)
    )
 \ft OrderFinal_FT
 IF   (    (current orderclass = 0)

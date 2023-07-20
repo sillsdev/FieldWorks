@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			InitializeComponent();
 
-			this.helpProvider = new HelpProvider();
+			this.helpProvider = new FlexHelpProvider();
 			this.helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 
 			m_lastTextBoxInFocus = fweditFindText;

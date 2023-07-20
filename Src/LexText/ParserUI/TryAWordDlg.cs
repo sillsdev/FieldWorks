@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			InitHtmlControl();
 
-			m_helpProvider = new HelpProvider();
+			m_helpProvider = new FlexHelpProvider();
 		}
 
 		public void SetDlgInfo(Mediator mediator, PropertyTable propertyTable, IWfiWordform wordform, ParserListener parserListener)

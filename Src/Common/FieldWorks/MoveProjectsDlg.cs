@@ -67,7 +67,7 @@ namespace SIL.FieldWorks
 				if (m_btnHelp.Enabled)
 				{
 					if (m_helpProvider == null)
-						m_helpProvider = new HelpProvider();
+						m_helpProvider = new FlexHelpProvider();
 					m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 					m_helpProvider.SetHelpKeyword(this, keyword);
 					m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);

@@ -327,7 +327,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (m_helpTopicProvider != null) // Will be null when running tests
 			{
-				var helpProvider = new HelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };
+				var helpProvider = new FlexHelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };
 				helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
 				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}

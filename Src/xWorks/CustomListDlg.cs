@@ -240,7 +240,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void InitializeHelpProvider()
 		{
-			m_helpProvider = new HelpProvider
+			m_helpProvider = new FlexHelpProvider
 			{
 				HelpNamespace = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile
 			};

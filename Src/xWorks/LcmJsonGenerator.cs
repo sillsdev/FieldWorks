@@ -173,6 +173,11 @@ namespace SIL.FieldWorks.XWorks
 			((JsonFragmentWriter)writer).InsertJsonProperty("guid", "g" + destination);
 		}
 
+		public void StartLink(IFragmentWriter writer, string externalLink)
+		{
+			((JsonFragmentWriter)writer).InsertJsonProperty("linkUrl", externalLink);
+		}
+
 		public void EndLink(IFragmentWriter writer)
 		{
 		}

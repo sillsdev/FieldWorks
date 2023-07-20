@@ -252,6 +252,17 @@ Main template
 					</xsl:element>
 				</xsl:if>
 			</xsl:when>
+			<!-- Exemplar -->
+			<xsl:when test="name(.)='Exemplar'">
+				<xsl:if test="not(preceding-sibling::Exemplar)">
+					<Exemplar>
+						<xsl:call-template name="DoAStr"/>
+						<xsl:for-each select="following-sibling::Exemplar">
+							<xsl:call-template name="DoAStr"/>
+						</xsl:for-each>
+					</Exemplar>
+				</xsl:if>
+			</xsl:when>
 			<!-- LiteralMeaning-->
 			<xsl:when test="name(.)='LiteralMeaning'">
 				<xsl:if test="not(preceding-sibling::LiteralMeaning)">
@@ -396,6 +407,17 @@ Main template
 						<xsl:attribute name="name"><xsl:value-of select="."/></xsl:attribute>
 					</Link>
 				</xsl:element>
+			</xsl:when>
+			<!-- LexExtendedNote Discussion -->
+			<xsl:when test="name(.)='Discussion'">
+				<xsl:if test="not(preceding-sibling::Discussion)">
+					<Discussion>
+						<xsl:call-template name="DoAStr"/>
+						<xsl:for-each select="following-sibling::Discussion">
+							<xsl:call-template name="DoAStr"/>
+						</xsl:for-each>
+					</Discussion>
+				</xsl:if>
 			</xsl:when>
 			<!-- Example -->
 			<xsl:when test="name(.)='Example'">

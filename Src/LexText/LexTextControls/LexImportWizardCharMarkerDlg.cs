@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
 			m_stylesheet = stylesheet;
-			helpProvider = new HelpProvider();
+			helpProvider = new FlexHelpProvider();
 			helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));

@@ -197,7 +197,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.m_btnHelp = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_btnOK = new System.Windows.Forms.Button();
-			this.m_helpProvider = new HelpProvider();
+			this.m_helpProvider = new FlexHelpProvider();
 			((System.ComponentModel.ISupportInitialize)(this.m_titleTextBox)).BeginInit();
 			this.SuspendLayout();
 			//

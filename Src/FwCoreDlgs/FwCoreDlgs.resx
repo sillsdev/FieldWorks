@@ -688,6 +688,12 @@ Do you want to remove English now?</value>
   <data name="ksAlreadyExists" xml:space="preserve">
     <value>{0} already exists.  Do you want to overwrite it?</value>
   </data>
+  <data name="ksClickNoToLeave" xml:space="preserve">
+    <value>{0} Click No to leave the file at
+{1}</value>
+    <comment>{0} is ksAlready exists, a string similar to "{destination file} already exists. Do you want to overwrite it?".
+{1} is the current location of a file that, if the user clicks Yes, would be moved or copied to replace {destination file}.</comment>
+  </data>
   <data name="ksPreviousFolder" xml:space="preserve">
     <value>(Previous folder: {0})</value>
   </data>
@@ -697,19 +703,28 @@ Do you want to remove English now?</value>
   <data name="ksLinkedFilesFolder" xml:space="preserve">
     <value>(Linked Files folder: {0})</value>
   </data>
-  <data name="ksDeletePictureBeforeReplacingFile" xml:space="preserve">
-    <value>If you want to replace a picture file, you must first delete the current picture.</value>
+  <data name="ksErrorFileInUse" xml:space="preserve">
+    <value>The file cannot be written because it is currently in use. Try restarting FieldWorks or choose a unique name.</value>
+    <comment>Written (or overwritten) can mean replaced by another file or saved changes to an existing file.</comment>
   </data>
-  <data name="ksCannotReplaceDisplayedPicture" xml:space="preserve">
-    <value>Cannot Replace Displayed Picture</value>
+  <data name="ksErrorMovingOrCopyingXtoY" xml:space="preserve">
+    <value>Error moving or copying file '{0}' to '{1}':
+{2}</value>
+    <comment>{0} is the source file. {1} is the destination file. {2} is the full text of the error.</comment>
   </data>
   <data name="kstidDestFolderMustBeInLinkedFiles" xml:space="preserve">
     <value>Destination folder must be an existing subfolder of the Linked Files folder: {0}</value>
-    <comment>Error message displayed if user chooses a destination folderthat is not a subfolder of the Linked Files folder.</comment>
+    <comment>Error message displayed if user chooses a destination folder that is not a subfolder of the Linked Files folder.</comment>
   </data>
   <data name="kstidSelectLinkedFilesSubFolder" xml:space="preserve">
     <value>Select a location within the Linked Files folder ({0}) for the picture file.</value>
     <comment>Description text displayed in Browse For Folder dialog box as accessed from Picture Properties dialog box. (Parameter is path to Linked Files base folder.)</comment>
+  </data>
+  <data name="ksSaveChanges" xml:space="preserve">
+    <value>&amp;Save changes</value>
+  </data>
+  <data name="ksSaveChangesAs" xml:space="preserve">
+    <value>Save changes &amp;as</value>
   </data>
   <data name="ksWSPropPunctuation" xml:space="preserve">
     <value>Specify punctuation usage for {0}.</value>
@@ -985,7 +1000,7 @@ Delete the existing relationship before trying to add this one again.</value>
     <comment>Message and tooltip shown when the user has cleared all writing system checkboxes and clicked OK</comment>
   </data>
   <data name="WritingSystemList_NormalTooltip" xml:space="preserve">
-    <value>Writing systems with selected checkboxes are always displayed.</value>
+    <value>Writing systems with cleared checkboxes are displayed only for fields that are not empty.</value>
     <comment>Tooltip for the writing system list in the writing system setup dialog</comment>
   </data>
   <data name="WritingSystemList_AddIpa" xml:space="preserve">

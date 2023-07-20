@@ -861,7 +861,7 @@ namespace SIL.FieldWorks.Discourse
 				Cache.DomainDataByFlid.EndUndoTask();
 				selection.SelectedItem = m_template;
 				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink,
-					new FwLinkArgs(DiscourseStrings.ksNewTemplateLink, newKid.Guid)));
+					new FwLinkArgs("charttempEdit", newKid.Guid)));
 				return;
 			}
 

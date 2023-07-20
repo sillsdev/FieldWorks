@@ -522,6 +522,9 @@
 		<part id="LexEntry-Jt-GlossesForSense" type="jtview">
 			<seq field="AllSenses" layout="GlossesForSense"/>
 		</part>
+		<part id="LexEntry-Jt-ExemplarForSense" type="jtview">
+			<seq field="AllSenses" layout="ExemplarForSense"/>
+		</part>
 		<part id="LexEntry-Jt-DefinitionsForSense" type="jtview">
 			<seq field="AllSenses" layout="DefinitionsForSense"/>
 		</part>

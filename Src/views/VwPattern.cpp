@@ -1340,7 +1340,7 @@ public:
 		// locale/rules, match case, match diacritics, and match whole word.
 		if (m_pat->m_stuRules.Length() > 0)
 		{
-			if (m_pat->m_stuRules.Chars()[0] == '#')
+			if (m_pat->m_stuRules.Chars()[0] == '#' && (m_pat->m_prcoll == NULL))
 			{
 				// Special trick case: this is not a valid start for an ICU collation, we use it to mark
 				// a language that wants a collation like some other language, whose locale is specified in the rest
@@ -2049,6 +2049,7 @@ void VwPattern::Compile()
 		}
 		if (m_stuRules.Length() > 0)
 		{
+			bool specialTrickCase = false;
 			if (m_stuRules.Chars()[0] == '#')
 			{
 				// Special trick case: this is not a valid start for an ICU collation, we use it to mark
@@ -2058,10 +2059,18 @@ void VwPattern::Compile()
 				Locale otherLocale = Locale::createFromName(staOtherLocale.Chars());
 				m_pcoll = Collator::createInstance(otherLocale, error);
 				if (U_FAILURE(error))
-					ThrowHr(E_FAIL);
-				m_pcoll->setStrength(m_strength);
+				{
+					// The '#' could represent a comment instead of this 'Special trick case'. LT-21433
+					// Instead of treating this as an exception treat it as a rule starting with a comment.
+					error = U_ZERO_ERROR;
+				}
+				else
+				{
+					m_pcoll->setStrength(m_strength);
+					specialTrickCase = true;
+				}
 			}
-			else
+			if(!specialTrickCase)
 			{
 				// Make a rule-based collater and an iterator based on it.
 				m_pcoll = m_prcoll = new RuleBasedCollator(m_stuRules.Chars(), m_strength, error);

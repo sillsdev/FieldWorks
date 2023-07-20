@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.XWorks
 
 			m_fieldsLabel.Tag = m_fieldsLabel.Text;	// Localizes Tag!
 
-			m_helpProvider = new HelpProvider
+			m_helpProvider = new FlexHelpProvider
 			{
 				HelpNamespace = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider").HelpFile
 			};

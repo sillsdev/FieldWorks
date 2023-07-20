@@ -691,7 +691,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
 			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
 			this.m_listPanel = new System.Windows.Forms.Panel();
-			this.m_helpProvider = new HelpProvider();
+			this.m_helpProvider = new FlexHelpProvider();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			this.SuspendLayout();
 			//

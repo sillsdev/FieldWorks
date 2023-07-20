@@ -5,6 +5,7 @@
   <layout class="LexSense" type="detail" name="Normal">
 	<part ref="HeavySummary" param="Summary" collapsedLayout="SummaryCollapsed" expansion="expanded" menu="mnuDataTree-Sense" hotlinks="mnuDataTree-Sense-Hotlinks" notifyVirtual="LexSenseOutline">
 		<indent>
+			<part ref="Exemplar" visibility="ifdata" />
 			<part ref="GlossAllA"/>
 			<part ref="ReversalEntries"   visibility="ifdata" />
 			<part ref="DefinitionAllA"/>

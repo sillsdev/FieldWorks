@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			m_ivwpattern = VwPatternClass.Create();
 
-			helpProvider = new HelpProvider();
+			helpProvider = new FlexHelpProvider();
 			helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);

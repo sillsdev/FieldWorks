@@ -150,23 +150,18 @@ namespace SIL.FieldWorks.XWorks
 			int chvo = obj.Cache.DomainDataByFlid.get_VecSize(obj.Hvo, flid);
 			IApp app = m_propertyTable.GetValue<IApp>("App");
 			using (PicturePropertiesDialog dlg = new PicturePropertiesDialog(obj.Cache, null,
-				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, true))
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app))
 			{
-				if (dlg.Initialize())
+				dlg.Initialize();
+				if (dlg.ShowDialog() == DialogResult.OK)
 				{
-					var stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
-					dlg.UseMultiStringCaption(obj.Cache, WritingSystemServices.kwsVernAnals, stylesheet);
-					if (dlg.ShowDialog() == DialogResult.OK)
+					UndoableUnitOfWorkHelper.Do(xWorksStrings.ksUndoInsertPicture, xWorksStrings.ksRedoInsertPicture, obj, () =>
 					{
-						UndoableUnitOfWorkHelper.Do(xWorksStrings.ksUndoInsertPicture, xWorksStrings.ksRedoInsertPicture, obj, () =>
-						{
-							string strLocalPictures = CmFolderTags.DefaultPictureFolder;
-							int hvoPic = obj.Cache.DomainDataByFlid.MakeNewObject(CmPictureTags.kClassId, obj.Hvo, flid, chvo);
-							var picture = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(hvoPic);
-							dlg.GetMultilingualCaptionValues(picture.Caption);
-							picture.UpdatePicture(dlg.CurrentFile, null, strLocalPictures, 0);
-						});
-					}
+						string strLocalPictures = CmFolderTags.DefaultPictureFolder;
+						int hvoPic = obj.Cache.DomainDataByFlid.MakeNewObject(CmPictureTags.kClassId, obj.Hvo, flid, chvo);
+						var picture = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(hvoPic);
+						picture.UpdatePicture(dlg.CurrentFile, null, strLocalPictures, 0);
+					});
 				}
 			}
 			return true;

@@ -96,7 +96,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					// Note that this may set m_obj to null. dlg.FS will be null if all inflection features have been
 					// removed. That is a valid state for this slice; m_obj deleted is not.
 					m_obj = dlg.FS;
-					m_msaInflectionFeatureListDlgLauncherView.Init(m_cache, dlg.FS);
+					// When features are first being added If the user removes all inflection features (or none are available and they click ok)
+					// then the data behind this component is deleted, and this class and its children are disposed from the prop change in the DataTree.
+					if (!IsDisposed)
+					{
+						// If we have been disposed we do not need to crash while trying to re-init the launcher view
+						m_msaInflectionFeatureListDlgLauncherView.Init(m_cache, dlg.FS);
+					}
 				}
 				else if (result == DialogResult.Yes)
 				{

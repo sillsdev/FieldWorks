@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Reversal Indexes" writingSystem="" version="22" lastModified="2018-04-27" allPublications="true" isRootBased="false">
+<DictionaryConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="All Reversal Indexes" writingSystem="" version="25" lastModified="2023-07-10" allPublications="true" isRootBased="false">
 	<ConfigurationItem name="Reversal Entry" isEnabled="true" style="Reversal-Normal" styleType="paragraph" field="ReversalIndexEntry" cssClassNameOverride="reversalindexentry">
 		<ConfigurationItem name="Reversal Form" isEnabled="true" style="Reversal-Headword" between=" " after=" " field="ReversalForm">
 		<!-- Only one space after, because everything following has a Before space, so that will turn into two between this and the rest. -->
@@ -247,6 +247,11 @@
 						<Option id="reversal" isEnabled="true" />
 					</WritingSystemOptions>
 				</ConfigurationItem>
+			</ConfigurationItem>
+			<ConfigurationItem name="Exemplar" isEnabled="false" before="" after=" " field="Exemplar">
+				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+					<Option id="vernacular" isEnabled="true" />
+				</WritingSystemOptions>
 			</ConfigurationItem>
 			<ConfigurationItem name="Definition (or Gloss)" isEnabled="false" before=" " between=" " after="" field="DefinitionOrGloss">
 			<!-- This is Def/Gloss in the analysis language, so usually would be almost the same as the Reversal Form.  It would be rare to display this. -->
@@ -942,6 +947,11 @@
 							<Option id="reversal" isEnabled="true" />
 						</WritingSystemOptions>
 					</ConfigurationItem>
+				</ConfigurationItem>
+				<ConfigurationItem name="Exemplar" isEnabled="false" before="" after=" " field="Exemplar">
+					<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
+						<Option id="vernacular" isEnabled="true" />
+					</WritingSystemOptions>
 				</ConfigurationItem>
 				<ConfigurationItem name="Definition (or Gloss)" isEnabled="false" before=" " between=" " after="" field="DefinitionOrGloss">
 					<WritingSystemOptions writingSystemType="reversal" displayWSAbreviation="false">
