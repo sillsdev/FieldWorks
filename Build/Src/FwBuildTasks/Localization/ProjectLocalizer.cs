@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2021 SIL International
+// Copyright (c) 2015-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -173,10 +173,6 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 		}
 
 		/// <returns><c>true</c> if the given ResX file has errors in string.Format variables</returns>
-		/// <remarks>
-		/// ENHANCE (Hasso) 2020.06: tolerate extra localized elements?
-		/// This would allow all GitHub branches to be build from the same branch in Crowdin.
-		/// </remarks>
 		private bool CheckResXForErrors(string resxPath, string originalResxPath)
 		{
 			var originalElements = LocalizableElements(originalResxPath, out var comments);
@@ -189,12 +185,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			//	hasErrors = true;
 			//}
 
-			if (hasErrors)
-			{
-				return true;
-			}
-
-			//if (originalElements.Count != localizedElements.Count)
+			//if (hasErrors || originalElements.Count != localizedElements.Count)
 			//{
 			//	foreach (var key in originalElements.Keys.Where(key => !localizedElements.ContainsKey(key)))
 			//	{
@@ -203,7 +194,9 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			//	}
 			//}
 
-			foreach (var _ in localizedElements.Where(elt => Options.HasErrors(resxPath, elt.Value, originalElements[elt.Key], comments[elt.Key])))
+			foreach (var _ in localizedElements.Where(elt => Options.HasErrors(resxPath, elt.Value,
+				originalElements.TryGetValue(elt.Key, out var origElt) ? origElt : null,
+				comments.TryGetValue(elt.Key, out var origComment) ? origComment : null)))
 			{
 				hasErrors = true;
 			}
