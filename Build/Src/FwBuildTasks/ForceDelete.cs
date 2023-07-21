@@ -33,21 +33,20 @@ namespace FwBuildTasks
 				{
 					try
 					{
-						// Ensure that the file is writeable.
+						// Ensure that the file is writable.
 						File.SetAttributes(item.ItemSpec, FileAttributes.Normal);
 						File.Delete(item.ItemSpec);
 					}
 					catch (Exception ex)
 					{
 						Log.LogWarningFromException(ex);
-						continue;
 					}
 				}
 				else if (Directory.Exists(item.ItemSpec))
 				{
 					try
 					{
-						// Ensure that all the files in the directory tree are writeable.
+						// Ensure that all the files in the directory tree are writable.
 						var filelist = Directory.GetFiles(item.ItemSpec, "*", SearchOption.AllDirectories);
 						foreach (var file in filelist)
 						{
