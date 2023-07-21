@@ -15,6 +15,7 @@ using System.Windows.Forms.VisualStyles;
 using System.Xml;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.Utils;
 
@@ -438,8 +439,9 @@ namespace XCore
 
 			InitializeComponent();
 
-			FwUtils.Subscriber.Subscribe(PropertyConstants.BestStyleName, SynchronizedOnIdleTime);
-			FwUtils.Subscriber.Subscribe(PropertyConstants.WritingSystemHvo, SynchronizedOnIdleTime);
+			Subscriber.Subscribe(EventConstants.PrepareToRefresh, OnPrepareToRefresh);
+			Subscriber.Subscribe(PropertyConstants.BestStyleName, SynchronizedOnIdleTime);
+			Subscriber.Subscribe(PropertyConstants.WritingSystemHvo, SynchronizedOnIdleTime);
 		}
 
 		/// <summary>
@@ -1301,8 +1303,9 @@ namespace XCore
 		/// </summary>
 		private void ShutDownPart1()
 		{
-			FwUtils.Subscriber.Unsubscribe(PropertyConstants.BestStyleName, SynchronizedOnIdleTime);
-			FwUtils.Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, SynchronizedOnIdleTime);
+			Subscriber.Unsubscribe(EventConstants.PrepareToRefresh, OnPrepareToRefresh);
+			Subscriber.Unsubscribe(PropertyConstants.BestStyleName, SynchronizedOnIdleTime);
+			Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, SynchronizedOnIdleTime);
 
 			if (m_mediator != null)
 			{
@@ -1821,21 +1824,14 @@ namespace XCore
 		/// gives the window a chance to save anything in progress before the Refresh
 		/// updates the cache.
 		///
-		/// Possibly this should be allowed to fail and abort the Refresh, if PrepareToGoAway fails?
+		/// ENHANCE (2012 or earlier) Possibly this should be allowed to fail and abort the Refresh, if PrepareToGoAway fails?
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <returns></returns>
-		public bool OnPrepareToRefresh(object sender)
+		public void OnPrepareToRefresh(object _)
 		{
 			CheckDisposed();
 
 			// This can be null when the MasterRefresh is being processed.
-			if (MainContentControlAsIxCoreContentControl == null)
-				return false;
-
-			MainContentControlAsIxCoreContentControl.PrepareToGoAway();
-
-			return false; // others may want to check also.
+			MainContentControlAsIxCoreContentControl?.PrepareToGoAway();
 		}
 
 		#endregion XCORE Message Handlers

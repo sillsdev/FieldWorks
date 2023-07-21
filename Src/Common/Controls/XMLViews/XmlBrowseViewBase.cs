@@ -1,21 +1,22 @@
-// Copyright (c) 2005-2017 SIL International
+// Copyright (c) 2005-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Utils;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
-using System.Diagnostics;
-using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel.Application;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.LCModel;
 using XCore;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -1106,6 +1107,8 @@ namespace SIL.FieldWorks.Common.Controls
 						break;
 				}
 			}
+
+			Subscriber.Subscribe(EventConstants.PrepareToRefresh, OnPrepareToRefresh);
 		}
 
 		/// <summary>
@@ -1137,6 +1140,8 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (m_bv != null && !m_bv.IsDisposed && m_bv.SpecialCache != null)
 					m_bv.SpecialCache.RemoveNotification(this);
+
+				Subscriber.Unsubscribe(EventConstants.PrepareToRefresh, OnPrepareToRefresh);
 			}
 
 			base.Dispose(disposing);
@@ -1392,19 +1397,11 @@ namespace SIL.FieldWorks.Common.Controls
 			get { return m_sda; }
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called when [prepare to refresh].
-		/// </summary>
-		/// <param name="args">The args.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public bool OnPrepareToRefresh(object args)
+		private void OnPrepareToRefresh(object args)
 		{
 			CheckDisposed();
 
 			OnSaveScrollPosition(args);
-			return false; // other things may wish to prepare too.
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -1235,11 +1235,15 @@ namespace XCore
 							handled = true;
 							break;
 						}
-						else
+						if (methodName == "OnMasterRefresh")
 						{
-							object o = InvokeMethod(target, mi, parameterList);
-							handled = (o != null) ? (bool) o : false;
+							Trace.Fail("Master Refresh is now handled by PubSub");
+							FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh));
+							handled = true;
+							break;
 						}
+						var o = InvokeMethod(target, mi, parameterList);
+						handled = o != null && (bool)o;
 					}
 					else
 					{

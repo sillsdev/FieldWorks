@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2021 SIL International
+// Copyright (c) 2003-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -19,6 +19,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.UIAdapters;
 using SIL.FieldWorks.FwCoreDlgControls;
@@ -1634,14 +1635,16 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Called in FwXApp.OnMasterRefresh BEFORE clearing the cache, typically to
 		/// save any work in progress.
+		/// REVIEW (Hasso) 2023.07: 2/3 production callers call this in a foreach loop in OnMasterRefresh. There has to be a more efficient way.
 		/// </summary>
 		public void PrepareToRefresh()
 		{
 			CheckDisposed();
 
-			// Use SendMessageToAllNow as this needs to go to everyone right now.  This
+			// REVIEW (Hasso) 2023.07: we had used MediatorSendMessageToAllNow as this needs to go to everyone right now.  This
 			// method on the mediator will not stop when the message is handled, nor is it deferred.
-			m_mediator.SendMessageToAllNow("PrepareToRefresh", null);
+			// REVIEW: do we need to replicate this urgency in PubSub?
+			Publisher.Publish(new PublisherParameterObject(EventConstants.PrepareToRefresh));
 		}
 
 		/// <summary>

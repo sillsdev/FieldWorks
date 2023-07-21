@@ -21,7 +21,7 @@
 			<IdlImporterXmlPath>$([System.IO.Path]::GetFullPath('$(OutDir)../../packages/SIL.IdlImporter.$(IdlImpVer)/build/IDLImporter.xml'))</IdlImporterXmlPath>
 		</PropertyGroup>
 				<!-- Install our dotnet global tool later used for generating Views.cs in the ViewsInterfaces project -->
-		<Exec Command="dotnet tool update --global SIL.IdlImporter.Tool --version $(IdlImpVer)" />
+		<Exec Command="dotnet tool update --global SIL.IdlImporter.Tool --version $(IdlImpVer)" Condition="'$(disableDownloads)'!='true'" />
 		<Exec Command="idlimport /c $(IdlImporterXmlPath) /o $(MSBuildProjectDirectory)\Views.cs /i &quot;@(ViewsIdhFiles)&quot; /n SIL.FieldWorks.Common.ViewsInterfaces /u &quot;@(UsingNamespaces)&quot; /r $(ViewsRefsJson) $(ViewsTlbSrc)" />
 	</Target>
 

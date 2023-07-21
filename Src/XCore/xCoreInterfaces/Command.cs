@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.Reporting;
 using SIL.Utils;
 
@@ -730,7 +731,14 @@ namespace XCore
 					using (new WaitCursor(Form.ActiveForm))
 					{
 						Logger.WriteEvent("Start: " + msgString);
-						m_mediator.SendMessage(msgString, this);
+						if (msgString == EventConstants.MasterRefresh)
+						{
+							Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh));
+						}
+						else
+						{
+							m_mediator.SendMessage(msgString, this);
+						}
 						Logger.WriteEvent("Done: " + msgString);
 					}
 				}

@@ -1,6 +1,7 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -19,6 +20,7 @@ using SIL.FieldWorks.Common.Widgets;
 using XCore;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.IText
@@ -756,12 +758,21 @@ namespace SIL.FieldWorks.IText
 			FinishInitTabPages(configurationParameters);
 			SetInitialTabPage();
 			m_currentTool = configurationParameters.Attributes["clerk"].Value;
+
+			Disposed += OnDispose;
+			Subscriber.Subscribe(EventConstants.PrepareToRefresh, OnPrepareToRefresh);
+
 			// Do NOT do this, it raises an exception.
 			//base.Init (mediator, configurationParameters);
 			// Instead do this.
 			InitBase(mediator, propertyTable, configurationParameters);
 			m_fullyInitialized = true;
 			RefreshPaneBar();
+		}
+
+		private void OnDispose(object sender, EventArgs e)
+		{
+			Subscriber.Unsubscribe(EventConstants.PrepareToRefresh, OnPrepareToRefresh);
 		}
 
 		/// <summary>
@@ -805,14 +816,13 @@ namespace SIL.FieldWorks.IText
 			return true;
 		}
 
-		public bool OnPrepareToRefresh(object args)
+		private void OnPrepareToRefresh(object _)
 		{
 			CheckDisposed();
 
-			// flag that a refresh was triggered (unless we don't have a current record..see var comment).
+			// flag that a refresh was triggered (unless we don't have a current record. See comment on m_fRefreshOccurred).
 			if (RootStTextHvo != 0)
 				m_fRefreshOccurred = true;
-			return false; // other things may wish to prepare too.
 		}
 
 		protected override void SetupDataContext()
