@@ -6,6 +6,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 {
 	public static class PropertyConstants
 	{
+		public const string ActiveClerk = "ActiveClerk";
 		public const string BestStyleName = "BestStyleName";
 		public const string SortedByLength = "SortedByLength";
 		public const string WritingSystemHvo = "WritingSystemHvo";

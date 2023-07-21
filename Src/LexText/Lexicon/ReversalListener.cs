@@ -380,6 +380,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			base.Init(mediator, propertyTable, viewConfiguration);
 			ChangeOwningObjectIfPossible();
+			FwUtils.Subscriber.Subscribe(PropertyConstants.ActiveClerk, ActiveClerkChanged);
 		}
 
 		private void ChangeOwningObjectIfPossible()
@@ -549,13 +550,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					JumpToIndex(rootIndex);
 					base.OnPropertyChanged(name);
 					break;
-				case "ActiveClerk":
-					RecordClerk activeClerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
-					if (activeClerk == this)
-						ChangeOwningObjectIfPossible();
-					else
-						base.OnPropertyChanged(name);
-					break;
 				case "ReversalIndexPublicationLayout":
 					// When the user chooses a different reversal index configuration from the drop-down menu,
 					// set the list of associated reversal index entries.
@@ -577,6 +571,15 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var parentIndex = m_list.IndexOfParentOf(item.KeyObject, Cache);
 
 			return parentIndex == -1 ? lastValidIndex : GetRootIndex(parentIndex);
+		}
+
+		private void ActiveClerkChanged(object obj)
+		{
+			var activeClerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
+			if (activeClerk == this)
+			{
+				ChangeOwningObjectIfPossible();
+			}
 		}
 
 		/// <summary>
@@ -722,6 +725,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		abstract protected ICmObject NewOwningObject(IReversalIndex ri);
+
+		protected override void Dispose(bool disposing)
+		{
+			FwUtils.Subscriber.Unsubscribe(PropertyConstants.ActiveClerk, ActiveClerkChanged);
+			base.Dispose(disposing);
+		}
 	}
 
 	/// <summary>
