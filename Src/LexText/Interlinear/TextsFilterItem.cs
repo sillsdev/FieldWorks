@@ -1,16 +1,10 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
-using SIL.FieldWorks.XWorks;
 using XCore;
 
 namespace SIL.FieldWorks.IText
@@ -31,13 +25,8 @@ namespace SIL.FieldWorks.IText
 
 		public override bool Invoke()
 		{
-			m_mediator.SendMessage("ProgressReset", this);
 			m_mediator.SendMessage("AddTexts", this);
-			// Not sure this can happen but play safe.
-			if (m_mediator != null && !m_mediator.IsDisposed)
-			{
-				m_mediator.SendMessage("ProgressReset", this);
-			}
+
 			//var clerk = RecordClerk.FindClerk(m_mediator, "interlinearTexts") as InterlinearTextsRecordClerk;
 			//if (clerk == null)
 			//    return false;
