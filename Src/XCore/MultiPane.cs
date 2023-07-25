@@ -96,6 +96,7 @@ namespace XCore
 				return;
 			if (disposing)
 			{
+				FwUtils.Subscriber.Unsubscribe(PropertyConstants.ActiveClerkSelectedObject, ActiveClerkSelectedObject);
 				if (m_mediator != null)
 					m_mediator.RemoveColleague(this);
 				if(components != null)
@@ -305,6 +306,7 @@ namespace XCore
 			//it's important to do this last, so that we don't go generating property change
 			//notifications that we then go trying to cope with before we are ready
 			mediator.AddColleague(this);
+			FwUtils.Subscriber.Subscribe(PropertyConstants.ActiveClerkSelectedObject, ActiveClerkSelectedObject);
 			m_fOkToPersistSplit = true;
 		}
 
@@ -628,7 +630,7 @@ namespace XCore
 			{
 				return;
 			}
-			if (name == "ActiveClerkSelectedObject" || name == "ToolForAreaNamed_lexicon")
+			if (name == "ToolForAreaNamed_lexicon")
 			{
 				SetFocusInDefaultControl();
 			}
@@ -646,6 +648,11 @@ namespace XCore
 					ShowFirstPaneChanged(this, new EventArgs());
 			}
 
+		}
+
+		private void ActiveClerkSelectedObject(object propertyObject)
+		{
+			SetFocusInDefaultControl();
 		}
 
 		/// <summary>

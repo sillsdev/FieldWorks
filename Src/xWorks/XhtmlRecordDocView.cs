@@ -44,14 +44,14 @@ namespace SIL.FieldWorks.XWorks
 			Clerk.VirtualListPublisher.AddNotification(this);
 			FwUtils.Subscriber.Subscribe(EventConstants.DictionaryConfigured, RefreshPreviewContent);
 			FwUtils.Subscriber.Subscribe(EventConstants.MasterRefresh, RefreshPreviewContent);
-		 Disposed += OnDisposed;
+			Disposed += OnDisposed;
 		}
 
 		private void OnDisposed(object sender, EventArgs e)
 		{
 			FwUtils.Subscriber.Unsubscribe(EventConstants.DictionaryConfigured, RefreshPreviewContent);
 			FwUtils.Subscriber.Unsubscribe(EventConstants.MasterRefresh, RefreshPreviewContent);
-	  }
+		}
 
 		private void RefreshPreviewContent(object _)
 		{

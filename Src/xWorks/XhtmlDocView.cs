@@ -79,12 +79,14 @@ namespace SIL.FieldWorks.XWorks
 			Disposed += OnDispose;
 			FwUtils.Subscriber.Subscribe(EventConstants.DictionaryConfigured, RefreshAllContent);
 			FwUtils.Subscriber.Subscribe(EventConstants.MasterRefresh, RefreshAllContent);
+			FwUtils.Subscriber.Subscribe(PropertyConstants.ActiveClerkSelectedObject, ActiveClerkSelectedObject);
 		}
 
 		private void OnDispose(object sender, EventArgs e)
 		{
 			FwUtils.Subscriber.Unsubscribe(EventConstants.DictionaryConfigured, RefreshAllContent);
 			FwUtils.Subscriber.Unsubscribe(EventConstants.MasterRefresh, RefreshAllContent);
+			FwUtils.Subscriber.Unsubscribe(PropertyConstants.ActiveClerkSelectedObject, ActiveClerkSelectedObject);
 		}
 
 		private void OnMouseWheel(object sender, DomMouseEventArgs domMouseEventArgs)
@@ -1019,19 +1021,21 @@ namespace SIL.FieldWorks.XWorks
 					}
 					UpdateContent(currentConfig);
 					break;
-				case "ActiveClerkSelectedObject":
-					var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
-					if (browser != null)
-					{
-						RemoveStyleFromPreviousSelectedEntryOnView(browser);
-						LoadPageIfNecessary(browser);
-						Clerk.SelectedRecordChanged(true);
-						SetActiveSelectedEntryOnView(browser);
-					}
-					break;
 				default:
 					// Not sure what other properties might change, but I'm not doing anything.
 					break;
+			}
+		}
+
+		private void ActiveClerkSelectedObject(object objectProperty)
+		{
+			var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
+			if (browser?.Document != null)
+			{
+				RemoveStyleFromPreviousSelectedEntryOnView(browser);
+				LoadPageIfNecessary(browser);
+				Clerk.SelectedRecordChanged(true);
+				SetActiveSelectedEntryOnView(browser);
 			}
 		}
 

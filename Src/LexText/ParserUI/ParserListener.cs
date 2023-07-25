@@ -42,10 +42,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		private PropertyTable m_propertyTable;
 		private LcmCache m_cache; //a pointer to the one owned by from the form
 		/// <summary>
-		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanged section of Dispose.
+		/// Use this to do the Add/RemoveNotifications, since it can be used in the unmanaged section of Dispose.
 		/// (If m_sda is COM, that is.)
 		/// Doing it there will be safer, since there was a risk of it not being removed
-		/// in the mananged section, as when disposing was done by the Finalizer.
+		/// in the managed section, as when disposing was done by the Finalizer.
 		/// </summary>
 		private ISilDataAccess m_sda;
 		/// <summary>
@@ -65,6 +65,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_propertyTable = propertyTable;
 			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 			mediator.AddColleague(this);
+			FwUtils.Subscriber.Subscribe(PropertyConstants.ActiveClerkSelectedObject, ActiveClerkSelectedObject);
 
 			m_sda = m_cache.MainCacheAccessor;
 			m_sda.AddNotification(this);
@@ -111,20 +112,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		/// <summary>
-		/// Send the newly selected wordform on to the parser.
-		/// </summary>
-		public void OnPropertyChanged(string propertyName)
+		private void ActiveClerkSelectedObject(object propertyObject)
 		{
-			CheckDisposed();
-
-			if (m_parserConnection != null && propertyName == "ActiveClerkSelectedObject")
+			if(m_parserConnection == null)
 			{
-				var wordform = m_propertyTable.GetValue<ICmObject>(propertyName) as IWfiWordform;
-				if (wordform != null)
-				{
-					m_parserConnection.UpdateWordform(wordform, ParserPriority.High);
-				}
+				return;
+			}
+			if (m_propertyTable.GetValue<ICmObject>(PropertyConstants.ActiveClerkSelectedObject) is IWfiWordform wordform)
+			{
+				m_parserConnection.UpdateWordform(wordform, ParserPriority.High);
 			}
 		}
 
@@ -363,6 +359,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (disposing)
 			{
+				FwUtils.Subscriber.Unsubscribe(PropertyConstants.ActiveClerkSelectedObject, ActiveClerkSelectedObject);
 				// other clients may now parse
 				// Dispose managed resources here.
 				if (m_timer != null)
