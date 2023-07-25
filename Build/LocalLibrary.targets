@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
 	<PropertyGroup>
-		<Icu4cBuildType Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'">Libraries_Icu4cWin32FieldWorksContinuous</Icu4cBuildType>
-		<Icu4cBuildType Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'">Libraries_Icu4cWin64FieldWorksContinuous</Icu4cBuildType>
-		<TeamCityUrl>https://build.palaso.org/</TeamCityUrl>
 		<LiblcmPlatform Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'">x86</LiblcmPlatform>
 		<LiblcmPlatform Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'">x64</LiblcmPlatform>
 		<LiblcmPlatform Condition="'$(OS)'!='Windows_NT'">x86</LiblcmPlatform>
@@ -24,11 +21,6 @@
 		<PalasoFileNamesForLL Include="SIL.TestUtilities.dll" />
 		<PalasoFileNamesForLL Include="Newtonsoft.Json.dll" />
 		<PalasoFileNamesForLL Include="Spart.dll" />
-		<IcuFileNamesForLL Include="gennorm2.exe" />
-		<IcuFileNamesForLL Include="icudt54.dll" />
-		<IcuFileNamesForLL Include="icuin54.dll" />
-		<IcuFileNamesForLL Include="icutu54.dll" />
-		<IcuFileNamesForLL Include="icuuc54.dll" />
 		<!--The Chorus Library uses these-->
 		<ChorusDeps Include="SIL.Windows.Forms.dll" />
 		<ChorusDeps Include="SIL.Windows.Forms.pdb" />
@@ -49,7 +41,6 @@
 		<!--Build the LCM library-->
 		<MakeDir Directories="$(LcmArtifactsDir)" />
 		<MakeDir Directories="$(LcmArtifactsDir)/../../lib/downloads/$(Platform)" Condition="'$(OS)'=='Windows_NT' "/>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType)" Artifacts="@(IcuFileNamesForLL)" DownloadsDir="$(LcmArtifactsDir)/../../lib/downloads/$(Platform)" Condition="'$(OS)'=='Windows_NT'"/>
 		<Copy SourceFiles="@(PalasoFileNamesForLL -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(LcmArtifactsDir)/../../lib/downloads" />
 		<Message Text="Building liblcm. Artifacts will be put into: $(LcmArtifactsDir)" />
 		<MSBuild Projects="$(LcmArtifactsDir)/../../LCM.sln"

@@ -306,9 +306,8 @@
 		<ExCss Condition="'$(OS)'=='Unix'">ExCSS</ExCss>
 		<ExCssBuildTag>fw-9.0.11.tcbuildtag</ExCssBuildTag>
 		<Icu4cBuildType32>Libraries_Icu4cWin32FieldWorksContinuous</Icu4cBuildType32>
-		<Icu4cBuildTag32>fw-9.0.11.tcbuildtag</Icu4cBuildTag32>
 		<Icu4cBuildType64>Libraries_Icu4cWin64FieldWorksContinuous</Icu4cBuildType64>
-		<Icu4cBuildTag64>fw-9.0.11.tcbuildtag</Icu4cBuildTag64>
+		<Icu4cBuildTag>fw-9.0.11.tcbuildtag</Icu4cBuildTag>
 		<HermitCrabBuildType>bt410</HermitCrabBuildType>
 		<HermitCrabBuildTag>fw-9.0.tcbuildtag</HermitCrabBuildTag>
 		<NUnitDownloadUrl>https://github.com/nunit/nunitv2/releases/download/2.6.4/NUnit-2.6.4.zip</NUnitDownloadUrl>
@@ -446,16 +445,16 @@
 		<MakeDir Directories="$(DownloadsDir)/lib/x86"/>
 		<Message Text="NOT" Condition="'$(UseLocalLibraries)'=='Y'"/>
 		<Message Text="Downloading artifacts for Palaso, including  L10NSharp, Enchant.Net, ibusdotnet, NDesk.DBus, Spart, and Newtonsoft.Json."/>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(PalasoBuildType)" VersionInfo="$(MasterVersionInfo)"
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(PalasoBuildType)"
 			Artifacts="@(PalasoFiles)" DownloadsDir="$(DownloadsDir)" Tag="$(PalasoBuildTag)" Condition="'$(UseLocalLibraries)'!='Y'"/>
 
 		<Message Text="Downloading artifacts for Chorus."/>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ChorusBuildType)" VersionInfo="$(MasterVersionInfo)"
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ChorusBuildType)"
 			Artifacts="@(ChorusFiles)" DownloadsDir="$(DownloadsDir)" Tag="$(ChorusBuildTag)" Condition="'$(UseLocalLibraries)'!='Y'"/>
 
 		<Message Text="nor" Condition="'$(UseLocalLibraries)'=='Y'"/>
 		<Message Text="Downloading artifacts for LCM." />
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(LcmBuildType)" VersionInfo="$(MasterVersionInfo)" Artifacts="LCM.zip" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalLibraries)'!='Y'" Tag="$(LcmBuildTag)"/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(LcmBuildType)" Artifacts="LCM.zip" DownloadsDir="$(DownloadsDir)" Condition="'$(UseLocalLibraries)'!='Y'" Tag="$(LcmBuildTag)"/>
 		<Message Text="(the above artifacts will be copied from $(PalasoArtifactsDir), $(ChorusArtifactsDir), and $(LcmArtifactsDir), respectively, as  specified in LibraryDevelopment.targets)" Condition="'$(UseLocalLibraries)'=='Y'"/>
 
 		<Message Text="Downloading an artifact for IPCFramework."/>
@@ -466,8 +465,8 @@
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(ExCssBuildType)" Tag="$(ExCssBuildTag)" Artifacts="$(ExCss).dll;$(ExCss).$(DebugInfo)" DownloadsDir="$(DownloadsDir)"/>
 
 		<Message Text="Downloading artifacts for icu4c." Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType32)" Tag="$(Icu4cBuildTag32)" Artifacts="@(IcuFiles)" DownloadsDir="$(DownloadsDir)/lib/x86" Condition="'$(OS)'=='Windows_NT'"/>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType64)" Tag="$(Icu4cBuildTag64)" Artifacts="@(IcuFiles)" DownloadsDir="$(DownloadsDir)/lib/x64" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'"/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType32)" Tag="$(Icu4cBuildTag)" Artifacts="@(IcuFiles)" DownloadsDir="$(DownloadsDir)/lib/x86" Condition="'$(OS)'=='Windows_NT'"/>
+		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(Icu4cBuildType64)" Tag="$(Icu4cBuildTag)" Artifacts="@(IcuFiles)" DownloadsDir="$(DownloadsDir)/lib/x64" Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'"/>
 
 		<Message Text="Downloading artifacts for HermitCrab." />
 		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(HermitCrabBuildType)" Tag="$(HermitCrabBuildTag)" Artifacts="QuickGraph.dll;SIL.Machine.dll;SIL.Collections.dll;SIL.HermitCrab.dll" DownloadsDir="$(DownloadsDir)"/>
