@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2021 SIL International
+// Copyright (c) 2015-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -687,7 +687,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>Callback to refresh the Message Slice after OnView[Lift]Messages</summary>
 		private void BroadcastMasterRefresh()
 		{
-			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh));
+			CheckDisposed();
+			_parentForm.Invoke(() => Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh)));
 		}
 
 		#endregion View Messages (for full FLEx data only) messages
