@@ -1,4 +1,4 @@
 FWMAJOR=9
 FWMINOR=8
 FWREVISION=0
-FWBETAVERSION=m/s² (reimplement PubSub)
+FWBETAVERSION=m/s² (PubSub)

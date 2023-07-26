@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,12 +10,12 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using DesktopAnalytics;
 using Sfm2Xml;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -559,7 +559,7 @@ namespace SIL.FieldWorks.IText
 
 		protected override void OnFinishButton()
 		{
-			Common.FwUtils.TrackingHelper.TrackImport("textsWords", "SFM", ImportExportStep.Attempted);
+			TrackingHelper.TrackImport("textsWords", "SFM", ImportExportStep.Attempted);
 			base.OnFinishButton();
 			SaveSettings();
 			if (string.IsNullOrEmpty(m_fileListBox.Text))
@@ -587,7 +587,9 @@ namespace SIL.FieldWorks.IText
 					Close();
 				}
 			}
-			m_mediator.SendMessage("MasterRefresh", ActiveForm);
+			// REVIEW (Hasso) 2023.07: do any subscribers care about the ActiveForm?
+			// REVIEW (Hasso) 2023.07: does this need to be invoked on the main UI thread? (ActiveForm.Invoke or similar)
+			Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh, ActiveForm));
 			if (m_firstNewText != null)
 			{
 				// try to select it.
@@ -595,7 +597,7 @@ namespace SIL.FieldWorks.IText
 				if (clerk != null)
 					clerk.JumpToRecord(m_firstNewText.ContentsOA.Hvo);
 			}
-			Common.FwUtils.TrackingHelper.TrackImport("textsWords", "SFM", m_firstNewText == null ? ImportExportStep.Failed : ImportExportStep.Succeeded);
+			TrackingHelper.TrackImport("textsWords", "SFM", m_firstNewText == null ? ImportExportStep.Failed : ImportExportStep.Succeeded);
 		}
 		LCModel.IText m_firstNewText;
 		private List<InterlinearMapping> m_oldMappings;

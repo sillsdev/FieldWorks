@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2017 SIL International
+// Copyright (c) 2009-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -20,6 +20,7 @@ using SIL.LCModel;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.Drawing;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Resources;
@@ -518,7 +519,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			if (ChangesWereMade)
 			{
-				m_mediator.SendMessage("MasterRefresh", null);
+				Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh));
 			}
 			Close();
 		}
