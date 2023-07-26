@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Code-Review+2: Mark Kidder <mark_kidder@sil.org>
+Verified-Linux+1: Hasso Pape <hasso_pape@sil.org>
+Submitted-by: Hasso Pape <hasso_pape@sil.org>
+Submitted-at: Wed, 26 Jul 2023 16:17:29 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/c/FieldWorks/+/9407
+Project: FieldWorks
+Branch: refs/heads/feature/PubSub
