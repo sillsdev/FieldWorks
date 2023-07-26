@@ -144,19 +144,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		public override void RegisterWithContextHelper()
-		{
-			CheckDisposed();
-
-			string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
-
-			PhoneEnvReferenceLauncher launcher = (PhoneEnvReferenceLauncher)this.Control;
-			Publisher.Publish(new PublisherParameterObject(EventConstants.RegisterHelpTargetWithId,
-				new object[]{launcher.Controls[1], caption, HelpId}));
-			Publisher.Publish(new PublisherParameterObject(EventConstants.RegisterHelpTargetWithId,
-				new object[]{launcher.Controls[0], caption, HelpId, "Button"}));
-		}
-
 		/// <summary>
 		/// Handle changes in the size of the underlying view.
 		/// </summary>

@@ -15,7 +15,6 @@ using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
-using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.Utils;
 using XCore;
@@ -196,19 +195,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				m_cache.DomainDataByFlid.SetObjProp(Object.Hvo, m_flid, newValue);
 			});
-		}
-
-		/// <summary></summary>
-		public override void RegisterWithContextHelper()
-		{
-			CheckDisposed();
-
-			if (Control != null)
-			{
-				string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
-				Publisher.Publish(new PublisherParameterObject(EventConstants.RegisterHelpTargetWithId,
-					new object[]{m_combo.Controls[0], caption, HelpId}));
-			}
 		}
 	}
 }

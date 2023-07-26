@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,19 +13,12 @@ using SIL.Utils;
 
 namespace XCore
 {
-
 	/// <summary>
 	/// Summary description for IContextHelper.
 	/// </summary>
 	public interface IContextHelper
 	{
-		Control ParentControl
-		{
-			set;
-		}
-
 		string GetToolTip(string id);
-
 	}
 
 	/// summary>
@@ -128,8 +121,6 @@ namespace XCore
 
 			if (disposing)
 			{
-				FwUtils.Subscriber.Unsubscribe(EventConstants.RegisterHelpTargetWithId, RegisterHelpTargetWithId);
-
 				// Dispose managed resources here.
 				if (m_mediator != null)
 				{
@@ -151,18 +142,6 @@ namespace XCore
 
 		#endregion IDisposable & Co. implementation
 
-		abstract protected  void SetHelps(Control target,string caption, string text );
-
-		abstract public  Control ParentControl
-		{
-			set;
-		}
-
-		protected abstract  bool ShowAlways
-		{
-			set;
-		}
-
 		#region IxCoreColleague
 		/// <summary/>
 		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
@@ -174,7 +153,6 @@ namespace XCore
 			m_propertyTable.SetProperty("ContextHelper", this, false);
 			m_propertyTable.SetPropertyPersistence("ContextHelper", false);
 
-			ParentControl = m_propertyTable.GetValue<Control>("window");
 			m_document= new XmlDocument();
 
 			//we use the  directory of the file which held are parameters as the starting point
@@ -184,10 +162,6 @@ namespace XCore
 			var configParamatersBasePath = FileUtils.StripFilePrefix(configurationParameters.BaseURI);
 			path = Path.Combine(Path.GetDirectoryName(configParamatersBasePath), path);
 			m_document.Load(path);
-			//m_items = m_document.SelectNodes("strings/item");
-
-			ShowAlways = m_propertyTable.GetBoolProperty("ShowBalloonHelp", true);
-			FwUtils.Subscriber.Subscribe(EventConstants.RegisterHelpTargetWithId, RegisterHelpTargetWithId);
 		}
 
 		public	IxCoreColleague[] GetMessageTargets()
@@ -218,7 +192,7 @@ namespace XCore
 			return text;
 		}
 
-		protected bool GetHelpText (string id, ref string caption, out string text)
+		private bool GetHelpText (string id, ref string caption, out string text)
 		{
 			text  ="";
 			if (id == null)
@@ -302,71 +276,6 @@ namespace XCore
 				return true;
 			}
 			return false;	//there was no real match
-		}
-
-		//this will just give each sub controlled the same helped message. If you want to have
-		//different messages for individual controls, you need register them separately.
-		protected void AddControls (Control parent, string helpid, string caption, string text)
-		{
-			foreach(Control child in parent.Controls)
-			{
-				SetHelps(child,caption, text);
-				AddControls(child, helpid, caption, text);
-			}
-
-		}
-		/// <summary>
-		/// register a control with the context of system
-		/// </summary>
-		/// <param name="argument"></param>
-		/// <returns>always returns true</returns>
-		//arguments:
-		//	0) the target control
-		//	1) the id to use when looking up the help text
-		//	2) (optional) a string to concatenate to the Id for a more specific help message, if it exists.
-		private void RegisterHelpTargetWithId(object argument)
-		{
-			CheckDisposed();
-			object[] arguments= (object[])argument;
-			System.Diagnostics.Debug.Assert( arguments.Length == 3 || arguments.Length == 4,"RegisterHelpTargetWithId Expects  three or four arguments");
-
-			Control target = (Control) arguments[0];
-			string caption = (string) arguments[1];
-			string helpid = (string) arguments[2];
-			//this can be used for some elements of the control, to give them their own help message.
-			string helpSubId ="";
-			if (arguments.Length == 4)
-				helpSubId = (string) arguments[3];
-
-			string text;
-			//first tried to see if there is an item for the fully qualified if
-			if (!GetHelpText(helpid+ helpSubId, ref caption, out text))
-			{
-				GetHelpText(helpid, ref caption, out text);//just use the id without the qualifier
-			}
-			else helpid= helpid+ helpSubId; //this is what will be fed to any sub controls
-
-			SetHelps(target, caption, text);
-
-			AddControls(target, helpid, caption, text);
-		}
-
-		/// summary>
-		/// Receives the broadcast message "PropertyChanged"
-		/// /summary>
-		public void OnPropertyChanged(string name)
-		{
-			CheckDisposed();
-
-			//			Debug.WriteLine("record clerk ("+this.m_vectorName + ") saw OnPropertyChanged " + name);
-			switch(name)
-			{
-				case "ShowBalloonHelp":
-					ShowAlways = m_propertyTable.GetBoolProperty(name, true);
-					break;
-				default:
-					break;
-			}
 		}
 	}
 }

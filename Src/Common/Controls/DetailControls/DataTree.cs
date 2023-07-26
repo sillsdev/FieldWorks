@@ -230,12 +230,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		private void InsertSliceAndRegisterWithContextHelp(int index, Slice slice)
-		{
-			slice.RegisterWithContextHelper();
-			InsertSlice(index, slice);
-		}
-
 		private void InsertSlice(int index, Slice slice)
 		{
 			InstallSlice(slice, index);
@@ -2448,7 +2442,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				SetNodeWeight(node, slice);
 
 				slice.FinishInit();
-				InsertSliceAndRegisterWithContextHelp(insertPosition, slice);
+				InsertSlice(insertPosition, slice);
 			}
 			else
 			{
@@ -2892,7 +2886,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// Now done in Slice.ctor
 				//slice.Visible = false; // don't show it until we position and size it.
 
-				InsertSliceAndRegisterWithContextHelp(insPos, slice);
+				InsertSlice(insPos, slice);
 			}
 			else
 			{

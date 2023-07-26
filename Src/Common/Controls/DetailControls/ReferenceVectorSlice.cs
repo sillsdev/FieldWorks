@@ -16,7 +16,6 @@ using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.FwUtils;
-using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.Utils;
 using XCore;
@@ -244,42 +243,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (Height != hNew - 1)
 			{
 				Height = hNew - 1;
-			}
-		}
-
-//		// Overhaul Aug 05: want all Window backgrounds in Detail controls.
-//		/// <summary>
-//		/// This is passed the color that the XDE specified, if any, otherwise null.
-//		/// The default is to use the normal window color for editable text.
-//		/// Subclasses which know they should have a different default should
-//		/// override this method, but normally should use the specified color if not
-//		/// null.
-//		/// </summary>
-//		/// <param name="clr"></param>
-//		public override void OverrideBackColor(String backColorName)
-//		{
-//			CheckDisposed();
-//
-//			if (this.Control == null)
-//				return;
-//			VectorReferenceLauncher vrl = (VectorReferenceLauncher)this.Control;
-//			vrl.BackColor = System.Drawing.SystemColors.Control;
-//		}
-
-		public override void RegisterWithContextHelper ()
-		{
-			CheckDisposed();
-			if (Control != null)
-			{
-				if (Mediator != null) // paranoia and unit testing
-				{
-					string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
-					var vrl = (VectorReferenceLauncher)Control;
-					Publisher.Publish(new PublisherParameterObject(EventConstants.RegisterHelpTargetWithId,
-						new object[]{vrl.Controls[1], caption, HelpId}));
-					Publisher.Publish(new PublisherParameterObject(EventConstants.RegisterHelpTargetWithId,
-						new object[]{vrl.Controls[0], caption, HelpId, "Button"}));
-				}
 			}
 		}
 	}
