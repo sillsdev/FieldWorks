@@ -6,6 +6,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 {
 	public static class EventConstants
 	{
+		public const string AddContextToHistory = "AddContextToHistory";
 		public const string DictionaryConfigured = "DictionaryConfigured";
 		public const string FollowLink = "FollowLink";
 		public const string HandleLocalHotlink = "HandleLocalHotlink";

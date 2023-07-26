@@ -85,7 +85,8 @@ namespace SIL.FieldWorks.IText
 			mediator.AddColleague(this);
 			//add our current state to the history system
 			string toolName = _propertyTable.GetStringProperty("currentContentControl", "");
-			mediator.SendMessage("AddContextToHistory", new FwLinkArgs(toolName, Guid.Empty), false);
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.AddContextToHistory, new FwLinkArgs(toolName, Guid.Empty)));
+
 		}
 
 		private void RebuildStatisticsTable()

@@ -1318,7 +1318,8 @@ namespace SIL.FieldWorks.IText
 				link.PropertyTableEntries.Add(new Property("InterlinearTab",
 					InterlinearTab.ToString()));
 				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
-				m_mediator.SendMessage("AddContextToHistory", link, false);
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.AddContextToHistory, link));
+
 			}
 		}
 

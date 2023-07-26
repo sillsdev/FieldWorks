@@ -797,7 +797,7 @@ namespace SIL.FieldWorks.XWorks
 			Guid guid = Guid.Empty;
 			if (clerk.CurrentObject != null)
 				guid = clerk.CurrentObject.Guid;
-			m_mediator.SendMessage("AddContextToHistory", new FwLinkArgs(toolName, guid), false);
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.AddContextToHistory, new FwLinkArgs(toolName, guid)));
 
 			SelectAndScrollToCurrentRecord();
 			base.ShowRecord();
