@@ -548,7 +548,6 @@ namespace SIL.FieldWorks.XWorks
 					//the persistence or ownership of the property...at the moment the only values we're putting
 					//in there are strings or bools
 				}
-				m_mediator.BroadcastMessageUntilHandled("LinkFollowed", m_lnkActive);
 			}
 			catch(Exception err)
 			{
@@ -569,6 +568,9 @@ namespace SIL.FieldWorks.XWorks
 				}
 				return false;
 			}
+
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.LinkFollowed, m_lnkActive));
+
 			return true;	//we handled this.
 		}
 

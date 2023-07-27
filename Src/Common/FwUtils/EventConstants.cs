@@ -10,6 +10,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string DictionaryConfigured = "DictionaryConfigured";
 		public const string FollowLink = "FollowLink";
 		public const string HandleLocalHotlink = "HandleLocalHotlink";
+		public const string LinkFollowed = "LinkFollowed";
 		public const string MasterRefresh = "MasterRefresh";
 		public const string PrepareToRefresh = "PrepareToRefresh";
 	}

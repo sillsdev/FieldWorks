@@ -63,6 +63,8 @@ namespace SIL.FieldWorks.XWorks
 
 			if (disposing)
 			{
+				FwUtils.Subscriber.Unsubscribe(EventConstants.LinkFollowed, LinkFollowed);
+
 				if (ExistingClerk != null) // ExistingClerk, *not* Clerk (see doc on ExistingClerk)
 				{
 					PersistSortSequence();
@@ -348,10 +350,10 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="args"></param>
 		/// <returns></returns>
-		public bool OnLinkFollowed(object args)
+		private void LinkFollowed(object args)
 		{
 			SetupLinkScripture();
-			return m_browseViewer.FollowLink(args);
+			m_browseViewer.FollowLink(args);
 		}
 
 
@@ -671,6 +673,8 @@ namespace SIL.FieldWorks.XWorks
 			// ShowRecord() was called in InitBase, but quit without doing anything,
 			// so call it again, since we are ready now.
 			ShowRecord();
+
+			FwUtils.Subscriber.Subscribe(EventConstants.LinkFollowed, LinkFollowed);
 		}
 
 		private void CheckExpectedListItemsClassInSync()
