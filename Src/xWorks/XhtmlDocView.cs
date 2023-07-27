@@ -1041,17 +1041,26 @@ namespace SIL.FieldWorks.XWorks
 
 		private void LoadPageIfNecessary(GeckoWebBrowser browser)
 		{
+			// This should load the page under the following conditions
+			// 1. If there are entries to publish but the page is currently blank
+			// 2. If the current entry is not on the page
 			var currentObjectHvo = Clerk.CurrentObjectHvo;
-			var currentObjectIndex = Array.IndexOf(PublicationDecorator.GetEntriesToPublish(m_propertyTable, Clerk.VirtualFlid), currentObjectHvo);
-			if (currentObjectIndex < 0 || browser == null || browser.Document == null) // If the current item is not to be displayed (invalid, not in this publication) just quit
-				return;
-			var currentPage = GetTopCurrentPageButton(browser.Document.Body);
-			if (currentPage == null)
-				return;
-			var currentPageRange = new Tuple<int, int>(int.Parse(currentPage.Attributes["startIndex"].NodeValue), int.Parse(currentPage.Attributes["endIndex"].NodeValue));
-			if (currentObjectIndex < currentPageRange.Item1 || currentObjectIndex > currentPageRange.Item2)
+			var entriesToConsider = PublicationDecorator.GetEntriesToPublish(m_propertyTable, Clerk.VirtualFlid);
+			var currentObjectIndex = Array.IndexOf(entriesToConsider, currentObjectHvo);
+			if (browser?.Document == null) // If our browser isn't ready then just exit
 			{
-				RefreshAllContent(this); // Reload the page
+				return;
+			}
+			var currentPage = GetTopCurrentPageButton(browser.Document.Body);
+			if (currentObjectIndex >= 0 || (entriesToConsider.Length > 0 && currentPage == null))
+			{
+				var currentPageRange = currentPage != null ?
+					new Tuple<int, int>(int.Parse(currentPage.Attributes["startIndex"].NodeValue), int.Parse(currentPage.Attributes["endIndex"].NodeValue))
+					: new Tuple<int, int>(int.MaxValue, int.MinValue);
+				if (currentObjectIndex < currentPageRange.Item1 || currentObjectIndex > currentPageRange.Item2)
+				{
+					RefreshAllContent(this); // Reload the page
+				}
 			}
 		}
 
