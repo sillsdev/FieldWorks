@@ -1757,39 +1757,6 @@ namespace SIL.FieldWorks.Common.Controls
 		public override void DisplayEmbeddedObject(IVwEnv vwenv, int hvo)
 		{
 		}
-
-
-		/// <summary>
-		/// We may have a link embedded in text displayed in a cell.
-		/// </summary>
-		public override void DoHotLinkAction(string strData, ISilDataAccess sda)
-		{
-			if (strData.Length > 0 && strData[0] == (int)FwObjDataTypes.kodtExternalPathName)
-			{
-				string url = strData.Substring(1); // may also be just a file name, launches default app.
-				try
-				{
-					if (url.StartsWith(FwLinkArgs.kFwUrlPrefix))
-					{
-						FwLinkArgs linkArgs = new FwLinkArgs(url);
-						linkArgs.DisplayErrorMsg = false;
-
-						// Return after publishing if there is at least one subscriber.
-						if (FwUtils.FwUtils.Subscriber.Subscriptions.TryGetValue(EventConstants.FollowLink, out _))
-						{
-							FwUtils.FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, linkArgs));
-							return;
-						}
-					}
-				}
-				catch
-				{
-					// Catch exceptions so we can try using the base class.
-				}
-			}
-			base.DoHotLinkAction(strData, sda);
-		}
-
 		#endregion Other methods
 
 		#region ItemsCollectorEnv

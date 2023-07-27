@@ -9,8 +9,6 @@
 // </remarks>
 
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 
 namespace SIL.FieldWorks.XWorks
 {

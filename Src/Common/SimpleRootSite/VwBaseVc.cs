@@ -217,24 +217,14 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// hyperlinking work.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public virtual void DoHotLinkAction(string strData, ISilDataAccess sda)
+		public void DoHotLinkAction(string strData, ISilDataAccess sda)
 		{
 			if (strData.Length > 0 && (int)strData[0] == (int)FwObjDataTypes.kodtExternalPathName)
 			{
 				string url = strData.Substring(1).Trim(); // may also be just a file name, launches default app.
 
-				// If the file path is saved as a non rooted path, then it is relative to the project's
-				// LinkedFilesRootDir.  In this case get the full path.
-				// We also need to deal with url's like the following ( http:// silfw:// http:\ silfw:\ which are considered Not rooted).
-				// thus the check for FileUtils.IsFilePathValid(url)
-				// Added check IsFileUriOrPath since paths starting with silfw: are valid paths on Linux.
-				if (FileUtils.IsFileUriOrPath(url) && FileUtils.IsFilePathValid(url) && !Path.IsPathRooted(url))
-				{
-					string linkedFilesFolder = GetLinkedFilesRootDir(sda);
-					url = Path.Combine(linkedFilesFolder, url);
-				}
-
 				// See if we can handle it (via our own LinkListener) without starting a process.
+				// Currently, our own LinkListener handles links to only the current project.
 				var args = new LocalLinkArgs { Link = url };
 				Publisher.Publish(new PublisherParameterObject(EventConstants.HandleLocalHotlink, args));
 				if (args.LinkHandledLocally)
@@ -242,7 +232,16 @@ namespace SIL.FieldWorks.Common.RootSites
 					return;
 				}
 
-				// Review JohnT: do we need to do some validation here?
+				// If the file path is saved as a non rooted path, then it is relative to the project's
+				// LinkedFilesRootDir.  In this case get the full path.
+				// Check both IsFileUriOrPath and IsFilePathValid, since paths starting with silfw: are valid paths on Linux.
+				// (silfw: links to another project would not be handled by HandleLocalHotlink)
+				if (FileUtils.IsFileUriOrPath(url) && FileUtils.IsFilePathValid(url) && !Path.IsPathRooted(url))
+				{
+					url = Path.Combine(GetLinkedFilesRootDir(sda), url);
+				}
+
+				// Review JohnT (2012 or earlier): do we need to do some validation here?
 				// C++ version uses URLIs, and takes another approach to launching files if not.
 				// But no such function in .NET that I can find.
 

@@ -318,40 +318,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				get { return m_wsLabel; }
 			}
-
-			/// <summary>
-			/// We may have a link embedded here.
-			/// </summary>
-			public override void DoHotLinkAction(string strData, ISilDataAccess sda)
-			{
-				if (strData.Length > 0 && strData[0] == (int)FwObjDataTypes.kodtExternalPathName)
-				{
-					string url = strData.Substring(1); // may also be just a file name, launches default app.
-					try
-					{
-						if (url.StartsWith(FwLinkArgs.kFwUrlPrefix))
-						{
-							FwLinkArgs linkArgs = new FwLinkArgs(url);
-							linkArgs.DisplayErrorMsg = false;
-
-							// Return after publishing if there is at least one subscriber.
-							if (FwUtils.FwUtils.Subscriber.Subscriptions.TryGetValue(EventConstants.FollowLink, out _))
-							{
-								FwUtils.FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.FollowLink, linkArgs));
-								return;
-							}
-						}
-					}
-					catch
-					{
-						// REVIEW: Why are we catching all errors?
-						// JohnT: one reason might be that the above will fail if the link is to another project.
-						// Review: would we be better to use the default? That is now smart about
-						// local links, albeit by a rather more awkward route because of dependency problems.
-					}
-				}
-				base.DoHotLinkAction(strData, sda);
-			}
 		}
 
 		public class UnicodeStringSliceVc: FwBaseVc
