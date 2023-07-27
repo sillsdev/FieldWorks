@@ -1066,7 +1066,7 @@ namespace SIL.FieldWorks.Common.Controls
 			HScroll = true;
 			m_scrollContainer.ResumeLayout(false);
 			ResumeLayout(false);
-			Subscriber.Subscribe(PropertyConstants.SortedByLength, SortedFromEndChanged);
+			Subscriber.Subscribe(PropertyConstants.SortedByLength, SortedByLengthChanged);
 		}
 
 		/// <summary>
@@ -1565,7 +1565,7 @@ namespace SIL.FieldWorks.Common.Controls
 					components.Dispose();
 				}
 				m_SortersToDispose.Dispose();
-				Subscriber.Unsubscribe(PropertyConstants.SortedByLength, SortedFromEndChanged);
+				Subscriber.Unsubscribe(PropertyConstants.SortedByLength, SortedByLengthChanged);
 			}
 			m_configureButton = null;
 			m_scrollBar = null;
@@ -3235,9 +3235,16 @@ namespace SIL.FieldWorks.Common.Controls
 			SetAndRaiseSorter(Sorter, true);
 		}
 
-		private void SortedFromEndChanged(object _)
+		private void SortedByLengthChanged(object sortByLengthParam)
 		{
-			CurrentColumnSortedByLength = !CurrentColumnSortedByLength;
+			var sortByLength = (bool)sortByLengthParam;
+			if (Sorter == null || sortByLength == CurrentColumnSortedByLength)
+			{
+				// No Sorter, or no Sorter yet. At least necessary for clean Startup in Collect Words tool.
+				// Or no change to the value, skip the rest of the setting and broadcasting
+				return;
+			}
+			CurrentColumnSortedByLength = sortByLength;
 			SetAndRaiseSorter(Sorter, true);
 		}
 
