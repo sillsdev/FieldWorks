@@ -573,6 +573,19 @@ namespace XCore
 #endif
 		}
 
+		/// <summary>
+		/// This method is used to queue up a property change handler in the IdleQueue
+		/// </summary>
+		/// <param name="handler">The function to execute on Idle.
+		/// If the function returns false it will be returned to the queue.
+		/// Only one copy of the handler will be allowed in the queue so anonymous functions should
+		/// only be used if you need more than one in the queue.
+		/// </param>
+		public void HandlePropertyChangeOnIdle(Func<object, bool> handler)
+		{
+			Mediator.IdleQueue.Add(new IdleQueueTask(handler));
+		}
+
 		private void BroadcastPropertyChange(string key, object newValue)
 		{
 			var localSettingsPrefix = GetPathPrefixForSettingsId(LocalSettingsId);
@@ -581,12 +594,7 @@ namespace XCore
 			// Some clients manage to get here by looking up a null key under local settings. Don't broadcast that.
 			if (!string.IsNullOrWhiteSpace(propertyName))
 			{
-				void PublishOnIdle(object sender, EventArgs e)
-				{
-					Application.Idle -= PublishOnIdle;
-					FwUtils.Publisher.Publish(new PublisherParameterObject(propertyName, newValue));
-				}
-				Application.Idle += PublishOnIdle;
+				FwUtils.Publisher.Publish(new PublisherParameterObject(propertyName, newValue));
 			}
 
 			Mediator?.BroadcastString("OnPropertyChanged", propertyName);

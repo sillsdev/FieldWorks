@@ -453,6 +453,8 @@ namespace XCore
 		/// Gets the idle queue.
 		/// </summary>
 		/// <value>The idle queue.</value>
+		/// <remarks>TODO: Move this out of the mediator and turn it into a singleton.
+		/// </remarks>
 		public IdleQueue IdleQueue
 		{
 			get

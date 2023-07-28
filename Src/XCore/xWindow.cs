@@ -1680,18 +1680,24 @@ namespace XCore
 		/// </summary>
 		private void SynchronizedOnIdleTime(object _ = null)
 		{
+			PropTable.HandlePropertyChangeOnIdle(IdleUpdateControls);
+		}
+
+		private bool IdleUpdateControls(object _)
+		{
 			CheckDisposed();
 
 			if (m_cSuspendIdle > 0)
-				return;
+				return false;
 
 			if (ActiveForm != this && OwnedForms.All(f => ActiveForm != f))
-				return;
+				return true;
 
 			UpdateControls();
 
 			// call OnIdle () on any colleagues that implement it.
 			m_mediator.SendMessage("Idle", null);
+			return true;
 		}
 
 		/// <summary>
