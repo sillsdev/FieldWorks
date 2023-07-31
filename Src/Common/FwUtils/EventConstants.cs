@@ -13,6 +13,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string LinkFollowed = "LinkFollowed";
 		public const string MasterRefresh = "MasterRefresh";
 		public const string PrepareToRefresh = "PrepareToRefresh";
+		public const string RefreshCurrentList = "RefreshCurrentList";
 		public const string SFMImport = "SFMImport";
 	}
 }

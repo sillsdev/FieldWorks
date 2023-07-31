@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This is the one (and should be only) handler for the user Refresh command.
 		/// Refresh wants to first clean up the cache, then give things like Clerks a
-		/// chance to reload stuff (calling the old OnRefresh methods), then give
+		/// chance to reload stuff (calling the old OnRefresh methods, now called RefreshList), then give
 		/// windows a chance to redisplay themselves.
 		/// </summary>
 		public void OnMasterRefresh(object sender)

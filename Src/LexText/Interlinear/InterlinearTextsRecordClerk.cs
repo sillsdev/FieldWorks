@@ -81,13 +81,13 @@ namespace SIL.FieldWorks.IText
 			base.ReloadIfNeeded();
 		}
 
-		public override bool OnRefresh(object sender)
+		public override void RefreshList(object _ = null)
 		{
-			if(m_list as ConcordanceWordList != null)
+			if(m_list is ConcordanceWordList cwList)
 			{
-				((ConcordanceWordList)m_list).RequestRefresh();
+				cwList.RequestRefresh();
 			}
-			return base.OnRefresh(sender);
+			base.RefreshList(_);
 		}
 
 		protected override void ReportCannotDelete()

@@ -19,8 +19,7 @@ namespace SIL.FieldWorks.Common.RootSites
 {
 	/// <summary>
 	/// Interface for application.
-	/// TODO: The only place this interface is used in RootSite is in SyncUndoAction. The only
-	/// place that SyncUndoAction is used is in FrameWork. This means that IApp could be moved
+	/// TODO (2012 or earlier; Hasso 2023.08): This interface is never used in RootSite. This means that IApp could be moved
 	/// to a better place.
 	/// </summary>
 	public interface IApp
@@ -70,13 +69,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// A place to get various pictures.
 		/// </summary>
 		PictureHolder PictureHolder { get; }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Refreshes all the views in all of the Main Windows of the app.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		void RefreshAllViews();
 
 		/// <summary>
 		/// Restart the spell-checking process (e.g. when dictionary changed)

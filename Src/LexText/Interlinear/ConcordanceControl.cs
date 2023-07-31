@@ -1770,11 +1770,6 @@ namespace SIL.FieldWorks.IText
 			base.Dispose(disposing);
 		}
 
-		protected override void RefreshAfterInvalidObject()
-		{
-			ConcordanceControl.LoadMatches(true);
-		}
-
 		/// <summary>
 		/// Overridden to prevent trying to get a name for the "current object" which we can't do because
 		/// it is not a true CmObject.

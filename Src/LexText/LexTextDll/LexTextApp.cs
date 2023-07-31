@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.ComponentModel;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -72,6 +71,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			InitializeMessageDialogs(progressDlg);
 			if (progressDlg != null)
 				progressDlg.Message = LexTextStrings.ksLoading_;
+			FwUtils.Subscriber.Subscribe(EventConstants.SFMImport, SFMImport);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -540,28 +540,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 		}
 
 		/// <summary>
-		/// On Refresh, we want to reload the XML configuration files.  This greatly facilitates developing
-		/// those files, even though it's not as useful for normal use.  It might prove useful whenever we
-		/// get around to allowing user customization (or it might not).
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <returns></returns>
-		public bool OnRefresh(object sender)
-		{
-			CheckDisposed();
-			var setDatabases = new HashSet<string>();
-			foreach (FwXWindow wnd in m_rgMainWindows)
-			{
-				string sDatabase = wnd.Cache.ProjectId.Name;
-				if (setDatabases.Contains(sDatabase))
-					continue;
-				setDatabases.Add(sDatabase);
-				Inventory.GetInventory("layouts", sDatabase).ReloadIfChanges();
-				Inventory.GetInventory("parts", sDatabase).ReloadIfChanges();
-			}
-			return false;
-		}
-		/// <summary>
 		/// When user selects Help -> Training, display a webpage in place of the Word Training documents.
 		/// </summary>
 		/// <param name="sender"></param>
@@ -842,14 +820,10 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// <summary>
 		/// Initialization. Never called because we don't use the xWindow class.
 		/// </summary>
-		/// <param name="mediator">Message mediator</param>
-		/// <param name="propertyTable"></param>
-		/// <param name="configurationParameters">Not used</param>
 		/// ------------------------------------------------------------------------------------
 		public void Init(Mediator mediator, PropertyTable propertyTable, System.Xml.XmlNode configurationParameters)
 		{
 			CheckDisposed();
-			FwUtils.Subscriber.Subscribe(EventConstants.SFMImport, SFMImport);
 		}
 
 		/// <summary>

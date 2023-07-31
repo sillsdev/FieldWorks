@@ -38,7 +38,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
@@ -1139,17 +1139,15 @@ namespace SIL.FieldWorks.XWorks
 			return true;	//we handled this.
 		}
 
-		public virtual bool OnRefresh(object argument)
+		public virtual void RefreshList(object _ = null)
 		{
 			CheckDisposed();
 
 			var window = m_propertyTable.GetValue<Form>("window");
 			using (new WaitCursor(window))
 			{
-				if (m_rch != null)
-					m_rch.Fixup(false);		// no need to recursively refresh!
+				m_rch?.Fixup(false);		// no need to recursively refresh!
 				m_list.ReloadList();
-				return false;	//that other colleagues do a refresh, too.
 			}
 		}
 
@@ -1980,8 +1978,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Stop notifications of prop changes
 		/// </summary>
-		void RemoveNotification()
+		private void RemoveNotification()
 		{
+			Subscriber.Unsubscribe(EventConstants.RefreshCurrentList, RefreshList);
 			// We need the list to get the cache.
 			if (m_list == null || m_list.IsDisposed || Cache == null || Cache.IsDisposed || Cache.DomainDataByFlid == null)
 				return;
@@ -2020,21 +2019,20 @@ namespace SIL.FieldWorks.XWorks
 
 				Debug.Assert(value);
 				var oldActiveClerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
-				if (oldActiveClerk != this)
-				{
-					if (oldActiveClerk != null)
-						oldActiveClerk.BecomeInactive();
-					m_propertyTable.SetProperty("ActiveClerk", this, true);
-					m_propertyTable.SetPropertyPersistence("ActiveClerk", false);
-					// We are adding this property so that EntryDlgListener can get access to the owning object
-					// without first getting a RecordClerk, since getting a RecordClerk at that level causes a
-					// circular dependency in compilation.
-					m_propertyTable.SetProperty("ActiveClerkOwningObject", OwningObject, true);
-					m_propertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
-					m_propertyTable.SetProperty("ActiveClerkSelectedObject", CurrentObject, true);
-					m_propertyTable.SetPropertyPersistence("ActiveClerkSelectedObject", false);
-					Cache.DomainDataByFlid.AddNotification(this);
-				}
+				if (oldActiveClerk == this || !value)
+					return;
+				oldActiveClerk?.BecomeInactive();
+				m_propertyTable.SetProperty("ActiveClerk", this, true);
+				m_propertyTable.SetPropertyPersistence("ActiveClerk", false);
+				// We are adding this property so that EntryDlgListener can get access to the owning object
+				// without first getting a RecordClerk, since getting a RecordClerk at that level causes a
+				// circular dependency in compilation.
+				m_propertyTable.SetProperty("ActiveClerkOwningObject", OwningObject, true);
+				m_propertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
+				m_propertyTable.SetProperty("ActiveClerkSelectedObject", CurrentObject, true);
+				m_propertyTable.SetPropertyPersistence("ActiveClerkSelectedObject", false);
+				Subscriber.Subscribe(EventConstants.RefreshCurrentList, RefreshList);
+				Cache.DomainDataByFlid.AddNotification(this);
 			}
 			get
 			{
@@ -2285,16 +2283,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected virtual void ClearInvalidSubitem()
 		{
-		}
-
-		/// <summary>
-		/// Handles refreshing the record list after an object was deleted.
-		/// </summary>
-		/// <remarks>This should be overriden to perform more efficient refreshing of the record list display</remarks>
-		protected virtual void RefreshAfterInvalidObject()
-		{
-			// to be safe we just do a full refresh
-			m_propertyTable.GetValue<IApp>("App").RefreshAllViews();
 		}
 
 		private int FindClosestValidIndex(int idx, int cobj)

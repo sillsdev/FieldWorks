@@ -210,7 +210,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			Clerk.OnRefresh(null);
+			Clerk.RefreshList();
 		}
 
 		public void OnFwRightMouseClick(SimpleRootSite sender, FwRightMouseClickEventArgs e)

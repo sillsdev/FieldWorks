@@ -690,7 +690,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				m_specialSda.SetInt(hvoFake, XMLViewsDataCache.ktagItemSelected, 1);
 			// Reconstruct the main list of objects we are showing.
 			m_srcClerk.ListLoadingSuppressed = false;
-			m_srcClerk.OnRefresh(null);
+			m_srcClerk.RefreshList();
 			m_srcClerk.ListLoadingSuppressed = true;
 		}
 

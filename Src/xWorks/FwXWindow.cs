@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This is the one (and should be only) handler for the user Refresh command.
 		/// Refresh wants to first clean up the cache, then give things like Clerks a
-		/// chance to reload stuff (calling the old OnRefresh methods), then give
+		/// chance to reload stuff (calling the old OnRefresh methods, now called RefreshList), then give
 		/// windows a chance to redisplay themselves.
 		/// </summary>
 		public virtual void OnMasterRefresh(object sender)
@@ -1193,7 +1193,8 @@ namespace SIL.FieldWorks.XWorks
 			using (var dialog = new UploadToWebonaryDlg(controller, model, propertyTable))
 			{
 				dialog.ShowDialog();
-				mediator.SendMessage("Refresh", null);
+				// Restore the record count in the status bar (LT-17023)
+				Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshCurrentList));
 			}
 		}
 
@@ -1553,27 +1554,6 @@ namespace SIL.FieldWorks.XWorks
 				return true;
 			}
 			return false;
-		}
-
-		private void HandleUndoResult(UndoResult ures, bool fPrivate)
-		{
-			// Enhance JohnT: may want to display messages for kuresFailed, kuresError
-			if (ures != UndoResult.kuresSuccess)
-			{
-
-				if (!fPrivate && m_app != null)
-				{
-					// currently implemented, this will cause this app to do a master refresh,
-					m_app.Synchronize(SyncMsg.ksyncUndoRedo);
-				}
-				else
-				{
-					// EricP/JohnT -- this path will probably never be called in a production
-					// context, since we'll have an FwApp. And even in the case of tests
-					// taking this path, we wonder if we should issue a "MasterRefresh" instead
-					m_mediator.SendMessage("Refresh", this);
-				}
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2254,19 +2234,6 @@ namespace SIL.FieldWorks.XWorks
 			Enabled = fEnable;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called just before a window synchronizes its views with DB changes (e.g. when an
-		/// undo or redo command is issued).
-		/// </summary>
-		/// <param name="sync">synchronization message</param>
-		/// ------------------------------------------------------------------------------------
-		public virtual void PreSynchronize(SyncMsg sync)
-		{
-			CheckDisposed();
-			// TODO: Implement it. This is copied from TE.
-		}
-
 		/// <summary>
 		/// If a property requests it, do a db sync.
 		/// </summary>
@@ -2330,22 +2297,6 @@ namespace SIL.FieldWorks.XWorks
 					fssPrev = fss;
 				}
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// JohnT: this might be a poorly named or obsolete message. Kept because there are
-		/// some callers and I don't have time to analyze them all. Generally better to use
-		/// RefreshDisplay().
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void RefreshAllViews()
-		{
-			CheckDisposed();
-
-			// We don't want to clear the cache... just update the view.
-			m_mediator.SendMessage("Refresh", this);
-			//OnMasterRefresh(null);
 		}
 
 		/// ------------------------------------------------------------------------------------

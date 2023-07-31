@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Create the client windows and add correspnding stuff to the sidebar, View menu,
+		/// Create the client windows and add corresponding stuff to the sidebar, View menu,
 		/// etc. Subclasses must override this.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -63,19 +63,10 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Called just before a window syncronizes it's views with DB changes (e.g. when an
-		/// undo or redo command is issued).
-		/// </summary>
-		/// <param name="sync">syncronization message</param>
-		/// ------------------------------------------------------------------------------------
-		void PreSynchronize(SyncMsg sync);
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called when a window syncronizes it's views with DB changes (e.g. when an undo or
+		/// Called when a window synchronizes it's views with DB changes (e.g. when an undo or
 		/// redo command is issued).
 		/// </summary>
-		/// <param name="sync">syncronization message</param>
+		/// <param name="sync">synchronization message</param>
 		/// <returns>true if successful; false results in RefreshAllWindows.</returns>
 		/// ------------------------------------------------------------------------------------
 		bool Synchronize(SyncMsg sync);
@@ -98,13 +89,6 @@ namespace SIL.FieldWorks.Common.Framework
 		/// <returns><c>true</c> if message handled, otherwise <c>false</c>.</returns>
 		/// ------------------------------------------------------------------------------------
 		bool OnEditFind(object args);
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Refreshes all the views that belong to this main window
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		void RefreshAllViews();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

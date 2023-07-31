@@ -10,6 +10,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -295,19 +296,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					// has been partially cleared out and thus would certainly fail the constraint
 					// check, then try to instantiate an error annotation which wouldn't have an
 					// owner, causing bad things to happen.
-					if (DesignMode || m_rootb == null || !m_env.IsValidObject)
-						return;
-
-					if (!value)
-					{
-						DoValidation(true); // JohnT: do we really always want a Refresh? Trying to preserve the previous behavior...
-					}
+					if (!DesignMode && m_rootb != null && m_env.IsValidObject && !value)
+						DoValidation();
 				}
 			}
 
 			#endregion INotifyControlInCurrentSlice implementation
 
-			private void DoValidation(bool refresh)
+			private void DoValidation()
 			{
 				Form frm = FindForm();
 				// frm may be null, if the record has been switched
@@ -316,16 +312,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				{
 					if (frm != null)
 						wc = new WaitCursor(frm);
-					ConstraintFailure failure;
-					m_env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, true, out failure, /* adjust the squiggly line */ true);
-					// This will make the record list update to the new value.
-					if(refresh)
-						Mediator.BroadcastMessage("Refresh", null);
+					m_env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, true, out _, /* adjust the squiggly line */ true);
 				}
 				finally
 				{
-					if (wc != null)
-						wc.Dispose();
+					wc?.Dispose();
 				}
 			}
 
@@ -341,7 +332,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				// Also, in some cases (LT-15730) we come back through here on Undo when we have a deleted object.
 				// Don't do validation then.
 				if (m_env.IsValidObject)
-					DoValidation(false);
+					DoValidation();
 			}
 
 			public override void MakeRoot()

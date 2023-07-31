@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2017 SIL International
+// Copyright (c) 2002-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Security;
 using System.Threading;
 using System.Windows.Forms;
@@ -16,6 +17,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -198,13 +200,6 @@ namespace SIL.FieldWorks.Common.Framework
 		protected DebugProcs m_debugProcs;
 #endif
 		private FwRegistrySettings m_registrySettings;
-		private SuppressedCacheInfo m_suppressedCacheInfo;
-		/// <summary>
-		/// null means that we are not suppressing view refreshes.
-		/// True means we're suppressing and we need to do a refresh when finished.
-		/// False means we're suppressing, but have no need to do a refresh when finished.
-		/// </summary>
-		private bool? m_refreshView;
 
 		/// <summary>The find patterns for the find/replace dialog, one for each database.</summary>
 		/// <remarks>We need one pattern per database (cache). Otherwise it'll crash when we try to
@@ -565,8 +560,6 @@ namespace SIL.FieldWorks.Common.Framework
 			m_registrySettings = null;
 			m_findPattern = null;
 			m_findReplaceDlg = null;
-			m_suppressedCacheInfo = null;
-			m_refreshView = null;
 			PictureHolder = null;
 #if DEBUG
 			m_debugProcs = null;
@@ -1068,24 +1061,6 @@ namespace SIL.FieldWorks.Common.Framework
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Refreshes all the views in all of the Main Windows of the app.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void RefreshAllViews()
-		{
-			CheckDisposed();
-
-			if (m_refreshView != null)
-				m_refreshView = true;
-			else
-			{
-				foreach (IFwMainWnd wnd in MainWindows)
-					wnd.RefreshAllViews();
-			}
-		}
-
 		/// <summary>
 		/// Restart the spell-checking process (e.g. when dictionary changed)
 		/// </summary>
@@ -1455,153 +1430,36 @@ namespace SIL.FieldWorks.Common.Framework
 		#region Synchronization methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Suppress execution of all synchronize messages and store them in a queue instead.
+		/// Cycle through the application's main windows and synchronize them with database changes.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void SuppressSynchronize()
-		{
-			CheckDisposed();
-
-			if (m_suppressedCacheInfo != null)
-				m_suppressedCacheInfo.Count++; // Nested call
-			else
-				m_suppressedCacheInfo = new SuppressedCacheInfo();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Resume execution of synchronize messages. If there are any messages in the queue
-		/// execute them now.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void ResumeSynchronize()
-		{
-			CheckDisposed();
-
-			if (m_suppressedCacheInfo == null)
-				return; // Nothing to do
-
-			m_suppressedCacheInfo.Count--;
-			if (m_suppressedCacheInfo.Count > 0)
-				return; // Still nested
-
-			BeginUpdate();
-			Queue<SyncMsg> messages = m_suppressedCacheInfo.Queue;
-			m_suppressedCacheInfo = null;
-
-			bool fProcessUndoRedoAfter = false;
-			SyncMsg savedUndoRedo = SyncMsg.ksyncFullRefresh; // Arbitrary
-			foreach (SyncMsg synchMsg in messages)
-			{
-				if (synchMsg == SyncMsg.ksyncUndoRedo)
-				{
-					// we must process this synch message after all the others
-					fProcessUndoRedoAfter = true;
-					savedUndoRedo = synchMsg;
-					continue;
-				}
-				// Do the synch
-				if (!Synchronize(synchMsg))
-				{
-					fProcessUndoRedoAfter = false; // Refresh already done, final UndoRedo unnecessary
-					break; // One resulted in Refresh everything, ignore other synch msgs.
-				}
-			}
-			if (fProcessUndoRedoAfter)
-				Synchronize(savedUndoRedo);
-
-			// NOTE: This code may present a race condition, because there is a slight
-			// possibility that a sync message can come to the App at
-			// this point and then get cleared from the syncMessages list and never get run.
-			EndUpdate();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Suppress all calls to <see cref="T:RefreshAllViews()"/> until <see cref="T:EndUpdate"/>
-		/// is called.
-		/// </summary>
-		/// <remarks>Used by <see cref="T:ResumeSynchronize"/> to do only one refresh of the
-		/// view.</remarks>
-		/// ------------------------------------------------------------------------------------
-		private void BeginUpdate()
-		{
-			CheckDisposed();
-
-			Debug.Assert(m_refreshView == null, "Nested BeginUpdate");
-			m_refreshView = false;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Do a <see cref="T:RefreshAllViews()"/> if it was called at least once after
-		/// <see cref="T:BeginUpdate"/>
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void EndUpdate()
-		{
-			CheckDisposed();
-
-			Debug.Assert(m_refreshView != null, "EndUpdate called without BeginUpdate");
-
-			bool needRefresh = (bool)m_refreshView;
-			m_refreshView = null; // Make sure we don't try suppress the following RefreshAllViews()
-			if (needRefresh)
-				RefreshAllViews();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Cycle through the applications main windows and synchronize them with database
-		/// changes.
-		/// </summary>
-		/// <param name="sync">synchronization information record</param>
-		/// <returns>false if a RefreshAllViews was performed or presync failed; this suppresses
+		/// <returns>false if a <see cref="EventConstants.RefreshCurrentList"/> was published; this suppresses
 		/// subsequent sync messages. True to continue processing.</returns>
 		/// ------------------------------------------------------------------------------------
 		public virtual bool Synchronize(SyncMsg sync)
 		{
 			CheckDisposed();
 
-			if (m_suppressedCacheInfo != null)
+			switch (sync)
 			{
-				Queue<SyncMsg> messages = m_suppressedCacheInfo.Queue;
-				if (!messages.Contains(sync))
-					messages.Enqueue(sync);
-				return true;
-			}
-
-			if (sync == SyncMsg.ksyncFullRefresh)
-			{
-				RefreshAllViews();
-				return false;
-			}
-
-			foreach (IFwMainWnd wnd in MainWindows)
-				wnd.PreSynchronize(sync);
-
-			if (sync == SyncMsg.ksyncWs)
-			{
-				// REVIEW TeTeam: AfLpInfo::Synchronize calls AfLpInfo::FullRefresh, which
-				// clears the cache, loads the styles, loads ws and updates wsf, load project
-				// basics, updates LinkedFiles root, load overlays and refreshes possibility
-				// lists. I don't think we need to do any of these here.
-				RefreshAllViews();
-				return false;
-			}
-
-			foreach (IFwMainWnd wnd in MainWindows)
-			{
-				if (!wnd.Synchronize(sync))
-				{
-					// The window itself was not able to process the message successfully;
-					// play safe and refresh everything
-					RefreshAllViews();
+				case SyncMsg.ksyncFullRefresh:
+				// WS changes require everything to be reloaded
+				case SyncMsg.ksyncWs:
+					Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshCurrentList));
 					return false;
-				}
+				// Hasso: As of 2023.08, the only SyncMsg handled by the only implementation is ksyncStyle.
+				// Nonetheless, future proof against new handled messages (don't know why)
+				// REVIEW (Hasso) 2023.08: it seems ksyncStyle is the only SyncMsg ever sent anywhere. (see https://github.com/sillsdev/liblcm/pull/286)
+				case SyncMsg.ksyncStyle:
+				default:
+					if (MainWindows.All(wnd => wnd.Synchronize(sync)))
+					{
+						return true;
+					}
+					// The window itself was not able to process the message successfully;
+					// play safe and refresh the whole list
+					goto case SyncMsg.ksyncFullRefresh;
 			}
 
-			return true;
 		}
 
 		/// ------------------------------------------------------------------------------------
