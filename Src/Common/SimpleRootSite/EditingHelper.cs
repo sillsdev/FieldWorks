@@ -247,7 +247,6 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// <summary>Event for changing properties of a pasted TsString</summary>
 		public event FwPasteFixTssEventHandler PasteFixTssEvent;
 
-		private bool m_fSuppressNextWritingSystemHvoChanged;
 		private long m_TimestampOfLastGotFocus;
 
 		/// <summary>Flag to prevent reentrancy while setting keyboard.</summary>
@@ -2839,19 +2838,21 @@ namespace SIL.FieldWorks.Common.RootSites
 				int oldWritingSystemHvo = int.Parse(s);
 				if (oldWritingSystemHvo != ws)
 				{
-					rs.PropTable.SetProperty("WritingSystemHvo", ws.ToString(), true);
-					rs.PropTable.SetPropertyPersistence("WritingSystemHvo", false);
-					m_fSuppressNextWritingSystemHvoChanged = true;
+					try
+					{
+						rs.UnsubscribeFromWritingSystemHvoChangedEvent();
+						rs.PropTable.SetProperty("WritingSystemHvo", ws.ToString(), true);
+						rs.PropTable.SetPropertyPersistence("WritingSystemHvo", false);
+					}
+					finally
+					{
+						rs.SubscribeToWritingSystemHvoChangedEvent();
+					}
 				}
 			}
 		}
 		internal void WritingSystemHvoChanged()
 		{
-			if (m_fSuppressNextWritingSystemHvoChanged)
-			{
-				m_fSuppressNextWritingSystemHvoChanged = false;
-				return;
-			}
 			// For now, we are only handling SimpleRootSite cases, e.g. for the Data Tree.
 			// If we need this in print layout, consider adding the mediator to the Callbacks
 			// interface.

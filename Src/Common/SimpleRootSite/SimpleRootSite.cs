@@ -2075,6 +2075,24 @@ namespace SIL.FieldWorks.Common.RootSites
 			EditingHelper.WritingSystemHvoChanged();
 		}
 
+		/// <summary>
+		/// Allow other classes to temporarily unsubscribe from the
+		/// WritingSystemHvo_Changed event.
+		/// </summary>
+		public void UnsubscribeFromWritingSystemHvoChangedEvent()
+		{
+			FwUtils.FwUtils.Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, WritingSystemHvo_Changed);
+		}
+
+		/// <summary>
+		/// Allow other classes to re-subscribe to the WritingSystemHvo_Changed
+		/// event (after temporarily unsubscribing).
+		/// </summary>
+		public void SubscribeToWritingSystemHvoChangedEvent()
+		{
+			FwUtils.FwUtils.Subscriber.Subscribe(PropertyConstants.WritingSystemHvo, WritingSystemHvo_Changed);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called (by xcore) to control display params of the writing system menu, e.g. whether
