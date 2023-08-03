@@ -48,6 +48,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			this.lbChooseVersion.Name = "lbChooseVersion";
 			this.lbChooseVersion.Size = new System.Drawing.Size(773, 329);
 			this.lbChooseVersion.TabIndex = 1;
+			this.lbChooseVersion.DoubleClick += new System.EventHandler(this.lbChooseVersion_DoubleClick);
 			// 
 			// btnDownload
 			// 

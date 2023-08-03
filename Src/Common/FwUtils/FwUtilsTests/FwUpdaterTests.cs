@@ -24,6 +24,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 			FileUtils.Manager.Reset();
 		}
 
+		[TestCase(null, "https://downloads.languagetechnology.org/flexbridge/", "https://downloads.languagetechnology.org/flexbridge/")]
+		[TestCase(" ", "https://downloads.languagetechnology.org/flexbridge/", "https://downloads.languagetechnology.org/flexbridge/")]
+		[TestCase("https://test.s3.amazonaws.com",  "https://downloads.languagetechnology.org/flexbridge/", "https://test.s3.amazonaws.com/")]
+		[TestCase("https://test.s3.amazonaws.com/",  "https://downloads.languagetechnology.org/flexbridge/", "https://test.s3.amazonaws.com/")]
+		public void GetBaseUrlFromUpdateInfo(string inFile, string inCode, string result)
+		{
+			var urlElt = inFile == null ? null : $"<BaseUrl>{inFile}</BaseUrl>";
+			var doc = XDocument.Parse($"<UpdateInfo>{urlElt}</UpdateInfo>");
+			FwUpdater.GetBaseUrlFromUpdateInfo(doc, ref inCode);
+			Assert.That(inCode, Is.EqualTo(result));
+		}
+
 		[Test]
 		public void EmptyBucket_DoesNotThrow()
 		{
@@ -182,9 +194,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.Null(result);
 		}
 
-		[TestCase(@"C:\ProgramData\SIL\FieldWorks\DownloadedUpdates\", "9.0.15.1", 316, 64, true)]
-		[TestCase(@"C:\ProgramData\SIL\FieldWorks\DownloadedUpdates\", "9.0.15.1", 32, 32, false)]
-		public void Parse_LocalContentsForBase(string baseURL, string version, int baseBuild, int arch, bool isOnline)
+		[TestCase(@"C:\ProgramData\SIL\FieldWorks\DownloadedUpdates\", "9.0.15.1", 64, true)]
+		[TestCase(@"C:\ProgramData\SIL\FieldWorks\DownloadedUpdates\", "9.0.15.1", 32, false)]
+		public void Parse_LocalContentsForBase(string baseURL, string version, int arch, bool isOnline)
 		{
 			var filename = BaseFileName(version, arch, isOnline);
 
@@ -195,6 +207,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.AreEqual(0, result.BaseBuild, "not important at this point");
 			Assert.AreEqual(isOnline ? FwUpdate.Typ.Online : FwUpdate.Typ.Offline, result.InstallerType);
 			Assert.AreEqual(arch == 64, result.Is64Bit, $"Arch: {arch}");
+		}
+
+		[Test]
+		public void Parse_FLExBridge()
+		{
+			const string baseURL = "https://software.sil.org/downloads/r/fieldworks/";
+			const string filename = "FLExBridge_Offline_4.1.0.exe";
+
+			var result = FwUpdater.Parse(filename, baseURL);
+
+			Assert.That(result.Version.ToString(), Is.EqualTo("4.1.0"));
+			Assert.That(result.URL, Is.EqualTo($"{baseURL}{filename}"));
+			Assert.That(result.BaseBuild, Is.EqualTo(0), "not important at this point");
+			Assert.That(result.InstallerType, Is.EqualTo(FwUpdate.Typ.Offline));
+			Assert.That(result.Is64Bit, Is.False);
 		}
 
 		[TestCase("7000072", "0.13_ldml3", "7500002")]
@@ -258,6 +285,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		[TestCase("7000072", "7000072", "0.13_ldml3", "0.13_ldml3", "7500002", "7600042", false, false, true, TestName = "new FLEx Bridge")]
+		[TestCase("7000072", null, "0.13_ldml3", null, "7500002", "7600042", false, false, true, TestName = "new FLEx Bridge installer")]
 		[TestCase("7000072", "7000076", "0.13_ldml3", "0.13_ldml3", "7500002", "7500002", true, false, false, TestName = "new LCM")]
 		[TestCase("7000072", "7000076", "0.13_ldml3", "0.13_ldml3", "7500002", "7600042", true, false, false, TestName = "new LCM and FLEx Bridge")]
 		[TestCase("7000072", "7000076", "0.13_ldml3", "1.13_ldml3", "7500002", "7500002", true, true, false, TestName = "new LCM and LIFT")]
@@ -276,7 +304,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var current = new FwUpdate(curVer, true, 2, FwUpdate.Typ.Patch, 0, new DateTime(2021-11-01), curLCM, curLIFT, curSR);
 			var available = new FwUpdate(newVer, true, 2, FwUpdate.Typ.Patch, 0, DateTime.Today, newLCM, newLIFT, newSR);
 
-			var result = FwUpdater.GetUpdateMessage(current, available, prompt);
+			var result = FwUpdater.GetUpdateMessage(FwUtilsStrings.UpdateDownloadedVersionYCurrentX, current, available, prompt);
 
 			var versionMsg = string.Format(FwUtilsStrings.UpdateDownloadedVersionYCurrentX, curVer, newVer);
 			var lcmMsg = FwUtilsStrings.ModelChangeLCM;
@@ -288,6 +316,31 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(result, wantLCMMsg ? Does.Contain(lcmMsg) : Does.Not.Contain(lcmMsg));
 			Assert.That(result, wantLIFTMsg ? Does.Contain(liftMsg) : Does.Not.Contain(liftMsg));
 			Assert.That(result, wantSRMsg ? Does.Contain(srMsg) : Does.Not.Contain(srMsg));
+		}
+
+		[Test]
+		public static void GetUpdateMessage()
+		{
+			const string curVer = "9.1.22";
+			const string newVer = "9.3.7";
+			const string prompt = "Do it now?";
+			const string instructions = "Close FLEx Bridge first.";
+			var current = new FwUpdate(curVer, true, 2, FwUpdate.Typ.Patch, 0, new DateTime(2023-08-04));
+			var available = new FwUpdate(newVer, true, 2, FwUpdate.Typ.Patch, 0, DateTime.Today);
+
+			var result = FwUpdater.GetUpdateMessage(FwUtilsStrings.UpdateDownloadedVersionYCurrentX, current, available, prompt, instructions);
+
+			var versionMsg = string.Format(FwUtilsStrings.UpdateDownloadedVersionYCurrentX, curVer, newVer);
+			var lcmMsg = FwUtilsStrings.ModelChangeLCM;
+			var liftMsg = FwUtilsStrings.ModelChangeLIFT;
+			var srMsg = string.Format(FwUtilsStrings.ModelChangeFBButNotFW, curVer);
+
+			Assert.That(result, Does.StartWith(versionMsg));
+			Assert.That(result, Does.Contain(prompt));
+			Assert.That(result, Does.EndWith(instructions));
+			Assert.That(result, Does.Not.Contain(lcmMsg));
+			Assert.That(result, Does.Not.Contain(liftMsg));
+			Assert.That(result, Does.Not.Contain(srMsg));
 		}
 
 		[TestCase("9.0.16", "9.0.17", true, true, 314, 314, FwUpdate.Typ.Patch, ExpectedResult = true)]
@@ -330,6 +383,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[TestCase("9.1.5", "9.1.5", 5, 5, FwUpdate.Typ.Online, FwUpdate.Typ.Offline, ExpectedResult = false, TestName = "Keeps online")]
 		[TestCase("9.1.5", "9.1.5", 5, 5, FwUpdate.Typ.Offline, FwUpdate.Typ.Online, ExpectedResult = true, TestName = "Prefers online")]
 		[TestCase("9.1.5", "9.1.6", 5, 6, FwUpdate.Typ.Online, FwUpdate.Typ.Offline, ExpectedResult = true, TestName = "Prefers newer")]
+		[TestCase("9.1.5", "9.1.6", 0, 0, FwUpdate.Typ.Online, FwUpdate.Typ.Offline, ExpectedResult = true, TestName = "Prefers newer (missing BB)")]
 		[TestCase("9.1.6", "9.1.5", 6, 5, FwUpdate.Typ.Online, FwUpdate.Typ.Offline, ExpectedResult = false, TestName = "Prevents backsliding")]
 		public bool IsNewerBase(string ver1, string ver2, int base1, int base2, FwUpdate.Typ type1, FwUpdate.Typ type2)
 		{
@@ -353,6 +407,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[TestCase("9.0.1", true, true, 200, 300, FwUpdate.Typ.Online, ExpectedResult = true, TestName = "newer than this patch's base")]
 		[TestCase("9.0.17", true, false, 314, 316, FwUpdate.Typ.Online, ExpectedResult = false, TestName = "Different Architecture")]
 		[TestCase("9.0.17", false, false, 314, 316, FwUpdate.Typ.Online, ExpectedResult = true, TestName = "Both 32-bit")]
+		[TestCase("9.0.17", true, true, 0, 0, FwUpdate.Typ.Online, ExpectedResult = true, TestName = "Missing Base Build number")]
 		public bool IsNewerBaseThanBase(string thatVer, bool isThis64Bit, bool isThat64Bit, int thisBase, int thatBase, FwUpdate.Typ thatType)
 		{
 			var current = new FwUpdate(new Version("9.0.16"), isThis64Bit, thisBase, FwUpdate.Typ.Patch);
@@ -481,7 +536,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			const string updateVersion = "9.0.18.8";
 			var updateFileName = Path.Combine(updateDir, PatchFileName(updateVersion, baseBld, 64));
 			mockFileOS.AddFile(updateFileName, string.Empty);
-			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath, isXmlValid
+			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath(false), isXmlValid
 				? "<notValidXml><see></notValidXml>"
 				: string.Format(ListBucketTemplate, Contents(Key("8.0.3", baseBld - 1, 64))));
 
@@ -493,7 +548,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(result.LCModelVersion, Is.Null);
 			Assert.That(result.LIFTModelVersion, Is.Null);
 			Assert.That(result.FlexBridgeDataVersion, Is.Null);
-			Assert.That(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath), Is.False, "Local update XML should have been deleted");
+			Assert.That(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), Is.False, "Local update XML should have been deleted");
 		}
 
 		[Test]
@@ -505,7 +560,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var mockFileOS = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(mockFileOS);
 			// UpdateInfo XML file
-			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath, string.Format(ListBucketTemplate,
+			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath(false), string.Format(ListBucketTemplate,
 				Contents(Key("9.0.18.8", baseBld, 64), modelVersion:"1.0", liftModelVersion:"2.0",flexBridgeDataVersion:"3.0")));
 			// earlier patch
 			mockFileOS.AddFile(Path.Combine(updateDir, PatchFileName("9.0.17.4", baseBld, 64)), string.Empty);
@@ -526,7 +581,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(result.LCModelVersion, Is.EqualTo("1.0"));
 			Assert.That(result.LIFTModelVersion, Is.EqualTo("2.0"));
 			Assert.That(result.FlexBridgeDataVersion, Is.EqualTo("3.0"));
-			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath), "Local update XML should have been deleted");
+			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), "Local update XML should have been deleted");
 		}
 
 		[Test]
@@ -537,7 +592,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var mockFileOS = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(mockFileOS);
 			// UpdateInfo XML file
-			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath, string.Format(ListBucketTemplate,
+			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath(false), string.Format(ListBucketTemplate,
 				Contents(Key("9.0.18.8", 18, 64), modelVersion:"1.0", liftModelVersion:"2.0", flexBridgeDataVersion:"3.0")));
 			// earlier base
 			mockFileOS.AddFile(Path.Combine(updateDir, BaseFileName("9.0.17.4")), string.Empty);
@@ -558,7 +613,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(result.LCModelVersion, Is.EqualTo("1.0"));
 			Assert.That(result.LIFTModelVersion, Is.EqualTo("2.0"));
 			Assert.That(result.FlexBridgeDataVersion, Is.EqualTo("3.0"));
-			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath), "Local update XML should have been deleted");
+			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), "Local update XML should have been deleted");
 		}
 
 		[Test]
@@ -569,7 +624,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var mockFileOS = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(mockFileOS);
 			// UpdateInfo XML file
-			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath, string.Format(ListBucketTemplate,
+			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath(false), string.Format(ListBucketTemplate,
 				Contents(Key("9.0.18.1", 18, 64))));
 			// earlier base
 			var earlierBaseFileName = Path.Combine(updateDir, BaseFileName("9.0.17.1"));
@@ -588,7 +643,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// SUT
 			FwUpdater.DeleteOldUpdateFiles(result);
 
-			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath), "Local update XML should have been deleted");
+			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), "Local update XML should have been deleted");
 			Assert.False(FileUtils.FileExists(earlierBaseFileName), "Earlier Base should have been deleted");
 			Assert.True(FileUtils.FileExists(updateFileName), "The Update File should NOT have been deleted");
 			Assert.False(FileUtils.FileExists(patchForDifferentBase), "Patch For Different Base should have been deleted");
@@ -604,7 +659,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var mockFileOS = new MockFileOS();
 			FileUtils.Manager.SetFileAdapter(mockFileOS);
 			// UpdateInfo XML file
-			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath, string.Format(ListBucketTemplate,
+			mockFileOS.AddFile(FwUpdater.LocalUpdateInfoFilePath(false), string.Format(ListBucketTemplate,
 				Contents(Key("9.0.19.8", baseBld, 64))));
 			// earlier patch
 			var earlierPatchFileName = Path.Combine(updateDir, PatchFileName("9.0.18.4", baseBld, 64));
@@ -632,7 +687,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// SUT
 			FwUpdater.DeleteOldUpdateFiles(result);
 
-			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath), "Local update XML should have been deleted");
+			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), "Local update XML should have been deleted");
 			Assert.False(FileUtils.FileExists(earlierPatchFileName), "Earlier Patch should have been deleted");
 			Assert.False(FileUtils.FileExists(earlierBaseFileName), "Earlier Base should have been deleted");
 			Assert.False(FileUtils.FileExists(onlineBaseFileName), "The Online Base File should have been deleted");
