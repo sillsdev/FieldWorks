@@ -1789,9 +1789,6 @@ namespace XCore
 					}
 					break;
 
-				case "DocumentName":
-					UpdateCaptionBar();
-					break;
 				// Obsolete case "ShowSidebarControls": // Fall through.
 				case "ShowSidebar": // Fall through.
 				// Obsolete case "ShowTreeBar": // Fall through.
@@ -2048,7 +2045,7 @@ namespace XCore
 		{
 			Text = String.Format("{0} - {1}",
 				m_propertyTable.GetStringProperty("DocumentName", ""),
-				m_propertyTable.GetStringProperty("applicationName", "application name???")); ;
+				m_propertyTable.GetStringProperty("applicationName", "application name???"));
 		}
 
 		#region Helper methods

@@ -530,7 +530,7 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.LocalSettingsId = "local";
 			m_propertyTable.SetProperty("cache", cache, true);
 			m_propertyTable.SetPropertyPersistence("cache", false);
-			m_propertyTable.SetProperty("DocumentName", GetProjectName(cache), true);
+			m_propertyTable.SetProperty("DocumentName", GetProjectName(cache), false);
 			m_propertyTable.SetPropertyPersistence("DocumentName", false);
 			var path = LcmFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder);
 			Directory.CreateDirectory(path);
@@ -1253,13 +1253,6 @@ namespace SIL.FieldWorks.XWorks
 					if (dlg.LinkedFilesChanged())
 					{
 						fFilesMoved = m_app.UpdateExternalLinks(sLinkedFilesRootDir);
-					}
-					// no need for any of these refreshes if entire window has been/will be
-					// destroyed and recreated.
-					if (!fDbRenamed && !fFilesMoved)
-					{
-						m_propertyTable.SetProperty("DocumentName", cache.ProjectId.UiName, true);
-						m_propertyTable.SetPropertyPersistence("DocumentName", false);
 					}
 				}
 			}
