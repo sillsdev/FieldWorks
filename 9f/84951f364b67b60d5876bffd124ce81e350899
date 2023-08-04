@@ -1,0 +1,8 @@
+Code-Review+2: Ariel Ror. <ariel_rorabaugh@sil.org>
+Verified+1: Jenkins CI <jenkins@sil.org>
+Verified-Linux+1: Jason Naylor <jason_naylor@sil.org>
+Submitted-by: Jason Naylor <jason_naylor@sil.org>
+Submitted-at: Fri, 04 Aug 2023 18:44:12 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/c/FieldWorks/+/9449
+Project: FieldWorks
+Branch: refs/heads/feature/PubSub
