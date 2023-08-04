@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			ConfiguredLcmGenerator.Init();
 			m_application.Dispose();
-			m_window.PropTable.Dispose();
+			m_window.Dispose();
 			FwRegistrySettings.Release();
 			base.FixtureTeardown();
 		}
