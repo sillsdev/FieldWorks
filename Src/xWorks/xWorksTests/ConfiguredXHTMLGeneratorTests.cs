@@ -5146,6 +5146,42 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(result, Is.Empty);
 		}
 
+		/// <summary>LT-21573: PictureFileRA can be null after an incomplete SFM import</summary>
+		[Test]
+		public void GenerateXHTMLForEntry_PictureFileRAMissing()
+		{
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var thumbNailNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA", CSSClassNameOverride = "photo" };
+			var senseNumberNode = new ConfigurableDictionaryNode { FieldDescription = "SenseNumberTSS", CSSClassNameOverride = "sensenumber" };
+			var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", DictionaryNodeOptions = wsOpts };
+			var pictureNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodePictureOptions(),
+				FieldDescription = "PicturesOfSenses",
+				CSSClassNameOverride = "Pictures",
+				Children = new List<ConfigurableDictionaryNode> { thumbNailNode, senseNumberNode, captionNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = CreateInterestingLexEntry(Cache);
+			var pic = CreatePicture(Cache);
+			pic.PictureFileRA = null;
+			testEntry.SensesOS[0].PicturesOS.Add(pic);
+
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+			Assert.That(result, Is.Empty);
+		}
+
 		[Test]
 		public void GenerateXHTMLForEntry_PictureWithCreator()
 		{

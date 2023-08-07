@@ -14,7 +14,11 @@ namespace SIL.FieldWorks.XWorks
 		public void Creator()
 		{
 			Assert.That(ConfiguredXHTMLGeneratorTests.CreatePicture(Cache).Creator(), Is.EqualTo("Jason Naylor"));
-			Assert.That(ConfiguredXHTMLGeneratorTests.CreatePicture(Cache, false).Creator(), Is.Null);
+			Assert.That(ConfiguredXHTMLGeneratorTests.CreatePicture(Cache, false).Creator(), Is.Null, "no file on disk");
+			// LT-21573: PictureFileRA can be null after an incomplete SFM import
+			var picLess = ConfiguredXHTMLGeneratorTests.CreatePicture(Cache);
+			picLess.PictureFileRA = null;
+			Assert.That(picLess.Creator(), Is.Null, "null PictureFileRA");
 		}
 
 		[Test]
