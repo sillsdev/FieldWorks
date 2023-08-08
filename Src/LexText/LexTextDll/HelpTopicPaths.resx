@@ -353,6 +353,9 @@
   <data name="khtpField-LexExampleSentence-Example" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/example_field.htm</value>
   </data>
+  <data name="khtpField-LexSense-Exemplar" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/Exemplar_field.htm</value>
+  </data>
   <data name="khtpField-CmFile-OriginalPath" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Sense_level_fields/File_field.htm</value>
   </data>
