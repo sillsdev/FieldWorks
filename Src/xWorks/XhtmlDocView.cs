@@ -80,6 +80,7 @@ namespace SIL.FieldWorks.XWorks
 			FwUtils.Subscriber.Subscribe(EventConstants.DictionaryConfigured, RefreshAllContent);
 			FwUtils.Subscriber.Subscribe(EventConstants.MasterRefresh, RefreshAllContent);
 			FwUtils.Subscriber.Subscribe(PropertyConstants.ActiveClerkSelectedObject, ActiveClerkSelectedObject);
+			FwUtils.Subscriber.Subscribe(PropertyConstants.SelectedPublication, SelectedPublicationChanged);
 		}
 
 		private void OnDispose(object sender, EventArgs e)
@@ -87,6 +88,13 @@ namespace SIL.FieldWorks.XWorks
 			FwUtils.Subscriber.Unsubscribe(EventConstants.DictionaryConfigured, RefreshAllContent);
 			FwUtils.Subscriber.Unsubscribe(EventConstants.MasterRefresh, RefreshAllContent);
 			FwUtils.Subscriber.Unsubscribe(PropertyConstants.ActiveClerkSelectedObject, ActiveClerkSelectedObject);
+			FwUtils.Subscriber.Unsubscribe(PropertyConstants.SelectedPublication, SelectedPublicationChanged);
+		}
+
+		private void SelectedPublicationChanged(object obj)
+		{
+			var validConfiguration = SetCurrentDictionaryPublicationLayout();
+			UpdateContent(validConfiguration);
 		}
 
 		private void OnMouseWheel(object sender, DomMouseEventArgs domMouseEventArgs)
@@ -1004,10 +1012,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			switch (name)
 			{
-				case "SelectedPublication":
-					var validConfiguration = SetCurrentDictionaryPublicationLayout();
-					UpdateContent(validConfiguration);
-					break;
 				case "DictionaryPublicationLayout":
 				case "ReversalIndexPublicationLayout":
 					var currentConfig = GetCurrentConfiguration(false);

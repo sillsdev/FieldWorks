@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.XWorks
 				var layouts = configLayouts.ChildNodes;
 				return ExtractLayoutsFromLayoutTypeList(layouts.Cast<XmlNode>());
 			}
-				return new List<Tuple<string, string>>();
+			return new List<Tuple<string, string>>();
 		}
 
 		private static IEnumerable<Tuple<string, string>> ExtractLayoutsFromLayoutTypeList(IEnumerable<XmlNode> layouts)
@@ -152,29 +152,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			switch (name)
 			{
-				case "SelectedPublication":
-					var pubDecorator = GetPubDecorator();
-					if (pubDecorator != null)
-					{
-						var pubName = GetSelectedPublication();
-						if (xWorksStrings.AllEntriesPublication == pubName)
-						{   // A null publication means show everything
-							pubDecorator.Publication = null;
-							m_mainView.RefreshDisplay();
-						}
-						else
-						{   // look up the publication object
-							var pub = (from item in Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS
-									   where item.Name.UserDefaultWritingSystem.Text == pubName
-									   select item).FirstOrDefault();
-							if (pub != null && pub != pubDecorator.Publication)
-							{   // change the publication if it is different from the current one
-								pubDecorator.Publication = pub;
-								m_mainView.RefreshDisplay();
-							}
-						}
-					}
-					break;
 				case "DictionaryPublicationLayout":
 					var layout = GetSelectedConfigView();
 					m_mainView.Vc.ResetTables(layout);
@@ -254,14 +231,14 @@ namespace SIL.FieldWorks.XWorks
 		/// resources; <c>false</c> to release only unmanaged resources.
 		/// </param>
 		/// -----------------------------------------------------------------------------------
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			//Debug.WriteLineIf(!disposing, "****************** " + GetType().Name + " 'disposing' is false. ******************");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
-
-			if( disposing )
+			FwUtils.Subscriber.Unsubscribe(PropertyConstants.SelectedPublication, SelectedPublicationChanged);
+			if(disposing)
 			{
 				DisposeTooltip();
 				if(components != null)
@@ -269,10 +246,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 			m_currentObject = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
-		#endregion // Consruction and disposal
+		#endregion // Construction and disposal
 
 		#region Other methods
 
@@ -1263,6 +1240,32 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			InitBase(mediator, propertyTable, configurationParameters);
+			FwUtils.Subscriber.Subscribe(PropertyConstants.SelectedPublication, SelectedPublicationChanged);
+		}
+
+		private void SelectedPublicationChanged(object obj)
+		{
+			var pubDecorator = GetPubDecorator();
+			if (pubDecorator != null)
+			{
+				var pubName = GetSelectedPublication();
+				if (xWorksStrings.AllEntriesPublication == pubName)
+				{   // A null publication means show everything
+					pubDecorator.Publication = null;
+					m_mainView.RefreshDisplay();
+				}
+				else
+				{   // look up the publication object
+					var pub = (from item in Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS
+							   where item.Name.UserDefaultWritingSystem.Text == pubName
+							   select item).FirstOrDefault();
+					if (pub != null && pub != pubDecorator.Publication)
+					{   // change the publication if it is different from the current one
+						pubDecorator.Publication = pub;
+						m_mainView.RefreshDisplay();
+					}
+				}
+			}
 		}
 
 		/// <summary>

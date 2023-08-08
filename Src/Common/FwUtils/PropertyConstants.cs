@@ -11,5 +11,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string BestStyleName = "BestStyleName";
 		public const string SortedByLength = "SortedByLength";
 		public const string WritingSystemHvo = "WritingSystemHvo";
+		public const string SelectedPublication = "SelectedPublication";
 	}
 }
