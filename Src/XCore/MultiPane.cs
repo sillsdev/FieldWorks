@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.Utils;
 
 namespace XCore
@@ -96,7 +97,8 @@ namespace XCore
 				return;
 			if (disposing)
 			{
-				FwUtils.Subscriber.Unsubscribe(PropertyConstants.ActiveClerkSelectedObject, ActiveClerkSelectedObject);
+				Subscriber.Unsubscribe(PropertyConstants.ActiveClerkSelectedObject, ActiveClerkSelectedObject);
+				Subscriber.Unsubscribe(PropertyConstants.ToolForAreaNamed_lexicon, ToolForAreaNamed_lexicon);
 				if (m_mediator != null)
 					m_mediator.RemoveColleague(this);
 				if(components != null)
@@ -306,7 +308,8 @@ namespace XCore
 			//it's important to do this last, so that we don't go generating property change
 			//notifications that we then go trying to cope with before we are ready
 			mediator.AddColleague(this);
-			FwUtils.Subscriber.Subscribe(PropertyConstants.ActiveClerkSelectedObject, ActiveClerkSelectedObject);
+			Subscriber.Subscribe(PropertyConstants.ActiveClerkSelectedObject, ActiveClerkSelectedObject);
+			Subscriber.Subscribe(PropertyConstants.ToolForAreaNamed_lexicon, ToolForAreaNamed_lexicon);
 			m_fOkToPersistSplit = true;
 		}
 
@@ -630,10 +633,6 @@ namespace XCore
 			{
 				return;
 			}
-			if (name == "ToolForAreaNamed_lexicon")
-			{
-				SetFocusInDefaultControl();
-			}
 			if (name == m_propertyControllingVisibilityOfFirstPane)
 			{
 				bool fShowFirstPane = m_propertyTable.GetBoolProperty(m_propertyControllingVisibilityOfFirstPane, true);
@@ -652,9 +651,23 @@ namespace XCore
 
 		private void ActiveClerkSelectedObject(object propertyObject)
 		{
-			SetFocusInDefaultControl();
+			CheckDisposed();
+			CheckToolNameAndSetFocus(propertyObject);
 		}
 
+		private void ToolForAreaNamed_lexicon(object propertyObject)
+		{
+			CheckDisposed();
+			CheckToolNameAndSetFocus(propertyObject);
+		}
+
+		private void CheckToolNameAndSetFocus(object propertyObject)
+		{
+			if (m_propertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null) == toolName)
+			{
+				SetFocusInDefaultControl();
+			}
+		}
 		/// <summary>
 		/// The focus will only be set in the default control if it implements IFocusablePanePortion.
 		/// Note that it may BE our First or SecondPane, or it may be a child of one of those.

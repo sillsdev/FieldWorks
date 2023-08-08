@@ -10,6 +10,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string ActiveClerkSelectedObject = "ActiveClerkSelectedObject";
 		public const string BestStyleName = "BestStyleName";
 		public const string SortedByLength = "SortedByLength";
+		public const string ToolForAreaNamed_lexicon = "ToolForAreaNamed_lexicon";
 		public const string WritingSystemHvo = "WritingSystemHvo";
 		public const string SelectedPublication = "SelectedPublication";
 	}

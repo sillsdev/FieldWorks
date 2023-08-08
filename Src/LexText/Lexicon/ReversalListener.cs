@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -380,7 +381,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			base.Init(mediator, propertyTable, viewConfiguration);
 			ChangeOwningObjectIfPossible();
-			FwUtils.Subscriber.Subscribe(PropertyConstants.ActiveClerk, ActiveClerkChanged);
+			Subscriber.Subscribe(PropertyConstants.ActiveClerk, ActiveClerkChanged);
+			Subscriber.Subscribe(PropertyConstants.ToolForAreaNamed_lexicon, ToolForAreaNamed_lexicon);
 		}
 
 		private void ChangeOwningObjectIfPossible()
@@ -545,11 +547,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				case "ReversalIndexGuid":
 					ChangeOwningObjectIfPossible();
 					break;
-				case "ToolForAreaNamed_lexicon":
-					int rootIndex = GetRootIndex(m_list.CurrentIndex);
-					JumpToIndex(rootIndex);
-					base.OnPropertyChanged(name);
-					break;
 				case "ReversalIndexPublicationLayout":
 					// When the user chooses a different reversal index configuration from the drop-down menu,
 					// set the list of associated reversal index entries.
@@ -580,6 +577,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				ChangeOwningObjectIfPossible();
 			}
+		}
+
+		protected override void ToolForAreaNamed_lexicon(object propertyObject)
+		{
+			int rootIndex = GetRootIndex(m_list.CurrentIndex);
+			JumpToIndex(rootIndex);
+			base.ToolForAreaNamed_lexicon(propertyObject);
 		}
 
 		/// <summary>
@@ -728,7 +732,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		protected override void Dispose(bool disposing)
 		{
-			FwUtils.Subscriber.Unsubscribe(PropertyConstants.ActiveClerk, ActiveClerkChanged);
+			Subscriber.Unsubscribe(PropertyConstants.ActiveClerk, ActiveClerkChanged);
+			Subscriber.Unsubscribe(PropertyConstants.ToolForAreaNamed_lexicon, ToolForAreaNamed_lexicon);
 			base.Dispose(disposing);
 		}
 	}

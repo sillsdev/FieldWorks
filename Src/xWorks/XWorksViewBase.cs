@@ -574,8 +574,8 @@ namespace SIL.FieldWorks.XWorks
 			string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
 			//uncomment the following line if we need to turn on or off the Export menu item
 			//for specific tools in the various areas of the application.
-			//string toolChoice = m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
-			//string toolChoice = m_mediator.PropertyTable.GetStringProperty("grammarSketch_grammar", null);
+			//string toolChoice = m_propertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
+			//string toolChoice = m_propertyTable.GetStringProperty("grammarSketch_grammar", null);
 			bool inFriendlyTerritory = (areaChoice == "lexicon"
 				|| areaChoice == "notebook"
 				|| clerk.Id == "concordanceWords"
