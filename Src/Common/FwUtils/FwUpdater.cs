@@ -97,6 +97,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <returns>a message for the log</returns>
 		private static void CheckForFlexBridgeUpdates(ILcmUI ui, UpdateSettings updateSettings)
 		{
+			if (CurrentFlexBridge.Version == null)
+			{
+				Logger.WriteMinorEvent("FLEx Bridge not installed; not checking for FLEx Bridge updates.");
+				return;
+			}
 			Logger.WriteEvent("Checking for FLEx Bridge updates...");
 			new Thread(() => Logger.WriteEvent(CheckForUpdatesInternal(ui, updateSettings, true)))
 			{
