@@ -33,17 +33,29 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Guard.AgainstNullOrEmptyString(message, nameof(message));
 
-			if (!_subscriber.Subscriptions.TryGetValue(message, out var subscribers))
+			// Check if 'message' was subscribed to.
+			if (_subscriber.Subscriptions.TryGetValue(message, out var subscribers))
 			{
-				return;
+				foreach (var subscriberAction in subscribers.ToList())
+				{
+					// NB: It is possible that the action's object is disposed,
+					// but we'll not fret about making sure it isn't disposed,
+					// but we will expect the subscribers to be well-behaved and unsubscribe,
+					// when they get disposed.
+					subscriberAction(newValue);
+				}
 			}
-			foreach (var subscriberAction in subscribers.ToList())
+
+			// Check if 'message' contains a prefix that was subscribed to.
+			foreach (KeyValuePair<string, HashSet<Action<string, object>>> entry in _subscriber.PrefixSubscriptions)
 			{
-				// NB: It is possible that the action's object is disposed,
-				// but we'll not fret about making sure it isn't disposed,
-				// but we will expect the subscribers to be well-behaved and unsubscribe,
-				// when they get disposed.
-				subscriberAction(newValue);
+				if (message.StartsWith(entry.Key))
+				{
+					foreach (var subscriberAction in entry.Value.ToList())
+					{
+						subscriberAction(message, newValue);
+					}
+				}
 			}
 		}
 

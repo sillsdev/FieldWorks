@@ -18,6 +18,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -1212,6 +1213,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(PropertyConstants.ShowHiddenFields, ShowHiddenFieldsChanged);
+				Subscriber.PrefixUnsubscribe(PropertyConstants.ShowHiddenFieldsSpecificPrefix, ShowHiddenFieldsSpecificChanged);
+
 				// Do this first, before setting m_fDisposing to true.
 				if (m_sda != null)
 					m_sda.RemoveNotification(this);
@@ -3649,6 +3653,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// it will override the persisted value.
 			if (PersistenceProvder != null)
 				RestorePreferences();
+
+			Subscriber.Subscribe(PropertyConstants.ShowHiddenFields, ShowHiddenFieldsChanged);
+			Subscriber.PrefixSubscribe(PropertyConstants.ShowHiddenFieldsSpecificPrefix, ShowHiddenFieldsSpecificChanged);
 		}
 
 		public IxCoreColleague[] GetMessageTargets()
@@ -3971,28 +3978,35 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			if (name == "ShowHiddenFields")
-			{
-				// The only place this occurs is when the status is changed from the "View" menu.
-				// We'll have to translate this to the real property based on the current tool.
-
-				string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
-				name = "ShowHiddenFields-" + toolName;
-
-				// Invert the status of the real property
-				bool oldShowValue = m_propertyTable.GetBoolProperty(name, false, PropertyTable.SettingsGroup.LocalSettings);
-				m_propertyTable.SetProperty(name, !oldShowValue, PropertyTable.SettingsGroup.LocalSettings, true); // update the pane bar check box.
-				HandleShowHiddenFields(!oldShowValue);
-			}
-			else if (name.StartsWith("ShowHiddenFields-"))
-			{
-				bool fShowAllFields = m_propertyTable.GetBoolProperty(name, false, PropertyTable.SettingsGroup.LocalSettings);
-				HandleShowHiddenFields(fShowAllFields);
-			}
-			else if (name == "currentContentControlObject")
+			if (name == "currentContentControlObject")
 			{
 				m_fCurrentContentControlObjectTriggered = true;
 			}
+		}
+
+		/// <summary>
+		/// Called when the generic "ShowHiddenFields" property is changed from the "View" menu.
+		/// We'll have to translate this to the specific property based on the current tool.
+		/// A specific property will look something like "ShowHiddenFields-lexiconEdit".
+		/// </summary>
+		private void ShowHiddenFieldsChanged(object _)
+		{
+			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
+			var name = PropertyConstants.ShowHiddenFieldsSpecificPrefix + toolName;
+
+			// Invert the status of the real property
+			bool oldShowValue = m_propertyTable.GetBoolProperty(name, false, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SetProperty(name, !oldShowValue, PropertyTable.SettingsGroup.LocalSettings, true); // update the pane bar check box.
+		}
+
+		/// <summary>
+		/// Called whenever a property that begins with "ShowHiddenFields-" is changed.
+		/// </summary>
+		/// <param name="specificName">The name of the specific property that changed. (ex. "ShowHiddenFields-lexiconEdit")</param>
+		private void ShowHiddenFieldsSpecificChanged(string specificName, object _)
+		{
+			bool fShowAllFields = m_propertyTable.GetBoolProperty(specificName, false, PropertyTable.SettingsGroup.LocalSettings);
+			HandleShowHiddenFields(fShowAllFields);
 		}
 
 		/// <summary>
