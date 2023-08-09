@@ -11,8 +11,9 @@ using System.Xml;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
@@ -166,6 +167,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
+		/// This method handles the persistence and display refresh when a user changes the always displayed writing systems for
+		/// the current slice through the context menu
+		/// </summary>
+		/// <param name="_"></param>
+		private void CurrentContextMenuSelectedWsIds(object _)
+		{
+			var singlePropertySequenceValue = m_propertyTable.GetStringProperty("SelectedWritingSystemHvosForCurrentContextMenu", null);
+			PersistAndRedisplayWssToDisplayForPart(singlePropertySequenceValue);
+		}
+
+		/// <summary>
 		/// Setup our view's Wss to display from our persisted layout/part ref override
 		/// </summary>
 		private void SetupWssToDisplay()
@@ -265,8 +277,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			if (!isCurrent)
 			{
+				Subscriber.Unsubscribe(PropertyConstants.CurrentContextMenuSelectedWsIds, CurrentContextMenuSelectedWsIds);
 				ReloadWssToDisplayForPart();
 				DoSideEffects();
+			}
+			else
+			{
+				Subscriber.Subscribe(PropertyConstants.CurrentContextMenuSelectedWsIds, CurrentContextMenuSelectedWsIds);
 			}
 			base.SetCurrentState(isCurrent);
 		}
@@ -315,27 +332,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called when property changed.
-		/// </summary>
-		/// <param name="name">The name.</param>
-		/// ------------------------------------------------------------------------------------
-		public virtual void OnPropertyChanged(string name)
-		{
-			CheckDisposed();
-
-			switch (name)
-			{
-				case "SelectedWritingSystemHvosForCurrentContextMenu":
-					string singlePropertySequenceValue = m_propertyTable.GetStringProperty("SelectedWritingSystemHvosForCurrentContextMenu", null);
-					PersistAndRedisplayWssToDisplayForPart(singlePropertySequenceValue);
-					break;
-				default:
-					break;
-			}
-		}
-
 		private void PersistAndRedisplayWssToDisplayForPart(IEnumerable<CoreWritingSystemDefinition> wssToDisplay)
 		{
 			PersistAndRedisplayWssToDisplayForPart(EncodeWssToDisplayPropertyValue(wssToDisplay));
@@ -376,18 +372,22 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// go through all the data tree slices, finding the slices that refer to the same part as this slice
 		/// setting them to the same writing systems to display
-		/// and redisplaying their views.
+		/// and re-displaying their views.
 		/// </summary>
 		/// <param name="wssToDisplay"></param>
 		private void SetWssToDisplayForPart(IEnumerable<CoreWritingSystemDefinition> wssToDisplay)
 		{
-			XmlNode ourPart = this.PartRef();
-			var writingSystemsToDisplay = wssToDisplay == null ? null : wssToDisplay.ToList();
-			foreach (Control c in ContainingDataTree.Slices)
+			var writingSystemsToDisplay = wssToDisplay?.ToList();
+			foreach (var slice in ContainingDataTree.Slices)
 			{
-				var slice = (Slice) c;
-				XmlNode part = slice.PartRef();
-				if (part == ourPart)
+				// If there is a lot of content a slice the user can interact with the writing system display options
+				// during lazy initialization. If the slice.Key is null then we can't access the PartRef yet.
+				if (slice.Key == null)
+				{
+					continue;
+				}
+				// If the slice is for the same field as the one we are responsible for then update it (common for multiple Senses)
+				if (slice.PartRef() == PartRef())
 				{
 					((LabeledMultiStringView) slice.Control).WritingSystemsToDisplay = writingSystemsToDisplay;
 					((LabeledMultiStringView) slice.Control).RefreshDisplay();

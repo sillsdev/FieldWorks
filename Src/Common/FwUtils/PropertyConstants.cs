@@ -13,5 +13,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string ToolForAreaNamed_lexicon = "ToolForAreaNamed_lexicon";
 		public const string WritingSystemHvo = "WritingSystemHvo";
 		public const string SelectedPublication = "SelectedPublication";
+		public const string CurrentContextMenuSelectedWsIds = "SelectedWritingSystemHvosForCurrentContextMenu";
 	}
 }
