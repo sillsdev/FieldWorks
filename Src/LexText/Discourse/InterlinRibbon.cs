@@ -371,7 +371,7 @@ namespace SIL.FieldWorks.Discourse
 
 					vwenv.OpenDiv();
 					vwenv.OpenParagraph();
-					AddLabelPile(vwenv, m_cache, true, ShowMorphBundles);
+					AddLabelPile(vwenv, m_cache);
 					vwenv.AddObjVecItems(m_ribbon.OccurenceListId, this, InterlinVc.kfragBundle);
 					vwenv.CloseParagraph();
 					vwenv.CloseDiv();

@@ -134,7 +134,6 @@ namespace SIL.FieldWorks.IText
 		private ITsString m_tssCommaSpace;
 		private ITsString m_tssPendingGlossAffix; // LexGloss line GlossAppend or GlossPrepend
 		private int m_mpBundleHeight; // millipoint height of interlinear bundle.
-		private bool m_fShowMorphBundles = true;
 		private bool m_fRtl;
 		private readonly IDictionary<ILgWritingSystem, ITsString> m_mapWsDirTss = new Dictionary<ILgWritingSystem, ITsString>();
 		// AnnotationDefns we need
@@ -467,21 +466,6 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		// Controls whether to display the morpheme bundles.
-		public bool ShowMorphBundles
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fShowMorphBundles;
-			}
-			set
-			{
-				CheckDisposed();
-				m_fShowMorphBundles = value;
-			}
-		}
-
 		// Controls whether to display the default sense (true), or the normal '***' row.
 		public bool ShowDefaultSense
 		{
@@ -636,7 +620,7 @@ namespace SIL.FieldWorks.IText
 					(int)SpellingModes.ksmDoNotCheck);
 				vwenv.OpenParagraph();
 				AddSegmentReference(vwenv, hvo);	// Calculate and display the segment reference.
-				AddLabelPile(vwenv, m_cache, true, m_fShowMorphBundles);
+				AddLabelPile(vwenv, m_cache);
 				vwenv.AddObjVecItems(SegmentTags.kflidAnalyses, this, kfragBundle);
 				// JohnT, 1 Feb 2008. Took this out as I can see no reason for it; AddObjVecItems handles
 				// the dependency already. Adding it just means that any change to the forms list
@@ -671,8 +655,7 @@ namespace SIL.FieldWorks.IText
 			{
 				var wa = m_analRepository.GetObject(hvo);
 				vwenv.AddObj(wa.Owner.Hvo, this, kfragWordformForm);
-				if (m_fShowMorphBundles)
-					vwenv.AddObj(hvo, this, kfragAnalysisMorphs);
+				vwenv.AddObj(hvo, this, kfragAnalysisMorphs);
 
 				int chvoGlosses = wa.MeaningsOC.Count;
 				for (int i = 0; i < m_WsList.AnalysisWsIds.Length; ++i)
@@ -1119,7 +1102,7 @@ namespace SIL.FieldWorks.IText
 			}
 			vwenv.OpenParagraph();
 			m_fHaveOpenedParagraph = true;
-			AddLabelPile(vwenv, m_cache, true, m_fShowMorphBundles);
+			AddLabelPile(vwenv, m_cache);
 			try
 			{
 				// We use this rather than AddObj(hvo) so we can easily identify this object and select
@@ -1602,7 +1585,7 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Add the pile of labels used to identify the lines in interlinear text.
 		/// </summary>
-		public void AddLabelPile(IVwEnv vwenv, LcmCache cache, bool fWantMultipleSenseGloss, bool fShowMorphemes)
+		public void AddLabelPile(IVwEnv vwenv, LcmCache cache)
 		{
 			CheckDisposed();
 
@@ -1811,33 +1794,26 @@ namespace SIL.FieldWorks.IText
 				{
 				case WfiWordformTags.kClassId:
 				case WfiAnalysisTags.kClassId:
-					if (m_this.m_fShowMorphBundles)
+					// Display the morpheme bundles.
+					if (m_hvoDefault != m_hvoWordBundleAnalysis)
 					{
-						// Display the morpheme bundles.
-						if (m_hvoDefault != m_hvoWordBundleAnalysis)
-						{
-							// Real analysis isn't what we're displaying, so morph breakdown
-							// is a guess. Is it a human-approved guess?
-							bool isHumanGuess = m_this.Decorator.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) !=
-																			(int) AnalysisGuessServices.OpinionAgent.Parser;
-							m_this.SetGuessing(m_vwenv, isHumanGuess ? ApprovedGuessColor : MachineGuessColor);
-						}
-						m_vwenv.AddObj(m_hvoDefault, m_this, kfragAnalysisMorphs);
+						// Real analysis isn't what we're displaying, so morph breakdown
+						// is a guess. Is it a human-approved guess?
+						bool isHumanGuess = m_this.Decorator.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) !=
+																		(int) AnalysisGuessServices.OpinionAgent.Parser;
+						m_this.SetGuessing(m_vwenv, isHumanGuess ? ApprovedGuessColor : MachineGuessColor);
 					}
+					m_vwenv.AddObj(m_hvoDefault, m_this, kfragAnalysisMorphs);
 					break;
 				case WfiGlossTags.kClassId:
-
-					if (m_this.m_fShowMorphBundles)
+					m_hvoWfiAnalysis = m_defaultObj.Owner.Hvo;
+					// Display all the morpheme stuff.
+					if (m_hvoWordBundleAnalysis == m_hvoWordform)
 					{
-						m_hvoWfiAnalysis = m_defaultObj.Owner.Hvo;
-						// Display all the morpheme stuff.
-						if (m_hvoWordBundleAnalysis == m_hvoWordform)
-						{
-							// Real analysis is just word, one we're displaying is a default
-							m_this.SetGuessing(m_vwenv);
-						}
-						m_vwenv.AddObj(m_hvoWfiAnalysis, m_this, kfragAnalysisMorphs);
+						// Real analysis is just word, one we're displaying is a default
+						m_this.SetGuessing(m_vwenv);
 					}
+					m_vwenv.AddObj(m_hvoWfiAnalysis, m_this, kfragAnalysisMorphs);
 					break;
 				default:
 					throw new Exception("Invalid type found in Segment analysis");

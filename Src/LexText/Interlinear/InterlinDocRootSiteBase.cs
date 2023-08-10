@@ -103,8 +103,6 @@ namespace SIL.FieldWorks.IText
 			m_sda = m_cache.MainCacheAccessor;
 			m_sda.AddNotification(this);
 
-			// PropertyTable can be null when the root site exists inside a dialog (LT-20412)
-			Vc.ShowMorphBundles = m_propertyTable?.GetBoolProperty("ShowMorphBundles", true) ?? true;
 			Vc.LineChoices = LineChoices;
 			Vc.ShowDefaultSense = true;
 

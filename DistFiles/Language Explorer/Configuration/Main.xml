@@ -957,9 +957,6 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 
 		<property name="InitialArea" value="lexicon" settingsGroup="local"/>
 		<property name="DoLog" bool="true" persist="false"/>
-		<!-- ShowMorphBundles is no longer supported in GUI, but still in the code.
-		So, add a default value here in order to prevent it from persisting -->
-		<property name="ShowMorphBundles" bool="true" persist="false" settingsGroup="local"/>
 		<!-- Default splitter values -->
 		<!--		<property name="PartsOfSpeech.editBasic.DataTree-Splitter" intValue="200"/>
 		<property name="PartsOfSpeech.editPlus.DataTree-Splitter" intValue="200"/>

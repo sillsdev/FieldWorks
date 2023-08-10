@@ -106,9 +106,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			base.MakeRoot();
 
 			m_vc = new InterlinVc(m_cache);
-			// Theory has it that the slices that have 'true' in this attribute will allow the sandbox to be used.
-			// We'll see how the theory goes, when I get to the point of wanting to see the sandbox.
-			m_vc.ShowMorphBundles = true;
 			m_vc.ShowDefaultSense = true;
 
 			m_vc.LineChoices = new EditableInterlinLineChoices(m_cache.LanguageProject, WritingSystemServices.kwsFirstVern,
