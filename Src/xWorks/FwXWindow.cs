@@ -1016,16 +1016,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			//there appears to be a problem with the DotNetBar balloon help which causes
-			//it to crash when the user hovers over something that should have a balloon but that window
-			//is behind a modeless dialog.
-			var balloonActive = m_propertyTable.GetBoolProperty("ShowBalloonHelp", false);
-			m_propertyTable.SetProperty("ShowBalloonHelp", false, true);
-
 			m_delegate.FileOpen(this);
-
-			m_propertyTable.SetProperty("ShowBalloonHelp", balloonActive, true);
-
 			return true;
 		}
 
