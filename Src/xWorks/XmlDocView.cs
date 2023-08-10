@@ -1216,7 +1216,7 @@ namespace SIL.FieldWorks.XWorks
 
 			m_mediator.AddColleague(this);
 
-			m_propertyTable.SetProperty("ShowRecordList", false, true);
+			m_propertyTable.SetProperty(PropertyConstants.ShowRecordList, false, true);
 
 			SetupDataContext();
 			ShowRecord();

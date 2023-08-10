@@ -11,6 +11,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string BestStyleName = "BestStyleName";
 		public const string ShowHiddenFields = "ShowHiddenFields";
 		public const string ShowHiddenFieldsSpecificPrefix = "ShowHiddenFields-";
+		public const string ShowRecordList = "ShowRecordList";
 		public const string SortedByLength = "SortedByLength";
 		public const string ToolForAreaNamed_lexicon = "ToolForAreaNamed_lexicon";
 		public const string WritingSystemHvo = "WritingSystemHvo";

@@ -323,11 +323,11 @@ namespace SIL.FieldWorks.XWorks
 					default:
 						break;
 					case TreebarAvailability.NotAllowed:
-						m_propertyTable.SetProperty("ShowRecordList", false, true);
+						m_propertyTable.SetProperty(PropertyConstants.ShowRecordList, false, true);
 						break;
 
 					case TreebarAvailability.Required:
-						m_propertyTable.SetProperty("ShowRecordList", true, true);
+						m_propertyTable.SetProperty(PropertyConstants.ShowRecordList, true, true);
 						break;
 
 					case TreebarAvailability.Optional:

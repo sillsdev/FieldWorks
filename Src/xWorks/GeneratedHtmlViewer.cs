@@ -737,9 +737,9 @@ namespace SIL.FieldWorks.XWorks
 
 			m_mediator = mediator;
 			m_propertyTable = propertyTable;
-			m_previousShowTreeBarValue = m_propertyTable.GetBoolProperty("ShowRecordList", true);
+			m_previousShowTreeBarValue = m_propertyTable.GetBoolProperty(PropertyConstants.ShowRecordList, true);
 
-			m_propertyTable.SetProperty("ShowRecordList", false, true);
+			m_propertyTable.SetProperty(PropertyConstants.ShowRecordList, false, true);
 
 			m_configurationParameters = configurationParameters;
 			mediator.AddColleague(this);
@@ -836,7 +836,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			m_propertyTable.SetProperty("ShowRecordList", m_previousShowTreeBarValue, true);
+			m_propertyTable.SetProperty(PropertyConstants.ShowRecordList, m_previousShowTreeBarValue, true);
 			return true;
 		}
 

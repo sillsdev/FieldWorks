@@ -1219,9 +1219,8 @@ namespace SIL.FieldWorks.XWorks
 
 			switch(name)
 			{
-				case "ShowRecordList":
-					if (IsControllingTheRecordTreeBar)//m_treeBarHandler!= null)
-						m_recordBarHandler.PopulateRecordBar(m_list);
+				case PropertyConstants.ShowRecordList:
+					// property change handled in its own method
 					break;
 				case "SelectedTreeBarNode":
 					if (!IsControllingTheRecordTreeBar) //m_treeBarHandler== null)
@@ -1254,6 +1253,13 @@ namespace SIL.FieldWorks.XWorks
 					CheckUpdateFilterAndClerk();
 					break;
 			}
+		}
+
+		private void ShowRecordList(object propertyObject)
+		{
+			CheckDisposed();
+			if (IsControllingTheRecordTreeBar) //m_treeBarHandler!= null)
+				m_recordBarHandler.PopulateRecordBar(m_list);
 		}
 
 		protected virtual void ToolForAreaNamed_lexicon(object propertyObject)
@@ -1996,6 +2002,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Subscriber.Unsubscribe(EventConstants.RefreshCurrentList, RefreshList);
 			Subscriber.Unsubscribe(PropertyConstants.ToolForAreaNamed_lexicon, ToolForAreaNamed_lexicon);
+			Subscriber.Unsubscribe(PropertyConstants.ShowRecordList, ShowRecordList);
 			// We need the list to get the cache.
 			if (m_list == null || m_list.IsDisposed || Cache == null || Cache.IsDisposed || Cache.DomainDataByFlid == null)
 				return;
@@ -2048,6 +2055,7 @@ namespace SIL.FieldWorks.XWorks
 				m_propertyTable.SetPropertyPersistence("ActiveClerkSelectedObject", false);
 				Subscriber.Subscribe(EventConstants.RefreshCurrentList, RefreshList);
 				Subscriber.Subscribe(PropertyConstants.ToolForAreaNamed_lexicon,ToolForAreaNamed_lexicon);
+				Subscriber.Subscribe(PropertyConstants.ShowRecordList, ShowRecordList);
 				Cache.DomainDataByFlid.AddNotification(this);
 			}
 			get

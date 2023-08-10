@@ -188,7 +188,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				return m_propertyTable.GetBoolProperty("ShowRecordList", false);
+				return m_propertyTable.GetBoolProperty(PropertyConstants.ShowRecordList, false);
 			}
 		}
 

@@ -440,6 +440,7 @@ namespace XCore
 			Subscriber.Subscribe(EventConstants.PrepareToRefresh, OnPrepareToRefresh);
 			Subscriber.Subscribe(PropertyConstants.BestStyleName, SynchronizedOnIdleTime);
 			Subscriber.Subscribe(PropertyConstants.WritingSystemHvo, SynchronizedOnIdleTime);
+			Subscriber.Subscribe(PropertyConstants.ShowRecordList, ShowRecordList);
 		}
 
 		/// <summary>
@@ -783,7 +784,7 @@ namespace XCore
 			m_recordBar.Size = new Size(200, 300);
 			m_recordBar.TabStop = true;
 			m_recordBar.TabIndex = 1;
-			m_secondarySplitContainer.Panel1Collapsed = !m_propertyTable.GetBoolProperty("ShowRecordList", false);
+			m_secondarySplitContainer.Panel1Collapsed = !m_propertyTable.GetBoolProperty(PropertyConstants.ShowRecordList, false);
 
 			// Always show the main content control.
 			m_secondarySplitContainer.Panel1MinSize = CollapsingSplitContainer.kCollapsedSize;
@@ -1304,6 +1305,7 @@ namespace XCore
 			Subscriber.Unsubscribe(EventConstants.PrepareToRefresh, OnPrepareToRefresh);
 			Subscriber.Unsubscribe(PropertyConstants.BestStyleName, SynchronizedOnIdleTime);
 			Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, SynchronizedOnIdleTime);
+			Subscriber.Unsubscribe(PropertyConstants.ShowRecordList, ShowRecordList);
 
 			if (m_mediator != null)
 			{
@@ -1786,8 +1788,9 @@ namespace XCore
 						}
 					}
 					break;
-				case "ShowRecordList": // Replaces obsolete "ShowTreeBar".
-					UpdateSidebarAndRecordBarDisplay(true);
+
+				case PropertyConstants.ShowRecordList:
+					// handled in ShowRecordList method
 					break;
 
 				default:
@@ -1831,6 +1834,12 @@ namespace XCore
 			MainContentControlAsIxCoreContentControl?.PrepareToGoAway();
 		}
 
+		private void ShowRecordList(object propertyObject)
+		{
+			CheckDisposed();
+			UpdateSidebarAndRecordBarDisplay(true);
+		}
+
 		#endregion XCORE Message Handlers
 
 		#region splitters, sidebar, and tree bar stuff
@@ -1859,7 +1868,7 @@ namespace XCore
 			if (m_mainSplitContainer.Panel1Collapsed)
 				m_mainSplitContainer.Panel1Collapsed = false;
 
-			if (m_propertyTable.GetBoolProperty("ShowRecordList", false))
+			if (m_propertyTable.GetBoolProperty(PropertyConstants.ShowRecordList, false))
 			{
 				// Show Record List.
 				if (m_secondarySplitContainer.Panel1Collapsed)
@@ -1938,7 +1947,7 @@ namespace XCore
 				// Hide the first pane for sure so that MultiPane's internal splitter will be set
 				// correctly.  See LT-6515.
 				// No broadcast even if it did change.
-				m_propertyTable.SetProperty("ShowRecordList", false, false);
+				m_propertyTable.SetProperty(PropertyConstants.ShowRecordList, false, false);
 				m_secondarySplitContainer.Panel1Collapsed = true;
 				m_mainContentControl.Dispose(); // before we create the new one, it inactivates the Clerk, which the new one may want active.
 				m_mainContentControl = null;
