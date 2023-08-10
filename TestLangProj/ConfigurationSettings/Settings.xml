@@ -19,12 +19,6 @@
 	<doDispose>false</doDispose>
   </Property>
   <Property>
-	<name>ShowSidebar</name>
-	<value xsi:type="xsd:boolean">true</value>
-	<doPersist>true</doPersist>
-	<doDispose>false</doDispose>
-  </Property>
-  <Property>
 	<name>SidebarWidthGlobal</name>
 	<value xsi:type="xsd:int">140</value>
 	<doPersist>true</doPersist>

@@ -21,7 +21,6 @@ namespace SIL.FieldWorks.Common.Framework
 	{
 		#region Member Variables
 		private readonly RegistryBoolSetting m_firstTimeAppHasBeenRun;
-		private readonly RegistryBoolSetting m_showSideBar;
 		private readonly RegistryBoolSetting m_showStatusBar;
 		private readonly RegistryBoolSetting m_openLastEditedProject;
 		private readonly RegistryIntSetting m_loadingProcessId;
@@ -78,7 +77,6 @@ namespace SIL.FieldWorks.Common.Framework
 			if (app == null)
 				throw new ArgumentNullException("app");
 			m_firstTimeAppHasBeenRun = new RegistryBoolSetting(app.SettingsKey, "FirstTime", true);
-			m_showSideBar = new RegistryBoolSetting(app.SettingsKey, "ShowSideBar", true);
 			m_showStatusBar = new RegistryBoolSetting(app.SettingsKey, "ShowStatusBar", true);
 			m_openLastEditedProject = new RegistryBoolSetting(app.SettingsKey, "OpenLastEditedProject", false);
 			m_loadingProcessId = new RegistryIntSetting(app.SettingsKey, "LoadingProcessId", 0);
@@ -119,7 +117,6 @@ namespace SIL.FieldWorks.Common.Framework
 			{
 				// dispose managed and unmanaged objects
 				m_firstTimeAppHasBeenRun.Dispose();
-				m_showSideBar.Dispose();
 				m_showStatusBar.Dispose();
 				m_openLastEditedProject.Dispose();
 				m_loadingProcessId.Dispose();
@@ -245,17 +242,6 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the value in the registry for the sidebar's visibility.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool ShowSideBarSetting
-		{
-			get {return m_showSideBar.Value;}
-			set {m_showSideBar.Value = value;}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets or sets the value in the registry for the statusbar's visibility.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -318,7 +304,6 @@ namespace SIL.FieldWorks.Common.Framework
 			ErrorReporter.AddProperty("NumberOfAnnoyingCrashes", NumberOfAnnoyingCrashes.ToString());
 			ErrorReporter.AddProperty("RuntimeBeforeCrash", "0:00");
 			ErrorReporter.AddProperty("LoadingProcessId", LoadingProcessId.ToString());
-			ErrorReporter.AddProperty("ShowSideBarSetting", ShowSideBarSetting.ToString());
 			ErrorReporter.AddProperty("ShowStatusBarSetting", ShowStatusBarSetting.ToString());
 			ErrorReporter.AddProperty("AutoOpenLastEditedProjectSetting", AutoOpenLastEditedProject.ToString());
 			ErrorReporter.AddProperty("DisableSplashScreenSetting", DisableSplashScreenSetting.ToString());
