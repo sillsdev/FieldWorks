@@ -1,0 +1,9 @@
+Code-Review+2: Hasso Pape <hasso_pape@sil.org>
+Verified-Linux+1: Ariel Ror. <ariel_rorabaugh@sil.org>
+Verified+1: Jenkins CI <jenkins@sil.org>
+Submitted-by: Ariel Ror. <ariel_rorabaugh@sil.org>
+Submitted-at: Fri, 11 Aug 2023 16:41:08 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/c/FieldWorks/+/9483
+Comments-Total: 4
+Project: FieldWorks
+Branch: refs/heads/feature/PubSub
