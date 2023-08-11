@@ -12,6 +12,7 @@ using System.Xml;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.Application;
@@ -74,6 +75,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if( disposing )
 			{
+				Subscriber.Unsubscribe(PropertyConstants.CurrentContentControlParameters, CurrentContentControlParametersChanged);
+
 				if (components != null)
 				{
 					components.Dispose();
@@ -99,11 +102,44 @@ namespace SIL.FieldWorks.Common.Controls
 
 			// Use the ones in fakeFlid, and any we create.
 			base.Init(nodeSpec, hvoRoot, fakeFlid, cache, mediator, bv);
+
+			Subscriber.Subscribe(PropertyConstants.CurrentContentControlParameters, CurrentContentControlParametersChanged);
 		}
 
 		#endregion Construction, initialization, and disposal.
 
 		#region Properties
+
+		/*
+			 * Starting up with Domains being startup tool.
+			 *	currentContentControlObject
+			 *	StatusPanelProgress
+			 *
+			 * Switching away from Domains to another tool in same area.
+			 *	currentContentControlParameters
+			 *
+			 * Switching to Domains, when another tool in same area was first to start
+			 *	ToolForAreaNamed_lexicon
+			 *	currentContentControlObject
+			 *
+			 * Switch to another area from domains
+			 *	areaChoiceParameters
+			 *	InitialArea
+			 *	currentContentControlParameters
+			 *
+			 * Switch to Domains from another area (other area was first to start)
+			 *	currentContentControlObject
+			 *
+			 * Switch to another domain
+			 *	StatusPanelRecordNumber
+			 *	StatusPanelMessage
+			 *	StatusPanelRecordNumber
+			 *	StatusPanelMessage
+			 *	-selected
+			 *	SemanticDomainList-selected
+			 *	ActiveClerkSelectedObject
+			 *	SelectedTreeBarNode
+			 */
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -161,6 +197,12 @@ namespace SIL.FieldWorks.Common.Controls
 
 		#region XCore message handlers
 
+		private void CurrentContentControlParametersChanged(object propertyObject)
+		{
+			CheckDisposed();
+			CleanupPendingEdits();
+		}
+
 		/// <summary>
 		/// This name is magic for an xCoreColleague that is active at the time when an xWindow is being closed.
 		/// If some active colleague implements this method, it gets a chance to do something special as the
@@ -173,57 +215,6 @@ namespace SIL.FieldWorks.Common.Controls
 
 			arg.Cancel = CleanupPendingEdits();
 			return arg.Cancel; // if we want to cancel, others don't need to be asked.
-		}
-
-		/// <summary>
-		/// This is invoked by the PropertyTable (because XmlBrowseView is a mediator).
-		/// </summary>
-		/// <param name="propName"></param>
-		public void OnPropertyChanged(string propName)
-		{
-			CheckDisposed();
-
-			/*
-			 * Starting up with Domains being startup tool.
-			 *	currentContentControlObject
-			 *	StatusPanelProgress
-			 *
-			 * Switching away from Domains to another tool in same area.
-			 *	currentContentControlParameters
-			 *
-			 * Switching to Domains, when another tool in same area was first to start
-			 *	ToolForAreaNamed_lexicon
-			 *	currentContentControlObject
-			 *
-			 * Switch to another area from domains
-			 *	areaChoiceParameters
-			 *	InitialArea
-			 *	currentContentControlParameters
-			 *
-			 * Switch to Domains from another area (other area was first to start)
-			 *	currentContentControlObject
-			 *
-			 * Switch to another domain
-			 *	StatusPanelRecordNumber
-			 *	StatusPanelMessage
-			 *	StatusPanelRecordNumber
-			 *	StatusPanelMessage
-			 *	-selected
-			 *	SemanticDomainList-selected
-			 *	ActiveClerkSelectedObject
-			 *	SelectedTreeBarNode
-			 */
-
-			// "currentContentControlObject" occurs in two incoming contexts,
-			// and one switching away context.
-			// We only need to handle the switching away context, but how to tell them apart?
-			// JohnT: don't handle switching to another domain by catching StatusPanelRecordNumber;
-			// too unreliable. Catch that by override of RootObjectHvo below.
-			if (propName == "areaChoiceParameters" // Switching to another area
-				|| propName == "currentContentControlParameters") // Switching to another tool in same area
-			{
-				CleanupPendingEdits();
-			}
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -1776,7 +1776,7 @@ namespace XCore
 				case "currentContentControl":
 					using (new WaitCursor(this))
 					{
-						XmlNode controlNode = m_propertyTable.GetValue<XmlNode>("currentContentControlParameters");
+						XmlNode controlNode = m_propertyTable.GetValue<XmlNode>(PropertyConstants.CurrentContentControlParameters);
 						if (controlNode != null)
 						{
 							XmlNode dynLoaderNode = controlNode.SelectSingleNode("dynamicloaderinfo");

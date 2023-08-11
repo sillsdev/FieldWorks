@@ -112,8 +112,8 @@ namespace SIL.FieldWorks.XWorks
 		public XmlNode ActivateTool(string toolName)
 		{
 			XmlNode configurationNode = GetToolNode(toolName);
-			PropTable.SetProperty("currentContentControlParameters", configurationNode.SelectSingleNode("control"), true);
-			PropTable.SetPropertyPersistence("currentContentControlParameters", false);
+			PropTable.SetProperty(PropertyConstants.CurrentContentControlParameters, configurationNode.SelectSingleNode("control"), true);
+			PropTable.SetPropertyPersistence(PropertyConstants.CurrentContentControlParameters, false);
 			PropTable.SetProperty("currentContentControl", toolName, true);
 			PropTable.SetPropertyPersistence("currentContentControl", false);
 			ProcessPendingItems();

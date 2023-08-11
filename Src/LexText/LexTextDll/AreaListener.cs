@@ -2,16 +2,17 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.Reporting;
+using SIL.Utils;
+using ConfigurationException = SIL.Utils.ConfigurationException;
 using System;
+using System.Xml;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using SIL.LCModel;
-using SIL.Reporting;
-using System.Xml;
-using SIL.Utils;
 using XCore;
-using ConfigurationException = SIL.Utils.ConfigurationException;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
@@ -944,8 +945,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 			string toolName;
 			XmlNode node = GetToolNodeForArea(areaName, out toolName);
-			m_propertyTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), true);
-			m_propertyTable.SetPropertyPersistence("currentContentControlParameters", false);
+			m_propertyTable.SetProperty(PropertyConstants.CurrentContentControlParameters, node.SelectSingleNode("control"), true);
+			m_propertyTable.SetPropertyPersistence(PropertyConstants.CurrentContentControlParameters, false);
 			m_propertyTable.SetProperty("currentContentControl", toolName, true);
 			m_propertyTable.SetPropertyPersistence("currentContentControl", false);
 		}
@@ -1041,7 +1042,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 					m_propertyTable.SetProperty("ToolForAreaNamed_" + area, toolName, true);
 			}
 			}
-			m_propertyTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), true);
+			m_propertyTable.SetProperty(PropertyConstants.CurrentContentControlParameters, node.SelectSingleNode("control"), true);
 			m_propertyTable.SetProperty("currentContentControl", toolName, true);
 			return true;
 		}

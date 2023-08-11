@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.XWorks
 		private IEnumerable<Tuple<string, string>> GatherBuiltInAndUserLayouts()
 		{
 			var layoutList = new List<Tuple<string, string>>();
-			layoutList.AddRange(GetBuiltInLayouts(m_propertyTable.GetValue<XmlNode>("currentContentControlParameters", null)));
+			layoutList.AddRange(GetBuiltInLayouts(m_propertyTable.GetValue<XmlNode>(PropertyConstants.CurrentContentControlParameters, null)));
 			var builtInLayoutList = new List<string>();
 			builtInLayoutList.AddRange(from layout in layoutList select layout.Item2);
 			var userLayouts = m_mainView.Vc.LayoutCache.LayoutInventory.GetLayoutTypes();
