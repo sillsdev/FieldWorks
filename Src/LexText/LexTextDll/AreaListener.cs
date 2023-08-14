@@ -126,6 +126,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 			if (disposing)
 			{
+				FwUtils.Subscriber.Unsubscribe(PropertyConstants.CurrentContentControlObject, CurrentContentControlObjectChanged);
 				// Dispose managed resources here.
 				if (m_mediator != null)
 					m_mediator.RemoveColleague(this);
@@ -147,6 +148,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			mediator.AddColleague(this);
 			m_ctotalLists = 0;
 			m_ccustomLists = 0;
+			FwUtils.Subscriber.Subscribe(PropertyConstants.CurrentContentControlObject, CurrentContentControlObjectChanged);
 		}
 
 		private DateTime m_lastToolChange = DateTime.MinValue;
@@ -160,35 +162,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 			{
 				default:
 					break;
-				/* remember, what XCore thinks of as a "Content Control", is what this AreaManager sees as a "tool".
-					* with that in mind, this case is invoked when the user chooses a different tool.
-					* the purpose of this code is to then store the name of that tool so that
-					* next time we come back to this area, we can remember to use this same tool.
-					*/
-				case "currentContentControlObject":
-					string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
-					var c = m_propertyTable.GetValue<IxCoreContentControl>("currentContentControlObject");
-					var propName = "ToolForAreaNamed_" + c.AreaName;
-					m_propertyTable.SetProperty(propName, toolName, true);
-					Logger.WriteEvent("Switched to " + toolName);
-					// Should we report a tool change?
-					if (m_lastToolChange.Date != DateTime.Now.Date)
-					{
-						// new day has dawned (or just started up). Reset tool reporting.
-						m_toolsReportedToday.Clear();
-						m_lastToolChange = DateTime.Now;
-					}
-					string areaNameForReport = m_propertyTable.GetStringProperty("areaChoice", null);
-					if (!string.IsNullOrWhiteSpace(areaNameForReport) && !m_toolsReportedToday.Contains(toolName))
-					{
-						m_toolsReportedToday.Add(toolName);
-						DesktopAnalytics.Analytics.Track("SwitchToTool", new Dictionary<string, string>
-						{
-							{"area", areaNameForReport},
-							{"tool", toolName}
-						});
-					}
-					break;
 
 				case "areaChoice":
 					string areaName = m_propertyTable.GetStringProperty("areaChoice", null);
@@ -201,6 +174,38 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 					ActivateToolForArea(areaName);
 					break;
+			}
+		}
+
+
+		/* remember, what XCore thinks of as a "Content Control", is what this AreaManager sees as a "tool".
+		 * with that in mind, this method is invoked when the user chooses a different tool.
+		 * the purpose of this code is to then store the name of that tool so that
+		 * next time we come back to this area, we can remember to use this same tool.
+		 */
+		private void CurrentContentControlObjectChanged(object _)
+		{
+			string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
+			var c = m_propertyTable.GetValue<IxCoreContentControl>("currentContentControlObject");
+			var propName = "ToolForAreaNamed_" + c.AreaName;
+			m_propertyTable.SetProperty(propName, toolName, true);
+			Logger.WriteEvent("Switched to " + toolName);
+			// Should we report a tool change?
+			if (m_lastToolChange.Date != DateTime.Now.Date)
+			{
+				// new day has dawned (or just started up). Reset tool reporting.
+				m_toolsReportedToday.Clear();
+				m_lastToolChange = DateTime.Now;
+			}
+			string areaNameForReport = m_propertyTable.GetStringProperty("areaChoice", null);
+			if (!string.IsNullOrWhiteSpace(areaNameForReport) && !m_toolsReportedToday.Contains(toolName))
+			{
+				m_toolsReportedToday.Add(toolName);
+				DesktopAnalytics.Analytics.Track("SwitchToTool", new Dictionary<string, string>
+				{
+					{"area", areaNameForReport},
+					{"tool", toolName}
+				});
 			}
 		}
 

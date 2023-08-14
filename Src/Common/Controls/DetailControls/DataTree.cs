@@ -1213,6 +1213,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(PropertyConstants.CurrentContentControlObject, CurrentContentControlObjectChanged);
 				Subscriber.Unsubscribe(PropertyConstants.ShowHiddenFields, ShowHiddenFieldsChanged);
 				Subscriber.PrefixUnsubscribe(PropertyConstants.ShowHiddenFieldsSpecificPrefix, ShowHiddenFieldsSpecificChanged);
 
@@ -3656,6 +3657,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			Subscriber.Subscribe(PropertyConstants.ShowHiddenFields, ShowHiddenFieldsChanged);
 			Subscriber.PrefixSubscribe(PropertyConstants.ShowHiddenFieldsSpecificPrefix, ShowHiddenFieldsSpecificChanged);
+			Subscriber.Subscribe(PropertyConstants.CurrentContentControlObject, CurrentContentControlObjectChanged);
 		}
 
 		public IxCoreColleague[] GetMessageTargets()
@@ -3972,16 +3974,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
-		/// Receives the broadcast message "PropertyChanged"
+		/// Called whenever the currentContentControlObject property is changed
 		/// </summary>
-		public void OnPropertyChanged(string name)
+		private void CurrentContentControlObjectChanged(object _)
 		{
 			CheckDisposed();
-
-			if (name == "currentContentControlObject")
-			{
-				m_fCurrentContentControlObjectTriggered = true;
-			}
+			m_fCurrentContentControlObjectTriggered = true;
 		}
 
 		/// <summary>

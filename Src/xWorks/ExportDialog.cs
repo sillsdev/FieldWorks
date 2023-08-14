@@ -180,7 +180,7 @@ namespace SIL.FieldWorks.XWorks
 			// the XmlVc for an XmlDocView.  Also obtain the database id and class id of the
 			// root object.
 
-			InitFromMainControl(m_propertyTable.GetValue<object>("currentContentControlObject", null));
+			InitFromMainControl(m_propertyTable.GetValue<object>(PropertyConstants.CurrentContentControlObject, null));
 			m_clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 
 			m_chkExportPictures.Checked = false;

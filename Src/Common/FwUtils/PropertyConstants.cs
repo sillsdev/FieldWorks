@@ -9,6 +9,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string ActiveClerk = "ActiveClerk";
 		public const string ActiveClerkSelectedObject = "ActiveClerkSelectedObject";
 		public const string BestStyleName = "BestStyleName";
+		public const string CurrentContentControlObject = "currentContentControlObject";
 		public const string CurrentContentControlParameters = "currentContentControlParameters";
 		public const string ShowHiddenFields = "ShowHiddenFields";
 		public const string ShowHiddenFieldsSpecificPrefix = "ShowHiddenFields-";

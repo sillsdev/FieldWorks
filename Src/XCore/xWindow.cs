@@ -1934,8 +1934,8 @@ namespace XCore
 					return;
 
 				// No broadcast even if it did change.
-				m_propertyTable.SetProperty("currentContentControlObject", null, false);
-				m_propertyTable.SetPropertyPersistence("currentContentControlObject", false);
+				m_propertyTable.SetProperty(PropertyConstants.CurrentContentControlObject, null, false);
+				m_propertyTable.SetPropertyPersistence(PropertyConstants.CurrentContentControlObject, false);
 
 				m_mediator.RemoveColleague(MainContentControlAsIxCoreColleague);
 				foreach (IxCoreColleague icc in MainContentControlAsIxCoreColleague.GetMessageTargets())
@@ -1989,12 +1989,16 @@ namespace XCore
 					mainControl.ResumeLayout(false);
 					var mainContentAsPostInit = m_mainContentControl as IPostLayoutInit;
 
-					//this was added because the user may switch to a control through some UI vector that does not
-					//first set the appropriate area. Doing this will lead to the appropriate area button being highlighted, and also
-					//help other things which depend on the accuracy of this "areaChoice" property.
-					m_propertyTable.SetProperty("currentContentControlObject", m_mainContentControl, true);
-					m_propertyTable.SetPropertyPersistence("currentContentControlObject", false);
+					// This was added because the user may switch to a control through some UI vector that does not
+					// first set the appropriate area. Doing this will lead to the appropriate area button being highlighted, and also
+					// help other things which depend on the accuracy of this "areaChoice" property.
+					//
+					// Note that areaChoice should be set before currentContentControlObject, since the property changed handling
+					// for currentContentControlObject in AreaListener expects areaChoice to be updated already.
 					m_propertyTable.SetProperty("areaChoice", MainContentControlAsIxCoreContentControl.AreaName, true);
+					m_propertyTable.SetProperty(PropertyConstants.CurrentContentControlObject, m_mainContentControl, true);
+					m_propertyTable.SetPropertyPersistence(PropertyConstants.CurrentContentControlObject, false);
+
 
 					if (contentClassNode != null && contentClassNode.ParentNode != null)
 						SetToolDefaultProperties(contentClassNode.ParentNode.SelectSingleNode("defaultProperties"));

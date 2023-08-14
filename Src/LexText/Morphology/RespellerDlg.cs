@@ -610,7 +610,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			// This is sure a complicated way to do this, but if we don't and the old wordform goes away,
 			// there will still be a selection out there referencing the old hvo.
 			var contentControlObj =
-				m_propertyTable.GetValue<IxCoreContentControl>("currentContentControlObject");
+				m_propertyTable.GetValue<IxCoreContentControl>(PropertyConstants.CurrentContentControlObject);
 			// This could be other sorts of control (e.g. MultiPane), but this is the one that was causing problems (LT-20118)
 			if (contentControlObj is PaneBarContainer control)
 			{
