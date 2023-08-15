@@ -1783,9 +1783,9 @@ namespace SIL.FieldWorks.XWorks
 		private static string GeneratePictureContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
 			object item, GeneratorSettings settings)
 		{
-			if (item is ICmPicture cmPic && !File.Exists(cmPic.PictureFileRA.AbsoluteInternalPath))
+			if (item is ICmPicture cmPic && !File.Exists(cmPic.PictureFileRA?.AbsoluteInternalPath))
 			{
-				Logger.WriteEvent($"Skipping generating picture because it does not exist at {cmPic.PictureFileRA.AbsoluteInternalPath}");
+				Logger.WriteEvent($"Skipping generating picture because there is no file at {cmPic.PictureFileRA?.AbsoluteInternalPath ?? "all"}");
 				return string.Empty;
 			}
 			var bldr = new StringBuilder();

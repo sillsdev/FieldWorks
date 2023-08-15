@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private static Metadata MetadataFromFile(this LCModel.ICmPicture picture)
 		{
-			var path = picture.PictureFileRA.AbsoluteInternalPath;
+			var path = picture.PictureFileRA?.AbsoluteInternalPath;
 			try
 			{
 				return Metadata.FromFile(path);
