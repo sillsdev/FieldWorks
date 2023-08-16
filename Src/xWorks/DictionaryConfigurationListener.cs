@@ -349,35 +349,6 @@ namespace SIL.FieldWorks.XWorks
 			propertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate);
 		}
 
-		public bool OnWritingSystemUpdated(object param)
-		{
-			if (param == null)
-				return false;
-
-			var currentConfig = GetCurrentConfiguration(m_propertyTable, true, null);
-			var cache = m_propertyTable.GetValue<LcmCache>("cache");
-			var configuration = new DictionaryConfigurationModel(currentConfig, cache);
-			DictionaryConfigurationController.UpdateWritingSystemInModel(configuration, cache);
-			configuration.Save();
-
-			return true;
-		}
-
-		public bool OnWritingSystemDeleted(object param)
-		{
-			var currentConfig = GetCurrentConfiguration(m_propertyTable, true, null);
-			var cache = m_propertyTable.GetValue<LcmCache>("cache");
-			var configuration = new DictionaryConfigurationModel(currentConfig, cache);
-			if (configuration.HomographConfiguration != null && ((string[])param).Any(x => x.ToString() == configuration.HomographConfiguration.HomographWritingSystem))
-			{
-				configuration.HomographConfiguration.HomographWritingSystem = string.Empty;
-				configuration.HomographConfiguration.CustomHomographNumbers = string.Empty;
-				configuration.Save();
-				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh));
-			}
-			return true;
-		}
-
 		private static string GetInnerConfigDir(string configFilePath)
 		{
 			return Path.GetFileName(Path.GetDirectoryName(configFilePath));

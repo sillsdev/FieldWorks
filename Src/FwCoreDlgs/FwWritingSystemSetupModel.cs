@@ -76,8 +76,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public readonly LcmCache Cache;
 
-		private readonly Mediator _mediator;
-
 		/// <summary/>
 		public event EventHandler WritingSystemListUpdated;
 
@@ -178,7 +176,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public event EventHandler OnCurrentWritingSystemChanged = delegate { };
 
 		/// <summary/>
-		public FwWritingSystemSetupModel(IWritingSystemContainer container, ListType type, IWritingSystemManager wsManager = null, LcmCache cache = null, Mediator mediator = null)
+		public FwWritingSystemSetupModel(IWritingSystemContainer container, ListType type, IWritingSystemManager wsManager = null, LcmCache cache = null)
 		{
 			switch (type)
 			{
@@ -197,7 +195,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			_wsManager = wsManager;
 			SetCurrentWsSetupModel(_currentWs);
 			Cache = cache;
-			_mediator = mediator;
 			_wsContainer = container;
 			_projectLexiconSettings = new ProjectLexiconSettings();
 			// ignore on disk settings if we are testing without a cache
@@ -681,7 +678,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 						{
 							WritingSystemUpdated?.Invoke(this, EventArgs.Empty);
 						}
-						_mediator?.SendMessage("WritingSystemUpdated", origWs.Id);
 					}
 
 					// whether or not the WS was created or changed, its list position may have changed (LT-19788)
@@ -820,7 +816,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return;
 			}
 
-			var deletedWsIds = new List<string>();
 			foreach (var deleteCandidateId in _wsIdsToDelete)
 			{
 				if (Cache.ServiceLocator.WritingSystemManager.TryGet(deleteCandidateId, out var deleteCandidate)
@@ -828,13 +823,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					&& !_mergedWritingSystems.Keys.Contains(deleteCandidate))
 				{
 					WritingSystemServices.DeleteWritingSystem(Cache, deleteCandidate);
-					deletedWsIds.Add(deleteCandidateId);
 				}
-			}
-
-			if (deletedWsIds.Count > 0)
-			{
-				_mediator?.SendMessage("WritingSystemDeleted", deletedWsIds.ToArray());
 			}
 		}
 
