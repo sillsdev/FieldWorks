@@ -123,6 +123,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			// Must not be run more than once.
 			if (m_isDisposed)
 				return;
+			FwUtils.Subscriber.Unsubscribe(PropertyConstants.AreaChoice, AreaChanged);
 
 			if (disposing)
 			{
@@ -149,32 +150,26 @@ namespace SIL.FieldWorks.XWorks.LexText
 			m_ctotalLists = 0;
 			m_ccustomLists = 0;
 			FwUtils.Subscriber.Subscribe(PropertyConstants.CurrentContentControlObject, CurrentContentControlObjectChanged);
+			FwUtils.Subscriber.Subscribe(PropertyConstants.AreaChoice, AreaChanged);
 		}
 
 		private DateTime m_lastToolChange = DateTime.MinValue;
 		HashSet<string> m_toolsReportedToday = new HashSet<string>();
 
-		public void OnPropertyChanged(string name)
+		private void AreaChanged(object _)
 		{
-			CheckDisposed();
+			string areaName = m_propertyTable.GetStringProperty("areaChoice", null);
 
-			switch(name)
+			if (string.IsNullOrEmpty(areaName))
 			{
-				default:
-					break;
-
-				case "areaChoice":
-					string areaName = m_propertyTable.GetStringProperty("areaChoice", null);
-
-					if(string.IsNullOrEmpty(areaName))
-						break;//this can happen when we use this property very early in the initialization
-
-					//for next startup
-					m_propertyTable.SetProperty("InitialArea", areaName, true);
-
-					ActivateToolForArea(areaName);
-					break;
+				//this can happen when we use this property very early in the initialization
+				return;
 			}
+
+			//for next startup
+			m_propertyTable.SetProperty("InitialArea", areaName, true);
+
+			ActivateToolForArea(areaName);
 		}
 
 
@@ -960,11 +955,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			string property = "ToolForAreaNamed_" + areaName;
 			toolName = m_propertyTable.GetStringProperty(property, "");
-			if (toolName == "")
-				throw new ConfigurationException("There must be a property named " + property + " in the <defaultProperties> section of the configuration file.");
-
-			XmlNode node;
-			if (!TryGetToolNode(areaName, toolName, out node))
+			if (!TryGetToolNode(areaName, toolName, out var node))
 			{
 				// the tool must be obsolete, so just get the default tool for this area
 				var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
@@ -1045,7 +1036,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 				if (area != null)
 				{
 					m_propertyTable.SetProperty("ToolForAreaNamed_" + area, toolName, true);
-			}
+				}
 			}
 			m_propertyTable.SetProperty(PropertyConstants.CurrentContentControlParameters, node.SelectSingleNode("control"), true);
 			m_propertyTable.SetProperty("currentContentControl", toolName, true);

@@ -50,6 +50,8 @@ namespace XCore
 		protected virtual void Dispose(bool fDisposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			FwUtils.Subscriber.Unsubscribe(PropertyConstants.AreaChoice, AreaChanged);
+			FwUtils.Subscriber.PrefixUnsubscribe(PropertyConstants.ToolForAreaPrefix, ToolForAreaChanged);
 			if (fDisposing && !IsDisposed)
 			{
 				// dispose managed and unmanaged objects
@@ -84,10 +86,6 @@ namespace XCore
 			}
 		}
 
-
-
-
-
 		/// <summary>
 		/// Called by xWindow when everything is all set up.
 		/// Will take the information that was received from CreateUIForChoiceGroupCollection and
@@ -102,12 +100,10 @@ namespace XCore
 		/// <summary>
 		/// Gets the sidebar.
 		/// </summary>
-
 		protected Panel MyPanel
 		{
 			get { return (Panel)MyControl; }
 		}
-
 
 		#endregion Properties
 
@@ -132,13 +128,15 @@ namespace XCore
 			areasLabel = StringTable.Table.LocalizeAttributeValue("Areas");
 
 			m_sidepane = new SidePane(MyControl, SidePaneItemAreaStyle.List);
+			// ReSharper disable once PossibleNullReferenceException - This is always set in our case
 			m_sidepane.AccessibilityObject.Name = "sidepane";
-				//m_sidepane.GetType().Name;
 			m_sidepane.ItemClicked += SidePaneItemClickedHandler;
 			m_sidepane.TabClicked += SidePaneTabClickedHandler;
 
 			mediator.AddColleague(this);
-		}
+			FwUtils.Subscriber.Subscribe(PropertyConstants.AreaChoice, AreaChanged);
+			FwUtils.Subscriber.PrefixSubscribe(PropertyConstants.ToolForAreaPrefix, ToolForAreaChanged);
+	  }
 
 		/// <summary>
 		/// Handle when an item on the sidepane is clicked.
@@ -312,11 +310,10 @@ namespace XCore
 				Debug.Assert(tab is ListPropertyChoice, "Only things that can be made into buttons should be appearing here.");
 				MakeAreaButton((ListPropertyChoice)tab);
 			}
-
 		}
 
 		/// <summary>
-		/// Redraw ths expanded item, so that the selected and enabled items are up to date.
+		/// Redraw this expanded item, so that the selected and enabled items are up to date.
 		/// </summary>
 		public override void OnIdle()
 		{
@@ -355,8 +352,6 @@ namespace XCore
 				return null;
 			}
 		}
-
-
 
 		/// <summary>
 		/// make a control to show, for example, the list of tools, or the list of filters.
@@ -444,53 +439,23 @@ namespace XCore
 
 			m_populatingList=true;
 			ListView list = (ListView) group.ReferenceWidget;
-//			if(list.Items.Count == group.Count)
-//				UpdateList(group);
-//			else
-			{
-				list.BeginUpdate();
-				list.Clear();
+			list.BeginUpdate();
+			list.Clear();
+			m_choiceGroupCache.Add(group); // cache group to defer adding it to the sidepane until we definitely have tabs already
+			list.EndUpdate();
 
-				m_choiceGroupCache.Add(group); // cache group to defer adding it to the sidepane until we definitely have tabs already
-
-				list.EndUpdate();
-			}
 			m_populatingList=false;
 			m_suspendEvents = wasSuspended;
 		}
-		/// <summary>
-		/// Populate a control to show, for example, the list of tools, or the list of filters.
-		/// </summary>
-		/// <param name="group"></param>
-//		protected void UpdateList(ChoiceGroup group)
-//		{
-//	//		Debug.WriteLine("Grp:"+group.Label);
-//			ListView list = (ListView) group.ReferenceWidget;
-//			foreach(ListPropertyChoice choice in group)
-//			{
-////				Debug.WriteLine(choice.Label);
-//				//if(choice.Checked)
-//					((ListViewItem)(choice.ReferenceWidget)).Selected = (choice.Checked);
-////				else
-////					((ListViewItem)(choice.ReferenceWidget)).Selected = (choice.Checked);
-////				Debug.WriteLine("foo:");
-//
-//			}
-//		}
+
 		protected ArrayList AddSubControlsForButton (ListPropertyChoice choice)
 		{
 			ArrayList controls= new ArrayList ();
 			foreach(Control control in m_panelSubControls)
 			{
-				//				if(control.Parent !=null)
-				//				{
-				//					control.Parent.Controls.Remove(control);
-				//					//		//			string s = control.Parent.Name;
-				//				}
-				if (null != choice.ParameterNode.SelectSingleNode("descendant::listPanel[@listId='"+ control.Name+ "']"))
+				if (choice.ParameterNode.SelectSingleNode("descendant::listPanel[@listId='"+ control.Name+ "']") != null)
 				{
 					controls.Add(control);
-					//string x = control.Parent.Name;
 				}
 			}
 			return controls;
@@ -528,64 +493,57 @@ namespace XCore
 
 		#endregion Other methods
 
-
-		/// <summary>
-		/// When something changes the property areaChoice (via something like a menubar),
-		/// this ensures that the matching button is highlighted.
-		/// This also handles getting the tool right when the area (or the tool) changes.
-		/// </summary>
-		public void OnPropertyChanged(string propertyName)
+		private void ToolForAreaChanged(string publishedToolForAreaProp, object o)
 		{
-			switch(propertyName)
+			var areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
+			if (areaChoice == null)
 			{
-				case "areaChoice":
-					string areaName = m_propertyTable.GetStringProperty("areaChoice", null);
-					foreach(ChoiceGroup group in m_choiceGroupCollectionCache)
+				// Only bad things could happen by processing this, alert developers and abort processing the property change
+				Debug.Assert(areaChoice != null,
+					"Possible PropertyChange timing error, areaChoice is expected to be set before ToolForAreaNamed");
+				return;
+			}
+			var propToolForCurrentArea = $"ToolForAreaNamed_{areaChoice}";
+			if (publishedToolForAreaProp == propToolForCurrentArea)
+			{
+				var toolForArea = m_propertyTable.GetStringProperty(propToolForCurrentArea, null);
+				SetToolForCurrentArea(toolForArea);
+			}
+		}
+
+		private void AreaChanged(object _)
+		{
+			string areaName = m_propertyTable.GetStringProperty("areaChoice", null);
+			foreach(ChoiceGroup group in m_choiceGroupCollectionCache)
+			{
+				foreach (ListPropertyChoice choice in group) // group must already be populated
+				{
+					if (choice.Value == areaName)
 					{
-						foreach (ListPropertyChoice choice in group) // group must already be populated
+						string listId = GetListIdFromListPropertyChoice(choice);
+						var tab = m_sidepane.GetTabByName(listId);
+						if (tab != null)
 						{
-							if (choice.Value == areaName)
+							// We need to explicitly set the tool if we can, since the sidepane will
+							// choose the first tool if one has never been chosen, and end up
+							// overwriting the property table value.  See FWR-2004.
+							string propToolForArea = "ToolForAreaNamed_" + areaName;
+							string toolForArea = m_propertyTable.GetStringProperty(propToolForArea, null);
+							m_sidepane.SelectTab(tab);
+							// FWR-2895 Deleting a Custom list could result in needing to
+							// update the PropertyTable.
+							if (!string.IsNullOrEmpty(toolForArea) && !toolForArea.StartsWith("?"))
 							{
-								string listId = GetListIdFromListPropertyChoice(choice);
-								var tab = m_sidepane.GetTabByName(listId);
-								if (tab != null)
+								var fsuccess = m_sidepane.SelectItem(tab, toolForArea);
+								if (!fsuccess)
 								{
-									// We need to explicitly set the tool if we can, since the sidepane will
-									// choose the first tool if one has never been chosen, and end up
-									// overwriting the property table value.  See FWR-2004.
-									string propToolForArea = "ToolForAreaNamed_" + areaName;
-									string toolForArea = m_propertyTable.GetStringProperty(propToolForArea, null);
-									m_sidepane.SelectTab(tab);
-									// FWR-2895 Deleting a Custom list could result in needing to
-									// update the PropertyTable.
-									if (!String.IsNullOrEmpty(toolForArea) && !toolForArea.StartsWith("?"))
-									{
-										var fsuccess = m_sidepane.SelectItem(tab, toolForArea);
-										if (!fsuccess)
-										{
-											m_propertyTable.SetProperty(propToolForArea, null, true);
-										}
-									}
+									m_propertyTable.SetProperty(propToolForArea, null, true);
 								}
-								break;
 							}
 						}
+						break;
 					}
-					break;
-
-				default:
-					// This helps fix FWR-2004.
-					if (propertyName.StartsWith("ToolForAreaNamed_"))
-					{
-						string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
-						string propToolForArea = "ToolForAreaNamed_" + areaChoice;
-						if (propertyName == propToolForArea)
-						{
-							string toolForArea = m_propertyTable.GetStringProperty(propertyName, null);
-							SetToolForCurrentArea(toolForArea);
-						}
-					}
-					break;
+				}
 			}
 		}
 
@@ -611,32 +569,6 @@ namespace XCore
 					}
 				}
 			}
-		}
-
-#if nono
-		//this did not work out well because this event, though it is a result of clicking and
-		//area button, actually comes before the event that tells us the button was changed!
-		//therefore, stuff that would set up the list dynamically depending on the area will get it wrong.
-		//therefore, we stopped using this and moved to putting all of the handling into the
-		//OnClick event for the Area button.
-		private void OnPanelVisibleChanged(object sender, EventArgs e)
-		{
-			NavigationPanePanel panel = (NavigationPanePanel) sender;
-			if (!panel.Visible)
-				return;
-			foreach(Control control in panel. Controls)
-			{
-				if (control. Tag == null)
-					continue;
-				ChoiceGroup group = (ChoiceGroup)control.Tag;
-				group.OnDisplay(this,null);
-
-			}
-		}
-#endif
-
-		private void OnPanelLayout(object sender, LayoutEventArgs e)
-		{
 		}
 	}
 }

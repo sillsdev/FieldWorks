@@ -8,16 +8,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 	{
 		public const string ActiveClerk = "ActiveClerk";
 		public const string ActiveClerkSelectedObject = "ActiveClerkSelectedObject";
+		public const string AreaChoice = "areaChoice";
 		public const string BestStyleName = "BestStyleName";
 		public const string CurrentContentControlObject = "currentContentControlObject";
 		public const string CurrentContentControlParameters = "currentContentControlParameters";
+		public const string CurrentContextMenuSelectedWsIds = "SelectedWritingSystemHvosForCurrentContextMenu";
+		public const string SelectedPublication = "SelectedPublication";
 		public const string ShowHiddenFields = "ShowHiddenFields";
 		public const string ShowHiddenFieldsSpecificPrefix = "ShowHiddenFields-";
 		public const string ShowRecordList = "ShowRecordList";
 		public const string SortedByLength = "SortedByLength";
 		public const string ToolForAreaNamed_lexicon = "ToolForAreaNamed_lexicon";
+		public const string ToolForAreaPrefix = "ToolForAreaNamed_";
 		public const string WritingSystemHvo = "WritingSystemHvo";
-		public const string SelectedPublication = "SelectedPublication";
-		public const string CurrentContextMenuSelectedWsIds = "SelectedWritingSystemHvosForCurrentContextMenu";
 	}
 }

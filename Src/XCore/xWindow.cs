@@ -798,9 +798,6 @@ namespace XCore
 
 			CreateStatusBar(m_windowConfigurationNode);
 
-			// Add the content control
-			// Note: We should be able to do it directly, since everything needed is in the default properties.
-			SetInitialContentObject(m_windowConfigurationNode);
 			m_sidebarAdapter.FinishInit();
 			m_menuBarAdapter.FinishInit();
 
@@ -823,6 +820,9 @@ namespace XCore
 
 			ClearRecordBarList();//sets up event handling
 			ResumeLayoutAll();
+			// Add the content control
+			// Note: We should be able to do it directly, since everything needed is in the default properties.
+			SetInitialContentObject(m_windowConfigurationNode);
 		}
 
 		private void SuspendLayoutAll()
