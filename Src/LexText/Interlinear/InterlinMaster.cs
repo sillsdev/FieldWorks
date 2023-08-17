@@ -195,8 +195,7 @@ namespace SIL.FieldWorks.IText
 			switch (m_tabCtrl.SelectedIndex)
 			{
 				case (int)TabPageSelection.Gloss:
-					return m_propertyTable.GetBoolProperty(InterlinDocForAnalysis.ksPropertyAddWordsToLexicon, false) ?
-						InterlinLineChoices.InterlinMode.GlossAddWordsToLexicon : InterlinLineChoices.InterlinMode.Gloss;
+					return InterlinDocForAnalysis.GetSelectedLineChoiceMode(m_propertyTable);
 
 				case (int)TabPageSelection.ConstituentChart:
 					return InterlinLineChoices.InterlinMode.Chart;

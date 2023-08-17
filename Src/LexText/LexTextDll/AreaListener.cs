@@ -123,11 +123,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 			// Must not be run more than once.
 			if (m_isDisposed)
 				return;
-			FwUtils.Subscriber.Unsubscribe(PropertyConstants.AreaChoice, AreaChanged);
 			FwUtils.Subscriber.Unsubscribe(EventConstants.GetContentControlParameters, GetContentControlParameters);
 
 			if (disposing)
 			{
+				FwUtils.Subscriber.Unsubscribe(PropertyConstants.AreaChoice, AreaChanged);
 				FwUtils.Subscriber.Unsubscribe(PropertyConstants.CurrentContentControlObject, CurrentContentControlObjectChanged);
 				// Dispose managed resources here.
 				if (m_mediator != null)

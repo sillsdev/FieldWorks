@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -13,6 +13,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -31,12 +32,12 @@ namespace SIL.FieldWorks.IText
 		/// so we can put all AddWordsToLexicon related code there rather than having this
 		/// class do double duty.
 		/// </summary>
-		internal const string ksPropertyAddWordsToLexicon = "ITexts_AddWordsToLexicon";
 
 		public InterlinDocForAnalysis()
 		{
 			InitializeComponent();
 			RightMouseClickedEvent += InterlinDocForAnalysis_RightMouseClickedEvent;
+			Subscriber.Subscribe(PropertyConstants.ITexts_AddWordsToLexicon, AddWordsToLexiconChanged);
 			DoSpellCheck = true;
 		}
 
@@ -812,38 +813,33 @@ namespace SIL.FieldWorks.IText
 
 		#region AddWordsToLexicon
 
-		public void OnPropertyChanged(string name)
+		private void AddWordsToLexiconChanged(object _)
 		{
 			CheckDisposed();
-
-			switch (name)
+			if (LineChoices == null)
 			{
-				case ksPropertyAddWordsToLexicon:
-					if (this.LineChoices != null)
-					{
-						// whenever we change this mode, we may also
-						// need to show the proper line choice labels, so put the lineChoices in the right mode.
-						InterlinLineChoices.InterlinMode newMode = GetSelectedLineChoiceMode();
-						if (LineChoices.Mode != newMode)
-						{
-							var saved = SelectedOccurrence;
-							this.TryHideFocusBoxAndUninstall();
-							this.LineChoices.Mode = newMode;
-							// the following reconstruct will destroy any valid selection (e.g. in Free line).
-							// is there anyway to do a less drastic refresh (e.g. via PropChanged?)
-							// that properly adjusts things?
-							this.RefreshDisplay();
-							if (saved != null)
-								TriggerAnnotationSelected(saved, false);
-						}
-					}
-					break;
+				return;
+			}
+
+			// whenever we change this mode, we may also
+			// need to show the proper line choice labels, so put the lineChoices in the right mode.
+			var newMode = GetSelectedLineChoiceMode(m_propertyTable);
+			if (LineChoices.Mode != newMode)
+			{
+				var saved = SelectedOccurrence;
+				TryHideFocusBoxAndUninstall();
+				LineChoices.Mode = newMode;
+				// REVIEW (2012 or earlier): the following reconstruct will destroy any valid selection (e.g. in Free line).
+				// is there anyway to do a less drastic refresh (e.g. via PropChanged?) that properly adjusts things?
+				RefreshDisplay();
+				if (saved != null)
+					TriggerAnnotationSelected(saved, false);
 			}
 		}
 
-		internal InterlinLineChoices.InterlinMode GetSelectedLineChoiceMode()
+		internal static InterlinLineChoices.InterlinMode GetSelectedLineChoiceMode(PropertyTable propertyTable)
 		{
-			return m_propertyTable.GetBoolProperty(ksPropertyAddWordsToLexicon, false) ?
+			return propertyTable.GetBoolProperty(PropertyConstants.ITexts_AddWordsToLexicon, false) ?
 				InterlinLineChoices.InterlinMode.GlossAddWordsToLexicon : InterlinLineChoices.InterlinMode.Gloss;
 		}
 

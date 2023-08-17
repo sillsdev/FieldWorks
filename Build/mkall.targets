@@ -278,7 +278,6 @@
 	</Target>
 
 	<PropertyGroup>
-		<MasterVersionInfo>$(fwrt)/Src/MasterVersionInfo.txt</MasterVersionInfo>
 		<TeamCityUrl>https://build.palaso.org/</TeamCityUrl>
 
 		<!-- Versions of NuGet packages. These need to match the versions in nuget-common/packages.config -->
