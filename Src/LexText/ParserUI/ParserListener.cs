@@ -66,6 +66,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 			mediator.AddColleague(this);
 			FwUtils.Subscriber.Subscribe(PropertyConstants.ActiveClerkSelectedObject, ActiveClerkSelectedObject);
+			FwUtils.Subscriber.Subscribe(EventConstants.StopParser, StopParser);
 
 			m_sda = m_cache.MainCacheAccessor;
 			m_sda.AddNotification(this);
@@ -568,12 +569,18 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;	//we handled this.
 		}
 
+		// Handler for the 'Stop Parser' menu item.
+		// Triggered from (DistFiles\Language Explorer\Configuration\Words\areaConfiguration.xml)
 		public bool OnStopParser(object argument)
 		{
-			CheckDisposed();
-
-			DisconnectFromParser();
+			StopParser(argument);
 			return true;	//we handled this.
+		}
+
+		private void StopParser(object _)
+		{
+			CheckDisposed();
+			DisconnectFromParser();
 		}
 
 		// used by Try a Word to get the parser running

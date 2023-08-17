@@ -2291,7 +2291,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						m_list.CurrentIndex = FindClosestValidIndex(idx, cobj);
 					}
-					m_mediator.SendMessage("StopParser", null);	// stop parser if it's running.
+					Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser));
 				}
 				finally
 				{

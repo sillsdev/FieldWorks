@@ -207,13 +207,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				return;
 			}
 
-			m_mediator.SendMessage("StopParser", null);
-
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser));
 			CreateWordsetFromFiles(m_paths);
-
-			//starting up the parser without the user asking for that pain is a bit over ambitious at the moment:
-			//m_mediator.SendMessage("StartParser", null);
-
 			m_mediator.SendMessage("FilterListChanged", null); // let record clerk know the list of filters has changed.
 			DialogResult = DialogResult.OK;
 		}

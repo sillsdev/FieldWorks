@@ -860,8 +860,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		private void StopParser()
 		{
-			if (_mediator != null)
-				_mediator.SendMessage("StopParser", null);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser));
 		}
 
 		/// <summary>

@@ -102,7 +102,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_dlg.ProgressBar.Step = 1;
 
 			// stop parser if it's running.
-			m_dlg.Mediator.SendMessage("StopParser", null);
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser));
 
 			NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 			{

@@ -2002,7 +2002,7 @@ namespace SIL.FieldWorks.XWorks
 			// into a situation where the main window was disposed of while the parser
 			// thread was trying to execute com calls on the UI thread and using the
 			// main form as the Invoke point.
-			m_mediator.SendMessageToAllNow("StopParser", null);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser));
 			base.XWindow_Closing(sender, e);
 		}
 
