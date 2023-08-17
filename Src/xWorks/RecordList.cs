@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2018 SIL International
+// Copyright (c) 2004-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -24,7 +24,6 @@ using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
-using SIL.LCModel.Core.Text;
 using SIL.ObjectModel;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
@@ -2562,7 +2561,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// sets the value of m_suppressingLoadList without any side effects (e.g. ReloadList()).
 		/// </summary>
-		/// <param name="value"></param>
+		// REVIEW (Hasso) 2023.08: Should we make sure we're not setting it to the same value before calling UninstallWindowActivated?
 		internal void SetSuppressingLoadList(bool value)
 		{
 			m_suppressingLoadList = value;

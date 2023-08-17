@@ -592,12 +592,13 @@ namespace XCore
 			var propertyName = key.StartsWith(localSettingsPrefix) ? key.Remove(0, localSettingsPrefix.Length) : key;
 
 			// Some clients manage to get here by looking up a null key under local settings. Don't broadcast that.
-			if (!string.IsNullOrWhiteSpace(propertyName))
+			if (string.IsNullOrWhiteSpace(propertyName))
 			{
-				FwUtils.Publisher.Publish(new PublisherParameterObject(propertyName, newValue));
+				return;
 			}
-
+			FwUtils.Publisher.Publish(new PublisherParameterObject(propertyName, newValue));
 			Mediator?.BroadcastString("OnPropertyChanged", propertyName);
+
 		}
 
 		/// <summary>

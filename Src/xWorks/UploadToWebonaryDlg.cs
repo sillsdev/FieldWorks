@@ -148,10 +148,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void publicationBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			var selectedPublication = publicationBox.SelectedItem.ToString();
-			m_controller.ActivatePublication(selectedPublication);
-			PopulateConfigurationsListByPublication(selectedPublication);
-			PopulateReversalsCheckboxListByPublication(selectedPublication);
+			PopulateConfigsAndReversalsByPublication();
 			UpdateEntriesToBePublishedLabel();
 		}
 
@@ -165,8 +162,12 @@ namespace SIL.FieldWorks.XWorks
 			UpdateEntriesToBePublishedLabel();
 		}
 
-		private void PopulateConfigurationsListByPublication(string publication)
+		private void PopulateConfigsAndReversalsByPublication()
 		{
+			var publication = publicationBox.SelectedItem.ToString();
+			m_controller.ActivatePublication(publication);
+
+			// populate configs combo
 			var selectedConfiguration = (configurationBox.SelectedItem ?? string.Empty).ToString();
 			var availableConfigurations = Model.Configurations.Where(prop => prop.Value.Publications.Contains(publication))
 				.Select(prop => prop.Value.Label).ToList();
@@ -179,14 +180,12 @@ namespace SIL.FieldWorks.XWorks
 				configurationBox.SelectedItem = selectedConfiguration;
 			else if (availableConfigurations.Count > 0)
 				configurationBox.SelectedIndex = 0;
-		}
 
-		private void PopulateReversalsCheckboxListByPublication(string publication)
-		{
+			// populate reversals checkbox list
 			var selectedReversals = GetSelectedReversals();
 			var availableReversals = Model.Reversals.Where(prop => prop.Value.Publications.Contains(publication)
 				&& prop.Value.Label != DictionaryConfigurationModel.AllReversalIndexes
-			  && !string.IsNullOrEmpty(prop.Value.WritingSystem)).Select(prop => prop.Value.Label).ToList();
+				&& !string.IsNullOrEmpty(prop.Value.WritingSystem)).Select(prop => prop.Value.Label).ToList();
 			reversalsCheckedListBox.Items.Clear();
 			foreach (var reversal in availableReversals)
 				reversalsCheckedListBox.Items.Add(reversal);
@@ -216,7 +215,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					publicationBox.SelectedIndex = 0;
 				}
-				PopulateReversalsCheckboxListByPublication(publicationBox.SelectedItem.ToString());
+				PopulateConfigsAndReversalsByPublication();
 				SetSelectedReversals(Model.SelectedReversals);
 				if(!String.IsNullOrEmpty(Model.SelectedConfiguration))
 				{
@@ -341,6 +340,13 @@ namespace SIL.FieldWorks.XWorks
 		private void closeButton_Click(object sender, EventArgs e)
 		{
 			SaveToModel();
+		}
+
+		protected override void OnLoad(EventArgs e)
+		{
+			configurationBox.SelectedIndexChanged += configurationBox_SelectedIndexChanged;
+			publicationBox.SelectedIndexChanged += publicationBox_SelectedIndexChanged;
+			reversalsCheckedListBox.SelectedIndexChanged += reversalsCheckedListBox_SelectedIndexChanged;
 		}
 
 		/// <summary>

@@ -213,7 +213,6 @@ namespace SIL.FieldWorks.XWorks
             this.configurationBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.configurationBox.FormattingEnabled = true;
             this.configurationBox.Name = "configurationBox";
-            this.configurationBox.SelectedIndexChanged += new System.EventHandler(this.configurationBox_SelectedIndexChanged);
             // 
             // publicationBox
             // 
@@ -222,7 +221,6 @@ namespace SIL.FieldWorks.XWorks
             this.publicationBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.publicationBox.FormattingEnabled = true;
             this.publicationBox.Name = "publicationBox";
-            this.publicationBox.SelectedIndexChanged += new System.EventHandler(this.publicationBox_SelectedIndexChanged);
             // 
             // configurationLabel
             // 
@@ -252,7 +250,6 @@ namespace SIL.FieldWorks.XWorks
             resources.ApplyResources(this.reversalsCheckedListBox, "reversalsCheckedListBox");
             this.reversalsCheckedListBox.FormattingEnabled = true;
             this.reversalsCheckedListBox.Name = "reversalsCheckedListBox";
-            this.reversalsCheckedListBox.SelectedIndexChanged += new System.EventHandler(this.reversalsCheckedListBox_SelectedIndexChanged);
             // 
             // UploadToWebonaryDlg
             // 

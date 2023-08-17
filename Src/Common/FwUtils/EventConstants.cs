@@ -18,5 +18,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string RemoveFilters = "RemoveFilters";
 		public const string SFMImport = "SFMImport";
 		public const string StopParser = "StopParser";
+		/// <summary>
+		/// Called before opening and after closing UploadToWebonaryDlg to prevent bits of the main window from reloading (comment on LT-21480).
+		/// Possibly useful in other cases.
+		/// </summary>
+		public const string SuppressReloadDuringExport = "SuppressReloadDuringExport";
 	}
 }

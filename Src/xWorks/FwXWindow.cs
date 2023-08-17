@@ -1180,10 +1180,18 @@ namespace SIL.FieldWorks.XWorks
 				Configurations = configurations,
 				Publications = publications
 			};
-			using (var controller = new UploadToWebonaryController(cache, propertyTable, mediator))
-			using (var dialog = new UploadToWebonaryDlg(controller, model, propertyTable))
+			try
 			{
-				dialog.ShowDialog();
+				Publisher.Publish(new PublisherParameterObject(EventConstants.SuppressReloadDuringExport, true));
+				using (var controller = new UploadToWebonaryController(cache, propertyTable, mediator))
+				using (var dialog = new UploadToWebonaryDlg(controller, model, propertyTable))
+				{
+					dialog.ShowDialog();
+				}
+			}
+			finally
+			{
+				Publisher.Publish(new PublisherParameterObject(EventConstants.SuppressReloadDuringExport, false));
 				// Restore the record count in the status bar (LT-17023)
 				Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshCurrentList));
 			}

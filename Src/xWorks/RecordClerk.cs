@@ -2118,6 +2118,7 @@ namespace SIL.FieldWorks.XWorks
 			RemoveNotification();
 			// If list loading was suppressed by this view (e.g., bulk edit to prevent changed items
 			// disappearing from filter), stop that now, so it won't affect any future use of the list.
+			// REVIEW (Hasso) 2023.08: I think this should be NoSideAffects, since we don't want to reload the list while we're inactive.
 			if (m_list != null)
 				m_list.ListLoadingSuppressed = false;
 		}

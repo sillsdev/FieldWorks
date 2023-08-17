@@ -79,6 +79,8 @@ namespace SIL.FieldWorks.XWorks
 			Disposed += OnDispose;
 			FwUtils.Subscriber.Subscribe(EventConstants.DictionaryConfigured, RefreshAllContent);
 			FwUtils.Subscriber.Subscribe(EventConstants.MasterRefresh, RefreshAllContent);
+			// temporarily unsubscribes from property changes that result in refreshing the view
+			FwUtils.Subscriber.Subscribe(EventConstants.SuppressReloadDuringExport, SuppressRegenerationOnPropChanged);
 			FwUtils.Subscriber.Subscribe(PropertyConstants.ActiveClerkSelectedObject, ActiveClerkSelectedObject);
 			FwUtils.Subscriber.Subscribe(PropertyConstants.SelectedPublication, SelectedPublicationChanged);
 		}
@@ -87,8 +89,23 @@ namespace SIL.FieldWorks.XWorks
 		{
 			FwUtils.Subscriber.Unsubscribe(EventConstants.DictionaryConfigured, RefreshAllContent);
 			FwUtils.Subscriber.Unsubscribe(EventConstants.MasterRefresh, RefreshAllContent);
+			FwUtils.Subscriber.Unsubscribe(EventConstants.SuppressReloadDuringExport, SuppressRegenerationOnPropChanged);
 			FwUtils.Subscriber.Unsubscribe(PropertyConstants.ActiveClerkSelectedObject, ActiveClerkSelectedObject);
 			FwUtils.Subscriber.Unsubscribe(PropertyConstants.SelectedPublication, SelectedPublicationChanged);
+		}
+
+		private void SuppressRegenerationOnPropChanged(object isSuppressing)
+		{
+			if ((bool)isSuppressing)
+			{
+				FwUtils.Subscriber.Unsubscribe(PropertyConstants.ActiveClerkSelectedObject, ActiveClerkSelectedObject);
+				FwUtils.Subscriber.Unsubscribe(PropertyConstants.SelectedPublication, SelectedPublicationChanged);
+			}
+			else
+			{
+				FwUtils.Subscriber.Subscribe(PropertyConstants.ActiveClerkSelectedObject, ActiveClerkSelectedObject);
+				FwUtils.Subscriber.Subscribe(PropertyConstants.SelectedPublication, SelectedPublicationChanged);
+			}
 		}
 
 		private void SelectedPublicationChanged(object obj)
