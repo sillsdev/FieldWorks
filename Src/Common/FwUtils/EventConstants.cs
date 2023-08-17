@@ -9,6 +9,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string AddContextToHistory = "AddContextToHistory";
 		public const string DictionaryConfigured = "DictionaryConfigured";
 		public const string FollowLink = "FollowLink";
+		public const string GetContentControlParameters = "GetContentControlParameters";
 		public const string HandleLocalHotlink = "HandleLocalHotlink";
 		public const string LinkFollowed = "LinkFollowed";
 		public const string MasterRefresh = "MasterRefresh";

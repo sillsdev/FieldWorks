@@ -9,6 +9,7 @@ using System.Linq;
 using System.Xml;
 using Newtonsoft.Json.Linq;
 using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
 using XCore;
@@ -184,7 +185,7 @@ namespace SIL.FieldWorks.XWorks
 				var tool = isDictionary ? "lexiconDictionary" : "reversalToolEditComplete";
 				var collector = new XmlNode[1];
 				var parameter = new Tuple<string, string, XmlNode[]>(area, tool, collector);
-				mediator.SendMessage("GetContentControlParameters", parameter);
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.GetContentControlParameters, parameter));
 				var parameters = collector[0].SelectSingleNode(".//parameters[@clerk]");
 				var currentClerk = propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 				if (DoesClerkMatchParams(currentClerk, parameters))

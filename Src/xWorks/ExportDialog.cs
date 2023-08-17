@@ -514,7 +514,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			var collector = new XmlNode[1];
 			var parameter = new Tuple<string, string, XmlNode[]>(area, tool, collector);
-			m_mediator.SendMessage("GetContentControlParameters", parameter);
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.GetContentControlParameters, parameter));
 			var controlNode = collector[0];
 			Debug.Assert(controlNode != null);
 			XmlNode dynLoaderNode = controlNode.SelectSingleNode("dynamicloaderinfo");
