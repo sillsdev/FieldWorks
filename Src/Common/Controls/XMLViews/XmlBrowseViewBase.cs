@@ -2065,21 +2065,6 @@ namespace SIL.FieldWorks.Common.Controls
 			return false;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called when [delete record].
-		/// </summary>
-		/// <param name="commandObject">The command object.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual bool OnDeleteRecord(object commandObject)
-		{
-			CheckDisposed();
-
-			return false;
-		}
-
-
 		/// <summary>
 		/// Allows xCore-specific initialization. We don't need any.
 		/// </summary>

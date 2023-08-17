@@ -76,6 +76,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if( disposing )
 			{
 				Subscriber.Unsubscribe(PropertyConstants.CurrentContentControlParameters, CurrentContentControlParametersChanged);
+				Subscriber.Unsubscribe(EventConstants.DeleteRecord, DeleteRecord);
 
 				if (components != null)
 				{
@@ -104,6 +105,7 @@ namespace SIL.FieldWorks.Common.Controls
 			base.Init(nodeSpec, hvoRoot, fakeFlid, cache, mediator, bv);
 
 			Subscriber.Subscribe(PropertyConstants.CurrentContentControlParameters, CurrentContentControlParametersChanged);
+			Subscriber.Subscribe(EventConstants.DeleteRecord, DeleteRecord);
 		}
 
 		#endregion Construction, initialization, and disposal.
@@ -1047,12 +1049,22 @@ namespace SIL.FieldWorks.Common.Controls
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Called when [delete record].
+		/// Method that handles the menu handling for deleting records.
+		/// Triggered from (DistFiles\Language Explorer\Configuration\Main.xml)
 		/// </summary>
 		/// <param name="commandObject">The command object.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		public override bool OnDeleteRecord(object commandObject)
+		public bool OnDeleteRecord(object commandObject)
+		{
+			DeleteRecord(commandObject);
+			return true;
+		}
+
+		/// <summary>
+		/// Method to handle published messages for DeleteRecord
+		/// </summary>
+		private void DeleteRecord(object _)
 		{
 			CheckDisposed();
 
@@ -1061,11 +1073,11 @@ namespace SIL.FieldWorks.Common.Controls
 
 			IVwSelection vwsel = m_rootb.Selection;
 			if (vwsel == null)
-				return false;
+				return;
 			ISilDataAccess sda = m_bv.SpecialCache;
 			List<XmlNode> columns = m_xbvvc.ColumnSpecs;
 			if (columns == null || columns.Count == 0)
-				return false;		// Something is broken!
+				return;		// Something is broken!
 
 			TextSelInfo tsi = new TextSelInfo(m_rootb.Selection);
 			if (tsi.ContainingObject(0) == XmlRDEBrowseViewVc.khvoNewItem)
@@ -1075,55 +1087,9 @@ namespace SIL.FieldWorks.Common.Controls
 			else
 			{
 				// 1. Remove the domain from the sense shown in the second column.
-				// 2. Delete the sense iff it is now empty except for the definition shown.
-				// 3. Delete the entry iff the entry now has no senses.
-#if false // JohnT: don't understand the following code at all. In particular it makes no sense
-				// to use ihvoRoot to index rgvsli; ihvoRoot is always zero in this view, it has only one root.
-				// Possibly this was an unsuccessful attempt to adapt some generic code I wrote to this
-				// particular application involving senses and entries?
-				// I'm leaving it in existence for now in case the original author turns up and
-				// can explain what he was getting at.
-				int cLevels = vwsel.get_BoxDepth(true);
-				int iLevel;
-				int cBoxes = -1;
-				int iBox = -1;
-				VwBoxType[] rgvbt = new VwBoxType[cLevels];
-				VwBoxType vbt = VwBoxType.kvbtUnknown;
-				for (iLevel = 0; iLevel < cLevels; ++iLevel)
-				{
-					vbt = vwsel.get_BoxType(false, iLevel);
-					if (vbt == VwBoxType.kvbtTableCell)
-					{
-						cBoxes = vwsel.get_BoxCount(true, iLevel);
-						iBox = vwsel.get_BoxIndex(true, iLevel);
-						break;
-					}
-				}
-				Debug.Assert(cBoxes == 2);
-				Debug.Assert(iBox != -1);
-				int hvoEntry;
-				int hvoSense;
-				if (iBox == 0)
-				{
-					hvoEntry = rgvsli[ihvoRoot].hvo;
-					IVwSelection vwsel2 = m_rootb.MakeSelInBox(vwsel, false, iLevel, 1,
-						true, false, false);
-					SelLevInfo[] rgvsli2 = SelLevInfo.AllTextSelInfo(vwsel, vwsel2.CLevels(false) - 1,
-						out ihvoRoot, out tag, out cpropPrevious, out ichAnchor, out ichEnd,
-						out ws, out fAssocPrev, out ihvoEnd, out ttp);
-					hvoSense = rgvsli2[ihvoRoot].hvo;
-				}
-				else
-				{
-					hvoSense = rgvsli[ihvoRoot].hvo;
-					IVwSelection vwsel2 = m_rootb.MakeSelInBox(vwsel, false, iLevel, 0,
-						true, false, false);
-					SelLevInfo[] rgvsli2 = SelLevInfo.AllTextSelInfo(vwsel, vwsel2.CLevels(false) - 1,
-						out ihvoRoot, out tag, out cpropPrevious, out ichAnchor, out ichEnd,
-						out ws, out fAssocPrev, out ihvoEnd, out ttp);
-					hvoEntry = rgvsli2[ihvoRoot].hvo;
-				}
-#else
+				// 2. Delete the sense if it is now empty except for the definition shown.
+				// 3. Delete the entry if the entry now has no senses.
+
 				int cvsli = tsi.Levels(false) - 1;
 				int tag = tsi.ContainingObjectTag(cvsli - 1);
 				Debug.Assert(cvsli >= 1); // there should be at least one level (each row is a sense)
@@ -1132,7 +1098,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// want to process.
 				int hvoSense = tsi.ContainingObject(cvsli - 1);
 				int hvoEntry = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoSense).Owner.Hvo;
-#endif
+
 				// If this was an editable object, it no longer is, because it's about to no longer exist.
 				RDEVc.EditableObjectsRemove(hvoSense);
 
@@ -1215,7 +1181,6 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 				});
 			}
-			return true;
 		}
 
 		#endregion Other message handlers

@@ -1010,7 +1010,7 @@ namespace SIL.FieldWorks.FdoUi
 				object command = this;
 				if (m_command != null)
 					command = m_command;
-				m_mediator.SendMessage("DeleteRecord", command);
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.DeleteRecord, command));
 			}
 			else
 			{

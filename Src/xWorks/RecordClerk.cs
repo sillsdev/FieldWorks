@@ -253,6 +253,8 @@ namespace SIL.FieldWorks.XWorks
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.DeleteRecord, DeleteRecord);
+
 				// Dispose managed resources here.
 				m_list.ListChanged -= OnListChanged;
 				m_list.AboutToReload -= m_list_AboutToReload;
@@ -430,6 +432,7 @@ namespace SIL.FieldWorks.XWorks
 
 			SetupDataContext(false);
 
+			Subscriber.Subscribe(EventConstants.DeleteRecord, DeleteRecord);
 		}
 
 		/// <summary>
@@ -1481,7 +1484,20 @@ namespace SIL.FieldWorks.XWorks
 			get { return Id != "AllReversalEntries" && (!Editable || !IsPrimaryClerk || !m_shouldHandleDeletion); }
 		}
 
+		/// <summary>
+		/// Handler for the 'Delete ...' menu item.
+		/// Triggered from (DistFiles\Language Explorer\Configuration\Main.xml)
+		/// </summary>
 		public bool OnDeleteRecord(object commandObject)
+		{
+			DeleteRecord(commandObject);
+			return true;
+		}
+
+		/// <summary>
+		/// Method to handle published messages for DeleteRecord
+		/// </summary>
+		private void DeleteRecord(object commandObject)
 		{
 			CheckDisposed();
 
@@ -1493,7 +1509,7 @@ namespace SIL.FieldWorks.XWorks
 			// The m_shouldHandleDeletion member was also added, so the "AllReversalEntries" clerk's primary clerk
 			// would not handle the message, and delete an entire reversal index.
 			if (ShouldNotHandleDeletionMessage)
-				return false;
+				return;
 
 			// It may be null:
 			// 1. if the objects are bing deleted using the keys,
@@ -1501,13 +1517,13 @@ namespace SIL.FieldWorks.XWorks
 			// 3. the user keeps pressing the del key.
 			// It looks like the command is not being disabled at all or fast enough.
 			if (CurrentObjectHvo == 0)
-				return true;
+				return;
 
 			// Don't allow an object to be deleted if it shouldn't be deleted.
 			if (!CanDelete())
 			{
 				ReportCannotDelete();
-				return true;
+				return;
 			}
 
 			ICmObject thingToDelete = GetObjectToDelete(CurrentObject);
@@ -1552,7 +1568,7 @@ namespace SIL.FieldWorks.XWorks
 					FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh));
 				}
 			}
-			return true; //we handled this, no need to ask anyone else.
+			return;
 		}
 
 		/// <summary>

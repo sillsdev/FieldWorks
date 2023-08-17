@@ -1363,27 +1363,6 @@ namespace SIL.FieldWorks.XWorks
 			return true; //we've handled this
 		}
 
-		/// <summary>
-		/// If this gets called (which it never should), just say we did it, unless we are in the context of reversal entries.
-		/// In the case of reversal entries, we say we did not do it, so the record clerk deals with it.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <returns></returns>
-		public bool OnDeleteRecord(object commandObject)
-		{
-			CheckDisposed();
-
-			if (Clerk.Id == "AllReversalEntries")
-			{
-				return false; // Let the clerk do it.
-			}
-			else
-			{
-				Debug.Assert(false);
-			}
-			return true;
-		}
-
 		public string FindTabHelpId
 		{
 			get { return XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "findHelpId", null); }
