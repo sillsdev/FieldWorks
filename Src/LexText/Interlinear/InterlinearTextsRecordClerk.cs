@@ -229,7 +229,7 @@ namespace SIL.FieldWorks.IText
 			{
 				// Tell the user we're turning off the filter, and then do it.
 				MessageBox.Show(ITextStrings.ksTurningOffFilter, ITextStrings.ksNote, MessageBoxButtons.OK);
-				m_mediator.SendMessage("RemoveFilters", this);
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.RemoveFilters, this));
 				m_activeMenuBarFilter = null;
 			}
 			SaveOnChangeRecord(); // commit any changes before we create a new text.

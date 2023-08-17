@@ -14,6 +14,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string MasterRefresh = "MasterRefresh";
 		public const string PrepareToRefresh = "PrepareToRefresh";
 		public const string RefreshCurrentList = "RefreshCurrentList";
+		public const string RemoveFilters = "RemoveFilters";
 		public const string SFMImport = "SFMImport";
 	}
 }
