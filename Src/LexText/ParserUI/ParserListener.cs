@@ -361,6 +361,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (disposing)
 			{
 				FwUtils.Subscriber.Unsubscribe(PropertyConstants.ActiveClerkSelectedObject, ActiveClerkSelectedObject);
+				FwUtils.Subscriber.Unsubscribe(EventConstants.StopParser, StopParser);
 				// other clients may now parse
 				// Dispose managed resources here.
 				if (m_timer != null)
