@@ -237,7 +237,13 @@ namespace SIL.FieldWorks.XWorks
 				// Historical comments here indicated that the Clerk should be processed by the mediator before the
 				// view. This is handled by Priority now, RecordView is by default just after RecordClerk in the processing.
 				mediator.AddColleague(this);
+
+				// SetupDataContext calls RecordClerk's ActivateUI, which sets the value of IsControllingTheRecordTreeBar.
+				// SetShowRecordList must be called after SetupDataContext because RecordClerk's handling of changes to ShowRecordList
+				// depends on the value of IsControllingTheRecordTreeBar.
 				SetupDataContext();
+				SetShowRecordList();
+
 				// Only if it was just now created should we try to restore from what we persisted.
 				// Otherwise (e.g., FWR-1128) we may miss changes made to the list in other tools.
 				if (fClerkWasCreated)
@@ -302,14 +308,16 @@ namespace SIL.FieldWorks.XWorks
 
 		private void SetTreebarAvailability()
 		{
-			string a = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "treeBarAvailability", "");
+			string a = XmlUtils.GetOptionalAttributeValue(m_configurationParameters,
+				"treeBarAvailability", "");
 
-			if(a == "NotMyBusiness")
+			if (a == "NotMyBusiness")
 				m_treebarAvailability = TreebarAvailability.NotMyBusiness;
 			else
 			{
-				if(a != "")
-					m_treebarAvailability = (TreebarAvailability)Enum.Parse(typeof(TreebarAvailability), a, true);
+				if (a != "")
+					m_treebarAvailability =
+						(TreebarAvailability)Enum.Parse(typeof(TreebarAvailability), a, true);
 				else
 					m_treebarAvailability = DefaultTreeBarAvailability;
 
@@ -317,23 +325,26 @@ namespace SIL.FieldWorks.XWorks
 
 				//				string e = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "treeBarAvailability", DefaultTreeBarAvailability);
 				//				m_treebarAvailability = (TreebarAvailability)Enum.Parse(typeof(TreebarAvailability), e, true);
+			}
+		}
 
-				switch (m_treebarAvailability)
-				{
-					default:
-						break;
-					case TreebarAvailability.NotAllowed:
-						m_propertyTable.SetProperty(PropertyConstants.ShowRecordList, false, true);
-						break;
+		private void SetShowRecordList()
+		{
 
-					case TreebarAvailability.Required:
-						m_propertyTable.SetProperty(PropertyConstants.ShowRecordList, true, true);
-						break;
+			switch (m_treebarAvailability)
+			{
+				default:
+					break;
+				case TreebarAvailability.NotAllowed:
+					m_propertyTable.SetProperty(PropertyConstants.ShowRecordList, false, true);
+					break;
 
-					case TreebarAvailability.Optional:
-						//Just use it however the last guy left it (see: PrepareToGoAway())
-						break;
-				}
+				case TreebarAvailability.Required:
+					m_propertyTable.SetProperty(PropertyConstants.ShowRecordList, true, true);
+					break;
+				case TreebarAvailability.Optional:
+					//Just use it however the last guy left it (see: PrepareToGoAway())
+					break;
 			}
 		}
 

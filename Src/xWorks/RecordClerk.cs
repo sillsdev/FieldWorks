@@ -2018,7 +2018,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Subscriber.Unsubscribe(EventConstants.RefreshCurrentList, RefreshList);
 			Subscriber.Unsubscribe(PropertyConstants.ToolForAreaNamed_lexicon, ToolForAreaNamed_lexicon);
-			Subscriber.Unsubscribe(PropertyConstants.ShowRecordList, ShowRecordList);
 			// We need the list to get the cache.
 			if (m_list == null || m_list.IsDisposed || Cache == null || Cache.IsDisposed || Cache.DomainDataByFlid == null)
 				return;
@@ -2070,8 +2069,7 @@ namespace SIL.FieldWorks.XWorks
 				m_propertyTable.SetProperty("ActiveClerkSelectedObject", CurrentObject, true);
 				m_propertyTable.SetPropertyPersistence("ActiveClerkSelectedObject", false);
 				Subscriber.Subscribe(EventConstants.RefreshCurrentList, RefreshList);
-				Subscriber.Subscribe(PropertyConstants.ToolForAreaNamed_lexicon,ToolForAreaNamed_lexicon);
-				Subscriber.Subscribe(PropertyConstants.ShowRecordList, ShowRecordList);
+				Subscriber.Subscribe(PropertyConstants.ToolForAreaNamed_lexicon, ToolForAreaNamed_lexicon);
 				Cache.DomainDataByFlid.AddNotification(this);
 			}
 			get
@@ -2100,10 +2098,13 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Tell the RecordClerk that it may now be the new master of the tree bar, if it is not a dependent clerk.
-		/// Use DeactivatedGui to tell RecordClerk that it's not currently being used in a Gui.
+		/// Use BecomeInactive to tell RecordClerk that it's not currently being used in a Gui.
 		/// </summary>
 		virtual public void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
 		{
+			// RecordClerk only needs to handle changes to ShowRecordList if RecordClerk is being used in GUI
+			Subscriber.Subscribe(PropertyConstants.ShowRecordList, ShowRecordList);
+
 			m_fIsActiveInGui = true;
 			CheckDisposed();
 
@@ -2128,6 +2129,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		virtual public void BecomeInactive()
 		{
+			// RecordClerk only needs to handle changes to ShowRecordList if RecordClerk is being used in GUI
+			Subscriber.Unsubscribe(PropertyConstants.ShowRecordList, ShowRecordList);
+
 			m_fIsActiveInGui = false;
 			if (m_recordBarHandler != null)
 				m_recordBarHandler.ReleaseRecordBar();
