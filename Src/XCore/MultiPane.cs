@@ -663,7 +663,7 @@ namespace XCore
 
 		private void CheckToolNameAndSetFocus(object propertyObject)
 		{
-			if (m_propertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null) == toolName)
+			if (m_propertyTable.GetStringProperty(PropertyConstants.ToolForAreaNamed_lexicon, null) == toolName)
 			{
 				SetFocusInDefaultControl();
 			}

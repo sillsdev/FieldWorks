@@ -382,7 +382,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			base.Init(mediator, propertyTable, viewConfiguration);
 			ChangeOwningObjectIfPossible();
 			Subscriber.Subscribe(PropertyConstants.ActiveClerk, ActiveClerkChanged);
-			Subscriber.Subscribe(PropertyConstants.ToolForAreaNamed_lexicon, ToolForAreaNamed_lexicon);
+			Subscriber.PrefixSubscribe(PropertyConstants.ToolForAreaPrefix, ToolForAreaChanged);
 		}
 
 		private void ChangeOwningObjectIfPossible()
@@ -542,6 +542,11 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			switch (name)
 			{
 				default:
+					if (name.StartsWith(PropertyConstants.ToolForAreaPrefix))
+					{
+						// this case is handled in the ToolForAreaChanged method
+						return;
+					}
 					base.OnPropertyChanged(name);
 					break;
 				case "ReversalIndexGuid":
@@ -579,11 +584,19 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-		protected override void ToolForAreaNamed_lexicon(object propertyObject)
+		protected override void ToolForAreaChanged(string publishedToolForAreaProp, object propertyObject)
 		{
-			int rootIndex = GetRootIndex(m_list.CurrentIndex);
-			JumpToIndex(rootIndex);
-			base.ToolForAreaNamed_lexicon(propertyObject);
+			if (publishedToolForAreaProp == PropertyConstants.ToolForAreaNamed_lexicon)
+			{
+				int rootIndex = GetRootIndex(m_list.CurrentIndex);
+				JumpToIndex(rootIndex);
+				base.ToolForAreaChanged(publishedToolForAreaProp, propertyObject);
+			}
+
+			else
+			{
+				base.OnPropertyChanged(publishedToolForAreaProp);
+			}
 		}
 
 		/// <summary>
@@ -733,7 +746,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		protected override void Dispose(bool disposing)
 		{
 			Subscriber.Unsubscribe(PropertyConstants.ActiveClerk, ActiveClerkChanged);
-			Subscriber.Unsubscribe(PropertyConstants.ToolForAreaNamed_lexicon, ToolForAreaNamed_lexicon);
+			Subscriber.PrefixUnsubscribe(PropertyConstants.ToolForAreaPrefix, ToolForAreaChanged);
 			base.Dispose(disposing);
 		}
 	}

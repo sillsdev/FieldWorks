@@ -1248,12 +1248,13 @@ namespace SIL.FieldWorks.XWorks
 						JumpToRecord(hvo);
 					break;
 
-				case PropertyConstants.ToolForAreaNamed_lexicon:
-					//this case is handled in ToolForAreaNamed_lexicon method
-					break;
-
 				default:
-					CheckUpdateFilterAndClerk();
+					// if name is of the form ToolForAreaNamed_{areaChoice}, then this case
+					// is handled in the ToolForAreaChanged method
+					if (name.StartsWith(PropertyConstants.ToolForAreaPrefix))
+						return;
+
+					CheckUpdateFilterAndClerk(name);
 					break;
 			}
 		}
@@ -1265,15 +1266,15 @@ namespace SIL.FieldWorks.XWorks
 				m_recordBarHandler.PopulateRecordBar(m_list);
 		}
 
-		protected virtual void ToolForAreaNamed_lexicon(object propertyObject)
+		protected virtual void ToolForAreaChanged(string publishedToolForAreaProp, object o)
 		{
-			CheckUpdateFilterAndClerk();
+			CheckUpdateFilterAndClerk(publishedToolForAreaProp);
 		}
 
-		private void CheckUpdateFilterAndClerk()
+		private void CheckUpdateFilterAndClerk(String propertyName)
 		{
 			//this happens when the user chooses a MenuItem or sidebar item that selects a filter
-			if (CurrentFilterPropertyTableId == PropertyConstants.ToolForAreaNamed_lexicon)
+			if (CurrentFilterPropertyTableId == propertyName)
 			{
 				OnChangeFilterToCheckedListPropertyChoice();
 			}
@@ -1281,7 +1282,7 @@ namespace SIL.FieldWorks.XWorks
 			//otherwise, if we are  "dependent" on another clerk to provide the owning object of our list:
 			else if (m_clerkProvidingRootObject != null)
 			{
-				if (DependentPropertyName == PropertyConstants.ToolForAreaNamed_lexicon)
+				if (DependentPropertyName == propertyName)
 				{
 					UpdateOwningObjectIfNeeded();
 				}
@@ -2017,7 +2018,7 @@ namespace SIL.FieldWorks.XWorks
 		private void RemoveNotification()
 		{
 			Subscriber.Unsubscribe(EventConstants.RefreshCurrentList, RefreshList);
-			Subscriber.Unsubscribe(PropertyConstants.ToolForAreaNamed_lexicon, ToolForAreaNamed_lexicon);
+			Subscriber.PrefixUnsubscribe(PropertyConstants.ToolForAreaPrefix, ToolForAreaChanged);
 			// We need the list to get the cache.
 			if (m_list == null || m_list.IsDisposed || Cache == null || Cache.IsDisposed || Cache.DomainDataByFlid == null)
 				return;
@@ -2069,7 +2070,7 @@ namespace SIL.FieldWorks.XWorks
 				m_propertyTable.SetProperty("ActiveClerkSelectedObject", CurrentObject, true);
 				m_propertyTable.SetPropertyPersistence("ActiveClerkSelectedObject", false);
 				Subscriber.Subscribe(EventConstants.RefreshCurrentList, RefreshList);
-				Subscriber.Subscribe(PropertyConstants.ToolForAreaNamed_lexicon, ToolForAreaNamed_lexicon);
+				Subscriber.PrefixSubscribe(PropertyConstants.ToolForAreaPrefix, ToolForAreaChanged);
 				Cache.DomainDataByFlid.AddNotification(this);
 			}
 			get
