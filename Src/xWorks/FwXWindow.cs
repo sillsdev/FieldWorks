@@ -439,6 +439,8 @@ namespace SIL.FieldWorks.XWorks
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(PropertyConstants.CurrentContentControl, CurrentContentControlChanged);
+
 				if (m_viewHelper != null)
 					m_viewHelper.Dispose();
 				if (m_app != null)
@@ -520,6 +522,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_fWindowIsCopy = (wndCopyFrom != null);
 			InitMediatorValues(cache);
+
+			Subscriber.Subscribe(PropertyConstants.CurrentContentControl, CurrentContentControlChanged);
 
 			if(iconStream != null)
 				Icon = new System.Drawing.Icon(iconStream);
@@ -2164,24 +2168,25 @@ namespace SIL.FieldWorks.XWorks
 			get { return m_app; }
 		}
 
-		/// <summary></summary>
-		public override void OnPropertyChanged(string name)
+		protected override void CurrentContentControlChanged(object obj)
 		{
 			CheckDisposed();
 
-			// When switching tools, the Cache should be saved.  Persisting the Undo/Redo buffer between tools can be confusing
-			// Fixes (LT-4650)
-			if (name == "currentContentControl")
+			if (this.CurrentContentControl != null)
 			{
-				Cache.DomainDataByFlid.GetActionHandler().Commit();
-				// If we change tools, the FindReplaceDlg is no longer valid, as its rootsite
-				// is part of the previous tool, and will thus be disposed.  See FWR-2080.
-				if (this.OwnedForms.Length > 0 && this.OwnedForms[0] is FwFindReplaceDlg)
-					this.OwnedForms[0].Close();
-			}
-			base.OnPropertyChanged(name);
-		}
+				// When switching tools, the Cache should be saved.  Persisting the Undo/Redo buffer between tools can be confusing
+				// Fixes (LT-4650)
 
+				Cache.DomainDataByFlid.GetActionHandler().Commit();
+			}
+
+			// If we change tools, the FindReplaceDlg is no longer valid, as its rootsite
+			// is part of the previous tool, and will thus be disposed.  See FWR-2080.
+			if (this.OwnedForms.Length > 0 && this.OwnedForms[0] is FwFindReplaceDlg)
+				this.OwnedForms[0].Close();
+
+			base.CurrentContentControlChanged(obj);
+		}
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns the NormalStateDesktopBounds property from the persistence object.

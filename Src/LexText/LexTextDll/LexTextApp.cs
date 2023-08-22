@@ -753,13 +753,19 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			if (progressDlg != null)
 				progressDlg.Message = String.Format(LexTextStrings.ksCreatingWindowForX, Cache.ProjectId.Name);
+
+			// We need InitializePartInventories to execute before ChangeContentObjectIfPossible in xWindow's CurrentContentControlChanged.
+			// This avoids a null app error at "sorter.Cache = cache;" in RecordClerk's TryRestoreSorter.
+			// We can achieve this by ensuring that InitializePartInventories is executed before base.NewMainAppWnd.
+			// Changing the order of these was necessitated by moving the currentContentControl property into Publish/Subscribe system.
+			if (isNewCache)
+				InitializePartInventories(progressDlg, true);
+
 			Form form = base.NewMainAppWnd(progressDlg, isNewCache, wndCopyFrom, fOpeningNewProject);
 
 			if (form is FwXWindow)
 				m_activeMainWindow = form;
 
-			if (isNewCache && form != null)
-				InitializePartInventories(progressDlg, true);
 			return form;
 		}
 

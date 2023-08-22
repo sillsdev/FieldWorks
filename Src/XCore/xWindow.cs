@@ -439,6 +439,7 @@ namespace XCore
 
 			Subscriber.Subscribe(EventConstants.PrepareToRefresh, OnPrepareToRefresh);
 			Subscriber.Subscribe(PropertyConstants.BestStyleName, SynchronizedOnIdleTime);
+			Subscriber.Subscribe(PropertyConstants.CurrentContentControl, CurrentContentControlChanged);
 			Subscriber.Subscribe(PropertyConstants.WritingSystemHvo, SynchronizedOnIdleTime);
 			Subscriber.Subscribe(PropertyConstants.ShowRecordList, ShowRecordList);
 		}
@@ -1304,6 +1305,7 @@ namespace XCore
 		{
 			Subscriber.Unsubscribe(EventConstants.PrepareToRefresh, OnPrepareToRefresh);
 			Subscriber.Unsubscribe(PropertyConstants.BestStyleName, SynchronizedOnIdleTime);
+			Subscriber.Unsubscribe(PropertyConstants.CurrentContentControl, CurrentContentControlChanged);
 			Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, SynchronizedOnIdleTime);
 			Subscriber.Unsubscribe(PropertyConstants.ShowRecordList, ShowRecordList);
 
@@ -1767,43 +1769,14 @@ namespace XCore
 		{
 			CheckDisposed();
 
-			switch (name)
+			if (name.Length > 11 && name.Substring(0, 11) == "StatusPanel")
 			{
-				//gentle reader, don't trip up over the unfortunate naming here.
-				//the property where we look for the XmlNode which defines the control is
-				//named currentContentControlParameters. It would perhaps be better named
-				//'currentContentControlConfiguration' or something.
-				case "currentContentControl":
-					using (new WaitCursor(this))
-					{
-						XmlNode controlNode = m_propertyTable.GetValue<XmlNode>(PropertyConstants.CurrentContentControlParameters);
-						if (controlNode != null)
-						{
-							XmlNode dynLoaderNode = controlNode.SelectSingleNode("dynamicloaderinfo");
-							if (dynLoaderNode == null)
-								throw new ArgumentException("Required 'dynamicloaderinfo' XML node not found, while handling change to 'currentContentControl' property in xWindow.", "name");
-							ChangeContentObjectIfPossible(XmlUtils.GetAttributeValue(dynLoaderNode, "assemblyPath"),
-								XmlUtils.GetAttributeValue(dynLoaderNode, "class"),
-								controlNode);
-						}
-					}
-					break;
-
-				case PropertyConstants.ShowRecordList:
-					// handled in ShowRecordList method
-					break;
-
-				default:
-					if (name.Length > 11 && name.Substring(0, 11) == "StatusPanel")
-					{
-						string panelName = name.Substring(11);
-						if (m_statusPanels.ContainsKey(panelName))
-						{
-							StatusBarPanel panel = m_statusPanels[panelName];
-							panel.Text = m_propertyTable.GetStringProperty(name, "");
-						}
-					}
-					break;
+				string panelName = name.Substring(11);
+				if (m_statusPanels.ContainsKey(panelName))
+				{
+					StatusBarPanel panel = m_statusPanels[panelName];
+					panel.Text = m_propertyTable.GetStringProperty(name, "");
+				}
 			}
 		}
 
@@ -2020,6 +1993,33 @@ namespace XCore
 						ApplicationRegistryKey, m_propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress);
 				}
 			}
+		}
+
+		protected virtual void CurrentContentControlChanged(object newValue)
+		{
+			CheckDisposed();
+
+			using (new WaitCursor(this))
+			{
+				// currentContentControlParameters is the property where we look for the XmlNode that defines the control.
+				// (It would perhaps be better named 'currentContentControlConfiguration'.)
+				XmlNode controlNode =
+					m_propertyTable.GetValue<XmlNode>("currentContentControlParameters");
+
+				if (controlNode != null)
+				{
+					XmlNode dynLoaderNode = controlNode.SelectSingleNode("dynamicloaderinfo");
+					if (dynLoaderNode == null)
+						throw new ArgumentException(
+							"Required 'dynamicloaderinfo' XML node not found while handling change to 'currentContentControl' property in xWindow.",
+							"name");
+
+					ChangeContentObjectIfPossible(XmlUtils.GetAttributeValue(dynLoaderNode, "assemblyPath"),
+						XmlUtils.GetAttributeValue(dynLoaderNode, "class"), controlNode);
+
+				}
+			}
+
 		}
 
 		private void SetToolDefaultProperties(XmlNode configurationNode)

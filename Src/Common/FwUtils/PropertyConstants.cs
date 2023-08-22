@@ -11,6 +11,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string ActiveClerkSelectedObject = "ActiveClerkSelectedObject";
 		public const string AreaChoice = "areaChoice";
 		public const string BestStyleName = "BestStyleName";
+		public const string CurrentContentControl = "currentContentControl";
 		public const string CurrentContentControlObject = "currentContentControlObject";
 		public const string CurrentContentControlParameters = "currentContentControlParameters";
 		public const string CurrentContextMenuSelectedWsIds = "SelectedWritingSystemHvosForCurrentContextMenu";
