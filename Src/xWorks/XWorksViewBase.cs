@@ -540,7 +540,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ReloadListsArea()
 		{
-			m_mediator.SendMessage("ReloadAreaTools", "lists");
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.ReloadAreaTools, "lists"));
 		}
 
 		private void DoDeleteCustomListCmd(ICmPossibilityList curList)

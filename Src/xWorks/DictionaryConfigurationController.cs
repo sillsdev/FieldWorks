@@ -362,7 +362,7 @@ namespace SIL.FieldWorks.XWorks
 						SaveModel();
 						MasterRefreshRequired = false; // We're reloading the whole app, that's refresh enough
 						View.Close();
-						mediator.SendMessage("ReloadAreaTools", "lists");
+						FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.ReloadAreaTools, "lists"));
 					};
 					SetManagerTypeInfo(dialog);
 					dialog.ShowDialog(View as Form);
