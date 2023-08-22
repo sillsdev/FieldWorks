@@ -542,22 +542,18 @@ namespace SIL.FieldWorks.XWorks
 		/// another pane may show a more detailed view of the selected record. Therefore, RecordBrowseView
 		/// never claims to have 'handled' this event.
 		/// </summary>
-		/// <param name="argument"></param>
-		/// <returns>
-		/// false; we didn't fully handle it, even though we may have done something.
-		/// </returns>
-		public override bool OnRecordNavigation(object argument)
+		public override void OnRecordNavigation(object argument)
 		{
 			CheckDisposed();
 
 			// Can't do anything if it isn't fully initialized,
 			// and we don't want to do anything, if we are told not to.
 			if (!m_fullyInitialized || m_suppressRecordNavigation)
-				return false;
+				return;
 			Debug.Assert(m_browseViewer != null, "RecordBrowseView.SetupDataContext() has to be called before RecordBrowseView.OnRecordNavigation().");
 
 			if (m_browseViewer == null || m_browseViewer.BrowseView == null || m_browseViewer.BrowseView.RootBox == null)
-				return false; // can't do anything useful without a root box to select in.
+				return; // can't do anything useful without a root box to select in.
 
 			var rni = (RecordNavigationInfo)argument;
 			m_suppressShowRecord = rni.SkipShowRecord;
@@ -580,7 +576,6 @@ namespace SIL.FieldWorks.XWorks
 					// we may have changed objects or root object classes (from Entries to Senses)
 					SetInfoBarText();
 				}
-				//base.OnRecordNavigation(argument);
 			}
 			finally
 			{
@@ -589,8 +584,6 @@ namespace SIL.FieldWorks.XWorks
 				if (rni.SuppressFocusChange && bvEnabled)
 					m_browseViewer.Enabled = true;
 			}
-
-			return false;
 		}
 
 		#endregion // Other methods

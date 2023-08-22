@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Xml;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using XCore;
 using SIL.LCModel;
 using SIL.Utils;
@@ -85,12 +86,10 @@ namespace SIL.FieldWorks.XWorks
 			if (IsDisposed)
 				return;
 
-			if( disposing )
+			if (disposing)
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				Subscriber.Unsubscribe(EventConstants.RecordNavigation, OnRecordNavigation);
+				components?.Dispose();
 			}
 
 			base.Dispose( disposing );
@@ -104,22 +103,19 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Other methods
 
-		public virtual bool OnRecordNavigation(object argument)
+		public virtual void OnRecordNavigation(object argument)
 		{
 			CheckDisposed();
 
-			if(!m_fullyInitialized)
-				return false;
 			// If it's not from our clerk, we may be intercepting a message intended for another pane.
-			if (RecordNavigationInfo.GetSendingClerk(argument) != Clerk)
-				return false;
+			if(!m_fullyInitialized || RecordNavigationInfo.GetSendingClerk(argument) != Clerk)
+				return;
 
-			var rni = argument as RecordNavigationInfo;
+			var rni = (RecordNavigationInfo)argument;
 			var options = new RecordClerk.ListUpdateHelper.ListUpdateHelperOptions();
 			options.SuppressSaveOnChangeRecord = rni.SuppressSaveOnChangeRecord;
 			using (new RecordClerk.ListUpdateHelper(Clerk, options))
 				ShowRecord(rni);
-			return true;	//we handled this.
 		}
 
 		/// <summary>
@@ -255,6 +251,7 @@ namespace SIL.FieldWorks.XWorks
 			if (!didRestoreFromPersistence && !Clerk.ListLoadingSuppressed && Clerk.RequestedLoadWhileSuppressed)
 				Clerk.UpdateList(true, true); // sluggishness culprit for LT-12844 was in here
 			Clerk.SetCurrentFromRelatedClerk(); // See if some other clerk wants to influence our current object.
+			Subscriber.Subscribe(EventConstants.RecordNavigation, OnRecordNavigation);
 			ShowRecord();
 		}
 

@@ -1,29 +1,30 @@
-// Copyright (c) 2003-2013 SIL International
+// Copyright (c) 2003-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.FieldWorks.FwCoreDlgs;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.DomainServices;
+using SIL.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.LCModel.Application;
-using SIL.FieldWorks.FwCoreDlgs;
 using XCore;
-using SIL.LCModel;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.Framework;
-using SIL.FieldWorks.Common.Widgets;
-using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.Common.FwUtils;
-using System.Drawing.Printing;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.FwCoreDlgControls;
-using SIL.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -237,12 +238,12 @@ namespace SIL.FieldWorks.XWorks
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
-			FwUtils.Subscriber.Unsubscribe(PropertyConstants.SelectedPublication, SelectedPublicationChanged);
 			if(disposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.RecordNavigation, OnRecordNavigation);
+				Subscriber.Unsubscribe(PropertyConstants.SelectedPublication, SelectedPublicationChanged);
 				DisposeTooltip();
-				if(components != null)
-					components.Dispose();
+				components?.Dispose();
 			}
 			m_currentObject = null;
 
@@ -454,21 +455,21 @@ namespace SIL.FieldWorks.XWorks
 			m_configObjectName = XmlUtils.GetLocalizedAttributeValue(m_configurationParameters, "configureObjectName", null);
 		}
 
-		public virtual bool OnRecordNavigation(object argument)
+		public virtual void OnRecordNavigation(object argument)
 		{
 			CheckDisposed();
 
 			if (!m_fullyInitialized
-				|| RecordNavigationInfo.GetSendingClerk(argument) != Clerk) // Don't pretend to have handled it if it isn't our clerk.
-				return false;
+				|| RecordNavigationInfo.GetSendingClerk(argument) != Clerk) // Don't try to handle it if it isn't our clerk.
+				return;
 
 			// persist Clerk's CurrentIndex in a db specific way
 			string propName = Clerk.PersistedIndexProperty;
 			m_propertyTable.SetProperty(propName, Clerk.CurrentIndex, PropertyTable.SettingsGroup.LocalSettings, true);
 			m_propertyTable.SetPropertyPersistence(propName, true, PropertyTable.SettingsGroup.LocalSettings);
 
-			Clerk.SuppressSaveOnChangeRecord = (argument as RecordNavigationInfo).SuppressSaveOnChangeRecord;
-			using (WaitCursor wc = new WaitCursor(this))
+			Clerk.SuppressSaveOnChangeRecord = ((RecordNavigationInfo)argument).SuppressSaveOnChangeRecord;
+			using (new WaitCursor(this))
 			{
 				//DateTime dt0 = DateTime.Now;
 				try
@@ -483,7 +484,6 @@ namespace SIL.FieldWorks.XWorks
 				//TimeSpan ts = TimeSpan.FromTicks(dt1.Ticks - dt0.Ticks);
 				//Debug.WriteLine("XmlDocView.OnRecordNavigation(): ShowRecord() took " + ts.ToString() + " at " + dt1.ToString());
 			}
-			return true;	//we handled this.
 		}
 
 		protected override void OnMouseClick(MouseEventArgs e)
@@ -1240,7 +1240,8 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			InitBase(mediator, propertyTable, configurationParameters);
-			FwUtils.Subscriber.Subscribe(PropertyConstants.SelectedPublication, SelectedPublicationChanged);
+			Subscriber.Subscribe(EventConstants.RecordNavigation, OnRecordNavigation);
+			Subscriber.Subscribe(PropertyConstants.SelectedPublication, SelectedPublicationChanged);
 		}
 
 		private void SelectedPublicationChanged(object obj)

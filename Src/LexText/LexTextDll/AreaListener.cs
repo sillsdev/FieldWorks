@@ -1,8 +1,9 @@
-// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.Reporting;
 using SIL.Utils;
@@ -89,7 +90,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		{
 			Dispose(true);
 			// This object will be cleaned up by the Dispose method.
-			// Therefore, you should call GC.SupressFinalize to
+			// Therefore, you should call GC.SuppressFinalize to
 			// take this object off the finalization queue
 			// and prevent finalization code for this object
 			// from executing a second time.
@@ -119,17 +120,17 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (m_isDisposed)
 				return;
-			FwUtils.Subscriber.Unsubscribe(EventConstants.GetContentControlParameters, GetContentControlParameters);
 
 			if (disposing)
 			{
-				FwUtils.Subscriber.Unsubscribe(PropertyConstants.AreaChoice, AreaChanged);
-				FwUtils.Subscriber.Unsubscribe(PropertyConstants.CurrentContentControlObject, CurrentContentControlObjectChanged);
-				FwUtils.Subscriber.Unsubscribe(EventConstants.ReloadAreaTools, ReloadAreaTools);
+				Subscriber.Unsubscribe(PropertyConstants.AreaChoice, AreaChanged);
+				Subscriber.Unsubscribe(PropertyConstants.CurrentContentControlObject, CurrentContentControlObjectChanged);
+				Subscriber.Unsubscribe(EventConstants.GetContentControlParameters, GetContentControlParameters);
+				Subscriber.Unsubscribe(EventConstants.ReloadAreaTools, ReloadAreaTools);
 
 				// Dispose managed resources here.
 				if (m_mediator != null)
@@ -152,10 +153,10 @@ namespace SIL.FieldWorks.XWorks.LexText
 			mediator.AddColleague(this);
 			m_ctotalLists = 0;
 			m_ccustomLists = 0;
-			FwUtils.Subscriber.Subscribe(PropertyConstants.CurrentContentControlObject, CurrentContentControlObjectChanged);
-			FwUtils.Subscriber.Subscribe(PropertyConstants.AreaChoice, AreaChanged);
-			FwUtils.Subscriber.Subscribe(EventConstants.GetContentControlParameters, GetContentControlParameters);
-			FwUtils.Subscriber.Subscribe(EventConstants.ReloadAreaTools, ReloadAreaTools);
+			Subscriber.Subscribe(PropertyConstants.CurrentContentControlObject, CurrentContentControlObjectChanged);
+			Subscriber.Subscribe(PropertyConstants.AreaChoice, AreaChanged);
+			Subscriber.Subscribe(EventConstants.GetContentControlParameters, GetContentControlParameters);
+			Subscriber.Subscribe(EventConstants.ReloadAreaTools, ReloadAreaTools);
 		}
 
 		private DateTime m_lastToolChange = DateTime.MinValue;

@@ -1237,10 +1237,12 @@ namespace XCore
 							handled = true;
 							break;
 						}
-						if (methodName == "OnMasterRefresh")
+						if (methodName == "OnRecordNavigation")
 						{
-							Trace.Fail("Master Refresh is now handled by PubSub");
-							FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh));
+							// I (Hasso) can't believe OnRecordNavigation has only one publisher, so I'm listening for more.
+							// Of course, our real concern would be how it got into the message queue, but there are too many entry points to watch.
+							Trace.Fail($"{methodName} is now handled by PubSub");
+							FwUtils.Publisher.Publish(new PublisherParameterObject(methodName.Substring(2)));
 							handled = true;
 							break;
 						}

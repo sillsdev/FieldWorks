@@ -162,14 +162,12 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Message Handlers
 
-		public override bool OnRecordNavigation(object argument)
+		public override void OnRecordNavigation(object argument)
 		{
 			CheckDisposed();
 
-			if(!m_fullyInitialized)
-				return false;
-			if (RecordNavigationInfo.GetSendingClerk(argument) != Clerk)
-				return false;
+			if(!m_fullyInitialized || RecordNavigationInfo.GetSendingClerk(argument) != Clerk)
+				return;
 
 			// persist Clerk's CurrentIndex in a db specific way
 			string propName = Clerk.PersistedIndexProperty;
@@ -186,7 +184,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				window.ResumeIdleProcessing();
 			}
-			return true;	//we handled this.
 		}
 
 		public bool OnConsideringClosing(object argument, CancelEventArgs args)

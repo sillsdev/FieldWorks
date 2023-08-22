@@ -1669,9 +1669,9 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// When deleting and inserting objects, we don't want the auto-save AFTER we switch records
-		/// (during the Broadcast of RecordNavigation). We achieve this by broadcasting the
+		/// (during the Broadcast of RecordNavigation). We achieve this by publishing the
 		/// RecordNavigation message with an argument that is a RecordNavigationInfo object with
-		/// ShouldSaveOnChangeRecord set to false (because this propery is true at the time
+		/// ShouldSaveOnChangeRecord set to false (because this property is true at the time
 		/// BroadcastChange is called).
 		/// We use it again in OnRecordNavigation handlers, which set it while calling SendRecord(),
 		/// the much-overridden method that eventually does the Save. This controls the actual
@@ -1809,7 +1809,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			//this is used by DependantRecordLists
+			//this is used by DependentRecordLists
 			var rni = new RecordNavigationInfo(this, m_suppressSaveOnChangeRecord || FwXWindow.InUndoRedo,
 				SkipShowRecord, suppressFocusChange);
 			var id = ClerkSelectedObjectPropertyId(Id);
@@ -1832,11 +1832,11 @@ namespace SIL.FieldWorks.XWorks
 
 			// We want an auto-save when we process the change record UNLESS we are deleting or inserting an object,
 			// or performing an Undo/Redo.
-			// Note: Broadcasting "OnRecordNavigation" even if a selection doesn't change allows the browse view to
+			// Note: Publishing "OnRecordNavigation" even if a selection doesn't change allows the browse view to
 			// scroll to the right index if it hasn't already done so.
 			if (!fSkipRecordNavigation)
 			{
-				m_mediator.BroadcastMessage("RecordNavigation", rni);
+				Publisher.Publish(new PublisherParameterObject(EventConstants.RecordNavigation, rni));
 			}
 		}
 
@@ -2426,8 +2426,13 @@ namespace SIL.FieldWorks.XWorks
 				//RecordBrowseView line 483 and elsewhere that we rely on the re-broadcasting.
 				//in order to maintain the LT-11401 fix we directly use the mediator here and pass true in the
 				//second parameter so that we don't save the record and lose the undo history. -naylor 2011-11-03
-				var rni = new RecordNavigationInfo(this, true, SkipShowRecord, suppressFocusChange);
-				m_mediator.BroadcastMessage("RecordNavigation", rni);
+				// Update (Hasso) 2023.08.23: Although there are some situations when the back button doesn't work
+				// (for instance, switching between Dictionary and Lexicon Edit, especially after startup w/o switching entries),
+				// I can see no difference in behaviour with or without publishing RecordNavigation. It is probably no longer needed.
+				// I also placed a breakpoint at RecordBrowseView line 492 and clicked around a bit without hitting it; for reference:
+				// RecordBrowseView:483 (ShowRecord()): if (clerk.OwningObject != null && clerk.OwningObject.Hvo != m_browseViewer.RootObjectHvo) return;
+				//var rni = new RecordNavigationInfo(this, true, SkipShowRecord, suppressFocusChange);
+				//Publisher.Publish(new PublisherParameterObject(EventConstants.RecordNavigation, rni));
 				return;
 			}
 			try
