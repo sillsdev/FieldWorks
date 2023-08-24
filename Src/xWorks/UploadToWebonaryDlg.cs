@@ -148,6 +148,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private void publicationBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			// ENHANCE (Hasso) 2023.08: With two Reversal Indexes selected, changing the Publication causes RecordClerk.SelectedRecordChanged
+			// to publish six RecordNavigation events, because the Configuration and Reversals boxes are reloaded, resulting in layers of
+			// xBox_SelectedIndexChanged calls. Unfortunately, unsubscribing from other IndexChanged events while processing this one did
+			// not reduce the number of calls. Fortunately, following the migration to PubSub, I no longer see a blip on the LexEdit pane
+			// when changing the Publication here.
 			PopulateConfigsAndReversalsByPublication();
 			UpdateEntriesToBePublishedLabel();
 		}
