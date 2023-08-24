@@ -253,8 +253,6 @@ namespace SIL.FieldWorks.XWorks
 
 			if (disposing)
 			{
-				Subscriber.Unsubscribe(EventConstants.DeleteRecord, DeleteRecord);
-
 				// Dispose managed resources here.
 				m_list.ListChanged -= OnListChanged;
 				m_list.AboutToReload -= m_list_AboutToReload;
@@ -431,8 +429,6 @@ namespace SIL.FieldWorks.XWorks
 			StoreClerkInPropertyTable(clerkConfiguration);
 
 			SetupDataContext(false);
-
-			Subscriber.Subscribe(EventConstants.DeleteRecord, DeleteRecord);
 		}
 
 		/// <summary>
@@ -2019,6 +2015,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Subscriber.Unsubscribe(EventConstants.RefreshCurrentList, RefreshList);
 			Subscriber.PrefixUnsubscribe(PropertyConstants.ToolForAreaPrefix, ToolForAreaChanged);
+			Subscriber.Unsubscribe(PropertyConstants.ShowRecordList, ShowRecordList);
+			Subscriber.Unsubscribe(EventConstants.DeleteRecord, DeleteRecord);
+
 			// We need the list to get the cache.
 			if (m_list == null || m_list.IsDisposed || Cache == null || Cache.IsDisposed || Cache.DomainDataByFlid == null)
 				return;
@@ -2103,8 +2102,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		virtual public void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
 		{
-			// RecordClerk only needs to handle changes to ShowRecordList if RecordClerk is being used in GUI
+			// RecordClerk only needs to handle changes if RecordClerk is being used in GUI
 			Subscriber.Subscribe(PropertyConstants.ShowRecordList, ShowRecordList);
+			Subscriber.Subscribe(EventConstants.DeleteRecord, DeleteRecord);
 
 			m_fIsActiveInGui = true;
 			CheckDisposed();
@@ -2130,9 +2130,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		virtual public void BecomeInactive()
 		{
-			// RecordClerk only needs to handle changes to ShowRecordList if RecordClerk is being used in GUI
-			Subscriber.Unsubscribe(PropertyConstants.ShowRecordList, ShowRecordList);
-
 			m_fIsActiveInGui = false;
 			if (m_recordBarHandler != null)
 				m_recordBarHandler.ReleaseRecordBar();
