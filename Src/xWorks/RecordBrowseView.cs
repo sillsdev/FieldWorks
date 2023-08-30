@@ -64,6 +64,8 @@ namespace SIL.FieldWorks.XWorks
 			if (disposing)
 			{
 				FwUtils.Subscriber.Unsubscribe(EventConstants.LinkFollowed, LinkFollowed);
+				FwUtils.Subscriber.Unsubscribe(EventConstants.ClerkOwningObjChanged, ClerkOwningObjChanged);
+
 
 				if (ExistingClerk != null) // ExistingClerk, *not* Clerk (see doc on ExistingClerk)
 				{
@@ -178,12 +180,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public bool OnClerkOwningObjChanged(object sender)
+		private void ClerkOwningObjChanged(object sender)
 		{
 			CheckDisposed();
 
 			if (Clerk != sender || (m_browseViewer==null))
-				return false;
+				return;
 
 			if (Clerk.OwningObject == null)
 			{
@@ -198,7 +200,6 @@ namespace SIL.FieldWorks.XWorks
 				m_browseViewer.RootObjectHvo = Clerk.OwningObject.Hvo;
 				SetInfoBarText();
 			}
-			return false; //allow others clients of this clerk to know about it as well.
 		}
 
 		/// <summary>
@@ -668,6 +669,7 @@ namespace SIL.FieldWorks.XWorks
 			ShowRecord();
 
 			FwUtils.Subscriber.Subscribe(EventConstants.LinkFollowed, LinkFollowed);
+			FwUtils.Subscriber.Subscribe(EventConstants.ClerkOwningObjChanged, ClerkOwningObjChanged);
 		}
 
 		private void CheckExpectedListItemsClassInSync()

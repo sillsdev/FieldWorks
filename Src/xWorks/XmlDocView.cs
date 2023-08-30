@@ -241,6 +241,7 @@ namespace SIL.FieldWorks.XWorks
 			if(disposing)
 			{
 				Subscriber.Unsubscribe(EventConstants.RecordNavigation, OnRecordNavigation);
+				Subscriber.Unsubscribe(EventConstants.ClerkOwningObjChanged, ClerkOwningObjChanged);
 				Subscriber.Unsubscribe(PropertyConstants.SelectedPublication, SelectedPublicationChanged);
 				DisposeTooltip();
 				components?.Dispose();
@@ -696,12 +697,12 @@ namespace SIL.FieldWorks.XWorks
 			return null;
 		}
 
-		public bool OnClerkOwningObjChanged(object sender)
+		private void ClerkOwningObjChanged(object sender)
 		{
 			CheckDisposed();
 
 			if (this.Clerk != sender || (m_mainView == null))
-				return false;
+				return;
 
 			if (Clerk.OwningObject == null)
 			{
@@ -717,7 +718,6 @@ namespace SIL.FieldWorks.XWorks
 				m_mainView.ResetRoot(m_hvoOwner);
 				SetInfoBarText();
 			}
-			return false; //allow others clients of this clerk to know about it as well.
 		}
 
 		/// <summary>
@@ -1241,6 +1241,7 @@ namespace SIL.FieldWorks.XWorks
 
 			InitBase(mediator, propertyTable, configurationParameters);
 			Subscriber.Subscribe(EventConstants.RecordNavigation, OnRecordNavigation);
+			Subscriber.Subscribe(EventConstants.ClerkOwningObjChanged, ClerkOwningObjChanged);
 			Subscriber.Subscribe(PropertyConstants.SelectedPublication, SelectedPublicationChanged);
 		}
 
