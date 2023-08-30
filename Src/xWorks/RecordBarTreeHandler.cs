@@ -260,6 +260,11 @@ namespace SIL.FieldWorks.XWorks
 		/// if the list we are given has been flattened, we need to un-flatten it.</remarks>
 		protected override bool ShouldAddNode(ICmObject obj)
 		{
+			if (obj == null)
+			{
+				return false;
+			}
+
 			var possibility = (ICmPossibility)obj;
 			//don't show it if it is a child of another possibility.
 			return possibility.OwningFlid != CmPossibilityTags.kflidSubPossibilities;
