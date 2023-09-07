@@ -237,7 +237,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				stylesDlg.SetPropsToFactorySettings = setPropsToFactorySettings;
 				if (stylesDlg.ShowDialog(owner) == DialogResult.OK && stylesDlg.ChangeType != StyleChangeType.None)
 				{
-					app.Synchronize(SyncMsg.ksyncStyle);
+					app.Synchronize();
 					var selectedStyle = stylesDlg.SelectedStyle;
 					m_oldStyle = comboStartingSelectedStyle;
 					if (fixCombo != null)
@@ -1299,7 +1299,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Inform all the application windows that the user issued an undo command after
 			// having applied a style change via the StylesDialog box.
 			if (m_fForUndo)
-				m_app.Synchronize(SyncMsg.ksyncStyle);
+				m_app.Synchronize();
 			return true;
 		}
 
@@ -1313,7 +1313,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Inform all the application windows that the user issued a redo command after
 			// an undo command after having applied a style change via the StylesDialog box.
 			if (!m_fForUndo)
-				m_app.Synchronize(SyncMsg.ksyncStyle);
+				m_app.Synchronize();
 			return true;
 		}
 

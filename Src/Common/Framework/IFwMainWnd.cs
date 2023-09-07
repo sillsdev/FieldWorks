@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Create the client windows and add correspnding stuff to the sidebar, View menu,
+		/// Create the client windows and add corresponding stuff to the sidebar, View menu,
 		/// etc. Subclasses must override this.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -52,33 +52,12 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets a Rectangle representing the position and size of the window in its
-		/// normal (non-minimized, non-maximized) state.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		Rectangle NormalStateDesktopBounds
-		{
-			get;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called just before a window syncronizes it's views with DB changes (e.g. when an
-		/// undo or redo command is issued).
-		/// </summary>
-		/// <param name="sync">syncronization message</param>
-		/// ------------------------------------------------------------------------------------
-		void PreSynchronize(SyncMsg sync);
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called when a window syncronizes it's views with DB changes (e.g. when an undo or
+		/// Called when a window synchronizes it's views with DB changes (e.g. when an undo or
 		/// redo command is issued).
 		/// </summary>
-		/// <param name="sync">syncronization message</param>
 		/// <returns>true if successful; false results in RefreshAllWindows.</returns>
 		/// ------------------------------------------------------------------------------------
-		bool Synchronize(SyncMsg sync);
+		void Synchronize();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

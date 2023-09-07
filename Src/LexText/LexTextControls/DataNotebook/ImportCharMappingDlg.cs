@@ -138,7 +138,7 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 					(dlg.ChangeType & StyleChangeType.Added) > 0 ||
 					(dlg.ChangeType & StyleChangeType.RenOrDel) > 0))
 				{
-					m_app.Synchronize(SyncMsg.ksyncStyle);
+					m_app.Synchronize();
 					LcmStyleSheet stylesheet = new LcmStyleSheet();
 					stylesheet.Init(m_cache, m_cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 					m_stylesheet = stylesheet;
