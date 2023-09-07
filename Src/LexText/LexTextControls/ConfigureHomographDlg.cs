@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2016 SIL International
+// Copyright (c) 2015-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -153,7 +153,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				dlg.CanSelectParagraphBackgroundColor = false;
 				if (dlg.ShowDialog(this) == DialogResult.OK && dlg.ChangeType != StyleChangeType.None)
 				{
-					m_app.Synchronize(SyncMsg.ksyncStyle);
+					m_app.Synchronize();
 					LcmStyleSheet stylesheet = new LcmStyleSheet();
 					stylesheet.Init(m_cache, m_cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 					m_stylesheet = stylesheet;

@@ -192,27 +192,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 			}
 		}
 
-		/// <summary>
-		/// This application processes DB sync records.
-		/// </summary>
-		public override Guid SyncGuid
-		{
-			get
-			{
-				CheckDisposed();
-				return AppGuid;
-			}
-		}
-
-		//public override string ProductName
-		//{
-		//    get
-		//    {
-		//        CheckDisposed();
-		//        return LexTextStrings.kstidApplicationName;
-		//    }
-		//}
-
 		public override string DefaultConfigurationPathname
 		{
 			get

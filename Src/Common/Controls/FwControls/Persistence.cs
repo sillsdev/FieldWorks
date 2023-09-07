@@ -292,9 +292,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Returns a Rectangle representing the position and size of the window in its
 		/// normal (non-minimized, non-maximized) state.
+		/// Internal for tests.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public Rectangle NormalStateDesktopBounds
+		internal Rectangle NormalStateDesktopBounds
 		{
 			get
 			{

@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.Windows.Forms;
 
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.Reporting;
 
@@ -131,71 +130,5 @@ namespace SIL.FieldWorks.Common.RootSites
 				m_selHelper = SelectionHelper.Create(m_rootSite);
 		}
 	}
-	#endregion
-
-	#region Class SyncUndoAction
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// Handle Undo and Redo (as well as Do) for a sync message. Basically it just means that
-	/// we have to do a sync again.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
-	public class SyncUndoAction : UndoActionBase
-	{
-		#region Data members
-		private SyncMsg m_syncMsg;
-		private IApp m_app;
-		#endregion
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="SyncUndoAction"/> class.
-		/// </summary>
-		/// <param name="app">The application.</param>
-		/// <param name="syncMsg">The sync message.</param>
-		/// ------------------------------------------------------------------------------------
-		public SyncUndoAction(IApp app, SyncMsg syncMsg)
-		{
-			m_app = app;
-			m_syncMsg = syncMsg;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Does this instance.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void Do()
-		{
-			m_app.Synchronize(m_syncMsg);
-		}
-
-		#region Overrides of UndoActionBase
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Reapplies (or "redoes") an action.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override bool Redo()
-		{
-			Do();
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Reverses (or "undoes") an action. Sets pfSuccess to true if successful. If not successful
-		/// because the database state has changed unexpectedly, sets pfSuccess to false but still
-		/// returns S_OK. More catastrophic errors may produce error result codes.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public override bool Undo()
-		{
-			Do();
-			return true;
-		}
-		#endregion
-	}
-
 	#endregion
 }

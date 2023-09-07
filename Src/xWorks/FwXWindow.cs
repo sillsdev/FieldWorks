@@ -1563,7 +1563,7 @@ namespace SIL.FieldWorks.XWorks
 				if (!fPrivate && m_app != null)
 				{
 					// currently implemented, this will cause this app to do a master refresh,
-					m_app.Synchronize(SyncMsg.ksyncUndoRedo);
+					m_app.Synchronize();
 				}
 				else
 				{
@@ -2207,23 +2207,6 @@ namespace SIL.FieldWorks.XWorks
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Returns the NormalStateDesktopBounds property from the persistence object.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		public Rectangle NormalStateDesktopBounds
-		{
-			get
-			{
-				CheckDisposed();
-
-				var loc = m_propertyTable.GetValue<Point>("windowLocation");
-				var size = m_propertyTable.GetValue("windowSize", /*hack*/new Size(400, 400));
-				return new Rectangle(loc, size);
-			}
-		}
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
 		/// Create the client windows and add corresponding stuff to the sidebar, View menu,
 		/// etc.
 		/// </summary>
@@ -2249,57 +2232,17 @@ namespace SIL.FieldWorks.XWorks
 			Enabled = fEnable;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called just before a window synchronizes its views with DB changes (e.g. when an
-		/// undo or redo command is issued).
-		/// </summary>
-		/// <param name="sync">synchronization message</param>
-		/// ------------------------------------------------------------------------------------
-		public virtual void PreSynchronize(SyncMsg sync)
-		{
-			CheckDisposed();
-			// TODO: Implement it. This is copied from TE.
-		}
-
-		/// <summary>
-		/// If a property requests it, do a db sync.
-		/// </summary>
-		public virtual void OnIdle(object sender)
-		{
-			CheckDisposed();
-
-			/* Bad things happen, when this is done and the parser is running.
-			 * TODO: Figure out how they can co-exist.
-			if (PropertyTable.PropertyTable.GetBoolProperty("SyncOnIdle", false) && FwApp.App != null
-				&& FwApp.App.SyncGuid != Guid.Empty)
-			{
-				FwApp.App.SyncFromDb();
-			}
-			*/
-		}
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called when a window synchronizes its views with DB changes (e.g. when an undo or
 		/// redo command is issued).
 		/// </summary>
-		/// <param name="sync">synchronization message</param>
-		/// <returns>True if the sync message was handled; false, indicating that the
-		/// application should refresh all windows. </returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual bool Synchronize(SyncMsg sync)
+		public virtual void Synchronize()
 		{
 			CheckDisposed();
 
-			if (sync == SyncMsg.ksyncStyle)
-			{
-				// force our stylesheet to resync (LT-7382).
-				ResyncStylesheet();
-				ResyncRootboxStyles();
-				return true;
-			}
-			return false;
+			// force our stylesheet to resync (LT-7382).
+			ResyncStylesheet();
+			ResyncRootboxStyles();
 		}
 
 		/// ------------------------------------------------------------------------------------
