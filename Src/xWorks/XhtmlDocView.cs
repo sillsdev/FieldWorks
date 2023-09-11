@@ -1062,9 +1062,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void LoadPageIfNecessary(GeckoWebBrowser browser)
 		{
-			// This should load the page under the following conditions
-			// 1. If there are entries to publish but the page is currently blank
-			// 2. If the current entry is not on the page
+			// This should load the page if the current entry is not on the page.
 			var currentObjectHvo = Clerk.CurrentObjectHvo;
 			var entriesToConsider = PublicationDecorator.GetEntriesToPublish(m_propertyTable, Clerk.VirtualFlid);
 			var currentObjectIndex = Array.IndexOf(entriesToConsider, currentObjectHvo);
@@ -1073,11 +1071,14 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 			var currentPage = GetTopCurrentPageButton(browser.Document.Body);
-			if (currentObjectIndex >= 0 || (entriesToConsider.Length > 0 && currentPage == null))
+			// If currentPage is null, it means all entries fit on one page, since no buttons are created in that case.
+			// If all entries fit on one page, we don't need to reload.
+			if (currentPage == null)
+				return;
+			if (currentObjectIndex >= 0)
 			{
-				var currentPageRange = currentPage != null ?
-					new Tuple<int, int>(int.Parse(currentPage.Attributes["startIndex"].NodeValue), int.Parse(currentPage.Attributes["endIndex"].NodeValue))
-					: new Tuple<int, int>(int.MaxValue, int.MinValue);
+				var currentPageRange = new Tuple<int, int>(int.Parse(currentPage.Attributes["startIndex"].NodeValue),
+						int.Parse(currentPage.Attributes["endIndex"].NodeValue));
 				if (currentObjectIndex < currentPageRange.Item1 || currentObjectIndex > currentPageRange.Item2)
 				{
 					RefreshAllContent(this); // Reload the page
