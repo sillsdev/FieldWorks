@@ -191,6 +191,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			var propName = "ToolForAreaNamed_" + c.AreaName;
 			m_propertyTable.SetProperty(propName, toolName, true);
 			Logger.WriteEvent("Switched to " + toolName);
+
 			// Should we report a tool change?
 			if (m_lastToolChange.Date != DateTime.Now.Date)
 			{
@@ -198,7 +199,14 @@ namespace SIL.FieldWorks.XWorks.LexText
 				m_toolsReportedToday.Clear();
 				m_lastToolChange = DateTime.Now;
 			}
-			string areaNameForReport = m_propertyTable.GetStringProperty("areaChoice", null);
+
+			// When we are selecting a new tool and switching areas, changes to
+			// currentContentControlObject (i.e. the tool) are processed before changes to areaChoice.
+			// This way, the tool to use in the new area is saved before the area is switched.
+			// Otherwise, ActivateToolForArea will override the tool choice with the last active tool in the area.
+			// That means we must report the name of the area associated with currentContentControlObject
+			// instead of the areaChoice property.
+			string areaNameForReport = c.AreaName;
 			if (!string.IsNullOrWhiteSpace(areaNameForReport) && !m_toolsReportedToday.Contains(toolName))
 			{
 				m_toolsReportedToday.Add(toolName);

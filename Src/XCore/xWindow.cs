@@ -1966,11 +1966,12 @@ namespace XCore
 					// first set the appropriate area. Doing this will lead to the appropriate area button being highlighted, and also
 					// help other things which depend on the accuracy of this "areaChoice" property.
 					//
-					// Note that areaChoice should be set before currentContentControlObject, since the property changed handling
-					// for currentContentControlObject in AreaListener expects areaChoice to be updated already.
-					m_propertyTable.SetProperty("areaChoice", MainContentControlAsIxCoreContentControl.AreaName, true);
+					// Note that currentContentControlObject should be set before areaChoice.
+					// Otherwise, when changing both tool and area, AreaListener's ActivateToolForArea
+					// will override the tool choice with the last tool active the given area.
 					m_propertyTable.SetProperty(PropertyConstants.CurrentContentControlObject, m_mainContentControl, true);
 					m_propertyTable.SetPropertyPersistence(PropertyConstants.CurrentContentControlObject, false);
+					m_propertyTable.SetProperty("areaChoice", MainContentControlAsIxCoreContentControl.AreaName, true);
 
 
 					if (contentClassNode != null && contentClassNode.ParentNode != null)
