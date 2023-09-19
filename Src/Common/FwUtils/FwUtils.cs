@@ -649,6 +649,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Gets the Singleton Subscriber.
 		/// </summary>
 		public static ISubscriber Subscriber => Singleton.Instance.Subscriber;
+
+		/// <summary>
+		/// Gets the Singleton IdleQueue.
+		/// </summary>
+		internal static IdleQueue IdleQueue => Singleton.Instance.IdleQueue;
 	}
 
 	/// <summary>
@@ -665,10 +670,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Subscriber = new Subscriber();
 			Publisher = new Publisher(Subscriber);
+			IdleQueue = new IdleQueue();
 		}
 
 		internal Publisher Publisher { get; private set; }
 		internal Subscriber Subscriber { get; private set; }
+		internal IdleQueue IdleQueue { get; private set; }
 
 		/// <summary>
 		/// Only used for testing!

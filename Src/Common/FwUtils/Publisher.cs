@@ -22,6 +22,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public Publisher(ISubscriber subscriber)
 		{
 			_subscriber = subscriber;
+			EndOfActionManager = new EndOfActionManager();
 		}
 
 		/// <summary>
@@ -60,6 +61,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		#region Implementation of IPublisher
+		/// <inheritdoc />
+		public EndOfActionManager EndOfActionManager { get; }
 
 		/// <inheritdoc />
 		public void Publish(PublisherParameterObject publisherParameterObject)
@@ -67,6 +70,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Guard.AgainstNull(publisherParameterObject, nameof(publisherParameterObject));
 
 			PublishMessage(publisherParameterObject.Message, publisherParameterObject.NewValue);
+		}
+
+		/// <inheritdoc />
+		public void PublishAtEndOfAction(PublisherParameterObject publisherParameterObject)
+		{
+			Guard.AgainstNull(publisherParameterObject, nameof(publisherParameterObject));
+
+			EndOfActionManager.AddEvent(publisherParameterObject);
 		}
 
 		/// <inheritdoc />

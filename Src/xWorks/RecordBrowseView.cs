@@ -538,14 +538,16 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Notification received at the end of an action.
 		/// Record browse view implements ShowRecord by scrolling to show the current record. However,
 		/// that may well not be all the response to selecting that record in the Clerk: for example,
 		/// another pane may show a more detailed view of the selected record. Therefore, RecordBrowseView
 		/// never claims to have 'handled' this event.
 		/// </summary>
-		public override void OnRecordNavigation(object argument)
+		public override void RecordNavigation(object argument)
 		{
-			CheckDisposed();
+			if (IsDisposed)
+				return;
 
 			// Can't do anything if it isn't fully initialized,
 			// and we don't want to do anything, if we are told not to.

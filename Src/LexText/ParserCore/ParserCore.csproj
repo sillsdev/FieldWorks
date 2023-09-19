@@ -278,6 +278,12 @@
       <LastGenOutput>ParserCoreStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\FwUtils\FwUtils.csproj">
+      <Project>{89ec1097-4786-4611-b6cb-2b8bc01cdded}</Project>
+      <Name>FwUtils</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

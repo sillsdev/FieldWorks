@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (disposing)
 			{
-				Subscriber.Unsubscribe(EventConstants.RecordNavigation, OnRecordNavigation);
+				Subscriber.Unsubscribe(EventConstants.RecordNavigation, RecordNavigation);
 				components?.Dispose();
 			}
 
@@ -103,12 +103,16 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Other methods
 
-		public virtual void OnRecordNavigation(object argument)
+		/// <summary>
+		/// Notification received at the end of an action.
+		/// </summary>
+		public virtual void RecordNavigation(object argument)
 		{
-			CheckDisposed();
+			if (IsDisposed)
+				return;
 
 			// If it's not from our clerk, we may be intercepting a message intended for another pane.
-			if(!m_fullyInitialized || RecordNavigationInfo.GetSendingClerk(argument) != Clerk)
+			if (!m_fullyInitialized || RecordNavigationInfo.GetSendingClerk(argument) != Clerk)
 				return;
 
 			var rni = (RecordNavigationInfo)argument;
@@ -251,7 +255,7 @@ namespace SIL.FieldWorks.XWorks
 			if (!didRestoreFromPersistence && !Clerk.ListLoadingSuppressed && Clerk.RequestedLoadWhileSuppressed)
 				Clerk.UpdateList(true, true); // sluggishness culprit for LT-12844 was in here
 			Clerk.SetCurrentFromRelatedClerk(); // See if some other clerk wants to influence our current object.
-			Subscriber.Subscribe(EventConstants.RecordNavigation, OnRecordNavigation);
+			Subscriber.Subscribe(EventConstants.RecordNavigation, RecordNavigation);
 			ShowRecord();
 		}
 

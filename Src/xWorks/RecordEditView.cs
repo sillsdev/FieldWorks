@@ -162,11 +162,15 @@ namespace SIL.FieldWorks.XWorks
 
 		#region Message Handlers
 
-		public override void OnRecordNavigation(object argument)
+		/// <summary>
+		/// Notification received at the end of an action.
+		/// </summary>
+		public override void RecordNavigation(object argument)
 		{
-			CheckDisposed();
+			if (IsDisposed)
+				return;
 
-			if(!m_fullyInitialized || RecordNavigationInfo.GetSendingClerk(argument) != Clerk)
+			if (!m_fullyInitialized || RecordNavigationInfo.GetSendingClerk(argument) != Clerk)
 				return;
 
 			// persist Clerk's CurrentIndex in a db specific way

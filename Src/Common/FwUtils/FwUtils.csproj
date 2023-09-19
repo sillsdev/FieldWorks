@@ -227,6 +227,8 @@
     </Compile>
     <Compile Include="ActivationContextHelper.cs" />
     <Compile Include="AlphaOutline.cs" />
+    <Compile Include="EndOfActionManager.cs" />
+    <Compile Include="EndOfActionOrder.cs" />
     <Compile Include="EventConstants.cs" />
     <Compile Include="FlexHelpProvider.cs">
       <SubType>Component</SubType>
@@ -242,6 +244,7 @@
     <Compile Include="FwUpdater.cs" />
     <Compile Include="GraphiteFontFeatures.cs" />
     <Compile Include="HelpTopicProviderBase.cs" />
+    <Compile Include="IdleQueue.cs" />
     <Compile Include="ImportExportStep.cs" />
     <Compile Include="IPublisher.cs" />
     <Compile Include="ISubscriber.cs" />

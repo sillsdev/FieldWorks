@@ -206,16 +206,20 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// We need to manually process the mediator jobs when we don't have a window visible to process WndProc messages.
+		/// We need to manually process both the mediator jobs and the EndOfActionManager IdleQueue
+		/// when we don't have a window visible to process WndProc messages.
 		/// </summary>
 		public void ProcessPendingItems()
 		{
+			// Process the mediator jobs.
 			m_mediator.BroadcastPendingItems();	// load the jobs.
-
 			while (m_mediator.JobItems > 0)
 			{
 				m_mediator.ProcessItem();
 			}
+
+			// Process the EndOfActionManager IdleQueue.
+			FwUtils.Publisher.EndOfActionManager.IdleEndOfAction(null);
 		}
 	}
 

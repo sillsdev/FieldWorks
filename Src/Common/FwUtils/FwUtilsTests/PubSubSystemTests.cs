@@ -231,6 +231,112 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.DoesNotThrow(() => FwUtils.Publisher.Publish(publisherParameterObject[0]));
 		}
 
+		/// <summary>
+		/// Test publishing at EndOfAction.
+		/// </summary>
+		[Test]
+		public void Test_PublishAtEndOfAction()
+		{
+			// Set up.
+			var subscriber = new EndOfAction_MultipleSubscriber
+			{
+				One = true,
+				Two = int.MinValue
+			};
+			subscriber.DoSubscriptions();
+
+			Assert.IsNull(subscriber.First);
+			Assert.IsTrue(subscriber.One);
+			Assert.AreEqual(int.MinValue, subscriber.Two);
+
+			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.RecordNavigation, false));
+			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged, int.MaxValue));
+
+			// Confirm that nothing changed.
+			Assert.IsNull(subscriber.First);
+			Assert.IsTrue(subscriber.One);
+			Assert.AreEqual(int.MinValue, subscriber.Two);
+
+			// SUT - Process the EndOfActionManager IdleQueue.
+			FwUtils.Publisher.EndOfActionManager.IdleEndOfAction(null);
+
+			Assert.AreEqual(EventConstants.RecordNavigation, subscriber.First);
+			Assert.IsFalse(subscriber.One);
+			Assert.AreEqual(int.MaxValue, subscriber.Two);
+			subscriber.DoUnsubscriptions();
+		}
+
+		/// <summary>
+		/// Test publishing at EndOfAction. It does not matter what order the events are published,
+		/// they still execute in the same order.
+		/// </summary>
+		[Test]
+		public void Test_PublishAtEndOfAction_OrderDoesNotMatter()
+		{
+			// Set up.
+			var subscriber = new EndOfAction_MultipleSubscriber
+			{
+				One = true,
+				Two = int.MinValue
+			};
+			subscriber.DoSubscriptions();
+
+			Assert.IsNull(subscriber.First);
+			Assert.IsTrue(subscriber.One);
+			Assert.AreEqual(int.MinValue, subscriber.Two);
+
+			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged, int.MaxValue));
+			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.RecordNavigation, false));
+
+			// Confirm that nothing changed.
+			Assert.IsNull(subscriber.First);
+			Assert.IsTrue(subscriber.One);
+			Assert.AreEqual(int.MinValue, subscriber.Two);
+
+			// SUT - Process the EndOfActionManager IdleQueue.
+			FwUtils.Publisher.EndOfActionManager.IdleEndOfAction(null);
+
+			Assert.AreEqual(EventConstants.RecordNavigation, subscriber.First);
+			Assert.IsFalse(subscriber.One);
+			Assert.AreEqual(int.MaxValue, subscriber.Two);
+			subscriber.DoUnsubscriptions();
+		}
+
+		/// <summary>
+		/// Test publishing at EndOfAction. Confirm that only the events that were published
+		/// actually execute.
+		/// </summary>
+		[Test]
+		public void Test_PublishAtEndOfAction_OnlyExecuteEventsThatArePublished()
+		{
+			// Set up.
+			var subscriber = new EndOfAction_MultipleSubscriber
+			{
+				One = true,
+				Two = int.MinValue
+			};
+			subscriber.DoSubscriptions();
+
+			Assert.IsNull(subscriber.First);
+			Assert.IsTrue(subscriber.One);
+			Assert.AreEqual(int.MinValue, subscriber.Two);
+
+			FwUtils.Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged, int.MaxValue));
+
+			// Confirm that nothing changed.
+			Assert.IsNull(subscriber.First);
+			Assert.IsTrue(subscriber.One);
+			Assert.AreEqual(int.MinValue, subscriber.Two);
+
+			// SUT - Process the EndOfActionManager IdleQueue.
+			FwUtils.Publisher.EndOfActionManager.IdleEndOfAction(null);
+
+			Assert.AreEqual(EventConstants.SelectionChanged, subscriber.First);
+			Assert.IsTrue(subscriber.One);	// Doesn't change.
+			Assert.AreEqual(int.MaxValue, subscriber.Two);
+			subscriber.DoUnsubscriptions();
+		}
+
 		private static class TestPublisher
 		{
 			internal static void PublishMessageOne()
@@ -446,5 +552,45 @@ namespace SIL.FieldWorks.Common.FwUtils
 				Two = (int)newValue;
 			}
 		}
+
+		private sealed class EndOfAction_MultipleSubscriber
+		{
+			internal string First { get; set; }
+			internal bool One { get; set; }
+			internal int Two { get; set; }
+
+			internal void DoSubscriptions()
+			{
+				FwUtils.Subscriber.Subscribe(EventConstants.RecordNavigation, RecordNavigationHandler);
+				FwUtils.Subscriber.Subscribe(EventConstants.SelectionChanged, SelectionChangedHandler);
+			}
+
+			internal void DoUnsubscriptions()
+			{
+				FwUtils.Subscriber.Unsubscribe(EventConstants.RecordNavigation, RecordNavigationHandler);
+				FwUtils.Subscriber.Unsubscribe(EventConstants.SelectionChanged, SelectionChangedHandler);
+			}
+
+			/// <summary>
+			/// This is the subscribed message handler for RecordNavigation message.
+			/// </summary>
+			private void RecordNavigationHandler(object data)
+			{
+				if (First == null)
+					First = EventConstants.RecordNavigation;
+				One = (bool)data;
+			}
+
+			/// <summary>
+			/// This is the subscribed message handler for SelectionChanged message.
+			/// </summary>
+			private void SelectionChangedHandler(object data)
+			{
+				if (First == null)
+					First = EventConstants.SelectionChanged;
+				Two = (int)data;
+			}
+		}
+
 	}
 }

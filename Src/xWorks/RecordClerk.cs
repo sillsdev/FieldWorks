@@ -1832,7 +1832,7 @@ namespace SIL.FieldWorks.XWorks
 			// scroll to the right index if it hasn't already done so.
 			if (!fSkipRecordNavigation)
 			{
-				Publisher.Publish(new PublisherParameterObject(EventConstants.RecordNavigation, rni));
+				Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.RecordNavigation, rni));
 			}
 		}
 
@@ -2423,13 +2423,10 @@ namespace SIL.FieldWorks.XWorks
 				//RecordBrowseView line 483 and elsewhere that we rely on the re-broadcasting.
 				//in order to maintain the LT-11401 fix we directly use the mediator here and pass true in the
 				//second parameter so that we don't save the record and lose the undo history. -naylor 2011-11-03
-				// Update (Hasso) 2023.08.23: Although there are some situations when the back button doesn't work
-				// (for instance, switching between Dictionary and Lexicon Edit, especially after startup w/o switching entries),
-				// I can see no difference in behaviour with or without publishing RecordNavigation. It is probably no longer needed.
-				// I also placed a breakpoint at RecordBrowseView line 492 and clicked around a bit without hitting it; for reference:
-				// RecordBrowseView:483 (ShowRecord()): if (clerk.OwningObject != null && clerk.OwningObject.Hvo != m_browseViewer.RootObjectHvo) return;
-				//var rni = new RecordNavigationInfo(this, true, SkipShowRecord, suppressFocusChange);
-				//Publisher.Publish(new PublisherParameterObject(EventConstants.RecordNavigation, rni));
+				//
+				// This Publish is still needed. (LT-21616)
+				var rni = new RecordNavigationInfo(this, true, SkipShowRecord, suppressFocusChange);
+				Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.RecordNavigation, rni));
 				return;
 			}
 			try

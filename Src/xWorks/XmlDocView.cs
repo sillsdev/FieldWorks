@@ -240,7 +240,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			if(disposing)
 			{
-				Subscriber.Unsubscribe(EventConstants.RecordNavigation, OnRecordNavigation);
+				Subscriber.Unsubscribe(EventConstants.RecordNavigation, RecordNavigation);
 				Subscriber.Unsubscribe(EventConstants.ClerkOwningObjChanged, ClerkOwningObjChanged);
 				Subscriber.Unsubscribe(PropertyConstants.SelectedPublication, SelectedPublicationChanged);
 				DisposeTooltip();
@@ -456,9 +456,13 @@ namespace SIL.FieldWorks.XWorks
 			m_configObjectName = XmlUtils.GetLocalizedAttributeValue(m_configurationParameters, "configureObjectName", null);
 		}
 
-		public virtual void OnRecordNavigation(object argument)
+		/// <summary>
+		/// Notification received at the end of an action.
+		/// </summary>
+		public virtual void RecordNavigation(object argument)
 		{
-			CheckDisposed();
+			if (IsDisposed)
+				return;
 
 			if (!m_fullyInitialized
 				|| RecordNavigationInfo.GetSendingClerk(argument) != Clerk) // Don't try to handle it if it isn't our clerk.
@@ -1240,7 +1244,7 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			InitBase(mediator, propertyTable, configurationParameters);
-			Subscriber.Subscribe(EventConstants.RecordNavigation, OnRecordNavigation);
+			Subscriber.Subscribe(EventConstants.RecordNavigation, RecordNavigation);
 			Subscriber.Subscribe(EventConstants.ClerkOwningObjChanged, ClerkOwningObjChanged);
 			Subscriber.Subscribe(PropertyConstants.SelectedPublication, SelectedPublicationChanged);
 		}

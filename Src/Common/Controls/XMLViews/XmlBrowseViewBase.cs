@@ -312,7 +312,7 @@ namespace SIL.FieldWorks.Common.Controls
 					m_hvoOldSel = 0;
 					m_selectedIndex = -1;
 					// Clearing out the list changes the selection, so let everyone know.
-					m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, FireSelectionChanged);
+					Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged));
 					return;
 				}
 				int hvoObjNewSel = GetNewSelectionObject(value);
@@ -402,14 +402,17 @@ namespace SIL.FieldWorks.Common.Controls
 				Update();
 				// actual selection changed event only on idle; this makes the browse view more responsive,
 				// especially to arrow keys on auto-repeat.
-				m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, FireSelectionChanged);
+				Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged));
 			}
 		}
 
-		bool FireSelectionChanged(object parameter)
+		/// <summary>
+		/// Notification received at the end of an action.
+		/// </summary>
+		private void SelectionChanged(object parameter)
 		{
 			if (IsDisposed || m_rootb == null)
-				return true; // presumably we've been disposed; this happens (at least) in tests where a later test may simulate idle events.
+				return; // presumably we've been disposed; this happens (at least) in tests where a later test may simulate idle events.
 			int hvoObjNewSel = GetNewSelectionObject(m_selectedIndex);
 			if (hvoObjNewSel == 0)
 			{
@@ -437,7 +440,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			if (SelectedIndexChanged != null)
 				SelectedIndexChanged(this, new EventArgs());
-			return true;
 		}
 
 		/// <summary>
@@ -1109,6 +1111,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 			Subscriber.Subscribe(EventConstants.PrepareToRefresh, OnPrepareToRefresh);
+			Subscriber.Subscribe(EventConstants.SelectionChanged, SelectionChanged);
 		}
 
 		/// <summary>
@@ -1138,10 +1141,11 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.PrepareToRefresh, OnPrepareToRefresh);
+				Subscriber.Unsubscribe(EventConstants.SelectionChanged, SelectionChanged);
+
 				if (m_bv != null && !m_bv.IsDisposed && m_bv.SpecialCache != null)
 					m_bv.SpecialCache.RemoveNotification(this);
-
-				Subscriber.Unsubscribe(EventConstants.PrepareToRefresh, OnPrepareToRefresh);
 			}
 
 			base.Dispose(disposing);
@@ -2149,8 +2153,8 @@ namespace SIL.FieldWorks.Common.Controls
 					// The selected object has changed even though the index didn't, e.g., because we
 					// changed the sorting of the list while leaving the selected index fixed.
 					// We need to fire the notification saying it changed, anyway.
-					// (But don't update m_hvoOldSelection; FireSelectionChanged must find the old one to register a change.)
-					m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, FireSelectionChanged);
+					// (But don't update m_hvoOldSelection; SelectionChanged must find the old one to register a change.)
+					Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged));
 				}
 			}
 			else if (RootBox != null && hvo > 0 && SelectedObject > 0)

@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Globalization;
 using System.Xml;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
