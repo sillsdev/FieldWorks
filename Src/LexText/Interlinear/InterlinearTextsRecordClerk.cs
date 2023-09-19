@@ -38,6 +38,28 @@ namespace SIL.FieldWorks.IText
 			return (from st in GetInterestingTextList().ScriptureTexts select st.Hvo).ToList();
 		}
 
+		public override bool IsControllingTheRecordTreeBar
+		{
+			set
+			{
+				CheckDisposed();
+
+				// Nothing to do if we were already the active clerk or if we are not controlling the recordtreebar,
+				var oldActiveClerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
+				if (oldActiveClerk == this || !value)
+					return;
+
+				base.IsControllingTheRecordTreeBar = value;
+				FwUtils.Subscriber.Subscribe(EventConstants.AddTexts, AddTexts);
+			}
+		}
+
+		protected override void RemoveNotification()
+		{
+			FwUtils.Subscriber.Unsubscribe(EventConstants.AddTexts, AddTexts);
+			base.RemoveNotification();
+		}
+
 		protected override string FilterStatusContents(bool listIsFiltered)
 		{
 			var baseStatus = base.FilterStatusContents(listIsFiltered);
@@ -142,10 +164,25 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		/// <summary>
+		/// Handler for the "Choose Texts..." menu item.
+		/// Triggered from: DistFiles/Language Explorer/Configuration/Words/areaConfiguration.xml
+		/// </summary>
 		protected internal bool OnAddTexts(object args)
 		{
 			CheckDisposed();
-			// get saved scripture choices
+			AddTexts(args);
+
+			return true;
+		}
+
+		/// <summary>
+		/// Method to handle published messages for AddTexts.
+		/// </summary>
+		protected internal void AddTexts(object args)
+		{
+			CheckDisposed();
+			// get saved texts choices
 			var interestingTextsList = GetInterestingTextList();
 			var interestingTexts = interestingTextsList.InterestingTexts.ToArray();
 
@@ -158,7 +195,7 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 
-			return true;
+			return;
 		}
 
 		private InterestingTextList GetInterestingTextList()

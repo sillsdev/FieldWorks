@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.IText
 			m_clerk = (clerk == null || clerk is TemporaryRecordClerk) ?
 				(InterlinearTextsRecordClerk)RecordClerkFactory.CreateClerk(mediator, _propertyTable, configurationParameters, true) :
 				(InterlinearTextsRecordClerk)clerk;
-			// There's no record bar for it to control, but it should control the staus bar (e.g., it should update if we change
+			// There's no record bar for it to control, but it should control the status bar (e.g., it should update if we change
 			// the set of selected texts).
 			m_clerk.ActivateUI(true);
 			_areaName = XmlUtils.GetOptionalAttributeValue(configurationParameters, "area", "unknown");
@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.IText
 			//add our current state to the history system
 			string toolName = _propertyTable.GetStringProperty("currentContentControl", "");
 			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.AddContextToHistory, new FwLinkArgs(toolName, Guid.Empty)));
-
+			FwUtils.Subscriber.Subscribe(EventConstants.AddTexts, AddTexts);
 		}
 
 		private void RebuildStatisticsTable()
@@ -235,14 +235,25 @@ namespace SIL.FieldWorks.IText
 			return true;
 		}
 
+		/// <summary>
+		/// Handler for the "Choose Texts..." menu item.
+		/// Triggered from: DistFiles/Language Explorer/Configuration/Words/areaConfiguration.xml
+		/// </summary>
 		public bool OnAddTexts(object args)
 		{
-			bool result = m_clerk.OnAddTexts(args);
-			if(result)
-			{
-				RebuildStatisticsTable();
-			}
-			return result;
+			CheckDisposed();
+			AddTexts(args);
+			return true;
+		}
+
+		/// <summary>
+		/// Method to handle published messages for AddTexts.
+		/// </summary>
+		private void AddTexts(object args)
+		{
+			m_clerk.AddTexts(args);
+			RebuildStatisticsTable();
+			return;
 		}
 
 		#endregion
@@ -252,7 +263,6 @@ namespace SIL.FieldWorks.IText
 		public bool PrepareToGoAway()
 		{
 			CheckDisposed();
-
 			return true;
 		}
 

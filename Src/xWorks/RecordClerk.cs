@@ -2011,7 +2011,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Stop notifications of prop changes
 		/// </summary>
-		private void RemoveNotification()
+		protected virtual void RemoveNotification()
 		{
 			Subscriber.Unsubscribe(EventConstants.RefreshCurrentList, RefreshList);
 			Subscriber.PrefixUnsubscribe(PropertyConstants.ToolForAreaPrefix, ToolForAreaChanged);

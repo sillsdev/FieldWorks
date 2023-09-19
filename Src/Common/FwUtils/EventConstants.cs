@@ -7,6 +7,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 	public static class EventConstants
 	{
 		public const string AddContextToHistory = "AddContextToHistory";
+		public const string AddTexts = "AddTexts";
 		public const string ClerkOwningObjChanged = "ClerkOwningObjChanged";
 		public const string DeleteRecord = "DeleteRecord";
 		public const string DictionaryConfigured = "DictionaryConfigured";

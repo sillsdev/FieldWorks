@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
 using XCore;
@@ -25,8 +26,7 @@ namespace SIL.FieldWorks.IText
 
 		public override bool Invoke()
 		{
-			m_mediator.SendMessage("AddTexts", this);
-
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.AddTexts, this));
 			//var clerk = RecordClerk.FindClerk(m_mediator, "interlinearTexts") as InterlinearTextsRecordClerk;
 			//if (clerk == null)
 			//    return false;
