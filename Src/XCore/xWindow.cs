@@ -438,6 +438,7 @@ namespace XCore
 			InitializeComponent();
 
 			Subscriber.Subscribe(EventConstants.PrepareToRefresh, OnPrepareToRefresh);
+			Subscriber.Subscribe(EventConstants.SetInitialContentObject, OnSetInitialContentObject);
 			Subscriber.Subscribe(PropertyConstants.BestStyleName, SynchronizedOnIdleTime);
 			Subscriber.Subscribe(PropertyConstants.CurrentContentControl, CurrentContentControlChanged);
 			Subscriber.Subscribe(PropertyConstants.WritingSystemHvo, SynchronizedOnIdleTime);
@@ -823,7 +824,7 @@ namespace XCore
 			ResumeLayoutAll();
 			// Add the content control
 			// Note: We should be able to do it directly, since everything needed is in the default properties.
-			SetInitialContentObject(m_windowConfigurationNode);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.SetInitialContentObject, m_windowConfigurationNode));
 		}
 
 		private void SuspendLayoutAll()
@@ -1203,34 +1204,28 @@ namespace XCore
 			return groupset;
 		}
 
-		private void SetInitialContentObject(XmlNode windowConfigurationNode)
-		{
-			//allow colleagues (i.e. a listener that has been installed, or, if there are none of those listening, then
-			//our own "OnSetInitialContentObject" handler, to choose what our initial content control will be.
-			m_mediator.SendMessage("SetInitialContentObject", windowConfigurationNode);
-		}
-
 		/// <summary>
-		/// this is called by xWindow just before it sets the initial control which will actually
-		/// take over the content area.  if no listener response to this message first, then this is called
-		/// and we determine the controlled by looking at the "<contentClass/>" element in the configuration file.
+		/// This is called by xWindow just before it sets the initial control which will actually take over the content area.
+		/// If there are other listeners we assume that they will handle the content object related properties.
+		/// If no other listeners exist then we determine the control by looking at the "<contentClass/>" element in the configuration file.
 		/// </summary>
-		/// <remarks> this handler relies on the configuration file having a <contentClass/> element.</remarks>
+		/// <remarks> This handler relies on the configuration file having a <contentClass/> element.</remarks>
 		/// <param name="windowConfigurationNode"></param>
 		/// <returns></returns>
-		public bool OnSetInitialContentObject(object windowConfigurationNode)
+		public void OnSetInitialContentObject(object windowConfigurationNode)
 		{
+			// We only want to handle this if there are no other listeners
+			if (Subscriber.Subscriptions[EventConstants.SetInitialContentObject].Count > 1)
+				return;
 			CheckDisposed();
 
 			XmlNode contentClassNode = ((XmlNode)windowConfigurationNode).SelectSingleNode("contentClass");
 
 			if (contentClassNode == null)
 				throw new ArgumentException("xWindow.OnSetInitialContentObject called. The area listener should have been tried first and handled this. " + m_mediator.GetColleaguesDumpString());
-			else
-				ChangeContentObjectIfPossible(XmlUtils.GetAttributeValue(contentClassNode, "assemblyPath"),
-					XmlUtils.GetAttributeValue(contentClassNode, "class"), contentClassNode);
 
-			return true;    //we handled this.
+			ChangeContentObjectIfPossible(XmlUtils.GetAttributeValue(contentClassNode, "assemblyPath"),
+				XmlUtils.GetAttributeValue(contentClassNode, "class"), contentClassNode);
 		}
 
 		public bool OnShowNotification(object notificationText)
@@ -1304,6 +1299,7 @@ namespace XCore
 		private void ShutDownPart1()
 		{
 			Subscriber.Unsubscribe(EventConstants.PrepareToRefresh, OnPrepareToRefresh);
+			Subscriber.Unsubscribe(EventConstants.SetInitialContentObject, OnSetInitialContentObject);
 			Subscriber.Unsubscribe(PropertyConstants.BestStyleName, SynchronizedOnIdleTime);
 			Subscriber.Unsubscribe(PropertyConstants.CurrentContentControl, CurrentContentControlChanged);
 			Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, SynchronizedOnIdleTime);
