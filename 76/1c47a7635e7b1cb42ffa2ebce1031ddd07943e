@@ -1,0 +1,9 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Verified-Linux+1: Jason Naylor <jason_naylor@sil.org>
+Code-Review+2: Jason Naylor <jason_naylor@sil.org>
+Submitted-by: Mark Kidder <mark_kidder@sil.org>
+Submitted-at: Wed, 20 Sep 2023 15:59:02 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/c/FieldWorks/+/9512
+Comments-Total: 3
+Project: FieldWorks
+Branch: refs/heads/feature/PubSub
