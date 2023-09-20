@@ -65,7 +65,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					dlg.GetDialogInfo(out var entry, out _);
 					// No need for a PropChanged here because InsertEntryDlg takes care of that. (LT-3608)
-					FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh));
 					m_mediator.SendMessage("JumpToRecord", entry.Hvo);
 				}
 			}
