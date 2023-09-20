@@ -439,9 +439,10 @@ namespace XCore
 
 			Subscriber.Subscribe(EventConstants.PrepareToRefresh, OnPrepareToRefresh);
 			Subscriber.Subscribe(EventConstants.SetInitialContentObject, OnSetInitialContentObject);
-			Subscriber.Subscribe(PropertyConstants.BestStyleName, SynchronizedOnIdleTime);
+			Subscriber.Subscribe(EventConstants.UpdateControls, UpdateControls);
+			Subscriber.Subscribe(PropertyConstants.BestStyleName, BestStyleNameOrWritingSystemHvoChanged);
 			Subscriber.Subscribe(PropertyConstants.CurrentContentControl, CurrentContentControlChanged);
-			Subscriber.Subscribe(PropertyConstants.WritingSystemHvo, SynchronizedOnIdleTime);
+			Subscriber.Subscribe(PropertyConstants.WritingSystemHvo, BestStyleNameOrWritingSystemHvoChanged);
 			Subscriber.Subscribe(PropertyConstants.ShowRecordList, ShowRecordList);
 		}
 
@@ -1300,9 +1301,10 @@ namespace XCore
 		{
 			Subscriber.Unsubscribe(EventConstants.PrepareToRefresh, OnPrepareToRefresh);
 			Subscriber.Unsubscribe(EventConstants.SetInitialContentObject, OnSetInitialContentObject);
-			Subscriber.Unsubscribe(PropertyConstants.BestStyleName, SynchronizedOnIdleTime);
+			Subscriber.Unsubscribe(EventConstants.UpdateControls, UpdateControls);
+			Subscriber.Unsubscribe(PropertyConstants.BestStyleName, BestStyleNameOrWritingSystemHvoChanged);
 			Subscriber.Unsubscribe(PropertyConstants.CurrentContentControl, CurrentContentControlChanged);
-			Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, SynchronizedOnIdleTime);
+			Subscriber.Unsubscribe(PropertyConstants.WritingSystemHvo, BestStyleNameOrWritingSystemHvoChanged);
 			Subscriber.Unsubscribe(PropertyConstants.ShowRecordList, ShowRecordList);
 
 			if (m_mediator != null)
@@ -1678,24 +1680,28 @@ namespace XCore
 		/// </summary>
 		private void SynchronizedOnIdleTime(object _ = null)
 		{
-			PropTable.HandlePropertyChangeOnIdle(IdleUpdateControls);
+			UpdateControls(null);
 		}
 
-		private bool IdleUpdateControls(object _)
+		private void BestStyleNameOrWritingSystemHvoChanged(object _)
+		{
+			Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.UpdateControls));
+		}
+
+		private void UpdateControls(object _)
 		{
 			CheckDisposed();
 
 			if (m_cSuspendIdle > 0)
-				return false;
+				return;
 
 			if (ActiveForm != this && OwnedForms.All(f => ActiveForm != f))
-				return true;
+				return;
 
 			UpdateControls();
 
 			// call OnIdle () on any colleagues that implement it.
 			m_mediator.SendMessage("Idle", null);
-			return true;
 		}
 
 		/// <summary>

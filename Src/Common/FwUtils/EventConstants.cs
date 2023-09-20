@@ -30,5 +30,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Possibly useful in other cases.
 		/// </summary>
 		public const string SuppressReloadDuringExport = "SuppressReloadDuringExport";
+		public const string UpdateControls = "UpdateControls";
 	}
 }
