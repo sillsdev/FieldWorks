@@ -1,0 +1,9 @@
+Verified-Linux+1: Hasso Pape <hasso_pape@sil.org>
+Code-Review+2: Hasso Pape <hasso_pape@sil.org>
+Verified+1: Hasso Pape <hasso_pape@sil.org>
+Submitted-by: Hasso Pape <hasso_pape@sil.org>
+Submitted-at: Thu, 21 Sep 2023 16:00:14 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/c/FieldWorks/+/9514
+Comments-Total: 4
+Project: FieldWorks
+Branch: refs/heads/feature/PubSub
