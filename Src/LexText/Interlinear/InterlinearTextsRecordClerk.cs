@@ -192,6 +192,7 @@ namespace SIL.FieldWorks.IText
 				{
 					interestingTextsList.SetInterestingTexts(dlg.GetListOfIncludedTexts());
 					UpdateFilterStatusBarPanel();
+					ReloadIfNeeded();
 				}
 			}
 
