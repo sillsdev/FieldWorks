@@ -357,29 +357,17 @@ namespace SIL.FieldWorks.IText
 
 		private void TurnOnShowInvisibleSpaces()
 		{
-			if (m_propertyTable != null)
-			{
-				m_propertyTable.SetProperty("ShowInvisibleSpaces", true, true);
-			}
+			m_propertyTable?.SetProperty("ShowInvisibleSpaces", true, true);
 		}
 
 		private void TurnOffClickInvisibleSpace()
 		{
-			if (m_propertyTable != null)
-			{
-				m_propertyTable.SetProperty("ClickInvisibleSpace", false, true);
-			}
+			m_propertyTable?.SetProperty("ClickInvisibleSpace", false, true);
 		}
 
-		private bool ShowInvisibleSpaces
-		{
-			get { return m_propertyTable.GetBoolProperty("ShowInvisibleSpaces", false); }
-		}
+		private bool ShowInvisibleSpaces => m_propertyTable?.GetBoolProperty("ShowInvisibleSpaces", false) ?? false;
 
-		private bool ClickInvisibleSpace
-		{
-			get { return m_propertyTable.GetBoolProperty("ClickInvisibleSpace", false); }
-		}
+		private bool ClickInvisibleSpace => m_propertyTable?.GetBoolProperty("ClickInvisibleSpace", false) ?? false;
 
 		#region Overrides of RootSite
 		/// ------------------------------------------------------------------------------------
@@ -577,8 +565,7 @@ namespace SIL.FieldWorks.IText
 			}
 			finally
 			{
-				if (ui != null)
-					ui.Dispose();
+				ui?.Dispose();
 			}
 		}
 
@@ -672,9 +659,7 @@ namespace SIL.FieldWorks.IText
 				return null;
 			// REVISIT (EricP) Need to check if Ws is IsRightToLeft?
 			var sel2 = sel.EndBeforeAnchor ? sel.EndPoint(true) : sel.EndPoint(false);
-			if (sel2 == null)
-				return null;
-			var sel3 = sel2.GrowToWord();
+			var sel3 = sel2?.GrowToWord();
 			return sel3;
 		}
 
@@ -707,9 +692,7 @@ namespace SIL.FieldWorks.IText
 		{
 			CheckDisposed();
 
-			if (m_rootb == null)
-				return false;
-			IVwSelection sel = m_rootb.Selection;
+			IVwSelection sel = m_rootb?.Selection;
 			if (sel == null || !sel.IsValid)
 				return false;
 			// out variables for GetSelectedWordPos
