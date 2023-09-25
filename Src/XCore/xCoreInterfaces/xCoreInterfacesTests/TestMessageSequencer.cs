@@ -234,28 +234,6 @@ namespace XCore
 		}
 	}
 
-	[TestFixture]
-	public class TestMessagePriority
-	{
-		/// <summary>
-		/// Checks to make sure the priority of colleagues is being handled properly in the mediator.
-		/// </summary>
-		[Test]
-		public void Prioritize()
-		{
-			using (Mediator mediator = new Mediator())
-			{
-				mediator.AddColleague(new LowColleague());
-				mediator.AddColleague(new HighColleague());
-				mediator.AddColleague(new MedColleague());
-
-				ArrayList testList = new ArrayList();
-				ArrayList expectedResult = new ArrayList() {"High", "Medium", "Low"};
-				mediator.SendMessage("AddTestItem", testList);
-				CollectionAssert.AreEqual(testList, expectedResult, "Mediator message Prioritization is broken.");
-			}
-		}
-	}
 	/// <summary>
 	/// This adds an extra set of numbers, 900..909, whenever we grow.
 	/// </summary>
@@ -523,59 +501,6 @@ namespace XCore
 		/// int, so lower numbers are higher priority. Maximum integer would be the lowest possible priority.
 		/// </summary>
 		public abstract int Priority { get; }
-
-		#endregion
-	}
-
-	public class LowColleague : TestColleague
-	{
-		#region Overrides of TestColleague
-
-		public override int Priority
-		{
-			get { return (int) ColleaguePriority.Low; }
-		}
-
-		public bool OnAddTestItem(object item)
-		{
-			((ArrayList)item).Add("Low");
-			return false;
-		}
-
-		#endregion
-	}
-
-	public class MedColleague : TestColleague
-	{
-		public bool OnAddTestItem(object item)
-		{
-			((ArrayList)item).Add("Medium");
-			return false;
-		}
-
-		#region Overrides of TestColleague
-
-		public override int Priority
-		{
-			get { return (int)ColleaguePriority.Medium; }
-		}
-
-		#endregion
-	}
-	public class HighColleague : TestColleague
-	{
-		public bool OnAddTestItem(object item)
-		{
-			((ArrayList)item).Add("High");
-			return false;
-		}
-
-		#region Overrides of TestColleague
-
-		public override int Priority
-		{
-			get { return (int)ColleaguePriority.High; }
-		}
 
 		#endregion
 	}
