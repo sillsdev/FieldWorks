@@ -907,7 +907,7 @@ namespace SIL.FieldWorks.XWorks
 			m_list.InitLoad(floadList);
 
 			//NB: we need to be careful
-			//not to broadcast any record changes until we are actually initialize enough
+			//not to broadcast any record changes until we are actually initialized enough
 			//to deal with the resulting request that will come from those widgets.
 
 
@@ -1390,7 +1390,7 @@ namespace SIL.FieldWorks.XWorks
 					}
 				}
 				if (old != newObj)
-					FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.ClerkOwningObjChanged, this));
+					Publisher.Publish(new PublisherParameterObject(EventConstants.ClerkOwningObjChanged, this));
 			}
 		}
 
@@ -1444,7 +1444,7 @@ namespace SIL.FieldWorks.XWorks
 				else
 				{
 					// Try to get a plausible substitution when the list is empty, so
-					// it doesn't look too wierd to the user.
+					// it doesn't look too weird to the user.
 					string className = Cache.MetaDataCacheAccessor.GetClassName(m_list.ListItemsClass);
 					string displayName = StringTable.Table.GetString(className, "ClassNames");
 					display.Text = String.Format(display.Text, displayName);
@@ -1562,7 +1562,7 @@ namespace SIL.FieldWorks.XWorks
 							}
 						}
 					}
-					FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh));
+					Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh));
 				}
 			}
 			return;

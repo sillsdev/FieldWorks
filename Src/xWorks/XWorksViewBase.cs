@@ -178,15 +178,24 @@ namespace SIL.FieldWorks.XWorks
 			get
 			{
 				if (m_clerk != null)
+				{
+					UpdateClerkEditable(m_clerk);
 					return m_clerk;
+				}
+
 				if (m_mediator == null)
 					return null; // Avoids a null reference exception, if there is no mediator at all.
 				if (m_propertyTable == null)
 					return null; // Avoids a null reference exception, if there is no property table at all.
+
 				m_haveActiveClerk = false;
 				m_clerk = RecordClerk.FindClerk(m_propertyTable, m_vectorName);
 				if (m_clerk != null && m_clerk.IsActiveInGui)
+				{
 					m_haveActiveClerk = true;
+					UpdateClerkEditable(m_clerk);
+				}
+
 				return m_clerk;
 			}
 		}
@@ -194,8 +203,13 @@ namespace SIL.FieldWorks.XWorks
 		internal RecordClerk CreateClerk(bool loadList)
 		{
 			var clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, m_configurationParameters, loadList);
-			clerk.Editable = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParameters, "allowInsertDeleteRecord", true);
+			UpdateClerkEditable(clerk);
 			return clerk;
+		}
+
+		internal void UpdateClerkEditable(RecordClerk clerk)
+		{
+			clerk.Editable = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParameters, "allowInsertDeleteRecord", true);
 		}
 
 		/// <summary>
