@@ -1,0 +1,8 @@
+Verified+1: Jenkins CI <jenkins@sil.org>
+Code-Review+2: Mark Kidder <mark_kidder@sil.org>
+Verified-Linux+1: Ariel Ror. <ariel_rorabaugh@sil.org>
+Submitted-by: Ariel Ror. <ariel_rorabaugh@sil.org>
+Submitted-at: Tue, 26 Sep 2023 15:25:59 +0000
+Reviewed-on: https://gerrit.lsdev.sil.org/c/FieldWorks/+/9520
+Project: FieldWorks
+Branch: refs/heads/feature/PubSub
