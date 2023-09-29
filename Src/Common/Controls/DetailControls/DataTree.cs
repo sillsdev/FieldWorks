@@ -141,7 +141,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// this helps DataTree delay from setting focus in a slice, until we're all setup to do so.
 		/// </summary>
 		bool m_fSuspendSettingCurrentSlice = false;
-		bool m_fCurrentContentControlObjectTriggered = false;
 
 		/// <summary>
 		/// These variables are used to prevent refreshes from occurring when they're not wanted,
@@ -999,7 +998,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// Mediator may be null during testing or maybe some other strange state
 				if (m_mediator != null)
 				{
-					m_fCurrentContentControlObjectTriggered = true; // allow OnReadyToSetCurrentSlice to focus first possible control.
+					FocusSliceAfterContentControlObjectChange = FocusCurrentSliceOrFirstPossible; // Add event handler so that OnReadyToSetCurrentSlice will focus first possible control.
 					m_mediator.IdleQueue.Add(IdleQueuePriority.High, OnReadyToSetCurrentSlice, (object) suppressFocusChange);
 					// prevent setting focus in slice until we're all setup (cf.
 					m_fSuspendSettingCurrentSlice = true;
@@ -1015,17 +1014,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private void SetCurrentSliceNewFromObject(ICmObject obj)
 		{
-			foreach (Slice slice in Slices)
+			var sliceForObj = Slices.FirstOrDefault(s => ReferenceEquals(s.Object, obj) && !s.IsHeaderNode);
+			if (sliceForObj != null)
 			{
-				if (slice.Object == obj)
-					m_fSetCurrentSliceNew = true;
-
-				if (m_fSetCurrentSliceNew && !slice.IsHeaderNode)
-				{
-					m_fSetCurrentSliceNew = false;
-					m_currentSliceNew = slice;
-					break;
-				}
+				m_currentSliceNew = sliceForObj;
 			}
 		}
 
@@ -2591,6 +2583,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		private readonly HashSet<string> m_setInvalidFields = new HashSet<string>();
+		private event Action FocusSliceAfterContentControlObjectChange;
+
 		/// <summary>
 		/// This seems a bit clumsy, but the metadata cache now throws an exception if the class
 		/// id/field name pair isn't valid for GetFieldId2().  Limiting this to only one throw
@@ -3979,7 +3973,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private void CurrentContentControlObjectChanged(object _)
 		{
 			CheckDisposed();
-			m_fCurrentContentControlObjectTriggered = true;
+			FocusSliceAfterContentControlObjectChange = FocusCurrentSliceOrFirstPossible;
 		}
 
 		/// <summary>
@@ -4152,7 +4146,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 			finally
 			{
-				m_fCurrentContentControlObjectTriggered = false;
+				FocusSliceAfterContentControlObjectChange = null;
 			}
 			return true;
 		}
@@ -4179,53 +4173,56 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// try to see if any of our current slices have focus. if so, use that one.
 			if (sliceToSetAsCurrent == null)
 			{
-			Control focusedControl = XWindow.FocusedControl();
-			if (ContainsFocus)
-			{
-				// see if we can find the parent slice for focusedControl
-				Control currentControl = focusedControl;
-				while (currentControl != null && currentControl != this)
+				Control focusedControl = XWindow.FocusedControl();
+				if (ContainsFocus)
 				{
-					if (currentControl is Slice)
+					// see if we can find the parent slice for focusedControl
+					Control currentControl = focusedControl;
+					while (currentControl != null && currentControl != this)
 					{
-						// found the slice to
-						sliceToSetAsCurrent = currentControl as Slice;
+						if (currentControl is Slice)
+						{
+							// found the slice to
+							sliceToSetAsCurrent = currentControl as Slice;
 							if (sliceToSetAsCurrent.IsDisposed)
 								sliceToSetAsCurrent = null;		// shouldn't happen, but...
 							else
-						break;
+								break;
+						}
+						currentControl = currentControl.Parent;
 					}
-					currentControl = currentControl.Parent;
 				}
-			}
 			}
 			// set current slice.
 			if (sliceToSetAsCurrent != null)
 			{
 				CurrentSlice = sliceToSetAsCurrent;
-				if (!suppressFocusChange && !m_currentSlice.Focused && m_fCurrentContentControlObjectTriggered)	// probably coming from m_currentSliceNew
+				if (!suppressFocusChange && !m_currentSlice.Focused)	// probably coming from m_currentSliceNew
 				{
-					// For string type slices, place cursor at end of (top) line.  This works
-					// more reliably than putting it at the beginning for some reason, and makes
-					// more sense in some circumstances (especially in the conversion from a ghost
-					// slice to a string type slice).
-					if (m_currentSlice is MultiStringSlice)
-					{
-						var mss = (MultiStringSlice) m_currentSlice;
-						mss.SelectAt(mss.WritingSystemsSelectedForDisplay.First().Handle, 99999);
-					}
-					else if (m_currentSlice is StringSlice)
-					{
-						((StringSlice) m_currentSlice).SelectAt(99999);
-					}
-					m_currentSlice.TakeFocus(false);
+					FocusSliceAfterContentControlObjectChange?.Invoke();
 				}
 			}
-			// otherwise, try to select the first slice, if it won't conflict with
-			// an existing cursor (cf. LT-8211), like when we're first starting up/switching tools
-			// as indicated by m_fCurrentContentControlObjectTriggered.
-			if (!suppressFocusChange && CurrentSlice == null && m_fCurrentContentControlObjectTriggered)
+		}
+
+		private void FocusCurrentSliceOrFirstPossible()
+		{
+			// For string type slices, place cursor at end of (top) line.  This works
+			// more reliably than putting it at the beginning for some reason, and makes
+			// more sense in some circumstances (especially in the conversion from a ghost
+			// slice to a string type slice).
+			if (m_currentSlice is MultiStringSlice mss)
+			{
+				mss.SelectAt(mss.WritingSystemsSelectedForDisplay.First().Handle, 99999);
+			}
+			else if (m_currentSlice is StringSlice slice)
+			{
+				slice.SelectAt(99999);
+			}
+			m_currentSlice.TakeFocus(false);
+			if (CurrentSlice == null)
+			{
 				FocusFirstPossibleSlice();
+			}
 		}
 
 		/// <summary>
