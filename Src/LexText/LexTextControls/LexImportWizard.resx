@@ -1447,7 +1447,7 @@
     <value>386, 21</value>
   </data>
   <data name="m_SettingsFileName.TabIndex" type="System.Int32, mscorlib">
-    <value>15</value>
+    <value>9</value>
   </data>
   <data name="&gt;&gt;m_SettingsFileName.Name" xml:space="preserve">
     <value>m_SettingsFileName</value>
