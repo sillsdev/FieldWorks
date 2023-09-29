@@ -2114,33 +2114,35 @@ namespace SIL.FieldWorks.LexText.Controls
 			// if it's known to be dirty OR the shift key is down - ask to save the settings file
 			if (m_dirtySenseLastSave || (Control.ModifierKeys & Keys.Shift) == Keys.Shift)
 			{
-				// LT-7057: if no settings file, don't ask to save
-				if (UsesInvalidFileNames(true))
-					return;	// finsih with out prompting to save...
+				// LT-7057, LT-21638: if no settings file or no input file, don't ask to save
+				if (string.IsNullOrEmpty(m_DatabaseFileName.Text) || UsesInvalidFileNames(true))
+					return;
 
-				// ask to save the settings
-				DialogResult result = DialogResult.Yes;
-				// if we're not importing a phaseX file, then ask
+				// if we're importing a phaseX file, save settings automatically; otherwise, ask first.
+				var result = DialogResult.Yes;
 				if (GetDictionaryFileAsPhaseFileNumber() == 0)
 					result = MessageBox.Show(this, LexTextControls.ksAskRememberImportSettings,
 						LexTextControls.ksSaveSettings_,
 						MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3);
 
-				if (result == DialogResult.Yes)
+				switch (result)
 				{
-					// before saving we need to make sure all the data structures are populated
-					while (CurrentStepNumber <= 6)
+					case DialogResult.Yes:
 					{
-						EnableNextButton();
-						m_CurrentStepNumber++;
+						// before saving we need to make sure all the data structures are populated
+						while (CurrentStepNumber <= 6)
+						{
+							EnableNextButton();
+							m_CurrentStepNumber++;
+						}
+						SaveSettings();
+						break;
 					}
-					SaveSettings();
-				}
-				else if (result == DialogResult.Cancel)
-				{
-					// This is how do we stop the cancel process...
-					this.DialogResult = DialogResult.None;
-					m_fCanceling = false;
+					case DialogResult.Cancel:
+						// This is how do we stop the cancel process...
+						this.DialogResult = DialogResult.None;
+						m_fCanceling = false;
+						break;
 				}
 			}
 		}
