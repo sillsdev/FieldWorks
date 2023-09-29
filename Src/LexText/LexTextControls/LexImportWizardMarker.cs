@@ -2,6 +2,16 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using Gecko;
+using Sfm2Xml;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Infrastructure;
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -11,15 +21,6 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Xsl;
-using Gecko;
-using Sfm2Xml;
-using SIL.LCModel.Core.Text;
-using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
 using XCore;
 using TreeView = System.Windows.Forms.TreeView;
 
@@ -56,6 +57,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private Label lblFunction;
 		private CheckBox chkbxAutoField;
 		private LcmCache m_cache;
+		private PropertyTable m_propertyTable;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private IApp m_app;
 		private string m_refFuncString;
@@ -84,17 +86,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			blbLangDesc.Enabled = cbLangDesc.Enabled = btnAddLangDesc.Enabled = enable;
 		}
 
-		public void Init(MarkerPresenter.ContentMapping currentMarker, Hashtable uiLangsHT, LcmCache cache,
-			IHelpTopicProvider helpTopicProvider, IApp app)
+		public void Init(MarkerPresenter.ContentMapping currentMarker, Hashtable uiLangs, LcmCache cache, PropertyTable propertyTable, IApp app)
 		{
 			CheckDisposed();
 
-			m_uiLangs = uiLangsHT;
+			m_uiLangs = uiLangs;
 			m_cache = cache;
-			m_helpTopicProvider = helpTopicProvider;
+			m_propertyTable = propertyTable;
+			m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			m_app = app;
-			helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
-			helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
+			helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
+			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 
 			// The following call is needed to 'correct' the current behavior of the FwOverrideComboBox control.
@@ -1051,7 +1053,8 @@ namespace SIL.FieldWorks.LexText.Controls
 								MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
 			}
-			med.SendMessage("AddCustomField", null);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.ConfigureCustomFields,
+				new Tuple<PropertyTable, string>(m_propertyTable, AreaConstants.lexicon)));
 
 			// The above call can cause the Mediator to 'go away', so check it and
 			// restore the member variable for everyone else who may be surprised

@@ -227,6 +227,7 @@
     </Compile>
     <Compile Include="ActivationContextHelper.cs" />
     <Compile Include="AlphaOutline.cs" />
+    <Compile Include="AreaConstants.cs" />
     <Compile Include="EndOfActionManager.cs" />
     <Compile Include="EndOfActionOrder.cs" />
     <Compile Include="EventConstants.cs" />

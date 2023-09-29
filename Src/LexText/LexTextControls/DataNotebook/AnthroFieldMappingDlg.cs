@@ -1,20 +1,21 @@
-// Copyright (c) 2010-2017 SIL International
+// Copyright (c) 2010-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
+using SIL.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
-using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls.DataNotebook
@@ -276,49 +277,29 @@ namespace SIL.FieldWorks.LexText.Controls.DataNotebook
 
 		private void m_btnAddCustom_Click(object sender, EventArgs e)
 		{
-			// What we'd like to do is the following bit of code, but we can't due to
-			// circular dependencies that would be introduced.  We could possibly move
-			// the dialog to another assembly/dll, but that would require reworking a
-			// fair number of strings that have been converted to resources.
-			//using (var dlg = new AddCustomFieldDlg(m_mediator, AddCustomFieldDlg.LocationType.Notebook))
-			//    dlg.ShowDialog();
-			System.Type typeFound;
-			MethodInfo mi = XmlUtils.GetStaticMethod("xWorks.dll",
-				"SIL.FieldWorks.XWorks.AddCustomFieldDlg",
-				"ShowNotebookCustomFieldDlg",
-				"AnthroFieldMappingDlg.m_btnAddCustom_Click()", out typeFound);
-			if (mi != null)
+			// Show the ConfigureCustomFields dialog (by publisher to avoid circular dependencies)
+			Publisher.Publish(new PublisherParameterObject(EventConstants.ConfigureCustomFields,
+				new Tuple<PropertyTable, string>(m_propertyTable, AreaConstants.notebook)));
+			// Now, clean up our map of possible field targets and reload the field combo list.
+			List<int> delFields = new List<int>();
+			foreach (int key in m_mapFlidName.Keys)
 			{
-				var parameters = new object[2];
-				parameters[0] = m_mediator;
-				parameters[1] = m_propertyTable;
-				mi.Invoke(typeFound,
-					System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public |
-					System.Reflection.BindingFlags.NonPublic, null, parameters, null);
-				// Now, clean up our map of possible field targets and reload the field combo list.
-				List<int> delFields = new List<int>();
-				foreach (int key in m_mapFlidName.Keys)
-				{
-					if (!m_mdc.FieldExists(key))
-						delFields.Add(key);
-				}
-				foreach (int flid in delFields)
-					m_mapFlidName.Remove(flid);
-				foreach (int flid in m_mdc.GetFields(RnGenericRecTags.kClassId, false, (int)CellarPropertyTypeFilter.All))
-				{
-					if (m_mapFlidName.ContainsKey(flid))
-						continue;
-					if (m_mdc.IsCustom(flid))
-					{
-						string name = m_mdc.GetFieldName(flid);
-						m_mapFlidName.Add(flid, name);
-					}
-				}
-				FillInFieldList();
+				if (!m_mdc.FieldExists(key))
+					delFields.Add(key);
 			}
-			else
+			foreach (int flid in delFields)
+				m_mapFlidName.Remove(flid);
+			foreach (int flid in m_mdc.GetFields(RnGenericRecTags.kClassId, false, (int)CellarPropertyTypeFilter.All))
 			{
+				if (m_mapFlidName.ContainsKey(flid))
+					continue;
+				if (m_mdc.IsCustom(flid))
+				{
+					string name = m_mdc.GetFieldName(flid);
+					m_mapFlidName.Add(flid, name);
+				}
 			}
+			FillInFieldList();
 		}
 
 		private void m_btnOK_Click(object sender, EventArgs e)

@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -55,7 +55,6 @@ namespace SIL.FieldWorks.XWorks
 		private Label m_wsLabel;
 
 		// variables for managing the dlg
-		private readonly Mediator m_mediator;
 		private readonly PropertyTable m_propertyTable;
 		private readonly LocationType m_locationType;
 
@@ -82,23 +81,9 @@ namespace SIL.FieldWorks.XWorks
 		private ComboBox m_listComboBox;
 		private Label m_listLabel;
 
-		/// <summary>
-		/// Provide access (via reflection) to this dialog for use by the
-		/// Data Notebook standard format importer.
-		/// </summary>
-		public static void ShowNotebookCustomFieldDlg(Mediator mediator, PropertyTable propertyTable)
-		{
-			using (var dlg = new AddCustomFieldDlg(mediator, propertyTable, LocationType.Notebook))
-			{
-				if (dlg.ShowCustomFieldWarning(null))
-					dlg.ShowDialog();
-			}
-		}
-
-		public AddCustomFieldDlg(Mediator mediator, PropertyTable propertyTable, LocationType locationType)
+		public AddCustomFieldDlg(PropertyTable propertyTable, LocationType locationType)
 		{
 			// create member variables
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
 			m_locationType = locationType;
 			m_cache = m_propertyTable.GetValue<LcmCache>("cache");

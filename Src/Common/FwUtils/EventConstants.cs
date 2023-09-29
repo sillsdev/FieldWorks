@@ -9,6 +9,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string AddContextToHistory = "AddContextToHistory";
 		public const string AddTexts = "AddTexts";
 		public const string ClerkOwningObjChanged = "ClerkOwningObjChanged";
+		public const string ConfigureCustomFields = "ConfigureCustomFields";
 		public const string DeleteRecord = "DeleteRecord";
 		public const string DictionaryConfigured = "DictionaryConfigured";
 		public const string FollowLink = "FollowLink";

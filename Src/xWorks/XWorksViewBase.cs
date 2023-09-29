@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.FdoUi;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -19,19 +20,7 @@ using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
-	/// <summary>
-	/// XmlDocView is a view that shows a complete list as a single view.
-	/// A RecordClerk class does most of the work of managing the list and current object.
-	///	list management and navigation is entirely(?) handled by the
-	/// RecordClerk.
-	///
-	/// The actual view of each object is specified by a child <jtview></jtview> node
-	/// of the view node. This specifies how to display an individual list item.
-	/// </summary>
-	/// <remarks>
-	/// IxCoreContentControl includes IxCoreColleague now,
-	/// so only IxCoreContentControl needs to be declared here.
-	/// </remarks>
+	/// <summary/>
 	public abstract class XWorksViewBase : XCoreUserControl, IxCoreContentControl, IPaneBarUser
 	{
 		#region Enumerations
@@ -39,10 +28,6 @@ namespace SIL.FieldWorks.XWorks
 		public enum TreebarAvailability {Required, Optional, NotAllowed, NotMyBusiness};
 
 		#endregion Enumerations
-
-		#region Event declaration
-
-		#endregion Event declaration
 
 		#region Data members
 		/// <summary>
@@ -78,14 +63,6 @@ namespace SIL.FieldWorks.XWorks
 		/// Last known parent that is a MultiPane.
 		/// </summary>
 		private MultiPane m_mpParent;
-		///// <summary>
-		///// Right-click menu for deleting Custom lists.
-		///// </summary>
-		//private ContextMenuStrip m_contextMenu;
-		///// <summary>
-		///// Keeps track of when the context menu last closed.
-		///// </summary>
-		//private long m_ticksWhenContextMenuClosed = 0;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -105,7 +82,13 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion Data members
 
-		#region Consruction and disposal
+		#region Construction and disposal
+		static XWorksViewBase()
+		{
+			// Subscribe to requests to display the ConfigureCustomFields dialog only once, not once per instance
+			Subscriber.Subscribe(EventConstants.ConfigureCustomFields, ConfigureCustomFields);
+		}
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XWorksViewBase"/> class.
 		/// </summary>
@@ -115,7 +98,6 @@ namespace SIL.FieldWorks.XWorks
 
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-
 
 			AccNameDefault = "XWorksViewBase";		// default accessibility name
 		}
@@ -153,7 +135,7 @@ namespace SIL.FieldWorks.XWorks
 			base.Dispose( disposing );
 		}
 
-		#endregion // Consruction and disposal
+		#endregion // Construction and disposal
 
 		#region Properties
 
@@ -607,19 +589,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			// No, as it can be using a config node that is correctly set to false, and we really wanted some other node,
-			// in order to see the menu in the main Lexicon Edit tool.
-			// bool fEditable = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParameters, "editable", true);
-
-			// In order for this menu to be visible and enabled it has to be in the correct area (lexicon)
-			// and the right tool(s).
+			// For this menu to be visible and enabled, it has to be in an applicable area and an applicable tool.
 			// Tools that allow this menu, as far as I (RandyR) can tell, as of 24 May 2007:
 			// "lexiconEdit", "bulkEditEntries", "lexiconBrowse", and "bulkEditSenses"
-			// I searched through JIRA to see if there was an offical list, and couldn't find such a list.
+			// I searched through JIRA to see if there was an official list, and couldn't find such a list.
 			// The old code tried to fish out some 'editable' attr from the xml file,
 			// but in some contexts in switching tools in the Lexicon area, the config file was for the dictionary preview
 			// control, which was set to 'false'. That makes sense, since the view itself isn't editable.
-			// No: if (areaChoice == "lexicon" && fEditable && (m_vectorName == "entries" || m_vectorName == "AllSenses"))
 			string toolChoice = m_propertyTable.GetStringProperty("currentContentControl", string.Empty);
 			string areaChoice = m_propertyTable.GetStringProperty("areaChoice", string.Empty);
 			bool inFriendlyTerritory = false;
@@ -641,38 +617,56 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		public bool OnAddCustomField(object argument)
+		/// <summary>
+		/// Display a dialog to allow users to modify Custom Fields
+		/// Triggered from DistFiles/Language Explorer/Configuration/Main.xml
+		/// </summary>
+		public bool OnAddCustomField(object _)
 		{
 			CheckDisposed();
+			ConfigureCustomFields(new Tuple<PropertyTable, string>(m_propertyTable, m_propertyTable.GetStringProperty("areaChoice", string.Empty)));
+			return true; // handled
+		}
 
-			if (SharedBackendServices.AreMultipleApplicationsConnected(Cache))
+		/// <summary>
+		/// Display a dialog to allow users to modify Custom Fields
+		/// </summary>
+		private static void ConfigureCustomFields(object propTableAndArea)
+		{
+			if (!(propTableAndArea is Tuple<PropertyTable, string> args))
 			{
-				MessageBoxUtils.Show(ParentForm, xWorksStrings.ksCustomFieldsCanNotBeAddedDueToOtherAppsText,
-					xWorksStrings.ksCustomFieldsCanNotBeAddedDueToOtherAppsCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				return true;
+				throw new ArgumentException(nameof(propTableAndArea));
 			}
 
-			AddCustomFieldDlg.LocationType locationType = AddCustomFieldDlg.LocationType.Lexicon;
-			string areaChoice = m_propertyTable.GetStringProperty("areaChoice", string.Empty);
+			var propertyTable = args.Item1;
+			var areaChoice = args.Item2;
+			var cache = propertyTable.GetValue<LcmCache>("cache");
+
+			if (SharedBackendServices.AreMultipleApplicationsConnected(cache))
+			{
+				MessageBoxUtils.Show(Form.ActiveForm, xWorksStrings.ksCustomFieldsCanNotBeAddedDueToOtherAppsText,
+					xWorksStrings.ksCustomFieldsCanNotBeAddedDueToOtherAppsCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
+			}
+
+			var locationType = AddCustomFieldDlg.LocationType.Lexicon;
 			switch (areaChoice)
 			{
-				case "lexicon":
+				case AreaConstants.lexicon:
 					locationType = AddCustomFieldDlg.LocationType.Lexicon;
 					break;
-				case "notebook":
+				case AreaConstants.notebook:
 					locationType = AddCustomFieldDlg.LocationType.Notebook;
 					break;
-				case "textsWords":
+				case AreaConstants.textsWords:
 					locationType = AddCustomFieldDlg.LocationType.Interlinear;
 					break;
 			}
-			using (var dlg = new AddCustomFieldDlg(m_mediator, m_propertyTable, locationType))
+			using (var dlg = new AddCustomFieldDlg(propertyTable, locationType))
 			{
-				if (dlg.ShowCustomFieldWarning(this))
-					dlg.ShowDialog(this);
+				if (dlg.ShowCustomFieldWarning(Form.ActiveForm))
+					dlg.ShowDialog(Form.ActiveForm);
 			}
-
-			return true;	// handled
 		}
 
 		public bool OnDisplayConfigureList(object commandObject, ref UIItemDisplayProperties display)
