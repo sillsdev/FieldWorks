@@ -321,27 +321,31 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		protected override void WritingSystemHvo_Changed(object newValue)
 		{
-			var wsBefore = 0;
-			// We want to know below whether a base class changed the ws or not.
-			if (RootObject != null && m_rootb != null && m_rootb.Selection.IsValid)
-				wsBefore = SelectionHelper.GetWsOfEntireSelection(m_rootb.Selection);
-
-			base.WritingSystemHvo_Changed(newValue);
-
-			if (RootObject != null && m_rootb != null && m_rootb.Selection.IsValid)
+			// If the TextPane is not visible, we should not handle the writing system change.
+			if (Visible)
 			{
-				int hvo, tag, ws, ichMin, ichLim;
-				ws = SelectionHelper.GetWsOfEntireSelection(m_rootb.Selection);
-				if (ws != wsBefore) // writing system changed!
-				{
-					if (GetSelectedWordPos(m_rootb.Selection, out hvo, out tag, out ws, out ichMin, out ichLim))
-					{
-						if (tag != StTxtParaTags.kflidContents)
-							return;
+				var wsBefore = 0;
+				// We want to know below whether a base class changed the ws or not.
+				if (RootObject != null && m_rootb != null && m_rootb.Selection.IsValid)
+					wsBefore = SelectionHelper.GetWsOfEntireSelection(m_rootb.Selection);
 
-						var para = m_cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
-						// force this paragraph to recognize it might need reparsing.
-						SetParaToReparse(para);
+				base.WritingSystemHvo_Changed(newValue);
+
+				if (RootObject != null && m_rootb != null && m_rootb.Selection.IsValid)
+				{
+					int hvo, tag, ws, ichMin, ichLim;
+					ws = SelectionHelper.GetWsOfEntireSelection(m_rootb.Selection);
+					if (ws != wsBefore) // writing system changed!
+					{
+						if (GetSelectedWordPos(m_rootb.Selection, out hvo, out tag, out ws, out ichMin, out ichLim))
+						{
+							if (tag != StTxtParaTags.kflidContents)
+								return;
+
+							var para = m_cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
+							// force this paragraph to recognize it might need reparsing.
+							SetParaToReparse(para);
+						}
 					}
 				}
 			}
