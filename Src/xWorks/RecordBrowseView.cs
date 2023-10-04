@@ -553,7 +553,7 @@ namespace SIL.FieldWorks.XWorks
 			// and we don't want to do anything, if we are told not to.
 			if (!m_fullyInitialized || m_suppressRecordNavigation)
 				return;
-			Debug.Assert(m_browseViewer != null, "RecordBrowseView.SetupDataContext() has to be called before RecordBrowseView.OnRecordNavigation().");
+			Debug.Assert(m_browseViewer != null, "RecordBrowseView.SetupDataContext() has to be called before RecordBrowseView.RecordNavigation().");
 
 			if (m_browseViewer == null || m_browseViewer.BrowseView == null || m_browseViewer.BrowseView.RootBox == null)
 				return; // can't do anything useful without a root box to select in.

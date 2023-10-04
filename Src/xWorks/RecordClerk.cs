@@ -1595,20 +1595,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Return true if some activity is underway that makes it a BAD idea to insert or delete things
-		/// from the list. For example, IText should not insert an object because the list is empty
-		/// WHILE we are processing the delete object.
-		/// </summary>
-		public bool ShouldNotModifyList
-		{
-			get
-			{
-				CheckDisposed();
-				return m_list.ShouldNotModifyList;
-			}
-		}
-
-		/// <summary>
 		/// Used to suppress Reloading our list multiple times until we're finished with PropChanges.
 		/// Also used (e.g., in Change spelling dialog) when we do NOT want the contents of the list
 		/// to change owing to changed filter properties.
@@ -1828,11 +1814,22 @@ namespace SIL.FieldWorks.XWorks
 
 			// We want an auto-save when we process the change record UNLESS we are deleting or inserting an object,
 			// or performing an Undo/Redo.
-			// Note: Publishing "OnRecordNavigation" even if a selection doesn't change allows the browse view to
+			// Note: Publishing "RecordNavigation" even if a selection doesn't change allows the browse view to
 			// scroll to the right index if it hasn't already done so.
 			if (!fSkipRecordNavigation)
 			{
-				Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.RecordNavigation, rni));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.CreateFirstRecord, rni));
+
+				// Publish at the end of the current action if we are not currently executing an EndOfAction event.
+				if (Publisher.EndOfActionManager.CurrentEndOfActionEvent == null)
+				{
+					Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.RecordNavigation, rni));
+				}
+				// Publish immediately if we are currently executing an EndOfAction event.
+				else
+				{
+					Publisher.Publish(new PublisherParameterObject(EventConstants.RecordNavigation, rni));
+				}
 			}
 		}
 
@@ -2424,9 +2421,19 @@ namespace SIL.FieldWorks.XWorks
 				//in order to maintain the LT-11401 fix we directly use the mediator here and pass true in the
 				//second parameter so that we don't save the record and lose the undo history. -naylor 2011-11-03
 				//
-				// This Publish is still needed. (LT-21616)
+				// The RecordNavigation Publish is still needed. (LT-21616)
 				var rni = new RecordNavigationInfo(this, true, SkipShowRecord, suppressFocusChange);
-				Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.RecordNavigation, rni));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.CreateFirstRecord, rni));
+				// Publish at the end of the current action if we are not currently executing an EndOfAction event.
+				if (Publisher.EndOfActionManager.CurrentEndOfActionEvent == null)
+				{
+					Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.RecordNavigation, rni));
+				}
+				// Publish immediately if we are currently executing an EndOfAction event.
+				else
+				{
+					Publisher.Publish(new PublisherParameterObject(EventConstants.RecordNavigation, rni));
+				}
 				return;
 			}
 			try

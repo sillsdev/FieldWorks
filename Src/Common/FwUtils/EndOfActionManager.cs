@@ -21,6 +21,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private bool m_initialized = false;
 		private readonly Dictionary<string, object> m_events = new Dictionary<string, object>();
 
+		/// <summary>
+		/// Returns the EndOfAction event that is currently being published.
+		/// Returns null if we are not currently publishing an EndOfAction event.
+		/// </summary>
+		public string CurrentEndOfActionEvent { get; private set; }
+
 		internal void AddEvent(PublisherParameterObject publisherParameterObject)
 		{
 			// If not already initialized, then add the EndOfAction event to the idle queue.
@@ -28,6 +34,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				m_initialized = true;
 				FwUtils.IdleQueue.Add(new IdleQueueTask(IdleQueuePriority.High, IdleEndOfAction, null));
+			}
+
+			if (CurrentEndOfActionEvent != null)
+			{
+				// Confirm that the event being added comes after the currently executing event.
+				var currentEventIndex = EndOfActionOrder.Order.IndexOf(CurrentEndOfActionEvent);
+				var newEventIndex = EndOfActionOrder.Order.IndexOf(publisherParameterObject.Message);
+
+				if (newEventIndex <= currentEventIndex)
+				{
+					throw new Exception(String.Format(
+						"While executing an EndOfAction event, cannot add the current or an earlier event. Current Event: {0}    Added Event: {1}",
+						CurrentEndOfActionEvent,
+						publisherParameterObject.Message));
+				}
 			}
 
 			// Add the dictionary entry if the key is not present. Overwrite the value if the key is present.
@@ -44,9 +65,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					if (m_events.TryGetValue(orderedEvent, out object data))
 					{
-						FwUtils.Publisher.Publish(
-							new PublisherParameterObject(orderedEvent, data));
 						m_events.Remove(orderedEvent);
+						CurrentEndOfActionEvent = orderedEvent;
+						FwUtils.Publisher.Publish(new PublisherParameterObject(orderedEvent, data));
+						CurrentEndOfActionEvent = null;
+					}
+
+					if (m_events.Count == 0)
+					{
+						break;
 					}
 				}
 
@@ -62,6 +89,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			finally
 			{
 				m_initialized = false;
+				CurrentEndOfActionEvent = null;
 			}
 
 			return true; // Always handle the event in the IdleQueue.

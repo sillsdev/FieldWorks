@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using XCore;
 
@@ -33,6 +34,8 @@ namespace SIL.FieldWorks.IText
 
 			if (disposing)
 			{
+				FwUtils.Subscriber.Unsubscribe(EventConstants.CreateFirstRecord, CreateFirstRecord);
+
 				//SuspendLayout();	// don't want do trigger OnLayout() when removing controls!
 				//DestroyTitleContentsPane();
 				//if (m_tabCtrl != null)

@@ -1685,7 +1685,11 @@ namespace XCore
 
 		private void BestStyleNameOrWritingSystemHvoChanged(object _)
 		{
-			Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.UpdateControls));
+			// If we are currently executing an UpdateControls event then don't publish it again.
+			if (Publisher.EndOfActionManager.CurrentEndOfActionEvent != EventConstants.UpdateControls)
+			{
+				Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.UpdateControls));
+			}
 		}
 
 		private void UpdateControls(object _)

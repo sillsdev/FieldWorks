@@ -763,6 +763,8 @@ namespace SIL.FieldWorks.IText
 			InitBase(mediator, propertyTable, configurationParameters);
 			m_fullyInitialized = true;
 			RefreshPaneBar();
+
+			Subscriber.Subscribe(EventConstants.CreateFirstRecord, CreateFirstRecord);
 		}
 
 		private void OnDispose(object sender, EventArgs e)
@@ -909,6 +911,48 @@ namespace SIL.FieldWorks.IText
 			SaveWorkInProgress();
 		}
 
+		/// <summary>
+		/// If there are no records (the last one was deleted or the filter was turned
+		/// off and there are none), then create an empty record.
+		/// </summary>
+		private void CreateFirstRecord(object argument)
+		{
+			if (IsDisposed)
+				return;
+
+			// If it's not from our clerk, we may be intercepting a message intended for another pane.
+			if (!m_fullyInitialized || RecordNavigationInfo.GetSendingClerk(argument) != Clerk)
+				return;
+
+			var rni = (RecordNavigationInfo)argument;
+			if (rni.SkipShowRecord)
+				return;
+
+			// It's important not to do this if there is a filter, as there's a good chance the new
+			// record doesn't pass the filter and we get into an infinite loop. Also, if the user
+			// is filtering, he probably just wants to see that there are no matching texts, not
+			// make a new one.
+			if (Clerk is InterlinearTextsRecordClerk &&
+				Clerk.CurrentObjectHvo == 0 && !m_fSuppressAutoCreate && Clerk.Filter == null)
+			{
+				// This is needed in SwitchText(0) to avoid LT-12411 when in Info tab.
+				// We'll get a chance to do it later.
+				Clerk.SuppressSaveOnChangeRecord = true;
+				// first clear the views of their knowledge of the previous text.
+				// otherwise they could crash trying to access information that is no longer valid. (LT-10024)
+				SwitchText(0);
+
+				// Presumably because there are none..make one.
+				//
+				// We don't want to force a Save here if we just deleted the last text;
+				// we want to be able to Undo deleting it!
+				var options = new RecordClerk.ListUpdateHelper.ListUpdateHelperOptions();
+				options.SuppressSaveOnChangeRecord = true;
+				using (new RecordClerk.ListUpdateHelper(Clerk, options))
+					((InterlinearTextsRecordClerk)Clerk).AddNewTextNonUndoable();
+			}
+		}
+
 		protected override void ShowRecord()
 		{
 			SaveWorkInProgress();
@@ -921,35 +965,6 @@ namespace SIL.FieldWorks.IText
 				m_bookmarks = new Dictionary<Tuple<string, Guid>, InterAreaBookmark>();
 			}
 
-			// It's important not to do this if there is a filter, as there's a good chance the new
-			// record doesn't pass the filter and we get into an infinite loop. Also, if the user
-			// is filtering, he probably just wants to see that there are no matching texts, not
-			// make a new one.
-			if (Clerk is InterlinearTextsRecordClerk &&
-				Clerk.CurrentObjectHvo == 0 && !m_fSuppressAutoCreate && !Clerk.ShouldNotModifyList
-				&& Clerk.Filter == null)
-			{
-				// This is needed in SwitchText(0) to avoid LT-12411 when in Info tab.
-				// We'll get a chance to do it later.
-				Clerk.SuppressSaveOnChangeRecord = true;
-				// first clear the views of their knowledge of the previous text.
-				// otherwise they could crash trying to access information that is no longer valid. (LT-10024)
-				SwitchText(0);
-
-				// Presumably because there are none..make one.
-				// This is invisible to the user so it should not be undoable; that is particularly
-				// important if the most recent action was to delete the last text, which will
-				// not be undoable if we are now showing 'Undo insert text'.
-				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-				{
-					// We don't want to force a Save here if we just deleted the last text;
-					// we want to be able to Undo deleting it!
-					var options = new RecordClerk.ListUpdateHelper.ListUpdateHelperOptions();
-					options.SuppressSaveOnChangeRecord = true;
-					using (new RecordClerk.ListUpdateHelper(Clerk, options))
-						((InterlinearTextsRecordClerk)Clerk).AddNewTextNonUndoable();
-				});
-			}
 			if (Clerk.CurrentObjectHvo == 0)
 			{
 				SwitchText(0);		// We no longer have a text.

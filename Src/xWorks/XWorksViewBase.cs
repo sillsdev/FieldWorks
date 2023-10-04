@@ -161,7 +161,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (m_clerk != null)
 				{
-					UpdateClerkEditable(m_clerk);
+					if(!m_clerk.IsDisposed)
+						UpdateClerkEditable(m_clerk);
 					return m_clerk;
 				}
 

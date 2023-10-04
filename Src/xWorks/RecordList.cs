@@ -1286,20 +1286,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		/// <summary>
-		/// Return true if some activity is underway that makes it a BAD idea to insert or delete things
-		/// from the list. For example, IText should not insert an object because the list is empty
-		/// WHILE we are processing the delete object.
-		/// </summary>
-		public bool ShouldNotModifyList
-		{
-			get
-			{
-				CheckDisposed();
-				return m_reloadingList || m_deletingObject;
-			}
-		}
-
 		public bool IsEmpty
 		{
 			get

@@ -312,7 +312,7 @@ namespace SIL.FieldWorks.Common.Controls
 					m_hvoOldSel = 0;
 					m_selectedIndex = -1;
 					// Clearing out the list changes the selection, so let everyone know.
-					Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged));
+					Publisher.Publish(new PublisherParameterObject(EventConstants.SelectionChanged));
 					return;
 				}
 				int hvoObjNewSel = GetNewSelectionObject(value);
@@ -400,14 +400,12 @@ namespace SIL.FieldWorks.Common.Controls
 						Focus(); // Note: used to be part of DoSelectAndScroll, but I'm not sure why...
 				}
 				Update();
-				// actual selection changed event only on idle; this makes the browse view more responsive,
-				// especially to arrow keys on auto-repeat.
-				Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.SelectionChanged));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.SelectionChanged));
 			}
 		}
 
 		/// <summary>
-		/// Notification received at the end of an action.
+		/// Notification that could be received at the end of an action or immediatly. Both types of publish are used.
 		/// </summary>
 		private void SelectionChanged(object parameter)
 		{
