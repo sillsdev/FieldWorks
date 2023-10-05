@@ -2874,7 +2874,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// This is called after a link is followed. It allows us to set up the desired filter
 		/// etc. even if the desired tool was already active.
 		/// </summary>
-		public bool FollowLink(object args)
+		public bool FollowLink()
 		{
 			RecordFilter filter = FilterFromLink();
 			if (filter == null)

@@ -349,12 +349,11 @@ namespace SIL.FieldWorks.XWorks
 		/// This is broadcast after a link is followed. It allows us to set up the desired filter
 		/// etc. even if the desired tool was already active.
 		/// </summary>
-		/// <param name="args"></param>
 		/// <returns></returns>
-		private void LinkFollowed(object args)
+		private void LinkFollowed(object _)
 		{
 			SetupLinkScripture();
-			m_browseViewer.FollowLink(args);
+			m_browseViewer.FollowLink();
 		}
 
 

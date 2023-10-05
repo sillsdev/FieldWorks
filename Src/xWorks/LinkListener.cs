@@ -520,14 +520,17 @@ namespace SIL.FieldWorks.XWorks
 						true);
 					m_propertyTable.SetPropertyPersistence("SuspendLoadingRecordUntilOnJumpToRecord", false);
 				}
+
+				// SetToolFromName can result in m_lnkActive being set to null, so keep a local copy. (LT-21643)
+				var localLnkActive = m_lnkActive;
 				m_mediator.SendMessage("SetToolFromName", m_lnkActive.ToolName);
 				// Note: It can be Guid.Empty in cases where it was never set,
 				// or more likely, when the HVO was set to -1.
-				if (m_lnkActive.TargetGuid != Guid.Empty)
+				if (localLnkActive.TargetGuid != Guid.Empty)
 				{
 					LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
-					ICmObject obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_lnkActive.TargetGuid);
-					if (obj is IReversalIndexEntry && m_lnkActive.ToolName == "reversalToolEditComplete")
+					ICmObject obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(localLnkActive.TargetGuid);
+					if (obj is IReversalIndexEntry && localLnkActive.ToolName == "reversalToolEditComplete")
 					{
 						// For the reversal index tool, just getting the tool right isn't enough.  We
 						// also need to be showing the proper index.  (See FWR-1105.)
@@ -541,7 +544,7 @@ namespace SIL.FieldWorks.XWorks
 					jumpToRecordHvo = obj.Hvo;
 				}
 
-				foreach (Property property in m_lnkActive.PropertyTableEntries)
+				foreach (Property property in localLnkActive.PropertyTableEntries)
 				{
 					m_propertyTable.SetProperty(property.name, property.value, true);
 					//TODO: I can't think at the moment of what to do about setting
@@ -573,7 +576,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, jumpToRecordHvo));
 			}
-			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.LinkFollowed, m_lnkActive));
+			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.LinkFollowed));
 
 			return true;	//we handled this.
 		}
