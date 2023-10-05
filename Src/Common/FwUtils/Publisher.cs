@@ -48,7 +48,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 
 			// Check if 'message' contains a prefix that was subscribed to.
-			foreach (KeyValuePair<string, HashSet<Action<string, object>>> entry in _subscriber.PrefixSubscriptions)
+			// Note: ToArray() is important to avoid new entries being added while iterating over the collection.
+			foreach (KeyValuePair<string, HashSet<Action<string, object>>> entry in _subscriber.PrefixSubscriptions.ToArray())
 			{
 				if (message.StartsWith(entry.Key))
 				{
