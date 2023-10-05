@@ -5,6 +5,7 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.LCModel;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.Utils;
 
@@ -83,9 +84,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				{
 					case DialogResult.OK: // Fall through.
 					case DialogResult.Yes:
-						// This is the equivalent functionality, but is deferred processing.
-						// This is done so that the JumpToRecord can be processed last.
-						m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedPOS.Hvo);
+						FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, dlg.SelectedPOS.Hvo));
 						break;
 				}
 			}

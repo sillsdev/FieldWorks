@@ -441,6 +441,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private bool FollowActiveLink(bool suspendLoadingRecord)
 		{
+
+			int? jumpToRecordHvo = null;
 			try
 			{
 				//Debug.Assert(!(m_lnkActive is FwAppArgs), "Beware: This will not handle link requests for other databases/applications." +
@@ -535,10 +537,8 @@ namespace SIL.FieldWorks.XWorks
 							m_propertyTable.SetProperty("ReversalIndexGuid", obj.Owner.Guid.ToString(), true);
 						}
 					}
-					// Allow this to happen after the processing of the tool change above by using the Broadcast
-					// method on the mediator, the SendMessage would process it before the above msg and it would
-					// use the wrong RecordList.  (LT-3260)
-					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", obj.Hvo);
+
+					jumpToRecordHvo = obj.Hvo;
 				}
 
 				foreach (Property property in m_lnkActive.PropertyTableEntries)
@@ -569,6 +569,10 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			}
 
+			if (jumpToRecordHvo != null)
+			{
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, jumpToRecordHvo));
+			}
 			FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.LinkFollowed, m_lnkActive));
 
 			return true;	//we handled this.

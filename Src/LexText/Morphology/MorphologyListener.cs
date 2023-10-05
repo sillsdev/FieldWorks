@@ -436,7 +436,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				dlg.SetDlgInfo(Cache, null, m_mediator, m_propertyTable);
 				if (dlg.ShowDialog() == DialogResult.OK)
-					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedObject.Hvo);
+					FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, dlg.SelectedObject.Hvo));
 			}
 			return true;
 		}

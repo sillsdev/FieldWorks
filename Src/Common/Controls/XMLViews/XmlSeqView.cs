@@ -22,6 +22,7 @@ using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.LCModel.Application;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.Utils;
 using XCore;
 
@@ -150,6 +151,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public XmlSeqView() : base(null)
 		{
 			// TODO: Add any initialization after the InitForm call
+			Subscriber.Subscribe(EventConstants.JumpToRecord, JumpToRecordEvent);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -203,6 +205,7 @@ namespace SIL.FieldWorks.Common.Controls
 					new object[] { cache, sda, flid, publication });
 			}
 			InitXmlViewRootSpec(hvoRoot, flid, xnSpec, useSda);
+			Subscriber.Subscribe(EventConstants.JumpToRecord, JumpToRecordEvent);
 		}
 
 		/// <summary>
@@ -253,6 +256,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.JumpToRecord, JumpToRecordEvent);
 			}
 			m_xmlVc = null;
 			m_mdc = null;
@@ -363,11 +367,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// (because this is the active Control?), so we can see if we
 		/// need to display a failure message.
 		/// </summary>
-		public bool OnJumpToRecord(object argument)
+		private void JumpToRecordEvent(object argument)
 		{
 			CheckDisposed();
 			Mediator.BroadcastMessage("CheckJump", argument);
-			return false; // I don't want to be seen as handling this!
 		}
 
 		/// <summary>

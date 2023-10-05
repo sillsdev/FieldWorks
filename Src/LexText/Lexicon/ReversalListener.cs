@@ -260,7 +260,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				{
 					// Can't Go to a subentry, so we have to go to its main entry.
 					var selEntry = (IReversalIndexEntry) dlg.SelectedObject;
-					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", selEntry.MainEntry.Hvo);
+					FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, selEntry.MainEntry.Hvo));
 				}
 			}
 			return true;

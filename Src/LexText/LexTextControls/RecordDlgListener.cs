@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Diagnostics;
 using System.Windows.Forms;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.Utils;
 using XCore;
@@ -69,7 +70,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (dlg.ShowDialog(Form.ActiveForm) == DialogResult.OK)
 				{
 					IRnGenericRec newRec = dlg.NewRecord;
-					m_mediator.SendMessage("JumpToRecord", newRec.Hvo);
+					FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, newRec.Hvo));
 				}
 			}
 			return true; // We "handled" the message, regardless of what happened.
@@ -104,7 +105,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				Debug.Assert(cache != null);
 				dlg.SetDlgInfo(cache, null, m_mediator, m_propertyTable);
 				if (dlg.ShowDialog() == DialogResult.OK)
-					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedObject.Hvo);
+					FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, dlg.SelectedObject.Hvo));
 			}
 			return true;
 		}

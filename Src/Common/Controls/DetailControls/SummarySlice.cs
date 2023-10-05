@@ -13,6 +13,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -447,7 +448,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (recOwner.Owner is IRnResearchNbk)
 			{
 				// If possible, jump to the newly promoted record.
-				mediator.BroadcastMessageUntilHandled("JumpToRecord", rec.Hvo);
+				Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, rec.Hvo));
 			}
 			return true;
 		}

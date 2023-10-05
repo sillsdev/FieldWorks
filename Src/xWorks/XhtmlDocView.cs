@@ -81,6 +81,7 @@ namespace SIL.FieldWorks.XWorks
 			FwUtils.Subscriber.Subscribe(EventConstants.MasterRefresh, RefreshAllContent);
 			// temporarily unsubscribes from property changes that result in refreshing the view
 			FwUtils.Subscriber.Subscribe(EventConstants.SuppressReloadDuringExport, SuppressRegenerationOnPropChanged);
+			FwUtils.Subscriber.Subscribe(EventConstants.JumpToRecord, JumpToRecordEvent);
 			FwUtils.Subscriber.Subscribe(PropertyConstants.ActiveClerkSelectedObject, ActiveClerkSelectedObject);
 			FwUtils.Subscriber.Subscribe(PropertyConstants.SelectedPublication, SelectedPublicationChanged);
 		}
@@ -90,6 +91,7 @@ namespace SIL.FieldWorks.XWorks
 			FwUtils.Subscriber.Unsubscribe(EventConstants.DictionaryConfigured, RefreshAllContent);
 			FwUtils.Subscriber.Unsubscribe(EventConstants.MasterRefresh, RefreshAllContent);
 			FwUtils.Subscriber.Unsubscribe(EventConstants.SuppressReloadDuringExport, SuppressRegenerationOnPropChanged);
+			FwUtils.Subscriber.Unsubscribe(EventConstants.JumpToRecord, JumpToRecordEvent);
 			FwUtils.Subscriber.Unsubscribe(PropertyConstants.ActiveClerkSelectedObject, ActiveClerkSelectedObject);
 			FwUtils.Subscriber.Unsubscribe(PropertyConstants.SelectedPublication, SelectedPublicationChanged);
 		}
@@ -198,7 +200,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="argument">the hvo of the record</param>
 		/// <returns></returns>
-		public bool OnJumpToRecord(object argument)
+		private void JumpToRecordEvent(object argument)
 		{
 			var hvoTarget = (int)argument;
 			var currControl = m_propertyTable.GetStringProperty("currentContentControl", "");
@@ -213,7 +215,6 @@ namespace SIL.FieldWorks.XWorks
 					GiveSimpleWarning(xrc);
 				}
 			}
-			return false;
 		}
 
 		private void GiveSimpleWarning(DictionaryConfigurationController.ExclusionReasonCode xrc)
@@ -369,7 +370,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					// Jump only if we need to; unnecessary refreshes prevent audio from playing when the user clicks an audio link (LT-19967)
 					if (clerk.JumpToTargetWillChangeIndex(obj.Hvo))
-						clerk.OnJumpToRecord(obj.Hvo);
+						clerk.JumpToRecordEvent(obj.Hvo);
 					else if (element is GeckoAnchorElement)
 						return;
 				}

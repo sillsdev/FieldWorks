@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using SIL.LCModel;
 using XCore;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 
 namespace SIL.FieldWorks.FdoUi
@@ -53,7 +54,7 @@ namespace SIL.FieldWorks.FdoUi
 					case DialogResult.OK: // Fall through.
 					case DialogResult.Yes:
 						ffdUi = new FsFeatDefnUi(dlg.SelectedFeatDefn);
-						mediator.SendMessage("JumpToRecord", dlg.SelectedFeatDefn.Hvo);
+						FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, dlg.SelectedFeatDefn.Hvo));
 						break;
 				}
 			}

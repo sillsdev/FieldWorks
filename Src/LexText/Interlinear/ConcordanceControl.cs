@@ -97,6 +97,8 @@ namespace SIL.FieldWorks.IText
 			}
 			// Load any saved settings.
 			LoadSettings();
+
+			FwUtils.Subscriber.Subscribe(EventConstants.JumpToRecord, JumpToRecordEvent);
 		}
 
 		/// <summary>
@@ -108,6 +110,8 @@ namespace SIL.FieldWorks.IText
 			Debug.WriteLineIf(!disposing, "****************** Missing Dispose() call for " + GetType().Name + ". ******************");
 			if (disposing)
 			{
+				FwUtils.Subscriber.Unsubscribe(EventConstants.JumpToRecord, JumpToRecordEvent);
+
 				if (components != null)
 					components.Dispose();
 				if (m_clerk != null)
@@ -1673,7 +1677,7 @@ namespace SIL.FieldWorks.IText
 
 		#region IXCore related (callable) methods
 
-		public bool OnJumpToRecord(object argument)
+		private void JumpToRecordEvent(object argument)
 		{
 			CheckDisposed();
 			// Check if we're the right tool, and that we have a valid object id.
@@ -1683,10 +1687,10 @@ namespace SIL.FieldWorks.IText
 			m_propertyTable.RemoveProperty("ConcordOn");
 			Debug.Assert(!String.IsNullOrEmpty(toolName) && !String.IsNullOrEmpty(areaName));
 			if (areaName != "textsWords" || toolName != "concordance")
-				return false;
+				return;
 			int hvoTarget = (int)argument;
 			if (!m_cache.ServiceLocator.IsValidObjectId(hvoTarget))
-				return false;
+				return;
 			try
 			{
 				ICmObject target = m_cache.ServiceLocator.GetObject(hvoTarget);
@@ -1740,7 +1744,6 @@ namespace SIL.FieldWorks.IText
 				// indicate that OnJumpToRecord has been handled.
 				m_clerk.SuspendLoadingRecordUntilOnJumpToRecord = false;
 			}
-			return true;
 		}
 
 		#endregion

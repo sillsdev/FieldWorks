@@ -16,6 +16,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -1884,7 +1885,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			HandleInsertCommand(fieldName, className, null, null);
+			int? jumpToRecordHvo = null;
+			HandleInsertCommand(fieldName, className, null, null, ref jumpToRecordHvo);
+
+			if (jumpToRecordHvo != null)
+			{
+				Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, jumpToRecordHvo));
+			}
 		}
 
 		/// <summary>
@@ -1914,7 +1921,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// this class (or a subclass), look for a containing object that is.</param>
 		/// <param name="recomputeVirtual">if non-null, this is a virtual property that should be updated for all
 		/// moved objects and their descendents of the specified class (string has form class.property)</param>
-		public virtual void HandleInsertCommand(string fieldName, string className, string ownerClassName, string recomputeVirtual)
+		/// <param name="jumpToRecordHvo">The hvo of the record to jump to (or null)</param>
+		public virtual void HandleInsertCommand(string fieldName, string className, string ownerClassName, string recomputeVirtual, ref int? jumpToRecordHvo)
 		{
 			CheckDisposed();
 
@@ -1937,7 +1945,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				Hide();
 			// First see whether THIS slice can do it. This helps us insert in the right position for things like
 			// subsenses.
-			if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, this, recomputeVirtual))
+			if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, this, recomputeVirtual, ref jumpToRecordHvo))
 				return;
 			// The previous call may have done the insert, but failed to recognize it due to disposing of the slice
 			// during a PropChanged operation.  See LT-9005.
@@ -1948,7 +1956,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			int index = IndexInContainer;
 			for (int i = index - 1; i >= 0; i--)
 			{
-				if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, ContainingDataTree.Slices[i], recomputeVirtual))
+				if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, ContainingDataTree.Slices[i], recomputeVirtual, ref jumpToRecordHvo))
 					return;
 			}
 
@@ -1958,7 +1966,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				Debug.WriteLine(String.Format("HandleInsertCommand({0}, {1}, {2}, {3}) -- slice = {4}",
 					fieldName, className, ownerClassName ?? "nullOwner", recomputeVirtual, slice));
-				if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, slice, recomputeVirtual))
+				if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, slice, recomputeVirtual, ref jumpToRecordHvo))
 					break;
 			}
 		}
@@ -1968,7 +1976,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// not that it was actually inserted. It may, or may not, have been inserted in this case.
 		/// 'false' means no suitable place was found, so the calling code can try other locations.
 		/// </returns>
-		private bool InsertObjectIfPossible(int newObjectClassId, int ownerClassId, string fieldName, Slice slice, string recomputeVirtual)
+		private bool InsertObjectIfPossible(int newObjectClassId, int ownerClassId, string fieldName, Slice slice, string recomputeVirtual, ref int? jumpToRecordHvo)
 		{
 			if ((ownerClassId > 0 && IsOrInheritsFrom((slice.Object.ClassID), ownerClassId)) // For adding senses using the simple edit mode, no matter where the cursor is.
 				|| slice.Object == Object
@@ -1993,7 +2001,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				else
 				{
-					insertionPosition = slice.InsertObject(flid, newObjectClassId);
+					insertionPosition = slice.InsertObject(flid, newObjectClassId, ref jumpToRecordHvo);
 				}
 				if (insertionPosition < 0)
 					return insertionPosition == -2;		// -2 keeps dlg for adding subPOSes from firing for each slice when cancelled.
@@ -2062,7 +2070,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		/// <returns>-1 if unsuccessful -2 if unsuccessful and no further attempts should be made,
 		/// otherwise, index of new object (0 if collection)</returns>
-		int InsertObject(int flid, int newObjectClassId)
+		private int InsertObject(int flid, int newObjectClassId, ref int? jumpToRecordHvo)
 		{
 			CheckDisposed();
 
@@ -2195,8 +2203,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					else
 					{
 						// If possible, jump to the newly inserted sub item.
-						if (m_mediator.BroadcastMessageUntilHandled("JumpToRecord", uiObj.Object.Hvo))
-							return insertionPosition;
+						jumpToRecordHvo = uiObj.Object.Hvo;
+
 						// If we haven't found a slice...common now, because there's rarely a need to expand anything...
 						// and some slice was added, focus it.
 						foreach (Slice slice in Parent.Controls)

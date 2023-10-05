@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					dlg.GetDialogInfo(out var entry, out _);
 					// No need for a PropChanged here because InsertEntryDlg takes care of that. (LT-3608)
-					m_mediator.SendMessage("JumpToRecord", entry.Hvo);
+					FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, entry.Hvo));
 				}
 			}
 			return true; // We "handled" the message, regardless of what happened.
@@ -144,7 +144,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						LexTextControls.ksEntriesHaveBeenMerged,
 						LexTextControls.ksMergeReport,
 						MessageBoxButtons.OK, MessageBoxIcon.Information);
-					m_mediator.SendMessage("JumpToRecord", survivor.Hvo);
+					FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, survivor.Hvo));
 				}
 			}
 			return true;
@@ -223,7 +223,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				dlg.SetDlgInfo(cache, null, m_mediator, m_propertyTable);
 				dlg.SetHelpTopic("khtpFindLexicalEntry");
 				if (dlg.ShowDialog() == DialogResult.OK)
-					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedObject.Hvo);
+					FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, dlg.SelectedObject.Hvo));
 			}
 			return true;
 		}

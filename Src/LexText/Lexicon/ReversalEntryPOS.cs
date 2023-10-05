@@ -95,7 +95,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 							});
 					// Note: PropChanged should happen on the old owner and the new in the 'Add" method call.
 					// Have to jump to a main PartOfSpeech, as RecordClerk doesn't know anything about subcategories.
-					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", newOwner.MainPossibility.Hvo);
+					FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, newOwner.MainPossibility.Hvo));
 				}
 			}
 
@@ -163,7 +163,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						()=> survivor.MergeObject(currentPOS, false));
 					// Note: PropChanged should happen on the old owner and the new in the 'Add" method call.
 					// Have to jump to a main PartOfSpeech, as RecordClerk doesn't know anything about subcategories.
-					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", survivor.MainPossibility.Hvo);
+					FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, survivor.MainPossibility.Hvo));
 				}
 			}
 

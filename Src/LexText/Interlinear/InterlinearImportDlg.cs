@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.IText
 							var firstNewText = import.FirstNewText;
 							if (firstNewText != null && m_mediator != null)
 							{
-								m_mediator.SendMessage("JumpToRecord", firstNewText.Hvo);
+								FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, firstNewText.Hvo));
 							}
 						}
 						else

@@ -355,6 +355,18 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnDataTreeInsert(object cmd)
 		{
+			int? jumpToRecordHvo = null;
+			bool retVal = DoInsert(cmd, ref jumpToRecordHvo);
+			if (jumpToRecordHvo != null)
+			{
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, jumpToRecordHvo));
+			}
+
+			return retVal;
+		}
+
+		private bool DoInsert(object cmd, ref int? jumpToRecordHvo)
+		{
 			Command command = (Command) cmd;
 			string field = command.GetParameter("field");
 			string className = command.GetParameter("className");
@@ -442,7 +454,7 @@ namespace SIL.FieldWorks.XWorks
 			Logger.WriteEvent(String.Format("Inserting class {1} into field {0} of a {2}.",
 				field, className, ownerClassName ?? "nullOwner"));
 			current.HandleInsertCommand(field, className, ownerClassName,
-				command.GetParameter("recomputeVirtual", null));
+				command.GetParameter("recomputeVirtual", null), ref jumpToRecordHvo);
 
 			Logger.WriteEvent("Done Inserting.");
 			return true;	//we handled this.
@@ -459,8 +471,9 @@ namespace SIL.FieldWorks.XWorks
 			ICmObject obj = originalSlice.Object;
 			object[] key = originalSlice.Key;
 			Type type = originalSlice.GetType();
+			int? jumpToRecordHvo = null;
 
-			if (OnDataTreeInsert(cmd))
+			if (DoInsert(cmd, ref jumpToRecordHvo))
 			{
 				string label;
 				if (cmd is Command)
@@ -487,6 +500,12 @@ namespace SIL.FieldWorks.XWorks
 					}
 				}
 			}
+
+			if (jumpToRecordHvo != null)
+			{
+				FwUtils.Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, jumpToRecordHvo));
+			}
+
 			return true;	//we handled this.
 		}
 

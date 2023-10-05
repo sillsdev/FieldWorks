@@ -253,6 +253,8 @@ namespace SIL.FieldWorks.XWorks
 
 			if (disposing)
 			{
+				FwUtils.Subscriber.Unsubscribe(EventConstants.JumpToRecord, JumpToRecordEvent);
+
 				// Dispose managed resources here.
 				m_list.ListChanged -= OnListChanged;
 				m_list.AboutToReload -= m_list_AboutToReload;
@@ -429,6 +431,8 @@ namespace SIL.FieldWorks.XWorks
 			StoreClerkInPropertyTable(clerkConfiguration);
 
 			SetupDataContext(false);
+
+			FwUtils.Subscriber.Subscribe(EventConstants.JumpToRecord, JumpToRecordEvent);
 		}
 
 		/// <summary>
@@ -1051,7 +1055,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="argument">the hvo of the record</param>
 		/// <returns></returns>
-		public bool OnJumpToRecord(object argument)
+		public void JumpToRecordEvent(object argument)
 		{
 			CheckDisposed();
 
@@ -1099,7 +1103,7 @@ namespace SIL.FieldWorks.XWorks
 						else
 						{
 							// user wants to give up
-							return true;
+							return;
 						}
 					}
 				}
@@ -1114,11 +1118,10 @@ namespace SIL.FieldWorks.XWorks
 						// It may be the wrong clerk, so just bail out.
 						//MessageBox.Show("The list target is no longer available. It may have been deleted.",
 						//	"Target not found", MessageBoxButtons.OK);
-						return false;
+						return;
 					}
 				}
 				JumpToIndex(index);
-				return true;	//we handled this.
 			}
 			finally
 			{

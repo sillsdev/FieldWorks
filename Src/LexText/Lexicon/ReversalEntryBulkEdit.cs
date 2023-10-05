@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 		void SelectNewItem()
 		{
-			Clerk.OnJumpToRecord(m_newItem.Hvo);
+			Clerk.JumpToRecordEvent(m_newItem.Hvo);
 		}
 
 		/// <summary>

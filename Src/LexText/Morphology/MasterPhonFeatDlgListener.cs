@@ -100,12 +100,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				{
 					case DialogResult.OK: // Fall through.
 					case DialogResult.Yes:
-						//m_mediator.SendMessage("JumpToRecord", dlg.SelectedFeatDefn.Hvo);
-						// This is the equivalent functionality, but is deferred processing.
-						// This is done so that the JumpToRecord can be processed last.
-						if (dlg.SelectedFeatDefn != null)
-							m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedFeatDefn.Hvo);
 						Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh, cache.LangProject.PhFeatureSystemOA));
+						if (dlg.SelectedFeatDefn != null)
+						{
+							Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, dlg.SelectedFeatDefn.Hvo));
+						}
+
 						break;
 				}
 			}
