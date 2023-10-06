@@ -51,6 +51,10 @@ namespace SIL.FieldWorks.IText
 
 				base.IsControllingTheRecordTreeBar = value;
 				FwUtils.Subscriber.Subscribe(EventConstants.AddTexts, AddTexts);
+
+				// Reload selected texts if we switched the active clerk,
+				// in case texts were selected or deselected from another view.
+				ReloadIfNeeded();
 			}
 		}
 
