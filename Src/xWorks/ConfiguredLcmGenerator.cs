@@ -217,32 +217,32 @@ namespace SIL.FieldWorks.XWorks
 		/// If it is a Minor Entry, first checks whether the entry should be published as a Minor Entry; then, generates XHTML for each applicable
 		/// Minor Entry configuration node.
 		/// </summary>
-		public static string GenerateXHTMLForEntry(ICmObject entryObj, DictionaryConfigurationModel configuration,
+		public static string GenerateContentForEntry(ICmObject entryObj, DictionaryConfigurationModel configuration,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, int index = -1)
 		{
 			if (IsMainEntry(entryObj, configuration))
-				return GenerateXHTMLForMainEntry(entryObj, configuration.Parts[0], publicationDecorator, settings, index);
+				return GenerateContentForMainEntry(entryObj, configuration.Parts[0], publicationDecorator, settings, index);
 
 			var entry = (ILexEntry)entryObj;
 			return entry.PublishAsMinorEntry
-				? GenerateXHTMLForMinorEntry(entry, configuration, publicationDecorator, settings, index)
+				? GenerateContentForMinorEntry(entry, configuration, publicationDecorator, settings, index)
 				: string.Empty;
 		}
 
-		public static string GenerateXHTMLForMainEntry(ICmObject entry, ConfigurableDictionaryNode configuration,
+		public static string GenerateContentForMainEntry(ICmObject entry, ConfigurableDictionaryNode configuration,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, int index)
 		{
 			if (configuration.DictionaryNodeOptions != null && ((ILexEntry)entry).ComplexFormEntryRefs.Any() && !IsListItemSelectedForExport(configuration, entry))
 				return string.Empty;
-			return GenerateXHTMLForEntry(entry, configuration, publicationDecorator, settings, index);
+			return GenerateContentForEntry(entry, configuration, publicationDecorator, settings, index);
 		}
 
-		private static string GenerateXHTMLForMinorEntry(ICmObject entry, DictionaryConfigurationModel configuration,
+		private static string GenerateContentForMinorEntry(ICmObject entry, DictionaryConfigurationModel configuration,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, int index)
 		{
 			// LT-15232: show minor entries using only the last applicable Minor Entry node (not more than once)
 			var applicablePart = configuration.Parts.Skip(1).LastOrDefault(part => IsListItemSelectedForExport(part, entry));
-			return applicablePart == null ? string.Empty : GenerateXHTMLForEntry(entry, applicablePart, publicationDecorator, settings, index);
+			return applicablePart == null ? string.Empty : GenerateContentForEntry(entry, applicablePart, publicationDecorator, settings, index);
 		}
 
 		/// <summary>
@@ -264,7 +264,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>Generates XHTML for an ICmObject for a specific ConfigurableDictionaryNode</summary>
 		/// <remarks>the configuration node must match the entry type</remarks>
-		internal static string GenerateXHTMLForEntry(ICmObject entry, ConfigurableDictionaryNode configuration,
+		internal static string GenerateContentForEntry(ICmObject entry, ConfigurableDictionaryNode configuration,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, int index = -1)
 		{
 			Guard.AgainstNull(settings, nameof(settings));
@@ -297,7 +297,7 @@ namespace SIL.FieldWorks.XWorks
 
 				var pieces = configuration.ReferencedOrDirectChildren
 					.Select(config =>
-						GenerateXHTMLForFieldByReflection(entry, config, publicationDecorator,
+						GenerateContentForFieldByReflection(entry, config, publicationDecorator,
 							settings))
 					.Where(content => !string.IsNullOrEmpty(content)).ToList();
 				if (pieces.Count == 0)
@@ -346,7 +346,7 @@ namespace SIL.FieldWorks.XWorks
 		/// write out appropriate XHTML.
 		/// </summary>
 		/// <remarks>We use a significant amount of boilerplate code for fields and subfields. Make sure you update both.</remarks>
-		internal static string GenerateXHTMLForFieldByReflection(object field, ConfigurableDictionaryNode config,
+		internal static string GenerateContentForFieldByReflection(object field, ConfigurableDictionaryNode config,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, SenseInfo info = new SenseInfo(),
 			bool fUseReverseSubField = false)
 		{
@@ -359,20 +359,20 @@ namespace SIL.FieldWorks.XWorks
 			object propertyValue = null;
 			if (config.DictionaryNodeOptions is DictionaryNodeGroupingOptions)
 			{
-				return GenerateXHTMLForGroupingNode(field, config, publicationDecorator, settings);
+				return GenerateContentForGroupingNode(field, config, publicationDecorator, settings);
 			}
 			if (config.FieldDescription == "DefinitionOrGloss")
 			{
 				if (field is ILexSense)
 				{
-					return GenerateXHTMLForDefinitionOrGloss(field as ILexSense, config, settings);
+					return GenerateContentForDefOrGloss(field as ILexSense, config, settings);
 				}
 				if (field is ILexEntryRef)
 				{
 					var ret = new StringBuilder();
 					foreach (var sense in (((field as ILexEntryRef).Owner as ILexEntry).AllSenses))
 					{
-						ret.Append(GenerateXHTMLForDefinitionOrGloss(sense, config, settings));
+						ret.Append(GenerateContentForDefOrGloss(sense, config, settings));
 					}
 					return ret.ToString();
 				}
@@ -453,24 +453,24 @@ namespace SIL.FieldWorks.XWorks
 			{
 				case PropertyType.CollectionType:
 					if (!IsCollectionEmpty(propertyValue))
-						return GenerateXHTMLForCollection(propertyValue, config, publicationDecorator, field, settings, info);
+						return GenerateContentForCollection(propertyValue, config, publicationDecorator, field, settings, info);
 					return string.Empty;
 
 				case PropertyType.MoFormType:
-					return GenerateXHTMLForMoForm(propertyValue as IMoForm, config, settings);
+					return GenerateContentForMoForm(propertyValue as IMoForm, config, settings);
 
 				case PropertyType.CmObjectType:
-					return GenerateXHTMLForICmObject(propertyValue as ICmObject, config, settings);
+					return GenerateContentForICmObject(propertyValue as ICmObject, config, settings);
 
 				case PropertyType.CmPictureType:
 					fileProperty = propertyValue as ICmFile;
 					fileOwner = field as ICmObject;
 					return fileProperty != null && fileOwner != null
-						? GenerateXHTMLForPicture(fileProperty, config, fileOwner, settings)
-						: GenerateXHTMLForPictureCaption(propertyValue, config, settings);
+						? GenerateContentForPicture(fileProperty, config, fileOwner, settings)
+						: GenerateContentForPictureCaption(propertyValue, config, settings);
 
 				case PropertyType.CmPossibility:
-					return GenerateXHTMLForPossibility(propertyValue, config, publicationDecorator, settings);
+					return GenerateContentForPossibility(propertyValue, config, publicationDecorator, settings);
 
 				case PropertyType.CmFileType:
 					fileProperty = propertyValue as ICmFile;
@@ -490,30 +490,30 @@ namespace SIL.FieldWorks.XWorks
 						if (fileOwner != null)
 						{
 							return IsVideo(fileProperty.InternalPath)
-								? GenerateXHTMLForVideoFile(fileProperty.ClassName, fileOwner.Guid.ToString(), srcAttr, MovieCamera, settings)
-								: GenerateXHTMLForAudioFile(fileProperty.ClassName, fileOwner.Guid.ToString(), srcAttr, LoudSpeaker, settings);
+								? GenerateContentForVideoFile(fileProperty.ClassName, fileOwner.Guid.ToString(), srcAttr, MovieCamera, settings)
+								: GenerateContentForAudioFile(fileProperty.ClassName, fileOwner.Guid.ToString(), srcAttr, LoudSpeaker, settings);
 						}
 					}
 					return string.Empty;
 			}
-			var bldr = new StringBuilder(GenerateXHTMLForValue(field, propertyValue, config, settings));
+			var bldr = new StringBuilder(GenerateContentForValue(field, propertyValue, config, settings));
 			if (config.ReferencedOrDirectChildren != null)
 			{
 				foreach (var child in config.ReferencedOrDirectChildren)
 				{
-					bldr.Append(GenerateXHTMLForFieldByReflection(propertyValue, child, publicationDecorator, settings));
+					bldr.Append(GenerateContentForFieldByReflection(propertyValue, child, publicationDecorator, settings));
 				}
 			}
 			return bldr.ToString();
 		}
 
-		private static string GenerateXHTMLForGroupingNode(object field, ConfigurableDictionaryNode config,
+		private static string GenerateContentForGroupingNode(object field, ConfigurableDictionaryNode config,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
 			if (config.ReferencedOrDirectChildren != null && config.ReferencedOrDirectChildren.Any(child => child.IsEnabled))
 			{
 				return settings.ContentGenerator.GenerateGroupingNode(field, config, publicationDecorator, settings,
-					(f, c, p, s) => GenerateXHTMLForFieldByReflection(f, c, p, s));
+					(f, c, p, s) => GenerateContentForFieldByReflection(f, c, p, s));
 			}
 			return string.Empty;
 		}
@@ -607,7 +607,7 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		private static string GenerateXHTMLForVideoFile(string className, string mediaId, string srcAttribute, string caption, GeneratorSettings settings)
+		private static string GenerateContentForVideoFile(string className, string mediaId, string srcAttribute, string caption, GeneratorSettings settings)
 		{
 			if (string.IsNullOrEmpty(srcAttribute) && string.IsNullOrEmpty(caption))
 				return string.Empty;
@@ -741,7 +741,7 @@ namespace SIL.FieldWorks.XWorks
 			return parentNodeType.Name;
 		}
 
-		private static string GenerateXHTMLForPossibility(object propertyValue, ConfigurableDictionaryNode config,
+		private static string GenerateContentForPossibility(object propertyValue, ConfigurableDictionaryNode config,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
 			if (config.ReferencedOrDirectChildren == null || !config.ReferencedOrDirectChildren.Any(node => node.IsEnabled))
@@ -749,7 +749,7 @@ namespace SIL.FieldWorks.XWorks
 			var bldr = new StringBuilder();
 			foreach (var child in config.ReferencedOrDirectChildren)
 			{
-				var content = GenerateXHTMLForFieldByReflection(propertyValue, child, publicationDecorator, settings);
+				var content = GenerateContentForFieldByReflection(propertyValue, child, publicationDecorator, settings);
 				bldr.Append(content);
 			}
 			if (bldr.Length > 0)
@@ -757,20 +757,20 @@ namespace SIL.FieldWorks.XWorks
 			return string.Empty;
 		}
 
-		private static string GenerateXHTMLForPictureCaption(object propertyValue, ConfigurableDictionaryNode config, GeneratorSettings settings)
+		private static string GenerateContentForPictureCaption(object propertyValue, ConfigurableDictionaryNode config, GeneratorSettings settings)
 		{
 			// todo: get sense numbers and captions into the same div and get rid of this if else
 			string content;
 			if (config.DictionaryNodeOptions != null)
-				content = GenerateXHTMLForStrings(propertyValue as IMultiString, config, settings);
+				content = GenerateContentForStrings(propertyValue as IMultiString, config, settings);
 			else
-				content = GenerateXHTMLForString(propertyValue as ITsString, config, settings);
+				content = GenerateContentForString(propertyValue as ITsString, config, settings);
 			if (!String.IsNullOrEmpty(content))
 				return settings.ContentGenerator.WriteProcessedObject(true, content, GetClassNameAttributeForConfig(config));
 			return String.Empty;
 		}
 
-		private static string GenerateXHTMLForPicture(ICmFile pictureFile, ConfigurableDictionaryNode config, ICmObject owner,
+		private static string GenerateContentForPicture(ICmFile pictureFile, ConfigurableDictionaryNode config, ICmObject owner,
 			GeneratorSettings settings)
 		{
 			var srcAttribute = GenerateSrcAttributeFromFilePath(pictureFile, settings.UseRelativePaths ? "pictures" : null, settings);
@@ -827,7 +827,7 @@ namespace SIL.FieldWorks.XWorks
 			return settings.UseRelativePaths ? filePath : new Uri(filePath).ToString();
 		}
 
-		private static string GenerateXHTMLForDefinitionOrGloss(ILexSense sense, ConfigurableDictionaryNode config, GeneratorSettings settings)
+		private static string GenerateContentForDefOrGloss(ILexSense sense, ConfigurableDictionaryNode config, GeneratorSettings settings)
 		{
 			var wsOption = config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			if (wsOption == null)
@@ -1257,7 +1257,7 @@ namespace SIL.FieldWorks.XWorks
 			return propInfo;
 		}
 
-		private static string GenerateXHTMLForMoForm(IMoForm moForm, ConfigurableDictionaryNode config, GeneratorSettings settings)
+		private static string GenerateContentForMoForm(IMoForm moForm, ConfigurableDictionaryNode config, GeneratorSettings settings)
 		{
 			// Don't export if there is no such data
 			if (moForm == null)
@@ -1266,13 +1266,13 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new NotImplementedException("Children for MoForm types not yet supported.");
 			}
-			return GenerateXHTMLForStrings(moForm.Form, config, settings, moForm.Owner.Guid);
+			return GenerateContentForStrings(moForm.Form, config, settings, moForm.Owner.Guid);
 		}
 
 		/// <summary>
 		/// This method will generate the XHTML that represents a collection and its contents
 		/// </summary>
-		private static string GenerateXHTMLForCollection(object collectionField, ConfigurableDictionaryNode config,
+		private static string GenerateContentForCollection(object collectionField, ConfigurableDictionaryNode config,
 			DictionaryPublicationDecorator pubDecorator, object collectionOwner, GeneratorSettings settings, SenseInfo info = new SenseInfo())
 		{
 			// To be used for things like shared grammatical info
@@ -1295,7 +1295,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (config.DictionaryNodeOptions is DictionaryNodeSenseOptions)
 			{
-				bldr.Append(GenerateXHTMLForSenses(config, pubDecorator, settings, collection, info, ref sharedCollectionInfo));
+				bldr.Append(GenerateContentForSenses(config, pubDecorator, settings, collection, info, ref sharedCollectionInfo));
 			}
 			else
 			{
@@ -1303,11 +1303,11 @@ namespace SIL.FieldWorks.XWorks
 				ConfigurableDictionaryNode lexEntryTypeNode;
 				if (IsVariantEntryType(config, out lexEntryTypeNode))
 				{
-					bldr.Append(GenerateXHTMLForILexEntryRefCollection(config, collection, cmOwner, pubDecorator, settings, lexEntryTypeNode, false));
+					bldr.Append(GenerateContentForEntryRefCollection(config, collection, cmOwner, pubDecorator, settings, lexEntryTypeNode, false));
 				}
 				else if (IsComplexEntryType(config, out lexEntryTypeNode))
 				{
-					bldr.Append(GenerateXHTMLForILexEntryRefCollection(config, collection, cmOwner, pubDecorator, settings, lexEntryTypeNode, true));
+					bldr.Append(GenerateContentForEntryRefCollection(config, collection, cmOwner, pubDecorator, settings, lexEntryTypeNode, true));
 				}
 				else if (IsPrimaryEntryReference(config, out lexEntryTypeNode))
 				{
@@ -1319,14 +1319,14 @@ namespace SIL.FieldWorks.XWorks
 						&& lexEntryTypeNode.ReferencedOrDirectChildren.Any(y => y.IsEnabled))
 					{
 						Debug.Assert(config.DictionaryNodeOptions == null,
-							"double calls to GenerateXHTMLForILexEntryRefsByType don't play nicely with ListOptions. Everything will be generated twice (if it doesn't crash)");
+							"double calls to GenerateContentForLexEntryRefsByType don't play nicely with ListOptions. Everything will be generated twice (if it doesn't crash)");
 						// Display typeless refs
 						foreach (var entry in lerCollection.Where(item => !item.ComplexEntryTypesRS.Any() && !item.VariantEntryTypesRS.Any()))
 							bldr.Append(GenerateCollectionItemContent(config, pubDecorator, entry, collectionOwner, settings, lexEntryTypeNode));
 						// Display refs of each type
-						GenerateXHTMLForILexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, bldr, lexEntryTypeNode,
+						GenerateContentForLexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, bldr, lexEntryTypeNode,
 							true); // complex
-						GenerateXHTMLForILexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, bldr, lexEntryTypeNode,
+						GenerateContentForLexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, bldr, lexEntryTypeNode,
 							false); // variants
 					}
 					else
@@ -1338,11 +1338,11 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else if (config.FieldDescription.StartsWith("Subentries"))
 				{
-					GenerateXHTMLForSubentries(config, collection, cmOwner, pubDecorator, settings, bldr);
+					GenerateContentForSubentries(config, collection, cmOwner, pubDecorator, settings, bldr);
 				}
 				else if (IsLexReferenceCollection(config))
 				{
-					GenerateXHTMLForILexReferenceCollection(config, collection.Cast<ILexReference>(), cmOwner, pubDecorator, settings, bldr);
+					GenerateContentForLexRefCollection(config, collection.Cast<ILexReference>(), cmOwner, pubDecorator, settings, bldr);
 				}
 				else
 				{
@@ -1418,7 +1418,7 @@ namespace SIL.FieldWorks.XWorks
 			return false;
 		}
 
-		private static string GenerateXHTMLForILexEntryRefCollection(ConfigurableDictionaryNode config, IEnumerable collection, ICmObject collectionOwner,
+		private static string GenerateContentForEntryRefCollection(ConfigurableDictionaryNode config, IEnumerable collection, ICmObject collectionOwner,
 			DictionaryPublicationDecorator pubDecorator, GeneratorSettings settings, ConfigurableDictionaryNode typeNode, bool isComplex)
 		{
 			var bldr = new StringBuilder();
@@ -1441,7 +1441,7 @@ namespace SIL.FieldWorks.XWorks
 				foreach (var entry in lerCollection.Where(item => !item.ComplexEntryTypesRS.Any() && !item.VariantEntryTypesRS.Any()))
 					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, entry, collectionOwner, settings, typeNode));
 				// Display refs of each type
-				GenerateXHTMLForILexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, bldr, typeNode, isComplex);
+				GenerateContentForLexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, bldr, typeNode, isComplex);
 			}
 			else
 			{
@@ -1452,7 +1452,7 @@ namespace SIL.FieldWorks.XWorks
 			return bldr.ToString();
 		}
 
-		private static void GenerateXHTMLForILexEntryRefsByType(ConfigurableDictionaryNode config, List<ILexEntryRef> lerCollection, object collectionOwner, DictionaryPublicationDecorator pubDecorator,
+		private static void GenerateContentForLexEntryRefsByType(ConfigurableDictionaryNode config, List<ILexEntryRef> lerCollection, object collectionOwner, DictionaryPublicationDecorator pubDecorator,
 			GeneratorSettings settings, StringBuilder bldr, ConfigurableDictionaryNode typeNode, bool isComplex)
 		{
 			var lexEntryTypes = isComplex
@@ -1496,7 +1496,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static void GenerateXHTMLForSubentries(ConfigurableDictionaryNode config, IEnumerable collection, ICmObject collectionOwner,
+		private static void GenerateContentForSubentries(ConfigurableDictionaryNode config, IEnumerable collection, ICmObject collectionOwner,
 			DictionaryPublicationDecorator pubDecorator, GeneratorSettings settings, StringBuilder bldr)
 		{
 			var listOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
@@ -1576,7 +1576,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// This method will generate the XHTML that represents a senses collection and its contents
 		/// </summary>
-		private static string GenerateXHTMLForSenses(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
+		private static string GenerateContentForSenses(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
 			GeneratorSettings settings, IEnumerable senseCollection, SenseInfo info, ref string sharedGramInfo)
 		{
 			// Check whether all the senses have been excluded from publication.  See https://jira.sil.org/browse/LT-15697.
@@ -1669,7 +1669,7 @@ namespace SIL.FieldWorks.XWorks
 		private static string InsertGramInfoBeforeSenses(ILexSense item, ConfigurableDictionaryNode gramInfoNode,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
-			var content = GenerateXHTMLForFieldByReflection(item, gramInfoNode, publicationDecorator, settings);
+			var content = GenerateContentForFieldByReflection(item, gramInfoNode, publicationDecorator, settings);
 			if (string.IsNullOrEmpty(content))
 				return string.Empty;
 			return settings.ContentGenerator.GenerateGramInfoBeforeSensesContent(content);
@@ -1768,7 +1768,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (child.FieldDescription != "MorphoSyntaxAnalysisRA" || !isSameGrammaticalInfo)
 					{
-						bldr.Append(GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings, info));
+						bldr.Append(GenerateContentForFieldByReflection(item, child, publicationDecorator, settings, info));
 					}
 				}
 			}
@@ -1798,7 +1798,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (child.FieldDescription == "PictureFileRA")
 					{
-						var content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
+						var content = GenerateContentForFieldByReflection(item, child, publicationDecorator, settings);
 						contentGenerator.WriteProcessedContents(writer, content);
 						break;
 					}
@@ -1812,7 +1812,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (child.FieldDescription != "PictureFileRA")
 					{
-						var content = GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings);
+						var content = GenerateContentForFieldByReflection(item, child, publicationDecorator, settings);
 						captionBldr.Append(content);
 					}
 				}
@@ -1831,7 +1831,7 @@ namespace SIL.FieldWorks.XWorks
 			object item, object collectionOwner, GeneratorSettings settings, ConfigurableDictionaryNode factoredTypeField = null)
 		{
 			if (item is IMultiStringAccessor)
-				return GenerateXHTMLForStrings((IMultiStringAccessor)item, config, settings);
+				return GenerateContentForStrings((IMultiStringAccessor)item, config, settings);
 			if ((config.DictionaryNodeOptions is DictionaryNodeListOptions && !IsListItemSelectedForExport(config, item, collectionOwner))
 				|| config.ReferencedOrDirectChildren == null)
 				return string.Empty;
@@ -1844,7 +1844,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					bldr.Append(child.FieldDescription == LookupComplexEntryType
 						? GenerateSubentryTypeChild(child, publicationDecorator, (ILexEntry)item, collectionOwner, settings)
-						: GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings));
+						: GenerateContentForFieldByReflection(item, child, publicationDecorator, settings));
 				}
 			}
 			else if (config.DictionaryNodeOptions is DictionaryNodePictureOptions)
@@ -1856,7 +1856,7 @@ namespace SIL.FieldWorks.XWorks
 				// If a type field has been factored out and generated then skip generating it here
 				foreach (var child in config.ReferencedOrDirectChildren.Where(child => !ReferenceEquals(child, factoredTypeField)))
 				{
-					bldr.Append(GenerateXHTMLForFieldByReflection(item, child, publicationDecorator, settings));
+					bldr.Append(GenerateContentForFieldByReflection(item, child, publicationDecorator, settings));
 				}
 			}
 			if (bldr.Length == 0)
@@ -1866,7 +1866,7 @@ namespace SIL.FieldWorks.XWorks
 			return settings.ContentGenerator.AddCollectionItem(IsBlockProperty(config), GetCollectionItemClassAttribute(config), collectionContent);
 		}
 
-		private static void GenerateXHTMLForILexReferenceCollection(ConfigurableDictionaryNode config,
+		private static void GenerateContentForLexRefCollection(ConfigurableDictionaryNode config,
 			IEnumerable<ILexReference> collection, ICmObject cmOwner, DictionaryPublicationDecorator pubDecorator,
 			GeneratorSettings settings, StringBuilder bldr)
 		{
@@ -2002,12 +2002,12 @@ namespace SIL.FieldWorks.XWorks
 									child.CSSClassNameOverride = CssGenerator.GetClassAttributeForConfig(child);
 								// Flag to prepend "Reverse" to child.SubField when it is used.
 								settings.ContentGenerator.WriteProcessedContents(xw,
-									GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings, fUseReverseSubField: true));
+									GenerateContentForFieldByReflection(reference, child, publicationDecorator, settings, fUseReverseSubField: true));
 							}
 							else
 							{
 								settings.ContentGenerator.WriteProcessedContents(xw,
-									GenerateXHTMLForFieldByReflection(reference, child, publicationDecorator, settings));
+									GenerateContentForFieldByReflection(reference, child, publicationDecorator, settings));
 							}
 							break;
 						default:
@@ -2029,7 +2029,7 @@ namespace SIL.FieldWorks.XWorks
 			var complexEntryRef = EntryRefForSubentry(subEntry, mainEntryOrSense);
 			return complexEntryRef == null
 				? string.Empty
-				: GenerateXHTMLForCollection(complexEntryRef.ComplexEntryTypesRS, config, publicationDecorator, subEntry, settings);
+				: GenerateContentForCollection(complexEntryRef.ComplexEntryTypesRS, config, publicationDecorator, subEntry, settings);
 		}
 
 		private static ILexEntryRef EntryRefForSubentry(ILexEntry subEntry, object mainEntryOrSense)
@@ -2105,7 +2105,7 @@ namespace SIL.FieldWorks.XWorks
 			return roman;
 		}
 
-		private static string GenerateXHTMLForICmObject(ICmObject propertyValue, ConfigurableDictionaryNode config, GeneratorSettings settings)
+		private static string GenerateContentForICmObject(ICmObject propertyValue, ConfigurableDictionaryNode config, GeneratorSettings settings)
 		{
 			// Don't export if there is no such data
 			if (propertyValue == null || config.ReferencedOrDirectChildren == null || !config.ReferencedOrDirectChildren.Any(node => node.IsEnabled))
@@ -2113,7 +2113,7 @@ namespace SIL.FieldWorks.XWorks
 			var bldr = new StringBuilder();
 			foreach (var child in config.ReferencedOrDirectChildren)
 			{
-				var content = GenerateXHTMLForFieldByReflection(propertyValue, child, null, settings);
+				var content = GenerateContentForFieldByReflection(propertyValue, child, null, settings);
 				bldr.Append(content);
 			}
 			if (bldr.Length > 0)
@@ -2293,7 +2293,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="propertyValue">data to generate xhtml for</param>
 		/// <param name="config"></param>
 		/// <param name="settings"></param>
-		private static string GenerateXHTMLForValue(object field, object propertyValue, ConfigurableDictionaryNode config, GeneratorSettings settings)
+		private static string GenerateContentForValue(object field, object propertyValue, ConfigurableDictionaryNode config, GeneratorSettings settings)
 		{
 			// If we're working with a headword, either for this entry or another one (Variant or Complex Form, etc.), store that entry's GUID
 			// so we can generate a link to the main or minor entry for this headword.
@@ -2340,7 +2340,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (!TsStringUtils.IsNullOrEmpty((ITsString)propertyValue))
 				{
-					var content = GenerateXHTMLForString((ITsString)propertyValue, config, settings, guid);
+					var content = GenerateContentForString((ITsString)propertyValue, config, settings, guid);
 					if (!string.IsNullOrEmpty(content))
 						return settings.ContentGenerator.WriteProcessedCollection(false, content, GetClassNameAttributeForConfig(config));
 				}
@@ -2348,7 +2348,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (propertyValue is IMultiStringAccessor)
 			{
-				return GenerateXHTMLForStrings((IMultiStringAccessor)propertyValue, config, settings, guid);
+				return GenerateContentForStrings((IMultiStringAccessor)propertyValue, config, settings, guid);
 			}
 			else if (propertyValue is int)
 			{
@@ -2365,8 +2365,8 @@ namespace SIL.FieldWorks.XWorks
 			else if (propertyValue is IMultiAccessorBase)
 			{
 				if (field is ISenseOrEntry)
-					return GenerateXHTMLForVirtualStrings(((ISenseOrEntry)field).Item, (IMultiAccessorBase)propertyValue, config, settings, guid);
-				return GenerateXHTMLForVirtualStrings((ICmObject)field, (IMultiAccessorBase)propertyValue, config, settings, guid);
+					return GenerateContentForVirtualStrings(((ISenseOrEntry)field).Item, (IMultiAccessorBase)propertyValue, config, settings, guid);
+				return GenerateContentForVirtualStrings((ICmObject)field, (IMultiAccessorBase)propertyValue, config, settings, guid);
 			}
 			else if (propertyValue is String)
 			{
@@ -2380,7 +2380,7 @@ namespace SIL.FieldWorks.XWorks
 					IStTxtPara stp = para as IStTxtPara;
 					if (stp == null)
 						continue;
-					var contentPara = GenerateXHTMLForString(stp.Contents, config, settings, guid);
+					var contentPara = GenerateContentForString(stp.Contents, config, settings, guid);
 					if (!String.IsNullOrEmpty(contentPara))
 					{
 						bldr.Append(contentPara);
@@ -2419,17 +2419,17 @@ namespace SIL.FieldWorks.XWorks
 			return String.Empty;
 		}
 
-		private static string GenerateXHTMLForStrings(IMultiStringAccessor multiStringAccessor, ConfigurableDictionaryNode config,
+		private static string GenerateContentForStrings(IMultiStringAccessor multiStringAccessor, ConfigurableDictionaryNode config,
 			GeneratorSettings settings)
 		{
-			return GenerateXHTMLForStrings(multiStringAccessor, config, settings, Guid.Empty);
+			return GenerateContentForStrings(multiStringAccessor, config, settings, Guid.Empty);
 		}
 
 		/// <summary>
 		/// This method will generate an XHTML span with a string for each selected writing system in the
 		/// DictionaryWritingSystemOptions of the configuration that also has data in the given IMultiStringAccessor
 		/// </summary>
-		private static string GenerateXHTMLForStrings(IMultiStringAccessor multiStringAccessor, ConfigurableDictionaryNode config,
+		private static string GenerateContentForStrings(IMultiStringAccessor multiStringAccessor, ConfigurableDictionaryNode config,
 			GeneratorSettings settings, Guid guid)
 		{
 			var wsOptions = config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
@@ -2484,7 +2484,7 @@ namespace SIL.FieldWorks.XWorks
 		/// This method will generate an XHTML span with a string for each selected writing system in the
 		/// DictionaryWritingSystemOptions of the configuration that also has data in the given IMultiAccessorBase
 		/// </summary>
-		private static string GenerateXHTMLForVirtualStrings(ICmObject owningObject, IMultiAccessorBase multiStringAccessor,
+		private static string GenerateContentForVirtualStrings(ICmObject owningObject, IMultiAccessorBase multiStringAccessor,
 																			ConfigurableDictionaryNode config, GeneratorSettings settings, Guid guid)
 		{
 			var wsOptions = config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
@@ -2530,19 +2530,19 @@ namespace SIL.FieldWorks.XWorks
 				return String.Empty;
 			}
 			var wsName = settings.Cache.WritingSystemFactory.get_EngineOrNull(wsId).Id;
-			var content = GenerateXHTMLForString(requestedString, config, settings, guid, wsName);
+			var content = GenerateContentForString(requestedString, config, settings, guid, wsName);
 			if (String.IsNullOrEmpty(content))
 				return String.Empty;
 			return settings.ContentGenerator.GenerateWsPrefixWithString(settings, wsOptions.DisplayWritingSystemAbbreviations, wsId, content);
 		}
 
-		private static string GenerateXHTMLForString(ITsString fieldValue, ConfigurableDictionaryNode config,
+		private static string GenerateContentForString(ITsString fieldValue, ConfigurableDictionaryNode config,
 			GeneratorSettings settings, string writingSystem = null)
 		{
-			return GenerateXHTMLForString(fieldValue, config, settings, Guid.Empty, writingSystem);
+			return GenerateContentForString(fieldValue, config, settings, Guid.Empty, writingSystem);
 		}
 
-		private static string GenerateXHTMLForString(ITsString fieldValue, ConfigurableDictionaryNode config,
+		private static string GenerateContentForString(ITsString fieldValue, ConfigurableDictionaryNode config,
 			GeneratorSettings settings, Guid linkTarget, string writingSystem = null)
 		{
 			if (TsStringUtils.IsNullOrEmpty(fieldValue))
@@ -2554,7 +2554,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					var audioId = fieldText.Substring(0, fieldText.IndexOf(".", StringComparison.Ordinal));
 					var srcAttr = GenerateSrcAttributeForMediaFromFilePath(fieldText, "AudioVisual", settings);
-					var fileContent = GenerateXHTMLForAudioFile(writingSystem, audioId, srcAttr, string.Empty, settings);
+					var fileContent = GenerateContentForAudioFile(writingSystem, audioId, srcAttr, string.Empty, settings);
 					var content = GenerateAudioWsContent(writingSystem, linkTarget, fileContent, settings);
 					if (!string.IsNullOrEmpty(content))
 						return settings.ContentGenerator.WriteProcessedObject(false, content, null);
@@ -2704,7 +2704,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="srcAttribute">Source location path for audio file</param>
 		/// <param name="audioIcon">Inner text for hyperlink (unicode icon for audio)</param>
 		/// <param name="settings"/>
-		private static string GenerateXHTMLForAudioFile(string classname,
+		private static string GenerateContentForAudioFile(string classname,
 			string audioId, string srcAttribute, string audioIcon, GeneratorSettings settings)
 		{
 			if (string.IsNullOrEmpty(audioId) && string.IsNullOrEmpty(srcAttribute) && string.IsNullOrEmpty(audioIcon))
@@ -2805,7 +2805,7 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateTableTitle(ITsString title, IFragmentWriter writer,
 			ConfigurableDictionaryNode config, GeneratorSettings settings, string writingSystem)
 		{
-			settings.ContentGenerator.AddTableTitle(writer, GenerateXHTMLForString(title, config, settings, writingSystem));
+			settings.ContentGenerator.AddTableTitle(writer, GenerateContentForString(title, config, settings, writingSystem));
 		}
 
 		/// <remarks>
@@ -2847,7 +2847,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var contentsGroup = cell.Groups["content"];
 				var cellLim = contentsGroup.Index + contentsGroup.Length;
-				var contentXHTML = GenerateXHTMLForString(rowUSFM.GetSubstring(contentsGroup.Index, cellLim), config, settings, writingSystem);
+				var contentXHTML = GenerateContentForString(rowUSFM.GetSubstring(contentsGroup.Index, cellLim), config, settings, writingSystem);
 				var alignment = HorizontalAlign.NotSet;
 				if (cell.Groups["align"].Success)
 				{
@@ -3001,6 +3001,7 @@ namespace SIL.FieldWorks.XWorks
 		public class GeneratorSettings
 		{
 			public ILcmContentGenerator ContentGenerator = new LcmXhtmlGenerator();
+//			public ILcmStylesGenerator StylesGenerator = new CssGenerator();
 			public LcmCache Cache { get; }
 			public ReadOnlyPropertyTable PropertyTable { get; }
 			public bool UseRelativePaths { get; }
