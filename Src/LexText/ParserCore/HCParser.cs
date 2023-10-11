@@ -12,8 +12,9 @@ using System.Xml;
 using System.Xml.Linq;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
-using SIL.Machine.Morphology.HermitCrab;
 using SIL.Machine.Annotations;
+using SIL.Machine.Morphology.HermitCrab;
+using SIL.Machine.Morphology.HermitCrab.MorphologicalRules;
 using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser
@@ -279,6 +280,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private bool GetMorphs(Word ws, out List<MorphInfo> result)
 		{
 			var morphs = new Dictionary<Morpheme, MorphInfo>();
+
+			var aprCircumfixes = new List<int>();
+			bool isSuffixPortionOfAprCircumfix = false;
+
 			result = new List<MorphInfo>();
 			foreach (Annotation<ShapeNode> morph in ws.Morphs)
 			{
@@ -286,11 +291,42 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				var formID = (int?) allomorph.Properties[FormID] ?? 0;
 				if (formID == 0)
 					continue;
+
+				isSuffixPortionOfAprCircumfix = false;
 				var formID2 = (int?) allomorph.Properties[FormID2] ?? 0;
+				if (formID2 == 0 && allomorph is AffixProcessAllomorph)
+				{
+					// Per the Leipzig glossing rules (https://www.eva.mpg.de/lingua/resources/glossing-rules.php),
+					// circumfixes should appear both before and after the material they attach to.
+					// HC does not have an overt marker for a circumfix when it is an affix processing rule (aka APR).
+					// The following code determines when an APR is marked as a circumfix in FLEx and ensures the
+					// two instances of it as a morph are included in the result at the correct places.
+					// This is a fix for https://jira.sil.org/browse/LT-21447
+					IMoForm circumForm;
+					if (!m_cache.ServiceLocator.GetInstance<IMoFormRepository>().TryGetObject(formID, out circumForm))
+					{
+						result = null;
+						return false;
+					}
+					if (circumForm.MorphTypeRA.Guid == MoMorphTypeTags.kguidMorphCircumfix)
+					{
+						if (aprCircumfixes.Contains(formID))
+						{
+							isSuffixPortionOfAprCircumfix = true;
+						}
+						else
+						{
+							// Remember this allomorph as an APR that is a circumfix
+							aprCircumfixes.Add(formID);
+						}
+					}
+				}
+
+
 				string formStr = ws.Shape.GetNodes(morph.Range).ToString(ws.Stratum.CharacterDefinitionTable, false);
 				int curFormID;
 				MorphInfo morphInfo;
-				if (!morphs.TryGetValue(allomorph.Morpheme, out morphInfo))
+				if (!morphs.TryGetValue(allomorph.Morpheme, out morphInfo) || isSuffixPortionOfAprCircumfix)
 				{
 					curFormID = formID;
 				}
