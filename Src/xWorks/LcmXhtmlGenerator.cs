@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.XWorks
 
 					var generateEntryAction = new Action(() =>
 					{
-						var entryContent = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, configuration, publicationDecorator, settings);
+						var entryContent = ConfiguredLcmGenerator.GenerateContentForEntry(entry, configuration, publicationDecorator, settings);
 						entryStringBuilder.Append(entryContent);
 						if (progress != null)
 							progress.Position++;
@@ -226,7 +226,7 @@ namespace SIL.FieldWorks.XWorks
 				var exportSettings = new ConfiguredLcmGenerator.GeneratorSettings(readOnlyPropTable.GetValue<LcmCache>("cache"), readOnlyPropTable, false, false, null,
 					ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropTable, configuration));
 				GenerateOpeningHtml(previewCssPath, custCssPath, exportSettings, writer);
-				var content = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, configuration, pubDecorator, exportSettings);
+				var content = ConfiguredLcmGenerator.GenerateContentForEntry(entry, configuration, pubDecorator, exportSettings);
 				writer.WriteRaw(content);
 				GenerateClosingHtml(writer);
 				writer.Flush();
@@ -360,7 +360,7 @@ namespace SIL.FieldWorks.XWorks
 				var firstEntry = Math.Max(0, oldCurrentPageRange.Item1 - entriesToAddCount);
 				for (var i = firstEntry; i < oldCurrentPageRange.Item1; ++i)
 				{
-					entries.Add(ConfiguredLcmGenerator.GenerateXHTMLForEntry(settings.Cache.ServiceLocator.ObjectRepository.GetObject(entryHvos[i]),
+					entries.Add(ConfiguredLcmGenerator.GenerateContentForEntry(settings.Cache.ServiceLocator.ObjectRepository.GetObject(entryHvos[i]),
 						currentConfig, publicationDecorator, settings));
 				}
 			}
@@ -369,7 +369,7 @@ namespace SIL.FieldWorks.XWorks
 				var lastEntry = Math.Min(oldAdjacentPageRange.Item2, oldCurrentPageRange.Item2 + entriesToAddCount);
 				for (var i = oldCurrentPageRange.Item2 + 1; i <= lastEntry; ++i)
 				{
-					entries.Add(ConfiguredLcmGenerator.GenerateXHTMLForEntry(settings.Cache.ServiceLocator.ObjectRepository.GetObject(entryHvos[i]),
+					entries.Add(ConfiguredLcmGenerator.GenerateContentForEntry(settings.Cache.ServiceLocator.ObjectRepository.GetObject(entryHvos[i]),
 						currentConfig, publicationDecorator, settings));
 				}
 			}

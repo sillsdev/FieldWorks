@@ -546,10 +546,10 @@ namespace SIL.FieldWorks.XWorks
 
 					var generateEntryAction = new Action(() =>
 					{
-						var entryContent = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, configuration,
+						var entryContent = ConfiguredLcmGenerator.GenerateContentForEntry(entry, configuration,
 							publicationDecorator, settings, index);
 						entryStringBuilder.Append(entryContent);
-						var displayXhtmlContent = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, configuration,
+						var displayXhtmlContent = ConfiguredLcmGenerator.GenerateContentForEntry(entry, configuration,
 							publicationDecorator, displayXhtmlSettings, index);
 						displayXhtmlBuilder.Append(displayXhtmlContent);
 						if (progress != null)
