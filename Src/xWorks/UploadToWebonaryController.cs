@@ -226,6 +226,12 @@ namespace SIL.FieldWorks.XWorks
 			{
 				siteName = siteName.Substring(domainIndex + domainSlash.Length);
 			}
+
+			// Remove a trailing '/'
+			if (siteName.EndsWith("/"))
+			{
+				siteName = siteName.Substring(0, siteName.Length - 1);
+			}
 			return siteName;
 		}
 
