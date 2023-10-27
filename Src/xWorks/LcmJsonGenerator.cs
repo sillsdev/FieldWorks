@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.XWorks
 			return $"{content}";
 		}
 
-		public string GenerateGroupingNode(object field, ConfigurableDictionaryNode config,
+		public string GenerateGroupingNode(object field, string className, ConfigurableDictionaryNode config,
 			DictionaryPublicationDecorator publicationDecorator, ConfiguredLcmGenerator.GeneratorSettings settings,
 			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, string> childContentGenerator)
 		{

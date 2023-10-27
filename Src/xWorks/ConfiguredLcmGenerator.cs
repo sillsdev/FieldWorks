@@ -262,7 +262,7 @@ namespace SIL.FieldWorks.XWorks
 			return lexEntry.EntryRefsOS.Any(ler => ler.RefType == LexEntryRefTags.krtComplexForm);
 		}
 
-		/// <summary>Generates XHTML for an ICmObject for a specific ConfigurableDictionaryNode</summary>
+		/// <summary>Generates content with the GeneratorSettings.ContentGenerator for an ICmObject for a specific ConfigurableDictionaryNode</summary>
 		/// <remarks>the configuration node must match the entry type</remarks>
 		internal static string GenerateContentForEntry(ICmObject entry, ConfigurableDictionaryNode configuration,
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, int index = -1)
@@ -343,7 +343,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// This method will use reflection to pull data out of the given object based on the given configuration and
-		/// write out appropriate XHTML.
+		/// write out appropriate content using the settings parameter.
 		/// </summary>
 		/// <remarks>We use a significant amount of boilerplate code for fields and subfields. Make sure you update both.</remarks>
 		internal static string GenerateContentForFieldByReflection(object field, ConfigurableDictionaryNode config,
@@ -379,6 +379,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (config.IsCustomField && config.SubField == null)
 			{
+				// REVIEW: We have overloaded terms here, this is a C# class not a css class, consider a different name
 				var customFieldOwnerClassName = GetClassNameForCustomFieldParent(config, settings.Cache);
 				if (!GetPropValueForCustomField(field, config, cache, customFieldOwnerClassName, config.FieldDescription, ref propertyValue))
 					return string.Empty;
@@ -452,10 +453,7 @@ namespace SIL.FieldWorks.XWorks
 			switch (typeForNode)
 			{
 				case PropertyType.CollectionType:
-					if (!IsCollectionEmpty(propertyValue))
-						return GenerateContentForCollection(propertyValue, config, publicationDecorator, field, settings, info);
-					return string.Empty;
-
+					return !IsCollectionEmpty(propertyValue) ? GenerateContentForCollection(propertyValue, config, publicationDecorator, field, settings, info) : string.Empty;
 				case PropertyType.MoFormType:
 					return GenerateContentForMoForm(propertyValue as IMoForm, config, settings);
 
@@ -512,7 +510,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (config.ReferencedOrDirectChildren != null && config.ReferencedOrDirectChildren.Any(child => child.IsEnabled))
 			{
-				return settings.ContentGenerator.GenerateGroupingNode(field, config, publicationDecorator, settings,
+				var className = settings.StylesGenerator.AddStyles(config).Trim('.');
+				return settings.ContentGenerator.GenerateGroupingNode(field, className, config, publicationDecorator, settings,
 					(f, c, p, s) => GenerateContentForFieldByReflection(f, c, p, s));
 			}
 			return string.Empty;
@@ -752,8 +751,12 @@ namespace SIL.FieldWorks.XWorks
 				var content = GenerateContentForFieldByReflection(propertyValue, child, publicationDecorator, settings);
 				bldr.Append(content);
 			}
+
 			if (bldr.Length > 0)
-				return settings.ContentGenerator.WriteProcessedObject(false, bldr.ToString(), GetClassNameAttributeForConfig(config));
+			{
+				var className = settings.StylesGenerator.AddStyles(config).Trim('.');
+				return settings.ContentGenerator.WriteProcessedObject(false, bldr.ToString(), className);
+			}
 			return string.Empty;
 		}
 
@@ -765,22 +768,27 @@ namespace SIL.FieldWorks.XWorks
 				content = GenerateContentForStrings(propertyValue as IMultiString, config, settings);
 			else
 				content = GenerateContentForString(propertyValue as ITsString, config, settings);
-			if (!String.IsNullOrEmpty(content))
-				return settings.ContentGenerator.WriteProcessedObject(true, content, GetClassNameAttributeForConfig(config));
-			return String.Empty;
+			if (!string.IsNullOrEmpty(content))
+			{
+				var className = settings.StylesGenerator.AddStyles(config).Trim('.');
+				return settings.ContentGenerator.WriteProcessedObject(true, content, className);
+			}
+			return string.Empty;
 		}
 
 		private static string GenerateContentForPicture(ICmFile pictureFile, ConfigurableDictionaryNode config, ICmObject owner,
 			GeneratorSettings settings)
 		{
 			var srcAttribute = GenerateSrcAttributeFromFilePath(pictureFile, settings.UseRelativePaths ? "pictures" : null, settings);
-			if (!String.IsNullOrEmpty(srcAttribute))
+			if (!string.IsNullOrEmpty(srcAttribute))
 			{
-				// the XHTML id attribute must be unique. The owning ICmPicture has a unique guid.
-				// The ICmFile is used for all references to the same file within the project, so its guid is not unique.
-				return settings.ContentGenerator.AddImage(GetClassNameAttributeForConfig(config), srcAttribute, owner.Guid.ToString());
+				var className = settings.StylesGenerator.AddStyles(config).Trim('.');
+				// An XHTML id attribute must be unique but the ICmfile is used for all references to the same file within the project.
+				// The ICmPicture that owns the file does have unique guid so we use that.
+				var ownerGuid = owner.Guid.ToString();
+				return settings.ContentGenerator.AddImage(className, srcAttribute, ownerGuid);
 			}
-			return String.Empty;
+			return string.Empty;
 		}
 
 		/// <summary>
@@ -846,9 +854,13 @@ namespace SIL.FieldWorks.XWorks
 					}
 				}
 			}
+
 			if (bldr.Length > 0)
-				return settings.ContentGenerator.WriteProcessedCollection(false, bldr.ToString(), GetClassNameAttributeForConfig(config));
-			return String.Empty;
+			{
+				var className = settings.StylesGenerator.AddStyles(config).Trim('.'); ;
+				return settings.ContentGenerator.WriteProcessedCollection(false, bldr.ToString(), className);
+			}
+			return string.Empty;
 		}
 
 		internal static string CopyFileSafely(GeneratorSettings settings, string source, string relativeDestination)
@@ -1353,9 +1365,10 @@ namespace SIL.FieldWorks.XWorks
 
 			if (bldr.Length > 0 || sharedCollectionInfo.Length > 0)
 			{
+				var className = settings.StylesGenerator.AddStyles(config).Trim('.'); ;
 				return config.DictionaryNodeOptions is DictionaryNodeSenseOptions ?
-					settings.ContentGenerator.WriteProcessedSenses(false, bldr.ToString(), GetClassNameAttributeForConfig(config), sharedCollectionInfo) :
-					settings.ContentGenerator.WriteProcessedCollection(false, bldr.ToString(), GetClassNameAttributeForConfig(config));
+					settings.ContentGenerator.WriteProcessedSenses(false, bldr.ToString(), className, sharedCollectionInfo) :
+					settings.ContentGenerator.WriteProcessedCollection(false, bldr.ToString(), className);
 			}
 			return string.Empty;
 		}
@@ -1488,7 +1501,7 @@ namespace SIL.FieldWorks.XWorks
 						? GenerateCollectionItemContent(typeNode, pubDecorator, lexEntryType,
 							lexEntryType.Owner, settings)
 						: null;
-					var className = generateLexType ? GetClassNameAttributeForConfig(typeNode) : null;
+					var className = generateLexType ? settings.StylesGenerator.AddStyles(typeNode).Trim('.') : null;
 					var refsByType = settings.ContentGenerator.AddLexReferences(generateLexType,
 						lexTypeContent, className, innerBldr.ToString(), IsTypeBeforeForm(config));
 					bldr.Append(refsByType);
@@ -1574,7 +1587,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// This method will generate the XHTML that represents a senses collection and its contents
+		/// This method will generate the Content that represents a senses collection and its contents
 		/// </summary>
 		private static string GenerateContentForSenses(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
 			GeneratorSettings settings, IEnumerable senseCollection, SenseInfo info, ref string sharedGramInfo)
@@ -1615,6 +1628,7 @@ namespace SIL.FieldWorks.XWorks
 				info.SenseCounter++;
 				bldr.Append(GenerateSenseContent(config, publicationDecorator, item, isThisSenseNumbered, settings, isSameGrammaticalInfo, info));
 			}
+			settings.StylesGenerator.AddStyles(config);
 			return bldr.ToString();
 		}
 
@@ -2116,9 +2130,13 @@ namespace SIL.FieldWorks.XWorks
 				var content = GenerateContentForFieldByReflection(propertyValue, child, null, settings);
 				bldr.Append(content);
 			}
+
 			if (bldr.Length > 0)
-				return settings.ContentGenerator.WriteProcessedObject(false, bldr.ToString(), GetClassNameAttributeForConfig(config));
-			return String.Empty;
+			{
+				var className = settings.StylesGenerator.AddStyles(config).Trim('.'); ;
+				return settings.ContentGenerator.WriteProcessedObject(false, bldr.ToString(), className);
+			}
+			return string.Empty;
 		}
 
 		/// <summary>Write the class element in the span for an individual item in the collection</summary>
@@ -2342,25 +2360,33 @@ namespace SIL.FieldWorks.XWorks
 				{
 					var content = GenerateContentForString((ITsString)propertyValue, config, settings, guid);
 					if (!string.IsNullOrEmpty(content))
-						return settings.ContentGenerator.WriteProcessedCollection(false, content, GetClassNameAttributeForConfig(config));
+					{
+						var className = settings.StylesGenerator.AddStyles(config).Trim('.'); ;
+						return settings.ContentGenerator.WriteProcessedCollection(false, content, className);
+					}
 				}
-				return String.Empty;
+				return string.Empty;
 			}
-			else if (propertyValue is IMultiStringAccessor)
+			if (propertyValue is IMultiStringAccessor)
 			{
 				return GenerateContentForStrings((IMultiStringAccessor)propertyValue, config, settings, guid);
 			}
-			else if (propertyValue is int)
+
+			if (propertyValue is int)
 			{
-				return settings.ContentGenerator.AddProperty(GetClassNameAttributeForConfig(config), false, propertyValue.ToString());
+				var cssClassName = settings.StylesGenerator.AddStyles(config).Trim('.'); ;
+				return settings.ContentGenerator.AddProperty(cssClassName, false,
+					propertyValue.ToString());
 			}
-			else if (propertyValue is DateTime)
+			if (propertyValue is DateTime)
 			{
-				return settings.ContentGenerator.AddProperty(GetClassNameAttributeForConfig(config), false, ((DateTime)propertyValue).ToLongDateString());
+				var cssClassName = settings.StylesGenerator.AddStyles(config).Trim('.'); ;
+				return settings.ContentGenerator.AddProperty(cssClassName, false, ((DateTime)propertyValue).ToLongDateString());
 			}
 			else if (propertyValue is GenDate)
 			{
-				return settings.ContentGenerator.AddProperty(GetClassNameAttributeForConfig(config), false, ((GenDate)propertyValue).ToLongString());
+				var cssClassName = settings.StylesGenerator.AddStyles(config).Trim('.'); ;
+				return settings.ContentGenerator.AddProperty(cssClassName, false, ((GenDate)propertyValue).ToLongString());
 			}
 			else if (propertyValue is IMultiAccessorBase)
 			{
@@ -2368,30 +2394,29 @@ namespace SIL.FieldWorks.XWorks
 					return GenerateContentForVirtualStrings(((ISenseOrEntry)field).Item, (IMultiAccessorBase)propertyValue, config, settings, guid);
 				return GenerateContentForVirtualStrings((ICmObject)field, (IMultiAccessorBase)propertyValue, config, settings, guid);
 			}
-			else if (propertyValue is String)
+			else if (propertyValue is string)
 			{
-				return settings.ContentGenerator.AddProperty(GetClassNameAttributeForConfig(config), false, propertyValue.ToString());
+				var cssClassName = settings.StylesGenerator.AddStyles(config).Trim('.');
+				return settings.ContentGenerator.AddProperty(cssClassName, false, propertyValue.ToString());
 			}
 			else if (propertyValue is IStText)
 			{
 				var bldr = new StringBuilder();
 				foreach (var para in (propertyValue as IStText).ParagraphsOS)
 				{
-					IStTxtPara stp = para as IStTxtPara;
+					var stp = para as IStTxtPara;
 					if (stp == null)
 						continue;
 					var contentPara = GenerateContentForString(stp.Contents, config, settings, guid);
-					if (!String.IsNullOrEmpty(contentPara))
+					if (!string.IsNullOrEmpty(contentPara))
 					{
 						bldr.Append(contentPara);
 						bldr.AppendLine();
 					}
 				}
 				if (bldr.Length > 0)
-				{
 					return settings.ContentGenerator.WriteProcessedCollection(true, bldr.ToString(), GetClassNameAttributeForConfig(config));
-				}
-				return String.Empty;
+				return string.Empty;
 			}
 			else
 			{
@@ -2475,9 +2500,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (bldr.Length > 0)
 			{
-				return settings.ContentGenerator.WriteProcessedCollection(false, bldr.ToString(), GetClassNameAttributeForConfig(config));
+				var className = settings.StylesGenerator.AddStyles(config).Trim('.'); ;
+				return settings.ContentGenerator.WriteProcessedCollection(false, bldr.ToString(), className);
 			}
-			return String.Empty;
+			return string.Empty;
 		}
 
 		/// <summary>
@@ -2517,7 +2543,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (bldr.Length > 0)
 			{
-				return settings.ContentGenerator.WriteProcessedCollection(false, bldr.ToString(), GetClassNameAttributeForConfig(config));
+				var className = settings.StylesGenerator.AddStyles(config).Trim('.');
+				return settings.ContentGenerator.WriteProcessedCollection(false, bldr.ToString(), className);
 			}
 			return String.Empty;
 		}
@@ -2562,6 +2589,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (config.IsCustomField && IsUSFM(fieldValue.Text))
 			{
+				// Review: Are any styles needed for tables?
 				return GenerateTablesFromUSFM(fieldValue, config, settings, writingSystem);
 			}
 			else
@@ -3001,7 +3029,7 @@ namespace SIL.FieldWorks.XWorks
 		public class GeneratorSettings
 		{
 			public ILcmContentGenerator ContentGenerator = new LcmXhtmlGenerator();
-//			public ILcmStylesGenerator StylesGenerator = new CssGenerator();
+			public ILcmStylesGenerator StylesGenerator = new CssGenerator();
 			public LcmCache Cache { get; }
 			public ReadOnlyPropertyTable PropertyTable { get; }
 			public bool UseRelativePaths { get; }
@@ -3031,6 +3059,7 @@ namespace SIL.FieldWorks.XWorks
 				RightToLeft = rightToLeft;
 				IsWebExport = isWebExport;
 				IsTemplate = isTemplate;
+				StylesGenerator.Init(propertyTable);
 			}
 		}
 
@@ -3043,6 +3072,13 @@ namespace SIL.FieldWorks.XWorks
 			public string SenseOutlineNumber { get; set; }
 			public string ParentSenseNumberingStyle { get; set; }
 		}
+	}
+
+	public interface ILcmStylesGenerator
+	{
+		void AddGlobalStyles(DictionaryConfigurationModel model, ReadOnlyPropertyTable propertyTable);
+		string AddStyles(ConfigurableDictionaryNode node);
+		void Init(ReadOnlyPropertyTable propertyTable);
 	}
 
 	/// <summary>
