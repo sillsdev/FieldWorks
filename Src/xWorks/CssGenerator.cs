@@ -563,7 +563,7 @@ namespace SIL.FieldWorks.XWorks
 						Value = baseSelection
 					};
 					styleRules.Add(blockRule);
-					styleRules.AddRange(GenerateCssForCounterReset(SelectBareClassName(configNode, baseSelection, cache), declaration));
+					styleRules.AddRange(GenerateCssForCounterReset(SelectCollectionClassName(configNode, baseSelection, cache), declaration));
 					var bulletRule = AdjustRuleIfParagraphNumberScheme(blockRule, configNode, propertyTable);
 					// REVIEW (Hasso) 2016.10: could these two lines be moved outside the loop?
 					// REVIEW (Hasso) 2016.10: both of these following lines add all rules but BeforeAfter (so if the condition in the first line
@@ -760,7 +760,7 @@ namespace SIL.FieldWorks.XWorks
 			string pictCaptionContent = ".captionContent ";
 			if (configNode.Parent == null)
 			{
-				collectionSelector = SelectBareClassName(configNode, baseSelection);
+				collectionSelector = SelectCollectionClassName(configNode, baseSelection);
 				baseSelection = SelectClassName(configNode, baseSelection);
 				GenerateFlowResetForBaseNode(baseSelection, rules);
 			}
@@ -769,12 +769,12 @@ namespace SIL.FieldWorks.XWorks
 				// Headword, Gloss, and Caption are contained in a captionContent area.
 				if (configNode.Parent.DictionaryNodeOptions is DictionaryNodePictureOptions)
 				{
-					collectionSelector = pictCaptionContent + SelectBareClassName(configNode, baseSelection, cache);
+					collectionSelector = pictCaptionContent + SelectCollectionClassName(configNode, baseSelection, cache);
 					baseSelection = pictCaptionContent + SelectClassName(configNode, baseSelection, cache);
 				}
 				else
 				{
-					collectionSelector = SelectBareClassName(configNode, baseSelection, cache);
+					collectionSelector = SelectCollectionClassName(configNode, baseSelection, cache);
 					baseSelection = SelectClassName(configNode, baseSelection, cache);
 				}
 				collectionItemSelector = $".{GetClassAttributeForCollectionItem(configNode)}";
@@ -807,7 +807,7 @@ namespace SIL.FieldWorks.XWorks
 								}
 								else
 								{
-									betweenSelector = $"";
+									betweenSelector = $"{collectionSelector}> .sensecontent + .sensecontent:before";
 								}
 								break;
 							}
@@ -829,7 +829,7 @@ namespace SIL.FieldWorks.XWorks
 									for (var i = enabledWsOptions.Length - 1; i > 0; i--)
 									{
 										betweenSelector = (i == enabledWsOptions.Length - 1 ? string.Empty : betweenSelector + ",") +
-														  string.Format("{0} span+span[lang|='{1}']:before", selectorOfWsOptOwner, enabledWsOptions[i].Id);
+														  $"{selectorOfWsOptOwner} span+span[lang|='{enabledWsOptions[i].Id}']:before";
 									}
 								}
 								break;
@@ -1010,11 +1010,24 @@ namespace SIL.FieldWorks.XWorks
 		/// output of this method for :before and :after rules in the css is sufficient to fix the bug reported in
 		/// LT-17048.  A better name might be nice, but this one is fairly descriptive.
 		/// </remarks>
-		private static string SelectBareClassName(ConfigurableDictionaryNode configNode, string adjustedClassName, LcmCache cache = null)
+		private static string SelectCollectionClassName(ConfigurableDictionaryNode configNode, string adjustedClassName, LcmCache cache = null)
 		{
 			var type = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(configNode, cache);
 			if (type == ConfiguredLcmGenerator.PropertyType.CollectionType)
+			{
+				// collection selectors typically follow the form of '.collection .collectionItem' or '.collection' and we want to return '.collection'
+				var collectionSelectorParts = adjustedClassName.Split(' ');
+				if (collectionSelectorParts.Length == 1)
+				{
+					return adjustedClassName;
+				}
+				if (collectionSelectorParts.Length == 2)
+				{
+					return collectionSelectorParts[0];
+				}
+				Debug.Fail("Unexpected adjustedClassName input for a collection type");
 				return "." + GetClassAttributeForConfig(configNode);
+			}
 			return SelectClassName(configNode, adjustedClassName, type);
 		}
 

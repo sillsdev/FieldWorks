@@ -778,6 +778,53 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateCssForStyleName_SensesAndSubSenses_BeforeBetweenAfterWork()
+		{
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var subSenses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions(),
+				Children = new List<ConfigurableDictionaryNode> { gloss },
+				Before = "^",
+				Between = ",",
+				After = ":"
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions(),
+				Children = new List<ConfigurableDictionaryNode> { subSenses },
+				Before = "#",
+				Between = ";",
+				After = "."
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+			PopulateFieldsForTesting(entry);
+			// In order to generate the correct indentation at each level we should see 5pt margin for each style
+			//SUT
+			var cssGenerator = new CssGenerator();
+			cssGenerator.Init(m_propertyTable);
+			cssGenerator.AddStyles(entry);
+			var senseClassName = cssGenerator.AddStyles(senses);
+			var subsenseClassName = cssGenerator.AddStyles(subSenses);
+			Assert.That(senseClassName, Is.Not.EqualTo(subsenseClassName));
+			var styleResults = cssGenerator.GetStylesString();
+			Assert.That(styleResults, Contains.Substring($"{senseClassName}:before"));
+			Assert.That(styleResults, Contains.Substring($"{subsenseClassName}:before"));
+			Assert.That(styleResults, Contains.Substring($"{senseClassName}:after"));
+			Assert.That(styleResults, Contains.Substring($"{subsenseClassName}:after"));
+			Assert.That(styleResults, Contains.Substring($"{senseClassName}> .sensecontent + .sensecontent:before"));
+			Assert.That(styleResults, Contains.Substring($"{subsenseClassName}> .sensecontent + .sensecontent:before"));
+		}
+
+		[Test]
 		public void GenerateCssForStyleName_HangingIndentWithExistingMargin_NoParentWorks()
 		{
 			var hangingIndent = -15 * 1000;
