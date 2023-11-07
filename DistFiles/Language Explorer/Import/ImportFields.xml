@@ -1035,28 +1035,6 @@
 			</Examples>
 		  </Help>
 		</Field>
-		<Field MDF="\rf" id="ref" list="no" multi="no" property="Reference"
-			   signature="String" type="string" uiname="Reference">
-		  <Help>
-			<Usage>When you have a marker that indicates the reference for this extended note example
-			sentence.</Usage>
-
-			<Settings>Set the Language Descriptor to the language of this
-			field.</Settings>
-
-			<Mapping>Yes</Mapping>
-
-			<Appends>Yes, appends field contents into a single field.</Appends>
-
-			<List>No</List>
-
-			<Multilingual>No</Multilingual>
-
-			<Examples>
-			  <Example>\rf Bear and Fly 7.02</Example>
-			</Examples>
-		  </Help>
-		</Field>
 	  </Class>
 
 	<Class name="ExtendedNoteExampleTranslation" partOf="ExtendedNoteExample">
