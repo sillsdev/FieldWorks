@@ -67,8 +67,8 @@ namespace SIL.FieldWorks.XWorks
 			var propStyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			LoadBulletUnicodes();
 			LoadNumberingStyles();
-			GenerateLetterHeaderCss(propertyTable, propStyleSheet);
-			GenerateCssForDefaultStyles(propertyTable, propStyleSheet, model);
+			_styleSheet.Rules.AddRange(GenerateLetterHeaderCss(propertyTable, propStyleSheet));
+			_styleSheet.Rules.AddRange(GenerateCssForDefaultStyles(propertyTable, propStyleSheet, model));
 			MakeLinksLookLikePlainText(_styleSheet);
 			GenerateBidirectionalCssShim(_styleSheet);
 			GenerateCssForAudioWs(_styleSheet, cache);
