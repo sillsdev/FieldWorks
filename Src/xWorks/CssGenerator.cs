@@ -95,7 +95,7 @@ namespace SIL.FieldWorks.XWorks
 					return className;
 				}
 				// Otherwise get a unique but useful class name and re-generate the style with the new name
-				className = $".{GetBestUniqueNameForNode(_styleDictionary, node)}";
+				className = GetBestUniqueNameForNode(_styleDictionary, node);
 				_styleDictionary[className] = GenerateCssFromConfigurationNode(node, className, _propertyTable).NonEmpty();
 				return className;
 			}
@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Guard.AgainstNull(node.Parent, "There should not be duplicate class names at the top of tree.");
 			// first try pre-pending the parent node classname
-			var className = $"{GetClassAttributeForConfig(node.Parent)}-{GetClassAttributeForConfig(node)}";
+			var className = $".{GetClassAttributeForConfig(node.Parent)}-{GetClassAttributeForConfig(node)}";
 			int counter = 0;
 			while (styles.ContainsKey(className))
 			{
