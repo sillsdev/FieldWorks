@@ -306,8 +306,9 @@ namespace SIL.FieldWorks.XWorks
 				using (var xw = settings.ContentGenerator.CreateWriter(bldr))
 				{
 					var clerk = settings.PropertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+					var entryClassName = settings.StylesGenerator.AddStyles(configuration).Trim('.');
 					settings.ContentGenerator.StartEntry(xw,
-						GetClassNameAttributeForConfig(configuration), entry.Guid, index, clerk);
+						entryClassName, entry.Guid, index, clerk);
 					settings.ContentGenerator.AddEntryData(xw, pieces);
 					settings.ContentGenerator.EndEntry(xw);
 					xw.Flush();
