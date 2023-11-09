@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -59,6 +60,21 @@ namespace SIL.FieldWorks.Common.Controls
 				{ "liftVersion", FLExBridgeHelper.LiftVersion }
 			});
 			EnsureLinkedFoldersExist(projectFileFullPath);
+
+			return projectFileFullPath;
+		}
+
+		/// <summary>
+		/// Get a new FW project from the specified Mercurial repository.
+		/// </summary>
+		/// <returns>Null if the operation was cancelled or otherwise did not work. The full pathname of an fwdata file, if it did work.</returns>
+		public static string ObtainProject(Uri repoUri, string repoName, string userName, string passWord, string repoIdentifier, out ObtainedProjectType obtainedProjectType)
+		{
+			var result = FLExBridgeHelper.LaunchFieldworksBridge(FwDirectoryFinder.ProjectsDirectory, userName, FLExBridgeHelper.Obtain, null,
+				LcmCache.ModelVersion, FLExBridgeHelper.LiftVersion, null, null, out _, out var projectFileFullPath, repoUri, repoName, passWord, repoIdentifier);
+
+			//Assume project type
+			obtainedProjectType = result ? ObtainedProjectType.FieldWorks : ObtainedProjectType.None;
 
 			return projectFileFullPath;
 		}
