@@ -7474,7 +7474,10 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForMainEntry(idiom, mainEntryNode, null, settings, 0);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("/div[@class='lexentry']/span[@class='headword']", 1);
-
+			var css = ((CssGenerator)settings.StylesGenerator).GetStylesString();
+			// verify that the flow reset css is generated
+			Assert.That(css, Contains.Substring("white-space:pre-wrap"));
+			Assert.That(css, Contains.Substring("clear:both"));
 			var complexOptions = (DictionaryNodeListOptions)mainEntryNode.DictionaryNodeOptions;
 			complexOptions.Options[0].IsEnabled = false;
 			result = ConfiguredLcmGenerator.GenerateContentForMainEntry(idiom, mainEntryNode, null, settings, 1);
