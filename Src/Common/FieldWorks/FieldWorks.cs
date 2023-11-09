@@ -1352,6 +1352,17 @@ namespace SIL.FieldWorks
 			if (TryCommandLineOption(projId, out projectOpenError))
 				return projId;
 
+			if (!string.IsNullOrEmpty(args.Password) && !string.IsNullOrEmpty(args.ProjectUri) && !string.IsNullOrEmpty(args.Username))
+			{
+				var projectFile = ObtainProjectMethod.ObtainProject(new Uri(args.ProjectUri), args.Database, args.Username, args.Password, args.RepoIdentifier, out _);
+				if (!string.IsNullOrEmpty(projectFile))
+				{
+					var projectName = Path.GetFileNameWithoutExtension(projectFile);
+					projId = new ProjectId(args.DatabaseType, projectName);
+					return projId;
+				}
+			}
+
 			// If this app hasn't been run before, ask user about opening sample DB.
 			var app = GetOrCreateApplication(args);
 			if (app.RegistrySettings.FirstTimeAppHasBeenRun)

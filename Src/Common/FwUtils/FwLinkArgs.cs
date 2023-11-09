@@ -444,6 +444,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string kAppServerMode = "appServerMode";
 		/// <summary>Command-line argument: flag that tells FW to bring up a dialog to set an associated project.</summary>
 		public const string kChooseProject = "chooseProject";
+		/// <summary>Command-line argument: authentication username </summary>
+		public const string kUser = "user";
+		/// <summary>Command-line argument: authentication password</summary>
+		public const string kPass = "password";
+		/// <summary>Command-line argument: remote URI of the desired project</summary>
+		public const string kUri = "projectUri";
+		/// <summary>Command-line argument: The ID used to identify repositories, regardless of their source URL, i.e. "log -r0 --template " + SurroundWithQuotes("{node}")</summary>
+		public const string kIdentifier = "repositoryIdentifier";
 		#endregion
 
 		#region Member variables
@@ -454,6 +462,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private string m_backupFile = string.Empty;
 		private string m_restoreOptions = string.Empty;
 		private string m_chooseProjectFile = string.Empty;
+		private string m_user = string.Empty;
+		private string m_pass = string.Empty;
+		private string m_uri = string.Empty;
+		private string m_repoIdentifier = string.Empty;
 		#endregion
 
 		#region Properties
@@ -588,6 +600,46 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public string ChooseProjectFile
 		{
 			get { return m_chooseProjectFile; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the Send/Receive username.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public string Username
+		{
+			get { return m_user; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the Send/Receive password.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public string Password
+		{
+			get { return m_pass; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the remote URI for the target project.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public string ProjectUri
+		{
+			get { return m_uri; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the ID used to identify the repository.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public string RepoIdentifier
+		{
+			get { return m_repoIdentifier; }
 		}
 		#endregion
 
@@ -922,6 +974,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 				case kAppServerMode: AppServerMode = true; break;
 				case kTag: m_tag = value; break;
 				case kTool: m_toolName = value; break;
+				case kUser: m_user = value; break;
+				case kPass: m_pass = value; break;
+				case kUri: m_uri = value; break;
+				case kIdentifier: m_repoIdentifier = value; break;
 				case kGuid:
 					if (value != "null")
 						TargetGuid = new Guid(value);
