@@ -77,7 +77,35 @@ namespace SIL.FieldWorks.XWorks
 			return entries.Length;
 		}
 
-		public void ExportDictionaryContent(string xhtmlPath, DictionaryConfigurationModel configuration = null, IThreadedProgress progress = null)
+		public void ExportDictionaryForWord(string filePath, DictionaryConfigurationModel configuration = null, IThreadedProgress progress = null)
+		{
+			using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
+			{
+			  configuration = configuration ?? new DictionaryConfigurationModel(DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "Dictionary"), m_cache);
+			  var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, DictionaryType);
+			  if (progress != null)
+				  progress.Maximum = entriesToSave.Length;
+			  // TODO: Create and add call to our Word content generator LcmWordGenerator(entriesToSave, publication, configuration, filePath, progress);
+			}
+		}
+
+		public void ExportReversalForWord(string filePath, string reversalWs, DictionaryConfigurationModel configuration = null, IThreadedProgress progress = null)
+		{
+			Guard.AgainstNullOrEmptyString(reversalWs, nameof(reversalWs));
+			using (ClerkActivator.ActivateClerkMatchingExportType(ReversalType, m_propertyTable, m_mediator))
+			using (ReversalIndexActivator.ActivateReversalIndex(reversalWs, m_propertyTable, m_cache))
+			{
+				configuration = configuration ?? new DictionaryConfigurationModel(
+					DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "ReversalIndex"), m_cache);
+				var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, ReversalType);
+				if (progress != null)
+				  progress.Maximum = entriesToSave.Length;
+
+				// TODO: Create and add call to our Word content generator LcmWordGenerator(entriesToSave, publication, configuration, filePath, progress);
+			}
+		}
+
+	  public void ExportDictionaryContent(string xhtmlPath, DictionaryConfigurationModel configuration = null, IThreadedProgress progress = null)
 		{
 			using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
 			{
