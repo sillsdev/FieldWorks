@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="docx" type="wordOpenXml" datatype="docx">
+	<FxtDocumentDescription dataLabel="Dictionary, Reversal Index" formatLabel="Word (DOCX)" defaultExtension="docx" filter="Word Documents (*.docx)|*.docx|All files (*.*)|*.*">Export configured dictionary and all reversal indexes for the current publication to the Microsoft Word .docx format.</FxtDocumentDescription>
+</template>
