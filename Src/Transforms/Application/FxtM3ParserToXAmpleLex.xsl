@@ -46,12 +46,9 @@ Preamble
 	<xsl:variable name="MoInflAffMsas" select="/M3Dump/Lexicon/MorphoSyntaxAnalyses/MoInflAffMsa"/>
 	<xsl:variable name="MoDerivAffMsas" select="/M3Dump/Lexicon/MorphoSyntaxAnalyses/MoDerivAffMsa"/>
 	<xsl:variable name="MoUnclassifiedAffixMsas" select="/M3Dump/Lexicon/MorphoSyntaxAnalyses/MoUnclassifiedAffixMsa"/>
-	<xsl:variable name="MoAffixAllomorphs" select="/M3Dump/Lexicon/Allomorphs/MoAffixAllomorph"/>
 	<xsl:variable name="MoStemAllomorphs" select="/M3Dump/Lexicon/Allomorphs//MoStemAllomorph"/>
 	<xsl:variable name="CompoundRules" select="/M3Dump/CompoundRules/MoEndoCompound | /M3Dump/CompoundRules/MoExoCompound"/>
-	<xsl:variable name="PartsOfSpeech" select="/M3Dump/PartsOfSpeech/PartOfSpeech"/>
 	<!-- included stylesheets (i.e. things common to other style sheets) -->
-	<xsl:include href="MorphTypeGuids.xsl"/>
 	<xsl:include href="XAmpleTemplateVariables.xsl"/>
 	<xsl:include href="FxtM3ParserCommon.xsl"/>
 	<!-- following is used for writing inflection class MECs -->
@@ -466,10 +463,26 @@ Main template
 				<xsl:with-param name="gloss" select="$gloss"/>
 			</xsl:call-template>
 			<xsl:text>
-\c</xsl:text>
+\c </xsl:text>
 			<xsl:choose>
-				<xsl:when test="contains($sTypes,'Particle')"> Prt</xsl:when>
-				<xsl:otherwise> W</xsl:otherwise>
+				<xsl:when test="contains($sTypes,'Particle')">Prt</xsl:when>
+				<xsl:when test="$bSuffixingOnly='N'">
+					<xsl:text>W</xsl:text>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:variable name="posid" select="$stemMsa/@PartOfSpeech"/>
+					<xsl:choose>
+						<xsl:when test="$posid!=0">
+							<xsl:text>pos</xsl:text>
+							<xsl:call-template name="GetTopLevelPOSId">
+								<xsl:with-param name="pos" select="key('POSID', $posid)"/>
+							</xsl:call-template>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:text>W</xsl:text>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:otherwise>
 			</xsl:choose>
 			<xsl:text>
 \wc </xsl:text>
@@ -1090,8 +1103,12 @@ DoDerivAffix
 		<xsl:call-template name="Gloss">
 			<xsl:with-param name="gloss" select="$gloss"/>
 		</xsl:call-template>
-\c W/W
-\o <xsl:if test="contains($sTypes, 'prefix')">
+		<xsl:call-template name="DoDerivAffixCategoryMapping">
+			<xsl:with-param name="derivMsa" select="$derivMsa"/>
+		</xsl:call-template>
+		<xsl:text>
+\o </xsl:text>
+		<xsl:if test="contains($sTypes, 'prefix')">
 			<xsl:text>-</xsl:text>
 		</xsl:if>
 		<xsl:text>1</xsl:text>
@@ -1165,6 +1182,55 @@ DoDerivAffix
 	</xsl:template>
 	<!--
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		DoDerivAffixCategoryMapping
+		Produce XAmaple category mapping
+		Parameters: derivMsa = msa node
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template name="DoDerivAffixCategoryMapping">
+		<xsl:param name="derivMsa"/>
+		<xsl:text>&#xa;\c </xsl:text>
+		<xsl:choose>
+			<xsl:when test="$bSuffixingOnly='N'">
+				<xsl:text>W/W</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:variable name="fromPosId" select="$derivMsa/@FromPartOfSpeech"/>
+				<xsl:variable name="toPosId" select="$derivMsa/@ToPartOfSpeech"/>
+				<xsl:choose>
+					<xsl:when test="$fromPosId">
+						<xsl:variable name="sPos">
+							<xsl:text>pos</xsl:text>
+							<xsl:call-template name="GetTopLevelPOSId">
+								<xsl:with-param name="pos" select="key('POSID', $fromPosId)"/>
+							</xsl:call-template>
+						</xsl:variable>
+						<xsl:value-of select="$sPos"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:text>W</xsl:text>
+					</xsl:otherwise>
+				</xsl:choose>
+				<xsl:text>/</xsl:text>
+				<xsl:choose>
+					<xsl:when test="$toPosId">
+						<xsl:variable name="sPos">
+							<xsl:text>pos</xsl:text>
+							<xsl:call-template name="GetTopLevelPOSId">
+								<xsl:with-param name="pos" select="key('POSID', $toPosId)"/>
+							</xsl:call-template>
+						</xsl:variable>
+						<xsl:value-of select="$sPos"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:text>W</xsl:text>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		DoInflAffix
 		Generate an inflectional affix
 		Parameters: inflMsa = msa node
@@ -1183,8 +1249,10 @@ DoDerivAffix
 		<xsl:call-template name="Gloss">
 			<xsl:with-param name="gloss" select="$gloss"/>
 		</xsl:call-template>
+		<xsl:call-template name="DoInflAffixCategoryMapping">
+			<xsl:with-param name="posid" select="$inflMsa/@PartOfSpeech"/>
+		</xsl:call-template>
 		<xsl:text>
-\c W/W
 \o </xsl:text>
 		<xsl:choose>
 			<xsl:when test="$Slot">
@@ -1330,6 +1398,36 @@ DoDerivAffix
 			<xsl:with-param name="fs" select="$inflMsa/InflectionFeatures/FsFeatStruc"/>
 			<xsl:with-param name="posid" select="$inflMsa/@PartOfSpeech"/>
 		</xsl:call-template>
+	</xsl:template>
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		DoInflAffixCategoryMapping
+		Produce XAmaple category mapping
+		Parameters: posid = Part of Speech id
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template name="DoInflAffixCategoryMapping">
+		<xsl:param name="posid"/>
+		<xsl:text>&#xa;\c </xsl:text>
+		<xsl:choose>
+			<xsl:when test="$bSuffixingOnly='N'">
+				<xsl:text>W/W</xsl:text>
+			</xsl:when>
+			<xsl:when test="$posid">
+				<xsl:variable name="sPos">
+					<xsl:text>pos</xsl:text>
+					<xsl:call-template name="GetTopLevelPOSId">
+						<xsl:with-param name="pos" select="key('POSID', $posid)"/>
+					</xsl:call-template>
+				</xsl:variable>
+				<xsl:value-of select="$sPos"/>
+				<xsl:text>/</xsl:text>
+				<xsl:value-of select="$sPos"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>W/W</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

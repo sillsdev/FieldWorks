@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			//
 			InitializeComponent();
 			AccessibleName = GetType().Name;
-			helpProvider = new HelpProvider();
+			helpProvider = new FlexHelpProvider();
 		}
 
 		/// <summary>

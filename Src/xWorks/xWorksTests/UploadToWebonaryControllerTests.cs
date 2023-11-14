@@ -151,6 +151,7 @@ namespace SIL.FieldWorks.XWorks
 		[TestCase("English", "english")]
 		[TestCase(UploadToWebonaryController.WebonaryOrg + "/thAI", "thai")]
 		[TestCase("httpS://www.Webonary.org/tPi", "tpi")]
+		[TestCase("httpS://www.Webonary.org/tPi/", "tpi")]
 		public void NormalizeSiteName(string userEntered, string expected)
 		{
 			Assert.That(UploadToWebonaryController.NormalizeSiteName(userEntered), Is.EqualTo(expected));

@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.XWorks
 			var mediatorStyles = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 			var styleSheet = new StyleSheet();
 			//SUT
-			CssGenerator.GenerateLetterHeaderCss(m_propertyTable, mediatorStyles, styleSheet);
+			styleSheet.Rules.AddRange(CssGenerator.GenerateLetterHeaderCss(m_propertyTable, mediatorStyles));
 			// verify that the css result contains boilerplate rules and the text-align center expected from the letHeadStyle test style
 			Assert.IsTrue(Regex.Match(styleSheet.ToString(), @"\.letHead\s*{\s*-moz-column-count:1;\s*-webkit-column-count:1;\s*column-count:1;\s*clear:both;\s*width:100%;.*text-align:center").Success,
 							  "GenerateLetterHeaderCss did not generate the expected css rules");
@@ -138,17 +138,17 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			// verify that the css result contains a line similar to: .lexentry {clear:both;white-space:pre;}
-			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry\s*{\s*clear:both;\s*white-space:pre-wrap;").Success,
+			VerifyRegex(cssResult, @"\.lexentry\s*{\s*clear:both;\s*white-space:pre-wrap;",
 							  "Css for root node(lexentry) did not generate 'clear' and 'white-space' rules match");
-			// verify that the css result contains a line similar to: .lexentry .headword {
-			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.mainheadword>\s*span\s*{.*").Success,
+			// verify that the css result contains a line similar to: .mainheadword span { {
+			VerifyRegex(cssResult, @"^\s*\.mainheadword>\s*span\s*{.*",
 							  "Css for child node(headword) did not generate a specific match");
 		}
 
 		[Test]
 		public void GenerateCssForConfiguration_SharedConfigurationGeneratesValidCss()
 		{
-			var headwordNode = new ConfigurableDictionaryNode
+			var subEntryHeadwordNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "MLHeadWord",
 				CSSClassNameOverride = "mainheadword",
@@ -158,24 +158,35 @@ namespace SIL.FieldWorks.XWorks
 			var sharedNode = new ConfigurableDictionaryNode
 			{
 				Label = "SharedSubentries",
-				Children = new List<ConfigurableDictionaryNode> { headwordNode },
+				Children = new List<ConfigurableDictionaryNode> { subEntryHeadwordNode },
 				FieldDescription = "Subentries",
 				CSSClassNameOverride = "sharedsubentries"
 			};
 			var subentriesNode = new ConfigurableDictionaryNode { FieldDescription = "Subentries", ReferenceItem = "SharedSubentries" };
+			var mainHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "mainheadword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				Before = " "
+			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
-				Children = new List<ConfigurableDictionaryNode> { subentriesNode }
+				Children = new List<ConfigurableDictionaryNode> { subentriesNode, mainHeadwordNode }
 			};
 			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(mainEntryNode, sharedNode);
 			PopulateFieldsForTesting(model);
 
+			var cssGenerator = new CssGenerator();
+			cssGenerator.Init(m_propertyTable);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			cssGenerator.AddStyles(mainHeadwordNode);
+			cssGenerator.AddStyles(subEntryHeadwordNode);
+			var cssResult = cssGenerator.GetStylesString();
 			// verify that the css result contains a line similar to: .sharedsubentries .sharedsubentry .headword span{
-			Assert.IsTrue(Regex.Match(cssResult, @"\.sharedsubentries\s*\.sharedsubentry>\s*\.mainheadword>\s*span\s*{.*").Success,
-				"Css for child node(headword) did not generate a match{0}{1}", Environment.NewLine, cssResult);
+			VerifyRegex(cssResult, @"^\s*\.sharedsubentries-mainheadword>\s*span\s*{.*",
+				"Css for child node(headword) did not generate a match");
 		}
 
 		[Test]
@@ -190,6 +201,20 @@ namespace SIL.FieldWorks.XWorks
 			// verify that the css result contains a line similar to a { text-decoration:inherit; color:inherit; }
 			Assert.IsTrue(Regex.Match(cssResult, @"\s*a\s*{[^}]*text-decoration:inherit;").Success, "Links should inherit underlines and similar.");
 			Assert.IsTrue(Regex.Match(cssResult, @"\s*a\s*{[^}]*color:inherit;").Success, "Links should inherit color.");
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_AddStyleDoesNotGenerateEmptyStyle()
+		{
+			var emptyNode = new ConfigurableDictionaryNode { FieldDescription = "Nothing"};
+			var mainEntryNode = new ConfigurableDictionaryNode { FieldDescription = "LexEntry", Children = new List<ConfigurableDictionaryNode> { emptyNode } };
+			PopulateFieldsForTesting(mainEntryNode);
+
+			var cssGenerator = new CssGenerator();
+			cssGenerator.Init(m_propertyTable);
+			//SUT
+			cssGenerator.AddStyles(emptyNode);
+			Assert.That(cssGenerator.GetStylesString(), Is.EqualTo(string.Empty));
 		}
 
 		[Test]
@@ -257,11 +282,11 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			// Check result for before, between and after rules
-			Assert.IsTrue(Regex.Match(cssResult, @"\.mainheadword>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'\\\s*'beforeText\\'\s*';\s*}").Success,
+			VerifyRegex(cssResult, @"\.mainheadword>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'\\\s*'beforeText\\'\s*';\s*}",
 							  "css before rule with 'beforeText' content not found on headword");
-			Assert.IsTrue(Regex.Match(cssResult, @"\.mainheadword>\s*.mainheadwor\s*\+\s*.mainheadwor:before\s*{\s*content\s*:\s*'\\\s*'betweenText\\'\s*';\s*}").Success,
+			VerifyRegex(cssResult, @"\.mainheadword>\s*.mainheadwor\s*\+\s*.mainheadwor:before\s*{\s*content\s*:\s*'\\\s*'betweenText\\'\s*';\s*}",
 							  "css before rule with 'betweenText' content not found on headword");
-			Assert.IsTrue(Regex.Match(cssResult, @"\.mainheadword>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'\\\s*'afterText\\'\s*';\s*}").Success,
+			VerifyRegex(cssResult, @"\.mainheadword>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'\\\s*'afterText\\'\s*';\s*}",
 							  "css after rule with 'afterText' content not found on headword");
 		}
 
@@ -285,24 +310,37 @@ namespace SIL.FieldWorks.XWorks
 				After = "}",
 				DictionaryNodeOptions = new DictionaryNodeGroupingOptions()
 			};
+			var mainHeadword = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				Label = "Headword",
+				CSSClassNameOverride = "mh",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				After = " "
+			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				Children = new List<ConfigurableDictionaryNode> { groupingNode },
+				Children = new List<ConfigurableDictionaryNode> { groupingNode, mainHeadword },
 				FieldDescription = "LexEntry"
 			};
 			PopulateFieldsForTesting(mainEntryNode);
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
+			var cssGenerator = new CssGenerator();
+			cssGenerator.Init(m_propertyTable);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			cssGenerator.AddStyles(mainHeadword);
+			cssGenerator.AddStyles(groupingNode);
+			cssGenerator.AddStyles(headwordNode);
+			var cssResult = cssGenerator.GetStylesString();
 			// Check the result for before and after rules for the group
 			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg\s*:before\s*{\s*content\s*:\s*'{';\s*}").Success,
 							  "css before rule for the grouping node was not generated");
 			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg\s*:after\s*{\s*content\s*:\s*'}';\s*}").Success,
 							  "css after rule for the grouping node was not generated");
 			// Check result for before and after rules equivalent to .headword span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
-			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg>\s*\.mh>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}").Success,
+			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg-mh>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}").Success,
 							  "css before rule with Z content not found on headword");
-			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg>\s*\.mh>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}").Success,
+			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg-mh>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}").Success,
 							  "css after rule with A content not found on headword");
 		}
 
@@ -359,8 +397,8 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			// Check result for between rule equivalent to lexentry> .mainheadword> span.writingsystemprefix + span:not(:last-child):after{content:' ';}
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry\s*>\s*\.mainheadword>\s*span\.writingsystemprefix\s*\~\s*span\.writingsystemprefix:before{.*content:' ';.*}", RegexOptions.Singleline).Success,
-							  "Between selector not generated.");
+			VerifyRegex(cssResult, @".*\.mainheadword>\s*span\.writingsystemprefix\s*\~\s*span\.writingsystemprefix:before{.*content:' ';.*}",
+				"Between selector not generated.");
 		}
 
 		[Test]
@@ -380,19 +418,30 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> {headwordNode},
 				FieldDescription = "Subentries"
 			};
+			var mainEntryHeadword = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				Label = "Headword",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" }),
+				After = " "
+			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
-				Children = new List<ConfigurableDictionaryNode> { subentryNode },
+				Children = new List<ConfigurableDictionaryNode> { mainEntryHeadword, subentryNode },
 				FieldDescription = "LexEntry"
 			};
 			PopulateFieldsForTesting(mainEntryNode);
-			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			// Check result for before and after rules equivalent to .subentries .subentry .headword span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
-			Assert.IsTrue(Regex.Match(cssResult, @"\.subentries\s*\.subentry>\s*\.headword>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}").Success,
+			var cssGenerator = new CssGenerator();
+			cssGenerator.Init(m_propertyTable);
+			cssGenerator.AddStyles(mainEntryHeadword);
+			cssGenerator.AddStyles(headwordNode);
+			var cssResult = cssGenerator.GetStylesString();
+			// Check result for before and after rules equivalent to .subentries-headword span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
+			VerifyRegex(cssResult, @"\.subentries-headword>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}",
 							  "css before rule with Z content not found on headword");
-			Assert.IsTrue(Regex.Match(cssResult, @"\.subentries\s*\.subentry>\s\.headword>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}").Success,
+			VerifyRegex(cssResult, @"\.subentries-headword>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}",
 							  "css after rule with A content not found on headword");
 		}
 
@@ -452,9 +501,9 @@ namespace SIL.FieldWorks.XWorks
 				var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 				//SUT
 				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-				Assert.That(cssResult, Contains.Substring(".lexentry> .senses:after"));
-				Assert.That(cssResult, Does.Not.Contain(".lexentry> .senses .sense:after"));
-				Assert.That(cssResult, Does.Not.Contain(".lexentry> .senses .sense:last-child:after"));
+				Assert.That(cssResult, Contains.Substring(".senses:after"));
+				Assert.That(cssResult, Does.Not.Contain(".senses .sense:after"));
+				Assert.That(cssResult, Does.Not.Contain(".senses .sense:last-child:after"));
 			}
 		}
 
@@ -494,12 +543,9 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .senses .sense> .definitionorgloss> span:first-child:before{.*content:'<';.*}",
-				RegexOptions.Singleline).Success, "Before not generated.");
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .senses .sense> .definitionorgloss> span\+span\[lang\|=\'en\']:before{.*content:',';.*}",
-				RegexOptions.Singleline).Success, "Between not generated.");
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .senses .sense> .definitionorgloss> span:last-child:after{.*content:'>';.*}",
-				RegexOptions.Singleline).Success, "After not generated.");
+			VerifyRegex(cssResult, @".definitionorgloss> span:first-child:before{.*content:'<';.*}", "Before not generated.");
+			VerifyRegex(cssResult, @".definitionorgloss> span\+span\[lang\|=\'en\']:before{.*content:',';.*}", "Between not generated.");
+			VerifyRegex(cssResult, @".definitionorgloss> span:last-child:after{.*content:'>';.*}", "After not generated.");
 		}
 
 		[Test]
@@ -544,7 +590,7 @@ namespace SIL.FieldWorks.XWorks
 				DictionaryNodeOptions = wsOpts,
 				Style = "Bulleted List"
 			};
-			var definitionOrGloss = new ConfigurableDictionaryNode
+			var bibliography = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "Bibliography",
 				Before = "<",
@@ -557,7 +603,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "SensesOS",
 				CSSClassNameOverride = "Senses",
-				Children = new List<ConfigurableDictionaryNode> { anthroNote, definitionOrGloss }
+				Children = new List<ConfigurableDictionaryNode> { anthroNote, bibliography }
 			};
 			var mainEntryNode = new ConfigurableDictionaryNode
 			{
@@ -570,18 +616,16 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .senses .sense>.*.anthronote{.*font-size:12pt;.*color:#F00;.*content:'\\25A0';.*}",
-				RegexOptions.Singleline).Success, "AnthoNote content not generated.");
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .senses .sense>.*.anthronote>.*span.writingsystemprefix.~.span.writingsystemprefix:before",
-				RegexOptions.Singleline).Success, "AnthoNote between content not generated.");
-			Assert.IsFalse(Regex.Match(cssResult, @".lexentry> .senses .sense> .anthronote:after",
-				RegexOptions.Singleline).Success, "AnthoNote after content should not generated.");
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .senses .sense> .bibliography> span{.*font-size:12pt;.*color:#F00;.*content:'\\25A0';.*}",
-				RegexOptions.Singleline).Success, "Bibliography content not generated.");
-			Assert.IsFalse(Regex.Match(cssResult, @".lexentry> .senses .sense>.*.bibliography>.*span.writingsystemprefix.~.span.writingsystemprefix:before",
-				RegexOptions.Singleline).Success, "Bibliography between content should not generated.");
-			Assert.IsFalse(Regex.Match(cssResult, @".lexentry> .senses .sense>.*.bibliography:after",
-				RegexOptions.Singleline).Success, "Bibliography after content should not generated.");
+			VerifyRegex(cssResult, @"\s*\.anthronote:before{.*font-size:12pt;.*color:#F00;.*content:'\\25A0';.*}",
+				"AnthroNote content not generated.");
+			VerifyRegex(cssResult, @"\s*\.anthronote>.*span.writingsystemprefix.~.span.writingsystemprefix:before",
+				"AnthroNote between content not generated.");
+			Assert.That(Regex.Match(cssResult, @".*\.anthronote:after").Success, Is.False, "AnthroNote after content should not generated.");
+			VerifyRegex(cssResult, @"\s*\.bibliography> span{.*font-size:12pt;.*color:#F00;.*content:'\\25A0';.*}",
+				"Bibliography content not generated.");
+			Assert.That(Regex.Match(cssResult, @"\s*\.bibliography>.*span.writingsystemprefix.~.span.writingsystemprefix:before").Success, Is.False,
+				"Bibliography between content should not generated.");
+			Assert.That(Regex.Match(cssResult, @"\s*\.bibliography:after").Success, Is.False, "Bibliography after content should not generated.");
 		}
 
 		[Test]
@@ -609,8 +653,8 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			const string regExPected = @".lexentry>\s.senses\s>\s.sensecontent:before.*{.*content:'@';.*font-size:14pt;.*color:Green;.*}";
-			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Custom bullet content not generated.");
+			const string regExPected = @"\s*.senses\s>\s.sensecontent:before.*{.*content:'@';.*font-size:14pt;.*color:Green;.*}";
+			VerifyRegex(cssResult, regExPected, "Custom bullet content not generated.");
 		}
 
 		[Test]
@@ -731,6 +775,53 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(parentDeclaration.ToString(), Contains.Substring("margin-left:7pt"), "Parent margin incorrectly generated");
 			var childDeclaration = CssGenerator.GenerateCssStyleFromLcmStyleSheet(childStyle.Name, CssGenerator.DefaultStyle, subSenses, m_propertyTable);
 			Assert.That(childDeclaration.ToString(), Contains.Substring("margin-left:8pt"), "Child margin incorrectly generated");
+		}
+
+		[Test]
+		public void GenerateCssForStyleName_SensesAndSubSenses_BeforeBetweenAfterWork()
+		{
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss" };
+			var subSenses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions(),
+				Children = new List<ConfigurableDictionaryNode> { gloss },
+				Before = "^",
+				Between = ",",
+				After = ":"
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions(),
+				Children = new List<ConfigurableDictionaryNode> { subSenses },
+				Before = "#",
+				Between = ";",
+				After = "."
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+			PopulateFieldsForTesting(entry);
+			// In order to generate the correct indentation at each level we should see 5pt margin for each style
+			//SUT
+			var cssGenerator = new CssGenerator();
+			cssGenerator.Init(m_propertyTable);
+			cssGenerator.AddStyles(entry);
+			var senseClassName = cssGenerator.AddStyles(senses);
+			var subsenseClassName = cssGenerator.AddStyles(subSenses);
+			Assert.That(senseClassName, Is.Not.EqualTo(subsenseClassName));
+			var styleResults = cssGenerator.GetStylesString();
+			Assert.That(styleResults, Contains.Substring($"{senseClassName}:before"));
+			Assert.That(styleResults, Contains.Substring($"{subsenseClassName}:before"));
+			Assert.That(styleResults, Contains.Substring($"{senseClassName}:after"));
+			Assert.That(styleResults, Contains.Substring($"{subsenseClassName}:after"));
+			Assert.That(styleResults, Contains.Substring($"{senseClassName}> .sensecontent + .sensecontent:before"));
+			Assert.That(styleResults, Contains.Substring($"{subsenseClassName}> .sensecontent + .sensecontent:before"));
 		}
 
 		[Test]
@@ -1198,7 +1289,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var XHTMLWriter = XmlWriter.Create(xhtmResult))
 			{
 				XHTMLWriter.WriteStartElement("body");
-				var content = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, testNode, null, DefaultSettings);
+				var content = ConfiguredLcmGenerator.GenerateContentForEntry(entry, testNode, null, DefaultSettings);
 				XHTMLWriter.WriteRaw(content);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
@@ -1240,7 +1331,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(cssResult, Does.Not.Contain(".headword"));
 			Assert.That(cssResult, Contains.Substring(".tailwind"));
 
-			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, testParentNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, testParentNode, null, DefaultSettings);
 			const string positiveTest = "//*[@class='tailwind']";
 			const string negativeTest = "//*[@class='headword']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(negativeTest);
@@ -1279,9 +1370,9 @@ namespace SIL.FieldWorks.XWorks
 			sense.Gloss.set_String(wsEn, TsStringUtils.MakeString("gloss", wsEn));
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .gloss"));
+			Assert.That(cssResult, Contains.Substring(".gloss"));
 
-			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, testEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, testEntryNode, null, DefaultSettings);
 			const string positiveTest = "/*[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='gloss']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(positiveTest, 1);
 		}
@@ -1534,10 +1625,9 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .morphosyntaxanalysisra> .mlpartofspeech"));
-			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .morphosyntaxanalysisra> .mlinflectionclass"));
-			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .morphosyntaxanalysisra> .slots .slot> .name"));
-			Assert.False(Regex.Match(cssResult, @"{\s*}").Success); // make sure we filter out empty rules
+			Assert.That(cssResult, Contains.Substring(".mlpartofspeech"));
+			Assert.That(cssResult, Contains.Substring(".mlinflectionclass"));
+			Assert.That(cssResult, Contains.Substring(".name"));
 		}
 
 		[Test]
@@ -1567,7 +1657,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.That(cssResult, Contains.Substring(".lexentry> .variantformentrybackrefs .variantformentrybackref> .pronunciations .pronunciation> .form"));
+			VerifyRegex(cssResult, @"\s*\.form", "No form style generated");
 		}
 
 		[Test]
@@ -1600,7 +1690,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.That(cssResult, Contains.Substring(".lexentry> .subentries .subentry> .complexformtypes .complexformtype> .reverseabbr> span"));
+			VerifyRegex(cssResult, @"\s*\.reverseabbr> span", "No reverse abbreviation span style generated");
 		}
 
 		[Test]
@@ -1639,11 +1729,11 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs> .complexformtypes .complexformtype> .name:before{\s*content:'<';\s*}",
+			VerifyRegex(cssResult, @".name:before{\s*content:'<';\s*}",
 				"Before not generated:");
-			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs> .complexformtypes .complexformtype> .name> .nam\+ .nam:before{\s*content:',';\s*}",
+			VerifyRegex(cssResult, @".name> .nam \+ .nam:before{\s*content:',';\s*}",
 				"Between not generated:");
-			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs> .complexformtypes .complexformtype> .name:after{\s*content:'>';\s*}",
+			VerifyRegex(cssResult, @".name:after{\s*content:'>';\s*}",
 				"After not generated:");
 		}
 
@@ -1686,12 +1776,10 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs .visiblecomplexformbackref> .complexformtypes .complexformtype> .name:before{\s*content:'<';\s*}",
-				"Before not generated:");
-			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs .visiblecomplexformbackref> .complexformtypes .complexformtype> .name> .nam\+ .nam:before{\s*content:',';\s*}",
+			VerifyRegex(cssResult, @"^\s*\.name:before{\s*content:'<';\s*}", "Before not generated:");
+			VerifyRegex(cssResult, @"^\s*.name> .nam \+ .nam:before{\s*content:',';\s*}",
 				"Between not generated:");
-			VerifyRegex(cssResult, @".lexentry> .visiblecomplexformbackrefs .visiblecomplexformbackref> .complexformtypes .complexformtype> .name:after{\s*content:'>';\s*}",
-				"After not generated:");
+			VerifyRegex(cssResult, @"^\s*\.name:after{\s*content:'>';\s*}", "After not generated:");
 		}
 
 		[Test]
@@ -1733,20 +1821,16 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs:before{.*content:'\[';.*}",
-				RegexOptions.Singleline).Success, "Before not generated for Variant Entry.");
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs> .variantformentrybackref\+ .variantformentrybackref:before{.*content:'\; ';.*}",
-				RegexOptions.Singleline).Success, "Between not generated Variant Entry.");
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs:after{.*content:'\]';.*}",
-				RegexOptions.Singleline).Success, "After not generated Variant Entry.");
-			Assert.False(Regex.Match(cssResult, @".lexentry .variantformentrybackrefs> .span\+ .span:before").Success);
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs .variantformentrybackref> .variantentrytypes .variantentrytype> .name:before{.*content:'<';.*}",
-				RegexOptions.Singleline).Success, "Before not generated Variant Entry Type.");
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs .variantformentrybackref> .variantentrytypes .variantentrytype> .name> .nam\+ .nam:before{.*content:',';.*}",
-				RegexOptions.Singleline).Success, "Between not generated Variant Entry Type.");
-			Assert.IsTrue(Regex.Match(cssResult, @".lexentry> .variantformentrybackrefs .variantformentrybackref> .variantentrytypes .variantentrytype> .name:after{.*content:'>';.*}",
-				RegexOptions.Singleline).Success, "After not generated Variant Entry Type.");
-		}
+			VerifyRegex(cssResult, @".variantformentrybackrefs:before{.*content:'\[';.*}",
+				"Before not generated for Variant Entry.");
+			VerifyRegex(cssResult, @".variantformentrybackrefs>\s+.variantformentrybackref\s*\+\s*.variantformentrybackref:before{.*content:'\; ';.*}",
+				"Between not generated Variant Entry.");
+			VerifyRegex(cssResult, @".variantformentrybackrefs:after{.*content:'\]';.*}", "After not generated Variant Entry.");
+			// Review: Was this assert correct before? VerifyRegex(cssResult, @".variantformentrybackrefs> .span \+ .span:before");
+			VerifyRegex(cssResult, @"^\.name:before{.*content:'<';.*}", "Before not generated Variant Entry Type.");
+			VerifyRegex(cssResult, @"^\.name:after{.*content:'>';.*}", "After not generated Variant Entry Type.");
+			VerifyRegex(cssResult, @"^\.name> .nam \+ .nam:before{.*content:',';.*}", "Between not generated Variant Entry Type.");
+	  }
 
 		[Test]
 		public void GenerateCssForConfiguration_GeneratesVariantNameSuffixBeforeBetweenAfter()
@@ -1791,19 +1875,19 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			VerifyRegex(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants:before{.*content:'\[';.*}",
+			VerifyRegex(cssResult, @".variantformentrybackrefs_inflectional-variants:before{.*content:'\[';.*}",
 				"Before not generated for Variant Entry.");
-			VerifyRegex(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants> .variantformentrybackref_inflectional-variants\+ .variantformentrybackref_inflectional-variants:before{.*content:'\; ';.*}",
+			VerifyRegex(cssResult, @"^\.variantformentrybackrefs_inflectional-variants>\s+\.variantformentrybackref_inflectional-variants\s*\+\s*\.variantformentrybackref_inflectional-variants:before{.*content:'\; ';.*}",
 				"Between should have been generated using class selectors because this element has type factoring.");
 			Assert.False(Regex.Match(cssResult, @".lexentry>? .variantformentrybackrefs_inflectional-variants>? span\+ span:before").Success,
 				"Between should not have been generated using generic spans because this element has type factoring." + Environment.NewLine + cssResult);
-			VerifyRegex(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants:after{.*content:'\]';.*}",
+			VerifyRegex(cssResult, @".variantformentrybackrefs_inflectional-variants:after{.*content:'\]';.*}",
 				"After not generated Variant Entry.");
-			VerifyRegex(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants> .variantentrytypes .variantentrytype> .name:before{.*content:'<';.*}",
+			VerifyRegex(cssResult, @"^\s*\.name:before{.*content:'<';.*}",
 				"Before not generated Variant Entry Type:");
-			VerifyRegex(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants> .variantentrytypes .variantentrytype> .name> .nam\+ .nam:before{.*content:',';.*}",
+			VerifyRegex(cssResult, @"^\s*\.name> .nam \+ .nam:before{.*content:',';.*}",
 				"Between not generated Variant Entry Type:");
-			VerifyRegex(cssResult, @".lexentry> .variantformentrybackrefs_inflectional-variants> .variantentrytypes .variantentrytype> .name:after{.*content:'>';.*}",
+			VerifyRegex(cssResult, @"^\s*\.name:after{.*content:'>';.*}",
 				"After not generated Variant Entry Type:");
 		}
 
@@ -1829,19 +1913,30 @@ namespace SIL.FieldWorks.XWorks
 				CSSClassNameOverride = "Senses",
 				Children = new List<ConfigurableDictionaryNode> { complexformsnotsubentries }
 			};
+			var headwordMain = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadword",
+				CSSClassNameOverride = "HeadWord",
+				After = " "
+			};
 			var entry = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
 				CSSClassNameOverride = "lexentry",
-				Children = new List<ConfigurableDictionaryNode> { senses }
+				Children = new List<ConfigurableDictionaryNode> { senses, headwordMain }
 			};
 
 			var model = new DictionaryConfigurationModel();
 			model.Parts = new List<ConfigurableDictionaryNode> { entry };
 			PopulateFieldsForTesting(entry);
+			var cssGenerator = new CssGenerator();
+			cssGenerator.Init(m_propertyTable);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .otherreferencedcomplexforms .otherreferencedcomplexform> .headword"));
+			cssGenerator.AddGlobalStyles(model, m_propertyTable);
+			cssGenerator.AddStyles(headwordMain);
+			cssGenerator.AddStyles(form);
+			var cssResult = cssGenerator.GetStylesString();
+			VerifyRegex(cssResult, @"^\s*\.otherreferencedcomplexforms-headword", "Headword node not generated for non subentry headword");
 		}
 
 		[Test]
@@ -1872,38 +1967,8 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.That(cssResult, Contains.Substring(".lexentry> .complexforms .complexform> .headword"));
-			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.complexforms\s*\.complexform{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
-		}
-
-		[Test]
-		public void GenerateCssForConfiguration_SenseSubEntriesHeadWord()
-		{
-			var form = new ConfigurableDictionaryNode { FieldDescription = "HeadWord", Style = "FooStyle"};
-			var subentries = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "Subentries",
-				Children = new List<ConfigurableDictionaryNode> { form }
-			};
-			var senses = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "SensesOS",
-				CSSClassNameOverride = "Senses",
-				Children = new List<ConfigurableDictionaryNode> { subentries }
-			};
-			var entry = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "LexEntry",
-				CSSClassNameOverride = "lexentry",
-				Children = new List<ConfigurableDictionaryNode> { senses }
-			};
-
-			var model = new DictionaryConfigurationModel();
-			model.Parts = new List<ConfigurableDictionaryNode> { entry };
-			PopulateFieldsForTesting(entry);
-			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.That(cssResult, Contains.Substring(".lexentry> .senses .sense> .subentries .subentry> .headword"));
+			Assert.That(cssResult, Contains.Substring(".headword")); // Make sure that the headword style was generated
+			Assert.IsTrue(Regex.Match(cssResult, @"\.complexforms\s*\.complexform{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
 		}
 
 		[Test]
@@ -1937,13 +2002,17 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel();
 			model.Parts = new List<ConfigurableDictionaryNode> { entry };
 			PopulateFieldsForTesting(entry);
+			var cssGenerator = new CssGenerator();
+			cssGenerator.Init(m_propertyTable);
+			cssGenerator.AddGlobalStyles(model, m_propertyTable);
 			//SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.That(cssResult, Contains.Substring(".lexentry> .senses > .sensecontent > .sense> .gloss"));
-			Assert.That(cssResult, Contains.Substring(".lexentry> .senses > .sensecontent > .sense> .morphosyntaxanalysisra"));
-			Assert.IsTrue(Regex.Match(cssResult,
-				@"\.lexentry>\s*\.senses\s*>\s*\.sharedgrammaticalinfo\s*>\s*\.morphosyntaxanalysisra\s*{.*font-family\s*:\s*'foofoo'\,serif.*}",
-				RegexOptions.Singleline).Success, "Style for sharedgrammaticalinfo not placed correctly");
+			cssGenerator.AddStyles(senses);
+			cssGenerator.AddStyles(gramInfo);
+			var cssResult = cssGenerator.GetStylesString();
+			VerifyRegex(cssResult, @"^\s*\.morphosyntaxanalysisra", "Style for non-shared grammatical info not generated");
+			VerifyRegex(cssResult,
+				@"^\s*\.senses\s*>\s*\.sharedgrammaticalinfo\s*{.*font-family\s*:\s*'foofoo'\,serif.*}",
+				"Style for sharedgrammaticalinfo not placed correctly");
 		}
 
 		[Test]
@@ -1980,9 +2049,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.IsTrue(Regex.Match(cssResult,
-				@"\.entry>\s*\.senses>\s*span.sensecontent\+\s*span\:before\{\s*content\:\'\*\'\;",
-				RegexOptions.Singleline).Success, "Between Material for Senses not placed correctly");
+			VerifyRegex(cssResult, @"^\s*\.senses>\s*span\.sensecontent \+\s*span\:before\{\s*content\:\'\*\'\;", "Between Material for Senses not placed correctly");
 		}
 
 		[Test]
@@ -2008,9 +2075,9 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.That(cssResult, Contains.Substring(".lexentry> .lexemeformoa> span[lang|=\"en-Zxxx-x-audio\"]{"));
-			Assert.IsTrue(Regex.Match(cssResult, @"a.en-Zxxx-x-audio{.*text-decoration:none;.*}", RegexOptions.Singleline).Success,
-							  "Audio not generated.");
+			// Not using regex to avoid figuring out all the escapes necessary
+			Assert.That(cssResult, Contains.Substring(".lexemeformoa> span[lang|=\"en-Zxxx-x-audio\"]{"));
+			VerifyRegex(cssResult, @"a.en-Zxxx-x-audio{.*text-decoration:none;.*}", "Audio not generated.");
 		}
 
 		[Test]
@@ -2035,9 +2102,8 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(model);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.That(cssResult, Contains.Substring(".lexentry> .senses > .sensecontent > .sense> .gloss"));
-			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*>\s*\.sensecontent(\s*\+\s*\.sensecontent)?\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
-			Assert.False(Regex.Match(cssResult, @"{\s*}").Success); // make sure we filter out empty rules
+			VerifyRegex(cssResult, @"^\.gloss", "gloss missing");
+			VerifyRegex(cssResult, @"^\s*\.senses\s*>\s*\.sensecontent\s*{\s*display\s*:\s*block;.*}");
 		}
 
 		[Test]
@@ -2068,7 +2134,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*>\s*\.sense>\s*\.examples\s*\.example\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
+			Assert.IsTrue(Regex.Match(cssResult, @"\.example\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
 		}
 
 		[Test]
@@ -2099,7 +2165,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.IsFalse(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*\.sense>\s*\.examples\s*\.example\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
+			Assert.IsFalse(Regex.Match(cssResult, @"\.example\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
 		}
 
 		[Test]
@@ -2125,9 +2191,8 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(model);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.That(cssResult, Contains.Substring(".lexentry> .senses > .sensecontent > .sense> .gloss"));
-			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*\+\s*\.sensecontent\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
-			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*>\s*\.sense\s*{.*font-style\s*:\s*italic;.*}", RegexOptions.Singleline).Success);
+			VerifyRegex(cssResult, @"^\s*\.senses\s*>\s*\.sensecontent\s*\+\s*\.sensecontent\s*{.*display\s*:\s*block;.*}", "First sense inline style not generated");
+			VerifyRegex(cssResult, @"^\s*\.senses\s*>\s*\.sensecontent\s*>\s*\.sense\s*{.*font-style\s*:\s*italic;.*}", "Style for each sense not generated");
 		}
 
 		[Test]
@@ -2153,9 +2218,8 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(model);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.That(cssResult, Contains.Substring(".lexentry> .senses > .sensecontent > .sense> .gloss"));
-			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*{.*display\s*:\s*block;.*}", RegexOptions.Singleline).Success);
-			Assert.IsTrue(Regex.Match(cssResult, @"\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*>\s*\.sense\s*{.*font-style\s*:\s*italic;.*}", RegexOptions.Singleline).Success);
+			VerifyRegex(cssResult, @"\s*\.senses\s*>\s*\.sensecontent\s*{.*display\s*:\s*block;.*}", "Block display not applied to all senses");
+			VerifyRegex(cssResult, @"\s*\.senses\s*>\s*\.sensecontent\s*>\s*\.sense\s*{.*font-style\s*:\s*italic;.*}", "Font style missing");
 		}
 
 		[Test]
@@ -2179,8 +2243,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*\.sensenumber", RegexOptions.Singleline).Success,
-							  "sense number style selector was not generated.");
+			VerifyRegex(cssResult, @"\s*\.senses\s*>\s*\.sensecontent\s*\.sensenumber", "sense number style selector was not generated.");
 			VerifyFontInfoInCss(FontColor, FontBGColor, FontName, FontBold, FontItalic, FontSize, cssResult);
 		}
 
@@ -2233,9 +2296,8 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.That(cssResult, Contains.Substring(".reversalindexentry> .refdsenses > .sensecontent > .refdsense> .gloss"));
-			Assert.IsTrue(Regex.Match(cssResult, @"\.reversalindexentry>\s*\.refdsenses\s*>\s*\.sensecontent\s*\.sensenumber\s*{.*font-style\s*:\s*italic;.*}", RegexOptions.Singleline).Success);
-			Assert.False(Regex.Match(cssResult, @"{\s*}").Success); // make sure we filter out empty rules
+			VerifyRegex(cssResult, @"^.gloss\s*{\s*font-family", "Gloss with style was not generated from reversal sense");
+			VerifyRegex(cssResult, @"^\.refdsenses\s*>\s*\.sensecontent\s*\.sensenumber\s*{.*font-style\s*:\s*italic;.*}", "Sense Number missing");
 		}
 
 		[Test]
@@ -2258,10 +2320,8 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*\.sensenumber:before{.*content:'\['.*}", RegexOptions.Singleline).Success,
-							  "Before content not applied to the sense number selector.");
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.senses\s*>\s*\.sensecontent\s*\.sensenumber:after{.*content:'\]'.*}", RegexOptions.Singleline).Success,
-							  "After content not applied to the sense number selector.");
+			VerifyRegex(cssResult, @"\s*\.senses\s*>\s*\.sensecontent\s*\.sensenumber:before{.*content:'\['.*}", "Before content not applied to the sense number selector.");
+			VerifyRegex(cssResult, @"\s*\.senses\s*>\s*\.sensecontent\s*\.sensenumber:after{.*content:'\]'.*}", "After content not applied to the sense number selector.");
 		}
 
 		[Test]
@@ -2309,17 +2369,15 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			const string thisMainSense = @"\.reversalindexentry>\s*\.sensesrs\s*\.sensesr>\s*\.entryrefswiththismainsense";
-			VerifyRegex(cssResult, thisMainSense + @">\s*\.entrytypes:before{\s*content:'b4';\s*}"); // TODO? (Hasso) 2016.10: put on .types .type first-child
-			VerifyRegex(cssResult, thisMainSense + @">\s*\.entryrefswiththismainsens\s*\+\s*.entrytypes:before{\s*content:'twixt';\s*}",
+			VerifyRegex(cssResult, @"\s*\.entrytypes:before{\s*content:'b4';\s*}"); // TODO? (Hasso) 2016.10: put on .types .type first-child
+			VerifyRegex(cssResult, @"\s*\.entryrefswiththismainsens\s*\+\s*.entrytypes:before\s*{\s*content:'twixt';\s*}",
 				"Until everything else is restructured under the yet-to-be-added Targets node, Factoring Type.Between goes between typed factions");
-			VerifyRegex(cssResult, thisMainSense + @">\s*\.entrytypes:after{\s*content:'farther back';\s*}");
-			VerifyRegex(cssResult, thisMainSense + @"\s*\.entryrefswiththismainsens>\s*\.testheadword:after{\s*content:'ah';\s*}",
+			VerifyRegex(cssResult, @"\s*\.entrytypes:after{\s*content:'farther back';\s*}");
+			VerifyRegex(cssResult, @"^\.testheadword:after{\s*content:'ah';\s*}",
 				"Headword's selector should *not* have changed due to factoring");
-			const string entryType = thisMainSense + @">\s*\.entrytypes \.entrytype";
-			VerifyRegex(cssResult, entryType + @">\s*\.reversename>\s*span:first-child:before{\s*content:'beef';\s*}");
-			VerifyRegex(cssResult, entryType + @">\s*\.reversename>\s*span+span\[lang|='" + lang2 + @"'\]:before{\s*content:'viet';\s*}");
-			VerifyRegex(cssResult, entryType + @">\s*\.reversename>\s*span:last-child:after{\s*content:'aft';\s*}");
+			VerifyRegex(cssResult, @"\s*\.reversename>\s*span:first-child:before{\s*content:'beef';\s*}");
+			VerifyRegex(cssResult, @"\s*\.reversename>\s*span+span\[lang|='" + lang2 + @"'\]:before{\s*content:'viet';\s*}");
+			VerifyRegex(cssResult, @"\s*\.reversename>\s*span:last-child:after{\s*content:'aft';\s*}");
 		}
 
 		[Test]
@@ -2341,7 +2399,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			VerifyRegex(cssResult, @".*\.lexentry>\s*\.senses>\s*\.sense\s*\+\s*\.sense:before{.*content:','.*}", "Between selector not generated.");
+			VerifyRegex(cssResult, @".*\.senses>\s*\.sense\s*\+\s*\.sense:before{.*content:','.*}", "Between selector not generated.");
 		}
 
 		[Test]
@@ -2364,8 +2422,8 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.lexemeform>\s*span\.writingsystemprefix\s*\~\s*span\.writingsystemprefix:before{.*content:','.*}", RegexOptions.Singleline).Success,
-							  "Between span selector not generated.");
+			VerifyRegex(cssResult, @".*\.lexemeform>\s*span\.writingsystemprefix\s*\~\s*span\.writingsystemprefix:before{.*content:','.*}",
+				"Between span selector not generated.");
 		}
 
 		[Test]
@@ -2397,7 +2455,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.lexemeform>\s*span\+span\[lang\|=\'fr\'\]:before{.*content:','.*}", RegexOptions.Singleline).Success,
+			VerifyRegex(cssResult, @".*\.lexemeform>\s*span\+span\[lang\|\='fr'\]:before{.*content:','.*}",
 							  "Between Multi-WritingSystem without Abbr selector not generated.");
 		}
 
@@ -2437,13 +2495,13 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.lexemeform>\s*span\.writingsystemprefix\s*\~\s*span\.writingsystemprefix:before\s*{.*content:','.*}", RegexOptions.Singleline).Success,
+			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexemeform>\s*span\.writingsystemprefix\s*\~\s*span\.writingsystemprefix:before\s*{.*content:','.*}", RegexOptions.Singleline).Success,
 							  "Between Multi-WritingSystem with Abbr selector not generated for LexemeForm.");
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.headword>\s*span\.writingsystemprefix\s*\~\s*span\.writingsystemprefix:before\s*{.*content:','.*}", RegexOptions.Singleline).Success,
+			Assert.IsTrue(Regex.Match(cssResult, @".*\.headword>\s*span\.writingsystemprefix\s*\~\s*span\.writingsystemprefix:before\s*{.*content:','.*}", RegexOptions.Singleline).Success,
 							  "Between Multi-WritingSystem with Abbr selector not generated for HeadWord.");
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.lexemeform>\s*span\.writingsystemprefix:after\s*{.*content:' '.*}", RegexOptions.Singleline).Success,
+			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexemeform>\s*span\.writingsystemprefix:after\s*{.*content:' '.*}", RegexOptions.Singleline).Success,
 							  "writingsystemprefix:after not generated for headword.");
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.headword>\s*span\.writingsystemprefix:after\s*{.*content:' '.*}", RegexOptions.Singleline).Success,
+			Assert.IsTrue(Regex.Match(cssResult, @".*\.headword>\s*span\.writingsystemprefix:after\s*{.*content:' '.*}", RegexOptions.Singleline).Success,
 							  "writingsystemprefix:after not generated for lexemeform.");
 		}
 
@@ -2484,13 +2542,13 @@ namespace SIL.FieldWorks.XWorks
 			wsOpts.Options[1].IsEnabled = false; // uncheck French ws
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.IsFalse(Regex.Match(cssResult, @".*\.lexentry>\s*\.lexemeform>\s*span\.writingsystemprefix\s*\+\s*span:not\(:last-child\):after\s*{.*content:','.*}", RegexOptions.Singleline).Success,
+			Assert.IsFalse(Regex.Match(cssResult, @".*\.lexemeform>\s*span\.writingsystemprefix\s*\+\s*span:not\(:last-child\):after\s*{.*content:','.*}", RegexOptions.Singleline).Success,
 							  "Between Multi-WritingSystem selector should not be generated for LexemeForm (only 1 ws checked).");
-			Assert.IsFalse(Regex.Match(cssResult, @".*\.lexentry>\s*\.headword>\s*span\.writingsystemprefix\s*\+\s*span:not\(:last-child\):after\s*{.*content:','.*}", RegexOptions.Singleline).Success,
+			Assert.IsFalse(Regex.Match(cssResult, @".*\.headword>\s*span\.writingsystemprefix\s*\+\s*span:not\(:last-child\):after\s*{.*content:','.*}", RegexOptions.Singleline).Success,
 							  "Between Multi-WritingSystem selector should not be generated for HeadWord (only 1 ws checked).");
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.lexemeform>\s*span\.writingsystemprefix:after\s*{.*content:' '.*}", RegexOptions.Singleline).Success,
+			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexemeform>\s*span\.writingsystemprefix:after\s*{.*content:' '.*}", RegexOptions.Singleline).Success,
 							  "writingsystemprefix:after not generated for headword.");
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.lexentry>\s*\.headword>\s*span\.writingsystemprefix:after\s*{.*content:' '.*}", RegexOptions.Singleline).Success,
+			Assert.IsTrue(Regex.Match(cssResult, @".*\.headword>\s*span\.writingsystemprefix:after\s*{.*content:' '.*}", RegexOptions.Singleline).Success,
 							  "writingsystemprefix:after not generated for lexemeform.");
 		}
 
@@ -2515,7 +2573,7 @@ namespace SIL.FieldWorks.XWorks
 				PopulateFieldsForTesting(entry);
 				// SUT
 				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-				VerifyRegex(cssResult, @".*\.lexentry>\s*\.senses>\s*\.sense\s*\+\s*\.sense:before{.*content:',';.*font-size:10pt;.*color:#00F.*}",
+				VerifyRegex(cssResult, @".*\.senses>\s*\.sense\s*\+\s*\.sense:before{.*content:',';.*font-size:10pt;.*color:#00F.*}",
 					"Between selector with format not generated.");
 			}
 		}
@@ -2640,16 +2698,11 @@ namespace SIL.FieldWorks.XWorks
 
 			// SUT
 			var cssWithPictureRules = CssGenerator.GenerateCssFromConfiguration(config, m_propertyTable);
-			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry.*picture.*{.*float:right.*}", RegexOptions.Singleline).Success,
-							  "picture not floated right");
-			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry.*picture.*img.*{.*max-width:1in;.*}", RegexOptions.Singleline).Success,
-							  "css for image did not contain height contraint attribute");
-			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry.*pictures.*picture.*{.*margin:\s*0pt\s*0pt\s*4pt\s*4pt.*;.*}", RegexOptions.Singleline).Success,
-							  "css for image did not contain valid margin attribute");
-			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry.*{.*clear:both.*}", RegexOptions.Singleline).Success,
-							  "float not cleared at entry");
-			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry*\>\s*.*pictures.*picture*\>\s*.captionContent\s*.caption*\{.*margin-left:\s*24pt", RegexOptions.Singleline).Success,
-							  "css for caption did not contain valid margin attribute");
+			VerifyRegex(cssWithPictureRules, @"^\s*\.picture.*{.*float:right.*}", "picture not floated right");
+			VerifyRegex(cssWithPictureRules, @"^\s*\.picture.*img.*{.*max-width:1in;.*}", "css for image did not contain height contraint attribute");
+			VerifyRegex(cssWithPictureRules, @"^\s*\.pictures.*picture.*{.*margin:\s*0pt\s*0pt\s*4pt\s*4pt.*;.*}", "css for image did not contain valid margin attribute");
+			VerifyRegex(cssWithPictureRules, @"^\s*\.entry\s*{.*clear:both.*}", "float not cleared at entry");
+			VerifyRegex(cssWithPictureRules, @"^\s*\s*.captionContent\s*.caption*\{.*margin-left:\s*24pt", "css for caption did not contain valid margin attribute");
 		}
 
 		/// <summary>
@@ -2704,23 +2757,23 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(config, m_propertyTable);
 
-			var senseNumberBefore = @".entry> .pictures .picture> .captionContent .sensenumbertss:before\{\s*content:'\[';";
-			Assert.IsTrue(Regex.Match(cssResult, senseNumberBefore, RegexOptions.Singleline).Success, "expected Sense Number before rule is generated");
+			var senseNumberBefore = @"^.captionContent .sensenumbertss:before\{\s*content:'\[';";
+			VerifyRegex(cssResult, senseNumberBefore, "expected Sense Number before rule is generated");
 
-			var senseNumberAfter = @".entry> .pictures .picture> .captionContent .sensenumbertss:after\{\s*content:'\]';";
-			Assert.IsTrue(Regex.Match(cssResult, senseNumberAfter, RegexOptions.Singleline).Success, "expected Sense Number after rule is generated");
+			var senseNumberAfter = @"^.captionContent .sensenumbertss:after\{\s*content:'\]';";
+			VerifyRegex(cssResult, senseNumberAfter, "expected Sense Number after rule is generated");
 
-			var senseNumberBetween = @".entry> .pictures .picture> .captionContent .sensenumbertss> .sensenumberts\+ .sensenumberts:before\{\s*content:', ';";
-			Assert.IsTrue(Regex.Match(cssResult, senseNumberBetween, RegexOptions.Singleline).Success, "expected Sense Number between rule is generated");
+			var senseNumberBetween = @"^.captionContent .sensenumbertss>\s*\.sensenumberts \+\s*\.sensenumberts:before\{\s*content:', ';";
+			VerifyRegex(cssResult, senseNumberBetween, "expected Sense Number between rule is generated");
 
-			var captionBefore = @".entry> .pictures .picture> .captionContent .caption:before\{\s*content:'\{';";
-			Assert.IsTrue(Regex.Match(cssResult, captionBefore, RegexOptions.Singleline).Success, "expected Caption before rule is generated");
+			var captionBefore = @"^.captionContent .caption:before\{\s*content:'\{';";
+			VerifyRegex(cssResult, captionBefore, "expected Caption before rule is generated");
 
-			var captionAfter = @".entry> .pictures .picture> .captionContent .caption:after\{\s*content:'\}';";
-			Assert.IsTrue(Regex.Match(cssResult, captionAfter, RegexOptions.Singleline).Success, "expected Caption after rule is generated");
+			var captionAfter = @"^.captionContent .caption:after\{\s*content:'\}';";
+			VerifyRegex(cssResult, captionAfter, "expected Caption after rule is generated");
 
-			var captionBetween = @".entry> .pictures .picture> .captionContent .caption> .captio\+ .captio:before\{\s*content:' ';";
-			Assert.IsTrue(Regex.Match(cssResult, captionBetween, RegexOptions.Singleline).Success, "expected Caption between rule is generated");
+			var captionBetween = @"^.captionContent .caption>\s*\.captio \+\s*\.captio:before\{\s*content:' ';";
+			VerifyRegex(cssResult, captionBetween, "expected Caption between rule is generated");
 		}
 
 		/// <summary>
@@ -2762,14 +2815,14 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(config, m_propertyTable);
 
-			var pictureBefore = @".entry> .pictures> div:first-child:before\{\s*content:'\[';";
-			Assert.IsTrue(Regex.Match(cssResult, pictureBefore, RegexOptions.Singleline).Success, "expected Picture before rule is generated");
+			var pictureBefore = @".pictures> div:first-child:before\{\s*content:'\[';";
+			VerifyRegex(cssResult, pictureBefore, "expected Picture before rule is generated");
 
-			var pictureAfter = @".entry> .pictures> div:last-child:after\{\s*content:'\]';";
-			Assert.IsTrue(Regex.Match(cssResult, pictureAfter, RegexOptions.Singleline).Success, "expected Picture after rule is generated");
+			var pictureAfter = @".pictures> div:last-child:after\{\s*content:'\]';";
+			VerifyRegex(cssResult, pictureAfter, "expected Picture after rule is generated");
 
-			var pictureBetween = @".entry> .pictures> div\+ div:before\{\s*content:', ';";
-			Assert.IsTrue(Regex.Match(cssResult, pictureBetween, RegexOptions.Singleline).Success, "expected Picture between rule is generated");
+			var pictureBetween = @".*\.pictures>\s*div\s*\+\s*div:before\{\s*content:', ';";
+			VerifyRegex(cssResult, pictureBetween, "expected Picture between rule is generated");
 		}
 
 
@@ -2820,12 +2873,9 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			var cssWithPictureRules = CssGenerator.GenerateCssFromConfiguration(config, m_propertyTable);
 
-			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry.*pictures.*picture> .captionContent .caption", RegexOptions.Singleline).Success,
-				"css for image did not contain expected rule");
-			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry.*pictures.*picture> .captionContent .headword", RegexOptions.Singleline).Success,
-				"css for image did not contain expected headword rule");
-			Assert.IsTrue(Regex.Match(cssWithPictureRules, @".*\.entry.*pictures.*picture> .captionContent .owner_gloss", RegexOptions.Singleline).Success,
-				"css for image did not contain expected gloss rule");
+			VerifyRegex(cssWithPictureRules, @"^\.captionContent .caption", "css for image did not contain expected rule");
+			VerifyRegex(cssWithPictureRules, @"^\.captionContent .headword", "css for image did not contain expected headword rule");
+			VerifyRegex(cssWithPictureRules, @"^\.captionContent .owner_gloss", "css for image did not contain expected gloss rule");
 		}
 
 		[Test]
@@ -2860,9 +2910,9 @@ namespace SIL.FieldWorks.XWorks
 			sense.Gloss.set_String(wsEn, TsStringUtils.MakeString("gloss", wsEn));
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(".lexentry> .senses .sense> .gloss> span.writingsystemprefix" +
+			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(".gloss> span.writingsystemprefix" +
 				"{font-family:\'foofoo\',serif;font-size:10pt;font-weight:bold;font-style:italic;color:#00F;"));
-			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(".lexentry> .senses .sense> .gloss> span.writingsystemprefix:after{content:' ';}"));
+			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(".gloss> span.writingsystemprefix:after{content:' ';}"));
 		}
 
 		[Test]
@@ -2950,13 +3000,13 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entryNode);
 			// Default (no ws) style info
 			const string englishGeneralStyle = "span[lang|=\"en\"]{font-family:'english',serif;color:#F00;}";
-			const string definitionSelector = ".lexentry> .senses .sense> .definition";
-			const string englishSpecificStyle = " span[lang|=\"en\"]{color:#FF0;}";
+			const string definitionSelector = ".definition span[lang|=\"en\"]{color:#FF0;}";
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
+			// Using substring instead of regex to avoid spending all the time figuring out which regex characters to escape in this css
 			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(englishGeneralStyle));
-			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(definitionSelector + englishSpecificStyle));
-		}
+			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(definitionSelector));
+	  }
 
 		[Test]
 		public void GenerateCssForConfiguration_GenerateMainEntryParagraphStyle()
@@ -3039,11 +3089,11 @@ namespace SIL.FieldWorks.XWorks
 			model.Parts.ForEach(PopulateFieldsForTesting);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			Assert.IsTrue(Regex.Match(cssResult, @"div.minorentry{\s*margin-left:24pt;\s*padding-right:48pt;\s*}", RegexOptions.Singleline).Success,
+			VerifyRegex(cssResult, @"div.minorentry{\s*margin-left:24pt;\s*padding-right:48pt;\s*}",
 							  "Dictionary-Minor Paragraph Style not generated.");
-			Assert.IsTrue(Regex.Match(cssResult, @"div.specialminorentry{\s*padding-right:32pt;\s*}", RegexOptions.Singleline).Success,
+			VerifyRegex(cssResult, @"div.specialminorentry{\s*padding-right:32pt;\s*}",
 							  "Dictionary-Minor Paragraph Style for node with style attribute not generated.");
-			Assert.IsTrue(Regex.Match(cssResult, @"div.optionsminorentry{\s*padding-right:16pt;\s*}", RegexOptions.Singleline).Success,
+			VerifyRegex(cssResult, @"div.optionsminorentry{\s*padding-right:16pt;\s*}",
 							  "Dictionary-Minor Paragraph Style for node with paragraph options not generated.");
 		}
 
@@ -3110,8 +3160,8 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			const string regExPected = @".lexentry>\s.senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*font-family:Arial;.*font-weight:bold;.*font-style:italic;.*background-color:Brown;.*}";
-			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Bulleted style not generated.");
+			const string regExPected = @".senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*font-family:Arial;.*font-weight:bold;.*font-style:italic;.*background-color:Brown;.*}";
+			VerifyRegex(cssResult, regExPected, "Bulleted style not generated.");
 		}
 
 		[Test]
@@ -3140,8 +3190,8 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			const string regExPected = @".lexentry>\s.senses\s>\s.sensecontent\s.\s.sensecontent:not\(:first-child\):before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*font-family:Arial;.*font-weight:bold;.*font-style:italic;.*background-color:Brown;.*}";
-			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Bulleted style not generated.");
+			const string regExPected = @"^\.senses\s+>\s*\.sensecontent:not\(:first-child\):before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*font-family:Arial;.*font-weight:bold;.*font-style:italic;.*background-color:Brown;.*}";
+			VerifyRegex(cssResult, regExPected, "Bulleted style not generated.");
 		}
 
 		[Test]
@@ -3169,9 +3219,11 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			const string regexExpected = @".lexentry>\s.sensesos{.*counter-reset:\ssensesos;.*}.*.lexentry>\s.sensesos\s>\s.sensecontent:before{.*counter-increment:\ssensesos;.*content:\scounter.sensesos,\sdecimal.\s'\s';.*font-size:14pt;.*color:Green;.*}";
-			Assert.IsTrue(Regex.Match(cssResult, regexExpected, RegexOptions.Singleline).Success, "Numbering style not generated for Senses.");
-		}
+			const string sensesCounterReset = @"\s*.sensesos\s*{\s*counter-reset:\ssensesos;.*}";
+			const string sensesCounterInc = @".*\s.sensesos\s>\s.sensecontent:before{.*counter-increment:\ssensesos;.*content:\scounter.sensesos,\sdecimal.\s'\s';.*font-size:14pt;.*color:Green;.*}";
+			VerifyRegex(cssResult, sensesCounterReset, "Numbering style counter reset not generated for Senses.");
+			VerifyRegex(cssResult, sensesCounterInc, "Numbering style counter-increment not generated for Senses.");
+	  }
 
 		[Test]
 		public void GenerateCssForNumberingStyleForSubentries()
@@ -3199,10 +3251,11 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entryConfig);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			const string regexExpected = @".lexentry>\s.subentries{.*counter-reset:[\s]subentries;.*}.*.lexentry>\s.subentries\s.subentry:before{.*counter-increment:[\s]subentries;.*content:\scounter.subentries,\supper-roman.\s'\s';.*font-size:14pt;.*color:Green;.*}";
-			Assert.IsTrue(Regex.Match(cssResult, regexExpected, RegexOptions.Singleline).Success,
-				"Numbering style not generated for Subentry.");
-		}
+			const string regexExpected = @"\s*\.subentries{.*counter-reset:[\s]subentries;.*}";
+			const string counterIncrement = @"\s*\.subentries\s.subentry:before{.*counter-increment:[\s]subentries;.*content:\scounter.subentries,\supper-roman.\s'\s';.*font-size:14pt;.*color:Green;.*}";
+			VerifyRegex(cssResult, regexExpected, "counter-reset style not generated for Subentry.");
+			VerifyRegex(cssResult, regexExpected, "counter-increment style not generated for Subentry.");
+	  }
 
 		[Test]
 		public void GenerateCssForNumberingStyleForExamples()
@@ -3239,8 +3292,8 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			const string regexExpected = @".lexentry>\s.senses\s>\s.sensecontent\s>\s.sense>\s.examplesos{.*counter-reset:[\s]examplesos;.*}.*.lexentry>\s.senses\s>\s.sensecontent\s>\s.sense>\s.examplesos\s.exampleso:before{.*counter-increment:[\s]examplesos;.*content:[\s]counter.examplesos,[\s]upper-alpha.\s'\s';.*font-size:14pt;.*color:Green;.*}";
-			Assert.IsTrue(Regex.Match(cssResult, regexExpected, RegexOptions.Singleline).Success, "Numbering style not generated for Examples.");
+			const string regexExpected = @"\s.examplesos{.*counter-reset:[\s]examplesos;.*}.*\s*\s\.examplesos\s\.exampleso:before{.*counter-increment:[\s]examplesos;.*content:[\s]counter.examplesos,[\s]upper-alpha.\s'\s';.*font-size:14pt;.*color:Green;.*}";
+			VerifyRegex(cssResult, regexExpected, "Numbering style not generated for Examples.");
 		}
 
 		[Test]
@@ -3301,16 +3354,16 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			const string regExpected = @".lexentry>\s.senses\s>\s.sensecontent";
-			Assert.IsTrue(Regex.Match(cssResult, regExpected, RegexOptions.Singleline).Success, "Sense List style should generate a match.");
-			const string regExNotExpected = regExpected + @"(\s\+\s.sensecontent)?:not\(:first-child\):before";
-			Assert.IsFalse(Regex.Match(cssResult, regExNotExpected, RegexOptions.Singleline).Success,
-							  "Sense List style should not generate a match, since it is not a bulleted style.");
+			const string regExpected = @"\s.senses\s>\s.sensecontent";
+			VerifyRegex(cssResult, regExpected, "Sense List style should generate a match.");
+			const string regExNotExpected = regExpected + @"(\s*\.sensecontent)?:not\(:first-child\):before";
+			Assert.IsFalse(Regex.Match(cssResult, regExNotExpected, RegexOptions.Singleline).Success, "Sense List style should not generate a match, since it is not a bulleted style.");
 		}
 
 		[Test]
-		public void GenerateCssForBulletStyleForSubSenses()
+		public void GenerateCssForBulletStyle_OneStyleWhenSubSenseMatchesSense()
 		{
+			var cssGenerator = new CssGenerator();
 			GenerateBulletStyle("Bulleted List");
 			var subsenses = new ConfigurableDictionaryNode
 			{
@@ -3343,9 +3396,62 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
 			PopulateFieldsForTesting(entry);
 			// SUT
-			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			const string regExPected = @".lexentry>\s.senses\s*>\s*.sensecontent\s*>\s*.sense>\s.senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*font-family:Arial;.*font-weight:bold;.*font-style:italic;.*background-color:Brown;.*}";
-			Assert.IsTrue(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Bulleted style for SubSenses not generated.");
+			// Add the sense and subsense styles
+			cssGenerator.AddGlobalStyles(model, m_propertyTable); // Gets the bullet information prepped
+			cssGenerator.Init(m_propertyTable);
+			cssGenerator.AddStyles(senses);
+			cssGenerator.AddStyles(subsenses);
+			var cssResult = cssGenerator.GetStylesString();
+			const string regExPected = @".*senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*font-family:Arial;.*font-weight:bold;.*font-style:italic;.*background-color:Brown;.*}";
+			Assert.That(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Bulleted style for SubSenses not generated.");
+			Assert.That(!Regex.Match(cssResult, regExPected, RegexOptions.Singleline).NextMatch().Success, "Bulleted style for SubSenses not generated.");
+		}
+
+		[Test]
+		public void GenerateCssForBulletStyle_TwoStylesWhenSubSensesAreDifferent()
+		{
+			var cssGenerator = new CssGenerator();
+			GenerateBulletStyle("Bulleted List");
+			var subsenses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					NumberStyle = "Dictionary-SenseNum", DisplayEachSenseInAParagraph = true
+				},
+				Style = "Bulleted List"
+			};
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions
+				{
+					NumberStyle = "Dictionary-SenseNum", DisplayEachSenseInAParagraph = true
+				},
+				Children = new List<ConfigurableDictionaryNode> { subsenses }
+			};
+
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "lexentry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { entry } };
+			PopulateFieldsForTesting(entry);
+			// SUT
+			// Add the sense and subsense styles
+			cssGenerator.AddGlobalStyles(model, m_propertyTable); // Gets the bullet information prepped
+			cssGenerator.Init(m_propertyTable);
+			cssGenerator.AddStyles(senses);
+			cssGenerator.AddStyles(subsenses);
+			var cssResult = cssGenerator.GetStylesString();
+			const string regExPectedForSub = @"\.senses-senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*font-family:Arial;.*font-weight:bold;.*font-style:italic;.*background-color:Brown;.*}";
+			VerifyRegex(cssResult, regExPectedForSub, "Bulleted style for SubSenses not generated.");
+			const string regExPectedForSense = @"\.senses\s>\s\.sensecontent"; // Make sure there is a .sense > .sensecontent rule as well as the bulletted sub-sense
+			VerifyRegex(cssResult, regExPectedForSense, "Non-bulleted style for Senses not generated.");
 		}
 
 		[Test]
@@ -3373,21 +3479,21 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entryConfig);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			var regexExpected1 = @"\.lexentry>\s\.subentries\s\.subentry{[^}]*\sfont-size:12pt;[^}]*\scolor:#F00;[^}]*\sdisplay:block;[^}]*}";
+			var regexExpected1 = @"\.subentries\s\.subentry{[^}]*\sfont-size:12pt;[^}]*\scolor:#F00;[^}]*\sdisplay:block;[^}]*}";
 			Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
 				"expected subentry rule not generated");
-			var regexExpected2 = @"\.lexentry>\s\.subentries\s\.subentry:before{[^}]*\scontent:'\\25A0';[^}]*font-size:14pt;[^}]*color:Green;[^}]*}";
+			var regexExpected2 = @"\.subentries\s\.subentry:before{[^}]*\scontent:'\\25A0';[^}]*font-size:14pt;[^}]*color:Green;[^}]*}";
 			Assert.IsTrue(Regex.Match(cssResult, regexExpected2, RegexOptions.Singleline).Success,
 				"expected subentry:before rule not generated");
 			// Check that the bullet info values occur only in the :before section, and that the primary values
 			// do not occur in the :before section.
-			var regexUnwanted1 = @"\.lexentry>\s\.subentries\s\.subentry{[^}]*\scontent:'\\25A0';[^}]*}";
+			var regexUnwanted1 = @"\.subentries\s\.subentry{[^}]*\scontent:'\\25A0';[^}]*}";
 			Assert.IsFalse(Regex.Match(cssResult, regexUnwanted1, RegexOptions.Singleline).Success,
 				"subentry rule has unwanted content value");
-			var regexUnwanted2 = @"\.lexentry>\s\.subentries\s\.subentry{[^}]*\sfont-size:14pt;[^}]*}";
+			var regexUnwanted2 = @".subentries\s\.subentry{[^}]*\sfont-size:14pt;[^}]*}";
 			Assert.IsFalse(Regex.Match(cssResult, regexUnwanted2, RegexOptions.Singleline).Success,
 				"subentry rule has unwanted font-size value");
-			var regexUnwanted3 = @"\.lexentry>\s\.subentries\s\.subentry{[^}]*\scolor:Green;[^}]*}";
+			var regexUnwanted3 = @".subentries\s\.subentry{[^}]*\scolor:Green;[^}]*}";
 			Assert.IsFalse(Regex.Match(cssResult, regexUnwanted3, RegexOptions.Singleline).Success,
 				"subentry rule has unwanted color value");
 			var regexUnwanted4 = @"\.lexentry>\s\.subentries\s\.subentry:before{[^}]*\sfont-size:12pt;[^}]*}";
@@ -3430,8 +3536,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// SUT
 				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-				const string regexExpected1 = @"\.lexentry>\s.mlrs\s\.mlr>\s\.configtargets\s\.configtarget>\s\.costume{[^}]*}";
-				Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success, "expected costume rule not generated");
+				const string regexExpected1 = @"\s*\.costume{[^}]*}";
+				VerifyRegex(cssResult, regexExpected1, "expected costume rule not generated");
 			}
 		}
 
@@ -3456,8 +3562,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// SUT
 				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-				const string regexExpected1 = @"\.lexentry>\s.cf12costume{[^}]*}";
-				Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success, "Class name started with number");
+				const string regexExpected1 = @"\s*.cf12costume{[^}]*}";
+				VerifyRegex(cssResult, regexExpected1, "Class name started with number");
 			}
 		}
 
@@ -3494,15 +3600,12 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// SUT
 				var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-				const string regexExpected1 = @"\.lexentry>\s\.custom-location \.custom-locatio{[^}]*}";
-				Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
-					"expected custom-location rule not generated");
-				const string regexExpected2 = @"\.lexentry>\s\.custom-location \.custom-locatio>\s\.name{[^}]*}";
-				Assert.IsTrue(Regex.Match(cssResult, regexExpected2, RegexOptions.Singleline).Success,
-					"expected custom-location>name rule not generated");
-				const string regexExpected3 = @"\.lexentry>\s\.custom-location \.custom-locatio>\s\.abbreviation{[^}]*}";
-				Assert.IsTrue(Regex.Match(cssResult, regexExpected3, RegexOptions.Singleline).Success,
-					"expected custom-location>abbreviation rule not generated");
+				const string regexExpected1 = @"\s*\.custom-location \.custom-locatio{[^}]*}";
+				VerifyRegex(cssResult, regexExpected1, "expected custom-location rule not generated");
+				const string regexExpected2 = @"\s*\.name{[^}]*}";
+				VerifyRegex(cssResult, regexExpected2, "expected custom-location name rule not generated");
+				const string regexExpected3 = @"\s*\.abbreviation{[^}]*}";
+				VerifyRegex(cssResult, regexExpected3, "expected custom-location>abbreviation rule not generated");
 			}
 		}
 
@@ -3526,9 +3629,8 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			var regexExpected1 = @"\.lexentry>\s\.note_test-one{[^}]*}";
-			Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
-				"expected duplicated config node rename rule not generated");
+			var regexExpected1 = @"\s\.note_test-one{[^}]*}";
+			VerifyRegex(cssResult, regexExpected1, "expected duplicated config node rename rule not generated");
 		}
 
 		[Test]
@@ -3551,9 +3653,8 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			var regexExpected1 = @"\.lexentry>\s\.note_-test{[^}]*}";
-			Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
-				"expected duplicated config node rename rule not generated");
+			var regexExpected1 = @"^\s*\.note_-test{[^}]*}";
+			VerifyRegex(cssResult, regexExpected1, "expected duplicated config node rename rule not generated");
 		}
 
 		[Test]
@@ -3576,9 +3677,8 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(model);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			var regexExpected1 = @"\.lexentry>\s\.note_-test-{[^}]*}";
-			Assert.IsTrue(Regex.Match(cssResult, regexExpected1, RegexOptions.Singleline).Success,
-				"expected duplicated config node rename rule not generated");
+			var regexExpected1 = @"\s*\.note_-test-{[^}]*}";
+			VerifyRegex(cssResult, regexExpected1, "expected duplicated config node rename rule not generated");
 		}
 
 		[Test]
@@ -3627,21 +3727,21 @@ namespace SIL.FieldWorks.XWorks
 			//var regexItem1 = @".entry> .pronunciations .pronunciation> .form> span\+ span:before\{\s*content:' ';\s*\}";
 			//Assert.IsTrue(Regex.Match(cssResult, regexItem1, RegexOptions.Singleline).Success, "expected collection item between rule is generated");
 
-			var regexItem2 = @".entry> .pronunciations .pronunciation> .form> span:first-child:before\{\s*content:'\[';\s*\}";
+			var regexItem2 = @".form> span:first-child:before\{\s*content:'\[';\s*\}";
 			Assert.IsTrue(Regex.Match(cssResult, regexItem2, RegexOptions.Singleline).Success, "expected collection item before rule is generated");
 
-			var regexItem3 = @".entry> .pronunciations .pronunciation> .form> span:last-child:after\{\s*content:'\]';\s*\}";
+			var regexItem3 = @".form> span:last-child:after\{\s*content:'\]';\s*\}";
 			Assert.IsTrue(Regex.Match(cssResult, regexItem3, RegexOptions.Singleline).Success, "expected collection item after rule is generated");
 
-			var regexCollection1 = @".entry> .pronunciations> .pronunciation\+ .pronunciation:before\{\s*content:', ';\s*\}";
-			Assert.IsTrue(Regex.Match(cssResult, regexCollection1, RegexOptions.Singleline).Success, "expected collection between rule is generated");
+			var regexCollection1 = @"^\.pronunciations>\s+.pronunciation\s+\+\s+\.pronunciation:before\{\s*content:', ';\s*\}";
+			VerifyRegex(cssResult, regexCollection1, "expected collection between rule is generated");
 
 			// The following two checks test the fix for LT-17048.  The preceding four checks should be the same before and after the fix.
-			var regexCollection2 = @".entry> .pronunciations:before\{\s*content:'\{Pron: ';\s*\}";
-			Assert.IsTrue(Regex.Match(cssResult, regexCollection2, RegexOptions.Singleline).Success, "expected collection before rule is generated");
+			var regexCollection2 = @".pronunciations:before\{\s*content:'\{Pron: ';\s*\}";
+			VerifyRegex(cssResult, regexCollection2, "expected collection before rule is generated");
 
-			var regexCollection3 = @".entry> .pronunciations:after\{\s*content:'\} ';\s*\}";
-			Assert.IsTrue(Regex.Match(cssResult, regexCollection3, RegexOptions.Singleline).Success, "expected collection after rule is generated");
+			var regexCollection3 = @".pronunciations:after\{\s*content:'\} ';\s*\}";
+			VerifyRegex(cssResult, regexCollection3, "expected collection after rule is generated");
 		}
 
 		[Test]
@@ -3676,12 +3776,12 @@ namespace SIL.FieldWorks.XWorks
 			((DictionaryNodeSenseOptions)sensesConfig.DictionaryNodeOptions).DisplayEachSenseInAParagraph = false;
 			var cssInline = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 
-			const string regexBefore = @"^\.lexentry> \.senses:before\{";
-			const string regexAfter = @"^\.lexentry> \.senses:after\{";
+			const string regexBefore = @"^\.senses:before\{";
+			const string regexAfter = @"^\.senses:after\{";
 
 			Assert.AreNotEqual(cssPara, cssInline, "The css should change depending on senses showing in a paragraph");
-			Assert.IsTrue(Regex.IsMatch(cssInline, regexBefore, RegexOptions.Multiline), "The css for inline senses should have a senses:before rule");
-			Assert.IsTrue(Regex.IsMatch(cssInline, regexAfter, RegexOptions.Multiline), "The css for inline senses should have a senses:after rule");
+			VerifyRegex(cssInline, regexBefore, "The css for inline senses should have a senses:before rule");
+			VerifyRegex(cssInline, regexAfter, "The css for inline senses should have a senses:after rule");
 			Assert.IsFalse(Regex.IsMatch(cssPara, regexBefore, RegexOptions.Multiline), "The css for paragraphed senses should not have a senses:before rule");
 			Assert.IsFalse(Regex.IsMatch(cssPara, regexAfter, RegexOptions.Multiline), "The css for paragraphed senses should not have a senses:after rule");
 		}
@@ -3726,11 +3826,11 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			// default (analysis ws) rule
-			const string regexPrimary = @"^\.lexentry> \.extendednotecontents\{\s*color:#008000;";
+			const string regexPrimary = @"^\.extendednotecontents\{\s*color:#008000;";
 			// specific (embedded vernacular ws) rule affecting any span inside .extendednotecontents (at any level)
-			const string regexSpecific = @"^\.lexentry> \.extendednotecontents span\[lang|='fr']\{\s*color:#00F";
-			Assert.IsTrue(Regex.IsMatch(result, regexPrimary, RegexOptions.Multiline), "The css for the default color should be there.");
-			Assert.IsTrue(Regex.IsMatch(result, regexSpecific, RegexOptions.Multiline), "The css for the specific language color should be there.");
+			const string regexSpecific = @"^\.extendednotecontents span\[lang|='fr']\{\s*color:#00F";
+			VerifyRegex(result, regexPrimary, "The css for the default color should be there.");
+			VerifyRegex(result, regexSpecific, "The css for the specific language color should be there.");
 		}
 
 		[Test]
@@ -4184,7 +4284,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(css, Contains.Substring("border-right-width:" + trailing / 1000 + "pt"));
 		}
 
-		private static void VerifyRegex(string input, string pattern, string message = null, RegexOptions options = RegexOptions.Singleline)
+		private static void VerifyRegex(string input, string pattern, string message = null, RegexOptions options = RegexOptions.Singleline | RegexOptions.Multiline)
 		{
 			Assert.IsTrue(Regex.Match(input, pattern, options).Success,
 				string.Format("{3}Expected{0}{1}{0}but got{0}{2}", Environment.NewLine, pattern, input,

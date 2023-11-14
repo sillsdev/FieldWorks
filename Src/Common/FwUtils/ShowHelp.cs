@@ -1,10 +1,6 @@
-// Copyright (c) 2004-2013 SIL International
+// Copyright (c) 2004-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: ShowHelp.cs
-// Responsibility: TE Team
-//
 // <remarks>
 // This class provides common code for displaying a help topic.
 // </remarks>
@@ -89,8 +85,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return;
 			}
 
-			// Show the help. We have to use a label because without it the help is always on top of the window
-			Help.ShowHelp(new Label(), helpFile, helpTopic);
+			using (var helpLabel = new Label())
+			{
+				TrackingHelper.TrackHelpRequest(helpFile, helpTopic);
+				// Show the help. We have to use a label because without it the help is always on top of the window
+				Help.ShowHelp(helpLabel, helpFile, helpTopic);
+			}
 		}
 	}
 }

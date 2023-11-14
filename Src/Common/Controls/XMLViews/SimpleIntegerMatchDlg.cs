@@ -205,7 +205,7 @@ namespace SIL.FieldWorks.Common.Controls
 			this.m_nudVal1 = new System.Windows.Forms.NumericUpDown();
 			this.m_nudVal2 = new System.Windows.Forms.NumericUpDown();
 			this.m_helpButton = new System.Windows.Forms.Button();
-			this.helpProvider1 = new HelpProvider();
+			this.helpProvider1 = new FlexHelpProvider();
 			((System.ComponentModel.ISupportInitialize)(this.m_nudVal1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_nudVal2)).BeginInit();
 			this.SuspendLayout();

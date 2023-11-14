@@ -8,7 +8,7 @@ Build/LibraryDevelopment.properties
 Build/NuGet.exe
 Build/nunit.framework.dll
 Build/nunit.framework.xml
-Build/packages.config
+Build/*.config
 Build/*.dll
 Build/*.pdb
 BuildDir/
@@ -29,8 +29,7 @@ Bin/_setLatestBuildConfig.bat
 Bin/_setroot.bat
 Lib/debug/DebugProcs.lib
 Lib/debug/Generic.lib
-Lib/debug/unit++.lib
-Lib/debug/unit++.pdb
+Lib/debug/unit++.*
 Lib/release/DebugProcs.lib
 Lib/release/Generic.lib
 Lib/release/unit++.lib
@@ -45,7 +44,7 @@ Src/LangInst/InstallLanguageTests/timing.txt
 *.user
 *.ncrunchsolution
 *.ncb
-*.sln
+FW.sln
 *.suo
 *.o
 *_ReSharper*

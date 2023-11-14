@@ -1145,7 +1145,16 @@ namespace SIL.FieldWorks.XWorks
 				if (availableWSs.All(opt => opt.Id != wsOptions.Options[i].Id) &&
 					WritingSystemServices.GetMagicWsIdFromName(wsOptions.Options[i].Id) == 0)
 				{
-					wsOptions.Options.RemoveAt(i);
+					// If Enabled, then add it to availableWSs.
+					if (wsOptions.Options[i].IsEnabled)
+					{
+						availableWSs.Add(wsOptions.Options[i]);
+					}
+					// If not Enabled, then remove it from wsOptions.Options.
+					else
+					{
+						wsOptions.Options.RemoveAt(i);
+					}
 				}
 			}
 			// ensure at least one is enabled (default to the first, which is always Magic)
@@ -1163,32 +1172,32 @@ namespace SIL.FieldWorks.XWorks
 			switch (wsType)
 			{
 				case DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular:
-					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsVern.ToString() });
-					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(
-							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = WritingSystemServices.kwsVern.ToString() });
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption { Id = ws.Id }));
 					break;
 				case DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis:
-					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsAnal.ToString() });
-					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
-							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = WritingSystemServices.kwsAnal.ToString() });
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption { Id = ws.Id }));
 					break;
 				case DictionaryNodeWritingSystemOptions.WritingSystemType.Both:
-					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsVern.ToString() });
-					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsAnal.ToString() });
-					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(
-							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
-					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
-							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = WritingSystemServices.kwsVern.ToString() });
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = WritingSystemServices.kwsAnal.ToString() });
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption { Id = ws.Id }));
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption { Id = ws.Id }));
 					break;
 				case DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation:
-					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsPronunciation.ToString() });
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = WritingSystemServices.kwsPronunciation.ToString() });
 					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Select(
-							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption { Id = ws.Id }));
 					break;
 				case DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal:
-					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsReversalIndex.ToString() });
-					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
-							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = WritingSystemServices.kwsReversalIndex.ToString() });
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption { Id = ws.Id }));
 					break;
 			}
 			return wsList;

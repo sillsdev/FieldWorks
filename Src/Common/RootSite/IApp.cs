@@ -9,19 +9,15 @@
 // <remarks>
 // </remarks>
 
-using System;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
 	/// <summary>
 	/// Interface for application.
-	/// TODO: The only place this interface is used in RootSite is in SyncUndoAction. The only
-	/// place that SyncUndoAction is used is in FrameWork. This means that IApp could be moved
-	/// to a better place.
+	/// TODO: This interface is not used in RootSite. This means that IApp could be moved to a better place.
 	/// </summary>
 	public interface IApp
 	{
@@ -83,25 +79,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		void RestartSpellChecking();
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Cycle through the applications main windows and synchronize them with database
-		/// changes.
+		/// Cycle through the applications main windows and synchronize them with database changes.
 		/// </summary>
-		/// <param name="sync">synchronization information record</param>
-		/// <returns><c>true</c> to continue processing; set to <c>false</c> to prevent
-		/// processing of subsequent sync messages. </returns>
-		/// ------------------------------------------------------------------------------------
-		bool Synchronize(SyncMsg sync);
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// To participate in automatic synchronization from the database (calling SyncFromDb
-		/// in a useful manner) and application must override this, providing a unique Guid.
-		/// Typically this is the Guid defined by a static AppGuid method.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		Guid SyncGuid { get; }
+		void Synchronize();
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>

@@ -95,6 +95,7 @@ namespace SIL.FieldWorks.XWorks
 				var custCssPath = CssGenerator.CopyCustomCssAndGetPath(Path.GetDirectoryName(xhtmlPath), cache, false);
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(xhtmlPath),
 					ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), Path.GetFileName(cssPath) == "configured.css");
+				settings.StylesGenerator.AddGlobalStyles(configuration, readOnlyPropertyTable);
 				GenerateOpeningHtml(cssPath, custCssPath, settings, xhtmlWriter);
 				Tuple<int, int> currentPageBounds = GetPageForCurrentEntry(settings, entryHvos, entriesPerPage);
 				GenerateTopOfPageButtonsIfNeeded(settings, entryHvos, entriesPerPage, currentPageBounds, xhtmlWriter, cssWriter);
@@ -112,7 +113,7 @@ namespace SIL.FieldWorks.XWorks
 
 					var generateEntryAction = new Action(() =>
 					{
-						var entryContent = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, configuration, publicationDecorator, settings);
+						var entryContent = ConfiguredLcmGenerator.GenerateContentForEntry(entry, configuration, publicationDecorator, settings);
 						entryStringBuilder.Append(entryContent);
 						if (progress != null)
 							progress.Position++;
@@ -149,7 +150,7 @@ namespace SIL.FieldWorks.XWorks
 					cssWriter.Write(CssGenerator.GenerateCssForSelectedEntry(settings.RightToLeft));
 					ConfiguredLcmGenerator.CopyFileSafely(settings, Path.Combine(FwDirectoryFinder.FlexFolder, ImagesFolder, CurrentEntryMarker), CurrentEntryMarker);
 				}
-				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, readOnlyPropertyTable));
+				cssWriter.Write(((CssGenerator)settings.StylesGenerator).GetStylesString());
 				cssWriter.Flush();
 			}
 		}
@@ -225,12 +226,13 @@ namespace SIL.FieldWorks.XWorks
 				var readOnlyPropTable = new ReadOnlyPropertyTable(propertyTable);
 				var exportSettings = new ConfiguredLcmGenerator.GeneratorSettings(readOnlyPropTable.GetValue<LcmCache>("cache"), readOnlyPropTable, false, false, null,
 					ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropTable, configuration));
+				exportSettings.StylesGenerator.AddGlobalStyles(configuration, new ReadOnlyPropertyTable(propertyTable));
 				GenerateOpeningHtml(previewCssPath, custCssPath, exportSettings, writer);
-				var content = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, configuration, pubDecorator, exportSettings);
+				var content = ConfiguredLcmGenerator.GenerateContentForEntry(entry, configuration, pubDecorator, exportSettings);
 				writer.WriteRaw(content);
 				GenerateClosingHtml(writer);
 				writer.Flush();
-				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, readOnlyPropTable));
+				cssWriter.Write(((CssGenerator)exportSettings.StylesGenerator).GetStylesString());
 				cssWriter.Flush();
 			}
 
@@ -360,7 +362,7 @@ namespace SIL.FieldWorks.XWorks
 				var firstEntry = Math.Max(0, oldCurrentPageRange.Item1 - entriesToAddCount);
 				for (var i = firstEntry; i < oldCurrentPageRange.Item1; ++i)
 				{
-					entries.Add(ConfiguredLcmGenerator.GenerateXHTMLForEntry(settings.Cache.ServiceLocator.ObjectRepository.GetObject(entryHvos[i]),
+					entries.Add(ConfiguredLcmGenerator.GenerateContentForEntry(settings.Cache.ServiceLocator.ObjectRepository.GetObject(entryHvos[i]),
 						currentConfig, publicationDecorator, settings));
 				}
 			}
@@ -369,7 +371,7 @@ namespace SIL.FieldWorks.XWorks
 				var lastEntry = Math.Min(oldAdjacentPageRange.Item2, oldCurrentPageRange.Item2 + entriesToAddCount);
 				for (var i = oldCurrentPageRange.Item2 + 1; i <= lastEntry; ++i)
 				{
-					entries.Add(ConfiguredLcmGenerator.GenerateXHTMLForEntry(settings.Cache.ServiceLocator.ObjectRepository.GetObject(entryHvos[i]),
+					entries.Add(ConfiguredLcmGenerator.GenerateContentForEntry(settings.Cache.ServiceLocator.ObjectRepository.GetObject(entryHvos[i]),
 						currentConfig, publicationDecorator, settings));
 				}
 			}
@@ -636,20 +638,20 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public string GenerateGroupingNode(object field, ConfigurableDictionaryNode config,
+		public string GenerateGroupingNode(object field, string className, ConfigurableDictionaryNode config,
 			DictionaryPublicationDecorator publicationDecorator, ConfiguredLcmGenerator.GeneratorSettings settings,
-			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, string> childContentGenrator)
+			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, string> childContentGenerator)
 		{
 			var bldr = new StringBuilder();
 			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 			{
 				xw.WriteStartElement("span");
-				xw.WriteAttributeString("class", CssGenerator.GetClassAttributeForConfig(config));
+				xw.WriteAttributeString("class", className);
 
 				var innerBuilder = new StringBuilder();
 				foreach (var child in config.ReferencedOrDirectChildren)
 				{
-					var childContent = childContentGenrator(field, child, publicationDecorator, settings);
+					var childContent = childContentGenerator(field, child, publicationDecorator, settings);
 					innerBuilder.Append(childContent);
 				}
 				var innerContents = innerBuilder.ToString();
@@ -737,7 +739,15 @@ namespace SIL.FieldWorks.XWorks
 			xw.WriteAttributeString("href", "#g" + destination);
 		}
 
-		public void EndLink(IFragmentWriter writer)
+		public void StartLink(IFragmentWriter writer, string externalLink)
+		{
+			var xw = ((XmlFragmentWriter)writer).Writer;
+			xw.WriteStartElement("a");
+			xw.WriteAttributeString("href", externalLink);
+			xw.WriteAttributeString("target", "_blank");
+	  }
+
+	  public void EndLink(IFragmentWriter writer)
 		{
 			((XmlFragmentWriter)writer).Writer.WriteEndElement(); // </a>
 		}

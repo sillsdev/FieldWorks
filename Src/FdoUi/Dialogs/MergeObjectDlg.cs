@@ -120,7 +120,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 
 			if(m_helpTopic != null && m_helpTopicProvider != null) // m_helpTopicProvider could be null for testing
 			{
-				helpProvider = new HelpProvider();
+				helpProvider = new FlexHelpProvider();
 				helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 				helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(m_helpTopic));
 				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);

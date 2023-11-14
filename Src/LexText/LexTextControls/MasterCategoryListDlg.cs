@@ -140,7 +140,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				m_helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 				if (m_helpTopicProvider != null)
 				{
-					helpProvider = new HelpProvider();
+					helpProvider = new FlexHelpProvider();
 					helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 					helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 					helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);

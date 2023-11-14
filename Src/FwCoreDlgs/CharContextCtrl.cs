@@ -815,6 +815,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			DoubleBuffered = true;
 		}
 
+		/// <summary>
+		/// ReSharper disable once UnusedMember.Local - Required method for Designer support.
+		/// </summary>
+		private void InitializeComponent(){}
+
 		/// <summary/>
 		protected override void Dispose(bool disposing)
 		{

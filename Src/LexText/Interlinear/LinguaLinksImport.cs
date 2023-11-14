@@ -357,6 +357,7 @@ namespace SIL.FieldWorks.IText
 			}
 			catch (Exception e)
 			{
+				Error.Invoke(this, e.StackTrace, e.Message);
 				Debug.Print(e.Message);
 				Debug.Print(e.StackTrace);
 			}

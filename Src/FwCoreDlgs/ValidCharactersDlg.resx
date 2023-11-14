@@ -457,7 +457,7 @@
     <value>btnSimilarWs</value>
   </data>
   <data name="&gt;&gt;btnSimilarWs.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.FwCoreDlgControls.LocaleMenuButton, FwCoreDlgControls, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgControls.LocaleMenuButton, FwCoreDlgControls, Version=9.1.19.30398, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;btnSimilarWs.Parent" xml:space="preserve">
     <value>tabBasedOn</value>
@@ -634,7 +634,7 @@
     <value>txtUnicodeValue</value>
   </data>
   <data name="&gt;&gt;txtUnicodeValue.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=9.0.2.26476, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=9.1.19.30399, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;txtUnicodeValue.Parent" xml:space="preserve">
     <value>grpUnicodeValue</value>
@@ -868,7 +868,7 @@
     <value>txtLastChar</value>
   </data>
   <data name="&gt;&gt;txtLastChar.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=9.0.2.26476, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=9.1.19.30399, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;txtLastChar.Parent" xml:space="preserve">
     <value>grpCharRange</value>
@@ -922,7 +922,7 @@
     <value>txtFirstChar</value>
   </data>
   <data name="&gt;&gt;txtFirstChar.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=9.0.2.26476, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=9.1.19.30399, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;txtFirstChar.Parent" xml:space="preserve">
     <value>grpCharRange</value>
@@ -1006,7 +1006,7 @@
     <value>txtManualCharEntry</value>
   </data>
   <data name="&gt;&gt;txtManualCharEntry.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=9.0.2.26476, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.FwTextBox, Widgets, Version=9.1.19.30399, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;txtManualCharEntry.Parent" xml:space="preserve">
     <value>grpSingle</value>
@@ -1075,7 +1075,7 @@
     <value>contextCtrl</value>
   </data>
   <data name="&gt;&gt;contextCtrl.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.FwCoreDlgs.CharContextCtrl, FwCoreDlgs, Version=9.0.2.26137, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgs.CharContextCtrl, FwCoreDlgs, Version=9.1.19.31034, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;contextCtrl.Parent" xml:space="preserve">
     <value>tabData</value>
@@ -1167,60 +1167,6 @@
   <data name="&gt;&gt;tabData.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="label3.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label3.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 8</value>
-  </data>
-  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>136, 13</value>
-  </data>
-  <data name="label3.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="label3.Text" xml:space="preserve">
-    <value>Not implemented yet. Sorry.</value>
-  </data>
-  <data name="&gt;&gt;label3.Name" xml:space="preserve">
-    <value>label3</value>
-  </data>
-  <data name="&gt;&gt;label3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
-    <value>tabUnicode</value>
-  </data>
-  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="tabUnicode.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
-  </data>
-  <data name="tabUnicode.Size" type="System.Drawing.Size, System.Drawing">
-    <value>303, 381</value>
-  </data>
-  <data name="tabUnicode.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="tabUnicode.Text" xml:space="preserve">
-    <value>Unicode Page</value>
-  </data>
-  <data name="&gt;&gt;tabUnicode.Name" xml:space="preserve">
-    <value>tabUnicode</value>
-  </data>
-  <data name="&gt;&gt;tabUnicode.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;tabUnicode.Parent" xml:space="preserve">
-    <value>tabCtrlAddFrom</value>
-  </data>
-  <data name="&gt;&gt;tabUnicode.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
   <data name="tabCtrlAddFrom.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
@@ -1300,7 +1246,7 @@
     <value>chrGridWordForming</value>
   </data>
   <data name="&gt;&gt;chrGridWordForming.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.CharacterGrid, FwControls, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Controls.CharacterGrid, FwControls, Version=9.1.19.30398, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;chrGridWordForming.Parent" xml:space="preserve">
     <value>pnlWordForming</value>
@@ -1327,7 +1273,7 @@
     <value>hlblWordForming</value>
   </data>
   <data name="&gt;&gt;hlblWordForming.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.HeaderLabel, FwControls, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Controls.HeaderLabel, FwControls, Version=9.1.19.30398, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;hlblWordForming.Parent" xml:space="preserve">
     <value>pnlWordForming</value>
@@ -1351,7 +1297,7 @@
     <value>pnlWordForming</value>
   </data>
   <data name="&gt;&gt;pnlWordForming.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.FwPanel, FwControls, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Controls.FwPanel, FwControls, Version=9.1.19.30398, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;pnlWordForming.Parent" xml:space="preserve">
     <value>splitValidCharsInner.Panel1</value>
@@ -1393,7 +1339,7 @@
     <value>chrGridOther</value>
   </data>
   <data name="&gt;&gt;chrGridOther.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.CharacterGrid, FwControls, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Controls.CharacterGrid, FwControls, Version=9.1.19.30398, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;chrGridOther.Parent" xml:space="preserve">
     <value>pnlOther</value>
@@ -1420,7 +1366,7 @@
     <value>hlblOther</value>
   </data>
   <data name="&gt;&gt;hlblOther.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.HeaderLabel, FwControls, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Controls.HeaderLabel, FwControls, Version=9.1.19.30398, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;hlblOther.Parent" xml:space="preserve">
     <value>pnlOther</value>
@@ -1444,7 +1390,7 @@
     <value>pnlOther</value>
   </data>
   <data name="&gt;&gt;pnlOther.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.FwPanel, FwControls, Version=9.0.2.21367, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Controls.FwPanel, FwControls, Version=9.1.19.30398, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;pnlOther.Parent" xml:space="preserve">
     <value>splitValidCharsInner.Panel2</value>

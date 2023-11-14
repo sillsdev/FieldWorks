@@ -859,7 +859,7 @@ namespace SIL.FieldWorks.Discourse
 				list.PossibilitiesOS.Add(newKid);
 				RecordList.SetUpConstChartTemplateTemplate(newKid);
 				Cache.DomainDataByFlid.EndUndoTask();
-				m_mediator.PostMessage("FollowLink", new FwLinkArgs(DiscourseStrings.ksNewTemplateLink, newKid.Guid));
+				m_mediator.PostMessage("FollowLink", new FwLinkArgs("charttempEdit", newKid.Guid));
 				selection.SelectedItem = m_template;
 				return;
 			}

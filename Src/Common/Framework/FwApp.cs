@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2017 SIL International
+// Copyright (c) 2002-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -144,22 +144,6 @@ namespace SIL.FieldWorks.Common.Framework
 	public abstract class FwApp : IApp, ISettings, IDisposable, IHelpTopicProvider,
 		IMessageFilter, IFeedbackInfoProvider, IProjectSpecificSettingsKeyProvider
 	{
-		#region SuppressedCacheInfo class
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Helper class that contains queued SyncMsgs and a reference count for
-		/// Suppress/ResumeSynchronize.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private class SuppressedCacheInfo
-		{
-			/// <summary>Reference count</summary>
-			public int Count = 1;
-			/// <summary>SyncMsg queue</summary>
-			public Queue<SyncMsg> Queue = new Queue<SyncMsg>();
-		}
-		#endregion
-
 		#region Member variables
 
 		/// <summary>
@@ -198,7 +182,6 @@ namespace SIL.FieldWorks.Common.Framework
 		protected DebugProcs m_debugProcs;
 #endif
 		private FwRegistrySettings m_registrySettings;
-		private SuppressedCacheInfo m_suppressedCacheInfo;
 		/// <summary>
 		/// null means that we are not suppressing view refreshes.
 		/// True means we're suppressing and we need to do a refresh when finished.
@@ -358,8 +341,6 @@ namespace SIL.FieldWorks.Common.Framework
 			if (wndCopyFrom != null)
 			{
 				AdjustNewWindowPosition(fwMainWindow, wndCopyFrom);
-				// TODO BryanW: see AfMdiMainWnd::CmdWndNew() for other items that need to be
-				// coordinated
 			}
 			else if (fwMainWindow.WindowState != FormWindowState.Maximized)
 			{
@@ -403,10 +384,6 @@ namespace SIL.FieldWorks.Common.Framework
 				// Here we subtract twice the caption height, which with the offset below insets it all around.
 				rcNewWnd.Width -=  SystemInformation.CaptionHeight * 2;
 				rcNewWnd.Height -=  SystemInformation.CaptionHeight * 2;
-				// JohnT: this old approach fails if the old window's position has never been
-				// persisted. NormalStateDesktopBounds crashes, not finding anything in the
-				// property table.
-				//				rcNewWnd = ((IFwMainWnd)wndCopyFrom).NormalStateDesktopBounds;
 			}
 
 			//Offset right and down
@@ -518,7 +495,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 			if (disposing)
 			{
-			UpdateAppRuntimeCounter();
+				UpdateAppRuntimeCounter();
 
 				Logger.WriteEvent("Disposing app: " + GetType().Name);
 				RegistrySettings.FirstTimeAppHasBeenRun = false;
@@ -565,7 +542,6 @@ namespace SIL.FieldWorks.Common.Framework
 			m_registrySettings = null;
 			m_findPattern = null;
 			m_findReplaceDlg = null;
-			m_suppressedCacheInfo = null;
 			m_refreshView = null;
 			PictureHolder = null;
 #if DEBUG
@@ -1453,170 +1429,16 @@ namespace SIL.FieldWorks.Common.Framework
 		#endregion
 
 		#region Synchronization methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Suppress execution of all synchronize messages and store them in a queue instead.
+		/// Cycle through the applications main windows and synchronize them with database changes.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void SuppressSynchronize()
+		public virtual void Synchronize()
 		{
 			CheckDisposed();
 
-			if (m_suppressedCacheInfo != null)
-				m_suppressedCacheInfo.Count++; // Nested call
-			else
-				m_suppressedCacheInfo = new SuppressedCacheInfo();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Resume execution of synchronize messages. If there are any messages in the queue
-		/// execute them now.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void ResumeSynchronize()
-		{
-			CheckDisposed();
-
-			if (m_suppressedCacheInfo == null)
-				return; // Nothing to do
-
-			m_suppressedCacheInfo.Count--;
-			if (m_suppressedCacheInfo.Count > 0)
-				return; // Still nested
-
-			BeginUpdate();
-			Queue<SyncMsg> messages = m_suppressedCacheInfo.Queue;
-			m_suppressedCacheInfo = null;
-
-			bool fProcessUndoRedoAfter = false;
-			SyncMsg savedUndoRedo = SyncMsg.ksyncFullRefresh; // Arbitrary
-			foreach (SyncMsg synchMsg in messages)
+			foreach (var wnd in MainWindows)
 			{
-				if (synchMsg == SyncMsg.ksyncUndoRedo)
-				{
-					// we must process this synch message after all the others
-					fProcessUndoRedoAfter = true;
-					savedUndoRedo = synchMsg;
-					continue;
-				}
-				// Do the synch
-				if (!Synchronize(synchMsg))
-				{
-					fProcessUndoRedoAfter = false; // Refresh already done, final UndoRedo unnecessary
-					break; // One resulted in Refresh everything, ignore other synch msgs.
-				}
-			}
-			if (fProcessUndoRedoAfter)
-				Synchronize(savedUndoRedo);
-
-			// NOTE: This code may present a race condition, because there is a slight
-			// possibility that a sync message can come to the App at
-			// this point and then get cleared from the syncMessages list and never get run.
-			EndUpdate();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Suppress all calls to <see cref="T:RefreshAllViews()"/> until <see cref="T:EndUpdate"/>
-		/// is called.
-		/// </summary>
-		/// <remarks>Used by <see cref="T:ResumeSynchronize"/> to do only one refresh of the
-		/// view.</remarks>
-		/// ------------------------------------------------------------------------------------
-		private void BeginUpdate()
-		{
-			CheckDisposed();
-
-			Debug.Assert(m_refreshView == null, "Nested BeginUpdate");
-			m_refreshView = false;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Do a <see cref="T:RefreshAllViews()"/> if it was called at least once after
-		/// <see cref="T:BeginUpdate"/>
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void EndUpdate()
-		{
-			CheckDisposed();
-
-			Debug.Assert(m_refreshView != null, "EndUpdate called without BeginUpdate");
-
-			bool needRefresh = (bool)m_refreshView;
-			m_refreshView = null; // Make sure we don't try suppress the following RefreshAllViews()
-			if (needRefresh)
-				RefreshAllViews();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Cycle through the applications main windows and synchronize them with database
-		/// changes.
-		/// </summary>
-		/// <param name="sync">synchronization information record</param>
-		/// <returns>false if a RefreshAllViews was performed or presync failed; this suppresses
-		/// subsequent sync messages. True to continue processing.</returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual bool Synchronize(SyncMsg sync)
-		{
-			CheckDisposed();
-
-			if (m_suppressedCacheInfo != null)
-			{
-				Queue<SyncMsg> messages = m_suppressedCacheInfo.Queue;
-				if (!messages.Contains(sync))
-					messages.Enqueue(sync);
-				return true;
-			}
-
-			if (sync == SyncMsg.ksyncFullRefresh)
-			{
-				RefreshAllViews();
-				return false;
-			}
-
-			foreach (IFwMainWnd wnd in MainWindows)
-				wnd.PreSynchronize(sync);
-
-			if (sync == SyncMsg.ksyncWs)
-			{
-				// REVIEW TeTeam: AfLpInfo::Synchronize calls AfLpInfo::FullRefresh, which
-				// clears the cache, loads the styles, loads ws and updates wsf, load project
-				// basics, updates LinkedFiles root, load overlays and refreshes possibility
-				// lists. I don't think we need to do any of these here.
-				RefreshAllViews();
-				return false;
-			}
-
-			foreach (IFwMainWnd wnd in MainWindows)
-			{
-				if (!wnd.Synchronize(sync))
-				{
-					// The window itself was not able to process the message successfully;
-					// play safe and refresh everything
-					RefreshAllViews();
-					return false;
-				}
-			}
-
-			return true;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// To participate in automatic synchronization from the database (calling SyncFromDb
-		/// in a useful manner) and application must override this, providing a unique Guid.
-		/// Typically this is the Guid defined by a static AppGuid method.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public virtual Guid SyncGuid
-		{
-			get
-			{
-				CheckDisposed();
-				return Guid.Empty;
+				wnd.Synchronize();
 			}
 		}
 		#endregion
@@ -1904,7 +1726,7 @@ namespace SIL.FieldWorks.Common.Framework
 						}
 						else
 						{
-							//if the file does not exist in the destination LinkeFiles location then copy/move it.
+							//if the file does not exist in the destination LinkedFiles location then copy/move it.
 							rgFilesToMove.Add(sFilepath);
 						}
 					}

@@ -95,9 +95,9 @@ namespace SIL.FieldWorks.XWorks
 			var entry = factory.Create();
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null);
 			//SUT
-			Assert.Throws(typeof(ArgumentNullException), () => ConfiguredLcmGenerator.GenerateXHTMLForEntry(null, mainEntryNode, null, settings));
-			Assert.Throws(typeof(ArgumentNullException), () => ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, (ConfigurableDictionaryNode)null, null, settings));
-			Assert.Throws(typeof(ArgumentNullException), () => ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, null));
+			Assert.Throws(typeof(ArgumentNullException), () => ConfiguredLcmGenerator.GenerateContentForEntry(null, mainEntryNode, null, settings));
+			Assert.Throws(typeof(ArgumentNullException), () => ConfiguredLcmGenerator.GenerateContentForEntry(entry, (ConfigurableDictionaryNode)null, null, settings));
+			Assert.Throws(typeof(ArgumentNullException), () => ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, null));
 		}
 
 		[Test]
@@ -108,11 +108,11 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null);
 			//SUT
 			//Test a blank main node description
-			Assert.That(() => ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings),
+			Assert.That(() => ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings),
 				Throws.InstanceOf<ArgumentException>().With.Message.Contains("Invalid configuration"));
 			//Test a configuration with a valid but incorrect type
 			mainEntryNode.FieldDescription = "LexSense";
-			Assert.That(() => ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings),
+			Assert.That(() => ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings),
 				Throws.InstanceOf<ArgumentException>().With.Message.Contains("doesn't configure this type"));
 		}
 
@@ -383,6 +383,52 @@ namespace SIL.FieldWorks.XWorks
 				var type = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(customFieldNode, Cache);
 				Assert.AreEqual(ConfiguredLcmGenerator.PropertyType.PrimitiveType, type);
 			}
+		}
+
+		[Test]
+		public void GetPropertyTypeForConfigurationNode_ExtensionMethodToString()
+		{
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
+			var memberNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "@extension:SIL.FieldWorks.XWorks.TestExtensionMethod.Creator",
+			};
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestPictureClass",
+				Children = new List<ConfigurableDictionaryNode> { memberNode },
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
+			var result = ConfiguredLcmGenerator.PropertyType.InvalidProperty;
+			// SUT
+			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(memberNode));
+			Assert.That(result, Is.EqualTo(ConfiguredLcmGenerator.PropertyType.PrimitiveType));
+		}
+
+		[Test]
+		public void GetPropertyTypeForConfigurationNode_ExtensionMethodMissingMethodDoesNotThrow()
+		{
+			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
+			var missingClassMember = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "@extension:SIL.FieldWorks.XWorks.MissingClass.Creator",
+			};
+			var missingMethodMember = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "@extension:SIL.FieldWorks.XWorks.TestPictureClass.MissingMethod",
+			};
+			var rootNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SIL.FieldWorks.XWorks.TestPictureClass",
+				Children = new List<ConfigurableDictionaryNode> { missingClassMember, missingMethodMember },
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
+			var result = ConfiguredLcmGenerator.PropertyType.PrimitiveType;
+		 // SUT
+		 Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(missingClassMember));
+		 Assert.That(result, Is.EqualTo(ConfiguredLcmGenerator.PropertyType.InvalidProperty));
+		 Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(missingMethodMember));
+		 Assert.That(result, Is.EqualTo(ConfiguredLcmGenerator.PropertyType.InvalidProperty));
 		}
 
 		[Test]

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
 
 	<UsingTask TaskName="GoldEticToXliff" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="ListsToXliff" AssemblyFile="FwBuildTasks.dll"/>
@@ -153,6 +153,15 @@
 		</ItemGroup>
 		<XliffToLists XliffSourceFiles="@(XliffFiles)" OutputXml="$(OutputXml)"/>
 		<Zip Source="$(OutputXml)" Destination="$(fwrt)/DistFiles/Templates"/>
+	</Target>
+
+	<!-- Use this when we want to export a single locale xml file to process for import to The Combine -->
+	<!-- Usage build /t:PrepareSemanticDomainForTheCombine /p:Locale=es -->
+	<Target Name="PrepareSemanticDomainForTheCombine" DependsOnTargets="">
+		<ItemGroup>
+			<XliffFiles Include="$(fwrt)/Localizations/l10ns/$(Locale)/Lists/SemanticDomains.$(Locale).xlf"/>
+		</ItemGroup>
+		<XliffToLists XliffSourceFiles="@(XliffFiles)" OutputXml="SemanticDomains-$(Locale).xml"/>
 	</Target>
 
 	<!-- Convert LocalizedLists-*.xml files from Localizations to xliff to upload as completed translations -->

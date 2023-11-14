@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.XWorks
 			return $"{content}";
 		}
 
-		public string GenerateGroupingNode(object field, ConfigurableDictionaryNode config,
+		public string GenerateGroupingNode(object field, string className, ConfigurableDictionaryNode config,
 			DictionaryPublicationDecorator publicationDecorator, ConfiguredLcmGenerator.GeneratorSettings settings,
 			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, string> childContentGenerator)
 		{
@@ -171,6 +171,11 @@ namespace SIL.FieldWorks.XWorks
 		public void StartLink(IFragmentWriter writer, Guid destination)
 		{
 			((JsonFragmentWriter)writer).InsertJsonProperty("guid", "g" + destination);
+		}
+
+		public void StartLink(IFragmentWriter writer, string externalLink)
+		{
+			((JsonFragmentWriter)writer).InsertJsonProperty("linkUrl", externalLink);
 		}
 
 		public void EndLink(IFragmentWriter writer)
@@ -541,10 +546,10 @@ namespace SIL.FieldWorks.XWorks
 
 					var generateEntryAction = new Action(() =>
 					{
-						var entryContent = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, configuration,
+						var entryContent = ConfiguredLcmGenerator.GenerateContentForEntry(entry, configuration,
 							publicationDecorator, settings, index);
 						entryStringBuilder.Append(entryContent);
-						var displayXhtmlContent = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, configuration,
+						var displayXhtmlContent = ConfiguredLcmGenerator.GenerateContentForEntry(entry, configuration,
 							publicationDecorator, displayXhtmlSettings, index);
 						displayXhtmlBuilder.Append(displayXhtmlContent);
 						if (progress != null)

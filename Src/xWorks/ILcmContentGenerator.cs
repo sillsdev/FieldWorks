@@ -19,8 +19,8 @@ namespace SIL.FieldWorks.XWorks
 		string WriteProcessedObject(bool isBlock, string elementContent, string className);
 		string WriteProcessedCollection(bool isBlock, string elementContent, string className);
 		string GenerateGramInfoBeforeSensesContent(string content);
-		string GenerateGroupingNode(object field, ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, ConfiguredLcmGenerator.GeneratorSettings settings,
-			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, string> childContentGenrator);
+		string GenerateGroupingNode(object field, string className, ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, ConfiguredLcmGenerator.GeneratorSettings settings,
+			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, string> childContentGenerator);
 		string AddSenseData(string senseNumberSpan, bool isBlockProperty, Guid ownerGuid, string senseContent, string className);
 		string AddCollectionItem(bool isBlock, string collectionItemClass, string content);
 		string AddProperty(string className, bool isBlockProperty, string content);
@@ -34,6 +34,7 @@ namespace SIL.FieldWorks.XWorks
 		void EndRun(IFragmentWriter writer);
 		void SetRunStyle(IFragmentWriter writer, string css);
 		void StartLink(IFragmentWriter writer, Guid destination);
+		void StartLink(IFragmentWriter writer, string externalDestination);
 		void EndLink(IFragmentWriter writer);
 		void AddToRunContent(IFragmentWriter writer, string txtContent);
 		void AddLineBreakInRunContent(IFragmentWriter writer);

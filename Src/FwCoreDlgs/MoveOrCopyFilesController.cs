@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			return MoveCopyOrLeaveFiles(new[] {sFile},
 				Path.Combine(sRootDirLinkedFiles, LcmFileHelper.ksOtherLinkedFilesDir),
 				sRootDirLinkedFiles,
-				helpTopicProvider).FirstOrDefault();
+				helpTopicProvider)[0];
 		}
 
 		private static string[] MoveCopyOrLeaveFiles(string[] files, string subFolder, string sRootDirExternalLinks,
@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 
 			// Check whether the file is found within the directory.
-			if (files.All(f => FileIsInExternalLinksFolder(f, sRootDirExternalLinks)))
+			if (files.All(f => IsFileInFolder(f, sRootDirExternalLinks)))
 				return files;
 
 			using (var dlg = new MoveOrCopyFilesDlg())
@@ -88,25 +88,33 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// Performs the action the user requested: move, copy, or leave the file.
 		/// </summary>
 		/// <param name="sFile">The fully-specified path name of the file.</param>
-		/// <param name="sRootDir">The fully-specified path name of the new target directory.</param>
+		/// <param name="sNewDir">The fully-specified path name of the new target directory.</param>
 		/// <param name="action">the action the user chose (copy, move or leave)</param>
-		/// <returns>The fully-specified path name of the (possibly newly moved or copied) file</returns>
-		internal static string PerformMoveCopyOrLeaveFile(string sFile, string sRootDir, FileLocationChoice action)
+		/// <param name="batchMode"><c>false</c> to notify the user of every little problem and return <c>null</c> if anything unexpected happens.
+		/// <c>true</c> (default) to interact only in case of conflicts and return the original path if the file cannot be moved or copied.</param>
+		/// <param name="sNewName">default is <c>null</c> to keep the same filename in the new location</param>
+		/// <returns>The fully-specified path name of the (possibly newly moved or copied) file
+		/// (null if batchMode=false and the file could not be moved or copied as specified)</returns>
+		internal static string PerformMoveCopyOrLeaveFile(string sFile, string sNewDir, FileLocationChoice action,
+			bool batchMode = true, string sNewName = null)
 		{
 			if (action == FileLocationChoice.Leave)
 				return sFile; // use original location.
 
-			string sNewFile = Path.Combine(sRootDir, Path.GetFileName(sFile));
+			var sNewFile = Path.Combine(sNewDir, sNewName ?? Path.GetFileName(sFile));
 			if (FileUtils.PathsAreEqual(sFile, sNewFile))
 				return sFile;
 
 			if (File.Exists(sNewFile))
 			{
-				if (MessageBox.Show(string.Format(FwCoreDlgs.ksAlreadyExists, sNewFile),
-						FwCoreDlgs.kstidWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-					== DialogResult.No)
+				var promptAlreadyExists = string.Format(FwCoreDlgs.ksAlreadyExists, sNewFile);
+				if (batchMode)
 				{
-					return sFile;
+					promptAlreadyExists = string.Format(FwCoreDlgs.ksClickNoToLeave, promptAlreadyExists, sFile);
+				}
+				if (MessageBox.Show(promptAlreadyExists, FwCoreDlgs.kstidWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+				{
+					return batchMode ? sFile : null;
 				}
 				try
 				{
@@ -114,9 +122,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				}
 				catch
 				{
-					// This is probably a picture file that we can't delete because it's open in FieldWorks.
-					MessageBox.Show(FwCoreDlgs.ksDeletePictureBeforeReplacingFile, FwCoreDlgs.ksCannotReplaceDisplayedPicture);
-					return sNewFile;
+					// This is probably a picture file that we can't delete because it's open somewhere.
+					MessageBox.Show(FwCoreDlgs.ksErrorFileInUse, FwCoreDlgs.ksError);
+					return batchMode ? sFile : null;
 				}
 			}
 			try
@@ -135,19 +143,26 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			catch (Exception e)
 			{
 				var sAction = (action == FileLocationChoice.Copy ? "copy" : "mov");
-				Logger.WriteEvent(string.Format("Error {0}ing file '{1}' to '{2}'", sAction, sFile, sNewFile));
+				Logger.WriteEvent($"Error {sAction}ing file '{sFile}' to '{sNewFile}'");
 				Logger.WriteError(e);
-				return sFile;
+				if (batchMode)
+				{
+					return sFile;
+				}
+
+				MessageBox.Show(string.Format(FwCoreDlgs.ksErrorMovingOrCopyingXtoY, sFile, sNewFile, e), FwCoreDlgs.ksError);
+				return null;
 			}
 		}
 
 		/// <summary>
 		/// Determines whether the given file is located in the given root directory (or any subfolder of it).
+		/// REVIEW (Hasso) 2023.06: this could be refactored into FileUtils, although it may be too simple to be worth the effort.
 		/// </summary>
 		/// <param name="sFile">The fully-specified path name of the file.</param>
 		/// <param name="sRootDir">The fully-specified path name of the LinkedFiles root directory.</param>
 		/// <returns><c>true</c> if the given file is located in the given root directory.</returns>
-		internal static bool FileIsInExternalLinksFolder(string sFile, string sRootDir)
+		internal static bool IsFileInFolder(string sFile, string sRootDir)
 		{
 			if(sFile.ToLowerInvariant().StartsWith(sRootDir.ToLowerInvariant()))
 			{

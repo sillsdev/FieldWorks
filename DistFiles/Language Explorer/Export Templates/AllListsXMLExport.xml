@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="xml" doUseBaseClassTemplatesIfNeeded="true">
+    <FxtDocumentDescription dataLabel="All Lists XML" formatLabel="XML" defaultExtension="xml" filter="XML files (*.xml)|*.xml|All files (*.*)|*.*">
+Export all lists into a single XML file. Data in all checked vernacular and analysis writing systems will be exported.
+
+If you want to convert this xml export to a htm file that displays nicely in a browser:
+
+1. Copy AllListsHTMLS.xsl from "c:\Program Files\SIL\FieldWorks 9\Language Explorer\Export Templates" to the directory of your xml file.
+
+2. In Windows File Explorer open the directory with your exported xml file, then in the edit box near the top, replace the path of your current directory with "powershell" and press Enter. This will open a powershell window on this directory.
+
+3. Copy the following lines into the powershell window and press Enter.
+$x = New-Object System.Xml.Xsl.XslCompiledTransform;
+$x.load( "AllListsHTMLS.xsl" )
+
+4. Copy the following line to the powershell window, but before executing it, replace both AllLists with the name of your xml file. You'll have to use arrow keys to move in the line to edit it. Then press Enter.
+$x.Transform( "AllLists.xml", "AllLists.htm" )
+
+5. You should then have an .htm file that you can open in a browser.
+</FxtDocumentDescription>
+    <class name="CmAnthroItem">
+        <element name="aitem">
+            <newLine/>
+            <call name="CmPossibility-Core"/>
+            <ifnot field="SubPossibilities" lengthequals="0">
+                <element name="subitems">
+                    <newLine/>
+                    <objVector objProperty="SubPossibilitiesOS"/>
+                </element>
+            </ifnot>
+        </element>
+    </class>
+    <class name="CmDomainQ">
+        <element name="sdq">
+            <element name="ques">
+                <newLine/>
+                <multilingualStringElement name="str" simpleProperty="Question" ws="all"/>
+            </element>
+            <element name="exwrd">
+                <newLine/>
+                <multilingualStringElement name="str" simpleProperty="ExampleWords" ws="all"/>
+            </element>
+            <element name="exsen">
+                <newLine/>
+                <multilingualStringElement name="str" simpleProperty="ExampleSentences" ws="all"/>
+            </element>
+        </element>
+    </class>
+    <class name="CmLocation">
+        <element name="locitem">
+            <newLine/>
+            <call name="CmPossibility-Core"/>
+            <element name="alias">
+                <newLine/>
+                <multilingualStringElement name="str" simpleProperty="Alias" ws="all"/>
+            </element>
+            <ifnot field="SubPossibilities" lengthequals="0">
+                <element name="subitems">
+                    <newLine/>
+                    <objVector objProperty="SubPossibilitiesOS"/>
+                </element>
+            </ifnot>
+        </element>
+    </class>
+    <class name="CmPerson">
+        <element name="peritem">
+            <newLine/>
+            <call name="CmPossibility-Core"/>
+            <numberElement name="gen" simpleProperty="Gender"/>
+            <!-- not yet implemented element name="dob">
+                <string simpleProperty="DateOfBirth"/>
+            </element-->
+            <!-- not yet implemented element name="dod">
+                <string simpleProperty="DateOfDeath"/>
+            </element-->
+            <booleanElement name="isres" simpleProperty="IsResearcher"/>
+            <newLine/>
+            <element name="alias">
+                <newLine/>
+                <multilingualStringElement name="str" simpleProperty="Alias" ws="all"/>
+            </element>
+            <ifnot field="PlacesOfResidence" lengthequals="0">
+                <element name="por">
+                    <newLine/>
+                    <objVector objProperty="PlacesOfResidenceRC" classtag="ItemRef"/>
+                </element>
+            </ifnot>
+            <ifnotnull field="Education">
+                <element name="edu">
+                    <objAtomic objProperty="EducationRA" classtag="Ref"/>
+                </element>
+            </ifnotnull>
+            <ifnot field="Positions" lengthequals="0">
+                <element name="pos">
+                    <newLine/>
+                    <objVector objProperty="PositionsRC" classtag="ItemRef"/>
+                </element>
+            </ifnot>
+            <ifnot field="SubPossibilities" lengthequals="0">
+                <element name="subitems">
+                    <newLine/>
+                    <objVector objProperty="SubPossibilitiesOS"/>
+                </element>
+            </ifnot>
+        </element>
+    </class>
+    <class name="CmPossibility">
+        <element name="item">
+            <newLine/>
+            <call name="CmPossibility-Core"/>
+            <ifnot field="SubPossibilities" lengthequals="0">
+                <element name="subitems">
+                    <newLine/>
+                    <objVector objProperty="SubPossibilitiesOS"/>
+                </element>
+            </ifnot>
+        </element>
+    </class>
+    <class name="CmPossibility-Core">
+        <element name="guidi">
+            <string simpleProperty="Guid"/>
+        </element>
+        <element name="name">
+            <newLine/>
+            <multilingualStringElement name="str" simpleProperty="Name" ws="all"/>
+        </element>
+        <element name="abbr">
+            <newLine/>
+            <multilingualStringElement name="str" simpleProperty="Abbreviation" ws="all"/>
+        </element>
+        <element name="descr">
+            <newLine/>
+            <multilingualStringElement name="str" simpleProperty="Description" ws="all"/>
+        </element>
+        <ifnotnull field="Status">
+            <element name="stat">
+                <objAtomic objProperty="StatusRA" classtag="Ref"/>
+            </element>
+        </ifnotnull>
+        <ifnotnull field="Discussion">
+            <objAtomic name="disc" objProperty="DiscussionOA"/>
+        </ifnotnull>
+        <ifnotnull field="Confidence">
+            <element name="conf">
+                <objAtomic objProperty="ConfidenceRA" classtag="Ref"/>
+            </element>
+        </ifnotnull>
+        <ifnot field="Researchers" lengthequals="0">
+            <element name="reschrs">
+                <newLine/>
+                <objVector objProperty="ResearchersRC" classtag="ItemRef"/>
+            </element>
+        </ifnot>
+        <ifnot field="Restrictions" lengthequals="0">
+            <element name="restrs">
+                <newLine/>
+                <objVector objProperty="RestrictionsRC" classtag="ItemRef"/>
+            </element>
+        </ifnot>
+    </class>
+    <class name="CmPossibility-ItemRef">
+        <element name="itemref">
+            <string simpleProperty="Name" ws="-1004"/>
+        </element>
+    </class>
+    <class name="CmPossibility-ItemRefAb">
+        <element name="itemref">
+            <string simpleProperty="Abbreviation" ws="-1004"/>
+            <text> - </text>
+            <string simpleProperty="Name" ws="-1004"/>
+        </element>
+    </class>
+    <class name="CmPossibility-Ref">
+        <string simpleProperty="Name" ws="-1004"/>
+    </class>
+    <class name="CmPossibilityList">
+        <element name="list" progressIncrement="true">
+            <newLine/>
+            <element name="guidl">
+                <string simpleProperty="Guid"/>
+            </element>
+            <element name="name">
+                <newLine/>
+                <multilingualStringElement name="str" simpleProperty="Name" ws="all"/>
+            </element>
+            <element name="abbr">
+                <newLine/>
+                <multilingualStringElement name="str" simpleProperty="Abbreviation" ws="all"/>
+            </element>
+            <numberElement name="cid" simpleProperty="ItemClsid" ifnotequal="0"/>
+            <ifnot field="Possibilities" lengthequals="0">
+                <element name="items">
+                    <newLine/>
+                    <objVector objProperty="PossibilitiesOS"/>
+                </element>
+            </ifnot>
+        </element>
+    </class>
+    <class name="CmSemanticDomain">
+        <element name="sditem">
+            <newLine/>
+            <call name="CmPossibility-Core"/>
+            <element name="lnc">
+                <string simpleProperty="LouwNidaCodes"/>
+            </element>
+            <element name="ocm">
+                <string simpleProperty="OcmCodes"/>
+            </element>
+            <ifnot field="OcmRefs" lengthequals="0">
+                <element name="ocmrefs">
+                    <newLine/>
+                    <objVector objProperty="OcmRefsRC" classtag="ItemRefAb"/>
+                </element>
+            </ifnot>
+            <ifnot field="RelatedDomains" lengthequals="0">
+                <element name="relds">
+                    <newLine/>
+                    <objVector objProperty="RelatedDomainsRC" classtag="ItemRefAb"/>
+                </element>
+            </ifnot>
+            <ifnot field="Questions" lengthequals="0">
+                <element name="sdqs">
+                    <newLine/>
+                    <objVector objProperty="QuestionsOS"/>
+                </element>
+            </ifnot>
+            <ifnot field="SubPossibilities" lengthequals="0">
+                <element name="subitems">
+                    <newLine/>
+                    <objVector objProperty="SubPossibilitiesOS"/>
+                </element>
+            </ifnot>
+        </element>
+    </class>
+    <class name="LangProject">
+        <element name="lists" progressIncrement="true">
+            <newLine/>
+            <objVector objProperty="AllPossibilityLists"/>
+        </element>
+    </class>
+    <class name="LexEntryType">
+        <element name="letitem">
+            <newLine/>
+            <call name="CmPossibility-Core"/>
+            <element name="revname">
+                <newLine/>
+                <multilingualStringElement name="str" simpleProperty="ReverseName" ws="all"/>
+            </element>
+            <element name="revabbr">
+                <newLine/>
+                <multilingualStringElement name="str" simpleProperty="ReverseAbbr" ws="all"/>
+            </element>
+            <ifnot field="SubPossibilities" lengthequals="0">
+                <element name="subitems">
+                    <newLine/>
+                    <objVector objProperty="SubPossibilitiesOS"/>
+                </element>
+            </ifnot>
+        </element>
+    </class>
+    <class name="LexRefType">
+        <element name="lrtitem">
+            <newLine/>
+            <call name="CmPossibility-Core"/>
+            <element name="revname">
+                <newLine/>
+                <multilingualStringElement name="str" simpleProperty="ReverseName" ws="all"/>
+            </element>
+            <element name="revabbr">
+                <newLine/>
+                <multilingualStringElement name="str" simpleProperty="ReverseAbbreviation" ws="all"/>
+            </element>
+            <numberElement name="maptyp" simpleProperty="MappingType" ifnotequal="0"/>
+        </element>
+    </class>
+    <class name="MoMorphType">
+        <element name="mtitem">
+            <newLine/>
+            <call name="CmPossibility-Core"/>
+            <element name="prfix">
+                <string simpleProperty="Prefix"/>
+            </element>
+            <element name="pofix">
+                <string simpleProperty="Postfix"/>
+            </element>
+            <numberElement name="secord" simpleProperty="SecondaryOrder" ifnotequal="0"/>
+            <ifnot field="SubPossibilities" lengthequals="0">
+                <element name="subitems">
+                    <newLine/>
+                    <objVector objProperty="SubPossibilitiesOS"/>
+                </element>
+            </ifnot>
+        </element>
+    </class>
+    <class name="PartOfSpeech">
+        <element name="positem">
+            <newLine/>
+            <call name="CmPossibility-Core"/>
+            <element name="csid">
+                <string simpleProperty="CatalogSourceId"/>
+            </element>
+            <ifnot field="SubPossibilities" lengthequals="0">
+                <element name="subitems">
+                    <newLine/>
+                    <objVector objProperty="SubPossibilitiesOS"/>
+                </element>
+            </ifnot>
+        </element>
+    </class>
+    <!-- Note once something is typed in discussion, an StTxtPara will always be present even if text is deleted. We could test for length > 0 on paragraph, but then we would have multiple \dis for more than one paragraph. -->
+    <class name="StText">
+        <ifnot field="Paragraphs" lengthequals="0">
+            <element name="disc">
+                <objVector objProperty="ParagraphsOS"/>
+            </element>
+        </ifnot>
+    </class>
+    <class name="StTxtPara">
+        <string simpleProperty="Contents" ws="analysis"/>
+    </class>
+</template>

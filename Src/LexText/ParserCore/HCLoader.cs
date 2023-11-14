@@ -1383,7 +1383,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					IPhNaturalClass naturalClass = m_naturalClassLookup[ncAbbr];
 					SimpleContext ctxt;
 					TryLoadSimpleContext(naturalClass, out ctxt);
-					var pattern = new Pattern<Word, ShapeNode>(token.Substring(1, token.Length - 2).Trim(), new Constraint<Word, ShapeNode>(ctxt.FeatureStruct) {Tag = ctxt});
+					var pattern = new Pattern<Word, ShapeNode>(XmlConvert.EncodeName(token.Substring(1, token.Length - 2).Trim()), new Constraint<Word, ShapeNode>(ctxt.FeatureStruct) {Tag = ctxt});
 					pattern.Freeze();
 					yield return pattern;
 				}
@@ -1396,7 +1396,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				if (token.StartsWith("["))
 				{
-					yield return new CopyFromInput(token.Substring(1, token.Length - 2).Trim());
+					yield return new CopyFromInput(XmlConvert.EncodeName(token.Substring(1, token.Length - 2).Trim()));
 				}
 				else
 				{
@@ -1421,7 +1421,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			foreach (IMoInflAffixSlot slot in slots)
 			{
-				ILexEntryInflType type = slot.ReferringObjects.OfType<ILexEntryInflType>().FirstOrDefault();
+				IEnumerable<ILexEntryInflType> types = slot.ReferringObjects.OfType<ILexEntryInflType>();
 				var rules = new List<MorphemicMorphologicalRule>();
 				foreach (IMoInflAffMsa msa in slot.Affixes)
 				{
@@ -1430,11 +1430,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					{
 						foreach (AffixProcessRule mrule in morphemes.OfType<AffixProcessRule>())
 						{
-							if (type != null)
+							if (types.Any())
 							{
-								// block slot from applying to irregularly inflected forms
-								foreach (AffixProcessAllomorph allo in mrule.Allomorphs)
-									allo.ExcludedMprFeatures.Add(m_mprFeatures[type]);
+								foreach (ILexEntryInflType t in types)
+								{
+									// block slot from applying to irregularly inflected forms
+									foreach (AffixProcessAllomorph allo in mrule.Allomorphs)
+										allo.ExcludedMprFeatures.Add(m_mprFeatures[t]);
+								}
 							}
 							rules.Add(mrule);
 						}
@@ -1443,10 +1446,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 				// add a null affix to the required slot so that irregularly inflected forms can parse correctly
 				// TODO: this really should be handled using rule blocking in HC
-				if (type != null && !slot.Optional)
-					rules.Add(LoadNullAffixProcessRule(type, template, slot));
+				if (types.Any() && !slot.Optional)
+					foreach (ILexEntryInflType t in types)
+						rules.Add(LoadNullAffixProcessRule(t, template, slot));
 
-				hcTemplate.Slots.Add(new AffixTemplateSlot(rules) {Name = slot.Name.BestAnalysisAlternative.Text, Optional = slot.Optional});
+				hcTemplate.Slots.Add(new AffixTemplateSlot(rules) { Name = slot.Name.BestAnalysisAlternative.Text, Optional = slot.Optional });
 			}
 
 			return hcTemplate;
@@ -1785,6 +1789,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						name = "r";
 					else if (i == indices[PhMetathesisRuleTags.kidxLeftSwitch])
 						name = "l";
+					else if (i == indices[PhMetathesisRuleTags.kidxRightEnv])
+						name = "rightEnv";
+					else if (i == indices[PhMetathesisRuleTags.kidxLeftEnv])
+						name = "leftEnv";
+					else if (i == indices[PhMetathesisRuleTags.kidxMiddle])
+						name = "middle";
+					else
+					{
+					 // Need a unique, non-null name as Hermit Crab uses a dictionary with unique keys
+					 // in AnalysisMetathesisRuleSpec() constructor
+						name = i.ToString();
+					}
 					pattern.Children.Add(new Group<Word, ShapeNode>(name, node));
 				}
 			}

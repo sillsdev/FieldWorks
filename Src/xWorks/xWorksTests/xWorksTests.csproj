@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.21022</ProductVersion>
@@ -284,6 +284,7 @@
     <Compile Include="CssGeneratorTests.cs" />
     <Compile Include="CustomListDlgTests.cs" />
     <Compile Include="DeleteCustomListTests.cs" />
+    <Compile Include="DictConfigModelExtTests.cs" />
     <Compile Include="DictionaryConfigManagerTests.cs" />
     <Compile Include="HeadwordNumbersControllerTests.cs" />
     <Compile Include="DictionaryConfigurationControllerTests.cs" />

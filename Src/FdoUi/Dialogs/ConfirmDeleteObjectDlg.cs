@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			{
 				buttonHelp.Visible = true;
 				buttonHelp.Enabled = true;
-				helpProvider = new HelpProvider();
+				helpProvider = new FlexHelpProvider();
 				helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 				helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);

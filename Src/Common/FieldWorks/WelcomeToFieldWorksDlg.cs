@@ -90,7 +90,7 @@ namespace SIL.FieldWorks
 			}
 
 			m_helpTopicProvider = helpTopicProvider;
-			var helpProvider = new HelpProvider
+			var helpProvider = new FlexHelpProvider
 			{
 				HelpNamespace = FwDirectoryFinder.CodeDirectory + m_helpTopicProvider.GetHelpString("UserHelpFile")
 			};
