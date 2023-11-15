@@ -288,7 +288,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// We want only the character type settings from the styleName style since we're applying them
 				// to a span.
-				var wsRule = new StyleRule { Value = selector + String.Format("[lang|=\"{0}\"]", aws.LanguageTag) };
+				var wsRule = new StyleRule { Value = selector + String.Format("[lang=\'{0}\']", aws.LanguageTag) };
 				var styleDecls = GenerateCssStyleFromLcmStyleSheet(styleName, aws.Handle, propertyTable);
 				wsRule.Declarations.Properties.AddRange(GetOnlyCharacterStyle(styleDecls));
 				styleRules.Add(wsRule);
@@ -666,7 +666,7 @@ namespace SIL.FieldWorks.XWorks
 				// if the writing system isn't a magic name just use it otherwise find the right one from the magic list
 				var wsIdString = possiblyMagic == 0 ? ws.Id : WritingSystemServices.GetWritingSystemList(cache, possiblyMagic, true).First().Id;
 				var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(wsIdString);
-				var wsRule = new StyleRule {Value = baseSelection + String.Format("[lang|=\"{0}\"]", wsIdString)};
+				var wsRule = new StyleRule {Value = baseSelection + String.Format("[lang=\'{0}\']", wsIdString)};
 				if (!string.IsNullOrEmpty(configNode.Style))
 					wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(configNode.Style, wsId, propertyTable));
 				if (!IsEmptyRule(wsRule))
@@ -829,7 +829,7 @@ namespace SIL.FieldWorks.XWorks
 									for (var i = enabledWsOptions.Length - 1; i > 0; i--)
 									{
 										betweenSelector = (i == enabledWsOptions.Length - 1 ? string.Empty : betweenSelector + ",") +
-														  $"{selectorOfWsOptOwner} span+span[lang|='{enabledWsOptions[i].Id}']:before";
+														  $"{selectorOfWsOptOwner} span+span[lang='{enabledWsOptions[i].Id}']:before";
 									}
 								}
 								break;
@@ -1436,7 +1436,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// fontName still null means not set in Normal Style, then get default fonts from WritingSystems configuration.
 			// Comparison, projectStyle.Name == "Normal", required to limit the font-family definition to the
-			// empty span (ie span[lang|="en"]{}. If not included, font-family will be added to many more spans.
+			// empty span (ie span[lang="en"]{}. If not included, font-family will be added to many more spans.
 			if (fontName == null && projectStyle.Name == "Normal")
 			{
 				var lgWritingSysytem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId);
