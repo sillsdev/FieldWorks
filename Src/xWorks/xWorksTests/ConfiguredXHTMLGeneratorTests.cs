@@ -1278,6 +1278,139 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateContentForEntry_CaptionOrHeadwordGetsCaption()
+		{
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = wsOpts
+			};
+
+			var captionOrHeadwordNode = new ConfigurableDictionaryNode { FieldDescription = "CaptionOrHeadword", DictionaryNodeOptions = wsOpts };
+			var pictureNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodePictureOptions(),
+				FieldDescription = "PicturesOfSenses",
+				CSSClassNameOverride = "Pictures",
+				Children = new List<ConfigurableDictionaryNode> { captionOrHeadwordNode }
+			};
+
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode, headwordNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entryOne = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(entryOne, "HeadwordEn", m_wsEn);
+			var sense = entryOne.SensesOS[0];
+			sense.PicturesOS.Add(CreatePicture(Cache, true, "captionEn", "en"));
+
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			const string captionOrHeadwordContainsCaption = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='captionorheadword']//span[text()='captionEn']";
+			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(captionOrHeadwordContainsCaption, 1);
+		}
+
+		[Test]
+		public void GenerateContentForEntry_CaptionOrHeadwordGetsHeadword()
+		{
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = wsOpts
+			};
+
+			var captionOrHeadwordNode = new ConfigurableDictionaryNode { FieldDescription = "CaptionOrHeadword", DictionaryNodeOptions = wsOpts };
+			var pictureNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodePictureOptions(),
+				FieldDescription = "PicturesOfSenses",
+				CSSClassNameOverride = "Pictures",
+				Children = new List<ConfigurableDictionaryNode> { captionOrHeadwordNode }
+			};
+
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode, headwordNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entryOne = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(entryOne, "HeadwordEn", m_wsEn);
+			var sense = entryOne.SensesOS[0];
+			sense.PicturesOS.Add(CreatePicture(Cache, true, null, "en"));    // Create the picture with a null caption.
+
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			const string captionOrHeadwordContainsHeadword = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='captionorheadword']//span[text()='HeadwordEn']";
+			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(captionOrHeadwordContainsHeadword, 1);
+		}
+
+		[Test]
+		public void GenerateContentForEntry_CaptionOrHeadword_HandlePerWs()
+		{
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en", "fr" });
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = wsOpts
+			};
+
+			var captionOrHeadwordNode = new ConfigurableDictionaryNode { FieldDescription = "CaptionOrHeadword", DictionaryNodeOptions = wsOpts };
+			var pictureNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodePictureOptions(),
+				FieldDescription = "PicturesOfSenses",
+				CSSClassNameOverride = "Pictures",
+				Children = new List<ConfigurableDictionaryNode> { captionOrHeadwordNode }
+			};
+
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode, headwordNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entryOne = CreateInterestingLexEntry(Cache);
+			AddHeadwordToEntry(entryOne, "HeadwordEn", m_wsEn);
+			AddHeadwordToEntry(entryOne, "HeadwordFr", m_wsFr);
+			var sense = entryOne.SensesOS[0];
+			sense.PicturesOS.Add(CreatePicture(Cache, true, "captionEn", "en"));    // Create the picture with a en caption, but no fr caption.
+
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			const string captionOrHeadwordContainsCaptionEn = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='captionorheadword']//span[@lang='en' and text()='captionEn']";
+			const string captionOrHeadwordContainsHeadwordFr = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='captionorheadword']//span[@lang='fr' and text()='HeadwordFr']";
+			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(captionOrHeadwordContainsCaptionEn, 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(captionOrHeadwordContainsHeadwordFr, 1);
+		}
+
+
+		[Test]
 		public void GenerateContentForEntry_DefinitionOrGlossWorks()
 		{
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
