@@ -152,6 +152,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\DesktopAnalytics.dll</HintPath>
     </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.20.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
     <Reference Include="DotNetZip">
       <HintPath>..\..\packages\DotNetZip.1.13.7\lib\net40\DotNetZip.dll</HintPath>
     </Reference>
@@ -280,6 +284,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\UIAdapterInterfaces.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
     <Reference Include="xCore, Version=6.1.1.30414, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\xCore.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
