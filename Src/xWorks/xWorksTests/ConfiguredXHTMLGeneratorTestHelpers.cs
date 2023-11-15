@@ -448,7 +448,7 @@ namespace SIL.FieldWorks.XWorks
 			if (caption != null)
 			{
 				var wsHandle = cache.WritingSystemFactory.GetWsFromStr(ws);
-				pic.Caption.set_String(wsHandle, TsStringUtils.MakeString("caption", wsHandle));
+				pic.Caption.set_String(wsHandle, TsStringUtils.MakeString(caption, wsHandle));
 			}
 			var file = cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
 			if (cache.LangProject.MediaOC.Any())

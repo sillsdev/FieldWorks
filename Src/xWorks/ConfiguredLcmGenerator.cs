@@ -378,6 +378,13 @@ namespace SIL.FieldWorks.XWorks
 					return ret.ToString();
 				}
 			}
+			if (config.FieldDescription == "CaptionOrHeadword")
+			{
+				if (field is ICmPicture)
+				{
+					return GenerateContentForCaptionOrHeadword(field as ICmPicture, config, settings);
+				}
+			}
 			if (config.IsCustomField && config.SubField == null)
 			{
 				// REVIEW: We have overloaded terms here, this is a C# class not a css class, consider a different name
@@ -862,6 +869,30 @@ namespace SIL.FieldWorks.XWorks
 				return settings.ContentGenerator.WriteProcessedCollection(false, bldr.ToString(), className);
 			}
 			return string.Empty;
+		}
+
+		private static string GenerateContentForCaptionOrHeadword(ICmPicture picture, ConfigurableDictionaryNode config, GeneratorSettings settings)
+		{
+			var wsOption = config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
+			if (wsOption == null)
+				throw new ArgumentException(@"Configuration nodes for MultiString fields should have WritingSystemOptions", "config");
+			var bldr = new StringBuilder();
+			foreach (var option in wsOption.Options)
+			{
+				if (option.IsEnabled)
+				{
+					int wsId;
+					ITsString bestString = picture.GetCaptionOrHeadword(option.Id, out wsId);
+					if (bestString != null)
+					{
+						var contentItem = GenerateWsPrefixAndString(config, settings, wsOption, wsId, bestString, Guid.Empty);
+						bldr.Append(contentItem);
+					}
+				}
+			}
+			if (bldr.Length > 0)
+				return settings.ContentGenerator.WriteProcessedCollection(false, bldr.ToString(), GetClassNameAttributeForConfig(config));
+			return String.Empty;
 		}
 
 		internal static string CopyFileSafely(GeneratorSettings settings, string source, string relativeDestination)
