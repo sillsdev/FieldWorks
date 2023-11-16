@@ -324,7 +324,7 @@ namespace SIL.FieldWorks.XWorks
 			return captionContent;
 		}
 
-		public string GenerateSenseNumber(string formattedSenseNumber)
+		public string GenerateSenseNumber(string formattedSenseNumber, string wsId)
 		{
 			return formattedSenseNumber;
 		}

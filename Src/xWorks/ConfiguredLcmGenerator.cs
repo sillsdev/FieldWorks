@@ -26,6 +26,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
+using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
@@ -1650,6 +1651,7 @@ namespace SIL.FieldWorks.XWorks
 			if (senseNode != null)
 				info.ParentSenseNumberingStyle = senseNode.ParentSenseNumberingStyle;
 
+			info.HomographConfig = settings.Cache.ServiceLocator.GetInstance<HomographConfiguration>();
 			// Calculating isThisSenseNumbered may make sense to do for each item in the foreach loop below, but because of how the answer
 			// is determined, the answer for all sibling senses is the same as for the first sense in the collection.
 			// So calculating outside the loop for performance.
@@ -2094,9 +2096,11 @@ namespace SIL.FieldWorks.XWorks
 			var senseOptions = senseConfigNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
 
 			var formattedSenseNumber = GetSenseNumber(senseOptions.NumberingStyle, ref info);
+			info.HomographConfig = settings.Cache.ServiceLocator.GetInstance<HomographConfiguration>();
+			var senseNumberWs = string.IsNullOrEmpty(info.HomographConfig.WritingSystem) ? "en" : info.HomographConfig.WritingSystem;
 			if (string.IsNullOrEmpty(formattedSenseNumber))
 				return string.Empty;
-			return settings.ContentGenerator.GenerateSenseNumber(formattedSenseNumber);
+			return settings.ContentGenerator.GenerateSenseNumber(formattedSenseNumber, senseNumberWs);
 		}
 
 		private static string GetSenseNumber(string numberingStyle, ref SenseInfo info)
@@ -3103,6 +3107,7 @@ namespace SIL.FieldWorks.XWorks
 			public int SenseCounter { get; set; }
 			public string SenseOutlineNumber { get; set; }
 			public string ParentSenseNumberingStyle { get; set; }
+			public HomographConfiguration HomographConfig { get; set; }
 		}
 	}
 
