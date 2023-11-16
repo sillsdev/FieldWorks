@@ -911,13 +911,14 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public string GenerateSenseNumber(string formattedSenseNumber)
+		public string GenerateSenseNumber(string formattedSenseNumber, string senseNumberWs)
 		{
 			var bldr = new StringBuilder();
 			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
 			{
 				xw.WriteStartElement("span");
 				xw.WriteAttributeString("class", "sensenumber");
+				xw.WriteAttributeString("lang", senseNumberWs);
 				xw.WriteString(formattedSenseNumber);
 				xw.WriteEndElement();
 				xw.Flush();

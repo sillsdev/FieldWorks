@@ -1875,7 +1875,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseToEntry(testEntry, "10", m_wsEn, Cache);
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			string senseNumberOne = $"/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and @lang='{homographWs}' and text()='1']]//span[@lang='en' and text()='gloss']";
 			string senseNumberTwo = $"/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and @lang='{homographWs}' and  text()='2']]//span[@lang='en' and text()='second gloss']";
 			string senseNumberTen = $"//span[@class='sensecontent']/spansenses/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and @lang='{homographWs}' and  text()='{tenthSenseNumber}']]//span[@lang='en' and text()='10']";
