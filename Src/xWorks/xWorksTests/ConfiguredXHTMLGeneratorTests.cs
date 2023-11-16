@@ -1968,9 +1968,12 @@ namespace SIL.FieldWorks.XWorks
 		/// if this is not the only sense, then number it.
 		/// (See LT-17906.)
 		/// </summary>
-		[Test]
-		public void GenerateContentForEntry_SenseNumbersGeneratedForMultipleSenses()
+		[TestCase("en")]
+		[TestCase("fr")]
+		public void GenerateContentForEntry_SenseNumbersGeneratedForMultipleSenses(string homographWs)
 		{
+			var homographConfig = Cache.ServiceLocator.GetInstance<HomographConfiguration>();
+			homographConfig.WritingSystem = homographWs;
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var sensesNode = new ConfigurableDictionaryNode
@@ -1991,8 +1994,8 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
-			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
-			const string senseNumberTwo = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]//span[@lang='en' and text()='second gloss']";
+			string senseNumberOne = $"/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and @lang='{homographWs}' and text()='1']]//span[@lang='en' and text()='gloss']";
+			string senseNumberTwo = $"/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and @lang='{homographWs}' and  text()='2']]//span[@lang='en' and text()='second gloss']";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberOne, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberTwo, 1);

@@ -23,6 +23,9 @@ using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using XCore;
 using Property = ExCSS.Property;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainImpl;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -35,6 +38,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal const string BeforeAfterBetweenStyleName = "Dictionary-Context";
 		internal const string LetterHeadingStyleName = "Dictionary-LetterHeading";
+		internal const string SenseNumberStyleName = "Dictionary-SenseNumber";
 		internal const string DictionaryNormal = "Dictionary-Normal";
 		internal const string DictionaryMinor = "Dictionary-Minor";
 		internal const string WritingSystemPrefix = "writingsystemprefix";
@@ -416,7 +420,13 @@ namespace SIL.FieldWorks.XWorks
 			if (senseOptions.DisplayEachSenseInAParagraph)
 				selectors = new List<StyleRule>(RemoveBeforeAfterSelectorRules(selectors));
 			styleRules.AddRange(CheckRangeOfRulesForEmpties(selectors));
+
+			var cache = propertyTable.GetValue<LcmCache>("cache");
+			var senseNumberLanguage = cache.ServiceLocator.GetInstance<HomographConfiguration>().WritingSystem;
+			senseNumberLanguage = string.IsNullOrEmpty(senseNumberLanguage) ? "en" : senseNumberLanguage;
+			var senseNumberWsId = cache.WritingSystemFactory.GetWsFromStr(senseNumberLanguage);
 			var senseNumberRule = new StyleRule();
+
 			// Not using SelectClassName here; sense and sensenumber are siblings and the configNode is for the Senses collection.
 			// Select the base plus the node's unmodified class attribute and append the sensenumber matcher.
 			var senseNumberSelector = string.Format("{0} .sensenumber", senseContentSelector);
@@ -424,7 +434,7 @@ namespace SIL.FieldWorks.XWorks
 			senseNumberRule.Value = senseNumberSelector;
 			if(!String.IsNullOrEmpty(senseOptions.NumberStyle))
 			{
-				senseNumberRule.Declarations.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(senseOptions.NumberStyle, DefaultStyle, propertyTable));
+				senseNumberRule.Declarations.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(senseOptions.NumberStyle, senseNumberWsId, propertyTable));
 			}
 			if (!IsEmptyRule(senseNumberRule))
 				styleRules.Add(senseNumberRule);
