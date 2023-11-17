@@ -2067,15 +2067,14 @@ namespace SIL.FieldWorks.XWorks
 					nextNumber = GetRomanSenseCounter(numberingStyle, info.SenseCounter);
 					break;
 				default: // handles %d and %O. We no longer support "%z" (1  b  iii) because users can hand-configure its equivalent
+					nextNumber = info.SenseCounter.ToString();
 					// Use the digits from the CustomHomographNumbers if they are defined
 					if (info.HomographConfig.CustomHomographNumbers.Count == 10)
 					{
-						nextNumber = info.HomographConfig.CustomHomographNumbers[info.SenseCounter];
-					}
-					else
-					{
-						// If the writing system somehow has no NumberingSystem then default to the sense counter number in Ascii
-						nextNumber = info.SenseCounter.ToString();
+						for (var digit = 0; digit < 10; ++digit)
+						{
+							nextNumber = nextNumber.Replace(digit.ToString(), info.HomographConfig.CustomHomographNumbers[digit]);
+						}
 					}
 					break;
 			}
