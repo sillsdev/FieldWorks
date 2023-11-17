@@ -1967,13 +1967,20 @@ namespace SIL.FieldWorks.XWorks
 		/// If the numbering style for Senses says to number it, and
 		/// if this is not the only sense, then number it.
 		/// (See LT-17906.)
+		/// Also verify that custom homograph numbers are used and we can count past 9 with them
 		/// </summary>
-		[TestCase("en")]
-		[TestCase("fr")]
-		public void GenerateContentForEntry_SenseNumbersGeneratedForMultipleSenses(string homographWs)
+		[TestCase("en", null)]
+		[TestCase("fr", null)]
+		[TestCase("fr", new [] { "y", "1", "2", "3", "4", "5", "6", "7", "8", "9" })]
+		public void GenerateContentForEntry_SenseNumbersGeneratedForMultipleSenses(string homographWs, string[] customHomographs)
 		{
 			var homographConfig = Cache.ServiceLocator.GetInstance<HomographConfiguration>();
+			var tenthSenseNumber = customHomographs == null ? "10" : customHomographs[1] + customHomographs[0];
 			homographConfig.WritingSystem = homographWs;
+			if (customHomographs != null)
+			{
+				homographConfig.CustomHomographNumbers = new List<string>(customHomographs);
+			}
 			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode { FieldDescription = "Gloss", DictionaryNodeOptions = wsOpts };
 			var sensesNode = new ConfigurableDictionaryNode
@@ -1991,11 +1998,20 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 			AddSenseToEntry(testEntry, "second gloss", m_wsEn, Cache);
+			AddSenseToEntry(testEntry, "3", m_wsEn, Cache);
+			AddSenseToEntry(testEntry, "4", m_wsEn, Cache);
+			AddSenseToEntry(testEntry, "5", m_wsEn, Cache);
+			AddSenseToEntry(testEntry, "6", m_wsEn, Cache);
+			AddSenseToEntry(testEntry, "7", m_wsEn, Cache);
+			AddSenseToEntry(testEntry, "8", m_wsEn, Cache);
+			AddSenseToEntry(testEntry, "9", m_wsEn, Cache);
+			AddSenseToEntry(testEntry, "10", m_wsEn, Cache);
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
 			string senseNumberOne = $"/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and @lang='{homographWs}' and text()='1']]//span[@lang='en' and text()='gloss']";
 			string senseNumberTwo = $"/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and @lang='{homographWs}' and  text()='2']]//span[@lang='en' and text()='second gloss']";
+			string senseNumberTen = $"//span[@class='sensecontent']/spansenses/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and @lang='{homographWs}' and  text()='{tenthSenseNumber}']]//span[@lang='en' and text()='10']";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberOne, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberTwo, 1);
