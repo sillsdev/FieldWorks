@@ -370,7 +370,7 @@ namespace SIL.FieldWorks.XWorks
 				foreach (var entry in entries)
 				{
 					var entryElement = browserElement.OwnerDocument.CreateHtmlElement("div");
-					var entryDoc = XDocument.Parse(entry);
+					var entryDoc = XDocument.Parse(entry.ToString());
 					foreach (var attribute in entryDoc.Root.Attributes())
 					{
 						entryElement.SetAttribute(attribute.Name.ToString(), attribute.Value);
@@ -402,7 +402,7 @@ namespace SIL.FieldWorks.XWorks
 				// Load entries above the lower navigation buttons
 				foreach (var entry in entries)
 				{
-					var entryElement = browserElement.OwnerDocument.CreateHtmlElement("div"); var entryDoc = XDocument.Parse(entry);
+					var entryElement = browserElement.OwnerDocument.CreateHtmlElement("div"); var entryDoc = XDocument.Parse(entry.ToString());
 					foreach (var attribute in entryDoc.Root.Attributes())
 					{
 						entryElement.SetAttribute(attribute.Name.ToString(), attribute.Value);

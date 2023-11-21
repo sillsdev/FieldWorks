@@ -189,7 +189,7 @@ namespace SIL.FieldWorks.XWorks
 			AddHeadwordToEntry(entry, "HeadWordTest", m_wsFr);
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings).ToString();
 			const string frenchHeadwordOfHeadwordTest = "/div[@class='lexentry']/span[@class='headword']/span[@lang='fr']/a[text()='HeadWordTest']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(frenchHeadwordOfHeadwordTest, 1);
 		}
@@ -212,7 +212,7 @@ namespace SIL.FieldWorks.XWorks
 			var entry = CreateInterestingLexEntry(Cache, "\uD900");
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings).ToString();
 			const string invalidCharsHeadwordTest = "/div[@class='lexentry']/span[@class='headword']/span[text()='\u0fff\u0fff\u0fff']";
 			// change Headword back to something legal so that we don't crash trying to save bad data into the cache.
 			AddHeadwordToEntry(entry, "notbadanymore", Cache.DefaultVernWs);
@@ -279,7 +279,7 @@ namespace SIL.FieldWorks.XWorks
 			morph.Form.set_String(wsFr, TsStringUtils.MakeString("LexemeFormTest", wsFr));
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings).ToString();
 			const string frenchLexForm = "/div[@class='lexentry']/span[@class='lexemeformoa']/span[@lang='fr']/a[text()='LexemeFormTest']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(frenchLexForm, 1);
 		}
@@ -324,7 +324,7 @@ namespace SIL.FieldWorks.XWorks
 			pronunciation.LocationRA = location;
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings).ToString();
 			const string hereLocation = "/div[@class='lexentry']/span[@class='pronunciations']/span[@class='pronunciation']/span[@class='location']/span[@class='name']/span[@lang='fr' and text()='Here!']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(hereLocation, 1);
 		}
@@ -402,7 +402,7 @@ namespace SIL.FieldWorks.XWorks
 			const string mediaFileAnchor2 = entryPart + variantsPart + varPronPart + mediaFilePart + movieCamSearch;
 
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings).ToString();
 			Assert.That(result, Contains.Substring(videoFileUrl1));
 			Assert.That(result, Contains.Substring(videoFileUrl2));
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(mediaFileAnchor1, 1);
@@ -456,7 +456,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings).ToString();
 			Assert.IsEmpty(result, "Should not have generated anything for a disabled node");
 		}
 
@@ -476,9 +476,9 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			XHTMLStringBuilder.AppendLine("<TESTWRAPPER>"); //keep the xml valid (single root element)
 															//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings).ToString();
 			XHTMLStringBuilder.Append(result);
-			result = ConfiguredLcmGenerator.GenerateContentForEntry(entryTwo, mainEntryNode, null, settings);
+			result = ConfiguredLcmGenerator.GenerateContentForEntry(entryTwo, mainEntryNode, null, settings).ToString();
 			XHTMLStringBuilder.Append(result);
 			XHTMLStringBuilder.AppendLine("</TESTWRAPPER>");
 
@@ -502,7 +502,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var mainEntryNode = ModelForCrossReferences(new[] { comRefType.Guid.ToString() });
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, DefaultSettings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(crossRefOwnerTypeXpath, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(CrossRefOwnerTypeXpath(comRefTypeName), 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordWsInCrossRefsXpath("en", "bEN"), 1);
@@ -530,7 +530,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 			const string oneSenseWithGlossOfGloss = xpathThruSense + "//span[@lang='en' and text()='gloss']";
 			// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithGlossOfGloss, 1);
@@ -579,9 +579,9 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			XHTMLStringBuilder.AppendLine("<TESTWRAPPER>"); //keep the xml valid (single root element)
 															//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings).ToString();
 			XHTMLStringBuilder.Append(result);
-			result = ConfiguredLcmGenerator.GenerateContentForEntry(entryTwo, mainEntryNode, null, settings);
+			result = ConfiguredLcmGenerator.GenerateContentForEntry(entryTwo, mainEntryNode, null, settings).ToString();
 			XHTMLStringBuilder.Append(result);
 			XHTMLStringBuilder.AppendLine("</TESTWRAPPER>");
 			result = XHTMLStringBuilder.ToString();
@@ -602,7 +602,7 @@ namespace SIL.FieldWorks.XWorks
 			var dictionaryModel = new DictionaryConfigurationModel(defaultRoot, Cache);
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, dictionaryModel.Parts[0], DefaultDecorator, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, dictionaryModel.Parts[0], DefaultDecorator, settings).ToString();
 			var entryExists = "/div[@class='entry' and @id='g" + entry.Guid + "']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(entryExists, 1);
 		}
@@ -639,7 +639,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings).ToString();
 			const string sensesThatShouldNotBe = "/div[@class='entry']/span[@class='senses']";
 			const string headwordThatShouldNotBe = "//span[@class='gloss']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(sensesThatShouldNotBe, 0);
@@ -670,7 +670,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings).ToString();
 			Assert.IsEmpty(result, "With only one subnode that is disabled, there should be nothing generated!");
 		}
 
@@ -728,7 +728,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			// SUT
-			var xhtmlString = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings);
+			var xhtmlString = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings).ToString();
 			const string sharedGramInfoPath = "//div[@class='lexentry']/span[@class='senses']/span[@class='sharedgrammaticalinfo']";
 			const string gramInfoPath = "//div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='msas']/span[@class='mlpartofspeech']";
 			AssertThatXmlIn.String(xhtmlString).HasNoMatchForXpath(gramInfoPath);
@@ -813,7 +813,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries, mainDict);
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			// SUT
-			var xhtmlString = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, mainDictionaryDecorator, settings);
+			var xhtmlString = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, mainDictionaryDecorator, settings).ToString();
 			const string sharedGramInfoPath = "//div[@class='lexentry']/span[@class='senses']/span[@class='sharedgrammaticalinfo']";
 			const string gramInfoPath = "//div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='msa']/span[@class='mlpartofspeech']";
 			AssertThatXmlIn.String(xhtmlString).HasNoMatchForXpath(gramInfoPath);
@@ -878,7 +878,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			// SUT
-			var xhtmlString = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings);
+			var xhtmlString = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings).ToString();
 			const string sharedGramInfoPath = "//div[@class='lexentry']/span[@class='sensesos']/span[@class='sharedgrammaticalinfo']";
 			const string gramInfoPath = "//div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='msas']/span[@class='mlpartofspeech']";
 			AssertThatXmlIn.String(xhtmlString).HasSpecifiedNumberOfMatchesForXpath(gramInfoPath, 2);
@@ -927,7 +927,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			// SUT
-			var xhtmlString = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings);
+			var xhtmlString = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings).ToString();
 			const string sharedGramInfoPath = "//div[@class='lexentry']/span[@class='sensesos']/span[@class='sharedgrammaticalinfo']";
 			const string gramInfoPath = "//div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='msas']/span[@class='mlpartofspeech']";
 			AssertThatXmlIn.String(xhtmlString).HasNoMatchForXpath(gramInfoPath);
@@ -987,7 +987,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings).ToString();
 			const string morphTypePath = "//span[@class='morphosyntaxanalysis']/span[@class='morphtypes']/span[@class='morphtype']/span[@class='abbreviation']/span[@lang='en' and text()='sfx']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(morphTypePath, 1);
 		}
@@ -1027,7 +1027,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings).ToString();
 			const string gramInfoPath = xpathThruSense + "/span[@class='morphosyntaxanalysis']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(gramInfoPath, 1);
 		}
@@ -1078,7 +1078,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings).ToString();
 			const string gramInfoPath = xpathThruSense + "/span[@class='morphosyntaxanalysis']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(gramInfoPath, 0);
 		}
@@ -1112,7 +1112,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings).ToString();
 			const string gramInfoPath = xpathThruSense + "/span[@class='morphosyntaxanalysis']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(gramInfoPath, 0);
 		}
@@ -1146,7 +1146,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings).ToString();
 			const string scientificCatPath = xpathThruSense + "/span[@class='scientificname']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(scientificCatPath, 0);
 		}
@@ -1202,7 +1202,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings).ToString();
 
 			const string gramAbbr1 = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearabbrtss']/span[@lang='fr']/span[@lang='fr' and text()='Blah']";
 			const string gramAbbr2 = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearabbrtss']/span[@lang='fr']/span[@lang='en' and text()=':Any']";
@@ -1265,7 +1265,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings).ToString();
 
 			const string gramAbbr1 = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearabbrtss']/span[@lang='fr']/span[@lang='fr' and text()='<Not Sure>']";
 			const string gramAbbr2 = xpathThruSense + "/span[@class='morphosyntaxanalysis']/span[@class='interlinearabbrtss']/span[@lang='fr']/span[@lang='en' and text()=':Any']";
@@ -1314,7 +1314,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings).ToString();
 			const string captionOrHeadwordContainsCaption = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='captionorheadword']//span[text()='captionEn']";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(captionOrHeadwordContainsCaption, 1);
@@ -1357,7 +1357,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings).ToString();
 			const string captionOrHeadwordContainsHeadword = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='captionorheadword']//span[text()='HeadwordEn']";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(captionOrHeadwordContainsHeadword, 1);
@@ -1401,7 +1401,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings).ToString();
 			const string captionOrHeadwordContainsCaptionEn = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='captionorheadword']//span[@lang='en' and text()='captionEn']";
 			const string captionOrHeadwordContainsHeadwordFr = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='captionorheadword']//span[@lang='fr' and text()='HeadwordFr']";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
@@ -1432,7 +1432,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings).ToString();
 			const string senseWithdefinitionOrGloss = "//span[@class='sense']/span[@class='definitionorgloss']/span[text()='gloss']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseWithdefinitionOrGloss, 1);
 		}
@@ -1462,7 +1462,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings).ToString();
 			const string senseWithdefinitionOrGloss =
 				"//span[@class='sense']/span[@class='definitionorgloss']/span[@class='writingsystemprefix' and normalize-space(text())='Eng']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseWithdefinitionOrGloss, 1);
@@ -1491,7 +1491,7 @@ namespace SIL.FieldWorks.XWorks
 			entryOne.SensesOS.First().Definition.set_String(wsEs, "definition");
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings).ToString();
 			const string senseWithdefinitionOrGlossTwoWs = "//span[@class='sense']/span[@class='definitionorgloss' and span[1]='gloss' and span[2]='definition']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseWithdefinitionOrGlossTwoWs, 1);
 		}
@@ -1550,7 +1550,7 @@ namespace SIL.FieldWorks.XWorks
 
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			// SUT
-			var output = ConfiguredLcmGenerator.GenerateContentForEntry(entryEntry, mainEntryNode, pubMain, DefaultSettings);
+			var output = ConfiguredLcmGenerator.GenerateContentForEntry(entryEntry, mainEntryNode, pubMain, DefaultSettings).ToString();
 
 			// set of xpaths and required number of matches.
 			var checkthis = new Dictionary<string, int>()
@@ -1623,7 +1623,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			var fwdNameXpath = string.Format(
 				"//span[@class='complexformsnotsubentries']/span[@class='complexformtypes']/span[@class='complexformtype']/span/span[@lang='en' and text()='{0}']",
 					complexRefAbbr);
@@ -1660,7 +1660,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings).ToString();
 			const string senseWithHyphenSuffix = "//span[@class='senses_test-one']/span[@class='sense_test-one']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseWithHyphenSuffix, 1);
 		}
@@ -1691,7 +1691,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings).ToString();
 			const string senseWithHyphenSuffix = "//span[@class='senses_-test']/span[@class='sense_-test']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseWithHyphenSuffix, 1);
 		}
@@ -1722,7 +1722,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings).ToString();
 			const string senseWithHyphenSuffix = "//span[@class='senses_-test-']/span[@class='sense_-test-']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseWithHyphenSuffix, 1);
 		}
@@ -1781,7 +1781,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings).ToString();
 			var headwordMatch = string.Format("//span[@class='{0}']//span[@class='{1}']/span[text()='{2}']",
 				nters, headWord, entryThreeForm);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordMatch, 1);
@@ -1835,7 +1835,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings).ToString();
 			const string etymologyWithArabicSrcLanguage = "//span[@class='etymologies']/span[@class='etymology']/span[@class='languages']/span[@class='language']/span[@class='abbreviation']/span[@lang='en' and text()='ar']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(etymologyWithArabicSrcLanguage, 1);
 			const string etymologyWithGeorgianNotes = "//span[@class='etymologies']/span[@class='etymology']/span[@class='languagenotes']/span[@lang='en' and text()='Georgian']";
@@ -2008,7 +2008,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseToEntry(testEntry, "10", m_wsEn, Cache);
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings).ToString();
 			string senseNumberOne = $"/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and @lang='{homographWs}' and text()='1']]//span[@lang='en' and text()='gloss']";
 			string senseNumberTwo = $"/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and @lang='{homographWs}' and  text()='2']]//span[@lang='en' and text()='second gloss']";
 			string senseNumberTen = $"//span[@class='sensecontent']/spansenses/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and @lang='{homographWs}' and  text()='{tenthSenseNumber}']]//span[@lang='en' and text()='10']";
@@ -2170,7 +2170,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(testEntry.AllSenses.Count, Is.EqualTo(1), "Test set up incorrectly. There should just be one sense.");
 			Assert.That(testEntry.AllSenses.First().AllSenses.Count, Is.EqualTo(1), "Test not set up correctly. There should be no subsenses.");
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings).ToString();
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]/span[@lang='en' and text()='gloss']";
 			// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(senseNumberOne);
@@ -2238,7 +2238,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(testEntry.AllSenses.Count, Is.EqualTo(3), "Test set up incorrectly.");
 			Assert.That(testEntry.AllSenses.First().AllSenses.Count, Is.EqualTo(3), "Test not set up correctly.");
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings).ToString();
 			const string senseNumberXpath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sensenumber']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(senseNumberXpath); // Should not have a sense number on top sense.
 
@@ -2305,7 +2305,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(testEntry.AllSenses.Count, Is.EqualTo(3), "Test set up incorrectly.");
 			Assert.That(testEntry.AllSenses.First().AllSenses.Count, Is.EqualTo(3), "Test not set up correctly.");
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings).ToString();
 			const string senseNumberXpath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sensenumber']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(senseNumberXpath); // Should not have a sense number on top sense.
 
@@ -2372,7 +2372,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(testEntry.AllSenses.Count, Is.EqualTo(3), "Test set up incorrectly.");
 			Assert.That(testEntry.AllSenses.First().AllSenses.Count, Is.EqualTo(3), "Test not set up correctly.");
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings).ToString();
 			const string senseNumberXpath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sensenumber']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberXpath, 1); // Should have sense number on top sense.
 
@@ -2422,7 +2422,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSingleSubSenseToSense("gloss", testEntry.SensesOS.First());
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings).ToString();
 			const string SenseOneSubSense = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]/span[@class='senses']/span[@class='sensecontent']//span[@lang='en' and text()='gloss1.1']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(SenseOneSubSense, 1);
 		}
@@ -2479,7 +2479,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings).ToString();
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='A']]//span[@lang='en' and text()='gloss']";
 			const string senseNumberTwo = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='B']]//span[@lang='en' and text()='second gloss']";
 			const string subSensesNumberTwoOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='I']]//span[@lang='en' and text()='second gloss2.1']";
@@ -2544,7 +2544,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings).ToString();
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='A']]//span[@lang='en' and text()='gloss']";
 			const string senseNumberTwo = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='B']]//span[@lang='en' and text()='second gloss']";
 			const string subSensesNumberTwoOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='second gloss2.1']";
@@ -2596,7 +2596,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseToEntry(testEntry, "gloss", m_wsEn, Cache);
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings).ToString();
 			const string senseNumberXpath = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sensenumber']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberXpath, 0); // Should not have produced sense number if style said not to number it.
 
@@ -2656,7 +2656,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings).ToString();
 			const string subSensesNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='second gloss2.1']";
 			const string subSenseNumberTwo = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]//span[@lang='en' and text()='second gloss2.2']";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
@@ -2698,7 +2698,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss");
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings).ToString();
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
 			const string senseNumberTwo = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]//span[@lang='en' and text()='second gloss']";
 			const string subSensesNumberTwoOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='second gloss2.1']";
@@ -2753,7 +2753,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry.SensesOS[1].SensesOS[0], "matte");
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings).ToString();
 			const string senseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]";
 			const string subSenseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2a']]";
 			const string subSubSenseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2aA']]";
@@ -2807,7 +2807,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry.SensesOS[1].SensesOS[0], "matte");
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings).ToString();
 			const string senseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]";
 			const string subSenseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2.a']]";
 			const string subSubSenseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2.a.A']]";
@@ -2861,7 +2861,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry.SensesOS[1].SensesOS[0], "matte");
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings).ToString();
 			const string senseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]";
 			const string subSenseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='a']]";
 			const string subSubSenseNumber = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='A']]";
@@ -2906,7 +2906,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry.SensesOS[1].SensesOS[0], "matte");
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings).ToString();
 			const string senseNumberOne = "//span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
 			const string senseNumberTwo = "//span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='2']]//span[@lang='en' and text()='second gloss']";
 			const string subSenseNumberTwoOne = "//span[@class='share sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='second gloss2.1']";
@@ -3047,7 +3047,7 @@ namespace SIL.FieldWorks.XWorks
 			AddSenseAndTwoSubsensesToEntry(testEntry.SensesOS[0], "subGloss");
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings).ToString();
 			const string subSenseNumberOneOne = "//span[@class='share sense' and preceding-sibling::span[@class='sensenumber' and text()='a']]//span[@lang='en' and text()='subGloss']";
 			const string subosoSenseNumberOneOneOne = "//span[@lang='en' and text()='subGloss2.1']";
 			const string subosoSenseNumberOneOneTwo = "//span[@lang='en' and text()='subGloss2.2']";
@@ -3097,7 +3097,7 @@ namespace SIL.FieldWorks.XWorks
 			CreateComplexForm(Cache, testEntry.SensesOS[0], subEntry, true);
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, settings).ToString();
 			const string senseContent = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']";
 			const string senseNumberOne = senseContent + "/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
 			const string subentrySenseContent = senseContent + "/span[@class='sense']/span[@class='subentries']/span[@class='subentry']/span[@class='senses']/span[@class='sensecontent']";
@@ -3137,7 +3137,7 @@ namespace SIL.FieldWorks.XWorks
 			var testEntry = CreateInterestingLexEntry(Cache);
 
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, DefaultSettings).ToString();
 			const string senseNumberOne = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and preceding-sibling::span[@class='sensenumber' and text()='1']]//span[@lang='en' and text()='gloss']";
 			// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberOne, 1);
@@ -3167,7 +3167,7 @@ namespace SIL.FieldWorks.XWorks
 			var testEntry = CreateInterestingLexEntry(Cache);
 
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, DefaultDecorator, DefaultSettings).ToString();
 			const string senseEntryGuid = "/div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense' and @entryguid]";
 			// This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseEntryGuid, 1);
@@ -3220,7 +3220,7 @@ namespace SIL.FieldWorks.XWorks
 			AddExampleToSense(testEntry.SensesOS[0], example, Cache, m_wsFr, m_wsEn, translation);
 
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, DefaultSettings).ToString();
 			const string xpathThruExample = xpathThruSense + "/span[@class='examplescontents']/span[@class='examplescontent']";
 			var oneSenseWithExample = string.Format(xpathThruExample + "/span[@class='example']/span[@lang='fr' and text()='{0}']", example);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithExample, 1);
@@ -3274,7 +3274,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			const string xpathThruExampleSentence = "/div[@class='lexentry']/span[@class='complexformsnotsubentries']/span[@class='complexformsnotsubentry']/span[@class='examplesentences']/span[@class='examplesentence']";
 			var oneSenseWithExample = string.Format(xpathThruExampleSentence + "//span[@lang='fr' and text()='{0}']", example);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithExample, 1);
@@ -3328,7 +3328,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			const string xpathThruExampleSentence = "/div[@class='lexentry']/span[@class='complexformsnotsubentries']/span[@class='complexformsnotsubentry']/span[@class='examplesentences']/span[@class='examplesentence']";
 			var oneSenseWithExample = string.Format(xpathThruExampleSentence + "//span[@lang='fr']//br");
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithExample, 1);
@@ -3403,7 +3403,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 
 			const string extendedNote = xpathThruSense + "/span[@class='extendednotecontents']/span[@class='extendednotecontent']";
 			var xpathThruNoteType = string.Format(extendedNote + "/span[@class='extendednotetypera_name']/span[@lang='en' and text()='{0}']", noteType);
@@ -3485,7 +3485,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 
 			const string extendedNote = xpathThruSense + "/span[@class='extendednotecontents']/span[@class='extendednotecontent']";
 			var xpathThruNoteType = string.Format(extendedNote + "/span[@class='extendednotetypera_name']/span[@lang='en' and text()='{0}']", noteType);
@@ -3561,7 +3561,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			const string xPathThruAllomorph = "/div[@class='lexentry']/span[@class='alternateformsos']/span[@class='alternateformso']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				xPathThruAllomorph + "/span[@class='form']/span[@lang='fr' and text()='Allomorph']", 1);
@@ -3598,7 +3598,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				"/div[@class='lexentry']/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']//span[@lang='fr']/span[@lang='fr']", 4);
 		}
@@ -3650,7 +3650,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				"//span[@class='visiblevariantentryrefs']/span[@class='visiblevariantentryref']/span[@class='referencedentries']/span[@class='referencedentry']/span[@class='headword']/span[@lang='fr']/span[@lang='fr']/a[@href]", 2);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
@@ -3749,7 +3749,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(otherMainEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(otherMainEntry, mainEntryNode, null, settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				"//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='configtargets']/span[@class='configtarget']/span[@class='primaryentryrefs']/span[@class='primaryentryref']/span[@class='referencedentries']/span[@class='referencedentry']/span[@class='headword']/span[@lang='fr']/a[@href]", 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
@@ -3796,7 +3796,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				"//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='configtargets']/span[@class='configtarget']/span[@class='headword']/span[@lang='fr']/span[@lang='fr']/a[@href]", 4);
 		}
@@ -3848,7 +3848,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				"//span[@class='configtargets']/span[@class='configtarget']/span[@class='headword']/span[@lang='fr']//a[@href]", 4);
 		}
@@ -3904,7 +3904,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT-
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(
 				"//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='configtargets']");
 		}
@@ -3944,7 +3944,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(referencedEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(referencedEntry, mainEntryNode, null, settings).ToString();
 			var fwdNameXpath = string.Format(
 				"//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']", refTypeName);
 			const string anyNameXpath =
@@ -3989,7 +3989,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			var fwdNameXpath = string.Format(
 				"//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']", refTypeName);
 			var revNameXpath = string.Format(
@@ -4034,7 +4034,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(referencedEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(referencedEntry, mainEntryNode, null, settings).ToString();
 			var fwdNameXpath = string.Format(
 				"//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']", refTypeName);
 			var revNameXpath = string.Format(
@@ -4084,7 +4084,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			var fwdNameXpath = string.Format(
 				"//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']", refTypeName);
 			var revNameXpath = string.Format(
@@ -4135,7 +4135,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			var fwdNameXpath = string.Format(
 				"//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']", refTypeName);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(fwdNameXpath, 1);
@@ -4182,7 +4182,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(referencedEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(referencedEntry, mainEntryNode, null, settings).ToString();
 			var fwdNameXpath = string.Format(
 				"//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']", refTypeName);
 			var revNameXpath = string.Format(
@@ -4237,7 +4237,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			const string NameXpath = "//span[@class='minimallexreferences']/span[@class='minimallexreference' and position()='{0}']/span[@class='ownertype_name']/span[@lang='en' and text()='{1}']";
 			var fwdNameFirstXpath = string.Format(NameXpath, "1", etyRefTypeName);
 			var fwdNameSecondXpath = string.Format(NameXpath, "2", comRefTypeName);
@@ -4249,7 +4249,7 @@ namespace SIL.FieldWorks.XWorks
 				Options =
 					DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { comRefType.Guid + ":f", etyRefType.Guid + ":f" })
 			};
-			var resultAfterChange = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings);
+			var resultAfterChange = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			var fwdNameChangedFirstXpath = string.Format(NameXpath, "1", comRefTypeName);
 			var fwdNameChangedSecondXpath = string.Format(NameXpath, "2", etyRefTypeName);
 			AssertThatXmlIn.String(resultAfterChange).HasSpecifiedNumberOfMatchesForXpath(fwdNameChangedFirstXpath, 1);
@@ -4316,7 +4316,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var output = ConfiguredLcmGenerator.GenerateContentForEntry(armEntry, mainEntryNode, null, settings);
+			var output = ConfiguredLcmGenerator.GenerateContentForEntry(armEntry, mainEntryNode, null, settings).ToString();
 			var fwdNameXpath = string.Format(
 				"//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='ownertype_name']/span[@lang='en' and text()='{0}']", refTypeName);
 			AssertThatXmlIn.String(output).HasNoMatchForXpath(fwdNameXpath);
@@ -4394,7 +4394,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var output = ConfiguredLcmGenerator.GenerateContentForEntry(firstEntry, mainEntryNode, null, settings);
+			var output = ConfiguredLcmGenerator.GenerateContentForEntry(firstEntry, mainEntryNode, null, settings).ToString();
 			var goodTarget = string.Format(
 				"//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='configtargets']/span[@class='configtarget']/span[@class='headword']/span[@lang='fr' and text()='{0}']", firstHeadword);
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(goodTarget, 1);
@@ -4463,7 +4463,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(firstEntry, mainEntryNode, DefaultDecorator, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(firstEntry, mainEntryNode, DefaultDecorator, settings).ToString();
 
 			var goodTarget1 = "//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='ownertype_name']/span[text()='Part']/ancestor::span[1]/following-sibling::node()//span[@class='configtarget']/span[@class='gloss']/span[@lang='en' and text()='b2']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(goodTarget1, 1);
@@ -4896,7 +4896,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				"/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@lang='fr']", 0);
 		}
@@ -4947,7 +4947,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				"/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']//span[@lang='fr']/span[@lang='fr']", 2);
 		}
@@ -5004,7 +5004,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				"/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='referencedentries']" +
 				"/span[@class='referencedentry']/span[@class='headword']/span[@lang='fr']/span[@lang='fr' and text()='Citation']", 1);
@@ -5046,7 +5046,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				xpathThruSense + "/span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']//span[@lang='fr']/span[@lang='fr']", 4);
 		}
@@ -5249,7 +5249,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 			const string oneSenseWithPicture = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/img[@class='photo' and @id]";
 			const string oneSenseWithPictureCaption = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='caption']//span[text()='caption']";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
@@ -5287,8 +5287,8 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
-			Assert.That(result, Is.Empty);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
+			Assert.IsEmpty(result);
 		}
 
 		/// <summary>LT-21573: PictureFileRA can be null after an incomplete SFM import</summary>
@@ -5323,7 +5323,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 			Assert.That(result, Is.Empty);
 		}
 
@@ -5356,7 +5356,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 			const string oneSenseWithPicture = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/img[@class='photo' and @id]";
 			const string oneSenseWithPictureCaption = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='creator' and text()='Jason Naylor']";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
@@ -5388,7 +5388,7 @@ namespace SIL.FieldWorks.XWorks
 			// generates a src attribute with an absolute file path
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 			var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[contains(@src, '" + composedPath + "')]";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 1);
 		}
@@ -5416,7 +5416,7 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(filePath));
 				var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[starts-with(@src, '" + pictureRelativePath + "')]";
 				if (!Platform.IsUnix)
@@ -5453,7 +5453,7 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(filePath));
 				var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[starts-with(@src, '" + pictureRelativePath + "')]";
 				if (!Platform.IsUnix)
@@ -5508,7 +5508,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, true, true, tempFolder.FullName);
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(fileName));
 				var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[contains(@src, '" + pictureRelativePath + "')]";
 				if (!Platform.IsUnix)
@@ -5563,7 +5563,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, true, true, tempFolder.FullName);
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(fileName));
 				const string pictureXPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img";
 				var pictureWithComposedPath = pictureXPath + "[contains(@src, '" + pictureRelativePath + "')]";
@@ -5705,7 +5705,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, true, true, tempFolder.FullName);
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 				var pictureRelativePath = Path.Combine("pictures", Path.GetFileName(fileName));
 				var pictureWithComposedPath = "/div[@class='lexentry']/span[@class='pictures']/span[@class='picture']/img[contains(@src, '" + pictureRelativePath + "')]";
 				if (!Platform.IsUnix)
@@ -5747,7 +5747,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetString(testEntry.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 				var customDataPath = string.Format("/div[@class='lexentry']/span[@class='customstring']/span[text()='{0}']", customData);
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
 			}
@@ -5784,7 +5784,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetString(testEntry.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 				var customDataPath = $"/div[@class='lexentry']/span[@class='grouping_customgroup']/span[@class='customstring']/span[text()='" + customData + "']";
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
 			}
@@ -5833,7 +5833,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetString(testEntry.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 				const string grpXPath = "/span[@class='grouping_customgroup']";
 				var customDataPath = $"/div[@class='lexentry']{grpXPath}{grpXPath}{grpXPath}/span[@class='customstring']/span[text()='{customData}']";
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
@@ -5901,7 +5901,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetString(testSence.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 				var customDataPath = string.Format("/div[@class='l']/span[@class='es']/span[@class='e']/span[@class='customstring']/span[text()='{0}']", customData);
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
 			}
@@ -5947,7 +5947,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetString(exampleSentence.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 				var customDataPath = string.Format(
 					"/div[@class='l']/span[@class='es']//span[@class='xs']/span[@class='x']/span[@class='customstring']/span[text()='{0}']", customData);
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
@@ -5986,7 +5986,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetString(allomorph.Hvo, customField.Flid, TsStringUtils.MakeString(customData, m_wsEn));
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 				var customDataPath = string.Format(
 					"/div[@class='l']/span[@class='as']/span[@class='a']/span[@class='customstring']/span[text()='{0}']", customData);
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
@@ -6018,7 +6018,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetMultiStringAlt(testEntry.Hvo, customField.Flid, m_wsEn, TsStringUtils.MakeString(customData, m_wsEn));
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 				var customDataPath = string.Format("/div[@class='lexentry']/span[@class='customstring']/span[text()='{0}']", customData);
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
 			}
@@ -6080,7 +6080,7 @@ namespace SIL.FieldWorks.XWorks
 					TsStringUtils.MakeString(senseCustomData, m_wsEn));
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 				var entryDataPath = string.Format("/div[@class='lexentry']/span[@class='mlrs']/span[@class='mlr']/span[@class='configtargets']/span[@class='configtarget']/span[@class='entrycstring']/span[text()='{0}']", entryCustomData);
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(entryDataPath, 1);
 				var senseDataPath = string.Format("/div[@class='lexentry']/span[@class='mlrs']/span[@class='mlr']/span[@class='configtargets']/span[@class='configtarget']/span[@class='sensecstring']/span[text()='{0}']", senseCustomData);
@@ -6144,7 +6144,7 @@ namespace SIL.FieldWorks.XWorks
 					TsStringUtils.MakeString(senseCustomData, m_wsEn));
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 				var entryDataPath = string.Format("/div[@class='lexentry']/span[@class='mlrs']/span[@class='mlr']/span[@class='configtargets']/span[@class='configtarget']/span[@class='entrycstring']/span[text()='{0}']", entryCustomData);
 				AssertThatXmlIn.String(result).HasNoMatchForXpath(entryDataPath, message: "Ref is to Sense; should be no Entry Custom Data");
 				var senseDataPath = string.Format("/div[@class='lexentry']/span[@class='mlrs']/span[@class='mlr']/span[@class='configtargets']/span[@class='configtarget']/span[@class='sensecstring']/span[text()='{0}']", senseCustomData);
@@ -6184,7 +6184,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetMultiStringAlt(refdEntry.Hvo, customField.Flid, m_wsEn, TsStringUtils.MakeString(customData, m_wsEn));
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 				var customDataPath = string.Format("/div[@class='lexentry']/span[@class='vars']/span[@class='var']/span[@class='owningentry_customstring']/span[text()='{0}']", customData);
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
 			}
@@ -6220,7 +6220,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 			var definitionXpath = "//div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='definition']/span[@lang='en']";
 			var str1Xpath = string.Format(definitionXpath + "/span[@lang='en' and text()='{0}']", multirunContent[0]);
 			var str2Xpath = string.Format(definitionXpath + "/span[@lang='fr' and text()='{0}']", multirunContent[1]);
@@ -6268,7 +6268,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetObjProp(testEntry.Hvo, customField.Flid, possibilityItem.Hvo);
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 				const string customDataPath = "/div[@class='lexentry']/span[@class='customlistitem']/span[@class='name']/span[text()='Djbuti']";
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
 			}
@@ -6309,7 +6309,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.Replace(testEntry.Hvo, customField.Flid, 0, 0, new[] { possibilityItem1.Hvo, possibilityItem2.Hvo }, 2);
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 				const string customDataPath1 = "/div[@class='lexentry']/span[@class='customlistitems']/span[@class='customlistitem']/span[@class='name']/span[text()='Dallas']";
 				const string customDataPath2 = "/div[@class='lexentry']/span[@class='customlistitems']/span[@class='customlistitem']/span[@class='name']/span[text()='Barcelona']";
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath1, 1);
@@ -6341,7 +6341,7 @@ namespace SIL.FieldWorks.XWorks
 				SilTime.SetTimeProperty(Cache.MainCacheAccessor, testEntry.Hvo, customField.Flid, customData);
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 				var customDataPath = string.Format("/div[@class='lexentry']/span[@class='customdate' and text()='{0}']", customData.ToLongDateString());
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
 			}
@@ -6371,7 +6371,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetInt(testEntry.Hvo, customField.Flid, customData);
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 				var customDataPath = string.Format("/div[@class='lexentry']/span[@class='custominteger' and text()='{0}']", customData);
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
 			}
@@ -6402,7 +6402,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache.MainCacheAccessor.SetObjProp(testEntry.Hvo, customField.Flid, text.Hvo);
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, rootNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, rootNode, null, settings).ToString();
 				const string customDataPath =
 					"/div[@class='lexentry']/div/span[text()='First para Custom string'] | /div[@class='lexentry']/div/span[text()='Second para Custom string']";
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 2);
@@ -6440,7 +6440,7 @@ namespace SIL.FieldWorks.XWorks
 			CreateVariantForm(Cache, variantForm, mainEntry);
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			const string referencedEntries =
 				"//span[@class='visiblevariantentryrefs']/span[@class='visiblevariantentryref']/span[@class='referencedentries']/span[@class='referencedentry']/span[@class='headword']/span[@lang='fr']/span[@lang='fr']";
 			AssertThatXmlIn.String(result)
@@ -6471,7 +6471,7 @@ namespace SIL.FieldWorks.XWorks
 			senseaudio.Form.set_String(wsEnAudio.Handle, TsStringUtils.MakeString(audioFileName, wsEnAudio.Handle));
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings).ToString();
 
 			const string audioTagwithSource = "//audio/source/@src";
 			AssertThatXmlIn.String(result)
@@ -6560,7 +6560,7 @@ namespace SIL.FieldWorks.XWorks
 				File.Copy(path, Path.Combine(destination, Path.GetFileName(path)), true);
 
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings).ToString();
 				if (isWebExport)
 				{
 					Assert.That(result, Contains.Substring("abu2.mp3"), "The automatic audio conversion in the CopyFileSafely method failed");
@@ -6649,7 +6649,7 @@ namespace SIL.FieldWorks.XWorks
 				File.Copy(path, Path.Combine(destination, Path.GetFileName(path)), true);
 
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings).ToString();
 				if (isWebExport)
 				{
 					Assert.That(result, Contains.Substring("abu2.mp3"), "The automatic audio conversion in the CopyFileSafely method failed");
@@ -6745,7 +6745,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings).ToString();
 				if (isWebExport)
 				{
 					Assert.That(result, Contains.Substring("abu21.mp3"), "The automatic audio conversion code in the CopyFileSafely method did not change the file name as it should have since a file with the same name but different contents already exists");
@@ -6781,7 +6781,7 @@ namespace SIL.FieldWorks.XWorks
 			senseaudio.Form.set_String(wsEnAudio.Handle, TsStringUtils.MakeString(audioFileName, wsEnAudio.Handle));
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, true, true, "//audio/source/@src");
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings).ToString();
 
 			const string safeAudioId = "gTest_Audi_o";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("//audio[contains(@id," + safeAudioId + ")]", 1);
@@ -6917,7 +6917,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings).ToString();
 			var fwdNameXpath = string.Format(
 				"//span[@class='sense']/span[@class='subentries']/span[@class='subentry']/span[@class='complexformtypes']/span[@class='complexformtype']/span/span[@lang='en' and text()='{0}']",
 					complexRefAbbr);
@@ -6965,7 +6965,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings).ToString();
 			var fwdNameXpath = string.Format(
 				"//span[@class='subentries']/span[@class='subentry']/span[@class='complexformtypes']/span[@class='complexformtype']/span/span[@lang='en' and text()='{0}']",
 					complexRefAbbr);
@@ -7036,7 +7036,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings).ToString();
 			const string fwdNameXpath =
 				"//span[@class='subentries']/span[@class='subentry subentry']/span[@class='subentries']/span[@class='subentry subentry']"
 				+ "/span[@class='complexformtypes']/span[@class='complexformtype']/span/span[@lang='en' and text()='{0}']";
@@ -7097,7 +7097,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings).ToString();
 			const string refTypeXpath = "//span[@class='subentries']/span[@class='subentry']/span[@class='complexformtypes']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(refTypeXpath);
 			StringAssert.DoesNotContain(complexRefAbbr, result);
@@ -7184,7 +7184,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings).ToString();
 			const string refTypeXpath = "//span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='complexformtypes']/span[@class='complexformtype']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(refTypeXpath);
 			const string headwordXpath = "//span[@class='visiblecomplexformbackrefs']/span[@class='visiblecomplexformbackref']/span[@class='headword']";
@@ -7226,7 +7226,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings).ToString();
 			const string refTypeXpath = "//span[@class='subentries']/span[@class='subentry']/span[@class='complexformtypes']/span[@class='complexformtype']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(refTypeXpath);
 			const string headwordXpath = "//span[@class='subentries']/span[@class='subentry']/span[@class='headword']";
@@ -7272,13 +7272,13 @@ namespace SIL.FieldWorks.XWorks
 
 			// When hiding minor entries this should still generate the reference (if not publishing to Webonary).
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, false, false);
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 2);
 
 			//SUT
 			// When hiding minor entries and publishing to Webonary this should NOT generate the reference.
 			settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, false, true);
-			result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings);
+			result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 0);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withoutReference, 2);
 		}
@@ -7371,7 +7371,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings).ToString();
 			const string refTypeXpath = "//span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='variantentrytypesrs']/span[@class='variantentrytypesr']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(refTypeXpath);
 			const string headwordXpath = "//span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='headword']";
@@ -7409,19 +7409,19 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(variantEntry, model, null, settings);
-			Assert.That(result, Is.Null.Or.Empty);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(variantEntry, model, null, settings).ToString();
+			Assert.IsEmpty(result);
 			// try with HideMinorEntry off
 			variantEntryRef.HideMinorEntry = 0;
-			result = ConfiguredLcmGenerator.GenerateContentForEntry(variantEntry, model, null, settings);
+			result = ConfiguredLcmGenerator.GenerateContentForEntry(variantEntry, model, null, settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("/div[@class='lexentry']/span[@class='headword']", 1);
 			// Should get the same results if in Root based view
 			model.IsRootBased = true;
-			result = ConfiguredLcmGenerator.GenerateContentForEntry(variantEntry, model, null, settings);
+			result = ConfiguredLcmGenerator.GenerateContentForEntry(variantEntry, model, null, settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("/div[@class='lexentry']/span[@class='headword']", 1);
 			variantEntryRef.HideMinorEntry = 1;
-			result = ConfiguredLcmGenerator.GenerateContentForEntry(variantEntry, model, null, settings);
-			Assert.That(result, Is.Null.Or.Empty);
+			result = ConfiguredLcmGenerator.GenerateContentForEntry(variantEntry, model, null, settings).ToString();
+			Assert.IsEmpty(result);
 		}
 
 		// Variant: Continue to generate the reference even if we are hiding the minor entry (useful for preview).
@@ -7477,13 +7477,13 @@ namespace SIL.FieldWorks.XWorks
 
 			// When not hiding minor entries this should generate the reference.
 			variantEntryRef.HideMinorEntry = 0;
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, model, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, model, null, settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 2);
 
 			//SUT
 			// When hiding minor entries this should still generate the reference.
 			variantEntryRef.HideMinorEntry = 1;
-			result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, model, null, settings);
+			result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, model, null, settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 2);
 		}
 
@@ -7541,13 +7541,13 @@ namespace SIL.FieldWorks.XWorks
 
 			// When hiding minor entries this should still generate the reference (if not publishing to Webonary).
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, false, false);
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, model, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, model, null, settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 2);
 
 			//SUT
 			// When hiding minor entries and publishing to Webonary this should NOT generate the reference.
 			settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, false, true);
-			result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, model, null, settings);
+			result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, model, null, settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 0);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withoutReference, 2);
 		}
@@ -7590,7 +7590,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings).ToString();
 			const string headwordXpath = "//span[@class='reffingsubs']/span[@class='reffingsub sharedsubentry']/span[@class='headword']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordXpath, 1);
 		}
@@ -7624,7 +7624,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForMainEntry(idiom, mainEntryNode, null, settings, 0);
+			var result = ConfiguredLcmGenerator.GenerateContentForMainEntry(idiom, mainEntryNode, null, settings, 0).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("/div[@class='lexentry']/span[@class='headword']", 1);
 			var css = ((CssGenerator)settings.StylesGenerator).GetStylesString();
 			// verify that the flow reset css is generated
@@ -7632,7 +7632,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(css, Contains.Substring("clear:both"));
 			var complexOptions = (DictionaryNodeListOptions)mainEntryNode.DictionaryNodeOptions;
 			complexOptions.Options[0].IsEnabled = false;
-			result = ConfiguredLcmGenerator.GenerateContentForMainEntry(idiom, mainEntryNode, null, settings, 1);
+			result = ConfiguredLcmGenerator.GenerateContentForMainEntry(idiom, mainEntryNode, null, settings, 1).ToString();
 			Assert.IsEmpty(result);
 		}
 
@@ -7696,7 +7696,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(minorEntry, model, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(minorEntry, model, null, settings).ToString();
 
 			var isComplexFormShowing = complexForm == FormType.Unspecified && isUnspecifiedComplexTypeEnabled;
 			var isVariantFormShowing = variantForm == FormType.Unspecified && isUnspecifiedVariantTypeEnabled;
@@ -7942,7 +7942,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var output = ConfiguredLcmGenerator.GenerateContentForEntry(entryCorps, mainEntryNode, pubEverything, settings);
+			var output = ConfiguredLcmGenerator.GenerateContentForEntry(entryCorps, mainEntryNode, pubEverything, settings).ToString();
 			Console.WriteLine(output);
 			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the unfiltered output displays everything.
@@ -7954,7 +7954,7 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchPictureCaption, 1);
 
 			//SUT
-			output = ConfiguredLcmGenerator.GenerateContentForEntry(entryCorps, mainEntryNode, pubMain, settings);
+			output = ConfiguredLcmGenerator.GenerateContentForEntry(entryCorps, mainEntryNode, pubMain, settings).ToString();
 			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the main publication output displays what it should.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
@@ -7968,7 +7968,7 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchBodyIsBig, 1);
 
 			//SUT
-			output = ConfiguredLcmGenerator.GenerateContentForEntry(entryCorps, mainEntryNode, pubTest, settings);
+			output = ConfiguredLcmGenerator.GenerateContentForEntry(entryCorps, mainEntryNode, pubTest, settings).ToString();
 			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the test publication output displays what it should.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
@@ -7982,7 +7982,7 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchCorpseIsDead, 1);
 
 			//SUT
-			output = ConfiguredLcmGenerator.GenerateContentForEntry(entryBras, mainEntryNode, pubEverything, settings);
+			output = ConfiguredLcmGenerator.GenerateContentForEntry(entryBras, mainEntryNode, pubEverything, settings).ToString();
 			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the unfiltered output displays everything.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
@@ -7991,7 +7991,7 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishTranslation, 2);
 
 			//SUT
-			output = ConfiguredLcmGenerator.GenerateContentForEntry(entryBras, mainEntryNode, pubMain, settings);
+			output = ConfiguredLcmGenerator.GenerateContentForEntry(entryBras, mainEntryNode, pubMain, settings).ToString();
 			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the main publication output displays everything.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
@@ -8002,7 +8002,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			// We can still produce test publication output for the entry since we have a copy of it.  Its senses and
 			// examples should not be displayed because the senses are separately hidden.
-			output = ConfiguredLcmGenerator.GenerateContentForEntry(entryBras, mainEntryNode, pubTest, settings);
+			output = ConfiguredLcmGenerator.GenerateContentForEntry(entryBras, mainEntryNode, pubTest, settings).ToString();
 			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the test output doesn't display the senses and examples.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
@@ -8011,7 +8011,7 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishTranslation, 0);
 
 			//SUT
-			output = ConfiguredLcmGenerator.GenerateContentForEntry(entryOreille, mainEntryNode, pubEverything, settings);
+			output = ConfiguredLcmGenerator.GenerateContentForEntry(entryOreille, mainEntryNode, pubEverything, settings).ToString();
 			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the unfiltered output displays everything.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
@@ -8022,7 +8022,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			// We can still produce main publication output for the entry since we have a copy of it.  Its sense and
 			// example should not be displayed because the sense is separately hidden.
-			output = ConfiguredLcmGenerator.GenerateContentForEntry(entryOreille, mainEntryNode, pubMain, settings);
+			output = ConfiguredLcmGenerator.GenerateContentForEntry(entryOreille, mainEntryNode, pubMain, settings).ToString();
 			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the test output doesn't display the sense and example.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
@@ -8031,7 +8031,7 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchEnglishTranslation, 0);
 
 			//SUT
-			output = ConfiguredLcmGenerator.GenerateContentForEntry(entryOreille, mainEntryNode, pubTest, settings);
+			output = ConfiguredLcmGenerator.GenerateContentForEntry(entryOreille, mainEntryNode, pubTest, settings).ToString();
 			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the test publication output displays everything.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
@@ -8045,7 +8045,7 @@ namespace SIL.FieldWorks.XWorks
 			const string matchVariantRef = "//span[@class='variantentrytypes']/span[@class='variantentrytype']/span[@class='name']/span[@lang='en']";
 
 			//SUT
-			output = ConfiguredLcmGenerator.GenerateContentForEntry(entryEntry, mainEntryNode, pubMain, settings);
+			output = ConfiguredLcmGenerator.GenerateContentForEntry(entryEntry, mainEntryNode, pubMain, settings).ToString();
 			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the main publication output displays what it should.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
@@ -8056,7 +8056,7 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchVariantRef, 1);
 
 			//SUT
-			output = ConfiguredLcmGenerator.GenerateContentForEntry(entryEntry, mainEntryNode, pubTest, settings);
+			output = ConfiguredLcmGenerator.GenerateContentForEntry(entryEntry, mainEntryNode, pubTest, settings).ToString();
 			Assert.That(output, Is.Not.Null.Or.Empty);
 			// Verify that the test publication output displays what it should.
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFrenchEntry, 1);
@@ -8120,7 +8120,7 @@ namespace SIL.FieldWorks.XWorks
 			using (CreateVariantForm(Cache, entryEntry, ve4, new Guid("00000000-0000-0000-0000-000000000004"), null)) // no Type; none generated
 			{
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
-				var output = ConfiguredLcmGenerator.GenerateContentForEntry(entryEntry, mainEntryNode, null, settings);
+				var output = ConfiguredLcmGenerator.GenerateContentForEntry(entryEntry, mainEntryNode, null, settings).ToString();
 				const string matchVariantRef = "//span[@class='variantentrytypes']/span[@class='variantentrytype']/span[@class='name']/span[@lang='en']";
 				AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchVariantRef, 2);
 			}
@@ -8183,7 +8183,7 @@ namespace SIL.FieldWorks.XWorks
 			CreateVariantForm(Cache, entryEntry, ve1, "Free Variant"); // unique Type;
 			CreateVariantForm(Cache, entryEntry, ve2, "Spelling Variant"); // unique Type; UnChecked
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
-			var output = ConfiguredLcmGenerator.GenerateContentForEntry(entryEntry, mainEntryNode, null, settings);
+			var output = ConfiguredLcmGenerator.GenerateContentForEntry(entryEntry, mainEntryNode, null, settings).ToString();
 			const string matchFreeVariantRef = "//span[@class='variantentrytypes']/span[@class='variantentrytype']/span[@class='name']/span[@lang='en' and text()='Free Variant']";
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchFreeVariantRef, 1);
 			const string matchSpellingVariantRef = "//span[@class='variantentrytypes']/span[@class='variantentrytype']/span[@class='name']/span[@lang='en' and text()='Spelling Variant']";
@@ -8246,7 +8246,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-			var output = ConfiguredLcmGenerator.GenerateContentForEntry(entryEntry, mainEntryNode, pubMain, DefaultSettings);
+			var output = ConfiguredLcmGenerator.GenerateContentForEntry(entryEntry, mainEntryNode, pubMain, DefaultSettings).ToString();
 			const string matchComplexFormRef = "//span[@class='complexformtypes']/span[@class='complexformtype']/span[@class='name']/span[@lang='en']";
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchComplexFormRef, 1);
 		}
@@ -8309,7 +8309,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-			var output = ConfiguredLcmGenerator.GenerateContentForEntry(entryEntry, mainEntryNode, pubMain, DefaultSettings);
+			var output = ConfiguredLcmGenerator.GenerateContentForEntry(entryEntry, mainEntryNode, pubMain, DefaultSettings).ToString();
 			const string matchComplexFormTypeCompound = "//span[@class='complexformtypes']/span[@class='complexformtype']/span[@class='name']/span[@lang='en' and text()='Compound']";
 			AssertThatXmlIn.String(output).HasSpecifiedNumberOfMatchesForXpath(matchComplexFormTypeCompound, 1);
 			const string matchComplexFormTypeIdiom = "//span[@class='complexformtypes']/span[@class='complexformtype']/span[@class='name']/span[@lang='en' and text()='Idiom']";
@@ -8362,7 +8362,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, DefaultSettings).ToString();
 			const string senseXpath = "div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='gloss']/span[@lang='en' and text()='gloss']";
 			var paracontinuationxpath = string.Format(
 				"div[@class='lexentry']//span[@class='subentries']/span[@class='subentry']/span[@class='complexformtypes']/span[@class='complexformtype']/span[@class='reverseabbr']/span[@lang='en' and text()='{0}']",
@@ -8421,19 +8421,19 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(subentry1, minorEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(subentry1, minorEntryNode, null, settings).ToString();
 			const string complexFormEntryRefXpath = "div[@class='minorentrycomplex']/span[@class='complexformentryrefs']/span[@class='complexformentryref']";
 			const string referencedEntriesXpath = "/span[@class='referencedentries']/span[@class='referencedentry']";
 			const string glossOrSummXpath1 = complexFormEntryRefXpath + referencedEntriesXpath + "/span[@class='glossorsummary']/span[@lang='en' and text()='MainEntrySummaryDefn']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(glossOrSummXpath1, 1);
 
 			//SUT
-			var result2 = ConfiguredLcmGenerator.GenerateContentForEntry(subentry2, minorEntryNode, null, settings);
+			var result2 = ConfiguredLcmGenerator.GenerateContentForEntry(subentry2, minorEntryNode, null, settings).ToString();
 			const string glossOrSummXpath2 = complexFormEntryRefXpath + referencedEntriesXpath + "/span[@class='glossorsummary']/span[@lang='en' and text()='gloss2']";
 			AssertThatXmlIn.String(result2).HasSpecifiedNumberOfMatchesForXpath(glossOrSummXpath2, 1);
 
 			//SUT
-			var result3 = ConfiguredLcmGenerator.GenerateContentForEntry(subentry3, minorEntryNode, null, settings);
+			var result3 = ConfiguredLcmGenerator.GenerateContentForEntry(subentry3, minorEntryNode, null, settings).ToString();
 			const string glossOrSummXpath3 = complexFormEntryRefXpath + referencedEntriesXpath + "/span[@class='glossorsummary']/span[@lang='en' and text()='MainEntryS3Defn']";
 			AssertThatXmlIn.String(result3).HasSpecifiedNumberOfMatchesForXpath(glossOrSummXpath3, 1);
 		}
@@ -8464,7 +8464,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings).ToString();
 			const string senseXpath = "div[@class='lexentry']/span[@class='senses']/span[@class='sensecontent']/span[@class='sense']/span[@class='gloss']/span[@lang='en' and text()='gloss']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseXpath, 1);
 			Assert.That(result, Does.Not.Match(@"<div class=['""]paracontinuation['""]\s*/>"),
@@ -9050,7 +9050,7 @@ namespace SIL.FieldWorks.XWorks
 			var multiRunString = frenchString.Insert(12, englishStr);
 			entry.Bibliography.set_String(m_wsFr, multiRunString);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, DefaultSettings).ToString();
 			const string nestedEn = "/div[@class='lexentry']/span[@class='bib']/span[@lang='fr']/span[@lang='en']";
 			const string nestedFr = "/div[@class='lexentry']/span[@class='bib']/span[@lang='fr']/span[@lang='fr']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(nestedEn, 1);
@@ -9077,7 +9077,7 @@ namespace SIL.FieldWorks.XWorks
 			var wsHe = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("he");
 			entry.Bibliography.set_String(wsHe, multiRunString);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, DefaultSettings).ToString();
 			const string nestedEn = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@dir='rtl']/span[@lang='en']/span[@dir='ltr']";
 			const string nestedHe = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@dir='rtl']/span[@lang='he']";
 			const string extraDirection = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@dir='rtl']/span[@lang='he']/span[@dir='rtl']";
@@ -9107,7 +9107,7 @@ namespace SIL.FieldWorks.XWorks
 			entry.Bibliography.set_String(wsHe, multiRunString);
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, true); // Right-to-Left
 																															 //SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings).ToString();
 			const string nestedEn = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@lang='en']/span[@dir='ltr']";
 			const string nestedHe = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@lang='he']";
 			const string extraDirection0 = "/div[@class='lexentry']/span[@class='bib']/span[@lang='he']/span[@dir='rtl']";
@@ -9145,7 +9145,7 @@ namespace SIL.FieldWorks.XWorks
 			  (char)FwObjDataTypes.kodtExternalPathName + testUrl);
 		  entry.Bibliography.set_String(m_wsFr, stringBldr.GetString());
 		  // SUT
-		  var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, DefaultSettings);
+		  var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, DefaultSettings).ToString();
 		  string nestedLink = $"/div[@class='lexentry']/span[@class='bib']/span/span/a[@href='{testUrl}']";
 		  AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(nestedLink, 1);
 	  }
@@ -9198,7 +9198,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var mainEntryNode = ModelForCrossReferences(new[] { comRefType.Guid.ToString() });
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, DefaultSettings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(crossRefOwnerTypeXpath, 1); // ensure there is only one
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(CrossRefOwnerTypeXpath(comRefTypeName), 1); // ...the *correct* one
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(1, "a"), 1);
@@ -9223,7 +9223,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var mainEntryNode = ModelForCrossReferences(new[] { comRefType.Guid.ToString() });
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, DefaultSettings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(CrossRefOwnerTypeXpath(comRefTypeName), 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(1, "a"), 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(2, "b"), 1);
@@ -9249,7 +9249,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var mainEntryNode = ModelForCrossReferences(new[] { colorType.Guid.ToString(), greekType.Guid.ToString() });
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(alphaEntry, mainEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(alphaEntry, mainEntryNode, null, DefaultSettings).ToString();
 			// first sequence: colors: ARGB
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(CrossRefOwnerTypeXpath(colorTypeName), 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(1, "alpha"), 2); // the first in both
@@ -9274,7 +9274,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var mainEntryNode = ModelForCrossReferences(new[] { characterType.Guid + ":f" });
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(stoogesEntry, mainEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(stoogesEntry, mainEntryNode, null, DefaultSettings).ToString();
 			// sequence of Stooges:
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(CrossRefOwnerTypeXpath(characterTypeName), 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(1, "Larry"), 1);
@@ -9436,7 +9436,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			//Console.WriteLine(LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { manEntry.Hvo, familyEntry.Hvo, girlEntry.Hvo, individualEntry.Hvo }, null,
 			//	new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } }, m_mediator)); // full output for diagnostics
-			var manResult = ConfiguredLcmGenerator.GenerateContentForEntry(manEntry, mainEntryNode, null, settings);
+			var manResult = ConfiguredLcmGenerator.GenerateContentForEntry(manEntry, mainEntryNode, null, settings).ToString();
 			AssertThatXmlIn.String(manResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 2); // antonyms are grouped into one span
 			var idxAntonymAbbr = manResult.IndexOf(antAbbrSpan, StringComparison.Ordinal);
 			var idxWhole = manResult.IndexOf(whSpan, StringComparison.Ordinal);
@@ -9462,7 +9462,7 @@ namespace SIL.FieldWorks.XWorks
 			// Ignore if usingSubfield. Justification: Part-Whole direction is miscalculated for field=Entry, subfield=MinimalLexReferences (LT-17571)
 			if (!usingSubfield)
 			{
-				var familyResult = ConfiguredLcmGenerator.GenerateContentForEntry(familyEntry, mainEntryNode, null, settings);
+				var familyResult = ConfiguredLcmGenerator.GenerateContentForEntry(familyEntry, mainEntryNode, null, settings).ToString();
 				AssertThatXmlIn.String(familyResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 2);
 				idxAntonymAbbr = familyResult.IndexOf(antAbbrSpan, StringComparison.Ordinal);
 				idxWhole = familyResult.IndexOf(whSpan, StringComparison.Ordinal);
@@ -9475,7 +9475,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.Less(idxAntonymAbbr, idxAntonymName, "Antonym name should come after Antonym abbreviation");
 
 				// SUT: Ensure that both directions of part-whole are kept separate
-				var girlResult = ConfiguredLcmGenerator.GenerateContentForEntry(girlEntry, mainEntryNode, null, settings);
+				var girlResult = ConfiguredLcmGenerator.GenerateContentForEntry(girlEntry, mainEntryNode, null, settings).ToString();
 				AssertThatXmlIn.String(girlResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 2); // whole and part
 				idxAntonymAbbr = girlResult.IndexOf(antAbbrSpan, StringComparison.Ordinal);
 				idxWhole = girlResult.IndexOf(whSpan, StringComparison.Ordinal);
@@ -9488,7 +9488,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.AreEqual(-1, idxAntonymName, "Antonym name relation should not exist for fille (girl)");
 			}
 
-			var individualResult = ConfiguredLcmGenerator.GenerateContentForEntry(individualEntry, mainEntryNode, null, settings);
+			var individualResult = ConfiguredLcmGenerator.GenerateContentForEntry(individualEntry, mainEntryNode, null, settings).ToString();
 			AssertThatXmlIn.String(individualResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 1);
 			idxAntonymAbbr = individualResult.IndexOf(antAbbrSpan, StringComparison.Ordinal);
 			idxWhole = individualResult.IndexOf(whSpan, StringComparison.Ordinal);
@@ -9548,7 +9548,7 @@ namespace SIL.FieldWorks.XWorks
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings).ToString();
 
 				// Test that variantformentrybackref items are in alphabetical order
 				Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
@@ -9610,7 +9610,7 @@ namespace SIL.FieldWorks.XWorks
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings).ToString();
 
 				// Test that variantentrytypes is before variantformentrybackref
 				Assert.That(result.IndexOf("variantentrytypes", StringComparison.InvariantCulture),
@@ -9678,7 +9678,7 @@ namespace SIL.FieldWorks.XWorks
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 
 				//SUT
-				var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings);
+				var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings).ToString();
 
 				// Test that variantformentrybackref items are in (alphabetical or) virtual order
 				Assert.That(result.IndexOf(headwords[0], StringComparison.InvariantCulture),
@@ -9742,7 +9742,7 @@ namespace SIL.FieldWorks.XWorks
 			CreateInterestingLexEntry(Cache, "headwordB").MakeVariantOf(lexentry, (ILexEntryType)finalTypeInOptionsList);
 
 			// SUT1
-			var result = ConfiguredLcmGenerator.GenerateContentForFieldByReflection(lexentry, variantFormNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForFieldByReflection(lexentry, variantFormNode, null, DefaultSettings).ToString();
 
 			Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
 				Is.LessThan(result.IndexOf("headwordB", StringComparison.InvariantCulture)), "variant forms not appearing in an order corresponding to their type sorting");
@@ -9751,7 +9751,7 @@ namespace SIL.FieldWorks.XWorks
 			((DictionaryNodeListOptions)variantFormNode.DictionaryNodeOptions).Options.Reverse();
 
 			// SUT2
-			result = ConfiguredLcmGenerator.GenerateContentForFieldByReflection(lexentry, variantFormNode, null, DefaultSettings);
+			result = ConfiguredLcmGenerator.GenerateContentForFieldByReflection(lexentry, variantFormNode, null, DefaultSettings).ToString();
 
 			Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
 				Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "variant forms not appearing in an order corresponding to their type sorting");
@@ -9802,7 +9802,7 @@ namespace SIL.FieldWorks.XWorks
 			CreateComplexForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordB"), true, finalTypeInOptionsListGuid);
 
 			// SUT1
-			var result = ConfiguredLcmGenerator.GenerateContentForFieldByReflection(lexentry, subentryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForFieldByReflection(lexentry, subentryNode, null, DefaultSettings).ToString();
 
 			Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
 				Is.LessThan(result.IndexOf("headwordB", StringComparison.InvariantCulture)), "Subentries should be sorted by Type");
@@ -9811,7 +9811,7 @@ namespace SIL.FieldWorks.XWorks
 			((DictionaryNodeListOptions)subentryNode.DictionaryNodeOptions).Options.Reverse();
 
 			// SUT2
-			result = ConfiguredLcmGenerator.GenerateContentForFieldByReflection(lexentry, subentryNode, null, DefaultSettings);
+			result = ConfiguredLcmGenerator.GenerateContentForFieldByReflection(lexentry, subentryNode, null, DefaultSettings).ToString();
 
 			Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
 				Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "Subentries should be sorted by Type");
@@ -10052,7 +10052,7 @@ namespace SIL.FieldWorks.XWorks
 				var entries = LcmXhtmlGenerator.GenerateNextFewEntries(pubEverything, new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, configPath,
 					settings, currentPage, adjPage, 1, out current, out adjacent);
 				Assert.AreEqual(1, entries.Count, "No entries generated");
-				Assert.That(entries[0], Does.Contain(thirdEntry.HeadWord.Text));
+				Assert.That(entries[0].ToString(), Does.Contain(thirdEntry.HeadWord.Text));
 			}
 			finally
 			{
@@ -10107,8 +10107,8 @@ namespace SIL.FieldWorks.XWorks
 				var entries = LcmXhtmlGenerator.GenerateNextFewEntries(pubEverything, new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, configPath,
 					settings, currentPage, adjPage, 2, out current, out adjacent);
 				Assert.AreEqual(2, entries.Count, "Not enough entries generated");
-				Assert.That(entries[0], Does.Contain(thirdEntry.HeadWord.Text));
-				Assert.That(entries[1], Does.Contain(fourthEntry.HeadWord.Text));
+				Assert.That(entries[0].ToString(), Does.Contain(thirdEntry.HeadWord.Text));
+				Assert.That(entries[1].ToString(), Does.Contain(fourthEntry.HeadWord.Text));
 				Assert.That(adjacent, Is.Null);
 			}
 			finally
@@ -10142,7 +10142,7 @@ namespace SIL.FieldWorks.XWorks
 			var testEntry = CreateInterestingLexEntry(Cache);
 
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, DefaultSettings).ToString();
 
 			const string oneSenseWithGlossOfGloss = "/div[@class='lexentry']/span[@class='grouping_sensegroup']"
 				+ "/span[@class='senses']/span[@class='sense']//span[@lang='en' and text()='gloss']";
@@ -10175,7 +10175,7 @@ namespace SIL.FieldWorks.XWorks
 			entry.CitationForm.set_String(wsKo, headword);
 			Assert.That(entry.CitationForm.get_String(wsKo).get_IsNormalizedForm(FwNormalizationMode.knmNFD), "Should be NFDecomposed in memory");
 			Assert.AreEqual(6, headword.Text.Length);
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, node, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, node, null, DefaultSettings).ToString();
 			var tsResult = TsStringUtils.MakeString(result, Cache.DefaultAnalWs);
 			Assert.False(TsStringUtils.IsNullOrEmpty(tsResult), "Results should have been generated");
 			Assert.That(tsResult.get_IsNormalizedForm(FwNormalizationMode.knmNFC), "Resulting XHTML should be NFComposed");
@@ -10204,7 +10204,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(comRefType, Is.Not.Null);
 
 			var mainEntryNode = ModelForCrossReferences(new[] { comRefType.Guid.ToString() });
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, DefaultSettings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(CrossRefOwnerTypeXpath(comRefTypeName), 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(1, "atest"), 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(HeadwordOrderInCrossRefsXpath(2, "ctest"), 1);
