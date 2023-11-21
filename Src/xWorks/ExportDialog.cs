@@ -891,7 +891,7 @@ namespace SIL.FieldWorks.XWorks
 			exportService.ExportDictionaryForWord(filePath, null, progress);
 			foreach (var reversal in m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances())
 			{
-				exportService.ExportReversalForWord(filePath, reversal.WritingSystem, new DictionaryConfigurationModel());
+				exportService.ExportReversalForWord(filePath, reversal.WritingSystem);
 			}
 			return null;
 		}

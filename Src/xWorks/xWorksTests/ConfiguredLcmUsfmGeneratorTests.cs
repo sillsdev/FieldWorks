@@ -140,7 +140,7 @@ namespace SIL.FieldWorks.XWorks
 			const string plainText = "Plain Text";
 			var entry = CreateInterestingLexEntry(plainText);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				XPathToUSFMField + "/span[@lang='en' and text()='" + plainText + "']", 1);
 			AssertThatXmlIn.String(result).HasNoMatchForXpath("//table");
@@ -153,7 +153,7 @@ namespace SIL.FieldWorks.XWorks
 			const string plainText = "Plain Text\n\\d ignore me";
 			var entry = CreateInterestingLexEntry(plainText);
 			//SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings).ToString();
 			AssertThatXmlIn.String(result).HasNoMatchForXpath("//table");
 			AssertIsGood(result);
 		}
@@ -165,7 +165,7 @@ namespace SIL.FieldWorks.XWorks
 			const string titleUSFM = @"\d " + title;
 			var entry = CreateInterestingLexEntry(titleUSFM);
 
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				XPathToTitle + "[@lang='en' and text()='" + title + "']", 1);
 			AssertIsGood(result);
@@ -176,7 +176,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var entry = CreateInterestingLexEntry("\\tr\n");
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField + "/table", 1);
 			AssertIsGood(result);
 		}
@@ -186,7 +186,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var entry = CreateInterestingLexEntry(@"\d title \tr \tc ");
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField + "/table", 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
 				XPathToTitle + "[@lang='en' and text()='title']", 1);
@@ -202,7 +202,7 @@ namespace SIL.FieldWorks.XWorks
 			var entry = CreateInterestingLexEntry(almostTable);
 			var result = string.Empty;
 			// SUT
-			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings));
+			Assert.DoesNotThrow(() => result = (ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings)).ToString());
 
 			// Verify that the field is in the results
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField, 1);
@@ -218,7 +218,7 @@ namespace SIL.FieldWorks.XWorks
 			var entry = CreateInterestingLexEntry(almostTable);
 			var result = string.Empty;
 			// SUT
-			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings));
+			Assert.DoesNotThrow(() => result = (ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings)).ToString());
 
 			// Verify that the partially-typed table is in the results
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToTitle + "[text()='" + TR + "']", 1);
@@ -233,7 +233,7 @@ namespace SIL.FieldWorks.XWorks
 			var entry = CreateInterestingLexEntry(almostTable);
 			var result = string.Empty;
 			// SUT
-			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings));
+			Assert.DoesNotThrow(() => result = (ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings)).ToString());
 
 			// Verify that the field is in the results
 			AssertThatXmlIn.String(result).HasNoMatchForXpath("//th");
@@ -256,7 +256,7 @@ namespace SIL.FieldWorks.XWorks
 			var entry = CreateInterestingLexEntry($"{TR} {TC}1 {a1}\t{TC}2 {a2} \t \r\n{TC}3  {a3} {TR}" +
 				$"\t{TC}1 {b1} {TC}2 {b2} {TC}3 {b3} {TR}      {TC}1 {c1} {TC}2 {c2} {TC}3 {c3}");
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField + "/table", 1);
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(XPathToTitle);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToRow, 3);
@@ -287,7 +287,7 @@ namespace SIL.FieldWorks.XWorks
 			const string a3 = "ty";
 			var entry = CreateInterestingLexEntry($"{TR} {TC}1 {a1}\t{TC}2 {TC}3  {a3}");
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings).ToString();
 			const string xpathToA = XPathToRow + "/td[span[@lang='en' and text()='" + a1 +
 									"']]/following-sibling::td[not(node())]/following-sibling::td[span[text()='" + a3 + "']]";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToA, 1);
@@ -300,7 +300,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var entry = CreateInterestingLexEntry($"{TR} {TC}1   {TC}2\r\n{TC}3\t{TC}4 ");
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings).ToString();
 			const string xpathToA = XPathToRow +
 				"/td[not(node())]/following-sibling::td[not(node())]/following-sibling::td[not(node())]/following-sibling::td[not(node())]";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToA, 1);
@@ -316,7 +316,7 @@ namespace SIL.FieldWorks.XWorks
 			const string b2h = "not normally expected, but not forbidden";
 			var entry = CreateInterestingLexEntry($"{TR} {TH}1 {a1h}  {TC}2\r{a2c}\n{TR} {TC}1 {b1c} {TH}2 {b2h}");
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings).ToString();
 			const string xpathToA = XPathToRow + "/th[span[@lang='en' and text()='" + a1h +
 						"']]/following-sibling::td[span[@lang='en' and text()='" + a2c + "']]";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToA, 1);
@@ -340,7 +340,7 @@ namespace SIL.FieldWorks.XWorks
 			var entry = CreateInterestingLexEntry($"{TR} {TH}r1 {a1}  {TH}2\r{a2}\n{TR} {TC}1 {b1} {TC}r2 {b2} " +
 												  $"{TR} {TH}c1 {c1}  {TH}l2\r{c2}\n{TR} {TC}l1 {d1} {TC}c2 {d2}");
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings).ToString();
 			const string xpathToA = XPathToRow + "/th[@style='text-align: right;' and span[@lang='en' and text()='" + a1 +
 									"']]/following-sibling::th[not(@style) and span[@lang='en' and text()='" + a2 + "']]";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpathToA, 1);
@@ -371,7 +371,7 @@ namespace SIL.FieldWorks.XWorks
 				$@"\d {title1} {TR} {TC}1 {la1} \d {title2} {TR} {TH}1 {za1} {TH}2 {za2} {TR} {TC}1 {zb1} {TC}2 {zb2} \d {TR} {TH}1 {loneCell}");
 
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField + "/table", 3);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToTitle, 2);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToRow, 4); // 1 + 2 + 1 = 4
@@ -385,7 +385,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var entry = CreateInterestingLexEntry($"{TR} {TC}{min}-{lim} home on the range");
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings).ToString();
 			// +1 because the range includes both ends
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath($"{XPathToRow}/td[@colspan='{lim - min + 1}']", 1);
 			AssertIsGood(result);
@@ -401,7 +401,7 @@ namespace SIL.FieldWorks.XWorks
 			const string content = "seldom";
 			var entry = CreateInterestingLexEntry($"{TR} {TC}{range} {content}");
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath($"{XPathToRow}/td[not(@colspan)]/span[text()='{content}']", 1);
 			AssertIsGood(result);
 		}
@@ -412,7 +412,7 @@ namespace SIL.FieldWorks.XWorks
 			const string junk = "no cells";
 			var entry = CreateInterestingLexEntry($"{TR} {junk}");
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings).ToString();
 			var expected = string.Format(xWorksStrings.InvalidUSFM_TextAfterTR, junk);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField +
 				$"//span[{StyleBigRed} and text() = '{expected}']", 1);
@@ -426,7 +426,7 @@ namespace SIL.FieldWorks.XWorks
 			const string junk = "oops";
 			var entry = CreateInterestingLexEntry($"{TR} {junk} {TC}1 data");
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings).ToString();
 
 			var expected = string.Format(xWorksStrings.InvalidUSFM_TextAfterTR, junk);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField +
@@ -441,7 +441,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var entry = CreateInterestingLexEntry(usfm);
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xpath, 1);
 			Assert.That(result, Does.EndWith("</div>"));
 			AssertIsGood(result);
@@ -452,7 +452,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var entry = CreateInterestingLexEntry($@"{TR} {marker}\th2 exists");
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField +
 				$"//span[{StyleBigRed} and text()='{marker}']", 1);
 			Assert.That(result, Does.EndWith("</div>"));
@@ -464,7 +464,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var entry = CreateInterestingLexEntry(TR + @" \t");
 			// SUT
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField +
 				"//span[" + StyleBigRed + @" and text()='\t']", 1);
 			Assert.That(result, Does.EndWith("</div>"));
@@ -478,7 +478,7 @@ namespace SIL.FieldWorks.XWorks
 			const string cellAfter = "after";
 			var cellWithBadMark = $@"in \{misMark} between";
 			var entry = CreateInterestingLexEntry($"{TR} {TC} {cellBefore} {TC} {cellWithBadMark} {TC} {cellAfter}");
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToCell, 3);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToCell + "[text()='" + cellBefore + "']", 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToCell + "[text()='" + cellAfter + "']", 1);

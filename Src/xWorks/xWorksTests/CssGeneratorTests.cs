@@ -1289,7 +1289,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var XHTMLWriter = XmlWriter.Create(xhtmResult))
 			{
 				XHTMLWriter.WriteStartElement("body");
-				var content = ConfiguredLcmGenerator.GenerateContentForEntry(entry, testNode, null, DefaultSettings);
+				var content = ConfiguredLcmGenerator.GenerateContentForEntry(entry, testNode, null, DefaultSettings).ToString();
 				XHTMLWriter.WriteRaw(content);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
@@ -1331,7 +1331,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(cssResult, Does.Not.Contain(".headword"));
 			Assert.That(cssResult, Contains.Substring(".tailwind"));
 
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, testParentNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, testParentNode, null, DefaultSettings).ToString();
 			const string positiveTest = "//*[@class='tailwind']";
 			const string negativeTest = "//*[@class='headword']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(negativeTest);
@@ -1372,7 +1372,7 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Contains.Substring(".gloss"));
 
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, testEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, testEntryNode, null, DefaultSettings).ToString();
 			const string positiveTest = "/*[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='gloss']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(positiveTest, 1);
 		}

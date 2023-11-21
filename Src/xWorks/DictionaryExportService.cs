@@ -81,11 +81,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
 			{
-			  configuration = configuration ?? new DictionaryConfigurationModel(DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "Dictionary"), m_cache);
-			  var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, DictionaryType);
-			  if (progress != null)
+				configuration = configuration ?? new DictionaryConfigurationModel(DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "Dictionary"), m_cache);
+				var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, DictionaryType);
+				if (progress != null)
 				  progress.Maximum = entriesToSave.Length;
-			  // TODO: Create and add call to our Word content generator LcmWordGenerator(entriesToSave, publication, configuration, filePath, progress);
+
+				LcmWordGenerator.SavePublishedDocx(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, filePath, progress);
 			}
 		}
 
@@ -101,7 +102,9 @@ namespace SIL.FieldWorks.XWorks
 				if (progress != null)
 				  progress.Maximum = entriesToSave.Length;
 
-				// TODO: Create and add call to our Word content generator LcmWordGenerator(entriesToSave, publication, configuration, filePath, progress);
+				string reversalFilePath = filePath.Split(new string[] { ".docx"}, StringSplitOptions.None)[0] + "-" + reversalWs + ".docx";
+
+				LcmWordGenerator.SavePublishedDocx(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, reversalFilePath, progress);
 			}
 		}
 
