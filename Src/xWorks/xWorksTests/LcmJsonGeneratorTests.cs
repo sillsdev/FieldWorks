@@ -1102,7 +1102,7 @@ namespace SIL.FieldWorks.XWorks
 			var results = LcmJsonGenerator.SavePublishedJsonWithStyles(new[] { testEntry.Hvo },
 				DefaultDecorator, 1,
 				new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } },
-				m_propertyTable, "test.json", null);
+				m_propertyTable, "test.json", null, out int[] _);
 			var expectedResults = @"{""xhtmlTemplate"":""lexentry"",""guid"":""g" + testEntry.Guid + @""",""letterHead"": ""c"",""sortIndex"": 0,
 				""homographnumber"":""0"",""citationform"":[{""lang"":""fr"",""value"":""Citation""}],
 				""displayXhtml"":""<div class=\""lexentry\"" id=\""g" + testEntry.Guid + @"\""><span class=\""homographnumber\"">0</span><span class=\""citationform\""><span lang=\""fr\"">Citation</span></span></div>""}";
@@ -1133,7 +1133,7 @@ namespace SIL.FieldWorks.XWorks
 			var results = LcmJsonGenerator.SavePublishedJsonWithStyles(new[] { testEntry.Hvo, testEntry2.Hvo, testEntry3.Hvo },
 				DefaultDecorator, testBatchSize,
 				new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } },
-				m_propertyTable, "test.json", null);
+				m_propertyTable, "test.json", null, out int[] _);
 			Assert.That(results.Count, Is.EqualTo(2)); // 3 entries makes 2 batches at batchSize of 2
 			Assert.That(results[0].Count, Is.EqualTo(testBatchSize)); // one full batch of 2
 			Assert.That(results[1].Count, Is.EqualTo(1)); // one lonely entry in the last batch
@@ -1156,10 +1156,27 @@ namespace SIL.FieldWorks.XWorks
 			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(minorEntry, false);
 
 			var result = LcmJsonGenerator.SavePublishedJsonWithStyles(new[] { minorEntry.Hvo },
-				DefaultDecorator, 1, configModel, m_propertyTable, "test.json", null);
+				DefaultDecorator, 1, configModel, m_propertyTable, "test.json", null, out int[] _);
 
 			Assert.AreEqual(1, result.Count, "batches");
 			Assert.AreEqual(0, result[0].Count, "entries");
+		}
+
+		[Test]
+		public void SavePublishedJsonWithStyles_MinorEntryNotPublished()
+		{
+			var configModel = ConfiguredXHTMLGeneratorTests.CreateInterestingConfigurationModel(Cache, m_propertyTable);
+			var mainEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var minorEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, minorEntry);
+			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(minorEntry, false);
+
+			var result = LcmJsonGenerator.SavePublishedJsonWithStyles(new[] { mainEntry.Hvo, minorEntry.Hvo },
+				DefaultDecorator, 10, configModel, m_propertyTable, "test.json", null, out int[] entryIds);
+
+			Assert.AreEqual(1, result.Count, "batches");
+			Assert.AreEqual(1, result[0].Count, "entries");
+			Assert.AreEqual(result[0].Count, entryIds.Length);
 		}
 
 		[Test]

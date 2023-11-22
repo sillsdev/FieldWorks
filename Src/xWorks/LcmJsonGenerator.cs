@@ -519,11 +519,13 @@ namespace SIL.FieldWorks.XWorks
 		/// could index the entries after upload and before processing.
 		/// </remarks>
 		public static List<JArray> SavePublishedJsonWithStyles(int[] entriesToSave, DictionaryPublicationDecorator publicationDecorator, int batchSize,
-			DictionaryConfigurationModel configuration, PropertyTable propertyTable, string jsonPath, IThreadedProgress progress)
+			DictionaryConfigurationModel configuration, PropertyTable propertyTable, string jsonPath, IThreadedProgress progress, out int[] entryIds)
 		{
 			var entryCount = entriesToSave.Length;
 			var cssPath = Path.ChangeExtension(jsonPath, "css");
 			var cache = propertyTable.GetValue<LcmCache>("cache", null);
+			var entryIdsList = new List<int>();
+
 			// Don't display letter headers if we're showing a preview in the Edit tool or we're not sorting by headword
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
@@ -581,6 +583,7 @@ namespace SIL.FieldWorks.XWorks
 							entryObject.displayXhtml = entryData.Item3.ToString();
 							jsonWriter.WriteRaw(entryObject.ToString());
 							jsonWriter.WriteRaw(",");
+							entryIdsList.Add(entryData.Item1.Hvo);
 						}
 						jsonWriter.WriteEndArray();
 						jsonWriter.Flush();
@@ -594,6 +597,8 @@ namespace SIL.FieldWorks.XWorks
 
 				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, readOnlyPropertyTable));
 				cssWriter.Flush();
+
+				entryIds = entryIdsList.ToArray();
 				return generatedEntries;
 			}
 		}
