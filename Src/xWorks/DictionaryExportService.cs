@@ -135,14 +135,14 @@ namespace SIL.FieldWorks.XWorks
 			LcmXhtmlGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, xhtmlPath, progress);
 		}
 
-		public List<JArray> ExportConfiguredJson(string folderPath, DictionaryConfigurationModel configuration)
+		public List<JArray> ExportConfiguredJson(string folderPath, DictionaryConfigurationModel configuration, out int[] entryIds)
 		{
 			using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
 			{
 				var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable,
 					out var entriesToSave, DictionaryType);
 				return LcmJsonGenerator.SavePublishedJsonWithStyles(entriesToSave, publicationDecorator, BatchSize, configuration, m_propertyTable,
-					Path.Combine(folderPath, "configured.json"), null);
+					Path.Combine(folderPath, "configured.json"), null, out entryIds);
 			}
 		}
 
@@ -154,9 +154,9 @@ namespace SIL.FieldWorks.XWorks
 			using (ReversalIndexActivator.ActivateReversalIndex(reversalWs, m_propertyTable, m_cache))
 			{
 				var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable,
-						out entryIds, ReversalType);
-				return LcmJsonGenerator.SavePublishedJsonWithStyles(entryIds, publicationDecorator, BatchSize,
-					configuration, m_propertyTable, Path.Combine(folderPath, $"reversal_{reversalWs}.json"), null);
+						out var entriesToSave, ReversalType);
+				return LcmJsonGenerator.SavePublishedJsonWithStyles(entriesToSave, publicationDecorator, BatchSize,
+					configuration, m_propertyTable, Path.Combine(folderPath, $"reversal_{reversalWs}.json"), null, out entryIds);
 			}
 		}
 
@@ -351,13 +351,13 @@ namespace SIL.FieldWorks.XWorks
 		public JObject ExportDictionaryContentJson(string siteName,
 			IEnumerable<string> templateFileNames,
 			IEnumerable<DictionaryConfigurationModel> reversals,
+			int[] entryIds,
 			string exportPath = null)
 		{
 			using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
 			{
-				ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, DictionaryType);
 				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
-				return LcmJsonGenerator.GenerateDictionaryMetaData(siteName, templateFileNames, reversals, entriesToSave, exportPath, m_cache, clerk);
+				return LcmJsonGenerator.GenerateDictionaryMetaData(siteName, templateFileNames, reversals, entryIds, exportPath, m_cache, clerk);
 			}
 		}
 	}
