@@ -103,12 +103,12 @@ namespace SIL.FieldWorks.XWorks
 			webonaryView.UpdateStatus(xWorksStrings.ExportingEntriesToWebonaryCompleted);
 		}
 
-		private JObject GenerateDictionaryMetadataContent(UploadToWebonaryModel model,
+		private JObject GenerateDictionaryMetadataContent(UploadToWebonaryModel model, int[] entryIds,
 			IEnumerable<string> templateFileNames, string tempDirectoryForExport)
 		{
 			return m_exportService.ExportDictionaryContentJson(model.SiteName, templateFileNames,
 				model.Reversals.Where(kvp => model.SelectedReversals.Contains(kvp.Key)).Select(kvp => kvp.Value),
-				tempDirectoryForExport);
+				entryIds, tempDirectoryForExport);
 		}
 
 		internal static void CompressExportedFiles(string tempDirectoryToCompress, string zipFileToUpload, IUploadToWebonaryView webonaryView)
@@ -572,18 +572,16 @@ namespace SIL.FieldWorks.XWorks
 						GenerateConfigurationTemplates(configuration, m_cache,
 							tempDirectoryForExport);
 					view.UpdateStatus(xWorksStrings.ksPreparingDataForWebonary);
-					var metadataContent = GenerateDictionaryMetadataContent(model,
+					int[] entryIds;
+					var entries = m_exportService.ExportConfiguredJson(tempDirectoryForExport, configuration, out entryIds);
+					var metadataContent = GenerateDictionaryMetadataContent(model, entryIds,
 						templateFileNames, tempDirectoryForExport);
 					view.UpdateStatus(xWorksStrings.ksWebonaryFinishedDataPrep);
-					var entries =
-						m_exportService.ExportConfiguredJson(tempDirectoryForExport,
-							configuration);
 					var allRequestsSucceeded = PostEntriesToWebonary(model, view, entries, false);
 
 					var reversalClerk = RecordClerk.FindClerk(m_propertyTable, "AllReversalEntries");
 					foreach (var selectedReversal in model.SelectedReversals)
 					{
-						int[] entryIds;
 						var writingSystem = model.Reversals[selectedReversal].WritingSystem;
 						entries = m_exportService.ExportConfiguredReversalJson(
 							tempDirectoryForExport, writingSystem, out entryIds,
