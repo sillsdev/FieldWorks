@@ -2487,8 +2487,7 @@ namespace SIL.FieldWorks.IText
 			IAnalysis wag = occurrence.Analysis;
 			IAnalysis wagGuess;
 			// now record the guess in the decorator.
-			// Todo JohnT: if occurrence.Indx is 0, record using DefaultStartSentenceFlid.
-			if (GuessServices.TryGetBestGuess(occurrence, out wagGuess))
+			if (GuessServices.TryGetBestGuess(occurrence, out wagGuess, false))
 			{
 				SetObjProp(wag.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid, wagGuess.Hvo);
 				SetInt(wagGuess.Analysis.Hvo, InterlinViewDataCache.OpinionAgentFlid, (int)GuessServices.GetOpinionAgent(wagGuess.Analysis));
