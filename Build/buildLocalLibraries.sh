@@ -194,7 +194,7 @@ function copy_pdb_files {
 	fi
 
 	# Copy .pdb files to the output directory
-	find "$artifacts_dir" -name '*.pdb' -exec cp {} "$output_dir" \; -exec cp {} "$downloads_dir"
+	find "$artifacts_dir" -name '*.pdb' -exec cp {} "$output_dir" \; -exec cp {} "$downloads_dir" \;
 
 	echo ".pdb files copied from $artifacts_dir to $output_dir and $downloads_dir"
 }
