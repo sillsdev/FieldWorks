@@ -109,7 +109,33 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			using (var task = new TaskReport(string.Format(ParserCoreStrings.ksTraceWordformX, sForm), m_taskUpdateHandler))
 			{
 				string normForm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sForm);
-				task.Details = fDoTrace ? m_parser.TraceWordXml(normForm, sSelectTraceMorphs) : m_parser.ParseWordXml(normForm);
+
+				// Get the lowercase word.
+				var cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem);
+				string normFormLower = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(cf.ToLower(sForm));
+
+				// The word is already lowercase, just return the xml.
+				if (normForm == normFormLower)
+				{
+					task.Details = fDoTrace ? m_parser.TraceWordXml(normForm, sSelectTraceMorphs) : m_parser.ParseWordXml(normForm);
+				}
+				// The word is uppercase, make a ParseWord() call for the uppercase word to determine if we should try to get
+				// the xml for the uppercase word or for the lowercase word.
+				else
+				{
+					ParseResult result = m_parser.ParseWord(normForm);
+
+					// Parse of uppercase word was successful, get it's xml.
+					if (result.Analyses.Count > 0 && result.ErrorMessage == null)
+					{
+						task.Details = fDoTrace ? m_parser.TraceWordXml(normForm, sSelectTraceMorphs) : m_parser.ParseWordXml(normForm);
+					}
+					// Parse of uppercase word was not successful, try to get the xml for the lowercase word.
+					else
+					{
+						task.Details = fDoTrace ? m_parser.TraceWordXml(normFormLower, sSelectTraceMorphs) : m_parser.ParseWordXml(normFormLower);
+					}
+				}
 			}
 		}
 
@@ -137,6 +163,22 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ParseResult result = m_parser.ParseWord(
 				CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD)
 				.Normalize(form.Text.Replace(' ', '.')));
+
+			// If the parse of the original word was not successful,then try to parse the lowercase word.
+			if (result.Analyses.Count == 0 || result.ErrorMessage != null)
+			{
+				var cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(form.get_WritingSystemAt(0)));
+				string sLower = cf.ToLower(form.Text);
+
+				// Try parsing the lowercase word if it is different from the original word.
+				if (sLower != form.Text)
+				{
+					result = m_parser.ParseWord(
+						CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD)
+						.Normalize(sLower.Replace(' ', '.')));
+				}
+			}
+
 			if (wordformHash == result.GetHashCode())
 				return false;
 
@@ -159,5 +201,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_parser.Reset();
 			CheckNeedsUpdate();
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Should only be used for tests!
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal IParser Parser { set => m_parser = value; }
+
 	}
 }
