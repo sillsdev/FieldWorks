@@ -507,8 +507,6 @@ namespace SIL.FieldWorks.IText
 										return;
 									}
 									SaveAnalysisForAnnotation(SelectedOccurrence, newAnalysisTree);
-									// determine if we confirmed on a sentence initial wordform to its lowercased form
-									bool fIsSentenceInitialCaseChange = oldWf != wf;
 									if (wf != null)
 									{
 										ApplyAnalysisToInstancesOfWordform(newAnalysisTree.Analysis, oldWf, wf);
@@ -535,10 +533,8 @@ namespace SIL.FieldWorks.IText
 			foreach (var occ in navigator.GetAnalysisOccurrencesAdvancingInStText().ToList())
 			{
 				// We certainly want to update any occurrence that exactly matches the wordform of the analysis we are confirming.
-				// If oldWordform is different, we are confirming a different case form from what occurred in the text,
-				// and we only confirm these if SelectedOccurrence and occ are both sentence-initial.
-				// We want to do that only for sentence-initial occurrences.
-				if (occ.Analysis == newWordform || (occ.Analysis == oldWordform && occ.Index == 0 && SelectedOccurrence.Index == 0))
+				// If oldWordform is different, we are confirming a different case form from what occurred in the text.
+				if (occ.Analysis == newWordform || occ.Analysis == oldWordform)
 					occ.Segment.AnalysesRS[occ.Index] = newAnalysis;
 			}
 		}
