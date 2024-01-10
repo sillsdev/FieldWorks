@@ -3246,7 +3246,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			// the user selected a footnote marker but the TextRepOfObj() method isn't
 			// implemented.
 
-			SetTsStringOnClipboard(tss, false, WritingSystemFactory);
+			SetTsStringOnClipboard(tss, true, WritingSystemFactory);
 		}
 
 		/// <summary>
