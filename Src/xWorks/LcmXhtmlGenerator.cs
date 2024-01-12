@@ -538,7 +538,7 @@ namespace SIL.FieldWorks.XWorks
 			return pageRanges;
 		}
 
-		public IFragment GenerateWsPrefixWithString(ConfiguredLcmGenerator.GeneratorSettings settings, bool displayAbbreviation, int wsId, IFragment content)
+		public IFragment GenerateWsPrefixWithString(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, bool displayAbbreviation, int wsId, IFragment content)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);
@@ -585,12 +585,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public IFragment WriteProcessedObject(bool isBlock, IFragment elementContent, string className)
+		public IFragment WriteProcessedObject(bool isBlock, IFragment elementContent, ConfigurableDictionaryNode config, string className)
 		{
 			return WriteProcessedContents(isBlock, elementContent, className);
 		}
 
-		public IFragment WriteProcessedCollection(bool isBlock, IFragment elementContent, string className)
+		public IFragment WriteProcessedCollection(bool isBlock, IFragment elementContent, ConfigurableDictionaryNode config, string className)
 		{
 			return WriteProcessedContents(isBlock, elementContent, className);
 		}
@@ -615,7 +615,7 @@ namespace SIL.FieldWorks.XWorks
 			return new StringFragment();
 		}
 
-		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content)
+		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content, ConfigurableDictionaryNode config)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);
@@ -732,19 +732,19 @@ namespace SIL.FieldWorks.XWorks
 			((XmlFragmentWriter)writer).Writer.WriteEndElement(); // span
 		}
 
-		public void SetRunStyle(IFragmentWriter writer, string css)
+		public void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, string css)
 		{
 			((XmlFragmentWriter)writer).Writer.WriteAttributeString("style", css);
 		}
 
-		public void StartLink(IFragmentWriter writer, Guid destination)
+		public void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, Guid destination)
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement("a");
 			xw.WriteAttributeString("href", "#g" + destination);
 		}
 
-		public void StartLink(IFragmentWriter writer, string externalLink)
+		public void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, string externalLink)
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement("a");
@@ -841,7 +841,7 @@ namespace SIL.FieldWorks.XWorks
 			((XmlFragmentWriter)writer).Writer.WriteEndElement(); // should be </table>
 		}
 
-		public void StartEntry(IFragmentWriter writer, string className, Guid entryGuid, int index, RecordClerk clerk)
+		public void StartEntry(IFragmentWriter writer, ConfigurableDictionaryNode config, string className, Guid entryGuid, int index, RecordClerk clerk)
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement("div");
@@ -849,11 +849,11 @@ namespace SIL.FieldWorks.XWorks
 			xw.WriteAttributeString("id", "g" + entryGuid);
 		}
 
-		public void AddEntryData(IFragmentWriter writer, List<IFragment> pieces)
+		public void AddEntryData(IFragmentWriter writer, List<ConfiguredLcmGenerator.ConfigFragment> pieces)
 		{
-			foreach (IFragment frag in pieces)
+			foreach (ConfiguredLcmGenerator.ConfigFragment configFrag in pieces)
 			{
-				((XmlFragmentWriter)writer).Writer.WriteRaw(frag.ToString());
+				((XmlFragmentWriter)writer).Writer.WriteRaw(configFrag.Frag.ToString());
 			}
 		}
 
@@ -863,7 +863,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public void AddCollection(IFragmentWriter writer, bool isBlockProperty,
-			string className, string content)
+			string className, ConfigurableDictionaryNode config, string content)
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement(isBlockProperty ? "div" : "span");
@@ -923,7 +923,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public IFragment GenerateSenseNumber(string formattedSenseNumber, string senseNumberWs)
+		public IFragment GenerateSenseNumber(string formattedSenseNumber, string senseNumberWs, ConfigurableDictionaryNode config)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);
@@ -939,7 +939,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public IFragment AddLexReferences(bool generateLexType, IFragment lexTypeContent, string className,
+		public IFragment AddLexReferences(bool generateLexType, IFragment lexTypeContent, ConfigurableDictionaryNode config, string className,
 			string referencesContent, bool typeBefore)
 		{
 			var bldr = new StringBuilder(100);
@@ -947,14 +947,14 @@ namespace SIL.FieldWorks.XWorks
 			// Generate the factored ref types element (if before).
 			if (generateLexType && typeBefore)
 			{
-				bldr.Append(WriteProcessedObject(false, lexTypeContent, className));
+				bldr.Append(WriteProcessedObject(false, lexTypeContent, config, className));
 			}
 			// Then add all the contents for the LexReferences (e.g. headwords)
 			bldr.Append(referencesContent);
 			// Generate the factored ref types element (if after).
 			if (generateLexType && !typeBefore)
 			{
-				bldr.Append(WriteProcessedObject(false, lexTypeContent, className));
+				bldr.Append(WriteProcessedObject(false, lexTypeContent, config, className));
 			}
 
 			return fragment;
@@ -970,10 +970,10 @@ namespace SIL.FieldWorks.XWorks
 			EndObject(writer);
 		}
 
-		public IFragment WriteProcessedSenses(bool isBlock, IFragment sensesContent, string classAttribute, IFragment sharedGramInfo)
+		public IFragment WriteProcessedSenses(bool isBlock, IFragment sensesContent, ConfigurableDictionaryNode config, string classAttribute, IFragment sharedGramInfo)
 		{
 			sharedGramInfo.Append(sensesContent);
-			return WriteProcessedObject(isBlock, sharedGramInfo, classAttribute);
+			return WriteProcessedObject(isBlock, sharedGramInfo, config, classAttribute);
 		}
 
 		public IFragment AddAudioWsContent(string className, Guid linkTarget, IFragment fileContent)
@@ -1013,7 +1013,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public IFragment AddCollectionItem(bool isBlock, string collectionItemClass, IFragment content)
+		public IFragment AddCollectionItem(bool isBlock, string collectionItemClass, ConfigurableDictionaryNode config, IFragment content)
 		{
 			var bldr = new StringBuilder();
 			var builder = new StringFragment(bldr);
@@ -1045,7 +1045,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public IFragment AddSenseData(IFragment senseNumberSpan, bool isBlock, Guid ownerGuid,
-			string senseContent, string className)
+			IFragment senseContent, string className)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);
@@ -1058,7 +1058,7 @@ namespace SIL.FieldWorks.XWorks
 				xw.WriteStartElement(isBlock ? "div" : "span");
 				xw.WriteAttributeString("class", className);
 				xw.WriteAttributeString("entryguid", "g" + ownerGuid);
-				xw.WriteRaw(senseContent);
+				xw.WriteRaw(senseContent.ToString());
 				xw.WriteEndElement();   // element name for property
 				xw.WriteEndElement();   // </span>
 				xw.Flush();

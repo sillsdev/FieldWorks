@@ -2,6 +2,17 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
+using Icu.Collation;
+using SIL.Code;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.Widgets;
+using SIL.LCModel;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
+using Style = DocumentFormat.OpenXml.Wordprocessing.Style;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,16 +20,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web.UI.WebControls;
-using DocumentFormat.OpenXml;
-using Icu.Collation;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Utils;
 using XCore;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -29,6 +31,10 @@ namespace SIL.FieldWorks.XWorks
 	public class LcmWordGenerator : ILcmContentGenerator, ILcmStylesGenerator
 	{
 		private LcmCache Cache { get; }
+		private static Styles _styleSheet { get; set; } = new Styles();
+		private static Dictionary<string, Styles> _styleDictionary = new Dictionary<string, Styles>();
+		private ReadOnlyPropertyTable _propertyTable;
+
 		public LcmWordGenerator(LcmCache cache)
 		{
 			Cache = cache;
@@ -45,12 +51,14 @@ namespace SIL.FieldWorks.XWorks
 				var cssPath = System.IO.Path.ChangeExtension(filePath, "css");
 				var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 				var cache = propertyTable.GetValue<LcmCache>("cache", null);
-
-
+				var generator = new LcmWordGenerator(cache);
 				var readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);
+
+				generator.Init(readOnlyPropertyTable);
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, System.IO.Path.GetDirectoryName(filePath),
 							ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), System.IO.Path.GetFileName(cssPath) == "configured.css")
-							{ ContentGenerator = new LcmWordGenerator(cache) };
+							{ ContentGenerator = generator, StylesGenerator = generator};
+				settings.StylesGenerator.AddGlobalStyles(configuration, readOnlyPropertyTable);
 				string lastHeader = null;
 				var entryContents = new Tuple<ICmObject, IFragment>[entryCount];
 				var entryActions = new List<Action>();
@@ -85,18 +93,19 @@ namespace SIL.FieldWorks.XWorks
 				var wsString = entryContents.Length > 0 ? ConfiguredLcmGenerator.GetWsForEntryType(entryContents[0].Item1, settings.Cache) : null;
 				var col = FwUtils.GetCollatorForWs(wsString);
 
+				var propStyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
+
 				foreach (var entry in entryContents)
 				{
 					if (!entry.Item2.IsNullOrEmpty())
 					{
 						IFragment letterHeader = GenerateLetterHeaderIfNeeded(entry.Item1,
-							ref lastHeader, col, settings, clerk);
+							ref lastHeader, col, settings, readOnlyPropertyTable, propStyleSheet, clerk);
 
 						// If needed, append letter header to the word doc
 						if (!letterHeader.IsNullOrEmpty())
 							fragment.Append(letterHeader);
 
-						// TODO: when/how are styles applied to the letter headers?
 						// Append the entry to the word doc
 						fragment.Append(entry.Item2);
 					}
@@ -106,7 +115,29 @@ namespace SIL.FieldWorks.XWorks
 				if (progress != null)
 					progress.Message = xWorksStrings.ksGeneratingStyleInfo;
 
-				// TODO: Generate styles
+				// Generate styles
+				StyleDefinitionsPart stylePart = fragment.mainDocPart.StyleDefinitionsPart;
+				if (stylePart == null)
+				{
+					// Initialize word doc's styles xml
+					stylePart = AddStylesPartToPackage(fragment.DocFrag);
+
+					// Add generated styles into the stylesheet from the dictionary
+					foreach (var stylesItem in _styleDictionary.Values)
+					{
+						foreach (var style in stylesItem.Descendants<Style>())
+							_styleSheet.AppendChild(style.CloneNode(true));
+					}
+
+					// Clone styles from the stylesheet into the word doc's styles xml
+					stylePart.Styles = ((Styles)_styleSheet.CloneNode(true));
+
+					// clear the dictionary
+					_styleDictionary = new Dictionary<string, Styles>();
+
+					// clear the styleSheet
+					_styleSheet = new WP.Styles();
+				}
 
 				fragment.DocFrag.Dispose();
 
@@ -121,116 +152,26 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		internal static IFragment GenerateLetterHeaderIfNeeded(ICmObject entry, ref string lastHeader, Collator headwordWsCollator, ConfiguredLcmGenerator.GeneratorSettings settings, RecordClerk clerk = null)
+		internal static IFragment GenerateLetterHeaderIfNeeded(ICmObject entry, ref string lastHeader, Collator headwordWsCollator, ConfiguredLcmGenerator.GeneratorSettings settings, ReadOnlyPropertyTable propertyTable, LcmStyleSheet mediatorStyleSheet, RecordClerk clerk = null)
 		{
 			StringBuilder headerTextBuilder = ConfiguredLcmGenerator.GenerateLetterHeaderIfNeeded(entry, ref lastHeader,
 				headwordWsCollator, settings, clerk);
 
-			return new DocFragment(headerTextBuilder.ToString());
+			// Create LetterHeader doc fragment and link it with the letterheadingstyle
+			return new DocFragment(headerTextBuilder.ToString(), WordStylesGenerator.LetterHeadingStyleName);
 
 		}
 
-		// ILcmStylesGenerator functions to implement
-		public void AddGlobalStyles(DictionaryConfigurationModel model, ReadOnlyPropertyTable propertyTable)
-		{
-			//TODO
-			return;
-		}
-
-		public string AddStyles(ConfigurableDictionaryNode node)
-		{
-			// TODO
-			return "TODO: AddStyles";
-		}
-
-		public void Init(ReadOnlyPropertyTable propertyTable)
-		{
-			// TODO
-			return;
-		}
-
-		// ILcmContentGenerator functions to implement
-		public IFragment GenerateWsPrefixWithString(ConfiguredLcmGenerator.GeneratorSettings settings,
-			bool displayAbbreviation, int wsId, IFragment content)
-		{
-			return content;
-		}
-
-		public IFragment GenerateAudioLinkContent(string classname, string srcAttribute, string caption, string safeAudioId)
-		{
-			// TODO
-			return new DocFragment("TODO: generate audio link content");
-		}
-		public IFragment WriteProcessedObject(bool isBlock, IFragment elementContent, string className)
-		{
-			return WriteProcessedContents(elementContent, className);
-		}
-		public IFragment WriteProcessedCollection(bool isBlock, IFragment elementContent, string className)
-		{
-			return WriteProcessedContents(elementContent, className);
-		}
-
-		private IFragment WriteProcessedContents(IFragment elementContent, string className)
-		{
-			// TODO:
-			// Currently we don't use the class name here.
-			// We don't want to write the class name to the document,
-			// but we may use it to set styles.
-			// Do we need write it here, for it to be used when determining style?
-
-			if (elementContent.IsNullOrEmpty())
-				return new DocFragment();
-
-			return elementContent;
-		}
-
-		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content)
-		{
-			return content;
-		}
-		public IFragment GenerateGroupingNode(object field, string className, ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, ConfiguredLcmGenerator.GeneratorSettings settings,
-			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, IFragment> childContentGenerator)
-		{
-			//TODO: handle grouping nodes
-			return new DocFragment("TODO: handle grouping nodes");
-		}
-
-		public IFragment AddSenseData(IFragment senseNumberSpan, bool isBlockProperty, Guid ownerGuid, string senseContent, string className)
-		{
-			var senseCont = new DocFragment(senseContent);
-			// Add sense numbers if needed
-			if (!senseNumberSpan.IsNullOrEmpty())
-			{
-				senseNumberSpan.Append(senseCont);
-				return senseNumberSpan;
-			}
-
-			return senseCont;
-		}
-		public IFragment AddCollectionItem(bool isBlock, string collectionItemClass, IFragment content)
-		{
-			return content.IsNullOrEmpty() ? new DocFragment() : content;
-		}
-		public IFragment AddProperty(string className, bool isBlockProperty, string content)
-		{
-			return new DocFragment(content);
-		}
-
-		public IFragment CreateFragment()
-		{
-			return new DocFragment();
-		}
-
-		public IFragment CreateFragment(string str)
-		{
-			return new DocFragment(str);
-		}
-
+		/*
+		 * DocFragment Region
+		 */
+		#region DocFragment class
 		public class DocFragment : IFragment
 		{
 			internal MemoryStream MemStr { get; }
 			internal WordprocessingDocument DocFrag { get; }
-			internal Body DocBody { get; }
+			internal MainDocumentPart mainDocPart { get; }
+			internal WP.Body DocBody { get; }
 
 			/// <summary>
 			/// Constructs a new memory stream and creates an empty doc fragment
@@ -242,7 +183,7 @@ namespace SIL.FieldWorks.XWorks
 				DocFrag = WordprocessingDocument.Open(MemStr, true);
 
 				// Initialize the document and body.
-				MainDocumentPart mainDocPart = DocFrag.AddMainDocumentPart();
+				mainDocPart = DocFrag.AddMainDocumentPart();
 				mainDocPart.Document = new WP.Document();
 				DocBody = mainDocPart.Document.AppendChild(new WP.Body());
 			}
@@ -257,7 +198,7 @@ namespace SIL.FieldWorks.XWorks
 				DocFrag = WordprocessingDocument.Open(str, true);
 
 				// Initialize the document and body.
-				MainDocumentPart mainDocPart = DocFrag.AddMainDocumentPart();
+				mainDocPart = DocFrag.AddMainDocumentPart();
 				mainDocPart.Document = new WP.Document();
 				DocBody = mainDocPart.Document.AppendChild(new WP.Body());
 			}
@@ -268,23 +209,97 @@ namespace SIL.FieldWorks.XWorks
 			/// </summary>
 			public DocFragment(string str) : this()
 			{
-				// Add text to the fragment
-				Paragraph para = DocBody.AppendChild(new Paragraph());
-				Run run = para.AppendChild(new Run());
-
+				// Only create paragraph, run, and text objects if the string is nonempty
 				if (!string.IsNullOrEmpty(str))
 				{
+					WP.Paragraph para = DocBody.AppendChild(new WP.Paragraph());
+					WP.Run run = para.AppendChild(new WP.Run());
 					// For spaces to show correctly, set preserve spaces on the text element
 					WP.Text txt = new WP.Text(str);
 					txt.Space = SpaceProcessingModeValues.Preserve;
 					run.AppendChild(txt);
 				}
-				else
+			}
+
+			public DocFragment(string str, string styleName) : this()
+			{
+				// Only create paragraph, run, and text objects if string is nonempty
+				if (!string.IsNullOrEmpty(str))
 				{
+					WP.ParagraphProperties paragraphProps = new WP.ParagraphProperties(new ParagraphStyleId() { Val = styleName });
+					WP.Paragraph para = DocBody.AppendChild(new WP.Paragraph(paragraphProps));
+					WP.Run run = para.AppendChild(new WP.Run());
 					// For spaces to show correctly, set preserve spaces on the text element
-					WP.Text txt = new WP.Text(String.Empty);
+					WP.Text txt = new WP.Text(str);
 					txt.Space = SpaceProcessingModeValues.Preserve;
 					run.AppendChild(txt);
+				}
+			}
+
+			public static void LinkStyleOrInheritParentStyle(IFragment content, ConfigurableDictionaryNode config)
+			{
+				DocFragment frag = ((DocFragment)content);
+				if (!string.IsNullOrEmpty(config.Style))
+				{
+					frag.AddStyleLink(config.Style, config.StyleType);
+				}
+				else if (!string.IsNullOrEmpty(config.Parent?.Style))
+				{
+					frag.AddStyleLink(config.Parent.Style, config.Parent.StyleType);
+				}
+			}
+
+			public void AddStyleLink(string styleName, ConfigurableDictionaryNode.StyleTypes styleType)
+			{
+				if (string.IsNullOrEmpty(styleName))
+					return;
+
+				if (styleType == ConfigurableDictionaryNode.StyleTypes.Paragraph)
+					LinkParaStyle(styleName);
+				else
+					LinkCharStyle(styleName);
+			}
+
+			/// <summary>
+			/// Appends the given styleName as a style ID for the last paragraph in the doc, or creates a new paragraph with the given styleID if no paragraph exists.
+			/// </summary>
+			/// <param name="styleName"></param>
+			private void LinkParaStyle(string styleName)
+			{
+				WP.Paragraph par = GetLastParagraph();
+				if (par.ParagraphProperties != null)
+				{
+					// if a style is already linked to the paragraph, return without adding another link
+					if (par.ParagraphProperties.Descendants<ParagraphStyleId>().Any())
+						return;
+
+					par.ParagraphProperties.Append(new ParagraphStyleId() { Val = styleName });
+				}
+				else
+				{
+					WP.ParagraphProperties paragraphProps = new WP.ParagraphProperties(new ParagraphStyleId() { Val = styleName });
+					par.Append(paragraphProps);
+				}
+			}
+
+			private void LinkCharStyle(string styleName)
+			{
+				WP.Run run = GetLastRun();
+				if (run.RunProperties != null)
+				{
+					// if a style is already linked to the run, return without adding another link
+					if (run.RunProperties.Descendants<RunStyle>().Any())
+						return;
+
+					run.RunProperties.Append(new RunStyle() { Val = styleName });
+				}
+				//run.RunProperties.Append(new StyleId() {Val = styleName}) ;
+				else
+				{
+					WP.RunProperties runProps =
+						new WP.RunProperties(new RunStyle() { Val = styleName });
+					// Prepend runproperties so it appears before any text elements contained in the run
+					run.PrependChild<WP.RunProperties>(runProps);
 				}
 			}
 
@@ -338,7 +353,6 @@ namespace SIL.FieldWorks.XWorks
 							break;
 					}
 				}
-
 				return FragStr.ToString();
 			}
 
@@ -356,7 +370,7 @@ namespace SIL.FieldWorks.XWorks
 			public void Append(IFragment frag)
 			{
 
-				foreach (Paragraph para in ((DocFragment)frag).DocBody.OfType<Paragraph>().ToList())
+				foreach (WP.Paragraph para in ((DocFragment)frag).DocBody.OfType<WP.Paragraph>().ToList())
 				{
 					// Append each paragraph. It is necessary to deep clone the node to maintain its tree of document properties
 					// and to ensure its styles will be maintained in the copy.
@@ -365,25 +379,46 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			/// <summary>
-			/// Appends a new run inside the last paragraph of the doc fragment.
+			/// Appends a new paragraph to the doc fragment.
 			/// The run will be added to the end of the paragraph.
 			/// </summary>
-			public void Append(Run run)
+			public void Append(WP.Paragraph par)
 			{
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
-				Paragraph lastPar = GetLastParagraph();
+				this.DocBody.AppendChild(par.CloneNode(true));
+			}
+
+			/// <summary>
+			/// Appends a new run inside the last paragraph of the doc fragment--creates a new paragraph if none exists.
+			/// The run will be added to the end of the paragraph.
+			/// </summary>
+			public void Append(WP.Run run)
+			{
+				// Deep clone the run b/c of its tree of properties and to maintain styles.
+				WP.Paragraph lastPar = GetLastParagraph();
 				lastPar.AppendChild(run.CloneNode(true));
+			}
+
+			/// <summary>
+			/// Appends text to the last run inside the last paragraph of the doc fragment.
+			/// If no run exists, a new one will be created.
+			/// </summary>
+			public void Append(string text)
+			{
+				WP.Run lastRun = GetLastRun();
+				WP.Text newText = new WP.Text(text);
+				lastRun.Append(newText);
 			}
 
 			public void AppendBreak()
 			{
-				// Breaks are automatically added between different paragraphs.
-				// A null op here is sufficient, unless we want line breaks within a paragraph or run.
+				WP.Run lastRun = GetLastRun();
+				lastRun.AppendChild(new WP.Break());
 			}
 
 			public void AppendSpace()
 			{
-				Run lastRun = GetLastRun();
+				WP.Run lastRun = GetLastRun();
 				WP.Text txt = new WP.Text(" ");
 				// For spaces to show correctly, set preserve spaces on the text element
 				txt.Space = SpaceProcessingModeValues.Preserve;
@@ -410,9 +445,9 @@ namespace SIL.FieldWorks.XWorks
 			/// Returns last paragraph in the document if it contains any,
 			/// else creates and returns a new paragraph.
 			/// </summary>
-			public Paragraph GetLastParagraph()
+			public WP.Paragraph GetLastParagraph()
 			{
-				List<Paragraph> parList = DocBody.OfType<Paragraph>().ToList();
+				List<WP.Paragraph> parList = DocBody.OfType<WP.Paragraph>().ToList();
 				if (parList.Any())
 					return parList.Last();
 				return GetNewParagraph();
@@ -421,9 +456,9 @@ namespace SIL.FieldWorks.XWorks
 			/// <summary>
 			/// Creates and returns a new paragraph.
 			/// </summary>
-			public Paragraph GetNewParagraph()
+			public WP.Paragraph GetNewParagraph()
 			{
-				Paragraph newPar = DocBody.AppendChild(new Paragraph());
+				WP.Paragraph newPar = DocBody.AppendChild(new WP.Paragraph());
 				return newPar;
 			}
 
@@ -431,22 +466,22 @@ namespace SIL.FieldWorks.XWorks
 			/// Returns last run in the document if it contains any,
 			/// else creates and returns a new run.
 			/// </summary>
-			private Run GetLastRun()
+			private WP.Run GetLastRun()
 			{
-				Paragraph lastPara = GetLastParagraph();
-				List<Run> runList = lastPara.OfType<Run>().ToList();
+				WP.Paragraph lastPara = GetLastParagraph();
+				List<WP.Run> runList = lastPara.OfType<WP.Run>().ToList();
 				if (runList.Any())
 					return runList.Last();
 
-				return lastPara.AppendChild(new Run());
+				return lastPara.AppendChild(new WP.Run());
 			}
 		}
+		#endregion DocFragment class
 
-		public IFragmentWriter CreateWriter(IFragment frag)
-		{
-			return new WordFragmentWriter((DocFragment)frag);
-		}
-
+		/*
+		 * WordFragmentWriter Region
+		 */
+		#region WordFragmentWriter class
 		public class WordFragmentWriter : IFragmentWriter
 		{
 			public DocFragment WordFragment { get; }
@@ -489,7 +524,12 @@ namespace SIL.FieldWorks.XWorks
 				WordFragment.Append(frag);
 			}
 
-			public void Insert(Run run)
+			public void Insert(WP.Paragraph par)
+			{
+				WordFragment.Append(par);
+			}
+
+			public void Insert(WP.Run run)
 			{
 				WordFragment.Append(run);
 			}
@@ -498,36 +538,115 @@ namespace SIL.FieldWorks.XWorks
 			/// Gets and returns the last run in the document, if one exists.
 			/// Otherwise, creates and returns a new run.
 			/// </summary>
-			public Run GetCurrentRun()
+			public WP.Run GetCurrentRun()
 			{
-				List<Run> runList = WordFragment.DocBody.Descendants<Run>().ToList();
+				List<WP.Run> runList = WordFragment.DocBody.Descendants<WP.Run>().ToList();
 				if (runList.Any())
 					return runList.Last();
 
 				// If there is no run, create one
-				Run lastRun = WordFragment.DocBody.AppendChild(new Run());
+				WP.Run lastRun = WordFragment.DocBody.AppendChild(new WP.Run());
 				return lastRun;
 			}
 
 			/// <summary>
-			/// Get the last paragraph in the doc if it contains any,
-			/// and add a new run to it.
+			/// Get the last paragraph in the doc if it contains any, and add a new run to it.
 			/// Else, create and add the run to a new paragraph.
 			/// </summary>
 			public void CreateRun()
 			{
-				Paragraph curPar = WordFragment.GetLastParagraph();
-				curPar.AppendChild(new Run());
+				WP.Paragraph curPar = WordFragment.GetLastParagraph();
+				curPar.AppendChild(new WP.Run());
+			}
+		}
+		#endregion WordFragmentWriter class
+
+		/*
+		 * Content Generator Region
+		 */
+		#region ILcmContentGenerator functions to implement
+		public IFragment GenerateWsPrefixWithString(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings,
+			bool displayAbbreviation, int wsId, IFragment content)
+		{
+			return content;
+		}
+
+		public IFragment GenerateAudioLinkContent(string classname, string srcAttribute, string caption, string safeAudioId)
+		{
+			// TODO
+			return new DocFragment("TODO: generate audio link content");
+		}
+		public IFragment WriteProcessedObject(bool isBlock, IFragment elementContent, ConfigurableDictionaryNode config, string className)
+		{
+			return WriteProcessedElementContent(elementContent, config, className);
+		}
+		public IFragment WriteProcessedCollection(bool isBlock, IFragment elementContent, ConfigurableDictionaryNode config, string className)
+		{
+			return WriteProcessedElementContent(elementContent, config, className);
+		}
+		private IFragment WriteProcessedElementContent(IFragment elementContent, ConfigurableDictionaryNode config, string className)
+		{
+			// Use the style name and type of the config node or its parent to link a style to the elementContent fragment where the processed contents are written.
+			DocFragment.LinkStyleOrInheritParentStyle(elementContent, config);
+			return elementContent;
+		}
+		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content, ConfigurableDictionaryNode config)
+		{
+			return content;
+		}
+		public IFragment GenerateGroupingNode(object field, string className, ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, ConfiguredLcmGenerator.GeneratorSettings settings,
+			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, IFragment> childContentGenerator)
+		{
+			//TODO: handle grouping nodes
+			IFragment docfrag = new DocFragment("TODO: handle grouping nodes");
+
+			//LinkStyleOrInheritParentStyle(docfrag, config);
+
+			return docfrag;
+			//return null;
+		}
+		public IFragment AddSenseData(IFragment senseNumberSpan, bool isBlockProperty, Guid ownerGuid, IFragment senseContent, string className)
+		{
+			// Add sense numbers if needed
+			if (!senseNumberSpan.IsNullOrEmpty())
+			{
+				senseNumberSpan.Append(senseContent);
+				return senseNumberSpan;
 			}
 
-			/*public void AddStyleToRun()
+			return senseContent;
+		}
+		public IFragment AddCollectionItem(bool isBlock, string collectionItemClass, ConfigurableDictionaryNode config, IFragment content)
+		{
+			if (!string.IsNullOrEmpty(config.Style))
 			{
-				// Grab the latest run and add a style
-				Run lastRun = GetCurrentRun();
+				if (isBlock && (config.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph))
+					((DocFragment)content).AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Paragraph);
 
-				// TODO: add style
+				else if (!isBlock)
+					((DocFragment)content).AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Character);
+			}
 
-			}*/
+			return content;
+		}
+		public IFragment AddProperty(string className, bool isBlockProperty, string content)
+		{
+			return new DocFragment(content);
+		}
+
+		public IFragment CreateFragment()
+		{
+			return new DocFragment();
+		}
+
+		public IFragment CreateFragment(string str)
+		{
+			return new DocFragment(str);
+		}
+
+		public IFragmentWriter CreateWriter(IFragment frag)
+		{
+			return new WordFragmentWriter((DocFragment)frag);
 		}
 
 		public void StartMultiRunString(IFragmentWriter writer, string writingSystem)
@@ -546,7 +665,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return;
 		}
-
 		/// <summary>
 		/// Creates a new run that is appended to the doc's last paragraph,
 		/// if one exists, or to a new paragraph otherwise.
@@ -563,38 +681,35 @@ namespace SIL.FieldWorks.XWorks
 			// Beginning a new run is sufficient to end the old run
 			// and to ensure new styles/content are applied to the new run.
 		}
-		public void SetRunStyle(IFragmentWriter writer, string css)
+		public void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, string css)
 		{
-			// Grab the current run and set its style
-			Run currentRun = ((WordFragmentWriter)writer).GetCurrentRun();
+			// TODO: Many runs don't ever call this function; this is not where we want to set the character styles.
 
-			// TODO: get the style indicated by the string css class
-			// For now, use bold as a default style in order to test setting styles
-
-			// If run already has properties, append the new style to run properties
-			if (currentRun.RunProperties != null)
-				currentRun.RunProperties.Append(new WP.Bold());
-
-			// Otherwise create run properties and append the style
-			else
+			/*if (config != null && !string.IsNullOrEmpty(config.Style))
 			{
-				currentRun.RunProperties = new WP.RunProperties();
-				currentRun.RunProperties.Append(new WP.Bold());
-			}
+				((WordFragmentWriter)writer).WordFragment.AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Character);
+			}*/
 		}
-		public void StartLink(IFragmentWriter writer, Guid destination)
+		public void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, Guid destination)
 		{
+			if (config != null && !string.IsNullOrEmpty(config.Style))
+			{
+				((WordFragmentWriter)writer).WordFragment.AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Character);
+			}
 			return;
 		}
-		public void StartLink(IFragmentWriter writer, string externalDestination)
+		public void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, string externalDestination)
 		{
+			if (config != null && !string.IsNullOrEmpty(config.Style))
+			{
+				((WordFragmentWriter)writer).WordFragment.AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Character);
+			}
 			return;
 		}
 		public void EndLink(IFragmentWriter writer)
 		{
 			return;
 		}
-
 		/// <summary>
 		/// Adds text to the last run in the doc, if one exists.
 		/// Creates a new run from the text otherwise.
@@ -644,28 +759,35 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return;
 		}
-
-		public void StartEntry(IFragmentWriter writer, string className, Guid entryGuid, int index, RecordClerk clerk)
+		public void StartEntry(IFragmentWriter writer, ConfigurableDictionaryNode config, string className, Guid entryGuid, int index, RecordClerk clerk)
 		{
 			// Each entry starts a new paragraph, and any entry data added will be added within the same paragraph.
 			// Create a new paragraph for the entry.
 			DocFragment wordDoc = ((WordFragmentWriter)writer).WordFragment;
-			Paragraph entryPar = wordDoc.GetNewParagraph();
-
-			// TODO: paragraph-level styles can be set here.
+			WP.Paragraph entryPar = wordDoc.GetNewParagraph();
+			WP.ParagraphProperties paragraphProps = new WP.ParagraphProperties(new ParagraphStyleId() {Val = config.Style});
+			entryPar.Append(paragraphProps);
 		}
-		public void AddEntryData(IFragmentWriter writer, List<IFragment> pieces)
+		public void AddEntryData(IFragmentWriter writer, List<ConfiguredLcmGenerator.ConfigFragment> pieces)
 		{
-			// TODO: In theory the pieces in the list here are already styled--where are run-level styles first set?
-			foreach (IFragment piece in pieces)
+			// TODO: the docfragment is now accessible via piece.Frag, and the configurabledictionarynode via piece.Config -- use this info to handle before/after content & display in separate paragraphs.
+
+			foreach (ConfiguredLcmGenerator.ConfigFragment piece in pieces)
 			{
 				WordFragmentWriter wordWriter = ((WordFragmentWriter)writer);
+				// The final word doc that data is being added to
+				DocFragment wordDocument = wordWriter.WordFragment;
 
-				// Each piece contains one run. These runs should reside in the same paragraph.
+				// The word fragment doc containing piece data
+				DocFragment frag = ((DocFragment)piece.Frag);
+
+				ConfigurableDictionaryNode config = piece.Config;
+
+				// Piece contains runs that should all be added to a single paragraph.
 				// So we append each run instead of the IFragments directly.
 				// Character formatting & style of each run will be preserved.
-				List<Run> runs = ((DocFragment)piece).DocBody.Descendants<Run>().ToList();
-				foreach (Run run in runs)
+				var pieceRuns = (frag.DocBody.Descendants<WP.Run>().ToList());
+				foreach (WP.Run run in pieceRuns)
 				{
 					// For spaces to show correctly, set preserve spaces on the text element
 					WP.Text txt = new WP.Text(" ");
@@ -679,9 +801,18 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return;
 		}
-		public void AddCollection(IFragmentWriter writer, bool isBlockProperty, string className, string content)
+		public void AddCollection(IFragmentWriter writer, bool isBlockProperty, string className, ConfigurableDictionaryNode config, string content)
 		{
-			return;
+			var frag = ((WordFragmentWriter)writer).WordFragment;
+			if (isBlockProperty && (config.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph))
+				frag.AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Paragraph);
+			else if (!isBlockProperty)
+				frag.AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Character);
+
+			if (!string.IsNullOrEmpty(content))
+			{
+				frag.Append(content);
+			}
 		}
 		public void BeginObjectProperty(IFragmentWriter writer, bool isBlockProperty, string getCollectionItemClassAttribute)
 		{
@@ -706,25 +837,26 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return new DocFragment("TODO: add image caption");
 		}
-		public IFragment GenerateSenseNumber(string formattedSenseNumber, string senseNumberWs)
+		public IFragment GenerateSenseNumber(string formattedSenseNumber, string senseNumberWs, ConfigurableDictionaryNode senseConfigNode)
 		{
-			// TODO: for styles, do we need to do something with the writing system?
-			return new DocFragment(formattedSenseNumber);
+			DocFragment senseNum = new DocFragment(formattedSenseNumber);
+			senseNum.AddStyleLink(WordStylesGenerator.SenseNumberStyleName, ConfigurableDictionaryNode.StyleTypes.Character);
+			return senseNum;
 		}
-		public IFragment AddLexReferences(bool generateLexType,IFragment lexTypeContent, string className, string referencesContent, bool typeBefore)
+		public IFragment AddLexReferences(bool generateLexType, IFragment lexTypeContent, ConfigurableDictionaryNode config, string className, string referencesContent, bool typeBefore)
 		{
 			var fragment = new DocFragment();
 			// Generate the factored ref types element (if before).
 			if (generateLexType && typeBefore)
 			{
-				fragment.Append(WriteProcessedObject(false, lexTypeContent, className));
+				fragment.Append(WriteProcessedObject(false, lexTypeContent, config, className));
 			}
 			// Then add all the contents for the LexReferences (e.g. headwords)
 			fragment.Append(new DocFragment(referencesContent));
 			// Generate the factored ref types element (if after).
 			if (generateLexType && !typeBefore)
 			{
-				fragment.Append(WriteProcessedObject(false, lexTypeContent, className));
+				fragment.Append(WriteProcessedObject(false, lexTypeContent, config, className));
 			}
 
 			return fragment;
@@ -737,7 +869,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return;
 		}
-		public IFragment WriteProcessedSenses(bool isBlock, IFragment senseContent, string className, IFragment sharedGramInfo)
+		public IFragment WriteProcessedSenses(bool isBlock, IFragment senseContent, ConfigurableDictionaryNode config, string className, IFragment sharedGramInfo)
 		{
 			sharedGramInfo.Append(senseContent);
 			return sharedGramInfo;
@@ -754,6 +886,106 @@ namespace SIL.FieldWorks.XWorks
 			string caption)
 		{
 			return new DocFragment("TODO: generate video link content");
+		}
+		#endregion ILcmContentGenerator functions to implement
+
+		/*
+		 * Styles Generator Region
+		 */
+		#region ILcmStylesGenerator functions to implement
+		public void AddGlobalStyles(DictionaryConfigurationModel model, ReadOnlyPropertyTable propertyTable)
+		{
+			var cache = propertyTable.GetValue<LcmCache>("cache");
+			var propStyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
+
+			// TODO: Implement custom bullets & numbering
+			// LoadBulletUnicodes();
+			// LoadNumberingStyles();
+
+			var letterHeaderStyle = WordStylesGenerator.GenerateLetterHeaderStyle(propertyTable, propStyleSheet);
+			if (letterHeaderStyle != null)
+				_styleSheet.Append(letterHeaderStyle);
+
+			Styles defaultStyles = WordStylesGenerator.GetDefaultWordStyles(propertyTable, propStyleSheet, model);
+			if (defaultStyles != null)
+			{
+				foreach (WP.Style style in defaultStyles.Descendants<Style>())
+				{
+					_styleSheet.Append(style.CloneNode(true));
+				}
+			}
+
+			// TODO: in openxml, will links be plaintext by default?
+			//WordStylesGenerator.MakeLinksLookLikePlainText(_styleSheet);
+			// TODO:  Generate style for audiows after we add audio to export
+			//WordStylesGenerator.GenerateWordStyleForAudioWs(_styleSheet, cache);
+		}
+		public string AddStyles(ConfigurableDictionaryNode node)
+		{
+			var className = $".{CssGenerator.GetClassAttributeForConfig(node)}";
+
+			lock (_styleDictionary)
+			{
+				var styleContent = WordStylesGenerator.CheckRangeOfStylesForEmpties(WordStylesGenerator.GenerateWordStylesFromConfigurationNode(node, className, _propertyTable));
+				// TODO: for testing, let it return className even if no styles are non-empty. Eventually, probably want to return null in that case?
+				if (styleContent == null)
+					return className;
+				if (!styleContent.Any())
+				{
+					return className;
+				}
+				if (!_styleDictionary.ContainsKey(className))
+				{
+					_styleDictionary[className] = styleContent;
+					return className;
+				}
+				// If the content is the same, then do nothing
+				if (WordStylesGenerator.AreStylesEquivalent(_styleDictionary[className], styleContent))
+				{
+					return className;
+				}
+				// Otherwise get a unique but useful class name and re-generate the style with the new name
+				className = GetBestUniqueNameForNode(_styleDictionary, node);
+				_styleDictionary[className] = WordStylesGenerator.CheckRangeOfStylesForEmpties(WordStylesGenerator.GenerateWordStylesFromConfigurationNode(node, className, _propertyTable));
+				//var styleName = _styleDictionary[className].
+				return className;
+			}
+		}
+		public void Init(ReadOnlyPropertyTable propertyTable)
+		{
+			_propertyTable = propertyTable;
+		}
+		#endregion ILcmStylesGenerator functions to implement
+
+		// Add a StylesDefinitionsPart to the document. Returns a reference to it.
+		public static StyleDefinitionsPart AddStylesPartToPackage(WordprocessingDocument doc)
+		{
+			StyleDefinitionsPart part;
+			part = doc.MainDocumentPart.AddNewPart<StyleDefinitionsPart>();
+			Styles root = new Styles();
+			root.Save(part);
+			return part;
+		}
+
+		/// <summary>
+		/// Finds an unused class name for the configuration node. This should be called when there are two nodes in the <code>DictionaryConfigurationModel</code>
+		/// have the same class name, but different style content. We want this name to be usefully recognizable.
+		/// </summary>
+		/// <returns></returns>
+		public static string GetBestUniqueNameForNode(Dictionary<string, Styles> styles,
+			ConfigurableDictionaryNode node)
+		{
+			Guard.AgainstNull(node.Parent, "There should not be duplicate class names at the top of tree.");
+			// First try appending the parent node classname.
+			var className =  node.Style + "-" + node.Parent.Style;
+
+			string classNameBase = className;
+			int counter = 0;
+			while (styles.ContainsKey(className))
+			{
+				className = $"{classNameBase}-{++counter}";
+			}
+			return className;
 		}
 	}
 }

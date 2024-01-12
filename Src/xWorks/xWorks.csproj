@@ -558,6 +558,7 @@
     <Compile Include="WebonaryClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="WordStylesGenerator.cs" />
     <Compile Include="WordsUsedOnlyElsewhereFilter.cs" />
     <Compile Include="XhtmlDocView.cs">
       <SubType>UserControl</SubType>

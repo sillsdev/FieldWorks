@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.XWorks
 			Cache = cache;
 		}
 
-		public IFragment GenerateWsPrefixWithString(ConfiguredLcmGenerator.GeneratorSettings settings,
+		public IFragment GenerateWsPrefixWithString(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings,
 			bool displayAbbreviation, int wsId, IFragment content)
 		{
 			return content;
@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.XWorks
 			dynamic audioObject = new JObject();
 			audioObject.id = safeAudioId;
 			audioObject.src = srcAttribute.Replace("\\", "/"); // expecting relative paths only
-			return WriteProcessedObject(false, new StringFragment(audioObject.ToString()), "value");
+			return WriteProcessedObject(false, new StringFragment(audioObject.ToString()), null,"value");
 		}
 
 		public IFragment GenerateVideoLinkContent(string className, string mediaId,
@@ -66,10 +66,10 @@ namespace SIL.FieldWorks.XWorks
 			dynamic videoObject = new JObject();
 			videoObject.id = mediaId;
 			videoObject.src = srcAttribute.Replace("\\", "/"); // expecting relative paths only
-			return WriteProcessedObject(false, new StringFragment(videoObject.ToString()), "value");
+			return WriteProcessedObject(false, new StringFragment(videoObject.ToString()), null, "value");
 		}
 
-		public IFragment WriteProcessedObject(bool isBlock, IFragment elementContent, string className)
+		public IFragment WriteProcessedObject(bool isBlock, IFragment elementContent, ConfigurableDictionaryNode config, string className)
 		{
 			if (elementContent.ToString().StartsWith("{"))
 				return WriteProcessedContents(elementContent, className, string.Empty, ",");
@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.XWorks
 			return WriteProcessedContents(elementContent, className, "{", "},");
 		}
 
-		public IFragment WriteProcessedCollection(bool isBlock, IFragment elementContent, string className)
+		public IFragment WriteProcessedCollection(bool isBlock, IFragment elementContent, ConfigurableDictionaryNode config, string className)
 		{
 			((StringFragment)elementContent).TrimEnd(',');
 			return WriteProcessedContents(elementContent, className, "[", "],");
@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.XWorks
 			return fragment;
 		}
 
-		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content)
+		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content, ConfigurableDictionaryNode config)
 		{
 			// The grammatical info is generated as a json property on 'senses'
 			return content;
@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.XWorks
 			return new StringFragment();
 		}
 
-		public IFragment AddCollectionItem(bool isBlock, string className, IFragment content)
+		public IFragment AddCollectionItem(bool isBlock, string className, ConfigurableDictionaryNode config,IFragment content)
 		{
 			var fragment = new StringFragment();
 			fragment.StrBuilder.Append(content.IsNullOrEmpty() ? string.Empty : $"{{{content}}},");
@@ -181,18 +181,18 @@ namespace SIL.FieldWorks.XWorks
 			m_runBuilder.Value.Clear();
 		}
 
-		public void SetRunStyle(IFragmentWriter writer, string css)
+		public void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, string css)
 		{
 			if(!string.IsNullOrEmpty(css))
 				((JsonFragmentWriter)writer).InsertJsonProperty("style", css);
 		}
 
-		public void StartLink(IFragmentWriter writer, Guid destination)
+		public void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, Guid destination)
 		{
 			((JsonFragmentWriter)writer).InsertJsonProperty("guid", "g" + destination);
 		}
 
-		public void StartLink(IFragmentWriter writer, string externalLink)
+		public void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, string externalLink)
 		{
 			((JsonFragmentWriter)writer).InsertJsonProperty("linkUrl", externalLink);
 		}
@@ -246,7 +246,7 @@ namespace SIL.FieldWorks.XWorks
 			// TODO: decide on a useful json representation for tables
 		}
 
-		public void StartEntry(IFragmentWriter xw, string className, Guid entryGuid, int index, RecordClerk clerk)
+		public void StartEntry(IFragmentWriter xw, ConfigurableDictionaryNode config, string className, Guid entryGuid, int index, RecordClerk clerk)
 		{
 			var jsonWriter = (JsonFragmentWriter)xw;
 			jsonWriter.StartObject();
@@ -274,9 +274,10 @@ namespace SIL.FieldWorks.XWorks
 			jsonWriter.InsertRawJson(",");
 		}
 
-		public void AddEntryData(IFragmentWriter xw, List<IFragment> pieces)
+		public void AddEntryData(IFragmentWriter xw, List<ConfiguredLcmGenerator.ConfigFragment> pieces)
 		{
-			pieces.ForEach(((JsonFragmentWriter)xw).InsertRawJson);
+			foreach (ConfiguredLcmGenerator.ConfigFragment piece in pieces)
+				((JsonFragmentWriter)xw).InsertRawJson(piece.Frag);
 		}
 
 		public void EndEntry(IFragmentWriter xw)
@@ -284,7 +285,7 @@ namespace SIL.FieldWorks.XWorks
 			((JsonFragmentWriter)xw).EndObject();
 		}
 
-		public void AddCollection(IFragmentWriter writer, bool isBlockProperty, string className, string content)
+		public void AddCollection(IFragmentWriter writer, bool isBlockProperty, string className, ConfigurableDictionaryNode config, string content)
 		{
 			((JsonFragmentWriter)writer).InsertPropertyName(className);
 			BeginArray(writer);
@@ -350,12 +351,12 @@ namespace SIL.FieldWorks.XWorks
 			return new StringFragment(captionContent);
 		}
 
-		public IFragment GenerateSenseNumber(string formattedSenseNumber, string wsId)
+		public IFragment GenerateSenseNumber(string formattedSenseNumber, string wsId, ConfigurableDictionaryNode config)
 		{
 			return new StringFragment(formattedSenseNumber);
 		}
 
-		public IFragment AddLexReferences(bool generateLexType, IFragment lexTypeContent, string className,
+		public IFragment AddLexReferences(bool generateLexType, IFragment lexTypeContent, ConfigurableDictionaryNode config, string className,
 			string referencesContent, bool typeBefore)
 		{
 			var bldr = new StringBuilder();
@@ -406,9 +407,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Generates data for all senses of an entry. For better processing of json add sharedGramInfo as a separate property object
 		/// </summary>
-		public IFragment WriteProcessedSenses(bool isBlock, IFragment sensesContent, string classAttribute, IFragment sharedGramInfo)
+		public IFragment WriteProcessedSenses(bool isBlock, IFragment sensesContent, ConfigurableDictionaryNode config, string classAttribute, IFragment sharedGramInfo)
 		{
-			return new StringFragment($"{sharedGramInfo.ToString()}{WriteProcessedCollection(isBlock, sensesContent, classAttribute)}");
+			return new StringFragment($"{sharedGramInfo.ToString()}{WriteProcessedCollection(isBlock, sensesContent, config, classAttribute)}");
 		}
 
 		public IFragment AddAudioWsContent(string wsId, Guid linkTarget, IFragment fileContent)
@@ -424,7 +425,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public IFragment AddSenseData(IFragment senseNumberSpan, bool isBlock, Guid ownerGuid,
-			string senseContent, string className)
+			IFragment senseContent, string className)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);
@@ -440,7 +441,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				xw.WritePropertyName("guid");
 				xw.WriteValue("g" + ownerGuid);
-				xw.WriteRaw("," + senseContent.TrimEnd(','));
+				xw.WriteRaw("," + senseContent.ToString().TrimEnd(','));
 				xw.WriteEndObject();
 				xw.WriteRaw(",");
 				xw.Flush();
