@@ -1442,9 +1442,9 @@ namespace SIL.FieldWorks.XWorks
 			// empty span (ie span[lang="en"]{}. If not included, font-family will be added to many more spans.
 			if (fontName == null && projectStyle.Name == "Normal")
 			{
-				var lgWritingSysytem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId);
-				if(lgWritingSysytem != null)
-					fontName = lgWritingSysytem.DefaultFontName;
+				var lgWritingSystem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId);
+				if(lgWritingSystem != null)
+					fontName = lgWritingSystem.DefaultFontName;
 			}
 
 			if (fontName != null)
