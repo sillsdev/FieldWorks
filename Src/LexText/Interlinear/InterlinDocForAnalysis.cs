@@ -2331,11 +2331,22 @@ namespace SIL.FieldWorks.IText
 									// 2) A parser result - not sure which gets picked if multiple.
 									// #2 May take a while to "percolate" through to become a "guess".
 									var guess = Cache.ServiceLocator.ObjectRepository.GetObject(hvo);
+									IWfiAnalysis workingAnalysis;
 									if (guess != null && guess is IAnalysis)
-										occ.Segment.AnalysesRS[occ.Index] = (IAnalysis) guess;
+									{
+										occ.Segment.AnalysesRS[occ.Index] = (IAnalysis)guess;
+										workingAnalysis = guess as IWfiAnalysis;
+									}
 									else
 									{
-										occ.Segment.AnalysesRS[occ.Index] = occAn.Wordform.AnalysesOC.FirstOrDefault();
+										workingAnalysis = occAn.Wordform.AnalysesOC.FirstOrDefault();
+										occ.Segment.AnalysesRS[occ.Index] = workingAnalysis;
+									}
+
+									if (workingAnalysis != null)
+									{
+										// Make sure this analysis is marked as user-approved.
+										Cache.LangProject.DefaultUserAgent.SetEvaluation(workingAnalysis, Opinions.approves);
 									}
 								}
 							/*	else if (occAn.HasWordform && occAn.Wordform.ParserCount > 0)
