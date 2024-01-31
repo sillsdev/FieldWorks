@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -148,6 +148,13 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void ApproveAndMoveNext_NoChange()
 		{
+			// Override the InterlinVc for this test, but not other tests.
+			var origVc = m_interlinDoc.InterlinVc;
+			m_interlinDoc.InterlinVc = new InterlinDocForAnalysisVc(Cache);
+
+			ISegment seg = m_para0_0.SegmentsOS[0];
+			SetUpMocksForTest(seg);
+
 			var occurrences = SegmentServices.GetAnalysisOccurrences(m_para0_0).ToList();
 			m_interlinDoc.SelectOccurrence(occurrences[0]);
 			var initialAnalysisTree = m_focusBox.InitialAnalysis;
@@ -161,6 +168,9 @@ namespace SIL.FieldWorks.IText
 
 			// nothing to undo.
 			Assert.AreEqual(0, Cache.ActionHandlerAccessor.UndoableSequenceCount);
+
+			// Restore the InterlinVc for other tests.
+			m_interlinDoc.InterlinVc = origVc;
 		}
 
 		/// <summary>
@@ -204,7 +214,7 @@ namespace SIL.FieldWorks.IText
 		public void OnAddWordGlossesToFreeTrans_Simple()
 		{
 			ISegment seg = m_para0_0.SegmentsOS[0];
-			SetUpMocksForOnAddWordGlossesToFreeTransTest(seg);
+			SetUpMocksForTest(seg);
 			SetUpGlosses(seg, "hope", "this", "works");
 
 			m_interlinDoc.OnAddWordGlossesToFreeTrans(null);
@@ -232,7 +242,7 @@ namespace SIL.FieldWorks.IText
 					m_para0_0.Contents = strBldr.GetString();
 				});
 
-			SetUpMocksForOnAddWordGlossesToFreeTransTest(seg);
+			SetUpMocksForTest(seg);
 			SetUpGlosses(seg, "hope", null, "this", "works");
 
 			m_interlinDoc.OnAddWordGlossesToFreeTrans(null);
@@ -247,7 +257,7 @@ namespace SIL.FieldWorks.IText
 		#endregion
 
 		#region Helper methods
-		private void SetUpMocksForOnAddWordGlossesToFreeTransTest(ISegment seg)
+		private void SetUpMocksForTest(ISegment seg)
 		{
 			IVwRootBox rootb = MockRepository.GenerateMock<IVwRootBox>();
 			m_interlinDoc.MockedRootBox = rootb;
@@ -298,6 +308,23 @@ namespace SIL.FieldWorks.IText
 			m_testText = testText;
 			Vc = new InterlinVc(Cache);
 			Vc.RootSite = this;
+			m_mediator = new Mediator();
+			m_propertyTable = new PropertyTable(m_mediator);
+
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (m_mediator != null)
+					m_mediator.Dispose();
+				if (m_propertyTable != null)
+					m_propertyTable.Dispose();
+			}
+			m_mediator = null;
+			m_propertyTable = null;
+			base.Dispose(disposing);
 		}
 
 		protected override FocusBoxController CreateFocusBoxInternal()
@@ -309,6 +336,16 @@ namespace SIL.FieldWorks.IText
 		{
 			InstallFocusBox();
 			FocusBox.SelectOccurrence(target);
+		}
+
+		internal InterlinVc InterlinVc
+		{
+			get => Vc;
+			set
+			{
+				Vc = value;
+				Vc.RootSite = this;
+			}
 		}
 
 		internal override void UpdateGuesses(HashSet<IWfiWordform> wordforms)
@@ -393,11 +430,11 @@ namespace SIL.FieldWorks.IText
 			return base.ShouldCreateAnalysisFromSandbox(fSaveGuess);
 		}
 
-		protected override void ApproveAnalysis(bool fSaveGuess)
+		public override void ApproveAnalysis(AnalysisOccurrence occ, bool allOccurrences, bool fSaveGuess)
 		{
 			if (DoDuringUnitOfWork != null)
 				NewAnalysisTree.Analysis = DoDuringUnitOfWork().Analysis;
-			base.ApproveAnalysis(fSaveGuess);
+			base.ApproveAnalysis(occ, allOccurrences, fSaveGuess);
 		}
 
 		internal AnalysisTree NewAnalysisTree
@@ -489,7 +526,7 @@ namespace SIL.FieldWorks.IText
 
 		public int GetLineOfCurrentSelection()
 		{
-			throw new NotImplementedException();
+			return -1;
 		}
 
 		public bool SelectOnOrBeyondLine(int startLine, int increment)
