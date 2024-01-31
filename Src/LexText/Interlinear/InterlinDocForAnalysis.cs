@@ -289,7 +289,7 @@ namespace SIL.FieldWorks.IText
 				return;
 			}
 			if (IsFocusBoxInstalled)
-				FocusBox.UpdateRealFromSandbox(null, fSaveGuess, target);
+				FocusBox.UpdateRealFromSandbox(null, fSaveGuess);
 			TryHideFocusBoxAndUninstall();
 			RecordGuessIfNotKnown(target);
 			InstallFocusBox();
@@ -2073,7 +2073,7 @@ namespace SIL.FieldWorks.IText
 				if (!fBundleOnly)
 				{
 					if (IsFocusBoxInstalled)
-						FocusBox.UpdateRealFromSandbox(null, fSaveGuess, null);
+						FocusBox.UpdateRealFromSandbox(null, fSaveGuess);
 					TryHideFocusBoxAndUninstall();
 				}
 
@@ -2117,7 +2117,7 @@ namespace SIL.FieldWorks.IText
 				if (!fBundleOnly)
 				{
 					if (IsFocusBoxInstalled)
-						FocusBox.UpdateRealFromSandbox(null, fSaveGuess, null);
+						FocusBox.UpdateRealFromSandbox(null, fSaveGuess);
 					TryHideFocusBoxAndUninstall();
 				}
 
@@ -2251,7 +2251,7 @@ namespace SIL.FieldWorks.IText
 		internal bool PrepareToGoAway()
 		{
 			if (IsFocusBoxInstalled)
-				FocusBox.UpdateRealFromSandbox(null, false, null);
+				FocusBox.UpdateRealFromSandbox(null, false);
 			return true;
 		}
 
@@ -2272,43 +2272,20 @@ namespace SIL.FieldWorks.IText
 			var helper = SelectionHelper.Create(RootBox.Site); // only helps restore translation and note line selections
 			AnalysisOccurrence focusedWf = SelectedOccurrence; // need to restore focus box if selected
 
-			// find the very first analysis
-			ISegment firstRealSeg = null;
-			IAnalysis firstRealOcc = null;
-			int occInd = 0;
-			foreach (IStPara p in RootStText.ParagraphsOS)
+			if (!FocusBox.PreCheckApprove())
+				return;
+
+			var sandbox = FocusBox.InterlinWordControl as Sandbox;
+			if (sandbox == null)
 			{
-				var para = (IStTxtPara) p;
-				foreach (ISegment seg in para.SegmentsOS)
-				{
-					firstRealSeg = seg;
-					occInd = 0;
-					foreach(IAnalysis an in seg.AnalysesRS)
-					{
-						if (an.HasWordform && an.IsValidObject)
-						{
-							firstRealOcc = an;
-							break;
-						}
-						occInd++;
-					}
-					if (firstRealOcc != null) break;
-				}
-				if (firstRealOcc != null) break;
+				throw new Exception("Not expecting sandbox to ever be null.");
 			}
-			// Set it as the current segment and recurse
-			if (firstRealOcc == null)
-				return; // punctuation only or nothing to analyze
-			AnalysisOccurrence ao = null;
-			if (focusedWf != null && focusedWf.Analysis == firstRealOcc)
-				ao = new AnalysisOccurrence(focusedWf.Segment, focusedWf.Index);
-			else
-				ao = new AnalysisOccurrence(firstRealSeg, occInd);
-			TriggerAnalysisSelected(ao, true, true, false);
-			var navigator = new SegmentServices.StTextAnnotationNavigator(ao);
+
+			var navigator = new SegmentServices.StTextAnnotationNavigator(SelectedOccurrence);
 
 			// This needs to be outside the block for the UOW, since what we are suppressing
 			// happens at the completion of the UOW.
+			FocusBox.Hide();
 			SuppressResettingGuesses(
 				() =>
 				{
@@ -2316,8 +2293,6 @@ namespace SIL.FieldWorks.IText
 					UndoableUnitOfWorkHelper.Do(cmd.UndoText, cmd.RedoText, Cache.ActionHandlerAccessor,
 					() =>
 					{
-						var nav = new SegmentServices.StTextAnnotationNavigator(SelectedOccurrence);
-						AnalysisOccurrence lastOccurrence;
 						var analyses = navigator.GetAnalysisOccurrencesAdvancingInStText().ToList();
 						foreach (var occ in analyses)
 						{   // This could be punctuation or any kind of analysis.
@@ -2326,42 +2301,20 @@ namespace SIL.FieldWorks.IText
 							{   // this is an analysis or a wordform
 								int hvo = Vc.GetGuess(occAn);
 								if (occAn.Hvo != hvo)
-								{   // this is a guess, so approve it
-									// 1) A second occurence of a word that has had a lexicon entry or sense created for it.
-									// 2) A parser result - not sure which gets picked if multiple.
-									// #2 May take a while to "percolate" through to become a "guess".
-									var guess = Cache.ServiceLocator.ObjectRepository.GetObject(hvo);
-									IWfiAnalysis workingAnalysis;
-									if (guess != null && guess is IAnalysis)
-									{
-										occ.Segment.AnalysesRS[occ.Index] = (IAnalysis)guess;
-										workingAnalysis = guess as IWfiAnalysis;
-									}
-									else
-									{
-										workingAnalysis = occAn.Wordform.AnalysesOC.FirstOrDefault();
-										occ.Segment.AnalysesRS[occ.Index] = workingAnalysis;
-									}
-
-									if (workingAnalysis != null)
-									{
-										// Make sure this analysis is marked as user-approved.
-										Cache.LangProject.DefaultUserAgent.SetEvaluation(workingAnalysis, Opinions.approves);
-									}
+								{
+									// Move the sandbox to the next AnalysisOccurrence, then do the approval (using the sandbox data).
+									sandbox.SwitchWord(occ);
+									FocusBox.ApproveAnalysis(occ, true, true);
 								}
-							/*	else if (occAn.HasWordform && occAn.Wordform.ParserCount > 0)
-								{   // this doesn't seem to be needed (and may not be correct) - always caught above
-									bool isHumanNoOpinion = occAn.Wordform.HumanNoOpinionParses.Cast<IWfiWordform>().Any(wf => wf.Hvo == occAn.Hvo);
-									if (isHumanNoOpinion)
-									{
-										occ.Segment.AnalysesRS[occ.Index] = occAn.Wordform.AnalysesOC.FirstOrDefault();
-									}
-								} */
 							}
 						}
+
+						// Restore the sandbox.
+						sandbox.SwitchWord(focusedWf);
 					});
-				}
-			);
+				});
+			FocusBox.Show();
+
 			// MoveFocusBoxIntoPlace();
 			if (focusedWf != null)
 				SelectOccurrence(focusedWf);

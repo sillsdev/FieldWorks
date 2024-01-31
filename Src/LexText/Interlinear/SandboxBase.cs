@@ -4527,7 +4527,7 @@ namespace SIL.FieldWorks.IText
 				// not what we started with. We would save anyway as we switched views, so do it now.
 				var parent = Controller;
 				if (parent != null)
-					parent.UpdateRealFromSandbox(null, false, null);
+					parent.UpdateRealFromSandbox(null, false);
 				// This leaves the parent in a bad state, but maybe it would be good if all this is
 				// happening in some other parent, such as the words analysis view?
 				//m_hvoAnalysisGuess = GetRealAnalysis(false);
