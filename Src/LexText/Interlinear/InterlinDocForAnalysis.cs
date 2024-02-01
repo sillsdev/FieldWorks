@@ -2042,7 +2042,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="fBundleOnly"></param>
 		/// <param name="fSaveGuess">if true, saves guesses; if false, skips guesses but still saves edits.</param>
 		/// <returns></returns>
-		protected virtual bool HandleClickSelection(IVwSelection vwselNew, bool fBundleOnly, bool fSaveGuess)
+		protected bool HandleClickSelection(IVwSelection vwselNew, bool fBundleOnly, bool fSaveGuess)
 		{
 			if (vwselNew == null)
 				return false; // couldn't select a bundle!
@@ -2138,7 +2138,8 @@ namespace SIL.FieldWorks.IText
 					TryHideFocusBoxAndUninstall();
 				return false;
 			}
-			TriggerAnnotationSelected(new AnalysisOccurrence(seg, ianalysis), fSaveGuess);
+
+			FocusBox.ApproveAndMoveTarget(new AnalysisOccurrence(seg, ianalysis), this, fSaveGuess, true);
 			return true;
 		}
 

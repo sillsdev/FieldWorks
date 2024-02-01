@@ -34,8 +34,7 @@ namespace SIL.FieldWorks.IText
 		/// Normally, this is invoked as a result of pressing the <Enter> key
 		/// or clicking the "Approve and Move Next" green check in an analysis.
 		/// </summary>
-		/// <param name="undoRedoText"></param>
-		internal virtual void ApproveAndMoveNext(ICommandUndoRedoText cmd)
+		internal void ApproveAndMoveNext(ICommandUndoRedoText cmd)
 		{
 			if (!PreCheckApprove())
 				return;
@@ -50,6 +49,36 @@ namespace SIL.FieldWorks.IText
 			// we already saved the current annotation. And it can't correctly place the focus box
 			// until the change we just did are completed and PropChanged sent. So keep this outside the UOW.
 			OnNextBundle(cmd, false, false, false, true);
+		}
+
+		/// <summary>
+		/// Approves an analysis (if there are edits or if fSaveGuess is true and there is a guess) and
+		/// moves the selection to target.
+		/// </summary>
+		/// <param name="target">The occurrence to move to.</param>
+		/// <param name="parent">If the FocusBox parent is not set, then use this value to set it.</param>
+		/// <param name="fSaveGuess">if true, saves guesses; if false, skips guesses but still saves edits.</param>
+		/// <param name="fMakeDefaultSelection">true to make the default selection within the new sandbox.</param>
+		internal void ApproveAndMoveTarget(AnalysisOccurrence target, InterlinDocForAnalysis parent, bool fSaveGuess, bool fMakeDefaultSelection)
+		{
+			if (!PreCheckApprove())
+				return;
+
+			if (Parent == null)
+			{
+				Parent = parent;
+			}
+
+			UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoApproveAnalysis, ITextStrings.ksRedoApproveAnalysis, Cache.ActionHandlerAccessor,
+				() =>
+				{
+					ApproveAnalysis(SelectedOccurrence, false, fSaveGuess);
+				});
+
+			// This should not make any data changes, since we're telling it not to save and anyway
+			// we already saved the current annotation. And it can't correctly place the focus box
+			// until the change we just did are completed and PropChanged sent. So keep this outside the UOW.
+			TargetBundle(target, false, fMakeDefaultSelection);
 		}
 
 		/// <summary>
@@ -149,16 +178,13 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Move to the next bundle in the direction indicated by fForward. If fSaveGuess is true, save guesses in the current position,
-		/// using Undo  text from the command. If skipFullyAnalyzedWords is true, move to the next item needing analysis, otherwise, the immediate next.
+		/// Move to the next bundle in the direction indicated by fForward. If fSaveGuess is true, save guesses in the current position.
+		/// If skipFullyAnalyzedWords is true, move to the next item needing analysis, otherwise, the immediate next.
 		/// If fMakeDefaultSelection is true, make the default selection within the moved focus box.
 		/// </summary>
-		public void OnNextBundle(ICommandUndoRedoText undoRedoText, bool fSaveGuess, bool skipFullyAnalyzedWords,
+		public void OnNextBundle(ICommandUndoRedoText _, bool fSaveGuess, bool skipFullyAnalyzedWords,
 			bool fMakeDefaultSelection, bool fForward)
 		{
-			int currentLineIndex = -1;
-			if (InterlinWordControl!= null)
-				currentLineIndex = InterlinWordControl.GetLineOfCurrentSelection();
 			var nextOccurrence = GetNextOccurrenceToAnalyze(fForward, skipFullyAnalyzedWords);
 			// If we are at the end of a segment we should move to the first Translation or note line (if any)
 			if(nextOccurrence.Segment != SelectedOccurrence.Segment || nextOccurrence == SelectedOccurrence)
@@ -169,7 +195,21 @@ namespace SIL.FieldWorks.IText
 					return;
 				}
 			}
-			InterlinDoc.TriggerAnalysisSelected(nextOccurrence, fSaveGuess, fMakeDefaultSelection);
+			TargetBundle(nextOccurrence, fSaveGuess, fMakeDefaultSelection);
+		}
+
+		/// <summary>
+		/// Move to the target bundle.
+		/// </summary>
+		/// <param name="target">The occurrence to move to.</param>
+		/// <param name="fSaveGuess">if true, saves guesses in the current position; if false, skips guesses but still saves edits.</param>
+		/// <param name="fMakeDefaultSelection">true to make the default selection within the moved focus box.</param>
+		public void TargetBundle(AnalysisOccurrence target, bool fSaveGuess, bool fMakeDefaultSelection)
+		{
+			int currentLineIndex = -1;
+			if (InterlinWordControl != null)
+				currentLineIndex = InterlinWordControl.GetLineOfCurrentSelection();
+			InterlinDoc.TriggerAnalysisSelected(target, fSaveGuess, fMakeDefaultSelection);
 			if (!fMakeDefaultSelection && currentLineIndex >= 0 && InterlinWordControl != null)
 				InterlinWordControl.SelectOnOrBeyondLine(currentLineIndex, 1);
 		}
