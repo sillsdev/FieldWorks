@@ -3789,7 +3789,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		public bool ShouldSave(bool fSaveGuess)
 		{
-			return m_caches.DataAccess.IsDirty() || fSaveGuess && UsingGuess;
+			return m_caches.DataAccess.IsDirty() || (fSaveGuess && UsingGuess);
 		}
 
 		/// <summary>
