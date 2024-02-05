@@ -160,6 +160,15 @@ namespace SIL.FieldWorks.IText
 			if (InterlinWordControl!= null)
 				currentLineIndex = InterlinWordControl.GetLineOfCurrentSelection();
 			var nextOccurrence = GetNextOccurrenceToAnalyze(fForward, skipFullyAnalyzedWords);
+			// If we are at the end of a segment we should move to the first Translation or note line (if any)
+			if(nextOccurrence.Segment != SelectedOccurrence.Segment || nextOccurrence == SelectedOccurrence)
+			{
+				if (InterlinDoc.SelectFirstTranslationOrNote())
+				{
+					// We moved to a translation or note line, exit
+					return;
+				}
+			}
 			InterlinDoc.TriggerAnalysisSelected(nextOccurrence, fSaveGuess, fMakeDefaultSelection);
 			if (!fMakeDefaultSelection && currentLineIndex >= 0 && InterlinWordControl != null)
 				InterlinWordControl.SelectOnOrBeyondLine(currentLineIndex, 1);
