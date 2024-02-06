@@ -48,7 +48,7 @@ namespace SIL.FieldWorks.IText
 			// This should not make any data changes, since we're telling it not to save and anyway
 			// we already saved the current annotation. And it can't correctly place the focus box
 			// until the change we just did are completed and PropChanged sent. So keep this outside the UOW.
-			OnNextBundle(cmd, false, false, false, true);
+			OnNextBundle(false, false, false, true);
 		}
 
 		/// <summary>
@@ -182,8 +182,7 @@ namespace SIL.FieldWorks.IText
 		/// If skipFullyAnalyzedWords is true, move to the next item needing analysis, otherwise, the immediate next.
 		/// If fMakeDefaultSelection is true, make the default selection within the moved focus box.
 		/// </summary>
-		public void OnNextBundle(ICommandUndoRedoText _, bool fSaveGuess, bool skipFullyAnalyzedWords,
-			bool fMakeDefaultSelection, bool fForward)
+		public void OnNextBundle(bool fSaveGuess, bool skipFullyAnalyzedWords, bool fMakeDefaultSelection, bool fForward)
 		{
 			var nextOccurrence = GetNextOccurrenceToAnalyze(fForward, skipFullyAnalyzedWords);
 			// If we are at the end of a segment we should move to the first Translation or note line (if any)
@@ -355,7 +354,7 @@ namespace SIL.FieldWorks.IText
 			// This should not make any data changes, since we're telling it not to save and anyway
 			// we already saved the current annotation. And it can't correctly place the focus box
 			// until the change we just did are completed and PropChanged sent. So keep this outside the UOW.
-			OnNextBundle(cmd, false, false, false, true);
+			OnNextBundle(false, false, false, true);
 		}
 
 		/// <summary>
@@ -453,7 +452,7 @@ namespace SIL.FieldWorks.IText
 
 		public bool OnApproveAndMoveNextSameLine(object cmd)
 		{
-			OnNextBundle(cmd as Command, true, false, false, true);
+			OnNextBundle(true, true, true, true);
 			return true;
 		}
 
@@ -484,7 +483,7 @@ namespace SIL.FieldWorks.IText
 
 		public bool OnBrowseMoveNextSameLine(object cmd)
 		{
-			OnNextBundle(cmd as Command, false, false, false, true);
+			OnNextBundle(false, false, false, true);
 			return true;
 		}
 
@@ -497,7 +496,7 @@ namespace SIL.FieldWorks.IText
 
 		public bool OnBrowseMoveNext(object cmd)
 		{
-			OnNextBundle(cmd as Command, false, false, true, true);
+			OnNextBundle(false, false, true, true);
 			return true;
 		}
 
@@ -566,7 +565,7 @@ namespace SIL.FieldWorks.IText
 		public void OnMoveFocusBoxRight(ICommandUndoRedoText undoRedoText, bool fSaveGuess)
 		{
 			// Move in the literal direction (LT-3706)
-			OnNextBundle(undoRedoText, fSaveGuess, false, true, !m_fRightToLeft);
+			OnNextBundle(fSaveGuess, false, true, !m_fRightToLeft);
 		}
 
 		/// <summary>
@@ -598,7 +597,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		public bool OnMoveFocusBoxLeft(object cmd)
 		{
-			OnNextBundle(cmd as ICommandUndoRedoText, true, false, true, m_fRightToLeft);
+			OnNextBundle(true, false, true, m_fRightToLeft);
 			return true;
 		}
 
@@ -621,7 +620,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		public bool OnMoveFocusBoxLeftNc(object cmd)
 		{
-			OnNextBundle(cmd as ICommandUndoRedoText, false, false, true, m_fRightToLeft);
+			OnNextBundle(false, false, true, m_fRightToLeft);
 			return true;
 		}
 
@@ -660,7 +659,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		public bool OnNextIncompleteBundle(object cmd)
 		{
-			OnNextBundle(cmd as ICommandUndoRedoText, true, true, true, true);
+			OnNextBundle(true, true, true, true);
 			return true;
 		}
 
@@ -671,7 +670,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		public bool OnNextIncompleteBundleNc(object cmd)
 		{
-			OnNextBundle(cmd as ICommandUndoRedoText, false, true, true, true);
+			OnNextBundle(false, true, true, true);
 			return true;
 		}
 
