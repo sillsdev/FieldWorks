@@ -235,7 +235,7 @@ namespace SIL.FieldWorks.XWorks
 			Model.RememberPassword = rememberPasswordCheckbox.Checked;
 			Model.Password = webonaryPasswordTextbox.Text;
 			Model.UserName = webonaryUsernameTextbox.Text;
-			Model.SiteName = webonarySiteNameTextbox.Text;
+			Model.SiteName = UploadToWebonaryController.NormalizeSiteName(webonarySiteNameTextbox.Text);
 			Model.SelectedReversals = GetSelectedReversals();
 			if(configurationBox.SelectedItem != null)
 			{

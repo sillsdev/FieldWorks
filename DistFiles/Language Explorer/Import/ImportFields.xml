@@ -935,7 +935,165 @@
 		</Field>
 	</Class>
 
-			<Class name="Function" partOf="Entry Subentry Sense">
+	<Class name="ExtendedNote" partOf="Sense">
+		<Field MDF="\end" id="end" multi="yes" property="Discussion"
+			   signature="MultiString" type="string" uiname="Extended Note Discussion">
+		  <Help>
+			<Usage>When you have a marker that describes information about this
+			extended note.</Usage>
+
+			<Settings>Set the Language Descriptor to the language of this
+			field.</Settings>
+
+			<Mapping>Yes</Mapping>
+
+			<Appends>Yes, appends field contents into a single note.</Appends>
+
+			<List>No</List>
+
+			<Multilingual>Yes</Multilingual>
+
+			<Examples>
+			  <Example>\end Introduces a substantive phrase with a common noun,
+			  verb or number as headword.</Example>
+			</Examples>
+		  </Help>
+		</Field>
+
+		<Field MDF="\ent" id="ent" list="yes" multi="no" property="ExtendedNoteType"
+		   signature="CmPossibility" type="string" uiname="Extended Note Type">
+			<Help>
+				<Usage>When you have a marker that records the type of the
+				extended note.</Usage>
+
+				<Settings>Set the Language Descriptor to the language of this field,
+				and check whether the content is a full name or
+				abbreviation.</Settings>
+
+				<Mapping>No</Mapping>
+
+				<Appends>No, only one extended note type is allowed.</Appends>
+
+				<List>Yes</List>
+
+				<Multilingual>No</Multilingual>
+
+				<Examples>
+				  <Example>\ent grammar (using name)</Example>
+				</Examples>
+				<Limitations>
+				  <Limitation>If you have extended note type fields in multiple languages in
+				  your SFM file, only one of these can be mapped to this field. The
+				  others should be excluded from input. Flex stores names in
+				  additional writing systems on each extended note type, but they cannot be
+				  imported in this way.</Limitation>
+
+				  <Limitation>Flex only allows one extended note type per extended note. 
+				  If you have multiple \ent fields for a given extended note, Flex will
+				  discard all but the last one, so if you don't want to lose information,
+				  you will need to concatenate them into a single field prior to
+				  import.</Limitation>
+				</Limitations>
+				<Extras>
+				  <Extra>This field links to an existing item in the extended note types list
+				  or creates a new item in the root of the list if an existing one is
+				  not found. The program checks both the name and abbreviation for a
+				  match. If a new sense type is created, the name and abbreviation
+				  will both be set to the field contents.</Extra>
+
+				  <Extra>If your extended note type field contents are inconsistent, you can
+				  either clean them up prior to import or clean them up after import.
+				  In this case, Flex will produce separate list items for each
+				  spelling.</Extra>
+				</Extras>
+			</Help>
+		</Field>
+	</Class>
+
+	<Class name="ExtendedNoteExample" partOf="ExtendedNote">
+		<Field MDF="\enex" id="enex" multi="yes" property="Example"
+			   signature="MultiString" type="string" uiname="Extended Note Example">
+		  <Help>
+			<Usage>When you have a marker that has the vernacular example
+			sentence for an extended note.</Usage>
+
+			<Settings>Set the Language Descriptor to the language of this
+			field.</Settings>
+
+			<Mapping>Yes</Mapping>
+
+			<Appends>No, additional \xv fields will start a new example
+			cluster.</Appends>
+
+			<List>No</List>
+
+			<Multilingual>Yes, for alternate vernacular writing
+			systems.</Multilingual>
+
+			<Examples>
+			  <Example>\enex Je m'appelle Sally.</Example>
+			</Examples>
+		  </Help>
+		</Field>
+		<Field MDF="\rf" id="ref" list="no" multi="no" property="Reference"
+			   signature="String" type="string" uiname="Reference">
+		  <Help>
+			<Usage>When you have a marker that indicates the reference for this extended note example
+			sentence.</Usage>
+
+			<Settings>Set the Language Descriptor to the language of this
+			field.</Settings>
+
+			<Mapping>Yes</Mapping>
+
+			<Appends>Yes, appends field contents into a single field.</Appends>
+
+			<List>No</List>
+
+			<Multilingual>No</Multilingual>
+
+			<Examples>
+			  <Example>\rf Bear and Fly 7.02</Example>
+			</Examples>
+		  </Help>
+		</Field>
+	  </Class>
+
+	<Class name="ExtendedNoteExampleTranslation" partOf="ExtendedNoteExample">
+		<Field MDF="\entr" id="entr" multi="yes" property="Translation"
+			   signature="MultiString" type="string" uiname="Extended Note Example Translation">
+			<Help>
+				<Usage>
+					When you have a marker that has a translation for an extended note example
+					sentence.
+				</Usage>
+
+				<Settings>
+					Set the Language Descriptor to the language of this
+					field.
+				</Settings>
+
+				<Mapping>Yes</Mapping>
+
+				<Appends>Yes, appends field contents into a single field.</Appends>
+
+				<List>No</List>
+
+				<Multilingual>Yes</Multilingual>
+
+				<Examples>
+					<Example>\entr My name is Sally.</Example>
+				</Examples>
+
+				<RelatedFields>
+					These should normally follow an \enex field.
+				</RelatedFields>
+			</Help>
+		</Field>
+	</Class>
+
+
+	<Class name="Function" partOf="Entry Subentry Sense">
 	<Field MDF="\lf" id="func" list="yes" multi="no"
 		   property="LexicalRelation" signature="LexRefType"
 		   type="string" uiname="Lexical Function">
@@ -1637,6 +1795,30 @@
 
 		<Examples>
 		  <Example>\bb See IJAL 20:30-35 for more information.</Example>
+		</Examples>
+	  </Help>
+	</Field>
+
+	<Field MDF="\exm" id="exm" multi="yes" property="Exemplar"
+		   signature="MultiString" type="string" uiname="Exemplar">
+	  <Help>
+		<Usage>When you have a marker that describes an exemplar. This is
+		typically an inflected form discussed in this sense. This covers \oi in
+		Philippine dictionaries.</Usage>
+
+		<Settings>Set the Language Descriptor to the language of this
+		field.</Settings>
+
+		<Mapping>Yes</Mapping>
+
+		<Appends>Yes, appends field contents into a single note.</Appends>
+
+		<List>No</List>
+
+		<Multilingual>Yes</Multilingual>
+
+		<Examples>
+		  <Example>\exm mun'abatol.</Example>
 		</Examples>
 	  </Help>
 	</Field>
@@ -2360,7 +2542,7 @@
 
 		<Mapping>Yes</Mapping>
 
-		<Appends>Yes, appends field contents into a single field.</Appends>
+		<Appends>No</Appends>
 
 		<List>No</List>
 
@@ -2923,7 +3105,7 @@
 		<Multilingual>No</Multilingual>
 
 		<Examples>
-		  <Example>\dle French</Example>
+		  <Example>\sdle French</Example>
 		</Examples>
 
 		<Limitations>

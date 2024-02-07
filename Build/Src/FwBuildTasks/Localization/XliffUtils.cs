@@ -26,6 +26,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			</xliff>";
 		internal const string EmptyGroup = "<group id='{0}'></group>";
 		internal const string TransUnitTemplate = "<trans-unit id='{0}'><source>{1}</source></trans-unit>";
+		internal const string ContextTemplate = "<context>{0}</context>";
 		internal const string FinalTargetTemplate = "<target state='" + State.Final + "'>{0}</target>";
 		internal const string TransUnit = "trans-unit";
 		private static readonly string[] AcceptableTranslationStates = { State.Translated, State.Final };

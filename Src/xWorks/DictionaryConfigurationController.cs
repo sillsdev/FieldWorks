@@ -1145,7 +1145,16 @@ namespace SIL.FieldWorks.XWorks
 				if (availableWSs.All(opt => opt.Id != wsOptions.Options[i].Id) &&
 					WritingSystemServices.GetMagicWsIdFromName(wsOptions.Options[i].Id) == 0)
 				{
-					wsOptions.Options.RemoveAt(i);
+					// If Enabled, then add it to availableWSs.
+					if (wsOptions.Options[i].IsEnabled)
+					{
+						availableWSs.Add(wsOptions.Options[i]);
+					}
+					// If not Enabled, then remove it from wsOptions.Options.
+					else
+					{
+						wsOptions.Options.RemoveAt(i);
+					}
 				}
 			}
 			// ensure at least one is enabled (default to the first, which is always Magic)
@@ -1163,32 +1172,32 @@ namespace SIL.FieldWorks.XWorks
 			switch (wsType)
 			{
 				case DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular:
-					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsVern.ToString() });
-					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(
-							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = WritingSystemServices.kwsVern.ToString() });
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption { Id = ws.Id }));
 					break;
 				case DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis:
-					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsAnal.ToString() });
-					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
-							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = WritingSystemServices.kwsAnal.ToString() });
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption { Id = ws.Id }));
 					break;
 				case DictionaryNodeWritingSystemOptions.WritingSystemType.Both:
-					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsVern.ToString() });
-					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsAnal.ToString() });
-					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Select(
-							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
-					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
-							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = WritingSystemServices.kwsVern.ToString() });
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = WritingSystemServices.kwsAnal.ToString() });
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption { Id = ws.Id }));
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption { Id = ws.Id }));
 					break;
 				case DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation:
-					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsPronunciation.ToString() });
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = WritingSystemServices.kwsPronunciation.ToString() });
 					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentPronunciationWritingSystems.Select(
-							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption { Id = ws.Id }));
 					break;
 				case DictionaryNodeWritingSystemOptions.WritingSystemType.Reversal:
-					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption() { Id = WritingSystemServices.kwsReversalIndex.ToString() });
-					wsList.AddRange(cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(
-							ws => new DictionaryNodeListOptions.DictionaryNodeOption() { Id = ws.Id }));
+					wsList.Add(new DictionaryNodeListOptions.DictionaryNodeOption { Id = WritingSystemServices.kwsReversalIndex.ToString() });
+					wsList.AddRange(cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Select(
+							ws => new DictionaryNodeListOptions.DictionaryNodeOption { Id = ws.Id }));
 					break;
 			}
 			return wsList;
@@ -1368,18 +1377,25 @@ namespace SIL.FieldWorks.XWorks
 			{
 				customField.Parent = parent;
 			}
+
+			// customFieldNodes has one node representing each customField. These fields might be duplicated
+			// in the parent or in its group (each with different LabelSuffix). So, make a copy of customFieldNodes,
+			// that we will remove custom fields from, to determine if there are any custom fields that need to be
+			// added to parent. (LT-21310).
+			List<ConfigurableDictionaryNode> customFieldNodesToAddToParent = new List<ConfigurableDictionaryNode>(customFieldNodes);
+
 			if (parent.Children == null)
 				parent.Children = new List<ConfigurableDictionaryNode>();
 			else
 			{
-				MergeCustomFieldLists(parent.Children, customFieldNodes);
+				MergeCustomFieldLists(parent.Children, customFieldNodes, customFieldNodesToAddToParent);
 				// If we have children, through the children and grouped children, removing any custom fields that no longer exist.
 				foreach (var group in parent.Children.Where(child => child.DictionaryNodeOptions is DictionaryNodeGroupingOptions && child.Children != null))
 				{
 					// Set the parent on the customFieldNodes (for Contains)
 					foreach(var customField in customFieldNodes)
 						customField.Parent = group;
-					MergeCustomFieldLists(group.Children, customFieldNodes);
+					MergeCustomFieldLists(group.Children, customFieldNodes, customFieldNodesToAddToParent);
 				}
 				// Set the parent back on the customFieldNodes (for when new fields are added)
 				foreach(var customField in customFieldNodes)
@@ -1387,10 +1403,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// Add any custom fields that didn't already exist in the children (at the end).
-			parent.Children.AddRange(customFieldNodes);
+			parent.Children.AddRange(customFieldNodesToAddToParent);
 		}
 
-		private static void MergeCustomFieldLists(List<ConfigurableDictionaryNode> existingNodes, List<ConfigurableDictionaryNode> customFieldNodes)
+		private static void MergeCustomFieldLists(List<ConfigurableDictionaryNode> existingNodes, List<ConfigurableDictionaryNode> customFieldNodes, List<ConfigurableDictionaryNode> customFieldNodesToAddToParent)
 		{
 			// Traverse through the existing nodes from end to beginning, removing any custom fields that no longer exist.
 			for (var i = existingNodes.Count - 1; i >= 0; --i)
@@ -1404,7 +1420,13 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
-					customFieldNodes.Remove(configNode); // field found
+					// We don't want to add a custom field to the parent if the custom field is used in
+					// a child (even if that child uses a custom field with a LabelSuffix).
+					// Since the Equals() method on ConfigurableDictionaryNode compares the LabelSuffix
+					// (along with Label and FieldDescription), calling Remove() will not remove a custom
+					// field if configNode contains a LabelSuffix. So use our own remove code.
+					customFieldNodesToAddToParent.RemoveAll(x =>
+						((x.Label == configNode.Label) && (x.FieldDescription == configNode.FieldDescription)));
 				}
 			}
 		}

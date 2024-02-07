@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.XWorks
 			configurationsListView.LostFocus += OnLostFocus;
 			configurationsListView.GotFocus += OnGotFocus;
 
-			m_helpProvider = new HelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };
+			m_helpProvider = new FlexHelpProvider { HelpNamespace = m_helpTopicProvider.HelpFile };
 			m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			m_helpProvider.SetShowHelp(this, true);

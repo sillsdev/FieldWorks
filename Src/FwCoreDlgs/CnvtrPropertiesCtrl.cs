@@ -10,6 +10,7 @@ using ECInterfaces;
 using Icu;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Resources;
 using SilEncConverters40;
@@ -225,7 +226,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CnvtrPropertiesCtrl));
 			this.lblSpecs = new System.Windows.Forms.Label();
-			this.helpProvider1 = new HelpProvider();
+			this.helpProvider1 = new FlexHelpProvider();
 			this.lblConversion = new System.Windows.Forms.Label();
 			this.lblName = new System.Windows.Forms.Label();
 			this.lblConverter = new System.Windows.Forms.Label();

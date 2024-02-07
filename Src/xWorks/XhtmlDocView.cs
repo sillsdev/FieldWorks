@@ -782,6 +782,11 @@ namespace SIL.FieldWorks.XWorks
 			const string html2PdfExe = "FieldWorksPdfMaker.exe";
 			// Generate all entries to an xhtml file on disk
 			var xhtmlPath = SaveConfiguredXhtmlWithProgress(GetCurrentConfiguration(false), true);
+			if (xhtmlPath == null)
+			{
+				// the user canceled
+				return;
+			}
 			// In the past, we have had difficulty generating large dictionaries and then printing from within FieldWorks (LT-20658, LT-20883).
 			// Instead, generate a PDF and open it in the system viewer for the user to print.
 			var pdfPrinterPath = Path.Combine(FileLocationUtilities.DirectoryOfTheApplicationExecutable, html2PdfExe);

@@ -762,6 +762,17 @@ namespace SIL.FieldWorks.Discourse
 				m_logic.StTextHvo = 0;
 				m_allColumns = new ICmPossibility[0];
 			}
+
+			if (m_chart != null)
+			{
+				m_body.SetRoot(m_chart.Hvo, m_allColumns, ChartIsRtL);
+				GetAndScrollToBookmark();
+			}
+			else
+			{
+				m_body.SetRoot(0, null, false);
+			}
+
 			if (m_template != null && m_template.Hvo != oldTemplateHvo)
 			{
 				m_fInColWidthChanged = true;
@@ -797,16 +808,6 @@ namespace SIL.FieldWorks.Discourse
 				{
 					m_fInColWidthChanged = false;
 				}
-			}
-
-			if (m_chart != null)
-			{
-				m_body.SetRoot(m_chart.Hvo, m_allColumns, ChartIsRtL);
-				GetAndScrollToBookmark();
-			}
-			else
-			{
-				m_body.SetRoot(0, null, false);
 			}
 
 			// If necessary adjust number of buttons
@@ -858,7 +859,7 @@ namespace SIL.FieldWorks.Discourse
 				list.PossibilitiesOS.Add(newKid);
 				RecordList.SetUpConstChartTemplateTemplate(newKid);
 				Cache.DomainDataByFlid.EndUndoTask();
-				m_mediator.PostMessage("FollowLink", new FwLinkArgs(DiscourseStrings.ksNewTemplateLink, newKid.Guid));
+				m_mediator.PostMessage("FollowLink", new FwLinkArgs("charttempEdit", newKid.Guid));
 				selection.SelectedItem = m_template;
 				return;
 			}

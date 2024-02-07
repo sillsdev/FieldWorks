@@ -28,6 +28,7 @@ using SIL.PlatformUtilities;
 using SIL.TestUtilities;
 using SIL.WritingSystems;
 using XCore;
+// ReSharper disable StringLiteralTypo
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -804,7 +805,7 @@ namespace SIL.FieldWorks.XWorks
 			// then when we generate XHTML for Main Dictionary, the shared grammatical info
 			// (shared between the other two senses) should cause the gramm. info to be
 			// put out front.
-			var mainDict = CreatePublicationType("Main Dictionary", Cache);
+			var mainDict = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0];
 			thirdSense.DoNotPublishInRC.Add(mainDict);
 
 			// create decorator
@@ -1368,7 +1369,7 @@ namespace SIL.FieldWorks.XWorks
 			// LT-19073: Definition and gloss display behaviour for LT-7445 should apply to "Definition (or Gloss)" field in Referenced Complex Froms.
 			// Check that different combinations of present or missing definition have successful fallback to gloss, and independently of other senses.
 
-			var typeMain = CreatePublicationType("main", Cache);
+			var typeMain = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0];
 
 			var entryEntry = CreateInterestingLexEntry(Cache, "entry");
 
@@ -5099,22 +5100,120 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var testEntry = CreateInterestingLexEntry(Cache);
 			var sense = testEntry.SensesOS[0];
-			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
-			sense.PicturesOS.Add(sensePic);
-			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			sensePic.Caption.set_String(wsEn, TsStringUtils.MakeString("caption", wsEn));
-			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
-			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
-			Cache.LangProject.MediaOC.Add(folder);
-			folder.FilesOC.Add(pic);
-			pic.InternalPath = "picture";
-			sensePic.PictureFileRA = pic;
+			sense.PicturesOS.Add(CreatePicture(Cache));
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
 			const string oneSenseWithPicture = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/img[@class='photo' and @id]";
 			const string oneSenseWithPictureCaption = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='caption']//span[text()='caption']";
+			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPicture, 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPictureCaption, 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_PictureFileMissing()
+		{
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var thumbNailNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA", CSSClassNameOverride = "photo" };
+			var senseNumberNode = new ConfigurableDictionaryNode { FieldDescription = "SenseNumberTSS", CSSClassNameOverride = "sensenumber" };
+			var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", DictionaryNodeOptions = wsOpts };
+			var pictureNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodePictureOptions(),
+				FieldDescription = "PicturesOfSenses",
+				CSSClassNameOverride = "Pictures",
+				Children = new List<ConfigurableDictionaryNode> { thumbNailNode, senseNumberNode, captionNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = CreateInterestingLexEntry(Cache);
+			var sense = testEntry.SensesOS[0];
+			sense.PicturesOS.Add(CreatePicture(Cache, false));
+
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+			Assert.That(result, Is.Empty);
+		}
+
+		/// <summary>LT-21573: PictureFileRA can be null after an incomplete SFM import</summary>
+		[Test]
+		public void GenerateXHTMLForEntry_PictureFileRAMissing()
+		{
+			var wsOpts = GetWsOptionsForLanguages(new[] { "en" });
+			var thumbNailNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA", CSSClassNameOverride = "photo" };
+			var senseNumberNode = new ConfigurableDictionaryNode { FieldDescription = "SenseNumberTSS", CSSClassNameOverride = "sensenumber" };
+			var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", DictionaryNodeOptions = wsOpts };
+			var pictureNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodePictureOptions(),
+				FieldDescription = "PicturesOfSenses",
+				CSSClassNameOverride = "Pictures",
+				Children = new List<ConfigurableDictionaryNode> { thumbNailNode, senseNumberNode, captionNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = CreateInterestingLexEntry(Cache);
+			var pic = CreatePicture(Cache);
+			pic.PictureFileRA = null;
+			testEntry.SensesOS[0].PicturesOS.Add(pic);
+
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+			Assert.That(result, Is.Empty);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_PictureWithCreator()
+		{
+			var thumbNailNode = new ConfigurableDictionaryNode { FieldDescription = "PictureFileRA", CSSClassNameOverride = "photo" };
+			var creatorNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "@extension:SIL.FieldWorks.XWorks.DictConfigModelExt.Creator",
+				CSSClassNameOverride = "creator"
+			};
+			var pictureNode = new ConfigurableDictionaryNode
+			{
+				DictionaryNodeOptions = new DictionaryNodePictureOptions(),
+				FieldDescription = "PicturesOfSenses",
+				CSSClassNameOverride = "Pictures",
+				Children = new List<ConfigurableDictionaryNode> { thumbNailNode, creatorNode }
+			};
+			var sensesNode = new ConfigurableDictionaryNode { FieldDescription = "Senses" };
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = CreateInterestingLexEntry(Cache);
+			var sense = testEntry.SensesOS[0];
+			sense.PicturesOS.Add(CreatePicture(Cache));
+
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(testEntry, mainEntryNode, null, settings);
+			const string oneSenseWithPicture = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/img[@class='photo' and @id]";
+			const string oneSenseWithPictureCaption = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='creator' and text()='Jason Naylor']";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPicture, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPictureCaption, 1);
@@ -6989,6 +7088,56 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordXpath, 1);
 		}
 
+		// ComplexForm: Don't generate the reference if we are hiding minor entries AND we are publishing to Webonary.
+		[Test]
+		public void GenerateXHTMLForEntry_ComplexFormDontGenerateReference()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+			var subentry = CreateInterestingLexEntry(Cache);
+			var subentryRef = CreateComplexForm(Cache, lexentry, subentry, true);
+
+			var headwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MLHeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var refTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = ConfiguredLcmGenerator.LookupComplexEntryType,
+				CSSClassNameOverride = "complexformtypes",
+			};
+			var complexOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Complex, Cache);
+			var subentryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { refTypeNode, headwordNode },
+				DictionaryNodeOptions = complexOptions,
+				FieldDescription = "Subentries"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { subentryNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			subentryRef.HideMinorEntry = 1;
+			const string withReference = "/div[@class='lexentry']/span[@class='subentries']/span[@class='subentry']/span[@class='headword']/span[@lang='fr']/span[@lang='fr']/a[@href]";
+			const string withoutReference = "/div[@class='lexentry']/span[@class='subentries']/span[@class='subentry']/span[@class='headword']/span[@lang='fr']/span[@lang='fr']";
+
+			// When hiding minor entries this should still generate the reference (if not publishing to Webonary).
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, false, false);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 2);
+
+			//SUT
+			// When hiding minor entries and publishing to Webonary this should NOT generate the reference.
+			settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, false, true);
+			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(lexentry, mainEntryNode, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 0);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withoutReference, 2);
+		}
+
 		[Test]
 		public void GenerateXHTMLForEntry_GeneratesVariant_WithEmptyList()
 		{
@@ -7128,6 +7277,134 @@ namespace SIL.FieldWorks.XWorks
 			variantEntryRef.HideMinorEntry = 1;
 			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(variantEntry, model, null, settings);
 			Assert.That(result, Is.Null.Or.Empty);
+		}
+
+		// Variant: Continue to generate the reference even if we are hiding the minor entry (useful for preview).
+		[Test]
+		public void GenerateXHTMLForEntry_VariantGenerateReferenceForHiddenEntry()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+			var variantEntry = CreateInterestingLexEntry(Cache);
+			var variantEntryRef = CreateVariantForm(Cache, lexentry, variantEntry);
+			variantEntryRef.VariantEntryTypesRS[0] = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0] as ILexEntryType;
+
+			var variantFormNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				CSSClassNameOverride = "headword",
+				SubField = "HeadWordRef",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "vernacular" })
+			};
+			var variantTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var variantTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
+			};
+			var variantNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNode, variantFormNode },
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant, Cache)
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { variantNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode },
+				IsRootBased = false
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, false, false);
+			const string withReference = "/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='headword']/span[@lang='fr']/span[@lang='fr']/a[@href]";
+
+			// When not hiding minor entries this should generate the reference.
+			variantEntryRef.HideMinorEntry = 0;
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(lexentry, model, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 2);
+
+			//SUT
+			// When hiding minor entries this should still generate the reference.
+			variantEntryRef.HideMinorEntry = 1;
+			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(lexentry, model, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 2);
+		}
+
+		// Variant: Don't generate the reference if we are hiding minor entries AND we are publishing to Webonary.
+		[Test]
+		public void GenerateXHTMLForEntry_VariantDontGenerateReference()
+		{
+			var lexentry = CreateInterestingLexEntry(Cache);
+			var variantEntry = CreateInterestingLexEntry(Cache);
+			var variantEntryRef = CreateVariantForm(Cache, lexentry, variantEntry);
+			variantEntryRef.VariantEntryTypesRS[0] = Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS[0] as ILexEntryType;
+
+			var variantFormNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwningEntry",
+				CSSClassNameOverride = "headword",
+				SubField = "HeadWordRef",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "vernacular" })
+			};
+			var variantTypeNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Name",
+				IsEnabled = true,
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "analysis" })
+			};
+			var variantTypeNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantEntryTypesRS",
+				CSSClassNameOverride = "variantentrytypes",
+				IsEnabled = true,
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNameNode },
+			};
+			var variantNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "VariantFormEntryBackRefs",
+				Children = new List<ConfigurableDictionaryNode> { variantTypeNode, variantFormNode },
+				DictionaryNodeOptions = GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant, Cache)
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { variantNode }
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode },
+				IsRootBased = false
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
+
+			variantEntryRef.HideMinorEntry = 1;
+			const string withReference = "/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='headword']/span[@lang='fr']/span[@lang='fr']/a[@href]";
+			const string withoutReference = "/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='headword']/span[@lang='fr']/span[@lang='fr']";
+
+			// When hiding minor entries this should still generate the reference (if not publishing to Webonary).
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, false, false);
+			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(lexentry, model, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 2);
+
+			//SUT
+			// When hiding minor entries and publishing to Webonary this should NOT generate the reference.
+			settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, false, true);
+			result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(lexentry, model, null, settings);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 0);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withoutReference, 2);
 		}
 
 		public enum FormType { Specified, Unspecified, None }
@@ -7314,15 +7591,15 @@ namespace SIL.FieldWorks.XWorks
 			// The second example of the first sense should not be published at all, since it is not published in main and
 			// its owner is not published in test.
 			var entryCorps = CreateInterestingLexEntry(Cache, "corps", "body");
+			entryCorps.DoNotPublishInRC.Remove(typeMain);
+			entryCorps.DoNotPublishInRC.Remove(typeTest);
 			var Pronunciation = AddPronunciationToEntry(entryCorps, "pronunciation", m_wsFr, Cache);
 			var exampleCorpsBody1 = AddExampleToSense(entryCorps.SensesOS[0], "Le corps est gros.", Cache, m_wsFr, m_wsEn, "The body is big.");
 			var exampleCorpsBody2 = AddExampleToSense(entryCorps.SensesOS[0], "Le corps est esprit.", Cache, m_wsFr, m_wsEn, "The body is spirit.");
 			AddSenseToEntry(entryCorps, "corpse", m_wsEn, Cache);
 			AddExampleToSense(entryCorps.SensesOS[1], "Le corps est mort.", Cache, m_wsFr, m_wsEn, "The corpse is dead.");
 
-			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
-			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
-			sensePic.Caption.set_String(wsFr, TsStringUtils.MakeString("caption", wsFr));
+			var sensePic = CreatePicture(Cache, ws: "fr");
 			entryCorps.SensesOS[0].PicturesOS.Add(sensePic);
 
 			Pronunciation.DoNotPublishInRC.Add(typeTest);
@@ -7336,6 +7613,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// This entry is published only in main, together with its sense and example.
 			var entryBras = CreateInterestingLexEntry(Cache, "bras", "arm");
+			entryBras.DoNotPublishInRC.Remove(typeMain);
 			AddExampleToSense(entryBras.SensesOS[0], "Mon bras est casse.", Cache, m_wsFr, m_wsEn, "My arm is broken.");
 			AddSenseToEntry(entryBras, "hand", m_wsEn, Cache);
 			AddExampleToSense(entryBras.SensesOS[1], "Mon bras va bien.", Cache, m_wsFr, m_wsEn, "My arm is fine.");
@@ -7350,18 +7628,25 @@ namespace SIL.FieldWorks.XWorks
 			AddExampleToSense(entryOreille.SensesOS[0], "Lac Pend d'Oreille est en Idaho.", Cache, m_wsFr, m_wsEn, "Lake Pend d'Oreille is in Idaho.");
 			entryOreille.DoNotPublishInRC.Add(typeMain);
 			entryOreille.SensesOS[0].DoNotPublishInRC.Add(typeMain);
+			entryOreille.DoNotPublishInRC.Remove(typeTest);
+			entryOreille.SensesOS[0].DoNotPublishInRC.Remove(typeTest);
 			//exampleOreille1.DoNotPublishInRC.Add(typeMain); -- should not show in main because its owner is not shown there
 
 			var entryEntry = CreateInterestingLexEntry(Cache, "entry", "entry");
+			entryEntry.DoNotPublishInRC.Remove(typeMain);
+			entryEntry.DoNotPublishInRC.Remove(typeTest);
 			var entryMainsubentry = CreateInterestingLexEntry(Cache, "mainsubentry", "mainsubentry");
+			entryMainsubentry.DoNotPublishInRC.Remove(typeMain);
 			entryMainsubentry.DoNotPublishInRC.Add(typeTest);
 			CreateComplexForm(Cache, entryEntry, entryMainsubentry, true);
 
 			var entryTestsubentry = CreateInterestingLexEntry(Cache, "testsubentry", "testsubentry");
 			entryTestsubentry.DoNotPublishInRC.Add(typeMain);
+			entryTestsubentry.DoNotPublishInRC.Remove(typeTest);
 			CreateComplexForm(Cache, entryEntry, entryTestsubentry, true);
 			var bizarroVariant = CreateInterestingLexEntry(Cache, "bizarre", "myVariant");
 			CreateVariantForm(Cache, entryEntry, bizarroVariant, "Spelling Variant");
+			bizarroVariant.DoNotPublishInRC.Remove(typeMain);
 			bizarroVariant.DoNotPublishInRC.Add(typeTest);
 
 			// Note that the decorators must be created (or refreshed) *after* the data exists.
@@ -7760,7 +8045,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_GeneratesComplexFormEntryTypesLabelWithNoRepetition()
 		{
-			var typeMain = CreatePublicationType("main", Cache);
+			var typeMain = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0];
 
 			var entryEntry = CreateInterestingLexEntry(Cache, "entry");
 
@@ -7821,7 +8106,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateXHTMLForEntry_GeneratesComplexFormEntryTypesAndNamesGroup()
 		{
-			var typeMain = CreatePublicationType("main", Cache);
+			var typeMain = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0];
 
 			var entryEntry = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(entryEntry, "entry", m_wsFr);
@@ -8685,7 +8970,39 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(extraDirection1);
 		}
 
-		private const string crossRefOwnerTypeXpath =
+	  [Test]
+	  public void GenerateXHTMLForEntry_EmbeddedHyperlinkGeneratesAnchor()
+	  {
+		  var headwordNode = new ConfigurableDictionaryNode
+		  {
+			  FieldDescription = "Bibliography",
+			  CSSClassNameOverride = "bib",
+			  DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+		  };
+		  var mainEntryNode = new ConfigurableDictionaryNode
+		  {
+			  Children = new List<ConfigurableDictionaryNode> { headwordNode },
+			  FieldDescription = "LexEntry"
+		  };
+		  CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+		  var entry = CreateInterestingLexEntry(Cache);
+		  var multiRunString = MakeVernTss("a link", Cache);
+		  var stringBldr = multiRunString.GetBldr();
+		  // Set the hyperlink style.
+		  stringBldr.SetStrPropValue(2, stringBldr.Length, (int)FwTextPropType.ktptNamedStyle, "Hyperlink");
+		  // Set the hyperlink data
+		  const string testUrl = "https://software.sil.org/fieldworks";
+		  // Note: There is a little wart stored in the front of external links in the string properties
+		  stringBldr.SetStrPropValue(2, stringBldr.Length, (int)FwTextPropType.ktptObjData,
+			  (char)FwObjDataTypes.kodtExternalPathName + testUrl);
+		  entry.Bibliography.set_String(m_wsFr, stringBldr.GetString());
+		  // SUT
+		  var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, DefaultSettings);
+		  string nestedLink = $"/div[@class='lexentry']/span[@class='bib']/span/span/a[@href='{testUrl}']";
+		  AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(nestedLink, 1);
+	  }
+
+	  private const string crossRefOwnerTypeXpath =
 			"//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='ownertype_name']";
 
 		private static string CrossRefOwnerTypeXpath(string type)
@@ -9843,6 +10160,48 @@ namespace SIL.FieldWorks.XWorks
 			const string expectedHwTemplate = "/div[@class='lexentry']/span[@class='headword']/span[@lang='en']/a[@href='%headword.guid%' and text()='%headword.[lang=en].value%']";
 			AssertThatXmlIn.String(result[0]).HasSpecifiedNumberOfMatchesForXpath(expectedTemplate, 1);
 			AssertThatXmlIn.String(result[0]).HasSpecifiedNumberOfMatchesForXpath(expectedHwTemplate, 1);
+		}
+
+		[Test]
+		public void GenerateXHTMLForEntry_BadWaveFileThrowsWithEntryInfo()
+		{
+			var pronunciationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "PronunciationsOS",
+				CSSClassNameOverride = "Pronunciations",
+				Children = new List<ConfigurableDictionaryNode> { CreateMediaNode() }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				Children = new List<ConfigurableDictionaryNode> { pronunciationsNode },
+				FieldDescription = "LexEntry"
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			var pronunciation =
+				Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
+			entry.PronunciationsOS.Add(pronunciation);
+
+			var tempWavFilePath = Path.GetTempFileName() + ".wav";
+			var badWavContainer =
+				Cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
+			pronunciation.MediaFilesOS.Add(badWavContainer);
+			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(folder);
+			var badWavFile =
+				Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			folder.FilesOC.Add(badWavFile);
+			badWavContainer.MediaFileRA = badWavFile;
+			File.WriteAllText(tempWavFilePath, "I am not a wave file");
+			badWavFile.InternalPath = tempWavFilePath;
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache,
+				new ReadOnlyPropertyTable(m_propertyTable), true, true,
+				Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()), false, true);
+			//SUT
+			Assert.That(
+				() => ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null,
+					settings),
+				Throws.Exception.With.Message.Contains("Exception generating entry:"));
 		}
 	}
 

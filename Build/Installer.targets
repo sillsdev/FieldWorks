@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
 	<!-- ########################################################################################################## -->
 	<!-- ### Configuration properties - Review and edit these values as needed.                                 ### -->
 	<!-- ########################################################################################################## -->
@@ -7,7 +7,6 @@
 	<PropertyGroup>
 		<ApplicationName>FieldWorks Language Explorer</ApplicationName>
 		<SafeApplicationName>FieldWorks</SafeApplicationName> <!-- should not contain any spaces or illegal filename characters -->
-		<CopyrightYear>2021</CopyrightYear>
 		<Manufacturer>SIL International</Manufacturer>
 		<SafeManufacturer>SIL</SafeManufacturer>
 	</PropertyGroup>
@@ -16,16 +15,6 @@
 	(this will get used by CallTarget as well as DependsOnTargets but not MSBuild) -->
 	<PropertyGroup>
 		<Configuration>Release</Configuration>
-	</PropertyGroup>
-
-	<!-- ########################################################################################################## -->
-	<!-- ### PRODUCT ID GUID definition : This value must be UNIQUE for each base build.  Furthermore, every    ### -->
-	<!-- ### base build must get its own unique third number (minor version) in the version number sequence.    ### -->
-	<!-- ########################################################################################################## -->
-
-	<!-- $(ApplicationName) 1.0.0.X ($(ApplicationName) build)-->
-	<PropertyGroup>
-		<ProductIdGuid>E6B62961-EA79-4E29-BA9C-6E19BB62656E</ProductIdGuid>
 	</PropertyGroup>
 
 	<!-- ########################################################################################################## -->
@@ -104,10 +93,23 @@
 		<Error Text="The Platform property must be set on the command line to x86 or x64."  Condition="'$(Platform)' == ''" />
 		<Error Text="Installer must be run for release builds [config=$(config)]"  Condition="'$(config)' != 'release'" />
 	</Target>
+
+	<!--
+		Removing files breaks the ability to patch and requires a new Base build to update.
+		To improve our user experience we may want to delay making a new Base build so this target adds zero byte files to
+		replace files that were removed (for instance during a library update).
+		A base build should warn if we have 'RemovedSinceLastBase' items to help us remember to clear these out.
+	-->
+	<Target Name="RescuePatching">
+		<!-- <ItemGroup>
+			<RemovedSinceLastBase Include="$(dir-outputBase)/Example.dll" />
+		</ItemGroup>
+		<WriteLinesToFile File="%(RemovedSinceLastBase.FullPath)" Lines="" /> -->
+	</Target>
 	<!-- ########################################################################################################## -->
 	<!-- ### Compile Targets                                                                                    ### -->
 	<!-- ########################################################################################################## -->
-	<Target Name="ProductCompile" DependsOnTargets="remakefw">
+	<Target Name="ProductCompile" DependsOnTargets="remakefw;RescuePatching">
 		<MSBuild Projects="$(InstallerDir)/CustomActions/CustomActions.sln" Targets="CustomActions" Properties="Configuration=Release;Platform=x86"/>
 	</Target>
 
@@ -172,7 +174,6 @@
 			<DevTestArtifacts Include="$(OutputDirForConfig)\*.vrs"/> <!-- versification files from some unit tests -->
 			<DevTestArtifacts Include="$(OutputDirForConfig)\Castle.Core.dll"/>
 			<DevTestArtifacts Include="$(OutputDirForConfig)\Moq.dll"/>
-			<DevTestArtifacts Include="$(OutputDirForConfig)\System.Runtime.CompilerServices.Unsafe.dll"/>
 			<DevTestArtifacts Include="$(OutputDirForConfig)\System.Threading.Tasks.Extensions.dll"/>
 			<FontFiles Include="$(fwrt)\DistFiles\Fonts\Raw\Quivira.otf"/>
 			<FontFiles Include="$(DownloadsDir)\Fonts\**\*.ttf"/>
@@ -395,7 +396,7 @@
 			Condition="!Exists('$(WixLibsDir)/vcredist_2015-19_x64.exe') And $(Platform)=='x64'"
 			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 14.1 runtime -->
 		<!-- FLEx Bridge -->
-		<DownloadFile Address="https://build.palaso.org/guestAuth/repository/download/FLExBridgeDevelopWin32InstallerSansPublish/fw-9.1.18.tcbuildtag/FLExBridge_Offline.exe"
+		<DownloadFile Address="https://build.palaso.org/guestAuth/repository/download/FLExBridgeDevelopWin32InstallerSansPublish/fw-9.1.22.tcbuildtag/FLExBridge_Offline.exe"
 			Condition="!Exists('$(WixLibsDir)/FLExBridge_Offline.exe')"
 			DownloadsDir="$(WixLibsDir)"/> <!-- TODO: always download to get the latest version -->
 	</Target>
@@ -431,7 +432,12 @@
 	</PropertyGroup>
 
 	<Target Name="BuildProductBaseMsi" DependsOnTargets="InstallerVersionNumbers">
+		<Warning Text="RemovedSinceLastBase should be cleared out before making a new base build." Condition="'@(RemovedSinceLastBase)' != ''" />
 		<Message Text="Building FieldWorks Base Msi for $(Arch)" Condition="'$(action)'!='test'"/>
+		<MSBuild.ExtensionPack.Framework.Guid TaskAction="Create">
+			<Output TaskParameter="FormattedGuidString" PropertyName="ProductIdGuid"/>
+		</MSBuild.ExtensionPack.Framework.Guid>
+		<Message Text="Generated GUID '$(ProductIdGuid)'"/>
 		<PropertyGroup>
 			<MsiFile>$(SafeApplicationName)_$(Revision).msi</MsiFile>
 			<BaseBuildDir>$(InstallerDir)/BaseInstallerBuild</BaseBuildDir>
@@ -439,7 +445,6 @@
 		</PropertyGroup>
 		<!-- Suppress ICE30 because we and Encoding Converters MM both install Geckofx, resulting in an ICE warning for double ref counting -->
 		<Exec WorkingDirectory="$(BaseBuildDir)" Command="(set SuppressICE=-sice:ICE30) &amp; buildBaseInstaller.bat $(BaseBuildArgs)" />
-
 		<ItemGroup>
 			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.exe"/>
 			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.msi"/>
@@ -447,12 +452,16 @@
 		<Move SourceFiles="@(InstallerFiles)" DestinationFiles="@(InstallerFiles -> '$(InstallersBaseDir)\%(Filename)_$(Arch)%(Extension)')"/>
 
 		<WriteLinesToFile File="$(AppBuildDir)/version" Overwrite="true" Lines="$(BuildVersion)" />
+		<WriteLinesToFile File="$(AppBuildDir)/ProductIdGuid" Overwrite="true" Lines="$(ProductIdGuid)" />
 	</Target>
 
 	<Target Name="BuildProductPatchMsp" DependsOnTargets="InstallerVersionNumbers">
 	<!-- TODO: work on Patch process -->
 		<ReadLinesFromFile File="$(AppBuildMasterDir)/version">
 			<Output TaskParameter="Lines" PropertyName="BaseVersion" />
+		</ReadLinesFromFile>
+		<ReadLinesFromFile File="$(AppBuildMasterDir)/ProductIdGuid">
+			<Output TaskParameter="Lines" PropertyName="ProductIdGuid" />
 		</ReadLinesFromFile>
 		<PropertyGroup>
 			<MspFile>$(SafeApplicationName)_$(BuildVersion).msp</MspFile>

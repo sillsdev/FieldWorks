@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using Paratext.LexicalContracts;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
@@ -17,9 +18,20 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		private readonly LexemeType m_type;
 		private readonly string m_lexicalForm;
 		private readonly int m_homograph;
+		private Guid m_guid;
+
+		public bool IsGuidKey => m_guid != Guid.Empty;
 
 		public LexemeKey(LexemeType type, string lexicalForm) : this(type, lexicalForm, 1)
 		{
+		}
+
+		public LexemeKey(LexemeType type, Guid id, LcmCache cache)
+		{
+			m_type = type;
+			m_guid = id;
+			m_lexicalForm = GetLexicalFormFromObject(type, id, cache);
+			m_homograph = GetHomographFromObject(id, cache);
 		}
 
 		public LexemeKey(LexemeType type, string lexicalForm, int homograph)
@@ -47,6 +59,12 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			get
 			{
+				// Version 2 interface
+				if (m_guid != Guid.Empty)
+				{
+					return m_guid.ToString();
+				}
+				// Version 1 interface
 				if (m_homograph == 1)
 					return string.Format("{0}:{1}", Type, LexicalForm);
 
@@ -59,9 +77,28 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			get { return m_type; }
 		}
 
-		public string LexicalForm
+		public string LexicalForm => m_lexicalForm;
+
+		// get the undecorated lexical form for the object type from the actual object
+		private static string GetLexicalFormFromObject(LexemeType type, Guid guid, LcmCache cache)
 		{
-			get { return m_lexicalForm; }
+			if (cache.ServiceLocator.ObjectRepository.TryGetObject(guid, out var wordform))
+			{
+				if (type == LexemeType.Word)
+				{
+					return ((IWfiAnalysis)wordform).GetForm(cache.DefaultVernWs).Text;
+				}
+				return ((ILexEntry)wordform).LexemeFormOA.Form.get_String(cache.DefaultVernWs).Text;
+			}
+			return string.Empty;
+		}
+
+		/// <summary>
+		/// If the object is an ILexEntry then return its adjusted Homograph number, otherwise return 0
+		/// </summary>
+		private int GetHomographFromObject(Guid guid, LcmCache cache)
+		{
+			return cache.ServiceLocator.GetInstance<ILexEntryRepository>().TryGetObject(guid, out var entry) ? FdoLexicon.GetParatextHomographNumFromEntry(entry) : 0;
 		}
 
 		public int Homograph

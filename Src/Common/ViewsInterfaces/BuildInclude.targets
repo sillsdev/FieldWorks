@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
 	<ItemGroup>
 		<UsingNamespaces Include="SIL.LCModel.Core.KernelInterfaces" />
 		<UsingNamespaces Include="SIL.LCModel.Utils" />
@@ -15,7 +15,7 @@
 	</ItemGroup>
 	<Target Name="ViewsCs" Inputs="@(ViewsInputs);$(OutDir)/../Common/ViewsTlb.idl" Outputs="Views.cs">
 		<PropertyGroup>
-			<IdlImpVer>3.0.1-beta0008</IdlImpVer>
+			<IdlImpVer>3.0.1</IdlImpVer>
 			<ViewsTlbSrc>$([System.IO.Path]::GetFullPath('$(OutDir)/../Common/ViewsTlb.idl'))</ViewsTlbSrc>
 			<ViewsRefsJson>$([System.IO.Path]::GetFullPath('$(OutDir)../Common/FwKernelTlb.json'))</ViewsRefsJson>
 			<IdlImporterXmlPath>$([System.IO.Path]::GetFullPath('$(OutDir)../../packages/SIL.IdlImporter.$(IdlImpVer)/build/IDLImporter.xml'))</IdlImporterXmlPath>

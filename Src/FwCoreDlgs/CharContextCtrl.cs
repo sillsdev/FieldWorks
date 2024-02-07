@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2019 SIL International
+// Copyright (c) 2015-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,18 +10,16 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Icu;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
+using SIL.FieldWorks.Resources;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
-using SIL.FieldWorks.Resources;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
-using SIL.Utils;
 using SIL.Windows.Forms;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -509,15 +507,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private void cmnuScanFile_Click(object sender, EventArgs e)
 		{
 			// Let the user specify a Paratext or Toolbox language file to scan.
-			var languageFiles = ResourceHelper.GetResourceString("kstidToolboxLanguageFiles");
-			var allFiles = ResourceHelper.GetResourceString("kstidAllFiles");
 			using (var openFileDialog = new OpenFileDialogAdapter
 			{
 				Title = FwCoreDlgs.kstidLanguageFileBrowser,
 				InitialDirectory = ScriptureProvider.SettingsDirectory,
 				CheckFileExists = true,
-				Filter = FileUtils.FileDialogFilterCaseInsensitiveCombinations(
-					string.Format("{0} ({1})|{1}|{2} ({3})|{3}", languageFiles, "*.lds;*.lng", allFiles, "*.*"))
+				Filter = string.Join("|", new []
+				{
+					FileFilterType.ParatextLanguageFiles, FileFilterType.ToolboxLanguageFiles, FileFilterType.AllFiles
+				}.Select(ResourceHelper.FileFilter))
 			})
 			{
 				if (openFileDialog.ShowDialog() == DialogResult.OK)
@@ -816,6 +814,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			DoubleBuffered = true;
 		}
+
+		/// <summary>
+		/// ReSharper disable once UnusedMember.Local - Required method for Designer support.
+		/// </summary>
+		private void InitializeComponent(){}
 
 		/// <summary/>
 		protected override void Dispose(bool disposing)

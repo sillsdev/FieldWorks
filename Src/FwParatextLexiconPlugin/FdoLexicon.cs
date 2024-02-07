@@ -23,10 +23,11 @@ using SIL.FieldWorks.WordWorks.Parser;
 using SIL.Machine.Morphology;
 using SIL.ObjectModel;
 using SIL.PlatformUtilities;
+using WordAnalysis = Paratext.LexicalContracts.WordAnalysis;
 
 namespace SIL.FieldWorks.ParatextLexiconPlugin
 {
-	internal class FdoLexicon : DisposableBase, Lexicon, WordAnalyses, IVwNotifyChange
+	internal class FdoLexicon : DisposableBase, Lexicon, WordAnalyses, IVwNotifyChange, LexiconV2, WordAnalysesV2
 	{
 		internal const string AddedByParatext = "Added by Paratext";
 		private IParser m_parser;
@@ -113,15 +114,31 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				return lexemes;
 			}
 		}
-
-		public Lexeme this[string id]
+	  /// <summary>
+	  /// Version 1 of the api uses a type:wordform identifier but version 2 should supply a guid
+	  /// </summary>
+	  public Lexeme this[string id]
 		{
 			get
 			{
-				Lexeme lexeme;
-				if (TryGetLexeme(new LexemeKey(id), out lexeme))
-					return lexeme;
-				return null;
+				// Version 2
+				if (Guid.TryParse(id, out var guid))
+				{
+					var entryOrAnalysis = Cache.ServiceLocator.ObjectRepository.GetObject(guid);
+					if (entryOrAnalysis is ILexEntry entry)
+					{
+						return new FdoLexEntryLexeme(this, new LexemeKey(GetLexemeTypeForMorphType(entry.MorphTypes.First()), guid, Cache));
+					}
+
+					if (entryOrAnalysis is IWfiAnalysis analysis)
+					{
+						return new FdoWordformLexeme(this, new LexemeKey(LexemeType.Word, guid, Cache));
+					}
+
+				}
+
+				// version 1
+				return TryGetLexeme(new LexemeKey(id), out var lexeme) ? lexeme : null;
 			}
 		}
 
@@ -130,7 +147,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			if (key.Type == LexemeType.Word)
 			{
 				IWfiWordform wf;
-				if (TryGetWordform(key.LexicalForm, out wf))
+				if (TryGetWordform(key, out wf))
 				{
 					lexeme = new FdoWordformLexeme(this, key);
 					return true;
@@ -163,15 +180,10 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			if (type == LexemeType.Word)
 				return new FdoWordformLexeme(this, new LexemeKey(type, lexicalForm));
 
-			int num = 1;
-			foreach (ILexEntry entry in GetMatchingEntries(type, lexicalForm))
-			{
-				if (m_homographNumbers.GetOrCreateValue(entry).Number != num)
-					break;
-				num++;
-			}
+			var nexHomographNum = 1;
+			nexHomographNum += GetMatchingEntries(new LexemeKey(type, lexicalForm)).Count();
 
-			return new FdoLexEntryLexeme(this, new LexemeKey(type, lexicalForm, num));
+			return new FdoLexEntryLexeme(this, new LexemeKey(type, lexicalForm, nexHomographNum));
 		}
 
 		public void RemoveLexeme(Lexeme lexeme)
@@ -179,7 +191,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			if (lexeme.Type == LexemeType.Word)
 			{
 				IWfiWordform wordform;
-				if (TryGetWordform(lexeme.LexicalForm, out wordform))
+				if (TryGetWordform(new LexemeKey(LexemeType.Word, lexeme.LexicalForm), out wordform))
 					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () => wordform.Delete());
 			}
 			else
@@ -208,23 +220,25 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			if (this[lexeme.Id] != null)
 				throw new ArgumentException("The specified lexeme has already been added.", "lexeme");
-
 			if (lexeme.Type == LexemeType.Word)
 			{
 				NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () => CreateWordform(lexeme.LexicalForm));
 			}
-			else
+			else if(lexeme is FdoLexEntryLexeme entryLexeme)
 			{
 				UpdatingEntries = true;
 				try
 				{
-					var entryLexeme = (FdoLexEntryLexeme) lexeme;
 					NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () => CreateEntry(entryLexeme.Key));
 				}
 				finally
 				{
 					UpdatingEntries = false;
 				}
+			}
+			else
+			{
+				throw new ArgumentException("The current code will only handle Lexemes created by FLEx (FdoLexEntryLexemes).");
 			}
 			OnLexemeAdded(lexeme);
 		}
@@ -255,9 +269,11 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		public IEnumerable<Lexeme> FindMatchingLexemes(string wordForm)
 		{
 			bool duplicates = false;
-			return m_cache.ServiceLocator.GetInstance<ILexEntryRepository>()
-				.FindEntriesForWordform(m_cache, TsStringUtils.MakeString(wordForm.Normalize(NormalizationForm.FormD), DefaultVernWs), null, ref duplicates)
-				.Select(GetEntryLexeme).ToArray();
+			var entriesForWordForm = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>()
+				.FindEntriesForWordform(m_cache,
+					TsStringUtils.MakeString(wordForm.Normalize(NormalizationForm.FormD),
+						DefaultVernWs), null, ref duplicates);
+			return entriesForWordForm.Select(GetEntryLexeme).ToArray();
 		}
 
 		public bool CanOpenInLexicon
@@ -297,7 +313,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			{
 				toolName = "Analyses";
 				IWfiWordform wf;
-				if (TryGetWordform(lexeme.LexicalForm, out wf))
+				if (TryGetWordform(new LexemeKey(LexemeType.Word, lexeme.LexicalForm), out wf))
 					guid = wf.Guid.ToString();
 			}
 			else
@@ -332,9 +348,27 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				return m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Select(writingSystem => writingSystem.Id).ToArray();
 			}
 		}
-		#endregion
+	  #endregion
 
-		#region WordAnalyses implementation
+	#region LexiconV2 Implementation
+
+		public bool EncodesKeyInId => false;
+
+		public IEnumerable<Lexeme> FindAllHomographs(LexemeType type, string lexicalForm)
+		{
+			// If this is looking for anything other than a wordform build the list out of the lex entries
+			if (type != LexemeType.Word)
+			{
+			  var lexEntries = GetMatchingEntries(new LexemeKey(type, lexicalForm));
+			  return lexEntries.Select(x => new FdoLexEntryLexeme(this,
+				  new LexemeKey(type, x.Guid, Cache)));
+			}
+			// otherwise throw for now, I don't think we need this
+			throw new NotImplementedException($"FindAllHomographs not yet implemented for {type}");
+		}
+	#endregion
+
+	  #region WordAnalyses implementation
 		public WordAnalysis CreateWordAnalysis(string word, IEnumerable<Lexeme> lexemes)
 		{
 			return new FdoWordAnalysis(word, lexemes);
@@ -343,7 +377,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		public IEnumerable<WordAnalysis> GetWordAnalyses(string word)
 		{
 			IWfiWordform wordform;
-			if (!TryGetWordform(word, out wordform))
+			if (!TryGetWordform(new LexemeKey(LexemeType.Word, word), out wordform))
 				return Enumerable.Empty<WordAnalysis>();
 
 			var analyses = new HashSet<WordAnalysis>();
@@ -361,7 +395,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 				{
 					IWfiWordform wordform;
-					if (!TryGetWordform(lexemes.Word, out wordform))
+					if (!TryGetWordform(new LexemeKey(LexemeType.Word, lexemes.Word), out wordform))
 					{
 						wordform = m_cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create(
 							TsStringUtils.MakeString(lexemes.Word.Normalize(NormalizationForm.FormD), DefaultVernWs));
@@ -390,7 +424,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		public void RemoveWordAnalysis(WordAnalysis lexemes)
 		{
 			IWfiWordform wordform;
-			if (!TryGetWordform(lexemes.Word, out wordform))
+			if (!TryGetWordform(new LexemeKey(LexemeType.Word, lexemes.Word), out wordform))
 				return;
 
 			foreach (IWfiAnalysis analysis in wordform.AnalysesOC.Where(a => a.MorphBundlesOS.Count > 0 && a.ApprovalStatusIcon == (int) Opinions.approves))
@@ -437,6 +471,94 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				return analyses;
 			}
 		}
+	  #endregion
+
+		#region WordAnaysesV2
+		public void RemoveWordAnalysis(WordAnalysisV2 lexemes)
+		{
+			if(Cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().TryGetObject(new Guid(lexemes.Id), out var wfiAnalysis))
+			{
+				// If this analysis is used in FLEx in any texts then do not remove it, we claim the ownership and rights to delete
+				if (!wfiAnalysis.OccurrencesInTexts.Any())
+				{
+					using (new NonUndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor))
+					{
+						wfiAnalysis.Delete();
+					}
+				}
+			}
+		}
+
+		IEnumerable<WordAnalysisV2> WordAnalysesV2.WordAnalyses
+		{
+			get
+			{
+				var analyses = new HashSet<WordAnalysisV2>();
+				foreach (IWfiAnalysis analysis in m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().AllInstances()
+							 .Where(a => a.MorphBundlesOS.Count > 0 && a.ApprovalStatusIcon == (int)Opinions.approves))
+				{
+					var wordFormWs = analysis.Wordform.Form.get_String(m_defaultVernWs).Text;
+					if (wordFormWs != null && TryGetWordAnalysis(analysis, out WordAnalysisV2 lexemes))
+						analyses.Add(lexemes);
+				}
+				return analyses;
+			}
+		}
+
+		WordAnalysisV2 WordAnalysesV2.CreateWordAnalysis(string word, IEnumerable<Lexeme> lexemes)
+		{
+			return new FdoWordAnalysisV2(word, lexemes);
+		}
+
+		IEnumerable<WordAnalysisV2> WordAnalysesV2.GetWordAnalyses(string word)
+		{
+			if (!TryGetWordform(new LexemeKey(LexemeType.Word, word), out var wordform))
+				return Enumerable.Empty<WordAnalysisV2>();
+
+			var analyses = new HashSet<WordAnalysisV2>();
+			foreach (var analysis in wordform.AnalysesOC.Where(a =>
+					   a.MorphBundlesOS.Count > 0 &&
+					   a.ApprovalStatusIcon == (int)Opinions.approves))
+			{
+				if (TryGetWordAnalysis(analysis, out WordAnalysisV2 lexemes))
+				{
+					analyses.Add(lexemes);
+				}
+			}
+
+			return analyses;
+		}
+
+		public void AddWordAnalysis(WordAnalysisV2 lexemes)
+		{
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				IWfiWordform wordform;
+				if (!TryGetWordform(new LexemeKey(LexemeType.Word, new Guid(lexemes.Id), Cache), out wordform))
+					wordform = m_cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create(
+						TsStringUtils.MakeString(lexemes.Word.Normalize(NormalizationForm.FormD),
+							DefaultVernWs));
+
+				var analysis = m_cache.ServiceLocator.GetInstance<IWfiAnalysisFactory>().Create();
+				wordform.AnalysesOC.Add(analysis);
+				analysis.ApprovalStatusIcon = (int)Opinions.approves;
+
+				foreach (var lexeme in lexemes)
+				{
+					var entryLexeme = (FdoLexEntryLexeme)lexeme;
+					ILexEntry entry;
+					if (TryGetEntry(entryLexeme.Key, out entry))
+					{
+						var mb = m_cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>()
+							.Create();
+						analysis.MorphBundlesOS.Add(mb);
+						mb.MorphRA = entry.LexemeFormOA;
+						mb.SenseRA = entry.SensesOS[0];
+						mb.MsaRA = entry.SensesOS[0].MorphoSyntaxAnalysisRA;
+					}
+				}
+			});
+		}
 		#endregion
 
 		private bool GetWordAnalysis(IWfiAnalysis analysis, out WordAnalysis lexemes)
@@ -460,6 +582,34 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 
 			lexemes = new FdoWordAnalysis(analysis.Wordform.Form.get_String(DefaultVernWs).Text.Normalize(), lexemeArray);
+			return true;
+		}
+
+		private bool TryGetWordAnalysis(IWfiAnalysis analysis, out WordAnalysisV2 lexemes)
+		{
+			var lexemeArray = new Lexeme[analysis.MorphBundlesOS.Count];
+			for (int i = 0; i < analysis.MorphBundlesOS.Count; i++)
+			{
+				IWfiMorphBundle mb = analysis.MorphBundlesOS[i];
+				if (mb.MorphRA == null)
+				{
+					lexemes = null;
+					return false;
+				}
+				var entry = mb.MorphRA.OwnerOfClass<ILexEntry>();
+				if (entry.LexemeFormOA != mb.MorphRA)
+				{
+					lexemes = null;
+					return false;
+				}
+				lexemeArray[i] = GetEntryLexeme(entry);
+			}
+
+			lexemes = new FdoWordAnalysisV2(analysis.Wordform.Guid,
+				analysis.Wordform.Form.get_String(DefaultVernWs).Text.Normalize(),
+				lexemeArray,
+				analysis.MeaningsOC);
+
 			return true;
 		}
 
@@ -603,11 +753,23 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			return maxlen;
 		}
 
-		private IEnumerable<ILexEntry> GetMatchingEntries(LexemeType type, string lexicalForm)
+		private IEnumerable<ILexEntry> GetMatchingEntries(LexemeKey key)
 		{
+			// Version 2 key
+			if (Guid.TryParse(key.Id, out var guid))
+			{
+				var entryInList = new List<ILexEntry>();
+				if (Cache.ServiceLocator.GetInstance<ILexEntryRepository>()
+					.TryGetObject(guid, out var entry))
+				{
+					entryInList.Add(entry);
+				}
+
+				return entryInList;
+			}
 			CreateEntryIndexIfNeeded();
 			SortedSet<ILexEntry> entries;
-			if (m_entryIndex.TryGetValue(new LexemeKey(type, lexicalForm), out entries))
+			if (m_entryIndex.TryGetValue(new LexemeKey(key.Type, key.LexicalForm), out entries))
 				return entries;
 			return Enumerable.Empty<ILexEntry>();
 		}
@@ -634,24 +796,34 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 				HomographNumber hn = m_homographNumbers.GetOrCreateValue(entry);
 				if (hn.Number == 0)
 				{
-					int num = 1;
-					foreach (ILexEntry e in entries)
-					{
-						if (m_homographNumbers.GetOrCreateValue(e).Number != num)
-							break;
-						num++;
-					}
-					hn.Number = num;
+					hn.Number = GetParatextHomographNumFromEntry(entry);
 				}
+
+				// If we ever have two entries that match by key and have the same homograph # we are in trouble
+				Debug.Assert(entries.Select(e => e.HomographNumber).Distinct().Count() == entries.Count);
 
 				entries.Add(entry);
 			}
 		}
 
-		internal bool TryGetWordform(string lexicalForm, out IWfiWordform wordform)
+		internal bool TryGetWordform(LexemeKey key, out IWfiWordform wordform)
 		{
+			if (key.IsGuidKey)
+			{
+				throw new ArgumentException("Unexpected key type for wordform");
+			}
 			return m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(
-				TsStringUtils.MakeString(lexicalForm.Normalize(NormalizationForm.FormD), DefaultVernWs), true, out wordform);
+				TsStringUtils.MakeString(key.LexicalForm.Normalize(NormalizationForm.FormD), DefaultVernWs), true, out wordform);
+		}
+
+		internal bool TryGetAnalysis(LexemeKey key, out IWfiAnalysis analysis)
+		{
+			if (key.IsGuidKey)
+			{
+				return Cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().TryGetObject(new Guid(key.Id), out analysis);
+			}
+
+			throw new ArgumentException("Unexpected key type.");
 		}
 
 		internal IWfiWordform CreateWordform(string lexicalForm)
@@ -663,7 +835,8 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 		internal bool TryGetEntry(LexemeKey key, out ILexEntry entry)
 		{
-			entry = GetMatchingEntries(key.Type, key.LexicalForm).FirstOrDefault(e => m_homographNumbers.GetOrCreateValue(e).Number == key.Homograph);
+
+			entry = GetMatchingEntries(key).FirstOrDefault(e => m_homographNumbers.GetOrCreateValue(e).Number == key.Homograph);
 			return entry != null;
 		}
 
@@ -675,9 +848,9 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			var msa = new SandboxGenericMSA {MsaType = (key.Type == LexemeType.Stem) ? MsaType.kStem : MsaType.kUnclassified};
 			ILexEntry entry = m_cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(GetMorphTypeForLexemeType(key.Type), tss, (ITsString) null, msa);
 			entry.ImportResidue = TsStringUtils.MakeString(AddedByParatext, Cache.DefaultAnalWs);
-			m_homographNumbers.GetOrCreateValue(entry).Number = key.Homograph;
+			m_homographNumbers.GetOrCreateValue(entry).Number = GetParatextHomographNumFromEntry(entry);
 
-			var homographKey = new LexemeKey(key.Type, key.LexicalForm);
+			var homographKey = new LexemeKey(key.Type, key.LexicalForm); // as in a key that matches all homographs
 			SortedSet<ILexEntry> entries;
 			if (!m_entryIndex.TryGetValue(homographKey, out entries))
 			{
@@ -689,31 +862,40 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			return entry;
 		}
 
+		// Paratext 9.3 and earlier treats an entry with no homographs as having a number of 1
+		// In LCM the homograph number is 0 if there are no homographs, and counts from 1 otherwise
+		internal static int GetParatextHomographNumFromEntry(ILexEntry entry)
+		{
+			return entry.HomographNumber == 0 ? 1 : entry.HomographNumber;
+		}
+
 		internal FdoLexEntryLexeme GetEntryLexeme(ILexEntry entry)
 		{
 			CreateEntryIndexIfNeeded();
-			LexemeType type = GetLexemeTypeForMorphType(entry.PrimaryMorphType);
-			HomographNumber hn = m_homographNumbers.GetOrCreateValue(entry);
-			string form = entry.LexemeFormOA == null ? string.Empty : entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text ?? string.Empty;
+			var type = GetLexemeTypeForMorphType(entry.PrimaryMorphType);
+			var hn = m_homographNumbers.GetOrCreateValue(entry);
+			// A 0 return value means that this entry was not yet in the table
+			if (hn.Number == 0)
+			{
+				hn.Number = GetParatextHomographNumFromEntry(entry);
+			}
+			var form = entry.LexemeFormOA == null ? string.Empty : entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text ?? string.Empty;
 			return new FdoLexEntryLexeme(this, new LexemeKey(type, form.Normalize(), hn.Number));
 		}
 
 		internal void OnLexemeAdded(Lexeme lexeme)
 		{
-			if (LexemeAdded != null)
-				LexemeAdded(this, new FdoLexemeAddedEventArgs(lexeme));
+			LexemeAdded?.Invoke(this, new FdoLexemeAddedEventArgs(lexeme));
 		}
 
 		internal void OnLexiconSenseAdded(Lexeme lexeme, LexiconSense sense)
 		{
-			if (LexiconSenseAdded != null)
-				LexiconSenseAdded(this, new FdoLexiconSenseAddedEventArgs(lexeme, sense));
+			LexiconSenseAdded?.Invoke(this, new FdoLexiconSenseAddedEventArgs(lexeme, sense));
 		}
 
 		internal void OnLexiconGlossAdded(Lexeme lexeme, LexiconSense sense, LanguageText gloss)
 		{
-			if (LexiconGlossAdded != null)
-				LexiconGlossAdded(this, new FdoLexiconGlossAddedEventArgs(lexeme, sense, gloss));
+			LexiconGlossAdded?.Invoke(this, new FdoLexiconGlossAddedEventArgs(lexeme, sense, gloss));
 		}
 
 		/// ------------------------------------------------------------------------------------

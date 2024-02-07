@@ -281,7 +281,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			throw new ArgumentException("Unknown list found");
 		}
 
-		private static void ConvertAUniToXliff(XElement list, XElement group, string baseId, ConversionMap item, string targetLang)
+		private static void ConvertAUniToXliff(XElement list, XElement group, string baseId, ConversionMap item, string targetLang, ConversionMap? context = null)
 		{
 			var sourceElem = list.Element(item.ElementName);
 			var source = sourceElem?.Elements("AUni").First().Value;
@@ -290,6 +290,18 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 				return;
 			}
 			var transUnit = XElement.Parse(string.Format(XliffUtils.TransUnitTemplate, baseId + item.IdSuffix, SecurityElement.Escape(source)));
+
+			if (context != null)
+			{
+				var descElem = list.Element(((ConversionMap)context).ElementName);
+				var description = AStrValue(descElem?.Element("AStr"));
+
+				if (!string.IsNullOrWhiteSpace(description))
+				{
+					transUnit.Add(XElement.Parse(string.Format(XliffUtils.ContextTemplate, SecurityElement.Escape(description))));
+				}
+			}
+
 			if (targetLang != null)
 			{
 				var target = sourceElem.XPathSelectElement($"AUni[@ws='{targetLang}']")?.Value;
@@ -426,7 +438,14 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 				}
 				ConvertAttributeAsElement(GuidMap, possibility, possGroup);
-				ConvertAUniToXliff(possibility, possGroup, possId, NameMap, targetLang);
+
+				ConversionMap? context = null;
+				if (possibilityType == "CmSemanticDomain")
+				{
+					context = DescMap;
+				}
+
+				ConvertAUniToXliff(possibility, possGroup, possId, NameMap, targetLang, context);
 				ConvertAUniToXliff(possibility, possGroup, possId, AbbrMap, targetLang);
 				ConvertAUniToXliff(possibility, possGroup, possId, RevNameMap, targetLang);
 				ConvertAUniToXliff(possibility, possGroup, possId, RevAbbrMap, targetLang);

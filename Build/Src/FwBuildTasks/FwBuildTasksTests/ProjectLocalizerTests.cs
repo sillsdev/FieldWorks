@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2021 SIL International
+﻿// Copyright (c) 2021-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				OutputFolder = Path.Combine(_rootPath, "Output")
 			};
 			var lOptions = new LocalizerOptions(task);
-			var localizer = new Localizer {Locale = LocaleGe};
+			var localizer = new Localization.Localizer { Locale = LocaleGe };
 			localizer.Initialize(_localeDir, lOptions);
 			var plOptions = new ProjectLocalizerOptions(localizer, lOptions);
 			_sut = new ProjectLocalizer(_projectDir, plOptions);

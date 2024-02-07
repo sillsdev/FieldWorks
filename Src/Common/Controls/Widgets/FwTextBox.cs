@@ -2768,7 +2768,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			CheckDisposed();
 
-			if (!DoAdjustHeight || m_DataAccess == null || Tss == null)
+			if (Tss == null || !DoAdjustHeight)
 				return false;
 
 			// Reduce the font size of any run in the new string as necessary to keep the text

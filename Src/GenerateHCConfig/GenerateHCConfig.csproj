@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -78,11 +78,8 @@
     <Reference Include="ParserCore">
       <HintPath>..\..\Output\Debug\ParserCore.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.Collections">
-      <HintPath>..\..\Output\Debug\SIL.Collections.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.HermitCrab">
-      <HintPath>..\..\Output\Debug\SIL.HermitCrab.dll</HintPath>
+    <Reference Include="SIL.Machine.Morphology.HermitCrab">
+      <HintPath>..\..\Output\Debug\SIL.Machine.Morphology.HermitCrab.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Machine">
       <HintPath>..\..\Output\Debug\SIL.Machine.dll</HintPath>

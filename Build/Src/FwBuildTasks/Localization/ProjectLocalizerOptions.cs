@@ -21,7 +21,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 
 		public string Version { get; }
 		public string FileVersion { get; }
-		public string InformationVersion { get; }
+		public new string InformationVersion { get; }
 		public string Locale { get; }
 		public string CurrentLocaleDir { get; }
 

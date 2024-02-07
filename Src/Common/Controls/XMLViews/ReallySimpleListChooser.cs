@@ -306,7 +306,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (buttonHelp.Enabled)
 				{
 					if (m_helpProvider == null)
-						this.m_helpProvider = new HelpProvider();
+						this.m_helpProvider = new FlexHelpProvider();
 					this.m_helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 					this.m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(m_helpTopic));
 					this.m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);

@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			InitializeComponent();
 			AccessibleName = GetType().Name;
 
-			m_helpProvider = new HelpProvider();
+			m_helpProvider = new FlexHelpProvider();
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			m_helpProvider.SetShowHelp(this, true);
 

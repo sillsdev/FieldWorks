@@ -84,7 +84,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var entryCount = entryHvos.Length;
 			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
-			var configDir = Path.GetDirectoryName(configuration.FilePath);
 			var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 			var cache = propertyTable.GetValue<LcmCache>("cache", null);
 			// Don't display letter headers if we're showing a preview in the Edit tool or we're not sorting by headword
@@ -93,7 +92,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
 				var readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);
-				var custCssPath = CssGenerator.CopyCustomCssAndGetPath(Path.GetDirectoryName(xhtmlPath), configDir);
+				var custCssPath = CssGenerator.CopyCustomCssAndGetPath(Path.GetDirectoryName(xhtmlPath), cache, false);
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(xhtmlPath),
 					ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), Path.GetFileName(cssPath) == "configured.css");
 				GenerateOpeningHtml(cssPath, custCssPath, settings, xhtmlWriter);
@@ -738,7 +737,15 @@ namespace SIL.FieldWorks.XWorks
 			xw.WriteAttributeString("href", "#g" + destination);
 		}
 
-		public void EndLink(IFragmentWriter writer)
+		public void StartLink(IFragmentWriter writer, string externalLink)
+		{
+			var xw = ((XmlFragmentWriter)writer).Writer;
+			xw.WriteStartElement("a");
+			xw.WriteAttributeString("href", externalLink);
+			xw.WriteAttributeString("target", "_blank");
+	  }
+
+	  public void EndLink(IFragmentWriter writer)
 		{
 			((XmlFragmentWriter)writer).Writer.WriteEndElement(); // </a>
 		}

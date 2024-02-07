@@ -6,9 +6,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using SIL.LCModel;
-using SIL.HermitCrab;
-using SIL.HermitCrab.MorphologicalRules;
-using SIL.HermitCrab.PhonologicalRules;
+using SIL.Machine.Morphology.HermitCrab;
+using SIL.Machine.Morphology.HermitCrab.MorphologicalRules;
+using SIL.Machine.Morphology.HermitCrab.PhonologicalRules;
 using SIL.Machine.FeatureModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser
@@ -23,6 +23,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		public bool IsTracing { get; set; }
+
+		public object GenerateWords(Language lang)
+		{
+			throw new System.NotImplementedException();
+		}
 
 		public void AnalyzeWord(Language lang, Word input)
 		{
@@ -281,17 +286,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			((XElement) input.CurrentTrace).Add(trace);
 		}
 
-		public void ParseBlocked(IHCRule rule, Word output)
+		public void Blocked(IHCRule rule, Word output)
 		{
 		}
 
-		public void ParseSuccessful(Language lang, Word output)
+		public void Successful(Language lang, Word word)
 		{
-			((XElement) output.CurrentTrace).Add(new XElement("ParseCompleteTrace", new XAttribute("success", true),
-				CreateWordElement("Result", output, false)));
+			((XElement)word.CurrentTrace).Add(new XElement("ParseCompleteTrace", new XAttribute("success", true),
+				CreateWordElement("Result", word, false)));
 		}
 
-		public void ParseFailed(Language lang, Word word, FailureReason reason, Allomorph allomorph, object failureObj)
+		public void Failed(Language lang, Word word, FailureReason reason, Allomorph allomorph, object failureObj)
 		{
 			XElement trace;
 			switch (reason)

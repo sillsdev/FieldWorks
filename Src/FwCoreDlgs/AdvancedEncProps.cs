@@ -5,6 +5,7 @@
 using System;
 using System.Windows.Forms;
 using ECInterfaces;
+using SIL.FieldWorks.Common.FwUtils;
 using SilEncConverters40;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -94,7 +95,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.lvConverterInfo = new System.Windows.Forms.ListView();
 			columnHeader1 = new System.Windows.Forms.ColumnHeader();
 			columnHeader2 = new System.Windows.Forms.ColumnHeader();
-			helpProvider1 = new HelpProvider();
+			helpProvider1 = new FlexHelpProvider();
 			this.SuspendLayout();
 			//
 			// lvConverterInfo

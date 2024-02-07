@@ -412,7 +412,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			tvDestination.ExpandAll();
 			tvDestination.EndUpdate();
 
-			helpProvider = new HelpProvider();
+			helpProvider = new FlexHelpProvider();
 		}
 
 		/// <summary>

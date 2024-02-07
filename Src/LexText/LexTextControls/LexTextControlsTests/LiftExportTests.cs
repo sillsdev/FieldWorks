@@ -626,6 +626,7 @@ namespace LexTextControlsTests
 					m_entryTest.SummaryDefinition.AnalysisDefaultWritingSystem =
 						TsStringUtils.MakeString("In summary dot dot dot.", m_cache.DefaultAnalWs);
 					m_entryTest.DoNotPublishInRC.Add(m_mapPublications["Main Dictionary"]);
+					m_entryTest.DoNotPublishInRC.Remove(m_mapPublications["School"]);
 
 					var tssDefn = TsStringUtils.MakeString("Definition for sense.\x2028Another para of defn", m_cache.DefaultAnalWs);
 					var bldr = tssDefn.GetBldr();
@@ -659,6 +660,7 @@ namespace LexTextControlsTests
 					ls.SocioLinguisticsNote.AnalysisDefaultWritingSystem =
 						TsStringUtils.MakeString("sense SocioLinguisticsNote", m_cache.DefaultAnalWs);
 					ls.DoNotPublishInRC.Add(m_mapPublications["School"]);
+					ls.DoNotPublishInRC.Remove(m_mapPublications["Main Dictionary"]);
 					m_entryTest.LiftResidue =
 						"<lift-residue id=\"songanganya & nganga_63698066-52d6-46bd-8438-64ce2a820dc6\" dateCreated=\"2008-04-27T22:41:26Z\" dateModified=\"2007-07-02T17:00:00Z\"></lift-residue>";
 
@@ -669,7 +671,11 @@ namespace LexTextControlsTests
 					AddAcademicDomain(ls, "medicine");
 
 					m_entryThis = entryFact.Create("this", "this", msaPronoun);
+					m_entryThis.DoNotPublishInRC.Remove(m_mapPublications["School"]);
+					m_entryThis.DoNotPublishInRC.Remove(m_mapPublications["Main Dictionary"]);
 					m_entryIs = entryFact.Create("is", "to.be", msaVerb);
+					m_entryIs.DoNotPublishInRC.Remove(m_mapPublications["School"]);
+					m_entryIs.DoNotPublishInRC.Remove(m_mapPublications["Main Dictionary"]);
 
 					var picFolder = m_cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
 					m_cache.LangProject.PicturesOC.Add(picFolder);
@@ -714,9 +720,21 @@ namespace LexTextControlsTests
 
 					// We should be able to export LexEntryRefs. BaseForm is a special case.
 					var entryUn = entryFact.Create("un", "not", new SandboxGenericMSA() { MsaType = MsaType.kDeriv });
+					entryUn.DoNotPublishInRC.Remove(m_mapPublications["School"]);
+					entryUn.DoNotPublishInRC.Remove(m_mapPublications["Main Dictionary"]);
+
 					var entryBelieve = entryFact.Create("believe", "believe", msaVerb);
+					entryBelieve.DoNotPublishInRC.Remove(m_mapPublications["School"]);
+					entryBelieve.DoNotPublishInRC.Remove(m_mapPublications["Main Dictionary"]);
+
 					var entryIng = entryFact.Create("ing", "with property", new SandboxGenericMSA() { MsaType = MsaType.kDeriv });
+					entryIng.DoNotPublishInRC.Remove(m_mapPublications["School"]);
+					entryIng.DoNotPublishInRC.Remove(m_mapPublications["Main Dictionary"]);
+
 					m_entryUnbelieving = entryFact.Create("unbelieving", "not believing", msaNoun); // not really a noun, I know
+					m_entryUnbelieving.DoNotPublishInRC.Remove(m_mapPublications["School"]);
+					m_entryUnbelieving.DoNotPublishInRC.Remove(m_mapPublications["Main Dictionary"]);
+
 					var ler1 = MakeComplexFormEntryRef(m_entryUnbelieving, new[] { entryUn, entryBelieve, entryIng },
 						"Compound");
 					ler1.PrimaryLexemesRS.Add(entryBelieve);

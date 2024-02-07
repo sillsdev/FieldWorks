@@ -197,6 +197,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 					UseConfigReferencedEntriesAsPrimary(oldConfigPart);
 					goto case 21;
 				case 21:
+				case 22:
+				case 23:
+				case 24:
 					MigrateNewChildNodesAndOptionsInto(oldConfigPart, currentDefaultConfigPart);
 					break;
 				default:

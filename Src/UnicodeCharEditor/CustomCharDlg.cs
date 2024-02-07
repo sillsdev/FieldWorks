@@ -180,7 +180,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			// Required for Windows Form Designer support
 			InitializeComponent();
 
-			m_helpProvider2 = new HelpProvider();
+			m_helpProvider2 = new FlexHelpProvider();
 
 			//Initialize our label Association dictionary
 			var labelAssociations = new Dictionary<TextBox, Label>

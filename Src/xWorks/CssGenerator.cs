@@ -19,6 +19,7 @@ using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using XCore;
 using Property = ExCSS.Property;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -1685,17 +1686,21 @@ namespace SIL.FieldWorks.XWorks
 			return custCssTempPath;
 		}
 
-		public static string CopyCustomCssAndGetPath(string destinationFolder, string configDir)
+		public static string CopyCustomCssAndGetPath(string destinationFolder, LcmCache cache, bool reversal)
 		{
-			string custCssPath = string.Empty;
-			var projType = string.IsNullOrEmpty(configDir) ? null : new DirectoryInfo(configDir).Name;
-			if (!string.IsNullOrEmpty(projType))
+			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder);
+			string configDir, cssName;
+			if (reversal)
 			{
-				var cssName = projType == "Dictionary" ? "ProjectDictionaryOverrides.css" : "ProjectReversalOverrides.css";
-				custCssPath = CopyCustomCssToTempFolder(configDir, destinationFolder, cssName);
+				configDir = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+				cssName = "ProjectReversalOverrides.css";
 			}
-
-			return custCssPath;
+			else
+			{
+				configDir = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+				cssName = "ProjectDictionaryOverrides.css";
+			}
+			return CopyCustomCssToTempFolder(configDir, destinationFolder, cssName);
 		}
 	}
 }

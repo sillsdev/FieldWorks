@@ -33,13 +33,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private const uint BytesPerMiB = 1048576;
 
 		private static FwUpdate Current { get; }
+		private static FwUpdate CurrentFlexBridge { get; }
 
 		/// <summary>
 		/// The local copy of the selected channel's UpdateInfo.xml, downloaded when checking and kept until we determine FLEx is up to date or until
 		/// the user decides whether to install the update. Used to decide whether to offer to install downloaded updates at startup and to determine
 		/// if downloaded updates contain model changes.
 		/// </summary>
-		internal static string LocalUpdateInfoFilePath { get; }
+		internal static string LocalUpdateInfoFilePath(bool isFlexBridge) => isFlexBridge ? LocalFBUpdateInfoFilePath : LocalFWUpdateInfoFilePath;
+		private static readonly string LocalFWUpdateInfoFilePath;
+		private static readonly string LocalFBUpdateInfoFilePath;
 
 		///// <remarks>so we can check daily even if the user never closes FW. REVIEW (Hasso) 2021.07: would a timer be better?
 		///// If we check daily, and we download two updates before the user restarts (unlikely!), should we notify again?</remarks>
@@ -58,8 +61,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// finding an "update" that is really the same version.
 				Current = new FwUpdate(vip.NumericAppVersion, Environment.Is64BitProcess, vip.BaseBuildNumber, FwUpdate.Typ.Patch,
 					0, vip.ApparentBuildDate, LcmCache.ModelVersion.ToString(), FLExBridgeHelper.LiftVersion, FLExBridgeHelper.FlexBridgeDataVersion);
+				CurrentFlexBridge = new FwUpdate(FLExBridgeHelper.FlexBridgeVersion, false, 0, FwUpdate.Typ.Patch,
+					flexBridgeDataVersion: FLExBridgeHelper.FlexBridgeDataVersion);
 			}
-			LocalUpdateInfoFilePath = Path.Combine(FwDirectoryFinder.DownloadedUpdates, "LastCheckUpdateInfo.xml");
+			LocalFWUpdateInfoFilePath = Path.Combine(FwDirectoryFinder.DownloadedUpdates, "LastCheckUpdateInfo.xml");
+			LocalFBUpdateInfoFilePath = Path.Combine(FwDirectoryFinder.DownloadedUpdates, "LastCheckFLExBridgeUpdateInfo.xml");
 		}
 
 		#region check for updates
@@ -75,7 +81,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				return;
 			}
-			Logger.WriteEvent("Checking for updates...");
+			Logger.WriteEvent("Checking for FieldWorks updates...");
 			// Only testers will access nightly and testing updates, so we can call more attention to errors
 			if (updateSettings.Channel == UpdateSettings.Channels.Nightly || updateSettings.Channel == UpdateSettings.Channels.Testing)
 			{
@@ -89,8 +95,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <returns>a message for the log</returns>
-		private static string CheckForUpdatesInternal(ILcmUI ui, UpdateSettings updateSettings)
+		private static void CheckForFlexBridgeUpdates(ILcmUI ui, UpdateSettings updateSettings)
 		{
+			if (CurrentFlexBridge.Version == null)
+			{
+				Logger.WriteMinorEvent("FLEx Bridge not installed; not checking for FLEx Bridge updates.");
+				return;
+			}
+			Logger.WriteEvent("Checking for FLEx Bridge updates...");
+			new Thread(() => Logger.WriteEvent(CheckForUpdatesInternal(ui, updateSettings, true)))
+			{
+				IsBackground = true
+			}.Start();
+		}
+
+		/// <returns>a message for the log</returns>
+		private static string CheckForUpdatesInternal(ILcmUI ui, UpdateSettings updateSettings, bool isFlexBridge = false)
+		{
+			var alreadyUpToDate = false;
 			try
 			{
 				if (!Platform.IsWindows)
@@ -121,45 +143,96 @@ namespace SIL.FieldWorks.Common.FwUtils
 						throw new ArgumentOutOfRangeException();
 				}
 
+				if (isFlexBridge)
+				{
+					baseURL = "https://software.sil.org/downloads/r/fieldworks/";
+					infoURL = "https://downloads.languagetechnology.org/flexbridge/UpdateInfoFLExBridge.xml";
+					// Since FLEx Bridge is not installed earlier in the startup process, its UpdateInfo.xml may still be present.
+					// Attempting to download to a fully-downloaded file results in an out of range exception from the server.
+					// Delete the file so it can be downloaded again (in case there are newer updates).
+					FileUtils.Delete(LocalFBUpdateInfoFilePath);
+				}
+
 				if (isNightly)
 				{
 					// LT-20875: WebClient requires the directory to exist before downloading to it. (DownloadClient creates directories itself)
 					FileUtils.EnsureDirectoryExists(FwDirectoryFinder.DownloadedUpdates);
 					// Use WebClient for nightly builds because DownloadClient can't download the dynamically built update info (LT-20819).
 					// DownloadClient is still best for all other channels because it is better for unstable internet.
-					new WebClient().DownloadFile(infoURL, LocalUpdateInfoFilePath);
+					new WebClient().DownloadFile(infoURL, LocalUpdateInfoFilePath(isFlexBridge));
 				}
-				else if (!new DownloadClient().DownloadFile(infoURL, LocalUpdateInfoFilePath))
+				else if (!new DownloadClient().DownloadFile(infoURL, LocalUpdateInfoFilePath(isFlexBridge)))
 				{
 					return $"Failed to download update info from {infoURL}";
 				}
-				var available = GetLatestUpdateFrom(Current, XDocument.Load(LocalUpdateInfoFilePath), baseURL,
+
+				var infoDoc = XDocument.Load(LocalUpdateInfoFilePath(isFlexBridge));
+				GetBaseUrlFromUpdateInfo(infoDoc, ref baseURL);
+
+				var available = GetLatestUpdateFrom(isFlexBridge ? CurrentFlexBridge : Current, infoDoc, baseURL,
 					isNightly || updateSettings.Channel == UpdateSettings.Channels.Testing);
 				if (available == null)
 				{
-					File.Delete(LocalUpdateInfoFilePath);
-					return "Check complete; already up to date";
+					File.Delete(LocalUpdateInfoFilePath(isFlexBridge));
+					alreadyUpToDate = true;
+					return $"Check complete; {(isFlexBridge ? "FLEx Bridge" : "FieldWorks")} is already up to date";
 				}
 				Logger.WriteMinorEvent($"Update found at {available.URL}");
 
 				var localFile = Path.Combine(FwDirectoryFinder.DownloadedUpdates, Path.GetFileName(available.URL));
-				if(File.Exists(localFile))
+				if (!File.Exists(localFile))
 				{
-					return $"Update already downloaded to {localFile}";
+					var tempFile = $"{localFile}.tmp";
+					if (new DownloadClient().DownloadFile(available.URL, tempFile))
+					{
+						File.Move(tempFile, localFile);
+					}
+					else
+					{
+						return "Update found, but failed to download";
+					}
 				}
-
-				var tempFile = $"{localFile}.tmp";
-				if (new DownloadClient().DownloadFile(available.URL, tempFile))
+				else if(isFlexBridge)
 				{
-					File.Move(tempFile, localFile);
+					// If a FLEx Bridge update is already downloaded, continue to install it (these are not installed on FLEx startup)
+					Logger.WriteEvent($"Update already downloaded to {localFile}");
 				}
 				else
 				{
-					return "Update found, but failed to download";
+					// If a FLEx update is already downloaded, the user probably declined to install it on startup
+					return $"Update already downloaded to {localFile}";
 				}
 
-				NotifyUserOnIdle(ui, GetUpdateMessage(Current, available, FwUtilsStrings.RestartToUpdatePrompt),
-					FwUtilsStrings.RestartToUpdateCaption);
+				if (isFlexBridge)
+				{
+					NotifyUserOnIdle(ui, () =>
+					{
+						if (DialogResult.Yes == FlexibleMessageBox.Show(Form.ActiveForm,
+							GetUpdateMessage(FwUtilsStrings.UpdateFBDownloadedVersionYCurrentX, CurrentFlexBridge, available,
+								FwUtilsStrings.UpdateNowPrompt, FwUtilsStrings.UpdateFBNowInstructions),
+							FwUtilsStrings.UpdateFBNowCaption, MessageBoxButtons.YesNo, options: FlexibleMessageBoxOptions.AlwaysOnTop))
+						{
+							var timer = new Timer { Interval = 1000 };
+							timer.Elapsed += (o, e) =>
+							{
+								// Wait for FLEx Bridge to exit.
+								// If multiple Elapsed events have piled up, install only once.
+								if (Process.GetProcessesByName("FLExBridge").Any() || !timer.Enabled)
+									return;
+
+								timer.Stop(); // one installer can run at once
+								InstallFlexBridge(localFile);
+							};
+							timer.Start();
+						}
+					});
+				}
+				else
+				{
+					NotifyUserOnIdle(ui, () => MessageBox.Show(Form.ActiveForm,
+						GetUpdateMessage(FwUtilsStrings.UpdateDownloadedVersionYCurrentX, Current, available, FwUtilsStrings.RestartToUpdatePrompt),
+						FwUtilsStrings.RestartToUpdateCaption));
+				}
 
 				return $"Update downloaded to {localFile}";
 			}
@@ -172,9 +245,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 				}
 				return $"Got {e.GetType()}: {e.Message}";
 			}
+			finally
+			{
+				// Check for FLEx Bridge updates only if FieldWorks is up to date or the user is a tester
+				if (!isFlexBridge && (alreadyUpToDate ||
+									  updateSettings.Channel == UpdateSettings.Channels.Nightly ||
+									  updateSettings.Channel == UpdateSettings.Channels.Testing))
+				{
+					CheckForFlexBridgeUpdates(ui, updateSettings);
+				}
+			}
 		}
 
-		private static void NotifyUserOnIdle(ILcmUI ui, string message, string caption = null)
+		private static void NotifyUserOnIdle(ILcmUI ui, Action notifyAction)
 		{
 			var timer = new Timer { SynchronizingObject = ui.SynchronizeInvoke, Interval = 1000 };
 			timer.Elapsed += (o, e) =>
@@ -185,9 +268,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 					return;
 
 				timer.Stop(); // one notification is enough
-				MessageBox.Show(Form.ActiveForm, message, caption);
+				notifyAction();
 			};
 			timer.Start();
+		}
+
+		internal static void GetBaseUrlFromUpdateInfo(XDocument info, ref string baseUrl)
+		{
+			var urlFromDoc = info.Root?.Element("BaseUrl")?.Value;
+			if (!string.IsNullOrWhiteSpace(urlFromDoc))
+			{
+				if (!urlFromDoc.EndsWith("/"))
+				{
+					urlFromDoc += "/";
+				}
+				baseUrl = urlFromDoc;
+			}
 		}
 
 		internal static FwUpdate GetLatestUpdateFrom(FwUpdate current, XDocument bucketContents, string bucketURL, bool userChoice = false)
@@ -285,13 +381,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		/// <param name="current">the currently-installed version</param>
 		/// <param name="potential">a potential installer</param>
-		/// <returns>>true iff potential is a base installer with a greater build number than current's base.</returns>
+		/// <returns>
+		/// true iff potential is a base installer with a greater build number than current's base,
+		/// or if there is no base build number and potential has a higher version (needed b/c FLEx Bridge installer URLs have no base build number)
+		/// </returns>
 		internal static bool IsNewerBaseThanBase(FwUpdate current, FwUpdate potential)
 		{
 			return potential != null
 				&& (potential.InstallerType == FwUpdate.Typ.Online || potential.InstallerType == FwUpdate.Typ.Offline)
 				&& potential.Is64Bit == current.Is64Bit
-				&& potential.BaseBuild > current.BaseBuild;
+				&& (potential.BaseBuild > current.BaseBuild
+					|| (current.BaseBuild == 0 && potential.Version > current.Version));
 		}
 
 		/// <summary>
@@ -374,7 +474,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// jobs/FieldWorks-Win-all-Patch/10/FieldWorks_9.0.14.10_b312_x64.msp
 				// 9.0.15/FieldWorks_9.0.16.128_b312_x64.msp
 				// 9.0.15/312/FieldWorks_9.0.15.1_Online_x64.exe
+				// FLExBridge_Offline_4.1.0.exe
 				var keyParts = Path.GetFileName(key)?.Split('_');
+				if (keyParts?.Length == 3 && keyParts[0].Equals("FLExBridge"))
+				{
+					// extract the version from before ".exe"
+					var verString = keyParts[2].Remove(keyParts[2].LastIndexOf('.'));
+					// As of 2023.07, FieldWorks and FLEx Bridge have version and o*line in opposite positions
+					keyParts = new[] { keyParts[0], verString, keyParts[1], keyParts[2] };
+				}
 				if (keyParts?.Length != 4)
 				{
 					return null;
@@ -414,9 +522,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 		#endregion select updates
 
-		internal static string GetUpdateMessage(FwUpdate current, FwUpdate update, string actionPrompt)
+		internal static string GetUpdateMessage(string updateAvailableMsgFormat, FwUpdate current, FwUpdate update, string actionPrompt,
+			string flexBridgeInstructions = null)
 		{
-			var messageParts = new List<string>(4) { FwUtilsStrings.UpdateDownloadedVersionYCurrentX };
+			// 4 parts max. FW has two fixed messages and up to two version warnings. FB has three fixed messages and one possible version warning.
+			var messageParts = new List<string>(4) { updateAvailableMsgFormat };
 			if (HasVersionChanged(current.LCModelVersion, update.LCModelVersion))
 			{
 				messageParts.Add(FwUtilsStrings.ModelChangeLCM);
@@ -432,6 +542,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 				messageParts.Add(FwUtilsStrings.ModelChangeLIFT);
 			}
 			messageParts.Add(actionPrompt);
+			if (flexBridgeInstructions != null)
+			{
+				messageParts.Add(flexBridgeInstructions);
+			}
 			return string.Format(string.Join($"{Environment.NewLine}{Environment.NewLine}", messageParts), current.Version, update.Version);
 		}
 
@@ -444,13 +558,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		#region install updates
 		/// <summary>
-		/// If an update has been downloaded and the user wants to, install it
+		/// If an update has been downloaded and the user wants to, install it.
+		/// ENHANCE (Hasso) 2023.08: (FB) offer to install FLEx Bridge updates on startup (probably safe, since it shouldn't be running)
 		/// </summary>
 		public static void InstallDownloadedUpdate()
 		{
 			var latestPatch = GetLatestDownloadedUpdate(Current);
 			if (latestPatch == null || DialogResult.Yes != FlexibleMessageBox.Show(
-				GetUpdateMessage(Current, latestPatch, FwUtilsStrings.UpdateNowPrompt),
+				GetUpdateMessage(FwUtilsStrings.UpdateDownloadedVersionYCurrentX, Current, latestPatch, FwUtilsStrings.UpdateNowPrompt),
 				FwUtilsStrings.UpdateNowCaption, MessageBoxButtons.YesNo, options: FlexibleMessageBoxOptions.AlwaysOnTop))
 			{
 				return;
@@ -490,9 +605,35 @@ namespace SIL.FieldWorks.Common.FwUtils
 			catch (Exception e)
 			{
 				Logger.WriteError(e);
-				MessageBox.Show(string.Format(FwUtilsStrings.CouldNotUpdateAutomaticallyFileXMessage, latestPatchFile),
+				MessageBox.Show(string.Join($"{Environment.NewLine}{Environment.NewLine}",
+						string.Format(FwUtilsStrings.CouldNotUpdateAutomaticallyFileXMessage, latestPatchFile), FwUtilsStrings.PleaseReport),
 					FwUtilsStrings.CouldNotUpdateAutomaticallyCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				throw;
+			}
+		}
+
+		private static void InstallFlexBridge(string installer)
+		{
+			Logger.WriteEvent($"Installing {installer}");
+			try
+			{
+				Process.Start(new ProcessStartInfo
+				{
+					FileName = installer,
+					UseShellExecute = false,
+					CreateNoWindow = true,
+					RedirectStandardError = true,
+					RedirectStandardInput = true,
+					RedirectStandardOutput = true,
+					Arguments = "/passive"
+				});
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError(e);
+				MessageBox.Show(string.Join($"{Environment.NewLine}{Environment.NewLine}",
+						string.Format(FwUtilsStrings.CouldNotUpdateFBAutomaticallyFileXMessage, installer), FwUtilsStrings.PleaseReport),
+					FwUtilsStrings.CouldNotUpdateAutomaticallyCaption, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 
@@ -502,13 +643,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		internal static FwUpdate GetLatestDownloadedUpdate(FwUpdate current)
 		{
-			if (!FileUtils.FileExists(LocalUpdateInfoFilePath))
+			if (!FileUtils.FileExists(LocalFWUpdateInfoFilePath))
 				return null;
 			var result = GetLatestUpdateFrom(current,
 				FileUtils.GetFilesInDirectory(FwDirectoryFinder.DownloadedUpdates).Select(file => Parse(file, string.Empty)));
-			result = AddMetaDataFromUpdateInfo(result, LocalUpdateInfoFilePath);
+			result = AddMetaDataFromUpdateInfo(result, LocalFWUpdateInfoFilePath);
 			// Deleting the info file ensures that we don't offer to install updates until after the next check (LT-20774)
-			FileUtils.Delete(LocalUpdateInfoFilePath);
+			FileUtils.Delete(LocalFWUpdateInfoFilePath);
 			return result;
 		}
 
@@ -560,7 +701,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				{
 					// If the file is corrupted, continue happily for users, but alert developers
 #if DEBUG
-					MessageBoxUtils.Show($"Invalid xml in {LocalUpdateInfoFilePath} updates may be broken.");
+					MessageBoxUtils.Show($"Invalid xml in {localUpdateInfoFilePath} updates may be broken.");
 #endif
 
 					return updateFromFile;

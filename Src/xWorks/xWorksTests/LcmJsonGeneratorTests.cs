@@ -1,4 +1,4 @@
-// Copyright (c) 2020 SIL International
+// Copyright (c) 2020-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -16,14 +16,13 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
-using SIL.TestUtilities;
 using XCore;
 using Formatting = Newtonsoft.Json.Formatting;
+// ReSharper disable StringLiteralTypo
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -291,23 +290,15 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			var sense = entry.SensesOS[0];
-			var sensePic = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create();
+			var sensePic = ConfiguredXHTMLGeneratorTests.CreatePicture(Cache);
 			sense.PicturesOS.Add(sensePic);
-			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
-			sensePic.Caption.set_String(wsEn, TsStringUtils.MakeString("caption", wsEn));
-			var pic = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
-			var folder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
-			Cache.LangProject.MediaOC.Add(folder);
-			folder.FilesOC.Add(pic);
-			pic.InternalPath = "picture";
-			sensePic.PictureFileRA = pic;
 
 			var settings = DefaultSettings;
 
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings, 0);
 			var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""g" + entry.Guid + @""",""letterHead"": ""c"",""sortIndex"": 0,
-				""pictures"": [{""guid"":""g" + sensePic.Guid + @""",""src"":""pictures/picture"",
+				""pictures"": [{""guid"":""g" + sensePic.Guid + @""",""src"":""pictures/test_auth_copy_license.jpg"",
 				""sensenumber"": [{""lang"":""en"",""value"":""1""}],""caption"": [{""lang"":""en"",""value"":""caption""}]}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
@@ -325,6 +316,8 @@ namespace SIL.FieldWorks.XWorks
 			// The second example of the first sense should not be published at all, since it is not published in main and
 			// its owner is not published in test.
 			var entryCorps = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "corps", "body");
+			entryCorps.DoNotPublishInRC.Remove(typeMain);
+			entryCorps.DoNotPublishInRC.Remove(typeTest);
 			var pronunciation = ConfiguredXHTMLGeneratorTests.AddPronunciationToEntry(entryCorps, "pronunciation", m_wsFr, Cache);
 			var exampleCorpsBody1 = ConfiguredXHTMLGeneratorTests.AddExampleToSense(entryCorps.SensesOS[0], "Le corps est gros.", Cache, m_wsFr, m_wsEn, "The body is big.");
 			var exampleCorpsBody2 = ConfiguredXHTMLGeneratorTests.AddExampleToSense(entryCorps.SensesOS[0], "Le corps est esprit.", Cache, m_wsFr, m_wsEn, "The body is spirit.");
@@ -347,6 +340,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// This entry is published only in main, together with its sense and example.
 			var entryBras = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "bras", "arm");
+			entryBras.DoNotPublishInRC.Remove(typeMain);
 			ConfiguredXHTMLGeneratorTests.AddExampleToSense(entryBras.SensesOS[0], "Mon bras est casse.", Cache, m_wsFr, m_wsEn, "My arm is broken.");
 			ConfiguredXHTMLGeneratorTests.AddSenseToEntry(entryBras, "hand", m_wsEn, Cache);
 			ConfiguredXHTMLGeneratorTests.AddExampleToSense(entryBras.SensesOS[1], "Mon bras va bien.", Cache, m_wsFr, m_wsEn, "My arm is fine.");
@@ -361,18 +355,25 @@ namespace SIL.FieldWorks.XWorks
 			ConfiguredXHTMLGeneratorTests.AddExampleToSense(entryOreille.SensesOS[0], "Lac Pend d'Oreille est en Idaho.", Cache, m_wsFr, m_wsEn, "Lake Pend d'Oreille is in Idaho.");
 			entryOreille.DoNotPublishInRC.Add(typeMain);
 			entryOreille.SensesOS[0].DoNotPublishInRC.Add(typeMain);
+			entryOreille.DoNotPublishInRC.Remove(typeTest);
+			entryOreille.SensesOS[0].DoNotPublishInRC.Remove(typeTest);
 			//exampleOreille1.DoNotPublishInRC.Add(typeMain); -- should not show in main because its owner is not shown there
 
 			var entryEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "entry", "entry");
+			entryEntry.DoNotPublishInRC.Remove(typeMain);
+			entryEntry.DoNotPublishInRC.Remove(typeTest);
 			var entryMainsubentry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "mainsubentry", "mainsubentry");
+			entryMainsubentry.DoNotPublishInRC.Remove(typeMain);
 			entryMainsubentry.DoNotPublishInRC.Add(typeTest);
 			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, entryEntry, entryMainsubentry, true);
 
 			var entryTestsubentry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "testsubentry", "testsubentry");
 			entryTestsubentry.DoNotPublishInRC.Add(typeMain);
+			entryTestsubentry.DoNotPublishInRC.Remove(typeTest);
 			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, entryEntry, entryTestsubentry, true);
 			var bizarroVariant = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "bizarre", "myVariant");
 			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, entryEntry, bizarroVariant, "Spelling Variant");
+			bizarroVariant.DoNotPublishInRC.Remove(typeMain);
 			bizarroVariant.DoNotPublishInRC.Add(typeTest);
 
 			// Note that the decorators must be created (or refreshed) *after* the data exists.
@@ -525,7 +526,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateJsonForEntry_TypeAfterForm()
 		{
-			var typeMain = ConfiguredXHTMLGeneratorTests.CreatePublicationType("main", Cache);
+			var typeMain = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0];
 
 			var entryEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "entry", "entry");
 			var entryMainsubentry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache, "mainsubentry", "mainsubentry");
@@ -1049,7 +1050,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var testEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
 			var siteName = "test";
-			var json = LcmJsonGenerator.GenerateDictionaryMetaData(siteName, new[] { "mainentry.xhtml" }, new List<DictionaryConfigurationModel>(), new []{ testEntry.Hvo }, null, null, Cache, m_Clerk);
+			var json = LcmJsonGenerator.GenerateDictionaryMetaData(siteName, new[] { "mainentry.xhtml" }, new List<DictionaryConfigurationModel>(), new []{ testEntry.Hvo }, null, Cache, m_Clerk);
 			var expectedResults = @"{""_id"":""" + siteName + @""",""mainLanguage"":{""title"":""French"",""lang"":""fr"",""letters"":[""c""],""cssFiles"":[""configured.css""]},""partsOfSpeech"":[],""semanticDomains"":[],
 				""xhtmlTemplates"": [""mainentry.xhtml""]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
@@ -1072,7 +1073,7 @@ namespace SIL.FieldWorks.XWorks
 			noun.Name.set_String(m_wsEn, "noun");
 			var siteName = "test";
 			var json = LcmJsonGenerator.GenerateDictionaryMetaData(siteName, new []{ "mainentry.xhtml" },
-				new List<DictionaryConfigurationModel>(), new[] { testEntry.Hvo }, null, null, Cache, m_Clerk);
+				new List<DictionaryConfigurationModel>(), new[] { testEntry.Hvo }, null, Cache, m_Clerk);
 			var expectedResults = @"{""_id"":""test"",""mainLanguage"":{""title"":""French"",""lang"":""fr"",""letters"":[""c""],""cssFiles"":[""configured.css""]},
 				""partsOfSpeech"":[{""lang"":""en"",""abbreviation"":""n"",""name"":""noun"",""guid"":""g" + noun.Guid + @"""}],
 				""semanticDomains"":[{""lang"":""en"",""abbreviation"":""9.0"",""name"":""CustomDomain"",""guid"":""g" + domainOne.Guid + @"""}],

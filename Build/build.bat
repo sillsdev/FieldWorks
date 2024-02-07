@@ -15,7 +15,7 @@ cd ..
 set PATH=%cd%\DistFiles;%cd%\Bin;%WIX%\bin;%PATH%
 popd
 
-for /f "usebackq tokens=1* delims=: " %%i in (`vswhere -version "15.0" -requires Microsoft.Component.MSBuild`) do (
+for /f "usebackq tokens=1* delims=: " %%i in (`vswhere -version "17.0" -requires Microsoft.Component.MSBuild`) do (
   if /i "%%i"=="installationPath" set InstallDir=%%j
   if /i "%%i"=="catalog_productLineVersion" set VSVersion=%%j
 )
@@ -26,15 +26,15 @@ REM run Microsoft's batch file to set all the environment variables and path nec
 set VcVarsLoc=%InstallDir%\VC\Auxiliary\Build\vcvarsall.bat
 
 if exist "%VcVarsLoc%" (
-  call "%VcVarsLoc%" %arch% 8.1
+  call "%VcVarsLoc%" %arch%
 ) else (
   echo "Could not find: %VcVarsLoc% something is wrong with the Visual Studio installation"
   GOTO End
 )
 
 
-if "%arch%" == "x86" IF "%VSVersion%" GEQ "2019" (set MsBuild="%InstallDir%\MSBuild\Current\Bin\msbuild.exe") else (set MsBuild="%InstallDir%\MSBuild\15.0\Bin\msbuild.exe")
-if "%arch%" == "x64" if "%VSVersion%" GEQ "2019" (set MsBuild="%InstallDir%\MSBuild\Current\Bin\amd64\msbuild.exe") else (set MsBuild="%InstallDir%\MSBuild\15.0\Bin\amd64\msbuild.exe")
+if "%arch%" == "x86" set MsBuild="%InstallDir%\MSBuild\Current\Bin\msbuild.exe"
+if "%arch%" == "x64" set MsBuild="%InstallDir%\MSBuild\Current\Bin\amd64\msbuild.exe"
 
 set KEY_NAME="HKLM\SOFTWARE\WOW6432Node\Microsoft\Microsoft SDKs\Windows\v10.0"
 set VALUE_NAME=InstallationFolder
@@ -56,6 +56,8 @@ echo Building using `%MsBuild%`
 set all_args=%*
 REM Run the next target only if the previous target succeeded
 (
+	%MsBuild% Src\FwBuildTasks\FwBuildTasks.sln /t:Restore;Build /p:Platform="Any CPU"
+) && (
 	if "%all_args:disableDownloads=%"=="%all_args%" %MsBuild% FieldWorks.proj /t:RestoreNuGetPackages
 ) && (
 	%MsBuild% FieldWorks.proj /t:CheckDevelopmentPropertiesFile

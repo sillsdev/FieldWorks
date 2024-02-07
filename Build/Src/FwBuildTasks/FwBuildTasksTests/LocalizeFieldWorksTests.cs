@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var doc = new XDocument(
 				new XElement(ns + "Project",
 					new XAttribute("DefaultTargets", "Build"),
-					new XAttribute("ToolsVersion", "4.0"),
+					new XAttribute("ToolsVersion", "Current"),
 					new XElement(ns + "PropertyGroup",
 						new XElement(ns + "RootNamespace",
 							new XText("SIL." + project)),

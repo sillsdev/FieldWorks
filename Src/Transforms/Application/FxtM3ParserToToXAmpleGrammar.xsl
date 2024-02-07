@@ -18,7 +18,6 @@ Preamble
 -->
 
 	<xsl:variable name="root" select="/M3Dump"/>
-	<xsl:variable name="POSs" select="$root/PartsOfSpeech"/>
 	<xsl:variable name="compRules" select="$root/CompoundRules"/>
 	<xsl:variable name="lexicon" select="$root/Lexicon"/>
 	<xsl:variable name="allos" select="$lexicon/Allomorphs"/>
@@ -36,10 +35,10 @@ Preamble
    <xsl:key name="StemNameID" match="MoStemName" use="@Id"/>
    <xsl:key name="AnyId" match="*" use="@id"/>
    <!-- included stylesheets (i.e. things common to other style sheets) -->
-   <xsl:include href="MorphTypeGuids.xsl"/>
    <xsl:include href="XAmpleTemplateVariables.xsl"/>
    <xsl:include href="CalculateStemNamesUsedInLexicalEntries.xsl"/>
-   <xsl:variable name="sAffixAlloWithFeaturesLogicalConstraint">
+	<xsl:include href="FxtM3ParserCommon.xsl"/>
+	<xsl:variable name="sAffixAlloWithFeaturesLogicalConstraint">
 	  <xsl:call-template name="AffixAlloWithFeaturesLogicalConstraint"/>
    </xsl:variable>
 	<xsl:variable name="affixAllosWithFeatures" select="$allos/MoAffixAllomorph/MsEnvFeatures/FsFeatStruc[descendant::FsClosedValue]"/>
@@ -146,7 +145,7 @@ rule {Partially analyzed word}
 |                FULLY ANALYZED WORD PORTION
 | ------------------------------------------------------------
 <!-- 3.1.5.1	Non-inflected, Fully Analyzed Stem -->
-	  <xsl:if test="$POSs/PartOfSpeech/AffixTemplates[not(MoInflAffixTemplate)]">
+	  <xsl:if test="$PartsOfSpeech/AffixTemplates[not(MoInflAffixTemplate)]">
 rule {Fully analyzed stem with no inflectional template}
   Full = Stem
 								| percolation
@@ -159,7 +158,7 @@ rule {Fully analyzed stem with no inflectional template}
 		&lt;Stem blocksInflection&gt; = - | prevent a non-final template from immediately being inflected without any intervening derivation or compounding
 </xsl:if>
 	  <!-- 3.1.5.2	Inflected, Fully Analyzed Stem -->
-	  <xsl:for-each select="$POSs/PartOfSpeech">
+	  <xsl:for-each select="$PartsOfSpeech">
 		 <xsl:variable name="posID" select="@Id"/>
 		 <xsl:for-each select="AffixTemplates/MoInflAffixTemplate[@Final='true']">
 			<xsl:if test="count(PrefixSlots | SuffixSlots)>0">
@@ -280,6 +279,8 @@ rule {Fully analyzed stem with a non-final inflectional template <xsl:value-of s
 			   </xsl:call-template>
 			   <xsl:call-template name="StemNameConstraints">
 				  <xsl:with-param name="posID" select="$posID"/>
+				  <xsl:with-param name="leftNT" select="'Stem_1'"/>
+				  <xsl:with-param name="rightNT" select="'Stem_2'"/>
 			   </xsl:call-template>
 			   <xsl:call-template name="AffixAlloWithFeaturesConstraints">
 				  <xsl:with-param name="sNonTerm" select="'Stem_1'"/>
@@ -947,7 +948,7 @@ rule {Partially analyzed stem that's been inflected with empty template}
 	&lt;Partial inflected&gt; = +
 	&lt;PartialInflected inflected&gt; = +
 
-	<xsl:for-each select="$POSs/PartOfSpeech">
+	<xsl:for-each select="$PartsOfSpeech">
 		 <xsl:variable name="posID" select="@Id"/>
 		 <xsl:for-each select="AffixTemplates/MoInflAffixTemplate">
 			<xsl:if test="count(PrefixSlots | SuffixSlots)>0">
@@ -1096,6 +1097,7 @@ rule {An interfix; no compound rules}
   Interfixes = interfix
   </xsl:if>
 	  <!-- 3.2	Creating the templates -->
+  <xsl:text>
 | ------------------------------------------------------------
 |                TEMPLATES
 | ------------------------------------------------------------
@@ -1106,6 +1108,27 @@ Let Linker be []
 Let Proclitic be []
 Let Enclitic be []
 Let Bound be []
+</xsl:text>
+	<xsl:if test="$bSuffixingOnly='Y'">
+		<xsl:text>
+Let pos0 be []&#xa;</xsl:text>
+		<xsl:variable name="topLevelPOSes">
+			<xsl:for-each select="$PartsOfSpeech">
+				<xsl:variable name="posid" select="@Id"/>
+				<xsl:if test="not($PartsOfSpeech/SubPossibilities[@dst=$posid])">
+					<xsl:text>&#x20;</xsl:text>
+					<xsl:value-of select="$posid"/>
+				</xsl:if>
+			</xsl:for-each>
+		</xsl:variable>
+		<xsl:call-template name="OutputLetsForTopLevelCategories">
+			<xsl:with-param name="sList" select="normalize-space($topLevelPOSes)"/>
+		</xsl:call-template>
+		<xsl:call-template name="OutputLetsForDerivMsas">
+			<xsl:with-param name="derivMsa" select="//MoDerivAffMsa[1]"/>
+			<xsl:with-param name="sExistingMappings" select="''"/>
+		</xsl:call-template>
+	</xsl:if>
 <!-- 3.2.1	Template types -->
 	  <xsl:variable name="ExceptionFeatures" select="$root/ProdRestrict/CmPossibility"/>
 	  <xsl:if test="$ExceptionFeatures">
@@ -1127,7 +1150,7 @@ Let <xsl:value-of select="$sDefaultExceptionFeatures"/> be [exception:[<xsl:for-
 </xsl:if>
 Let <xsl:value-of select="$sRootPOS"/>0 be [rootCat:unknown] <!-- An stem unspecified for POS  -->
 Let <xsl:value-of select="$sCliticPOS"/>0 be [rootCat:unknown] <!-- An stem unspecified for POS  -->
-	  <xsl:for-each select="$POSs/PartOfSpeech">
+	  <xsl:for-each select="$PartsOfSpeech">
 		 <xsl:text>
 Let </xsl:text>
 		 <xsl:value-of select="$sRootPOS"/>
@@ -1336,7 +1359,7 @@ Let suffixinginterfix be {[cat:suffix]
    -->
    <xsl:template name="OutputInflectionClassTemplates">
 	  <!-- singleton inflection classes (from individual msas) -->
-	  <xsl:for-each select="$POSs/PartOfSpeech/InflectionClasses//MoInflClass">
+	  <xsl:for-each select="$PartsOfSpeech/InflectionClasses//MoInflClass">
 		 <xsl:text>
 Let </xsl:text>
 		 <xsl:value-of select="$sInflClass"/>
@@ -1711,7 +1734,7 @@ ConstrainNestedCategories
 		 <xsl:value-of select="$sSecondNode"/>
 		 <xsl:text> envCat&gt;</xsl:text>
 	  </xsl:if>
-	  <xsl:for-each select="$POSs/PartOfSpeech[SubPossibilities]">
+	  <xsl:for-each select="$PartsOfSpeech[SubPossibilities]">
 		 <xsl:text>
 		/
 		&lt;</xsl:text>
@@ -1759,7 +1782,27 @@ ConstrainNestedCategories
 </xsl:text>
 	  </xsl:for-each>
    </xsl:template>
-   <!--
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		GetDerivPOSId
+		get top level POS Id for a derivaitonal MSA mapping
+		Parameters: posid = the Id of one part of the mapping
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template name="GetDerivPOSId">
+		<xsl:param name="posid"/>
+		<xsl:choose>
+			<xsl:when test="$posid=0">
+				<xsl:text>0</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:call-template name="GetTopLevelPOSId">
+					<xsl:with-param name="pos" select="key('POSID',$posid)"/>
+				</xsl:call-template>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 GetOtherExceptionFeaturesAsDefault
 	get any other exception features and set them to default minus
@@ -2027,7 +2070,87 @@ OutputFsFeatStruc
 		 <xsl:value-of select="@Feature"/>:<xsl:value-of select="@Value"/>
 	  </xsl:for-each>
    </xsl:template>
-   <!--
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		OutputLetsForTopLevelCategories
+		Output Let statements for top level categories
+		Parameters: sList = list of strings to look at
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template name="OutputLetsForTopLevelCategories">
+		<xsl:param name="sList"/>
+		<xsl:variable name="sFirst" select="substring-before($sList,' ')"/>
+		<xsl:variable name="sRest" select="substring-after($sList,' ')"/>
+		<xsl:if test="string-length($sFirst) &gt; 0">
+			<xsl:text>Let pos</xsl:text>
+			<xsl:value-of select="$sFirst"/>
+			<xsl:text> be []
+Let pos</xsl:text>
+			<xsl:value-of select="$sFirst"/>
+			<xsl:text>/pos</xsl:text>
+			<xsl:value-of select="$sFirst"/>
+			<xsl:text> be []
+</xsl:text>
+			<xsl:if test="$sRest">
+				<xsl:call-template name="OutputLetsForTopLevelCategories">
+					<xsl:with-param name="sList" select="$sRest"/>
+				</xsl:call-template>
+			</xsl:if>
+		</xsl:if>
+	</xsl:template>
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		OutputLetsForDerivMsas
+		Output Let statements for derivational affix category mappings
+		Parameters: derivMsa = current derivational MSA
+		sExistingMappings = list of mappings already handled
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template name="OutputLetsForDerivMsas">
+		<xsl:param name="derivMsa"/>
+		<xsl:param name="sExistingMappings"/>
+		<xsl:if test="$derivMsa">
+			<xsl:variable name="fromPosId">
+				<xsl:call-template name="GetDerivPOSId">
+					<xsl:with-param name="posid" select="$derivMsa/@FromPartOfSpeech"/>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:variable name="toPosId">
+				<xsl:call-template name="GetDerivPOSId">
+					<xsl:with-param name="posid" select="$derivMsa/@ToPartOfSpeech"/>
+				</xsl:call-template>
+			</xsl:variable>
+			<xsl:variable name="thisMapping">
+				<xsl:text>|</xsl:text>
+				<xsl:value-of select="$fromPosId"/>
+				<xsl:text>/</xsl:text>
+				<xsl:value-of select="$toPosId"/>
+				<xsl:text>|</xsl:text>
+			</xsl:variable>
+			<xsl:if test="$fromPosId!=$toPosId and not(contains($sExistingMappings,$thisMapping))">
+				<xsl:text>Let pos</xsl:text>
+				<xsl:value-of select="$fromPosId"/>
+				<xsl:text>/pos</xsl:text>
+				<xsl:value-of select="$toPosId"/>
+				<xsl:text> be []&#xa;</xsl:text>
+			</xsl:if>
+			<xsl:variable name="sMappings">
+				<xsl:choose>
+					<xsl:when test="contains($sExistingMappings,$thisMapping)">
+						<xsl:value-of select="$sExistingMappings"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="concat($sExistingMappings,$thisMapping)"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xsl:call-template name="OutputLetsForDerivMsas">
+				<xsl:with-param name="derivMsa" select="$derivMsa/following-sibling::MoDerivAffMsa[1]"/>
+				<xsl:with-param name="sExistingMappings" select="$sMappings"/>
+			</xsl:call-template>
+		</xsl:if>
+	</xsl:template>
+	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 OutputLetsForStemNamesUsedInLexicalEntries
 	Output Let statements for "not" stem names used in lexical entries
@@ -2182,7 +2305,7 @@ POSorParentHasStemNames
 		 </xsl:when>
 		 <xsl:otherwise>
 			<!-- now check parent POS -->
-			<xsl:for-each select="$POSs/PartOfSpeech/SubPossibilities[@dst=$posID]">
+			<xsl:for-each select="$PartsOfSpeech/SubPossibilities[@dst=$posID]">
 			   <xsl:call-template name="POSorParentHasStemNames">
 				  <xsl:with-param name="posID" select="../@Id"/>
 			   </xsl:call-template>
@@ -2222,7 +2345,7 @@ StemNameDefaultLogicalConstraint
 		 <xsl:text>]]</xsl:text>
 	  </xsl:for-each>
 	  <!-- now check parent POS -->
-	  <xsl:for-each select="$POSs/PartOfSpeech/SubPossibilities[@dst=$posID]">
+	  <xsl:for-each select="$PartsOfSpeech/SubPossibilities[@dst=$posID]">
 		 <xsl:call-template name="StemNameDefaultLogicalConstraint">
 			<xsl:with-param name="posID" select="../@Id"/>
 			<xsl:with-param name="bContinues">
@@ -2241,20 +2364,32 @@ StemNameDefaultLogicalConstraint
 StemNameConstraints
 	if needed, build stem name contraints
 		Parameters: posID = ID of current PartOfSpeech
+			leftNT = left non-terminal symbol to use
+			rightNT = right non-terminal symbol to use
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 -->
    <xsl:template name="StemNameConstraints">
 	  <xsl:param name="posID"/>
+	  <xsl:param name="leftNT" select="'Full'"/>
+	  <xsl:param name="rightNT" select="'Stem'"/>
 	  <xsl:variable name="bPOSorParentHasStemNames">
 		 <xsl:call-template name="POSorParentHasStemNames">
 			<xsl:with-param name="posID" select="$posID"/>
 		 </xsl:call-template>
 	  </xsl:variable>
 	  <xsl:if test="contains($bPOSorParentHasStemNames, 'Y')">
-  &lt;Full stemNameInfo stemName&gt;       = &lt;Stem stemName&gt;
+		 <xsl:text>
+  &lt;</xsl:text>
+		 <xsl:value-of select="$leftNT"/>
+		 <xsl:text> stemNameInfo stemName&gt;       = &lt;</xsl:text>
+		 <xsl:value-of select="$rightNT"/>
+		 <xsl:text> stemName&gt;
 				  | stem name logical constraint
- &lt;Full stemNameInfo&gt; == (
-  <xsl:call-template name="StemNameLogicalConstraint">
+  &lt;</xsl:text>
+		 <xsl:value-of select="$leftNT"/>
+		 <xsl:text> stemNameInfo&gt; == (
+  </xsl:text>
+		 <xsl:call-template name="StemNameLogicalConstraint">
 			<xsl:with-param name="posID" select="$posID"/>
 			<xsl:with-param name="origPosID" select="$posID"/>
 		 </xsl:call-template>
@@ -2278,7 +2413,7 @@ StemNameLogicalConstraint
 	  <xsl:param name="posID"/>
 	  <xsl:param name="bContinues"/>
 	  <xsl:param name="origPosID"/>
-	  <xsl:variable name="stemNames" select="key('POSID', $posID)/StemNames/MoStemName[descendant::FsClosedValue]"/>
+	<xsl:variable name="stemNames" select="key('POSID', $posID)/StemNames/MoStemName[descendant::FsClosedValue]"/>
 	  <xsl:for-each select="$stemNames">
 		 <!-- nested items need to be enclosed in parens -->
 		 <xsl:if test="position()!=1 or $bContinues='Y'">
@@ -2292,7 +2427,7 @@ StemNameLogicalConstraint
 		 <xsl:text>))</xsl:text>
 	  </xsl:for-each>
 	  <!-- now check parent POS -->
-	  <xsl:variable name="parentPOS" select="$POSs/PartOfSpeech/SubPossibilities[@dst=$posID]"/>
+	  <xsl:variable name="parentPOS" select="$PartsOfSpeech/SubPossibilities[@dst=$posID]"/>
 	  <xsl:for-each select="$parentPOS">
 		 <xsl:call-template name="StemNameLogicalConstraint">
 			<xsl:with-param name="posID" select="../@Id"/>
@@ -2336,7 +2471,7 @@ StemNameRelevantToPOS
 		 </xsl:when>
 		 <xsl:otherwise>
 			<!-- this POS did not; check parent POS -->
-			<xsl:for-each select="$POSs/PartOfSpeech[SubPossibilities/@dst=$pos/@Id]">
+			<xsl:for-each select="$PartsOfSpeech[SubPossibilities/@dst=$pos/@Id]">
 			   <xsl:call-template name="StemNameRelevantToPOS">
 				  <xsl:with-param name="stemname" select="$stemname"/>
 				  <xsl:with-param name="pos" select="."/>
@@ -2406,7 +2541,7 @@ morphoSyntax : </xsl:text>
 		 <xsl:if test="position()=last()">]</xsl:if>
 	  </xsl:for-each>
 	  <!-- Now check for any above. -->
-	  <xsl:for-each select="$POSs/PartOfSpeech/SubPossibilities[@dst=$pos]">
+	  <xsl:for-each select="$PartsOfSpeech/SubPossibilities[@dst=$pos]">
 		 <xsl:call-template name="SuperPOSGetDefaultFeatures">
 			<xsl:with-param name="pos" select="../@Id"/>
 		 </xsl:call-template>
@@ -2427,7 +2562,7 @@ SuperPOSHasTemplate
 	  <xsl:if test="$CurrentPOS/AffixTemplates/MoInflAffixTemplate">Y</xsl:if>
 	  <xsl:if test="not($CurrentPOS/AffixTemplates/MoInflAffixTemplate)">
 		 <!-- Did not have one.  Check for any above. -->
-		 <xsl:for-each select="$POSs/PartOfSpeech/SubPossibilities[@dst=$pos]">
+		 <xsl:for-each select="$PartsOfSpeech/SubPossibilities[@dst=$pos]">
 			<xsl:call-template name="SuperPOSHasTemplate">
 			   <xsl:with-param name="pos" select="../@Id"/>
 			</xsl:call-template>

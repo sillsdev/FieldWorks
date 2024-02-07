@@ -204,7 +204,7 @@ namespace SIL.FieldWorks.IText
 			var helpTopicProvider = m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider");
 			if (helpTopicProvider != null) // FwApp.App could be null during tests
 			{
-				helpProvider = new HelpProvider();
+				helpProvider = new FlexHelpProvider();
 				helpProvider.HelpNamespace = helpTopicProvider.HelpFile;
 				helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(s_helpTopic));
 				helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);

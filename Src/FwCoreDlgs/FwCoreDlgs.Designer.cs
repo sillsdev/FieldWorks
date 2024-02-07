@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.FwCoreDlgs {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class FwCoreDlgs {
@@ -245,15 +245,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot Replace Displayed Picture.
-        /// </summary>
-        public static string ksCannotReplaceDisplayedPicture {
-            get {
-                return ResourceManager.GetString("ksCannotReplaceDisplayedPicture", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to This writing system cannot be modified, because FieldWorks does not have permission to write the necessary file ({0}). .
         /// </summary>
         public static string ksCannotSaveWritingSystem {
@@ -357,6 +348,16 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} Click No to leave the file at
+        ///{1}.
+        /// </summary>
+        public static string ksClickNoToLeave {
+            get {
+                return ResourceManager.GetString("ksClickNoToLeave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} [{1}].
         /// </summary>
         public static string ksCodePageDisplay {
@@ -431,15 +432,6 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to If you want to replace a picture file, you must first delete the current picture..
-        /// </summary>
-        public static string ksDeletePictureBeforeReplacingFile {
-            get {
-                return ResourceManager.GetString("ksDeletePictureBeforeReplacingFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Description.
         /// </summary>
         public static string ksDescription {
@@ -499,6 +491,25 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string ksErrorCreatingBackupDirCaption {
             get {
                 return ResourceManager.GetString("ksErrorCreatingBackupDirCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file cannot be written because it is currently in use. Try restarting FieldWorks or choose a unique name..
+        /// </summary>
+        public static string ksErrorFileInUse {
+            get {
+                return ResourceManager.GetString("ksErrorFileInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error moving or copying file &apos;{0}&apos; to &apos;{1}&apos;:
+        ///{2}.
+        /// </summary>
+        public static string ksErrorMovingOrCopyingXtoY {
+            get {
+                return ResourceManager.GetString("ksErrorMovingOrCopyingXtoY", resourceCulture);
             }
         }
         
@@ -1126,6 +1137,24 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         public static string ksRunUtilities {
             get {
                 return ResourceManager.GetString("ksRunUtilities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &amp;Save changes.
+        /// </summary>
+        public static string ksSaveChanges {
+            get {
+                return ResourceManager.GetString("ksSaveChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save changes &amp;as.
+        /// </summary>
+        public static string ksSaveChangesAs {
+            get {
+                return ResourceManager.GetString("ksSaveChangesAs", resourceCulture);
             }
         }
         
@@ -2406,7 +2435,7 @@ namespace SIL.FieldWorks.FwCoreDlgs {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Writing systems with selected checkboxes are always displayed..
+        ///   Looks up a localized string similar to Writing systems with cleared checkboxes are displayed only for fields that are not empty..
         /// </summary>
         public static string WritingSystemList_NormalTooltip {
             get {

@@ -4,7 +4,7 @@ Copyright (c) 2018 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
 -->
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
 	<PropertyGroup>
 		<FwrtPath>../..</FwrtPath>
 		<ILRepackBin Condition="('$(OS)' == 'Windows_NT')">&quot;$(FwrtPath)\packages\ILRepack.2.0.16\tools\ILRepack.exe&quot;</ILRepackBin>
@@ -19,7 +19,7 @@ This software is licensed under the LGPL, version 2.1 or later
 		<RepackAssemblies Include="$(OutputPath)/SIL.LCModel.Utils.dll"/>
 		<RepackAssemblies Include="$(OutputPath)/SIL.Machine.dll"/>
 		<RepackAssemblies Include="$(OutputPath)/SIL.WritingSystems.dll"/>
-		<RepackAssemblies Include="$(OutputPath)/SIL.HermitCrab.dll"/>
+		<RepackAssemblies Include="$(OutputPath)/SIL.Machine.Morphology.HermitCrab.dll"/>
 		<RepackAssemblies Include="$(OutputPath)/SIL.Lexicon.dll"/>
 		<RepackAssemblies Include="$(OutputPath)/ParserCore.dll"/>
 		<RepackAssemblies Include="$(OutputPath)/FwUtils.dll"/>

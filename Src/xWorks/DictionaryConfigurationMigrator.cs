@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class DictionaryConfigurationMigrator
 	{
-		public const int VersionCurrent = 22;
+		public const int VersionCurrent = 25;
 		internal const string NodePathSeparator = " > ";
 		public const string RootFileName = "Root";
 		public const string HybridFileName = "Hybrid";
@@ -68,7 +68,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (m_logger.HasContent)
 					{
-					var configurationDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable,
+						var configurationDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable,
 							DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
 						Directory.CreateDirectory(configurationDir);
 						File.AppendAllText(Path.Combine(configurationDir, "ConfigMigrationLog.txt"), m_logger.Content);

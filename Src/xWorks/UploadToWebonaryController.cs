@@ -108,7 +108,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return m_exportService.ExportDictionaryContentJson(model.SiteName, templateFileNames,
 				model.Reversals.Where(kvp => model.SelectedReversals.Contains(kvp.Key)).Select(kvp => kvp.Value),
-				model.Configurations[model.SelectedConfiguration].FilePath,
 				tempDirectoryForExport);
 		}
 
@@ -215,6 +214,22 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Converts siteName to lowercase and removes https://www.webonary.org, if present. LT-21224, LT-21387
+		/// </summary>
+		internal static string NormalizeSiteName(string siteName)
+		{
+			siteName = siteName.ToLowerInvariant();
+			// trim a leading [http[s]://]webonary.org/
+			const string domainSlash = WebonaryOrg + "/";
+			var domainIndex = siteName.IndexOf(domainSlash, StringComparison.InvariantCulture);
+			if (domainIndex != -1)
+			{
+				siteName = siteName.Substring(domainIndex + domainSlash.Length);
+			}
+			return siteName;
+		}
+
+		/// <summary>
 		/// Return upload URI, based on siteName.
 		/// </summary>
 		internal virtual string DestinationURI(string siteName)
@@ -230,13 +245,15 @@ namespace SIL.FieldWorks.XWorks
 			return $"https://cloud-api.{Server}/v1/{apiEndpoint}/{siteName}?client=Flex&version='{Assembly.GetExecutingAssembly().GetName().Version}'";
 		}
 
+		internal const string WebonaryOrg = "webonary.org";
+
 		internal static string Server
 		{
 			get
 			{
 				// For local testing, set the WEBONARYSERVER environment variable to something like 192.168.33.10
 				var server = Environment.GetEnvironmentVariable("WEBONARYSERVER");
-				return string.IsNullOrEmpty(server) ? "webonary.org" : server;
+				return string.IsNullOrEmpty(server) ? WebonaryOrg : server;
 			}
 		}
 

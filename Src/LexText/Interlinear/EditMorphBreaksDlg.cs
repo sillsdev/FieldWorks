@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.IText
 			if (!Application.RenderWithVisualStyles)
 				m_txtMorphs.BorderStyle = BorderStyle.FixedSingle;
 
-			m_helpProvider = new HelpProvider {HelpNamespace = helpTopicProvider.HelpFile};
+			m_helpProvider = new FlexHelpProvider {HelpNamespace = helpTopicProvider.HelpFile};
 			m_helpProvider.SetHelpKeyword(this, helpTopicProvider.GetHelpString(ksHelpTopic));
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 		}

@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.IText
 			AccessibleName = GetType().Name;
 
 			m_helpTopicProvider = helpTopicProvider;
-			helpProvider = new HelpProvider();
+			helpProvider = new FlexHelpProvider();
 			helpProvider.HelpNamespace = m_helpTopicProvider.HelpFile;
 			helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
 			helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);

@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2017 SIL International
+// Copyright (c) 2004-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,18 +8,17 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using SIL.LCModel.Core.Text;
-using SIL.FieldWorks.Common.Controls;
+using SIL.Code;
 using SIL.FieldWorks.Common.Controls.FileDialog;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.Resources;
-using SIL.Reporting;
 using SIL.LCModel.Utils;
+using SIL.Reporting;
+using SIL.Windows.Forms.ClearShare;
+using SIL.Windows.Forms.ImageToolbox;
+using SIL.Windows.Forms.ImageToolbox.ImageGallery;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -28,45 +27,68 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// Dialog for editing picture properties
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class PicturePropertiesDialog : Form
+	public partial class PicturePropertiesDialog
 	{
 		#region Member variables
-		private const string s_helpTopic = "khtpPictureProperties";
+		private const string HelpTopic = "khtpPictureProperties";
+		private readonly string m_rbCopyText;
+		private readonly string m_rbMoveText;
 
-		private IContainer components;
-		private Image m_currentImage;
 		private string m_filePath;
-		private PictureBox m_picPreview;
-		private Label lblFilename;
-		private readonly LcmCache m_cache;
 		private readonly ICmPicture m_initialPicture;
+		private FileLocationChoice m_fileLocChoice = s_defaultFileLocChoiceForSession;
+		private bool m_isSaveAsChosen;
+
+		private readonly LcmCache m_cache;
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly IApp m_app;
 		private readonly HelpProvider m_helpProvider;
-		private readonly int m_captionWs;
 
-		private Button m_btnHelp;
-		private FwTextBox m_txtCaption;
-		private LabeledMultiStringControl m_lmscCaption;
-		private ToolTip m_tooltip;
-		private Panel panelBottom;
-		private GroupBox m_grpFileLocOptions;
-		private RadioButton m_rbMove;
-		private RadioButton m_rbCopy;
-		private RadioButton m_rbLeave;
-		private TextBox m_txtDestination;
-		private Label m_lblDestination;
-		private Button m_btnBrowseDest;
-		private Panel panelFileName;
-		private FwPanel pnlCaption;
-		private Panel panel1;
-		private FwPanel pnlPicture;
-
-		private static FileLocationChoice s_defaultFileLocChoiceForSession = FileLocationChoice.Copy;
 		private static string s_sExternalLinkDestinationDir;
-
-		private String s_defaultPicturesFolder;
+		private static string s_defaultPicturesFolder;
+		private static FileLocationChoice s_defaultFileLocChoiceForSession = FileLocationChoice.Copy;
 		#endregion
+
+		#region Private properties and backing variables
+		private Size m_imageInitialSize;
+
+		/// <summary>True if the image has no license and the user has not selected one, either</summary>
+		private bool m_isSuggestingLicense;
+
+		/// <remarks>
+		/// For some reason, when switching to the crop control from the Art Of Reading gallery chooser, metadata is marked dirty.
+		/// But Palaso is smart enough not to let users edit this metadata, so it is never dirty.
+		/// Request at https://github.com/sillsdev/libpalaso/issues/1268 ~Hasso, 2023.06
+		/// </remarks>
+		private bool m_isAOR;
+
+		private bool IsDirty => (!m_isAOR && imageToolbox.ImageInfo.Metadata.HasChanges) || IsCropped;
+
+		private bool IsCropped => !m_imageInitialSize.Equals(imageToolbox.ImageInfo.Image.Size);
+
+		private bool m_imageExistsOutsideProject;
+
+		private bool ImageExistsOutsideProject
+		{
+			get => m_imageExistsOutsideProject;
+			set => m_imageExistsOutsideProject = m_grpFileLocOptions.Visible = value;
+		}
+
+		private bool FileFormatSupportsMetadata
+		{
+			get
+			{
+				try
+				{
+					return imageToolbox.ImageInfo.FileFormatSupportsMetadata;
+				}
+				catch
+				{
+					return false;
+				}
+			}
+		}
+		#endregion Private properties and backing variables
 
 		#region Construction, initialization, and disposal
 		/// ------------------------------------------------------------------------------------
@@ -81,28 +103,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public PicturePropertiesDialog(LcmCache cache, ICmPicture initialPicture,
 			IHelpTopicProvider helpTopicProvider, IApp app)
-			: this(cache, initialPicture, helpTopicProvider, app, false)
 		{
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="T:PicturePropertiesDialog"/> class.
-		/// </summary>
-		/// <param name="cache">The LcmCache to use</param>
-		/// <param name="initialPicture">The CmPicture object to set all of the dialog
-		/// properties to, or null to edit a new picture</param>
-		/// <param name="helpTopicProvider">typically IHelpTopicProvider.App</param>
-		/// <param name="app">The application</param>
-		/// <param name="fAnalysis">true to use analysis writign system for caption</param>
-		/// ------------------------------------------------------------------------------------
-		public PicturePropertiesDialog(LcmCache cache, ICmPicture initialPicture,
-			IHelpTopicProvider helpTopicProvider, IApp app, bool fAnalysis)
-		{
-			// ReSharper disable LocalizableElement
-			if (cache == null)
-				throw(new ArgumentNullException("cache", "The LcmCache cannot be null"));
-			// ReSharper restore LocalizableElement
+			Guard.AgainstNull(cache, nameof(cache));
 
 			Logger.WriteEvent("Opening 'Picture Properties' dialog");
 
@@ -110,92 +112,26 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_initialPicture = initialPicture;
 			m_helpTopicProvider = helpTopicProvider;
 			m_app = app;
-			m_captionWs = fAnalysis
-				? m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle
-				: m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 
 			InitializeComponent();
 			AccessibleName = GetType().Name;
+			m_rbCopyText = m_rbCopy_rbSave.Text;
+			m_rbMoveText = m_rbMove_rbSaveAs.Text;
 
 			if (m_helpTopicProvider != null) // Could be null during tests
 			{
-				m_helpProvider = new HelpProvider();
+				m_helpProvider = new FlexHelpProvider();
 				m_helpProvider.HelpNamespace = FwDirectoryFinder.CodeDirectory +
 					m_helpTopicProvider.GetHelpString("UserHelpFile");
-				m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(s_helpTopic));
+				m_helpProvider.SetHelpKeyword(this, m_helpTopicProvider.GetHelpString(HelpTopic));
 				m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			}
 		}
 
-		/// <summary>
-		/// Convert the text box for the caption to a multilingual string control.
-		/// </summary>
-		public void UseMultiStringCaption(LcmCache cache, int wsMagic, IVwStylesheet stylesheet)
-		{
-			m_lmscCaption = new LabeledMultiStringControl(cache, wsMagic, stylesheet);
-			m_txtCaption.Hide();
-			m_lmscCaption.Location = m_txtCaption.Location;
-			m_lmscCaption.Width = m_txtCaption.Width;
-			m_lmscCaption.Anchor = m_txtCaption.Anchor;
-			m_lmscCaption.AccessibleName = m_txtCaption.AccessibleName;
-			m_lmscCaption.Dock = DockStyle.Fill;
-
-			// Grow the dialog and move all lower controls down to make room.
-			pnlCaption.Controls.Remove(m_txtCaption);
-			m_lmscCaption.TabIndex = m_txtCaption.TabIndex;	// assume the same tab order as the 'designed' control
-			pnlCaption.Controls.Add(m_lmscCaption);
-		}
-
-		/// <summary>
-		/// Set the multilingual caption into the dialog control.
-		/// </summary>
-		public void SetMultilingualCaptionValues(IMultiAccessorBase caption)
-		{
-			if (m_lmscCaption == null)
-				return;
-			var cws = m_lmscCaption.NumberOfWritingSystems;
-			for (var i = 0; i < cws; i++)
-			{
-				var curWs = m_lmscCaption.Ws(i);
-				if (curWs <= 0)
-					continue;
-				int actualWs;
-				ITsString tssStr;
-				if (!caption.TryWs(curWs, out actualWs, out tssStr))
-					continue;
-				m_lmscCaption.SetValue(curWs, tssStr);
-			}
-		}
-
-		/// <summary>
-		/// Store the results of any editing into the actual data.
-		/// </summary>
-		public void GetMultilingualCaptionValues(IMultiAccessorBase caption)
-		{
-			if (m_lmscCaption == null)
-				return;
-			var cws = m_lmscCaption.NumberOfWritingSystems;
-			for (var i = 0; i < cws; i++)
-			{
-				var curWs = m_lmscCaption.Ws(i);
-				caption.set_String(curWs, m_lmscCaption.Value(curWs));
-			}
-		}
-
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initialize the dialog (and let the user select a picture)
-		/// </summary>
-		/// <returns>True if initialization succeeded, false otherwise</returns>
-		/// ------------------------------------------------------------------------------------
-		public bool Initialize()
+		/// <summary/>
+		public void Initialize()
 		{
 			CheckDisposed();
-
-			ILgWritingSystemFactory wsf = m_cache.LanguageWritingSystemFactoryAccessor;
-			m_txtCaption.WritingSystemFactory = wsf;
-			m_txtCaption.WritingSystemCode = m_captionWs;
 
 			s_defaultPicturesFolder = Path.Combine(m_cache.LanguageProject.LinkedFilesRootDir, "Pictures");
 			try
@@ -218,44 +154,31 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (m_initialPicture != null)
 			{
-				ITsString tss = m_initialPicture.Caption.get_String(m_captionWs);
-				m_txtCaption.Tss = tss.Length == 0 ? MakeEmptyCaptionString() : tss;
-
 				if (m_initialPicture.PictureFileRA == null)
-					m_filePath = String.Empty;
+					m_filePath = string.Empty;
 				else
 				{
 					m_filePath = m_initialPicture.PictureFileRA.AbsoluteInternalPath;
 					if (m_filePath == StringServices.EmptyFileName)
-						m_filePath = String.Empty;
+						m_filePath = string.Empty;
 				}
 
 				if (FileUtils.TrySimilarFileExists(m_filePath, out m_filePath))
-					m_currentImage = Image.FromFile(m_filePath);
+					imageToolbox.ImageInfo = PalasoImage.FromFile(m_filePath);
 				else
 				{
 					// use an image that indicates the image file could not be opened.
-					m_currentImage = SimpleRootSite.ImageNotFoundX;
+					imageToolbox.ImageInfo.Image = SimpleRootSite.ImageNotFoundX;
 				}
-				UpdatePicInformation();
+				UpdateInfoForNewPic();
 				m_rbLeave.Checked = true;
-				return true;
+				return;
 			}
 
-			m_txtCaption.Tss = MakeEmptyCaptionString();
-
-			// if the user isn't editing an existing picture, then go ahead and bring up
-			// the file chooser
-			DialogResult result = ShowChoosePictureDlg();
-			if (result == DialogResult.Cancel)
-			{
-				// use an image that indicates the we don't have an image
-				Debug.Assert(m_currentImage == null);
-				m_currentImage = SimpleRootSite.ImageNotFoundX;
-				UpdatePicInformation();
-			}
-			ApplyDefaultFileLocationChoice();
-			return (result == DialogResult.OK);
+			// there is no picture yet; hide the saving controls
+			panelFileName.Visible = false;
+			ImageExistsOutsideProject = false;
+			m_btnOK.Enabled = false;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -268,7 +191,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -279,275 +202,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// resources; <c>false</c> to release only unmanaged resources.
 		/// </param>
 		/// -----------------------------------------------------------------------------------
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
 
-			if( disposing )
+			if (disposing)
 			{
-				if (components != null)
-					components.Dispose();
-
-				if (m_currentImage != null)
-					m_currentImage.Dispose();
-
-				if (m_helpProvider != null)
-					m_helpProvider.Dispose();
+				components?.Dispose();
+				m_helpProvider?.Dispose();
 			}
-			m_currentImage = null;
-			base.Dispose( disposing );
-		}
-		#endregion
-
-		#region Windows Form Designer generated code
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		private void InitializeComponent()
-		{
-			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.Button m_btnOK;
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PicturePropertiesDialog));
-			System.Windows.Forms.Button btnCancel;
-			System.Windows.Forms.Button btnChooseFile;
-			System.Windows.Forms.Label lblCaption;
-			System.Windows.Forms.Label label2;
-			System.Windows.Forms.Label label3;
-			this.m_btnHelp = new System.Windows.Forms.Button();
-			this.m_picPreview = new System.Windows.Forms.PictureBox();
-			this.lblFilename = new System.Windows.Forms.Label();
-			this.m_txtCaption = new SIL.FieldWorks.Common.Widgets.FwTextBox();
-			this.m_tooltip = new System.Windows.Forms.ToolTip(this.components);
-			this.panelBottom = new System.Windows.Forms.Panel();
-			this.pnlPicture = new SIL.FieldWorks.Common.Controls.FwPanel();
-			this.pnlCaption = new SIL.FieldWorks.Common.Controls.FwPanel();
-			this.m_grpFileLocOptions = new System.Windows.Forms.GroupBox();
-			this.m_btnBrowseDest = new System.Windows.Forms.Button();
-			this.m_txtDestination = new System.Windows.Forms.TextBox();
-			this.m_lblDestination = new System.Windows.Forms.Label();
-			this.m_rbLeave = new System.Windows.Forms.RadioButton();
-			this.m_rbMove = new System.Windows.Forms.RadioButton();
-			this.m_rbCopy = new System.Windows.Forms.RadioButton();
-			this.panelFileName = new System.Windows.Forms.Panel();
-			this.panel1 = new System.Windows.Forms.Panel();
-			m_btnOK = new System.Windows.Forms.Button();
-			btnCancel = new System.Windows.Forms.Button();
-			btnChooseFile = new System.Windows.Forms.Button();
-			lblCaption = new System.Windows.Forms.Label();
-			label2 = new System.Windows.Forms.Label();
-			label3 = new System.Windows.Forms.Label();
-			((System.ComponentModel.ISupportInitialize)(this.m_picPreview)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_txtCaption)).BeginInit();
-			this.panelBottom.SuspendLayout();
-			this.pnlPicture.SuspendLayout();
-			this.pnlCaption.SuspendLayout();
-			this.m_grpFileLocOptions.SuspendLayout();
-			this.panelFileName.SuspendLayout();
-			this.panel1.SuspendLayout();
-			this.SuspendLayout();
-			//
-			// m_btnOK
-			//
-			resources.ApplyResources(m_btnOK, "m_btnOK");
-			m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			m_btnOK.Name = "m_btnOK";
-			//
-			// btnCancel
-			//
-			resources.ApplyResources(btnCancel, "btnCancel");
-			btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			btnCancel.Name = "btnCancel";
-			//
-			// btnChooseFile
-			//
-			resources.ApplyResources(btnChooseFile, "btnChooseFile");
-			btnChooseFile.Name = "btnChooseFile";
-			btnChooseFile.Click += new System.EventHandler(this.m_btnChooseFile_Click);
-			//
-			// lblCaption
-			//
-			resources.ApplyResources(lblCaption, "lblCaption");
-			lblCaption.Name = "lblCaption";
-			//
-			// label2
-			//
-			resources.ApplyResources(label2, "label2");
-			label2.Name = "label2";
-			//
-			// label3
-			//
-			resources.ApplyResources(label3, "label3");
-			label3.Name = "label3";
-			//
-			// m_btnHelp
-			//
-			resources.ApplyResources(this.m_btnHelp, "m_btnHelp");
-			this.m_btnHelp.Name = "m_btnHelp";
-			this.m_btnHelp.Click += new System.EventHandler(this.m_btnHelp_Click);
-			//
-			// m_picPreview
-			//
-			resources.ApplyResources(this.m_picPreview, "m_picPreview");
-			this.m_picPreview.Name = "m_picPreview";
-			this.m_picPreview.TabStop = false;
-			this.m_picPreview.ClientSizeChanged += new System.EventHandler(this.m_picPreview_ClientSizeChanged);
-			//
-			// lblFilename
-			//
-			resources.ApplyResources(this.lblFilename, "lblFilename");
-			this.lblFilename.Name = "lblFilename";
-			this.lblFilename.Paint += new System.Windows.Forms.PaintEventHandler(this.lblFilename_Paint);
-			this.lblFilename.MouseEnter += new System.EventHandler(this.lblFilename_MouseEnter);
-			//
-			// m_txtCaption
-			//
-			this.m_txtCaption.AcceptsReturn = false;
-			this.m_txtCaption.AdjustStringHeight = true;
-			this.m_txtCaption.BackColor = System.Drawing.SystemColors.Window;
-			this.m_txtCaption.controlID = null;
-			resources.ApplyResources(this.m_txtCaption, "m_txtCaption");
-			this.m_txtCaption.HasBorder = true;
-			this.m_txtCaption.Name = "m_txtCaption";
-			this.m_txtCaption.SuppressEnter = false;
-			this.m_txtCaption.WordWrap = true;
-			//
-			// panelBottom
-			//
-			resources.ApplyResources(this.panelBottom, "panelBottom");
-			this.panelBottom.Controls.Add(this.pnlPicture);
-			this.panelBottom.Controls.Add(this.pnlCaption);
-			this.panelBottom.Controls.Add(btnChooseFile);
-			this.panelBottom.Controls.Add(lblCaption);
-			this.panelBottom.Controls.Add(label3);
-			this.panelBottom.ForeColor = System.Drawing.SystemColors.ControlText;
-			this.panelBottom.Name = "panelBottom";
-			//
-			// pnlPicture
-			//
-			resources.ApplyResources(this.pnlPicture, "pnlPicture");
-			this.pnlPicture.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.pnlPicture.ClipTextForChildControls = true;
-			this.pnlPicture.ControlReceivingFocusOnMnemonic = null;
-			this.pnlPicture.Controls.Add(this.m_picPreview);
-			this.pnlPicture.DoubleBuffered = true;
-			this.pnlPicture.MnemonicGeneratesClick = false;
-			this.pnlPicture.Name = "pnlPicture";
-			this.pnlPicture.PaintExplorerBarBackground = false;
-			//
-			// pnlCaption
-			//
-			resources.ApplyResources(this.pnlCaption, "pnlCaption");
-			this.pnlCaption.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.pnlCaption.ClipTextForChildControls = true;
-			this.pnlCaption.ControlReceivingFocusOnMnemonic = null;
-			this.pnlCaption.Controls.Add(this.m_txtCaption);
-			this.pnlCaption.DoubleBuffered = true;
-			this.pnlCaption.MnemonicGeneratesClick = false;
-			this.pnlCaption.Name = "pnlCaption";
-			this.pnlCaption.PaintExplorerBarBackground = false;
-			//
-			// m_grpFileLocOptions
-			//
-			resources.ApplyResources(this.m_grpFileLocOptions, "m_grpFileLocOptions");
-			this.m_grpFileLocOptions.Controls.Add(this.m_btnBrowseDest);
-			this.m_grpFileLocOptions.Controls.Add(this.m_txtDestination);
-			this.m_grpFileLocOptions.Controls.Add(this.m_lblDestination);
-			this.m_grpFileLocOptions.Controls.Add(this.m_rbLeave);
-			this.m_grpFileLocOptions.Controls.Add(this.m_rbMove);
-			this.m_grpFileLocOptions.Controls.Add(this.m_rbCopy);
-			this.m_grpFileLocOptions.Name = "m_grpFileLocOptions";
-			this.m_grpFileLocOptions.TabStop = false;
-			//
-			// m_btnBrowseDest
-			//
-			resources.ApplyResources(this.m_btnBrowseDest, "m_btnBrowseDest");
-			this.m_btnBrowseDest.Name = "m_btnBrowseDest";
-			this.m_btnBrowseDest.UseVisualStyleBackColor = true;
-			this.m_btnBrowseDest.Click += new System.EventHandler(this.m_btnBrowseDest_Click);
-			//
-			// m_txtDestination
-			//
-			resources.ApplyResources(this.m_txtDestination, "m_txtDestination");
-			this.m_txtDestination.Name = "m_txtDestination";
-			//
-			// m_lblDestination
-			//
-			resources.ApplyResources(this.m_lblDestination, "m_lblDestination");
-			this.m_lblDestination.Name = "m_lblDestination";
-			//
-			// m_rbLeave
-			//
-			resources.ApplyResources(this.m_rbLeave, "m_rbLeave");
-			this.m_rbLeave.Name = "m_rbLeave";
-			this.m_rbLeave.UseVisualStyleBackColor = true;
-			this.m_rbLeave.CheckedChanged += new System.EventHandler(this.HandleLocationCheckedChanged);
-			//
-			// m_rbMove
-			//
-			resources.ApplyResources(this.m_rbMove, "m_rbMove");
-			this.m_rbMove.Name = "m_rbMove";
-			this.m_rbMove.UseVisualStyleBackColor = true;
-			this.m_rbMove.CheckedChanged += new System.EventHandler(this.HandleLocationCheckedChanged);
-			//
-			// m_rbCopy
-			//
-			resources.ApplyResources(this.m_rbCopy, "m_rbCopy");
-			this.m_rbCopy.Checked = true;
-			this.m_rbCopy.Name = "m_rbCopy";
-			this.m_rbCopy.TabStop = true;
-			this.m_rbCopy.UseVisualStyleBackColor = true;
-			this.m_rbCopy.CheckedChanged += new System.EventHandler(this.HandleLocationCheckedChanged);
-			//
-			// panelFileName
-			//
-			resources.ApplyResources(this.panelFileName, "panelFileName");
-			this.panelFileName.Controls.Add(this.lblFilename);
-			this.panelFileName.Controls.Add(label2);
-			this.panelFileName.ForeColor = System.Drawing.SystemColors.ControlText;
-			this.panelFileName.Name = "panelFileName";
-			//
-			// panel1
-			//
-			resources.ApplyResources(this.panel1, "panel1");
-			this.panel1.Controls.Add(btnCancel);
-			this.panel1.Controls.Add(this.m_btnHelp);
-			this.panel1.Controls.Add(m_btnOK);
-			this.panel1.Name = "panel1";
-			//
-			// PicturePropertiesDialog
-			//
-			this.AcceptButton = m_btnOK;
-			resources.ApplyResources(this, "$this");
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.CancelButton = btnCancel;
-			this.Controls.Add(this.panelBottom);
-			this.Controls.Add(this.m_grpFileLocOptions);
-			this.Controls.Add(this.panelFileName);
-			this.Controls.Add(this.panel1);
-			this.MaximizeBox = false;
-			this.MinimizeBox = false;
-			this.Name = "PicturePropertiesDialog";
-			this.ShowIcon = false;
-			this.ShowInTaskbar = false;
-			((System.ComponentModel.ISupportInitialize)(this.m_picPreview)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_txtCaption)).EndInit();
-			this.panelBottom.ResumeLayout(false);
-			this.panelBottom.PerformLayout();
-			this.pnlPicture.ResumeLayout(false);
-			this.pnlCaption.ResumeLayout(false);
-			this.m_grpFileLocOptions.ResumeLayout(false);
-			this.m_grpFileLocOptions.PerformLayout();
-			this.panelFileName.ResumeLayout(false);
-			this.panelFileName.PerformLayout();
-			this.panel1.ResumeLayout(false);
-			this.ResumeLayout(false);
-
+			base.Dispose(disposing);
 		}
 		#endregion
 
@@ -567,47 +234,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				return m_filePath;
 			}
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the caption the user gave the file.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ITsString Caption
-		{
-			get
-			{
-				CheckDisposed();
-				return m_txtCaption.Tss;
-			}
-		}
 		#endregion
 
 		#region Event handlers
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handles the ClientSizeChanged event of the m_picPreview control.
-		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-		/// ------------------------------------------------------------------------------------
-		private void m_picPreview_ClientSizeChanged(object sender, EventArgs e)
-		{
-			UpdatePicInformation();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handle event when user clicks on button to choose an image file.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// ------------------------------------------------------------------------------------
-		private void m_btnChooseFile_Click(object sender, EventArgs e)
-		{
-			ShowChoosePictureDlg();
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Show help for this dialog
@@ -617,7 +246,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void m_btnHelp_Click(object sender, EventArgs e)
 		{
-			ShowHelp.ShowHelpTopic(m_helpTopicProvider, s_helpTopic);
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, HelpTopic);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -633,7 +262,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			using (var dlg = new FolderBrowserDialogAdapter())
 			{
 				dlg.SelectedPath = m_txtDestination.Text;
-				dlg.Description = String.Format(FwCoreDlgs.kstidSelectLinkedFilesSubFolder,
+				dlg.Description = string.Format(FwCoreDlgs.kstidSelectLinkedFilesSubFolder,
 					s_defaultPicturesFolder);
 				dlg.ShowNewFolderButton = true;
 
@@ -656,9 +285,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (DialogResult == DialogResult.OK)
 			{
-				string action = (m_initialPicture == null ? "Creating" : "Changing");
-				Logger.WriteEvent(string.Format("{0} Picture Properties: file: {1}, {2} caption",
-					action, m_filePath, m_txtCaption.Text.Length > 0 ? "with" : "no"));
+				var action = (m_initialPicture == null ? "Creating" : "Changing");
+				Logger.WriteEvent(
+					$"{action} Picture Properties: file: {m_filePath}, {imageToolbox.ImageInfo.Metadata.MinimalCredits(new[] { "en" }, out _)}");
 			}
 
 			base.OnClosed(e);
@@ -673,12 +302,26 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		protected override void OnClosing(CancelEventArgs e)
 		{
-			if (DialogResult == DialogResult.OK && m_grpFileLocOptions.Visible)
+			if (DialogResult == DialogResult.OK)
 			{
+				if (m_isSuggestingLicense)
+				{
+					// The user didn't select a license; don't save one
+					imageToolbox.ImageInfo.Metadata.License = new NullLicense();
+					imageToolbox.ImageInfo.Metadata.HasChanges = false;
+				}
 				if (!m_rbLeave.Checked && !ValidateDestinationFolder(m_txtDestination.Text))
+				{
 					e.Cancel = true;
-				else
-					ApplyFileLocationOptions();
+				}
+				else if (IsDirty)
+				{
+					ApplySaveFile(e);
+				}
+				else if (ImageExistsOutsideProject)
+				{
+					ApplyMoveCopyOrLeaveFile(e);
+				}
 			}
 
 			base.OnClosing(e);
@@ -686,115 +329,125 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Draw the file name with EllipsisPath trimming.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void lblFilename_Paint(object sender, PaintEventArgs e)
-		{
-			TextFormatFlags flags = TextFormatFlags.VerticalCenter |
-				TextFormatFlags.PathEllipsis | TextFormatFlags.SingleLine;
-
-			e.Graphics.FillRectangle(SystemBrushes.Control, lblFilename.ClientRectangle);
-			TextRenderer.DrawText(e.Graphics, lblFilename.Text, lblFilename.Font,
-				lblFilename.ClientRectangle, lblFilename.ForeColor, flags);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		///
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void lblFilename_MouseEnter(object sender, EventArgs e)
-		{
-			Size szPreferred = TextRenderer.MeasureText(lblFilename.Text, lblFilename.Font);
-			m_tooltip.SetToolTip(lblFilename,
-				(lblFilename.Width < szPreferred.Width + 8 ? lblFilename.Text : null));
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Makes sure the destination text box and chooser button are disabled when the
 		/// user chooses to leave the picture in its original folder.
+		/// Handles other behaviour when the user chooses to Save or Save As
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private void HandleLocationCheckedChanged(object sender, EventArgs e)
 		{
-			m_txtDestination.Enabled = (sender != m_rbLeave);
-			m_btnBrowseDest.Enabled = m_txtDestination.Enabled;
-			m_lblDestination.Enabled = m_txtDestination.Enabled;
+			if (!((RadioButton)sender).Checked)
+			{
+				return;
+			}
+			m_txtDestination.Visible = m_btnBrowseDest.Visible = m_lblDestination.Visible =
+				txtFileName.Visible = lblFileName.Visible = (sender != m_rbLeave);
+			if (IsDirty)
+			{
+				// If it's dirty, it needs to be saved [as]
+				if (sender == m_rbCopy_rbSave)
+				{
+					txtFileName.Visible = lblFileName.Visible = false;
+					txtFileName.Text = Path.GetFileName(lblSourcePath.Text);
+					m_isSaveAsChosen = false;
+				}
+				else // save as
+				{
+					txtFileName.Visible = lblFileName.Visible = true;
+					m_isSaveAsChosen = true;
+				}
+			}
+			else
+			{
+				m_fileLocChoice = m_rbCopy_rbSave.Checked ? FileLocationChoice.Copy :
+					m_rbMove_rbSaveAs.Checked ? FileLocationChoice.Move : FileLocationChoice.Leave;
+			}
 		}
-
 		#endregion
 
 		#region Private methods
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Called when the user clicked the OK button and the File Location Options panel is
-		/// visible.
+		/// Called when the user clicked the OK button and the file needs to be moved or copied into the linked media folder or left where it is.
+		/// Cancels if the file is unable to be moved or copied for any reason.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void ApplyFileLocationOptions()
+		private void ApplyMoveCopyOrLeaveFile(CancelEventArgs e)
 		{
-			FileLocationChoice fileLocChoice;
-
-			if (m_rbCopy.Checked)
-				fileLocChoice = FileLocationChoice.Copy;
-			else
-			{
-				fileLocChoice = (m_rbMove.Checked ?
-					FileLocationChoice.Move : FileLocationChoice.Leave);
-			}
-
 			// If this dialog is being displayed for the purpose of inserting a new
 			// picture or changing which picture is being displayed, remember the user's
 			// copy/move/leave choice
 			if (m_initialPicture == null || m_initialPicture.PictureFileRA.AbsoluteInternalPath != m_filePath)
-				s_defaultFileLocChoiceForSession = fileLocChoice;
+				s_defaultFileLocChoiceForSession = m_fileLocChoice;
 
-			m_picPreview.Image = null;
-			m_currentImage.Dispose();
-			m_currentImage = null;
-
-			m_filePath = MoveOrCopyFilesController.PerformMoveCopyOrLeaveFile(m_filePath, m_txtDestination.Text, fileLocChoice);
-			if (MoveOrCopyFilesController.FileIsInExternalLinksFolder(m_filePath, m_txtDestination.Text))
+			var filePath = MoveOrCopyFilesController.PerformMoveCopyOrLeaveFile(m_filePath, m_txtDestination.Text, m_fileLocChoice, false,
+				string.IsNullOrEmpty(txtFileName.Text) ? null : txtFileName.Text);
+			if (filePath == null)
+			{
+				e.Cancel = true;
+			}
+			else
+			{
+				m_filePath = filePath;
 				s_sExternalLinkDestinationDir = m_txtDestination.Text;
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Validates the proposed destination folder.
+		/// Called when the user clicked the OK button and the file has any changes to be saved (as).
+		/// Cancels if the file is unable to be moved or copied for any reason.
 		/// </summary>
-		/// <param name="proposedDestFolder">The proposed destination folder path.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
+		private void ApplySaveFile(CancelEventArgs e)
+		{
+			// ReSharper disable once AssignNullToNotNullAttribute - txtFileName should always have text
+			var savePath = Path.Combine(m_txtDestination.Text, txtFileName.Text);
+			// If Save As and there is a conflict, prompt to overwrite (cancel if user clicks no)
+			if (m_rbMove_rbSaveAs.Checked && File.Exists(savePath) &&
+				MessageBox.Show(string.Format(FwCoreDlgs.ksAlreadyExists, savePath), FwCoreDlgs.kstidWarning, MessageBoxButtons.YesNo,
+					MessageBoxIcon.Warning) == DialogResult.No)
+			{
+				e.Cancel = true;
+			}
+			else
+			{
+				try
+				{
+					imageToolbox.ImageInfo.Save(savePath);
+					m_filePath = savePath;
+				}
+				catch (Exception ex)
+				{
+					Logger.WriteEvent($"Error saving file to '{savePath}'");
+					Logger.WriteError(ex);
+					// This file is probably open somewhere.
+					MessageBox.Show(FwCoreDlgs.ksErrorFileInUse, FwCoreDlgs.ksError);
+					e.Cancel = true;
+				}
+			}
+		}
+
+		/// <summary/>
 		private bool ValidateDestinationFolder(string proposedDestFolder)
 		{
 			if (!IsFolderInLinkedFilesFolder(proposedDestFolder))
 			{
-				MessageBoxUtils.Show(this, String.Format(FwCoreDlgs.kstidDestFolderMustBeInLinkedFiles,
+				MessageBoxUtils.Show(this, string.Format(FwCoreDlgs.kstidDestFolderMustBeInLinkedFiles,
 					s_defaultPicturesFolder), m_app.ApplicationName, MessageBoxButtons.OK);
 				return false;
 			}
 			return true;
 		}
 
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Applies the default file location choice.
+		/// Applies the user's file location choice.
 		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void ApplyDefaultFileLocationChoice()
+		private void ApplyFileLocationChoice()
 		{
-			// We can only leave the file where it is if we're working locally. If we don't copy
-			// (or move) to the project folder other users can't see it.
-			m_rbLeave.Enabled = true;
-			switch (s_defaultFileLocChoiceForSession)
+			switch (m_fileLocChoice)
 			{
 				case FileLocationChoice.Copy:
-					m_rbCopy.Checked = true;
+					m_rbCopy_rbSave.Checked = true;
 					break;
 				case FileLocationChoice.Move:
-					m_rbMove.Checked = true;
+					m_rbMove_rbSaveAs.Checked = true;
 					break;
 				case FileLocationChoice.Leave:
 					m_rbLeave.Checked = true;
@@ -802,99 +455,92 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Show the file chooser dialog for opening an image file.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private DialogResult ShowChoosePictureDlg()
-		{
-			DialogResult dialogResult = DialogResult.None;
-			using (var dlg = new OpenFileDialogAdapter())
-			{
-				dlg.InitialDirectory = (m_grpFileLocOptions.Visible) ? m_txtDestination.Text :
-					s_defaultPicturesFolder;
-				dlg.Filter = ResourceHelper.BuildFileFilter(FileFilterType.AllImage, FileFilterType.AllFiles);
-				dlg.FilterIndex = 1;
-				dlg.Title = FwCoreDlgs.kstidInsertPictureChooseFileCaption;
-				dlg.RestoreDirectory = true;
-				dlg.CheckFileExists = true;
-				dlg.CheckPathExists = true;
+		/// <remarks>The Enter key is used to search the AOR gallery. Register our OK button only when it doesn't conflict.</remarks>
+		private void ImageToolbox_Enter(object sender, EventArgs e) { AcceptButton = null; }
+		/// <remarks>The Enter key is used to search the AOR gallery. Register our OK button only when it doesn't conflict.</remarks>
+		private void ImageToolbox_Leave(object sender, EventArgs e) { AcceptButton = m_btnOK; }
 
-				while (dialogResult != DialogResult.OK && dialogResult != DialogResult.Cancel)
+		private void ImageToolbox_ImageChanged(object sender, EventArgs e)
+		{
+			// AcquireImage includes scan, camera, and filesystem; ImageGallery has its own implementation
+			if (sender is AcquireImageControl || sender is ImageGalleryControl)
+			{
+				// A new image has been selected
+				m_isAOR = sender is ImageGalleryControl;
+				m_isSaveAsChosen = false;
+				m_filePath = imageToolbox.ImageInfo.OriginalFilePath;
+				UpdateInfoForNewPic();
+				panelFileName.Visible = true;
+				if (ImageExistsOutsideProject)
 				{
-					dialogResult = dlg.ShowDialog(m_app == null ? null : m_app.ActiveMainWindow);
-					if (dialogResult == DialogResult.OK)
-					{
-						string file = dlg.FileName;
-						if (String.IsNullOrEmpty(file))
-							return DialogResult.Cancel;
-						Image image;
-						try
-						{
-							image = Image.FromFile(FileUtils.ActualFilePath(file));
-						}
-						catch (OutOfMemoryException) // unsupported image format
-						{
-							MessageBoxUtils.Show(FwCoreDlgs.kstidInsertPictureReadError,
-								FwCoreDlgs.kstidInsertPictureReadErrorCaption);
-							dialogResult = DialogResult.None;
-							continue;
-						}
-						m_filePath = file;
-						m_currentImage = image;
-						UpdatePicInformation();
-						if (m_grpFileLocOptions.Visible)
-							ApplyDefaultFileLocationChoice();
-					}
+					// rbSave is hidden if metadata is added and the original file format doesn't support it
+					m_rbCopy_rbSave.Visible = true;
+					m_fileLocChoice = s_defaultFileLocChoiceForSession;
+					ApplyFileLocationChoice();
 				}
 			}
-			return dialogResult;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Makes an empty caption string.
-		/// </summary>
-		/// <returns>An empty caption string with the correct writing system</returns>
-		/// ------------------------------------------------------------------------------------
-		private ITsString MakeEmptyCaptionString()
-		{
-			return TsStringUtils.EmptyString(m_captionWs);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Updates the information in the dialog for the current image
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void UpdatePicInformation()
-		{
-			if (m_currentImage != null)
+			else
 			{
-				// update the image
-				int newWidth;
-				int newHeight;
-				float ratio = (float)m_currentImage.Height / m_currentImage.Width;
+				// As of 2023.06, the only other option is crop.
+			}
+			OnDirtyChanged();
+		}
 
-				if ((int)(m_picPreview.Width * ratio) < m_picPreview.Height)
+		private void ImageToolbox_MetadataChanged(object sender, EventArgs e)
+		{
+			m_isSuggestingLicense = false;
+			if (!FileFormatSupportsMetadata)
+			{
+				txtFileName.Text = Path.ChangeExtension(txtFileName.Text, "png");
+				m_isSaveAsChosen = m_rbMove_rbSaveAs.Checked = true;
+				m_rbCopy_rbSave.Visible = false;
+			}
+			OnDirtyChanged();
+		}
+
+		/// <summary>
+		/// Changes the controls to reflect whether an image is dirty (needs to be saved) or not (can be moved, copied, or left where it is).
+		/// </summary>
+		private void OnDirtyChanged()
+		{
+			if (IsDirty)
+			{
+				m_rbCopy_rbSave.Text = FwCoreDlgs.ksSaveChanges;
+				m_rbMove_rbSaveAs.Text = FwCoreDlgs.ksSaveChangesAs;
+				m_rbLeave.Visible = false;
+				m_grpFileLocOptions.Visible = true;
+				if (!m_isSaveAsChosen && !IsCropped && FileIsInLinkedFilesFolder(lblSourcePath.Text))
 				{
-					newWidth = m_picPreview.Width;
-					newHeight = (int)(newWidth * ratio);
+					m_rbCopy_rbSave.Checked = true;
 				}
 				else
 				{
-					newHeight = m_picPreview.Height;
-					newWidth = (int)(newHeight * (1f / ratio));
+					m_rbMove_rbSaveAs.Checked = true;
 				}
-
-				m_picPreview.Image = new Bitmap(m_currentImage, newWidth, newHeight);
 			}
+			else
+			{
+				m_rbCopy_rbSave.Text = m_rbCopyText;
+				m_rbMove_rbSaveAs.Text = m_rbMoveText;
+				m_rbLeave.Visible = true;
+				m_grpFileLocOptions.Visible = ImageExistsOutsideProject;
+				txtFileName.Visible = lblFileName.Visible = true;
+				if (ImageExistsOutsideProject)
+					ApplyFileLocationChoice();
+			}
+		}
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Updates the information in the dialog after a new image has been selected
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void UpdateInfoForNewPic()
+		{
 			// Add "(not found)" if the original file isn't available
-			string tmpOriginalPath = m_filePath;
-			if (String.IsNullOrEmpty(tmpOriginalPath))
-				m_grpFileLocOptions.Visible = false;
+			var tmpOriginalPath = m_filePath;
+			if (string.IsNullOrEmpty(tmpOriginalPath))
+				ImageExistsOutsideProject = false;
 			else
 			{
 				if (!File.Exists(tmpOriginalPath))
@@ -903,18 +549,36 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					tmpOriginalPath = tmpOriginalPath.Normalize(System.Text.NormalizationForm.FormD);
 				if (!File.Exists(tmpOriginalPath))
 				{
+					m_imageInitialSize = Size.Empty;
 					tmpOriginalPath =
 						string.Format(FwCoreDlgs.kstidPictureUnavailable, tmpOriginalPath.Normalize());
-					m_grpFileLocOptions.Visible = false;
+					ImageExistsOutsideProject = false;
+					m_btnOK.Enabled = false;
 				}
 				else
 				{
-					m_grpFileLocOptions.Visible = !FileIsInLinkedFilesFolder(tmpOriginalPath);
+					m_imageInitialSize = imageToolbox.ImageInfo.Image.Size;
+					ImageExistsOutsideProject = !FileIsInLinkedFilesFolder(tmpOriginalPath);
+					m_btnOK.Enabled = true;
 				}
 			}
 
-			// update the path
-			lblFilename.Text = tmpOriginalPath;
+			if (imageToolbox.ImageInfo.Metadata.IsLicenseNotSet)
+			{
+				imageToolbox.ImageInfo.Metadata.License = CreativeCommonsLicense.FromToken("cc0");
+				m_isSuggestingLicense = true;
+			}
+			else
+			{
+				m_isSuggestingLicense = false;
+			}
+			// Palaso always sets HasChanges=true, but a freshly-selected image has no changes. In the future, we may wish to
+			// investigate a change in Palaso (https://github.com/sillsdev/libpalaso/issues/1268) ~Hasso, 2023.06
+			imageToolbox.ImageInfo.Metadata.HasChanges = false;
+
+			// update the file name
+			lblSourcePath.Text = tmpOriginalPath;
+			txtFileName.Text = Path.GetFileName(tmpOriginalPath);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -923,9 +587,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="sFilePath">The file path.</param>
 		/// ------------------------------------------------------------------------------------
-		private bool FileIsInLinkedFilesFolder(string sFilePath)
+		private static bool FileIsInLinkedFilesFolder(string sFilePath)
 		{
-			return MoveOrCopyFilesController.FileIsInExternalLinksFolder(sFilePath, s_defaultPicturesFolder);
+			return MoveOrCopyFilesController.IsFileInFolder(sFilePath, s_defaultPicturesFolder);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -934,7 +598,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// </summary>
 		/// <param name="sFolder">The full path of the folder to check.</param>
 		/// ------------------------------------------------------------------------------------
-		private bool IsFolderInLinkedFilesFolder(string sFolder)
+		private static bool IsFolderInLinkedFilesFolder(string sFolder)
 		{
 			if (!Directory.Exists(sFolder))
 				return false;

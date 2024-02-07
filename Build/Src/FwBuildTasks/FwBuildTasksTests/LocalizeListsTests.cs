@@ -352,9 +352,10 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		}
 
 		[Test]
-		public void ConvertListToXliff_SemanticDomainConvertedWithQuestions()
+		public void ConvertListToXliff_SemanticDomainConvertedWithContextAndQuestions()
 		{
 			const string guid = "63403699-07c1-43f3-a47c-069d6e4316e5";
+			const string subdomainGuid = "999581c4-1611-4acb-ae1b-5e6c1dfe6f0c";
 			const string listXml = @"<Lists><List owner='LangProject' field='SemanticDomainList' itemClass='CmSemanticDomain'>
 				<Possibilities>
 					<CmSemanticDomain guid='" + guid + @"'>
@@ -384,6 +385,31 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 								</ExampleSentences>
 							</CmDomainQ>
 						</Questions>
+						<SubPossibilities>
+							<CmSemanticDomain guid='" + subdomainGuid + @"'>
+								<Abbreviation>
+									<AUni ws='en'>1.1</AUni>
+								</Abbreviation>
+								<Name>
+									<AUni ws='en'>Sky</AUni>
+								</Name>
+								<Description>
+									<AStr ws='en'>
+										<Run ws='en'>Use this domain for words related to the sky.</Run>
+									</AStr>
+								</Description>
+								<Questions>
+									<CmDomainQ>
+										<Question>
+											<AUni ws='en'>(1) What words are used to refer to the sky?</AUni>
+										</Question>
+										<ExampleWords>
+											<AUni ws='en'>sky, firmament, canopy, vault</AUni>
+										</ExampleWords>
+									</CmDomainQ>
+								</Questions>
+							</CmSemanticDomain>
+						</SubPossibilities>
 					</CmSemanticDomain>
 				</Possibilities>
 			</List></Lists>";
@@ -393,6 +419,22 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath("//group/*[local-name()='guid'][text()='" + guid + "']", 1);
 			// This xpath matches the first semantic domain
 			var xpathToPossGroup = "//group/group/group[@id='LangProject_SemanticDomainList_" + guid + "']";
+			// This xpath matches the first subdomain
+			var xpathToSubPossGroup = "//group/group/group/group[@id='LangProject_SemanticDomainList_" + subdomainGuid + "']";
+
+			//Verify name trans-unit present
+			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToPossGroup + "/trans-unit[contains(@id, '_" + guid + "_Name')]", 1, true);
+			// Verify context present in name trans-unit
+			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToPossGroup + "/trans-unit/context", 1, true);
+			//Verify name trans-unit present in subdomain
+			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToSubPossGroup, 1, true);
+			// Verify context present in name trans-unit within subdomain
+			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToPossGroup + "/trans-unit/context", 1, true);
+
 			// Verify questions group present
 			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(
 				xpathToPossGroup + "/group[contains(@id, '_" + guid + "_Qs')]", 1, true);
@@ -408,6 +450,20 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			// Verify ExampleSentence group present
 			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(
 				xpathToPossGroup + "/group/group/group[contains(@id, '_" + guid + "_Qs_0_ES')]", 1, true);
+
+			// Verify questions group present in subdomain
+			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToSubPossGroup + "/group[contains(@id, '_" + subdomainGuid + "_Qs')]", 1, true);
+			// Verify first question present in subdomain
+			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToSubPossGroup + "/group/group[contains(@id, '_" + subdomainGuid + "_Qs_0')]", 1, true);
+			// Verify question trans-unit present in subdomain
+			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToSubPossGroup + "/group/group/trans-unit[contains(@id, '_" + subdomainGuid + "_Qs_0_Q')]", 1, true);
+			// Verify ExampleWords trans-unit present in subdomain
+			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(
+				xpathToSubPossGroup + "/group/group/trans-unit[contains(@id, '_" + subdomainGuid + "_Qs_0_EW')]", 1, true);
+
 		}
 
 		[Test]
@@ -927,6 +983,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 									<sil:guid>" + guid + @"</sil:guid>
 									<trans-unit id='LangProject_SemanticDomainList_" + guid + @"_Name'>
 										<source>Universe, creation</source>
+										<context>Use this domain for general words referring to the physical universe. Some languages may not have a single word for the universe and may have to use a phrase such as &amp;apos;rain, soil, and things of the sky&amp;apos; or &amp;apos;sky, land, and water&amp;apos; or a descriptive phrase such as &amp;apos;everything you can see&amp;apos; or &amp;apos;everything that exists&amp;apos;.</context>
 									</trans-unit>
 									<trans-unit id='LangProject_SemanticDomainList_" + guid + @"_Abbr'>
 										<source>1</source>

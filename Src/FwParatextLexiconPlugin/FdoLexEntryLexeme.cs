@@ -81,15 +81,19 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 			}
 		}
 
-		public int HomographNumber
+	  /// <summary>
+	  /// We exchange the user visible homograph number with Paratext (starting at 1)
+	  /// <remarks>0 indicates uninitialized</remarks>
+	  /// </summary>
+	  public int HomographNumber
 		{
 			get
 			{
 				ILexEntry entry;
 				if (!m_lexicon.TryGetEntry(m_key, out entry))
-					return 0;
-
-				return entry.HomographNumber;
+					return Key.Homograph; // This was our best guess if this was created but not added
+				// If the entry has been added return its current homograph number from LCM (adjusted)
+				return FdoLexicon.GetParatextHomographNumFromEntry(entry);
 			}
 		}
 

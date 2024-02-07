@@ -23,5 +23,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 			eventProps["step"] = Enum.GetName(typeof(ImportExportStep), importExportStep);
 			Analytics.Track("Export", eventProps);
 		}
+
+		public static void TrackHelpRequest(string helpFile, string helpTopic, Dictionary<string, string> extraProps = null)
+		{
+			var eventProps = extraProps ?? new Dictionary<string, string>();
+			eventProps["helpFile"] = helpFile;
+			eventProps["helpTopic"] = helpTopic;
+			Analytics.Track("Help", eventProps);
+		}
 	}
 }

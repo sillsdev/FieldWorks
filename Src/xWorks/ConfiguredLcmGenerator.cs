@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2021 SIL International
+// Copyright (c) 2014-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -30,6 +30,7 @@ using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
+using SIL.Reporting;
 using XCore;
 using FileUtils = SIL.LCModel.Utils.FileUtils;
 using UnitType = ExCSS.UnitType;
@@ -270,35 +271,59 @@ namespace SIL.FieldWorks.XWorks
 			Guard.AgainstNull(configuration, nameof(configuration));
 			Guard.AgainstNull(entry, nameof(entry));
 
-			// ReSharper disable LocalizableElement, because seriously, who cares about localized exceptions?
-			if (string.IsNullOrEmpty(configuration.FieldDescription))
+			try
 			{
-				throw new ArgumentException("Invalid configuration: FieldDescription can not be null", "configuration");
-			}
-			if (entry.ClassID != settings.Cache.MetaDataCacheAccessor.GetClassId(configuration.FieldDescription))
-			{
-				throw new ArgumentException("The given argument doesn't configure this type", "configuration");
-			}
-			// ReSharper restore LocalizableElement
-			if (!configuration.IsEnabled)
-			{
-				return string.Empty;
-			}
+				// ReSharper disable LocalizableElement, because seriously, who cares about localized exceptions?
+				if (string.IsNullOrEmpty(configuration.FieldDescription))
+				{
+					throw new ArgumentException(
+						"Invalid configuration: FieldDescription can not be null",
+						"configuration");
+				}
 
-			var pieces = configuration.ReferencedOrDirectChildren
-				.Select(config => GenerateXHTMLForFieldByReflection(entry, config, publicationDecorator, settings))
-				.Where(content => !string.IsNullOrEmpty(content)).ToList();
-			if (pieces.Count == 0)
-				return string.Empty;
-			var bldr = new StringBuilder();
-			using (var xw = settings.ContentGenerator.CreateWriter(bldr))
+				if (entry.ClassID !=
+					settings.Cache.MetaDataCacheAccessor.GetClassId(
+						configuration.FieldDescription))
+				{
+					throw new ArgumentException("The given argument doesn't configure this type",
+						"configuration");
+				}
+				// ReSharper restore LocalizableElement
+
+				if (!configuration.IsEnabled)
+				{
+					return string.Empty;
+				}
+
+				var pieces = configuration.ReferencedOrDirectChildren
+					.Select(config =>
+						GenerateXHTMLForFieldByReflection(entry, config, publicationDecorator,
+							settings))
+					.Where(content => !string.IsNullOrEmpty(content)).ToList();
+				if (pieces.Count == 0)
+					return string.Empty;
+				var bldr = new StringBuilder();
+				using (var xw = settings.ContentGenerator.CreateWriter(bldr))
+				{
+					var clerk = settings.PropertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+					settings.ContentGenerator.StartEntry(xw,
+						GetClassNameAttributeForConfig(configuration), entry.Guid, index, clerk);
+					settings.ContentGenerator.AddEntryData(xw, pieces);
+					settings.ContentGenerator.EndEntry(xw);
+					xw.Flush();
+					return CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC)
+						.Normalize(bldr.ToString()); // All content should be in NFC (LT-18177)
+				}
+			}
+			catch (ArgumentException)
 			{
-				var clerk = settings.PropertyTable.GetValue<RecordClerk>("ActiveClerk", null);
-				settings.ContentGenerator.StartEntry(xw, GetClassNameAttributeForConfig(configuration), entry.Guid, index, clerk);
-				settings.ContentGenerator.AddEntryData(xw, pieces);
-				settings.ContentGenerator.EndEntry(xw);
-				xw.Flush();
-				return CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC).Normalize(bldr.ToString()); // All content should be in NFC (LT-18177)
+				// probably a configuration error
+				throw;
+			}
+			catch (Exception e)
+			{
+				// unknown exception, give the user the entry information in the crash message
+				throw new Exception($"Exception generating entry: {entry.SortKey}", e);
 			}
 		}
 
@@ -360,7 +385,18 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-				var property = entryType.GetProperty(config.FieldDescription);
+				MemberInfo property;
+				if (IsExtensionMethod(config.FieldDescription))
+				{
+					var extensionType = GetExtensionMethodType(config.FieldDescription);
+					property = extensionType.GetMethod(
+						GetExtensionMethodName(config.FieldDescription),
+						BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+				}
+				else
+				{
+					property = entryType.GetProperty(config.FieldDescription);
+				}
 				if (property == null)
 				{
 #if DEBUG
@@ -369,7 +405,7 @@ namespace SIL.FieldWorks.XWorks
 #endif
 					return string.Empty;
 				}
-				propertyValue = property.GetValue(field, new object[] { });
+				propertyValue = GetValueFromMember(property, field);
 				GetSortedReferencePropertyValue(config, ref propertyValue, field);
 			}
 			// If the property value is null there is nothing to generate
@@ -1023,7 +1059,7 @@ namespace SIL.FieldWorks.XWorks
 					var property = GetProperty(lookupType, node);
 					if (property != null)
 					{
-						fieldType = property.PropertyType;
+						fieldType = GetTypeFromMember(property);
 					}
 					else
 					{
@@ -1044,6 +1080,68 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			return fieldType;
+		}
+
+		private static bool IsExtensionMethod(string fieldDescription)
+		{
+			return fieldDescription.StartsWith("@extension:");
+		}
+
+		private static string GetExtensionMethodName(string fieldDescription)
+		{
+			return fieldDescription.Split('.').Last();
+		}
+
+		private static Type GetExtensionMethodType(string fieldDescription)
+		{
+			var lengthOfMethodName = fieldDescription.LastIndexOf('.') - "@extension:".Length;
+			var typeName = fieldDescription.Substring("@extension:".Length, lengthOfMethodName);
+			var type = Type.GetType(typeName);
+			if (type != null) return type;
+			foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
+			{
+				type = a.GetType(typeName);
+				if (type != null)
+				{
+					return type;
+				}
+			}
+			return null;
+		}
+
+		private static Type GetTypeFromMember(MemberInfo property)
+		{
+			switch (property.MemberType)
+			{
+				case MemberTypes.Property:
+				{
+					return ((PropertyInfo)property).PropertyType;
+				}
+				case MemberTypes.Method:
+				{
+					return ((MethodInfo)property).ReturnType;
+				}
+				default:
+					return null;
+			}
+		}
+
+		private static object GetValueFromMember(MemberInfo property, object instance)
+		{
+			switch (property.MemberType)
+			{
+				case MemberTypes.Property:
+				{
+					return ((PropertyInfo)property).GetValue(instance, new object[] {});
+				}
+				case MemberTypes.Method:
+				{
+					// Execute the presumed extension method (passing the instance as the 'this' parameter)
+					return ((MethodInfo)property).Invoke(instance, new object[] {instance});
+				}
+				default:
+					return null;
+			}
 		}
 
 		private static Type GetCustomFieldType(Type lookupType, ConfigurableDictionaryNode config, LcmCache cache)
@@ -1115,10 +1213,10 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="lookupType"></param>
 		/// <param name="node"></param>
 		/// <returns></returns>
-		private static PropertyInfo GetProperty(Type lookupType, ConfigurableDictionaryNode node)
+		private static MemberInfo GetProperty(Type lookupType, ConfigurableDictionaryNode node)
 		{
 			string propertyOfInterest;
-			PropertyInfo propInfo;
+			MemberInfo propInfo;
 			var typesToCheck = new Stack<Type>();
 			typesToCheck.Push(lookupType);
 			do
@@ -1136,7 +1234,18 @@ namespace SIL.FieldWorks.XWorks
 						current = property.PropertyType;
 					}
 				}
-				propInfo = current.GetProperty(propertyOfInterest, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+				if (IsExtensionMethod(propertyOfInterest))
+				{
+					var extensionType = GetExtensionMethodType(propertyOfInterest);
+					propInfo = extensionType?.GetMethod(
+						GetExtensionMethodName(propertyOfInterest),
+						BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+				}
+				else
+				{
+					propInfo = current.GetProperty(propertyOfInterest, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+				}
 				if (propInfo == null)
 				{
 					foreach (var i in current.GetInterfaces())
@@ -1674,6 +1783,11 @@ namespace SIL.FieldWorks.XWorks
 		private static string GeneratePictureContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
 			object item, GeneratorSettings settings)
 		{
+			if (item is ICmPicture cmPic && !File.Exists(cmPic.PictureFileRA?.AbsoluteInternalPath))
+			{
+				Logger.WriteEvent($"Skipping generating picture because there is no file at {cmPic.PictureFileRA?.AbsoluteInternalPath ?? "all"}");
+				return string.Empty;
+			}
 			var bldr = new StringBuilder();
 			var contentGenerator = settings.ContentGenerator;
 			using (var writer = contentGenerator.CreateWriter(bldr))
@@ -2187,9 +2301,32 @@ namespace SIL.FieldWorks.XWorks
 			if (config.IsHeadWord)
 			{
 				if (field is ILexEntry)
-					guid = ((ILexEntry)field).Guid;
+				{
+					// For Complex Forms, don't generate the reference if we are not going to publish the entry to Webonary.
+					if (settings.IsWebExport &&
+						!((ILexEntry)field).PublishAsMinorEntry &&
+						((ILexEntry)field).EntryRefsOS.Count > 0)
+					{
+						guid = Guid.Empty;
+					}
+					else
+					{
+						guid = ((ILexEntry)field).Guid;
+					}
+				}
 				else if (field is ILexEntryRef)
-					guid = ((ILexEntryRef)field).OwningEntry.Guid;
+				{
+					// For Variants, don't generate the reference if we are not going to publish the entry to Webonary.
+					if (settings.IsWebExport &&
+						!((ILexEntryRef)field).OwningEntry.PublishAsMinorEntry)
+					{
+						guid = Guid.Empty;
+					}
+					else
+					{
+						guid = ((ILexEntryRef)field).OwningEntry.Guid;
+					}
+				}
 				else if (field is ISenseOrEntry)
 					guid = ((ISenseOrEntry)field).EntryGuid;
 				else if (field is ILexSense)
@@ -2460,8 +2597,13 @@ namespace SIL.FieldWorks.XWorks
 
 							var props = fieldValue.get_Properties(i);
 							var style = props.GetStrPropValue((int)FwTextPropType.ktptNamedStyle);
+							string externalLink = null;
+							if (style == "Hyperlink")
+							{
+								externalLink = props.GetStrPropValue((int)FwTextPropType.ktptObjData);
+							}
 							writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(fieldValue.get_WritingSystem(i));
-							GenerateRunWithPossibleLink(settings, writingSystem, writer, style, text, linkTarget, rightToLeft);
+							GenerateRunWithPossibleLink(settings, writingSystem, writer, style, text, linkTarget, rightToLeft, externalLink);
 						}
 
 						if (fieldValue.RunCount > 1)
@@ -2507,7 +2649,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void GenerateRunWithPossibleLink(GeneratorSettings settings, string writingSystem, IFragmentWriter writer, string style,
-			string text, Guid linkDestination, bool rightToLeft)
+			string text, Guid linkDestination, bool rightToLeft, string externalLink = null)
 		{
 			settings.ContentGenerator.StartRun(writer, writingSystem);
 			var wsRtl = settings.Cache.WritingSystemFactory.get_Engine(writingSystem).RightToLeftScript;
@@ -2527,6 +2669,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				settings.ContentGenerator.StartLink(writer, linkDestination);
 			}
+			if (!string.IsNullOrEmpty(externalLink))
+			{
+				settings.ContentGenerator.StartLink(writer, externalLink.TrimStart((char)FwObjDataTypes.kodtExternalPathName));
+			}
 			if (text.Contains(TxtLineSplit))
 			{
 				var txtContents = text.Split(TxtLineSplit);
@@ -2542,7 +2688,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				settings.ContentGenerator.AddToRunContent(writer, text);
 			}
-			if (linkDestination != Guid.Empty)
+			if (linkDestination != Guid.Empty || !string.IsNullOrEmpty(externalLink))
 			{
 				settings.ContentGenerator.EndLink(writer);
 			}

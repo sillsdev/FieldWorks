@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2021 SIL International
+// Copyright (c) 2015-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,7 +14,6 @@ using SIL.LCModel;
 using SIL.LCModel.Utils;
 using IPCFramework;
 using SIL.PlatformUtilities;
-using SIL.Reporting;
 
 namespace SIL.FieldWorks.Common.FwUtils
 {
@@ -140,6 +139,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static string FlexBridgeDataVersion { get; }
 
+		/// <summary/>
+		public static Version FlexBridgeVersion { get; }
+
 		/// <summary>
 		/// Event handler delegate that passes a jump URL.
 		/// </summary>
@@ -174,10 +176,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 					// set the data version to an empty string. This will trigger the assert to let developers know if this becomes a problem again,
 					// and will also let users know that updating FLEx Bridge will require everyone to update at the same time (LT-20019, LT-20778)
 					?.GetRawConstantValue() as string ?? string.Empty;
+				FlexBridgeVersion = fbAssemblyWithConstants.GetName().Version;
 			}
 			else
 			{
 				FlexBridgeDataVersion = null;
+				FlexBridgeVersion = null;
 			}
 #if DEBUG
 			// Don't pester developers who haven't set FLEx Bridge up.
@@ -252,9 +256,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// It probably can't ever be null or empty, but let's be as robust as possible.
 			var locale = Thread.CurrentThread.CurrentUICulture.Name;
 
-			// Mono doesn't have a plain "zh" locale.  It needs the country code for Chinese.  See FWNX-1255.
-			if (!Platform.IsMono || locale != "zh-CN")
+			// We don't use a plain "zh" locale.  Mono etc. need the country code for Chinese.  See FWNX-1255.
+			if (locale != "zh-CN")
+			{
 				locale = string.IsNullOrWhiteSpace(locale) ? "en" : locale.Split('-')[0];
+			}
 			AddArg(ref args, "-locale", locale);
 
 			if (_noBlockerHostAndCallback != null)

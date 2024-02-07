@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			IHelpTopicProvider helpTopicProvider)
 		{
 			SetHelpTopic("khtpConfigureHeadwordNumbers"); // Default help topic ID
-			m_helpProvider = new HelpProvider();
+			m_helpProvider = new FlexHelpProvider();
 			m_helpProvider.SetHelpNavigator(this, HelpNavigator.Topic);
 			m_helpProvider.SetShowHelp(this, true);
 

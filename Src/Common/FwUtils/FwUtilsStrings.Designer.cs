@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Common.FwUtils {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class FwUtilsStrings {
@@ -93,6 +93,15 @@ namespace SIL.FieldWorks.Common.FwUtils {
         internal static string CouldNotUpdateAutomaticallyFileXMessage {
             get {
                 return ResourceManager.GetString("CouldNotUpdateAutomaticallyFileXMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FLEx Bridge could not be updated automatically. Please close all Send/Receive and Conflict Report windows and install the update from {0}.
+        /// </summary>
+        internal static string CouldNotUpdateFBAutomaticallyFileXMessage {
+            get {
+                return ResourceManager.GetString("CouldNotUpdateFBAutomaticallyFileXMessage", resourceCulture);
             }
         }
         
@@ -342,6 +351,15 @@ namespace SIL.FieldWorks.Common.FwUtils {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please report this by choosing Help &gt; Report a Problem....
+        /// </summary>
+        internal static string PleaseReport {
+            get {
+                return ResourceManager.GetString("PleaseReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Restart to Update.
         /// </summary>
         internal static string RestartToUpdateCaption {
@@ -365,6 +383,33 @@ namespace SIL.FieldWorks.Common.FwUtils {
         internal static string UpdateDownloadedVersionYCurrentX {
             get {
                 return ResourceManager.GetString("UpdateDownloadedVersionYCurrentX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A FLEx Bridge (Send/Receive) update has been downloaded (version {1}; you currently have {0})..
+        /// </summary>
+        internal static string UpdateFBDownloadedVersionYCurrentX {
+            get {
+                return ResourceManager.GetString("UpdateFBDownloadedVersionYCurrentX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update FLEx Bridge Now?.
+        /// </summary>
+        internal static string UpdateFBNowCaption {
+            get {
+                return ResourceManager.GetString("UpdateFBNowCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Before installing, make sure that you have closed all Send/Receive and Conflict Report windows. If you click Yes, installation will begin automatically approximately 15 seconds after these windows are closed..
+        /// </summary>
+        internal static string UpdateFBNowInstructions {
+            get {
+                return ResourceManager.GetString("UpdateFBNowInstructions", resourceCulture);
             }
         }
         

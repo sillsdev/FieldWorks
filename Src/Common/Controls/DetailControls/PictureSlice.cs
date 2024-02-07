@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2023 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,13 +8,12 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel.Utils;
 using SIL.Utils;
+using System.IO;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -61,7 +60,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			try
 			{
-				pb.Image = Image.FromFile(FileUtils.ActualFilePath(m_picture.PictureFileRA.AbsoluteInternalPath));
+				// Jump through some hoops so the actual file is unlocked as soon as we're done reading it (instead of whenever the slice is disposed)
+				pb.Image = Image.FromStream(new MemoryStream(File.ReadAllBytes(FileUtils.ActualFilePath(m_picture.PictureFileRA.AbsoluteInternalPath))));
 				m_aspectRatio = (float)pb.Image.Height / (float) pb.Image.Width;
 				if (m_aspectRatio == 0.0)
 					m_aspectRatio = 0.0001F; // avoid divide by zero.
@@ -167,25 +167,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 			var pic = (ICmPicture)Object;
 			var app = m_propertyTable.GetValue<IApp>("App");
-			using (var dlg = new PicturePropertiesDialog(m_cache, pic, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app, true))
+			using (var dlg = new PicturePropertiesDialog(m_cache, pic, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), app))
 			{
-				if (dlg.Initialize())
+				dlg.Initialize();
+				if (dlg.ShowDialog() == DialogResult.OK)
 				{
-					var stylesheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
-					dlg.UseMultiStringCaption(m_cache, WritingSystemServices.kwsVernAnals, stylesheet);
-					dlg.SetMultilingualCaptionValues(pic.Caption);
-					if (dlg.ShowDialog() == DialogResult.OK)
+					UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoUpdatePicture, DetailControlsStrings.ksRedoUpdatePicture, m_obj, () =>
 					{
-						UndoableUnitOfWorkHelper.Do(DetailControlsStrings.ksUndoUpdatePicture, DetailControlsStrings.ksRedoUpdatePicture, m_obj, () =>
-						{
-							string strLocalPictures = CmFolderTags.DefaultPictureFolder;
-							dlg.GetMultilingualCaptionValues(pic.Caption);
-							pic.UpdatePicture(dlg.CurrentFile, null, strLocalPictures, 0);
-						});
-						InstallPicture(m_picBox);
-						m_lastSize = new Size(0, 0); // forces OnSizeChanged to do something (we need to adjust to new aspect ratio).
-						OnSizeChanged(new EventArgs());
-					}
+						pic.UpdatePicture(dlg.CurrentFile, null, CmFolderTags.DefaultPictureFolder, 0);
+					});
+					InstallPicture(m_picBox);
+					m_lastSize = new Size(0, 0); // forces OnSizeChanged to do something (we need to adjust to new aspect ratio).
+					OnSizeChanged(EventArgs.Empty);
 				}
 			}
 		}
