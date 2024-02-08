@@ -6,14 +6,14 @@ on:
     branches: ["release/9.1", "develop", "master", "feature/PubSub"]
   workflow_dispatch:
 
-  jobs:
-    build:
-      runs-on: windows-latest
-    steps:
-      - name: Checkout Files
-        uses: actions/checkout@v3
-        
-      - name: Build and Test
-        shell: cmd
-        working-directory: Build
-        run: build64.bat /t:remakefw /p:action=test
+jobs:
+  build:
+    runs-on: windows-latest
+  steps:
+    - name: Checkout Files
+      uses: actions/checkout@v3
+      
+    - name: Build and Test
+      shell: cmd
+      working-directory: Build
+      run: build64.bat /t:remakefw /p:action=test
