@@ -185,7 +185,7 @@ namespace SIL.FieldWorks.XWorks
 			cssGenerator.AddStyles(subEntryHeadwordNode);
 			var cssResult = cssGenerator.GetStylesString();
 			// verify that the css result contains a line similar to: .sharedsubentries .sharedsubentry .headword span{
-			VerifyRegex(cssResult, @"^\s*\.sharedsubentries-mainheadword>\s*span\s*{.*",
+			VerifyRegex(cssResult, @"^\s*\.mainheadword-sharedsubentries>\s*span\s*{.*",
 				"Css for child node(headword) did not generate a match");
 		}
 
@@ -338,9 +338,9 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg\s*:after\s*{\s*content\s*:\s*'}';\s*}").Success,
 							  "css after rule for the grouping node was not generated");
 			// Check result for before and after rules equivalent to .headword span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
-			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg-mh>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}").Success,
+			Assert.IsTrue(Regex.Match(cssResult, @"\.mh-grouping_hwg>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}").Success,
 							  "css before rule with Z content not found on headword");
-			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg-mh>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}").Success,
+			Assert.IsTrue(Regex.Match(cssResult, @"\.mh-grouping_hwg>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}").Success,
 							  "css after rule with A content not found on headword");
 		}
 
@@ -438,10 +438,10 @@ namespace SIL.FieldWorks.XWorks
 			cssGenerator.AddStyles(mainEntryHeadword);
 			cssGenerator.AddStyles(headwordNode);
 			var cssResult = cssGenerator.GetStylesString();
-			// Check result for before and after rules equivalent to .subentries-headword span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
-			VerifyRegex(cssResult, @"\.subentries-headword>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}",
+			// Check result for before and after rules equivalent to .headword-subentries span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
+			VerifyRegex(cssResult, @"\.headword-subentries>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}",
 							  "css before rule with Z content not found on headword");
-			VerifyRegex(cssResult, @"\.subentries-headword>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}",
+			VerifyRegex(cssResult, @"\.headword-subentries>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}",
 							  "css after rule with A content not found on headword");
 		}
 
@@ -1936,7 +1936,7 @@ namespace SIL.FieldWorks.XWorks
 			cssGenerator.AddStyles(headwordMain);
 			cssGenerator.AddStyles(form);
 			var cssResult = cssGenerator.GetStylesString();
-			VerifyRegex(cssResult, @"^\s*\.otherreferencedcomplexforms-headword", "Headword node not generated for non subentry headword");
+			VerifyRegex(cssResult, @"^\s*\.headword-otherreferencedcomplexforms", "Headword node not generated for non subentry headword");
 		}
 
 		[Test]

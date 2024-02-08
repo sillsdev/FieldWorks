@@ -120,12 +120,15 @@ namespace SIL.FieldWorks.XWorks
 			ConfigurableDictionaryNode node)
 		{
 			Guard.AgainstNull(node.Parent, "There should not be duplicate class names at the top of tree.");
-			// first try pre-pending the parent node classname
-			var className = $".{GetClassAttributeForConfig(node.Parent)}-{GetClassAttributeForConfig(node)}";
+			// First try appending the parent node classname. Pathway has code that cares about what
+			// the className starts with, so keep the 'node' name first.
+			var className = $".{GetClassAttributeForConfig(node)}-{GetClassAttributeForConfig(node.Parent)}";
+
+			string classNameBase = className;
 			int counter = 0;
 			while (styles.ContainsKey(className))
 			{
-				className = $"{className}-{++counter}";
+				className = $"{classNameBase}-{++counter}";
 			}
 			return className;
 		}
