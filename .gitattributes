@@ -19,6 +19,7 @@
 *.vcxproj -whitespace
 *.vcxproj.filters -whitespace
 *.vdproj -whitespace
+*.yml -whitespace
 *.xml -whitespace
 changelog -whitespace
 FwHelpAbout.cs -whitespace
