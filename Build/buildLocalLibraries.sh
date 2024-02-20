@@ -39,8 +39,11 @@ function delete_and_pack_liblcm {
 			echo "Deleting files starting with 'SIL.LCModel' in $packages_dir"
 			find "$packages_dir" -name 'SIL.LCModel*' -exec rm -f -r {} \;
 
+			echo "Removing liblcm output packages so that dotnet pack will run and output the version"
+			(cd "$liblcm_dir/artifacts" && rm *nupkg)
+
 			echo "Running 'dotnet pack' in the liblcm directory: $liblcm_dir"
-			pack_output=$(cd "$liblcm_dir" && dotnet pack)
+			pack_output=$(cd "$liblcm_dir" && dotnet pack -c Debug)
 
 			# Extract version number using regex
 			if [[ $pack_output =~ $version_regex ]]; then
@@ -80,8 +83,11 @@ function delete_and_pack_chorus {
 
 			find "$packages_dir" -name "${prefix}*" -exec rm -f -r {} \;
 
+			echo "Removing chorus output packages so that dotnet pack will run and output the version"
+			(cd "$chorus_dir/output" && rm *nupkg)
+
 			echo "Running 'dotnet pack' in the chorus directory: $chorus_dir"
-			pack_output=$(cd "$chorus_dir" && dotnet pack)
+			pack_output=$(cd "$chorus_dir" && dotnet pack -c Debug)
 
 			# Extract version number using regex
 			if [[ $pack_output =~ $version_regex ]]; then
@@ -120,8 +126,11 @@ function delete_and_pack_libpalaso {
 				find "$packages_dir" -name "${prefix}*" -exec rm -f -r {} \;
 			done
 
+			echo "Removing palaso output packages so that dotnet pack will run and output the version"
+			(cd "$libpalaso_dir/output" && rm *nupkg)
+
 			echo "Running 'dotnet pack' in the libpalaso directory: $libpalaso_dir"
-			pack_output=$(cd "$libpalaso_dir" && dotnet pack)
+			pack_output=$(cd "$libpalaso_dir" && dotnet pack -c Debug)
 
 			# Extract version number using regex
 			if [[ $pack_output =~ $version_regex ]]; then
@@ -233,6 +242,9 @@ done
 if [ -z "$libpalaso_dir" ] && [ -z "$liblcm_dir" ] && [ -z "$chorus_dir" ]; then
 	display_usage
 fi
+
+mkdir ../Output/Debug
+mkdir ../Downloads
 
 # Display the provided directory paths
 echo "libpalaso directory: $libpalaso_dir"
