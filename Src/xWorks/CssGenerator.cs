@@ -968,7 +968,6 @@ namespace SIL.FieldWorks.XWorks
 				case ConfiguredLcmGenerator.PropertyType.CollectionType:
 				{
 					// for collections we generate a css selector to match each item e.g '.senses .sense'
-					// TODO - Should we do the same here?  The old code was calling GetClassAttributeForConfig().
 					return string.Format("{0} .{1}", adjustedClassName, GetClassAttributeForCollectionItem(configNode));
 				}
 				case ConfiguredLcmGenerator.PropertyType.CmPictureType:
@@ -986,26 +985,11 @@ namespace SIL.FieldWorks.XWorks
 						{
 							spanStyle = "> span";
 						}
-						// TODO - Should we do the same here?  The old code was calling GetClassAttributeForConfig().
 						return adjustedClassName + spanStyle;
 					}
 					goto default;
 				}
 				default:
-					// TODO - Do we just want CSSClassNameOverride or do we want the additional
-					//        name generation that is done in GetClassAttributeForConfig().
-
-					// Only append the CSSClassNameOverride if it is not already part of the adjustedClassName.
-					if (configNode.CSSClassNameOverride != null)
-					{
-						string classAttName = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFC)
-							.Normalize(configNode.CSSClassNameOverride.ToLower());
-
-						if (!adjustedClassName.ToLower().Contains(classAttName))
-						{
-							return string.Format("{0} > .{1}", adjustedClassName, classAttName);
-						}
-					}
 					return adjustedClassName;
 			}
 		}
