@@ -2871,6 +2871,24 @@ namespace SIL.FieldWorks.XWorks
 
 			var pictureBetween = @".*\.pictures>\s*div\s*\+\s*div:before\{\s*content:', ';";
 			VerifyRegex(cssResult, pictureBetween, "expected Picture between rule is generated");
+
+			// Verify that the before/after/between picture content is not nested in 'captionContent'.
+			RegexOptions options = RegexOptions.Singleline | RegexOptions.Multiline;
+			var captionContentPictureBefore = @".captionContent .pictures> div:first-child:before\{\s*content:'\[';";
+			string message = "did not expect Picture before rule to be nested in captionContent.";
+			Assert.IsFalse(Regex.Match(cssResult, captionContentPictureBefore, options).Success,
+				string.Format("{3}Expected{0}{1}{0}but got{0}{2}", Environment.NewLine, pictureBefore, cssResult, message + Environment.NewLine));
+
+			var captionContentPictureAfter = @".captionContent .pictures> div:last-child:after\{\s*content:'\]';";
+			message = "did not expect Picture after rule to be nested in captionContent.";
+			Assert.IsFalse(Regex.Match(cssResult, captionContentPictureAfter, options).Success,
+				string.Format("{3}Expected{0}{1}{0}but got{0}{2}", Environment.NewLine, pictureAfter, cssResult, message + Environment.NewLine));
+
+			var captionContentPictureBetween = @".captionContent .*\.pictures>\s*div\s*\+\s*div:before\{\s*content:', ';";
+			VerifyRegex(cssResult, pictureBetween, "expected Picture between rule is generated");
+			message = "did not expect Picture between rule to be nested in captionContent.";
+			Assert.IsFalse(Regex.Match(cssResult, captionContentPictureBetween, options).Success,
+				string.Format("{3}Expected{0}{1}{0}but got{0}{2}", Environment.NewLine, pictureBetween, cssResult, message + Environment.NewLine));
 		}
 
 
