@@ -494,15 +494,6 @@ namespace SIL.FieldWorks.XWorks
 				if (!IsEmptyRule(senseContentRule))
 					styleRules.Add(senseContentRule);
 			}
-
-			if (senseOptions.ShowSharedGrammarInfoFirst)
-			{
-				foreach (var gramInfoNode in configNode.Children.Where(node => node.FieldDescription == "MorphoSyntaxAnalysisRA" && node.IsEnabled))
-				{
-					styleRules.AddRange(GenerateCssFromConfigurationNode(gramInfoNode, collectionSelector + "> .sharedgrammaticalinfo", propertyTable));
-				}
-			}
-
 			return styleRules;
 		}
 

@@ -2009,10 +2009,58 @@ namespace SIL.FieldWorks.XWorks
 			cssGenerator.AddStyles(senses);
 			cssGenerator.AddStyles(gramInfo);
 			var cssResult = cssGenerator.GetStylesString();
-			VerifyRegex(cssResult, @"^\s*\.morphosyntaxanalysisra", "Style for non-shared grammatical info not generated");
-			VerifyRegex(cssResult,
-				@"^\s*\.senses\s*>\s*\.sharedgrammaticalinfo\s*{.*font-family\s*:\s*'foofoo'\,serif.*}",
-				"Style for sharedgrammaticalinfo not placed correctly");
+			VerifyRegex(cssResult, @"^\s*\.morphosyntaxanalysisra", "Style for morphosyntaxanalysisra not generated");
+			VerifyRegex(cssResult, @"^\s*\.morphosyntaxanalysisra\s*{.*font-family\s*:\s*'foofoo'\,serif.*}",
+				"Style for morphosyntaxanalysisra not placed correctly");
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_GramInfoAfterText()
+		{
+			GenerateStyle("Dictionary-Contrasting");
+			var pos = new ConfigurableDictionaryNode { FieldDescription = "MLPartOfSpeech" };
+			var inflectionClass = new ConfigurableDictionaryNode { FieldDescription = "MLInflectionClass" };
+			var afterText = "ExactlyOnce";
+			var gramInfo = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				Label = "Gram. Info.",
+				Children = new List<ConfigurableDictionaryNode> { pos, inflectionClass },
+				Style = "Dictionary-Contrasting",
+				After = afterText
+			};
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss", Style = "FooStyle" };
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { ShowSharedGrammarInfoFirst = true },
+				Children = new List<ConfigurableDictionaryNode> { gramInfo, gloss }
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "lexentry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			PopulateFieldsForTesting(entry);
+			var cssGenerator = new CssGenerator();
+			cssGenerator.Init(m_propertyTable);
+			cssGenerator.AddGlobalStyles(model, m_propertyTable);
+
+			//SUT
+			cssGenerator.AddStyles(senses);
+			cssGenerator.AddStyles(gramInfo);
+			var cssResult = cssGenerator.GetStylesString();
+
+			// Check that the after text is included once, not more or less.
+			var firstIndex = cssResult.IndexOf(afterText);
+			var lastIndex = cssResult.LastIndexOf(afterText);
+			Assert.IsTrue(firstIndex != -1 && firstIndex == lastIndex,
+				string.Format("After text \'{0}\' was not included exactly one time.", afterText));
 		}
 
 		[Test]
