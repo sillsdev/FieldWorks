@@ -840,7 +840,6 @@ namespace SIL.FieldWorks.XWorks
 							}
 							case DictionaryNodePictureOptions _:
 							{
-								collectionSelector = pictCaptionContent + "." + GetClassAttributeForConfig(configNode);
 								betweenSelector = string.Format("{0}> {1}+{1}:before", collectionSelector, " div");
 								break;
 							}
