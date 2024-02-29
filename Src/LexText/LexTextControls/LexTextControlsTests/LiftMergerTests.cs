@@ -2765,7 +2765,7 @@ namespace LexTextControlsTests
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
-			var flidCustom = CreateFirstEntryWithConflictingData();
+			var flidCustom = CreateFirstEntryWithConflictingData("Long Text1");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
@@ -2789,7 +2789,7 @@ namespace LexTextControlsTests
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
-			var flidCustom = CreateFirstEntryWithConflictingData();
+			var flidCustom = CreateFirstEntryWithConflictingData("Long Text2");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
@@ -2813,7 +2813,7 @@ namespace LexTextControlsTests
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
-			var flidCustom = CreateFirstEntryWithConflictingData();
+			var flidCustom = CreateFirstEntryWithConflictingData("Long Text3");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
@@ -2855,7 +2855,7 @@ namespace LexTextControlsTests
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
-			var flidCustom = CreateFirstEntryWithConflictingData();
+			var flidCustom = CreateFirstEntryWithConflictingData("Long Text4");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
@@ -2990,7 +2990,7 @@ namespace LexTextControlsTests
 			Assert.IsTrue(tss.Equals(para.Contents), "The third paragraph contents should have all its formatting.");
 		}
 
-		private int CreateFirstEntryWithConflictingData()
+		private int CreateFirstEntryWithConflictingData(string customFieldName)
 		{
 			var entry0 = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create(
 				new Guid("494616cc-2f23-4877-a109-1a6c1db0887e"), Cache.LangProject.LexDbOA);
@@ -3007,7 +3007,7 @@ namespace LexTextControlsTests
 
 			var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
 			Assert.That(mdc, Is.Not.Null);
-			var flidCustom = mdc.AddCustomField("LexEntry", "Long Text", CellarPropertyType.OwningAtomic, StTextTags.kClassId);
+			var flidCustom = mdc.AddCustomField("LexEntry", customFieldName, CellarPropertyType.OwningAtomic, StTextTags.kClassId);
 			var hvoText = Cache.DomainDataByFlid.MakeNewObject(StTextTags.kClassId, entry0.Hvo, flidCustom, -2);
 			var text = Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(hvoText);
 
