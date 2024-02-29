@@ -820,7 +820,7 @@
     <value>_identifiersControl</value>
   </data>
   <data name="&gt;&gt;_identifiersControl.Type" xml:space="preserve">
-    <value>SIL.Windows.Forms.WritingSystems.WSIdentifiers.WSIdentifierView, SIL.Windows.Forms.WritingSystems, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.Windows.Forms.WritingSystems.WSIdentifiers.WSIdentifierView, SIL.Windows.Forms.WritingSystems, Version=13.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2</value>
   </data>
   <data name="&gt;&gt;_identifiersControl.Parent" xml:space="preserve">
     <value>_generalTab</value>
@@ -988,7 +988,7 @@
     <value>_spellingCombo</value>
   </data>
   <data name="&gt;&gt;_spellingCombo.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=9.0.8.29769, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=9.1.25.26507, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;_spellingCombo.Parent" xml:space="preserve">
     <value>_generalTab</value>
@@ -1042,7 +1042,7 @@
     <value>_defaultFontControl</value>
   </data>
   <data name="&gt;&gt;_defaultFontControl.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.FwCoreDlgControls.DefaultFontsControl, FwCoreDlgControls, Version=9.0.8.29769, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.FwCoreDlgControls.DefaultFontsControl, FwCoreDlgControls, Version=9.1.25.26507, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;_defaultFontControl.Parent" xml:space="preserve">
     <value>_fontTab</value>
@@ -1099,7 +1099,7 @@
     <value>_keyboardControl</value>
   </data>
   <data name="&gt;&gt;_keyboardControl.Type" xml:space="preserve">
-    <value>SIL.Windows.Forms.WritingSystems.WSKeyboardControl, SIL.Windows.Forms.WritingSystems, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.Windows.Forms.WritingSystems.WSKeyboardControl, SIL.Windows.Forms.WritingSystems, Version=13.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2</value>
   </data>
   <data name="&gt;&gt;_keyboardControl.Parent" xml:space="preserve">
     <value>_keyboardTab</value>
@@ -1156,7 +1156,7 @@
     <value>_sortControl</value>
   </data>
   <data name="&gt;&gt;_sortControl.Type" xml:space="preserve">
-    <value>SIL.Windows.Forms.WritingSystems.WSSortControl, SIL.Windows.Forms.WritingSystems, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.Windows.Forms.WritingSystems.WSSortControl, SIL.Windows.Forms.WritingSystems, Version=13.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2</value>
   </data>
   <data name="&gt;&gt;_sortControl.Parent" xml:space="preserve">
     <value>_sortTab</value>
@@ -1306,7 +1306,7 @@
     <value>customDigits</value>
   </data>
   <data name="&gt;&gt;customDigits.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Widgets.CustomDigitEntryControl, Widgets, Version=9.0.8.29769, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Widgets.CustomDigitEntryControl, Widgets, Version=9.1.25.22019, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;customDigits.Parent" xml:space="preserve">
     <value>_numbersTab</value>
@@ -1438,7 +1438,7 @@
     <value>_encodingConverterCombo</value>
   </data>
   <data name="&gt;&gt;_encodingConverterCombo.Type" xml:space="preserve">
-    <value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=9.0.8.29769, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.FieldWorks.Common.Controls.FwOverrideComboBox, FwControls, Version=9.1.25.26507, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;_encodingConverterCombo.Parent" xml:space="preserve">
     <value>_convertersTab</value>
@@ -1706,6 +1706,9 @@
   </metadata>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
+  </metadata>
+  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>87</value>
   </metadata>
   <data name="$this.AccessibleDescription" xml:space="preserve">
     <value>Used to change settings related to languages and their use in FieldWorks</value>

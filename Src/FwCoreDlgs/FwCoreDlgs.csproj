@@ -198,6 +198,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
     </Reference>
+    <Reference Include="XCore">
+      <Name>XCore</Name>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\XCore.dll</HintPath>
+    </Reference>
     <Reference Include="icu.net">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\icu.net.dll</HintPath>

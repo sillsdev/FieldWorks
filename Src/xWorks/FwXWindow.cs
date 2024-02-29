@@ -1492,7 +1492,7 @@ namespace SIL.FieldWorks.XWorks
 			model.WritingSystemListUpdated += OnWritingSystemListChanged;
 			model.WritingSystemUpdated += OnWritingSystemUpdated;
 			using (var view = new FwWritingSystemSetupDlg(model,
-				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app))
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app, m_propertyTable))
 			{
 				view.ShowDialog(this);
 			}
