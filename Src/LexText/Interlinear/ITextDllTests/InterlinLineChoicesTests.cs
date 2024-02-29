@@ -533,13 +533,13 @@ namespace SIL.FieldWorks.IText
 			var wsFrn = frWs.Handle;
 
 			using (var cFirstAnal = new CustomFieldForTest(Cache,
-				"Candy Apple Red",
+				"Candy Apple Red Anal",
 				Cache.MetaDataCacheAccessor.GetClassId("Segment"),
 				WritingSystemServices.kwsAnal,
 				CellarPropertyType.String,
 				Guid.Empty))
 			using (var cFirstVern = new CustomFieldForTest(Cache,
-				"Candy Apple Red",
+				"Candy Apple Red Vern",
 				Cache.MetaDataCacheAccessor.GetClassId("Segment"),
 				WritingSystemServices.kwsVern,
 				CellarPropertyType.String,
@@ -571,13 +571,13 @@ namespace SIL.FieldWorks.IText
 			var wsGer = deWs.Handle;
 
 			using (var cFirstAnal = new CustomFieldForTest(Cache,
-				"Candy Apple Red",
+				"Candy Apple Red Anal",
 				Cache.MetaDataCacheAccessor.GetClassId("Segment"),
 				WritingSystemServices.kwsAnal,
 				CellarPropertyType.String,
 				Guid.Empty))
 			using (var cFirstVern = new CustomFieldForTest(Cache,
-				"Candy Apple Red",
+				"Candy Apple Red Vern",
 				Cache.MetaDataCacheAccessor.GetClassId("Segment"),
 				WritingSystemServices.kwsVern,
 				CellarPropertyType.String,
