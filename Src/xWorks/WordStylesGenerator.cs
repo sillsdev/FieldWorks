@@ -616,7 +616,61 @@ namespace SIL.FieldWorks.XWorks
 				charDefaults.Append(backShade);
 			}
 
-			//TODO: handle remaining font features including from ws or default, underline, and super/subscript
+			FwSuperscriptVal fwSuperSub;
+			if (GetFontValue(wsFontInfo.m_superSub, defaultFontInfo.SuperSub, out fwSuperSub))
+			{
+				VerticalTextAlignment oxmlSuperSub = new VerticalTextAlignment();
+				switch (fwSuperSub)
+				{
+					case (FwSuperscriptVal.kssvSub):
+						oxmlSuperSub.Val = VerticalPositionValues.Subscript;
+						break;
+					case (FwSuperscriptVal.kssvSuper):
+						oxmlSuperSub.Val = VerticalPositionValues.Superscript;
+						break;
+					case (FwSuperscriptVal.kssvOff):
+						oxmlSuperSub.Val = VerticalPositionValues.Baseline;
+						break;
+				}
+				charDefaults.Append(oxmlSuperSub);
+			}
+
+			// Handling underline and strikethrough.
+			FwUnderlineType fwUnderline;
+			if (GetFontValue(wsFontInfo.m_underline, defaultFontInfo.Underline, out fwUnderline))
+			{
+				// In FieldWorks, strikethrough is a special type of underline,
+				// but strikethrough and underline are represented by different objects in OpenXml
+				if (fwUnderline != FwUnderlineType.kuntStrikethrough)
+				{
+					Underline oxmlUnderline = new Underline();
+					switch (fwUnderline)
+					{
+						case (FwUnderlineType.kuntSingle):
+							oxmlUnderline.Val = UnderlineValues.Single;
+							break;
+						case (FwUnderlineType.kuntDouble):
+							oxmlUnderline.Val = UnderlineValues.Double;
+							break;
+						case (FwUnderlineType.kuntDotted):
+							oxmlUnderline.Val = UnderlineValues.Dotted;
+							break;
+						case (FwUnderlineType.kuntDashed):
+							oxmlUnderline.Val = UnderlineValues.Dash;
+							break;
+						case (FwUnderlineType.kuntNone):
+							oxmlUnderline.Val = UnderlineValues.None;
+							break;
+					}
+					charDefaults.Append(oxmlUnderline);
+				}
+				// Else the underline is actually a strikethrough.
+				else
+				{
+					charDefaults.Append(new Strike());
+				}
+			}
+			//TODO: handle remaining font features including from ws or default,
 
 			return charDefaults;
 		}
