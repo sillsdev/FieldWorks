@@ -157,9 +157,8 @@ namespace SIL.FieldWorks.XWorks
 			StringBuilder headerTextBuilder = ConfiguredLcmGenerator.GenerateLetterHeaderIfNeeded(entry, ref lastHeader,
 				headwordWsCollator, settings, clerk);
 
-			// Create LetterHeader doc fragment and link it with the letterheadingstyle
-			return new DocFragment(headerTextBuilder.ToString(), WordStylesGenerator.LetterHeadingStyleName);
-
+			// Create LetterHeader doc fragment and link it with the letter heading style.
+			return DocFragment.GenerateLetterHeaderDocFragment(headerTextBuilder.ToString(), WordStylesGenerator.LetterHeadingStyleName);
 		}
 
 		/*
@@ -172,6 +171,7 @@ namespace SIL.FieldWorks.XWorks
 			internal WordprocessingDocument DocFrag { get; }
 			internal MainDocumentPart mainDocPart { get; }
 			internal WP.Body DocBody { get; }
+			internal string ParagraphStyle { get; private set; }
 
 			/// <summary>
 			/// Constructs a new memory stream and creates an empty doc fragment
@@ -212,8 +212,8 @@ namespace SIL.FieldWorks.XWorks
 				// Only create paragraph, run, and text objects if the string is nonempty
 				if (!string.IsNullOrEmpty(str))
 				{
-					WP.Paragraph para = DocBody.AppendChild(new WP.Paragraph());
-					WP.Run run = para.AppendChild(new WP.Run());
+					WP.Run run = DocBody.AppendChild(new WP.Run());
+
 					// For spaces to show correctly, set preserve spaces on the text element
 					WP.Text txt = new WP.Text(str);
 					txt.Space = SpaceProcessingModeValues.Preserve;
@@ -221,25 +221,40 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			public DocFragment(string str, string styleName) : this()
+			/// <summary>
+			/// Generate the document fragment for a letter header.
+			/// </summary>
+			/// <param name="str">Letter header string.</param>
+			/// <param name="styleName">Letter header style.</param>
+			internal static DocFragment GenerateLetterHeaderDocFragment(string str, string styleName)
 			{
+				var docFrag = new DocFragment();
 				// Only create paragraph, run, and text objects if string is nonempty
 				if (!string.IsNullOrEmpty(str))
 				{
 					WP.ParagraphProperties paragraphProps = new WP.ParagraphProperties(new ParagraphStyleId() { Val = styleName });
-					WP.Paragraph para = DocBody.AppendChild(new WP.Paragraph(paragraphProps));
+					WP.Paragraph para = docFrag.DocBody.AppendChild(new WP.Paragraph(paragraphProps));
 					WP.Run run = para.AppendChild(new WP.Run());
 					// For spaces to show correctly, set preserve spaces on the text element
 					WP.Text txt = new WP.Text(str);
 					txt.Space = SpaceProcessingModeValues.Preserve;
 					run.AppendChild(txt);
 				}
+				return docFrag;
 			}
 
 			public static void LinkStyleOrInheritParentStyle(IFragment content, ConfigurableDictionaryNode config)
 			{
 				DocFragment frag = ((DocFragment)content);
-				if (!string.IsNullOrEmpty(config.Style))
+
+				// Check if this is a Table
+				bool bTable = frag.DocBody.Elements<WP.Table>().FirstOrDefault() != null;
+
+				if (bTable)
+				{
+					// TODO - Add Table Style info.
+				}
+				else if (!string.IsNullOrEmpty(config.Style))
 				{
 					frag.AddStyleLink(config.Style, config.StyleType);
 				}
@@ -255,7 +270,12 @@ namespace SIL.FieldWorks.XWorks
 					return;
 
 				if (styleType == ConfigurableDictionaryNode.StyleTypes.Paragraph)
-					LinkParaStyle(styleName);
+				{
+					if (string.IsNullOrEmpty(ParagraphStyle))
+					{
+						ParagraphStyle = styleName;
+					}
+				}
 				else
 					LinkCharStyle(styleName);
 			}
@@ -264,8 +284,11 @@ namespace SIL.FieldWorks.XWorks
 			/// Appends the given styleName as a style ID for the last paragraph in the doc, or creates a new paragraph with the given styleID if no paragraph exists.
 			/// </summary>
 			/// <param name="styleName"></param>
-			private void LinkParaStyle(string styleName)
+			internal void LinkParaStyle(string styleName)
 			{
+				if (string.IsNullOrEmpty(styleName))
+					return;
+
 				WP.Paragraph par = GetLastParagraph();
 				if (par.ParagraphProperties != null)
 				{
@@ -293,7 +316,6 @@ namespace SIL.FieldWorks.XWorks
 
 					run.RunProperties.Append(new RunStyle() { Val = styleName });
 				}
-				//run.RunProperties.Append(new StyleId() {Val = styleName}) ;
 				else
 				{
 					WP.RunProperties runProps =
@@ -364,43 +386,42 @@ namespace SIL.FieldWorks.XWorks
 
 			/// <summary>
 			/// Appends one doc fragment to another.
-			/// Use this if styles have already been applied
-			/// and if not attempting to append within the same paragraph.
+			/// Use this if styles have already been applied.
 			/// </summary>
 			public void Append(IFragment frag)
 			{
-
-				foreach (WP.Paragraph para in ((DocFragment)frag).DocBody.OfType<WP.Paragraph>().ToList())
+				foreach (OpenXmlElement elem in ((DocFragment)frag).DocBody.Elements().ToList())
 				{
-					// Append each paragraph. It is necessary to deep clone the node to maintain its tree of document properties
+					// Append each element. It is necessary to deep clone the node to maintain its tree of document properties
 					// and to ensure its styles will be maintained in the copy.
-					this.DocBody.AppendChild(para.CloneNode(true));
+					this.DocBody.AppendChild(elem.CloneNode(true));
 				}
 			}
 
 			/// <summary>
-			/// Appends a new paragraph to the doc fragment.
-			/// The run will be added to the end of the paragraph.
+			/// Append a table to the doc fragment.
 			/// </summary>
-			public void Append(WP.Paragraph par)
+			public void Append(WP.Table table)
 			{
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
-				this.DocBody.AppendChild(par.CloneNode(true));
+				this.DocBody.AppendChild(table.CloneNode(true));
 			}
 
 			/// <summary>
 			/// Appends a new run inside the last paragraph of the doc fragment--creates a new paragraph if none exists.
 			/// The run will be added to the end of the paragraph.
 			/// </summary>
-			public void Append(WP.Run run)
+			/// <param name="run">The run to append.</param>
+			/// <param name="forceNewParagraph">Even if a paragraph exists, force the creation of a new paragraph.</param>
+			public void AppendToParagraph(WP.Run run, bool forceNewParagraph)
 			{
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
-				WP.Paragraph lastPar = GetLastParagraph();
+				WP.Paragraph lastPar = forceNewParagraph ? GetNewParagraph() : GetLastParagraph();
 				lastPar.AppendChild(run.CloneNode(true));
 			}
 
 			/// <summary>
-			/// Appends text to the last run inside the last paragraph of the doc fragment.
+			/// Appends text to the last run inside the doc fragment.
 			/// If no run exists, a new one will be created.
 			/// </summary>
 			public void Append(string text)
@@ -466,14 +487,13 @@ namespace SIL.FieldWorks.XWorks
 			/// Returns last run in the document if it contains any,
 			/// else creates and returns a new run.
 			/// </summary>
-			private WP.Run GetLastRun()
+			internal WP.Run GetLastRun()
 			{
-				WP.Paragraph lastPara = GetLastParagraph();
-				List<WP.Run> runList = lastPara.OfType<WP.Run>().ToList();
+				List<WP.Run> runList = DocBody.OfType<WP.Run>().ToList();
 				if (runList.Any())
 					return runList.Last();
 
-				return lastPara.AppendChild(new WP.Run());
+				return DocBody.AppendChild(new WP.Run());
 			}
 		}
 		#endregion DocFragment class
@@ -487,6 +507,7 @@ namespace SIL.FieldWorks.XWorks
 			public DocFragment WordFragment { get; }
 			private bool isDisposed;
 			internal Dictionary<string, Collator> collatorCache = new Dictionary<string, Collator>();
+			public bool ForceNewParagraph { get; set; } = false;
 
 			public WordFragmentWriter(DocFragment frag)
 			{
@@ -524,39 +545,15 @@ namespace SIL.FieldWorks.XWorks
 				WordFragment.Append(frag);
 			}
 
-			public void Insert(WP.Paragraph par)
-			{
-				WordFragment.Append(par);
-			}
-
-			public void Insert(WP.Run run)
-			{
-				WordFragment.Append(run);
-			}
+			internal WP.Table CurrentTable { get; set; }
+			internal WP.TableRow CurrentTableRow { get; set; }
 
 			/// <summary>
-			/// Gets and returns the last run in the document, if one exists.
-			/// Otherwise, creates and returns a new run.
-			/// </summary>
-			public WP.Run GetCurrentRun()
-			{
-				List<WP.Run> runList = WordFragment.DocBody.Descendants<WP.Run>().ToList();
-				if (runList.Any())
-					return runList.Last();
-
-				// If there is no run, create one
-				WP.Run lastRun = WordFragment.DocBody.AppendChild(new WP.Run());
-				return lastRun;
-			}
-
-			/// <summary>
-			/// Get the last paragraph in the doc if it contains any, and add a new run to it.
-			/// Else, create and add the run to a new paragraph.
+			/// Add a new run to the WordFragment DocBody.
 			/// </summary>
 			public void CreateRun()
 			{
-				WP.Paragraph curPar = WordFragment.GetLastParagraph();
-				curPar.AppendChild(new WP.Run());
+				WordFragment.DocBody.AppendChild(new WP.Run());
 			}
 		}
 		#endregion WordFragmentWriter class
@@ -666,8 +663,7 @@ namespace SIL.FieldWorks.XWorks
 			return;
 		}
 		/// <summary>
-		/// Creates a new run that is appended to the doc's last paragraph,
-		/// if one exists, or to a new paragraph otherwise.
+		/// Add a new run to the writers WordFragment DocBody.
 		/// </summary>
 		/// <param name="writer"></param>
 		/// <param name="writingSystem"></param>
@@ -719,45 +715,57 @@ namespace SIL.FieldWorks.XWorks
 			// For spaces to show correctly, set preserve spaces on the new text element
 			WP.Text txt = new WP.Text(txtContent);
 			txt.Space = SpaceProcessingModeValues.Preserve;
-			((WordFragmentWriter)writer).GetCurrentRun()
+			((WordFragmentWriter)writer).WordFragment.GetLastRun()
 				.AppendChild(txt);
 		}
 		public void AddLineBreakInRunContent(IFragmentWriter writer)
 		{
-			((WordFragmentWriter)writer).GetCurrentRun()
+			((WordFragmentWriter)writer).WordFragment.GetLastRun()
 				.AppendChild(new WP.Break());
 		}
 		public void StartTable(IFragmentWriter writer)
 		{
-			return;
+			Debug.Assert(((WordFragmentWriter)writer).CurrentTable == null,
+				"Not expecting nested tables.  Treating it as a new table.");
+
+			((WordFragmentWriter)writer).CurrentTable = new WP.Table();
+			((WordFragmentWriter)writer).WordFragment.DocBody.Append(((WordFragmentWriter)writer).CurrentTable);
 		}
 		public void AddTableTitle(IFragmentWriter writer, IFragment content)
 		{
-			return;
+			WP.TableRow tblTitleRow = new WP.TableRow();
+			tblTitleRow.Append(new WP.TableCell(new WP.Paragraph(new WP.Run(new WP.Text(content.ToString())))));
+			((WordFragmentWriter)writer).CurrentTable.Append(tblTitleRow);
 		}
 		public void StartTableBody(IFragmentWriter writer)
 		{
-			return;
+			// Nothing to do for Word export.
 		}
 		public void StartTableRow(IFragmentWriter writer)
 		{
-			return;
+			Debug.Assert(((WordFragmentWriter)writer).CurrentTableRow == null,
+				"Not expecting nested tables rows.  Treating it as a new table row.");
+
+			((WordFragmentWriter)writer).CurrentTableRow = new WP.TableRow();
+			((WordFragmentWriter)writer).CurrentTable.Append(((WordFragmentWriter)writer).CurrentTableRow);
 		}
 		public void AddTableCell(IFragmentWriter writer, bool isHead, int colSpan, HorizontalAlign alignment, IFragment content)
 		{
-			return;
+			WP.TableCell tableCell = new WP.TableCell();
+			tableCell.Append(new WP.Paragraph(new WP.Run(new WP.Text(content.ToString()))));
+			((WordFragmentWriter)writer).CurrentTableRow.Append(tableCell);
 		}
 		public void EndTableRow(IFragmentWriter writer)
 		{
-			return;
+			((WordFragmentWriter)writer).CurrentTableRow = null;
 		}
 		public void EndTableBody(IFragmentWriter writer)
 		{
-			return;
+			// Nothing to do for Word export.
 		}
 		public void EndTable(IFragmentWriter writer)
 		{
-			return;
+			((WordFragmentWriter)writer).CurrentTable = null;
 		}
 		public void StartEntry(IFragmentWriter writer, ConfigurableDictionaryNode config, string className, Guid entryGuid, int index, RecordClerk clerk)
 		{
@@ -783,17 +791,33 @@ namespace SIL.FieldWorks.XWorks
 
 				ConfigurableDictionaryNode config = piece.Config;
 
-				// Piece contains runs that should all be added to a single paragraph.
-				// So we append each run instead of the IFragments directly.
-				// Character formatting & style of each run will be preserved.
-				var pieceRuns = (frag.DocBody.Descendants<WP.Run>().ToList());
-				foreach (WP.Run run in pieceRuns)
+				var elements = frag.DocBody.Elements().ToList();
+				foreach (OpenXmlElement elem in elements)
 				{
-					// For spaces to show correctly, set preserve spaces on the text element
-					WP.Text txt = new WP.Text(" ");
-					txt.Space = SpaceProcessingModeValues.Preserve;
-					run.AppendChild(txt);
-					wordWriter.Insert(run);
+					switch (elem)
+					{
+						case WP.Run run:
+							// For spaces to show correctly, set preserve spaces on the text element
+							WP.Text txt = new WP.Text(" ");
+							txt.Space = SpaceProcessingModeValues.Preserve;
+							run.AppendChild(txt);
+							wordWriter.WordFragment.AppendToParagraph(run, wordWriter.ForceNewParagraph);
+							wordWriter.ForceNewParagraph = false;
+
+							// Add the paragraph style.
+							wordWriter.WordFragment.LinkParaStyle(frag.ParagraphStyle);
+
+							break;
+						case WP.Table table:
+							wordWriter.WordFragment.Append(table);
+
+							// Start a new paragraph with the next run to maintain the correct position of the table.
+							wordWriter.ForceNewParagraph = true;
+							break;
+						default:
+							throw new Exception("Unexpected element type on DocBody: " + elem.GetType().ToString());
+
+					}
 				}
 			}
 		}
