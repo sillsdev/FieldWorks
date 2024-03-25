@@ -289,12 +289,9 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				// If text direction is right to left, add BiDi property to the paragraph.
-				if (exportStyleInfo.DirectionIsRightToLeft != TriStateBool.triNotSet)
+				if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
 				{
-					if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
-					{
-						parProps.Append(new BiDi());//BiDi = new BiDi());
-					}
+					parProps.Append(new BiDi());
 				}
 				exportStyle.Append(parProps);
 			}
