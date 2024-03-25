@@ -264,6 +264,7 @@ namespace SIL.FieldWorks.XWorks
 
 				if (exportStyleInfo.HasTrailingIndent)
 				{
+					// Check bidirectional flag to determine correct orientation for indent
 					if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
 						parProps.Append(new Indentation() { Left = MilliPtToTwentiPt(exportStyleInfo.TrailingIndent).ToString() });
 					else
@@ -279,6 +280,7 @@ namespace SIL.FieldWorks.XWorks
 						ancestorIndents = CalculateParagraphIndentsFromAncestors(ancestorIndents.Ancestor, styleSheet, new AncestorIndents(0f, 0f));
 						var leadingIndent = CalculateMarginLeft(exportStyleInfo, ancestorIndents, hangingIndent);
 
+						// Check bidirectional flag to determine correct orientation for indent
 						if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
 							parProps.Append(new Indentation() { Right = leadingIndent.ToString() });
 						else
@@ -286,16 +288,13 @@ namespace SIL.FieldWorks.XWorks
 					}
 				}
 
-				// If text direction is specified, add specification to paragraph properties
+				// If text direction is right to left, add BiDi property to the paragraph.
 				if (exportStyleInfo.DirectionIsRightToLeft != TriStateBool.triNotSet)
 				{
-					parProps.Append(new BiDi());
-
 					if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
-						parProps.Append(new TextDirection() { Val = TextDirectionValues.TopToBottomRightToLeft });
-
-					else
-						parProps.Append(new TextDirection() { Val = TextDirectionValues.LefToRightTopToBottom });
+					{
+						parProps.Append(new BiDi());//BiDi = new BiDi());
+					}
 				}
 				exportStyle.Append(parProps);
 			}
@@ -441,12 +440,18 @@ namespace SIL.FieldWorks.XWorks
 				// if the writing system isn't a magic name just use it otherwise find the right one from the magic list
 				var wsIdString = possiblyMagic == 0 ? ws.Id : WritingSystemServices.GetWritingSystemList(cache, possiblyMagic, true).First().Id;
 				var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(wsIdString);
+				var wsString = String.Format("[lang=\'{0}\']", wsIdString).Trim('.');
 
 				var wsStyle = new Style();
+
 				if (!string.IsNullOrEmpty(configNode.Style))
 					wsStyle = GenerateWordStyleFromLcmStyleSheet(configNode.Style, wsId, propertyTable);
 
-				wsStyle.StyleId = configNode.Style + (String.Format("[lang=\'{0}\']", wsIdString)).Trim('.');
+				//style should be based on the span for the current ws as well as the style info for the current node that is independent from the ws
+				wsStyle.Append(new BasedOn() { Val = "span" + wsString });
+				wsStyle.Append(new BasedOn() { Val = configNode.Style });
+
+				wsStyle.StyleId = configNode.Style + wsString;
 
 				if (!IsEmptyStyle(wsStyle))
 					return wsStyle;
