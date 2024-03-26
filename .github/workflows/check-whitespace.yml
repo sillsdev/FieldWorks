@@ -1,0 +1,64 @@
+name: check-whitespace
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+# Avoid unnecessary builds
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-whitespace:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: git log --check
+      id: check_out
+      run: |
+        echo "Starting the script."
+        baseSha=${{ github.event.pull_request.base.sha }}
+        git log --check --pretty=format:"---% h% s" ${baseSha}.. | tee check-results.log
+        problems=()
+        commit=
+        commitText=
+        commitTextmd=
+        # Use git log --check to look for whitespace errors in each commit of this PR
+        log_output=$(cat check-results.log)
+        echo "${log_output}"
+        # Use a for loop to iterate over lines of log_output
+        IFS=$'\n'
+        for line in $log_output; do
+          echo "Line: ${line}"
+          case "${line}" in
+            "--- "*)
+              IFS=' ' read -r _ commit commitText <<< "$line"
+              commitTextmd="[${commit}](https://github.com/${{ github.repository }}/commit/${commit}) ${commitText}"
+              ;;
+            "")
+              ;;
+            *:[1-9]*:*) # contains file and line number information - This indicates that a whitespace error was found
+              file="${line%%:*}"
+              afterFile="${line#*:}" # Remove the first colon and everything before it
+              lineNumber="${afterFile%%:*}"  # Remove anything after and including the first remaining colon to get only the line number
+              problems+=("[${commitTextmd}]")
+              problems+=("[${line}](https://github.com/${{ github.repository }}/blob/${{github.event.pull_request.head.ref}}/${file}#L${lineNumber})")
+              problems+=""
+              ;;
+          esac
+        done
+        if test ${#problems[*]} -gt 0; then
+          echo "⚠️ Please review the Summary output for further information." >> $GITHUB_STEP_SUMMARY
+          echo "### A whitespace issue was found in one or more of the commits." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Errors:" >> $GITHUB_STEP_SUMMARY
+          for i in "${problems[@]}"; do
+            echo "${i}" >> $GITHUB_STEP_SUMMARY
+          done
+          exit 1
+        fi
+        echo "No problems found"
