@@ -1,0 +1,93 @@
+name: Commit Message Check
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches: ["release/9.1", "develop", "master", "feature/PubSub"]
+jobs:
+  check_commit_message:
+    runs-on: windows-latest
+    name: Check Commit Message
+    steps:  
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check commit message
+        shell: bash
+        run: |
+          # This script checks that the commit message is formatted according to the standard:
+          # - First line:      no more than 62 chars and not ending with period (or if it is the
+          #                    only line: no more than 70 chars)
+          # - Second line:     empty
+          # - Following lines: no more than 70 chars
+          # Run git log command and capture its output
+          log_output=$(git log --pretty=format:"---commit---%n%H%n%B" ${{ github.event.pull_request.base.sha }}..)
+          # Define states
+          STATE_INITIAL="INITIAL"
+          STATE_HASH="HASH"
+          STATE_FIRST="FIRST"
+          STATE_LONG_FIRST="LONG_FIRST"
+          STATE_SECOND="SECOND"
+          STATE_OTHER="OTHER"
+          # Initialize variables
+          state="$STATE_INITIAL"
+          commit_hash=""
+          # Function to reset state to Hash
+          reset_state() {
+              state="$STATE_HASH"
+              commit_hash=""
+          }
+          # Iterate through the log results
+          while IFS= read -r log_line; do
+            echo "${log_line}"
+            case "$state" in
+              "$STATE_INITIAL")
+                # Move to Hash state
+                if [[ "$log_line" == "---commit---" ]]; then
+                  state="$STATE_HASH"
+                fi
+              ;;
+              "$STATE_HASH")
+                # Capture commit hash and move to First state
+                commit_hash="$log_line"
+                state="$STATE_FIRST"
+              ;;
+              "$STATE_FIRST")
+                # Check first line length and punctuation, move to Second state
+                if [[ ${#log_line} -gt 70 ]]; then
+                  echo "::warning ⚠️ First line was too long in $commit_hash"
+                elif [[ "$log_line" == *"." ]]; then
+                  echo "::error The first line should not end in a period in $commit_hash" 
+                elif [[ ${#log_line} -gt 62 ]]; then
+                  state="$STATE_LONG_FIRST"
+                else
+                  state="$STATE_SECOND"
+                fi
+                ;;
+              "$STATE_LONG_FIRST")
+                # Check second line and move to Other state
+                if [[ "$log_line" == "---commit---" ]]; then
+                  reset_state
+                else
+                  echo "::warning ⚠️ First line should be less than 60 chars if there is more than one line. $commit_hash"
+                fi
+              ;;
+              "$STATE_SECOND")
+                # Check second line and move to Other state
+                if [[ -n "$log_line" ]]; then
+                  echo "::error Second line is not blank in commit $commit_hash"
+                fi
+                state="$STATE_OTHER"
+              ;;
+              "$STATE_OTHER")
+                # Check other lines length and move to Other state or reset to Hash state
+                if [[ ${#log_line} -gt 70 ]]; then
+                  echo "::warning ⚠️ Line exceeds 70 characters in commit $commit_hash"
+                  echo "$log_line"
+                elif [[ "$log_line" == "---commit---" ]]; then
+                  reset_state
+                fi
+              ;;
+            esac
+          done <<< "$log_output"
+
