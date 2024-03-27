@@ -677,14 +677,27 @@ namespace SIL.FieldWorks.XWorks
 			// Beginning a new run is sufficient to end the old run
 			// and to ensure new styles/content are applied to the new run.
 		}
-		public void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, string css)
-		{
-			// TODO: Many runs don't ever call this function; this is not where we want to set the character styles.
 
-			/*if (config != null && !string.IsNullOrEmpty(config.Style))
+		/// <summary>
+		/// Set the style for a specific run.
+		/// This is needed to set the specific style for any field that allows the
+		/// default style to be overridden (Table Cell, Custom Field, Note...).
+		/// </summary>
+		public void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, string writingSystem, string _, string runStyle)
+		{
+			if (!string.IsNullOrEmpty(runStyle))
 			{
-				((WordFragmentWriter)writer).WordFragment.AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Character);
-			}*/
+				// Add the style link.
+				((WordFragmentWriter)writer).WordFragment.AddStyleLink(runStyle, ConfigurableDictionaryNode.StyleTypes.Character);
+
+				// Only add the style to the styleSheet if not already there.
+				if (!_styleSheet.ChildElements.Any(p => ((Style)p).StyleId == runStyle))
+				{
+					int ws = Cache.WritingSystemFactory.GetWsFromStr(writingSystem);
+					var wpStyle = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(runStyle, ws, _propertyTable);
+					_styleSheet.Append(wpStyle);
+				}
+			}
 		}
 		public void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, Guid destination)
 		{
@@ -751,9 +764,20 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public void AddTableCell(IFragmentWriter writer, bool isHead, int colSpan, HorizontalAlign alignment, IFragment content)
 		{
-			WP.TableCell tableCell = new WP.TableCell();
-			tableCell.Append(new WP.Paragraph(new WP.Run(new WP.Text(content.ToString()))));
-			((WordFragmentWriter)writer).CurrentTableRow.Append(tableCell);
+			// The runs contain the text and any cell-specific styling (in the run properties).
+			// Note: multiple runs will exist if the cell contains multiple styles.
+			WP.Paragraph paragraph = new WP.Paragraph();
+			foreach (WP.Run run in ((DocFragment)content).DocBody.Elements<WP.Run>())
+			{
+				paragraph.Append(run.CloneNode(true));
+			}
+
+			if (paragraph.HasChildren)
+			{
+				WP.TableCell tableCell = new WP.TableCell();
+				tableCell.Append(paragraph);
+				((WordFragmentWriter)writer).CurrentTableRow.Append(tableCell);
+			}
 		}
 		public void EndTableRow(IFragmentWriter writer)
 		{

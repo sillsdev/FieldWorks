@@ -732,9 +732,10 @@ namespace SIL.FieldWorks.XWorks
 			((XmlFragmentWriter)writer).Writer.WriteEndElement(); // span
 		}
 
-		public void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, string css)
+		public void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, string writingSystem, string css, string runStyle)
 		{
-			((XmlFragmentWriter)writer).Writer.WriteAttributeString("style", css);
+			if (!String.IsNullOrEmpty(css))
+				((XmlFragmentWriter)writer).Writer.WriteAttributeString("style", css);
 		}
 
 		public void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, Guid destination)

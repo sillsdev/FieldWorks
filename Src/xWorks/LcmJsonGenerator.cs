@@ -181,7 +181,7 @@ namespace SIL.FieldWorks.XWorks
 			m_runBuilder.Value.Clear();
 		}
 
-		public void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, string css)
+		public void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, string writingSystem, string css, string runStyle)
 		{
 			if(!string.IsNullOrEmpty(css))
 				((JsonFragmentWriter)writer).InsertJsonProperty("style", css);
