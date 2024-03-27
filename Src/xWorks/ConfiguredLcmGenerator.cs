@@ -2807,8 +2807,8 @@ namespace SIL.FieldWorks.XWorks
 				var cssStyle = CssGenerator.GenerateCssStyleFromLcmStyleSheet(style,
 					settings.Cache.WritingSystemFactory.GetWsFromStr(writingSystem), settings.PropertyTable);
 				var css = cssStyle.ToString();
-				if (!String.IsNullOrEmpty(css))
-					settings.ContentGenerator.SetRunStyle(writer, config, css);
+
+				settings.ContentGenerator.SetRunStyle(writer, config, writingSystem, css, style);
 			}
 			if (linkDestination != Guid.Empty)
 			{
@@ -3031,7 +3031,7 @@ namespace SIL.FieldWorks.XWorks
 				new ExCSS.Property("color") { Term = new HtmlColor(222, 0, 0) },
 				new ExCSS.Property("font-size") { Term = new PrimitiveTerm(UnitType.Ems, 1.5f) }
 			};
-			settings.ContentGenerator.SetRunStyle(writer, null, css.ToString());
+			settings.ContentGenerator.SetRunStyle(writer, null, writingSystem, css.ToString(), null);
 			if (text.Contains(TxtLineSplit))
 			{
 				var txtContents = text.Split(TxtLineSplit);

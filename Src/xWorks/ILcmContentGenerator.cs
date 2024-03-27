@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.XWorks
 		void EndBiDiWrapper(IFragmentWriter writer);
 		void StartRun(IFragmentWriter writer, string writingSystem);
 		void EndRun(IFragmentWriter writer);
-		void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, string css);
+		void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, string writingSystem, string css, string runStyle);
 		void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, Guid destination);
 		void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, string externalDestination);
 		void EndLink(IFragmentWriter writer);
