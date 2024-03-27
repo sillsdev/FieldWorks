@@ -1,0 +1,52 @@
+name: Commit messages check
+on:
+  pull_request:
+  workflow_call:
+
+jobs:
+  gitlint:
+    name: Check commit messages
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Install dependencies
+      run: |
+        pip install --upgrade gitlint
+    - name: Lint git commit messages
+      shell: bash
+      # run the linter and tee the output to a file, this will make the check fail but allow us to use the results in summary
+      run: gitlint --ignore body-is-missing --commits origin/$GITHUB_BASE_REF..  2>&1 | tee check_results.log
+    - name: Propegate Error Summary
+      if: always()
+      shell: bash
+      # put the output of the commit message linting into the summary for the job and in an environment variable
+      run: |
+        # Change the commit part of the log into a markdown link to the commit
+        commitsUrl="https:\/\/github.com\/${{ github.repository_owner }}\/${{ github.event.repository.name }}\/commit\/"
+        sed -i "s/Commit \([0-9a-f]\{7,40\}\)/[commit \1]($commitsUrl\1)/g" check_results.log
+        # Put the results into the job summary
+        cat check_results.log >> "$GITHUB_STEP_SUMMARY"
+        # Put the results into a multi-line environment variable to use in the next step
+        echo "check_results<<###LINT_DELIMITER###" >> "$GITHUB_ENV"
+        echo "$(cat check_results.log)" >> "$GITHUB_ENV"
+        echo "###LINT_DELIMITER###" >> "$GITHUB_ENV"
+    # add a comment on the PR if the commit message linting failed
+    - name: Comment on PR
+      if: failure()
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        header: Commit Comment
+        message: |
+          ⚠️ Commit Message Format Issues ⚠️
+          ${{ env.check_results }}
+    - name: Clear PR Comment
+      if: success()
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        header: Commit Comment
+        hide: true
+        hide_classify: "RESOLVED"
+        
