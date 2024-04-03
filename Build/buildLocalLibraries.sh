@@ -43,7 +43,7 @@ function delete_and_pack_liblcm {
 			(cd "$liblcm_dir/artifacts" && rm *nupkg)
 
 			echo "Running 'dotnet pack' in the liblcm directory: $liblcm_dir"
-			pack_output=$(cd "$liblcm_dir" && dotnet pack -c Debug)
+			pack_output=$(cd "$liblcm_dir" && dotnet pack -c Debug -p:TargetFrameworks=net461)
 
 			# Extract version number using regex
 			if [[ $pack_output =~ $version_regex ]]; then
