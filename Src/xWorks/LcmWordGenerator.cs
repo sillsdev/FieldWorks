@@ -683,7 +683,7 @@ namespace SIL.FieldWorks.XWorks
 		/// This is needed to set the specific style for any field that allows the
 		/// default style to be overridden (Table Cell, Custom Field, Note...).
 		/// </summary>
-		public void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, string writingSystem, string _, string runStyle)
+		public void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propertyTable, string writingSystem, string runStyle, bool error)
 		{
 			if (!string.IsNullOrEmpty(runStyle))
 			{

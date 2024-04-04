@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using ExCSS;
 using Icu.Collation;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
@@ -732,8 +733,27 @@ namespace SIL.FieldWorks.XWorks
 			((XmlFragmentWriter)writer).Writer.WriteEndElement(); // span
 		}
 
-		public void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, string writingSystem, string css, string runStyle)
+		public void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propertyTable, string writingSystem, string runStyle, bool error)
 		{
+			StyleDeclaration cssStyle = null;
+
+			// This is primarily intended to make formatting errors stand out in the GUI.
+			// Make the error red and slightly larger than the surrounding text.
+			if (error)
+			{
+				cssStyle = new StyleDeclaration
+				{
+					new ExCSS.Property("color") { Term = new HtmlColor(222, 0, 0) },
+					new ExCSS.Property("font-size") { Term = new PrimitiveTerm(ExCSS.UnitType.Ems, 1.5f) }
+				};
+			}
+			else if (!string.IsNullOrEmpty(runStyle))
+			{
+				var cache = propertyTable.GetValue<LcmCache>("cache", null);
+				cssStyle = CssGenerator.GenerateCssStyleFromLcmStyleSheet(runStyle,
+					cache.WritingSystemFactory.GetWsFromStr(writingSystem), propertyTable);
+			}
+			string css = cssStyle?.ToString();
 			if (!String.IsNullOrEmpty(css))
 				((XmlFragmentWriter)writer).Writer.WriteAttributeString("style", css);
 		}
