@@ -181,10 +181,17 @@ namespace SIL.FieldWorks.XWorks
 			m_runBuilder.Value.Clear();
 		}
 
-		public void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, string css)
+		public void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propertyTable, string writingSystem, string runStyle, bool error)
 		{
-			if(!string.IsNullOrEmpty(css))
-				((JsonFragmentWriter)writer).InsertJsonProperty("style", css);
+			if (!string.IsNullOrEmpty(runStyle))
+			{
+				var cache = propertyTable.GetValue<LcmCache>("cache", null);
+				var cssStyle = CssGenerator.GenerateCssStyleFromLcmStyleSheet(runStyle,
+					cache.WritingSystemFactory.GetWsFromStr(writingSystem), propertyTable);
+				string css = cssStyle?.ToString();
+				if (!string.IsNullOrEmpty(css))
+					((JsonFragmentWriter)writer).InsertJsonProperty("style", css);
+			}
 		}
 
 		public void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, Guid destination)

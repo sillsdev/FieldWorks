@@ -2804,11 +2804,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (!String.IsNullOrEmpty(style))
 			{
-				var cssStyle = CssGenerator.GenerateCssStyleFromLcmStyleSheet(style,
-					settings.Cache.WritingSystemFactory.GetWsFromStr(writingSystem), settings.PropertyTable);
-				var css = cssStyle.ToString();
-				if (!String.IsNullOrEmpty(css))
-					settings.ContentGenerator.SetRunStyle(writer, config, css);
+				settings.ContentGenerator.SetRunStyle(writer, config, settings.PropertyTable, writingSystem, style, false);
 			}
 			if (linkDestination != Guid.Empty)
 			{
@@ -3025,13 +3021,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(settings.Cache.WritingSystemFactory.UserWs);
 			settings.ContentGenerator.StartRun(writer, writingSystem);
-			// Make the error red and slightly larger than the surrounding text
-			var css = new StyleDeclaration
-			{
-				new ExCSS.Property("color") { Term = new HtmlColor(222, 0, 0) },
-				new ExCSS.Property("font-size") { Term = new PrimitiveTerm(UnitType.Ems, 1.5f) }
-			};
-			settings.ContentGenerator.SetRunStyle(writer, null, css.ToString());
+			settings.ContentGenerator.SetRunStyle(writer, null, settings.PropertyTable, writingSystem, null, true);
 			if (text.Contains(TxtLineSplit))
 			{
 				var txtContents = text.Split(TxtLineSplit);
