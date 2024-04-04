@@ -247,14 +247,13 @@ namespace SIL.FieldWorks.XWorks
 			{
 				DocFragment frag = ((DocFragment)content);
 
-				// Check if this is a Table
-				bool bTable = frag.DocBody.Elements<WP.Table>().FirstOrDefault() != null;
-
-				if (bTable)
+				// Don't add style for tables.
+				if (frag.DocBody.Elements<WP.Table>().FirstOrDefault() != null)
 				{
-					// TODO - Add Table Style info.
+					return;
 				}
-				else if (!string.IsNullOrEmpty(config.Style))
+
+				if (!string.IsNullOrEmpty(config.Style))
 				{
 					frag.AddStyleLink(config.Style, config.StyleType);
 				}
@@ -547,6 +546,9 @@ namespace SIL.FieldWorks.XWorks
 
 			internal WP.Table CurrentTable { get; set; }
 			internal WP.TableRow CurrentTableRow { get; set; }
+			internal IFragment TableTitleContent { get; set; }
+			internal int TableColumns { get; set; }
+			internal int RowColumns { get; set; }
 
 			/// <summary>
 			/// Add a new run to the WordFragment DocBody.
@@ -738,17 +740,26 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public void StartTable(IFragmentWriter writer)
 		{
-			Debug.Assert(((WordFragmentWriter)writer).CurrentTable == null,
+			WordFragmentWriter wordWriter = (WordFragmentWriter)writer;
+			Debug.Assert(wordWriter.CurrentTable == null,
 				"Not expecting nested tables.  Treating it as a new table.");
 
-			((WordFragmentWriter)writer).CurrentTable = new WP.Table();
-			((WordFragmentWriter)writer).WordFragment.DocBody.Append(((WordFragmentWriter)writer).CurrentTable);
+			wordWriter.CurrentTable = new WP.Table();
+			wordWriter.TableTitleContent = null;
+			wordWriter.TableColumns = 0;
+			wordWriter.WordFragment.DocBody.Append(wordWriter.CurrentTable);
 		}
 		public void AddTableTitle(IFragmentWriter writer, IFragment content)
 		{
-			WP.TableRow tblTitleRow = new WP.TableRow();
-			tblTitleRow.Append(new WP.TableCell(new WP.Paragraph(new WP.Run(new WP.Text(content.ToString())))));
-			((WordFragmentWriter)writer).CurrentTable.Append(tblTitleRow);
+			WordFragmentWriter wordWriter = (WordFragmentWriter)writer;
+
+			// We can't add the Table Title until we know the total number of columns in the
+			// table. Store off the content and add the Title when we are ending the Table.
+			wordWriter.TableTitleContent = content;
+			if (wordWriter.TableColumns == 0)
+			{
+				wordWriter.TableColumns = 1;
+			}
 		}
 		public void StartTableBody(IFragmentWriter writer)
 		{
@@ -756,32 +767,99 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public void StartTableRow(IFragmentWriter writer)
 		{
-			Debug.Assert(((WordFragmentWriter)writer).CurrentTableRow == null,
+			WordFragmentWriter wordWriter = (WordFragmentWriter)writer;
+			Debug.Assert(wordWriter.CurrentTableRow == null,
 				"Not expecting nested tables rows.  Treating it as a new table row.");
 
-			((WordFragmentWriter)writer).CurrentTableRow = new WP.TableRow();
-			((WordFragmentWriter)writer).CurrentTable.Append(((WordFragmentWriter)writer).CurrentTableRow);
+			wordWriter.CurrentTableRow = new WP.TableRow();
+			wordWriter.RowColumns = 0;
+			wordWriter.CurrentTable.Append(wordWriter.CurrentTableRow);
 		}
 		public void AddTableCell(IFragmentWriter writer, bool isHead, int colSpan, HorizontalAlign alignment, IFragment content)
 		{
+			WordFragmentWriter wordWriter = (WordFragmentWriter)writer;
+			wordWriter.RowColumns += colSpan;
+			WP.Paragraph paragraph = new WP.Paragraph();
+
+			// Set the cell alignment if not Left (the default).
+			if (alignment != HorizontalAlign.Left)
+			{
+				WP.JustificationValues justification = WP.JustificationValues.Left;
+				if (alignment == HorizontalAlign.Center)
+				{
+					justification = WP.JustificationValues.Center;
+				}
+				else if (alignment == HorizontalAlign.Right)
+				{
+					justification = WP.JustificationValues.Right;
+				}
+
+				WP.ParagraphProperties paragraphProperties = new WP.ParagraphProperties();
+				paragraphProperties.AppendChild<WP.Justification>(new WP.Justification() { Val = justification });
+				paragraph.AppendChild<WP.ParagraphProperties>(paragraphProperties);
+			}
+
 			// The runs contain the text and any cell-specific styling (in the run properties).
 			// Note: multiple runs will exist if the cell contains multiple styles.
-			WP.Paragraph paragraph = new WP.Paragraph();
 			foreach (WP.Run run in ((DocFragment)content).DocBody.Elements<WP.Run>())
 			{
-				paragraph.Append(run.CloneNode(true));
+				WP.Run tableRun = (WP.Run)run.CloneNode(true);
+
+				// Add Bold for headers.
+				if (isHead)
+				{
+					if (tableRun.RunProperties != null)
+					{
+						tableRun.RunProperties.Append(new WP.Bold());
+					}
+					else
+					{
+						WP.RunProperties runProps = new WP.RunProperties(new WP.Bold());
+						// Prepend runProps so it appears before any text elements contained in the run
+						tableRun.PrependChild<WP.RunProperties>(runProps);
+					}
+				}
+				paragraph.Append(tableRun);
 			}
 
 			if (paragraph.HasChildren)
 			{
 				WP.TableCell tableCell = new WP.TableCell();
+
+				// If there are additional columns to span, then add the property to the
+				// first cell to support column spanning.
+				if (colSpan > 1)
+				{
+					WP.TableCellProperties firstCellProps = new WP.TableCellProperties();
+					firstCellProps.Append(new WP.HorizontalMerge() { Val = WP.MergedCellValues.Restart });
+					tableCell.Append(firstCellProps);
+				}
 				tableCell.Append(paragraph);
-				((WordFragmentWriter)writer).CurrentTableRow.Append(tableCell);
+				wordWriter.CurrentTableRow.Append(tableCell);
+
+				// If there are additional columns to span, then add the additional cells.
+				if (colSpan > 1)
+				{
+					for (int ii = 1; ii < colSpan; ii++)
+					{
+						WP.TableCellProperties spanCellProps = new WP.TableCellProperties();
+						spanCellProps.Append(new WP.HorizontalMerge() { Val = WP.MergedCellValues.Continue });
+						var spanCell = new WP.TableCell(spanCellProps, new WP.Paragraph());
+						wordWriter.CurrentTableRow.Append(spanCell);
+					}
+				}
 			}
 		}
 		public void EndTableRow(IFragmentWriter writer)
 		{
-			((WordFragmentWriter)writer).CurrentTableRow = null;
+			WordFragmentWriter wordWriter = (WordFragmentWriter)writer;
+
+			if (wordWriter.RowColumns > wordWriter.TableColumns)
+			{
+				wordWriter.TableColumns = wordWriter.RowColumns;
+			}
+			wordWriter.RowColumns = 0;
+			wordWriter.CurrentTableRow = null;
 		}
 		public void EndTableBody(IFragmentWriter writer)
 		{
@@ -789,7 +867,19 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public void EndTable(IFragmentWriter writer)
 		{
-			((WordFragmentWriter)writer).CurrentTable = null;
+			WordFragmentWriter wordWriter = (WordFragmentWriter)writer;
+
+			// If there is a Table Title, then add it now, when we know the number of columns.
+			if (wordWriter.TableTitleContent != null)
+			{
+				wordWriter.CurrentTableRow = new WP.TableRow();
+				AddTableCell(writer, false, wordWriter.TableColumns, HorizontalAlign.Center, wordWriter.TableTitleContent);
+				wordWriter.CurrentTable.PrependChild(wordWriter.CurrentTableRow);
+				wordWriter.CurrentTableRow = null;
+			}
+			wordWriter.TableColumns = 0;
+			wordWriter.TableTitleContent = null;
+			wordWriter.CurrentTable = null;
 		}
 		public void StartEntry(IFragmentWriter writer, ConfigurableDictionaryNode config, string className, Guid entryGuid, int index, RecordClerk clerk)
 		{
