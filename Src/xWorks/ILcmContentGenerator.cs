@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Web.UI.WebControls;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -33,7 +34,7 @@ namespace SIL.FieldWorks.XWorks
 		void EndBiDiWrapper(IFragmentWriter writer);
 		void StartRun(IFragmentWriter writer, string writingSystem);
 		void EndRun(IFragmentWriter writer);
-		void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, string css);
+		void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propertyTable, string writingSystem, string runStyle, bool error);
 		void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, Guid destination);
 		void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, string externalDestination);
 		void EndLink(IFragmentWriter writer);
