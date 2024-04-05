@@ -861,7 +861,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				filePath = MakeSafeFilePath(file.AbsoluteInternalPath);
 			}
-			return settings.UseRelativePaths ? filePath : new Uri(filePath).ToString();
+			return filePath;
+			//return settings.UseRelativePaths ? filePath : new Uri(filePath).ToString();
 		}
 
 		private static string GenerateSrcAttributeForMediaFromFilePath(string filename, string subFolder, GeneratorSettings settings)

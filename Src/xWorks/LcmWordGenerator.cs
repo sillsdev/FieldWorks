@@ -20,7 +20,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web.UI.WebControls;
+using System.Windows.Media.Imaging;
 using XCore;
+using A = DocumentFormat.OpenXml.Drawing;
+using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
+using PIC = DocumentFormat.OpenXml.Drawing.Pictures;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -34,6 +38,8 @@ namespace SIL.FieldWorks.XWorks
 		private static Styles _styleSheet { get; set; } = new Styles();
 		private static Dictionary<string, Styles> _styleDictionary = new Dictionary<string, Styles>();
 		private ReadOnlyPropertyTable _propertyTable;
+		internal const int maxImageHeightInches = 1;
+		internal const int maxImageWidthInches = 1;
 
 		public LcmWordGenerator(LcmCache cache)
 		{
@@ -55,7 +61,7 @@ namespace SIL.FieldWorks.XWorks
 				var readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);
 
 				generator.Init(readOnlyPropertyTable);
-				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, System.IO.Path.GetDirectoryName(filePath),
+				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, false, true, System.IO.Path.GetDirectoryName(filePath),
 							ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), System.IO.Path.GetFileName(cssPath) == "configured.css")
 							{ ContentGenerator = generator, StylesGenerator = generator};
 				settings.StylesGenerator.AddGlobalStyles(configuration, readOnlyPropertyTable);
@@ -369,6 +375,14 @@ namespace SIL.FieldWorks.XWorks
 							FragStr.AppendLine();
 							break;
 
+						case "r":
+							string docStr = ToString(docSection);
+							if (string.IsNullOrEmpty(docStr))
+								if (docSection.Descendants<Drawing>().Any())
+									docStr = "[image run]";
+							FragStr.Append(docStr);
+							break;
+
 						default:
 							FragStr.Append(ToString(docSection));
 							break;
@@ -391,9 +405,17 @@ namespace SIL.FieldWorks.XWorks
 			{
 				foreach (OpenXmlElement elem in ((DocFragment)frag).DocBody.Elements().ToList())
 				{
+					if (elem.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().Any())
+					{
+						// then need to append image in such a way that the relID is maintained
+						this.DocBody.AppendChild(CloneImageRun(frag, elem));
+						// wordWriter.WordFragment.AppendPhotoToParagraph(frag, elem, wordWriter.ForceNewParagraph);
+					}
+
 					// Append each element. It is necessary to deep clone the node to maintain its tree of document properties
 					// and to ensure its styles will be maintained in the copy.
-					this.DocBody.AppendChild(elem.CloneNode(true));
+					else
+						this.DocBody.AppendChild(elem.CloneNode(true));
 				}
 			}
 
@@ -407,7 +429,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			/// <summary>
-			/// Appends a new run inside the last paragraph of the doc fragment--creates a new paragraph if none exists.
+			/// Appends a new run inside the last paragraph of the doc fragment--creates a new paragraph if none exists or if forceNewParagraph is true.
 			/// The run will be added to the end of the paragraph.
 			/// </summary>
 			/// <param name="run">The run to append.</param>
@@ -417,6 +439,65 @@ namespace SIL.FieldWorks.XWorks
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
 				WP.Paragraph lastPar = forceNewParagraph ? GetNewParagraph() : GetLastParagraph();
 				lastPar.AppendChild(run.CloneNode(true));
+			}
+
+			public void AppendCaptionToParagraph(WP.SimpleField caption)
+			{
+				// Deep clone the run b/c of its tree of properties and to maintain styles.
+				WP.Paragraph lastPar = GetLastParagraph();
+				lastPar.AppendChild(caption.CloneNode(true));
+			}
+
+			/// <summary>
+			/// Appends a new run inside the last paragraph of the doc fragment--creates a new paragraph if none exists or if forceNewParagraph is true.
+			/// The run will be added to the end of the paragraph.
+			/// </summary>
+			/// <param name="run">The run to append.</param>
+			/// <param name="forceNewParagraph">Even if a paragraph exists, force the creation of a new paragraph.</param>
+			public void AppendImageToParagraph(IFragment fragToCopy, OpenXmlElement run, bool forceNewParagraph)
+			{
+				WP.Paragraph lastPar = forceNewParagraph ? GetNewParagraph() : GetLastParagraph();
+				var clonedRun = CloneImageRun(fragToCopy, run);
+				lastPar.AppendChild(clonedRun);
+			}
+
+			/// <summary>
+			/// Clones and returns a run containing an image.
+			/// </summary>
+			public OpenXmlElement CloneImageRun(IFragment fragToCopy, OpenXmlElement run)
+			{
+				var clonedRun = run.CloneNode(true);
+				clonedRun.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().ToList().ForEach(
+					blip =>
+					{
+						var newRelation =
+							CopyImage(DocFrag, blip.Embed, ((DocFragment)fragToCopy).DocFrag);
+						// Update the relationship ID in the cloned blip element.
+						blip.Embed = newRelation;
+					});
+				clonedRun.Descendants<DocumentFormat.OpenXml.Vml.ImageData>().ToList().ForEach(
+					imageData =>
+					{
+						var newRelation = CopyImage(DocFrag, imageData.RelationshipId, ((DocFragment)fragToCopy).DocFrag);
+						// Update the relationship ID in the cloned image data element.
+						imageData.RelationshipId = newRelation;
+					});
+				return clonedRun;
+			}
+
+			/// <summary>
+			/// Copies the image part of one document to another and returns the relationship ID of the copied image part.
+			/// </summary>
+			public static string CopyImage(WordprocessingDocument newDoc, string relId, WordprocessingDocument org)
+			{
+				if (org.MainDocumentPart == null || newDoc.MainDocumentPart == null)
+				{
+					throw new ArgumentNullException("MainDocumentPart is null.");
+				}
+				var p = org.MainDocumentPart.GetPartById(relId) as ImagePart;
+				var newPart = newDoc.MainDocumentPart.AddPart(p);
+				newPart.FeedData(p.GetStream());
+				return newDoc.MainDocumentPart.GetIdOfPart(newPart);
 			}
 
 			/// <summary>
@@ -515,12 +596,12 @@ namespace SIL.FieldWorks.XWorks
 
 			public void Dispose()
 			{
-				foreach (var cachEntry in collatorCache.Values)
+				/*foreach (var cachEntry in collatorCache.Values)
 				{
 					cachEntry?.Dispose();
 				}
 				Dispose(true);
-				GC.SuppressFinalize(this);
+				GC.SuppressFinalize(this);*/
 			}
 
 			protected virtual void Dispose(bool disposing)
@@ -528,7 +609,7 @@ namespace SIL.FieldWorks.XWorks
 				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 				if (!isDisposed)
 				{
-					WordFragment.DocFrag.Dispose();
+					//WordFragment.DocFrag.Dispose();
 					WordFragment.MemStr.Dispose();
 					isDisposed = true;
 				}
@@ -536,7 +617,7 @@ namespace SIL.FieldWorks.XWorks
 
 			public void Flush()
 			{
-				WordFragment.MemStr.Flush();
+				//WordFragment.MemStr.Flush();
 			}
 
 			public void Insert(IFragment frag)
@@ -597,12 +678,10 @@ namespace SIL.FieldWorks.XWorks
 			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, IFragment> childContentGenerator)
 		{
 			//TODO: handle grouping nodes
-			IFragment docfrag = new DocFragment("TODO: handle grouping nodes");
-
+			//IFragment docfrag = new DocFragment(...);
 			//LinkStyleOrInheritParentStyle(docfrag, config);
-
-			return docfrag;
-			//return null;
+			//return docfrag;
+			return null;
 		}
 		public IFragment AddSenseData(IFragment senseNumberSpan, bool isBlockProperty, Guid ownerGuid, IFragment senseContent, string className)
 		{
@@ -908,29 +987,48 @@ namespace SIL.FieldWorks.XWorks
 				var elements = frag.DocBody.Elements().ToList();
 				foreach (OpenXmlElement elem in elements)
 				{
-					switch (elem)
+					if (elem.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().Any())
 					{
-						case WP.Run run:
-							// For spaces to show correctly, set preserve spaces on the text element
-							WP.Text txt = new WP.Text(" ");
-							txt.Space = SpaceProcessingModeValues.Preserve;
-							run.AppendChild(txt);
-							wordWriter.WordFragment.AppendToParagraph(run, wordWriter.ForceNewParagraph);
-							wordWriter.ForceNewParagraph = false;
+						// The image should begin its own paragraph, as should the next run,
+						// to maintain correct order of the image.
+						// If the image has a caption, it should remain in the same paragraph as the image.
+						wordWriter.ForceNewParagraph = true;
+						wordWriter.WordFragment.AppendImageToParagraph(frag, elem, wordWriter.ForceNewParagraph);
+					}
 
-							// Add the paragraph style.
-							wordWriter.WordFragment.LinkParaStyle(frag.ParagraphStyle);
+					else{
+						switch (elem)
+						{
+							//case WP.SimpleField caption:
+							// TODO: Captions should be created as runs inside simplefields--make sure to handle this case
+								// SimpleField stores an image caption.
+								// In this case, the caption is added to the last referenced paragraph,
+								// which should contain the associated image.
+								//wordWriter.WordFragment.AppendCaptionToParagraph(caption);
+								//break;
+							case WP.Run run:
+								// TODO: should no longer need to add spaces here after before/after text is handled.
+								// For spaces to show correctly, set preserve spaces on the text element
+								WP.Text txt = new WP.Text(" ");
+								txt.Space = SpaceProcessingModeValues.Preserve;
+								run.AppendChild(txt);
+								wordWriter.WordFragment.AppendToParagraph(run, wordWriter.ForceNewParagraph);
+								wordWriter.ForceNewParagraph = false;
 
-							break;
-						case WP.Table table:
-							wordWriter.WordFragment.Append(table);
+								// Add the paragraph style.
+								wordWriter.WordFragment.LinkParaStyle(frag.ParagraphStyle);
 
-							// Start a new paragraph with the next run to maintain the correct position of the table.
-							wordWriter.ForceNewParagraph = true;
-							break;
-						default:
-							throw new Exception("Unexpected element type on DocBody: " + elem.GetType().ToString());
+								break;
+							case WP.Table table:
+								wordWriter.WordFragment.Append(table);
 
+								// Start a new paragraph with the next run to maintain the correct position of the table.
+								wordWriter.ForceNewParagraph = true;
+								break;
+							default:
+								throw new Exception("Unexpected element type on DocBody: " + elem.GetType().ToString());
+
+						}
 					}
 				}
 			}
@@ -962,18 +1060,43 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public void WriteProcessedContents(IFragmentWriter writer, IFragment contents)
 		{
-			if (contents.IsNullOrEmpty())
+			if (!contents.IsNullOrEmpty())
 			{
 				((WordFragmentWriter)writer).Insert(contents);
 			}
 		}
 		public IFragment AddImage(string classAttribute, string srcAttribute, string pictureGuid)
 		{
-			return new DocFragment("TODO: add image");
+			DocFragment imageFrag = new DocFragment();
+			WordprocessingDocument wordDoc = imageFrag.DocFrag;
+			string partId = AddImagePartToPackage(wordDoc, srcAttribute);
+			Drawing image = CreateImage(wordDoc, srcAttribute, partId);
+
+			if (wordDoc.MainDocumentPart is null || wordDoc.MainDocumentPart.Document.Body is null)
+			{
+				throw new ArgumentNullException("MainDocumentPart and/or Body is null.");
+			}
+
+			Run imgRun = new Run();
+			imgRun.AppendChild(image);
+			RunProperties imgProperties = new RunProperties();
+
+			// Append the image to body, the image should be in a Run.
+			wordDoc.MainDocumentPart.Document.Body.AppendChild(imgRun);
+			return imageFrag;
 		}
 		public IFragment AddImageCaption(string captionContent)
 		{
-			return new DocFragment("TODO: add image caption");
+			// TODO: captions need to be added into simplefields and linked to the relevant image/table to show as captions
+			/*SimpleField simpleField = new SimpleField(new Run(new RunProperties(new NoProof()), new WP.Text() { Text = " ", Space = SpaceProcessingModeValues.Preserve }));
+			simpleField.Instruction = @"SEQ " + "Figure 1";
+			Run runLabel = new Run(new WP.Text() { Text = " " + captionContent, Space = SpaceProcessingModeValues.Preserve });
+			simpleField.Append(runLabel);
+			DocFragment frag = new DocFragment();
+			frag.DocBody.Append(simpleField);
+			return frag;*/
+
+			return new DocFragment(captionContent);
 		}
 		public IFragment GenerateSenseNumber(string formattedSenseNumber, string senseNumberWs, ConfigurableDictionaryNode senseConfigNode)
 		{
@@ -1105,13 +1228,201 @@ namespace SIL.FieldWorks.XWorks
 			return part;
 		}
 
+		// Add an ImagePart to the document. Returns the part ID.
+		public static string AddImagePartToPackage(WordprocessingDocument doc, string imagePath, ImagePartType imageType = ImagePartType.Jpeg)
+		{
+			MainDocumentPart mainPart = doc.MainDocumentPart;
+			ImagePart imagePart = mainPart.AddImagePart(imageType);
+			using (FileStream stream = new FileStream(imagePath, FileMode.Open))
+			{
+				imagePart.FeedData(stream);
+			}
+
+			return mainPart.GetIdOfPart(imagePart);
+		}
+
+		public static Drawing CreateImage(WordprocessingDocument doc, string filepath, string partId)
+		{
+			// Create a bitmap to store the image so we can track/preserve aspect ratio.
+			var img = new BitmapImage();
+
+			// Minimize the time that the image file is locked by opening with a filestream to initialize the bitmap image
+			using (var fs = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.Read))
+			{
+				img.BeginInit();
+				img.StreamSource = fs;
+				img.EndInit();
+			}
+
+			var actWidthPx = img.PixelWidth;
+			var actHeightPx = img.PixelHeight;
+			var horzRezDpi = img.DpiX;
+			var vertRezDpi = img.DpiY;
+			var actWidthInches = (float)(actWidthPx / horzRezDpi);
+			var actHeightInches = (float)(actHeightPx / vertRezDpi);
+
+			var ratioActualInches = actHeightInches / actWidthInches;
+			var ratioMaxInches = (float)(maxImageHeightInches) / (float)(maxImageWidthInches);
+
+			// height/widthInches will store the actual height and width
+			// to use for the image in the Word doc.
+			float heightInches = maxImageHeightInches;
+			float widthInches = maxImageWidthInches;
+
+			// If the ratio of the actual image is greater than the max ratio,
+			// we leave height equal to the max height and scale width accordingly.
+			if (ratioActualInches >= ratioMaxInches)
+			{
+				widthInches = actWidthInches * (maxImageHeightInches / actHeightInches);
+			}
+			// Otherwise, if the ratio of the actual image is less than the max ratio,
+			// we leave width equal to the max width and scale height accordingly.
+			else if (ratioActualInches < ratioMaxInches)
+			{
+				heightInches = actHeightInches * (maxImageWidthInches / actWidthInches);
+			}
+
+			// Calculate the actual height and width in emus to use for the image.
+			const int emusPerInch = 914400;
+			var widthEmus = (long)(widthInches * emusPerInch);
+			var heightEmus = (long)(heightInches * emusPerInch);
+
+			// We want a 4pt right/left margin--4pt is equal to 0.0553 inches in MS word.
+			float rlMarginInches = 0.0553F;
+
+			// Create and add a floating image with image wrap set to top/bottom
+			// Name for the image -- the name of the file after all containing folders and the file extension are removed.
+			string name = (filepath.Split('\\').Last()).Split('.').First();
+			string haPosition = "right";
+			// Define the reference of the image.
+			DW.Anchor anchor = new DW.Anchor();
+			anchor.Append(new DW.SimplePosition() { X = 0L, Y = 0L });
+			anchor.Append(
+				new DW.HorizontalPosition(
+					new DW.HorizontalAlignment(haPosition)
+				)
+				{
+					RelativeFrom =
+					  DW.HorizontalRelativePositionValues.Margin
+				}
+			);
+			anchor.Append(
+				new DW.VerticalPosition(
+					new DW.PositionOffset("0")
+				)
+				{
+					RelativeFrom =
+					DW.VerticalRelativePositionValues.Paragraph
+				}
+			);
+			anchor.Append(
+				new DW.Extent()
+				{
+					Cx = widthEmus,
+					Cy = heightEmus
+				}
+			);
+			anchor.Append(
+				new DW.EffectExtent()
+				{
+					LeftEdge = 0L,
+					TopEdge = 0L,
+					RightEdge = 0L,
+					BottomEdge = 0L
+				}
+			);
+			anchor.Append(new DW.WrapTopBottom());
+			anchor.Append(
+				new DW.DocProperties()
+				{
+					Id = (UInt32Value)1U,
+					Name = name
+				}
+			);
+			anchor.Append(
+				new DW.NonVisualGraphicFrameDrawingProperties(
+					  new A.GraphicFrameLocks() { NoChangeAspect = true })
+			);
+			anchor.Append(
+				new A.Graphic(
+					  new A.GraphicData(
+						new PIC.Picture(
+
+						  new PIC.NonVisualPictureProperties(
+							new PIC.NonVisualDrawingProperties()
+							{
+								Id = (UInt32Value)0U,
+								Name = name + ".jpg"
+							},
+							new PIC.NonVisualPictureDrawingProperties()),
+
+							new PIC.BlipFill(
+								new A.Blip(
+									new A.BlipExtensionList(
+										new A.BlipExtension()
+										{
+											Uri =
+											"{28A0092B-C50C-407E-A947-70E740481C1C}"
+										})
+								)
+								{
+									Embed = partId,
+									CompressionState =
+									A.BlipCompressionValues.Print
+								},
+								new A.Stretch(
+									new A.FillRectangle())),
+
+						  new PIC.ShapeProperties(
+
+							new A.Transform2D(
+							  new A.Offset() { X = 0L, Y = 0L },
+
+							  new A.Extents()
+							  {
+								  Cx = widthEmus,
+								  Cy = heightEmus
+							  }),
+
+							new A.PresetGeometry(
+							  new A.AdjustValueList()
+							)
+							{ Preset = A.ShapeTypeValues.Rectangle }
+						  )
+						)
+				  )
+					  { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" })
+			);
+
+			anchor.DistanceFromTop = (UInt32Value)0U;
+			anchor.DistanceFromBottom = (UInt32Value)0U;
+
+			// Want 4pt padding on right & left; calculate what this is in emus.
+			anchor.DistanceFromLeft = (UInt32Value)(rlMarginInches * emusPerInch);
+			anchor.DistanceFromRight = (UInt32Value)(rlMarginInches * emusPerInch);
+			anchor.SimplePos = false;
+
+			// RelativeHeight determines order of display when elements overlap
+			// (e.g. how far towards the front or back this element's priority should be).
+			// Since we choose not to allow overlap, we needn't worry about relative height.
+			anchor.RelativeHeight = (UInt32Value)0U;
+			anchor.BehindDoc = false;
+			anchor.Locked = false;
+			anchor.LayoutInCell = true;
+			anchor.AllowOverlap = false;
+
+			Drawing element = new Drawing();
+			element.Append(anchor);
+
+			return element;
+		}
+
 		/// <summary>
 		/// Finds an unused class name for the configuration node. This should be called when there are two nodes in the <code>DictionaryConfigurationModel</code>
 		/// have the same class name, but different style content. We want this name to be usefully recognizable.
 		/// </summary>
 		/// <returns></returns>
-		public static string GetBestUniqueNameForNode(Dictionary<string, Styles> styles,
-			ConfigurableDictionaryNode node)
+		public static string GetBestUniqueNameForNode(Dictionary<string, Styles> styles, ConfigurableDictionaryNode node)
 		{
 			Guard.AgainstNull(node.Parent, "There should not be duplicate class names at the top of tree.");
 			// First try appending the parent node classname.

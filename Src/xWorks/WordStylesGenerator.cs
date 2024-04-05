@@ -1,4 +1,5 @@
 using DocumentFormat.OpenXml.Wordprocessing;
+using ExCSS;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
@@ -325,7 +326,8 @@ namespace SIL.FieldWorks.XWorks
 
 				// TODO: handle listAndPara and pictureOptions cases
 				// case IParaOption listAndParaOpts:
-				// case DictionaryNodePictureOptions pictureOptions:
+				//case DictionaryNodePictureOptions pictureOptions:
+					//return GenerateWordStyleFromPictureOptions(configNode, pictureOptions, styleName, cache, propertyTable);
 
 				default:
 					{
