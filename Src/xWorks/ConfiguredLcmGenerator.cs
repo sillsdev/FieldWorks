@@ -1941,9 +1941,8 @@ namespace SIL.FieldWorks.XWorks
 					contentGenerator.WriteProcessedContents(writer, settings.ContentGenerator.AddImageCaption(captionBldr.ToString()));
 				}
 				writer.Flush();
+				return bldr;
 			}
-
-			return bldr;
 		}
 
 		private static IFragment GenerateCollectionItemContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,

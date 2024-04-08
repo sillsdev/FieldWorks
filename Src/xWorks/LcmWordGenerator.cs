@@ -596,28 +596,26 @@ namespace SIL.FieldWorks.XWorks
 
 			public void Dispose()
 			{
-				/*foreach (var cachEntry in collatorCache.Values)
-				{
-					cachEntry?.Dispose();
-				}
-				Dispose(true);
-				GC.SuppressFinalize(this);*/
-			}
+				// When writer is being disposed, dispose only the dictionary entries,
+				// not the word doc fragment.
+				// ConfiguredLcmGenerator consistently returns the fragment and disposes the writer,
+				// which would otherwise result in a disposed fragment being accessed.
 
-			protected virtual void Dispose(bool disposing)
-			{
-				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 				if (!isDisposed)
 				{
-					//WordFragment.DocFrag.Dispose();
-					WordFragment.MemStr.Dispose();
+					foreach (var cachEntry in collatorCache.Values)
+					{
+						cachEntry?.Dispose();
+					}
+
+					GC.SuppressFinalize(this);
 					isDisposed = true;
 				}
 			}
 
 			public void Flush()
 			{
-				//WordFragment.MemStr.Flush();
+				WordFragment.MemStr.Flush();
 			}
 
 			public void Insert(IFragment frag)
