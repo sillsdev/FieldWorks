@@ -22,9 +22,9 @@ using System.Text;
 using System.Web.UI.WebControls;
 using System.Windows.Media.Imaging;
 using XCore;
-using A = DocumentFormat.OpenXml.Drawing;
-using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
-using PIC = DocumentFormat.OpenXml.Drawing.Pictures;
+using XmlDrawing = DocumentFormat.OpenXml.Drawing;
+using DrawingWP = DocumentFormat.OpenXml.Drawing.Wordprocessing;
+using Pictures = DocumentFormat.OpenXml.Drawing.Pictures;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -1293,35 +1293,35 @@ namespace SIL.FieldWorks.XWorks
 			string name = (filepath.Split('\\').Last()).Split('.').First();
 			string haPosition = "right";
 			// Define the reference of the image.
-			DW.Anchor anchor = new DW.Anchor();
-			anchor.Append(new DW.SimplePosition() { X = 0L, Y = 0L });
+			DrawingWP.Anchor anchor = new DrawingWP.Anchor();
+			anchor.Append(new DrawingWP.SimplePosition() { X = 0L, Y = 0L });
 			anchor.Append(
-				new DW.HorizontalPosition(
-					new DW.HorizontalAlignment(haPosition)
+				new DrawingWP.HorizontalPosition(
+					new DrawingWP.HorizontalAlignment(haPosition)
 				)
 				{
 					RelativeFrom =
-					  DW.HorizontalRelativePositionValues.Margin
+					  DrawingWP.HorizontalRelativePositionValues.Margin
 				}
 			);
 			anchor.Append(
-				new DW.VerticalPosition(
-					new DW.PositionOffset("0")
+				new DrawingWP.VerticalPosition(
+					new DrawingWP.PositionOffset("0")
 				)
 				{
 					RelativeFrom =
-					DW.VerticalRelativePositionValues.Paragraph
+					DrawingWP.VerticalRelativePositionValues.Paragraph
 				}
 			);
 			anchor.Append(
-				new DW.Extent()
+				new DrawingWP.Extent()
 				{
 					Cx = widthEmus,
 					Cy = heightEmus
 				}
 			);
 			anchor.Append(
-				new DW.EffectExtent()
+				new DrawingWP.EffectExtent()
 				{
 					LeftEdge = 0L,
 					TopEdge = 0L,
@@ -1329,35 +1329,35 @@ namespace SIL.FieldWorks.XWorks
 					BottomEdge = 0L
 				}
 			);
-			anchor.Append(new DW.WrapTopBottom());
+			anchor.Append(new DrawingWP.WrapTopBottom());
 			anchor.Append(
-				new DW.DocProperties()
+				new DrawingWP.DocProperties()
 				{
 					Id = (UInt32Value)1U,
 					Name = name
 				}
 			);
 			anchor.Append(
-				new DW.NonVisualGraphicFrameDrawingProperties(
-					  new A.GraphicFrameLocks() { NoChangeAspect = true })
+				new DrawingWP.NonVisualGraphicFrameDrawingProperties(
+					  new XmlDrawing.GraphicFrameLocks() { NoChangeAspect = true })
 			);
 			anchor.Append(
-				new A.Graphic(
-					  new A.GraphicData(
-						new PIC.Picture(
+				new XmlDrawing.Graphic(
+					  new XmlDrawing.GraphicData(
+						new Pictures.Picture(
 
-						  new PIC.NonVisualPictureProperties(
-							new PIC.NonVisualDrawingProperties()
+						  new Pictures.NonVisualPictureProperties(
+							new Pictures.NonVisualDrawingProperties()
 							{
 								Id = (UInt32Value)0U,
 								Name = name + ".jpg"
 							},
-							new PIC.NonVisualPictureDrawingProperties()),
+							new Pictures.NonVisualPictureDrawingProperties()),
 
-							new PIC.BlipFill(
-								new A.Blip(
-									new A.BlipExtensionList(
-										new A.BlipExtension()
+							new Pictures.BlipFill(
+								new XmlDrawing.Blip(
+									new XmlDrawing.BlipExtensionList(
+										new XmlDrawing.BlipExtension()
 										{
 											Uri =
 											"{28A0092B-C50C-407E-A947-70E740481C1C}"
@@ -1366,26 +1366,26 @@ namespace SIL.FieldWorks.XWorks
 								{
 									Embed = partId,
 									CompressionState =
-									A.BlipCompressionValues.Print
+									XmlDrawing.BlipCompressionValues.Print
 								},
-								new A.Stretch(
-									new A.FillRectangle())),
+								new XmlDrawing.Stretch(
+									new XmlDrawing.FillRectangle())),
 
-						  new PIC.ShapeProperties(
+						  new Pictures.ShapeProperties(
 
-							new A.Transform2D(
-							  new A.Offset() { X = 0L, Y = 0L },
+							new XmlDrawing.Transform2D(
+							  new XmlDrawing.Offset() { X = 0L, Y = 0L },
 
-							  new A.Extents()
+							  new XmlDrawing.Extents()
 							  {
 								  Cx = widthEmus,
 								  Cy = heightEmus
 							  }),
 
-							new A.PresetGeometry(
-							  new A.AdjustValueList()
+							new XmlDrawing.PresetGeometry(
+							  new XmlDrawing.AdjustValueList()
 							)
-							{ Preset = A.ShapeTypeValues.Rectangle }
+							{ Preset = XmlDrawing.ShapeTypeValues.Rectangle }
 						  )
 						)
 				  )
