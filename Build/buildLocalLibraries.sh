@@ -9,7 +9,7 @@ mkall_targets_file="mkall.targets"
 packages_dir="../packages"
 
 # dotnet pack result version regex
-version_regex="\s*Successfully created package.*\.([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?)\.nupkg"
+version_regex="\s*Successfully created package.*\.([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9\-]+)?)\.nupkg"
 
 # Function to display usage information
 function display_usage {
