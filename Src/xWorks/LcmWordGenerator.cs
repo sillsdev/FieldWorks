@@ -1350,7 +1350,7 @@ namespace SIL.FieldWorks.XWorks
 							new Pictures.NonVisualDrawingProperties()
 							{
 								Id = (UInt32Value)0U,
-								Name = name + ".jpg"
+								Name = name
 							},
 							new Pictures.NonVisualPictureDrawingProperties()),
 
