@@ -200,6 +200,9 @@ namespace SIL.FieldWorks.IText
 				btnUndoChanges.Anchor = AnchorStyles.Left;
 				btnUndoChanges.Location = new Point(
 					btnConfirmChanges.Width + btnConfirmChangesForWholeText.Width, btnUndoChanges.Location.Y);
+				btnBreakPhrase.Anchor = AnchorStyles.Left;
+				btnBreakPhrase.Location = new Point(
+					btnConfirmChanges.Width + btnConfirmChangesForWholeText.Width + btnUndoChanges.Width, btnBreakPhrase.Location.Y);
 				btnMenu.Anchor = AnchorStyles.Right;
 				btnMenu.Location = new Point(panelControlBar.Width - btnMenu.Width, btnMenu.Location.Y);
 			}
