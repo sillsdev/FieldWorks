@@ -861,7 +861,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				filePath = MakeSafeFilePath(file.AbsoluteInternalPath);
 			}
-			return settings.UseRelativePaths ? filePath : new Uri(filePath).ToString();
+			return filePath;
 		}
 
 		private static string GenerateSrcAttributeForMediaFromFilePath(string filename, string subFolder, GeneratorSettings settings)
@@ -1940,9 +1940,8 @@ namespace SIL.FieldWorks.XWorks
 					contentGenerator.WriteProcessedContents(writer, settings.ContentGenerator.AddImageCaption(captionBldr.ToString()));
 				}
 				writer.Flush();
+				return bldr;
 			}
-
-			return bldr;
 		}
 
 		private static IFragment GenerateCollectionItemContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
