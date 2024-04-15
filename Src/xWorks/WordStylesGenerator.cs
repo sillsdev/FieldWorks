@@ -108,7 +108,10 @@ namespace SIL.FieldWorks.XWorks
 			var projectStyle = styleSheet.Styles[styleName];
 			var exportStyleInfo = new ExportStyleInfo(projectStyle);
 			var exportStyle = new Style();
+			// StyleId is used for style linking in the xml.
 			exportStyle.StyleId = styleName.Trim('.');
+			// StyleName is the name a user will see for the given style in Word's style sheet.
+			exportStyle.Append(new StyleName() {Val = exportStyle.StyleId});
 			var parProps = new ParagraphProperties();
 			var runProps = new StyleRunProperties();
 
