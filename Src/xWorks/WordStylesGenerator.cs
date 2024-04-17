@@ -617,9 +617,10 @@ namespace SIL.FieldWorks.XWorks
 			System.Drawing.Color backColor;
 			if (GetFontValue(wsFontInfo.m_backColor, defaultFontInfo.BackColor, out backColor))
 			{
-				// note: open xml does not allow alpha
+				// note: open xml does not allow alpha,
+				// though a percentage shading could be implemented using shading pattern options.
 				string openXmlColor = GetOpenXmlColor(backColor.R, backColor.G, backColor.B);
-				var backShade = new Shading() { Color = openXmlColor };
+				var backShade = new Shading() { Fill = openXmlColor };
 				charDefaults.Append(backShade);
 			}
 
