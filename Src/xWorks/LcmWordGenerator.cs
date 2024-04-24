@@ -1001,10 +1001,21 @@ namespace SIL.FieldWorks.XWorks
 								// while non-picture content should not be added to the textframes.
 								wordWriter.ForceNewParagraph = true;
 
-								// Word automatically merges adjacent textframes with same size specifications.
+								// Word automatically merges adjacent textframes with the same size specifications.
 								// If the run we are adding is an image (i.e. a Drawing object),
 								// and it is being added after another image run was previously added from the same piece,
 								// we need to append an empty paragraph between to maintain separate textframes.
+								//
+								// Checking for adjacent images and adding an empty paragraph between won't work,
+								// because each image run is followed by runs containing its caption,
+								// copyright & license, etc.
+								//
+								// But, a lexical entry corresponds to a single piece and all the images it contains
+								// are added sequentially at the end of the piece, after all of the senses.
+								// This means the order of runs w/in a piece is: headword run, sense1 run, sense2 run, ... ,
+								// [image1 run, caption1 run, copyright&license1 run], [image2 run, caption2 run, copyright&license2 run], ...
+								// We need empty paragraphs between the [] textframe chunks, which corresponds to adding an empty paragraph
+								// immediately before any image run other than the first image run in a piece.
 								if (run.Descendants<Drawing>().Any())
 								{
 									if (pieceHasImage)
