@@ -31,6 +31,7 @@ namespace SIL.FieldWorks.XWorks
 		internal const string DictionaryMinor = "Dictionary-Minor";
 		internal const string WritingSystemPrefix = "writingsystemprefix";
 		internal const string WritingSystemStyleName = "Writing System Abbreviation";
+		internal const string PictureAndCaptionTextframeStyle = "Image-Textframe-Style";
 
 		public static Style GenerateLetterHeaderStyle(
 			ReadOnlyPropertyTable propertyTable, LcmStyleSheet mediatorStyleSheet)
@@ -327,10 +328,12 @@ namespace SIL.FieldWorks.XWorks
 					// children of collections.
 					return GenerateWordStyleForSenses(configNode, senseOptions, ref styleName, propertyTable);
 
-				// TODO: handle listAndPara and pictureOptions cases
+				// TODO: handle listAndPara case and character portion of pictureOptions
 				// case IParaOption listAndParaOpts:
-				//case DictionaryNodePictureOptions pictureOptions:
-					//return GenerateWordStyleFromPictureOptions(configNode, pictureOptions, styleName, cache, propertyTable);
+
+				case DictionaryNodePictureOptions pictureOptions:
+					//return new Styles();
+					return GenerateWordStyleFromPictureOptions(configNode, pictureOptions, styleName, cache, propertyTable);
 
 				default:
 					{
@@ -515,6 +518,36 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			return styleRules;
+		}
+
+		private static Styles GenerateWordStyleFromPictureOptions(ConfigurableDictionaryNode configNode, DictionaryNodePictureOptions pictureOptions,
+			string baseSelection, LcmCache cache, ReadOnlyPropertyTable propertyTable)
+		{
+			var styles = new Styles();
+
+			var frameStyle = new Style();
+
+			// A textframe for holding an image/caption has to be a paragraph
+			frameStyle.Type = StyleValues.Paragraph;
+
+			// We use FLEX's max image width as the width for the textframe.
+			// Note: 1 inch is equivalent to 72 points, and width is specified in twentieths of a point.
+			// Thus, we calculate textframe width by multiplying max image width in inches by 72*30 = 1440
+			var textFrameWidth = LcmWordGenerator.maxImageWidthInches * 1440;
+
+			// A paragraph is turned into a textframe simply by adding a frameproperties object inside the paragraph properties.
+			// We leave a 4-pt border around the textframe--80 twentieths of a point.
+			var textFrameBorder = "80";
+			var textFrameProps = new FrameProperties() { Width = textFrameWidth.ToString(), HeightType = HeightRuleValues.Auto, HorizontalSpace = textFrameBorder, VerticalSpace = textFrameBorder, Wrap = TextWrappingValues.NotBeside, VerticalPosition = VerticalAnchorValues.Text, HorizontalPosition = HorizontalAnchorValues.Margin, XAlign = HorizontalAlignmentValues.Right };
+			var parProps = new ParagraphProperties();
+			frameStyle.StyleId = PictureAndCaptionTextframeStyle;
+			frameStyle.StyleName = new StyleName(){Val = PictureAndCaptionTextframeStyle};
+			parProps.Append(textFrameProps);
+			frameStyle.Append(parProps);
+			styles.Append(frameStyle);
+
+			//TODO: define picture/caption character styles based on user specifications in FLEx
+			return styles;
 		}
 
 		private static Styles GenerateWordStylesFromListAndParaOptions(ConfigurableDictionaryNode configNode,
