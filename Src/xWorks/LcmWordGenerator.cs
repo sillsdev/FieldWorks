@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Office2010.Drawing;
+//using DocumentFormat.OpenXml.Office2010.Drawing;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Icu.Collation;
@@ -1334,7 +1334,7 @@ namespace SIL.FieldWorks.XWorks
 									new XmlDrawing.Blip(
 										new XmlDrawing.BlipExtensionList(
 											new XmlDrawing.BlipExtension(
-												new UseLocalDpi() {Val = false}
+												new DocumentFormat.OpenXml.Office2010.Drawing.UseLocalDpi() {Val = false}
 											) { Uri = "{28A0092B-C50C-407E-A947-70E740481C1C}" }
 										)
 									)

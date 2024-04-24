@@ -332,7 +332,6 @@ namespace SIL.FieldWorks.XWorks
 				// case IParaOption listAndParaOpts:
 
 				case DictionaryNodePictureOptions pictureOptions:
-					//return new Styles();
 					return GenerateWordStyleFromPictureOptions(configNode, pictureOptions, styleName, cache, propertyTable);
 
 				default:
