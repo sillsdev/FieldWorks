@@ -301,12 +301,12 @@ namespace SIL.FieldWorks.XWorks
 					if (par.ParagraphProperties.Descendants<ParagraphStyleId>().Any())
 						return;
 
-					par.ParagraphProperties.Append(new ParagraphStyleId() { Val = styleName });
+					par.ParagraphProperties.PrependChild(new ParagraphStyleId() { Val = styleName });
 				}
 				else
 				{
 					WP.ParagraphProperties paragraphProps = new WP.ParagraphProperties(new ParagraphStyleId() { Val = styleName });
-					par.Append(paragraphProps);
+					par.PrependChild(paragraphProps);
 				}
 			}
 
@@ -434,31 +434,22 @@ namespace SIL.FieldWorks.XWorks
 			/// </summary>
 			/// <param name="run">The run to append.</param>
 			/// <param name="forceNewParagraph">Even if a paragraph exists, force the creation of a new paragraph.</param>
-			public void AppendToParagraph(WP.Run run, bool forceNewParagraph)
+			public void AppendToParagraph(IFragment fragToCopy, OpenXmlElement run, bool forceNewParagraph)
 			{
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
 				WP.Paragraph lastPar = forceNewParagraph ? GetNewParagraph() : GetLastParagraph();
-				lastPar.AppendChild(run.CloneNode(true));
+				lastPar.AppendChild(CloneRun(fragToCopy, run));
 			}
 
-			public void AppendCaptionToParagraph(WP.SimpleField caption)
+			public OpenXmlElement CloneRun(IFragment fragToCopy, OpenXmlElement run)
 			{
-				// Deep clone the run b/c of its tree of properties and to maintain styles.
-				WP.Paragraph lastPar = GetLastParagraph();
-				lastPar.AppendChild(caption.CloneNode(true));
-			}
+				if (run.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().Any())
+				{
+					return CloneImageRun(fragToCopy, run);
+				}
 
-			/// <summary>
-			/// Appends a new run inside the last paragraph of the doc fragment--creates a new paragraph if none exists or if forceNewParagraph is true.
-			/// The run will be added to the end of the paragraph.
-			/// </summary>
-			/// <param name="run">The run to append.</param>
-			/// <param name="forceNewParagraph">Even if a paragraph exists, force the creation of a new paragraph.</param>
-			public void AppendImageToParagraph(IFragment fragToCopy, OpenXmlElement run, bool forceNewParagraph)
-			{
-				WP.Paragraph lastPar = forceNewParagraph ? GetNewParagraph() : GetLastParagraph();
-				var clonedRun = CloneImageRun(fragToCopy, run);
-				lastPar.AppendChild(clonedRun);
+				return run.CloneNode(true);
+
 			}
 
 			/// <summary>
@@ -983,50 +974,81 @@ namespace SIL.FieldWorks.XWorks
 				ConfigurableDictionaryNode config = piece.Config;
 
 				var elements = frag.DocBody.Elements().ToList();
+
+				// This variable will track whether or not we have already added an image from this piece to the Word doc.
+				// In the case that more than one image appears in the same piece
+				// (e.g. one entry with multiple senses and a picture for each sense),
+				// we need to add an empty paragraph between the images to prevent
+				// all the images and their captions from being merged into a single textframe by Word.
+				Boolean pieceHasImage = false;
+
 				foreach (OpenXmlElement elem in elements)
 				{
-					if (elem.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().Any())
+					switch (elem)
 					{
-						// The image should begin its own paragraph, as should the next run,
-						// to maintain correct order of the image.
-						// If the image has a caption, it should remain in the same paragraph as the image.
-						wordWriter.ForceNewParagraph = true;
-						wordWriter.WordFragment.AppendImageToParagraph(frag, elem, wordWriter.ForceNewParagraph);
-					}
+						case WP.Run run:
+							// TODO: should no longer need to add spaces here after before/after text is handled.
+							// For spaces to show correctly, set preserve spaces on the text element
+							WP.Text txt = new WP.Text(" ");
+							txt.Space = SpaceProcessingModeValues.Preserve;
+							run.AppendChild(txt);
 
-					else{
-						switch (elem)
-						{
-							//case WP.SimpleField caption:
-							// TODO: Captions should be created as runs inside simplefields--make sure to handle this case
-								// SimpleField stores an image caption.
-								// In this case, the caption is added to the last referenced paragraph,
-								// which should contain the associated image.
-								//wordWriter.WordFragment.AppendCaptionToParagraph(caption);
-								//break;
-							case WP.Run run:
-								// TODO: should no longer need to add spaces here after before/after text is handled.
-								// For spaces to show correctly, set preserve spaces on the text element
-								WP.Text txt = new WP.Text(" ");
-								txt.Space = SpaceProcessingModeValues.Preserve;
-								run.AppendChild(txt);
-								wordWriter.WordFragment.AppendToParagraph(run, wordWriter.ForceNewParagraph);
-								wordWriter.ForceNewParagraph = false;
-
-								// Add the paragraph style.
-								wordWriter.WordFragment.LinkParaStyle(frag.ParagraphStyle);
-
-								break;
-							case WP.Table table:
-								wordWriter.WordFragment.Append(table);
-
-								// Start a new paragraph with the next run to maintain the correct position of the table.
+							if (config.Label == "Pictures" || config.Parent?.Label == "Pictures")
+							{
+								// Runs containing pictures or captions need to be in separate paragraphs
+								// from whatever precedes and follows them because they will be added into textframes,
+								// while non-picture content should not be added to the textframes.
 								wordWriter.ForceNewParagraph = true;
-								break;
-							default:
-								throw new Exception("Unexpected element type on DocBody: " + elem.GetType().ToString());
 
-						}
+								// Word automatically merges adjacent textframes with the same size specifications.
+								// If the run we are adding is an image (i.e. a Drawing object),
+								// and it is being added after another image run was previously added from the same piece,
+								// we need to append an empty paragraph between to maintain separate textframes.
+								//
+								// Checking for adjacent images and adding an empty paragraph between won't work,
+								// because each image run is followed by runs containing its caption,
+								// copyright & license, etc.
+								//
+								// But, a lexical entry corresponds to a single piece and all the images it contains
+								// are added sequentially at the end of the piece, after all of the senses.
+								// This means the order of runs w/in a piece is: headword run, sense1 run, sense2 run, ... ,
+								// [image1 run, caption1 run, copyright&license1 run], [image2 run, caption2 run, copyright&license2 run], ...
+								// We need empty paragraphs between the [] textframe chunks, which corresponds to adding an empty paragraph
+								// immediately before any image run other than the first image run in a piece.
+								if (run.Descendants<Drawing>().Any())
+								{
+									if (pieceHasImage)
+									{
+										wordWriter.WordFragment.AppendToParagraph(frag, new Run(), true);
+									}
+
+									// We have now added at least one image from this piece.
+									pieceHasImage = true;
+								}
+
+								wordWriter.WordFragment.AppendToParagraph(frag, run, wordWriter.ForceNewParagraph);
+								wordWriter.WordFragment.LinkParaStyle(WordStylesGenerator.PictureAndCaptionTextframeStyle);
+							}
+
+							else
+							{
+								wordWriter.WordFragment.AppendToParagraph(frag, run, wordWriter.ForceNewParagraph);
+								wordWriter.ForceNewParagraph = false;
+								wordWriter.WordFragment.LinkParaStyle(frag.ParagraphStyle);
+							}
+
+							break;
+
+						case WP.Table table:
+							wordWriter.WordFragment.Append(table);
+
+							// Start a new paragraph with the next run to maintain the correct position of the table.
+							wordWriter.ForceNewParagraph = true;
+							break;
+
+						default:
+							throw new Exception("Unexpected element type on DocBody: " + elem.GetType().ToString());
+
 					}
 				}
 			}
@@ -1085,15 +1107,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public IFragment AddImageCaption(string captionContent)
 		{
-			// TODO: captions need to be added into simplefields and linked to the relevant image/table to show as captions
-			/*SimpleField simpleField = new SimpleField(new Run(new RunProperties(new NoProof()), new WP.Text() { Text = " ", Space = SpaceProcessingModeValues.Preserve }));
-			simpleField.Instruction = @"SEQ " + "Figure 1";
-			Run runLabel = new Run(new WP.Text() { Text = " " + captionContent, Space = SpaceProcessingModeValues.Preserve });
-			simpleField.Append(runLabel);
-			DocFragment frag = new DocFragment();
-			frag.DocBody.Append(simpleField);
-			return frag;*/
-
 			return new DocFragment(captionContent);
 		}
 		public IFragment GenerateSenseNumber(string formattedSenseNumber, string senseNumberWs, ConfigurableDictionaryNode senseConfigNode)
@@ -1291,126 +1304,82 @@ namespace SIL.FieldWorks.XWorks
 			// Create and add a floating image with image wrap set to top/bottom
 			// Name for the image -- the name of the file after all containing folders and the file extension are removed.
 			string name = (filepath.Split('\\').Last()).Split('.').First();
-			string haPosition = "right";
-			// Define the reference of the image.
-			DrawingWP.Anchor anchor = new DrawingWP.Anchor();
-			anchor.Append(new DrawingWP.SimplePosition() { X = 0L, Y = 0L });
-			anchor.Append(
-				new DrawingWP.HorizontalPosition(
-					new DrawingWP.HorizontalAlignment(haPosition)
-				)
-				{
-					RelativeFrom =
-					  DrawingWP.HorizontalRelativePositionValues.Margin
-				}
-			);
-			anchor.Append(
-				new DrawingWP.VerticalPosition(
-					new DrawingWP.PositionOffset("0")
-				)
-				{
-					RelativeFrom =
-					DrawingWP.VerticalRelativePositionValues.Paragraph
-				}
-			);
-			anchor.Append(
-				new DrawingWP.Extent()
-				{
-					Cx = widthEmus,
-					Cy = heightEmus
-				}
-			);
-			anchor.Append(
-				new DrawingWP.EffectExtent()
-				{
-					LeftEdge = 0L,
-					TopEdge = 0L,
-					RightEdge = 0L,
-					BottomEdge = 0L
-				}
-			);
-			anchor.Append(new DrawingWP.WrapTopBottom());
-			anchor.Append(
-				new DrawingWP.DocProperties()
-				{
-					Id = (UInt32Value)1U,
-					Name = name
-				}
-			);
-			anchor.Append(
-				new DrawingWP.NonVisualGraphicFrameDrawingProperties(
-					  new XmlDrawing.GraphicFrameLocks() { NoChangeAspect = true })
-			);
-			anchor.Append(
-				new XmlDrawing.Graphic(
-					  new XmlDrawing.GraphicData(
-						new Pictures.Picture(
 
-						  new Pictures.NonVisualPictureProperties(
-							new Pictures.NonVisualDrawingProperties()
-							{
-								Id = (UInt32Value)0U,
-								Name = name
-							},
-							new Pictures.NonVisualPictureDrawingProperties()),
-
-							new Pictures.BlipFill(
-								new XmlDrawing.Blip(
-									new XmlDrawing.BlipExtensionList(
-										new XmlDrawing.BlipExtension()
+			var element = new Drawing(
+				new DrawingWP.Inline(
+					new DrawingWP.Extent()
+					{
+						Cx = widthEmus,
+						Cy = heightEmus
+					},
+					new DrawingWP.EffectExtent()
+					{
+						LeftEdge = 0L,
+						TopEdge = 0L,
+						RightEdge = 0L,
+						BottomEdge = 0L
+					},
+					new DrawingWP.DocProperties()
+					{
+						Id = (UInt32Value)1U,
+						Name = name
+					},
+					new DrawingWP.NonVisualGraphicFrameDrawingProperties(
+						new XmlDrawing.GraphicFrameLocks() { NoChangeAspect = true }),
+					new XmlDrawing.Graphic(
+						new XmlDrawing.GraphicData(
+							new Pictures.Picture(
+								new Pictures.NonVisualPictureProperties(
+									new Pictures.NonVisualDrawingProperties()
+									{
+										Id = (UInt32Value)0U,
+										Name = name
+									},
+									new Pictures.NonVisualPictureDrawingProperties(
+										new XmlDrawing.PictureLocks()
+											{NoChangeAspect = true, NoChangeArrowheads = true}
+									)
+								),
+								new Pictures.BlipFill(
+									new XmlDrawing.Blip(
+										new XmlDrawing.BlipExtensionList(
+											new XmlDrawing.BlipExtension(
+												new DocumentFormat.OpenXml.Office2010.Drawing.UseLocalDpi() {Val = false}
+											) { Uri = "{28A0092B-C50C-407E-A947-70E740481C1C}" }
+										)
+									)
+									{
+										Embed = partId,
+										CompressionState = XmlDrawing.BlipCompressionValues.Print
+									},
+									new XmlDrawing.SourceRectangle(),
+									new XmlDrawing.Stretch(new XmlDrawing.FillRectangle())
+								),
+								new Pictures.ShapeProperties(
+									new XmlDrawing.Transform2D(
+										new XmlDrawing.Offset() { X = 0L, Y = 0L },
+										new XmlDrawing.Extents()
 										{
-											Uri =
-											"{28A0092B-C50C-407E-A947-70E740481C1C}"
-										})
-								)
-								{
-									Embed = partId,
-									CompressionState =
-									XmlDrawing.BlipCompressionValues.Print
-								},
-								new XmlDrawing.Stretch(
-									new XmlDrawing.FillRectangle())),
-
-						  new Pictures.ShapeProperties(
-
-							new XmlDrawing.Transform2D(
-							  new XmlDrawing.Offset() { X = 0L, Y = 0L },
-
-							  new XmlDrawing.Extents()
-							  {
-								  Cx = widthEmus,
-								  Cy = heightEmus
-							  }),
-
-							new XmlDrawing.PresetGeometry(
-							  new XmlDrawing.AdjustValueList()
+											Cx = widthEmus,
+											Cy = heightEmus
+										}
+									),
+									new XmlDrawing.PresetGeometry(
+										new XmlDrawing.AdjustValueList()
+									) { Preset = XmlDrawing.ShapeTypeValues.Rectangle },
+									new XmlDrawing.NoFill()
+								) {BlackWhiteMode = XmlDrawing.BlackWhiteModeValues.Auto}
 							)
-							{ Preset = XmlDrawing.ShapeTypeValues.Rectangle }
-						  )
-						)
-				  )
-					  { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" })
+						) { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" }
+					)
+				)
+				{
+					DistanceFromTop = (UInt32Value)0U,
+					DistanceFromBottom = (UInt32Value)0U,
+					DistanceFromLeft = (UInt32Value)0U,
+					DistanceFromRight = (UInt32Value)0U
+				}
 			);
-
-			anchor.DistanceFromTop = (UInt32Value)0U;
-			anchor.DistanceFromBottom = (UInt32Value)0U;
-
-			// Want 4pt padding on right & left; calculate what this is in emus.
-			anchor.DistanceFromLeft = (UInt32Value)(rlMarginInches * emusPerInch);
-			anchor.DistanceFromRight = (UInt32Value)(rlMarginInches * emusPerInch);
-			anchor.SimplePos = false;
-
-			// RelativeHeight determines order of display when elements overlap
-			// (e.g. how far towards the front or back this element's priority should be).
-			// Since we choose not to allow overlap, we needn't worry about relative height.
-			anchor.RelativeHeight = (UInt32Value)0U;
-			anchor.BehindDoc = false;
-			anchor.Locked = false;
-			anchor.LayoutInCell = true;
-			anchor.AllowOverlap = false;
-
-			Drawing element = new Drawing();
-			element.Append(anchor);
 
 			return element;
 		}
