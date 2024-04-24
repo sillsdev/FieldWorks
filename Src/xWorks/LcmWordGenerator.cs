@@ -1367,8 +1367,7 @@ namespace SIL.FieldWorks.XWorks
 					DistanceFromTop = (UInt32Value)0U,
 					DistanceFromBottom = (UInt32Value)0U,
 					DistanceFromLeft = (UInt32Value)0U,
-					DistanceFromRight = (UInt32Value)0U,
-					EditId = "50D07946"
+					DistanceFromRight = (UInt32Value)0U
 				}
 			);
 
