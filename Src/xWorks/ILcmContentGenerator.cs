@@ -22,8 +22,8 @@ namespace SIL.FieldWorks.XWorks
 		IFragment GenerateGramInfoBeforeSensesContent(IFragment content, ConfigurableDictionaryNode config);
 		IFragment GenerateGroupingNode(object field, string className, ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, ConfiguredLcmGenerator.GeneratorSettings settings,
 			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, IFragment> childContentGenerator);
-		IFragment AddSenseData(IFragment senseNumberSpan, bool isBlockProperty, Guid ownerGuid, IFragment senseContent, string className);
-		IFragment AddCollectionItem(bool isBlock, string collectionItemClass, ConfigurableDictionaryNode config,IFragment content);
+		IFragment AddSenseData(IFragment senseNumberSpan, Guid ownerGuid, ConfigurableDictionaryNode config, IFragment senseContent, bool first);
+		IFragment AddCollectionItem(bool isBlock, string collectionItemClass, ConfigurableDictionaryNode config, IFragment content, bool first);
 		IFragment AddProperty(string className, bool isBlockProperty, string content);
 		IFragment CreateFragment();
 		IFragment CreateFragment(string str);

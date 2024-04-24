@@ -499,6 +499,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				WP.Run lastRun = GetLastRun();
 				WP.Text newText = new WP.Text(text);
+				newText.Space = SpaceProcessingModeValues.Preserve;
 				lastRun.Append(newText);
 			}
 
@@ -657,6 +658,35 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// Use the style name and type of the config node or its parent to link a style to the elementContent fragment where the processed contents are written.
 			DocFragment.LinkStyleOrInheritParentStyle(elementContent, config);
+
+			bool displayEachInAParagraph = false;
+			if (config != null &&
+				config.DictionaryNodeOptions is IParaOption &&
+				((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph)
+			{
+				displayEachInAParagraph = true;
+			}
+
+			// Add Before text, if it is not going to be displayed in it's own paragraph.
+			if (!displayEachInAParagraph && !string.IsNullOrEmpty(config.Before))
+			{
+				WP.Text txt = new WP.Text(config.Before);
+				txt.Space = SpaceProcessingModeValues.Preserve;
+				var beforeRun = new WP.Run(txt);
+				((DocFragment)elementContent).DocBody.PrependChild(beforeRun);
+			}
+
+			// Add After text, if it is not going to be displayed in it's own paragraph.
+			if (!displayEachInAParagraph && !string.IsNullOrEmpty(config.After))
+			{
+				WP.Text txt = new WP.Text(config.After);
+				txt.Space = SpaceProcessingModeValues.Preserve;
+				var afterRun = new WP.Run(txt);
+				((DocFragment)elementContent).DocBody.Append(afterRun);
+				// To be consistent with the xhtml output, only the after text uses the same style.
+				DocFragment.LinkStyleOrInheritParentStyle(elementContent, config);
+			}
+
 			return elementContent;
 		}
 		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content, ConfigurableDictionaryNode config)
@@ -672,18 +702,53 @@ namespace SIL.FieldWorks.XWorks
 			//return docfrag;
 			return null;
 		}
-		public IFragment AddSenseData(IFragment senseNumberSpan, bool isBlockProperty, Guid ownerGuid, IFragment senseContent, string className)
+		public IFragment AddSenseData(IFragment senseNumberSpan, Guid ownerGuid, ConfigurableDictionaryNode config, IFragment senseContent, bool first)
 		{
+			var senseData = new DocFragment();
+			var senseNode = (DictionaryNodeSenseOptions)config?.DictionaryNodeOptions;
+			bool eachInAParagraph = false;
+			bool firstSenseInline = false;
+			string afterNumber = null;
+			string beforeNumber = null;
+			if (senseNode != null)
+			{
+				eachInAParagraph = senseNode.DisplayEachSenseInAParagraph;
+				firstSenseInline = senseNode.DisplayFirstSenseInline;
+				afterNumber = senseNode.AfterNumber;
+				beforeNumber = senseNode.BeforeNumber;
+			}
+
+			// We want a break before the first sense item, between items, and after the last item.
+			// So, only add a break before the content if it is the first sense and it's not displayed in-line.
+			if (eachInAParagraph && first && !firstSenseInline)
+			{
+				senseData.AppendBreak();
+			}
+
 			// Add sense numbers if needed
 			if (!senseNumberSpan.IsNullOrEmpty())
 			{
-				senseNumberSpan.Append(senseContent);
-				return senseNumberSpan;
+				if (!string.IsNullOrEmpty(beforeNumber))
+				{
+					senseData.Append(beforeNumber);
+				}
+				senseData.Append(senseNumberSpan);
+				if (!string.IsNullOrEmpty(afterNumber))
+				{
+					senseData.Append(afterNumber);
+				}
 			}
 
-			return senseContent;
+			senseData.Append(senseContent);
+
+			if (eachInAParagraph)
+			{
+				senseData.AppendBreak();
+			}
+
+			return senseData;
 		}
-		public IFragment AddCollectionItem(bool isBlock, string collectionItemClass, ConfigurableDictionaryNode config, IFragment content)
+		public IFragment AddCollectionItem(bool isBlock, string collectionItemClass, ConfigurableDictionaryNode config, IFragment content, bool first)
 		{
 			if (!string.IsNullOrEmpty(config.Style))
 			{
@@ -694,7 +759,41 @@ namespace SIL.FieldWorks.XWorks
 					((DocFragment)content).AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Character);
 			}
 
-			return content;
+			var collData = CreateFragment();
+			bool eachInAParagraph = false;
+			if (config != null &&
+				config.DictionaryNodeOptions is IParaOption &&
+				((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph)
+			{
+				eachInAParagraph = true;
+
+				// We want a break before the first collection item, between items, and after the last item.
+				// So, only add a break before the content if it is the first.
+				if (first)
+				{
+					collData.AppendBreak();
+				}
+			}
+
+			// Add Between text, if it is not going to be displayed in it's own paragraph
+			// and it is not the first item in the collection.
+			if (!first &&
+				config != null &&
+				config.DictionaryNodeOptions is IParaOption &&
+				!eachInAParagraph &&
+				!string.IsNullOrEmpty(config.Between))
+			{
+				((DocFragment)collData).Append(config.Between);
+			}
+
+			collData.Append(content);
+
+			if (eachInAParagraph)
+			{
+				collData.AppendBreak();
+			}
+
+			return collData;
 		}
 		public IFragment AddProperty(string className, bool isBlockProperty, string content)
 		{
@@ -987,12 +1086,6 @@ namespace SIL.FieldWorks.XWorks
 					switch (elem)
 					{
 						case WP.Run run:
-							// TODO: should no longer need to add spaces here after before/after text is handled.
-							// For spaces to show correctly, set preserve spaces on the text element
-							WP.Text txt = new WP.Text(" ");
-							txt.Space = SpaceProcessingModeValues.Preserve;
-							run.AppendChild(txt);
-
 							if (config.Label == "Pictures" || config.Parent?.Label == "Pictures")
 							{
 								// Runs containing pictures or captions need to be in separate paragraphs
@@ -1143,6 +1236,24 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public IFragment WriteProcessedSenses(bool isBlock, IFragment senseContent, ConfigurableDictionaryNode config, string className, IFragment sharedGramInfo)
 		{
+			// Add Before text for the sharedGramInfo.
+			if (!string.IsNullOrEmpty(config.Before))
+			{
+				WP.Text txt = new WP.Text(config.Before);
+				txt.Space = SpaceProcessingModeValues.Preserve;
+				var beforeRun = new WP.Run(txt);
+				((DocFragment)sharedGramInfo).DocBody.PrependChild(beforeRun);
+			}
+
+			// Add After text for the sharedGramInfo.
+			if (!string.IsNullOrEmpty(config.After))
+			{
+				WP.Text txt = new WP.Text(config.After);
+				txt.Space = SpaceProcessingModeValues.Preserve;
+				var afterRun = new WP.Run(txt);
+				((DocFragment)sharedGramInfo).DocBody.Append(afterRun);
+			}
+
 			sharedGramInfo.Append(senseContent);
 			return sharedGramInfo;
 		}
