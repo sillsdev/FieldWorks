@@ -304,7 +304,7 @@ namespace SIL.FieldWorks.IText
 				MoveFocusBoxIntoPlace();
 				// Now it is the right size and place we can show it.
 				TryShowFocusBox();
-				// All this CAN hapen because we're editing in another window...for example,
+				// All this CAN happen because we're editing in another window...for example,
 				// if we edit something that deletes the current wordform in a concordance view.
 				// In that case we don't want to steal the focus.
 				if (ParentForm == Form.ActiveForm)
@@ -1828,6 +1828,8 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		private bool previousRightToLeft;
+		private bool hasRightToLeftChanged => previousRightToLeft != Vc.RightToLeft;
 		/// <summary>
 		/// returns the focus box for the interlinDoc if it exists or can be created.
 		/// </summary>
@@ -1835,9 +1837,10 @@ namespace SIL.FieldWorks.IText
 		{
 			get
 			{
-				if (ExistingFocusBox == null && ForEditing)
+				if ((ExistingFocusBox == null && ForEditing) || hasRightToLeftChanged)
 				{
 					CreateFocusBox();
+					previousRightToLeft = Vc.RightToLeft;
 				}
 				return ExistingFocusBox;
 			}
