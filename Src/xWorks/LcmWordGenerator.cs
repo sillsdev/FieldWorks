@@ -659,13 +659,9 @@ namespace SIL.FieldWorks.XWorks
 			// Use the style name and type of the config node or its parent to link a style to the elementContent fragment where the processed contents are written.
 			DocFragment.LinkStyleOrInheritParentStyle(elementContent, config);
 
-			bool displayEachInAParagraph = false;
-			if (config != null &&
-				config.DictionaryNodeOptions is IParaOption &&
-				((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph)
-			{
-				displayEachInAParagraph = true;
-			}
+			bool displayEachInAParagraph = config != null &&
+										   config.DictionaryNodeOptions is IParaOption &&
+										   ((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph;
 
 			// Add Before text, if it is not going to be displayed in it's own paragraph.
 			if (!displayEachInAParagraph && !string.IsNullOrEmpty(config.Before))
