@@ -1034,7 +1034,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public IFragment AddCollectionItem(bool isBlock, string collectionItemClass, ConfigurableDictionaryNode config, IFragment content)
+		public IFragment AddCollectionItem(bool isBlock, string collectionItemClass, ConfigurableDictionaryNode config, IFragment content, bool first)
 		{
 			var bldr = new StringBuilder();
 			var builder = new StringFragment(bldr);
@@ -1065,9 +1065,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public IFragment AddSenseData(IFragment senseNumberSpan, bool isBlock, Guid ownerGuid,
-			IFragment senseContent, string className)
+		public IFragment AddSenseData(IFragment senseNumberSpan, Guid ownerGuid, ConfigurableDictionaryNode config,
+			IFragment senseContent, bool first)
 		{
+			bool isBlock = ConfiguredLcmGenerator.IsBlockProperty(config);
+			string className = ConfiguredLcmGenerator.GetCollectionItemClassAttribute(config);
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);
 			using (var xw = XmlWriter.Create(bldr, new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }))
