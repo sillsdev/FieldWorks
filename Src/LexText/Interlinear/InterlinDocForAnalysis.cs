@@ -1852,6 +1852,11 @@ namespace SIL.FieldWorks.IText
 
 		internal override void CreateFocusBox()
 		{
+			if (ExistingFocusBox != null)
+			{
+				ExistingFocusBox.Dispose();
+			}
+
 			ExistingFocusBox = CreateFocusBoxInternal();
 		}
 
