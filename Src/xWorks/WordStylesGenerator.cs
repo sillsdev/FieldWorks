@@ -116,6 +116,9 @@ namespace SIL.FieldWorks.XWorks
 			var parProps = new ParagraphProperties();
 			var runProps = new StyleRunProperties();
 
+			if (exportStyleInfo.BasedOnStyle?.Name != null)
+				exportStyle.BasedOn = new BasedOn() { Val = exportStyleInfo.BasedOnStyle.Name };
+
 			// Create paragraph and run styles as specified by exportStyleInfo.
 			// Only if the style to export is a paragraph style should we create paragraph formatting options like indentation, alignment, border, etc.
 			if (exportStyleInfo.IsParagraphStyle)
@@ -456,6 +459,7 @@ namespace SIL.FieldWorks.XWorks
 				wsStyle.Append(new BasedOn() { Val = configNode.Style });
 
 				wsStyle.StyleId = configNode.Style + wsString;
+				wsStyle.StyleName = new StyleName(){ Val = wsStyle.StyleId };
 
 				if (!IsEmptyStyle(wsStyle))
 					return wsStyle;
@@ -561,6 +565,7 @@ namespace SIL.FieldWorks.XWorks
 			var styleRules = new Styles();
 			var wsRule1 = GetOnlyCharacterStyle(GenerateWordStyleFromLcmStyleSheet(WritingSystemStyleName, 0, configNode, propertyTable));
 			wsRule1.StyleId = (string.Format("{0}.{1}", baseSelection, WritingSystemPrefix)).Trim('.');
+			wsRule1.StyleName = new StyleName() { Val = wsRule1.StyleId };
 			styleRules = AddRange(styleRules, wsRule1);
 
 			// TODO: Determine how to handle after content in Word export (can't add content via a style)
@@ -871,8 +876,8 @@ namespace SIL.FieldWorks.XWorks
 			return null;
 		}
 
-		public static bool AreStylesEquivalent(Styles first,
-			Styles second)
+		public static bool AreStylesEquivalent(Style first,
+			Style second)
 		{
 			// OuterXml gets the markup that represents the current element and all of its child elements.
 			// All styles and style specification added to the styles element will be its children;
