@@ -1259,4 +1259,7 @@ See USFM documentation for help.</value>
   <data name="Webonary_UnexpectedUploadError" xml:space="preserve">
     <value>Unexpected error encountered while uploading to webonary.</value>
   </data>
+  <data name="UploadToWebonaryController_RetryAfterFailedConnection" xml:space="preserve">
+    <value>Initial connection failed retrying...</value>
+  </data>
 </root>
