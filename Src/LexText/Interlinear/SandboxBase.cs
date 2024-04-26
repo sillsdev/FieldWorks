@@ -3873,10 +3873,10 @@ namespace SIL.FieldWorks.IText
 
 			m_dxdLayoutWidth = kForceLayout; // Don't try to draw until we get OnSize and do layout.
 			// For some reason, we don't always initialize our control size to be the same as our rootbox.
-			this.Margin = new Padding(3, 0, 3, 1);
+			Margin = new Padding(3, 0, 3, 1);
 			SyncControlSizeToRootBoxSize();
 			if (RightToLeftWritingSystem)
-				this.Anchor = AnchorStyles.Right | AnchorStyles.Top;
+				Anchor = AnchorStyles.Right | AnchorStyles.Top;
 
 			//TODO:
 			//ptmw->RegisterRootBox(qrootb);
