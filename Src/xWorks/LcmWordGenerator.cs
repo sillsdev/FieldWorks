@@ -260,16 +260,17 @@ namespace SIL.FieldWorks.XWorks
 
 				if (!string.IsNullOrEmpty(config.Style))
 				{
-					frag.AddStyleLink(config.Style, config.StyleType);
+					frag.AddStyleLink(config.Style, config, config.StyleType);
 				}
 				else if (!string.IsNullOrEmpty(config.Parent?.Style))
 				{
-					frag.AddStyleLink(config.Parent.Style, config.Parent.StyleType);
+					frag.AddStyleLink(config.Parent.Style, config.Parent, config.Parent.StyleType);
 				}
 			}
 
-			public void AddStyleLink(string styleName, ConfigurableDictionaryNode.StyleTypes styleType)
+			public void AddStyleLink(string styleName, ConfigurableDictionaryNode config, ConfigurableDictionaryNode.StyleTypes styleType)
 			{
+				styleName = GetWsStyleName(styleName, config);
 				if (string.IsNullOrEmpty(styleName))
 					return;
 
@@ -314,9 +315,12 @@ namespace SIL.FieldWorks.XWorks
 				WP.Run run = GetLastRun();
 				if (run.RunProperties != null)
 				{
-					// if a style is already linked to the run, return without adding another link
+					// if a style is already linked to the run, replace the stylename and return without adding another link
 					if (run.RunProperties.Descendants<RunStyle>().Any())
+					{
+						run.RunProperties.Descendants<RunStyle>().Last().Val = styleName;
 						return;
+					}
 
 					run.RunProperties.Append(new RunStyle() { Val = styleName });
 				}
@@ -327,6 +331,29 @@ namespace SIL.FieldWorks.XWorks
 					// Prepend runproperties so it appears before any text elements contained in the run
 					run.PrependChild<WP.RunProperties>(runProps);
 				}
+			}
+
+			public static string GetWsStyleName(string styleName, ConfigurableDictionaryNode config)
+			{
+				if (config.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions)
+				{
+					foreach (var opt in ((DictionaryNodeWritingSystemOptions)config.DictionaryNodeOptions).Options)
+					{
+						if (opt.IsEnabled)
+						{
+							if (opt.Id == "vernacular" || opt.Id == "all vernacular")
+								return styleName;
+
+							// else, the DictionaryNodeOption Id specifies a particular writing system
+							// if there is no base style, return just the ws style
+							if (styleName == null)
+								return WordStylesGenerator.GetWsString(opt.Id);
+							// if there is a base style, return the ws-specific version of that style
+							return styleName + WordStylesGenerator.GetWsString(opt.Id);
+						}
+					}
+				}
+				return styleName;
 			}
 
 			/// <summary>
@@ -623,9 +650,18 @@ namespace SIL.FieldWorks.XWorks
 			/// <summary>
 			/// Add a new run to the WordFragment DocBody.
 			/// </summary>
-			public void CreateRun()
+			public void CreateRun(string writingSystem)
 			{
-				WordFragment.DocBody.AppendChild(new WP.Run());
+				if (writingSystem == null)
+					WordFragment.DocBody.AppendChild(new WP.Run());
+				else
+				{
+					var wsString = WordStylesGenerator.GetWsString(writingSystem);
+					var run = new WP.Run();
+					run.Append(new RunProperties());
+					run.RunProperties.Append(new RunStyle() { Val = "span"+wsString });
+					WordFragment.DocBody.AppendChild(run);
+				}
 			}
 		}
 		#endregion WordFragmentWriter class
@@ -653,6 +689,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return WriteProcessedElementContent(elementContent, config, className);
 		}
+
 		private IFragment WriteProcessedElementContent(IFragment elementContent, ConfigurableDictionaryNode config, string className)
 		{
 			// Use the style name and type of the config node or its parent to link a style to the elementContent fragment where the processed contents are written.
@@ -748,10 +785,10 @@ namespace SIL.FieldWorks.XWorks
 			if (!string.IsNullOrEmpty(config.Style))
 			{
 				if (isBlock && (config.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph))
-					((DocFragment)content).AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Paragraph);
+					((DocFragment)content).AddStyleLink(config.Style, config, ConfigurableDictionaryNode.StyleTypes.Paragraph);
 
 				else if (!isBlock)
-					((DocFragment)content).AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Character);
+					((DocFragment)content).AddStyleLink(config.Style, config,ConfigurableDictionaryNode.StyleTypes.Character);
 			}
 
 			var collData = CreateFragment();
@@ -833,7 +870,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="writingSystem"></param>
 		public void StartRun(IFragmentWriter writer, string writingSystem)
 		{
-			((WordFragmentWriter)writer).CreateRun();
+			((WordFragmentWriter)writer).CreateRun(writingSystem);
 		}
 		public void EndRun(IFragmentWriter writer)
 		{
@@ -852,7 +889,7 @@ namespace SIL.FieldWorks.XWorks
 			if (!string.IsNullOrEmpty(runStyle))
 			{
 				// Add the style link.
-				((WordFragmentWriter)writer).WordFragment.AddStyleLink(runStyle, ConfigurableDictionaryNode.StyleTypes.Character);
+				((WordFragmentWriter)writer).WordFragment.AddStyleLink(runStyle, config, ConfigurableDictionaryNode.StyleTypes.Character);
 
 				// Only add the style to the styleSheet if not already there.
 				if (!_styleSheet.ChildElements.Any(p => ((Style)p).StyleId == runStyle))
@@ -867,7 +904,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (config != null && !string.IsNullOrEmpty(config.Style))
 			{
-				((WordFragmentWriter)writer).WordFragment.AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Character);
+				((WordFragmentWriter)writer).WordFragment.AddStyleLink(config.Style, config, ConfigurableDictionaryNode.StyleTypes.Character);
 			}
 			return;
 		}
@@ -875,7 +912,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (config != null && !string.IsNullOrEmpty(config.Style))
 			{
-				((WordFragmentWriter)writer).WordFragment.AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Character);
+				((WordFragmentWriter)writer).WordFragment.AddStyleLink(config.Style, config, ConfigurableDictionaryNode.StyleTypes.Character);
 			}
 			return;
 		}
@@ -1149,9 +1186,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var frag = ((WordFragmentWriter)writer).WordFragment;
 			if (isBlockProperty && (config.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph))
-				frag.AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Paragraph);
+				frag.AddStyleLink(config.Style, config, ConfigurableDictionaryNode.StyleTypes.Paragraph);
 			else if (!isBlockProperty)
-				frag.AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Character);
+				frag.AddStyleLink(config.Style, config, ConfigurableDictionaryNode.StyleTypes.Character);
 
 			if (!string.IsNullOrEmpty(content))
 			{
@@ -1200,7 +1237,7 @@ namespace SIL.FieldWorks.XWorks
 		public IFragment GenerateSenseNumber(string formattedSenseNumber, string senseNumberWs, ConfigurableDictionaryNode senseConfigNode)
 		{
 			DocFragment senseNum = new DocFragment(formattedSenseNumber);
-			senseNum.AddStyleLink(WordStylesGenerator.SenseNumberStyleName, ConfigurableDictionaryNode.StyleTypes.Character);
+			senseNum.AddStyleLink(WordStylesGenerator.SenseNumberStyleName, senseConfigNode, ConfigurableDictionaryNode.StyleTypes.Character);
 			return senseNum;
 		}
 		public IFragment AddLexReferences(bool generateLexType, IFragment lexTypeContent, ConfigurableDictionaryNode config, string className, string referencesContent, bool typeBefore)
@@ -1320,7 +1357,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						_styleDictionary[styleName] = style;
 					}
-					// If the content is the same, we don't need to do anything--the style is alread in the dictionary.
+					// If the content is the same, we don't need to do anything--the style is already in the dictionary.
 					// But if the content is NOT the same, re-name this style and add it to the dictionary.
 					else if (!WordStylesGenerator.AreStylesEquivalent(_styleDictionary[styleName], style))
 					{
