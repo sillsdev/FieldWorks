@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private LcmCache Cache { get; }
 		private static Styles _styleSheet { get; set; } = new Styles();
-		private static Dictionary<string, Styles> _styleDictionary = new Dictionary<string, Styles>();
+		private static Dictionary<string, Style> _styleDictionary = new Dictionary<string, Style>();
 		private ReadOnlyPropertyTable _propertyTable;
 		internal const int maxImageHeightInches = 1;
 		internal const int maxImageWidthInches = 1;
@@ -129,17 +129,16 @@ namespace SIL.FieldWorks.XWorks
 					stylePart = AddStylesPartToPackage(fragment.DocFrag);
 
 					// Add generated styles into the stylesheet from the dictionary
-					foreach (var stylesItem in _styleDictionary.Values)
+					foreach (var style in _styleDictionary.Values)
 					{
-						foreach (var style in stylesItem.Descendants<Style>())
-							_styleSheet.AppendChild(style.CloneNode(true));
+						_styleSheet.AppendChild(style.CloneNode(true));
 					}
 
 					// Clone styles from the stylesheet into the word doc's styles xml
 					stylePart.Styles = ((Styles)_styleSheet.CloneNode(true));
 
 					// clear the dictionary
-					_styleDictionary = new Dictionary<string, Styles>();
+					_styleDictionary = new Dictionary<string, Style>();
 
 					// clear the styleSheet
 					_styleSheet = new WP.Styles();
@@ -1301,32 +1300,37 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public string AddStyles(ConfigurableDictionaryNode node)
 		{
+			// The css className isn't important for the Word export.
+			// Styles should be stored in the dictionary based on their stylenames.
+			// Generate all styles that are needed by this class and add them to the dictionary with their stylename as the key.
 			var className = $".{CssGenerator.GetClassAttributeForConfig(node)}";
 
 			lock (_styleDictionary)
 			{
 				var styleContent = WordStylesGenerator.CheckRangeOfStylesForEmpties(WordStylesGenerator.GenerateWordStylesFromConfigurationNode(node, className, _propertyTable));
-				// TODO: for testing, let it return className even if no styles are non-empty. Eventually, probably want to return null in that case?
 				if (styleContent == null)
 					return className;
 				if (!styleContent.Any())
-				{
 					return className;
-				}
-				if (!_styleDictionary.ContainsKey(className))
+
+				foreach (Style style in styleContent.Descendants<Style>())
 				{
-					_styleDictionary[className] = styleContent;
-					return className;
+					string styleName = style.StyleId;
+					if (!_styleDictionary.ContainsKey(styleName))
+					{
+						_styleDictionary[styleName] = style;
+					}
+					// If the content is the same, we don't need to do anything--the style is alread in the dictionary.
+					// But if the content is NOT the same, re-name this style and add it to the dictionary.
+					else if (!WordStylesGenerator.AreStylesEquivalent(_styleDictionary[styleName], style))
+					{
+						// Otherwise get a unique but useful style name and re-name the style
+						styleName = GetBestUniqueNameForNode(_styleDictionary, node);
+						style.StyleId = styleName;
+						style.StyleName = new StyleName() { Val = styleName };
+						_styleDictionary[styleName] = style;
+					}
 				}
-				// If the content is the same, then do nothing
-				if (WordStylesGenerator.AreStylesEquivalent(_styleDictionary[className], styleContent))
-				{
-					return className;
-				}
-				// Otherwise get a unique but useful class name and re-generate the style with the new name
-				className = GetBestUniqueNameForNode(_styleDictionary, node);
-				_styleDictionary[className] = WordStylesGenerator.CheckRangeOfStylesForEmpties(WordStylesGenerator.GenerateWordStylesFromConfigurationNode(node, className, _propertyTable));
-				//var styleName = _styleDictionary[className].
 				return className;
 			}
 		}
@@ -1496,7 +1500,7 @@ namespace SIL.FieldWorks.XWorks
 		/// have the same class name, but different style content. We want this name to be usefully recognizable.
 		/// </summary>
 		/// <returns></returns>
-		public static string GetBestUniqueNameForNode(Dictionary<string, Styles> styles, ConfigurableDictionaryNode node)
+		public static string GetBestUniqueNameForNode(Dictionary<string, Style> styles, ConfigurableDictionaryNode node)
 		{
 			Guard.AgainstNull(node.Parent, "There should not be duplicate class names at the top of tree.");
 			// First try appending the parent node classname.
