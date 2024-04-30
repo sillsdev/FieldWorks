@@ -1031,14 +1031,33 @@ namespace SIL.FieldWorks.XWorks
 		{
 			WordFragmentWriter wordWriter = (WordFragmentWriter)writer;
 
-			// If there is a Table Title, then add it now, when we know the number of columns.
+			// If there is a Table Title, then prepend it now, when we know the number of columns.
 			if (wordWriter.TableTitleContent != null)
 			{
 				wordWriter.CurrentTableRow = new WP.TableRow();
 				AddTableCell(writer, false, wordWriter.TableColumns, HorizontalAlign.Center, wordWriter.TableTitleContent);
-				wordWriter.CurrentTable.PrependChild(wordWriter.CurrentTableRow);
+				wordWriter.CurrentTable.PrependChild(wordWriter.CurrentTableRow); // Prepend so that it is the first row.
 				wordWriter.CurrentTableRow = null;
 			}
+
+			// Create a TableProperties object and specify the indent information.
+			WP.TableProperties tblProp = new WP.TableProperties();
+
+			WP.TableRowAlignmentValues tableAlignment = WP.TableRowAlignmentValues.Left;
+			int indentVal = WordStylesGenerator.GetTableIndentInfo(_propertyTable, ref tableAlignment);
+
+			var tableJustify = new WP.TableJustification();
+			tableJustify.Val = tableAlignment;
+			tblProp.Append(tableJustify);
+
+			var tableIndent = new WP.TableIndentation();
+			tableIndent.Type = WP.TableWidthUnitValues.Dxa;
+			tableIndent.Width = indentVal;
+			tblProp.Append(tableIndent);
+
+			// TableProperties MUST be first, so prepend them.
+			wordWriter.CurrentTable.PrependChild(tblProp);
+
 			wordWriter.TableColumns = 0;
 			wordWriter.TableTitleContent = null;
 			wordWriter.CurrentTable = null;
