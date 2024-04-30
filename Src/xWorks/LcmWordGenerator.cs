@@ -1027,7 +1027,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// Nothing to do for Word export.
 		}
-		public void EndTable(IFragmentWriter writer)
+		public void EndTable(IFragmentWriter writer, ConfigurableDictionaryNode config)
 		{
 			WordFragmentWriter wordWriter = (WordFragmentWriter)writer;
 
@@ -1044,7 +1044,7 @@ namespace SIL.FieldWorks.XWorks
 			WP.TableProperties tblProp = new WP.TableProperties();
 
 			WP.TableRowAlignmentValues tableAlignment = WP.TableRowAlignmentValues.Left;
-			int indentVal = WordStylesGenerator.GetTableIndentInfo(_propertyTable, ref tableAlignment);
+			int indentVal = WordStylesGenerator.GetTableIndentInfo(_propertyTable, config, ref tableAlignment);
 
 			var tableJustify = new WP.TableJustification();
 			tableJustify.Val = tableAlignment;

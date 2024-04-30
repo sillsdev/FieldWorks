@@ -248,7 +248,7 @@ namespace SIL.FieldWorks.XWorks
 			// TODO: decide on a useful json representation for tables
 		}
 
-		public void EndTable(IFragmentWriter writer)
+		public void EndTable(IFragmentWriter writer, ConfigurableDictionaryNode config)
 		{
 			// TODO: decide on a useful json representation for tables
 		}
