@@ -759,6 +759,47 @@ namespace SIL.FieldWorks.XWorks
 			return new AncestorIndents(parentNode, GetLeadingIndent(exportStyleInfo), GetHangingIndentIfAny(exportStyleInfo));
 		}
 
+		/// <summary>
+		/// Gets the indentation information for a Table.
+		/// </summary>
+		/// <param name="tableAlignment">Returns the table alignment.</param>
+		/// <returns>Returns the indentation value.</returns>
+		internal static int GetTableIndentInfo(ReadOnlyPropertyTable propertyTable, ConfigurableDictionaryNode config, ref TableRowAlignmentValues tableAlignment)
+		{
+			var style = config.Parent?.Style;
+			var styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
+			if (style == null || styleSheet == null || !styleSheet.Styles.Contains(style))
+			{
+				return 0;
+			}
+
+			var projectStyle = styleSheet.Styles[style];
+			var exportStyleInfo = new ExportStyleInfo(projectStyle);
+
+			// Get the indentation value.
+			int indentVal = 0;
+			var hangingIndent = 0.0f;
+			if (exportStyleInfo.HasFirstLineIndent)
+			{
+				var firstLineIndentValue = MilliPtToTwentiPt(exportStyleInfo.FirstLineIndent);
+				if (firstLineIndentValue < 0.0f)
+				{
+					hangingIndent = firstLineIndentValue;
+				}
+			}
+			if (exportStyleInfo.HasLeadingIndent || hangingIndent < 0.0f)
+			{
+				var leadingIndent = CalculateMarginLeft(exportStyleInfo, new AncestorIndents(0.0f, 0.0f), hangingIndent);
+				indentVal = (int)leadingIndent;
+			}
+
+			// Get the alignment direction.
+			tableAlignment = exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue ?
+				TableRowAlignmentValues.Right : TableRowAlignmentValues.Left;
+
+			return indentVal;
+		}
+
 		private static float CalculateMarginLeft(ExportStyleInfo exportStyleInfo, AncestorIndents ancestorIndents,
 			float hangingIndent)
 		{

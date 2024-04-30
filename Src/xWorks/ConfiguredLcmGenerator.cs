@@ -2940,7 +2940,7 @@ namespace SIL.FieldWorks.XWorks
 					GenerateTableRow(usfm.GetSubstring(row.Item1, row.Item2), writer, config, settings, writingSystem);
 				}
 				settings.ContentGenerator.EndTableBody(writer);
-				settings.ContentGenerator.EndTable(writer);
+				settings.ContentGenerator.EndTable(writer, config);
 				writer.Flush();
 			}
 			return bldr;

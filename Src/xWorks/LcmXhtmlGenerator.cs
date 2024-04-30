@@ -857,7 +857,7 @@ namespace SIL.FieldWorks.XWorks
 			((XmlFragmentWriter)writer).Writer.WriteFullEndElement(); // should be </tbody>
 		}
 
-		public void EndTable(IFragmentWriter writer)
+		public void EndTable(IFragmentWriter writer, ConfigurableDictionaryNode config)
 		{
 			((XmlFragmentWriter)writer).Writer.WriteEndElement(); // should be </table>
 		}

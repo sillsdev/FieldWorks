@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.XWorks
 		void AddTableCell(IFragmentWriter writer, bool isHead, int colSpan, HorizontalAlign alignment, IFragment content);
 		void EndTableRow(IFragmentWriter writer);
 		void EndTableBody(IFragmentWriter writer);
-		void EndTable(IFragmentWriter writer);
+		void EndTable(IFragmentWriter writer, ConfigurableDictionaryNode config);
 		void StartEntry(IFragmentWriter writer, ConfigurableDictionaryNode config, string className, Guid entryGuid, int index, RecordClerk clerk);
 		void AddEntryData(IFragmentWriter writer, List<ConfiguredLcmGenerator.ConfigFragment> pieces);
 		void EndEntry(IFragmentWriter writer);
