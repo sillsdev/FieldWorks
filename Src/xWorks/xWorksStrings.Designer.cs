@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class xWorksStrings {
@@ -2977,6 +2977,15 @@ namespace SIL.FieldWorks.XWorks {
             get {
                 return ResourceManager.GetString("UploadToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__" +
                         "publication_using_the__1__configuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Initial Connection failed retrying....
+        /// </summary>
+        internal static string UploadToWebonaryController_RetryAfterFailedConnection {
+            get {
+                return ResourceManager.GetString("UploadToWebonaryController_RetryAfterFailedConnection", resourceCulture);
             }
         }
         

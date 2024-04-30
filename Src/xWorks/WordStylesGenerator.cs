@@ -1,4 +1,5 @@
 using DocumentFormat.OpenXml.Wordprocessing;
+using ExCSS;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
@@ -30,6 +31,7 @@ namespace SIL.FieldWorks.XWorks
 		internal const string DictionaryMinor = "Dictionary-Minor";
 		internal const string WritingSystemPrefix = "writingsystemprefix";
 		internal const string WritingSystemStyleName = "Writing System Abbreviation";
+		internal const string PictureAndCaptionTextframeStyle = "Image-Textframe-Style";
 
 		public static Style GenerateLetterHeaderStyle(
 			ReadOnlyPropertyTable propertyTable, LcmStyleSheet mediatorStyleSheet)
@@ -107,9 +109,15 @@ namespace SIL.FieldWorks.XWorks
 			var projectStyle = styleSheet.Styles[styleName];
 			var exportStyleInfo = new ExportStyleInfo(projectStyle);
 			var exportStyle = new Style();
+			// StyleId is used for style linking in the xml.
 			exportStyle.StyleId = styleName.Trim('.');
+			// StyleName is the name a user will see for the given style in Word's style sheet.
+			exportStyle.Append(new StyleName() {Val = exportStyle.StyleId});
 			var parProps = new ParagraphProperties();
 			var runProps = new StyleRunProperties();
+
+			if (exportStyleInfo.BasedOnStyle?.Name != null)
+				exportStyle.BasedOn = new BasedOn() { Val = exportStyleInfo.BasedOnStyle.Name };
 
 			// Create paragraph and run styles as specified by exportStyleInfo.
 			// Only if the style to export is a paragraph style should we create paragraph formatting options like indentation, alignment, border, etc.
@@ -323,9 +331,11 @@ namespace SIL.FieldWorks.XWorks
 					// children of collections.
 					return GenerateWordStyleForSenses(configNode, senseOptions, ref styleName, propertyTable);
 
-				// TODO: handle listAndPara and pictureOptions cases
+				// TODO: handle listAndPara case and character portion of pictureOptions
 				// case IParaOption listAndParaOpts:
-				// case DictionaryNodePictureOptions pictureOptions:
+
+				case DictionaryNodePictureOptions pictureOptions:
+					return GenerateWordStyleFromPictureOptions(configNode, pictureOptions, styleName, cache, propertyTable);
 
 				default:
 					{
@@ -449,6 +459,7 @@ namespace SIL.FieldWorks.XWorks
 				wsStyle.Append(new BasedOn() { Val = configNode.Style });
 
 				wsStyle.StyleId = configNode.Style + wsString;
+				wsStyle.StyleName = new StyleName(){ Val = wsStyle.StyleId };
 
 				if (!IsEmptyStyle(wsStyle))
 					return wsStyle;
@@ -512,6 +523,36 @@ namespace SIL.FieldWorks.XWorks
 			return styleRules;
 		}
 
+		private static Styles GenerateWordStyleFromPictureOptions(ConfigurableDictionaryNode configNode, DictionaryNodePictureOptions pictureOptions,
+			string baseSelection, LcmCache cache, ReadOnlyPropertyTable propertyTable)
+		{
+			var styles = new Styles();
+
+			var frameStyle = new Style();
+
+			// A textframe for holding an image/caption has to be a paragraph
+			frameStyle.Type = StyleValues.Paragraph;
+
+			// We use FLEX's max image width as the width for the textframe.
+			// Note: 1 inch is equivalent to 72 points, and width is specified in twentieths of a point.
+			// Thus, we calculate textframe width by multiplying max image width in inches by 72*30 = 1440
+			var textFrameWidth = LcmWordGenerator.maxImageWidthInches * 1440;
+
+			// A paragraph is turned into a textframe simply by adding a frameproperties object inside the paragraph properties.
+			// We leave a 4-pt border around the textframe--80 twentieths of a point.
+			var textFrameBorder = "80";
+			var textFrameProps = new FrameProperties() { Width = textFrameWidth.ToString(), HeightType = HeightRuleValues.Auto, HorizontalSpace = textFrameBorder, VerticalSpace = textFrameBorder, Wrap = TextWrappingValues.NotBeside, VerticalPosition = VerticalAnchorValues.Text, HorizontalPosition = HorizontalAnchorValues.Margin, XAlign = HorizontalAlignmentValues.Right };
+			var parProps = new ParagraphProperties();
+			frameStyle.StyleId = PictureAndCaptionTextframeStyle;
+			frameStyle.StyleName = new StyleName(){Val = PictureAndCaptionTextframeStyle};
+			parProps.Append(textFrameProps);
+			frameStyle.Append(parProps);
+			styles.Append(frameStyle);
+
+			//TODO: define picture/caption character styles based on user specifications in FLEx
+			return styles;
+		}
+
 		private static Styles GenerateWordStylesFromListAndParaOptions(ConfigurableDictionaryNode configNode,
 			IParaOption listAndParaOpts, ref string baseSelection, LcmCache cache, ReadOnlyPropertyTable propertyTable)
 		{
@@ -524,6 +565,7 @@ namespace SIL.FieldWorks.XWorks
 			var styleRules = new Styles();
 			var wsRule1 = GetOnlyCharacterStyle(GenerateWordStyleFromLcmStyleSheet(WritingSystemStyleName, 0, configNode, propertyTable));
 			wsRule1.StyleId = (string.Format("{0}.{1}", baseSelection, WritingSystemPrefix)).Trim('.');
+			wsRule1.StyleName = new StyleName() { Val = wsRule1.StyleId };
 			styleRules = AddRange(styleRules, wsRule1);
 
 			// TODO: Determine how to handle after content in Word export (can't add content via a style)
@@ -612,9 +654,10 @@ namespace SIL.FieldWorks.XWorks
 			System.Drawing.Color backColor;
 			if (GetFontValue(wsFontInfo.m_backColor, defaultFontInfo.BackColor, out backColor))
 			{
-				// note: open xml does not allow alpha
+				// note: open xml does not allow alpha,
+				// though a percentage shading could be implemented using shading pattern options.
 				string openXmlColor = GetOpenXmlColor(backColor.R, backColor.G, backColor.B);
-				var backShade = new Shading() { Color = openXmlColor };
+				var backShade = new Shading() { Fill = openXmlColor };
 				charDefaults.Append(backShade);
 			}
 
@@ -833,8 +876,8 @@ namespace SIL.FieldWorks.XWorks
 			return null;
 		}
 
-		public static bool AreStylesEquivalent(Styles first,
-			Styles second)
+		public static bool AreStylesEquivalent(Style first,
+			Style second)
 		{
 			// OuterXml gets the markup that represents the current element and all of its child elements.
 			// All styles and style specification added to the styles element will be its children;

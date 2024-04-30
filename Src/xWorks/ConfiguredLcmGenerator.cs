@@ -861,7 +861,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				filePath = MakeSafeFilePath(file.AbsoluteInternalPath);
 			}
-			return settings.UseRelativePaths ? filePath : new Uri(filePath).ToString();
+			return filePath;
 		}
 
 		private static string GenerateSrcAttributeForMediaFromFilePath(string filename, string subFolder, GeneratorSettings settings)
@@ -1410,8 +1410,12 @@ namespace SIL.FieldWorks.XWorks
 						Debug.Assert(config.DictionaryNodeOptions == null,
 							"double calls to GenerateContentForLexEntryRefsByType don't play nicely with ListOptions. Everything will be generated twice (if it doesn't crash)");
 						// Display typeless refs
+						bool first = true;
 						foreach (var entry in lerCollection.Where(item => !item.ComplexEntryTypesRS.Any() && !item.VariantEntryTypesRS.Any()))
-							bldr.Append(GenerateCollectionItemContent(config, pubDecorator, entry, collectionOwner, settings, lexEntryTypeNode));
+						{
+							bldr.Append(GenerateCollectionItemContent(config, pubDecorator, entry, collectionOwner, settings, first, lexEntryTypeNode));
+							first = false;
+						}
 						// Display refs of each type
 						GenerateContentForLexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, bldr, lexEntryTypeNode,
 							true); // complex
@@ -1421,8 +1425,12 @@ namespace SIL.FieldWorks.XWorks
 					else
 					{
 						Debug.WriteLine("Unable to group " + config.FieldDescription + " by LexRefType; generating sequentially");
+						bool first = true;
 						foreach (var item in lerCollection)
-							bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings));
+						{
+							bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings, first));
+							first = false;
+						}
 					}
 				}
 				else if (config.FieldDescription.StartsWith("Subentries"))
@@ -1435,8 +1443,12 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
+					bool first = true;
 					foreach (var item in collection)
-						bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings));
+					{
+						bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings, first));
+						first = false;
+					}
 				}
 			}
 
@@ -1528,16 +1540,24 @@ namespace SIL.FieldWorks.XWorks
 			if (typeNode.IsEnabled && typeNode.ReferencedOrDirectChildren != null && typeNode.ReferencedOrDirectChildren.Any(y => y.IsEnabled))
 			{
 				// Display typeless refs
+				bool first = true;
 				foreach (var entry in lerCollection.Where(item => !item.ComplexEntryTypesRS.Any() && !item.VariantEntryTypesRS.Any()))
-					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, entry, collectionOwner, settings, typeNode));
+				{
+					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, entry, collectionOwner, settings, first, typeNode));
+					first = false;
+				}
 				// Display refs of each type
 				GenerateContentForLexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, bldr, typeNode, isComplex);
 			}
 			else
 			{
 				Debug.WriteLine("Unable to group " + config.FieldDescription + " by LexRefType; generating sequentially");
+				bool first = true;
 				foreach (var item in lerCollection)
-					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings));
+				{
+					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings, first));
+					first = false;
+				}
 			}
 			return bldr;
 		}
@@ -1561,11 +1581,13 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var typeGuid in lexEntryTypesFiltered)
 			{
 				var innerBldr = new StringBuilder();
+				bool first = true;
 				foreach (var lexEntRef in lerCollection)
 				{
 					if (isComplex ? lexEntRef.ComplexEntryTypesRS.Any(t => t.Guid == typeGuid) : lexEntRef.VariantEntryTypesRS.Any(t => t.Guid == typeGuid))
 					{
-						innerBldr.Append(GenerateCollectionItemContent(config, pubDecorator, lexEntRef, collectionOwner, settings, typeNode));
+						innerBldr.Append(GenerateCollectionItemContent(config, pubDecorator, lexEntRef, collectionOwner, settings, first, typeNode));
+						first = false;
 					}
 				}
 
@@ -1576,7 +1598,7 @@ namespace SIL.FieldWorks.XWorks
 					var generateLexType = typeNode != null;
 					var lexTypeContent = generateLexType
 						? GenerateCollectionItemContent(typeNode, pubDecorator, lexEntryType,
-							lexEntryType.Owner, settings)
+							lexEntryType.Owner, settings, first)
 						: null;
 					var className = generateLexType ? settings.StylesGenerator.AddStyles(typeNode).Trim('.') : null;
 					var refsByType = settings.ContentGenerator.AddLexReferences(generateLexType,
@@ -1600,11 +1622,13 @@ namespace SIL.FieldWorks.XWorks
 					.Select(le => new Tuple<ILexEntryRef, ILexEntry>(EntryRefForSubentry(le, collectionOwner), le)).ToList();
 
 				// Generate any Subentries with no ComplexFormType
+				bool first = true;
 				for (var i = 0; i < subentries.Count; i++)
 				{
 					if (subentries[i].Item1 == null || !subentries[i].Item1.ComplexEntryTypesRS.Any())
 					{
-						bldr.Append(GenerateCollectionItemContent(config, pubDecorator, subentries[i].Item2, collectionOwner, settings));
+						bldr.Append(GenerateCollectionItemContent(config, pubDecorator, subentries[i].Item2, collectionOwner, settings, first));
+						first = false;
 						subentries.RemoveAt(i--);
 					}
 				}
@@ -1615,7 +1639,8 @@ namespace SIL.FieldWorks.XWorks
 					{
 						if (subentries[i].Item1.ComplexEntryTypesRS.Any(t => t.Guid == typeGuid))
 						{
-							bldr.Append(GenerateCollectionItemContent(config, pubDecorator, subentries[i].Item2, collectionOwner, settings));
+							bldr.Append(GenerateCollectionItemContent(config, pubDecorator, subentries[i].Item2, collectionOwner, settings, first));
+							first = false;
 							subentries.RemoveAt(i--);
 						}
 					}
@@ -1624,8 +1649,12 @@ namespace SIL.FieldWorks.XWorks
 			else
 			{
 				Debug.WriteLine("Unable to group " + config.FieldDescription + " by LexRefType; generating sequentially");
+				bool first = true;
 				foreach (var item in collection)
-					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings));
+				{
+					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings, first));
+					first = false;
+				}
 			}
 		}
 
@@ -1702,35 +1731,13 @@ namespace SIL.FieldWorks.XWorks
 			var isThisSenseNumbered = ShouldThisSenseBeNumbered(filteredSenseCollection[0], config, filteredSenseCollection);
 			var bldr = settings.ContentGenerator.CreateFragment();
 
-			// TODO: Can handle separate sense paragraph styling here; likely will make the most sense to be handled wherever we deal with before/after content for senses.
-			// TODO: If handled here (or elsewhere w/in LcmGenerator), remove sense paragraph handling from the CssGenerator, otherwise sense paragraphs will be separated by two lines in the xhtml export.
-			/*// Only need to check once whether DisplayEachSenseInAParagraph is true -- value will be the same for each item in the loop
-			bool newParagraphPerSense;
-			if (senseNode?.DisplayEachSenseInAParagraph == true)
-				newParagraphPerSense = true;
-			else
-				newParagraphPerSense = false;
-
-			//If the first sense must be inline, we append the first sense without a preceding line break
-			int startSense = 0;
-			if (senseNode?.DisplayFirstSenseInline == true)
-			{
-				bldr.Append(GenerateSenseContent(config, publicationDecorator, filteredSenseCollection[startSense], isThisSenseNumbered, settings, isSameGrammaticalInfo, info));
-				startSense++;
-			}
-
-			for (int i = startSense; i < filteredSenseCollection.Count; i++)*/
-
+			bool first = true;
 			foreach (var item in filteredSenseCollection)
 			{
 				info.SenseCounter++;
-
-				// TODO: sense paragraphs
-				/*// If each sense belongs in a new paragraph, append a line break before the sense content.
-				if (newParagraphPerSense)
-					bldr.AppendBreak();*/
-
-				bldr.Append(GenerateSenseContent(config, publicationDecorator, item, isThisSenseNumbered, settings, isSameGrammaticalInfo, info));
+				bldr.Append(GenerateSenseContent(config, publicationDecorator, item, isThisSenseNumbered, settings,
+					isSameGrammaticalInfo, info, first));
+				first = false;
 			}
 			settings.StylesGenerator.AddStyles(config);
 			return bldr;
@@ -1876,7 +1883,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static IFragment GenerateSenseContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
-			object item, bool isThisSenseNumbered, GeneratorSettings settings, bool isSameGrammaticalInfo, SenseInfo info)
+			object item, bool isThisSenseNumbered, GeneratorSettings settings, bool isSameGrammaticalInfo, SenseInfo info, bool first)
 		{
 			var senseNumberSpan = GenerateSenseNumberSpanIfNeeded(config, isThisSenseNumbered, ref info, settings);
 			var bldr = settings.ContentGenerator.CreateFragment();
@@ -1893,8 +1900,7 @@ namespace SIL.FieldWorks.XWorks
 			if (bldr.Length() == 0)
 				return bldr;
 
-			return settings.ContentGenerator.AddSenseData(senseNumberSpan, IsBlockProperty(config), ((ICmObject)item).Owner.Guid,
-				bldr, GetCollectionItemClassAttribute(config));
+			return settings.ContentGenerator.AddSenseData(senseNumberSpan, ((ICmObject)item).Owner.Guid, config, bldr, first);
 		}
 
 		private static IFragment GeneratePictureContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
@@ -1940,13 +1946,12 @@ namespace SIL.FieldWorks.XWorks
 					contentGenerator.WriteProcessedContents(writer, settings.ContentGenerator.AddImageCaption(captionBldr.ToString()));
 				}
 				writer.Flush();
+				return bldr;
 			}
-
-			return bldr;
 		}
 
 		private static IFragment GenerateCollectionItemContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
-			object item, object collectionOwner, GeneratorSettings settings, ConfigurableDictionaryNode factoredTypeField = null)
+			object item, object collectionOwner, GeneratorSettings settings, bool first, ConfigurableDictionaryNode factoredTypeField = null)
 		{
 			if (item is IMultiStringAccessor)
 				return GenerateContentForStrings((IMultiStringAccessor)item, config, settings);
@@ -1980,7 +1985,7 @@ namespace SIL.FieldWorks.XWorks
 			if (bldr.Length() == 0)
 				return bldr;
 			var collectionContent = bldr;
-			return settings.ContentGenerator.AddCollectionItem(IsBlockProperty(config), GetCollectionItemClassAttribute(config), config, collectionContent);
+			return settings.ContentGenerator.AddCollectionItem(IsBlockProperty(config), GetCollectionItemClassAttribute(config), config, collectionContent, first);
 		}
 
 		private static void GenerateContentForLexRefCollection(ConfigurableDictionaryNode config,
@@ -2088,6 +2093,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					return settings.ContentGenerator.CreateFragment();
 				}
+
+				bool first = true;
 				foreach (var child in config.ReferencedOrDirectChildren.Where(c => c.IsEnabled))
 				{
 					switch (child.FieldDescription)
@@ -2098,7 +2105,8 @@ namespace SIL.FieldWorks.XWorks
 							{
 								var referenceItem = referenceListItem.Item2;
 								var targetItem = referenceListItem.Item1;
-								contentBldr.Append(GenerateCollectionItemContent(child, publicationDecorator, targetItem, referenceItem, settings));
+								contentBldr.Append(GenerateCollectionItemContent(child, publicationDecorator, targetItem, referenceItem, settings, first));
+								first = false;
 							}
 							if (contentBldr.Length > 0)
 							{
@@ -2253,7 +2261,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>Write the class element in the span for an individual item in the collection</summary>
-		private static string GetCollectionItemClassAttribute(ConfigurableDictionaryNode config)
+		internal static string GetCollectionItemClassAttribute(ConfigurableDictionaryNode config)
 		{
 			var classAtt = CssGenerator.GetClassAttributeForCollectionItem(config);
 			if (config.ReferencedNode != null)
@@ -2488,8 +2496,7 @@ namespace SIL.FieldWorks.XWorks
 			if (propertyValue is int)
 			{
 				var cssClassName = settings.StylesGenerator.AddStyles(config).Trim('.'); ;
-				return settings.ContentGenerator.AddProperty(cssClassName, false,
-					propertyValue.ToString());
+				return settings.ContentGenerator.AddProperty(cssClassName, false, propertyValue.ToString());
 			}
 			if (propertyValue is DateTime)
 			{

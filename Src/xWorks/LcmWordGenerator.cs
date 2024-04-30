@@ -20,7 +20,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web.UI.WebControls;
+using System.Windows.Media.Imaging;
 using XCore;
+using XmlDrawing = DocumentFormat.OpenXml.Drawing;
+using DrawingWP = DocumentFormat.OpenXml.Drawing.Wordprocessing;
+using Pictures = DocumentFormat.OpenXml.Drawing.Pictures;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -32,8 +36,10 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private LcmCache Cache { get; }
 		private static Styles _styleSheet { get; set; } = new Styles();
-		private static Dictionary<string, Styles> _styleDictionary = new Dictionary<string, Styles>();
+		private static Dictionary<string, Style> _styleDictionary = new Dictionary<string, Style>();
 		private ReadOnlyPropertyTable _propertyTable;
+		internal const int maxImageHeightInches = 1;
+		internal const int maxImageWidthInches = 1;
 
 		public LcmWordGenerator(LcmCache cache)
 		{
@@ -55,7 +61,7 @@ namespace SIL.FieldWorks.XWorks
 				var readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);
 
 				generator.Init(readOnlyPropertyTable);
-				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, System.IO.Path.GetDirectoryName(filePath),
+				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, false, true, System.IO.Path.GetDirectoryName(filePath),
 							ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), System.IO.Path.GetFileName(cssPath) == "configured.css")
 							{ ContentGenerator = generator, StylesGenerator = generator};
 				settings.StylesGenerator.AddGlobalStyles(configuration, readOnlyPropertyTable);
@@ -123,17 +129,16 @@ namespace SIL.FieldWorks.XWorks
 					stylePart = AddStylesPartToPackage(fragment.DocFrag);
 
 					// Add generated styles into the stylesheet from the dictionary
-					foreach (var stylesItem in _styleDictionary.Values)
+					foreach (var style in _styleDictionary.Values)
 					{
-						foreach (var style in stylesItem.Descendants<Style>())
-							_styleSheet.AppendChild(style.CloneNode(true));
+						_styleSheet.AppendChild(style.CloneNode(true));
 					}
 
 					// Clone styles from the stylesheet into the word doc's styles xml
 					stylePart.Styles = ((Styles)_styleSheet.CloneNode(true));
 
 					// clear the dictionary
-					_styleDictionary = new Dictionary<string, Styles>();
+					_styleDictionary = new Dictionary<string, Style>();
 
 					// clear the styleSheet
 					_styleSheet = new WP.Styles();
@@ -295,12 +300,12 @@ namespace SIL.FieldWorks.XWorks
 					if (par.ParagraphProperties.Descendants<ParagraphStyleId>().Any())
 						return;
 
-					par.ParagraphProperties.Append(new ParagraphStyleId() { Val = styleName });
+					par.ParagraphProperties.PrependChild(new ParagraphStyleId() { Val = styleName });
 				}
 				else
 				{
 					WP.ParagraphProperties paragraphProps = new WP.ParagraphProperties(new ParagraphStyleId() { Val = styleName });
-					par.Append(paragraphProps);
+					par.PrependChild(paragraphProps);
 				}
 			}
 
@@ -369,6 +374,14 @@ namespace SIL.FieldWorks.XWorks
 							FragStr.AppendLine();
 							break;
 
+						case "r":
+							string docStr = ToString(docSection);
+							if (string.IsNullOrEmpty(docStr))
+								if (docSection.Descendants<Drawing>().Any())
+									docStr = "[image run]";
+							FragStr.Append(docStr);
+							break;
+
 						default:
 							FragStr.Append(ToString(docSection));
 							break;
@@ -391,9 +404,17 @@ namespace SIL.FieldWorks.XWorks
 			{
 				foreach (OpenXmlElement elem in ((DocFragment)frag).DocBody.Elements().ToList())
 				{
+					if (elem.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().Any())
+					{
+						// then need to append image in such a way that the relID is maintained
+						this.DocBody.AppendChild(CloneImageRun(frag, elem));
+						// wordWriter.WordFragment.AppendPhotoToParagraph(frag, elem, wordWriter.ForceNewParagraph);
+					}
+
 					// Append each element. It is necessary to deep clone the node to maintain its tree of document properties
 					// and to ensure its styles will be maintained in the copy.
-					this.DocBody.AppendChild(elem.CloneNode(true));
+					else
+						this.DocBody.AppendChild(elem.CloneNode(true));
 				}
 			}
 
@@ -407,16 +428,66 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			/// <summary>
-			/// Appends a new run inside the last paragraph of the doc fragment--creates a new paragraph if none exists.
+			/// Appends a new run inside the last paragraph of the doc fragment--creates a new paragraph if none exists or if forceNewParagraph is true.
 			/// The run will be added to the end of the paragraph.
 			/// </summary>
 			/// <param name="run">The run to append.</param>
 			/// <param name="forceNewParagraph">Even if a paragraph exists, force the creation of a new paragraph.</param>
-			public void AppendToParagraph(WP.Run run, bool forceNewParagraph)
+			public void AppendToParagraph(IFragment fragToCopy, OpenXmlElement run, bool forceNewParagraph)
 			{
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
 				WP.Paragraph lastPar = forceNewParagraph ? GetNewParagraph() : GetLastParagraph();
-				lastPar.AppendChild(run.CloneNode(true));
+				lastPar.AppendChild(CloneRun(fragToCopy, run));
+			}
+
+			public OpenXmlElement CloneRun(IFragment fragToCopy, OpenXmlElement run)
+			{
+				if (run.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().Any())
+				{
+					return CloneImageRun(fragToCopy, run);
+				}
+
+				return run.CloneNode(true);
+
+			}
+
+			/// <summary>
+			/// Clones and returns a run containing an image.
+			/// </summary>
+			public OpenXmlElement CloneImageRun(IFragment fragToCopy, OpenXmlElement run)
+			{
+				var clonedRun = run.CloneNode(true);
+				clonedRun.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().ToList().ForEach(
+					blip =>
+					{
+						var newRelation =
+							CopyImage(DocFrag, blip.Embed, ((DocFragment)fragToCopy).DocFrag);
+						// Update the relationship ID in the cloned blip element.
+						blip.Embed = newRelation;
+					});
+				clonedRun.Descendants<DocumentFormat.OpenXml.Vml.ImageData>().ToList().ForEach(
+					imageData =>
+					{
+						var newRelation = CopyImage(DocFrag, imageData.RelationshipId, ((DocFragment)fragToCopy).DocFrag);
+						// Update the relationship ID in the cloned image data element.
+						imageData.RelationshipId = newRelation;
+					});
+				return clonedRun;
+			}
+
+			/// <summary>
+			/// Copies the image part of one document to another and returns the relationship ID of the copied image part.
+			/// </summary>
+			public static string CopyImage(WordprocessingDocument newDoc, string relId, WordprocessingDocument org)
+			{
+				if (org.MainDocumentPart == null || newDoc.MainDocumentPart == null)
+				{
+					throw new ArgumentNullException("MainDocumentPart is null.");
+				}
+				var p = org.MainDocumentPart.GetPartById(relId) as ImagePart;
+				var newPart = newDoc.MainDocumentPart.AddPart(p);
+				newPart.FeedData(p.GetStream());
+				return newDoc.MainDocumentPart.GetIdOfPart(newPart);
 			}
 
 			/// <summary>
@@ -427,6 +498,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				WP.Run lastRun = GetLastRun();
 				WP.Text newText = new WP.Text(text);
+				newText.Space = SpaceProcessingModeValues.Preserve;
 				lastRun.Append(newText);
 			}
 
@@ -515,21 +587,19 @@ namespace SIL.FieldWorks.XWorks
 
 			public void Dispose()
 			{
-				foreach (var cachEntry in collatorCache.Values)
-				{
-					cachEntry?.Dispose();
-				}
-				Dispose(true);
-				GC.SuppressFinalize(this);
-			}
+				// When writer is being disposed, dispose only the dictionary entries,
+				// not the word doc fragment.
+				// ConfiguredLcmGenerator consistently returns the fragment and disposes the writer,
+				// which would otherwise result in a disposed fragment being accessed.
 
-			protected virtual void Dispose(bool disposing)
-			{
-				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 				if (!isDisposed)
 				{
-					WordFragment.DocFrag.Dispose();
-					WordFragment.MemStr.Dispose();
+					foreach (var cachEntry in collatorCache.Values)
+					{
+						cachEntry?.Dispose();
+					}
+
+					GC.SuppressFinalize(this);
 					isDisposed = true;
 				}
 			}
@@ -587,6 +657,31 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// Use the style name and type of the config node or its parent to link a style to the elementContent fragment where the processed contents are written.
 			DocFragment.LinkStyleOrInheritParentStyle(elementContent, config);
+
+			bool displayEachInAParagraph = config != null &&
+										   config.DictionaryNodeOptions is IParaOption &&
+										   ((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph;
+
+			// Add Before text, if it is not going to be displayed in it's own paragraph.
+			if (!displayEachInAParagraph && !string.IsNullOrEmpty(config.Before))
+			{
+				WP.Text txt = new WP.Text(config.Before);
+				txt.Space = SpaceProcessingModeValues.Preserve;
+				var beforeRun = new WP.Run(txt);
+				((DocFragment)elementContent).DocBody.PrependChild(beforeRun);
+			}
+
+			// Add After text, if it is not going to be displayed in it's own paragraph.
+			if (!displayEachInAParagraph && !string.IsNullOrEmpty(config.After))
+			{
+				WP.Text txt = new WP.Text(config.After);
+				txt.Space = SpaceProcessingModeValues.Preserve;
+				var afterRun = new WP.Run(txt);
+				((DocFragment)elementContent).DocBody.Append(afterRun);
+				// To be consistent with the xhtml output, only the after text uses the same style.
+				DocFragment.LinkStyleOrInheritParentStyle(elementContent, config);
+			}
+
 			return elementContent;
 		}
 		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content, ConfigurableDictionaryNode config)
@@ -597,25 +692,58 @@ namespace SIL.FieldWorks.XWorks
 			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, IFragment> childContentGenerator)
 		{
 			//TODO: handle grouping nodes
-			IFragment docfrag = new DocFragment("TODO: handle grouping nodes");
-
+			//IFragment docfrag = new DocFragment(...);
 			//LinkStyleOrInheritParentStyle(docfrag, config);
-
-			return docfrag;
-			//return null;
+			//return docfrag;
+			return null;
 		}
-		public IFragment AddSenseData(IFragment senseNumberSpan, bool isBlockProperty, Guid ownerGuid, IFragment senseContent, string className)
+		public IFragment AddSenseData(IFragment senseNumberSpan, Guid ownerGuid, ConfigurableDictionaryNode config, IFragment senseContent, bool first)
 		{
+			var senseData = new DocFragment();
+			var senseNode = (DictionaryNodeSenseOptions)config?.DictionaryNodeOptions;
+			bool eachInAParagraph = false;
+			bool firstSenseInline = false;
+			string afterNumber = null;
+			string beforeNumber = null;
+			if (senseNode != null)
+			{
+				eachInAParagraph = senseNode.DisplayEachSenseInAParagraph;
+				firstSenseInline = senseNode.DisplayFirstSenseInline;
+				afterNumber = senseNode.AfterNumber;
+				beforeNumber = senseNode.BeforeNumber;
+			}
+
+			// We want a break before the first sense item, between items, and after the last item.
+			// So, only add a break before the content if it is the first sense and it's not displayed in-line.
+			if (eachInAParagraph && first && !firstSenseInline)
+			{
+				senseData.AppendBreak();
+			}
+
 			// Add sense numbers if needed
 			if (!senseNumberSpan.IsNullOrEmpty())
 			{
-				senseNumberSpan.Append(senseContent);
-				return senseNumberSpan;
+				if (!string.IsNullOrEmpty(beforeNumber))
+				{
+					senseData.Append(beforeNumber);
+				}
+				senseData.Append(senseNumberSpan);
+				if (!string.IsNullOrEmpty(afterNumber))
+				{
+					senseData.Append(afterNumber);
+				}
 			}
 
-			return senseContent;
+			senseData.Append(senseContent);
+
+			if (eachInAParagraph)
+			{
+				senseData.AppendBreak();
+			}
+
+			return senseData;
 		}
-		public IFragment AddCollectionItem(bool isBlock, string collectionItemClass, ConfigurableDictionaryNode config, IFragment content)
+		public IFragment AddCollectionItem(bool isBlock, string collectionItemClass, ConfigurableDictionaryNode config, IFragment content, bool first)
 		{
 			if (!string.IsNullOrEmpty(config.Style))
 			{
@@ -626,7 +754,41 @@ namespace SIL.FieldWorks.XWorks
 					((DocFragment)content).AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Character);
 			}
 
-			return content;
+			var collData = CreateFragment();
+			bool eachInAParagraph = false;
+			if (config != null &&
+				config.DictionaryNodeOptions is IParaOption &&
+				((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph)
+			{
+				eachInAParagraph = true;
+
+				// We want a break before the first collection item, between items, and after the last item.
+				// So, only add a break before the content if it is the first.
+				if (first)
+				{
+					collData.AppendBreak();
+				}
+			}
+
+			// Add Between text, if it is not going to be displayed in it's own paragraph
+			// and it is not the first item in the collection.
+			if (!first &&
+				config != null &&
+				config.DictionaryNodeOptions is IParaOption &&
+				!eachInAParagraph &&
+				!string.IsNullOrEmpty(config.Between))
+			{
+				((DocFragment)collData).Append(config.Between);
+			}
+
+			collData.Append(content);
+
+			if (eachInAParagraph)
+			{
+				collData.AppendBreak();
+			}
+
+			return collData;
 		}
 		public IFragment AddProperty(string className, bool isBlockProperty, string content)
 		{
@@ -906,28 +1068,72 @@ namespace SIL.FieldWorks.XWorks
 				ConfigurableDictionaryNode config = piece.Config;
 
 				var elements = frag.DocBody.Elements().ToList();
+
+				// This variable will track whether or not we have already added an image from this piece to the Word doc.
+				// In the case that more than one image appears in the same piece
+				// (e.g. one entry with multiple senses and a picture for each sense),
+				// we need to add an empty paragraph between the images to prevent
+				// all the images and their captions from being merged into a single textframe by Word.
+				Boolean pieceHasImage = false;
+
 				foreach (OpenXmlElement elem in elements)
 				{
 					switch (elem)
 					{
 						case WP.Run run:
-							// For spaces to show correctly, set preserve spaces on the text element
-							WP.Text txt = new WP.Text(" ");
-							txt.Space = SpaceProcessingModeValues.Preserve;
-							run.AppendChild(txt);
-							wordWriter.WordFragment.AppendToParagraph(run, wordWriter.ForceNewParagraph);
-							wordWriter.ForceNewParagraph = false;
+							if (config.Label == "Pictures" || config.Parent?.Label == "Pictures")
+							{
+								// Runs containing pictures or captions need to be in separate paragraphs
+								// from whatever precedes and follows them because they will be added into textframes,
+								// while non-picture content should not be added to the textframes.
+								wordWriter.ForceNewParagraph = true;
 
-							// Add the paragraph style.
-							wordWriter.WordFragment.LinkParaStyle(frag.ParagraphStyle);
+								// Word automatically merges adjacent textframes with the same size specifications.
+								// If the run we are adding is an image (i.e. a Drawing object),
+								// and it is being added after another image run was previously added from the same piece,
+								// we need to append an empty paragraph between to maintain separate textframes.
+								//
+								// Checking for adjacent images and adding an empty paragraph between won't work,
+								// because each image run is followed by runs containing its caption,
+								// copyright & license, etc.
+								//
+								// But, a lexical entry corresponds to a single piece and all the images it contains
+								// are added sequentially at the end of the piece, after all of the senses.
+								// This means the order of runs w/in a piece is: headword run, sense1 run, sense2 run, ... ,
+								// [image1 run, caption1 run, copyright&license1 run], [image2 run, caption2 run, copyright&license2 run], ...
+								// We need empty paragraphs between the [] textframe chunks, which corresponds to adding an empty paragraph
+								// immediately before any image run other than the first image run in a piece.
+								if (run.Descendants<Drawing>().Any())
+								{
+									if (pieceHasImage)
+									{
+										wordWriter.WordFragment.AppendToParagraph(frag, new Run(), true);
+									}
+
+									// We have now added at least one image from this piece.
+									pieceHasImage = true;
+								}
+
+								wordWriter.WordFragment.AppendToParagraph(frag, run, wordWriter.ForceNewParagraph);
+								wordWriter.WordFragment.LinkParaStyle(WordStylesGenerator.PictureAndCaptionTextframeStyle);
+							}
+
+							else
+							{
+								wordWriter.WordFragment.AppendToParagraph(frag, run, wordWriter.ForceNewParagraph);
+								wordWriter.ForceNewParagraph = false;
+								wordWriter.WordFragment.LinkParaStyle(frag.ParagraphStyle);
+							}
 
 							break;
+
 						case WP.Table table:
 							wordWriter.WordFragment.Append(table);
 
 							// Start a new paragraph with the next run to maintain the correct position of the table.
 							wordWriter.ForceNewParagraph = true;
 							break;
+
 						default:
 							throw new Exception("Unexpected element type on DocBody: " + elem.GetType().ToString());
 
@@ -962,18 +1168,34 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public void WriteProcessedContents(IFragmentWriter writer, IFragment contents)
 		{
-			if (contents.IsNullOrEmpty())
+			if (!contents.IsNullOrEmpty())
 			{
 				((WordFragmentWriter)writer).Insert(contents);
 			}
 		}
 		public IFragment AddImage(string classAttribute, string srcAttribute, string pictureGuid)
 		{
-			return new DocFragment("TODO: add image");
+			DocFragment imageFrag = new DocFragment();
+			WordprocessingDocument wordDoc = imageFrag.DocFrag;
+			string partId = AddImagePartToPackage(wordDoc, srcAttribute);
+			Drawing image = CreateImage(wordDoc, srcAttribute, partId);
+
+			if (wordDoc.MainDocumentPart is null || wordDoc.MainDocumentPart.Document.Body is null)
+			{
+				throw new ArgumentNullException("MainDocumentPart and/or Body is null.");
+			}
+
+			Run imgRun = new Run();
+			imgRun.AppendChild(image);
+			RunProperties imgProperties = new RunProperties();
+
+			// Append the image to body, the image should be in a Run.
+			wordDoc.MainDocumentPart.Document.Body.AppendChild(imgRun);
+			return imageFrag;
 		}
 		public IFragment AddImageCaption(string captionContent)
 		{
-			return new DocFragment("TODO: add image caption");
+			return new DocFragment(captionContent);
 		}
 		public IFragment GenerateSenseNumber(string formattedSenseNumber, string senseNumberWs, ConfigurableDictionaryNode senseConfigNode)
 		{
@@ -1009,6 +1231,24 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public IFragment WriteProcessedSenses(bool isBlock, IFragment senseContent, ConfigurableDictionaryNode config, string className, IFragment sharedGramInfo)
 		{
+			// Add Before text for the sharedGramInfo.
+			if (!string.IsNullOrEmpty(config.Before))
+			{
+				WP.Text txt = new WP.Text(config.Before);
+				txt.Space = SpaceProcessingModeValues.Preserve;
+				var beforeRun = new WP.Run(txt);
+				((DocFragment)sharedGramInfo).DocBody.PrependChild(beforeRun);
+			}
+
+			// Add After text for the sharedGramInfo.
+			if (!string.IsNullOrEmpty(config.After))
+			{
+				WP.Text txt = new WP.Text(config.After);
+				txt.Space = SpaceProcessingModeValues.Preserve;
+				var afterRun = new WP.Run(txt);
+				((DocFragment)sharedGramInfo).DocBody.Append(afterRun);
+			}
+
 			sharedGramInfo.Append(senseContent);
 			return sharedGramInfo;
 		}
@@ -1060,32 +1300,37 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public string AddStyles(ConfigurableDictionaryNode node)
 		{
+			// The css className isn't important for the Word export.
+			// Styles should be stored in the dictionary based on their stylenames.
+			// Generate all styles that are needed by this class and add them to the dictionary with their stylename as the key.
 			var className = $".{CssGenerator.GetClassAttributeForConfig(node)}";
 
 			lock (_styleDictionary)
 			{
 				var styleContent = WordStylesGenerator.CheckRangeOfStylesForEmpties(WordStylesGenerator.GenerateWordStylesFromConfigurationNode(node, className, _propertyTable));
-				// TODO: for testing, let it return className even if no styles are non-empty. Eventually, probably want to return null in that case?
 				if (styleContent == null)
 					return className;
 				if (!styleContent.Any())
-				{
 					return className;
-				}
-				if (!_styleDictionary.ContainsKey(className))
+
+				foreach (Style style in styleContent.Descendants<Style>())
 				{
-					_styleDictionary[className] = styleContent;
-					return className;
+					string styleName = style.StyleId;
+					if (!_styleDictionary.ContainsKey(styleName))
+					{
+						_styleDictionary[styleName] = style;
+					}
+					// If the content is the same, we don't need to do anything--the style is alread in the dictionary.
+					// But if the content is NOT the same, re-name this style and add it to the dictionary.
+					else if (!WordStylesGenerator.AreStylesEquivalent(_styleDictionary[styleName], style))
+					{
+						// Otherwise get a unique but useful style name and re-name the style
+						styleName = GetBestUniqueNameForNode(_styleDictionary, node);
+						style.StyleId = styleName;
+						style.StyleName = new StyleName() { Val = styleName };
+						_styleDictionary[styleName] = style;
+					}
 				}
-				// If the content is the same, then do nothing
-				if (WordStylesGenerator.AreStylesEquivalent(_styleDictionary[className], styleContent))
-				{
-					return className;
-				}
-				// Otherwise get a unique but useful class name and re-generate the style with the new name
-				className = GetBestUniqueNameForNode(_styleDictionary, node);
-				_styleDictionary[className] = WordStylesGenerator.CheckRangeOfStylesForEmpties(WordStylesGenerator.GenerateWordStylesFromConfigurationNode(node, className, _propertyTable));
-				//var styleName = _styleDictionary[className].
 				return className;
 			}
 		}
@@ -1105,13 +1350,157 @@ namespace SIL.FieldWorks.XWorks
 			return part;
 		}
 
+		// Add an ImagePart to the document. Returns the part ID.
+		public static string AddImagePartToPackage(WordprocessingDocument doc, string imagePath, ImagePartType imageType = ImagePartType.Jpeg)
+		{
+			MainDocumentPart mainPart = doc.MainDocumentPart;
+			ImagePart imagePart = mainPart.AddImagePart(imageType);
+			using (FileStream stream = new FileStream(imagePath, FileMode.Open))
+			{
+				imagePart.FeedData(stream);
+			}
+
+			return mainPart.GetIdOfPart(imagePart);
+		}
+
+		public static Drawing CreateImage(WordprocessingDocument doc, string filepath, string partId)
+		{
+			// Create a bitmap to store the image so we can track/preserve aspect ratio.
+			var img = new BitmapImage();
+
+			// Minimize the time that the image file is locked by opening with a filestream to initialize the bitmap image
+			using (var fs = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.Read))
+			{
+				img.BeginInit();
+				img.StreamSource = fs;
+				img.EndInit();
+			}
+
+			var actWidthPx = img.PixelWidth;
+			var actHeightPx = img.PixelHeight;
+			var horzRezDpi = img.DpiX;
+			var vertRezDpi = img.DpiY;
+			var actWidthInches = (float)(actWidthPx / horzRezDpi);
+			var actHeightInches = (float)(actHeightPx / vertRezDpi);
+
+			var ratioActualInches = actHeightInches / actWidthInches;
+			var ratioMaxInches = (float)(maxImageHeightInches) / (float)(maxImageWidthInches);
+
+			// height/widthInches will store the actual height and width
+			// to use for the image in the Word doc.
+			float heightInches = maxImageHeightInches;
+			float widthInches = maxImageWidthInches;
+
+			// If the ratio of the actual image is greater than the max ratio,
+			// we leave height equal to the max height and scale width accordingly.
+			if (ratioActualInches >= ratioMaxInches)
+			{
+				widthInches = actWidthInches * (maxImageHeightInches / actHeightInches);
+			}
+			// Otherwise, if the ratio of the actual image is less than the max ratio,
+			// we leave width equal to the max width and scale height accordingly.
+			else if (ratioActualInches < ratioMaxInches)
+			{
+				heightInches = actHeightInches * (maxImageWidthInches / actWidthInches);
+			}
+
+			// Calculate the actual height and width in emus to use for the image.
+			const int emusPerInch = 914400;
+			var widthEmus = (long)(widthInches * emusPerInch);
+			var heightEmus = (long)(heightInches * emusPerInch);
+
+			// We want a 4pt right/left margin--4pt is equal to 0.0553 inches in MS word.
+			float rlMarginInches = 0.0553F;
+
+			// Create and add a floating image with image wrap set to top/bottom
+			// Name for the image -- the name of the file after all containing folders and the file extension are removed.
+			string name = (filepath.Split('\\').Last()).Split('.').First();
+
+			var element = new Drawing(
+				new DrawingWP.Inline(
+					new DrawingWP.Extent()
+					{
+						Cx = widthEmus,
+						Cy = heightEmus
+					},
+					new DrawingWP.EffectExtent()
+					{
+						LeftEdge = 0L,
+						TopEdge = 0L,
+						RightEdge = 0L,
+						BottomEdge = 0L
+					},
+					new DrawingWP.DocProperties()
+					{
+						Id = (UInt32Value)1U,
+						Name = name
+					},
+					new DrawingWP.NonVisualGraphicFrameDrawingProperties(
+						new XmlDrawing.GraphicFrameLocks() { NoChangeAspect = true }),
+					new XmlDrawing.Graphic(
+						new XmlDrawing.GraphicData(
+							new Pictures.Picture(
+								new Pictures.NonVisualPictureProperties(
+									new Pictures.NonVisualDrawingProperties()
+									{
+										Id = (UInt32Value)0U,
+										Name = name
+									},
+									new Pictures.NonVisualPictureDrawingProperties(
+										new XmlDrawing.PictureLocks()
+											{NoChangeAspect = true, NoChangeArrowheads = true}
+									)
+								),
+								new Pictures.BlipFill(
+									new XmlDrawing.Blip(
+										new XmlDrawing.BlipExtensionList(
+											new XmlDrawing.BlipExtension(
+												new DocumentFormat.OpenXml.Office2010.Drawing.UseLocalDpi() {Val = false}
+											) { Uri = "{28A0092B-C50C-407E-A947-70E740481C1C}" }
+										)
+									)
+									{
+										Embed = partId,
+										CompressionState = XmlDrawing.BlipCompressionValues.Print
+									},
+									new XmlDrawing.SourceRectangle(),
+									new XmlDrawing.Stretch(new XmlDrawing.FillRectangle())
+								),
+								new Pictures.ShapeProperties(
+									new XmlDrawing.Transform2D(
+										new XmlDrawing.Offset() { X = 0L, Y = 0L },
+										new XmlDrawing.Extents()
+										{
+											Cx = widthEmus,
+											Cy = heightEmus
+										}
+									),
+									new XmlDrawing.PresetGeometry(
+										new XmlDrawing.AdjustValueList()
+									) { Preset = XmlDrawing.ShapeTypeValues.Rectangle },
+									new XmlDrawing.NoFill()
+								) {BlackWhiteMode = XmlDrawing.BlackWhiteModeValues.Auto}
+							)
+						) { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" }
+					)
+				)
+				{
+					DistanceFromTop = (UInt32Value)0U,
+					DistanceFromBottom = (UInt32Value)0U,
+					DistanceFromLeft = (UInt32Value)0U,
+					DistanceFromRight = (UInt32Value)0U
+				}
+			);
+
+			return element;
+		}
+
 		/// <summary>
 		/// Finds an unused class name for the configuration node. This should be called when there are two nodes in the <code>DictionaryConfigurationModel</code>
 		/// have the same class name, but different style content. We want this name to be usefully recognizable.
 		/// </summary>
 		/// <returns></returns>
-		public static string GetBestUniqueNameForNode(Dictionary<string, Styles> styles,
-			ConfigurableDictionaryNode node)
+		public static string GetBestUniqueNameForNode(Dictionary<string, Style> styles, ConfigurableDictionaryNode node)
 		{
 			Guard.AgainstNull(node.Parent, "There should not be duplicate class names at the top of tree.");
 			// First try appending the parent node classname.

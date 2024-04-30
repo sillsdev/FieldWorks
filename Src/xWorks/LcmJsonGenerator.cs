@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.XWorks
 			return new StringFragment();
 		}
 
-		public IFragment AddCollectionItem(bool isBlock, string className, ConfigurableDictionaryNode config,IFragment content)
+		public IFragment AddCollectionItem(bool isBlock, string className, ConfigurableDictionaryNode config,IFragment content, bool first)
 		{
 			var fragment = new StringFragment();
 			fragment.StrBuilder.Append(content.IsNullOrEmpty() ? string.Empty : $"{{{content}}},");
@@ -431,8 +431,7 @@ namespace SIL.FieldWorks.XWorks
 			return new StringFragment($"\\u+0FFF\\u+0FFF\\u+0FFF{badStrBuilder}");
 		}
 
-		public IFragment AddSenseData(IFragment senseNumberSpan, bool isBlock, Guid ownerGuid,
-			IFragment senseContent, string className)
+		public IFragment AddSenseData(IFragment senseNumberSpan, Guid ownerGuid, ConfigurableDictionaryNode config, IFragment senseContent, bool first)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);

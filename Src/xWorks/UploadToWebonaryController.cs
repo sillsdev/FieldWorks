@@ -168,6 +168,8 @@ namespace SIL.FieldWorks.XWorks
 				var signedUrl = PostContentToWebonary(model, webonaryView, "post/file", fileToSign);
 				if (string.IsNullOrEmpty(signedUrl))
 				{
+					webonaryView.SetStatusCondition(WebonaryStatusCondition.None);
+					webonaryView.UpdateStatus(xWorksStrings.UploadToWebonaryController_RetryAfterFailedConnection);
 					// Sleep briefly and try one more time (To compensate for a potential lambda cold start)
 					Thread.Sleep(500);
 					signedUrl = PostContentToWebonary(model, webonaryView, "post/file", fileToSign);
