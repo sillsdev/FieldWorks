@@ -428,15 +428,56 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			/// <summary>
-			/// Appends a new run inside the last paragraph of the doc fragment--creates a new paragraph if none exists or if forceNewParagraph is true.
+			/// Appends a new run inside the last paragraph of the doc fragment--creates a new paragraph if none
+			/// exists or if forceNewParagraph is true.
 			/// The run will be added to the end of the paragraph.
 			/// </summary>
 			/// <param name="run">The run to append.</param>
 			/// <param name="forceNewParagraph">Even if a paragraph exists, force the creation of a new paragraph.</param>
 			public void AppendToParagraph(IFragment fragToCopy, OpenXmlElement run, bool forceNewParagraph)
 			{
+				WP.Paragraph lastPar = null;
+
+				if (forceNewParagraph)
+				{
+					// When forcing a new paragraph use a 'continuation' style for the new paragraph.
+					// The continuation style is based on the style used in the last paragraph.
+					string style = null;
+					WP.Paragraph lastParagraph = DocBody.OfType<WP.Paragraph>().LastOrDefault();
+					if (lastParagraph != null)
+					{
+						WP.ParagraphProperties paraProps = lastParagraph.OfType<WP.ParagraphProperties>().FirstOrDefault();
+						if (paraProps != null)
+						{
+							ParagraphStyleId styleId = paraProps.OfType<WP.ParagraphStyleId>().FirstOrDefault();
+							if (styleId != null && styleId.Val != null && styleId.Val.Value != null)
+							{
+								if (styleId.Val.Value.EndsWith(WordStylesGenerator.EntryStyleContinue))
+								{
+									style = styleId.Val.Value;
+								}
+								else
+								{
+									style = styleId.Val.Value + WordStylesGenerator.EntryStyleContinue;
+								}
+							}
+						}
+					}
+
+					lastPar = GetNewParagraph();
+					if (!string.IsNullOrEmpty(style))
+					{
+						WP.ParagraphProperties paragraphProps = new WP.ParagraphProperties(
+							new ParagraphStyleId() { Val = style });
+						lastPar.Append(paragraphProps);
+					}
+				}
+				else
+				{
+					lastPar = GetLastParagraph();
+				}
+
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
-				WP.Paragraph lastPar = forceNewParagraph ? GetNewParagraph() : GetLastParagraph();
 				lastPar.AppendChild(CloneRun(fragToCopy, run));
 			}
 
@@ -1064,12 +1105,19 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public void StartEntry(IFragmentWriter writer, ConfigurableDictionaryNode config, string className, Guid entryGuid, int index, RecordClerk clerk)
 		{
-			// Each entry starts a new paragraph, and any entry data added will be added within the same paragraph.
+			// Each entry starts a new paragraph, and any entry data added will usually be added within the same paragraph.
+			// The paragraph will end whenever a data type that cannot be in a paragraph is encounter (Tables or Pictures).
+			// A new 'continuation' paragraph will be started after the Table ot Picture if there is other data that still
+			// needs to be added to the entry.
 			// Create a new paragraph for the entry.
 			DocFragment wordDoc = ((WordFragmentWriter)writer).WordFragment;
 			WP.Paragraph entryPar = wordDoc.GetNewParagraph();
 			WP.ParagraphProperties paragraphProps = new WP.ParagraphProperties(new ParagraphStyleId() {Val = config.Style});
 			entryPar.Append(paragraphProps);
+
+			// Create the 'continuation' style for the entry. This style will be the same as the style for the entry with the only
+			// difference being that it does not contain the first line indenting (since it is a continuation of the same entry).
+			AddStyles(config, true);
 		}
 		public void AddEntryData(IFragmentWriter writer, List<ConfiguredLcmGenerator.ConfigFragment> pieces)
 		{
@@ -1319,6 +1367,17 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public string AddStyles(ConfigurableDictionaryNode node)
 		{
+			return AddStyles(node, false);
+		}
+
+		/// <summary>
+		/// Generates styles that are needed by this node and adds them to the dictionary.
+		/// </summary>
+		/// <param name="addEntryContinuationStyle">If true then generate the 'continuation' style for the node.
+		///                                         If false then generate the regular (non-continuation) styles for the node.</param>
+		/// <returns></returns>
+		public string AddStyles(ConfigurableDictionaryNode node, bool addEntryContinuationStyle)
+		{
 			// The css className isn't important for the Word export.
 			// Styles should be stored in the dictionary based on their stylenames.
 			// Generate all styles that are needed by this class and add them to the dictionary with their stylename as the key.
@@ -1326,7 +1385,15 @@ namespace SIL.FieldWorks.XWorks
 
 			lock (_styleDictionary)
 			{
-				var styleContent = WordStylesGenerator.CheckRangeOfStylesForEmpties(WordStylesGenerator.GenerateWordStylesFromConfigurationNode(node, className, _propertyTable));
+				Styles styleContent = null;
+				if (addEntryContinuationStyle)
+				{
+					styleContent = WordStylesGenerator.CheckRangeOfStylesForEmpties(WordStylesGenerator.GenerateContinuationWordStyles(node, _propertyTable));
+				}
+				else
+				{
+					styleContent = WordStylesGenerator.CheckRangeOfStylesForEmpties(WordStylesGenerator.GenerateWordStylesFromConfigurationNode(node, className, _propertyTable));
+				}
 				if (styleContent == null)
 					return className;
 				if (!styleContent.Any())
