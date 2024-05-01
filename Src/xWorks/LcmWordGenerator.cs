@@ -1107,7 +1107,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// Each entry starts a new paragraph, and any entry data added will usually be added within the same paragraph.
 			// The paragraph will end whenever a data type that cannot be in a paragraph is encounter (Tables or Pictures).
-			// A new 'continuation' paragraph will be started after the Table ot Picture if there is other data that still
+			// A new 'continuation' paragraph will be started after the Table or Picture if there is other data that still
 			// needs to be added to the entry.
 			// Create a new paragraph for the entry.
 			DocFragment wordDoc = ((WordFragmentWriter)writer).WordFragment;
