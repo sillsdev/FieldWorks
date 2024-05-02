@@ -32,6 +32,7 @@ namespace SIL.FieldWorks.XWorks
 		internal const string WritingSystemPrefix = "writingsystemprefix";
 		internal const string WritingSystemStyleName = "Writing System Abbreviation";
 		internal const string PictureAndCaptionTextframeStyle = "Image-Textframe-Style";
+		internal const string EntryStyleContinue = "-Continue";
 
 		public static Style GenerateLetterHeaderStyle(
 			ReadOnlyPropertyTable propertyTable, LcmStyleSheet mediatorStyleSheet)
@@ -86,7 +87,7 @@ namespace SIL.FieldWorks.XWorks
 			ConfigurableDictionaryNode node, ReadOnlyPropertyTable propertyTable)
 		{
 			return GenerateWordStyleFromLcmStyleSheet(styleName, wsId, node, propertyTable,
-				false);
+				false, true);
 		}
 
 		/// <summary>
@@ -100,10 +101,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="wsId">writing system id</param>
 		/// <param name="node">The configuration node to use for generating paragraph margin in context</param>
 		/// <param name="propertyTable">To retrieve styles</param>
+		/// <param name="allowFirstLineIndent">Indicates if the style returned should include FirstLineIndent.</param>
 		/// <returns></returns>
 		internal static Style GenerateWordStyleFromLcmStyleSheet(
 			string styleName, int wsId, ConfigurableDictionaryNode node,
-			ReadOnlyPropertyTable propertyTable, bool calculateFirstSenseStyle)
+			ReadOnlyPropertyTable propertyTable, bool calculateFirstSenseStyle, bool allowFirstLineIndent)
 		{
 			var styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			if (styleSheet == null || !styleSheet.Styles.Contains(styleName))
@@ -182,7 +184,10 @@ namespace SIL.FieldWorks.XWorks
 						hangingIndent = firstLineIndentValue;
 					}
 
-					parProps.Append(new Indentation() { FirstLine = firstLineIndentValue.ToString() });
+					if (allowFirstLineIndent)
+					{
+						parProps.Append(new Indentation() { FirstLine = firstLineIndentValue.ToString() });
+					}
 				}
 
 				if (exportStyleInfo.HasKeepWithNext)
@@ -579,6 +584,25 @@ namespace SIL.FieldWorks.XWorks
 			styleRules.Add(wsRule2);*/
 
 			return styleRules;
+		}
+
+		/// <summary>
+		/// Create the 'continuation' style for the entry, which is needed when an entry contains multiple paragraphs. This
+		/// style will be used for all but the first paragraph. It is the same as the style for the first paragraph except
+		/// that it does not contain the first line indenting.
+		/// </summary>
+		/// <returns>Returns the continuation style.</returns>
+		internal static Styles GenerateContinuationWordStyles(
+			ConfigurableDictionaryNode node, ReadOnlyPropertyTable propertyTable)
+		{
+			Style contStyle = GenerateWordStyleFromLcmStyleSheet(node.Style, DefaultStyle, node,
+				propertyTable, false, false);
+			contStyle.StyleName.Val = node.Style + EntryStyleContinue;
+			contStyle.StyleId = node.Style + EntryStyleContinue;
+
+			var retStyles = new Styles();
+			retStyles.AppendChild(contStyle.CloneNode(true));
+			return retStyles;
 		}
 
 		/// <summary>
