@@ -706,21 +706,15 @@ namespace SIL.FieldWorks.XWorks
 			// Add Before text, if it is not going to be displayed in it's own paragraph.
 			if (!displayEachInAParagraph && !string.IsNullOrEmpty(config.Before))
 			{
-				WP.Text txt = new WP.Text(config.Before);
-				txt.Space = SpaceProcessingModeValues.Preserve;
-				var beforeRun = new WP.Run(txt);
+				var beforeRun = CreateBeforeAfterBetweenRun(config.Before);
 				((DocFragment)elementContent).DocBody.PrependChild(beforeRun);
 			}
 
 			// Add After text, if it is not going to be displayed in it's own paragraph.
 			if (!displayEachInAParagraph && !string.IsNullOrEmpty(config.After))
 			{
-				WP.Text txt = new WP.Text(config.After);
-				txt.Space = SpaceProcessingModeValues.Preserve;
-				var afterRun = new WP.Run(txt);
+				var afterRun = CreateBeforeAfterBetweenRun(config.After);
 				((DocFragment)elementContent).DocBody.Append(afterRun);
-				// To be consistent with the xhtml output, only the after text uses the same style.
-				DocFragment.LinkStyleOrInheritParentStyle(elementContent, config);
 			}
 
 			return elementContent;
@@ -819,7 +813,8 @@ namespace SIL.FieldWorks.XWorks
 				!eachInAParagraph &&
 				!string.IsNullOrEmpty(config.Between))
 			{
-				((DocFragment)collData).Append(config.Between);
+				var betweenRun = CreateBeforeAfterBetweenRun(config.Between);
+				((DocFragment)collData).DocBody.Append(betweenRun);
 			}
 
 			collData.Append(content);
@@ -1301,18 +1296,14 @@ namespace SIL.FieldWorks.XWorks
 			// Add Before text for the sharedGramInfo.
 			if (!string.IsNullOrEmpty(config.Before))
 			{
-				WP.Text txt = new WP.Text(config.Before);
-				txt.Space = SpaceProcessingModeValues.Preserve;
-				var beforeRun = new WP.Run(txt);
+				var beforeRun = CreateBeforeAfterBetweenRun(config.Before);
 				((DocFragment)sharedGramInfo).DocBody.PrependChild(beforeRun);
 			}
 
 			// Add After text for the sharedGramInfo.
 			if (!string.IsNullOrEmpty(config.After))
 			{
-				WP.Text txt = new WP.Text(config.After);
-				txt.Space = SpaceProcessingModeValues.Preserve;
-				var afterRun = new WP.Run(txt);
+				var afterRun = CreateBeforeAfterBetweenRun(config.After);
 				((DocFragment)sharedGramInfo).DocBody.Append(afterRun);
 			}
 
@@ -1350,6 +1341,10 @@ namespace SIL.FieldWorks.XWorks
 			var letterHeaderStyle = WordStylesGenerator.GenerateLetterHeaderStyle(propertyTable, propStyleSheet);
 			if (letterHeaderStyle != null)
 				_styleSheet.Append(letterHeaderStyle);
+
+			var beforeAfterBetweenStyle = WordStylesGenerator.GenerateBeforeAfterBetweenStyle(propertyTable);
+			if (beforeAfterBetweenStyle != null)
+				_styleSheet.Append(beforeAfterBetweenStyle);
 
 			Styles defaultStyles = WordStylesGenerator.GetDefaultWordStyles(propertyTable, propStyleSheet, model);
 			if (defaultStyles != null)
@@ -1599,6 +1594,25 @@ namespace SIL.FieldWorks.XWorks
 				className = $"{classNameBase}-{++counter}";
 			}
 			return className;
+		}
+
+		/// <summary>
+		/// Creates a BeforeAfterBetween run using the text provided and using the BeforeAfterBetween style.
+		/// </summary>
+		/// <param name="text">Text for the run.</param>
+		/// <returns>The BeforeAfterBetween run.</returns>
+		private WP.Run CreateBeforeAfterBetweenRun(string text)
+		{
+			WP.Run run = new WP.Run();
+			WP.RunProperties runProps =
+				new WP.RunProperties(new RunStyle() { Val = WordStylesGenerator.BeforeAfterBetweenStyleName });
+			run.Append(runProps);
+
+			WP.Text txt = new WP.Text(text);
+			txt.Space = SpaceProcessingModeValues.Preserve;
+			run.Append(txt);
+
+			return run;
 		}
 	}
 }

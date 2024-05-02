@@ -40,6 +40,11 @@ namespace SIL.FieldWorks.XWorks
 			return GenerateWordStyleFromLcmStyleSheet(LetterHeadingStyleName, 0, propertyTable);
 		}
 
+		public static Style GenerateBeforeAfterBetweenStyle(ReadOnlyPropertyTable propertyTable)
+		{
+			return GenerateWordStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, 0, propertyTable);
+		}
+
 		public static Styles GetDefaultWordStyles(ReadOnlyPropertyTable propertyTable, LcmStyleSheet propStyleSheet, DictionaryConfigurationModel model)
 		{
 			var styles = new Styles();
