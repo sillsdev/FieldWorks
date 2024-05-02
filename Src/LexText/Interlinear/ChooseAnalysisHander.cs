@@ -25,6 +25,7 @@ namespace SIL.FieldWorks.IText
 	{
 		int m_hvoAnalysis; // The current 'analysis', may be wordform, analysis, gloss.
 		int m_hvoSrc; // the object (CmAnnotation? or SbWordform) we're analyzing.
+		AnalysisOccurrence m_occurrence;
 		bool m_fInitializing = false; // true to suppress AnalysisChosen while setting up combo.
 		LcmCache m_cache;
 		IComboList m_combo;
@@ -110,12 +111,13 @@ namespace SIL.FieldWorks.IText
 		/// <param name="hvoSrc"></param>
 		/// <param name="?"></param>
 		/// <param name="comboList"></param>
-		public ChooseAnalysisHandler(LcmCache cache, int hvoSrc, int hvoAnalysis, IComboList comboList)
+		public ChooseAnalysisHandler(LcmCache cache, int hvoSrc, int hvoAnalysis, AnalysisOccurrence occurrence, IComboList comboList)
 		{
 			m_combo = comboList;
 			m_cache = cache;
 			m_hvoSrc = hvoSrc;
 			m_hvoAnalysis = hvoAnalysis;
+			m_occurrence = occurrence;
 			m_combo.SelectedIndexChanged += new EventHandler(m_combo_SelectedIndexChanged);
 			m_combo.WritingSystemFactory = cache.LanguageWritingSystemFactoryAccessor;
 		}
@@ -280,7 +282,9 @@ namespace SIL.FieldWorks.IText
 			var wordform = m_owner.GetWordformOfAnalysis();
 
 			// Add the analyses, and recursively the other items.
-			foreach (var wa in wordform.AnalysesOC)
+			var guess_services = new AnalysisGuessServices(m_cache);
+			var sorted_analyses = guess_services.GetSortedAnalysisGuesses(wordform, m_occurrence, false);
+			foreach (var wa in sorted_analyses)
 			{
 				Opinions o = wa.GetAgentOpinion(
 					m_cache.LangProject.DefaultUserAgent);
@@ -307,7 +311,9 @@ namespace SIL.FieldWorks.IText
 		{
 			AddItem(wa,
 				MakeAnalysisStringRep(wa, m_cache, StyleSheet != null, (m_owner as SandboxBase).RawWordformWs), true);
-			foreach (var gloss in wa.MeaningsOC)
+			var guess_services = new AnalysisGuessServices(m_cache);
+			var sorted_glosses = guess_services.GetSortedGlossGuesses(wa, m_occurrence);
+			foreach (var gloss in sorted_glosses)
 			{
 				AddItem(gloss, MakeGlossStringRep(gloss, m_cache, StyleSheet != null), true);
 			}
