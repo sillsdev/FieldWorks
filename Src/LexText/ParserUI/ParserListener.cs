@@ -481,7 +481,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;	//we handled this.
 		}
 
-		public bool OnParseWordsInCurrentText(object argument)
+		public bool OnShowConflictsInCurrentText(object argument)
 		{
 			CheckDisposed();
 
@@ -489,11 +489,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				IStText text = CurrentText;
 				IEnumerable<IWfiWordform> wordforms = text.UniqueWordforms();
-				m_parserConnection.UpdateWordforms(wordforms, ParserPriority.Medium);
+				m_parserConnection.UpdateWordforms(wordforms, ParserPriority.Medium, true);
 			}
 
-			return true;	//we handled this.
+			return true;    //we handled this.
 		}
+
 		public bool OnParseAllWords(object argument)
 		{
 			CheckDisposed();
