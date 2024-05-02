@@ -96,10 +96,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			return this;
 		}
 
-		public void UpdateWordforms(IEnumerable<IWfiWordform> wordforms, ParserPriority priority, bool showConflicts = false)
+		public void UpdateWordforms(IEnumerable<IWfiWordform> wordforms, ParserPriority priority)
 		{
 			CheckDisposed();
-			m_scheduler.ScheduleWordformsForUpdate(wordforms, priority, showConflicts);
+			m_scheduler.ScheduleWordformsForUpdate(wordforms, priority);
 		}
 
 		public void UpdateWordform(IWfiWordform wordform, ParserPriority priority)

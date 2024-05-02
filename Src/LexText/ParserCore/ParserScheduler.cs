@@ -131,7 +131,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly int[] m_queueCounts = new int[5];
 		private volatile bool m_tryAWordDialogRunning;
 		private TaskReport m_TaskReport;
-		private Dictionary<IWfiWordform, bool> m_wordformProcessed = null;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -288,20 +287,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_thread.EnqueueWork(priority, new UpdateWordformWork(this, priority, wordform));
 		}
 
-		public void ScheduleWordformsForUpdate(IEnumerable<IWfiWordform> wordforms, ParserPriority priority, bool showConflicts)
+		public void ScheduleWordformsForUpdate(IEnumerable<IWfiWordform> wordforms, ParserPriority priority)
 		{
 			CheckDisposed();
 
-			m_wordformProcessed = null;
-			if (showConflicts)
-			{
-				// Keep track of which wordforms have been processed.
-				m_wordformProcessed = new Dictionary<IWfiWordform, bool>();
-				foreach (var wordform in wordforms)
-				{
-					m_wordformProcessed[wordform] = false;
-				}
-			}
 			foreach (var wordform in wordforms)
 				ScheduleOneWordformForUpdate(wordform, priority);
 		}
@@ -327,17 +316,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private void ParseFiler_WordformUpdated(object sender, WordformUpdatedEventArgs e)
 		{
 			DecrementQueueCount(e.Priority);
-			if (m_wordformProcessed != null && m_wordformProcessed.ContainsKey(e.Wordform))
-			{
-				m_wordformProcessed[e.Wordform] = true;
-				// See if we are done.
-				foreach (var key in m_wordformProcessed.Keys)
-				{
-					if (!m_wordformProcessed[key])
-						return;
-				}
-				// Display the wordforms in the Wordforms window.
-			}
 		}
 
 		/// <summary>

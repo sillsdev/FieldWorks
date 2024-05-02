@@ -17,8 +17,7 @@
 		<command id="CmdParseWordsInCurrentText" label="Parse Words in Te_xt" message="ParseWordsInCurrentText"/>
 		<command id="CmdClearSelectedWordParserAnalyses" label="Clear Current Parser _Analyses" message="ClearSelectedWordParserAnalyses"/>
 		<command id="CmdReInitializeParser" label="Re_load Grammar / Lexicon" message="ReInitParser" tooltip="Reloads data from the Grammar and Lexicon, so the parser uses your latest changes."/>
-        <command id="CmdShowConflictsInCurrentText" label="Show Conflicts in Text" message="ShowConflictsInCurrentText" tooltip="Parses text and shows conflicts between user approval and parser approval."/>
-        <command id="CmdImportWordSet" label="_Import Word Set..." message="ImportWordSet"/>
+		<command id="CmdImportWordSet" label="_Import Word Set..." message="ImportWordSet"/>
 		<command id="CmdChooseXAmpleParser" label="Default Parser (XAmple)" message="ChooseParser">
 			<parameters parser="XAmple"/>
 		</command>
@@ -277,11 +276,10 @@
 				<item command="CmdChooseXAmpleParser"/>
 				<item command="CmdChooseHCParser"/>
 			</menu>
-          <item command="CmdShowConflictsInCurrentText"/>
-          <item command="CmdEditParserParameters"/>
+	  <item command="CmdEditParserParameters"/>
 		</menu>
 		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menubar/*"/>
-    </menubar>
+	</menubar>
 	<!-- ********************************************************** -->
 	<!-- ************************ menuAddOn *********************** -->
 	<!-- ********************************************************** -->
