@@ -101,6 +101,7 @@ namespace SIL.FieldWorks.IText
 		internal const int ktagSegmentFree = -61;
 		internal const int ktagSegmentLit = -62;
 		internal const int ktagSegmentNote = -63;
+		internal const int ktagGuessedAnalysis = -64;
 		// flids for paragraph annotation sequences.
 		internal int ktagSegmentForms;
 
@@ -1821,6 +1822,8 @@ namespace SIL.FieldWorks.IText
 							bool isHumanGuess = m_this.Decorator.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) !=
 																			(int) AnalysisGuessServices.OpinionAgent.Parser;
 							m_this.SetGuessing(m_vwenv, isHumanGuess ? ApprovedGuessColor : MachineGuessColor);
+							// Let the exporter know that this is a guessed analysis.
+							m_vwenv.AddProp(ktagGuessedAnalysis, m_this, 0);
 						}
 						m_vwenv.AddObj(m_hvoDefault, m_this, kfragAnalysisMorphs);
 					}
@@ -1835,6 +1838,8 @@ namespace SIL.FieldWorks.IText
 						{
 							// Real analysis is just word, one we're displaying is a default
 							m_this.SetGuessing(m_vwenv);
+							// Let the exporter know that this is a guessed analysis.
+							m_vwenv.AddProp(ktagGuessedAnalysis, m_this, 0);
 						}
 						m_vwenv.AddObj(m_hvoWfiAnalysis, m_this, kfragAnalysisMorphs);
 					}
