@@ -32,11 +32,17 @@ namespace SIL.FieldWorks.XWorks
 		internal const string WritingSystemPrefix = "writingsystemprefix";
 		internal const string WritingSystemStyleName = "Writing System Abbreviation";
 		internal const string PictureAndCaptionTextframeStyle = "Image-Textframe-Style";
+		internal const string EntryStyleContinue = "-Continue";
 
 		public static Style GenerateLetterHeaderStyle(
 			ReadOnlyPropertyTable propertyTable, LcmStyleSheet mediatorStyleSheet)
 		{
 			return GenerateWordStyleFromLcmStyleSheet(LetterHeadingStyleName, 0, propertyTable);
+		}
+
+		public static Style GenerateBeforeAfterBetweenStyle(ReadOnlyPropertyTable propertyTable)
+		{
+			return GenerateWordStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, 0, propertyTable);
 		}
 
 		public static Styles GetDefaultWordStyles(ReadOnlyPropertyTable propertyTable, LcmStyleSheet propStyleSheet, DictionaryConfigurationModel model)
@@ -81,7 +87,7 @@ namespace SIL.FieldWorks.XWorks
 			ConfigurableDictionaryNode node, ReadOnlyPropertyTable propertyTable)
 		{
 			return GenerateWordStyleFromLcmStyleSheet(styleName, wsId, node, propertyTable,
-				false);
+				false, true);
 		}
 
 		/// <summary>
@@ -95,10 +101,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="wsId">writing system id</param>
 		/// <param name="node">The configuration node to use for generating paragraph margin in context</param>
 		/// <param name="propertyTable">To retrieve styles</param>
+		/// <param name="allowFirstLineIndent">Indicates if the style returned should include FirstLineIndent.</param>
 		/// <returns></returns>
 		internal static Style GenerateWordStyleFromLcmStyleSheet(
 			string styleName, int wsId, ConfigurableDictionaryNode node,
-			ReadOnlyPropertyTable propertyTable, bool calculateFirstSenseStyle)
+			ReadOnlyPropertyTable propertyTable, bool calculateFirstSenseStyle, bool allowFirstLineIndent)
 		{
 			var styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			if (styleSheet == null || !styleSheet.Styles.Contains(styleName))
@@ -177,7 +184,10 @@ namespace SIL.FieldWorks.XWorks
 						hangingIndent = firstLineIndentValue;
 					}
 
-					parProps.Append(new Indentation() { FirstLine = firstLineIndentValue.ToString() });
+					if (allowFirstLineIndent)
+					{
+						parProps.Append(new Indentation() { FirstLine = firstLineIndentValue.ToString() });
+					}
 				}
 
 				if (exportStyleInfo.HasKeepWithNext)
@@ -578,6 +588,25 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Create the 'continuation' style for the entry, which is needed when an entry contains multiple paragraphs. This
+		/// style will be used for all but the first paragraph. It is the same as the style for the first paragraph except
+		/// that it does not contain the first line indenting.
+		/// </summary>
+		/// <returns>Returns the continuation style.</returns>
+		internal static Styles GenerateContinuationWordStyles(
+			ConfigurableDictionaryNode node, ReadOnlyPropertyTable propertyTable)
+		{
+			Style contStyle = GenerateWordStyleFromLcmStyleSheet(node.Style, DefaultStyle, node,
+				propertyTable, false, false);
+			contStyle.StyleName.Val = node.Style + EntryStyleContinue;
+			contStyle.StyleId = node.Style + EntryStyleContinue;
+
+			var retStyles = new Styles();
+			retStyles.AppendChild(contStyle.CloneNode(true));
+			return retStyles;
+		}
+
+		/// <summary>
 		/// Builds the word styles for font info properties using the writing system overrides
 		/// </summary>
 		private static StyleRunProperties AddFontInfoWordStyles(BaseStyleInfo projectStyle, int wsId, LcmCache cache)
@@ -763,6 +792,47 @@ namespace SIL.FieldWorks.XWorks
 			var exportStyleInfo = new ExportStyleInfo(projectStyle);
 
 			return new AncestorIndents(parentNode, GetLeadingIndent(exportStyleInfo), GetHangingIndentIfAny(exportStyleInfo));
+		}
+
+		/// <summary>
+		/// Gets the indentation information for a Table.
+		/// </summary>
+		/// <param name="tableAlignment">Returns the table alignment.</param>
+		/// <returns>Returns the indentation value.</returns>
+		internal static int GetTableIndentInfo(ReadOnlyPropertyTable propertyTable, ConfigurableDictionaryNode config, ref TableRowAlignmentValues tableAlignment)
+		{
+			var style = config.Parent?.Style;
+			var styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
+			if (style == null || styleSheet == null || !styleSheet.Styles.Contains(style))
+			{
+				return 0;
+			}
+
+			var projectStyle = styleSheet.Styles[style];
+			var exportStyleInfo = new ExportStyleInfo(projectStyle);
+
+			// Get the indentation value.
+			int indentVal = 0;
+			var hangingIndent = 0.0f;
+			if (exportStyleInfo.HasFirstLineIndent)
+			{
+				var firstLineIndentValue = MilliPtToTwentiPt(exportStyleInfo.FirstLineIndent);
+				if (firstLineIndentValue < 0.0f)
+				{
+					hangingIndent = firstLineIndentValue;
+				}
+			}
+			if (exportStyleInfo.HasLeadingIndent || hangingIndent < 0.0f)
+			{
+				var leadingIndent = CalculateMarginLeft(exportStyleInfo, new AncestorIndents(0.0f, 0.0f), hangingIndent);
+				indentVal = (int)leadingIndent;
+			}
+
+			// Get the alignment direction.
+			tableAlignment = exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue ?
+				TableRowAlignmentValues.Right : TableRowAlignmentValues.Left;
+
+			return indentVal;
 		}
 
 		private static float CalculateMarginLeft(ExportStyleInfo exportStyleInfo, AncestorIndents ancestorIndents,
