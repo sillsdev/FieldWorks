@@ -143,21 +143,24 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			CheckDisposed();
 
-			int wordformHash = 0;
 			ITsString form = null;
 			int hvo = 0;
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
 			{
 				if (wordform.IsValidObject)
 				{
-					wordformHash = wordform.Checksum;
 					form = wordform.Form.VernacularDefaultWritingSystem;
 				}
 			}
 			// 'form' will now be null, if it could not find the wordform for whatever reason.
 			// uiCRCWordform will also now be 0, if 'form' is null.
 			if (form == null || string.IsNullOrEmpty(form.Text))
+			{
+				// Call ProcessParse anyway to let clients know that the parser finished.
+				ParseResult parseResult = new ParseResult(string.Format(ParserCoreStrings.ksHCInvalidWordform, "", 0, "", ""));
+				m_parseFiler.ProcessParse(wordform, priority, parseResult);
 				return false;
+			}
 
 			CheckNeedsUpdate();
 			ParseResult result = m_parser.ParseWord(
@@ -178,9 +181,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						.Normalize(sLower.Replace(' ', '.')));
 				}
 			}
-
-			if (wordformHash == result.GetHashCode())
-				return false;
 
 			return m_parseFiler.ProcessParse(wordform, priority, result);
 		}
