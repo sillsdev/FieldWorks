@@ -373,7 +373,6 @@ namespace SIL.FieldWorks.XWorks
 							//selectors.AddRange(GenerateWordStylesForWritingSystems(baseSelection + " span", configNode.Style, propertyTable));
 						}
 
-						//rule.StyleId = styleName;
 						if (configNode.Style != null)
 							rule.StyleId = configNode.Style;
 						rules.AppendChild(rule.CloneNode(true));
@@ -439,7 +438,8 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
 				Style wsCharStyle = GetOnlyCharacterStyle(GenerateWordStyleFromLcmStyleSheet(styleName, aws.Handle, propertyTable));
-				wsCharStyle.StyleId = selector + String.Format("[lang=\'{0}\']", aws.LanguageTag);
+				wsCharStyle.StyleId = selector + GetWsString(aws.LanguageTag);
+				wsCharStyle.StyleName = new StyleName() { Val = wsCharStyle.StyleId };
 
 				styleRules.Append(wsCharStyle);
 			}
@@ -457,16 +457,17 @@ namespace SIL.FieldWorks.XWorks
 				// if the writing system isn't a magic name just use it otherwise find the right one from the magic list
 				var wsIdString = possiblyMagic == 0 ? ws.Id : WritingSystemServices.GetWritingSystemList(cache, possiblyMagic, true).First().Id;
 				var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(wsIdString);
-				var wsString = String.Format("[lang=\'{0}\']", wsIdString).Trim('.');
+				var wsString = GetWsString(wsIdString).Trim('.');
 
 				var wsStyle = new Style();
 
 				if (!string.IsNullOrEmpty(configNode.Style))
 					wsStyle = GenerateWordStyleFromLcmStyleSheet(configNode.Style, wsId, propertyTable);
 
-				//style should be based on the span for the current ws as well as the style info for the current node that is independent from the ws
+				// Any given style can only be based on one style.
+				// This style should be based on the span for the current ws;
+				// style info for the current node (independent of WS) should be added during creation of this style.
 				wsStyle.Append(new BasedOn() { Val = "span" + wsString });
-				wsStyle.Append(new BasedOn() { Val = configNode.Style });
 
 				wsStyle.StyleId = configNode.Style + wsString;
 				wsStyle.StyleName = new StyleName(){ Val = wsStyle.StyleId };
@@ -631,10 +632,10 @@ namespace SIL.FieldWorks.XWorks
 
 			if (fontName != null)
 			{
-				// TODO: test with a named font set in FLex
-				// Roman is the openxml font family option for serif font
-				var fontFamily = new Font(){Name = fontName, FontFamily = new FontFamily(){Val = FontFamilyValues.Roman}};
-				charDefaults.Append(fontFamily);
+				// Note: if desired, multiple fonts can be used for different text types in a single run
+				// by separately specifying font names to use for ASCII, High ANSI, Complex Script, and East Asian content.
+				var font = new RunFonts(){Ascii = fontName};
+				charDefaults.Append(font);
 			}
 
 			// For the following additions, wsFontInfo is a publicly accessible InheritableStyleProp value if set (ie. m_fontSize, m_bold, etc.).
@@ -747,6 +748,11 @@ namespace SIL.FieldWorks.XWorks
 			//TODO: handle remaining font features including from ws or default,
 
 			return charDefaults;
+		}
+
+		public static string GetWsString(string wsId)
+		{
+			return String.Format("[lang=\'{0}\']", wsId);
 		}
 
 		/// <summary>
