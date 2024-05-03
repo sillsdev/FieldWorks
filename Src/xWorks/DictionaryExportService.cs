@@ -99,10 +99,15 @@ namespace SIL.FieldWorks.XWorks
 				configuration = configuration ?? new DictionaryConfigurationModel(
 					DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "ReversalIndex"), m_cache);
 				var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, ReversalType);
+
+				// Don't export empty reversals
+				if (entriesToSave.Length == 0)
+					return;
+
 				if (progress != null)
 				  progress.Maximum = entriesToSave.Length;
 
-				string reversalFilePath = filePath.Split(new string[] { ".docx"}, StringSplitOptions.None)[0] + "-" + reversalWs + ".docx";
+				string reversalFilePath = filePath.Split(new string[] { ".docx"}, StringSplitOptions.None)[0] + "-reversal-" + reversalWs + ".docx";
 
 				LcmWordGenerator.SavePublishedDocx(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, reversalFilePath, progress);
 			}
