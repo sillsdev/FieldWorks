@@ -56,6 +56,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private FormWindowState m_prevWindowState;
 		private ParserConnection m_parserConnection;
 		private Timer m_timer;
+		private Dictionary<IWfiWordform, bool> m_wordformProcessed = null;
 
 		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
@@ -181,7 +182,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Don't bother if the lexicon is empty.  See FWNX-1019.
 				if (m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().Count == 0)
 					return false;
-				m_parserConnection = new ParserConnection(m_cache, m_mediator.IdleQueue);
+				m_parserConnection = new ParserConnection(m_cache, m_mediator.IdleQueue, WordformUpdatedEventHandler);
 			}
 			StartProgressUpdateTimer();
 			return true;
@@ -481,18 +482,68 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;	//we handled this.
 		}
 
-		public bool OnShowConflictsInCurrentText(object argument)
+		public bool OnParseWordsInCurrentText(object argument)
 		{
 			CheckDisposed();
 
-			if (ConnectToParser())
+			if (CurrentText != null && ConnectToParser())
 			{
 				IStText text = CurrentText;
 				IEnumerable<IWfiWordform> wordforms = text.UniqueWordforms();
-				m_parserConnection.UpdateWordforms(wordforms, ParserPriority.Medium, true);
+				m_parserConnection.UpdateWordforms(wordforms, ParserPriority.Medium);
 			}
 
 			return true;    //we handled this.
+		}
+
+		public bool OnCheckParserOnCurrentText(object argument)
+		{
+			CheckDisposed();
+
+			if (CurrentText != null && ConnectToParser())
+			{
+				IStText text = CurrentText;
+				IEnumerable<IWfiWordform> wordforms = text.UniqueWordforms();
+				InitWordformProcessed(wordforms);
+				m_parserConnection.UpdateWordforms(wordforms, ParserPriority.Medium);
+			}
+
+			return true;    //we handled this.
+		}
+
+		private void InitWordformProcessed(IEnumerable<IWfiWordform> wordforms)
+		{
+			if (wordforms == null)
+			{
+				m_wordformProcessed = null;
+			}
+			else
+			{
+				m_wordformProcessed = new Dictionary<IWfiWordform, bool>();
+				foreach (var wordform in wordforms)
+				{
+					m_wordformProcessed[wordform] = false;
+				}
+
+			}
+		}
+
+		private void WordformUpdatedEventHandler(object sender, WordformUpdatedEventArgs e)
+		{
+			if (m_wordformProcessed != null && m_wordformProcessed.ContainsKey(e.Wordform))
+			{
+				m_wordformProcessed[e.Wordform] = true;
+				// See whether all of the wordforms have been processed.
+				foreach (var key in m_wordformProcessed.Keys)
+				{
+					if (!m_wordformProcessed[key])
+						return;
+				}
+				// Show the conflicts.
+				FwLinkArgs link = new FwAppArgs(m_cache.ProjectId.Handle, "Analyses", Guid.Empty);
+				m_mediator.PostMessage("FollowLink", link);
+
+			}
 		}
 
 		public bool OnParseAllWords(object argument)

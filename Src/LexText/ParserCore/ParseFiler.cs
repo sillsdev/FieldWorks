@@ -151,6 +151,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						FireWordformUpdated(work.Wordform, work.Priority);
 						continue;
 					}
+					if (work.Wordform.Checksum == work.ParseResult.GetHashCode())
+					{
+						// Nothing changed, but clients might like to know anyway.
+						FireWordformUpdated(work.Wordform, work.Priority);
+						continue;
+					}
 					string form = work.Wordform.Form.BestVernacularAlternative.Text;
 					using (new TaskReport(String.Format(ParserCoreStrings.ksUpdateX, form), m_taskUpdateHandler))
 					{
