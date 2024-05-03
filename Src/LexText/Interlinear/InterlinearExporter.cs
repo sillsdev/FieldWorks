@@ -33,6 +33,7 @@ namespace SIL.FieldWorks.IText
 		bool m_fDoingInterlinName = false; // true during MSA
 		bool m_fDoingGlossPrepend = false; // true after special AddProp
 		bool m_fDoingGlossAppend = false; // true after special AddProp
+		bool m_fDoingGuessedAnalysis = false; // true after special AddProp
 		string m_sPendingPrefix; // got a prefix, need the ws from the form itself before we write it.
 		string m_sFreeAnnotationType;
 		ITsString m_tssPendingHomographNumber;
@@ -388,6 +389,11 @@ namespace SIL.FieldWorks.IText
 
 		public override void AddProp(int tag, IVwViewConstructor vc, int frag)
 		{
+			if (tag == InterlinVc.ktagGuessedAnalysis)
+			{
+				m_fDoingGuessedAnalysis = true;
+				return;
+			}
 			if (tag == InterlinVc.ktagGlossPrepend)
 			{
 				m_fDoingGlossPrepend = true;
@@ -602,10 +608,16 @@ namespace SIL.FieldWorks.IText
 					break;
 				case InterlinVc.kfragMorphBundle:
 					m_writer.WriteStartElement("morphemes");
+					if (m_fDoingGuessedAnalysis)
+					{
+						m_writer.WriteAttributeString("analysisStatus", "guess");
+					}
 					break;
 				default:
 					break;
 			}
+			// Clear here instead of above just to make sure it gets cleared.
+			m_fDoingGuessedAnalysis = false;
 			base.AddObjVecItems (tag, vc, frag);
 			switch(frag)
 			{
