@@ -18,10 +18,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// </summary>
 	public class WordformUpdatedEventArgs : EventArgs
 	{
-		public WordformUpdatedEventArgs(IWfiWordform wordform, ParserPriority priority)
+		public WordformUpdatedEventArgs(IWfiWordform wordform, ParserPriority priority, ParseResult parseResult = null)
 		{
 			Wordform = wordform;
 			Priority = priority;
+			ParseResult = parseResult;
 		}
 
 		public IWfiWordform Wordform
@@ -30,6 +31,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		public ParserPriority Priority
+		{
+			get; private set;
+		}
+
+		public ParseResult ParseResult
 		{
 			get; private set;
 		}
@@ -148,13 +154,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					if (!work.IsValid)
 					{
 						// the wordform or the candidate analyses are no longer valid, so just skip this parse
-						FireWordformUpdated(work.Wordform, work.Priority);
+						FireWordformUpdated(work.Wordform, work.Priority, work.ParseResult);
 						continue;
 					}
 					if (work.Wordform.Checksum == work.ParseResult.GetHashCode())
 					{
 						// Nothing changed, but clients might like to know anyway.
-						FireWordformUpdated(work.Wordform, work.Priority);
+						FireWordformUpdated(work.Wordform, work.Priority, work.ParseResult);
 						continue;
 					}
 					string form = work.Wordform.Form.BestVernacularAlternative.Text;
@@ -192,16 +198,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						work.Wordform.Checksum = work.ParseResult.GetHashCode();
 					}
 					// notify all listeners that the wordform has been updated
-					FireWordformUpdated(work.Wordform, work.Priority);
+					FireWordformUpdated(work.Wordform, work.Priority, work.ParseResult);
 				}
 			});
 			return true;
 		}
 
-		private void FireWordformUpdated(IWfiWordform wordform, ParserPriority priority)
+		private void FireWordformUpdated(IWfiWordform wordform, ParserPriority priority, ParseResult parseResult)
 		{
 			if (WordformUpdated != null)
-				WordformUpdated(this, new WordformUpdatedEventArgs(wordform, priority));
+				WordformUpdated(this, new WordformUpdatedEventArgs(wordform, priority, parseResult));
 		}
 
 		/// <summary>
