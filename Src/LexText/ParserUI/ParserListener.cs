@@ -29,6 +29,7 @@ using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using XCore;
 using Gecko.WebIDL;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -57,7 +58,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		private FormWindowState m_prevWindowState;
 		private ParserConnection m_parserConnection;
 		private Timer m_timer;
-		private Dictionary<IWfiWordform, bool> m_wordformProcessed = null;
+		// Keep track of parse results as we parse wordforms.
+		private Dictionary<IWfiWordform, ParseResult> m_activeParseResults = null;
+		private int m_activeParseResultsCount = 0;
+		private bool m_showConflicts = false;
 
 		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
@@ -113,6 +117,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		public Dictionary<IWfiWordform, ParseResult> ParseResults
+		{
+			get; private set;
+		}
+
 		/// <summary>
 		/// Send the newly selected wordform on to the parser.
 		/// </summary>
@@ -125,7 +134,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				var wordform = m_propertyTable.GetValue<ICmObject>(propertyName) as IWfiWordform;
 				if (wordform != null)
 				{
-					m_parserConnection.UpdateWordform(wordform, ParserPriority.High);
+					UpdateWordform(wordform, ParserPriority.High);
 				}
 			}
 		}
@@ -140,7 +149,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_parserConnection != null && tag == WfiWordformTags.kflidForm)
 			{
 				// the form of this WfiWordform was changed, so update its parse info.
-				m_parserConnection.UpdateWordform(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetObject(hvo), ParserPriority.High);
+				UpdateWordform(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetObject(hvo), ParserPriority.High);
 			}
 		}
 
@@ -466,7 +475,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (ConnectToParser())
 			{
 				IWfiWordform wf = CurrentWordform;
-				m_parserConnection.UpdateWordform(wf, ParserPriority.High);
+				UpdateWordform(wf, ParserPriority.High);
 			}
 
 			return true;	//we handled this.
@@ -491,7 +500,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				IStText text = CurrentText;
 				IEnumerable<IWfiWordform> wordforms = text.UniqueWordforms();
-				m_parserConnection.UpdateWordforms(wordforms, ParserPriority.Medium);
+				UpdateWordforms(wordforms, ParserPriority.Medium);
 			}
 
 			return true;    //we handled this.
@@ -509,25 +518,41 @@ namespace SIL.FieldWorks.LexText.Controls
 				var interestingTextsList = InterestingTextsDecorator.GetInterestingTextList(m_mediator, m_propertyTable, m_cache.ServiceLocator);
 				interestingTextsList.SetInterestingTexts(texts);
 				IEnumerable<IWfiWordform> wordforms = text.UniqueWordforms();
-				InitWordformProcessed(wordforms);
-				m_parserConnection.UpdateWordforms(wordforms, ParserPriority.Medium);
+				UpdateWordforms(wordforms, ParserPriority.Medium, true);
 			}
 
 			return true;    //we handled this.
 		}
 
-		private void InitWordformProcessed(IEnumerable<IWfiWordform> wordforms)
+		private void UpdateWordforms(IEnumerable<IWfiWordform> wordforms, ParserPriority priority, bool showConflicts = false)
 		{
+			m_showConflicts = showConflicts;
+			InitActiveParseResults(wordforms);
+			m_parserConnection.UpdateWordforms(wordforms, priority);
+		}
+
+		private void UpdateWordform(IWfiWordform wordform, ParserPriority priority)
+		{
+			m_showConflicts = false;
+			InitActiveParseResults(null);
+			m_parserConnection.UpdateWordform(wordform, priority);
+		}
+
+		private void InitActiveParseResults(IEnumerable<IWfiWordform> wordforms)
+		{
+			// Initialize m_activeParseResults with the given wordforms.
 			if (wordforms == null)
 			{
-				m_wordformProcessed = null;
+				m_activeParseResults = null;
+				m_activeParseResultsCount = 0;
 			}
 			else
 			{
-				m_wordformProcessed = new Dictionary<IWfiWordform, bool>();
+				m_activeParseResults = new Dictionary<IWfiWordform, ParseResult>();
+				m_activeParseResultsCount = 0;
 				foreach (var wordform in wordforms)
 				{
-					m_wordformProcessed[wordform] = false;
+					m_activeParseResults[wordform] = null;
 				}
 
 			}
@@ -535,22 +560,31 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void WordformUpdatedEventHandler(object sender, WordformUpdatedEventArgs e)
 		{
-			if (m_wordformProcessed != null && m_wordformProcessed.ContainsKey(e.Wordform))
+			if (m_activeParseResults != null && m_activeParseResults.ContainsKey(e.Wordform))
 			{
-				m_wordformProcessed[e.Wordform] = true;
-				// See whether all of the wordforms have been processed.
-				foreach (var key in m_wordformProcessed.Keys)
+				// Record the parse result.
+				m_activeParseResults[e.Wordform] = e.ParseResult;
+				m_activeParseResultsCount++;
+				// Verify that all of the wordforms have been processed.
+				if (m_activeParseResultsCount < m_activeParseResults.Count())
+					return;
+				foreach (var key in m_activeParseResults.Keys)
 				{
-					if (!m_wordformProcessed[key])
+					if (m_activeParseResults[key] == null)
 						return;
 				}
+				// Save the parse results for clients.
+				ParseResults = m_activeParseResults;
+				m_activeParseResults = null;
+				if (!m_showConflicts)
+					return;
 				// Show the conflicts.
 				FwLinkArgs link = new FwAppArgs(m_cache.ProjectId.Handle, "Analyses", Guid.Empty);
 				List<Property> additionalProps = link.PropertyTableEntries;
 				additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 				additionalProps.Add(new Property("LinkSetupInfo", "ReviewConflictingOpinions"));
 				m_mediator.PostMessage("FollowLink", link);
-
+				m_showConflicts = false;
 			}
 		}
 
@@ -558,7 +592,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 			if (ConnectToParser())
-				m_parserConnection.UpdateWordforms(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances(), ParserPriority.Low);
+			{
+				IEnumerable<IWfiWordform> wordforms = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances();
+				UpdateWordforms(wordforms, ParserPriority.Low);
+			}
 
 			return true;	//we handled this.
 		}
@@ -655,7 +692,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 			if (ConnectToParser())
-				m_parserConnection.UpdateWordforms(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances(), ParserPriority.Low);
+			{
+				IEnumerable<IWfiWordform> wordforms = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances();
+				UpdateWordforms(wordforms, ParserPriority.Low);
+			}
 			return true;	//we handled this.
 		}
 
