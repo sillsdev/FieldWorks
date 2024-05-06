@@ -28,6 +28,7 @@ using SIL.FieldWorks.WordWorks.Parser;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using XCore;
+using Gecko.WebIDL;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -503,6 +504,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (CurrentText != null && ConnectToParser())
 			{
 				IStText text = CurrentText;
+				List<IStText> texts = new List<IStText>();
+				texts.Add(text);
+				var interestingTextsList = InterestingTextsDecorator.GetInterestingTextList(m_mediator, m_propertyTable, m_cache.ServiceLocator);
+				interestingTextsList.SetInterestingTexts(texts);
 				IEnumerable<IWfiWordform> wordforms = text.UniqueWordforms();
 				InitWordformProcessed(wordforms);
 				m_parserConnection.UpdateWordforms(wordforms, ParserPriority.Medium);
@@ -541,6 +546,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 				// Show the conflicts.
 				FwLinkArgs link = new FwAppArgs(m_cache.ProjectId.Handle, "Analyses", Guid.Empty);
+				List<Property> additionalProps = link.PropertyTableEntries;
+				additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
+				additionalProps.Add(new Property("LinkSetupInfo", "ReviewConflictingOpinions"));
 				m_mediator.PostMessage("FollowLink", link);
 
 			}
