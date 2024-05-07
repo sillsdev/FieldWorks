@@ -145,7 +145,13 @@ namespace SIL.FieldWorks.XWorks
 						// alignment is always a paragraph property
 						parProps.Append(alignmentStyle);
 				}
-				if (exportStyleInfo.HasBorder)
+
+				// TODO:
+				// The code below works to handle borders for the word export.
+				// However, borders do not currently display in FLEx, and once a border has been added in FLEx,
+				// deselecting the border does not actually remove it from the styles object in FLEx.
+				// Until this is fixed, it is better not to display borders in the word export.
+				/*if (exportStyleInfo.HasBorder)
 				{
 					// create borders to add to the paragraph properties
 					ParagraphBorders border = new ParagraphBorders();
@@ -173,7 +179,8 @@ namespace SIL.FieldWorks.XWorks
 					border.Append(BottomBorder);
 					parProps.Append(border);
 
-				}
+				}*/
+
 				if (exportStyleInfo.HasFirstLineIndent)
 				{
 					// Handles both first-line and hanging indent, hanging-indent will result in a negative text-indent value
