@@ -144,7 +144,6 @@ namespace SIL.FieldWorks.IText
 		private InterlinLineChoices m_lineChoices;
 		protected IVwStylesheet m_stylesheet;
 		private IParaDataLoader m_loader;
-		private readonly HashSet<int> m_vernWss; // all vernacular writing systems
 		private readonly int m_selfFlid;
 
 		private int m_leftPadding;
@@ -184,8 +183,7 @@ namespace SIL.FieldWorks.IText
 			m_tssEmptyPara = TsStringUtils.MakeString(ITextStrings.ksEmptyPara, m_wsAnalysis);
 			m_tssSpace = TsStringUtils.MakeString(" ", m_wsAnalysis);
 			m_msaVc = new MoMorphSynAnalysisUi.MsaVc(m_cache);
-			m_vernWss = WritingSystemServices.GetAllWritingSystems(m_cache, "all vernacular",
-				null, 0, 0);
+
 			// This usually gets overridden, but ensures default behavior if not.
 			m_lineChoices = InterlinLineChoices.DefaultChoices(m_cache.LangProject,
 				WritingSystemServices.kwsVernInParagraph, WritingSystemServices.kwsAnal);
@@ -227,7 +225,8 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		internal bool CanBeAnalyzed(AnalysisOccurrence occurrence)
 		{
-			return !(occurrence.Analysis is IPunctuationForm) && m_vernWss.Contains(occurrence.BaselineWs);
+			return !(occurrence.Analysis is IPunctuationForm) &&
+				WritingSystemServices.GetAllWritingSystems(m_cache, "all vernacular", null, 0, 0).Contains(occurrence.BaselineWs);
 		}
 
 		internal IVwStylesheet StyleSheet
