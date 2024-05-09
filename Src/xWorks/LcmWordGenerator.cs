@@ -341,9 +341,12 @@ namespace SIL.FieldWorks.XWorks
 					{
 						if (opt.IsEnabled)
 						{
-							if (opt.Id == "vernacular" || opt.Id == "all vernacular")
+							// If it's magic then don't return a language tag specific style.
+							var possiblyMagic = WritingSystemServices.GetMagicWsIdFromName(opt.Id);
+							if (possiblyMagic != 0)
+							{
 								return styleName;
-
+							}
 							// else, the DictionaryNodeOption Id specifies a particular writing system
 							// if there is no base style, return just the ws style
 							if (styleName == null)
@@ -468,12 +471,12 @@ namespace SIL.FieldWorks.XWorks
 				if (forceNewParagraph)
 				{
 					// When forcing a new paragraph use a 'continuation' style for the new paragraph.
-					// The continuation style is based on the style used in the last paragraph.
+					// The continuation style is based on the style used in the first paragraph.
 					string style = null;
-					WP.Paragraph lastParagraph = DocBody.OfType<WP.Paragraph>().LastOrDefault();
-					if (lastParagraph != null)
+					WP.Paragraph firstParagraph = DocBody.OfType<WP.Paragraph>().FirstOrDefault();
+					if (firstParagraph != null)
 					{
-						WP.ParagraphProperties paraProps = lastParagraph.OfType<WP.ParagraphProperties>().FirstOrDefault();
+						WP.ParagraphProperties paraProps = firstParagraph.OfType<WP.ParagraphProperties>().FirstOrDefault();
 						if (paraProps != null)
 						{
 							ParagraphStyleId styleId = paraProps.OfType<WP.ParagraphStyleId>().FirstOrDefault();
@@ -1206,14 +1209,16 @@ namespace SIL.FieldWorks.XWorks
 								{
 									if (pieceHasImage)
 									{
-										wordWriter.WordFragment.AppendToParagraph(frag, new Run(), true);
+										wordWriter.WordFragment.GetNewParagraph();
+										wordWriter.WordFragment.AppendToParagraph(frag, new Run(), false);
 									}
 
 									// We have now added at least one image from this piece.
 									pieceHasImage = true;
 								}
 
-								wordWriter.WordFragment.AppendToParagraph(frag, run, wordWriter.ForceNewParagraph);
+								wordWriter.WordFragment.GetNewParagraph();
+								wordWriter.WordFragment.AppendToParagraph(frag, run, false);
 								wordWriter.WordFragment.LinkParaStyle(WordStylesGenerator.PictureAndCaptionTextframeStyle);
 							}
 

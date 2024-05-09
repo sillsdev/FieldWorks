@@ -351,7 +351,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BIRDInterlinearImporter.cs" />
-    <Compile Include="ChooseAnalysisHander.cs">
+    <Compile Include="ChooseAnalysisHandler.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ChooseTextWritingSystemDlg.cs">
