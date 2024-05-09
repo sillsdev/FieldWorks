@@ -1537,15 +1537,10 @@ namespace SIL.FieldWorks.Common.RootSites
 					newPos.Y = 0;
 				}
 
-				if (Platform.IsMono)
-				{
-					if (AllowPainting == true) // FWNX-235
-						AutoScrollPosition = newPos;
-					else
-						cachedAutoScrollPosition = newPos;
-				}
-				else
+				if (!Platform.IsMono || AllowPainting) // FWNX-235
 					AutoScrollPosition = newPos;
+				else
+					cachedAutoScrollPosition = newPos;
 			}
 		}
 
