@@ -341,9 +341,12 @@ namespace SIL.FieldWorks.XWorks
 					{
 						if (opt.IsEnabled)
 						{
-							if (opt.Id == "vernacular" || opt.Id == "all vernacular")
+							// If it's magic then don't return a language tag specific style.
+							var possiblyMagic = WritingSystemServices.GetMagicWsIdFromName(opt.Id);
+							if (possiblyMagic != 0)
+							{
 								return styleName;
-
+							}
 							// else, the DictionaryNodeOption Id specifies a particular writing system
 							// if there is no base style, return just the ws style
 							if (styleName == null)
