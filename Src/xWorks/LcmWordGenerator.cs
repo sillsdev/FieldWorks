@@ -451,7 +451,7 @@ namespace SIL.FieldWorks.XWorks
 			/// <summary>
 			/// Append a table to the doc fragment.
 			/// </summary>
-			public void Append(WP.Table table)
+			public void AppendTable(WP.Table table)
 			{
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
 				this.DocBody.AppendChild(table.CloneNode(true));
@@ -739,19 +739,19 @@ namespace SIL.FieldWorks.XWorks
 			// Use the style name and type of the config node or its parent to link a style to the elementContent fragment where the processed contents are written.
 			DocFragment.LinkStyleOrInheritParentStyle(elementContent, config);
 
-			bool displayEachInAParagraph = config != null &&
-										   config.DictionaryNodeOptions is IParaOption &&
-										   ((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph;
+			bool eachOnANewLine = config != null &&
+								  config.DictionaryNodeOptions is IParaOption &&
+								  ((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph;
 
-			// Add Before text, if it is not going to be displayed in it's own paragraph.
-			if (!displayEachInAParagraph && !string.IsNullOrEmpty(config.Before))
+			// Add Before text, if it is not going to be displayed on it's own line.
+			if (!eachOnANewLine && !string.IsNullOrEmpty(config.Before))
 			{
 				var beforeRun = CreateBeforeAfterBetweenRun(config.Before);
 				((DocFragment)elementContent).DocBody.PrependChild(beforeRun);
 			}
 
-			// Add After text, if it is not going to be displayed in it's own paragraph.
-			if (!displayEachInAParagraph && !string.IsNullOrEmpty(config.After))
+			// Add After text, if it is not going to be displayed on it's own line.
+			if (!eachOnANewLine && !string.IsNullOrEmpty(config.After))
 			{
 				var afterRun = CreateBeforeAfterBetweenRun(config.After);
 				((DocFragment)elementContent).DocBody.Append(afterRun);
@@ -776,13 +776,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var senseData = new DocFragment();
 			var senseNode = (DictionaryNodeSenseOptions)config?.DictionaryNodeOptions;
-			bool eachInAParagraph = false;
+			bool eachOnANewLine = false;
 			bool firstSenseInline = false;
 			string afterNumber = null;
 			string beforeNumber = null;
 			if (senseNode != null)
 			{
-				eachInAParagraph = senseNode.DisplayEachSenseInAParagraph;
+				eachOnANewLine = senseNode.DisplayEachSenseInAParagraph;
 				firstSenseInline = senseNode.DisplayFirstSenseInline;
 				afterNumber = senseNode.AfterNumber;
 				beforeNumber = senseNode.BeforeNumber;
@@ -790,7 +790,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// We want a break before the first sense item, between items, and after the last item.
 			// So, only add a break before the content if it is the first sense and it's not displayed in-line.
-			if (eachInAParagraph && first && !firstSenseInline)
+			if (eachOnANewLine && first && !firstSenseInline)
 			{
 				senseData.AppendBreak();
 			}
@@ -811,7 +811,7 @@ namespace SIL.FieldWorks.XWorks
 
 			senseData.Append(senseContent);
 
-			if (eachInAParagraph)
+			if (eachOnANewLine)
 			{
 				senseData.AppendBreak();
 			}
@@ -830,12 +830,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			var collData = CreateFragment();
-			bool eachInAParagraph = false;
+			bool eachOnANewLine = false;
 			if (config != null &&
 				config.DictionaryNodeOptions is IParaOption &&
 				((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph)
 			{
-				eachInAParagraph = true;
+				eachOnANewLine = true;
 
 				// We want a break before the first collection item, between items, and after the last item.
 				// So, only add a break before the content if it is the first.
@@ -845,12 +845,12 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			// Add Between text, if it is not going to be displayed in it's own paragraph
+			// Add Between text, if it is not going to be displayed on it's own line
 			// and it is not the first item in the collection.
 			if (!first &&
 				config != null &&
 				config.DictionaryNodeOptions is IParaOption &&
-				!eachInAParagraph &&
+				!eachOnANewLine &&
 				!string.IsNullOrEmpty(config.Between))
 			{
 				var betweenRun = CreateBeforeAfterBetweenRun(config.Between);
@@ -859,7 +859,7 @@ namespace SIL.FieldWorks.XWorks
 
 			collData.Append(content);
 
-			if (eachInAParagraph)
+			if (eachOnANewLine)
 			{
 				collData.AppendBreak();
 			}
@@ -1232,7 +1232,7 @@ namespace SIL.FieldWorks.XWorks
 							break;
 
 						case WP.Table table:
-							wordWriter.WordFragment.Append(table);
+							wordWriter.WordFragment.AppendTable(table);
 
 							// Start a new paragraph with the next run to maintain the correct position of the table.
 							wordWriter.ForceNewParagraph = true;
