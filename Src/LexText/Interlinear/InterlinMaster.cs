@@ -1326,6 +1326,7 @@ namespace SIL.FieldWorks.IText
 			ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
+			// Can display add words to lexicon panel bar button
 			display.Visible = display.Enabled = InterlinearTab == TabPageSelection.Gloss;
 			return true;
 		}
@@ -1347,6 +1348,7 @@ namespace SIL.FieldWorks.IText
 			ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
+			// Can display add words to lexicon panel bar button
 			display.Visible = display.Enabled = InterlinearTab == TabPageSelection.Info;
 			return true;
 		}
