@@ -511,7 +511,6 @@ namespace SIL.FieldWorks.IText
 			// (another case of toolbar processing being done at an unexpected time)
 			display.Enabled = m_tabCtrl.SelectedIndex == ktpsRawText ?
 				m_rtPane?.LexiconLookupEnabled() ?? false : false;
-			
 			return true;
 		}
 
@@ -593,7 +592,6 @@ namespace SIL.FieldWorks.IText
 
 						m_infoPane.Enabled = m_infoPane.CurrentRootHvo != 0;
 						m_infoPane.BackColor = m_infoPane.Enabled ? SystemColors.Control : Color.White;
-						
 						if (m_infoPane.Enabled && ParentForm == Form.ActiveForm)
 							m_infoPane.Focus();
 						break;
@@ -716,7 +714,6 @@ namespace SIL.FieldWorks.IText
 			// title/contents stuff.
 			if (fHideTitlePane)
 				m_tcPane.Visible = false;
-			
 			m_fSuppressAutoCreate = XmlUtils.GetBooleanAttributeValue(configurationParameters,
 				"suppressAutoCreate");
 
