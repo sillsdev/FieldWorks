@@ -41,6 +41,13 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		RecordClerk m_clerk;
 
+		private string m_currentTool = "";
+
+		public string CurrentTool
+		{
+			get { return m_currentTool; }
+		}
+
 		public RawTextPane() : base(null)
 		{
 			BackColor = Color.FromKnownColor(KnownColor.Window);
@@ -157,6 +164,8 @@ namespace SIL.FieldWorks.IText
 				return m_rootObj;
 			}
 		}
+
+
 
 		internal int LastFoundAnnotationHvo
 		{
@@ -652,7 +661,21 @@ namespace SIL.FieldWorks.IText
 		public void SelectBookmark(IStTextBookmark bookmark)
 		{
 			CheckDisposed();
-			MakeTextSelectionAndScrollToView(bookmark.BeginCharOffset, bookmark.EndCharOffset, 0, bookmark.IndexOfParagraph);
+			if (CanFocus)
+				MakeTextSelectionAndScrollToView(bookmark.BeginCharOffset, bookmark.EndCharOffset, 0, bookmark.IndexOfParagraph);
+			else
+				VisibleChanged += RawTextPane_VisibleChanged;
+		}
+
+		private void RawTextPane_VisibleChanged(object sender, EventArgs e)
+		{
+			if (CanFocus)
+			{
+				var bookmark = InterlinMaster.m_bookmarks[new Tuple<string, Guid>(CurrentTool, RootObject.Guid)];
+				MakeTextSelectionAndScrollToView(bookmark.BeginCharOffset, bookmark.EndCharOffset, 0, bookmark.IndexOfParagraph);
+
+				VisibleChanged -= RawTextPane_VisibleChanged;
+			} 
 		}
 
 		#endregion
@@ -891,6 +914,7 @@ namespace SIL.FieldWorks.IText
 			m_configurationParameters = configurationParameters;
 			m_clerk = ToolConfiguration.FindClerk(m_propertyTable, m_configurationParameters);
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			m_currentTool = configurationParameters.Attributes["clerk"].Value;
 		}
 	}
 
