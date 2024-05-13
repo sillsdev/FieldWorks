@@ -1057,15 +1057,14 @@ namespace SIL.FieldWorks.IText
 					// (When a lowercase wordform changes, it affects the best guess of its uppercase versions.)
 					var form = wordform.Form.VernacularDefaultWritingSystem;
 					var cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(form.get_WritingSystemAt(0)));
-					foreach (IWfiWordform wordform2 in uniqueWordforms)
+					foreach (IWfiWordform ucWordform in uniqueWordforms)
 					{
-						var form2 = wordform2.Form.VernacularDefaultWritingSystem;
-						if (form2 != form && form2 != null && !string.IsNullOrEmpty(form2.Text))
+						var ucForm = ucWordform.Form.VernacularDefaultWritingSystem;
+						if (ucForm != form && ucForm != null && !string.IsNullOrEmpty(ucForm.Text))
 						{
-							string sLower = cf.ToLower(form2.Text);
-							if (sLower == form.Text)
+							if (cf.ToLower(ucForm.Text) == form.Text)
 							{
-								m_wordformsToUpdate.Add(wordform2);
+								m_wordformsToUpdate.Add(ucWordform);
 								m_mediator.IdleQueue.Add(IdleQueuePriority.High, PostponedUpdateWordforms);
 							}
 						}
