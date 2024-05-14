@@ -460,20 +460,25 @@ namespace SIL.FieldWorks.XWorks
 			var cache = propertyTable.GetValue<LcmCache>("cache");
 			foreach (var ws in wsOptions.Options.Where(opt => opt.IsEnabled))
 			{
-				var possiblyMagic = WritingSystemServices.GetMagicWsIdFromName(ws.Id);
-				// if the writing system isn't a magic name just use it otherwise find the right one from the magic list
-				var wsIdString = possiblyMagic == 0 ? ws.Id : WritingSystemServices.GetWritingSystemList(cache, possiblyMagic, true).First().Id;
-				var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(wsIdString);
-				var wsString = GetWsString(wsIdString).Trim('.');
-
 				var wsStyle = new Style();
 
+				// If it's magic then don't add a specific style for the language tag.
+				var possiblyMagic = WritingSystemServices.GetMagicWsIdFromName(ws.Id);
+				if (possiblyMagic != 0)
+				{
+					return wsStyle;
+				}
+
 				if (!string.IsNullOrEmpty(configNode.Style))
+				{
+					var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(ws.Id);
 					wsStyle = GenerateWordStyleFromLcmStyleSheet(configNode.Style, wsId, propertyTable);
+				}
 
 				// Any given style can only be based on one style.
 				// This style should be based on the span for the current ws;
 				// style info for the current node (independent of WS) should be added during creation of this style.
+				var wsString = GetWsString(ws.Id).Trim('.');
 				wsStyle.Append(new BasedOn() { Val = "span" + wsString });
 
 				wsStyle.StyleId = configNode.Style + wsString;
