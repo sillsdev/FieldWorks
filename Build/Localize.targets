@@ -69,7 +69,7 @@
 	<Target Name="downloadTranslatedFiles" Condition="'$(disableDownloads)'!='true'" DependsOnTargets="InstallOvercrowdin">
 		<ForceDelete Files="$(L10nsDirectory)"/>
 		<MakeDir Directories="$(DownloadsDir)"/>
-		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin download -v -r2 -f $(CrowdinZip)" ContinueOnError="$(OnFailedCrowdinDownload)"/>
+		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin download -v -f $(CrowdinZip)" ContinueOnError="$(OnFailedCrowdinDownload)"/>
 		<Unzip ZipFilename="$(CrowdinZip)" ToDir="$(L10nsDirectory)"/>
 		<NormalizeLocales L10nsDirectory="$(L10nsDirectory)"/>
 		<ItemGroup>
