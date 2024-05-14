@@ -458,6 +458,16 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			/// <summary>
+			/// Append a paragraph to the doc fragment.
+			/// </summary>
+			public void AppendParagraph(WP.Paragraph para)
+			{
+				// Deep clone the run b/c of its tree of properties and to maintain styles.
+				this.DocBody.AppendChild(para.CloneNode(true));
+			}
+
+
+			/// <summary>
 			/// Appends a new run inside the last paragraph of the doc fragment--creates a new paragraph if none
 			/// exists or if forceNewParagraph is true.
 			/// The run will be added to the end of the paragraph.
@@ -766,12 +776,71 @@ namespace SIL.FieldWorks.XWorks
 		public IFragment GenerateGroupingNode(object field, string className, ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, ConfiguredLcmGenerator.GeneratorSettings settings,
 			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, IFragment> childContentGenerator)
 		{
-			//TODO: handle grouping nodes
-			//IFragment docfrag = new DocFragment(...);
-			//LinkStyleOrInheritParentStyle(docfrag, config);
-			//return docfrag;
-			return null;
+			var groupData = new DocFragment();
+			WP.Paragraph groupPara = null;
+			bool eachOnANewLine = config != null &&
+								  config.DictionaryNodeOptions is DictionaryNodeGroupingOptions &&
+								  ((DictionaryNodeGroupingOptions)(config.DictionaryNodeOptions)).DisplayEachInAParagraph;
+
+			// If the group is displayed on a new line then the group needs it's own paragraph, so
+			// the group style can be applied to the entire paragraph (applied to all of the runs
+			// contained in it).
+			if (eachOnANewLine)
+			{
+				groupPara = new WP.Paragraph();
+			}
+
+			// Add Before text, if it is not going to be displayed on it's own line.
+			if (!eachOnANewLine && !string.IsNullOrEmpty(config.Before))
+			{
+				var beforeRun = CreateBeforeAfterBetweenRun(config.Before);
+				groupData.DocBody.PrependChild(beforeRun);
+			}
+
+			// Add the group data.
+			foreach (var child in config.ReferencedOrDirectChildren)
+			{
+				IFragment childContent = childContentGenerator(field, child, publicationDecorator, settings);
+				if (eachOnANewLine)
+				{
+					var elements = ((DocFragment)childContent).DocBody.Elements().ToList();
+					foreach (OpenXmlElement elem in elements)
+					{
+						// Deep clone the run b/c of its tree of properties and to maintain styles.
+						groupPara.AppendChild(groupData.CloneRun(childContent, elem));
+					}
+				}
+				else
+				{
+					groupData.Append(childContent);
+				}
+			}
+
+			// Add After text, if it is not going to be displayed on it's own line.
+			if (!eachOnANewLine && !string.IsNullOrEmpty(config.After))
+			{
+				var afterRun = CreateBeforeAfterBetweenRun(config.After);
+				groupData.DocBody.Append(afterRun);
+			}
+
+			// Don't add an empty paragraph to the groupData fragment.
+			if (groupPara != null && groupPara.HasChildren)
+			{
+				// Add the group style.
+				if (!string.IsNullOrEmpty(config.Style))
+				{
+					WP.ParagraphProperties paragraphProps =
+						new WP.ParagraphProperties(new ParagraphStyleId() { Val = config.Style });
+					groupPara.PrependChild(paragraphProps);
+
+					AddStyles(config, false);
+				}
+				groupData.DocBody.AppendChild(groupPara);
+			}
+
+			return groupData;
 		}
+
 		public IFragment AddSenseData(IFragment senseNumberSpan, Guid ownerGuid, ConfigurableDictionaryNode config, IFragment senseContent, bool first)
 		{
 			var senseData = new DocFragment();
@@ -1238,6 +1307,13 @@ namespace SIL.FieldWorks.XWorks
 							wordWriter.ForceNewParagraph = true;
 							break;
 
+						case WP.Paragraph para:
+							wordWriter.WordFragment.AppendParagraph(para);
+
+							// Start a new paragraph with the next run so that it uses the correct style.
+							wordWriter.ForceNewParagraph = true;
+
+							break;
 						default:
 							throw new Exception("Unexpected element type on DocBody: " + elem.GetType().ToString());
 
