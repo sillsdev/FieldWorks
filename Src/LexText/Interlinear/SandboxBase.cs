@@ -1662,8 +1662,31 @@ namespace SIL.FieldWorks.IText
 				// to prevent using data that does not exist anymore
 				if(!Cache.ServiceLocator.IsValidObjectId(hvoDefault))
 					hvoDefault = 0;
+				if (hvoDefault != 0 && m_fSetWordformInProgress)
+				{
+					// Verify that the guess includes the wordform set by the user.
+					// (The guesser may have guessed a lowercase wordform for an uppercase occurrence.)
+					// If it doesn't include the wordform, set hvoDefault to 0.
+					var obj = m_caches.MainCache.ServiceLocator.GetObject(hvoDefault);
+					IWfiWordform guessWf = null;
+					switch (obj.ClassID)
+					{
+						case WfiAnalysisTags.kClassId:
+							guessWf = ((IWfiAnalysis)obj).Wordform;
+							break;
+						case WfiGlossTags.kClassId:
+							guessWf = ((IWfiGloss)obj).Wordform;
+							break;
+						case WfiWordformTags.kClassId:
+							guessWf = (IWfiWordform)obj;
+							break;
+					}
+					if (guessWf != null && guessWf != wordform)
+						hvoDefault = 0;
+				}
+
 			}
-			else
+			if (hvoDefault == 0)
 			{
 				// Try to establish a default based on the wordform itself.
 				int ws = wordform.Cache.DefaultVernWs;
