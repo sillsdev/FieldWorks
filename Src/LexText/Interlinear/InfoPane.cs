@@ -134,15 +134,12 @@ namespace SIL.FieldWorks.IText
 			if (IsDisposed)
 				return;
 
-			if( disposing )
+			if (disposing)
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+				components?.Dispose();
 			}
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#endregion // Constructors, destructors, and suchlike methods.
@@ -155,14 +152,14 @@ namespace SIL.FieldWorks.IText
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InfoPane));
-			this.SuspendLayout();
+			SuspendLayout();
 			//
 			// InfoPane
 			//
-			this.Name = "InfoPane";
+			Name = "InfoPane";
 			resources.ApplyResources(this, "$this");
-			this.Load += new System.EventHandler(this.InfoPane_Load);
-			this.ResumeLayout(false);
+			Load += new EventHandler(InfoPane_Load);
+			ResumeLayout(false);
 
 		}
 		#endregion
@@ -203,22 +200,19 @@ namespace SIL.FieldWorks.IText
 					if (m_info != null && m_info.CurrentRootHvo == 0)
 						return;
 					//Debug.Assert(m_info.CurrentRootHvo == root.Hvo);
-					ICmObject showObj = root;
-					ICmObject stText;
-					if (root.ClassID == CmBaseAnnotationTags.kClassId)	// RecordClerk is tracking the annotation
-					{
-						// This pane, as well as knowing how to work with a record list of Texts, knows
-						// how to work with one of CmBaseAnnotations, that is, a list of occurrences of
-						// a word.
-						var cba = (ICmBaseAnnotation) root;
-						ICmObject cmoPara = cba.BeginObjectRA;
-						stText = cmoPara.Owner;
-						showObj = stText;
-					}
-					else
-					{
-						stText = root;
-					}
+
+					bool isRecordClerkTracking = root.ClassID == CmBaseAnnotationTags.kClassId; // RecordClerk is tracking the annotation
+
+					// This pane, as well as knowing how to work with a record list of Texts, knows
+					// how to work with one of CmBaseAnnotations, that is, a list of occurrences of
+					// a word.
+					ICmObject stText = isRecordClerkTracking ?
+						((ICmBaseAnnotation)root).BeginObjectRA.Owner :
+						root;
+					ICmObject showObj = isRecordClerkTracking ?
+						stText :
+						root;
+
 					if (stText.OwningFlid == TextTags.kflidContents)
 						showObj = stText.Owner;
 					base.ShowObject(showObj, layoutName, layoutChoiceField, showObj, suppressFocusChange);

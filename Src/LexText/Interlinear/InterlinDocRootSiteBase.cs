@@ -115,10 +115,7 @@ namespace SIL.FieldWorks.IText
 
 		public bool OnDisplayExportInterlinear(object commandObject, ref UIItemDisplayProperties display)
 		{
-			if (m_hvoRoot != 0)
-				display.Enabled = true;
-			else
-				display.Enabled = false;
+			display.Enabled = m_hvoRoot != 0 ? true : false;
 			display.Visible = true;
 			return true;
 		}
@@ -289,12 +286,9 @@ namespace SIL.FieldWorks.IText
 
 		internal virtual AnalysisOccurrence OccurrenceContainingSelection()
 		{
-			if (m_rootb == null)
-				return null;
-
 			// This works fine for non-Sandbox panes,
 			// Sandbox panes' selection may be in the Sandbox.
-			var sel = m_rootb.Selection;
+			var sel = m_rootb?.Selection;
 			return sel == null ? null : GetAnalysisFromSelection(sel);
 		}
 

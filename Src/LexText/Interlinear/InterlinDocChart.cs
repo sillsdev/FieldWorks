@@ -21,13 +21,13 @@ namespace SIL.FieldWorks.IText
 
 		private void InitializeComponent()
 		{
-			this.SuspendLayout();
+			SuspendLayout();
 			//
 			// InterlinDocChart
 			//
-			this.AccessibleName = "Interlinear Document Chart";
-			this.Name = "InterlinDocChart";
-			this.ResumeLayout(false);
+			AccessibleName = "Interlinear Document Chart";
+			Name = "InterlinDocChart";
+			ResumeLayout(false);
 		}
 
 		public InterlinDocChart()

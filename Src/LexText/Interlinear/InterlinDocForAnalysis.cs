@@ -60,9 +60,8 @@ namespace SIL.FieldWorks.IText
 			if (CanDeleteNote(e.Selection, out hvoNote))
 			{
 				if (menu.Items.Count > 0)
-				{
 					menu.Items.Add(new ToolStripSeparator());
-				}
+
 				// Add the delete item.
 				string sMenuText = ITextStrings.ksDeleteNote;
 				ToolStripMenuItem item = new ToolStripMenuItem(sMenuText);
@@ -233,13 +232,9 @@ namespace SIL.FieldWorks.IText
 				if (ParentForm == Form.ActiveForm)
 				{
 					if (ExistingFocusBox.CanFocus)
-					{
 						ExistingFocusBox.Focus(); // important when switching tabs with ctrl-tab.
-					}
 					else
-					{
 						VisibleChanged += FocusWhenVisible;
-					}
 				}
 				return;
 			}
@@ -285,9 +280,7 @@ namespace SIL.FieldWorks.IText
 		{
 			// This can happen, though it is rare...see LT-8193.
 			if (!target.IsValid)
-			{
 				return;
-			}
 			if (IsFocusBoxInstalled)
 				FocusBox.UpdateRealFromSandbox(null, fSaveGuess);
 			TryHideFocusBoxAndUninstall();
@@ -510,16 +503,14 @@ namespace SIL.FieldWorks.IText
 				{   // try the first (last) segment in the next (previous) paragraph
 					int nextParaIndex = delta + currentPara.IndexInOwner;
 					nextSeg = null;
-					IStTxtPara nextPara = null;
 					if (0 <= nextParaIndex && nextParaIndex < currentText.ParagraphsOS.Count)
 					{   // try to find this paragraph's first (last) segment
 						currentPara = (IStTxtPara)currentText.ParagraphsOS[nextParaIndex];
 						nextSegIndex = upward ? currentPara.SegmentsOS.Count - 1 : 0;
 					}
 					else
-					{	// no more paragraphs in this text
+						// no more paragraphs in this text
 						break;
-					}
 				}
 				realAnalysis = FindRealAnalysisInSegment(nextSeg, !upward);
 			} while (nextSeg == null || (realAnalysis == null && !HasVisibleTranslationOrNote(nextSeg, lines)));
@@ -558,19 +549,19 @@ namespace SIL.FieldWorks.IText
 			Debug.Assert(lines != null, "Interlinear line configurations not enumerable 2");
 			var annotations = lines.SkipWhile(line => line.WordLevel);
 			int tryAnnotationIndex = lines.Count() - annotations.Count();
-			if (annotations.Count() > 0)
-			{   // We want to select at the start of this translation or note if it is not a null note.
-				bool isaNote = annotations.First().Flid == InterlinLineChoices.kflidNote;
-				if (isaNote && segment.NotesOS.Count == 0)
-				{   // this note is not visible - skip to the next non-note translation or note
-					var otherAnnotations = annotations.SkipWhile(line => line.Flid == InterlinLineChoices.kflidNote);
-					tryAnnotationIndex = lines.Count() - otherAnnotations.Count();
-					if (otherAnnotations.Count() == 0)
-						tryAnnotationIndex = -1; // no more translations or notes, go to an analysis in the next segment.
-				}
-			}
-			else // no translations or notes to go to
-				tryAnnotationIndex = -1;
+			// We want to select at the start of this translation or note if it is not a null note.
+			bool isaNote = annotations.Count() > 0 && annotations.First().Flid == InterlinLineChoices.kflidNote;
+			bool isNoteNotVisible = isaNote && segment.NotesOS.Count == 0;
+
+			// If this note is not visible - skip to the next non-note translation or note
+			var otherAnnotations = isNoteNotVisible ?
+				annotations.SkipWhile(line => line.Flid == InterlinLineChoices.kflidNote) :
+				null;
+
+			tryAnnotationIndex = isNoteNotVisible && otherAnnotations?.Count() != 0 ?
+				(lines.Count() - otherAnnotations?.Count()) ?? -1 :
+				-1; // no translations or notes to go to
+
 			int tryAnnotationFlid = 0;
 			ws = -1;
 			if (tryAnnotationIndex > -1)
@@ -628,7 +619,7 @@ namespace SIL.FieldWorks.IText
 
 		/// <summary>
 		/// Return the first non-null translation or note selection in the specified segment.
-		/// The segment does not need to be the current occurance.
+		/// The segment does not need to be the current occurence.
 		/// </summary>
 		/// <param name="segment">A valid segment.</param>
 		/// <returns>The selection or null if there is no real translation or note.</returns>
@@ -669,14 +660,10 @@ namespace SIL.FieldWorks.IText
 		{
 			var noteLevel = new SelLevInfo();
 			noteLevel.ihvo = 0;
-			if (tagTextProp == NoteTags.kflidContent)
-			{
-				noteLevel.tag = SegmentTags.kflidNotes;
-			}
-			else
-			{
-				noteLevel.tag = Cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
-			}
+			noteLevel.tag = tagTextProp == NoteTags.kflidContent ?
+				SegmentTags.kflidNotes :
+				Cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
+
 			return noteLevel;
 		}
 
@@ -819,7 +806,7 @@ namespace SIL.FieldWorks.IText
 			switch (name)
 			{
 				case ksPropertyAddWordsToLexicon:
-					if (this.LineChoices != null)
+					if (LineChoices != null)
 					{
 						// whenever we change this mode, we may also
 						// need to show the proper line choice labels, so put the lineChoices in the right mode.
@@ -827,12 +814,12 @@ namespace SIL.FieldWorks.IText
 						if (LineChoices.Mode != newMode)
 						{
 							var saved = SelectedOccurrence;
-							this.TryHideFocusBoxAndUninstall();
-							this.LineChoices.Mode = newMode;
+							TryHideFocusBoxAndUninstall();
+							LineChoices.Mode = newMode;
 							// the following reconstruct will destroy any valid selection (e.g. in Free line).
 							// is there anyway to do a less drastic refresh (e.g. via PropChanged?)
 							// that properly adjusts things?
-							this.RefreshDisplay();
+							RefreshDisplay();
 							if (saved != null)
 								TriggerAnnotationSelected(saved, false);
 						}
@@ -865,7 +852,8 @@ namespace SIL.FieldWorks.IText
 				if (hvoAnchor != 0)
 				{
 					ICmObject coAnchor = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoAnchor);
-					if ((coAnchor is ISegment && (tsi.TagAnchor == SegmentTags.kflidFreeTranslation || tsi.TagAnchor == SegmentTags.kflidLiteralTranslation))
+					if ((coAnchor is ISegment &&
+						(tsi.TagAnchor == SegmentTags.kflidFreeTranslation || tsi.TagAnchor == SegmentTags.kflidLiteralTranslation))
 						|| (coAnchor is INote && tsi.TagAnchor == NoteTags.kflidContent))
 					{
 						// we are in a segment-level annotation.
@@ -896,10 +884,10 @@ namespace SIL.FieldWorks.IText
 				switch (change)
 				{   // might need to change the key event so the base method will handle it right.
 					case ArrowChange.Down:
-						e2 = new System.Windows.Forms.KeyEventArgs(Keys.Down);
+						e2 = new KeyEventArgs(Keys.Down);
 						break;
 					case ArrowChange.Up:
-						e2 = new System.Windows.Forms.KeyEventArgs(Keys.Up);
+						e2 = new KeyEventArgs(Keys.Up);
 						break;
 					case ArrowChange.None:
 						e2 = e;
@@ -993,7 +981,6 @@ namespace SIL.FieldWorks.IText
 				}
 				if (isUpMove)
 				{   // Need to move up to a real analysis in the same segment
-					IAnalysis nextAnalysis = null;
 					int index = 0;
 					foreach (var an in curSeg.AnalysesRS.Reverse())
 					{	// need to count because an.IndexInOwner == 0 for all an - go figure
@@ -1505,9 +1492,7 @@ namespace SIL.FieldWorks.IText
 				else
 				{
 					if (analysis is IWfiGloss)
-					{
 						insert = ((IWfiGloss)analysis).Form.get_String(ws);
-					}
 					else if (analysis is IWfiAnalysis || analysis is IWfiWordform)
 					{
 						// check if we have a guess cached with a gloss. (LT-9973)
@@ -1520,9 +1505,7 @@ namespace SIL.FieldWorks.IText
 						}
 					}
 					else
-					{
 						continue;
-					}
 					if (bldr.Length > 0 && insert != null && insert.Length > 0 && !fOpenPunc)
 						bldr.ReplaceTsString(bldr.Length, bldr.Length, space);
 					fOpenPunc = false;
@@ -1596,7 +1579,7 @@ namespace SIL.FieldWorks.IText
 					&& freeAnn != null)
 				{
 					var helper = SelectionHelper.GetSelectionInfo(tsi.Selection, this);
-					int wsField = 0;
+					int wsField;
 					if (tsi.TssAnchor != null && tsi.TssAnchor.Length > 0)
 						wsField = TsStringUtils.GetWsAtOffset(tsi.TssAnchor, 0);
 					else
@@ -1700,7 +1683,7 @@ namespace SIL.FieldWorks.IText
 					helper.AssocPrev = !helper.AssocPrev;
 					try
 					{
-						var newSel = helper.MakeRangeSelection(this.RootBox, false);
+						var newSel = helper.MakeRangeSelection(RootBox, false);
 						helper = SelectionHelper.Create(newSel, this);
 						flid = helper.GetTextPropId(SelectionHelper.SelLimitType.Anchor);
 					}
@@ -1726,15 +1709,10 @@ namespace SIL.FieldWorks.IText
 						handlerExtensions.DoAtEndOfPropChanged(handlerExtensions_PropChangedCompleted);
 					}
 					else
-					{
-						// No undo task to tag on the end of, so do it now.
-						SetupTranslationPrompt(helper, flid);
-					}
+						SetupTranslationPrompt(helper, flid); // No undo task to tag on the end of, so do it now.
 				}
 				else if (flid != kTagUserPrompt)
-				{
 					Vc.SetActiveFreeform(0, 0, 0, 0); // clear any current prompt.
-				}
 				// do not extend the selection for a user prompt if the user is currently entering an IME composition,
 				// since we are about to switch the prompt to a real comment field
 				else if (helper.GetTextPropId(SelectionHelper.SelLimitType.End) == SimpleRootSite.kTagUserPrompt
@@ -1805,7 +1783,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		public bool IsFocusBoxInstalled
 		{
-			get { return ExistingFocusBox != null && this.Controls.Contains(FocusBox); }
+			get { return ExistingFocusBox != null && Controls.Contains(FocusBox); }
 		}
 
 		/// <summary>
@@ -1872,10 +1850,7 @@ namespace SIL.FieldWorks.IText
 		internal override bool TryHideFocusBoxAndUninstall()
 		{
 			if (Vc == null)
-			{
-				// we're pretty well hidden already if we don't have a view
-				return false;
-			}
+				return false; // we're pretty well hidden already if we don't have a view
 			if (!IsFocusBoxInstalled)
 			{
 				SelectedOccurrence = null;
@@ -1884,18 +1859,18 @@ namespace SIL.FieldWorks.IText
 			var oldAnnotation = SelectedOccurrence;
 			SelectedOccurrence = null;
 			SimulateReplaceAnalysis(oldAnnotation);
-			bool fFocus = this.Focused || ExistingFocusBox.ContainsFocus;
+			bool fFocus = Focused || ExistingFocusBox.ContainsFocus;
 			FocusBox.SizeChanged -= FocusBox_SizeChanged;
 			ExistingFocusBox.SuspendLayout();
 			ExistingFocusBox.Visible = false;
-			this.SuspendLayout();
-			this.Controls.Remove(ExistingFocusBox);
-			this.ResumeLayout();
+			SuspendLayout();
+			Controls.Remove(ExistingFocusBox);
+			ResumeLayout();
 			ExistingFocusBox.ResumeLayout();
 			// hiding the ExistingFocusBox can sometimes leave the focus on one of its controls,
 			// believe it or not!  (See FWR-3188.)
-			if (fFocus && !this.Focused)
-				this.Focus();
+			if (fFocus && !Focused)
+				Focus();
 			return true;
 		}
 
@@ -2032,12 +2007,9 @@ namespace SIL.FieldWorks.IText
 
 		public override void OriginalWndProc(ref Message msg)
 		{
-			if (Platform.IsMono)
-			{
+			if (Platform.IsMono && msg.Msg == (int)Win32.WinMsgs.WM_LBUTTONDOWN)
 				// When handling a left mouse button down event, save the original scroll position.
-				if (msg.Msg == (int)Win32.WinMsgs.WM_LBUTTONDOWN)
-					m_ptScrollPos = AutoScrollPosition;
-			}
+				m_ptScrollPos = AutoScrollPosition;
 			base.OriginalWndProc(ref msg);
 		}
 
@@ -2102,7 +2074,7 @@ namespace SIL.FieldWorks.IText
 				//a translation prompt.
 				vwselNew.Install();
 				//scroll the current selection into view (don't use vwselNew, it might be invalid now)
-				ScrollSelectionIntoView(this.RootBox.Selection, VwScrollSelOpts.kssoDefault);
+				ScrollSelectionIntoView(RootBox.Selection, VwScrollSelOpts.kssoDefault);
 				return true;
 			}
 
@@ -2286,9 +2258,7 @@ namespace SIL.FieldWorks.IText
 
 			var sandbox = FocusBox.InterlinWordControl as Sandbox;
 			if (sandbox == null)
-			{
 				throw new Exception("Not expecting sandbox to ever be null.");
-			}
 
 			var navigator = new SegmentServices.StTextAnnotationNavigator(SelectedOccurrence);
 
@@ -2415,13 +2385,11 @@ namespace SIL.FieldWorks.IText
 			if (RootSite.RootBox.IsCompositionInProgress)
 				return tssVal;
 
+			// User typed something (return?) which didn't actually put any text over the prompt.
+			// No good replacing it because we'll just get the prompt string back and won't be
+			// able to make our new selection.
 			if (tssVal.Length == 0)
-			{
-				// User typed something (return?) which didn't actually put any text over the prompt.
-				// No good replacing it because we'll just get the prompt string back and won't be
-				// able to make our new selection.
 				return tssVal;
-			}
 
 			// Get information about current selection
 			var helper = SelectionHelper.Create(vwsel, RootSite);
