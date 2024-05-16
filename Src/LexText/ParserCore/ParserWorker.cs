@@ -140,7 +140,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		public bool UpdateWordform(IWfiWordform wordform, ParserPriority priority)
+		public bool UpdateWordform(IWfiWordform wordform, ParserPriority priority, bool checkParser = false)
 		{
 			CheckDisposed();
 
@@ -159,14 +159,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				// Call ProcessParse anyway to let clients know that the parser finished.
 				ParseResult parseResult = new ParseResult(string.Format(ParserCoreStrings.ksHCInvalidWordform, "", 0, "", ""));
-				m_parseFiler.ProcessParse(wordform, priority, parseResult);
+				m_parseFiler.ProcessParse(wordform, priority, parseResult, checkParser);
 				return false;
 			}
 
 			CheckNeedsUpdate();
+			var stopWatch = System.Diagnostics.Stopwatch.StartNew();
 			ParseResult result = m_parser.ParseWord(
 				CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD)
 				.Normalize(form.Text.Replace(' ', '.')));
+			stopWatch.Stop();
+			result.ParseTime = stopWatch.ElapsedMilliseconds;
 
 			// Try parsing the lowercase word if it is different from the original word.
 			// Do this even if the uppercase word parsed successfully.
@@ -181,19 +184,22 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				// Only parse the lowercase version if it exists.
 				if (m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(text, out lcWordform))
 				{
+					stopWatch.Start();
 					var lcResult = m_parser.ParseWord(
 						CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD)
 						.Normalize(sLower.Replace(' ', '.')));
+					stopWatch.Stop();
+					lcResult.ParseTime = stopWatch.ElapsedMilliseconds;
 					if (lcResult.Analyses.Count > 0 && lcResult.ErrorMessage == null)
 					{
-						m_parseFiler.ProcessParse(lcWordform, priority, lcResult);
-						m_parseFiler.ProcessParse(wordform, priority, result);
+						m_parseFiler.ProcessParse(lcWordform, priority, lcResult, checkParser);
+						m_parseFiler.ProcessParse(wordform, priority, result, checkParser);
 						return true;
 					}
 				}
 			}
 
-			return m_parseFiler.ProcessParse(wordform, priority, result);
+			return m_parseFiler.ProcessParse(wordform, priority, result, checkParser);
 		}
 
 		private void CheckNeedsUpdate()
