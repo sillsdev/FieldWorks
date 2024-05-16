@@ -814,9 +814,8 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Calculate the left margin.
-		/// Note that for Word Styles the left margin value is not going to later on be combined with its
-		/// ancestors left margin value, so no adjustment needs to be made at this point to compensate
-		/// for the ancestors margin value.
+		/// Note that in Word Styles the left margin is not combined with its ancestor so
+		/// no adjustment is necessary.
 		/// </summary>
 		private static float CalculateMarginLeft(ExportStyleInfo exportStyleInfo, float hangingIndent)
 		{
