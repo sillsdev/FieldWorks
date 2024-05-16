@@ -2796,7 +2796,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return null;
 			m_propertyTable.RemoveProperty("LinkSetupInfo");
 			if (linkSetupInfo != "TeReviewUndecidedSpelling" && linkSetupInfo != "TeCorrectSpelling" &&
-				linkSetupInfo != "FilterAnthroItems" && linkSetupInfo != "ReviewConflictingOpinions")
+				linkSetupInfo != "FilterAnthroItems")
 				return null; // Only setting we know as yet.
 
 			List<XmlNode> possibleColumns = m_xbv.Vc.ComputePossibleColumns();
@@ -2852,24 +2852,10 @@ namespace SIL.FieldWorks.Common.Controls
 				ListChoiceFilter filterListChoice = new ColumnSpecFilter(m_cache, ListMatchOptions.Any, chosenHvos, colSpec);
 				filterListChoice.MakeUserVisible(true);
 				return filterListChoice;
-			} else if (linkSetupInfo == "ReviewConflictingOpinions")
-			{
-				XmlNode colSpec = XmlViewsUtils.FindNodeWithAttrVal(possibleColumns, "label", "Conflicting Opinions");
-				if (colSpec == null)
-					return null;
-
-				FilterBarCellFilter conflictFilter = MakeFilter(possibleColumns, "Conflicting Opinions",
-																new RangeIntMatcher(1, Int32.MaxValue));
-				FilterBarCellFilter occurrenceFilter = MakeFilter(possibleColumns, "Number in Corpus",
-																  new RangeIntMatcher(1, Int32.MaxValue));
-				AndFilter andFilter = new AndFilter();
-				andFilter.Add(conflictFilter);
-				andFilter.Add(occurrenceFilter);
-				return andFilter;
 			}
 
 			return null;
-		} 
+		}
 
 		private static int[] ParseCommaDelimitedHvoString(string itemHvos)
 		{
