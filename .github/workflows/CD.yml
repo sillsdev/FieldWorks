@@ -1,0 +1,136 @@
+name: Flex Installer
+on:
+  push:
+    branches: ["release/9.1", "develop", "master", "feature/PubSub", "feature/gha-cd"]
+  workflow_call:
+    inputs:
+      flex_ref:
+        description: The tag/branch/sha to build
+        default: 'release/9.1'
+        required: false
+        type: string
+      installer_ref:
+        description: The tag/branch/sha for the installer
+        default: 'feature/netfx48IdFix'
+        required: false
+        type: string
+      helps_ref:
+        description: The tag or branch for helps
+        default: 'master'
+        required: false
+        type: string
+      lcm_ref:
+        description: The tag or branch for liblcm (for localization)
+        default: 'master'
+        required: false
+        type: string
+      l10n_ref:
+        description: The tag or branch for FieldWorks localizations
+        default: 'master'
+        required: false
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  debug_build_and_test:
+    env:
+      CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
+      LcmLocalArtifactsDir: ${{ github.workspace }}\Localizations\LCM\artifacts\Debug
+      LcmRootDir: ${{ github.workspace }}\Localizations\LCM
+      FILESTOSIGNLATER: "${{ github.workspace }}\\filesToSign"
+    name: Build Debug and run Tests
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Files
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.flex_ref }}
+
+      - name: Checkout Installer
+        uses: actions/checkout@v4
+        with:
+          repository: sillsdev/genericinstaller
+          ref: ${{ inputs.installer_ref || 'feature/netfx48IdFix' }}
+          path: PatchableInstaller
+        
+      - name: Checkout Helps
+        uses: actions/checkout@v4
+        with:
+          repository: sillsdev/FwHelps
+          ref: ${{ inputs.helps_ref }}
+          path: DistFiles/Helps
+        
+      - name: Checkout Localizations
+        uses: actions/checkout@v4
+        with:
+          repository: sillsdev/FwLocalizations
+          ref: ${{ inputs.l10n_ref }}
+          path: Localizations
+        
+      - name: Checkout liblcm (for l10n)
+        uses: actions/checkout@v4
+        with:
+          repository: sillsdev/liblcm
+          ref: ${{ inputs.lcm_ref }}
+          path: Localizations/LCM
+        
+
+      - name: Download 461 targeting pack
+        uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
+        id: downloadfile  # Remember to give an ID if you need the output filename
+        with:
+            url: "https://download.microsoft.com/download/F/1/D/F1DEB8DB-D277-4EF9-9F48-3A65D4D8F965/NDP461-DevPack-KB3105179-ENU.exe"
+            target: public/
+                
+      - name: Install targeting pack
+        shell: cmd
+        working-directory: public
+        run: NDP461-DevPack-KB3105179-ENU.exe /q
+         
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 5.0.x
+
+      - name: Build installer
+        shell: powershell
+        working-directory: Build
+        run: ./build64.bat /t:BuildBaseInstaller /p:config=release /p:action=test /p:desktopNotAvailable=true /v:d /bl ^| tee-object -FilePath build.log
+
+      - name: Scan Debug Build Output
+        shell: powershell
+        working-directory: Build
+        run: |
+          $results = Select-String -Path "build.log" -Pattern "^\s*[1-9][0-9]* Error\(s\)"
+          if ($results) {
+              foreach ($result in $results) {
+                  Write-Host "Found errors in build.log $($result.LineNumber): $($result.Line)" -ForegroundColor red 
+              }
+              exit 1
+          } else {
+              Write-Host "No errors found" -ForegroundColor green 
+              exit 0
+          }
+
+      - name: Capture Test Results
+        shell: powershell
+        working-directory: Build
+        run: .\NUnitReport /a ^| tee-object -FilePath test-results.log
+
+      - name: Report Test Results
+        uses: sillsdev/fw-nunitreport-action@v1.0.0
+        with:
+          log-path: Build/test-results.log
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            Build/*.log
+            **/*.binlog
+            **/*.msi
+        if: always()
