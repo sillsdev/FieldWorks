@@ -260,16 +260,17 @@ namespace SIL.FieldWorks.XWorks
 
 				if (!string.IsNullOrEmpty(config.Style))
 				{
-					frag.AddStyleLink(config.Style, config.StyleType);
+					frag.AddStyleLink(config.Style, config, config.StyleType);
 				}
 				else if (!string.IsNullOrEmpty(config.Parent?.Style))
 				{
-					frag.AddStyleLink(config.Parent.Style, config.Parent.StyleType);
+					frag.AddStyleLink(config.Parent.Style, config.Parent, config.Parent.StyleType);
 				}
 			}
 
-			public void AddStyleLink(string styleName, ConfigurableDictionaryNode.StyleTypes styleType)
+			public void AddStyleLink(string styleName, ConfigurableDictionaryNode config, ConfigurableDictionaryNode.StyleTypes styleType)
 			{
+				styleName = GetWsStyleName(styleName, config);
 				if (string.IsNullOrEmpty(styleName))
 					return;
 
@@ -314,9 +315,12 @@ namespace SIL.FieldWorks.XWorks
 				WP.Run run = GetLastRun();
 				if (run.RunProperties != null)
 				{
-					// if a style is already linked to the run, return without adding another link
+					// if a style is already linked to the run, replace the stylename and return without adding another link
 					if (run.RunProperties.Descendants<RunStyle>().Any())
+					{
+						run.RunProperties.Descendants<RunStyle>().Last().Val = styleName;
 						return;
+					}
 
 					run.RunProperties.Append(new RunStyle() { Val = styleName });
 				}
@@ -327,6 +331,32 @@ namespace SIL.FieldWorks.XWorks
 					// Prepend runproperties so it appears before any text elements contained in the run
 					run.PrependChild<WP.RunProperties>(runProps);
 				}
+			}
+
+			public static string GetWsStyleName(string styleName, ConfigurableDictionaryNode config)
+			{
+				if (config.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions)
+				{
+					foreach (var opt in ((DictionaryNodeWritingSystemOptions)config.DictionaryNodeOptions).Options)
+					{
+						if (opt.IsEnabled)
+						{
+							// If it's magic then don't return a language tag specific style.
+							var possiblyMagic = WritingSystemServices.GetMagicWsIdFromName(opt.Id);
+							if (possiblyMagic != 0)
+							{
+								return styleName;
+							}
+							// else, the DictionaryNodeOption Id specifies a particular writing system
+							// if there is no base style, return just the ws style
+							if (styleName == null)
+								return WordStylesGenerator.GetWsString(opt.Id);
+							// if there is a base style, return the ws-specific version of that style
+							return styleName + WordStylesGenerator.GetWsString(opt.Id);
+						}
+					}
+				}
+				return styleName;
 			}
 
 			/// <summary>
@@ -421,22 +451,73 @@ namespace SIL.FieldWorks.XWorks
 			/// <summary>
 			/// Append a table to the doc fragment.
 			/// </summary>
-			public void Append(WP.Table table)
+			public void AppendTable(WP.Table table)
 			{
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
 				this.DocBody.AppendChild(table.CloneNode(true));
 			}
 
 			/// <summary>
-			/// Appends a new run inside the last paragraph of the doc fragment--creates a new paragraph if none exists or if forceNewParagraph is true.
+			/// Append a paragraph to the doc fragment.
+			/// </summary>
+			public void AppendParagraph(WP.Paragraph para)
+			{
+				// Deep clone the run b/c of its tree of properties and to maintain styles.
+				this.DocBody.AppendChild(para.CloneNode(true));
+			}
+
+
+			/// <summary>
+			/// Appends a new run inside the last paragraph of the doc fragment--creates a new paragraph if none
+			/// exists or if forceNewParagraph is true.
 			/// The run will be added to the end of the paragraph.
 			/// </summary>
 			/// <param name="run">The run to append.</param>
 			/// <param name="forceNewParagraph">Even if a paragraph exists, force the creation of a new paragraph.</param>
 			public void AppendToParagraph(IFragment fragToCopy, OpenXmlElement run, bool forceNewParagraph)
 			{
+				WP.Paragraph lastPar = null;
+
+				if (forceNewParagraph)
+				{
+					// When forcing a new paragraph use a 'continuation' style for the new paragraph.
+					// The continuation style is based on the style used in the first paragraph.
+					string style = null;
+					WP.Paragraph firstParagraph = DocBody.OfType<WP.Paragraph>().FirstOrDefault();
+					if (firstParagraph != null)
+					{
+						WP.ParagraphProperties paraProps = firstParagraph.OfType<WP.ParagraphProperties>().FirstOrDefault();
+						if (paraProps != null)
+						{
+							ParagraphStyleId styleId = paraProps.OfType<WP.ParagraphStyleId>().FirstOrDefault();
+							if (styleId != null && styleId.Val != null && styleId.Val.Value != null)
+							{
+								if (styleId.Val.Value.EndsWith(WordStylesGenerator.EntryStyleContinue))
+								{
+									style = styleId.Val.Value;
+								}
+								else
+								{
+									style = styleId.Val.Value + WordStylesGenerator.EntryStyleContinue;
+								}
+							}
+						}
+					}
+
+					lastPar = GetNewParagraph();
+					if (!string.IsNullOrEmpty(style))
+					{
+						WP.ParagraphProperties paragraphProps = new WP.ParagraphProperties(
+							new ParagraphStyleId() { Val = style });
+						lastPar.Append(paragraphProps);
+					}
+				}
+				else
+				{
+					lastPar = GetLastParagraph();
+				}
+
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
-				WP.Paragraph lastPar = forceNewParagraph ? GetNewParagraph() : GetLastParagraph();
 				lastPar.AppendChild(CloneRun(fragToCopy, run));
 			}
 
@@ -623,9 +704,18 @@ namespace SIL.FieldWorks.XWorks
 			/// <summary>
 			/// Add a new run to the WordFragment DocBody.
 			/// </summary>
-			public void CreateRun()
+			public void CreateRun(string writingSystem)
 			{
-				WordFragment.DocBody.AppendChild(new WP.Run());
+				if (writingSystem == null)
+					WordFragment.DocBody.AppendChild(new WP.Run());
+				else
+				{
+					var wsString = WordStylesGenerator.GetWsString(writingSystem);
+					var run = new WP.Run();
+					run.Append(new RunProperties());
+					run.RunProperties.Append(new RunStyle() { Val = "span"+wsString });
+					WordFragment.DocBody.AppendChild(run);
+				}
 			}
 		}
 		#endregion WordFragmentWriter class
@@ -653,33 +743,28 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return WriteProcessedElementContent(elementContent, config, className);
 		}
+
 		private IFragment WriteProcessedElementContent(IFragment elementContent, ConfigurableDictionaryNode config, string className)
 		{
 			// Use the style name and type of the config node or its parent to link a style to the elementContent fragment where the processed contents are written.
 			DocFragment.LinkStyleOrInheritParentStyle(elementContent, config);
 
-			bool displayEachInAParagraph = config != null &&
-										   config.DictionaryNodeOptions is IParaOption &&
-										   ((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph;
+			bool eachOnANewLine = config != null &&
+								  config.DictionaryNodeOptions is IParaOption &&
+								  ((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph;
 
-			// Add Before text, if it is not going to be displayed in it's own paragraph.
-			if (!displayEachInAParagraph && !string.IsNullOrEmpty(config.Before))
+			// Add Before text, if it is not going to be displayed on it's own line.
+			if (!eachOnANewLine && !string.IsNullOrEmpty(config.Before))
 			{
-				WP.Text txt = new WP.Text(config.Before);
-				txt.Space = SpaceProcessingModeValues.Preserve;
-				var beforeRun = new WP.Run(txt);
+				var beforeRun = CreateBeforeAfterBetweenRun(config.Before);
 				((DocFragment)elementContent).DocBody.PrependChild(beforeRun);
 			}
 
-			// Add After text, if it is not going to be displayed in it's own paragraph.
-			if (!displayEachInAParagraph && !string.IsNullOrEmpty(config.After))
+			// Add After text, if it is not going to be displayed on it's own line.
+			if (!eachOnANewLine && !string.IsNullOrEmpty(config.After))
 			{
-				WP.Text txt = new WP.Text(config.After);
-				txt.Space = SpaceProcessingModeValues.Preserve;
-				var afterRun = new WP.Run(txt);
+				var afterRun = CreateBeforeAfterBetweenRun(config.After);
 				((DocFragment)elementContent).DocBody.Append(afterRun);
-				// To be consistent with the xhtml output, only the after text uses the same style.
-				DocFragment.LinkStyleOrInheritParentStyle(elementContent, config);
 			}
 
 			return elementContent;
@@ -691,23 +776,82 @@ namespace SIL.FieldWorks.XWorks
 		public IFragment GenerateGroupingNode(object field, string className, ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator, ConfiguredLcmGenerator.GeneratorSettings settings,
 			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, IFragment> childContentGenerator)
 		{
-			//TODO: handle grouping nodes
-			//IFragment docfrag = new DocFragment(...);
-			//LinkStyleOrInheritParentStyle(docfrag, config);
-			//return docfrag;
-			return null;
+			var groupData = new DocFragment();
+			WP.Paragraph groupPara = null;
+			bool eachOnANewLine = config != null &&
+								  config.DictionaryNodeOptions is DictionaryNodeGroupingOptions &&
+								  ((DictionaryNodeGroupingOptions)(config.DictionaryNodeOptions)).DisplayEachInAParagraph;
+
+			// If the group is displayed on a new line then the group needs it's own paragraph, so
+			// the group style can be applied to the entire paragraph (applied to all of the runs
+			// contained in it).
+			if (eachOnANewLine)
+			{
+				groupPara = new WP.Paragraph();
+			}
+
+			// Add Before text, if it is not going to be displayed on it's own line.
+			if (!eachOnANewLine && !string.IsNullOrEmpty(config.Before))
+			{
+				var beforeRun = CreateBeforeAfterBetweenRun(config.Before);
+				groupData.DocBody.PrependChild(beforeRun);
+			}
+
+			// Add the group data.
+			foreach (var child in config.ReferencedOrDirectChildren)
+			{
+				IFragment childContent = childContentGenerator(field, child, publicationDecorator, settings);
+				if (eachOnANewLine)
+				{
+					var elements = ((DocFragment)childContent).DocBody.Elements().ToList();
+					foreach (OpenXmlElement elem in elements)
+					{
+						// Deep clone the run b/c of its tree of properties and to maintain styles.
+						groupPara.AppendChild(groupData.CloneRun(childContent, elem));
+					}
+				}
+				else
+				{
+					groupData.Append(childContent);
+				}
+			}
+
+			// Add After text, if it is not going to be displayed on it's own line.
+			if (!eachOnANewLine && !string.IsNullOrEmpty(config.After))
+			{
+				var afterRun = CreateBeforeAfterBetweenRun(config.After);
+				groupData.DocBody.Append(afterRun);
+			}
+
+			// Don't add an empty paragraph to the groupData fragment.
+			if (groupPara != null && groupPara.HasChildren)
+			{
+				// Add the group style.
+				if (!string.IsNullOrEmpty(config.Style))
+				{
+					WP.ParagraphProperties paragraphProps =
+						new WP.ParagraphProperties(new ParagraphStyleId() { Val = config.Style });
+					groupPara.PrependChild(paragraphProps);
+
+					AddStyles(config, false);
+				}
+				groupData.DocBody.AppendChild(groupPara);
+			}
+
+			return groupData;
 		}
+
 		public IFragment AddSenseData(IFragment senseNumberSpan, Guid ownerGuid, ConfigurableDictionaryNode config, IFragment senseContent, bool first)
 		{
 			var senseData = new DocFragment();
 			var senseNode = (DictionaryNodeSenseOptions)config?.DictionaryNodeOptions;
-			bool eachInAParagraph = false;
+			bool eachOnANewLine = false;
 			bool firstSenseInline = false;
 			string afterNumber = null;
 			string beforeNumber = null;
 			if (senseNode != null)
 			{
-				eachInAParagraph = senseNode.DisplayEachSenseInAParagraph;
+				eachOnANewLine = senseNode.DisplayEachSenseInAParagraph;
 				firstSenseInline = senseNode.DisplayFirstSenseInline;
 				afterNumber = senseNode.AfterNumber;
 				beforeNumber = senseNode.BeforeNumber;
@@ -715,7 +859,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// We want a break before the first sense item, between items, and after the last item.
 			// So, only add a break before the content if it is the first sense and it's not displayed in-line.
-			if (eachInAParagraph && first && !firstSenseInline)
+			if (eachOnANewLine && first && !firstSenseInline)
 			{
 				senseData.AppendBreak();
 			}
@@ -736,7 +880,7 @@ namespace SIL.FieldWorks.XWorks
 
 			senseData.Append(senseContent);
 
-			if (eachInAParagraph)
+			if (eachOnANewLine)
 			{
 				senseData.AppendBreak();
 			}
@@ -748,19 +892,19 @@ namespace SIL.FieldWorks.XWorks
 			if (!string.IsNullOrEmpty(config.Style))
 			{
 				if (isBlock && (config.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph))
-					((DocFragment)content).AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Paragraph);
+					((DocFragment)content).AddStyleLink(config.Style, config, ConfigurableDictionaryNode.StyleTypes.Paragraph);
 
 				else if (!isBlock)
-					((DocFragment)content).AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Character);
+					((DocFragment)content).AddStyleLink(config.Style, config,ConfigurableDictionaryNode.StyleTypes.Character);
 			}
 
 			var collData = CreateFragment();
-			bool eachInAParagraph = false;
+			bool eachOnANewLine = false;
 			if (config != null &&
 				config.DictionaryNodeOptions is IParaOption &&
 				((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph)
 			{
-				eachInAParagraph = true;
+				eachOnANewLine = true;
 
 				// We want a break before the first collection item, between items, and after the last item.
 				// So, only add a break before the content if it is the first.
@@ -770,20 +914,21 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			// Add Between text, if it is not going to be displayed in it's own paragraph
+			// Add Between text, if it is not going to be displayed on it's own line
 			// and it is not the first item in the collection.
 			if (!first &&
 				config != null &&
 				config.DictionaryNodeOptions is IParaOption &&
-				!eachInAParagraph &&
+				!eachOnANewLine &&
 				!string.IsNullOrEmpty(config.Between))
 			{
-				((DocFragment)collData).Append(config.Between);
+				var betweenRun = CreateBeforeAfterBetweenRun(config.Between);
+				((DocFragment)collData).DocBody.Append(betweenRun);
 			}
 
 			collData.Append(content);
 
-			if (eachInAParagraph)
+			if (eachOnANewLine)
 			{
 				collData.AppendBreak();
 			}
@@ -833,7 +978,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="writingSystem"></param>
 		public void StartRun(IFragmentWriter writer, string writingSystem)
 		{
-			((WordFragmentWriter)writer).CreateRun();
+			((WordFragmentWriter)writer).CreateRun(writingSystem);
 		}
 		public void EndRun(IFragmentWriter writer)
 		{
@@ -852,7 +997,7 @@ namespace SIL.FieldWorks.XWorks
 			if (!string.IsNullOrEmpty(runStyle))
 			{
 				// Add the style link.
-				((WordFragmentWriter)writer).WordFragment.AddStyleLink(runStyle, ConfigurableDictionaryNode.StyleTypes.Character);
+				((WordFragmentWriter)writer).WordFragment.AddStyleLink(runStyle, config, ConfigurableDictionaryNode.StyleTypes.Character);
 
 				// Only add the style to the styleSheet if not already there.
 				if (!_styleSheet.ChildElements.Any(p => ((Style)p).StyleId == runStyle))
@@ -867,7 +1012,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (config != null && !string.IsNullOrEmpty(config.Style))
 			{
-				((WordFragmentWriter)writer).WordFragment.AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Character);
+				((WordFragmentWriter)writer).WordFragment.AddStyleLink(config.Style, config, ConfigurableDictionaryNode.StyleTypes.Character);
 			}
 			return;
 		}
@@ -875,7 +1020,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (config != null && !string.IsNullOrEmpty(config.Style))
 			{
-				((WordFragmentWriter)writer).WordFragment.AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Character);
+				((WordFragmentWriter)writer).WordFragment.AddStyleLink(config.Style, config, ConfigurableDictionaryNode.StyleTypes.Character);
 			}
 			return;
 		}
@@ -1064,12 +1209,19 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public void StartEntry(IFragmentWriter writer, ConfigurableDictionaryNode config, string className, Guid entryGuid, int index, RecordClerk clerk)
 		{
-			// Each entry starts a new paragraph, and any entry data added will be added within the same paragraph.
+			// Each entry starts a new paragraph, and any entry data added will usually be added within the same paragraph.
+			// The paragraph will end whenever a data type that cannot be in a paragraph is encounter (Tables or Pictures).
+			// A new 'continuation' paragraph will be started after the Table or Picture if there is other data that still
+			// needs to be added to the entry.
 			// Create a new paragraph for the entry.
 			DocFragment wordDoc = ((WordFragmentWriter)writer).WordFragment;
 			WP.Paragraph entryPar = wordDoc.GetNewParagraph();
 			WP.ParagraphProperties paragraphProps = new WP.ParagraphProperties(new ParagraphStyleId() {Val = config.Style});
 			entryPar.Append(paragraphProps);
+
+			// Create the 'continuation' style for the entry. This style will be the same as the style for the entry with the only
+			// difference being that it does not contain the first line indenting (since it is a continuation of the same entry).
+			AddStyles(config, true);
 		}
 		public void AddEntryData(IFragmentWriter writer, List<ConfiguredLcmGenerator.ConfigFragment> pieces)
 		{
@@ -1126,14 +1278,16 @@ namespace SIL.FieldWorks.XWorks
 								{
 									if (pieceHasImage)
 									{
-										wordWriter.WordFragment.AppendToParagraph(frag, new Run(), true);
+										wordWriter.WordFragment.GetNewParagraph();
+										wordWriter.WordFragment.AppendToParagraph(frag, new Run(), false);
 									}
 
 									// We have now added at least one image from this piece.
 									pieceHasImage = true;
 								}
 
-								wordWriter.WordFragment.AppendToParagraph(frag, run, wordWriter.ForceNewParagraph);
+								wordWriter.WordFragment.GetNewParagraph();
+								wordWriter.WordFragment.AppendToParagraph(frag, run, false);
 								wordWriter.WordFragment.LinkParaStyle(WordStylesGenerator.PictureAndCaptionTextframeStyle);
 							}
 
@@ -1147,12 +1301,19 @@ namespace SIL.FieldWorks.XWorks
 							break;
 
 						case WP.Table table:
-							wordWriter.WordFragment.Append(table);
+							wordWriter.WordFragment.AppendTable(table);
 
 							// Start a new paragraph with the next run to maintain the correct position of the table.
 							wordWriter.ForceNewParagraph = true;
 							break;
 
+						case WP.Paragraph para:
+							wordWriter.WordFragment.AppendParagraph(para);
+
+							// Start a new paragraph with the next run so that it uses the correct style.
+							wordWriter.ForceNewParagraph = true;
+
+							break;
 						default:
 							throw new Exception("Unexpected element type on DocBody: " + elem.GetType().ToString());
 
@@ -1168,9 +1329,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var frag = ((WordFragmentWriter)writer).WordFragment;
 			if (isBlockProperty && (config.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph))
-				frag.AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Paragraph);
+				frag.AddStyleLink(config.Style, config, ConfigurableDictionaryNode.StyleTypes.Paragraph);
 			else if (!isBlockProperty)
-				frag.AddStyleLink(config.Style, ConfigurableDictionaryNode.StyleTypes.Character);
+				frag.AddStyleLink(config.Style, config, ConfigurableDictionaryNode.StyleTypes.Character);
 
 			if (!string.IsNullOrEmpty(content))
 			{
@@ -1219,7 +1380,7 @@ namespace SIL.FieldWorks.XWorks
 		public IFragment GenerateSenseNumber(string formattedSenseNumber, string senseNumberWs, ConfigurableDictionaryNode senseConfigNode)
 		{
 			DocFragment senseNum = new DocFragment(formattedSenseNumber);
-			senseNum.AddStyleLink(WordStylesGenerator.SenseNumberStyleName, ConfigurableDictionaryNode.StyleTypes.Character);
+			senseNum.AddStyleLink(WordStylesGenerator.SenseNumberStyleName, senseConfigNode, ConfigurableDictionaryNode.StyleTypes.Character);
 			return senseNum;
 		}
 		public IFragment AddLexReferences(bool generateLexType, IFragment lexTypeContent, ConfigurableDictionaryNode config, string className, string referencesContent, bool typeBefore)
@@ -1253,18 +1414,14 @@ namespace SIL.FieldWorks.XWorks
 			// Add Before text for the sharedGramInfo.
 			if (!string.IsNullOrEmpty(config.Before))
 			{
-				WP.Text txt = new WP.Text(config.Before);
-				txt.Space = SpaceProcessingModeValues.Preserve;
-				var beforeRun = new WP.Run(txt);
+				var beforeRun = CreateBeforeAfterBetweenRun(config.Before);
 				((DocFragment)sharedGramInfo).DocBody.PrependChild(beforeRun);
 			}
 
 			// Add After text for the sharedGramInfo.
 			if (!string.IsNullOrEmpty(config.After))
 			{
-				WP.Text txt = new WP.Text(config.After);
-				txt.Space = SpaceProcessingModeValues.Preserve;
-				var afterRun = new WP.Run(txt);
+				var afterRun = CreateBeforeAfterBetweenRun(config.After);
 				((DocFragment)sharedGramInfo).DocBody.Append(afterRun);
 			}
 
@@ -1303,6 +1460,10 @@ namespace SIL.FieldWorks.XWorks
 			if (letterHeaderStyle != null)
 				_styleSheet.Append(letterHeaderStyle);
 
+			var beforeAfterBetweenStyle = WordStylesGenerator.GenerateBeforeAfterBetweenStyle(propertyTable);
+			if (beforeAfterBetweenStyle != null)
+				_styleSheet.Append(beforeAfterBetweenStyle);
+
 			Styles defaultStyles = WordStylesGenerator.GetDefaultWordStyles(propertyTable, propStyleSheet, model);
 			if (defaultStyles != null)
 			{
@@ -1319,6 +1480,17 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public string AddStyles(ConfigurableDictionaryNode node)
 		{
+			return AddStyles(node, false);
+		}
+
+		/// <summary>
+		/// Generates styles that are needed by this node and adds them to the dictionary.
+		/// </summary>
+		/// <param name="addEntryContinuationStyle">If true then generate the 'continuation' style for the node.
+		///                                         If false then generate the regular (non-continuation) styles for the node.</param>
+		/// <returns></returns>
+		public string AddStyles(ConfigurableDictionaryNode node, bool addEntryContinuationStyle)
+		{
 			// The css className isn't important for the Word export.
 			// Styles should be stored in the dictionary based on their stylenames.
 			// Generate all styles that are needed by this class and add them to the dictionary with their stylename as the key.
@@ -1326,7 +1498,15 @@ namespace SIL.FieldWorks.XWorks
 
 			lock (_styleDictionary)
 			{
-				var styleContent = WordStylesGenerator.CheckRangeOfStylesForEmpties(WordStylesGenerator.GenerateWordStylesFromConfigurationNode(node, className, _propertyTable));
+				Styles styleContent = null;
+				if (addEntryContinuationStyle)
+				{
+					styleContent = WordStylesGenerator.CheckRangeOfStylesForEmpties(WordStylesGenerator.GenerateContinuationWordStyles(node, _propertyTable));
+				}
+				else
+				{
+					styleContent = WordStylesGenerator.CheckRangeOfStylesForEmpties(WordStylesGenerator.GenerateWordStylesFromConfigurationNode(node, className, _propertyTable));
+				}
 				if (styleContent == null)
 					return className;
 				if (!styleContent.Any())
@@ -1339,7 +1519,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						_styleDictionary[styleName] = style;
 					}
-					// If the content is the same, we don't need to do anything--the style is alread in the dictionary.
+					// If the content is the same, we don't need to do anything--the style is already in the dictionary.
 					// But if the content is NOT the same, re-name this style and add it to the dictionary.
 					else if (!WordStylesGenerator.AreStylesEquivalent(_styleDictionary[styleName], style))
 					{
@@ -1532,6 +1712,25 @@ namespace SIL.FieldWorks.XWorks
 				className = $"{classNameBase}-{++counter}";
 			}
 			return className;
+		}
+
+		/// <summary>
+		/// Creates a BeforeAfterBetween run using the text provided and using the BeforeAfterBetween style.
+		/// </summary>
+		/// <param name="text">Text for the run.</param>
+		/// <returns>The BeforeAfterBetween run.</returns>
+		private WP.Run CreateBeforeAfterBetweenRun(string text)
+		{
+			WP.Run run = new WP.Run();
+			WP.RunProperties runProps =
+				new WP.RunProperties(new RunStyle() { Val = WordStylesGenerator.BeforeAfterBetweenStyleName });
+			run.Append(runProps);
+
+			WP.Text txt = new WP.Text(text);
+			txt.Space = SpaceProcessingModeValues.Preserve;
+			run.Append(txt);
+
+			return run;
 		}
 	}
 }

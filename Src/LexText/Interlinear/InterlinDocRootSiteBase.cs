@@ -18,6 +18,7 @@ using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgControls;
 using XCore;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.IText
 {
@@ -1046,10 +1047,27 @@ namespace SIL.FieldWorks.IText
 					break;
 				case WfiWordformTags.kflidAnalyses:
 					IWfiWordform wordform = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetObject(hvo);
-					if (RootStText.UniqueWordforms().Contains(wordform))
+					var uniqueWordforms = RootStText.UniqueWordforms();
+					if (uniqueWordforms.Contains(wordform))
 					{
 						m_wordformsToUpdate.Add(wordform);
 						m_mediator.IdleQueue.Add(IdleQueuePriority.High, PostponedUpdateWordforms);
+					}
+					// Update uppercase versions of wordform.
+					// (When a lowercase wordform changes, it affects the best guess of its uppercase versions.)
+					var form = wordform.Form.VernacularDefaultWritingSystem;
+					var cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(form.get_WritingSystemAt(0)));
+					foreach (IWfiWordform ucWordform in uniqueWordforms)
+					{
+						var ucForm = ucWordform.Form.VernacularDefaultWritingSystem;
+						if (ucForm != form && ucForm != null && !string.IsNullOrEmpty(ucForm.Text))
+						{
+							if (cf.ToLower(ucForm.Text) == form.Text)
+							{
+								m_wordformsToUpdate.Add(ucWordform);
+								m_mediator.IdleQueue.Add(IdleQueuePriority.High, PostponedUpdateWordforms);
+							}
+						}
 					}
 					break;
 			}

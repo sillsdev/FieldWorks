@@ -32,6 +32,7 @@ using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.ObjectModel;
 using XCore;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -167,18 +168,23 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD)
 				.Normalize(form.Text.Replace(' ', '.')));
 
-			// If the parse of the original word was not successful,then try to parse the lowercase word.
-			if (result.Analyses.Count == 0 || result.ErrorMessage != null)
-			{
-				var cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(form.get_WritingSystemAt(0)));
-				string sLower = cf.ToLower(form.Text);
+			// Try parsing the lowercase word if it is different from the original word.
+			// Do this even if the uppercase word parsed successfully.
+			var cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(form.get_WritingSystemAt(0)));
+			string sLower = cf.ToLower(form.Text);
 
-				// Try parsing the lowercase word if it is different from the original word.
-				if (sLower != form.Text)
+			if (sLower != form.Text)
+			{
+				var lcResult = m_parser.ParseWord(
+					CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD)
+					.Normalize(sLower.Replace(' ', '.')));
+				if (lcResult.Analyses.Count > 0 && lcResult.ErrorMessage == null)
 				{
-					result = m_parser.ParseWord(
-						CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD)
-						.Normalize(sLower.Replace(' ', '.')));
+					var text = TsStringUtils.MakeString(sLower, form.get_WritingSystem(0));
+					var lcWordform = WfiWordformServices.FindOrCreateWordform(m_cache, text);
+					m_parseFiler.ProcessParse(lcWordform, priority, lcResult);
+					m_parseFiler.ProcessParse(wordform, priority, result);
+					return true;
 				}
 			}
 

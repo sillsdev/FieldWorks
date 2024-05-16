@@ -32,11 +32,17 @@ namespace SIL.FieldWorks.XWorks
 		internal const string WritingSystemPrefix = "writingsystemprefix";
 		internal const string WritingSystemStyleName = "Writing System Abbreviation";
 		internal const string PictureAndCaptionTextframeStyle = "Image-Textframe-Style";
+		internal const string EntryStyleContinue = "-Continue";
 
 		public static Style GenerateLetterHeaderStyle(
 			ReadOnlyPropertyTable propertyTable, LcmStyleSheet mediatorStyleSheet)
 		{
 			return GenerateWordStyleFromLcmStyleSheet(LetterHeadingStyleName, 0, propertyTable);
+		}
+
+		public static Style GenerateBeforeAfterBetweenStyle(ReadOnlyPropertyTable propertyTable)
+		{
+			return GenerateWordStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, 0, propertyTable);
 		}
 
 		public static Styles GetDefaultWordStyles(ReadOnlyPropertyTable propertyTable, LcmStyleSheet propStyleSheet, DictionaryConfigurationModel model)
@@ -81,7 +87,7 @@ namespace SIL.FieldWorks.XWorks
 			ConfigurableDictionaryNode node, ReadOnlyPropertyTable propertyTable)
 		{
 			return GenerateWordStyleFromLcmStyleSheet(styleName, wsId, node, propertyTable,
-				false);
+				false, true);
 		}
 
 		/// <summary>
@@ -95,10 +101,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="wsId">writing system id</param>
 		/// <param name="node">The configuration node to use for generating paragraph margin in context</param>
 		/// <param name="propertyTable">To retrieve styles</param>
+		/// <param name="allowFirstLineIndent">Indicates if the style returned should include FirstLineIndent.</param>
 		/// <returns></returns>
 		internal static Style GenerateWordStyleFromLcmStyleSheet(
 			string styleName, int wsId, ConfigurableDictionaryNode node,
-			ReadOnlyPropertyTable propertyTable, bool calculateFirstSenseStyle)
+			ReadOnlyPropertyTable propertyTable, bool calculateFirstSenseStyle, bool allowFirstLineIndent)
 		{
 			var styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			if (styleSheet == null || !styleSheet.Styles.Contains(styleName))
@@ -138,7 +145,13 @@ namespace SIL.FieldWorks.XWorks
 						// alignment is always a paragraph property
 						parProps.Append(alignmentStyle);
 				}
-				if (exportStyleInfo.HasBorder)
+
+				// TODO:
+				// The code below works to handle borders for the word export.
+				// However, borders do not currently display in FLEx, and once a border has been added in FLEx,
+				// deselecting the border does not actually remove it from the styles object in FLEx.
+				// Until this is fixed, it is better not to display borders in the word export.
+				/*if (exportStyleInfo.HasBorder)
 				{
 					// create borders to add to the paragraph properties
 					ParagraphBorders border = new ParagraphBorders();
@@ -166,7 +179,8 @@ namespace SIL.FieldWorks.XWorks
 					border.Append(BottomBorder);
 					parProps.Append(border);
 
-				}
+				}*/
+
 				if (exportStyleInfo.HasFirstLineIndent)
 				{
 					// Handles both first-line and hanging indent, hanging-indent will result in a negative text-indent value
@@ -177,7 +191,10 @@ namespace SIL.FieldWorks.XWorks
 						hangingIndent = firstLineIndentValue;
 					}
 
-					parProps.Append(new Indentation() { FirstLine = firstLineIndentValue.ToString() });
+					if (allowFirstLineIndent)
+					{
+						parProps.Append(new Indentation() { FirstLine = firstLineIndentValue.ToString() });
+					}
 				}
 
 				if (exportStyleInfo.HasKeepWithNext)
@@ -363,7 +380,6 @@ namespace SIL.FieldWorks.XWorks
 							//selectors.AddRange(GenerateWordStylesForWritingSystems(baseSelection + " span", configNode.Style, propertyTable));
 						}
 
-						//rule.StyleId = styleName;
 						if (configNode.Style != null)
 							rule.StyleId = configNode.Style;
 						rules.AppendChild(rule.CloneNode(true));
@@ -429,7 +445,8 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
 				Style wsCharStyle = GetOnlyCharacterStyle(GenerateWordStyleFromLcmStyleSheet(styleName, aws.Handle, propertyTable));
-				wsCharStyle.StyleId = selector + String.Format("[lang=\'{0}\']", aws.LanguageTag);
+				wsCharStyle.StyleId = selector + GetWsString(aws.LanguageTag);
+				wsCharStyle.StyleName = new StyleName() { Val = wsCharStyle.StyleId };
 
 				styleRules.Append(wsCharStyle);
 			}
@@ -443,20 +460,26 @@ namespace SIL.FieldWorks.XWorks
 			var cache = propertyTable.GetValue<LcmCache>("cache");
 			foreach (var ws in wsOptions.Options.Where(opt => opt.IsEnabled))
 			{
-				var possiblyMagic = WritingSystemServices.GetMagicWsIdFromName(ws.Id);
-				// if the writing system isn't a magic name just use it otherwise find the right one from the magic list
-				var wsIdString = possiblyMagic == 0 ? ws.Id : WritingSystemServices.GetWritingSystemList(cache, possiblyMagic, true).First().Id;
-				var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(wsIdString);
-				var wsString = String.Format("[lang=\'{0}\']", wsIdString).Trim('.');
-
 				var wsStyle = new Style();
 
-				if (!string.IsNullOrEmpty(configNode.Style))
-					wsStyle = GenerateWordStyleFromLcmStyleSheet(configNode.Style, wsId, propertyTable);
+				// If it's magic then don't add a specific style for the language tag.
+				var possiblyMagic = WritingSystemServices.GetMagicWsIdFromName(ws.Id);
+				if (possiblyMagic != 0)
+				{
+					return wsStyle;
+				}
 
-				//style should be based on the span for the current ws as well as the style info for the current node that is independent from the ws
+				if (!string.IsNullOrEmpty(configNode.Style))
+				{
+					var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(ws.Id);
+					wsStyle = GenerateWordStyleFromLcmStyleSheet(configNode.Style, wsId, propertyTable);
+				}
+
+				// Any given style can only be based on one style.
+				// This style should be based on the span for the current ws;
+				// style info for the current node (independent of WS) should be added during creation of this style.
+				var wsString = GetWsString(ws.Id).Trim('.');
 				wsStyle.Append(new BasedOn() { Val = "span" + wsString });
-				wsStyle.Append(new BasedOn() { Val = configNode.Style });
 
 				wsStyle.StyleId = configNode.Style + wsString;
 				wsStyle.StyleName = new StyleName(){ Val = wsStyle.StyleId };
@@ -577,6 +600,25 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Create the 'continuation' style for the entry, which is needed when an entry contains multiple paragraphs. This
+		/// style will be used for all but the first paragraph. It is the same as the style for the first paragraph except
+		/// that it does not contain the first line indenting.
+		/// </summary>
+		/// <returns>Returns the continuation style.</returns>
+		internal static Styles GenerateContinuationWordStyles(
+			ConfigurableDictionaryNode node, ReadOnlyPropertyTable propertyTable)
+		{
+			Style contStyle = GenerateWordStyleFromLcmStyleSheet(node.Style, DefaultStyle, node,
+				propertyTable, false, false);
+			contStyle.StyleName.Val = node.Style + EntryStyleContinue;
+			contStyle.StyleId = node.Style + EntryStyleContinue;
+
+			var retStyles = new Styles();
+			retStyles.AppendChild(contStyle.CloneNode(true));
+			return retStyles;
+		}
+
+		/// <summary>
 		/// Builds the word styles for font info properties using the writing system overrides
 		/// </summary>
 		private static StyleRunProperties AddFontInfoWordStyles(BaseStyleInfo projectStyle, int wsId, LcmCache cache)
@@ -602,10 +644,10 @@ namespace SIL.FieldWorks.XWorks
 
 			if (fontName != null)
 			{
-				// TODO: test with a named font set in FLex
-				// Roman is the openxml font family option for serif font
-				var fontFamily = new Font(){Name = fontName, FontFamily = new FontFamily(){Val = FontFamilyValues.Roman}};
-				charDefaults.Append(fontFamily);
+				// Note: if desired, multiple fonts can be used for different text types in a single run
+				// by separately specifying font names to use for ASCII, High ANSI, Complex Script, and East Asian content.
+				var font = new RunFonts(){Ascii = fontName};
+				charDefaults.Append(font);
 			}
 
 			// For the following additions, wsFontInfo is a publicly accessible InheritableStyleProp value if set (ie. m_fontSize, m_bold, etc.).
@@ -718,6 +760,11 @@ namespace SIL.FieldWorks.XWorks
 			//TODO: handle remaining font features including from ws or default,
 
 			return charDefaults;
+		}
+
+		public static string GetWsString(string wsId)
+		{
+			return String.Format("[lang=\'{0}\']", wsId);
 		}
 
 		/// <summary>
