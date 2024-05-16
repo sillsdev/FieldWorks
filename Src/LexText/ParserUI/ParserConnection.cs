@@ -98,16 +98,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			return this;
 		}
 
-		public void UpdateWordforms(IEnumerable<IWfiWordform> wordforms, ParserPriority priority)
+		public void UpdateWordforms(IEnumerable<IWfiWordform> wordforms, ParserPriority priority, bool checkParser)
 		{
 			CheckDisposed();
-			m_scheduler.ScheduleWordformsForUpdate(wordforms, priority);
+			m_scheduler.ScheduleWordformsForUpdate(wordforms, priority, checkParser);
 		}
 
 		public void UpdateWordform(IWfiWordform wordform, ParserPriority priority)
 		{
 			CheckDisposed();
-			m_scheduler.ScheduleOneWordformForUpdate(wordform, priority);
+			m_scheduler.ScheduleOneWordformForUpdate(wordform, priority, false);
 		}
 
 		public Exception UnhandledException
