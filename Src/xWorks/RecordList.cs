@@ -1743,7 +1743,8 @@ namespace SIL.FieldWorks.XWorks
 					return true;
 				}
 			}
-			else if (tag == SegmentTags.kflidAnalyses && m_publisher.OwningFieldName == "Wordforms")
+			// tag == WfiWordformTags.kflidAnalyses is needed for wordforms that don't appear in a segment.
+			else if ((tag == SegmentTags.kflidAnalyses || tag == WfiWordformTags.kflidAnalyses) && m_publisher.OwningFieldName == "Wordforms")
 			{
 				// Changing this potentially changes the list of wordforms that occur in the interesting texts.
 				// Hopefully we don't rebuild the list every time; usually this can only be changed in another view.
