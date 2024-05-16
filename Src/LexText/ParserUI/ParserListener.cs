@@ -59,9 +59,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ParserConnection m_parserConnection;
 		private Timer m_timer;
 		// Keep track of parse results as we parse wordforms.
-		private Dictionary<IWfiWordform, ParseResult> m_activeParseResults = null;
-		private int m_activeParseResultsCount = 0;
-		private bool m_showConflicts = false;
+		private Dictionary<IWfiWordform, ParseResult> m_checkParserResults = null;
+		private int m_checkParserResultsCount = 0;
 
 		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
@@ -115,11 +114,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				CheckDisposed();
 				m_parserConnection = value;
 			}
-		}
-
-		public Dictionary<IWfiWordform, ParseResult> ParseResults
-		{
-			get; private set;
 		}
 
 		/// <summary>
@@ -524,35 +518,46 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;    //we handled this.
 		}
 
-		private void UpdateWordforms(IEnumerable<IWfiWordform> wordforms, ParserPriority priority, bool showConflicts = false)
+		public bool OnCheckParserOnAll(object argument)
 		{
-			m_showConflicts = showConflicts;
-			InitActiveParseResults(wordforms);
-			m_parserConnection.UpdateWordforms(wordforms, priority);
+			CheckDisposed();
+
+			if (CurrentText != null && ConnectToParser())
+			{
+				IEnumerable<IWfiWordform> wordforms = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances();
+				UpdateWordforms(wordforms, ParserPriority.Low, true);
+			}
+
+			return true;    //we handled this.
+		}
+
+		private void UpdateWordforms(IEnumerable<IWfiWordform> wordforms, ParserPriority priority, bool checkParser = false)
+		{
+			if (checkParser)
+				InitCheckParserResults(wordforms);
+			m_parserConnection.UpdateWordforms(wordforms, priority, checkParser);
 		}
 
 		private void UpdateWordform(IWfiWordform wordform, ParserPriority priority)
 		{
-			m_showConflicts = false;
-			InitActiveParseResults(null);
 			m_parserConnection.UpdateWordform(wordform, priority);
 		}
 
-		private void InitActiveParseResults(IEnumerable<IWfiWordform> wordforms)
+		private void InitCheckParserResults(IEnumerable<IWfiWordform> wordforms)
 		{
-			// Initialize m_activeParseResults with the given wordforms.
+			// Initialize m_parseResults with the given wordforms.
 			if (wordforms == null)
 			{
-				m_activeParseResults = null;
-				m_activeParseResultsCount = 0;
+				m_checkParserResults = null;
+				m_checkParserResultsCount = 0;
 			}
 			else
 			{
-				m_activeParseResults = new Dictionary<IWfiWordform, ParseResult>();
-				m_activeParseResultsCount = 0;
+				m_checkParserResults = new Dictionary<IWfiWordform, ParseResult>();
+				m_checkParserResultsCount = 0;
 				foreach (var wordform in wordforms)
 				{
-					m_activeParseResults[wordform] = null;
+					m_checkParserResults[wordform] = null;
 				}
 
 			}
@@ -560,31 +565,26 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void WordformUpdatedEventHandler(object sender, WordformUpdatedEventArgs e)
 		{
-			if (m_activeParseResults != null && m_activeParseResults.ContainsKey(e.Wordform))
+			if (e.CheckParser && m_checkParserResults != null && m_checkParserResults.ContainsKey(e.Wordform))
 			{
 				// Record the parse result.
-				m_activeParseResults[e.Wordform] = e.ParseResult;
-				m_activeParseResultsCount++;
+				m_checkParserResults[e.Wordform] = e.ParseResult;
+				m_checkParserResultsCount++;
 				// Verify that all of the wordforms have been processed.
-				if (m_activeParseResultsCount < m_activeParseResults.Count())
+				if (m_checkParserResultsCount < m_checkParserResults.Count())
 					return;
-				foreach (var key in m_activeParseResults.Keys)
+				foreach (var key in m_checkParserResults.Keys)
 				{
-					if (m_activeParseResults[key] == null)
+					if (m_checkParserResults[key] == null)
 						return;
 				}
-				// Save the parse results for clients.
-				ParseResults = m_activeParseResults;
-				m_activeParseResults = null;
-				if (!m_showConflicts)
-					return;
-				// Show the conflicts.
-				FwLinkArgs link = new FwAppArgs(m_cache.ProjectId.Handle, "Analyses", Guid.Empty);
-				List<Property> additionalProps = link.PropertyTableEntries;
-				additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
-				additionalProps.Add(new Property("LinkSetupInfo", "ReviewConflictingOpinions"));
-				m_mediator.PostMessage("FollowLink", link);
-				m_showConflicts = false;
+				// Convert parse results into ParserReport.
+				m_checkParserResults = null;
+				// Show the parser report.
+				// FwLinkArgs link = new FwAppArgs(m_cache.ProjectId.Handle, "ParserReports", Guid.Empty);
+				// List<Property> additionalProps = link.PropertyTableEntries;
+				// additionalProps.Add(new Property("LinkSetupInfo", "AppendParserReport"));
+				// m_mediator.PostMessage("FollowLink", link);
 			}
 		}
 

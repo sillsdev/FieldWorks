@@ -91,16 +91,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		class UpdateWordformWork : ParserWork
 		{
 			private readonly IWfiWordform m_wordform;
+			private readonly bool m_checkParser;
 
-			public UpdateWordformWork(ParserScheduler scheduler, ParserPriority priority, IWfiWordform wordform)
+			public UpdateWordformWork(ParserScheduler scheduler, ParserPriority priority, IWfiWordform wordform, bool checkParser)
 				: base(scheduler, priority)
 			{
 				m_wordform = wordform;
+				m_checkParser = checkParser;
 			}
 
 			public override void DoWork()
 			{
-				if (!m_scheduler.m_parserWorker.UpdateWordform(m_wordform, m_priority))
+				if (!m_scheduler.m_parserWorker.UpdateWordform(m_wordform, m_priority, m_checkParser))
 				{
 					// this wordform was skipped
 					base.DoWork();
@@ -281,19 +283,19 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_thread.EnqueueWork(ParserPriority.TryAWord, new TryAWordWork(this, form, fDoTrace, sSelectTraceMorphs));
 		}
 
-		public void ScheduleOneWordformForUpdate(IWfiWordform wordform, ParserPriority priority)
+		public void ScheduleOneWordformForUpdate(IWfiWordform wordform, ParserPriority priority, bool checkParser)
 		{
 			CheckDisposed();
 
-			m_thread.EnqueueWork(priority, new UpdateWordformWork(this, priority, wordform));
+			m_thread.EnqueueWork(priority, new UpdateWordformWork(this, priority, wordform, checkParser));
 		}
 
-		public void ScheduleWordformsForUpdate(IEnumerable<IWfiWordform> wordforms, ParserPriority priority)
+		public void ScheduleWordformsForUpdate(IEnumerable<IWfiWordform> wordforms, ParserPriority priority, bool checkParser)
 		{
 			CheckDisposed();
 
 			foreach (var wordform in wordforms)
-				ScheduleOneWordformForUpdate(wordform, priority);
+				ScheduleOneWordformForUpdate(wordform, priority, checkParser);
 		}
 
 		private void HandleTaskUpdate(TaskReport task)
