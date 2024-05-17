@@ -232,43 +232,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// </remarks>
 		private void ProcessAnalysis(IWfiWordform wordform, ParseAnalysis analysis)
 		{
-			/*
-				Try to find matching analysis(analyses) that already exist.
-				A "match" is one in which:
-				(1) the number of morph bundles equal the number of the MoForm and
-					MorphoSyntaxAnanlysis (MSA) IDs passed in to the stored procedure, and
-				(2) The objects of each MSA+Form pair match those of the corresponding WfiMorphBundle.
-			*/
 			// Find matching analysis/analyses, if any exist.
 			var matches = new HashSet<IWfiAnalysis>();
 			foreach (IWfiAnalysis anal in wordform.AnalysesOC)
 			{
-				if (anal.MorphBundlesOS.Count == analysis.Morphs.Count)
-				{
-					// Meets match condition (1), above.
-					bool mbMatch = false; //Start pessimistically.
-					int i = 0;
-					foreach (IWfiMorphBundle mb in anal.MorphBundlesOS)
-					{
-						var current = analysis.Morphs[i++];
-						if (mb.MorphRA == current.Form && mb.MsaRA == current.Msa && mb.InflTypeRA == current.InflType)
-						{
-							// Possibly matches condition (2), above.
-							mbMatch = true;
-						}
-						else
-						{
-							// Fails condition (2), above.
-							mbMatch = false;
-							break; // No sense in continuing.
-						}
-					}
-					if (mbMatch)
-					{
-						// Meets matching condition (2), above.
-						matches.Add(anal);
-					}
-				}
+				if (analysis.MatchesIWfiAnalysis(anal))
+					matches.Add(anal);
 			}
 			if (matches.Count == 0)
 			{

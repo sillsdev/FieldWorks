@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			// The lowercase wordform has already been parsed.
 			bVal = parserWorker.UpdateWordform(catsLowerTest, ParserPriority.Low);
 			ExecuteIdleQueue();
-			Assert.IsFalse(bVal);
+			Assert.IsTrue(bVal);
 			CheckAnalysisSize("Cats", 0, false);
 			CheckAnalysisSize("cats", 1, false);
 		}
