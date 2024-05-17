@@ -259,6 +259,7 @@
       <DependentUpon>ParserCoreStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="ParseResult.cs" />
+    <Compile Include="ParserReport.cs" />
     <Compile Include="ParserScheduler.cs">
       <SubType>Code</SubType>
     </Compile>
