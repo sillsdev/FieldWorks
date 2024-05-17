@@ -164,10 +164,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			CheckNeedsUpdate();
+			var normalizer = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD);
+			var word = normalizer.Normalize(form.Text.Replace(' ', '.'));
 			var stopWatch = System.Diagnostics.Stopwatch.StartNew();
-			ParseResult result = m_parser.ParseWord(
-				CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD)
-				.Normalize(form.Text.Replace(' ', '.')));
+			ParseResult result = m_parser.ParseWord(word);
 			stopWatch.Stop();
 			result.ParseTime = stopWatch.ElapsedMilliseconds;
 
@@ -178,16 +178,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			if (sLower != form.Text)
 			{
-				var text = TsStringUtils.MakeString(sLower, form.get_WritingSystem(0));
 				IWfiWordform lcWordform;
 				// We cannot use WfiWordformServices.FindOrCreateWordform because of props change (LT-21810).
 				// Only parse the lowercase version if it exists.
 				if (m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(text, out lcWordform))
 				{
+					var lcWord = normalizer.Normalize(sLower.Replace(' ', '.'));
 					stopWatch.Start();
-					var lcResult = m_parser.ParseWord(
-						CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD)
-						.Normalize(sLower.Replace(' ', '.')));
+					var lcResult = m_parser.ParseWord(lcWord);
 					stopWatch.Stop();
 					lcResult.ParseTime = stopWatch.ElapsedMilliseconds;
 					if (lcResult.Analyses.Count > 0 && lcResult.ErrorMessage == null)

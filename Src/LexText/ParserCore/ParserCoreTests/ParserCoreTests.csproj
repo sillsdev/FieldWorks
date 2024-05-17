@@ -208,6 +208,7 @@
       <Link>AssemblyInfoForTests.cs</Link>
     </Compile>
     <Compile Include="HCLoaderTests.cs" />
+    <Compile Include="ParserReportTests.cs" />
     <Compile Include="ParseWorkerTests.cs" />
     <Compile Include="XAmpleParserTests.cs" />
     <Compile Include="M3ToXAmpleTransformerTests.cs">

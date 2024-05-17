@@ -2853,7 +2853,6 @@ namespace SIL.FieldWorks.Common.Controls
 				filterListChoice.MakeUserVisible(true);
 				return filterListChoice;
 			}
-
 			return null;
 		}
 
