@@ -832,8 +832,6 @@ namespace SIL.FieldWorks.XWorks
 					WP.ParagraphProperties paragraphProps =
 						new WP.ParagraphProperties(new ParagraphStyleId() { Val = config.Style });
 					groupPara.PrependChild(paragraphProps);
-
-					AddStyles(config, false);
 				}
 				groupData.DocBody.AppendChild(groupPara);
 			}
