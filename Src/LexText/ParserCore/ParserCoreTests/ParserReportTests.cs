@@ -179,17 +179,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			var parseReport = new ParseReport(catWordform, result);
 			CheckParseReport(parseReport, numAnalyses: 4, numApprovedMissing: 3, numDisapproved: 1, numNoOpinion: 2, parseTime: 10);
 
-			var errorResult = new ParseResult("error"){ ParseTime = 10 };
+			var errorResult = new ParseResult("error"){ ParseTime = 1 };
 			var errorReport = new ParseReport(catWordform, errorResult);
-			CheckParseReport(errorReport, numApprovedMissing: 4, parseTime: 10, errorMessage: "error");
+			CheckParseReport(errorReport, numApprovedMissing: 4, parseTime: 1, errorMessage: "error");
 			errorReport = new ParseReport(errorWordform, errorResult);
-			CheckParseReport(errorReport, parseTime: 10, errorMessage: "error");
+			CheckParseReport(errorReport, parseTime: 1, errorMessage: "error");
 
-			var zeroResult = new ParseResult(Enumerable.Empty<ParseAnalysis>()){ ParseTime = 10 };
+			var zeroResult = new ParseResult(Enumerable.Empty<ParseAnalysis>()){ ParseTime = 2 };
 			var zeroReport = new ParseReport(catWordform, zeroResult);
-			CheckParseReport(zeroReport, numApprovedMissing: 4, parseTime: 10);
+			CheckParseReport(zeroReport, numApprovedMissing: 4, parseTime: 2);
 			zeroReport = new ParseReport(zeroWordform, zeroResult);
-			CheckParseReport(zeroReport, parseTime: 10);
+			CheckParseReport(zeroReport, parseTime: 2);
 
 			var parserReport = new ParserReport();
 			parserReport.AddParseReport("cat", parseReport);
@@ -198,7 +198,50 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.IsTrue(parserReport.ParseReports.ContainsKey("cat"));
 			CheckParserReport(parserReport, numParseErrors: 1, numWords: 3,
 				numZeroParses: 2, totalAnalyses: 4, totalApprovedMissing: 3,
-				totalDisapproved: 1, totalNoOpinion: 2, totalParseTime: 30);
+				totalDisapproved: 1, totalNoOpinion: 2, totalParseTime: 13);
+
+			// Check SubtractParseReport.
+			var eeReport = errorReport.DiffParseReport(errorReport);
+			CheckParseReport(eeReport);
+
+			var epReport = parseReport.DiffParseReport(errorReport);
+			CheckParseReport(epReport, numAnalyses: 4, numApprovedMissing: 3,
+				numDisapproved: 1, numNoOpinion: 2, parseTime: 9, errorMessage: "error => ");
+
+			var ezReport = errorReport.DiffParseReport(zeroReport);
+			CheckParseReport(ezReport, parseTime: -1, errorMessage: " => error");
+
+			var peReport = errorReport.DiffParseReport(parseReport);
+			CheckParseReport(peReport, numAnalyses: -4, numApprovedMissing: -3,
+				numDisapproved: -1, numNoOpinion: -2, parseTime: -9, errorMessage: " => error");
+
+			var ppReport = parseReport.DiffParseReport(parseReport);
+			CheckParseReport(ppReport);
+
+			var pzReport = zeroReport.DiffParseReport(parseReport);
+			CheckParseReport(pzReport, numAnalyses: -4, numApprovedMissing: -3,
+				numDisapproved: -1, numNoOpinion: -2, parseTime: -8);
+
+			var zeReport = errorReport.DiffParseReport(zeroReport);
+			CheckParseReport(zeReport, parseTime: -1, errorMessage: " => error");
+
+			var zpReport = parseReport.DiffParseReport(zeroReport);
+			CheckParseReport(zpReport, numAnalyses: 4, numApprovedMissing: 3,
+				numDisapproved: 1, numNoOpinion: 2, parseTime: 8);
+
+			var zzReport = zeroReport.DiffParseReport(zeroReport);
+			CheckParseReport(zzReport);
+
+			var parserReport2 = new ParserReport();
+			parserReport2.AddParseReport("cat", parseReport);
+			parserReport2.AddParseReport("extra", zeroReport);
+			var diffReports = parserReport2.DiffParseReports(parserReport.ParseReports);
+			Assert.IsTrue(diffReports.ContainsKey("extra"));
+			CheckParseReport(diffReports["extra"], parseTime: 2, errorMessage: "missing => ");
+			Assert.IsTrue(diffReports.ContainsKey("zero"));
+			CheckParseReport(diffReports["zero"], parseTime: -2, errorMessage: " => missing");
+			Assert.IsTrue(diffReports.ContainsKey("cat"));
+			CheckParseReport(diffReports["cat"]);
 		}
 
 	}

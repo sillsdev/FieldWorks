@@ -22,6 +22,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		// Either "Testbed", "All", or the name of the text parsed
 		public string SourceText { get; set; }
 
+		// Timestamp of when CheckParser was called
 		public long Timestamp { get; set; }
 
 		// Number of words parsed
@@ -33,6 +34,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		// Number of words that get zero parses but no error
 		public int NumZeroParses { get; set; }
 
+		// Total time to parse all the words
 		public long TotalParseTime { get; set; }
 
 		// Total number of parse analyses
@@ -41,7 +43,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		// Total number of analyses that were marked approved by the user that did not get a parse
 		public int TotalUserApprovedAnalysesMissing { get; set; }
 
-		// Total number of parse analyses that were marked as disapproved by the user.
+		// Total number of parse analyses that were marked as disapproved by the user
 		public int TotalUserDisapprovedAnalyses { get; set; }
 
 		// Total number of parse analyses that were marked as noOpinion by the user
@@ -75,20 +77,57 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				NumZeroParses += 1;
 		}
 
+		/// <summary>
+		/// Return the differences between the current reports and the old reports.
+		/// </summary>
+		/// <param name="oldReports"></param>
+		/// <returns></returns>
+		public IDictionary<string, ParseReport> DiffParseReports (IDictionary<string, ParseReport> oldReports)
+		{
+			IDictionary<string, ParseReport> newParseReports = new Dictionary<string, ParseReport>();
+			ParseReport missingReport = new ParseReport();
+			missingReport.ErrorMessage = "missing";
+
+			foreach (string key in oldReports.Keys)
+			{
+				ParseReport oldReport = oldReports[key];
+				ParseReport newReport = ParseReports.ContainsKey(key) ? ParseReports[key] : missingReport;
+				newParseReports[key] = newReport.DiffParseReport(oldReport);
+			}
+			foreach (string key in ParseReports.Keys)
+			{
+				if (!oldReports.ContainsKey(key))
+				{
+					ParseReport newReport = ParseReports[key];
+					newParseReports[key] = newReport.DiffParseReport(missingReport);
+				}
+			}
+
+			return newParseReports;
+		}
 	}
 
+	/// <summary>
+	/// ParseReport reports the results of parsing a word.
+	/// </summary>
 	public class ParseReport
 	{
+		// Time to parse the word
 		public long ParseTime { get; set; }
 
+		// Error message from the parser
 		public string ErrorMessage { get; set; }
 
+		// Number of parse analyses
 		public int NumAnalyses { get; set; }
 
+		// Number of analyses that were marked approved by the user that did not get a parse
 		public int NumUserApprovedAnalysesMissing { get; set; }
 
+		// Number of parse analyses that were marked as disapproved by the user
 		public int NumUserDisapprovedAnalyses {  get; set; }
 
+		// Number of parse analyses that were marked as noOpinion by the user
 		public int NumUserNoOpinionAnalyses { get; set; }
 
 		public ParseReport() { }
@@ -140,5 +179,28 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		}
 
+		/// <summary>
+		/// Return the diff between the current report and the old report.
+		/// </summary>
+		/// <param name="oldReport"></param>
+		/// <returns></returns>
+		public ParseReport DiffParseReport(ParseReport oldReport)
+		{
+			ParseReport diffReport = new ParseReport
+			{
+				NumAnalyses = NumAnalyses - oldReport.NumAnalyses,
+				NumUserApprovedAnalysesMissing = NumUserApprovedAnalysesMissing - oldReport.NumUserApprovedAnalysesMissing,
+				NumUserDisapprovedAnalyses = NumUserDisapprovedAnalyses - oldReport.NumUserDisapprovedAnalyses,
+				NumUserNoOpinionAnalyses = NumUserNoOpinionAnalyses - oldReport.NumUserNoOpinionAnalyses,
+				ParseTime = ParseTime - oldReport.ParseTime
+			};
+			if (ErrorMessage != oldReport.ErrorMessage)
+			{
+				string oldError = oldReport.ErrorMessage ?? string.Empty;
+				string newError = ErrorMessage ?? string.Empty;
+				diffReport.ErrorMessage = oldError + " => " + newError;
+			}
+			return diffReport;
+		}
 	}
 }
