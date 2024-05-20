@@ -52,13 +52,29 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return newAnal;
 		}
 
-		protected IWfiWordform CheckAnalysisSize(string form, int expectedSize, bool isStarting)
+		private void CheckParseReport(ParseReport report, int numAnalyses = 0, int numApprovedMissing = 0,
+			int numDisapproved = 0, int numNoOpinion = 0, int parseTime = 0, string errorMessage = null)
 		{
-			IWfiWordform wf = FindOrCreateWordform(form);
-			int actualSize = wf.AnalysesOC.Count;
-			string msg = String.Format("Wrong number of {0} analyses for: {1}", isStarting ? "starting" : "ending", form);
-			Assert.AreEqual(expectedSize, actualSize, msg);
-			return wf;
+			Assert.AreEqual(numAnalyses, report.NumAnalyses);
+			Assert.AreEqual(numDisapproved, report.NumUserDisapprovedAnalyses);
+			Assert.AreEqual(numApprovedMissing, report.NumUserApprovedAnalysesMissing);
+			Assert.AreEqual(numNoOpinion, report.NumUserNoOpinionAnalyses);
+			Assert.AreEqual(parseTime, report.ParseTime);
+			Assert.AreEqual(errorMessage, report.ErrorMessage);
+		}
+
+		private void CheckParserReport(ParserReport report, int numParseErrors = 0, int numWords = 0,
+			int numZeroParses = 0, int totalAnalyses = 0, int totalApprovedMissing = 0,
+			int totalDisapproved = 0, int totalNoOpinion = 0,int totalParseTime = 0)
+		{
+			Assert.AreEqual(totalAnalyses, report.TotalAnalyses);
+			Assert.AreEqual(totalDisapproved, report.TotalUserDisapprovedAnalyses);
+			Assert.AreEqual(totalApprovedMissing, report.TotalUserApprovedAnalysesMissing);
+			Assert.AreEqual(totalNoOpinion, report.TotalUserNoOpinionAnalyses);
+			Assert.AreEqual(numParseErrors, report.NumParseErrors);
+			Assert.AreEqual(numWords, report.NumWords);
+			Assert.AreEqual(numZeroParses, report.NumZeroParses);
+			Assert.AreEqual(totalParseTime, report.TotalParseTime);
 		}
 		#endregion // Non-tests
 
@@ -108,7 +124,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			ILexDb ldb = Cache.LanguageProject.LexDbOA;
 
-			var wordform = FindOrCreateWordform("cat");
+			var catWordform = FindOrCreateWordform("cat");
+			var errorWordform = FindOrCreateWordform("error");
+			var zeroWordform = FindOrCreateWordform("zero");
 			ParseResult result = null;
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 			{
@@ -120,51 +138,67 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				IMoStemMsa catNMsa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
 				catN.MorphoSyntaxAnalysesOC.Add(catNMsa);
 				var parseMorph = new ParseMorph(catNForm, catNMsa);
+				// Verb
+				ILexEntry catV = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				IMoStemAllomorph catVForm = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+				catV.AlternateFormsOS.Add(catVForm);
+				catVForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("catv", m_vernacularWS.Handle);
+				IMoStemMsa catVMsa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+				catV.MorphoSyntaxAnalysesOC.Add(catVMsa);
+				var parseMorph2 = new ParseMorph(catVForm, catVMsa);
+				// Other
+				ILexEntry catX = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				IMoStemAllomorph catXForm = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
+				catX.AlternateFormsOS.Add(catXForm);
+				catXForm.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString("catx", m_vernacularWS.Handle);
+				IMoStemMsa catXMsa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+				catX.MorphoSyntaxAnalysesOC.Add(catXMsa);
+				var parseMorph3 = new ParseMorph(catXForm, catXMsa);
+
 				result = new ParseResult(new[]
 				{
-					new ParseAnalysis(new[]
-					{
-						parseMorph,
-					})
+					new ParseAnalysis(new[] { parseMorph }),
+					new ParseAnalysis(new[] { parseMorph2 }),
+					new ParseAnalysis(new[] { parseMorph2, parseMorph2 }),
+					new ParseAnalysis(new[] { parseMorph3 })
 				});
-				var analysis = CreateIWfiAnalysis(wordform, new List<ParseMorph> {parseMorph});
-				analysis.SetAgentOpinion(Cache.LanguageProject.DefaultUserAgent, Opinions.disapproves);
-				var analysis2 = CreateIWfiAnalysis(wordform, new List<ParseMorph> { parseMorph, parseMorph });
+				var analysis = CreateIWfiAnalysis(catWordform, new List<ParseMorph> {parseMorph});
+				analysis.SetAgentOpinion(Cache.LanguageProject.DefaultUserAgent, Opinions.approves);
+				var analysisX = CreateIWfiAnalysis(catWordform, new List<ParseMorph> { parseMorph3 });
+				analysisX.SetAgentOpinion(Cache.LanguageProject.DefaultUserAgent, Opinions.disapproves);
+				// Missing approved analyses.
+				var analysis2 = CreateIWfiAnalysis(catWordform, new List<ParseMorph> { parseMorph, parseMorph });
 				analysis2.SetAgentOpinion(Cache.LanguageProject.DefaultUserAgent, Opinions.approves);
+				var analysis3 = CreateIWfiAnalysis(catWordform, new List<ParseMorph> { parseMorph, parseMorph, parseMorph });
+				analysis3.SetAgentOpinion(Cache.LanguageProject.DefaultUserAgent, Opinions.approves);
+				var analysis4 = CreateIWfiAnalysis(catWordform, new List<ParseMorph> { parseMorph, parseMorph, parseMorph, parseMorph });
+				analysis4.SetAgentOpinion(Cache.LanguageProject.DefaultUserAgent, Opinions.approves);
 				result.ParseTime = 10;
 			});
 
-			var parseReport = new ParseReport(wordform, result);
-			Assert.IsNull(parseReport.ErrorMessage);
-			Assert.AreEqual(1, parseReport.NumAnalyses);
-			Assert.AreEqual(10, parseReport.ParseTime);
-			Assert.AreEqual(1, parseReport.NumHumanApprovedAnalysesMissing);
-			Assert.AreEqual(1, parseReport.NumHumanDisapprovedAnalyses);
+			var parseReport = new ParseReport(catWordform, result);
+			CheckParseReport(parseReport, numAnalyses: 4, numApprovedMissing: 3, numDisapproved: 1, numNoOpinion: 2, parseTime: 10);
 
 			var errorResult = new ParseResult("error"){ ParseTime = 10 };
-			var errorReport = new ParseReport(wordform, errorResult);
-			Assert.AreEqual("error", errorReport.ErrorMessage);
-			Assert.AreEqual(0, errorReport.NumAnalyses);
-			Assert.AreEqual(10, errorReport.ParseTime);
+			var errorReport = new ParseReport(catWordform, errorResult);
+			CheckParseReport(errorReport, numApprovedMissing: 4, parseTime: 10, errorMessage: "error");
+			errorReport = new ParseReport(errorWordform, errorResult);
+			CheckParseReport(errorReport, parseTime: 10, errorMessage: "error");
 
 			var zeroResult = new ParseResult(Enumerable.Empty<ParseAnalysis>()){ ParseTime = 10 };
-			var zeroReport = new ParseReport(wordform, zeroResult);
-			Assert.IsNull(zeroReport.ErrorMessage);
-			Assert.AreEqual(0, zeroReport.NumAnalyses);
-			Assert.AreEqual(10, zeroReport.ParseTime);
+			var zeroReport = new ParseReport(catWordform, zeroResult);
+			CheckParseReport(zeroReport, numApprovedMissing: 4, parseTime: 10);
+			zeroReport = new ParseReport(zeroWordform, zeroResult);
+			CheckParseReport(zeroReport, parseTime: 10);
 
 			var parserReport = new ParserReport();
 			parserReport.AddParseReport("cat", parseReport);
 			parserReport.AddParseReport("error", errorReport);
 			parserReport.AddParseReport("zero", zeroReport);
 			Assert.IsTrue(parserReport.ParseReports.ContainsKey("cat"));
-			Assert.AreEqual(1, parserReport.NumAnalyses);
-			Assert.AreEqual(1, parserReport.NumHumanApprovedAnalysesMissing);
-			Assert.AreEqual(1, parserReport.NumHumanDisapprovedAnalyses);
-			Assert.AreEqual(1, parserReport.NumParseErrors);
-			Assert.AreEqual(3, parserReport.NumWords);
-			Assert.AreEqual(1, parserReport.NumZeroParses);
-			Assert.AreEqual(30, parserReport.TotalParseTime);
+			CheckParserReport(parserReport, numParseErrors: 1, numWords: 3,
+				numZeroParses: 2, totalAnalyses: 4, totalApprovedMissing: 3,
+				totalDisapproved: 1, totalNoOpinion: 2, totalParseTime: 30);
 		}
 
 	}

@@ -12,11 +12,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// </summary>
 	public class ParserReport
 	{
-		// Name of the project.
+		// Name of the project
 		public string ProjectName { get; set; }
 
 		// Name of the machine that ran the parser
-		// This is relevant for ParseTime.
+		// (This is relevant for ParseTime.)
 		public string MachineName { get; set; }
 
 		// Either "Testbed", "All", or the name of the text parsed
@@ -35,14 +35,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public long TotalParseTime { get; set; }
 
-		// Total number of analyses
-		public int NumAnalyses { get; set; }
+		// Total number of parse analyses
+		public int TotalAnalyses { get; set; }
 
-		// Number of HumanApproved analyses that did not get a parse
-		public int NumHumanApprovedAnalysesMissing { get; set; }
+		// Total number of analyses that were marked approved by the user that did not get a parse
+		public int TotalUserApprovedAnalysesMissing { get; set; }
 
-		// Number of HumanDisapproved analyses that got a parse
-		public int NumHumanDisapprovedAnalyses {  get; set; }
+		// Total number of parse analyses that were marked as disapproved by the user.
+		public int TotalUserDisapprovedAnalyses { get; set; }
+
+		// Total number of parse analyses that were marked as noOpinion by the user
+		public int TotalUserNoOpinionAnalyses { get; set; }
 
 		// Parse reports for each word
 		public IDictionary<string, ParseReport> ParseReports { get; set; }
@@ -62,12 +65,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ParseReports[word] = report;
 			NumWords += 1;
 			TotalParseTime += report.ParseTime;
-			NumAnalyses += report.NumAnalyses;
-			NumHumanApprovedAnalysesMissing += report.NumHumanApprovedAnalysesMissing;
-			NumHumanDisapprovedAnalyses += report.NumHumanDisapprovedAnalyses;
+			TotalAnalyses += report.NumAnalyses;
+			TotalUserApprovedAnalysesMissing += report.NumUserApprovedAnalysesMissing;
+			TotalUserDisapprovedAnalyses += report.NumUserDisapprovedAnalyses;
+			TotalUserNoOpinionAnalyses += report.NumUserNoOpinionAnalyses;
 			if (report.ErrorMessage != null)
 				NumParseErrors += 1;
-			else if (report.NumAnalyses == 0)
+			if (report.NumAnalyses == 0)
 				NumZeroParses += 1;
 		}
 
@@ -81,10 +85,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public int NumAnalyses { get; set; }
 
-		public int NumHumanApprovedAnalysesMissing { get; set; }
+		public int NumUserApprovedAnalysesMissing { get; set; }
 
-		public int NumHumanDisapprovedAnalyses {  get; set; }
+		public int NumUserDisapprovedAnalyses {  get; set; }
 
+		public int NumUserNoOpinionAnalyses { get; set; }
 
 		public ParseReport() { }
 
@@ -93,29 +98,46 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ParseTime = result.ParseTime;
 			ErrorMessage = result.ErrorMessage;
 			NumAnalyses = result.Analyses.Count();
-			if (NumAnalyses == 0 || wordform == null)
-			{
-				// Don't count conflicts if there are zero parses.
+			if (wordform == null)
 				return;
-			}
-			// Look for conflicts between human opinion and parser.
-			var humanAgent = wordform.Cache.LanguageProject.DefaultUserAgent;
+			// Look for conflicts between user opinion and parser.
+			var userAgent = wordform.Cache.LanguageProject.DefaultUserAgent;
+			// Count missing user approved analyses.
 			foreach (IWfiAnalysis wfAnalysis in wordform.AnalysesOC)
 			{
-				var opinion = wfAnalysis.GetAgentOpinion(humanAgent);
-				if (opinion != Opinions.noopinion)
+				var opinion = wfAnalysis.GetAgentOpinion(userAgent);
+				if (opinion == Opinions.approves)
 				{
-					// Look for matching analysis.
 					var found = false;
 					foreach (ParseAnalysis pAnalysis in result.Analyses)
 						if (pAnalysis.MatchesIWfiAnalysis(wfAnalysis))
 							found = true;
-					if (opinion == Opinions.approves && !found)
-						NumHumanApprovedAnalysesMissing++;
-					if (opinion == Opinions.disapproves && found)
-						NumHumanDisapprovedAnalyses++;
+					if (!found)
+						NumUserApprovedAnalysesMissing++;
+
 				}
 			}
+			// Count parse analyses that are disapproved.
+			// Count parse analyses that have no opinion.
+			foreach (ParseAnalysis pAnalysis in result.Analyses)
+			{
+				Opinions pOpinion = Opinions.noopinion;
+				foreach (IWfiAnalysis wfAnalysis in wordform.AnalysesOC)
+					if (pAnalysis.MatchesIWfiAnalysis(wfAnalysis))
+					{
+						var wfOpinion = wfAnalysis.GetAgentOpinion(userAgent);
+						if (wfOpinion == Opinions.disapproves)
+							pOpinion = Opinions.disapproves;
+						else if (wfOpinion == Opinions.approves && pOpinion != Opinions.disapproves)
+							pOpinion = Opinions.approves;
+					}
+				if (pOpinion == Opinions.disapproves)
+					NumUserDisapprovedAnalyses++;
+				if (pOpinion == Opinions.noopinion)
+					NumUserNoOpinionAnalyses++;
+
+			}
+
 		}
 
 	}
