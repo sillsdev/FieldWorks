@@ -86,8 +86,7 @@ namespace SIL.FieldWorks.XWorks
 			string styleName, int wsId,
 			ConfigurableDictionaryNode node, ReadOnlyPropertyTable propertyTable)
 		{
-			return GenerateWordStyleFromLcmStyleSheet(styleName, wsId, node, propertyTable,
-				false, true);
+			return GenerateWordStyleFromLcmStyleSheet(styleName, wsId, node, propertyTable, true);
 		}
 
 		/// <summary>
@@ -105,7 +104,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		internal static Style GenerateWordStyleFromLcmStyleSheet(
 			string styleName, int wsId, ConfigurableDictionaryNode node,
-			ReadOnlyPropertyTable propertyTable, bool calculateFirstSenseStyle, bool allowFirstLineIndent)
+			ReadOnlyPropertyTable propertyTable, bool allowFirstLineIndent)
 		{
 			var styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			if (styleSheet == null || !styleSheet.Styles.Contains(styleName))
@@ -132,11 +131,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				exportStyle.Type = StyleValues.Paragraph;
 				var hangingIndent = 0.0f;
-
-				// Tuple ancestorIndents used for ancestor components leadingIndent and hangingIndent.
-				var ancestorIndents = new AncestorIndents(0.0f, 0.0f);
-				if (exportStyleInfo.IsParagraphStyle && node != null)
-					ancestorIndents = CalculateParagraphIndentsFromAncestors(node, styleSheet, ancestorIndents);
 
 				if (exportStyleInfo.HasAlignment)
 				{
@@ -209,34 +203,25 @@ namespace SIL.FieldWorks.XWorks
 					parProps.Append(new KeepLines());
 				}
 
-				// calculate leading indent, unless it will be calculated later for first sense style
-				if (exportStyleInfo.HasLeadingIndent || hangingIndent < 0.0f ||
-					ancestorIndents.TextIndent < 0.0f)
+				// calculate leading indent.
+				if (exportStyleInfo.HasLeadingIndent || hangingIndent < 0.0f)
 				{
-					if (!calculateFirstSenseStyle || ancestorIndents.Ancestor == null)
+					ConfigurableDictionaryNode ancestor = null;
+					if (node != null)
+						ancestor = AncestorWithParagraphStyle(node, styleSheet);
+
+					var senseOptions = ancestor == null ? null : ancestor.DictionaryNodeOptions as DictionaryNodeSenseOptions;
+					if (ancestor == null ||
+						senseOptions == null ||
+						!senseOptions.DisplayEachSenseInAParagraph)
 					{
-						var leadingIndent = CalculateMarginLeft(exportStyleInfo, ancestorIndents, hangingIndent);
+						var leadingIndent = CalculateMarginLeft(exportStyleInfo, hangingIndent);
 
 						if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
 							parProps.Append(new Indentation() { Right = leadingIndent.ToString() });
 						else
 							parProps.Append(new Indentation() { Left = leadingIndent.ToString() });
 					}
-					else
-					{
-						var senseOptions = ancestorIndents.Ancestor.DictionaryNodeOptions as DictionaryNodeSenseOptions;
-						if (senseOptions == null || !senseOptions.DisplayEachSenseInAParagraph)
-						{
-							var leadingIndent = CalculateMarginLeft(exportStyleInfo, ancestorIndents, hangingIndent);
-
-							if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
-								parProps.Append(new Indentation() { Right = leadingIndent.ToString() });
-							else
-								parProps.Append(new Indentation() { Left = leadingIndent.ToString() });
-						}
-						// else, leading indent will be added when we calculate the first sense style.
-					}
-
 				}
 
 				if (exportStyleInfo.HasLineSpacing)
@@ -294,23 +279,6 @@ namespace SIL.FieldWorks.XWorks
 						parProps.Append(new Indentation() { Left = MilliPtToTwentiPt(exportStyleInfo.TrailingIndent).ToString() });
 					else
 						parProps.Append(new Indentation() { Right = MilliPtToTwentiPt(exportStyleInfo.TrailingIndent).ToString() });
-				}
-
-				// if leadingIndent was not calculated above, indent will be calculated now for first sense style
-				if (calculateFirstSenseStyle && ancestorIndents.Ancestor != null)
-				{
-					var senseOptions = ancestorIndents.Ancestor.DictionaryNodeOptions as DictionaryNodeSenseOptions;
-					if (senseOptions != null && senseOptions.DisplayEachSenseInAParagraph)
-					{
-						ancestorIndents = CalculateParagraphIndentsFromAncestors(ancestorIndents.Ancestor, styleSheet, new AncestorIndents(0f, 0f));
-						var leadingIndent = CalculateMarginLeft(exportStyleInfo, ancestorIndents, hangingIndent);
-
-						// Check bidirectional flag to determine correct orientation for indent
-						if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
-							parProps.Append(new Indentation() { Right = leadingIndent.ToString() });
-						else
-							parProps.Append(new Indentation() { Left = leadingIndent.ToString() });
-					}
 				}
 
 				// If text direction is right to left, add BiDi property to the paragraph.
@@ -609,7 +577,7 @@ namespace SIL.FieldWorks.XWorks
 			ConfigurableDictionaryNode node, ReadOnlyPropertyTable propertyTable)
 		{
 			Style contStyle = GenerateWordStyleFromLcmStyleSheet(node.Style, DefaultStyle, node,
-				propertyTable, false, false);
+				propertyTable, false);
 			contStyle.StyleName.Val = node.Style + EntryStyleContinue;
 			contStyle.StyleId = node.Style + EntryStyleContinue;
 
@@ -789,21 +757,18 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		private static AncestorIndents CalculateParagraphIndentsFromAncestors(ConfigurableDictionaryNode currentNode,
-			LcmStyleSheet styleSheet, AncestorIndents ancestorIndents)
+		private static ConfigurableDictionaryNode AncestorWithParagraphStyle(ConfigurableDictionaryNode currentNode,
+			LcmStyleSheet styleSheet)
 		{
 			var parentNode = currentNode;
 			do
 			{
 				parentNode = parentNode.Parent;
 				if (parentNode == null)
-					return ancestorIndents;
+					return null;
 			} while (!IsParagraphStyle(parentNode, styleSheet));
 
-			var projectStyle = styleSheet.Styles[parentNode.Style];
-			var exportStyleInfo = new ExportStyleInfo(projectStyle);
-
-			return new AncestorIndents(parentNode, GetLeadingIndent(exportStyleInfo), GetHangingIndentIfAny(exportStyleInfo));
+			return parentNode;
 		}
 
 		/// <summary>
@@ -836,7 +801,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (exportStyleInfo.HasLeadingIndent || hangingIndent < 0.0f)
 			{
-				var leadingIndent = CalculateMarginLeft(exportStyleInfo, new AncestorIndents(0.0f, 0.0f), hangingIndent);
+				var leadingIndent = CalculateMarginLeft(exportStyleInfo, hangingIndent);
 				indentVal = (int)leadingIndent;
 			}
 
@@ -847,8 +812,12 @@ namespace SIL.FieldWorks.XWorks
 			return indentVal;
 		}
 
-		private static float CalculateMarginLeft(ExportStyleInfo exportStyleInfo, AncestorIndents ancestorIndents,
-			float hangingIndent)
+		/// <summary>
+		/// Calculate the left margin.
+		/// Note that in Word Styles the left margin is not combined with its ancestor so
+		/// no adjustment is necessary.
+		/// </summary>
+		private static float CalculateMarginLeft(ExportStyleInfo exportStyleInfo, float hangingIndent)
 		{
 			var leadingIndent = 0.0f;
 			if (exportStyleInfo.HasLeadingIndent)
@@ -856,21 +825,8 @@ namespace SIL.FieldWorks.XWorks
 				leadingIndent = MilliPtToTwentiPt(exportStyleInfo.LeadingIndent);
 			}
 
-			var ancestorMargin = ancestorIndents.Margin - ancestorIndents.TextIndent;
-			leadingIndent -= ancestorMargin + hangingIndent;
+			leadingIndent -= hangingIndent;
 			return leadingIndent;
-		}
-
-		private static float GetHangingIndentIfAny(ExportStyleInfo exportStyleInfo)
-		{
-			// Handles both first-line and hanging indent: hanging indent represented as a negative first-line indent value
-			return exportStyleInfo.HasFirstLineIndent && exportStyleInfo.FirstLineIndent < 0 ?
-				MilliPtToTwentiPt(exportStyleInfo.FirstLineIndent) : 0.0f;
-		}
-
-		private static float GetLeadingIndent(ExportStyleInfo exportStyleInfo)
-		{
-			return exportStyleInfo.HasLeadingIndent ? MilliPtToTwentiPt(exportStyleInfo.LeadingIndent) : 0.0f;
 		}
 
 		/// <summary>
@@ -1045,25 +1001,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return (int)Math.Round((float)millipoints / 125, 0);
 		}
-
-		private class AncestorIndents
-		{
-			public AncestorIndents(float margin, float textIndent) : this(null, margin, textIndent)
-			{
-			}
-
-			public AncestorIndents(ConfigurableDictionaryNode ancestor, float margin, float textIndent)
-			{
-				Ancestor = ancestor;
-				Margin = margin;
-				TextIndent = textIndent;
-			}
-
-			public float Margin { get; private set; }
-			public float TextIndent { get; private set; }
-			public ConfigurableDictionaryNode Ancestor { get; private set; }
-		}
-
 	}
 
 	public static class WordStyleExtensions
