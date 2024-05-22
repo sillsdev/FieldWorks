@@ -1,59 +1,94 @@
+using Newtonsoft.Json;
 using SIL.LCModel;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
 	/// <summary>
 	/// ParserReport reports the results of Check Parser.
 	/// </summary>
-	public class ParserReport
+	public class ParserReport: IEquatable<ParserReport>
 	{
-		// Name of the project
+		/// <summary>
+		/// Name of the project
+		/// </summary>
 		public string ProjectName { get; set; }
 
-		// Name of the machine that ran the parser
-		// (This is relevant for ParseTime.)
+		/// <summary>
+		/// Name of the machine that ran the parser
+		/// (This is relevant for ParseTime.)
+		/// </summary>
 		public string MachineName { get; set; }
 
-		// Either "Testbed", "All", or the name of the text parsed
+		/// <summary>
+		/// Either "Testbed", "All", or the name of the text parsed
+		/// </summary>
 		public string SourceText { get; set; }
 
-		// Timestamp of when CheckParser was called
+		/// <summary>
+		/// Timestamp of when CheckParser was called
+		/// Use FromFileTime to convert to DateTime.
+		/// </summary>
 		public long Timestamp { get; set; }
 
-		// Number of words parsed
+		/// <summary>
+		/// Number of words parsed
+		/// </summary>
 		public int NumWords { get; set; }
 
-		// Number of words that get a parse error
+		/// <summary>
+		/// Number of words that get a parse error
+		/// </summary>
 		public int NumParseErrors { get; set; }
 
-		// Number of words that get zero parses but no error
+		/// <summary>
+		/// Number of words that get zero parses but no error
+		/// </summary>
 		public int NumZeroParses { get; set; }
 
-		// Total time to parse all the words
+		/// <summary>
+		/// Total time to parse all the words
+		/// </summary>
 		public long TotalParseTime { get; set; }
 
-		// Total number of parse analyses
+		/// <summary>
+		/// Total number of parse analyses
+		/// </summary>
 		public int TotalAnalyses { get; set; }
 
-		// Total number of analyses that were marked approved by the user that did not get a parse
+		/// <summary>
+		/// Total number of analyses that were marked approved by the user that did not get a parse
+		/// </summary>
 		public int TotalUserApprovedAnalysesMissing { get; set; }
 
-		// Total number of parse analyses that were marked as disapproved by the user
+		/// <summary>
+		/// Total number of parse analyses that were marked as disapproved by the user
+		/// </summary>
 		public int TotalUserDisapprovedAnalyses { get; set; }
 
-		// Total number of parse analyses that were marked as noOpinion by the user
+		/// <summary>
+		/// Total number of parse analyses that were marked as noOpinion by the user
+		/// </summary>
 		public int TotalUserNoOpinionAnalyses { get; set; }
 
-		// Parse reports for each word
+		/// <summary>
+		/// Parse reports for each word
+		/// </summary>
 		public IDictionary<string, ParseReport> ParseReports { get; set; }
 
 		public ParserReport()
 		{
+			ParseReports = new Dictionary<string, ParseReport>();
+		}
+
+		public ParserReport(LcmCache cache)
+		{
+			ProjectName = cache.LanguageProject.ShortName;
+			MachineName = Environment.MachineName;
+			Timestamp = DateTime.UtcNow.ToFileTime();
 			ParseReports = new Dictionary<string, ParseReport>();
 		}
 
@@ -75,6 +110,51 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				NumParseErrors += 1;
 			if (report.NumAnalyses == 0)
 				NumZeroParses += 1;
+		}
+
+		/// <summary>
+		/// Read the given json file as a ParserReport.
+		/// </summary>
+		/// <param name="filename"></param>
+		/// <returns></returns>
+		public static ParserReport ReadJsonFile(string filename)
+		{
+			string json = File.ReadAllText(filename);
+			ParserReport report = Newtonsoft.Json.JsonConvert.DeserializeObject<ParserReport>(json);
+			return report;
+		}
+
+		/// <summary>
+		/// Write this parser report as json on the given filename.
+		/// </summary>
+		/// <param name="filename"></param>
+		public void WriteJsonFile(string filename)
+		{
+			string json = JsonConvert.SerializeObject(this);
+			using (StreamWriter outputFile = new StreamWriter(filename))
+			{
+				outputFile.WriteLine(json);
+			}
+
+		}
+
+		/// <summary>
+		/// Write this parser report as json in the standard place and return the filename.
+		/// </summary>
+		/// <param name="cache"></param>
+		public string WriteJsonFile(LcmCache cache)
+		{
+			var reportDir = GetProjectReportsDirectory(cache);
+			var filename = Path.Combine(reportDir, Guid.NewGuid().ToString() + ".json");
+			WriteJsonFile(filename);
+			return filename;
+		}
+
+		public string GetProjectReportsDirectory(LcmCache cache)
+		{
+			var reportDir = Path.Combine(cache.ProjectId.Path, "ProjectReports");
+			System.IO.Directory.CreateDirectory(reportDir);
+			return reportDir;
 		}
 
 		/// <summary>
@@ -104,6 +184,35 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			return newParseReports;
+		}
+
+		public bool Equals(ParserReport report)
+		{
+			if (report is null)
+			{
+				return false;
+			}
+
+			// Optimization for a common success case.
+			if (Object.ReferenceEquals(this, report))
+			{
+				return true;
+			}
+
+			// If run-time types are not exactly the same, return false.
+			if (this.GetType() != report.GetType()) return false;
+
+			if (ProjectName != report.ProjectName) return false;
+
+			if (MachineName != report.MachineName) return false;
+
+			if (Timestamp != report.Timestamp) return false;
+
+			if (SourceText != report.SourceText) return false;
+
+			// if (ParseReports != report.ParseReports) return false;
+
+			return true;
 		}
 	}
 
