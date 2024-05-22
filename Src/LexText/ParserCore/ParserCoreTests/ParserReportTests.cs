@@ -191,7 +191,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			zeroReport = new ParseReport(zeroWordform, zeroResult);
 			CheckParseReport(zeroReport, parseTime: 2);
 
-			var parserReport = new ParserReport();
+			var parserReport = new ParserReport(Cache);
+			parserReport.SourceText = "Testbed";
 			parserReport.AddParseReport("cat", parseReport);
 			parserReport.AddParseReport("error", errorReport);
 			parserReport.AddParseReport("zero", zeroReport);
@@ -242,6 +243,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CheckParseReport(diffReports["zero"], parseTime: -2, errorMessage: " => missing");
 			Assert.IsTrue(diffReports.ContainsKey("cat"));
 			CheckParseReport(diffReports["cat"]);
+
+			// Check json.
+			string filename = parserReport.WriteJsonFile(Cache);
+			var jsonParserReport = ParserReport.ReadJsonFile(filename);
+			Assert.AreEqual(parserReport, jsonParserReport);
 		}
 
 	}
