@@ -364,7 +364,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public IFragment AddLexReferences(bool generateLexType, IFragment lexTypeContent, ConfigurableDictionaryNode config, string className,
-			string referencesContent, bool typeBefore)
+			IFragment referencesContent, bool typeBefore)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);
@@ -382,7 +382,7 @@ namespace SIL.FieldWorks.XWorks
 				// Write an array with the references.
 				xw.WritePropertyName("references");
 				xw.WriteStartArray();
-				xw.WriteRaw(referencesContent);
+				xw.WriteRaw(referencesContent.ToString());
 				xw.WriteEndArray();
 				// Write properties related to the factored type (if any and if after).
 				if (generateLexType && !typeBefore)

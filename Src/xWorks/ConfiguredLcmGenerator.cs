@@ -149,10 +149,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-				/// This method uses a ThreadPool to execute the given individualActions in parallel.
-				/// It waits for all the individualActions to complete and then returns.
-				/// </summary>
-				internal static void SpawnEntryGenerationThreadsAndWait(List<Action> individualActions, IThreadedProgress progress)
+		/// This method uses a ThreadPool to execute the given individualActions in parallel.
+		/// It waits for all the individualActions to complete and then returns.
+		/// </summary>
+		internal static void SpawnEntryGenerationThreadsAndWait(List<Action> individualActions, IThreadedProgress progress)
 		{
 			var actionCount = individualActions.Count;
 			//Note that our COM classes all implement the STA threading model, while the ThreadPool always uses MTA model threads.
@@ -1580,29 +1580,33 @@ namespace SIL.FieldWorks.XWorks
 			// Generate XHTML by Type
 			foreach (var typeGuid in lexEntryTypesFiltered)
 			{
-				var innerBldr = new StringBuilder();
+				var combinedContent = settings.ContentGenerator.CreateFragment();
 				bool first = true;
 				foreach (var lexEntRef in lerCollection)
 				{
 					if (isComplex ? lexEntRef.ComplexEntryTypesRS.Any(t => t.Guid == typeGuid) : lexEntRef.VariantEntryTypesRS.Any(t => t.Guid == typeGuid))
 					{
-						innerBldr.Append(GenerateCollectionItemContent(config, pubDecorator, lexEntRef, collectionOwner, settings, first, typeNode));
-						first = false;
+						var content = GenerateCollectionItemContent(config, pubDecorator, lexEntRef, collectionOwner, settings, first, typeNode);
+						if (!content.IsNullOrEmpty())
+						{
+							combinedContent.Append(content);
+							first = false;
+						}
 					}
 				}
 
-				if (innerBldr.Length > 0)
+				if (!first)
 				{
 					var lexEntryType = lexEntryTypes.First(t => t.Guid.Equals(typeGuid));
-					// Display the Type iff there were refs of this Type (and we are factoring)
+					// Display the Type if there were refs of this Type (and we are factoring)
 					var generateLexType = typeNode != null;
 					var lexTypeContent = generateLexType
 						? GenerateCollectionItemContent(typeNode, pubDecorator, lexEntryType,
-							lexEntryType.Owner, settings, first)
+							lexEntryType.Owner, settings, false)
 						: null;
 					var className = generateLexType ? settings.StylesGenerator.AddStyles(typeNode).Trim('.') : null;
 					var refsByType = settings.ContentGenerator.AddLexReferences(generateLexType,
-						lexTypeContent, config, className, innerBldr.ToString(), IsTypeBeforeForm(config));
+						lexTypeContent, config, className, combinedContent, IsTypeBeforeForm(config));
 					bldr.Append(refsByType);
 				}
 			}

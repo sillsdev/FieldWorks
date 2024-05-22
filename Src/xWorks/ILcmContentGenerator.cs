@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.XWorks
 		IFragment AddImage(string classAttribute, string srcAttribute, string pictureGuid);
 		IFragment AddImageCaption(string captionContent);
 		IFragment GenerateSenseNumber(string formattedSenseNumber, string senseNumberWs, ConfigurableDictionaryNode config);
-		IFragment AddLexReferences(bool generateLexType, IFragment lexTypeContent, ConfigurableDictionaryNode config, string className, string referencesContent, bool typeBefore);
+		IFragment AddLexReferences(bool generateLexType, IFragment lexTypeContent, ConfigurableDictionaryNode config, string className, IFragment referencesContent, bool typeBefore);
 		void BeginCrossReference(IFragmentWriter writer, bool isBlockProperty, string className);
 		void EndCrossReference(IFragmentWriter writer);
 		IFragment WriteProcessedSenses(bool isBlock, IFragment senseContent, ConfigurableDictionaryNode config, string className, IFragment sharedCollectionInfo);
