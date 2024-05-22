@@ -92,6 +92,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			public int m_tag;
 			/// <summary>Index of the current item</summary>
 			public int m_ihvo;
+			/// <summary>String properties of the current item</summary>
+			public Dictionary<int, string> m_stringProps;
 			/// <summary>Handles counting of previous occurrences of properties</summary>
 			public PrevPropCounter m_cpropPrev = new PrevPropCounter();
 
@@ -111,6 +113,7 @@ namespace SIL.FieldWorks.Common.RootSites
 				m_hvo = hvo;
 				m_tag = tag;
 				m_ihvo = ihvo;
+				m_stringProps = new Dictionary<int, string>();
 			}
 
 			/// --------------------------------------------------------------------------------
@@ -333,6 +336,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected IFwMetaDataCache m_mdc = null;
 		/// <summary>This is used to find virtual property handlers in setting notifiers.  See LT-8245</summary>
 		protected IVwCacheDa m_cda = null;
+		/// <summary>
+		/// This is used to store string props for the next object added.
+		/// </summary>
+		protected Dictionary<int, string> m_stringProps = new Dictionary<int, string>();
 		#endregion
 
 		#region Constructor
@@ -843,11 +850,12 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Nothing to do here. None of our collectors cares about string properties (yet).
+		/// Save string property for the next object.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public virtual void set_StringProperty(int sp, string bstrValue)
 		{
+			m_stringProps[sp] = bstrValue;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1319,6 +1327,12 @@ namespace SIL.FieldWorks.Common.RootSites
 			else
 				ihvo = 0; // not a vector item.
 			OpenTheObject(hvoItem, ihvo);
+			// Add any pending string props.
+			StackItem top = PeekStack;
+			if (top != null)
+				top.m_stringProps = m_stringProps;
+			// Clear pending string props.
+			m_stringProps = new Dictionary<int, string>();
 			vc.Display(this, hvoItem, frag);
 			CloseTheObject();
 			if (!wasPropOpen)
