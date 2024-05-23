@@ -245,6 +245,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CheckParseReport(diffReports["cat"]);
 
 			// Check json.
+			// Verify that character encoding is preserved.
+			parserReport.AddParseReport("español", zeroReport);
 			string filename = parserReport.WriteJsonFile(Cache);
 			var jsonParserReport = ParserReport.ReadJsonFile(filename);
 			Assert.AreEqual(parserReport, jsonParserReport);

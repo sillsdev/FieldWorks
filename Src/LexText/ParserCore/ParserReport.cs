@@ -19,18 +19,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		/// <summary>
 		/// Name of the machine that ran the parser
-		/// (This is relevant for ParseTime.)
+		/// (This is relevant for parse times.)
 		/// </summary>
 		public string MachineName { get; set; }
 
 		/// <summary>
-		/// Either "Testbed", "All", or the name of the text parsed
+		/// Either "Testbed Texts", "All Texts", or the name of the text parsed
 		/// </summary>
 		public string SourceText { get; set; }
 
 		/// <summary>
-		/// Timestamp of when CheckParser was called
-		/// Use FromFileTime to convert to DateTime.
+		/// Timestamp of when CheckParser was called as a FileTime
+		/// (Use FromFileTime to convert to DateTime.)
 		/// </summary>
 		public long Timestamp { get; set; }
 
@@ -45,12 +45,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public int NumParseErrors { get; set; }
 
 		/// <summary>
-		/// Number of words that get zero parses but no error
+		/// Number of words that get zero parses
 		/// </summary>
 		public int NumZeroParses { get; set; }
 
 		/// <summary>
-		/// Total time to parse all the words
+		/// Total time to parse all the words in milliseconds
 		/// </summary>
 		public long TotalParseTime { get; set; }
 
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public int TotalAnalyses { get; set; }
 
 		/// <summary>
-		/// Total number of analyses that were marked approved by the user that did not get a parse
+		/// Total number of analyses that were marked approved by the user but did not get a parse
 		/// </summary>
 		public int TotalUserApprovedAnalysesMissing { get; set; }
 
@@ -150,9 +150,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return filename;
 		}
 
-		public string GetProjectReportsDirectory(LcmCache cache)
+		/// <summary>
+		/// Get the project reports directory for the project.
+		/// This is where project reports are stored.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <returns></returns>
+		public static string GetProjectReportsDirectory(LcmCache cache)
 		{
-			var reportDir = Path.Combine(cache.ProjectId.Path, "ProjectReports");
+			// TODO: Handle the case when the project isn't local.
+			var projectDir = Path.GetDirectoryName(cache.ProjectId.Path);
+			var reportDir = Path.Combine(projectDir, "ProjectReports");
 			System.IO.Directory.CreateDirectory(reportDir);
 			return reportDir;
 		}
@@ -164,53 +172,79 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <returns></returns>
 		public IDictionary<string, ParseReport> DiffParseReports (IDictionary<string, ParseReport> oldReports)
 		{
-			IDictionary<string, ParseReport> newParseReports = new Dictionary<string, ParseReport>();
-			ParseReport missingReport = new ParseReport();
-			missingReport.ErrorMessage = "missing";
+			IDictionary<string, ParseReport> diffParseReports = new Dictionary<string, ParseReport>();
+			ParseReport missingReport = new ParseReport
+			{
+				ErrorMessage = "missing"
+			};
 
 			foreach (string key in oldReports.Keys)
 			{
 				ParseReport oldReport = oldReports[key];
 				ParseReport newReport = ParseReports.ContainsKey(key) ? ParseReports[key] : missingReport;
-				newParseReports[key] = newReport.DiffParseReport(oldReport);
+				diffParseReports[key] = newReport.DiffParseReport(oldReport);
 			}
 			foreach (string key in ParseReports.Keys)
 			{
 				if (!oldReports.ContainsKey(key))
 				{
 					ParseReport newReport = ParseReports[key];
-					newParseReports[key] = newReport.DiffParseReport(missingReport);
+					diffParseReports[key] = newReport.DiffParseReport(missingReport);
 				}
 			}
 
-			return newParseReports;
+			return diffParseReports;
 		}
 
-		public bool Equals(ParserReport report)
+		/// <summary>
+		/// Is this parse report equal to other?
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		public bool Equals(ParserReport other)
 		{
-			if (report is null)
+			if (other is null)
 			{
 				return false;
 			}
 
 			// Optimization for a common success case.
-			if (Object.ReferenceEquals(this, report))
+			if (Object.ReferenceEquals(this, other))
 			{
 				return true;
 			}
 
 			// If run-time types are not exactly the same, return false.
-			if (this.GetType() != report.GetType()) return false;
+			if (this.GetType() != other.GetType()) return false;
 
-			if (ProjectName != report.ProjectName) return false;
+			if (ProjectName != other.ProjectName) return false;
 
-			if (MachineName != report.MachineName) return false;
+			if (MachineName != other.MachineName) return false;
 
-			if (Timestamp != report.Timestamp) return false;
+			if (Timestamp != other.Timestamp) return false;
 
-			if (SourceText != report.SourceText) return false;
+			if (SourceText != other.SourceText) return false;
 
-			// if (ParseReports != report.ParseReports) return false;
+			if (NumWords != other.NumWords) return false;
+
+			if (NumParseErrors != other.NumParseErrors) return false;
+
+			if (NumZeroParses != other.NumZeroParses) return false;
+
+			if (TotalParseTime != other.TotalParseTime) return false;
+
+			if (TotalAnalyses != other.TotalAnalyses) return false;
+
+			if (TotalUserApprovedAnalysesMissing != other.TotalUserApprovedAnalysesMissing) return false;
+
+			if (TotalUserDisapprovedAnalyses != other.TotalUserDisapprovedAnalyses) return false;
+
+			if (TotalUserNoOpinionAnalyses != other.TotalUserNoOpinionAnalyses) return false;
+
+			if (ParseReports.Count != other.ParseReports.Count) return false;
+
+			foreach (string key in ParseReports.Keys)
+				if (!ParseReports[key].Equals(other.ParseReports[key])) return false;
 
 			return true;
 		}
@@ -219,28 +253,46 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// <summary>
 	/// ParseReport reports the results of parsing a word.
 	/// </summary>
-	public class ParseReport
+	public class ParseReport : IEquatable<ParseReport>
 	{
-		// Time to parse the word
+		/// <summary>
+		/// Time to parse the word in milliseconds
+		/// </summary>
 		public long ParseTime { get; set; }
 
-		// Error message from the parser
+		/// <summary>
+		/// Error message from the parser
+		/// </summary>
 		public string ErrorMessage { get; set; }
 
-		// Number of parse analyses
+		/// <summary>
+		/// Number of parse analyses
+		/// </summary>
 		public int NumAnalyses { get; set; }
 
-		// Number of analyses that were marked approved by the user that did not get a parse
+		/// <summary>
+		/// Number of analyses that were marked approved by the user but did not get a parse
+		/// </summary>
 		public int NumUserApprovedAnalysesMissing { get; set; }
 
-		// Number of parse analyses that were marked as disapproved by the user
+		/// <summary>
+		/// Number of parse analyses that were marked as disapproved by the user
+		/// </summary>
 		public int NumUserDisapprovedAnalyses {  get; set; }
 
-		// Number of parse analyses that were marked as noOpinion by the user
+		/// <summary>
+		/// Number of parse analyses that were marked as noOpinion by the user
+		/// </summary>
 		public int NumUserNoOpinionAnalyses { get; set; }
 
 		public ParseReport() { }
 
+		/// <summary>
+		/// Create a parse report from a wordform and a parse result.
+		/// The wordform is needed to check user approval of parse analyses.
+		/// </summary>
+		/// <param name="wordform"></param>
+		/// <param name="result"></param>
 		public ParseReport(IWfiWordform wordform, ParseResult result)
 		{
 			ParseTime = result.ParseTime;
@@ -310,6 +362,28 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				diffReport.ErrorMessage = oldError + " => " + newError;
 			}
 			return diffReport;
+		}
+
+		/// <summary>
+		/// Is this parse report equal to other?
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		public bool Equals(ParseReport other)
+		{
+			if (ParseTime != other.ParseTime) return false;
+
+			if (ErrorMessage != other.ErrorMessage) return false;
+
+			if (NumAnalyses != other.NumAnalyses) return false;
+
+			if (NumUserApprovedAnalysesMissing != other.NumUserApprovedAnalysesMissing) return false;
+
+			if (NumUserDisapprovedAnalyses != other.NumUserDisapprovedAnalyses) return false;
+
+			if (NumUserNoOpinionAnalyses != other.NumUserNoOpinionAnalyses) return false;
+
+			return true;
 		}
 	}
 }
