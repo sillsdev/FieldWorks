@@ -1323,17 +1323,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return;
 		}
-		public void AddCollection(IFragmentWriter writer, bool isBlockProperty, string className, ConfigurableDictionaryNode config, string content)
+		public void AddCollection(IFragmentWriter writer, bool isBlockProperty, string className, ConfigurableDictionaryNode config, IFragment content)
 		{
-			var frag = ((WordFragmentWriter)writer).WordFragment;
-			if (isBlockProperty && (config.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph))
-				frag.AddStyleLink(config.Style, config, ConfigurableDictionaryNode.StyleTypes.Paragraph);
-			else if (!isBlockProperty)
-				frag.AddStyleLink(config.Style, config, ConfigurableDictionaryNode.StyleTypes.Character);
-
-			if (!string.IsNullOrEmpty(content))
+			if (!content.IsNullOrEmpty())
 			{
-				frag.Append(content);
+				((WordFragmentWriter)writer).WordFragment.Append(content);
 			}
 		}
 		public void BeginObjectProperty(IFragmentWriter writer, bool isBlockProperty, string getCollectionItemClassAttribute)

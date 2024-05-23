@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.XWorks
 		void StartEntry(IFragmentWriter writer, ConfigurableDictionaryNode config, string className, Guid entryGuid, int index, RecordClerk clerk);
 		void AddEntryData(IFragmentWriter writer, List<ConfiguredLcmGenerator.ConfigFragment> pieces);
 		void EndEntry(IFragmentWriter writer);
-		void AddCollection(IFragmentWriter writer, bool isBlockProperty, string className, ConfigurableDictionaryNode config, string content);
+		void AddCollection(IFragmentWriter writer, bool isBlockProperty, string className, ConfigurableDictionaryNode config, IFragment content);
 		void BeginObjectProperty(IFragmentWriter writer, bool isBlockProperty, string getCollectionItemClassAttribute);
 		void EndObject(IFragmentWriter writer);
 		void WriteProcessedContents(IFragmentWriter writer, IFragment contents);

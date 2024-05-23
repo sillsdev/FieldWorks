@@ -884,12 +884,12 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public void AddCollection(IFragmentWriter writer, bool isBlockProperty,
-			string className, ConfigurableDictionaryNode config, string content)
+			string className, ConfigurableDictionaryNode config, IFragment content)
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement(isBlockProperty ? "div" : "span");
 			xw.WriteAttributeString("class", className);
-			xw.WriteRaw(content);
+			xw.WriteRaw(content.ToString());
 			xw.WriteEndElement();
 		}
 

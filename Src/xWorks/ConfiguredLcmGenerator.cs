@@ -1366,7 +1366,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// To be used for things like shared grammatical info
 			var sharedCollectionInfo = settings.ContentGenerator.CreateFragment();
-			var bldr = settings.ContentGenerator.CreateFragment();
+			var frag = settings.ContentGenerator.CreateFragment();
 			IEnumerable collection;
 			if (collectionField is IEnumerable)
 			{
@@ -1384,7 +1384,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (config.DictionaryNodeOptions is DictionaryNodeSenseOptions)
 			{
-				bldr.Append(GenerateContentForSenses(config, pubDecorator, settings, collection, info, ref sharedCollectionInfo));
+				frag.Append(GenerateContentForSenses(config, pubDecorator, settings, collection, info, ref sharedCollectionInfo));
 			}
 			else
 			{
@@ -1392,11 +1392,11 @@ namespace SIL.FieldWorks.XWorks
 				ConfigurableDictionaryNode lexEntryTypeNode;
 				if (IsVariantEntryType(config, out lexEntryTypeNode))
 				{
-					bldr.Append(GenerateContentForEntryRefCollection(config, collection, cmOwner, pubDecorator, settings, lexEntryTypeNode, false));
+					frag.Append(GenerateContentForEntryRefCollection(config, collection, cmOwner, pubDecorator, settings, lexEntryTypeNode, false));
 				}
 				else if (IsComplexEntryType(config, out lexEntryTypeNode))
 				{
-					bldr.Append(GenerateContentForEntryRefCollection(config, collection, cmOwner, pubDecorator, settings, lexEntryTypeNode, true));
+					frag.Append(GenerateContentForEntryRefCollection(config, collection, cmOwner, pubDecorator, settings, lexEntryTypeNode, true));
 				}
 				else if (IsPrimaryEntryReference(config, out lexEntryTypeNode))
 				{
@@ -1413,13 +1413,13 @@ namespace SIL.FieldWorks.XWorks
 						bool first = true;
 						foreach (var entry in lerCollection.Where(item => !item.ComplexEntryTypesRS.Any() && !item.VariantEntryTypesRS.Any()))
 						{
-							bldr.Append(GenerateCollectionItemContent(config, pubDecorator, entry, collectionOwner, settings, first, lexEntryTypeNode));
+							frag.Append(GenerateCollectionItemContent(config, pubDecorator, entry, collectionOwner, settings, first, lexEntryTypeNode));
 							first = false;
 						}
 						// Display refs of each type
-						GenerateContentForLexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, bldr, lexEntryTypeNode,
+						GenerateContentForLexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, frag, lexEntryTypeNode,
 							true); // complex
-						GenerateContentForLexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, bldr, lexEntryTypeNode,
+						GenerateContentForLexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, frag, lexEntryTypeNode,
 							false); // variants
 					}
 					else
@@ -1428,36 +1428,36 @@ namespace SIL.FieldWorks.XWorks
 						bool first = true;
 						foreach (var item in lerCollection)
 						{
-							bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings, first));
+							frag.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings, first));
 							first = false;
 						}
 					}
 				}
 				else if (config.FieldDescription.StartsWith("Subentries"))
 				{
-					GenerateContentForSubentries(config, collection, cmOwner, pubDecorator, settings, bldr);
+					GenerateContentForSubentries(config, collection, cmOwner, pubDecorator, settings, frag);
 				}
 				else if (IsLexReferenceCollection(config))
 				{
-					GenerateContentForLexRefCollection(config, collection.Cast<ILexReference>(), cmOwner, pubDecorator, settings, bldr);
+					GenerateContentForLexRefCollection(config, collection.Cast<ILexReference>(), cmOwner, pubDecorator, settings, frag);
 				}
 				else
 				{
 					bool first = true;
 					foreach (var item in collection)
 					{
-						bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings, first));
+						frag.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings, first));
 						first = false;
 					}
 				}
 			}
 
-			if (bldr.Length() > 0 || sharedCollectionInfo.Length() > 0)
+			if (frag.Length() > 0 || sharedCollectionInfo.Length() > 0)
 			{
 				var className = settings.StylesGenerator.AddStyles(config).Trim('.');
 				return config.DictionaryNodeOptions is DictionaryNodeSenseOptions ?
-					settings.ContentGenerator.WriteProcessedSenses(false, bldr, config, className, sharedCollectionInfo) :
-					settings.ContentGenerator.WriteProcessedCollection(false, bldr, config, className);
+					settings.ContentGenerator.WriteProcessedSenses(false, frag, config, className, sharedCollectionInfo) :
+					settings.ContentGenerator.WriteProcessedCollection(false, frag, config, className);
 			}
 			return settings.ContentGenerator.CreateFragment();
 		}
@@ -1523,7 +1523,7 @@ namespace SIL.FieldWorks.XWorks
 		private static IFragment GenerateContentForEntryRefCollection(ConfigurableDictionaryNode config, IEnumerable collection, ICmObject collectionOwner,
 			DictionaryPublicationDecorator pubDecorator, GeneratorSettings settings, ConfigurableDictionaryNode typeNode, bool isComplex)
 		{
-			var bldr = settings.ContentGenerator.CreateFragment();
+			var frag = settings.ContentGenerator.CreateFragment();
 
 			var lerCollection = collection.Cast<ILexEntryRef>().ToList();
 			// ComplexFormsNotSubentries is a filtered version of VisibleComplexFormBackRefs, so it doesn't have it's own VirtualOrdering.
@@ -1543,11 +1543,11 @@ namespace SIL.FieldWorks.XWorks
 				bool first = true;
 				foreach (var entry in lerCollection.Where(item => !item.ComplexEntryTypesRS.Any() && !item.VariantEntryTypesRS.Any()))
 				{
-					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, entry, collectionOwner, settings, first, typeNode));
+					frag.Append(GenerateCollectionItemContent(config, pubDecorator, entry, collectionOwner, settings, first, typeNode));
 					first = false;
 				}
 				// Display refs of each type
-				GenerateContentForLexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, bldr, typeNode, isComplex);
+				GenerateContentForLexEntryRefsByType(config, lerCollection, collectionOwner, pubDecorator, settings, frag, typeNode, isComplex);
 			}
 			else
 			{
@@ -1555,11 +1555,11 @@ namespace SIL.FieldWorks.XWorks
 				bool first = true;
 				foreach (var item in lerCollection)
 				{
-					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings, first));
+					frag.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings, first));
 					first = false;
 				}
 			}
-			return bldr;
+			return frag;
 		}
 
 		private static void GenerateContentForLexEntryRefsByType(ConfigurableDictionaryNode config, List<ILexEntryRef> lerCollection, object collectionOwner, DictionaryPublicationDecorator pubDecorator,
@@ -1613,7 +1613,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void GenerateContentForSubentries(ConfigurableDictionaryNode config, IEnumerable collection, ICmObject collectionOwner,
-			DictionaryPublicationDecorator pubDecorator, GeneratorSettings settings, IFragment bldr)
+			DictionaryPublicationDecorator pubDecorator, GeneratorSettings settings, IFragment frag)
 		{
 			var listOptions = config.DictionaryNodeOptions as DictionaryNodeListOptions;
 			var typeNode = config.ReferencedOrDirectChildren.FirstOrDefault(n => n.FieldDescription == LookupComplexEntryType);
@@ -1631,7 +1631,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (subentries[i].Item1 == null || !subentries[i].Item1.ComplexEntryTypesRS.Any())
 					{
-						bldr.Append(GenerateCollectionItemContent(config, pubDecorator, subentries[i].Item2, collectionOwner, settings, first));
+						frag.Append(GenerateCollectionItemContent(config, pubDecorator, subentries[i].Item2, collectionOwner, settings, first));
 						first = false;
 						subentries.RemoveAt(i--);
 					}
@@ -1643,7 +1643,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						if (subentries[i].Item1.ComplexEntryTypesRS.Any(t => t.Guid == typeGuid))
 						{
-							bldr.Append(GenerateCollectionItemContent(config, pubDecorator, subentries[i].Item2, collectionOwner, settings, first));
+							frag.Append(GenerateCollectionItemContent(config, pubDecorator, subentries[i].Item2, collectionOwner, settings, first));
 							first = false;
 							subentries.RemoveAt(i--);
 						}
@@ -1656,7 +1656,7 @@ namespace SIL.FieldWorks.XWorks
 				bool first = true;
 				foreach (var item in collection)
 				{
-					bldr.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings, first));
+					frag.Append(GenerateCollectionItemContent(config, pubDecorator, item, collectionOwner, settings, first));
 					first = false;
 				}
 			}
@@ -2104,19 +2104,19 @@ namespace SIL.FieldWorks.XWorks
 					switch (child.FieldDescription)
 					{
 						case "ConfigTargets":
-							var contentBldr = new StringBuilder();
+							var content = settings.ContentGenerator.CreateFragment();
 							foreach (var referenceListItem in referenceList)
 							{
 								var referenceItem = referenceListItem.Item2;
 								var targetItem = referenceListItem.Item1;
-								contentBldr.Append(GenerateCollectionItemContent(child, publicationDecorator, targetItem, referenceItem, settings, first));
+								content.Append(GenerateCollectionItemContent(child, publicationDecorator, targetItem, referenceItem, settings, first));
 								first = false;
 							}
-							if (contentBldr.Length > 0)
+							if (!content.IsNullOrEmpty())
 							{
 								// targets
 								settings.ContentGenerator.AddCollection(xw, IsBlockProperty(child),
-									CssGenerator.GetClassAttributeForConfig(child), config, contentBldr.ToString());
+									CssGenerator.GetClassAttributeForConfig(child), config, content);
 							}
 							break;
 						case "OwnerType":
