@@ -150,9 +150,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return filename;
 		}
 
+		/// <summary>
+		/// Get the project reports directory for the project.
+		/// This is where project reports are stored.
+		/// </summary>
+		/// <param name="cache"></param>
+		/// <returns></returns>
 		public string GetProjectReportsDirectory(LcmCache cache)
 		{
-			var reportDir = Path.Combine(cache.ProjectId.Path, "ProjectReports");
+			// TODO: Handle the case when the project isn't local.
+			var projectDir = Path.GetDirectoryName(cache.ProjectId.Path);
+			var reportDir = Path.Combine(projectDir, "ProjectReports");
 			System.IO.Directory.CreateDirectory(reportDir);
 			return reportDir;
 		}
@@ -186,31 +194,50 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return newParseReports;
 		}
 
-		public bool Equals(ParserReport report)
+		public bool Equals(ParserReport other)
 		{
-			if (report is null)
+			if (other is null)
 			{
 				return false;
 			}
 
 			// Optimization for a common success case.
-			if (Object.ReferenceEquals(this, report))
+			if (Object.ReferenceEquals(this, other))
 			{
 				return true;
 			}
 
 			// If run-time types are not exactly the same, return false.
-			if (this.GetType() != report.GetType()) return false;
+			if (this.GetType() != other.GetType()) return false;
 
-			if (ProjectName != report.ProjectName) return false;
+			if (ProjectName != other.ProjectName) return false;
 
-			if (MachineName != report.MachineName) return false;
+			if (MachineName != other.MachineName) return false;
 
-			if (Timestamp != report.Timestamp) return false;
+			if (Timestamp != other.Timestamp) return false;
 
-			if (SourceText != report.SourceText) return false;
+			if (SourceText != other.SourceText) return false;
 
-			// if (ParseReports != report.ParseReports) return false;
+			if (NumWords != other.NumWords) return false;
+
+			if (NumParseErrors != other.NumParseErrors) return false;
+
+			if (NumZeroParses != other.NumZeroParses) return false;
+
+			if (TotalParseTime != other.TotalParseTime) return false;
+
+			if (TotalAnalyses != other.TotalAnalyses) return false;
+
+			if (TotalUserApprovedAnalysesMissing != other.TotalUserApprovedAnalysesMissing) return false;
+
+			if (TotalUserDisapprovedAnalyses != other.TotalUserDisapprovedAnalyses) return false;
+
+			if (TotalUserNoOpinionAnalyses != other.TotalUserNoOpinionAnalyses) return false;
+
+			if (ParseReports.Count != other.ParseReports.Count) return false;
+
+			foreach (string key in ParseReports.Keys)
+				if (!ParseReports[key].Equals(other.ParseReports[key])) return false;
 
 			return true;
 		}
@@ -219,24 +246,36 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// <summary>
 	/// ParseReport reports the results of parsing a word.
 	/// </summary>
-	public class ParseReport
+	public class ParseReport : IEquatable<ParseReport>
 	{
-		// Time to parse the word
+		/// <summary>
+		/// Time to parse the word
+		/// </summary>
 		public long ParseTime { get; set; }
 
-		// Error message from the parser
+		/// <summary>
+		/// Error message from the parser
+		/// </summary>
 		public string ErrorMessage { get; set; }
 
-		// Number of parse analyses
+		/// <summary>
+		/// Number of parse analyses
+		/// </summary>
 		public int NumAnalyses { get; set; }
 
-		// Number of analyses that were marked approved by the user that did not get a parse
+		/// <summary>
+		/// Number of analyses that were marked approved by the user that did not get a parse
+		/// </summary>
 		public int NumUserApprovedAnalysesMissing { get; set; }
 
-		// Number of parse analyses that were marked as disapproved by the user
+		/// <summary>
+		/// Number of parse analyses that were marked as disapproved by the user
+		/// </summary>
 		public int NumUserDisapprovedAnalyses {  get; set; }
 
-		// Number of parse analyses that were marked as noOpinion by the user
+		/// <summary>
+		/// Number of parse analyses that were marked as noOpinion by the user
+		/// </summary>
 		public int NumUserNoOpinionAnalyses { get; set; }
 
 		public ParseReport() { }
@@ -311,5 +350,22 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 			return diffReport;
 		}
+
+		public bool Equals(ParseReport other)
+		{
+			if (ParseTime != other.ParseTime) return false;
+
+			if (ErrorMessage != other.ErrorMessage) return false;
+
+			if (NumAnalyses != other.NumAnalyses) return false;
+
+			if (NumUserApprovedAnalysesMissing != other.NumUserApprovedAnalysesMissing) return false;
+
+			if (NumUserDisapprovedAnalyses != other.NumUserDisapprovedAnalyses) return false;
+
+			if (NumUserNoOpinionAnalyses != other.NumUserNoOpinionAnalyses) return false;
+
+			return true;
 	}
+}
 }
