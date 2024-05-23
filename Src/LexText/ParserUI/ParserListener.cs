@@ -28,8 +28,6 @@ using SIL.FieldWorks.WordWorks.Parser;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using XCore;
-using Gecko.WebIDL;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -61,6 +59,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		// Keep track of parse results as we parse wordforms.
 		private Dictionary<IWfiWordform, ParseResult> m_checkParserResults = null;
 		private int m_checkParserResultsCount = 0;
+		private string m_sourceText = null;
 
 		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
@@ -506,13 +505,30 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (CurrentText != null && ConnectToParser())
 			{
-				IStText text = CurrentText;
-				List<IStText> texts = new List<IStText>();
-				texts.Add(text);
-				var interestingTextsList = InterestingTextsDecorator.GetInterestingTextList(m_mediator, m_propertyTable, m_cache.ServiceLocator);
-				interestingTextsList.SetInterestingTexts(texts);
-				IEnumerable<IWfiWordform> wordforms = text.UniqueWordforms();
-				UpdateWordforms(wordforms, ParserPriority.Medium, true);
+				IEnumerable<IWfiWordform> wordforms = CurrentText.UniqueWordforms();
+				UpdateWordforms(wordforms, ParserPriority.Medium, true, CurrentText.ShortName);
+			}
+
+			return true;    //we handled this.
+		}
+
+		public bool OnCheckParserOnTestbed(object argument)
+		{
+			CheckDisposed();
+
+			if (ConnectToParser())
+			{
+				// Get all of the wordforms in the Testbed texts.
+				IEnumerable<IWfiWordform> wordforms = new HashSet<IWfiWordform>();
+				IEnumerable<SIL.LCModel.IText> texts = m_cache.ServiceLocator.GetInstance<ITextRepository>().AllInstances();
+				foreach (SIL.LCModel.IText text in texts)
+					if (text is IStText iStText)
+						foreach (var genre in iStText.GenreCategories)
+							if (genre.ShortName == "Testbed")
+								wordforms.Union(iStText.UniqueWordforms());
+
+				// Check all of the wordforms.
+				UpdateWordforms(wordforms, ParserPriority.Medium, true, "Testbed Texts");
 			}
 
 			return true;    //we handled this.
@@ -522,19 +538,36 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			if (CurrentText != null && ConnectToParser())
+			if (ConnectToParser())
 			{
 				IEnumerable<IWfiWordform> wordforms = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances();
-				UpdateWordforms(wordforms, ParserPriority.Low, true);
+				UpdateWordforms(wordforms, ParserPriority.Low, true, "All Texts");
 			}
 
 			return true;    //we handled this.
 		}
 
-		private void UpdateWordforms(IEnumerable<IWfiWordform> wordforms, ParserPriority priority, bool checkParser = false)
+		public bool OnShowParserReports(object argument)
+		{
+			CheckDisposed();
+
+			ShowParserReports();
+
+			return true;
+		}
+
+		private void UpdateWordforms(IEnumerable<IWfiWordform> wordforms, ParserPriority priority, bool checkParser = false, string sourceText = null)
 		{
 			if (checkParser)
-				InitCheckParserResults(wordforms);
+			{
+				InitCheckParserResults(wordforms, sourceText);
+				if (wordforms.Count() == 0)
+				{
+					// Write an empty parser report.
+					WriteParserReport();
+					ShowParserReports(append: true);
+				}
+			}
 			m_parserConnection.UpdateWordforms(wordforms, priority, checkParser);
 		}
 
@@ -543,7 +576,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_parserConnection.UpdateWordform(wordform, priority);
 		}
 
-		private void InitCheckParserResults(IEnumerable<IWfiWordform> wordforms)
+		private void InitCheckParserResults(IEnumerable<IWfiWordform> wordforms, string sourceText)
 		{
 			// Initialize m_parseResults with the given wordforms.
 			if (wordforms == null)
@@ -559,8 +592,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					m_checkParserResults[wordform] = null;
 				}
-
 			}
+			m_sourceText = sourceText;
 		}
 
 		private void WordformUpdatedEventHandler(object sender, WordformUpdatedEventArgs e)
@@ -579,13 +612,53 @@ namespace SIL.FieldWorks.LexText.Controls
 						return;
 				}
 				// Convert parse results into ParserReport.
-				m_checkParserResults = null;
-				// Show the parser report.
-				// FwLinkArgs link = new FwAppArgs(m_cache.ProjectId.Handle, "ParserReports", Guid.Empty);
-				// List<Property> additionalProps = link.PropertyTableEntries;
-				// additionalProps.Add(new Property("LinkSetupInfo", "AppendParserReport"));
-				// m_mediator.PostMessage("FollowLink", link);
+
+				WriteParserReport();
+				ShowParserReports(append: true);
 			}
+		}
+
+		/// <summary>
+		/// Write the parse results as a parser report in the standard place.
+		/// </summary>
+		void WriteParserReport()
+		{
+			// Create a parser report from the parse results.
+			var parserReport = new ParserReport(m_cache)
+			{
+				SourceText = m_sourceText
+			};
+			if (m_checkParserResults != null)
+			{
+				foreach (var wordform in m_checkParserResults.Keys)
+				{
+					var parseResult = m_checkParserResults[wordform];
+					var parseReport = new ParseReport(wordform, parseResult);
+					// TODO: Get the right string (e.g. not 'jugaraI?n' for Spanish).
+					var form = wordform.Form.VernacularDefaultWritingSystem;
+					parserReport.AddParseReport(form.Text, parseReport);
+				}
+			}
+			// Write the parser report to the default place.
+			parserReport.WriteJsonFile(m_cache);
+			// Clear the data we wrote.
+			m_checkParserResults = null;
+		}
+
+		/// <summary>
+		/// Show the parser reports in the ParserReports window.
+		/// </summary>
+		/// <param name="append"></param>
+		void ShowParserReports(bool append = false)
+		{
+			FwLinkArgs link = new FwAppArgs(m_cache.ProjectId.Handle, "ParserReports", Guid.Empty);
+			if (append)
+			{
+				List<Property> additionalProps = link.PropertyTableEntries;
+				additionalProps.Add(new Property("LinkSetupInfo", "AppendParserReport"));
+			}
+			m_mediator.PostMessage("FollowLink", link);
+
 		}
 
 		public bool OnParseAllWords(object argument)
