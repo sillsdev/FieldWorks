@@ -28,8 +28,6 @@ using SIL.FieldWorks.WordWorks.Parser;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using XCore;
-using Gecko.WebIDL;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace SIL.FieldWorks.LexText.Controls
 {

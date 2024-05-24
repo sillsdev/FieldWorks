@@ -19,18 +19,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		/// <summary>
 		/// Name of the machine that ran the parser
-		/// (This is relevant for ParseTime.)
+		/// (This is relevant for parse times.)
 		/// </summary>
 		public string MachineName { get; set; }
 
 		/// <summary>
-		/// Either "Testbed", "All", or the name of the text parsed
+		/// Either "Testbed Texts", "All Texts", or the name of the text parsed
 		/// </summary>
 		public string SourceText { get; set; }
 
 		/// <summary>
-		/// Timestamp of when CheckParser was called
-		/// Use FromFileTime to convert to DateTime.
+		/// Timestamp of when CheckParser was called as a FileTime
+		/// (Use FromFileTime to convert to DateTime.)
 		/// </summary>
 		public long Timestamp { get; set; }
 
@@ -45,12 +45,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public int NumParseErrors { get; set; }
 
 		/// <summary>
-		/// Number of words that get zero parses but no error
+		/// Number of words that get zero parses
 		/// </summary>
 		public int NumZeroParses { get; set; }
 
 		/// <summary>
-		/// Total time to parse all the words
+		/// Total time to parse all the words in milliseconds
 		/// </summary>
 		public long TotalParseTime { get; set; }
 
@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public int TotalAnalyses { get; set; }
 
 		/// <summary>
-		/// Total number of analyses that were marked approved by the user that did not get a parse
+		/// Total number of analyses that were marked approved by the user but did not get a parse
 		/// </summary>
 		public int TotalUserApprovedAnalysesMissing { get; set; }
 
@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// </summary>
 		/// <param name="cache"></param>
 		/// <returns></returns>
-		public string GetProjectReportsDirectory(LcmCache cache)
+		public static string GetProjectReportsDirectory(LcmCache cache)
 		{
 			// TODO: Handle the case when the project isn't local.
 			var projectDir = Path.GetDirectoryName(cache.ProjectId.Path);
@@ -172,28 +172,35 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <returns></returns>
 		public IDictionary<string, ParseReport> DiffParseReports (IDictionary<string, ParseReport> oldReports)
 		{
-			IDictionary<string, ParseReport> newParseReports = new Dictionary<string, ParseReport>();
-			ParseReport missingReport = new ParseReport();
-			missingReport.ErrorMessage = "missing";
+			IDictionary<string, ParseReport> diffParseReports = new Dictionary<string, ParseReport>();
+			ParseReport missingReport = new ParseReport
+			{
+				ErrorMessage = "missing"
+			};
 
 			foreach (string key in oldReports.Keys)
 			{
 				ParseReport oldReport = oldReports[key];
 				ParseReport newReport = ParseReports.ContainsKey(key) ? ParseReports[key] : missingReport;
-				newParseReports[key] = newReport.DiffParseReport(oldReport);
+				diffParseReports[key] = newReport.DiffParseReport(oldReport);
 			}
 			foreach (string key in ParseReports.Keys)
 			{
 				if (!oldReports.ContainsKey(key))
 				{
 					ParseReport newReport = ParseReports[key];
-					newParseReports[key] = newReport.DiffParseReport(missingReport);
+					diffParseReports[key] = newReport.DiffParseReport(missingReport);
 				}
 			}
 
-			return newParseReports;
+			return diffParseReports;
 		}
 
+		/// <summary>
+		/// Is this parse report equal to other?
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
 		public bool Equals(ParserReport other)
 		{
 			if (other is null)
@@ -249,7 +256,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	public class ParseReport : IEquatable<ParseReport>
 	{
 		/// <summary>
-		/// Time to parse the word
+		/// Time to parse the word in milliseconds
 		/// </summary>
 		public long ParseTime { get; set; }
 
@@ -264,7 +271,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public int NumAnalyses { get; set; }
 
 		/// <summary>
-		/// Number of analyses that were marked approved by the user that did not get a parse
+		/// Number of analyses that were marked approved by the user but did not get a parse
 		/// </summary>
 		public int NumUserApprovedAnalysesMissing { get; set; }
 
@@ -280,6 +287,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public ParseReport() { }
 
+		/// <summary>
+		/// Create a parse report from a wordform and a parse result.
+		/// The wordform is needed to check user approval of parse analyses.
+		/// </summary>
+		/// <param name="wordform"></param>
+		/// <param name="result"></param>
 		public ParseReport(IWfiWordform wordform, ParseResult result)
 		{
 			ParseTime = result.ParseTime;
@@ -351,6 +364,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return diffReport;
 		}
 
+		/// <summary>
+		/// Is this parse report equal to other?
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
 		public bool Equals(ParseReport other)
 		{
 			if (ParseTime != other.ParseTime) return false;
@@ -366,6 +384,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (NumUserNoOpinionAnalyses != other.NumUserNoOpinionAnalyses) return false;
 
 			return true;
+		}
 	}
-}
 }
