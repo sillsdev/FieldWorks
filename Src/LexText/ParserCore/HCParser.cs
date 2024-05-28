@@ -235,6 +235,33 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						writer.WriteEndElement();
 					}
 				}
+				foreach (IPhPhoneme phone in m_cache.LangProject.PhonologicalDataOA.PhonemeSetsOS[0].PhonemesOC)
+				{
+					foreach (IPhCode code in phone.CodesOS)
+					{
+						if (code != null && code.Representation != null)
+						{
+							var grapheme = code.Representation.BestVernacularAlternative.Text;
+							// Check for empty graphemes/codes whcih can cause a crash; see https://jira.sil.org/browse/LT-21589
+							if (String.IsNullOrEmpty(grapheme) || grapheme == "***")
+							{
+								writer.WriteStartElement("EmptyGrapheme");
+								writer.WriteElementString("Phoneme", phone.Name.BestVernacularAnalysisAlternative.Text);
+								writer.WriteEndElement();
+							}
+							else
+							// Check for '[' and ']' which can cause a mysterious message in Try a Word
+							if (grapheme.Contains("[") || grapheme.Contains("]"))
+							{
+								writer.WriteStartElement("NoBracketsAsGraphemes");
+								writer.WriteElementString("Grapheme", grapheme);
+								writer.WriteElementString("Phoneme", phone.Name.BestVernacularAnalysisAlternative.Text);
+								writer.WriteElementString("Bracket", grapheme);
+								writer.WriteEndElement();
+							}
+						}
+					}
+				}
 				writer.WriteEndElement();
 			}
 		}
