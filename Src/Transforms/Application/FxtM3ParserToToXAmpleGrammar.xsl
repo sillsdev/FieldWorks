@@ -1465,7 +1465,7 @@ Let&amp;</xsl:text>
 		&lt;<xsl:value-of select="$sNonTerm"/> envMorphoSyntaxInfo fullMorphoSyntax&gt; = &lt;<xsl:value-of select="$sNonTerm"/> morphoSyntax>
 			| environment morpho-syntax logical constraint
 		&lt;<xsl:value-of select="$sNonTerm"/> envMorphoSyntaxInfo&gt; == (
-		 <xsl:call-template name="AffixAlloWithFeaturesLogicalConstraint"/>
+		 <xsl:value-of select="$sAffixAlloWithFeaturesLogicalConstraint"/>
 		 <xsl:text>)</xsl:text>
 	  </xsl:if>
    </xsl:template>
