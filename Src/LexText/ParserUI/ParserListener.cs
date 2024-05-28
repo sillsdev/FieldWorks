@@ -634,7 +634,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					var parseResult = m_checkParserResults[wordform];
 					var parseReport = new ParseReport(wordform, parseResult);
-					// TODO: Get the right string (e.g. not 'jugaraI?n' for Spanish).
 					var form = wordform.Form.VernacularDefaultWritingSystem;
 					parserReport.AddParseReport(form.Text, parseReport);
 				}
