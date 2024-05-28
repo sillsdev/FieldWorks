@@ -1325,9 +1325,15 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public void AddCollection(IFragmentWriter writer, bool isBlockProperty, string className, ConfigurableDictionaryNode config, IFragment content)
 		{
+			var frag = ((WordFragmentWriter)writer).WordFragment;
+			if (isBlockProperty && (config.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph))
+				frag.AddStyleLink(config.Style, config, ConfigurableDictionaryNode.StyleTypes.Paragraph);
+			else if (!isBlockProperty)
+				frag.AddStyleLink(config.Style, config, ConfigurableDictionaryNode.StyleTypes.Character);
+
 			if (!content.IsNullOrEmpty())
 			{
-				((WordFragmentWriter)writer).WordFragment.Append(content);
+				frag.Append(content);
 			}
 		}
 		public void BeginObjectProperty(IFragmentWriter writer, bool isBlockProperty, string getCollectionItemClassAttribute)
