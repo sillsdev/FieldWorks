@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<word>
+  <form>manahomia</form>
+  <seq step="Try to build a Full analysis node on an uninflected Stem node.">
+    <full syncat="5816" syncatAbbr="v" requiresInfl="+" inflected="-">
+      <stem syncat="5816" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+">
+        <morph type="root" wordType="root" morphname="570" alloid="9" category="W">
+          <props> RootPOS5816</props>
+          <shortName>manaho (fall): manaho</shortName>
+          <alloform>manaho</alloform>
+          <gloss>fall</gloss>
+          <citationForm>manaho</citationForm>
+          <stemMsa cat="5816" catAbbr="v" inflClass="0" requiresInfl="+" />
+        </morph>
+      </stem>
+    </full>
+    <morph type="sfx" wordType="2431" morphname="1888" alloid="5570" category="W/W">
+      <props />
+      <shortName>-mi (PFV): -mi</shortName>
+      <alloform>-mi</alloform>
+      <gloss>PFV</gloss>
+      <citationForm>-mi</citationForm>
+      <inflMsa cat="5816" catAbbr="v" slot="2431" slotAbbr="PFV" slotOptional="true" />
+    </morph>
+    <morph type="sfx" wordType="904" morphname="5177" alloid="5162" category="W/W">
+      <props />
+      <shortName>-a (1SG.ABS): -a</shortName>
+      <alloform>-a</alloform>
+      <gloss>1SG.ABS</gloss>
+      <citationForm>-a</citationForm>
+      <inflMsa cat="5816" catAbbr="v" slot="904" slotAbbr="PERSNUMABS" slotOptional="true" />
+    </morph>
+  </seq>
+  <seq step="Try to apply inflectional template 'verb'.  The result will be a Full analysis node.">
+    <full syncat="5816" syncatAbbr="v" requiresInfl="-" inflected="+">
+      <failure>The inflectional template named 'verb' for category 'Verb' failed because the required prefix slot 'PERSNUMERG' was not found.</failure>
+      <stem syncat="5816" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+">
+        <morph type="root" wordType="root" morphname="570" alloid="9" category="W">
+          <props> RootPOS5816</props>
+          <shortName>manaho (fall): manaho</shortName>
+          <alloform>manaho</alloform>
+          <gloss>fall</gloss>
+          <citationForm>manaho</citationForm>
+          <stemMsa cat="5816" catAbbr="v" inflClass="0" requiresInfl="+" />
+        </morph>
+      </stem>
+      <morph type="sfx" wordType="2431" morphname="1888" alloid="5570" category="W/W">
+        <props />
+        <shortName>-mi (PFV): -mi</shortName>
+        <alloform>-mi</alloform>
+        <gloss>PFV</gloss>
+        <citationForm>-mi</citationForm>
+        <inflMsa cat="5816" catAbbr="v" slot="2431" slotAbbr="PFV" slotOptional="true" />
+      </morph>
+      <morph type="sfx" wordType="904" morphname="5177" alloid="5162" category="W/W">
+        <props />
+        <shortName>-a (1SG.ABS): -a</shortName>
+        <alloform>-a</alloform>
+        <gloss>1SG.ABS</gloss>
+        <citationForm>-a</citationForm>
+        <inflMsa cat="5816" catAbbr="v" slot="904" slotAbbr="PERSNUMABS" slotOptional="true" />
+      </morph>
+    </full>
+  </seq>
+</word>

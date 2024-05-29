@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2024 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -34,6 +34,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private XslCompiledTransform m_resultTransformAffixAlloFeats;
 		private XslCompiledTransform m_UnificationViaXsltTransform;
 		private XslCompiledTransform m_SameSlotTwiceTransform;
+		private XslCompiledTransform m_RequiredOptionalPrefixSlotsTransform;
 
 		/// <summary>
 		/// Location of test files
@@ -47,6 +48,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected string m_sResultTransformStemNames;
 		/// <summary></summary>
 		protected string m_sResultTransformAffixAlloFeats;
+		/// <summary></summary>
+		protected string m_sRequiredOptionalPrefixSlotsTransform;
 		/// <summary></summary>
 		protected string m_sM3FXTDump;
 		/// <summary></summary>
@@ -97,6 +100,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			SetUpResultTransform(m_sResultTransformStemNames, out m_resultTransformStemNames);
 			CreateResultTransform("M3FXTDumpAffixAlloFeats.xml", out m_sResultTransformAffixAlloFeats);
 			SetUpResultTransform(m_sResultTransformAffixAlloFeats, out m_resultTransformAffixAlloFeats);
+			SetUpRequiredOptionalPrefixSlotsTransform();
+			CreateResultTransform("M3FXTRequiredOptionalPrefixSlots.xml", out m_sRequiredOptionalPrefixSlotsTransform);
+			SetUpResultTransform(m_sRequiredOptionalPrefixSlotsTransform, out m_RequiredOptionalPrefixSlotsTransform);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -119,12 +125,14 @@ namespace SIL.FieldWorks.LexText.Controls
 				File.Delete(Path.Combine(m_sTempPath, "UnifyTwoFeatureStructures.xsl"));
 			if (File.Exists(Path.Combine(m_sTempPath, "TestUnificationViaXSLT-Linux.xsl")))
 				File.Delete(Path.Combine(m_sTempPath, "TestUnificationViaXSLT-Linux.xsl"));
+			if (File.Exists(m_sRequiredOptionalPrefixSlotsTransform))
+				File.Delete(m_sRequiredOptionalPrefixSlotsTransform);
 		}
 
 		#region Helper methods for setup
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Sets the up result transform.
+		/// Sets up the result transform.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private void SetUpResultTransform(string sResultTransform, out XslCompiledTransform resultTransform)
@@ -135,7 +143,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Sets the up unification via XSLT transform.
+		/// Sets up the unification via XSLT transform.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private void SetUpUnificationViaXsltTransform()
@@ -148,7 +156,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Sets the up unification via XSLT transform.
+		/// Sets up the same slot twice XSLT transform.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private void SetUpSameSlotTwiceTransform()
@@ -157,6 +165,19 @@ namespace SIL.FieldWorks.LexText.Controls
 				@"TLPSameSlotTwiceWordGrammarDebugger.xsl");
 			m_SameSlotTwiceTransform = new XslCompiledTransform(m_fDebug);
 			m_SameSlotTwiceTransform.Load(sSameSlotTwiceTransform);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Sets up the Required Optional Prefix Slots XSLT transform.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void SetUpRequiredOptionalPrefixSlotsTransform()
+		{
+			string sRequiredOptionalPrefixSlotsTransform = Path.Combine(m_sTestPath,
+				@"RequiredOptionalPrefixSlotsWordGrammarDebugger.xsl");
+			m_RequiredOptionalPrefixSlotsTransform = new XslCompiledTransform(m_fDebug);
+			m_RequiredOptionalPrefixSlotsTransform.Load(sRequiredOptionalPrefixSlotsTransform);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -239,7 +260,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			sb.AppendLine(sExpectedResultFile);
 			sb.Append("Actual file was ");
 			sb.AppendLine(sActualResultFile);
-
 			XElement xeActual = XElement.Parse(sActual, LoadOptions.None);
 			XElement xeExpected = XElement.Parse(sExpected, LoadOptions.None);
 			bool ok = XmlHelper.EqualXml(xeExpected, xeActual, sb);
@@ -284,6 +304,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			ApplyTransform("niyaloximuraStep01.xml", "niyaloximuraStep02.xml");
 			// Inflectional templates
 			ApplyTransform("biliStep00BadInflection.xml", "biliStep01BadInflection.xml");
+			// required prefix slot, optional prefix slot, stem, optional suffix slots
+			// but no prefix is in the form
+			ApplyTransform("manahomiaStep00.xml", "manahomiaStep01.xml", m_RequiredOptionalPrefixSlotsTransform);
 		}
 
 		/// ------------------------------------------------------------------------------------
