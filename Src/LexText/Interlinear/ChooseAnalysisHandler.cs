@@ -439,13 +439,9 @@ namespace SIL.FieldWorks.IText
 					ITsIncStrBldr sbPrepend = null;
 					ITsIncStrBldr sbAppend = null;
 
-					var inflType = mb.InflTypeRA;
-					var glossAccessor = sense.Gloss;
-					var wsAnalysis = fdoCache.ServiceLocator.WritingSystemManager.Get(fdoCache.DefaultAnalWs);
+					ITsString tssGloss = sense.Gloss.get_String(fdoCache.DefaultAnalWs);
 
-					var tssSense = MorphServices.MakeGlossOptionWithInflVariantTypes(inflType, glossAccessor, wsAnalysis);
-
-					var displayText = tssSense.Text;
+					var displayText = tssGloss?.Text;
 					if (sbPrepend != null)
 						displayText = sbPrepend.GetString() + displayText;
 					if (sbAppend != null)
