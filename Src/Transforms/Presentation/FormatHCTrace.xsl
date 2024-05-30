@@ -826,7 +826,7 @@ function Toggle(node, path, imgOffset)
 								<xsl:text>This affix cannot attach to an irregularly inflected form.</xsl:text>
 							</xsl:when>
 							<xsl:when test="@type = 'partialParse'">
-								<xsl:text>This parse does not include all analyzed morphemes.</xsl:text>
+								<xsl:text>This parse does not include all analyzed morphemes.  Perhaps the missing morphemes are in an inflectional template that is not available at this point in the synthesis.</xsl:text>
 							</xsl:when>
 							<xsl:when test="@type = 'nonFinalTemplate'">
 								<xsl:text>Further derivation is required after a non-final template.</xsl:text>
