@@ -1323,7 +1323,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return;
 		}
-		public void AddCollection(IFragmentWriter writer, bool isBlockProperty, string className, ConfigurableDictionaryNode config, string content)
+		public void AddCollection(IFragmentWriter writer, bool isBlockProperty, string className, ConfigurableDictionaryNode config, IFragment content)
 		{
 			var frag = ((WordFragmentWriter)writer).WordFragment;
 			if (isBlockProperty && (config.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph))
@@ -1331,7 +1331,7 @@ namespace SIL.FieldWorks.XWorks
 			else if (!isBlockProperty)
 				frag.AddStyleLink(config.Style, config, ConfigurableDictionaryNode.StyleTypes.Character);
 
-			if (!string.IsNullOrEmpty(content))
+			if (!content.IsNullOrEmpty())
 			{
 				frag.Append(content);
 			}
@@ -1381,7 +1381,7 @@ namespace SIL.FieldWorks.XWorks
 			senseNum.AddStyleLink(WordStylesGenerator.SenseNumberStyleName, senseConfigNode, ConfigurableDictionaryNode.StyleTypes.Character);
 			return senseNum;
 		}
-		public IFragment AddLexReferences(bool generateLexType, IFragment lexTypeContent, ConfigurableDictionaryNode config, string className, string referencesContent, bool typeBefore)
+		public IFragment AddLexReferences(bool generateLexType, IFragment lexTypeContent, ConfigurableDictionaryNode config, string className, IFragment referencesContent, bool typeBefore)
 		{
 			var fragment = new DocFragment();
 			// Generate the factored ref types element (if before).
@@ -1390,7 +1390,7 @@ namespace SIL.FieldWorks.XWorks
 				fragment.Append(WriteProcessedObject(false, lexTypeContent, config, className));
 			}
 			// Then add all the contents for the LexReferences (e.g. headwords)
-			fragment.Append(new DocFragment(referencesContent));
+			fragment.Append(referencesContent);
 			// Generate the factored ref types element (if after).
 			if (generateLexType && !typeBefore)
 			{
