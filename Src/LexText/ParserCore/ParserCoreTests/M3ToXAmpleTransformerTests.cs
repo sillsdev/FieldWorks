@@ -39,6 +39,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		string m_sM3FXTLatinDump;
 		string m_sM3FXTIrregularlyInflectedFormsDump;
 		string m_sM3FXTQuechuaMYLDump;
+		string m_sM3FXTEmiFLExDump;
 		private string m_sAbazaOrderClassPlayDump;
 		readonly Dictionary<string, XPathDocument> m_mapXmlDocs = new Dictionary<string, XPathDocument>();
 
@@ -85,6 +86,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_sM3FXTIrregularlyInflectedFormsDump = Path.Combine(m_sTestPath, "IrregularlyInflectedFormsParserFxtResult.xml");
 			m_sAbazaOrderClassPlayDump = Path.Combine(m_sTestPath, "Abaza-OrderclassPlay.xml");
 			m_sM3FXTQuechuaMYLDump = Path.Combine(m_sTestPath, "QuechuaMYLFxtResult.xml");
+			m_sM3FXTEmiFLExDump = Path.Combine(m_sTestPath, "emi-flexFxtResult.xml");
 
 			SetupXmlDocument(m_sM3FXTDump);
 			SetupXmlDocument(m_sM3FXTCircumfixDump);
@@ -102,6 +104,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			SetupXmlDocument(m_sM3FXTIrregularlyInflectedFormsDump);
 			SetupXmlDocument(m_sAbazaOrderClassPlayDump);
 			SetupXmlDocument(m_sM3FXTQuechuaMYLDump);
+			SetupXmlDocument(m_sM3FXTEmiFLExDump);
 		}
 
 		private void SetupXmlDocument(string filepath)
@@ -161,6 +164,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ApplyTransform(m_sM3FXTIrregularlyInflectedFormsDump, m_lexTransform, "IrregularlyInflectedFormsLexicon.txt");
 			ApplyTransform(m_sAbazaOrderClassPlayDump, m_lexTransform, "Abaza-OrderclassPlaylex.txt");
 			ApplyTransform(m_sM3FXTQuechuaMYLDump, m_lexTransform, "QuechuaMYLlex.txt");
+			ApplyTransform(m_sM3FXTEmiFLExDump, m_lexTransform, "emi-flexlex.txt");
 		}
 		/// <summary>
 		/// Test creating the word grammar file
