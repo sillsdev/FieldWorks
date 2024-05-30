@@ -296,7 +296,7 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 
-			// Add option to clear the analysis altogeter.
+			// Add option to clear the analysis altogether.
 			AddItem(wordform, MakeSimpleString(ITextStrings.ksNewAnalysis), false, WfiWordformTags.kClassId);
 			// Add option to reset to the default
 			AddItem(null, MakeSimpleString(ITextStrings.ksUseDefaultAnalysis), false);
@@ -375,6 +375,7 @@ namespace SIL.FieldWorks.IText
 			ITsTextProps glossTextProperties = GlossTextProperties(fdoCache, true, fUseStyleSheet);
 			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
 			ISilDataAccess sda = fdoCache.MainCacheAccessor;
+			ILexEntry entry = null;
 			int cmorph = wa.MorphBundlesOS.Count;
 			if (cmorph == 0)
 				return TsStringUtils.MakeString(ITextStrings.ksNoMorphemes, fdoCache.DefaultUserWs);
@@ -396,7 +397,7 @@ namespace SIL.FieldWorks.IText
 				// Review: Appears to be similar to code in LexEntryVc.
 				if (mf != null)
 				{
-					var entry = mf.Owner as ILexEntry;
+					entry = mf.Owner as ILexEntry;
 					var lexemeForm = entry.LexemeFormOA;
 					if (lexemeForm != null)
 					{
@@ -435,8 +436,21 @@ namespace SIL.FieldWorks.IText
 				int ichMinSense = tsb.Length;
 				if (sense != null)
 				{
-					ITsString tssGloss = sense.Gloss.get_String(fdoCache.DefaultAnalWs);
-					tsb.Replace(ichMinSense, ichMinSense, tssGloss.Text, glossTextProperties);
+					ITsIncStrBldr sbPrepend = null;
+					ITsIncStrBldr sbAppend = null;
+
+					var inflType = mb.InflTypeRA;
+					var glossAccessor = sense.Gloss;
+					var wsAnalysis = fdoCache.ServiceLocator.WritingSystemManager.Get(fdoCache.DefaultAnalWs);
+
+					var tssSense = MorphServices.MakeGlossOptionWithInflVariantTypes(inflType, glossAccessor, wsAnalysis);
+
+					var displayText = tssSense.Text;
+					if (sbPrepend != null)
+						displayText = sbPrepend.GetString() + displayText;
+					if (sbAppend != null)
+						displayText = displayText + sbAppend.GetString();
+					tsb.Replace(ichMinSense, ichMinSense, displayText, glossTextProperties);
 				}
 				else
 					tsb.Replace(ichMinSense, ichMinSense, ksMissingString, glossTextProperties);
@@ -569,6 +583,7 @@ namespace SIL.FieldWorks.IText
 				combo.Location = new System.Drawing.Point(loc.left, loc.top);
 				// 21 is the default height of a combo, the smallest reasonable size.
 				combo.Size = new System.Drawing.Size(Math.Max(loc.right - loc.left + 30, 200), Math.Max( loc.bottom - loc.top, 50));
+
 				if (!m_owner.Controls.Contains(combo))
 					m_owner.Controls.Add(combo);
 			}
