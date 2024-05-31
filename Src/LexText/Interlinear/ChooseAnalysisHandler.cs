@@ -374,8 +374,6 @@ namespace SIL.FieldWorks.IText
 			ITsTextProps formTextProperties = FormTextProperties(fdoCache, fUseStyleSheet, wsVern);
 			ITsTextProps glossTextProperties = GlossTextProperties(fdoCache, true, fUseStyleSheet);
 			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
-			ISilDataAccess sda = fdoCache.MainCacheAccessor;
-			ILexEntry entry = null;
 			int cmorph = wa.MorphBundlesOS.Count;
 			if (cmorph == 0)
 				return TsStringUtils.MakeString(ITextStrings.ksNoMorphemes, fdoCache.DefaultUserWs);
@@ -397,7 +395,7 @@ namespace SIL.FieldWorks.IText
 				// Review: Appears to be similar to code in LexEntryVc.
 				if (mf != null)
 				{
-					entry = mf.Owner as ILexEntry;
+					var entry = mf.Owner as ILexEntry;
 					var lexemeForm = entry.LexemeFormOA;
 					if (lexemeForm != null)
 					{
