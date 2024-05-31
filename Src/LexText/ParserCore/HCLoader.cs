@@ -2345,7 +2345,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 
-			m_null = m_table.AddBoundary(new[] {"^0", "*0", "&0", "Ø", "∅"});
+			m_null = m_table.AddBoundary(new[] {"^0", "*0", "&0", "∅"});
 			m_table.AddBoundary(".");
 			m_morphBdry = m_table["+"];
 
