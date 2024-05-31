@@ -66,7 +66,14 @@ Main template
 					</xsl:if>
 				</xsl:for-each>
 			</languages>
-			<types> </types>
+			<types>
+				<type id="tDependent" color="#0000FF"/>
+				<type id="tGramInfo" color="#FF9900"/>
+				<type id="tMoved" color="#FF0000"/>
+				<type id="tMovedMkr" color="#FF8080"/>
+				<type id="tSong" color="#993366"/>
+				<type id="tSpeech" color="#008000"/>
+			</types>
 		</lingPaper>
 	</xsl:template>
 	<!--
@@ -122,7 +129,10 @@ Main template
 	-->
 	<xsl:template match="listRef">
 		<gloss lang="{@lang}">
-			<xsl:apply-templates/>
+			<xsl:text>&#x20;</xsl:text>
+			<object type="tGramInfo">
+				<xsl:apply-templates/>
+			</object>
 		</gloss>
 	</xsl:template>
 	<!--
@@ -132,7 +142,38 @@ Main template
 		<xsl:if test="@noSpaceBefore='false'">
 			<xsl:text>&#x20;</xsl:text>
 		</xsl:if>
-		<xsl:apply-templates/>
+		<xsl:choose>
+			<xsl:when test="ancestor::row[@type='speech']">
+				<object type="tSpeech">
+					<xsl:apply-templates/>
+				</object>
+			</xsl:when>
+			<xsl:when test="ancestor::row[@type='song']">
+				<object type="tSong">
+					<xsl:apply-templates/>
+				</object>
+			</xsl:when>
+			<xsl:when test="ancestor::row[@type='dependent']">
+				<object type="tDependent">
+					<xsl:apply-templates/>
+				</object>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:apply-templates/>
+			</xsl:otherwise>
+		</xsl:choose>
+		<xsl:if test="@noSpaceAfter='false'">
+			<xsl:text>&#x20;</xsl:text>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="lit[following-sibling::*[1][name()='listRef'] or preceding-sibling::*[1][name()='listRef']]">
+		<xsl:if test="@noSpaceBefore='false' or preceding-sibling::*[1][name()='word']">
+			<xsl:text>&#x20;</xsl:text>
+		</xsl:if>
+		<object type="tGramInfo">
+			<xsl:apply-templates/>
+		</object>
 		<xsl:if test="@noSpaceAfter='false'">
 			<xsl:text>&#x20;</xsl:text>
 		</xsl:if>
@@ -143,7 +184,26 @@ Main template
 			<xsl:if test="count(preceding-sibling::*) &gt; 0">
 				<xsl:text>&#x20;</xsl:text>
 			</xsl:if>
-			<xsl:apply-templates/>
+			<xsl:choose>
+				<xsl:when test="ancestor::row[@type='speech']">
+					<object type="tSpeech">
+						<xsl:apply-templates/>
+					</object>
+				</xsl:when>
+				<xsl:when test="ancestor::row[@type='song']">
+					<object type="tSong">
+						<xsl:apply-templates/>
+					</object>
+				</xsl:when>
+				<xsl:when test="ancestor::row[@type='dependent']">
+					<object type="tDependent">
+						<xsl:apply-templates/>
+					</object>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:apply-templates/>
+				</xsl:otherwise>
+			</xsl:choose>
 		</langData>
 	</xsl:template>
 
@@ -162,7 +222,7 @@ Main template
 					<lineGroup>
 						<line>
 							<wrd>
-								<xsl:apply-templates select="lit | word | listRef"/>
+								<xsl:apply-templates select="lit | word | listRef | moveMkr"/>
 							</wrd>
 						</line>
 						<line>
@@ -177,6 +237,21 @@ Main template
 				<xsl:apply-templates/>
 			</xsl:otherwise>
 		</xsl:choose>
+	</xsl:template>
+	<!--
+		moveMkr
+	-->
+	<xsl:template match="moveMkr">
+		<object type="tMovedMkr">
+			<xsl:choose>
+				<xsl:when test=".='Preposed'">
+					<xsl:text>&lt;&lt; </xsl:text>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text> &gt;&gt;</xsl:text>
+				</xsl:otherwise>
+			</xsl:choose>
+		</object>
 	</xsl:template>
 	<!--
 		row
@@ -207,7 +282,31 @@ Main template
 			<xsl:if test="count(preceding-sibling::*) &gt; 0">
 				<xsl:text>&#x20;</xsl:text>
 			</xsl:if>
-			<xsl:apply-templates/>
+			<xsl:choose>
+				<xsl:when test="ancestor::row[@type='speech']">
+					<object type="tSpeech">
+						<xsl:apply-templates/>
+					</object>
+				</xsl:when>
+				<xsl:when test="ancestor::row[@type='song']">
+					<object type="tSong">
+						<xsl:apply-templates/>
+					</object>
+				</xsl:when>
+				<xsl:when test="ancestor::row[@type='dependent']">
+					<object type="tDependent">
+						<xsl:apply-templates/>
+					</object>
+				</xsl:when>
+				<xsl:when test="@moved='true'">
+					<object type="tMoved">
+						<xsl:apply-templates/>
+					</object>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:apply-templates/>
+				</xsl:otherwise>
+			</xsl:choose>
 		</langData>
 	</xsl:template>
 </xsl:stylesheet>
