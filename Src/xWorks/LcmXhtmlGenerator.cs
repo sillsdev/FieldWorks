@@ -884,12 +884,12 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public void AddCollection(IFragmentWriter writer, bool isBlockProperty,
-			string className, ConfigurableDictionaryNode config, string content)
+			string className, ConfigurableDictionaryNode config, IFragment content)
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement(isBlockProperty ? "div" : "span");
 			xw.WriteAttributeString("class", className);
-			xw.WriteRaw(content);
+			xw.WriteRaw(content.ToString());
 			xw.WriteEndElement();
 		}
 
@@ -961,7 +961,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public IFragment AddLexReferences(bool generateLexType, IFragment lexTypeContent, ConfigurableDictionaryNode config, string className,
-			string referencesContent, bool typeBefore)
+			IFragment referencesContent, bool typeBefore)
 		{
 			var bldr = new StringBuilder(100);
 			var fragment = new StringFragment(bldr);
@@ -971,7 +971,7 @@ namespace SIL.FieldWorks.XWorks
 				bldr.Append(WriteProcessedObject(false, lexTypeContent, config, className));
 			}
 			// Then add all the contents for the LexReferences (e.g. headwords)
-			bldr.Append(referencesContent);
+			bldr.Append(referencesContent.ToString());
 			// Generate the factored ref types element (if after).
 			if (generateLexType && !typeBefore)
 			{
