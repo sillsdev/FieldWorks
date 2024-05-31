@@ -161,7 +161,7 @@ Main template
 			<xsl:otherwise>
 				<xsl:apply-templates/>
 			</xsl:otherwise>
-		</xsl:choose>			
+		</xsl:choose>
 		<xsl:if test="@noSpaceAfter='false'">
 			<xsl:text>&#x20;</xsl:text>
 		</xsl:if>
@@ -178,7 +178,7 @@ Main template
 			<xsl:text>&#x20;</xsl:text>
 		</xsl:if>
 	</xsl:template>
-	
+
 	<xsl:template match="lit[following-sibling::word]">
 		<langData lang="{@lang}">
 			<xsl:if test="count(preceding-sibling::*) &gt; 0">
@@ -203,7 +203,7 @@ Main template
 				<xsl:otherwise>
 					<xsl:apply-templates/>
 				</xsl:otherwise>
-			</xsl:choose>			
+			</xsl:choose>
 		</langData>
 	</xsl:template>
 
@@ -306,7 +306,7 @@ Main template
 				<xsl:otherwise>
 					<xsl:apply-templates/>
 				</xsl:otherwise>
-			</xsl:choose>			
+			</xsl:choose>
 		</langData>
 	</xsl:template>
 </xsl:stylesheet>
