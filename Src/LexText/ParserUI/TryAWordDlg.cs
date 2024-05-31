@@ -411,7 +411,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					var uri = new Uri(Path.Combine(TransformPath, "WhileTracing.htm"));
 					m_htmlControl.URL = uri.AbsoluteUri;
 					sWord = sWord.Replace(' ', '.'); // LT-7334 to allow for phrases; do this at the last minute
-					sWord = sWord.Replace("\"", "&quot;");  // LT-10373 a double quote causes a crash; change it so HTML/XML works
+					sWord = new System.Xml.Linq.XText(sWord).ToString();  // LT-10373 a double quote causes a crash; change it so HTML/XML works
 					m_parserListener.Connection.TryAWordDialogIsRunning = true; // make sure this is set properly
 					m_tryAWordResult = m_parserListener.Connection.BeginTryAWord(sWord, DoTrace, selectedTraceMorphs);
 					// waiting for result, so disable Try It button
