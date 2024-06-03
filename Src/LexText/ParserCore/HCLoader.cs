@@ -1159,7 +1159,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 								IPhCode code = termUnit.CodesOS[0];
 								string strRep = termUnit.ClassID == PhBdryMarkerTags.kClassId ? code.Representation.BestVernacularAlternative.Text
 									: code.Representation.VernacularDefaultWritingSystem.Text;
-								strRep = strRep.Trim();
+								if (strRep != null)
+									strRep = strRep.Trim();
 								if (string.IsNullOrEmpty(strRep))
 									throw new InvalidAffixProcessException(allo, false);
 								sb.Append(strRep);
@@ -2344,7 +2345,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 
-			m_null = m_table.AddBoundary(new[] {"^0", "*0", "&0", "Ø", "∅"});
+			m_null = m_table.AddBoundary(new[] {"^0", "*0", "&0", "∅"});
 			m_table.AddBoundary(".");
 			m_morphBdry = m_table["+"];
 
