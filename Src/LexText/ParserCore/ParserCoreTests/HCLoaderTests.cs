@@ -25,8 +25,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	[TestFixture]
 	public class HCLoaderTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private const string PrefixNull = "([StrRep:{\"&0\", \"*0\", \"^0\", \"∅\", \"Ø\"}, Type:boundary][StrRep:\"+\", Type:boundary])*";
-		private const string SuffixNull = "([StrRep:\"+\", Type:boundary][StrRep:{\"&0\", \"*0\", \"^0\", \"∅\", \"Ø\"}, Type:boundary])*";
+		private const string PrefixNull = "([StrRep:{\"&0\", \"*0\", \"^0\", \"∅\"}, Type:boundary][StrRep:\"+\", Type:boundary])*";
+		private const string SuffixNull = "([StrRep:\"+\", Type:boundary][StrRep:{\"&0\", \"*0\", \"^0\", \"∅\"}, Type:boundary])*";
 		private const string AnyPlus = PrefixNull + "ANY+" + SuffixNull;
 		private const string AnyStar = PrefixNull + "ANY*" + SuffixNull;
 		private const string VowelFS = "[cons:-, Type:segment, voc:+]";
