@@ -233,17 +233,14 @@
 						</xsl:if>-->
 					</language>
 				</xsl:if>
-				<xsl:if test="key('ItemsLang',$sLangId)[parent::word and following-sibling::morphemes or parent::word and not(following-sibling::morphemes) and @type='txt']">
-					<language font-family="{$sFont}" id="{$sLangId}-baseline">
-						<!--<xsl:if test="@vernacular='true'">
-							<xsl:attribute name="name">vernacular</xsl:attribute>
-						</xsl:if>-->
-					</language>
-				</xsl:if>
-				<xsl:if test="key('ItemsLang',$sLangId)[parent::word and @type='punct']">
-					<language font-family="{$sFont}" id="{$sLangId}-baseline">
-					</language>
-				</xsl:if>
+				<xsl:choose>
+					<xsl:when test="key('ItemsLang',$sLangId)[parent::word and following-sibling::morphemes or parent::word and not(following-sibling::morphemes) and @type='txt']">
+						<language font-family="{$sFont}" id="{$sLangId}-baseline"/>
+					</xsl:when>
+					<xsl:when test="key('ItemsLang',$sLangId)[parent::word and @type='punct']">
+						<language font-family="{$sFont}" id="{$sLangId}-baseline"/>
+					</xsl:when>
+				</xsl:choose>
 				<xsl:if test="key('ItemsLang',$sLangId)[parent::word and @type='pos']">
 					<language font-family="{$sFont}" id="{$sLangId}-wordCategory"/>
 				</xsl:if>
