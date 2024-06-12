@@ -39,6 +39,8 @@ using SIL.PlatformUtilities;
 using SIL.Reporting;
 using SIL.Utils;
 using XCore;
+using SIL.LCModel.Application.ApplicationServices;
+using NAudio.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -1919,6 +1921,34 @@ namespace SIL.FieldWorks.XWorks
 				return new IxCoreColleague[] { this, m_app as IxCoreColleague };
 			else
 				return new IxCoreColleague[]{this};
+		}
+
+		public bool OnImportPhonology(object commandObject)
+		{
+			string filename = null;
+			// ActiveForm can go null (see FWNX-731), so cache its value, and check whether
+			// we need to use 'this' instead (which might be a better idea anyway).
+			var form = ActiveForm;
+			if (form == null)
+				form = this;
+			using (var dlg = new OpenFileDialogAdapter())
+			{
+				dlg.CheckFileExists = true;
+				dlg.RestoreDirectory = true;
+				dlg.Title = ResourceHelper.GetResourceString("kstidOpenTranslatedLists");
+				dlg.ValidateNames = true;
+				dlg.Multiselect = false;
+				dlg.Filter = ResourceHelper.FileFilter(FileFilterType.FieldWorksTranslatedLists);
+				if (dlg.ShowDialog(form) != DialogResult.OK)
+					return true;
+				filename = dlg.FileName;
+			}
+			using (new WaitCursor(form, true))
+			{
+				var xmlImportData = new XmlImportData(Cache, true);
+				xmlImportData.ImportData(filename, null);
+			}
+			return true;
 		}
 
 		/// <summary>
