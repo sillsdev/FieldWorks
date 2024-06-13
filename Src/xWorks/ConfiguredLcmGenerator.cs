@@ -2807,7 +2807,7 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateRunWithPossibleLink(GeneratorSettings settings, string writingSystem, IFragmentWriter writer, string style,
 			string text, Guid linkDestination, bool rightToLeft, ConfigurableDictionaryNode config, string externalLink = null)
 		{
-			settings.ContentGenerator.StartRun(writer, writingSystem);
+			settings.ContentGenerator.StartRun(writer, config, settings.PropertyTable, writingSystem);
 			var wsRtl = settings.Cache.WritingSystemFactory.get_Engine(writingSystem).RightToLeftScript;
 			if (rightToLeft != wsRtl)
 			{
@@ -3031,7 +3031,7 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateError(string text, IFragmentWriter writer, GeneratorSettings settings)
 		{
 			var writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(settings.Cache.WritingSystemFactory.UserWs);
-			settings.ContentGenerator.StartRun(writer, writingSystem);
+			settings.ContentGenerator.StartRun(writer, null, settings.PropertyTable, writingSystem);
 			settings.ContentGenerator.SetRunStyle(writer, null, settings.PropertyTable, writingSystem, null, true);
 			if (text.Contains(TxtLineSplit))
 			{
