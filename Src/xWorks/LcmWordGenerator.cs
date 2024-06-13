@@ -250,7 +250,7 @@ namespace SIL.FieldWorks.XWorks
 
 			public static string GetWsStyleName(LcmCache cache, string styleName, ConfigurableDictionaryNode config, string writingSystem)
 			{
-				// If the config does not contain writing system options, then just return the style name.(custom fields)
+				// If the config does not contain writing system options, then just return the style name.(An example is custom fields.)
 				if (!(config.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions))
 				{
 					return styleName;
