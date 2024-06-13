@@ -35,7 +35,6 @@ namespace SIL.FieldWorks.XWorks
 	public class LcmWordGenerator : ILcmContentGenerator, ILcmStylesGenerator
 	{
 		private LcmCache Cache { get; }
-		private static Styles _styleSheet { get; set; } = new Styles();
 		private static Dictionary<string, Style> _styleDictionary = new Dictionary<string, Style>();
 		private ReadOnlyPropertyTable _propertyTable;
 		internal const int maxImageHeightInches = 1;
@@ -127,21 +126,22 @@ namespace SIL.FieldWorks.XWorks
 				{
 					// Initialize word doc's styles xml
 					stylePart = AddStylesPartToPackage(fragment.DocFrag);
+					Styles styleSheet = new Styles();
 
-					// Add generated styles into the stylesheet from the dictionary
-					foreach (var style in _styleDictionary.Values)
+					lock(_styleDictionary)
 					{
-						_styleSheet.AppendChild(style.CloneNode(true));
+						// Add generated styles into the stylesheet from the dictionary
+						foreach (var style in _styleDictionary.Values)
+						{
+							styleSheet.AppendChild(style.CloneNode(true));
+						}
+
+						// clear the dictionary
+						_styleDictionary = new Dictionary<string, Style>();
 					}
 
 					// Clone styles from the stylesheet into the word doc's styles xml
-					stylePart.Styles = ((Styles)_styleSheet.CloneNode(true));
-
-					// clear the dictionary
-					_styleDictionary = new Dictionary<string, Style>();
-
-					// clear the styleSheet
-					_styleSheet = new WP.Styles();
+					stylePart.Styles = ((Styles)styleSheet.CloneNode(true));
 				}
 
 				fragment.DocFrag.Dispose();
@@ -214,7 +214,7 @@ namespace SIL.FieldWorks.XWorks
 			/// </summary>
 			public DocFragment(string str) : this()
 			{
-				// Only create paragraph, run, and text objects if the string is nonempty
+				// Only create run, and text objects if the string is nonempty
 				if (!string.IsNullOrEmpty(str))
 				{
 					WP.Run run = DocBody.AppendChild(new WP.Run());
@@ -248,115 +248,28 @@ namespace SIL.FieldWorks.XWorks
 				return docFrag;
 			}
 
-			public static void LinkStyleOrInheritParentStyle(IFragment content, ConfigurableDictionaryNode config)
+			public static string GetWsStyleName(LcmCache cache, string styleName, ConfigurableDictionaryNode config, string writingSystem)
 			{
-				DocFragment frag = ((DocFragment)content);
-
-				// Don't add style for tables.
-				if (frag.DocBody.Elements<WP.Table>().FirstOrDefault() != null)
+				// If the config does not contain writing system options, then just return the style name.(An example is custom fields.)
+				if (!(config.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions))
 				{
-					return;
+					return styleName;
 				}
 
-				if (!string.IsNullOrEmpty(config.Style))
+				var wsStr = writingSystem;
+				var possiblyMagic = WritingSystemServices.GetMagicWsIdFromName(writingSystem);
+				// If it is magic, then get the associated ws.
+				if (possiblyMagic != 0)
 				{
-					frag.AddStyleLink(config.Style, config, config.StyleType);
+					// Get a list of the writing systems for the magic name, and use the first one.
+					wsStr = WritingSystemServices.GetWritingSystemList(cache, possiblyMagic, false).First().Id;
 				}
-				else if (!string.IsNullOrEmpty(config.Parent?.Style))
-				{
-					frag.AddStyleLink(config.Parent.Style, config.Parent, config.Parent.StyleType);
-				}
-			}
 
-			public void AddStyleLink(string styleName, ConfigurableDictionaryNode config, ConfigurableDictionaryNode.StyleTypes styleType)
-			{
-				styleName = GetWsStyleName(styleName, config);
-				if (string.IsNullOrEmpty(styleName))
-					return;
-
-				if (styleType == ConfigurableDictionaryNode.StyleTypes.Paragraph)
-				{
-					if (string.IsNullOrEmpty(ParagraphStyle))
-					{
-						ParagraphStyle = styleName;
-					}
-				}
-				else
-					LinkCharStyle(styleName);
-			}
-
-			/// <summary>
-			/// Appends the given styleName as a style ID for the last paragraph in the doc, or creates a new paragraph with the given styleID if no paragraph exists.
-			/// </summary>
-			/// <param name="styleName"></param>
-			internal void LinkParaStyle(string styleName)
-			{
-				if (string.IsNullOrEmpty(styleName))
-					return;
-
-				WP.Paragraph par = GetLastParagraph();
-				if (par.ParagraphProperties != null)
-				{
-					// if a style is already linked to the paragraph, return without adding another link
-					if (par.ParagraphProperties.Descendants<ParagraphStyleId>().Any())
-						return;
-
-					par.ParagraphProperties.PrependChild(new ParagraphStyleId() { Val = styleName });
-				}
-				else
-				{
-					WP.ParagraphProperties paragraphProps = new WP.ParagraphProperties(new ParagraphStyleId() { Val = styleName });
-					par.PrependChild(paragraphProps);
-				}
-			}
-
-			private void LinkCharStyle(string styleName)
-			{
-				WP.Run run = GetLastRun();
-				if (run.RunProperties != null)
-				{
-					// if a style is already linked to the run, replace the stylename and return without adding another link
-					if (run.RunProperties.Descendants<RunStyle>().Any())
-					{
-						run.RunProperties.Descendants<RunStyle>().Last().Val = styleName;
-						return;
-					}
-
-					run.RunProperties.Append(new RunStyle() { Val = styleName });
-				}
-				else
-				{
-					WP.RunProperties runProps =
-						new WP.RunProperties(new RunStyle() { Val = styleName });
-					// Prepend runproperties so it appears before any text elements contained in the run
-					run.PrependChild<WP.RunProperties>(runProps);
-				}
-			}
-
-			public static string GetWsStyleName(string styleName, ConfigurableDictionaryNode config)
-			{
-				if (config.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions)
-				{
-					foreach (var opt in ((DictionaryNodeWritingSystemOptions)config.DictionaryNodeOptions).Options)
-					{
-						if (opt.IsEnabled)
-						{
-							// If it's magic then don't return a language tag specific style.
-							var possiblyMagic = WritingSystemServices.GetMagicWsIdFromName(opt.Id);
-							if (possiblyMagic != 0)
-							{
-								return styleName;
-							}
-							// else, the DictionaryNodeOption Id specifies a particular writing system
-							// if there is no base style, return just the ws style
-							if (styleName == null)
-								return WordStylesGenerator.GetWsString(opt.Id);
-							// if there is a base style, return the ws-specific version of that style
-							return styleName + WordStylesGenerator.GetWsString(opt.Id);
-						}
-					}
-				}
-				return styleName;
+				// If there is no base style, return just the ws style.
+				if (styleName == null)
+					return WordStylesGenerator.GetWsString(wsStr);
+				// If there is a base style, return the ws-specific version of that style.
+				return styleName + WordStylesGenerator.GetWsString(wsStr);
 			}
 
 			/// <summary>
@@ -704,17 +617,57 @@ namespace SIL.FieldWorks.XWorks
 			/// <summary>
 			/// Add a new run to the WordFragment DocBody.
 			/// </summary>
-			public void CreateRun(string writingSystem)
+			public void AddRun(LcmCache cache, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string writingSystem)
 			{
+				var run = new WP.Run();
+				WordFragment.DocBody.AppendChild(run);
+
 				if (writingSystem == null)
-					WordFragment.DocBody.AppendChild(new WP.Run());
+				{
+					return;
+				}
+
+				string styleName = null;
+				if (config == null || string.IsNullOrEmpty(config.Style))
+				{
+					styleName = WordStylesGenerator.GetWsString(writingSystem);
+				}
 				else
 				{
-					var wsString = WordStylesGenerator.GetWsString(writingSystem);
-					var run = new WP.Run();
-					run.Append(new RunProperties());
-					run.RunProperties.Append(new RunStyle() { Val = "span"+wsString });
-					WordFragment.DocBody.AppendChild(run);
+					styleName = DocFragment.GetWsStyleName(cache, config.Style, config, writingSystem);
+				}
+				run.Append(new RunProperties(new RunStyle() { Val = styleName }));
+
+				// If the style is not in the dictionary, then add it.
+				lock (_styleDictionary)
+				{
+					if (!_styleDictionary.ContainsKey(styleName))
+					{
+						if (config != null && !string.IsNullOrEmpty(config.Style))
+						{
+							var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(writingSystem);
+							Style style = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(config.Style, wsId, propTable);
+							if (style == null || style.Type != StyleValues.Character)
+							{
+								// If we hit this assert, then we might end up referencing a style that
+								// does not get created.
+								Debug.Assert(false);
+								return;
+							}
+
+							var wsString = WordStylesGenerator.GetWsString(writingSystem);
+							style.Append(new BasedOn() { Val = wsString });
+							style.StyleId = styleName;
+							style.StyleName = new StyleName() { Val = style.StyleId };
+							_styleDictionary[styleName] = style;
+						}
+						else
+						{
+							// If we hit this assert, then we might need to create a style for just the ws.
+							// We are expecting the ws style to be added to the _styleDictionary in GetDefaultWordStyles().
+							Debug.Assert(false);
+						}
+					}
 				}
 			}
 		}
@@ -737,17 +690,21 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public IFragment WriteProcessedObject(bool isBlock, IFragment elementContent, ConfigurableDictionaryNode config, string className)
 		{
-			return WriteProcessedElementContent(elementContent, config, className);
+			return WriteProcessedElementContent(elementContent, config);
 		}
 		public IFragment WriteProcessedCollection(bool isBlock, IFragment elementContent, ConfigurableDictionaryNode config, string className)
 		{
-			return WriteProcessedElementContent(elementContent, config, className);
+			return WriteProcessedElementContent(elementContent, config);
 		}
 
-		private IFragment WriteProcessedElementContent(IFragment elementContent, ConfigurableDictionaryNode config, string className)
+		private IFragment WriteProcessedElementContent(IFragment elementContent, ConfigurableDictionaryNode config)
 		{
-			// Use the style name and type of the config node or its parent to link a style to the elementContent fragment where the processed contents are written.
-			DocFragment.LinkStyleOrInheritParentStyle(elementContent, config);
+			// Check if the character style for the last run should be modified.
+			if (string.IsNullOrEmpty(config.Style) && !string.IsNullOrEmpty(config.Parent.Style) &&
+				(config.Parent.StyleType != ConfigurableDictionaryNode.StyleTypes.Paragraph))
+			{
+				AddRunStyle(elementContent, config.Parent.Style, false);
+			}
 
 			bool eachOnANewLine = config != null &&
 								  config.DictionaryNodeOptions is IParaOption &&
@@ -885,15 +842,14 @@ namespace SIL.FieldWorks.XWorks
 
 			return senseData;
 		}
+
 		public IFragment AddCollectionItem(bool isBlock, string collectionItemClass, ConfigurableDictionaryNode config, IFragment content, bool first)
 		{
-			if (!string.IsNullOrEmpty(config.Style))
+			// Add the style to all the runs in the content fragment.
+			if (!string.IsNullOrEmpty(config.Style) &&
+				(config.StyleType != ConfigurableDictionaryNode.StyleTypes.Paragraph))
 			{
-				if (isBlock && (config.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph))
-					((DocFragment)content).AddStyleLink(config.Style, config, ConfigurableDictionaryNode.StyleTypes.Paragraph);
-
-				else if (!isBlock)
-					((DocFragment)content).AddStyleLink(config.Style, config,ConfigurableDictionaryNode.StyleTypes.Character);
+				AddRunStyle(content, config.Style, true);
 			}
 
 			var collData = CreateFragment();
@@ -974,9 +930,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="writer"></param>
 		/// <param name="writingSystem"></param>
-		public void StartRun(IFragmentWriter writer, string writingSystem)
+		public void StartRun(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string writingSystem)
 		{
-			((WordFragmentWriter)writer).CreateRun(writingSystem);
+			((WordFragmentWriter)writer).AddRun(Cache, config, propTable, writingSystem);
 		}
 		public void EndRun(IFragmentWriter writer)
 		{
@@ -986,7 +942,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Set the style for a specific run.
+		/// Overrides the style for a specific run.
 		/// This is needed to set the specific style for any field that allows the
 		/// default style to be overridden (Table Cell, Custom Field, Note...).
 		/// </summary>
@@ -994,32 +950,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (!string.IsNullOrEmpty(runStyle))
 			{
-				// Add the style link.
-				((WordFragmentWriter)writer).WordFragment.AddStyleLink(runStyle, config, ConfigurableDictionaryNode.StyleTypes.Character);
-
-				// Only add the style to the styleSheet if not already there.
-				if (!_styleSheet.ChildElements.Any(p => ((Style)p).StyleId == runStyle))
-				{
-					int ws = Cache.WritingSystemFactory.GetWsFromStr(writingSystem);
-					var wpStyle = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(runStyle, ws, _propertyTable);
-					_styleSheet.Append(wpStyle);
-				}
+				AddRunStyle(((WordFragmentWriter)writer).WordFragment, runStyle, false);
 			}
 		}
 		public void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, Guid destination)
 		{
-			if (config != null && !string.IsNullOrEmpty(config.Style))
-			{
-				((WordFragmentWriter)writer).WordFragment.AddStyleLink(config.Style, config, ConfigurableDictionaryNode.StyleTypes.Character);
-			}
 			return;
 		}
 		public void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, string externalDestination)
 		{
-			if (config != null && !string.IsNullOrEmpty(config.Style))
-			{
-				((WordFragmentWriter)writer).WordFragment.AddStyleLink(config.Style, config, ConfigurableDictionaryNode.StyleTypes.Character);
-			}
 			return;
 		}
 		public void EndLink(IFragmentWriter writer)
@@ -1284,16 +1223,17 @@ namespace SIL.FieldWorks.XWorks
 									pieceHasImage = true;
 								}
 
-								wordWriter.WordFragment.GetNewParagraph();
-								wordWriter.WordFragment.AppendToParagraph(frag, run, false);
-								wordWriter.WordFragment.LinkParaStyle(WordStylesGenerator.PictureAndCaptionTextframeStyle);
-							}
+								WP.Paragraph newPar = wordWriter.WordFragment.GetNewParagraph();
+								WP.ParagraphProperties paragraphProps =
+									new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextframeStyle });
+								newPar.Append(paragraphProps);
 
+								wordWriter.WordFragment.AppendToParagraph(frag, run, false);
+							}
 							else
 							{
 								wordWriter.WordFragment.AppendToParagraph(frag, run, wordWriter.ForceNewParagraph);
 								wordWriter.ForceNewParagraph = false;
-								wordWriter.WordFragment.LinkParaStyle(frag.ParagraphStyle);
 							}
 
 							break;
@@ -1325,15 +1265,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public void AddCollection(IFragmentWriter writer, bool isBlockProperty, string className, ConfigurableDictionaryNode config, IFragment content)
 		{
-			var frag = ((WordFragmentWriter)writer).WordFragment;
-			if (isBlockProperty && (config.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph))
-				frag.AddStyleLink(config.Style, config, ConfigurableDictionaryNode.StyleTypes.Paragraph);
-			else if (!isBlockProperty)
-				frag.AddStyleLink(config.Style, config, ConfigurableDictionaryNode.StyleTypes.Character);
-
 			if (!content.IsNullOrEmpty())
 			{
-				frag.Append(content);
+				((WordFragmentWriter)writer).WordFragment.Append(content);
 			}
 		}
 		public void BeginObjectProperty(IFragmentWriter writer, bool isBlockProperty, string getCollectionItemClassAttribute)
@@ -1377,8 +1311,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public IFragment GenerateSenseNumber(string formattedSenseNumber, string senseNumberWs, ConfigurableDictionaryNode senseConfigNode)
 		{
-			DocFragment senseNum = new DocFragment(formattedSenseNumber);
-			senseNum.AddStyleLink(WordStylesGenerator.SenseNumberStyleName, senseConfigNode, ConfigurableDictionaryNode.StyleTypes.Character);
+			DocFragment senseNum = new DocFragment();
+			WP.Run run = CreateRun(formattedSenseNumber, WordStylesGenerator.SenseNumberStyleName);
+			senseNum.DocBody.AppendChild(run);
 			return senseNum;
 		}
 		public IFragment AddLexReferences(bool generateLexType, IFragment lexTypeContent, ConfigurableDictionaryNode config, string className, IFragment referencesContent, bool typeBefore)
@@ -1454,20 +1389,33 @@ namespace SIL.FieldWorks.XWorks
 			// LoadBulletUnicodes();
 			// LoadNumberingStyles();
 
-			var letterHeaderStyle = WordStylesGenerator.GenerateLetterHeaderStyle(propertyTable, propStyleSheet);
+			var letterHeaderStyle = WordStylesGenerator.GenerateLetterHeaderStyle(propertyTable);
 			if (letterHeaderStyle != null)
-				_styleSheet.Append(letterHeaderStyle);
+			{
+				lock(_styleDictionary)
+				{
+					_styleDictionary[letterHeaderStyle.StyleId] = letterHeaderStyle;
+				}
+			}
 
 			var beforeAfterBetweenStyle = WordStylesGenerator.GenerateBeforeAfterBetweenStyle(propertyTable);
 			if (beforeAfterBetweenStyle != null)
-				_styleSheet.Append(beforeAfterBetweenStyle);
+			{
+				lock(_styleDictionary)
+				{
+					_styleDictionary[beforeAfterBetweenStyle.StyleId] = beforeAfterBetweenStyle;
+				}
+			}
 
 			Styles defaultStyles = WordStylesGenerator.GetDefaultWordStyles(propertyTable, propStyleSheet, model);
 			if (defaultStyles != null)
 			{
 				foreach (WP.Style style in defaultStyles.Descendants<Style>())
 				{
-					_styleSheet.Append(style.CloneNode(true));
+					lock(_styleDictionary)
+					{
+						_styleDictionary[style.StyleId] = (WP.Style)style.CloneNode(true);
+					}
 				}
 			}
 
@@ -1476,6 +1424,37 @@ namespace SIL.FieldWorks.XWorks
 			// TODO:  Generate style for audiows after we add audio to export
 			//WordStylesGenerator.GenerateWordStyleForAudioWs(_styleSheet, cache);
 		}
+
+		/// <summary>
+		/// Gets the style from the dictionary (if it is in the dictionary). If not in the
+		/// dictionary then create the Word style from the LCM Style Sheet and add it to the dictionary.
+		/// </summary>
+		/// <returns>Returns null if it fails to find or create the character style.</returns>
+		private Style GetOrCreateCharacterStyle(string styleName)
+		{
+			Style retStyle = null;
+			lock (_styleDictionary)
+			{
+				if (_styleDictionary.TryGetValue(styleName, out retStyle))
+				{
+					if (retStyle.Type != StyleValues.Character)
+					{
+						return null;
+					}
+				}
+				else
+				{
+					retStyle = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(styleName, 0, _propertyTable);
+					if (retStyle == null || retStyle.Type != StyleValues.Character)
+					{
+						return null;
+					}
+					_styleDictionary[styleName] = retStyle;
+				}
+			}
+			return retStyle;
+		}
+
 		public string AddStyles(ConfigurableDictionaryNode node)
 		{
 			return AddStyles(node, false);
@@ -1494,23 +1473,24 @@ namespace SIL.FieldWorks.XWorks
 			// Generate all styles that are needed by this class and add them to the dictionary with their stylename as the key.
 			var className = $".{CssGenerator.GetClassAttributeForConfig(node)}";
 
-			lock (_styleDictionary)
+			Styles styleContent = null;
+			if (addEntryContinuationStyle)
 			{
-				Styles styleContent = null;
-				if (addEntryContinuationStyle)
-				{
-					styleContent = WordStylesGenerator.CheckRangeOfStylesForEmpties(WordStylesGenerator.GenerateContinuationWordStyles(node, _propertyTable));
-				}
-				else
-				{
-					styleContent = WordStylesGenerator.CheckRangeOfStylesForEmpties(WordStylesGenerator.GenerateWordStylesFromConfigurationNode(node, className, _propertyTable));
-				}
-				if (styleContent == null)
-					return className;
-				if (!styleContent.Any())
-					return className;
+				styleContent = WordStylesGenerator.CheckRangeOfStylesForEmpties(WordStylesGenerator.GenerateContinuationWordStyles(node, _propertyTable));
+			}
+			else
+			{
+				styleContent = WordStylesGenerator.CheckRangeOfStylesForEmpties(WordStylesGenerator.GenerateWordStylesFromConfigurationNode(node, className, _propertyTable));
+			}
 
-				foreach (Style style in styleContent.Descendants<Style>())
+			if (styleContent == null)
+				return className;
+			if (!styleContent.Any())
+				return className;
+
+			foreach (Style style in styleContent.Descendants<Style>())
+			{
+				lock (_styleDictionary)
 				{
 					string styleName = style.StyleId;
 					if (!_styleDictionary.ContainsKey(styleName))
@@ -1528,8 +1508,8 @@ namespace SIL.FieldWorks.XWorks
 						_styleDictionary[styleName] = style;
 					}
 				}
-				return className;
 			}
+			return className;
 		}
 		public void Init(ReadOnlyPropertyTable propertyTable)
 		{
@@ -1713,22 +1693,126 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Creates a run using the text provided and using the style provided.
+		/// </summary>
+		private WP.Run CreateRun(string runText, string runStyle)
+		{
+			WP.Run run = new WP.Run();
+			if (!string.IsNullOrEmpty(runStyle))
+			{
+				WP.RunProperties runProps =
+					new WP.RunProperties(new RunStyle() { Val = runStyle });
+				run.Append(runProps);
+			}
+
+			if (!string.IsNullOrEmpty(runText))
+			{
+				WP.Text txt = new WP.Text(runText);
+				txt.Space = SpaceProcessingModeValues.Preserve;
+				run.Append(txt);
+			}
+			return run;
+		}
+
+		/// <summary>
 		/// Creates a BeforeAfterBetween run using the text provided and using the BeforeAfterBetween style.
 		/// </summary>
 		/// <param name="text">Text for the run.</param>
 		/// <returns>The BeforeAfterBetween run.</returns>
 		private WP.Run CreateBeforeAfterBetweenRun(string text)
 		{
-			WP.Run run = new WP.Run();
-			WP.RunProperties runProps =
-				new WP.RunProperties(new RunStyle() { Val = WordStylesGenerator.BeforeAfterBetweenStyleName });
-			run.Append(runProps);
+			return CreateRun(text, WordStylesGenerator.BeforeAfterBetweenStyleName);
+		}
 
-			WP.Text txt = new WP.Text(text);
-			txt.Space = SpaceProcessingModeValues.Preserve;
-			run.Append(txt);
+		/// <summary>
+		/// Worker method for AddRunStyle(), not intended to be called from other places. If it is
+		/// then the the pre-checks on 'style' should be added to this method.
+		/// </summary>
+		private void AddRunStyle_Worker(WP.Run run, string style)
+		{
+			if (run.RunProperties != null)
+			{
+				if (run.RunProperties.Descendants<RunStyle>().Any())
+				{
+					string currentRunStyle = run.RunProperties.Descendants<RunStyle>().Last().Val;
+					if (!string.IsNullOrEmpty(currentRunStyle))
+					{
+						// If the current style is a language tag, then no need to add the colon.
+						string basedOnStyleName = currentRunStyle.StartsWith("[") ? (style + currentRunStyle) : (style + ":" + currentRunStyle);
 
-			return run;
+						lock (_styleDictionary)
+						{
+							if (_styleDictionary.ContainsKey(basedOnStyleName))
+							{
+								run.RunProperties.Descendants<RunStyle>().Last().Val = basedOnStyleName;
+							}
+							else
+							{
+								Style rootStyle = GetOrCreateCharacterStyle(style);
+								if (rootStyle != null)
+								{
+									Style basedOnStyle = WordStylesGenerator.GenerateBasedOnCharacterStyle(rootStyle, currentRunStyle, basedOnStyleName);
+									if (basedOnStyle != null)
+									{
+										_styleDictionary[basedOnStyleName] = basedOnStyle;
+										run.RunProperties.Descendants<RunStyle>().Last().Val = basedOnStyleName;
+									}
+								}
+							}
+						}
+					}
+					else
+					{
+						run.RunProperties.Descendants<RunStyle>().Last().Val = style;
+					}
+				}
+				else
+				{
+					run.RunProperties.Append(new RunStyle() { Val = style });
+				}
+			}
+			else
+			{
+				WP.RunProperties runProps =
+					new WP.RunProperties(new RunStyle() { Val = style });
+				// Prepend RunProperties so it appears before any text elements contained in the run
+				run.PrependChild<WP.RunProperties>(runProps);
+			}
+		}
+
+		/// <summary>
+		/// Adds the specified style to either all of the runs contained in the fragment or the last
+		/// run in the fragment. If a run does not contain RunProperties or a RunStyle then just add
+		/// the specified style. Otherwise create a new style for the run that uses the specified
+		/// style but makes it BasedOn the current style that is being used by the run.
+		/// </summary>
+		/// <param name="frag">The fragment containing the runs that should have the new style applied.</param>
+		/// <param name="style">Style to apply to the runs in the fragment.</param>
+		/// <param name="allRuns">If true then apply the style to all runs in the fragment.
+		///                       If false then only apply the style to the last run in the fragment.</param>
+		public void AddRunStyle(IFragment frag, string style, bool allRuns)
+		{
+			string sDefaultTextStyle = "Default Paragraph Characters";
+			if (string.IsNullOrEmpty(style) || style.StartsWith(sDefaultTextStyle))
+			{
+				return;
+			}
+
+			if (allRuns)
+			{
+				foreach (WP.Run run in ((DocFragment)frag).DocBody.Elements<WP.Run>())
+				{
+					AddRunStyle_Worker(run, style);
+				}
+			}
+			else
+			{
+				List<WP.Run> runList = ((DocFragment)frag).DocBody.Elements<WP.Run>().ToList();
+				if (runList.Any())
+				{
+					AddRunStyle_Worker(runList.Last(), style);
+				}
+			}
 		}
 	}
 }

@@ -34,8 +34,7 @@ namespace SIL.FieldWorks.XWorks
 		internal const string PictureAndCaptionTextframeStyle = "Image-Textframe-Style";
 		internal const string EntryStyleContinue = "-Continue";
 
-		public static Style GenerateLetterHeaderStyle(
-			ReadOnlyPropertyTable propertyTable, LcmStyleSheet mediatorStyleSheet)
+		public static Style GenerateLetterHeaderStyle(ReadOnlyPropertyTable propertyTable)
 		{
 			return GenerateWordStyleFromLcmStyleSheet(LetterHeadingStyleName, 0, propertyTable);
 		}
@@ -325,13 +324,11 @@ namespace SIL.FieldWorks.XWorks
 				default:
 					{
 						var rule = new Style();
-
 						var rules = new Styles();
 
 						var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 						if (wsOptions != null)
 						{
-							rules = AddRange(rules, GenerateWordStyleFromWsOptions(configNode, wsOptions, styleName, propertyTable));
 							if (wsOptions.DisplayWritingSystemAbbreviations)
 							{
 								rules = AddRange(rules, GenerateWordStylesForWritingSystemPrefix(configNode, styleName, propertyTable));
@@ -344,13 +341,9 @@ namespace SIL.FieldWorks.XWorks
 							//Generate the rules for the default font info
 							rule = GenerateWordStyleFromLcmStyleSheet(configNode.Style, DefaultStyle, configNode, propertyTable);
 
-							// TODO: how to handle span vs div etc.
-							//selectors.AddRange(GenerateWordStylesForWritingSystems(baseSelection + " span", configNode.Style, propertyTable));
-						}
-
-						if (configNode.Style != null)
 							rule.StyleId = configNode.Style;
-						rules.AppendChild(rule.CloneNode(true));
+							rules.AppendChild(rule.CloneNode(true));
+						}
 						return rules;
 					}
 			}
@@ -400,12 +393,11 @@ namespace SIL.FieldWorks.XWorks
 
 			defaultStyleProps.StyleId = "Normal";
 			styles.Append(defaultStyleProps);
-			styles = AddRange(styles, GenerateWordStylesForWritingSystems("span", "Normal", propertyTable));
-;
+			styles = AddRange(styles, GenerateWordStylesForWritingSystems("Normal", propertyTable));
 			return styles;
 		}
 
-		private static Styles GenerateWordStylesForWritingSystems(string selector, string styleName, ReadOnlyPropertyTable propertyTable)
+		private static Styles GenerateWordStylesForWritingSystems(string styleName, ReadOnlyPropertyTable propertyTable)
 		{
 			var cache = propertyTable.GetValue<LcmCache>("cache");
 			var styleRules = new Styles();
@@ -413,50 +405,13 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
 				Style wsCharStyle = GetOnlyCharacterStyle(GenerateWordStyleFromLcmStyleSheet(styleName, aws.Handle, propertyTable));
-				wsCharStyle.StyleId = selector + GetWsString(aws.LanguageTag);
+				wsCharStyle.StyleId = GetWsString(aws.LanguageTag);
 				wsCharStyle.StyleName = new StyleName() { Val = wsCharStyle.StyleId };
 
 				styleRules.Append(wsCharStyle);
 			}
 
 			return styleRules;
-		}
-
-		private static Style GenerateWordStyleFromWsOptions(ConfigurableDictionaryNode configNode, DictionaryNodeWritingSystemOptions wsOptions,
-			string baseSelection, ReadOnlyPropertyTable propertyTable)
-		{
-			var cache = propertyTable.GetValue<LcmCache>("cache");
-			foreach (var ws in wsOptions.Options.Where(opt => opt.IsEnabled))
-			{
-				var wsStyle = new Style();
-
-				// If it's magic then don't add a specific style for the language tag.
-				var possiblyMagic = WritingSystemServices.GetMagicWsIdFromName(ws.Id);
-				if (possiblyMagic != 0)
-				{
-					return wsStyle;
-				}
-
-				if (!string.IsNullOrEmpty(configNode.Style))
-				{
-					var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(ws.Id);
-					wsStyle = GenerateWordStyleFromLcmStyleSheet(configNode.Style, wsId, propertyTable);
-				}
-
-				// Any given style can only be based on one style.
-				// This style should be based on the span for the current ws;
-				// style info for the current node (independent of WS) should be added during creation of this style.
-				var wsString = GetWsString(ws.Id).Trim('.');
-				wsStyle.Append(new BasedOn() { Val = "span" + wsString });
-
-				wsStyle.StyleId = configNode.Style + wsString;
-				wsStyle.StyleName = new StyleName(){ Val = wsStyle.StyleId };
-
-				if (!IsEmptyStyle(wsStyle))
-					return wsStyle;
-			}
-
-			return new Style();
 		}
 
 		private static Styles GenerateWordStyleForSenses(ConfigurableDictionaryNode configNode, DictionaryNodeSenseOptions senseOptions, ref string baseSelection, ReadOnlyPropertyTable propertyTable)
@@ -584,6 +539,26 @@ namespace SIL.FieldWorks.XWorks
 			var retStyles = new Styles();
 			retStyles.AppendChild(contStyle.CloneNode(true));
 			return retStyles;
+		}
+
+		/// <summary>
+		/// Generates a new character style similar to the rootStyle, but being based on the provided style name.
+		/// </summary>
+		/// <param name="rootStyle">The style we want the new style to be similar to.</param>
+		/// <param name="styleToBaseOn">The name of the style that the new style will be based on.</param>
+		/// <param name="basedOnStyleName">The name for the new style.</param>
+		internal static Style GenerateBasedOnCharacterStyle(Style rootStyle, string styleToBaseOn, string basedOnStyleName)
+		{
+			if (rootStyle == null || string.IsNullOrEmpty(styleToBaseOn) || string.IsNullOrEmpty(basedOnStyleName))
+			{
+				return null;
+			}
+
+			Style retStyle = GetOnlyCharacterStyle(rootStyle);
+			retStyle.Append(new BasedOn() { Val = styleToBaseOn });
+			retStyle.StyleId = basedOnStyleName;
+			retStyle.StyleName = new StyleName() { Val = basedOnStyleName };
+			return retStyle;
 		}
 
 		/// <summary>

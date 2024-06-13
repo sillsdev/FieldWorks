@@ -32,7 +32,7 @@ namespace SIL.FieldWorks.XWorks
 		void EndMultiRunString(IFragmentWriter writer);
 		void StartBiDiWrapper(IFragmentWriter writer, bool rightToLeft);
 		void EndBiDiWrapper(IFragmentWriter writer);
-		void StartRun(IFragmentWriter writer, string writingSystem);
+		void StartRun(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string writingSystem);
 		void EndRun(IFragmentWriter writer);
 		void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propertyTable, string writingSystem, string runStyle, bool error);
 		void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, Guid destination);
