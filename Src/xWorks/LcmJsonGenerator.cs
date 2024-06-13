@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		public void StartRun(IFragmentWriter writer, string writingSystem)
+		public void StartRun(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string writingSystem)
 		{
 			var jsonWriter = (JsonFragmentWriter)writer;
 			jsonWriter.StartObject();
