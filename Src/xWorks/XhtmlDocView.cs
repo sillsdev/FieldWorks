@@ -43,6 +43,7 @@ namespace SIL.FieldWorks.XWorks
 		internal string m_configObjectName;
 		internal const string CurrentSelectedEntryClass = "currentSelectedEntry";
 		private const string FieldWorksPrintLimitEnv = "FIELDWORKS_PRINT_LIMIT";
+		private bool m_jumpToRecord = false; // Whether we got a JumpToRecord signal
 
 		private GeckoWebBrowser GeckoBrowser => (GeckoWebBrowser)m_mainView.NativeBrowser;
 
@@ -177,6 +178,7 @@ namespace SIL.FieldWorks.XWorks
 					GiveSimpleWarning(xrc);
 				}
 			}
+			m_jumpToRecord = true;
 			return false;
 		}
 
@@ -1077,12 +1079,21 @@ namespace SIL.FieldWorks.XWorks
 				var currReversalWs = writingSystem.Id;
 				var currentConfig = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
 				var configuration = File.Exists(currentConfig) ? new DictionaryConfigurationModel(currentConfig, Cache) : null;
+				var currentPage = GetTopCurrentPageButton(browser.Document.Body);
 				if (configuration == null || configuration.WritingSystem != currReversalWs)
 				{
 					var newConfig = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable),
 						writingSystem.Id + DictionaryConfigurationModel.FileExtension);
 					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", File.Exists(newConfig) ? newConfig : null, true);
+				} else if (currentPage == null && m_jumpToRecord)
+				{
+					// Force the content to be updated once (LT-21702).
+					// This isn't needed when ReversalIndexPublicationLayout is changed
+					// because it causes the content to be updated as a side effect.
+					UpdateContent(currentConfig);
 				}
+				// Clear m_jumpToRecord no matter what.
+				m_jumpToRecord = false;
 			}
 			var currentObjectGuid = Clerk.CurrentObject.Guid.ToString();
 			var currSelectedByGuid = browser.Document.GetHtmlElementById("g" + currentObjectGuid);
