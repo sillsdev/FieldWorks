@@ -2489,9 +2489,9 @@ namespace SIL.FieldWorks.IText
 			// next get the best guess for wordform or analysis
 
 			IAnalysis wag = occurrence.Analysis;
-			IAnalysis wagGuess;
+			IAnalysis wagGuess = GuessServices.GetBestGuess(occurrence, false, false);
 			// now record the guess in the decorator.
-			if (GuessServices.TryGetBestGuess(occurrence, out wagGuess, false))
+			if (!(wagGuess is NullWAG))
 			{
 				SetObjProp(wag.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid, wagGuess.Hvo);
 				SetInt(wagGuess.Analysis.Hvo, InterlinViewDataCache.OpinionAgentFlid, (int)GuessServices.GetOpinionAgent(wagGuess.Analysis));
