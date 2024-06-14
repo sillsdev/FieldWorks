@@ -692,7 +692,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			CheckDisposed();
 
 			string path = String.Format(FwDirectoryFinder.CodeDirectory +
-				"{0}Helps{0}WW-ConceptualIntro{0}ConceptualIntroduction.htm",
+				"{0}Helps{0}WW-ConceptualIntro{0}ConceptualIntroFLEx.pdf",
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {
