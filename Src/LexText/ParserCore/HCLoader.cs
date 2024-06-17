@@ -583,7 +583,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					Tuple<string, string> contexts = SplitEnvironment(env);
 					hcAllo.Environments.Add(new AllomorphEnvironment(ConstraintType.Require, LoadEnvironmentPattern(contexts.Item1, true),
 						LoadEnvironmentPattern(contexts.Item2, false))
-					{ Name = env.StringRepresentation.Text });
+						{ Name = env.StringRepresentation.Text });
 				}
 				else
 				{
