@@ -1266,16 +1266,22 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void VariantStem()
 		{
-			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphStem, "sag", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem, MainPOS = m_verb});
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphStem, "sag", "gloss", new SandboxGenericMSA { MsaType = MsaType.kStem, MainPOS = m_verb });
 			ILexEntryInflType type = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPluralVar);
 			type.GlossAppend.SetAnalysisDefaultWritingSystem(".pl");
 			type.InflFeatsOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
-			CreateFeatStruc(Cache.LanguageProject.MsFeatureSystemOA, m_inflType, type.InflFeatsOA, new FS {{"nounAgr", new FS {{"num", "pl"}}}});
+			CreateFeatStruc(Cache.LanguageProject.MsFeatureSystemOA, m_inflType, type.InflFeatsOA, new FS { { "nounAgr", new FS { { "num", "pl" } } } });
 			ILexEntryRef entryRef = entry.CreateVariantEntryAndBackRef(type, TsStringUtils.MakeString("sau", Cache.DefaultVernWs));
 			entryRef.VariantEntryTypesRS.Add(Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypFreeVar));
+
+			ILexEntryInflType type3 = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypIrregInflectionVar);
+			type3.GlossAppend.SetAnalysisDefaultWritingSystem(".sg");
+			type3.InflFeatsOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
+			CreateFeatStruc(Cache.LanguageProject.MsFeatureSystemOA, m_inflType, type3.InflFeatsOA, new FS { { "nounAgr", new FS { { "num", "sg" } } } });
+			ILexEntryRef entryRef3 = entry.CreateVariantEntryAndBackRef(type3, TsStringUtils.MakeString("sai", Cache.DefaultVernWs));
 			LoadLanguage();
 
-			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(3));
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(4));
 			LexEntry hcEntry = m_lang.Strata[0].Entries.ElementAt(0);
 			Assert.That(hcEntry.Gloss, Is.EqualTo("gloss"));
 			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
@@ -1286,7 +1292,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
 			Assert.That(hcEntry.PrimaryAllomorph.Segments.ToString(), Is.EqualTo("sau"));
 			Assert.That(hcEntry.SyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[nounAgr:[num:pl]], POS:V]"));
-			Assert.That(hcEntry.MprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"Plural Variant"}));
+			Assert.That(hcEntry.MprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] { "Plural Variant" }));
 
 			hcEntry = m_lang.Strata[0].Entries.ElementAt(2);
 			Assert.That(hcEntry.Gloss, Is.EqualTo("gloss"));
@@ -1294,6 +1300,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcEntry.PrimaryAllomorph.Segments.ToString(), Is.EqualTo("sau"));
 			Assert.That(hcEntry.SyntacticFeatureStruct.ToString(), Is.EqualTo("[POS:V]"));
 			Assert.That(hcEntry.MprFeatures, Is.Empty);
+
+			hcEntry = m_lang.Strata[0].Entries.ElementAt(3);
+			Assert.That(hcEntry.Gloss, Is.EqualTo("gloss.sg"));
+			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
+			Assert.That(hcEntry.PrimaryAllomorph.Segments.ToString(), Is.EqualTo("sai"));
+			Assert.That(hcEntry.SyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[nounAgr:[num:sg]], POS:V]"));
+			Assert.That(hcEntry.MprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] { "Irregular Inflectional Variant" }));
 		}
 
 		[Test]
