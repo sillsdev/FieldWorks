@@ -178,8 +178,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (lcResult.Analyses.Count > 0 && lcResult.ErrorMessage == null)
 				{
 					var text = TsStringUtils.MakeString(sLower, form.get_WritingSystem(0));
-					var lcWordform = WfiWordformServices.FindOrCreateWordform(m_cache, text);
-					m_parseFiler.ProcessParse(lcWordform, priority, lcResult);
+					IWfiWordform lcWordform;
+					// We cannot use WfiWordformServices.FindOrCreateWordform because of props change (LT-21810).
+					if (m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(text, out lcWordform))
+						m_parseFiler.ProcessParse(lcWordform, priority, lcResult);
 					m_parseFiler.ProcessParse(wordform, priority, result);
 					return true;
 				}
