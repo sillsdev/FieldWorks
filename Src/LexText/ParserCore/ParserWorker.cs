@@ -172,18 +172,21 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			if (sLower != form.Text)
 			{
-				var lcResult = m_parser.ParseWord(
-					CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD)
-					.Normalize(sLower.Replace(' ', '.')));
-				if (lcResult.Analyses.Count > 0 && lcResult.ErrorMessage == null)
+				var text = TsStringUtils.MakeString(sLower, form.get_WritingSystem(0));
+				IWfiWordform lcWordform;
+				// We cannot use WfiWordformServices.FindOrCreateWordform because of props change (LT-21810).
+				// Only parse the lowercase version if it exists.
+				if (m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(text, out lcWordform))
 				{
-					var text = TsStringUtils.MakeString(sLower, form.get_WritingSystem(0));
-					IWfiWordform lcWordform;
-					// We cannot use WfiWordformServices.FindOrCreateWordform because of props change (LT-21810).
-					if (m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(text, out lcWordform))
+					var lcResult = m_parser.ParseWord(
+						CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD)
+						.Normalize(sLower.Replace(' ', '.')));
+					if (lcResult.Analyses.Count > 0 && lcResult.ErrorMessage == null)
+					{
 						m_parseFiler.ProcessParse(lcWordform, priority, lcResult);
-					m_parseFiler.ProcessParse(wordform, priority, result);
-					return true;
+						m_parseFiler.ProcessParse(wordform, priority, result);
+						return true;
+					}
 				}
 			}
 
