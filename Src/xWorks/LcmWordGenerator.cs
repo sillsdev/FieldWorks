@@ -10,6 +10,7 @@ using SIL.Code;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
 using Style = DocumentFormat.OpenXml.Wordprocessing.Style;
@@ -699,6 +700,17 @@ namespace SIL.FieldWorks.XWorks
 		public IFragment GenerateWsPrefixWithString(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings,
 			bool displayAbbreviation, int wsId, IFragment content)
 		{
+			if (displayAbbreviation)
+			{
+				// Prepend the run with the abbreviation content and abbreviation style.
+				string abbrev = ((CoreWritingSystemDefinition)settings.Cache.WritingSystemFactory.get_EngineOrNull(wsId)).Abbreviation;
+				var abbrevRun = CreateRun(abbrev, WordStylesGenerator.WritingSystemDisplayName);
+				((DocFragment)content).DocBody.PrependChild(abbrevRun);
+
+				// Add the abbreviation style to the _styleDictionary (if not already added).
+				GetOrCreateCharacterStyle(WordStylesGenerator.WritingSystemStyleName, WordStylesGenerator.WritingSystemDisplayName, _propertyTable);
+			}
+
 			return content;
 		}
 
@@ -1501,7 +1513,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-				styleContent = WordStylesGenerator.CheckRangeOfStylesForEmpties(WordStylesGenerator.GenerateWordStylesFromConfigurationNode(node, className, _propertyTable));
+				styleContent = WordStylesGenerator.CheckRangeOfStylesForEmpties(WordStylesGenerator.GenerateWordStylesFromConfigurationNode(node, _propertyTable));
 			}
 
 			if (styleContent == null)
