@@ -654,7 +654,7 @@
 			<NuGottenFiles Include="$(PackagesDir)/Analytics.3.6.0/lib/net461/Analytics.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/DocumentFormat.OpenXml.2.20.0/lib/net46/DocumentFormat.OpenXml.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/DotNetZip.1.16.0/lib/net40/*.*"/>
-			<NuGottenFiles Include="$(PackagesDir)/icu.net.2.9.0-beta.13/lib/net451/icu.net.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/icu.net.2.10.0/lib/net451/icu.net.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/Markdig.Signed.0.30.0/lib/net452/Markdig.Signed.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/Microsoft.Extensions.DependencyModel.2.0.4/lib/net451/Microsoft.Extensions.DependencyModel.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/Microsoft.Win32.Registry.4.7.0/lib/net461/Microsoft.Win32.Registry.dll" Condition="'$(OS)'=='Windows_NT'"/>
