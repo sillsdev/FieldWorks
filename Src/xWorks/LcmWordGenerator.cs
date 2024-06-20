@@ -1765,7 +1765,8 @@ namespace SIL.FieldWorks.XWorks
 					if (!string.IsNullOrEmpty(currentRunStyle))
 					{
 						// If the current style is a language tag, then no need to add the colon.
-						string basedOnStyleName = currentRunStyle.StartsWith("[") ? (styleDisplayName + currentRunStyle) : (styleDisplayName + ":" + currentRunStyle);
+						string basedOnStyleName = currentRunStyle.StartsWith("[") ?
+							(styleDisplayName + currentRunStyle) : (styleDisplayName + WordStylesGenerator.StyleSeparator + currentRunStyle);
 
 						lock (_styleDictionary)
 						{
@@ -1775,6 +1776,15 @@ namespace SIL.FieldWorks.XWorks
 							}
 							else
 							{
+								// Don't create a new style if the current style already has the same root.
+								int compareTo = currentRunStyle.IndexOf(WordStylesGenerator.StyleSeparator);
+								compareTo = compareTo != -1 ? compareTo : currentRunStyle.IndexOf("[");
+								if ((compareTo == -1 && currentRunStyle.Equals(styleDisplayName)) ||
+									(compareTo != -1 && currentRunStyle.Substring(0, compareTo).Equals(styleDisplayName)))
+								{
+									return;
+								}
+
 								Style basedOnStyle = WordStylesGenerator.GenerateBasedOnCharacterStyle(rootStyle, currentRunStyle, basedOnStyleName);
 								if (basedOnStyle != null)
 								{
