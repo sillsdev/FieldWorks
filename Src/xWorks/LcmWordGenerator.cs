@@ -1777,10 +1777,11 @@ namespace SIL.FieldWorks.XWorks
 							else
 							{
 								// Don't create a new style if the current style already has the same root.
-								int compareTo = currentRunStyle.IndexOf(WordStylesGenerator.StyleSeparator);
-								compareTo = compareTo != -1 ? compareTo : currentRunStyle.IndexOf("[");
-								if ((compareTo == -1 && currentRunStyle.Equals(styleDisplayName)) ||
-									(compareTo != -1 && currentRunStyle.Substring(0, compareTo).Equals(styleDisplayName)))
+								int separatorIndex = currentRunStyle.IndexOf(WordStylesGenerator.StyleSeparator);
+								separatorIndex = separatorIndex != -1 ? separatorIndex : currentRunStyle.IndexOf("[");
+								bool hasSameRoot = separatorIndex == -1 ? currentRunStyle.Equals(styleDisplayName) :
+									currentRunStyle.Substring(0, separatorIndex).Equals(styleDisplayName);
+								if (hasSameRoot)
 								{
 									return;
 								}
