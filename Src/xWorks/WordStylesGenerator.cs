@@ -27,13 +27,13 @@ namespace SIL.FieldWorks.XWorks
 		internal const string BeforeAfterBetweenStyleName = "Dictionary-Context";
 		internal const string BeforeAfterBetweenDisplayName = "Context";
 		internal const string LetterHeadingStyleName = "Dictionary-LetterHeading";
-		internal const string LetterHeadingDisplayName = "LetterHeading";
+		internal const string LetterHeadingDisplayName = "Letter Heading";
 		internal const string SenseNumberStyleName = "Dictionary-SenseNumber";
-		internal const string SenseNumberDisplayName = "SenseNumber";
+		internal const string SenseNumberDisplayName = "Sense Number";
 		internal const string DictionaryNormal = "Dictionary-Normal";
 		internal const string DictionaryMinor = "Dictionary-Minor";
-		internal const string WritingSystemPrefix = "writingsystemprefix";
 		internal const string WritingSystemStyleName = "Writing System Abbreviation";
+		internal const string WritingSystemDisplayName = "Writing System Abbreviation";
 		internal const string PictureAndCaptionTextframeStyle = "Image-Textframe-Style";
 		internal const string EntryStyleContinue = "-Continue";
 		internal const string StyleSeparator = " : ";
@@ -313,8 +313,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Generates openxml styles for a configuration node and adds them to the given stylesheet (recursive).
 		/// </summary>
 		public static Styles GenerateWordStylesFromConfigurationNode(
-			ConfigurableDictionaryNode configNode, string styleName,
-			ReadOnlyPropertyTable propertyTable)
+			ConfigurableDictionaryNode configNode, ReadOnlyPropertyTable propertyTable)
 		{
 			var cache = propertyTable.GetValue<LcmCache>("cache");
 			switch (configNode.DictionaryNodeOptions)
@@ -335,15 +334,6 @@ namespace SIL.FieldWorks.XWorks
 					{
 						var rule = new Style();
 						var rules = new Styles();
-
-						var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-						if (wsOptions != null)
-						{
-							if (wsOptions.DisplayWritingSystemAbbreviations)
-							{
-								rules = AddRange(rules, GenerateWordStylesForWritingSystemPrefix(configNode, styleName, propertyTable));
-							}
-						}
 
 						// if the configuration node defines a style then add all the rules generated from that style
 						if (!string.IsNullOrEmpty(configNode.Style))
@@ -517,22 +507,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// TODO: Generate these styles when we implement custom numbering as well as before/after + separate paragraphs in styles
 			return null;
-		}
-
-		private static Styles GenerateWordStylesForWritingSystemPrefix(ConfigurableDictionaryNode configNode, string baseSelection, ReadOnlyPropertyTable propertyTable)
-		{
-			var styleRules = new Styles();
-			var wsRule1 = GetOnlyCharacterStyle(GenerateWordStyleFromLcmStyleSheet(WritingSystemStyleName, 0, configNode, propertyTable));
-			wsRule1.StyleId = (string.Format("{0}.{1}", baseSelection, WritingSystemPrefix)).Trim('.');
-			wsRule1.StyleName = new StyleName() { Val = wsRule1.StyleId };
-			styleRules = AddRange(styleRules, wsRule1);
-
-			// TODO: Determine how to handle after content in Word export (can't add content via a style)
-			/*var wsRule2 = new Style { StyleId = string.Format("{0}.{1}:after", baseSelection, WritingSystemPrefix) };
-			wsRule2.Declarations.Properties.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, " ") });
-			styleRules.Add(wsRule2);*/
-
-			return styleRules;
 		}
 
 		/// <summary>
