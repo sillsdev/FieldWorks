@@ -920,6 +920,10 @@ namespace SIL.FieldWorks.IText
 		{
 			// now update the guesses for the paragraphs.
 			var pdut = new ParaDataUpdateTracker(Vc.GuessServices, Vc.Decorator);
+			if (wordforms != null)
+				// The user may have changed the analyses for wordforms. (LT-21814)
+				foreach (var wordform in wordforms)
+					pdut.NoteChangedAnalysis(wordform.Hvo);
 			foreach (IStTxtPara para in RootStText.ParagraphsOS)
 				pdut.LoadAnalysisData(para, wordforms);
 			if (fUpdateDisplayWhereNeeded)

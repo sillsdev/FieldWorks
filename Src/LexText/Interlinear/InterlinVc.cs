@@ -1397,6 +1397,11 @@ namespace SIL.FieldWorks.IText
 								{
 									flid = wmb.Cache.MetaDataCacheAccessor.GetFieldId2(WfiMorphBundleTags.kClassId,
 										"DefaultSense", false);
+									if (wmb.MorphRA != null &&
+										DisplayLexGlossWithInflType(vwenv, wmb.MorphRA.Owner as ILexEntry, wmb.DefaultSense, spec, wmb.InflTypeRA))
+									{
+										break;
+									}
 								}
 							}
 							else
@@ -2573,6 +2578,11 @@ namespace SIL.FieldWorks.IText
 		{
 			m_currentAnnotation = occurrence;
 			base.NoteCurrentAnnotation(occurrence);
+		}
+
+		public void NoteChangedAnalysis(int hvo)
+		{
+			m_analysesWithNewGuesses.Add(hvo);
 		}
 
 		private void MarkCurrentAnnotationAsChanged()
