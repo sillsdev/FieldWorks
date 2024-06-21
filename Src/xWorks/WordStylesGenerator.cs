@@ -36,6 +36,7 @@ namespace SIL.FieldWorks.XWorks
 		internal const string WritingSystemDisplayName = "Writing System Abbreviation";
 		internal const string PictureAndCaptionTextframeStyle = "Image-Textframe-Style";
 		internal const string EntryStyleContinue = "-Continue";
+		internal const string StyleSeparator = " : ";
 
 		public static Style GenerateLetterHeaderStyle(ReadOnlyPropertyTable propertyTable)
 		{
