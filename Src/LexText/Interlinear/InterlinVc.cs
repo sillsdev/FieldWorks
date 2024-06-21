@@ -2580,6 +2580,11 @@ namespace SIL.FieldWorks.IText
 			base.NoteCurrentAnnotation(occurrence);
 		}
 
+		public void NoteChangedAnalysis(int hvo)
+		{
+			m_analysesWithNewGuesses.Add(hvo);
+		}
+
 		private void MarkCurrentAnnotationAsChanged()
 		{
 			// something has changed in the cache for the annotation or its analysis,
