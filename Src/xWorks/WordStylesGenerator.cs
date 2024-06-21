@@ -25,23 +25,33 @@ namespace SIL.FieldWorks.XWorks
 
 		// Names for global and default styles
 		internal const string BeforeAfterBetweenStyleName = "Dictionary-Context";
+		internal const string BeforeAfterBetweenDisplayName = "Context";
 		internal const string LetterHeadingStyleName = "Dictionary-LetterHeading";
+		internal const string LetterHeadingDisplayName = "Letter Heading";
 		internal const string SenseNumberStyleName = "Dictionary-SenseNumber";
+		internal const string SenseNumberDisplayName = "Sense Number";
 		internal const string DictionaryNormal = "Dictionary-Normal";
 		internal const string DictionaryMinor = "Dictionary-Minor";
-		internal const string WritingSystemPrefix = "writingsystemprefix";
 		internal const string WritingSystemStyleName = "Writing System Abbreviation";
+		internal const string WritingSystemDisplayName = "Writing System Abbreviation";
 		internal const string PictureAndCaptionTextframeStyle = "Image-Textframe-Style";
 		internal const string EntryStyleContinue = "-Continue";
+		internal const string StyleSeparator = " : ";
 
 		public static Style GenerateLetterHeaderStyle(ReadOnlyPropertyTable propertyTable)
 		{
-			return GenerateWordStyleFromLcmStyleSheet(LetterHeadingStyleName, 0, propertyTable);
+			var style = GenerateWordStyleFromLcmStyleSheet(LetterHeadingStyleName, 0, propertyTable);
+			style.StyleId = LetterHeadingDisplayName;
+			style.StyleName.Val = style.StyleId;
+			return style;
 		}
 
 		public static Style GenerateBeforeAfterBetweenStyle(ReadOnlyPropertyTable propertyTable)
 		{
-			return GenerateWordStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, 0, propertyTable);
+			var style = GenerateWordStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, 0, propertyTable);
+			style.StyleId = BeforeAfterBetweenDisplayName;
+			style.StyleName.Val = style.StyleId;
+			return style;
 		}
 
 		public static Styles GetDefaultWordStyles(ReadOnlyPropertyTable propertyTable, LcmStyleSheet propStyleSheet, DictionaryConfigurationModel model)
@@ -303,8 +313,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Generates openxml styles for a configuration node and adds them to the given stylesheet (recursive).
 		/// </summary>
 		public static Styles GenerateWordStylesFromConfigurationNode(
-			ConfigurableDictionaryNode configNode, string styleName,
-			ReadOnlyPropertyTable propertyTable)
+			ConfigurableDictionaryNode configNode, ReadOnlyPropertyTable propertyTable)
 		{
 			var cache = propertyTable.GetValue<LcmCache>("cache");
 			switch (configNode.DictionaryNodeOptions)
@@ -313,36 +322,30 @@ namespace SIL.FieldWorks.XWorks
 					// Try to generate style for the sense number before the baseSelection is updated b/c
 					// the sense number is a sibling of the sense element and we are normally applying styles to the
 					// children of collections.
-					return GenerateWordStyleForSenses(configNode, senseOptions, ref styleName, propertyTable);
+					return GenerateWordStyleForSenses(configNode, senseOptions, propertyTable);
 
 				// TODO: handle listAndPara case and character portion of pictureOptions
 				// case IParaOption listAndParaOpts:
 
 				case DictionaryNodePictureOptions pictureOptions:
-					return GenerateWordStyleFromPictureOptions(configNode, pictureOptions, styleName, cache, propertyTable);
+					return GenerateWordStyleFromPictureOptions(configNode, pictureOptions, cache, propertyTable);
 
 				default:
 					{
 						var rule = new Style();
 						var rules = new Styles();
 
-						var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-						if (wsOptions != null)
-						{
-							if (wsOptions.DisplayWritingSystemAbbreviations)
-							{
-								rules = AddRange(rules, GenerateWordStylesForWritingSystemPrefix(configNode, styleName, propertyTable));
-							}
-						}
-
 						// if the configuration node defines a style then add all the rules generated from that style
 						if (!string.IsNullOrEmpty(configNode.Style))
 						{
-							//Generate the rules for the default font info
-							rule = GenerateWordStyleFromLcmStyleSheet(configNode.Style, DefaultStyle, configNode, propertyTable);
-
-							rule.StyleId = configNode.Style;
-							rules.AppendChild(rule.CloneNode(true));
+							if (configNode.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph)
+							{
+								//Generate the rules for the default font info
+								rule = GenerateWordStyleFromLcmStyleSheet(configNode.Style, DefaultStyle, configNode, propertyTable);
+								rule.StyleId = configNode.DisplayLabel;
+								rule.StyleName.Val = rule.StyleId;
+								rules.AppendChild(rule.CloneNode(true));
+							}
 						}
 						return rules;
 					}
@@ -414,7 +417,7 @@ namespace SIL.FieldWorks.XWorks
 			return styleRules;
 		}
 
-		private static Styles GenerateWordStyleForSenses(ConfigurableDictionaryNode configNode, DictionaryNodeSenseOptions senseOptions, ref string baseSelection, ReadOnlyPropertyTable propertyTable)
+		private static Styles GenerateWordStyleForSenses(ConfigurableDictionaryNode configNode, DictionaryNodeSenseOptions senseOptions, ReadOnlyPropertyTable propertyTable)
 		{
 			var styleRules = new Styles();
 
@@ -433,8 +436,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				senseNumberStyle = GenerateWordStyleFromLcmStyleSheet(senseOptions.NumberStyle, senseNumberWsId, propertyTable);
 			}
+			senseNumberStyle.StyleId = SenseNumberDisplayName;
+			senseNumberStyle.StyleName = new StyleName() { Val = senseNumberStyle.StyleId };
 
-			senseNumberStyle.StyleId = SenseNumberStyleName;
 			if (!IsEmptyStyle(senseNumberStyle))
 				styleRules = AddRange(styleRules, senseNumberStyle);
 
@@ -465,12 +469,11 @@ namespace SIL.FieldWorks.XWorks
 				if (!IsEmptyStyle(senseContentStyle))
 					styleRules.Append(senseContentStyle);
 			}
-
 			return styleRules;
 		}
 
 		private static Styles GenerateWordStyleFromPictureOptions(ConfigurableDictionaryNode configNode, DictionaryNodePictureOptions pictureOptions,
-			string baseSelection, LcmCache cache, ReadOnlyPropertyTable propertyTable)
+			LcmCache cache, ReadOnlyPropertyTable propertyTable)
 		{
 			var styles = new Styles();
 
@@ -506,22 +509,6 @@ namespace SIL.FieldWorks.XWorks
 			return null;
 		}
 
-		private static Styles GenerateWordStylesForWritingSystemPrefix(ConfigurableDictionaryNode configNode, string baseSelection, ReadOnlyPropertyTable propertyTable)
-		{
-			var styleRules = new Styles();
-			var wsRule1 = GetOnlyCharacterStyle(GenerateWordStyleFromLcmStyleSheet(WritingSystemStyleName, 0, configNode, propertyTable));
-			wsRule1.StyleId = (string.Format("{0}.{1}", baseSelection, WritingSystemPrefix)).Trim('.');
-			wsRule1.StyleName = new StyleName() { Val = wsRule1.StyleId };
-			styleRules = AddRange(styleRules, wsRule1);
-
-			// TODO: Determine how to handle after content in Word export (can't add content via a style)
-			/*var wsRule2 = new Style { StyleId = string.Format("{0}.{1}:after", baseSelection, WritingSystemPrefix) };
-			wsRule2.Declarations.Properties.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, " ") });
-			styleRules.Add(wsRule2);*/
-
-			return styleRules;
-		}
-
 		/// <summary>
 		/// Create the 'continuation' style for the entry, which is needed when an entry contains multiple paragraphs. This
 		/// style will be used for all but the first paragraph. It is the same as the style for the first paragraph except
@@ -533,8 +520,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Style contStyle = GenerateWordStyleFromLcmStyleSheet(node.Style, DefaultStyle, node,
 				propertyTable, false);
-			contStyle.StyleName.Val = node.Style + EntryStyleContinue;
-			contStyle.StyleId = node.Style + EntryStyleContinue;
+			contStyle.StyleId = node.DisplayLabel + EntryStyleContinue;
+			contStyle.StyleName.Val = contStyle.StyleId;
 
 			var retStyles = new Styles();
 			retStyles.AppendChild(contStyle.CloneNode(true));
