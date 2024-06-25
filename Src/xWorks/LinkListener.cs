@@ -520,7 +520,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
 					ICmObject obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_lnkActive.TargetGuid);
-					if (obj is IReversalIndexEntry && m_lnkActive.ToolName == "reversalToolEditComplete")
+					if (obj is IReversalIndexEntry && m_lnkActive.ToolName == "reversalToolEditComplete" ||
+						(m_lnkActive?.PropertyTableEntries.Where(p => p.name.Equals("database")).Any() ?? false))
 					{
 						// For the reversal index tool, just getting the tool right isn't enough.  We
 						// also need to be showing the proper index.  (See FWR-1105.)
