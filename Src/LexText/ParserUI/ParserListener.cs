@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
@@ -650,14 +651,33 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="append"></param>
 		void ShowParserReports(bool append = false)
 		{
-			FwLinkArgs link = new FwAppArgs(m_cache.ProjectId.Handle, "ParserReports", Guid.Empty);
-			if (append)
+			// Sample data
+			var testParserReports = new ObservableCollection<ParserReport>
 			{
-				List<Property> additionalProps = link.PropertyTableEntries;
-				additionalProps.Add(new Property("LinkSetupInfo", "AppendParserReport"));
-			}
-			m_mediator.PostMessage("FollowLink", link);
+				new ParserReport
+				{
+					ProjectName = "Test Project 1",
+					MachineName = "TestMachine1",
+					SourceText = "Test Source Text 1",
+					Timestamp = DateTime.Now.ToFileTime(),
+					NumWords = 100,
+					NumParseErrors = 2,
+					NumZeroParses = 1
+				},
+				new ParserReport
+				{
+					ProjectName = "Test Project 2",
+					MachineName = "TestMachine2",
+					SourceText = "Test Source Text 2",
+					Timestamp = DateTime.Now.AddMinutes(-30).ToFileTime(),
+					NumWords = 200,
+					NumParseErrors = 1,
+					NumZeroParses = 0
+				}
+			};
 
+			ParserReportDialog dialog = new ParserReportDialog(testParserReports);
+			dialog.Show(); // Show the dialog but do not block other app access
 		}
 
 		public bool OnParseAllWords(object argument)
