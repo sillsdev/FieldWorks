@@ -1576,7 +1576,7 @@ namespace ParatextImport.ImportTests
 			// For some reason, starting in 2022-01, this message has a Unix newline even on Windows. If it changes back soon,
 			// we can switch to regular expression matching to save the maintenance.
 			Assert.That(() => m_importer.ProcessSegment("Title ", @"\mt"), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(string.Format(
-				"Back translation not part of a paragraph:\n" +
+				"Back translation not part of a paragraph:{0}" +
 				"\tThis is default paragraph characters {0}" +
 				"\t(Style: Default Paragraph Characters){0}" +
 				"Attempting to read GEN", Environment.NewLine)));
@@ -3064,7 +3064,7 @@ namespace ParatextImport.ImportTests
 			// For some reason, starting in 2022-01, this message has a Unix newline even on Windows. If it changes back soon,
 			// we can switch to regular expression matching to save the maintenance.
 			Assert.That(() => m_importer.FinalizeImport(), Throws.TypeOf<ScriptureUtilsException>().With.Message.EqualTo(string.Format(
-				"Back translation does not correspond to a vernacular picture.\n" +
+				"Back translation does not correspond to a vernacular picture.{1}" +
 				"A back translation picture must correspond to a picture in the corresponding vernacular paragraph." +
 				"{1}{1}\\fig {0}{1}Attempting to read GEN  Chapter: 1  Verse: 1",
 				Path.Combine(Path.GetTempPath(), "BT for first photo"), Environment.NewLine)));
