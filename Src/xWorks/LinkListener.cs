@@ -502,7 +502,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				// Return false if the link is to a different database
 				var databases = m_lnkActive.PropertyTableEntries.Where(p => p.name == "database");
-				if (databases.Any() && databases.First().name != cache.LangProject.ShortName)
+				if (databases.FirstOrDefault()?.name != cache.LangProject.ShortName)
 				{
 					return false;
 				}
