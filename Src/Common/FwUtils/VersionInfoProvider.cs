@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using SIL.Extensions;
@@ -16,6 +17,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 	/// ----------------------------------------------------------------------------------------
 	public class VersionInfoProvider
 	{
+
+		internal static DateTime DefaultBuildDate = new DateTime(2001, 06, 23);
 		/// <summary>Default copyright string if no assembly could be found</summary>
 		public const string kDefaultCopyrightString = "Copyright (c) 2002-2021 SIL International";
 		/// <summary>Copyright string to use in sensitive areas (i.e. when m_fShowSILInfo is true)</summary>
@@ -264,7 +267,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			get
 			{
 				ParseInformationalVersion(m_assembly, out _, out var date);
-				return string.IsNullOrEmpty(date) ? new DateTime(2001, 06, 23) : DateTime.Parse(date);
+				if (DateTime.TryParse(date, CultureInfo.InvariantCulture, DateTimeStyles.None,
+						out var buildDate))
+				{
+					return buildDate;
+				}
+				return DefaultBuildDate;
 			}
 		}
 

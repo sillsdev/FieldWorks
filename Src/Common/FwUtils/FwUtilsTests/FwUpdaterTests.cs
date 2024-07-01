@@ -3,10 +3,15 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Threading;
 using System.Xml.Linq;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
+using SIL.Extensions;
 using SIL.LCModel.Utils;
 using FileUtils = SIL.LCModel.Utils.FileUtils;
 
@@ -695,6 +700,32 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.True(FileUtils.FileExists(updateFileName), "The Update File should NOT have been deleted");
 			Assert.False(FileUtils.FileExists(patchForDifferentBase), "Patch For Different Base should have been deleted");
 			Assert.False(FileUtils.FileExists(otherFileName), "Other File should have been deleted");
+		}
+
+		[Test]
+		public void VersionInfoProvider_GetVersionInfo_WorksForOddCulture()
+		{
+			var versionInfo = new VersionInfoProvider(Assembly.GetAssembly(GetType()), true);
+			var originalCulture = Thread.CurrentThread.CurrentCulture;
+			var oddCulture = new CultureInfo("th-TH");
+			oddCulture.DateTimeFormat.TimeSeparator = "-";
+			Thread.CurrentThread.CurrentCulture = oddCulture;
+			try
+			{
+				// Simulate the generation of the ISO8601 date string
+				string iso8601DateString = new DateTime(2024, 6, 27).ToISO8601TimeFormatDateOnlyString();
+
+
+				// Asserting that the parse result should fail (which it should, given the culture mismatch)
+				Assert.Throws<FormatException>(()=> DateTime.Parse(iso8601DateString), "Test not valid if this doesn't throw");
+
+				// Asserting that the version info provider's apparent build date is correctly handled (or not)
+				Assert.That(versionInfo.ApparentBuildDate, Is.Not.EqualTo(VersionInfoProvider.DefaultBuildDate));
+			}
+			finally
+			{
+				Thread.CurrentThread.CurrentCulture = originalCulture;
+			}
 		}
 
 		private static string Contents(string key, int size = 0, string modified = "2020-12-13T04:46:57.000Z",
