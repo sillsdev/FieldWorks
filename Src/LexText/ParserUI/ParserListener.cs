@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
@@ -675,8 +676,17 @@ namespace SIL.FieldWorks.LexText.Controls
 					NumZeroParses = 0
 				}
 			};
+			var reportDir = ParserReport.GetProjectReportsDirectory(m_cache);
+			var parserReports = new ObservableCollection<ParserReport>();
+			foreach (string filename in Directory.EnumerateFiles(reportDir, "*.json"))
+			{
+				var parserReport = ParserReport.ReadJsonFile(filename);
+				parserReports.Add(parserReport);
+			}
+			if (parserReports.Count() == 0)
+				parserReports = testParserReports;
 
-			ParserReportDialog dialog = new ParserReportDialog(testParserReports);
+			ParserReportDialog dialog = new ParserReportDialog(parserReports);
 			dialog.Show(); // Show the dialog but do not block other app access
 		}
 
