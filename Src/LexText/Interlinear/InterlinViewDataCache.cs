@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
 using HvoFlidKey=SIL.LCModel.HvoFlidKey;
 
 namespace SIL.FieldWorks.IText
@@ -26,11 +27,22 @@ namespace SIL.FieldWorks.IText
 		private const int ktagMostApprovedAnalysis = -64; // arbitrary non-valid flid to use for storing Guesses
 		private const int ktagOpinionAgent = -66; // arbitrary non-valid flid to use for storing opinion agents
 
-		private readonly IDictionary<HvoFlidKey, int> m_guessCache = new Dictionary<HvoFlidKey, int>();
+		private readonly IDictionary<AnalysisOccurrence, int> m_guessCache = new Dictionary<AnalysisOccurrence, int>();
 		private readonly IDictionary<HvoFlidKey, int> m_humanApproved = new Dictionary<HvoFlidKey, int>();
 
 		public InterlinViewDataCache(LcmCache cache) : base(cache.DomainDataByFlid as ISilDataAccessManaged)
 		{
+		}
+
+		public bool get_IsPropInCache(AnalysisOccurrence occurrence, int tag, int cpt, int ws)
+		{
+			switch (tag)
+			{
+				default:
+					throw new ArgumentException("tag", tag.ToString());
+				case ktagMostApprovedAnalysis:
+					return m_guessCache.ContainsKey(occurrence);
+			}
 		}
 
 		public override bool get_IsPropInCache(int hvo, int tag, int cpt, int ws)
@@ -40,9 +52,25 @@ namespace SIL.FieldWorks.IText
 				default:
 					return base.get_IsPropInCache(hvo, tag, cpt, ws);
 				case ktagMostApprovedAnalysis:
-					return m_guessCache.ContainsKey(new HvoFlidKey(hvo, tag));
+					throw new ArgumentException("tag", tag.ToString());
 				case ktagOpinionAgent:
 					return m_humanApproved.ContainsKey(new HvoFlidKey(hvo, tag));
+			}
+		}
+
+		public int get_ObjectProp(AnalysisOccurrence occurrence, int tag)
+		{
+			switch (tag)
+			{
+				default:
+					throw new ArgumentException("tag", tag.ToString());
+				case ktagMostApprovedAnalysis:
+					{
+						int result;
+						if (m_guessCache.TryGetValue(occurrence, out result))
+							return result;
+						return 0; // no guess cached.
+					}
 			}
 		}
 
@@ -53,12 +81,7 @@ namespace SIL.FieldWorks.IText
 				default:
 					return base.get_ObjectProp(hvo, tag);
 				case ktagMostApprovedAnalysis:
-					{
-						int result;
-						if (m_guessCache.TryGetValue(new HvoFlidKey(hvo, tag), out result))
-							return result;
-						return 0; // no guess cached.
-					}
+					throw new ArgumentException("tag", tag.ToString());
 			}
 		}
 
@@ -78,6 +101,21 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		public void SetObjProp(AnalysisOccurrence occurrence, int tag, int hvoObj)
+		{
+			switch (tag)
+			{
+				default:
+					throw new ArgumentException("tag", tag.ToString());
+				case ktagMostApprovedAnalysis:
+					if (hvoObj == 0)
+						m_guessCache.Remove(occurrence);
+					else
+						m_guessCache[occurrence] = hvoObj;
+					break;
+			}
+		}
+
 		public override void SetObjProp(int hvo, int tag, int hvoObj)
 		{
 			switch (tag)
@@ -86,12 +124,7 @@ namespace SIL.FieldWorks.IText
 					base.SetObjProp(hvo, tag, hvoObj);
 					break;
 				case ktagMostApprovedAnalysis:
-					var key = new HvoFlidKey(hvo, tag);
-					if (hvoObj == 0)
-						m_guessCache.Remove(key);
-					else
-						m_guessCache[key] = hvoObj;
-					break;
+					throw new ArgumentException("tag", tag.ToString());
 			}
 		}
 

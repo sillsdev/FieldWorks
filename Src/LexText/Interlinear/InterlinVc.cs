@@ -554,12 +554,12 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="analysis"></param>
 		/// <returns></returns>
-		internal int GetGuess(IAnalysis analysis)
+		internal int GetGuess(IAnalysis analysis, AnalysisOccurrence occurrence)
 		{
-			if (Decorator.get_IsPropInCache(analysis.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid,
+			if (Decorator.get_IsPropInCache(occurrence, InterlinViewDataCache.AnalysisMostApprovedFlid,
 				(int)CellarPropertyType.ReferenceAtomic, 0))
 			{
-				var hvoResult = Decorator.get_ObjectProp(analysis.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid);
+				var hvoResult = Decorator.get_ObjectProp(occurrence, InterlinViewDataCache.AnalysisMostApprovedFlid);
 				if(hvoResult != 0 && Cache.ServiceLocator.IsValidObjectId(hvoResult))
 					return hvoResult;  // may have been cleared by setting to zero, or the Decorator could have stale data
 			}
@@ -1718,12 +1718,12 @@ namespace SIL.FieldWorks.IText
 				{
 				case WfiWordformTags.kClassId:
 					m_hvoWordform = wag.Wordform.Hvo;
-					m_hvoDefault = m_this.GetGuess(wag.Wordform);
+					m_hvoDefault = m_this.GetGuess(wag.Wordform, m_analysisOccurrence);
 					break;
 				case WfiAnalysisTags.kClassId:
 					m_hvoWordform = wag.Wordform.Hvo;
 					m_hvoWfiAnalysis = wag.Analysis.Hvo;
-					m_hvoDefault = m_this.GetGuess(wag.Analysis);
+					m_hvoDefault = m_this.GetGuess(wag.Analysis, m_analysisOccurrence);
 					break;
 				case WfiGlossTags.kClassId:
 					m_hvoWfiAnalysis = wag.Analysis.Hvo;
@@ -2290,6 +2290,12 @@ namespace SIL.FieldWorks.IText
 			return new InterlinViewCacheLoader(new AnalysisGuessServices(m_cache), Decorator);
 		}
 
+		internal InterlinViewDataCache GetGuessCache()
+		{
+			EnsureLoader();
+			return m_loader.GetGuessCache();
+		}
+
 		internal void RecordGuessIfNotKnown(AnalysisOccurrence selected)
 		{
 			EnsureLoader();
@@ -2408,6 +2414,7 @@ namespace SIL.FieldWorks.IText
 	{
 		void LoadParaData(IStTxtPara para);
 		void LoadSegmentData(ISegment seg);
+		InterlinViewDataCache GetGuessCache();
 		void ResetGuessCache();
 		bool UpdatingOccurrence(IAnalysis oldAnalysis, IAnalysis newAnalysis);
 		void RecordGuessIfNotKnown(AnalysisOccurrence occurrence);
@@ -2470,7 +2477,7 @@ namespace SIL.FieldWorks.IText
 
 		public void RecordGuessIfNotKnown(AnalysisOccurrence occurrence)
 		{
-			if (m_sdaDecorator.get_ObjectProp(occurrence.Analysis.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid) == 0)
+			if (m_sdaDecorator.get_ObjectProp(occurrence, InterlinViewDataCache.AnalysisMostApprovedFlid) == 0)
 				RecordGuessIfAvailable(occurrence);
 		}
 
@@ -2484,6 +2491,11 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		public InterlinViewDataCache GetGuessCache()
+		{
+			return m_sdaDecorator;
+		}
+
 		private void RecordGuessIfAvailable(AnalysisOccurrence occurrence)
 		{
 			// TODO: deal with lowercase forms of sentence initial occurrences.
@@ -2494,16 +2506,16 @@ namespace SIL.FieldWorks.IText
 			// next get the best guess for wordform or analysis
 
 			IAnalysis wag = occurrence.Analysis;
-			IAnalysis wagGuess = GuessServices.GetBestGuess(occurrence, false, false);
+			IAnalysis wagGuess = GuessServices.GetBestGuess(occurrence, false);
 			// now record the guess in the decorator.
 			if (!(wagGuess is NullWAG))
 			{
-				SetObjProp(wag.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid, wagGuess.Hvo);
+				SetObjProp(occurrence, InterlinViewDataCache.AnalysisMostApprovedFlid, wagGuess.Hvo);
 				SetInt(wagGuess.Analysis.Hvo, InterlinViewDataCache.OpinionAgentFlid, (int)GuessServices.GetOpinionAgent(wagGuess.Analysis));
 			}
 			else
 			{
-				SetObjProp(wag.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid, 0);
+				SetObjProp(occurrence, InterlinViewDataCache.AnalysisMostApprovedFlid, 0);
 			}
 		}
 
@@ -2521,6 +2533,11 @@ namespace SIL.FieldWorks.IText
 		protected virtual void SetObjProp(int hvo, int flid, int objValue)
 		{
 			m_sdaDecorator.SetObjProp(hvo, flid, objValue);
+		}
+
+		protected virtual void SetObjProp(AnalysisOccurrence occurrence, int flid, int objValue)
+		{
+			m_sdaDecorator.SetObjProp(occurrence, flid, objValue);
 		}
 
 		/// <summary>
@@ -2566,6 +2583,7 @@ namespace SIL.FieldWorks.IText
 	internal class ParaDataUpdateTracker : InterlinViewCacheLoader
 	{
 		private HashSet<AnalysisOccurrence> m_annotationsChanged = new HashSet<AnalysisOccurrence>();
+		private HashSet<AnalysisOccurrence> m_annotationsUnchanged = new HashSet<AnalysisOccurrence>();
 		private AnalysisOccurrence m_currentAnnotation;
 		HashSet<int> m_analysesWithNewGuesses = new HashSet<int>();
 
@@ -2598,26 +2616,35 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		internal IList<AnalysisOccurrence> ChangedAnnotations
 		{
-			get { return m_annotationsChanged.ToArray(); }
+			get
+			{
+				// Include occurrences that are unchanged but might add a yellow background.
+				foreach (var unchangedAnnotation in m_annotationsUnchanged)
+				{
+					if (m_analysesWithNewGuesses.Contains(unchangedAnnotation.Analysis.Hvo))
+					{
+						m_annotationsChanged.Add(unchangedAnnotation);
+					}
+				}
+				return m_annotationsChanged.ToArray();
+			}
 		}
 
-		protected override void SetObjProp(int hvo, int flid, int newObjValue)
+		protected override void SetObjProp(AnalysisOccurrence occurrence, int flid, int newObjValue)
 		{
-			int oldObjValue = Decorator.get_ObjectProp(hvo, flid);
+			int oldObjValue = Decorator.get_ObjectProp(occurrence, flid);
 			if (oldObjValue != newObjValue)
 			{
-				base.SetObjProp(hvo, flid, newObjValue);
-				m_analysesWithNewGuesses.Add(hvo);
+				base.SetObjProp(occurrence, flid, newObjValue);
+				m_annotationsChanged.Add(occurrence);
+				m_analysesWithNewGuesses.Add(occurrence.Analysis.Hvo);
 				MarkCurrentAnnotationAsChanged();
-				return;
 			}
-			// If we find more than one occurrence of the same analysis, only the first time
-			// will its guess change. But all of them need to be updated! So any occurrence whose
-			// guess has changed needs to be marked as changed.
-			if (m_currentAnnotation != null && m_currentAnnotation.Analysis !=null
-				&& m_analysesWithNewGuesses.Contains(m_currentAnnotation.Analysis.Hvo))
+			else
 			{
-				MarkCurrentAnnotationAsChanged();
+				// We will want to redisplay these with a yellow background
+				// if the number of possibilities change.
+				m_annotationsUnchanged.Add(occurrence);
 			}
 		}
 

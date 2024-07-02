@@ -1641,7 +1641,7 @@ namespace SIL.FieldWorks.IText
 
 			if (InterlinDoc == null) // In Wordform Analyses tool and some unit tests, InterlinDoc is null
 				return;
-			ISilDataAccess sda = InterlinDoc.RootBox.DataAccess;
+			var guessCache = InterlinDoc.GetGuessCache();
 
 			// If we're calling from the context of SetWordform(), we may be trying to establish
 			// an alternative wordform/form/analysis. In that case, or if we don't have a default cached,
@@ -1656,12 +1656,12 @@ namespace SIL.FieldWorks.IText
 			{
 				// Try to establish a default based on the current occurrence.
 				if (m_fSetWordformInProgress ||
-					!sda.get_IsPropInCache(HvoAnnotation, InterlinViewDataCache.AnalysisMostApprovedFlid,
+					!guessCache.get_IsPropInCache(m_occurrenceSelected, InterlinViewDataCache.AnalysisMostApprovedFlid,
 						(int) CellarPropertyType.ReferenceAtomic, 0))
 				{
 					InterlinDoc.RecordGuessIfNotKnown(m_occurrenceSelected);
 				}
-				hvoDefault = sda.get_ObjectProp(HvoAnnotation, InterlinViewDataCache.AnalysisMostApprovedFlid);
+				hvoDefault = guessCache.get_ObjectProp(m_occurrenceSelected, InterlinViewDataCache.AnalysisMostApprovedFlid);
 				// In certain cases like during an undo the Decorator data might be stale, so validate the result before we continue
 				// to prevent using data that does not exist anymore
 				if(!Cache.ServiceLocator.IsValidObjectId(hvoDefault))
