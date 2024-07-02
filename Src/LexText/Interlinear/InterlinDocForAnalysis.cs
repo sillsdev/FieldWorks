@@ -1473,9 +1473,10 @@ namespace SIL.FieldWorks.IText
 			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bool fOpenPunc = false;
 			ITsString space = TsStringUtils.MakeString(" ", ws);
-			foreach (var analysis in seg.AnalysesRS)
+			for (var i = 0; i < seg.AnalysesRS.Count; i++)
 			{
 				ITsString insert = null;
+				var analysis = seg.AnalysesRS[i];
 				if (analysis.Wordform == null)
 				{
 					// PunctForm...insert its text.
@@ -1511,7 +1512,7 @@ namespace SIL.FieldWorks.IText
 					else if (analysis is IWfiAnalysis || analysis is IWfiWordform)
 					{
 						// check if we have a guess cached with a gloss. (LT-9973)
-						int guessHvo = Vc.GetGuess(analysis);
+						int guessHvo = Vc.GetGuess(analysis, new AnalysisOccurrence(seg, i));
 						if (guessHvo != 0)
 						{
 							var guess = Cache.ServiceLocator.ObjectRepository.GetObject(guessHvo) as IWfiGloss;
@@ -2244,6 +2245,13 @@ namespace SIL.FieldWorks.IText
 				Focus(); // So we can actually see the selection we just made.
 		}
 
+		internal InterlinViewDataCache GetGuessCache()
+		{
+			if (Vc != null)
+				return Vc.GetGuessCache();
+			return null;
+		}
+
 		internal void RecordGuessIfNotKnown(AnalysisOccurrence selected)
 		{
 			if (Vc != null) // I think this only happens in tests.
@@ -2308,7 +2316,7 @@ namespace SIL.FieldWorks.IText
 							IAnalysis occAn = occ.Analysis; // averts “Access to the modified closure” warning in resharper
 							if (occAn is IWfiAnalysis || occAn is IWfiWordform)
 							{   // this is an analysis or a wordform
-								int hvo = Vc.GetGuess(occAn);
+								int hvo = Vc.GetGuess(occAn, occ);
 								if (occAn.Hvo != hvo)
 								{
 									// Move the sandbox to the next AnalysisOccurrence, then do the approval (using the sandbox data).
