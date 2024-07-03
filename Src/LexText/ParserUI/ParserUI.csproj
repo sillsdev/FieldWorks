@@ -277,12 +277,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ParserConnection.cs" />
-    <Compile Include="ParserReportDialog.xaml.cs">
-      <DependentUpon>ParserReportDialog.xaml</DependentUpon>
+    <Compile Include="ParserReportsDialog.xaml.cs">
+      <DependentUpon>ParserReportsDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ParserReportViewModel.cs" />
-    <Compile Include="ParserReportView.xaml.cs">
-      <DependentUpon>ParserReportView.xaml</DependentUpon>
+    <Compile Include="ParserReportsViewModel.cs" />
+    <Compile Include="ParserReportsView.xaml.cs">
+      <DependentUpon>ParserReportsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ParserListener.cs">
       <SubType>Code</SubType>
@@ -349,11 +349,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="ParserReportDialog.xaml">
+    <Page Include="ParserReportsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ParserReportView.xaml">
+    <Page Include="ParserReportsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
