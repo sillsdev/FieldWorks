@@ -19,10 +19,10 @@ namespace SIL.FieldWorks.IText
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	///
+	/// A data cache for guesses
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class InterlinViewDataCache : DomainDataByFlidDecoratorBase
+	public class InterlinViewDataCache
 	{
 		private const int ktagMostApprovedAnalysis = -64; // arbitrary non-valid flid to use for storing Guesses
 		private const int ktagOpinionAgent = -66; // arbitrary non-valid flid to use for storing opinion agents
@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.IText
 		private readonly IDictionary<AnalysisOccurrence, int> m_guessCache = new Dictionary<AnalysisOccurrence, int>();
 		private readonly IDictionary<HvoFlidKey, int> m_humanApproved = new Dictionary<HvoFlidKey, int>();
 
-		public InterlinViewDataCache(LcmCache cache) : base(cache.DomainDataByFlid as ISilDataAccessManaged)
+		public InterlinViewDataCache(LcmCache cache)
 		{
 		}
 
@@ -42,19 +42,6 @@ namespace SIL.FieldWorks.IText
 					throw new ArgumentException("tag", tag.ToString());
 				case ktagMostApprovedAnalysis:
 					return m_guessCache.ContainsKey(occurrence);
-			}
-		}
-
-		public override bool get_IsPropInCache(int hvo, int tag, int cpt, int ws)
-		{
-			switch (tag)
-			{
-				default:
-					return base.get_IsPropInCache(hvo, tag, cpt, ws);
-				case ktagMostApprovedAnalysis:
-					throw new ArgumentException("tag", tag.ToString());
-				case ktagOpinionAgent:
-					return m_humanApproved.ContainsKey(new HvoFlidKey(hvo, tag));
 			}
 		}
 
@@ -74,23 +61,12 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		public override int get_ObjectProp(int hvo, int tag)
+		public int get_IntProp(int hvo, int tag)
 		{
 			switch (tag)
 			{
 				default:
-					return base.get_ObjectProp(hvo, tag);
-				case ktagMostApprovedAnalysis:
 					throw new ArgumentException("tag", tag.ToString());
-			}
-		}
-
-		public override int get_IntProp(int hvo, int tag)
-		{
-			switch (tag)
-			{
-				default:
-					return base.get_IntProp(hvo, tag);
 				case ktagOpinionAgent:
 					{
 						int result;
@@ -116,25 +92,12 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		public override void SetObjProp(int hvo, int tag, int hvoObj)
+		public void SetInt(int hvo, int tag, int n)
 		{
 			switch (tag)
 			{
 				default:
-					base.SetObjProp(hvo, tag, hvoObj);
-					break;
-				case ktagMostApprovedAnalysis:
 					throw new ArgumentException("tag", tag.ToString());
-			}
-		}
-
-		public override void SetInt(int hvo, int tag, int n)
-		{
-			switch (tag)
-			{
-				default:
-					base.SetInt(hvo, tag, n);
-					break;
 				case ktagOpinionAgent:
 					m_humanApproved[new HvoFlidKey(hvo, tag)] = n;
 					break;

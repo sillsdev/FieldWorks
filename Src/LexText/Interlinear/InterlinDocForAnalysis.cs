@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.IText
 
 		internal void SuppressResettingGuesses(Action task)
 		{
-			Vc.Decorator.SuppressResettingGuesses(task);
+			Vc.GuessCache.SuppressResettingGuesses(task);
 		}
 
 		public override void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
@@ -2248,7 +2248,7 @@ namespace SIL.FieldWorks.IText
 		internal InterlinViewDataCache GetGuessCache()
 		{
 			if (Vc != null)
-				return Vc.GetGuessCache();
+				return Vc.GuessCache;
 			return null;
 		}
 
