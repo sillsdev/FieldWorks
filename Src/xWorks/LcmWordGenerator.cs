@@ -26,6 +26,7 @@ using XCore;
 using XmlDrawing = DocumentFormat.OpenXml.Drawing;
 using DrawingWP = DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using Pictures = DocumentFormat.OpenXml.Drawing.Pictures;
+using System.Text.RegularExpressions;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -1754,6 +1755,25 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns>The BeforeAfterBetween run.</returns>
 		private WP.Run CreateBeforeAfterBetweenRun(string text)
 		{
+			if(text.Contains("\\A"))
+			{
+				var run = new WP.Run()
+				{
+					RunProperties = new WP.RunProperties(new RunStyle() { Val = WordStylesGenerator.BeforeAfterBetweenDisplayName })
+				};
+				// If the before after between text has line break characters return a composite run including theline breaks
+				// Use Regex.Matches to capture both the content and the delimiters
+				var matches = Regex.Matches(text, @"(\\A|\\0A)|[^\\]*(?:(?=\\A|\\0A)|$)");
+				foreach (Match match in matches)
+				{
+					if (match.Groups[1].Success)
+						run.Append(new WP.Break() { Type = BreakValues.TextWrapping });
+					else
+						run.Append(new WP.Text(match.Value));
+				}
+				return run;
+			}
+
 			return CreateRun(text, WordStylesGenerator.BeforeAfterBetweenDisplayName);
 		}
 
