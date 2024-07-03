@@ -6,11 +6,11 @@ using SIL.FieldWorks.WordWorks.Parser;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
-	public class ParserReportViewModel
+	public class ParserReportsViewModel
 	{
 		public ObservableCollection<ParserReport> ParserReports { get; set; }
 
-		public ParserReportViewModel()
+		public ParserReportsViewModel()
 		{
 			ParserReports = new ObservableCollection<ParserReport>();
 
