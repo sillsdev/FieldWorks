@@ -2583,6 +2583,7 @@ namespace SIL.FieldWorks.IText
 	internal class ParaDataUpdateTracker : InterlinViewCacheLoader
 	{
 		private HashSet<AnalysisOccurrence> m_annotationsChanged = new HashSet<AnalysisOccurrence>();
+		private HashSet<AnalysisOccurrence> m_annotationsUnchanged = new HashSet<AnalysisOccurrence>();
 		private AnalysisOccurrence m_currentAnnotation;
 		HashSet<int> m_analysesWithNewGuesses = new HashSet<int>();
 
@@ -2615,7 +2616,18 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		internal IList<AnalysisOccurrence> ChangedAnnotations
 		{
-			get { return m_annotationsChanged.ToArray(); }
+			get
+			{
+				// Include occurrences that are unchanged but might add a yellow background.
+				foreach (var unchangedAnnotation in m_annotationsUnchanged)
+				{
+					if (m_analysesWithNewGuesses.Contains(unchangedAnnotation.Analysis.Hvo))
+					{
+						m_annotationsChanged.Add(unchangedAnnotation);
+					}
+				}
+				return m_annotationsChanged.ToArray();
+			}
 		}
 
 		protected override void SetObjProp(AnalysisOccurrence occurrence, int flid, int newObjValue)
@@ -2625,7 +2637,14 @@ namespace SIL.FieldWorks.IText
 			{
 				base.SetObjProp(occurrence, flid, newObjValue);
 				m_annotationsChanged.Add(occurrence);
+				m_analysesWithNewGuesses.Add(occurrence.Analysis.Hvo);
 				MarkCurrentAnnotationAsChanged();
+			}
+			else
+			{
+				// We will want to redisplay these with a yellow background
+				// if the number of possibilities change.
+				m_annotationsUnchanged.Add(occurrence);
 			}
 		}
 
