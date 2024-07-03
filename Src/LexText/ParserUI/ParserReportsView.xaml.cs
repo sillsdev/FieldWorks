@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
-	/// Interaction logic for ParserReportView.xaml
+	/// Interaction logic for ParserReportsView.xaml
 	/// </summary>
-	public partial class ParserReportView : UserControl
+	public partial class ParserReportsView : UserControl
 	{
-		public ParserReportView()
+		public ParserReportsView()
 		{
 			InitializeComponent();
 		}
