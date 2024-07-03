@@ -919,7 +919,7 @@ namespace SIL.FieldWorks.IText
 		private void UpdateGuesses(HashSet<IWfiWordform> wordforms, bool fUpdateDisplayWhereNeeded)
 		{
 			// now update the guesses for the paragraphs.
-			var pdut = new ParaDataUpdateTracker(Vc.GuessServices, Vc.Decorator);
+			var pdut = new ParaDataUpdateTracker(Vc.GuessServices, Vc.GuessCache);
 			if (wordforms != null)
 				// The user may have changed the analyses for wordforms. (LT-21814)
 				foreach (var wordform in wordforms)
@@ -991,12 +991,6 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		protected virtual void AddDecorator()
 		{
-			// by default, just use the InterinVc decorator.
-			if (m_rootb != null)
-			{
-				m_rootb.DataAccess = Vc.Decorator;
-			}
-
 		}
 
 		protected virtual void SetRootInternal(int hvo)
