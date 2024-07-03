@@ -130,6 +130,10 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.20.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Output\Debug\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -308,6 +312,7 @@
     <Compile Include="InterestingTextsTests.cs" />
     <Compile Include="ItemClickedTests.cs" />
     <Compile Include="LcmJsonGeneratorTests.cs" />
+    <Compile Include="LcmWordGeneratorTests.cs" />
     <Compile Include="MacroListenerTests.cs" />
     <Compile Include="RecordListTests.cs" />
     <Compile Include="ReversalIndexServicesTests.cs" />
