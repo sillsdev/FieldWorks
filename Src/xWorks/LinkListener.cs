@@ -501,8 +501,8 @@ namespace SIL.FieldWorks.XWorks
 					// Todo JohnT: need to do something special here if we c
 				}
 				// Return false if the link is to a different database
-				var databases = m_lnkActive.PropertyTableEntries.Where(p => p.name == "database");
-				if (databases.FirstOrDefault()?.name != cache.LangProject.ShortName)
+				var databaseName = m_lnkActive.PropertyTableEntries.Where(p => p.name == "database").FirstOrDefault()?.value as string;
+				if (databaseName != "this$" && databaseName != cache.LangProject.ShortName && m_fFollowingLink)
 				{
 					return false;
 				}
