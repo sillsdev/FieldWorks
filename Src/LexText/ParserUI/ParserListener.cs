@@ -686,7 +686,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (parserReports.Count() == 0)
 				parserReports = testParserReports;
 
-			ParserReportDialog dialog = new ParserReportDialog(parserReports);
+			ParserReportsDialog dialog = new ParserReportsDialog(parserReports);
 			dialog.Show(); // Show the dialog but do not block other app access
 		}
 
