@@ -1,0 +1,24 @@
+<Window x:Class="SIL.FieldWorks.LexText.Controls.ParserReportDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SIL.FieldWorks.LexText.Controls"
+        d:DataContext="{d:DesignInstance Type=local:ParserReportViewModel, IsDesignTimeCreatable=True}"
+        mc:Ignorable="d"
+        Title="Parser Report" WindowStartupLocation="CenterScreen"
+        WindowState="Maximized" WindowStyle="ThreeDBorderWindow">
+	<Grid>
+		<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding ParserReport.ParseReports.Values}">
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Word" Binding="{Binding Word}" />
+				<DataGridTextColumn Header="Parse Time" Binding="{Binding ParseTime}" />
+				<DataGridTextColumn Header="Error Message" Binding="{Binding ErrorMessage}" />
+				<DataGridTextColumn Header="Num Analyses" Binding="{Binding NumAnalyses}" />
+				<DataGridTextColumn Header="Analyses Missing" Binding="{Binding NumUserApprovedAnalysesMissing}" />
+				<DataGridTextColumn Header="Disapproved Analyses" Binding="{Binding NumUserDisapprovedAnalyses}" />
+				<DataGridTextColumn Header="No Opinion Analyses" Binding="{Binding NumUserNoOpinionAnalyses}" />
+			</DataGrid.Columns>
+		</DataGrid>
+	</Grid>
+</Window>

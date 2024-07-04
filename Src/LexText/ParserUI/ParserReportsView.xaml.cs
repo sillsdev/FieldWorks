@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using SIL.FieldWorks.WordWorks.Parser;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -23,6 +24,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		public ParserReportsView()
 		{
 			InitializeComponent();
+		}
+
+		public void ShowParserReport(object sender, RoutedEventArgs e)
+		{
+			var button = sender as Button;
+			var parserReport = button.CommandParameter as ParserReport;
+			ParserListener.ShowParserReport(parserReport);
 		}
 	}
 }
