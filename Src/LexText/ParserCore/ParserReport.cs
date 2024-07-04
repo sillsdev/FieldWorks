@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Policy;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -100,6 +101,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void AddParseReport(string word, ParseReport report)
 		{
 			ParseReports[word] = report;
+			report.Word = word;
 			NumWords += 1;
 			TotalParseTime += report.ParseTime;
 			TotalAnalyses += report.NumAnalyses;
@@ -121,6 +123,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			string json = File.ReadAllText(filename);
 			ParserReport report = Newtonsoft.Json.JsonConvert.DeserializeObject<ParserReport>(json);
+			foreach (var word in report.ParseReports.Keys)
+			{
+				var parseReport = report.ParseReports[word];
+				if (parseReport.Word == null)
+					parseReport.Word = word;
+			}
 			return report;
 		}
 
@@ -255,6 +263,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// </summary>
 	public class ParseReport : IEquatable<ParseReport>
 	{
+		/// <summary>
+		/// The word parsed
+		/// </summary>
+		public string Word { get; set; }
+
 		/// <summary>
 		/// Time to parse the word in milliseconds
 		/// </summary>

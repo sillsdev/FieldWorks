@@ -277,6 +277,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ParserConnection.cs" />
+    <Compile Include="ParserReportDialog.xaml.cs">
+      <DependentUpon>ParserReportDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ParserReportsDialog.xaml.cs">
       <DependentUpon>ParserReportsDialog.xaml</DependentUpon>
     </Compile>
@@ -291,6 +294,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="IParserTrace.cs" />
+    <Compile Include="ParserReportViewModel.cs" />
     <Compile Include="ParserTraceUITransform.cs" />
     <Compile Include="ParserUIStrings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -349,6 +353,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="ParserReportDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ParserReportsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
