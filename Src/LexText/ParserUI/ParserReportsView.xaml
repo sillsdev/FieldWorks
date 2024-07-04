@@ -13,6 +13,15 @@
 	<Grid Margin="10">
         <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding ParserReports}">
             <DataGrid.Columns>
+				<DataGridTemplateColumn Header="Actions">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button Content="show"
+									Click="ShowParserReport"
+									CommandParameter="{Binding}"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
                 <DataGridTextColumn Header="Project Name" Binding="{Binding ProjectName}" />
                 <DataGridTextColumn Header="Machine Name" Binding="{Binding MachineName}" />
 				<DataGridTextColumn Header="Source Text" Binding="{Binding SourceText}" />

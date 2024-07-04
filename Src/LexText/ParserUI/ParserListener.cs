@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			return new IxCoreColleague[]{this};
+			return new IxCoreColleague[] { this };
 		}
 
 		/// <summary>
@@ -227,7 +227,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (ex != null)
 				{
 					DisconnectFromParser();
-						var app = m_propertyTable.GetValue<IApp>("App");
+					var app = m_propertyTable.GetValue<IApp>("App");
 					ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress,
 													app.ActiveMainWindow, false);
 				}
@@ -426,7 +426,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			display.Visible = enable;
 			display.Enabled = enable;
 
-			return true;	//we handled this.
+			return true;    //we handled this.
 		}
 
 		public bool OnClearSelectedWordParserAnalyses(object dummyObj)
@@ -447,7 +447,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					wf.Checksum = 0;
 				}
 			});
-			return true;	//we handled this.
+			return true;    //we handled this.
 		}
 
 		#endregion ClearSelectedWordParserAnalyses handlers
@@ -460,7 +460,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			display.Visible = enable;
 			display.Enabled = enable;
 
-			return true;	//we handled this.
+			return true;    //we handled this.
 		}
 
 		public bool OnParseCurrentWord(object argument)
@@ -473,7 +473,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				UpdateWordform(wf, ParserPriority.High);
 			}
 
-			return true;	//we handled this.
+			return true;    //we handled this.
 		}
 
 		public bool OnDisplayParseWordsInCurrentText(object commandObject, ref UIItemDisplayProperties display)
@@ -484,7 +484,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			display.Visible = enable;
 			display.Enabled = enable;
 
-			return true;	//we handled this.
+			return true;    //we handled this.
 		}
 
 		public bool OnParseWordsInCurrentText(object argument)
@@ -566,8 +566,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (wordforms.Count() == 0)
 				{
 					// Write an empty parser report.
-					WriteParserReport();
-					ShowParserReports(append: true);
+					var parserReport = WriteParserReport();
+					ShowParserReport(parserReport);
 				}
 			}
 			m_parserConnection.UpdateWordforms(wordforms, priority, checkParser);
@@ -615,15 +615,15 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 				// Convert parse results into ParserReport.
 
-				WriteParserReport();
-				ShowParserReports(append: true);
+				var parserReport = WriteParserReport();
+				ShowParserReport(parserReport);
 			}
 		}
 
 		/// <summary>
 		/// Write the parse results as a parser report in the standard place.
 		/// </summary>
-		void WriteParserReport()
+		ParserReport WriteParserReport()
 		{
 			// Create a parser report from the parse results.
 			var parserReport = new ParserReport(m_cache)
@@ -644,13 +644,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			parserReport.WriteJsonFile(m_cache);
 			// Clear the data we wrote.
 			m_checkParserResults = null;
+			return parserReport;
 		}
 
 		/// <summary>
 		/// Show the parser reports in the ParserReports window.
 		/// </summary>
-		/// <param name="append"></param>
-		void ShowParserReports(bool append = false)
+		public void ShowParserReports()
 		{
 			// Sample data
 			var testParserReports = new ObservableCollection<ParserReport>
@@ -688,6 +688,12 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			ParserReportsDialog dialog = new ParserReportsDialog(parserReports);
 			dialog.Show(); // Show the dialog but do not block other app access
+		}
+
+		public static void ShowParserReport(ParserReport parserReport)
+		{
+			ParserReportDialog dialog = new ParserReportDialog(parserReport);
+			dialog.Show();
 		}
 
 		public bool OnParseAllWords(object argument)
