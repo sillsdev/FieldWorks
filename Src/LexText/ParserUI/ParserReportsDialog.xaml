@@ -19,6 +19,7 @@
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
 							<Button Content="show"
+									ToolTip="Show this parser report"
 							Click="ShowParserReport"
 							CommandParameter="{Binding}"/>
 						</DataTemplate>
@@ -27,7 +28,28 @@
 				<DataGridTemplateColumn>
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
+							<Button Content="diff"
+									ToolTip="Take the difference between this parser report and a second report selected by the radio button"
+							Click="DiffParserReports"
+							CommandParameter="{Binding}"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTemplateColumn>
+					<DataGridTemplateColumn.Header>
+						<Label ToolTip="the second argument to the diff">2nd</Label>
+					</DataGridTemplateColumn.Header>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<RadioButton GroupName="2nd" IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTemplateColumn>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
 							<Button Content="delete"
+									ToolTip="Delete this parser report from the disk"
 							Click="DeleteParserReport"
 							CommandParameter="{Binding}"/>
 						</DataTemplate>
