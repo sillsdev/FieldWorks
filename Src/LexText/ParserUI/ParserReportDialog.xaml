@@ -6,18 +6,46 @@
         xmlns:local="clr-namespace:SIL.FieldWorks.LexText.Controls"
         d:DataContext="{d:DesignInstance Type=local:ParserReportViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
-        Title="Parser Report" WindowStartupLocation="CenterScreen"
-        WindowState="Maximized" WindowStyle="ThreeDBorderWindow">
+        Title="{Binding ParserReport.Title}" WindowStartupLocation="CenterScreen"
+        SizeToContent="WidthAndHeight" MaxHeight="500" WindowStyle="ThreeDBorderWindow">
 	<Grid>
 		<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding ParserReport.ParseReports.Values}">
 			<DataGrid.Columns>
-				<DataGridTextColumn Header="Word" Binding="{Binding Word}" />
-				<DataGridTextColumn Header="Parse Time" Binding="{Binding ParseTime}" />
-				<DataGridTextColumn Header="Error Message" Binding="{Binding ErrorMessage}" />
-				<DataGridTextColumn Header="Num Analyses" Binding="{Binding NumAnalyses}" />
-				<DataGridTextColumn Header="Analyses Missing" Binding="{Binding NumUserApprovedAnalysesMissing}" />
-				<DataGridTextColumn Header="Disapproved Analyses" Binding="{Binding NumUserDisapprovedAnalyses}" />
-				<DataGridTextColumn Header="No Opinion Analyses" Binding="{Binding NumUserNoOpinionAnalyses}" />
+				<DataGridTextColumn Binding="{Binding Word}">
+					<DataGridTextColumn.Header>
+						<Label ToolTip="the word that was parsed">Word</Label>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding ParseTime}">
+					<DataGridTextColumn.Header>
+						<Label ToolTip="the time it took to parse the word">Parse Time</Label>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding ErrorMessage}">
+					<DataGridTextColumn.Header>
+						<Label ToolTip="the error message reported by the parser">Error Message</Label>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding NumAnalyses}">
+					<DataGridTextColumn.Header>
+						<Label ToolTip="the number of analyses produced by the parser">Num Analyses</Label>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding NumUserApprovedAnalysesMissing}">
+					<DataGridTextColumn.Header>
+						<Label ToolTip="the number of approved analyses that the parser didn't produce">Missing Analyses</Label>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding NumUserDisapprovedAnalyses}">
+					<DataGridTextColumn.Header>
+						<Label ToolTip="the number of disapproved analyses that the parser produced">Disapproved Analyses</Label>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding NumUserNoOpinionAnalyses}">
+					<DataGridTextColumn.Header>
+						<Label ToolTip="the number of analyses produced by the parser that were neither approved nor disapproved">No Opinion Analyses</Label>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
 			</DataGrid.Columns>
 		</DataGrid>
 	</Grid>
