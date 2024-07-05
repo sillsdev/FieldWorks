@@ -81,13 +81,36 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public IDictionary<string, ParseReport> ParseReports { get; set; }
 
 		/// <summary>
+		/// Whether this report is selected
+		/// </summary>
+		[JsonIgnore]
+		public Boolean IsSelected { get; set; }
+
+		/// <summary>
+		/// Is this report the result of DiffParserReports?
+		/// </summary>
+		[JsonIgnore]
+		public Boolean IsDiff { get; set; }
+
+		/// <summary>
 		/// Title used for window.
 		/// This should be unique.
 		/// </summary>
+		[JsonIgnore]
 		public string Title
 		{
-			get { return ProjectName + ", " + SourceText + ", " + new DateTime(Timestamp).ToString() + ", " + MachineName; }
+			get
+			{
+				string time = IsDiff ? new TimeSpan(Timestamp).ToString() : new DateTime(Timestamp).ToString();
+				return (IsDiff ? "Diff " : "") + ProjectName + ", " + SourceText + ", " + time + "," + MachineName;
+			}
 		}
+
+		/// <summary>
+		/// The filename that the report came from.
+		/// </summary>
+		[JsonIgnore]
+		public string Filename { get; set; }
 
 		public ParserReport()
 		{
@@ -138,6 +161,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (parseReport.Word == null)
 					parseReport.Word = word;
 			}
+			report.Filename = filename;
 			return report;
 		}
 
@@ -152,7 +176,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				outputFile.WriteLine(json);
 			}
-
+			Filename = filename;
 		}
 
 		/// <summary>
@@ -165,6 +189,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			var filename = Path.Combine(reportDir, Guid.NewGuid().ToString() + ".json");
 			WriteJsonFile(filename);
 			return filename;
+		}
+
+		/// <summary>
+		/// Delete the JSON file that this report came from.
+		/// </summary>
+		public void DeleteJsonFile()
+		{
+			if (Filename == null) return;
+			File.Delete(Filename);
 		}
 
 		/// <summary>
@@ -183,34 +216,58 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		/// <summary>
-		/// Return the differences between the current reports and the old reports.
+		/// Return the differences between the current report and another report.
 		/// </summary>
-		/// <param name="oldReports"></param>
+		/// <param name="report2"></param>
 		/// <returns></returns>
-		public IDictionary<string, ParseReport> DiffParseReports (IDictionary<string, ParseReport> oldReports)
+		public ParserReport DiffParserReports (ParserReport report2)
 		{
-			IDictionary<string, ParseReport> diffParseReports = new Dictionary<string, ParseReport>();
+			ParserReport diff = new ParserReport();
+			diff.IsDiff = true;
+			diff.ProjectName = DiffNames(ProjectName, report2.ProjectName);
+			diff.SourceText = DiffNames(SourceText, report2.SourceText);
+			diff.MachineName = DiffNames(MachineName, report2.MachineName);
+			diff.Timestamp = Timestamp - report2.Timestamp;
+			diff.NumWords = NumWords - report2.NumWords;
+			diff.NumParseErrors = NumParseErrors - report2.NumParseErrors;
+			diff.NumZeroParses = NumZeroParses - report2.NumZeroParses;
+			diff.TotalParseTime = TotalParseTime - report2.TotalParseTime;
+			diff.TotalAnalyses = TotalAnalyses - report2.TotalAnalyses;
+			diff.TotalUserApprovedAnalysesMissing = TotalUserApprovedAnalysesMissing - report2.TotalUserApprovedAnalysesMissing;
+			diff.TotalUserDisapprovedAnalyses = TotalUserDisapprovedAnalyses - report2.TotalUserDisapprovedAnalyses;
+			diff.TotalUserNoOpinionAnalyses = TotalUserNoOpinionAnalyses - report2.TotalUserNoOpinionAnalyses;
+
 			ParseReport missingReport = new ParseReport
 			{
 				ErrorMessage = "missing"
 			};
 
-			foreach (string key in oldReports.Keys)
+			foreach (string key in report2.ParseReports.Keys)
 			{
-				ParseReport oldReport = oldReports[key];
+				ParseReport oldReport = report2.ParseReports[key];
 				ParseReport newReport = ParseReports.ContainsKey(key) ? ParseReports[key] : missingReport;
-				diffParseReports[key] = newReport.DiffParseReport(oldReport);
+				ParseReport diffReport = newReport.DiffParseReport(oldReport);
+				diff.AddParseReport(key, diffReport);
 			}
 			foreach (string key in ParseReports.Keys)
 			{
-				if (!oldReports.ContainsKey(key))
+				if (!report2.ParseReports.ContainsKey(key))
 				{
 					ParseReport newReport = ParseReports[key];
-					diffParseReports[key] = newReport.DiffParseReport(missingReport);
+					ParseReport diffReport = newReport.DiffParseReport(missingReport);
+
+					diff.AddParseReport(key, diffReport);
 				}
 			}
 
-			return diffParseReports;
+			return diff;
+		}
+
+		string DiffNames(string name1, string name2)
+		{
+			if (name1 == name2)
+				return name1;
+			return name1 + " - " + name2;
 		}
 
 		/// <summary>
