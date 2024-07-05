@@ -6,9 +6,89 @@
         xmlns:local="clr-namespace:SIL.FieldWorks.LexText.Controls"
         d:DataContext="{d:DesignInstance Type=local:ParserReportsViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
-        Title="Parser Report" WindowStartupLocation="CenterScreen"
-        WindowState="Maximized" WindowStyle="ThreeDBorderWindow">
+        Title="Parser Reports" WindowStartupLocation="CenterScreen"
+        SizeToContent="WidthAndHeight" WindowStyle="ThreeDBorderWindow">
+	<Window.Resources>
+		<local:FileTimeToDateTimeConverter x:Key="FileTimeToDateTimeConverter"/>
+	</Window.Resources>
+
 	<Grid>
-		<local:ParserReportsView />
+		<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding ParserReports}">
+			<DataGrid.Columns>
+				<DataGridTemplateColumn>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button Content="show"
+							Click="ShowParserReport"
+							CommandParameter="{Binding}"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTemplateColumn>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button Content="delete"
+							Click="DeleteParserReport"
+							CommandParameter="{Binding}"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTextColumn Binding="{Binding SourceText}">
+					<DataGridTextColumn.Header>
+						<Label ToolTip="the text that was parsed">Text</Label>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding Timestamp, Converter={StaticResource FileTimeToDateTimeConverter}, StringFormat=\{0:G\}}">
+					<DataGridTextColumn.Header>
+						<Label ToolTip="when the text was parsed">Timestamp</Label>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding MachineName}">
+					<DataGridTextColumn.Header>
+						<Label ToolTip="the machine that the text was parsed on">Machine Name</Label>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding NumWords}">
+					<DataGridTextColumn.Header>
+						<Label ToolTip="the number of distinct words parsed in the text">Num Words Parsed</Label>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding NumParseErrors}">
+					<DataGridTextColumn.Header>
+						<Label ToolTip="the number of errors in the words parsed">Num Parse Errors</Label>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding NumZeroParses}">
+					<DataGridTextColumn.Header>
+						<Label ToolTip="the number of zero parses in the words parsed">Num Zero Parses</Label>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding TotalParseTime}">
+					<DataGridTextColumn.Header>
+						<Label ToolTip="the time it took to parse all the distinct words in the text">Total Parse Time</Label>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding TotalAnalyses}">
+					<DataGridTextColumn.Header>
+						<Label ToolTip="the number of analyses in the words parsed">Total Analyses</Label>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding TotalUserApprovedAnalysesMissing}">
+					<DataGridTextColumn.Header>
+						<Label ToolTip="the number of approved analyses missing in the words parsed">Total Missing Analyses</Label>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding TotalUserDisapprovedAnalyses}">
+					<DataGridTextColumn.Header>
+						<Label ToolTip="the number of disapproved analyses in the words parsed">Total Disapproved Analyses</Label>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding TotalUserNoOpinionAnalyses}">
+					<DataGridTextColumn.Header>
+						<Label ToolTip="the number of analyses that were neither approved not disapproved in the words parsed">Total No Opinion Analyses</Label>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+			</DataGrid.Columns>
+		</DataGrid>
 	</Grid>
 </Window>

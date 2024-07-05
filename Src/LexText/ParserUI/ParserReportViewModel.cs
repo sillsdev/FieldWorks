@@ -22,6 +22,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
 			{
 				// Populate with design-time data
+				ParserReport.AddParseReport("test", new ParseReport(null, new ParseResult(new List<ParseAnalysis>())));
+				ParserReport.AddParseReport("error", new ParseReport(null, new ParseResult("error")));
 			}
 			else
 			{

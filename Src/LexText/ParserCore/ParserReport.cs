@@ -80,6 +80,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// </summary>
 		public IDictionary<string, ParseReport> ParseReports { get; set; }
 
+		/// <summary>
+		/// Title used for window.
+		/// This should be unique.
+		/// </summary>
+		public string Title
+		{
+			get { return ProjectName + ", " + SourceText + ", " + new DateTime(Timestamp).ToString() + ", " + MachineName; }
+		}
+
 		public ParserReport()
 		{
 			ParseReports = new Dictionary<string, ParseReport>();
