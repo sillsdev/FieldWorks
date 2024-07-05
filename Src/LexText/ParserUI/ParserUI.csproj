@@ -284,9 +284,6 @@
       <DependentUpon>ParserReportsDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="ParserReportsViewModel.cs" />
-    <Compile Include="ParserReportsView.xaml.cs">
-      <DependentUpon>ParserReportsView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ParserListener.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -358,10 +355,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ParserReportsDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ParserReportsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
