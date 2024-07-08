@@ -330,6 +330,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="TryAWordDlg.resx">
       <DependentUpon>TryAWordDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

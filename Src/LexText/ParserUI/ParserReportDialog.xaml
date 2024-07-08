@@ -12,6 +12,16 @@
 	<Grid>
 		<DataGrid AutoGenerateColumns="False" CanUserAddRows="False" ItemsSource="{Binding ParserReport.ParseReports.Values}">
 			<DataGrid.Columns>
+				<DataGridTemplateColumn>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button Content="reparse"
+									ToolTip="Reparse this word using TryAWord"
+							Click="ReparseWord"
+							CommandParameter="{Binding}"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
 				<DataGridTextColumn Binding="{Binding Word}">
 					<DataGridTextColumn.Header>
 						<StackPanel>
@@ -19,16 +29,6 @@
 							<Separator/>
 							<Label ToolTip ="number of words"
 								   Content="{Binding DataContext.ParserReport.NumWords, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
-						</StackPanel>
-					</DataGridTextColumn.Header>
-				</DataGridTextColumn>
-				<DataGridTextColumn Binding="{Binding ParseTime}">
-					<DataGridTextColumn.Header>
-						<StackPanel>
-							<Label ToolTip="the time it took to parse the word">Parse Time</Label>
-							<Separator/>
-							<Label ToolTip ="total parse time"
-								   Content="{Binding DataContext.ParserReport.TotalParseTime, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
 						</StackPanel>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
@@ -79,6 +79,16 @@
 							<Separator/>
 							<Label ToolTip ="total number of analyses with no opinion"
 								   Content="{Binding DataContext.ParserReport.TotalUserNoOpinionAnalyses, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
+						</StackPanel>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding ParseTime}">
+					<DataGridTextColumn.Header>
+						<StackPanel>
+							<Label ToolTip="the time it took to parse the word">Parse Time</Label>
+							<Separator/>
+							<Label ToolTip ="total parse time"
+								   Content="{Binding DataContext.ParserReport.TotalParseTime, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
 						</StackPanel>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>

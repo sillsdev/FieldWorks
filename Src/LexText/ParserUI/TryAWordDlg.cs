@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_helpProvider = new FlexHelpProvider();
 		}
 
-		public void SetDlgInfo(Mediator mediator, PropertyTable propertyTable, IWfiWordform wordform, ParserListener parserListener)
+		public void SetDlgInfo(Mediator mediator, PropertyTable propertyTable, string word, ParserListener parserListener)
 		{
 			Mediator = mediator;
 			PropTable = propertyTable;
@@ -98,10 +98,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			// restore window location and size after setting up the form textbox, because it might adjust size of
 			// window causing the window to grow every time it is opened
 			m_persistProvider.RestoreWindowSettings(PersistProviderID, this);
-			if (wordform == null)
+			if (word == null)
 				GetLastWordUsed();
 			else
-				SetWordToUse(wordform.Form.VernacularDefaultWritingSystem.Text);
+				SetWordToUse(word);
 
 			m_webPageInteractor = new WebPageInteractor(m_htmlControl, Mediator, m_cache, m_wordformTextBox);
 
@@ -178,7 +178,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				SetWordToUse(word.Trim());
 		}
 
-		private void SetWordToUse(string word)
+		public void SetWordToUse(string word)
 		{
 			m_wordformTextBox.Text = word;
 			m_tryItButton.Enabled = !String.IsNullOrEmpty(word);
@@ -398,6 +398,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		private void m_tryItButton_Click(object sender, EventArgs e)
+		{
+			TryIt();
+		}
+
+		public void TryIt()
 		{
 			// get a connection, if one does not exist
 			if (m_parserListener.ConnectToParser())
