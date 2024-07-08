@@ -2536,7 +2536,7 @@ namespace SIL.FieldWorks.IText
 		{
 			// recreate the guess services, so they will use the latest FDO data.
 			GuessServices.ClearGuessData();
-			// clear the Decorator cache for the guesses, so it won't have any stale data.
+			// clear the cache for the guesses, so it won't have any stale data.
 			m_guessCache.ClearPropFromCache(InterlinViewDataCache.AnalysisMostApprovedFlid);
 		}
 

@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.IText
 			switch (tag)
 			{
 				default:
-					throw new ArgumentException("tag", tag.ToString());
+					throw new ArgumentException(String.Format("Unhandled property id: {0}", tag.ToString()));
 				case ktagMostApprovedAnalysis:
 					return m_guessCache.ContainsKey(occurrence);
 			}
@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.IText
 			switch (tag)
 			{
 				default:
-					throw new ArgumentException("tag", tag.ToString());
+					throw new ArgumentException(String.Format("Unhandled property id: {0}", tag.ToString()));
 				case ktagMostApprovedAnalysis:
 					{
 						int result;
@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.IText
 			switch (tag)
 			{
 				default:
-					throw new ArgumentException("tag", tag.ToString());
+					throw new ArgumentException(String.Format("Unhandled property id: {0}", tag.ToString()));
 				case ktagOpinionAgent:
 					{
 						int result;
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.IText
 			switch (tag)
 			{
 				default:
-					throw new ArgumentException("tag", tag.ToString());
+					throw new ArgumentException(String.Format("Unhandled property id: {0}", tag.ToString()));
 				case ktagMostApprovedAnalysis:
 					if (hvoObj == 0)
 						m_guessCache.Remove(occurrence);
@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.IText
 			switch (tag)
 			{
 				default:
-					throw new ArgumentException("tag", tag.ToString());
+					throw new ArgumentException(String.Format("Unhandled property id: {0}", tag.ToString()));
 				case ktagOpinionAgent:
 					m_humanApproved[new HvoFlidKey(hvo, tag)] = n;
 					break;
