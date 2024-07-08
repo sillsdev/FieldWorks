@@ -567,7 +567,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					// Write an empty parser report.
 					var parserReport = WriteParserReport();
-					ShowParserReport(parserReport);
+					ShowParserReport(parserReport, m_mediator);
 				}
 			}
 			m_parserConnection.UpdateWordforms(wordforms, priority, checkParser);
@@ -616,7 +616,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Convert parse results into ParserReport.
 
 				var parserReport = WriteParserReport();
-				ShowParserReport(parserReport);
+				ShowParserReport(parserReport, m_mediator);
 			}
 		}
 
@@ -686,13 +686,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (parserReports.Count() == 0)
 				parserReports = testParserReports;
 
-			ParserReportsDialog dialog = new ParserReportsDialog(parserReports);
+			ParserReportsDialog dialog = new ParserReportsDialog(parserReports, m_mediator);
 			dialog.Show(); // Show the dialog but do not block other app access
 		}
 
-		public static void ShowParserReport(ParserReport parserReport)
+		public static void ShowParserReport(ParserReport parserReport, Mediator mediator)
 		{
-			ParserReportDialog dialog = new ParserReportDialog(parserReport);
+			ParserReportDialog dialog = new ParserReportDialog(parserReport, mediator);
 			dialog.Show();
 		}
 
@@ -835,6 +835,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;
 		}
 
+		public bool OnTryThisWord(object commandObject)
+		{
+			CheckDisposed();
+
+			var result = TryThisWord(commandObject as string);
+			// Invoke it immediately.
+			m_dialog.TryIt();
+			return result;
+		}
+
 		/// <summary>
 		/// Handles the xWorks message for Try A Word
 		/// </summary>
@@ -842,17 +852,26 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <returns>false</returns>
 		public bool OnTryAWord(object argument)
 		{
+			string word = null;
+			if (CurrentWordform != null)
+				word = CurrentWordform.Form.VernacularDefaultWritingSystem.Text;
+
+			return TryThisWord(word);
+		}
+
+		public bool TryThisWord(string word)
+		{
 			CheckDisposed();
 
 			if (m_dialog == null || m_dialog.IsDisposed)
 			{
 				m_dialog = new TryAWordDlg();
 				m_dialog.SizeChanged += (sender, e) =>
-											{
-												if (m_dialog.WindowState != FormWindowState.Minimized)
-													m_prevWindowState = m_dialog.WindowState;
-											};
-				m_dialog.SetDlgInfo(m_mediator, m_propertyTable, CurrentWordform, this);
+				{
+					if (m_dialog.WindowState != FormWindowState.Minimized)
+						m_prevWindowState = m_dialog.WindowState;
+				};
+				m_dialog.SetDlgInfo(m_mediator, m_propertyTable, word, this);
 				var form = m_propertyTable.GetValue<FwXWindow>("window");
 				m_dialog.Show(form);
 				// This allows Keyman to work correctly on initial typing.
@@ -863,6 +882,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			else
 			{
+				if (word != null)
+					m_dialog.SetWordToUse(word);
 				if (m_dialog.WindowState == FormWindowState.Minimized)
 					m_dialog.WindowState = m_prevWindowState;
 				else
