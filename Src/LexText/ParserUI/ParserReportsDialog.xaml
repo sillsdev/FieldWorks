@@ -7,13 +7,14 @@
         d:DataContext="{d:DesignInstance Type=local:ParserReportsViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
         Title="Parser Reports" WindowStartupLocation="CenterScreen"
-        SizeToContent="WidthAndHeight" WindowStyle="ThreeDBorderWindow">
+		SizeToContent="WidthAndHeight" MinHeight="300" MaxHeight="500"
+        WindowStyle="ThreeDBorderWindow">
 	<Window.Resources>
 		<local:FileTimeToDateTimeConverter x:Key="FileTimeToDateTimeConverter"/>
 	</Window.Resources>
 
 	<Grid>
-		<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding ParserReports}">
+		<DataGrid AutoGenerateColumns="False" CanUserAddRows="False" ItemsSource="{Binding ParserReports}">
 			<DataGrid.Columns>
 				<DataGridTemplateColumn>
 					<DataGridTemplateColumn.CellTemplate>

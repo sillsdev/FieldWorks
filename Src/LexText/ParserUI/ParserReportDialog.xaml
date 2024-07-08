@@ -7,9 +7,10 @@
         d:DataContext="{d:DesignInstance Type=local:ParserReportViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
         Title="{Binding ParserReport.Title}" WindowStartupLocation="CenterScreen"
-        SizeToContent="WidthAndHeight" MaxHeight="500" WindowStyle="ThreeDBorderWindow">
+        SizeToContent="WidthAndHeight" MinHeight="300" MaxHeight="500"
+		WindowStyle="ThreeDBorderWindow">
 	<Grid>
-		<DataGrid AutoGenerateColumns="False" ItemsSource="{Binding ParserReport.ParseReports.Values}">
+		<DataGrid AutoGenerateColumns="False" CanUserAddRows="False" ItemsSource="{Binding ParserReport.ParseReports.Values}">
 			<DataGrid.Columns>
 				<DataGridTextColumn Binding="{Binding Word}">
 					<DataGridTextColumn.Header>
