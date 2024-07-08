@@ -1,17 +1,10 @@
 // Copyright (c) 2009-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: InterlinViewDataCache.cs
-// Responsibility: pyle
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using SIL.LCModel;
-using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
 using HvoFlidKey=SIL.LCModel.HvoFlidKey;
 
@@ -39,7 +32,7 @@ namespace SIL.FieldWorks.IText
 			switch (tag)
 			{
 				default:
-					throw new ArgumentException(String.Format("Unhandled property id: {0}", tag.ToString()));
+					throw new ArgumentException(string.Format("Unhandled property id: {0}", tag.ToString()), nameof(tag));
 				case ktagMostApprovedAnalysis:
 					return m_guessCache.ContainsKey(occurrence);
 			}
@@ -50,7 +43,7 @@ namespace SIL.FieldWorks.IText
 			switch (tag)
 			{
 				default:
-					throw new ArgumentException(String.Format("Unhandled property id: {0}", tag.ToString()));
+					throw new ArgumentException(string.Format("Unhandled property id: {0}", tag.ToString()), nameof(tag));
 				case ktagMostApprovedAnalysis:
 					{
 						int result;
@@ -66,7 +59,7 @@ namespace SIL.FieldWorks.IText
 			switch (tag)
 			{
 				default:
-					throw new ArgumentException(String.Format("Unhandled property id: {0}", tag.ToString()));
+					throw new ArgumentException(string.Format("Unhandled property id: {0}", tag.ToString()), nameof(tag));
 				case ktagOpinionAgent:
 					{
 						int result;
@@ -82,7 +75,7 @@ namespace SIL.FieldWorks.IText
 			switch (tag)
 			{
 				default:
-					throw new ArgumentException(String.Format("Unhandled property id: {0}", tag.ToString()));
+					throw new ArgumentException(string.Format("Unhandled property id: {0}", tag.ToString()), nameof(tag));
 				case ktagMostApprovedAnalysis:
 					if (hvoObj == 0)
 						m_guessCache.Remove(occurrence);
@@ -97,7 +90,7 @@ namespace SIL.FieldWorks.IText
 			switch (tag)
 			{
 				default:
-					throw new ArgumentException(String.Format("Unhandled property id: {0}", tag.ToString()));
+					throw new ArgumentException(string.Format("Unhandled property id: {0}", tag.ToString()), nameof(tag));
 				case ktagOpinionAgent:
 					m_humanApproved[new HvoFlidKey(hvo, tag)] = n;
 					break;
