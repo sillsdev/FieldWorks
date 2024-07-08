@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -14,16 +15,19 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		public ObservableCollection<ParserReport> ParserReports { get; }
 
+		public Mediator Mediator { get; set; }
+
 		public ParserReportsDialog()
 		{
 			InitializeComponent();
 		}
 
-		public ParserReportsDialog(ObservableCollection<ParserReport> parserReports)
+		public ParserReportsDialog(ObservableCollection<ParserReport> parserReports, Mediator mediator)
 		{
 			InitializeComponent();
 			var sortedReports = new ObservableCollection<ParserReport>(parserReports.OrderByDescending(i => i.Timestamp));
 			ParserReports = sortedReports;
+			Mediator = mediator;
 			DataContext = new ParserReportsViewModel { ParserReports = sortedReports };
 		}
 
@@ -31,8 +35,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			var button = sender as Button;
 			var parserReport = button.CommandParameter as ParserReport;
-			ParserListener.ShowParserReport(parserReport);
+			ParserListener.ShowParserReport(parserReport, Mediator);
 		}
+
 		public void DeleteParserReport(object sender, RoutedEventArgs e)
 		{
 			var button = sender as Button;
@@ -40,6 +45,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			parserReport.DeleteJsonFile();
 			ParserReports.Remove(parserReport);
 		}
+
 		public void DiffParserReports(object sender, RoutedEventArgs e)
 		{
 			var button = sender as Button;
@@ -58,7 +64,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				return;
 			}
 			var diff = parserReport.DiffParserReports(parserReport2);
-			ParserListener.ShowParserReport(diff);
+			ParserListener.ShowParserReport(diff, Mediator);
 		}
 	}
 }
