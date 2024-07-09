@@ -835,11 +835,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;
 		}
 
+		/// <summary>
+		/// Handles the xWorks message for Try This Word
+		/// </summary>
+		/// <param name="argument">The word to try</param>
+		/// <returns></returns>
 		public bool OnTryThisWord(object commandObject)
 		{
 			CheckDisposed();
 
-			var result = TryThisWord(commandObject as string);
+			var result = TryAWord(commandObject as string);
 			// Invoke it immediately.
 			m_dialog.TryIt();
 			return result;
@@ -856,10 +861,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (CurrentWordform != null)
 				word = CurrentWordform.Form.VernacularDefaultWritingSystem.Text;
 
-			return TryThisWord(word);
+			return TryAWord(word);
 		}
 
-		public bool TryThisWord(string word)
+		public bool TryAWord(string initialWord)
 		{
 			CheckDisposed();
 
@@ -871,7 +876,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (m_dialog.WindowState != FormWindowState.Minimized)
 						m_prevWindowState = m_dialog.WindowState;
 				};
-				m_dialog.SetDlgInfo(m_mediator, m_propertyTable, word, this);
+				m_dialog.SetDlgInfo(m_mediator, m_propertyTable, initialWord, this);
 				var form = m_propertyTable.GetValue<FwXWindow>("window");
 				m_dialog.Show(form);
 				// This allows Keyman to work correctly on initial typing.
@@ -882,8 +887,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			else
 			{
-				if (word != null)
-					m_dialog.SetWordToUse(word);
+				if (initialWord != null)
+					m_dialog.SetWordToUse(initialWord);
 				if (m_dialog.WindowState == FormWindowState.Minimized)
 					m_dialog.WindowState = m_prevWindowState;
 				else
