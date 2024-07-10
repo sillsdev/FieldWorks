@@ -43,7 +43,8 @@ namespace SIL.FieldWorks.XWorks
 		internal string m_configObjectName;
 		internal const string CurrentSelectedEntryClass = "currentSelectedEntry";
 		private const string FieldWorksPrintLimitEnv = "FIELDWORKS_PRINT_LIMIT";
-		private bool m_jumpToRecord = false; // Whether we got a JumpToRecord signal
+		private bool m_updateContentLater = false; // Whether we should postpone calling UpdateContent
+		private string m_loadedConfig = null;
 
 		private GeckoWebBrowser GeckoBrowser => (GeckoWebBrowser)m_mainView.NativeBrowser;
 
@@ -178,7 +179,8 @@ namespace SIL.FieldWorks.XWorks
 					GiveSimpleWarning(xrc);
 				}
 			}
-			m_jumpToRecord = true;
+			// Wait until SetActiveSelectedEntryOnView to call UpdateContent.
+			m_updateContentLater = true;
 			return false;
 		}
 
@@ -1003,14 +1005,20 @@ namespace SIL.FieldWorks.XWorks
 				case "ReversalIndexPublicationLayout":
 					var currentConfig = GetCurrentConfiguration(false);
 					if (name == "ReversalIndexPublicationLayout")
+					{
 						DictionaryConfigurationUtils.SetReversalIndexGuidBasedOnReversalIndexConfiguration(m_propertyTable, Cache);
+						// Wait until SetActiveSelectedEntryOnView to call UpdateContent.
+						m_updateContentLater = true;
+					}
 					var currentPublication = GetCurrentPublication();
 					var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
 					if (validPublication != currentPublication)
 					{
 						m_propertyTable.SetProperty("SelectedPublication", validPublication, false);
 					}
-					UpdateContent(currentConfig);
+					if (!m_updateContentLater)
+						// Do it now.
+						UpdateContent(currentConfig);
 					break;
 				case "ActiveClerkSelectedObject":
 					var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
@@ -1085,15 +1093,14 @@ namespace SIL.FieldWorks.XWorks
 					var newConfig = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable),
 						writingSystem.Id + DictionaryConfigurationModel.FileExtension);
 					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", File.Exists(newConfig) ? newConfig : null, true);
-				} else if (currentPage == null && m_jumpToRecord)
+				} else if (m_updateContentLater)
 				{
 					// Force the content to be updated once (LT-21702).
 					// This isn't needed when ReversalIndexPublicationLayout is changed
 					// because it causes the content to be updated as a side effect.
 					UpdateContent(currentConfig);
+					m_updateContentLater = false;
 				}
-				// Clear m_jumpToRecord no matter what.
-				m_jumpToRecord = false;
 			}
 			var currentObjectGuid = Clerk.CurrentObject.Guid.ToString();
 			var currSelectedByGuid = browser.Document.GetHtmlElementById("g" + currentObjectGuid);
@@ -1212,6 +1219,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
+				// Don't load the configuration file twice.
+				if (configurationFile == m_loadedConfig)
+					return;
+				m_loadedConfig = configurationFile;
 				var xhtmlPath = SaveConfiguredXhtmlWithProgress(configurationFile, allOnOnePage);
 				if (xhtmlPath != null)
 				{
