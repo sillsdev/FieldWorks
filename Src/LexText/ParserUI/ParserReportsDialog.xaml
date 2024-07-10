@@ -38,7 +38,7 @@
 				</DataGridTemplateColumn>
 				<DataGridTemplateColumn>
 					<DataGridTemplateColumn.Header>
-						<Label ToolTip="the second argument to the diff">2nd</Label>
+						<Label ToolTip="The second argument to the diff">2nd</Label>
 					</DataGridTemplateColumn.Header>
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
@@ -58,57 +58,57 @@
 				</DataGridTemplateColumn>
 				<DataGridTextColumn Binding="{Binding SourceText}">
 					<DataGridTextColumn.Header>
-						<Label ToolTip="the text that was parsed">Text</Label>
+						<Label ToolTip="The text that was parsed">Text</Label>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
 				<DataGridTextColumn Binding="{Binding Timestamp, Converter={StaticResource FileTimeToDateTimeConverter}, StringFormat=\{0:G\}}">
 					<DataGridTextColumn.Header>
-						<Label ToolTip="when the text was parsed">Timestamp</Label>
+						<Label ToolTip="When the text was parsed">Timestamp</Label>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
 				<DataGridTextColumn Binding="{Binding MachineName}">
 					<DataGridTextColumn.Header>
-						<Label ToolTip="the machine that the text was parsed on">Machine Name</Label>
+						<Label ToolTip="The machine that the text was parsed on">Machine Name</Label>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
 				<DataGridTextColumn Binding="{Binding NumWords}">
 					<DataGridTextColumn.Header>
-						<Label ToolTip="the number of distinct words parsed in the text">Num Words Parsed</Label>
+						<Label ToolTip="The number of distinct words parsed in the text">Num Words Parsed</Label>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
 				<DataGridTextColumn Binding="{Binding NumParseErrors}">
 					<DataGridTextColumn.Header>
-						<Label ToolTip="the number of errors in the words parsed">Num Parse Errors</Label>
+						<Label ToolTip="The number of errors in the words parsed">Num Parse Errors</Label>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
 				<DataGridTextColumn Binding="{Binding NumZeroParses}">
 					<DataGridTextColumn.Header>
-						<Label ToolTip="the number of zero parses in the words parsed">Num Zero Parses</Label>
+						<Label ToolTip="The number of zero parses in the words parsed">Num Zero Parses</Label>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
 				<DataGridTextColumn Binding="{Binding TotalParseTime}">
 					<DataGridTextColumn.Header>
-						<Label ToolTip="the time it took to parse all the distinct words in the text">Total Parse Time</Label>
+						<Label ToolTip="The time it took to parse all the distinct words in the text">Total Parse Time</Label>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
 				<DataGridTextColumn Binding="{Binding TotalAnalyses}">
 					<DataGridTextColumn.Header>
-						<Label ToolTip="the number of analyses in the words parsed">Total Analyses</Label>
+						<Label ToolTip="The number of analyses in the words parsed">Total Analyses</Label>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
 				<DataGridTextColumn Binding="{Binding TotalUserApprovedAnalysesMissing}">
 					<DataGridTextColumn.Header>
-						<Label ToolTip="the number of approved analyses missing in the words parsed">Total Missing Analyses</Label>
+						<Label ToolTip="The number of approved analyses missing in the words parsed">Total Missing Analyses</Label>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
 				<DataGridTextColumn Binding="{Binding TotalUserDisapprovedAnalyses}">
 					<DataGridTextColumn.Header>
-						<Label ToolTip="the number of disapproved analyses in the words parsed">Total Disapproved Analyses</Label>
+						<Label ToolTip="The number of disapproved analyses in the words parsed">Total Disapproved Analyses</Label>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
 				<DataGridTextColumn Binding="{Binding TotalUserNoOpinionAnalyses}">
 					<DataGridTextColumn.Header>
-						<Label ToolTip="the number of analyses that were neither approved not disapproved in the words parsed">Total No Opinion Analyses</Label>
+						<Label ToolTip="The number of analyses that were neither approved not disapproved in the words parsed">Total No Opinion Analyses</Label>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
 			</DataGrid.Columns>
