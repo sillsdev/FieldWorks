@@ -2321,7 +2321,7 @@ namespace SIL.FieldWorks.IText
 								{
 									// Move the sandbox to the next AnalysisOccurrence, then do the approval (using the sandbox data).
 									sandbox.SwitchWord(occ);
-									FocusBox.ApproveAnalysis(occ, true, true);
+									FocusBox.ApproveAnalysis(occ, false, true);
 								}
 							}
 						}
