@@ -39,10 +39,6 @@ namespace SIL.FieldWorks.LexText.Controls
 					NumZeroParses = 1
 				});
 			}
-			else
-			{
-				// Runtime data loading logic here
-			}
 		}
 	}
 }
