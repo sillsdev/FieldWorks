@@ -56,6 +56,7 @@ using SIL.WritingSystems;
 using XCore;
 using ConfigurationException = SIL.Reporting.ConfigurationException;
 using PropertyTable = XCore.PropertyTable;
+using Process = System.Diagnostics.Process;
 
 namespace SIL.FieldWorks
 {
@@ -128,6 +129,11 @@ namespace SIL.FieldWorks
 		[DllImport("kernel32.dll")]
 		public static extern IntPtr LoadLibrary(string fileName);
 
+		const int DpiAwarenessContextUnaware = -1;
+
+		[DllImport("User32.dll")]
+		private static extern bool SetProcessDpiAwarenessContext(int dpiFlag);
+
 		/// ----------------------------------------------------------------------------
 		/// <summary>
 		/// The main entry point for the FieldWorks executable.
@@ -137,6 +143,7 @@ namespace SIL.FieldWorks
 		[STAThread]
 		static int Main(string[] rgArgs)
 		{
+			SetProcessDpiAwarenessContext(DpiAwarenessContextUnaware);
 			Thread.CurrentThread.Name = "Main thread";
 			Logger.Init(FwUtils.ksSuiteName);
 
