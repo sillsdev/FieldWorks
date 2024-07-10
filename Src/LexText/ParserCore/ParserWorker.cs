@@ -178,6 +178,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			if (sLower != form.Text)
 			{
+				var text = TsStringUtils.MakeString(sLower, form.get_WritingSystem(0));
 				IWfiWordform lcWordform;
 				// We cannot use WfiWordformServices.FindOrCreateWordform because of props change (LT-21810).
 				// Only parse the lowercase version if it exists.
