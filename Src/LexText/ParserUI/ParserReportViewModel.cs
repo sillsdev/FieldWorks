@@ -25,10 +25,6 @@ namespace SIL.FieldWorks.LexText.Controls
 				ParserReport.AddParseReport("test", new ParseReport(null, new ParseResult(new List<ParseAnalysis>())));
 				ParserReport.AddParseReport("error", new ParseReport(null, new ParseResult("error")));
 			}
-			else
-			{
-				// Runtime data loading logic here
-			}
 		}
 	}
 }

@@ -128,8 +128,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <summary>
 		/// Adds parse report to ParseReports and update statistics.
 		/// </summary>
-		/// <param name="word"></param>
-		/// <param name="report"></param>
 		public void AddParseReport(string word, ParseReport report)
 		{
 			ParseReports[word] = report;
@@ -149,8 +147,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <summary>
 		/// Read the given json file as a ParserReport.
 		/// </summary>
-		/// <param name="filename"></param>
-		/// <returns></returns>
 		public static ParserReport ReadJsonFile(string filename)
 		{
 			string json = File.ReadAllText(filename);
@@ -168,8 +164,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <summary>
 		/// Write this parser report as json on the given filename.
 		/// </summary>
-		/// <param name="filename"></param>
-		public void WriteJsonFile(string filename)
+		private void WriteJsonFile(string filename)
 		{
 			string json = JsonConvert.SerializeObject(this);
 			using (StreamWriter outputFile = new StreamWriter(filename))
@@ -182,7 +177,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <summary>
 		/// Write this parser report as json in the standard place and return the filename.
 		/// </summary>
-		/// <param name="cache"></param>
 		public string WriteJsonFile(LcmCache cache)
 		{
 			var reportDir = GetProjectReportsDirectory(cache);
@@ -204,8 +198,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Get the project reports directory for the project.
 		/// This is where project reports are stored.
 		/// </summary>
-		/// <param name="cache"></param>
-		/// <returns></returns>
 		public static string GetProjectReportsDirectory(LcmCache cache)
 		{
 			// TODO: Handle the case when the project isn't local.
@@ -218,40 +210,38 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <summary>
 		/// Return the differences between the current report and another report.
 		/// </summary>
-		/// <param name="report2"></param>
-		/// <returns></returns>
-		public ParserReport DiffParserReports (ParserReport report2)
+		public ParserReport DiffParserReports(ParserReport other)
 		{
 			ParserReport diff = new ParserReport();
 			diff.IsDiff = true;
-			diff.ProjectName = DiffNames(ProjectName, report2.ProjectName);
-			diff.SourceText = DiffNames(SourceText, report2.SourceText);
-			diff.MachineName = DiffNames(MachineName, report2.MachineName);
-			diff.Timestamp = Timestamp - report2.Timestamp;
-			diff.NumWords = NumWords - report2.NumWords;
-			diff.NumParseErrors = NumParseErrors - report2.NumParseErrors;
-			diff.NumZeroParses = NumZeroParses - report2.NumZeroParses;
-			diff.TotalParseTime = TotalParseTime - report2.TotalParseTime;
-			diff.TotalAnalyses = TotalAnalyses - report2.TotalAnalyses;
-			diff.TotalUserApprovedAnalysesMissing = TotalUserApprovedAnalysesMissing - report2.TotalUserApprovedAnalysesMissing;
-			diff.TotalUserDisapprovedAnalyses = TotalUserDisapprovedAnalyses - report2.TotalUserDisapprovedAnalyses;
-			diff.TotalUserNoOpinionAnalyses = TotalUserNoOpinionAnalyses - report2.TotalUserNoOpinionAnalyses;
+			diff.ProjectName = DiffNames(ProjectName, other.ProjectName);
+			diff.SourceText = DiffNames(SourceText, other.SourceText);
+			diff.MachineName = DiffNames(MachineName, other.MachineName);
+			diff.Timestamp = Timestamp - other.Timestamp;
+			diff.NumWords = NumWords - other.NumWords;
+			diff.NumParseErrors = NumParseErrors - other.NumParseErrors;
+			diff.NumZeroParses = NumZeroParses - other.NumZeroParses;
+			diff.TotalParseTime = TotalParseTime - other.TotalParseTime;
+			diff.TotalAnalyses = TotalAnalyses - other.TotalAnalyses;
+			diff.TotalUserApprovedAnalysesMissing = TotalUserApprovedAnalysesMissing - other.TotalUserApprovedAnalysesMissing;
+			diff.TotalUserDisapprovedAnalyses = TotalUserDisapprovedAnalyses - other.TotalUserDisapprovedAnalyses;
+			diff.TotalUserNoOpinionAnalyses = TotalUserNoOpinionAnalyses - other.TotalUserNoOpinionAnalyses;
 
 			ParseReport missingReport = new ParseReport
 			{
 				ErrorMessage = "missing"
 			};
 
-			foreach (string key in report2.ParseReports.Keys)
+			foreach (string key in other.ParseReports.Keys)
 			{
-				ParseReport oldReport = report2.ParseReports[key];
+				ParseReport oldReport = other.ParseReports[key];
 				ParseReport newReport = ParseReports.ContainsKey(key) ? ParseReports[key] : missingReport;
 				ParseReport diffReport = newReport.DiffParseReport(oldReport);
 				diff.AddParseReport(key, diffReport);
 			}
 			foreach (string key in ParseReports.Keys)
 			{
-				if (!report2.ParseReports.ContainsKey(key))
+				if (!other.ParseReports.ContainsKey(key))
 				{
 					ParseReport newReport = ParseReports[key];
 					ParseReport diffReport = newReport.DiffParseReport(missingReport);
@@ -263,18 +253,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return diff;
 		}
 
-		string DiffNames(string name1, string name2)
+		string DiffNames(string name, string otherName)
 		{
-			if (name1 == name2)
-				return name1;
-			return name1 + " - " + name2;
+			if (name == otherName)
+				return name;
+			return name + " - " + otherName;
 		}
 
 		/// <summary>
 		/// Is this parse report equal to other?
 		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
 		public bool Equals(ParserReport other)
 		{
 			if (other is null)
@@ -370,8 +358,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Create a parse report from a wordform and a parse result.
 		/// The wordform is needed to check user approval of parse analyses.
 		/// </summary>
-		/// <param name="wordform"></param>
-		/// <param name="result"></param>
 		public ParseReport(IWfiWordform wordform, ParseResult result)
 		{
 			ParseTime = result.ParseTime;
@@ -422,8 +408,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <summary>
 		/// Return the diff between the current report and the old report.
 		/// </summary>
-		/// <param name="oldReport"></param>
-		/// <returns></returns>
 		public ParseReport DiffParseReport(ParseReport oldReport)
 		{
 			ParseReport diffReport = new ParseReport
@@ -446,8 +430,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <summary>
 		/// Is this parse report equal to other?
 		/// </summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
 		public bool Equals(ParseReport other)
 		{
 			if (ParseTime != other.ParseTime) return false;

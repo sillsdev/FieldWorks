@@ -25,9 +25,9 @@
 				<DataGridTextColumn Binding="{Binding Word}">
 					<DataGridTextColumn.Header>
 						<StackPanel>
-							<Label ToolTip="the word that was parsed">Word</Label>
+							<Label ToolTip="The word that was parsed">Word</Label>
 							<Separator/>
-							<Label ToolTip ="number of words"
+							<Label ToolTip ="Number of words"
 								   Content="{Binding DataContext.ParserReport.NumWords, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
 						</StackPanel>
 					</DataGridTextColumn.Header>
@@ -35,9 +35,9 @@
 				<DataGridTextColumn Binding="{Binding ErrorMessage}">
 					<DataGridTextColumn.Header>
 						<StackPanel>
-							<Label ToolTip="the error message reported by the parser">Error Message</Label>
+							<Label ToolTip="The error message reported by the parser">Error Message</Label>
 							<Separator/>
-							<Label ToolTip ="number of parse errors"
+							<Label ToolTip ="Number of parse errors"
 								   Content="{Binding DataContext.ParserReport.NumParseErrors, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
 						</StackPanel>
 					</DataGridTextColumn.Header>
@@ -45,9 +45,9 @@
 				<DataGridTextColumn Binding="{Binding NumAnalyses}">
 					<DataGridTextColumn.Header>
 						<StackPanel>
-							<Label ToolTip="the number of analyses produced by the parser">Num Analyses</Label>
+							<Label ToolTip="The number of analyses produced by the parser">Num Analyses</Label>
 							<Separator/>
-							<Label ToolTip ="total number of analyses"
+							<Label ToolTip ="Total number of analyses"
 								   Content="{Binding DataContext.ParserReport.TotalAnalyses, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
 						</StackPanel>
 					</DataGridTextColumn.Header>
@@ -55,9 +55,9 @@
 				<DataGridTextColumn Binding="{Binding NumUserApprovedAnalysesMissing}">
 					<DataGridTextColumn.Header>
 						<StackPanel>
-							<Label ToolTip="the number of analyses approved by the user that the parser didn't produce">Missing Analyses</Label>
+							<Label ToolTip="The number of analyses approved by the user that the parser didn't produce">Missing Analyses</Label>
 							<Separator/>
-							<Label ToolTip ="total number of missing analyses"
+							<Label ToolTip ="Total number of missing analyses"
 								   Content="{Binding DataContext.ParserReport.TotalUserApprovedAnalysesMissing, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
 						</StackPanel>
 					</DataGridTextColumn.Header>
@@ -65,9 +65,9 @@
 				<DataGridTextColumn Binding="{Binding NumUserDisapprovedAnalyses}">
 					<DataGridTextColumn.Header>
 						<StackPanel>
-							<Label ToolTip="the number of analyses produced by the parser that were disapproved by the user">Disapproved Analyses</Label>
+							<Label ToolTip="The number of analyses produced by the parser that were disapproved by the user">Disapproved Analyses</Label>
 							<Separator/>
-							<Label ToolTip ="total number of disapproved analyses"
+							<Label ToolTip ="Total number of disapproved analyses"
 								   Content="{Binding DataContext.ParserReport.TotalUserDisapprovedAnalyses, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
 						</StackPanel>
 					</DataGridTextColumn.Header>
@@ -75,9 +75,9 @@
 				<DataGridTextColumn Binding="{Binding NumUserNoOpinionAnalyses}">
 					<DataGridTextColumn.Header>
 						<StackPanel>
-							<Label ToolTip="the number of analyses produced by the parser that were neither approved nor disapproved by the user">No Opinion Analyses</Label>
+							<Label ToolTip="The number of analyses produced by the parser that were neither approved nor disapproved by the user">No Opinion Analyses</Label>
 							<Separator/>
-							<Label ToolTip ="total number of analyses with no opinion"
+							<Label ToolTip ="Total number of analyses with no opinion"
 								   Content="{Binding DataContext.ParserReport.TotalUserNoOpinionAnalyses, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
 						</StackPanel>
 					</DataGridTextColumn.Header>
@@ -85,9 +85,9 @@
 				<DataGridTextColumn Binding="{Binding ParseTime}">
 					<DataGridTextColumn.Header>
 						<StackPanel>
-							<Label ToolTip="the time it took to parse the word">Parse Time</Label>
+							<Label ToolTip="The time it took to parse the word">Parse Time</Label>
 							<Separator/>
-							<Label ToolTip ="total parse time"
+							<Label ToolTip ="Total parse time"
 								   Content="{Binding DataContext.ParserReport.TotalParseTime, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
 						</StackPanel>
 					</DataGridTextColumn.Header>
