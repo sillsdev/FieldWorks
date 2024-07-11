@@ -18,10 +18,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	/// </summary>
 	public class WordformUpdatedEventArgs : EventArgs
 	{
-		public WordformUpdatedEventArgs(IWfiWordform wordform, ParserPriority priority)
+		public WordformUpdatedEventArgs(IWfiWordform wordform, ParserPriority priority, ParseResult parseResult, bool checkParser)
 		{
 			Wordform = wordform;
 			Priority = priority;
+			ParseResult = parseResult;
+			CheckParser = checkParser;
 		}
 
 		public IWfiWordform Wordform
@@ -30,6 +32,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		public ParserPriority Priority
+		{
+			get; private set;
+		}
+
+		public ParseResult ParseResult
+		{
+			get; private set;
+		}
+
+		public bool CheckParser
 		{
 			get; private set;
 		}
@@ -106,10 +118,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// <param name="wordform">The wordform.</param>
 		/// <param name="priority">The priority.</param>
 		///  <param name="parseResult">The parse result.</param>
-		public bool ProcessParse(IWfiWordform wordform, ParserPriority priority, ParseResult parseResult)
+		public bool ProcessParse(IWfiWordform wordform, ParserPriority priority, ParseResult parseResult, bool checkParser = false)
 		{
 			lock (m_syncRoot)
-				m_workQueue.Enqueue(new WordformUpdateWork(wordform, priority, parseResult));
+				m_workQueue.Enqueue(new WordformUpdateWork(wordform, priority, parseResult, checkParser));
 			m_idleQueue.Add(IdleQueuePriority.Low, UpdateWordforms);
 			return true;
 		}
@@ -145,10 +157,22 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				foreach (WordformUpdateWork work in results)
 				{
+					if (work.CheckParser)
+					{
+						// This was just a test.  Don't update data.
+						FireWordformUpdated(work.Wordform, work.Priority, work.ParseResult, work.CheckParser);
+						continue;
+					}
 					if (!work.IsValid)
 					{
 						// the wordform or the candidate analyses are no longer valid, so just skip this parse
-						FireWordformUpdated(work.Wordform, work.Priority);
+						FireWordformUpdated(work.Wordform, work.Priority, work.ParseResult, work.CheckParser);
+						continue;
+					}
+					if (work.Wordform.Checksum == work.ParseResult.GetHashCode())
+					{
+						// Nothing changed, but clients might like to know anyway.
+						FireWordformUpdated(work.Wordform, work.Priority, work.ParseResult, work.CheckParser);
 						continue;
 					}
 					string form = work.Wordform.Form.BestVernacularAlternative.Text;
@@ -186,16 +210,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						work.Wordform.Checksum = work.ParseResult.GetHashCode();
 					}
 					// notify all listeners that the wordform has been updated
-					FireWordformUpdated(work.Wordform, work.Priority);
+					FireWordformUpdated(work.Wordform, work.Priority, work.ParseResult, work.CheckParser);
 				}
 			});
 			return true;
 		}
 
-		private void FireWordformUpdated(IWfiWordform wordform, ParserPriority priority)
+		private void FireWordformUpdated(IWfiWordform wordform, ParserPriority priority, ParseResult parseResult, bool checkParser)
 		{
 			if (WordformUpdated != null)
-				WordformUpdated(this, new WordformUpdatedEventArgs(wordform, priority));
+				WordformUpdated(this, new WordformUpdatedEventArgs(wordform, priority, parseResult, checkParser));
 		}
 
 		/// <summary>
@@ -208,43 +232,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// </remarks>
 		private void ProcessAnalysis(IWfiWordform wordform, ParseAnalysis analysis)
 		{
-			/*
-				Try to find matching analysis(analyses) that already exist.
-				A "match" is one in which:
-				(1) the number of morph bundles equal the number of the MoForm and
-					MorphoSyntaxAnanlysis (MSA) IDs passed in to the stored procedure, and
-				(2) The objects of each MSA+Form pair match those of the corresponding WfiMorphBundle.
-			*/
 			// Find matching analysis/analyses, if any exist.
 			var matches = new HashSet<IWfiAnalysis>();
 			foreach (IWfiAnalysis anal in wordform.AnalysesOC)
 			{
-				if (anal.MorphBundlesOS.Count == analysis.Morphs.Count)
-				{
-					// Meets match condition (1), above.
-					bool mbMatch = false; //Start pessimistically.
-					int i = 0;
-					foreach (IWfiMorphBundle mb in anal.MorphBundlesOS)
-					{
-						var current = analysis.Morphs[i++];
-						if (mb.MorphRA == current.Form && mb.MsaRA == current.Msa && mb.InflTypeRA == current.InflType)
-						{
-							// Possibly matches condition (2), above.
-							mbMatch = true;
-						}
-						else
-						{
-							// Fails condition (2), above.
-							mbMatch = false;
-							break; // No sense in continuing.
-						}
-					}
-					if (mbMatch)
-					{
-						// Meets matching condition (2), above.
-						matches.Add(anal);
-					}
-				}
+				if (analysis.MatchesIWfiAnalysis(anal))
+					matches.Add(anal);
 			}
 			if (matches.Count == 0)
 			{
@@ -299,12 +292,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			private readonly IWfiWordform m_wordform;
 			private readonly ParserPriority m_priority;
 			private readonly ParseResult m_parseResult;
+			private readonly bool m_checkParser;
 
-			public WordformUpdateWork(IWfiWordform wordform, ParserPriority priority, ParseResult parseResult)
+			public WordformUpdateWork(IWfiWordform wordform, ParserPriority priority, ParseResult parseResult, bool checkParser)
 			{
 				m_wordform = wordform;
 				m_priority = priority;
 				m_parseResult = parseResult;
+				m_checkParser = checkParser;
 			}
 
 			public IWfiWordform Wordform
@@ -320,6 +315,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			public ParseResult ParseResult
 			{
 				get { return m_parseResult; }
+			}
+
+			public bool CheckParser
+			{
+				get { return m_checkParser; }
 			}
 
 			public bool IsValid

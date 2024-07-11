@@ -33,11 +33,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Initializes a new instance of the <see cref="ParserConnection"/> class.
 		/// This will attempt to connect to an existing parser or start a new one if necessary.
 		/// </summary>
-		public ParserConnection(LcmCache cache, IdleQueue idleQueue)
+		public ParserConnection(LcmCache cache, IdleQueue idleQueue, EventHandler<WordformUpdatedEventArgs> WordformEventHandler = null)
 		{
 			m_activity = "";
 			m_scheduler = new ParserScheduler(cache, idleQueue, Path.Combine(FwDirectoryFinder.CodeDirectory, FwDirectoryFinder.ksFlexFolderName));
 			m_scheduler.ParserUpdateVerbose += ParserUpdateHandlerForPolling;
+			if (WordformEventHandler != null)
+				m_scheduler.WordformUpdated += WordformEventHandler;
 		}
 
 		private object SyncRoot
@@ -96,16 +98,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			return this;
 		}
 
-		public void UpdateWordforms(IEnumerable<IWfiWordform> wordforms, ParserPriority priority)
+		public void UpdateWordforms(IEnumerable<IWfiWordform> wordforms, ParserPriority priority, bool checkParser)
 		{
 			CheckDisposed();
-			m_scheduler.ScheduleWordformsForUpdate(wordforms, priority);
+			m_scheduler.ScheduleWordformsForUpdate(wordforms, priority, checkParser);
 		}
 
 		public void UpdateWordform(IWfiWordform wordform, ParserPriority priority)
 		{
 			CheckDisposed();
-			m_scheduler.ScheduleOneWordformForUpdate(wordform, priority);
+			m_scheduler.ScheduleOneWordformForUpdate(wordform, priority, false);
 		}
 
 		public Exception UnhandledException

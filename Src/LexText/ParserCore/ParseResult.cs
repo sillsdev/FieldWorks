@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2024 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -40,6 +40,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			get { return m_errorMessage; }
 		}
+
+		public long ParseTime;
 
 		public bool IsValid
 		{
@@ -95,6 +97,38 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			var other = obj as ParseAnalysis;
 			return other != null && Equals(other);
+		}
+
+		public bool MatchesIWfiAnalysis(IWfiAnalysis analysis)
+		{
+			/*
+				A "match" is one in which:
+				(1) the number of morph bundles equal the number of the MoForm and
+					MorphoSyntaxAnanlysis (MSA) IDs passed in to the stored procedure, and
+				(2) The objects of each MSA+Form pair match those of the corresponding WfiMorphBundle.
+			*/
+			if (analysis.MorphBundlesOS.Count == this.Morphs.Count)
+			{
+				// Meets match condition (1), above.
+				bool mbMatch = false; //Start pessimistically.
+				int i = 0;
+				foreach (IWfiMorphBundle mb in analysis.MorphBundlesOS)
+				{
+					var current = this.Morphs[i++];
+					if (mb.MorphRA == current.Form && mb.MsaRA == current.Msa && mb.InflTypeRA == current.InflType)
+					{
+						// Possibly matches condition (2), above.
+						mbMatch = true;
+					}
+					else
+					{
+						// Fails condition (2), above.
+						return false;
+					}
+				}
+				return mbMatch;
+			}
+			return false;
 		}
 
 		public override int GetHashCode()
