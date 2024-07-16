@@ -597,12 +597,13 @@ namespace SIL.FieldWorks.FdoUi
 					// display its entry headword and variant type information (LT-4053)
 					ILexEntryRef ler;
 					var variant = wfb.MorphRA.Owner as ILexEntry;
-					if (variant.IsVariantOfSenseOrOwnerEntry(wfb.SenseRA, out ler))
+					var sense = wfb.SenseRA != null ? wfb.SenseRA : wfb.DefaultSense;
+					if (variant.IsVariantOfSenseOrOwnerEntry(sense, out ler))
 					{
 						// build Headword from sense's entry
 						vwenv.OpenParagraph();
 						vwenv.OpenInnerPile();
-						vwenv.AddObj(wfb.SenseRA.EntryID, this, (int)VcFrags.kfragHeadWord);
+						vwenv.AddObj(sense.EntryID, this, (int)VcFrags.kfragHeadWord);
 						vwenv.CloseInnerPile();
 						vwenv.OpenInnerPile();
 						// now add variant type info
