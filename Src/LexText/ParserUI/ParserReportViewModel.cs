@@ -14,7 +14,16 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		public ParserReport ParserReport { get; set; }
 
-		public ParserReportViewModel()
+		public string Title
+		{
+			get
+			{
+				string time = ParserReport.IsDiff ? new TimeSpan(ParserReport.Timestamp).ToString() : new DateTime(ParserReport.Timestamp).ToString();
+				return (ParserReport.IsDiff ? "Diff " : "") + ParserReport.ProjectName + ", " + ParserReport.SourceText + ", " + time + "," + ParserReport.MachineName;
+			}
+		}
+
+	public ParserReportViewModel()
 		{
 			ParserReport = new ParserReport();
 

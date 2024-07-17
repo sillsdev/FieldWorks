@@ -1,5 +1,6 @@
 using SIL.Extensions;
 using SIL.FieldWorks.WordWorks.Parser;
+using SIL.LCModel;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -17,17 +18,20 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		public Mediator Mediator { get; set; }
 
+		public LcmCache Cache { get; set; }
+
 		public ParserReportsDialog()
 		{
 			InitializeComponent();
 		}
 
-		public ParserReportsDialog(ObservableCollection<ParserReport> parserReports, Mediator mediator)
+		public ParserReportsDialog(ObservableCollection<ParserReport> parserReports, Mediator mediator, LcmCache cache)
 		{
 			InitializeComponent();
 			parserReports.Sort((x, y) => x.Timestamp.CompareTo(y.Timestamp));
 			ParserReports = parserReports;
 			Mediator = mediator;
+			Cache = cache;
 			DataContext = new ParserReportsViewModel { ParserReports = parserReports };
 		}
 
@@ -35,7 +39,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			var button = sender as Button;
 			var parserReport = button.CommandParameter as ParserReport;
-			ParserListener.ShowParserReport(parserReport, Mediator);
+			ParserListener.ShowParserReport(parserReport, Mediator, Cache);
 		}
 
 		public void DeleteParserReport(object sender, RoutedEventArgs e)
@@ -63,8 +67,15 @@ namespace SIL.FieldWorks.LexText.Controls
 				MessageBox.Show("Please select a second report other than this report using the radio button labelled '2nd'.");
 				return;
 			}
+			if (parserReport.Timestamp < parserReport2.Timestamp)
+			{
+				// swap the two variables.
+				ParserReport temp = parserReport;
+				parserReport = parserReport2;
+				parserReport2 = temp;
+			}
 			var diff = parserReport.DiffParserReports(parserReport2);
-			ParserListener.ShowParserReport(diff, Mediator);
+			ParserListener.ShowParserReport(diff, Mediator, Cache);
 		}
 	}
 }

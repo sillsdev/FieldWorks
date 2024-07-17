@@ -525,12 +525,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				// Get all of the wordforms in the Testbed texts.
 				IEnumerable<IWfiWordform> wordforms = new HashSet<IWfiWordform>();
-				IEnumerable<SIL.LCModel.IText> texts = m_cache.ServiceLocator.GetInstance<ITextRepository>().AllInstances();
-				foreach (SIL.LCModel.IText text in texts)
-					if (text is IStText iStText)
-						foreach (var genre in iStText.GenreCategories)
-							if (genre.ShortName == "Testbed")
-								wordforms.Union(iStText.UniqueWordforms());
+				foreach (var text in m_cache.LanguageProject.InterlinearTexts)
+					foreach (var genre in text.GenreCategories)
+						if (genre.ShortName == "Testbed")
+							wordforms = wordforms.Union(text.UniqueWordforms());
 
 				// Check all of the wordforms.
 				UpdateWordforms(wordforms, ParserPriority.Medium, true, "Testbed Texts");
@@ -571,7 +569,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					// Write an empty parser report.
 					var parserReport = WriteParserReport();
 					AddParserReport(parserReport);
-					ShowParserReport(parserReport, m_mediator);
+					ShowParserReport(parserReport, m_mediator, m_cache);
 				}
 			}
 			m_parserConnection.UpdateWordforms(wordforms, priority, checkParser);
@@ -621,7 +619,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				var parserReport = WriteParserReport();
 				AddParserReport(parserReport);
-				ShowParserReport(parserReport, m_mediator);
+				ShowParserReport(parserReport, m_mediator, m_cache);
 			}
 		}
 
@@ -661,7 +659,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				ReadParserReports();
 				// Create parser reports window.
-				m_parserReportsDialog = new ParserReportsDialog(m_parserReports, m_mediator);
+				m_parserReportsDialog = new ParserReportsDialog(m_parserReports, m_mediator, m_cache);
 				m_parserReportsDialog.Closed += ParserReportsDialog_Closed;
 			}
 			m_parserReportsDialog.Show(); // Show the dialog but do not block other app access
@@ -710,9 +708,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="parserReport"></param>
 		/// <param name="mediator">the mediator is used to call TryAWord</param>
-		public static void ShowParserReport(ParserReport parserReport, Mediator mediator)
+		public static void ShowParserReport(ParserReport parserReport, Mediator mediator, LcmCache cache)
 		{
-			ParserReportDialog dialog = new ParserReportDialog(parserReport, mediator);
+			ParserReportDialog dialog = new ParserReportDialog(parserReport, mediator, cache);
 			dialog.Show();
 		}
 
