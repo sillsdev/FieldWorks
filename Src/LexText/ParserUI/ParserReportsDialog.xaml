@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SIL.FieldWorks.LexText.Controls"
         d:DataContext="{d:DesignInstance Type=local:ParserReportsViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
-        Title="Parser Reports" WindowStartupLocation="CenterScreen"
+        Title="Parser Test Reports" WindowStartupLocation="CenterScreen"
 		SizeToContent="WidthAndHeight" MinHeight="300" MaxHeight="500"
         WindowStyle="ThreeDBorderWindow">
 	<Window.Resources>
@@ -14,7 +14,7 @@
 	</Window.Resources>
 
 	<Grid>
-		<DataGrid AutoGenerateColumns="False" CanUserAddRows="False" ItemsSource="{Binding ParserReports}">
+		<DataGrid AutoGenerateColumns="False" CanUserAddRows="False" ItemsSource="{Binding ParserReports, Mode=TwoWay}">
 			<DataGrid.Columns>
 				<DataGridTemplateColumn>
 					<DataGridTemplateColumn.CellTemplate>

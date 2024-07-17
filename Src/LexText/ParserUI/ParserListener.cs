@@ -30,6 +30,7 @@ using SIL.FieldWorks.WordWorks.Parser;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using XCore;
+using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -62,6 +63,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		private Dictionary<IWfiWordform, ParseResult> m_checkParserResults = null;
 		private int m_checkParserResultsCount = 0;
 		private string m_sourceText = null;
+		private ObservableCollection<ParserReport> m_parserReports = null;
+		private ParserReportsDialog m_parserReportsDialog = null;
 
 		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
@@ -567,6 +570,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					// Write an empty parser report.
 					var parserReport = WriteParserReport();
+					AddParserReport(parserReport);
 					ShowParserReport(parserReport, m_mediator);
 				}
 			}
@@ -616,6 +620,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Convert parse results into ParserReport.
 
 				var parserReport = WriteParserReport();
+				AddParserReport(parserReport);
 				ShowParserReport(parserReport, m_mediator);
 			}
 		}
@@ -652,44 +657,59 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		public void ShowParserReports()
 		{
-			// Sample data
-			var testParserReports = new ObservableCollection<ParserReport>
+			if (m_parserReportsDialog == null)
 			{
-				new ParserReport
-				{
-					ProjectName = "Test Project 1",
-					MachineName = "TestMachine1",
-					SourceText = "Test Source Text 1",
-					Timestamp = DateTime.Now.ToFileTime(),
-					NumWords = 100,
-					NumParseErrors = 2,
-					NumZeroParses = 1
-				},
-				new ParserReport
-				{
-					ProjectName = "Test Project 2",
-					MachineName = "TestMachine2",
-					SourceText = "Test Source Text 2",
-					Timestamp = DateTime.Now.AddMinutes(-30).ToFileTime(),
-					NumWords = 200,
-					NumParseErrors = 1,
-					NumZeroParses = 0
-				}
-			};
-			var reportDir = ParserReport.GetProjectReportsDirectory(m_cache);
-			var parserReports = new ObservableCollection<ParserReport>();
-			foreach (string filename in Directory.EnumerateFiles(reportDir, "*.json"))
-			{
-				var parserReport = ParserReport.ReadJsonFile(filename);
-				parserReports.Add(parserReport);
+				ReadParserReports();
+				// Create parser reports window.
+				m_parserReportsDialog = new ParserReportsDialog(m_parserReports, m_mediator);
+				m_parserReportsDialog.Closed += ParserReportsDialog_Closed;
 			}
-			if (parserReports.Count() == 0)
-				parserReports = testParserReports;
-
-			ParserReportsDialog dialog = new ParserReportsDialog(parserReports, m_mediator);
-			dialog.Show(); // Show the dialog but do not block other app access
+			m_parserReportsDialog.Show(); // Show the dialog but do not block other app access
+			m_parserReportsDialog.BringIntoView();
 		}
 
+		private void ParserReportsDialog_Closed(object sender, EventArgs e)
+		{
+			m_parserReportsDialog = null;
+		}
+
+		/// <summary>
+		/// Read the parser reports from the disk if they haven't been read.
+		/// </summary>
+		private void ReadParserReports()
+		{
+			if (m_parserReports == null)
+			{
+				m_parserReports = new ObservableCollection<ParserReport>();
+				var reportDir = ParserReport.GetProjectReportsDirectory(m_cache);
+				foreach (string filename in Directory.EnumerateFiles(reportDir, "*.json"))
+				{
+					var parserReport = ParserReport.ReadJsonFile(filename);
+					m_parserReports.Add(parserReport);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Add parserReport to the list of parser reports.
+		/// </summary>
+		private void AddParserReport(ParserReport parserReport)
+		{
+			if (m_parserReportsDialog != null)
+			{
+				((ParserReportsViewModel)m_parserReportsDialog.DataContext).ParserReports.Insert(0, parserReport);
+			} else
+			{
+				ReadParserReports();
+				m_parserReports.Add(parserReport);
+			}
+		}
+
+		/// <summary>
+		/// Display a parser report window.
+		/// </summary>
+		/// <param name="parserReport"></param>
+		/// <param name="mediator">the mediator is used to call TryAWord</param>
 		public static void ShowParserReport(ParserReport parserReport, Mediator mediator)
 		{
 			ParserReportDialog dialog = new ParserReportDialog(parserReport, mediator);

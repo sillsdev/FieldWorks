@@ -25,10 +25,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		public ParserReportsDialog(ObservableCollection<ParserReport> parserReports, Mediator mediator)
 		{
 			InitializeComponent();
-			var sortedReports = new ObservableCollection<ParserReport>(parserReports.OrderByDescending(i => i.Timestamp));
-			ParserReports = sortedReports;
+			parserReports.Sort((x, y) => x.Timestamp.CompareTo(y.Timestamp));
+			ParserReports = parserReports;
 			Mediator = mediator;
-			DataContext = new ParserReportsViewModel { ParserReports = sortedReports };
+			DataContext = new ParserReportsViewModel { ParserReports = parserReports };
 		}
 
 		public void ShowParserReport(object sender, RoutedEventArgs e)
