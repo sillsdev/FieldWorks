@@ -2,9 +2,6 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.DomainServices;
-using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using XCore;
@@ -40,11 +37,17 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			var button = sender as Button;
 			var parseReport = button.CommandParameter as ParseReport;
-			var wordForm = TsStringUtils.MakeString(parseReport.Word, Cache.DefaultVernWs);
-			var analysis = WfiWordformServices.FindOrCreateWordform(Cache, wordForm);
-			var fwLink = new FwLinkArgs("Analyses", analysis.Guid);
-			List<Property> additionalProps = fwLink.PropertyTableEntries;
-			Mediator.PostMessage("FollowLink", fwLink);
+			var tsString = TsStringUtils.MakeString(parseReport.Word, Cache.DefaultVernWs);
+			IWfiWordform wordform;
+			if (Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(tsString, out wordform))
+			{
+				var fwLink = new FwLinkArgs("Analyses", wordform.Guid);
+				Mediator.PostMessage("FollowLink", fwLink);
+			} else
+			{
+				// This should never happen.
+				MessageBox.Show("Unknown word " + parseReport.Word);
+			}
 		}
 	}
 }

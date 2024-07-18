@@ -95,9 +95,9 @@
 				<DataGridTextColumn Binding="{Binding ParseTime}">
 					<DataGridTextColumn.Header>
 						<StackPanel>
-							<Label ToolTip="The time it took to parse the word">Parse Time</Label>
+							<Label ToolTip="The time it took to parse the word in milliseconds">Parse Time</Label>
 							<Separator/>
-							<Label ToolTip ="Total parse time"
+							<Label ToolTip ="Total parse time in milliseconds"
 								   Content="{Binding DataContext.ParserReport.TotalParseTime, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
 						</StackPanel>
 					</DataGridTextColumn.Header>

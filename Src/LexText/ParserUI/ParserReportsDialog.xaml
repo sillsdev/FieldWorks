@@ -20,7 +20,7 @@
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
 							<Button Content="show"
-									ToolTip="Show this parser report"
+									ToolTip="Show this test report"
 							Click="ShowParserReport"
 							CommandParameter="{Binding}"/>
 						</DataTemplate>
@@ -30,7 +30,7 @@
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
 							<Button Content="diff"
-									ToolTip="Take the difference between this parser report and a second report selected by the radio button"
+									ToolTip="Show the difference between this test report and the report selected by the radio button (older report is subtracted from newer report)"
 							Click="DiffParserReports"
 							CommandParameter="{Binding}"/>
 						</DataTemplate>
@@ -38,11 +38,11 @@
 				</DataGridTemplateColumn>
 				<DataGridTemplateColumn>
 					<DataGridTemplateColumn.Header>
-						<Label ToolTip="The second argument to the diff">2nd</Label>
+						<Label ToolTip="The other argument to diff">Diff</Label>
 					</DataGridTemplateColumn.Header>
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<RadioButton GroupName="2nd" IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" />
+							<RadioButton GroupName="Diff" IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" />
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
@@ -50,7 +50,7 @@
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
 							<Button Content="delete"
-									ToolTip="Delete this parser report from the disk"
+									ToolTip="Delete this test report from the disk"
 							Click="DeleteParserReport"
 							CommandParameter="{Binding}"/>
 						</DataTemplate>
@@ -88,7 +88,7 @@
 				</DataGridTextColumn>
 				<DataGridTextColumn Binding="{Binding TotalParseTime}">
 					<DataGridTextColumn.Header>
-						<Label ToolTip="The time it took to parse all the distinct words in the text">Total Parse Time</Label>
+						<Label ToolTip="The time it took to parse all the distinct words in the text in milliseconds">Total Parse Time</Label>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
 				<DataGridTextColumn Binding="{Binding TotalAnalyses}">
