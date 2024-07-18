@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		public ParserReportsDialog(ObservableCollection<ParserReport> parserReports, Mediator mediator, LcmCache cache)
 		{
 			InitializeComponent();
-			parserReports.Sort((x, y) => x.Timestamp.CompareTo(y.Timestamp));
+			parserReports.Sort((x, y) => y.Timestamp.CompareTo(x.Timestamp));
 			ParserReports = parserReports;
 			Mediator = mediator;
 			Cache = cache;

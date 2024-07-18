@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-	public ParserReportViewModel()
+		public ParserReportViewModel()
 		{
 			ParserReport = new ParserReport();
 
