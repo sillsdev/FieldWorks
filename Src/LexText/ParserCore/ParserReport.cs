@@ -93,20 +93,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public Boolean IsDiff { get; set; }
 
 		/// <summary>
-		/// Title used for window.
-		/// This should be unique.
-		/// </summary>
-		[JsonIgnore]
-		public string Title
-		{
-			get
-			{
-				string time = IsDiff ? new TimeSpan(Timestamp).ToString() : new DateTime(Timestamp).ToString();
-				return (IsDiff ? "Diff " : "") + ProjectName + ", " + SourceText + ", " + time + "," + MachineName;
-			}
-		}
-
-		/// <summary>
 		/// The filename that the report came from.
 		/// </summary>
 		[JsonIgnore]

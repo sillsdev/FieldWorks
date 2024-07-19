@@ -17,10 +17,10 @@
 		<command id="CmdParseWordsInCurrentText" label="Parse Words in Te_xt" message="ParseWordsInCurrentText"/>
 		<command id="CmdClearSelectedWordParserAnalyses" label="Clear Current Parser _Analyses" message="ClearSelectedWordParserAnalyses"/>
 		<command id="CmdReInitializeParser" label="Re_load Grammar / Lexicon" message="ReInitParser" tooltip="Reloads data from the Grammar and Lexicon, so the parser uses your latest changes."/>
-        <command id="CmdCheckParserOnCurrentText" label="Check Parser on Text" message="CheckParserOnCurrentText" tooltip="Checks parser on currrent text and reports results."/>
-        <command id="CmdCheckParserOnTestbed" label="Check Parser on Testbed" message="CheckParserOnTestbed" tooltip="Checks parser on texts in Testbed genre and reports results."/>
-        <command id="CmdCheckParserOnAll" label="Check Parser on All" message="CheckParserOnAll" tooltip="Checks parser on all texts and reports results."/>
-        <command id="CmdShowParserReports" label="Show Parser Reports" message="ShowParserReports" tooltip="Shows parser reports."/>
+        <command id="CmdCheckParserOnCurrentText" label="On Current Text" message="CheckParserOnCurrentText" tooltip="Checks parser on currrent text and reports results."/>
+        <command id="CmdCheckParserOnTestbed" label="On Testbed" message="CheckParserOnTestbed" tooltip="Checks parser on texts in Testbed genre and reports results."/>
+        <command id="CmdCheckParserOnAll" label="On All Texts" message="CheckParserOnAll" tooltip="Checks parser on all texts and reports results."/>
+        <command id="CmdShowParserReports" label="Show Test Reports..." message="ShowParserReports" tooltip="Shows test reports."/>
         <command id="CmdImportWordSet" label="_Import Word Set..." message="ImportWordSet"/>
 		<command id="CmdChooseXAmpleParser" label="Default Parser (XAmple)" message="ChooseParser">
 			<parameters parser="XAmple"/>
@@ -276,7 +276,7 @@
 	  <item command="CmdParseCurrentWord"/>
 	  <item command="CmdClearSelectedWordParserAnalyses" defaultVisible="false"/>
           <item label="-" translate="do not translate"/>
-          <menu id="CheckParserMenu" label="Check Parser">
+          <menu id="CheckParserMenu" label="Run Tests">
             <item command="CmdCheckParserOnTestbed"/>
             <item command="CmdCheckParserOnCurrentText"/>
             <item command="CmdCheckParserOnAll"/>
