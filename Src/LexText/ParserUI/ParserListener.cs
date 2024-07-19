@@ -30,6 +30,7 @@ using SIL.FieldWorks.WordWorks.Parser;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using XCore;
+using SIL.ObjectModel;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -62,6 +63,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		private Dictionary<IWfiWordform, ParseResult> m_checkParserResults = null;
 		private int m_checkParserResultsCount = 0;
 		private string m_sourceText = null;
+		private ObservableCollection<ParserReport> m_parserReports = null;
+		private ParserReportsDialog m_parserReportsDialog = null;
 
 		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
@@ -508,7 +511,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (CurrentText != null && ConnectToParser())
 			{
 				IEnumerable<IWfiWordform> wordforms = CurrentText.UniqueWordforms();
-				UpdateWordforms(wordforms, ParserPriority.Medium, true, CurrentText.ShortName);
+				UpdateWordforms(wordforms, ParserPriority.Medium, checkParser: true, CurrentText.ShortName);
 			}
 
 			return true;    //we handled this.
@@ -522,15 +525,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				// Get all of the wordforms in the Testbed texts.
 				IEnumerable<IWfiWordform> wordforms = new HashSet<IWfiWordform>();
-				IEnumerable<SIL.LCModel.IText> texts = m_cache.ServiceLocator.GetInstance<ITextRepository>().AllInstances();
-				foreach (SIL.LCModel.IText text in texts)
-					if (text is IStText iStText)
-						foreach (var genre in iStText.GenreCategories)
-							if (genre.ShortName == "Testbed")
-								wordforms.Union(iStText.UniqueWordforms());
+				foreach (var text in m_cache.LanguageProject.InterlinearTexts)
+					foreach (var genre in text.GenreCategories)
+						if (genre.ShortName == "Testbed")
+							wordforms = wordforms.Union(text.UniqueWordforms());
 
 				// Check all of the wordforms.
-				UpdateWordforms(wordforms, ParserPriority.Medium, true, "Testbed Texts");
+				UpdateWordforms(wordforms, ParserPriority.Medium, checkParser: true, "Testbed Texts");
 			}
 
 			return true;    //we handled this.
@@ -543,7 +544,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (ConnectToParser())
 			{
 				IEnumerable<IWfiWordform> wordforms = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances();
-				UpdateWordforms(wordforms, ParserPriority.Low, true, "All Texts");
+				UpdateWordforms(wordforms, ParserPriority.Low, checkParser: true, "All Texts");
 			}
 
 			return true;    //we handled this.
@@ -558,6 +559,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;
 		}
 
+		/// <summary>
+		/// Run the parser on the given wordforms and then update the wordforms
+		/// unless checkParser is true, in which case create a test report instead.
+		/// </summary>
+		/// <param name="wordforms">The wordforms to parse</param>
+		/// <param name="priority">The priority the parser is run at</param>
+		/// <param name="checkParser">Whether to check the parser and not update the wordforms</param>
+		/// <param name="sourceText">The source text for the word forms (used for the test report)</param>
 		private void UpdateWordforms(IEnumerable<IWfiWordform> wordforms, ParserPriority priority, bool checkParser = false, string sourceText = null)
 		{
 			if (checkParser)
@@ -567,7 +576,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					// Write an empty parser report.
 					var parserReport = WriteParserReport();
-					ShowParserReport(parserReport, m_mediator);
+					AddParserReport(parserReport);
+					ShowParserReport(parserReport, m_mediator, m_cache);
 				}
 			}
 			m_parserConnection.UpdateWordforms(wordforms, priority, checkParser);
@@ -616,7 +626,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Convert parse results into ParserReport.
 
 				var parserReport = WriteParserReport();
-				ShowParserReport(parserReport, m_mediator);
+				AddParserReport(parserReport);
+				ShowParserReport(parserReport, m_mediator, m_cache);
 			}
 		}
 
@@ -652,47 +663,59 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		public void ShowParserReports()
 		{
-			// Sample data
-			var testParserReports = new ObservableCollection<ParserReport>
+			if (m_parserReportsDialog == null)
 			{
-				new ParserReport
-				{
-					ProjectName = "Test Project 1",
-					MachineName = "TestMachine1",
-					SourceText = "Test Source Text 1",
-					Timestamp = DateTime.Now.ToFileTime(),
-					NumWords = 100,
-					NumParseErrors = 2,
-					NumZeroParses = 1
-				},
-				new ParserReport
-				{
-					ProjectName = "Test Project 2",
-					MachineName = "TestMachine2",
-					SourceText = "Test Source Text 2",
-					Timestamp = DateTime.Now.AddMinutes(-30).ToFileTime(),
-					NumWords = 200,
-					NumParseErrors = 1,
-					NumZeroParses = 0
-				}
-			};
-			var reportDir = ParserReport.GetProjectReportsDirectory(m_cache);
-			var parserReports = new ObservableCollection<ParserReport>();
-			foreach (string filename in Directory.EnumerateFiles(reportDir, "*.json"))
-			{
-				var parserReport = ParserReport.ReadJsonFile(filename);
-				parserReports.Add(parserReport);
+				ReadParserReports();
+				// Create parser reports window.
+				m_parserReportsDialog = new ParserReportsDialog(m_parserReports, m_mediator, m_cache);
+				m_parserReportsDialog.Closed += ParserReportsDialog_Closed;
 			}
-			if (parserReports.Count() == 0)
-				parserReports = testParserReports;
-
-			ParserReportsDialog dialog = new ParserReportsDialog(parserReports, m_mediator);
-			dialog.Show(); // Show the dialog but do not block other app access
+			m_parserReportsDialog.Show(); // Show the dialog but do not block other app access
+			m_parserReportsDialog.BringIntoView();
 		}
 
-		public static void ShowParserReport(ParserReport parserReport, Mediator mediator)
+		private void ParserReportsDialog_Closed(object sender, EventArgs e)
 		{
-			ParserReportDialog dialog = new ParserReportDialog(parserReport, mediator);
+			m_parserReportsDialog = null;
+		}
+
+		/// <summary>
+		/// Read the parser reports from the disk if they haven't been read.
+		/// </summary>
+		private void ReadParserReports()
+		{
+			if (m_parserReports == null)
+			{
+				m_parserReports = new ObservableCollection<ParserReport>();
+				var reportDir = ParserReport.GetProjectReportsDirectory(m_cache);
+				foreach (string filename in Directory.EnumerateFiles(reportDir, "*.json"))
+				{
+					var parserReport = ParserReport.ReadJsonFile(filename);
+					m_parserReports.Add(parserReport);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Add parserReport to the list of parser reports.
+		/// </summary>
+		private void AddParserReport(ParserReport parserReport)
+		{
+			ReadParserReports();
+			// m_parserReportsDialog's window updates when m_parserReports changes
+			// because m_parserReports is an ObservableCollection.
+			// Add at front so that newest reports appear first.
+			m_parserReports.Insert(0, parserReport);
+		}
+
+		/// <summary>
+		/// Display a parser report window.
+		/// </summary>
+		/// <param name="parserReport"></param>
+		/// <param name="mediator">the mediator is used to call TryAWord</param>
+		public static void ShowParserReport(ParserReport parserReport, Mediator mediator, LcmCache cache)
+		{
+			ParserReportDialog dialog = new ParserReportDialog(parserReport, mediator, cache);
 			dialog.Show();
 		}
 
