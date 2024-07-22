@@ -325,7 +325,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ParserUIStrings.resx">
       <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ParserUIStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="TryAWordDlg.resx">

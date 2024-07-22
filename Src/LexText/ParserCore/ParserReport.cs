@@ -117,7 +117,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void AddParseReport(string word, ParseReport report)
 		{
 			ParseReports[word] = report;
-			report.Word = word;
+			if (report.Word == null || report.Word == "")
+				report.Word = word;
 			NumWords += 1;
 			TotalParseTime += report.ParseTime;
 			TotalAnalyses += report.NumAnalyses;
@@ -215,7 +216,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			ParseReport missingReport = new ParseReport
 			{
-				ErrorMessage = "missing"
 			};
 
 			foreach (string key in other.ParseReports.Keys)
@@ -409,6 +409,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				string oldError = oldReport.ErrorMessage ?? string.Empty;
 				string newError = ErrorMessage ?? string.Empty;
 				diffReport.ErrorMessage = oldError + " => " + newError;
+			}
+			if (Word != oldReport.Word)
+			{
+				string oldWord = oldReport.Word ?? string.Empty;
+				string newWord = Word ?? string.Empty;
+				diffReport.Word = oldWord + " => " + newWord;
 			}
 			return diffReport;
 		}
