@@ -1167,6 +1167,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_propertyTable.SetProperty("SelectedPublication", validPublication, true);
 			}
+			// Force a refresh.
+			m_loadedConfig = null;
 			UpdateContent(currentConfig);
 		}
 
