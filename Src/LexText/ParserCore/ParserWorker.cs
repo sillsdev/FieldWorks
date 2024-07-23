@@ -191,7 +191,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					lcResult.ParseTime = stopWatch.ElapsedMilliseconds;
 					if (lcResult.Analyses.Count > 0 && lcResult.ErrorMessage == null)
 					{
-						m_parseFiler.ProcessParse(lcWordform, priority, lcResult, checkParser);
+						m_parseFiler.ProcessParse(lcWordform, 0, lcResult, checkParser);
 						m_parseFiler.ProcessParse(wordform, priority, result, checkParser);
 						return true;
 					}
@@ -203,11 +203,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private void CheckNeedsUpdate()
 		{
-			using (var task = new TaskReport(ParserCoreStrings.ksUpdatingGrammarAndLexicon, m_taskUpdateHandler))
-			{
-				if (!m_parser.IsUpToDate())
+			if (!m_parser.IsUpToDate())
+				using (var task = new TaskReport(ParserCoreStrings.ksUpdatingGrammarAndLexicon, m_taskUpdateHandler))
+				{
 					m_parser.Update();
-			}
+				}
 		}
 
 		public void ReloadGrammarAndLexicon()
