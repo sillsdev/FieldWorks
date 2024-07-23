@@ -14,11 +14,15 @@ namespace SIL.FieldWorks.LexText.Controls
 	{
 		public ParserReport ParserReport { get; set; }
 
+		private FileTimeToDateTimeConverter m_FileTimeToDateTimeConverter = new FileTimeToDateTimeConverter();
+
 		public string Title
 		{
 			get
 			{
-				string time = ParserReport.IsDiff ? new TimeSpan(ParserReport.Timestamp).ToString() : new DateTime(ParserReport.Timestamp).ToString();
+				string time = ParserReport.IsDiff
+					? TimeSpan.FromTicks(ParserReport.Timestamp).ToString()
+					: m_FileTimeToDateTimeConverter.Convert(ParserReport.Timestamp, null, null, null).ToString();
 				return (ParserReport.IsDiff ? ParserUIStrings.ksDiffHeader + " " : "") + ParserReport.ProjectName + ", " + ParserReport.SourceText + ", " + time + "," + ParserReport.MachineName;
 			}
 		}

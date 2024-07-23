@@ -298,6 +298,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ParserUIStrings.resx</DependentUpon>
     </Compile>
+    <Compile Include="MillisecondsToTimeSpanConverter.cs" />
     <Compile Include="TryAWordDlg.cs">
       <SubType>Form</SubType>
     </Compile>

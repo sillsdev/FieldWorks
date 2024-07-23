@@ -11,6 +11,7 @@
         WindowStyle="ThreeDBorderWindow">
 	<Window.Resources>
 		<local:FileTimeToDateTimeConverter x:Key="FileTimeToDateTimeConverter"/>
+		<local:MillisecondsToTimeSpanConverter x:Key="MillisecondsToTimeSpanConverter"/>
 	</Window.Resources>
 
 	<Grid>
@@ -117,7 +118,7 @@
 							   ToolTip="{x:Static local:ParserUIStrings.ksTotalNoOpinionAnalysesToolTip}"/>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
-				<DataGridTextColumn Binding="{Binding TotalParseTime}">
+				<DataGridTextColumn Binding="{Binding TotalParseTime, Converter={StaticResource MillisecondsToTimeSpanConverter}, StringFormat=\{0:g\}}">
 					<DataGridTextColumn.Header>
 						<Label Content="{x:Static local:ParserUIStrings.ksTotalParseTime}"
 							   ToolTip="{x:Static local:ParserUIStrings.ksTotalParseTimeToolTip}"/>

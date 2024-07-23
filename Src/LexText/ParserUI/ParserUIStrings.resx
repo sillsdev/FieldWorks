@@ -258,7 +258,7 @@
     <value>Parse Time</value>
   </data>
   <data name="ksParseTimeToolTip" xml:space="preserve">
-    <value>The time it took to parse the word in milliseconds</value>
+    <value>The time it took to parse the word</value>
   </data>
   <data name="ksReparse" xml:space="preserve">
     <value>reparse</value>
@@ -321,7 +321,7 @@
     <value>Total Parse Time</value>
   </data>
   <data name="ksTotalParseTimeToolTip" xml:space="preserve">
-    <value>The time it took to parse the words in milliseconds</value>
+    <value>The total time it took to parse the words</value>
   </data>
   <data name="ksWord" xml:space="preserve">
     <value>Word</value>

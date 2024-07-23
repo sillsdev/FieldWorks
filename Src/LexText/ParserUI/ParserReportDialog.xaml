@@ -9,6 +9,9 @@
         Title="{Binding Title}" WindowStartupLocation="CenterScreen"
         SizeToContent="WidthAndHeight" MinHeight="300" MaxHeight="500"
 		WindowStyle="ThreeDBorderWindow">
+	<Window.Resources>
+		<local:MillisecondsToTimeSpanConverter x:Key="MillisecondsToTimeSpanConverter"/>
+	</Window.Resources>
 	<Grid>
 		<DataGrid AutoGenerateColumns="False" CanUserAddRows="False" ItemsSource="{Binding ParserReport.ParseReports.Values}">
 			<DataGrid.Columns>
@@ -38,19 +41,30 @@
 							<Label Content="{x:Static local:ParserUIStrings.ksWord}"
 								   ToolTip="{x:Static local:ParserUIStrings.ksWordToolTip}"/>
 							<Separator/>
-							<Label ToolTip ="{x:Static local:ParserUIStrings.ksNumWordsParsedToolTip}"
-								   Content="{Binding DataContext.ParserReport.NumWords, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
+							<TextBlock ToolTip ="{x:Static local:ParserUIStrings.ksNumWordsParsedToolTip}"
+								   Text="{Binding DataContext.ParserReport.NumWords, RelativeSource={RelativeSource AncestorType=DataGrid}}"></TextBlock>
 						</StackPanel>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
-				<DataGridTextColumn Binding="{Binding ErrorMessage}">
+				<DataGridTextColumn Binding="{Binding ErrorMessage}" MaxWidth="100">
+					<DataGridTextColumn.ElementStyle>
+						<Style TargetType="{x:Type TextBlock}"
+							   BasedOn="{StaticResource {x:Type TextBlock}}">
+							<Setter Property="TextWrapping"
+									   Value="NoWrap" />
+							<Setter Property="TextTrimming"
+									Value="CharacterEllipsis" />
+							<Setter Property="ToolTip"
+									Value="{Binding ErrorMessage}" />
+						</Style>
+					</DataGridTextColumn.ElementStyle>
 					<DataGridTextColumn.Header>
 						<StackPanel>
 							<Label Content="{x:Static local:ParserUIStrings.ksErrorMessage}"
 								   ToolTip="{x:Static local:ParserUIStrings.ksErrorMessageToolTip}"/>
 							<Separator/>
-							<Label ToolTip ="{x:Static local:ParserUIStrings.ksNumParseErrorsToolTip}"
-								   Content="{Binding DataContext.ParserReport.NumParseErrors, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
+							<TextBlock ToolTip ="{x:Static local:ParserUIStrings.ksNumParseErrorsToolTip}"
+								   Text="{Binding DataContext.ParserReport.NumParseErrors, RelativeSource={RelativeSource AncestorType=DataGrid}}"></TextBlock>
 						</StackPanel>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
@@ -60,8 +74,8 @@
 							<Label Content="{x:Static local:ParserUIStrings.ksNumAnalyses}"
 								   ToolTip="{x:Static local:ParserUIStrings.ksNumAnalysesToolTip}"/>
 							<Separator/>
-							<Label ToolTip ="{x:Static local:ParserUIStrings.ksTotalAnalysesWithZerosToolTip}"
-								   Content="{Binding DataContext.TotalAnalysesWithZeros, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
+							<TextBlock ToolTip ="{x:Static local:ParserUIStrings.ksTotalAnalysesWithZerosToolTip}"
+								   Text="{Binding DataContext.TotalAnalysesWithZeros, RelativeSource={RelativeSource AncestorType=DataGrid}}"></TextBlock>
 						</StackPanel>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
@@ -71,8 +85,8 @@
 							<Label Content="{x:Static local:ParserUIStrings.ksNumMissingAnalyses}"
 								   ToolTip="{x:Static local:ParserUIStrings.ksNumMissingAnalysesToolTip}"/>
 							<Separator/>
-							<Label ToolTip ="{x:Static local:ParserUIStrings.ksTotalMissingAnalysesToolTip}"
-								   Content="{Binding DataContext.ParserReport.TotalUserApprovedAnalysesMissing, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
+							<TextBlock ToolTip ="{x:Static local:ParserUIStrings.ksTotalMissingAnalysesToolTip}"
+								   Text="{Binding DataContext.ParserReport.TotalUserApprovedAnalysesMissing, RelativeSource={RelativeSource AncestorType=DataGrid}}"></TextBlock>
 						</StackPanel>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
@@ -82,8 +96,8 @@
 							<Label Content="{x:Static local:ParserUIStrings.ksNumDisapprovedAnalyses}"
 								   ToolTip="{x:Static local:ParserUIStrings.ksNumDisapprovedAnalysesToolTip}"/>
 							<Separator/>
-							<Label ToolTip="{x:Static local:ParserUIStrings.ksTotalDisapprovedAnalysesToolTip}"
-								   Content="{Binding DataContext.ParserReport.TotalUserDisapprovedAnalyses, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
+							<TextBlock ToolTip="{x:Static local:ParserUIStrings.ksTotalDisapprovedAnalysesToolTip}"
+								   Text="{Binding DataContext.ParserReport.TotalUserDisapprovedAnalyses, RelativeSource={RelativeSource AncestorType=DataGrid}}"></TextBlock>
 						</StackPanel>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
@@ -93,19 +107,21 @@
 							<Label Content="{x:Static local:ParserUIStrings.ksNumNoOpinionAnalyses}"
 								   ToolTip="{x:Static local:ParserUIStrings.ksNumNoOpinionAnalysesToolTip}"/>
 							<Separator/>
-							<Label ToolTip ="{x:Static local:ParserUIStrings.ksTotalNoOpinionAnalysesToolTip}"
-								   Content="{Binding DataContext.ParserReport.TotalUserNoOpinionAnalyses, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
+							<TextBlock ToolTip ="{x:Static local:ParserUIStrings.ksTotalNoOpinionAnalysesToolTip}"
+								   Text="{Binding DataContext.ParserReport.TotalUserNoOpinionAnalyses, RelativeSource={RelativeSource AncestorType=DataGrid}}"></TextBlock>
 						</StackPanel>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
-				<DataGridTextColumn Binding="{Binding ParseTime}">
+				<DataGridTextColumn Binding="{Binding ParseTime, Converter={StaticResource MillisecondsToTimeSpanConverter}, StringFormat=\{0:g\}}">
 					<DataGridTextColumn.Header>
 						<StackPanel>
 							<Label Content="{x:Static local:ParserUIStrings.ksParseTime}"
 								   ToolTip="{x:Static local:ParserUIStrings.ksParseTimeToolTip}"/>
 							<Separator/>
-								<Label ToolTip ="{x:Static local:ParserUIStrings.ksTotalParseTimeToolTip}"
-								   Content="{Binding DataContext.ParserReport.TotalParseTime, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
+							<!-- The following must be a TextBlock for StringFormat to work. -->
+							<TextBlock ToolTip ="{x:Static local:ParserUIStrings.ksTotalParseTimeToolTip}"
+								Text="{Binding DataContext.ParserReport.TotalParseTime, RelativeSource={RelativeSource AncestorType=DataGrid},
+								Converter={StaticResource MillisecondsToTimeSpanConverter}, StringFormat=\{0:g\}}"></TextBlock>
 						</StackPanel>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>

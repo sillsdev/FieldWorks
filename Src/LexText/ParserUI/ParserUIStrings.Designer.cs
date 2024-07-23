@@ -394,7 +394,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The time it took to parse the word in milliseconds.
+        ///   Looks up a localized string similar to The time it took to parse the word.
         /// </summary>
         public static string ksParseTimeToolTip {
             get {
@@ -619,7 +619,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The time it took to parse the words in milliseconds.
+        ///   Looks up a localized string similar to The total time it took to parse the words.
         /// </summary>
         public static string ksTotalParseTimeToolTip {
             get {
