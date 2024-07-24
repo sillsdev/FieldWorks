@@ -6,7 +6,7 @@ using SIL.FieldWorks.WordWorks.Parser;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
-	public class ParserReportsViewModel
+	public class ParserReportsViewModel : INotifyPropertyChanged
 	{
 		public ObservableCollection<ParserReport> ParserReports { get; set; }
 
@@ -39,6 +39,13 @@ namespace SIL.FieldWorks.LexText.Controls
 					NumZeroParses = 1
 				});
 			}
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected virtual void OnPropertyChanged(string propertyName)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 }
