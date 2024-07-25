@@ -517,6 +517,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="StringFragment.cs" />
+    <Compile Include="WordStyleCollection.cs" />
     <Compile Include="TreeBarHandlerUtils.cs" />
     <Compile Include="UploadToWebonaryController.cs" />
     <Compile Include="UploadToWebonaryDlg.cs">
