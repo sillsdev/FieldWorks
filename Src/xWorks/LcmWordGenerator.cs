@@ -637,6 +637,7 @@ namespace SIL.FieldWorks.XWorks
 				string displayNameBase = DocFragment.GetWsStyleName(cache, config, writingSystem);
 				if (!string.IsNullOrEmpty(displayNameBase))
 				{
+					// The calls to TryGetStyle() and AddStyle() need to be in the same lock.
 					lock (s_styleCollection)
 					{
 						string uniqueDisplayName = null;
@@ -1356,6 +1357,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Add the style to the collection and get the unique name.
 			string uniqueDisplayName = null;
+			// The calls to TryGetStyle() and AddStyle() need to be in the same lock.
 			lock (s_styleCollection)
 			{
 				if (s_styleCollection.TryGetStyle(numberStyleName, displayNameBase, out Style existingStyle))
@@ -1523,6 +1525,7 @@ namespace SIL.FieldWorks.XWorks
 		private static Style GetOrCreateCharacterStyle(string nodeStyleName, string displayNameBase, ReadOnlyPropertyTable propertyTable)
 		{
 			Style retStyle = null;
+			// The calls to TryGetStyle() and AddStyle() need to be in the same lock.
 			lock (s_styleCollection)
 			{
 				if (s_styleCollection.TryGetStyle(nodeStyleName, displayNameBase, out retStyle))
@@ -1818,6 +1821,7 @@ namespace SIL.FieldWorks.XWorks
 						string displayNameBaseCombined = currentRunStyle.StartsWith("[") ?
 							(displayNameBase + currentRunStyle) : (displayNameBase + WordStylesGenerator.StyleSeparator + currentRunStyle);
 
+						// The calls to TryGetStyle() and AddStyle() need to be in the same lock.
 						lock (s_styleCollection)
 						{
 							if (s_styleCollection.TryGetStyle(nodeStyleName, displayNameBaseCombined, out Style existingStyle))
