@@ -299,6 +299,7 @@
       <DependentUpon>ParserUIStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="MillisecondsToTimeSpanConverter.cs" />
+    <Compile Include="PositiveIntToRedBrushConverter.cs" />
     <Compile Include="TryAWordDlg.cs">
       <SubType>Form</SubType>
     </Compile>

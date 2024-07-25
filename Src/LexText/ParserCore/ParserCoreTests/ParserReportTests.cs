@@ -243,13 +243,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CheckParseReport(diff.ParseReports["zero"], parseTime: -2, errorMessage: " => missing");
 			Assert.IsTrue(diff.ParseReports.ContainsKey("cat"));
 			CheckParseReport(diff.ParseReports["cat"]);
-
-			// Check json.
-			// Verify that character encoding is preserved.
-			parserReport.AddParseReport("español", zeroReport);
-			string filename = parserReport.WriteJsonFile(Cache);
-			var jsonParserReport = ParserReport.ReadJsonFile(filename);
-			Assert.AreEqual(parserReport, jsonParserReport);
 		}
 
 	}

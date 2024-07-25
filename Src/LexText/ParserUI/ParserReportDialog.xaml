@@ -7,10 +7,11 @@
         d:DataContext="{d:DesignInstance Type=local:ParserReportViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
         Title="{Binding Title}" WindowStartupLocation="CenterScreen"
-        SizeToContent="WidthAndHeight" MinHeight="300" MaxHeight="500"
+        SizeToContent="WidthAndHeight" MinHeight="300" MaxHeight="1000"
 		WindowStyle="ThreeDBorderWindow">
 	<Window.Resources>
 		<local:MillisecondsToTimeSpanConverter x:Key="MillisecondsToTimeSpanConverter"/>
+		<local:PositiveIntToRedBrushConverter x:Key="PositiveIntToRedBrushConverter" />
 	</Window.Resources>
 	<Grid>
 		<DataGrid AutoGenerateColumns="False" CanUserAddRows="False" ItemsSource="{Binding ParserReport.ParseReports.Values}">
@@ -64,18 +65,24 @@
 								   ToolTip="{x:Static local:ParserUIStrings.ksErrorMessageToolTip}"/>
 							<Separator/>
 							<TextBlock ToolTip ="{x:Static local:ParserUIStrings.ksNumParseErrorsToolTip}"
-								   Text="{Binding DataContext.ParserReport.NumParseErrors, RelativeSource={RelativeSource AncestorType=DataGrid}}"></TextBlock>
+									   Text="{Binding DataContext.ParserReport.NumParseErrors, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+									   Foreground="{Binding DataContext.ParserReport.NumParseErrors,
+															RelativeSource={RelativeSource AncestorType=DataGrid},
+															Converter={StaticResource PositiveIntToRedBrushConverter}}"/>
 						</StackPanel>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
-				<DataGridTextColumn Binding="{Binding NumAnalyses}">
+				<DataGridTextColumn Binding="{Binding NoParse}">
 					<DataGridTextColumn.Header>
 						<StackPanel>
-							<Label Content="{x:Static local:ParserUIStrings.ksNumAnalyses}"
-								   ToolTip="{x:Static local:ParserUIStrings.ksNumAnalysesToolTip}"/>
+							<Label Content="{x:Static local:ParserUIStrings.ksNumZeroParses}"
+								   ToolTip="{x:Static local:ParserUIStrings.ksNumZeroParsesToolTip}"/>
 							<Separator/>
-							<TextBlock ToolTip ="{x:Static local:ParserUIStrings.ksTotalAnalysesWithZerosToolTip}"
-								   Text="{Binding DataContext.TotalAnalysesWithZeros, RelativeSource={RelativeSource AncestorType=DataGrid}}"></TextBlock>
+							<TextBlock ToolTip ="{x:Static local:ParserUIStrings.ksNumZeroParsesToolTip}"
+									   Text="{Binding DataContext.ParserReport.NumZeroParses, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+									   Foreground="{Binding DataContext.ParserReport.NumZeroParses,
+												RelativeSource={RelativeSource AncestorType=DataGrid},
+												Converter={StaticResource PositiveIntToRedBrushConverter}}"/>
 						</StackPanel>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
@@ -86,7 +93,10 @@
 								   ToolTip="{x:Static local:ParserUIStrings.ksNumMissingAnalysesToolTip}"/>
 							<Separator/>
 							<TextBlock ToolTip ="{x:Static local:ParserUIStrings.ksTotalMissingAnalysesToolTip}"
-								   Text="{Binding DataContext.ParserReport.TotalUserApprovedAnalysesMissing, RelativeSource={RelativeSource AncestorType=DataGrid}}"></TextBlock>
+									   Text="{Binding DataContext.ParserReport.TotalUserApprovedAnalysesMissing, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+									   Foreground="{Binding DataContext.ParserReport.TotalUserApprovedAnalysesMissing,
+												RelativeSource={RelativeSource AncestorType=DataGrid},
+												Converter={StaticResource PositiveIntToRedBrushConverter}}"/>
 						</StackPanel>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
@@ -97,7 +107,10 @@
 								   ToolTip="{x:Static local:ParserUIStrings.ksNumDisapprovedAnalysesToolTip}"/>
 							<Separator/>
 							<TextBlock ToolTip="{x:Static local:ParserUIStrings.ksTotalDisapprovedAnalysesToolTip}"
-								   Text="{Binding DataContext.ParserReport.TotalUserDisapprovedAnalyses, RelativeSource={RelativeSource AncestorType=DataGrid}}"></TextBlock>
+									   Text="{Binding DataContext.ParserReport.TotalUserDisapprovedAnalyses, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+									   Foreground="{Binding DataContext.ParserReport.TotalUserDisapprovedAnalyses,
+												RelativeSource={RelativeSource AncestorType=DataGrid},
+												Converter={StaticResource PositiveIntToRedBrushConverter}}"/>
 						</StackPanel>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
@@ -108,7 +121,21 @@
 								   ToolTip="{x:Static local:ParserUIStrings.ksNumNoOpinionAnalysesToolTip}"/>
 							<Separator/>
 							<TextBlock ToolTip ="{x:Static local:ParserUIStrings.ksTotalNoOpinionAnalysesToolTip}"
-								   Text="{Binding DataContext.ParserReport.TotalUserNoOpinionAnalyses, RelativeSource={RelativeSource AncestorType=DataGrid}}"></TextBlock>
+									   Text="{Binding DataContext.ParserReport.TotalUserNoOpinionAnalyses, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+									   Foreground="{Binding DataContext.ParserReport.TotalUserNoOpinionAnalyses,
+												RelativeSource={RelativeSource AncestorType=DataGrid},
+												Converter={StaticResource PositiveIntToRedBrushConverter}}"/>
+						</StackPanel>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding NumAnalyses}">
+					<DataGridTextColumn.Header>
+						<StackPanel>
+							<Label Content="{x:Static local:ParserUIStrings.ksNumAnalyses}"
+								   ToolTip="{x:Static local:ParserUIStrings.ksNumAnalysesToolTip}"/>
+							<Separator/>
+							<TextBlock ToolTip ="{x:Static local:ParserUIStrings.ksTotalAnalysesToolTip}"
+								   Text="{Binding DataContext.ParserReport.TotalAnalyses, RelativeSource={RelativeSource AncestorType=DataGrid}}"></TextBlock>
 						</StackPanel>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>

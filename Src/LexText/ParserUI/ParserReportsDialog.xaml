@@ -64,16 +64,10 @@
 							   ToolTip="{x:Static local:ParserUIStrings.ksTextToolTip}"/>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
-				<DataGridTextColumn Binding="{Binding Timestamp, Converter={StaticResource FileTimeToDateTimeConverter}, StringFormat=\{0:G\}}">
+				<DataGridTextColumn Binding="{Binding Timestamp, Converter={StaticResource FileTimeToDateTimeConverter}, StringFormat=\{0:g\}}">
 					<DataGridTextColumn.Header>
 						<Label Content="{x:Static local:ParserUIStrings.ksTimestamp}"
 							   ToolTip="{x:Static local:ParserUIStrings.ksTimestampToolTip}"/>
-					</DataGridTextColumn.Header>
-				</DataGridTextColumn>
-				<DataGridTextColumn Binding="{Binding MachineName}">
-					<DataGridTextColumn.Header>
-						<Label Content="{x:Static local:ParserUIStrings.ksMachineName}"
-							   ToolTip="{x:Static local:ParserUIStrings.ksMachineNameToolTip}"/>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
 				<DataGridTextColumn Binding="{Binding NumWords}">
@@ -94,12 +88,6 @@
 							   ToolTip="{x:Static local:ParserUIStrings.ksNumZeroParsesToolTip}"/>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
-				<DataGridTextColumn Binding="{Binding TotalAnalyses}">
-					<DataGridTextColumn.Header>
-						<Label Content="{x:Static local:ParserUIStrings.ksTotalAnalyses}"
-							   ToolTip="{x:Static local:ParserUIStrings.ksTotalAnalysesToolTip}"/>
-					</DataGridTextColumn.Header>
-				</DataGridTextColumn>
 				<DataGridTextColumn Binding="{Binding TotalUserApprovedAnalysesMissing}">
 					<DataGridTextColumn.Header>
 						<Label Content="{x:Static local:ParserUIStrings.ksTotalMissingAnalyses}"
@@ -118,10 +106,22 @@
 							   ToolTip="{x:Static local:ParserUIStrings.ksTotalNoOpinionAnalysesToolTip}"/>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding TotalAnalyses}">
+					<DataGridTextColumn.Header>
+						<Label Content="{x:Static local:ParserUIStrings.ksTotalAnalyses}"
+							   ToolTip="{x:Static local:ParserUIStrings.ksTotalAnalysesToolTip}"/>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
 				<DataGridTextColumn Binding="{Binding TotalParseTime, Converter={StaticResource MillisecondsToTimeSpanConverter}, StringFormat=\{0:g\}}">
 					<DataGridTextColumn.Header>
 						<Label Content="{x:Static local:ParserUIStrings.ksTotalParseTime}"
 							   ToolTip="{x:Static local:ParserUIStrings.ksTotalParseTimeToolTip}"/>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding MachineName}">
+					<DataGridTextColumn.Header>
+						<Label Content="{x:Static local:ParserUIStrings.ksMachineName}"
+							   ToolTip="{x:Static local:ParserUIStrings.ksMachineNameToolTip}"/>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
 			</DataGrid.Columns>

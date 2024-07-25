@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				string time = ParserReport.IsDiff
 					? TimeSpan.FromTicks(ParserReport.Timestamp).ToString()
 					: m_FileTimeToDateTimeConverter.Convert(ParserReport.Timestamp, null, null, null).ToString();
-				return (ParserReport.IsDiff ? ParserUIStrings.ksDiffHeader + " " : "") + ParserReport.ProjectName + ", " + ParserReport.SourceText + ", " + time + "," + ParserReport.MachineName;
+				return (ParserReport.IsDiff ? ParserUIStrings.ksDiffHeader + " " : "") + ParserReport.ProjectName + ", " + ParserReport.SourceText + ", " + time + ", " + ParserReport.MachineName;
 			}
 		}
 

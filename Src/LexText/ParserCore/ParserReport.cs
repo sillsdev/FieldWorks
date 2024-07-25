@@ -200,23 +200,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public ParserReport DiffParserReports(ParserReport other)
 		{
 			ParserReport diff = new ParserReport();
-			diff.IsDiff = true;
-			diff.ProjectName = DiffNames(ProjectName, other.ProjectName);
-			diff.SourceText = DiffNames(SourceText, other.SourceText);
-			diff.MachineName = DiffNames(MachineName, other.MachineName);
-			diff.Timestamp = Timestamp - other.Timestamp;
-			diff.NumWords = NumWords - other.NumWords;
-			diff.NumParseErrors = NumParseErrors - other.NumParseErrors;
-			diff.NumZeroParses = NumZeroParses - other.NumZeroParses;
-			diff.TotalParseTime = TotalParseTime - other.TotalParseTime;
-			diff.TotalAnalyses = TotalAnalyses - other.TotalAnalyses;
-			diff.TotalUserApprovedAnalysesMissing = TotalUserApprovedAnalysesMissing - other.TotalUserApprovedAnalysesMissing;
-			diff.TotalUserDisapprovedAnalyses = TotalUserDisapprovedAnalyses - other.TotalUserDisapprovedAnalyses;
-			diff.TotalUserNoOpinionAnalyses = TotalUserNoOpinionAnalyses - other.TotalUserNoOpinionAnalyses;
-
-			ParseReport missingReport = new ParseReport
-			{
-			};
+			ParseReport missingReport = new ParseReport();
 
 			foreach (string key in other.ParseReports.Keys)
 			{
@@ -235,6 +219,21 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					diff.AddParseReport(key, diffReport);
 				}
 			}
+
+			// The following must go after AddParserReport is called.
+			diff.IsDiff = true;
+			diff.ProjectName = DiffNames(ProjectName, other.ProjectName);
+			diff.SourceText = DiffNames(SourceText, other.SourceText);
+			diff.MachineName = DiffNames(MachineName, other.MachineName);
+			diff.Timestamp = Timestamp - other.Timestamp;
+			diff.NumWords = NumWords - other.NumWords;
+			diff.NumParseErrors = NumParseErrors - other.NumParseErrors;
+			diff.NumZeroParses = NumZeroParses - other.NumZeroParses;
+			diff.TotalParseTime = TotalParseTime - other.TotalParseTime;
+			diff.TotalAnalyses = TotalAnalyses - other.TotalAnalyses;
+			diff.TotalUserApprovedAnalysesMissing = TotalUserApprovedAnalysesMissing - other.TotalUserApprovedAnalysesMissing;
+			diff.TotalUserDisapprovedAnalyses = TotalUserDisapprovedAnalyses - other.TotalUserDisapprovedAnalyses;
+			diff.TotalUserNoOpinionAnalyses = TotalUserNoOpinionAnalyses - other.TotalUserNoOpinionAnalyses;
 
 			return diff;
 		}
@@ -317,6 +316,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Error message from the parser
 		/// </summary>
 		public string ErrorMessage { get; set; }
+
+		/// <summary>
+		/// Whether the word had no parse (1) or not (0).
+		/// Just used for ParserReport display.
+		/// </summary>
+		[JsonIgnore]
+		public int NoParse
+		{ get
+			{
+				return NumAnalyses == 0 ? 1 : 0;
+			}
+		}
 
 		/// <summary>
 		/// Number of parse analyses

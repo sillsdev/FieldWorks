@@ -277,7 +277,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Missing Analyses.
+        ///   Looks up a localized string similar to Failed Analyses.
         /// </summary>
         public static string ksNumMissingAnalyses {
             get {
@@ -295,7 +295,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No Opinion Analyses.
+        ///   Looks up a localized string similar to Unknown Analyses.
         /// </summary>
         public static string ksNumNoOpinionAnalyses {
             get {
@@ -439,7 +439,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reparse this word using TryAWord.
+        ///   Looks up a localized string similar to Reparse this word using Try A Word.
         /// </summary>
         public static string ksReparseToolTip {
             get {
@@ -574,7 +574,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Total Missing Analyses.
+        ///   Looks up a localized string similar to Total Failed Analyses.
         /// </summary>
         public static string ksTotalMissingAnalyses {
             get {
@@ -592,7 +592,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Total No Opinion.
+        ///   Looks up a localized string similar to Total Unknown Analyses.
         /// </summary>
         public static string ksTotalNoOpinionAnalyses {
             get {
