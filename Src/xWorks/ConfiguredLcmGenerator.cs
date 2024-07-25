@@ -536,8 +536,8 @@ namespace SIL.FieldWorks.XWorks
 						if (fileOwner != null)
 						{
 							return IsVideo(fileProperty.InternalPath)
-								? GenerateContentForVideoFile(fileProperty.ClassName, fileOwner.Guid.ToString(), srcAttr, MovieCamera, settings)
-								: GenerateContentForAudioFile(fileProperty.ClassName, fileOwner.Guid.ToString(), srcAttr, LoudSpeaker, settings);
+								? GenerateContentForVideoFile(config, fileProperty.ClassName, fileOwner.Guid.ToString(), srcAttr, MovieCamera, settings)
+								: GenerateContentForAudioFile(config, fileProperty.ClassName, fileOwner.Guid.ToString(), srcAttr, LoudSpeaker, settings);
 						}
 					}
 					return settings.ContentGenerator.CreateFragment();
@@ -560,7 +560,7 @@ namespace SIL.FieldWorks.XWorks
 			if (config.ReferencedOrDirectChildren != null && config.ReferencedOrDirectChildren.Any(child => child.IsEnabled))
 			{
 				var className = settings.StylesGenerator.AddStyles(config).Trim('.');
-				return settings.ContentGenerator.GenerateGroupingNode(field, className, config, publicationDecorator, settings,
+				return settings.ContentGenerator.GenerateGroupingNode(config, field, className, publicationDecorator, settings,
 					(f, c, p, s) => GenerateContentForFieldByReflection(f, c, p, s));
 			}
 			return settings.ContentGenerator.CreateFragment();
@@ -655,13 +655,13 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		private static IFragment GenerateContentForVideoFile(string className, string mediaId, string srcAttribute, string caption, GeneratorSettings settings)
+		private static IFragment GenerateContentForVideoFile(ConfigurableDictionaryNode config, string className, string mediaId, string srcAttribute, string caption, GeneratorSettings settings)
 		{
 			if (string.IsNullOrEmpty(srcAttribute) && string.IsNullOrEmpty(caption))
 				return settings.ContentGenerator.CreateFragment();
 			// This creates a link that will open the video in the same window as the dictionary view/preview
 			// refreshing will bring it back to the dictionary
-			return settings.ContentGenerator.GenerateVideoLinkContent(className, GetSafeXHTMLId(mediaId), srcAttribute, caption);
+			return settings.ContentGenerator.GenerateVideoLinkContent(config, className, GetSafeXHTMLId(mediaId), srcAttribute, caption);
 		}
 
 		private static bool IsVideo(string fileName)
@@ -804,7 +804,7 @@ namespace SIL.FieldWorks.XWorks
 			if (bldr.Length() > 0)
 			{
 				var className = settings.StylesGenerator.AddStyles(config).Trim('.');
-				return settings.ContentGenerator.WriteProcessedObject(false, bldr, config, className);
+				return settings.ContentGenerator.WriteProcessedObject(config, false, bldr, className);
 			}
 
 			// bldr is a fragment that is empty of text, since length = 0
@@ -822,7 +822,7 @@ namespace SIL.FieldWorks.XWorks
 			if (!content.IsNullOrEmpty())
 			{
 				var className = settings.StylesGenerator.AddStyles(config).Trim('.');
-				return settings.ContentGenerator.WriteProcessedObject(true, content, config,className);
+				return settings.ContentGenerator.WriteProcessedObject(config, true, content, className);
 			}
 			return settings.ContentGenerator.CreateFragment();
 		}
@@ -837,7 +837,7 @@ namespace SIL.FieldWorks.XWorks
 				// An XHTML id attribute must be unique but the ICmfile is used for all references to the same file within the project.
 				// The ICmPicture that owns the file does have unique guid so we use that.
 				var ownerGuid = owner.Guid.ToString();
-				return settings.ContentGenerator.AddImage(className, srcAttribute, ownerGuid);
+				return settings.ContentGenerator.AddImage(config, className, srcAttribute, ownerGuid);
 			}
 			return settings.ContentGenerator.CreateFragment();
 		}
@@ -909,7 +909,7 @@ namespace SIL.FieldWorks.XWorks
 			if (bldr.Length() > 0)
 			{
 				var className = settings.StylesGenerator.AddStyles(config).Trim('.');
-				return settings.ContentGenerator.WriteProcessedCollection(false, bldr, config,className);
+				return settings.ContentGenerator.WriteProcessedCollection(config, false, bldr, className);
 			}
 			// bldr is a fragment that is empty of text, since length = 0
 			return bldr;
@@ -935,7 +935,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			if (bldr.Length() > 0)
-				return settings.ContentGenerator.WriteProcessedCollection(false, bldr, config, GetClassNameAttributeForConfig(config));
+				return settings.ContentGenerator.WriteProcessedCollection(config, false, bldr, GetClassNameAttributeForConfig(config));
 			// bldr is a fragment that is empty of text, since length = 0
 			return bldr;
 		}
@@ -1456,8 +1456,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var className = settings.StylesGenerator.AddStyles(config).Trim('.');
 				return config.DictionaryNodeOptions is DictionaryNodeSenseOptions ?
-					settings.ContentGenerator.WriteProcessedSenses(false, frag, config, className, sharedCollectionInfo) :
-					settings.ContentGenerator.WriteProcessedCollection(false, frag, config, className);
+					settings.ContentGenerator.WriteProcessedSenses(config, false, frag, className, sharedCollectionInfo) :
+					settings.ContentGenerator.WriteProcessedCollection(config, false, frag, className);
 			}
 			return settings.ContentGenerator.CreateFragment();
 		}
@@ -1605,8 +1605,8 @@ namespace SIL.FieldWorks.XWorks
 							lexEntryType.Owner, settings, false)
 						: null;
 					var className = generateLexType ? settings.StylesGenerator.AddStyles(typeNode).Trim('.') : null;
-					var refsByType = settings.ContentGenerator.AddLexReferences(generateLexType,
-						lexTypeContent, config, className, combinedContent, IsTypeBeforeForm(config));
+					var refsByType = settings.ContentGenerator.AddLexReferences(config, generateLexType,
+						lexTypeContent, className, combinedContent, IsTypeBeforeForm(config));
 					bldr.Append(refsByType);
 				}
 			}
@@ -1904,7 +1904,7 @@ namespace SIL.FieldWorks.XWorks
 			if (bldr.Length() == 0)
 				return bldr;
 
-			return settings.ContentGenerator.AddSenseData(senseNumberSpan, ((ICmObject)item).Owner.Guid, config, bldr, first);
+			return settings.ContentGenerator.AddSenseData(config, senseNumberSpan, ((ICmObject)item).Owner.Guid, bldr, first);
 		}
 
 		private static IFragment GeneratePictureContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
@@ -1926,7 +1926,7 @@ namespace SIL.FieldWorks.XWorks
 					if (child.FieldDescription == "PictureFileRA")
 					{
 						var content = GenerateContentForFieldByReflection(item, child, publicationDecorator, settings);
-						contentGenerator.WriteProcessedContents(writer, content);
+						contentGenerator.WriteProcessedContents(writer, config, content);
 						break;
 					}
 				}
@@ -1947,7 +1947,7 @@ namespace SIL.FieldWorks.XWorks
 
 				if (captionBldr.Length() != 0)
 				{
-					contentGenerator.WriteProcessedContents(writer, settings.ContentGenerator.AddImageCaption(captionBldr.ToString()));
+					contentGenerator.WriteProcessedContents(writer, config, settings.ContentGenerator.AddImageCaption(config, captionBldr.ToString()));
 				}
 				writer.Flush();
 				return bldr;
@@ -1989,7 +1989,7 @@ namespace SIL.FieldWorks.XWorks
 			if (bldr.Length() == 0)
 				return bldr;
 			var collectionContent = bldr;
-			return settings.ContentGenerator.AddCollectionItem(IsBlockProperty(config), GetCollectionItemClassAttribute(config), config, collectionContent, first);
+			return settings.ContentGenerator.AddCollectionItem(config, IsBlockProperty(config), GetCollectionItemClassAttribute(config), collectionContent, first);
 		}
 
 		private static void GenerateContentForLexRefCollection(ConfigurableDictionaryNode config,
@@ -2087,7 +2087,7 @@ namespace SIL.FieldWorks.XWorks
 			var xBldr = settings.ContentGenerator.CreateFragment();
 			using (var xw = settings.ContentGenerator.CreateWriter(xBldr))
 			{
-				settings.ContentGenerator.BeginCrossReference(xw, IsBlockProperty(config), GetCollectionItemClassAttribute(config));
+				settings.ContentGenerator.BeginCrossReference(xw, config, IsBlockProperty(config), GetCollectionItemClassAttribute(config));
 				var targetInfo = referenceList.FirstOrDefault();
 				if (targetInfo == null)
 					return settings.ContentGenerator.CreateFragment();
@@ -2115,8 +2115,8 @@ namespace SIL.FieldWorks.XWorks
 							if (!content.IsNullOrEmpty())
 							{
 								// targets
-								settings.ContentGenerator.AddCollection(xw, IsBlockProperty(child),
-									CssGenerator.GetClassAttributeForConfig(child), config, content);
+								settings.ContentGenerator.AddCollection(xw, config, IsBlockProperty(child),
+									CssGenerator.GetClassAttributeForConfig(child), content);
 							}
 							break;
 						case "OwnerType":
@@ -2130,12 +2130,12 @@ namespace SIL.FieldWorks.XWorks
 								if (string.IsNullOrEmpty(child.CSSClassNameOverride))
 									child.CSSClassNameOverride = CssGenerator.GetClassAttributeForConfig(child);
 								// Flag to prepend "Reverse" to child.SubField when it is used.
-								settings.ContentGenerator.WriteProcessedContents(xw,
+								settings.ContentGenerator.WriteProcessedContents(xw, config,
 									GenerateContentForFieldByReflection(reference, child, publicationDecorator, settings, fUseReverseSubField: true));
 							}
 							else
 							{
-								settings.ContentGenerator.WriteProcessedContents(xw,
+								settings.ContentGenerator.WriteProcessedContents(xw, config,
 									GenerateContentForFieldByReflection(reference, child, publicationDecorator, settings));
 							}
 							break;
@@ -2181,7 +2181,7 @@ namespace SIL.FieldWorks.XWorks
 			var senseNumberWs = string.IsNullOrEmpty(info.HomographConfig.WritingSystem) ? "en" : info.HomographConfig.WritingSystem;
 			if (string.IsNullOrEmpty(formattedSenseNumber))
 				return settings.ContentGenerator.CreateFragment();
-			return settings.ContentGenerator.GenerateSenseNumber(formattedSenseNumber, senseNumberWs, senseConfigNode);
+			return settings.ContentGenerator.GenerateSenseNumber(senseConfigNode, formattedSenseNumber, senseNumberWs);
 		}
 
 		private static string GetSenseNumber(string numberingStyle, ref SenseInfo info)
@@ -2259,7 +2259,7 @@ namespace SIL.FieldWorks.XWorks
 			if (bldr.Length() > 0)
 			{
 				var className = settings.StylesGenerator.AddStyles(config).Trim('.'); ;
-				return settings.ContentGenerator.WriteProcessedObject(false, bldr, config, className);
+				return settings.ContentGenerator.WriteProcessedObject(config, false, bldr, className);
 			}
 			return bldr;
 		}
@@ -2487,7 +2487,7 @@ namespace SIL.FieldWorks.XWorks
 					if (!content.IsNullOrEmpty())
 					{
 						var className = settings.StylesGenerator.AddStyles(config).Trim('.'); ;
-						return settings.ContentGenerator.WriteProcessedCollection(false, content, config, className);
+						return settings.ContentGenerator.WriteProcessedCollection(config, false, content, className);
 					}
 				}
 				return settings.ContentGenerator.CreateFragment();
@@ -2500,17 +2500,17 @@ namespace SIL.FieldWorks.XWorks
 			if (propertyValue is int)
 			{
 				var cssClassName = settings.StylesGenerator.AddStyles(config).Trim('.'); ;
-				return settings.ContentGenerator.AddProperty(cssClassName, false, propertyValue.ToString());
+				return settings.ContentGenerator.AddProperty(config, cssClassName, false, propertyValue.ToString());
 			}
 			if (propertyValue is DateTime)
 			{
 				var cssClassName = settings.StylesGenerator.AddStyles(config).Trim('.'); ;
-				return settings.ContentGenerator.AddProperty(cssClassName, false, ((DateTime)propertyValue).ToLongDateString());
+				return settings.ContentGenerator.AddProperty(config, cssClassName, false, ((DateTime)propertyValue).ToLongDateString());
 			}
 			else if (propertyValue is GenDate)
 			{
 				var cssClassName = settings.StylesGenerator.AddStyles(config).Trim('.'); ;
-				return settings.ContentGenerator.AddProperty(cssClassName, false, ((GenDate)propertyValue).ToLongString());
+				return settings.ContentGenerator.AddProperty(config, cssClassName, false, ((GenDate)propertyValue).ToLongString());
 			}
 			else if (propertyValue is IMultiAccessorBase)
 			{
@@ -2521,7 +2521,7 @@ namespace SIL.FieldWorks.XWorks
 			else if (propertyValue is string)
 			{
 				var cssClassName = settings.StylesGenerator.AddStyles(config).Trim('.');
-				return settings.ContentGenerator.AddProperty(cssClassName, false, propertyValue.ToString());
+				return settings.ContentGenerator.AddProperty(config, cssClassName, false, propertyValue.ToString());
 			}
 			else if (propertyValue is IStText)
 			{
@@ -2539,7 +2539,7 @@ namespace SIL.FieldWorks.XWorks
 					}
 				}
 				if (bldr.Length() > 0)
-					return settings.ContentGenerator.WriteProcessedCollection(true, bldr, config, GetClassNameAttributeForConfig(config));
+					return settings.ContentGenerator.WriteProcessedCollection(config, true, bldr, GetClassNameAttributeForConfig(config));
 				// bldr is empty of text
 				return bldr;
 			}
@@ -2563,7 +2563,7 @@ namespace SIL.FieldWorks.XWorks
 			var content = propertyValue.ToString();
 			if (!String.IsNullOrEmpty(content))
 			{
-				return settings.ContentGenerator.AddProperty(GetClassNameAttributeForConfig(config), IsBlockProperty(config), content);
+				return settings.ContentGenerator.AddProperty(config, GetClassNameAttributeForConfig(config), IsBlockProperty(config), content);
 			}
 
 			return settings.ContentGenerator.CreateFragment();
@@ -2626,7 +2626,7 @@ namespace SIL.FieldWorks.XWorks
 			if (bldr.Length() > 0)
 			{
 				var className = settings.StylesGenerator.AddStyles(config).Trim('.'); ;
-				return settings.ContentGenerator.WriteProcessedCollection(false, bldr, config, className);
+				return settings.ContentGenerator.WriteProcessedCollection(config, false, bldr, className);
 			}
 			// bldr is empty of text
 			return bldr;
@@ -2671,7 +2671,7 @@ namespace SIL.FieldWorks.XWorks
 			if (bldr.Length() > 0)
 			{
 				var className = settings.StylesGenerator.AddStyles(config).Trim('.');
-				return settings.ContentGenerator.WriteProcessedCollection(false, bldr, config, className);
+				return settings.ContentGenerator.WriteProcessedCollection(config, false, bldr, className);
 			}
 			// bldr is empty of text
 			return bldr;
@@ -2709,10 +2709,10 @@ namespace SIL.FieldWorks.XWorks
 				{
 					var audioId = fieldText.Substring(0, fieldText.IndexOf(".", StringComparison.Ordinal));
 					var srcAttr = GenerateSrcAttributeForMediaFromFilePath(fieldText, "AudioVisual", settings);
-					var fileContent = GenerateContentForAudioFile(writingSystem, audioId, srcAttr, string.Empty, settings);
+					var fileContent = GenerateContentForAudioFile(config, writingSystem, audioId, srcAttr, string.Empty, settings);
 					var content = GenerateAudioWsContent(writingSystem, linkTarget, fileContent, settings);
 					if (!content.IsNullOrEmpty())
-						return settings.ContentGenerator.WriteProcessedObject(false, content, config,null);
+						return settings.ContentGenerator.WriteProcessedObject(config, false, content, null);
 				}
 			}
 			else if (config.IsCustomField && IsUSFM(fieldValue.Text))
@@ -2734,12 +2734,12 @@ namespace SIL.FieldWorks.XWorks
 						{
 							writingSystem = writingSystem ?? GetLanguageFromFirstOption(config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions,
 																settings.Cache);
-							settings.ContentGenerator.StartMultiRunString(writer, writingSystem);
+							settings.ContentGenerator.StartMultiRunString(writer, config, writingSystem);
 							var wsRtl = settings.Cache.WritingSystemFactory.get_Engine(writingSystem).RightToLeftScript;
 							if (rightToLeft != wsRtl)
 							{
 								rightToLeft = wsRtl; // the outer WS direction will be used to identify embedded runs of the opposite direction.
-								settings.ContentGenerator.StartBiDiWrapper(writer, rightToLeft);
+								settings.ContentGenerator.StartBiDiWrapper(writer, config, rightToLeft);
 							}
 						}
 
@@ -2811,7 +2811,7 @@ namespace SIL.FieldWorks.XWorks
 			var wsRtl = settings.Cache.WritingSystemFactory.get_Engine(writingSystem).RightToLeftScript;
 			if (rightToLeft != wsRtl)
 			{
-				settings.ContentGenerator.StartBiDiWrapper(writer, wsRtl);
+				settings.ContentGenerator.StartBiDiWrapper(writer, config, wsRtl);
 			}
 			if (!String.IsNullOrEmpty(style))
 			{
@@ -2833,7 +2833,7 @@ namespace SIL.FieldWorks.XWorks
 					settings.ContentGenerator.AddToRunContent(writer, txtContents[i]);
 					if (i == txtContents.Count() - 1)
 						break;
-					settings.ContentGenerator.AddLineBreakInRunContent(writer);
+					settings.ContentGenerator.AddLineBreakInRunContent(writer, config);
 				}
 			}
 			else
@@ -2856,13 +2856,13 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="srcAttribute">Source location path for audio file</param>
 		/// <param name="audioIcon">Inner text for hyperlink (unicode icon for audio)</param>
 		/// <param name="settings"/>
-		private static IFragment GenerateContentForAudioFile(string classname,
+		private static IFragment GenerateContentForAudioFile(ConfigurableDictionaryNode config, string classname,
 			string audioId, string srcAttribute, string audioIcon, GeneratorSettings settings)
 		{
 			if (string.IsNullOrEmpty(audioId) && string.IsNullOrEmpty(srcAttribute) && string.IsNullOrEmpty(audioIcon))
 				return settings.ContentGenerator.CreateFragment();
 			var safeAudioId = GetSafeXHTMLId(audioId);
-			return settings.ContentGenerator.GenerateAudioLinkContent(classname, srcAttribute, audioIcon, safeAudioId);
+			return settings.ContentGenerator.GenerateAudioLinkContent(config, classname, srcAttribute, audioIcon, safeAudioId);
 		}
 
 		private static string GetSafeXHTMLId(string audioId)
@@ -2932,7 +2932,7 @@ namespace SIL.FieldWorks.XWorks
 					select match.Groups["rowcontents"] into rowContentsGroup
 					select new Tuple<int, int>(rowContentsGroup.Index, rowContentsGroup.Index + rowContentsGroup.Length);
 
-				settings.ContentGenerator.StartTable(writer);
+				settings.ContentGenerator.StartTable(writer, config);
 				if (headerContent != null && headerContent.Length > 0)
 				{
 					var title = usfm.GetSubstring(headerContent.Index, headerContent.Index + headerContent.Length);
@@ -2986,12 +2986,12 @@ namespace SIL.FieldWorks.XWorks
 				if (new Regex(@"\A\\(t((h|c)(r|c|l)?(\d+(-\d*)?)?)?)?$").IsMatch(junk))
 				{
 					// The user seems to be starting to type a valid marker; call attention to its location
-					GenerateError(junk, writer, settings);
+					GenerateError(writer, settings, config, junk);
 				}
 				else
 				{
 					// Yes, this strips all WS and formatting information, but for an error message, I'm not sure that we care
-					GenerateError(string.Format(xWorksStrings.InvalidUSFM_TextAfterTR, junk), writer, settings);
+					GenerateError(writer, settings, config, string.Format(xWorksStrings.InvalidUSFM_TextAfterTR, junk));
 				}
 			}
 
@@ -3028,7 +3028,7 @@ namespace SIL.FieldWorks.XWorks
 			settings.ContentGenerator.EndTableRow(writer);
 		}
 
-		private static void GenerateError(string text, IFragmentWriter writer, GeneratorSettings settings)
+		private static void GenerateError(IFragmentWriter writer, GeneratorSettings settings, ConfigurableDictionaryNode config, string text)
 		{
 			var writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(settings.Cache.WritingSystemFactory.UserWs);
 			settings.ContentGenerator.StartRun(writer, null, settings.PropertyTable, writingSystem);
@@ -3041,7 +3041,7 @@ namespace SIL.FieldWorks.XWorks
 					settings.ContentGenerator.AddToRunContent(writer, txtContents[i]);
 					if (i == txtContents.Length - 1)
 						break;
-					settings.ContentGenerator.AddLineBreakInRunContent(writer);
+					settings.ContentGenerator.AddLineBreakInRunContent(writer, config);
 				}
 			}
 			else
