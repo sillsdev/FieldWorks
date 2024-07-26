@@ -192,7 +192,7 @@
     <value>Show the difference between this test report and the report selected by the radio button (older report is subtracted from newer report)</value>
   </data>
   <data name="ksDiffHeader" xml:space="preserve">
-    <value>Diff</value>
+    <value>Diff With</value>
   </data>
   <data name="ksDiffHeaderToolTip" xml:space="preserve">
     <value>The other argument to diff</value>
@@ -325,5 +325,8 @@
   </data>
   <data name="ksWordToolTip" xml:space="preserve">
     <value>The word that was parsed</value>
+  </data>
+  <data name="ksSelectDiffReport" xml:space="preserve">
+    <value>Please select a second report other than this report using the radio button in the column labelled 'Diff With'.</value>
   </data>
 </root>

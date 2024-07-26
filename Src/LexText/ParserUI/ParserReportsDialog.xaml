@@ -28,6 +28,16 @@
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
 				<DataGridTemplateColumn>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button Content="{x:Static local:ParserUIStrings.ksDiffButton}"
+									ToolTip="{x:Static local:ParserUIStrings.ksDiffButtonToolTip}"
+							Click="DiffParserReports"
+							CommandParameter="{Binding}"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTemplateColumn>
 					<DataGridTemplateColumn.Header>
 						<Label Content="{x:Static local:ParserUIStrings.ksDiffHeader}"
 							   ToolTip="{x:Static local:ParserUIStrings.ksDiffHeaderToolTip}"/>
@@ -35,16 +45,6 @@
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
 							<RadioButton GroupName="Diff" IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" />
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-				<DataGridTemplateColumn>
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<Button Content="{x:Static local:ParserUIStrings.ksDiffButton}"
-									ToolTip="{x:Static local:ParserUIStrings.ksDiffButtonToolTip}"
-							Click="DiffParserReports"
-							CommandParameter="{Binding}"/>
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>

@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			if (parserReport2 == null)
 			{
-				MessageBox.Show("Please select a second report other than this report using the radio button labelled '2nd'.");
+				MessageBox.Show(ParserUIStrings.ksSelectDiffReport);
 				return;
 			}
 			if (parserReport.Timestamp < parserReport2.Timestamp)

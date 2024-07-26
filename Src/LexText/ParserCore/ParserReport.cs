@@ -143,6 +143,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				var parseReport = report.ParseReports[word];
 				if (parseReport.Word == null)
 					parseReport.Word = word;
+				// NoParse is a virtual property.
+				parseReport.NoParse = parseReport.NumAnalyses == 0 ? 1 : 0;
 			}
 			report.Filename = filename;
 			return report;
@@ -200,7 +202,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public ParserReport DiffParserReports(ParserReport other)
 		{
 			ParserReport diff = new ParserReport();
-			ParseReport missingReport = new ParseReport();
+			ParseReport missingReport = new ParseReport() { NoParse = 1 };
 
 			foreach (string key in other.ParseReports.Keys)
 			{

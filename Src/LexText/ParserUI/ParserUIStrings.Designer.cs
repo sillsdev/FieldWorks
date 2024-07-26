@@ -124,7 +124,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Diff.
+        ///   Looks up a localized string similar to Diff With.
         /// </summary>
         public static string ksDiffHeader {
             get {
@@ -444,6 +444,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         public static string ksReparseToolTip {
             get {
                 return ResourceManager.GetString("ksReparseToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please select a second report other than this report using the radio button in the column labelled &apos;Diff With&apos;..
+        /// </summary>
+        public static string ksSelectDiffReport {
+            get {
+                return ResourceManager.GetString("ksSelectDiffReport", resourceCulture);
             }
         }
         
