@@ -322,12 +322,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Just used for ParserReport display.
 		/// </summary>
 		[JsonIgnore]
-		public int NoParse
-		{ get
-			{
-				return NumAnalyses == 0 ? 1 : 0;
-			}
-		}
+		public int NoParse { get; set; }
 
 		/// <summary>
 		/// Number of parse analyses
@@ -360,6 +355,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ParseTime = result.ParseTime;
 			ErrorMessage = result.ErrorMessage;
 			NumAnalyses = result.Analyses.Count();
+			NoParse = NumAnalyses == 0 ? 1 : 0;
 			if (wordform == null)
 				return;
 			// Look for conflicts between user opinion and parser.
@@ -410,6 +406,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ParseReport diffReport = new ParseReport
 			{
 				NumAnalyses = NumAnalyses - oldReport.NumAnalyses,
+				NoParse = NoParse - oldReport.NoParse,
 				NumUserApprovedAnalysesMissing = NumUserApprovedAnalysesMissing - oldReport.NumUserApprovedAnalysesMissing,
 				NumUserDisapprovedAnalyses = NumUserDisapprovedAnalyses - oldReport.NumUserDisapprovedAnalyses,
 				NumUserNoOpinionAnalyses = NumUserNoOpinionAnalyses - oldReport.NumUserNoOpinionAnalyses,
