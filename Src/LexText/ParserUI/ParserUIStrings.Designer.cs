@@ -286,7 +286,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The number of analyses approved by the user that the parser didn&apos;t produce.
+        ///   Looks up a localized string similar to The number of analyses approved by the user that the parser failed to produce.
         /// </summary>
         public static string ksNumMissingAnalysesToolTip {
             get {
@@ -313,7 +313,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Num Parse Errors.
+        ///   Looks up a localized string similar to Error Messages.
         /// </summary>
         public static string ksNumParseErrors {
             get {
@@ -322,7 +322,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The number of errors in the words parsed.
+        ///   Looks up a localized string similar to The number of error messages in the words parsed.
         /// </summary>
         public static string ksNumParseErrorsToolTip {
             get {
@@ -331,7 +331,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Num Words Parsed.
+        ///   Looks up a localized string similar to Words Parsed.
         /// </summary>
         public static string ksNumWordsParsed {
             get {
@@ -349,7 +349,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Num Zero Parses.
+        ///   Looks up a localized string similar to No Parses.
         /// </summary>
         public static string ksNumZeroParses {
             get {
@@ -358,7 +358,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The number of zero parses in the words parsed.
+        ///   Looks up a localized string similar to The number of words that got no parse.
         /// </summary>
         public static string ksNumZeroParsesToolTip {
             get {
@@ -529,7 +529,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Total Analyses.
+        ///   Looks up a localized string similar to Num Analyses.
         /// </summary>
         public static string ksTotalAnalyses {
             get {
@@ -547,16 +547,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The total number of analyses in the words parsed (+ number of zero parses).
-        /// </summary>
-        public static string ksTotalAnalysesWithZerosToolTip {
-            get {
-                return ResourceManager.GetString("ksTotalAnalysesWithZerosToolTip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Total Disapproved Analyses.
+        ///   Looks up a localized string similar to Disapproved Analyses.
         /// </summary>
         public static string ksTotalDisapprovedAnalyses {
             get {
@@ -574,7 +565,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Total Failed Analyses.
+        ///   Looks up a localized string similar to Failed Analyses.
         /// </summary>
         public static string ksTotalMissingAnalyses {
             get {
@@ -583,7 +574,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The total number of approved analyses missing in the words parsed.
+        ///   Looks up a localized string similar to The total number of approved analyses that the parser failed to produce in the words parsed.
         /// </summary>
         public static string ksTotalMissingAnalysesToolTip {
             get {
@@ -592,7 +583,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Total Unknown Analyses.
+        ///   Looks up a localized string similar to Unknown Analyses.
         /// </summary>
         public static string ksTotalNoOpinionAnalyses {
             get {
@@ -610,7 +601,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Total Parse Time.
+        ///   Looks up a localized string similar to Parse Time.
         /// </summary>
         public static string ksTotalParseTime {
             get {
@@ -678,15 +669,6 @@ namespace SIL.FieldWorks.LexText.Controls {
         public static string ksWordToolTip {
             get {
                 return ResourceManager.GetString("ksWordToolTip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to zeros.
-        /// </summary>
-        public static string ksZeros {
-            get {
-                return ResourceManager.GetString("ksZeros", resourceCulture);
             }
         }
     }

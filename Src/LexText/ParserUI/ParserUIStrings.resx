@@ -225,7 +225,7 @@
     <value>Failed Analyses</value>
   </data>
   <data name="ksNumMissingAnalysesToolTip" xml:space="preserve">
-    <value>The number of analyses approved by the user that the parser didn't produce</value>
+    <value>The number of analyses approved by the user that the parser failed to produce</value>
   </data>
   <data name="ksNumNoOpinionAnalyses" xml:space="preserve">
     <value>Unknown Analyses</value>
@@ -234,22 +234,22 @@
     <value>The number of analyses produced by the parser that were neither approved nor disapproved by the user</value>
   </data>
   <data name="ksNumParseErrors" xml:space="preserve">
-    <value>Num Parse Errors</value>
+    <value>Error Messages</value>
   </data>
   <data name="ksNumParseErrorsToolTip" xml:space="preserve">
-    <value>The number of errors in the words parsed</value>
+    <value>The number of error messages in the words parsed</value>
   </data>
   <data name="ksNumWordsParsed" xml:space="preserve">
-    <value>Num Words Parsed</value>
+    <value>Words Parsed</value>
   </data>
   <data name="ksNumWordsParsedToolTip" xml:space="preserve">
     <value>The number of distinct words parsed in the text</value>
   </data>
   <data name="ksNumZeroParses" xml:space="preserve">
-    <value>Num Zero Parses</value>
+    <value>No Parses</value>
   </data>
   <data name="ksNumZeroParsesToolTip" xml:space="preserve">
-    <value>The number of zero parses in the words parsed</value>
+    <value>The number of words that got no parse</value>
   </data>
   <data name="ksParserTestReports" xml:space="preserve">
     <value>Parser Test Reports</value>
@@ -291,34 +291,31 @@
     <value>When the text was parsed</value>
   </data>
   <data name="ksTotalAnalyses" xml:space="preserve">
-    <value>Total Analyses</value>
+    <value>Num Analyses</value>
   </data>
   <data name="ksTotalAnalysesToolTip" xml:space="preserve">
     <value>The total number of analyses in the words parsed</value>
   </data>
-  <data name="ksTotalAnalysesWithZerosToolTip" xml:space="preserve">
-    <value>The total number of analyses in the words parsed (+ number of zero parses)</value>
-  </data>
   <data name="ksTotalDisapprovedAnalyses" xml:space="preserve">
-    <value>Total Disapproved Analyses</value>
+    <value>Disapproved Analyses</value>
   </data>
   <data name="ksTotalDisapprovedAnalysesToolTip" xml:space="preserve">
     <value>The total number of disapproved analyses in the words parsed</value>
   </data>
   <data name="ksTotalMissingAnalyses" xml:space="preserve">
-    <value>Total Failed Analyses</value>
+    <value>Failed Analyses</value>
   </data>
   <data name="ksTotalMissingAnalysesToolTip" xml:space="preserve">
-    <value>The total number of approved analyses missing in the words parsed</value>
+    <value>The total number of approved analyses that the parser failed to produce in the words parsed</value>
   </data>
   <data name="ksTotalNoOpinionAnalyses" xml:space="preserve">
-    <value>Total Unknown Analyses</value>
+    <value>Unknown Analyses</value>
   </data>
   <data name="ksTotalNoOpinionAnalysesToolTip" xml:space="preserve">
     <value>The total number of analyses that were neither approved not disapproved in the words parsed</value>
   </data>
   <data name="ksTotalParseTime" xml:space="preserve">
-    <value>Total Parse Time</value>
+    <value>Parse Time</value>
   </data>
   <data name="ksTotalParseTimeToolTip" xml:space="preserve">
     <value>The total time it took to parse the words</value>
@@ -328,8 +325,5 @@
   </data>
   <data name="ksWordToolTip" xml:space="preserve">
     <value>The word that was parsed</value>
-  </data>
-  <data name="ksZeros" xml:space="preserve">
-    <value>zeros</value>
   </data>
 </root>

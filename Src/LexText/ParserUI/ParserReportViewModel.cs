@@ -36,15 +36,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		public string TotalAnalysesWithZeros
-		{
-			get
-			{
-				return ParserReport.TotalAnalyses + " (" + ParserUIStrings.ksZeros + ": " + ParserReport.NumZeroParses + ")";
-			}
-
-		}
-
 		public ParserReportViewModel()
 		{
 			ParserReport = new ParserReport();

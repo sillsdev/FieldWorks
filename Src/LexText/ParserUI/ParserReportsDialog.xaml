@@ -28,16 +28,6 @@
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
 				<DataGridTemplateColumn>
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<Button Content="{x:Static local:ParserUIStrings.ksDiffButton}"
-									ToolTip="{x:Static local:ParserUIStrings.ksDiffButtonToolTip}"
-							Click="DiffParserReports"
-							CommandParameter="{Binding}"/>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-				<DataGridTemplateColumn>
 					<DataGridTemplateColumn.Header>
 						<Label Content="{x:Static local:ParserUIStrings.ksDiffHeader}"
 							   ToolTip="{x:Static local:ParserUIStrings.ksDiffHeaderToolTip}"/>
@@ -45,6 +35,16 @@
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
 							<RadioButton GroupName="Diff" IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTemplateColumn>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button Content="{x:Static local:ParserUIStrings.ksDiffButton}"
+									ToolTip="{x:Static local:ParserUIStrings.ksDiffButtonToolTip}"
+							Click="DiffParserReports"
+							CommandParameter="{Binding}"/>
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
@@ -76,12 +76,6 @@
 							   ToolTip="{x:Static local:ParserUIStrings.ksNumWordsParsedToolTip}"/>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
-				<DataGridTextColumn Binding="{Binding NumParseErrors}">
-					<DataGridTextColumn.Header>
-						<Label Content="{x:Static local:ParserUIStrings.ksNumParseErrors}"
-							   ToolTip="{x:Static local:ParserUIStrings.ksNumParseErrorsToolTip}"/>
-					</DataGridTextColumn.Header>
-				</DataGridTextColumn>
 				<DataGridTextColumn Binding="{Binding NumZeroParses}">
 					<DataGridTextColumn.Header>
 						<Label Content="{x:Static local:ParserUIStrings.ksNumZeroParses}"
@@ -104,6 +98,12 @@
 					<DataGridTextColumn.Header>
 						<Label Content="{x:Static local:ParserUIStrings.ksTotalNoOpinionAnalyses}"
 							   ToolTip="{x:Static local:ParserUIStrings.ksTotalNoOpinionAnalysesToolTip}"/>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding NumParseErrors}">
+					<DataGridTextColumn.Header>
+						<Label Content="{x:Static local:ParserUIStrings.ksNumParseErrors}"
+							   ToolTip="{x:Static local:ParserUIStrings.ksNumParseErrorsToolTip}"/>
 					</DataGridTextColumn.Header>
 				</DataGridTextColumn>
 				<DataGridTextColumn Binding="{Binding TotalAnalyses}">
