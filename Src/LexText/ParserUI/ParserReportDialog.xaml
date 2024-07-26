@@ -14,7 +14,7 @@
 		<local:PositiveIntToRedBrushConverter x:Key="PositiveIntToRedBrushConverter" />
 	</Window.Resources>
 	<Grid>
-		<DataGrid AutoGenerateColumns="False" CanUserAddRows="False" ItemsSource="{Binding ParserReport.ParseReports.Values}">
+		<DataGrid AutoGenerateColumns="False" CanUserAddRows="False" ItemsSource="{Binding ParseReports}">
 			<DataGrid.Columns>
 				<DataGridTemplateColumn>
 					<DataGridTemplateColumn.CellTemplate>

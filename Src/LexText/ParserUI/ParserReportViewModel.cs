@@ -27,6 +27,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		public IEnumerable<ParseReport> ParseReports
+		{
+			get
+			{
+				// Use ToList so that sorting the reports doesn't change the data model.
+				return ParserReport.ParseReports.Values.ToList();
+			}
+		}
+
 		public string TotalAnalysesWithZeros
 		{
 			get
