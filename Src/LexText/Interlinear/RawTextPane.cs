@@ -48,6 +48,8 @@ namespace SIL.FieldWorks.IText
 			get { return m_currentTool; }
 		}
 
+		public event EventHandler OnRefreshForScrollBarVisibility;
+
 		public RawTextPane() : base(null)
 		{
 			BackColor = Color.FromKnownColor(KnownColor.Window);
@@ -224,12 +226,23 @@ namespace SIL.FieldWorks.IText
 
 		protected override void  OnKeyPress(KeyPressEventArgs e)
 		{
+			// Might need to handle scrollbar visibility changes so add a handler to refresh if necessary.
+			OnRefreshForScrollBarVisibility -= RefreshIfNecessary;
+			OnRefreshForScrollBarVisibility += RefreshIfNecessary;
 			if (e.KeyChar == (int) Keys.Escape)
 			{
 				TurnOffClickInvisibleSpace();
 			}
 			base.OnKeyPress(e);
 			Cursor.Current = Cursors.IBeam;
+		}
+
+		private void RefreshIfNecessary(object sender, EventArgs e)
+		{
+			if (Visible)
+			{
+				m_mediator.PostMessage("MasterRefresh", null);
+			}
 		}
 
 		Cursor m_invisibleSpaceCursor;
@@ -479,6 +492,7 @@ namespace SIL.FieldWorks.IText
 
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
+			var scrollStatus = VScroll;
 			if (Parent == null && string.IsNullOrEmpty(levent.AffectedProperty))
 				return; // width is meaningless, no point in doing extra work
 			// In a tab page this panel occupies the whole thing, so layout is wasted until
@@ -486,6 +500,13 @@ namespace SIL.FieldWorks.IText
 			if (Parent is TabPage && (Parent.Width - Parent.Padding.Horizontal) != this.Width)
 				return;
 			base.OnLayout(levent);
+			if (scrollStatus != VScroll)
+			{
+				// If the base layout has changed the scroll bar visibility, we might need to refresh the view
+				OnRefreshForScrollBarVisibility?.Invoke(this, EventArgs.Empty);
+				// Now that we've handled the event, we don't need to listen for it anymore
+				OnRefreshForScrollBarVisibility -= RefreshIfNecessary;
+			}
 		}
 
 
