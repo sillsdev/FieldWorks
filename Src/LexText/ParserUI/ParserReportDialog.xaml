@@ -1,0 +1,108 @@
+<Window x:Class="SIL.FieldWorks.LexText.Controls.ParserReportDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SIL.FieldWorks.LexText.Controls"
+        d:DataContext="{d:DesignInstance Type=local:ParserReportViewModel, IsDesignTimeCreatable=True}"
+        mc:Ignorable="d"
+        Title="{Binding Title}" WindowStartupLocation="CenterScreen"
+        SizeToContent="WidthAndHeight" MinHeight="300" MaxHeight="500"
+		WindowStyle="ThreeDBorderWindow">
+	<Grid>
+		<DataGrid AutoGenerateColumns="False" CanUserAddRows="False" ItemsSource="{Binding ParserReport.ParseReports.Values}">
+			<DataGrid.Columns>
+				<DataGridTemplateColumn>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button Content="show"
+									ToolTip="Show the analyses of this word"
+							Click="ShowWordAnalyses"
+							CommandParameter="{Binding}"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTemplateColumn>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button Content="reparse"
+									ToolTip="Reparse this word using TryAWord"
+							Click="ReparseWord"
+							CommandParameter="{Binding}"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTextColumn Binding="{Binding Word}">
+					<DataGridTextColumn.Header>
+						<StackPanel>
+							<Label ToolTip="The word that was parsed">Word</Label>
+							<Separator/>
+							<Label ToolTip ="Number of words"
+								   Content="{Binding DataContext.ParserReport.NumWords, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
+						</StackPanel>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding ErrorMessage}">
+					<DataGridTextColumn.Header>
+						<StackPanel>
+							<Label ToolTip="The error message reported by the parser">Error Message</Label>
+							<Separator/>
+							<Label ToolTip ="Number of parse errors"
+								   Content="{Binding DataContext.ParserReport.NumParseErrors, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
+						</StackPanel>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding NumAnalyses}">
+					<DataGridTextColumn.Header>
+						<StackPanel>
+							<Label ToolTip="The number of analyses produced by the parser">Num Analyses</Label>
+							<Separator/>
+							<Label ToolTip ="Total number of analyses"
+								   Content="{Binding DataContext.ParserReport.TotalAnalyses, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
+						</StackPanel>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding NumUserApprovedAnalysesMissing}">
+					<DataGridTextColumn.Header>
+						<StackPanel>
+							<Label ToolTip="The number of analyses approved by the user that the parser didn't produce">Missing Analyses</Label>
+							<Separator/>
+							<Label ToolTip ="Total number of missing analyses"
+								   Content="{Binding DataContext.ParserReport.TotalUserApprovedAnalysesMissing, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
+						</StackPanel>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding NumUserDisapprovedAnalyses}">
+					<DataGridTextColumn.Header>
+						<StackPanel>
+							<Label ToolTip="The number of analyses produced by the parser that were disapproved by the user">Disapproved Analyses</Label>
+							<Separator/>
+							<Label ToolTip ="Total number of disapproved analyses"
+								   Content="{Binding DataContext.ParserReport.TotalUserDisapprovedAnalyses, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
+						</StackPanel>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding NumUserNoOpinionAnalyses}">
+					<DataGridTextColumn.Header>
+						<StackPanel>
+							<Label ToolTip="The number of analyses produced by the parser that were neither approved nor disapproved by the user">No Opinion Analyses</Label>
+							<Separator/>
+							<Label ToolTip ="Total number of analyses with no opinion"
+								   Content="{Binding DataContext.ParserReport.TotalUserNoOpinionAnalyses, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
+						</StackPanel>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+				<DataGridTextColumn Binding="{Binding ParseTime}">
+					<DataGridTextColumn.Header>
+						<StackPanel>
+							<Label ToolTip="The time it took to parse the word in milliseconds">Parse Time</Label>
+							<Separator/>
+							<Label ToolTip ="Total parse time in milliseconds"
+								   Content="{Binding DataContext.ParserReport.TotalParseTime, RelativeSource={RelativeSource AncestorType=DataGrid}}"></Label>
+						</StackPanel>
+					</DataGridTextColumn.Header>
+				</DataGridTextColumn>
+			</DataGrid.Columns>
+		</DataGrid>
+	</Grid>
+</Window>

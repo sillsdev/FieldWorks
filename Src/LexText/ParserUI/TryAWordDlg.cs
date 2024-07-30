@@ -84,7 +84,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_helpProvider = new FlexHelpProvider();
 		}
 
-		public void SetDlgInfo(Mediator mediator, PropertyTable propertyTable, IWfiWordform wordform, ParserListener parserListener)
+		public void SetDlgInfo(Mediator mediator, PropertyTable propertyTable, string word, ParserListener parserListener)
 		{
 			Mediator = mediator;
 			PropTable = propertyTable;
@@ -98,10 +98,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			// restore window location and size after setting up the form textbox, because it might adjust size of
 			// window causing the window to grow every time it is opened
 			m_persistProvider.RestoreWindowSettings(PersistProviderID, this);
-			if (wordform == null)
+			if (word == null)
 				GetLastWordUsed();
 			else
-				SetWordToUse(wordform.Form.VernacularDefaultWritingSystem.Text);
+				SetWordToUse(word);
 
 			m_webPageInteractor = new WebPageInteractor(m_htmlControl, Mediator, m_cache, m_wordformTextBox);
 
@@ -178,7 +178,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				SetWordToUse(word.Trim());
 		}
 
-		private void SetWordToUse(string word)
+		public void SetWordToUse(string word)
 		{
 			m_wordformTextBox.Text = word;
 			m_tryItButton.Enabled = !String.IsNullOrEmpty(word);
@@ -399,6 +399,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void m_tryItButton_Click(object sender, EventArgs e)
 		{
+			TryIt();
+		}
+
+		public void TryIt()
+		{
 			// get a connection, if one does not exist
 			if (m_parserListener.ConnectToParser())
 			{
@@ -410,6 +415,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					// Display a "processing" message (and include info on how to improve the results)
 					var uri = new Uri(Path.Combine(TransformPath, "WhileTracing.htm"));
 					m_htmlControl.URL = uri.AbsoluteUri;
+					sWord = new System.Xml.Linq.XText(sWord).ToString();  // LT-10373 XML special characters cause a crash; change it so HTML/XML works
+					sWord = sWord.Replace("\"", "&quot;");  // LT-10373 same for double quote
 					sWord = sWord.Replace(' ', '.'); // LT-7334 to allow for phrases; do this at the last minute
 					m_parserListener.Connection.TryAWordDialogIsRunning = true; // make sure this is set properly
 					m_tryAWordResult = m_parserListener.Connection.BeginTryAWord(sWord, DoTrace, selectedTraceMorphs);

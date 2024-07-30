@@ -43,6 +43,8 @@ namespace SIL.FieldWorks.XWorks
 		internal string m_configObjectName;
 		internal const string CurrentSelectedEntryClass = "currentSelectedEntry";
 		private const string FieldWorksPrintLimitEnv = "FIELDWORKS_PRINT_LIMIT";
+		private bool m_updateContentLater = false; // Whether we should postpone calling UpdateContent
+		private string m_loadedConfig = null;
 
 		private GeckoWebBrowser GeckoBrowser => (GeckoWebBrowser)m_mainView.NativeBrowser;
 
@@ -177,6 +179,8 @@ namespace SIL.FieldWorks.XWorks
 					GiveSimpleWarning(xrc);
 				}
 			}
+			// Wait until SetActiveSelectedEntryOnView to call UpdateContent.
+			m_updateContentLater = true;
 			return false;
 		}
 
@@ -1001,14 +1005,20 @@ namespace SIL.FieldWorks.XWorks
 				case "ReversalIndexPublicationLayout":
 					var currentConfig = GetCurrentConfiguration(false);
 					if (name == "ReversalIndexPublicationLayout")
+					{
 						DictionaryConfigurationUtils.SetReversalIndexGuidBasedOnReversalIndexConfiguration(m_propertyTable, Cache);
+						// Wait until SetActiveSelectedEntryOnView to call UpdateContent.
+						m_updateContentLater = true;
+					}
 					var currentPublication = GetCurrentPublication();
 					var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
 					if (validPublication != currentPublication)
 					{
 						m_propertyTable.SetProperty("SelectedPublication", validPublication, false);
 					}
-					UpdateContent(currentConfig);
+					if (!m_updateContentLater)
+						// Do it now.
+						UpdateContent(currentConfig);
 					break;
 				case "ActiveClerkSelectedObject":
 					var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
@@ -1077,11 +1087,19 @@ namespace SIL.FieldWorks.XWorks
 				var currReversalWs = writingSystem.Id;
 				var currentConfig = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
 				var configuration = File.Exists(currentConfig) ? new DictionaryConfigurationModel(currentConfig, Cache) : null;
+				var currentPage = GetTopCurrentPageButton(browser.Document.Body);
 				if (configuration == null || configuration.WritingSystem != currReversalWs)
 				{
 					var newConfig = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable),
 						writingSystem.Id + DictionaryConfigurationModel.FileExtension);
 					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", File.Exists(newConfig) ? newConfig : null, true);
+				} else if (m_updateContentLater)
+				{
+					// Force the content to be updated once (LT-21702).
+					// This isn't needed when ReversalIndexPublicationLayout is changed
+					// because it causes the content to be updated as a side effect.
+					UpdateContent(currentConfig);
+					m_updateContentLater = false;
 				}
 			}
 			var currentObjectGuid = Clerk.CurrentObject.Guid.ToString();
@@ -1149,6 +1167,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_propertyTable.SetProperty("SelectedPublication", validPublication, true);
 			}
+			// Force a refresh.
+			m_loadedConfig = null;
 			UpdateContent(currentConfig);
 		}
 
@@ -1201,6 +1221,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
+				// Don't load the configuration file twice.
+				if (configurationFile == m_loadedConfig)
+					return;
+				m_loadedConfig = configurationFile;
 				var xhtmlPath = SaveConfiguredXhtmlWithProgress(configurationFile, allOnOnePage);
 				if (xhtmlPath != null)
 				{

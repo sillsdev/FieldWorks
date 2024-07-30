@@ -69,14 +69,6 @@ namespace SIL.FieldWorks.IText
 			m_segRepo = m_cache.ServiceLocator.GetInstance<ISegmentRepository>();
 		}
 
-		/// <summary>
-		/// This causes all rootbox access to go through our Tagging Decorator.
-		/// </summary>
-		protected override void AddDecorator()
-		{
-			m_rootb.DataAccess = (Vc as InterlinTaggingVc).Decorator;
-		}
-
 		#region SelectionMethods
 
 		bool m_fInSelChanged;

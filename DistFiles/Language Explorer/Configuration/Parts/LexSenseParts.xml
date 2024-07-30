@@ -217,8 +217,15 @@
 						<string field="ChooserNameTS"/>
 					</obj>
 				</if>
+				<if is="MoInflAffMsa">
+					<obj class="MoInflAffMsa" field="InflFeats" layout="empty">
+						<string field="ChooserNameTS"/>
+					</obj>
+				</if>
 				<ifnot is="MoStemMsa">
-					<lit>n/a</lit>
+					<ifnot is="MoInflAffMsa">
+						<lit>n/a</lit>
+					</ifnot>
 				</ifnot>
 			</obj>
 		</part>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<word>
+    <form>manahomia</form>
+    <seq step="Try to build a Stem node on a root.">
+        <stem syncat="5816" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="+">
+            <morph type="root" wordType="root" morphname="570" alloid="9" category="W">
+                <props> RootPOS5816</props>
+                <shortName>manaho (fall): manaho</shortName>
+                <alloform>manaho</alloform>
+                <gloss>fall</gloss>
+                <citationForm>manaho</citationForm>
+                <stemMsa cat="5816" catAbbr="v" inflClass="0" requiresInfl="+" />
+            </morph>
+        </stem>
+        <morph type="sfx" wordType="2431" morphname="1888" alloid="5570" category="W/W">
+            <props />
+            <shortName>-mi (PFV): -mi</shortName>
+            <alloform>-mi</alloform>
+            <gloss>PFV</gloss>
+            <citationForm>-mi</citationForm>
+            <inflMsa cat="5816" catAbbr="v" slot="2431" slotAbbr="PFV" slotOptional="true" />
+        </morph>
+        <morph type="sfx" wordType="904" morphname="5177" alloid="5162" category="W/W">
+            <props />
+            <shortName>-a (1SG.ABS): -a</shortName>
+            <alloform>-a</alloform>
+            <gloss>1SG.ABS</gloss>
+            <citationForm>-a</citationForm>
+            <inflMsa cat="5816" catAbbr="v" slot="904" slotAbbr="PERSNUMABS" slotOptional="true" />
+        </morph>
+    </seq>
+    <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked).">
+        <partial syncat="5816" syncatAbbr="v">
+            <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'v'.</failure>
+            <morph type="root" wordType="root" morphname="570" alloid="9" category="W">
+                <props> RootPOS5816</props>
+                <shortName>manaho (fall): manaho</shortName>
+                <alloform>manaho</alloform>
+                <gloss>fall</gloss>
+                <citationForm>manaho</citationForm>
+                <stemMsa cat="5816" catAbbr="v" inflClass="0" requiresInfl="+" />
+            </morph>
+        </partial>
+        <morph type="sfx" wordType="2431" morphname="1888" alloid="5570" category="W/W">
+            <props />
+            <shortName>-mi (PFV): -mi</shortName>
+            <alloform>-mi</alloform>
+            <gloss>PFV</gloss>
+            <citationForm>-mi</citationForm>
+            <inflMsa cat="5816" catAbbr="v" slot="2431" slotAbbr="PFV" slotOptional="true" />
+        </morph>
+        <morph type="sfx" wordType="904" morphname="5177" alloid="5162" category="W/W">
+            <props />
+            <shortName>-a (1SG.ABS): -a</shortName>
+            <alloform>-a</alloform>
+            <gloss>1SG.ABS</gloss>
+            <citationForm>-a</citationForm>
+            <inflMsa cat="5816" catAbbr="v" slot="904" slotAbbr="PERSNUMABS" slotOptional="true" />
+        </morph>
+    </seq>
+</word>
