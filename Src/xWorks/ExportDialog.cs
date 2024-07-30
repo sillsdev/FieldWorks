@@ -939,8 +939,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var outPath = (string)args[0];
 			m_progressDlg = progress;
-			var xml = M3ModelExportServices.ExportPhonology(m_cache.LanguageProject);
-			xml.Save(outPath);
+			var phonologyServices = new PhonologyServices(m_cache);
+			phonologyServices.ExportPhonologyAsXml(outPath);
 			m_progressDlg.Step(1000);
 			return null;
 		}

@@ -1945,8 +1945,17 @@ namespace SIL.FieldWorks.XWorks
 			}
 			using (new WaitCursor(form, true))
 			{
-				var xmlImportData = new XmlImportData(Cache, true);
-				xmlImportData.ImportData(filename, null);
+				try
+				{
+					var phonologyServices = new PhonologyServices(Cache);
+					phonologyServices.ImportPhonologyFromXml(filename);
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine("Error: " + ex.Message);
+					Command command = (Command)commandObject;
+					MessageBox.Show(ex.Message, command.ToolTip);
+				}
 			}
 			return true;
 		}
