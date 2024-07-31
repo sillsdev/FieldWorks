@@ -892,6 +892,7 @@ namespace SIL.FieldWorks.XWorks
 			if (wsOption == null)
 				throw new ArgumentException(@"Configuration nodes for MultiString fields would have WritingSystemOptions", "config");
 			var bldr = settings.ContentGenerator.CreateFragment();
+			bool first = true;
 			foreach (var option in wsOption.Options)
 			{
 				if (option.IsEnabled)
@@ -900,7 +901,8 @@ namespace SIL.FieldWorks.XWorks
 					ITsString bestString = sense.GetDefinitionOrGloss(option.Id, out wsId);
 					if (bestString != null)
 					{
-						var contentItem = GenerateWsPrefixAndString(config, settings, wsOption, wsId, bestString, Guid.Empty);
+						var contentItem = GenerateWsPrefixAndString(config, settings, wsOption, wsId, bestString, Guid.Empty, first);
+						first = false;
 						bldr.Append(contentItem);
 					}
 				}
@@ -921,6 +923,7 @@ namespace SIL.FieldWorks.XWorks
 			if (wsOption == null)
 				throw new ArgumentException(@"Configuration nodes for MultiString fields should have WritingSystemOptions", "config");
 			var bldr = settings.ContentGenerator.CreateFragment();
+			bool first = true;
 			foreach (var option in wsOption.Options)
 			{
 				if (option.IsEnabled)
@@ -929,7 +932,8 @@ namespace SIL.FieldWorks.XWorks
 					ITsString bestString = picture.GetCaptionOrHeadword(option.Id, out wsId);
 					if (bestString != null)
 					{
-						var contentItem = GenerateWsPrefixAndString(config, settings, wsOption, wsId, bestString, Guid.Empty);
+						var contentItem = GenerateWsPrefixAndString(config, settings, wsOption, wsId, bestString, Guid.Empty, first);
+						first = false;
 						bldr.Append(contentItem);
 					}
 				}
@@ -2483,7 +2487,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (!TsStringUtils.IsNullOrEmpty((ITsString)propertyValue))
 				{
-					var content = GenerateContentForString((ITsString)propertyValue, config, settings, guid);
+					var content = GenerateContentForString((ITsString)propertyValue, config, settings, guid, true);
 					if (!content.IsNullOrEmpty())
 					{
 						var className = settings.StylesGenerator.AddStyles(config).Trim('.'); ;
@@ -2531,7 +2535,7 @@ namespace SIL.FieldWorks.XWorks
 					var stp = para as IStTxtPara;
 					if (stp == null)
 						continue;
-					var contentPara = GenerateContentForString(stp.Contents, config, settings, guid);
+					var contentPara = GenerateContentForString(stp.Contents, config, settings, guid, true);
 					if (!contentPara.IsNullOrEmpty())
 					{
 						bldr.Append(contentPara);
@@ -2592,6 +2596,7 @@ namespace SIL.FieldWorks.XWorks
 			if (multiStringAccessor == null || multiStringAccessor.StringCount == 0)
 				return settings.ContentGenerator.CreateFragment();
 			var bldr = settings.ContentGenerator.CreateFragment();
+			bool first = true;
 			foreach (var option in wsOptions.Options)
 			{
 				if (!option.IsEnabled)
@@ -2618,7 +2623,8 @@ namespace SIL.FieldWorks.XWorks
 					// use the method in the multi-string to get the right string and set wsId to the used one
 					bestString = multiStringAccessor.GetAlternativeOrBestTss(wsId, out wsId);
 				}
-				var contentItem = GenerateWsPrefixAndString(config, settings, wsOptions, wsId, bestString, guid);
+				var contentItem = GenerateWsPrefixAndString(config, settings, wsOptions, wsId, bestString, guid, first);
+				first = false;
 
 				if (!String.IsNullOrEmpty(contentItem.ToString()))
 					bldr.Append(contentItem);
@@ -2646,6 +2652,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			var bldr = settings.ContentGenerator.CreateFragment();
+			bool first = true;
 			foreach (var option in wsOptions.Options)
 			{
 				if (!option.IsEnabled)
@@ -2666,7 +2673,8 @@ namespace SIL.FieldWorks.XWorks
 																					owningObject.Hvo, multiStringAccessor.Flid, (CoreWritingSystemDefinition)defaultWs);
 				}
 				var requestedString = multiStringAccessor.get_String(wsId);
-				bldr.Append(GenerateWsPrefixAndString(config, settings, wsOptions, wsId, requestedString, guid));
+				bldr.Append(GenerateWsPrefixAndString(config, settings, wsOptions, wsId, requestedString, guid, first));
+				first = false;
 			}
 			if (bldr.Length() > 0)
 			{
@@ -2678,14 +2686,14 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static IFragment GenerateWsPrefixAndString(ConfigurableDictionaryNode config, GeneratorSettings settings,
-			DictionaryNodeWritingSystemOptions wsOptions, int wsId, ITsString requestedString, Guid guid)
+			DictionaryNodeWritingSystemOptions wsOptions, int wsId, ITsString requestedString, Guid guid, bool first)
 		{
 			if (String.IsNullOrEmpty(requestedString.Text))
 			{
 				return settings.ContentGenerator.CreateFragment();
 			}
 			var wsName = settings.Cache.WritingSystemFactory.get_EngineOrNull(wsId).Id;
-			var content = GenerateContentForString(requestedString, config, settings, guid, wsName);
+			var content = GenerateContentForString(requestedString, config, settings, guid, first, wsName);
 			if (String.IsNullOrEmpty(content.ToString()))
 				return settings.ContentGenerator.CreateFragment();
 			return settings.ContentGenerator.GenerateWsPrefixWithString(config, settings, wsOptions.DisplayWritingSystemAbbreviations, wsId, content);
@@ -2694,11 +2702,11 @@ namespace SIL.FieldWorks.XWorks
 		private static IFragment GenerateContentForString(ITsString fieldValue, ConfigurableDictionaryNode config,
 			GeneratorSettings settings, string writingSystem = null)
 		{
-			return GenerateContentForString(fieldValue, config, settings, Guid.Empty, writingSystem);
+			return GenerateContentForString(fieldValue, config, settings, Guid.Empty, true, writingSystem);
 		}
 
 		private static IFragment GenerateContentForString(ITsString fieldValue, ConfigurableDictionaryNode config,
-			GeneratorSettings settings, Guid linkTarget, string writingSystem = null)
+			GeneratorSettings settings, Guid linkTarget, bool first, string writingSystem = null)
 		{
 			if (TsStringUtils.IsNullOrEmpty(fieldValue))
 				return settings.ContentGenerator.CreateFragment();
@@ -2759,7 +2767,7 @@ namespace SIL.FieldWorks.XWorks
 								externalLink = props.GetStrPropValue((int)FwTextPropType.ktptObjData);
 							}
 							writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(fieldValue.get_WritingSystem(i));
-							GenerateRunWithPossibleLink(settings, writingSystem, writer, style, text, linkTarget, rightToLeft, config, externalLink);
+							GenerateRunWithPossibleLink(settings, writingSystem, writer, style, text, linkTarget, rightToLeft, config, first, externalLink);
 						}
 
 						if (fieldValue.RunCount > 1)
@@ -2805,9 +2813,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static void GenerateRunWithPossibleLink(GeneratorSettings settings, string writingSystem, IFragmentWriter writer, string style,
-			string text, Guid linkDestination, bool rightToLeft, ConfigurableDictionaryNode config, string externalLink = null)
+			string text, Guid linkDestination, bool rightToLeft, ConfigurableDictionaryNode config, bool first, string externalLink = null)
 		{
-			settings.ContentGenerator.StartRun(writer, config, settings.PropertyTable, writingSystem);
+			settings.ContentGenerator.StartRun(writer, config, settings.PropertyTable, writingSystem, first);
 			var wsRtl = settings.Cache.WritingSystemFactory.get_Engine(writingSystem).RightToLeftScript;
 			if (rightToLeft != wsRtl)
 			{
@@ -3031,7 +3039,7 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateError(IFragmentWriter writer, GeneratorSettings settings, ConfigurableDictionaryNode config, string text)
 		{
 			var writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(settings.Cache.WritingSystemFactory.UserWs);
-			settings.ContentGenerator.StartRun(writer, null, settings.PropertyTable, writingSystem);
+			settings.ContentGenerator.StartRun(writer, null, settings.PropertyTable, writingSystem, true);
 			settings.ContentGenerator.SetRunStyle(writer, null, settings.PropertyTable, writingSystem, null, true);
 			if (text.Contains(TxtLineSplit))
 			{
