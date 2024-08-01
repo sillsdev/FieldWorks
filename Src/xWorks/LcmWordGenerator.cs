@@ -968,7 +968,41 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public IFragment AddProperty(ConfigurableDictionaryNode config, string className, bool isBlockProperty, string content)
 		{
-			return new DocFragment(content);
+			var propFrag = new DocFragment();
+
+			// Add Before text.
+			if (!string.IsNullOrEmpty(config.Before))
+			{
+				var beforeRun = CreateBeforeAfterBetweenRun(config.Before);
+				propFrag.DocBody.Append(beforeRun);
+			}
+
+			// Add the content with the style.
+			if (!string.IsNullOrEmpty(content))
+			{
+				string styleDisplayName = null;
+				if (!string.IsNullOrEmpty(config.Style))
+				{
+					string displayNameBase = !string.IsNullOrEmpty(config.DisplayLabel) ? config.DisplayLabel : config.Style;
+
+					Style style = GetOrCreateCharacterStyle(config.Style, displayNameBase, _propertyTable);
+					if (style != null)
+					{
+						styleDisplayName = style.StyleId;
+					}
+				}
+				var contentRun = CreateRun(content, styleDisplayName);
+				propFrag.DocBody.Append(contentRun);
+			}
+
+			// Add After text.
+			if (!string.IsNullOrEmpty(config.After))
+			{
+				var afterRun = CreateBeforeAfterBetweenRun(config.After);
+				propFrag.DocBody.Append(afterRun);
+			}
+
+			return propFrag;
 		}
 
 		public IFragment CreateFragment()
@@ -1592,7 +1626,7 @@ namespace SIL.FieldWorks.XWorks
 						return null;
 					}
 
-					s_styleCollection.AddStyle(retStyle, nodeStyleName, retStyle.StyleId);
+					s_styleCollection.AddStyle(retStyle, nodeStyleName, displayNameBase);
 				}
 			}
 			return retStyle;
