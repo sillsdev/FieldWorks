@@ -788,14 +788,14 @@ namespace SIL.FieldWorks.XWorks
 								  config.DictionaryNodeOptions is IParaOption &&
 								  ((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph;
 
-			// Add Before text, if it is not going to be displayed on it's own line.
+			// Add Before text, if it is not going to be displayed on its own line.
 			if (!eachOnANewLine && !string.IsNullOrEmpty(config.Before))
 			{
 				var beforeRun = CreateBeforeAfterBetweenRun(config.Before);
 				((DocFragment)elementContent).DocBody.PrependChild(beforeRun);
 			}
 
-			// Add After text, if it is not going to be displayed on it's own line.
+			// Add After text, if it is not going to be displayed on its own line.
 			if (!eachOnANewLine && !string.IsNullOrEmpty(config.After))
 			{
 				var afterRun = CreateBeforeAfterBetweenRun(config.After);
@@ -817,7 +817,7 @@ namespace SIL.FieldWorks.XWorks
 								  config.DictionaryNodeOptions is DictionaryNodeGroupingOptions &&
 								  ((DictionaryNodeGroupingOptions)(config.DictionaryNodeOptions)).DisplayEachInAParagraph;
 
-			// If the group is displayed on a new line then the group needs it's own paragraph, so
+			// If the group is displayed on a new line then the group needs its own paragraph, so
 			// the group style can be applied to the entire paragraph (applied to all of the runs
 			// contained in it).
 			if (eachOnANewLine)
@@ -825,7 +825,7 @@ namespace SIL.FieldWorks.XWorks
 				groupPara = new WP.Paragraph();
 			}
 
-			// Add Before text, if it is not going to be displayed on it's own line.
+			// Add Before text, if it is not going to be displayed on its own line.
 			if (!eachOnANewLine && !string.IsNullOrEmpty(config.Before))
 			{
 				var beforeRun = CreateBeforeAfterBetweenRun(config.Before);
@@ -851,7 +851,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			// Add After text, if it is not going to be displayed on it's own line.
+			// Add After text, if it is not going to be displayed on its own line.
 			if (!eachOnANewLine && !string.IsNullOrEmpty(config.After))
 			{
 				var afterRun = CreateBeforeAfterBetweenRun(config.After);
@@ -945,7 +945,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			// Add Between text, if it is not going to be displayed on it's own line
+			// Add Between text, if it is not going to be displayed on its own line
 			// and it is not the first item in the collection.
 			if (!first &&
 				config != null &&
@@ -1274,8 +1274,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public void AddEntryData(IFragmentWriter writer, List<ConfiguredLcmGenerator.ConfigFragment> pieces)
 		{
-			// TODO: the docfragment is now accessible via piece.Frag, and the configurabledictionarynode via piece.Config -- use this info to handle before/after content & display in separate paragraphs.
-
 			foreach (ConfiguredLcmGenerator.ConfigFragment piece in pieces)
 			{
 				WordFragmentWriter wordWriter = ((WordFragmentWriter)writer);
@@ -1416,9 +1414,27 @@ namespace SIL.FieldWorks.XWorks
 			wordDoc.MainDocumentPart.Document.Body.AppendChild(imgRun);
 			return imageFrag;
 		}
-		public IFragment AddImageCaption(ConfigurableDictionaryNode config, string captionContent)
+		public IFragment AddImageCaption(ConfigurableDictionaryNode config, IFragment captionContent)
 		{
-			return new DocFragment(captionContent);
+			// ConfiguredLcmGenerator constructs the caption in such a way that every run in captionContent will be in a distinct paragraph.
+			// We do need to maintain distinct runs b/c they may each have different character styles.
+			// However, all runs in the caption ought to be in a single paragraph.
+
+			var docFrag = new DocFragment();
+			if (!captionContent.IsNullOrEmpty())
+			{
+				// Create a paragraph using the textframe style for captions.
+				WP.ParagraphProperties paragraphProps = new WP.ParagraphProperties(
+					new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextframeStyle });
+				WP.Paragraph captionPara = docFrag.DocBody.AppendChild(new WP.Paragraph(paragraphProps));
+
+				// Clone each caption run and append it to the caption paragraph.
+				foreach (Run run in ((DocFragment)captionContent).DocBody.Descendants<Run>())
+				{
+					captionPara.AppendChild(run.CloneNode(true));
+				}
+			}
+			return docFrag;
 		}
 		public IFragment GenerateSenseNumber(ConfigurableDictionaryNode senseConfigNode, string formattedSenseNumber, string senseNumberWs)
 		{

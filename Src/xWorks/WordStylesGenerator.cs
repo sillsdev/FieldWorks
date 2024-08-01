@@ -472,8 +472,6 @@ namespace SIL.FieldWorks.XWorks
 			parProps.Append(textFrameProps);
 			frameStyle.Append(parProps);
 			styles.Append(frameStyle);
-
-			//TODO: define picture/caption character styles based on user specifications in FLEx
 			return styles;
 		}
 
