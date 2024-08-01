@@ -624,8 +624,17 @@ namespace SIL.FieldWorks.XWorks
 			/// <summary>
 			/// Add a new run to the WordFragment DocBody.
 			/// </summary>
-			public void AddRun(LcmCache cache, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string writingSystem)
+			public void AddRun(LcmCache cache, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string writingSystem, bool first)
 			{
+				// Add Between text, if it is not the first item.
+				if (!first &&
+					config != null &&
+					!string.IsNullOrEmpty(config.Between))
+				{
+					var betweenRun = CreateBeforeAfterBetweenRun(config.Between);
+					WordFragment.DocBody.Append(betweenRun);
+				}
+
 				var run = new WP.Run();
 				WordFragment.DocBody.AppendChild(run);
 
@@ -712,10 +721,38 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (displayAbbreviation)
 			{
-				// Prepend the run with the abbreviation content and abbreviation style.
-				string abbrev = ((CoreWritingSystemDefinition)settings.Cache.WritingSystemFactory.get_EngineOrNull(wsId)).Abbreviation;
+				//  Create the abbreviation run that uses the abbreviation style.
+				// Note: Appending a space is similar to the code in CssGenerator.cs GenerateCssForWritingSystemPrefix() that adds
+				//       a space after the abbreviation.
+				string abbrev = ((CoreWritingSystemDefinition)settings.Cache.WritingSystemFactory.get_EngineOrNull(wsId)).Abbreviation + " ";
 				var abbrevRun = CreateRun(abbrev, WordStylesGenerator.WritingSystemDisplayName);
-				((DocFragment)content).DocBody.PrependChild(abbrevRun);
+
+				// We can't just prepend the abbreviation run because the content might already contain a before or between run.
+				// The abbreviation run should go after the before or between run, but before the string run.
+				bool abbrevAdded = false;
+				var runs = ((DocFragment)content).DocBody.Elements<Run>().ToList<Run>();
+				if (runs.Count > 1)
+				{
+					// To determine if the first run is before or between content, check if it's run properties
+					// have the style associated with all before and between content.
+					Run firstRun = runs.First();
+					RunProperties runProps = firstRun.OfType<RunProperties>().FirstOrDefault();
+					if (runProps != null)
+					{
+						RunStyle runStyle = runProps.OfType<RunStyle>().FirstOrDefault();
+						if (runStyle != null && runStyle.Val == WordStylesGenerator.BeforeAfterBetweenDisplayName)
+						{
+							((DocFragment)content).DocBody.InsertAfter(abbrevRun, firstRun);
+							abbrevAdded = true;
+						}
+					}
+				}
+
+				// There is no before or between run, so just prepend the abbreviation run.
+				if (!abbrevAdded)
+				{
+					((DocFragment)content).DocBody.PrependChild(abbrevRun);
+				}
 
 				// Add the abbreviation style to the collection (if not already added).
 				GetOrCreateCharacterStyle(WordStylesGenerator.WritingSystemStyleName, WordStylesGenerator.WritingSystemDisplayName, _propertyTable);
@@ -856,6 +893,17 @@ namespace SIL.FieldWorks.XWorks
 				senseData.AppendBreak();
 			}
 
+			// Add Between text, if it is not going to be displayed on it's own line
+			// and it is not the first item.
+			if (!first &&
+				config != null &&
+				!eachOnANewLine &&
+				!string.IsNullOrEmpty(config.Between))
+			{
+				var betweenRun = CreateBeforeAfterBetweenRun(config.Between);
+				((DocFragment)senseData).DocBody.Append(betweenRun);
+			}
+
 			// Add sense numbers if needed
 			if (!senseNumberSpan.IsNullOrEmpty())
 			{
@@ -920,7 +968,41 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public IFragment AddProperty(ConfigurableDictionaryNode config, string className, bool isBlockProperty, string content)
 		{
-			return new DocFragment(content);
+			var propFrag = new DocFragment();
+
+			// Add Before text.
+			if (!string.IsNullOrEmpty(config.Before))
+			{
+				var beforeRun = CreateBeforeAfterBetweenRun(config.Before);
+				propFrag.DocBody.Append(beforeRun);
+			}
+
+			// Add the content with the style.
+			if (!string.IsNullOrEmpty(content))
+			{
+				string styleDisplayName = null;
+				if (!string.IsNullOrEmpty(config.Style))
+				{
+					string displayNameBase = !string.IsNullOrEmpty(config.DisplayLabel) ? config.DisplayLabel : config.Style;
+
+					Style style = GetOrCreateCharacterStyle(config.Style, displayNameBase, _propertyTable);
+					if (style != null)
+					{
+						styleDisplayName = style.StyleId;
+					}
+				}
+				var contentRun = CreateRun(content, styleDisplayName);
+				propFrag.DocBody.Append(contentRun);
+			}
+
+			// Add After text.
+			if (!string.IsNullOrEmpty(config.After))
+			{
+				var afterRun = CreateBeforeAfterBetweenRun(config.After);
+				propFrag.DocBody.Append(afterRun);
+			}
+
+			return propFrag;
 		}
 
 		public IFragment CreateFragment()
@@ -959,9 +1041,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="writer"></param>
 		/// <param name="writingSystem"></param>
-		public void StartRun(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string writingSystem)
+		public void StartRun(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string writingSystem, bool first)
 		{
-			((WordFragmentWriter)writer).AddRun(Cache, config, propTable, writingSystem);
+			((WordFragmentWriter)writer).AddRun(Cache, config, propTable, writingSystem, first);
 		}
 		public void EndRun(IFragmentWriter writer)
 		{
@@ -1461,21 +1543,22 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public IFragment WriteProcessedSenses(ConfigurableDictionaryNode config, bool isBlock, IFragment senseContent, string className, IFragment sharedGramInfo)
 		{
-			// Add Before text for the sharedGramInfo.
+			// Add Before text for the senses.
 			if (!string.IsNullOrEmpty(config.Before))
 			{
 				var beforeRun = CreateBeforeAfterBetweenRun(config.Before);
 				((DocFragment)sharedGramInfo).DocBody.PrependChild(beforeRun);
 			}
 
-			// Add After text for the sharedGramInfo.
+			sharedGramInfo.Append(senseContent);
+
+			// Add After text for the senses.
 			if (!string.IsNullOrEmpty(config.After))
 			{
 				var afterRun = CreateBeforeAfterBetweenRun(config.After);
 				((DocFragment)sharedGramInfo).DocBody.Append(afterRun);
 			}
 
-			sharedGramInfo.Append(senseContent);
 			return sharedGramInfo;
 		}
 		public IFragment AddAudioWsContent(string wsId, Guid linkTarget, IFragment fileContent)
@@ -1559,7 +1642,7 @@ namespace SIL.FieldWorks.XWorks
 						return null;
 					}
 
-					s_styleCollection.AddStyle(retStyle, nodeStyleName, retStyle.StyleId);
+					s_styleCollection.AddStyle(retStyle, nodeStyleName, displayNameBase);
 				}
 			}
 			return retStyle;
@@ -1763,7 +1846,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Creates a run using the text provided and using the style provided.
 		/// </summary>
-		private WP.Run CreateRun(string runText, string styleDisplayName)
+		internal static WP.Run CreateRun(string runText, string styleDisplayName)
 		{
 			WP.Run run = new WP.Run();
 			if (!string.IsNullOrEmpty(styleDisplayName))
@@ -1787,7 +1870,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="text">Text for the run.</param>
 		/// <returns>The BeforeAfterBetween run.</returns>
-		private WP.Run CreateBeforeAfterBetweenRun(string text)
+		internal static WP.Run CreateBeforeAfterBetweenRun(string text)
 		{
 			if(text.Contains("\\A"))
 			{
@@ -1795,7 +1878,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					RunProperties = new WP.RunProperties(new RunStyle() { Val = WordStylesGenerator.BeforeAfterBetweenDisplayName })
 				};
-				// If the before after between text has line break characters return a composite run including theline breaks
+				// If the before after between text has line break characters return a composite run including the line breaks
 				// Use Regex.Matches to capture both the content and the delimiters
 				var matches = Regex.Matches(text, @"(\\A|\\0A)|[^\\]*(?:(?=\\A|\\0A)|$)");
 				foreach (Match match in matches)

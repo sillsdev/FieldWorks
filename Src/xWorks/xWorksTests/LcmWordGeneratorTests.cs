@@ -16,6 +16,7 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.TestUtilities;
@@ -76,6 +77,8 @@ namespace SIL.FieldWorks.XWorks
 				styles.Add(new BaseStyleInfo { Name = "Abbreviation", IsParagraphStyle = false });
 			if (!styles.Contains("Dictionary-SenseNumber"))
 				styles.Add(new BaseStyleInfo { Name = "Dictionary-SenseNumber", IsParagraphStyle = false });
+			if (!styles.Contains("Style1"))
+				styles.Add(new BaseStyleInfo { Name = "Style1", IsParagraphStyle = false });
 
 			m_Clerk = CreateClerk();
 			m_propertyTable.SetProperty("ActiveClerk", m_Clerk, false);
@@ -308,6 +311,205 @@ namespace SIL.FieldWorks.XWorks
 			// 4. Sense number after text:		AFT
 			const string senseNumberTwoRun = "<w:r><w:rPr><w:rStyle w:val=\"Sense Number[lang='en']\" /></w:rPr><w:t xml:space=\"preserve\">BEF</w:t><w:t xml:space=\"preserve\">2</w:t><w:t xml:space=\"preserve\">AFT</w:t></w:r>";
 			Assert.True(result.mainDocPart.RootElement.OuterXml.Contains(senseNumberTwoRun));
+		}
+
+		[Test]
+		public void GenerateBeforeBetweenAfterContent()
+		{
+			var wsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" });
+			var senseOptions = new DictionaryNodeSenseOptions
+			{
+				NumberingStyle = "%d",
+				NumberEvenASingleSense = true
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = wsOpts,
+				Style = "Dictionary-Headword"
+			};
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = senseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+				Style = DictionaryNormal,
+				Before = "BE2",
+				Between = "TW2",
+				After = "AF2"
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = senseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode },
+				Style = DictionaryNormal,
+				Before = "BE1",
+				Between = "TW1",
+				After = "AF1"
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				Style = DictionaryNormal
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			int wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			ConfiguredXHTMLGeneratorTests.AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss", Cache, wsEn);
+
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
+			var outXml = result.mainDocPart.RootElement.OuterXml;
+
+			// Before text 'BE1' is before sense number '1' for 'gloss'.
+			const string beforeFirstSense =
+				"<w:t xml:space=\"preserve\">BE1</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Sense Number[lang='en']\" /></w:rPr><w:t xml:space=\"preserve\">1</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss[lang='en']\" /></w:rPr><w:t xml:space=\"preserve\">gloss</w:t>";
+			Assert.True(outXml.Contains(beforeFirstSense));
+
+			// Between text 'TW1' is before sense number '2' for 'second gloss'.
+			const string betweenSenses =
+				"<w:t xml:space=\"preserve\">TW1</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Sense Number[lang='en']\" /></w:rPr><w:t xml:space=\"preserve\">2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss[lang='en']\" /></w:rPr><w:t xml:space=\"preserve\">second gloss</w:t>";
+			Assert.True(outXml.Contains(betweenSenses));
+
+			// Before text 'BE2' is before sense number '1' for 'second gloss2.1'.
+			const string beforeFirstSubSense =
+				"<w:t xml:space=\"preserve\">BE2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Sense Number[lang='en']\" /></w:rPr><w:t xml:space=\"preserve\">1</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss[lang='en']\" /></w:rPr><w:t xml:space=\"preserve\">second gloss2.1</w:t>";
+			Assert.True(outXml.Contains(beforeFirstSubSense));
+
+			// Between text 'TW2' is before sense number '2' for 'second gloss2.2'.
+			const string betweenSubSenses =
+				"<w:t xml:space=\"preserve\">TW2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Sense Number[lang='en']\" /></w:rPr><w:t xml:space=\"preserve\">2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss[lang='en']\" /></w:rPr><w:t xml:space=\"preserve\">second gloss2.2</w:t>";
+			Assert.True(outXml.Contains(betweenSubSenses));
+
+			// After text 'AF2' is after 'second gloss2.2'.
+			const string afterSubSenses =
+				"<w:t xml:space=\"preserve\">second gloss2.2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Context\" /></w:rPr><w:t xml:space=\"preserve\">AF2</w:t>";
+			Assert.True(outXml.Contains(afterSubSenses));
+
+			// After text 'AF1' is after 'AF2'.
+			const string afterSenses =
+				"<w:t xml:space=\"preserve\">AF2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Context\" /></w:rPr><w:t xml:space=\"preserve\">AF1</w:t>";
+			Assert.True(outXml.Contains(afterSenses));
+		}
+
+
+		[Test]
+		public void GenerateBeforeBetweenAfterContentWithWSAbbreviation()
+		{
+			var wsOpts = new DictionaryNodeWritingSystemOptions
+			{
+				Options = new List<DictionaryNodeListOptions.DictionaryNodeOption>
+				{
+					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "en" },
+					new DictionaryNodeListOptions.DictionaryNodeOption { Id = "es" }
+				},
+				DisplayWritingSystemAbbreviations = true
+			};
+
+			var senseOptions = new DictionaryNodeSenseOptions
+			{
+				NumberingStyle = "%d",
+				NumberEvenASingleSense = true
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = wsOpts,
+				Style = "Dictionary-Headword",
+				Before = "BE3",
+				Between = "TW3",
+				After = "AF3"
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = senseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+				Style = DictionaryNormal,
+			};
+
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				Style = DictionaryNormal
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var wsEs = Cache.WritingSystemFactory.GetWsFromStr("es");
+			testEntry.SensesOS.First().Gloss.set_String(wsEs, TsStringUtils.MakeString("glossES", wsEs));
+
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
+			var outXml = result.mainDocPart.RootElement.OuterXml;
+
+			// Before text 'BE3' is after the sense number '1' and before the english abbreviation, which is before 'gloss'.
+			const string beforeAbbreviation =
+				"<w:t xml:space=\"preserve\">1</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Context\" /></w:rPr><w:t xml:space=\"preserve\">BE3</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Writing System Abbreviation\" /></w:rPr><w:t xml:space=\"preserve\">Eng </w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss[lang='en']\" /></w:rPr><w:t xml:space=\"preserve\">gloss</w:t>";
+			Assert.True(outXml.Contains(beforeAbbreviation));
+
+			// Between text 'TW3' is before the spanish abbreviation, which is before 'glossES'.
+			const string betweenAbbreviation =
+				"<w:t xml:space=\"preserve\">TW3</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Writing System Abbreviation\" /></w:rPr><w:t xml:space=\"preserve\">Spa </w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss[lang='es']\" /></w:rPr><w:t xml:space=\"preserve\">glossES</w:t>";
+			Assert.True(outXml.Contains(betweenAbbreviation));
+
+			// After text 'AF3' is after 'glossES'.
+			const string afterAbbreviation =
+				"<w:t xml:space=\"preserve\">glossES</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Context\" /></w:rPr><w:t xml:space=\"preserve\">AF3</w:t>";
+			Assert.True(outXml.Contains(afterAbbreviation));
+		}
+
+		[Test]
+		public void GeneratePropertyData()
+		{
+			var wsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" });
+
+			// Test with the 'DateModified' property.
+			var dateModifiedNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "DateModified",
+				Label = "DisplayNameBase",
+				Style = "Style1",
+				Before = "BE4",
+				After = "AF4"
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = wsOpts,
+				Style = "Dictionary-Headword"
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetSenseNodeOptions(),
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+				Style = DictionaryNormal
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode, dateModifiedNode },
+				Style = DictionaryNormal
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
+			var outXml = result.mainDocPart.RootElement.OuterXml;
+
+			// The property before text 'BE4' is first, followed by the style that is applied to the property, 'DisplayNameBase'.
+			const string beforeAndStyle = "<w:t xml:space=\"preserve\">BE4</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"DisplayNameBase\" /></w:rPr>";
+			Assert.True(outXml.Contains(beforeAndStyle));
+
+			// The property after text 'AF4' was written.
+			Assert.True(outXml.Contains("AF4"));
 		}
 	}
 }
