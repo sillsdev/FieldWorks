@@ -2148,7 +2148,15 @@ namespace SIL.FieldWorks.IText
 				return false;
 			}
 
-			FocusBox.ApproveAndMoveTarget(new AnalysisOccurrence(seg, ianalysis), this, fSaveGuess, true);
+			if (SelectedOccurrence == null)
+			{
+				TriggerAnnotationSelected(new AnalysisOccurrence(seg, ianalysis), fSaveGuess);
+			}
+			else
+			{
+				FocusBox.ApproveAndMoveTarget(new AnalysisOccurrence(seg, ianalysis), this, fSaveGuess, true);
+			}
+
 			return true;
 		}
 
