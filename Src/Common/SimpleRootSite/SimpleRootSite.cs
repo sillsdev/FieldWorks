@@ -47,6 +47,11 @@ namespace SIL.FieldWorks.Common.RootSites
 
 		/// <summary>This event gets fired when the AutoScrollPosition value changes</summary>
 		public event ScrollPositionChanged VerticalScrollPositionChanged;
+
+		/// <summary>
+		/// This event gets fired when a refresh is needed to change the scrollbar visibility.
+		/// </summary>
+		public event EventHandler OnRefreshForScrollBarVisibility;
 		#endregion Events
 
 		#region WindowsLanguageProfileSink class
@@ -1021,6 +1026,23 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			CheckDisposed();
 			return AdjustScrollRange1(dxdSize, dxdPosition, dydSize, dydPosition);
+		}
+
+		/// <inheritdoc/>
+		protected override void OnPreviewKeyDown(PreviewKeyDownEventArgs e)
+		{
+			OnRefreshForScrollBarVisibility -= RefreshIfNecessary;
+			OnRefreshForScrollBarVisibility += RefreshIfNecessary;
+
+			base.OnPreviewKeyDown(e);
+		}
+
+		private void RefreshIfNecessary(object sender, EventArgs e)
+		{
+			if (Visible)
+			{
+				m_mediator.PostMessage("MasterRefresh", null);
+			}
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -3678,6 +3700,8 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// -----------------------------------------------------------------------------------
 		protected override void OnLayout(LayoutEventArgs levent)
 		{
+			var scrollStatus = VScroll;
+
 			CheckDisposed();
 
 			if ((!DesignMode || AllowPaintingInDesigner) && m_fRootboxMade && m_fAllowLayout &&
@@ -3713,6 +3737,14 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			else
 				base.OnLayout(levent);
+
+			if (scrollStatus != VScroll)
+			{
+				// If the base layout has changed the scroll bar visibility, we might need to refresh the view
+				OnRefreshForScrollBarVisibility?.Invoke(this, EventArgs.Empty);
+				// Now that we've handled the event, we don't need to listen for it anymore
+				OnRefreshForScrollBarVisibility -= RefreshIfNecessary;
+			}
 		}
 
 		/// <summary>
@@ -4049,6 +4081,9 @@ namespace SIL.FieldWorks.Common.RootSites
 		protected override void OnKeyPress(KeyPressEventArgs e)
 		{
 			CheckDisposed();
+
+			OnRefreshForScrollBarVisibility -= RefreshIfNecessary;
+			OnRefreshForScrollBarVisibility += RefreshIfNecessary;
 
 			base.OnKeyPress(e);
 			if (!e.Handled)

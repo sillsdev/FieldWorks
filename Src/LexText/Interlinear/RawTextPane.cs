@@ -48,6 +48,7 @@ namespace SIL.FieldWorks.IText
 			get { return m_currentTool; }
 		}
 
+
 		public RawTextPane() : base(null)
 		{
 			BackColor = Color.FromKnownColor(KnownColor.Window);
@@ -224,13 +225,15 @@ namespace SIL.FieldWorks.IText
 
 		protected override void  OnKeyPress(KeyPressEventArgs e)
 		{
-			if (e.KeyChar == (int) Keys.Escape)
+			// Might need to handle scrollbar visibility changes so add a handler to refresh if necessary.
+			if (e.KeyChar == (int)Keys.Escape)
 			{
 				TurnOffClickInvisibleSpace();
 			}
 			base.OnKeyPress(e);
 			Cursor.Current = Cursors.IBeam;
 		}
+
 
 		Cursor m_invisibleSpaceCursor;
 
@@ -481,8 +484,8 @@ namespace SIL.FieldWorks.IText
 		{
 			if (Parent == null && string.IsNullOrEmpty(levent.AffectedProperty))
 				return; // width is meaningless, no point in doing extra work
-			// In a tab page this panel occupies the whole thing, so layout is wasted until
-			// our size is adjusted to match.
+						// In a tab page this panel occupies the whole thing, so layout is wasted until
+						// our size is adjusted to match.
 			if (Parent is TabPage && (Parent.Width - Parent.Padding.Horizontal) != this.Width)
 				return;
 			base.OnLayout(levent);
@@ -505,15 +508,15 @@ namespace SIL.FieldWorks.IText
 
 			switch (dpt)
 			{
-			case VwDelProbType.kdptBsAtStartPara:
-			case VwDelProbType.kdptDelAtEndPara:
-			case VwDelProbType.kdptNone:
-				return VwDelProbResponse.kdprDone;
-			case VwDelProbType.kdptBsReadOnly:
-			case VwDelProbType.kdptComplexRange:
-			case VwDelProbType.kdptDelReadOnly:
-			case VwDelProbType.kdptReadOnly:
-				return VwDelProbResponse.kdprFail;
+				case VwDelProbType.kdptBsAtStartPara:
+				case VwDelProbType.kdptDelAtEndPara:
+				case VwDelProbType.kdptNone:
+					return VwDelProbResponse.kdprDone;
+				case VwDelProbType.kdptBsReadOnly:
+				case VwDelProbType.kdptComplexRange:
+				case VwDelProbType.kdptDelReadOnly:
+				case VwDelProbType.kdptReadOnly:
+					return VwDelProbResponse.kdprFail;
 			}
 			return VwDelProbResponse.kdprAbort;
 		}
@@ -643,7 +646,7 @@ namespace SIL.FieldWorks.IText
 					ihvoEnd,
 					null, // don't set any special text props for typing
 					true); // install it
-				// Don't steal the focus from another window.  See FWR-1795.
+						   // Don't steal the focus from another window.  See FWR-1795.
 				if (ParentForm == Form.ActiveForm)
 					Focus();
 				// Scroll this selection into View.
@@ -675,7 +678,7 @@ namespace SIL.FieldWorks.IText
 				MakeTextSelectionAndScrollToView(bookmark.BeginCharOffset, bookmark.EndCharOffset, 0, bookmark.IndexOfParagraph);
 
 				VisibleChanged -= RawTextPane_VisibleChanged;
-			} 
+			}
 		}
 
 		#endregion
@@ -1032,12 +1035,12 @@ namespace SIL.FieldWorks.IText
 
 			// get para info
 			IStTxtPara para = Cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
-//			ITsTextProps props = StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs);
-//
-//			// set string info based on the para info
-//			ITsStrBldr bldr = (ITsStrBldr)tssVal.GetBldr();
-//			bldr.SetProperties(0, bldr.Length, props);
-//			tssVal = bldr.GetString();
+			//			ITsTextProps props = StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs);
+			//
+			//			// set string info based on the para info
+			//			ITsStrBldr bldr = (ITsStrBldr)tssVal.GetBldr();
+			//			bldr.SetProperties(0, bldr.Length, props);
+			//			tssVal = bldr.GetString();
 
 			// Add the text the user just typed to the paragraph - this destroys the selection
 			// because we replace the user prompt.
