@@ -1947,7 +1947,7 @@ namespace SIL.FieldWorks.XWorks
 
 				if (captionBldr.Length() != 0)
 				{
-					contentGenerator.WriteProcessedContents(writer, config, settings.ContentGenerator.AddImageCaption(config, captionBldr.ToString()));
+					contentGenerator.WriteProcessedContents(writer, config, settings.ContentGenerator.AddImageCaption(config, captionBldr));
 				}
 				writer.Flush();
 				return bldr;
