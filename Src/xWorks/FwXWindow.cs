@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using Microsoft.Win32;
@@ -1931,6 +1932,8 @@ namespace SIL.FieldWorks.XWorks
 			var form = ActiveForm;
 			if (form == null)
 				form = this;
+			Command command = (Command)commandObject;
+			string caption = command.ToolTip;
 			using (var dlg = new OpenFileDialogAdapter())
 			{
 				dlg.CheckFileExists = true;
@@ -1943,21 +1946,57 @@ namespace SIL.FieldWorks.XWorks
 					return true;
 				filename = dlg.FileName;
 			}
+			DialogResult result = MessageBox.Show(xWorksStrings.DeletePhonology, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+			if (result != DialogResult.Yes)
+				return true;
+			DeletePhonology();
 			using (new WaitCursor(form, true))
 			{
-				try
+				using (var dlg = new ProgressDialogWithTask(this))
 				{
-					var phonologyServices = new PhonologyServices(Cache);
-					phonologyServices.ImportPhonologyFromXml(filename);
-				}
-				catch (Exception ex)
-				{
-					Console.WriteLine("Error: " + ex.Message);
-					Command command = (Command)commandObject;
-					MessageBox.Show(ex.Message, command.ToolTip);
+					dlg.AllowCancel = true;
+					dlg.Maximum = 200;
+					dlg.Message = filename;
+					dlg.RunTask(true, ImportPhonology, filename, caption);
 				}
 			}
 			return true;
+		}
+
+		private object ImportPhonology(IThreadedProgress dlg, object[] parameters)
+		{
+			try
+			{
+				var phonologyServices = new PhonologyServices(Cache);
+				phonologyServices.ImportPhonologyFromXml((string)parameters[0]);
+				dlg.Step(200);
+				// Let the dialog update.
+				Thread.Sleep(100);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Error: " + ex.Message);
+				MessageBox.Show(ex.Message, (string)parameters[1]);
+			}
+			return false;
+		}
+
+
+		private void DeletePhonology()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			{
+				IPhPhonData phonData = Cache.LangProject.PhonologicalDataOA;
+				// Delete what is covered by ImportPhonology.
+				phonData.ContextsOS.Clear();
+				phonData.EnvironmentsOS.Clear();
+				phonData.FeatConstraintsOS.Clear();
+				phonData.NaturalClassesOS.Clear();
+				phonData.PhonemeSetsOS.Clear();
+				phonData.PhonRulesOS.Clear();
+				Cache.LanguageProject.PhFeatureSystemOA.TypesOC.Clear();
+				Cache.LanguageProject.PhFeatureSystemOA.FeaturesOC.Clear();
+			});
 		}
 
 		/// <summary>
