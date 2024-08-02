@@ -84,13 +84,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Whether this report is selected
 		/// </summary>
 		[JsonIgnore]
-		public Boolean IsSelected { get; set; }
+		public bool IsSelected { get; set; }
 
 		/// <summary>
 		/// Is this report the result of DiffParserReports?
 		/// </summary>
 		[JsonIgnore]
-		public Boolean IsDiff { get; set; }
+		public bool IsDiff { get; set; }
 
 		/// <summary>
 		/// The filename that the report came from.

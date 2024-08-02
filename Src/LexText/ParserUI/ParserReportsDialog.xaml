@@ -7,124 +7,104 @@
         d:DataContext="{d:DesignInstance Type=local:ParserReportsViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
         Title="{x:Static local:ParserUIStrings.ksParserTestReports}" WindowStartupLocation="CenterScreen"
-		SizeToContent="WidthAndHeight" MinHeight="300" MaxHeight="500"
+        SizeToContent="Width" MinHeight="300"
         WindowStyle="ThreeDBorderWindow">
+
 	<Window.Resources>
 		<local:FileTimeToDateTimeConverter x:Key="FileTimeToDateTimeConverter"/>
 		<local:MillisecondsToTimeSpanConverter x:Key="MillisecondsToTimeSpanConverter"/>
+		<Style x:Key="DataGridCheckBoxStyle" TargetType="CheckBox">
+				<EventSetter Event="PreviewMouseLeftButtonDown" Handler="CheckBox_PreviewMouseLeftButtonDown"/>
+		</Style>
 	</Window.Resources>
 
 	<Grid>
-		<DataGrid AutoGenerateColumns="False" CanUserAddRows="False" ItemsSource="{Binding ParserReports, Mode=TwoWay}">
-			<DataGrid.Columns>
-				<DataGridTemplateColumn>
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<Button Content="{x:Static local:ParserUIStrings.ksShowReport}"
-									ToolTip="{x:Static local:ParserUIStrings.ksShowReportToolTip}"
-							Click="ShowParserReport"
-							CommandParameter="{Binding}"/>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-				<DataGridTemplateColumn>
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<Button Content="{x:Static local:ParserUIStrings.ksDiffButton}"
-									ToolTip="{x:Static local:ParserUIStrings.ksDiffButtonToolTip}"
-							Click="DiffParserReports"
-							CommandParameter="{Binding}"/>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-				<DataGridTemplateColumn>
-					<DataGridTemplateColumn.Header>
-						<Label Content="{x:Static local:ParserUIStrings.ksDiffHeader}"
-							   ToolTip="{x:Static local:ParserUIStrings.ksDiffHeaderToolTip}"/>
-					</DataGridTemplateColumn.Header>
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<RadioButton GroupName="Diff" IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" />
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-				<DataGridTemplateColumn>
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<Button Content="delete"
-									ToolTip="{x:Static local:ParserUIStrings.ksDeleteToolTip}"
-							Click="DeleteParserReport"
-							CommandParameter="{Binding}"/>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-				<DataGridTextColumn Binding="{Binding SourceText}">
-					<DataGridTextColumn.Header>
-						<Label Content="{x:Static local:ParserUIStrings.ksText}"
-							   ToolTip="{x:Static local:ParserUIStrings.ksTextToolTip}"/>
-					</DataGridTextColumn.Header>
-				</DataGridTextColumn>
-				<DataGridTextColumn Binding="{Binding Timestamp, Converter={StaticResource FileTimeToDateTimeConverter}, StringFormat=\{0:g\}}">
-					<DataGridTextColumn.Header>
-						<Label Content="{x:Static local:ParserUIStrings.ksTimestamp}"
-							   ToolTip="{x:Static local:ParserUIStrings.ksTimestampToolTip}"/>
-					</DataGridTextColumn.Header>
-				</DataGridTextColumn>
-				<DataGridTextColumn Binding="{Binding NumWords}">
-					<DataGridTextColumn.Header>
-						<Label Content="{x:Static local:ParserUIStrings.ksNumWordsParsed}"
-							   ToolTip="{x:Static local:ParserUIStrings.ksNumWordsParsedToolTip}"/>
-					</DataGridTextColumn.Header>
-				</DataGridTextColumn>
-				<DataGridTextColumn Binding="{Binding NumZeroParses}">
-					<DataGridTextColumn.Header>
-						<Label Content="{x:Static local:ParserUIStrings.ksNumZeroParses}"
-							   ToolTip="{x:Static local:ParserUIStrings.ksNumZeroParsesToolTip}"/>
-					</DataGridTextColumn.Header>
-				</DataGridTextColumn>
-				<DataGridTextColumn Binding="{Binding TotalUserApprovedAnalysesMissing}">
-					<DataGridTextColumn.Header>
-						<Label Content="{x:Static local:ParserUIStrings.ksTotalMissingAnalyses}"
-							   ToolTip="{x:Static local:ParserUIStrings.ksTotalMissingAnalysesToolTip}"/>
-					</DataGridTextColumn.Header>
-				</DataGridTextColumn>
-				<DataGridTextColumn Binding="{Binding TotalUserDisapprovedAnalyses}">
-					<DataGridTextColumn.Header>
-						<Label Content="{x:Static local:ParserUIStrings.ksTotalDisapprovedAnalyses}"
-							   ToolTip="{x:Static local:ParserUIStrings.ksTotalDisapprovedAnalysesToolTip}"/>
-					</DataGridTextColumn.Header>
-				</DataGridTextColumn>
-				<DataGridTextColumn Binding="{Binding TotalUserNoOpinionAnalyses}">
-					<DataGridTextColumn.Header>
-						<Label Content="{x:Static local:ParserUIStrings.ksTotalNoOpinionAnalyses}"
-							   ToolTip="{x:Static local:ParserUIStrings.ksTotalNoOpinionAnalysesToolTip}"/>
-					</DataGridTextColumn.Header>
-				</DataGridTextColumn>
-				<DataGridTextColumn Binding="{Binding NumParseErrors}">
-					<DataGridTextColumn.Header>
-						<Label Content="{x:Static local:ParserUIStrings.ksNumParseErrors}"
-							   ToolTip="{x:Static local:ParserUIStrings.ksNumParseErrorsToolTip}"/>
-					</DataGridTextColumn.Header>
-				</DataGridTextColumn>
-				<DataGridTextColumn Binding="{Binding TotalAnalyses}">
-					<DataGridTextColumn.Header>
-						<Label Content="{x:Static local:ParserUIStrings.ksTotalAnalyses}"
-							   ToolTip="{x:Static local:ParserUIStrings.ksTotalAnalysesToolTip}"/>
-					</DataGridTextColumn.Header>
-				</DataGridTextColumn>
-				<DataGridTextColumn Binding="{Binding TotalParseTime, Converter={StaticResource MillisecondsToTimeSpanConverter}, StringFormat=\{0:g\}}">
-					<DataGridTextColumn.Header>
-						<Label Content="{x:Static local:ParserUIStrings.ksTotalParseTime}"
-							   ToolTip="{x:Static local:ParserUIStrings.ksTotalParseTimeToolTip}"/>
-					</DataGridTextColumn.Header>
-				</DataGridTextColumn>
-				<DataGridTextColumn Binding="{Binding MachineName}">
-					<DataGridTextColumn.Header>
-						<Label Content="{x:Static local:ParserUIStrings.ksMachineName}"
-							   ToolTip="{x:Static local:ParserUIStrings.ksMachineNameToolTip}"/>
-					</DataGridTextColumn.Header>
-				</DataGridTextColumn>
-			</DataGrid.Columns>
-		</DataGrid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<ScrollViewer VerticalScrollBarVisibility="Auto">
+			<DataGrid AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" MouseDoubleClick="DataGrid_MouseDoubleClick" ItemsSource="{Binding ParserReports, Mode=TwoWay}">
+				<DataGrid.Columns>
+					<DataGridCheckBoxColumn Binding="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						ElementStyle="{StaticResource DataGridCheckBoxStyle}">
+						<DataGridCheckBoxColumn.Header>
+							<Label Content="{x:Static local:ParserUIStrings.ksSelect}" />
+						</DataGridCheckBoxColumn.Header>
+					</DataGridCheckBoxColumn>
+					<DataGridTextColumn Binding="{Binding ParserReport.SourceText}">
+						<DataGridTextColumn.Header>
+							<Label Content="{x:Static local:ParserUIStrings.ksText}" ToolTip="{x:Static local:ParserUIStrings.ksTextToolTip}"/>
+						</DataGridTextColumn.Header>
+					</DataGridTextColumn>
+					<DataGridTextColumn Binding="{Binding Timestamp, StringFormat=\{0:dd MMM yyyy hh:mm tt\}}">
+						<DataGridTextColumn.Header>
+							<Label Content="{x:Static local:ParserUIStrings.ksTimestamp}" ToolTip="{x:Static local:ParserUIStrings.ksTimestampToolTip}"/>
+						</DataGridTextColumn.Header>
+					</DataGridTextColumn>
+					<DataGridTextColumn Binding="{Binding ParserReport.NumWords}">
+						<DataGridTextColumn.Header>
+							<Label Content="{x:Static local:ParserUIStrings.ksNumWordsParsed}" ToolTip="{x:Static local:ParserUIStrings.ksNumWordsParsedToolTip}"/>
+						</DataGridTextColumn.Header>
+					</DataGridTextColumn>
+					<DataGridTextColumn Binding="{Binding ParserReport.NumZeroParses}">
+						<DataGridTextColumn.Header>
+							<Label Content="{x:Static local:ParserUIStrings.ksNumZeroParses}" ToolTip="{x:Static local:ParserUIStrings.ksNumZeroParsesToolTip}"/>
+						</DataGridTextColumn.Header>
+					</DataGridTextColumn>
+					<DataGridTextColumn Binding="{Binding ParserReport.TotalUserApprovedAnalysesMissing}">
+						<DataGridTextColumn.Header>
+							<Label Content="{x:Static local:ParserUIStrings.ksTotalMissingAnalyses}" ToolTip="{x:Static local:ParserUIStrings.ksTotalMissingAnalysesToolTip}"/>
+						</DataGridTextColumn.Header>
+					</DataGridTextColumn>
+					<DataGridTextColumn Binding="{Binding ParserReport.TotalUserDisapprovedAnalyses}">
+						<DataGridTextColumn.Header>
+							<Label Content="{x:Static local:ParserUIStrings.ksTotalDisapprovedAnalyses}" ToolTip="{x:Static local:ParserUIStrings.ksTotalDisapprovedAnalysesToolTip}"/>
+						</DataGridTextColumn.Header>
+					</DataGridTextColumn>
+					<DataGridTextColumn Binding="{Binding ParserReport.TotalUserNoOpinionAnalyses}">
+						<DataGridTextColumn.Header>
+							<Label Content="{x:Static local:ParserUIStrings.ksTotalNoOpinionAnalyses}" ToolTip="{x:Static local:ParserUIStrings.ksTotalNoOpinionAnalysesToolTip}"/>
+						</DataGridTextColumn.Header>
+					</DataGridTextColumn>
+					<DataGridTextColumn Binding="{Binding ParserReport.NumParseErrors}">
+						<DataGridTextColumn.Header>
+							<Label Content="{x:Static local:ParserUIStrings.ksNumParseErrors}" ToolTip="{x:Static local:ParserUIStrings.ksNumParseErrorsToolTip}"/>
+						</DataGridTextColumn.Header>
+					</DataGridTextColumn>
+					<DataGridTextColumn Binding="{Binding ParserReport.TotalAnalyses}">
+						<DataGridTextColumn.Header>
+							<Label Content="{x:Static local:ParserUIStrings.ksTotalAnalyses}" ToolTip="{x:Static local:ParserUIStrings.ksTotalAnalysesToolTip}"/>
+						</DataGridTextColumn.Header>
+					</DataGridTextColumn>
+					<DataGridTextColumn Binding="{Binding ParserReport.TotalParseTime, Converter={StaticResource MillisecondsToTimeSpanConverter}, StringFormat=\{0:g\}}">
+						<DataGridTextColumn.Header>
+							<Label Content="{x:Static local:ParserUIStrings.ksTotalParseTime}" ToolTip="{x:Static local:ParserUIStrings.ksTotalParseTimeToolTip}"/>
+						</DataGridTextColumn.Header>
+					</DataGridTextColumn>
+					<DataGridTextColumn Binding="{Binding ParserReport.MachineName}">
+						<DataGridTextColumn.Header>
+							<Label Content="{x:Static local:ParserUIStrings.ksMachineName}" ToolTip="{x:Static local:ParserUIStrings.ksMachineNameToolTip}"/>
+						</DataGridTextColumn.Header>
+					</DataGridTextColumn>
+				</DataGrid.Columns>
+			</DataGrid>
+		</ScrollViewer>
+
+		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Height="40">
+			<Button Content="{x:Static local:ParserUIStrings.ksShowReport}"
+                    ToolTip="{x:Static local:ParserUIStrings.ksShowReportToolTip}"
+                    IsEnabled="{Binding CanShowReport}"
+                    Click="ShowParserReport" Width="100" Margin="5"/>
+			<Button Content="{x:Static local:ParserUIStrings.ksDiffButton}"
+                    ToolTip="{x:Static local:ParserUIStrings.ksDiffButtonToolTip}"
+                    IsEnabled="{Binding CanDiffReports}"
+                    Click="DiffParserReports" Width="100" Margin="5" />
+			<Button Content="{Binding DiffButtonContent}"
+                    ToolTip="{x:Static local:ParserUIStrings.ksDeleteToolTip}"
+                    IsEnabled="{Binding CanDeleteReports}"
+                    Click="DeleteParserReport" Width="100" Margin="5" />
+		</StackPanel>
 	</Grid>
 </Window>

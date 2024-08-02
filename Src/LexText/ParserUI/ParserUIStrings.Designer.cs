@@ -88,6 +88,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete {0} Reports.
+        /// </summary>
+        public static string ksDelete {
+            get {
+                return ResourceManager.GetString("ksDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete this test report from the disk.
         /// </summary>
         public static string ksDeleteToolTip {
@@ -106,7 +115,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to diff.
+        ///   Looks up a localized string similar to _Compare.
         /// </summary>
         public static string ksDiffButton {
             get {
@@ -115,7 +124,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show the difference between this test report and the report selected by the radio button (older report is subtracted from newer report).
+        ///   Looks up a localized string similar to Show the difference between two selected reports (older report is subtracted from newer report) [Alt-C].
         /// </summary>
         public static string ksDiffButtonToolTip {
             get {
@@ -430,7 +439,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to reparse.
+        ///   Looks up a localized string similar to Try A Word....
         /// </summary>
         public static string ksReparse {
             get {
@@ -448,6 +457,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select.
+        /// </summary>
+        public static string ksSelect {
+            get {
+                return ResourceManager.GetString("ksSelect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please select a second report other than this report using the radio button in the column labelled &apos;Diff With&apos;..
         /// </summary>
         public static string ksSelectDiffReport {
@@ -457,7 +475,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to show.
+        ///   Looks up a localized string similar to Show.
         /// </summary>
         public static string ksShowAnalyses {
             get {
@@ -475,7 +493,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to show.
+        ///   Looks up a localized string similar to Show Report.
         /// </summary>
         public static string ksShowReport {
             get {
