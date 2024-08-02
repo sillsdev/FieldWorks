@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private Dictionary<IWfiWordform, ParseResult> m_checkParserResults = null;
 		private int m_checkParserResultsCount = 0;
 		private string m_sourceText = null;
-		private ObservableCollection<ParserReport> m_parserReports = null;
+		private ObservableCollection<ParserReportViewModel> m_parserReports = null;
 		private ParserReportsDialog m_parserReportsDialog = null;
 
 		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
@@ -742,12 +742,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (m_parserReports == null)
 			{
-				m_parserReports = new ObservableCollection<ParserReport>();
+				m_parserReports = new ObservableCollection<ParserReportViewModel>();
 				var reportDir = ParserReport.GetProjectReportsDirectory(m_cache);
 				foreach (string filename in Directory.EnumerateFiles(reportDir, "*.json"))
 				{
 					var parserReport = ParserReport.ReadJsonFile(filename);
-					m_parserReports.Add(parserReport);
+					m_parserReports.Add(new ParserReportViewModel { ParserReport = parserReport});
 				}
 			}
 		}
@@ -761,7 +761,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// m_parserReportsDialog's window updates when m_parserReports changes
 			// because m_parserReports is an ObservableCollection.
 			// Add at front so that newest reports appear first.
-			m_parserReports.Insert(0, parserReport);
+			m_parserReports.Insert(0, new ParserReportViewModel { ParserReport = parserReport });
 		}
 
 		/// <summary>
