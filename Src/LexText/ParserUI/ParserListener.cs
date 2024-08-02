@@ -661,6 +661,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			return parserReport;
 		}
 
+		/// <summary>
+		/// Suppress this parse result if it is an uppercase wordform whose analyses all came from its lowercase version.
+		/// This only happens in projects that were parsed before we decided that the case of wordforms in analyses
+		/// should be determined by the case of the word that was parsed rather than the case of the surface form.
+		/// So, the wordform for "The" should be "the" rather than "The" because "The" is parsed as the determiner "the".
+		/// </summary>
+		/// <param name="wordform"></param>
+		/// <returns></returns>
 		private bool SuppressableParseResult(IWfiWordform wordform)
 		{
 			var result = m_checkParserResults[wordform];
@@ -668,6 +676,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				return false;
 			// See if there is a lowercase version of wordform in the parse results.
 			ITsString itsString = wordform.Form.VernacularDefaultWritingSystem;
+			if (itsString == null || itsString.Text == null)
+				return true;
 			var cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(itsString.get_WritingSystemAt(0)));
 			string lcText = cf.ToLower(itsString.Text);
 			if (lcText != itsString.Text)
