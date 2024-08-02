@@ -186,4 +186,7 @@
   <data name="ksUnknownNaturalClass" xml:space="preserve">
     <value>Unknown Natural Class!</value>
   </data>
+  <data name="ksTestX" xml:space="preserve">
+    <value>Tested {0}</value>
+  </data>
 </root>

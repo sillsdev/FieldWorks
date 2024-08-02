@@ -31,6 +31,7 @@ using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using XCore;
 using SIL.ObjectModel;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -645,6 +646,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				foreach (var wordform in m_checkParserResults.Keys)
 				{
+					if (SuppressableParseResult(wordform))
+						continue;
 					var parseResult = m_checkParserResults[wordform];
 					var parseReport = new ParseReport(wordform, parseResult);
 					var form = wordform.Form.VernacularDefaultWritingSystem;
@@ -656,6 +659,49 @@ namespace SIL.FieldWorks.LexText.Controls
 			// Clear the data we wrote.
 			m_checkParserResults = null;
 			return parserReport;
+		}
+
+		private bool SuppressableParseResult(IWfiWordform wordform)
+		{
+			var result = m_checkParserResults[wordform];
+			if (result.Analyses.Count > 0)
+				return false;
+			// See if there is a lowercase version of wordform in the parse results.
+			ITsString itsString = wordform.Form.VernacularDefaultWritingSystem;
+			var cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(itsString.get_WritingSystemAt(0)));
+			string lcText = cf.ToLower(itsString.Text);
+			if (lcText != itsString.Text)
+			{
+				var lcItsString = TsStringUtils.MakeString(lcText, itsString.get_WritingSystem(0));
+				IWfiWordform lcWordform;
+				if (m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(lcItsString, out lcWordform))
+				{
+					if (m_checkParserResults.ContainsKey(lcWordform))
+					{
+						var lcResult = m_checkParserResults[lcWordform];
+						// See if lcResult covers wordform's approved analyses.
+						var userAgent = wordform.Cache.LanguageProject.DefaultUserAgent;
+						foreach (IWfiAnalysis wfAnalysis in wordform.AnalysesOC)
+						{
+							var wfOpinion = wfAnalysis.GetAgentOpinion(userAgent);
+							if (wfOpinion == Opinions.approves)
+							{
+								foreach (ParseAnalysis lcWfAnalysis in lcResult.Analyses)
+								{
+									if (!lcWfAnalysis.MatchesIWfiAnalysis(wfAnalysis))
+									{
+										return false;
+									}
+								}
+							}
+						}
+						// All approved analyses are covered.
+						// Suppress the parse results for wordform.
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		/// <summary>

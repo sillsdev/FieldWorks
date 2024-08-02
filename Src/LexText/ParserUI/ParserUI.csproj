@@ -298,6 +298,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ParserUIStrings.resx</DependentUpon>
     </Compile>
+    <Compile Include="MillisecondsToTimeSpanConverter.cs" />
+    <Compile Include="PositiveIntToRedBrushConverter.cs" />
     <Compile Include="TryAWordDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -325,7 +327,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ParserUIStrings.resx">
       <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ParserUIStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="TryAWordDlg.resx">
