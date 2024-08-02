@@ -77,6 +77,8 @@ namespace SIL.FieldWorks.XWorks
 				styles.Add(new BaseStyleInfo { Name = "Abbreviation", IsParagraphStyle = false });
 			if (!styles.Contains("Dictionary-SenseNumber"))
 				styles.Add(new BaseStyleInfo { Name = "Dictionary-SenseNumber", IsParagraphStyle = false });
+			if (!styles.Contains("Style1"))
+				styles.Add(new BaseStyleInfo { Name = "Style1", IsParagraphStyle = false });
 
 			m_Clerk = CreateClerk();
 			m_propertyTable.SetProperty("ActiveClerk", m_Clerk, false);
@@ -460,6 +462,54 @@ namespace SIL.FieldWorks.XWorks
 			const string afterAbbreviation =
 				"<w:t xml:space=\"preserve\">glossES</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Context\" /></w:rPr><w:t xml:space=\"preserve\">AF3</w:t>";
 			Assert.True(outXml.Contains(afterAbbreviation));
+		}
+
+		[Test]
+		public void GeneratePropertyData()
+		{
+			var wsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" });
+
+			// Test with the 'DateModified' property.
+			var dateModifiedNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "DateModified",
+				Label = "DisplayNameBase",
+				Style = "Style1",
+				Before = "BE4",
+				After = "AF4"
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = wsOpts,
+				Style = "Dictionary-Headword"
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetSenseNodeOptions(),
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+				Style = DictionaryNormal
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode, dateModifiedNode },
+				Style = DictionaryNormal
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
+			var outXml = result.mainDocPart.RootElement.OuterXml;
+
+			// The property before text 'BE4' is first, followed by the style that is applied to the property, 'DisplayNameBase'.
+			const string beforeAndStyle = "<w:t xml:space=\"preserve\">BE4</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"DisplayNameBase\" /></w:rPr>";
+			Assert.True(outXml.Contains(beforeAndStyle));
+
+			// The property after text 'AF4' was written.
+			Assert.True(outXml.Contains("AF4"));
 		}
 	}
 }

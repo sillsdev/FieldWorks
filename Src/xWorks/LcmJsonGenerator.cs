@@ -353,9 +353,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public IFragment AddImageCaption(ConfigurableDictionaryNode config, string captionContent)
+		public IFragment AddImageCaption(ConfigurableDictionaryNode config, IFragment captionContent)
 		{
-			return new StringFragment(captionContent);
+			return new StringFragment(captionContent.ToString());
 		}
 
 		public IFragment GenerateSenseNumber(ConfigurableDictionaryNode config, string formattedSenseNumber, string wsId)

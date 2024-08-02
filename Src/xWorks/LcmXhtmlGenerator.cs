@@ -930,7 +930,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public IFragment AddImageCaption(ConfigurableDictionaryNode config, string captionContent)
+		public IFragment AddImageCaption(ConfigurableDictionaryNode config, IFragment captionContent)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);
@@ -938,7 +938,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				xw.WriteStartElement("div");
 				xw.WriteAttributeString("class", "captionContent");
-				xw.WriteRaw(captionContent);
+				xw.WriteRaw(captionContent.ToString());
 				xw.WriteEndElement();
 				xw.Flush();
 				return fragment;
