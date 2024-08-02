@@ -259,7 +259,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This will permanently delete the existing phonology.  Do you want to continue?.
+        ///   Looks up a localized string similar to This will permanently delete the existing phonology and all references to it.  Do you want to continue?.
         /// </summary>
         internal static string DeletePhonology {
             get {

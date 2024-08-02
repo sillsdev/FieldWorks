@@ -1263,6 +1263,6 @@ See USFM documentation for help.</value>
     <value>Initial connection failed retrying...</value>
   </data>
   <data name="DeletePhonology" xml:space="preserve">
-    <value>This will permanently delete the existing phonology.  Do you want to continue?</value>
+    <value>This will permanently delete the existing phonology and all references to it.  Do you want to continue?</value>
   </data>
 </root>
