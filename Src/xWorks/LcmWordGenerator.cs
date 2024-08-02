@@ -1299,7 +1299,13 @@ namespace SIL.FieldWorks.XWorks
 					switch (elem)
 					{
 						case WP.Run run:
-							if (config.Label == "Pictures" || config.Parent?.Label == "Pictures")
+							Boolean containsDrawing = run.Descendants<Drawing>().Any();
+							// Image captions have a Pictures node as their parent.
+							// For a main entry, an image will have the "Pictures" ConfigurableDictionaryNode associated with it.
+							// For subentries, however, the image is a descendant of a "Subentries" ConfigurableDictionaryNode.
+							// Thus, to know if we're dealing with an image and/or caption,
+							// we check if the node or its parent is a picture Node, or if the run contains a descendant that is a picture.
+							if (config.Label == "Pictures" || config.Parent?.Label == "Pictures" || containsDrawing)
 							{
 								// Runs containing pictures or captions need to be in separate paragraphs
 								// from whatever precedes and follows them because they will be added into textframes,
@@ -1321,7 +1327,7 @@ namespace SIL.FieldWorks.XWorks
 								// [image1 run, caption1 run, copyright&license1 run], [image2 run, caption2 run, copyright&license2 run], ...
 								// We need empty paragraphs between the [] textframe chunks, which corresponds to adding an empty paragraph
 								// immediately before any image run other than the first image run in a piece.
-								if (run.Descendants<Drawing>().Any())
+								if (containsDrawing)
 								{
 									if (pieceHasImage)
 									{
