@@ -31,6 +31,7 @@ using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using XCore;
 using SIL.ObjectModel;
+using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -63,7 +64,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private Dictionary<IWfiWordform, ParseResult> m_checkParserResults = null;
 		private int m_checkParserResultsCount = 0;
 		private string m_sourceText = null;
-		private ObservableCollection<ParserReport> m_parserReports = null;
+		private ObservableCollection<ParserReportViewModel> m_parserReports = null;
 		private ParserReportsDialog m_parserReportsDialog = null;
 
 		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
@@ -645,6 +646,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				foreach (var wordform in m_checkParserResults.Keys)
 				{
+					if (SuppressableParseResult(wordform))
+						continue;
 					var parseResult = m_checkParserResults[wordform];
 					var parseReport = new ParseReport(wordform, parseResult);
 					var form = wordform.Form.VernacularDefaultWritingSystem;
@@ -656,6 +659,59 @@ namespace SIL.FieldWorks.LexText.Controls
 			// Clear the data we wrote.
 			m_checkParserResults = null;
 			return parserReport;
+		}
+
+		/// <summary>
+		/// Suppress this parse result if it is an uppercase wordform whose analyses all came from its lowercase version.
+		/// This only happens in projects that were parsed before we decided that the case of wordforms in analyses
+		/// should be determined by the case of the word that was parsed rather than the case of the surface form.
+		/// So, the wordform for "The" should be "the" rather than "The" because "The" is parsed as the determiner "the".
+		/// </summary>
+		/// <param name="wordform"></param>
+		/// <returns></returns>
+		private bool SuppressableParseResult(IWfiWordform wordform)
+		{
+			var result = m_checkParserResults[wordform];
+			if (result.Analyses.Count > 0)
+				return false;
+			// See if there is a lowercase version of wordform in the parse results.
+			ITsString itsString = wordform.Form.VernacularDefaultWritingSystem;
+			if (itsString == null || itsString.Text == null)
+				return true;
+			var cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(itsString.get_WritingSystemAt(0)));
+			string lcText = cf.ToLower(itsString.Text);
+			if (lcText != itsString.Text)
+			{
+				var lcItsString = TsStringUtils.MakeString(lcText, itsString.get_WritingSystem(0));
+				IWfiWordform lcWordform;
+				if (m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(lcItsString, out lcWordform))
+				{
+					if (m_checkParserResults.ContainsKey(lcWordform))
+					{
+						var lcResult = m_checkParserResults[lcWordform];
+						// See if lcResult covers wordform's approved analyses.
+						var userAgent = wordform.Cache.LanguageProject.DefaultUserAgent;
+						foreach (IWfiAnalysis wfAnalysis in wordform.AnalysesOC)
+						{
+							var wfOpinion = wfAnalysis.GetAgentOpinion(userAgent);
+							if (wfOpinion == Opinions.approves)
+							{
+								foreach (ParseAnalysis lcWfAnalysis in lcResult.Analyses)
+								{
+									if (!lcWfAnalysis.MatchesIWfiAnalysis(wfAnalysis))
+									{
+										return false;
+									}
+								}
+							}
+						}
+						// All approved analyses are covered.
+						// Suppress the parse results for wordform.
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		/// <summary>
@@ -686,12 +742,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (m_parserReports == null)
 			{
-				m_parserReports = new ObservableCollection<ParserReport>();
+				m_parserReports = new ObservableCollection<ParserReportViewModel>();
 				var reportDir = ParserReport.GetProjectReportsDirectory(m_cache);
 				foreach (string filename in Directory.EnumerateFiles(reportDir, "*.json"))
 				{
 					var parserReport = ParserReport.ReadJsonFile(filename);
-					m_parserReports.Add(parserReport);
+					m_parserReports.Add(new ParserReportViewModel { ParserReport = parserReport});
 				}
 			}
 		}
@@ -705,7 +761,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			// m_parserReportsDialog's window updates when m_parserReports changes
 			// because m_parserReports is an ObservableCollection.
 			// Add at front so that newest reports appear first.
-			m_parserReports.Insert(0, parserReport);
+			m_parserReports.Insert(0, new ParserReportViewModel { ParserReport = parserReport });
 		}
 
 		/// <summary>

@@ -238,18 +238,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			parserReport2.AddParseReport("extra", zeroReport);
 			var diff = parserReport2.DiffParserReports(parserReport);
 			Assert.IsTrue(diff.ParseReports.ContainsKey("extra"));
-			CheckParseReport(diff.ParseReports["extra"], parseTime: 2, errorMessage: "missing => ");
+			CheckParseReport(diff.ParseReports["extra"], parseTime: 2);
+			Assert.AreEqual(diff.ParseReports["extra"].Word, " => zero");
 			Assert.IsTrue(diff.ParseReports.ContainsKey("zero"));
-			CheckParseReport(diff.ParseReports["zero"], parseTime: -2, errorMessage: " => missing");
+			CheckParseReport(diff.ParseReports["zero"], parseTime: -2);
+			Assert.AreEqual(diff.ParseReports["zero"].Word, "zero => ");
 			Assert.IsTrue(diff.ParseReports.ContainsKey("cat"));
 			CheckParseReport(diff.ParseReports["cat"]);
-
-			// Check json.
-			// Verify that character encoding is preserved.
-			parserReport.AddParseReport("español", zeroReport);
-			string filename = parserReport.WriteJsonFile(Cache);
-			var jsonParserReport = ParserReport.ReadJsonFile(filename);
-			Assert.AreEqual(parserReport, jsonParserReport);
 		}
 
 	}

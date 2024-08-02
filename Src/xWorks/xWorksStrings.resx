@@ -1262,4 +1262,7 @@ See USFM documentation for help.</value>
   <data name="UploadToWebonaryController_RetryAfterFailedConnection" xml:space="preserve">
     <value>Initial connection failed retrying...</value>
   </data>
+  <data name="DeletePhonology" xml:space="preserve">
+    <value>This will permanently delete the existing phonology and all references to it.  Do you want to continue?</value>
+  </data>
 </root>

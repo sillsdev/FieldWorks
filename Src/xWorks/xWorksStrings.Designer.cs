@@ -259,6 +259,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This will permanently delete the existing phonology and all references to it.  Do you want to continue?.
+        /// </summary>
+        internal static string DeletePhonology {
+            get {
+                return ResourceManager.GetString("DeletePhonology", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete this custom view.
         /// </summary>
         internal static string DeleteViewTooltip {
@@ -2981,7 +2990,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Initial Connection failed retrying....
+        ///   Looks up a localized string similar to Initial connection failed retrying....
         /// </summary>
         internal static string UploadToWebonaryController_RetryAfterFailedConnection {
             get {

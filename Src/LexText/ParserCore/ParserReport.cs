@@ -84,13 +84,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Whether this report is selected
 		/// </summary>
 		[JsonIgnore]
-		public Boolean IsSelected { get; set; }
+		public bool IsSelected { get; set; }
 
 		/// <summary>
 		/// Is this report the result of DiffParserReports?
 		/// </summary>
 		[JsonIgnore]
-		public Boolean IsDiff { get; set; }
+		public bool IsDiff { get; set; }
 
 		/// <summary>
 		/// The filename that the report came from.
@@ -117,7 +117,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void AddParseReport(string word, ParseReport report)
 		{
 			ParseReports[word] = report;
-			report.Word = word;
+			if (report.Word == null || report.Word == "")
+				report.Word = word;
 			NumWords += 1;
 			TotalParseTime += report.ParseTime;
 			TotalAnalyses += report.NumAnalyses;
@@ -142,6 +143,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				var parseReport = report.ParseReports[word];
 				if (parseReport.Word == null)
 					parseReport.Word = word;
+				// NoParse is a virtual property.
+				parseReport.NoParse = parseReport.NumAnalyses == 0 ? 1 : 0;
 			}
 			report.Filename = filename;
 			return report;
@@ -199,24 +202,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public ParserReport DiffParserReports(ParserReport other)
 		{
 			ParserReport diff = new ParserReport();
-			diff.IsDiff = true;
-			diff.ProjectName = DiffNames(ProjectName, other.ProjectName);
-			diff.SourceText = DiffNames(SourceText, other.SourceText);
-			diff.MachineName = DiffNames(MachineName, other.MachineName);
-			diff.Timestamp = Timestamp - other.Timestamp;
-			diff.NumWords = NumWords - other.NumWords;
-			diff.NumParseErrors = NumParseErrors - other.NumParseErrors;
-			diff.NumZeroParses = NumZeroParses - other.NumZeroParses;
-			diff.TotalParseTime = TotalParseTime - other.TotalParseTime;
-			diff.TotalAnalyses = TotalAnalyses - other.TotalAnalyses;
-			diff.TotalUserApprovedAnalysesMissing = TotalUserApprovedAnalysesMissing - other.TotalUserApprovedAnalysesMissing;
-			diff.TotalUserDisapprovedAnalyses = TotalUserDisapprovedAnalyses - other.TotalUserDisapprovedAnalyses;
-			diff.TotalUserNoOpinionAnalyses = TotalUserNoOpinionAnalyses - other.TotalUserNoOpinionAnalyses;
-
-			ParseReport missingReport = new ParseReport
-			{
-				ErrorMessage = "missing"
-			};
+			ParseReport missingReport = new ParseReport() { NoParse = 1 };
 
 			foreach (string key in other.ParseReports.Keys)
 			{
@@ -235,6 +221,21 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					diff.AddParseReport(key, diffReport);
 				}
 			}
+
+			// The following must go after AddParserReport is called.
+			diff.IsDiff = true;
+			diff.ProjectName = DiffNames(ProjectName, other.ProjectName);
+			diff.SourceText = DiffNames(SourceText, other.SourceText);
+			diff.MachineName = DiffNames(MachineName, other.MachineName);
+			diff.Timestamp = Timestamp - other.Timestamp;
+			diff.NumWords = NumWords - other.NumWords;
+			diff.NumParseErrors = NumParseErrors - other.NumParseErrors;
+			diff.NumZeroParses = NumZeroParses - other.NumZeroParses;
+			diff.TotalParseTime = TotalParseTime - other.TotalParseTime;
+			diff.TotalAnalyses = TotalAnalyses - other.TotalAnalyses;
+			diff.TotalUserApprovedAnalysesMissing = TotalUserApprovedAnalysesMissing - other.TotalUserApprovedAnalysesMissing;
+			diff.TotalUserDisapprovedAnalyses = TotalUserDisapprovedAnalyses - other.TotalUserDisapprovedAnalyses;
+			diff.TotalUserNoOpinionAnalyses = TotalUserNoOpinionAnalyses - other.TotalUserNoOpinionAnalyses;
 
 			return diff;
 		}
@@ -319,6 +320,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public string ErrorMessage { get; set; }
 
 		/// <summary>
+		/// Whether the word had no parse (1) or not (0).
+		/// Just used for ParserReport display.
+		/// </summary>
+		[JsonIgnore]
+		public int NoParse { get; set; }
+
+		/// <summary>
 		/// Number of parse analyses
 		/// </summary>
 		public int NumAnalyses { get; set; }
@@ -349,6 +357,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ParseTime = result.ParseTime;
 			ErrorMessage = result.ErrorMessage;
 			NumAnalyses = result.Analyses.Count();
+			NoParse = NumAnalyses == 0 ? 1 : 0;
 			if (wordform == null)
 				return;
 			// Look for conflicts between user opinion and parser.
@@ -399,6 +408,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ParseReport diffReport = new ParseReport
 			{
 				NumAnalyses = NumAnalyses - oldReport.NumAnalyses,
+				NoParse = NoParse - oldReport.NoParse,
 				NumUserApprovedAnalysesMissing = NumUserApprovedAnalysesMissing - oldReport.NumUserApprovedAnalysesMissing,
 				NumUserDisapprovedAnalyses = NumUserDisapprovedAnalyses - oldReport.NumUserDisapprovedAnalyses,
 				NumUserNoOpinionAnalyses = NumUserNoOpinionAnalyses - oldReport.NumUserNoOpinionAnalyses,
@@ -409,6 +419,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				string oldError = oldReport.ErrorMessage ?? string.Empty;
 				string newError = ErrorMessage ?? string.Empty;
 				diffReport.ErrorMessage = oldError + " => " + newError;
+			}
+			if (Word != oldReport.Word)
+			{
+				string oldWord = oldReport.Word ?? string.Empty;
+				string newWord = Word ?? string.Empty;
+				diffReport.Word = oldWord + " => " + newWord;
 			}
 			return diffReport;
 		}
