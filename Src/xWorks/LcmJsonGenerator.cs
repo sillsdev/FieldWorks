@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.XWorks
 			return content;
 		}
 
-		public IFragment GenerateAudioLinkContent(string classname, string srcAttribute, string caption,
+		public IFragment GenerateAudioLinkContent(ConfigurableDictionaryNode config, string classname, string srcAttribute, string caption,
 			string safeAudioId)
 		{
 			/*"audio": {
@@ -55,10 +55,10 @@ namespace SIL.FieldWorks.XWorks
 			dynamic audioObject = new JObject();
 			audioObject.id = safeAudioId;
 			audioObject.src = srcAttribute.Replace("\\", "/"); // expecting relative paths only
-			return WriteProcessedObject(false, new StringFragment(audioObject.ToString()), null,"value");
+			return WriteProcessedObject(null, false, new StringFragment(audioObject.ToString()), "value");
 		}
 
-		public IFragment GenerateVideoLinkContent(string className, string mediaId,
+		public IFragment GenerateVideoLinkContent(ConfigurableDictionaryNode config, string className, string mediaId,
 			string srcAttribute,
 			string caption)
 		{
@@ -66,10 +66,10 @@ namespace SIL.FieldWorks.XWorks
 			dynamic videoObject = new JObject();
 			videoObject.id = mediaId;
 			videoObject.src = srcAttribute.Replace("\\", "/"); // expecting relative paths only
-			return WriteProcessedObject(false, new StringFragment(videoObject.ToString()), null, "value");
+			return WriteProcessedObject(null, false, new StringFragment(videoObject.ToString()), "value");
 		}
 
-		public IFragment WriteProcessedObject(bool isBlock, IFragment elementContent, ConfigurableDictionaryNode config, string className)
+		public IFragment WriteProcessedObject(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className)
 		{
 			if (elementContent.ToString().StartsWith("{"))
 				return WriteProcessedContents(elementContent, className, string.Empty, ",");
@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.XWorks
 			return WriteProcessedContents(elementContent, className, "{", "},");
 		}
 
-		public IFragment WriteProcessedCollection(bool isBlock, IFragment elementContent, ConfigurableDictionaryNode config, string className)
+		public IFragment WriteProcessedCollection(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className)
 		{
 			((StringFragment)elementContent).TrimEnd(',');
 			return WriteProcessedContents(elementContent, className, "[", "],");
@@ -109,7 +109,7 @@ namespace SIL.FieldWorks.XWorks
 			return content;
 		}
 
-		public IFragment GenerateGroupingNode(object field, string className, ConfigurableDictionaryNode config,
+		public IFragment GenerateGroupingNode(ConfigurableDictionaryNode config, object field, string className, 
 			DictionaryPublicationDecorator publicationDecorator, ConfiguredLcmGenerator.GeneratorSettings settings,
 			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, IFragment> childContentGenerator)
 		{
@@ -117,14 +117,14 @@ namespace SIL.FieldWorks.XWorks
 			return new StringFragment();
 		}
 
-		public IFragment AddCollectionItem(bool isBlock, string className, ConfigurableDictionaryNode config,IFragment content, bool first)
+		public IFragment AddCollectionItem(ConfigurableDictionaryNode config, bool isBlock, string className, IFragment content, bool first)
 		{
 			var fragment = new StringFragment();
 			fragment.StrBuilder.Append(content.IsNullOrEmpty() ? string.Empty : $"{{{content}}},");
 			return fragment;
 		}
 
-		public IFragment AddProperty(string className, bool isBlockProperty, string content)
+		public IFragment AddProperty(ConfigurableDictionaryNode config, string className, bool isBlockProperty, string content)
 		{
 			var fragment = new StringFragment($"\"{className}\": \"{content}\",");
 			return fragment;
@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.XWorks
 			return new JsonFragmentWriter(((StringFragment)bldr).StrBuilder);
 		}
 
-		public void StartMultiRunString(IFragmentWriter writer, string writingSystem)
+		public void StartMultiRunString(IFragmentWriter writer, ConfigurableDictionaryNode config, string writingSystem)
 		{
 		}
 
@@ -153,7 +153,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		public void StartBiDiWrapper(IFragmentWriter writer, bool rightToLeft)
+		public void StartBiDiWrapper(IFragmentWriter writer, ConfigurableDictionaryNode config, bool rightToLeft)
 		{
 		}
 
@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		public void StartRun(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string writingSystem)
+		public void StartRun(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string writingSystem, bool first)
 		{
 			var jsonWriter = (JsonFragmentWriter)writer;
 			jsonWriter.StartObject();
@@ -208,12 +208,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		public void AddLineBreakInRunContent(IFragmentWriter writer)
+		public void AddLineBreakInRunContent(IFragmentWriter writer, ConfigurableDictionaryNode config)
 		{
 			m_runBuilder.Value.Append("\n");
 		}
 
-		public void StartTable(IFragmentWriter writer)
+		public void StartTable(IFragmentWriter writer, ConfigurableDictionaryNode config)
 		{
 			// TODO: decide on a useful json representation for tables
 		}
@@ -292,11 +292,11 @@ namespace SIL.FieldWorks.XWorks
 			((JsonFragmentWriter)xw).EndObject();
 		}
 
-		public void AddCollection(IFragmentWriter writer, bool isBlockProperty, string className, ConfigurableDictionaryNode config, IFragment content)
+		public void AddCollection(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty, string className, IFragment content)
 		{
 			((JsonFragmentWriter)writer).InsertPropertyName(className);
 			BeginArray(writer);
-			WriteProcessedContents(writer, content);
+			WriteProcessedContents(writer, config, content);
 			EndArray(writer);
 		}
 
@@ -310,7 +310,7 @@ namespace SIL.FieldWorks.XWorks
 			((JsonFragmentWriter)writer).EndArray();
 		}
 
-		public void BeginObjectProperty(IFragmentWriter writer, bool isBlockProperty,
+		public void BeginObjectProperty(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty,
 			string className)
 		{
 			((JsonFragmentWriter)writer).InsertPropertyName(className);
@@ -322,7 +322,7 @@ namespace SIL.FieldWorks.XWorks
 			((JsonFragmentWriter)writer).EndObject();
 		}
 
-		public void WriteProcessedContents(IFragmentWriter writer, IFragment contents)
+		public void WriteProcessedContents(IFragmentWriter writer, ConfigurableDictionaryNode config, IFragment contents)
 		{
 			if (!contents.IsNullOrEmpty())
 			{
@@ -335,7 +335,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public IFragment AddImage(string classAttribute, string srcAttribute, string pictureGuid)
+		public IFragment AddImage(ConfigurableDictionaryNode config, string classAttribute, string srcAttribute, string pictureGuid)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment();
@@ -353,17 +353,17 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public IFragment AddImageCaption(string captionContent)
+		public IFragment AddImageCaption(ConfigurableDictionaryNode config, IFragment captionContent)
 		{
-			return new StringFragment(captionContent);
+			return new StringFragment(captionContent.ToString());
 		}
 
-		public IFragment GenerateSenseNumber(string formattedSenseNumber, string wsId, ConfigurableDictionaryNode config)
+		public IFragment GenerateSenseNumber(ConfigurableDictionaryNode config, string formattedSenseNumber, string wsId)
 		{
 			return new StringFragment(formattedSenseNumber);
 		}
 
-		public IFragment AddLexReferences(bool generateLexType, IFragment lexTypeContent, ConfigurableDictionaryNode config, string className,
+		public IFragment AddLexReferences(ConfigurableDictionaryNode config, bool generateLexType, IFragment lexTypeContent, string className,
 			IFragment referencesContent, bool typeBefore)
 		{
 			var bldr = new StringBuilder();
@@ -398,7 +398,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public void BeginCrossReference(IFragmentWriter writer, bool isBlockProperty, string classAttribute)
+		public void BeginCrossReference(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty, string classAttribute)
 		{
 			// In json the context is enough. We don't need the extra 'span' or 'div' with the item name
 			// If the consumer needs to match up (to use our css) they can assume the child is the collection singular
@@ -414,9 +414,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Generates data for all senses of an entry. For better processing of json add sharedGramInfo as a separate property object
 		/// </summary>
-		public IFragment WriteProcessedSenses(bool isBlock, IFragment sensesContent, ConfigurableDictionaryNode config, string classAttribute, IFragment sharedGramInfo)
+		public IFragment WriteProcessedSenses(ConfigurableDictionaryNode config, bool isBlock, IFragment sensesContent, string classAttribute, IFragment sharedGramInfo)
 		{
-			return new StringFragment($"{sharedGramInfo.ToString()}{WriteProcessedCollection(isBlock, sensesContent, config, classAttribute)}");
+			return new StringFragment($"{sharedGramInfo.ToString()}{WriteProcessedCollection(config, isBlock, sensesContent, classAttribute)}");
 		}
 
 		public IFragment AddAudioWsContent(string wsId, Guid linkTarget, IFragment fileContent)
@@ -431,7 +431,7 @@ namespace SIL.FieldWorks.XWorks
 			return new StringFragment($"\\u+0FFF\\u+0FFF\\u+0FFF{badStrBuilder}");
 		}
 
-		public IFragment AddSenseData(IFragment senseNumberSpan, Guid ownerGuid, ConfigurableDictionaryNode config, IFragment senseContent, bool first)
+		public IFragment AddSenseData(ConfigurableDictionaryNode config, IFragment senseNumberSpan, Guid ownerGuid, IFragment senseContent, bool first)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);
