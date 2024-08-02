@@ -186,10 +186,10 @@
     <value>Delete this test report from the disk</value>
   </data>
   <data name="ksDiffButton" xml:space="preserve">
-    <value>diff</value>
+    <value>_Compare</value>
   </data>
   <data name="ksDiffButtonToolTip" xml:space="preserve">
-    <value>Show the difference between this test report and the report selected by the radio button (older report is subtracted from newer report)</value>
+    <value>Show the difference between two selected reports (older report is subtracted from newer report) [Alt-C]</value>
   </data>
   <data name="ksDiffHeader" xml:space="preserve">
     <value>Diff With</value>
@@ -261,19 +261,19 @@
     <value>The time it took to parse the word</value>
   </data>
   <data name="ksReparse" xml:space="preserve">
-    <value>reparse</value>
+    <value>Try A Word...</value>
   </data>
   <data name="ksReparseToolTip" xml:space="preserve">
     <value>Reparse this word using Try A Word</value>
   </data>
   <data name="ksShowAnalyses" xml:space="preserve">
-    <value>show</value>
+    <value>Show</value>
   </data>
   <data name="ksShowAnalysesToolTip" xml:space="preserve">
     <value>Show the analyses of this word</value>
   </data>
   <data name="ksShowReport" xml:space="preserve">
-    <value>show</value>
+    <value>Show Report</value>
   </data>
   <data name="ksShowReportToolTip" xml:space="preserve">
     <value>Show this test report</value>
@@ -328,5 +328,12 @@
   </data>
   <data name="ksSelectDiffReport" xml:space="preserve">
     <value>Please select a second report other than this report using the radio button in the column labelled 'Diff With'.</value>
+  </data>
+  <data name="ksDelete" xml:space="preserve">
+    <value>Delete {0} Reports</value>
+    <comment>Deleting parser reports {0} is the number selected</comment>
+  </data>
+  <data name="ksSelect" xml:space="preserve">
+    <value>Select</value>
   </data>
 </root>

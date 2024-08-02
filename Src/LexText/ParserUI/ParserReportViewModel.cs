@@ -1,16 +1,13 @@
 using SIL.FieldWorks.WordWorks.Parser;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
-	public class ParserReportViewModel
+	public class ParserReportViewModel : INotifyPropertyChanged
 	{
 		public ParserReport ParserReport { get; set; }
 
@@ -36,6 +33,21 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		public DateTime Timestamp => DateTime.FromFileTime(ParserReport.Timestamp);
+
+		public bool IsSelected
+		{
+			get => ParserReport.IsSelected;
+			set
+			{
+				if (ParserReport.IsSelected != value)
+				{
+					ParserReport.IsSelected = value;
+					OnPropertyChanged(nameof(IsSelected));
+				}
+			}
+		}
+
 		public ParserReportViewModel()
 		{
 			ParserReport = new ParserReport();
@@ -47,6 +59,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				ParserReport.AddParseReport("test", new ParseReport(null, new ParseResult(new List<ParseAnalysis>())));
 				ParserReport.AddParseReport("error", new ParseReport(null, new ParseResult("error")));
 			}
+		}
+		public event PropertyChangedEventHandler PropertyChanged;
+		protected virtual void OnPropertyChanged(string propertyName)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 }
