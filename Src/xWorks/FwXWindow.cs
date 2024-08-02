@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using Microsoft.Win32;
@@ -39,6 +40,8 @@ using SIL.PlatformUtilities;
 using SIL.Reporting;
 using SIL.Utils;
 using XCore;
+using SIL.LCModel.Application.ApplicationServices;
+using NAudio.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -1919,6 +1922,81 @@ namespace SIL.FieldWorks.XWorks
 				return new IxCoreColleague[] { this, m_app as IxCoreColleague };
 			else
 				return new IxCoreColleague[]{this};
+		}
+
+		public bool OnImportPhonology(object commandObject)
+		{
+			string filename = null;
+			// ActiveForm can go null (see FWNX-731), so cache its value, and check whether
+			// we need to use 'this' instead (which might be a better idea anyway).
+			var form = ActiveForm;
+			if (form == null)
+				form = this;
+			Command command = (Command)commandObject;
+			string caption = command.ToolTip;
+			using (var dlg = new OpenFileDialogAdapter())
+			{
+				dlg.CheckFileExists = true;
+				dlg.RestoreDirectory = true;
+				dlg.Title = ResourceHelper.GetResourceString("kstidOpenTranslatedLists");
+				dlg.ValidateNames = true;
+				dlg.Multiselect = false;
+				dlg.Filter = ResourceHelper.FileFilter(FileFilterType.FieldWorksTranslatedLists);
+				if (dlg.ShowDialog(form) != DialogResult.OK)
+					return true;
+				filename = dlg.FileName;
+			}
+			DialogResult result = MessageBox.Show(xWorksStrings.DeletePhonology, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+			if (result != DialogResult.Yes)
+				return true;
+			DeletePhonology();
+			using (new WaitCursor(form, true))
+			{
+				using (var dlg = new ProgressDialogWithTask(this))
+				{
+					dlg.AllowCancel = true;
+					dlg.Maximum = 200;
+					dlg.Message = filename;
+					dlg.RunTask(true, ImportPhonology, filename, caption);
+				}
+			}
+			return true;
+		}
+
+		private object ImportPhonology(IThreadedProgress dlg, object[] parameters)
+		{
+			try
+			{
+				var phonologyServices = new PhonologyServices(Cache);
+				phonologyServices.ImportPhonologyFromXml((string)parameters[0]);
+				dlg.Step(200);
+				// Let the dialog update.
+				Thread.Sleep(100);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Error: " + ex.Message);
+				MessageBox.Show(ex.Message, (string)parameters[1]);
+			}
+			return false;
+		}
+
+
+		private void DeletePhonology()
+		{
+			NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			{
+				IPhPhonData phonData = Cache.LangProject.PhonologicalDataOA;
+				// Delete what is covered by ImportPhonology.
+				phonData.ContextsOS.Clear();
+				phonData.EnvironmentsOS.Clear();
+				phonData.FeatConstraintsOS.Clear();
+				phonData.NaturalClassesOS.Clear();
+				phonData.PhonemeSetsOS.Clear();
+				phonData.PhonRulesOS.Clear();
+				Cache.LanguageProject.PhFeatureSystemOA.TypesOC.Clear();
+				Cache.LanguageProject.PhFeatureSystemOA.FeaturesOC.Clear();
+			});
 		}
 
 		/// <summary>
