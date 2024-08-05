@@ -758,15 +758,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		private void AddParserReport(ParserReport parserReport)
 		{
 			ReadParserReports();
-			// m_parserReportsDialog's window updates when m_parserReports changes
-			// because m_parserReports is an ObservableCollection.
-			ParserReportViewModel viewModel = new ParserReportViewModel { ParserReport = parserReport };
+			m_parserReports.Insert(0, new ParserReportViewModel { ParserReport = parserReport });
 			if (m_parserReportsDialog != null)
-				// Call AddParserReport so that the window will see property changes.
-				((ParserReportsViewModel)m_parserReportsDialog.DataContext).AddParserReport(viewModel);
-			else
-				// Add at front so that newest reports appear first.
-				m_parserReports.Insert(0, viewModel);
+				// Reset ParserReports so that the window gets notified when the new report is selected.
+				((ParserReportsViewModel)m_parserReportsDialog.DataContext).ParserReports = m_parserReports;
 		}
 
 		/// <summary>

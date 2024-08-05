@@ -15,31 +15,29 @@ namespace SIL.FieldWorks.LexText.Controls
 			get => _parserReports;
 			set
 			{
-				if (_parserReports != value)
+				// Do this even if value == _parserReports because it may have new items.
+				// Unsubscribe from PropertyChanged events of old collection items
+				if (_parserReports != null)
 				{
-					// Unsubscribe from PropertyChanged events of old collection items
-					if (_parserReports != null)
+					foreach (var report in _parserReports)
 					{
-						foreach (var report in _parserReports)
-						{
-							report.PropertyChanged -= OnReportPropertyChanged;
-						}
+						report.PropertyChanged -= OnReportPropertyChanged;
 					}
-
-					_parserReports = value;
-
-					// Subscribe to PropertyChanged events of new collection items
-					if (_parserReports != null)
-					{
-						foreach (var report in _parserReports)
-						{
-							report.PropertyChanged += OnReportPropertyChanged;
-						}
-					}
-
-					OnPropertyChanged(nameof(ParserReports));
-					UpdateButtonStates(); // Update button states when the collection changes
 				}
+
+				_parserReports = value;
+
+				// Subscribe to PropertyChanged events of new collection items
+				if (_parserReports != null)
+				{
+					foreach (var report in _parserReports)
+					{
+						report.PropertyChanged += OnReportPropertyChanged;
+					}
+				}
+
+				OnPropertyChanged(nameof(ParserReports));
+				UpdateButtonStates(); // Update button states when the collection changes
 			}
 		}
 		public bool CanShowReport => ParserReports.Count(report => report.IsSelected) == 1;
@@ -104,12 +102,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			OnPropertyChanged(nameof(CanShowReport));
 			OnPropertyChanged(nameof(CanDiffReports));
 			OnPropertyChanged(nameof(CanDeleteReports));
-		}
-
-		public void AddParserReport(ParserReportViewModel report)
-		{
-			ParserReports.Insert(0, report);
-			report.PropertyChanged += OnReportPropertyChanged;
 		}
 	}
 }
