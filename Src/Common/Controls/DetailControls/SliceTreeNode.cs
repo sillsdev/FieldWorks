@@ -42,9 +42,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		internal const int kdxpLeftMargin = 2; // Gap at the far left of everything.
 		#endregion
 
-		protected bool m_inMenuButton = false;
-
-		private bool m_fShowPlusMinus = false;
+		private bool m_fShowPlusMinus;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -57,13 +55,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				CheckDisposed();
 
-				// Depending on compile switch for SLICE_IS_SPLITCONTAINER,
-				// grandParent will be both a Slice and a SplitContainer
-				// (Slice is a subclass of SplitContainer),
-				// or just a SplitContainer (SplitContainer is the only child Control of a Slice).
-				// If grandParent is not a Slice, then we have to move up to the great-grandparent
-				// to find the Slice.
-				Control parent = Parent;
+				// Return the Slice parent of this button, even if the button buried in other controls
+				var parent = Parent;
 				while (!(parent is Slice))
 					parent = parent.Parent;
 
