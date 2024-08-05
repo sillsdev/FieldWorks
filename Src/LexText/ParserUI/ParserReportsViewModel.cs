@@ -105,5 +105,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			OnPropertyChanged(nameof(CanDiffReports));
 			OnPropertyChanged(nameof(CanDeleteReports));
 		}
+
+		public void AddParserReport(ParserReportViewModel report)
+		{
+			ParserReports.Insert(0, report);
+			report.PropertyChanged += OnReportPropertyChanged;
+		}
 	}
 }
