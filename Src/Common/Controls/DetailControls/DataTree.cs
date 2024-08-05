@@ -294,13 +294,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (m_currentSlice == null)
 				return; // Too early to do much;
 
-			// Depending on compile switch for SLICE_IS_SPLITCONTAINER,
-			// the sender will be both a Slice and a SplitContainer
-			// (Slice is a subclass of SplitContainer),
-			// or just a SplitContainer (SplitContainer is the only child Control of a Slice).
-			Slice movedSlice = sender is Slice ? (Slice) sender
+			var movedSlice = sender is Slice slice ? slice
 				// sender is also a SplitContainer.
-				: (Slice) ((SplitContainer) sender).Parent; // Have to move up one parent notch to get to teh Slice.
+				: (Slice) ((SplitContainer) sender).Parent; // Review: This branch is probably obsolete.
 			if (m_currentSlice != movedSlice)
 				return; // Too early to do much;
 
