@@ -2664,7 +2664,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The custom field name &quot;{0}&quot; includes punctuation characters. This may cause export to fail or make the exported file difficult for other programs to use. We recommend that you rename your custom field and then do the export again.
+        ///   Looks up a localized string similar to The custom field name &quot;{0}&quot; includes punctuation characters. This may cause export to fail or make the exported file difficult for other programs to use.  Please contact flex_errors@sil.org for help modifying your project.
         ///Do you want to continue with the export?.
         /// </summary>
         internal static string PunctInFieldNameWarning {
