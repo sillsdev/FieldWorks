@@ -57,6 +57,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (report.IsSelected)
 				{
 					report.ParserReport.DeleteJsonFile();
+					report.IsSelected = false;
 					ParserReports.Remove(report);
 				}
 			}
