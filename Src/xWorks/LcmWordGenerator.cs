@@ -865,7 +865,7 @@ namespace SIL.FieldWorks.XWorks
 				if (!string.IsNullOrEmpty(config.Style))
 				{
 					WP.ParagraphProperties paragraphProps =
-						new WP.ParagraphProperties(new ParagraphStyleId() { Val = config.Style });
+						new WP.ParagraphProperties(new ParagraphStyleId() { Val = config.DisplayLabel });
 					groupPara.PrependChild(paragraphProps);
 				}
 				groupData.DocBody.AppendChild(groupPara);
@@ -1678,7 +1678,7 @@ namespace SIL.FieldWorks.XWorks
 				if (style.Type == StyleValues.Paragraph)
 				{
 					string oldName = style.StyleId;
-					string newName = s_styleCollection.AddStyle(style, style.StyleId, style.StyleId);
+					string newName = s_styleCollection.AddStyle(style, node.Style, style.StyleId);
 					Debug.Assert(oldName == newName, "Not expecting the name for a paragraph style to ever change!");
 				}
 				else
