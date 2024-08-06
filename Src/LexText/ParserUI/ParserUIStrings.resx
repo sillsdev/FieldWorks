@@ -156,13 +156,6 @@
     <value>Queue: ({0}/{1}/{2})</value>
     <comment>{0}, {1}, and {2} are numbers (or value of ksDash)</comment>
   </data>
-  <data name="ksUnknown" xml:space="preserve">
-    <value>Unknown</value>
-  </data>
-  <data name="ksUpdate" xml:space="preserve">
-    <value>Update</value>
-    <comment>related to ParserCoreStrings.ksUpdateX</comment>
-  </data>
   <data name="ksUndoEditingParserParameters" xml:space="preserve">
     <value>Undo Editing Parser Parameters</value>
   </data>
@@ -182,9 +175,6 @@
   <data name="ksDidNotParse" xml:space="preserve">
     <value>Parse was not attempted because of errors in the lexical data</value>
   </data>
-  <data name="ksDeleteToolTip" xml:space="preserve">
-    <value>Delete this test report from the disk</value>
-  </data>
   <data name="ksDiffButton" xml:space="preserve">
     <value>_Compare</value>
   </data>
@@ -192,10 +182,7 @@
     <value>Show the difference between two selected reports (older report is subtracted from newer report) [Alt-C]</value>
   </data>
   <data name="ksDiffHeader" xml:space="preserve">
-    <value>Diff With</value>
-  </data>
-  <data name="ksDiffHeaderToolTip" xml:space="preserve">
-    <value>The other argument to diff</value>
+    <value>Compare</value>
   </data>
   <data name="ksErrorMessage" xml:space="preserve">
     <value>Error Message</value>
@@ -264,7 +251,7 @@
     <value>Try A Word...</value>
   </data>
   <data name="ksReparseToolTip" xml:space="preserve">
-    <value>Reparse this word using Try A Word</value>
+    <value>Parse this word using Try A Word</value>
   </data>
   <data name="ksShowAnalyses" xml:space="preserve">
     <value>Show</value>
@@ -326,14 +313,14 @@
   <data name="ksWordToolTip" xml:space="preserve">
     <value>The word that was parsed</value>
   </data>
-  <data name="ksSelectDiffReport" xml:space="preserve">
-    <value>Please select a second report other than this report using the radio button in the column labelled 'Diff With'.</value>
-  </data>
   <data name="ksDelete" xml:space="preserve">
     <value>Delete {0} Reports</value>
     <comment>Deleting parser reports {0} is the number selected</comment>
   </data>
   <data name="ksSelect" xml:space="preserve">
     <value>Select</value>
+  </data>
+  <data name="ksDeleteToolTip" xml:space="preserve">
+    <value>Delete the selected test reports from the disk</value>
   </data>
 </root>

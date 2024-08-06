@@ -575,6 +575,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				InitCheckParserResults(wordforms, sourceText);
 				if (wordforms.Count() == 0)
 				{
+					ReadParserReports();
 					// Write an empty parser report.
 					var parserReport = WriteParserReport();
 					AddParserReport(parserReport);
@@ -624,8 +625,9 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (m_checkParserResults[key] == null)
 						return;
 				}
+				// Read parser reports before writing and adding a parser report to avoid duplicates.
+				ReadParserReports();
 				// Convert parse results into ParserReport.
-
 				var parserReport = WriteParserReport();
 				AddParserReport(parserReport);
 				ShowParserReport(parserReport, m_mediator, m_cache);
@@ -757,7 +759,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		private void AddParserReport(ParserReport parserReport)
 		{
-			ReadParserReports();
 			m_parserReports.Insert(0, new ParserReportViewModel { ParserReport = parserReport });
 			if (m_parserReportsDialog != null)
 				// Reset ParserReports so that the window gets notified when the new report is selected.

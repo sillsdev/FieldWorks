@@ -36,6 +36,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public long Timestamp { get; set; }
 
 		/// <summary>
+		/// Timestamp of report that this report was diffed with (only relevant for IsDiff).
+		/// </summary>
+		public long DiffTimestamp { get; set; }
+
+		/// <summary>
 		/// Number of words parsed
 		/// </summary>
 		public int NumWords { get; set; }
@@ -227,7 +232,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			diff.ProjectName = DiffNames(ProjectName, other.ProjectName);
 			diff.SourceText = DiffNames(SourceText, other.SourceText);
 			diff.MachineName = DiffNames(MachineName, other.MachineName);
-			diff.Timestamp = Timestamp - other.Timestamp;
+			diff.Timestamp = Timestamp;
+			diff.DiffTimestamp = other.Timestamp;
 			diff.NumWords = NumWords - other.NumWords;
 			diff.NumParseErrors = NumParseErrors - other.NumParseErrors;
 			diff.NumZeroParses = NumZeroParses - other.NumZeroParses;
@@ -244,7 +250,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			if (name == otherName)
 				return name;
-			return name + " - " + otherName;
+			return otherName + " => " + name;
 		}
 
 		/// <summary>
