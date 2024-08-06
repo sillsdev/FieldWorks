@@ -38,6 +38,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			DataContext = new ParserReportsViewModel { ParserReports = parserReports };
 		}
 
+		private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+		{
+			ScrollViewer scrollViewer = sender as ScrollViewer;
+			if (scrollViewer != null)
+				if (e.Delta > 0)
+					scrollViewer.LineUp();
+				else
+					scrollViewer.LineDown();
+			e.Handled = true;
+		}
+
 		public void ShowParserReport(object sender, RoutedEventArgs e)
 		{
 			foreach (var report in ParserReports)
