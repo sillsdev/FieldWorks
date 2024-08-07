@@ -530,7 +530,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Get the selected genre from the user.
 				string displayWs = "analysis vernacular";
 				var labels = ObjectLabel.CreateObjectLabels(m_cache, m_cache.LanguageProject.GenreListOA.PossibilitiesOS, "", displayWs);
-				var chooser = new SimpleListChooser(null, labels, "Genre", null);
+				var chooser = new SimpleListChooser(null, labels, ParserUIStrings.ksGenre, null);
 				chooser.ShowDialog();
 				ICmPossibility selectedGenre = (ICmPossibility)chooser.SelectedObject;
 
@@ -542,7 +542,8 @@ namespace SIL.FieldWorks.LexText.Controls
 							wordforms = wordforms.Union(text.UniqueWordforms());
 
 				// Check all of the wordforms.
-				UpdateWordforms(wordforms, ParserPriority.Medium, checkParser: true, selectedGenre.Name.AnalysisDefaultWritingSystem.Text + " genre");
+				var genreName = String.Format(ParserUIStrings.ksXGenre, selectedGenre.Name.AnalysisDefaultWritingSystem.Text);
+				UpdateWordforms(wordforms, ParserPriority.Medium, checkParser: true, genreName);
 			}
 
 			return true;    //we handled this.

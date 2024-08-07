@@ -160,6 +160,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Genre.
+        /// </summary>
+        public static string ksGenre {
+            get {
+                return ResourceManager.GetString("ksGenre", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
         public static string ksIdle_ {
@@ -660,6 +669,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         public static string ksWordToolTip {
             get {
                 return ResourceManager.GetString("ksWordToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} genre.
+        /// </summary>
+        public static string ksXGenre {
+            get {
+                return ResourceManager.GetString("ksXGenre", resourceCulture);
             }
         }
     }

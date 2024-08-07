@@ -323,4 +323,10 @@
   <data name="ksDeleteToolTip" xml:space="preserve">
     <value>Delete the selected test reports from the disk</value>
   </data>
+  <data name="ksGenre" xml:space="preserve">
+    <value>Genre</value>
+  </data>
+  <data name="ksXGenre" xml:space="preserve">
+    <value>{0} genre</value>
+  </data>
 </root>
