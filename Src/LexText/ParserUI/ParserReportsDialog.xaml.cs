@@ -1,6 +1,7 @@
 using SIL.Extensions;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.LCModel;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Threading;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -118,8 +120,16 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				if(dataGrid.SelectedItem is ParserReportViewModel selectedItem)
 					ParserListener.ShowParserReport(selectedItem.ParserReport, Mediator, Cache);
-				else
-					Debug.Fail("Type of Contents of DataGrid changed, adjust double click code.");
+			}
+			else
+				Debug.Fail("Type of Contents of DataGrid changed, adjust double click code.");
+		}
+		private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (sender is DataGrid dataGrid)
+			{
+				// Turn off selection in favor of the check box.
+				Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() => dataGrid.UnselectAll()));
 			}
 		}
 		private void CheckBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
