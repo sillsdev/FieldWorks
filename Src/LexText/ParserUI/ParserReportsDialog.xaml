@@ -25,7 +25,8 @@
 		</Grid.RowDefinitions>
 
 		<ScrollViewer VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
-			<DataGrid AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" MouseDoubleClick="DataGrid_MouseDoubleClick" ItemsSource="{Binding ParserReports, Mode=TwoWay}">
+			<DataGrid AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" SelectionChanged="DataGrid_SelectionChanged"
+					  MouseDoubleClick="DataGrid_MouseDoubleClick" ItemsSource="{Binding ParserReports, Mode=TwoWay}">
 				<DataGrid.Columns>
 					<DataGridCheckBoxColumn Binding="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 						ElementStyle="{StaticResource DataGridCheckBoxStyle}">
