@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public string MachineName { get; set; }
 
 		/// <summary>
-		/// Either "Testbed Texts", "All Texts", or the name of the text parsed
+		/// Either the name of the text parsed, the name of the genre parsed, or "All Texts"
 		/// </summary>
 		public string SourceText { get; set; }
 

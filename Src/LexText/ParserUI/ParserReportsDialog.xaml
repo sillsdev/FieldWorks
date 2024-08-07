@@ -7,7 +7,7 @@
         d:DataContext="{d:DesignInstance Type=local:ParserReportsViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
         Title="{x:Static local:ParserUIStrings.ksParserTestReports}" WindowStartupLocation="CenterScreen"
-        SizeToContent="Width" MinHeight="300"
+        SizeToContent="Width" Height="300"
         WindowStyle="ThreeDBorderWindow">
 
 	<Window.Resources>

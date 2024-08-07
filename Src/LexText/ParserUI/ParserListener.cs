@@ -32,6 +32,9 @@ using SIL.Utils;
 using XCore;
 using SIL.ObjectModel;
 using SIL.LCModel.Core.Text;
+using System.Runtime.Remoting.Contexts;
+using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.Controls;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -518,24 +521,41 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;    //we handled this.
 		}
 
-		public bool OnCheckParserOnTestbed(object argument)
+		public bool OnCheckParserOnGenre(object argument)
 		{
 			CheckDisposed();
 
 			if (ConnectToParser())
 			{
-				// Get all of the wordforms in the Testbed texts.
+				// Get the selected genre from the user.
+				string displayWs = "analysis vernacular";
+				var labels = ObjectLabel.CreateObjectLabels(m_cache, m_cache.LanguageProject.GenreListOA.PossibilitiesOS, "", displayWs);
+				var chooser = new SimpleListChooser(null, labels, "Genre");
+				chooser.ShowDialog();
+				ICmPossibility selectedGenre = (ICmPossibility)chooser.SelectedObject;
+
+				// Get all of the wordforms in the genre's texts.
 				IEnumerable<IWfiWordform> wordforms = new HashSet<IWfiWordform>();
 				foreach (var text in m_cache.LanguageProject.InterlinearTexts)
 					foreach (var genre in text.GenreCategories)
-						if (genre.ShortName == "Testbed")
+						if (ContainsGenre(selectedGenre, genre))
 							wordforms = wordforms.Union(text.UniqueWordforms());
 
 				// Check all of the wordforms.
-				UpdateWordforms(wordforms, ParserPriority.Medium, checkParser: true, "Testbed Texts");
+				UpdateWordforms(wordforms, ParserPriority.Medium, checkParser: true, selectedGenre.Name.AnalysisDefaultWritingSystem.Text + " genre");
 			}
 
 			return true;    //we handled this.
+		}
+
+		private bool ContainsGenre(ICmPossibility genre1, ICmPossibility genre2)
+		{
+			while (genre2 != null)
+			{
+				if (genre1 == genre2) return true;
+				genre2 = genre2.Owner as ICmPossibility;
+			}
+			return false;
 		}
 
 		public bool OnCheckParserOnAll(object argument)
