@@ -530,7 +530,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Get the selected genre from the user.
 				string displayWs = "analysis vernacular";
 				var labels = ObjectLabel.CreateObjectLabels(m_cache, m_cache.LanguageProject.GenreListOA.PossibilitiesOS, "", displayWs);
-				var chooser = new SimpleListChooser(null, labels, "Genre");
+				var chooser = new SimpleListChooser(null, labels, "Genre", null);
 				chooser.ShowDialog();
 				ICmPossibility selectedGenre = (ICmPossibility)chooser.SelectedObject;
 
