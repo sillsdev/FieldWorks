@@ -1187,13 +1187,132 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (m_mainView != null)
 			{
-				var geckoBrowser = m_mainView.NativeBrowser as GeckoWebBrowser;
-				if (geckoBrowser != null)
-				{
-					geckoBrowser.Window.Find(string.Empty, false, false, true, false, true, true);
-				}
+				var findDialog = new FindDialog(this);
+				findDialog.Show(m_mainView);
 			}
 			return true;
+		}
+
+		private class FindDialog : BasicFindDialog
+		{
+			private string[] results = null;
+			private int resultIndex = 0;
+			private XhtmlDocView docView;
+			public FindDialog(XhtmlDocView doc)
+			{
+				docView = doc;
+				FindNext += FindNextInBrowser;
+				FindPrev += FindPrevInBrowser;
+				SearchTextChanged += (sender, args) => {
+					var lastId = Guid.Empty.ToString();
+					if (results != null && results.Length > 0)
+						lastId = results[resultIndex];
+					StatusText = "";
+					results = null;
+					ClearCurrentFindResult(docView.GeckoBrowser, lastId);
+				};
+			}
+
+			private void FindPrevInBrowser(object sender, IBasicFindView view)
+			{
+				var geckoBrowser = docView.m_mainView.NativeBrowser as GeckoWebBrowser;
+				if (geckoBrowser == null)
+					return;
+				string lastId = Guid.Empty.ToString();
+				if (!InitResults(view.SearchText))
+				{
+					lastId = results[resultIndex];
+					if (resultIndex - 1 >= 0)
+						--resultIndex;
+					else // wrap around
+						resultIndex = results.Length - 1;
+				}
+				ScrollAndHighlightResult(geckoBrowser, view, lastId);
+			}
+			private void FindNextInBrowser(object sender, IBasicFindView view)
+			{
+				var geckoBrowser = docView.m_mainView.NativeBrowser as GeckoWebBrowser;
+				if (geckoBrowser == null)
+					return;
+				string lastId = Guid.Empty.ToString();
+				if(!InitResults(view.SearchText))
+				{
+					lastId = results[resultIndex];
+					if (resultIndex + 1 < results.Length)
+						++resultIndex;
+					else // wrap around
+						resultIndex = 0;
+				}
+				ScrollAndHighlightResult(geckoBrowser, view, lastId);
+			}
+
+			private void ScrollAndHighlightResult(GeckoWebBrowser geckoBrowser, IBasicFindView view, string lastId)
+			{
+				if (results != null && results.Length > 0)
+				{
+					view.StatusText = $"{resultIndex + 1} of {results.Length} Results";
+					ClearCurrentFindResult(geckoBrowser, lastId);
+					var element = geckoBrowser.Document.GetHtmlElementById(results[resultIndex]);
+					element.ScrollIntoView(true);
+					docView.AddClassToHtmlElement(element, CurrentSelectedEntryClass);
+				}
+				else
+				{
+					view.StatusText = "0 Results";
+				}
+
+			}
+
+			private void ClearCurrentFindResult(GeckoWebBrowser geckoBrowser, string lastId)
+			{
+				var currentElement = geckoBrowser.Document.GetHtmlElementById(lastId);
+				if (currentElement != null)
+					docView.RemoveClassFromHtmlElement(currentElement, CurrentSelectedEntryClass);
+			}
+
+			private bool InitResults(string searchText)
+			{
+				var geckoBrowser = docView.m_mainView.NativeBrowser as GeckoWebBrowser;
+				if (geckoBrowser == null)
+					throw new ApplicationException();
+				if (results == null || results.Length == 0)
+				{
+					string newResults = string.Empty;
+					geckoBrowser.RemoveMessageEventListener("find");
+					geckoBrowser.AddMessageEventListener("find", r => newResults = r);
+					using(var executor = new AutoJSContext(geckoBrowser.Window))
+					{
+						// Javascript query to execute in the browser
+						// finds every text element matching the search string and returns the id of the first parent element with an id
+						var browserJsQuery =
+						"var ids=[];" +
+						"var containsText = (containsText === undefined)" + // function for finding text in a node (make sure it isn't redefined)
+						"	? (el, searchText) => Array.from(el.childNodes).some(c => c.nodeType === Node.TEXT_NODE && c.textContent.includes(searchText))" +
+						"	: containsText;" +
+						"Array.prototype.forEach.call(document.querySelectorAll('span, div'), function(element) { if (containsText(element, '" +
+						searchText +
+						"')) {" +
+						"	let id = element.id;" +
+						"	if (!id) {" +
+						"		var parent = element.parentElement;" +
+						"		while (parent && !parent.id) {" +
+						"			parent = parent.parentElement;" +
+						"		}" +
+						"		id = parent ? parent.id : null;" +
+						"	}" +
+						"if (id && !ids.includes(id)) { ids.push(id); } } });" +
+						"var idsString = ids.join(';');" +
+						"var event = new MessageEvent('find', { view: window, bubbles: true, cancelable: false, data: idsString });" + // send the results back to the C# code
+						"document.dispatchEvent(event);";
+						executor.EvaluateScript(browserJsQuery);
+					}
+					results = newResults.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+					resultIndex = 0;
+					return true;
+				}
+
+				return false;
+			}
 		}
 
 		/// <summary>

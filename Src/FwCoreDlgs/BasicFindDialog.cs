@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016 SIL International
+// Copyright (c) 2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,6 +18,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// <summary/>
 		public event FindNextDelegate FindNext;
 
+		/// <summary/>
+		public delegate void FindPrevDelegate(object sender, IBasicFindView view);
+
+		/// <summary/>
+		public event FindPrevDelegate FindPrev;
+
+		/// <summary/>
+		public delegate void SearchTextChangeDelegate(object sender, IBasicFindView view);
+
+		/// <summary/>
+		public event SearchTextChangeDelegate SearchTextChanged;
+
 		/// <summary>
 		/// Basic constructor (for the designer)
 		/// </summary>
@@ -28,8 +40,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void _findNext_Click(object sender, EventArgs e)
 		{
-			if(FindNext != null)
-				FindNext(this, this);
+			FindNext?.Invoke(this, this);
 		}
 
 		/// <summary>
@@ -48,7 +59,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void _searchTextbox_TextChanged(object sender, EventArgs e)
 		{
-			_findNext.Enabled = !string.IsNullOrEmpty(_searchTextbox.Text);
+			_findNext.Enabled = _findPrev.Enabled = !string.IsNullOrEmpty(_searchTextbox.Text);
+			SearchTextChanged?.Invoke(this, this);
 		}
 
 		/// <summary>
@@ -64,10 +76,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				e.SuppressKeyPress = true;
 			}
 		}
-	}
 
-	/// <summary/>
-	public interface IBasicFindView
+	  private void _findPrev_Click(object sender, EventArgs e)
+	  {
+			FindPrev?.Invoke(this, this);
+		}
+   }
+
+   /// <summary/>
+   public interface IBasicFindView
 	{
 		/// <summary>
 		/// Text to display to the user in the dialog
