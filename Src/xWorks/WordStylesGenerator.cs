@@ -465,7 +465,7 @@ namespace SIL.FieldWorks.XWorks
 			// A paragraph is turned into a textframe simply by adding a frameproperties object inside the paragraph properties.
 			// We leave a 4-pt border around the textframe--80 twentieths of a point.
 			var textFrameBorder = "80";
-			var textFrameProps = new FrameProperties() { Width = textFrameWidth.ToString(), HeightType = HeightRuleValues.Auto, HorizontalSpace = textFrameBorder, VerticalSpace = textFrameBorder, Wrap = TextWrappingValues.NotBeside, VerticalPosition = VerticalAnchorValues.Text, HorizontalPosition = HorizontalAnchorValues.Margin, XAlign = HorizontalAlignmentValues.Right };
+			var textFrameProps = new FrameProperties() { Width = textFrameWidth.ToString(), HeightType = HeightRuleValues.Auto, HorizontalSpace = textFrameBorder, VerticalSpace = textFrameBorder, Wrap = TextWrappingValues.NotBeside, VerticalPosition = VerticalAnchorValues.Text, HorizontalPosition = HorizontalAnchorValues.Text, XAlign = HorizontalAlignmentValues.Right };
 			var parProps = new ParagraphProperties();
 			frameStyle.StyleId = PictureAndCaptionTextframeStyle;
 			frameStyle.StyleName = new StyleName(){Val = PictureAndCaptionTextframeStyle};
