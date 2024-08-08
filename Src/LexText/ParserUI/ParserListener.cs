@@ -530,9 +530,13 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Get the selected genre from the user.
 				string displayWs = "analysis vernacular";
 				var labels = ObjectLabel.CreateObjectLabels(m_cache, m_cache.LanguageProject.GenreListOA.PossibilitiesOS, "", displayWs);
-				var chooser = new SimpleListChooser(null, labels, ParserUIStrings.ksGenre, null);
+				var chooser = new SimpleListChooser(null, labels, ParserUIStrings.ksGenre, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				// chooser.SetHelpTopic("FLExHelpFile");
+				ExpandTreeViewNodes(chooser.TreeView.Nodes);
 				chooser.ShowDialog();
 				ICmPossibility selectedGenre = (ICmPossibility)chooser.SelectedObject;
+				if (chooser.ChosenOne == null || selectedGenre == null)
+					return false;
 
 				// Get all of the wordforms in the genre's texts.
 				IEnumerable<IWfiWordform> wordforms = new HashSet<IWfiWordform>();
@@ -547,6 +551,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 
 			return true;    //we handled this.
+		}
+
+		private void ExpandTreeViewNodes(TreeNodeCollection nodes)
+		{
+			foreach (TreeNode node in nodes)
+			{
+				node.Expand();
+				ExpandTreeViewNodes(node.Nodes);
+			}
 		}
 
 		private bool ContainsGenre(ICmPossibility genre1, ICmPossibility genre2)
