@@ -40,6 +40,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._searchTextbox = new System.Windows.Forms.TextBox();
 			this._notificationLabel = new System.Windows.Forms.Label();
 			this._findNext = new System.Windows.Forms.Button();
+			this._findPrev = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// _searchTextbox
@@ -61,10 +62,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._findNext.UseVisualStyleBackColor = true;
 			this._findNext.Click += new System.EventHandler(this._findNext_Click);
 			// 
+			// _findPrev
+			// 
+			resources.ApplyResources(this._findPrev, "_findPrev");
+			this._findPrev.Name = "_findPrev";
+			this._findPrev.UseVisualStyleBackColor = true;
+			this._findPrev.Click += new System.EventHandler(this._findPrev_Click);
+			// 
 			// BasicFindDialog
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._findPrev);
 			this.Controls.Add(this._findNext);
 			this.Controls.Add(this._notificationLabel);
 			this.Controls.Add(this._searchTextbox);
@@ -85,5 +94,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private TextBox _searchTextbox;
 		private System.Windows.Forms.Label _notificationLabel;
 		private System.Windows.Forms.Button _findNext;
-	}
+	  private Button _findPrev;
+   }
 }
