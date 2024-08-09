@@ -540,11 +540,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 				// Get all of the wordforms in the genre's texts.
 				IEnumerable<IWfiWordform> wordforms = new HashSet<IWfiWordform>();
-				foreach (var text in m_cache.LanguageProject.InterlinearTexts)
-					foreach (var genre in text.GenreCategories)
-						if (ContainsGenre(selectedGenre, genre))
-							wordforms = wordforms.Union(text.UniqueWordforms());
-
+				foreach (var text in m_cache.LanguageProject.InterlinearTexts.Where(t => t.GenreCategories.Any(genre => ContainsGenre(selectedGenre, genre))))
+				{
+					wordforms = wordforms.Union(text.UniqueWordforms());
+				}
 				// Check all of the wordforms.
 				var genreName = String.Format(ParserUIStrings.ksXGenre, selectedGenre.Name.AnalysisDefaultWritingSystem.Text);
 				UpdateWordforms(wordforms, ParserPriority.Medium, checkParser: true, genreName);
