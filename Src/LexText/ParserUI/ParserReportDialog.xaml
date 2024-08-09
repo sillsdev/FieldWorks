@@ -7,7 +7,7 @@
         d:DataContext="{d:DesignInstance Type=local:ParserReportViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
         Title="{Binding Title}" WindowStartupLocation="CenterScreen"
-        SizeToContent="WidthAndHeight" MinHeight="300" MaxHeight="1000"
+        SizeToContent="Width" Height="500"
 		WindowStyle="ThreeDBorderWindow">
 	<Window.Resources>
 		<local:MillisecondsToTimeSpanConverter x:Key="MillisecondsToTimeSpanConverter"/>
