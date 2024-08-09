@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete this test report from the disk.
+        ///   Looks up a localized string similar to Delete the selected test reports from the disk.
         /// </summary>
         public static string ksDeleteToolTip {
             get {
@@ -133,20 +133,11 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Diff With.
+        ///   Looks up a localized string similar to Compare.
         /// </summary>
         public static string ksDiffHeader {
             get {
                 return ResourceManager.GetString("ksDiffHeader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The other argument to diff.
-        /// </summary>
-        public static string ksDiffHeaderToolTip {
-            get {
-                return ResourceManager.GetString("ksDiffHeaderToolTip", resourceCulture);
             }
         }
         
@@ -165,6 +156,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         public static string ksErrorMessageToolTip {
             get {
                 return ResourceManager.GetString("ksErrorMessageToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Genre.
+        /// </summary>
+        public static string ksGenre {
+            get {
+                return ResourceManager.GetString("ksGenre", resourceCulture);
             }
         }
         
@@ -448,7 +448,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reparse this word using Try A Word.
+        ///   Looks up a localized string similar to Parse this word using Try A Word.
         /// </summary>
         public static string ksReparseToolTip {
             get {
@@ -462,15 +462,6 @@ namespace SIL.FieldWorks.LexText.Controls {
         public static string ksSelect {
             get {
                 return ResourceManager.GetString("ksSelect", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Please select a second report other than this report using the radio button in the column labelled &apos;Diff With&apos;..
-        /// </summary>
-        public static string ksSelectDiffReport {
-            get {
-                return ResourceManager.GetString("ksSelectDiffReport", resourceCulture);
             }
         }
         
@@ -664,24 +655,6 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unknown.
-        /// </summary>
-        public static string ksUnknown {
-            get {
-                return ResourceManager.GetString("ksUnknown", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Update.
-        /// </summary>
-        public static string ksUpdate {
-            get {
-                return ResourceManager.GetString("ksUpdate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Word.
         /// </summary>
         public static string ksWord {
@@ -696,6 +669,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         public static string ksWordToolTip {
             get {
                 return ResourceManager.GetString("ksWordToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} genre.
+        /// </summary>
+        public static string ksXGenre {
+            get {
+                return ResourceManager.GetString("ksXGenre", resourceCulture);
             }
         }
     }

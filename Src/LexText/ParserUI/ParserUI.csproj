@@ -362,6 +362,16 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Controls\DetailControls\DetailControls.csproj">
+      <Project>{C65D2B3D-543D-4F63-B35D-5859F5ECDE1E}</Project>
+      <Name>DetailControls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Controls\XMLViews\XMLViews.csproj">
+      <Project>{BC490547-D278-4442-BD34-3580DBEFC405}</Project>
+      <Name>XMLViews</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

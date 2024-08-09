@@ -18,7 +18,7 @@
 		<command id="CmdClearSelectedWordParserAnalyses" label="Clear Current Parser _Analyses" message="ClearSelectedWordParserAnalyses"/>
 		<command id="CmdReInitializeParser" label="Re_load Grammar / Lexicon" message="ReInitParser" tooltip="Reloads data from the Grammar and Lexicon, so the parser uses your latest changes."/>
         <command id="CmdCheckParserOnCurrentText" label="On Current Text" message="CheckParserOnCurrentText" tooltip="Checks parser on currrent text and reports results."/>
-        <command id="CmdCheckParserOnTestbed" label="On Testbed" message="CheckParserOnTestbed" tooltip="Checks parser on texts in Testbed genre and reports results."/>
+        <command id="CmdCheckParserOnGenre" label="On Genre" message="CheckParserOnGenre" tooltip="Checks parser on texts in the selected genre and reports results."/>
         <command id="CmdCheckParserOnAll" label="On All Texts" message="CheckParserOnAll" tooltip="Checks parser on all texts and reports results."/>
         <command id="CmdShowParserReports" label="Show Test Reports..." message="ShowParserReports" tooltip="Shows test reports."/>
         <command id="CmdImportWordSet" label="_Import Word Set..." message="ImportWordSet"/>
@@ -277,8 +277,8 @@
 	  <item command="CmdClearSelectedWordParserAnalyses" defaultVisible="false"/>
           <item label="-" translate="do not translate"/>
           <menu id="CheckParserMenu" label="Run Tests">
-            <item command="CmdCheckParserOnTestbed"/>
             <item command="CmdCheckParserOnCurrentText"/>
+            <item command="CmdCheckParserOnGenre"/>
             <item command="CmdCheckParserOnAll"/>
             <item command="CmdShowParserReports"/>
           </menu>

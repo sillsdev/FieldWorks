@@ -17,9 +17,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				string time = ParserReport.IsDiff
-					? TimeSpan.FromTicks(ParserReport.Timestamp).ToString()
-					: m_FileTimeToDateTimeConverter.Convert(ParserReport.Timestamp, null, null, null).ToString();
+				string time = m_FileTimeToDateTimeConverter.Convert(ParserReport.Timestamp, null, null, null).ToString();
+				if (ParserReport.IsDiff)
+					time = m_FileTimeToDateTimeConverter.Convert(ParserReport.DiffTimestamp, null, null, null).ToString() + " => " + time;
 				return (ParserReport.IsDiff ? ParserUIStrings.ksDiffHeader + " " : "") + ParserReport.ProjectName + ", " + ParserReport.SourceText + ", " + time + ", " + ParserReport.MachineName;
 			}
 		}
