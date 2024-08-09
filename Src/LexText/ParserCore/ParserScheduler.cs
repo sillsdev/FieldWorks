@@ -62,6 +62,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			public virtual void DoWork()
 			{
+				// This undoes the IncrementQueueCount above.
+				// Subclasses should always call base.DoWork().
+				// Nobody else should call IncrementQueueCount or DecrementQueueCount.
 				m_scheduler.DecrementQueueCount(m_priority);
 			}
 		}
@@ -102,11 +105,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			public override void DoWork()
 			{
-				if (!m_scheduler.m_parserWorker.UpdateWordform(m_wordform, m_priority, m_checkParser))
-				{
-					// this wordform was skipped
-					base.DoWork();
-				}
+				m_scheduler.m_parserWorker.UpdateWordform(m_wordform, m_priority, m_checkParser);
+				base.DoWork();
 			}
 		}
 
@@ -318,7 +318,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private void ParseFiler_WordformUpdated(object sender, WordformUpdatedEventArgs e)
 		{
-			DecrementQueueCount(e.Priority);
 			if (WordformUpdated != null)
 			{
 				WordformUpdated(this, e);
