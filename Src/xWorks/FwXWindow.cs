@@ -1938,10 +1938,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				dlg.CheckFileExists = true;
 				dlg.RestoreDirectory = true;
-				dlg.Title = ResourceHelper.GetResourceString("kstidOpenTranslatedLists");
+				dlg.Title = ResourceHelper.GetResourceString("kstidXML");
 				dlg.ValidateNames = true;
 				dlg.Multiselect = false;
-				dlg.Filter = ResourceHelper.FileFilter(FileFilterType.FieldWorksTranslatedLists);
+				dlg.Filter = ResourceHelper.FileFilter(FileFilterType.XML);
 				if (dlg.ShowDialog(form) != DialogResult.OK)
 					return true;
 				filename = dlg.FileName;
