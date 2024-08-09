@@ -32,6 +32,9 @@ using SIL.Utils;
 using XCore;
 using SIL.ObjectModel;
 using SIL.LCModel.Core.Text;
+using System.Runtime.Remoting.Contexts;
+using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.Controls;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -518,24 +521,54 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;    //we handled this.
 		}
 
-		public bool OnCheckParserOnTestbed(object argument)
+		public bool OnCheckParserOnGenre(object argument)
 		{
 			CheckDisposed();
 
 			if (ConnectToParser())
 			{
-				// Get all of the wordforms in the Testbed texts.
-				IEnumerable<IWfiWordform> wordforms = new HashSet<IWfiWordform>();
-				foreach (var text in m_cache.LanguageProject.InterlinearTexts)
-					foreach (var genre in text.GenreCategories)
-						if (genre.ShortName == "Testbed")
-							wordforms = wordforms.Union(text.UniqueWordforms());
+				// Get the selected genre from the user.
+				string displayWs = "analysis vernacular";
+				var labels = ObjectLabel.CreateObjectLabels(m_cache, m_cache.LanguageProject.GenreListOA.PossibilitiesOS, "", displayWs);
+				var chooser = new SimpleListChooser(null, labels, ParserUIStrings.ksGenre, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				// chooser.SetHelpTopic("FLExHelpFile");
+				ExpandTreeViewNodes(chooser.TreeView.Nodes);
+				chooser.ShowDialog();
+				ICmPossibility selectedGenre = (ICmPossibility)chooser.SelectedObject;
+				if (chooser.ChosenOne == null || selectedGenre == null)
+					return false;
 
+				// Get all of the wordforms in the genre's texts.
+				IEnumerable<IWfiWordform> wordforms = new HashSet<IWfiWordform>();
+				foreach (var text in m_cache.LanguageProject.InterlinearTexts.Where(t => t.GenreCategories.Any(genre => ContainsGenre(selectedGenre, genre))))
+				{
+					wordforms = wordforms.Union(text.UniqueWordforms());
+				}
 				// Check all of the wordforms.
-				UpdateWordforms(wordforms, ParserPriority.Medium, checkParser: true, "Testbed Texts");
+				var genreName = String.Format(ParserUIStrings.ksXGenre, selectedGenre.Name.AnalysisDefaultWritingSystem.Text);
+				UpdateWordforms(wordforms, ParserPriority.Medium, checkParser: true, genreName);
 			}
 
 			return true;    //we handled this.
+		}
+
+		private void ExpandTreeViewNodes(TreeNodeCollection nodes)
+		{
+			foreach (TreeNode node in nodes)
+			{
+				node.Expand();
+				ExpandTreeViewNodes(node.Nodes);
+			}
+		}
+
+		private bool ContainsGenre(ICmPossibility genre1, ICmPossibility genre2)
+		{
+			while (genre2 != null)
+			{
+				if (genre1 == genre2) return true;
+				genre2 = genre2.Owner as ICmPossibility;
+			}
+			return false;
 		}
 
 		public bool OnCheckParserOnAll(object argument)
@@ -575,6 +608,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				InitCheckParserResults(wordforms, sourceText);
 				if (wordforms.Count() == 0)
 				{
+					ReadParserReports();
 					// Write an empty parser report.
 					var parserReport = WriteParserReport();
 					AddParserReport(parserReport);
@@ -624,8 +658,9 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (m_checkParserResults[key] == null)
 						return;
 				}
+				// Read parser reports before writing and adding a parser report to avoid duplicates.
+				ReadParserReports();
 				// Convert parse results into ParserReport.
-
 				var parserReport = WriteParserReport();
 				AddParserReport(parserReport);
 				ShowParserReport(parserReport, m_mediator, m_cache);
@@ -757,7 +792,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		private void AddParserReport(ParserReport parserReport)
 		{
-			ReadParserReports();
 			m_parserReports.Insert(0, new ParserReportViewModel { ParserReport = parserReport });
 			if (m_parserReportsDialog != null)
 				// Reset ParserReports so that the window gets notified when the new report is selected.

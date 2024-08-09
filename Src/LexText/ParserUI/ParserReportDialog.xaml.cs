@@ -30,14 +30,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			var button = sender as Button;
 			var parseReport = button.CommandParameter as ParseReport;
-			Mediator.SendMessage("TryThisWord", parseReport.Word);
+			Mediator.SendMessage("TryThisWord", RemoveArrow(parseReport.Word));
 		}
 
 		public void ShowWordAnalyses(object sender, RoutedEventArgs e)
 		{
 			var button = sender as Button;
 			var parseReport = button.CommandParameter as ParseReport;
-			var tsString = TsStringUtils.MakeString(parseReport.Word, Cache.DefaultVernWs);
+			var tsString = TsStringUtils.MakeString(RemoveArrow(parseReport.Word), Cache.DefaultVernWs);
 			IWfiWordform wordform;
 			if (Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(tsString, out wordform))
 			{
@@ -48,6 +48,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				// This should never happen.
 				MessageBox.Show("Unknown word " + parseReport.Word);
 			}
+		}
+
+		private string RemoveArrow(string word)
+		{
+			return word.Replace(" => ", string.Empty);
 		}
 	}
 }

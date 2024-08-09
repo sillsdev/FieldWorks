@@ -138,7 +138,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;_searchTextbox.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="_notificationLabel.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -162,7 +162,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;_notificationLabel.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="_findNext.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -189,6 +189,37 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;_findNext.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="_findPrev.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="_findPrev.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="_findPrev.Location" type="System.Drawing.Point, System.Drawing">
+    <value>159, 51</value>
+  </data>
+  <data name="_findPrev.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="_findPrev.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="_findPrev.Text" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="&gt;&gt;_findPrev.Name" xml:space="preserve">
+    <value>_findPrev</value>
+  </data>
+  <data name="&gt;&gt;_findPrev.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_findPrev.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;_findPrev.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
