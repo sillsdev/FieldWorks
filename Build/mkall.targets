@@ -288,12 +288,7 @@
 		<LcmNugetVersion>11.0.0-beta0103</LcmNugetVersion>
 		<IcuNugetVersion>70.1.123</IcuNugetVersion>
 		<HermitCrabNugetVersion>2.5.13</HermitCrabNugetVersion>
-		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
-		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
-		<IPCFrameworkBuildType Condition="'$(OS)'=='Windows_NT'">bt278</IPCFrameworkBuildType>
-		<!-- bt279 is the develop branch build of IPCFramework for Linux development. Update when appropriate. -->
-		<IPCFrameworkBuildType Condition="'$(OS)'=='Unix'">bt279</IPCFrameworkBuildType>
-		<IPCFrameworkBuildTag>.lastSuccessful</IPCFrameworkBuildTag>
+		<IPCFrameworkVersion>1.1.1-beta0001</IPCFrameworkVersion>
 		<!-- bt393 is the master branch build of ExCss for Windows development. Update when appropriate. -->
 		<ExCssBuildType Condition="'$(OS)'=='Windows_NT'">bt393</ExCssBuildType>
 		<ExCss Condition="'$(OS)'=='Windows_NT'">ExCss</ExCss>
@@ -447,8 +442,6 @@
 		<Message Text="Copying artifacts from Palaso, Chorus, LCM, and related packages to Downloads."/>
 		<Copy SourceFiles="@(SILNugetFiles)" DestinationFolder="$(DownloadsDir)/%(RecursiveDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<Message Text="(Palaso, Chorus, and LCM artifacts will be copied to Output from $(PalasoArtifactsDir), $(ChorusArtifactsDir), and $(LcmArtifactsDir), respectively, as  specified in LibraryDevelopment.targets)" Condition="'$(UseLocalLibraries)'=='Y'"/>
-		<Message Text="Downloading an artifact for IPCFramework."/>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(IPCFrameworkBuildType)" Tag="$(IPCFrameworkBuildTag)" Artifacts="IPCFramework.dll" DownloadsDir="$(DownloadsDir)"/>
 
 		<!-- Due to platform-specific casing, ExCSS or ExCss is included in a variable -->
 		<Message Text="Downloading artifacts for $(ExCss)."/>
@@ -475,6 +468,7 @@
 			<SILNugetPackages Include="Icu4c.Win.Fw.Bin" Condition="'$(OS)'=='Windows_NT'"><Version>$(IcuNugetVersion)</Version><Path>build/**/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="Icu4c.Win.Fw.Lib" Condition="'$(OS)'=='Windows_NT'"><Version>$(IcuNugetVersion)</Version><Path>runtimes/**/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="Icu4c.Win.Fw.Lib"><Version>$(IcuNugetVersion)</Version><Path>build/native/**/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.FLExBridge.IPCFramework"><Version>$(IPCFrameworkVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<!-- LCM and related packages -->
 			<!-- If the build is run with /p:UsingLocalLibraryBuild use that for NoSymbols when the package comes from liblcm, libpalaso, or chorus -->
 			<!-- a true value will skip downloading and extracting the .pdb files from the nuget server. -->
