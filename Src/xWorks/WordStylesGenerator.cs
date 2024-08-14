@@ -4,6 +4,7 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using System;
@@ -23,22 +24,24 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal const int DefaultStyle = -1;
 
-		// Names for global and default styles
+		// Global and default character styles.
 		internal const string BeforeAfterBetweenStyleName = "Dictionary-Context";
 		internal const string BeforeAfterBetweenDisplayName = "Context";
-		internal const string LetterHeadingStyleName = "Dictionary-LetterHeading";
-		internal const string LetterHeadingDisplayName = "Letter Heading";
 		internal const string SenseNumberStyleName = "Dictionary-SenseNumber";
 		internal const string SenseNumberDisplayName = "Sense Number";
-		internal const string DictionaryNormal = "Dictionary-Normal";
-		internal const string DictionaryMinor = "Dictionary-Minor";
 		internal const string WritingSystemStyleName = "Writing System Abbreviation";
 		internal const string WritingSystemDisplayName = "Writing System Abbreviation";
-		internal const string PictureAndCaptionTextframeStyle = "Image-Textframe-Style";
-		internal const string EntryStyleContinue = "-Continue";
 		internal const string StyleSeparator = " : ";
 
-		public static Style GenerateLetterHeaderStyle(ReadOnlyPropertyTable propertyTable)
+		// Globals and default paragraph styles.
+		internal const string NormalParagraphStyleName = "Normal";
+		internal const string MainEntryParagraphDisplayName = "Main Entry";
+		internal const string LetterHeadingStyleName = "Dictionary-LetterHeading";
+		internal const string LetterHeadingDisplayName = "Letter Heading";
+		internal const string PictureAndCaptionTextframeStyle = "Image-Textframe-Style";
+		internal const string EntryStyleContinue = "-Continue";
+
+		public static Style GenerateLetterHeaderParagraphStyle(ReadOnlyPropertyTable propertyTable)
 		{
 			var style = GenerateWordStyleFromLcmStyleSheet(LetterHeadingStyleName, 0, propertyTable);
 			style.StyleId = LetterHeadingDisplayName;
@@ -54,18 +57,26 @@ namespace SIL.FieldWorks.XWorks
 			return style;
 		}
 
-		public static Styles GetDefaultWordStyles(ReadOnlyPropertyTable propertyTable, LcmStyleSheet propStyleSheet, DictionaryConfigurationModel model)
+		public static Style GenerateNormalParagraphStyle(ReadOnlyPropertyTable propertyTable)
 		{
-			var styles = new Styles();
-			if (propStyleSheet == null)
-				return null;
-			// Normal is added as a default style; this means all styles will inherit from Normal unless specified otherwise.
-			if (propStyleSheet.Styles.Contains("Normal"))
-				styles = AddRange(styles, GetWordStyleForWsSpanWithNormalStyle(propertyTable));
+			var style = GenerateWordStyleFromLcmStyleSheet(NormalParagraphStyleName, DefaultStyle, propertyTable);
+			return style;
+		}
 
-			// TODO: handle DictionaryNormal, DictionaryMinor, and LetterHeadingForWritingSystem styles
+		public static Style GenerateMainEntryParagraphStyle(ReadOnlyPropertyTable propertyTable, DictionaryConfigurationModel model,
+			out ConfigurableDictionaryNode mainEntryNode)
+		{
+			Style style = null;
 
-			return styles;
+			// The user can change the style name that is associated with the Main Entry, so look up the node style name using the DisplayLabel.
+			mainEntryNode = model.Parts.Find(node => node.DisplayLabel == MainEntryParagraphDisplayName);
+			if (mainEntryNode != null)
+			{
+				style = GenerateWordStyleFromLcmStyleSheet(mainEntryNode.Style, DefaultStyle, mainEntryNode, propertyTable);
+				style.StyleId = MainEntryParagraphDisplayName;
+				style.StyleName.Val = style.StyleId;
+			}
+			return style;
 		}
 
 		/// <summary>
@@ -128,7 +139,7 @@ namespace SIL.FieldWorks.XWorks
 			exportStyle.StyleId = styleName.Trim('.');
 			// StyleName is the name a user will see for the given style in Word's style sheet.
 			exportStyle.Append(new StyleName() {Val = exportStyle.StyleId});
-			var parProps = new ParagraphProperties();
+			var parProps = new StyleParagraphProperties();
 			var runProps = new StyleRunProperties();
 
 			if (exportStyleInfo.BasedOnStyle?.Name != null)
@@ -352,61 +363,19 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Creates run properties/character styles for the default "Normal" style
+		/// Generate the character styles (for the writing systems) that will be the base of all other character styles.
 		/// </summary>
 		/// <param name="propertyTable"></param>
 		/// <returns></returns>
-		private static Styles GetWordStyleForWsSpanWithNormalStyle(ReadOnlyPropertyTable propertyTable)
-		{
-			var styles = new Styles();
-			var defaultStyleProps = new Style();
-
-			// Generate character style rules for the default "Normal" style info
-			var normalStyle = GetOnlyCharacterStyle(GenerateWordStyleFromLcmStyleSheet("Normal", DefaultStyle, propertyTable));
-			var defaultRunProps = new RunPropertiesDefault();
-			if (normalStyle.Descendants<StyleRunProperties>().Any())
-			{
-				foreach (var item in normalStyle.Descendants<StyleRunProperties>())
-				{
-					defaultRunProps.AppendChild(item.CloneNode(true));
-					defaultStyleProps.AppendChild(defaultRunProps);
-				}
-			}
-
-			// if a default fontsize wasn't set, set one now
-			if (!defaultRunProps.Descendants<FontSize>().Any())
-			{
-				List<StyleRunProperties> runProps =
-					defaultRunProps.OfType<StyleRunProperties>().ToList();
-
-				// Append desired default font size to the last runproperties element in the default run properties (if one exists)
-				if (runProps.Any())
-					// kDefaultFontSize stores the desired fontsize in points. Openxml expects fontsize given in half points, so we multiply by 2
-					runProps.Last().Append(new FontSize() { Val = (FontInfo.kDefaultFontSize * 2).ToString() });
-
-				// Else, create a new runproperties element with the desired default font size and append it to the default run properties
-				else
-				{
-					RunProperties newRunProps = new RunProperties();
-					newRunProps.Append(new FontSize() { Val = (FontInfo.kDefaultFontSize * 2).ToString() });
-					defaultRunProps.Append(newRunProps);
-				}
-			}
-
-			defaultStyleProps.StyleId = "Normal";
-			styles.Append(defaultStyleProps);
-			styles = AddRange(styles, GenerateWordStylesForWritingSystems("Normal", propertyTable));
-			return styles;
-		}
-
-		private static Styles GenerateWordStylesForWritingSystems(string styleName, ReadOnlyPropertyTable propertyTable)
+		public static Styles GenerateWritingSystemsStyles(ReadOnlyPropertyTable propertyTable)
 		{
 			var cache = propertyTable.GetValue<LcmCache>("cache");
 			var styleRules = new Styles();
 			// Generate the rules for all the writing system overrides
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
-				Style wsCharStyle = GetOnlyCharacterStyle(GenerateWordStyleFromLcmStyleSheet(styleName, aws.Handle, propertyTable));
+				// Get the character style information from the "Normal" paragraph style.
+				Style wsCharStyle = GetOnlyCharacterStyle(GenerateWordStyleFromLcmStyleSheet(NormalParagraphStyleName, aws.Handle, propertyTable));
 				wsCharStyle.StyleId = GetWsString(aws.LanguageTag);
 				wsCharStyle.StyleName = new StyleName() { Val = wsCharStyle.StyleId };
 
@@ -534,11 +503,19 @@ namespace SIL.FieldWorks.XWorks
 			// fontName still null means not set in Normal Style, then get default fonts from WritingSystems configuration.
 			// Comparison, projectStyle.Name == "Normal", required to limit the font-family definition to the
 			// empty span (ie span[lang="en"]{}. If not included, font-family will be added to many more spans.
-			if (fontName == null && projectStyle.Name == "Normal")
+			if (fontName == null && projectStyle.Name == NormalParagraphStyleName)
 			{
 				var lgWritingSystem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId);
 				if (lgWritingSystem != null)
 					fontName = lgWritingSystem.DefaultFontName;
+				else
+				{
+					CoreWritingSystemDefinition defAnalWs = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+					lgWritingSystem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(defAnalWs.Handle);
+					if (lgWritingSystem != null)
+						fontName = lgWritingSystem.DefaultFontName;
+
+				}
 			}
 
 			if (fontName != null)
@@ -554,8 +531,15 @@ namespace SIL.FieldWorks.XWorks
 
 			// Check fontsize
 			int fontSize;
-			if (GetFontValue(wsFontInfo.m_fontSize, defaultFontInfo.FontSize, out fontSize))
+			if (GetFontValue(wsFontInfo.m_fontSize, defaultFontInfo.FontSize, out fontSize) ||
+			   projectStyle.Name == NormalParagraphStyleName)
 			{
+				// Always set the font size for the 'Normal' paragraph style.
+				if (fontSize == 0)
+				{
+					fontSize = FontInfo.kDefaultFontSize * 1000;
+				}
+
 				// Fontsize is stored internally multiplied by 1000.  (FieldWorks code generally hates floating point.)
 				// OpenXML expects fontsize given in halves of a point; thus we divide by 500.
 				fontSize = fontSize / 500;
