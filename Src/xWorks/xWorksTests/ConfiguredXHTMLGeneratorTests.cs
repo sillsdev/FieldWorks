@@ -3844,8 +3844,8 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
-			//SUT
-			settings.StylesGenerator.AddStyles(targetsNode);
+
+			ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings);
 
 			var result = ((CssGenerator)settings.StylesGenerator).GetStylesString();
 
