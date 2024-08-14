@@ -3802,6 +3802,60 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void GenerateContentForEntry_GeneratesCssForConfigTargetsInLexReferences()
+		{
+			var mainEntry = CreateInterestingLexEntry(Cache);
+			var referencedEntry = CreateInterestingLexEntry(Cache);
+			const string refTypeName = "TestRefType";
+			CreateLexicalReference(Cache, mainEntry, referencedEntry, refTypeName);
+			var refType = Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.First(poss => poss.Name.BestAnalysisAlternative.Text == refTypeName);
+			Assert.That(refType, Is.Not.Null);
+
+			var formNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				CSSClassNameOverride = "headword",
+				DictionaryNodeOptions = GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var targetsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConfigTargets",
+				Children = new List<ConfigurableDictionaryNode> { formNode },
+				Before = " ",
+				Between = ";",
+				After = "!"
+			};
+			var crossReferencesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MinimalLexReferences",
+				DictionaryNodeOptions = new DictionaryNodeListOptions
+				{
+					ListId = DictionaryNodeListOptions.ListIds.Entry,
+					Options = DictionaryDetailsControllerTests.ListOfEnabledDNOsFromStrings(new[] { refType.Guid.ToString() })
+				},
+				Children = new List<ConfigurableDictionaryNode> { targetsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { crossReferencesNode }
+			};
+
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
+			//SUT
+			settings.StylesGenerator.AddStyles(targetsNode);
+
+			var result = ((CssGenerator)settings.StylesGenerator).GetStylesString();
+
+			var pattern = @".configtargets>\s*\.configtarget\s*\+\s*\.configtarget:before\s*\{\s*content:\s*';';\s*\}\s*\.configtargets:before\s*\{\s*content:\s*' ';\s*\}\s*\.configtargets:after\s*\{\s*content:\s*'!';\s*\}";
+
+			CssGeneratorTests.VerifyRegex(result, pattern, "CSS verification failed.");
+		}
+
+
+		[Test]
 		public void GenerateContentForEntry_GeneratesLinksForCrossReferencesWithReferencedNodes()
 		{
 			var mainEntry = CreateInterestingLexEntry(Cache);
