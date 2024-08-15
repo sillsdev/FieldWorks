@@ -1687,6 +1687,7 @@ namespace SIL.FieldWorks.XWorks
 					else
 					{
 						basedOnStyle = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(style.BasedOn.Val, 0, node, propertyTable, !continuationStyle);
+						// Check if the style is based on itself.  This happens with the 'Normal' style and could possibly happen with others.
 						bool basedOnIsDifferent = basedOnStyle.BasedOn?.Val != null && basedOnStyle.StyleId != basedOnStyle.BasedOn?.Val;
 						if (continuationStyle)
 						{
