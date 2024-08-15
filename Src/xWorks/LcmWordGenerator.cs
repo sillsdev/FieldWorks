@@ -1270,6 +1270,7 @@ namespace SIL.FieldWorks.XWorks
 			// Create the 'continuation' style for the entry. This style will be the same as the style for the entry with the only
 			// difference being that it does not contain the first line indenting (since it is a continuation of the same entry).
 			var contStyle = WordStylesGenerator.GenerateContinuationWordStyles(config, _propertyTable);
+			AddBasedOnStyle(contStyle, config, _propertyTable);
 			s_styleCollection.AddStyle(contStyle, contStyle.StyleId, contStyle.StyleId);
 		}
 		public void AddEntryData(IFragmentWriter writer, List<ConfiguredLcmGenerator.ConfigFragment> pieces)
@@ -1595,11 +1596,9 @@ namespace SIL.FieldWorks.XWorks
 			// LoadBulletUnicodes();
 			// LoadNumberingStyles();
 
-			var letterHeaderStyle = WordStylesGenerator.GenerateLetterHeaderStyle(propertyTable);
-			if (letterHeaderStyle != null)
-			{
-				s_styleCollection.AddStyle(letterHeaderStyle, WordStylesGenerator.LetterHeadingStyleName, letterHeaderStyle.StyleId);
-			}
+
+			// Generate Character Styles
+			//
 
 			var beforeAfterBetweenStyle = WordStylesGenerator.GenerateBeforeAfterBetweenStyle(propertyTable);
 			if (beforeAfterBetweenStyle != null)
@@ -1607,19 +1606,105 @@ namespace SIL.FieldWorks.XWorks
 				s_styleCollection.AddStyle(beforeAfterBetweenStyle, WordStylesGenerator.BeforeAfterBetweenStyleName, beforeAfterBetweenStyle.StyleId);
 			}
 
-			Styles defaultStyles = WordStylesGenerator.GetDefaultWordStyles(propertyTable, propStyleSheet, model);
-			if (defaultStyles != null)
+			Styles writingSystemStyles = WordStylesGenerator.GenerateWritingSystemsStyles(propertyTable);
+			if (writingSystemStyles != null)
 			{
-				foreach (WP.Style style in defaultStyles.Descendants<Style>())
+				foreach (WP.Style style in writingSystemStyles.Descendants<Style>())
 				{
 					s_styleCollection.AddStyle(style, style.StyleId, style.StyleId);
 				}
 			}
 
+			// Generate Paragraph styles.
+			// Note: the order of generation is important since we want based on names to use the display names, not the style names.
+			//
+
+			var normalParagraphStyle = WordStylesGenerator.GenerateNormalParagraphStyle(propertyTable);
+			if (normalParagraphStyle != null)
+			{
+				s_styleCollection.AddStyle(normalParagraphStyle, WordStylesGenerator.NormalParagraphStyleName, normalParagraphStyle.StyleId);
+			}
+
+			var mainEntryParagraphStyle = WordStylesGenerator.GenerateMainEntryParagraphStyle(propertyTable, model, out ConfigurableDictionaryNode node);
+			if (mainEntryParagraphStyle != null)
+			{
+				AddBasedOnStyle(mainEntryParagraphStyle, node, propertyTable);
+				s_styleCollection.AddStyle(mainEntryParagraphStyle, node.Style, mainEntryParagraphStyle.StyleId);
+			}
+
+			var letterHeaderStyle = WordStylesGenerator.GenerateLetterHeaderParagraphStyle(propertyTable);
+			if (letterHeaderStyle != null)
+			{
+				AddBasedOnStyle(letterHeaderStyle, null, _propertyTable);
+				s_styleCollection.AddStyle(letterHeaderStyle, WordStylesGenerator.LetterHeadingStyleName, letterHeaderStyle.StyleId);
+			}
+
+
+			// Check both 'normal' and 'mainEntry' paragraph styles for the RightToLeft flag.  If either of them
+			// have it then set the flag for all run properties to be created RTL.
+			// Note:  Checking 'normal' and 'mainEntry' seems like a logical place to check for this flag since
+			// other paragraph styles are usually based on them, but there may be reasons to expand this check.
+			if ((normalParagraphStyle?.StyleParagraphProperties?.BiDi != null) ||
+				(mainEntryParagraphStyle?.StyleParagraphProperties?.BiDi != null))
+			{
+				RightToLeft = true;
+			}
+
+
 			// TODO: in openxml, will links be plaintext by default?
 			//WordStylesGenerator.MakeLinksLookLikePlainText(_styleSheet);
 			// TODO:  Generate style for audiows after we add audio to export
 			//WordStylesGenerator.GenerateWordStyleForAudioWs(_styleSheet, cache);
+		}
+
+		/// <summary>
+		/// Intended to add the basedOn styles for paragraph styles, not character styles.
+		/// This method is recursive. It walks up the basedOn styles and adds them
+		/// until we get to a style that is already in the collection.
+		/// If the basedOn style is already in the collection then the style.BasedOn value will
+		/// get updated to the unique display name.
+		/// </summary>
+		/// <param name="style">The style to add it's basedOn style. (It's BasedOn value might get modified.)</param>
+		/// <param name="node">Can be null, but if it is then the paragraph margin is not generated in context.</param>
+		private void AddBasedOnStyle(Style style, ConfigurableDictionaryNode node, ReadOnlyPropertyTable propertyTable)
+		{
+			if (style.BasedOn != null && !string.IsNullOrEmpty(style.BasedOn.Val))
+			{
+				// If this is a continuation style then base it on a continuation style.
+				bool continuationStyle = style.StyleId.Value.EndsWith(WordStylesGenerator.EntryStyleContinue);
+
+				lock (s_styleCollection)
+				{
+					// If the basedOn style already exists, then update the reference to the basedOn styles unique name.
+					if (s_styleCollection.TryGetStyle(style.BasedOn.Val, out Style basedOnStyle))
+					{
+						style.BasedOn.Val = basedOnStyle.StyleId;
+						if(continuationStyle && style.BasedOn.Val != WordStylesGenerator.NormalParagraphStyleName)
+							style.BasedOn.Val += WordStylesGenerator.EntryStyleContinue;
+					}
+					// Else if the basedOn style does NOT already exist, then create the basedOn style, if needed add
+					// it's basedOn style, then add this basedOn style to the collection.
+					else
+					{
+						basedOnStyle = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(style.BasedOn.Val, 0, node, propertyTable, !continuationStyle);
+						// Check if the style is based on itself.  This happens with the 'Normal' style and could possibly happen with others.
+						bool basedOnIsDifferent = basedOnStyle.BasedOn?.Val != null && basedOnStyle.StyleId != basedOnStyle.BasedOn?.Val;
+						if (continuationStyle)
+						{
+							basedOnStyle.StyleId += WordStylesGenerator.EntryStyleContinue;
+							basedOnStyle.StyleName.Val = basedOnStyle.StyleId;
+							style.BasedOn.Val += WordStylesGenerator.EntryStyleContinue;
+
+						}
+
+						if (basedOnIsDifferent)
+						{
+							AddBasedOnStyle(basedOnStyle, node, propertyTable);
+						}
+						s_styleCollection.AddStyle(basedOnStyle, basedOnStyle.StyleId, basedOnStyle.StyleId);
+					}
+				}
+			}
 		}
 
 		/// <summary>
@@ -1677,9 +1762,16 @@ namespace SIL.FieldWorks.XWorks
 			{
 				if (style.Type == StyleValues.Paragraph)
 				{
-					string oldName = style.StyleId;
-					string newName = s_styleCollection.AddStyle(style, node.Style, style.StyleId);
-					Debug.Assert(oldName == newName, "Not expecting the name for a paragraph style to ever change!");
+					lock (s_styleCollection)
+					{
+						if (!s_styleCollection.TryGetStyle(node.Style, style.StyleId, out Style _))
+						{
+							AddBasedOnStyle(style, node, _propertyTable);
+							string oldName = style.StyleId;
+							string newName = s_styleCollection.AddStyle(style, node.Style, style.StyleId);
+							Debug.Assert(oldName == newName, "Not expecting the name for a paragraph style to ever change!");
+						}
+					}
 				}
 				else
 				{
@@ -2011,5 +2103,12 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 		}
+
+		/// <summary>
+		/// Indicates if all the runs should be created LTR or RTL.
+		/// Note: If we do not force all to be the same then we would need to create
+		/// different styles for LTR and for RTL.
+		/// </summary>
+		public static bool RightToLeft { private set; get; }
 	}
 }
