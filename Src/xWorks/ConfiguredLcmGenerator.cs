@@ -2121,6 +2121,7 @@ namespace SIL.FieldWorks.XWorks
 								// targets
 								settings.ContentGenerator.AddCollection(xw, config, IsBlockProperty(child),
 									CssGenerator.GetClassAttributeForConfig(child), content);
+								settings.StylesGenerator.AddStyles(child);
 							}
 							break;
 						case "OwnerType":
