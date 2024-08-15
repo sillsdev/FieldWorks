@@ -4350,7 +4350,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(css, Contains.Substring("border-right-width:" + trailing / 1000 + "pt"));
 		}
 
-		private static void VerifyRegex(string input, string pattern, string message = null, RegexOptions options = RegexOptions.Singleline | RegexOptions.Multiline)
+		public static void VerifyRegex(string input, string pattern, string message = null, RegexOptions options = RegexOptions.Singleline | RegexOptions.Multiline)
 		{
 			Assert.IsTrue(Regex.Match(input, pattern, options).Success,
 				string.Format("{3}Expected{0}{1}{0}but got{0}{2}", Environment.NewLine, pattern, input,
