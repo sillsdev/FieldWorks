@@ -144,6 +144,39 @@ namespace SIL.FieldWorks.XWorks
 					stylePart.Styles = ((Styles)styleSheet.CloneNode(true));
 				}
 
+				// Add document settings
+				DocumentSettingsPart settingsPart = fragment.mainDocPart.DocumentSettingsPart;
+				if (settingsPart == null)
+				{
+					// Initialize word doc's settings part
+					settingsPart = AddDocSettingsPartToPackage(fragment.DocFrag);
+
+					settingsPart.Settings = new WP.Settings(
+						new Compatibility(
+							new CompatibilitySetting()
+							{
+								Name = CompatSettingNameValues.CompatibilityMode,
+								// val determines the version of word we are targeting.
+								// 14 corresponds to Office 2010; 16 would correspond to Office 2019
+								Val = new StringValue("14"),
+								Uri = new StringValue("http://schemas.microsoft.com/office/word")
+							},
+							new CompatibilitySetting()
+							{
+								// specify that table style should not be overridden
+								Name = CompatSettingNameValues.OverrideTableStyleFontSizeAndJustification,
+								Val = new StringValue("0"),
+								Uri = new StringValue("http://schemas.microsoft.com/office/word")
+							}
+							// If in the future, if we find that certain style items are different in different version of word,
+							// it may help to specify more compatibility settings.
+							// A full list of all possible compatibility settings may be found here:
+							// https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.wordprocessing.compatsettingnamevalues?view=openxml-3.0.1
+						)
+					);
+					settingsPart.Settings.Save();
+				}
+
 				fragment.DocFrag.Dispose();
 
 				// Create mode will overwrite any existing document at the given filePath;
@@ -1793,6 +1826,14 @@ namespace SIL.FieldWorks.XWorks
 			part = doc.MainDocumentPart.AddNewPart<StyleDefinitionsPart>();
 			Styles root = new Styles();
 			root.Save(part);
+			return part;
+		}
+
+		// Add a DocumentSettingsPart to the document. Returns a reference to it.
+		public static DocumentSettingsPart AddDocSettingsPartToPackage(WordprocessingDocument doc)
+		{
+			DocumentSettingsPart part;
+			part = doc.MainDocumentPart.AddNewPart<DocumentSettingsPart>();
 			return part;
 		}
 
