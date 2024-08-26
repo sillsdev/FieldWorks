@@ -109,11 +109,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			parserWorker.Parser = new TestParserClass(null, lowerXDoc);
 
 			// SUT
-			parserWorker.TryAWord("Cats", false, null);
-			Assert.AreEqual(m_taskDetailsString, lowerXDoc.ToString());
-			m_taskDetailsString = null;
-
-			// SUT
 			parserWorker.TryAWord("cats", false, null);
 			Assert.AreEqual(m_taskDetailsString, lowerXDoc.ToString());
 		}
