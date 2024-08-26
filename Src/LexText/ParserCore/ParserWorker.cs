@@ -109,34 +109,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CheckNeedsUpdate();
 			using (var task = new TaskReport(string.Format(ParserCoreStrings.ksTraceWordformX, sForm), m_taskUpdateHandler))
 			{
+				// Assume that the user used the correct case.
 				string normForm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sForm);
-
-				// Get the lowercase word.
-				var cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem);
-				string normFormLower = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(cf.ToLower(sForm));
-
-				// The word is already lowercase, just return the xml.
-				if (normForm == normFormLower)
-				{
-					task.Details = fDoTrace ? m_parser.TraceWordXml(normForm, sSelectTraceMorphs) : m_parser.ParseWordXml(normForm);
-				}
-				// The word is uppercase, make a ParseWord() call for the uppercase word to determine if we should try to get
-				// the xml for the uppercase word or for the lowercase word.
-				else
-				{
-					ParseResult result = m_parser.ParseWord(normForm);
-
-					// Parse of uppercase word was successful, get it's xml.
-					if (result.Analyses.Count > 0 && result.ErrorMessage == null)
-					{
-						task.Details = fDoTrace ? m_parser.TraceWordXml(normForm, sSelectTraceMorphs) : m_parser.ParseWordXml(normForm);
-					}
-					// Parse of uppercase word was not successful, try to get the xml for the lowercase word.
-					else
-					{
-						task.Details = fDoTrace ? m_parser.TraceWordXml(normFormLower, sSelectTraceMorphs) : m_parser.ParseWordXml(normFormLower);
-					}
-				}
+				task.Details = fDoTrace ? m_parser.TraceWordXml(normForm, sSelectTraceMorphs) : m_parser.ParseWordXml(normForm);
 			}
 		}
 
