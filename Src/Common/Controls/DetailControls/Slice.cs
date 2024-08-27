@@ -2789,28 +2789,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 			if (ContainingDataTree.ShowingAllFields)
 			{
-				XmlNode swapWith = null;
-				XmlNode fieldRef = null;
-				var keyBldr = new StringBuilder();
-				foreach (object obj in Key)
-				{
-					var node = obj as XmlNode;
-					if (node == null || node.Name != "part" ||
-						XmlUtils.GetOptionalAttributeValue(node, "ref", null) == null)
-					{
-						keyBldr.Append($"Not an interesting node for fieldRef: {obj}");
-						continue;
-					}
-					else
-					{
-						keyBldr.Append(
-							$"name: {node.Name} ref: {XmlUtils.GetOptionalAttributeValue(node, "ref")}");
-					}
-
-					fieldRef = node;
-				}
-
-				Debug.WriteLine(keyBldr.ToString());
+				XmlNode swapWith;
+				XmlNode fieldRef = FieldReferenceForSlice();
 
 				if (fieldRef == null)
 				{
@@ -2843,6 +2823,29 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					.PersistOverrideElement(PartParent(fieldRef));
 				ContainingDataTree.RefreshList(true);
 			}
+		}
+
+		/// <summary>
+		/// Find the last part ref in the Key which represents the part of the data and configuration for this slice.
+		/// This is built up in DataTree with the path to the part in the combined layout and parts configuration files.
+		/// There may be other part refs in the path if this slice represents a subfield.
+		/// </summary>
+		private XmlNode FieldReferenceForSlice()
+		{
+			XmlNode fieldRef = null;
+			foreach (object obj in Key)
+			{
+				var node = obj as XmlNode;
+				if (node == null || node.Name != "part" ||
+					XmlUtils.GetOptionalAttributeValue(node, "ref", null) == null)
+				{
+					continue;
+				}
+
+				fieldRef = node;
+			}
+
+			return fieldRef;
 		}
 
 		protected void SetFieldVisibility(string visibility)
@@ -2951,15 +2954,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			XmlNode lastPartRef = null;
-			foreach (object obj in Key)
-			{
-				var node = obj as XmlNode;
-				if (node == null || node.Name != "part" ||
-					XmlUtils.GetOptionalAttributeValue(node, "ref", null) == null)
-					continue;
-				lastPartRef = node;
-			}
+			var lastPartRef = FieldReferenceForSlice();
 
 			return lastPartRef != null &&
 				   XmlUtils.GetOptionalAttributeValue(lastPartRef, "visibility", "always") ==
@@ -2968,15 +2963,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private bool CheckValidMove(UIItemDisplayProperties display, Direction dir)
 		{
-			XmlNode lastPartRef = null;
-			foreach (object obj in Key)
-			{
-				var node = obj as XmlNode;
-				if (node == null || node.Name != "part" ||
-					XmlUtils.GetOptionalAttributeValue(node, "ref", null) == null)
-					continue;
-				lastPartRef = node;
-			}
+			XmlNode lastPartRef = FieldReferenceForSlice();
 
 			if (lastPartRef == null)
 				return false;
@@ -2989,7 +2976,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			XmlNode prev = partRef.PreviousSibling;
 			while (prev != null && (prev.NodeType != XmlNodeType.Element || prev.Name != "part" ||
-				XmlUtils.GetOptionalAttributeValue(prev, "ref", null) == null))
+				XmlUtils.GetOptionalAttributeValue(prev, "ref", null) == null ||
+				DataTree.SpecialPartRefs.Contains(XmlUtils.GetOptionalAttributeValue(prev, "ref"))))
 			{
 				prev = prev.PreviousSibling;
 			}

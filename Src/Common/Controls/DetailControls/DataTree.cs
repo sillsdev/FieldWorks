@@ -55,6 +55,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	public class DataTree : UserControl, IVwNotifyChange, IxCoreColleague, IRefreshableRoot
 	{
 		/// <summary>
+		/// Part refs that don't represent actual data slices
+		/// </summary>
+		public static string[] SpecialPartRefs = { "ChangeHandler", "_CustomFieldPlaceholder" };
+
+		/// <summary>
 		/// Occurs when the current slice changes
 		/// </summary>
 		public event EventHandler CurrentSliceChanged;
