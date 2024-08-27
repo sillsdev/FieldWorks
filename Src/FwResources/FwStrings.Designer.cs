@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class FwStrings {
@@ -322,7 +322,7 @@ namespace SIL.FieldWorks.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change Vernacular Writing System.
+        ///   Looks up a localized string similar to Default Vernacular Writing System Has Changed.
         /// </summary>
         internal static string kstidChangeHomographNumberWsTitle {
             get {
@@ -2077,6 +2077,15 @@ namespace SIL.FieldWorks.Resources {
         internal static string kstidPersonalNotes {
             get {
                 return ResourceManager.GetString("kstidPersonalNotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Phonology XML Files.
+        /// </summary>
+        internal static string kstidPhonologyXML {
+            get {
+                return ResourceManager.GetString("kstidPhonologyXML", resourceCulture);
             }
         }
         

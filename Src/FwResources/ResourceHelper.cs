@@ -34,6 +34,8 @@ namespace SIL.FieldWorks.Resources
 		AllScriptureStandardFormat,
 		/// <summary>*.xml</summary>
 		XML,
+		/// <summary>Phonology XML (*.xml)</summary>
+		PhonologyXML,
 		/// <summary>*.rtf</summary>
 		RichTextFormat,
 		/// <summary>*.pdf</summary>
@@ -133,6 +135,7 @@ namespace SIL.FieldWorks.Resources
 			s_fileFilterExtensions[FileFilterType.DefaultStandardFormat] = "*.sf";
 			s_fileFilterExtensions[FileFilterType.AllScriptureStandardFormat] = "*.db; *.sf; *.sfm; *.txt";
 			s_fileFilterExtensions[FileFilterType.XML] = "*.xml";
+			s_fileFilterExtensions[FileFilterType.PhonologyXML] = "*.xml";
 			s_fileFilterExtensions[FileFilterType.RichTextFormat] = "*.rtf";
 			s_fileFilterExtensions[FileFilterType.PDF] = "*.pdf";
 			s_fileFilterExtensions[FileFilterType.OXES] = "*" + FwFileExtensions.ksOpenXmlForEditingScripture;
