@@ -47,12 +47,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			get
 			{
-				// Depending on compile switch for SLICE_IS_SPLITCONTAINER,
-				// grandParent will be both a Slice and a SplitContainer
-				// (Slice is a subclass of SplitContainer),
-				// or just a SplitContainer (SplitContainer is the only child Control of a Slice).
-				// If grandParent is not a Slice, then we have to move up to the great-grandparent
-				// to find the Slice.
+				// Return the Slice parent of this button, even if the button buried in other controls
 				Control parent = Parent;
 				while (!(parent is Slice))
 					parent = parent.Parent;
