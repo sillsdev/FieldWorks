@@ -343,6 +343,9 @@
     <Compile Include="ConfigurableDictionaryNode.cs" />
     <Compile Include="ConfiguredLcmGenerator.cs" />
     <Compile Include="DictConfigModelExt.cs" />
+    <Compile Include="GrammarExportDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="HeadWordNumbersController.cs" />
     <Compile Include="HeadWordNumbersDlg.cs">
       <SubType>Form</SubType>
