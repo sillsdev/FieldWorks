@@ -361,11 +361,11 @@ namespace SIL.FieldWorks.XWorks
 			// Here is the original order (along with a comment between them that seemed to imply this
 			// new order could be a problem, but no obvious ones have appeared in my testing.
 
-		   /*
-			* LoadUI(configFile);
-			* // Reload additional property settings that depend on knowing the database name.
-			* m_viewHelper = new ActiveViewHelper(this);
-			*/
+			/*
+			 * LoadUI(configFile);
+			 * // Reload additional property settings that depend on knowing the database name.
+			 * m_viewHelper = new ActiveViewHelper(this);
+			 */
 
 			m_viewHelper = new ActiveViewHelper(this);
 			LoadUI(configFile);
@@ -523,7 +523,7 @@ namespace SIL.FieldWorks.XWorks
 			m_fWindowIsCopy = (wndCopyFrom != null);
 			InitMediatorValues(cache);
 
-			if(iconStream != null)
+			if (iconStream != null)
 				Icon = new System.Drawing.Icon(iconStream);
 		}
 
@@ -969,8 +969,8 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		protected bool OnStartLogging(object args)
 		{
-					return true;
-			}
+			return true;
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1099,7 +1099,7 @@ namespace SIL.FieldWorks.XWorks
 			var filesToArchive = m_app.FwManager.ArchiveProjectWithRamp(m_app, this);
 
 			// if there are no files to archive, return now.
-			if((filesToArchive == null) || (filesToArchive.Count == 0))
+			if ((filesToArchive == null) || (filesToArchive.Count == 0))
 				return true;
 
 			ReapRamp ramp = new ReapRamp();
@@ -1835,7 +1835,7 @@ namespace SIL.FieldWorks.XWorks
 				// Need to refresh to reload the cache.  See LT-6265.
 				(m_app as FwXApp).OnMasterRefresh(null);
 			}
-			return false;	// refresh already called if needed
+			return false;   // refresh already called if needed
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1918,10 +1918,27 @@ namespace SIL.FieldWorks.XWorks
 		public override IxCoreColleague[] GetMessageTargets()
 		{
 			CheckDisposed();
-			if(m_app is IxCoreColleague)
+			if (m_app is IxCoreColleague)
 				return new IxCoreColleague[] { this, m_app as IxCoreColleague };
 			else
-				return new IxCoreColleague[]{this};
+				return new IxCoreColleague[] { this };
+		}
+
+		public bool OnDisplayImportPhonology(object parameters, ref UIItemDisplayProperties display)
+		{
+			// Set display here in case command == null or mediator == null.
+			display.Enabled = false;
+			display.Visible = false;
+			XCore.Command command = parameters as XCore.Command;
+			if (command == null)
+				return true;
+			Mediator mediator = Mediator;
+			if (mediator == null)
+				return true;
+			string area = PropTable.GetValue<string>("areaChoice");
+			display.Enabled = area == "grammar";
+			display.Visible = area == "grammar";
+			return true;
 		}
 
 		public bool OnImportPhonology(object commandObject)
