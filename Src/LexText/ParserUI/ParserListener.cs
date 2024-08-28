@@ -571,13 +571,20 @@ namespace SIL.FieldWorks.LexText.Controls
 			return false;
 		}
 
+		/// <summary>
+		/// Check parser on all words in texts.
+		/// </summary>
 		public bool OnCheckParserOnAll(object argument)
 		{
 			CheckDisposed();
 
 			if (ConnectToParser())
 			{
-				IEnumerable<IWfiWordform> wordforms = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances();
+				IEnumerable<IWfiWordform> wordforms = new HashSet<IWfiWordform>();
+				foreach (var text in m_cache.LanguageProject.InterlinearTexts)
+				{
+					wordforms = wordforms.Union(text.UniqueWordforms());
+				}
 				UpdateWordforms(wordforms, ParserPriority.Low, checkParser: true, "All Texts");
 			}
 
