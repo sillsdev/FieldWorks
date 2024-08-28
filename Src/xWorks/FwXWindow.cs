@@ -1926,6 +1926,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool OnDisplayImportPhonology(object parameters, ref UIItemDisplayProperties display)
 		{
+			// Set display here in case command == null or mediator == null.
 			display.Enabled = false;
 			display.Visible = false;
 			XCore.Command command = parameters as XCore.Command;
@@ -1935,11 +1936,8 @@ namespace SIL.FieldWorks.XWorks
 			if (mediator == null)
 				return true;
 			string area = PropTable.GetValue<string>("areaChoice");
-			if (area == "grammar")
-			{
-				display.Enabled = true;
-				display.Visible = true;
-			}
+			display.Enabled = area == "grammar";
+			display.Visible = area == "grammar";
 			return true;
 		}
 
