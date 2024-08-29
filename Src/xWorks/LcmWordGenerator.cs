@@ -471,17 +471,17 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
-				lastPar.AppendChild(CloneRun(fragToCopy, run));
+				lastPar.AppendChild(CloneElement(fragToCopy, run));
 			}
 
-			public OpenXmlElement CloneRun(IFragment fragToCopy, OpenXmlElement run)
+			public OpenXmlElement CloneElement(IFragment fragToCopy, OpenXmlElement elem)
 			{
-				if (run.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().Any())
+				if (elem.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().Any())
 				{
-					return CloneImageRun(fragToCopy, run);
+					return CloneImageRun(fragToCopy, elem);
 				}
 
-				return run.CloneNode(true);
+				return elem.CloneNode(true);
 
 			}
 
@@ -817,19 +817,20 @@ namespace SIL.FieldWorks.XWorks
 				AddRunStyle(elementContent, config.Parent.Style, config.Parent.DisplayLabel, false);
 			}
 
-			bool eachOnANewLine = config != null &&
+			bool eachInAParagraph = config != null &&
 								  config.DictionaryNodeOptions is IParaOption &&
 								  ((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph;
 
-			// Add Before text, if it is not going to be displayed on its own line.
-			if (!eachOnANewLine && !string.IsNullOrEmpty(config.Before))
+
+			// Add Before text, if it is not going to be displayed in a paragraph.
+			if (!eachInAParagraph && !string.IsNullOrEmpty(config.Before))
 			{
 				var beforeRun = CreateBeforeAfterBetweenRun(config.Before);
 				((DocFragment)elementContent).DocBody.PrependChild(beforeRun);
 			}
 
-			// Add After text, if it is not going to be displayed on its own line.
-			if (!eachOnANewLine && !string.IsNullOrEmpty(config.After))
+			// Add After text, if it is not going to be displayed in a paragraph.
+			if (!eachInAParagraph && !string.IsNullOrEmpty(config.After))
 			{
 				var afterRun = CreateBeforeAfterBetweenRun(config.After);
 				((DocFragment)elementContent).DocBody.Append(afterRun);
@@ -846,20 +847,19 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var groupData = new DocFragment();
 			WP.Paragraph groupPara = null;
-			bool eachOnANewLine = config != null &&
+			bool eachInAParagraph = config != null &&
 								  config.DictionaryNodeOptions is DictionaryNodeGroupingOptions &&
 								  ((DictionaryNodeGroupingOptions)(config.DictionaryNodeOptions)).DisplayEachInAParagraph;
 
-			// If the group is displayed on a new line then the group needs its own paragraph, so
-			// the group style can be applied to the entire paragraph (applied to all of the runs
-			// contained in it).
-			if (eachOnANewLine)
+			// Display in its own paragraph, so the group style can be applied to all of the runs
+			// contained in it.
+			if (eachInAParagraph)
 			{
 				groupPara = new WP.Paragraph();
 			}
 
-			// Add Before text, if it is not going to be displayed on its own line.
-			if (!eachOnANewLine && !string.IsNullOrEmpty(config.Before))
+			// Add Before text, if it is not going to be displayed in a paragraph.
+			if (!eachInAParagraph && !string.IsNullOrEmpty(config.Before))
 			{
 				var beforeRun = CreateBeforeAfterBetweenRun(config.Before);
 				groupData.DocBody.PrependChild(beforeRun);
@@ -869,13 +869,13 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var child in config.ReferencedOrDirectChildren)
 			{
 				IFragment childContent = childContentGenerator(field, child, publicationDecorator, settings);
-				if (eachOnANewLine)
+				if (eachInAParagraph)
 				{
 					var elements = ((DocFragment)childContent).DocBody.Elements().ToList();
 					foreach (OpenXmlElement elem in elements)
 					{
 						// Deep clone the run b/c of its tree of properties and to maintain styles.
-						groupPara.AppendChild(groupData.CloneRun(childContent, elem));
+						groupPara.AppendChild(groupData.CloneElement(childContent, elem));
 					}
 				}
 				else
@@ -884,8 +884,8 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			// Add After text, if it is not going to be displayed on its own line.
-			if (!eachOnANewLine && !string.IsNullOrEmpty(config.After))
+			// Add After text, if it is not going to be displayed in a paragraph.
+			if (!eachInAParagraph && !string.IsNullOrEmpty(config.After))
 			{
 				var afterRun = CreateBeforeAfterBetweenRun(config.After);
 				groupData.DocBody.Append(afterRun);
@@ -910,44 +910,60 @@ namespace SIL.FieldWorks.XWorks
 		public IFragment AddSenseData(ConfigurableDictionaryNode config, IFragment senseNumberSpan, Guid ownerGuid, IFragment senseContent, bool first)
 		{
 			var senseData = new DocFragment();
+			WP.Paragraph newPara = null;
 			var senseNode = (DictionaryNodeSenseOptions)config?.DictionaryNodeOptions;
-			bool eachOnANewLine = false;
+			bool eachInAParagraph = false;
 			bool firstSenseInline = false;
 			if (senseNode != null)
 			{
-				eachOnANewLine = senseNode.DisplayEachSenseInAParagraph;
+				eachInAParagraph = senseNode.DisplayEachSenseInAParagraph;
 				firstSenseInline = senseNode.DisplayFirstSenseInline;
 			}
 
-			// We want a break before the first sense item, between items, and after the last item.
-			// So, only add a break before the content if it is the first sense and it's not displayed in-line.
-			if (eachOnANewLine && first && !firstSenseInline)
+			bool inAPara = eachInAParagraph && (!first || !firstSenseInline);
+			if (inAPara)
 			{
-				senseData.AppendBreak();
+				newPara = new WP.Paragraph();
 			}
 
-			// Add Between text, if it is not going to be displayed on it's own line
+			// Add Between text, if it is not going to be displayed in a paragraph
 			// and it is not the first item.
 			if (!first &&
 				config != null &&
-				!eachOnANewLine &&
+				!eachInAParagraph &&
 				!string.IsNullOrEmpty(config.Between))
 			{
 				var betweenRun = CreateBeforeAfterBetweenRun(config.Between);
-				((DocFragment)senseData).DocBody.Append(betweenRun);
+				senseData.DocBody.Append(betweenRun);
 			}
 
 			// Add sense numbers if needed
 			if (!senseNumberSpan.IsNullOrEmpty())
 			{
-				senseData.Append(senseNumberSpan);
+				if (inAPara)
+				{
+					foreach (OpenXmlElement elem in ((DocFragment)senseNumberSpan).DocBody.Elements())
+					{
+						newPara.AppendChild(senseData.CloneElement(senseNumberSpan, elem));
+					}
+				}
+				else
+				{
+					senseData.Append(senseNumberSpan);
+				}
 			}
 
-			senseData.Append(senseContent);
-
-			if (eachOnANewLine)
+			if (inAPara)
 			{
-				senseData.AppendBreak();
+				List<OpenXmlElement> elements = SeparateIntoFirstLevelElements(newPara, senseContent as DocFragment, config);
+				foreach (OpenXmlElement elem in elements)
+				{
+					senseData.DocBody.Append(elem);
+				}
+			}
+			else
+			{
+				senseData.Append(senseContent);
 			}
 
 			return senseData;
@@ -962,39 +978,40 @@ namespace SIL.FieldWorks.XWorks
 				AddRunStyle(content, config.Style, config.DisplayLabel, true);
 			}
 
-			var collData = CreateFragment();
-			bool eachOnANewLine = false;
+			var collData = new DocFragment();
+			WP.Paragraph newPara = null;
+			bool eachInAParagraph = false;
 			if (config != null &&
 				config.DictionaryNodeOptions is IParaOption &&
 				((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph)
 			{
-				eachOnANewLine = true;
-
-				// We want a break before the first collection item, between items, and after the last item.
-				// So, only add a break before the content if it is the first.
-				if (first)
-				{
-					collData.AppendBreak();
-				}
+				eachInAParagraph = true;
+				newPara = new WP.Paragraph();
 			}
 
-			// Add Between text, if it is not going to be displayed on its own line
+			// Add Between text, if it is not going to be displayed in a paragraph
 			// and it is not the first item in the collection.
 			if (!first &&
 				config != null &&
 				config.DictionaryNodeOptions is IParaOption &&
-				!eachOnANewLine &&
+				!eachInAParagraph &&
 				!string.IsNullOrEmpty(config.Between))
 			{
 				var betweenRun = CreateBeforeAfterBetweenRun(config.Between);
 				((DocFragment)collData).DocBody.Append(betweenRun);
 			}
 
-			collData.Append(content);
-
-			if (eachOnANewLine)
+			if (newPara != null)
 			{
-				collData.AppendBreak();
+				List<OpenXmlElement> elements = SeparateIntoFirstLevelElements(newPara, content as DocFragment, config);
+				foreach (OpenXmlElement elem in elements)
+				{
+					collData.DocBody.Append(elem);
+				}
+			}
+			else
+			{
+				collData.Append(content);
 			}
 
 			return collData;
@@ -1288,24 +1305,33 @@ namespace SIL.FieldWorks.XWorks
 			wordWriter.TableTitleContent = null;
 			wordWriter.CurrentTable = null;
 		}
-		public void StartEntry(IFragmentWriter writer, ConfigurableDictionaryNode config, string className, Guid entryGuid, int index, RecordClerk clerk)
+
+		public void StartEntry(IFragmentWriter writer, ConfigurableDictionaryNode node, string className, Guid entryGuid, int index, RecordClerk clerk)
 		{
-			// Each entry starts a new paragraph, and any entry data added will usually be added within the same paragraph.
-			// The paragraph will end whenever a data type that cannot be in a paragraph is encounter (Tables or Pictures).
-			// A new 'continuation' paragraph will be started after the Table or Picture if there is other data that still
-			// needs to be added to the entry.
+			// Each entry starts a new paragraph. The paragraph will end whenever a child needs its own paragraph or
+			// when a data type exists that cannot be in a paragraph (Tables or nested paragraphs).
+			// A new 'continuation' paragraph will be started for the entry if there is other data that still
+			// needs to be added to the entry after the interruption.
+
+			// Create the style for the entry.
+			var style = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(node.Style, WordStylesGenerator.DefaultStyle, _propertyTable);
+			style.StyleId = node.DisplayLabel;
+			style.StyleName.Val = style.StyleId;
+			AddBasedOnStyle(style, node, _propertyTable);
+			string uniqueDisplayName = s_styleCollection.AddStyle(style, node.Style, style.StyleId);
+
 			// Create a new paragraph for the entry.
 			DocFragment wordDoc = ((WordFragmentWriter)writer).WordFragment;
 			WP.Paragraph entryPar = wordDoc.GetNewParagraph();
-			WP.ParagraphProperties paragraphProps = new WP.ParagraphProperties(new ParagraphStyleId() {Val = config.DisplayLabel});
+			WP.ParagraphProperties paragraphProps = new WP.ParagraphProperties(new ParagraphStyleId() {Val = uniqueDisplayName });
 			entryPar.Append(paragraphProps);
 
 			// Create the 'continuation' style for the entry. This style will be the same as the style for the entry with the only
 			// difference being that it does not contain the first line indenting (since it is a continuation of the same entry).
-			var contStyle = WordStylesGenerator.GenerateContinuationWordStyles(config, _propertyTable);
-			AddBasedOnStyle(contStyle, config, _propertyTable);
-			s_styleCollection.AddStyle(contStyle, contStyle.StyleId, contStyle.StyleId);
+			var contStyle = WordStylesGenerator.GenerateContinuationStyle(style);
+			s_styleCollection.AddStyle(contStyle, node.Style, contStyle.StyleId);
 		}
+
 		public void AddEntryData(IFragmentWriter writer, List<ConfiguredLcmGenerator.ConfigFragment> pieces)
 		{
 			foreach (ConfiguredLcmGenerator.ConfigFragment piece in pieces)
@@ -1698,18 +1724,55 @@ namespace SIL.FieldWorks.XWorks
 		/// get updated to the unique display name.
 		/// </summary>
 		/// <param name="style">The style to add it's basedOn style. (It's BasedOn value might get modified.)</param>
-		/// <param name="node">Can be null, but if it is then the paragraph margin is not generated in context.</param>
+		/// <param name="node">Can be null, but if it is then the only option for getting a basedOnStyle is from
+		/// the style, not the parent node.</param>
 		private void AddBasedOnStyle(Style style, ConfigurableDictionaryNode node, ReadOnlyPropertyTable propertyTable)
 		{
+			Debug.Assert(style.Type == StyleValues.Paragraph);
+
+			// No based on styles for pictures.
+			if (style.StyleId == WordStylesGenerator.PictureAndCaptionTextframeStyle)
+				return;
+
+			string basedOnStyleName = null;
+			string basedOnDisplayName = null;
+			ConfigurableDictionaryNode parentNode = null;
 			if (style.BasedOn != null && !string.IsNullOrEmpty(style.BasedOn.Val))
+			{
+				basedOnStyleName = style.BasedOn.Val;
+			}
+
+			// If there is no basedOn style, or the basedOn style is "Normal" then use the
+			// parent node's style for the basedOn style.
+			if (string.IsNullOrEmpty(basedOnStyleName) ||
+				basedOnStyleName == WordStylesGenerator.NormalParagraphStyleName)
+			{
+				if (node?.Parent != null && !string.IsNullOrEmpty(node.Parent.Style) &&
+					(node.Parent.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph))
+				{
+					parentNode = node.Parent;
+					basedOnStyleName = node.Parent.Style;
+					basedOnDisplayName = node.Parent.DisplayLabel;
+				}
+			}
+
+			if (!string.IsNullOrEmpty(basedOnStyleName))
 			{
 				// If this is a continuation style then base it on a continuation style.
 				bool continuationStyle = style.StyleId.Value.EndsWith(WordStylesGenerator.EntryStyleContinue);
+				// Currently this method does not work (and should not be used) for continuation styles. The problem is
+				// that the basedOn name of the regular style has already been changed to the display name. We would
+				// need a way to get the FLEX name from the display name.
+				if (continuationStyle)
+				{
+					Debug.Assert(!continuationStyle, "Currently this method does not support continuation styles.");
+					return;
+				}
 
 				lock (s_styleCollection)
 				{
 					// If the basedOn style already exists, then update the reference to the basedOn styles unique name.
-					if (s_styleCollection.TryGetStyle(style.BasedOn.Val, out Style basedOnStyle))
+					if (s_styleCollection.TryGetStyle(basedOnStyleName, out Style basedOnStyle))
 					{
 						style.BasedOn.Val = basedOnStyle.StyleId;
 						if(continuationStyle && style.BasedOn.Val != WordStylesGenerator.NormalParagraphStyleName)
@@ -1719,22 +1782,31 @@ namespace SIL.FieldWorks.XWorks
 					// it's basedOn style, then add this basedOn style to the collection.
 					else
 					{
-						basedOnStyle = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(style.BasedOn.Val, 0, node, propertyTable, !continuationStyle);
+						basedOnStyle = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(basedOnStyleName, 0, propertyTable, !continuationStyle);
 						// Check if the style is based on itself.  This happens with the 'Normal' style and could possibly happen with others.
 						bool basedOnIsDifferent = basedOnStyle.BasedOn?.Val != null && basedOnStyle.StyleId != basedOnStyle.BasedOn?.Val;
+
+						if (!string.IsNullOrEmpty(basedOnDisplayName))
+						{
+							basedOnStyle.StyleId = basedOnDisplayName;
+							basedOnStyle.StyleName.Val = basedOnStyle.StyleId;
+							style.BasedOn.Val = basedOnStyle.StyleId;
+						}
 						if (continuationStyle)
 						{
 							basedOnStyle.StyleId += WordStylesGenerator.EntryStyleContinue;
 							basedOnStyle.StyleName.Val = basedOnStyle.StyleId;
-							style.BasedOn.Val += WordStylesGenerator.EntryStyleContinue;
-
+							style.BasedOn.Val = basedOnStyle.StyleId;
 						}
 
 						if (basedOnIsDifferent)
 						{
-							AddBasedOnStyle(basedOnStyle, node, propertyTable);
+							// If the parentNode is not null then the basedOnStyle came from the parentNode.
+							// If the parentNode is null then the basedOnStyle came from the style.BasedOn.Val and
+							// we should pass null to AddBasedOnStyle since no node is associated with the basedOnStyle.
+							AddBasedOnStyle(basedOnStyle, parentNode, propertyTable);
 						}
-						s_styleCollection.AddStyle(basedOnStyle, basedOnStyle.StyleId, basedOnStyle.StyleId);
+						s_styleCollection.AddStyle(basedOnStyle, basedOnStyleName, basedOnStyle.StyleId);
 					}
 				}
 			}
@@ -1783,32 +1855,22 @@ namespace SIL.FieldWorks.XWorks
 			// The css className isn't important for the Word export.
 			var className = $".{CssGenerator.GetClassAttributeForConfig(node)}";
 
-			Styles styleContent = null;
-			styleContent = WordStylesGenerator.CheckRangeOfStylesForEmpties(WordStylesGenerator.GenerateParagraphStylesFromConfigurationNode(node, _propertyTable));
+			Style style = WordStylesGenerator.GenerateParagraphStyleFromConfigurationNode(node, _propertyTable);
 
-			if (styleContent == null)
-				return className;
-			if (!styleContent.Any())
+			if (style == null)
 				return className;
 
-			foreach (Style style in styleContent.Descendants<Style>())
+			if (style.Type == StyleValues.Paragraph)
 			{
-				if (style.Type == StyleValues.Paragraph)
+				lock (s_styleCollection)
 				{
-					lock (s_styleCollection)
+					if (!s_styleCollection.TryGetStyle(node.Style, style.StyleId, out Style _))
 					{
-						if (!s_styleCollection.TryGetStyle(node.Style, style.StyleId, out Style _))
-						{
-							AddBasedOnStyle(style, node, _propertyTable);
-							string oldName = style.StyleId;
-							string newName = s_styleCollection.AddStyle(style, node.Style, style.StyleId);
-							Debug.Assert(oldName == newName, "Not expecting the name for a paragraph style to ever change!");
-						}
+						AddBasedOnStyle(style, node, _propertyTable);
+						string oldName = style.StyleId;
+						string newName = s_styleCollection.AddStyle(style, node.Style, style.StyleId);
+						Debug.Assert(oldName == newName, "Not expecting the name for a paragraph style to ever change!");
 					}
-				}
-				else
-				{
-					Debug.Assert(false, "Should not be adding character styles in here. Instead add them from where the style is referenced.");
 				}
 			}
 			return className;
@@ -2146,10 +2208,132 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Word does not support certain element types being nested inside Paragraphs (Paragraphs & Tables).
+		/// If we encounter one of these then end the paragraph and add the un-nestable type at the
+		/// same level. If we later encounter nestable types then a continuation paragraph will be created.
+		/// </summary>
+		/// <param name="outputParagraph">The first paragraph that will be returned. The content will be added
+		/// to this paragraph until a un-nestable type is encountered.</param>
+		/// <param name="contentToAdd">The content to add either to the paragraph or at the same level as the paragraph.</param>
+		/// <returns>A list of elements that contain the original outputParagraph and the contentToAdd. The contentToAdd
+		/// might all be added to the outputParagraph, or it might also result in additional un-nestable types being returned
+		/// in the list.</returns>
+		public List<OpenXmlElement> SeparateIntoFirstLevelElements(WP.Paragraph outputParagraph, DocFragment contentToAdd, ConfigurableDictionaryNode node)
+		{
+			List<OpenXmlElement> retList = new List<OpenXmlElement>();
+			bool continuationParagraph = false;
+			var workingParagraph = outputParagraph;
+			var elements = ((DocFragment)contentToAdd).DocBody.Elements();
+			foreach (OpenXmlElement elem in elements)
+			{
+				// Un-nestable type.
+				if (elem is WP.Paragraph || elem is WP.Table)
+				{
+					// End the current working paragraph and add it to the list.
+					if (EndParagraph(workingParagraph, node, continuationParagraph))
+					{
+						retList.Add(workingParagraph);
+					}
+
+					// Add the un-nestable element.
+					retList.Add(elem.CloneNode(true));
+
+					// Start a new working paragraph.
+					continuationParagraph = true;
+					workingParagraph = new WP.Paragraph();
+				}
+				else
+				{
+					workingParagraph.AppendChild(contentToAdd.CloneElement(contentToAdd, elem));
+				}
+			}
+
+			// If the working paragraph contains content then add it's style and add
+			// it to the return list.
+			if (EndParagraph(workingParagraph, node, continuationParagraph))
+			{
+				retList.Add(workingParagraph);
+			}
+
+			return retList;
+		}
+
+		/// <summary>
+		/// Adds the style needed for the paragraph and adds the reference to the style.
+		/// </summary>
+		/// <param name="continuationParagraph">True if this is a continuation paragraph.</param>
+		/// <returns>true if the paragraph contains content, false if it does not.</returns>
+		private bool EndParagraph(WP.Paragraph paragraph, ConfigurableDictionaryNode node, bool continuationParagraph)
+		{
+			if (paragraph != null && paragraph.HasChildren)
+			{
+				// Add the style.
+				if (!string.IsNullOrEmpty(node.Style))
+				{
+					// The calls to TryGetStyle() and AddStyle() need to be in the same lock.
+					lock(s_styleCollection)
+					{
+						string uniqueDisplayName = null;
+
+						// Try to get the continuation style.
+						if (continuationParagraph)
+						{
+							if (s_styleCollection.TryGetStyle(node.Style, node.DisplayLabel + WordStylesGenerator.EntryStyleContinue,
+									out Style existingContinuationStyle))
+							{
+								uniqueDisplayName = existingContinuationStyle.StyleId;
+							}
+						}
+
+						// Try to get the regular style.
+						if (string.IsNullOrEmpty(uniqueDisplayName))
+						{
+							Style style = null;
+							if (s_styleCollection.TryGetStyle(node.Style, node.DisplayLabel, out style))
+							{
+								uniqueDisplayName = style.StyleId;
+							}
+							// Add the regular style.
+							else
+							{
+								style = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(node.Style, WordStylesGenerator.DefaultStyle, _propertyTable);
+								style.StyleId = node.DisplayLabel;
+								style.StyleName.Val = style.StyleId;
+								AddBasedOnStyle(style, node, _propertyTable);
+								uniqueDisplayName = s_styleCollection.AddStyle(style, node.Style, style.StyleId);
+							}
+
+							// Add the continuation style.
+							if (continuationParagraph)
+							{
+								var contStyle = WordStylesGenerator.GenerateContinuationStyle(style);
+								uniqueDisplayName = s_styleCollection.AddStyle(contStyle, node.Style, contStyle.StyleId);
+							}
+						}
+						WP.ParagraphProperties paragraphProps =
+							new WP.ParagraphProperties(new ParagraphStyleId() { Val = uniqueDisplayName });
+						paragraph.PrependChild(paragraphProps);
+					}
+				}
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
 		/// Indicates if all the runs should be created LTR or RTL.
 		/// Note: If we do not force all to be the same then we would need to create
 		/// different styles for LTR and for RTL.
 		/// </summary>
 		public static bool RightToLeft { private set; get; }
+
+		/// <summary>
+		/// Added to support tests.
+		/// </summary>
+		public static void ClearStyleCollection()
+		{
+			s_styleCollection.Clear();
+		}
+
 	}
 }
