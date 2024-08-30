@@ -1609,7 +1609,7 @@ namespace SIL.FieldWorks.XWorks
 							lexEntryType.Owner, settings, false)
 						: null;
 					var className = generateLexType ? settings.StylesGenerator.AddStyles(typeNode).Trim('.') : null;
-					var refsByType = settings.ContentGenerator.AddLexReferences(config, generateLexType,
+					var refsByType = settings.ContentGenerator.AddLexReferences(typeNode, generateLexType,
 						lexTypeContent, className, combinedContent, IsTypeBeforeForm(config));
 					bldr.Append(refsByType);
 				}
