@@ -51,7 +51,7 @@
 								<Setter Property="TextTrimming"
 									Value="CharacterEllipsis" />
 								<Setter Property="ToolTip"
-									Value="{Binding ErrorMessage}" />
+									Value="{Binding ParserReport.Comment}" />
 							</Style>
 						</DataGridTextColumn.ElementStyle>
 					</DataGridTextColumn>
