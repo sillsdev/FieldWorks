@@ -993,7 +993,6 @@ namespace SIL.FieldWorks.XWorks
 			// and it is not the first item in the collection.
 			if (!first &&
 				config != null &&
-				config.DictionaryNodeOptions is IParaOption &&
 				!eachInAParagraph &&
 				!string.IsNullOrEmpty(config.Between))
 			{

@@ -1606,7 +1606,7 @@ namespace SIL.FieldWorks.XWorks
 					var generateLexType = typeNode != null;
 					var lexTypeContent = generateLexType
 						? GenerateCollectionItemContent(typeNode, pubDecorator, lexEntryType,
-							lexEntryType.Owner, settings, false)
+							lexEntryType.Owner, settings, true)
 						: null;
 					var className = generateLexType ? settings.StylesGenerator.AddStyles(typeNode).Trim('.') : null;
 					var refsByType = settings.ContentGenerator.AddLexReferences(typeNode, generateLexType,
