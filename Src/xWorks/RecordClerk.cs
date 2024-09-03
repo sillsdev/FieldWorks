@@ -1193,13 +1193,6 @@ namespace SIL.FieldWorks.XWorks
 					dlg.ShowDialog();
 				}
 			}
-			else if (areaChoice == "grammar")
-			{
-				using (var dlg = new GrammarExportDialog(m_mediator, m_propertyTable))
-				{
-					dlg.ShowDialog();
-				}
-			}
 			else
 			{
 				// It's somewhat unfortunate that this bit of code knows what classes can have custom fields.
