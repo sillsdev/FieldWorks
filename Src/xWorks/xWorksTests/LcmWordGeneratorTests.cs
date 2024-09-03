@@ -35,7 +35,17 @@ namespace SIL.FieldWorks.XWorks
 		private Mediator m_mediator;
 		private RecordClerk m_Clerk;
 
-		private const string DictionaryNormal = "Dictionary-Normal";
+		// Character Styles
+		private const string DictionaryNormal = "Dictionary-Normal-Char";
+		private const string DictionaryGlossStyleName = "Dictionary-Gloss-Char";
+
+		// Paragraph Styles
+		private const string MainEntryParagraphStyleName = "Dictionary-Main-Para";
+		private const string MainEntryParagraphDisplayName = "Main Entry Display Name";
+		private const string SensesParagraphStyleName = "Dictionary-Senses-Para";
+		private const string SensesParagraphDisplayName = "Senses Display Name";
+		private const string SubSensesParagraphStyleName = "Dictionary-SubSenses-Para";
+		private const string SubSensesParagraphDisplayName = "SubSenses Display Name";
 
 		private ConfiguredLcmGenerator.GeneratorSettings DefaultSettings;
 
@@ -69,6 +79,8 @@ namespace SIL.FieldWorks.XWorks
 				{ ContentGenerator = wordGenerator, StylesGenerator = wordGenerator };
 
 			var styles = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable).Styles;
+
+			// Add character styles
 			if (!styles.Contains(DictionaryNormal))
 				styles.Add(new BaseStyleInfo { Name = DictionaryNormal });
 			if (!styles.Contains("Dictionary-Headword"))
@@ -79,6 +91,16 @@ namespace SIL.FieldWorks.XWorks
 				styles.Add(new BaseStyleInfo { Name = "Dictionary-SenseNumber", IsParagraphStyle = false });
 			if (!styles.Contains("Style1"))
 				styles.Add(new BaseStyleInfo { Name = "Style1", IsParagraphStyle = false });
+			if (!styles.Contains(DictionaryGlossStyleName))
+				styles.Add(new BaseStyleInfo { Name = DictionaryGlossStyleName, IsParagraphStyle = false });
+
+			// Add paragraph styles
+			if (!styles.Contains(MainEntryParagraphStyleName))
+				styles.Add(new BaseStyleInfo { Name = MainEntryParagraphStyleName, IsParagraphStyle = true });
+			if (!styles.Contains(SensesParagraphStyleName))
+				styles.Add(new BaseStyleInfo { Name = SensesParagraphStyleName, IsParagraphStyle = true });
+			if (!styles.Contains(SubSensesParagraphStyleName))
+				styles.Add(new BaseStyleInfo { Name = SubSensesParagraphStyleName, IsParagraphStyle = true });
 
 			m_Clerk = CreateClerk();
 			m_propertyTable.SetProperty("ActiveClerk", m_Clerk, false);
@@ -224,6 +246,11 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void GenerateUniqueStyleName()
 		{
+			// This test needs to clear the style collection, else we may get flaky test results
+			// because other tests may set the gloss Style to some other value; resulting in this
+			// test getting unique style names like "Gloss3[lang='en']".
+			LcmWordGenerator.ClearStyleCollection();
+
 			var wsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode
 			{
@@ -396,7 +423,6 @@ namespace SIL.FieldWorks.XWorks
 			Assert.True(outXml.Contains(afterSenses));
 		}
 
-
 		[Test]
 		public void GenerateBeforeBetweenAfterContentWithWSAbbreviation()
 		{
@@ -510,6 +536,170 @@ namespace SIL.FieldWorks.XWorks
 
 			// The property after text 'AF4' was written.
 			Assert.True(outXml.Contains("AF4"));
+		}
+
+		[Test]
+		public void ReferenceParagraphDisplayNames()
+		{
+			var wsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" });
+			var senseOptions = new DictionaryNodeSenseOptions
+			{
+				NumberingStyle = "%d",
+				NumberEvenASingleSense = true,
+				DisplayEachSenseInAParagraph = true
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = wsOpts,
+				Style = DictionaryGlossStyleName
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = senseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+				Style = SensesParagraphStyleName,
+				Label = SensesParagraphDisplayName
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				Style = MainEntryParagraphStyleName,
+				Label = MainEntryParagraphDisplayName
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			int wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
+
+			// Assert that the references to the paragraph styles use the display names, not the style names.
+			Assert.True(result.mainDocPart.RootElement.OuterXml.Contains(MainEntryParagraphDisplayName));
+			Assert.True(result.mainDocPart.RootElement.OuterXml.Contains(SensesParagraphDisplayName));
+		}
+
+		[Test]
+		public void GenerateParagraphForSensesAndSubSenses()
+		{
+			var wsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" });
+			var subSenseOptions = new DictionaryNodeSenseOptions
+			{
+				NumberingStyle = "%d",
+				NumberEvenASingleSense = true,
+				DisplayEachSenseInAParagraph = true
+			};
+			var senseOptions = new DictionaryNodeSenseOptions
+			{
+				NumberingStyle = "%d",
+				NumberEvenASingleSense = true,
+				DisplayEachSenseInAParagraph = true
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = wsOpts,
+				Style = DictionaryGlossStyleName
+			};
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				IsEnabled = true,
+				DictionaryNodeOptions = subSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+				Style = SubSensesParagraphStyleName,
+				Label = SubSensesParagraphDisplayName
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				IsEnabled = true,
+				DictionaryNodeOptions = senseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode },
+				Style = SensesParagraphStyleName,
+				Label = SensesParagraphDisplayName
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				IsEnabled = true,
+				Style = MainEntryParagraphStyleName,
+				Label = MainEntryParagraphDisplayName
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			int wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			ConfiguredXHTMLGeneratorTests.AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss", Cache, wsEn);
+
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
+
+			// There should be 5 paragraphs, one for the main entry, one for each sense, and one for each subsense.
+			AssertThatXmlIn.String(result.mainDocPart.RootElement.OuterXml).HasSpecifiedNumberOfMatchesForXpath(
+				"/w:document/w:body/w:p",
+				5,
+				WordNamespaceManager);
+		}
+
+		[Test]
+		public void GenerateContinueParagraph()
+		{
+			var wsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" });
+			var senseOptions = new DictionaryNodeSenseOptions
+			{
+				NumberingStyle = "%d",
+				NumberEvenASingleSense = true,
+				DisplayEachSenseInAParagraph = true
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = wsOpts,
+				Style = DictionaryGlossStyleName
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = senseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+				Style = SensesParagraphStyleName,
+				Label = SensesParagraphDisplayName
+			};
+			var dateModifiedNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "DateModified",
+				Label = "Date Modified",
+				Before = " Modified on: ",
+				IsEnabled = true,
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode, dateModifiedNode },
+				Style = MainEntryParagraphStyleName,
+				Label = MainEntryParagraphDisplayName
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
+
+			// There should be 3 paragraph styles, one for the main entry, one for the sense, and one for the continuation of the main entry.
+			AssertThatXmlIn.String(result.mainDocPart.RootElement.OuterXml).HasSpecifiedNumberOfMatchesForXpath(
+				"/w:document/w:body/w:p/w:pPr/w:pStyle",
+				3,
+				WordNamespaceManager);
+
+			// Assert that the continuation paragraph uses the continuation style.
+			Assert.True(result.mainDocPart.RootElement.OuterXml.Contains(MainEntryParagraphDisplayName + WordStylesGenerator.EntryStyleContinue));
 		}
 	}
 }
