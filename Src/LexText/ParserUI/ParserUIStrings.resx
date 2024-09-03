@@ -329,4 +329,19 @@
   <data name="ksXGenre" xml:space="preserve">
     <value>{0} genre</value>
   </data>
+  <data name="ksComment" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="ksCommentToolTip" xml:space="preserve">
+    <value>The comment provided by the user when the report was saved</value>
+  </data>
+  <data name="ksSaveReport" xml:space="preserve">
+    <value>Save Report</value>
+  </data>
+  <data name="ksSaveReportToolTip" xml:space="preserve">
+    <value>Save the report in the project</value>
+  </data>
+  <data name="ksEnterComment" xml:space="preserve">
+    <value>Please enter a comment for the parser report</value>
+  </data>
 </root>

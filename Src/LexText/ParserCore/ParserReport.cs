@@ -41,6 +41,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public long DiffTimestamp { get; set; }
 
 		/// <summary>
+		/// User-specified comment.
+		/// </summary>
+		public string Comment { get; set; }
+
+		/// <summary>
 		/// Number of words parsed
 		/// </summary>
 		public int NumWords { get; set; }
