@@ -728,7 +728,7 @@ namespace SIL.FieldWorks.IText
 			var wsFact = cache.WritingSystemFactory;
 			ILgWritingSystem wsMainVernWs = null;
 			IWfiMorphBundle bundle = null;
-			
+
 			foreach (var wordItem in word.Items)
 			{
 				ITsString wordForm = null;
@@ -764,7 +764,7 @@ namespace SIL.FieldWorks.IText
 				Debug.Assert(analysis != null, "What else could this do?");
 			}
 
-			// Fill in morphemes, lex. entries, lex. gloss, and lex.gram.info 
+			// Fill in morphemes, lex. entries, lex. gloss, and lex.gram.info
 			if (word.morphemes != null && word.morphemes.morphs.Length > 0)
 			{
 				int morphIdx = 0;
@@ -777,7 +777,7 @@ namespace SIL.FieldWorks.IText
 					{
 						break;
 					}
-					
+
 					foreach (item item in morpheme.items)
 					{
 						itemDict[item.type] = new Tuple<string, string>(item.lang, item.Value);
