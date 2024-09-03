@@ -69,6 +69,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private string m_sourceText = null;
 		private ObservableCollection<ParserReportViewModel> m_parserReports = null;
 		private ParserReportsDialog m_parserReportsDialog = null;
+		private string m_defaultComment = null;
 
 		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
@@ -617,7 +618,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				{
 					ReadParserReports();
 					// Write an empty parser report.
-					var parserReport = WriteParserReport();
+					var parserReport = CreateParserReport();
 					AddParserReport(parserReport);
 					ShowParserReport(parserReport, m_mediator, m_cache);
 				}
@@ -668,18 +669,17 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Read parser reports before writing and adding a parser report to avoid duplicates.
 				ReadParserReports();
 				// Convert parse results into ParserReport.
-				var parserReport = WriteParserReport();
+				var parserReport = CreateParserReport();
 				AddParserReport(parserReport);
 				ShowParserReport(parserReport, m_mediator, m_cache);
 			}
 		}
 
 		/// <summary>
-		/// Write the parse results as a parser report in the standard place.
+		/// Create a parser report from the parse results.
 		/// </summary>
-		ParserReport WriteParserReport()
+		ParserReport CreateParserReport()
 		{
-			// Create a parser report from the parse results.
 			var parserReport = new ParserReport(m_cache)
 			{
 				SourceText = m_sourceText
@@ -696,11 +696,60 @@ namespace SIL.FieldWorks.LexText.Controls
 					parserReport.AddParseReport(form.Text, parseReport);
 				}
 			}
-			// Write the parser report to the default place.
-			parserReport.WriteJsonFile(m_cache);
 			// Clear the data we wrote.
 			m_checkParserResults = null;
 			return parserReport;
+		}
+
+		public static void SaveParserReport(ParserReport report, LcmCache cache, string defaultComment)
+		{
+			Form inputBox = CreateInputBox(ParserUIStrings.ksEnterComment, ref defaultComment);
+			DialogResult result = inputBox.ShowDialog();
+			if (result == DialogResult.OK)
+			{
+				Control textBox = inputBox.Controls["input"];
+				report.Comment = textBox.Text;
+				report.WriteJsonFile(cache);
+			}
+		}
+
+		private static Form CreateInputBox(string title, ref string input)
+		{
+			System.Drawing.Size size = new System.Drawing.Size(400, 70);
+			Form inputBox = new Form();
+
+			inputBox.FormBorderStyle = FormBorderStyle.FixedDialog;
+			inputBox.ClientSize = size;
+			inputBox.Text = title;
+			inputBox.StartPosition = FormStartPosition.CenterScreen;
+
+			TextBox textBox = new TextBox();
+			textBox.Size = new System.Drawing.Size(size.Width - 10, 23);
+			textBox.Location = new System.Drawing.Point(5, 5);
+			textBox.Text = input;
+			textBox.Name = "input";
+			inputBox.Controls.Add(textBox);
+
+			Button okButton = new Button();
+			okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+			okButton.Name = "okButton";
+			okButton.Size = new System.Drawing.Size(75, 23);
+			okButton.Text = "&OK";
+			okButton.Location = new System.Drawing.Point(size.Width - 80 - 80, 39);
+			inputBox.Controls.Add(okButton);
+
+			Button cancelButton = new Button();
+			cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			cancelButton.Name = "cancelButton";
+			cancelButton.Size = new System.Drawing.Size(75, 23);
+			cancelButton.Text = "&Cancel";
+			cancelButton.Location = new System.Drawing.Point(size.Width - 80, 39);
+			inputBox.Controls.Add(cancelButton);
+
+			inputBox.AcceptButton = okButton;
+			inputBox.CancelButton = cancelButton;
+
+			return inputBox;
 		}
 
 		/// <summary>
@@ -765,7 +814,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				ReadParserReports();
 				// Create parser reports window.
-				m_parserReportsDialog = new ParserReportsDialog(m_parserReports, m_mediator, m_cache);
+				m_parserReportsDialog = new ParserReportsDialog(m_parserReports, m_mediator, m_cache, m_defaultComment);
 				m_parserReportsDialog.Closed += ParserReportsDialog_Closed;
 			}
 			m_parserReportsDialog.Show(); // Show the dialog but do not block other app access
@@ -774,6 +823,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void ParserReportsDialog_Closed(object sender, EventArgs e)
 		{
+			ParserReportsDialog dialog = (ParserReportsDialog)sender;
+			// Preserve the default comment for the next call to ShowParserReports.
+			if (dialog != null)
+				m_defaultComment = dialog.DefaultComment;
 			m_parserReportsDialog = null;
 		}
 
