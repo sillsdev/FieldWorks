@@ -10,6 +10,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	public class ParserReportsViewModel : INotifyPropertyChanged
 	{
 		private ObservableCollection<ParserReportViewModel> _parserReports;
+
 		public ObservableCollection<ParserReportViewModel> ParserReports
 		{
 			get => _parserReports;
@@ -36,13 +37,15 @@ namespace SIL.FieldWorks.LexText.Controls
 					}
 				}
 
-				OnPropertyChanged(nameof(ParserReports));
+				// Don't call OnPropertyChanged here!  It suppresses the default behavior.
 				UpdateButtonStates(); // Update button states when the collection changes
 			}
 		}
 		public bool CanShowReport => ParserReports.Count(report => report.IsSelected) == 1;
 		public bool CanDiffReports => ParserReports.Count(report => report.IsSelected) == 2;
 		public bool CanDeleteReports => ParserReports.Any(report => report.IsSelected);
+		public bool CanSaveReport => ParserReports.Count(report => report.IsSelected) == 1 &&
+									ParserReports.Count(report => report.IsSelected && report.ParserReport.Filename == null) == 1;
 
 		public string DiffButtonContent => string.Format(ParserUIStrings.ksDelete,
 			ParserReports.Count(report => report.IsSelected));
@@ -86,6 +89,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				// Notify changes to button state properties
 				OnPropertyChanged(nameof(CanShowReport));
+				OnPropertyChanged(nameof(CanSaveReport));
 				OnPropertyChanged(nameof(CanDiffReports));
 				OnPropertyChanged(nameof(CanDeleteReports));
 				OnPropertyChanged(nameof(DiffButtonContent));
@@ -101,6 +105,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			OnPropertyChanged(nameof(CanShowReport));
 			OnPropertyChanged(nameof(CanDiffReports));
+			OnPropertyChanged(nameof(CanSaveReport));
 			OnPropertyChanged(nameof(CanDeleteReports));
 		}
 	}
