@@ -992,6 +992,10 @@ namespace SIL.FieldWorks.XWorks
 			EndObject(writer);
 		}
 
+		public void BetweenCrossReferenceType(IFragment content, ConfigurableDictionaryNode node, bool first)
+		{
+		}
+
 		public IFragment WriteProcessedSenses(ConfigurableDictionaryNode config, bool isBlock, IFragment sensesContent, string classAttribute, IFragment sharedGramInfo)
 		{
 			sharedGramInfo.Append(sensesContent);

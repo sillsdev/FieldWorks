@@ -2005,9 +2005,12 @@ namespace SIL.FieldWorks.XWorks
 			var organizedRefs = SortAndFilterLexRefsAndTargets(collection, cmOwner, config);
 
 			// Now that we have things in the right order, try outputting one type at a time
+			bool first = true;
 			foreach (var referenceList in organizedRefs)
 			{
 				var xBldr = GenerateCrossReferenceChildren(config, pubDecorator, referenceList, cmOwner, settings);
+				settings.ContentGenerator.BetweenCrossReferenceType(xBldr, config, first);
+				first = false;
 				bldr.Append(xBldr);
 			}
 		}
@@ -2119,7 +2122,7 @@ namespace SIL.FieldWorks.XWorks
 							if (!content.IsNullOrEmpty())
 							{
 								// targets
-								settings.ContentGenerator.AddCollection(xw, config, IsBlockProperty(child),
+								settings.ContentGenerator.AddCollection(xw, child, IsBlockProperty(child),
 									CssGenerator.GetClassAttributeForConfig(child), content);
 								settings.StylesGenerator.AddStyles(child);
 							}
