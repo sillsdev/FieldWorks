@@ -1606,10 +1606,10 @@ namespace SIL.FieldWorks.XWorks
 					var generateLexType = typeNode != null;
 					var lexTypeContent = generateLexType
 						? GenerateCollectionItemContent(typeNode, pubDecorator, lexEntryType,
-							lexEntryType.Owner, settings, false)
+							lexEntryType.Owner, settings, true)
 						: null;
 					var className = generateLexType ? settings.StylesGenerator.AddStyles(typeNode).Trim('.') : null;
-					var refsByType = settings.ContentGenerator.AddLexReferences(config, generateLexType,
+					var refsByType = settings.ContentGenerator.AddLexReferences(typeNode, generateLexType,
 						lexTypeContent, className, combinedContent, IsTypeBeforeForm(config));
 					bldr.Append(refsByType);
 				}
@@ -2005,9 +2005,12 @@ namespace SIL.FieldWorks.XWorks
 			var organizedRefs = SortAndFilterLexRefsAndTargets(collection, cmOwner, config);
 
 			// Now that we have things in the right order, try outputting one type at a time
+			bool firstIteration = true;
 			foreach (var referenceList in organizedRefs)
 			{
 				var xBldr = GenerateCrossReferenceChildren(config, pubDecorator, referenceList, cmOwner, settings);
+				settings.ContentGenerator.BetweenCrossReferenceType(xBldr, config, firstIteration);
+				firstIteration = false;
 				bldr.Append(xBldr);
 			}
 		}
@@ -2119,8 +2122,9 @@ namespace SIL.FieldWorks.XWorks
 							if (!content.IsNullOrEmpty())
 							{
 								// targets
-								settings.ContentGenerator.AddCollection(xw, config, IsBlockProperty(child),
+								settings.ContentGenerator.AddCollection(xw, child, IsBlockProperty(child),
 									CssGenerator.GetClassAttributeForConfig(child), content);
+								settings.StylesGenerator.AddStyles(child);
 							}
 							break;
 						case "OwnerType":

@@ -81,6 +81,36 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Check if a style already exists in any of the Lists in the entire collection.
+		/// NOTE: To support multiple threads this method must be called in the same lock that also
+		/// acts on the result (ie. calling AddStyle()).
+		/// </summary>
+		/// <param name="nodeStyleName">The unique FLEX style name, typically comes from node.Style.</param>
+		/// <param name="style">Returns the found Style, or returns null if not found.</param>
+		/// <returns>True if found, else false.</returns>
+		public bool TryGetStyle(string nodeStyleName, out Style style)
+		{
+			lock (styleDictionary)
+			{
+				foreach (var keyValuePair in styleDictionary)
+				{
+					foreach (var elem in keyValuePair.Value)
+					{
+						// If the style already exists, return it's name.
+						if (elem.NodeStyleName == nodeStyleName)
+						{
+							style = elem.Style;
+							return true;
+						}
+					}
+				}
+			}
+
+			style = null;
+			return false;
+		}
+
+		/// <summary>
 		/// Adds a style to the collection.
 		/// If a style with the identical style information is already in the collection then just return
 		/// the unique name.

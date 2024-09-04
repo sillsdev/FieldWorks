@@ -361,11 +361,11 @@ namespace SIL.FieldWorks.XWorks
 			// Here is the original order (along with a comment between them that seemed to imply this
 			// new order could be a problem, but no obvious ones have appeared in my testing.
 
-		   /*
-			* LoadUI(configFile);
-			* // Reload additional property settings that depend on knowing the database name.
-			* m_viewHelper = new ActiveViewHelper(this);
-			*/
+			/*
+			 * LoadUI(configFile);
+			 * // Reload additional property settings that depend on knowing the database name.
+			 * m_viewHelper = new ActiveViewHelper(this);
+			 */
 
 			m_viewHelper = new ActiveViewHelper(this);
 			LoadUI(configFile);
@@ -523,7 +523,7 @@ namespace SIL.FieldWorks.XWorks
 			m_fWindowIsCopy = (wndCopyFrom != null);
 			InitMediatorValues(cache);
 
-			if(iconStream != null)
+			if (iconStream != null)
 				Icon = new System.Drawing.Icon(iconStream);
 		}
 
@@ -969,8 +969,8 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		protected bool OnStartLogging(object args)
 		{
-					return true;
-			}
+			return true;
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1099,7 +1099,7 @@ namespace SIL.FieldWorks.XWorks
 			var filesToArchive = m_app.FwManager.ArchiveProjectWithRamp(m_app, this);
 
 			// if there are no files to archive, return now.
-			if((filesToArchive == null) || (filesToArchive.Count == 0))
+			if ((filesToArchive == null) || (filesToArchive.Count == 0))
 				return true;
 
 			ReapRamp ramp = new ReapRamp();
@@ -1835,7 +1835,7 @@ namespace SIL.FieldWorks.XWorks
 				// Need to refresh to reload the cache.  See LT-6265.
 				(m_app as FwXApp).OnMasterRefresh(null);
 			}
-			return false;	// refresh already called if needed
+			return false;   // refresh already called if needed
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1918,10 +1918,27 @@ namespace SIL.FieldWorks.XWorks
 		public override IxCoreColleague[] GetMessageTargets()
 		{
 			CheckDisposed();
-			if(m_app is IxCoreColleague)
+			if (m_app is IxCoreColleague)
 				return new IxCoreColleague[] { this, m_app as IxCoreColleague };
 			else
-				return new IxCoreColleague[]{this};
+				return new IxCoreColleague[] { this };
+		}
+
+		public bool OnDisplayImportPhonology(object parameters, ref UIItemDisplayProperties display)
+		{
+			// Set display here in case command == null or mediator == null.
+			display.Enabled = false;
+			display.Visible = false;
+			XCore.Command command = parameters as XCore.Command;
+			if (command == null)
+				return true;
+			Mediator mediator = Mediator;
+			if (mediator == null)
+				return true;
+			string area = PropTable.GetValue<string>("areaChoice");
+			display.Enabled = area == "grammar";
+			display.Visible = area == "grammar";
+			return true;
 		}
 
 		public bool OnImportPhonology(object commandObject)
@@ -1938,10 +1955,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				dlg.CheckFileExists = true;
 				dlg.RestoreDirectory = true;
-				dlg.Title = ResourceHelper.GetResourceString("kstidXML");
+				dlg.Title = ResourceHelper.GetResourceString("kstidPhonologyXML");
 				dlg.ValidateNames = true;
 				dlg.Multiselect = false;
-				dlg.Filter = ResourceHelper.FileFilter(FileFilterType.XML);
+				dlg.Filter = ResourceHelper.FileFilter(FileFilterType.PhonologyXML);
 				if (dlg.ShowDialog(form) != DialogResult.OK)
 					return true;
 				filename = dlg.FileName;
@@ -1949,54 +1966,21 @@ namespace SIL.FieldWorks.XWorks
 			DialogResult result = MessageBox.Show(xWorksStrings.DeletePhonology, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 			if (result != DialogResult.Yes)
 				return true;
-			DeletePhonology();
-			using (new WaitCursor(form, true))
-			{
-				using (var dlg = new ProgressDialogWithTask(this))
-				{
-					dlg.AllowCancel = true;
-					dlg.Maximum = 200;
-					dlg.Message = filename;
-					dlg.RunTask(true, ImportPhonology, filename, caption);
-				}
-			}
-			return true;
-		}
 
-		private object ImportPhonology(IThreadedProgress dlg, object[] parameters)
-		{
 			try
 			{
 				var phonologyServices = new PhonologyServices(Cache);
-				phonologyServices.ImportPhonologyFromXml((string)parameters[0]);
-				dlg.Step(200);
-				// Let the dialog update.
-				Thread.Sleep(100);
+				phonologyServices.DeletePhonology();
+				phonologyServices.ImportPhonologyFromXml(filename);
+				m_mediator.SendMessage("MasterRefresh", null);
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine("Error: " + ex.Message);
-				MessageBox.Show(ex.Message, (string)parameters[1]);
+				MessageBox.Show(ex.Message, caption);
 			}
-			return false;
-		}
 
-
-		private void DeletePhonology()
-		{
-			NonUndoableUnitOfWorkHelper.Do(Cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
-			{
-				IPhPhonData phonData = Cache.LangProject.PhonologicalDataOA;
-				// Delete what is covered by ImportPhonology.
-				phonData.ContextsOS.Clear();
-				phonData.EnvironmentsOS.Clear();
-				phonData.FeatConstraintsOS.Clear();
-				phonData.NaturalClassesOS.Clear();
-				phonData.PhonemeSetsOS.Clear();
-				phonData.PhonRulesOS.Clear();
-				Cache.LanguageProject.PhFeatureSystemOA.TypesOC.Clear();
-				Cache.LanguageProject.PhFeatureSystemOA.FeaturesOC.Clear();
-			});
+			return true;
 		}
 
 		/// <summary>

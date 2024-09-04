@@ -4,6 +4,7 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using System;
@@ -23,22 +24,24 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal const int DefaultStyle = -1;
 
-		// Names for global and default styles
+		// Global and default character styles.
 		internal const string BeforeAfterBetweenStyleName = "Dictionary-Context";
 		internal const string BeforeAfterBetweenDisplayName = "Context";
-		internal const string LetterHeadingStyleName = "Dictionary-LetterHeading";
-		internal const string LetterHeadingDisplayName = "Letter Heading";
 		internal const string SenseNumberStyleName = "Dictionary-SenseNumber";
 		internal const string SenseNumberDisplayName = "Sense Number";
-		internal const string DictionaryNormal = "Dictionary-Normal";
-		internal const string DictionaryMinor = "Dictionary-Minor";
 		internal const string WritingSystemStyleName = "Writing System Abbreviation";
 		internal const string WritingSystemDisplayName = "Writing System Abbreviation";
-		internal const string PictureAndCaptionTextframeStyle = "Image-Textframe-Style";
-		internal const string EntryStyleContinue = "-Continue";
 		internal const string StyleSeparator = " : ";
 
-		public static Style GenerateLetterHeaderStyle(ReadOnlyPropertyTable propertyTable)
+		// Globals and default paragraph styles.
+		internal const string NormalParagraphStyleName = "Normal";
+		internal const string MainEntryParagraphDisplayName = "Main Entry";
+		internal const string LetterHeadingStyleName = "Dictionary-LetterHeading";
+		internal const string LetterHeadingDisplayName = "Letter Heading";
+		internal const string PictureAndCaptionTextframeStyle = "Image-Textframe-Style";
+		internal const string EntryStyleContinue = "-Continue";
+
+		public static Style GenerateLetterHeaderParagraphStyle(ReadOnlyPropertyTable propertyTable)
 		{
 			var style = GenerateWordStyleFromLcmStyleSheet(LetterHeadingStyleName, 0, propertyTable);
 			style.StyleId = LetterHeadingDisplayName;
@@ -54,18 +57,26 @@ namespace SIL.FieldWorks.XWorks
 			return style;
 		}
 
-		public static Styles GetDefaultWordStyles(ReadOnlyPropertyTable propertyTable, LcmStyleSheet propStyleSheet, DictionaryConfigurationModel model)
+		public static Style GenerateNormalParagraphStyle(ReadOnlyPropertyTable propertyTable)
 		{
-			var styles = new Styles();
-			if (propStyleSheet == null)
-				return null;
-			// Normal is added as a default style; this means all styles will inherit from Normal unless specified otherwise.
-			if (propStyleSheet.Styles.Contains("Normal"))
-				styles = AddRange(styles, GetWordStyleForWsSpanWithNormalStyle(propertyTable));
+			var style = GenerateWordStyleFromLcmStyleSheet(NormalParagraphStyleName, DefaultStyle, propertyTable);
+			return style;
+		}
 
-			// TODO: handle DictionaryNormal, DictionaryMinor, and LetterHeadingForWritingSystem styles
+		public static Style GenerateMainEntryParagraphStyle(ReadOnlyPropertyTable propertyTable, DictionaryConfigurationModel model,
+			out ConfigurableDictionaryNode mainEntryNode)
+		{
+			Style style = null;
 
-			return styles;
+			// The user can change the style name that is associated with the Main Entry, so look up the node style name using the DisplayLabel.
+			mainEntryNode = model.Parts.Find(node => node.DisplayLabel == MainEntryParagraphDisplayName);
+			if (mainEntryNode != null)
+			{
+				style = GenerateWordStyleFromLcmStyleSheet(mainEntryNode.Style, DefaultStyle, propertyTable);
+				style.StyleId = MainEntryParagraphDisplayName;
+				style.StyleName.Val = style.StyleId;
+			}
+			return style;
 		}
 
 		/// <summary>
@@ -74,28 +85,12 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="styleName"></param>
 		/// <param name="wsId">writing system id</param>
-		/// <param name="propertyTable"></param>
-		/// <returns></returns>
-		internal static Style GenerateWordStyleFromLcmStyleSheet(
-			string styleName, int wsId, ReadOnlyPropertyTable propertyTable)
-		{
-			return GenerateWordStyleFromLcmStyleSheet(styleName, wsId, null, propertyTable);
-		}
-
-		/// <summary>
-		/// Generates a css StyleDeclaration for the requested FieldWorks style.
-		/// <remarks>internal to facilitate separate unit testing.</remarks>
-		/// </summary>
-		/// <param name="styleName"></param>
-		/// <param name="wsId">writing system id</param>
-		/// <param name="node">The configuration node to use for generating paragraph margin in context</param>
 		/// <param name="propertyTable">To retrieve styles</param>
 		/// <returns></returns>
-		internal static Style GenerateWordStyleFromLcmStyleSheet(
-			string styleName, int wsId,
-			ConfigurableDictionaryNode node, ReadOnlyPropertyTable propertyTable)
+		internal static Style GenerateWordStyleFromLcmStyleSheet(string styleName, int wsId,
+			ReadOnlyPropertyTable propertyTable)
 		{
-			return GenerateWordStyleFromLcmStyleSheet(styleName, wsId, node, propertyTable, true);
+			return GenerateWordStyleFromLcmStyleSheet(styleName, wsId, propertyTable, true);
 		}
 
 		/// <summary>
@@ -107,12 +102,10 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="styleName"></param>
 		/// <param name="wsId">writing system id</param>
-		/// <param name="node">The configuration node to use for generating paragraph margin in context</param>
 		/// <param name="propertyTable">To retrieve styles</param>
 		/// <param name="allowFirstLineIndent">Indicates if the style returned should include FirstLineIndent.</param>
 		/// <returns></returns>
-		internal static Style GenerateWordStyleFromLcmStyleSheet(
-			string styleName, int wsId, ConfigurableDictionaryNode node,
+		internal static Style GenerateWordStyleFromLcmStyleSheet(string styleName, int wsId,
 			ReadOnlyPropertyTable propertyTable, bool allowFirstLineIndent)
 		{
 			var styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
@@ -128,7 +121,7 @@ namespace SIL.FieldWorks.XWorks
 			exportStyle.StyleId = styleName.Trim('.');
 			// StyleName is the name a user will see for the given style in Word's style sheet.
 			exportStyle.Append(new StyleName() {Val = exportStyle.StyleId});
-			var parProps = new ParagraphProperties();
+			var parProps = new StyleParagraphProperties();
 			var runProps = new StyleRunProperties();
 
 			if (exportStyleInfo.BasedOnStyle?.Name != null)
@@ -215,22 +208,12 @@ namespace SIL.FieldWorks.XWorks
 				// calculate leading indent.
 				if (exportStyleInfo.HasLeadingIndent || hangingIndent < 0.0f)
 				{
-					ConfigurableDictionaryNode ancestor = null;
-					if (node != null)
-						ancestor = AncestorWithParagraphStyle(node, styleSheet);
+					var leadingIndent = CalculateMarginLeft(exportStyleInfo, hangingIndent);
 
-					var senseOptions = ancestor == null ? null : ancestor.DictionaryNodeOptions as DictionaryNodeSenseOptions;
-					if (ancestor == null ||
-						senseOptions == null ||
-						!senseOptions.DisplayEachSenseInAParagraph)
-					{
-						var leadingIndent = CalculateMarginLeft(exportStyleInfo, hangingIndent);
-
-						if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
-							parProps.Append(new Indentation() { Right = leadingIndent.ToString() });
-						else
-							parProps.Append(new Indentation() { Left = leadingIndent.ToString() });
-					}
+					if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
+						parProps.Append(new Indentation() { Right = leadingIndent.ToString() });
+					else
+						parProps.Append(new Indentation() { Left = leadingIndent.ToString() });
 				}
 
 				if (exportStyleInfo.HasLineSpacing)
@@ -312,18 +295,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Generates paragraph styles from a configuration node.
 		/// </summary>
-		public static Styles GenerateParagraphStylesFromConfigurationNode(ConfigurableDictionaryNode configNode,
+		public static Style GenerateParagraphStyleFromConfigurationNode(ConfigurableDictionaryNode configNode,
 			ReadOnlyPropertyTable propertyTable)
 		{
 			switch (configNode.DictionaryNodeOptions)
 			{
-				case DictionaryNodeSenseOptions senseOptions:
-					// TODO - 7/17/2024 The paragraph style generated by this method is never referenced.  Also, in most cases the
-					// paragraph style generated is empty, so it does not get added to the style collection.
-					// For now skip this call, and consider deleting this method in the future.
-					// return GenerateParagraphStyleForSenses(configNode, senseOptions, propertyTable);
-					return new Styles();
-
 				// TODO: handle listAndPara case and character portion of pictureOptions
 				// case IParaOption listAndParaOpts:
 
@@ -333,80 +309,34 @@ namespace SIL.FieldWorks.XWorks
 
 				default:
 					{
-						var style = new Style();
-						var styles = new Styles();
-
 						// If the configuration node defines a paragraph style then add the style.
 						if (!string.IsNullOrEmpty(configNode.Style) &&
 							(configNode.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph))
 						{
-							//Generate the rules for the default font info
-							style = GenerateWordStyleFromLcmStyleSheet(configNode.Style, DefaultStyle, configNode, propertyTable);
+							var style = GenerateWordStyleFromLcmStyleSheet(configNode.Style, DefaultStyle, propertyTable);
 							style.StyleId = configNode.DisplayLabel;
 							style.StyleName.Val = style.StyleId;
-							styles.AppendChild(style.CloneNode(true));
+							return style;
 						}
-						return styles;
+						return null;
 					}
 			}
 		}
 
 		/// <summary>
-		/// Creates run properties/character styles for the default "Normal" style
+		/// Generate the character styles (for the writing systems) that will be the base of all other character styles.
 		/// </summary>
 		/// <param name="propertyTable"></param>
 		/// <returns></returns>
-		private static Styles GetWordStyleForWsSpanWithNormalStyle(ReadOnlyPropertyTable propertyTable)
-		{
-			var styles = new Styles();
-			var defaultStyleProps = new Style();
-
-			// Generate character style rules for the default "Normal" style info
-			var normalStyle = GetOnlyCharacterStyle(GenerateWordStyleFromLcmStyleSheet("Normal", DefaultStyle, propertyTable));
-			var defaultRunProps = new RunPropertiesDefault();
-			if (normalStyle.Descendants<StyleRunProperties>().Any())
-			{
-				foreach (var item in normalStyle.Descendants<StyleRunProperties>())
-				{
-					defaultRunProps.AppendChild(item.CloneNode(true));
-					defaultStyleProps.AppendChild(defaultRunProps);
-				}
-			}
-
-			// if a default fontsize wasn't set, set one now
-			if (!defaultRunProps.Descendants<FontSize>().Any())
-			{
-				List<StyleRunProperties> runProps =
-					defaultRunProps.OfType<StyleRunProperties>().ToList();
-
-				// Append desired default font size to the last runproperties element in the default run properties (if one exists)
-				if (runProps.Any())
-					// kDefaultFontSize stores the desired fontsize in points. Openxml expects fontsize given in half points, so we multiply by 2
-					runProps.Last().Append(new FontSize() { Val = (FontInfo.kDefaultFontSize * 2).ToString() });
-
-				// Else, create a new runproperties element with the desired default font size and append it to the default run properties
-				else
-				{
-					RunProperties newRunProps = new RunProperties();
-					newRunProps.Append(new FontSize() { Val = (FontInfo.kDefaultFontSize * 2).ToString() });
-					defaultRunProps.Append(newRunProps);
-				}
-			}
-
-			defaultStyleProps.StyleId = "Normal";
-			styles.Append(defaultStyleProps);
-			styles = AddRange(styles, GenerateWordStylesForWritingSystems("Normal", propertyTable));
-			return styles;
-		}
-
-		private static Styles GenerateWordStylesForWritingSystems(string styleName, ReadOnlyPropertyTable propertyTable)
+		public static Styles GenerateWritingSystemsStyles(ReadOnlyPropertyTable propertyTable)
 		{
 			var cache = propertyTable.GetValue<LcmCache>("cache");
 			var styleRules = new Styles();
 			// Generate the rules for all the writing system overrides
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
-				Style wsCharStyle = GetOnlyCharacterStyle(GenerateWordStyleFromLcmStyleSheet(styleName, aws.Handle, propertyTable));
+				// Get the character style information from the "Normal" paragraph style.
+				Style wsCharStyle = GetOnlyCharacterStyle(GenerateWordStyleFromLcmStyleSheet(NormalParagraphStyleName, aws.Handle, propertyTable));
 				wsCharStyle.StyleId = GetWsString(aws.LanguageTag);
 				wsCharStyle.StyleName = new StyleName() { Val = wsCharStyle.StyleId };
 
@@ -416,42 +346,9 @@ namespace SIL.FieldWorks.XWorks
 			return styleRules;
 		}
 
-		private static Styles GenerateParagraphStyleForSenses(ConfigurableDictionaryNode configNode, DictionaryNodeSenseOptions senseOptions, ReadOnlyPropertyTable propertyTable)
-		{
-			var styleRules = new Styles();
-
-			if (!string.IsNullOrEmpty(configNode.Style) &&
-				(senseOptions.DisplayEachSenseInAParagraph))
-			{
-				Style styleDeclaration = GenerateWordStyleFromLcmStyleSheet(configNode.Style, 0, configNode, propertyTable);
-				if (senseOptions.DisplayEachSenseInAParagraph)
-				{
-					Style senseParaStyle = GetOnlyParagraphStyle(styleDeclaration);
-
-					// TODO: goal is to apply the paragraph style information to all but the first sensecontent block, if requested -- how to achieve this with word/openxml?
-					senseParaStyle.StyleId = configNode.Style;
-					if (senseParaStyle.StyleName == null)
-					{
-						senseParaStyle.StyleName = new StyleName() { Val = senseParaStyle.StyleId };
-					}
-					else
-					{
-						senseParaStyle.StyleName.Val = senseParaStyle.StyleId;
-					}
-
-					styleRules.Append(senseParaStyle);
-
-					// TODO: append bulleted list style after handling custom bullet/numbering systems
-				}
-			}
-
-			return styleRules;
-		}
-
-		private static Styles GenerateParagraphStyleFromPictureOptions(ConfigurableDictionaryNode configNode, DictionaryNodePictureOptions pictureOptions,
+		private static Style GenerateParagraphStyleFromPictureOptions(ConfigurableDictionaryNode configNode, DictionaryNodePictureOptions pictureOptions,
 			LcmCache cache, ReadOnlyPropertyTable propertyTable)
 		{
-			var styles = new Styles();
 			var frameStyle = new Style();
 
 			// A textframe for holding an image/caption has to be a paragraph
@@ -471,8 +368,7 @@ namespace SIL.FieldWorks.XWorks
 			frameStyle.StyleName = new StyleName(){Val = PictureAndCaptionTextframeStyle};
 			parProps.Append(textFrameProps);
 			frameStyle.Append(parProps);
-			styles.Append(frameStyle);
-			return styles;
+			return frameStyle;
 		}
 
 		private static Styles GenerateWordStylesFromListAndParaOptions(ConfigurableDictionaryNode configNode,
@@ -483,18 +379,54 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Create the 'continuation' style for the entry, which is needed when an entry contains multiple paragraphs. This
-		/// style will be used for all but the first paragraph. It is the same as the style for the first paragraph except
-		/// that it does not contain the first line indenting.
+		/// Create a paragraph 'continuation' style based on a regular style. This is needed when a paragraph is split
+		/// because part of the content cannot be nested in a paragraph (table, another paragraph). The
+		/// continuation style is the same as the regular style except that it does not contain the first line indenting.
 		/// </summary>
 		/// <returns>Returns the continuation style.</returns>
-		internal static Style GenerateContinuationWordStyles(ConfigurableDictionaryNode node, ReadOnlyPropertyTable propertyTable)
+		internal static Style GenerateContinuationStyle(Style style)
 		{
-			Style contStyle = GenerateWordStyleFromLcmStyleSheet(node.Style, DefaultStyle, node,
-				propertyTable, false);
-			contStyle.StyleId = node.DisplayLabel + EntryStyleContinue;
+			Style contStyle = (Style)style.CloneNode(true);
+			WordStylesGenerator.RemoveFirstLineIndentation(contStyle);
+			contStyle.StyleId = contStyle.StyleId + EntryStyleContinue;
 			contStyle.StyleName.Val = contStyle.StyleId;
+
+			if (contStyle.BasedOn != null && !string.IsNullOrEmpty(contStyle.BasedOn.Val) &&
+				contStyle.BasedOn.Val != NormalParagraphStyleName)
+			{
+				contStyle.BasedOn.Val = contStyle.BasedOn.Val + EntryStyleContinue;
+			}
 			return contStyle;
+		}
+
+		/// <summary>
+		/// Remove the first line indentation from the style.
+		/// Continuation styles need this removed.
+		/// </summary>
+		/// <param name="style">The style that will be modified to remove the value.</param>
+		private static void RemoveFirstLineIndentation(Style style)
+		{
+			// Get the paragraph properties.
+			StyleParagraphProperties paraProps = style.OfType<StyleParagraphProperties>().FirstOrDefault();
+			if (paraProps != null)
+			{
+				// Remove FirstLine from all the indentations. Typically it will only be in one.
+				// Note: ToList() is necessary so we are not enumerating over the collection that we are removing from.
+				foreach (var indentation in paraProps.OfType<Indentation>().ToList())
+				{
+					if (indentation.FirstLine != null)
+					{
+						// Remove the FirstLine value.
+						indentation.FirstLine = null;
+
+						// Remove the indentation if it doesn't contain anything.
+						if (!indentation.HasChildren && !indentation.HasAttributes)
+						{
+							paraProps.RemoveChild(indentation);
+						}
+					}
+				}
+			}
 		}
 
 		/// <summary>
@@ -534,11 +466,19 @@ namespace SIL.FieldWorks.XWorks
 			// fontName still null means not set in Normal Style, then get default fonts from WritingSystems configuration.
 			// Comparison, projectStyle.Name == "Normal", required to limit the font-family definition to the
 			// empty span (ie span[lang="en"]{}. If not included, font-family will be added to many more spans.
-			if (fontName == null && projectStyle.Name == "Normal")
+			if (fontName == null && projectStyle.Name == NormalParagraphStyleName)
 			{
 				var lgWritingSystem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId);
 				if (lgWritingSystem != null)
 					fontName = lgWritingSystem.DefaultFontName;
+				else
+				{
+					CoreWritingSystemDefinition defAnalWs = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+					lgWritingSystem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(defAnalWs.Handle);
+					if (lgWritingSystem != null)
+						fontName = lgWritingSystem.DefaultFontName;
+
+				}
 			}
 
 			if (fontName != null)
@@ -554,8 +494,15 @@ namespace SIL.FieldWorks.XWorks
 
 			// Check fontsize
 			int fontSize;
-			if (GetFontValue(wsFontInfo.m_fontSize, defaultFontInfo.FontSize, out fontSize))
+			if (GetFontValue(wsFontInfo.m_fontSize, defaultFontInfo.FontSize, out fontSize) ||
+			   projectStyle.Name == NormalParagraphStyleName)
 			{
+				// Always set the font size for the 'Normal' paragraph style.
+				if (fontSize == 0)
+				{
+					fontSize = FontInfo.kDefaultFontSize * 1000;
+				}
+
 				// Fontsize is stored internally multiplied by 1000.  (FieldWorks code generally hates floating point.)
 				// OpenXML expects fontsize given in halves of a point; thus we divide by 500.
 				fontSize = fontSize / 500;
