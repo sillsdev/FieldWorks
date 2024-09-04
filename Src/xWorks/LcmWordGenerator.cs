@@ -1440,9 +1440,23 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public void AddCollection(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty, string className, IFragment content)
 		{
+			// Add Before text.
+			if (!string.IsNullOrEmpty(config.Before))
+			{
+				var beforeRun = CreateBeforeAfterBetweenRun(config.Before);
+				((WordFragmentWriter)writer).WordFragment.DocBody.Append(beforeRun);
+			}
+
 			if (!content.IsNullOrEmpty())
 			{
 				((WordFragmentWriter)writer).WordFragment.Append(content);
+			}
+
+			// Add After text.
+			if (!string.IsNullOrEmpty(config.After))
+			{
+				var afterRun = CreateBeforeAfterBetweenRun(config.After);
+				((WordFragmentWriter)writer).WordFragment.DocBody.Append(afterRun);
 			}
 		}
 		public void BeginObjectProperty(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty, string getCollectionItemClassAttribute)
@@ -1606,6 +1620,17 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return;
 		}
+
+		public void BetweenCrossReferenceType(IFragment content, ConfigurableDictionaryNode node, bool firstItem)
+		{
+			// Add Between text if it is not the first item in the collection.
+			if (!firstItem && !string.IsNullOrEmpty(node.Between))
+			{
+				var betweenRun = CreateBeforeAfterBetweenRun(node.Between);
+				((DocFragment)content).DocBody.PrependChild(betweenRun);
+			}
+		}
+
 		public IFragment WriteProcessedSenses(ConfigurableDictionaryNode config, bool isBlock, IFragment senseContent, string className, IFragment sharedGramInfo)
 		{
 			// Add Before text for the senses.
