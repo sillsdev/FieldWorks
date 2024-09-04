@@ -411,6 +411,10 @@ namespace SIL.FieldWorks.XWorks
 			((JsonFragmentWriter)writer).InsertRawJson(",");
 		}
 
+		public void BetweenCrossReferenceType(IFragment content, ConfigurableDictionaryNode node, bool firstItem)
+		{
+		}
+
 		/// <summary>
 		/// Generates data for all senses of an entry. For better processing of json add sharedGramInfo as a separate property object
 		/// </summary>
