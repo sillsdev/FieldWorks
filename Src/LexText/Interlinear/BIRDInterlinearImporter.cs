@@ -19,10 +19,7 @@ using SIL.LCModel.Application.ApplicationServices;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
-using Gecko.WebIDL;
-using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.Extensions;
-using SIL.Machine.DataStructures;
 
 namespace SIL.FieldWorks.IText
 {
@@ -767,11 +764,11 @@ namespace SIL.FieldWorks.IText
 			// Fill in morphemes, lex. entries, lex. gloss, and lex.gram.info
 			if (word.morphemes != null && word.morphemes.morphs.Length > 0)
 			{
+				ILexEntryRepository lex_entry_repo = cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+				IMoMorphSynAnalysisRepository msa_repo = cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>();
 				int morphIdx = 0;
 				foreach (var morpheme in word.morphemes.morphs)
 				{
-					ILexEntryRepository lex_entry_repo = cache.ServiceLocator.GetInstance<ILexEntryRepository>();
-					IMoMorphSynAnalysisRepository msa_repo = cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>();
 					var itemDict = new Dictionary<string, Tuple<string, string>>();
 					if (analysis.Analysis == null)
 					{
@@ -786,12 +783,12 @@ namespace SIL.FieldWorks.IText
 					if (itemDict.ContainsKey("txt")) // Morphemes
 					{
 						int ws = GetWsEngine(wsFact, itemDict["txt"].Item1).Handle;
-						ITsString wf = TsStringUtils.MakeString(itemDict["txt"].Item2, ws);
+						var morphForm = itemDict["txt"].Item2;
+						ITsString wf = TsStringUtils.MakeString(morphForm, ws);
 
 						// If we already have a bundle use that one
-						bundle =
-							analysis.Analysis.MorphBundlesOS.FirstOrDefault(b => b.Form.get_String(ws).Text == itemDict["txt"].Item2);
-						if (bundle == null)
+						bundle = analysis.Analysis.MorphBundlesOS.ElementAtOrDefault(morphIdx);
+						if (bundle == null || bundle.Form.get_String(ws).Text != morphForm)
 						{
 							// Otherwise create a new bundle and add it to analysis
 							bundle = cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>().Create();
@@ -807,23 +804,19 @@ namespace SIL.FieldWorks.IText
 					if (itemDict.ContainsKey("cf")) // Lex. Entries
 					{
 						int ws_cf = GetWsEngine(wsFact, itemDict["cf"].Item1).Handle;
+						ILexEntry entry = null;
 						var entries = lex_entry_repo.AllInstances().Where(
 							m => StringServices.CitationFormWithAffixTypeStaticForWs(m, ws_cf, string.Empty) == itemDict["cf"].Item2);
-						if (entries != null)
+						if (entries.Count() == 1)
 						{
-							ILexEntry entry = null;
-							if (entries.Count() == 1)
-							{
-								entry = entries.First();
-							}
-							else if (itemDict.ContainsKey("hn")) // Homograph Number
-							{
-								entry = entries.FirstOrDefault(m => m.HomographNumber.ToString() == itemDict["hn"].Item2);
-							}
-							else // Didn't find a match
-							{
-								break;
-							}
+							entry = entries.First();
+						}
+						else if (itemDict.ContainsKey("hn")) // Homograph Number
+						{
+							entry = entries.FirstOrDefault(m => m.HomographNumber.ToString() == itemDict["hn"].Item2);
+						}
+						if (entry != null)
+						{
 							bundle.MorphRA = entry.LexemeFormOA;
 
 							if (itemDict.ContainsKey("gls")) // Lex. Gloss
