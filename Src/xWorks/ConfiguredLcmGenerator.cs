@@ -1606,10 +1606,10 @@ namespace SIL.FieldWorks.XWorks
 					var generateLexType = typeNode != null;
 					var lexTypeContent = generateLexType
 						? GenerateCollectionItemContent(typeNode, pubDecorator, lexEntryType,
-							lexEntryType.Owner, settings, false)
+							lexEntryType.Owner, settings, true)
 						: null;
 					var className = generateLexType ? settings.StylesGenerator.AddStyles(typeNode).Trim('.') : null;
-					var refsByType = settings.ContentGenerator.AddLexReferences(config, generateLexType,
+					var refsByType = settings.ContentGenerator.AddLexReferences(typeNode, generateLexType,
 						lexTypeContent, className, combinedContent, IsTypeBeforeForm(config));
 					bldr.Append(refsByType);
 				}
@@ -2121,6 +2121,7 @@ namespace SIL.FieldWorks.XWorks
 								// targets
 								settings.ContentGenerator.AddCollection(xw, config, IsBlockProperty(child),
 									CssGenerator.GetClassAttributeForConfig(child), content);
+								settings.StylesGenerator.AddStyles(child);
 							}
 							break;
 						case "OwnerType":

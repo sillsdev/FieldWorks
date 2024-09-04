@@ -1186,7 +1186,7 @@ namespace SIL.FieldWorks.XWorks
 			string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
 			if (areaChoice == "notebook")
 			{
-				if (AreCustomFieldsAProblem(new int[] { RnGenericRecTags.kClassId}))
+				if (AreCustomFieldsAProblem(new int[] { RnGenericRecTags.kClassId }))
 					return true;
 				using (var dlg = new NotebookExportDialog(m_mediator, m_propertyTable))
 				{

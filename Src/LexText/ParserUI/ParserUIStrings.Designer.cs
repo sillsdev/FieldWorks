@@ -79,6 +79,24 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Comment.
+        /// </summary>
+        public static string ksComment {
+            get {
+                return ResourceManager.GetString("ksComment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The comment provided by the user when the report was saved.
+        /// </summary>
+        public static string ksCommentToolTip {
+            get {
+                return ResourceManager.GetString("ksCommentToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to -.
         /// </summary>
         public static string ksDash {
@@ -138,6 +156,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         public static string ksDiffHeader {
             get {
                 return ResourceManager.GetString("ksDiffHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please enter a comment for the parser report.
+        /// </summary>
+        public static string ksEnterComment {
+            get {
+                return ResourceManager.GetString("ksEnterComment", resourceCulture);
             }
         }
         
@@ -453,6 +480,24 @@ namespace SIL.FieldWorks.LexText.Controls {
         public static string ksReparseToolTip {
             get {
                 return ResourceManager.GetString("ksReparseToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save Report.
+        /// </summary>
+        public static string ksSaveReport {
+            get {
+                return ResourceManager.GetString("ksSaveReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save the report in the project.
+        /// </summary>
+        public static string ksSaveReportToolTip {
+            get {
+                return ResourceManager.GetString("ksSaveReportToolTip", resourceCulture);
             }
         }
         

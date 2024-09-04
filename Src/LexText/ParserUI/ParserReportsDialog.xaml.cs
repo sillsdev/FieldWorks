@@ -25,12 +25,14 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		public LcmCache Cache { get; set; }
 
+		public string DefaultComment = null;
+
 		public ParserReportsDialog()
 		{
 			InitializeComponent();
 		}
 
-		public ParserReportsDialog(ObservableCollection<ParserReportViewModel> parserReports, Mediator mediator, LcmCache cache)
+		public ParserReportsDialog(ObservableCollection<ParserReportViewModel> parserReports, Mediator mediator, LcmCache cache, string defaultComment)
 		{
 			InitializeComponent();
 			parserReports.Sort((x, y) => y.Timestamp.CompareTo(x.Timestamp));
@@ -38,6 +40,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			Mediator = mediator;
 			Cache = cache;
 			DataContext = new ParserReportsViewModel { ParserReports = parserReports };
+			DefaultComment = defaultComment;
 		}
 
 		private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
@@ -61,6 +64,21 @@ namespace SIL.FieldWorks.LexText.Controls
 					break;
 				}
 			}
+		}
+
+		public void SaveParserReport(object sender, RoutedEventArgs e)
+		{
+			foreach (var report in ParserReports)
+			{
+				if (report.IsSelected)
+				{
+					ParserListener.SaveParserReport(report.ParserReport, Cache, DefaultComment);
+				}
+			}
+			// The comment may have been updated.
+			DataGrid.Items.Refresh();
+			((ParserReportsViewModel)DataContext).UpdateButtonStates();
+
 		}
 
 		public void DeleteParserReport(object sender, RoutedEventArgs e)
