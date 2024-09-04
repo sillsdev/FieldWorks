@@ -411,7 +411,7 @@ namespace SIL.FieldWorks.XWorks
 			((JsonFragmentWriter)writer).InsertRawJson(",");
 		}
 
-		public void BetweenCrossReferenceType(IFragment content, ConfigurableDictionaryNode node, bool first)
+		public void BetweenCrossReferenceType(IFragment content, ConfigurableDictionaryNode node, bool firstItem)
 		{
 		}
 

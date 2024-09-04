@@ -2005,12 +2005,12 @@ namespace SIL.FieldWorks.XWorks
 			var organizedRefs = SortAndFilterLexRefsAndTargets(collection, cmOwner, config);
 
 			// Now that we have things in the right order, try outputting one type at a time
-			bool first = true;
+			bool firstIteration = true;
 			foreach (var referenceList in organizedRefs)
 			{
 				var xBldr = GenerateCrossReferenceChildren(config, pubDecorator, referenceList, cmOwner, settings);
-				settings.ContentGenerator.BetweenCrossReferenceType(xBldr, config, first);
-				first = false;
+				settings.ContentGenerator.BetweenCrossReferenceType(xBldr, config, firstIteration);
+				firstIteration = false;
 				bldr.Append(xBldr);
 			}
 		}

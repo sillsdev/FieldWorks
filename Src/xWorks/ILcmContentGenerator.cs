@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.XWorks
 		IFragment AddLexReferences(ConfigurableDictionaryNode config, bool generateLexType, IFragment lexTypeContent, string className, IFragment referencesContent, bool typeBefore);
 		void BeginCrossReference(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty, string className);
 		void EndCrossReference(IFragmentWriter writer);
-		void BetweenCrossReferenceType(IFragment content, ConfigurableDictionaryNode node, bool first);
+		void BetweenCrossReferenceType(IFragment content, ConfigurableDictionaryNode node, bool firstItem);
 		IFragment WriteProcessedSenses(ConfigurableDictionaryNode config, bool isBlock, IFragment senseContent, string className, IFragment sharedCollectionInfo);
 		IFragment AddAudioWsContent(string wsId, Guid linkTarget, IFragment fileContent);
 		IFragment GenerateErrorContent(StringBuilder badStrBuilder);

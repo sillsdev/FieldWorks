@@ -1621,10 +1621,10 @@ namespace SIL.FieldWorks.XWorks
 			return;
 		}
 
-		public void BetweenCrossReferenceType(IFragment content, ConfigurableDictionaryNode node, bool first)
+		public void BetweenCrossReferenceType(IFragment content, ConfigurableDictionaryNode node, bool firstItem)
 		{
 			// Add Between text if it is not the first item in the collection.
-			if (!first && !string.IsNullOrEmpty(node.Between))
+			if (!firstItem && !string.IsNullOrEmpty(node.Between))
 			{
 				var betweenRun = CreateBeforeAfterBetweenRun(node.Between);
 				((DocFragment)content).DocBody.PrependChild(betweenRun);

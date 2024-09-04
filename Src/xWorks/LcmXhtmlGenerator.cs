@@ -992,7 +992,7 @@ namespace SIL.FieldWorks.XWorks
 			EndObject(writer);
 		}
 
-		public void BetweenCrossReferenceType(IFragment content, ConfigurableDictionaryNode node, bool first)
+		public void BetweenCrossReferenceType(IFragment content, ConfigurableDictionaryNode node, bool firstItem)
 		{
 		}
 
