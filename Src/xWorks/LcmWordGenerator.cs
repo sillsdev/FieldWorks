@@ -1633,8 +1633,11 @@ namespace SIL.FieldWorks.XWorks
 
 		public IFragment WriteProcessedSenses(ConfigurableDictionaryNode config, bool isBlock, IFragment senseContent, string className, IFragment sharedGramInfo)
 		{
-			// Add Before text for the senses.
-			if (!string.IsNullOrEmpty(config.Before))
+			var senseOptions = config?.DictionaryNodeOptions as DictionaryNodeSenseOptions;
+			bool eachInAParagraph = senseOptions?.DisplayEachSenseInAParagraph ?? false;
+
+			// Add Before text for the senses if they were not displayed in separate paragraphs.
+			if (!eachInAParagraph && !string.IsNullOrEmpty(config.Before))
 			{
 				var beforeRun = CreateBeforeAfterBetweenRun(config.Before);
 				((DocFragment)sharedGramInfo).DocBody.PrependChild(beforeRun);
@@ -1642,8 +1645,8 @@ namespace SIL.FieldWorks.XWorks
 
 			sharedGramInfo.Append(senseContent);
 
-			// Add After text for the senses.
-			if (!string.IsNullOrEmpty(config.After))
+			// Add After text for the senses if they were not displayed in separate paragraphs.
+			if (!eachInAParagraph && !string.IsNullOrEmpty(config.After))
 			{
 				var afterRun = CreateBeforeAfterBetweenRun(config.After);
 				((DocFragment)sharedGramInfo).DocBody.Append(afterRun);
