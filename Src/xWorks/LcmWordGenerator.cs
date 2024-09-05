@@ -796,8 +796,8 @@ namespace SIL.FieldWorks.XWorks
 
 		public IFragment GenerateAudioLinkContent(ConfigurableDictionaryNode config, string classname, string srcAttribute, string caption, string safeAudioId)
 		{
-			// TODO
-			return new DocFragment("TODO: generate audio link content");
+			// We are not planning to support audio and video content for Word Export.
+			return new DocFragment();
 		}
 		public IFragment WriteProcessedObject(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className)
 		{
@@ -1657,7 +1657,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public IFragment AddAudioWsContent(string wsId, Guid linkTarget, IFragment fileContent)
 		{
-			return new DocFragment("TODO: add audiows content");
+			// We are not planning to support audio and video content for Word Export.
+			return new DocFragment();
 		}
 		public IFragment GenerateErrorContent(StringBuilder badStrBuilder)
 		{
@@ -1666,7 +1667,8 @@ namespace SIL.FieldWorks.XWorks
 		public IFragment GenerateVideoLinkContent(ConfigurableDictionaryNode config, string className, string mediaId, string srcAttribute,
 			string caption)
 		{
-			return new DocFragment("TODO: generate video link content");
+			// We are not planning to support audio and video content for Word Export.
+			return new DocFragment();
 		}
 		#endregion ILcmContentGenerator functions to implement
 
