@@ -346,27 +346,9 @@ namespace SIL.FieldWorks.IText
 			if (InterlinDoc == null || !InterlinDoc.IsFocusBoxInstalled)
 				return;
 			// we're fully installed, so update the buttons.
-			if (ShowLinkWordsIcon)
-			{
-				btnLinkNextWord.Visible = true;
-				btnLinkNextWord.Enabled = true;
-			}
-			else
-			{
-				btnLinkNextWord.Visible = false;
-				btnLinkNextWord.Enabled = false;
-			}
+			btnLinkNextWord.Visible = btnLinkNextWord.Enabled = ShowLinkWordsIcon;
+			btnBreakPhrase.Visible = btnBreakPhrase.Enabled = ShowBreakPhraseIcon;
 
-			if (ShowBreakPhraseIcon)
-			{
-				btnBreakPhrase.Visible = true;
-				btnBreakPhrase.Enabled = true;
-			}
-			else
-			{
-				btnBreakPhrase.Visible = false;
-				btnBreakPhrase.Enabled = false;
-			}
 			UpdateButtonState_Undo();
 			// LT-11406: Somehow JoinWords (and BreakPhrase) leaves the selection elsewhere,
 			// this should make it select the default location.
@@ -376,16 +358,8 @@ namespace SIL.FieldWorks.IText
 
 		private void UpdateButtonState_Undo()
 		{
-			if (InterlinWordControl != null && InterlinWordControl.HasChanged)
-			{
-				btnUndoChanges.Visible = true;
-				btnUndoChanges.Enabled = true;
-			}
-			else
-			{
-				btnUndoChanges.Visible = false;
-				btnUndoChanges.Enabled = false;
-			}
+			bool shouldEnable = InterlinWordControl != null && InterlinWordControl.HasChanged;
+			btnUndoChanges.Visible = btnUndoChanges.Enabled = shouldEnable;
 		}
 
 		private void btnLinkNextWord_Click(object sender, EventArgs e)
