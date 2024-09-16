@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 using XCore;
 
@@ -256,6 +257,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					mb.MsaRA = morph.Msa;
 					if (morph.InflType != null)
 						mb.InflTypeRA = morph.InflType;
+					if (morph.GuessedString != null)
+					{
+						// Override default Form with GuessedString.
+						int vernWS = m_cache.DefaultVernWs;
+						mb.Form.set_String(vernWS, TsStringUtils.MakeString(morph.GuessedString, vernWS));
+					}
 				}
 				matches.Add(newAnal);
 			}

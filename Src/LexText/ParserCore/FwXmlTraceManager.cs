@@ -470,7 +470,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (inflTypeID != 0 && !m_cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().TryGetObject(inflTypeID, out inflType))
 				return null;
 
-			return HCParser.CreateAllomorphElement("Allomorph", form, msa, inflType, formID2 != 0);
+			string guessedString = allomorph.Guessed ? allomorph.Morpheme.Gloss : null;
+			return HCParser.CreateAllomorphElement("Allomorph", form, msa, inflType, formID2 != 0, guessedString);
 		}
 	}
 }

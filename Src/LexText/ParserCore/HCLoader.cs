@@ -1836,7 +1836,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					{
 						var rule = new AllomorphCoOccurrenceRule(ConstraintType.Exclude, others, adjacency);
 						firstAllo.AllomorphCoOccurrenceRules.Add(rule);
-						m_language.AllomorphCoOccurrenceRules.Add(rule);
+						m_language.AllomorphCoOccurrenceRules.Add((firstAllo, rule));
 					}
 				}
 			}
@@ -1886,7 +1886,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					{
 						var rule = new MorphemeCoOccurrenceRule(ConstraintType.Exclude, others, adjacency);
 						firstMorpheme.MorphemeCoOccurrenceRules.Add(rule);
-						m_language.MorphemeCoOccurrenceRules.Add(rule);
+						m_language.MorphemeCoOccurrenceRules.Add((firstMorpheme, rule));
 					}
 				}
 			}
@@ -2364,6 +2364,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					if (!m_table.Contains(otherChar))
 						m_table.AddBoundary(otherChar);
 				}
+			}
+			// Add natural classes to table for lexical patterns.
+			foreach(NaturalClass hcNaturalClass in m_language.NaturalClasses)
+			{
+				m_table.AddNaturalClass(hcNaturalClass);
+			}
+			foreach (string ncName in m_naturalClassLookup.Keys)
+			{
+				NaturalClass hcNaturalClass;
+				if (TryLoadNaturalClass(m_naturalClassLookup[ncName], out hcNaturalClass))
+					m_table.AddNaturalClass(hcNaturalClass);
 			}
 			m_language.CharacterDefinitionTables.Add(m_table);
 		}
