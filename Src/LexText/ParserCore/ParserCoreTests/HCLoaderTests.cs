@@ -41,7 +41,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			InvalidPhoneme,
 			DuplicateGrapheme,
 			InvalidEnvironment,
-			InvalidRedupForm
+			InvalidRedupForm,
+			InvalidRewriteRule
 		}
 
 		private class TestHCLoadErrorLogger : IHCLoadErrorLogger
@@ -81,6 +82,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			public void InvalidReduplicationForm(IMoForm form, string reason, IMoMorphSynAnalysis msa)
 			{
 				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidRedupForm, (ICmObject) msa));
+			}
+
+			public void InvalidRewriteRule(IPhRegularRule rule, string reason)
+			{
+				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidRedupForm, (ICmObject) rule));
 			}
 		}
 
