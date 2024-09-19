@@ -118,6 +118,15 @@
 										</span>
 									</li>
 								</xsl:when>
+								<xsl:when test="@type = 'invalid-rewrite-rule'">
+									<li>
+										<xsl:text>The rewrite rule "</xsl:text>
+										<xsl:value-of select="Rule" />
+										<xsl:text>" is invalid. Reason: </xsl:text>
+										<xsl:value-of select="Reason" />
+										<xsl:text> </xsl:text>
+									</li>
+								</xsl:when>
 								<xsl:otherwise>
 									<!-- Do not expect any others to happen, but just in case, we show them in all their HC glory -->
 									<li><xsl:value-of select="."/></li>

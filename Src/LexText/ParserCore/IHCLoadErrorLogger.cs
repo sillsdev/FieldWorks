@@ -1,4 +1,4 @@
-﻿using SIL.LCModel;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -10,5 +10,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		void DuplicateGrapheme(IPhPhoneme phoneme);
 		void InvalidEnvironment(IMoForm form, IPhEnvironment env, string reason, IMoMorphSynAnalysis msa);
 		void InvalidReduplicationForm(IMoForm form, string reason, IMoMorphSynAnalysis msa);
+		void InvalidRewriteRule(IPhRegularRule prule, string reason);
 	}
 }

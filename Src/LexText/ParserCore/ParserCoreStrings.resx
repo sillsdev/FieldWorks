@@ -189,4 +189,7 @@
   <data name="ksTestX" xml:space="preserve">
     <value>Tested {0}</value>
   </data>
+  <data name="ksMaxElementsInRule" xml:space="preserve">
+    <value>A rule can't have more than one element in its left-hand side or its right-hand side.</value>
+  </data>
 </root>
