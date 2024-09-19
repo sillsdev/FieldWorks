@@ -994,9 +994,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Cache.LanguageProject.PhonologicalDataOA.PhonRulesOS.Add(prule);
 			prule.Name.SetAnalysisDefaultWritingSystem("prule");
 			prule.Direction = 2;
-			IPhSimpleContextSeg segCtxt = Cache.ServiceLocator.GetInstance<IPhSimpleContextSegFactory>().Create();
-			prule.StrucDescOS.Add(segCtxt);
-			segCtxt.FeatureStructureRA = GetPhoneme("a");
 			IPhSimpleContextNC ncCtxt = Cache.ServiceLocator.GetInstance<IPhSimpleContextNCFactory>().Create();
 			prule.StrucDescOS.Add(ncCtxt);
 			ncCtxt.FeatureStructureRA = m_vowel;
@@ -1027,7 +1024,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			Assert.That(hcPrule.Direction, Is.EqualTo(Machine.DataStructures.Direction.LeftToRight));
 			Assert.That(hcPrule.ApplicationMode, Is.EqualTo(RewriteApplicationMode.Simultaneous));
-			Assert.That(hcPrule.Lhs.ToString(), Is.EqualTo(m_lang.Strata[0].CharacterDefinitionTable["a"].FeatureStruct + VowelFS));
+			Assert.That(hcPrule.Lhs.ToString(), Is.EqualTo(VowelFS));
 
 			Assert.That(hcPrule.Subrules.Count, Is.EqualTo(1));
 			RewriteSubrule subrule = hcPrule.Subrules[0];
