@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -599,6 +599,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							int prevCellId = GetPrevCell(seqCtxt.Hvo);
 							cellIndex = GetCellCount(prevCellId) - 1;
 							Rule.InputOS.Remove(seqCtxt);
+							// Unschedule the removal of the column.
+							m_removeCol = null;
 							return prevCellId;
 						}
 						bool reconstruct = RemoveContextsFrom(forward, sel, seqCtxt, false, out cellIndex);
