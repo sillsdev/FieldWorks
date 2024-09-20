@@ -133,6 +133,15 @@ namespace SIL.FieldWorks.WordWorks.Parser {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A rule can&apos;t have more than one element in its left-hand side or its right-hand side..
+        /// </summary>
+        internal static string ksMaxElementsInRule {
+            get {
+                return ResourceManager.GetString("ksMaxElementsInRule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ???.
         /// </summary>
         internal static string ksQuestions {
