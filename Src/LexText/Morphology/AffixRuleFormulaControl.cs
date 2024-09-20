@@ -599,6 +599,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							int prevCellId = GetPrevCell(seqCtxt.Hvo);
 							cellIndex = GetCellCount(prevCellId) - 1;
 							Rule.InputOS.Remove(seqCtxt);
+							// Unschedule the removal of the column.
+							m_removeCol = null;
 							return prevCellId;
 						}
 						bool reconstruct = RemoveContextsFrom(forward, sel, seqCtxt, false, out cellIndex);
