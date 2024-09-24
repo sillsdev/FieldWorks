@@ -236,7 +236,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						if (regRule.StrucDescOS.Count > 0 || regRule.RightHandSidesOS.Any(rhs => rhs.StrucChangeOS.Count > 0))
 						{
 							RewriteRule hcRegRule = LoadRewriteRule(regRule);
-
+							if (hcRegRule == null)
+								continue;
 							// Choose which stratum the phonological rules apply on.
 							if (!m_notOnClitics)
 								m_clitic.PhonologicalRules.Add(hcRegRule);
@@ -1704,6 +1705,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 			hcPrule.Properties[HCParser.PRuleID] = prule.Hvo;
 
+			if (hcPrule.Lhs.Children.Count > 1)
+			{
+				m_logger.InvalidRewriteRule(prule, ParserCoreStrings.ksMaxElementsInRule);
+				return null;
+			}
 			foreach (IPhSegRuleRHS rhs in prule.RightHandSidesOS)
 			{
 				var psubrule = new RewriteSubrule();
@@ -1752,6 +1758,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						rightPattern.Children.Add(new Constraint<Word, ShapeNode>(HCFeatureSystem.RightSideAnchor));
 					rightPattern.Freeze();
 					psubrule.RightEnvironment = rightPattern;
+				}
+
+				if (psubrule.Rhs.Children.Count > 1)
+				{
+					m_logger.InvalidRewriteRule(prule, ParserCoreStrings.ksMaxElementsInRule);
+					return null;
 				}
 
 				hcPrule.Subrules.Add(psubrule);
