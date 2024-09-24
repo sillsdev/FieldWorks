@@ -134,11 +134,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="e"></param>
 		protected override void OnKeyPress(KeyPressEventArgs e)
 		{
+			e.Handled = true;
 			if (e.KeyChar == (char)Keys.Back || e.KeyChar == (char)Keys.Delete)
 			{
 				if (RemoveItemsRequested != null)
 					RemoveItemsRequested(this, new RemoveItemsRequestedEventArgs(false));
-				e.Handled = true;
 			}
 			else
 			{
