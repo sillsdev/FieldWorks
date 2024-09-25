@@ -176,7 +176,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private bool DisplayColumnOption(object option)
 		{
 			SelectionHelper sel = SelectionHelper.Create(m_view);
-			if (sel.IsRange)
+			if (sel == null || sel.IsRange)
 				return false;
 
 			int cellId = GetCell(sel);
