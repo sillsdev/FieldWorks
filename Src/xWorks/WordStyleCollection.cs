@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using DocumentFormat.OpenXml.Wordprocessing;
+using SIL.LCModel.DomainServices;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,18 +24,19 @@ namespace SIL.FieldWorks.XWorks
 		//							Definition (or Gloss)3[lang='en']
 		//
 		private Dictionary<string,List<StyleElement>> styleDictionary = new Dictionary<string, List<StyleElement>>();
+		private int bulletAndNumberingUniqueIdCounter = 1;
 
 		/// <summary>
 		/// Returns a single list containing all of the Styles.
 		/// </summary>
-		public List<Style> GetStyles()
+		public List<StyleElement> GetStyleElements()
 		{
 			lock(styleDictionary)
 			{
 				// Get an enumerator to the flattened list of all StyleElements.
 				var enumerator = styleDictionary.Values.SelectMany(x => x);
-				// Create a single list of all the Styles.
-				return enumerator.Select(x => x.Style).ToList();
+				// Create a single list of all the StyleElements.
+				return enumerator.ToList();
 			}
 		}
 
@@ -46,6 +48,7 @@ namespace SIL.FieldWorks.XWorks
 			lock(styleDictionary)
 			{
 				styleDictionary.Clear();
+				bulletAndNumberingUniqueIdCounter = 1;
 			}
 		}
 
@@ -56,9 +59,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="nodeStyleName">The unique FLEX style name, typically comes from node.Style.</param>
 		/// <param name="displayNameBase">The key value in the styleDictionary.</param>
-		/// <param name="style">Returns the found Style, or returns null if not found.</param>
+		/// <param name="styleElem">Returns the found style element, or returns null if not found.</param>
 		/// <returns>True if found, else false.</returns>
-		public bool TryGetStyle(string nodeStyleName, string displayNameBase, out Style style)
+		public bool TryGetStyle(string nodeStyleName, string displayNameBase, out StyleElement styleElem)
 		{
 			lock (styleDictionary)
 			{
@@ -66,29 +69,31 @@ namespace SIL.FieldWorks.XWorks
 				{
 					foreach (var elem in stylesWithSameDisplayNameBase)
 					{
-						// If the style already exists, return it's name.
 						if (elem.NodeStyleName == nodeStyleName)
 						{
-							style = elem.Style;
+							styleElem = elem;
 							return true;
 						}
 					}
 				}
 			}
-
-			style = null;
+			styleElem = null;
 			return false;
 		}
 
 		/// <summary>
-		/// Check if a style already exists in any of the Lists in the entire collection.
+		/// Check if a paragraph style already exists in any of the Lists in the entire collection. If it
+		/// does then return the first one that is found (there could be more than one).
+		/// NOTE: For most cases use TryGetStyle() instead of this method. This method allows us to re-use
+		/// existing styles for based-on values.  The undesirable alternative would be to create a new style
+		/// that uses the FLEX name for the display name.
 		/// NOTE: To support multiple threads this method must be called in the same lock that also
 		/// acts on the result (ie. calling AddStyle()).
 		/// </summary>
 		/// <param name="nodeStyleName">The unique FLEX style name, typically comes from node.Style.</param>
 		/// <param name="style">Returns the found Style, or returns null if not found.</param>
 		/// <returns>True if found, else false.</returns>
-		public bool TryGetStyle(string nodeStyleName, out Style style)
+		public bool TryGetParagraphStyle(string nodeStyleName, out Style style)
 		{
 			lock (styleDictionary)
 			{
@@ -96,8 +101,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					foreach (var elem in keyValuePair.Value)
 					{
-						// If the style already exists, return it's name.
-						if (elem.NodeStyleName == nodeStyleName)
+						if (elem.NodeStyleName == nodeStyleName &&
+							elem.Style.Type == StyleValues.Paragraph)
 						{
 							style = elem.Style;
 							return true;
@@ -122,16 +127,17 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="displayNameBase">The base name that will be used to create the unique display name
 		/// for the style.  The root of this name typically comes from the node.DisplayLabel but it can have
 		/// additional information if it is based on other styles and/or has a writing system.</param>
+		/// <param name="bulletInfo">Bullet and Numbering info used by some paragraph styles. Not used for character styles. </param>
 		/// <returns>The unique display name. The name that should be referenced in a Run.</returns>
-		public string AddStyle(Style style, string nodeStyleName, string displayNameBase)
+		public string AddStyle(Style style, string nodeStyleName, string displayNameBase, BulletInfo? bulletInfo = null)
 		{
 			lock (styleDictionary)
 			{
 				if (styleDictionary.TryGetValue(displayNameBase, out List<StyleElement> stylesWithSameDisplayNameBase))
 				{
-					if (TryGetStyle(nodeStyleName, displayNameBase, out Style existingStyle))
+					if (TryGetStyle(nodeStyleName, displayNameBase, out StyleElement existingStyle))
 					{
-						return existingStyle.StyleId;
+						return existingStyle.Style.StyleId;
 					}
 				}
 				// Else this is the first style with this root. Add it to the Dictionary.
@@ -179,16 +185,30 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				// Add the style element to the collection.
-				var styleElement = new StyleElement(nodeStyleName, style);
+				var styleElement = new StyleElement(nodeStyleName, style, bulletInfo);
 				stylesWithSameDisplayNameBase.Add(styleElement);
 
 				return uniqueDisplayName;
 			}
 		}
+
+		/// <summary>
+		/// Returns a unique id that is used for bullet and numbering in paragraph styles.
+		/// </summary>
+		public int GetNewBulletAndNumberingUniqueId
+		{
+			get
+			{
+				lock(styleDictionary)
+				{
+					return bulletAndNumberingUniqueIdCounter++;
+				}
+			}
+		}
 	}
 
 	// WordStyleCollection dictionary values.
-	internal class StyleElement
+	public class StyleElement
 	{
 		/// <param name="nodeStyleName">The unmodified FLEX style name. Typically comes from node.Style. Can be null.</param>
 		/// <param name="style">The style with it's styleId set to the uniqueDisplayName.
@@ -198,12 +218,34 @@ namespace SIL.FieldWorks.XWorks
 		///         Grammatical Info.2 : Category Info.[lang='en']
 		///         Subentries : Grammatical Info.2 : Category Info.[lang='en']
 		/// </param>
-		internal StyleElement(string nodeStyleName, Style style)
+		/// <param name="bulletInfo">Bullet and Numbering info used by some paragraph styles. Not used
+		/// for character styles. </param>
+		internal StyleElement(string nodeStyleName, Style style, BulletInfo? bulletInfo)
 		{
 			this.NodeStyleName = nodeStyleName;
 			this.Style = style;
+			this.BulletInfo = bulletInfo;
+			NumberingFirstNumUniqueIds = new List<int>();
 		}
 		internal string NodeStyleName { get; }
 		internal Style Style { get; }
+
+		/// <summary>
+		/// Bullet and Numbering info used by some (not all) paragraph styles. Not used
+		/// for character styles.
+		/// </summary>
+		internal BulletInfo? BulletInfo { get; }
+
+		/// <summary>
+		/// Unique id for this style that can be used for all bullet list items, and
+		/// for all numbered list items except for the first list item in each list.
+		/// </summary>
+		internal int? BulletAndNumberingUniqueId { get; set; }
+
+		/// <summary>
+		/// For numbered lists the first list item in each list must have it's own unique id. This
+		/// allows us to re-start the numbering for each list.
+		/// </summary>
+		internal List<int> NumberingFirstNumUniqueIds { get; set; }
 	}
 }
