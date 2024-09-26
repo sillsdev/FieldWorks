@@ -2495,7 +2495,8 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 
-			// Create the AbstractNum.
+			// Add the new AbstractNum after the last AbstractNum.
+			// Word cares about the order of AbstractNum elements and NumberingInstance elements.
 			var abstractNum = new AbstractNum(abstractLevel) { AbstractNumberId = bulletUniqueId };
 			var lastAbstractNum = numberingPart.Numbering.Elements<AbstractNum>().LastOrDefault();
 			if (lastAbstractNum == null)
@@ -2507,7 +2508,8 @@ namespace SIL.FieldWorks.XWorks
 				numberingPart.Numbering.InsertAfter(abstractNum, lastAbstractNum);
 			}
 
-			// Create the NumberingInstance.
+			// Add the new NumberingInstance after the last NumberingInstance.
+			// Word cares about the order of AbstractNum elements and NumberingInstance elements.
 			var numberingInstance = new NumberingInstance() { NumberID = bulletUniqueId };
 			var abstractNumId = new AbstractNumId() { Val = bulletUniqueId };
 			numberingInstance.Append(abstractNumId);
