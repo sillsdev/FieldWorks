@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -569,6 +569,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var redo = string.Format(MEStrings.ksRuleRedoInsert, option);
 
 			SelectionHelper sel = SelectionHelper.Create(m_view);
+			if (sel == null)
+			{
+				// The selection can become invalid because of an undo (see LT-20588).
+				m_insertionControl.UpdateOptionsDisplay();
+				return;
+			}
 			int cellId = -1;
 			int cellIndex = -1;
 			switch (option.Type)
