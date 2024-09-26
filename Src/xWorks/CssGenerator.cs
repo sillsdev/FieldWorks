@@ -1262,12 +1262,12 @@ namespace SIL.FieldWorks.XWorks
 					string customBullet = exportStyleInfo.BulletInfo.m_bulletCustom;
 					declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, customBullet) });
 				}
-				else if (BulletSymbolsCollection.ContainsKey(exportStyleInfo.NumberScheme.ToString()))
+				else if (BulletSymbolsCollection.ContainsKey(numScheme))
 				{
 					string selectedBullet = BulletSymbolsCollection[numScheme];
 					declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, selectedBullet) });
 				}
-				else if (NumberingStylesCollection.ContainsKey(exportStyleInfo.NumberScheme.ToString()))
+				else if (NumberingStylesCollection.ContainsKey(numScheme))
 				{
 					if (node != null)
 					{
