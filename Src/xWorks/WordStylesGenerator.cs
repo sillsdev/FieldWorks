@@ -9,6 +9,7 @@ using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using XCore;
 
@@ -41,38 +42,39 @@ namespace SIL.FieldWorks.XWorks
 		internal const string PictureAndCaptionTextframeStyle = "Image-Textframe-Style";
 		internal const string EntryStyleContinue = "-Continue";
 
-		public static Style GenerateLetterHeaderParagraphStyle(ReadOnlyPropertyTable propertyTable)
+		public static Style GenerateLetterHeaderParagraphStyle(ReadOnlyPropertyTable propertyTable, out BulletInfo? bulletInfo)
 		{
-			var style = GenerateWordStyleFromLcmStyleSheet(LetterHeadingStyleName, 0, propertyTable);
+			var style = GenerateParagraphStyleFromLcmStyleSheet(LetterHeadingStyleName, 0, propertyTable, out bulletInfo);
 			style.StyleId = LetterHeadingDisplayName;
 			style.StyleName.Val = style.StyleId;
 			return style;
 		}
 
-		public static Style GenerateBeforeAfterBetweenStyle(ReadOnlyPropertyTable propertyTable)
+		public static Style GenerateBeforeAfterBetweenCharacterStyle(ReadOnlyPropertyTable propertyTable)
 		{
-			var style = GenerateWordStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, 0, propertyTable);
+			var style = GenerateCharacterStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, 0, propertyTable);
 			style.StyleId = BeforeAfterBetweenDisplayName;
 			style.StyleName.Val = style.StyleId;
 			return style;
 		}
 
-		public static Style GenerateNormalParagraphStyle(ReadOnlyPropertyTable propertyTable)
+		public static Style GenerateNormalParagraphStyle(ReadOnlyPropertyTable propertyTable, out BulletInfo? bulletInfo)
 		{
-			var style = GenerateWordStyleFromLcmStyleSheet(NormalParagraphStyleName, DefaultStyle, propertyTable);
+			var style = GenerateParagraphStyleFromLcmStyleSheet(NormalParagraphStyleName, DefaultStyle, propertyTable, out bulletInfo);
 			return style;
 		}
 
 		public static Style GenerateMainEntryParagraphStyle(ReadOnlyPropertyTable propertyTable, DictionaryConfigurationModel model,
-			out ConfigurableDictionaryNode mainEntryNode)
+			out ConfigurableDictionaryNode mainEntryNode, out BulletInfo? bulletInfo)
 		{
 			Style style = null;
+			bulletInfo = null;
 
 			// The user can change the style name that is associated with the Main Entry, so look up the node style name using the DisplayLabel.
 			mainEntryNode = model.Parts.Find(node => node.DisplayLabel == MainEntryParagraphDisplayName);
 			if (mainEntryNode != null)
 			{
-				style = GenerateWordStyleFromLcmStyleSheet(mainEntryNode.Style, DefaultStyle, propertyTable);
+				style = GenerateParagraphStyleFromLcmStyleSheet(mainEntryNode.Style, DefaultStyle, propertyTable, out bulletInfo);
 				style.StyleId = MainEntryParagraphDisplayName;
 				style.StyleName.Val = style.StyleId;
 			}
@@ -80,34 +82,50 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Generates a Word Style for the requested FieldWorks style.
-		/// <remarks>internal to facilitate separate unit testing.</remarks>
+		/// Generates a Word Paragraph Style for the requested FieldWorks style.
 		/// </summary>
-		/// <param name="styleName"></param>
+		/// <param name="styleName">Name of the paragraph style.</param>
 		/// <param name="wsId">writing system id</param>
 		/// <param name="propertyTable">To retrieve styles</param>
-		/// <returns></returns>
-		internal static Style GenerateWordStyleFromLcmStyleSheet(string styleName, int wsId,
-			ReadOnlyPropertyTable propertyTable)
+		/// <param name="bulletInfo">Returns the bullet and numbering info associated with the style. Returns null
+		///                          if there is none.</param>
+		/// <returns>Returns the WordProcessing.Style item. Can return null.</returns>
+		internal static Style GenerateParagraphStyleFromLcmStyleSheet(string styleName, int wsId,
+			ReadOnlyPropertyTable propertyTable, out BulletInfo? bulletInfo)
 		{
-			return GenerateWordStyleFromLcmStyleSheet(styleName, wsId, propertyTable, true);
+			var style = GenerateWordStyleFromLcmStyleSheet(styleName, wsId, propertyTable, out bulletInfo);
+			Debug.Assert(style == null || style.Type == StyleValues.Paragraph);
+			return style;
 		}
 
 		/// <summary>
-		/// Generates Word Styles for the requested FieldWorks style.
-		/// <remarks>
-		/// Internal to facilitate separate unit testing.
-		/// Returns a List of WordProcessing.Style items
-		/// </remarks>
+		/// Generates a Word Character Style for the requested FieldWorks style.
 		/// </summary>
-		/// <param name="styleName"></param>
+		/// <param name="styleName">Name of the character style.</param>
 		/// <param name="wsId">writing system id</param>
 		/// <param name="propertyTable">To retrieve styles</param>
-		/// <param name="allowFirstLineIndent">Indicates if the style returned should include FirstLineIndent.</param>
-		/// <returns></returns>
-		internal static Style GenerateWordStyleFromLcmStyleSheet(string styleName, int wsId,
-			ReadOnlyPropertyTable propertyTable, bool allowFirstLineIndent)
+		/// <returns>Returns the WordProcessing.Style item. Can return null.</returns>
+		internal static Style GenerateCharacterStyleFromLcmStyleSheet(string styleName, int wsId,
+			ReadOnlyPropertyTable propertyTable)
 		{
+			var style = GenerateWordStyleFromLcmStyleSheet(styleName, wsId, propertyTable, out BulletInfo? _);
+			Debug.Assert(style == null || style.Type == StyleValues.Character);
+			return style;
+		}
+
+		/// <summary>
+		/// Generates a Word Style for the requested FieldWorks style.
+		/// </summary>
+		/// <param name="styleName">Name of the character or paragraph style.</param>
+		/// <param name="wsId">writing system id</param>
+		/// <param name="propertyTable">To retrieve styles</param>
+		/// <param name="bulletInfo">Returns the bullet and numbering info associated with the style. Returns null
+		///                          if there is none. (For character styles always returns null.)</param>
+		/// <returns>Returns the WordProcessing.Style item. Can return null.</returns>
+		internal static Style GenerateWordStyleFromLcmStyleSheet(string styleName, int wsId,
+			ReadOnlyPropertyTable propertyTable, out BulletInfo? bulletInfo)
+		{
+			bulletInfo = null;
 			var styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 			if (styleSheet == null || !styleSheet.Styles.Contains(styleName))
 			{
@@ -186,11 +204,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						hangingIndent = firstLineIndentValue;
 					}
-
-					if (allowFirstLineIndent)
-					{
-						parProps.Append(new Indentation() { FirstLine = firstLineIndentValue.ToString() });
-					}
+					parProps.Append(new Indentation() { FirstLine = firstLineIndentValue.ToString() });
 				}
 
 				if (exportStyleInfo.HasKeepWithNext)
@@ -278,6 +292,13 @@ namespace SIL.FieldWorks.XWorks
 				{
 					parProps.Append(new BiDi());
 				}
+
+				// Add Bullet and Numbering.
+				if (exportStyleInfo.NumberScheme != VwBulNum.kvbnNone)
+				{
+					bulletInfo = exportStyleInfo.BulletInfo;
+				}
+
 				exportStyle.Append(parProps);
 			}
 			// If the style to export isn't a paragraph style, set it to character style type
@@ -296,8 +317,9 @@ namespace SIL.FieldWorks.XWorks
 		/// Generates paragraph styles from a configuration node.
 		/// </summary>
 		public static Style GenerateParagraphStyleFromConfigurationNode(ConfigurableDictionaryNode configNode,
-			ReadOnlyPropertyTable propertyTable)
+			ReadOnlyPropertyTable propertyTable, out BulletInfo? bulletInfo)
 		{
+			bulletInfo = null;
 			switch (configNode.DictionaryNodeOptions)
 			{
 				// TODO: handle listAndPara case and character portion of pictureOptions
@@ -313,7 +335,7 @@ namespace SIL.FieldWorks.XWorks
 						if (!string.IsNullOrEmpty(configNode.Style) &&
 							(configNode.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph))
 						{
-							var style = GenerateWordStyleFromLcmStyleSheet(configNode.Style, DefaultStyle, propertyTable);
+							var style = GenerateParagraphStyleFromLcmStyleSheet(configNode.Style, DefaultStyle, propertyTable, out bulletInfo);
 							style.StyleId = configNode.DisplayLabel;
 							style.StyleName.Val = style.StyleId;
 							return style;
@@ -328,7 +350,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="propertyTable"></param>
 		/// <returns></returns>
-		public static Styles GenerateWritingSystemsStyles(ReadOnlyPropertyTable propertyTable)
+		public static Styles GenerateWritingSystemsCharacterStyles(ReadOnlyPropertyTable propertyTable)
 		{
 			var cache = propertyTable.GetValue<LcmCache>("cache");
 			var styleRules = new Styles();
@@ -336,7 +358,7 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
 				// Get the character style information from the "Normal" paragraph style.
-				Style wsCharStyle = GetOnlyCharacterStyle(GenerateWordStyleFromLcmStyleSheet(NormalParagraphStyleName, aws.Handle, propertyTable));
+				Style wsCharStyle = GetOnlyCharacterStyle(GenerateParagraphStyleFromLcmStyleSheet(NormalParagraphStyleName, aws.Handle, propertyTable, out BulletInfo? _));
 				wsCharStyle.StyleId = GetWsString(aws.LanguageTag);
 				wsCharStyle.StyleName = new StyleName() { Val = wsCharStyle.StyleId };
 
