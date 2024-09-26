@@ -238,9 +238,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							RewriteRule hcRegRule = LoadRewriteRule(regRule);
 							if (hcRegRule == null)
 								continue;
-							m_morphophonemic.PhonologicalRules.Add(hcRegRule);
+							// Choose which stratum the phonological rules apply on.
 							if (!m_notOnClitics)
 								m_clitic.PhonologicalRules.Add(hcRegRule);
+							else
+								m_morphophonemic.PhonologicalRules.Add(hcRegRule);
 							m_language.PhonologicalRules.Add(hcRegRule);
 						}
 						break;
@@ -250,9 +252,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						if (metaRule.LeftSwitchIndex != -1 && metaRule.RightSwitchIndex != -1)
 						{
 							MetathesisRule hcMetaRule = LoadMetathesisRule(metaRule);
-							m_morphophonemic.PhonologicalRules.Add(hcMetaRule);
+
+							// Choose which stratum the phonological rules apply on.
 							if (!m_notOnClitics)
 								m_clitic.PhonologicalRules.Add(hcMetaRule);
+							else
+								m_morphophonemic.PhonologicalRules.Add(hcMetaRule);
 							m_language.PhonologicalRules.Add(hcMetaRule);
 						}
 						break;
