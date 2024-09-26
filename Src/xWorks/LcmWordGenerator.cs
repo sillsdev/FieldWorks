@@ -403,7 +403,7 @@ namespace SIL.FieldWorks.XWorks
 					if (elem.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().Any())
 					{
 						// then need to append image in such a way that the relID is maintained
-						this.DocBody.AppendChild(CloneImageRun(frag, elem));
+						this.DocBody.AppendChild(CloneImageElement(frag, elem));
 						// wordWriter.WordFragment.AppendPhotoToParagraph(frag, elem, wordWriter.ForceNewParagraph);
 					}
 
@@ -417,19 +417,25 @@ namespace SIL.FieldWorks.XWorks
 			/// <summary>
 			/// Append a table to the doc fragment.
 			/// </summary>
-			public void AppendTable(WP.Table table)
+			/// <param name="copyFromFrag">If the table contains pictures, then this is the fragment
+			///                            where we copy the picture data from.</param>
+			/// <param name="table">The table to append.</param>
+			public void AppendTable(IFragment copyFromFrag, WP.Table table)
 			{
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
-				this.DocBody.AppendChild(table.CloneNode(true));
+				this.DocBody.AppendChild(CloneElement(copyFromFrag, table));
 			}
 
 			/// <summary>
 			/// Append a paragraph to the doc fragment.
 			/// </summary>
-			public void AppendParagraph(WP.Paragraph para)
+			/// <param name="copyFromFrag">If the paragraph contains pictures, then this is the fragment
+			///                            where we copy the picture data from.</param>
+			/// <param name="para">The paragraph to append.</param>
+			public void AppendParagraph(IFragment copyFromFrag, WP.Paragraph para)
 			{
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
-				this.DocBody.AppendChild(para.CloneNode(true));
+				this.DocBody.AppendChild(CloneElement(copyFromFrag, para));
 			}
 
 
@@ -487,39 +493,48 @@ namespace SIL.FieldWorks.XWorks
 				lastPar.AppendChild(CloneElement(fragToCopy, run));
 			}
 
-			public OpenXmlElement CloneElement(IFragment fragToCopy, OpenXmlElement elem)
+			/// <summary>
+			/// Does a deep clone of the element.  If there is picture data then that is cloned
+			/// from the copyFromFrag into 'this' frag.
+			/// </summary>
+			/// <param name="copyFromFrag">If the element contains pictures, then this is the fragment
+			///                            where we copy the picture data from.</param>
+			/// <param name="elem">Element to clone.</param>
+			/// <returns>The cloned element.</returns>
+			public OpenXmlElement CloneElement(IFragment copyFromFrag, OpenXmlElement elem)
 			{
 				if (elem.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().Any())
 				{
-					return CloneImageRun(fragToCopy, elem);
+					return CloneImageElement(copyFromFrag, elem);
 				}
-
 				return elem.CloneNode(true);
-
 			}
 
 			/// <summary>
-			/// Clones and returns a run containing an image.
+			/// Clones and returns a element containing an image.
 			/// </summary>
-			public OpenXmlElement CloneImageRun(IFragment fragToCopy, OpenXmlElement run)
+			/// <param name="copyFromFrag">The fragment where we copy the picture data from.</param>
+			/// <param name="elem">Element to clone.</param>
+			/// <returns>The cloned element.</returns>
+			public OpenXmlElement CloneImageElement(IFragment copyFromFrag, OpenXmlElement elem)
 			{
-				var clonedRun = run.CloneNode(true);
-				clonedRun.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().ToList().ForEach(
+				var clonedElem = elem.CloneNode(true);
+				clonedElem.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().ToList().ForEach(
 					blip =>
 					{
 						var newRelation =
-							CopyImage(DocFrag, blip.Embed, ((DocFragment)fragToCopy).DocFrag);
+							CopyImage(DocFrag, blip.Embed, ((DocFragment)copyFromFrag).DocFrag);
 						// Update the relationship ID in the cloned blip element.
 						blip.Embed = newRelation;
 					});
-				clonedRun.Descendants<DocumentFormat.OpenXml.Vml.ImageData>().ToList().ForEach(
+				clonedElem.Descendants<DocumentFormat.OpenXml.Vml.ImageData>().ToList().ForEach(
 					imageData =>
 					{
-						var newRelation = CopyImage(DocFrag, imageData.RelationshipId, ((DocFragment)fragToCopy).DocFrag);
+						var newRelation = CopyImage(DocFrag, imageData.RelationshipId, ((DocFragment)copyFromFrag).DocFrag);
 						// Update the relationship ID in the cloned image data element.
 						imageData.RelationshipId = newRelation;
 					});
-				return clonedRun;
+				return clonedElem;
 			}
 
 			/// <summary>
@@ -970,11 +985,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (inAPara)
 			{
-				List<OpenXmlElement> elements = SeparateIntoFirstLevelElements(newPara, senseContent as DocFragment, config);
-				foreach (OpenXmlElement elem in elements)
-				{
-					senseData.DocBody.Append(elem);
-				}
+				SeparateIntoFirstLevelElements(senseData, newPara, senseContent as DocFragment, config);
 			}
 			else
 			{
@@ -1017,11 +1028,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (newPara != null)
 			{
-				List<OpenXmlElement> elements = SeparateIntoFirstLevelElements(newPara, content as DocFragment, config);
-				foreach (OpenXmlElement elem in elements)
-				{
-					collData.DocBody.Append(elem);
-				}
+				SeparateIntoFirstLevelElements(collData, newPara, content as DocFragment, config);
 			}
 			else
 			{
@@ -1429,14 +1436,14 @@ namespace SIL.FieldWorks.XWorks
 							break;
 
 						case WP.Table table:
-							wordWriter.WordFragment.AppendTable(table);
+							wordWriter.WordFragment.AppendTable(frag, table);
 
 							// Start a new paragraph with the next run to maintain the correct position of the table.
 							wordWriter.ForceNewParagraph = true;
 							break;
 
 						case WP.Paragraph para:
-							wordWriter.WordFragment.AppendParagraph(para);
+							wordWriter.WordFragment.AppendParagraph(frag, para);
 
 							// Start a new paragraph with the next run so that it uses the correct style.
 							wordWriter.ForceNewParagraph = true;
@@ -2252,17 +2259,14 @@ namespace SIL.FieldWorks.XWorks
 		/// If we encounter one of these then end the paragraph and add the un-nestable type at the
 		/// same level. If we later encounter nestable types then a continuation paragraph will be created.
 		/// </summary>
-		/// <param name="outputParagraph">The first paragraph that will be returned. The content will be added
+		/// <param name="copyToFrag">The fragment where the new elements will be added.</param>
+		/// <param name="firstParagraph">The first paragraph that will be added to 'copyToFrag'. Content from contentToAdd will be added
 		/// to this paragraph until a un-nestable type is encountered.</param>
 		/// <param name="contentToAdd">The content to add either to the paragraph or at the same level as the paragraph.</param>
-		/// <returns>A list of elements that contain the original outputParagraph and the contentToAdd. The contentToAdd
-		/// might all be added to the outputParagraph, or it might also result in additional un-nestable types being returned
-		/// in the list.</returns>
-		public List<OpenXmlElement> SeparateIntoFirstLevelElements(WP.Paragraph outputParagraph, DocFragment contentToAdd, ConfigurableDictionaryNode node)
+		public void SeparateIntoFirstLevelElements(DocFragment copyToFrag, WP.Paragraph firstParagraph, DocFragment contentToAdd, ConfigurableDictionaryNode node)
 		{
-			List<OpenXmlElement> retList = new List<OpenXmlElement>();
 			bool continuationParagraph = false;
-			var workingParagraph = outputParagraph;
+			var workingParagraph = firstParagraph;
 			var elements = ((DocFragment)contentToAdd).DocBody.Elements();
 			foreach (OpenXmlElement elem in elements)
 			{
@@ -2272,11 +2276,11 @@ namespace SIL.FieldWorks.XWorks
 					// End the current working paragraph and add it to the list.
 					if (EndParagraph(workingParagraph, node, continuationParagraph))
 					{
-						retList.Add(workingParagraph);
+						copyToFrag.DocBody.AppendChild(workingParagraph);
 					}
 
 					// Add the un-nestable element.
-					retList.Add(elem.CloneNode(true));
+					copyToFrag.DocBody.AppendChild(copyToFrag.CloneElement(contentToAdd, elem));
 
 					// Start a new working paragraph.
 					continuationParagraph = true;
@@ -2284,7 +2288,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
-					workingParagraph.AppendChild(contentToAdd.CloneElement(contentToAdd, elem));
+					workingParagraph.AppendChild(copyToFrag.CloneElement(contentToAdd, elem));
 				}
 			}
 
@@ -2292,10 +2296,8 @@ namespace SIL.FieldWorks.XWorks
 			// it to the return list.
 			if (EndParagraph(workingParagraph, node, continuationParagraph))
 			{
-				retList.Add(workingParagraph);
+				copyToFrag.DocBody.AppendChild(workingParagraph);
 			}
-
-			return retList;
 		}
 
 		/// <summary>
