@@ -2180,7 +2180,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private Shape Segment(string str)
 		{
 			Shape shape;
-			if (m_acceptUnspecifiedGraphemes)
+			if (m_acceptUnspecifiedGraphemes && !IsLexicalPattern(str))
 			{
 				int[] baseCharPositions = null;
 				do
@@ -2204,9 +2204,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 			else
 			{
-				shape = m_table.Segment(str);
+				shape = m_table.Segment(str, true);
 			}
 			return shape;
+		}
+
+		/// <summary>
+		/// Does form contain a lexical pattern (e.g. [Seg]*)?
+		/// </summary>
+		public static bool IsLexicalPattern(string form)
+		{
+			// This assumes that "[" and "]" are not part of any phonemes.
+			return form.Contains("[") && form.Contains("]");
 		}
 
 		private static string FormatForm(string formStr)
