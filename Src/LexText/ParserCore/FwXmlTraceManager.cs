@@ -129,16 +129,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			((XElement) output.CurrentTrace).Add(new XElement("PhonologicalRuleSynthesisTrace",
 				CreateHCRuleElement("PhonologicalRule", rule),
-				CreateWordElement("Input", input, false),
-				CreateWordElement("Output", output, false)));
+				// Show as regex to make debugging phonological rules easier (fixes LT-18682).
+				CreateWordElement("Input", input, true),
+				CreateWordElement("Output", output, true)));
 		}
 
 		public void PhonologicalRuleNotApplied(IPhonologicalRule rule, int subruleIndex, Word input, FailureReason reason, object failureObj)
 		{
 			var pruleTrace = new XElement("PhonologicalRuleSynthesisTrace",
 				CreateHCRuleElement("PhonologicalRule", rule),
-				CreateWordElement("Input", input, false),
-				CreateWordElement("Output", input, false));
+				// Show as regex to make debugging phonological rules easier (fixes LT-18682).
+				CreateWordElement("Input", input, true),
+				CreateWordElement("Output", input, true));
 
 			var rewriteRule = rule as RewriteRule;
 			if (rewriteRule != null)
@@ -386,13 +388,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return new XElement(name, fs.Head().ToString().Replace(",", ""));
 		}
 
-		private static XElement CreateWordElement(string name, Word word, bool analysis)
+		private static XElement CreateWordElement(string name, Word word, bool regex)
 		{
 			string wordStr;
 			if (word == null)
 				wordStr = "*None*";
 			else
-				wordStr = analysis ? word.Shape.ToRegexString(word.Stratum.CharacterDefinitionTable, true) : word.Shape.ToString(word.Stratum.CharacterDefinitionTable, true);
+				wordStr = regex ? word.Shape.ToRegexString(word.Stratum.CharacterDefinitionTable, true) : word.Shape.ToString(word.Stratum.CharacterDefinitionTable, true);
 			return new XElement(name, wordStr);
 		}
 
