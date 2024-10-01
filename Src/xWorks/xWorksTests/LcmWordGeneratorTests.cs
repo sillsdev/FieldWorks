@@ -6,18 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms.VisualStyles;
+using System.Text.RegularExpressions;
 using System.Xml;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
-using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.DomainImpl;
 using SIL.LCModel.DomainServices;
 using SIL.TestUtilities;
 using XCore;
@@ -46,6 +43,10 @@ namespace SIL.FieldWorks.XWorks
 		private const string SensesParagraphDisplayName = "Senses Display Name";
 		private const string SubSensesParagraphStyleName = "Dictionary-SubSenses-Para";
 		private const string SubSensesParagraphDisplayName = "SubSenses Display Name";
+		private const string BulletParagraphStyleName = "Dictionary-Bullet-Para";
+		private const string BulletParagraphDisplayName = "Bullet Display Name";
+		private const string NumberParagraphStyleName = "Dictionary-Number-Para";
+		private const string NumberParagraphDisplayName = "Number Display Name";
 
 		private ConfiguredLcmGenerator.GeneratorSettings DefaultSettings;
 
@@ -101,6 +102,26 @@ namespace SIL.FieldWorks.XWorks
 				styles.Add(new BaseStyleInfo { Name = SensesParagraphStyleName, IsParagraphStyle = true });
 			if (!styles.Contains(SubSensesParagraphStyleName))
 				styles.Add(new BaseStyleInfo { Name = SubSensesParagraphStyleName, IsParagraphStyle = true });
+			if (!styles.Contains(BulletParagraphStyleName))
+			{
+				var bulletinfo = new BulletInfo
+				{
+					m_numberScheme = VwBulNum.kvbnBulletBase + 1,
+				};
+				var inherbullet = new InheritableStyleProp<BulletInfo>(bulletinfo);
+				var bulletStyle = new TestStyle(inherbullet, Cache) { Name = BulletParagraphStyleName, IsParagraphStyle = true };
+				styles.Add(bulletStyle);
+			}
+			if (!styles.Contains(NumberParagraphStyleName))
+			{
+				var bulletinfo = new BulletInfo
+				{
+					m_numberScheme = VwBulNum.kvbnArabic,
+				};
+				var inherbullet = new InheritableStyleProp<BulletInfo>(bulletinfo);
+				var bulletStyle = new TestStyle(inherbullet, Cache) { Name = NumberParagraphStyleName, IsParagraphStyle = true };
+				styles.Add(bulletStyle);
+			}
 
 			m_Clerk = CreateClerk();
 			m_propertyTable.SetProperty("ActiveClerk", m_Clerk, false);
@@ -645,6 +666,91 @@ namespace SIL.FieldWorks.XWorks
 				"/w:document/w:body/w:p",
 				5,
 				WordNamespaceManager);
+		}
+
+		[Test]
+		public void GenerateBulletsAndNumbering()
+		{
+			var wsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" });
+			var subSenseOptions = new DictionaryNodeSenseOptions
+			{
+				DisplayEachSenseInAParagraph = true
+			};
+			var senseOptions = new DictionaryNodeSenseOptions
+			{
+				DisplayEachSenseInAParagraph = true
+			};
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = wsOpts,
+				Style = DictionaryGlossStyleName
+			};
+			var subSenseNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				IsEnabled = true,
+				DictionaryNodeOptions = subSenseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+				StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph,
+				Style = NumberParagraphStyleName,
+				Label = NumberParagraphDisplayName
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				IsEnabled = true,
+				DictionaryNodeOptions = senseOptions,
+				Children = new List<ConfigurableDictionaryNode> { glossNode, subSenseNode },
+				StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph,
+				Style = BulletParagraphStyleName,
+				Label = BulletParagraphDisplayName
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				IsEnabled = true,
+				StyleType = ConfigurableDictionaryNode.StyleTypes.Paragraph,
+				Style = MainEntryParagraphStyleName,
+				Label = MainEntryParagraphDisplayName
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var testEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			int wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			ConfiguredXHTMLGeneratorTests.AddSenseAndTwoSubsensesToEntry(testEntry, "second gloss", Cache, wsEn);
+
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
+
+			// There should be two instances of the bulletId and one instance for each of the numberId's.
+			string resultStr = result.mainDocPart.RootElement.OuterXml;
+			int count1 = Regex.Matches(resultStr, "<w:numId w:val=\"1\" />").Count;
+			int count2 = Regex.Matches(resultStr, "<w:numId w:val=\"2\" />").Count;
+			int count3 = Regex.Matches(resultStr, "<w:numId w:val=\"3\" />").Count;
+			int bulletId = 0;
+			if (count1 == 2)
+			{
+				bulletId = 1;
+				Assert.True(count2 == 1 && count3 == 1);
+			}
+			else if (count2 == 2)
+			{
+				bulletId = 2;
+				Assert.True(count1 == 1 && count3 == 1);
+			}
+			else if (count3 == 2)
+			{
+				bulletId = 3;
+				Assert.True(count1 == 1 && count2 == 1);
+			}
+			Assert.True(bulletId != 0);
+
+			// Make sure both instances of the bulletId are associated with the bullet style.
+			string bulletStyleStr = "w:pStyle w:val=\"Bullet Display Name\" /><w:numPr><w:ilvl w:val=\"0\" /><w:numId w:val=\"" + bulletId;
+			Assert.True(Regex.Matches(resultStr, bulletStyleStr).Count == 2);
 		}
 
 		[Test]

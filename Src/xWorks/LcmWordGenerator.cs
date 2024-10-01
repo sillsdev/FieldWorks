@@ -27,6 +27,7 @@ using XmlDrawing = DocumentFormat.OpenXml.Drawing;
 using DrawingWP = DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using Pictures = DocumentFormat.OpenXml.Drawing.Pictures;
 using System.Text.RegularExpressions;
+using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -124,6 +125,7 @@ namespace SIL.FieldWorks.XWorks
 
 				// Generate styles
 				StyleDefinitionsPart stylePart = fragment.mainDocPart.StyleDefinitionsPart;
+				NumberingDefinitionsPart numberingPart = fragment.mainDocPart.NumberingDefinitionsPart;
 				if (stylePart == null)
 				{
 					// Initialize word doc's styles xml
@@ -131,10 +133,21 @@ namespace SIL.FieldWorks.XWorks
 					Styles styleSheet = new Styles();
 
 					// Add generated styles into the stylesheet from the collection.
-					var styles = s_styleCollection.GetStyles();
-					foreach (var style in styles)
+					var styleElements = s_styleCollection.GetStyleElements();
+					foreach (var styleElement in styleElements)
 					{
-						styleSheet.AppendChild(style.CloneNode(true));
+						// Generate bullet and numbering data.
+						if (styleElement.BulletInfo.HasValue)
+						{
+							// Initialize word doc's numbering part one time.
+							if (numberingPart == null)
+							{
+								numberingPart = AddNumberingPartToPackage(fragment.DocFrag);
+							}
+
+							GenerateBulletAndNumberingData(styleElement, numberingPart);
+						}
+						styleSheet.AppendChild(styleElement.Style.CloneNode(true));
 					}
 
 					// Clear the collection.
@@ -390,7 +403,7 @@ namespace SIL.FieldWorks.XWorks
 					if (elem.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().Any())
 					{
 						// then need to append image in such a way that the relID is maintained
-						this.DocBody.AppendChild(CloneImageRun(frag, elem));
+						this.DocBody.AppendChild(CloneImageElement(frag, elem));
 						// wordWriter.WordFragment.AppendPhotoToParagraph(frag, elem, wordWriter.ForceNewParagraph);
 					}
 
@@ -404,19 +417,25 @@ namespace SIL.FieldWorks.XWorks
 			/// <summary>
 			/// Append a table to the doc fragment.
 			/// </summary>
-			public void AppendTable(WP.Table table)
+			/// <param name="copyFromFrag">If the table contains pictures, then this is the fragment
+			///                            where we copy the picture data from.</param>
+			/// <param name="table">The table to append.</param>
+			public void AppendTable(IFragment copyFromFrag, WP.Table table)
 			{
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
-				this.DocBody.AppendChild(table.CloneNode(true));
+				this.DocBody.AppendChild(CloneElement(copyFromFrag, table));
 			}
 
 			/// <summary>
 			/// Append a paragraph to the doc fragment.
 			/// </summary>
-			public void AppendParagraph(WP.Paragraph para)
+			/// <param name="copyFromFrag">If the paragraph contains pictures, then this is the fragment
+			///                            where we copy the picture data from.</param>
+			/// <param name="para">The paragraph to append.</param>
+			public void AppendParagraph(IFragment copyFromFrag, WP.Paragraph para)
 			{
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
-				this.DocBody.AppendChild(para.CloneNode(true));
+				this.DocBody.AppendChild(CloneElement(copyFromFrag, para));
 			}
 
 
@@ -474,39 +493,48 @@ namespace SIL.FieldWorks.XWorks
 				lastPar.AppendChild(CloneElement(fragToCopy, run));
 			}
 
-			public OpenXmlElement CloneElement(IFragment fragToCopy, OpenXmlElement elem)
+			/// <summary>
+			/// Does a deep clone of the element.  If there is picture data then that is cloned
+			/// from the copyFromFrag into 'this' frag.
+			/// </summary>
+			/// <param name="copyFromFrag">If the element contains pictures, then this is the fragment
+			///                            where we copy the picture data from.</param>
+			/// <param name="elem">Element to clone.</param>
+			/// <returns>The cloned element.</returns>
+			public OpenXmlElement CloneElement(IFragment copyFromFrag, OpenXmlElement elem)
 			{
 				if (elem.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().Any())
 				{
-					return CloneImageRun(fragToCopy, elem);
+					return CloneImageElement(copyFromFrag, elem);
 				}
-
 				return elem.CloneNode(true);
-
 			}
 
 			/// <summary>
-			/// Clones and returns a run containing an image.
+			/// Clones and returns a element containing an image.
 			/// </summary>
-			public OpenXmlElement CloneImageRun(IFragment fragToCopy, OpenXmlElement run)
+			/// <param name="copyFromFrag">The fragment where we copy the picture data from.</param>
+			/// <param name="elem">Element to clone.</param>
+			/// <returns>The cloned element.</returns>
+			public OpenXmlElement CloneImageElement(IFragment copyFromFrag, OpenXmlElement elem)
 			{
-				var clonedRun = run.CloneNode(true);
-				clonedRun.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().ToList().ForEach(
+				var clonedElem = elem.CloneNode(true);
+				clonedElem.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().ToList().ForEach(
 					blip =>
 					{
 						var newRelation =
-							CopyImage(DocFrag, blip.Embed, ((DocFragment)fragToCopy).DocFrag);
+							CopyImage(DocFrag, blip.Embed, ((DocFragment)copyFromFrag).DocFrag);
 						// Update the relationship ID in the cloned blip element.
 						blip.Embed = newRelation;
 					});
-				clonedRun.Descendants<DocumentFormat.OpenXml.Vml.ImageData>().ToList().ForEach(
+				clonedElem.Descendants<DocumentFormat.OpenXml.Vml.ImageData>().ToList().ForEach(
 					imageData =>
 					{
-						var newRelation = CopyImage(DocFrag, imageData.RelationshipId, ((DocFragment)fragToCopy).DocFrag);
+						var newRelation = CopyImage(DocFrag, imageData.RelationshipId, ((DocFragment)copyFromFrag).DocFrag);
 						// Update the relationship ID in the cloned image data element.
 						imageData.RelationshipId = newRelation;
 					});
-				return clonedRun;
+				return clonedElem;
 			}
 
 			/// <summary>
@@ -683,9 +711,9 @@ namespace SIL.FieldWorks.XWorks
 					lock (s_styleCollection)
 					{
 						string uniqueDisplayName = null;
-						if (s_styleCollection.TryGetStyle(config.Style, displayNameBase, out Style existingStyle))
+						if (s_styleCollection.TryGetStyle(config.Style, displayNameBase, out StyleElement existingStyle))
 						{
-							uniqueDisplayName = existingStyle.StyleId;
+							uniqueDisplayName = existingStyle.Style.StyleId;
 						}
 						// If the style is not in the collection, then add it.
 						else
@@ -696,8 +724,8 @@ namespace SIL.FieldWorks.XWorks
 							if (!string.IsNullOrEmpty(config.Style))
 							{
 								var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(writingSystem);
-								Style style = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(config.Style, wsId, propTable);
-								if (style == null || style.Type != StyleValues.Character)
+								Style style = WordStylesGenerator.GenerateCharacterStyleFromLcmStyleSheet(config.Style, wsId, propTable);
+								if (style == null)
 								{
 									// If we hit this assert, then we might end up referencing a style that
 									// does not get created.
@@ -836,6 +864,8 @@ namespace SIL.FieldWorks.XWorks
 				((DocFragment)elementContent).DocBody.Append(afterRun);
 			}
 
+			// Add Bullet and Numbering Data to lists.
+			AddBulletAndNumberingData(elementContent, config, eachInAParagraph);
 			return elementContent;
 		}
 		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content, ConfigurableDictionaryNode config)
@@ -955,11 +985,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (inAPara)
 			{
-				List<OpenXmlElement> elements = SeparateIntoFirstLevelElements(newPara, senseContent as DocFragment, config);
-				foreach (OpenXmlElement elem in elements)
-				{
-					senseData.DocBody.Append(elem);
-				}
+				SeparateIntoFirstLevelElements(senseData, newPara, senseContent as DocFragment, config);
 			}
 			else
 			{
@@ -1002,11 +1028,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (newPara != null)
 			{
-				List<OpenXmlElement> elements = SeparateIntoFirstLevelElements(newPara, content as DocFragment, config);
-				foreach (OpenXmlElement elem in elements)
-				{
-					collData.DocBody.Append(elem);
-				}
+				SeparateIntoFirstLevelElements(collData, newPara, content as DocFragment, config);
 			}
 			else
 			{
@@ -1313,11 +1335,11 @@ namespace SIL.FieldWorks.XWorks
 			// needs to be added to the entry after the interruption.
 
 			// Create the style for the entry.
-			var style = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(node.Style, WordStylesGenerator.DefaultStyle, _propertyTable);
+			var style = WordStylesGenerator.GenerateParagraphStyleFromLcmStyleSheet(node.Style, WordStylesGenerator.DefaultStyle, _propertyTable, out BulletInfo? bulletInfo);
 			style.StyleId = node.DisplayLabel;
 			style.StyleName.Val = style.StyleId;
-			AddBasedOnStyle(style, node, _propertyTable);
-			string uniqueDisplayName = s_styleCollection.AddStyle(style, node.Style, style.StyleId);
+			AddParagraphBasedOnStyle(style, node, _propertyTable);
+			string uniqueDisplayName = s_styleCollection.AddStyle(style, node.Style, style.StyleId, bulletInfo);
 
 			// Create a new paragraph for the entry.
 			DocFragment wordDoc = ((WordFragmentWriter)writer).WordFragment;
@@ -1328,7 +1350,7 @@ namespace SIL.FieldWorks.XWorks
 			// Create the 'continuation' style for the entry. This style will be the same as the style for the entry with the only
 			// difference being that it does not contain the first line indenting (since it is a continuation of the same entry).
 			var contStyle = WordStylesGenerator.GenerateContinuationStyle(style);
-			s_styleCollection.AddStyle(contStyle, node.Style, contStyle.StyleId);
+			s_styleCollection.AddStyle(contStyle, node.Style, contStyle.StyleId, bulletInfo);
 		}
 
 		public void AddEntryData(IFragmentWriter writer, List<ConfiguredLcmGenerator.ConfigFragment> pieces)
@@ -1414,14 +1436,14 @@ namespace SIL.FieldWorks.XWorks
 							break;
 
 						case WP.Table table:
-							wordWriter.WordFragment.AppendTable(table);
+							wordWriter.WordFragment.AppendTable(frag, table);
 
 							// Start a new paragraph with the next run to maintain the correct position of the table.
 							wordWriter.ForceNewParagraph = true;
 							break;
 
 						case WP.Paragraph para:
-							wordWriter.WordFragment.AppendParagraph(para);
+							wordWriter.WordFragment.AppendParagraph(frag, para);
 
 							// Start a new paragraph with the next run so that it uses the correct style.
 							wordWriter.ForceNewParagraph = true;
@@ -1537,9 +1559,9 @@ namespace SIL.FieldWorks.XWorks
 			// The calls to TryGetStyle() and AddStyle() need to be in the same lock.
 			lock (s_styleCollection)
 			{
-				if (s_styleCollection.TryGetStyle(numberStyleName, displayNameBase, out Style existingStyle))
+				if (s_styleCollection.TryGetStyle(numberStyleName, displayNameBase, out StyleElement existingStyle))
 				{
-					uniqueDisplayName = existingStyle.StyleId;
+					uniqueDisplayName = existingStyle.Style.StyleId;
 				}
 				// If the style is not in the collection, then add it.
 				else
@@ -1549,8 +1571,7 @@ namespace SIL.FieldWorks.XWorks
 					// Get the style from the LcmStyleSheet.
 					var cache = _propertyTable.GetValue<LcmCache>("cache");
 					var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(senseNumberWs);
-					Style style = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(numberStyleName, wsId, _propertyTable);
-					Debug.Assert(style.Type == StyleValues.Character);
+					Style style = WordStylesGenerator.GenerateCharacterStyleFromLcmStyleSheet(numberStyleName, wsId, _propertyTable);
 
 					style.Append(new BasedOn() { Val = wsString });
 					style.StyleId = displayNameBase;
@@ -1643,6 +1664,7 @@ namespace SIL.FieldWorks.XWorks
 				((DocFragment)sharedGramInfo).DocBody.PrependChild(beforeRun);
 			}
 
+			AddBulletAndNumberingData(senseContent, config, eachInAParagraph);
 			sharedGramInfo.Append(senseContent);
 
 			// Add After text for the senses if they were not displayed in separate paragraphs.
@@ -1680,21 +1702,16 @@ namespace SIL.FieldWorks.XWorks
 			var cache = propertyTable.GetValue<LcmCache>("cache");
 			var propStyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 
-			// TODO: Implement custom bullets & numbering
-			// LoadBulletUnicodes();
-			// LoadNumberingStyles();
-
-
 			// Generate Character Styles
 			//
 
-			var beforeAfterBetweenStyle = WordStylesGenerator.GenerateBeforeAfterBetweenStyle(propertyTable);
+			var beforeAfterBetweenStyle = WordStylesGenerator.GenerateBeforeAfterBetweenCharacterStyle(propertyTable);
 			if (beforeAfterBetweenStyle != null)
 			{
 				s_styleCollection.AddStyle(beforeAfterBetweenStyle, WordStylesGenerator.BeforeAfterBetweenStyleName, beforeAfterBetweenStyle.StyleId);
 			}
 
-			Styles writingSystemStyles = WordStylesGenerator.GenerateWritingSystemsStyles(propertyTable);
+			Styles writingSystemStyles = WordStylesGenerator.GenerateWritingSystemsCharacterStyles(propertyTable);
 			if (writingSystemStyles != null)
 			{
 				foreach (WP.Style style in writingSystemStyles.Descendants<Style>())
@@ -1706,34 +1723,33 @@ namespace SIL.FieldWorks.XWorks
 			// Generate Paragraph styles.
 			// Note: the order of generation is important since we want based on names to use the display names, not the style names.
 			//
-
-			var normalParagraphStyle = WordStylesGenerator.GenerateNormalParagraphStyle(propertyTable);
-			if (normalParagraphStyle != null)
+			BulletInfo? bulletInfo = null;
+			var normStyle = WordStylesGenerator.GenerateNormalParagraphStyle(propertyTable, out bulletInfo);
+			if (normStyle != null)
 			{
-				s_styleCollection.AddStyle(normalParagraphStyle, WordStylesGenerator.NormalParagraphStyleName, normalParagraphStyle.StyleId);
+				s_styleCollection.AddStyle(normStyle, WordStylesGenerator.NormalParagraphStyleName, normStyle.StyleId, bulletInfo);
 			}
 
-			var mainEntryParagraphStyle = WordStylesGenerator.GenerateMainEntryParagraphStyle(propertyTable, model, out ConfigurableDictionaryNode node);
-			if (mainEntryParagraphStyle != null)
+			var mainStyle = WordStylesGenerator.GenerateMainEntryParagraphStyle(propertyTable, model, out ConfigurableDictionaryNode node, out bulletInfo);
+			if (mainStyle != null)
 			{
-				AddBasedOnStyle(mainEntryParagraphStyle, node, propertyTable);
-				s_styleCollection.AddStyle(mainEntryParagraphStyle, node.Style, mainEntryParagraphStyle.StyleId);
+				AddParagraphBasedOnStyle(mainStyle, node, propertyTable);
+				s_styleCollection.AddStyle(mainStyle, node.Style, mainStyle.StyleId, bulletInfo);
 			}
 
-			var letterHeaderStyle = WordStylesGenerator.GenerateLetterHeaderParagraphStyle(propertyTable);
-			if (letterHeaderStyle != null)
+			var headStyle = WordStylesGenerator.GenerateLetterHeaderParagraphStyle(propertyTable, out bulletInfo);
+			if (headStyle != null)
 			{
-				AddBasedOnStyle(letterHeaderStyle, null, _propertyTable);
-				s_styleCollection.AddStyle(letterHeaderStyle, WordStylesGenerator.LetterHeadingStyleName, letterHeaderStyle.StyleId);
+				AddParagraphBasedOnStyle(headStyle, null, _propertyTable);
+				s_styleCollection.AddStyle(headStyle, WordStylesGenerator.LetterHeadingStyleName, headStyle.StyleId, bulletInfo);
 			}
-
 
 			// Check both 'normal' and 'mainEntry' paragraph styles for the RightToLeft flag.  If either of them
 			// have it then set the flag for all run properties to be created RTL.
 			// Note:  Checking 'normal' and 'mainEntry' seems like a logical place to check for this flag since
 			// other paragraph styles are usually based on them, but there may be reasons to expand this check.
-			if ((normalParagraphStyle?.StyleParagraphProperties?.BiDi != null) ||
-				(mainEntryParagraphStyle?.StyleParagraphProperties?.BiDi != null))
+			if ((normStyle?.StyleParagraphProperties?.BiDi != null) ||
+				(mainStyle?.StyleParagraphProperties?.BiDi != null))
 			{
 				RightToLeft = true;
 			}
@@ -1755,7 +1771,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="style">The style to add it's basedOn style. (It's BasedOn value might get modified.)</param>
 		/// <param name="node">Can be null, but if it is then the only option for getting a basedOnStyle is from
 		/// the style, not the parent node.</param>
-		private void AddBasedOnStyle(Style style, ConfigurableDictionaryNode node, ReadOnlyPropertyTable propertyTable)
+		private void AddParagraphBasedOnStyle(Style style, ConfigurableDictionaryNode node, ReadOnlyPropertyTable propertyTable)
 		{
 			Debug.Assert(style.Type == StyleValues.Paragraph);
 
@@ -1787,7 +1803,6 @@ namespace SIL.FieldWorks.XWorks
 
 			if (!string.IsNullOrEmpty(basedOnStyleName))
 			{
-				// If this is a continuation style then base it on a continuation style.
 				bool continuationStyle = style.StyleId.Value.EndsWith(WordStylesGenerator.EntryStyleContinue);
 				// Currently this method does not work (and should not be used) for continuation styles. The problem is
 				// that the basedOn name of the regular style has already been changed to the display name. We would
@@ -1801,17 +1816,15 @@ namespace SIL.FieldWorks.XWorks
 				lock (s_styleCollection)
 				{
 					// If the basedOn style already exists, then update the reference to the basedOn styles unique name.
-					if (s_styleCollection.TryGetStyle(basedOnStyleName, out Style basedOnStyle))
+					if (s_styleCollection.TryGetParagraphStyle(basedOnStyleName, out Style basedOnStyle))
 					{
 						style.BasedOn.Val = basedOnStyle.StyleId;
-						if(continuationStyle && style.BasedOn.Val != WordStylesGenerator.NormalParagraphStyleName)
-							style.BasedOn.Val += WordStylesGenerator.EntryStyleContinue;
 					}
 					// Else if the basedOn style does NOT already exist, then create the basedOn style, if needed add
 					// it's basedOn style, then add this basedOn style to the collection.
 					else
 					{
-						basedOnStyle = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(basedOnStyleName, 0, propertyTable, !continuationStyle);
+						basedOnStyle = WordStylesGenerator.GenerateParagraphStyleFromLcmStyleSheet(basedOnStyleName, 0, propertyTable,out BulletInfo? bulletInfo);
 						// Check if the style is based on itself.  This happens with the 'Normal' style and could possibly happen with others.
 						bool basedOnIsDifferent = basedOnStyle.BasedOn?.Val != null && basedOnStyle.StyleId != basedOnStyle.BasedOn?.Val;
 
@@ -1821,21 +1834,15 @@ namespace SIL.FieldWorks.XWorks
 							basedOnStyle.StyleName.Val = basedOnStyle.StyleId;
 							style.BasedOn.Val = basedOnStyle.StyleId;
 						}
-						if (continuationStyle)
-						{
-							basedOnStyle.StyleId += WordStylesGenerator.EntryStyleContinue;
-							basedOnStyle.StyleName.Val = basedOnStyle.StyleId;
-							style.BasedOn.Val = basedOnStyle.StyleId;
-						}
 
 						if (basedOnIsDifferent)
 						{
 							// If the parentNode is not null then the basedOnStyle came from the parentNode.
 							// If the parentNode is null then the basedOnStyle came from the style.BasedOn.Val and
-							// we should pass null to AddBasedOnStyle since no node is associated with the basedOnStyle.
-							AddBasedOnStyle(basedOnStyle, parentNode, propertyTable);
+							// we should pass null to AddParagraphBasedOnStyle since no node is associated with the basedOnStyle.
+							AddParagraphBasedOnStyle(basedOnStyle, parentNode, propertyTable);
 						}
-						s_styleCollection.AddStyle(basedOnStyle, basedOnStyleName, basedOnStyle.StyleId);
+						s_styleCollection.AddStyle(basedOnStyle, basedOnStyleName, basedOnStyle.StyleId, bulletInfo);
 					}
 				}
 			}
@@ -1852,8 +1859,9 @@ namespace SIL.FieldWorks.XWorks
 			// The calls to TryGetStyle() and AddStyle() need to be in the same lock.
 			lock (s_styleCollection)
 			{
-				if (s_styleCollection.TryGetStyle(nodeStyleName, displayNameBase, out retStyle))
+				if (s_styleCollection.TryGetStyle(nodeStyleName, displayNameBase, out StyleElement styleElem))
 				{
+					retStyle = styleElem.Style;
 					if (retStyle.Type != StyleValues.Character)
 					{
 						return null;
@@ -1861,7 +1869,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
-					retStyle = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(nodeStyleName, 0, propertyTable);
+					retStyle = WordStylesGenerator.GenerateCharacterStyleFromLcmStyleSheet(nodeStyleName, 0, propertyTable);
 					if (retStyle == null || retStyle.Type != StyleValues.Character)
 					{
 						return null;
@@ -1884,7 +1892,7 @@ namespace SIL.FieldWorks.XWorks
 			// The css className isn't important for the Word export.
 			var className = $".{CssGenerator.GetClassAttributeForConfig(node)}";
 
-			Style style = WordStylesGenerator.GenerateParagraphStyleFromConfigurationNode(node, _propertyTable);
+			Style style = WordStylesGenerator.GenerateParagraphStyleFromConfigurationNode(node, _propertyTable, out BulletInfo? bulletInfo);
 
 			if (style == null)
 				return className;
@@ -1893,11 +1901,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				lock (s_styleCollection)
 				{
-					if (!s_styleCollection.TryGetStyle(node.Style, style.StyleId, out Style _))
+					if (!s_styleCollection.TryGetStyle(node.Style, style.StyleId, out StyleElement _))
 					{
-						AddBasedOnStyle(style, node, _propertyTable);
+						AddParagraphBasedOnStyle(style, node, _propertyTable);
 						string oldName = style.StyleId;
-						string newName = s_styleCollection.AddStyle(style, node.Style, style.StyleId);
+						string newName = s_styleCollection.AddStyle(style, node.Style, style.StyleId, bulletInfo);
 						Debug.Assert(oldName == newName, "Not expecting the name for a paragraph style to ever change!");
 					}
 				}
@@ -1925,6 +1933,16 @@ namespace SIL.FieldWorks.XWorks
 		{
 			DocumentSettingsPart part;
 			part = doc.MainDocumentPart.AddNewPart<DocumentSettingsPart>();
+			return part;
+		}
+
+		// Add a NumberingDefinitionsPart to the document. Returns a reference to it.
+		public static NumberingDefinitionsPart AddNumberingPartToPackage(WordprocessingDocument doc)
+		{
+			NumberingDefinitionsPart part;
+			part = doc.MainDocumentPart.AddNewPart<NumberingDefinitionsPart>();
+			Numbering numElement = new Numbering();
+			numElement.Save(part);
 			return part;
 		}
 
@@ -2130,7 +2148,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void AddRunStyle_Worker(WP.Run run, string nodeStyleName, string displayNameBase)
 		{
-			Style rootStyle = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(nodeStyleName, 0, _propertyTable);
+			Style rootStyle = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(nodeStyleName, 0, _propertyTable, out BulletInfo? _);
 			if (rootStyle == null || rootStyle.Type != StyleValues.Character)
 			{
 				return;
@@ -2153,9 +2171,9 @@ namespace SIL.FieldWorks.XWorks
 						// The calls to TryGetStyle() and AddStyle() need to be in the same lock.
 						lock (s_styleCollection)
 						{
-							if (s_styleCollection.TryGetStyle(nodeStyleName, displayNameBaseCombined, out Style existingStyle))
+							if (s_styleCollection.TryGetStyle(nodeStyleName, displayNameBaseCombined, out StyleElement existingStyle))
 							{
-								run.RunProperties.Descendants<RunStyle>().Last().Val = existingStyle.StyleId;
+								run.RunProperties.Descendants<RunStyle>().Last().Val = existingStyle.Style.StyleId;
 							}
 							else
 							{
@@ -2241,17 +2259,14 @@ namespace SIL.FieldWorks.XWorks
 		/// If we encounter one of these then end the paragraph and add the un-nestable type at the
 		/// same level. If we later encounter nestable types then a continuation paragraph will be created.
 		/// </summary>
-		/// <param name="outputParagraph">The first paragraph that will be returned. The content will be added
+		/// <param name="copyToFrag">The fragment where the new elements will be added.</param>
+		/// <param name="firstParagraph">The first paragraph that will be added to 'copyToFrag'. Content from contentToAdd will be added
 		/// to this paragraph until a un-nestable type is encountered.</param>
 		/// <param name="contentToAdd">The content to add either to the paragraph or at the same level as the paragraph.</param>
-		/// <returns>A list of elements that contain the original outputParagraph and the contentToAdd. The contentToAdd
-		/// might all be added to the outputParagraph, or it might also result in additional un-nestable types being returned
-		/// in the list.</returns>
-		public List<OpenXmlElement> SeparateIntoFirstLevelElements(WP.Paragraph outputParagraph, DocFragment contentToAdd, ConfigurableDictionaryNode node)
+		public void SeparateIntoFirstLevelElements(DocFragment copyToFrag, WP.Paragraph firstParagraph, DocFragment contentToAdd, ConfigurableDictionaryNode node)
 		{
-			List<OpenXmlElement> retList = new List<OpenXmlElement>();
 			bool continuationParagraph = false;
-			var workingParagraph = outputParagraph;
+			var workingParagraph = firstParagraph;
 			var elements = ((DocFragment)contentToAdd).DocBody.Elements();
 			foreach (OpenXmlElement elem in elements)
 			{
@@ -2261,11 +2276,11 @@ namespace SIL.FieldWorks.XWorks
 					// End the current working paragraph and add it to the list.
 					if (EndParagraph(workingParagraph, node, continuationParagraph))
 					{
-						retList.Add(workingParagraph);
+						copyToFrag.DocBody.AppendChild(workingParagraph);
 					}
 
 					// Add the un-nestable element.
-					retList.Add(elem.CloneNode(true));
+					copyToFrag.DocBody.AppendChild(copyToFrag.CloneElement(contentToAdd, elem));
 
 					// Start a new working paragraph.
 					continuationParagraph = true;
@@ -2273,7 +2288,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
-					workingParagraph.AppendChild(contentToAdd.CloneElement(contentToAdd, elem));
+					workingParagraph.AppendChild(copyToFrag.CloneElement(contentToAdd, elem));
 				}
 			}
 
@@ -2281,10 +2296,8 @@ namespace SIL.FieldWorks.XWorks
 			// it to the return list.
 			if (EndParagraph(workingParagraph, node, continuationParagraph))
 			{
-				retList.Add(workingParagraph);
+				copyToFrag.DocBody.AppendChild(workingParagraph);
 			}
-
-			return retList;
 		}
 
 		/// <summary>
@@ -2302,41 +2315,45 @@ namespace SIL.FieldWorks.XWorks
 					// The calls to TryGetStyle() and AddStyle() need to be in the same lock.
 					lock(s_styleCollection)
 					{
+						BulletInfo? bulletInfo = null;
 						string uniqueDisplayName = null;
 
 						// Try to get the continuation style.
 						if (continuationParagraph)
 						{
 							if (s_styleCollection.TryGetStyle(node.Style, node.DisplayLabel + WordStylesGenerator.EntryStyleContinue,
-									out Style existingContinuationStyle))
+									out StyleElement contStyleElem))
 							{
-								uniqueDisplayName = existingContinuationStyle.StyleId;
+								bulletInfo = contStyleElem.BulletInfo;
+								uniqueDisplayName = contStyleElem.Style.StyleId;
 							}
 						}
 
-						// Try to get the regular style.
 						if (string.IsNullOrEmpty(uniqueDisplayName))
 						{
+							// Try to get the regular style.
 							Style style = null;
-							if (s_styleCollection.TryGetStyle(node.Style, node.DisplayLabel, out style))
+							if (s_styleCollection.TryGetStyle(node.Style, node.DisplayLabel, out StyleElement styleElem))
 							{
+								style = styleElem.Style;
+								bulletInfo = styleElem.BulletInfo;
 								uniqueDisplayName = style.StyleId;
 							}
 							// Add the regular style.
 							else
 							{
-								style = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(node.Style, WordStylesGenerator.DefaultStyle, _propertyTable);
+								style = WordStylesGenerator.GenerateParagraphStyleFromLcmStyleSheet(node.Style, WordStylesGenerator.DefaultStyle, _propertyTable, out bulletInfo);
 								style.StyleId = node.DisplayLabel;
 								style.StyleName.Val = style.StyleId;
-								AddBasedOnStyle(style, node, _propertyTable);
-								uniqueDisplayName = s_styleCollection.AddStyle(style, node.Style, style.StyleId);
+								AddParagraphBasedOnStyle(style, node, _propertyTable);
+								uniqueDisplayName = s_styleCollection.AddStyle(style, node.Style, style.StyleId, bulletInfo);
 							}
 
 							// Add the continuation style.
 							if (continuationParagraph)
 							{
 								var contStyle = WordStylesGenerator.GenerateContinuationStyle(style);
-								uniqueDisplayName = s_styleCollection.AddStyle(contStyle, node.Style, contStyle.StyleId);
+								uniqueDisplayName = s_styleCollection.AddStyle(contStyle, node.Style, contStyle.StyleId, bulletInfo);
 							}
 						}
 						WP.ParagraphProperties paragraphProps =
@@ -2347,6 +2364,251 @@ namespace SIL.FieldWorks.XWorks
 				return true;
 			}
 			return false;
+		}
+
+		/// <summary>
+		/// Adds the bullet and numbering data to a list of items.
+		/// </summary>
+		/// <param name="elementContent">The fragment containing the list of items.</param>
+		/// <param name="eachInAParagraph">true: The list items are in paragraphs, so add the bullet or numbering.
+		///                                false: The list items are not in paragraphs, don't add bullet or numbering.</param>
+		private void AddBulletAndNumberingData(IFragment elementContent, ConfigurableDictionaryNode node, bool eachInAParagraph)
+		{
+			if (node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph &&
+				!string.IsNullOrEmpty(node.Style) &&
+				eachInAParagraph)
+			{
+				// Get the StyleElement.
+				if (s_styleCollection.TryGetStyle(node.Style, node.DisplayLabel, out StyleElement styleElem))
+				{
+					// This style uses bullet or numbering.
+					if (styleElem.BulletInfo.HasValue)
+					{
+						var bulletInfo = styleElem.BulletInfo.Value;
+						var numScheme = bulletInfo.m_numberScheme;
+						int? numberingFirstNumUniqueId = null;
+
+						// We are potentially adding data to the StyleElement so it needs to be in a lock.
+						lock (s_styleCollection)
+						{
+							// If the StyleElement does not already have the unique id then generate one.
+							// Note: This number can be the same for all list items on all the lists associated with
+							// this StyleElement with one exception; for numbered lists, the first list item on each
+							// list needs it's own unique id.
+							if (!styleElem.BulletAndNumberingUniqueId.HasValue)
+							{
+								styleElem.BulletAndNumberingUniqueId = s_styleCollection.GetNewBulletAndNumberingUniqueId;
+							}
+
+							// Only generate this number if it is a numbered list.
+							// Note: Each list will need a uniqueId to cause the numbering to re-start at the beginning
+							//       of each list.
+							if (string.IsNullOrEmpty(bulletInfo.m_bulletCustom) &&
+								string.IsNullOrEmpty(PreDefinedBullet(numScheme)) &&
+								WordNumberingFormat(numScheme).HasValue)
+							{
+								numberingFirstNumUniqueId = s_styleCollection.GetNewBulletAndNumberingUniqueId;
+								styleElem.NumberingFirstNumUniqueIds.Add(numberingFirstNumUniqueId.Value);
+							}
+						}
+
+						// Iterate through the paragraphs and add the uniqueId to the ParagraphProperties.
+						bool firstParagraph = true;
+						foreach (OpenXmlElement elem in ((DocFragment)elementContent).DocBody.Elements())
+						{
+							if (elem is Paragraph)
+							{
+								var paraProps = elem.Elements<ParagraphProperties>().First();
+								if (paraProps != null)
+								{
+									// Only add the uniqueId to paragraphs with the correct style.  There could
+									// be paragraphs with different styles.
+									var paraStyle = paraProps.Elements<ParagraphStyleId>().FirstOrDefault();
+									if (paraStyle != null && paraStyle.Val == node.DisplayLabel)
+									{
+										int uniqueId = styleElem.BulletAndNumberingUniqueId.Value;
+
+										// The first paragraph for a numbered list needs to use a different uniqueId.
+										if (firstParagraph && numberingFirstNumUniqueId.HasValue)
+										{
+											uniqueId = numberingFirstNumUniqueId.Value;
+										}
+
+										paraProps.Append(new NumberingProperties(
+											new NumberingLevelReference() { Val = 0 },
+											new NumberingId() { Val = uniqueId }));
+										firstParagraph = false;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Generate the bullet or numbering data and add it to the Word doc.
+		/// </summary>
+		/// <param name="styleElement">Contains the bullet and numbering data.</param>
+		/// <param name="numberingPart">Part of the Word doc where bullet and numbering data is stored.</param>
+		internal static void GenerateBulletAndNumberingData(StyleElement styleElement, NumberingDefinitionsPart numberingPart)
+		{
+			if (!styleElement.BulletInfo.HasValue)
+			{
+				return;
+			}
+
+			// Not expecting this to be null if BulletInfo is not null. If we hit this assert then
+			// most likely there is another place where we need to call AddBulletAndNumberingData().
+			Debug.Assert(styleElement.BulletAndNumberingUniqueId.HasValue);
+
+			var bulletInfo = styleElement.BulletInfo.Value;
+			var bulletUniqueId = styleElement.BulletAndNumberingUniqueId.Value;
+			var numScheme = bulletInfo.m_numberScheme;
+			Level abstractLevel = null;
+
+			// Generate custom bullet data.
+			if (!string.IsNullOrEmpty(bulletInfo.m_bulletCustom))
+			{
+				abstractLevel = new Level(new NumberingFormat() { Val = NumberFormatValues.Bullet },
+					new LevelText() { Val = bulletInfo.m_bulletCustom })
+					{ LevelIndex = 0 };
+			}
+			// Generate selected bullet data.
+			else if (!string.IsNullOrEmpty(PreDefinedBullet(numScheme)))
+			{
+				abstractLevel = new Level(new NumberingFormat() { Val = NumberFormatValues.Bullet },
+					new LevelText() { Val = PreDefinedBullet(numScheme) })
+					{ LevelIndex = 0 };
+			}
+			// Generate numbering data.
+			else if (WordNumberingFormat(numScheme).HasValue)
+			{
+				string numberString = bulletInfo.m_textBefore + "%1" + bulletInfo.m_textAfter;
+				abstractLevel = new Level(new NumberingFormat() { Val = WordNumberingFormat(numScheme).Value },
+					new LevelText() { Val = numberString },
+					new StartNumberingValue() { Val = bulletInfo.m_start })
+					{ LevelIndex = 0 };
+			}
+
+			if (abstractLevel == null)
+			{
+				return;
+			}
+
+			// Add the new AbstractNum after the last AbstractNum.
+			// Word cares about the order of AbstractNum elements and NumberingInstance elements.
+			var abstractNum = new AbstractNum(abstractLevel) { AbstractNumberId = bulletUniqueId };
+			var lastAbstractNum = numberingPart.Numbering.Elements<AbstractNum>().LastOrDefault();
+			if (lastAbstractNum == null)
+			{
+				numberingPart.Numbering.Append(abstractNum);
+			}
+			else
+			{
+				numberingPart.Numbering.InsertAfter(abstractNum, lastAbstractNum);
+			}
+
+			// Add the new NumberingInstance after the last NumberingInstance.
+			// Word cares about the order of AbstractNum elements and NumberingInstance elements.
+			var numberingInstance = new NumberingInstance() { NumberID = bulletUniqueId };
+			var abstractNumId = new AbstractNumId() { Val = bulletUniqueId };
+			numberingInstance.Append(abstractNumId);
+			var lastNumberingInstance = numberingPart.Numbering.Elements<NumberingInstance>().LastOrDefault();
+			if (lastNumberingInstance == null)
+			{
+				numberingPart.Numbering.Append(numberingInstance);
+			}
+			else
+			{
+				numberingPart.Numbering.InsertAfter(numberingInstance, lastNumberingInstance);
+			}
+
+			// If this is a numbered list then create the NumberingInstances for the first item in each list.
+			if (styleElement.NumberingFirstNumUniqueIds.Any())
+			{
+				NumberingInstance insertAfter = numberingInstance;
+				foreach (int firstParagraphUniqueId in styleElement.NumberingFirstNumUniqueIds)
+				{
+					NumberingInstance firstParagraphNumberingInstance = new NumberingInstance() { NumberID = firstParagraphUniqueId };
+					AbstractNumId abstractNumId2 = new AbstractNumId() { Val = bulletUniqueId };
+					LevelOverride levelOverride = new LevelOverride()
+					{
+						LevelIndex = 0,
+						StartOverrideNumberingValue = new StartOverrideNumberingValue() { Val = bulletInfo.m_start }
+					};
+					firstParagraphNumberingInstance.Append(abstractNumId2);
+					firstParagraphNumberingInstance.Append(levelOverride);
+					numberingPart.Numbering.InsertAfter(firstParagraphNumberingInstance, insertAfter);
+					insertAfter = firstParagraphNumberingInstance;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Get the pre-defined bullet character associated with the bullet scheme (not for custom bullets).
+		/// </summary>
+		/// <param name="scheme">The bullet scheme.</param>
+		/// <returns>The bullet as a string, or null if the scheme is not for a pre-defined bullet.</returns>
+		public static string PreDefinedBullet(VwBulNum scheme)
+		{
+			string bullet = null;
+			switch (scheme)
+			{
+				case VwBulNum.kvbnBulletBase + 0: bullet = "\x00B7"; break;     // MIDDLE DOT
+				case VwBulNum.kvbnBulletBase + 1: bullet = "\x2022"; break;     // BULLET (note: in a list item, consider using 'disc' somehow?)
+				case VwBulNum.kvbnBulletBase + 2: bullet = "\x25CF"; break;     // BLACK CIRCLE
+				case VwBulNum.kvbnBulletBase + 3: bullet = "\x274D"; break;     // SHADOWED WHITE CIRCLE
+				case VwBulNum.kvbnBulletBase + 4: bullet = "\x25AA"; break;     // BLACK SMALL SQUARE (note: in a list item, consider using 'square' somehow?)
+				case VwBulNum.kvbnBulletBase + 5: bullet = "\x25A0"; break;     // BLACK SQUARE
+				case VwBulNum.kvbnBulletBase + 6: bullet = "\x25AB"; break;     // WHITE SMALL SQUARE
+				case VwBulNum.kvbnBulletBase + 7: bullet = "\x25A1"; break;     // WHITE SQUARE
+				case VwBulNum.kvbnBulletBase + 8: bullet = "\x2751"; break;     // LOWER RIGHT SHADOWED WHITE SQUARE
+				case VwBulNum.kvbnBulletBase + 9: bullet = "\x2752"; break;     // UPPER RIGHT SHADOWED WHITE SQUARE
+				case VwBulNum.kvbnBulletBase + 10: bullet = "\x2B27"; break;    // BLACK MEDIUM LOZENGE
+				case VwBulNum.kvbnBulletBase + 11: bullet = "\x29EB"; break;    // BLACK LOZENGE
+				case VwBulNum.kvbnBulletBase + 12: bullet = "\x25C6"; break;    // BLACK DIAMOND
+				case VwBulNum.kvbnBulletBase + 13: bullet = "\x2756"; break;    // BLACK DIAMOND MINUS WHITE X
+				case VwBulNum.kvbnBulletBase + 14: bullet = "\x2318"; break;    // PLACE OF INTEREST SIGN
+				case VwBulNum.kvbnBulletBase + 15: bullet = "\x261E"; break;    // WHITE RIGHT POINTING INDEX
+				case VwBulNum.kvbnBulletBase + 16: bullet = "\x271D"; break;    // LATIN CROSS
+				case VwBulNum.kvbnBulletBase + 17: bullet = "\x271E"; break;    // SHADOWED WHITE LATIN CROSS
+				case VwBulNum.kvbnBulletBase + 18: bullet = "\x2730"; break;    // SHADOWED WHITE STAR
+				case VwBulNum.kvbnBulletBase + 19: bullet = "\x27A2"; break;    // THREE-D TOP-LIGHTED RIGHTWARDS ARROWHEAD
+				case VwBulNum.kvbnBulletBase + 20: bullet = "\x27B2"; break;    // CIRCLED HEAVY WHITE RIGHTWARDS ARROW
+				case VwBulNum.kvbnBulletBase + 21: bullet = "\x2794"; break;    // HEAVY WIDE-HEADED RIGHTWARDS ARROW
+				case VwBulNum.kvbnBulletBase + 22: bullet = "\x2794"; break;    // HEAVY WIDE-HEADED RIGHTWARDS ARROW
+				case VwBulNum.kvbnBulletBase + 23: bullet = "\x21E8"; break;    // RIGHTWARDS WHITE ARROW
+				case VwBulNum.kvbnBulletBase + 24: bullet = "\x2713"; break;   // CHECK MARK
+			}
+			return bullet;
+		}
+
+		/// <summary>
+		/// Return the Word number format.
+		/// </summary>
+		/// <param name="numberScheme">FLEX number format.</param>
+		/// <returns>Word number format, or null if the numberScheme is not a valid numbering format.</returns>
+		public static NumberFormatValues? WordNumberingFormat(VwBulNum numberScheme)
+		{
+			switch (numberScheme)
+			{
+				case VwBulNum.kvbnArabic:
+					return NumberFormatValues.Decimal;
+				case VwBulNum.kvbnRomanLower:
+					return NumberFormatValues.LowerRoman;
+				case VwBulNum.kvbnRomanUpper:
+					return NumberFormatValues.UpperRoman;
+				case VwBulNum.kvbnLetterLower:
+					return NumberFormatValues.LowerLetter;
+				case VwBulNum.kvbnLetterUpper:
+					return NumberFormatValues.UpperLetter;
+				case VwBulNum.kvbnArabic01:
+					return NumberFormatValues.DecimalZero;
+				default:
+					return null;
+			}
 		}
 
 		/// <summary>
