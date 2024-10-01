@@ -135,7 +135,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					return type != RuleInsertType.Index;
 
 				case MoAffixProcessTags.kflidOutput:
-					return type == RuleInsertType.Index || type == RuleInsertType.Phoneme || type == RuleInsertType.MorphemeBoundary;
+					return type == RuleInsertType.Index
+						|| type == RuleInsertType.Phoneme
+						|| type == RuleInsertType.Features
+						|| type == RuleInsertType.MorphemeBoundary;
 
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
@@ -441,9 +444,22 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		protected override int InsertNC(IPhNaturalClass nc, SelectionHelper sel, out int cellIndex, out IPhSimpleContextNC ctxt)
 		{
-			ctxt = m_cache.ServiceLocator.GetInstance<IPhSimpleContextNCFactory>().Create();
-			var cellId = InsertContext(ctxt, sel, out cellIndex);
-			ctxt.FeatureStructureRA = nc;
+			int cellId = GetCell(sel);
+			if (cellId == MoAffixProcessTags.kflidOutput)
+			{
+				var insertNC = m_cache.ServiceLocator.GetInstance<IMoInsertNCFactory>().Create();
+				cellIndex = InsertIntoOutput(insertNC, sel);
+				nc.Name.SetAnalysisDefaultWritingSystem("xxx");
+				nc.Abbreviation.SetAnalysisDefaultWritingSystem("xxx");
+				insertNC.ContentRA = nc;
+				ctxt = null;
+			}
+			else
+			{
+				ctxt = m_cache.ServiceLocator.GetInstance<IPhSimpleContextNCFactory>().Create();
+				cellId = InsertContext(ctxt, sel, out cellIndex);
+				ctxt.FeatureStructureRA = nc;
+			}
 			return cellId;
 		}
 

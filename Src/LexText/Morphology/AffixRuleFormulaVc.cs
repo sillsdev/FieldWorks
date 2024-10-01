@@ -331,6 +331,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							CloseSingleLinePile(vwenv);
 							break;
 
+						case MoInsertNCTags.kClassId:
+							OpenSingleLinePile(vwenv, GetOutputMaxNumLines());
+							vwenv.AddObjProp(MoInsertNCTags.kflidContent, this, kfragFeatNC);
+							CloseSingleLinePile(vwenv);
+							break;
+
 						case MoModifyFromInputTags.kClassId:
 							var modify = (IMoModifyFromInput) mapping;
 							int outputMaxNumLines = GetOutputMaxNumLines();
