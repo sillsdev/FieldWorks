@@ -43,6 +43,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Features,
 			Variable,
 			Index,
+			ModifiedIndex,
 			Column
 		};
 
@@ -440,6 +441,19 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		}
 
 		/// <summary>
+		/// Inserts a modified item from the specified rule mapping index.
+		/// </summary>
+		/// <param name="index">The rule mapping index.</param>
+		/// <param name="modifications">The modifications to the indexed item.</param>
+		/// <param name="sel">The selection.</param>
+		/// <param name="cellIndex">Index of the new item.</param>
+		/// <returns>The ID of the cell that the item was inserted into</returns>
+		protected virtual int InsertModifiedIndex(int index, IPhNCFeatures modifications, SelectionHelper sel, out int cellIndex)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		/// Inserts the variable (PhVariable).
 		/// </summary>
 		/// <param name="sel">The selection.</param>
@@ -616,11 +630,39 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 									IPhSimpleContextNC ctxt;
 									cellId = InsertNC(featNC, sel, out cellIndex, out ctxt);
 									if (ctxt != null)
-									{
 										featChooser.Context = ctxt;
-										featChooser.UpdateFeatureStructure();
-									}
+									else
+										featChooser.FS = featNC.FeaturesOA;
+									featChooser.UpdateFeatureStructure();
 								});
+						}
+						else if (res != DialogResult.Cancel)
+						{
+							featChooser.HandleJump();
+						}
+					}
+					break;
+
+				case RuleInsertType.ModifiedIndex:
+					using (var featChooser = new PhonologicalFeatureChooserDlg())
+					{
+						SetupPhonologicalFeatureChoooserDlg(featChooser);
+						featChooser.SetHelpTopic(FeatureChooserHelpTopic);
+						DialogResult res = featChooser.ShowDialog();
+						if (res == DialogResult.OK)
+						{
+							UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
+							{
+								IPhNCFeatures featNC = m_cache.ServiceLocator.GetInstance<IPhNCFeaturesFactory>().Create();
+								m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(featNC);
+								featNC.Name.SetUserWritingSystem(string.Format(MEStrings.ksRuleNCFeatsName, RuleName));
+								featNC.FeaturesOA = m_cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
+								string label = (string)e.Suboption;
+								int index = Convert.ToInt32(label.Substring(0, label.Length - 1));
+								cellId = InsertModifiedIndex(index, featNC, sel, out cellIndex);
+								featChooser.FS = featNC.FeaturesOA;
+								featChooser.UpdateFeatureStructure();
+							});
 						}
 						else if (res != DialogResult.Cancel)
 						{

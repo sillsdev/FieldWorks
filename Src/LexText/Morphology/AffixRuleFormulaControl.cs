@@ -117,6 +117,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Variable), DisplayVariableOption);
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Column), DisplayColumnOption);
 			m_insertionControl.AddMultiOption(new InsertOption(RuleInsertType.Index), DisplayOption, DisplayIndices);
+			m_insertionControl.AddMultiOption(new InsertOption(RuleInsertType.ModifiedIndex), DisplayOption, DisplayModifiedIndices);
 			m_insertionControl.NoOptionsMessage = DisplayNoOptsMsg;
 		}
 
@@ -136,8 +137,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 				case MoAffixProcessTags.kflidOutput:
 					return type == RuleInsertType.Index
+						|| type == RuleInsertType.ModifiedIndex
 						|| type == RuleInsertType.Phoneme
-						|| type == RuleInsertType.Features
 						|| type == RuleInsertType.MorphemeBoundary;
 
 				default:
@@ -202,6 +203,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var indices = new int[Rule.InputOS.Count];
 			for (int i = 0; i < indices.Length; i++)
 				indices[i] = i + 1;
+			return indices.Cast<object>();
+		}
+
+		private IEnumerable<object> DisplayModifiedIndices()
+		{
+			var indices = new string[Rule.InputOS.Count];
+			for (int i = 0; i < indices.Length; i++)
+				indices[i] = Convert.ToString(i + 1) + "+";
 			return indices.Cast<object>();
 		}
 
@@ -449,8 +458,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				var insertNC = m_cache.ServiceLocator.GetInstance<IMoInsertNCFactory>().Create();
 				cellIndex = InsertIntoOutput(insertNC, sel);
-				nc.Name.SetAnalysisDefaultWritingSystem("xxx");
-				nc.Abbreviation.SetAnalysisDefaultWritingSystem("xxx");
 				insertNC.ContentRA = nc;
 				ctxt = null;
 			}
@@ -579,6 +586,15 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var copy = m_cache.ServiceLocator.GetInstance<IMoCopyFromInputFactory>().Create();
 			cellIndex = InsertIntoOutput(copy, sel);
 			copy.ContentRA = Rule.InputOS[index - 1];
+			return MoAffixProcessTags.kflidOutput;
+		}
+
+		protected override int InsertModifiedIndex(int index, IPhNCFeatures modification, SelectionHelper sel, out int cellIndex)
+		{
+			IMoModifyFromInput modify = m_cache.ServiceLocator.GetInstance<IMoModifyFromInputFactory>().Create();
+			cellIndex = InsertIntoOutput(modify, sel);
+			modify.ContentRA = Rule.InputOS[index - 1];
+			modify.ModificationRA = modification;
 			return MoAffixProcessTags.kflidOutput;
 		}
 
