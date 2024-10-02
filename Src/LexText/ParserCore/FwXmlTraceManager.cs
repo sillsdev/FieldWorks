@@ -10,6 +10,9 @@ using SIL.Machine.Morphology.HermitCrab;
 using SIL.Machine.Morphology.HermitCrab.MorphologicalRules;
 using SIL.Machine.Morphology.HermitCrab.PhonologicalRules;
 using SIL.Machine.FeatureModel;
+using SIL.Machine.Annotations;
+using System.Collections.Generic;
+using System.Text;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -129,18 +132,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			((XElement) output.CurrentTrace).Add(new XElement("PhonologicalRuleSynthesisTrace",
 				CreateHCRuleElement("PhonologicalRule", rule),
-				// Show as regex to make debugging phonological rules easier (fixes LT-18682).
-				CreateWordElement("Input", input, true),
-				CreateWordElement("Output", output, true)));
+				// Show bracketed to make debugging phonological rules easier (fixes LT-18682).
+				CreateWordElement("Input", input, false, true),
+				CreateWordElement("Output", output, false, true)));
 		}
 
 		public void PhonologicalRuleNotApplied(IPhonologicalRule rule, int subruleIndex, Word input, FailureReason reason, object failureObj)
 		{
 			var pruleTrace = new XElement("PhonologicalRuleSynthesisTrace",
 				CreateHCRuleElement("PhonologicalRule", rule),
-				// Show as regex to make debugging phonological rules easier (fixes LT-18682).
-				CreateWordElement("Input", input, true),
-				CreateWordElement("Output", input, true));
+				// Show bracketed to make debugging phonological rules easier (fixes LT-18682).
+				CreateWordElement("Input", input, false, true),
+				CreateWordElement("Output", input, false, true));
 
 			var rewriteRule = rule as RewriteRule;
 			if (rewriteRule != null)
@@ -388,14 +391,34 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return new XElement(name, fs.Head().ToString().Replace(",", ""));
 		}
 
-		private static XElement CreateWordElement(string name, Word word, bool regex)
+		private static XElement CreateWordElement(string name, Word word, bool analysis, bool bracketed = false)
 		{
 			string wordStr;
 			if (word == null)
 				wordStr = "*None*";
 			else
-				wordStr = regex ? word.Shape.ToRegexString(word.Stratum.CharacterDefinitionTable, true) : word.Shape.ToString(word.Stratum.CharacterDefinitionTable, true);
+				wordStr = analysis
+					? word.Shape.ToRegexString(word.Stratum.CharacterDefinitionTable, true)
+					: bracketed ? ToBracketedString(word.Shape, word.Stratum.CharacterDefinitionTable)
+					: word.Shape.ToString(word.Stratum.CharacterDefinitionTable, true);
 			return new XElement(name, wordStr);
+		}
+
+		private static string ToBracketedString(IEnumerable<ShapeNode> nodes, CharacterDefinitionTable table)
+		{
+			StringBuilder stringBuilder = new StringBuilder();
+			foreach (ShapeNode node in nodes)
+			{
+				string text = table.GetMatchingStrReps(node).FirstOrDefault();
+				if (text != null)
+				{
+					if (text.Length > 1)
+						text = "(" + text + ")";
+					stringBuilder.Append(text);
+				}
+			}
+
+			return stringBuilder.ToString();
 		}
 
 		private XElement CreateMorphemeElement(Morpheme morpheme)
