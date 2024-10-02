@@ -1951,7 +1951,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			MainDocumentPart mainPart = doc.MainDocumentPart;
 			ImagePart imagePart = mainPart.AddImagePart(imageType);
-			using (FileStream stream = new FileStream(imagePath, FileMode.Open))
+			using (FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read))
 			{
 				imagePart.FeedData(stream);
 			}
@@ -2418,7 +2418,7 @@ namespace SIL.FieldWorks.XWorks
 						{
 							if (elem is Paragraph)
 							{
-								var paraProps = elem.Elements<ParagraphProperties>().First();
+								var paraProps = elem.Elements<ParagraphProperties>().FirstOrDefault();
 								if (paraProps != null)
 								{
 									// Only add the uniqueId to paragraphs with the correct style.  There could
