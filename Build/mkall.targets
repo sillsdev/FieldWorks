@@ -287,7 +287,7 @@
 		<ParatextNugetVersion>9.4.0.1-beta</ParatextNugetVersion>
 		<LcmNugetVersion>11.0.0-beta0104</LcmNugetVersion>
 		<IcuNugetVersion>70.1.123</IcuNugetVersion>
-		<HermitCrabNugetVersion>3.2.6</HermitCrabNugetVersion>
+		<HermitCrabNugetVersion>3.3.0</HermitCrabNugetVersion>
 		<IPCFrameworkVersion>1.1.1-beta0001</IPCFrameworkVersion>
 		<!-- bt393 is the master branch build of ExCss for Windows development. Update when appropriate. -->
 		<ExCssBuildType Condition="'$(OS)'=='Windows_NT'">bt393</ExCssBuildType>
@@ -441,8 +441,6 @@
 		<!-- TODO (Hasso) 2011.11: copy on Condition="'$(UseLocalLibraries)'!='Y'" -->
 		<Message Text="Copying artifacts from Palaso, Chorus, LCM, and related packages to Downloads."/>
 		<Copy SourceFiles="@(SILNugetFiles)" DestinationFolder="$(DownloadsDir)/%(RecursiveDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
-		<Copy SourceFiles="../../machine/src/SIL.Machine.Morphology.HermitCrab/bin/Debug/netstandard2.0/SIL.Machine.Morphology.HermitCrab.dll" DestinationFolder="$(DownloadsDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
-		<Copy SourceFiles="../../machine/src/SIL.Machine/bin/Debug/netstandard2.0/SIL.Machine.dll" DestinationFolder="$(DownloadsDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<Message Text="(Palaso, Chorus, and LCM artifacts will be copied to Output from $(PalasoArtifactsDir), $(ChorusArtifactsDir), and $(LcmArtifactsDir), respectively, as  specified in LibraryDevelopment.targets)" Condition="'$(UseLocalLibraries)'=='Y'"/>
 
 		<!-- Due to platform-specific casing, ExCSS or ExCss is included in a variable -->
@@ -533,8 +531,8 @@
 			<SILNugetPackages Include="Autofac"><Version>4.9.4</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="Vulcan.Uczniowie.HelpProvider"><Version>1.0.16</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<!-- HermitCrab and related packages -->
-			<SILNugetPackages Include="SIL.Machine.Morphology.HermitCrab"><Version>$(HermitCrabNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="SIL.Machine"><Version>$(HermitCrabNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Machine.Morphology.HermitCrab"><Version>$(HermitCrabNugetVersion)</Version><Path>lib/netstandard2.0/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Machine"><Version>$(HermitCrabNugetVersion)</Version><Path>lib/netstandard2.0/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="Sandwych.Quickgraph.Core"><Version>1.0.0</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 		</ItemGroup>
 	</Target>
