@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -134,11 +134,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <param name="e"></param>
 		protected override void OnKeyPress(KeyPressEventArgs e)
 		{
-			if (e.KeyChar == (char) Keys.Back)
+			e.Handled = true;
+			if (e.KeyChar == (char)Keys.Back || e.KeyChar == (char)Keys.Delete)
 			{
 				if (RemoveItemsRequested != null)
 					RemoveItemsRequested(this, new RemoveItemsRequestedEventArgs(false));
-				e.Handled = true;
+			}
+			else
+			{
+				// Ignore all other characters (fixes LT-21888).
+				return;
 			}
 			base.OnKeyPress(e);
 		}
