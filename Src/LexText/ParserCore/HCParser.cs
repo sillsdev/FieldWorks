@@ -640,6 +640,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_xmlWriter.WriteElementString("Reason", reason);
 				m_xmlWriter.WriteEndElement();
 			}
+			public void InvalidRewriteRule(IPhRegularRule rule, string reason)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "invalid-rewrite-rule");
+				m_xmlWriter.WriteElementString("Rule", rule.Name.BestAnalysisVernacularAlternative.Text);
+				m_xmlWriter.WriteElementString("Reason", reason);
+				m_xmlWriter.WriteEndElement();
+			}
 		}
 	}
 }

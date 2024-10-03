@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -176,7 +176,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private bool DisplayColumnOption(object option)
 		{
 			SelectionHelper sel = SelectionHelper.Create(m_view);
-			if (sel.IsRange)
+			if (sel == null || sel.IsRange)
 				return false;
 
 			int cellId = GetCell(sel);
@@ -599,6 +599,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							int prevCellId = GetPrevCell(seqCtxt.Hvo);
 							cellIndex = GetCellCount(prevCellId) - 1;
 							Rule.InputOS.Remove(seqCtxt);
+							// Unschedule the removal of the column.
+							m_removeCol = null;
 							return prevCellId;
 						}
 						bool reconstruct = RemoveContextsFrom(forward, sel, seqCtxt, false, out cellIndex);
@@ -716,7 +718,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			else
 			{
 				int idx = GetIndexToRemove(mappings, sel, forward);
-				if (idx > -1)
+				if (idx > -1 && idx < mappings.Count())
 				{
 					var mapping = (IMoRuleMapping) mappings[idx];
 					index = idx - 1;
