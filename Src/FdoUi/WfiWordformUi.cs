@@ -79,19 +79,16 @@ namespace SIL.FieldWorks.FdoUi
 
 		public override bool CanDelete(out string cannotDeleteMsg)
 		{
-			// Delete problem annotations of the word form.
-			// These aren't used within FieldWorks, and they block deletion.
-			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			ICmBaseAnnotationRepository repository = base.Object.Cache.ServiceLocator.GetInstance<ICmBaseAnnotationRepository>();
+			IEnumerable<ICmBaseAnnotation> problemAnnotations =
+				from ann in repository.AllInstances()
+				where ann.BeginObjectRA == base.Object && ann.SourceRA is ICmAgent
+				select ann;
+			if (problemAnnotations.Any())
 			{
-				ICmBaseAnnotationRepository repository = base.Object.Cache.ServiceLocator.GetInstance<ICmBaseAnnotationRepository>();
-				IEnumerable<ICmBaseAnnotation> problemAnnotations =
-					from ann in repository.AllInstances()
-					where ann.BeginObjectRA == base.Object && ann.SourceRA is ICmAgent
-					select ann;
-				foreach (ICmBaseAnnotation problem in problemAnnotations)
-					m_cache.DomainDataByFlid.DeleteObj(problem.Hvo);
-			});
-
+				cannotDeleteMsg = FdoUiStrings.ksCannotDeleteWordformBecauseOfAnnotations;
+				return false;
+			}
 			if (base.CanDelete(out cannotDeleteMsg))
 				return true;
 			cannotDeleteMsg = FdoUiStrings.ksCannotDeleteWordform;
