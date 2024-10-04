@@ -1069,8 +1069,8 @@ namespace SIL.FieldWorks.Common.Widgets
 			}
 			else
 			{
-				//m_comboListBox.FormWidth = this.Size.Width;
-				sz.Width = Width;
+				// If the programmer set an explicit width for the list box, that width is stored in DropDownWidth.
+				sz.Width = DropDownWidth;
 			}
 
 			if (sz != m_dropDownBox.Form.Size)
