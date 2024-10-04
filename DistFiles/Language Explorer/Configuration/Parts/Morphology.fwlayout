@@ -558,6 +558,8 @@
 		<part ref="DescriptionAllA" menu="mnuDataTree-Help"/>
 		<part ref="OrderNumber" menu="mnuDataTree-Help"/>
 		<part ref="Direction" menu="mnuDataTree-Help"/>
+		<part ref="InitialStratum" menu="mnuDataTree-Help" visibility="ifdata"/>
+		<part ref="FinalStratum" menu="mnuDataTree-Help" visibility="ifdata"/>
 		<part ref="RequiredPOSes" menu="mnuDataTree-Help"/>
 		<part ref="RequiredRuleFeats" menu="mnuDataTree-Help"/>
 		<part ref="ExcludedRuleFeats" menu="mnuDataTree-Help"/>

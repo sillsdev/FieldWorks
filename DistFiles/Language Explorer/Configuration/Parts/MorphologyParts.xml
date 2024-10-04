@@ -2652,10 +2652,16 @@
 				<slice field="Description" label="Description" editor="multistring" ws="all analysis" textStyle="Default Paragraph Characters"/>
 			</if>
 		</part>
-		<part id="PhSegmentRule-Detail-OrderNumber" type="detail">
-			<slice field="OrderNumber" label="Order Number" editor="int"/>
-		</part>
-		<part id="PhSegmentRule-Detail-Active" type="detail">
+      <part id="PhSegmentRule-Detail-OrderNumber" type="detail">
+        <slice field="OrderNumber" label="Order Number" editor="int"/>
+      </part>
+      <part id="PhSegmentRule-Detail-InitialStratum" type="detail">
+        <slice field="InitialStratum" label="Initial Stratum" editor="defaultAtomicReference"/>
+      </part>
+      <part id="PhSegmentRule-Detail-FinalStratum" type="detail">
+        <slice field="FinalStratum" label="Final Stratum" editor="defaultAtomicReference"/>
+      </part>
+      <part id="PhSegmentRule-Detail-Active" type="detail">
 			<slice field="Disabled" label="Active" editor="checkboxwithrefresh" editable="true" toggleValue="true" menu="mnuDataTree-Help"/>
 		</part>
 		<part id="PhSegmentRule-Detail-Direction" type="detail">

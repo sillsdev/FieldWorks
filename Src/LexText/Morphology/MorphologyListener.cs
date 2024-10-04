@@ -22,6 +22,7 @@ using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.IText;
 using SIL.Utils;
 using XCore;
+using System.Linq;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -180,10 +181,32 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_propertyTable = propertyTable;
 			m_mediator.AddColleague(this);
 			Cache = m_propertyTable.GetValue<LcmCache>("cache");
+			CreateDefaultStratum(Cache);
 			m_wordformRepos = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>();
 			Cache.DomainDataByFlid.AddNotification(this);
 			if (IsVernacularSpellingEnabled())
 				OnEnableVernacularSpelling();
+		}
+
+		private void CreateDefaultStratum(LcmCache cache)
+		{
+			if (Cache.LangProject.MorphologicalDataOA.StrataOS.Count() == 0)
+			{
+				NonUndoableUnitOfWorkHelper.Do(cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+				{
+					// Create default strata.
+					IMoStratumFactory stratumFactory = cache.ServiceLocator.GetInstance<IMoStratumFactory>();
+					string[] stratumNames = new string[] { "Morphophonemic", "Clitic", "Surface" };
+					int ws = Cache.DefaultAnalWs;
+					foreach (var stratumName in stratumNames)
+					{
+						IMoStratum stratum = stratumFactory.Create();
+						Cache.LangProject.MorphologicalDataOA.StrataOS.Add(stratum);
+						ITsString tss = TsStringUtils.MakeString(stratumName, ws);
+						stratum.Name.set_String(ws, tss);
+					}
+				});
+			}
 		}
 
 		public IxCoreColleague[] GetMessageTargets()
