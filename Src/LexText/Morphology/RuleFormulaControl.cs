@@ -43,7 +43,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Features,
 			Variable,
 			Index,
-			ModifiedIndex,
+			SetMappingFeatures,
+			SetMappingNaturalClass,
 			Column
 		};
 
@@ -71,6 +72,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 				case RuleInsertType.Index:
 					return MEStrings.ksRuleIndexOpt;
+
+				case RuleInsertType.SetMappingFeatures:
+					return MEStrings.ksSetFeaturesOpt;
+
+				case RuleInsertType.SetMappingNaturalClass:
+					return MEStrings.ksSetNaturalClassOpt;
 
 				case RuleInsertType.Column:
 					return MEStrings.ksRuleColOpt;
@@ -440,18 +447,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			throw new NotImplementedException();
 		}
 
-		/// <summary>
-		/// Inserts a modified item from the specified rule mapping index.
-		/// </summary>
-		/// <param name="index">The rule mapping index.</param>
-		/// <param name="modifications">The modifications to the indexed item.</param>
-		/// <param name="sel">The selection.</param>
-		/// <param name="cellIndex">Index of the new item.</param>
-		/// <returns>The ID of the cell that the item was inserted into</returns>
-		protected virtual int InsertModifiedIndex(int index, IPhNCFeatures modifications, SelectionHelper sel, out int cellIndex)
+		public virtual void SetMappingFeatures(SelectionHelper sel)
 		{
 			throw new NotImplementedException();
 		}
+
+		public virtual void SetMappingNaturalClass(SelectionHelper sel)
+		{
+			throw new NotImplementedException();
+		}
+
+
 
 		/// <summary>
 		/// Inserts the variable (PhVariable).
@@ -643,34 +649,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					}
 					break;
 
-				case RuleInsertType.ModifiedIndex:
-					using (var featChooser = new PhonologicalFeatureChooserDlg())
-					{
-						SetupPhonologicalFeatureChoooserDlg(featChooser);
-						featChooser.SetHelpTopic(FeatureChooserHelpTopic);
-						DialogResult res = featChooser.ShowDialog();
-						if (res == DialogResult.OK)
-						{
-							UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
-							{
-								IPhNCFeatures featNC = m_cache.ServiceLocator.GetInstance<IPhNCFeaturesFactory>().Create();
-								m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS.Add(featNC);
-								featNC.Name.SetUserWritingSystem(string.Format(MEStrings.ksRuleNCFeatsName, RuleName));
-								featNC.FeaturesOA = m_cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
-								string label = (string)e.Suboption;
-								int index = Convert.ToInt32(label.Substring(0, label.Length - 1));
-								cellId = InsertModifiedIndex(index, featNC, sel, out cellIndex);
-								featChooser.FS = featNC.FeaturesOA;
-								featChooser.UpdateFeatureStructure();
-							});
-						}
-						else if (res != DialogResult.Cancel)
-						{
-							featChooser.HandleJump();
-						}
-					}
-					break;
-
 				case RuleInsertType.WordBoundary:
 					IPhBdryMarker wordBdry = m_cache.ServiceLocator.GetInstance<IPhBdryMarkerRepository>().GetObject(LangProjectTags.kguidPhRuleWordBdry);
 					UndoableUnitOfWorkHelper.Do(undo, redo, m_cache.ActionHandlerAccessor, () =>
@@ -708,6 +686,15 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							cellId = InsertVariable(sel, out cellIndex);
 						});
 					break;
+
+				case RuleInsertType.SetMappingFeatures:
+					SetMappingFeatures(sel);
+					break;
+
+				case RuleInsertType.SetMappingNaturalClass:
+					SetMappingNaturalClass(sel);
+					break;
+
 			}
 
 			m_view.Select();
