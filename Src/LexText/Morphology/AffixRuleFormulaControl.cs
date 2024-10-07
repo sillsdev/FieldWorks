@@ -134,7 +134,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				case AffixRuleFormulaVc.ktagLeftEmpty:
 				case AffixRuleFormulaVc.ktagRightEmpty:
-					return type != RuleInsertType.Index;
+					return type != RuleInsertType.Index
+						&& type != RuleInsertType.SetMappingFeatures
+						&& type != RuleInsertType.SetMappingNaturalClass;
 
 				case MoAffixProcessTags.kflidOutput:
 					return type == RuleInsertType.Index
@@ -147,7 +149,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					if (ctxtOrVar.ClassID == PhVariableTags.kClassId)
 						return false;
-					return type != RuleInsertType.Index;
+					return type != RuleInsertType.Index
+						&& type != RuleInsertType.SetMappingFeatures
+						&& type != RuleInsertType.SetMappingNaturalClass;
 			}
 		}
 
