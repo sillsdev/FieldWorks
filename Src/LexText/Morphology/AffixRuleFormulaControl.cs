@@ -117,7 +117,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Variable), DisplayVariableOption);
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Column), DisplayColumnOption);
 			m_insertionControl.AddMultiOption(new InsertOption(RuleInsertType.Index), DisplayOption, DisplayIndices);
-			m_insertionControl.AddMultiOption(new InsertOption(RuleInsertType.ModifiedIndex), DisplayOption, DisplayModifiedIndices);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.SetMappingFeatures), DisplayOption);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.SetMappingNaturalClass), DisplayOption);
 			m_insertionControl.NoOptionsMessage = DisplayNoOptsMsg;
 		}
 
@@ -137,7 +138,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 				case MoAffixProcessTags.kflidOutput:
 					return type == RuleInsertType.Index
-						|| type == RuleInsertType.ModifiedIndex
+						|| (type == RuleInsertType.SetMappingFeatures && IsIndexCurrent)
+						|| (type == RuleInsertType.SetMappingNaturalClass && IsIndexCurrent)
 						|| type == RuleInsertType.Phoneme
 						|| type == RuleInsertType.MorphemeBoundary;
 
@@ -203,14 +205,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var indices = new int[Rule.InputOS.Count];
 			for (int i = 0; i < indices.Length; i++)
 				indices[i] = i + 1;
-			return indices.Cast<object>();
-		}
-
-		private IEnumerable<object> DisplayModifiedIndices()
-		{
-			var indices = new string[Rule.InputOS.Count];
-			for (int i = 0; i < indices.Length; i++)
-				indices[i] = Convert.ToString(i + 1) + "+";
 			return indices.Cast<object>();
 		}
 
@@ -589,15 +583,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return MoAffixProcessTags.kflidOutput;
 		}
 
-		protected override int InsertModifiedIndex(int index, IPhNCFeatures modification, SelectionHelper sel, out int cellIndex)
-		{
-			IMoModifyFromInput modify = m_cache.ServiceLocator.GetInstance<IMoModifyFromInputFactory>().Create();
-			cellIndex = InsertIntoOutput(modify, sel);
-			modify.ContentRA = Rule.InputOS[index - 1];
-			modify.ModificationRA = modification;
-			return MoAffixProcessTags.kflidOutput;
-		}
-
 		protected override int InsertVariable(SelectionHelper sel, out int cellIndex)
 		{
 			return InsertContext(m_cache.ServiceLocator.GetInstance<IPhVariableFactory>().Create(), sel, out cellIndex);
@@ -784,9 +769,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		public void SetMappingFeatures()
+		public override void SetMappingFeatures(SelectionHelper sel = null)
 		{
-			SelectionHelper.Create(m_view);
+			if (sel == null)
+				sel = SelectionHelper.Create(m_view);
 			bool reconstruct = false;
 			int index = -1;
 			UndoableUnitOfWorkHelper.Do(MEStrings.ksAffixRuleUndoSetMappingFeatures,
@@ -852,9 +838,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				ReconstructView(MoAffixProcessTags.kflidOutput, index, true);
 		}
 
-		public void SetMappingNaturalClass()
+		public override void SetMappingNaturalClass(SelectionHelper sel = null)
 		{
-			SelectionHelper.Create(m_view);
+			if (sel == null)
+				sel = SelectionHelper.Create(m_view);
 
 			var natClasses = new HashSet<ICmObject>();
 			foreach (var nc in m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS)
