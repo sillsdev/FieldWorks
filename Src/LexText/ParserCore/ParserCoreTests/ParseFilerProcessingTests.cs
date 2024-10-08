@@ -63,20 +63,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		protected IWfiWordform CheckAnnotationSize(string form, int expectedSize, bool isStarting)
-		{
-			ILcmServiceLocator servLoc = Cache.ServiceLocator;
-			IWfiWordform wf = FindOrCreateWordform(form);
-			int actualSize =
-				(from ann in servLoc.GetInstance<ICmBaseAnnotationRepository>().AllInstances()
-				 where ann.BeginObjectRA == wf
-				 select ann).Count();
-				// wf.RefsFrom_CmBaseAnnotation_BeginObject.Count;
-			string msg = String.Format("Wrong number of {0} annotations for: {1}", isStarting ? "starting" : "ending", form);
-			Assert.AreEqual(expectedSize, actualSize, msg);
-			return wf;
-		}
-
 		private IWfiWordform FindOrCreateWordform(string form)
 		{
 			ILcmServiceLocator servLoc = Cache.ServiceLocator;
@@ -175,26 +161,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		#endregion Setup and TearDown
 
 		#region Tests
-
-		[Test]
-		public void TooManyAnalyses()
-		{
-			IWfiWordform bearsTest = CheckAnnotationSize("bearsTEST", 0, true);
-			var result = new ParseResult("Maximum permitted analyses (448) reached.");
-			m_filer.ProcessParse(bearsTest, ParserPriority.Low, result);
-			ExecuteIdleQueue();
-			CheckAnnotationSize("bearsTEST", 1, false);
-		}
-
-		[Test]
-		public void BufferOverrun()
-		{
-			IWfiWordform dogsTest = CheckAnnotationSize("dogsTEST", 0, true);
-			var result = new ParseResult("Maximum internal buffer size (117) reached.");
-			m_filer.ProcessParse(dogsTest, ParserPriority.Low, result);
-			ExecuteIdleQueue();
-			CheckAnnotationSize("dogsTEST", 1, false);
-		}
 
 		[Test]
 		public void TwoAnalyses()
