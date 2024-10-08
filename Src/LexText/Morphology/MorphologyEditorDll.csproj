@@ -100,7 +100,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>  
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <OutputPath>..\..\..\Output\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -353,6 +353,7 @@
     <Compile Include="ParserAnalysisRemover.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ParserAnnotationRemover.cs" />
     <Compile Include="PhEnvStrRepresentationSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>

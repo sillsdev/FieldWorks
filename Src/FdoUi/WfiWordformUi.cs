@@ -2,10 +2,13 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 
 using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -76,6 +79,16 @@ namespace SIL.FieldWorks.FdoUi
 
 		public override bool CanDelete(out string cannotDeleteMsg)
 		{
+			ICmBaseAnnotationRepository repository = base.Object.Cache.ServiceLocator.GetInstance<ICmBaseAnnotationRepository>();
+			IEnumerable<ICmBaseAnnotation> problemAnnotations =
+				from ann in repository.AllInstances()
+				where ann.BeginObjectRA == base.Object && ann.SourceRA is ICmAgent
+				select ann;
+			if (problemAnnotations.Any())
+			{
+				cannotDeleteMsg = FdoUiStrings.ksCannotDeleteWordformBecauseOfAnnotations;
+				return false;
+			}
 			if (base.CanDelete(out cannotDeleteMsg))
 				return true;
 			cannotDeleteMsg = FdoUiStrings.ksCannotDeleteWordform;

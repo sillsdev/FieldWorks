@@ -181,10 +181,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					string form = work.Wordform.Form.BestVernacularAlternative.Text;
 					using (new TaskReport(String.Format(ParserCoreStrings.ksUpdateX, form), m_taskUpdateHandler))
 					{
-						// delete old problem annotations
+						// delete all old problem annotations
+						// (We no longer create new problem annotations.)
 						IEnumerable<ICmBaseAnnotation> problemAnnotations =
 							from ann in m_baseAnnotationRepository.AllInstances()
-							where ann.BeginObjectRA == work.Wordform && ann.SourceRA == m_parserAgent
+							where ann.SourceRA == m_parserAgent
 							select ann;
 						foreach (ICmBaseAnnotation problem in problemAnnotations)
 							m_cache.DomainDataByFlid.DeleteObj(problem.Hvo);
@@ -194,13 +195,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 						if (work.ParseResult.ErrorMessage != null)
 						{
-							// there was an error, so create a problem annotation
-							ICmBaseAnnotation problemReport = m_baseAnnotationFactory.Create();
-							m_cache.LangProject.AnnotationsOC.Add(problemReport);
-							problemReport.CompDetails = work.ParseResult.ErrorMessage;
-							problemReport.SourceRA = m_parserAgent;
-							problemReport.AnnotationTypeRA = null;
-							problemReport.BeginObjectRA = work.Wordform;
 							SetUnsuccessfulParseEvals(work.Wordform, Opinions.noopinion);
 						}
 						else
