@@ -1348,9 +1348,9 @@ namespace SIL.FieldWorks.XWorks
 			entryPar.Append(paragraphProps);
 
 			// Create the 'continuation' style for the entry. This style will be the same as the style for the entry with the only
-			// difference being that it does not contain the first line indenting (since it is a continuation of the same entry).
+			// differences being that it does not contain the first line indenting or bullet info (since it is a continuation of the same entry).
 			var contStyle = WordStylesGenerator.GenerateContinuationStyle(style);
-			s_styleCollection.AddStyle(contStyle, node.Style, contStyle.StyleId, bulletInfo);
+			s_styleCollection.AddStyle(contStyle, node.Style, contStyle.StyleId);
 		}
 
 		public void AddEntryData(IFragmentWriter writer, List<ConfiguredLcmGenerator.ConfigFragment> pieces)
@@ -2353,7 +2353,7 @@ namespace SIL.FieldWorks.XWorks
 							if (continuationParagraph)
 							{
 								var contStyle = WordStylesGenerator.GenerateContinuationStyle(style);
-								uniqueDisplayName = s_styleCollection.AddStyle(contStyle, node.Style, contStyle.StyleId, bulletInfo);
+								uniqueDisplayName = s_styleCollection.AddStyle(contStyle, node.Style, contStyle.StyleId);
 							}
 						}
 						WP.ParagraphProperties paragraphProps =
