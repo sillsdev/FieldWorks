@@ -164,10 +164,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		public ParseMorph(IMoForm form, IMoMorphSynAnalysis msa, ILexEntryInflType inflType)
+			: this(form, msa, inflType, null)
 		{
-			m_form = form;
-			m_msa = msa;
-			m_inflType = inflType;
 		}
 
 		public ParseMorph(IMoForm form, IMoMorphSynAnalysis msa, ILexEntryInflType inflType, string guessedString)
