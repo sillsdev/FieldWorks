@@ -331,6 +331,14 @@
 		<part id="MoForm-Jt-Allomorph" type="JtView">
 			<string field="Form" ws="vernacular"/>
 		</part>
+		<part id="MoForm-Jt-AllomorphStemNames" type="JtView">
+			<if is="MoStemAllomorph">
+			  <obj field="StemName" layout="OnlyStemName"/>
+			</if>
+		</part>
+		<part id="MoStemName-Jt-OnlyStemName" type="JtView">
+			<string field="Name" ws="best analysis" />
+		</part>
 		<part id="MoForm-Jt-IsAbstractFormForAllomorph" type="jtview">
 			<if field="IsAbstract" boolequals="false">
 				<lit>no</lit>
