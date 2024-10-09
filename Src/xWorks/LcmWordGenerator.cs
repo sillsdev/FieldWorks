@@ -2270,8 +2270,11 @@ namespace SIL.FieldWorks.XWorks
 			var elements = ((DocFragment)contentToAdd).DocBody.Elements();
 			foreach (OpenXmlElement elem in elements)
 			{
-				// Un-nestable type.
-				if (elem is WP.Paragraph || elem is WP.Table)
+				Boolean containsDrawing = elem.Descendants<Drawing>().Any();
+				// Un-nestable type (Paragraph or Table), or if a run contains a drawing, then leave it
+				// as a first level element. Runs containing drawings will later, in AddEntryData(), get
+				// put in their own paragraph.
+				if (elem is WP.Paragraph || elem is WP.Table || (elem is WP.Run && containsDrawing))
 				{
 					// End the current working paragraph and add it to the list.
 					if (EndParagraph(workingParagraph, node, continuationParagraph))
