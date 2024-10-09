@@ -1854,7 +1854,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					{
 						var rule = new AllomorphCoOccurrenceRule(ConstraintType.Exclude, others, adjacency);
 						firstAllo.AllomorphCoOccurrenceRules.Add(rule);
-						m_language.AllomorphCoOccurrenceRules.Add(rule);
+						m_language.AllomorphCoOccurrenceRules.Add((firstAllo, rule));
 					}
 				}
 			}
@@ -1904,7 +1904,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					{
 						var rule = new MorphemeCoOccurrenceRule(ConstraintType.Exclude, others, adjacency);
 						firstMorpheme.MorphemeCoOccurrenceRules.Add(rule);
-						m_language.MorphemeCoOccurrenceRules.Add(rule);
+						m_language.MorphemeCoOccurrenceRules.Add((firstMorpheme, rule));
 					}
 				}
 			}
@@ -2198,7 +2198,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private Shape Segment(string str)
 		{
 			Shape shape;
-			if (m_acceptUnspecifiedGraphemes)
+			if (m_acceptUnspecifiedGraphemes && !IsLexicalPattern(str))
 			{
 				int[] baseCharPositions = null;
 				do
@@ -2222,9 +2222,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 			else
 			{
-				shape = m_table.Segment(str);
+				shape = m_table.Segment(str, true);
 			}
 			return shape;
+		}
+
+		/// <summary>
+		/// Does form contain a lexical pattern (e.g. [Seg]*)?
+		/// </summary>
+		public static bool IsLexicalPattern(string form)
+		{
+			// This assumes that "[" and "]" are not part of any phonemes.
+			return form.Contains("[") && form.Contains("]");
 		}
 
 		private static string FormatForm(string formStr)
@@ -2382,6 +2391,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					if (!m_table.Contains(otherChar))
 						m_table.AddBoundary(otherChar);
 				}
+			}
+			// Add natural classes to table for lexical patterns.
+			foreach(NaturalClass hcNaturalClass in m_language.NaturalClasses)
+			{
+				m_table.AddNaturalClass(hcNaturalClass);
+			}
+			foreach (string ncName in m_naturalClassLookup.Keys)
+			{
+				NaturalClass hcNaturalClass;
+				if (TryLoadNaturalClass(m_naturalClassLookup[ncName], out hcNaturalClass))
+					m_table.AddNaturalClass(hcNaturalClass);
 			}
 			m_language.CharacterDefinitionTables.Add(m_table);
 		}
