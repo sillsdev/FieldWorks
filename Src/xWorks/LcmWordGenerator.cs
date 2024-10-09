@@ -2500,6 +2500,16 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 
+			// Add any font properties that were explicitly set.
+			if (bulletInfo.FontInfo != null && bulletInfo.FontInfo.IsAnyExplicit)
+			{
+				WP.RunProperties runProps = WordStylesGenerator.GetExplicitFontProperties(bulletInfo.FontInfo);
+				if (runProps.HasChildren)
+				{
+					abstractLevel.Append(runProps);
+				}
+			}
+
 			// Add the new AbstractNum after the last AbstractNum.
 			// Word cares about the order of AbstractNum elements and NumberingInstance elements.
 			var abstractNum = new AbstractNum(abstractLevel) { AbstractNumberId = bulletUniqueId };

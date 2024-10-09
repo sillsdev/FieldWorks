@@ -617,6 +617,16 @@ namespace SIL.FieldWorks.XWorks
 							oxmlUnderline.Val = UnderlineValues.None;
 							break;
 					}
+
+					// UnderlineColor
+					System.Drawing.Color color;
+					if (GetFontValue(wsFontInfo.m_underlineColor, defaultFontInfo.UnderlineColor, out color) &&
+						oxmlUnderline.Val != UnderlineValues.None)
+					{
+						string openXmlColor = GetOpenXmlColor(color.R, color.G, color.B);
+						oxmlUnderline.Color = openXmlColor;
+					}
+
 					charDefaults.Append(oxmlUnderline);
 				}
 				// Else the underline is actually a strikethrough.
@@ -628,6 +638,137 @@ namespace SIL.FieldWorks.XWorks
 			//TODO: handle remaining font features including from ws or default,
 
 			return charDefaults;
+		}
+
+		/// <summary>
+		/// Gets the font properties that were explicitly set.
+		/// </summary>
+		/// <returns>RunProperties containing all explicitly set font properties.</returns>
+		public static RunProperties GetExplicitFontProperties(FontInfo fontInfo)
+		{
+			var runProps = new RunProperties();
+
+			// FontName
+			if (((InheritableStyleProp<string>)fontInfo.FontName).IsExplicit)
+			{
+				// Note: if desired, multiple fonts can be used for different text types in a single run
+				// by separately specifying font names to use for ASCII, High ANSI, Complex Script, and East Asian content.
+				var font = new RunFonts() { Ascii = fontInfo.FontName.Value };
+				runProps.Append(font);
+			}
+
+			// FontSize
+			if (((InheritableStyleProp<int>)fontInfo.FontSize).IsExplicit)
+			{
+				// Fontsize is stored internally multiplied by 1000.  (FieldWorks code generally hates floating point.)
+				// OpenXML expects fontsize given in halves of a point; thus we divide by 500.
+				int fontSize = fontInfo.FontSize.Value / 500;
+				var size = new FontSize() { Val = fontSize.ToString() };
+				runProps.Append(size);
+			}
+
+			// Bold
+			if (((InheritableStyleProp<bool>)fontInfo.Bold).IsExplicit)
+			{
+				var bold = new Bold() { Val = fontInfo.Bold.Value };
+				runProps.Append(bold);
+			}
+
+			// Italic
+			if (((InheritableStyleProp<bool>)fontInfo.Italic).IsExplicit)
+			{
+				var ital = new Italic() { Val = fontInfo.Italic.Value };
+				runProps.Append(ital);
+			}
+
+			// FontColor
+			if (((InheritableStyleProp<System.Drawing.Color>)fontInfo.FontColor).IsExplicit)
+			{
+				System.Drawing.Color color = fontInfo.FontColor.Value;
+				// note: open xml does not allow alpha
+				string openXmlColor = GetOpenXmlColor(color.R, color.G, color.B);
+				var fontColor = new Color() { Val = openXmlColor };
+				runProps.Append(fontColor);
+			}
+
+			// BackColor
+			if (((InheritableStyleProp<System.Drawing.Color>)fontInfo.BackColor).IsExplicit)
+			{
+				System.Drawing.Color color = fontInfo.BackColor.Value;
+				// note: open xml does not allow alpha,
+				// though a percentage shading could be implemented using shading pattern options.
+				string openXmlColor = GetOpenXmlColor(color.R, color.G, color.B);
+				var backShade = new Shading() { Fill = openXmlColor };
+				runProps.Append(backShade);
+			}
+
+			// Superscript
+			if (((InheritableStyleProp<FwSuperscriptVal>)fontInfo.SuperSub).IsExplicit)
+			{
+				FwSuperscriptVal fwSuperSub = fontInfo.SuperSub.Value;
+				VerticalTextAlignment oxmlSuperSub = new VerticalTextAlignment();
+				switch (fwSuperSub)
+				{
+					case (FwSuperscriptVal.kssvSub):
+						oxmlSuperSub.Val = VerticalPositionValues.Subscript;
+						break;
+					case (FwSuperscriptVal.kssvSuper):
+						oxmlSuperSub.Val = VerticalPositionValues.Superscript;
+						break;
+					case (FwSuperscriptVal.kssvOff):
+						oxmlSuperSub.Val = VerticalPositionValues.Baseline;
+						break;
+				}
+				runProps.Append(oxmlSuperSub);
+			}
+
+			// Underline, UnderlineColor, and Strikethrough.
+			if (((InheritableStyleProp<FwUnderlineType>)fontInfo.Underline).IsExplicit)
+			{
+				FwUnderlineType fwUnderline = fontInfo.Underline.Value;
+
+				// In FieldWorks, strikethrough is a special type of underline,
+				// but strikethrough and underline are represented by different objects in OpenXml
+				if (fwUnderline != FwUnderlineType.kuntStrikethrough)
+				{
+					Underline oxmlUnderline = new Underline();
+					switch (fwUnderline)
+					{
+						case (FwUnderlineType.kuntSingle):
+							oxmlUnderline.Val = UnderlineValues.Single;
+							break;
+						case (FwUnderlineType.kuntDouble):
+							oxmlUnderline.Val = UnderlineValues.Double;
+							break;
+						case (FwUnderlineType.kuntDotted):
+							oxmlUnderline.Val = UnderlineValues.Dotted;
+							break;
+						case (FwUnderlineType.kuntDashed):
+							oxmlUnderline.Val = UnderlineValues.Dash;
+							break;
+						case (FwUnderlineType.kuntNone):
+							oxmlUnderline.Val = UnderlineValues.None;
+							break;
+					}
+
+					// UnderlineColor
+					if (((InheritableStyleProp<System.Drawing.Color>)fontInfo.UnderlineColor).IsExplicit &&
+						oxmlUnderline.Val != UnderlineValues.None)
+					{
+						System.Drawing.Color color = fontInfo.UnderlineColor.Value;
+						string openXmlColor = GetOpenXmlColor(color.R, color.G, color.B);
+						oxmlUnderline.Color = openXmlColor;
+					}
+
+					runProps.Append(oxmlUnderline);
+				}
+				// Strikethrough
+				else
+				{
+					runProps.Append(new Strike());
+				}
+			}
+			return runProps;
 		}
 
 		public static string GetWsString(string wsId)
