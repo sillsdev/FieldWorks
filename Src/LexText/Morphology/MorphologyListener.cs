@@ -195,15 +195,19 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				NonUndoableUnitOfWorkHelper.Do(cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
 					// Create default strata.
+					int ws = Cache.DefaultAnalWs;
+					ICmPossibilityList stratumPossibilities = cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+					stratumPossibilities.Name.set_String(ws, TsStringUtils.MakeString("Strata", ws));
+					stratumPossibilities.WsSelector = WritingSystemServices.kwsAnalVerns;
 					IMoStratumFactory stratumFactory = cache.ServiceLocator.GetInstance<IMoStratumFactory>();
 					string[] stratumNames = new string[] { "Morphophonemic", "Clitic", "Surface" };
-					int ws = Cache.DefaultAnalWs;
 					foreach (var stratumName in stratumNames)
 					{
 						IMoStratum stratum = stratumFactory.Create();
-						Cache.LangProject.MorphologicalDataOA.StrataOS.Add(stratum);
+						// Cache.LangProject.MorphologicalDataOA.StrataOS.Add(stratum);
 						ITsString tss = TsStringUtils.MakeString(stratumName, ws);
 						stratum.Name.set_String(ws, tss);
+						stratumPossibilities.FindOrCreatePossibility(stratumName, ws);
 					}
 				});
 			}
