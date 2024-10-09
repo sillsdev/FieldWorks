@@ -962,7 +962,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcStemEntry.PrimaryAllomorph.AllomorphCoOccurrenceRules.Count, Is.EqualTo(1));
 			AllomorphCoOccurrenceRule coOccurRule = hcStemEntry.PrimaryAllomorph.AllomorphCoOccurrenceRules.First();
 			Assert.That(coOccurRule.Adjacency, Is.EqualTo(MorphCoOccurrenceAdjacency.SomewhereToRight));
-			Assert.That(coOccurRule.Key.Morpheme.ToString(), Is.EqualTo("sag"));
 			Assert.That(coOccurRule.Others.Select(a => a.Morpheme.ToString()), Is.EqualTo(new[] {"-ɯd"}));
 		}
 
@@ -983,7 +982,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcStemEntry.MorphemeCoOccurrenceRules.Count, Is.EqualTo(1));
 			MorphemeCoOccurrenceRule coOccurRule = hcStemEntry.MorphemeCoOccurrenceRules.First();
 			Assert.That(coOccurRule.Adjacency, Is.EqualTo(MorphCoOccurrenceAdjacency.AdjacentToRight));
-			Assert.That(coOccurRule.Key.ToString(), Is.EqualTo("sag"));
 			Assert.That(coOccurRule.Others.Select(a => a.ToString()), Is.EqualTo(new[] {"-ɯd"}));
 		}
 

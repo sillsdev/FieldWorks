@@ -426,6 +426,12 @@ namespace SIL.FieldWorks.IText
 						else
 						{
 							mb.MorphRA = mfRepository.GetObject(m_analysisMorphs[imorph]);
+							if (mb.MorphRA != null && IsLexicalPattern(mb.MorphRA.Form))
+							{
+								// If mb.MorphRA.Form is a lexical pattern then set mb.Form to the guessed root.
+								int hvoSbMorph = m_sda.get_VecItem(m_hvoSbWord, ktagSbWordMorphs, imorph);
+								mb.Form.set_String(wsVern, m_sandbox.GetFullMorphForm(hvoSbMorph));
+							}
 						}
 						// Set the MSA if we have one. Note that it is (pathologically) possible that the user has done
 						// something in another window to destroy the MSA we remember, so don't try to set it if so.

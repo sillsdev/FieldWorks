@@ -1145,7 +1145,10 @@ namespace SIL.FieldWorks.IText
 						IMoForm morph = mb.MorphRA;
 						if (morph != null)
 						{
-							ITsString tss = morph.Form.get_String(m_sandbox.RawWordformWs);
+							// If morph.Form is a lexical pattern then mb.Form is the guessed root.
+							ITsString tss = IsLexicalPattern(morph.Form)
+								? mb.Form.get_String(m_sandbox.RawWordformWs)
+								: morph.Form.get_String(m_sandbox.RawWordformWs);
 							var morphType = morph.MorphTypeRA;
 							string sPrefix = morphType.Prefix;
 							string sPostfix = morphType.Postfix;
