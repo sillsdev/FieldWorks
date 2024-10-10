@@ -188,9 +188,9 @@
       <Name>nunit.framework</Name>
       <HintPath>..\..\..\..\packages\NUnit.3.13.3\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
+    <Reference Include="Moq, Version=4.20.70">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Bin\Rhino\Rhino.Mocks.dll</HintPath>
+      <HintPath>..\..\..\..\Output\Debug\Moq.dll</HintPath>
     </Reference>
     <Reference Include="RootSite">
       <Name>RootSite</Name>
