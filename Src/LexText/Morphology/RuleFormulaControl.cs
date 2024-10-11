@@ -641,10 +641,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 									featNC.FeaturesOA = m_cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
 									IPhSimpleContextNC ctxt;
 									cellId = InsertNC(featNC, sel, out cellIndex, out ctxt);
-									if (ctxt != null)
-										featChooser.Context = ctxt;
-									else
-										featChooser.FS = featNC.FeaturesOA;
+									featChooser.Context = ctxt;
 									featChooser.UpdateFeatureStructure();
 								});
 						}
