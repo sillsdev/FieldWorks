@@ -589,6 +589,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var redo = string.Format(MEStrings.ksRuleRedoInsert, option);
 
 			SelectionHelper sel = SelectionHelper.Create(m_view);
+			if (sel == null)
+			{
+				// The selection can become invalid because of an undo (see LT-20588).
+				m_insertionControl.UpdateOptionsDisplay();
+				return;
+			}
 			int cellId = -1;
 			int cellIndex = -1;
 			switch (option.Type)

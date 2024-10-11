@@ -337,4 +337,7 @@ Without these, we cannot find related entries.</value>
     <value>Problem opening file</value>
     <comment>Caption for error dialog</comment>
   </data>
+  <data name="ksCannotDeleteWordformBecauseOfAnnotations" xml:space="preserve">
+    <value>Sorry, FieldWorks cannot delete this wordform because there are parsing annotations attached.  Please invoke "Remove Parser annotations" in Tools &gt; Utilities first.</value>
+  </data>
 </root>

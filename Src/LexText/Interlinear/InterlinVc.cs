@@ -1356,9 +1356,10 @@ namespace SIL.FieldWorks.IText
 						{
 							vwenv.AddString(m_tssMissingVernacular);
 						}
-						else if (mf == null)
+						else if (mf == null || SandboxBase.IsLexicalPattern(mf.Form))
 						{
 							// If no morph, use the form of the morph bundle (and the entry is of course missing)
+							// If mf.Form is a lexical pattern then the form of the morph bundle is the guessed root.
 							var ws = GetRealWsOrBestWsForContext(wmb.Hvo, spec);
 							vwenv.AddStringAltMember(WfiMorphBundleTags.kflidForm, ws, this);
 						}
@@ -2637,4 +2638,5 @@ namespace SIL.FieldWorks.IText
 		}
 
 	}
+
 }

@@ -1325,9 +1325,14 @@ namespace SIL.FieldWorks.IText
 						}
 						else
 						{
-							// Create the secondary object corresponding to the MoForm in the usual way from the form object.
-							hvoMorphForm = CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidMorphemes, mf.Hvo,
-																		 MoFormTags.kflidForm, hvoSbWord, sdaMain, cda);
+							hvoMorphForm = m_caches.FindOrCreateSec(mf.Hvo, kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
+							if (IsLexicalPattern(mf.Form))
+								// If mf.Form is a lexical pattern then mb.Form is the guessed root.
+								CopyStringsToSecondary(InterlinLineChoices.kflidMorphemes, sdaMain, mb.Hvo,
+									WfiMorphBundleTags.kflidForm, cda, hvoMorphForm, ktagSbNamedObjName);
+							else
+								CopyStringsToSecondary(InterlinLineChoices.kflidMorphemes, sdaMain, mf.Hvo,
+									MoFormTags.kflidForm, cda, hvoMorphForm, ktagSbNamedObjName);
 							// Store the prefix and postfix markers from the MoMorphType object.
 							int hvoMorphType = sdaMain.get_ObjectProp(mf.Hvo,
 																	  MoFormTags.kflidMorphType);
@@ -1465,6 +1470,22 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 			return fGuessing != 0;
+		}
+
+		/// <summary>
+		/// Does multiString contain a lexical pattern (e.g. [Seg]*)?
+		/// </summary>
+		public static bool IsLexicalPattern(IMultiUnicode multiString)
+		{
+			// This assumes that "[" and "]" are not part of any phonemes.
+			for (var i = 0; i < multiString.StringCount; i++)
+			{
+				int ws;
+				string text = multiString.GetStringFromIndex(i, out ws).Text;
+				if (text.Contains("[") && text.Contains("]"))
+					return true;
+			}
+			return false;
 		}
 
 		public static bool GetHasMultipleRelevantAnalyses(IWfiWordform analysis)
@@ -2007,6 +2028,17 @@ namespace SIL.FieldWorks.IText
 								  && (mf.MorphTypeRA == mmt || mf.MorphTypeRA.IsAmbiguousWith(mmt))
 							  select mf).ToList();
 
+				if (morphs.Count == 0)
+				{
+					// Look for morphs in matching morph bundles with lexical patterns.
+					// If morph is a lexical pattern then the morph bundle's Form is the guessed root.
+					morphs = (from mb in Cache.ServiceLocator.GetInstance<IWfiMorphBundleRepository>().AllInstances()
+							  where IsLexicalPattern(mb.MorphRA.Form)
+							      && icuCollator.Compare(mb.Form.get_String(ws).Text, form) == 0
+								  && mb.MorphRA.MorphTypeRA != null
+								  && (mb.MorphRA.MorphTypeRA == mmt || mb.MorphRA.MorphTypeRA.IsAmbiguousWith(mmt))
+							  select mb.MorphRA).ToList();
+				}
 				if (morphs.Count == 1)
 					return morphs.First(); // special case: we can avoid the cost of figuring ReferringObjects.
 				IMoForm bestMorph = null;

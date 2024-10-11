@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			IEnumerable<Word> wordAnalyses;
 			try
 			{
-				wordAnalyses = m_morpher.ParseWord(word);
+				wordAnalyses = m_morpher.ParseWord(word, out _, true);
 			}
 			catch (Exception e)
 			{
@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					if (GetMorphs(wordAnalysis, out morphs))
 					{
 						analyses.Add(new ParseAnalysis(morphs.Select(mi =>
-							new ParseMorph(mi.Form, mi.Msa, mi.InflType))));
+							new ParseMorph(mi.Form, mi.Msa, mi.InflType, mi.GuessedString))));
 					}
 				}
 				result = new ParseResult(analyses);
@@ -189,11 +189,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				try
 				{
 					object trace;
-					foreach (Word wordAnalysis in m_morpher.ParseWord(form, out trace))
+					foreach (Word wordAnalysis in m_morpher.ParseWord(form, out trace, true))
 					{
 						List<MorphInfo> morphs;
 						if (GetMorphs(wordAnalysis, out morphs))
-							wordformElem.Add(new XElement("Analysis", morphs.Select(mi => CreateAllomorphElement("Morph", mi.Form, mi.Msa, mi.InflType, mi.IsCircumfix))));
+							wordformElem.Add(new XElement("Analysis", morphs.Select(mi => CreateAllomorphElement("Morph", mi.Form, mi.Msa, mi.InflType, mi.IsCircumfix, mi.GuessedString))));
 					}
 					if (tracing)
 						wordformElem.Add(new XElement("Trace", trace));
@@ -364,7 +364,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 				else
 				{
-					morphInfo.String += formStr;
 					continue;
 				}
 
@@ -394,7 +393,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				morphInfo = new MorphInfo
 					{
 						Form = form,
-						String = formStr,
+						GuessedString = allomorph.Guessed ? formStr : null,
 						Msa = msa,
 						InflType = inflType,
 						IsCircumfix = formID2 > 0
@@ -466,11 +465,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return "unknown";
 		}
 
-		internal static XElement CreateAllomorphElement(string name, IMoForm form, IMoMorphSynAnalysis msa, ILexEntryInflType inflType, bool circumfix)
+		internal static XElement CreateAllomorphElement(string name, IMoForm form, IMoMorphSynAnalysis msa, ILexEntryInflType inflType, bool circumfix, string guessedString)
 		{
 			Guid morphTypeGuid = circumfix ? MoMorphTypeTags.kguidMorphCircumfix : (form.MorphTypeRA == null ? Guid.Empty : form.MorphTypeRA.Guid);
 			var elem = new XElement(name, new XAttribute("id", form.Hvo), new XAttribute("type", GetMorphTypeString(morphTypeGuid)),
-				new XElement("Form", circumfix ? form.OwnerOfClass<ILexEntry>().HeadWord.Text : form.GetFormWithMarkers(form.Cache.DefaultVernWs)),
+				new XElement("Form", circumfix ? form.OwnerOfClass<ILexEntry>().HeadWord.Text : guessedString ?? form.GetFormWithMarkers(form.Cache.DefaultVernWs)),
 				new XElement("LongName", form.LongName));
 			elem.Add(CreateMorphemeElement(msa, inflType));
 			return elem;
@@ -567,7 +566,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		class MorphInfo
 		{
 			public IMoForm Form { get; set; }
-			public string String { get; set; }
+			public string GuessedString { get; set; }
 			public IMoMorphSynAnalysis Msa { get; set; }
 			public ILexEntryInflType InflType { get; set; }
 			public bool IsCircumfix { get; set; }
