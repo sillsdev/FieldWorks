@@ -200,9 +200,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 						linkLabel.Links.Clear();
 						int start = 0;
-						foreach (int option in options)
+						foreach (object option in options)
 						{
-							int len = Convert.ToString(option).Length;
+							int len = option.ToString().Length;
 							LinkLabel.Link link = linkLabel.Links.Add(start, len, opt.Item1);
 							// use the tag property to store the index for this link
 							link.Tag = option;
