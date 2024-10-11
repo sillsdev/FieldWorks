@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ParatextImport</RootNamespace>
     <AssemblyName>ParatextImportTests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <AppConfig>..\..\AppForTests.config</AppConfig>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>
@@ -161,10 +161,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\ProjectUnpacker.dll</HintPath>
     </Reference>
-    <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Bin\Rhino\Rhino.Mocks.dll</HintPath>
-    </Reference>
+    <Reference Include="Moq" />
     <Reference Include="RootSite, Version=5.5.0.19483, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\RootSite.dll</HintPath>

@@ -16,7 +16,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <NoWin32Manifest>true</NoWin32Manifest>
     <ApplicationIcon>BookOnCube.ico</ApplicationIcon>
     <PublishUrl>publish\</PublishUrl>

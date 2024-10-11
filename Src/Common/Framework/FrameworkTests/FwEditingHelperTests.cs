@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Moq;
 using Rhino.Mocks;
 using SIL.FieldWorks.Common.RootSites;
 using System.Windows.Forms;
@@ -16,6 +17,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
+using MockRepository = Rhino.Mocks.MockRepository;
 
 namespace SIL.FieldWorks.Common.Framework
 {
