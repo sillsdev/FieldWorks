@@ -210,6 +210,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\NETStandard.Library.NETFramework.2.0.0-preview2-25405-01\build\net461\lib\netstandard.dll</HintPath>
     </Reference>
+    <Reference Include="System.ValueTuple">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SIL.WritingSystems.dll</HintPath>
