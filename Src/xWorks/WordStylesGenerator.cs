@@ -361,7 +361,6 @@ namespace SIL.FieldWorks.XWorks
 				Style wsCharStyle = GetOnlyCharacterStyle(GenerateParagraphStyleFromLcmStyleSheet(NormalParagraphStyleName, aws.Handle, propertyTable, out BulletInfo? _));
 				wsCharStyle.StyleId = GetWsString(aws.LanguageTag);
 				wsCharStyle.StyleName = new StyleName() { Val = wsCharStyle.StyleId };
-
 				styleRules.Append(wsCharStyle);
 			}
 
@@ -479,6 +478,30 @@ namespace SIL.FieldWorks.XWorks
 			var charDefaults = new StyleRunProperties();
 			var wsFontInfo = projectStyle.FontInfoForWs(wsId);
 			var defaultFontInfo = projectStyle.DefaultCharacterStyleInfo;
+
+			// If the paragraph is Bidi; check whether this run should be RTL
+			if (LcmWordGenerator.IsBidi)
+			{
+				//charDefaults.Append(new RightToLeftText());
+				bool wsIsRtl = false;
+				CoreWritingSystemDefinition aws;
+				if (wsId == 0)
+				{
+					// ID of 0 doesn't correspond to any writing system
+					// In this case, assume we're working with the default analysis WS
+					aws = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+				}
+				else
+				{
+					aws = cache.ServiceLocator.WritingSystems.AllWritingSystems
+						.FirstOrDefault(ws => ws.Handle == wsId);
+				}
+
+				wsIsRtl = aws?.RightToLeftScript ?? false;
+
+				//TODO: add some flag here to pass along with the style that will let us know to make the run RTL in the LcmWordGenerator.
+				//if (wsIsRtl)
+			}
 
 			// set fontName to the wsFontInfo publicly accessible InheritableStyleProp value if set, otherwise the
 			// defaultFontInfo if set, or null.
@@ -635,6 +658,7 @@ namespace SIL.FieldWorks.XWorks
 					charDefaults.Append(new Strike());
 				}
 			}
+
 			//TODO: handle remaining font features including from ws or default,
 
 			return charDefaults;
@@ -880,6 +904,7 @@ namespace SIL.FieldWorks.XWorks
 				charStyle.StyleId = fullStyleDeclaration.StyleId;
 			if (fullStyleDeclaration.StyleRunProperties != null)
 				charStyle.Append(fullStyleDeclaration.StyleRunProperties.CloneNode(true));
+
 			return charStyle;
 		}
 

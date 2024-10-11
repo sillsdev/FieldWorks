@@ -42,6 +42,7 @@ namespace SIL.FieldWorks.XWorks
 		private ReadOnlyPropertyTable _propertyTable;
 		internal const int maxImageHeightInches = 1;
 		internal const int maxImageWidthInches = 1;
+		public static bool IsBidi { get; private set; }
 
 		public LcmWordGenerator(LcmCache cache)
 		{
@@ -63,8 +64,10 @@ namespace SIL.FieldWorks.XWorks
 				var readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);
 
 				generator.Init(readOnlyPropertyTable);
+				IsBidi = ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable,
+					configuration);
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, false, true, System.IO.Path.GetDirectoryName(filePath),
-							ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), System.IO.Path.GetFileName(cssPath) == "configured.css")
+							IsBidi, System.IO.Path.GetFileName(cssPath) == "configured.css")
 							{ ContentGenerator = generator, StylesGenerator = generator};
 				settings.StylesGenerator.AddGlobalStyles(configuration, readOnlyPropertyTable);
 				string lastHeader = null;
@@ -687,12 +690,29 @@ namespace SIL.FieldWorks.XWorks
 			/// </summary>
 			public void AddRun(LcmCache cache, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string writingSystem, bool first)
 			{
+				bool wsIsRtl = false;
+				// If the project is Bidi; check whether this run should be RTL
+				if (IsBidi == true)
+				{
+					CoreWritingSystemDefinition aws;
+
+					aws = cache.ServiceLocator.WritingSystems.AllWritingSystems
+							.FirstOrDefault(ws => ws.Id == writingSystem);
+
+					wsIsRtl = aws?.RightToLeftScript ?? false;
+				}
+
 				// Add Between text, if it is not the first item.
 				if (!first &&
 					config != null &&
 					!string.IsNullOrEmpty(config.Between))
 				{
 					var betweenRun = CreateBeforeAfterBetweenRun(config.Between);
+
+					if (wsIsRtl)
+					{
+						MakeRunRtl(betweenRun);
+					}
 					WordFragment.DocBody.Append(betweenRun);
 				}
 
@@ -767,6 +787,11 @@ namespace SIL.FieldWorks.XWorks
 						}
 
 						run.Append(new RunProperties(new RunStyle() { Val = uniqueDisplayName }));
+
+						if (wsIsRtl)
+						{
+							MakeRunRtl(run);
+						}
 					}
 				}
 			}
@@ -855,6 +880,15 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var beforeRun = CreateBeforeAfterBetweenRun(config.Before);
 				((DocFragment)elementContent).DocBody.PrependChild(beforeRun);
+				if (IsBidi)
+				{
+					// Add a unicode RTL mark before the before content.
+					var rtlRun = new WP.Run();
+					rtlRun.AppendChild(new WP.Text("\u200f"));
+					rtlRun.RunProperties = new RunProperties();
+					rtlRun.RunProperties.RightToLeftText = new RightToLeftText();
+					((DocFragment)elementContent).DocBody.PrependChild(rtlRun);
+				}
 			}
 
 			// Add After text, if it is not going to be displayed in a paragraph.
@@ -862,6 +896,16 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var afterRun = CreateBeforeAfterBetweenRun(config.After);
 				((DocFragment)elementContent).DocBody.Append(afterRun);
+			}
+
+			// If Bidi, add a RTL character after the run and any "after text".
+			if (IsBidi)
+			{
+				var rtlRun = new WP.Run();
+				rtlRun.AppendChild(new WP.Text("\u200f"));
+				rtlRun.RunProperties = new RunProperties();
+				rtlRun.RunProperties.RightToLeftText = new RightToLeftText();
+				((DocFragment)elementContent).DocBody.Append(rtlRun);
 			}
 
 			// Add Bullet and Numbering Data to lists.
@@ -893,6 +937,15 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var beforeRun = CreateBeforeAfterBetweenRun(config.Before);
 				groupData.DocBody.PrependChild(beforeRun);
+				if (IsBidi)
+				{
+					// Add a unicode RTL mark before the before content.
+					var rtlRun = new WP.Run();
+					rtlRun.AppendChild(new WP.Text("\u200f"));
+					rtlRun.RunProperties = new RunProperties();
+					rtlRun.RunProperties.RightToLeftText = new RightToLeftText();
+					groupData.DocBody.PrependChild(rtlRun);
+				}
 			}
 
 			// Add the group data.
@@ -921,6 +974,15 @@ namespace SIL.FieldWorks.XWorks
 				groupData.DocBody.Append(afterRun);
 			}
 
+			// If Bidi, add a RTL character after the run and any "after text".
+			if (IsBidi)
+			{
+				var rtlRun = new WP.Run();
+				rtlRun.AppendChild(new WP.Text("\u200f"));
+				rtlRun.RunProperties = new RunProperties();
+				rtlRun.RunProperties.RightToLeftText = new RightToLeftText();
+				groupData.DocBody.Append(rtlRun);
+			}
 			// Don't add an empty paragraph to the groupData fragment.
 			if (groupPara != null && groupPara.HasChildren)
 			{
@@ -1158,6 +1220,14 @@ namespace SIL.FieldWorks.XWorks
 			txt.Space = SpaceProcessingModeValues.Preserve;
 			((WordFragmentWriter)writer).WordFragment.GetLastRun()
 				.AppendChild(txt);
+		}
+
+		public static void MakeRunRtl(Run run)
+		{
+			if (run.RunProperties == null)
+				run.RunProperties = new RunProperties();
+
+			run.RunProperties.RightToLeftText = new RightToLeftText();
 		}
 		public void AddLineBreakInRunContent(IFragmentWriter writer, ConfigurableDictionaryNode config)
 		{
@@ -1743,17 +1813,6 @@ namespace SIL.FieldWorks.XWorks
 				AddParagraphBasedOnStyle(headStyle, null, _propertyTable);
 				s_styleCollection.AddStyle(headStyle, WordStylesGenerator.LetterHeadingStyleName, headStyle.StyleId, bulletInfo);
 			}
-
-			// Check both 'normal' and 'mainEntry' paragraph styles for the RightToLeft flag.  If either of them
-			// have it then set the flag for all run properties to be created RTL.
-			// Note:  Checking 'normal' and 'mainEntry' seems like a logical place to check for this flag since
-			// other paragraph styles are usually based on them, but there may be reasons to expand this check.
-			if ((normStyle?.StyleParagraphProperties?.BiDi != null) ||
-				(mainStyle?.StyleParagraphProperties?.BiDi != null))
-			{
-				RightToLeft = true;
-			}
-
 
 			// TODO: in openxml, will links be plaintext by default?
 			//WordStylesGenerator.MakeLinksLookLikePlainText(_styleSheet);
