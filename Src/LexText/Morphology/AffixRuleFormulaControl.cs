@@ -451,20 +451,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		protected override int InsertNC(IPhNaturalClass nc, SelectionHelper sel, out int cellIndex, out IPhSimpleContextNC ctxt)
 		{
-			int cellId = GetCell(sel);
-			if (cellId == MoAffixProcessTags.kflidOutput)
-			{
-				var insertNC = m_cache.ServiceLocator.GetInstance<IMoInsertNCFactory>().Create();
-				cellIndex = InsertIntoOutput(insertNC, sel);
-				insertNC.ContentRA = nc;
-				ctxt = null;
-			}
-			else
-			{
-				ctxt = m_cache.ServiceLocator.GetInstance<IPhSimpleContextNCFactory>().Create();
-				cellId = InsertContext(ctxt, sel, out cellIndex);
-				ctxt.FeatureStructureRA = nc;
-			}
+			ctxt = m_cache.ServiceLocator.GetInstance<IPhSimpleContextNCFactory>().Create();
+			var cellId = InsertContext(ctxt, sel, out cellIndex);
+			ctxt.FeatureStructureRA = nc;
 			return cellId;
 		}
 
