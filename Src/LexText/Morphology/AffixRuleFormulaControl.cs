@@ -113,6 +113,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Features), DisplayOption);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.SetMappingNaturalClass), DisplayOption);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.SetMappingFeatures), DisplayOption);
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.MorphemeBoundary), DisplayOption);
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Variable), DisplayVariableOption);
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Column), DisplayColumnOption);
@@ -132,16 +134,24 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				case AffixRuleFormulaVc.ktagLeftEmpty:
 				case AffixRuleFormulaVc.ktagRightEmpty:
-					return type != RuleInsertType.Index;
+					return type != RuleInsertType.Index
+						&& type != RuleInsertType.SetMappingFeatures
+						&& type != RuleInsertType.SetMappingNaturalClass;
 
 				case MoAffixProcessTags.kflidOutput:
-					return type == RuleInsertType.Index || type == RuleInsertType.Phoneme || type == RuleInsertType.MorphemeBoundary;
+					return type == RuleInsertType.Index
+						|| (type == RuleInsertType.SetMappingFeatures && IsIndexCurrent)
+						|| (type == RuleInsertType.SetMappingNaturalClass && IsIndexCurrent)
+						|| type == RuleInsertType.Phoneme
+						|| type == RuleInsertType.MorphemeBoundary;
 
 				default:
 					var ctxtOrVar = m_cache.ServiceLocator.GetInstance<IPhContextOrVarRepository>().GetObject(cellId);
 					if (ctxtOrVar.ClassID == PhVariableTags.kClassId)
 						return false;
-					return type != RuleInsertType.Index;
+					return type != RuleInsertType.Index
+						&& type != RuleInsertType.SetMappingFeatures
+						&& type != RuleInsertType.SetMappingNaturalClass;
 			}
 		}
 
@@ -752,9 +762,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			}
 		}
 
-		public void SetMappingFeatures()
+		public override void SetMappingFeatures(SelectionHelper sel = null)
 		{
-			SelectionHelper.Create(m_view);
+			if (sel == null)
+				sel = SelectionHelper.Create(m_view);
 			bool reconstruct = false;
 			int index = -1;
 			UndoableUnitOfWorkHelper.Do(MEStrings.ksAffixRuleUndoSetMappingFeatures,
@@ -820,9 +831,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				ReconstructView(MoAffixProcessTags.kflidOutput, index, true);
 		}
 
-		public void SetMappingNaturalClass()
+		public override void SetMappingNaturalClass(SelectionHelper sel = null)
 		{
-			SelectionHelper.Create(m_view);
+			if (sel == null)
+				sel = SelectionHelper.Create(m_view);
 
 			var natClasses = new HashSet<ICmObject>();
 			foreach (var nc in m_cache.LangProject.PhonologicalDataOA.NaturalClassesOS)
