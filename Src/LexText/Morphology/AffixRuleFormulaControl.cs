@@ -113,12 +113,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Phoneme), DisplayOption);
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.NaturalClass), DisplayOption);
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Features), DisplayOption);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.SetMappingNaturalClass), DisplayOption);
+			m_insertionControl.AddOption(new InsertOption(RuleInsertType.SetMappingFeatures), DisplayOption);
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.MorphemeBoundary), DisplayOption);
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Variable), DisplayVariableOption);
 			m_insertionControl.AddOption(new InsertOption(RuleInsertType.Column), DisplayColumnOption);
 			m_insertionControl.AddMultiOption(new InsertOption(RuleInsertType.Index), DisplayOption, DisplayIndices);
-			m_insertionControl.AddOption(new InsertOption(RuleInsertType.SetMappingFeatures), DisplayOption);
-			m_insertionControl.AddOption(new InsertOption(RuleInsertType.SetMappingNaturalClass), DisplayOption);
 			m_insertionControl.NoOptionsMessage = DisplayNoOptsMsg;
 		}
 
