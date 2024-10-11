@@ -43,6 +43,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Features,
 			Variable,
 			Index,
+			SetMappingFeatures,
+			SetMappingNaturalClass,
 			Column
 		};
 
@@ -70,6 +72,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 				case RuleInsertType.Index:
 					return MEStrings.ksRuleIndexOpt;
+
+				case RuleInsertType.SetMappingFeatures:
+					return MEStrings.ksSetFeaturesOpt;
+
+				case RuleInsertType.SetMappingNaturalClass:
+					return MEStrings.ksSetNaturalClassOpt;
 
 				case RuleInsertType.Column:
 					return MEStrings.ksRuleColOpt;
@@ -439,6 +447,18 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			throw new NotImplementedException();
 		}
 
+		public virtual void SetMappingFeatures(SelectionHelper sel)
+		{
+			throw new NotImplementedException();
+		}
+
+		public virtual void SetMappingNaturalClass(SelectionHelper sel)
+		{
+			throw new NotImplementedException();
+		}
+
+
+
 		/// <summary>
 		/// Inserts the variable (PhVariable).
 		/// </summary>
@@ -669,6 +689,15 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							cellId = InsertVariable(sel, out cellIndex);
 						});
 					break;
+
+				case RuleInsertType.SetMappingFeatures:
+					SetMappingFeatures(sel);
+					break;
+
+				case RuleInsertType.SetMappingNaturalClass:
+					SetMappingNaturalClass(sel);
+					break;
+
 			}
 
 			m_view.Select();
