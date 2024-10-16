@@ -12,6 +12,7 @@ using XCore;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.ObjectModel;
+using System.Windows.Forms;
 
 namespace SIL.FieldWorks.IText
 {
@@ -195,6 +196,13 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 			TargetBundle(nextOccurrence, fSaveGuess, fMakeDefaultSelection);
+		}
+
+		public void OnNextBundleSkipTranslationOrNoteLine(bool fSaveGuess)
+		{
+			var nextOccurrence = GetNextOccurrenceToAnalyze(true, true);
+
+			TargetBundle(nextOccurrence, fSaveGuess, true);
 		}
 
 		/// <summary>
@@ -659,7 +667,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		public bool OnNextIncompleteBundle(object cmd)
 		{
-			OnNextBundle(true, true, true, true);
+			OnNextBundleSkipTranslationOrNoteLine(true);
 			return true;
 		}
 
@@ -670,7 +678,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		public bool OnNextIncompleteBundleNc(object cmd)
 		{
-			OnNextBundle(false, true, true, true);
+			OnNextBundleSkipTranslationOrNoteLine(false);
 			return true;
 		}
 
