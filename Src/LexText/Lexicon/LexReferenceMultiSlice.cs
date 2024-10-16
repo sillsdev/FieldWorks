@@ -129,7 +129,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		public override void GenerateChildren(XmlNode node, XmlNode caller, ICmObject obj, int indent,
-			ref int insPos, ArrayList path, ObjSeqHashMap reuseMap, bool fUsePersistentExpansion)
+			ref int insPos, ArrayList path, bool fUsePersistentExpansion)
 		{
 			CheckDisposed();
 			// If node has children, figure what to do with them...
@@ -150,14 +150,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			for (int i = 0; i < m_refs.Count; i++)
 			{
-				GenerateChildNode(i, node, caller, indent, ref insPos, path, reuseMap);
+				GenerateChildNode(i, node, caller, indent, ref insPos, path);
 			}
 
 			Expansion = DataTree.TreeItemState.ktisExpanded;
 		}
 
 		private void GenerateChildNode(int iChild, XmlNode node, XmlNode caller, int indent,
-			ref int insPos, ArrayList path, ObjSeqHashMap reuseMap)
+			ref int insPos, ArrayList path)
 		{
 			var lr = m_refs[iChild];
 			var lrt = lr.Owner as ILexRefType;
@@ -301,7 +301,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				" menu=\"" + sMenu + "\"><deParams displayProperty=\"HeadWord\"/></slice>";
 			node.InnerXml = sXml;
 			int firstNewSliceIndex = insPos;
-			CreateIndentedNodes(caller, lr, indent, ref insPos, path, reuseMap, node);
+			CreateIndentedNodes(caller, lr, indent, ref insPos, path, node);
 			for (int islice = firstNewSliceIndex; islice < insPos; islice++)
 			{
 				Slice child = ContainingDataTree.Slices[islice] as Slice;
@@ -769,7 +769,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					caller = Key[Key.Length - 2] as XmlNode;
 				int insPos = this.IndexInContainer + m_refs.Count;
 				GenerateChildNode(m_refs.Count-1, m_configurationNode, caller, Indent,
-					ref insPos, new ArrayList(Key), new ObjSeqHashMap());
+					ref insPos, new ArrayList(Key));
 				Expansion = DataTree.TreeItemState.ktisExpanded;
 			}
 			finally
@@ -795,7 +795,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				if (Key.Length > 1)
 					caller = Key[Key.Length - 2] as XmlNode;
 				int insPos = iSlice + 1;
-				GenerateChildren(m_configurationNode, caller, m_obj, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), false);
+				GenerateChildren(m_configurationNode, caller, m_obj, Indent, ref insPos, new ArrayList(Key), false);
 				Expansion = DataTree.TreeItemState.ktisExpanded;
 			}
 			finally

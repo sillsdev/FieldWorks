@@ -123,11 +123,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			var path = GeneratePath();
 
-			var reuseMap = new ObjSeqHashMap();
 			// Data taken from a running Sena 3
 			var node = CreateXmlElementFromOuterXmlOf("<slice field=\"Form\" label=\"Form\" editor=\"multistring\" ws=\"all vernacular\" weight=\"light\" menu=\"mnuDataTree-LexemeForm\" contextMenu=\"mnuDataTree-LexemeFormContext\" spell=\"no\"><properties><bold value=\"on\" /><fontsize value=\"120%\" /></properties></slice>");
 
-			m_Slice.CreateIndentedNodes(caller, obj, indent, ref insPos, path, reuseMap, node);
+			m_Slice.CreateIndentedNodes(caller, obj, indent, ref insPos, path, node);
 		}
 
 		/// <remarks>
@@ -178,7 +177,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public void CreateGhostStringSlice_ParentSliceNotNull()
 		{
 			var path = GeneratePath();
-			var reuseMap = new ObjSeqHashMap();
 			var obj = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			m_DataTree = new DataTree();
 			m_Slice = GenerateSlice(Cache, m_DataTree);
@@ -190,7 +188,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			int indent = 0;
 			int insertPosition = 0;
 			int flidEmptyProp = 5002031;    // runtime flid of ghost field
-			m_DataTree.MakeGhostSlice(path, node, reuseMap, obj, m_Slice, flidEmptyProp, null, indent, ref insertPosition);
+			m_DataTree.MakeGhostSlice(path, node, obj, m_Slice, flidEmptyProp, null, indent, ref insertPosition);
 			var ghostSlice = m_DataTree.Slices[0];
 			Assert.NotNull(ghostSlice);
 			Assert.AreEqual(ghostSlice.PropTable, m_Slice.PropTable);

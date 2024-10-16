@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -104,20 +104,20 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		public override void GenerateChildren(XmlNode node, XmlNode caller, ICmObject obj, int indent, ref int insPos,
-			ArrayList path, ObjSeqHashMap reuseMap, bool fUsePersistentExpansion)
+			ArrayList path, bool fUsePersistentExpansion)
 		{
 			CheckDisposed();
 
 			foreach (IRnRoledPartic roledPartic in Record.ParticipantsOC)
 			{
 				if (roledPartic.RoleRA != null)
-					GenerateChildNode(roledPartic, node, caller, indent, ref insPos, path, reuseMap);
+					GenerateChildNode(roledPartic, node, caller, indent, ref insPos, path);
 			}
 			Expansion = Record.ParticipantsOC.Count == 0 ? DataTree.TreeItemState.ktisCollapsedEmpty : DataTree.TreeItemState.ktisExpanded;
 		}
 
 		private void GenerateChildNode(IRnRoledPartic roledPartic, XmlNode node, XmlNode caller, int indent,
-			ref int insPos, ArrayList path, ObjSeqHashMap reuseMap)
+			ref int insPos, ArrayList path)
 		{
 			var sliceElem = new XElement("slice",
 				new XAttribute("label", roledPartic.RoleRA.Name.BestAnalysisAlternative.Text),
@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					sliceElem.Add(XElement.Parse(childNode.OuterXml));
 			}
 			node.InnerXml = sliceElem.ToString();
-			CreateIndentedNodes(caller, roledPartic, indent, ref insPos, path, reuseMap, node);
+			CreateIndentedNodes(caller, roledPartic, indent, ref insPos, path, node);
 			node.InnerXml = "";
 		}
 
@@ -355,7 +355,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				if (Key.Length > 1)
 					caller = Key[Key.Length - 2] as XmlNode;
 				int insPos = IndexInContainer + Record.ParticipantsOC.Count - 1;
-				GenerateChildNode(roledPartic, m_configurationNode, caller, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap());
+				GenerateChildNode(roledPartic, m_configurationNode, caller, Indent, ref insPos, new ArrayList(Key));
 				Expansion = DataTree.TreeItemState.ktisExpanded;
 			}
 			finally
@@ -379,7 +379,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				if (Key.Length > 1)
 					caller = Key[Key.Length - 2] as XmlNode;
 				int insPos = iSlice + 1;
-				GenerateChildren(m_configurationNode, caller, m_obj, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), false);
+				GenerateChildren(m_configurationNode, caller, m_obj, Indent, ref insPos, new ArrayList(Key), false);
 				Expansion = DataTree.TreeItemState.ktisExpanded;
 			}
 			finally
