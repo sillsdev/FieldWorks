@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.XWorks
 			// Start with output log area not shown by default
 			// When a user clicks Publish, it is revealed. This is done within the context of having a resizable table of controls, and having
 			// the output log area be the vertically growing control when a user increases the height of the dialog
-			this.Shown += (sender, args) => { ValidateSortingOnAlphaHeaders(); this.Height = this.Height - outputLogTextbox.Height;};
+			Shown += (sender, args) => { ValidateSortingOnAlphaHeaders(); };
 
 			// Handle localizable explanation area with link.
 			var explanationText = xWorksStrings.toApplyForWebonaryAccountExplanation;
@@ -192,6 +192,11 @@ namespace SIL.FieldWorks.XWorks
 			SetSelectedReversals(selectedReversals);
 		}
 
+		public void UploadCompleted()
+		{
+			throw new NotImplementedException();
+		}
+
 		public UploadToWebonaryModel Model { get; set; }
 
 		private void LoadFromModel()
@@ -277,21 +282,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			SaveToModel();
 
-			// Increase height of form so the output log is shown.
-			// Account for situations where the user already increased the height of the form
-			// or maximized the form, and later reduces the height or unmaximizes the form
-			// after clicking Publish.
-
-			var allButTheLogRowHeight = tableLayoutPanel.GetRowHeights().Sum() - tableLayoutPanel.GetRowHeights().Last();
-			var fudge = Height - tableLayoutPanel.Height;
-			var minimumFormHeightToShowLog = allButTheLogRowHeight + outputLogTextbox.MinimumSize.Height + fudge;
-			if (Platform.IsUnix)
-				minimumFormHeightToShowLog += m_additionalMinimumHeightForMono;
-			MinimumSize = new Size(MinimumSize.Width, minimumFormHeightToShowLog);
-
 			using (new WaitCursor(this))
 			{
-				m_controller.UploadToWebonary(Model, this);
+				m_progress.Style = ProgressBarStyle.Marquee;
+				// m_controller.UploadToWebonary(Model, this);
 			}
 		}
 
@@ -300,19 +294,28 @@ namespace SIL.FieldWorks.XWorks
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpUploadToWebonary");
 		}
 
+		private void closeButton_Click(object sender, EventArgs e)
+		{
+			SaveToModel();
+		}
+
+		private void reportButton_Click(object sender, EventArgs e)
+		{
+			m_progress.Style = ProgressBarStyle.Continuous;
+			m_progress.Value = m_progress.Maximum;
+		}
+
 		/// <summary>
 		/// Add a message to the status area. Make sure the status area is redrawn so the
 		/// user can see what's going on even if we are working on something.
 		/// </summary>
 		public void UpdateStatus(string statusString)
 		{
-			outputLogTextbox.AppendText(Environment.NewLine + statusString);
-			outputLogTextbox.Refresh();
+			// Log the status
 		}
 
 		/// <summary>
-		/// Respond to a new status condition by changing the background color of the
-		/// output log.
+		/// Respond to a new status condition by changing the background color of progress indicator
 		/// </summary>
 		public void SetStatusCondition(WebonaryStatusCondition condition)
 		{
@@ -334,12 +337,7 @@ namespace SIL.FieldWorks.XWorks
 				default:
 					throw new ArgumentException("Unhandled WebonaryStatusCondition", nameof(condition));
 			}
-			outputLogTextbox.BackColor = newColor;
-		}
-
-		private void closeButton_Click(object sender, EventArgs e)
-		{
-			SaveToModel();
+			// outputLogTextbox.BackColor = newColor;
 		}
 
 		/// <summary>
@@ -356,16 +354,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 			base.OnClosing(e);
 		}
-
-		protected override void OnResize(EventArgs e)
-		{
-			base.OnResize(e);
-
-			// On Linux, when reducing the height of the dialog, the output log doesn't shrink with it.
-			// Set its height back to something smaller to keep the whole control visible. It will expand as appropriate.
-			if (Platform.IsUnix)
-				outputLogTextbox.Size = new Size(outputLogTextbox.Size.Width, outputLogTextbox.MinimumSize.Height);
-		}
 	}
 
 	/// <summary>
@@ -375,6 +363,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		void UpdateStatus(string statusString);
 		void SetStatusCondition(WebonaryStatusCondition condition);
+		void UploadCompleted();
 		UploadToWebonaryModel Model { get; set; }
 	}
 
