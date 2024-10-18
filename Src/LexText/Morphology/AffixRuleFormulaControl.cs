@@ -54,6 +54,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				CheckDisposed();
 
 				var obj = CurrentObject;
+				if (obj == null)
+					return false;
 				if (obj.ClassID == MoCopyFromInputTags.kClassId)
 				{
 					var copy = (IMoCopyFromInput) obj;
