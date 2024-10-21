@@ -28,6 +28,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly string m_outputDirectory;
 		private ParserModelChangeListener m_changeListener;
 		private bool m_forceUpdate;
+		private bool m_guessRoots;
 
 		internal const string CRuleID = "ID";
 		internal const string FormID = "ID";
@@ -51,6 +52,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_outputDirectory = Path.GetTempPath();
 			m_changeListener = new ParserModelChangeListener(m_cache);
 			m_forceUpdate = true;
+			m_guessRoots = true;
 		}
 
 		#region IParser implementation
@@ -86,7 +88,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			IEnumerable<Word> wordAnalyses;
 			try
 			{
-				wordAnalyses = m_morpher.ParseWord(word, out _, true);
+				wordAnalyses = m_morpher.ParseWord(word, out _, m_guessRoots);
 			}
 			catch (Exception e)
 			{
@@ -150,8 +152,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				writer.WriteEndElement();
 				XElement parserParamsElem = XElement.Parse(m_cache.LanguageProject.MorphologicalDataOA.ParserParameters);
 				XElement delReappsElem = parserParamsElem.Elements("ParserParameters").Elements("HC").Elements("DelReapps").FirstOrDefault();
+				XElement guessRootsElem = parserParamsElem.Element("HC").Element("GuessRoots");
 				if (delReappsElem != null)
 					delReapps = (int) delReappsElem;
+				if (guessRootsElem != null)
+					m_guessRoots = (bool) guessRootsElem;
 			}
 			m_morpher = new Morpher(m_traceManager, m_language) { DeletionReapplications = delReapps };
 		}
@@ -189,7 +194,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				try
 				{
 					object trace;
-					foreach (Word wordAnalysis in m_morpher.ParseWord(form, out trace, true))
+					foreach (Word wordAnalysis in m_morpher.ParseWord(form, out trace, m_guessRoots))
 					{
 						List<MorphInfo> morphs;
 						if (GetMorphs(wordAnalysis, out morphs))
