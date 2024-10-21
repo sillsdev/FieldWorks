@@ -31,6 +31,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private const string NotOnClitics = "NotOnClitics";
 		private const string NoDefaultCompounding = "NoDefaultCompounding";
 		private const string AcceptUnspecifiedGraphemes = "AcceptUnspecifiedGraphemes";
+		private const string GuessRoots = "GuessRoots";
 
 		private const string XAmple = "XAmple";
 		private const string MaxNulls = "MaxNulls";
@@ -314,6 +315,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				hcElem.Add(new XElement(NotOnClitics, true));
 			if (hcElem.Element(AcceptUnspecifiedGraphemes) == null)
 				hcElem.Add(new XElement(AcceptUnspecifiedGraphemes, false));
+			if (hcElem.Element(GuessRoots) == null)
+				hcElem.Add(new XElement(GuessRoots, true));
 
 			using (XmlReader reader = parserParamsElem.CreateReader())
 				dsParserParameters.ReadXml(reader, XmlReadMode.IgnoreSchema);
@@ -355,6 +358,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			tblHC.Columns.Add(NotOnClitics, typeof(bool));
 			tblHC.Columns.Add(NoDefaultCompounding, typeof(bool));
 			tblHC.Columns.Add(AcceptUnspecifiedGraphemes, typeof(bool));
+			tblHC.Columns.Add(GuessRoots, typeof(bool));
 			return tblHC;
 		}
 	}
