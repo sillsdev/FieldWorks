@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using Moq;
 using Rhino.Mocks;
 using SIL.FieldWorks.Common.RootSites;
 using System.Windows.Forms;
