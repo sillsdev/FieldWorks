@@ -9,7 +9,10 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Gecko.WebIDL;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.IO;
+using SIL.LCModel.Core.Phonology;
 using SIL.Windows.Forms;
 using SIL.PlatformUtilities;
 using PropertyTable = XCore.PropertyTable;
@@ -23,6 +26,9 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly UploadToWebonaryController m_controller;
+
+		private WebonaryStatusCondition m_uploadStatus = WebonaryStatusCondition.None;
+
 		// Mono 3 handles the display of the size gripper differently than .NET SWF and so the dialog needs to be taller. Part of LT-16433.
 		private const int m_additionalMinimumHeightForMono = 26;
 
@@ -194,7 +200,13 @@ namespace SIL.FieldWorks.XWorks
 
 		public void UploadCompleted()
 		{
-			throw new NotImplementedException();
+			m_progress.Value = m_progress.Maximum;
+			m_progress.Style = ProgressBarStyle.Continuous;
+			reportButton.Enabled = true;
+			if (m_uploadStatus != WebonaryStatusCondition.Success)
+			{
+				reportButton_Click(null, null);
+			}
 		}
 
 		public UploadToWebonaryModel Model { get; set; }
@@ -231,6 +243,7 @@ namespace SIL.FieldWorks.XWorks
 					configurationBox.SelectedIndex = 0;
 				}
 				UpdateEntriesToBePublishedLabel();
+				reportButton.Enabled = Model.CanViewReport;
 			}
 		}
 
@@ -284,8 +297,9 @@ namespace SIL.FieldWorks.XWorks
 
 			using (new WaitCursor(this))
 			{
+				RobustFile.Delete(Model.LastUploadReport);
 				m_progress.Style = ProgressBarStyle.Marquee;
-				// m_controller.UploadToWebonary(Model, this);
+				m_controller.UploadToWebonary(Model, this);
 			}
 		}
 
@@ -301,43 +315,24 @@ namespace SIL.FieldWorks.XWorks
 
 		private void reportButton_Click(object sender, EventArgs e)
 		{
-			m_progress.Style = ProgressBarStyle.Continuous;
-			m_progress.Value = m_progress.Maximum;
+			using(var dlg = new WebonaryLogViewer(Model.LastUploadReport))
+			{
+				dlg.ShowDialog();
+			}
 		}
 
 		/// <summary>
 		/// Add a message to the status area. Make sure the status area is redrawn so the
 		/// user can see what's going on even if we are working on something.
 		/// </summary>
-		public void UpdateStatus(string statusString)
+		public void UpdateStatus(string statusString, WebonaryStatusCondition c)
 		{
+			// Set the status to the greater of the current or the new update
+			m_uploadStatus = (WebonaryStatusCondition)Math.Max(Convert.ToInt32(m_uploadStatus), Convert.ToInt32(c));
 			// Log the status
-		}
-
-		/// <summary>
-		/// Respond to a new status condition by changing the background color of progress indicator
-		/// </summary>
-		public void SetStatusCondition(WebonaryStatusCondition condition)
-		{
-			Color newColor;
-			switch (condition)
-			{
-				case WebonaryStatusCondition.Success:
-					// Green
-					newColor = ColorTranslator.FromHtml("#b8ffaa");
-					break;
-				case WebonaryStatusCondition.Error:
-					// Red
-					newColor = ColorTranslator.FromHtml("#ffaaaa");
-					break;
-				case WebonaryStatusCondition.None:
-					// Grey
-					newColor = ColorTranslator.FromHtml("#dcdad5");
-					break;
-				default:
-					throw new ArgumentException("Unhandled WebonaryStatusCondition", nameof(condition));
-			}
-			// outputLogTextbox.BackColor = newColor;
+			Model.Log.AddEntry(c, statusString);
+			// pump messages
+			Application.DoEvents();
 		}
 
 		/// <summary>
@@ -361,8 +356,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public interface IUploadToWebonaryView
 	{
-		void UpdateStatus(string statusString);
-		void SetStatusCondition(WebonaryStatusCondition condition);
+		void UpdateStatus(string statusString, WebonaryStatusCondition condition);
 		void UploadCompleted();
 		UploadToWebonaryModel Model { get; set; }
 	}
@@ -374,6 +368,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		None,
 		Success,
-		Error
+		FileRejected,
+		Error,
 	}
 }
