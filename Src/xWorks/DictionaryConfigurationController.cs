@@ -1558,14 +1558,12 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Search the TreeNode tree to find a starting node based on matching the "class"
-		/// attributes of the generated XHTML tracing back from the XHTML element clicked.
-		/// If no match is found, SelectedNode is not set.  Otherwise, the best match found
-		/// is used to set SelectedNode.
+		/// Search the TreeNode tree to find a starting node based on nodeId attribute - a hash of a ConfigurableDictionaryNode
+		/// generated into the xhtml. If nothing is found SelectedNode is not set.
 		/// </summary>
-		internal void SetStartingNode(List<string> classList)
+		internal void SetStartingNode(string nodeId)
 		{
-			if (classList == null || classList.Count == 0)
+			if (string.IsNullOrEmpty(nodeId))
 				return;
 			if (View != null &&
 				View.TreeControl != null &&
@@ -1579,22 +1577,15 @@ namespace SIL.FieldWorks.XWorks
 					var configNode = node.Tag as ConfigurableDictionaryNode;
 					if (configNode == null)
 						continue;
-					var cssClass = CssGenerator.GetClassAttributeForConfig(configNode);
-					if (classList[0].Split(' ').Contains(cssClass))
+					topNode = FindConfigNode(configNode, nodeId, new List<ConfigurableDictionaryNode>());
+					if (topNode != null)
 					{
-						topNode = configNode;
 						break;
 					}
 				}
-				if (topNode == null)
-					return;
-				// We have a match, so search through the TreeNode tree to find the TreeNode tagged
-				// with the given configuration node.  If found, set that as the SelectedNode.
-				classList.RemoveAt(0);
-				var startingConfigNode = FindConfigNode(topNode, classList);
 				foreach (TreeNode node in View.TreeControl.Tree.Nodes)
 				{
-					var startingTreeNode = FindMatchingTreeNode(node, startingConfigNode);
+					var startingTreeNode = FindMatchingTreeNode(node, topNode);
 					if (startingTreeNode != null)
 					{
 						View.TreeControl.Tree.SelectedNode = startingTreeNode;
@@ -1605,48 +1596,31 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Recursively descend the configuration tree, progressively matching nodes against CSS class path.  Stop
-		/// when we run out of both tree and classes.  Classes can be skipped if not matched.  Running out of tree nodes
-		/// before running out of classes causes one level of backtracking up the configuration tree to look for a better match.
+		/// Recursively descend the configuration tree depth first until a matching nodeId is found
 		/// </summary>
 		/// <remarks>LT-17213 Now 'internal static' so DictionaryConfigurationDlg can use it.</remarks>
-		internal static ConfigurableDictionaryNode FindConfigNode(ConfigurableDictionaryNode topNode, List<string> classPath)
+		internal static ConfigurableDictionaryNode FindConfigNode(ConfigurableDictionaryNode topNode, string nodeId, List<ConfigurableDictionaryNode> visited)
 		{
-			if (classPath.Count == 0)
+			if (string.IsNullOrEmpty(nodeId) || $"{topNode.GetHashCode()}".Equals(nodeId))
 			{
 				return topNode; // what we have already is the best we can find.
 			}
+			visited.Add(topNode);
 
-			// If we can't go further down the configuration tree, but still have classes to match, back up one level
-			// and try matching with the remaining classes.  The configuration tree doesn't always map exactly with
-			// the XHTML tree structure.  For instance, in the XHTML, Examples contains instances of Example, each
-			// of which contains an instance of Translations, which contains instances of Translation.  In the configuration
-			// tree, Examples contains Example and Translations at the same level.
-			if (topNode.ReferencedOrDirectChildren == null || topNode.ReferencedOrDirectChildren.Count == 0)
+			if (topNode.ReferencedOrDirectChildren != null)
 			{
-				var match = FindConfigNode(topNode.Parent, classPath);
-				return ReferenceEquals(match, topNode.Parent)
-					? topNode	// this is the best we can find.
-					: match;	// we found something better!
-			}
-			ConfigurableDictionaryNode matchingNode = null;
-			foreach (var node in topNode.ReferencedOrDirectChildren)
-			{
-				var cssClass = CssGenerator.GetClassAttributeForConfig(node);
-				// LT-17359 a reference node might have "senses mainentrysubsenses"
-				if (cssClass == classPath[0].Split(' ')[0])
+				foreach (var node in topNode.ReferencedOrDirectChildren)
 				{
-					matchingNode = node;
-					break;
+					if (visited.Contains(node))
+						continue;
+					var match = FindConfigNode(node, nodeId, visited);
+					if (match != null)
+					{
+						return match;
+					}
 				}
 			}
-			// If we didn't match, skip this class in the list and try the next class, looking at the same configuration
-			// node.  There are classes in the XHTML that aren't represented in the configuration nodes.  ("sensecontent"
-			// and "sense" among others)
-			if (matchingNode == null)
-				matchingNode = topNode;
-			classPath.RemoveAt(0);
-			return FindConfigNode(matchingNode, classPath);
+			return null;
 		}
 
 		/// <summary>
