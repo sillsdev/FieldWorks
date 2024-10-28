@@ -403,6 +403,12 @@ namespace SIL.FieldWorks.IText
 			var cmd = (ICommandUndoRedoText)arg;
 			UndoableUnitOfWorkHelper.Do(cmd.UndoText, cmd.RedoText, Cache.ActionHandlerAccessor,
 				() => SelectedOccurrence.BreakPhrase());
+			if (InterlinDoc != null)
+			{
+				// Breaking phrases renumbers the occurrences.
+				// We need to clear the analysis cache to avoid problems.
+				InterlinDoc.ResetAnalysisCache();
+			}
 			InterlinWordControl.SwitchWord(SelectedOccurrence);
 			UpdateButtonState();
 		}
