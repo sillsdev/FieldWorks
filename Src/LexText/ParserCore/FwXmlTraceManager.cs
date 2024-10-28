@@ -366,7 +366,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				case FailureReason.DisjunctiveAllomorph:
 					trace = CreateParseCompleteElement(word,
 						new XElement("FailureReason", new XAttribute("type", "disjunctiveAllomorph"),
-							CreateWordElement("Word", (Word) failureObj, false)));
+							CreateAllomorphElement((Allomorph) failureObj)));
 					break;
 
 				case FailureReason.PartialParse:
