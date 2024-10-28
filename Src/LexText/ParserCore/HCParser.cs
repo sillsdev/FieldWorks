@@ -151,8 +151,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_language = HCLoader.Load(m_cache, new XmlHCLoadErrorLogger(writer));
 				writer.WriteEndElement();
 				XElement parserParamsElem = XElement.Parse(m_cache.LanguageProject.MorphologicalDataOA.ParserParameters);
-				XElement delReappsElem = parserParamsElem.Elements("ParserParameters").Elements("HC").Elements("DelReapps").FirstOrDefault();
-				XElement guessRootsElem = parserParamsElem.Element("HC").Element("GuessRoots");
+				XElement delReappsElem = parserParamsElem.Elements("HC").Elements("DelReapps").FirstOrDefault();
+				XElement guessRootsElem = parserParamsElem.Elements("HC").Elements("GuessRoots").FirstOrDefault();
 				if (delReappsElem != null)
 					delReapps = (int) delReappsElem;
 				if (guessRootsElem != null)
