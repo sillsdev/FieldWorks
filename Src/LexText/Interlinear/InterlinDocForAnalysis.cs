@@ -2260,6 +2260,12 @@ namespace SIL.FieldWorks.IText
 			return null;
 		}
 
+		internal void ResetAnalysisCache()
+		{
+			if (Vc != null)
+				Vc.ResetAnalysisCache();
+		}
+
 		internal void RecordGuessIfNotKnown(AnalysisOccurrence selected)
 		{
 			if (Vc != null) // I think this only happens in tests.
@@ -2347,6 +2353,7 @@ namespace SIL.FieldWorks.IText
 				helper.SetSelection(true, true);
 			Update();
 		}
+
 	}
 
 	public class InterlinDocForAnalysisVc : InterlinVc
