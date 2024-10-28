@@ -379,6 +379,9 @@ namespace SIL.FieldWorks.IText
 						SelectedOccurrence.MakePhraseWithNextWord();
 						if (InterlinDoc != null)
 						{
+							// Joining words renumbers the occurrences.
+							// We need to clear the analysis cache to avoid problems (cf LT-21965).
+							InterlinDoc.ResetAnalysisCache();
 							InterlinDoc.RecordGuessIfNotKnown(SelectedOccurrence);
 						}
 					});
