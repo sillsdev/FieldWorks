@@ -379,6 +379,9 @@ namespace SIL.FieldWorks.IText
 						SelectedOccurrence.MakePhraseWithNextWord();
 						if (InterlinDoc != null)
 						{
+							// Joining words renumbers the occurrences.
+							// We need to clear the analysis cache to avoid problems (cf LT-21965).
+							InterlinDoc.ResetAnalysisCache();
 							InterlinDoc.RecordGuessIfNotKnown(SelectedOccurrence);
 						}
 					});
@@ -400,6 +403,12 @@ namespace SIL.FieldWorks.IText
 			var cmd = (ICommandUndoRedoText)arg;
 			UndoableUnitOfWorkHelper.Do(cmd.UndoText, cmd.RedoText, Cache.ActionHandlerAccessor,
 				() => SelectedOccurrence.BreakPhrase());
+			if (InterlinDoc != null)
+			{
+				// Breaking phrases renumbers the occurrences.
+				// We need to clear the analysis cache to avoid problems.
+				InterlinDoc.ResetAnalysisCache();
+			}
 			InterlinWordControl.SwitchWord(SelectedOccurrence);
 			UpdateButtonState();
 		}
