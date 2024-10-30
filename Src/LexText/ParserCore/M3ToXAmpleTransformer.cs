@@ -130,28 +130,33 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
+		/// <summary>
+		/// Get slots that are not defined in the scope of their use.
+		/// Slots are used in PrefixSlots and SuffixSlots.
+		/// Slots are defined in AffixSlots.
+		/// </summary>
+		/// <param name="element"></param>
+		/// <param name="undefinedSlots"></param>
 		private void GetUndefinedSlots(XElement element, ISet<string> undefinedSlots)
 		{
-			// Recursively get undefined slots.
+			// Get undefined slots recursively to handle scope correctly.
 			foreach (XElement elem in element.Elements())
 			{
 				GetUndefinedSlots(elem, undefinedSlots);
 			}
-			// Record slots encountered.
+			// Record slots where they are used.
 			if (element.Name == "PrefixSlots" || element.Name == "SuffixSlots")
 			{
 				undefinedSlots.Add((string) element.Attribute("dst"));
 			}
-			// Remove slots that are defined at this level.
+			// Remove undefined slots from below that are defined at this level.
 			// NB: This must happen after we recursively get undefined slots.
-			foreach (XElement elem in element.Elements())
+			XElement affixSlotsElem = element.Element("AffixSlots");
+			if (affixSlotsElem != null)
 			{
-				if (elem.Name == "AffixSlots")
+				foreach (XElement slot in affixSlotsElem.Elements())
 				{
-					foreach (XElement slot in elem.Elements())
-					{
-						undefinedSlots.Remove((string)slot.Attribute("Id"));
-					}
+					undefinedSlots.Remove((string)slot.Attribute("Id"));
 				}
 			}
 		}
