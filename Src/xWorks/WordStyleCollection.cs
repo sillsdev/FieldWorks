@@ -48,17 +48,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			lock (styleDictionary)
 			{
-				// Get an enumerator to the flattened list of all StyleElements.
-				var styleElementsEnumerator = styleDictionary.Values.SelectMany(x => x);
-				foreach (var styleElement in styleElementsEnumerator)
-				{
-					if (styleElement.Style.StyleId == uniqueDisplayName)
-					{
-						return styleElement;
-					}
-				}
+				return styleDictionary.Values.SelectMany(x => x)
+					.FirstOrDefault(styleElement => styleElement.Style.StyleId == uniqueDisplayName);
 			}
-			return null;
 		}
 
 		/// <summary>
