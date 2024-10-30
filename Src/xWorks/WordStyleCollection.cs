@@ -41,6 +41,19 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Finds a StyleElement from the uniqueDisplayName.
+		/// </summary>
+		/// <param name="uniqueDisplayName">The style name that uniquely identifies a style.</param>
+		public StyleElement GetStyleElement(string uniqueDisplayName)
+		{
+			lock (styleDictionary)
+			{
+				return styleDictionary.Values.SelectMany(x => x)
+					.FirstOrDefault(styleElement => styleElement.Style.StyleId == uniqueDisplayName);
+			}
+		}
+
+		/// <summary>
 		/// Clears the collection.
 		/// </summary>
 		public void Clear()
@@ -116,6 +129,45 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Adds a character style to the collection.
+		/// If a style with the identical style information is already in the collection then just return
+		/// the unique name.
+		/// If the identical style is not already in the collection then generate a unique name,
+		/// update the style name values (with the unique name), and return the unique name.
+		/// </summary>
+		/// <param name="style">The style to add to the collection. (It's name might get modified.)</param>
+		/// <param name="nodeStyleName">The unique FLEX style name, typically comes from node.Style.</param>
+		/// <param name="displayNameBase">The base name that will be used to create the unique display name
+		/// for the style.  The root of this name typically comes from the node.DisplayLabel but it can have
+		/// additional information if it is based on other styles and/or has a writing system.</param>
+		/// <param name="wsId">The writing system id associated with this style.</param>
+		/// <param name="wsIsRtl">True if the writing system is right to left.</param>
+		/// <returns>The unique display name. The name that should be referenced in a Run.</returns>
+		public string AddCharacterStyle(Style style, string nodeStyleName, string displayNameBase, int wsId, bool wsIsRtl)
+		{
+			return AddStyle(style, nodeStyleName, displayNameBase, null, wsId, wsIsRtl);
+		}
+
+		/// <summary>
+		/// Adds a paragraph style to the collection.
+		/// If a style with the identical style information is already in the collection then just return
+		/// the unique name.
+		/// If the identical style is not already in the collection then generate a unique name,
+		/// update the style name values (with the unique name), and return the unique name.
+		/// </summary>
+		/// <param name="style">The style to add to the collection. (It's name might get modified.)</param>
+		/// <param name="nodeStyleName">The unique FLEX style name, typically comes from node.Style.</param>
+		/// <param name="displayNameBase">The base name that will be used to create the unique display name
+		/// for the style.  The root of this name typically comes from the node.DisplayLabel but it can have
+		/// additional information if it is based on other styles and/or has a writing system.</param>
+		/// <param name="bulletInfo">Bullet and Numbering info used by some paragraph styles.</param>
+		/// <returns>The unique display name.</returns>
+		public string AddParagraphStyle(Style style, string nodeStyleName, string displayNameBase, BulletInfo? bulletInfo)
+		{
+			return AddStyle(style, nodeStyleName, displayNameBase, bulletInfo, WordStylesGenerator.DefaultStyle, false);
+		}
+
+		/// <summary>
 		/// Adds a style to the collection.
 		/// If a style with the identical style information is already in the collection then just return
 		/// the unique name.
@@ -127,9 +179,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="displayNameBase">The base name that will be used to create the unique display name
 		/// for the style.  The root of this name typically comes from the node.DisplayLabel but it can have
 		/// additional information if it is based on other styles and/or has a writing system.</param>
-		/// <param name="bulletInfo">Bullet and Numbering info used by some paragraph styles. Not used for character styles. </param>
+		/// <param name="bulletInfo">Bullet and Numbering info used by some paragraph styles. Not used for character styles.</param>
+		/// <param name="wsId">The writing system id associated with this style.</param>
+		/// <param name="wsIsRtl">True if the writing system is right to left.</param>
 		/// <returns>The unique display name. The name that should be referenced in a Run.</returns>
-		public string AddStyle(Style style, string nodeStyleName, string displayNameBase, BulletInfo? bulletInfo = null)
+		public string AddStyle(Style style, string nodeStyleName, string displayNameBase, BulletInfo? bulletInfo, int wsId, bool wsIsRtl)
 		{
 			lock (styleDictionary)
 			{
@@ -185,7 +239,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				// Add the style element to the collection.
-				var styleElement = new StyleElement(nodeStyleName, style, bulletInfo);
+				var styleElement = new StyleElement(nodeStyleName, style, bulletInfo, wsId, wsIsRtl);
 				stylesWithSameDisplayNameBase.Add(styleElement);
 
 				return uniqueDisplayName;
@@ -218,17 +272,22 @@ namespace SIL.FieldWorks.XWorks
 		///         Grammatical Info.2 : Category Info.[lang='en']
 		///         Subentries : Grammatical Info.2 : Category Info.[lang='en']
 		/// </param>
-		/// <param name="bulletInfo">Bullet and Numbering info used by some paragraph styles. Not used
-		/// for character styles. </param>
-		internal StyleElement(string nodeStyleName, Style style, BulletInfo? bulletInfo)
+		/// <param name="bulletInfo">Bullet and Numbering info used by some paragraph styles. Not used for character styles.</param>
+		/// <param name="wsId">The writing system id associated with this style.</param>
+		/// <param name="wsIsRtl">True if the writing system is right to left.</param>
+		internal StyleElement(string nodeStyleName, Style style, BulletInfo? bulletInfo, int wsId, bool wsIsRtl)
 		{
 			this.NodeStyleName = nodeStyleName;
 			this.Style = style;
+			this.WritingSystemId = wsId;
+			this.WritingSystemIsRtl = wsIsRtl;
 			this.BulletInfo = bulletInfo;
 			NumberingFirstNumUniqueIds = new List<int>();
 		}
 		internal string NodeStyleName { get; }
 		internal Style Style { get; }
+		internal int WritingSystemId { get; }
+		internal bool WritingSystemIsRtl { get; }
 
 		/// <summary>
 		/// Bullet and Numbering info used by some (not all) paragraph styles. Not used
