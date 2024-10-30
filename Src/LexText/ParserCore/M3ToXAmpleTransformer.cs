@@ -11,6 +11,7 @@ using System.Xml.Xsl;
 using System.Linq;
 using SIL.Utils;
 using SIL.WordWorks.GAFAWS.PositionAnalysis;
+using System.Collections.Generic;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -94,12 +95,69 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			foreach (XElement templateElem in domTemplate.Root.Elements("PartsOfSpeech").Elements("PartOfSpeech")
 				.Where(pe => pe.DescendantsAndSelf().Elements("AffixTemplates").Elements("MoInflAffixTemplate").Any(te => te.Element("PrefixSlots") != null || te.Element("SuffixSlots") != null)))
 			{
+				DefineUndefinedSlots(templateElem);
 				// transform the POS that has templates to GAFAWS format
 				string gafawsFile = m_database + "gafawsData.xml";
 				TransformPosInfoToGafawsInputFormat(templateElem, gafawsFile);
 				string resultFile = ApplyGafawsAlgorithm(gafawsFile);
 				//based on results of GAFAWS, modify the model dom by inserting orderclass in slots
 				InsertOrderclassInfo(domModel, resultFile);
+			}
+		}
+
+		/// <summary>
+		/// Define undefined slots found in templateElem in AffixSlots.
+		/// </summary>
+		private void DefineUndefinedSlots(XElement templateElem)
+		{
+			ISet<string> undefinedSlots = new HashSet<string>();
+			GetUndefinedSlots(templateElem, undefinedSlots);
+			if (undefinedSlots.Count == 0)
+				return;
+			// Add undefined slots to AffixSlots.
+			foreach (XElement elem in templateElem.Elements())
+			{
+				if (elem.Name == "AffixSlots")
+				{
+					foreach (string slotId in undefinedSlots)
+					{
+						XElement slot = new XElement("MoInflAffixSlot");
+						slot.SetAttributeValue("Id", slotId);
+						elem.Add(slot);
+					}
+					break;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Get slots that are not defined in the scope of their use.
+		/// Slots are used in PrefixSlots and SuffixSlots.
+		/// Slots are defined in AffixSlots.
+		/// </summary>
+		/// <param name="element"></param>
+		/// <param name="undefinedSlots"></param>
+		private void GetUndefinedSlots(XElement element, ISet<string> undefinedSlots)
+		{
+			// Get undefined slots recursively to handle scope correctly.
+			foreach (XElement elem in element.Elements())
+			{
+				GetUndefinedSlots(elem, undefinedSlots);
+			}
+			// Record slots where they are used.
+			if (element.Name == "PrefixSlots" || element.Name == "SuffixSlots")
+			{
+				undefinedSlots.Add((string) element.Attribute("dst"));
+			}
+			// Remove undefined slots from below that are defined at this level.
+			// NB: This must happen after we recursively get undefined slots.
+			XElement affixSlotsElem = element.Element("AffixSlots");
+			if (affixSlotsElem != null)
+			{
+				foreach (XElement slot in affixSlotsElem.Elements())
+				{
+					undefinedSlots.Remove((string)slot.Attribute("Id"));
+				}
 			}
 		}
 
