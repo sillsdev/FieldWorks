@@ -165,7 +165,8 @@ namespace SIL.FieldWorks.XWorks
 				var mockView = SetUpView();
 				//SUT
 				Assert.DoesNotThrow(() => controller.UploadToWebonary(mockView.Model, mockView));
-				Assert.That(mockView.StatusStrings.Any(s => s.Contains(mockView.Model.SelectedPublication) && s.Contains(mockView.Model.SelectedConfiguration)));
+				Assert.That(mockView.StatusStrings.Any(s => s.Contains(mockView.Model.SelectedPublication) && s.Contains(mockView.Model.SelectedConfiguration)),
+					string.Concat(mockView.StatusStrings));
 			}
 		}
 
@@ -222,8 +223,7 @@ namespace SIL.FieldWorks.XWorks
 				reversalConfig["English"] = model;
 				model.Label = "English";
 				model.WritingSystem = "en";
-				List<string> reversalLanguage = new List<string>();
-				reversalLanguage.Add("English");
+				List<string> reversalLanguage = new List<string> { "English" };
 				mockView.Model.SelectedReversals = reversalLanguage;
 
 				// create entry sufficient to generate xhtml and css
@@ -235,9 +235,8 @@ namespace SIL.FieldWorks.XWorks
 				Assert.DoesNotThrow(() => controller.UploadToWebonary(mockView.Model, mockView));
 
 				// The names of the files being sent to webonary are listed while logging the zip
-				Assert.That(mockView.StatusStrings.Any(s => s.Contains("configured.xhtml")), "xhtml not logged as compressed");
-				Assert.That(mockView.StatusStrings.Any(s => s.Contains("configured.css")), "css not logged as compressed");
-				Assert.That(mockView.StatusStrings.Any(s => s.Contains("reversal_en.xhtml")), "reversal_enxhtml not logged as compressed");
+				Assert.That(mockView.StatusStrings.Any(s => s.Contains("lexentry.xhtml")), "xhtml not logged as sent: ");
+				Assert.That(mockView.StatusStrings.Any(s => s.Contains("configured.css")), "css not logged as sent");
 				Assert.That(mockView.StatusStrings.Any(s => s.Contains("Exporting entries for English reversal")), "English reversal not exported");
 			}
 		}
@@ -246,7 +245,6 @@ namespace SIL.FieldWorks.XWorks
 		/// Just give an error if not all the info is supplied rather than crashing.
 		/// </summary>
 		[Test]
-		[Category("ByHand")] // ByHand since uses local webonary instance
 		public void UploadToWebonaryDoesNotCrashWithoutAllItsInfo()
 		{
 			using (var controller = SetUpController())
@@ -254,8 +252,6 @@ namespace SIL.FieldWorks.XWorks
 				var view = SetUpView();
 				var model = view.Model;
 
-				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, view));
-				Assert.That(view.StatusStrings.Any(s => s.Contains("Uploading")), "Inform that the process has started");
 				model.SiteName = null;
 				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, view));
 				model.SiteName = "site";
@@ -274,7 +270,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		[Ignore("Until get working. Doesn't seem to put together the right kind of data to not get an error yet.")]
 		public void UploadToWebonaryCanCompleteWithoutError()
 		{
 			using (var controller = SetUpController())
@@ -287,244 +282,6 @@ namespace SIL.FieldWorks.XWorks
 				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, mockView));
 				mockView.StatusStrings.ForEach(Console.WriteLine); // Remove this output line once this test works.
 				Assert.That(String.IsNullOrEmpty(mockView.StatusStrings.Find(s => s.Contains("Error") || s.Contains("ERROR") || s.Contains("error"))));
-			}
-		}
-
-		#region Test connection to local Webonary instance
-		[Test]
-		[Category("ByHand")]
-		[Ignore("Used for manual testing against a real Webonary instance")]
-		public void CanConnectAtAll()
-		{
-			using (var client = new WebClient())
-			{
-				string responseText = null;
-				Assert.DoesNotThrow(()=>{responseText = ConnectAndUpload(client);});
-				Assert.That(responseText, Contains.Substring("username"),"Should get some sort of response from server, like an error message about authenticating.");
-			}
-		}
-
-		[Test]
-		[Category("ByHand")]
-		[Ignore("Used for manual testing against a real Webonary instance")]
-		public void CanAuthenticate()
-		{
-			using (var client = new WebClient())
-			{
-				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes("webonary:webonary")));
-				var responseText = ConnectAndUpload(client);
-				Assert.That(responseText, Does.Not.Contain("authentication failed"));
-				Assert.That(responseText, Does.Not.Contain("Wrong username or password"));
-			}
-		}
-
-		[Test]
-		[Category("ByHand")]
-		[Ignore("Used for manual testing against a real Webonary instance")]
-		public void ZipFileExtracts()
-		{
-			using (var client = new WebClient())
-			{
-				client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(new UTF8Encoding().GetBytes("webonary:webonary")));
-				var responseText = ConnectAndUpload(client);
-				Assert.That(responseText, Does.Contain("extracted successfully"));
-			}
-		}
-
-		[Test]
-		[Category("ByHand")]
-		[Ignore("Used for manual testing against a real Webonary instance")]
-		public void RealUploadWithBadDataReportsErrorInProcessing()
-		{
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator))
-			{
-				var view = new MockWebonaryDlg
-				{
-					Model = new UploadToWebonaryModel(m_propertyTable)
-					{
-						UserName = "webonary",
-						Password = "webonary"
-					}
-				};
-				// Contains a filename in the zip that isn't correct, so no data will be found by webonary.
-				controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new-bad.zip", view.Model, view);
-				//view.StatusStrings.ForEach(Console.WriteLine); // Debugging output
-				Assert.That(view.StatusStrings.Any(s => s.IndexOf("Error", StringComparison.OrdinalIgnoreCase) >= 0), "Should be an error reported");
-			}
-		}
-
-		/// <summary>
-		/// Does not crash. Reports error in upload.
-		/// Marked ByHand since I don't want the build servers poking around on
-		/// places on the network like this, and it also takes a few minutes to timeout.
-		/// </summary>
-		[Test]
-		[Category("ByHand")]
-		[Ignore("Takes too long to timeout. Enable if want to test.")]
-		public void RealUploadToWebonaryHandlesNetworkErrors()
-		{
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator))
-			{
-				var view = new MockWebonaryDlg();
-				var filepath = "../../Src/xWorks/xWorksTests/lubwisi-d-new.zip";
-
-				controller.UploadURI = "http://nameresolutionfailure.local/import.php";
-				Assert.DoesNotThrow(() => controller.UploadToWebonary(filepath, view.Model, view));
-				Assert.That(view.StatusStrings.Any(s => s.Contains("An error occurred uploading your data:")));
-				controller.UploadURI = "http://localhost:12345/import/connectfailure.php";
-				Assert.DoesNotThrow(() => controller.UploadToWebonary(filepath, view.Model, view));
-				Assert.That(view.StatusStrings.Any(s => s.Contains("An error occurred uploading your data:")));
-				controller.UploadURI = "http://192.168.0.1/import/requesttimedout.php";
-				Assert.DoesNotThrow(() => controller.UploadToWebonary(filepath, view.Model, view));
-				Assert.That(view.StatusStrings.Any(s => s.Contains("An error occurred uploading your data:")));
-			}
-		}
-
-		/// <summary>
-		/// Helper
-		/// </summary>
-		static string ConnectAndUpload(WebClient client)
-		{
-			var targetURI = "http://192.168.33.10/test/wp-json/webonary/import";
-			var inputFile = "../../Src/xWorks/xWorksTests/lubwisi-d-new.zip";
-			var response = client.UploadFile(targetURI, inputFile);
-			var responseText = Encoding.ASCII.GetString(response);
-			return responseText;
-		}
-		#endregion
-
-		[Test]
-		public void UploadToWebonaryThrowsOnNullInput()
-		{
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, null))
-			{
-				var view = new MockWebonaryDlg();
-				var model = new UploadToWebonaryModel(m_propertyTable);
-				Assert.Throws<ArgumentNullException>(() => controller.UploadToWebonary(null, model, view));
-				Assert.Throws<ArgumentNullException>(() => controller.UploadToWebonary("notNull", null, view));
-				Assert.Throws<ArgumentNullException>(() => controller.UploadToWebonary("notNull", model, null));
-			}
-		}
-
-		[Test]
-		public void UploadToWebonaryReportsFailedAuthentication()
-		{
-			var responseText = Encoding.UTF8.GetBytes("Wrong username or password.\nauthentication failed\n");
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, responseText))
-			{
-				var view = new MockWebonaryDlg()
-				{
-					Model = new UploadToWebonaryModel(m_propertyTable)
-					{
-						UserName = "nouser",
-						Password = "nopassword"
-					}
-				};
-				controller.UploadToWebonary("Fakefile.zip", view.Model, view);
-				Assert.That(view.StatusStrings.Any(s => s.Contains("Error: Wrong username or password")));
-			}
-		}
-
-		/// <summary>
-		/// The webonary server has an automatic redirection for non-existent sites. This tests both ways that information can be returned.
-		/// </summary>
-		[Test]
-		public void UploadToWebonaryReportsIncorrectSiteName()
-		{
-			// Test for a successful response indicating that a redirect should happen
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, new byte[] {}, HttpStatusCode.Found))
-			{
-				var view = new MockWebonaryDlg()
-				{
-					Model = new UploadToWebonaryModel(m_propertyTable)
-					{
-						SiteName = "test",
-						UserName = "software",
-						Password = "4API-testing"
-					}
-				};
-				controller.UploadToWebonary("fakefile.zip", view.Model, view);
-				Assert.That(view.StatusStrings.Any(s => s.Contains(xWorksStrings.ksErrorWebonarySiteName)));
-			}
-
-			// Test with an exception which indicates a redirect should happen
-			var redirectException = new WebonaryClient.WebonaryException(new WebException("Redirected."));
-			redirectException.StatusCode = HttpStatusCode.Redirect;
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, redirectException, new byte[] { }))
-			{
-				var view = new MockWebonaryDlg()
-				{
-					Model = new UploadToWebonaryModel(m_propertyTable)
-					{
-						SiteName = "test",
-						UserName = "software",
-						Password = "4API-testing"
-					}
-				};
-				controller.UploadToWebonary("fakefile.zip", view.Model, view);
-				Assert.That(view.StatusStrings.Any(s => s.Contains(xWorksStrings.ksErrorWebonarySiteName)));
-			}
-		}
-
-		[Test]
-		public void UploadToWebonaryReportsLackingPermissionsToUpload()
-		{
-			var ex = new WebonaryClient.WebonaryException(new WebException("Unable to connect to Webonary. Please check your username and password and your Internet connection."));
-			ex.StatusCode = HttpStatusCode.BadRequest;
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, ex, null))
-			{
-				var view = new MockWebonaryDlg()
-				{
-					Model = new UploadToWebonaryModel(m_propertyTable)
-					{
-						SiteName = "test-india",
-						UserName = "software",
-						Password = "4API-testing"
-					}
-				};
-				controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view.Model, view);
-				Assert.That(view.StatusStrings.Any(s => s.Contains("Unable to connect to Webonary. Please check your username and password and your Internet connection.")));
-			}
-		}
-
-		[Test]
-		public void UploadToWebonaryReportsSuccess()
-		{
-			var success = "Upload successful.";
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, Encoding.UTF8.GetBytes(success)))
-			{
-				var view = new MockWebonaryDlg()
-				{
-					Model = new UploadToWebonaryModel(m_propertyTable)
-					{
-						UserName = "webonary",
-						Password = "webonary"
-					}
-				};
-				controller.UploadToWebonary("../../Src/xWorks/xWorksTests/lubwisi-d-new.zip", view.Model, view);
-				//view.StatusStrings.ForEach(Console.WriteLine); // Debugging output
-				Assert.That(view.StatusStrings.Any(s => s.Contains("Upload successful")));
-			}
-		}
-
-		[Test]
-		public void UploadToWebonaryErrorInProcessingHandled()
-		{
-			var webonaryProcessingErrorContent = Encoding.UTF8.GetBytes("Error processing data: bad data.");
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, webonaryProcessingErrorContent))
-			{
-				var view = new MockWebonaryDlg
-				{
-					Model = new UploadToWebonaryModel(m_propertyTable)
-					{
-						UserName = "webonary",
-						Password = "webonary"
-					}
-				};
-				// Contains a filename in the zip that isn't correct, so no data will be found by webonary.
-				controller.UploadToWebonary("fakebaddata.zip", view.Model, view);
-				//view.StatusStrings.ForEach(Console.WriteLine); // Debugging output
-				Assert.That(view.StatusStrings.Any(s => s.IndexOf("Error", StringComparison.OrdinalIgnoreCase) >= 0), "Should be an error reported");
 			}
 		}
 
@@ -570,115 +327,6 @@ namespace SIL.FieldWorks.XWorks
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mp2"));
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mpv2"));
 			Assert.False(UploadToWebonaryController.IsSupportedWebonaryFile("foo.mpa"));
-		}
-
-		[Test]
-		public void CompressExportedFiles_IncludesAcceptableMediaTypes()
-		{
-			var view = new MockWebonaryDlg();
-
-			var tempDirectoryToCompress = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-			Directory.CreateDirectory(tempDirectoryToCompress);
-			try
-			{
-				var zipFileToUpload = Path.Combine(Path.GetTempPath(), Path.GetTempFileName());
-
-				// TIFF
-				var tiffFilename = Path.GetFileName(Path.GetTempFileName() + ".tif");
-				var tiffPath = Path.Combine(tempDirectoryToCompress, tiffFilename);
-				var tiffMagicNumber = new byte[] {0x49, 0x49, 0x2A};
-				File.WriteAllBytes(tiffPath, tiffMagicNumber);
-
-				// JPEG
-				var jpegFilename = Path.GetFileName(Path.GetTempFileName() + ".jpg");
-				var jpegPath = Path.Combine(tempDirectoryToCompress, jpegFilename);
-				var jpegMagicNumber = new byte[] {0xff, 0xd8};
-				File.WriteAllBytes(jpegPath, jpegMagicNumber);
-
-				// MP4
-				var mp4Filename = Path.GetFileName(Path.GetTempFileName() + ".mp4");
-				var mp4Path = Path.Combine(tempDirectoryToCompress, mp4Filename);
-				var mp4MagicNumber = new byte[] { 0x00, 0x00, 0x00, 0x18, 0x66, 0x74, 0x79, 0x70, 0x6d, 0x70, 0x34, 0x32 };
-				File.WriteAllBytes(mp4Path, mp4MagicNumber);
-
-				var xhtmlFilename = Path.GetFileName(Path.GetTempFileName() + ".xhtml");
-				var xhtmlPath = Path.Combine(tempDirectoryToCompress, xhtmlFilename);
-				var xhtmlContent = "<xhtml/>";
-				File.WriteAllText(xhtmlPath, xhtmlContent);
-
-				// SUT
-				UploadToWebonaryController.CompressExportedFiles(tempDirectoryToCompress, zipFileToUpload, view);
-
-				// Verification
-				const string unsupported = ".*nsupported.*";
-				const string unsupportedRegex = ".*{0}" + unsupported;
-				using (var uploadZip = new ZipFile(zipFileToUpload))
-				{
-					Assert.False(uploadZip.EntryFileNames.Contains(tiffFilename), "Should not have included unsupported TIFF file in file to upload.");
-					Assert.True(uploadZip.EntryFileNames.Contains(jpegFilename), "Should have included supported JPEG file in file to upload.");
-					Assert.True(uploadZip.EntryFileNames.Contains(mp4Filename), "Should have included supported MP4 file in file to upload.");
-				}
-
-				var query = string.Format(unsupportedRegex, tiffFilename);
-				Assert.True(view.StatusStrings.Exists(statusString => Regex.Matches(statusString, query).Count==1), "Lack of support for the tiff file should have been reported to the user.");
-				query = string.Format(unsupportedRegex, jpegFilename);
-				Assert.False(view.StatusStrings.Exists(statusString => Regex.Matches(statusString, query).Count==1), "Should not have reported lack of support for the jpeg file.");
-				query = string.Format(unsupportedRegex, mp4Filename);
-				Assert.False(view.StatusStrings.Exists(statusString => Regex.Matches(statusString, query).Count == 1), "Should not have reported lack of support for the mp4 file.");
-
-				Assert.That(view.StatusStrings.Count(statusString => Regex.Matches(statusString, unsupported).Count > 0), Is.EqualTo(1), "Too many unsupported files reported.");
-			}
-			finally
-			{
-				RobustIO.DeleteDirectoryAndContents(tempDirectoryToCompress);
-			}
-		}
-
-		/// <summary>
-		/// LT-17149.
-		/// </summary>
-		[Test]
-		public void UploadFilename_UsesSiteName()
-		{
-			var view = SetUpView();
-			var model = view.Model;
-			model.SiteName = "my-site-name";
-			var expectedFilename = "my-site-name.zip";
-			var actualFilename = UploadToWebonaryController.UploadFilename(model, view);
-			Assert.That(actualFilename, Is.EqualTo(expectedFilename), "Incorrect filename for webonary export.");
-		}
-
-		[Test]
-		public void UploadFilename_ThrowsForBadInput()
-		{
-			Assert.Throws<ArgumentNullException>(() => UploadToWebonaryController.UploadFilename(null, null));
-			var view = SetUpView();
-			var model = view.Model;
-			model.SiteName = null;
-			Assert.Throws<ArgumentException>(() => UploadToWebonaryController.UploadFilename(model, view));
-			model.SiteName = "";
-			Assert.Throws<ArgumentException>(() => UploadToWebonaryController.UploadFilename(model, view));
-		}
-
-		[TestCase("my.Site")]
-		[TestCase("my Site")]
-		[TestCase("my$Site")]
-		[TestCase("my%Site")]
-		[TestCase("my_Site")]
-		[TestCase("my*Site")]
-		[TestCase("my/Site")]
-		[TestCase("my:Site")]
-		public void UploadFilename_FailsForInvalidCharactersInSiteName(string siteName)
-		{
-			var view = SetUpView();
-			var model = view.Model;
-			model.SiteName = siteName;
-
-			// SUT
-			var result = UploadToWebonaryController.UploadFilename(model, view);
-
-			Assert.That(result, Is.Null, "Fail on invalid characters.");
-			Assert.That(view.StatusStrings.Any(s => s.Contains(xWorksStrings.ksErrorInvalidCharacters)), "Inform that there was a problem");
 		}
 
 		[Test]
@@ -769,7 +417,9 @@ namespace SIL.FieldWorks.XWorks
 				Password = "password",
 				SelectedPublication = "Test publication",
 				SelectedConfiguration = "Test Config",
-				Configurations = testConfig
+				Configurations = testConfig,
+				Reversals = new Dictionary<string, DictionaryConfigurationModel>(),
+				SelectedReversals = new List<string>(),
 			};
 		}
 
@@ -785,12 +435,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// Collect the status messages that are generated during the export
 			public List<string> StatusStrings = new List<string>();
-			public void UpdateStatus(string statusString)
+			public void UpdateStatus(string statusString, WebonaryStatusCondition condition)
 			{
 				StatusStrings.Add(statusString);
 			}
 
-			public void SetStatusCondition(WebonaryStatusCondition condition)
+			public void UploadCompleted()
 			{
 			}
 

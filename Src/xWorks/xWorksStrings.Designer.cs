@@ -2529,6 +2529,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} was not uploaded because it was missing copyright and license information..
+        /// </summary>
+        internal static string MissingCopyrightAndLicense {
+            get {
+                return ResourceManager.GetString("MissingCopyrightAndLicense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A component of FieldWorks, {0}, is missing. This prevents printing. Antivirus software sometimes removes files. You may need technical help to repair the FieldWorks installation and protect this file from being deleted again..
         /// </summary>
         internal static string MissingGeckofxHtmlToPdf {
@@ -3031,6 +3040,51 @@ namespace SIL.FieldWorks.XWorks {
         internal static string Webonary_UnexpectedUploadError {
             get {
                 return ResourceManager.GetString("Webonary_UnexpectedUploadError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not copy the file. {0}.
+        /// </summary>
+        internal static string WebonaryLogViewer_CopyFileError {
+            get {
+                return ResourceManager.GetString("WebonaryLogViewer_CopyFileError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Errors &amp; Warnings.
+        /// </summary>
+        internal static string WebonaryLogViewer_Errors_Warnings {
+            get {
+                return ResourceManager.GetString("WebonaryLogViewer_Errors-Warnings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Full Log.
+        /// </summary>
+        internal static string WebonaryLogViewer_Full_Log {
+            get {
+                return ResourceManager.GetString("WebonaryLogViewer_Full_Log", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rejected Files.
+        /// </summary>
+        internal static string WebonaryLogViewer_Rejected_Files {
+            get {
+                return ResourceManager.GetString("WebonaryLogViewer_Rejected_Files", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save a copy.
+        /// </summary>
+        internal static string WebonaryLogViewer_Save_a_copy {
+            get {
+                return ResourceManager.GetString("WebonaryLogViewer_Save_a_copy", resourceCulture);
             }
         }
         
