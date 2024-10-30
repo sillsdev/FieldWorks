@@ -10,12 +10,14 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.LexText.Controls;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
@@ -26,6 +28,7 @@ using SIL.Reporting;
 using SIL.Utils;
 using XCore;
 using ConfigurationException = SIL.Utils.ConfigurationException;
+using System.Web.Caching;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -488,6 +491,49 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			return true;	//we handled this.
+		}
+
+		/// <summary>
+		/// This method is called when a user selects a Move operation in on a slice.
+		/// </summary>
+		/// <param name="cmd"></param>
+		/// <returns></returns>
+		public bool OnDataTreeMove(object cmd)
+		{
+			Command command = (Command)cmd;
+			string field = command.GetParameter("field");
+			Slice currentSlice = m_dataEntryForm.CurrentSlice;
+			ICmObject obj = currentSlice.Object;
+			if (obj is IMoInflAffixSlot slot)
+			{
+				GetPartOfSpeech(slot.Owner.Hvo);
+			}
+			if (obj is IMoInflAffixTemplate template)
+			{
+				GetPartOfSpeech(template.Owner.Hvo);
+			}
+			return true;
+		}
+
+		private void GetPartOfSpeech(int hvo)
+		{
+			SIL.FieldWorks.Common.Widgets.TreeCombo m_tcMainPOS;
+			CoreWritingSystemDefinition defAnalWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			m_tcMainPOS = new SIL.FieldWorks.Common.Widgets.TreeCombo();
+			m_tcMainPOS.AdjustStringHeight = true;
+			// Setting width to match the default width used by popuptree
+			m_tcMainPOS.DropDownWidth = 300;
+			m_tcMainPOS.DroppedDown = false;
+			m_tcMainPOS.Name = "m_tcMainPOS";
+			m_tcMainPOS.SelectedNode = null;
+			m_tcMainPOS.StyleSheet = null;
+			POSPopupTreeManager m_mainPOSPopupTreeManager = new POSPopupTreeManager(m_tcMainPOS, Cache,
+				Cache.LanguageProject.PartsOfSpeechOA,
+				defAnalWs.Handle, false, m_mediator, m_propertyTable,
+				m_propertyTable.GetValue<Form>("window"));
+			m_mainPOSPopupTreeManager.NotSureIsAny = true;
+			m_mainPOSPopupTreeManager.LoadPopupTree(hvo);
+			// m_mainPOSPopupTreeManager.AfterSelect += m_mainPOSPopupTreeManager_AfterSelect;
 		}
 
 		private bool SliceConfiguredForField(XmlNode node, string field)

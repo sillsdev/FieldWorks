@@ -76,16 +76,22 @@
 	<command id="CmdDataTree-Insert-POS-AffixSlot" label="Insert Affix Slot" message="DataTreeInsert">
 	  <parameters field="AffixSlots" className="MoInflAffixSlot"/>
 	</command>
-	<command id="CmdDataTree-Delete-POS-AffixSlot" label="Delete Affix Slot" message="DataTreeDelete" icon="Delete">
+    <command id="CmdDataTree-Move-POS-AffixSlot" label="Move Affix Slot" message="DataTreeMove">
+      <parameters field="AffixSlots" className="MoInflAffixSlot"/>
+    </command>
+    <command id="CmdDataTree-Delete-POS-AffixSlot" label="Delete Affix Slot" message="DataTreeDelete" icon="Delete">
 	  <parameters field="AffixSlots" className="MoInflAffixSlot"/>
 	</command>
 	<command id="CmdDataTree-Insert-POS-AffixTemplate" label="Insert Affix Template" message="DataTreeInsert">
 	  <parameters field="AffixTemplates" className="MoInflAffixTemplate"/>
 	</command>
-	 <command id="CmdDataTree-Copy-POS-AffixTemplate" label="Duplicate Affix Template" message="DataTreeCopy">
-		<parameters field="AffixTemplates" className="MoInflAffixTemplate"/>
-	 </command>
-	 <command id="CmdDataTree-Delete-POS-AffixTemplate" label="Delete Affix Template" message="DataTreeDelete" icon="Delete">
+    <command id="CmdDataTree-Copy-POS-AffixTemplate" label="Duplicate Affix Template" message="DataTreeCopy">
+      <parameters field="AffixTemplates" className="MoInflAffixTemplate"/>
+    </command>
+    <command id="CmdDataTree-Move-POS-AffixTemplate" label="Move Affix Template" message="DataTreeMove">
+      <parameters field="AffixTemplates" className="MoInflAffixTemplate"/>
+    </command>
+    <command id="CmdDataTree-Delete-POS-AffixTemplate" label="Delete Affix Template" message="DataTreeDelete" icon="Delete">
 	  <parameters field="AffixTemplates" className="MoInflAffixTemplate"/>
 	</command>
 	<command id="CmdDataTree-Insert-POS-InflectionClass-Subclasses" label="Insert Inflection Class" message="DataTreeInsert">
@@ -207,8 +213,9 @@
 	  <!-- <item command="CmdDataTree-Help"/> -->
 	</menu>
 	<menu id="mnuDataTree-POS-AffixSlot">
-	  <item command="CmdDataTree-Delete-POS-AffixSlot"/>
-	  <!-- <item command="CmdDataTree-Help"/> -->
+      <item command="CmdDataTree-Move-POS-AffixSlot"/>
+      <item command="CmdDataTree-Delete-POS-AffixSlot"/>
+      <!-- <item command="CmdDataTree-Help"/> -->
 	</menu>
 	<menu id="mnuDataTree-POS-AffixTemplates">
 	  <item command="CmdDataTree-Insert-POS-AffixTemplate"/>
@@ -216,8 +223,9 @@
 	</menu>
 	 <menu id="mnuDataTree-POS-AffixTemplate">
 	  <item command="CmdDataTree-Delete-POS-AffixTemplate"/>
-	   <item command="CmdDataTree-Copy-POS-AffixTemplate"/>
-	   <!-- <item command="CmdDataTree-Help"/> -->
+      <item command="CmdDataTree-Copy-POS-AffixTemplate"/>
+      <item command="CmdDataTree-Move-POS-AffixTemplate"/>
+      <!-- <item command="CmdDataTree-Help"/> -->
 	</menu>
 	<menu id="mnuDataTree-POS-InflectionClass-Subclasses">
 	  <item command="CmdDataTree-Insert-POS-InflectionClass-Subclasses"/>
