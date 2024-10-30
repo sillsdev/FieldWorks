@@ -44,15 +44,17 @@ namespace SIL.FieldWorks.XWorks
 
 		public static Style GenerateLetterHeaderParagraphStyle(ReadOnlyPropertyTable propertyTable, out BulletInfo? bulletInfo)
 		{
-			var style = GenerateParagraphStyleFromLcmStyleSheet(LetterHeadingStyleName, 0, propertyTable, out bulletInfo);
+			var style = GenerateParagraphStyleFromLcmStyleSheet(LetterHeadingStyleName, DefaultStyle, propertyTable, out bulletInfo);
 			style.StyleId = LetterHeadingDisplayName;
 			style.StyleName.Val = style.StyleId;
 			return style;
 		}
 
-		public static Style GenerateBeforeAfterBetweenCharacterStyle(ReadOnlyPropertyTable propertyTable)
+		public static Style GenerateBeforeAfterBetweenCharacterStyle(ReadOnlyPropertyTable propertyTable, out int wsId)
 		{
-			var style = GenerateCharacterStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, 0, propertyTable);
+			var cache = propertyTable.GetValue<LcmCache>("cache");
+			wsId = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
+			var style = GenerateCharacterStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, wsId, propertyTable);
 			style.StyleId = BeforeAfterBetweenDisplayName;
 			style.StyleName.Val = style.StyleId;
 			return style;
@@ -350,22 +352,22 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="propertyTable"></param>
 		/// <returns></returns>
-		public static Styles GenerateWritingSystemsCharacterStyles(ReadOnlyPropertyTable propertyTable)
+		public static List<StyleElement> GenerateWritingSystemsCharacterStyles(ReadOnlyPropertyTable propertyTable)
 		{
+			var styleElements = new List<StyleElement>();
 			var cache = propertyTable.GetValue<LcmCache>("cache");
-			var styleRules = new Styles();
-			// Generate the rules for all the writing system overrides
+			// Generate the styles for all the writing systems
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
 				// Get the character style information from the "Normal" paragraph style.
 				Style wsCharStyle = GetOnlyCharacterStyle(GenerateParagraphStyleFromLcmStyleSheet(NormalParagraphStyleName, aws.Handle, propertyTable, out BulletInfo? _));
 				wsCharStyle.StyleId = GetWsString(aws.LanguageTag);
 				wsCharStyle.StyleName = new StyleName() { Val = wsCharStyle.StyleId };
-
-				styleRules.Append(wsCharStyle);
+				var styleElem = new StyleElement(wsCharStyle.StyleId, wsCharStyle, null, aws.Handle, aws.RightToLeftScript);
+				styleElements.Add(styleElem);
 			}
 
-			return styleRules;
+			return styleElements;
 		}
 
 		private static Style GenerateParagraphStyleFromPictureOptions(ConfigurableDictionaryNode configNode, DictionaryNodePictureOptions pictureOptions,

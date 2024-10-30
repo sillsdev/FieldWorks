@@ -357,7 +357,7 @@ namespace SIL.FieldWorks.XWorks
 			// 2. Sense number before text:		BEF
 			// 3. Sense number:					2
 			// 4. Sense number after text:		AFT
-			const string senseNumberTwoRun = "<w:r><w:rPr><w:rStyle w:val=\"Sense Number[lang='en']\" /></w:rPr><w:t xml:space=\"preserve\">BEF</w:t><w:t xml:space=\"preserve\">2</w:t><w:t xml:space=\"preserve\">AFT</w:t></w:r>";
+			const string senseNumberTwoRun = "<w:t xml:space=\"preserve\">BEF</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Sense Number[lang='en']\" /></w:rPr><w:t xml:space=\"preserve\">2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Context\" /></w:rPr><w:t xml:space=\"preserve\">AFT</w:t></w:r>";
 			Assert.True(result.mainDocPart.RootElement.OuterXml.Contains(senseNumberTwoRun));
 		}
 

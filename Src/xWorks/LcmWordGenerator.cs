@@ -42,6 +42,7 @@ namespace SIL.FieldWorks.XWorks
 		private ReadOnlyPropertyTable _propertyTable;
 		internal const int maxImageHeightInches = 1;
 		internal const int maxImageWidthInches = 1;
+		public static bool IsBidi { get; private set; }
 
 		public LcmWordGenerator(LcmCache cache)
 		{
@@ -63,8 +64,9 @@ namespace SIL.FieldWorks.XWorks
 				var readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);
 
 				generator.Init(readOnlyPropertyTable);
+				IsBidi = ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration);
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, false, true, System.IO.Path.GetDirectoryName(filePath),
-							ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), System.IO.Path.GetFileName(cssPath) == "configured.css")
+							IsBidi, System.IO.Path.GetFileName(cssPath) == "configured.css")
 							{ ContentGenerator = generator, StylesGenerator = generator};
 				settings.StylesGenerator.AddGlobalStyles(configuration, readOnlyPropertyTable);
 				string lastHeader = null;
@@ -203,7 +205,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		internal static IFragment GenerateLetterHeaderIfNeeded(ICmObject entry, ref string lastHeader, Collator headwordWsCollator, ConfiguredLcmGenerator.GeneratorSettings settings, ReadOnlyPropertyTable propertyTable, LcmStyleSheet mediatorStyleSheet, RecordClerk clerk = null)
+		internal static IFragment GenerateLetterHeaderIfNeeded(ICmObject entry, ref string lastHeader, Collator headwordWsCollator,
+			ConfiguredLcmGenerator.GeneratorSettings settings, ReadOnlyPropertyTable propertyTable, LcmStyleSheet mediatorStyleSheet,
+			RecordClerk clerk = null)
 		{
 			StringBuilder headerTextBuilder = ConfiguredLcmGenerator.GenerateLetterHeaderIfNeeded(entry, ref lastHeader,
 				headwordWsCollator, settings, clerk);
@@ -446,7 +450,7 @@ namespace SIL.FieldWorks.XWorks
 			/// </summary>
 			/// <param name="run">The run to append.</param>
 			/// <param name="forceNewParagraph">Even if a paragraph exists, force the creation of a new paragraph.</param>
-			public void AppendToParagraph(IFragment fragToCopy, OpenXmlElement run, bool forceNewParagraph)
+			public void AppendToParagraph(IFragment fragToCopy, Run run, bool forceNewParagraph)
 			{
 				WP.Paragraph lastPar = null;
 
@@ -487,6 +491,30 @@ namespace SIL.FieldWorks.XWorks
 				else
 				{
 					lastPar = GetLastParagraph();
+
+					// If the project is bidi and
+					// the run we are adding is not rtl and
+					// the paragraph already contains runs and
+					// the previous run is not rtl
+					// then add a run between them that is rtl and contains a rtl character.
+					// This is needed to get the runs to switch their order in Word.
+					if (IsBidi && run.RunProperties?.RightToLeftText == null)
+					{
+						var childRuns = lastPar.Elements<Run>();
+						if(childRuns.Any())
+						{
+							var previousRun = childRuns.Last();
+							if (previousRun.RunProperties?.RightToLeftText == null)
+							{
+								// Add a unicode RTL mark between two runs that are not rtl.
+								var rtlRun = new WP.Run();
+								rtlRun.AppendChild(new WP.Text("\u200f"));
+								rtlRun.RunProperties = new RunProperties();
+								rtlRun.RunProperties.RightToLeftText = new RightToLeftText();
+								lastPar.AppendChild(rtlRun);
+							}
+						}
+					}
 				}
 
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
@@ -736,19 +764,23 @@ namespace SIL.FieldWorks.XWorks
 								style.Append(new BasedOn() { Val = wsString });
 								style.StyleId = displayNameBase;
 								style.StyleName.Val = style.StyleId;
-								uniqueDisplayName = s_styleCollection.AddStyle(style, config.Style, style.StyleId);
+								bool wsIsRtl = IsWritingSystemRightToLeft(cache, wsId);
+								uniqueDisplayName = s_styleCollection.AddCharacterStyle(style, config.Style, style.StyleId, wsId, wsIsRtl);
 							}
 							// There is no style name defined in the config so generate a style that is identical to the writing system style
-							// except that it contains a display name that the user wants to see in the Word Styles. (example: "Reverse Abbreviation[lang='en']")
+							// except that it contains a display name that the user wants to see in the Word Styles.
+							// (example: "Reverse Abbreviation[lang='en']")
 							else
 							{
-								Style rootStyle = GetOrCreateCharacterStyle(wsString, wsString, propTable);
+								StyleElement rootElem = s_styleCollection.GetStyleElement(wsString);
+								Style rootStyle = rootElem.Style;
 								if (rootStyle != null)
 								{
 									Style basedOnStyle = WordStylesGenerator.GenerateBasedOnCharacterStyle(new Style(), wsString, displayNameBase);
 									if (basedOnStyle != null)
 									{
-										uniqueDisplayName = s_styleCollection.AddStyle(basedOnStyle, config.Style, basedOnStyle.StyleId);
+										uniqueDisplayName = s_styleCollection.AddCharacterStyle(basedOnStyle, config.Style, basedOnStyle.StyleId,
+											rootElem.WritingSystemId, rootElem.WritingSystemIsRtl);
 									}
 									else
 									{
@@ -766,7 +798,7 @@ namespace SIL.FieldWorks.XWorks
 							}
 						}
 
-						run.Append(new RunProperties(new RunStyle() { Val = uniqueDisplayName }));
+						run.Append(GenerateRunProperties(uniqueDisplayName));
 					}
 				}
 			}
@@ -1339,7 +1371,7 @@ namespace SIL.FieldWorks.XWorks
 			style.StyleId = node.DisplayLabel;
 			style.StyleName.Val = style.StyleId;
 			AddParagraphBasedOnStyle(style, node, _propertyTable);
-			string uniqueDisplayName = s_styleCollection.AddStyle(style, node.Style, style.StyleId, bulletInfo);
+			string uniqueDisplayName = s_styleCollection.AddParagraphStyle(style, node.Style, style.StyleId, bulletInfo);
 
 			// Create a new paragraph for the entry.
 			DocFragment wordDoc = ((WordFragmentWriter)writer).WordFragment;
@@ -1350,7 +1382,7 @@ namespace SIL.FieldWorks.XWorks
 			// Create the 'continuation' style for the entry. This style will be the same as the style for the entry with the only
 			// differences being that it does not contain the first line indenting or bullet info (since it is a continuation of the same entry).
 			var contStyle = WordStylesGenerator.GenerateContinuationStyle(style);
-			s_styleCollection.AddStyle(contStyle, node.Style, contStyle.StyleId);
+			s_styleCollection.AddParagraphStyle(contStyle, node.Style, contStyle.StyleId, null);
 		}
 
 		public void AddEntryData(IFragmentWriter writer, List<ConfiguredLcmGenerator.ConfigFragment> pieces)
@@ -1576,43 +1608,34 @@ namespace SIL.FieldWorks.XWorks
 					style.Append(new BasedOn() { Val = wsString });
 					style.StyleId = displayNameBase;
 					style.StyleName.Val = style.StyleId;
-					uniqueDisplayName = s_styleCollection.AddStyle(style, numberStyleName, style.StyleId);
+					bool wsIsRtl = IsWritingSystemRightToLeft(cache, wsId);
+					uniqueDisplayName = s_styleCollection.AddCharacterStyle(style, numberStyleName, style.StyleId, wsId, wsIsRtl);
 				}
 			}
 
-			// Create the run.
-			WP.Run run = new WP.Run();
-
-			// Reference the style name.
-			WP.RunProperties runProps = new WP.RunProperties(new RunStyle() { Val = uniqueDisplayName });
-			run.Append(runProps);
+			DocFragment senseNum = new DocFragment();
 
 			// Add characters before the number.
 			if (!string.IsNullOrEmpty(beforeNumber))
 			{
-				WP.Text txt = new WP.Text(beforeNumber);
-				txt.Space = SpaceProcessingModeValues.Preserve;
-				run.Append(txt);
+				var beforeRun = CreateBeforeAfterBetweenRun(beforeNumber);
+				senseNum.DocBody.AppendChild(beforeRun);
 			}
 
 			// Add the number.
 			if (!string.IsNullOrEmpty(formattedSenseNumber))
 			{
-				WP.Text txt = new WP.Text(formattedSenseNumber);
-				txt.Space = SpaceProcessingModeValues.Preserve;
-				run.Append(txt);
+				var run = CreateRun(formattedSenseNumber, uniqueDisplayName);
+				senseNum.DocBody.AppendChild(run);
 			}
 
 			// Add characters after the number.
 			if (!string.IsNullOrEmpty(afterNumber))
 			{
-				WP.Text txt = new WP.Text(afterNumber);
-				txt.Space = SpaceProcessingModeValues.Preserve;
-				run.Append(txt);
+				var afterRun = CreateBeforeAfterBetweenRun(afterNumber);
+				senseNum.DocBody.AppendChild(afterRun);
 			}
 
-			DocFragment senseNum = new DocFragment();
-			senseNum.DocBody.AppendChild(run);
 			return senseNum;
 		}
 		public IFragment AddLexReferences(ConfigurableDictionaryNode config, bool generateLexType, IFragment lexTypeContent, string className, IFragment referencesContent, bool typeBefore)
@@ -1705,18 +1728,21 @@ namespace SIL.FieldWorks.XWorks
 			// Generate Character Styles
 			//
 
-			var beforeAfterBetweenStyle = WordStylesGenerator.GenerateBeforeAfterBetweenCharacterStyle(propertyTable);
+			var beforeAfterBetweenStyle = WordStylesGenerator.GenerateBeforeAfterBetweenCharacterStyle(propertyTable, out int wsId);
 			if (beforeAfterBetweenStyle != null)
 			{
-				s_styleCollection.AddStyle(beforeAfterBetweenStyle, WordStylesGenerator.BeforeAfterBetweenStyleName, beforeAfterBetweenStyle.StyleId);
+				bool wsIsRtl = IsWritingSystemRightToLeft(cache, wsId);
+				s_styleCollection.AddCharacterStyle(beforeAfterBetweenStyle,
+					WordStylesGenerator.BeforeAfterBetweenStyleName, beforeAfterBetweenStyle.StyleId, wsId, wsIsRtl);
 			}
 
-			Styles writingSystemStyles = WordStylesGenerator.GenerateWritingSystemsCharacterStyles(propertyTable);
+			List<StyleElement> writingSystemStyles = WordStylesGenerator.GenerateWritingSystemsCharacterStyles(propertyTable);
 			if (writingSystemStyles != null)
 			{
-				foreach (WP.Style style in writingSystemStyles.Descendants<Style>())
+				foreach (StyleElement elem in writingSystemStyles)
 				{
-					s_styleCollection.AddStyle(style, style.StyleId, style.StyleId);
+					s_styleCollection.AddCharacterStyle(elem.Style, elem.Style.StyleId, elem.Style.StyleId,
+						elem.WritingSystemId, elem.WritingSystemIsRtl);
 				}
 			}
 
@@ -1727,33 +1753,22 @@ namespace SIL.FieldWorks.XWorks
 			var normStyle = WordStylesGenerator.GenerateNormalParagraphStyle(propertyTable, out bulletInfo);
 			if (normStyle != null)
 			{
-				s_styleCollection.AddStyle(normStyle, WordStylesGenerator.NormalParagraphStyleName, normStyle.StyleId, bulletInfo);
+				s_styleCollection.AddParagraphStyle(normStyle, WordStylesGenerator.NormalParagraphStyleName, normStyle.StyleId, bulletInfo);
 			}
 
 			var mainStyle = WordStylesGenerator.GenerateMainEntryParagraphStyle(propertyTable, model, out ConfigurableDictionaryNode node, out bulletInfo);
 			if (mainStyle != null)
 			{
 				AddParagraphBasedOnStyle(mainStyle, node, propertyTable);
-				s_styleCollection.AddStyle(mainStyle, node.Style, mainStyle.StyleId, bulletInfo);
+				s_styleCollection.AddParagraphStyle(mainStyle, node.Style, mainStyle.StyleId, bulletInfo);
 			}
 
 			var headStyle = WordStylesGenerator.GenerateLetterHeaderParagraphStyle(propertyTable, out bulletInfo);
 			if (headStyle != null)
 			{
 				AddParagraphBasedOnStyle(headStyle, null, _propertyTable);
-				s_styleCollection.AddStyle(headStyle, WordStylesGenerator.LetterHeadingStyleName, headStyle.StyleId, bulletInfo);
+				s_styleCollection.AddParagraphStyle(headStyle, WordStylesGenerator.LetterHeadingStyleName, headStyle.StyleId, bulletInfo);
 			}
-
-			// Check both 'normal' and 'mainEntry' paragraph styles for the RightToLeft flag.  If either of them
-			// have it then set the flag for all run properties to be created RTL.
-			// Note:  Checking 'normal' and 'mainEntry' seems like a logical place to check for this flag since
-			// other paragraph styles are usually based on them, but there may be reasons to expand this check.
-			if ((normStyle?.StyleParagraphProperties?.BiDi != null) ||
-				(mainStyle?.StyleParagraphProperties?.BiDi != null))
-			{
-				RightToLeft = true;
-			}
-
 
 			// TODO: in openxml, will links be plaintext by default?
 			//WordStylesGenerator.MakeLinksLookLikePlainText(_styleSheet);
@@ -1824,7 +1839,8 @@ namespace SIL.FieldWorks.XWorks
 					// it's basedOn style, then add this basedOn style to the collection.
 					else
 					{
-						basedOnStyle = WordStylesGenerator.GenerateParagraphStyleFromLcmStyleSheet(basedOnStyleName, 0, propertyTable,out BulletInfo? bulletInfo);
+						basedOnStyle = WordStylesGenerator.GenerateParagraphStyleFromLcmStyleSheet(basedOnStyleName,
+							WordStylesGenerator.DefaultStyle, propertyTable,out BulletInfo? bulletInfo);
 						// Check if the style is based on itself.  This happens with the 'Normal' style and could possibly happen with others.
 						bool basedOnIsDifferent = basedOnStyle.BasedOn?.Val != null && basedOnStyle.StyleId != basedOnStyle.BasedOn?.Val;
 
@@ -1842,7 +1858,7 @@ namespace SIL.FieldWorks.XWorks
 							// we should pass null to AddParagraphBasedOnStyle since no node is associated with the basedOnStyle.
 							AddParagraphBasedOnStyle(basedOnStyle, parentNode, propertyTable);
 						}
-						s_styleCollection.AddStyle(basedOnStyle, basedOnStyleName, basedOnStyle.StyleId, bulletInfo);
+						s_styleCollection.AddParagraphStyle(basedOnStyle, basedOnStyleName, basedOnStyle.StyleId, bulletInfo);
 					}
 				}
 			}
@@ -1869,13 +1885,15 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
-					retStyle = WordStylesGenerator.GenerateCharacterStyleFromLcmStyleSheet(nodeStyleName, 0, propertyTable);
+					retStyle = WordStylesGenerator.GenerateCharacterStyleFromLcmStyleSheet(nodeStyleName, WordStylesGenerator.DefaultStyle, propertyTable);
 					if (retStyle == null || retStyle.Type != StyleValues.Character)
 					{
 						return null;
 					}
 
-					s_styleCollection.AddStyle(retStyle, nodeStyleName, displayNameBase);
+					var cache = propertyTable.GetValue<LcmCache>("cache");
+					bool wsIsRtl = IsWritingSystemRightToLeft(cache, WordStylesGenerator.DefaultStyle);
+					s_styleCollection.AddCharacterStyle(retStyle, nodeStyleName, displayNameBase, WordStylesGenerator.DefaultStyle, wsIsRtl);
 				}
 			}
 			return retStyle;
@@ -1905,7 +1923,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						AddParagraphBasedOnStyle(style, node, _propertyTable);
 						string oldName = style.StyleId;
-						string newName = s_styleCollection.AddStyle(style, node.Style, style.StyleId, bulletInfo);
+						string newName = s_styleCollection.AddParagraphStyle(style, node.Style, style.StyleId, bulletInfo);
 						Debug.Assert(oldName == newName, "Not expecting the name for a paragraph style to ever change!");
 					}
 				}
@@ -2099,8 +2117,7 @@ namespace SIL.FieldWorks.XWorks
 			WP.Run run = new WP.Run();
 			if (!string.IsNullOrEmpty(styleDisplayName))
 			{
-				WP.RunProperties runProps =
-					new WP.RunProperties(new RunStyle() { Val = styleDisplayName });
+				WP.RunProperties runProps = GenerateRunProperties(styleDisplayName);
 				run.Append(runProps);
 			}
 
@@ -2124,7 +2141,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var run = new WP.Run()
 				{
-					RunProperties = new WP.RunProperties(new RunStyle() { Val = WordStylesGenerator.BeforeAfterBetweenDisplayName })
+					RunProperties = GenerateRunProperties(WordStylesGenerator.BeforeAfterBetweenDisplayName)
 				};
 				// If the before after between text has line break characters return a composite run including the line breaks
 				// Use Regex.Matches to capture both the content and the delimiters
@@ -2148,7 +2165,22 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void AddRunStyle_Worker(WP.Run run, string nodeStyleName, string displayNameBase)
 		{
-			Style rootStyle = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(nodeStyleName, 0, _propertyTable, out BulletInfo? _);
+			// Use the writing system that is already used in the run.
+			int wsId = WordStylesGenerator.DefaultStyle;
+			bool wsIsRtl = false;
+			var styleElem = GetStyleElementFromRun(run);
+			if (styleElem != null)
+			{
+				wsId = styleElem.WritingSystemId;
+				wsIsRtl = styleElem.WritingSystemIsRtl;
+			}
+			else
+			{
+				var cache = _propertyTable.GetValue<LcmCache>("cache");
+				wsIsRtl = IsWritingSystemRightToLeft(cache, wsId);
+			}
+
+			Style rootStyle = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(nodeStyleName, wsId, _propertyTable, out BulletInfo? _);
 			if (rootStyle == null || rootStyle.Type != StyleValues.Character)
 			{
 				return;
@@ -2164,6 +2196,15 @@ namespace SIL.FieldWorks.XWorks
 					// If the run has a current style, then make the new style based on the current style.
 					if (!string.IsNullOrEmpty(currentRunStyle))
 					{
+						// If the currentRun has one of the default global character styles then return. We do not
+						// want to create a new style based on these.
+						if (currentRunStyle == WordStylesGenerator.BeforeAfterBetweenDisplayName ||
+							currentRunStyle == WordStylesGenerator.SenseNumberDisplayName ||
+							currentRunStyle == WordStylesGenerator.WritingSystemDisplayName)
+						{
+							return;
+						}
+
 						// If the current style is a language tag, then no need to add the separator.
 						string displayNameBaseCombined = currentRunStyle.StartsWith("[") ?
 							(displayNameBase + currentRunStyle) : (displayNameBase + WordStylesGenerator.StyleSeparator + currentRunStyle);
@@ -2173,7 +2214,7 @@ namespace SIL.FieldWorks.XWorks
 						{
 							if (s_styleCollection.TryGetStyle(nodeStyleName, displayNameBaseCombined, out StyleElement existingStyle))
 							{
-								run.RunProperties.Descendants<RunStyle>().Last().Val = existingStyle.Style.StyleId;
+								ResetRunProperties(run, existingStyle.Style.StyleId);
 							}
 							else
 							{
@@ -2190,29 +2231,28 @@ namespace SIL.FieldWorks.XWorks
 								Style basedOnStyle = WordStylesGenerator.GenerateBasedOnCharacterStyle(rootStyle, currentRunStyle, displayNameBaseCombined);
 								if (basedOnStyle != null)
 								{
-									string uniqueDisplayName = s_styleCollection.AddStyle(basedOnStyle, nodeStyleName, basedOnStyle.StyleId);
-									run.RunProperties.Descendants<RunStyle>().Last().Val = uniqueDisplayName;
+									string uniqueDisplayName = s_styleCollection.AddCharacterStyle(basedOnStyle, nodeStyleName, basedOnStyle.StyleId, wsId, wsIsRtl);
+									ResetRunProperties(run, uniqueDisplayName);
 								}
 							}
 						}
 					}
 					else
 					{
-						string uniqueDisplayName = s_styleCollection.AddStyle(rootStyle, nodeStyleName, displayNameBase);
-						run.RunProperties.Descendants<RunStyle>().Last().Val = uniqueDisplayName;
+						string uniqueDisplayName = s_styleCollection.AddCharacterStyle(rootStyle, nodeStyleName, displayNameBase, wsId, wsIsRtl);
+						ResetRunProperties(run, uniqueDisplayName);
 					}
 				}
 				else
 				{
-					string uniqueDisplayName = s_styleCollection.AddStyle(rootStyle, nodeStyleName, displayNameBase);
-					run.RunProperties.Append(new RunStyle() { Val = uniqueDisplayName });
+					string uniqueDisplayName = s_styleCollection.AddCharacterStyle(rootStyle, nodeStyleName, displayNameBase, wsId, wsIsRtl);
+					ResetRunProperties(run, uniqueDisplayName);
 				}
 			}
 			else
 			{
-				string uniqueDisplayName = s_styleCollection.AddStyle(rootStyle, nodeStyleName, displayNameBase);
-				WP.RunProperties runProps =
-					new WP.RunProperties(new RunStyle() { Val = uniqueDisplayName });
+				string uniqueDisplayName = s_styleCollection.AddCharacterStyle(rootStyle, nodeStyleName, displayNameBase, wsId, wsIsRtl);
+				WP.RunProperties runProps = GenerateRunProperties(uniqueDisplayName);
 				// Prepend RunProperties so it appears before any text elements contained in the run
 				run.PrependChild<WP.RunProperties>(runProps);
 			}
@@ -2349,14 +2389,14 @@ namespace SIL.FieldWorks.XWorks
 								style.StyleId = node.DisplayLabel;
 								style.StyleName.Val = style.StyleId;
 								AddParagraphBasedOnStyle(style, node, _propertyTable);
-								uniqueDisplayName = s_styleCollection.AddStyle(style, node.Style, style.StyleId, bulletInfo);
+								uniqueDisplayName = s_styleCollection.AddParagraphStyle(style, node.Style, style.StyleId, bulletInfo);
 							}
 
 							// Add the continuation style.
 							if (continuationParagraph)
 							{
 								var contStyle = WordStylesGenerator.GenerateContinuationStyle(style);
-								uniqueDisplayName = s_styleCollection.AddStyle(contStyle, node.Style, contStyle.StyleId);
+								uniqueDisplayName = s_styleCollection.AddParagraphStyle(contStyle, node.Style, contStyle.StyleId, null);
 							}
 						}
 						WP.ParagraphProperties paragraphProps =
@@ -2625,11 +2665,76 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Indicates if all the runs should be created LTR or RTL.
-		/// Note: If we do not force all to be the same then we would need to create
-		/// different styles for LTR and for RTL.
+		/// Deletes the existing run properties and creates new run properties; setting the
+		/// style name and right to left flag.
 		/// </summary>
-		public static bool RightToLeft { private set; get; }
+		/// <param name="uniqueDisplayName">The new style name.</param>
+		public void ResetRunProperties(Run run, string uniqueDisplayName)
+		{
+			if (run.RunProperties != null)
+			{
+				run.RemoveChild(run.RunProperties);
+			}
+			run.RunProperties = GenerateRunProperties(uniqueDisplayName);
+		}
+
+		/// <summary>
+		/// Generate the run properties.  Sets the style name and right to left flag.
+		/// </summary>
+		/// <param name="uniqueDisplayName">The style name.</param>
+		public static RunProperties GenerateRunProperties(string uniqueDisplayName)
+		{
+			var runProp = new RunProperties(new RunStyle() { Val = uniqueDisplayName });
+			if (IsBidi)
+			{
+				StyleElement styleElem = s_styleCollection.GetStyleElement(uniqueDisplayName);
+				Debug.Assert(styleElem != null);
+				if (styleElem.WritingSystemIsRtl)
+				{
+					runProp.RightToLeftText = new RightToLeftText();
+				}
+			}
+			return runProp;
+		}
+
+		/// <summary>
+		/// Gets the unique display name out of a run.
+		/// </summary>
+		/// <returns>The name, or null if the run does not contain the information.</returns>
+		public string GetUniqueDisplayName(Run run)
+		{
+			return run.RunProperties?.RunStyle?.Val;
+		}
+
+		/// <summary>
+		/// Get the StyleElement associated with a run.
+		/// </summary>
+		/// <returns>The StyleElement, or null if the run does not contain the information.</returns>
+		public StyleElement GetStyleElementFromRun(Run run)
+		{
+			string uniqueDisplayName = GetUniqueDisplayName(run);
+			if (uniqueDisplayName == null)  // Runs containing a 'Drawing' will not have RunProperties.
+				return null;
+
+			StyleElement elem = s_styleCollection.GetStyleElement(uniqueDisplayName);
+			Debug.Assert(elem != null);  // I don't think we should ever not find a styleElement.
+
+			return elem;
+		}
+
+		/// <summary>
+		/// Check if a writing system is right to left.
+		/// </summary>
+		internal static bool IsWritingSystemRightToLeft(LcmCache cache, int wsId)
+		{
+			var lgWritingSystem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId);
+			if (lgWritingSystem == null)
+			{
+				CoreWritingSystemDefinition defAnalWs = cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+				lgWritingSystem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(defAnalWs.Handle);
+			}
+			return lgWritingSystem.RightToLeftScript;
+		}
 
 		/// <summary>
 		/// Added to support tests.
@@ -2638,6 +2743,5 @@ namespace SIL.FieldWorks.XWorks
 		{
 			s_styleCollection.Clear();
 		}
-
 	}
 }
