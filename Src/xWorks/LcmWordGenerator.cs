@@ -491,30 +491,6 @@ namespace SIL.FieldWorks.XWorks
 				else
 				{
 					lastPar = GetLastParagraph();
-
-					// If the project is bidi and
-					// the run we are adding is not rtl and
-					// the paragraph already contains runs and
-					// the previous run is not rtl
-					// then add a run between them that is rtl and contains a rtl character.
-					// This is needed to get the runs to switch their order in Word.
-					if (IsBidi && run.RunProperties?.RightToLeftText == null)
-					{
-						var childRuns = lastPar.Elements<Run>();
-						if(childRuns.Any())
-						{
-							var previousRun = childRuns.Last();
-							if (previousRun.RunProperties?.RightToLeftText == null)
-							{
-								// Add a unicode RTL mark between two runs that are not rtl.
-								var rtlRun = new WP.Run();
-								rtlRun.AppendChild(new WP.Text("\u200f"));
-								rtlRun.RunProperties = new RunProperties();
-								rtlRun.RunProperties.RightToLeftText = new RightToLeftText();
-								lastPar.AppendChild(rtlRun);
-							}
-						}
-					}
 				}
 
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
