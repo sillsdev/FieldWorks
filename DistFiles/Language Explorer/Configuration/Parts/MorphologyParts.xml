@@ -930,6 +930,9 @@
 			<cell>
 				<properties>
 					<bold value="on"/>
+                    <if func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="false">
+                        <foreColor value="orange"/>
+                    </if>
 					<bordertrailing value="3"/>
 				</properties>
 				<para>
@@ -1377,9 +1380,11 @@
 			</if>
 		</part>
 		<part id="MoInflAffixTemplate-Detail-TemplateTable" type="Detail">
-			<slice id="TemplateTable" label="Table" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.InflAffixTemplateSlice" layout="TemplateTablex" menu="mnuDataTree-Help" helpTopicID="khtpField-MoInflAffixTemplate-Table">
-				<deParams menu="mnuInflAffixTemplate-TemplateTable"/>
-			</slice>
+          <savehvo>
+            <slice id="TemplateTable" label="Table" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.InflAffixTemplateSlice" layout="TemplateTablex" menu="mnuDataTree-Help" helpTopicID="khtpField-MoInflAffixTemplate-Table">
+              <deParams menu="mnuInflAffixTemplate-TemplateTable"/>
+            </slice>
+          </savehvo>
 		</part>
 		<part id="MoInflAffixTemplate-Detail-Message" type="detail" paramType="JtLayoutsOfThisClass">
 			<slice editor="jtview" layout="default" editable="no" menu="mnuDataTree-Help" helpTopicID="khtpField-MoInflAffixTemplate-Note" />
