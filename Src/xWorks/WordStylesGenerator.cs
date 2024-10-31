@@ -507,9 +507,13 @@ namespace SIL.FieldWorks.XWorks
 
 			if (fontName != null)
 			{
-				// Note: if desired, multiple fonts can be used for different text types in a single run
-				// by separately specifying font names to use for ASCII, High ANSI, Complex Script, and East Asian content.
-				var font = new RunFonts(){Ascii = fontName};
+				var font = new RunFonts()
+				{
+					Ascii = fontName,
+					HighAnsi = fontName,
+					ComplexScript = fontName,
+					EastAsia = fontName
+				};
 				charDefaults.Append(font);
 			}
 
@@ -531,7 +535,9 @@ namespace SIL.FieldWorks.XWorks
 				// OpenXML expects fontsize given in halves of a point; thus we divide by 500.
 				fontSize = fontSize / 500;
 				var size = new FontSize() { Val = fontSize.ToString() };
+				var sizeCS = new FontSizeComplexScript() { Val = fontSize.ToString() };
 				charDefaults.Append(size);
+				charDefaults.Append(sizeCS);
 			}
 
 			// Check for bold
