@@ -105,6 +105,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		{
 			if (m_obj != null)
 			{
+				if (m_obj.ClassID != MoStemMsaTags.kClassId
+					&& m_obj.ClassID != MoInflAffMsaTags.kClassId
+					&& m_obj.ClassID != MoDerivAffMsaTags.kClassId)
+					// Avoid creating a unit of work if there is nothing to be done.
+					// This prevents "Can't start new task, while broadcasting PropChanges." (LT-21971)
+					return;
 				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
 					switch (m_obj.ClassID)
