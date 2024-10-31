@@ -1265,4 +1265,22 @@ See USFM documentation for help.</value>
   <data name="DeletePhonology" xml:space="preserve">
     <value>This will permanently delete the existing phonology and all references to it.  Do you want to continue?</value>
   </data>
+  <data name="MissingCopyrightAndLicense" xml:space="preserve">
+    <value>{0} was not uploaded because it was missing copyright and license information.</value>
+  </data>
+  <data name="WebonaryLogViewer_Full_Log" xml:space="preserve">
+    <value>Full Log</value>
+  </data>
+  <data name="WebonaryLogViewer_Rejected_Files" xml:space="preserve">
+    <value>Rejected Files</value>
+  </data>
+  <data name="WebonaryLogViewer_Errors-Warnings" xml:space="preserve">
+    <value>Errors &amp; Warnings</value>
+  </data>
+  <data name="WebonaryLogViewer_CopyFileError" xml:space="preserve">
+    <value>Could not copy the file. {0}</value>
+  </data>
+  <data name="WebonaryLogViewer_Save_a_copy" xml:space="preserve">
+    <value>Save a copy</value>
+  </data>
 </root>
