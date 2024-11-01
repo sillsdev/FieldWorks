@@ -1623,7 +1623,7 @@ namespace SIL.FieldWorks.Common.Controls
 						}
 					case "ifnot":
 						{
-							if (!ConditionPasses(vwenv, frag, hvo, m_cache, m_sda, caller))
+							if (!ConditionPasses(vwenv, frag, hvo, m_cache, m_sda, caller, m_stackHvo))
 								ProcessChildren(frag, vwenv, hvo, caller);
 							break;
 						}
@@ -3368,10 +3368,10 @@ namespace SIL.FieldWorks.Common.Controls
 		static private bool GetBoolValueFromCache(IVwEnv vwenv, XmlNode frag, int hvo,
 			LcmCache cache, ISilDataAccess sda, Stack<int> stackHvo)
 		{
-			int flid = GetFlidAndHvo(vwenv, frag, ref hvo, sda);
 			string funcName = XmlUtils.GetOptionalAttributeValue(frag, "func");
 			if (funcName != null)
 				return (bool)EvaluateFunction(funcName, hvo, stackHvo, cache);
+			int flid = GetFlidAndHvo(vwenv, frag, ref hvo, sda);
 			if (flid == -1 || hvo == 0)
 				return false; // This is rather arbitrary...objects missing, what should each test do?
 			NoteDependency(vwenv, hvo, flid);
@@ -3852,16 +3852,18 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			var obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 			if (funcName == "TemplateSlotOutOfScope")
-				if (obj is IMoInflAffixSlot slot)
+			{
+				IMoInflAffixSlot slot = obj as IMoInflAffixSlot;
+				IMoInflAffixTemplate template = null;
+				if (stackHvo != null && stackHvo.Count > 0)
 				{
-					// Get the template.
-					if (stackHvo.Count == 0)
-						return false;
 					int templateHvo = stackHvo.Peek();
-					var templateObj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
-					return TemplateSlotOutOfScope(slot, (IMoInflAffixTemplate)templateObj);
+					var templateObj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(templateHvo);
+					template = templateObj as IMoInflAffixTemplate;
 				}
-			return null;
+				return TemplateSlotOutOfScope(slot, template);
+			}
+			return false;
 		}
 
 		/// <summary>
@@ -3869,8 +3871,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		private static bool TemplateSlotOutOfScope(IMoInflAffixSlot slot, IMoInflAffixTemplate template)
 		{
-			// If there is no template, return false.
-			if (template == null)
+			// If there is no slot or template, return false.
+			if (slot == null || template == null)
 				return false;
 			// Check the scope of the slot.
 			IPartOfSpeech partOfSpeech = (IPartOfSpeech) template.Owner;
@@ -3878,7 +3880,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (partOfSpeech == slot.Owner)
 					return false;
-				partOfSpeech = (IPartOfSpeech) slot.Owner;
+				partOfSpeech = partOfSpeech.Owner as IPartOfSpeech;
 			}
 			return true;
 		}

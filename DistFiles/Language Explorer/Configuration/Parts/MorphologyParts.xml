@@ -930,9 +930,6 @@
 			<cell>
 				<properties>
 					<bold value="on"/>
-                    <if func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="false">
-                        <foreColor value="orange"/>
-                    </if>
 					<bordertrailing value="3"/>
 				</properties>
 				<para>
@@ -942,7 +939,19 @@
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
 						<lit translate="do not translate">(</lit>
 					</if>
-					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					<if func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+					  <span>
+						<properties>
+						  <forecolor value="orange"/>
+						</properties>
+						<string target="owner" class="PartOfSpeech" field="Abbreviation" ws="analysis"/>
+						<lit>:</lit>
+						<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					  </span>
+					</if>
+					<ifnot func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+					  <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					</ifnot>
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
 						<lit translate="do not translate">)</lit>
 					</if>
@@ -1380,11 +1389,9 @@
 			</if>
 		</part>
 		<part id="MoInflAffixTemplate-Detail-TemplateTable" type="Detail">
-          <savehvo>
-            <slice id="TemplateTable" label="Table" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.InflAffixTemplateSlice" layout="TemplateTablex" menu="mnuDataTree-Help" helpTopicID="khtpField-MoInflAffixTemplate-Table">
-              <deParams menu="mnuInflAffixTemplate-TemplateTable"/>
-            </slice>
-          </savehvo>
+			<slice id="TemplateTable" label="Table" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.InflAffixTemplateSlice" layout="TemplateTablex" menu="mnuDataTree-Help" helpTopicID="khtpField-MoInflAffixTemplate-Table">
+			  <deParams menu="mnuInflAffixTemplate-TemplateTable"/>
+			</slice>
 		</part>
 		<part id="MoInflAffixTemplate-Detail-Message" type="detail" paramType="JtLayoutsOfThisClass">
 			<slice editor="jtview" layout="default" editable="no" menu="mnuDataTree-Help" helpTopicID="khtpField-MoInflAffixTemplate-Note" />
@@ -1411,68 +1418,70 @@
 			<slice field="Disabled" label="Active" editor="checkboxwithrefresh" editable="true" toggleValue="true" menu="mnuDataTree-Help"/>
 		</part>
 		<part id="MoInflAffixTemplate-Jt-TemplateTabley" type="jtview">
+		  <savehvo>
 			<table columns="%ColumnCount">
 				<properties>
 					<borderbottom value="3"/>
 				</properties>
-					<if field="Disabled" boolequals="true">
-						<row>
-							<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="PrefixSlotNameDisabled"/>
-							<cell>
-								<properties>
-									<bold value="on"/>
-									<bordertrailing value="3"/>
-									<forecolor value="GrayText"/>
-								</properties>
-								<para>
-									<lit>&#xA0;&#xA0;</lit>
-									<commandIcon visibility="focused"/>
-									<lit>STEM</lit>
-									<lit>&#xA0;&#xA0;</lit>
-								</para>
-							</cell>
-							<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SuffixSlotNameDisabled"/>
-						</row>
-						<row>
-							<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="SlotContentsDisabled"/>
-							<cell>
-								<properties>
-									<bordertrailing value="3"/>
-								</properties>
-								<lit/>
-							</cell>
-							<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SlotContentsDisabled"/>
-						</row>
-					</if>
-					<if field="Disabled" boolequals="false">
-						<row>
-							<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="PrefixSlotName"/>
+                <if field="Disabled" boolequals="true">
+					<row>
+						<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="PrefixSlotNameDisabled"/>
 						<cell>
 							<properties>
 								<bold value="on"/>
 								<bordertrailing value="3"/>
+								<forecolor value="GrayText"/>
 							</properties>
-							<para>
-								<lit>&#xA0;&#xA0;</lit>
-								<commandIcon visibility="focused"/>
-								<lit>STEM</lit>
-								<lit>&#xA0;&#xA0;</lit>
-							</para>
-						</cell>
-						<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SuffixSlotName"/>
-						</row>
-						<row>
-							<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="SlotContents"/>
-							<cell>
-								<properties>
-									<bordertrailing value="3"/>
-								</properties>
-								<lit/>
-							</cell>
-							<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SlotContents"/>
-						</row>
-					</if>
+					<para>
+					  <lit>&#xA0;&#xA0;</lit>
+					  <commandIcon visibility="focused"/>
+					  <lit>STEM</lit>
+					  <lit>&#xA0;&#xA0;</lit>
+					</para>
+				  </cell>
+				  <seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SuffixSlotNameDisabled"/>
+				</row>
+				<row>
+				  <seq class="MoInflAffixTemplate" field="PrefixSlots" layout="SlotContentsDisabled"/>
+				  <cell>
+					<properties>
+					  <bordertrailing value="3"/>
+					</properties>
+					<lit/>
+				  </cell>
+				  <seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SlotContentsDisabled"/>
+				</row>
+			  </if>
+			  <if field="Disabled" boolequals="false">
+				<row>
+				  <seq class="MoInflAffixTemplate" field="PrefixSlots" layout="PrefixSlotName"/>
+				  <cell>
+					<properties>
+					  <bold value="on"/>
+					  <bordertrailing value="3"/>
+					</properties>
+					<para>
+					  <lit>&#xA0;&#xA0;</lit>
+					  <commandIcon visibility="focused"/>
+					  <lit>STEM</lit>
+					  <lit>&#xA0;&#xA0;</lit>
+					</para>
+				  </cell>
+				  <seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SuffixSlotName"/>
+				</row>
+				<row>
+				  <seq class="MoInflAffixTemplate" field="PrefixSlots" layout="SlotContents"/>
+				  <cell>
+					<properties>
+					  <bordertrailing value="3"/>
+					</properties>
+					<lit/>
+				  </cell>
+				  <seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SlotContents"/>
+				</row>
+			  </if>
 			</table>
+		  </savehvo>
 		</part>
 		<!-- the display is inherently Left-To-Right: RTL vernacular scripts require reversed handling of the columns -->
 		<!-- see LT-4317 for the bug report -->
