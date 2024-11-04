@@ -3874,15 +3874,26 @@ namespace SIL.FieldWorks.Common.Controls
 			// If there is no slot or template, return false.
 			if (slot == null || template == null)
 				return false;
-			// Check the scope of the slot.
-			IPartOfSpeech partOfSpeech = (IPartOfSpeech) template.Owner;
+			// Get the slot from the template with the same name as slot.
+			IPartOfSpeech partOfSpeech = template.Owner as IPartOfSpeech;
+			IMoInflAffixSlot inScopeSlot = GetPOSSlot(partOfSpeech, slot.Name.BestAnalysisVernacularAlternative.Text);
+			// If the slots are different, then slot is out of scope.
+			return slot != inScopeSlot;
+		}
+
+		private static IMoInflAffixSlot GetPOSSlot(IPartOfSpeech partOfSpeech, string name)
+		{
 			while (partOfSpeech != null)
 			{
-				if (partOfSpeech == slot.Owner)
-					return false;
+				foreach (IMoInflAffixSlot slot in partOfSpeech.AllAffixSlots)
+				{
+					// NB: BestAnalysisVernacularAlternative always returns something.
+					if (slot.Name.BestAnalysisVernacularAlternative.Text == name)
+						return slot;
+				}
 				partOfSpeech = partOfSpeech.Owner as IPartOfSpeech;
 			}
-			return true;
+			return null;
 		}
 
 		/// ------------------------------------------------------------------------------------

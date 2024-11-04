@@ -29,6 +29,7 @@ using SIL.Utils;
 using XCore;
 using ConfigurationException = SIL.Utils.ConfigurationException;
 using System.Web.Caching;
+using SIL.Extensions;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -61,6 +62,18 @@ namespace SIL.FieldWorks.XWorks
 		/// COnfiguration information.
 		/// </summary>
 		protected XmlNode m_configuration;
+
+		/// <summary>
+		/// Object being moved.
+		/// </summary>
+		protected ICmObject m_moveObj;
+
+		/// <summary>
+		/// Part of Speech chooser.
+		/// </summary>
+		TreeCombo m_treeCombo;
+
+		POSPopupTreeManager m_POSPopupTreeManager;
 
 
 		/// <summary>
@@ -500,40 +513,89 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnDataTreeMove(object cmd)
 		{
-			Command command = (Command)cmd;
-			string field = command.GetParameter("field");
 			Slice currentSlice = m_dataEntryForm.CurrentSlice;
-			ICmObject obj = currentSlice.Object;
-			if (obj is IMoInflAffixSlot slot)
+			m_moveObj = currentSlice.Object;
+			if (m_moveObj is IMoInflAffixSlot slot)
 			{
-				GetPartOfSpeech(slot.Owner.Hvo);
+				ShowPartsOfSpeech(slot.Owner.Hvo);
 			}
-			if (obj is IMoInflAffixTemplate template)
+			if (m_moveObj is IMoInflAffixTemplate template)
 			{
-				GetPartOfSpeech(template.Owner.Hvo);
+				ShowPartsOfSpeech(template.Owner.Hvo);
 			}
 			return true;
 		}
 
-		private void GetPartOfSpeech(int hvo)
+		private void ShowPartsOfSpeech(int hvo)
 		{
-			SIL.FieldWorks.Common.Widgets.TreeCombo m_tcMainPOS;
+			// Create a TreeCombo for the POSPopupTreeManager.
+			m_treeCombo = new TreeCombo();
 			CoreWritingSystemDefinition defAnalWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
-			m_tcMainPOS = new SIL.FieldWorks.Common.Widgets.TreeCombo();
-			m_tcMainPOS.AdjustStringHeight = true;
+			m_treeCombo.AdjustStringHeight = true;
 			// Setting width to match the default width used by popuptree
-			m_tcMainPOS.DropDownWidth = 300;
-			m_tcMainPOS.DroppedDown = false;
-			m_tcMainPOS.Name = "m_tcMainPOS";
-			m_tcMainPOS.SelectedNode = null;
-			m_tcMainPOS.StyleSheet = null;
-			POSPopupTreeManager m_mainPOSPopupTreeManager = new POSPopupTreeManager(m_tcMainPOS, Cache,
+			m_treeCombo.DropDownWidth = 300;
+			m_treeCombo.DroppedDown = false;
+			m_treeCombo.Name = "m_POSMenu";
+			m_treeCombo.SelectedNode = null;
+			m_treeCombo.StyleSheet = null;
+			// Add the TreeCombo to the current slice.
+			Slice currentSlice = m_dataEntryForm.CurrentSlice;
+			currentSlice.Control.Controls.Add(m_treeCombo);
+			// Create the POSPopupTreeManager for hvo.
+			// Pass in the TreeCombo.
+			m_POSPopupTreeManager = new POSPopupTreeManager(m_treeCombo, Cache,
 				Cache.LanguageProject.PartsOfSpeechOA,
 				defAnalWs.Handle, false, m_mediator, m_propertyTable,
 				m_propertyTable.GetValue<Form>("window"));
-			m_mainPOSPopupTreeManager.NotSureIsAny = true;
-			m_mainPOSPopupTreeManager.LoadPopupTree(hvo);
-			// m_mainPOSPopupTreeManager.AfterSelect += m_mainPOSPopupTreeManager_AfterSelect;
+			m_POSPopupTreeManager.NotSureIsAny = true;
+			m_POSPopupTreeManager.LoadPopupTree(hvo);
+			m_POSPopupTreeManager.AfterSelect += POSPopupTreeManager_AfterSelect;
+			// Show the POSPopupTreeManager.
+			m_treeCombo.DroppedDown = true;
+		}
+
+		private void POSPopupTreeManager_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
+		{
+			IPartOfSpeech selectedPOS = null;
+			m_POSPopupTreeManager.AfterSelect -= POSPopupTreeManager_AfterSelect;
+			// Remove m_treeCombo from currentSlice so it won't be disposed when the object is moved.
+			Slice currentSlice = m_dataEntryForm.CurrentSlice;
+			currentSlice.Control.Controls.Remove(m_treeCombo);
+			var repo = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>();
+			if (e.Node is HvoTreeNode)
+				repo.TryGetObject((e.Node as HvoTreeNode).Hvo, out selectedPOS);
+			if (selectedPOS != null)
+			{
+				if (m_moveObj is IMoInflAffixSlot slot)
+				{
+					MoveSlot(slot, selectedPOS);
+				}
+				if (m_moveObj is IMoInflAffixTemplate template)
+				{
+					MoveTemplate(template, selectedPOS);
+				}
+			}
+		}
+
+		private void MoveSlot(IMoInflAffixSlot slot, IPartOfSpeech selectedPOS)
+		{
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Move Slot",
+									"Redo Move Slot", Cache.ActionHandlerAccessor, () =>
+									{
+										IPartOfSpeech slotPOS = slot.Owner as IPartOfSpeech;
+										slotPOS.AffixSlotsOC.Remove(slot);
+										selectedPOS.AffixSlotsOC.Add(slot);
+									});
+		}
+		private void MoveTemplate(IMoInflAffixTemplate template, IPartOfSpeech selectedPOS)
+		{
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Move Template",
+									"Redo Move Template", Cache.ActionHandlerAccessor, () =>
+									{
+										IPartOfSpeech templatePOS = template.Owner as IPartOfSpeech;
+										int index = templatePOS.AffixTemplatesOS.IndexOf(template);
+										templatePOS.AffixTemplatesOS.MoveTo(index, index, selectedPOS.AffixTemplatesOS, 0);
+									});
 		}
 
 		private bool SliceConfiguredForField(XmlNode node, string field)
