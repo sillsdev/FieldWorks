@@ -582,8 +582,6 @@ namespace SIL.FieldWorks.XWorks
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Move Slot",
 									"Redo Move Slot", Cache.ActionHandlerAccessor, () =>
 									{
-										IPartOfSpeech slotPOS = slot.Owner as IPartOfSpeech;
-										slotPOS.AffixSlotsOC.Remove(slot);
 										selectedPOS.AffixSlotsOC.Add(slot);
 									});
 		}
@@ -592,11 +590,45 @@ namespace SIL.FieldWorks.XWorks
 			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Move Template",
 									"Redo Move Template", Cache.ActionHandlerAccessor, () =>
 									{
+										// Get the template POS before the template is moved.
 										IPartOfSpeech templatePOS = template.Owner as IPartOfSpeech;
-										int index = templatePOS.AffixTemplatesOS.IndexOf(template);
-										templatePOS.AffixTemplatesOS.MoveTo(index, index, selectedPOS.AffixTemplatesOS, 0);
+										// Move the template.
+										selectedPOS.AffixTemplatesOS.Add(template);
+										if (templatePOS.Owner == selectedPOS)
+										{
+											// Move template slots up, too.
+											IList<IMoInflAffixSlot> slots = template.PrefixSlotsRS.ToList();
+											slots.AddRange(template.SuffixSlotsRS.ToList());
+											foreach (IMoInflAffixSlot slot in slots)
+											{
+												IPartOfSpeech slotPOS = slot.Owner as IPartOfSpeech;
+												IPartOfSpeech slotPOSOwner = slotPOS.Owner as IPartOfSpeech;
+												// Move a slot if it is at the same level as the template
+												// and moving it couldn't cause a name conflict.
+												string slotName = slot.Name.BestAnalysisVernacularAlternative.Text;
+												if (slotPOS == templatePOS && GetPOSSlot(slotPOSOwner, slotName) == null)
+													MoveSlot(slot, selectedPOS);
+											}
+										}
 									});
 		}
+
+		public static IMoInflAffixSlot GetPOSSlot(IPartOfSpeech partOfSpeech, string name)
+		{
+			while (partOfSpeech != null)
+			{
+				foreach (IMoInflAffixSlot slot in partOfSpeech.AllAffixSlots)
+				{
+					// NB: BestAnalysisVernacularAlternative always returns something.
+					if (slot.Name.BestAnalysisVernacularAlternative.Text == name)
+						return slot;
+				}
+				partOfSpeech = partOfSpeech.Owner as IPartOfSpeech;
+			}
+			return null;
+		}
+
+
 
 		private bool SliceConfiguredForField(XmlNode node, string field)
 		{

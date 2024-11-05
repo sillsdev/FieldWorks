@@ -3881,7 +3881,11 @@ namespace SIL.FieldWorks.Common.Controls
 			return slot != inScopeSlot;
 		}
 
-		private static IMoInflAffixSlot GetPOSSlot(IPartOfSpeech partOfSpeech, string name)
+		/// <summary>
+		/// Get the slot named 'name' in the scope of partOfSpeech.
+		/// If there is more than one slot, return the first one.
+		/// </summary>
+		public static IMoInflAffixSlot GetPOSSlot(IPartOfSpeech partOfSpeech, string name)
 		{
 			while (partOfSpeech != null)
 			{
