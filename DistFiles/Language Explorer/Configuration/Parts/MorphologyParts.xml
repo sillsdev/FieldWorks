@@ -997,8 +997,20 @@
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
 						<lit translate="do not translate">(</lit>
 					</if>
-					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
-					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
+                    <if func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <span>
+                        <properties>
+                          <forecolor value="orange"/>
+                        </properties>
+                        <string target="owner" class="PartOfSpeech" field="Abbreviation" ws="analysis"/>
+                        <lit>:</lit>
+                        <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                      </span>
+                    </if>
+                    <ifnot func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                    </ifnot>
+                    <if class="MoInflAffixSlot" field="Optional" boolequals="true">
 						<lit translate="do not translate">)</lit>
 					</if>
 					<lit>&#xA0;&#xA0;</lit>
@@ -1043,8 +1055,20 @@
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
 						<lit translate="do not translate">&#x200E;)&#xA0;&#xA0;</lit>
 					</if>
-					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
-					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+                    <if func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <span>
+                        <properties>
+                          <forecolor value="orange"/>
+                        </properties>
+                        <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                        <lit>:</lit>
+                        <string target="owner" class="PartOfSpeech" field="Abbreviation" ws="analysis"/>
+                      </span>
+                    </if>
+                    <ifnot func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                    </ifnot>
+                    <if class="MoInflAffixSlot" field="Optional" boolequals="false">
 						<lit translate="do not translate">&#x200F;&#xA0;&#xA0;-</lit>
 					</if>
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
@@ -1094,8 +1118,20 @@
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
 						<lit translate="do not translate">&#x200E;)-&#xA0;&#xA0;</lit>
 					</if>
-					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
-					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+                    <if func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <span>
+                        <properties>
+                          <forecolor value="orange"/>
+                        </properties>
+                        <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                        <lit>:</lit>
+                        <string target="owner" class="PartOfSpeech" field="Abbreviation" ws="analysis"/>
+                      </span>
+                    </if>
+                    <ifnot func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                    </ifnot>
+                    <if class="MoInflAffixSlot" field="Optional" boolequals="false">
 						<lit translate="do not translate">&#x200F;&#xA0;&#xA0;</lit>
 					</if>
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
@@ -1145,8 +1181,20 @@
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
 						<lit translate="do not translate">(</lit>
 					</if>
-					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
-					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+                    <if func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <span>
+                        <properties>
+                          <forecolor value="orange"/>
+                        </properties>
+                        <string target="owner" class="PartOfSpeech" field="Abbreviation" ws="analysis"/>
+                        <lit>:</lit>
+                        <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                      </span>
+                    </if>
+                    <ifnot func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                    </ifnot>
+                    <if class="MoInflAffixSlot" field="Optional" boolequals="false">
 						<lit translate="do not translate">-&#xA0;&#xA0;</lit>
 					</if>
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
@@ -1196,8 +1244,20 @@
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
 						<lit translate="do not translate">&#xA0;&#xA0;-(</lit>
 					</if>
-					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
-					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+                    <if func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <span>
+                        <properties>
+                          <forecolor value="orange"/>
+                        </properties>
+                        <string target="owner" class="PartOfSpeech" field="Abbreviation" ws="analysis"/>
+                        <lit>:</lit>
+                        <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                      </span>
+                    </if>
+                    <ifnot func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                    </ifnot>
+                    <if class="MoInflAffixSlot" field="Optional" boolequals="false">
 						<lit translate="do not translate">&#xA0;&#xA0;</lit>
 					</if>
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
@@ -1247,8 +1307,20 @@
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
 						<lit translate="do not translate">&#xA0;&#xA0;-(</lit>
 					</if>
-					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
-					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+                    <if func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <span>
+                        <properties>
+                          <forecolor value="orange"/>
+                        </properties>
+                        <string target="owner" class="PartOfSpeech" field="Abbreviation" ws="analysis"/>
+                        <lit>:</lit>
+                        <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                      </span>
+                    </if>
+                    <ifnot func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                    </ifnot>
+                    <if class="MoInflAffixSlot" field="Optional" boolequals="false">
 						<lit translate="do not translate">&#xA0;&#xA0;</lit>
 					</if>
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
@@ -1298,8 +1370,20 @@
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
 						<lit translate="do not translate">&#xA0;&#xA0;(</lit>
 					</if>
-					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
-					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+                    <if func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <span>
+                        <properties>
+                          <forecolor value="orange"/>
+                        </properties>
+                        <string target="owner" class="PartOfSpeech" field="Abbreviation" ws="analysis"/>
+                        <lit>:</lit>
+                        <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                      </span>
+                    </if>
+                    <ifnot func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                    </ifnot>
+                    <if class="MoInflAffixSlot" field="Optional" boolequals="false">
 						<lit translate="do not translate">-&#xA0;&#xA0;</lit>
 					</if>
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
