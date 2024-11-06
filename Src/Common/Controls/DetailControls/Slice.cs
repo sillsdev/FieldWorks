@@ -2804,7 +2804,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				else
 				{
-					swapWith = NextPartSibling(fieldRef.NextSibling);
+					swapWith = NextPartSibling(fieldRef);
 				}
 
 				var parent = fieldRef.ParentNode;
