@@ -749,7 +749,8 @@ namespace SIL.FieldWorks.XWorks
 							else
 							{
 								StyleElement rootElem = s_styleCollection.GetStyleElement(wsString);
-								Style rootStyle = rootElem.Style;
+								// rootElem can be null, see LT-21981.
+								Style rootStyle = rootElem?.Style;
 								if (rootStyle != null)
 								{
 									Style basedOnStyle = WordStylesGenerator.GenerateBasedOnCharacterStyle(new Style(), wsString, displayNameBase);
