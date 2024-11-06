@@ -25,6 +25,8 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			foreach (var locale in locales)
 			{
 				RenameLocale(locale, Normalize(locale));
+				if (locale == "ms")
+					CopyLocale(locale, "zlm");
 			}
 			return true;
 		}
@@ -49,8 +51,37 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var sourceDir = Path.Combine(L10nsDirectory, source);
 			var destDir = Path.Combine(L10nsDirectory, dest);
 			Directory.Move(sourceDir, destDir);
+			RenameLocaleFiles(destDir, source, dest);
+		}
 
-			foreach (var file in Directory.EnumerateFiles(destDir, "*", SearchOption.AllDirectories))
+		private void CopyLocale(string source, string dest)
+		{
+			var destDirName = Path.Combine(L10nsDirectory, dest);
+			var destDir = new DirectoryInfo(destDirName);
+
+			if (destDir.Exists)
+			{
+				Log.LogMessage($"'{source}' already exists.");
+				return;
+			}
+			// Create the destination directory
+			Directory.CreateDirectory(destDirName);
+
+			// Get the files in the source directory and copy to the destination directory
+			var sourceDirName = Path.Combine(L10nsDirectory, source);
+			var sourceDir = new DirectoryInfo(sourceDirName);
+			foreach (FileInfo file in sourceDir.GetFiles())
+			{
+				string targetFilePath = Path.Combine(destDirName, file.Name);
+				file.CopyTo(targetFilePath);
+			}
+
+			RenameLocaleFiles(destDirName, source, dest);
+		}
+
+		private void RenameLocaleFiles(string destDirName, string source, string dest)
+		{
+			foreach (var file in Directory.EnumerateFiles(destDirName, "*", SearchOption.AllDirectories))
 			{
 				var nameNoExt = Path.GetFileNameWithoutExtension(file);
 				// ReSharper disable once PossibleNullReferenceException - no files are null
