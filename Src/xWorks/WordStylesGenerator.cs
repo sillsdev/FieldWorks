@@ -546,7 +546,9 @@ namespace SIL.FieldWorks.XWorks
 			if (bold)
 			{
 				var boldFont = new Bold() { Val = true };
+				var boldCS = new BoldComplexScript() { Val = true };
 				charDefaults.Append(boldFont);
+				charDefaults.Append(boldCS);
 			}
 
 			// Check for italic
@@ -555,7 +557,9 @@ namespace SIL.FieldWorks.XWorks
 			if (ital)
 			{
 				var italFont = new Italic() { Val = true };
+				var italicCS = new ItalicComplexScript() { Val = true };
 				charDefaults.Append(italFont);
+				charDefaults.Append(italicCS);
 			}
 
 			// Check for font color
