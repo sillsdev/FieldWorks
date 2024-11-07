@@ -583,6 +583,10 @@ namespace SIL.FieldWorks.XWorks
 									"Redo Move Slot", Cache.ActionHandlerAccessor, () =>
 									{
 										selectedPOS.AffixSlotsOC.Add(slot);
+										foreach (IMoInflAffMsa msa in slot.Affixes)
+										{
+											msa.PartOfSpeechRA = selectedPOS;
+										}
 									});
 		}
 		private void MoveTemplate(IMoInflAffixTemplate template, IPartOfSpeech selectedPOS)
