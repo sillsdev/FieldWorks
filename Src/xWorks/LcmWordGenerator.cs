@@ -65,7 +65,8 @@ namespace SIL.FieldWorks.XWorks
 
 				generator.Init(readOnlyPropertyTable);
 				IsBidi = ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration);
-				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, false, true, System.IO.Path.GetDirectoryName(filePath),
+				// Call GeneratorSettings with relativesPaths = false but useUri = false because that works better for Word.
+				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, false, false, true, System.IO.Path.GetDirectoryName(filePath),
 							IsBidi, System.IO.Path.GetFileName(cssPath) == "configured.css")
 							{ ContentGenerator = generator, StylesGenerator = generator};
 				settings.StylesGenerator.AddGlobalStyles(configuration, readOnlyPropertyTable);
