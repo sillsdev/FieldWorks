@@ -861,7 +861,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				filePath = MakeSafeFilePath(file.AbsoluteInternalPath);
 			}
-			return filePath;
+			return (settings.UseRelativePaths || !settings.UseUri) ? filePath : new Uri(filePath).ToString();
 		}
 
 		private static string GenerateSrcAttributeForMediaFromFilePath(string filename, string subFolder, GeneratorSettings settings)
@@ -3175,6 +3175,8 @@ namespace SIL.FieldWorks.XWorks
 			public LcmCache Cache { get; }
 			public ReadOnlyPropertyTable PropertyTable { get; }
 			public bool UseRelativePaths { get; }
+
+			public bool UseUri { get; }
 			public bool CopyFiles { get; }
 			public string ExportPath { get; }
 			public bool RightToLeft { get; }
@@ -3186,8 +3188,12 @@ namespace SIL.FieldWorks.XWorks
 			{
 			}
 
-
 			public GeneratorSettings(LcmCache cache, ReadOnlyPropertyTable propertyTable, bool relativePaths, bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false, bool isTemplate = false)
+			: this(cache, propertyTable == null ? null : propertyTable, relativePaths, true, copyFiles, exportPath, rightToLeft, isWebExport, isTemplate)
+			{
+			}
+
+			public GeneratorSettings(LcmCache cache, ReadOnlyPropertyTable propertyTable, bool relativePaths, bool useUri, bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false, bool isTemplate = false)
 			{
 				if (cache == null || propertyTable == null)
 				{
@@ -3196,6 +3202,7 @@ namespace SIL.FieldWorks.XWorks
 				Cache = cache;
 				PropertyTable = propertyTable;
 				UseRelativePaths = relativePaths;
+				UseUri = useUri;
 				CopyFiles = copyFiles;
 				ExportPath = exportPath;
 				RightToLeft = rightToLeft;
