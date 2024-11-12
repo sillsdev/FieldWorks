@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.XWorks
 								Name = CompatSettingNameValues.CompatibilityMode,
 								// val determines the version of word we are targeting.
 								// 14 corresponds to Office 2010; 16 would correspond to Office 2019
-								Val = new StringValue("14"),
+								Val = new StringValue("16"),
 								Uri = new StringValue("http://schemas.microsoft.com/office/word")
 							},
 							new CompatibilitySetting()
@@ -183,7 +183,7 @@ namespace SIL.FieldWorks.XWorks
 								Val = new StringValue("0"),
 								Uri = new StringValue("http://schemas.microsoft.com/office/word")
 							}
-							// If in the future, if we find that certain style items are different in different version of word,
+							// If in the future, if we find that certain style items are different in different versions of word,
 							// it may help to specify more compatibility settings.
 							// A full list of all possible compatibility settings may be found here:
 							// https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.wordprocessing.compatsettingnamevalues?view=openxml-3.0.1
