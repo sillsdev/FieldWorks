@@ -653,6 +653,23 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_xmlWriter.WriteElementString("Reason", reason);
 				m_xmlWriter.WriteEndElement();
 			}
+
+			public void OutOfScopeSlot(IMoInflAffixSlot slot, IMoInflAffixTemplate template)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "out-of-scope-slot");
+				IPartOfSpeech slotPOS = slot.Owner as IPartOfSpeech;
+				IPartOfSpeech templatePOS = template.Owner as IPartOfSpeech;
+				string slotPOSAbbr = slotPOS != null ? slotPOS.Abbreviation.BestAnalysisVernacularAlternative.Text : "***";
+				string templatePOSName = templatePOS != null ? templatePOS.Name.BestAnalysisVernacularAlternative.Text : "***";
+				string reason = slotPOSAbbr + ":" + slot.Name.BestAnalysisVernacularAlternative.Text
+					+ " is out of the scope of "
+					+ template.Name.BestAnalysisVernacularAlternative.Text
+					+ " in "
+					+ templatePOSName;
+				m_xmlWriter.WriteElementString("Reason", reason);
+				m_xmlWriter.WriteEndElement();
+			}
 		}
 	}
 }
