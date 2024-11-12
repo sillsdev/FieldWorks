@@ -34,7 +34,7 @@ jobs:
         run: NDP461-DevPack-KB3105179-ENU.exe /q
 
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: | 
             2.1.x
