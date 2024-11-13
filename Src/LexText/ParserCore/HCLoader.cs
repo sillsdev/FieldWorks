@@ -6,6 +6,7 @@ using SIL.Extensions;
 using SIL.LCModel;
 using SIL.LCModel.Core.Phonology;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Matching;
@@ -1429,7 +1430,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			foreach (IMoInflAffixSlot slot in slots)
 			{
 				if (TemplateSlotOutOfScope(slot, template))
-					m_logger.OutOfScopeSlot(slot, template);
+				{
+					IPartOfSpeech slotPOS = slot.Owner as IPartOfSpeech;
+					IPartOfSpeech templatePOS = template.Owner as IPartOfSpeech;
+					string slotPOSAbbr = slotPOS != null ? slotPOS.Abbreviation.BestAnalysisVernacularAlternative.Text : "***";
+					string templatePOSName = templatePOS != null ? templatePOS.Name.BestAnalysisVernacularAlternative.Text : "***";
+					string slotName = slotPOSAbbr + ":" + slot.Name.BestAnalysisVernacularAlternative.Text;
+					string templateName = template.Name.BestAnalysisVernacularAlternative.Text;
+					string reason = "The " + slotName + " in the " + templateName + " affix template under the " + templatePOSName
+						+ " category is not located in the " + templatePOSName + " category or above.  Please move the "
+						+ slotName + " slot so it is in the " + templatePOSName + " category or above.";
+					m_logger.OutOfScopeSlot(slot, template, reason);
+				}
 				IEnumerable<ILexEntryInflType> types = slot.ReferringObjects.OfType<ILexEntryInflType>();
 				var rules = new List<MorphemicMorphologicalRule>();
 				foreach (IMoInflAffMsa msa in slot.Affixes)
