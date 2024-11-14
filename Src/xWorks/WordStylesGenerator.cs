@@ -33,6 +33,8 @@ namespace SIL.FieldWorks.XWorks
 		internal const string WritingSystemStyleName = "Writing System Abbreviation";
 		internal const string WritingSystemDisplayName = "Writing System Abbreviation";
 		internal const string StyleSeparator = " : ";
+		internal const string LangTagPre = "[lang=\'";
+		internal const string LangTagPost = "\']";
 
 		// Globals and default paragraph styles.
 		internal const string NormalParagraphStyleName = "Normal";
@@ -73,7 +75,7 @@ namespace SIL.FieldWorks.XWorks
 			bulletInfo = null;
 
 			// The user can change the style name that is associated with the Main Entry, so look up the node style name using the DisplayLabel.
-			mainEntryNode = model.Parts.Find(node => node.DisplayLabel == MainEntryParagraphDisplayName);
+			mainEntryNode = model?.Parts.Find(node => node.DisplayLabel == MainEntryParagraphDisplayName);
 			if (mainEntryNode != null)
 			{
 				style = GenerateParagraphStyleFromLcmStyleSheet(mainEntryNode.Style, DefaultStyle, propertyTable, out bulletInfo);
@@ -785,7 +787,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public static string GetWsString(string wsId)
 		{
-			return String.Format("[lang=\'{0}\']", wsId);
+			return LangTagPre + wsId + LangTagPost;
 		}
 
 		/// <summary>
