@@ -1829,47 +1829,26 @@ namespace SIL.FieldWorks.XWorks
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.That(treeNode, Is.Null, "Passing a null class list should not find a TreeNode (and should not crash either)");
 
-				dcc.SetStartingNode(new List<string>());
+				dcc.SetStartingNode(string.Empty);
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.That(treeNode, Is.Null, "Passing an empty class list should not find a TreeNode");
+				Assert.That(treeNode, Is.Null, "Passing an empty nodeId should not find a TreeNode");
 
-				dcc.SetStartingNode(new List<string> {"something","invalid"});
+				dcc.SetStartingNode("12345");
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.That(treeNode, Is.Null, "Passing a totally invalid class list should not find a TreeNode");
+				Assert.That(treeNode, Is.Null, "Passing a totally invalid nodeId hash should not find a tree node");
 
-				dcc.SetStartingNode(new List<string>{"entry","senses","sensecontent","sense","random","nonsense"});
+				dcc.SetStartingNode($"{headwordNode.GetHashCode()}");
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.That(treeNode, Is.Not.Null, "Passing a partially valid class list should find a TreeNode");
-				Assert.AreSame(sensesNode, treeNode.Tag, "Passing a partially valid class list should find the best node possible");
+				Assert.That(treeNode, Is.Not.Null, "Passing the hash for headword should return a node.");
+				Assert.AreSame(headwordNode, treeNode.Tag, "The correct node should be identified by the hash");
 
 				// Starting here we need to Unset the controller's SelectedNode to keep from getting false positives
 				ClearSelectedNode(dcc);
-				dcc.SetStartingNode(new List<string> {"entry","mainheadword"});
+				dcc.SetStartingNode($"{translationNode.GetHashCode()}");
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.That(treeNode, Is.Not.Null, "entry/mainheadword should find a TreeNode");
-				Assert.AreSame(headwordNode, treeNode.Tag, "entry/mainheadword should find the right TreeNode");
-				Assert.AreEqual(headwordNode.Label, treeNode.Text, "The TreeNode for entry/mainheadword should have the right Text");
-
-				ClearSelectedNode(dcc);
-				dcc.SetStartingNode(new List<string> { "entry " + XhtmlDocView.CurrentSelectedEntryClass, "mainheadword" });
-				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.That(treeNode, Is.Not.Null, "entry/mainheadword should find a TreeNode, even if this is the selected entry");
-				Assert.AreSame(headwordNode, treeNode.Tag, "entry/mainheadword should find the right TreeNode");
-				Assert.AreEqual(headwordNode.Label, treeNode.Text, "The TreeNode for entry/mainheadword should have the right Text");
-
-				ClearSelectedNode(dcc);
-				dcc.SetStartingNode(new List<string> {"entry","senses","sensecontent","sense","definitionorgloss"});
-				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.That(treeNode, Is.Not.Null, "entry//definitionorgloss should find a TreeNode");
-				Assert.AreSame(defglossNode, treeNode.Tag, "entry//definitionorgloss should find the right TreeNode");
-				Assert.AreEqual(defglossNode.Label, treeNode.Text, "The TreeNode for entry//definitionorgloss should have the right Text");
-
-				ClearSelectedNode(dcc);
-				dcc.SetStartingNode(new List<string> {"entry","senses","sensecontent","sense","examples","example","translations","translation","translation"});
-				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.That(treeNode, Is.Not.Null, "entry//translation should find a TreeNode");
-				Assert.AreSame(translationNode, treeNode.Tag, "entry//translation should find the right TreeNode");
-				Assert.AreEqual(translationNode.Label, treeNode.Text, "The TreeNode for entry//translation should have the right Text");
+				Assert.That(treeNode, Is.Not.Null, "translation should find a TreeNode");
+				Assert.AreSame(translationNode, treeNode.Tag, "using the translationNode hash should find the right TreeNode");
+				Assert.AreEqual(translationNode.Label, treeNode.Text, "The translation treenode should have the right Text");
 			}
 		}
 
@@ -1902,19 +1881,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(DictionaryConfigurationModelTests.CreateSimpleSharingModel(entryNode, subSensesSharedItem));
-			var node = DictionaryConfigurationController.FindConfigNode(entryNode, new List<string>
-				{
-					"entry",
-					"senses",
-					"sensecontent",
-					"sense",
-					"senses mainentrysubsenses",
-					"sensecontent",
-					"sense mainentrysubsense",
-					"senses mainentrysubsenses",
-					"sensecontent",
-					"sensenumber"
-				});
+			var node = DictionaryConfigurationController.FindConfigNode(entryNode, $"{subsubsensesNode.GetHashCode()}", new List<ConfigurableDictionaryNode>());
 			Assert.AreSame(subsubsensesNode, node,
 				"Sense Numbers are configured on the node itself, not its ReferencedOrDirectChildren.{0}Expected: {1}{0}But got:  {2}", Environment.NewLine,
 				DictionaryConfigurationMigrator.BuildPathStringFromNode(subsubsensesNode), DictionaryConfigurationMigrator.BuildPathStringFromNode(node));
@@ -2536,102 +2503,24 @@ namespace SIL.FieldWorks.XWorks
 			m_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
 			m_model.SharedItems = new List<ConfigurableDictionaryNode> { referencedConfigNode };
 			CssGeneratorTests.PopulateFieldsForTesting(m_model);
-			var subSenseGloss = subsenseClassListArray.ToList();
-			subSenseGloss.Add("gloss");
-			var subSenseUndefined = subsenseClassListArray.ToList();
-			subSenseUndefined.Add("undefined");
 			using (var testView = new TestConfigurableDictionaryView())
 			{
 				var dcc = new DictionaryConfigurationController { View = testView, _model = m_model };
 				dcc.CreateTreeOfTreeNodes(null, m_model.Parts);
 
 				//Test normal case first
-				dcc.SetStartingNode(new List<string> { "entry", "senses", "sensecontent", "sense", "gloss" });
+				dcc.SetStartingNode($"{glossNode.GetHashCode()}");
 				var treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.That(treeNode, Is.Not.Null, "Passing a valid class list should find a TreeNode");
-				Assert.AreSame(glossNode, treeNode.Tag, "Passing a valid class list should find the node");
+				Assert.That(treeNode, Is.Not.Null);
+				Assert.AreSame(glossNode, treeNode.Tag, "Passing the normal gloss hash should get the gloss node");
 
 				//SUT
 				ClearSelectedNode(dcc);
-				dcc.SetStartingNode(subSenseGloss);
+				dcc.SetStartingNode($"{subGlossNode.GetHashCode()}");
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.That(treeNode, Is.Not.Null, "Passing a valid class list should find a TreeNode");
-				Assert.AreSame(subGlossNode, treeNode.Tag, "Passing a valid class list should even find the node in a referenced node");
-
-				ClearSelectedNode(dcc);
-				dcc.SetStartingNode(subSenseUndefined);
-				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.That(treeNode, Is.Not.Null, "invalid field should still find a TreeNode");
-				Assert.AreSame(subSensesNode, treeNode.Tag, "'undefined' field should find the closest TreeNode");
-			}
-		}
-
-		static readonly string[] subentryClassListArray = { "entry", "subentries mainentrysubentries", "subentry mainentrysubentry" };
-
-		[Test]
-		public void SetStartingNode_WorksWithReferencedSubentryNode()
-		{
-			var subentriesNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "Subentries",
-				ReferenceItem = "MainEntrySubentries"
-			};
-			var subGlossNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "Gloss"
-			};
-			var referencedConfigNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "Subentries",
-				CSSClassNameOverride = "mainentrysubentries",
-				Children = new List<ConfigurableDictionaryNode> { subGlossNode },
-				Label = "MainEntrySubentries"
-			};
-
-			var headwordNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "MLHeadWord",
-				Label = "Headword",
-				CSSClassNameOverride = "mainheadword"
-			};
-			var entryNode = new ConfigurableDictionaryNode
-			{
-				FieldDescription = "LexEntry",
-				Label = "Main Entry",
-				CSSClassNameOverride = "entry",
-				Children = new List<ConfigurableDictionaryNode> { headwordNode, subentriesNode },
-			};
-			m_model.Parts = new List<ConfigurableDictionaryNode> { entryNode };
-			m_model.SharedItems = new List<ConfigurableDictionaryNode> { referencedConfigNode };
-			CssGeneratorTests.PopulateFieldsForTesting(m_model);
-			var subentryGloss = subentryClassListArray.ToList();
-			subentryGloss.Add("gloss");
-			var subentryUndefined = subentryClassListArray.ToList();
-			subentryUndefined.Add("undefined");
-			var subentriesClassList = subentryClassListArray.ToList();
-			subentriesClassList.RemoveAt(subentriesClassList.Count - 1);
-			using (var testView = new TestConfigurableDictionaryView())
-			{
-				var dcc = new DictionaryConfigurationController { View = testView, _model = m_model };
-				dcc.CreateTreeOfTreeNodes(null, m_model.Parts);
-
-				//SUT
-				dcc.SetStartingNode(subentryGloss);
-				var treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.That(treeNode, Is.Not.Null, "Passing a valid class list should find a TreeNode");
-				Assert.AreSame(subGlossNode, treeNode.Tag, "Passing a valid class list should even find the node in a referenced node");
-
-				ClearSelectedNode(dcc);
-				dcc.SetStartingNode(subentryUndefined);
-				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.That(treeNode, Is.Not.Null, "invalid field should still find a TreeNode");
-				Assert.AreSame(subentriesNode, treeNode.Tag, "'undefined' field should find the closest TreeNode");
-
-				ClearSelectedNode(dcc);
-				dcc.SetStartingNode(subentriesClassList);
-				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
-				Assert.That(treeNode, Is.Not.Null, "should find main Subentries node");
-				Assert.AreSame(subentriesNode, treeNode.Tag, "Passing a valid class list should find it");
+				Assert.That(treeNode, Is.Not.Null);
+				Assert.AreSame(subGlossNode, treeNode.Tag,
+					"Passing the hash for the gloss on the subentry should get the subentry gloss node");
 			}
 		}
 
