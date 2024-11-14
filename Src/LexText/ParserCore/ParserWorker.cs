@@ -141,8 +141,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CheckNeedsUpdate();
 			var normalizer = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD);
 			var word = normalizer.Normalize(form.Text.Replace(' ', '.'));
+			ParseResult result = null;
 			var stopWatch = System.Diagnostics.Stopwatch.StartNew();
-			ParseResult result = m_parser.ParseWord(word);
+			using (var task = new TaskReport(String.Format(ParserCoreStrings.ksParsingX, word), m_taskUpdateHandler))
+			{
+				result = m_parser.ParseWord(word);
+			}
 			stopWatch.Stop();
 			result.ParseTime = stopWatch.ElapsedMilliseconds;
 
@@ -160,8 +164,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(text, out lcWordform))
 				{
 					var lcWord = normalizer.Normalize(sLower.Replace(' ', '.'));
+					ParseResult lcResult = null;
 					stopWatch.Start();
-					var lcResult = m_parser.ParseWord(lcWord);
+					using (var task = new TaskReport(String.Format(ParserCoreStrings.ksParsingX, word), m_taskUpdateHandler))
+					{
+						lcResult = m_parser.ParseWord(lcWord);
+					}
 					stopWatch.Stop();
 					lcResult.ParseTime = stopWatch.ElapsedMilliseconds;
 					if (lcResult.Analyses.Count > 0 && lcResult.ErrorMessage == null)
