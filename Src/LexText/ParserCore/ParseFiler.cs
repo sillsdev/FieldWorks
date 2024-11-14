@@ -161,9 +161,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					if (work.CheckParser)
 					{
 						// This was just a test.  Don't update data.
-						string testform = work.Wordform.Form.BestVernacularAlternative.Text;
-						using (new TaskReport(String.Format(ParserCoreStrings.ksTestX, testform), m_taskUpdateHandler))
-						{ }
 						FireWordformUpdated(work.Wordform, work.Priority, work.ParseResult, work.CheckParser);
 						continue;
 					}
