@@ -9479,14 +9479,14 @@ namespace SIL.FieldWorks.XWorks
 			}
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 			var settings = DefaultSettings;
-			const string antAbbrSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">ant</span></span>";
-			const string whSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">wh</span></span>";
-			const string ptSpan = "<span class=\"ownertype_abbreviation\"><span lang=\"en\">pt</span></span>";
-			const string antNameSpan = "<span class=\"ownertype_name\"><span lang=\"en\">Antonym</span></span>";
-			const string femmeSpan = "<span class=\"headword\"><span lang=\"fr\">femme</span></span>";
-			var garçonSpan = TsStringUtils.Compose("<span class=\"headword\"><span lang=\"fr\">garçon</span></span>");
-			var bêteSpan = TsStringUtils.Compose("<span class=\"headword\"><span lang=\"fr\">bête</span></span>");
-			const string trucSpan = "<span class=\"headword\"><span lang=\"fr\">truc</span></span>";
+			string antAbbrSpan = $"<span class=\"ownertype_abbreviation\"><span nodeId=\"{relAbbrNode.GetHashCode()}\" lang=\"en\">ant</span></span>";
+			string whSpan = $"<span class=\"ownertype_abbreviation\"><span nodeId=\"{relAbbrNode.GetHashCode()}\" lang=\"en\">wh</span></span>";
+			string ptSpan = $"<span class=\"ownertype_abbreviation\"><span nodeId=\"{relAbbrNode.GetHashCode()}\" lang=\"en\">pt</span></span>";
+			string antNameSpan = $"<span class=\"ownertype_name\"><span nodeId=\"{relNameNode.GetHashCode()}\" lang=\"en\">Antonym</span></span>";
+			string femmeSpan = $"<span class=\"headword\"><span nodeId=\"{refHeadwordNode.GetHashCode()}\" lang=\"fr\">femme</span></span>";
+			var garçonSpan = TsStringUtils.Compose($"<span class=\"headword\"><span nodeId=\"{refHeadwordNode.GetHashCode()}\" lang=\"fr\">garçon</span></span>");
+			var bêteSpan = TsStringUtils.Compose($"<span class=\"headword\"><span nodeId=\"{refHeadwordNode.GetHashCode()}\" lang=\"fr\">bête</span></span>");
+			string trucSpan = $"<span class=\"headword\"><span nodeId=\"{refHeadwordNode.GetHashCode()}\" lang=\"fr\">truc</span></span>";
 			//SUT
 			//Console.WriteLine(LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { manEntry.Hvo, familyEntry.Hvo, girlEntry.Hvo, individualEntry.Hvo }, null,
 			//	new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } }, m_mediator)); // full output for diagnostics
