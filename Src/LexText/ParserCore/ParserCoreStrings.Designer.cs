@@ -142,6 +142,15 @@ namespace SIL.FieldWorks.WordWorks.Parser {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Parsing {0}.
+        /// </summary>
+        internal static string ksParsingX {
+            get {
+                return ResourceManager.GetString("ksParsingX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ???.
         /// </summary>
         internal static string ksQuestions {
@@ -174,15 +183,6 @@ namespace SIL.FieldWorks.WordWorks.Parser {
         internal static string ksStarted {
             get {
                 return ResourceManager.GetString("ksStarted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Tested {0}.
-        /// </summary>
-        internal static string ksTestX {
-            get {
-                return ResourceManager.GetString("ksTestX", resourceCulture);
             }
         }
         
