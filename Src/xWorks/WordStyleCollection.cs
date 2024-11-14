@@ -208,7 +208,7 @@ namespace SIL.FieldWorks.XWorks
 				if (styleCount > 0)
 				{
 					int separatorIndex = uniqueDisplayName.IndexOf(WordStylesGenerator.StyleSeparator);
-					separatorIndex = separatorIndex != -1 ? separatorIndex : uniqueDisplayName.IndexOf("[");
+					separatorIndex = separatorIndex != -1 ? separatorIndex : uniqueDisplayName.IndexOf(WordStylesGenerator.LangTagPre);
 					// Append the number before the basedOn information.
 					// Note: We do not want to append the number to the end of the uniqueDisplayName if
 					// there is basedOn information because that could result in the name not being
