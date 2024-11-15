@@ -525,7 +525,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="hvoRef"></param>
 		/// <returns></returns>
-		private bool IsPublishableLexRef(int hvoRef)
+		internal bool IsPublishableLexRef(int hvoRef)
 		{
 			var publishableItems = VecProp(hvoRef, LexReferenceTags.kflidTargets);
 			int originalItemCount = BaseSda.get_VecSize(hvoRef, LexReferenceTags.kflidTargets);
