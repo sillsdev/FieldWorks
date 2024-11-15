@@ -369,6 +369,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_persistProvider.PersistWindowSettings(PersistProviderID, this);
 			if (m_parserListener.Connection != null)
 			{
+				this.Text = ParserUIStrings.ksStoppingParser;
 				m_parserListener.Connection.TryAWordDialogIsRunning = false;
 				m_parserListener.DisconnectFromParser();
 			}
