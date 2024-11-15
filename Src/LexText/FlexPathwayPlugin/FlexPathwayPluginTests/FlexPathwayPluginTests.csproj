@@ -10,7 +10,7 @@
     <AppDesignerFolder>.</AppDesignerFolder>
     <RootNamespace>FlexPathwayPluginTests</RootNamespace>
     <AssemblyName>FlexPathwayPluginTests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <AppConfig>..\..\..\AppForTests.config</AppConfig>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
