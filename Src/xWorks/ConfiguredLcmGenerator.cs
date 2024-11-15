@@ -2099,7 +2099,7 @@ namespace SIL.FieldWorks.XWorks
 				if (targetInfo == null)
 					return settings.ContentGenerator.CreateFragment();
 				var reference = targetInfo.Item2;
-				if (targetInfo.Item1 == null || !publicationDecorator.IsPublishableLexRef(reference.Hvo))
+				if (targetInfo.Item1 == null || (!publicationDecorator?.IsPublishableLexRef(reference.Hvo) ?? false))
 				{
 					return settings.ContentGenerator.CreateFragment();
 				}
