@@ -12,6 +12,7 @@ using SIL.LCModel.Utils;
 using SIL.LCModel;
 using SIL.ObjectModel;
 using XCore;
+using System.Threading;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -196,6 +197,20 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		protected override void DisposeManagedResources()
+		{
+			// Wait until wordforms aren't being updated.
+			m_parserWorker.ParseFiler.Stopping = true;
+			while (m_parserWorker.ParseFiler.UpdatingWordforms)
+				Thread.Sleep(1);
+			// It should be safe to stop the thread now.
+			// (Thread.Stop aborts after 60 seconds, which can leave things in a funny state.)
+			System.Threading.Tasks.Task.Run(() =>
+			{
+				FinishDisposeManagedResources();
+			});
+		}
+
+		private void FinishDisposeManagedResources()
 		{
 			m_thread.Stop();
 			m_thread.Dispose();
