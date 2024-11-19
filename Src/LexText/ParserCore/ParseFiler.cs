@@ -118,9 +118,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_baseAnnotationRepository = servLoc.GetInstance<ICmBaseAnnotationRepository>();
 			m_baseAnnotationFactory = servLoc.GetInstance<ICmBaseAnnotationFactory>();
 			m_userAgent = m_cache.LanguageProject.DefaultUserAgent;
-
-			Stopping = false;
-			UpdatingWordforms = false;
 		}
 
 		#endregion Construction and Disposal
@@ -157,12 +154,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			// the UOW was active.
 			if (!((IActionHandlerExtensions) m_cache.ActionHandlerAccessor).CanStartUow)
 				return false;
-
-			// Don't update words if we are stopping.
-			if (Stopping)
-				return false;
-			// Don't stop if we are updating words.
-			UpdatingWordforms = true;
 
 			// update all of the wordforms in a batch, this might slow down the UI thread a little, if it causes too much unresponsiveness
 			// we can bail out early if there is a message in the Win32 message queue
@@ -227,7 +218,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					FireWordformUpdated(work.Wordform, work.Priority, work.ParseResult, work.CheckParser);
 				}
 			});
-			UpdatingWordforms = false;
 			return true;
 		}
 

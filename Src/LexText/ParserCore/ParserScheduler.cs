@@ -198,12 +198,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		protected override void DisposeManagedResources()
 		{
-			// Wait until wordforms aren't being updated.
-			m_parserWorker.ParseFiler.Stopping = true;
-			while (m_parserWorker.ParseFiler.UpdatingWordforms)
-				Thread.Sleep(1);
-			// It should be safe to stop the thread now.
-			// (Thread.Stop aborts after 60 seconds, which can leave things in a funny state.)
+			// Dispose the managed resources in a separate thread
+			// so that the user gets control back right away.
 			System.Threading.Tasks.Task.Run(() =>
 			{
 				FinishDisposeManagedResources();
