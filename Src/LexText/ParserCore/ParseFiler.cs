@@ -77,16 +77,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		#region Properties
 
-		/// <summary>
-		/// Are we in the process of stopping the thread this is running in?
-		/// </summary>
-		public bool Stopping;
-
-		/// <summary>
-		/// Are we updating word forms?
-		/// </summary>
-		public bool UpdatingWordforms;
-
 		#endregion Properties
 
 		#region Construction and Disposal
