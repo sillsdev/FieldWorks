@@ -13,9 +13,11 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.Framework;
 using System.Collections.Generic;
 using System;
+using System.Threading;
 using SIL.LCModel;
 using SIL.FieldWorks.Resources;
 using SIL.Reporting;
+using SIL.Windows.Forms.Archiving;
 using SIL.Windows.Forms.PortableSettingsProvider;
 using XCore;
 using SIL.LCModel.Core.WritingSystems;
@@ -35,6 +37,8 @@ namespace SIL.FieldWorks.XWorks.Archiving
 
 		private DateTime m_earliest = DateTime.MaxValue;
 		private DateTime m_latest = DateTime.MinValue;
+
+		private IEnumerable<string> m_filesToArchive;
 
 		static ReapRamp()
 		{
@@ -66,8 +70,9 @@ namespace SIL.FieldWorks.XWorks.Archiving
 			var title = cache.LanguageProject.ShortName;
 			var uiLocale = wsMgr.Get(cache.DefaultUserWs).IcuLocale;
 			var projectId = cache.LanguageProject.ShortName;
+			m_filesToArchive = filesToArchive;
 
-			var model = new RampArchivingDlgViewModel(Application.ProductName, title, projectId, /*appSpecificArchivalProcessInfo:*/ string.Empty, SetFilesToArchive(filesToArchive), GetFileDescription);
+			var model = new RampArchivingDlgViewModel(Application.ProductName, title, projectId, SetFilesToArchive, GetFileDescription);
 
 			// image files should be labeled as Graphic rather than Photograph (the default).
 			model.ImagesArePhotographs = false;
@@ -91,7 +96,7 @@ namespace SIL.FieldWorks.XWorks.Archiving
 			AddMetsPairs(model, viProvider.ShortNumericAppVersion, cache);
 
 			// create the dialog
-			using (var dlg = new ArchivingDlg(model, "Palaso", dialogFont, new FormSettings()))
+			using (var dlg = new ArchivingDlg(model, string.Empty, "Palaso", dialogFont, new FormSettings()))
 			using (var reportingAdapter = new SilErrorReportingAdapter(dlg, propertyTable))
 			{
 				ErrorReport.SetErrorReporter(reportingAdapter);
@@ -262,9 +267,9 @@ namespace SIL.FieldWorks.XWorks.Archiving
 		/// </summary>
 		/// <param name="filesToArchive">The files to include</param>
 		/// ------------------------------------------------------------------------------------
-		private static Action<ArchivingDlgViewModel> SetFilesToArchive(IEnumerable<string> filesToArchive)
+		private void SetFilesToArchive(ArchivingDlgViewModel advModel, CancellationToken token)
 		{
-			return advModel => advModel.AddFileGroup(string.Empty, filesToArchive, ResourceHelper.GetResourceString("kstidAddingFwProject"));
+			advModel.AddFileGroup(string.Empty, m_filesToArchive, ResourceHelper.GetResourceString("kstidAddingFwProject"));
 		}
 
 		private void GetCreateDateRange(LcmCache cache)
