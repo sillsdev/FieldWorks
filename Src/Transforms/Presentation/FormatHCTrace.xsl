@@ -80,6 +80,11 @@ Main template
 					<xsl:text>.</xsl:text>
 				</h1>
 				<xsl:call-template name="ResultSection"/>
+				<h2>
+					<xsl:text>Parse time: </xsl:text>
+					<xsl:value-of select="@parseTime"/>
+					<xsl:text> milliseconds.</xsl:text>
+				</h2>
 				<xsl:if test="$prmShowTrace = 'true'">
 					<xsl:call-template name="TraceSection"/>
 				</xsl:if>
