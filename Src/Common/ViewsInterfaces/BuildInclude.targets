@@ -15,7 +15,7 @@
 	</ItemGroup>
 	<Target Name="ViewsCs" Inputs="@(ViewsInputs);$(OutDir)/../Common/ViewsTlb.idl" Outputs="Views.cs">
 		<PropertyGroup>
-			<IdlImpVer>3.0.1</IdlImpVer>
+			<IdlImpVer>4.0.0-beta0052</IdlImpVer>
 			<ViewsTlbSrc>$([System.IO.Path]::GetFullPath('$(OutDir)/../Common/ViewsTlb.idl'))</ViewsTlbSrc>
 			<ViewsRefsJson>$([System.IO.Path]::GetFullPath('$(OutDir)../Common/FwKernelTlb.json'))</ViewsRefsJson>
 			<IdlImporterXmlPath>$([System.IO.Path]::GetFullPath('$(OutDir)../../packages/SIL.IdlImporter.$(IdlImpVer)/build/IDLImporter.xml'))</IdlImporterXmlPath>
