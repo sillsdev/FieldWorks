@@ -86,6 +86,8 @@ namespace SIL.FieldWorks.XWorks
 				styles.Add(new BaseStyleInfo { Name = DictionaryNormal });
 			if (!styles.Contains("Dictionary-Headword"))
 				styles.Add(new BaseStyleInfo { Name = "Dictionary-Headword", IsParagraphStyle = false});
+			if (!styles.Contains(WordStylesGenerator.BeforeAfterBetweenStyleName))
+				styles.Add(new BaseStyleInfo { Name = WordStylesGenerator.BeforeAfterBetweenStyleName, IsParagraphStyle = false });
 			if (!styles.Contains("Abbreviation"))
 				styles.Add(new BaseStyleInfo { Name = "Abbreviation", IsParagraphStyle = false });
 			if (!styles.Contains("Dictionary-SenseNumber"))
@@ -96,8 +98,12 @@ namespace SIL.FieldWorks.XWorks
 				styles.Add(new BaseStyleInfo { Name = DictionaryGlossStyleName, IsParagraphStyle = false });
 
 			// Add paragraph styles
+			if (!styles.Contains(WordStylesGenerator.NormalParagraphStyleName))
+				styles.Add(new BaseStyleInfo { Name = WordStylesGenerator.NormalParagraphStyleName, IsParagraphStyle = true });
 			if (!styles.Contains(MainEntryParagraphStyleName))
 				styles.Add(new BaseStyleInfo { Name = MainEntryParagraphStyleName, IsParagraphStyle = true });
+			if (!styles.Contains(WordStylesGenerator.LetterHeadingStyleName))
+				styles.Add(new BaseStyleInfo { Name = WordStylesGenerator.LetterHeadingStyleName, IsParagraphStyle = true });
 			if (!styles.Contains(SensesParagraphStyleName))
 				styles.Add(new BaseStyleInfo { Name = SensesParagraphStyleName, IsParagraphStyle = true });
 			if (!styles.Contains(SubSensesParagraphStyleName))
@@ -122,6 +128,7 @@ namespace SIL.FieldWorks.XWorks
 				var bulletStyle = new TestStyle(inherbullet, Cache) { Name = NumberParagraphStyleName, IsParagraphStyle = true };
 				styles.Add(bulletStyle);
 			}
+			DefaultSettings.StylesGenerator.AddGlobalStyles(null, new ReadOnlyPropertyTable(m_propertyTable));
 
 			m_Clerk = CreateClerk();
 			m_propertyTable.SetProperty("ActiveClerk", m_Clerk, false);
@@ -271,6 +278,8 @@ namespace SIL.FieldWorks.XWorks
 			// because other tests may set the gloss Style to some other value; resulting in this
 			// test getting unique style names like "Gloss3[lang='en']".
 			LcmWordGenerator.ClearStyleCollection();
+			// Always re-add the global styles after clearing the collection.
+			DefaultSettings.StylesGenerator.AddGlobalStyles(null, new ReadOnlyPropertyTable(m_propertyTable));
 
 			var wsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" });
 			var glossNode = new ConfigurableDictionaryNode
@@ -357,7 +366,7 @@ namespace SIL.FieldWorks.XWorks
 			// 2. Sense number before text:		BEF
 			// 3. Sense number:					2
 			// 4. Sense number after text:		AFT
-			const string senseNumberTwoRun = "<w:t xml:space=\"preserve\">BEF</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Sense Number[lang='en']\" /></w:rPr><w:t xml:space=\"preserve\">2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Context\" /></w:rPr><w:t xml:space=\"preserve\">AFT</w:t></w:r>";
+			const string senseNumberTwoRun = "<w:t xml:space=\"preserve\">BEF</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Sense Number[lang='en']\" /></w:rPr><w:t xml:space=\"preserve\">2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Context : Sense Number[lang='en']\" /></w:rPr><w:t xml:space=\"preserve\">AFT</w:t></w:r>";
 			Assert.True(result.mainDocPart.RootElement.OuterXml.Contains(senseNumberTwoRun));
 		}
 
@@ -435,12 +444,12 @@ namespace SIL.FieldWorks.XWorks
 
 			// After text 'AF2' is after 'second gloss2.2'.
 			const string afterSubSenses =
-				"<w:t xml:space=\"preserve\">second gloss2.2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Context\" /></w:rPr><w:t xml:space=\"preserve\">AF2</w:t>";
+				"<w:t xml:space=\"preserve\">second gloss2.2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Context : SensesOS\" /></w:rPr><w:t xml:space=\"preserve\">AF2</w:t>";
 			Assert.True(outXml.Contains(afterSubSenses));
 
 			// After text 'AF1' is after 'AF2'.
 			const string afterSenses =
-				"<w:t xml:space=\"preserve\">AF2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Context\" /></w:rPr><w:t xml:space=\"preserve\">AF1</w:t>";
+				"<w:t xml:space=\"preserve\">AF2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Context : SensesOS\" /></w:rPr><w:t xml:space=\"preserve\">AF1</w:t>";
 			Assert.True(outXml.Contains(afterSenses));
 		}
 
@@ -497,7 +506,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Before text 'BE3' is after the sense number '1' and before the english abbreviation, which is before 'gloss'.
 			const string beforeAbbreviation =
-				"<w:t xml:space=\"preserve\">1</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Context\" /></w:rPr><w:t xml:space=\"preserve\">BE3</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Writing System Abbreviation\" /></w:rPr><w:t xml:space=\"preserve\">Eng </w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss[lang='en']\" /></w:rPr><w:t xml:space=\"preserve\">gloss</w:t>";
+				"<w:t xml:space=\"preserve\">1</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Context : Gloss[lang='en']\" /></w:rPr><w:t xml:space=\"preserve\">BE3</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Writing System Abbreviation\" /></w:rPr><w:t xml:space=\"preserve\">Eng </w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss[lang='en']\" /></w:rPr><w:t xml:space=\"preserve\">gloss</w:t>";
 			Assert.True(outXml.Contains(beforeAbbreviation));
 
 			// Between text 'TW3' is before the spanish abbreviation, which is before 'glossES'.
@@ -507,7 +516,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// After text 'AF3' is after 'glossES'.
 			const string afterAbbreviation =
-				"<w:t xml:space=\"preserve\">glossES</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Context\" /></w:rPr><w:t xml:space=\"preserve\">AF3</w:t>";
+				"<w:t xml:space=\"preserve\">glossES</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Context : Gloss[lang='en']\" /></w:rPr><w:t xml:space=\"preserve\">AF3</w:t>";
 			Assert.True(outXml.Contains(afterAbbreviation));
 		}
 

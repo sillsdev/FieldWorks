@@ -214,12 +214,12 @@
 			<obj class="LexSense" field="MorphoSyntaxAnalysis" layout="empty">
 				<if is="MoStemMsa">
 					<obj class="MoStemMsa" field="MsFeatures" layout="empty">
-						<string field="ChooserNameTS"/>
+						<string field="LongNameTSS"/>
 					</obj>
 				</if>
 				<if is="MoInflAffMsa">
 					<obj class="MoInflAffMsa" field="InflFeats" layout="empty">
-						<string field="ChooserNameTS"/>
+						<string field="LongNameTSS"/>
 					</obj>
 				</if>
 				<ifnot is="MoStemMsa">
