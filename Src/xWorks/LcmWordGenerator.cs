@@ -2160,7 +2160,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			if (text.Contains("\\A"))
+			if (text.Contains("\\A") || text.Contains("\\0A") || text.Contains("\\a") || text.Contains("\\0a"))
 			{
 				var run = new WP.Run()
 				{
@@ -2168,7 +2168,7 @@ namespace SIL.FieldWorks.XWorks
 				};
 				// If the before after between text has line break characters return a composite run including the line breaks
 				// Use Regex.Matches to capture both the content and the delimiters
-				var matches = Regex.Matches(text, @"(\\A|\\0A)|[^\\]*(?:(?=\\A|\\0A)|$)");
+				var matches = Regex.Matches(text, @"(\\A|\\0A|\\a|\\0a)|[^\\]*(?:(?=\\A|\\0A|\\a|\\0a)|$)");
 				foreach (Match match in matches)
 				{
 					if (match.Groups[1].Success)
