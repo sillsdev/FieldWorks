@@ -344,7 +344,4 @@
   <data name="ksEnterComment" xml:space="preserve">
     <value>Please enter a comment for the parser report</value>
   </data>
-  <data name="ksStoppingParser" xml:space="preserve">
-    <value>Stopping the Parser (may take up to a minute)</value>
-  </data>
 </root>

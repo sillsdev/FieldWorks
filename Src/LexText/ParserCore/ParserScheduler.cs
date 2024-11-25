@@ -12,6 +12,7 @@ using SIL.LCModel.Utils;
 using SIL.LCModel;
 using SIL.ObjectModel;
 using XCore;
+using System.Threading;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -196,6 +197,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		protected override void DisposeManagedResources()
+		{
+			// Dispose the managed resources in a separate thread
+			// so that the user gets control back right away.
+			System.Threading.Tasks.Task.Run(() =>
+			{
+				FinishDisposeManagedResources();
+			});
+		}
+
+		private void FinishDisposeManagedResources()
 		{
 			m_thread.Stop();
 			m_thread.Dispose();

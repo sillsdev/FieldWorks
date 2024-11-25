@@ -556,15 +556,6 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Stopping the Parser (may take up to a minute).
-        /// </summary>
-        public static string ksStoppingParser {
-            get {
-                return ResourceManager.GetString("ksStoppingParser", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Text.
         /// </summary>
         public static string ksText {
