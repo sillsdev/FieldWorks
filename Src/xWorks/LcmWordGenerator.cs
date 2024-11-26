@@ -123,6 +123,15 @@ namespace SIL.FieldWorks.XWorks
 				}
 				col?.Dispose();
 
+				// Set the last section of the document to be two columns. (The last section is all the
+				// entries after the last letter header.) For the last section this information is stored
+				// different than all the other sections. It is stored as the last child element of the body.
+				var sectProps = new SectionProperties(
+					new Columns() { EqualWidth = true, ColumnCount = 2 },
+					new SectionType() { Val = SectionMarkValues.Continuous }
+					);
+				fragment.DocBody.Append(sectProps);
+
 				if (progress != null)
 					progress.Message = xWorksStrings.ksGeneratingStyleInfo;
 
@@ -288,6 +297,16 @@ namespace SIL.FieldWorks.XWorks
 				// Only create paragraph, run, and text objects if string is nonempty
 				if (!string.IsNullOrEmpty(str))
 				{
+					// Everything other than the Letter Header should be 2 columns. Create a empty
+					// paragraph with two columns for the last paragraph in the section that uses 2
+					// columns. (The section is all the entries after the previous letter header.)
+					var sectProps2 = new SectionProperties(
+						new Columns() { EqualWidth = true, ColumnCount = 2 },
+						new SectionType() { Val = SectionMarkValues.Continuous }
+					);
+					docFrag.DocBody.AppendChild(new WP.Paragraph(new WP.ParagraphProperties(sectProps2)));
+
+					// Create the letter header in a paragraph.
 					WP.ParagraphProperties paragraphProps = new WP.ParagraphProperties(new ParagraphStyleId() { Val = styleDisplayName });
 					WP.Paragraph para = docFrag.DocBody.AppendChild(new WP.Paragraph(paragraphProps));
 					WP.Run run = para.AppendChild(new WP.Run());
@@ -295,6 +314,14 @@ namespace SIL.FieldWorks.XWorks
 					WP.Text txt = new WP.Text(str);
 					txt.Space = SpaceProcessingModeValues.Preserve;
 					run.AppendChild(txt);
+
+					// Only the Letter Header should be 1 column. Create a empty paragraph with one
+					// column so the previous letter header paragraph uses 1 column.
+					var sectProps1 = new SectionProperties(
+						new Columns() { EqualWidth = true, ColumnCount = 1 },
+						new SectionType() { Val = SectionMarkValues.Continuous }
+					);
+					docFrag.DocBody.AppendChild(new WP.Paragraph(new WP.ParagraphProperties(sectProps1)));
 				}
 				return docFrag;
 			}
@@ -2160,7 +2187,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			if (text.Contains("\\A"))
+			if (text.Contains("\\A") || text.Contains("\\0A") || text.Contains("\\a") || text.Contains("\\0a"))
 			{
 				var run = new WP.Run()
 				{
@@ -2168,7 +2195,7 @@ namespace SIL.FieldWorks.XWorks
 				};
 				// If the before after between text has line break characters return a composite run including the line breaks
 				// Use Regex.Matches to capture both the content and the delimiters
-				var matches = Regex.Matches(text, @"(\\A|\\0A)|[^\\]*(?:(?=\\A|\\0A)|$)");
+				var matches = Regex.Matches(text, @"(\\A|\\0A|\\a|\\0a)|[^\\]*(?:(?=\\A|\\0A|\\a|\\0a)|$)");
 				foreach (Match match in matches)
 				{
 					if (match.Groups[1].Success)
