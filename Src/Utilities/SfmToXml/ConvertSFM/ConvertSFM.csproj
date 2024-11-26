@@ -142,6 +142,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="netstandard" />
     <Reference Include="Sfm2Xml">
       <Name>Sfm2Xml</Name>
       <HintPath>..\..\..\..\Output\Debug\Sfm2Xml.dll</HintPath>
