@@ -156,6 +156,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
     </Reference>
+    <Reference Include="netstandard" />
     <Reference Include="ViewsInterfaces">
       <Name>ViewsInterfaces</Name>
       <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>

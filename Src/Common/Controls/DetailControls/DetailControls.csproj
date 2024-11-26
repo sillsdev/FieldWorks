@@ -140,6 +140,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="netstandard" />
     <Reference Include="ViewsInterfaces">
       <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
     </Reference>

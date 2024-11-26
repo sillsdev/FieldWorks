@@ -92,6 +92,7 @@
       <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="netstandard" />
     <Reference Include="ViewsInterfaces, Version=9.0.0.19446, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
