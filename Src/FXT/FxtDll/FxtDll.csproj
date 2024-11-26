@@ -125,6 +125,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="netstandard" />
     <Reference Include="SIL.LCModel">
       <Name>SIL.LCModel</Name>
       <HintPath>..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>

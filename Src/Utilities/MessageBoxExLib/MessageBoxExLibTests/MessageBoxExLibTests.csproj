@@ -146,6 +146,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="netstandard" />
     <Reference Include="FormsTester">
       <HintPath>..\..\..\..\Bin\nunitforms\FormsTester.dll</HintPath>
     </Reference>

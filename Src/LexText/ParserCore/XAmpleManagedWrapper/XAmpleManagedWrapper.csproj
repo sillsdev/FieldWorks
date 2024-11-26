@@ -80,6 +80,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="netstandard" />
     <Reference Include="SIL.Core">
       <SpecificVersion>false</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\SIL.Core.dll</HintPath>

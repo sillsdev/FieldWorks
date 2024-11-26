@@ -115,6 +115,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="netstandard" />
     <Reference Include="Accessibility">
       <Name>Accessibility</Name>
     </Reference>

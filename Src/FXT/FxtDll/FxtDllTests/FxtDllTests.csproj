@@ -146,6 +146,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="netstandard" />
     <Reference Include="SIL.LCModel">
       <Name>SIL.LCModel</Name>
       <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
