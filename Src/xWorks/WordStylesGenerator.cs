@@ -13,7 +13,6 @@ using System.Diagnostics;
 using System.Linq;
 using XCore;
 
-
 namespace SIL.FieldWorks.XWorks
 {
 	public class WordStylesGenerator
@@ -32,17 +31,22 @@ namespace SIL.FieldWorks.XWorks
 		internal const string SenseNumberDisplayName = "Sense Number";
 		internal const string WritingSystemStyleName = "Writing System Abbreviation";
 		internal const string WritingSystemDisplayName = "Writing System Abbreviation";
+		internal const string HeadwordDisplayName = "Headword";
 		internal const string StyleSeparator = " : ";
 		internal const string LangTagPre = "[lang=\'";
 		internal const string LangTagPost = "\']";
 
 		// Globals and default paragraph styles.
 		internal const string NormalParagraphStyleName = "Normal";
+		internal const string PageHeaderStyleName = "Header";
 		internal const string MainEntryParagraphDisplayName = "Main Entry";
 		internal const string LetterHeadingStyleName = "Dictionary-LetterHeading";
 		internal const string LetterHeadingDisplayName = "Letter Heading";
 		internal const string PictureAndCaptionTextframeStyle = "Image-Textframe-Style";
 		internal const string EntryStyleContinue = "-Continue";
+
+		internal const string PageHeaderIdEven = "EvenPages";
+		internal const string PageHeaderIdOdd = "OddPages";
 
 		public static Style GenerateLetterHeaderParagraphStyle(ReadOnlyPropertyTable propertyTable, out BulletInfo? bulletInfo)
 		{
@@ -83,6 +87,26 @@ namespace SIL.FieldWorks.XWorks
 				style.StyleName.Val = style.StyleId;
 			}
 			return style;
+		}
+
+		/// <summary>
+		/// Generate the style that will be used for the header that goes on the top of
+		/// every page.  The header style will be similar to the provided style, with the
+		/// addition of the tab stop.
+		/// </summary>
+		/// <param name="style">The style to based the header style on.</param>
+		/// <returns>The header style.</returns>
+		internal static Style GeneratePageHeaderStyle(Style style)
+		{
+			Style pageHeaderStyle = (Style)style.CloneNode(true);
+			pageHeaderStyle.StyleId = PageHeaderStyleName;
+			pageHeaderStyle.StyleName.Val = pageHeaderStyle.StyleId;
+
+			// Add the tab stop.
+			var tabs = new Tabs();
+			tabs.Append(new TabStop() { Val = TabStopValues.End, Position = (int)(1440 * 6.5/*inches*/) });
+			pageHeaderStyle.StyleParagraphProperties.Append(tabs);
+			return pageHeaderStyle;
 		}
 
 		/// <summary>
