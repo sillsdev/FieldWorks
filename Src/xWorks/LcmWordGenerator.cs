@@ -71,6 +71,7 @@ namespace SIL.FieldWorks.XWorks
 							{ ContentGenerator = generator, StylesGenerator = generator};
 				settings.StylesGenerator.AddGlobalStyles(configuration, readOnlyPropertyTable);
 				string lastHeader = null;
+				string firstHeadwordStyle = null;
 				var entryContents = new Tuple<ICmObject, IFragment>[entryCount];
 				var entryActions = new List<Action>();
 
@@ -119,14 +120,21 @@ namespace SIL.FieldWorks.XWorks
 
 						// Append the entry to the word doc
 						fragment.Append(entry.Item2);
+
+						if (string.IsNullOrEmpty(firstHeadwordStyle))
+						{
+							firstHeadwordStyle = GetFirstHeadwordStyle((DocFragment)entry.Item2);
+						}
 					}
 				}
 				col?.Dispose();
 
-				// Set the last section of the document to be two columns. (The last section is all the
-				// entries after the last letter header.) For the last section this information is stored
+				// Set the last section of the document to be two columns and add the page headers. (The last section
+				// is all the entries after the last letter header.) For the last section this information is stored
 				// different than all the other sections. It is stored as the last child element of the body.
 				var sectProps = new SectionProperties(
+					new HeaderReference() { Id = WordStylesGenerator.PageHeaderIdEven, Type = HeaderFooterValues.Even },
+					new HeaderReference() { Id = WordStylesGenerator.PageHeaderIdOdd, Type = HeaderFooterValues.Default },
 					new Columns() { EqualWidth = true, ColumnCount = 2 },
 					new SectionType() { Val = SectionMarkValues.Continuous }
 					);
@@ -169,6 +177,13 @@ namespace SIL.FieldWorks.XWorks
 					stylePart.Styles = ((Styles)styleSheet.CloneNode(true));
 				}
 
+				// Add the page headers.
+				var headerParts = fragment.mainDocPart.HeaderParts;
+				if (!headerParts.Any())
+				{
+					AddPageHeaderPartsToPackage(fragment.DocFrag, firstHeadwordStyle);
+				}
+
 				// Add document settings
 				DocumentSettingsPart settingsPart = fragment.mainDocPart.DocumentSettingsPart;
 				if (settingsPart == null)
@@ -192,7 +207,9 @@ namespace SIL.FieldWorks.XWorks
 								Name = CompatSettingNameValues.OverrideTableStyleFontSizeAndJustification,
 								Val = new StringValue("0"),
 								Uri = new StringValue("http://schemas.microsoft.com/office/word")
-							}
+							},
+							new EvenAndOddHeaders()    // Use different page headers for the even and odd pages.
+
 							// If in the future, if we find that certain style items are different in different versions of word,
 							// it may help to specify more compatibility settings.
 							// A full list of all possible compatibility settings may be found here:
@@ -301,6 +318,8 @@ namespace SIL.FieldWorks.XWorks
 					// paragraph with two columns for the last paragraph in the section that uses 2
 					// columns. (The section is all the entries after the previous letter header.)
 					var sectProps2 = new SectionProperties(
+						new HeaderReference() { Id = WordStylesGenerator.PageHeaderIdEven, Type = HeaderFooterValues.Even },
+						new HeaderReference() { Id = WordStylesGenerator.PageHeaderIdOdd, Type = HeaderFooterValues.Default },
 						new Columns() { EqualWidth = true, ColumnCount = 2 },
 						new SectionType() { Val = SectionMarkValues.Continuous }
 					);
@@ -318,6 +337,8 @@ namespace SIL.FieldWorks.XWorks
 					// Only the Letter Header should be 1 column. Create a empty paragraph with one
 					// column so the previous letter header paragraph uses 1 column.
 					var sectProps1 = new SectionProperties(
+						new HeaderReference() { Id = WordStylesGenerator.PageHeaderIdEven, Type = HeaderFooterValues.Even },
+						new HeaderReference() { Id = WordStylesGenerator.PageHeaderIdOdd, Type = HeaderFooterValues.Default },
 						new Columns() { EqualWidth = true, ColumnCount = 1 },
 						new SectionType() { Val = SectionMarkValues.Continuous }
 					);
@@ -1774,6 +1795,10 @@ namespace SIL.FieldWorks.XWorks
 				s_styleCollection.AddParagraphStyle(normStyle, WordStylesGenerator.NormalParagraphStyleName, normStyle.StyleId, bulletInfo);
 			}
 
+			var pageHeaderStyle = WordStylesGenerator.GeneratePageHeaderStyle(normStyle);
+			// Intentionally re-using the bulletInfo from Normal.
+			s_styleCollection.AddParagraphStyle(pageHeaderStyle, WordStylesGenerator.PageHeaderStyleName, pageHeaderStyle.StyleId, bulletInfo);
+
 			var mainStyle = WordStylesGenerator.GenerateMainEntryParagraphStyle(propertyTable, model, out ConfigurableDictionaryNode node, out bulletInfo);
 			if (mainStyle != null)
 			{
@@ -1980,6 +2005,58 @@ namespace SIL.FieldWorks.XWorks
 			Numbering numElement = new Numbering();
 			numElement.Save(part);
 			return part;
+		}
+
+		// Add the page HeaderParts to the document.
+		public static void AddPageHeaderPartsToPackage(WordprocessingDocument doc, string headwordStyle)
+		{
+			// Generate header for even pages.
+			HeaderPart even = doc.MainDocumentPart.AddNewPart<HeaderPart>(WordStylesGenerator.PageHeaderIdEven);
+			GenerateHeaderPartContent(even, true, headwordStyle);
+
+			// Generate header for odd pages.
+			HeaderPart odd = doc.MainDocumentPart.AddNewPart<HeaderPart>(WordStylesGenerator.PageHeaderIdOdd);
+			GenerateHeaderPartContent(odd, false, headwordStyle);
+		}
+
+		/// <summary>
+		/// Adds the page number and the first or last headword to the HeaderPart.
+		/// </summary>
+		/// <param name="part">HeaderPart to modify.</param>
+		/// <param name="even">True = generate content for even pages.
+		///                    False = generate content for odd pages.</param>
+		/// <param name="headwordStyle">The style that will be used to find the first or last headword on the page.</param>
+		private static void GenerateHeaderPartContent(HeaderPart part, bool even, string headwordStyle)
+		{
+			ParagraphStyleId paraStyleId = new ParagraphStyleId() { Val = WordStylesGenerator.PageHeaderStyleName };
+			Paragraph para = new Paragraph(new ParagraphProperties(paraStyleId));
+
+			if (even)
+			{
+				if (!string.IsNullOrEmpty(headwordStyle))
+				{
+					// Add the first headword on the page to the header.
+					para.Append(new Run(new SimpleField() { Instruction = "STYLEREF " + headwordStyle + " \\* MERGEFORMAT" }));
+				}
+				para.Append(new WP.Run(new WP.TabChar()));
+				// Add the page number to the header.
+				para.Append(new WP.Run(new SimpleField() { Instruction = "PAGE" }));
+			}
+			else
+			{
+				// Add the page number to the header.
+				para.Append(new WP.Run(new SimpleField() { Instruction = "PAGE" }));
+				para.Append(new WP.Run(new WP.TabChar()));
+				if (!string.IsNullOrEmpty(headwordStyle))
+				{
+					// Add the last headword on the page to the header.
+					para.Append(new WP.Run(new SimpleField() { Instruction = "STYLEREF " + headwordStyle + " \\l \\* MERGEFORMAT" }));
+				}
+			}
+
+			Header header = new Header(para);
+			part.Header = header;
+			part.Header.Save();
 		}
 
 		// Add an ImagePart to the document. Returns the part ID.
@@ -2851,6 +2928,24 @@ namespace SIL.FieldWorks.XWorks
 				lgWritingSystem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(defAnalWs.Handle);
 			}
 			return lgWritingSystem.RightToLeftScript;
+		}
+
+		/// <summary>
+		/// Get the full style name for the first RunStyle that begins with "Headword".
+		/// </summary>
+		/// <returns>The full style name that begins with "Headword".
+		///          Null if none are found.</returns>
+		public static string GetFirstHeadwordStyle(DocFragment frag)
+		{
+			// Find the first run style with a value that begins with "Headword".
+			foreach (RunStyle runStyle in frag.DocBody.Descendants<RunStyle>())
+			{
+				if (runStyle.Val.Value.StartsWith(WordStylesGenerator.HeadwordDisplayName))
+				{
+					return runStyle.Val.Value;
+				}
+			}
+			return null;
 		}
 
 		/// <summary>
