@@ -1,0 +1,14 @@
+<Project>
+<!-- .Net Framework projects which reference netstandard2.0 end up copying a bad version of System.ValueTuple -->
+<!-- Rather than try to fix it here and there we'll just go nuclear and copy the right one in after every project -->
+	<Target Name="CopyCorrectSystemValueTuple" AfterTargets="Build">
+		<ItemGroup>
+			<TupleAssembly Include="$(MSBuildThisFileDirectory)/../packages/System.ValueTuple.4.5.0/lib/net461/System.ValueTuple.dll" />
+		</ItemGroup>
+		<Message Text="Copying @(TupleAssembly) to $(OutDir)" />
+		<Error
+			Text="System.ValueTuple not found in the packages folder."
+			Condition="!Exists('$(MSBuildThisFileDirectory)/../packages/System.ValueTuple.4.5.0/lib/net461/System.ValueTuple.dll')" />
+		<Copy SourceFiles="@(TupleAssembly)" DestinationFolder="$(OutDir)" />
+	</Target>
+</Project>
