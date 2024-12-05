@@ -124,16 +124,19 @@ namespace SIL.FieldWorks.XWorks
 
 			string classNameBase = className;
 			int counter = 0;
-			while (_styleDictionary.ContainsKey(className))
+			lock (_styleDictionary)
 			{
-				var styleContent = GenerateCssFromConfigurationNode(node, className, _propertyTable).NonEmpty();
-				if (AreStyleRulesListsEquivalent(_styleDictionary[className], styleContent))
+				while (_styleDictionary.ContainsKey(className))
 				{
-					return className;
+					var styleContent = GenerateCssFromConfigurationNode(node, className, _propertyTable).NonEmpty();
+					if (AreStyleRulesListsEquivalent(_styleDictionary[className], styleContent))
+					{
+						return className;
+					}
+					className = $"{classNameBase}-{++counter}";
 				}
-				className = $"{classNameBase}-{++counter}";
+				_styleDictionary[className] = GenerateCssFromConfigurationNode(node, className, _propertyTable).NonEmpty();
 			}
-			_styleDictionary[className] = GenerateCssFromConfigurationNode(node, className, _propertyTable).NonEmpty();
 			return className;
 		}
 
