@@ -15,8 +15,8 @@
 	</Window.Resources>
 	<Grid>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" Height="40">
 			<Button Content="{x:Static local:ParserUIStrings.ksSaveReport}"
