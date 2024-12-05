@@ -14,7 +14,17 @@
 		<local:PositiveIntToRedBrushConverter x:Key="PositiveIntToRedBrushConverter" />
 	</Window.Resources>
 	<Grid>
-		<DataGrid AutoGenerateColumns="False" CanUserAddRows="False" ItemsSource="{Binding ParseReports}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" Height="40">
+			<Button Content="{x:Static local:ParserUIStrings.ksSaveReport}"
+                    ToolTip="{x:Static local:ParserUIStrings.ksSaveReportToolTip}"
+                    Click="SaveParserReport" Width="100" Margin="5"/>
+			<Label x:Name="commentLabel" Content="{Binding DisplayComment, Mode=OneWay}" Height="27"/>
+		</StackPanel>
+		<DataGrid Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" ItemsSource="{Binding ParseReports}">
 			<DataGrid.Columns>
 				<DataGridTemplateColumn>
 					<DataGridTemplateColumn.CellTemplate>

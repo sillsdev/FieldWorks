@@ -18,13 +18,20 @@ namespace SIL.FieldWorks.LexText.Controls
 			InitializeComponent();
 		}
 
-		public ParserReportDialog(ParserReport parserReport, Mediator mediator, LcmCache cache)
+		public ParserReportDialog(ParserReportViewModel parserReport, Mediator mediator, LcmCache cache)
 		{
 			InitializeComponent();
 			Mediator = mediator;
 			Cache = cache;
-			DataContext = new ParserReportViewModel { ParserReport = parserReport };
+			DataContext = parserReport;
 		}
+
+		public void SaveParserReport(object sender, RoutedEventArgs e)
+		{
+			ParserReportViewModel parserReportViewModel = (ParserReportViewModel)DataContext;
+			ParserListener.SaveParserReport(parserReportViewModel, Cache, null);
+		}
+
 
 		public void ReparseWord(object sender, RoutedEventArgs e)
 		{

@@ -39,7 +39,7 @@
 							<Label Content="{x:Static local:ParserUIStrings.ksText}" ToolTip="{x:Static local:ParserUIStrings.ksTextToolTip}"/>
 						</DataGridTextColumn.Header>
 					</DataGridTextColumn>
-					<DataGridTextColumn Binding="{Binding ParserReport.Comment, Mode=TwoWay}" Width="100">
+					<DataGridTextColumn Binding="{Binding DisplayComment, Mode=OneWay}" Width="100">
 						<DataGridTextColumn.Header>
 							<Label Content="{x:Static local:ParserUIStrings.ksComment}" ToolTip="{x:Static local:ParserUIStrings.ksCommentToolTip}"/>
 						</DataGridTextColumn.Header>
@@ -122,7 +122,7 @@
                     ToolTip="{x:Static local:ParserUIStrings.ksDiffButtonToolTip}"
                     IsEnabled="{Binding CanDiffReports}"
                     Click="DiffParserReports" Width="100" Margin="5" />
-			<Button Content="{Binding DiffButtonContent}"
+			<Button Content="{Binding DeleteButtonContent}"
                     ToolTip="{x:Static local:ParserUIStrings.ksDeleteToolTip}"
                     IsEnabled="{Binding CanDeleteReports}"
                     Click="DeleteParserReport" Width="100" Margin="5" />

@@ -24,6 +24,18 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		public string DisplayComment
+		{
+			get
+			{
+				if (ParserReport.Filename == null)
+				{
+					return ParserUIStrings.ksUnsavedParserReport;
+				}
+				return ParserReport.Comment;
+			}
+		}
+
 		public IEnumerable<ParseReport> ParseReports
 		{
 			get
@@ -64,6 +76,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected virtual void OnPropertyChanged(string propertyName)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		public void UpdateDisplayComment()
+		{
+			OnPropertyChanged("DisplayComment");
 		}
 	}
 }
