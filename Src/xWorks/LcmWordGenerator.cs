@@ -71,7 +71,7 @@ namespace SIL.FieldWorks.XWorks
 							{ ContentGenerator = generator, StylesGenerator = generator};
 				settings.StylesGenerator.AddGlobalStyles(configuration, readOnlyPropertyTable);
 				string lastHeader = null;
-				string firstHeadwordStyle = null;
+				string firstGuidewordStyle = null;
 				var entryContents = new Tuple<ICmObject, IFragment>[entryCount];
 				var entryActions = new List<Action>();
 
@@ -121,9 +121,9 @@ namespace SIL.FieldWorks.XWorks
 						// Append the entry to the word doc
 						fragment.Append(entry.Item2);
 
-						if (string.IsNullOrEmpty(firstHeadwordStyle))
+						if (string.IsNullOrEmpty(firstGuidewordStyle))
 						{
-							firstHeadwordStyle = GetFirstHeadwordStyle((DocFragment)entry.Item2);
+							firstGuidewordStyle = GetFirstGuidewordStyle((DocFragment)entry.Item2, configuration.Type);
 						}
 					}
 				}
@@ -181,7 +181,7 @@ namespace SIL.FieldWorks.XWorks
 				var headerParts = fragment.mainDocPart.HeaderParts;
 				if (!headerParts.Any())
 				{
-					AddPageHeaderPartsToPackage(fragment.DocFrag, firstHeadwordStyle);
+					AddPageHeaderPartsToPackage(fragment.DocFrag, firstGuidewordStyle);
 				}
 
 				// Add document settings
@@ -2008,35 +2008,35 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// Add the page HeaderParts to the document.
-		public static void AddPageHeaderPartsToPackage(WordprocessingDocument doc, string headwordStyle)
+		public static void AddPageHeaderPartsToPackage(WordprocessingDocument doc, string guidewordStyle)
 		{
 			// Generate header for even pages.
 			HeaderPart even = doc.MainDocumentPart.AddNewPart<HeaderPart>(WordStylesGenerator.PageHeaderIdEven);
-			GenerateHeaderPartContent(even, true, headwordStyle);
+			GenerateHeaderPartContent(even, true, guidewordStyle);
 
 			// Generate header for odd pages.
 			HeaderPart odd = doc.MainDocumentPart.AddNewPart<HeaderPart>(WordStylesGenerator.PageHeaderIdOdd);
-			GenerateHeaderPartContent(odd, false, headwordStyle);
+			GenerateHeaderPartContent(odd, false, guidewordStyle);
 		}
 
 		/// <summary>
-		/// Adds the page number and the first or last headword to the HeaderPart.
+		/// Adds the page number and the first or last guideword to the HeaderPart.
 		/// </summary>
 		/// <param name="part">HeaderPart to modify.</param>
 		/// <param name="even">True = generate content for even pages.
 		///                    False = generate content for odd pages.</param>
-		/// <param name="headwordStyle">The style that will be used to find the first or last headword on the page.</param>
-		private static void GenerateHeaderPartContent(HeaderPart part, bool even, string headwordStyle)
+		/// <param name="guidewordStyle">The style that will be used to find the first or last guideword on the page.</param>
+		private static void GenerateHeaderPartContent(HeaderPart part, bool even, string guidewordStyle)
 		{
 			ParagraphStyleId paraStyleId = new ParagraphStyleId() { Val = WordStylesGenerator.PageHeaderStyleName };
 			Paragraph para = new Paragraph(new ParagraphProperties(paraStyleId));
 
 			if (even)
 			{
-				if (!string.IsNullOrEmpty(headwordStyle))
+				if (!string.IsNullOrEmpty(guidewordStyle))
 				{
-					// Add the first headword on the page to the header.
-					para.Append(new Run(new SimpleField() { Instruction = "STYLEREF " + headwordStyle + " \\* MERGEFORMAT" }));
+					// Add the first guideword on the page to the header.
+					para.Append(new Run(new SimpleField() { Instruction = "STYLEREF \"" + guidewordStyle + "\" \\* MERGEFORMAT" }));
 				}
 				para.Append(new WP.Run(new WP.TabChar()));
 				// Add the page number to the header.
@@ -2047,10 +2047,10 @@ namespace SIL.FieldWorks.XWorks
 				// Add the page number to the header.
 				para.Append(new WP.Run(new SimpleField() { Instruction = "PAGE" }));
 				para.Append(new WP.Run(new WP.TabChar()));
-				if (!string.IsNullOrEmpty(headwordStyle))
+				if (!string.IsNullOrEmpty(guidewordStyle))
 				{
-					// Add the last headword on the page to the header.
-					para.Append(new WP.Run(new SimpleField() { Instruction = "STYLEREF " + headwordStyle + " \\l \\* MERGEFORMAT" }));
+					// Add the last guideword on the page to the header.
+					para.Append(new WP.Run(new SimpleField() { Instruction = "STYLEREF \"" + guidewordStyle + "\" \\l \\* MERGEFORMAT" }));
 				}
 			}
 
@@ -2931,16 +2931,20 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Get the full style name for the first RunStyle that begins with "Headword".
+		/// Get the full style name for the first RunStyle that begins with the guideword style.
 		/// </summary>
-		/// <returns>The full style name that begins with "Headword".
+		/// <param name="type">Indicates if we are are exporting a Reversal or regular dictionary.</param>
+		/// <returns>The full style name that begins with the guideword style.
 		///          Null if none are found.</returns>
-		public static string GetFirstHeadwordStyle(DocFragment frag)
+		public static string GetFirstGuidewordStyle(DocFragment frag, DictionaryConfigurationModel.ConfigType type)
 		{
-			// Find the first run style with a value that begins with "Headword".
+			string guidewordStyle = type == DictionaryConfigurationModel.ConfigType.Reversal ?
+				WordStylesGenerator.ReversalFormDisplayName : WordStylesGenerator.HeadwordDisplayName;
+
+			// Find the first run style with a value that begins with the guideword style.
 			foreach (RunStyle runStyle in frag.DocBody.Descendants<RunStyle>())
 			{
-				if (runStyle.Val.Value.StartsWith(WordStylesGenerator.HeadwordDisplayName))
+				if (runStyle.Val.Value.StartsWith(guidewordStyle))
 				{
 					return runStyle.Val.Value;
 				}
