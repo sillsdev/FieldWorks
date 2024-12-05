@@ -849,7 +849,7 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
 
 			//SUT
-			string firstHeadwordStyle = LcmWordGenerator.GetFirstHeadwordStyle(result);
+			string firstHeadwordStyle = LcmWordGenerator.GetFirstGuidewordStyle(result, DictionaryConfigurationModel.ConfigType.Root);
 
 			Assert.True(firstHeadwordStyle == "Headword[lang='en']");
 		}
