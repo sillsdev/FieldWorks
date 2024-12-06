@@ -2,8 +2,12 @@ using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
+using System.Diagnostics;
+using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Threading;
 using XCore;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -24,6 +28,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			Mediator = mediator;
 			Cache = cache;
 			DataContext = parserReport;
+			commentLabel.Content = ParserUIStrings.ksComment + ":";
 		}
 
 		public void SaveParserReport(object sender, RoutedEventArgs e)
@@ -60,6 +65,36 @@ namespace SIL.FieldWorks.LexText.Controls
 		private string RemoveArrow(string word)
 		{
 			return word.Replace(" => ", string.Empty);
+		}
+
+		private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+		{
+			ScrollViewer scrollViewer = sender as ScrollViewer;
+			if (scrollViewer != null)
+				if (e.Delta > 0)
+					scrollViewer.LineUp();
+				else
+					scrollViewer.LineDown();
+			e.Handled = true;
+		}
+
+		private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			if (sender is DataGrid dataGrid)
+			{
+				if (dataGrid.SelectedItem is ParserReportViewModel selectedItem)
+					ParserListener.ShowParserReport(selectedItem, Mediator, Cache);
+			}
+			else
+				Debug.Fail("Type of Contents of DataGrid changed, adjust double click code.");
+		}
+		private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (sender is DataGrid dataGrid)
+			{
+				// Turn off selection in favor of the check box.
+				Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() => dataGrid.UnselectAll()));
+			}
 		}
 	}
 }
