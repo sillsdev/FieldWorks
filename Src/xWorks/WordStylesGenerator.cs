@@ -410,10 +410,19 @@ namespace SIL.FieldWorks.XWorks
 			// Thus, we calculate textframe width by multiplying max image width in inches by 72*30 = 1440
 			var textFrameWidth = LcmWordGenerator.maxImageWidthInches * 1440;
 
-			// A paragraph is turned into a textframe simply by adding a frameproperties object inside the paragraph properties.
-			// We leave a 4-pt border around the textframe--80 twentieths of a point.
+			// We will leave a 4-pt border around the textframe--80 twentieths of a point.
 			var textFrameBorder = "80";
-			var textFrameProps = new FrameProperties() { Width = textFrameWidth.ToString(), HeightType = HeightRuleValues.Auto, HorizontalSpace = textFrameBorder, VerticalSpace = textFrameBorder, Wrap = TextWrappingValues.NotBeside, VerticalPosition = VerticalAnchorValues.Text, HorizontalPosition = HorizontalAnchorValues.Text, XAlign = HorizontalAlignmentValues.Right };
+
+			// A paragraph is turned into a textframe simply by adding a frameproperties object inside the paragraph properties.
+			// Note that the argument "Y = textFrameBorder" is necessary for the following reason:
+			// In Word 2019, in order for the image textframe to display below the entry it portrays,
+			// a positive y-value offset must be specified that matches or exceeds the border of the textframe.
+			// We also lock the image's anchor because this allows greater flexibility in positioning the image from within Word.
+			// Without a locked anchor, if a user drags a textframe, Word will arbitrarily change the anchor and snap the textframe into a new location,
+			// rather than allowing the user to drag the textframe to their desired location.
+			var textFrameProps = new FrameProperties() { Width = textFrameWidth.ToString(), HeightType = HeightRuleValues.Auto, HorizontalSpace = textFrameBorder, VerticalSpace = textFrameBorder,
+				Wrap = TextWrappingValues.NotBeside, VerticalPosition = VerticalAnchorValues.Text, HorizontalPosition = HorizontalAnchorValues.Text, XAlign = HorizontalAlignmentValues.Right,
+				Y=textFrameBorder, AnchorLock = new DocumentFormat.OpenXml.OnOffValue(true) };
 			var parProps = new ParagraphProperties();
 			frameStyle.StyleId = PictureAndCaptionTextframeStyle;
 			frameStyle.StyleName = new StyleName(){Val = PictureAndCaptionTextframeStyle};
