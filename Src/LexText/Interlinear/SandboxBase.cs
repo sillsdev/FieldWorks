@@ -2033,7 +2033,7 @@ namespace SIL.FieldWorks.IText
 					// Look for morphs in matching morph bundles with lexical patterns.
 					// If morph is a lexical pattern then the morph bundle's Form is the guessed root.
 					morphs = (from mb in Cache.ServiceLocator.GetInstance<IWfiMorphBundleRepository>().AllInstances()
-							  where IsLexicalPattern(mb.MorphRA.Form)
+							  where mb.MorphRA != null && IsLexicalPattern(mb.MorphRA.Form)
 							      && icuCollator.Compare(mb.Form.get_String(ws).Text, form) == 0
 								  && mb.MorphRA.MorphTypeRA != null
 								  && (mb.MorphRA.MorphTypeRA == mmt || mb.MorphRA.MorphTypeRA.IsAmbiguousWith(mmt))
