@@ -619,8 +619,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					ReadParserReports();
 					// Write an empty parser report.
 					var parserReport = CreateParserReport();
-					AddParserReport(parserReport);
-					ShowParserReport(parserReport, m_mediator, m_cache);
+					ParserReportViewModel viewModel = AddParserReport(parserReport);
+					ShowParserReport(viewModel, m_mediator, m_cache);
 				}
 			}
 			m_parserConnection.UpdateWordforms(wordforms, priority, checkParser);
@@ -670,8 +670,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				ReadParserReports();
 				// Convert parse results into ParserReport.
 				var parserReport = CreateParserReport();
-				AddParserReport(parserReport);
-				ShowParserReport(parserReport, m_mediator, m_cache);
+				ParserReportViewModel viewModel = AddParserReport(parserReport);
+				ShowParserReport(viewModel, m_mediator, m_cache);
 			}
 		}
 
@@ -701,15 +701,18 @@ namespace SIL.FieldWorks.LexText.Controls
 			return parserReport;
 		}
 
-		public static void SaveParserReport(ParserReport report, LcmCache cache, string defaultComment)
+		public static void SaveParserReport(ParserReportViewModel reportViewModel, LcmCache cache, string defaultComment)
 		{
 			Form inputBox = CreateInputBox(ParserUIStrings.ksEnterComment, ref defaultComment);
 			DialogResult result = inputBox.ShowDialog();
 			if (result == DialogResult.OK)
 			{
+				ParserReport report = reportViewModel.ParserReport;
 				Control textBox = inputBox.Controls["input"];
 				report.Comment = textBox.Text;
+				report.DeleteJsonFile();
 				report.WriteJsonFile(cache);
+				reportViewModel.UpdateDisplayComment();
 			}
 		}
 
@@ -850,12 +853,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Add parserReport to the list of parser reports.
 		/// </summary>
-		private void AddParserReport(ParserReport parserReport)
+		private ParserReportViewModel AddParserReport(ParserReport parserReport)
 		{
-			m_parserReports.Insert(0, new ParserReportViewModel { ParserReport = parserReport });
+			ParserReportViewModel viewModel = new ParserReportViewModel { ParserReport = parserReport };
+			m_parserReports.Insert(0, viewModel);
 			if (m_parserReportsDialog != null)
 				// Reset ParserReports so that the window gets notified when the new report is selected.
 				((ParserReportsViewModel)m_parserReportsDialog.DataContext).ParserReports = m_parserReports;
+			return viewModel;
 		}
 
 		/// <summary>
@@ -863,7 +868,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		/// <param name="parserReport"></param>
 		/// <param name="mediator">the mediator is used to call TryAWord</param>
-		public static void ShowParserReport(ParserReport parserReport, Mediator mediator, LcmCache cache)
+		public static void ShowParserReport(ParserReportViewModel parserReport, Mediator mediator, LcmCache cache)
 		{
 			ParserReportDialog dialog = new ParserReportDialog(parserReport, mediator, cache);
 			dialog.Show();

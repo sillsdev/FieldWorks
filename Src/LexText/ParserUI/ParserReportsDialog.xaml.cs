@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				if (report.IsSelected)
 				{
-					ParserListener.ShowParserReport(report.ParserReport, Mediator, Cache);
+					ParserListener.ShowParserReport(report, Mediator, Cache);
 					break;
 				}
 			}
@@ -72,11 +72,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				if (report.IsSelected)
 				{
-					ParserListener.SaveParserReport(report.ParserReport, Cache, DefaultComment);
+					ParserListener.SaveParserReport(report, Cache, DefaultComment);
 				}
 			}
-			// The comment may have been updated.
-			DataGrid.Items.Refresh();
 			((ParserReportsViewModel)DataContext).UpdateButtonStates();
 
 		}
@@ -130,14 +128,15 @@ namespace SIL.FieldWorks.LexText.Controls
 				parserReport2 = temp;
 			}
 			var diff = parserReport.ParserReport.DiffParserReports(parserReport2.ParserReport);
-			ParserListener.ShowParserReport(diff, Mediator, Cache);
+			ParserReportViewModel viewModel = new ParserReportViewModel() { ParserReport = diff };
+			ParserListener.ShowParserReport(viewModel, Mediator, Cache);
 		}
 		private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
 			if (sender is DataGrid dataGrid)
 			{
 				if(dataGrid.SelectedItem is ParserReportViewModel selectedItem)
-					ParserListener.ShowParserReport(selectedItem.ParserReport, Mediator, Cache);
+					ParserListener.ShowParserReport(selectedItem, Mediator, Cache);
 			}
 			else
 				Debug.Fail("Type of Contents of DataGrid changed, adjust double click code.");

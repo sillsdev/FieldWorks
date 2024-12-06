@@ -700,6 +700,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (unsaved).
+        /// </summary>
+        public static string ksUnsavedParserReport {
+            get {
+                return ResourceManager.GetString("ksUnsavedParserReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Word.
         /// </summary>
         public static string ksWord {

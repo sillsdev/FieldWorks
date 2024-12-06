@@ -44,10 +44,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		public bool CanShowReport => ParserReports.Count(report => report.IsSelected) == 1;
 		public bool CanDiffReports => ParserReports.Count(report => report.IsSelected) == 2;
 		public bool CanDeleteReports => ParserReports.Any(report => report.IsSelected);
-		public bool CanSaveReport => ParserReports.Count(report => report.IsSelected) == 1 &&
-									ParserReports.Count(report => report.IsSelected && report.ParserReport.Filename == null) == 1;
+		public bool CanSaveReport => ParserReports.Count(report => report.IsSelected) == 1;
 
-		public string DiffButtonContent => string.Format(ParserUIStrings.ksDelete,
+		public string DeleteButtonContent => string.Format(ParserUIStrings.ksDelete,
 			ParserReports.Count(report => report.IsSelected));
 		public ParserReportsViewModel()
 		{
@@ -88,11 +87,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (e.PropertyName == nameof(ParserReportViewModel.IsSelected))
 			{
 				// Notify changes to button state properties
-				OnPropertyChanged(nameof(CanShowReport));
-				OnPropertyChanged(nameof(CanSaveReport));
-				OnPropertyChanged(nameof(CanDiffReports));
-				OnPropertyChanged(nameof(CanDeleteReports));
-				OnPropertyChanged(nameof(DiffButtonContent));
+				UpdateButtonStates();
 			}
 		}
 		protected virtual void OnPropertyChanged(string propertyName)
@@ -104,9 +99,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		public void UpdateButtonStates()
 		{
 			OnPropertyChanged(nameof(CanShowReport));
+			OnPropertyChanged(nameof(CanSaveReport));
 			OnPropertyChanged(nameof(CanDiffReports));
 			OnPropertyChanged(nameof(CanSaveReport));
 			OnPropertyChanged(nameof(CanDeleteReports));
+			OnPropertyChanged(nameof(DeleteButtonContent));
 		}
 	}
 }
