@@ -24,9 +24,10 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var locales = Directory.GetDirectories(L10nsDirectory).Select(Path.GetFileName);
 			foreach (var locale in locales)
 			{
-				RenameLocale(locale, Normalize(locale));
-				if (locale == "ms")
-					CopyLocale(locale, "zlm");
+				var normalizedLocale = Normalize(locale);
+				RenameLocale(locale, normalizedLocale);
+				if (normalizedLocale == "ms")
+					CopyLocale(normalizedLocale, "zlm");
 			}
 			return true;
 		}
