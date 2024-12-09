@@ -43,6 +43,21 @@ namespace SIL.FieldWorks.IText
 
 		private string m_currentTool = "";
 
+		public bool PreviousShowVScroll;
+
+		///// <summary>
+		///// This event gets fired when a refresh is needed to change the scrollbar visibility.
+		///// </summary>
+		//public event EventHandler OnTriggerRefreshForScrollBarVisibility;
+
+		private void RefreshIfNecessary(object sender, LayoutEventArgs e)
+		{
+			bool showVScroll = ((SimpleRootSite)m_rootb?.Site)?.IsVScrollVisible ?? false;
+			Layout -= RefreshIfNecessary;
+			if (showVScroll != PreviousShowVScroll)
+				RootBox?.Reconstruct();
+		}
+
 		public string CurrentTool
 		{
 			get { return m_currentTool; }
@@ -306,6 +321,12 @@ namespace SIL.FieldWorks.IText
 			{
 				if (RootObject != null && m_rootb != null && m_rootb.Selection.IsValid)
 					wsBefore = SelectionHelper.GetWsOfEntireSelection(m_rootb.Selection);
+			}
+
+			if (name == "ActiveClerkSelectedObject")
+			{
+				Layout += RefreshIfNecessary;
+				PreviousShowVScroll = ((SimpleRootSite)m_rootb?.Site)?.IsVScrollVisible ?? false;
 			}
 
 			base.OnPropertyChanged(name);
