@@ -11,5 +11,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		void InvalidEnvironment(IMoForm form, IPhEnvironment env, string reason, IMoMorphSynAnalysis msa);
 		void InvalidReduplicationForm(IMoForm form, string reason, IMoMorphSynAnalysis msa);
 		void InvalidRewriteRule(IPhRegularRule prule, string reason);
+		void InvalidOrderedStratum(string stratumName, string reason);
+		void InvalidOrderedRule(string ruleName, string reason);
 	}
 }

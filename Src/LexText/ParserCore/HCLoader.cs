@@ -60,6 +60,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly bool m_noDefaultCompounding;
 		private readonly bool m_notOnClitics;
 		private readonly bool m_acceptUnspecifiedGraphemes;
+		private readonly string[] m_orderedStrata;
+		private readonly string[] m_ruleOrder;
 
 		private SimpleContext m_any;
 		private CharacterDefinition m_null;
@@ -87,6 +89,22 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_noDefaultCompounding = hcElem != null && ((bool?)hcElem.Element("NoDefaultCompounding") ?? false);
 			m_notOnClitics = hcElem == null || ((bool?)hcElem.Element("NotOnClitics") ?? true);
 			m_acceptUnspecifiedGraphemes = hcElem != null && ((bool?)hcElem.Element("AcceptUnspecifiedGraphemes") ?? false);
+			m_orderedStrata = new string[0];
+			if (hcElem != null && hcElem.Element("OrderedStrata") != null)
+			{
+				m_orderedStrata = ((string)hcElem.Element("OrderedStrata")).Split(',')
+					.Select(sValue => sValue.Trim())
+					.Where(x => !string.IsNullOrWhiteSpace(x))
+					.ToArray();
+			}
+			m_ruleOrder = new string[0];
+			if (hcElem != null && hcElem.Element("RuleOrder") != null)
+			{
+				m_ruleOrder = ((string)hcElem.Element("RuleOrder")).Split(',')
+					.Select(sValue => sValue.Trim())
+					.Where(x => !string.IsNullOrWhiteSpace(x))
+					.ToArray();
+			}
 
 			m_naturalClasses = new Dictionary<IPhNaturalClass, NaturalClass>();
 			m_charDefs = new Dictionary<IPhTerminalUnit, CharacterDefinition>();
@@ -152,7 +170,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 
-			m_morphophonemic = new Stratum(m_table) { Name = "Morphophonemic", MorphologicalRuleOrder = MorphologicalRuleOrder.Unordered };
+			m_morphophonemic = new Stratum(m_table) { Name = "Morphology", MorphologicalRuleOrder = MorphologicalRuleOrder.Unordered };
 			m_language.Strata.Add(m_morphophonemic);
 
 			m_clitic = new Stratum(m_table) { Name = "Clitic", MorphologicalRuleOrder = MorphologicalRuleOrder.Unordered };
@@ -277,7 +295,58 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				LoadMorphemeCoOccurrenceRules(morphAdhocProhib);
 			}
+
+			// Sort strata rules if requested by the user.
+			foreach (string stratumName in m_orderedStrata)
+			{
+				bool found = false;
+				foreach (Stratum stratum in m_language.Strata)
+				{
+					if (stratum.Name == stratumName)
+					{
+						IList<IMorphologicalRule> originalOrder = stratum.MorphologicalRules.ToList();
+						stratum.MorphologicalRules.Sort(delegate(IMorphologicalRule rule1, IMorphologicalRule rule2)
+						{
+							int pos1 = m_ruleOrder.IndexOf(rule1.Name);
+							int pos2 = m_ruleOrder.IndexOf(rule2.Name);
+							if (pos1 == pos2)
+							{
+								pos1 = originalOrder.IndexOf(rule1);
+								pos2 = originalOrder.IndexOf(rule2);
+							}
+							return pos1.CompareTo(pos2);
+						});
+						stratum.MorphologicalRuleOrder = MorphologicalRuleOrder.Linear;
+						found = true;
+					}
+				}
+				if (!found)
+				{
+					m_logger.InvalidOrderedStratum(stratumName, "Error in OrderedStrata: There is no stratum named " + stratumName + ".");
+				}
+			}
+			// Check RuleOrder.
+			foreach (string ruleName in m_ruleOrder)
+			{
+				bool found = false;
+				foreach (Stratum stratum in m_language.Strata)
+				{
+					foreach (IMorphologicalRule rule in stratum.MorphologicalRules)
+					{
+						if (rule.Name == ruleName)
+						{
+							found = true;
+						}
+					}
+				}
+				if (!found)
+				{
+					m_logger.InvalidOrderedRule(ruleName, "Error in RuleOrder: There is no morphological rule named " + ruleName + ".");
+				}
+			}
 		}
+
+
 
 		private void LoadInflClassMprFeature(IMoInflClass inflClass, MprFeatureGroup inflClassesGroup)
 		{

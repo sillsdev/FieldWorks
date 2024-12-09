@@ -108,5 +108,15 @@ namespace GenerateHCConfig
 		{
 			Console.WriteLine("The rewrite rule \"{0}\" is invalid. Reason: {1}", rule.Name.BestAnalysisVernacularAlternative.Text, reason);
 		}
+
+		public void InvalidOrderedStratum(string stratumName, string reason)
+		{
+			Console.WriteLine(reason);
+		}
+
+		public void InvalidOrderedRule(string ruleName, string reason)
+		{
+			Console.WriteLine(reason);
+		}
 	}
 }

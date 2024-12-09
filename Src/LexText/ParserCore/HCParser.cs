@@ -653,6 +653,22 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_xmlWriter.WriteElementString("Reason", reason);
 				m_xmlWriter.WriteEndElement();
 			}
+
+			public void InvalidOrderedStratum(string stratumName, string reason)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "invalid-ordered-stratum");
+				m_xmlWriter.WriteElementString("Reason", reason);
+				m_xmlWriter.WriteEndElement();
+			}
+
+			public void InvalidOrderedRule(string ruleName, string reason)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "invalid-ordered-rule");
+				m_xmlWriter.WriteElementString("Reason", reason);
+				m_xmlWriter.WriteEndElement();
+			}
 		}
 	}
 }
