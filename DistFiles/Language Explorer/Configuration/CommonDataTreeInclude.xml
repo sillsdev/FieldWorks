@@ -38,7 +38,7 @@
 				  behavior="singlePropertySequenceValue" property="SelectedWritingSystemHvosForCurrentContextMenu" defaultPropertyValue=""/>
 			<item command="CmdDataTree-WritingSystemMenu-Configure"/>
 		</menu>
-		<menu id="mnuMove" label="Move">
+		<menu id="mnuMove" label="Move Field">
 			<item command="CmdDataTree-MoveFieldUp"/>
 			<item command="CmdDataTree-MoveFieldDown"/>
 		</menu>
