@@ -45,11 +45,6 @@ namespace SIL.FieldWorks.IText
 
 		public bool PreviousShowVScroll;
 
-		///// <summary>
-		///// This event gets fired when a refresh is needed to change the scrollbar visibility.
-		///// </summary>
-		//public event EventHandler OnTriggerRefreshForScrollBarVisibility;
-
 		private void RefreshIfNecessary(object sender, LayoutEventArgs e)
 		{
 			bool showVScroll = ((SimpleRootSite)m_rootb?.Site)?.IsVScrollVisible ?? false;
