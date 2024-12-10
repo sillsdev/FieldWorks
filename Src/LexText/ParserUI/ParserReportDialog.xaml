@@ -188,6 +188,7 @@
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Height="40">
 			<Button Content="{x:Static local:ParserUIStrings.ksSaveReport}"
                     ToolTip="{x:Static local:ParserUIStrings.ksSaveReportToolTip}"
+					IsEnabled="{Binding CanSaveReport}"
                     Click="SaveParserReport" Width="100" Margin="5"/>
 			<Label x:Name="commentLabel" Height="27"/>
 			<Label Content="{Binding DisplayComment, Mode=OneWay}" Height="27"/>
