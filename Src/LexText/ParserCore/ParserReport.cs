@@ -237,6 +237,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			diff.ProjectName = DiffNames(ProjectName, other.ProjectName);
 			diff.SourceText = DiffNames(SourceText, other.SourceText);
 			diff.MachineName = DiffNames(MachineName, other.MachineName);
+			diff.Comment = DiffNames(Comment, other.Comment);
 			diff.Timestamp = Timestamp;
 			diff.DiffTimestamp = other.Timestamp;
 			diff.NumWords = NumWords - other.NumWords;
