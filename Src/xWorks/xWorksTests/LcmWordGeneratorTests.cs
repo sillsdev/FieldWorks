@@ -816,5 +816,42 @@ namespace SIL.FieldWorks.XWorks
 			// Assert that the continuation paragraph uses the continuation style.
 			Assert.True(result.mainDocPart.RootElement.OuterXml.Contains(MainEntryParagraphDisplayName + WordStylesGenerator.EntryStyleContinue));
 		}
+
+		[Test]
+		public void GetFirstHeadwordStyle()
+		{
+			LcmWordGenerator.ClearStyleCollection();
+			DefaultSettings.StylesGenerator.AddGlobalStyles(null, new ReadOnlyPropertyTable(m_propertyTable));
+			var wsOpts = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en" });
+			var glossNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Gloss",
+				DictionaryNodeOptions = wsOpts,
+				Style = "Dictionary-Headword",
+				Label = WordStylesGenerator.HeadwordDisplayName
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Senses",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetSenseNodeOptions(),
+				Children = new List<ConfigurableDictionaryNode> { glossNode },
+				Style = DictionaryNormal
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				Style = MainEntryParagraphStyleName,
+				Label = MainEntryParagraphDisplayName
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var entry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
+
+			//SUT
+			string firstHeadwordStyle = LcmWordGenerator.GetFirstGuidewordStyle(result, DictionaryConfigurationModel.ConfigType.Root);
+
+			Assert.True(firstHeadwordStyle == "Headword[lang='en']");
+		}
 	}
 }

@@ -143,6 +143,7 @@
 	<PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+	<Reference Include="netstandard" />
 	<Reference Include="System">
 	  <Name>System</Name>
 	</Reference>
