@@ -140,6 +140,11 @@ namespace SIL.FieldWorks.XWorks
 					new Columns() { EqualWidth = true, ColumnCount = 2 },
 					new SectionType() { Val = SectionMarkValues.Continuous }
 					);
+				// Set the section to BiDi so the columns are displayed right to left.
+				if (IsBidi)
+				{
+					sectProps.Append(new BiDi());
+				}
 				fragment.DocBody.Append(sectProps);
 
 				if (progress != null)
@@ -329,6 +334,11 @@ namespace SIL.FieldWorks.XWorks
 							new Columns() { EqualWidth = true, ColumnCount = 2 },
 							new SectionType() { Val = SectionMarkValues.Continuous }
 						);
+						// Set the section to BiDi so the columns are displayed right to left.
+						if (IsBidi)
+						{
+							sectProps2.Append(new BiDi());
+						}
 						docFrag.DocBody.AppendChild(new WP.Paragraph(new WP.ParagraphProperties(sectProps2)));
 					}
 
@@ -349,6 +359,11 @@ namespace SIL.FieldWorks.XWorks
 						new Columns() { EqualWidth = true, ColumnCount = 1 },
 						new SectionType() { Val = SectionMarkValues.Continuous }
 					);
+					// Set the section to BiDi so the columns are displayed right to left.
+					if (IsBidi)
+					{
+						sectProps1.Append(new BiDi());
+					}
 					docFrag.DocBody.AppendChild(new WP.Paragraph(new WP.ParagraphProperties(sectProps1)));
 				}
 				return docFrag;
