@@ -252,11 +252,7 @@ namespace SIL.FieldWorks.XWorks
 				if (exportStyleInfo.HasLeadingIndent || hangingIndent < 0.0f)
 				{
 					var leadingIndent = CalculateMarginLeft(exportStyleInfo, hangingIndent);
-
-					if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
-						parProps.Append(new Indentation() { Right = leadingIndent.ToString() });
-					else
-						parProps.Append(new Indentation() { Left = leadingIndent.ToString() });
+					parProps.Append(new Indentation() { Left = leadingIndent.ToString() });
 				}
 
 				if (exportStyleInfo.HasLineSpacing)
@@ -309,11 +305,7 @@ namespace SIL.FieldWorks.XWorks
 
 				if (exportStyleInfo.HasTrailingIndent)
 				{
-					// Check bidirectional flag to determine correct orientation for indent
-					if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
-						parProps.Append(new Indentation() { Left = MilliPtToTwentiPt(exportStyleInfo.TrailingIndent).ToString() });
-					else
-						parProps.Append(new Indentation() { Right = MilliPtToTwentiPt(exportStyleInfo.TrailingIndent).ToString() });
+					parProps.Append(new Indentation() { Right = MilliPtToTwentiPt(exportStyleInfo.TrailingIndent).ToString() });
 				}
 
 				// If text direction is right to left, add BiDi property to the paragraph.
