@@ -3,11 +3,10 @@
     <RootNamespace>SIL.FieldWorks.Build.Tasks</RootNamespace>
     <Description>Additional msbuild tasks for FieldWorks</Description>
     <Product>FwBuildTasks</Product>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
     <OutputPath>../..</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="NUnit" Version="3.13.3" PrivateAssets="All" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
