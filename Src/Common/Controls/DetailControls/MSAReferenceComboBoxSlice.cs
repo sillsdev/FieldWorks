@@ -37,6 +37,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		//private bool m_processSelectionEvent = true;
 		private bool m_handlingMessage = false;
+		private bool m_forceRefresh = false;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -98,6 +99,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_MSAPopupTreeManager = new MSAPopupTreeManager(m_tree, m_cache, list,
 					m_tree.WritingSystemCode, true, m_mediator, m_propertyTable,
 					m_propertyTable.GetValue<Form>("window"));
+				m_MSAPopupTreeManager.BeforeChange += m_MSAPopupTreeManager_BeforeChange;
+				m_MSAPopupTreeManager.AfterChange += m_MSAPopupTreeManager_AfterChange;
 				m_MSAPopupTreeManager.AfterSelect += m_MSAPopupTreeManager_AfterSelect;
 				m_MSAPopupTreeManager.Sense = m_obj as ILexSense;
 				m_MSAPopupTreeManager.PersistenceProvider = m_persistProvider;
@@ -222,6 +225,33 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// What do we need to do here, if anything?
 		}
 
+		public void m_MSAPopupTreeManager_BeforeChange(object sender, TreeViewEventArgs e)
+		{
+			if (!ContainingDataTree.DoNotRefresh)
+			{
+				// Postpone refreshing the screen until m_MSAPopupTreeManager_AfterChange (LT-21980).
+				ContainingDataTree.DoNotRefresh = true;
+				m_forceRefresh = true;
+			}
+		}
+
+		public void m_MSAPopupTreeManager_AfterChange(object sender, TreeViewEventArgs e)
+		{
+			if (m_forceRefresh)
+			{
+				m_forceRefresh = false;
+				// We can't call RefreshDataTree directly,
+				// since that will cause Windows to crash accessing a disposed object.
+				// So, we queue it on the UI thread instead.
+				this.BeginInvoke(new Action(RefreshDataTree));
+			}
+		}
+
+		public void RefreshDataTree()
+		{
+			ContainingDataTree.DoNotRefresh = false;
+		}
+
 		private void m_MSAPopupTreeManager_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			// unless we get a mouse click or simulated mouse click (e.g. by ENTER or TAB),
@@ -286,7 +316,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// We still can't refresh the data at this point without causing a crash due to
 				// a pending Windows message.  See LT-9713 and LT-9714.
 				if (ContainingDataTree.DoNotRefresh != fOldDoNotRefresh)
+				{
 					Mediator.BroadcastMessage("DelayedRefreshList", fOldDoNotRefresh);
+				}
 			}
 		}
 
