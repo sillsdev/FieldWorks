@@ -71,6 +71,7 @@ namespace SIL.FieldWorks.XWorks
 							{ ContentGenerator = generator, StylesGenerator = generator};
 				settings.StylesGenerator.AddGlobalStyles(configuration, readOnlyPropertyTable);
 				string lastHeader = null;
+				bool firstHeader = true;
 				string firstGuidewordStyle = null;
 				var entryContents = new Tuple<ICmObject, IFragment>[entryCount];
 				var entryActions = new List<Action>();
@@ -112,7 +113,8 @@ namespace SIL.FieldWorks.XWorks
 					if (!entry.Item2.IsNullOrEmpty())
 					{
 						IFragment letterHeader = GenerateLetterHeaderIfNeeded(entry.Item1,
-							ref lastHeader, col, settings, readOnlyPropertyTable, propStyleSheet, clerk);
+							ref lastHeader, col, settings, readOnlyPropertyTable, propStyleSheet, firstHeader, clerk );
+						firstHeader = false;
 
 						// If needed, append letter header to the word doc
 						if (!letterHeader.IsNullOrEmpty())
@@ -138,6 +140,11 @@ namespace SIL.FieldWorks.XWorks
 					new Columns() { EqualWidth = true, ColumnCount = 2 },
 					new SectionType() { Val = SectionMarkValues.Continuous }
 					);
+				// Set the section to BiDi so the columns are displayed right to left.
+				if (IsBidi)
+				{
+					sectProps.Append(new BiDi());
+				}
 				fragment.DocBody.Append(sectProps);
 
 				if (progress != null)
@@ -234,13 +241,13 @@ namespace SIL.FieldWorks.XWorks
 
 		internal static IFragment GenerateLetterHeaderIfNeeded(ICmObject entry, ref string lastHeader, Collator headwordWsCollator,
 			ConfiguredLcmGenerator.GeneratorSettings settings, ReadOnlyPropertyTable propertyTable, LcmStyleSheet mediatorStyleSheet,
-			RecordClerk clerk = null)
+			bool firstHeader, RecordClerk clerk = null)
 		{
 			StringBuilder headerTextBuilder = ConfiguredLcmGenerator.GenerateLetterHeaderIfNeeded(entry, ref lastHeader,
 				headwordWsCollator, settings, clerk);
 
 			// Create LetterHeader doc fragment and link it with the letter heading style.
-			return DocFragment.GenerateLetterHeaderDocFragment(headerTextBuilder.ToString(), WordStylesGenerator.LetterHeadingDisplayName);
+			return DocFragment.GenerateLetterHeaderDocFragment(headerTextBuilder.ToString(), WordStylesGenerator.LetterHeadingDisplayName, firstHeader);
 		}
 
 		/*
@@ -308,22 +315,32 @@ namespace SIL.FieldWorks.XWorks
 			/// </summary>
 			/// <param name="str">Letter header string.</param>
 			/// <param name="styleDisplayName">Letter header style name to display in Word.</param>
-			internal static DocFragment GenerateLetterHeaderDocFragment(string str, string styleDisplayName)
+			/// <param name="firstHeader">True if this is the first header being written.</param>
+			internal static DocFragment GenerateLetterHeaderDocFragment(string str, string styleDisplayName, bool firstHeader)
 			{
 				var docFrag = new DocFragment();
 				// Only create paragraph, run, and text objects if string is nonempty
 				if (!string.IsNullOrEmpty(str))
 				{
-					// Everything other than the Letter Header should be 2 columns. Create a empty
-					// paragraph with two columns for the last paragraph in the section that uses 2
-					// columns. (The section is all the entries after the previous letter header.)
-					var sectProps2 = new SectionProperties(
-						new HeaderReference() { Id = WordStylesGenerator.PageHeaderIdEven, Type = HeaderFooterValues.Even },
-						new HeaderReference() { Id = WordStylesGenerator.PageHeaderIdOdd, Type = HeaderFooterValues.Default },
-						new Columns() { EqualWidth = true, ColumnCount = 2 },
-						new SectionType() { Val = SectionMarkValues.Continuous }
-					);
-					docFrag.DocBody.AppendChild(new WP.Paragraph(new WP.ParagraphProperties(sectProps2)));
+					// Don't add this paragraph before the first letter header. It results in an extra blank line.
+					if (!firstHeader)
+					{
+						// Everything other than the Letter Header should be 2 columns. Create a empty
+						// paragraph with two columns for the last paragraph in the section that uses 2
+						// columns. (The section is all the entries after the previous letter header.)
+						var sectProps2 = new SectionProperties(
+							new HeaderReference() { Id = WordStylesGenerator.PageHeaderIdEven, Type = HeaderFooterValues.Even },
+							new HeaderReference() { Id = WordStylesGenerator.PageHeaderIdOdd, Type = HeaderFooterValues.Default },
+							new Columns() { EqualWidth = true, ColumnCount = 2 },
+							new SectionType() { Val = SectionMarkValues.Continuous }
+						);
+						// Set the section to BiDi so the columns are displayed right to left.
+						if (IsBidi)
+						{
+							sectProps2.Append(new BiDi());
+						}
+						docFrag.DocBody.AppendChild(new WP.Paragraph(new WP.ParagraphProperties(sectProps2)));
+					}
 
 					// Create the letter header in a paragraph.
 					WP.ParagraphProperties paragraphProps = new WP.ParagraphProperties(new ParagraphStyleId() { Val = styleDisplayName });
@@ -342,6 +359,11 @@ namespace SIL.FieldWorks.XWorks
 						new Columns() { EqualWidth = true, ColumnCount = 1 },
 						new SectionType() { Val = SectionMarkValues.Continuous }
 					);
+					// Set the section to BiDi so the columns are displayed right to left.
+					if (IsBidi)
+					{
+						sectProps1.Append(new BiDi());
+					}
 					docFrag.DocBody.AppendChild(new WP.Paragraph(new WP.ParagraphProperties(sectProps1)));
 				}
 				return docFrag;

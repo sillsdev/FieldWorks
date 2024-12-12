@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			get
 			{
-				if (ParserReport.Filename == null)
+				if (ParserReport.Filename == null && !ParserReport.IsDiff)
 				{
 					return ParserUIStrings.ksUnsavedParserReport;
 				}
@@ -59,6 +59,9 @@ namespace SIL.FieldWorks.LexText.Controls
 				}
 			}
 		}
+
+		public bool CanSaveReport => !ParserReport.IsDiff;
+
 
 		public ParserReportViewModel()
 		{
