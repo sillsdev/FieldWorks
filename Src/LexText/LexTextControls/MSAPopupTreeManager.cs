@@ -44,6 +44,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#region Events
 
+		public event TreeViewEventHandler BeforeChange;
+		public event TreeViewEventHandler AfterChange;
+
 		#endregion Events
 
 		/// <summary>
@@ -419,11 +422,19 @@ namespace SIL.FieldWorks.LexText.Controls
 					m_sense.MorphoSyntaxAnalysisRA.Hvo, true, m_sEditGramFunc);
 				if (dlg.ShowDialog(ParentForm) == DialogResult.OK)
 				{
+					if (BeforeChange != null)
+					{
+						BeforeChange(this, null);
+					}
 					Cache.DomainDataByFlid.BeginUndoTask(String.Format(LexTextControls.ksUndoSetX, FieldName),
 						String.Format(LexTextControls.ksRedoSetX, FieldName));
 					m_sense.SandboxMSA = dlg.SandboxMSA;
 					Cache.DomainDataByFlid.EndUndoTask();
 					LoadPopupTree(m_sense.MorphoSyntaxAnalysisRA.Hvo);
+					if (AfterChange != null)
+					{
+						AfterChange(this, null);
+					}
 					return true;
 				}
 			}
