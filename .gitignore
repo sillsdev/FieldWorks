@@ -29,6 +29,7 @@ Bin/_setLatestBuildConfig.bat
 Bin/_setroot.bat
 Lib/debug/DebugProcs.lib
 Lib/debug/Generic.lib
+Lib/debug/System.ValueTuple.dll
 Lib/debug/unit++.*
 Lib/release/DebugProcs.lib
 Lib/release/Generic.lib
