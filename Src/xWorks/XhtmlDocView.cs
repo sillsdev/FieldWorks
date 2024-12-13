@@ -1342,7 +1342,8 @@ namespace SIL.FieldWorks.XWorks
 			else
 			{
 				// Don't load the configuration file twice.
-				if (configurationFile == m_loadedConfig)
+				var currentPublication = GetCurrentPublication();
+				if (configurationFile == m_loadedConfig && currentPublication == m_pubDecorator?.Publication?.ChooserNameTS?.Text)
 					return;
 				m_loadedConfig = configurationFile;
 				var xhtmlPath = SaveConfiguredXhtmlWithProgress(configurationFile, allOnOnePage);
