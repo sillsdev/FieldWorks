@@ -553,8 +553,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			//	return;
 			if (m_monitoredProps.Contains(Tuple.Create(hvo, tag)))
 			{
-				RefreshList(false);
-				OnFocusFirstPossibleSlice(null);
+				// If we call RefreshList now, it causes a crash in the invoker
+				// because some slice data structures that are being used by the invoker
+				// get disposed by RefreshList (LT-21980, LT-22011).  So we postpone calling
+				// RefreshList until the work is done.
+				this.BeginInvoke(new Action(PostponedRefreshList));
 			}
 			// Note, in LinguaLinks import we don't have an action handler when we hit this.
 			else if (m_cache.DomainDataByFlid.GetActionHandler() != null && m_cache.DomainDataByFlid.GetActionHandler().IsUndoOrRedoInProgress)
@@ -578,6 +581,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// some FieldSlices (e.g. combo slices)may want to Update their display
 				// if its field changes during an Undo/Redo (cf. LT-4861).
 				RefreshList(hvo, tag);
+			}
+		}
+
+		private void PostponedRefreshList()
+		{
+			if (!IsDisposed)
+			{
+				RefreshList(false);
+				OnFocusFirstPossibleSlice(null);
 			}
 		}
 
