@@ -728,6 +728,8 @@ namespace SIL.FieldWorks.IText
 
 			foreach (var wordItem in word.Items)
 			{
+				if (wordItem.Value == null)
+					continue;
 				ITsString wordForm = null;
 				switch (wordItem.type)
 				{
@@ -758,7 +760,8 @@ namespace SIL.FieldWorks.IText
 			}
 			else
 			{
-				Debug.Assert(analysis != null, "What else could this do?");
+				// There was an invalid analysis in the file. We can't do anything with it.
+				return null;
 			}
 
 			// Fill in morphemes, lex. entries, lex. gloss, and lex.gram.info
