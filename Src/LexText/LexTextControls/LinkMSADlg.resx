@@ -195,7 +195,7 @@
 	<value>102, 32</value>
   </data>
   <data name="m_panel1.Size" type="System.Drawing.Size, System.Drawing">
-	<value>208, 20</value>
+	<value>300, 20</value>
   </data>
   <data name="&gt;&gt;m_panel1.Name" xml:space="preserve">
 	<value>m_panel1</value>
