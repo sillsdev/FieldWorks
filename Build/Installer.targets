@@ -210,6 +210,7 @@
 			<L10nFiles Include="$(OutputDirForConfig)\ur\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\vi\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\zh-CN\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\zlm\**\*"/>
 			<!-- no need to install the following; most are installed by merge modules -->
 			<MergeModules Include="$(OutputDirForConfig)\asserts.log"/>
 			<MergeModules Include="$(OutputDirForConfig)\basicTest.xml"/>
