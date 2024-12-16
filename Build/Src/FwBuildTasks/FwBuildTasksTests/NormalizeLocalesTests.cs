@@ -1,4 +1,4 @@
-// Copyright (c) 2020 SIL International
+﻿// Copyright (c) 2020 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -58,6 +58,19 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 			// Verify that Chinese has the country code and that there is no regionless Chinese.
 			VerifyLocale("zh-CN", "zh");
+		}
+
+		[Test]
+		public void CopyMalay()
+		{
+			FileSystemSetup(new[] { "ms" });
+
+			VerifyLocale("ms", "zlm");
+
+			_task.Execute();
+
+			VerifyLocale("ms", "zzz");
+			VerifyLocale("zlm", "zzz");
 		}
 
 		private void FileSystemSetup(string[] locales)
