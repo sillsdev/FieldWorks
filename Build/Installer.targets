@@ -304,7 +304,8 @@
 		<PropertyGroup>
 			<!-- Substring keeps Chinese the same length as everyone else (and '-' is an illegal character in some places) -->
 			<!-- "The nail that sticks up gets hammered down" (Japanese proverb) -->
-			<SafeTargetLocale>$(TargetLocale.Substring(0,2))</SafeTargetLocale>
+			<SafeTargetLocale Condition="'$(TargetLocale)'=='zh-CN'">$(TargetLocale.Substring(0,2))</SafeTargetLocale>
+			<SafeTargetLocale Condition="'$(TargetLocale)'!='zh-CN'">$(TargetLocale)</SafeTargetLocale>
 			<!-- KeyPathFix changes KeyPath="yes" to KeyPath="no" so we can overwrite later versions of files, if necessary. -->
 			<!-- See https://github.com/sillsdev/genericinstaller's README for details. -->
 			<KeyPathFixArg Condition="'$(FixKeyPath)'=='true'">-t $(InstallerDir)/BaseInstallerBuild/KeyPathFix.xsl</KeyPathFixArg>
