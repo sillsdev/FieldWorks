@@ -567,6 +567,68 @@ namespace SIL.FieldWorks.XWorks
 			// The property after text 'AF4' was written.
 			Assert.True(outXml.Contains("AF4"));
 		}
+		[Test]
+		public void EmbeddedStylesHaveNoExtraSpace()
+		{
+			var translationNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Translation",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "en", "fr" }),
+				Between = "AREYOUCRAZY"
+			};
+			var translationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "TranslationsOC",
+				CSSClassNameOverride = "translationcontents",
+				Children = new List<ConfigurableDictionaryNode> { translationNode }
+			};
+			var exampleNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "Example",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetWsOptionsForLanguages(new[] { "fr" })
+			};
+			var examplesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ExamplesOS",
+				CSSClassNameOverride = "examplescontents",
+				Children = new List<ConfigurableDictionaryNode> { exampleNode, translationsNode },
+				Style = DictionaryNormal
+			};
+			var sensesNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "senses",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetSenseNodeOptions(),
+				Children = new List<ConfigurableDictionaryNode> { examplesNode },
+				Style = DictionaryNormal
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { sensesNode },
+				Style = DictionaryNormal
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+
+			const string example = "Jones and Schneider";
+			const string translation = "Overwritten with actual SUT data";
+			var testEntry = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			ConfiguredXHTMLGeneratorTests.AddExampleToSense(testEntry.SensesOS[0], example, Cache, wsFr, wsEn, translation);
+			var enTrans = MakeMuliStyleTss(new [] { "don't", "go", "between" });
+			var frTrans = MakeMuliStyleTss(new[] { "aller", "entre", "eux" });
+			testEntry.SensesOS[0].ExamplesOS[0].TranslationsOC.First().Translation.set_String(wsEn, enTrans);
+			testEntry.SensesOS[0].ExamplesOS[0].TranslationsOC.First().Translation.set_String(wsFr, frTrans);
+
+			//SUT
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
+			var outXml = result.mainDocPart.RootElement.OuterXml;
+			// Verify that AREYOUCRAZY appears only once in the output.
+			var betweenCount = Regex.Matches(outXml, "AREYOUCRAZY").Count;
+
+			Assert.That(betweenCount, Is.EqualTo(1)); // The between should not separate runs in a single translation
+		}
 
 		[Test]
 		public void ReferenceParagraphDisplayNames()
@@ -852,6 +914,19 @@ namespace SIL.FieldWorks.XWorks
 			string firstHeadwordStyle = LcmWordGenerator.GetFirstGuidewordStyle(result, DictionaryConfigurationModel.ConfigType.Root);
 
 			Assert.True(firstHeadwordStyle == "Headword[lang='en']");
+		}
+		private ITsString MakeMuliStyleTss(IEnumerable<string> content)
+		{
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var tsFact = TsStringUtils.TsStrFactory;
+			var builder = tsFact.GetIncBldr();
+			var lastStyle = "Dictionary-Gloss-Char";
+			foreach (var runContent in content)
+			{
+				builder.AppendTsString(TsStringUtils.MakeString(runContent, wsEn, lastStyle));
+				lastStyle = lastStyle.Equals("Dictionary-Gloss-Char") ? "Dictionary-Normal-Char" : "Dictionary-Gloss-Char";
+			}
+			return builder.GetString();
 		}
 	}
 }

@@ -2776,7 +2776,15 @@ namespace SIL.FieldWorks.XWorks
 								externalLink = props.GetStrPropValue((int)FwTextPropType.ktptObjData);
 							}
 							writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(fieldValue.get_WritingSystem(i));
-							GenerateRunWithPossibleLink(settings, writingSystem, writer, style, text, linkTarget, rightToLeft, config, first, externalLink);
+
+							// The purpose of the boolean argument "first" is to determine if between content should be generated.
+							// If first is false, the between content is generated; if first is true, between content is not generated.
+							// In the case of a multi-run string, between content should only be placed at the start of the string, not inside the string.
+							// When i > 0, we are dealing with a run in the middle of a multi-run string, so we pass value "true" for the argument "first" in order to suppress between content.
+							if (i > 0)
+								GenerateRunWithPossibleLink(settings, writingSystem, writer, style, text, linkTarget, rightToLeft, config, true, externalLink);
+							else
+								GenerateRunWithPossibleLink(settings, writingSystem, writer, style, text, linkTarget, rightToLeft, config, first, externalLink);
 						}
 
 						if (fieldValue.RunCount > 1)
