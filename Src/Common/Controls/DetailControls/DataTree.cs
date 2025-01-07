@@ -154,6 +154,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		bool m_fDoNotRefresh = false;
 		bool m_fPostponedClearAllSlices = false;
 		// Set during ConstructSlices, to suppress certain behaviors not safe at this point.
+		bool m_postponePropChanged = true;
 		internal bool ConstructingSlices { get; private set; }
 
 		public List<Slice> Slices { get; private set; }
@@ -527,6 +528,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		}
 
+		public virtual bool OnPostponePropChanged(object commandObject)
+		{
+			if ((bool)commandObject == true)
+				m_postponePropChanged = true;
+			else
+				m_postponePropChanged = false;
+			return true;
+		}
+
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			CheckDisposed();
@@ -557,7 +567,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// because some slice data structures that are being used by the invoker
 				// get disposed by RefreshList (LT-21980, LT-22011).  So we postpone calling
 				// RefreshList until the work is done.
-				this.BeginInvoke(new Action(PostponedRefreshList));
+				if (m_postponePropChanged)
+				{
+					this.BeginInvoke(new Action(RefreshListAndFocus));
+				} else
+				{
+					RefreshListAndFocus();
+				}
 			}
 			// Note, in LinguaLinks import we don't have an action handler when we hit this.
 			else if (m_cache.DomainDataByFlid.GetActionHandler() != null && m_cache.DomainDataByFlid.GetActionHandler().IsUndoOrRedoInProgress)
@@ -584,7 +600,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
-		private void PostponedRefreshList()
+		private void RefreshListAndFocus()
 		{
 			if (!IsDisposed)
 			{
