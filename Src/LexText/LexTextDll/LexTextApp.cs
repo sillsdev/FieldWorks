@@ -593,6 +593,20 @@ namespace SIL.FieldWorks.XWorks.LexText
 			return true;
 		}
 
+		public bool OnHelpPublishToWord(object sender)
+		{
+			CheckDisposed();
+
+			string path = String.Format(FwDirectoryFinder.CodeDirectory +
+				"{0}Helps{0}Language Explorer{0}Training{0}Publishing FLEx Dictionaries Using Microsoft Word.pdf",
+				Path.DirectorySeparatorChar);
+
+			OpenDocument(path, (e) => {
+				MessageBox.Show(null, String.Format(LexTextStrings.ksCannotLaunchX, path),
+					LexTextStrings.ksError);
+			});
+			return true;
+		}
 		public bool OnHelpNotesSendReceive(object sender)
 		{
 			CheckDisposed();
