@@ -297,6 +297,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			// Sort strata rules if requested by the user.
+			Stratum lastNewStratum = null;
 			foreach (string stratumName in m_orderedStrata)
 			{
 				bool found = false;
@@ -320,10 +321,56 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						found = true;
 					}
 				}
+				if (!found && m_cache.LangProject.MorphologicalDataOA.StrataOS.Count == 0)
+				{
+					if (stratumName == "Templates")
+					{
+						// Create a new stratum for templates before Clitics.
+						Stratum newStratum = new Stratum(m_table) { Name = stratumName, MorphologicalRuleOrder = MorphologicalRuleOrder.Linear };
+						newStratum.AffixTemplates.AddRange(m_morphophonemic.AffixTemplates);
+						m_morphophonemic.AffixTemplates.Clear();
+						int cliticIndex = m_language.Strata.IndexOf(m_clitic);
+						m_language.Strata.Insert(cliticIndex, newStratum);
+						found = true;
+					}
+					else
+					{
+						// See if stratumName is a rule.
+						foreach (Stratum stratum in m_language.Strata)
+						{
+							foreach (IMorphologicalRule rule in stratum.MorphologicalRules)
+							{
+								if (rule.Name == stratumName)
+								{
+									// Create a new stratum before Clitic.
+									Stratum newStratum = new Stratum(m_table) { Name = stratumName, MorphologicalRuleOrder = MorphologicalRuleOrder.Linear };
+									int cliticIndex = m_language.Strata.IndexOf(m_clitic);
+									m_language.Strata.Insert(cliticIndex, newStratum);
+									stratum.MorphologicalRules.Remove(rule);
+									newStratum.MorphologicalRules.Add(rule);
+									lastNewStratum = newStratum;
+									found = true;
+									break;
+								}
+							}
+							if (found)
+							{
+								break;
+							}
+						}
+					}
+				}
 				if (!found)
 				{
 					m_logger.InvalidOrderedStratum(stratumName, "Error in OrderedStrata: There is no stratum named " + stratumName + ".");
 				}
+			}
+			if (lastNewStratum != null)
+			{
+				// Move phonological rules from Morphology to lastNewStratum.
+				lastNewStratum.PhonologicalRules.AddRange(m_morphophonemic.PhonologicalRules);
+				m_morphophonemic.PhonologicalRules.Clear();
+
 			}
 			// Check RuleOrder.
 			foreach (string ruleName in m_ruleOrder)
