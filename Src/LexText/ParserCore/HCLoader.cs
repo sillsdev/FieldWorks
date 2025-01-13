@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -60,6 +61,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly bool m_noDefaultCompounding;
 		private readonly bool m_notOnClitics;
 		private readonly bool m_acceptUnspecifiedGraphemes;
+		private readonly IList<IList<string>> m_strata;
 		private readonly string[] m_orderedStrata;
 		private readonly string[] m_ruleOrder;
 
@@ -90,8 +92,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_notOnClitics = hcElem == null || ((bool?)hcElem.Element("NotOnClitics") ?? true);
 			m_acceptUnspecifiedGraphemes = hcElem != null && ((bool?)hcElem.Element("AcceptUnspecifiedGraphemes") ?? false);
 			m_orderedStrata = new string[0];
+			m_strata = new List<IList<string>>();
 			if (hcElem != null && hcElem.Element("OrderedStrata") != null)
 			{
+				m_strata = ParseStrataString((string)hcElem.Element("OrderedStrata"));
 				m_orderedStrata = ((string)hcElem.Element("OrderedStrata")).Split(',')
 					.Select(sValue => sValue.Trim())
 					.Where(x => !string.IsNullOrWhiteSpace(x))
@@ -108,6 +112,39 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			m_naturalClasses = new Dictionary<IPhNaturalClass, NaturalClass>();
 			m_charDefs = new Dictionary<IPhTerminalUnit, CharacterDefinition>();
+		}
+
+		private IList<IList<string>> ParseStrataString(string strataString)
+		{
+			// Tokenize strataString based on commas and parentheses.
+			string[] tokens = Regex.Split(strataString, @"([(,)])")
+									.Select(sValue => sValue.Trim())
+									.Where(s => !string.IsNullOrWhiteSpace(s))
+									.ToArray();
+			// Group rules into strata based on parentheses.
+			IList<IList<string>> strata = new List<IList<string>>();
+			bool parentheses = false;
+			foreach (string token in tokens)
+			{
+				if (token == "(")
+				{
+					parentheses = true;
+					strata.Add(new List<string>());
+				}
+				else if (token == ")")
+				{
+					parentheses = false;
+				}
+				else if (token != ",")
+				{
+					if (!parentheses)
+					{
+						strata.Add(new List<string>());
+					}
+					strata.Last().Add(token);
+				}
+			}
+			return strata;
 		}
 
 		private void LoadLanguage()
@@ -173,7 +210,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_morphophonemic = new Stratum(m_table) { Name = "Morphology", MorphologicalRuleOrder = MorphologicalRuleOrder.Unordered };
 			m_language.Strata.Add(m_morphophonemic);
 
-			m_clitic = new Stratum(m_table) { Name = "Clitic", MorphologicalRuleOrder = MorphologicalRuleOrder.Unordered };
+			m_clitic = new Stratum(m_table) { Name = "Clitics", MorphologicalRuleOrder = MorphologicalRuleOrder.Unordered };
 			m_language.Strata.Add(m_clitic);
 
 			m_language.Strata.Add(new Stratum(m_table) { Name = "Surface" });
@@ -296,6 +333,162 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				LoadMorphemeCoOccurrenceRules(morphAdhocProhib);
 			}
 
+			if (m_strata.Count > 0)
+			{
+				CreateStrata();
+			}
+		}
+
+		private void CreateStrata()
+		{
+			// Replace the default strata of m_morphophonemics and m_clitic with the user-defined strata.
+			// The phonological rules are stored in m_morphophonemics unless NotOnClitics is false.
+			Stratum cliticsStratum = null;
+			Stratum compoundRulesStratum = null;
+			Stratum morphologyStratum = null;
+			Stratum phonologyStratum = null;
+			Stratum templateStratum = null;
+			foreach (IList<string> stratumRules in m_strata)
+			{
+				if (stratumRules.Count == 0)
+				{
+					continue;
+				}
+				Stratum stratum = new Stratum(m_table) { Name = stratumRules[0], MorphologicalRuleOrder = MorphologicalRuleOrder.Unordered };
+				// m_clitic should always be last.
+				int cliticIndex = m_language.Strata.IndexOf(m_clitic);
+				m_language.Strata.Insert(cliticIndex, stratum);
+				foreach (string rule in stratumRules)
+				{
+					// Save these classes for later.
+					if (rule == "Clitics")
+					{
+						cliticsStratum = stratum;
+					}
+					else if (rule == "CompoundRules")
+					{
+						compoundRulesStratum = stratum;
+					}
+					else if (rule == "Morphology")
+					{
+						morphologyStratum = stratum;
+					}
+					else if (rule == "Phonology")
+					{
+						phonologyStratum = stratum;
+					}
+					else if (rule == "Templates")
+					{
+						templateStratum = stratum;
+					}
+					else
+					{
+						// Move the given rule to stratum.
+						MoveRule(rule, m_morphophonemic, stratum);
+						MoveRule(rule, m_clitic, stratum);
+					}
+				}
+			}
+
+			// Process phonology before cliticsStratum and morphologyStratum.
+			if (phonologyStratum != null)
+			{
+				// Move remaining phonological rules to phonologyStratum.
+				phonologyStratum.PhonologicalRules.AddRange(m_morphophonemic.PhonologicalRules);
+				phonologyStratum.PhonologicalRules.AddRange(m_clitic.PhonologicalRules);
+				m_morphophonemic.PhonologicalRules.Clear();
+				m_clitic.PhonologicalRules.Clear();
+			}
+			else
+			{
+				// Move remaining phonological rules just before clitic stratum.
+				int cliticIndex = m_language.Strata.IndexOf(m_clitic);
+				if (cliticIndex > 1)
+				{
+					m_language.Strata[cliticIndex - 1].PhonologicalRules.AddRange(m_morphophonemic.PhonologicalRules);
+					m_morphophonemic.PhonologicalRules.Clear();
+				}
+			}
+			if (compoundRulesStratum != null)
+			{
+				// Move remaining compound rules to compoundRulesStratum.
+				foreach (IMorphologicalRule rule in m_morphophonemic.MorphologicalRules.ToList())
+				{
+					if (rule is CompoundingRule)
+					{
+						compoundRulesStratum.MorphologicalRules.Add(rule);
+						m_morphophonemic.MorphologicalRules.Remove(rule);
+					}
+				}
+			}
+			if (templateStratum != null)
+			{
+				// Move remaining templates to templateStratum.
+				templateStratum.AffixTemplates.AddRange(m_morphophonemic.AffixTemplates);
+				m_morphophonemic.AffixTemplates.Clear();
+			}
+			if (cliticsStratum != null)
+			{
+				// Replace m_clitic with cliticsStratum.
+				MoveRules(m_clitic, cliticsStratum);
+			}
+			// Process morphology last.
+			if (morphologyStratum != null)
+			{
+				MoveRules(m_morphophonemic, morphologyStratum);
+			}
+
+			// Remove empty strata.
+			foreach (Stratum stratum in m_language.Strata.ToList())
+			{
+				if (stratum.AffixTemplates.Count == 0 &&
+					stratum.MorphologicalRules.Count == 0 &&
+					stratum.PhonologicalRules.Count == 0)
+				{
+					m_language.Strata.Remove(stratum);
+				}
+			}
+		}
+
+		void MoveRules(Stratum source, Stratum target)
+		{
+			target.MorphologicalRules.AddRange(source.MorphologicalRules);
+			target.MorphologicalRules.AddRange(source.MorphologicalRules);
+			target.PhonologicalRules.AddRange(source.PhonologicalRules);
+			m_language.Strata.Remove(source);
+		}
+
+		void MoveRule(string ruleName, Stratum source, Stratum target)
+		{
+			// Move all rules named ruleName from source to target.
+			foreach (IMorphologicalRule rule in source.MorphologicalRules.ToList())
+			{
+				if (rule.Name == ruleName)
+				{
+					target.MorphologicalRules.Add(rule);
+					source.MorphologicalRules.Remove(rule);
+				}
+			}
+			foreach (IPhonologicalRule rule in source.PhonologicalRules.ToList())
+			{
+				if (rule.Name == ruleName)
+				{
+					target.PhonologicalRules.Add(rule);
+					source.PhonologicalRules.Remove(rule);
+				}
+			}
+			foreach (AffixTemplate rule in source.AffixTemplates.ToList())
+			{
+				if (rule.Name == ruleName)
+				{
+					target.AffixTemplates.Add(rule);
+					source.AffixTemplates.Remove(rule);
+				}
+			}
+		}
+
+		private void OrderStrata()
+		{
 			// Sort strata rules if requested by the user.
 			Stratum lastNewStratum = null;
 			foreach (string stratumName in m_orderedStrata)
