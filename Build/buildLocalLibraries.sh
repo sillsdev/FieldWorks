@@ -5,6 +5,9 @@
 libpalaso_dir=""
 liblcm_dir=""
 chorus_dir=""
+libpalaso_net_ver="net462"
+liblcm_net_ver="net461"
+chorus_net_ver="net462"
 mkall_targets_file="mkall.targets"
 packages_dir="../packages"
 
@@ -43,7 +46,7 @@ function delete_and_pack_liblcm {
 			(cd "$liblcm_dir/artifacts" && rm *nupkg)
 
 			echo "Running 'dotnet pack' in the liblcm directory: $liblcm_dir"
-			pack_output=$(cd "$liblcm_dir" && dotnet pack -c Debug -p:TargetFrameworks=net461)
+			pack_output=$(cd "$liblcm_dir" && dotnet pack -c Debug -p:TargetFrameworks=$liblcm_net_ver)
 
 			# Extract version number using regex
 			if [[ $pack_output =~ $version_regex ]]; then
@@ -53,7 +56,7 @@ function delete_and_pack_liblcm {
 				echo "Error: Unable to extract version number from dotnet pack output. (Maybe build failure or nothing needed building?)"
 				exit 1
 			fi
-			copy_pdb_files "$liblcm_dir/artifacts/Debug/net461"
+			copy_pdb_files "$liblcm_dir/artifacts/Debug/$liblcm_net_ver"
 		fi
 
 		# Update LcmNugetVersion in mkall.targets
@@ -74,20 +77,21 @@ function delete_and_pack_chorus {
 			echo "Error: The specified packages directory does not exist: $packages_dir"
 			exit 1
 		fi
-
+		prefixes=("SIL.Chorus.App" "SIL.Chorus.LibChorus")
 		if [ "$use_manual_version" == true ]; then
 			version_number="$manual_version"
 		else
-			prefix="SIL.Chorus"
 			echo "Deleting files starting with specified prefix in $packages_dir"
 
-			find "$packages_dir" -name "${prefix}*" -exec rm -f -r {} \;
+			for prefix in "${prefixes[@]}"; do
+				find "$packages_dir" -name "${prefix}*" -exec rm -f -r {} \;
+			done
 
 			echo "Removing chorus output packages so that dotnet pack will run and output the version"
 			(cd "$chorus_dir/output" && rm *nupkg)
 
 			echo "Running 'dotnet pack' in the chorus directory: $chorus_dir"
-			pack_output=$(cd "$chorus_dir" && dotnet pack -c Debug -p:TargetFrameworks=net461)
+			pack_output=$(cd "$chorus_dir" && dotnet pack -c Debug -p:TargetFrameworks=$chorus_net_ver)
 
 			# Extract version number using regex
 			if [[ $pack_output =~ $version_regex ]]; then
@@ -97,13 +101,15 @@ function delete_and_pack_chorus {
 				echo "Error: Unable to extract version number from dotnet pack output."
 				exit 1
 			fi
-			copy_pdb_files "$chorus_dir/Output/Debug/net461"
+			copy_pdb_files "$chorus_dir/Output/Debug/$chorus_net_ver"
 		fi
 
 		# Update ChorusNugetVersion in mkall.targets
 		update_mkall_targets "ChorusNugetVersion" "$version_number"
 		# Update packages.config with extracted version
-		update_packages_config "SIL.Chorus" "$version_number"
+		for prefix in "${prefixes[@]}"; do
+			update_packages_config "$prefix" "$version_number"
+		done
 	fi
 }
 
@@ -130,7 +136,7 @@ function delete_and_pack_libpalaso {
 			(cd "$libpalaso_dir/output" && rm *nupkg)
 
 			echo "Running 'dotnet pack' in the libpalaso directory: $libpalaso_dir"
-			pack_output=$(cd "$libpalaso_dir" && dotnet pack -c Debug -p:TargetFrameworks=net461)
+			pack_output=$(cd "$libpalaso_dir" && dotnet pack -c Debug -p:TargetFrameworks=$libpalaso_net_ver)
 
 			# Extract version number using regex
 			if [[ $pack_output =~ $version_regex ]]; then
@@ -140,7 +146,7 @@ function delete_and_pack_libpalaso {
 				echo "Error: Unable to extract version number from dotnet pack output."
 				exit 1
 			fi
-			copy_pdb_files "$libpalaso_dir/output/Debug/net461"
+			copy_pdb_files "$libpalaso_dir/output/Debug/$libpalaso_net_ver"
 		fi
 
 		# Update PalasoNugetVersion in mkall.targets
