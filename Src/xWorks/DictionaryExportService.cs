@@ -191,7 +191,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
 				if (disposing && m_currentClerk != null && !m_currentClerk.IsDisposed)
-					m_currentClerk.ActivateUI(true, false);
+					m_currentClerk.ActivateUI(true);
 			}
 
 			~ClerkActivator()
