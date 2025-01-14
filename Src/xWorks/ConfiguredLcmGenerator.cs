@@ -429,7 +429,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// REVIEW: We have overloaded terms here, this is a C# class not a css class, consider a different name
 				var customFieldOwnerClassName = GetClassNameForCustomFieldParent(config, settings.Cache);
-				if (!GetPropValueForCustomField(field, config, cache, customFieldOwnerClassName, config.FieldDescription, ref propertyValue))
+				if (!GetPropValueForCustomField(field, config, cache, publicationDecorator, customFieldOwnerClassName, config.FieldDescription, ref propertyValue))
 					return settings.ContentGenerator.CreateFragment();
 			}
 			else
@@ -455,6 +455,13 @@ namespace SIL.FieldWorks.XWorks
 					return settings.ContentGenerator.CreateFragment();
 				}
 				propertyValue = GetValueFromMember(property, field);
+				// This code demonstrates using the cache metadata,
+				// an alternative form of reflection to get values that respect the decorator
+				// We may be able to replace the GetValueFromMember above with this code, but the ownerClassName may take
+				// some work to determine
+				object backdoorProp = null;
+				var success = GetPropValueForCustomField(field, config, cache, publicationDecorator, "LexEntry",
+					property.Name, ref backdoorProp);
 				GetSortedReferencePropertyValue(config, ref propertyValue, field);
 			}
 			// If the property value is null there is nothing to generate
@@ -467,7 +474,7 @@ namespace SIL.FieldWorks.XWorks
 				if (config.IsCustomField)
 				{
 					// Get the custom field value (in SubField) using the property which came from the field object
-					if (!GetPropValueForCustomField(propertyValue, config, cache, ((ICmObject)propertyValue).ClassName,
+					if (!GetPropValueForCustomField(propertyValue, config, cache, publicationDecorator, ((ICmObject)propertyValue).ClassName,
 						config.SubField, ref propertyValue))
 					{
 						return settings.ContentGenerator.CreateFragment();
@@ -572,7 +579,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns>true if the custom field was valid and false otherwise</returns>
 		/// <remarks>propertyValue can be null if the custom field is valid but no value is stored for the owning object</remarks>
 		private static bool GetPropValueForCustomField(object fieldOwner, ConfigurableDictionaryNode config,
-			LcmCache cache, string customFieldOwnerClassName, string customFieldName, ref object propertyValue)
+			LcmCache cache, ISilDataAccess decorator, string customFieldOwnerClassName, string customFieldName, ref object propertyValue)
 		{
 			int customFieldFlid = GetCustomFieldFlid(config, cache, customFieldOwnerClassName, customFieldName);
 			if (customFieldFlid != 0)
@@ -618,20 +625,20 @@ namespace SIL.FieldWorks.XWorks
 					case (int)CellarPropertyType.OwningAtomic:
 						{
 							// This method returns the hvo of the object pointed to
-							propertyValue = cache.MainCacheAccessor.get_ObjectProp(specificObject.Hvo, customFieldFlid);
+							propertyValue = decorator.get_ObjectProp(specificObject.Hvo, customFieldFlid);
 							// if the hvo is invalid set propertyValue to null otherwise get the object
 							propertyValue = (int)propertyValue > 0 ? cache.LangProject.Services.GetObject((int)propertyValue) : null;
 							break;
 						}
 					case (int)CellarPropertyType.GenDate:
 						{
-							propertyValue = new GenDate(cache.MainCacheAccessor.get_IntProp(specificObject.Hvo, customFieldFlid));
+							propertyValue = new GenDate(decorator.get_IntProp(specificObject.Hvo, customFieldFlid));
 							break;
 						}
 
 					case (int)CellarPropertyType.Time:
 						{
-							propertyValue = SilTime.ConvertFromSilTime(cache.MainCacheAccessor.get_TimeProp(specificObject.Hvo, customFieldFlid));
+							propertyValue = SilTime.ConvertFromSilTime(decorator.get_TimeProp(specificObject.Hvo, customFieldFlid));
 							break;
 						}
 					case (int)CellarPropertyType.MultiUnicode:
@@ -642,12 +649,12 @@ namespace SIL.FieldWorks.XWorks
 						}
 					case (int)CellarPropertyType.String:
 						{
-							propertyValue = cache.MainCacheAccessor.get_StringProp(specificObject.Hvo, customFieldFlid);
+							propertyValue = decorator.get_StringProp(specificObject.Hvo, customFieldFlid);
 							break;
 						}
 					case (int)CellarPropertyType.Integer:
 						{
-							propertyValue = cache.MainCacheAccessor.get_IntProp(specificObject.Hvo, customFieldFlid);
+							propertyValue = decorator.get_IntProp(specificObject.Hvo, customFieldFlid);
 							break;
 						}
 				}
