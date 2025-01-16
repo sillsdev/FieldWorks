@@ -135,6 +135,12 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				CheckDisposed();
 
+				if (m_bar.InvokeRequired)
+				{
+					m_bar.Invoke((Action<string>)(s => this.TextForReal = s), value);
+					return;
+				}
+
 				m_text = value;
 				// But we still need to set the Text property to get autosizing to work.
 				this.Text = m_text;
