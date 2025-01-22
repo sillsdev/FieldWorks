@@ -383,9 +383,9 @@ namespace SIL.FieldWorks.Common.Controls
 						}
 					}
 					AddWritingSystemsToCombo(cache, items,
-						cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems);
+						cache.ServiceLocator.WritingSystems.VernacularWritingSystems);
 					AddWritingSystemsToCombo(cache, items,
-						cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems);
+						cache.ServiceLocator.WritingSystems.AnalysisWritingSystems);
 					break;
 				case WsComboContent.kwccAnalAndVern:
 					if (!skipDefaults)
@@ -403,9 +403,9 @@ namespace SIL.FieldWorks.Common.Controls
 						}
 					}
 					AddWritingSystemsToCombo(cache, items,
-						cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems);
+						cache.ServiceLocator.WritingSystems.AnalysisWritingSystems);
 					AddWritingSystemsToCombo(cache, items,
-						cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems);
+						cache.ServiceLocator.WritingSystems.VernacularWritingSystems);
 					break;
 				case WsComboContent.kwccBestAnalOrVern:
 					if (!skipDefaults)
@@ -424,9 +424,9 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 
 					AddWritingSystemsToCombo(cache, items,
-						cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems);
+						cache.ServiceLocator.WritingSystems.AnalysisWritingSystems);
 					AddWritingSystemsToCombo(cache, items,
-						cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems);
+						cache.ServiceLocator.WritingSystems.VernacularWritingSystems);
 					break;
 				case WsComboContent.kwccBestAnalysis:
 					if (!skipDefaults)
@@ -440,7 +440,7 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 
 					AddWritingSystemsToCombo(cache, items,
-						cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems);
+						cache.ServiceLocator.WritingSystems.AnalysisWritingSystems);
 					break;
 				case WsComboContent.kwccBestVernacular:
 					if (!skipDefaults)
@@ -453,7 +453,7 @@ namespace SIL.FieldWorks.Common.Controls
 						}
 					}
 					AddWritingSystemsToCombo(cache, items,
-						cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems);
+						cache.ServiceLocator.WritingSystems.VernacularWritingSystems);
 					break;
 				case WsComboContent.kwccBestVernOrAnal:
 					if (!skipDefaults)
@@ -472,9 +472,9 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 
 					AddWritingSystemsToCombo(cache, items,
-						cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems);
+						cache.ServiceLocator.WritingSystems.VernacularWritingSystems);
 					AddWritingSystemsToCombo(cache, items,
-						cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems);
+						cache.ServiceLocator.WritingSystems.AnalysisWritingSystems);
 					break;
 				case WsComboContent.kwccAnalysis:
 					if (!skipDefaults)
@@ -488,12 +488,12 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 
 					AddWritingSystemsToCombo(cache, items,
-						cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems);
+						cache.ServiceLocator.WritingSystems.AnalysisWritingSystems);
 					break;
 				case WsComboContent.kwccVernacularInParagraph:
 					items.Add(new WsComboItem(sVernacularInPara, "vern in para"));
 					AddWritingSystemsToCombo(cache, items,
-						cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems);
+						cache.ServiceLocator.WritingSystems.VernacularWritingSystems);
 					break;
 				case WsComboContent.kwccVernacular:
 					if (!skipDefaults)
@@ -507,7 +507,7 @@ namespace SIL.FieldWorks.Common.Controls
 					}
 
 					AddWritingSystemsToCombo(cache, items,
-						cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems);
+						cache.ServiceLocator.WritingSystems.VernacularWritingSystems);
 					break;
 				case WsComboContent.kwccPronunciation:
 					if (!skipDefaults)
