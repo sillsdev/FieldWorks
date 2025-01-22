@@ -158,7 +158,9 @@
 			<parameters file="Lexicography Introduction/Introduction to Lexicography.htm"/>
 		</command>
 		<command id="CmdHelpNotesSFMDatabaseImport" label="Technical Notes on _SFM Database Import..." message="HelpNotesSFMDatabaseImport"/>
-		<command id="CmdHelpPublishToWord" label="Publishing FLEx Dictionaries to Word..." message="HelpPublishToWord"/>
+		<command id="CmdHelpPublishToWord" label="Publishing FLEx Dictionaries to Word..." message="HelpTrainingFile">
+          <parameters file="Publishing FLEx Dictionaries Using Microsoft Word.pdf"/>
+        </command>
 		<command id="CmdHelpNotesSendReceive" label="Technical Notes on FieldWorks Send-_Receive..." message="HelpNotesSendReceive"/>
 		<command id="CmdHelpNotesLinguaLinksDatabaseImport" label="Technical Notes on Lin_guaLinks Import..." message="HelpNotesLinguaLinksDatabaseImport"/>
 		<!-- Help/Resources/Technical Notes on LinguaLinks Import... -->
