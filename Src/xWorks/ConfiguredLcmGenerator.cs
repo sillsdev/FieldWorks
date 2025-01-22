@@ -454,14 +454,13 @@ namespace SIL.FieldWorks.XWorks
 #endif
 					return settings.ContentGenerator.CreateFragment();
 				}
-				propertyValue = GetValueFromMember(property, field);
+				// propertyValue = GetValueFromMember(property, field);
 				// This code demonstrates using the cache metadata,
 				// an alternative form of reflection to get values that respect the decorator
 				// We may be able to replace the GetValueFromMember above with this code, but the ownerClassName may take
 				// some work to determine
-				object backdoorProp = null;
-				var success = GetPropValueForCustomField(field, config, cache, publicationDecorator, "LexEntry",
-					property.Name, ref backdoorProp);
+				var success = GetPropValueForCustomField(field, config, cache, publicationDecorator,
+					((ICmObject)field).ClassName, property.Name, ref propertyValue);
 				GetSortedReferencePropertyValue(config, ref propertyValue, field);
 			}
 			// If the property value is null there is nothing to generate
@@ -581,6 +580,8 @@ namespace SIL.FieldWorks.XWorks
 		private static bool GetPropValueForCustomField(object fieldOwner, ConfigurableDictionaryNode config,
 			LcmCache cache, ISilDataAccess decorator, string customFieldOwnerClassName, string customFieldName, ref object propertyValue)
 		{
+			if (decorator == null)
+				decorator = cache.DomainDataByFlid;
 			int customFieldFlid = GetCustomFieldFlid(config, cache, customFieldOwnerClassName, customFieldName);
 			if (customFieldFlid != 0)
 			{
@@ -644,7 +645,7 @@ namespace SIL.FieldWorks.XWorks
 					case (int)CellarPropertyType.MultiUnicode:
 					case (int)CellarPropertyType.MultiString:
 						{
-							propertyValue = cache.MainCacheAccessor.get_MultiStringProp(specificObject.Hvo, customFieldFlid);
+							propertyValue = decorator.get_MultiStringProp(specificObject.Hvo, customFieldFlid);
 							break;
 						}
 					case (int)CellarPropertyType.String:
