@@ -4063,7 +4063,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					setUsed.Add(les.Hvo);
 			}
 			// If we're keeping only the imported data, delete any unused example.
-			if (m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
+			if (m_msImport == MergeStyle.MsKeepOnlyNew)
 			{
 				foreach (int hvo in ls.ExamplesOS.ToHvoArray())
 				{
