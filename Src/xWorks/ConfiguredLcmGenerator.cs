@@ -456,8 +456,6 @@ namespace SIL.FieldWorks.XWorks
 				}
 				// This code demonstrates using the cache metadata,
 				// an alternative form of reflection to get values that respect the decorator
-				// We may be able to replace the GetValueFromMember above with this code, but the ownerClassName may take
-				// some work to determine
 				var success = GetPropValueForCustomField(field, config, cache, publicationDecorator,
 					((ICmObject)field).ClassName, property.Name, ref propertyValue);
 				GetSortedReferencePropertyValue(config, ref propertyValue, field);
@@ -1220,24 +1218,6 @@ namespace SIL.FieldWorks.XWorks
 				case MemberTypes.Method:
 				{
 					return ((MethodInfo)property).ReturnType;
-				}
-				default:
-					return null;
-			}
-		}
-
-		private static object GetValueFromMember(MemberInfo property, object instance)
-		{
-			switch (property.MemberType)
-			{
-				case MemberTypes.Property:
-				{
-					return ((PropertyInfo)property).GetValue(instance, new object[] {});
-				}
-				case MemberTypes.Method:
-				{
-					// Execute the presumed extension method (passing the instance as the 'this' parameter)
-					return ((MethodInfo)property).Invoke(instance, new object[] {instance});
 				}
 				default:
 					return null;
