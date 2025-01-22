@@ -27,7 +27,7 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <SccAuxPath>
     </SccAuxPath>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -152,6 +152,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\DesktopAnalytics.dll</HintPath>
     </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.20.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
     <Reference Include="DotNetZip">
       <HintPath>..\..\packages\DotNetZip.1.13.7\lib\net40\DotNetZip.dll</HintPath>
     </Reference>
@@ -164,15 +168,22 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.Windows.Forms.Archiving, Version=15.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\Debug\SIL.Windows.Forms.Archiving.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="System.Web" />
     <Reference Include="TagLibSharp, Version=2.2.0.0, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\TagLibSharp.dll</HintPath>
     </Reference>
+    <Reference Include="netstandard" />
     <Reference Include="ViewsInterfaces, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -280,6 +291,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\UIAdapterInterfaces.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
     <Reference Include="xCore, Version=6.1.1.30414, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Output\Debug\xCore.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -424,6 +436,7 @@
     <Compile Include="GlobalSettingServices.cs" />
     <Compile Include="ILcmContentGenerator.cs" />
     <Compile Include="LcmJsonGenerator.cs" />
+    <Compile Include="LcmWordGenerator.cs" />
     <Compile Include="LcmXhtmlGenerator.cs" />
     <Compile Include="ReversalIndexServices.cs" />
     <Compile Include="SilErrorReportingAdapter.cs" />
@@ -509,6 +522,15 @@
     <Compile Include="NotebookExportDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="StringFragment.cs" />
+    <Compile Include="WebonaryLogViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WebonaryLogViewer.Designer.cs">
+      <DependentUpon>WebonaryLogViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WebonaryUploadLog.cs" />
+    <Compile Include="WordStyleCollection.cs" />
     <Compile Include="TreeBarHandlerUtils.cs" />
     <Compile Include="UploadToWebonaryController.cs" />
     <Compile Include="UploadToWebonaryDlg.cs">
@@ -551,6 +573,7 @@
     <Compile Include="WebonaryClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="WordStylesGenerator.cs" />
     <Compile Include="WordsUsedOnlyElsewhereFilter.cs" />
     <Compile Include="XhtmlDocView.cs">
       <SubType>UserControl</SubType>
@@ -686,6 +709,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\App.ico" />
+    <EmbeddedResource Include="WebonaryLogViewer.resx">
+      <DependentUpon>WebonaryLogViewer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="XmlDiagnosticsDlg.resx">
       <DependentUpon>XmlDiagnosticsDlg.cs</DependentUpon>
     </EmbeddedResource>

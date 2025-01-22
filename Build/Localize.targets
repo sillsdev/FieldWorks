@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
 
+	<UsingTask TaskName="CopyLocale" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="GoldEticToXliff" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="ListsToXliff" AssemblyFile="FwBuildTasks.dll"/>
 	<UsingTask TaskName="LocalizeFieldWorks" AssemblyFile="FwBuildTasks.dll"/>
@@ -13,7 +14,7 @@
 
 	<!-- Localize strings-en.xml, lists, and all resx files -->
 	<Target Name="localize" DependsOnTargets="localize-source;localize-binaries"/>
-	<Target Name="localize-source" DependsOnTargets="Initialize;downloadTranslatedFiles;copyLibL10ns;combineGOLDEtic;zipLocalizedLists;processLanguages-source" Condition="'$(DisableLocalization)'!='true'"/>
+	<Target Name="localize-source" DependsOnTargets="Initialize;downloadTranslatedFiles;copyLibL10ns;combineGOLDEtic;zipLocalizedLists;copyLocales;processLanguages-source" Condition="'$(DisableLocalization)'!='true'"/>
 	<Target Name="localize-binaries" DependsOnTargets="Initialize;processLanguages-binaries" Condition="'$(DisableLocalization)'!='true'"/>
 
 	<PropertyGroup>
@@ -33,6 +34,9 @@
 	<Target Name="InstallOvercrowdin">
 		<!-- Install overcrowdin, or update if already installed. -->
 		<Exec WorkingDirectory="$(fwrt)" Command="dotnet tool update -g overcrowdin || dotnet tool install -g overcrowdin"/>
+	</Target>
+	<Target Name="copyLocales"> <!-- Copy locales to alternate ws identifiers -->
+		<CopyLocale SourceL10n="$(L10nsDirectory)/ms" DestL10n="$(L10nsDirectory)/zlm" LcmDir="$(LcmSrcDir)" />
 	</Target>
 
 	<!-- Update localizable files in Crowdin -->
@@ -69,7 +73,7 @@
 	<Target Name="downloadTranslatedFiles" Condition="'$(disableDownloads)'!='true'" DependsOnTargets="InstallOvercrowdin">
 		<ForceDelete Files="$(L10nsDirectory)"/>
 		<MakeDir Directories="$(DownloadsDir)"/>
-		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin download -v -r2 -f $(CrowdinZip)" ContinueOnError="$(OnFailedCrowdinDownload)"/>
+		<Exec WorkingDirectory="$(fwrt)" Command="overcrowdin download -v -f $(CrowdinZip)" ContinueOnError="$(OnFailedCrowdinDownload)"/>
 		<Unzip ZipFilename="$(CrowdinZip)" ToDir="$(L10nsDirectory)"/>
 		<NormalizeLocales L10nsDirectory="$(L10nsDirectory)"/>
 		<ItemGroup>

@@ -200,6 +200,9 @@ namespace SIL.FieldWorks.IText
 				btnUndoChanges.Anchor = AnchorStyles.Left;
 				btnUndoChanges.Location = new Point(
 					btnConfirmChanges.Width + btnConfirmChangesForWholeText.Width, btnUndoChanges.Location.Y);
+				btnBreakPhrase.Anchor = AnchorStyles.Left;
+				btnBreakPhrase.Location = new Point(
+					btnConfirmChanges.Width + btnConfirmChangesForWholeText.Width + btnUndoChanges.Width, btnBreakPhrase.Location.Y);
 				btnMenu.Anchor = AnchorStyles.Right;
 				btnMenu.Location = new Point(panelControlBar.Width - btnMenu.Width, btnMenu.Location.Y);
 			}
@@ -343,27 +346,9 @@ namespace SIL.FieldWorks.IText
 			if (InterlinDoc == null || !InterlinDoc.IsFocusBoxInstalled)
 				return;
 			// we're fully installed, so update the buttons.
-			if (ShowLinkWordsIcon)
-			{
-				btnLinkNextWord.Visible = true;
-				btnLinkNextWord.Enabled = true;
-			}
-			else
-			{
-				btnLinkNextWord.Visible = false;
-				btnLinkNextWord.Enabled = false;
-			}
+			btnLinkNextWord.Visible = btnLinkNextWord.Enabled = ShowLinkWordsIcon;
+			btnBreakPhrase.Visible = btnBreakPhrase.Enabled = ShowBreakPhraseIcon;
 
-			if (ShowBreakPhraseIcon)
-			{
-				btnBreakPhrase.Visible = true;
-				btnBreakPhrase.Enabled = true;
-			}
-			else
-			{
-				btnBreakPhrase.Visible = false;
-				btnBreakPhrase.Enabled = false;
-			}
 			UpdateButtonState_Undo();
 			// LT-11406: Somehow JoinWords (and BreakPhrase) leaves the selection elsewhere,
 			// this should make it select the default location.
@@ -373,16 +358,8 @@ namespace SIL.FieldWorks.IText
 
 		private void UpdateButtonState_Undo()
 		{
-			if (InterlinWordControl != null && InterlinWordControl.HasChanged)
-			{
-				btnUndoChanges.Visible = true;
-				btnUndoChanges.Enabled = true;
-			}
-			else
-			{
-				btnUndoChanges.Visible = false;
-				btnUndoChanges.Enabled = false;
-			}
+			bool shouldEnable = InterlinWordControl != null && InterlinWordControl.HasChanged;
+			btnUndoChanges.Visible = btnUndoChanges.Enabled = shouldEnable;
 		}
 
 		private void btnLinkNextWord_Click(object sender, EventArgs e)
@@ -402,6 +379,9 @@ namespace SIL.FieldWorks.IText
 						SelectedOccurrence.MakePhraseWithNextWord();
 						if (InterlinDoc != null)
 						{
+							// Joining words renumbers the occurrences.
+							// We need to clear the analysis cache to avoid problems (cf LT-21965).
+							InterlinDoc.ResetAnalysisCache();
 							InterlinDoc.RecordGuessIfNotKnown(SelectedOccurrence);
 						}
 					});
@@ -423,6 +403,12 @@ namespace SIL.FieldWorks.IText
 			var cmd = (ICommandUndoRedoText)arg;
 			UndoableUnitOfWorkHelper.Do(cmd.UndoText, cmd.RedoText, Cache.ActionHandlerAccessor,
 				() => SelectedOccurrence.BreakPhrase());
+			if (InterlinDoc != null)
+			{
+				// Breaking phrases renumbers the occurrences.
+				// We need to clear the analysis cache to avoid problems.
+				InterlinDoc.ResetAnalysisCache();
+			}
 			InterlinWordControl.SwitchWord(SelectedOccurrence);
 			UpdateButtonState();
 		}

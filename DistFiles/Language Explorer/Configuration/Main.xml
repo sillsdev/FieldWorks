@@ -67,8 +67,9 @@
 		<command id="CmdArchiveWithRamp" label="_Archive with RAMP (SIL)..." message="ArchiveWithRamp" icon="ArchiveWithRamp"/>
 		<command id="CmdUploadToWebonary" label="Upload to _Webonary..." message="UploadToWebonary"/>
 		<command id="CmdPageSetup" label="Page Setup..." message="PageSetup"/>
-		<command id="CmdImportSFMLexicon" label="_Standard Format Lexicon..." message="SFMImport"/>
-		<command id="CmdImportSFMNotebook" label="Standard Format _Notebook data..." message="LaunchConnectedDialog">
+      <command id="CmdImportSFMLexicon" label="_Standard Format Lexicon..." message="SFMImport"/>
+      <command id="CmdImportPhonology" label="_Phonology..." message="ImportPhonology"/>
+      <command id="CmdImportSFMNotebook" label="Standard Format _Notebook data..." message="LaunchConnectedDialog">
 			<parameters>
 				<dynamicloaderinfo assemblyPath="LexTextControls.dll" class="SIL.FieldWorks.LexText.Controls.DataNotebook.NotebookImportWiz"/>
 			</parameters>
@@ -425,7 +426,8 @@
 				<item command="CmdImportSFMNotebook"/>
 				<item command="CmdImportTranslatedLists"/>
 				<item command="CmdImportTranslatedGramCats"/>
-				<include path="Extensions/*/MainConfigurationExtension.xml" query="root/menuAddOn/menu[@id='Import']/*"/>
+                <item command="CmdImportPhonology"/>
+                <include path="Extensions/*/MainConfigurationExtension.xml" query="root/menuAddOn/menu[@id='Import']/*"/>
 			</menu>
 			<item command="CmdExport"/>
 			<include path="Words/areaConfiguration.xml" query="root/menuAddOn/menu[@id='FileExport']/*"/>

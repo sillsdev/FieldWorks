@@ -9,7 +9,10 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Gecko.WebIDL;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.IO;
+using SIL.LCModel.Core.Phonology;
 using SIL.Windows.Forms;
 using SIL.PlatformUtilities;
 using PropertyTable = XCore.PropertyTable;
@@ -23,6 +26,9 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private readonly UploadToWebonaryController m_controller;
+
+		private WebonaryStatusCondition m_uploadStatus = WebonaryStatusCondition.None;
+
 		// Mono 3 handles the display of the size gripper differently than .NET SWF and so the dialog needs to be taller. Part of LT-16433.
 		private const int m_additionalMinimumHeightForMono = 26;
 
@@ -74,7 +80,7 @@ namespace SIL.FieldWorks.XWorks
 			// Start with output log area not shown by default
 			// When a user clicks Publish, it is revealed. This is done within the context of having a resizable table of controls, and having
 			// the output log area be the vertically growing control when a user increases the height of the dialog
-			this.Shown += (sender, args) => { ValidateSortingOnAlphaHeaders(); this.Height = this.Height - outputLogTextbox.Height;};
+			Shown += (sender, args) => { ValidateSortingOnAlphaHeaders(); };
 
 			// Handle localizable explanation area with link.
 			var explanationText = xWorksStrings.toApplyForWebonaryAccountExplanation;
@@ -93,9 +99,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private void siteNameBox_TextChanged(object sender, EventArgs e)
 		{
-			var subDomain = m_controller.UseJsonApi ? "cloud-api" : "www";
 			// ReSharper disable once LocalizableElement -- this is the *world-wide* web, not a LAN.
-			webonarySiteURLLabel.Text = $"https://{subDomain}.{UploadToWebonaryController.Server}/{webonarySiteNameTextbox.Text}";
+			webonarySiteURLLabel.Text = $"https://www.{UploadToWebonaryController.Server}/{webonarySiteNameTextbox.Text}";
 		}
 
 		private void UpdateEntriesToBePublishedLabel()
@@ -193,6 +198,17 @@ namespace SIL.FieldWorks.XWorks
 			SetSelectedReversals(selectedReversals);
 		}
 
+		public void UploadCompleted()
+		{
+			m_progress.Value = m_progress.Maximum;
+			m_progress.Style = ProgressBarStyle.Continuous;
+			reportButton.Enabled = true;
+			if (m_uploadStatus != WebonaryStatusCondition.Success)
+			{
+				reportButton_Click(null, null);
+			}
+		}
+
 		public UploadToWebonaryModel Model { get; set; }
 
 		private void LoadFromModel()
@@ -227,6 +243,7 @@ namespace SIL.FieldWorks.XWorks
 					configurationBox.SelectedIndex = 0;
 				}
 				UpdateEntriesToBePublishedLabel();
+				reportButton.Enabled = Model.CanViewReport;
 			}
 		}
 
@@ -278,20 +295,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			SaveToModel();
 
-			// Increase height of form so the output log is shown.
-			// Account for situations where the user already increased the height of the form
-			// or maximized the form, and later reduces the height or unmaximizes the form
-			// after clicking Publish.
-
-			var allButTheLogRowHeight = tableLayoutPanel.GetRowHeights().Sum() - tableLayoutPanel.GetRowHeights().Last();
-			var fudge = Height - tableLayoutPanel.Height;
-			var minimumFormHeightToShowLog = allButTheLogRowHeight + outputLogTextbox.MinimumSize.Height + fudge;
-			if (Platform.IsUnix)
-				minimumFormHeightToShowLog += m_additionalMinimumHeightForMono;
-			MinimumSize = new Size(MinimumSize.Width, minimumFormHeightToShowLog);
-
 			using (new WaitCursor(this))
 			{
+				RobustFile.Delete(Model.LastUploadReport);
+				m_progress.Style = ProgressBarStyle.Marquee;
 				m_controller.UploadToWebonary(Model, this);
 			}
 		}
@@ -301,46 +308,31 @@ namespace SIL.FieldWorks.XWorks
 			ShowHelp.ShowHelpTopic(m_helpTopicProvider, "khtpUploadToWebonary");
 		}
 
+		private void closeButton_Click(object sender, EventArgs e)
+		{
+			SaveToModel();
+		}
+
+		private void reportButton_Click(object sender, EventArgs e)
+		{
+			using(var dlg = new WebonaryLogViewer(Model.LastUploadReport))
+			{
+				dlg.ShowDialog();
+			}
+		}
+
 		/// <summary>
 		/// Add a message to the status area. Make sure the status area is redrawn so the
 		/// user can see what's going on even if we are working on something.
 		/// </summary>
-		public void UpdateStatus(string statusString)
+		public void UpdateStatus(string statusString, WebonaryStatusCondition c)
 		{
-			outputLogTextbox.AppendText(Environment.NewLine + statusString);
-			outputLogTextbox.Refresh();
-		}
-
-		/// <summary>
-		/// Respond to a new status condition by changing the background color of the
-		/// output log.
-		/// </summary>
-		public void SetStatusCondition(WebonaryStatusCondition condition)
-		{
-			Color newColor;
-			switch (condition)
-			{
-				case WebonaryStatusCondition.Success:
-					// Green
-					newColor = ColorTranslator.FromHtml("#b8ffaa");
-					break;
-				case WebonaryStatusCondition.Error:
-					// Red
-					newColor = ColorTranslator.FromHtml("#ffaaaa");
-					break;
-				case WebonaryStatusCondition.None:
-					// Grey
-					newColor = ColorTranslator.FromHtml("#dcdad5");
-					break;
-				default:
-					throw new ArgumentException("Unhandled WebonaryStatusCondition", nameof(condition));
-			}
-			outputLogTextbox.BackColor = newColor;
-		}
-
-		private void closeButton_Click(object sender, EventArgs e)
-		{
-			SaveToModel();
+			// Set the status to the greater of the current or the new update
+			m_uploadStatus = (WebonaryStatusCondition)Math.Max(Convert.ToInt32(m_uploadStatus), Convert.ToInt32(c));
+			// Log the status
+			Model.Log.AddEntry(c, statusString);
+			// pump messages
+			Application.DoEvents();
 		}
 
 		/// <summary>
@@ -357,16 +349,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 			base.OnClosing(e);
 		}
-
-		protected override void OnResize(EventArgs e)
-		{
-			base.OnResize(e);
-
-			// On Linux, when reducing the height of the dialog, the output log doesn't shrink with it.
-			// Set its height back to something smaller to keep the whole control visible. It will expand as appropriate.
-			if (Platform.IsUnix)
-				outputLogTextbox.Size = new Size(outputLogTextbox.Size.Width, outputLogTextbox.MinimumSize.Height);
-		}
 	}
 
 	/// <summary>
@@ -374,8 +356,8 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public interface IUploadToWebonaryView
 	{
-		void UpdateStatus(string statusString);
-		void SetStatusCondition(WebonaryStatusCondition condition);
+		void UpdateStatus(string statusString, WebonaryStatusCondition condition);
+		void UploadCompleted();
 		UploadToWebonaryModel Model { get; set; }
 	}
 
@@ -386,6 +368,7 @@ namespace SIL.FieldWorks.XWorks
 	{
 		None,
 		Success,
-		Error
+		FileRejected,
+		Error,
 	}
 }

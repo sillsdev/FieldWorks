@@ -454,7 +454,19 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// Make the real object and set the string property we are ghosting. The final PropChanged
 				// will typically dispose this and create a new string slice whose key is our own key
 				// followed by the flid of the string property.
-				int hvoNewObj = MakeRealObject(tssTyped);
+				// To avoid problems, PropChanged must not be postponed (cf. LT-22018).
+				// Copy m_mediator in case 'this' gets disposed.
+				Mediator mediator = m_mediator;
+				int hvoNewObj;
+				try
+				{
+					mediator.SendMessage("PostponePropChanged", false);
+					hvoNewObj = MakeRealObject(tssTyped);
+				}
+				finally
+				{
+					mediator.SendMessage("PostponePropChanged", true);
+				}
 
 				// Now try to make a suitable selection in the slice that replaces this.
 				RestoreSelection(ich, datatree, parentKey, hvoNewObj, flidStringProp, wsToCreate);

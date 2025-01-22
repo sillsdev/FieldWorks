@@ -865,16 +865,21 @@
 		</ConfigurationItem>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Pictures" between="  " after=" " style="Dictionary-Pictures" isEnabled="true" field="PicturesOfSenses" cssClassNameOverride="pictures">
+	<ConfigurationItem name="Pictures" between="" after="" style="Dictionary-Pictures" isEnabled="true" field="PicturesOfSenses" cssClassNameOverride="pictures">
 	  <PictureOptions minimumHeight="0" maximumHeight="1" maximumWidth="0" minimumWidth="0" pictureLocation="right" stackPictures="false" />
 	  <ConfigurationItem name="Thumbnail" after="" isEnabled="true" field="PictureFileRA" cssClassNameOverride="thumbnail"/>
+	  <ConfigurationItem name="Caption (or Headword)" between=" " isEnabled="false" field="CaptionOrHeadword">
+		  <WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+			  <Option id="vernacular" isEnabled="true"/>
+		  </WritingSystemOptions>
+	  </ConfigurationItem>
 	  <ConfigurationItem name="Caption" between=" " isEnabled="false" field="Caption">
 		<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  <!-- Using cssClassNameOverride="headword" to show the Configure Headword Numbers button -->
-	  <ConfigurationItem name="Headword" between=" " after="" style="Dictionary-Headword" isEnabled="true" field="Owner" subField="OwnerOutlineName" cssClassNameOverride="headword">
+	  <ConfigurationItem name="Headword" between=" " after="" style="Dictionary-Headword" isEnabled="true" field="Owner" subField="MLOwnerOutlineName" cssClassNameOverride="headword">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
@@ -1914,16 +1919,21 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Pictures" between="  " after=" " style="Dictionary-Pictures" isEnabled="true" field="PicturesOfSenses" cssClassNameOverride="pictures">
+	<ConfigurationItem name="Pictures" between="" after="" style="Dictionary-Pictures" isEnabled="true" field="PicturesOfSenses" cssClassNameOverride="pictures">
 	  <PictureOptions minimumHeight="0" maximumHeight="1" maximumWidth="0" minimumWidth="0" pictureLocation="right" stackPictures="false" />
 	  <ConfigurationItem name="Thumbnail" after="" isEnabled="true" field="PictureFileRA" cssClassNameOverride="thumbnail"/>
+	  <ConfigurationItem name="Caption (or Headword)" between=" " isEnabled="false" field="CaptionOrHeadword">
+		  <WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+			  <Option id="vernacular" isEnabled="true"/>
+		  </WritingSystemOptions>
+	  </ConfigurationItem>
 	  <ConfigurationItem name="Caption" between=" " isEnabled="false" field="Caption">
 		<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  <!-- Using cssClassNameOverride="headword" to show the Configure Headword Numbers button -->
-	  <ConfigurationItem name="Headword" between=" " after="" style="Dictionary-Headword" isEnabled="true" field="Owner" subField="OwnerOutlineName" cssClassNameOverride="headword">
+	  <ConfigurationItem name="Headword" between=" " after="" style="Dictionary-Headword" isEnabled="true" field="Owner" subField="MLOwnerOutlineName" cssClassNameOverride="headword">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
@@ -2946,16 +2956,21 @@
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	</ConfigurationItem>
-	<ConfigurationItem name="Pictures" between="  " after=" " style="Dictionary-Pictures" isEnabled="true" field="PicturesOfSenses" cssClassNameOverride="pictures">
+	<ConfigurationItem name="Pictures" between="" after="" style="Dictionary-Pictures" isEnabled="true" field="PicturesOfSenses" cssClassNameOverride="pictures">
 	  <PictureOptions minimumHeight="0" maximumHeight="1" maximumWidth="0" minimumWidth="0" pictureLocation="right" stackPictures="false" />
 	  <ConfigurationItem name="Thumbnail" after="" isEnabled="true" field="PictureFileRA" cssClassNameOverride="thumbnail"/>
+	  <ConfigurationItem name="Caption (or Headword)" between=" " isEnabled="false" field="CaptionOrHeadword">
+		  <WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+			  <Option id="vernacular" isEnabled="true"/>
+		  </WritingSystemOptions>
+	  </ConfigurationItem>
 	  <ConfigurationItem name="Caption" between=" " isEnabled="false" field="Caption">
 		<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 		  <Option id="vernacular" isEnabled="true"/>
 		</WritingSystemOptions>
 	  </ConfigurationItem>
 	  <!-- Using cssClassNameOverride="headword" to show the Configure Headword Numbers button -->
-	  <ConfigurationItem name="Headword" between=" " after="" style="Dictionary-Headword" isEnabled="true" field="Owner" subField="OwnerOutlineName" cssClassNameOverride="headword">
+	  <ConfigurationItem name="Headword" between=" " after="" style="Dictionary-Headword" isEnabled="true" field="Owner" subField="MLOwnerOutlineName" cssClassNameOverride="headword">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>
@@ -4390,16 +4405,21 @@
 		  </ConfigurationItem>
 		</ConfigurationItem>
 	  </ConfigurationItem>
-	  <ConfigurationItem name="Pictures" between="  " after=" " style="Dictionary-Pictures" isEnabled="true" field="PicturesOfSenses" cssClassNameOverride="pictures">
+	  <ConfigurationItem name="Pictures" between="" after="" style="Dictionary-Pictures" isEnabled="true" field="PicturesOfSenses" cssClassNameOverride="pictures">
 		<PictureOptions minimumHeight="0" maximumHeight="1" minimumWidth="0" maximumWidth="0" pictureLocation="right" stackPictures="false" />
 		<ConfigurationItem name="Thumbnail" after="" isEnabled="true" field="PictureFileRA" cssClassNameOverride="thumbnail"/>
+		<ConfigurationItem name="Caption (or Headword)" between=" " isEnabled="false" field="CaptionOrHeadword">
+			<WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
+				<Option id="vernacular" isEnabled="true"/>
+			</WritingSystemOptions>
+		</ConfigurationItem>
 		<ConfigurationItem name="Caption" between=" " isEnabled="false" field="Caption">
 		  <WritingSystemOptions writingSystemType="both" displayWSAbreviation="false">
 			<Option id="vernacular" isEnabled="true"/>
 		  </WritingSystemOptions>
 		</ConfigurationItem>
 	  <!-- Using cssClassNameOverride="headword" to show the Configure Headword Numbers button -->
-	  <ConfigurationItem name="Headword" between=" " after="" style="Dictionary-Headword" isEnabled="true" field="Owner" subField="OwnerOutlineName" cssClassNameOverride="headword">
+	  <ConfigurationItem name="Headword" between=" " after="" style="Dictionary-Headword" isEnabled="true" field="Owner" subField="MLOwnerOutlineName" cssClassNameOverride="headword">
 	  <WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 		<Option id="vernacular" isEnabled="true"/>
 	  </WritingSystemOptions>

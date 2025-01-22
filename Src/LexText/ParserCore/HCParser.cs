@@ -28,6 +28,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly string m_outputDirectory;
 		private ParserModelChangeListener m_changeListener;
 		private bool m_forceUpdate;
+		private bool m_guessRoots;
 
 		internal const string CRuleID = "ID";
 		internal const string FormID = "ID";
@@ -51,6 +52,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_outputDirectory = Path.GetTempPath();
 			m_changeListener = new ParserModelChangeListener(m_cache);
 			m_forceUpdate = true;
+			m_guessRoots = true;
 		}
 
 		#region IParser implementation
@@ -86,7 +88,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			IEnumerable<Word> wordAnalyses;
 			try
 			{
-				wordAnalyses = m_morpher.ParseWord(word);
+				wordAnalyses = m_morpher.ParseWord(word, out _, m_guessRoots);
 			}
 			catch (Exception e)
 			{
@@ -103,7 +105,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					if (GetMorphs(wordAnalysis, out morphs))
 					{
 						analyses.Add(new ParseAnalysis(morphs.Select(mi =>
-							new ParseMorph(mi.Form, mi.Msa, mi.InflType))));
+							new ParseMorph(mi.Form, mi.Msa, mi.InflType, mi.GuessedString))));
 					}
 				}
 				result = new ParseResult(analyses);
@@ -149,9 +151,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_language = HCLoader.Load(m_cache, new XmlHCLoadErrorLogger(writer));
 				writer.WriteEndElement();
 				XElement parserParamsElem = XElement.Parse(m_cache.LanguageProject.MorphologicalDataOA.ParserParameters);
-				XElement delReappsElem = parserParamsElem.Elements("ParserParameters").Elements("HC").Elements("DelReapps").FirstOrDefault();
+				XElement delReappsElem = parserParamsElem.Elements("HC").Elements("DelReapps").FirstOrDefault();
+				XElement guessRootsElem = parserParamsElem.Elements("HC").Elements("GuessRoots").FirstOrDefault();
 				if (delReappsElem != null)
 					delReapps = (int) delReappsElem;
+				if (guessRootsElem != null)
+					m_guessRoots = (bool) guessRootsElem;
 			}
 			m_morpher = new Morpher(m_traceManager, m_language) { DeletionReapplications = delReapps };
 		}
@@ -189,11 +194,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				try
 				{
 					object trace;
-					foreach (Word wordAnalysis in m_morpher.ParseWord(form, out trace))
+					foreach (Word wordAnalysis in m_morpher.ParseWord(form, out trace, m_guessRoots))
 					{
 						List<MorphInfo> morphs;
 						if (GetMorphs(wordAnalysis, out morphs))
-							wordformElem.Add(new XElement("Analysis", morphs.Select(mi => CreateAllomorphElement("Morph", mi.Form, mi.Msa, mi.InflType, mi.IsCircumfix))));
+							wordformElem.Add(new XElement("Analysis", morphs.Select(mi => CreateAllomorphElement("Morph", mi.Form, mi.Msa, mi.InflType, mi.IsCircumfix, mi.GuessedString))));
 					}
 					if (tracing)
 						wordformElem.Add(new XElement("Trace", trace));
@@ -233,6 +238,33 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						writer.WriteElementString("PredictedPhonemes", string.Join(" ", predictedPhonemes.Select(p => p.Name.BestVernacularAlternative.Text)));
 						writer.WriteElementString("ActualPhonemes", string.Join(" ", natClass.SegmentsRC.Select(p => p.Name.BestVernacularAlternative.Text)));
 						writer.WriteEndElement();
+					}
+				}
+				foreach (IPhPhoneme phone in m_cache.LangProject.PhonologicalDataOA.PhonemeSetsOS[0].PhonemesOC)
+				{
+					foreach (IPhCode code in phone.CodesOS)
+					{
+						if (code != null && code.Representation != null)
+						{
+							var grapheme = code.Representation.BestVernacularAlternative.Text;
+							// Check for empty graphemes/codes whcih can cause a crash; see https://jira.sil.org/browse/LT-21589
+							if (String.IsNullOrEmpty(grapheme) || grapheme == "***")
+							{
+								writer.WriteStartElement("EmptyGrapheme");
+								writer.WriteElementString("Phoneme", phone.Name.BestVernacularAnalysisAlternative.Text);
+								writer.WriteEndElement();
+							}
+							else
+							// Check for '[' and ']' which can cause a mysterious message in Try a Word
+							if (grapheme.Contains("[") || grapheme.Contains("]"))
+							{
+								writer.WriteStartElement("NoBracketsAsGraphemes");
+								writer.WriteElementString("Grapheme", grapheme);
+								writer.WriteElementString("Phoneme", phone.Name.BestVernacularAnalysisAlternative.Text);
+								writer.WriteElementString("Bracket", grapheme);
+								writer.WriteEndElement();
+							}
+						}
 					}
 				}
 				writer.WriteEndElement();
@@ -337,7 +369,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 				else
 				{
-					morphInfo.String += formStr;
 					continue;
 				}
 
@@ -367,7 +398,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				morphInfo = new MorphInfo
 					{
 						Form = form,
-						String = formStr,
+						GuessedString = allomorph.Guessed ? formStr : null,
 						Msa = msa,
 						InflType = inflType,
 						IsCircumfix = formID2 > 0
@@ -439,11 +470,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return "unknown";
 		}
 
-		internal static XElement CreateAllomorphElement(string name, IMoForm form, IMoMorphSynAnalysis msa, ILexEntryInflType inflType, bool circumfix)
+		internal static XElement CreateAllomorphElement(string name, IMoForm form, IMoMorphSynAnalysis msa, ILexEntryInflType inflType, bool circumfix, string guessedString)
 		{
 			Guid morphTypeGuid = circumfix ? MoMorphTypeTags.kguidMorphCircumfix : (form.MorphTypeRA == null ? Guid.Empty : form.MorphTypeRA.Guid);
 			var elem = new XElement(name, new XAttribute("id", form.Hvo), new XAttribute("type", GetMorphTypeString(morphTypeGuid)),
-				new XElement("Form", circumfix ? form.OwnerOfClass<ILexEntry>().HeadWord.Text : form.GetFormWithMarkers(form.Cache.DefaultVernWs)),
+				new XElement("Form", circumfix ? form.OwnerOfClass<ILexEntry>().HeadWord.Text : guessedString ?? form.GetFormWithMarkers(form.Cache.DefaultVernWs)),
 				new XElement("LongName", form.LongName));
 			elem.Add(CreateMorphemeElement(msa, inflType));
 			return elem;
@@ -540,7 +571,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		class MorphInfo
 		{
 			public IMoForm Form { get; set; }
-			public string String { get; set; }
+			public string GuessedString { get; set; }
 			public IMoMorphSynAnalysis Msa { get; set; }
 			public ILexEntryInflType InflType { get; set; }
 			public bool IsCircumfix { get; set; }
@@ -611,6 +642,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_xmlWriter.WriteAttributeString("type", "invalid-redup-form");
 				m_xmlWriter.WriteElementString("Form", form.Form.VernacularDefaultWritingSystem.Text);
 				m_xmlWriter.WriteElementString("Hvo", msa.Hvo.ToString(CultureInfo.InvariantCulture));
+				m_xmlWriter.WriteElementString("Reason", reason);
+				m_xmlWriter.WriteEndElement();
+			}
+			public void InvalidRewriteRule(IPhRegularRule rule, string reason)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "invalid-rewrite-rule");
+				m_xmlWriter.WriteElementString("Rule", rule.Name.BestAnalysisVernacularAlternative.Text);
 				m_xmlWriter.WriteElementString("Reason", reason);
 				m_xmlWriter.WriteEndElement();
 			}

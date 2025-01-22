@@ -43,6 +43,8 @@ namespace SIL.FieldWorks.XWorks
 		internal string m_configObjectName;
 		internal const string CurrentSelectedEntryClass = "currentSelectedEntry";
 		private const string FieldWorksPrintLimitEnv = "FIELDWORKS_PRINT_LIMIT";
+		private bool m_updateContentLater = false; // Whether we should postpone calling UpdateContent
+		private string m_loadedConfig = null;
 
 		private GeckoWebBrowser GeckoBrowser => (GeckoWebBrowser)m_mainView.NativeBrowser;
 
@@ -177,6 +179,8 @@ namespace SIL.FieldWorks.XWorks
 					GiveSimpleWarning(xrc);
 				}
 			}
+			// Wait until SetActiveSelectedEntryOnView to call UpdateContent.
+			m_updateContentLater = true;
 			return false;
 		}
 
@@ -311,7 +315,7 @@ namespace SIL.FieldWorks.XWorks
 			// or the entry being clicked (when the user clicks anywhere in an entry that is not currently selected)
 			var destinationGuid = GetGuidFromEntryLink(element);
 			if (destinationGuid == Guid.Empty)
-				GetClassListFromGeckoElement(element, out destinationGuid, out _);
+				GetElementInfoFromGeckoElement(element, out destinationGuid, out _);
 
 			// If we don't have a destination GUID, the user may have clicked a video player. We can't handle that,
 			// and if we say we did, we will prevent the user from operating the video controls.
@@ -370,7 +374,7 @@ namespace SIL.FieldWorks.XWorks
 				foreach (var entry in entries)
 				{
 					var entryElement = browserElement.OwnerDocument.CreateHtmlElement("div");
-					var entryDoc = XDocument.Parse(entry);
+					var entryDoc = XDocument.Parse(entry.ToString());
 					foreach (var attribute in entryDoc.Root.Attributes())
 					{
 						entryElement.SetAttribute(attribute.Name.ToString(), attribute.Value);
@@ -402,7 +406,7 @@ namespace SIL.FieldWorks.XWorks
 				// Load entries above the lower navigation buttons
 				foreach (var entry in entries)
 				{
-					var entryElement = browserElement.OwnerDocument.CreateHtmlElement("div"); var entryDoc = XDocument.Parse(entry);
+					var entryElement = browserElement.OwnerDocument.CreateHtmlElement("div"); var entryDoc = XDocument.Parse(entry.ToString());
 					foreach (var attribute in entryDoc.Root.Attributes())
 					{
 						entryElement.SetAttribute(attribute.Name.ToString(), attribute.Value);
@@ -477,7 +481,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Guid topLevelGuid;
 			GeckoElement entryElement;
-			var classList = GetClassListFromGeckoElement(element, out topLevelGuid, out entryElement);
+			var classList = GetElementInfoFromGeckoElement(element, out topLevelGuid, out entryElement);
 			var localizedName = DictionaryConfigurationListener.GetDictionaryConfigurationType(propertyTable);
 			var label = string.Format(xWorksStrings.ksConfigure, localizedName);
 			s_contextMenu = new ContextMenuStrip();
@@ -501,28 +505,29 @@ namespace SIL.FieldWorks.XWorks
 		/// Returns the class hierarchy for a GeckoElement
 		/// </summary>
 		/// <remarks>LT-17213 Internal for use in DictionaryConfigurationDlg</remarks>
-		internal static List<string> GetClassListFromGeckoElement(GeckoElement element, out Guid topLevelGuid, out GeckoElement entryElement)
+		internal static string GetElementInfoFromGeckoElement(GeckoElement element, out Guid topLevelGuid, out GeckoElement entryElement)
 		{
 			topLevelGuid = Guid.Empty;
 			entryElement = element;
-			var classList = new List<string>();
+			string nearestNodeId = null;
 			if (entryElement.TagName == "body" || entryElement.TagName == "html")
-				return classList;
+				return string.Empty;
 			for (; entryElement != null; entryElement = entryElement.ParentElement)
 			{
+				if (string.IsNullOrEmpty(nearestNodeId))
+				{
+					nearestNodeId = entryElement.GetAttribute("nodeId");
+				}
 				var className = entryElement.GetAttribute("class");
-				if (string.IsNullOrEmpty(className))
-					continue;
 				if (className == "letHead")
 					break;
-				classList.Insert(0, className);
 				if (entryElement.TagName == "div" && entryElement.ParentElement.TagName == "body")
 				{
 					topLevelGuid = GetGuidFromGeckoDomElement(entryElement);
 					break; // we have the element we want; continuing to loop will get its parent instead
 				}
 			}
-			return classList;
+			return nearestNodeId;
 		}
 
 		/// <summary>
@@ -594,7 +599,7 @@ namespace SIL.FieldWorks.XWorks
 			var tagObjects = (object[])item.Tag;
 			var propertyTable = tagObjects[0] as PropertyTable;
 			var mediator = tagObjects[1] as Mediator;
-			var classList = tagObjects[2] as List<string>;
+			var nodeId = tagObjects[2] as string;
 			var guid = (Guid)tagObjects[3];
 			bool refreshNeeded;
 			using (var dlg = new DictionaryConfigurationDlg(propertyTable))
@@ -607,7 +612,7 @@ namespace SIL.FieldWorks.XWorks
 				else if (clerk != null)
 					current = clerk.CurrentObject;
 				var controller = new DictionaryConfigurationController(dlg, propertyTable, mediator, current);
-				controller.SetStartingNode(classList);
+				controller.SetStartingNode(nodeId);
 				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, DictionaryConfigurationListener.GetDictionaryConfigurationType(propertyTable));
 				dlg.HelpTopic = DictionaryConfigurationListener.GetConfigDialogHelpTopic(propertyTable);
 				dlg.ShowDialog(propertyTable.GetValue<IWin32Window>("window"));
@@ -1001,14 +1006,20 @@ namespace SIL.FieldWorks.XWorks
 				case "ReversalIndexPublicationLayout":
 					var currentConfig = GetCurrentConfiguration(false);
 					if (name == "ReversalIndexPublicationLayout")
+					{
 						DictionaryConfigurationUtils.SetReversalIndexGuidBasedOnReversalIndexConfiguration(m_propertyTable, Cache);
+						// Wait until SetActiveSelectedEntryOnView to call UpdateContent.
+						m_updateContentLater = true;
+					}
 					var currentPublication = GetCurrentPublication();
 					var validPublication = GetValidPublicationForConfiguration(currentConfig) ?? xWorksStrings.AllEntriesPublication;
 					if (validPublication != currentPublication)
 					{
 						m_propertyTable.SetProperty("SelectedPublication", validPublication, false);
 					}
-					UpdateContent(currentConfig);
+					if (!m_updateContentLater)
+						// Do it now.
+						UpdateContent(currentConfig);
 					break;
 				case "ActiveClerkSelectedObject":
 					var browser = m_mainView.NativeBrowser as GeckoWebBrowser;
@@ -1077,11 +1088,19 @@ namespace SIL.FieldWorks.XWorks
 				var currReversalWs = writingSystem.Id;
 				var currentConfig = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
 				var configuration = File.Exists(currentConfig) ? new DictionaryConfigurationModel(currentConfig, Cache) : null;
+				var currentPage = GetTopCurrentPageButton(browser.Document.Body);
 				if (configuration == null || configuration.WritingSystem != currReversalWs)
 				{
 					var newConfig = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable),
 						writingSystem.Id + DictionaryConfigurationModel.FileExtension);
 					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", File.Exists(newConfig) ? newConfig : null, true);
+				} else if (m_updateContentLater)
+				{
+					// Force the content to be updated once (LT-21702).
+					// This isn't needed when ReversalIndexPublicationLayout is changed
+					// because it causes the content to be updated as a side effect.
+					UpdateContent(currentConfig);
+					m_updateContentLater = false;
 				}
 			}
 			var currentObjectGuid = Clerk.CurrentObject.Guid.ToString();
@@ -1149,6 +1168,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_propertyTable.SetProperty("SelectedPublication", validPublication, true);
 			}
+			// Force a refresh.
+			m_loadedConfig = null;
 			UpdateContent(currentConfig);
 		}
 
@@ -1167,13 +1188,132 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (m_mainView != null)
 			{
-				var geckoBrowser = m_mainView.NativeBrowser as GeckoWebBrowser;
-				if (geckoBrowser != null)
-				{
-					geckoBrowser.Window.Find(string.Empty, false, false, true, false, true, true);
-				}
+				var findDialog = new FindDialog(this);
+				findDialog.Show(m_mainView);
 			}
 			return true;
+		}
+
+		private class FindDialog : BasicFindDialog
+		{
+			private string[] results = null;
+			private int resultIndex = 0;
+			private XhtmlDocView docView;
+			public FindDialog(XhtmlDocView doc)
+			{
+				docView = doc;
+				FindNext += FindNextInBrowser;
+				FindPrev += FindPrevInBrowser;
+				SearchTextChanged += (sender, args) => {
+					var lastId = Guid.Empty.ToString();
+					if (results != null && results.Length > 0)
+						lastId = results[resultIndex];
+					StatusText = "";
+					results = null;
+					ClearCurrentFindResult(docView.GeckoBrowser, lastId);
+				};
+			}
+
+			private void FindPrevInBrowser(object sender, IBasicFindView view)
+			{
+				var geckoBrowser = docView.m_mainView.NativeBrowser as GeckoWebBrowser;
+				if (geckoBrowser == null)
+					return;
+				string lastId = Guid.Empty.ToString();
+				if (!InitResults(view.SearchText))
+				{
+					lastId = results[resultIndex];
+					if (resultIndex - 1 >= 0)
+						--resultIndex;
+					else // wrap around
+						resultIndex = results.Length - 1;
+				}
+				ScrollAndHighlightResult(geckoBrowser, view, lastId);
+			}
+			private void FindNextInBrowser(object sender, IBasicFindView view)
+			{
+				var geckoBrowser = docView.m_mainView.NativeBrowser as GeckoWebBrowser;
+				if (geckoBrowser == null)
+					return;
+				string lastId = Guid.Empty.ToString();
+				if(!InitResults(view.SearchText))
+				{
+					lastId = results[resultIndex];
+					if (resultIndex + 1 < results.Length)
+						++resultIndex;
+					else // wrap around
+						resultIndex = 0;
+				}
+				ScrollAndHighlightResult(geckoBrowser, view, lastId);
+			}
+
+			private void ScrollAndHighlightResult(GeckoWebBrowser geckoBrowser, IBasicFindView view, string lastId)
+			{
+				if (results != null && results.Length > 0)
+				{
+					view.StatusText = $"{resultIndex + 1} of {results.Length} Results";
+					ClearCurrentFindResult(geckoBrowser, lastId);
+					var element = geckoBrowser.Document.GetHtmlElementById(results[resultIndex]);
+					element.ScrollIntoView(true);
+					docView.AddClassToHtmlElement(element, CurrentSelectedEntryClass);
+				}
+				else
+				{
+					view.StatusText = "0 Results";
+				}
+
+			}
+
+			private void ClearCurrentFindResult(GeckoWebBrowser geckoBrowser, string lastId)
+			{
+				var currentElement = geckoBrowser.Document.GetHtmlElementById(lastId);
+				if (currentElement != null)
+					docView.RemoveClassFromHtmlElement(currentElement, CurrentSelectedEntryClass);
+			}
+
+			private bool InitResults(string searchText)
+			{
+				var geckoBrowser = docView.m_mainView.NativeBrowser as GeckoWebBrowser;
+				if (geckoBrowser == null)
+					throw new ApplicationException();
+				if (results == null || results.Length == 0)
+				{
+					string newResults = string.Empty;
+					geckoBrowser.RemoveMessageEventListener("find");
+					geckoBrowser.AddMessageEventListener("find", r => newResults = r);
+					using(var executor = new AutoJSContext(geckoBrowser.Window))
+					{
+						// Javascript query to execute in the browser
+						// finds every text element matching the search string and returns the id of the first parent element with an id
+						var browserJsQuery =
+						"var ids=[];" +
+						"var containsText = (containsText === undefined)" + // function for finding text in a node (make sure it isn't redefined)
+						"	? (el, searchText) => Array.from(el.childNodes).some(c => c.nodeType === Node.TEXT_NODE && c.textContent.includes(searchText))" +
+						"	: containsText;" +
+						"Array.prototype.forEach.call(document.querySelectorAll('span, div, a'), function(element) { if (containsText(element, '" +
+						searchText +
+						"')) {" +
+						"	let id = element.id;" +
+						"	if (!id) {" +
+						"		var parent = element.parentElement;" +
+						"		while (parent && !parent.id) {" +
+						"			parent = parent.parentElement;" +
+						"		}" +
+						"		id = parent ? parent.id : null;" +
+						"	}" +
+						"if (id && !ids.includes(id)) { ids.push(id); } } });" +
+						"var idsString = ids.join(';');" +
+						"var event = new MessageEvent('find', { view: window, bubbles: true, cancelable: false, data: idsString });" + // send the results back to the C# code
+						"document.dispatchEvent(event);";
+						executor.EvaluateScript(browserJsQuery);
+					}
+					results = newResults.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+					resultIndex = 0;
+					return true;
+				}
+
+				return false;
+			}
 		}
 
 		/// <summary>
@@ -1201,6 +1341,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
+				// Don't load the configuration file twice.
+				var currentPublication = GetCurrentPublication();
+				if (configurationFile == m_loadedConfig && currentPublication == m_pubDecorator?.Publication?.ChooserNameTS?.Text)
+					return;
+				m_loadedConfig = configurationFile;
 				var xhtmlPath = SaveConfiguredXhtmlWithProgress(configurationFile, allOnOnePage);
 				if (xhtmlPath != null)
 				{

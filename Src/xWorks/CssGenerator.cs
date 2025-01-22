@@ -23,6 +23,9 @@ using SIL.FieldWorks.XWorks.DictionaryDetailsView;
 using XCore;
 using Property = ExCSS.Property;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainImpl;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -35,6 +38,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal const string BeforeAfterBetweenStyleName = "Dictionary-Context";
 		internal const string LetterHeadingStyleName = "Dictionary-LetterHeading";
+		internal const string SenseNumberStyleName = "Dictionary-SenseNumber";
 		internal const string DictionaryNormal = "Dictionary-Normal";
 		internal const string DictionaryMinor = "Dictionary-Minor";
 		internal const string WritingSystemPrefix = "writingsystemprefix";
@@ -95,8 +99,7 @@ namespace SIL.FieldWorks.XWorks
 					return className;
 				}
 				// Otherwise get a unique but useful class name and re-generate the style with the new name
-				className = GetBestUniqueNameForNode(_styleDictionary, node);
-				_styleDictionary[className] = GenerateCssFromConfigurationNode(node, className, _propertyTable).NonEmpty();
+				className = GetBestUniqueNameForNode(node);
 				return className;
 			}
 		}
@@ -112,16 +115,27 @@ namespace SIL.FieldWorks.XWorks
 		/// have the same class name, but different style content. We want this name to be usefully recognizable.
 		/// </summary>
 		/// <returns></returns>
-		public static string GetBestUniqueNameForNode(Dictionary<string, List<StyleRule>> styles,
-			ConfigurableDictionaryNode node)
+		public string GetBestUniqueNameForNode(ConfigurableDictionaryNode node)
 		{
 			Guard.AgainstNull(node.Parent, "There should not be duplicate class names at the top of tree.");
-			// first try pre-pending the parent node classname
-			var className = $".{GetClassAttributeForConfig(node.Parent)}-{GetClassAttributeForConfig(node)}";
+			// First try appending the parent node classname. Pathway has code that cares about what
+			// the className starts with, so keep the 'node' name first.
+			var className = $".{GetClassAttributeForConfig(node)}-{GetClassAttributeForConfig(node.Parent)}";
+
+			string classNameBase = className;
 			int counter = 0;
-			while (styles.ContainsKey(className))
+			lock (_styleDictionary)
 			{
-				className = $"{className}-{++counter}";
+				while (_styleDictionary.ContainsKey(className))
+				{
+					var styleContent = GenerateCssFromConfigurationNode(node, className, _propertyTable).NonEmpty();
+					if (AreStyleRulesListsEquivalent(_styleDictionary[className], styleContent))
+					{
+						return className;
+					}
+					className = $"{classNameBase}-{++counter}";
+				}
+				_styleDictionary[className] = GenerateCssFromConfigurationNode(node, className, _propertyTable).NonEmpty();
 			}
 			return className;
 		}
@@ -288,7 +302,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// We want only the character type settings from the styleName style since we're applying them
 				// to a span.
-				var wsRule = new StyleRule { Value = selector + String.Format("[lang|=\"{0}\"]", aws.LanguageTag) };
+				var wsRule = new StyleRule { Value = selector + String.Format("[lang=\'{0}\']", aws.LanguageTag) };
 				var styleDecls = GenerateCssStyleFromLcmStyleSheet(styleName, aws.Handle, propertyTable);
 				wsRule.Declarations.Properties.AddRange(GetOnlyCharacterStyle(styleDecls));
 				styleRules.Add(wsRule);
@@ -416,7 +430,13 @@ namespace SIL.FieldWorks.XWorks
 			if (senseOptions.DisplayEachSenseInAParagraph)
 				selectors = new List<StyleRule>(RemoveBeforeAfterSelectorRules(selectors));
 			styleRules.AddRange(CheckRangeOfRulesForEmpties(selectors));
+
+			var cache = propertyTable.GetValue<LcmCache>("cache");
+			var senseNumberLanguage = cache.ServiceLocator.GetInstance<HomographConfiguration>().WritingSystem;
+			senseNumberLanguage = string.IsNullOrEmpty(senseNumberLanguage) ? "en" : senseNumberLanguage;
+			var senseNumberWsId = cache.WritingSystemFactory.GetWsFromStr(senseNumberLanguage);
 			var senseNumberRule = new StyleRule();
+
 			// Not using SelectClassName here; sense and sensenumber are siblings and the configNode is for the Senses collection.
 			// Select the base plus the node's unmodified class attribute and append the sensenumber matcher.
 			var senseNumberSelector = string.Format("{0} .sensenumber", senseContentSelector);
@@ -424,7 +444,7 @@ namespace SIL.FieldWorks.XWorks
 			senseNumberRule.Value = senseNumberSelector;
 			if(!String.IsNullOrEmpty(senseOptions.NumberStyle))
 			{
-				senseNumberRule.Declarations.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(senseOptions.NumberStyle, DefaultStyle, propertyTable));
+				senseNumberRule.Declarations.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(senseOptions.NumberStyle, senseNumberWsId, propertyTable));
 			}
 			if (!IsEmptyRule(senseNumberRule))
 				styleRules.Add(senseNumberRule);
@@ -481,15 +501,6 @@ namespace SIL.FieldWorks.XWorks
 				if (!IsEmptyRule(senseContentRule))
 					styleRules.Add(senseContentRule);
 			}
-
-			if (senseOptions.ShowSharedGrammarInfoFirst)
-			{
-				foreach (var gramInfoNode in configNode.Children.Where(node => node.FieldDescription == "MorphoSyntaxAnalysisRA" && node.IsEnabled))
-				{
-					styleRules.AddRange(GenerateCssFromConfigurationNode(gramInfoNode, collectionSelector + "> .sharedgrammaticalinfo", propertyTable));
-				}
-			}
-
 			return styleRules;
 		}
 
@@ -666,7 +677,7 @@ namespace SIL.FieldWorks.XWorks
 				// if the writing system isn't a magic name just use it otherwise find the right one from the magic list
 				var wsIdString = possiblyMagic == 0 ? ws.Id : WritingSystemServices.GetWritingSystemList(cache, possiblyMagic, true).First().Id;
 				var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(wsIdString);
-				var wsRule = new StyleRule {Value = baseSelection + String.Format("[lang|=\"{0}\"]", wsIdString)};
+				var wsRule = new StyleRule {Value = baseSelection + String.Format("[lang=\'{0}\']", wsIdString)};
 				if (!string.IsNullOrEmpty(configNode.Style))
 					wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(configNode.Style, wsId, propertyTable));
 				if (!IsEmptyRule(wsRule))
@@ -829,14 +840,13 @@ namespace SIL.FieldWorks.XWorks
 									for (var i = enabledWsOptions.Length - 1; i > 0; i--)
 									{
 										betweenSelector = (i == enabledWsOptions.Length - 1 ? string.Empty : betweenSelector + ",") +
-														  $"{selectorOfWsOptOwner} span+span[lang|='{enabledWsOptions[i].Id}']:before";
+														  $"{selectorOfWsOptOwner} span+span[lang='{enabledWsOptions[i].Id}']:before";
 									}
 								}
 								break;
 							}
 							case DictionaryNodePictureOptions _:
 							{
-								collectionSelector = pictCaptionContent + "." + GetClassAttributeForConfig(configNode);
 								betweenSelector = string.Format("{0}> {1}+{1}:before", collectionSelector, " div");
 								break;
 							}
@@ -1259,12 +1269,12 @@ namespace SIL.FieldWorks.XWorks
 					string customBullet = exportStyleInfo.BulletInfo.m_bulletCustom;
 					declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, customBullet) });
 				}
-				else if (BulletSymbolsCollection.ContainsKey(exportStyleInfo.NumberScheme.ToString()))
+				else if (BulletSymbolsCollection.ContainsKey(numScheme))
 				{
 					string selectedBullet = BulletSymbolsCollection[numScheme];
 					declaration.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, selectedBullet) });
 				}
-				else if (NumberingStylesCollection.ContainsKey(exportStyleInfo.NumberScheme.ToString()))
+				else if (NumberingStylesCollection.ContainsKey(numScheme))
 				{
 					if (node != null)
 					{
@@ -1436,12 +1446,12 @@ namespace SIL.FieldWorks.XWorks
 
 			// fontName still null means not set in Normal Style, then get default fonts from WritingSystems configuration.
 			// Comparison, projectStyle.Name == "Normal", required to limit the font-family definition to the
-			// empty span (ie span[lang|="en"]{}. If not included, font-family will be added to many more spans.
+			// empty span (ie span[lang="en"]{}. If not included, font-family will be added to many more spans.
 			if (fontName == null && projectStyle.Name == "Normal")
 			{
-				var lgWritingSysytem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId);
-				if(lgWritingSysytem != null)
-					fontName = lgWritingSysytem.DefaultFontName;
+				var lgWritingSystem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId);
+				if(lgWritingSystem != null)
+					fontName = lgWritingSystem.DefaultFontName;
 			}
 
 			if (fontName != null)

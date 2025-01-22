@@ -28,6 +28,11 @@ using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
+	enum Direction
+	{
+		Up, Down
+	}
+
 	/// <summary>
 	/// A Slice is essentially one row of a tree.
 	/// It contains both a SliceTreeNode on the left of the splitter line, and a
@@ -37,22 +42,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// within the tree for this item, knowing whether the item can be expanded,
 	/// and optionally drawing the part of the tree that is opposite the item, and
 	/// many other things.}
-#if SLICE_IS_SPLITCONTAINER
-	/// The problem I (RandyR) ran into with this is when the DataTree scrolled and reset the Top of the slice,
-	/// the internal SplitterRectangle ended up being non-0 in many cases,
-	/// which resulted in the splitter not be in the right place (visible)
-	/// The MS docs say in a vertical orientation like this, the 'Y"
-	/// value of SplitterRectangle will always be 0.
-	/// I don't know if it is a bug in the MS code or in our code that lets it be non-0,
-	/// but I worked with it quite a while without finding the true problem.
-	/// So, I went back to a Slice having a SplitContainer,
-	/// rather than the better option of it being a SplitContainer.
-	///</remarks>
-	public class Slice : SplitContainer, IxCoreColleague
-#else
 	///</remarks>
 	public class Slice : UserControl, IxCoreColleague
-#endif
 	{
 		#region Constants
 
@@ -225,11 +216,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				CheckDisposed();
 
-#if SLICE_IS_SPLITCONTAINER
-				return this;
-#else
 				return Controls[0] as SplitContainer;
-#endif
 			}
 		}
 
@@ -468,9 +455,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary></summary>
 		public Slice()
 		{
-#if SLICE_IS_SPLITCONTAINER
-			TabStop = false;
-#else
 			// Create a SplitContainer to hold the two (or one control.
 			m_splitter = new SplitContainer {TabStop = false, AccessibleName = "Slice.SplitContainer"};
 			// Do this once right away, mainly so child controls like check box that don't control
@@ -478,7 +462,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// until our own size is definitely established by SetWidthForDataTreeLayout.
 			m_splitter.Size = Size;
 			Controls.Add(m_splitter);
-#endif
 			// This is really important. Since some slices are invisible, all must be,
 			// or Show() will reorder them.
 			Visible = false;
@@ -528,7 +511,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			if (Control != null)//grouping nodes do not have a control
+			if (Control != null) //grouping nodes do not have a control
 			{
 				//It's OK to send null as an id
 				if (m_mediator != null) // helpful for robustness and testing.
@@ -1096,7 +1079,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		/// <summary></summary>
 		public virtual void GenerateChildren(XmlNode node, XmlNode caller, ICmObject obj, int indent,
-			ref int insPos, ArrayList path, ObjSeqHashMap reuseMap, bool fUsePersistentExpansion)
+			ref int insPos, ArrayList path, bool fUsePersistentExpansion)
 		{
 			CheckDisposed();
 
@@ -1118,14 +1101,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (indentNode != null)
 			{
 				// Similarly pretest for children of caller, to see whether anything is produced.
-				ContainingDataTree.ApplyLayout(obj, this, indentNode, indent + ExtraIndent(indentNode), insPos, path, reuseMap,
+				ContainingDataTree.ApplyLayout(obj, this, indentNode, indent + ExtraIndent(indentNode), insPos, path,
 					true, out ntr);
 				//fUseChildrenOfNode = false;
 			}
 			else
 			{
 				int insPosT = insPos; // don't modify the real one in this test call.
-				ntr = ContainingDataTree.ProcessPartChildren(node, path, reuseMap, obj, this, indent + ExtraIndent(node), ref insPosT,
+				ntr = ContainingDataTree.ProcessPartChildren(node, path, obj, this, indent + ExtraIndent(node), ref insPosT,
 					true, null, false, node);
 				//fUseChildrenOfNode = true;
 			}
@@ -1161,7 +1144,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					// Record the expansion state and generate the children.
 					Expansion = DataTree.TreeItemState.ktisExpanded;
-					CreateIndentedNodes(caller, obj, indent, ref insPos, path, reuseMap, node);
+					CreateIndentedNodes(caller, obj, indent, ref insPos, path, node);
 				}
 				else
 				{
@@ -1173,7 +1156,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		/// <summary></summary>
 		public virtual void CreateIndentedNodes(XmlNode caller, ICmObject obj, int indent, ref int insPos,
-			ArrayList path, ObjSeqHashMap reuseMap, XmlNode node)
+			ArrayList path, XmlNode node)
 		{
 			CheckDisposed();
 
@@ -1187,10 +1170,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				DataTree.NodeTestResult ntr;
 				insPos = ContainingDataTree.ApplyLayout(obj, this, indentNode, indent + ExtraIndent(indentNode),
-					insPos, path, reuseMap, false, out ntr);
+					insPos, path, false, out ntr);
 			}
 			else
-				ContainingDataTree.ProcessPartChildren(node, path, reuseMap, obj, this, indent + ExtraIndent(node), ref insPos,
+				ContainingDataTree.ProcessPartChildren(node, path, obj, this, indent + ExtraIndent(node), ref insPos,
 					false, parameter, false, caller);
 		}
 
@@ -1609,7 +1592,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				if (Key.Length > 1)
 					caller = Key[Key.Length - 2] as XmlNode;
 				int insPos = iSlice + 1;
-				CreateIndentedNodes(caller, m_obj, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), m_configurationNode);
+				CreateIndentedNodes(caller, m_obj, Indent, ref insPos, new ArrayList(Key), m_configurationNode);
 
 				Expansion = DataTree.TreeItemState.ktisExpanded;
 				if (m_propertyTable != null)
@@ -2801,6 +2784,70 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return false;
 		}
 
+		private void MoveField(Direction dir)
+		{
+			CheckDisposed();
+			if (ContainingDataTree.ShowingAllFields)
+			{
+				XmlNode swapWith;
+				XmlNode fieldRef = FieldReferenceForSlice();
+
+				if (fieldRef == null)
+				{
+					Debug.Fail("Could not identify field to move on slice.");
+					return;
+				}
+
+				if (dir == Direction.Up)
+				{
+					swapWith = PrevPartSibling(fieldRef);
+				}
+				else
+				{
+					swapWith = NextPartSibling(fieldRef);
+				}
+
+				var parent = fieldRef.ParentNode;
+				// Reorder in the parent node in the xml
+				if (parent != null)
+				{
+					parent.RemoveChild(fieldRef);
+					if (dir == Direction.Up)
+						parent.InsertBefore(fieldRef, swapWith);
+					else
+						parent.InsertAfter(fieldRef, swapWith);
+				}
+
+				// Persist in the parent part (might not be the immediate parent node)
+				Inventory.GetInventory("layouts", m_cache.ProjectId.Name)
+					.PersistOverrideElement(PartParent(fieldRef));
+				ContainingDataTree.RefreshList(true);
+			}
+		}
+
+		/// <summary>
+		/// Find the last part ref in the Key which represents the part of the data and configuration for this slice.
+		/// This is built up in DataTree with the path to the part in the combined layout and parts configuration files.
+		/// There may be other part refs in the path if this slice represents a subfield.
+		/// </summary>
+		private XmlNode FieldReferenceForSlice()
+		{
+			XmlNode fieldRef = null;
+			foreach (object obj in Key)
+			{
+				var node = obj as XmlNode;
+				if (node == null || node.Name != "part" ||
+					XmlUtils.GetOptionalAttributeValue(node, "ref", null) == null)
+				{
+					continue;
+				}
+
+				fieldRef = node;
+			}
+
+			return fieldRef;
+		}
+
 		protected void SetFieldVisibility(string visibility)
 		{
 			CheckDisposed();
@@ -2907,15 +2954,90 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			XmlNode lastPartRef = null;
-			foreach (object obj in Key)
+			var lastPartRef = FieldReferenceForSlice();
+
+			return lastPartRef != null &&
+				   XmlUtils.GetOptionalAttributeValue(lastPartRef, "visibility", "always") ==
+				   visibility;
+		}
+
+		private bool CheckValidMove(UIItemDisplayProperties display, Direction dir)
+		{
+			XmlNode lastPartRef = FieldReferenceForSlice();
+
+			if (lastPartRef == null)
+				return false;
+			return dir == Direction.Up
+				? PrevPartSibling(lastPartRef) != null
+				: NextPartSibling(lastPartRef) != null;
+		}
+
+		private XmlNode PrevPartSibling(XmlNode partRef)
+		{
+			XmlNode prev = partRef.PreviousSibling;
+			while (prev != null && (prev.NodeType != XmlNodeType.Element || prev.Name != "part" ||
+				XmlUtils.GetOptionalAttributeValue(prev, "ref", null) == null ||
+				DataTree.SpecialPartRefs.Contains(XmlUtils.GetOptionalAttributeValue(prev, "ref"))))
 			{
-				var node = obj as XmlNode;
-				if (node == null || node.Name != "part" || XmlUtils.GetOptionalAttributeValue(node, "ref", null) == null)
-					continue;
-				lastPartRef = node;
+				prev = prev.PreviousSibling;
 			}
-			return lastPartRef != null && XmlUtils.GetOptionalAttributeValue(lastPartRef, "visibility", "always") == visibility;
+			return prev;
+		}
+
+		private XmlNode NextPartSibling(XmlNode partRef)
+		{
+			XmlNode next = partRef.NextSibling;
+			while (next != null && (next.NodeType != XmlNodeType.Element || next.Name != "part" ||
+				XmlUtils.GetOptionalAttributeValue(next, "ref", null) == null))
+			{
+				next = next.NextSibling;
+			}
+			return next;
+		}
+
+		private XmlNode PartParent(XmlNode partRef)
+		{
+			XmlNode parent = partRef.ParentNode;
+			while (parent != null && (parent.NodeType != XmlNodeType.Element || (parent.Name != "part" && parent.Name != "layout")))
+			{
+				parent = parent.ParentNode;
+			}
+			if(parent == null)
+				throw new ConfigurationException("Could not find parent part node", m_configurationNode);
+			return parent;
+		}
+
+		/// <summary></summary>
+		public bool OnDisplayMoveFieldUp(object args, ref UIItemDisplayProperties display)
+		{
+			CheckDisposed();
+			display.Enabled = ContainingDataTree.ShowingAllFields && CheckValidMove(display, Direction.Up);
+
+			return true;
+		}
+
+		/// <summary></summary>
+		public bool OnDisplayMoveFieldDown(object args, ref UIItemDisplayProperties display)
+		{
+			CheckDisposed();
+			display.Enabled = ContainingDataTree.ShowingAllFields && CheckValidMove(display, Direction.Down);
+			return true;
+		}
+
+		/// <summary></summary>
+		public bool OnMoveFieldUp(object args)
+		{
+			CheckDisposed();
+			MoveField(Direction.Up);
+			return true;
+		}
+
+		/// <summary></summary>
+		public bool OnMoveFieldDown(object args)
+		{
+			CheckDisposed();
+			MoveField(Direction.Down);
+			return true;
 		}
 
 		/// <summary></summary>

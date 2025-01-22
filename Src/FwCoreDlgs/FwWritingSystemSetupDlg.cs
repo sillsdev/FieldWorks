@@ -17,6 +17,7 @@ using SIL.LCModel;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.Windows.Forms.WritingSystems;
 using SIL.WritingSystems;
+using XCore;
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
@@ -26,9 +27,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private FwWritingSystemSetupModel _model;
 		private IHelpTopicProvider _helpTopicProvider;
 		private IApp _app;
+		private const string PersistProviderID = "FwWritingSystemSetup";
+		private PersistenceProvider m_persistProvider;
 
 		/// <summary/>
-		public FwWritingSystemSetupDlg(FwWritingSystemSetupModel model = null, IHelpTopicProvider helpTopicProvider = null, IApp app = null) : base()
+		public FwWritingSystemSetupDlg(FwWritingSystemSetupModel model, IHelpTopicProvider helpTopicProvider, IApp app = null, XCore.PropertyTable propTable = null) : base()
 		{
 			InitializeComponent();
 			_helpTopicProvider = helpTopicProvider;
@@ -36,6 +39,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			if (model != null)
 			{
 				BindToModel(model);
+			}
+
+			if (propTable != null)
+			{
+				m_persistProvider = new PersistenceProvider(null, propTable, PersistProviderID);
+				m_persistProvider.RestoreWindowSettings(PersistProviderID, this);
 			}
 		}
 
@@ -451,6 +460,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		private void OkButtonClick(object sender, EventArgs e)
 		{
+			if (m_persistProvider != null)
+			{
+				m_persistProvider.PersistWindowSettings(PersistProviderID, this);
+			}
+
 			if (_model.IsListValid && customDigits.AreAllDigitsValid())
 			{
 				_model.Save();
@@ -478,6 +492,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					_tabControl.SelectedTab = _numbersTab;
 				}
 				DialogResult = DialogResult.None;
+			}
+		}
+
+		private void CancelButtonClick(object sender, EventArgs e)
+		{
+			if (m_persistProvider != null)
+			{
+				m_persistProvider.PersistWindowSettings(PersistProviderID, this);
 			}
 		}
 
@@ -687,7 +709,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			newWritingSystems = new List<CoreWritingSystemDefinition>();
 			var model = new FwWritingSystemSetupModel(cache.ServiceLocator.WritingSystems, type, cache.ServiceLocator.WritingSystemManager, cache);
 			var oldWsSet = new HashSet<WSListItemModel>(model.WorkingList);
-			using (var dlg = new FwWritingSystemSetupDlg(model, helpProvider, app))
+			using (var dlg = new FwWritingSystemSetupDlg(model, helpProvider, app, ((XCore.XWindow)(app.ActiveMainWindow))?.PropTable))
 			{
 				dlg.ShowDialog(parentForm);
 				if (dlg.DialogResult == DialogResult.OK)

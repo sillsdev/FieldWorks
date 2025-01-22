@@ -2,6 +2,13 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using Icu.Collation;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
+using SIL.LCModel.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,13 +17,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Web.UI.WebControls;
-using Icu.Collation;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using SIL.FieldWorks.Common.Controls;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
-using SIL.LCModel.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -38,13 +38,13 @@ namespace SIL.FieldWorks.XWorks
 			Cache = cache;
 		}
 
-		public string GenerateWsPrefixWithString(ConfiguredLcmGenerator.GeneratorSettings settings,
-			bool displayAbbreviation, int wsId, string content)
+		public IFragment GenerateWsPrefixWithString(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings,
+			bool displayAbbreviation, int wsId, IFragment content)
 		{
 			return content;
 		}
 
-		public string GenerateAudioLinkContent(string classname, string srcAttribute, string caption,
+		public IFragment GenerateAudioLinkContent(ConfigurableDictionaryNode config, string classname, string srcAttribute, string caption,
 			string safeAudioId)
 		{
 			/*"audio": {
@@ -55,10 +55,10 @@ namespace SIL.FieldWorks.XWorks
 			dynamic audioObject = new JObject();
 			audioObject.id = safeAudioId;
 			audioObject.src = srcAttribute.Replace("\\", "/"); // expecting relative paths only
-			return WriteProcessedObject(false, audioObject.ToString(), "value");
+			return WriteProcessedObject(null, false, new StringFragment(audioObject.ToString()), "value");
 		}
 
-		public string GenerateVideoLinkContent(string className, string mediaId,
+		public IFragment GenerateVideoLinkContent(ConfigurableDictionaryNode config, string className, string mediaId,
 			string srcAttribute,
 			string caption)
 		{
@@ -66,67 +66,86 @@ namespace SIL.FieldWorks.XWorks
 			dynamic videoObject = new JObject();
 			videoObject.id = mediaId;
 			videoObject.src = srcAttribute.Replace("\\", "/"); // expecting relative paths only
-			return WriteProcessedObject(false, videoObject.ToString(), "value");
+			return WriteProcessedObject(null, false, new StringFragment(videoObject.ToString()), "value");
 		}
 
-		public string WriteProcessedObject(bool isBlock, string elementContent, string className)
+		public IFragment WriteProcessedObject(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className)
 		{
-			if (elementContent.StartsWith("{"))
+			if (elementContent.ToString().StartsWith("{"))
 				return WriteProcessedContents(elementContent, className, string.Empty, ",");
-			return WriteProcessedContents(elementContent.TrimEnd(','), className, "{", "},");
+
+			((StringFragment)elementContent).TrimEnd(',');
+			return WriteProcessedContents(elementContent, className, "{", "},");
 		}
 
-		public string WriteProcessedCollection(bool isBlock, string elementContent, string className)
+		public IFragment WriteProcessedCollection(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className)
 		{
-			return WriteProcessedContents(elementContent.TrimEnd(','), className, "[", "],");
+			((StringFragment)elementContent).TrimEnd(',');
+			return WriteProcessedContents(elementContent, className, "[", "],");
 		}
 
-		private string WriteProcessedContents(string elementContent, string className, string begin, string end)
+		private IFragment WriteProcessedContents(IFragment elementContent, string className, string begin, string end)
 		{
-			if (string.IsNullOrEmpty(elementContent))
-				return string.Empty;
+			if (elementContent.IsNullOrEmpty())
+				return new StringFragment();
+
 			var bldr = new StringBuilder();
+			var fragment = new StringFragment(bldr);
+
 			if (!string.IsNullOrEmpty(className))
 			{
 				bldr.Append($"\"{className}\": ");
 			}
 
 			bldr.Append(begin);
-			bldr.Append(elementContent.TrimEnd(','));
+			bldr.Append(elementContent.ToString().TrimEnd(','));
 			bldr.Append(end);
-			return bldr.ToString();
+			return fragment;
 		}
 
-		public string GenerateGramInfoBeforeSensesContent(string content)
+		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content, ConfigurableDictionaryNode config)
 		{
 			// The grammatical info is generated as a json property on 'senses'
-			return $"{content}";
+			return content;
 		}
 
-		public string GenerateGroupingNode(object field, string className, ConfigurableDictionaryNode config,
+		public IFragment GenerateGroupingNode(ConfigurableDictionaryNode config, object field, string className, 
 			DictionaryPublicationDecorator publicationDecorator, ConfiguredLcmGenerator.GeneratorSettings settings,
-			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, string> childContentGenerator)
+			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, IFragment> childContentGenerator)
 		{
 			//TODO: Decide how to handle grouping nodes in the json api
-			return string.Empty;
+			return new StringFragment();
 		}
 
-		public string AddCollectionItem(bool isBlock, string className, string content)
+		public IFragment AddCollectionItem(ConfigurableDictionaryNode config, bool isBlock, string className, IFragment content, bool first)
 		{
-			return string.IsNullOrEmpty(content)? string.Empty : $"{{{content}}},";
+			var fragment = new StringFragment();
+			fragment.StrBuilder.Append(content.IsNullOrEmpty() ? string.Empty : $"{{{content}}},");
+			return fragment;
 		}
 
-		public string AddProperty(string className, bool isBlockProperty, string content)
+		public IFragment AddProperty(ConfigurableDictionaryNode config, string className, bool isBlockProperty, string content)
 		{
-			return $"\"{className}\": \"{content}\",";
+			var fragment = new StringFragment($"\"{className}\": \"{content}\",");
+			return fragment;
 		}
 
-		public IFragmentWriter CreateWriter(StringBuilder bldr)
+		public IFragment CreateFragment()
 		{
-			return new JsonFragmentWriter(bldr);
+			return new StringFragment();
 		}
 
-		public void StartMultiRunString(IFragmentWriter writer, string writingSystem)
+		public IFragment CreateFragment(string str)
+		{
+			return new StringFragment(str);
+		}
+
+		public IFragmentWriter CreateWriter(IFragment bldr)
+		{
+			return new JsonFragmentWriter(((StringFragment)bldr).StrBuilder);
+		}
+
+		public void StartMultiRunString(IFragmentWriter writer, ConfigurableDictionaryNode config, string writingSystem)
 		{
 		}
 
@@ -134,7 +153,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		public void StartBiDiWrapper(IFragmentWriter writer, bool rightToLeft)
+		public void StartBiDiWrapper(IFragmentWriter writer, ConfigurableDictionaryNode config, bool rightToLeft)
 		{
 		}
 
@@ -142,7 +161,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		public void StartRun(IFragmentWriter writer, string writingSystem)
+		public void StartRun(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string writingSystem, bool first)
 		{
 			var jsonWriter = (JsonFragmentWriter)writer;
 			jsonWriter.StartObject();
@@ -162,18 +181,25 @@ namespace SIL.FieldWorks.XWorks
 			m_runBuilder.Value.Clear();
 		}
 
-		public void SetRunStyle(IFragmentWriter writer, string css)
+		public void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propertyTable, string writingSystem, string runStyle, bool error)
 		{
-			if(!string.IsNullOrEmpty(css))
-				((JsonFragmentWriter)writer).InsertJsonProperty("style", css);
+			if (!string.IsNullOrEmpty(runStyle))
+			{
+				var cache = propertyTable.GetValue<LcmCache>("cache", null);
+				var cssStyle = CssGenerator.GenerateCssStyleFromLcmStyleSheet(runStyle,
+					cache.WritingSystemFactory.GetWsFromStr(writingSystem), propertyTable);
+				string css = cssStyle?.ToString();
+				if (!string.IsNullOrEmpty(css))
+					((JsonFragmentWriter)writer).InsertJsonProperty("style", css);
+			}
 		}
 
-		public void StartLink(IFragmentWriter writer, Guid destination)
+		public void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, Guid destination)
 		{
 			((JsonFragmentWriter)writer).InsertJsonProperty("guid", "g" + destination);
 		}
 
-		public void StartLink(IFragmentWriter writer, string externalLink)
+		public void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, string externalLink)
 		{
 			((JsonFragmentWriter)writer).InsertJsonProperty("linkUrl", externalLink);
 		}
@@ -182,17 +208,17 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		public void AddLineBreakInRunContent(IFragmentWriter writer)
+		public void AddLineBreakInRunContent(IFragmentWriter writer, ConfigurableDictionaryNode config)
 		{
 			m_runBuilder.Value.Append("\n");
 		}
 
-		public void StartTable(IFragmentWriter writer)
+		public void StartTable(IFragmentWriter writer, ConfigurableDictionaryNode config)
 		{
 			// TODO: decide on a useful json representation for tables
 		}
 
-		public void AddTableTitle(IFragmentWriter writer, string content)
+		public void AddTableTitle(IFragmentWriter writer, IFragment content)
 		{
 			// TODO: decide on a useful json representation for tables
 		}
@@ -207,7 +233,7 @@ namespace SIL.FieldWorks.XWorks
 			// TODO: decide on a useful json representation for tables
 		}
 
-		public void AddTableCell(IFragmentWriter writer, bool isHead, int colSpan, HorizontalAlign alignment, string content)
+		public void AddTableCell(IFragmentWriter writer, bool isHead, int colSpan, HorizontalAlign alignment, IFragment content)
 		{
 			// TODO: decide on a useful json representation for tables
 		}
@@ -222,12 +248,12 @@ namespace SIL.FieldWorks.XWorks
 			// TODO: decide on a useful json representation for tables
 		}
 
-		public void EndTable(IFragmentWriter writer)
+		public void EndTable(IFragmentWriter writer, ConfigurableDictionaryNode config)
 		{
 			// TODO: decide on a useful json representation for tables
 		}
 
-		public void StartEntry(IFragmentWriter xw, string className, Guid entryGuid, int index, RecordClerk clerk)
+		public void StartEntry(IFragmentWriter xw, ConfigurableDictionaryNode config, string className, Guid entryGuid, int index, RecordClerk clerk)
 		{
 			var jsonWriter = (JsonFragmentWriter)xw;
 			jsonWriter.StartObject();
@@ -255,9 +281,10 @@ namespace SIL.FieldWorks.XWorks
 			jsonWriter.InsertRawJson(",");
 		}
 
-		public void AddEntryData(IFragmentWriter xw, List<string> pieces)
+		public void AddEntryData(IFragmentWriter xw, List<ConfiguredLcmGenerator.ConfigFragment> pieces)
 		{
-			pieces.ForEach(((JsonFragmentWriter)xw).InsertRawJson);
+			foreach (ConfiguredLcmGenerator.ConfigFragment piece in pieces)
+				((JsonFragmentWriter)xw).InsertRawJson(piece.Frag);
 		}
 
 		public void EndEntry(IFragmentWriter xw)
@@ -265,11 +292,11 @@ namespace SIL.FieldWorks.XWorks
 			((JsonFragmentWriter)xw).EndObject();
 		}
 
-		public void AddCollection(IFragmentWriter writer, bool isBlockProperty, string className, string content)
+		public void AddCollection(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty, string className, IFragment content)
 		{
 			((JsonFragmentWriter)writer).InsertPropertyName(className);
 			BeginArray(writer);
-			WriteProcessedContents(writer, content);
+			WriteProcessedContents(writer, config, content);
 			EndArray(writer);
 		}
 
@@ -283,7 +310,7 @@ namespace SIL.FieldWorks.XWorks
 			((JsonFragmentWriter)writer).EndArray();
 		}
 
-		public void BeginObjectProperty(IFragmentWriter writer, bool isBlockProperty,
+		public void BeginObjectProperty(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty,
 			string className)
 		{
 			((JsonFragmentWriter)writer).InsertPropertyName(className);
@@ -295,18 +322,25 @@ namespace SIL.FieldWorks.XWorks
 			((JsonFragmentWriter)writer).EndObject();
 		}
 
-		public void WriteProcessedContents(IFragmentWriter writer, string contents)
+		public void WriteProcessedContents(IFragmentWriter writer, ConfigurableDictionaryNode config, IFragment contents)
 		{
-			if (!string.IsNullOrEmpty(contents))
+			if (!contents.IsNullOrEmpty())
 			{
 				// Try not to double up, but do try to end content with a ',' for building up objects
-				((JsonFragmentWriter)writer).InsertRawJson(contents.TrimEnd(',') + ",");
+				string curStr = contents.ToString();
+				StringBuilder bldr = ((StringFragment)contents).StrBuilder;
+				bldr.Clear();
+				bldr.Append(curStr.TrimEnd(',') + ",");
+				((JsonFragmentWriter)writer).InsertRawJson(contents);
 			}
 		}
 
-		public string AddImage(string classAttribute, string srcAttribute, string pictureGuid)
+		public IFragment AddImage(ConfigurableDictionaryNode config, string classAttribute, string srcAttribute, string pictureGuid)
 		{
 			var bldr = new StringBuilder();
+			var fragment = new StringFragment();
+			fragment.StrBuilder = bldr;
+
 			var sw = new StringWriter(bldr);
 			using (var xw = new JsonTextWriter(sw))
 			{
@@ -315,24 +349,26 @@ namespace SIL.FieldWorks.XWorks
 				xw.WritePropertyName("src");
 				xw.WriteValue(srcAttribute.Replace("\\", "/")); // expecting relative paths only
 				xw.Flush();
-				return bldr.ToString();
+				return fragment;
 			}
 		}
 
-		public string AddImageCaption(string captionContent)
+		public IFragment AddImageCaption(ConfigurableDictionaryNode config, IFragment captionContent)
 		{
-			return captionContent;
+			return new StringFragment(captionContent.ToString());
 		}
 
-		public string GenerateSenseNumber(string formattedSenseNumber)
+		public IFragment GenerateSenseNumber(ConfigurableDictionaryNode config, string formattedSenseNumber, string wsId)
 		{
-			return formattedSenseNumber;
+			return new StringFragment(formattedSenseNumber);
 		}
 
-		public string AddLexReferences(bool generateLexType, string lexTypeContent, string className,
-			string referencesContent, bool typeBefore)
+		public IFragment AddLexReferences(ConfigurableDictionaryNode config, bool generateLexType, IFragment lexTypeContent, string className,
+			IFragment referencesContent, bool typeBefore)
 		{
 			var bldr = new StringBuilder();
+			var fragment = new StringFragment(bldr);
+
 			var sw = new StringWriter(bldr);
 			using (var xw = new JsonTextWriter(sw))
 			{
@@ -341,28 +377,28 @@ namespace SIL.FieldWorks.XWorks
 				if (generateLexType && typeBefore)
 				{
 					xw.WritePropertyName("referenceType");
-					xw.WriteValue(lexTypeContent);
+					xw.WriteValue(lexTypeContent.ToString());
 				}
 				// Write an array with the references.
 				xw.WritePropertyName("references");
 				xw.WriteStartArray();
-				xw.WriteRaw(referencesContent);
+				xw.WriteRaw(referencesContent.ToString());
 				xw.WriteEndArray();
 				// Write properties related to the factored type (if any and if after).
 				if (generateLexType && !typeBefore)
 				{
 					xw.WritePropertyName("referenceType");
-					xw.WriteValue(lexTypeContent);
+					xw.WriteValue(lexTypeContent.ToString());
 				}
 
 				xw.WriteEndObject();
 				xw.WriteRaw(",");
 				xw.Flush();
-				return bldr.ToString();
+				return fragment;
 			}
 		}
 
-		public void BeginCrossReference(IFragmentWriter writer, bool isBlockProperty, string classAttribute)
+		public void BeginCrossReference(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty, string classAttribute)
 		{
 			// In json the context is enough. We don't need the extra 'span' or 'div' with the item name
 			// If the consumer needs to match up (to use our css) they can assume the child is the collection singular
@@ -375,46 +411,52 @@ namespace SIL.FieldWorks.XWorks
 			((JsonFragmentWriter)writer).InsertRawJson(",");
 		}
 
+		public void BetweenCrossReferenceType(IFragment content, ConfigurableDictionaryNode node, bool firstItem)
+		{
+		}
+
 		/// <summary>
 		/// Generates data for all senses of an entry. For better processing of json add sharedGramInfo as a separate property object
 		/// </summary>
-		public string WriteProcessedSenses(bool isBlock, string sensesContent, string classAttribute, string sharedGramInfo)
+		public IFragment WriteProcessedSenses(ConfigurableDictionaryNode config, bool isBlock, IFragment sensesContent, string classAttribute, IFragment sharedGramInfo)
 		{
-			return $"{sharedGramInfo}{WriteProcessedCollection(isBlock, sensesContent, classAttribute)}";
+			return new StringFragment($"{sharedGramInfo.ToString()}{WriteProcessedCollection(config, isBlock, sensesContent, classAttribute)}");
 		}
 
-		public string AddAudioWsContent(string wsId, Guid linkTarget, string fileContent)
+		public IFragment AddAudioWsContent(string wsId, Guid linkTarget, IFragment fileContent)
 		{
-			return $"{{\"guid\":\"g{linkTarget}\",\"lang\":\"{wsId}\",{fileContent}}}";
+			return new StringFragment($"{{\"guid\":\"g{linkTarget}\",\"lang\":\"{wsId}\",{fileContent}}}");
 		}
 
-		public string GenerateErrorContent(StringBuilder badStrBuilder)
+		public IFragment GenerateErrorContent(StringBuilder badStrBuilder)
 		{
 			// We can't generate comments in json - But adding unicode tofu in front of the cleaned bad string should help
 			// highlight the problem content without crashing the user or blocking the rest of the export
-			return $"\\u+0FFF\\u+0FFF\\u+0FFF{badStrBuilder}";
+			return new StringFragment($"\\u+0FFF\\u+0FFF\\u+0FFF{badStrBuilder}");
 		}
 
-		public string AddSenseData(string senseNumberSpan, bool isBlock, Guid ownerGuid,
-			string senseContent, string className)
+		public IFragment AddSenseData(ConfigurableDictionaryNode config, IFragment senseNumberSpan, Guid ownerGuid, IFragment senseContent, bool first)
 		{
 			var bldr = new StringBuilder();
+			var fragment = new StringFragment(bldr);
+
 			var sw = new StringWriter(bldr);
 			using (var xw = new JsonTextWriter(sw))
 			{
 				xw.WriteStartObject();
-				if (!string.IsNullOrEmpty(senseNumberSpan))
+				if (!senseNumberSpan.IsNullOrEmpty())
 				{
 					xw.WritePropertyName("senseNumber");
-					xw.WriteValue(senseNumberSpan);
+					xw.WriteValue(senseNumberSpan.ToString());
 				}
 				xw.WritePropertyName("guid");
 				xw.WriteValue("g" + ownerGuid);
-				xw.WriteRaw("," + senseContent.TrimEnd(','));
+				xw.WriteRaw("," + senseContent.ToString().TrimEnd(','));
 				xw.WriteEndObject();
 				xw.WriteRaw(",");
 				xw.Flush();
-				return bldr.ToString();
+
+				return fragment;
 			}
 		}
 
@@ -503,6 +545,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				jsonWriter.WriteRaw(jsonContent);
 			}
+
+			public void InsertRawJson(IFragment jsonContent)
+			{
+				jsonWriter.WriteRaw(jsonContent.ToString());
+			}
 		}
 
 		/// <summary>
@@ -519,19 +566,27 @@ namespace SIL.FieldWorks.XWorks
 		/// could index the entries after upload and before processing.
 		/// </remarks>
 		public static List<JArray> SavePublishedJsonWithStyles(int[] entriesToSave, DictionaryPublicationDecorator publicationDecorator, int batchSize,
-			DictionaryConfigurationModel configuration, PropertyTable propertyTable, string jsonPath, IThreadedProgress progress)
+			DictionaryConfigurationModel configuration, PropertyTable propertyTable, string jsonPath, IThreadedProgress progress, out int[] entryIds)
 		{
 			var entryCount = entriesToSave.Length;
 			var cssPath = Path.ChangeExtension(jsonPath, "css");
 			var cache = propertyTable.GetValue<LcmCache>("cache", null);
+			var entryIdsList = new List<int>();
+
 			// Don't display letter headers if we're showing a preview in the Edit tool or we're not sorting by headword
 			using (var cssWriter = new StreamWriter(cssPath, false, Encoding.UTF8))
 			{
 				var readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(jsonPath),
 					ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), Path.GetFileName(cssPath) == "configured.css") { ContentGenerator = new LcmJsonGenerator(cache)};
+				settings.StylesGenerator.AddGlobalStyles(configuration, readOnlyPropertyTable);
 				var displayXhtmlSettings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(jsonPath),
 						ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), Path.GetFileName(cssPath) == "configured.css");
+				// Use the same StyleGenerator for both GeneratorSettings to prevent having two that
+				// could contain different data for unique names. The unique names can be generated
+				// in different orders.
+				displayXhtmlSettings.StylesGenerator = settings.StylesGenerator;
+
 				var entryContents = new Tuple<ICmObject, StringBuilder, StringBuilder>[entryCount];
 				var entryActions = new List<Action>();
 				// For every entry in the page generate an action that will produce the xhtml document fragment for that entry
@@ -581,6 +636,7 @@ namespace SIL.FieldWorks.XWorks
 							entryObject.displayXhtml = entryData.Item3.ToString();
 							jsonWriter.WriteRaw(entryObject.ToString());
 							jsonWriter.WriteRaw(",");
+							entryIdsList.Add(entryData.Item1.Hvo);
 						}
 						jsonWriter.WriteEndArray();
 						jsonWriter.Flush();
@@ -592,8 +648,10 @@ namespace SIL.FieldWorks.XWorks
 				if (progress != null)
 					progress.Message = xWorksStrings.ksGeneratingStyleInfo;
 
-				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, readOnlyPropertyTable));
+				cssWriter.Write(((CssGenerator)settings.StylesGenerator).GetStylesString());
 				cssWriter.Flush();
+
+				entryIds = entryIdsList.ToArray();
 				return generatedEntries;
 			}
 		}

@@ -467,6 +467,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			resources.ApplyResources(this._cancelBtn, "_cancelBtn");
 			this._cancelBtn.Name = "_cancelBtn";
 			this._cancelBtn.UseVisualStyleBackColor = true;
+			this._cancelBtn.Click += new System.EventHandler(this.CancelButtonClick);
 			// 
 			// _okBtn
 			// 

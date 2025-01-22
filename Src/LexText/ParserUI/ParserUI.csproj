@@ -43,7 +43,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -93,7 +93,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>  
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <OutputPath>..\..\..\Output\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -146,6 +146,8 @@
     <OutputPath>..\..\..\Output\Debug\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
@@ -227,12 +229,14 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Widgets">
       <Name>Widgets</Name>
       <HintPath>..\..\..\Output\Debug\Widgets.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
     <Reference Include="xCore">
       <Name>xCore</Name>
       <HintPath>..\..\..\Output\Debug\xCore.dll</HintPath>
@@ -253,6 +257,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
+    <Reference Include="netstandard" />
     <Reference Include="ViewsInterfaces">
       <HintPath>..\..\..\Output\Debug\ViewslInterfaces.dll</HintPath>
     </Reference>
@@ -264,6 +269,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="FileTimeToDateTimeConverter.cs" />
     <Compile Include="HCTrace.cs" />
     <Compile Include="ImportWordSetDlg.cs">
       <SubType>Form</SubType>
@@ -272,6 +278,13 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ParserConnection.cs" />
+    <Compile Include="ParserReportDialog.xaml.cs">
+      <DependentUpon>ParserReportDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ParserReportsDialog.xaml.cs">
+      <DependentUpon>ParserReportsDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ParserReportsViewModel.cs" />
     <Compile Include="ParserListener.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -279,12 +292,15 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="IParserTrace.cs" />
+    <Compile Include="ParserReportViewModel.cs" />
     <Compile Include="ParserTraceUITransform.cs" />
     <Compile Include="ParserUIStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ParserUIStrings.resx</DependentUpon>
     </Compile>
+    <Compile Include="MillisecondsToTimeSpanConverter.cs" />
+    <Compile Include="PositiveIntToRedBrushConverter.cs" />
     <Compile Include="TryAWordDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -312,11 +328,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ParserUIStrings.resx">
       <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ParserUIStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="TryAWordDlg.resx">
       <DependentUpon>TryAWordDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -335,6 +352,26 @@
       <ProductName>.NET Framework 3.5</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="ParserReportDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ParserReportsDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Controls\DetailControls\DetailControls.csproj">
+      <Project>{C65D2B3D-543D-4F63-B35D-5859F5ECDE1E}</Project>
+      <Name>DetailControls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Controls\XMLViews\XMLViews.csproj">
+      <Project>{BC490547-D278-4442-BD34-3580DBEFC405}</Project>
+      <Name>XMLViews</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

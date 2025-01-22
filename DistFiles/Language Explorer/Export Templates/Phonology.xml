@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template format="htm" type="phonology" datatype="Phonology">
+	<FxtDocumentDescription dataLabel="Phonology" formatLabel="Phonology XML" defaultExtension="xml" filter="XML files (*.xml)|*.xml|All files (*.*)|*.*">Export Phonology as an XML file.</FxtDocumentDescription>
+</template>

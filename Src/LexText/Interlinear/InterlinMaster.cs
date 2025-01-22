@@ -166,9 +166,8 @@ namespace SIL.FieldWorks.IText
 		{
 			InitializeInterlinearTabControl(site);
 			//if (site is ISetupLineChoices && m_tabCtrl.SelectedIndex != ktpsCChart)
-			if (site is ISetupLineChoices)
+			if (site is ISetupLineChoices interlinearView)
 			{
-				var interlinearView = site as ISetupLineChoices;
 				interlinearView.SetupLineChoices($"InterlinConfig_v3_{(interlinearView.ForEditing ? "Edit" : "Doc")}_{InterlinearTab}",
 												 $"InterlinConfig_v2_{(interlinearView.ForEditing ? "Edit" : "Doc")}_{InterlinearTab}",
 												 GetLineMode());
@@ -290,9 +289,7 @@ namespace SIL.FieldWorks.IText
 				return; // nothing to save...for now, don't overwrite existing one.
 
 			if (RootStText == null)
-			{
 				return;
-			}
 
 			AnalysisOccurrence curAnalysis = null;
 			var fSaved = false;
@@ -509,17 +506,11 @@ namespace SIL.FieldWorks.IText
 			CheckDisposed();
 
 			display.Visible = true;
-			if (m_tabCtrl.SelectedIndex != ktpsRawText)
-				display.Enabled = false;
-			else
-			{
-				//LT-6904 : exposed this case where the m_rtPane was null
-				// (another case of toolbar processing being done at an unepxected time)
-				if (m_rtPane == null)
-					display.Enabled = false;
-				else
-					display.Enabled = m_rtPane.LexiconLookupEnabled();
-			}
+
+			//LT-6904 : exposed the case where the m_rtPane was null
+			// (another case of toolbar processing being done at an unexpected time)
+			display.Enabled = m_tabCtrl.SelectedIndex == ktpsRawText ?
+				m_rtPane?.LexiconLookupEnabled() ?? false : false;
 			return true;
 		}
 
@@ -600,16 +591,9 @@ namespace SIL.FieldWorks.IText
 						m_infoPane.Dock = DockStyle.Fill;
 
 						m_infoPane.Enabled = m_infoPane.CurrentRootHvo != 0;
-						if (m_infoPane.Enabled)
-						{
-							m_infoPane.BackColor = System.Drawing.SystemColors.Control;
-							if (ParentForm == Form.ActiveForm)
-								m_infoPane.Focus();
-						}
-						else
-						{
-							m_infoPane.BackColor = System.Drawing.Color.White;
-						}
+						m_infoPane.BackColor = m_infoPane.Enabled ? SystemColors.Control : Color.White;
+						if (m_infoPane.Enabled && ParentForm == Form.ActiveForm)
+							m_infoPane.Focus();
 						break;
 					default:
 						break;
@@ -637,7 +621,7 @@ namespace SIL.FieldWorks.IText
 		private void SetupChartPane()
 		{
 			(m_constChartPane as IxCoreColleague).Init(m_mediator, m_propertyTable, m_configurationParameters);
-			m_constChartPane.BackColor = System.Drawing.SystemColors.Window;
+			m_constChartPane.BackColor = SystemColors.Window;
 			m_constChartPane.Name = "m_constChartPane";
 			m_constChartPane.Dock = DockStyle.Fill;
 		}
@@ -725,12 +709,11 @@ namespace SIL.FieldWorks.IText
 			// Do this BEFORE calling InitBase, which calls ShowRecord, whose correct behavior
 			// depends on the suppressAutoCreate flag.
 			bool fHideTitlePane = XmlUtils.GetBooleanAttributeValue(configurationParameters, "hideTitleContents");
+
+			// When used as the third pane of a concordance, we don't want the
+			// title/contents stuff.
 			if (fHideTitlePane)
-			{
-				// When used as the third pane of a concordance, we don't want the
-				// title/contents stuff.
 				m_tcPane.Visible = false;
-			}
 			m_fSuppressAutoCreate = XmlUtils.GetBooleanAttributeValue(configurationParameters,
 				"suppressAutoCreate");
 
@@ -773,15 +756,10 @@ namespace SIL.FieldWorks.IText
 		{
 			// If the Record Clerk has remembered we're IsPersistedForAnInterlinearTabPage,
 			// and we haven't already switched to that tab page, do so now.
-			if (this.Visible && m_tabCtrl.SelectedIndex != (int)InterlinearTab)
-			{
+			m_tabCtrl.SelectedIndex = Visible && m_tabCtrl.SelectedIndex != (int)InterlinearTab ?
 				// Switch to the persisted tab page index.
-				m_tabCtrl.SelectedIndex = (int)InterlinearTab;
-			}
-			else
-			{
-				m_tabCtrl.SelectedIndex = ktpsRawText;
-			}
+				(int)InterlinearTab :
+				ktpsRawText;
 		}
 
 		/// <summary>
@@ -798,7 +776,7 @@ namespace SIL.FieldWorks.IText
 
 		private bool SaveWorkInProgress()
 		{
-			if (m_idcAnalyze != null && m_idcAnalyze.Visible &&  !m_idcAnalyze.PrepareToGoAway())
+			if (m_idcAnalyze != null && m_idcAnalyze.Visible && !m_idcAnalyze.PrepareToGoAway())
 				return false;
 			if (m_idcGloss != null && m_idcGloss.Visible && !m_idcGloss.PrepareToGoAway())
 				return false;
@@ -912,9 +890,7 @@ namespace SIL.FieldWorks.IText
 				return;
 			//This is our very first time trying to show a text, if possible we would like to show the stored text.
 			if (m_bookmarks == null)
-			{
 				m_bookmarks = new Dictionary<Tuple<string, Guid>, InterAreaBookmark>();
-			}
 
 			// It's important not to do this if there is a filter, as there's a good chance the new
 			// record doesn't pass the filter and we get into an infinite loop. Also, if the user
@@ -962,27 +938,21 @@ namespace SIL.FieldWorks.IText
 			{
 				var stText = Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(hvoRoot);
 				if (stText.ParagraphsOS.Count == 0)
-				{
 					NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 						((InterlinearTextsRecordClerk)Clerk).CreateFirstParagraph(stText, Cache.DefaultVernWs));
-				}
 				if (stText.ParagraphsOS.Count == 1 && ((IStTxtPara)stText.ParagraphsOS[0]).Contents.Length == 0)
 				{
 					// If we have restarted FLEx since this text was created, the WS has been lost and replaced with the userWs.
 					// If this is the case, default to the Default Vernacular WS (LT-15688 & LT-20837)
 					var userWs = Cache.ServiceLocator.WritingSystemManager.UserWs;
 					if(stText.MainWritingSystem == userWs)
-					{
 						NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 							((IStTxtPara)stText.ParagraphsOS[0]).Contents = TsStringUtils.MakeString(string.Empty, Cache.DefaultVernWs));
-					}
 
 					// since we have no text, we should not sit on any of the analyses tabs,
 					// the info tab is still useful though.
 					if (InterlinearTab != TabPageSelection.Info && InterlinearTab != TabPageSelection.RawText)
-					{
 						InterlinearTab = TabPageSelection.RawText;
-					}
 					// Don't steal the focus from another window.  See FWR-1795.
 					if (ParentForm == Form.ActiveForm)
 						m_rtPane.Focus();
@@ -1054,13 +1024,9 @@ namespace SIL.FieldWorks.IText
 			{
 				InterAreaBookmark mark;
 				if (m_bookmarks.TryGetValue(new Tuple<string, Guid>(CurrentTool, stText.Guid), out mark))
-				{
 					mark.Restore(IndexOfTextRecord);
-				}
 				else
-				{
 					m_bookmarks.Add(new Tuple<string, Guid>(CurrentTool, stText.Guid), new InterAreaBookmark(this, Cache, m_propertyTable));
-				}
 			}
 		}
 
@@ -1312,7 +1278,6 @@ namespace SIL.FieldWorks.IText
 				Guid guid = Guid.Empty;
 				if (Clerk.CurrentObject != null)
 					guid = Clerk.CurrentObject.Guid;
-				LcmCache cache = Cache;
 				// Not sure what will happen with guid == Guid.Empty on the link...
 				FwLinkArgs link = new FwLinkArgs(toolName, guid, InterlinearTab.ToString());
 				link.PropertyTableEntries.Add(new Property("InterlinearTab",
@@ -1358,9 +1323,8 @@ namespace SIL.FieldWorks.IText
 			ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
-			var fCanDisplayAddWordsToLexiconPanelBarButton = InterlinearTab == TabPageSelection.Gloss;
-			display.Visible = fCanDisplayAddWordsToLexiconPanelBarButton;
-			display.Enabled = fCanDisplayAddWordsToLexiconPanelBarButton;
+			// Can display add words to lexicon panel bar button
+			display.Visible = display.Enabled = InterlinearTab == TabPageSelection.Gloss;
 			return true;
 		}
 
@@ -1381,9 +1345,8 @@ namespace SIL.FieldWorks.IText
 			ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
-			var fCanDisplayAddWordsToLexiconPanelBarButton = InterlinearTab == TabPageSelection.Info;
-			display.Visible = fCanDisplayAddWordsToLexiconPanelBarButton;
-			display.Enabled = fCanDisplayAddWordsToLexiconPanelBarButton;
+			// Can display add words to lexicon panel bar button
+			display.Visible = display.Enabled = InterlinearTab == TabPageSelection.Info;
 			return true;
 		}
 
@@ -1435,7 +1398,6 @@ namespace SIL.FieldWorks.IText
 			// params.
 			if (m_configurationParameters != null /* && !Cache.DatabaseAccessor.IsTransactionOpen() */)
 				Clerk.SaveOnChangeRecord();
-			bool fParsedTextDuringSave = false;
 			// Pane-individual updates; None did anything, I removed them; GJM
 			// Is this where we need to hook in reparsing of segments/paras, etc. if RawTextPane is deselected?
 			// No. See DomainImpl.AnalysisAdjuster.

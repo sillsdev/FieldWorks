@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GenerateHCConfig</RootNamespace>
     <AssemblyName>GenerateHCConfig</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -84,6 +84,7 @@
     <Reference Include="SIL.Machine">
       <HintPath>..\..\Output\Debug\SIL.Machine.dll</HintPath>
     </Reference>
+    <Reference Include="netstandard" />
     <Reference Include="SIL.WritingSystems, Version=3.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\SIL.WritingSystems.dll</HintPath>

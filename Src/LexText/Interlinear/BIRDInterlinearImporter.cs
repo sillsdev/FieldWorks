@@ -19,6 +19,7 @@ using SIL.LCModel.Application.ApplicationServices;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
+using SIL.Extensions;
 
 namespace SIL.FieldWorks.IText
 {
@@ -723,8 +724,12 @@ namespace SIL.FieldWorks.IText
 			IAnalysis analysis = null;
 			var wsFact = cache.WritingSystemFactory;
 			ILgWritingSystem wsMainVernWs = null;
+			IWfiMorphBundle bundle = null;
+
 			foreach (var wordItem in word.Items)
 			{
+				if (wordItem.Value == null)
+					continue;
 				ITsString wordForm = null;
 				switch (wordItem.type)
 				{
@@ -755,21 +760,90 @@ namespace SIL.FieldWorks.IText
 			}
 			else
 			{
-				Debug.Assert(analysis != null, "What else could this do?");
+				// There was an invalid analysis in the file. We can't do anything with it.
+				return null;
 			}
-			//Add any morphemes to the thing
+
+			// Fill in morphemes, lex. entries, lex. gloss, and lex.gram.info
 			if (word.morphemes != null && word.morphemes.morphs.Length > 0)
 			{
-				//var bundle = newSegment.Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>().Create();
-				//analysis.Analysis.MorphBundlesOS.Add(bundle);
-				//foreach (var morpheme in word.morphemes)
-				//{
-				//    //create a morpheme
-				//    foreach(item item in morpheme.items)
-				//    {
-				//        //fill in morpheme's stuff
-				//    }
-				//}
+				ILexEntryRepository lex_entry_repo = cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+				IMoMorphSynAnalysisRepository msa_repo = cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>();
+				int morphIdx = 0;
+				foreach (var morpheme in word.morphemes.morphs)
+				{
+					var itemDict = new Dictionary<string, Tuple<string, string>>();
+					if (analysis.Analysis == null)
+					{
+						break;
+					}
+
+					foreach (item item in morpheme.items)
+					{
+						itemDict[item.type] = new Tuple<string, string>(item.lang, item.Value);
+					}
+
+					if (itemDict.ContainsKey("txt")) // Morphemes
+					{
+						int ws = GetWsEngine(wsFact, itemDict["txt"].Item1).Handle;
+						var morphForm = itemDict["txt"].Item2;
+						ITsString wf = TsStringUtils.MakeString(morphForm, ws);
+
+						// If we already have a bundle use that one
+						bundle = analysis.Analysis.MorphBundlesOS.ElementAtOrDefault(morphIdx);
+						if (bundle == null || bundle.Form.get_String(ws).Text != morphForm)
+						{
+							// Otherwise create a new bundle and add it to analysis
+							bundle = cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>().Create();
+							if (analysis.Analysis.MorphBundlesOS.Count >= word.morphemes.morphs.Length)
+							{
+								analysis.Analysis.MorphBundlesOS.RemoveAt(morphIdx);
+							}
+							analysis.Analysis.MorphBundlesOS.Insert(morphIdx, bundle);
+						}
+						bundle.Form.set_String(ws, wf);
+					}
+
+					if (itemDict.ContainsKey("cf")) // Lex. Entries
+					{
+						int ws_cf = GetWsEngine(wsFact, itemDict["cf"].Item1).Handle;
+						ILexEntry entry = null;
+						var entries = lex_entry_repo.AllInstances().Where(
+							m => StringServices.CitationFormWithAffixTypeStaticForWs(m, ws_cf, string.Empty) == itemDict["cf"].Item2);
+						if (entries.Count() == 1)
+						{
+							entry = entries.First();
+						}
+						else if (itemDict.ContainsKey("hn")) // Homograph Number
+						{
+							entry = entries.FirstOrDefault(m => m.HomographNumber.ToString() == itemDict["hn"].Item2);
+						}
+						if (entry != null)
+						{
+							bundle.MorphRA = entry.LexemeFormOA;
+
+							if (itemDict.ContainsKey("gls")) // Lex. Gloss
+							{
+								int ws_gls = GetWsEngine(wsFact, itemDict["gls"].Item1).Handle;
+								ILexSense sense = entry.SensesOS.FirstOrDefault(s => s.Gloss.get_String(ws_gls).Text == itemDict["gls"].Item2);
+								if (sense != null)
+								{
+									bundle.SenseRA = sense;
+								}
+							}
+						}
+					}
+
+					if (itemDict.ContainsKey("msa")) // Lex. Gram. Info
+					{
+						IMoMorphSynAnalysis match = msa_repo.AllInstances().FirstOrDefault(m => m.InterlinearAbbr == itemDict["msa"].Item2);
+						if (match != null)
+						{
+							bundle.MsaRA = match;
+						}
+					}
+					morphIdx++;
+				}
 			}
 			return analysis;
 		}

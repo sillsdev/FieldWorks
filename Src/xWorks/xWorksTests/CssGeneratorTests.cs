@@ -185,7 +185,7 @@ namespace SIL.FieldWorks.XWorks
 			cssGenerator.AddStyles(subEntryHeadwordNode);
 			var cssResult = cssGenerator.GetStylesString();
 			// verify that the css result contains a line similar to: .sharedsubentries .sharedsubentry .headword span{
-			VerifyRegex(cssResult, @"^\s*\.sharedsubentries-mainheadword>\s*span\s*{.*",
+			VerifyRegex(cssResult, @"^\s*\.mainheadword-sharedsubentries>\s*span\s*{.*",
 				"Css for child node(headword) did not generate a match");
 		}
 
@@ -338,9 +338,9 @@ namespace SIL.FieldWorks.XWorks
 			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg\s*:after\s*{\s*content\s*:\s*'}';\s*}").Success,
 							  "css after rule for the grouping node was not generated");
 			// Check result for before and after rules equivalent to .headword span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
-			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg-mh>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}").Success,
+			Assert.IsTrue(Regex.Match(cssResult, @"\.mh-grouping_hwg>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}").Success,
 							  "css before rule with Z content not found on headword");
-			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg-mh>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}").Success,
+			Assert.IsTrue(Regex.Match(cssResult, @"\.mh-grouping_hwg>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}").Success,
 							  "css after rule with A content not found on headword");
 		}
 
@@ -438,10 +438,10 @@ namespace SIL.FieldWorks.XWorks
 			cssGenerator.AddStyles(mainEntryHeadword);
 			cssGenerator.AddStyles(headwordNode);
 			var cssResult = cssGenerator.GetStylesString();
-			// Check result for before and after rules equivalent to .subentries-headword span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
-			VerifyRegex(cssResult, @"\.subentries-headword>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}",
+			// Check result for before and after rules equivalent to .headword-subentries span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
+			VerifyRegex(cssResult, @"\.headword-subentries>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}",
 							  "css before rule with Z content not found on headword");
-			VerifyRegex(cssResult, @"\.subentries-headword>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}",
+			VerifyRegex(cssResult, @"\.headword-subentries>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}",
 							  "css after rule with A content not found on headword");
 		}
 
@@ -544,7 +544,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			VerifyRegex(cssResult, @".definitionorgloss> span:first-child:before{.*content:'<';.*}", "Before not generated.");
-			VerifyRegex(cssResult, @".definitionorgloss> span\+span\[lang\|=\'en\']:before{.*content:',';.*}", "Between not generated.");
+			VerifyRegex(cssResult, @".definitionorgloss> span\+span\[lang\=\'en\']:before{.*content:',';.*}", "Between not generated.");
 			VerifyRegex(cssResult, @".definitionorgloss> span:last-child:after{.*content:'>';.*}", "After not generated.");
 		}
 
@@ -1223,7 +1223,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			//Verify that vernacular was converted into french to match the vernholder node
-			Assert.That(cssResult, Contains.Substring(".vernholder> span[lang|=\"fr\"]"));
+			Assert.That(cssResult, Contains.Substring(".vernholder> span[lang='fr']"));
 		}
 
 		[Test]
@@ -1247,7 +1247,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			//Verify that analysis was converted into english to match the analyholder node
-			Assert.That(cssResult, Contains.Substring(".analyholder> span[lang|=\"en\"]"));
+			Assert.That(cssResult, Contains.Substring(".analyholder> span[lang='en']"));
 		}
 
 		[Test]
@@ -1289,7 +1289,7 @@ namespace SIL.FieldWorks.XWorks
 			using (var XHTMLWriter = XmlWriter.Create(xhtmResult))
 			{
 				XHTMLWriter.WriteStartElement("body");
-				var content = ConfiguredLcmGenerator.GenerateContentForEntry(entry, testNode, null, DefaultSettings);
+				var content = ConfiguredLcmGenerator.GenerateContentForEntry(entry, testNode, null, DefaultSettings).ToString();
 				XHTMLWriter.WriteRaw(content);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
@@ -1331,7 +1331,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(cssResult, Does.Not.Contain(".headword"));
 			Assert.That(cssResult, Contains.Substring(".tailwind"));
 
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, testParentNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, testParentNode, null, DefaultSettings).ToString();
 			const string positiveTest = "//*[@class='tailwind']";
 			const string negativeTest = "//*[@class='headword']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(negativeTest);
@@ -1372,7 +1372,7 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(cssResult, Contains.Substring(".gloss"));
 
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, testEntryNode, null, DefaultSettings);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, testEntryNode, null, DefaultSettings).ToString();
 			const string positiveTest = "/*[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='gloss']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(positiveTest, 1);
 		}
@@ -1400,8 +1400,8 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			//make sure that fontinfo with the subscript overrides made it into css
 			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvSub, FwUnderlineType.kuntNone, Color.Black, cssResult);
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.sil*\.fieldworks.xworks.testrootclass>\s*span\[lang|='fr']\{.*position\:relative\*top\:-0.2em.*", RegexOptions.Singleline).Success,
-				  "Subscript's positiion not generated properly");
+			Assert.IsTrue(Regex.Match(cssResult, @".*\.sil*\.fieldworks.xworks.testrootclass>\s*span\[lang='fr'\]\{.*position\:relative;\s*top\:0.3em.*", RegexOptions.Singleline).Success,
+				  "Subscript's position not generated properly");
 		}
 
 		[Test]
@@ -1427,8 +1427,8 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			//make sure that fontinfo with the superscript overrides made it into css
 			VerifyExtraFontInfoInCss(0, FwSuperscriptVal.kssvSuper, FwUnderlineType.kuntNone, Color.Black, cssResult);
-			Assert.IsTrue(Regex.Match(cssResult, @".*\.sil*\.fieldworks.xworks.testrootclass>\s*span\[lang|='fr']\{.*position\:relative\*top\:\0.2em.*", RegexOptions.Singleline).Success,
-				  "Superscript's positiion not generated properly");
+			Assert.IsTrue(Regex.Match(cssResult, @".*\.sil*\.fieldworks.xworks.testrootclass>\s*span\[lang='fr']\{.*position\:relative;\s*top\:-0.6em.*", RegexOptions.Singleline).Success,
+				  "Superscript's position not generated properly");
 		}
 
 		[Test]
@@ -1936,7 +1936,7 @@ namespace SIL.FieldWorks.XWorks
 			cssGenerator.AddStyles(headwordMain);
 			cssGenerator.AddStyles(form);
 			var cssResult = cssGenerator.GetStylesString();
-			VerifyRegex(cssResult, @"^\s*\.otherreferencedcomplexforms-headword", "Headword node not generated for non subentry headword");
+			VerifyRegex(cssResult, @"^\s*\.headword-otherreferencedcomplexforms", "Headword node not generated for non subentry headword");
 		}
 
 		[Test]
@@ -2009,10 +2009,58 @@ namespace SIL.FieldWorks.XWorks
 			cssGenerator.AddStyles(senses);
 			cssGenerator.AddStyles(gramInfo);
 			var cssResult = cssGenerator.GetStylesString();
-			VerifyRegex(cssResult, @"^\s*\.morphosyntaxanalysisra", "Style for non-shared grammatical info not generated");
-			VerifyRegex(cssResult,
-				@"^\s*\.senses\s*>\s*\.sharedgrammaticalinfo\s*{.*font-family\s*:\s*'foofoo'\,serif.*}",
-				"Style for sharedgrammaticalinfo not placed correctly");
+			VerifyRegex(cssResult, @"^\s*\.morphosyntaxanalysisra", "Style for morphosyntaxanalysisra not generated");
+			VerifyRegex(cssResult, @"^\s*\.morphosyntaxanalysisra\s*{.*font-family\s*:\s*'foofoo'\,serif.*}",
+				"Style for morphosyntaxanalysisra not placed correctly");
+		}
+
+		[Test]
+		public void GenerateCssForConfiguration_GramInfoAfterText()
+		{
+			GenerateStyle("Dictionary-Contrasting");
+			var pos = new ConfigurableDictionaryNode { FieldDescription = "MLPartOfSpeech" };
+			var inflectionClass = new ConfigurableDictionaryNode { FieldDescription = "MLInflectionClass" };
+			var afterText = "ExactlyOnce";
+			var gramInfo = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MorphoSyntaxAnalysisRA",
+				Label = "Gram. Info.",
+				Children = new List<ConfigurableDictionaryNode> { pos, inflectionClass },
+				Style = "Dictionary-Contrasting",
+				After = afterText
+			};
+			var gloss = new ConfigurableDictionaryNode { FieldDescription = "Gloss", Style = "FooStyle" };
+			var senses = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "SensesOS",
+				CSSClassNameOverride = "Senses",
+				DictionaryNodeOptions = new DictionaryNodeSenseOptions { ShowSharedGrammarInfoFirst = true },
+				Children = new List<ConfigurableDictionaryNode> { gramInfo, gloss }
+			};
+			var entry = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "lexentry",
+				Children = new List<ConfigurableDictionaryNode> { senses }
+			};
+
+			var model = new DictionaryConfigurationModel();
+			model.Parts = new List<ConfigurableDictionaryNode> { entry };
+			PopulateFieldsForTesting(entry);
+			var cssGenerator = new CssGenerator();
+			cssGenerator.Init(m_propertyTable);
+			cssGenerator.AddGlobalStyles(model, m_propertyTable);
+
+			//SUT
+			cssGenerator.AddStyles(senses);
+			cssGenerator.AddStyles(gramInfo);
+			var cssResult = cssGenerator.GetStylesString();
+
+			// Check that the after text is included once, not more or less.
+			var firstIndex = cssResult.IndexOf(afterText);
+			var lastIndex = cssResult.LastIndexOf(afterText);
+			Assert.IsTrue(firstIndex != -1 && firstIndex == lastIndex,
+				string.Format("After text \'{0}\' was not included exactly one time.", afterText));
 		}
 
 		[Test]
@@ -2076,7 +2124,7 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			// Not using regex to avoid figuring out all the escapes necessary
-			Assert.That(cssResult, Contains.Substring(".lexemeformoa> span[lang|=\"en-Zxxx-x-audio\"]{"));
+			Assert.That(cssResult, Contains.Substring(".lexemeformoa> span[lang='en-Zxxx-x-audio']{"));
 			VerifyRegex(cssResult, @"a.en-Zxxx-x-audio{.*text-decoration:none;.*}", "Audio not generated.");
 		}
 
@@ -2376,7 +2424,7 @@ namespace SIL.FieldWorks.XWorks
 			VerifyRegex(cssResult, @"^\.testheadword:after{\s*content:'ah';\s*}",
 				"Headword's selector should *not* have changed due to factoring");
 			VerifyRegex(cssResult, @"\s*\.reversename>\s*span:first-child:before{\s*content:'beef';\s*}");
-			VerifyRegex(cssResult, @"\s*\.reversename>\s*span+span\[lang|='" + lang2 + @"'\]:before{\s*content:'viet';\s*}");
+			VerifyRegex(cssResult, @"\s*\.reversename>\s*span\+span\[lang='" + lang2 + @"'\]:before{\s*content:'viet';\s*}");
 			VerifyRegex(cssResult, @"\s*\.reversename>\s*span:last-child:after{\s*content:'aft';\s*}");
 		}
 
@@ -2455,7 +2503,7 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(entry);
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			VerifyRegex(cssResult, @".*\.lexemeform>\s*span\+span\[lang\|\='fr'\]:before{.*content:','.*}",
+			VerifyRegex(cssResult, @".*\.lexemeform>\s*span\+span\[lang\='fr'\]:before{.*content:','.*}",
 							  "Between Multi-WritingSystem without Abbr selector not generated.");
 		}
 
@@ -2823,6 +2871,24 @@ namespace SIL.FieldWorks.XWorks
 
 			var pictureBetween = @".*\.pictures>\s*div\s*\+\s*div:before\{\s*content:', ';";
 			VerifyRegex(cssResult, pictureBetween, "expected Picture between rule is generated");
+
+			// Verify that the before/after/between picture content is not nested in 'captionContent'.
+			RegexOptions options = RegexOptions.Singleline | RegexOptions.Multiline;
+			var captionContentPictureBefore = @".captionContent .pictures> div:first-child:before\{\s*content:'\[';";
+			string message = "did not expect Picture before rule to be nested in captionContent.";
+			Assert.IsFalse(Regex.Match(cssResult, captionContentPictureBefore, options).Success,
+				string.Format("{3}Expected{0}{1}{0}but got{0}{2}", Environment.NewLine, pictureBefore, cssResult, message + Environment.NewLine));
+
+			var captionContentPictureAfter = @".captionContent .pictures> div:last-child:after\{\s*content:'\]';";
+			message = "did not expect Picture after rule to be nested in captionContent.";
+			Assert.IsFalse(Regex.Match(cssResult, captionContentPictureAfter, options).Success,
+				string.Format("{3}Expected{0}{1}{0}but got{0}{2}", Environment.NewLine, pictureAfter, cssResult, message + Environment.NewLine));
+
+			var captionContentPictureBetween = @".captionContent .*\.pictures>\s*div\s*\+\s*div:before\{\s*content:', ';";
+			VerifyRegex(cssResult, pictureBetween, "expected Picture between rule is generated");
+			message = "did not expect Picture between rule to be nested in captionContent.";
+			Assert.IsFalse(Regex.Match(cssResult, captionContentPictureBetween, options).Success,
+				string.Format("{3}Expected{0}{1}{0}but got{0}{2}", Environment.NewLine, pictureBetween, cssResult, message + Environment.NewLine));
 		}
 
 
@@ -2951,8 +3017,8 @@ namespace SIL.FieldWorks.XWorks
 			PopulateFieldsForTesting(testEntryNode);
 			// Default (no ws) style info
 			const string defaultStyle = "body{font-size:10pt;}";
-			const string englishStyle = "span[lang|=\"en\"]{font-family:'english',serif;color:#F00;}";
-			const string frenchStyle = "span[lang|=\"fr\"]{font-family:'french',serif;color:#008000;}";
+			const string englishStyle = "span[lang='en']{font-family:'english',serif;color:#F00;}";
+			const string frenchStyle = "span[lang='fr']{font-family:'french',serif;color:#008000;}";
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(defaultStyle + englishStyle + frenchStyle));
@@ -2999,8 +3065,8 @@ namespace SIL.FieldWorks.XWorks
 			};
 			PopulateFieldsForTesting(entryNode);
 			// Default (no ws) style info
-			const string englishGeneralStyle = "span[lang|=\"en\"]{font-family:'english',serif;color:#F00;}";
-			const string definitionSelector = ".definition span[lang|=\"en\"]{color:#FF0;}";
+			const string englishGeneralStyle = "span[lang='en']{font-family:'english',serif;color:#F00;}";
+			const string definitionSelector = ".definition span[lang='en']{color:#FF0;}";
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			// Using substring instead of regex to avoid spending all the time figuring out which regex characters to escape in this css
@@ -3131,7 +3197,7 @@ namespace SIL.FieldWorks.XWorks
 			// The problem we are testing for occurred in the section of CssGenerator labeled:
 			// "Then generate the rules for all the writing system overrides"
 			// So I chose to check specifically for one of the default writing systems; DefaultAnalWs would have worked too.
-			var vernStyle = "span[lang|=\"" + vernWs + "\"]{color:#008000;}";
+			var vernStyle = "span[lang='" + vernWs + "']{color:#008000;}";
 			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(@"div.minorentryvariant " + vernStyle),
 				"Dictionary-Secondary Paragraph Style should be generated.");
 		}
@@ -3828,7 +3894,7 @@ namespace SIL.FieldWorks.XWorks
 			// default (analysis ws) rule
 			const string regexPrimary = @"^\.extendednotecontents\{\s*color:#008000;";
 			// specific (embedded vernacular ws) rule affecting any span inside .extendednotecontents (at any level)
-			const string regexSpecific = @"^\.extendednotecontents span\[lang|='fr']\{\s*color:#00F";
+			const string regexSpecific = @"^\.extendednotecontents span\[lang='fr']\{\s*color:#00F";
 			VerifyRegex(result, regexPrimary, "The css for the default color should be there.");
 			VerifyRegex(result, regexSpecific, "The css for the specific language color should be there.");
 		}
@@ -4284,7 +4350,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(css, Contains.Substring("border-right-width:" + trailing / 1000 + "pt"));
 		}
 
-		private static void VerifyRegex(string input, string pattern, string message = null, RegexOptions options = RegexOptions.Singleline | RegexOptions.Multiline)
+		public static void VerifyRegex(string input, string pattern, string message = null, RegexOptions options = RegexOptions.Singleline | RegexOptions.Multiline)
 		{
 			Assert.IsTrue(Regex.Match(input, pattern, options).Success,
 				string.Format("{3}Expected{0}{1}{0}but got{0}{2}", Environment.NewLine, pattern, input,

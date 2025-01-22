@@ -29,7 +29,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -142,6 +142,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="netstandard" />
     <Reference Include="Accessibility" />
     <Reference Include="SIL.Core, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2">
       <SpecificVersion>False</SpecificVersion>
@@ -264,8 +265,4 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <Target Name="AfterBuild">
-    <!-- This monkey patch should keep our program from crashing on startup until we can update to .NET 4.6.2 and fix it right -->
-    <Copy SourceFiles="..\..\..\..\..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll" DestinationFolder="$(OutputPath)" />
-  </Target>
 </Project>

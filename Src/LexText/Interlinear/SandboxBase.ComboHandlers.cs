@@ -346,7 +346,7 @@ namespace SIL.FieldWorks.IText
 						ComboListBox clb2 = new ComboListBox();
 						clb2.StyleSheet = sandbox.StyleSheet;
 						ChooseAnalysisHandler caHandler = new ChooseAnalysisHandler(
-							caches.MainCache, hvoSbWord, sandbox.Analysis, clb2);
+							caches.MainCache, hvoSbWord, sandbox.Analysis, sandbox.m_occurrenceSelected, clb2);
 						caHandler.Owner = sandbox;
 						caHandler.AnalysisChosen += new EventHandler(
 							sandbox.Handle_AnalysisChosen);
@@ -1125,7 +1125,9 @@ namespace SIL.FieldWorks.IText
 					return; // no real wordform, can't have analyses.
 				ITsStrBldr builder = TsStringUtils.MakeStrBldr();
 				ITsString space = TsStringUtils.MakeString(fBaseWordIsPhrase ? "  " : " ", m_wsVern);
-				foreach (IWfiAnalysis wa in wordform.AnalysesOC)
+				var guess_services = new AnalysisGuessServices(m_caches.MainCache);
+				var sorted_analyses = guess_services.GetSortedAnalysisGuesses(wordform, m_wsVern);
+				foreach (IWfiAnalysis wa in sorted_analyses)
 				{
 					Opinions o = wa.GetAgentOpinion(
 						m_caches.MainCache.LangProject.DefaultUserAgent);
@@ -1143,7 +1145,10 @@ namespace SIL.FieldWorks.IText
 						IMoForm morph = mb.MorphRA;
 						if (morph != null)
 						{
-							ITsString tss = morph.Form.get_String(m_sandbox.RawWordformWs);
+							// If morph.Form is a lexical pattern then mb.Form is the guessed root.
+							ITsString tss = IsLexicalPattern(morph.Form)
+								? mb.Form.get_String(m_sandbox.RawWordformWs)
+								: morph.Form.get_String(m_sandbox.RawWordformWs);
 							var morphType = morph.MorphTypeRA;
 							string sPrefix = morphType.Prefix;
 							string sPostfix = morphType.Postfix;
@@ -3195,7 +3200,10 @@ namespace SIL.FieldWorks.IText
 			private void AddComboItems(ref int hvoEmptyGloss, ITsStrBldr tsb, IWfiAnalysis wa)
 			{
 				IList<int> wsids = m_sandbox.m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss);
-				foreach (IWfiGloss gloss in wa.MeaningsOC)
+
+				var guess_services = new AnalysisGuessServices(m_caches.MainCache);
+				var sorted_glosses = guess_services.GetSortedGlossGuesses(wa);
+				foreach (IWfiGloss gloss in sorted_glosses)
 				{
 					int glossCount = 0;
 

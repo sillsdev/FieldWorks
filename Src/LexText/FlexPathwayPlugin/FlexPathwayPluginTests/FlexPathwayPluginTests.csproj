@@ -10,7 +10,7 @@
     <AppDesignerFolder>.</AppDesignerFolder>
     <RootNamespace>FlexPathwayPluginTests</RootNamespace>
     <AssemblyName>FlexPathwayPluginTests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <AppConfig>..\..\..\AppForTests.config</AppConfig>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
@@ -89,6 +89,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="netstandard" />
     <Reference Include="FlexPathwayPlugin, Version=9.0.0.25881, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Output\Debug\FlexPathwayPlugin.dll</HintPath>

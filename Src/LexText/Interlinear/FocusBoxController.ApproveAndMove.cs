@@ -12,6 +12,7 @@ using XCore;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.ObjectModel;
+using System.Windows.Forms;
 
 namespace SIL.FieldWorks.IText
 {
@@ -25,7 +26,7 @@ namespace SIL.FieldWorks.IText
 		internal void ApproveAndStayPut(ICommandUndoRedoText undoRedoText)
 		{
 			// don't navigate, just save.
-			UpdateRealFromSandbox(undoRedoText, true, SelectedOccurrence);
+			UpdateRealFromSandbox(undoRedoText, true);
 		}
 
 		/// <summary>
@@ -34,79 +35,51 @@ namespace SIL.FieldWorks.IText
 		/// Normally, this is invoked as a result of pressing the <Enter> key
 		/// or clicking the "Approve and Move Next" green check in an analysis.
 		/// </summary>
-		/// <param name="undoRedoText"></param>
-		internal virtual void ApproveAndMoveNext(ICommandUndoRedoText undoRedoText)
+		internal void ApproveAndMoveNext(ICommandUndoRedoText cmd)
 		{
-			ApproveAndMoveNextRecursive(undoRedoText);
+			if (!PreCheckApprove())
+				return;
+
+			UndoableUnitOfWorkHelper.Do(cmd.UndoText, cmd.RedoText, Cache.ActionHandlerAccessor,
+				() =>
+				{
+					ApproveAnalysis(SelectedOccurrence, false, true);
+				});
+
+			// This should not make any data changes, since we're telling it not to save and anyway
+			// we already saved the current annotation. And it can't correctly place the focus box
+			// until the change we just did are completed and PropChanged sent. So keep this outside the UOW.
+			OnNextBundle(false, false, false, true);
 		}
 
 		/// <summary>
-		/// Approves an analysis and moves the selection to the next wordform or the
-		/// next Interlinear line. An Interlinear line is one of the configurable
-		/// "lines" in the Tools->Configure->Interlinear Lines dialog, not a segement.
-		/// The list of lines is collected in choices[] below.
-		/// WordLevel is true for word or analysis lines. The non-word lines are translation and note lines.
-		/// Normally, this is invoked as a result of pressing the <Enter> key in an analysis.
+		/// Approves an analysis (if there are edits or if fSaveGuess is true and there is a guess) and
+		/// moves the selection to target.
 		/// </summary>
-		/// <param name="undoRedoText"></param>
-		/// <returns>true if IP moved on, false otherwise</returns>
-		internal virtual bool ApproveAndMoveNextRecursive(ICommandUndoRedoText undoRedoText)
+		/// <param name="target">The occurrence to move to.</param>
+		/// <param name="parent">If the FocusBox parent is not set, then use this value to set it.</param>
+		/// <param name="fSaveGuess">if true, saves guesses; if false, skips guesses but still saves edits.</param>
+		/// <param name="fMakeDefaultSelection">true to make the default selection within the new sandbox.</param>
+		internal void ApproveAndMoveTarget(AnalysisOccurrence target, InterlinDocForAnalysis parent, bool fSaveGuess, bool fMakeDefaultSelection)
 		{
-			if (!SelectedOccurrence.IsValid)
+			if (!PreCheckApprove())
+				return;
+
+			if (Parent == null)
 			{
-				// Can happen (at least) when the text we're analyzing got deleted in another window
-				SelectedOccurrence = null;
-				InterlinDoc.TryHideFocusBoxAndUninstall();
-				return false;
+				Parent = parent;
 			}
-			var navigator = new SegmentServices.StTextAnnotationNavigator(SelectedOccurrence);
-			var nextWordform = navigator.GetNextWordformOrDefault(SelectedOccurrence);
-			if (nextWordform == null || nextWordform.Segment != SelectedOccurrence.Segment ||
-				nextWordform == SelectedOccurrence)
-			{
-				// We're at the end of a segment...try to go to an annotation of SelectedOccurrence.Segment
-				// or possibly (See LT-12229:If the nextWordform is the same as SelectedOccurrence)
-				// at the end of the text.
-				UpdateRealFromSandbox(undoRedoText, true, null); // save work done in sandbox
-				// try to select the first configured annotation (not a null note) in this segment
-				if (InterlinDoc.SelectFirstTranslationOrNote())
-				{   // IP should now be on an annotation line.
-					return true;
-				}
-			}
-			if (nextWordform != null)
-			{
-				bool dealtWith = false;
-				if (nextWordform.Segment != SelectedOccurrence.Segment)
-				{   // Is there another segment before the next wordform?
-					// It would have no analyses or just punctuation.
-					// It could have "real" annotations.
-					AnalysisOccurrence realAnalysis;
-					ISegment nextSeg = InterlinDoc.GetNextSegment
-						(SelectedOccurrence.Segment.Owner.IndexInOwner,
-						 SelectedOccurrence.Segment.IndexInOwner, false, out realAnalysis); // downward move
-					if (nextSeg != null && nextSeg != nextWordform.Segment)
-					{   // This is a segment before the one contaning the next wordform.
-						if (nextSeg.AnalysesRS.Where(an => an.HasWordform).Count() > 0)
-						{   // Set it as the current segment and recurse
-							SelectedOccurrence = new AnalysisOccurrence(nextSeg, 0); // set to first analysis
-							dealtWith = ApproveAndMoveNextRecursive(undoRedoText);
-						}
-						else
-						{	// only has annotations: focus on it and set the IP there.
-							InterlinDoc.SelectFirstTranslationOrNote(nextSeg);
-							return true; // IP should now be on an annotation line.
-						}
-					}
-				}
-				if (!dealtWith)
-				{   // If not dealt with continue on to the next wordform.
-					UpdateRealFromSandbox(undoRedoText, true, nextWordform);
-					// do the move.
-					InterlinDoc.SelectOccurrence(nextWordform);
-				}
-			}
-			return true;
+
+			UndoableUnitOfWorkHelper.Do(ITextStrings.ksUndoApproveAnalysis, ITextStrings.ksRedoApproveAnalysis, Cache.ActionHandlerAccessor,
+				() =>
+				{
+					ApproveAnalysis(SelectedOccurrence, false, fSaveGuess);
+				});
+
+			// This should not make any data changes, since we're telling it not to save and anyway
+			// we already saved the current annotation. And it can't correctly place the focus box
+			// until the change we just did are completed and PropChanged sent. So keep this outside the UOW.
+			TargetBundle(target, false, fMakeDefaultSelection);
 		}
 
 		/// <summary>
@@ -115,9 +88,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="undoRedoText">Approving the state of the FocusBox can be associated with
 		/// different user actions (ie. UOW)</param>
 		/// <param name="fSaveGuess"></param>
-		/// <param name="nextWordform"></param>
-		internal void UpdateRealFromSandbox(ICommandUndoRedoText undoRedoText, bool fSaveGuess,
-			AnalysisOccurrence nextWordform)
+		internal void UpdateRealFromSandbox(ICommandUndoRedoText undoRedoText, bool fSaveGuess)
 		{
 			if (!ShouldCreateAnalysisFromSandbox(fSaveGuess))
 				return;
@@ -136,7 +107,7 @@ namespace SIL.FieldWorks.IText
 				// But we don't want it to happen as an automatic side effect of the PropChanged.
 				InterlinDoc.SuspendResettingAnalysisCache = true;
 				UndoableUnitOfWorkHelper.Do(undoText, redoText,
-					Cache.ActionHandlerAccessor, () => ApproveAnalysisAndMove(fSaveGuess, nextWordform));
+					Cache.ActionHandlerAccessor, () => ApproveAnalysis(SelectedOccurrence, false, fSaveGuess));
 			}
 			finally
 			{
@@ -158,31 +129,9 @@ namespace SIL.FieldWorks.IText
 			return true;
 		}
 
-
-		protected virtual void ApproveAnalysisAndMove(bool fSaveGuess, AnalysisOccurrence nextWordform)
+		private void FinishSettingAnalysis(AnalysisTree newAnalysisTree, IAnalysis oldAnalysis)
 		{
-			using (new UndoRedoApproveAndMoveHelper(this, SelectedOccurrence, nextWordform))
-				ApproveAnalysis(fSaveGuess);
-		}
-
-		/// <summary>
-		///
-		/// </summary>
-		/// <param name="fSaveGuess"></param>
-		protected virtual void ApproveAnalysis(bool fSaveGuess)
-		{
-			IWfiAnalysis obsoleteAna;
-			AnalysisTree newAnalysisTree = InterlinWordControl.GetRealAnalysis(fSaveGuess, out obsoleteAna);
-			// if we've made it this far, might as well try to go the whole way through the UOW.
-			SaveAnalysisForAnnotation(SelectedOccurrence, newAnalysisTree);
-			FinishSettingAnalysis(newAnalysisTree, InitialAnalysis);
-			if (obsoleteAna != null)
-				obsoleteAna.Delete();
-		}
-
-		private void FinishSettingAnalysis(AnalysisTree newAnalysisTree, AnalysisTree oldAnalysisTree)
-		{
-			if (newAnalysisTree.Analysis == oldAnalysisTree.Analysis)
+			if (newAnalysisTree.Analysis == oldAnalysis)
 				return;
 			List<int> msaHvoList = new List<int>();
 			// Collecting for the new analysis is probably overkill, since the MissingEntries combo will only have MSAs
@@ -209,148 +158,10 @@ namespace SIL.FieldWorks.IText
 			// analysis of the word.
 			occurrence.Analysis = newAnalysisTree.Analysis;
 
-			// In case the wordform we point at has a form that doesn't match, we may need to set up an overidden form for the annotation.
-			IWfiWordform targetWordform = newAnalysisTree.Wordform;
-			if (targetWordform != null)
-			{
-				TryCacheRealWordForm(occurrence);
-			}
-
 			// It's possible if the new analysis is a different case form that the old wordform is now
 			// unattested and should be removed.
 			if (wfToTryDeleting != null && wfToTryDeleting != occurrence.Analysis.Wordform)
 				wfToTryDeleting.DeleteIfSpurious();
-		}
-
-		private static bool BaselineFormDiffersFromAnalysisWord(AnalysisOccurrence occurrence, out ITsString baselineForm)
-		{
-			baselineForm = occurrence.BaselineText; // Review JohnT: does this work if the text might have changed??
-			var wsBaselineForm = TsStringUtils.GetWsAtOffset(baselineForm, 0);
-			// We've updated the annotation to have InstanceOf set to the NEW analysis, so what we now derive from
-			// that is the NEW wordform.
-			var wfNew = occurrence.Analysis as IWfiWordform;
-			if (wfNew == null)
-				return false; // punctuation variations not significant.
-			var tssWfNew = wfNew.Form.get_String(wsBaselineForm);
-			return !baselineForm.Equals(tssWfNew);
-		}
-
-		private void TryCacheRealWordForm(AnalysisOccurrence occurrence)
-		{
-			ITsString tssBaselineCbaForm;
-			if (BaselineFormDiffersFromAnalysisWord(occurrence, out tssBaselineCbaForm))
-			{
-				//m_cache.VwCacheDaAccessor.CacheStringProp(hvoAnnotation,
-				//									 InterlinVc.TwficRealFormTag(m_cache),
-				//									 tssBaselineCbaForm);
-			}
-		}
-
-		internal class UndoRedoApproveAndMoveHelper : DisposableBase
-		{
-			internal UndoRedoApproveAndMoveHelper(FocusBoxController focusBox,
-				AnalysisOccurrence occBeforeApproveAndMove, AnalysisOccurrence occAfterApproveAndMove)
-			{
-				Cache = focusBox.Cache;
-				FocusBox = focusBox;
-				OccurrenceBeforeApproveAndMove = occBeforeApproveAndMove;
-				OccurrenceAfterApproveAndMove = occAfterApproveAndMove;
-
-				// add the undo action
-				AddUndoRedoAction(OccurrenceBeforeApproveAndMove, null);
-			}
-
-			LcmCache Cache { get; set; }
-			FocusBoxController FocusBox { get; set; }
-			AnalysisOccurrence OccurrenceBeforeApproveAndMove { get; set; }
-			AnalysisOccurrence OccurrenceAfterApproveAndMove { get; set; }
-
-			private UndoRedoApproveAnalysis AddUndoRedoAction(AnalysisOccurrence currentAnnotation, AnalysisOccurrence newAnnotation)
-			{
-				if (Cache.ActionHandlerAccessor != null && currentAnnotation != newAnnotation)
-				{
-					var undoRedoAction = new UndoRedoApproveAnalysis(FocusBox.InterlinDoc,
-						currentAnnotation, newAnnotation);
-					Cache.ActionHandlerAccessor.AddAction(undoRedoAction);
-					return undoRedoAction;
-				}
-				return null;
-			}
-
-			protected override void DisposeManagedResources()
-			{
-				// add the redo action
-				if (OccurrenceBeforeApproveAndMove != OccurrenceAfterApproveAndMove)
-					AddUndoRedoAction(null, OccurrenceAfterApproveAndMove);
-			}
-
-			protected override void DisposeUnmanagedResources()
-			{
-				FocusBox = null;
-				OccurrenceBeforeApproveAndMove = null;
-				OccurrenceAfterApproveAndMove = null;
-			}
-
-			protected override void Dispose(bool disposing)
-			{
-				Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
-				base.Dispose(disposing);
-			}
-		}
-
-		/// <summary>
-		/// This class allows smarter UndoRedo for ApproveAnalysis, so that the FocusBox can move appropriately.
-		/// </summary>
-		internal class UndoRedoApproveAnalysis : UndoActionBase
-		{
-			readonly InterlinDocForAnalysis m_interlinDoc;
-			readonly AnalysisOccurrence m_oldOccurrence;
-			AnalysisOccurrence m_newOccurrence;
-
-			internal UndoRedoApproveAnalysis(InterlinDocForAnalysis interlinDoc, AnalysisOccurrence oldAnnotation,
-				AnalysisOccurrence newAnnotation)
-			{
-				m_interlinDoc = interlinDoc;
-				m_oldOccurrence = oldAnnotation;
-				m_newOccurrence = newAnnotation;
-			}
-
-			#region Overrides of UndoActionBase
-
-			private bool IsUndoable()
-			{
-				return m_oldOccurrence != null && m_oldOccurrence.IsValid && m_interlinDoc.IsFocusBoxInstalled;
-			}
-
-			public override bool Redo()
-			{
-				if (m_newOccurrence != null && m_newOccurrence.IsValid)
-				{
-					m_interlinDoc.SelectOccurrence(m_newOccurrence);
-				}
-				else
-				{
-					m_interlinDoc.TryHideFocusBoxAndUninstall();
-				}
-
-				return true;
-			}
-
-			public override bool Undo()
-			{
-				if (IsUndoable())
-				{
-					m_interlinDoc.SelectOccurrence(m_oldOccurrence);
-				}
-				else
-				{
-					m_interlinDoc.TryHideFocusBoxAndUninstall();
-				}
-
-				return true;
-			}
-
-			#endregion
 		}
 
 		/// <summary>
@@ -368,18 +179,44 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Move to the next bundle in the direction indicated by fForward. If fSaveGuess is true, save guesses in the current position,
-		/// using Undo  text from the command. If skipFullyAnalyzedWords is true, move to the next item needing analysis, otherwise, the immediate next.
+		/// Move to the next bundle in the direction indicated by fForward. If fSaveGuess is true, save guesses in the current position.
+		/// If skipFullyAnalyzedWords is true, move to the next item needing analysis, otherwise, the immediate next.
 		/// If fMakeDefaultSelection is true, make the default selection within the moved focus box.
 		/// </summary>
-		public void OnNextBundle(ICommandUndoRedoText undoRedoText, bool fSaveGuess, bool skipFullyAnalyzedWords,
-			bool fMakeDefaultSelection, bool fForward)
+		public void OnNextBundle(bool fSaveGuess, bool skipFullyAnalyzedWords, bool fMakeDefaultSelection, bool fForward)
+		{
+			var nextOccurrence = GetNextOccurrenceToAnalyze(fForward, skipFullyAnalyzedWords);
+			// If we are at the end of a segment we should move to the first Translation or note line (if any)
+			if(nextOccurrence.Segment != SelectedOccurrence.Segment || nextOccurrence == SelectedOccurrence)
+			{
+				if (InterlinDoc.SelectFirstTranslationOrNote())
+				{
+					// We moved to a translation or note line, exit
+					return;
+				}
+			}
+			TargetBundle(nextOccurrence, fSaveGuess, fMakeDefaultSelection);
+		}
+
+		public void OnNextBundleSkipTranslationOrNoteLine(bool fSaveGuess)
+		{
+			var nextOccurrence = GetNextOccurrenceToAnalyze(true, true);
+
+			TargetBundle(nextOccurrence, fSaveGuess, true);
+		}
+
+		/// <summary>
+		/// Move to the target bundle.
+		/// </summary>
+		/// <param name="target">The occurrence to move to.</param>
+		/// <param name="fSaveGuess">if true, saves guesses in the current position; if false, skips guesses but still saves edits.</param>
+		/// <param name="fMakeDefaultSelection">true to make the default selection within the moved focus box.</param>
+		public void TargetBundle(AnalysisOccurrence target, bool fSaveGuess, bool fMakeDefaultSelection)
 		{
 			int currentLineIndex = -1;
-			if (InterlinWordControl!= null)
+			if (InterlinWordControl != null)
 				currentLineIndex = InterlinWordControl.GetLineOfCurrentSelection();
-			var nextOccurrence = GetNextOccurrenceToAnalyze(fForward, skipFullyAnalyzedWords);
-			InterlinDoc.TriggerAnalysisSelected(nextOccurrence, fSaveGuess, fMakeDefaultSelection);
+			InterlinDoc.TriggerAnalysisSelected(target, fSaveGuess, fMakeDefaultSelection);
 			if (!fMakeDefaultSelection && currentLineIndex >= 0 && InterlinWordControl != null)
 				InterlinWordControl.SelectOnOrBeyondLine(currentLineIndex, 1);
 		}
@@ -472,20 +309,42 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
+		/// Common pre-checks used for some of the Approve workflows.
+		/// </summary>
+		/// <returns>true: passed all pre-checks.</returns>
+		public bool PreCheckApprove()
+		{
+			if (SelectedOccurrence == null)
+				return false;
+
+			if (!SelectedOccurrence.IsValid)
+			{
+				// Can happen (at least) when the text we're analyzing got deleted in another window
+				SelectedOccurrence = null;
+				InterlinDoc.TryHideFocusBoxAndUninstall();
+				return false;
+			}
+
+			var stText = SelectedOccurrence.Paragraph.Owner as IStText;
+			if (stText == null || stText.ParagraphsOS.Count == 0)
+				return false; // paranoia, we should be in one of its paragraphs.
+
+			return true;
+		}
+
+		/// <summary>
 		/// Using the current focus box content, approve it and apply it to all unanalyzed matching
 		/// wordforms in the text.  See LT-8833.
 		/// </summary>
 		/// <returns></returns>
 		public void ApproveGuessOrChangesForWholeTextAndMoveNext(Command cmd)
 		{
+			if (!PreCheckApprove())
+				return;
+
 			// Go through the entire text looking for matching analyses that can be set to the new
 			// value.
-			if (SelectedOccurrence == null)
-				return;
-			var oldWf = SelectedOccurrence.Analysis.Wordform;
-			var stText = SelectedOccurrence.Paragraph.Owner as IStText;
-			if (stText == null || stText.ParagraphsOS.Count == 0)
-				return; // paranoia, we should be in one of its paragraphs.
+
 			// We don't need to discard existing guesses, even though we will modify Segment.Analyses,
 			// since guesses for other wordforms will not be affected, and there will be no remaining
 			// guesses for the word we're confirming everywhere. (This needs to be outside the block
@@ -496,49 +355,65 @@ namespace SIL.FieldWorks.IText
 						// Needs to include GetRealAnalysis, since it might create a new one.
 						UndoableUnitOfWorkHelper.Do(cmd.UndoText, cmd.RedoText, Cache.ActionHandlerAccessor,
 							() =>
-								{
-									IWfiAnalysis obsoleteAna;
-									AnalysisTree newAnalysisTree = InterlinWordControl.GetRealAnalysis(true, out obsoleteAna);
-									var wf = newAnalysisTree.Wordform;
-									if (newAnalysisTree.Analysis == wf)
-									{
-										// nothing significant to confirm, so move on
-										// (return means get out of this lambda expression, not out of the method).
-										return;
-									}
-									SaveAnalysisForAnnotation(SelectedOccurrence, newAnalysisTree);
-									// determine if we confirmed on a sentence initial wordform to its lowercased form
-									bool fIsSentenceInitialCaseChange = oldWf != wf;
-									if (wf != null)
-									{
-										ApplyAnalysisToInstancesOfWordform(newAnalysisTree.Analysis, oldWf, wf);
-									}
-									// don't try to clean up the old analysis until we've finished walking through
-									// the text and applied all our changes, otherwise we could delete a wordform
-									// that is referenced by dummy annotations in the text, and thus cause the display
-									// to treat them like pronunciations, and just show an unanalyzable text (LT-9953)
-									FinishSettingAnalysis(newAnalysisTree, InitialAnalysis);
-									if (obsoleteAna != null)
-										obsoleteAna.Delete();
-								});
+							{
+								ApproveAnalysis(SelectedOccurrence, true, true);
+							});
 					});
 			// This should not make any data changes, since we're telling it not to save and anyway
 			// we already saved the current annotation. And it can't correctly place the focus box
 			// until the change we just did are completed and PropChanged sent. So keep this outside the UOW.
-			OnNextBundle(cmd, false, false, false, true);
+			OnNextBundle(false, false, false, true);
+		}
+
+		/// <summary>
+		/// Common code intended to be used for all analysis approval workflows.
+		/// </summary>
+		/// <param name="occ">The occurrence to approve.</param>
+		/// <param name="allOccurrences">if true, approve all occurrences; if false, only approve occ </param>
+		/// <param name="fSaveGuess">if true, saves guesses; if false, skips guesses but still saves edits.</param>
+		public virtual void ApproveAnalysis(AnalysisOccurrence occ, bool allOccurrences, bool fSaveGuess)
+		{
+			IAnalysis oldAnalysis = occ.Analysis;
+			IWfiWordform oldWf = occ.Analysis.Wordform;
+
+			IWfiAnalysis obsoleteAna;
+			AnalysisTree newAnalysisTree = InterlinWordControl.GetRealAnalysis(fSaveGuess, out obsoleteAna);
+			var wf = newAnalysisTree.Wordform;
+			if (newAnalysisTree.Analysis == wf)
+			{
+				// nothing significant to confirm, so move on
+				return;
+			}
+			SaveAnalysisForAnnotation(occ, newAnalysisTree);
+			if (wf != null)
+			{
+				if (allOccurrences)
+				{
+					ApplyAnalysisToInstancesOfWordform(occ, newAnalysisTree.Analysis, oldWf, wf);
+				}
+				else
+				{
+					occ.Segment.AnalysesRS[occ.Index] = newAnalysisTree.Analysis;
+				}
+			}
+			// don't try to clean up the old analysis until we've finished walking through
+			// the text and applied all our changes, otherwise we could delete a wordform
+			// that is referenced by dummy annotations in the text, and thus cause the display
+			// to treat them like pronunciations, and just show an unanalyzable text (LT-9953)
+			FinishSettingAnalysis(newAnalysisTree, oldAnalysis);
+			if (obsoleteAna != null)
+				obsoleteAna.Delete();
 		}
 
 		// Caller must create UOW
-		private void ApplyAnalysisToInstancesOfWordform(IAnalysis newAnalysis, IWfiWordform oldWordform, IWfiWordform newWordform)
+		private void ApplyAnalysisToInstancesOfWordform(AnalysisOccurrence occurrence, IAnalysis newAnalysis, IWfiWordform oldWordform, IWfiWordform newWordform)
 		{
-			var navigator = new SegmentServices.StTextAnnotationNavigator(SelectedOccurrence);
+			var navigator = new SegmentServices.StTextAnnotationNavigator(occurrence);
 			foreach (var occ in navigator.GetAnalysisOccurrencesAdvancingInStText().ToList())
 			{
 				// We certainly want to update any occurrence that exactly matches the wordform of the analysis we are confirming.
-				// If oldWordform is different, we are confirming a different case form from what occurred in the text,
-				// and we only confirm these if SelectedOccurrence and occ are both sentence-initial.
-				// We want to do that only for sentence-initial occurrences.
-				if (occ.Analysis == newWordform || (occ.Analysis == oldWordform && occ.Index == 0 && SelectedOccurrence.Index == 0))
+				// If oldWordform is different, we are confirming a different case form from what occurred in the text.
+				if (occ.Analysis == newWordform || occ.Analysis == oldWordform)
 					occ.Segment.AnalysesRS[occ.Index] = newAnalysis;
 			}
 		}
@@ -585,7 +460,7 @@ namespace SIL.FieldWorks.IText
 
 		public bool OnApproveAndMoveNextSameLine(object cmd)
 		{
-			OnNextBundle(cmd as Command, true, false, false, true);
+			OnNextBundle(true, true, true, true);
 			return true;
 		}
 
@@ -616,7 +491,7 @@ namespace SIL.FieldWorks.IText
 
 		public bool OnBrowseMoveNextSameLine(object cmd)
 		{
-			OnNextBundle(cmd as Command, false, false, false, true);
+			OnNextBundle(false, false, false, true);
 			return true;
 		}
 
@@ -629,7 +504,7 @@ namespace SIL.FieldWorks.IText
 
 		public bool OnBrowseMoveNext(object cmd)
 		{
-			OnNextBundle(cmd as Command, false, false, true, true);
+			OnNextBundle(false, false, true, true);
 			return true;
 		}
 
@@ -698,7 +573,7 @@ namespace SIL.FieldWorks.IText
 		public void OnMoveFocusBoxRight(ICommandUndoRedoText undoRedoText, bool fSaveGuess)
 		{
 			// Move in the literal direction (LT-3706)
-			OnNextBundle(undoRedoText, fSaveGuess, false, true, !m_fRightToLeft);
+			OnNextBundle(fSaveGuess, false, true, !m_fRightToLeft);
 		}
 
 		/// <summary>
@@ -730,7 +605,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		public bool OnMoveFocusBoxLeft(object cmd)
 		{
-			OnNextBundle(cmd as ICommandUndoRedoText, true, false, true, m_fRightToLeft);
+			OnNextBundle(true, false, true, m_fRightToLeft);
 			return true;
 		}
 
@@ -753,7 +628,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		public bool OnMoveFocusBoxLeftNc(object cmd)
 		{
-			OnNextBundle(cmd as ICommandUndoRedoText, false, false, true, m_fRightToLeft);
+			OnNextBundle(false, false, true, m_fRightToLeft);
 			return true;
 		}
 
@@ -792,7 +667,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		public bool OnNextIncompleteBundle(object cmd)
 		{
-			OnNextBundle(cmd as ICommandUndoRedoText, true, true, true, true);
+			OnNextBundleSkipTranslationOrNoteLine(true);
 			return true;
 		}
 
@@ -803,7 +678,7 @@ namespace SIL.FieldWorks.IText
 		/// <returns></returns>
 		public bool OnNextIncompleteBundleNc(object cmd)
 		{
-			OnNextBundle(cmd as ICommandUndoRedoText, false, true, true, true);
+			OnNextBundleSkipTranslationOrNoteLine(false);
 			return true;
 		}
 

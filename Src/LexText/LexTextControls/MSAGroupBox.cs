@@ -625,7 +625,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			//
 			this.m_fwcbAffixTypes.AdjustStringHeight = true;
 			this.m_fwcbAffixTypes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.m_fwcbAffixTypes.DropDownWidth = 140;
 			this.m_fwcbAffixTypes.DroppedDown = false;
 			resources.ApplyResources(this.m_fwcbAffixTypes, "m_fwcbAffixTypes");
 			this.m_fwcbAffixTypes.Name = "m_fwcbAffixTypes";
@@ -642,7 +641,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			// m_tcMainPOS
 			//
 			this.m_tcMainPOS.AdjustStringHeight = true;
-			this.m_tcMainPOS.DropDownWidth = 140;
+			// Setting width to match the default width used by popuptree
+			this.m_tcMainPOS.DropDownWidth = 300;
 			this.m_tcMainPOS.DroppedDown = false;
 			resources.ApplyResources(this.m_tcMainPOS, "m_tcMainPOS");
 			this.m_tcMainPOS.Name = "m_tcMainPOS";

@@ -101,10 +101,10 @@
 		A base build should warn if we have 'RemovedSinceLastBase' items to help us remember to clear these out.
 	-->
 	<Target Name="RescuePatching">
-		<!-- <ItemGroup>
-			<RemovedSinceLastBase Include="$(dir-outputBase)/Example.dll" />
+		<ItemGroup>
+			<RemovedSinceLastBase Include="$(dir-outputBase)/Helps/WW-ConceptualIntro/ConceptualIntroduction.htm" />
 		</ItemGroup>
-		<WriteLinesToFile File="%(RemovedSinceLastBase.FullPath)" Lines="" /> -->
+		<WriteLinesToFile File="%(RemovedSinceLastBase.FullPath)" Lines="" />
 	</Target>
 	<!-- ########################################################################################################## -->
 	<!-- ### Compile Targets                                                                                    ### -->
@@ -210,6 +210,7 @@
 			<L10nFiles Include="$(OutputDirForConfig)\ur\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\vi\**\*"/>
 			<L10nFiles Include="$(OutputDirForConfig)\zh-CN\**\*"/>
+			<L10nFiles Include="$(OutputDirForConfig)\zlm\**\*"/>
 			<!-- no need to install the following; most are installed by merge modules -->
 			<MergeModules Include="$(OutputDirForConfig)\asserts.log"/>
 			<MergeModules Include="$(OutputDirForConfig)\basicTest.xml"/>
@@ -303,7 +304,8 @@
 		<PropertyGroup>
 			<!-- Substring keeps Chinese the same length as everyone else (and '-' is an illegal character in some places) -->
 			<!-- "The nail that sticks up gets hammered down" (Japanese proverb) -->
-			<SafeTargetLocale>$(TargetLocale.Substring(0,2))</SafeTargetLocale>
+			<SafeTargetLocale Condition="'$(TargetLocale)'=='zh-CN'">$(TargetLocale.Substring(0,2))</SafeTargetLocale>
+			<SafeTargetLocale Condition="'$(TargetLocale)'!='zh-CN'">$(TargetLocale)</SafeTargetLocale>
 			<!-- KeyPathFix changes KeyPath="yes" to KeyPath="no" so we can overwrite later versions of files, if necessary. -->
 			<!-- See https://github.com/sillsdev/genericinstaller's README for details. -->
 			<KeyPathFixArg Condition="'$(FixKeyPath)'=='true'">-t $(InstallerDir)/BaseInstallerBuild/KeyPathFix.xsl</KeyPathFixArg>
@@ -396,7 +398,8 @@
 			Condition="!Exists('$(WixLibsDir)/vcredist_2015-19_x64.exe') And $(Platform)=='x64'"
 			DownloadsDir="$(WixLibsDir)"/>	<!-- VisualC++ 14.1 runtime -->
 		<!-- FLEx Bridge -->
-		<DownloadFile Address="https://build.palaso.org/guestAuth/repository/download/FLExBridgeDevelopWin32InstallerSansPublish/fw-9.1.22.tcbuildtag/FLExBridge_Offline.exe"
+		<DownloadFile Address="https://software.sil.org/downloads/r/fieldworks/FlexBridge_Offline_4.2.0.exe"
+			LocalFilename="FLExBridge_Offline.exe"
 			Condition="!Exists('$(WixLibsDir)/FLExBridge_Offline.exe')"
 			DownloadsDir="$(WixLibsDir)"/> <!-- TODO: always download to get the latest version -->
 	</Target>
@@ -439,12 +442,12 @@
 		</MSBuild.ExtensionPack.Framework.Guid>
 		<Message Text="Generated GUID '$(ProductIdGuid)'"/>
 		<PropertyGroup>
-			<MsiFile>$(SafeApplicationName)_$(Revision).msi</MsiFile>
+			<MsiFile>$(SafeApplicationName)_$(PatchVersionSegment).msi</MsiFile>
 			<BaseBuildDir>$(InstallerDir)/BaseInstallerBuild</BaseBuildDir>
 			<BaseBuildArgs>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" $(SafeManufacturer) $(Arch)</BaseBuildArgs>
 		</PropertyGroup>
 		<!-- Suppress ICE30 because we and Encoding Converters MM both install Geckofx, resulting in an ICE warning for double ref counting -->
-		<Exec WorkingDirectory="$(BaseBuildDir)" Command="(set SuppressICE=-sice:ICE30) &amp; buildBaseInstaller.bat $(BaseBuildArgs)" />
+		<Exec WorkingDirectory="$(BaseBuildDir)" Command="buildBaseInstaller.bat $(BaseBuildArgs)" EnvironmentVariables="SuppressICE=-sice:ICE30" />
 		<ItemGroup>
 			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.exe"/>
 			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.msi"/>

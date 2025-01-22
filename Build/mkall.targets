@@ -283,17 +283,12 @@
 
 		<!-- Versions of NuGet packages. These need to match the versions in nuget-common/packages.config -->
 		<ChorusNugetVersion>5.2.0-beta0003</ChorusNugetVersion>
-		<PalasoNugetVersion>13.0.0-beta0076</PalasoNugetVersion>
+		<PalasoNugetVersion>15.0.0-beta0117</PalasoNugetVersion>
 		<ParatextNugetVersion>9.4.0.1-beta</ParatextNugetVersion>
-		<LcmNugetVersion>10.2.0-beta0075</LcmNugetVersion>
+		<LcmNugetVersion>11.0.0-beta0111</LcmNugetVersion>
 		<IcuNugetVersion>70.1.123</IcuNugetVersion>
-		<HermitCrabNugetVersion>2.5.13</HermitCrabNugetVersion>
-		<!--Todo: use PalasoBuildType, when it refers to somewhere that has the IPCFramework.-->
-		<!-- bt278 is the develop branch build of IPCFramework for Windows development. Update when appropriate. -->
-		<IPCFrameworkBuildType Condition="'$(OS)'=='Windows_NT'">bt278</IPCFrameworkBuildType>
-		<!-- bt279 is the develop branch build of IPCFramework for Linux development. Update when appropriate. -->
-		<IPCFrameworkBuildType Condition="'$(OS)'=='Unix'">bt279</IPCFrameworkBuildType>
-		<IPCFrameworkBuildTag>.lastSuccessful</IPCFrameworkBuildTag>
+		<HermitCrabNugetVersion>3.4.2</HermitCrabNugetVersion>
+		<IPCFrameworkVersion>1.1.1-beta0001</IPCFrameworkVersion>
 		<!-- bt393 is the master branch build of ExCss for Windows development. Update when appropriate. -->
 		<ExCssBuildType Condition="'$(OS)'=='Windows_NT'">bt393</ExCssBuildType>
 		<ExCss Condition="'$(OS)'=='Windows_NT'">ExCss</ExCss>
@@ -331,7 +326,11 @@
 		<PalasoFiles Include="Mono.Unix.dll.config" Condition="'$(OS)'!='Windows_NT'" />
 		<PalasoFiles Include="SIL.WritingSystems.dll"/>
 		<PalasoFiles Include="SIL.WritingSystems.Tests.dll"/>
+		<PalasoFiles Include="SIL.Windows.Forms.Archiving.dll"/>
+		<PalasoFiles Include="SIL.Windows.Forms.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.dll"/>
+		<PalasoFiles Include="System.Drawing.Common.dll"/>
+		<PalasoFiles Include="System.Drawing.Common.pdb"/>
 		<PalasoFiles Include="System.Memory.dll"/>
 		<PalasoFiles Include="System.Resources.Extensions.dll"/>
 		<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.dll"/>
@@ -355,6 +354,7 @@
 		<PalasoFiles Include="SIL.Lift.pdb"/>
 		<PalasoFiles Include="SIL.Media.pdb"/>
 		<PalasoFiles Include="SIL.Windows.Forms.pdb"/>
+		<PalasoFiles Include="SIL.Windows.Forms.Archiving.pdb"/>
 		<PalasoFiles Include="SIL.Windows.Forms.GeckoBrowserAdapter.pdb"/>
 		<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.pdb"/>
 		<PalasoFiles Include="SIL.Archiving.pdb"/>
@@ -384,10 +384,7 @@
 		<LcmOutputBaseFiles Include="NHunspell.dll" Condition="'$(OS)'=='Windows_NT'" />
 		<LcmOutputBaseFiles Include="CommonServiceLocator.dll" />
 		<LcmOutputBaseFiles Include="protobuf-net.dll" />
-		<LcmOutputBaseFiles Include="Sandwych.Quickgraph.Core.dll" />
 		<LcmOutputBaseFiles Include="StructureMap.dll" />
-		<LcmOutputBaseFiles Include="SIL.Machine.dll" />
-		<LcmOutputBaseFiles Include="SIL.Machine.Morphology.HermitCrab.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.FixData.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.dll" />
 		<LcmOutputBaseFiles Include="SIL.LCModel.Utils.Tests.dll" />
@@ -450,8 +447,6 @@
 		<Message Text="Copying artifacts from Palaso, Chorus, LCM, and related packages to Downloads."/>
 		<Copy SourceFiles="@(SILNugetFiles)" DestinationFolder="$(DownloadsDir)/%(RecursiveDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<Message Text="(Palaso, Chorus, and LCM artifacts will be copied to Output from $(PalasoArtifactsDir), $(ChorusArtifactsDir), and $(LcmArtifactsDir), respectively, as  specified in LibraryDevelopment.targets)" Condition="'$(UseLocalLibraries)'=='Y'"/>
-		<Message Text="Downloading an artifact for IPCFramework."/>
-		<DownloadFilesFromTeamCity Address="$(TeamCityUrl)" BuildType="$(IPCFrameworkBuildType)" Tag="$(IPCFrameworkBuildTag)" Artifacts="IPCFramework.dll" DownloadsDir="$(DownloadsDir)"/>
 
 		<!-- Due to platform-specific casing, ExCSS or ExCss is included in a variable -->
 		<Message Text="Downloading artifacts for $(ExCss)."/>
@@ -478,19 +473,23 @@
 			<SILNugetPackages Include="Icu4c.Win.Fw.Bin" Condition="'$(OS)'=='Windows_NT'"><Version>$(IcuNugetVersion)</Version><Path>build/**/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="Icu4c.Win.Fw.Lib" Condition="'$(OS)'=='Windows_NT'"><Version>$(IcuNugetVersion)</Version><Path>runtimes/**/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="Icu4c.Win.Fw.Lib"><Version>$(IcuNugetVersion)</Version><Path>build/native/**/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.FLExBridge.IPCFramework"><Version>$(IPCFrameworkVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<!-- LCM and related packages -->
-			<SILNugetPackages Include="SIL.LCModel"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.LCModel"><Version>$(LcmNugetVersion)</Version><Path>contentFiles/**/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.LCModel.Build.Tasks"><Version>$(LcmNugetVersion)</Version><Path>tools/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.LCModel.Core"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.LCModel.Core"><Version>$(LcmNugetVersion)</Version><Path>contentFiles/**/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.LCModel.Core.Tests"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.LCModel.FixData"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.LCModel.Utils"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.LCModel.Utils.Tests"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.LCModel.Tests"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.LCModel.Tools"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="CommonServiceLocator"><Version>1.4.0</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<!-- If the build is run with /p:UsingLocalLibraryBuild use that for NoSymbols when the package comes from liblcm, libpalaso, or chorus -->
+			<!-- a true value will skip downloading and extracting the .pdb files from the nuget server. -->
+			<!-- If this is used with buildLocalLibraries.sh you should end up with locally built .pdb files -->
+			<SILNugetPackages Include="SIL.LCModel"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.LCModel"><Version>$(LcmNugetVersion)</Version><Path>contentFiles/**/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.LCModel.Build.Tasks"><Version>$(LcmNugetVersion)</Version><Path>tools/net461/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.LCModel.Core"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.LCModel.Core"><Version>$(LcmNugetVersion)</Version><Path>contentFiles/**/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.LCModel.Core.Tests"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.LCModel.FixData"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.LCModel.Utils"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.LCModel.Utils.Tests"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.LCModel.Tests"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.LCModel.Tools"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="CommonServiceLocator"><Version>2.0.7</Version><Path>lib/net46/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="Mono.Unix" Condition="'$(OS)'!='Windows_NT'"><Version>7.1.0-final.1.21458.1</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="NHunspell.Patched"><Version>1.2.5554</Version><Path>lib/net/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="NHunspell.Patched"><Version>1.2.5554</Version><Path>runtimes/win7-$(Platform)/native/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
@@ -499,30 +498,33 @@
 			<SILNugetPackages Include="structuremap.patched"><Version>4.7.3</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="System.CodeDom"><Version>4.4.0</Version><Path>lib/netstandard2.0/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<!-- Palaso and related packages -->
-			<SILNugetPackages Include="SIL.Archiving"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Archiving"><Version>$(PalasoNugetVersion)</Version><Path>lib/net462/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="SIL.Archiving"><Version>$(PalasoNugetVersion)</Version><Path>contentFiles/any/any/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="SIL.Core"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.Core.Desktop"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Core"><Version>$(PalasoNugetVersion)</Version><Path>lib/net462/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Core.Desktop"><Version>$(PalasoNugetVersion)</Version><Path>lib/net462/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="SIL.Media"><Version>$(PalasoNugetVersion)</Version><Path>build/**/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="SIL.Media"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Media"><Version>$(PalasoNugetVersion)</Version><Path>lib/net462/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="SIL.Media"><Version>$(PalasoNugetVersion)</Version><Path>contentFiles/any/any/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="SIL.Lift"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.Lexicon"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.TestUtilities"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.Scripture"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.Windows.Forms"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Lift"><Version>$(PalasoNugetVersion)</Version><Path>lib/net462/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Lexicon"><Version>$(PalasoNugetVersion)</Version><Path>lib/net462/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.TestUtilities"><Version>$(PalasoNugetVersion)</Version><Path>lib/net462/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Scripture"><Version>$(PalasoNugetVersion)</Version><Path>lib/net462/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Windows.Forms"><Version>$(PalasoNugetVersion)</Version><Path>lib/net462/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="SIL.Windows.Forms" Condition="'$(Platform)'!='x64'"><Version>$(PalasoNugetVersion)</Version><Path>build/Interop.WIA.dll</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="SIL.Windows.Forms" Condition="'$(Platform)'=='x64'"><Version>$(PalasoNugetVersion)</Version><Path>build/x64/Interop.WIA.dll</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="SIL.Windows.Forms.Keyboarding"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Windows.Forms.Archiving"><Version>$(PalasoNugetVersion)</Version><Path>lib/net462/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Windows.Forms.Archiving"><Version>$(PalasoNugetVersion)</Version><Path>contentFiles/any/any/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Windows.Forms.Keyboarding"><Version>$(PalasoNugetVersion)</Version><Path>lib/net462/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="SIL.Windows.Forms.Keyboarding"><Version>$(PalasoNugetVersion)</Version><Path>build/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="SIL.Windows.Forms.Keyboarding"><Version>$(PalasoNugetVersion)</Version><Path>contentFiles/any/any/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="SIL.Windows.Forms.GeckoBrowserAdapter"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.Windows.Forms.WritingSystems"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.WritingSystems"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.WritingSystems.Tests"><Version>$(PalasoNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Windows.Forms.GeckoBrowserAdapter"><Version>$(PalasoNugetVersion)</Version><Path>lib/net462/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Windows.Forms.WritingSystems"><Version>$(PalasoNugetVersion)</Version><Path>lib/net462/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.WritingSystems"><Version>$(PalasoNugetVersion)</Version><Path>lib/net462/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.WritingSystems.Tests"><Version>$(PalasoNugetVersion)</Version><Path>lib/net462/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="System.Drawing.Common"><Version>9.0.0</Version><Path>lib/net462/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="System.Memory"><Version>4.5.4</Version><Path>lib/net461/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="System.Resources.Extensions"><Version>4.6.0</Version><Path>lib/netstandard2.0/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="L10NSharp"><Version>6.0.0</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
+			<SILNugetPackages Include="L10NSharp"><Version>7.0.0</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="Enchant.Net"><Version>1.4.3-beta0010</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="Enchant.Net"><Version>1.4.3-beta0010</Version><Path>contentFiles/any/any/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="NDesk.DBus"><Version>0.15.0</Version><Path>lib/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
@@ -531,14 +533,14 @@
 			<SILNugetPackages Include="Tenuto"><Version>1.0.0.39</Version><Path>lib/net461/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="relaxngDatatype"><Version>1.0.0.39</Version><Path>lib/net461/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<!-- Chorus and related packages -->
-			<SILNugetPackages Include="SIL.Chorus.LibChorus"><Version>$(ChorusNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.Chorus.App"><Version>$(ChorusNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
-			<SILNugetPackages Include="SIL.Chorus.ChorusHub"  Condition="'$(OS)'=='Unix'"><Version>$(ChorusNugetVersion)</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Chorus.LibChorus"><Version>$(ChorusNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Chorus.App"><Version>$(ChorusNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Chorus.ChorusHub"  Condition="'$(OS)'=='Unix'"><Version>$(ChorusNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="Autofac"><Version>4.9.4</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="Vulcan.Uczniowie.HelpProvider"><Version>1.0.16</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<!-- HermitCrab and related packages -->
-			<SILNugetPackages Include="SIL.Machine.Morphology.HermitCrab"><Version>$(HermitCrabNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="SIL.Machine"><Version>$(HermitCrabNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Machine.Morphology.HermitCrab"><Version>$(HermitCrabNugetVersion)</Version><Path>lib/netstandard2.0/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="SIL.Machine"><Version>$(HermitCrabNugetVersion)</Version><Path>lib/netstandard2.0/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="Sandwych.Quickgraph.Core"><Version>1.0.0</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 		</ItemGroup>
 	</Target>
@@ -560,6 +562,9 @@
 		<!-- xBuild and MsBuild generate different case artifacts off the same solution file. (sigh) -->
 		<DownloadedFiles Include="$(DownloadsDir)/$(ExCss).dll"/>
 		<DownloadedFiles Include="$(DownloadsDir)/$(ExCss).$(DebugInfo)"/>
+		<DownloadedFiles Include="$(DownloadsDir)/Sandwych.Quickgraph.Core.dll" />
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Machine.dll" />
+		<DownloadedFiles Include="$(DownloadsDir)/SIL.Machine.Morphology.HermitCrab.dll" />
 	</ItemGroup>
 
 	<Target Name="CopyDlls" DependsOnTargets="downloadDlls;copyLibL10ns">
@@ -649,8 +654,9 @@
 			<NuGottenFiles Include="$(GeckoDir)/build/*.dll.config" Condition="'$(OS)'!='Windows_NT'"/>
 			<NuGottenFiles Include="$(GeckoDir)/content/**/*.*"/>
 			<NuGottenFiles Include="$(PackagesDir)/Analytics.3.6.0/lib/net461/Analytics.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/DocumentFormat.OpenXml.2.20.0/lib/net46/DocumentFormat.OpenXml.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/DotNetZip.1.16.0/lib/net40/*.*"/>
-			<NuGottenFiles Include="$(PackagesDir)/icu.net.2.9.0-beta.13/lib/net451/icu.net.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/icu.net.3.0.0-beta.297/lib/netstandard2.0/icu.net.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/Markdig.Signed.0.30.0/lib/net452/Markdig.Signed.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/Microsoft.Extensions.DependencyModel.2.0.4/lib/net451/Microsoft.Extensions.DependencyModel.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/Microsoft.Win32.Registry.4.7.0/lib/net461/Microsoft.Win32.Registry.dll" Condition="'$(OS)'=='Windows_NT'"/>

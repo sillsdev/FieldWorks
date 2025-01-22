@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class xWorksStrings {
@@ -255,6 +255,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string DeletedObjectDetected {
             get {
                 return ResourceManager.GetString("DeletedObjectDetected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This will permanently delete the existing phonology and all references to it.  Do you want to continue?.
+        /// </summary>
+        internal static string DeletePhonology {
+            get {
+                return ResourceManager.GetString("DeletePhonology", resourceCulture);
             }
         }
         
@@ -2520,6 +2529,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} was not uploaded because it was missing copyright and license information..
+        /// </summary>
+        internal static string MissingCopyrightAndLicense {
+            get {
+                return ResourceManager.GetString("MissingCopyrightAndLicense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A component of FieldWorks, {0}, is missing. This prevents printing. Antivirus software sometimes removes files. You may need technical help to repair the FieldWorks installation and protect this file from being deleted again..
         /// </summary>
         internal static string MissingGeckofxHtmlToPdf {
@@ -2655,7 +2673,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The custom field name &quot;{0}&quot; includes punctuation characters. This may cause export to fail or make the exported file difficult for other programs to use. We recommend that you rename your custom field and then do the export again.
+        ///   Looks up a localized string similar to The custom field name &quot;{0}&quot; includes punctuation characters. This may cause export to fail or make the exported file difficult for other programs to use.  Please contact flex_errors@sil.org for help modifying your project.
         ///Do you want to continue with the export?.
         /// </summary>
         internal static string PunctInFieldNameWarning {
@@ -2981,6 +2999,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Initial connection failed retrying....
+        /// </summary>
+        internal static string UploadToWebonaryController_RetryAfterFailedConnection {
+            get {
+                return ResourceManager.GetString("UploadToWebonaryController_RetryAfterFailedConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to View.
         /// </summary>
         internal static string View {
@@ -3013,6 +3040,51 @@ namespace SIL.FieldWorks.XWorks {
         internal static string Webonary_UnexpectedUploadError {
             get {
                 return ResourceManager.GetString("Webonary_UnexpectedUploadError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not copy the file. {0}.
+        /// </summary>
+        internal static string WebonaryLogViewer_CopyFileError {
+            get {
+                return ResourceManager.GetString("WebonaryLogViewer_CopyFileError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Errors &amp; Warnings.
+        /// </summary>
+        internal static string WebonaryLogViewer_Errors_Warnings {
+            get {
+                return ResourceManager.GetString("WebonaryLogViewer_Errors-Warnings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Full Log.
+        /// </summary>
+        internal static string WebonaryLogViewer_Full_Log {
+            get {
+                return ResourceManager.GetString("WebonaryLogViewer_Full_Log", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rejected Files.
+        /// </summary>
+        internal static string WebonaryLogViewer_Rejected_Files {
+            get {
+                return ResourceManager.GetString("WebonaryLogViewer_Rejected_Files", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save a copy.
+        /// </summary>
+        internal static string WebonaryLogViewer_Save_a_copy {
+            get {
+                return ResourceManager.GetString("WebonaryLogViewer_Save_a_copy", resourceCulture);
             }
         }
         

@@ -118,6 +118,15 @@
 										</span>
 									</li>
 								</xsl:when>
+								<xsl:when test="@type = 'invalid-rewrite-rule'">
+									<li>
+										<xsl:text>The rewrite rule "</xsl:text>
+										<xsl:value-of select="Rule" />
+										<xsl:text>" is invalid. Reason: </xsl:text>
+										<xsl:value-of select="Reason" />
+										<xsl:text> </xsl:text>
+									</li>
+								</xsl:when>
 								<xsl:otherwise>
 									<!-- Do not expect any others to happen, but just in case, we show them in all their HC glory -->
 									<li><xsl:value-of select="."/></li>
@@ -156,69 +165,124 @@
 	</xsl:template>
 
 	<xsl:template name="ShowAnyDataIssues">
+		<xsl:call-template name="ShowAnyNaturalClassPhonemeMismatch"/>
+		<xsl:call-template name="ShowAnyIllFormedGraphemes"/>
+	</xsl:template>
+
+	<xsl:template name="ShowAnyNaturalClassPhonemeMismatch">
 		<xsl:variable name="issues" select="DataIssues/NatClassPhonemeMismatch"/>
 		<xsl:if test="count($issues)&gt;0">
-		<div style="color:red">
-			<p>
+			<div style="color:red">
+				<p>
+					<xsl:text>The following data issue</xsl:text>
+					<xsl:choose>
+						<xsl:when test="count($issues) &gt; 1">
+							<xsl:text>s were</xsl:text>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:text> was</xsl:text>
+						</xsl:otherwise>
+					</xsl:choose>
+					<xsl:text> found that may affect how the parser works.  When the Hermit Crab parser uses a natural class during its synthesis process, the natural class will use the phonological features which are the intersection of the features of all the phonemes in the class while trying to see if a segment matches the natural class.  The implied phonological features are shown for each class below and mean that it will match any of the predicted phonemes shown.  (If the implied features field is blank, then it will match *all* phonemes.)  For each of the natural classes shown below, the set of predicted phonemes is not the same as the set of actual  phonemes.  You will need to rework your phonological feature system and the assignment of these features to phonemes to make it be correct.</xsl:text>
+				</p>
+				<!--			<ul>-->
+				<xsl:for-each select="$issues">
+					<!--					<li>-->
+					<table>
+						<tr valign="top">
+							<td>
+								<table>
+									<tr style="color:red">
+										<td>
+											<xsl:value-of select="ClassName"/>
+										</td>
+									</tr>
+									<tr style="color:red">
+										<td>
+											<xsl:text>[</xsl:text>
+											<xsl:value-of select="ClassAbbeviation"/>
+											<xsl:text>]</xsl:text>
+										</td>
+									</tr>
+								</table>
+							</td>
+							<td>
+								<table>
+									<tr style="color:red">
+										<td>Implied Features</td>
+										<td>
+											<xsl:value-of select="ImpliedPhonologicalFeatures"/>
+										</td>
+									</tr>
+									<tr style="color:red">
+										<td>Predicted Phonemes</td>
+										<td>
+											<xsl:value-of select="PredictedPhonemes"/>
+										</td>
+									</tr>
+									<tr style="color:red">
+										<td>Actual Phonemes</td>
+										<td>
+											<xsl:value-of select="ActualPhonemes"/>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+					<!--					</li>-->
+				</xsl:for-each>
+				<!--			</ul>-->
+			</div>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template name="ShowAnyIllFormedGraphemes">
+		<xsl:variable name="emptyGraphemes" select="DataIssues/EmptyGrapheme"/>
+		<xsl:if test="count($emptyGraphemes)&gt;0">
+			<div style="color:red">
+				<br/>
 				<xsl:text>The following data issue</xsl:text>
 				<xsl:choose>
-					<xsl:when test="count($issues) &gt; 1">
+					<xsl:when test="count($emptyGraphemes) &gt; 1">
 						<xsl:text>s were</xsl:text>
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:text> was</xsl:text>
 					</xsl:otherwise>
 				</xsl:choose>
-				<xsl:text> found that may affect how the parser works.  When the Hermit Crab parser uses a natural class during its synthesis process, the natural class will use the phonological features which are the intersection of the features of all the phonemes in the class while trying to see if a segment matches the natural class.  The implied phonological features are shown for each class below and mean that it will match any of the predicted phonemes shown.  (If the implied features field is blank, then it will match *all* phonemes.)  For each of the natural classes shown below, the set of predicted phonemes is not the same as the set of actual  phonemes.  You will need to rework your phonological feature system and the assignment of these features to phonemes to make it be correct.</xsl:text>
-			</p>
-<!--			<ul>-->
-				<xsl:for-each select="$issues">
-<!--					<li>-->
-					<table>
-							<tr valign="top">
-								<td>
-									<table>
-										<tr style="color:red">
-											<td>
-												<xsl:value-of select="ClassName"/>
-											</td>
-										</tr>
-										<tr style="color:red">
-											<td>
-												<xsl:text>[</xsl:text>
-												<xsl:value-of select="ClassAbbeviation"/>
-												<xsl:text>]</xsl:text>
-											</td>
-										</tr>
-									</table>
-								</td>
-								<td>
-									<table>
-										<tr style="color:red">
-											<td>Implied Features</td>
-											<td>
-												<xsl:value-of select="ImpliedPhonologicalFeatures"/>
-											</td>
-										</tr>
-										<tr style="color:red">
-											<td>Predicted Phonemes</td>
-											<td>
-												<xsl:value-of select="PredictedPhonemes"/>
-											</td>
-										</tr>
-										<tr style="color:red">
-											<td>Actual Phonemes</td>
-											<td>
-												<xsl:value-of select="ActualPhonemes"/>
-											</td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-						</table>
-<!--					</li>-->
+				<xsl:text> found that may affect how the parser works.  Empty graphemes can make the Hermit Crab parser not respond correctly.</xsl:text>
+				<xsl:for-each select="$emptyGraphemes">
+					<br/>
+					<xsl:text>The phoneme </xsl:text>
+					<xsl:value-of select="Phoneme"/>
+					<xsl:text> has an empty grapheme.  Please delete it or fill it out.</xsl:text>
 				</xsl:for-each>
-<!--			</ul>-->
+			</div>
+		</xsl:if>
+		<xsl:variable name="bracketsInGraphemes" select="DataIssues/NoBracketsAsGraphemes"/>
+
+		<xsl:if test="count($bracketsInGraphemes)&gt;0">
+			<div style="color:red">
+				<br/>
+				<xsl:text>The following data issue</xsl:text>
+				<xsl:choose>
+					<xsl:when test="count($bracketsInGraphemes) &gt; 1">
+						<xsl:text>s were</xsl:text>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:text> was</xsl:text>
+					</xsl:otherwise>
+				</xsl:choose>
+				<xsl:text> found that may affect how the parser works.  Using left or right square brackets as graphemes can make the Hermit Crab parser not respond correctly.</xsl:text>
+				<xsl:for-each select="$bracketsInGraphemes">
+					<br/>
+					<xsl:text>The phoneme </xsl:text>
+					<xsl:value-of select="Phoneme"/>
+					<xsl:text> has a bracket ( </xsl:text>
+					<xsl:value-of select="Bracket"/>
+					<xsl:text> ) as a grapheme.  Please delete it.</xsl:text>
+				</xsl:for-each>
 			</div>
 		</xsl:if>
 	</xsl:template>

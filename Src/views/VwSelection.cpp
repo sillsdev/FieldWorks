@@ -5315,6 +5315,7 @@ void VwTextSelection::MakeSubString(ITsString * ptss, int ichMin, int ichLim, IT
 	int cch;
 	CheckHr(ptss->GetBldr(&qtsb));
 	CheckHr(ptss->get_Length(&cch));
+
 	if (ichLim < cch)
 		CheckHr(qtsb->Replace(ichLim, cch, NULL, NULL));
 	if (ichMin)
@@ -5342,16 +5343,25 @@ void VwTextSelection::MakeSubString(ITsString * ptss, int ichMin, int ichLim, IT
 
 			if (wsNew <= 0)
 			{
-				// Still don't have a writing system, so use the WS of the last run that the
-				// selection is located in.
-				int cRun;
-				CheckHr(m_qtsbProp->get_RunCount(&cRun));
-				Assert(cRun > 0);
-				CheckHr(m_qtsbProp->get_Properties(cRun - 1, &qttp));
-				CheckHr(qttp->GetIntPropValues(ktptWs, &var, &wsNew));
+				if(m_qtsbProp)
+				{
+					// Still don't have a writing system, so use the WS of the last run that the
+					// selection is located in.
+					int cRun;
+					CheckHr(m_qtsbProp->get_RunCount(&cRun));
+					Assert(cRun > 0);
+					CheckHr(m_qtsbProp->get_Properties(cRun - 1, &qttp));
+					CheckHr(qttp->GetIntPropValues(ktptWs, &var, &wsNew));
+				}
 			}
 
-			Assert(wsNew > 0);
+			if(wsNew <= 0)
+			{
+				// After every effort no suitable source for a ws was found
+				// This is noteworty, but instead of failing we'll just leave the builder without a new ws
+				Assert(wsNew > 0);
+				return;
+			}
 			// update the builder with the new writing system
 			CheckHr(qtsb->get_Properties(0, &qttp));
 			ITsPropsBldrPtr qtpb;

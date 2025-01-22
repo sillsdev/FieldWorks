@@ -15,7 +15,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
@@ -28,6 +30,11 @@ using SIL.FieldWorks.WordWorks.Parser;
 using SIL.FieldWorks.XWorks;
 using SIL.Utils;
 using XCore;
+using SIL.ObjectModel;
+using SIL.LCModel.Core.Text;
+using System.Runtime.Remoting.Contexts;
+using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.Controls;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -56,6 +63,13 @@ namespace SIL.FieldWorks.LexText.Controls
 		private FormWindowState m_prevWindowState;
 		private ParserConnection m_parserConnection;
 		private Timer m_timer;
+		// Keep track of parse results as we parse wordforms.
+		private Dictionary<IWfiWordform, ParseResult> m_checkParserResults = null;
+		private int m_checkParserResultsCount = 0;
+		private string m_sourceText = null;
+		private ObservableCollection<ParserReportViewModel> m_parserReports = null;
+		private ParserReportsDialog m_parserReportsDialog = null;
+		private string m_defaultComment = null;
 
 		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
@@ -80,7 +94,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			return new IxCoreColleague[]{this};
+			return new IxCoreColleague[] { this };
 		}
 
 		/// <summary>
@@ -123,7 +137,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				var wordform = m_propertyTable.GetValue<ICmObject>(propertyName) as IWfiWordform;
 				if (wordform != null)
 				{
-					m_parserConnection.UpdateWordform(wordform, ParserPriority.High);
+					UpdateWordform(wordform, ParserPriority.High);
 				}
 			}
 		}
@@ -138,7 +152,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (m_parserConnection != null && tag == WfiWordformTags.kflidForm)
 			{
 				// the form of this WfiWordform was changed, so update its parse info.
-				m_parserConnection.UpdateWordform(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetObject(hvo), ParserPriority.High);
+				UpdateWordform(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetObject(hvo), ParserPriority.High);
 			}
 		}
 
@@ -181,7 +195,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Don't bother if the lexicon is empty.  See FWNX-1019.
 				if (m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().Count == 0)
 					return false;
-				m_parserConnection = new ParserConnection(m_cache, m_mediator.IdleQueue);
+				m_parserConnection = new ParserConnection(m_cache, m_mediator.IdleQueue, WordformUpdatedEventHandler);
 			}
 			StartProgressUpdateTimer();
 			return true;
@@ -221,7 +235,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (ex != null)
 				{
 					DisconnectFromParser();
-						var app = m_propertyTable.GetValue<IApp>("App");
+					var app = m_propertyTable.GetValue<IApp>("App");
 					ErrorReporter.ReportException(ex, app.SettingsKey, app.SupportEmailAddress,
 													app.ActiveMainWindow, false);
 				}
@@ -420,7 +434,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			display.Visible = enable;
 			display.Enabled = enable;
 
-			return true;	//we handled this.
+			return true;    //we handled this.
 		}
 
 		public bool OnClearSelectedWordParserAnalyses(object dummyObj)
@@ -441,7 +455,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					wf.Checksum = 0;
 				}
 			});
-			return true;	//we handled this.
+			return true;    //we handled this.
 		}
 
 		#endregion ClearSelectedWordParserAnalyses handlers
@@ -454,7 +468,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			display.Visible = enable;
 			display.Enabled = enable;
 
-			return true;	//we handled this.
+			return true;    //we handled this.
 		}
 
 		public bool OnParseCurrentWord(object argument)
@@ -464,10 +478,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (ConnectToParser())
 			{
 				IWfiWordform wf = CurrentWordform;
-				m_parserConnection.UpdateWordform(wf, ParserPriority.High);
+				UpdateWordform(wf, ParserPriority.High);
 			}
 
-			return true;	//we handled this.
+			return true;    //we handled this.
 		}
 
 		public bool OnDisplayParseWordsInCurrentText(object commandObject, ref UIItemDisplayProperties display)
@@ -478,27 +492,396 @@ namespace SIL.FieldWorks.LexText.Controls
 			display.Visible = enable;
 			display.Enabled = enable;
 
-			return true;	//we handled this.
+			return true;    //we handled this.
 		}
 
 		public bool OnParseWordsInCurrentText(object argument)
 		{
 			CheckDisposed();
 
-			if (ConnectToParser())
+			if (CurrentText != null && ConnectToParser())
 			{
 				IStText text = CurrentText;
 				IEnumerable<IWfiWordform> wordforms = text.UniqueWordforms();
-				m_parserConnection.UpdateWordforms(wordforms, ParserPriority.Medium);
+				UpdateWordforms(wordforms, ParserPriority.Medium);
 			}
 
-			return true;	//we handled this.
+			return true;    //we handled this.
 		}
+
+		public bool OnCheckParserOnCurrentText(object argument)
+		{
+			CheckDisposed();
+
+			if (CurrentText != null && ConnectToParser())
+			{
+				IEnumerable<IWfiWordform> wordforms = CurrentText.UniqueWordforms();
+				UpdateWordforms(wordforms, ParserPriority.Medium, checkParser: true, CurrentText.ShortName);
+			}
+
+			return true;    //we handled this.
+		}
+
+		public bool OnCheckParserOnGenre(object argument)
+		{
+			CheckDisposed();
+
+			if (ConnectToParser())
+			{
+				// Get the selected genre from the user.
+				string displayWs = "analysis vernacular";
+				var labels = ObjectLabel.CreateObjectLabels(m_cache, m_cache.LanguageProject.GenreListOA.PossibilitiesOS, "", displayWs);
+				var chooser = new SimpleListChooser(null, labels, ParserUIStrings.ksGenre, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"));
+				// chooser.SetHelpTopic("FLExHelpFile");
+				ExpandTreeViewNodes(chooser.TreeView.Nodes);
+				chooser.ShowDialog();
+				ICmPossibility selectedGenre = (ICmPossibility)chooser.SelectedObject;
+				if (chooser.ChosenOne == null || selectedGenre == null)
+					return false;
+
+				// Get all of the wordforms in the genre's texts.
+				IEnumerable<IWfiWordform> wordforms = new HashSet<IWfiWordform>();
+				foreach (var text in m_cache.LanguageProject.InterlinearTexts.Where(t => t.GenreCategories.Any(genre => ContainsGenre(selectedGenre, genre))))
+				{
+					wordforms = wordforms.Union(text.UniqueWordforms());
+				}
+				// Check all of the wordforms.
+				var genreName = String.Format(ParserUIStrings.ksXGenre, selectedGenre.Name.AnalysisDefaultWritingSystem.Text);
+				UpdateWordforms(wordforms, ParserPriority.Medium, checkParser: true, genreName);
+			}
+
+			return true;    //we handled this.
+		}
+
+		private void ExpandTreeViewNodes(TreeNodeCollection nodes)
+		{
+			foreach (TreeNode node in nodes)
+			{
+				node.Expand();
+				ExpandTreeViewNodes(node.Nodes);
+			}
+		}
+
+		private bool ContainsGenre(ICmPossibility genre1, ICmPossibility genre2)
+		{
+			while (genre2 != null)
+			{
+				if (genre1 == genre2) return true;
+				genre2 = genre2.Owner as ICmPossibility;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Check parser on all words in texts.
+		/// </summary>
+		public bool OnCheckParserOnAll(object argument)
+		{
+			CheckDisposed();
+
+			if (ConnectToParser())
+			{
+				IEnumerable<IWfiWordform> wordforms = new HashSet<IWfiWordform>();
+				foreach (var text in m_cache.LanguageProject.InterlinearTexts)
+				{
+					wordforms = wordforms.Union(text.UniqueWordforms());
+				}
+				UpdateWordforms(wordforms, ParserPriority.Low, checkParser: true, "All Texts");
+			}
+
+			return true;    //we handled this.
+		}
+
+		public bool OnShowParserReports(object argument)
+		{
+			CheckDisposed();
+
+			ShowParserReports();
+
+			return true;
+		}
+
+		/// <summary>
+		/// Run the parser on the given wordforms and then update the wordforms
+		/// unless checkParser is true, in which case create a test report instead.
+		/// </summary>
+		/// <param name="wordforms">The wordforms to parse</param>
+		/// <param name="priority">The priority the parser is run at</param>
+		/// <param name="checkParser">Whether to check the parser and not update the wordforms</param>
+		/// <param name="sourceText">The source text for the word forms (used for the test report)</param>
+		private void UpdateWordforms(IEnumerable<IWfiWordform> wordforms, ParserPriority priority, bool checkParser = false, string sourceText = null)
+		{
+			if (checkParser)
+			{
+				InitCheckParserResults(wordforms, sourceText);
+				if (wordforms.Count() == 0)
+				{
+					ReadParserReports();
+					// Write an empty parser report.
+					var parserReport = CreateParserReport();
+					ParserReportViewModel viewModel = AddParserReport(parserReport);
+					ShowParserReport(viewModel, m_mediator, m_cache);
+				}
+			}
+			m_parserConnection.UpdateWordforms(wordforms, priority, checkParser);
+		}
+
+		private void UpdateWordform(IWfiWordform wordform, ParserPriority priority)
+		{
+			m_parserConnection.UpdateWordform(wordform, priority);
+		}
+
+		private void InitCheckParserResults(IEnumerable<IWfiWordform> wordforms, string sourceText)
+		{
+			// Initialize m_parseResults with the given wordforms.
+			if (wordforms == null)
+			{
+				m_checkParserResults = null;
+				m_checkParserResultsCount = 0;
+			}
+			else
+			{
+				m_checkParserResults = new Dictionary<IWfiWordform, ParseResult>();
+				m_checkParserResultsCount = 0;
+				foreach (var wordform in wordforms)
+				{
+					m_checkParserResults[wordform] = null;
+				}
+			}
+			m_sourceText = sourceText;
+		}
+
+		private void WordformUpdatedEventHandler(object sender, WordformUpdatedEventArgs e)
+		{
+			if (e.CheckParser && m_checkParserResults != null && m_checkParserResults.ContainsKey(e.Wordform))
+			{
+				// Record the parse result.
+				m_checkParserResults[e.Wordform] = e.ParseResult;
+				m_checkParserResultsCount++;
+				// Verify that all of the wordforms have been processed.
+				if (m_checkParserResultsCount < m_checkParserResults.Count())
+					return;
+				foreach (var key in m_checkParserResults.Keys)
+				{
+					if (m_checkParserResults[key] == null)
+						return;
+				}
+				// Read parser reports before writing and adding a parser report to avoid duplicates.
+				ReadParserReports();
+				// Convert parse results into ParserReport.
+				var parserReport = CreateParserReport();
+				ParserReportViewModel viewModel = AddParserReport(parserReport);
+				ShowParserReport(viewModel, m_mediator, m_cache);
+			}
+		}
+
+		/// <summary>
+		/// Create a parser report from the parse results.
+		/// </summary>
+		ParserReport CreateParserReport()
+		{
+			var parserReport = new ParserReport(m_cache)
+			{
+				SourceText = m_sourceText
+			};
+			if (m_checkParserResults != null)
+			{
+				foreach (var wordform in m_checkParserResults.Keys)
+				{
+					if (SuppressableParseResult(wordform))
+						continue;
+					var parseResult = m_checkParserResults[wordform];
+					var parseReport = new ParseReport(wordform, parseResult);
+					var form = wordform.Form.VernacularDefaultWritingSystem;
+					parserReport.AddParseReport(form.Text, parseReport);
+				}
+			}
+			// Clear the data we wrote.
+			m_checkParserResults = null;
+			return parserReport;
+		}
+
+		public static void SaveParserReport(ParserReportViewModel reportViewModel, LcmCache cache, string defaultComment)
+		{
+			Form inputBox = CreateInputBox(ParserUIStrings.ksEnterComment, ref defaultComment);
+			DialogResult result = inputBox.ShowDialog();
+			if (result == DialogResult.OK)
+			{
+				ParserReport report = reportViewModel.ParserReport;
+				Control textBox = inputBox.Controls["input"];
+				report.Comment = textBox.Text;
+				report.DeleteJsonFile();
+				report.WriteJsonFile(cache);
+				reportViewModel.UpdateDisplayComment();
+			}
+		}
+
+		private static Form CreateInputBox(string title, ref string input)
+		{
+			System.Drawing.Size size = new System.Drawing.Size(400, 70);
+			Form inputBox = new Form();
+
+			inputBox.FormBorderStyle = FormBorderStyle.FixedDialog;
+			inputBox.ClientSize = size;
+			inputBox.Text = title;
+			inputBox.StartPosition = FormStartPosition.CenterScreen;
+
+			TextBox textBox = new TextBox();
+			textBox.Size = new System.Drawing.Size(size.Width - 10, 23);
+			textBox.Location = new System.Drawing.Point(5, 5);
+			textBox.Text = input;
+			textBox.Name = "input";
+			inputBox.Controls.Add(textBox);
+
+			Button okButton = new Button();
+			okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+			okButton.Name = "okButton";
+			okButton.Size = new System.Drawing.Size(75, 23);
+			okButton.Text = "&OK";
+			okButton.Location = new System.Drawing.Point(size.Width - 80 - 80, 39);
+			inputBox.Controls.Add(okButton);
+
+			Button cancelButton = new Button();
+			cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			cancelButton.Name = "cancelButton";
+			cancelButton.Size = new System.Drawing.Size(75, 23);
+			cancelButton.Text = "&Cancel";
+			cancelButton.Location = new System.Drawing.Point(size.Width - 80, 39);
+			inputBox.Controls.Add(cancelButton);
+
+			inputBox.AcceptButton = okButton;
+			inputBox.CancelButton = cancelButton;
+
+			return inputBox;
+		}
+
+		/// <summary>
+		/// Suppress this parse result if it is an uppercase wordform whose analyses all came from its lowercase version.
+		/// This only happens in projects that were parsed before we decided that the case of wordforms in analyses
+		/// should be determined by the case of the word that was parsed rather than the case of the surface form.
+		/// So, the wordform for "The" should be "the" rather than "The" because "The" is parsed as the determiner "the".
+		/// </summary>
+		/// <param name="wordform"></param>
+		/// <returns></returns>
+		private bool SuppressableParseResult(IWfiWordform wordform)
+		{
+			var result = m_checkParserResults[wordform];
+			if (result.Analyses.Count > 0)
+				return false;
+			// See if there is a lowercase version of wordform in the parse results.
+			ITsString itsString = wordform.Form.VernacularDefaultWritingSystem;
+			if (itsString == null || itsString.Text == null)
+				return true;
+			var cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(itsString.get_WritingSystemAt(0)));
+			string lcText = cf.ToLower(itsString.Text);
+			if (lcText != itsString.Text)
+			{
+				var lcItsString = TsStringUtils.MakeString(lcText, itsString.get_WritingSystem(0));
+				IWfiWordform lcWordform;
+				if (m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(lcItsString, out lcWordform))
+				{
+					if (m_checkParserResults.ContainsKey(lcWordform))
+					{
+						var lcResult = m_checkParserResults[lcWordform];
+						// See if lcResult covers wordform's approved analyses.
+						var userAgent = wordform.Cache.LanguageProject.DefaultUserAgent;
+						foreach (IWfiAnalysis wfAnalysis in wordform.AnalysesOC)
+						{
+							var wfOpinion = wfAnalysis.GetAgentOpinion(userAgent);
+							if (wfOpinion == Opinions.approves)
+							{
+								foreach (ParseAnalysis lcWfAnalysis in lcResult.Analyses)
+								{
+									if (!lcWfAnalysis.MatchesIWfiAnalysis(wfAnalysis))
+									{
+										return false;
+									}
+								}
+							}
+						}
+						// All approved analyses are covered.
+						// Suppress the parse results for wordform.
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Show the parser reports in the ParserReports window.
+		/// </summary>
+		public void ShowParserReports()
+		{
+			if (m_parserReportsDialog == null)
+			{
+				ReadParserReports();
+				// Create parser reports window.
+				m_parserReportsDialog = new ParserReportsDialog(m_parserReports, m_mediator, m_cache, m_defaultComment);
+				m_parserReportsDialog.Closed += ParserReportsDialog_Closed;
+			}
+			m_parserReportsDialog.Show(); // Show the dialog but do not block other app access
+			m_parserReportsDialog.BringIntoView();
+		}
+
+		private void ParserReportsDialog_Closed(object sender, EventArgs e)
+		{
+			ParserReportsDialog dialog = (ParserReportsDialog)sender;
+			// Preserve the default comment for the next call to ShowParserReports.
+			if (dialog != null)
+				m_defaultComment = dialog.DefaultComment;
+			m_parserReportsDialog = null;
+		}
+
+		/// <summary>
+		/// Read the parser reports from the disk if they haven't been read.
+		/// </summary>
+		private void ReadParserReports()
+		{
+			if (m_parserReports == null)
+			{
+				m_parserReports = new ObservableCollection<ParserReportViewModel>();
+				var reportDir = ParserReport.GetProjectReportsDirectory(m_cache);
+				foreach (string filename in Directory.EnumerateFiles(reportDir, "*.json"))
+				{
+					var parserReport = ParserReport.ReadJsonFile(filename);
+					m_parserReports.Add(new ParserReportViewModel { ParserReport = parserReport});
+				}
+			}
+		}
+
+		/// <summary>
+		/// Add parserReport to the list of parser reports.
+		/// </summary>
+		private ParserReportViewModel AddParserReport(ParserReport parserReport)
+		{
+			ParserReportViewModel viewModel = new ParserReportViewModel { ParserReport = parserReport };
+			m_parserReports.Insert(0, viewModel);
+			if (m_parserReportsDialog != null)
+				// Reset ParserReports so that the window gets notified when the new report is selected.
+				((ParserReportsViewModel)m_parserReportsDialog.DataContext).ParserReports = m_parserReports;
+			return viewModel;
+		}
+
+		/// <summary>
+		/// Display a parser report window.
+		/// </summary>
+		/// <param name="parserReport"></param>
+		/// <param name="mediator">the mediator is used to call TryAWord</param>
+		public static void ShowParserReport(ParserReportViewModel parserReport, Mediator mediator, LcmCache cache)
+		{
+			ParserReportDialog dialog = new ParserReportDialog(parserReport, mediator, cache);
+			dialog.Show();
+		}
+
 		public bool OnParseAllWords(object argument)
 		{
 			CheckDisposed();
 			if (ConnectToParser())
-				m_parserConnection.UpdateWordforms(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances(), ParserPriority.Low);
+			{
+				IEnumerable<IWfiWordform> wordforms = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances();
+				UpdateWordforms(wordforms, ParserPriority.Low);
+			}
 
 			return true;	//we handled this.
 		}
@@ -595,7 +978,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 			if (ConnectToParser())
-				m_parserConnection.UpdateWordforms(m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances(), ParserPriority.Low);
+			{
+				IEnumerable<IWfiWordform> wordforms = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().AllInstances();
+				UpdateWordforms(wordforms, ParserPriority.Low);
+			}
 			return true;	//we handled this.
 		}
 
@@ -628,11 +1014,35 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
+		/// Handles the xWorks message for Try This Word
+		/// </summary>
+		/// <param name="argument">The word to try</param>
+		/// <returns></returns>
+		public bool OnTryThisWord(object commandObject)
+		{
+			CheckDisposed();
+
+			var result = TryAWord(commandObject as string);
+			// Invoke it immediately.
+			m_dialog.TryIt();
+			return result;
+		}
+
+		/// <summary>
 		/// Handles the xWorks message for Try A Word
 		/// </summary>
 		/// <param name="argument">The xCore Command object.</param>
 		/// <returns>false</returns>
 		public bool OnTryAWord(object argument)
+		{
+			string word = null;
+			if (CurrentWordform != null)
+				word = CurrentWordform.Form.VernacularDefaultWritingSystem.Text;
+
+			return TryAWord(word);
+		}
+
+		public bool TryAWord(string initialWord)
 		{
 			CheckDisposed();
 
@@ -640,11 +1050,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				m_dialog = new TryAWordDlg();
 				m_dialog.SizeChanged += (sender, e) =>
-											{
-												if (m_dialog.WindowState != FormWindowState.Minimized)
-													m_prevWindowState = m_dialog.WindowState;
-											};
-				m_dialog.SetDlgInfo(m_mediator, m_propertyTable, CurrentWordform, this);
+				{
+					if (m_dialog.WindowState != FormWindowState.Minimized)
+						m_prevWindowState = m_dialog.WindowState;
+				};
+				m_dialog.SetDlgInfo(m_mediator, m_propertyTable, initialWord, this);
 				var form = m_propertyTable.GetValue<FwXWindow>("window");
 				m_dialog.Show(form);
 				// This allows Keyman to work correctly on initial typing.
@@ -655,6 +1065,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			else
 			{
+				if (initialWord != null)
+					m_dialog.SetWordToUse(initialWord);
 				if (m_dialog.WindowState == FormWindowState.Minimized)
 					m_dialog.WindowState = m_prevWindowState;
 				else

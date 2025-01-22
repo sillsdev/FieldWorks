@@ -18,7 +18,7 @@
 	<UpgradeBackupLocation>
 	</UpgradeBackupLocation>
 	<IsWebBootstrapper>false</IsWebBootstrapper>
-	<TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
 	<PublishUrl>publish\</PublishUrl>
 	<Install>true</Install>
 	<InstallFrom>Disk</InstallFrom>
@@ -84,6 +84,7 @@
 	<PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+	<Reference Include="netstandard" />
 	<Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
 	  <SpecificVersion>False</SpecificVersion>
 	  <HintPath>..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>

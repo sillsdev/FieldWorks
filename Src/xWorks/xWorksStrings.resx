@@ -822,7 +822,7 @@ Are you sure you want to delete this list?</value>
     <value>Please remove the punctuation from the custom field name ("{0}") to allow export and some other functions to work.</value>
   </data>
   <data name="PunctInFieldNameWarning" xml:space="preserve">
-    <value>The custom field name "{0}" includes punctuation characters. This may cause export to fail or make the exported file difficult for other programs to use. We recommend that you rename your custom field and then do the export again.
+    <value>The custom field name "{0}" includes punctuation characters. This may cause export to fail or make the exported file difficult for other programs to use.  Please contact flex_errors@sil.org for help modifying your project.
 Do you want to continue with the export?</value>
   </data>
   <data name="ksRedoMacro" xml:space="preserve">
@@ -1258,5 +1258,29 @@ See USFM documentation for help.</value>
   </data>
   <data name="Webonary_UnexpectedUploadError" xml:space="preserve">
     <value>Unexpected error encountered while uploading to webonary.</value>
+  </data>
+  <data name="UploadToWebonaryController_RetryAfterFailedConnection" xml:space="preserve">
+    <value>Initial connection failed retrying...</value>
+  </data>
+  <data name="DeletePhonology" xml:space="preserve">
+    <value>This will permanently delete the existing phonology and all references to it.  Do you want to continue?</value>
+  </data>
+  <data name="MissingCopyrightAndLicense" xml:space="preserve">
+    <value>{0} was not uploaded because it was missing copyright and license information.</value>
+  </data>
+  <data name="WebonaryLogViewer_Full_Log" xml:space="preserve">
+    <value>Full Log</value>
+  </data>
+  <data name="WebonaryLogViewer_Rejected_Files" xml:space="preserve">
+    <value>Rejected Files</value>
+  </data>
+  <data name="WebonaryLogViewer_Errors-Warnings" xml:space="preserve">
+    <value>Errors &amp; Warnings</value>
+  </data>
+  <data name="WebonaryLogViewer_CopyFileError" xml:space="preserve">
+    <value>Could not copy the file. {0}</value>
+  </data>
+  <data name="WebonaryLogViewer_Save_a_copy" xml:space="preserve">
+    <value>Save a copy</value>
   </data>
 </root>
