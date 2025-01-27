@@ -540,14 +540,20 @@
 		<part ref="Segments" label="Phonemes" menu="mnuDataTree-Help"/>
 	</layout>
 
-  <layout class="PhNCFeatures" type="detail" name="Edit">
-	<part ref="NameAllA" menu="mnuDataTree-Help"/>
-	<part ref="DescriptionAllA" menu="mnuDataTree-Help"/>
-	<part ref="AbbreviationAllA" menu="mnuDataTree-Help"/>
-	<part ref="Features" label="Phonological Features" menu="mnuDataTree-Help"/>
-  </layout>
+	<layout class="PhNCFeatures" type="detail" name="Edit">
+		<part ref="NameAllA" menu="mnuDataTree-Help"/>
+		<part ref="DescriptionAllA" menu="mnuDataTree-Help"/>
+		<part ref="AbbreviationAllA" menu="mnuDataTree-Help"/>
+		<part ref="Features" label="Phonological Features" menu="mnuDataTree-Help"/>
+	</layout>
 
-  <layout class="PhEnvironment" type="detail" name="Edit">
+	<layout class="MoStratum" type="detail" name="Edit">
+		<part ref="NameAllA" menu="mnuDataTree-Help"/>
+		<part ref="DescriptionAllA" menu="mnuDataTree-Help"/>
+		<part ref="AbbreviationAllA" menu="mnuDataTree-Help"/>
+	</layout>
+
+	<layout class="PhEnvironment" type="detail" name="Edit">
 		<part ref="NameAllA" menu="mnuDataTree-Help"/>
 		<part ref="DescriptionAllA" menu="mnuDataTree-Help"/>
 		<part ref="StringRepresentation"/>

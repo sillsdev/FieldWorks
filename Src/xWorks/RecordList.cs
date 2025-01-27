@@ -3450,6 +3450,9 @@ namespace SIL.FieldWorks.XWorks
 							case "DsDiscourseData":
 								owningObject = cache.LanguageProject.DiscourseDataOA;
 								break;
+							case "MorphologicalData":
+								owningObject = cache.LanguageProject.MorphologicalDataOA;
+								break;
 							default:
 								Debug.Assert(false, "Illegal owner specified for possibility list.");
 								break;

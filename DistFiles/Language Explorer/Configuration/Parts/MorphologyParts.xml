@@ -2810,7 +2810,19 @@
 		</part>
 	</bin>
 
-	<!-- STUFF ADDED FOR THE NEW CONFIGURATION -->
+  <bin class="MoStratum">
+    <part id="MoStratum-Detail-NameAllA" type="Detail">
+      <slice field="Name" label="Name" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+    </part>
+    <part id="MoStratum-Detail-AbbreviationAllA" type="Detail">
+      <slice field="Abbreviation" label="Abbreviation" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+    </part>
+    <part id="MoStratum-Detail-DescriptionAllA" type="Detail">
+      <slice field="Description" label="Description" editor="multistring" ws="all analysis" menu="mnuDataTree-Help"/>
+    </part>
+  </bin>
+
+  <!-- STUFF ADDED FOR THE NEW CONFIGURATION -->
 
 	<bin class="MoForm">
 		<part id="MoForm-Jt-MorphTypeConfig">

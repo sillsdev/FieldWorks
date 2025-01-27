@@ -57,7 +57,10 @@
 	<menu id="PaneBar-ShowHiddenFields-naturalClassedit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-naturalClassedit" defaultVisible="true" settingsGroup="local"/>
 	</menu>
-	<menu id="PaneBar-ShowHiddenFields-EnvironmentEdit" label="">
+    <menu id="PaneBar-ShowHiddenFields-strataEdit" label="">
+      <item label="Show Hidden Fields" boolProperty="ShowHiddenFields-strataEdit" defaultVisible="true" settingsGroup="local"/>
+    </menu>
+    <menu id="PaneBar-ShowHiddenFields-EnvironmentEdit" label="">
 		<item label="Show Hidden Fields" boolProperty="ShowHiddenFields-EnvironmentEdit" defaultVisible="true" settingsGroup="local"/>
 	</menu>
 	<menu id="PaneBar-ShowHiddenFields-PhonologicalRuleEdit" label="">

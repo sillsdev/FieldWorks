@@ -68,6 +68,7 @@
 	<string id="PhNCSegments" txt="Natural Class (Phonemes)"/>
 	<string id="PhRegularRule" txt="Phonological Rule"/>
 	<string id="PhMetathesisRule" txt="Metathesis Rule"/>
+	<string id="MoStratum" txt="Stratum"/>
 	<string id="MoInflAffixSlot" txt="Inflectional Affix Slot"/>
 	<string id="MoInflAffixTemplate" txt="Inflectional Affix Template"/>
 	<string id="MoInflClass" txt="Inflection Class"/>
@@ -123,6 +124,7 @@
 	<string id="FsFeatDefn-Phonological" txt="Phonological Features"/>
 	<string id="FsFeatDefn-PhonologicalValues" txt="Phonological Feature and Values"/>
 	<string id="ProdRestrict-Plural" txt='Exception "Features"'/>
+	<string id="Stratum-Plural" txt="Strata"/>
 <!-- Lexicon Views-->
 	<string id="LexEntry-Plural" txt="Entries"/>
 	<string id="LexSense-Plural" txt="Senses"/>
@@ -170,6 +172,7 @@
 	<string id="No-FsFeatDefn-Phonological" txt="No Phonological Features"/>
 	<string id="No-ProdRestricts" txt='No Exception "Features"'/>
 	<string id="No-Problems" txt="No Problems"/>
+	<string id="No-Strata" txt="No Strata"/>
 <!-- Lexicon Views-->
 	<string id="No-LexEntries" txt="No Entries"/>
 	<string id="No-ReversalIndexEntries" txt="No Reversal Entries"/>

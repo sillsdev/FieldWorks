@@ -45,7 +45,10 @@
 	<command id="CmdInsertFeatureNaturalClasses" label="Natural Class (Features)" message="InsertItemInVector" icon="addFeature" >
 	  <params className="PhNCFeatures"/>
 	</command>
-		<command id="CmdInsertPhRegularRule" label="Phonological Rule" message="InsertItemInVector" icon="environment">
+      <command id="CmdInsertStratum" label="Stratum" message="InsertItemInVector" icon="addFeature" >
+        <params className="MoStratum"/>
+      </command>
+      <command id="CmdInsertPhRegularRule" label="Phonological Rule" message="InsertItemInVector" icon="environment">
 			<params className="PhRegularRule"/>
 		</command>
 		<command id="CmdInsertPhMetathesisRule" label="Metathesis Rule" message="InsertItemInVector" icon="metathesis">
@@ -286,6 +289,8 @@
 			<item label="-" translate="do not translate"/>  -->
 			<item command="CmdInsertSegmentNaturalClasses" defaultVisible="false"/>
 			<item command="CmdInsertFeatureNaturalClasses" defaultVisible="false"/>
+            <item label="-" translate="do not translate"/>
+            <item command="CmdInsertStratum" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdInsertPhEnvironment" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
@@ -371,8 +376,10 @@
 			<item command="CmdInsertBoundaryMarker"/>  -->
 			<item label="-" translate="do not translate"/>
 	  <item command="CmdInsertSegmentNaturalClasses" defaultVisible="false"/>
-	  <item command="CmdInsertFeatureNaturalClasses" defaultVisible="false"/>
-	  <item label="-" translate="do not translate"/>
+          <item command="CmdInsertFeatureNaturalClasses" defaultVisible="false"/>
+          <item label="-" translate="do not translate"/>
+          <item command="CmdInsertStratum" defaultVisible="false"/>
+          <item label="-" translate="do not translate"/>
 			<item command="CmdInsertPhEnvironment" defaultVisible="false"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdInsertPhRegularRule" defaultVisible="false"/>
@@ -441,6 +448,9 @@
 				<clerk id="naturalClasses">
 					<recordList owner="MorphologicalData" property="NaturalClasses"/>
 				</clerk>
+              <clerk id="strata">
+                <recordList owner="MorphologicalData" property="Strata"/>
+              </clerk>
 				<clerk id="environments">
 					<recordList owner="MorphologicalData" property="Environments"/>
 				</clerk>
