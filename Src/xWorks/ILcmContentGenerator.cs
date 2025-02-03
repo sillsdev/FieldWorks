@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.XWorks
 			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, IFragment> childContentGenerator);
 		IFragment AddSenseData(ConfigurableDictionaryNode config, IFragment senseNumberSpan, Guid ownerGuid, IFragment senseContent, bool first);
 		IFragment AddCollectionItem(ConfigurableDictionaryNode config, bool isBlock, string collectionItemClass, IFragment content, bool first);
-		IFragment AddProperty(ConfigurableDictionaryNode config, string className, bool isBlockProperty, string content);
+		IFragment AddProperty(ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string className, bool isBlockProperty, string content, string writingSystem);
 		IFragment CreateFragment();
 		IFragment CreateFragment(string str);
 		IFragmentWriter CreateWriter(IFragment fragment);

@@ -1076,7 +1076,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public IFragment AddProperty(ConfigurableDictionaryNode config, string className, bool isBlockProperty, string content)
+		public IFragment AddProperty(ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string className, bool isBlockProperty, string content, string writingSystem)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);
