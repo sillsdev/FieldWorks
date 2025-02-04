@@ -1121,39 +1121,35 @@ namespace SIL.FieldWorks.XWorks
 
 			return collData;
 		}
-		public IFragment AddProperty(ConfigurableDictionaryNode config, string className, bool isBlockProperty, string content)
+		public IFragment AddProperty(ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string className, bool isBlockProperty, string content, string writingSystem)
 		{
 			var propFrag = new DocFragment();
 			Run contentRun = null;
 			string styleDisplayName = null;
 
-			// Add the content with the style.
-			if (!string.IsNullOrEmpty(content))
+			if (content == null)
 			{
-				if (!string.IsNullOrEmpty(config.Style))
-				{
-					string displayNameBase = !string.IsNullOrEmpty(config.DisplayLabel) ? config.DisplayLabel : config.Style;
-
-					Style style = GetOrCreateCharacterStyle(config.Style, displayNameBase, _propertyTable);
-					if (style != null)
-					{
-						styleDisplayName = style.StyleId;
-					}
-				}
-				contentRun = CreateRun(content, styleDisplayName);
+				// In this case, we should not generate the run or any before/after text for it.
+				return propFrag;
 			}
+
+			// Create a run with the correct style.
+			var writer = CreateWriter(propFrag);
+			((WordFragmentWriter)writer).AddRun(Cache, config, propTable, writingSystem, true);
+
+			// Add the content to the run.
+			AddToRunContent(writer, content);
+			var currentRun = ((WordFragmentWriter)writer).WordFragment.GetLastRun();
+
+			// Get the run's styleDisplayName for use in before/after text runs.
+			if (currentRun.RunProperties != null)
+				styleDisplayName = currentRun.RunProperties.RunStyle?.Val;
 
 			// Add Before text.
 			if (!string.IsNullOrEmpty(config.Before))
 			{
 				var beforeRun = CreateBeforeAfterBetweenRun(config.Before, styleDisplayName);
-				propFrag.DocBody.Append(beforeRun);
-			}
-
-			// Add the content.
-			if (contentRun != null)
-			{
-				propFrag.DocBody.Append(contentRun);
+				propFrag.DocBody.PrependChild(beforeRun);
 			}
 
 			// Add After text.

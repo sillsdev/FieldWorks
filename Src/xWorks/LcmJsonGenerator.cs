@@ -124,7 +124,7 @@ namespace SIL.FieldWorks.XWorks
 			return fragment;
 		}
 
-		public IFragment AddProperty(ConfigurableDictionaryNode config, string className, bool isBlockProperty, string content)
+		public IFragment AddProperty(ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string className, bool isBlockProperty, string content, string writingSystem)
 		{
 			var fragment = new StringFragment($"\"{className}\": \"{content}\",");
 			return fragment;

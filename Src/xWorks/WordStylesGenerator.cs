@@ -515,6 +515,13 @@ namespace SIL.FieldWorks.XWorks
 			var fontName = wsFontInfo.m_fontName.ValueIsSet ? wsFontInfo.m_fontName.Value
 				: defaultFontInfo.FontName.ValueIsSet ? defaultFontInfo.FontName.Value : null;
 
+			// If font is explicitly set in FLEx to "<default font>", this gets picked up as the fontname.
+			// In that case, we want to set fontNome to null in the word style so that it can be inherited from the WS.
+			if (fontName == "<default font>")
+			{
+				fontName = null;
+			}
+
 			// fontName still null means not set in Normal Style, then get default fonts from WritingSystems configuration.
 			// Comparison, projectStyle.Name == "Normal", required to limit the font-family definition to the
 			// empty span (ie span[lang="en"]{}. If not included, font-family will be added to many more spans.
