@@ -2512,18 +2512,15 @@ namespace SIL.FieldWorks.XWorks
 
 			if (propertyValue is int)
 			{
-				var cssClassName = settings.StylesGenerator.AddStyles(config).Trim('.'); ;
-				return settings.ContentGenerator.AddProperty(config, cssClassName, false, propertyValue.ToString());
+				return GenerateContentForSimpleString(config, settings, false, propertyValue.ToString());
 			}
 			if (propertyValue is DateTime)
 			{
-				var cssClassName = settings.StylesGenerator.AddStyles(config).Trim('.'); ;
-				return settings.ContentGenerator.AddProperty(config, cssClassName, false, ((DateTime)propertyValue).ToLongDateString());
+				return GenerateContentForSimpleString(config, settings, false, ((DateTime)propertyValue).ToLongDateString());
 			}
 			else if (propertyValue is GenDate)
 			{
-				var cssClassName = settings.StylesGenerator.AddStyles(config).Trim('.'); ;
-				return settings.ContentGenerator.AddProperty(config, cssClassName, false, ((GenDate)propertyValue).ToLongString());
+				return GenerateContentForSimpleString(config, settings, false, ((GenDate)propertyValue).ToLongString());
 			}
 			else if (propertyValue is IMultiAccessorBase)
 			{
@@ -2533,8 +2530,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else if (propertyValue is string)
 			{
-				var cssClassName = settings.StylesGenerator.AddStyles(config).Trim('.');
-				return settings.ContentGenerator.AddProperty(config, cssClassName, false, propertyValue.ToString());
+				return GenerateContentForSimpleString(config, settings, false, propertyValue.ToString());
 			}
 			else if (propertyValue is IStText)
 			{
@@ -2570,16 +2566,18 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private static IFragment WriteElementContents(object propertyValue,
-			ConfigurableDictionaryNode config, GeneratorSettings settings)
+		/// <summary>
+		/// This method will add a property containing the string, using the first selected writing system,
+		/// or the first analysis writing system if no writing system is selected.
+		/// </summary>
+		private static IFragment GenerateContentForSimpleString(ConfigurableDictionaryNode config,
+			GeneratorSettings settings, bool isBlockProperty, string simpleString)
 		{
-			var content = propertyValue.ToString();
-			if (!String.IsNullOrEmpty(content))
-			{
-				return settings.ContentGenerator.AddProperty(config, GetClassNameAttributeForConfig(config), IsBlockProperty(config), content);
-			}
+			var writingSystem = GetLanguageFromFirstOptionOrAnalysis(config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions,
+				settings.Cache);
+			var cssClassName = settings.StylesGenerator.AddStyles(config).Trim('.');
+			return settings.ContentGenerator.AddProperty(config, settings.PropertyTable, cssClassName, false, simpleString, writingSystem);
 
-			return settings.ContentGenerator.CreateFragment();
 		}
 
 		private static IFragment GenerateContentForStrings(IMultiStringAccessor multiStringAccessor, ConfigurableDictionaryNode config,
@@ -3084,6 +3082,29 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// This method returns the lang attribute value from the first selected writing system in the given options.
+		/// It defaults to the first analysis writing system if no options are given, and English if no analysis writing system is specified.
+		/// </summary>
+		/// <param name="wsOptions"></param>
+		/// <param name="cache"></param>
+		/// <returns></returns>
+		private static string GetLanguageFromFirstOptionOrAnalysis(DictionaryNodeWritingSystemOptions wsOptions, LcmCache cache)
+		{
+			if (wsOptions == null)
+			{
+				const string defaultLang = "en";
+				var analWs = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultAnalWs);
+				if (analWs == null)
+					return defaultLang;
+
+				return analWs;
+			}
+
+			return GetLanguageFromFirstWs(wsOptions, cache);
+		}
+
+		/// <summary>
+		/// This method returns the lang attribute value from the first selected writing system in the given options.
+		/// It defaults to English if no options are given.
 		/// </summary>
 		/// <param name="wsOptions"></param>
 		/// <param name="cache"></param>
@@ -3093,6 +3114,21 @@ namespace SIL.FieldWorks.XWorks
 			const string defaultLang = "en";
 			if (wsOptions == null)
 				return defaultLang;
+			return GetLanguageFromFirstWs(wsOptions, cache);
+		}
+
+		/// <summary>
+		/// This method returns the lang attribute value from the first selected writing system in the given options.
+		/// Returns null if no options are given.
+		/// </summary>
+		/// <param name="wsOptions"></param>
+		/// <param name="cache"></param>
+		/// <returns></returns>
+		private static string GetLanguageFromFirstWs(DictionaryNodeWritingSystemOptions wsOptions, LcmCache cache)
+		{
+			if (wsOptions == null)
+				return null;
+
 			foreach (var option in wsOptions.Options)
 			{
 				if (option.IsEnabled)
