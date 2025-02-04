@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Linq;
 using SIL.Reporting;
 using SIL.Windows.Forms.ClearShare;
 
@@ -30,8 +31,14 @@ namespace SIL.FieldWorks.XWorks
 			}
 			// As of 2023.07, the only implementation that actually uses the language list is CustomLicense w/o custom text,
 			// which our UI seems to prevent users from creating.
-			var license = metadata.License.GetMinimalFormForCredits(new[] { "en" }, out _);
-			return string.IsNullOrEmpty(license) ? metadata.ShortCopyrightNotice : string.Join(", ", metadata.ShortCopyrightNotice, license);
+			var license = metadata.License?.GetMinimalFormForCredits(new[] { "en" }, out _);
+			if (string.IsNullOrEmpty(metadata.CopyrightNotice) && string.IsNullOrEmpty(license))
+				return null;
+			// We want the short copyright notice, but it isn't safe to ask for if CopyrightNotice is null
+			var copyright = string.IsNullOrEmpty(metadata.CopyrightNotice)
+				? string.Empty
+				: metadata.ShortCopyrightNotice;
+			return string.Join(", ", new[] { copyright, license }.Where(txt => !string.IsNullOrEmpty(txt)));
 		}
 
 		private static Metadata MetadataFromFile(this LCModel.ICmPicture picture)
