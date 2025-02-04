@@ -3089,11 +3089,10 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		private static string GetLanguageFromFirstOptionOrAnalysis(DictionaryNodeWritingSystemOptions wsOptions, LcmCache cache)
 		{
-			const string defaultLang = "en";
-			var analWs = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultAnalWs);
-
 			if (wsOptions == null)
 			{
+				const string defaultLang = "en";
+				var analWs = cache.WritingSystemFactory.GetStrFromWs(cache.DefaultAnalWs);
 				if (analWs == null)
 					return defaultLang;
 
