@@ -565,7 +565,7 @@ namespace SIL.FieldWorks.XWorks
 			if (imageExtensions.Any(path.ToLowerInvariant().EndsWith))
 			{
 				var metaData = Metadata.FromFile(path);
-				if (metaData == null || !metaData.IsMinimallyComplete || !metaData.IsLicenseNotSet)
+				if (metaData == null || !metaData.IsMinimallyComplete || metaData.IsLicenseNotSet)
 				{
 					return false;
 				}
