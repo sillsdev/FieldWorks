@@ -1127,7 +1127,7 @@ namespace SIL.FieldWorks.XWorks
 			Run contentRun = null;
 			string styleDisplayName = null;
 
-			if (content == null)
+			if (string.IsNullOrEmpty(content))
 			{
 				// In this case, we should not generate the run or any before/after text for it.
 				return propFrag;
