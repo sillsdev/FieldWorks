@@ -280,16 +280,16 @@ namespace SIL.FieldWorks.XWorks
 					else
 					{
 						// Note: In Flex a user can set 'at least' or 'exactly' for line heights. These are differentiated using negative and positive
-						// values in LineSpacing.m_lineHeight -- negative value means at least line height, otherwise it's exactly line height
+						// values in LineSpacing.m_lineHeight -- positive value means at least line height, otherwise it's exact line height
 						var lineHeight = exportStyleInfo.LineSpacing.m_lineHeight;
-						if (lineHeight < 0)
+						if (lineHeight >= 0)
 						{
-							lineHeight = MilliPtToTwentiPt(Math.Abs(exportStyleInfo.LineSpacing.m_lineHeight));
+							lineHeight = MilliPtToTwentiPt(lineHeight);
 							parProps.Append(new SpacingBetweenLines() { Line = lineHeight.ToString(), LineRule = LineSpacingRuleValues.AtLeast });
 						}
 						else
 						{
-							lineHeight = MilliPtToTwentiPt(exportStyleInfo.LineSpacing.m_lineHeight);
+							lineHeight = MilliPtToTwentiPt(Math.Abs(lineHeight));
 							parProps.Append(new SpacingBetweenLines() { Line = lineHeight.ToString(), LineRule = LineSpacingRuleValues.Exact });
 						}
 					}
@@ -516,7 +516,7 @@ namespace SIL.FieldWorks.XWorks
 				: defaultFontInfo.FontName.ValueIsSet ? defaultFontInfo.FontName.Value : null;
 
 			// If font is explicitly set in FLEx to "<default font>", this gets picked up as the fontname.
-			// In that case, we want to set fontNome to null in the word style so that it can be inherited from the WS.
+			// In that case, we want to set fontName to null in the word style so that it can be inherited from the WS.
 			if (fontName == "<default font>")
 			{
 				fontName = null;
