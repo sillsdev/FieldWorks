@@ -487,8 +487,10 @@ namespace SIL.FieldWorks.XWorks
 				// an alternative form of reflection to get values that respect the decorator
 				bool success = false;
 				if (field is ICmObject)
+				{
 					success = GetPropValueForCustomField(field, config, cache, publicationDecorator,
 					((ICmObject)field).ClassName, PlainFieldName(property.Name), ref propertyValue);
+				}
 
 				if (!success)
 					propertyValue = GetValueFromMember(property, field);
@@ -651,8 +653,11 @@ namespace SIL.FieldWorks.XWorks
 							sda.VecProp(specificObject.Hvo, customFieldFlid, chvo, out chvo, arrayPtr);
 							contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 						}
-						// if the hvo is invalid set propertyValue to null otherwise get the object
-						propertyValue = contents.Select(id => cache.LangProject.Services.GetObject(id));
+						// Convert the contents to IEnumerable<T>
+						var objects = contents.Select(id => cache.LangProject.Services.GetObject(id));
+						var type = objects.FirstOrDefault()?.GetType() ?? typeof(object);
+						var castMethod = typeof(Enumerable).GetMethod("Cast").MakeGenericMethod(type);
+						propertyValue = castMethod.Invoke(null, new object[] { objects });
 						break;
 					}
 				case (int)CellarPropertyType.ReferenceAtomic:
@@ -747,6 +752,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var options = config.DictionaryNodeOptions as DictionaryNodeListOptions;
 			var unsortedReferences = propertyValue as IEnumerable<ILexReference>;
+			var list = propertyValue as List;
 			if (options == null || unsortedReferences == null || !unsortedReferences.Any())
 				return;
 			// Calculate and store the ids for each of the references once for efficiency.
@@ -2068,13 +2074,6 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			MoveTargetsToMasterList(cmOwner, curType.Item1, config, allTargetsForType, orderedTargets);
-			orderedTargets.Sort((list1, list2) =>
-			{
-				if (!list1.Any() && !list2.Any()) return 0;
-				if (!list1.Any()) return -1;
-				if (!list2.Any()) return 1;
-				return CompareLexRefTargets(list1[0], list2[0]);
-			});
 			return orderedTargets;
 		}
 
