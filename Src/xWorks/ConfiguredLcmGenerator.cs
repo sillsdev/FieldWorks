@@ -29,6 +29,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -382,6 +383,34 @@ namespace SIL.FieldWorks.XWorks
 			return classAtt;
 		}
 
+		private static string PlainFieldName(string fieldname)
+		{
+			if (fieldname.EndsWith("OA") || fieldname.EndsWith("OS") || fieldname.EndsWith("OC")
+				|| fieldname.EndsWith("RA") || fieldname.EndsWith("RS") || fieldname.EndsWith("RC"))
+			{
+				return fieldname.Substring(0, fieldname.Length - 2);
+			}
+			return fieldname;
+		}
+
+		private static object GetValueFromMember(MemberInfo property, object instance)
+		{
+			switch (property.MemberType)
+			{
+				case MemberTypes.Property:
+					{
+						return ((PropertyInfo)property).GetValue(instance, new object[] { });
+					}
+				case MemberTypes.Method:
+					{
+						// Execute the presumed extension method (passing the instance as the 'this' parameter)
+						return ((MethodInfo)property).Invoke(instance, new object[] { instance });
+					}
+				default:
+					return null;
+			}
+		}
+
 		/// <summary>
 		/// This method will use reflection to pull data out of the given object based on the given configuration and
 		/// write out appropriate content using the settings parameter.
@@ -429,7 +458,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// REVIEW: We have overloaded terms here, this is a C# class not a css class, consider a different name
 				var customFieldOwnerClassName = GetClassNameForCustomFieldParent(config, settings.Cache);
-				if (!GetPropValueForCustomField(field, config, cache, customFieldOwnerClassName, config.FieldDescription, ref propertyValue))
+				if (!GetPropValueForCustomField(field, config, cache, publicationDecorator, customFieldOwnerClassName, config.FieldDescription, ref propertyValue))
 					return settings.ContentGenerator.CreateFragment();
 			}
 			else
@@ -454,7 +483,18 @@ namespace SIL.FieldWorks.XWorks
 #endif
 					return settings.ContentGenerator.CreateFragment();
 				}
-				propertyValue = GetValueFromMember(property, field);
+				// This code demonstrates using the cache metadata,
+				// an alternative form of reflection to get values that respect the decorator
+				bool success = false;
+				if (field is ICmObject)
+				{
+					success = GetPropValueForCustomField(field, config, cache, publicationDecorator,
+					((ICmObject)field).ClassName, PlainFieldName(property.Name), ref propertyValue);
+				}
+
+				if (!success)
+					propertyValue = GetValueFromMember(property, field);
+
 				GetSortedReferencePropertyValue(config, ref propertyValue, field);
 			}
 			// If the property value is null there is nothing to generate
@@ -467,7 +507,7 @@ namespace SIL.FieldWorks.XWorks
 				if (config.IsCustomField)
 				{
 					// Get the custom field value (in SubField) using the property which came from the field object
-					if (!GetPropValueForCustomField(propertyValue, config, cache, ((ICmObject)propertyValue).ClassName,
+					if (!GetPropValueForCustomField(propertyValue, config, cache, publicationDecorator, ((ICmObject)propertyValue).ClassName,
 						config.SubField, ref propertyValue))
 					{
 						return settings.ContentGenerator.CreateFragment();
@@ -572,86 +612,92 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns>true if the custom field was valid and false otherwise</returns>
 		/// <remarks>propertyValue can be null if the custom field is valid but no value is stored for the owning object</remarks>
 		private static bool GetPropValueForCustomField(object fieldOwner, ConfigurableDictionaryNode config,
-			LcmCache cache, string customFieldOwnerClassName, string customFieldName, ref object propertyValue)
+			LcmCache cache, ISilDataAccess decorator, string customFieldOwnerClassName, string customFieldName, ref object propertyValue)
 		{
+			if (decorator == null)
+				decorator = cache.DomainDataByFlid;
 			int customFieldFlid = GetCustomFieldFlid(config, cache, customFieldOwnerClassName, customFieldName);
-			if (customFieldFlid != 0)
+			if (customFieldFlid == 0)
+				return false;
+
+			var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
+			ICmObject specificObject;
+			if (fieldOwner is ISenseOrEntry)
 			{
-				var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
-				ICmObject specificObject;
-				if (fieldOwner is ISenseOrEntry)
+				specificObject = ((ISenseOrEntry)fieldOwner).Item;
+				if (!((IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor).GetFields(specificObject.ClassID,
+					true, (int)CellarPropertyTypeFilter.All).Contains(customFieldFlid))
 				{
-					specificObject = ((ISenseOrEntry)fieldOwner).Item;
-					if (!((IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor).GetFields(specificObject.ClassID,
-						true, (int)CellarPropertyTypeFilter.All).Contains(customFieldFlid))
-					{
-						return false;
-					}
-				}
-				else
-				{
-					specificObject = (ICmObject)fieldOwner;
-				}
-
-				switch (customFieldType)
-				{
-					case (int)CellarPropertyType.ReferenceCollection:
-					case (int)CellarPropertyType.OwningCollection:
-					// Collections are stored essentially the same as sequences.
-					case (int)CellarPropertyType.ReferenceSequence:
-					case (int)CellarPropertyType.OwningSequence:
-						{
-							var sda = cache.MainCacheAccessor;
-							// This method returns the hvo of the object pointed to
-							var chvo = sda.get_VecSize(specificObject.Hvo, customFieldFlid);
-							int[] contents;
-							using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
-							{
-								sda.VecProp(specificObject.Hvo, customFieldFlid, chvo, out chvo, arrayPtr);
-								contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
-							}
-							// if the hvo is invalid set propertyValue to null otherwise get the object
-							propertyValue = contents.Select(id => cache.LangProject.Services.GetObject(id));
-							break;
-						}
-					case (int)CellarPropertyType.ReferenceAtomic:
-					case (int)CellarPropertyType.OwningAtomic:
-						{
-							// This method returns the hvo of the object pointed to
-							propertyValue = cache.MainCacheAccessor.get_ObjectProp(specificObject.Hvo, customFieldFlid);
-							// if the hvo is invalid set propertyValue to null otherwise get the object
-							propertyValue = (int)propertyValue > 0 ? cache.LangProject.Services.GetObject((int)propertyValue) : null;
-							break;
-						}
-					case (int)CellarPropertyType.GenDate:
-						{
-							propertyValue = new GenDate(cache.MainCacheAccessor.get_IntProp(specificObject.Hvo, customFieldFlid));
-							break;
-						}
-
-					case (int)CellarPropertyType.Time:
-						{
-							propertyValue = SilTime.ConvertFromSilTime(cache.MainCacheAccessor.get_TimeProp(specificObject.Hvo, customFieldFlid));
-							break;
-						}
-					case (int)CellarPropertyType.MultiUnicode:
-					case (int)CellarPropertyType.MultiString:
-						{
-							propertyValue = cache.MainCacheAccessor.get_MultiStringProp(specificObject.Hvo, customFieldFlid);
-							break;
-						}
-					case (int)CellarPropertyType.String:
-						{
-							propertyValue = cache.MainCacheAccessor.get_StringProp(specificObject.Hvo, customFieldFlid);
-							break;
-						}
-					case (int)CellarPropertyType.Integer:
-						{
-							propertyValue = cache.MainCacheAccessor.get_IntProp(specificObject.Hvo, customFieldFlid);
-							break;
-						}
+					return false;
 				}
 			}
+			else
+			{
+				specificObject = (ICmObject)fieldOwner;
+			}
+
+			switch (customFieldType)
+			{
+				case (int)CellarPropertyType.ReferenceCollection:
+				case (int)CellarPropertyType.OwningCollection:
+				// Collections are stored essentially the same as sequences.
+				case (int)CellarPropertyType.ReferenceSequence:
+				case (int)CellarPropertyType.OwningSequence:
+					{
+						var sda = cache.MainCacheAccessor;
+						// This method returns the hvo of the object pointed to
+						var chvo = sda.get_VecSize(specificObject.Hvo, customFieldFlid);
+						int[] contents;
+						using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
+						{
+							sda.VecProp(specificObject.Hvo, customFieldFlid, chvo, out chvo, arrayPtr);
+							contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
+						}
+						// Convert the contents to IEnumerable<T>
+						var objects = contents.Select(id => cache.LangProject.Services.GetObject(id));
+						var type = objects.FirstOrDefault()?.GetType() ?? typeof(object);
+						var castMethod = typeof(Enumerable).GetMethod("Cast").MakeGenericMethod(type);
+						propertyValue = castMethod.Invoke(null, new object[] { objects });
+						break;
+					}
+				case (int)CellarPropertyType.ReferenceAtomic:
+				case (int)CellarPropertyType.OwningAtomic:
+					{
+						// This method returns the hvo of the object pointed to
+						propertyValue = decorator.get_ObjectProp(specificObject.Hvo, customFieldFlid);
+						// if the hvo is invalid set propertyValue to null otherwise get the object
+						propertyValue = (int)propertyValue > 0 ? cache.LangProject.Services.GetObject((int)propertyValue) : null;
+						break;
+					}
+				case (int)CellarPropertyType.GenDate:
+					{
+						propertyValue = new GenDate(decorator.get_IntProp(specificObject.Hvo, customFieldFlid));
+						break;
+					}
+
+				case (int)CellarPropertyType.Time:
+					{
+						propertyValue = SilTime.ConvertFromSilTime(decorator.get_TimeProp(specificObject.Hvo, customFieldFlid));
+						break;
+					}
+				case (int)CellarPropertyType.MultiUnicode:
+				case (int)CellarPropertyType.MultiString:
+					{
+						propertyValue = decorator.get_MultiStringProp(specificObject.Hvo, customFieldFlid);
+						break;
+					}
+				case (int)CellarPropertyType.String:
+					{
+						propertyValue = decorator.get_StringProp(specificObject.Hvo, customFieldFlid);
+						break;
+					}
+				case (int)CellarPropertyType.Integer:
+					{
+						propertyValue = decorator.get_IntProp(specificObject.Hvo, customFieldFlid);
+						break;
+					}
+			}
+
 			return true;
 		}
 
@@ -706,6 +752,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var options = config.DictionaryNodeOptions as DictionaryNodeListOptions;
 			var unsortedReferences = propertyValue as IEnumerable<ILexReference>;
+			var list = propertyValue as List;
 			if (options == null || unsortedReferences == null || !unsortedReferences.Any())
 				return;
 			// Calculate and store the ids for each of the references once for efficiency.
@@ -1213,24 +1260,6 @@ namespace SIL.FieldWorks.XWorks
 				case MemberTypes.Method:
 				{
 					return ((MethodInfo)property).ReturnType;
-				}
-				default:
-					return null;
-			}
-		}
-
-		private static object GetValueFromMember(MemberInfo property, object instance)
-		{
-			switch (property.MemberType)
-			{
-				case MemberTypes.Property:
-				{
-					return ((PropertyInfo)property).GetValue(instance, new object[] {});
-				}
-				case MemberTypes.Method:
-				{
-					// Execute the presumed extension method (passing the instance as the 'this' parameter)
-					return ((MethodInfo)property).Invoke(instance, new object[] {instance});
 				}
 				default:
 					return null;
