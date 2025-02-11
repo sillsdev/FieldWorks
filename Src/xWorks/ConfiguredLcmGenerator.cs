@@ -619,7 +619,7 @@ namespace SIL.FieldWorks.XWorks
 			int customFieldFlid = GetCustomFieldFlid(config, cache, customFieldOwnerClassName, customFieldName);
 			if (customFieldFlid == 0)
 				return false;
-			
+
 			var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
 			ICmObject specificObject;
 			if (fieldOwner is ISenseOrEntry)
@@ -697,7 +697,7 @@ namespace SIL.FieldWorks.XWorks
 						break;
 					}
 			}
-			
+
 			return true;
 		}
 
