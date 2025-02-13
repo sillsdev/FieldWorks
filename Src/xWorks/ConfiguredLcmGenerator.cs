@@ -752,7 +752,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var options = config.DictionaryNodeOptions as DictionaryNodeListOptions;
 			var unsortedReferences = propertyValue as IEnumerable<ILexReference>;
-			var list = propertyValue as List;
 			if (options == null || unsortedReferences == null || !unsortedReferences.Any())
 				return;
 			// Calculate and store the ids for each of the references once for efficiency.
