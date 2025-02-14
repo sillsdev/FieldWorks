@@ -244,6 +244,15 @@ namespace SIL.FieldWorks.XWorks
 			return Cache.GetOutlineNumber(sense, LexSenseTags.kflidSenses, false, true, this);
 		}
 
+		public override ITsMultiString get_MultiStringProp(int hvo, int tag)
+		{
+			if (tag == m_mlHeadwordFlid)
+			{
+				return new PublicationAwareMultiStringAccessor(hvo, tag, this);
+			}
+			return base.get_MultiStringProp(hvo, tag);
+		}
+
 		public override ITsString get_MultiStringAlt(int hvo, int tag, int ws)
 		{
 			if (tag == m_mlHeadwordFlid)
@@ -614,6 +623,84 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			// A reference is also not publishable if all of its PrimarySensesOrEntries are excluded
 			return entryRef.PrimarySensesOrEntries.Any(senseOrEntry => !m_excludedItems.Contains(senseOrEntry.Item.Hvo));
+		}
+
+		private class PublicationAwareMultiStringAccessor : IMultiAccessorBase
+		{
+			private readonly int m_hvo;
+			private readonly int m_tag;
+			private readonly DictionaryPublicationDecorator m_decorator;
+
+			public PublicationAwareMultiStringAccessor(int hvo, int tag, DictionaryPublicationDecorator decorator)
+			{
+				m_hvo = hvo;
+				m_tag = tag;
+				m_decorator = decorator;
+			}
+
+			public ITsString GetStringFromIndex(int iws, out int _ws)
+			{
+				throw new NotImplementedException();
+			}
+
+			public ITsString get_String(int ws)
+			{
+				return m_decorator.get_MultiStringAlt(m_hvo, m_tag, ws);
+			}
+
+			public void set_String(int ws, ITsString _tss)
+			{
+				throw new NotImplementedException();
+			}
+
+			public int StringCount { get; }
+			public void SetAnalysisDefaultWritingSystem(string val)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void SetVernacularDefaultWritingSystem(string val)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void SetUserWritingSystem(string val)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void set_String(int ws, string val)
+			{
+				throw new NotImplementedException();
+			}
+
+			public bool TryWs(int ws, out int actualWs)
+			{
+				throw new NotImplementedException();
+			}
+
+			public bool TryWs(int ws, out int actualWs, out ITsString tssActual)
+			{
+				throw new NotImplementedException();
+			}
+
+			public ITsString StringOrNull(int ws)
+			{
+				throw new NotImplementedException();
+			}
+
+			public int Flid { get; }
+			public ITsString NotFoundTss { get; }
+			public ITsString AnalysisDefaultWritingSystem { get; set; }
+			public ITsString VernacularDefaultWritingSystem { get; set; }
+			public string UiString { get; }
+			public ITsString UserDefaultWritingSystem { get; set; }
+			public ITsString RawUserDefaultWritingSystem { get; }
+			public ITsString BestAnalysisVernacularAlternative { get; }
+			public ITsString BestAnalysisAlternative { get; }
+			public ITsString BestVernacularAlternative { get; }
+			public ITsString BestVernacularAnalysisAlternative { get; }
+			public int[] AvailableWritingSystemIds { get; }
 		}
 	}
 }
