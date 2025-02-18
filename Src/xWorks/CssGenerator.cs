@@ -110,8 +110,8 @@ namespace SIL.FieldWorks.XWorks
 					{
 						// We need a specificity higher than ".senses-? .subentries-? .subentry" and
 						// because of the way the path to ".mainentrysubentries" is generated we can
-						// get the wrong value for ".sense-?. So add ".sensecontent .sense" to the path.
-						uniqueNodePath = uniqueNodePath + ".sensecontent .sense ";
+						// get the wrong value for ".sense-?. So add ".sensecontent .sense " to the path.
+						uniqueNodePath = uniqueNodePath + ".sensecontent .sense "; // Intentionally include the space at the end.
 						uniqueNodeName = ".mainentrysubentry";
 						ii++;
 					}
@@ -127,7 +127,7 @@ namespace SIL.FieldWorks.XWorks
 						AddUniquePathToStyleRules(styleRules, uniqueNodePath);
 						_styleDictionary[uniqueNodeName] = styleRules;
 					}
-					uniqueNodePath = uniqueNodePath + uniqueNodeName + " ";
+					uniqueNodePath = uniqueNodePath + uniqueNodeName + " "; // Intentionally include the space at the end.
 				}
 				return uniqueNodeName;
 			}
