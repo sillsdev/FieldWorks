@@ -214,7 +214,7 @@ namespace SIL.FieldWorks.XWorks
 			var topLevelClass = CssGenerator.GetClassAttributeForConfig(topLevelConfigNode);
 			foreach (var div in body.GetElementsByTagName("div"))
 			{
-				if (Equals(div.ParentElement, body) && div.GetAttribute("class") == topLevelClass)
+				if (Equals(div.ParentElement, body) && div.GetAttribute("class").StartsWith(topLevelClass))
 					elements.AddRange(FindMatchingSpans(selectedConfigNode, div, topLevelConfigNode, cache));
 			}
 			return elements;

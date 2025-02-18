@@ -185,7 +185,7 @@ namespace SIL.FieldWorks.XWorks
 			cssGenerator.AddStyles(subEntryHeadwordNode);
 			var cssResult = cssGenerator.GetStylesString();
 			// verify that the css result contains a line similar to: .sharedsubentries .sharedsubentry .headword span{
-			VerifyRegex(cssResult, @"^\s*\.mainheadword-sharedsubentries>\s*span\s*{.*",
+			VerifyRegex(cssResult, @"\.sharedsubentries-.\s\.mainheadword-.>\s*span\s*{.*",
 				"Css for child node(headword) did not generate a match");
 		}
 
@@ -214,7 +214,7 @@ namespace SIL.FieldWorks.XWorks
 			cssGenerator.Init(m_propertyTable);
 			//SUT
 			cssGenerator.AddStyles(emptyNode);
-			Assert.That(cssGenerator.GetStylesString(), Is.EqualTo(string.Empty));
+			Assert.That(!cssGenerator.GetStylesString().Contains(".nothing"));
 		}
 
 		[Test]
@@ -333,14 +333,14 @@ namespace SIL.FieldWorks.XWorks
 			cssGenerator.AddStyles(headwordNode);
 			var cssResult = cssGenerator.GetStylesString();
 			// Check the result for before and after rules for the group
-			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg\s*:before\s*{\s*content\s*:\s*'{';\s*}").Success,
+			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg-.\s*:before\s*{\s*content\s*:\s*'{';\s*}").Success,
 							  "css before rule for the grouping node was not generated");
-			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg\s*:after\s*{\s*content\s*:\s*'}';\s*}").Success,
+			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg-.\s*:after\s*{\s*content\s*:\s*'}';\s*}").Success,
 							  "css after rule for the grouping node was not generated");
 			// Check result for before and after rules equivalent to .headword span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
-			Assert.IsTrue(Regex.Match(cssResult, @"\.mh-grouping_hwg>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}").Success,
+			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg-.\s\.mh-.>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}").Success,
 							  "css before rule with Z content not found on headword");
-			Assert.IsTrue(Regex.Match(cssResult, @"\.mh-grouping_hwg>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}").Success,
+			Assert.IsTrue(Regex.Match(cssResult, @"\.grouping_hwg-.\s\.mh-.>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}").Success,
 							  "css after rule with A content not found on headword");
 		}
 
@@ -439,9 +439,9 @@ namespace SIL.FieldWorks.XWorks
 			cssGenerator.AddStyles(headwordNode);
 			var cssResult = cssGenerator.GetStylesString();
 			// Check result for before and after rules equivalent to .headword-subentries span:first-child{content:'Z';} and .headword span:last-child{content:'A'}
-			VerifyRegex(cssResult, @"\.headword-subentries>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}",
+			VerifyRegex(cssResult, @"\.subentries-.\s\.headword-.>\s*span\s*:\s*first-child:before\s*{\s*content\s*:\s*'Z';\s*}",
 							  "css before rule with Z content not found on headword");
-			VerifyRegex(cssResult, @"\.headword-subentries>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}",
+			VerifyRegex(cssResult, @"\.subentries-.\s\.headword-.>\s*span\s*:\s*last-child:after\s*{\s*content\s*:\s*'A';\s*}",
 							  "css after rule with A content not found on headword");
 		}
 
@@ -1294,8 +1294,8 @@ namespace SIL.FieldWorks.XWorks
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				var result = xhtmResult.ToString();
-				const string positiveTest = "//*[@class='bolo']";
-				const string negativeTest = "//*[@class='lexentry']";
+				const string positiveTest = "//*[@class='bolo-1']";
+				const string negativeTest = "//*[@class='lexentry-1']";
 				AssertThatXmlIn.String(result).HasNoMatchForXpath(negativeTest);
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(positiveTest, 1);
 			}
@@ -1332,8 +1332,8 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(cssResult, Contains.Substring(".tailwind"));
 
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, testParentNode, null, DefaultSettings).ToString();
-			const string positiveTest = "//*[@class='tailwind']";
-			const string negativeTest = "//*[@class='headword']";
+			const string positiveTest = "//*[@class='tailwind-1']";
+			const string negativeTest = "//*[@class='headword-1']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(negativeTest);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(positiveTest, 1);
 		}
@@ -1373,7 +1373,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(cssResult, Contains.Substring(".gloss"));
 
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, testEntryNode, null, DefaultSettings).ToString();
-			const string positiveTest = "/*[@class='lexentry']/span[@class='senses']/span[@class='sense']/span[@class='gloss']";
+			const string positiveTest = "/*[@class='lexentry-1']/span[@class='senses-1']/span[@class='sense']/span[@class='gloss-1']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(positiveTest, 1);
 		}
 
@@ -1936,7 +1936,7 @@ namespace SIL.FieldWorks.XWorks
 			cssGenerator.AddStyles(headwordMain);
 			cssGenerator.AddStyles(form);
 			var cssResult = cssGenerator.GetStylesString();
-			VerifyRegex(cssResult, @"^\s*\.headword-otherreferencedcomplexforms", "Headword node not generated for non subentry headword");
+			VerifyRegex(cssResult, @"\.otherreferencedcomplexforms-.\s.headword-.", "Headword node not generated for non subentry headword");
 		}
 
 		[Test]
@@ -2009,8 +2009,8 @@ namespace SIL.FieldWorks.XWorks
 			cssGenerator.AddStyles(senses);
 			cssGenerator.AddStyles(gramInfo);
 			var cssResult = cssGenerator.GetStylesString();
-			VerifyRegex(cssResult, @"^\s*\.morphosyntaxanalysisra", "Style for morphosyntaxanalysisra not generated");
-			VerifyRegex(cssResult, @"^\s*\.morphosyntaxanalysisra\s*{.*font-family\s*:\s*'foofoo'\,serif.*}",
+			VerifyRegex(cssResult, @"\.morphosyntaxanalysisra-.", "Style for morphosyntaxanalysisra not generated");
+			VerifyRegex(cssResult, @"\.morphosyntaxanalysisra-.\s*{.*font-family\s*:\s*'foofoo'\,serif.*}",
 				"Style for morphosyntaxanalysisra not placed correctly");
 		}
 
@@ -3088,6 +3088,7 @@ namespace SIL.FieldWorks.XWorks
 			var testEntryNode = new ConfigurableDictionaryNode
 			{
 				FieldDescription = "LexEntry",
+				Style = "Dictionary-Normal",
 				Children = new List<ConfigurableDictionaryNode> { testSensesNode },
 				CSSClassNameOverride = "entry"
 			};
@@ -3100,13 +3101,13 @@ namespace SIL.FieldWorks.XWorks
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.IsTrue(
 				Regex.Match(cssResult,
-					@"div.entry{\s*margin-left:24pt;\s*padding-right:48pt;\s*}",
+					@".entry{\s*margin-left:24pt;\s*padding-right:48pt;\s*",
 					RegexOptions.Singleline).Success,
 				"Dictionary-Normal Paragraph Style not generated when main entry has no style selected.");
 			model.Parts[0].Style = "Dictionary-RTL";
 			cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			Assert.IsTrue(
-				Regex.Match(cssResult, @"div.entry{\s*direction:rtl;\s*}",
+				Regex.Match(cssResult, @".entry{\s*direction:rtl;\s*}",
 					RegexOptions.Singleline).Success,
 				"Main Entry style was not used as the main page style");
 		}
@@ -3127,6 +3128,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				FieldDescription = "LexEntry",
 				CSSClassNameOverride = "minorentry",
+				Style = "Dictionary-Minor",
 				Children = new List<ConfigurableDictionaryNode> { testSensesNode }
 			};
 			var extraEntryNode = new ConfigurableDictionaryNode
@@ -3155,11 +3157,11 @@ namespace SIL.FieldWorks.XWorks
 			model.Parts.ForEach(PopulateFieldsForTesting);
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			VerifyRegex(cssResult, @"div.minorentry{\s*margin-left:24pt;\s*padding-right:48pt;\s*}",
+			VerifyRegex(cssResult, @".minorentry{\s*margin-left:24pt;\s*padding-right:48pt;\s*",
 							  "Dictionary-Minor Paragraph Style not generated.");
-			VerifyRegex(cssResult, @"div.specialminorentry{\s*padding-right:32pt;\s*}",
+			VerifyRegex(cssResult, @".specialminorentry{\s*padding-right:32pt;\s*}",
 							  "Dictionary-Minor Paragraph Style for node with style attribute not generated.");
-			VerifyRegex(cssResult, @"div.optionsminorentry{\s*padding-right:16pt;\s*}",
+			VerifyRegex(cssResult, @".optionsminorentry{\s*padding-right:16pt;\s*}",
 							  "Dictionary-Minor Paragraph Style for node with paragraph options not generated.");
 		}
 
@@ -3198,7 +3200,7 @@ namespace SIL.FieldWorks.XWorks
 			// "Then generate the rules for all the writing system overrides"
 			// So I chose to check specifically for one of the default writing systems; DefaultAnalWs would have worked too.
 			var vernStyle = "span[lang='" + vernWs + "']{color:#008000;}";
-			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(@"div.minorentryvariant " + vernStyle),
+			Assert.That(Regex.Replace(cssResult, @"\t|\n|\r", ""), Contains.Substring(@"minorentryvariant " + vernStyle),
 				"Dictionary-Secondary Paragraph Style should be generated.");
 		}
 
@@ -3468,7 +3470,7 @@ namespace SIL.FieldWorks.XWorks
 			cssGenerator.AddStyles(senses);
 			cssGenerator.AddStyles(subsenses);
 			var cssResult = cssGenerator.GetStylesString();
-			const string regExPected = @".*senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*font-family:Arial;.*font-weight:bold;.*font-style:italic;.*background-color:Brown;.*}";
+			const string regExPected = @".*senses-.\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*font-family:Arial;.*font-weight:bold;.*font-style:italic;.*background-color:Brown;.*}";
 			Assert.That(Regex.Match(cssResult, regExPected, RegexOptions.Singleline).Success, "Bulleted style for SubSenses not generated.");
 			Assert.That(!Regex.Match(cssResult, regExPected, RegexOptions.Singleline).NextMatch().Success, "Bulleted style for SubSenses not generated.");
 		}
@@ -3514,9 +3516,9 @@ namespace SIL.FieldWorks.XWorks
 			cssGenerator.AddStyles(senses);
 			cssGenerator.AddStyles(subsenses);
 			var cssResult = cssGenerator.GetStylesString();
-			const string regExPectedForSub = @"\.senses-senses\s>\s.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*font-family:Arial;.*font-weight:bold;.*font-style:italic;.*background-color:Brown;.*}";
+			const string regExPectedForSub = @"\.senses-.\s\.senses-.\s>\s\.sensecontent:before.*{.*content:'\\25A0';.*font-size:14pt;.*color:Green;.*font-family:Arial;.*font-weight:bold;.*font-style:italic;.*background-color:Brown;.*}";
 			VerifyRegex(cssResult, regExPectedForSub, "Bulleted style for SubSenses not generated.");
-			const string regExPectedForSense = @"\.senses\s>\s\.sensecontent"; // Make sure there is a .sense > .sensecontent rule as well as the bulletted sub-sense
+			const string regExPectedForSense = @"\.senses-.\s>\s\.sensecontent"; // Make sure there is a .sense > .sensecontent rule as well as the bulletted sub-sense
 			VerifyRegex(cssResult, regExPectedForSense, "Non-bulleted style for Senses not generated.");
 		}
 
