@@ -32,8 +32,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private const string NoDefaultCompounding = "NoDefaultCompounding";
 		private const string AcceptUnspecifiedGraphemes = "AcceptUnspecifiedGraphemes";
 		private const string GuessRoots = "GuessRoots";
-		private const string RuleOrder = "RuleOrder";
-		private const string OrderedStrata = "OrderedStrata";
+		private const string Strata = "Strata";
 
 		private const string XAmple = "XAmple";
 		private const string MaxNulls = "MaxNulls";
@@ -297,8 +296,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			PopulateDataGrid(m_dataGrid2, HC);
 			m_dataGrid2.TableStyles[0].GridColumnStyles[2].Width = 130;
 			m_dataGrid2.TableStyles[0].GridColumnStyles[3].Width = 160;
-			m_dataGrid2.TableStyles[0].GridColumnStyles[5].Width = 200;
-			m_dataGrid2.TableStyles[0].GridColumnStyles[6].Width = 200;
+			m_dataGrid2.TableStyles[0].GridColumnStyles[5].Width = 400;
 		}
 
 		private void LoadParserData(DataSet dsParserParameters)
@@ -321,16 +319,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				hcElem.Add(new XElement(AcceptUnspecifiedGraphemes, false));
 			if (hcElem.Element(GuessRoots) == null)
 				hcElem.Add(new XElement(GuessRoots, true));
-			if (hcElem.Element(RuleOrder) == null)
-			{
-				hcElem.Add(new XElement(RuleOrder, ""));
-
-			}
-			if (hcElem.Element(OrderedStrata) == null)
-			{
-				hcElem.Add(new XElement(OrderedStrata, ""));
-
-			}
+			if (hcElem.Element(Strata) == null)
+				hcElem.Add(new XElement(Strata, ""));
 
 			using (XmlReader reader = parserParamsElem.CreateReader())
 				dsParserParameters.ReadXml(reader, XmlReadMode.IgnoreSchema);
@@ -381,8 +371,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			tblHC.Columns.Add(NoDefaultCompounding, typeof(bool));
 			tblHC.Columns.Add(AcceptUnspecifiedGraphemes, typeof(bool));
 			tblHC.Columns.Add(GuessRoots, typeof(bool));
-			tblHC.Columns.Add(OrderedStrata, typeof(string));
-			tblHC.Columns.Add(RuleOrder, typeof(string));
+			tblHC.Columns.Add(Strata, typeof(string));
 			return tblHC;
 		}
 	}

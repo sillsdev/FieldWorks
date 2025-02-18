@@ -62,8 +62,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly bool m_notOnClitics;
 		private readonly bool m_acceptUnspecifiedGraphemes;
 		private readonly IList<IList<string>> m_strata;
-		private readonly string[] m_orderedStrata;
-		private readonly string[] m_ruleOrder;
 
 		private SimpleContext m_any;
 		private CharacterDefinition m_null;
@@ -91,23 +89,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_noDefaultCompounding = hcElem != null && ((bool?)hcElem.Element("NoDefaultCompounding") ?? false);
 			m_notOnClitics = hcElem == null || ((bool?)hcElem.Element("NotOnClitics") ?? true);
 			m_acceptUnspecifiedGraphemes = hcElem != null && ((bool?)hcElem.Element("AcceptUnspecifiedGraphemes") ?? false);
-			m_orderedStrata = new string[0];
 			m_strata = new List<IList<string>>();
-			if (hcElem != null && hcElem.Element("OrderedStrata") != null)
+			if (hcElem != null && hcElem.Element("Strata") != null)
 			{
-				m_strata = ParseStrataString((string)hcElem.Element("OrderedStrata"));
-				m_orderedStrata = ((string)hcElem.Element("OrderedStrata")).Split(',')
-					.Select(sValue => sValue.Trim())
-					.Where(x => !string.IsNullOrWhiteSpace(x))
-					.ToArray();
-			}
-			m_ruleOrder = new string[0];
-			if (hcElem != null && hcElem.Element("RuleOrder") != null)
-			{
-				m_ruleOrder = ((string)hcElem.Element("RuleOrder")).Split(',')
-					.Select(sValue => sValue.Trim())
-					.Where(x => !string.IsNullOrWhiteSpace(x))
-					.ToArray();
+				m_strata = ParseStrataString((string)hcElem.Element("Strata"));
 			}
 
 			m_naturalClasses = new Dictionary<IPhNaturalClass, NaturalClass>();
@@ -452,7 +437,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		void MoveRules(Stratum source, Stratum target)
 		{
-			target.MorphologicalRules.AddRange(source.MorphologicalRules);
+			target.AffixTemplates.AddRange(source.AffixTemplates);
+			target.Entries.AddRange(source.Entries);
 			target.MorphologicalRules.AddRange(source.MorphologicalRules);
 			target.PhonologicalRules.AddRange(source.PhonologicalRules);
 			m_language.Strata.Remove(source);
@@ -461,6 +447,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		void MoveRule(string ruleName, Stratum source, Stratum target)
 		{
 			// Move all rules named ruleName from source to target.
+			foreach (LexEntry entry in source.Entries.ToList())
+			{
+				if (entry.PrimaryAllomorph.Segments.ToString() == ruleName)
+				{
+					target.Entries.Add(entry);
+					source.Entries.Remove(entry);
+				}
+			}
 			foreach (IMorphologicalRule rule in source.MorphologicalRules.ToList())
 			{
 				if (rule.Name == ruleName)
@@ -486,107 +480,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 		}
-
-		private void OrderStrata()
-		{
-			// Sort strata rules if requested by the user.
-			Stratum lastNewStratum = null;
-			foreach (string stratumName in m_orderedStrata)
-			{
-				bool found = false;
-				foreach (Stratum stratum in m_language.Strata)
-				{
-					if (stratum.Name == stratumName)
-					{
-						IList<IMorphologicalRule> originalOrder = stratum.MorphologicalRules.ToList();
-						stratum.MorphologicalRules.Sort(delegate(IMorphologicalRule rule1, IMorphologicalRule rule2)
-						{
-							int pos1 = m_ruleOrder.IndexOf(rule1.Name);
-							int pos2 = m_ruleOrder.IndexOf(rule2.Name);
-							if (pos1 == pos2)
-							{
-								pos1 = originalOrder.IndexOf(rule1);
-								pos2 = originalOrder.IndexOf(rule2);
-							}
-							return pos1.CompareTo(pos2);
-						});
-						stratum.MorphologicalRuleOrder = MorphologicalRuleOrder.Linear;
-						found = true;
-					}
-				}
-				if (!found && m_cache.LangProject.MorphologicalDataOA.StrataOS.Count == 0)
-				{
-					if (stratumName == "Templates")
-					{
-						// Create a new stratum for templates before Clitics.
-						Stratum newStratum = new Stratum(m_table) { Name = stratumName, MorphologicalRuleOrder = MorphologicalRuleOrder.Linear };
-						newStratum.AffixTemplates.AddRange(m_morphophonemic.AffixTemplates);
-						m_morphophonemic.AffixTemplates.Clear();
-						int cliticIndex = m_language.Strata.IndexOf(m_clitic);
-						m_language.Strata.Insert(cliticIndex, newStratum);
-						found = true;
-					}
-					else
-					{
-						// See if stratumName is a rule.
-						foreach (Stratum stratum in m_language.Strata)
-						{
-							foreach (IMorphologicalRule rule in stratum.MorphologicalRules)
-							{
-								if (rule.Name == stratumName)
-								{
-									// Create a new stratum before Clitic.
-									Stratum newStratum = new Stratum(m_table) { Name = stratumName, MorphologicalRuleOrder = MorphologicalRuleOrder.Linear };
-									int cliticIndex = m_language.Strata.IndexOf(m_clitic);
-									m_language.Strata.Insert(cliticIndex, newStratum);
-									stratum.MorphologicalRules.Remove(rule);
-									newStratum.MorphologicalRules.Add(rule);
-									lastNewStratum = newStratum;
-									found = true;
-									break;
-								}
-							}
-							if (found)
-							{
-								break;
-							}
-						}
-					}
-				}
-				if (!found)
-				{
-					m_logger.InvalidOrderedStratum(stratumName, "Error in OrderedStrata: There is no stratum named " + stratumName + ".");
-				}
-			}
-			if (lastNewStratum != null)
-			{
-				// Move phonological rules from Morphology to lastNewStratum.
-				lastNewStratum.PhonologicalRules.AddRange(m_morphophonemic.PhonologicalRules);
-				m_morphophonemic.PhonologicalRules.Clear();
-
-			}
-			// Check RuleOrder.
-			foreach (string ruleName in m_ruleOrder)
-			{
-				bool found = false;
-				foreach (Stratum stratum in m_language.Strata)
-				{
-					foreach (IMorphologicalRule rule in stratum.MorphologicalRules)
-					{
-						if (rule.Name == ruleName)
-						{
-							found = true;
-						}
-					}
-				}
-				if (!found)
-				{
-					m_logger.InvalidOrderedRule(ruleName, "Error in RuleOrder: There is no morphological rule named " + ruleName + ".");
-				}
-			}
-		}
-
-
 
 		private void LoadInflClassMprFeature(IMoInflClass inflClass, MprFeatureGroup inflClassesGroup)
 		{
