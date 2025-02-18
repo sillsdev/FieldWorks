@@ -62,6 +62,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly bool m_notOnClitics;
 		private readonly bool m_acceptUnspecifiedGraphemes;
 		private readonly IList<IList<string>> m_strata;
+		private readonly Dictionary<LexEntry, string> m_entryName;
 
 		private SimpleContext m_any;
 		private CharacterDefinition m_null;
@@ -94,6 +95,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				m_strata = ParseStrataString((string)hcElem.Element("Strata"));
 			}
+			m_entryName = new Dictionary<LexEntry, string>();
 
 			m_naturalClasses = new Dictionary<IPhNaturalClass, NaturalClass>();
 			m_charDefs = new Dictionary<IPhTerminalUnit, CharacterDefinition>();
@@ -426,7 +428,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			// Remove empty strata.
 			foreach (Stratum stratum in m_language.Strata.ToList())
 			{
-				if (stratum.AffixTemplates.Count == 0 &&
+				if (stratum.Entries.Count == 0 &&
+					stratum.AffixTemplates.Count == 0 &&
 					stratum.MorphologicalRules.Count == 0 &&
 					stratum.PhonologicalRules.Count == 0)
 				{
@@ -449,7 +452,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			// Move all rules named ruleName from source to target.
 			foreach (LexEntry entry in source.Entries.ToList())
 			{
-				if (entry.PrimaryAllomorph.Segments.ToString() == ruleName)
+				if (m_entryName[entry] == ruleName)
 				{
 					target.Entries.Add(entry);
 					source.Entries.Remove(entry);
@@ -611,12 +614,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							if (mainEntry != null)
 							{
 								foreach (IMoStemMsa msa in mainEntry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>())
-									LoadLexEntryOfVariant(stratum, inflType, msa, allos);
+									LoadLexEntryOfVariant(stratum, inflType, msa, allos, entry.ShortName);
 							}
 							else
 							{
 								ILexSense sense = (ILexSense)component;
-								LoadLexEntryOfVariant(stratum, inflType, (IMoStemMsa)sense.MorphoSyntaxAnalysisRA, allos);
+								LoadLexEntryOfVariant(stratum, inflType, (IMoStemMsa)sense.MorphoSyntaxAnalysisRA, allos, entry.ShortName);
 							}
 						}
 					}
@@ -624,7 +627,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			foreach (IMoStemMsa msa in entry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>())
-				LoadLexEntry(stratum, msa, allos);
+				LoadLexEntry(stratum, msa, allos, entry.ShortName);
 		}
 
 		private IEnumerable<ILexEntryInflType> GetInflTypes(ILexEntryRef lexEntryRef)
@@ -651,16 +654,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		private void AddEntry(Stratum stratum, LexEntry hcEntry, IMoMorphSynAnalysis msa)
+		private void AddEntry(Stratum stratum, LexEntry hcEntry, IMoMorphSynAnalysis msa, string name)
 		{
 			if (hcEntry.Allomorphs.Count > 0)
 			{
 				stratum.Entries.Add(hcEntry);
+				m_entryName[hcEntry] = name;
 				m_morphemes.GetOrCreate(msa, () => new List<Morpheme>()).Add(hcEntry);
 			}
 		}
 
-		private void LoadLexEntry(Stratum stratum, IMoStemMsa msa, IList<IMoStemAllomorph> allos)
+		private void LoadLexEntry(Stratum stratum, IMoStemMsa msa, IList<IMoStemAllomorph> allos, string name)
 		{
 			var hcEntry = new LexEntry();
 
@@ -699,10 +703,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 
-			AddEntry(stratum, hcEntry, msa);
+			AddEntry(stratum, hcEntry, msa, name);
 		}
 
-		private void LoadLexEntryOfVariant(Stratum stratum, ILexEntryInflType inflType, IMoStemMsa msa, IList<IMoStemAllomorph> allos)
+		private void LoadLexEntryOfVariant(Stratum stratum, ILexEntryInflType inflType, IMoStemMsa msa, IList<IMoStemAllomorph> allos, string name)
 		{
 			var hcEntry = new LexEntry();
 
@@ -775,7 +779,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 
-			AddEntry(stratum, hcEntry, msa);
+			AddEntry(stratum, hcEntry, msa, name);
 		}
 
 		private RootAllomorph LoadRootAllomorph(IMoStemAllomorph allo, IMoMorphSynAnalysis msa)
