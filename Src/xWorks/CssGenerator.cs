@@ -97,37 +97,65 @@ namespace SIL.FieldWorks.XWorks
 				// Generate the unique name and css for each node (starting from the root node).
 				string uniqueNodeName = null;
 				string uniqueNodePath = null;
+				string sensesSubentryNodePath = null;
+				bool buildSenseSubentryRules = false;
 				for (int ii=0; ii < nodes.Count; ii++)
 				{
 					var workingNode = nodes[ii];
-					string nodePath = GetNodePath(workingNode);
 					var workingClassName = $".{GetClassAttributeForConfig(workingNode)}";
 
 					// If this node is ".subentries" and the next node is ".mainentrysubentries",
-					// then set the uniqueNodeName to ".mainentrysubentry" and skip the next node.
+					// then we need to build two sets of rules, one for ".entry-1 .subentries-?"
+					// and one for ".entry-1 .senses-? .subentries-?". We only need to build the two
+					// set for the children. The node ".entry-1 .senses-? .subentries-?" does NOT
+					// need a second set of rules.  It's rules will get created through the normal
+					// execution of this method (and could use a different style).
 					if (workingClassName == ".subentries" && (ii + 1 < nodes.Count) &&
 						$".{GetClassAttributeForConfig(nodes[ii + 1])}" == ".mainentrysubentries")
 					{
-						// We need a specificity higher than ".senses-? .subentries-? .subentry" and
-						// because of the way the path to ".mainentrysubentries" is generated we can
-						// get the wrong value for ".sense-?. So add ".sensecontent .sense " to the path.
-						uniqueNodePath = uniqueNodePath + ".sensecontent .sense "; // Intentionally include the space at the end.
-						uniqueNodeName = ".mainentrysubentry";
-						ii++;
+						// We need a specificity higher than ".entry-1 .senses-? .subentries-? .subentry"
+						// for the sensesSubentryNodePath so make it more specific by adding
+						// ".sensecontent .sense .subentry ".
+						sensesSubentryNodePath = uniqueNodePath + ".sensecontent .sense .subentry "; // Intentionally include the space at the end.
 					}
-					else
+
+					if (workingClassName == ".mainentrysubentries")
 					{
-						uniqueNodeName = GetUniqueNodeName(nodePath, workingClassName);
+						buildSenseSubentryRules = true;
+						continue;
 					}
+					uniqueNodeName = GetUniqueNodeName(workingNode, workingClassName);
 
 					if (!_styleDictionary.ContainsKey(uniqueNodeName))
 					{
+						List<StyleRule> senseSubentryRules = null;
 						var styleRules = GenerateCssFromConfigurationNode(workingNode, uniqueNodeName, _propertyTable).NonEmpty();
 						styleRules = styleRules.Distinct().ToList(); // Remove duplicate rules.
+						// Make a copy of each rule and prepend the unique path for senses subentries.
+						if (buildSenseSubentryRules)
+						{
+							senseSubentryRules = styleRules.Select(x => new StyleRule(x.Declarations)
+							{
+								Selector = x.Selector,
+								Value = x.Value
+							}).ToList();
+							AddUniquePathToStyleRules(senseSubentryRules, sensesSubentryNodePath);
+						}
 						AddUniquePathToStyleRules(styleRules, uniqueNodePath);
+
+						// Add the senses subentries rules to the standard subentries rules.
+						if (buildSenseSubentryRules)
+						{
+							styleRules.AddRange(senseSubentryRules);
+						}
 						_styleDictionary[uniqueNodeName] = styleRules;
 					}
+
 					uniqueNodePath = uniqueNodePath + uniqueNodeName + " "; // Intentionally include the space at the end.
+					if (buildSenseSubentryRules)
+					{
+						sensesSubentryNodePath = sensesSubentryNodePath + uniqueNodeName + " "; // Intentionally include the space at the end.
+					}
 				}
 				return uniqueNodeName;
 			}
@@ -155,11 +183,11 @@ namespace SIL.FieldWorks.XWorks
 		/// To avoid problems with one node using the style assigned to a different node with the same
 		/// name, assign a unique name to every node.
 		/// </summary>
-		/// <param name="nodePath">A path containing Non-Unique names for all the nodes.</param>
 		/// <param name="className">The name without an appended unique number.</param>
 		/// <returns></returns>
-		private string GetUniqueNodeName(string nodePath, string className)
+		private string GetUniqueNodeName(ConfigurableDictionaryNode node, string className)
 		{
+			string nodePath = GetNodePath(node);
 			if (_uniqueNodeNames.ContainsKey(nodePath))
 			{
 				return _uniqueNodeNames[nodePath];
