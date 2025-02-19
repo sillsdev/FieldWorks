@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2024 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -30,6 +30,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly M3ToXAmpleTransformer m_transformer;
 		private readonly string m_database;
 		private bool m_forceUpdate;
+		private XElement xampleAddonFileRoot;
 
 		public XAmpleParser(LcmCache cache, string dataDir)
 		{
@@ -41,8 +42,26 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_database = ConvertNameToUseAnsiCharacters(m_cache.ProjectId.Name);
 			m_transformer = new M3ToXAmpleTransformer(m_database);
 			m_forceUpdate = true;
+			InitXAmpleAddonDataInfo();
 		}
-
+		private void InitXAmpleAddonDataInfo()
+		{
+			string supportingFilesDir = LcmFileHelper.GetSupportingFilesDir(m_cache.ProjectId.ProjectFolder);
+			if (supportingFilesDir != null)
+			{
+				string xampleAddonFile = Path.Combine(supportingFilesDir, "XAmpleAddonData.xml");
+				if (File.Exists(xampleAddonFile))
+				{
+					XDocument doc = XDocument.Load(xampleAddonFile);
+					if (doc != null)
+					{
+						xampleAddonFileRoot = doc.Root;
+						var preparer = new XAmplePropertiesPreparer(m_cache, xampleAddonFileRoot, false);
+						preparer.AddListsAndFields();
+					}
+				}
+			}
+		}
 		/// <summary>
 		/// Convert any characters in the name which are higher than 0x00FF to hex.
 		/// Neither XAmple nor PC-PATR can read a file name containing letters above 0x00FF.
@@ -96,6 +115,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_transformer.PrepareTemplatesForXAmpleFiles(model, template);
 
 				m_transformer.MakeAmpleFiles(model);
+				if (xampleAddonFileRoot != null)
+				{
+					var augmenter = XAmplePropertiesXAmpleDataFilesAugmenter.Instance;
+					augmenter.Process(m_cache, m_database, xampleAddonFileRoot);
+				}
 
 				int maxAnalCount = 20;
 				XElement maxAnalCountElem = model.Elements("M3Dump").Elements("ParserParameters").Elements("ParserParameters").Elements("XAmple").Elements("MaxAnalysesToReturn").FirstOrDefault();
