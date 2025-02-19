@@ -34,7 +34,7 @@ jobs:
         run: NDP461-DevPack-KB3105179-ENU.exe /q
 
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: | 
             2.1.x
@@ -74,7 +74,7 @@ jobs:
         run: .\NUnitReport /a ^| tee-object -FilePath test-results.log
 
       - name: Report Test Results
-        uses: sillsdev/fw-nunitreport-action@v1.0.0
+        uses: sillsdev/fw-nunitreport-action@v2.0.0
         with:
           log-path: Build/test-results.log
           token: ${{ secrets.GITHUB_TOKEN }}

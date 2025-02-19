@@ -38,6 +38,7 @@
 	<StartupObject>NUnitReport.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+	<Reference Include="netstandard" />
 	<Reference Include="FwBuildTasks">
 	  <HintPath>..\..\FwBuildTasks.dll</HintPath>
 	</Reference>

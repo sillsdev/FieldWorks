@@ -13,7 +13,6 @@ using System.Diagnostics;
 using System.Linq;
 using XCore;
 
-
 namespace SIL.FieldWorks.XWorks
 {
 	public class WordStylesGenerator
@@ -32,15 +31,23 @@ namespace SIL.FieldWorks.XWorks
 		internal const string SenseNumberDisplayName = "Sense Number";
 		internal const string WritingSystemStyleName = "Writing System Abbreviation";
 		internal const string WritingSystemDisplayName = "Writing System Abbreviation";
+		internal const string HeadwordDisplayName = "Headword";
+		internal const string ReversalFormDisplayName = "Reversal Form";
 		internal const string StyleSeparator = " : ";
+		internal const string LangTagPre = "[lang=\'";
+		internal const string LangTagPost = "\']";
 
 		// Globals and default paragraph styles.
 		internal const string NormalParagraphStyleName = "Normal";
+		internal const string PageHeaderStyleName = "Header";
 		internal const string MainEntryParagraphDisplayName = "Main Entry";
 		internal const string LetterHeadingStyleName = "Dictionary-LetterHeading";
 		internal const string LetterHeadingDisplayName = "Letter Heading";
 		internal const string PictureAndCaptionTextframeStyle = "Image-Textframe-Style";
 		internal const string EntryStyleContinue = "-Continue";
+
+		internal const string PageHeaderIdEven = "EvenPages";
+		internal const string PageHeaderIdOdd = "OddPages";
 
 		public static Style GenerateLetterHeaderParagraphStyle(ReadOnlyPropertyTable propertyTable, out BulletInfo? bulletInfo)
 		{
@@ -73,7 +80,7 @@ namespace SIL.FieldWorks.XWorks
 			bulletInfo = null;
 
 			// The user can change the style name that is associated with the Main Entry, so look up the node style name using the DisplayLabel.
-			mainEntryNode = model.Parts.Find(node => node.DisplayLabel == MainEntryParagraphDisplayName);
+			mainEntryNode = model?.Parts.Find(node => node.DisplayLabel == MainEntryParagraphDisplayName);
 			if (mainEntryNode != null)
 			{
 				style = GenerateParagraphStyleFromLcmStyleSheet(mainEntryNode.Style, DefaultStyle, propertyTable, out bulletInfo);
@@ -81,6 +88,26 @@ namespace SIL.FieldWorks.XWorks
 				style.StyleName.Val = style.StyleId;
 			}
 			return style;
+		}
+
+		/// <summary>
+		/// Generate the style that will be used for the header that goes on the top of
+		/// every page.  The header style will be similar to the provided style, with the
+		/// addition of the tab stop.
+		/// </summary>
+		/// <param name="style">The style to based the header style on.</param>
+		/// <returns>The header style.</returns>
+		internal static Style GeneratePageHeaderStyle(Style style)
+		{
+			Style pageHeaderStyle = (Style)style.CloneNode(true);
+			pageHeaderStyle.StyleId = PageHeaderStyleName;
+			pageHeaderStyle.StyleName.Val = pageHeaderStyle.StyleId;
+
+			// Add the tab stop.
+			var tabs = new Tabs();
+			tabs.Append(new TabStop() { Val = TabStopValues.End, Position = (int)(1440 * 6.5/*inches*/) });
+			pageHeaderStyle.StyleParagraphProperties.Append(tabs);
+			return pageHeaderStyle;
 		}
 
 		/// <summary>
@@ -225,11 +252,7 @@ namespace SIL.FieldWorks.XWorks
 				if (exportStyleInfo.HasLeadingIndent || hangingIndent < 0.0f)
 				{
 					var leadingIndent = CalculateMarginLeft(exportStyleInfo, hangingIndent);
-
-					if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
-						parProps.Append(new Indentation() { Right = leadingIndent.ToString() });
-					else
-						parProps.Append(new Indentation() { Left = leadingIndent.ToString() });
+					parProps.Append(new Indentation() { Left = leadingIndent.ToString() });
 				}
 
 				if (exportStyleInfo.HasLineSpacing)
@@ -257,16 +280,16 @@ namespace SIL.FieldWorks.XWorks
 					else
 					{
 						// Note: In Flex a user can set 'at least' or 'exactly' for line heights. These are differentiated using negative and positive
-						// values in LineSpacing.m_lineHeight -- negative value means at least line height, otherwise it's exactly line height
+						// values in LineSpacing.m_lineHeight -- positive value means at least line height, otherwise it's exact line height
 						var lineHeight = exportStyleInfo.LineSpacing.m_lineHeight;
-						if (lineHeight < 0)
+						if (lineHeight >= 0)
 						{
-							lineHeight = MilliPtToTwentiPt(Math.Abs(exportStyleInfo.LineSpacing.m_lineHeight));
+							lineHeight = MilliPtToTwentiPt(lineHeight);
 							parProps.Append(new SpacingBetweenLines() { Line = lineHeight.ToString(), LineRule = LineSpacingRuleValues.AtLeast });
 						}
 						else
 						{
-							lineHeight = MilliPtToTwentiPt(exportStyleInfo.LineSpacing.m_lineHeight);
+							lineHeight = MilliPtToTwentiPt(Math.Abs(lineHeight));
 							parProps.Append(new SpacingBetweenLines() { Line = lineHeight.ToString(), LineRule = LineSpacingRuleValues.Exact });
 						}
 					}
@@ -282,11 +305,7 @@ namespace SIL.FieldWorks.XWorks
 
 				if (exportStyleInfo.HasTrailingIndent)
 				{
-					// Check bidirectional flag to determine correct orientation for indent
-					if (exportStyleInfo.DirectionIsRightToLeft == TriStateBool.triTrue)
-						parProps.Append(new Indentation() { Left = MilliPtToTwentiPt(exportStyleInfo.TrailingIndent).ToString() });
-					else
-						parProps.Append(new Indentation() { Right = MilliPtToTwentiPt(exportStyleInfo.TrailingIndent).ToString() });
+					parProps.Append(new Indentation() { Right = MilliPtToTwentiPt(exportStyleInfo.TrailingIndent).ToString() });
 				}
 
 				// If text direction is right to left, add BiDi property to the paragraph.
@@ -383,10 +402,19 @@ namespace SIL.FieldWorks.XWorks
 			// Thus, we calculate textframe width by multiplying max image width in inches by 72*30 = 1440
 			var textFrameWidth = LcmWordGenerator.maxImageWidthInches * 1440;
 
-			// A paragraph is turned into a textframe simply by adding a frameproperties object inside the paragraph properties.
-			// We leave a 4-pt border around the textframe--80 twentieths of a point.
+			// We will leave a 4-pt border around the textframe--80 twentieths of a point.
 			var textFrameBorder = "80";
-			var textFrameProps = new FrameProperties() { Width = textFrameWidth.ToString(), HeightType = HeightRuleValues.Auto, HorizontalSpace = textFrameBorder, VerticalSpace = textFrameBorder, Wrap = TextWrappingValues.NotBeside, VerticalPosition = VerticalAnchorValues.Text, HorizontalPosition = HorizontalAnchorValues.Text, XAlign = HorizontalAlignmentValues.Right };
+
+			// A paragraph is turned into a textframe simply by adding a frameproperties object inside the paragraph properties.
+			// Note that the argument "Y = textFrameBorder" is necessary for the following reason:
+			// In Word 2019, in order for the image textframe to display below the entry it portrays,
+			// a positive y-value offset must be specified that matches or exceeds the border of the textframe.
+			// We also lock the image's anchor because this allows greater flexibility in positioning the image from within Word.
+			// Without a locked anchor, if a user drags a textframe, Word will arbitrarily change the anchor and snap the textframe into a new location,
+			// rather than allowing the user to drag the textframe to their desired location.
+			var textFrameProps = new FrameProperties() { Width = textFrameWidth.ToString(), HeightType = HeightRuleValues.Auto, HorizontalSpace = textFrameBorder, VerticalSpace = textFrameBorder,
+				Wrap = TextWrappingValues.NotBeside, VerticalPosition = VerticalAnchorValues.Text, HorizontalPosition = HorizontalAnchorValues.Text, XAlign = HorizontalAlignmentValues.Right,
+				Y=textFrameBorder, AnchorLock = new DocumentFormat.OpenXml.OnOffValue(true) };
 			var parProps = new ParagraphProperties();
 			frameStyle.StyleId = PictureAndCaptionTextframeStyle;
 			frameStyle.StyleName = new StyleName(){Val = PictureAndCaptionTextframeStyle};
@@ -487,6 +515,13 @@ namespace SIL.FieldWorks.XWorks
 			var fontName = wsFontInfo.m_fontName.ValueIsSet ? wsFontInfo.m_fontName.Value
 				: defaultFontInfo.FontName.ValueIsSet ? defaultFontInfo.FontName.Value : null;
 
+			// If font is explicitly set in FLEx to "<default font>", this gets picked up as the fontname.
+			// In that case, we want to set fontName to null in the word style so that it can be inherited from the WS.
+			if (fontName == "<default font>")
+			{
+				fontName = null;
+			}
+
 			// fontName still null means not set in Normal Style, then get default fonts from WritingSystems configuration.
 			// Comparison, projectStyle.Name == "Normal", required to limit the font-family definition to the
 			// empty span (ie span[lang="en"]{}. If not included, font-family will be added to many more spans.
@@ -507,9 +542,13 @@ namespace SIL.FieldWorks.XWorks
 
 			if (fontName != null)
 			{
-				// Note: if desired, multiple fonts can be used for different text types in a single run
-				// by separately specifying font names to use for ASCII, High ANSI, Complex Script, and East Asian content.
-				var font = new RunFonts(){Ascii = fontName};
+				var font = new RunFonts()
+				{
+					Ascii = fontName,
+					HighAnsi = fontName,
+					ComplexScript = fontName,
+					EastAsia = fontName
+				};
 				charDefaults.Append(font);
 			}
 
@@ -531,7 +570,9 @@ namespace SIL.FieldWorks.XWorks
 				// OpenXML expects fontsize given in halves of a point; thus we divide by 500.
 				fontSize = fontSize / 500;
 				var size = new FontSize() { Val = fontSize.ToString() };
+				var sizeCS = new FontSizeComplexScript() { Val = fontSize.ToString() };
 				charDefaults.Append(size);
+				charDefaults.Append(sizeCS);
 			}
 
 			// Check for bold
@@ -540,7 +581,9 @@ namespace SIL.FieldWorks.XWorks
 			if (bold)
 			{
 				var boldFont = new Bold() { Val = true };
+				var boldCS = new BoldComplexScript() { Val = true };
 				charDefaults.Append(boldFont);
+				charDefaults.Append(boldCS);
 			}
 
 			// Check for italic
@@ -549,7 +592,9 @@ namespace SIL.FieldWorks.XWorks
 			if (ital)
 			{
 				var italFont = new Italic() { Val = true };
+				var italicCS = new ItalicComplexScript() { Val = true };
 				charDefaults.Append(italFont);
+				charDefaults.Append(italicCS);
 			}
 
 			// Check for font color
@@ -775,7 +820,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public static string GetWsString(string wsId)
 		{
-			return String.Format("[lang=\'{0}\']", wsId);
+			return LangTagPre + wsId + LangTagPost;
 		}
 
 		/// <summary>

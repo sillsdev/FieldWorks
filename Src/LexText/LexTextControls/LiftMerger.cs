@@ -4003,7 +4003,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					setUsed.Add(lsSub.Hvo);
 			}
 			// If we're keeping only the imported data, delete any unused subsense.
-			if (m_msImport == MergeStyle.MsKeepOnlyNew  || m_msImport == MergeStyle.MsTheCombine)
+			if (m_msImport == MergeStyle.MsKeepOnlyNew)
 			{
 				foreach (int hvo in ls.SensesOS.ToHvoArray())
 				{
@@ -4063,7 +4063,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					setUsed.Add(les.Hvo);
 			}
 			// If we're keeping only the imported data, delete any unused example.
-			if (m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
+			if (m_msImport == MergeStyle.MsKeepOnlyNew)
 			{
 				foreach (int hvo in ls.ExamplesOS.ToHvoArray())
 				{
@@ -4297,7 +4297,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					setUsed.Add(ct.Hvo);
 			}
 			// If we're keeping only the imported data, erase any unused existing data first.
-			if (m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
+			if (m_msImport == MergeStyle.MsKeepOnlyNew)
 			{
 				foreach (int hvo in les.TranslationsOC.ToHvoArray())
 				{

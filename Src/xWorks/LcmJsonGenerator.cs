@@ -124,7 +124,7 @@ namespace SIL.FieldWorks.XWorks
 			return fragment;
 		}
 
-		public IFragment AddProperty(ConfigurableDictionaryNode config, string className, bool isBlockProperty, string content)
+		public IFragment AddProperty(ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string className, bool isBlockProperty, string content, string writingSystem)
 		{
 			var fragment = new StringFragment($"\"{className}\": \"{content}\",");
 			return fragment;
@@ -579,8 +579,14 @@ namespace SIL.FieldWorks.XWorks
 				var readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(jsonPath),
 					ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), Path.GetFileName(cssPath) == "configured.css") { ContentGenerator = new LcmJsonGenerator(cache)};
+				settings.StylesGenerator.AddGlobalStyles(configuration, readOnlyPropertyTable);
 				var displayXhtmlSettings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(jsonPath),
 						ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), Path.GetFileName(cssPath) == "configured.css");
+				// Use the same StyleGenerator for both GeneratorSettings to prevent having two that
+				// could contain different data for unique names. The unique names can be generated
+				// in different orders.
+				displayXhtmlSettings.StylesGenerator = settings.StylesGenerator;
+
 				var entryContents = new Tuple<ICmObject, StringBuilder, StringBuilder>[entryCount];
 				var entryActions = new List<Action>();
 				// For every entry in the page generate an action that will produce the xhtml document fragment for that entry
@@ -642,7 +648,7 @@ namespace SIL.FieldWorks.XWorks
 				if (progress != null)
 					progress.Message = xWorksStrings.ksGeneratingStyleInfo;
 
-				cssWriter.Write(CssGenerator.GenerateCssFromConfiguration(configuration, readOnlyPropertyTable));
+				cssWriter.Write(((CssGenerator)settings.StylesGenerator).GetStylesString());
 				cssWriter.Flush();
 
 				entryIds = entryIdsList.ToArray();

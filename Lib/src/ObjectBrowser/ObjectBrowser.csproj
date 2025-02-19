@@ -10,7 +10,7 @@
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace>SIL.ObjectBrowser</RootNamespace>
 	<AssemblyName>ObjectBrowser</AssemblyName>
-	<TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+	<TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
 	<FileAlignment>512</FileAlignment>
 	<FileUpgradeFlags>
 	</FileUpgradeFlags>
@@ -76,6 +76,7 @@
 	<PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+	<Reference Include="netstandard" />
 	<Reference Include="System" />
 	<Reference Include="System.Core">
 	  <RequiredTargetFramework>3.5</RequiredTargetFramework>

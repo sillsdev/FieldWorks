@@ -315,7 +315,7 @@ namespace SIL.FieldWorks.XWorks
 			// or the entry being clicked (when the user clicks anywhere in an entry that is not currently selected)
 			var destinationGuid = GetGuidFromEntryLink(element);
 			if (destinationGuid == Guid.Empty)
-				GetClassListFromGeckoElement(element, out destinationGuid, out _);
+				GetElementInfoFromGeckoElement(element, out destinationGuid, out _);
 
 			// If we don't have a destination GUID, the user may have clicked a video player. We can't handle that,
 			// and if we say we did, we will prevent the user from operating the video controls.
@@ -481,7 +481,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Guid topLevelGuid;
 			GeckoElement entryElement;
-			var classList = GetClassListFromGeckoElement(element, out topLevelGuid, out entryElement);
+			var classList = GetElementInfoFromGeckoElement(element, out topLevelGuid, out entryElement);
 			var localizedName = DictionaryConfigurationListener.GetDictionaryConfigurationType(propertyTable);
 			var label = string.Format(xWorksStrings.ksConfigure, localizedName);
 			s_contextMenu = new ContextMenuStrip();
@@ -505,28 +505,29 @@ namespace SIL.FieldWorks.XWorks
 		/// Returns the class hierarchy for a GeckoElement
 		/// </summary>
 		/// <remarks>LT-17213 Internal for use in DictionaryConfigurationDlg</remarks>
-		internal static List<string> GetClassListFromGeckoElement(GeckoElement element, out Guid topLevelGuid, out GeckoElement entryElement)
+		internal static string GetElementInfoFromGeckoElement(GeckoElement element, out Guid topLevelGuid, out GeckoElement entryElement)
 		{
 			topLevelGuid = Guid.Empty;
 			entryElement = element;
-			var classList = new List<string>();
+			string nearestNodeId = null;
 			if (entryElement.TagName == "body" || entryElement.TagName == "html")
-				return classList;
+				return string.Empty;
 			for (; entryElement != null; entryElement = entryElement.ParentElement)
 			{
+				if (string.IsNullOrEmpty(nearestNodeId))
+				{
+					nearestNodeId = entryElement.GetAttribute("nodeId");
+				}
 				var className = entryElement.GetAttribute("class");
-				if (string.IsNullOrEmpty(className))
-					continue;
 				if (className == "letHead")
 					break;
-				classList.Insert(0, className);
 				if (entryElement.TagName == "div" && entryElement.ParentElement.TagName == "body")
 				{
 					topLevelGuid = GetGuidFromGeckoDomElement(entryElement);
 					break; // we have the element we want; continuing to loop will get its parent instead
 				}
 			}
-			return classList;
+			return nearestNodeId;
 		}
 
 		/// <summary>
@@ -598,7 +599,7 @@ namespace SIL.FieldWorks.XWorks
 			var tagObjects = (object[])item.Tag;
 			var propertyTable = tagObjects[0] as PropertyTable;
 			var mediator = tagObjects[1] as Mediator;
-			var classList = tagObjects[2] as List<string>;
+			var nodeId = tagObjects[2] as string;
 			var guid = (Guid)tagObjects[3];
 			bool refreshNeeded;
 			using (var dlg = new DictionaryConfigurationDlg(propertyTable))
@@ -611,7 +612,7 @@ namespace SIL.FieldWorks.XWorks
 				else if (clerk != null)
 					current = clerk.CurrentObject;
 				var controller = new DictionaryConfigurationController(dlg, propertyTable, mediator, current);
-				controller.SetStartingNode(classList);
+				controller.SetStartingNode(nodeId);
 				dlg.Text = String.Format(xWorksStrings.ConfigureTitle, DictionaryConfigurationListener.GetDictionaryConfigurationType(propertyTable));
 				dlg.HelpTopic = DictionaryConfigurationListener.GetConfigDialogHelpTopic(propertyTable);
 				dlg.ShowDialog(propertyTable.GetValue<IWin32Window>("window"));
@@ -1341,7 +1342,8 @@ namespace SIL.FieldWorks.XWorks
 			else
 			{
 				// Don't load the configuration file twice.
-				if (configurationFile == m_loadedConfig)
+				var currentPublication = GetCurrentPublication();
+				if (configurationFile == m_loadedConfig && currentPublication == m_pubDecorator?.Publication?.ChooserNameTS?.Text)
 					return;
 				m_loadedConfig = configurationFile;
 				var xhtmlPath = SaveConfiguredXhtmlWithProgress(configurationFile, allOnOnePage);

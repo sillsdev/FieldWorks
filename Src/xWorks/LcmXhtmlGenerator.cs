@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Web.UI.WebControls;
 using System.Xml;
@@ -549,6 +550,10 @@ namespace SIL.FieldWorks.XWorks
 				{
 					xw.WriteStartElement("span");
 					xw.WriteAttributeString("class", CssGenerator.WritingSystemPrefix);
+					if (!settings.IsWebExport)
+					{
+						xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
+					}
 					var prefix = ((CoreWritingSystemDefinition)settings.Cache.WritingSystemFactory.get_EngineOrNull(wsId)).Abbreviation;
 					xw.WriteString(prefix);
 					xw.WriteEndElement();
@@ -568,6 +573,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				xw.WriteStartElement("audio");
 				xw.WriteAttributeString("id", safeAudioId);
+				xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
 				xw.WriteStartElement("source");
 				xw.WriteAttributeString("src", srcAttribute);
 				xw.WriteRaw("");
@@ -589,15 +595,15 @@ namespace SIL.FieldWorks.XWorks
 
 		public IFragment WriteProcessedObject(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className)
 		{
-			return WriteProcessedContents(isBlock, elementContent, className);
+			return WriteProcessedContents(config, isBlock, elementContent, className);
 		}
 
 		public IFragment WriteProcessedCollection(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className)
 		{
-			return WriteProcessedContents(isBlock, elementContent, className);
+			return WriteProcessedContents(config, isBlock, elementContent, className);
 		}
 
-		private IFragment WriteProcessedContents(bool asBlock, IFragment xmlContent, string className)
+		private IFragment WriteProcessedContents(ConfigurableDictionaryNode config, bool asBlock, IFragment xmlContent, string className)
 		{
 			if (!xmlContent.IsNullOrEmpty())
 			{
@@ -643,6 +649,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				xw.WriteStartElement("span");
 				xw.WriteAttributeString("class", className);
+				if (!settings.IsWebExport)
+				{
+					xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
+				}
 
 				var innerBuilder = new StringBuilder();
 				foreach (var child in config.ReferencedOrDirectChildren)
@@ -699,6 +709,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement("span");
+			xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
 			xw.WriteAttributeString("lang", writingSystem);
 		}
 
@@ -712,6 +723,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement("span"); // set direction on a nested span to preserve Context's position and direction.
+			xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
 			xw.WriteAttributeString("dir", rightToLeft ? "rtl" : "ltr");
 		}
 
@@ -725,6 +737,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement("span");
+			// When generating an error node config is null
+			if (config != null)
+			{
+				xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
+			}
 			xw.WriteAttributeString("lang", writingSystem);
 		}
 
@@ -868,6 +885,7 @@ namespace SIL.FieldWorks.XWorks
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement("div");
 			xw.WriteAttributeString("class", className);
+			xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
 			xw.WriteAttributeString("id", "g" + entryGuid);
 		}
 
@@ -890,6 +908,7 @@ namespace SIL.FieldWorks.XWorks
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement(isBlockProperty ? "div" : "span");
 			xw.WriteAttributeString("class", className);
+			xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
 			xw.WriteRaw(content.ToString());
 			xw.WriteEndElement();
 		}
@@ -924,6 +943,7 @@ namespace SIL.FieldWorks.XWorks
 				xw.WriteAttributeString("class", classAttribute);
 				xw.WriteAttributeString("src", srcAttribute);
 				xw.WriteAttributeString("id", "g" + pictureGuid);
+				xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
 				xw.WriteEndElement();
 				xw.Flush();
 				return fragment;
@@ -954,6 +974,7 @@ namespace SIL.FieldWorks.XWorks
 				xw.WriteStartElement("span");
 				xw.WriteAttributeString("class", "sensenumber");
 				xw.WriteAttributeString("lang", senseNumberWs);
+				xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
 				xw.WriteString(formattedSenseNumber);
 				xw.WriteEndElement();
 				xw.Flush();
@@ -1047,6 +1068,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				xw.WriteStartElement(isBlock ? "div" : "span");
 				xw.WriteAttributeString("class", collectionItemClass);
+				xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
 				xw.WriteRaw(content.ToString());
 				xw.WriteEndElement();
 				xw.Flush();
@@ -1054,7 +1076,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public IFragment AddProperty(ConfigurableDictionaryNode config, string className, bool isBlockProperty, string content)
+		public IFragment AddProperty(ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string className, bool isBlockProperty, string content, string writingSystem)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);
@@ -1063,6 +1085,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				xw.WriteStartElement(isBlockProperty ? "div" : "span");
 				xw.WriteAttributeString("class", className);
+				xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
 				xw.WriteString(content);
 				xw.WriteEndElement();
 				xw.Flush();
@@ -1082,10 +1105,11 @@ namespace SIL.FieldWorks.XWorks
 				// Wrap the number and sense combination in a sensecontent span so that both can be affected by DisplayEachSenseInParagraph
 				xw.WriteStartElement("span");
 				xw.WriteAttributeString("class", "sensecontent");
-				xw.WriteRaw(senseNumberSpan?.ToString());
+				xw.WriteRaw(senseNumberSpan?.ToString() ?? string.Empty);
 				xw.WriteStartElement(isBlock ? "div" : "span");
 				xw.WriteAttributeString("class", className);
 				xw.WriteAttributeString("entryguid", "g" + ownerGuid);
+				xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
 				xw.WriteRaw(senseContent.ToString());
 				xw.WriteEndElement();   // element name for property
 				xw.WriteEndElement();   // </span>

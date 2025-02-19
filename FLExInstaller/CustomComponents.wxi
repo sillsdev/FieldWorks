@@ -169,6 +169,7 @@
 		<Directory Id="urL10NFOLDER" Name="ur"/>
 		<Directory Id="viL10NFOLDER" Name="vi"/>
 		<Directory Id="zhL10NFOLDER" Name="zh-CN"/>
+		<Directory Id="zlmL10NFOLDER" Name="zlm"/>
 	</DirectoryRef>
 
 	<DirectoryRef Id='HARVESTDATAFOLDER'>
@@ -225,6 +226,7 @@
 	<WixVariable Id="MASTERurL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\ur"/>
 	<WixVariable Id="MASTERviL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\vi"/>
 	<WixVariable Id="MASTERzhL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\zh-CN"/>
+	<WixVariable Id="MASTERzlmL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\zlm"/>
 	<WixVariable Id="MASTERFONTDIR" Value="$(var.MASTERBUILDDIR)_Font"/>
 	<?define HarvestWxiDir = .\master?>
 	<?else?>
@@ -254,6 +256,7 @@
 	<WixVariable Id="UPDATEurL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\ur"/>
 	<WixVariable Id="UPDATEviL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\vi"/>
 	<WixVariable Id="UPDATEzhL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\zh-CN"/>
+	<WixVariable Id="UPDATEzlmL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\zlm"/>
 	<WixVariable Id="UPDATEFONTDIR" Value="$(var.UPDATEBUILDDIR)_Font"/>
 	<?define HarvestWxiDir = .\update?>
 	<?endif?>
@@ -284,5 +287,6 @@
 	<?include $(var.HarvestWxiDir)\urHarvest.wxi?>
 	<?include $(var.HarvestWxiDir)\viHarvest.wxi?>
 	<?include $(var.HarvestWxiDir)\zhHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\zlmHarvest.wxi?>
 	<?include Fonts.wxi?>
 </Include>

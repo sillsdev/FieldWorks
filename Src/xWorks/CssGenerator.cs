@@ -99,8 +99,7 @@ namespace SIL.FieldWorks.XWorks
 					return className;
 				}
 				// Otherwise get a unique but useful class name and re-generate the style with the new name
-				className = GetBestUniqueNameForNode(_styleDictionary, node);
-				_styleDictionary[className] = GenerateCssFromConfigurationNode(node, className, _propertyTable).NonEmpty();
+				className = GetBestUniqueNameForNode(node);
 				return className;
 			}
 		}
@@ -116,8 +115,7 @@ namespace SIL.FieldWorks.XWorks
 		/// have the same class name, but different style content. We want this name to be usefully recognizable.
 		/// </summary>
 		/// <returns></returns>
-		public static string GetBestUniqueNameForNode(Dictionary<string, List<StyleRule>> styles,
-			ConfigurableDictionaryNode node)
+		public string GetBestUniqueNameForNode(ConfigurableDictionaryNode node)
 		{
 			Guard.AgainstNull(node.Parent, "There should not be duplicate class names at the top of tree.");
 			// First try appending the parent node classname. Pathway has code that cares about what
@@ -126,9 +124,18 @@ namespace SIL.FieldWorks.XWorks
 
 			string classNameBase = className;
 			int counter = 0;
-			while (styles.ContainsKey(className))
+			lock (_styleDictionary)
 			{
-				className = $"{classNameBase}-{++counter}";
+				while (_styleDictionary.ContainsKey(className))
+				{
+					var styleContent = GenerateCssFromConfigurationNode(node, className, _propertyTable).NonEmpty();
+					if (AreStyleRulesListsEquivalent(_styleDictionary[className], styleContent))
+					{
+						return className;
+					}
+					className = $"{classNameBase}-{++counter}";
+				}
+				_styleDictionary[className] = GenerateCssFromConfigurationNode(node, className, _propertyTable).NonEmpty();
 			}
 			return className;
 		}
