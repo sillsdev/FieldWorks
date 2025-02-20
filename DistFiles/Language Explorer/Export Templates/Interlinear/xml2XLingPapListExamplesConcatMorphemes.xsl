@@ -71,14 +71,16 @@ paragraph[1]
 -->
 	<xsl:template match="paragraphs" priority="100">
 		<xsl:param name="sScriptureType"/>
+		<xsl:param name="sThisTextId"/>
 		<xsl:variable name="iCount" select="count(../preceding-sibling::interlinear-text)+1"/>
 		<p>
 			<xsl:text>paragraph </xsl:text>
 			<xsl:value-of select="$iCount"/>
 		</p>
-		<example num="x{$iCount}">
+		<example num="x{$sThisTextId}-{$iCount}">
 			<xsl:apply-templates select="descendant::phrase">
 				<xsl:with-param name="sScriptureType" select="$sScriptureType"/>
+				<xsl:with-param name="sThisTextId" select="$sThisTextId"/>
 			</xsl:apply-templates>
 		</example>
 	</xsl:template>
@@ -89,6 +91,7 @@ phrase
 -->
 	<xsl:template match="phrase">
 		<xsl:param name="sScriptureType"/>
+		<xsl:param name="sThisTextId"/>
 		<xsl:variable name="sLevel">
 			<xsl:call-template name="OutputLevelContent">
 				<xsl:with-param name="sScriptureType" select="$sScriptureType"/>

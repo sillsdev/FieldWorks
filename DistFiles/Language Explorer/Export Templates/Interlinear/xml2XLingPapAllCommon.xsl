@@ -3,7 +3,6 @@
 	<!-- This stylesheet contains the common components for XLingPaper output  -->
 
 	<xsl:key name="ItemsLang" match="//item" use="@lang"/>
-	<xsl:variable name="sThisTextId" select="substring-before(/document/interlinear-text/@guid,'-')"/>
 	<xsl:template match="interlinear-text">
 		<xsl:variable name="sScriptureType">
 			<xsl:variable name="sTitle" select="item[@type='title']"/>
@@ -29,26 +28,34 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
+		<xsl:variable name="sThisTextId" select="substring-before(@guid,'-')"/>
 		<xsl:apply-templates>
 			<xsl:with-param name="sScriptureType" select="$sScriptureType"/>
+			<xsl:with-param name="sThisTextId" select="$sThisTextId"/>
 		</xsl:apply-templates>
 	</xsl:template>
 	<xsl:template match="paragraph">
 		<xsl:param name="sScriptureType"/>
+		<xsl:param name="sThisTextId"/>
 		<xsl:apply-templates>
 			<xsl:with-param name="sScriptureType" select="$sScriptureType"/>
+			<xsl:with-param name="sThisTextId" select="$sThisTextId"/>
 		</xsl:apply-templates>
 	</xsl:template>
 	<xsl:template match="paragraphs">
 		<xsl:param name="sScriptureType"/>
+		<xsl:param name="sThisTextId"/>
 		<xsl:apply-templates>
 			<xsl:with-param name="sScriptureType" select="$sScriptureType"/>
+			<xsl:with-param name="sThisTextId" select="$sThisTextId"/>
 		</xsl:apply-templates>
 	</xsl:template>
 	<xsl:template match="phrases">
 		<xsl:param name="sScriptureType"/>
+		<xsl:param name="sThisTextId"/>
 		<xsl:apply-templates>
 			<xsl:with-param name="sScriptureType" select="$sScriptureType"/>
+			<xsl:with-param name="sThisTextId" select="$sThisTextId"/>
 		</xsl:apply-templates>
 	</xsl:template>
 	<xsl:template match="phrase[count(item)=0]">

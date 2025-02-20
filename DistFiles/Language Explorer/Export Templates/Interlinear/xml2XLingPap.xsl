@@ -59,7 +59,7 @@ Main template
 						   <textTitle><xsl:value-of select="item[@type='title']"/></textTitle>
 						   <shortTitle><xsl:value-of select="item[@type='title-abbreviation']"/></shortTitle>
 						</textInfo>
-						<xsl:apply-templates/>
+						<xsl:apply-templates select="."/>
 						</interlinear-text>
 					</xsl:for-each>
 				</appendix>
@@ -106,6 +106,7 @@ phrase
 -->
 	<xsl:template match="phrase">
 		<xsl:param name="sScriptureType"/>
+		<xsl:param name="sThisTextId"/>
 		<xsl:variable name="sLevel">
 			<xsl:call-template name="OutputLevelContent">
 				<xsl:with-param name="sScriptureType" select="$sScriptureType"/>
