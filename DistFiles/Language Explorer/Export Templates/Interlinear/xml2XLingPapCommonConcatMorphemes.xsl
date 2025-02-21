@@ -239,8 +239,29 @@ OutputLineOfWrdElementsFromMorphs
 						<xsl:when test="morphemes[morph/item[@type=$sType and @lang=$sLang]]">
 							<xsl:for-each select="morphemes[morph/item[@type=$sType and @lang=$sLang]]">
 								<wrd>
+									<xsl:variable name="vernacularLanguageMissingInPhase1">
+										<xsl:variable name="sBeforeLastHyphenId">
+											<xsl:call-template name="GetPortionBeforeLastHyphen">
+												<xsl:with-param name="pText" select="$sLang"/>
+											</xsl:call-template>
+										</xsl:variable>
+										<xsl:variable name="sBeforeFirstHyphenId">
+											<xsl:value-of select="substring-before($sLang,'-')"/>
+										</xsl:variable>
+											<xsl:choose>
+												<xsl:when test="//language[@lang=$sBeforeFirstHyphenId]/@vernacular='true'">
+													<xsl:text>Y</xsl:text>
+												</xsl:when>
+												<xsl:when test="//language[@lang=$sBeforeLastHyphenId]/@vernacular='true'">
+													<xsl:text>Y</xsl:text>
+												</xsl:when>
+												<xsl:otherwise>
+													<xsl:text>N</xsl:text>
+												</xsl:otherwise>
+											</xsl:choose>
+									</xsl:variable>
 									<xsl:choose>
-										<xsl:when test="key('Language',morph/item[@type=$sType and @lang=$sLang]/@lang)/@vernacular='true'">
+										<xsl:when test="key('Language',morph/item[@type=$sType and @lang=$sLang]/@lang)/@vernacular='true' or $vernacularLanguageMissingInPhase1='Y'">
 											<langData>
 												<xsl:for-each select="morph/item[@type=$sType and @lang=$sLang]">
 													<xsl:call-template name="GetMorphLangAttribute"/>
