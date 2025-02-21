@@ -15,6 +15,7 @@ Elements to ignore or are handled elsewhere
 	  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    -->
 	<xsl:template name="OutputFreeWithAnyNotes">
+		<xsl:variable name="sThisTextId" select="substring-before(ancestor::interlinear-text/@guid,'-')"/>
 		<free>
 			<xsl:call-template name="GetFreeLangAttribute"/>
 			<xsl:apply-templates/>
