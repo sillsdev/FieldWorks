@@ -159,53 +159,16 @@ Elements to ignore or are handled elsewhere
 					</xsl:when>
 					<xsl:when test="name()='morph'">
 						<!-- first word does not have an analysis -->
-						<xsl:for-each select="ancestor::word/following-sibling::word/morphemes/morph/item[1]">
-							<!-- morphemes -->
-							<xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
-								<xsl:with-param name="sType" select="'txt'"/>
-								<xsl:with-param name="sLang" select="$sLang"/>
-							</xsl:call-template>
-							<!-- Lex Entries -->
-							<xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
-								<xsl:with-param name="sType" select="'cf'"/>
-								<xsl:with-param name="sLang" select="$sLang"/>
-							</xsl:call-template>
-							<!-- Gloss -->
-							<xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
-								<xsl:with-param name="sType" select="'gls'"/>
-								<xsl:with-param name="sLang" select="$sLang"/>
-								<xsl:with-param name="bAddHyphen" select="'Y'"/>
-							</xsl:call-template>
-							<!-- msa -->
-							<xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
-								<xsl:with-param name="sType" select="'msa'"/>
-								<xsl:with-param name="sLang" select="$sLang"/>
-								<xsl:with-param name="bAddHyphen" select="'Y'"/>
+						<xsl:for-each select="ancestor::word/following-sibling::word[1]/morphemes/morph/item">
+							<xsl:variable name="sLang2" select="@lang"/>
+							<xsl:call-template name="ProcessMorphItem">
+								<xsl:with-param name="sLang" select="$sLang2"/>
 							</xsl:call-template>
 						</xsl:for-each>
 					</xsl:when>
 					<xsl:when test="parent::morph[count(preceding-sibling::morph)=0]">
-						<!-- morphemes -->
-						<xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
-							<xsl:with-param name="sType" select="'txt'"/>
+						<xsl:call-template name="ProcessMorphItem">
 							<xsl:with-param name="sLang" select="$sLang"/>
-						</xsl:call-template>
-						<!-- Lex Entries -->
-						<xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
-							<xsl:with-param name="sType" select="'cf'"/>
-							<xsl:with-param name="sLang" select="$sLang"/>
-						</xsl:call-template>
-						<!-- Gloss -->
-						<xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
-							<xsl:with-param name="sType" select="'gls'"/>
-							<xsl:with-param name="sLang" select="$sLang"/>
-							<xsl:with-param name="bAddHyphen" select="'Y'"/>
-						</xsl:call-template>
-						<!-- msa -->
-						<xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
-							<xsl:with-param name="sType" select="'msa'"/>
-							<xsl:with-param name="sLang" select="$sLang"/>
-							<xsl:with-param name="bAddHyphen" select="'Y'"/>
 						</xsl:call-template>
 					</xsl:when>
 				</xsl:choose>
@@ -230,6 +193,31 @@ Elements to ignore or are handled elsewhere
 				</xsl:when>
 			</xsl:choose>
 		</xsl:for-each>
+	</xsl:template>
+	<xsl:template name="ProcessMorphItem">
+		<xsl:param name="sLang"/>
+		<!-- morphemes -->
+		<xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
+			<xsl:with-param name="sType" select="'txt'"/>
+			<xsl:with-param name="sLang" select="$sLang"/>
+		</xsl:call-template>
+		<!-- Lex Entries -->
+		<xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
+			<xsl:with-param name="sType" select="'cf'"/>
+			<xsl:with-param name="sLang" select="$sLang"/>
+		</xsl:call-template>
+		<!-- Gloss -->
+		<xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
+			<xsl:with-param name="sType" select="'gls'"/>
+			<xsl:with-param name="sLang" select="$sLang"/>
+			<xsl:with-param name="bAddHyphen" select="'Y'"/>
+		</xsl:call-template>
+		<!-- msa -->
+		<xsl:call-template name="OutputLineOfWrdElementsFromMorphs">
+			<xsl:with-param name="sType" select="'msa'"/>
+			<xsl:with-param name="sLang" select="$sLang"/>
+			<xsl:with-param name="bAddHyphen" select="'Y'"/>
+		</xsl:call-template>
 	</xsl:template>
 	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
