@@ -25,6 +25,7 @@ using System.Windows.Media.Imaging;
 using XCore;
 using XmlDrawing = DocumentFormat.OpenXml.Drawing;
 using DrawingWP = DocumentFormat.OpenXml.Drawing.Wordprocessing;
+using DrawingShape = DocumentFormat.OpenXml.Office2010.Word.DrawingShape;
 using Pictures = DocumentFormat.OpenXml.Drawing.Pictures;
 using System.Text.RegularExpressions;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -568,6 +569,33 @@ namespace SIL.FieldWorks.XWorks
 				lastPar.AppendChild(CloneElement(fragToCopy, run));
 			}
 
+			public void AppendToTextbox(IFragment fragToCopy, Run run, WP.ParagraphProperties paragraphProps)
+			{
+				WP.TextBoxContent lastTextBox = GetLastTextBox();
+
+				if (lastTextBox == null)
+					return;
+
+				WP.Paragraph newImagePar = new WP.Paragraph();
+				newImagePar.Append(paragraphProps);
+
+				// Deep clone the run b/c of its tree of properties and to maintain styles.
+				newImagePar.AppendChild(CloneElement(fragToCopy, run));
+
+				lastTextBox.AppendChild(newImagePar);
+			}
+
+			public void AppendParagraphToTextbox(IFragment fragToCopy, WP.Paragraph para)
+			{
+				WP.TextBoxContent lastTextBox = GetLastTextBox();
+
+				if (lastTextBox == null)
+					return;
+
+				for(int i =0; i < 4; i++)
+					lastTextBox.AppendChild(CloneElement(fragToCopy, para));
+			}
+
 			/// <summary>
 			/// Does a deep clone of the element.  If there is picture data then that is cloned
 			/// from the copyFromFrag into 'this' frag.
@@ -682,6 +710,17 @@ namespace SIL.FieldWorks.XWorks
 				return GetNewParagraph();
 			}
 
+			public WP.TextBoxContent GetLastTextBox()
+			{
+				//List<WP.TextBoxContent> textBoxContList =
+					//DocBody.OfType<WP.TextBoxContent>().ToList();
+				List<WP.TextBoxContent> textBoxContList =
+					DocBody.Descendants<WP.TextBoxContent>().ToList();
+				if (textBoxContList.Any())
+					return textBoxContList.Last();
+				return null;
+			}
+
 			/// <summary>
 			/// Creates and returns a new paragraph.
 			/// </summary>
@@ -689,6 +728,146 @@ namespace SIL.FieldWorks.XWorks
 			{
 				WP.Paragraph newPar = DocBody.AppendChild(new WP.Paragraph());
 				return newPar;
+			}
+
+			public void AppendNewTextboxParagraph(IFragment frag, Run run, WP.ParagraphProperties paragraphProps)
+			{
+
+				//TODO: read alignment from the image specifications, and use it to set the preferred alignment here:
+				string horPosition = "left";
+
+				WP.Paragraph newImagePar = new WP.Paragraph();
+				newImagePar.Append(paragraphProps);
+				// Deep clone the run b/c of its tree of properties and to maintain styles.
+				newImagePar.AppendChild(CloneElement(frag, run));
+
+				// Calculate the height and width in emus to use for the drawing containing the textbox.
+				// Drawing extent is specified in English Metric Units or EMUs, 914400 EMUs corresponds to one inch, and there are 72 points per inch.
+				const double emusPerPoint = 914400.0/72.0;
+				DrawingWP.Extent textBoxExtent = newImagePar.Descendants<DrawingWP.Extent>().FirstOrDefault();
+
+				Int64Value extentX = (Int64Value)Math.Ceiling((double)textBoxExtent.Cx + (24.0 * emusPerPoint));
+				Int64Value extentY = (Int64Value)Math.Ceiling((double)textBoxExtent.Cy + (48.0 * emusPerPoint));
+
+				WP.Paragraph textBoxPar = new WP.Paragraph();
+				Run textBoxRun = new Run();
+				Drawing textBoxDrawing = new Drawing();
+
+				DrawingWP.Anchor anchor = new DrawingWP.Anchor()
+				{
+					DistanceFromTop = (UInt32Value)0U,
+					DistanceFromBottom = (UInt32Value)0U,
+					DistanceFromLeft = (UInt32Value)0U,
+					DistanceFromRight = (UInt32Value)0U,
+					SimplePos = false,
+					RelativeHeight = (UInt32Value)0U,
+					BehindDoc = false,
+					Locked = false,
+					LayoutInCell = true,
+					AllowOverlap = false
+				};
+				anchor.Append(new DrawingWP.SimplePosition() { X = 0L, Y = 0L});
+
+				// image textbox is anchored horizontally wrt the column
+				anchor.Append(
+					new DrawingWP.HorizontalPosition(
+						new DrawingWP.HorizontalAlignment(horPosition)
+					)
+					{
+						RelativeFrom = DrawingWP.HorizontalRelativePositionValues.Column
+					}
+				);
+
+				// image textbox is anchored vertically wrt the preceeding paragraph
+				anchor.Append(
+					new DrawingWP.VerticalPosition(
+						new DrawingWP.PositionOffset("0")
+					)
+					{
+						RelativeFrom = DrawingWP.VerticalRelativePositionValues.Paragraph
+					}
+				);
+				//TODO: Extent encodes the width and height of the final drawing item.
+				//TODO: Need to calculate this based on image size (and the size that will be needed for the caption...though we won't know this until later).
+				//TODO: perhaps initially set it based on image size, and then get and update the extent later after captions are added??
+				// This extent must also be declared in the anchor's shapeproperties element.
+				anchor.Append(
+					new DrawingWP.Extent()
+					{
+						Cx = extentX,
+						Cy = extentY
+					}
+				);
+
+				// We don't apply an effect to the textbox, so effect extent is 0
+				anchor.Append(
+					new DrawingWP.EffectExtent()
+					{
+						LeftEdge = 0L,
+						TopEdge = 0L,
+						RightEdge = 0L,
+						BottomEdge = 0L
+					}
+				);
+
+				// Text should wrap above and below the textbox
+				anchor.Append(new DrawingWP.WrapTopBottom());
+
+				// Need a unique ID and name for the drawing containing the textbox. Without them, the word document will be mis-formatted and unable to open.
+				string stringId = Guid.NewGuid().ToString();
+				anchor.Append(new DrawingWP.DocProperties() {Id = (UInt32)stringId.GetHashCode(), Name = "Textbox "+stringId});
+
+				// Graphic frame drawing properties must be specified or the word document will be mis-formatted and unable to open.
+				anchor.Append(
+					new DrawingWP.NonVisualGraphicFrameDrawingProperties(
+						new XmlDrawing.GraphicFrameLocks()//{ NoChangeAspect = true }
+						)
+				);
+
+				anchor.Append(
+					new XmlDrawing.Graphic(
+
+						new XmlDrawing.GraphicData(
+
+							new DrawingShape.WordprocessingShape(
+
+								new DrawingShape.NonVisualDrawingShapeProperties(){ TextBox = true },
+
+								new DrawingShape.ShapeProperties(
+									new XmlDrawing.TransformGroup(
+										new XmlDrawing.Offset(){X=0, Y=0},
+											// Specify the extent here and in the anchor itself (see above)
+											new XmlDrawing.Extents(){Cx = extentX, Cy = extentY}
+									),
+									new XmlDrawing.PresetGeometry() { Preset = XmlDrawing.ShapeTypeValues.Rectangle }
+								) { BlackWhiteMode = XmlDrawing.BlackWhiteModeValues.Auto },
+
+								new DrawingShape.TextBoxInfo2(
+									new WP.TextBoxContent(
+										newImagePar
+									)
+								),
+
+								new DrawingShape.TextBodyProperties(
+									new XmlDrawing.ShapeAutoFit()
+								)
+								{
+									Rotation = 0,
+									Vertical = XmlDrawing.TextVerticalValues.Horizontal,
+									Wrap = XmlDrawing.TextWrappingValues.Square,
+									Anchor = XmlDrawing.TextAnchoringTypeValues.Top,
+									AnchorCenter = false
+								}
+							)
+						) { Uri = "http://schemas.microsoft.com/office/word/2010/wordprocessingShape" }
+					)
+				);
+
+				textBoxDrawing.Append(anchor);
+				textBoxRun.Append(textBoxDrawing);
+				textBoxPar.Append(textBoxRun);
+				DocBody.AppendChild(textBoxPar);
+
 			}
 
 			/// <summary>
@@ -1496,22 +1675,24 @@ namespace SIL.FieldWorks.XWorks
 								// immediately before any image run other than the first image run in a piece.
 								if (containsDrawing)
 								{
-									if (pieceHasImage)
-									{
-										wordWriter.WordFragment.GetNewParagraph();
-										wordWriter.WordFragment.AppendToParagraph(frag, new Run(), false);
-									}
+									// Create and add a new textbox containing the image
+									WP.ParagraphProperties paragraphProps =
+										new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextframeStyle });
 
-									// We have now added at least one image from this piece.
-									pieceHasImage = true;
+									wordWriter.WordFragment.AppendNewTextboxParagraph(frag, run, paragraphProps);
 								}
-
-								WP.Paragraph newPar = wordWriter.WordFragment.GetNewParagraph();
-								WP.ParagraphProperties paragraphProps =
-									new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextframeStyle });
-								newPar.Append(paragraphProps);
-
-								wordWriter.WordFragment.AppendToParagraph(frag, run, false);
+								else
+								{
+									// TODO: Fix the captions for textboxes
+									//otherwise, we have a caption; we must add the caption to the last textbox, which should contain the image
+									//WP.Paragraph newPar = new WP.Paragraph();
+									WP.ParagraphProperties paragraphProps =
+										new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextframeStyle });
+									//newPar.Append(paragraphProps);
+									//newPar.Append(run);
+									wordWriter.WordFragment.AppendToTextbox(frag, run, paragraphProps);
+									//wordWriter.WordFragment.AppendToParagraph(frag, run, false);
+								}
 							}
 							else
 							{
@@ -1529,7 +1710,14 @@ namespace SIL.FieldWorks.XWorks
 							break;
 
 						case WP.Paragraph para:
-							wordWriter.WordFragment.AppendParagraph(frag, para);
+							// If we have a paragraph associated with a Pictures node, we are dealing with an image caption.
+							if (config.Label == "Pictures" || config.Parent?.Label == "Pictures")
+							{
+								// TODO: Handle cloning the caption paragraph inside the textbox...
+								wordWriter.WordFragment.AppendParagraphToTextbox(frag, para);
+							}
+							else
+								wordWriter.WordFragment.AppendParagraph(frag, para);
 
 							// Start a new paragraph with the next run so that it uses the correct style.
 							wordWriter.ForceNewParagraph = true;
@@ -2175,7 +2363,7 @@ namespace SIL.FieldWorks.XWorks
 									},
 									new Pictures.NonVisualPictureDrawingProperties(
 										new XmlDrawing.PictureLocks()
-											{NoChangeAspect = true, NoChangeArrowheads = true}
+											{NoChangeAspect = true}
 									)
 								),
 								new Pictures.BlipFill(
