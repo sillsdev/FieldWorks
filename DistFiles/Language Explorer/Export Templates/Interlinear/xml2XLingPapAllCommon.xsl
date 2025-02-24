@@ -191,6 +191,25 @@
 	</xsl:template>
 	<!--
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		GetPortionBeforeLastHyphen
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template name="GetPortionBeforeLastHyphen">
+		<xsl:param name="pText"/>
+		<xsl:param name="pDelim" select="'-'"/>
+		<xsl:if test="contains($pText, $pDelim)">
+			<xsl:value-of select="substring-before($pText, $pDelim)"/>
+			<xsl:if test="contains(substring-after($pText, $pDelim), $pDelim)">
+				<xsl:value-of select="$pDelim"/>
+			</xsl:if>
+			<xsl:call-template name="GetPortionBeforeLastHyphen">
+				<xsl:with-param name="pText" select="substring-after($pText, $pDelim)"/>
+				<xsl:with-param name="pDelim" select="$pDelim"/>
+			</xsl:call-template>
+		</xsl:if>
+	</xsl:template>
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		GetWordLangAttribute
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	-->
@@ -223,10 +242,33 @@
 	-->
 	<xsl:template name="OutputLanguageElements">
 		<xsl:variable name="firstMorphemes" select="//paragraphs/paragraph[1]/phrases[1]/phrase[1]/words[1]/word[1]/morphemes/morph[1]/item"/>
-		<xsl:for-each select="//interlinear-text[1]/languages/language">
+		<xsl:for-each select="//item[generate-id() = generate-id(key('ItemsLang', @lang)[1])]">
 			<xsl:variable name="sLangId" select="@lang"/>
 			<xsl:if test="key('ItemsLang',$sLangId)">
-				<xsl:variable name="sFont" select="@font"/>
+				<xsl:variable name="sBeforeLastHyphenId">
+					<xsl:call-template name="GetPortionBeforeLastHyphen">
+						<xsl:with-param name="pText" select="$sLangId"/>
+					</xsl:call-template>
+				</xsl:variable>
+				<xsl:variable name="sBeforeFirstHyphenId">
+					<xsl:value-of select="substring-before($sLangId,'-')"/>
+				</xsl:variable>
+				<xsl:variable name="sFont">
+					<xsl:choose>
+						<xsl:when test="//language[@lang=$sLangId]">
+							<xsl:value-of select="//language[@lang=$sLangId]/@font"/>
+						</xsl:when>
+						<xsl:when test="//language[@lang=$sBeforeFirstHyphenId]">
+							<xsl:value-of select="//language[@lang=$sBeforeFirstHyphenId]/@font"/>
+						</xsl:when>
+						<xsl:when test="//language[@lang=$sBeforeLastHyphenId]">
+							<xsl:value-of select="//language[@lang=$sBeforeLastHyphenId]/@font"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="//language[1]/@font"/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:variable>
 				<xsl:if test="key('ItemsLang',$sLangId)[parent::phrase and @type='gls']">
 					<language font-family="{$sFont}" id="{$sLangId}-free"/>
 				</xsl:if>
