@@ -170,7 +170,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (lcResult.Analyses.Count > 0 && lcResult.ErrorMessage == null)
 				{
 					IWfiWordform lcWordform = null;
-					NonUndoableUnitOfWorkHelper.Do(
+					NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
 						m_cache.ActionHandlerAccessor,
 						() => lcWordform = WfiWordformServices.FindOrCreateWordform(m_cache, text));
 					m_parseFiler.ProcessParse(lcWordform, 0, lcResult, checkParser);
