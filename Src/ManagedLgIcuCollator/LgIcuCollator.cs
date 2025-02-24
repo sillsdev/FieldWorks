@@ -94,6 +94,10 @@ namespace SIL.FieldWorks.Language
 		public int Compare(string bstrValue1, string bstrValue2, LgCollatingOptions colopt)
 		{
 			EnsureCollator();
+			if (bstrValue1 == null)
+				bstrValue1 = "";
+			if (bstrValue2 == null)
+				bstrValue2 = "";
 			var key1 = m_collator.GetSortKey(bstrValue1).KeyData;
 			var key2 = m_collator.GetSortKey(bstrValue2).KeyData;
 
