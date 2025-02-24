@@ -367,6 +367,9 @@
 			<obj field="LexemeForm" layout="InflectionClassForLexemeForm"/>
 			<seq field="AlternateForms" layout="InflectionClassForAffix"/>
 		</part>
+        <part id="LexEntry-Jt-RequiredFeaturesForLexemeForm" type="JtView">
+          <obj field="LexemeForm" layout="RequiredFeatures"/>
+        </part>
 		<part id="LexEntry-Jt-RequiredFeatures" type="JtView">
 			<seq field="AlternateForms" layout="RequiredFeatures"/>
 		</part>
