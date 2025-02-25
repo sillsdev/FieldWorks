@@ -105,8 +105,9 @@ namespace SIL.FieldWorks.XWorks
 					var workingClassName = $".{GetClassAttributeForConfig(workingNode)}";
 
 					// If this node is ".subentries" and the next node is ".mainentrysubentries",
-					// then we need to build two sets of rules, one for ".entry-1 .subentries-?"
-					// and one for ".entry-1 .senses-? .subentries-?". We only need to build the two
+					// then we need to build the same set of rules twice, once for ".entry-1 .subentries-?"
+					// and once for ".entry-1 .senses-? .subentries-?", so that the xhtml can choose
+					// the rules associated with the correct path. We only need to build the two
 					// set for the children. The node ".entry-1 .senses-? .subentries-?" does NOT
 					// need a second set of rules.  It's rules will get created through the normal
 					// execution of this method (and could use a different style).
