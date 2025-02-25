@@ -58,6 +58,7 @@ namespace SIL.FieldWorks.XWorks
 		private LcmCache _cache;
 		private ReadOnlyPropertyTable _propertyTable;
 		private Dictionary<string, List<StyleRule>> _styleDictionary = new Dictionary<string, List<StyleRule>>();
+		private Dictionary<string, string> _uniqueNodeNames = new Dictionary<string, string>();
 		private StyleSheet _styleSheet = new StyleSheet();
 
 		public void Init(ReadOnlyPropertyTable propertyTable)
@@ -83,61 +84,154 @@ namespace SIL.FieldWorks.XWorks
 			var className = $".{GetClassAttributeForConfig(node)}";
 			lock (_styleDictionary)
 			{
-				var styleContent = GenerateCssFromConfigurationNode(node, className, _propertyTable).NonEmpty();
-				if (!styleContent.Any())
+				// Create a list of nodes for the path, from root to 'node'.
+				List<ConfigurableDictionaryNode> nodes = new List<ConfigurableDictionaryNode>();
+				var pathNode = node;
+				while (pathNode != null)
 				{
-					return className;
+					nodes.Add(pathNode);
+					pathNode = pathNode.Parent;
 				}
-				if (!_styleDictionary.ContainsKey(className))
-				{
-					_styleDictionary[className] = styleContent;
-					return className;
-				}
-				// If the content is the same, then do nothing
-				if (AreStyleRulesListsEquivalent(_styleDictionary[className], styleContent))
-				{
-					return className;
-				}
-				// Otherwise get a unique but useful class name and re-generate the style with the new name
-				className = GetBestUniqueNameForNode(node);
-				return className;
-			}
-		}
+				nodes.Reverse();
 
-		public static bool AreStyleRulesListsEquivalent(List<StyleRule> first,
-			List<StyleRule> second)
-		{
-			return first.Count == second.Count && first.TrueForAll(rule => second.Any(otherrule => otherrule.ToString().Equals(rule.ToString())));
+				// Generate the unique name and css for each node (starting from the root node).
+				string uniqueNodeName = null;
+				string uniqueNodePath = null;
+				string sensesSubentryNodePath = null;
+				bool buildSenseSubentryRules = false;
+				for (int ii=0; ii < nodes.Count; ii++)
+				{
+					var workingNode = nodes[ii];
+					var workingClassName = $".{GetClassAttributeForConfig(workingNode)}";
+
+					// If this node is ".subentries" and the next node is ".mainentrysubentries",
+					// then we need to build the same set of rules twice, once for ".entry-1 .subentries-?"
+					// and once for ".entry-1 .senses-? .subentries-?", so that the xhtml can choose
+					// the rules associated with the correct path. We only need to build the two
+					// set for the children. The node ".entry-1 .senses-? .subentries-?" does NOT
+					// need a second set of rules.  It's rules will get created through the normal
+					// execution of this method (and could use a different style).
+					if (workingClassName == ".subentries" && (ii + 1 < nodes.Count) &&
+						$".{GetClassAttributeForConfig(nodes[ii + 1])}" == ".mainentrysubentries")
+					{
+						// We need a specificity higher than ".entry-1 .senses-? .subentries-? .subentry"
+						// for the sensesSubentryNodePath so make it more specific by adding
+						// ".sensecontent .sense .subentry ".
+						sensesSubentryNodePath = uniqueNodePath + ".sensecontent .sense .subentry "; // Intentionally include the space at the end.
+					}
+
+					if (workingClassName == ".mainentrysubentries")
+					{
+						buildSenseSubentryRules = true;
+						continue;
+					}
+					uniqueNodeName = GetUniqueNodeName(workingNode, workingClassName);
+
+					if (!_styleDictionary.ContainsKey(uniqueNodeName))
+					{
+						List<StyleRule> senseSubentryRules = null;
+						var styleRules = GenerateCssFromConfigurationNode(workingNode, uniqueNodeName, _propertyTable).NonEmpty();
+						styleRules = styleRules.Distinct().ToList(); // Remove duplicate rules.
+						// Make a copy of each rule and prepend the unique path for senses subentries.
+						if (buildSenseSubentryRules)
+						{
+							senseSubentryRules = styleRules.Select(x => new StyleRule(x.Declarations)
+							{
+								Selector = x.Selector,
+								Value = x.Value
+							}).ToList();
+							AddUniquePathToStyleRules(senseSubentryRules, sensesSubentryNodePath);
+						}
+						AddUniquePathToStyleRules(styleRules, uniqueNodePath);
+
+						// Add the senses subentries rules to the standard subentries rules.
+						if (buildSenseSubentryRules)
+						{
+							styleRules.AddRange(senseSubentryRules);
+						}
+						_styleDictionary[uniqueNodeName] = styleRules;
+					}
+
+					uniqueNodePath = uniqueNodePath + uniqueNodeName + " "; // Intentionally include the space at the end.
+					if (buildSenseSubentryRules)
+					{
+						sensesSubentryNodePath = sensesSubentryNodePath + uniqueNodeName + " "; // Intentionally include the space at the end.
+					}
+				}
+				return uniqueNodeName;
+			}
 		}
 
 		/// <summary>
-		/// Finds an unused class name for the configuration node. This should be called when there are two nodes in the <code>DictionaryConfigurationModel</code>
-		/// have the same class name, but different style content. We want this name to be usefully recognizable.
+		/// Get a path containing Non-Unique names for all the nodes from the root up to and
+		/// including the 'node' passed in.
 		/// </summary>
-		/// <returns></returns>
-		public string GetBestUniqueNameForNode(ConfigurableDictionaryNode node)
+		private string GetNodePath(ConfigurableDictionaryNode node)
 		{
-			Guard.AgainstNull(node.Parent, "There should not be duplicate class names at the top of tree.");
-			// First try appending the parent node classname. Pathway has code that cares about what
-			// the className starts with, so keep the 'node' name first.
-			var className = $".{GetClassAttributeForConfig(node)}-{GetClassAttributeForConfig(node.Parent)}";
-
-			string classNameBase = className;
-			int counter = 0;
-			lock (_styleDictionary)
+			// Generate the node path info from the root to this node.
+			string pathToNode = null;
+			var workingNode = node;
+			while (workingNode != null)
 			{
-				while (_styleDictionary.ContainsKey(className))
-				{
-					var styleContent = GenerateCssFromConfigurationNode(node, className, _propertyTable).NonEmpty();
-					if (AreStyleRulesListsEquivalent(_styleDictionary[className], styleContent))
-					{
-						return className;
-					}
-					className = $"{classNameBase}-{++counter}";
-				}
-				_styleDictionary[className] = GenerateCssFromConfigurationNode(node, className, _propertyTable).NonEmpty();
+				string workingClassName = $".{GetClassAttributeForConfig(workingNode)} ";
+				pathToNode = workingClassName + pathToNode;
+				workingNode = workingNode.Parent;
 			}
-			return className;
+			return pathToNode;
+		}
+
+		/// <summary>
+		/// To avoid problems with one node using the style assigned to a different node with the same
+		/// name, assign a unique name to every node.
+		/// </summary>
+		/// <param name="className">The name without an appended unique number.</param>
+		/// <returns></returns>
+		private string GetUniqueNodeName(ConfigurableDictionaryNode node, string className)
+		{
+			string nodePath = GetNodePath(node);
+			if (_uniqueNodeNames.ContainsKey(nodePath))
+			{
+				return _uniqueNodeNames[nodePath];
+			}
+
+			int counter = 0;
+			string uniqueNodeName;
+			do
+			{
+				uniqueNodeName = $"{className}-{++counter}";
+			} while (_styleDictionary.ContainsKey(uniqueNodeName));
+
+			_uniqueNodeNames[nodePath] = uniqueNodeName;
+			return uniqueNodeName;
+		}
+
+		/// <summary>
+		/// To avoid problems with the wrong style being used, add the unique path to the style
+		/// rules.  This increases specificity.
+		/// </summary>
+		/// <param name="styleRules">The rules to be pre-pended with the uniquePath.</param>
+		/// <param name="uniquePath">A path containing Unique names for all the nodes.</param>
+		private void AddUniquePathToStyleRules(List<StyleRule> styleRules, string uniquePath)
+		{
+			if (!string.IsNullOrEmpty(uniquePath))
+			{
+				foreach (var styleRule in styleRules)
+				{
+					string existingRule = styleRule.Value;
+					// If the styleRule already contains the last node on the uniquePath, then don't add the node again.
+					int indexSpace = styleRule.Value.IndexOf(' ');
+					if (indexSpace != -1)
+					{
+						string ruleFirstNode = styleRule.Value.Substring(0, indexSpace + 1 /*intentionally include the space*/);
+						if (uniquePath.EndsWith(ruleFirstNode))
+						{
+							existingRule = styleRule.Value.Substring(indexSpace + 1 /*intentionally exclude the space*/);
+						}
+					}
+
+					styleRule.Value = uniquePath + existingRule;
+				}
+			}
 		}
 
 		public string GetStylesString()
@@ -200,16 +294,10 @@ namespace SIL.FieldWorks.XWorks
 			if (propStyleSheet.Styles.Contains("Normal"))
 				styles.AddRange(GenerateCssForWsSpanWithNormalStyle(propertyTable));
 
-			var entryBaseStyle = ConfiguredLcmGenerator.GetEntryStyle(model);
-			if (propStyleSheet.Styles.Contains(entryBaseStyle))
-				styles.AddRange(GenerateDictionaryNormalParagraphCss(propertyTable, entryBaseStyle));
-
 			if (propStyleSheet.Styles.Contains(LetterHeadingStyleName))
 			{
 				styles.AddRange(GenerateCssForWritingSystems(".letter", LetterHeadingStyleName, propertyTable));
 			}
-
-			styles.AddRange(GenerateDictionaryMinorParagraphCss(propertyTable, model));
 
 			return styles;
 		}
@@ -254,42 +342,6 @@ namespace SIL.FieldWorks.XWorks
 			styles.Add(defaultRule);
 			// Then generate the rules for all the writing system overrides
 			styles.AddRange(GenerateCssForWritingSystems("span", "Normal", propertyTable));
-			return styles;
-		}
-
-		private static List<StyleRule> GenerateDictionaryNormalParagraphCss(ReadOnlyPropertyTable propertyTable, string entryBaseStyle)
-		{
-			var styles = new List<StyleRule>();
-			var dictNormalRule = new StyleRule { Value = "div.entry" };
-			var dictNormalStyle = GenerateCssStyleFromLcmStyleSheet(entryBaseStyle, 0, propertyTable);
-			dictNormalRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictNormalStyle));
-			styles.Add(dictNormalRule);
-			// Then generate the rules for all the writing system overrides
-			styles.AddRange(GenerateCssForWritingSystems("div.entry span", entryBaseStyle, propertyTable));
-			return styles;
-		}
-
-		private static List<StyleRule> GenerateDictionaryMinorParagraphCss(ReadOnlyPropertyTable propertyTable, DictionaryConfigurationModel model)
-		{
-			var styles = new List<StyleRule>();
-			// Use the style set in all the parts following main entry, if no style is specified assume Dictionary-Minor
-			for (var i = 1; i < model.Parts.Count; ++i)
-			{
-				var minorEntryNode = model.Parts[i];
-				if (minorEntryNode.IsEnabled)
-				{
-					var styleName = minorEntryNode.Style;
-					if (string.IsNullOrEmpty(styleName))
-						styleName = DictionaryMinor;
-					var dictionaryMinorStyle = GenerateCssStyleFromLcmStyleSheet(styleName, 0, propertyTable);
-					var minorRule = new StyleRule { Value = string.Format("div.{0}", GetClassAttributeForConfig(minorEntryNode)) };
-					minorRule.Declarations.Properties.AddRange(GetOnlyParagraphStyle(dictionaryMinorStyle));
-					styles.Add(minorRule);
-					// Then generate the rules for all the writing system overrides
-					styles.AddRange(GenerateCssForWritingSystems(string.Format("div.{0} span", GetClassAttributeForConfig(minorEntryNode)), styleName, propertyTable));
-				}
-			}
-
 			return styles;
 		}
 
@@ -421,6 +473,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private static List<StyleRule> GenerateCssForSenses(ConfigurableDictionaryNode configNode, DictionaryNodeSenseOptions senseOptions, ref string baseSelection, ReadOnlyPropertyTable propertyTable)
 		{
+			string baseSelectionOrig = baseSelection;
 			var styleRules = new List<StyleRule>();
 			var selectors = GenerateSelectorsFromNode(configNode, ref baseSelection, propertyTable.GetValue<LcmCache>("cache"), propertyTable);
 			// Insert '> .sensecontent' between '.*senses' and '.*sense' (where * could be 'referring', 'sub', or similar)
@@ -501,6 +554,13 @@ namespace SIL.FieldWorks.XWorks
 				if (!IsEmptyRule(senseContentRule))
 					styleRules.Add(senseContentRule);
 			}
+
+			// Add the ws specific styles.
+			if (!string.IsNullOrEmpty(configNode.Style))
+			{
+				styleRules.AddRange(GenerateCssForWritingSystems(baseSelectionOrig + " span", configNode.Style, propertyTable));
+			}
+
 			return styleRules;
 		}
 
@@ -607,7 +667,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private static IEnumerable<StyleRule> RemoveBeforeAndAfterForNoteInParaRules(IEnumerable<StyleRule> rules)
 		{
-			return rules.Where(rule => rule.Value.Contains("~"));
+			// Return non-before/after rules and before/after rules that contains a '~'.
+			return rules.Where(rule => (!IsBeforeOrAfter(rule) || rule.Value.Contains("~")));
 		}
 
 		/// <summary>
