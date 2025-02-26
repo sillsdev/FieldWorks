@@ -370,7 +370,9 @@
 		</part>
 		<part id="MoForm-Jt-RequiredFeatures" type="JtView">
 			<if is="MoAffixAllomorph">
-				<obj field="MsEnvFeatures" layout="Browse"/>
+                <obj field="MsEnvFeatures" layout="empty">
+                  <string field="LongNameTSS"/>
+                </obj>
 			</if>
 		</part>
 		<part id="MoForm-Jt-SimpleForm" type="JtView">
