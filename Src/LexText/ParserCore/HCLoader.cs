@@ -102,10 +102,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return newPhonemes;
 		}
 
-		private string RemoveDottedCircles(string phoneme)
+		private string RemoveDottedCircles(string text)
 		{
+			if (text == null)
+				return text;
 			string dottedCircle = "\u25CC";
-			return phoneme.Replace(dottedCircle, string.Empty);
+			return text.Replace(dottedCircle, string.Empty);
 		}
 
 		private void LoadLanguage()
