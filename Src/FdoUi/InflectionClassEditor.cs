@@ -249,7 +249,8 @@ namespace SIL.FieldWorks.FdoUi
 			// Todo: user selected a part of speech.
 			// Arrange to turn all relevant items blue.
 			// Remember which item was selected so we can later 'doit'.
-			if (e.Node is HvoTreeNode)
+			var hvoNode = e.Node as HvoTreeNode;
+			if (hvoNode != null && hvoNode.Hvo != 0)
 			{
 				var hvo = (e.Node as HvoTreeNode).Hvo;
 				var clid = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetClsid(hvo);
@@ -276,7 +277,7 @@ namespace SIL.FieldWorks.FdoUi
 			// Tell the parent control that we may have changed the selected item so it can
 			// enable or disable the Apply and Preview buttons based on the selection.
 			if (ValueChanged != null)
-				ValueChanged(this, new FwObjectSelectionEventArgs(m_selectedHvo));
+				ValueChanged(this, new FwObjectSelectionEventArgs(m_selectedHvo, hvoNode != null ? 0 : -1));
 		}
 
 		/// <summary>
@@ -330,7 +331,7 @@ namespace SIL.FieldWorks.FdoUi
 					state.PercentDone = i * 20 / itemsToChange.Count();
 					state.Breath();
 				}
-				if (!IsItemEligible(m_cache.DomainDataByFlid, hvoSense, possiblePOS))
+				if (!IsItemEligible(hvoSense))
 					continue;
 				var ls = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
 				var msa = (IMoStemMsa)ls.MorphoSyntaxAnalysisRA;
@@ -395,7 +396,7 @@ namespace SIL.FieldWorks.FdoUi
 							// Adjust its POS as well as its inflection class, just to be sure.
 							msmTarget = msm;
 							msmTarget.PartOfSpeechRA = kvp.Key.Item2;
-							msmTarget.InflectionClassRA = m_cache.ServiceLocator.GetInstance<IMoInflClassRepository>().GetObject(m_selectedHvo);
+							msmTarget.InflectionClassRA = m_selectedHvo == 0 ? null : m_cache.ServiceLocator.GetInstance<IMoInflClassRepository>().GetObject(m_selectedHvo);
 							break;
 						}
 					}
@@ -406,7 +407,7 @@ namespace SIL.FieldWorks.FdoUi
 					msmTarget = m_cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
 					entry.MorphoSyntaxAnalysesOC.Add(msmTarget);
 					msmTarget.PartOfSpeechRA = kvp.Key.Item2;
-					msmTarget.InflectionClassRA = m_cache.ServiceLocator.GetInstance<IMoInflClassRepository>().GetObject(m_selectedHvo);
+					msmTarget.InflectionClassRA = m_selectedHvo == 0 ? null : m_cache.ServiceLocator.GetInstance<IMoInflClassRepository>().GetObject(m_selectedHvo);
 				}
 				// Finally! Make the senses we want to change use it.
 				foreach (var ls in sensesToChange)
@@ -455,7 +456,7 @@ namespace SIL.FieldWorks.FdoUi
 					state.PercentDone = i * 100 / itemsToChange.Count();
 					state.Breath();
 				}
-				bool fEnable = IsItemEligible(m_sda, hvo, possiblePOS);
+				bool fEnable = IsItemEligible(hvo);
 				if (fEnable)
 					m_sda.SetString(hvo, tagFakeFlid, tss);
 				m_sda.SetInt(hvo, tagEnable, (fEnable ? 1 : 0));
@@ -502,21 +503,10 @@ namespace SIL.FieldWorks.FdoUi
 			}
 		}
 
-		private bool IsItemEligible(ISilDataAccess sda, int hvo, HashSet<int> possiblePOS)
+		private bool IsItemEligible(int hvo)
 		{
-			bool fEnable = false;
 			var ls = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvo);
-			if (ls.MorphoSyntaxAnalysisRA != null && ls.MorphoSyntaxAnalysisRA is IMoStemMsa)
-			{
-				var msa = ls.MorphoSyntaxAnalysisRA as IMoStemMsa;
-				var pos = msa.PartOfSpeechRA;
-				if (pos != null && possiblePOS.Contains(pos.Hvo))
-				{
-					// Only show it as a change if it is different
-					fEnable = msa.InflectionClassRA == null || msa.InflectionClassRA.Hvo != m_selectedHvo;
-				}
-			}
-			return fEnable;
+			return ls.MorphoSyntaxAnalysisRA is IMoStemMsa;
 		}
 
 		private IPartOfSpeech GetPOS()
