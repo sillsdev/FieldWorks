@@ -158,26 +158,24 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (sLower != form.Text)
 			{
 				var text = TsStringUtils.MakeString(sLower, form.get_WritingSystem(0));
-				IWfiWordform lcWordform;
-				// We cannot use WfiWordformServices.FindOrCreateWordform because of props change (LT-21810).
-				// Only parse the lowercase version if it exists.
-				if (m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(text, out lcWordform))
+				var lcWord = normalizer.Normalize(sLower.Replace(' ', '.'));
+				ParseResult lcResult = null;
+				stopWatch.Start();
+				using (var task = new TaskReport(String.Format(ParserCoreStrings.ksParsingX, word), m_taskUpdateHandler))
 				{
-					var lcWord = normalizer.Normalize(sLower.Replace(' ', '.'));
-					ParseResult lcResult = null;
-					stopWatch.Start();
-					using (var task = new TaskReport(String.Format(ParserCoreStrings.ksParsingX, word), m_taskUpdateHandler))
-					{
-						lcResult = m_parser.ParseWord(lcWord);
-					}
-					stopWatch.Stop();
-					lcResult.ParseTime = stopWatch.ElapsedMilliseconds;
-					if (lcResult.Analyses.Count > 0 && lcResult.ErrorMessage == null)
-					{
-						m_parseFiler.ProcessParse(lcWordform, 0, lcResult, checkParser);
-						m_parseFiler.ProcessParse(wordform, priority, result, checkParser);
-						return true;
-					}
+					lcResult = m_parser.ParseWord(lcWord);
+				}
+				stopWatch.Stop();
+				lcResult.ParseTime = stopWatch.ElapsedMilliseconds;
+				if (lcResult.Analyses.Count > 0 && lcResult.ErrorMessage == null)
+				{
+					IWfiWordform lcWordform = null;
+					NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
+						m_cache.ActionHandlerAccessor,
+						() => lcWordform = WfiWordformServices.FindOrCreateWordform(m_cache, text));
+					m_parseFiler.ProcessParse(lcWordform, 0, lcResult, checkParser);
+					m_parseFiler.ProcessParse(wordform, priority, result, checkParser);
+					return true;
 				}
 			}
 
