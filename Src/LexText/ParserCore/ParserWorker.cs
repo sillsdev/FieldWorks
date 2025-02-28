@@ -115,7 +115,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				var stopWatch = System.Diagnostics.Stopwatch.StartNew();
 				task.Details = fDoTrace ? m_parser.TraceWordXml(normForm, sSelectTraceMorphs) : m_parser.ParseWordXml(normForm);
 				stopWatch.Stop();
-				task.Details.Element("Wordform").Add(new XAttribute("parseTime", stopWatch.ElapsedMilliseconds.ToString()));
+				double seconds = stopWatch.ElapsedMilliseconds / 1000.0;
+				task.Details.Element("Wordform").Add(new XAttribute("parseTime", seconds.ToString("0.000")));
 			}
 		}
 

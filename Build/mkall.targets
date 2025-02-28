@@ -287,7 +287,7 @@
 		<ParatextNugetVersion>9.4.0.1-beta</ParatextNugetVersion>
 		<LcmNugetVersion>11.0.0-beta0111</LcmNugetVersion>
 		<IcuNugetVersion>70.1.123</IcuNugetVersion>
-		<HermitCrabNugetVersion>3.4.2</HermitCrabNugetVersion>
+		<HermitCrabNugetVersion>3.6.1</HermitCrabNugetVersion>
 		<IPCFrameworkVersion>1.1.1-beta0001</IPCFrameworkVersion>
 		<!-- bt393 is the master branch build of ExCss for Windows development. Update when appropriate. -->
 		<ExCssBuildType Condition="'$(OS)'=='Windows_NT'">bt393</ExCssBuildType>

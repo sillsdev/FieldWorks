@@ -78,7 +78,7 @@ Main template
 				<h2>
 					<xsl:text>Parse time: </xsl:text>
 					<xsl:value-of select="@parseTime"/>
-					<xsl:text> milliseconds.</xsl:text>
+					<xsl:text> seconds.</xsl:text>
 				</h2>
 			</body>
 		</html>
