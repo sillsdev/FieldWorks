@@ -130,10 +130,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private string RemoveDottedCircles(string text)
 		{
-			if (text == null)
-				return text;
 			string dottedCircle = "\u25CC";
-			return text.Replace(dottedCircle, string.Empty);
+			return text?.Replace(dottedCircle, string.Empty);
 		}
 
 		public void Reset()

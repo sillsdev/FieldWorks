@@ -94,20 +94,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private string[] RemoveDottedCircles(string[] phonemes)
 		{
-			string[] newPhonemes = new string[phonemes.Length];
-			for (int i = 0; i < phonemes.Length; i++)
-			{
-				newPhonemes[i] = RemoveDottedCircles(phonemes[i]);
-			}
-			return newPhonemes;
+			return phonemes.Select(RemoveDottedCircles).ToArray();
 		}
 
 		private string RemoveDottedCircles(string text)
 		{
-			if (text == null)
-				return text;
 			string dottedCircle = "\u25CC";
-			return text.Replace(dottedCircle, string.Empty);
+			return text?.Replace(dottedCircle, string.Empty);
 		}
 
 		private void LoadLanguage()
