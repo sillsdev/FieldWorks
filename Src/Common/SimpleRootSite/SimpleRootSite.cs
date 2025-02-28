@@ -1626,6 +1626,14 @@ namespace SIL.FieldWorks.Common.RootSites
 			get { return WantHScroll && AutoScrollMinSize.Width > Width; }
 		}
 
+		/// <summary>
+		/// We want to allow clients to tell whether we are showing the vertical scroll bar.
+		/// </summary>
+		public bool IsVScrollVisible
+		{
+			get { return VScroll; }
+		}
+
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
 		/// Root site slaves sometimes need to suppress the effects of OnSizeChanged.

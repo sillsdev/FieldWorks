@@ -43,8 +43,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			InvalidEnvironment,
 			InvalidRedupForm,
 			InvalidRewriteRule,
-			InvalidOrderedStratum,
-			InvalidOrderedRule
+			InvalidStrata
 		}
 
 		private class TestHCLoadErrorLogger : IHCLoadErrorLogger
@@ -91,14 +90,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidRewriteRule, (ICmObject)rule));
 			}
 
-			public void InvalidOrderedStratum(string stratumName, string reason)
+			public void InvalidStrata(string strata, string reason)
 			{
-				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidOrderedStratum, (ICmObject)null));
+				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidStrata, (ICmObject)null));
 			}
 
-			public void InvalidOrderedRule(string ruleName, string reason)
+			public void OutOfScopeSlot(IMoInflAffixSlot slot, IMoInflAffixTemplate template, string reason)
 			{
-				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidOrderedRule, (ICmObject)null));
+				throw new NotImplementedException();
 			}
 		}
 

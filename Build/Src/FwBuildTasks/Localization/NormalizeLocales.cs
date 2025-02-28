@@ -24,7 +24,8 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var locales = Directory.GetDirectories(L10nsDirectory).Select(Path.GetFileName);
 			foreach (var locale in locales)
 			{
-				RenameLocale(locale, Normalize(locale));
+				var normalizedLocale = Normalize(locale);
+				RenameLocale(locale, normalizedLocale);
 			}
 			return true;
 		}
@@ -49,8 +50,12 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			var sourceDir = Path.Combine(L10nsDirectory, source);
 			var destDir = Path.Combine(L10nsDirectory, dest);
 			Directory.Move(sourceDir, destDir);
+			RenameLocaleFiles(destDir, source, dest);
+		}
 
-			foreach (var file in Directory.EnumerateFiles(destDir, "*", SearchOption.AllDirectories))
+		internal static void RenameLocaleFiles(string destDirName, string source, string dest, string extension = "*")
+		{
+			foreach (var file in Directory.EnumerateFiles(destDirName, extension, SearchOption.AllDirectories))
 			{
 				var nameNoExt = Path.GetFileNameWithoutExtension(file);
 				// ReSharper disable once PossibleNullReferenceException - no files are null

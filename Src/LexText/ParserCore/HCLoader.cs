@@ -6,6 +6,7 @@ using SIL.Extensions;
 using SIL.LCModel;
 using SIL.LCModel.Core.Phonology;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Matching;
@@ -61,6 +62,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly bool m_noDefaultCompounding;
 		private readonly bool m_notOnClitics;
 		private readonly bool m_acceptUnspecifiedGraphemes;
+		private readonly string m_strataString;
 		private readonly IList<IList<string>> m_strata;
 		private readonly Dictionary<LexEntry, string> m_entryName;
 
@@ -93,7 +95,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_strata = new List<IList<string>>();
 			if (hcElem != null && hcElem.Element("Strata") != null)
 			{
-				m_strata = ParseStrataString((string)hcElem.Element("Strata"));
+				m_strataString = (string)hcElem.Element("Strata");
+				m_strata = ParseStrataString(m_strataString);
 			}
 			m_entryName = new Dictionary<LexEntry, string>();
 
@@ -371,8 +374,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					else
 					{
 						// Move the given rule to stratum.
-						MoveRule(rule, m_morphophonemic, stratum);
-						MoveRule(rule, m_clitic, stratum);
+						bool found = MoveRule(rule, m_morphophonemic, stratum);
+						found = found || MoveRule(rule, m_clitic, stratum);
+						if (!found)
+							m_logger.InvalidStrata(m_strataString, "Unknown rule in Strata: " + rule + ".");
 					}
 				}
 			}
@@ -447,15 +452,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_language.Strata.Remove(source);
 		}
 
-		void MoveRule(string ruleName, Stratum source, Stratum target)
+		bool MoveRule(string ruleName, Stratum source, Stratum target)
 		{
 			// Move all rules named ruleName from source to target.
+			bool found = false;
 			foreach (LexEntry entry in source.Entries.ToList())
 			{
 				if (m_entryName[entry] == ruleName)
 				{
 					target.Entries.Add(entry);
 					source.Entries.Remove(entry);
+					found = true;
 				}
 			}
 			foreach (IMorphologicalRule rule in source.MorphologicalRules.ToList())
@@ -464,6 +471,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				{
 					target.MorphologicalRules.Add(rule);
 					source.MorphologicalRules.Remove(rule);
+					found = true;
 				}
 			}
 			foreach (IPhonologicalRule rule in source.PhonologicalRules.ToList())
@@ -472,6 +480,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				{
 					target.PhonologicalRules.Add(rule);
 					source.PhonologicalRules.Remove(rule);
+					found = true;
 				}
 			}
 			foreach (AffixTemplate rule in source.AffixTemplates.ToList())
@@ -480,8 +489,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				{
 					target.AffixTemplates.Add(rule);
 					source.AffixTemplates.Remove(rule);
+					found = true;
 				}
 			}
+			return found;
 		}
 
 		private void LoadInflClassMprFeature(IMoInflClass inflClass, MprFeatureGroup inflClassesGroup)
@@ -1634,6 +1645,19 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			foreach (IMoInflAffixSlot slot in slots)
 			{
+				if (TemplateSlotOutOfScope(slot, template))
+				{
+					IPartOfSpeech slotPOS = slot.Owner as IPartOfSpeech;
+					IPartOfSpeech templatePOS = template.Owner as IPartOfSpeech;
+					string slotPOSAbbr = slotPOS != null ? slotPOS.Abbreviation.BestAnalysisVernacularAlternative.Text : "***";
+					string templatePOSName = templatePOS != null ? templatePOS.Name.BestAnalysisVernacularAlternative.Text : "***";
+					string slotName = slotPOSAbbr + ":" + slot.Name.BestAnalysisVernacularAlternative.Text;
+					string templateName = template.Name.BestAnalysisVernacularAlternative.Text;
+					string reason = "The " + slotName + " in the " + templateName + " affix template under the " + templatePOSName
+						+ " category is not located in the " + templatePOSName + " category or above.  Please move the "
+						+ slotName + " slot so it is in the " + templatePOSName + " category or above.";
+					m_logger.OutOfScopeSlot(slot, template, reason);
+				}
 				IEnumerable<ILexEntryInflType> types = slot.ReferringObjects.OfType<ILexEntryInflType>();
 				var rules = new List<MorphemicMorphologicalRule>();
 				foreach (IMoInflAffMsa msa in slot.Affixes)
@@ -1667,6 +1691,40 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			return hcTemplate;
+		}
+
+		/// <summary>
+		/// Determine if slot is out of scope of the template in stackHvo.
+		/// </summary>
+		private static bool TemplateSlotOutOfScope(IMoInflAffixSlot slot, IMoInflAffixTemplate template)
+		{
+			// If there is no slot or template, return false.
+			if (slot == null || template == null)
+				return false;
+			// Get the slot from the template with the same name as slot.
+			IPartOfSpeech partOfSpeech = template.Owner as IPartOfSpeech;
+			IMoInflAffixSlot inScopeSlot = GetPOSSlot(partOfSpeech, slot.Name.BestAnalysisVernacularAlternative.Text);
+			// If the slots are different, then slot is out of scope.
+			return slot != inScopeSlot;
+		}
+
+		/// <summary>
+		/// Get the slot named 'name' in the scope of partOfSpeech.
+		/// If there is more than one slot, return the first one.
+		/// </summary>
+		public static IMoInflAffixSlot GetPOSSlot(IPartOfSpeech partOfSpeech, string name)
+		{
+			while (partOfSpeech != null)
+			{
+				foreach (IMoInflAffixSlot slot in partOfSpeech.AllAffixSlots)
+				{
+					// NB: BestAnalysisVernacularAlternative always returns something.
+					if (slot.Name.BestAnalysisVernacularAlternative.Text == name)
+						return slot;
+				}
+				partOfSpeech = partOfSpeech.Owner as IPartOfSpeech;
+			}
+			return null;
 		}
 
 		private AffixProcessRule LoadNullAffixProcessRule(ILexEntryInflType type, IMoInflAffixTemplate template, IMoInflAffixSlot slot)

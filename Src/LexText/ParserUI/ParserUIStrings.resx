@@ -344,4 +344,7 @@
   <data name="ksEnterComment" xml:space="preserve">
     <value>Please enter a comment for the parser report</value>
   </data>
+  <data name="ksUnsavedParserReport" xml:space="preserve">
+    <value>(unsaved)</value>
+  </data>
 </root>

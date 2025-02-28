@@ -1,9 +1,9 @@
 name: Flex CI
 on:
   push:
-    branches: ["release/9.1", "develop", "master", "feature/PubSub"]
+    branches: ["release/**", "develop", "master", "feature/PubSub"]
   pull_request:
-    branches: ["release/9.1", "develop", "master", "feature/PubSub"]
+    branches: ["release/**", "develop", "master", "feature/PubSub"]
   workflow_dispatch:
 
 concurrency:
@@ -74,7 +74,7 @@ jobs:
         run: .\NUnitReport /a ^| tee-object -FilePath test-results.log
 
       - name: Report Test Results
-        uses: sillsdev/fw-nunitreport-action@v1.0.0
+        uses: sillsdev/fw-nunitreport-action@v2.0.0
         with:
           log-path: Build/test-results.log
           token: ${{ secrets.GITHUB_TOKEN }}

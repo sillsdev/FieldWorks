@@ -154,6 +154,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		bool m_fDoNotRefresh = false;
 		bool m_fPostponedClearAllSlices = false;
 		// Set during ConstructSlices, to suppress certain behaviors not safe at this point.
+		bool m_postponePropChanged = true;
 		internal bool ConstructingSlices { get; private set; }
 
 		public List<Slice> Slices { get; private set; }
@@ -527,6 +528,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		}
 
+		public virtual bool OnPostponePropChanged(object commandObject)
+		{
+			if ((bool)commandObject == true)
+				m_postponePropChanged = true;
+			else
+				m_postponePropChanged = false;
+			return true;
+		}
+
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			CheckDisposed();
@@ -553,8 +563,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			//	return;
 			if (m_monitoredProps.Contains(Tuple.Create(hvo, tag)))
 			{
-				RefreshList(false);
-				OnFocusFirstPossibleSlice(null);
+				// If we call RefreshList now, it causes a crash in the invoker
+				// because some slice data structures that are being used by the invoker
+				// get disposed by RefreshList (LT-21980, LT-22011).  So we postpone calling
+				// RefreshList until the work is done.
+				if (m_postponePropChanged)
+				{
+					this.BeginInvoke(new Action(RefreshListAndFocus));
+				} else
+				{
+					RefreshListAndFocus();
+				}
 			}
 			// Note, in LinguaLinks import we don't have an action handler when we hit this.
 			else if (m_cache.DomainDataByFlid.GetActionHandler() != null && m_cache.DomainDataByFlid.GetActionHandler().IsUndoOrRedoInProgress)
@@ -578,6 +597,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// some FieldSlices (e.g. combo slices)may want to Update their display
 				// if its field changes during an Undo/Redo (cf. LT-4861).
 				RefreshList(hvo, tag);
+			}
+		}
+
+		private void RefreshListAndFocus()
+		{
+			if (!IsDisposed)
+			{
+				RefreshList(false);
+				OnFocusFirstPossibleSlice(null);
 			}
 		}
 

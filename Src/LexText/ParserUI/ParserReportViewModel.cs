@@ -24,6 +24,18 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		public string DisplayComment
+		{
+			get
+			{
+				if (ParserReport.Filename == null && !ParserReport.IsDiff)
+				{
+					return ParserUIStrings.ksUnsavedParserReport;
+				}
+				return ParserReport.Comment;
+			}
+		}
+
 		public IEnumerable<ParseReport> ParseReports
 		{
 			get
@@ -48,6 +60,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		public bool CanSaveReport => !ParserReport.IsDiff;
+
+
 		public ParserReportViewModel()
 		{
 			ParserReport = new ParserReport();
@@ -64,6 +79,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected virtual void OnPropertyChanged(string propertyName)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		public void UpdateDisplayComment()
+		{
+			OnPropertyChanged("DisplayComment");
 		}
 	}
 }

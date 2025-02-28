@@ -68,6 +68,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="netstandard" />
     <Reference Include="FwBuildTasks">
       <HintPath>..\..\..\Build\FwBuildTasks.dll</HintPath>
     </Reference>

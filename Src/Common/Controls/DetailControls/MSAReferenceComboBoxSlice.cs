@@ -37,6 +37,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		//private bool m_processSelectionEvent = true;
 		private bool m_handlingMessage = false;
+		private bool m_forceRefresh = false;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -286,7 +287,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// We still can't refresh the data at this point without causing a crash due to
 				// a pending Windows message.  See LT-9713 and LT-9714.
 				if (ContainingDataTree.DoNotRefresh != fOldDoNotRefresh)
+				{
 					Mediator.BroadcastMessage("DelayedRefreshList", fOldDoNotRefresh);
+				}
 			}
 		}
 
