@@ -76,7 +76,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_mprFeatures = new Dictionary<ICmObject, MprFeature>();
 
 			m_envValidator = new PhonEnvRecognizer(
-				m_cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(),
+				RemoveDottedCircles(m_cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray()),
 				m_cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
 
 			m_naturalClassLookup = new Dictionary<string, IPhNaturalClass>();
@@ -91,6 +91,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			m_naturalClasses = new Dictionary<IPhNaturalClass, NaturalClass>();
 			m_charDefs = new Dictionary<IPhTerminalUnit, CharacterDefinition>();
+		}
+
+		private string[] RemoveDottedCircles(string[] phonemes)
+		{
+			return phonemes.Select(RemoveDottedCircles).ToArray();
+		}
+
+		private string RemoveDottedCircles(string text)
+		{
+			string dottedCircle = "\u25CC";
+			return text?.Replace(dottedCircle, string.Empty);
 		}
 
 		private void LoadLanguage()
@@ -312,7 +323,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (affixProcess != null)
 				return affixProcess.InputOS.Count > 1 || affixProcess.OutputOS.Count > 1;
 
-			string formStr = form.Form.VernacularDefaultWritingSystem.Text;
+			string formStr = RemoveDottedCircles(form.Form.VernacularDefaultWritingSystem.Text);
 			if (form.IsAbstract || string.IsNullOrEmpty(formStr))
 				return false;
 
@@ -354,7 +365,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (!(form is IMoStemAllomorph))
 				return false;
 
-			string formStr = form.Form.VernacularDefaultWritingSystem.Text;
+			string formStr = RemoveDottedCircles(form.Form.VernacularDefaultWritingSystem.Text);
 			if (form.IsAbstract || string.IsNullOrEmpty(formStr))
 				return false;
 
@@ -579,7 +590,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private RootAllomorph LoadRootAllomorph(IMoStemAllomorph allo, IMoMorphSynAnalysis msa)
 		{
-			string form = FormatForm(allo.Form.VernacularDefaultWritingSystem.Text);
+			string form = FormatForm(RemoveDottedCircles(allo.Form.VernacularDefaultWritingSystem.Text));
 			Shape shape = Segment(form);
 			var hcAllo = new RootAllomorph(new Segments(m_table, form, shape));
 
@@ -1077,9 +1088,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			pattern.Freeze();
 			hcAllo.Lhs.Add(pattern);
 
-			hcAllo.Rhs.Add(new InsertSegments(Segments(prefixAllo.Form.VernacularDefaultWritingSystem.Text.Trim() + "+")));
+			hcAllo.Rhs.Add(new InsertSegments(Segments(RemoveDottedCircles(prefixAllo.Form.VernacularDefaultWritingSystem.Text).Trim() + "+")));
 			hcAllo.Rhs.Add(new CopyFromInput("stem"));
-			hcAllo.Rhs.Add(new InsertSegments(Segments("+" + suffixAllo.Form.VernacularDefaultWritingSystem.Text.Trim())));
+			hcAllo.Rhs.Add(new InsertSegments(Segments("+" + RemoveDottedCircles(suffixAllo.Form.VernacularDefaultWritingSystem.Text).Trim())));
 
 			if (leftEnvPattern != null || rightEnvPattern != null)
 			{
@@ -1164,8 +1175,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							foreach (IPhTerminalUnit termUnit in insertPhones.ContentRS)
 							{
 								IPhCode code = termUnit.CodesOS[0];
-								string strRep = termUnit.ClassID == PhBdryMarkerTags.kClassId ? code.Representation.BestVernacularAlternative.Text
-									: code.Representation.VernacularDefaultWritingSystem.Text;
+								string strRep = termUnit.ClassID == PhBdryMarkerTags.kClassId
+									? RemoveDottedCircles(code.Representation.BestVernacularAlternative.Text)
+									: RemoveDottedCircles(code.Representation.VernacularDefaultWritingSystem.Text);
 								if (strRep != null)
 									strRep = strRep.Trim();
 								if (string.IsNullOrEmpty(strRep))
@@ -1211,7 +1223,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private AffixProcessAllomorph LoadFormAffixProcessAllomorph(IMoForm allo, IPhEnvironment env)
 		{
 			var hcAllo = new AffixProcessAllomorph();
-			string form = allo.Form.VernacularDefaultWritingSystem.Text.Trim();
+			string form = RemoveDottedCircles(allo.Form.VernacularDefaultWritingSystem.Text).Trim();
 			Tuple<string, string> contexts = SplitEnvironment(env);
 			if (form.Contains("["))
 			{
@@ -2389,8 +2401,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (phoneme.FeaturesOA != null && phoneme.FeaturesOA.FeatureSpecsOC.Count > 0)
 					fs = LoadFeatureStruct(phoneme.FeaturesOA, m_language.PhonologicalFeatureSystem);
 
-				string[] reps = phoneme.CodesOS.Where(c => !string.IsNullOrEmpty(c.Representation.VernacularDefaultWritingSystem.Text))
-					.Select(c => c.Representation.VernacularDefaultWritingSystem.Text).ToArray();
+				string[] reps = phoneme.CodesOS
+					.Where(c => !string.IsNullOrEmpty(RemoveDottedCircles(c.Representation.VernacularDefaultWritingSystem.Text)))
+					.Select(c => RemoveDottedCircles(c.Representation.VernacularDefaultWritingSystem.Text)).ToArray();
 				if (reps.Length == 0)
 				{
 					// did not find a grapheme for this phoneme
@@ -2410,8 +2423,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			foreach (IPhBdryMarker bdry in phonemeSet.BoundaryMarkersOC.Where(bdry => bdry.Guid != LangProjectTags.kguidPhRuleWordBdry))
 			{
-				string[] reps = bdry.CodesOS.Where(c => !string.IsNullOrEmpty(c.Representation.BestVernacularAlternative.Text))
-					.Select(c => c.Representation.BestVernacularAlternative.Text).ToArray();
+				string[] reps = bdry.CodesOS
+					.Where(c => !string.IsNullOrEmpty(RemoveDottedCircles(c.Representation.BestVernacularAlternative.Text)))
+					.Select(c => RemoveDottedCircles(c.Representation.BestVernacularAlternative.Text)).ToArray();
 				if (reps.Length > 0)
 				{
 					CharacterDefinition cd = m_table.AddBoundary(reps);
