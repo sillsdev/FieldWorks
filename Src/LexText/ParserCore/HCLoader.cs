@@ -350,34 +350,36 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_language.Strata.Insert(cliticIndex, stratum);
 				foreach (string rule in stratumRules)
 				{
-					// Save these classes for later.
-					if (rule == "Clitics")
+					// Save predefined classes for later.
+					switch (rule)
 					{
-						cliticsStratum = stratum;
-					}
-					else if (rule == "CompoundRules")
-					{
-						compoundRulesStratum = stratum;
-					}
-					else if (rule == "Morphology")
-					{
-						morphologyStratum = stratum;
-					}
-					else if (rule == "Phonology")
-					{
-						phonologyStratum = stratum;
-					}
-					else if (rule == "Templates")
-					{
-						templateStratum = stratum;
-					}
-					else
-					{
-						// Move the given rule to stratum.
-						bool found = MoveRule(rule, m_morphophonemic, stratum);
-						found = found || MoveRule(rule, m_clitic, stratum);
-						if (!found)
-							m_logger.InvalidStrata(m_strataString, "Unknown rule in Strata: " + rule + ".");
+						case "Clitics":
+							cliticsStratum = stratum;
+							break;
+						case "CompoundRules":
+							compoundRulesStratum = stratum;
+							break;
+						case "Morphology":
+							morphologyStratum = stratum;
+							break;
+						case "Phonology":
+							phonologyStratum = stratum;
+							break;
+						case "Templates":
+							templateStratum = stratum;
+							break;
+						default:
+							{
+								// Move the given rule to stratum.
+								bool found = false;
+								if (MoveRule(rule, m_morphophonemic, stratum))
+									found = true;
+								if (MoveRule(rule, m_clitic, stratum))
+									found = true;
+								if (!found)
+									m_logger.InvalidStrata(m_strataString, "Unknown rule in Strata: " + rule + ".");
+								break;
+							}
 					}
 				}
 			}
@@ -452,47 +454,30 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_language.Strata.Remove(source);
 		}
 
-		bool MoveRule(string ruleName, Stratum source, Stratum target)
+		private bool MoveRule(string ruleName, Stratum source, Stratum target)
 		{
-			// Move all rules named ruleName from source to target.
 			bool found = false;
-			foreach (LexEntry entry in source.Entries.ToList())
-			{
-				if (m_entryName[entry] == ruleName)
-				{
-					target.Entries.Add(entry);
-					source.Entries.Remove(entry);
-					found = true;
-				}
-			}
-			foreach (IMorphologicalRule rule in source.MorphologicalRules.ToList())
-			{
-				if (rule.Name == ruleName)
-				{
-					target.MorphologicalRules.Add(rule);
-					source.MorphologicalRules.Remove(rule);
-					found = true;
-				}
-			}
-			foreach (IPhonologicalRule rule in source.PhonologicalRules.ToList())
-			{
-				if (rule.Name == ruleName)
-				{
-					target.PhonologicalRules.Add(rule);
-					source.PhonologicalRules.Remove(rule);
-					found = true;
-				}
-			}
-			foreach (AffixTemplate rule in source.AffixTemplates.ToList())
-			{
-				if (rule.Name == ruleName)
-				{
-					target.AffixTemplates.Add(rule);
-					source.AffixTemplates.Remove(rule);
-					found = true;
-				}
-			}
+
+			found |= MoveMatchingItems(source.Entries, target.Entries, entry => m_entryName[entry] == ruleName);
+			found |= MoveMatchingItems(source.MorphologicalRules, target.MorphologicalRules, rule => rule.Name == ruleName);
+			found |= MoveMatchingItems(source.PhonologicalRules, target.PhonologicalRules, rule => rule.Name == ruleName);
+			found |= MoveMatchingItems(source.AffixTemplates, target.AffixTemplates, rule => rule.Name == ruleName);
+
 			return found;
+		}
+
+		private bool MoveMatchingItems<T>(ICollection<T> source, ICollection<T> target, Func<T, bool> filterFunction)
+		{
+			var itemsToMove = source.Where(filterFunction).ToList();
+			if (itemsToMove.Count == 0) return false;
+
+			foreach (var item in itemsToMove)
+			{
+				target.Add(item);
+				source.Remove(item);
+			}
+
+			return true;
 		}
 
 		private void LoadInflClassMprFeature(IMoInflClass inflClass, MprFeatureGroup inflClassesGroup)
