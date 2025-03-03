@@ -88,6 +88,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidRedupForm, (ICmObject) rule));
 			}
+
+			public void OutOfScopeSlot(IMoInflAffixSlot slot, IMoInflAffixTemplate template, string reason)
+			{
+				throw new NotImplementedException();
+			}
 		}
 
 		private readonly List<Tuple<LoadErrorType, ICmObject>> m_loadErrors = new List<Tuple<LoadErrorType, ICmObject>>();

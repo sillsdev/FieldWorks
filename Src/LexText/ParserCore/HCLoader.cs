@@ -6,6 +6,7 @@ using SIL.Extensions;
 using SIL.LCModel;
 using SIL.LCModel.Core.Phonology;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Matching;
@@ -75,7 +76,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_mprFeatures = new Dictionary<ICmObject, MprFeature>();
 
 			m_envValidator = new PhonEnvRecognizer(
-				m_cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(),
+				RemoveDottedCircles(m_cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray()),
 				m_cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
 
 			m_naturalClassLookup = new Dictionary<string, IPhNaturalClass>();
@@ -90,6 +91,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			m_naturalClasses = new Dictionary<IPhNaturalClass, NaturalClass>();
 			m_charDefs = new Dictionary<IPhTerminalUnit, CharacterDefinition>();
+		}
+
+		private string[] RemoveDottedCircles(string[] phonemes)
+		{
+			return phonemes.Select(RemoveDottedCircles).ToArray();
+		}
+
+		private string RemoveDottedCircles(string text)
+		{
+			string dottedCircle = "\u25CC";
+			return text?.Replace(dottedCircle, string.Empty);
 		}
 
 		private void LoadLanguage()
@@ -311,7 +323,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (affixProcess != null)
 				return affixProcess.InputOS.Count > 1 || affixProcess.OutputOS.Count > 1;
 
-			string formStr = form.Form.VernacularDefaultWritingSystem.Text;
+			string formStr = RemoveDottedCircles(form.Form.VernacularDefaultWritingSystem.Text);
 			if (form.IsAbstract || string.IsNullOrEmpty(formStr))
 				return false;
 
@@ -353,7 +365,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (!(form is IMoStemAllomorph))
 				return false;
 
-			string formStr = form.Form.VernacularDefaultWritingSystem.Text;
+			string formStr = RemoveDottedCircles(form.Form.VernacularDefaultWritingSystem.Text);
 			if (form.IsAbstract || string.IsNullOrEmpty(formStr))
 				return false;
 
@@ -578,7 +590,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private RootAllomorph LoadRootAllomorph(IMoStemAllomorph allo, IMoMorphSynAnalysis msa)
 		{
-			string form = FormatForm(allo.Form.VernacularDefaultWritingSystem.Text);
+			string form = FormatForm(RemoveDottedCircles(allo.Form.VernacularDefaultWritingSystem.Text));
 			Shape shape = Segment(form);
 			var hcAllo = new RootAllomorph(new Segments(m_table, form, shape));
 
@@ -1076,9 +1088,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			pattern.Freeze();
 			hcAllo.Lhs.Add(pattern);
 
-			hcAllo.Rhs.Add(new InsertSegments(Segments(prefixAllo.Form.VernacularDefaultWritingSystem.Text.Trim() + "+")));
+			hcAllo.Rhs.Add(new InsertSegments(Segments(RemoveDottedCircles(prefixAllo.Form.VernacularDefaultWritingSystem.Text).Trim() + "+")));
 			hcAllo.Rhs.Add(new CopyFromInput("stem"));
-			hcAllo.Rhs.Add(new InsertSegments(Segments("+" + suffixAllo.Form.VernacularDefaultWritingSystem.Text.Trim())));
+			hcAllo.Rhs.Add(new InsertSegments(Segments("+" + RemoveDottedCircles(suffixAllo.Form.VernacularDefaultWritingSystem.Text).Trim())));
 
 			if (leftEnvPattern != null || rightEnvPattern != null)
 			{
@@ -1163,8 +1175,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							foreach (IPhTerminalUnit termUnit in insertPhones.ContentRS)
 							{
 								IPhCode code = termUnit.CodesOS[0];
-								string strRep = termUnit.ClassID == PhBdryMarkerTags.kClassId ? code.Representation.BestVernacularAlternative.Text
-									: code.Representation.VernacularDefaultWritingSystem.Text;
+								string strRep = termUnit.ClassID == PhBdryMarkerTags.kClassId
+									? RemoveDottedCircles(code.Representation.BestVernacularAlternative.Text)
+									: RemoveDottedCircles(code.Representation.VernacularDefaultWritingSystem.Text);
 								if (strRep != null)
 									strRep = strRep.Trim();
 								if (string.IsNullOrEmpty(strRep))
@@ -1210,7 +1223,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private AffixProcessAllomorph LoadFormAffixProcessAllomorph(IMoForm allo, IPhEnvironment env)
 		{
 			var hcAllo = new AffixProcessAllomorph();
-			string form = allo.Form.VernacularDefaultWritingSystem.Text.Trim();
+			string form = RemoveDottedCircles(allo.Form.VernacularDefaultWritingSystem.Text).Trim();
 			Tuple<string, string> contexts = SplitEnvironment(env);
 			if (form.Contains("["))
 			{
@@ -1428,6 +1441,19 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			foreach (IMoInflAffixSlot slot in slots)
 			{
+				if (TemplateSlotOutOfScope(slot, template))
+				{
+					IPartOfSpeech slotPOS = slot.Owner as IPartOfSpeech;
+					IPartOfSpeech templatePOS = template.Owner as IPartOfSpeech;
+					string slotPOSAbbr = slotPOS != null ? slotPOS.Abbreviation.BestAnalysisVernacularAlternative.Text : "***";
+					string templatePOSName = templatePOS != null ? templatePOS.Name.BestAnalysisVernacularAlternative.Text : "***";
+					string slotName = slotPOSAbbr + ":" + slot.Name.BestAnalysisVernacularAlternative.Text;
+					string templateName = template.Name.BestAnalysisVernacularAlternative.Text;
+					string reason = "The " + slotName + " in the " + templateName + " affix template under the " + templatePOSName
+						+ " category is not located in the " + templatePOSName + " category or above.  Please move the "
+						+ slotName + " slot so it is in the " + templatePOSName + " category or above.";
+					m_logger.OutOfScopeSlot(slot, template, reason);
+				}
 				IEnumerable<ILexEntryInflType> types = slot.ReferringObjects.OfType<ILexEntryInflType>();
 				var rules = new List<MorphemicMorphologicalRule>();
 				foreach (IMoInflAffMsa msa in slot.Affixes)
@@ -1461,6 +1487,40 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			return hcTemplate;
+		}
+
+		/// <summary>
+		/// Determine if slot is out of scope of the template in stackHvo.
+		/// </summary>
+		private static bool TemplateSlotOutOfScope(IMoInflAffixSlot slot, IMoInflAffixTemplate template)
+		{
+			// If there is no slot or template, return false.
+			if (slot == null || template == null)
+				return false;
+			// Get the slot from the template with the same name as slot.
+			IPartOfSpeech partOfSpeech = template.Owner as IPartOfSpeech;
+			IMoInflAffixSlot inScopeSlot = GetPOSSlot(partOfSpeech, slot.Name.BestAnalysisVernacularAlternative.Text);
+			// If the slots are different, then slot is out of scope.
+			return slot != inScopeSlot;
+		}
+
+		/// <summary>
+		/// Get the slot named 'name' in the scope of partOfSpeech.
+		/// If there is more than one slot, return the first one.
+		/// </summary>
+		public static IMoInflAffixSlot GetPOSSlot(IPartOfSpeech partOfSpeech, string name)
+		{
+			while (partOfSpeech != null)
+			{
+				foreach (IMoInflAffixSlot slot in partOfSpeech.AllAffixSlots)
+				{
+					// NB: BestAnalysisVernacularAlternative always returns something.
+					if (slot.Name.BestAnalysisVernacularAlternative.Text == name)
+						return slot;
+				}
+				partOfSpeech = partOfSpeech.Owner as IPartOfSpeech;
+			}
+			return null;
 		}
 
 		private AffixProcessRule LoadNullAffixProcessRule(ILexEntryInflType type, IMoInflAffixTemplate template, IMoInflAffixSlot slot)
@@ -2341,8 +2401,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (phoneme.FeaturesOA != null && phoneme.FeaturesOA.FeatureSpecsOC.Count > 0)
 					fs = LoadFeatureStruct(phoneme.FeaturesOA, m_language.PhonologicalFeatureSystem);
 
-				string[] reps = phoneme.CodesOS.Where(c => !string.IsNullOrEmpty(c.Representation.VernacularDefaultWritingSystem.Text))
-					.Select(c => c.Representation.VernacularDefaultWritingSystem.Text).ToArray();
+				string[] reps = phoneme.CodesOS
+					.Where(c => !string.IsNullOrEmpty(RemoveDottedCircles(c.Representation.VernacularDefaultWritingSystem.Text)))
+					.Select(c => RemoveDottedCircles(c.Representation.VernacularDefaultWritingSystem.Text)).ToArray();
 				if (reps.Length == 0)
 				{
 					// did not find a grapheme for this phoneme
@@ -2362,8 +2423,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			foreach (IPhBdryMarker bdry in phonemeSet.BoundaryMarkersOC.Where(bdry => bdry.Guid != LangProjectTags.kguidPhRuleWordBdry))
 			{
-				string[] reps = bdry.CodesOS.Where(c => !string.IsNullOrEmpty(c.Representation.BestVernacularAlternative.Text))
-					.Select(c => c.Representation.BestVernacularAlternative.Text).ToArray();
+				string[] reps = bdry.CodesOS
+					.Where(c => !string.IsNullOrEmpty(RemoveDottedCircles(c.Representation.BestVernacularAlternative.Text)))
+					.Select(c => RemoveDottedCircles(c.Representation.BestVernacularAlternative.Text)).ToArray();
 				if (reps.Length > 0)
 				{
 					CharacterDefinition cd = m_table.AddBoundary(reps);
