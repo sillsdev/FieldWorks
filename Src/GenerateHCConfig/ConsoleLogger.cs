@@ -109,6 +109,11 @@ namespace GenerateHCConfig
 			Console.WriteLine("The rewrite rule \"{0}\" is invalid. Reason: {1}", rule.Name.BestAnalysisVernacularAlternative.Text, reason);
 		}
 
+		public void InvalidStrata(string strata, string reason)
+		{
+			Console.WriteLine(reason);
+		}
+
 		public void OutOfScopeSlot(IMoInflAffixSlot slot, IMoInflAffixTemplate template, string reason)
 		{
 			Console.WriteLine(reason);
