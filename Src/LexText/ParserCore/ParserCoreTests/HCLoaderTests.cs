@@ -42,7 +42,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			DuplicateGrapheme,
 			InvalidEnvironment,
 			InvalidRedupForm,
-			InvalidRewriteRule
+			InvalidRewriteRule,
+			InvalidStrata
 		}
 
 		private class TestHCLoadErrorLogger : IHCLoadErrorLogger
@@ -86,7 +87,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			public void InvalidRewriteRule(IPhRegularRule rule, string reason)
 			{
-				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidRedupForm, (ICmObject) rule));
+				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidRewriteRule, (ICmObject)rule));
+			}
+
+			public void InvalidStrata(string strata, string reason)
+			{
+				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidStrata, (ICmObject)null));
 			}
 
 			public void OutOfScopeSlot(IMoInflAffixSlot slot, IMoInflAffixTemplate template, string reason)

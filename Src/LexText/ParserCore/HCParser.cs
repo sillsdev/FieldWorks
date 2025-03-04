@@ -654,6 +654,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_xmlWriter.WriteEndElement();
 			}
 
+			public void InvalidStrata(string strata, string reason)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "invalid-strata");
+				m_xmlWriter.WriteElementString("Reason", reason);
+				m_xmlWriter.WriteEndElement();
+			}
+
 			public void OutOfScopeSlot(IMoInflAffixSlot slot, IMoInflAffixTemplate template, string reason)
 			{
 				m_xmlWriter.WriteStartElement("LoadError");
