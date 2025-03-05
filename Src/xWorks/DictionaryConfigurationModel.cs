@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -105,6 +105,9 @@ namespace SIL.FieldWorks.XWorks
 		[XmlElement("HomographConfiguration")]
 		public DictionaryHomographConfiguration HomographConfiguration { get; set; }
 
+		[XmlElement("Pictures")]
+		public PictureConfiguration Pictures { get; set; }
+
 		/// <summary>
 		/// Checks which folder this will be saved in to determine if it is a reversal
 		/// </summary>
@@ -200,6 +203,11 @@ namespace SIL.FieldWorks.XWorks
 					HomographConfiguration.CustomHomographNumbers = string.Empty;
 				}
 			}
+
+			if (Pictures == null)
+			{
+				Pictures = new PictureConfiguration();
+			}
 			// Handle any changes to the custom field definitions.  (See https://jira.sil.org/browse/LT-16430.)
 			// The "Merge" method handles both additions and deletions.
 			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(this, cache);
@@ -279,6 +287,16 @@ namespace SIL.FieldWorks.XWorks
 				clone.Publications = new List<string>(Publications);
 			}
 
+			if (HomographConfiguration != null)
+			{
+				clone.HomographConfiguration = new DictionaryHomographConfiguration(HomographConfiguration);
+			}
+
+			if (Pictures != null)
+			{
+				clone.Pictures = new PictureConfiguration(Pictures);
+			}
+
 			return clone;
 		}
 
@@ -321,6 +339,21 @@ namespace SIL.FieldWorks.XWorks
 	public class DictionaryHomographConfiguration
 	{
 		public DictionaryHomographConfiguration() {}
+
+		public DictionaryHomographConfiguration(DictionaryHomographConfiguration other) : this()
+		{
+			if (other == null)
+				return;
+
+			ShowHwNumber = other.ShowHwNumber;
+			ShowHwNumInCrossRef = other.ShowHwNumInCrossRef;
+			ShowHwNumInReversalCrossRef = other.ShowHwNumInReversalCrossRef;
+			ShowSenseNumber = other.ShowSenseNumber;
+			ShowSenseNumberReversal = other.ShowSenseNumberReversal;
+			HomographNumberBefore = other.HomographNumberBefore;
+			HomographWritingSystem = other.HomographWritingSystem;
+			CustomHomographNumberList = other.CustomHomographNumberList != null ? new List<string>(other.CustomHomographNumberList) : null;
+		}
 
 		public DictionaryHomographConfiguration(HomographConfiguration config)
 		{
