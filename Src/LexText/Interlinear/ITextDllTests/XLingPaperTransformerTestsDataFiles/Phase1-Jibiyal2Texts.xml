@@ -1,0 +1,771 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<document>
+  <interlinear-text guid="db30c762-4cb7-4c75-8e23-a8d918a35ce6">
+    <item type="title" lang="en">Demonstrative</item>
+    <item type="comment" lang="en"></item>
+    <paragraphs>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">1</item>
+            <words>
+              <word>
+                <item type="txt" lang="kwl">sem</item>
+                <morphemes analysisStatus="guess">
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">sɛm</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">monitor </item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">de</item>
+                <morphemes analysisStatus="guess">
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">dɛɛ</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">dem.dist</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">2</item>
+            <words>
+              <word>
+                <item type="txt" lang="kwl">kuluk</item>
+                <morphemes analysisStatus="guess">
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">kuluk</item>
+                    <item type="gls" lang="en">box</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">de</item>
+                <morphemes analysisStatus="guess">
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">dɛɛ</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">dem.dist</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">3</item>
+            <words>
+              <word>
+                <item type="txt" lang="kwl">kuluk</item>
+                <morphemes analysisStatus="guess">
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">kuluk</item>
+                    <item type="gls" lang="en">box</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">dee</item>
+                <morphemes analysisStatus="guess">
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">dɛɛ</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">dem.dist</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">4</item>
+            <words>
+              <word>
+                <item type="txt" lang="kwl">mat</item>
+                <morphemes analysisStatus="guess">
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">mat</item>
+                    <item type="hn" lang="kwl">3</item>
+                    <item type="gls" lang="en">wife</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">de</item>
+                <morphemes analysisStatus="guess">
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">dɛɛ</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">dem.dist</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">5</item>
+            <words>
+              <word>
+                <item type="txt" lang="kwl">mat</item>
+                <morphemes analysisStatus="guess">
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">mat</item>
+                    <item type="hn" lang="kwl">3</item>
+                    <item type="gls" lang="en">wife</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">dee</item>
+                <morphemes analysisStatus="guess">
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">dɛɛ</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">dem.dist</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph />
+    </paragraphs>
+    <languages>
+      <language lang="en" font="Charis SIL" />
+      <language lang="kwl" font="Charis SIL" vernacular="true" />
+    </languages>
+  </interlinear-text>
+  <interlinear-text guid="f271582d-f11e-4073-a3fe-6dc22fe0f5f8">
+    <item type="title" lang="en">Possessive pronouns</item>
+    <item type="comment" lang="en"></item>
+    <paragraphs>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">1</item>
+            <words>
+              <word>
+                <item type="txt" lang="kwl">Sem</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">sɛm</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">monitor </item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">mang</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">maŋ</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">pick</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">kuluk</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">kuluk</item>
+                    <item type="gls" lang="en">box</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">ji</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">dʒi</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">3sg.m.sbj.poss</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+            <item type="gls" lang="en">(same [masculine] subject)</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">2</item>
+            <words>
+              <word>
+                <item type="txt" lang="kwl">Sem</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">sɛm</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">monitor </item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">mang</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">maŋ</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">pick</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">kuluk</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">kuluk</item>
+                    <item type="gls" lang="en">box</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">doefan</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">dɨfan</item>
+                    <item type="gls" lang="en">rabbit</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">3</item>
+            <words>
+              <word>
+                <item type="txt" lang="kwl">Sem</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">sɛm</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">monitor </item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">mang</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">maŋ</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">pick</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">kuluk</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">kuluk</item>
+                    <item type="gls" lang="en">box</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">noe</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">nɨ</item>
+                    <item type="gls" lang="en">1sg.poss</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">4</item>
+            <words>
+              <word>
+                <item type="txt" lang="kwl">Sem</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">sɛm</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">monitor </item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">mang</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">maŋ</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">pick</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">kuluk</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">kuluk</item>
+                    <item type="gls" lang="en">box</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">goe</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">gɨ</item>
+                    <item type="gls" lang="en">2ms</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">5</item>
+            <words>
+              <word>
+                <item type="txt" lang="kwl">Sem</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">sɛm</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">monitor </item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">mang</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">maŋ</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">pick</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">kuluk</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">kuluk</item>
+                    <item type="gls" lang="en">box</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">yi</item>
+                <morphemes>
+                  <morph />
+                </morphemes>
+              </word>
+            </words>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">6</item>
+            <words>
+              <word>
+                <item type="txt" lang="kwl">Sem</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">sɛm</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">monitor </item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">mang</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">maŋ</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">pick</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">kuluk</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">kuluk</item>
+                    <item type="gls" lang="en">box</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">nyi</item>
+                <morphemes analysisStatus="guess">
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">nji</item>
+                    <item type="gls" lang="en">3sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+            <item type="gls" lang="en">(different subject)</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">7</item>
+            <words>
+              <word>
+                <item type="txt" lang="kwl">Sem</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">sɛm</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">monitor </item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">mang</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">maŋ</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">pick</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">kuluk</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">kuluk</item>
+                    <item type="gls" lang="en">box</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">mu</item>
+                <morphemes>
+                  <morph />
+                </morphemes>
+              </word>
+            </words>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">8</item>
+            <words>
+              <word>
+                <item type="txt" lang="kwl">Sem</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">sɛm</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">monitor </item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">mang</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">maŋ</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">pick</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">kuluk</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">kuluk</item>
+                    <item type="gls" lang="en">box</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">gu</item>
+                <morphemes>
+                  <morph />
+                </morphemes>
+              </word>
+            </words>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">9</item>
+            <words>
+              <word>
+                <item type="txt" lang="kwl">Sem</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">sɛm</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">monitor </item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">mang</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">maŋ</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">pick</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">kuluk</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">kuluk</item>
+                    <item type="gls" lang="en">box</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">mop</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">mɔp</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">3pl</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">10</item>
+            <words>
+              <word>
+                <item type="txt" lang="kwl">Zap</item>
+                <morphemes>
+                  <morph />
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">mop</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">mɔp</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">3pl</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">kok</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">maŋ</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="variantTypes" lang="en" />
+                    <item type="glsPrepend" lang="en"></item>
+                    <item type="gls" lang="en">carry</item>
+                    <item type="glsAppend" lang="en">.pl</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">kuluk</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">kuluk</item>
+                    <item type="gls" lang="en">box</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">zu</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">zu</item>
+                    <item type="gls" lang="en">pl.sp.poss</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+            <item type="gls" lang="en">(same [plural] subject)</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">11</item>
+            <words>
+              <word>
+                <item type="txt" lang="kwl">Zap</item>
+                <morphemes>
+                  <morph />
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">mop</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">mɔp</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">3pl</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">kok</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">maŋ</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="variantTypes" lang="en" />
+                    <item type="glsPrepend" lang="en"></item>
+                    <item type="gls" lang="en">carry</item>
+                    <item type="glsAppend" lang="en">.pl</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">kuluk</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">kuluk</item>
+                    <item type="gls" lang="en">box</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">mop</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">mɔp</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">3pl</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+            <item type="gls" lang="en">(different subject)</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">12</item>
+            <words>
+              <word>
+                <item type="txt" lang="kwl">Mat</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">mat</item>
+                    <item type="hn" lang="kwl">3</item>
+                    <item type="gls" lang="en">wife</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">sem</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">sɛm</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">monitor </item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">mang</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">maŋ</item>
+                    <item type="hn" lang="kwl">1</item>
+                    <item type="gls" lang="en">pick</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">kuluk</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">kuluk</item>
+                    <item type="gls" lang="en">box</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="txt" lang="kwl">doe</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="cf" lang="kwl-x-Phonemic">dɨ</item>
+                    <item type="hn" lang="kwl">3</item>
+                    <item type="gls" lang="en">3sg.f.sbj.poss</item>
+                  </morph>
+                </morphemes>
+              </word>
+            </words>
+            <item type="gls" lang="en">(same [feminine] subject)</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+    </paragraphs>
+    <languages>
+      <language lang="en" font="Charis SIL" />
+      <language lang="kwl" font="Charis SIL" vernacular="true" />
+    </languages>
+  </interlinear-text>
+</document>

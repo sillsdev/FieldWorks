@@ -1,0 +1,2554 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<document>
+  <interlinear-text guid="3f8b41a4-615d-453b-af69-0ba2877ed666">
+    <item type="title" lang="es">Cómo se ayudaron Pájaro Blanco y Hormiguita</item>
+    <item type="title" lang="nlv">Ken omopalewihkeh Istaktototl iwan Askatzintli </item>
+    <item type="title-abbreviation" lang="es">Páj. y Horm.</item>
+    <item type="title-abbreviation" lang="nlv">Ken omop.</item>
+    <paragraphs>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">1.1</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Okatka</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">okatka</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">había</item>
+                <item type="pos" lang="es">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">se</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">se</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">uno/un/una</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">tonalli</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">tonalli</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">sol/día</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">Hubo un día</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">1.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">ihkuak</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">ihkuak</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">cuando</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">otlawakiaya</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">otlawakiaya</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">estaba.seco</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">cuando [todo] estaba seco [en temporada de sequía]</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">1.3</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">melahka</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">melahka</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">verdaderamente</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">otonaya</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">otonaya</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">hacía.calor</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"> hacía mucho calor.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">2</item>
+            <words>
+              <word>
+                <item type="punct" lang="en">Begin</item>
+              </word>
+              <word>
+                <item type="punct" lang="en">;</item>
+              </word>
+              <word>
+                <item type="punct" lang="en">here</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">:</item>
+              </word>
+              <word>
+                <item type="punct" lang="en">and</item>
+              </word>
+              <word>
+                <item type="punct" lang="en">there</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">:</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Ya</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">ya</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">ya</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">miek</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">miek</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">much@</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">tonaltin</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">tonaltin</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">días</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Askatzintli</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Askatzintli</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">Hormiguita</item>
+              </word>
+              <word>
+                <item type="punct" lang="en">middle</item>
+              </word>
+              <word>
+                <item type="punct" lang="en">of</item>
+              </word>
+              <word>
+                <item type="punct" lang="en">the</item>
+              </word>
+              <word>
+                <item type="punct" lang="en">road</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">amitlah</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">amitlah</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">nada</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">atl</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">atl</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">agua</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">okoniaya</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">okoniaya</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">él/ella.bebía</item>
+              </word>
+              <word>
+                <item type="punct" lang="en">end</item>
+              </word>
+              <word>
+                <item type="punct" lang="en">of</item>
+              </word>
+              <word>
+                <item type="punct" lang="en">the</item>
+              </word>
+              <word>
+                <item type="punct" lang="en">line</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">Ya hacía muchos días que Hormiguita no había bebido nada de agua.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">3</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Okihtoh</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">okihtoh</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">él/ella.dijo</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">:</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">Dijo:</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">4.1</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">—</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Nikneki</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Nikneki</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">quiero</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">se</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">se</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">uno/un/una</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">tlachipinal</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">tlachipinal</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">gota</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">atzintli</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">atzintli</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">agüita</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">,</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"> —Quiero una gotita de agua,</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">4.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">maski</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">maski</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">aunque</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">san</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">san</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">sólo/por.lo.menos</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">onikittaskia</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">onikittaskia</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">yo.hubiera.visto</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">itech</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">itech</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">por</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">se</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">se</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">uno/un/una</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">xiwitl</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">xiwitl</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">hoja/hierba/año</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">que por lo menos yo [la] viera en una hoja [de alguna planta].</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">5</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Noso</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">noso</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">pero/pues</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">ahwachtli</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">ahwachtli</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">rocío</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">noihki</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">noihki</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">también</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">owakki</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">owakki</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">se.secó</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">Pero el rocío también se había secado. </item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">6</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Omotekipachoh</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">omotekipachoh</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">se.preocupó</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">,</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">okihtoh</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">okihtoh</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">dijo</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">:</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">Se preocupó [y] dijo: </item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">7.1</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">—</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Tlakeh</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Tlakeh</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">si</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">amo</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">amo</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">no</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">nikonis</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">nikonis</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">lo.beberé</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">sekitzin</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">sekitzin</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">poquit@</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">atl</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">atl</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">agua</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">,</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">—Si no bebo un poquito de agua,</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">7.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">neh</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">neh</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">yo</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">nimikis</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">nimikis</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">moriré</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">moriré.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">8</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Askatzintli</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Askatzintli</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">Hormiguita</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">otlayehyekoh</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">otlayehyekoh</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">pensó</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">:</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">Hormiguita pensó:</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">9.1</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">—</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Moneki</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Moneki</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">Es.necesario/se debe</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">nias</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">nias</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">iré</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">itech</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">itech</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">por</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">aweyatl</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">aweyatl</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">río</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"> —Necesito ir al río</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">9.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">tlen</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">tlen</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">que/el que/lo que</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">yonikkak</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">yonikkak</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">ya.escuché</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">ik</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">ik</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">con</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">motlapowiah</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">motlapowiah</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">se.hablan</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">del que ya escuché algunos hablan.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">10</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Se</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">se</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">uno/un/una</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">moto</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">moto</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">ardilla</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">tlen</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">tlen</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">que/el que/lo que</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">ixtlamatki</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">ixtlamatki</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">inteligente</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">okillih</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">okillih</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">le.dijo</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">:</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">Una ardilla que es inteligente le dijo:</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">11.1</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">—¡</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Amo</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Amo</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">no</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">,</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">amo</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">amo</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">no</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">xiah</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">xiah</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">vete</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">!</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"> —¡No, no vayas!</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">11.2</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Atl</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Atl</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">agua</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">kenik</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">kenik</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">cómo</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">motlalowa</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">motlalowa</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">corre</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">mitzwikas</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">mitzwikas</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">te.llevará</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">El agua así como corre te llevará.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">12.1</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Opanok</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">opanok</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">pasó</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">itech</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">itech</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">en</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">tlalwakki</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">tlalwakki</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">tierra.seca</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">,</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">xiwitl</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">xiwitl</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">hoja/hierba</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">wakki</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">wakki</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">sec@</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">iwan</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">iwan</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">y/con</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">mamayotl</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">mamayotl</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">rama(s)</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">tlen</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">tlen</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">que/el que/lo que</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">yawaktok</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">yawaktok</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">ya.están.secas</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">Caminó por tierra seca, hojas secas y ramas secas</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">12.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">asta</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">asta</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">hasta</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">ihkuak</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">ihkuak</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">cuando</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">okikak</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">okikak</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">escuchó</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">ken</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">ken</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">cómo</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">motlelowa</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">motlelowa</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">corre</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">aweyatl</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">aweyatl</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">río</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">ihkoyokatih</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">ihkoyokatih</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">haciendo.zumbido</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">hasta que escuchó cómo corría el río haciendo zumbido.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">13.1</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Askatzintli</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Askatzintli</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">Hormiguita</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">omopachoh</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">omopachoh</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">se.inclinó</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">Hormiguita se inclinó</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">13.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">iwan</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">iwan</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">y/con</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">okonik</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">okonik</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">tomó</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">seki</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">seki</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">poc@</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">atl</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">atl</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">agua</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">sesektzin</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">sesektzin</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">fría</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">y tomó un poco de agua fresca.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">14.1</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Askatzintli</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Askatzintli</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">Hormiguita</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">miak</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">miak</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">much@</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">opakiaya</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">opakiaya</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">se.alegraba</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">Hormiguita se alegraba mucho</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">14.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">noso</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">noso</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">pero/pues</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">amo</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">amo</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">no</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">okittak</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">okittak</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">vió</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">ken</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">ken</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">cómo</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">ipan</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">ipan</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">sobre.el/sobre.ella</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">owallaya</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">owallaya</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">venía</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">atl</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">atl</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">agua</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">pero no vió cómo sobre ella venía el agua.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">15.1</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">¡</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Satekitl</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Satekitl</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">demasiad@</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">temawtih</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">temawtih</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">da.miedo</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">!</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">¡Qué miedo!</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">15.2</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Askatzintli</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Askatzintli</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">Hormiguita</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">omatoktih</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">omatoktih</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">se.hundió</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">,</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">Hormiguita se hundió,</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">15.3</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">okiwikaya</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">okiwikaya</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">lo.llevaba/la.llevaba</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">atl</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">atl</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">agua</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">el agua se la llevaba.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">16</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Okuixtzahtzik</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">okuixtzahtzik</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">gritó</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">:</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">Gritó:</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">17</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">—¡</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Techpalewikih</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Techpalewikih</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">vengan.a.ayudarme</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">!</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">—¡Ayúdenme!</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">18</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">¡</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Techpalewikih</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Techpalewikih</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">vengan.a.ayudarme</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">,</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">namechtlatlawtia</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">namechtlatlawtia</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">se.los.ruego</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">!</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">¡Ayúdenme, se los ruego!</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">19</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">¡</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Natolowa</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Natolowa</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">me.ahogo</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">!</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">—¡Me ahogo!</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">20</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Se</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">se</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">uno/un/una</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">istaktototl</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">istaktototl</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">blanco.pájaro</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">chikawak</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">chikawak</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">fuerte</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">okihtoh</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">okihtoh</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">dijo</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">:</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">Un pájaro blanco dijo fuértemente: </item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">21</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">—¡</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Nikan</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Nikan</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">aquí</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">,</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">xitlehko</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">xitlehko</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">sube</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">!</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">—¡Aquí, sube!</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">22</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Itech</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">itech</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">por</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">itenpil</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">itenpil</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">su.pico</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">okiwalikaya</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">okiwalikaya</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">llevaba</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">se</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">se</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">uno/un/una</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">kuawtzintli</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">kuawtzintli</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">palito</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">En su pico llevaba un palito.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">23.1</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Istaktototl</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">istaktototl</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">blanco.pájaro</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">okitlalih</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Askatzintli</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Askatzintli</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">Hormiguita</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">kanin</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">tlalli</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">tlawaki</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">23.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">iwan</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">iwan</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">y/con</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">satepan</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">opatlantiah</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">24.1</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Miek</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">miek</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">much@</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">opakki</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Askatzintli</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Askatzintli</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">Hormiguita</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">24.2</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Okimollih</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">:</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">25.1</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">—</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Ma</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">nimochia</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">okseppa</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">ma</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">wiki</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Istaktototl</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">,</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">25.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">ihkon</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">nimotlasohkamatis</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">inawak</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">26.1</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Ok</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">omochiaya</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Askatzintli</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Askatzintli</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">Hormiguita</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">,</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">26.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">owallahkeh</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">ome</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">chokomeh</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">okiwalikayah</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">intlatlamotlal</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">27</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">—</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Nikan</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Nikan</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">aquí</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">nochipa</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">witz</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">se</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">se</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">uno/un/una</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">weyi</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">istaktototl</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">istaktototl</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">blanco.pájaro</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">atlikin</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">28</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Ihkon</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">okihtoh</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">okihtoh</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">dijo</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">se</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">se</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">uno/un/una</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">chokoh</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">29.1</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">—</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Axan</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">yowalli</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">tikonixkaskeh</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">29.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">iwan</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">iwan</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">y/con</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">tikonkuaskeh</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">inon</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">tototl</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">,</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">tikweliliskeh</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">30</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Ihkon</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">inon</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">ome</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">chokomeh</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">omotlaatihkeh</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">kimonepachwiah</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Istaktototl</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">31.1</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">—¡</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Amo</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Amo</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">no</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">ihkon</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">ma</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">kichiwakan</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">!</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">31.2</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">¡</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Amo</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Amo</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">no</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">ma</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">kimiktikan</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Istaktototl</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">!</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">32</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Okihtowaya</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Askatzintli</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Askatzintli</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">Hormiguita</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">33.1</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">—</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Noso</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">neh</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">neh</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">yo</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">san</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">san</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">sólo/por.lo.menos</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">nitzikiotzin</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">33.2</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">¿</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Kenik</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">kualtis</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">nikpalewis</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">?</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">34</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">San</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">san</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">sólo/por.lo.menos</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">ompa</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">owalehkok</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Istaktototl</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">okseppa</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">oatliko</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">35.1</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Chokomeh</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">okitlalihkeh</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">tetl</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">itech</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">itech</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">por</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">intlatlamotlal</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">,</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">35.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">ya</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">ya</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">ya</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">kitemotlaskeh</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Istaktototl</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">36.1</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Ihkuakon</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">omolnamik</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Askatzintli</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Askatzintli</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">Hormiguita</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">,</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">36.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">okimatki</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">tlen</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">tlen</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">que/el que/lo que</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">kichiwas</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">37.1</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Otzikuinki</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">itech</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">itech</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">por</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">ikxi</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">se</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">se</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">uno/un/una</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">chokoh</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">,</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">37.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">okiminki</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">chikawak</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">chikawak</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">fuerte</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">ken</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">ken</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">cómo</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">owelitik</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">38.1</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Chokoh</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">oahkotzikuinki</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">,</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">38.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">okikahkah</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">itlatlamotlal</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">38.3</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Otzahtzik</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">:</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">39.1</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">—¡</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Ay</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">!</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">39.2</item>
+            <words>
+              <word>
+                <item type="punct" lang="nlv">¿</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">tlen</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">tlen</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">que/el que/lo que</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">onechminki</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">?</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">40.1</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Istaktototl</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">istaktototl</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">blanco.pájaro</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">omomawtih</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">,</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">40.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">opatlantiah</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">oksekkan</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">omotlaatito</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">41.1</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">Ihkon</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">noso</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">noso</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">pero/pues</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Askatzintli</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">Askatzintli</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">Hormiguita</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">okualtik</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">omotlasohkamatki</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">inawak</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">Istaktototl</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">,</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">§</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">41.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="nlv">iwan</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="nlv">iwan</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">y/con</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">ihkon</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">yehwan</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">omentih</item>
+              </word>
+              <word>
+                <item type="txt" lang="nlv">omopalewihkeh</item>
+              </word>
+              <word>
+                <item type="punct" lang="nlv">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+    </paragraphs>
+    <languages>
+      <language lang="es" font="Charis SIL AmArea" vernacular="true" />
+      <language lang="nlv" font="Charis SIL AmArea" vernacular="true" />
+      <language lang="en" font="Charis SIL" />
+    </languages>
+  </interlinear-text>
+</document>
