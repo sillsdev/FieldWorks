@@ -31,55 +31,15 @@ namespace SIL.FieldWorks.IText
 			m_xmlTransform.Load(m_sTransformPath);
 		}
 
-		[Test]
-		public void TestGilaki01()
-		{
-			RunXmlTest("Gilaki01");
-		}
-
-		[Test]
-		public void TestHalbiBUD2()
-		{
-			RunXmlTest("HalbiBUD2");
-		}
-
-		[Test]
-		public void TestHalbiCS3()
-		{
-			RunXmlTest("HalbiCS3");
-		}
-
-		[Test]
-		public void TestHalbiST1()
-		{
-			RunXmlTest("HalbiST1");
-		}
-
-		[Test]
-		public void TestJibiyal2Texts()
-		{
-			RunXmlTest("Jibiyal2Texts");
-		}
-
-		[Test]
-		public void TestnszEnglishWords()
-		{
-			RunXmlTest("nszEnglishWords");
-		}
-
-		[Test]
-		public void TestSETCorn()
-		{
-			RunXmlTest("SETCorn");
-		}
-
-		[Test]
-		public void TestUrim2Kids()
-		{
-			RunXmlTest("Urim2Kids");
-		}
-
-		private void RunXmlTest(string testName)
+		[TestCase("Gilaki01")]
+		[TestCase("HalbiBUD2")]
+		[TestCase("HalbiCS3")]
+		[TestCase("HalbiST1")]
+		[TestCase("Jibiyal2Texts")]
+		[TestCase("nszEnglishWords")]
+		[TestCase("SETCorn")]
+		[TestCase("Urim2Kids")]
+		public void RunXmlTest(string testName)
 		{
 			string inputFileName = Path.Combine(m_sTestPath, "Phase1-" + testName + ".xml");
 			string goldFileName = Path.Combine(m_sTestPath, testName + "Old.xml");
