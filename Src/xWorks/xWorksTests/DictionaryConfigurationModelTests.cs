@@ -734,7 +734,7 @@ namespace SIL.FieldWorks.XWorks
 					DictionaryNodeOptions = new DictionaryNodePictureOptions
 					{
 						StackMultiplePictures = true,
-						PictureLocation = DictionaryNodePictureOptions.AlignmentType.Left,
+						PictureLocation = AlignmentType.Left,
 						MaximumHeight = maxHeight,
 						MinimumHeight = minHeight,
 						MaximumWidth = maxWidth,
@@ -1212,7 +1212,8 @@ namespace SIL.FieldWorks.XWorks
 				Parts = new List<ConfigurableDictionaryNode> { parentNode },
 				SharedItems = new List<ConfigurableDictionaryNode> { parentNode.DeepCloneUnderSameParent() },
 				Publications = new List<string> { "unabridged", "college", "urban colloquialisms" },
-				HomographConfiguration = new DictionaryHomographConfiguration { HomographNumberBefore = true, ShowHwNumber = false }
+				HomographConfiguration = new DictionaryHomographConfiguration { HomographNumberBefore = true, ShowHwNumber = false },
+				Pictures = new PictureConfiguration { Alignment = AlignmentType.Center, Width = .5f }
 			};
 
 			// SUT
@@ -1229,7 +1230,20 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Assert.AreEqual(model.Publications[i], clone.Publications[i]);
 			}
-			Assert.AreEqual(model.HomographConfiguration, clone.HomographConfiguration);
+			Assert.That(model.HomographConfiguration, Is.Not.SameAs(clone.HomographConfiguration));
+			// If we were on NUnit 4
+			// Assert.That(model.HomographConfiguration, Is.EqualTo(clone.HomographConfiguration).UsingPropertiesComparer());
+			// But we're not, so we have to do it manually or implement otherwise unnecessary equality interfaces
+			Assert.That(model.HomographConfiguration.CustomHomographNumbers, Is.EqualTo(clone.HomographConfiguration.CustomHomographNumbers));
+			Assert.That(model.HomographConfiguration.HomographNumberBefore, Is.EqualTo(clone.HomographConfiguration.HomographNumberBefore));
+			Assert.That(model.HomographConfiguration.HomographWritingSystem, Is.EqualTo(clone.HomographConfiguration.HomographWritingSystem));
+			Assert.That(model.HomographConfiguration.ShowHwNumber, Is.EqualTo(clone.HomographConfiguration.ShowHwNumber));
+			Assert.That(model.HomographConfiguration.ShowHwNumInCrossRef, Is.EqualTo(clone.HomographConfiguration.ShowHwNumInCrossRef));
+			Assert.That(model.HomographConfiguration.ShowHwNumInReversalCrossRef, Is.EqualTo(clone.HomographConfiguration.ShowHwNumInReversalCrossRef));
+			// Same here
+			Assert.That(model.Pictures, Is.Not.SameAs(clone.Pictures));
+			Assert.That(model.Pictures.Alignment, Is.EqualTo(clone.Pictures.Alignment));
+			Assert.That(model.Pictures.Width, Is.EqualTo(clone.Pictures.Width));
 		}
 
 		[Test]
