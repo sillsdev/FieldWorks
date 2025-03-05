@@ -1,0 +1,1123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE lingPaper PUBLIC   "-//XMLmind//DTD XLingPap//EN" "XLingPap.dtd">
+<lingPaper automaticallywrapinterlinears="yes">
+   <frontMatter>
+      <title>01 Greeting</title>
+      <author>Giljanskij jazyk by Rastorgueva et al</author>
+   </frontMatter>
+   <section1 id="s1">
+      <secTitle>First Section</secTitle>
+      <p/>
+   </section1>
+   <backMatter>
+      <appendix id="a1">
+         <secTitle>Interlinear text</secTitle>
+         <interlinear-text>
+            <textInfo>
+               <textTitle>01 Greeting</textTitle>
+               <shortTitle>01 Greeting</shortTitle>
+            </textInfo>
+    
+    
+    
+    
+    
+      
+        
+          
+            <interlinear text="T-ID272ed0be-1" textref="T-ID272ed0be-1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">səlam</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">aleykum</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">hello</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">to.you</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">Hello!</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-2" textref="T-ID272ed0be-2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">aleykum</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">səlam</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">to.you</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">hello</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">Hello!</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-3" textref="T-ID272ed0be-3">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">ti</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">ahvål</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">čutor=ə</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">2sg.gen</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">condition</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">how=be.prs.3sg</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">How are you? (lit. How is your condition?)</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-4" textref="T-ID272ed0be-4">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">mi</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">ahvål</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">xob=ə</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">1sg.gen</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">condition</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">good=be.prs.3sg</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">Fine. (lit. My condition is good.)</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-5" textref="T-ID272ed0be-5">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">či</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">kun-i</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">či</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">kår</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">kun-i</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">what</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">do.prs-2sg</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">what</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">work</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">do.prs-2sg</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">What are you doing? How are you getting on?</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-6" textref="T-ID272ed0be-6">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">bəd</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">n-i-yəm</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">bad</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">neg-be.prs-1sg</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">I am not bad.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-7" textref="T-ID272ed0be-7">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">šime</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">zak-an</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">či</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">kun-idi</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">2pl.gen</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">child-pl</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">what</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">do.prs-2/3pl</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">What are your children doing?</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-8" textref="T-ID272ed0be-8">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">alhamdullå</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">bəd</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">n-i-idi</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">dərs</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">xan-idi</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">kår</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">kun-idi</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">praise.God</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">bad</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">neg-be.prs-2/3pl</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">lesson</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">read.prs-2/3pl</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">work</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">do.prs-2/3pl</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">Praise God, they are not bad. They are studying and working.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-9" textref="T-ID272ed0be-9">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">koya</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">šo-on</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">dər-i</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">where</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">go.pst-inf</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">have.aux-2sg</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">Where are you going?</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-10" textref="T-ID272ed0be-10">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">šime</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">xånə</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">biǰa</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">ita</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">məɣåzə</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">tåzə</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">va=∅-bost-ə</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">uyə</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">šo-on</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">dər-əm</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">2pl.gen</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">house</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">side</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">one</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">store</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">recently</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">vpfx=pfv-become.pst-3sg</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">there</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">go.pst-inf</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">have.aux-1sg</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">A new store has opened near your house. I am going there.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-11" textref="T-ID272ed0be-11">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">a</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">məɣåzə</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">či</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">məɣåzə</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">is-ə</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">this</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">store</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">what</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">store</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">be.pst.***-3sg</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">What sort of store is it? (lit. This store, what store is it?)</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-12" textref="T-ID272ed0be-12">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">mən</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">ni-∅-d-emə</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">g-idi</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">xob</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">məɣåzə=yə</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">hamə či</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">dar-e</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">1sg.nom</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">neg-pfv-see.pst-1sg.pfv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">say.prs-2/3pl</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">good</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">store=be.prs.3sg</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">everything</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">have.prs-3sg</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">I have not seen it. They say: "It is a good store. It has everything."</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-13" textref="T-ID272ed0be-13">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">xa-yəm</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">bə-š-əm</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">uyə</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">ipiče</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">zak-an=əre</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">čiz=o</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">miz</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">bi-hin-əm</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">want.prs-1sg</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">sbjv-go.prs-1sg</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">there</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">a.bit</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">child-pl=ben</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">thing=and</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">thing</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">sbjv-buy.prs-1sg</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">I want to go there and buy something for the children.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-14" textref="T-ID272ed0be-14">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">heyf</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">mən</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">nə-tan-əm</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">b-a-yəm</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">ipiče</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">kår</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">dar-əm</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">vəillå</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">ti</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">amara</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">amo-i-m</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">pity</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">1sg.nom</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">neg-able.prs-1sg</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">sbjv-come.prs-1sg</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">a.bit</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">work</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">have.prs-1sg</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">otherwise</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">2sg.gen</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">with</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">come.pst-ipfv-1sg</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">It is a pity that I cannot come. I have a bit of work [to do], otherwise I would come with you.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-15" textref="T-ID272ed0be-15">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">tu</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">bu-gu-∅</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">bi-din-əm</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">mi</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">abǰi</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">či</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">kun-e</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">2sg.nom</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">imp-say.prs-2sg.imp</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">sbjv-see.prs-1sg</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">1sg.gen</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">mother</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">what</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">do.prs-3sg</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">Can you tell me what my mother is doing?</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-16" textref="T-ID272ed0be-16">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">məgər</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">tu</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">n-∅-an-i</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">mi</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">mår</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">nåxuš=ə</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">q</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">2sg.nom</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">neg-sbjv-know.prs-2sg</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">1sg.gen</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">mother</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">unwell=be.prs.3sg</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">Do you not know that my mother is ill?</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-17" textref="T-ID272ed0be-17">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">na</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">xudå</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">nu-∅-kun-ə</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">no</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">God</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">neg-sbjv-do.prs-3sg</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">No, God forbid.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-18" textref="T-ID272ed0be-18">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">una</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">či</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">bu-bost-ə</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">3sg.acc/dat.dist</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">what</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">pfv-become.pst-3sg</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">What has happened to her?</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-19" textref="T-ID272ed0be-19">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">bale</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">alan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">du</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">må=yə</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">ki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">nåxuš=ə</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">yes</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">presently</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">two</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">month=be.prs.3sg</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">cmpl</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">unwell=be.prs.3sg</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">Yes, it is now two months that she is unwell.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-20" textref="T-ID272ed0be-20">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">xaxur=ǰan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">tu</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">mara</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">bə-baxš-∅</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">sister=dear</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">2sg.nom</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">1sg.acc/dat</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">imp-forgive.prs-2sg.imp</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">Dear sister, forgive me!</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-21" textref="T-ID272ed0be-21">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">mən</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">n-anəst-i-m</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">vəillå</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">a</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">vəxt=ə</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">ɣədər</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">hizår</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">vår</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">b-amo-∅</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">bu-m</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">1sg.nom</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">neg-know.pst-ipfv-1sg</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">otherwise</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">this</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">time=ez</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">much</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">1000</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">instance</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">pfv-come.pst-pspt</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">be.aux-1sg</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">I did not know, otherwise I should have come a thousand times.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-22" textref="T-ID272ed0be-22">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">xudå</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">tara</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">amere</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">bə-dar-ə</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">God</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">2sg.acc/dat</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">1pl.ben</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">sbjv-keep.prs-3sg</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">May God keep you for us.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-23" textref="T-ID272ed0be-23">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">mən</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">hamišə</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">g-əmə</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">mi</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">zahra=ǰan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">xeyli</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">mehrəbån=ə</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">1sg.nom</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">always</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">say.prs-1sg.fut</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">1sg.gen</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">Zahra=dear</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">very</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">kind=be.prs.3sg</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">I will always say, "My dear Zahra is very kind."</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID272ed0be-24" textref="T-ID272ed0be-24">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="glk-Latn-x-rast-morpheme">xudå håfez</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">goodbye</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">Goodbye.</free>
+            </interlinear>
+        
+      
+    
+    
+      
+      
+      
+    
+  
+         </interlinear-text>
+      </appendix>
+      <endnotes/>
+      <references/>
+   </backMatter>
+   <languages>
+      <language font-family="Charis SIL" id="en-free"/>
+      <language font-family="Charis SIL" id="en-lexGloss"/>
+      <language font-family="Doulos SIL" id="glk-Latn-x-rast-baseline"/>
+      <language font-family="Doulos SIL" id="glk-Latn-x-rast-morpheme"/>
+      <language font-family="Lateef" id="glk-baseline"/>
+   </languages>
+   <types>
+      <type id="tHomographNumber" font-size="65%" cssSpecial="vertical-align:sub" xsl-foSpecial="baseline-shift='sub'"/>
+      <type id="tLiteralTranslation"/>
+      <type id="tVariantTypes" font-family="Charis SIL"/>
+   </types>
+</lingPaper>
