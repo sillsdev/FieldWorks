@@ -1,0 +1,921 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE lingPaper PUBLIC   "-//XMLmind//DTD XLingPap//EN" "XLingPap.dtd">
+<lingPaper automaticallywrapinterlinears="yes">
+   <frontMatter>
+      <title>Demonstrative</title>
+      <author>[Insert author's name here]</author>
+   </frontMatter>
+   <section1 id="s1">
+      <secTitle>First Section</secTitle>
+      <p/>
+   </section1>
+   <backMatter>
+      <appendix id="a1">
+         <secTitle>Interlinear text</secTitle>
+         <interlinear-text>
+            <textInfo>
+               <textTitle>Demonstrative</textTitle>
+               <shortTitle/>
+            </textInfo>
+    
+    
+    
+      
+        
+          
+            <interlinear text="T-IDdb30c762-1" textref="T-IDdb30c762-1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-baseline">sem</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">de</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">sɛm<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">dɛɛ<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">monitor</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">dem.dist</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-IDdb30c762-2" textref="T-IDdb30c762-2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-baseline">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">de</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">dɛɛ<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">box</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">dem.dist</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-IDdb30c762-3" textref="T-IDdb30c762-3">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-baseline">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">dee</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">dɛɛ<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">box</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">dem.dist</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-IDdb30c762-4" textref="T-IDdb30c762-4">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-baseline">mat</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">de</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">mat<object type="tHomographNumber">3</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">dɛɛ<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">wife</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">dem.dist</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-IDdb30c762-5" textref="T-IDdb30c762-5">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-baseline">mat</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">dee</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">mat<object type="tHomographNumber">3</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">dɛɛ<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">wife</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">dem.dist</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free"/>
+            </interlinear>
+        
+      
+      
+    
+    
+      
+      
+    
+  
+         </interlinear-text>
+         <interlinear-text>
+            <textInfo>
+               <textTitle>Possessive pronouns</textTitle>
+               <shortTitle/>
+            </textInfo>
+    
+    
+    
+      
+        
+          
+            <interlinear text="T-IDf271582d-1" textref="T-IDf271582d-1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-baseline">Sem</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">mang</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">ji</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">sɛm<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">maŋ<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">dʒi<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">monitor</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">pick</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">box</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">3sg.m.sbj.poss</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">(same [masculine] subject)</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-IDf271582d-2" textref="T-IDf271582d-2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-baseline">Sem</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">mang</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">doefan</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">sɛm<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">maŋ<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">dɨfan</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">monitor</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">pick</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">box</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">rabbit</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-IDf271582d-3" textref="T-IDf271582d-3">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-baseline">Sem</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">mang</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">noe</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">sɛm<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">maŋ<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">nɨ</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">monitor</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">pick</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">box</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">1sg.poss</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-IDf271582d-4" textref="T-IDf271582d-4">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-baseline">Sem</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">mang</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">goe</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">sɛm<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">maŋ<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">gɨ</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">monitor</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">pick</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">box</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">2ms</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-IDf271582d-5" textref="T-IDf271582d-5">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-baseline">Sem</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">mang</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">yi</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">sɛm<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">maŋ<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">***</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">monitor</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">pick</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">box</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">***</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-IDf271582d-6" textref="T-IDf271582d-6">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-baseline">Sem</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">mang</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">nyi</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">sɛm<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">maŋ<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">nji</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">monitor</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">pick</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">box</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">3sg</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">(different subject)</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-IDf271582d-7" textref="T-IDf271582d-7">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-baseline">Sem</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">mang</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">mu</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">sɛm<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">maŋ<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">***</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">monitor</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">pick</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">box</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">***</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-IDf271582d-8" textref="T-IDf271582d-8">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-baseline">Sem</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">mang</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">gu</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">sɛm<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">maŋ<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">***</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">monitor</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">pick</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">box</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">***</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-IDf271582d-9" textref="T-IDf271582d-9">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-baseline">Sem</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">mang</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">mop</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">sɛm<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">maŋ<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">mɔp<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">monitor</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">pick</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">box</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">3pl</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-IDf271582d-10" textref="T-IDf271582d-10">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-baseline">Zap</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">mop</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">kok</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">zu</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">mɔp<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">maŋ<object type="tHomographNumber">1</object>
+                           <object type="tVariantTypes"/>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">zu</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">***</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">3pl</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">carry.pl</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">box</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">pl.sp.poss</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">(same [plural] subject)</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-IDf271582d-11" textref="T-IDf271582d-11">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-baseline">Zap</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">mop</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">kok</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">mop</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">mɔp<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">maŋ<object type="tHomographNumber">1</object>
+                           <object type="tVariantTypes"/>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">mɔp<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">***</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">3pl</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">carry.pl</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">box</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">3pl</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">(different subject)</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-IDf271582d-12" textref="T-IDf271582d-12">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-baseline">Mat</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">sem</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">mang</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-baseline">doe</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">mat<object type="tHomographNumber">3</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">sɛm<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">maŋ<object type="tHomographNumber">1</object>
+                        </langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">kuluk</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="kwl-x-Phonemic-lexEntry">dɨ<object type="tHomographNumber">3</object>
+                        </langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">wife</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">monitor</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">pick</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">box</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">3sg.f.sbj.poss</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">(same [feminine] subject)</free>
+            </interlinear>
+        
+      
+    
+    
+      
+      
+    
+  
+         </interlinear-text>
+      </appendix>
+      <endnotes/>
+      <references/>
+   </backMatter>
+   <languages>
+      <language font-family="Charis SIL" id="en-free"/>
+      <language font-family="Charis SIL" id="en-lexGloss"/>
+      <language font-family="Charis SIL" id="kwl-baseline"/>
+      <language font-family="Charis SIL" id="kwl-x-Phonemic-lexEntry"/>
+   </languages>
+   <types>
+      <type id="tHomographNumber" font-size="65%" cssSpecial="vertical-align:sub" xsl-foSpecial="baseline-shift='sub'"/>
+      <type id="tLiteralTranslation"/>
+      <type id="tVariantTypes" font-family="Charis SIL"/>
+   </types>
+</lingPaper>
