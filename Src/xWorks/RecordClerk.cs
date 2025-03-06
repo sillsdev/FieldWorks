@@ -1075,7 +1075,11 @@ namespace SIL.FieldWorks.XWorks
 					// target before complaining to the user about a filter being on.
 					var mdc = (IFwMetaDataCacheManaged)m_list.VirtualListPublisher.MetaDataCache;
 					int clidList = mdc.FieldExists(m_list.Flid) ? mdc.GetDstClsId(m_list.Flid) : -1;
-					int clidObj = m_list.Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoTarget).ClassID;
+					ICmObjectRepository objRepository = m_list.Cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+					if (!objRepository.TryGetObject(hvoTarget, out ICmObject targetObject))
+						// The object was deleted (LT-22063).
+						return true;
+					int clidObj = targetObject.ClassID;
 
 					// If (int) clidList is -1, that means it was for a decorator property and the IsSameOrSubclassOf
 					// test won't be valid.
