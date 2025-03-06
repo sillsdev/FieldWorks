@@ -70,6 +70,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alignment:.
+        /// </summary>
+        internal static string AlignmentLabelText {
+            get {
+                return ResourceManager.GetString("AlignmentLabelText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All Analysis then all Vernacular Writing Systems.
         /// </summary>
         internal static string AllAnalysisVernacularWs {
@@ -371,6 +380,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string DidNotSelectValidWsForDb {
             get {
                 return ResourceManager.GetString("DidNotSelectValidWsForDb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Document Picture Settings:.
+        /// </summary>
+        internal static string DocumentPictureSettingsLabelText {
+            get {
+                return ResourceManager.GetString("DocumentPictureSettingsLabelText", resourceCulture);
             }
         }
         
@@ -3085,6 +3103,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string WebonaryLogViewer_Save_a_copy {
             get {
                 return ResourceManager.GetString("WebonaryLogViewer_Save_a_copy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Width (inches):.
+        /// </summary>
+        internal static string WidthLabelText {
+            get {
+                return ResourceManager.GetString("WidthLabelText", resourceCulture);
             }
         }
         
