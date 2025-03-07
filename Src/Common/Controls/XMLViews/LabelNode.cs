@@ -105,6 +105,14 @@ namespace SIL.FieldWorks.Common.Controls
 			// I think only label.Object is likely to be null, but let's prevent crashes thoroughly.
 			if (label != null && label.Object != null && label.Object.ReferringObjects != null)
 			{
+				if (label.Object.Owner.ToString() == "Publications")
+				{
+					// IPublication is the value of DoNotPublishIn,
+					// so we need to invert the count.
+					ILexEntryRepository repository = label.Object.Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+					count = repository.Count - label.Object.ReferringObjects.Count;
+					return count;
+				}
 				count = label.Object.ReferringObjects.Count;
 				foreach (ICmObject x in label.Object.ReferringObjects)
 				{
