@@ -1,0 +1,2549 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE lingPaper PUBLIC   "-//XMLmind//DTD XLingPap//EN" "XLingPap.dtd">
+<lingPaper automaticallywrapinterlinears="yes">
+   <frontMatter>
+      <title>Cómo se ayudaron Pájaro Blanco y Hormiguita</title>
+      <author>[Insert author's name here]</author>
+   </frontMatter>
+   <section1 id="s1">
+      <secTitle>First Section</secTitle>
+      <p/>
+   </section1>
+   <backMatter>
+      <appendix id="a1">
+         <secTitle>Interlinear text</secTitle>
+         <interlinear-text>
+            <textInfo>
+               <textTitle>Cómo se ayudaron Pájaro Blanco y Hormiguita</textTitle>
+               <shortTitle>Páj. y Horm.</shortTitle>
+            </textInfo>
+    
+    
+    
+    
+    
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-1.1" textref="T-ID3f8b41a4-1.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Okatka</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">se</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">tonalli</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">okatka</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">se</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">tonalli</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">había</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">uno/un/una</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">sol/día</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">Hubo un día</free>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-1.2" textref="T-ID3f8b41a4-1.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">ihkuak</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">otlawakiaya</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">ihkuak</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">otlawakiaya</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">cuando</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">estaba.seco</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">cuando [todo] estaba seco [en temporada de sequía]</free>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-1.3" textref="T-ID3f8b41a4-1.3">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">melahka</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">otonaya.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">melahka</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">otonaya</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">verdaderamente</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">hacía.calor</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"> hacía mucho calor.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-2" textref="T-ID3f8b41a4-2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Begin;here:andthereYa</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">miek</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">tonaltin</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">Askatzintlimiddleof</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">roadamitlah</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">atl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">okoniayaendoftheline.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">ya</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">miek</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">tonaltin</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">Askatzintli</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">amitlah</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">atl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">okoniaya</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">ya</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">much@</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">días</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">Hormiguita</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">nada</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">agua</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">él/ella.bebía</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">Ya hacía muchos días que Hormiguita no había bebido nada de agua.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-3" textref="T-ID3f8b41a4-3">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Okihtoh:</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">okihtoh</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">él/ella.dijo</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">Dijo:</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-4.1" textref="T-ID3f8b41a4-4.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">—Nikneki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">se</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">tlachipinal</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">atzintli,</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">Nikneki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">se</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">tlachipinal</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">atzintli</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">quiero</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">uno/un/una</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">gota</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">agüita</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"> —Quiero una gotita de agua,</free>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-4.2" textref="T-ID3f8b41a4-4.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">maski</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">san</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">onikittaskia</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">itech</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">se</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">xiwitl.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">maski</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">san</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">onikittaskia</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">itech</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">se</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">xiwitl</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">aunque</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">sólo/por.lo.menos</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">yo.hubiera.visto</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">por</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">uno/un/una</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">hoja/hierba/año</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">que por lo menos yo [la] viera en una hoja [de alguna planta].</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-5" textref="T-ID3f8b41a4-5">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Noso</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">ahwachtli</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">noihki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">owakki.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">noso</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">ahwachtli</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">noihki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">owakki</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">pero/pues</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">rocío</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">también</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">se.secó</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">Pero el rocío también se había secado. </free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-6" textref="T-ID3f8b41a4-6">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Omotekipachoh,</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">okihtoh:</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">omotekipachoh</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">okihtoh</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">se.preocupó</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">dijo</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">Se preocupó [y] dijo: </free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-7.1" textref="T-ID3f8b41a4-7.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">—Tlakeh</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">amo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">nikonis</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">sekitzin</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">atl,</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">Tlakeh</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">amo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">nikonis</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">sekitzin</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">atl</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">si</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">no</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">lo.beberé</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">poquit@</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">agua</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">—Si no bebo un poquito de agua,</free>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-7.2" textref="T-ID3f8b41a4-7.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">neh</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">nimikis.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">neh</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">nimikis</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">yo</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">moriré</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">moriré.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-8" textref="T-ID3f8b41a4-8">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Askatzintli</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">otlayehyekoh:</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">Askatzintli</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">otlayehyekoh</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">Hormiguita</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">pensó</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">Hormiguita pensó:</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-9.1" textref="T-ID3f8b41a4-9.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">—Moneki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">nias</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">itech</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">aweyatl</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">Moneki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">nias</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">itech</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">aweyatl</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">Es.necesario/se debe</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">iré</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">por</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">río</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"> —Necesito ir al río</free>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-9.2" textref="T-ID3f8b41a4-9.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">tlen</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">yonikkak</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">ik</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">motlapowiah.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">tlen</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">yonikkak</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">ik</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">motlapowiah</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">que/el que/lo que</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">ya.escuché</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">con</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">se.hablan</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">del que ya escuché algunos hablan.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-10" textref="T-ID3f8b41a4-10">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Se</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">moto</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">tlen</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">ixtlamatki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">okillih:</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">se</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">moto</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">tlen</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">ixtlamatki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">okillih</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">uno/un/una</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">ardilla</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">que/el que/lo que</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">inteligente</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">le.dijo</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">Una ardilla que es inteligente le dijo:</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-11.1" textref="T-ID3f8b41a4-11.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">—¡Amo,</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">amo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">xiah!</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">Amo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">amo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">xiah</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">no</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">no</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">vete</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"> —¡No, no vayas!</free>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-11.2" textref="T-ID3f8b41a4-11.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">§Atl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">kenik</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">motlalowa</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">mitzwikas.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">Atl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">kenik</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">motlalowa</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">mitzwikas</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">agua</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">cómo</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">corre</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">te.llevará</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">El agua así como corre te llevará.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-12.1" textref="T-ID3f8b41a4-12.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Opanok</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">itech</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">tlalwakki,</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">xiwitl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">wakki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">iwan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">mamayotl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">tlen</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">yawaktok</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">opanok</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">itech</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">tlalwakki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">xiwitl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">wakki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">iwan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">mamayotl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">tlen</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">yawaktok</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">pasó</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">en</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">tierra.seca</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">hoja/hierba</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">sec@</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">y/con</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">rama(s)</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">que/el que/lo que</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">ya.están.secas</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">Caminó por tierra seca, hojas secas y ramas secas</free>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-12.2" textref="T-ID3f8b41a4-12.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">asta</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">ihkuak</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">okikak</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">ken</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">motlelowa</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">aweyatl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">ihkoyokatih.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">asta</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">ihkuak</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">okikak</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">ken</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">motlelowa</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">aweyatl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">ihkoyokatih</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">hasta</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">cuando</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">escuchó</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">cómo</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">corre</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">río</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">haciendo.zumbido</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">hasta que escuchó cómo corría el río haciendo zumbido.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-13.1" textref="T-ID3f8b41a4-13.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Askatzintli</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">omopachoh</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">Askatzintli</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">omopachoh</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">Hormiguita</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">se.inclinó</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">Hormiguita se inclinó</free>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-13.2" textref="T-ID3f8b41a4-13.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">iwan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">okonik</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">seki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">atl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">sesektzin.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">iwan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">okonik</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">seki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">atl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">sesektzin</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">y/con</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">tomó</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">poc@</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">agua</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">fría</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">y tomó un poco de agua fresca.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-14.1" textref="T-ID3f8b41a4-14.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Askatzintli</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">miak</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">opakiaya</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">Askatzintli</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">miak</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">opakiaya</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">Hormiguita</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">much@</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">se.alegraba</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">Hormiguita se alegraba mucho</free>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-14.2" textref="T-ID3f8b41a4-14.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">noso</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">amo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">okittak</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">ken</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">ipan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">owallaya</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">atl.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">noso</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">amo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">okittak</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">ken</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">ipan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">owallaya</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">atl</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">pero/pues</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">no</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">vió</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">cómo</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">sobre.el/sobre.ella</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">venía</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">agua</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">pero no vió cómo sobre ella venía el agua.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-15.1" textref="T-ID3f8b41a4-15.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">¡Satekitl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">temawtih!</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">Satekitl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">temawtih</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">demasiad@</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">da.miedo</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">¡Qué miedo!</free>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-15.2" textref="T-ID3f8b41a4-15.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">§Askatzintli</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">omatoktih,</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">Askatzintli</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">omatoktih</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">Hormiguita</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">se.hundió</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">Hormiguita se hundió,</free>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-15.3" textref="T-ID3f8b41a4-15.3">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">okiwikaya</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">atl.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">okiwikaya</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">atl</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">lo.llevaba/la.llevaba</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">agua</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">el agua se la llevaba.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-16" textref="T-ID3f8b41a4-16">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Okuixtzahtzik:</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">okuixtzahtzik</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">gritó</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">Gritó:</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-17" textref="T-ID3f8b41a4-17">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">—¡Techpalewikih!</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">Techpalewikih</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">vengan.a.ayudarme</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">—¡Ayúdenme!</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-18" textref="T-ID3f8b41a4-18">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">¡Techpalewikih,</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">namechtlatlawtia!</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">Techpalewikih</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">namechtlatlawtia</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">vengan.a.ayudarme</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">se.los.ruego</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">¡Ayúdenme, se los ruego!</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-19" textref="T-ID3f8b41a4-19">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">¡Natolowa!</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">Natolowa</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">me.ahogo</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">—¡Me ahogo!</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-20" textref="T-ID3f8b41a4-20">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Se</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">istaktototl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">chikawak</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">okihtoh:</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">se</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">istaktototl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">chikawak</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">okihtoh</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">uno/un/una</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">blanco.pájaro</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">fuerte</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">dijo</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">Un pájaro blanco dijo fuértemente: </free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-21" textref="T-ID3f8b41a4-21">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">—¡Nikan,</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">xitlehko!</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">Nikan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">xitlehko</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">aquí</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">sube</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">—¡Aquí, sube!</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-22" textref="T-ID3f8b41a4-22">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Itech</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">itenpil</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">okiwalikaya</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">se</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">kuawtzintli.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">itech</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">itenpil</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">okiwalikaya</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">se</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">kuawtzintli</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">por</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">su.pico</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">llevaba</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">uno/un/una</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">palito</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free">En su pico llevaba un palito.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-23.1" textref="T-ID3f8b41a4-23.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Istaktototl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">okitlalih</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">Askatzintli</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">kanin</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">tlalli</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">tlawaki</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">istaktototl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">Askatzintli</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">blanco.pájaro</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">Hormiguita</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-23.2" textref="T-ID3f8b41a4-23.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">iwan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">satepan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">opatlantiah.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">iwan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">y/con</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-24.1" textref="T-ID3f8b41a4-24.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Miek</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">opakki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">Askatzintli.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">miek</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">Askatzintli</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">much@</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">Hormiguita</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-24.2" textref="T-ID3f8b41a4-24.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">§Okimollih:</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-25.1" textref="T-ID3f8b41a4-25.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">—Ma</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">nimochia</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">okseppa</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">ma</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">wiki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">Istaktototl,</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-25.2" textref="T-ID3f8b41a4-25.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">ihkon</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">nimotlasohkamatis</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">inawak.</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-26.1" textref="T-ID3f8b41a4-26.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Ok</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">omochiaya</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">Askatzintli,</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-26.2" textref="T-ID3f8b41a4-26.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">owallahkeh</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">ome</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">chokomeh</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">okiwalikayah</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">intlatlamotlal.</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-27" textref="T-ID3f8b41a4-27">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">—Nikan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">nochipa</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">witz</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">se</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">weyi</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">istaktototl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">atlikin.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">Nikan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">se</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">istaktototl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">aquí</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">uno/un/una</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="es-wordGloss">blanco.pájaro</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-28" textref="T-ID3f8b41a4-28">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Ihkon</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">okihtoh</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">se</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">chokoh.</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-29.1" textref="T-ID3f8b41a4-29.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">—Axan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">yowalli</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">tikonixkaskeh</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-29.2" textref="T-ID3f8b41a4-29.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">iwan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">tikonkuaskeh</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">inon</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">tototl,</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">tikweliliskeh.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">iwan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">y/con</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-30" textref="T-ID3f8b41a4-30">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Ihkon</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">inon</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">ome</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">chokomeh</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">omotlaatihkeh</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">kimonepachwiah</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">Istaktototl.</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-31.1" textref="T-ID3f8b41a4-31.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">—¡Amo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">ihkon</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">ma</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">kichiwakan!</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">Amo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">no</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-31.2" textref="T-ID3f8b41a4-31.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">§Amo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">ma</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">kimiktikan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">Istaktototl!</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">Amo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">no</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-32" textref="T-ID3f8b41a4-32">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Okihtowaya</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">Askatzintli.</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-33.1" textref="T-ID3f8b41a4-33.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">—Noso</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">neh</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">san</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">nitzikiotzin.</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-33.2" textref="T-ID3f8b41a4-33.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">§Kenik</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">kualtis</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">nikpalewis?</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-34" textref="T-ID3f8b41a4-34">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">San</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">ompa</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">owalehkok</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">Istaktototl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">okseppa</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">oatliko.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">san</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">sólo/por.lo.menos</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-35.1" textref="T-ID3f8b41a4-35.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Chokomeh</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">okitlalihkeh</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">tetl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">itech</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">intlatlamotlal,</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-35.2" textref="T-ID3f8b41a4-35.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">ya</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">kitemotlaskeh</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">Istaktototl.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">ya</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">ya</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-36.1" textref="T-ID3f8b41a4-36.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Ihkuakon</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">omolnamik</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">Askatzintli,</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-36.2" textref="T-ID3f8b41a4-36.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">okimatki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">tlen</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">kichiwas.</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-37.1" textref="T-ID3f8b41a4-37.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Otzikuinki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">itech</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">ikxi</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">se</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">chokoh,</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-37.2" textref="T-ID3f8b41a4-37.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">okiminki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">chikawak</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">ken</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">owelitik.</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-38.1" textref="T-ID3f8b41a4-38.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Chokoh</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">oahkotzikuinki,</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-38.2" textref="T-ID3f8b41a4-38.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">okikahkah</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">itlatlamotlal.</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-38.3" textref="T-ID3f8b41a4-38.3">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">§Otzahtzik:</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-39.1" textref="T-ID3f8b41a4-39.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">—¡Ay!</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-39.2" textref="T-ID3f8b41a4-39.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">¿tlen</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">onechminki?</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">tlen</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">que/el que/lo que</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-40.1" textref="T-ID3f8b41a4-40.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Istaktototl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">omomawtih,</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">istaktototl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">blanco.pájaro</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-40.2" textref="T-ID3f8b41a4-40.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">opatlantiah</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">oksekkan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">omotlaatito.</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID3f8b41a4-41.1" textref="T-ID3f8b41a4-41.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">Ihkon</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">noso</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">Askatzintli</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">okualtik</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">omotlasohkamatki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">inawak</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">Istaktototl,</langData>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+          
+            <interlinear text="T-ID3f8b41a4-41.2" textref="T-ID3f8b41a4-41.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-baseline">iwan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">ihkon</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">yehwan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">omentih</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-baseline">omopalewihkeh.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="nlv-morpheme">iwan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="nlv-morpheme">***</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="es-wordGloss">y/con</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="es-free"/>
+            </interlinear>
+        
+      
+    
+    
+      
+      
+      
+    
+  
+         </interlinear-text>
+      </appendix>
+      <endnotes/>
+      <references/>
+   </backMatter>
+   <languages>
+      <language font-family="Charis SIL AmArea" id="es-free"/>
+      <language font-family="Charis SIL AmArea" id="es-wordCategory"/>
+      <language font-family="Charis SIL AmArea" id="es-wordGloss"/>
+      <language font-family="Charis SIL AmArea" id="nlv-baseline"/>
+      <language font-family="Charis SIL AmArea" id="nlv-morpheme"/>
+      <language font-family="Charis SIL" id="en-baseline"/>
+   </languages>
+   <types>
+      <type id="tHomographNumber" font-size="65%" cssSpecial="vertical-align:sub" xsl-foSpecial="baseline-shift='sub'"/>
+      <type id="tLiteralTranslation"/>
+      <type id="tVariantTypes" font-family="Charis SIL"/>
+   </types>
+</lingPaper>

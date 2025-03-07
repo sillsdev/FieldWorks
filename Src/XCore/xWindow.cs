@@ -1929,6 +1929,8 @@ namespace XCore
 		{
 			CheckDisposed();
 
+			if (Mediator != null)
+				Mediator.SendMessage("StopParser", null);
 			this.Close();
 
 			return true;
