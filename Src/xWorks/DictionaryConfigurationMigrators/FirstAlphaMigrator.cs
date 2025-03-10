@@ -59,7 +59,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			if (alphaModel.Version == PreHistoricMigrator.VersionPre83 || alphaModel.Version == PreHistoricMigrator.VersionAlpha1)
 				RemoveNonLoadableData(alphaModel.PartsAndSharedItems);
 			// now that it's safe to specify them, it would be helpful to have parents in certain steps:
-			DictionaryConfigurationModel.SpecifyParentsAndReferences(alphaModel.Parts, alphaModel.SharedItems);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(alphaModel.Parts, sharedItems:alphaModel.SharedItems);
 			switch (alphaModel.Version)
 			{
 				case -1:
