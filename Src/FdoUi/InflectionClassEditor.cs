@@ -355,50 +355,31 @@ namespace SIL.FieldWorks.FdoUi
 				var entry = kvp.Key.Item1;
 				var sensesToChange = kvp.Value;
 				IMoStemMsa msmTarget = null;
-				foreach (var msa in entry.MorphoSyntaxAnalysesOC)
-				{
-					var msm = msa as IMoStemMsa;
-					if (msm != null && msm.InflectionClassRA != null && msm.InflectionClassRA.Hvo == m_selectedHvo)
-					{
-						// Can reuse this one!
-						msmTarget = msm;
-						break;
-					}
-				}
+				msmTarget = entry.MorphoSyntaxAnalysesOC
+					.OfType<IMoStemMsa>()
+					.FirstOrDefault(msm => msm.InflectionClassRA?.Hvo == m_selectedHvo);
+
 				if (msmTarget == null)
 				{
 					// See if we can reuse an existing MoStemMsa by changing it.
 					// This is possible if it is used only by senses in the list, or not used at all.
-					var otherSenses = new List<ILexSense>();
-					if (entry.SensesOS.Count != sensesToChange.Count)
+					var otherSenses = entry.SensesOS.Count != sensesToChange.Count
+						? entry.SensesOS.Where(ls => !sensesToChange.Contains(ls)).ToList()
+						: new List<ILexSense>();
+
+					var msm = entry.MorphoSyntaxAnalysesOC
+						.OfType<IMoStemMsa>()
+						.FirstOrDefault(ms => !otherSenses.Any(ls => ls.MorphoSyntaxAnalysisRA == ms));
+
+					if (msm != null)
 					{
-						foreach (var ls in entry.SensesOS)
-							if (!sensesToChange.Contains(ls))
-								otherSenses.Add(ls);
-					}
-					foreach (var msa in entry.MorphoSyntaxAnalysesOC)
-					{
-						var msm = msa as IMoStemMsa;
-						if (msm == null)
-							continue;
-						bool fOk = true;
-						foreach (var ls in otherSenses)
-						{
-							if (ls.MorphoSyntaxAnalysisRA == msm)
-							{
-								fOk = false;
-								break;
-							}
-						}
-						if (fOk)
-						{
-							// Can reuse this one! Nothing we don't want to change uses it.
-							// Adjust its POS as well as its inflection class, just to be sure.
-							msmTarget = msm;
-							msmTarget.PartOfSpeechRA = kvp.Key.Item2;
-							msmTarget.InflectionClassRA = m_selectedHvo == 0 ? null : m_cache.ServiceLocator.GetInstance<IMoInflClassRepository>().GetObject(m_selectedHvo);
-							break;
-						}
+						// Can reuse this one! Nothing we don't want to change uses it.
+						// Adjust its POS as well as its inflection class, just to be sure.
+						msmTarget = msm;
+						msmTarget.PartOfSpeechRA = kvp.Key.Item2;
+						msmTarget.InflectionClassRA = m_selectedHvo == 0
+							? null
+							: m_cache.ServiceLocator.GetInstance<IMoInflClassRepository>().GetObject(m_selectedHvo);
 					}
 				}
 				if (msmTarget == null)
