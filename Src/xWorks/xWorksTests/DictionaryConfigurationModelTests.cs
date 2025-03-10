@@ -1086,12 +1086,12 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { configNode }, SharedItems = null };
 
 			// SUT (DNE b/c no SharedItems)
-			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems), "No SharedItems!");
+			Assert.Throws<ArgumentNullException>(() => DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, sharedItems: model.SharedItems), "No SharedItems!");
 
 			model.SharedItems = new List<ConfigurableDictionaryNode>();
 
 			// SUT (DNE b/c SharedItems doesn't contain what was requested)
-			Assert.Throws<KeyNotFoundException>(() => DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems), "No matching item!");
+			Assert.Throws<KeyNotFoundException>(() => DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, sharedItems: model.SharedItems), "No matching item!");
 		}
 
 		[Test]
@@ -1102,14 +1102,14 @@ namespace SIL.FieldWorks.XWorks
 			var model = CreateSimpleSharingModel(configNode, refConfigNode);
 
 			// SUT (Field is different)
-			Assert.Throws<KeyNotFoundException>(() => DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems));
+			Assert.Throws<KeyNotFoundException>(() => DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, sharedItems: model.SharedItems));
 			Assert.That(configNode.ReferencedNode, Is.Null, "ReferencedNode should not have been set");
 
 			refConfigNode.FieldDescription = m_field;
 			refConfigNode.SubField = "SensesOS";
 
 			// SUT (SubField is different)
-			Assert.Throws<KeyNotFoundException>(() => DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems));
+			Assert.Throws<KeyNotFoundException>(() => DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, sharedItems: model.SharedItems));
 			Assert.That(configNode.ReferencedNode, Is.Null, "ReferencedNode should not have been set");
 		}
 
@@ -1121,7 +1121,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = CreateSimpleSharingModel(oneConfigNode, oneRefConfigNode);
 
 			// SUT
-			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, sharedItems: model.SharedItems);
 
 			Assert.AreSame(oneRefConfigNode, oneConfigNode.ReferencedNode);
 		}
@@ -1139,7 +1139,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			// SUT
-			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, sharedItems: model.SharedItems);
 
 			Assert.AreSame(configNodeOne, refdConfigNode.Parent, "The Referenced node's 'Parent' should be the first to reference (breadth first)");
 		}
@@ -1158,7 +1158,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			// SUT
-			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, sharedItems: model.SharedItems);
 
 			Assert.AreSame(configNodeTwo, refdConfigNode.Parent, "The Referenced node's 'Parent' should be the first to reference (breadth first)");
 		}
@@ -1176,7 +1176,7 @@ namespace SIL.FieldWorks.XWorks
 			var model = CreateSimpleSharingModel(configNode, refdConfigNode);
 
 			// SUT
-			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, sharedItems: model.SharedItems);
 
 			Assert.AreSame(refdConfigNode, refdConfigNodeChild.Parent);
 			Assert.AreSame(refdConfigNode, refdConfigNodeChild.ReferencedNode);
