@@ -1307,7 +1307,12 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode, headwordNode },
 				FieldDescription = "LexEntry"
 			};
-			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode>(){ mainEntryNode },
+				Pictures = new PictureConfiguration()
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
 			var entryOne = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(entryOne, "HeadwordEn", m_wsEn);
 			var sense = entryOne.SensesOS[0];
@@ -1350,7 +1355,12 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode, headwordNode },
 				FieldDescription = "LexEntry"
 			};
-			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode>(){ mainEntryNode },
+				Pictures = new PictureConfiguration()
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
 			var entryOne = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(entryOne, "HeadwordEn", m_wsEn);
 			var sense = entryOne.SensesOS[0];
@@ -1393,7 +1403,12 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { sensesNode, pictureNode, headwordNode },
 				FieldDescription = "LexEntry"
 			};
-			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> () { mainEntryNode },
+				Pictures = new PictureConfiguration()
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
 			var entryOne = CreateInterestingLexEntry(Cache);
 			AddHeadwordToEntry(entryOne, "HeadwordEn", m_wsEn);
 			AddHeadwordToEntry(entryOne, "HeadwordFr", m_wsFr);
@@ -7983,7 +7998,11 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, mainPronunciationsNode, sensesNode, pictureNode, subentryNode, variantNode },
 				FieldDescription = "LexEntry"
 			};
-			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode>() { mainEntryNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
 
 			const string matchFrenchEntry = "//span[@class='entry-1']/span[@lang='fr']";
 			const string matchFrenchPronunciation = "//span[@class='pronunciations-1']/span[@class='pronunciation']/span[@class='form-1']/span[@lang='fr']";

@@ -30,6 +30,13 @@ namespace SIL.FieldWorks.XWorks
 		public StringTable StringTable { get; set; }
 
 		/// <summary>
+		/// This is the model that the configuration node is associated with, used for some
+		/// more global settings.
+		/// </summary>
+		[XmlIgnore]
+		public DictionaryConfigurationModel Model { get; set; }
+
+		/// <summary>
 		/// The non-editable portion of the label to display for this node
 		/// </summary>
 		[XmlAttribute(AttributeName = "name")]

@@ -185,7 +185,7 @@ namespace SIL.FieldWorks.XWorks
 			SharedItems = SharedItems ?? new List<ConfigurableDictionaryNode>();
 			if (cache == null)
 				return;
-			SpecifyParentsAndReferences(Parts, SharedItems);
+			SpecifyParentsAndReferences(Parts, this, SharedItems);
 			if (AllPublications)
 				Publications = DictionaryConfigurationController.GetAllPublications(cache);
 			else
@@ -278,7 +278,7 @@ namespace SIL.FieldWorks.XWorks
 			if (Parts != null)
 			{
 				clone.Parts = Parts.Select(node => node.DeepCloneUnderParent(null, true)).ToList();
-				SpecifyParentsAndReferences(clone.Parts, clone.SharedItems);
+				SpecifyParentsAndReferences(clone.Parts, clone, clone.SharedItems);
 			}
 
 			// Clone Publications
@@ -303,7 +303,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Assign Parent and ReferencedNode properties to descendants of nodes.
 		/// </summary>
-		internal static void SpecifyParentsAndReferences(List<ConfigurableDictionaryNode> nodes, List<ConfigurableDictionaryNode> sharedItems = null)
+		internal static void SpecifyParentsAndReferences(List<ConfigurableDictionaryNode> nodes, DictionaryConfigurationModel model = null, List<ConfigurableDictionaryNode> sharedItems = null)
 		{
 			if (nodes == null)
 				throw new ArgumentNullException();
@@ -314,6 +314,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var node = rollingNodes[0];
 				rollingNodes.RemoveAt(0);
+				node.Model = model;
 				if (!string.IsNullOrEmpty(node.ReferenceItem))
 					DictionaryConfigurationController.LinkReferencedNode(sharedItems, node, node.ReferenceItem);
 				if (node.Children == null)
@@ -324,7 +325,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			if (sharedItems != null && !ReferenceEquals(nodes, sharedItems))
-				SpecifyParentsAndReferences(sharedItems, sharedItems);
+				SpecifyParentsAndReferences(sharedItems, model, sharedItems);
 		}
 
 		public override string ToString()

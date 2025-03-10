@@ -763,28 +763,81 @@ namespace SIL.FieldWorks.XWorks
 		private static List<StyleRule> GenerateCssFromPictureOptions(ConfigurableDictionaryNode configNode, DictionaryNodePictureOptions pictureOptions,
 			string baseSelection, LcmCache cache, ReadOnlyPropertyTable propertyTable)
 		{
+			// Add the property to keep the caption centered under the image
+			var captionRule = new StyleRule();
+			captionRule.Value = baseSelection + " .captionContent";
+			// set the display as table-caption to allow the caption to be centered under the image
+			captionRule.Declarations.Properties.Add(new Property("display")
+			{
+				Term = new PrimitiveTerm(UnitType.Ident, "table-caption")
+			});
+			// set the caption-side to get the caption below the image
+			captionRule.Declarations.Properties.Add(new Property("caption-side")
+			{
+				Term = new PrimitiveTerm(UnitType.Ident, "bottom")
+			});
+			captionRule.Declarations.Properties.Add(new Property("text-align")
+			{
+				Term = new PrimitiveTerm(UnitType.Ident, "center")
+			});
+			// clear the hanging indent
+			captionRule.Declarations.Properties.Add(new Property("text-indent")
+			{
+				Term = new PrimitiveTerm(UnitType.Point, 0)
+			});
 			var styles = GenerateSelectorsFromNode(configNode, ref baseSelection, cache, propertyTable);
+			styles.Add(captionRule);
+			// css to keep caption centered under the image will be using display: table to support old gecko
+			// display: table;
+			// flex-direction: column; /* Stack image and caption vertically */
+			// text-align: left, right, center; /* moves the block img correctly */
+			// margin: 0 auto; /* centers block under parent */
+			// doing this and then adding a text-align:center for the caption content will center the caption under the image
 			var pictureAndCaptionRule = new StyleRule();
 			pictureAndCaptionRule.Value = baseSelection;
 
 			var pictureProps = pictureAndCaptionRule.Declarations.Properties;
-			pictureProps.Add(new Property("float") { Term = new PrimitiveTerm(UnitType.Ident, "right") });
-			pictureProps.Add(new Property("text-align") { Term = new PrimitiveTerm(UnitType.Ident, "center") });
-			var margin = new Property("margin");
-			var marginValues = BuildTermList(TermList.TermSeparator.Space, new PrimitiveTerm(UnitType.Point, 0),
-				new PrimitiveTerm(UnitType.Point, 0), new PrimitiveTerm(UnitType.Point, 4), new PrimitiveTerm(UnitType.Point, 4));
-			margin.Term = marginValues;
-			pictureProps.Add(margin);
-			pictureProps.Add(new Property("padding") { Term = new PrimitiveTerm(UnitType.Point, 2) });
-			pictureProps.Add(new Property("float")
+			var alignment = configNode.Model.Pictures != null
+				? configNode.Model.Pictures.Alignment.ToString().ToLowerInvariant()
+				: pictureOptions.PictureLocation.ToString().ToLowerInvariant();
+			string marginPropName;
+			Term marginValue;
+			switch (alignment)
 			{
-				Term = new PrimitiveTerm(UnitType.Ident, pictureOptions.PictureLocation.ToString().ToLowerInvariant())
-			});
+				case "left":
+					marginPropName = "margin-right";
+					marginValue = new PrimitiveTerm(UnitType.Ident, "auto");
+					break;
+				case "center":
+					marginPropName = "margin";
+					marginValue = BuildTermList(TermList.TermSeparator.Space,
+						new PrimitiveTerm(UnitType.Point, 0),
+						new PrimitiveTerm(UnitType.Ident, "auto"));
+					break;
+				default:
+					// right aligned was the historical default
+					marginPropName = "margin-left";
+					marginValue = new PrimitiveTerm(UnitType.Ident, "auto");
+					break;
+			}
+			// add props for the flexbox layout of the pictures element
+			pictureProps.Add(new Property("display") { Term = new PrimitiveTerm(UnitType.Ident, "table") });
+			var margin = new Property(marginPropName);
+			margin.Term = marginValue;
+			pictureProps.Add(margin);
+			// add the alignment property
+			pictureProps.Add(new Property("text-align") { Term = new PrimitiveTerm(UnitType.Ident, alignment) });
 			styles.Add(pictureAndCaptionRule);
 
+			// Add the properties to size the images
 			var pictureRule = new StyleRule();
 			pictureRule.Value = pictureAndCaptionRule.Value + " img";
-			if(pictureOptions.MinimumHeight > 0)
+			// display the img as a block so that it will take up the full width of the container
+			pictureRule.Declarations.Properties.Add(new Property("display")
+			{
+				Term = new PrimitiveTerm(UnitType.Ident, "block")
+			});
+			if (pictureOptions.MinimumHeight > 0)
 			{
 				pictureRule.Declarations.Properties.Add(new Property("min-height")
 				{
@@ -805,13 +858,13 @@ namespace SIL.FieldWorks.XWorks
 					Term = new PrimitiveTerm(UnitType.Inch, pictureOptions.MinimumWidth)
 				});
 			}
-			if(pictureOptions.MaximumWidth > 0)
+
+			var width = pictureOptions.MaximumWidth;
+			pictureRule.Declarations.Properties.Add(new Property("max-width")
 			{
-				pictureRule.Declarations.Properties.Add(new Property("max-width")
-				{
-					Term = new PrimitiveTerm(UnitType.Inch, pictureOptions.MaximumWidth)
-				});
-			}
+				Term = new PrimitiveTerm(UnitType.Inch, configNode.Model.Pictures != null ? (float)configNode.Model.Pictures.Width : width)
+			});
+
 			if (!IsEmptyRule(pictureRule))
 				styles.Add(pictureRule);
 			return styles;
