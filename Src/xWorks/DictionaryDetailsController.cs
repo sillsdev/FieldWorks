@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else if (Options is DictionaryNodePictureOptions)
 				{
-					// todo: loading options here once UX has been worked out
+					optionsView = LoadPictureOptions(model.Pictures);
 				}
 				else
 				{
@@ -194,6 +194,29 @@ namespace SIL.FieldWorks.XWorks
 			View.AfterTextChanged += OnViewOnAfterTextChanged;
 
 			View.ResumeLayout();
+		}
+
+		private UserControl LoadPictureOptions(PictureConfiguration modelPictures)
+		{
+			var pictureOptionsView = new PictureOptionsView
+			{
+				Alignment = modelPictures.Alignment,
+				PictureWidth = modelPictures.Width
+			};
+
+			pictureOptionsView.AlignmentChanged += (sender, e) =>
+			{
+				modelPictures.Alignment = pictureOptionsView.Alignment;
+				RefreshPreview();
+			};
+
+			pictureOptionsView.WidthChanged += (sender, e) =>
+			{
+				modelPictures.Width = pictureOptionsView.PictureWidth;
+				RefreshPreview();
+			};
+
+			return pictureOptionsView;
 		}
 
 		internal static IEnumerable<ConfigurableDictionaryNode> FindNodes(

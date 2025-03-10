@@ -17,12 +17,12 @@ namespace SIL.FieldWorks.XWorks
 		public PictureConfiguration() { }
 
 		[XmlAttribute("alignment")]
-		public AlignmentType Alignment { get; set; } = AlignmentType.Center;
+		public AlignmentType Alignment { get; set; } = AlignmentType.Right;
 
 		/// <summary>
 		/// Width of the picture in inches.
 		/// </summary>
 		[XmlAttribute("width")]
-		public float Width { get; set; } = 1.0f;
+		public double Width { get; set; } = 1.0f;
 	}
 }
