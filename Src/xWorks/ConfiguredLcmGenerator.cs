@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.XWorks
 			//threads as done here works in all the cases that have been tried.  (Windows/Linux, program/unit test)  Unfortunately,
 			//the speedup on Linux is minimal.
 			var maxThreadCount = Math.Min(16, (int)(Environment.ProcessorCount * 1.5));
-			maxThreadCount = Math.Min(maxThreadCount, actionCount);
+			maxThreadCount = 1;//Math.Min(maxThreadCount, actionCount);
 			Exception exceptionThrown = null;
 			var threadActionArray = new Action[maxThreadCount];
 			using (var countDown = new CountdownEvent(maxThreadCount))
