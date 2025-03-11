@@ -419,6 +419,8 @@ namespace SIL.FieldWorks.XWorks
 			var parProps = new ParagraphProperties();
 			frameStyle.StyleId = PictureAndCaptionTextframeStyle;
 			frameStyle.StyleName = new StyleName(){Val = PictureAndCaptionTextframeStyle};
+			// TODO: Use the justification specified in FLEx for pictures to set the value here.
+			parProps.Justification = new Justification() { Val = JustificationValues.Left };
 			//parProps.Append(textFrameProps);
 			frameStyle.Append(parProps);
 			return frameStyle;
