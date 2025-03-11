@@ -32,6 +32,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks
 {
+	using static SIL.Archiving.ArchivingDlgViewModel;
 	// This alias is to be used when creating Wordprocessing Text objects,
 	// since there are multiple different Text types across the packages we are using.
 	using WP = DocumentFormat.OpenXml.Wordprocessing;
@@ -591,9 +592,9 @@ namespace SIL.FieldWorks.XWorks
 
 				if (lastTextBox == null)
 					return;
+				//TODO: can use this for loop to test resizing textbox to fit a long caption. Remove after testing.
+				//for(int i = 0; i < 4; i++)
 				lastTextBox.AppendChild(CloneElement(fragToCopy, para));
-				//for(int i =0; i < 4; i++)
-				//	lastTextBox.AppendChild(CloneElement(fragToCopy, para));
 			}
 
 			/// <summary>
@@ -730,16 +731,21 @@ namespace SIL.FieldWorks.XWorks
 				return newPar;
 			}
 
-			public void AppendNewTextboxParagraph(IFragment frag, Run run, WP.ParagraphProperties paragraphProps)
+			public void AppendNewTextboxParagraph(IFragment frag, Run run, WP.ParagraphProperties paragraphProps, ConfigurableDictionaryNode config)
 			{
-
-				//TODO: read alignment from the image specifications, and use it to set the preferred alignment here:
+				//TODO: grab picture options from the config node & use it to set the horizontal position
+				//Use the alignment specified in FLEx for the images to set the preferred alignment for the textbox here:
 				string horPosition = "left";
 
 				WP.Paragraph newImagePar = new WP.Paragraph();
 				newImagePar.Append(paragraphProps);
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
 				newImagePar.AppendChild(CloneElement(frag, run));
+
+				// Get the image properties.
+				// We will use this in order to set the ID and name of the textbox to match those of the image.
+				DrawingWP.DocProperties imageProps =
+					newImagePar.Descendants<DrawingWP.DocProperties>().FirstOrDefault();
 
 				// Calculate the height and width in emus to use for the drawing containing the textbox.
 				// Drawing extent is specified in English Metric Units or EMUs, 914400 EMUs corresponds to one inch, and there are 72 points per inch.
@@ -816,9 +822,9 @@ namespace SIL.FieldWorks.XWorks
 				// Text should wrap above and below the textbox
 				anchor.Append(new DrawingWP.WrapTopBottom());
 
-				// Need a unique ID and name for the drawing containing the textbox. Without them, the word document will be mis-formatted and unable to open.
-				string stringId = Guid.NewGuid().ToString();
-				anchor.Append(new DrawingWP.DocProperties() {Id = (UInt32)stringId.GetHashCode(), Name = "Textbox "+stringId});
+				// Need to copy the ID and name from the image drawing into the textbox. Without them, the word document will be mis-formatted and unable to open.
+				anchor.Append(new DrawingWP.DocProperties()
+					{ Id = imageProps.Id, Name = imageProps.Name });
 
 				// Graphic frame drawing properties must be specified or the word document will be mis-formatted and unable to open.
 				anchor.Append(
@@ -1682,7 +1688,7 @@ namespace SIL.FieldWorks.XWorks
 									WP.ParagraphProperties paragraphProps =
 										new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextframeStyle });
 
-									wordWriter.WordFragment.AppendNewTextboxParagraph(frag, run, paragraphProps);
+									wordWriter.WordFragment.AppendNewTextboxParagraph(frag, run, paragraphProps, config);
 								}
 								else
 								{
@@ -2333,7 +2339,6 @@ namespace SIL.FieldWorks.XWorks
 			// Create and add a floating image with image wrap set to top/bottom
 			// Name for the image -- the name of the file after all containing folders and the file extension are removed.
 			string name = (filepath.Split('\\').Last()).Split('.').First();
-
 			var element = new Drawing(
 				new DrawingWP.Inline(
 					new DrawingWP.Extent()
