@@ -591,9 +591,9 @@ namespace SIL.FieldWorks.XWorks
 
 				if (lastTextBox == null)
 					return;
-
-				for(int i =0; i < 4; i++)
-					lastTextBox.AppendChild(CloneElement(fragToCopy, para));
+				lastTextBox.AppendChild(CloneElement(fragToCopy, para));
+				//for(int i =0; i < 4; i++)
+				//	lastTextBox.AppendChild(CloneElement(fragToCopy, para));
 			}
 
 			/// <summary>
@@ -753,6 +753,8 @@ namespace SIL.FieldWorks.XWorks
 				Run textBoxRun = new Run();
 				Drawing textBoxDrawing = new Drawing();
 
+				// Need a unique ID and name for the anchor.
+				string anchorId = Guid.NewGuid().ToString();
 				DrawingWP.Anchor anchor = new DrawingWP.Anchor()
 				{
 					DistanceFromTop = (UInt32Value)0U,
@@ -764,7 +766,8 @@ namespace SIL.FieldWorks.XWorks
 					BehindDoc = false,
 					Locked = false,
 					LayoutInCell = true,
-					AllowOverlap = false
+					AllowOverlap = false,
+					AnchorId = anchorId
 				};
 				anchor.Append(new DrawingWP.SimplePosition() { X = 0L, Y = 0L});
 
@@ -2403,7 +2406,9 @@ namespace SIL.FieldWorks.XWorks
 					DistanceFromTop = (UInt32Value)0U,
 					DistanceFromBottom = (UInt32Value)0U,
 					DistanceFromLeft = (UInt32Value)0U,
-					DistanceFromRight = (UInt32Value)0U
+					DistanceFromRight = (UInt32Value)0U,
+					// generate an ID for the drawing anchor
+					AnchorId = Guid.NewGuid().ToString()
 				}
 			);
 
