@@ -281,6 +281,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="XAmpleParser.cs" />
+    <Compile Include="XAmplePropertiesPreparer.cs" />
+    <Compile Include="XAmplePropertiesXAmpleDataFilesAugmenter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ParserCoreStrings.resx">
