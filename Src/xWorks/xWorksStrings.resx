@@ -1292,4 +1292,10 @@ See USFM documentation for help.</value>
   <data name="WebonaryLogViewer_Save_a_copy" xml:space="preserve">
     <value>Save a copy</value>
   </data>
+  <data name="PictureOptionsView_MaxHeightLabel" xml:space="preserve">
+    <value>Max Height (inches):</value>
+  </data>
+  <data name="PictureOptionsView_MaxWidthLabel" xml:space="preserve">
+    <value>Max Width (inches):</value>
+  </data>
 </root>

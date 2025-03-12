@@ -201,7 +201,8 @@ namespace SIL.FieldWorks.XWorks
 			var pictureOptionsView = new PictureOptionsView
 			{
 				Alignment = modelPictures.Alignment,
-				PictureWidth = modelPictures.Width
+				PictureWidth = modelPictures.Width,
+				PictureHeight = modelPictures.Height
 			};
 
 			pictureOptionsView.AlignmentChanged += (sender, e) =>
@@ -213,6 +214,12 @@ namespace SIL.FieldWorks.XWorks
 			pictureOptionsView.WidthChanged += (sender, e) =>
 			{
 				modelPictures.Width = pictureOptionsView.PictureWidth;
+				RefreshPreview();
+			};
+
+			pictureOptionsView.HeightChanged += (sender, e) =>
+			{
+				modelPictures.Height = pictureOptionsView.PictureHeight;
 				RefreshPreview();
 			};
 

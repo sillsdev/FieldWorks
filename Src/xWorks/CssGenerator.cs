@@ -844,13 +844,6 @@ namespace SIL.FieldWorks.XWorks
 					Term = new PrimitiveTerm(UnitType.Inch, pictureOptions.MinimumHeight)
 				});
 			}
-			if(pictureOptions.MaximumHeight > 0)
-			{
-				pictureRule.Declarations.Properties.Add(new Property("max-height")
-				{
-					Term = new PrimitiveTerm(UnitType.Inch, pictureOptions.MaximumHeight)
-				});
-			}
 			if(pictureOptions.MinimumWidth > 0)
 			{
 				pictureRule.Declarations.Properties.Add(new Property("min-width")
@@ -863,6 +856,12 @@ namespace SIL.FieldWorks.XWorks
 			pictureRule.Declarations.Properties.Add(new Property("max-width")
 			{
 				Term = new PrimitiveTerm(UnitType.Inch, configNode.Model.Pictures != null ? (float)configNode.Model.Pictures.Width : width)
+			});
+
+			var height = pictureOptions.MaximumHeight;
+			pictureRule.Declarations.Properties.Add(new Property("max-height")
+			{
+				Term = new PrimitiveTerm(UnitType.Inch, configNode.Model.Pictures != null ? (float)configNode.Model.Pictures.Height : height)
 			});
 
 			if (!IsEmptyRule(pictureRule))

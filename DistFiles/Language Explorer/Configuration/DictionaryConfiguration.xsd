@@ -42,6 +42,7 @@
 <xs:complexType name="PicturesType">
 	<xs:attribute type="alignmentType" name="alignment"/>
 	<xs:attribute type="xs:float" name="width"/>
+	<xs:attribute type="xs:float" name="height"/>
 </xs:complexType>
 <xs:complexType name="SenseOptionsType">
 	<xs:attribute type="xs:string" name="numberStyle"/>
