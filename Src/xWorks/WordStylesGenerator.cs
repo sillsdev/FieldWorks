@@ -392,8 +392,28 @@ namespace SIL.FieldWorks.XWorks
 		private static Style GenerateParagraphStyleFromPictureOptions(ConfigurableDictionaryNode configNode, DictionaryNodePictureOptions pictureOptions,
 			LcmCache cache, ReadOnlyPropertyTable propertyTable)
 		{
-			//TODO: rework style for textframes
+			//TODO: check if anything else about the style needs to be added for textframes
 			var frameStyle = new Style();
+
+			// TODO: Use the picture configuration to set the justification value and width for the textframe.
+			// initialize width to one inch and justification to right
+			double widthInches = 1.0;
+			JustificationValues alignment = JustificationValues.Right;
+
+			// if we have picture options, update width and alignment
+			if (configNode.DictionaryNodeOptions is DictionaryNodePictureOptions)
+			{
+				DictionaryNodePictureOptions picOpts = (DictionaryNodePictureOptions)configNode.DictionaryNodeOptions;
+
+				if(picOpts.MaximumWidth > 0)
+					widthInches = picOpts.MaximumWidth;
+
+				if (picOpts.PictureLocation.ToString() == "Center")
+					alignment = JustificationValues.Center;
+				else if (picOpts.PictureLocation.ToString() == "Left")
+					alignment = JustificationValues.Left;
+
+			}
 
 			// A textframe for holding an image/caption has to be a paragraph
 			frameStyle.Type = StyleValues.Paragraph;
@@ -401,7 +421,7 @@ namespace SIL.FieldWorks.XWorks
 			// We use FLEX's max image width as the width for the textframe.
 			// Note: 1 inch is equivalent to 72 points, and width is specified in twentieths of a point.
 			// Thus, we calculate textframe width by multiplying max image width in inches by 72*30 = 1440
-			var textFrameWidth = LcmWordGenerator.maxImageWidthInches * 1440;
+			var textFrameWidth = widthInches * 1440;
 
 			// We will leave a 4-pt border around the textframe--80 twentieths of a point.
 			var textFrameBorder = "80";
@@ -419,8 +439,8 @@ namespace SIL.FieldWorks.XWorks
 			var parProps = new ParagraphProperties();
 			frameStyle.StyleId = PictureAndCaptionTextframeStyle;
 			frameStyle.StyleName = new StyleName(){Val = PictureAndCaptionTextframeStyle};
-			// TODO: Use the justification specified in FLEx for pictures to set the value here.
-			parProps.Justification = new Justification() { Val = JustificationValues.Left };
+
+			parProps.Justification = new Justification() { Val = alignment };
 			//parProps.Append(textFrameProps);
 			frameStyle.Append(parProps);
 			return frameStyle;
