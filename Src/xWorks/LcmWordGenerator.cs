@@ -42,8 +42,6 @@ namespace SIL.FieldWorks.XWorks
 		private LcmCache Cache { get; }
 		private static WordStyleCollection s_styleCollection = new WordStyleCollection();
 		private ReadOnlyPropertyTable _propertyTable;
-		internal const int maxImageHeightInches = 1;
-		internal const int maxImageWidthInches = 1;
 		public static bool IsBidi { get; private set; }
 
 		public LcmWordGenerator(LcmCache cache)
@@ -592,8 +590,6 @@ namespace SIL.FieldWorks.XWorks
 
 				if (lastTextBox == null)
 					return;
-				//TODO: can use this for loop to test resizing textbox to fit a long caption. Remove after testing.
-				//for(int i = 0; i < 4; i++)
 				lastTextBox.AppendChild(CloneElement(fragToCopy, para));
 			}
 
@@ -735,6 +731,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				//TODO: grab picture options from the config node & use it to set the horizontal position
 				//Use the alignment specified in FLEx for the images to set the preferred alignment for the textbox here:
+				string alignment = "right";
+				if (config.DictionaryNodeOptions is DictionaryNodePictureOptions)
+					alignment = ((DictionaryNodePictureOptions)config.DictionaryNodeOptions)
+						.PictureLocation.ToString().ToLower();
+					//new PictureConfiguration().Alignment.ToString().ToLower();
 				string horPosition = "left";
 
 				WP.Paragraph newImagePar = new WP.Paragraph();
@@ -777,7 +778,7 @@ namespace SIL.FieldWorks.XWorks
 				// image textbox is anchored horizontally wrt the column
 				anchor.Append(
 					new DrawingWP.HorizontalPosition(
-						new DrawingWP.HorizontalAlignment(horPosition)
+						new DrawingWP.HorizontalAlignment(alignment)
 					)
 					{
 						RelativeFrom = DrawingWP.HorizontalRelativePositionValues.Column
@@ -2301,34 +2302,19 @@ namespace SIL.FieldWorks.XWorks
 			var actHeightPx = img.PixelHeight;
 			var horzRezDpi = img.DpiX;
 			var vertRezDpi = img.DpiY;
-			var actWidthInches = (float)(actWidthPx / horzRezDpi);
-			var actHeightInches = (float)(actHeightPx / vertRezDpi);
-
-			var ratioActualInches = actHeightInches / actWidthInches;
-			var ratioMaxInches = (float)(maxImageHeightInches) / (float)(maxImageWidthInches);
+			var totalWidthInches = (float)(actWidthPx / horzRezDpi);
+			var totalHeightInches = (float)(actHeightPx / vertRezDpi);
 
 			// height/widthInches will store the actual height and width
 			// to use for the image in the Word doc.
-			float heightInches = maxImageHeightInches;
-			float widthInches = maxImageWidthInches;
-
-			// If the ratio of the actual image is greater than the max ratio,
-			// we leave height equal to the max height and scale width accordingly.
-			if (ratioActualInches >= ratioMaxInches)
-			{
-				widthInches = actWidthInches * (maxImageHeightInches / actHeightInches);
-			}
-			// Otherwise, if the ratio of the actual image is less than the max ratio,
-			// we leave width equal to the max width and scale height accordingly.
-			else if (ratioActualInches < ratioMaxInches)
-			{
-				heightInches = actHeightInches * (maxImageWidthInches / actWidthInches);
-			}
+			// Width is set in the picture configuration. Scale height corresponding to the width.
+			var widthToUseInches = new PictureConfiguration().Width;
+			var heightToUseInches = totalHeightInches * (widthToUseInches / totalWidthInches) ;
 
 			// Calculate the actual height and width in emus to use for the image.
 			const int emusPerInch = 914400;
-			var widthEmus = (long)(widthInches * emusPerInch);
-			var heightEmus = (long)(heightInches * emusPerInch);
+			var widthEmus = (long)(widthToUseInches * emusPerInch);
+			var heightEmus = (long)(heightToUseInches * emusPerInch);
 
 			// We want a 4pt right/left margin--4pt is equal to 0.0553 inches in MS word.
 			float rlMarginInches = 0.0553F;
