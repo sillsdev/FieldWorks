@@ -2619,6 +2619,24 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Max Height (inches):.
+        /// </summary>
+        internal static string PictureOptionsView_MaxHeightLabel {
+            get {
+                return ResourceManager.GetString("PictureOptionsView_MaxHeightLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Max Width (inches):.
+        /// </summary>
+        internal static string PictureOptionsView_MaxWidthLabel {
+            get {
+                return ResourceManager.GetString("PictureOptionsView_MaxWidthLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Problem Starting {0}.
         /// </summary>
         internal static string ProblemStarting0 {

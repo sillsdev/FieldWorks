@@ -28,6 +28,14 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			set => widthTextBox.Text = value.ToString("F2");
 		}
 
+		public double PictureHeight
+		{
+			get => double.TryParse(heightTextBox.Text, NumberStyles.Float, null, out var width)
+				? Math.Round(width, 2)
+				: 0.0f;
+			set => heightTextBox.Text = value.ToString("F2");
+		}
+
         public event EventHandler AlignmentChanged
         {
             add => alignmentComboBox.SelectedIndexChanged += value;
@@ -38,6 +46,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
         {
             add => widthTextBox.TextChanged += value;
 			remove => widthTextBox.TextChanged -= value;
+		}
+
+		public event EventHandler HeightChanged
+		{
+			add => heightTextBox.TextChanged += value;
+			remove => heightTextBox.TextChanged -= value;
 		}
     }
 }
