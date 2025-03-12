@@ -32,7 +32,6 @@ using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks
 {
-	using static SIL.Archiving.ArchivingDlgViewModel;
 	// This alias is to be used when creating Wordprocessing Text objects,
 	// since there are multiple different Text types across the packages we are using.
 	using WP = DocumentFormat.OpenXml.Wordprocessing;
@@ -568,7 +567,7 @@ namespace SIL.FieldWorks.XWorks
 				lastPar.AppendChild(CloneElement(fragToCopy, run));
 			}
 
-			public void AppendToTextbox(IFragment fragToCopy, Run run, WP.ParagraphProperties paragraphProps)
+			public void AppendImageToTextbox(IFragment fragToCopy, Run run, WP.ParagraphProperties paragraphProps)
 			{
 				WP.TextBoxContent lastTextBox = GetLastTextBox();
 
@@ -584,7 +583,7 @@ namespace SIL.FieldWorks.XWorks
 				lastTextBox.AppendChild(newImagePar);
 			}
 
-			public void AppendParagraphToTextbox(IFragment fragToCopy, WP.Paragraph para)
+			public void AppendCaptionParagraphToTextbox(IFragment fragToCopy, WP.Paragraph para)
 			{
 				WP.TextBoxContent lastTextBox = GetLastTextBox();
 
@@ -709,8 +708,7 @@ namespace SIL.FieldWorks.XWorks
 
 			public WP.TextBoxContent GetLastTextBox()
 			{
-				//List<WP.TextBoxContent> textBoxContList =
-					//DocBody.OfType<WP.TextBoxContent>().ToList();
+				// Returns the textbox content belonging to the last textbox added to the document
 				List<WP.TextBoxContent> textBoxContList =
 					DocBody.Descendants<WP.TextBoxContent>().ToList();
 				if (textBoxContList.Any())
@@ -1690,15 +1688,9 @@ namespace SIL.FieldWorks.XWorks
 								}
 								else
 								{
-									// TODO: Fix the captions for textboxes
-									//otherwise, we have a caption; we must add the caption to the last textbox, which should contain the image
-									//WP.Paragraph newPar = new WP.Paragraph();
 									WP.ParagraphProperties paragraphProps =
 										new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextframeStyle });
-									//newPar.Append(paragraphProps);
-									//newPar.Append(run);
-									wordWriter.WordFragment.AppendToTextbox(frag, run, paragraphProps);
-									//wordWriter.WordFragment.AppendToParagraph(frag, run, false);
+									wordWriter.WordFragment.AppendImageToTextbox(frag, run, paragraphProps);
 								}
 							}
 							else
@@ -1720,8 +1712,8 @@ namespace SIL.FieldWorks.XWorks
 							// If we have a paragraph associated with a Pictures node, we are dealing with an image caption.
 							if (config.Label == "Pictures" || config.Parent?.Label == "Pictures")
 							{
-								// TODO: Handle cloning the caption paragraph inside the textbox...
-								wordWriter.WordFragment.AppendParagraphToTextbox(frag, para);
+								// In this case, the paragraph is an image caption and belongs in the last textbox
+								wordWriter.WordFragment.AppendCaptionParagraphToTextbox(frag, para);
 							}
 							else
 								wordWriter.WordFragment.AppendParagraph(frag, para);
