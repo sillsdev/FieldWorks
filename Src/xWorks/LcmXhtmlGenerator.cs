@@ -82,7 +82,8 @@ namespace SIL.FieldWorks.XWorks
 		/// the given collection.
 		/// </summary>
 		public static void SavePublishedHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, int entriesPerPage,
-			DictionaryConfigurationModel configuration, XCore.PropertyTable propertyTable, string xhtmlPath, IThreadedProgress progress = null)
+			DictionaryConfigurationModel configuration, XCore.PropertyTable propertyTable, string xhtmlPath, IThreadedProgress progress = null,
+			bool isXhtmlExport = false)
 		{
 			var entryCount = entryHvos.Length;
 			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
@@ -97,6 +98,7 @@ namespace SIL.FieldWorks.XWorks
 				var custCssPath = CssGenerator.CopyCustomCssAndGetPath(Path.GetDirectoryName(xhtmlPath), cache, false);
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(cache, readOnlyPropertyTable, true, true, Path.GetDirectoryName(xhtmlPath),
 					ConfiguredLcmGenerator.IsEntryStyleRtl(readOnlyPropertyTable, configuration), Path.GetFileName(cssPath) == "configured.css");
+				settings.IsXhtmlExport = isXhtmlExport;
 				settings.StylesGenerator.AddGlobalStyles(configuration, readOnlyPropertyTable);
 				GenerateOpeningHtml(cssPath, custCssPath, settings, xhtmlWriter);
 				Tuple<int, int> currentPageBounds = GetPageForCurrentEntry(settings, entryHvos, entriesPerPage);
@@ -550,10 +552,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					xw.WriteStartElement("span");
 					xw.WriteAttributeString("class", CssGenerator.WritingSystemPrefix);
-					if (!settings.IsWebExport)
-					{
-						xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
-					}
+					WriteNodeId(xw, config, settings);
 					var prefix = ((CoreWritingSystemDefinition)settings.Cache.WritingSystemFactory.get_EngineOrNull(wsId)).Abbreviation;
 					xw.WriteString(prefix);
 					xw.WriteEndElement();
@@ -564,7 +563,17 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public IFragment GenerateAudioLinkContent(ConfigurableDictionaryNode config, string classname,
+		private void WriteNodeId(XmlWriter xw, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings)
+		{
+			if (config == null)
+				// When generating an error node config is null
+				return;
+			if (settings != null && (settings.IsWebExport || settings.IsXhtmlExport))
+				return;
+			xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
+		}
+
+		public IFragment GenerateAudioLinkContent(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string classname,
 			string srcAttribute, string caption, string safeAudioId)
 		{
 			var bldr = new StringBuilder();
@@ -573,7 +582,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				xw.WriteStartElement("audio");
 				xw.WriteAttributeString("id", safeAudioId);
-				xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
+				WriteNodeId(xw, config, settings);
 				xw.WriteStartElement("source");
 				xw.WriteAttributeString("src", srcAttribute);
 				xw.WriteRaw("");
@@ -649,10 +658,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				xw.WriteStartElement("span");
 				xw.WriteAttributeString("class", className);
-				if (!settings.IsWebExport)
-				{
-					xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
-				}
+				WriteNodeId(xw, config, settings);
 
 				var innerBuilder = new StringBuilder();
 				foreach (var child in config.ReferencedOrDirectChildren)
@@ -705,11 +711,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public void StartMultiRunString(IFragmentWriter writer, ConfigurableDictionaryNode config, string writingSystem)
+		public void StartMultiRunString(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string writingSystem)
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement("span");
-			xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
+			WriteNodeId(xw, config, settings);
 			xw.WriteAttributeString("lang", writingSystem);
 		}
 
@@ -719,11 +725,11 @@ namespace SIL.FieldWorks.XWorks
 			((XmlFragmentWriter)writer).Writer.WriteEndElement(); // </span> (lang)
 		}
 
-		public void StartBiDiWrapper(IFragmentWriter writer, ConfigurableDictionaryNode config, bool rightToLeft)
+		public void StartBiDiWrapper(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, bool rightToLeft)
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement("span"); // set direction on a nested span to preserve Context's position and direction.
-			xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
+			WriteNodeId(xw, config, settings);
 			xw.WriteAttributeString("dir", rightToLeft ? "rtl" : "ltr");
 		}
 
@@ -733,15 +739,11 @@ namespace SIL.FieldWorks.XWorks
 			((XmlFragmentWriter)writer).Writer.WriteEndElement(); // </span> (dir)
 		}
 
-		public void StartRun(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string writingSystem, bool first)
+		public void StartRun(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string writingSystem, bool first)
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement("span");
-			// When generating an error node config is null
-			if (config != null)
-			{
-				xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
-			}
+			WriteNodeId(xw, config, settings);
 			xw.WriteAttributeString("lang", writingSystem);
 		}
 
@@ -880,12 +882,12 @@ namespace SIL.FieldWorks.XWorks
 			((XmlFragmentWriter)writer).Writer.WriteEndElement(); // should be </table>
 		}
 
-		public void StartEntry(IFragmentWriter writer, ConfigurableDictionaryNode config, string className, Guid entryGuid, int index, RecordClerk clerk)
+		public void StartEntry(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string className, Guid entryGuid, int index, RecordClerk clerk)
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement("div");
 			xw.WriteAttributeString("class", className);
-			xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
+			WriteNodeId(xw, config, settings);
 			xw.WriteAttributeString("id", "g" + entryGuid);
 		}
 
@@ -902,13 +904,13 @@ namespace SIL.FieldWorks.XWorks
 			EndObject(writer);
 		}
 
-		public void AddCollection(IFragmentWriter writer, ConfigurableDictionaryNode config,
+		public void AddCollection(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings,
 			bool isBlockProperty, string className, IFragment content)
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement(isBlockProperty ? "div" : "span");
 			xw.WriteAttributeString("class", className);
-			xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
+			WriteNodeId(xw, config, settings);
 			xw.WriteRaw(content.ToString());
 			xw.WriteEndElement();
 		}
@@ -933,7 +935,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary/>
 		/// <param name="pictureGuid">This is used as an id in the xhtml and must be unique.</param>
-		public IFragment AddImage(ConfigurableDictionaryNode config, string classAttribute, string srcAttribute, string pictureGuid)
+		public IFragment AddImage(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string classAttribute, string srcAttribute, string pictureGuid)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);
@@ -943,7 +945,7 @@ namespace SIL.FieldWorks.XWorks
 				xw.WriteAttributeString("class", classAttribute);
 				xw.WriteAttributeString("src", srcAttribute);
 				xw.WriteAttributeString("id", "g" + pictureGuid);
-				xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
+				WriteNodeId(xw, config, settings);
 				xw.WriteEndElement();
 				xw.Flush();
 				return fragment;
@@ -965,7 +967,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public IFragment GenerateSenseNumber(ConfigurableDictionaryNode config, string formattedSenseNumber, string senseNumberWs)
+		public IFragment GenerateSenseNumber(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string formattedSenseNumber, string senseNumberWs)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);
@@ -974,7 +976,7 @@ namespace SIL.FieldWorks.XWorks
 				xw.WriteStartElement("span");
 				xw.WriteAttributeString("class", "sensenumber");
 				xw.WriteAttributeString("lang", senseNumberWs);
-				xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
+				WriteNodeId(xw, config, settings);
 				xw.WriteString(formattedSenseNumber);
 				xw.WriteEndElement();
 				xw.Flush();
@@ -1060,7 +1062,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public IFragment AddCollectionItem(ConfigurableDictionaryNode config, bool isBlock, string collectionItemClass, IFragment content, bool first)
+		public IFragment AddCollectionItem(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlock, string collectionItemClass, IFragment content, bool first)
 		{
 			var bldr = new StringBuilder();
 			var builder = new StringFragment(bldr);
@@ -1068,7 +1070,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				xw.WriteStartElement(isBlock ? "div" : "span");
 				xw.WriteAttributeString("class", collectionItemClass);
-				xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
+				WriteNodeId(xw, config, settings);
 				xw.WriteRaw(content.ToString());
 				xw.WriteEndElement();
 				xw.Flush();
@@ -1076,7 +1078,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public IFragment AddProperty(ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string className, bool isBlockProperty, string content, string writingSystem)
+		public IFragment AddProperty(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string className, bool isBlockProperty, string content, string writingSystem)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);
@@ -1085,7 +1087,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				xw.WriteStartElement(isBlockProperty ? "div" : "span");
 				xw.WriteAttributeString("class", className);
-				xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
+				WriteNodeId(xw, config, settings);
 				xw.WriteString(content);
 				xw.WriteEndElement();
 				xw.Flush();
@@ -1093,7 +1095,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public IFragment AddSenseData(ConfigurableDictionaryNode config, IFragment senseNumberSpan, Guid ownerGuid,
+		public IFragment AddSenseData(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, IFragment senseNumberSpan, Guid ownerGuid,
 			IFragment senseContent, bool first)
 		{
 			bool isBlock = ConfiguredLcmGenerator.IsBlockProperty(config);
@@ -1109,7 +1111,7 @@ namespace SIL.FieldWorks.XWorks
 				xw.WriteStartElement(isBlock ? "div" : "span");
 				xw.WriteAttributeString("class", className);
 				xw.WriteAttributeString("entryguid", "g" + ownerGuid);
-				xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
+				WriteNodeId(xw, config, settings);
 				xw.WriteRaw(senseContent.ToString());
 				xw.WriteEndElement();   // element name for property
 				xw.WriteEndElement();   // </span>
