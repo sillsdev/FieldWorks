@@ -727,8 +727,23 @@ namespace SIL.FieldWorks.XWorks
 
 			public void AppendNewTextboxParagraph(IFragment frag, Run run, WP.ParagraphProperties paragraphProps, ConfigurableDictionaryNode config)
 			{
-				//TODO: grab picture options from the config node & use it to set the horizontal position
-				//Use the alignment specified in FLEx for the images to set the preferred alignment for the textbox here:
+				int uniqueGraphicId;
+				int uniqueInnerDrawingId;
+				int uniqueOuterDrawingId;
+
+				// Lock style collection while getting the IDs to use for the Image & Textbox
+				lock (s_styleCollection)
+				{
+					// The xml textbox image structure consists of a graphic object that is nested inside a drawing object
+					// that is nested inside another drawing object.
+					// The unique ID for the outer drawing object should be incremented once from the inner drawing object,
+					// which should be incremented once from the unique ID of the innermost graphic object.
+					uniqueGraphicId = s_styleCollection.GetAndIncrementPictureUniqueIdCount;
+					uniqueInnerDrawingId = s_styleCollection.GetAndIncrementPictureUniqueIdCount;
+					uniqueOuterDrawingId = s_styleCollection.GetAndIncrementPictureUniqueIdCount;
+				}
+
+				//Use the image alignment specified in FLEx for the textbox alignment, with right align as default
 				string alignment = "right";
 				if (config.DictionaryNodeOptions is DictionaryNodePictureOptions)
 					alignment = config.Model.Pictures.Alignment.ToString().ToLower();
@@ -738,10 +753,17 @@ namespace SIL.FieldWorks.XWorks
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
 				newImagePar.AppendChild(CloneElement(frag, run));
 
-				// Get the image properties.
-				// We will use this in order to set the ID and name of the textbox to match those of the image.
-				DrawingWP.DocProperties imageProps =
+				// Get the properties of the inner drawing object in order to set its unique ID.
+				DrawingWP.DocProperties innerDrawingObjectProps =
 					newImagePar.Descendants<DrawingWP.DocProperties>().FirstOrDefault();
+				innerDrawingObjectProps.Id = Convert.ToUInt32(uniqueInnerDrawingId);
+
+				// Get the properties of the innermost graphic object in order to set its unique ID.
+				// We will also use this to get the name of the image to use in the textbox.
+				Pictures.NonVisualDrawingProperties graphicObjectProps =
+					newImagePar.Descendants<Pictures.NonVisualDrawingProperties>()
+						.FirstOrDefault();
+				graphicObjectProps.Id = Convert.ToUInt32(uniqueGraphicId);
 
 				// Calculate the height and width in emus to use for the drawing containing the textbox.
 				// Drawing extent is specified in English Metric Units or EMUs, 914400 EMUs corresponds to one inch, and there are 72 points per inch.
@@ -789,9 +811,7 @@ namespace SIL.FieldWorks.XWorks
 						RelativeFrom = DrawingWP.VerticalRelativePositionValues.Paragraph
 					}
 				);
-				//TODO: Extent encodes the width and height of the final drawing item.
-				//TODO: Need to calculate this based on image size (and the size that will be needed for the caption...though we won't know this until later).
-				//TODO: perhaps initially set it based on image size, and then get and update the extent later after captions are added??
+
 				// This extent must also be declared in the anchor's shapeproperties element.
 				anchor.Append(
 					new DrawingWP.Extent()
@@ -815,9 +835,10 @@ namespace SIL.FieldWorks.XWorks
 				// Text should wrap above and below the textbox
 				anchor.Append(new DrawingWP.WrapTopBottom());
 
-				// Need to copy the ID and name from the image drawing into the textbox. Without them, the word document will be mis-formatted and unable to open.
+				// Need to add ID and name to the textbox drawing. Without them, the word document will be mis-formatted and unable to open.
+				// Use the name from the picture for the textbox.
 				anchor.Append(new DrawingWP.DocProperties()
-					{ Id = imageProps.Id, Name = imageProps.Name });
+					{ Id = Convert.ToUInt32(uniqueOuterDrawingId), Name = graphicObjectProps.Name });
 
 				// Graphic frame drawing properties must be specified or the word document will be mis-formatted and unable to open.
 				anchor.Append(
@@ -851,6 +872,7 @@ namespace SIL.FieldWorks.XWorks
 								),
 
 								new DrawingShape.TextBodyProperties(
+									// ShapeAutoFit allows the textbox to resize if its contents overflow
 									new XmlDrawing.ShapeAutoFit()
 								)
 								{
@@ -2022,8 +2044,6 @@ namespace SIL.FieldWorks.XWorks
 
 			// TODO: in openxml, will links be plaintext by default?
 			//WordStylesGenerator.MakeLinksLookLikePlainText(_styleSheet);
-			// TODO:  Generate style for audiows after we add audio to export
-			//WordStylesGenerator.GenerateWordStyleForAudioWs(_styleSheet, cache);
 		}
 
 		/// <summary>
@@ -2279,7 +2299,7 @@ namespace SIL.FieldWorks.XWorks
 			return mainPart.GetIdOfPart(imagePart);
 		}
 
-		public static Drawing CreateImage(WordprocessingDocument doc, string filepath, string partId, double maxWidth, double maxHeight)
+		public static Drawing CreateImage(WordprocessingDocument doc, string filepath, string partId, double maxWidthInches, double maxHeightInches)
 		{
 			// Create a bitmap to store the image so we can track/preserve aspect ratio.
 			var img = new BitmapImage();
@@ -2296,19 +2316,37 @@ namespace SIL.FieldWorks.XWorks
 			var actHeightPx = img.PixelHeight;
 			var horzRezDpi = img.DpiX;
 			var vertRezDpi = img.DpiY;
-			var totalWidthInches = Math.Min((float)(actWidthPx / horzRezDpi), maxWidth);
-			var totalHeightInches = Math.Min((float)(actHeightPx / vertRezDpi), maxHeight);
+			var actWidthInches = actWidthPx / horzRezDpi;
+			var actHeightInches = actHeightPx / vertRezDpi;
 
-			// height/widthInches will store the actual height and width
+			var ratioActualInches = actHeightInches / actWidthInches;
+			var ratioMaxInches = maxHeightInches / maxWidthInches;
+
+			var totalWidthInches = Math.Min((float)(actWidthPx / horzRezDpi), maxWidthInches);
+			var totalHeightInches = Math.Min((float)(actHeightPx / vertRezDpi), maxHeightInches);
+
+			// height/widthInches will store the final height and width
 			// to use for the image in the Word doc.
-			// Width is set in the picture configuration. Scale height corresponding to the width.
-			var widthToUseInches = new PictureConfiguration().Width;
-			var heightToUseInches = totalHeightInches * (widthToUseInches / totalWidthInches) ;
+			double heightInches = maxHeightInches;
+			double widthInches = maxWidthInches;
+
+			// If the ratio of the actual image is greater than the max ratio,
+			// we leave height equal to the max height and scale width accordingly.
+			if (ratioActualInches >= ratioMaxInches)
+			{
+				widthInches = actWidthInches * (maxHeightInches / actHeightInches);
+			}
+			// Otherwise, if the ratio of the actual image is less than the max ratio,
+			// we leave width equal to the max width and scale height accordingly.
+			else if (ratioActualInches < ratioMaxInches)
+			{
+				heightInches = actHeightInches * (maxWidthInches / actWidthInches);
+			}
 
 			// Calculate the actual height and width in emus to use for the image.
 			const int emusPerInch = 914400;
-			var widthEmus = (long)(widthToUseInches * emusPerInch);
-			var heightEmus = (long)(heightToUseInches * emusPerInch);
+			var widthEmus = (long)(widthInches * emusPerInch);
+			var heightEmus = (long)(heightInches * emusPerInch);
 
 			// We want a 4pt right/left margin--4pt is equal to 0.0553 inches in MS word.
 			float rlMarginInches = 0.0553F;
@@ -2332,7 +2370,7 @@ namespace SIL.FieldWorks.XWorks
 					},
 					new DrawingWP.DocProperties()
 					{
-						Id = (UInt32Value)1U,
+						// The drawing also needs an Id; we will add this when we add the image to the textbox.
 						Name = name
 					},
 					new DrawingWP.NonVisualGraphicFrameDrawingProperties(
@@ -2343,7 +2381,7 @@ namespace SIL.FieldWorks.XWorks
 								new Pictures.NonVisualPictureProperties(
 									new Pictures.NonVisualDrawingProperties()
 									{
-										Id = (UInt32Value)0U,
+										// The graphic also needs an Id; we will add this when we add the image to the textbox.
 										Name = name
 									},
 									new Pictures.NonVisualPictureDrawingProperties(
