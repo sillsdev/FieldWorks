@@ -731,10 +731,7 @@ namespace SIL.FieldWorks.XWorks
 				//Use the alignment specified in FLEx for the images to set the preferred alignment for the textbox here:
 				string alignment = "right";
 				if (config.DictionaryNodeOptions is DictionaryNodePictureOptions)
-					alignment = ((DictionaryNodePictureOptions)config.DictionaryNodeOptions)
-						.PictureLocation.ToString().ToLower();
-					//new PictureConfiguration().Alignment.ToString().ToLower();
-				string horPosition = "left";
+					alignment = config.Model.Pictures.Alignment.ToString().ToLower();
 
 				WP.Paragraph newImagePar = new WP.Paragraph();
 				newImagePar.Append(paragraphProps);
@@ -1775,7 +1772,12 @@ namespace SIL.FieldWorks.XWorks
 			DocFragment imageFrag = new DocFragment();
 			WordprocessingDocument wordDoc = imageFrag.DocFrag;
 			string partId = AddImagePartToPackage(wordDoc, srcAttribute);
-			Drawing image = CreateImage(wordDoc, srcAttribute, partId);
+			var picOpts = config.DictionaryNodeOptions as DictionaryNodePictureOptions;
+			// calculate the maximum image width from the configuration
+			var maxWidth = config.Model.Pictures?.Width ?? (picOpts?.MaximumWidth ?? 1.0f);
+			// calculate the maximum image height from the configuration
+			var maxHeight = config.Model.Pictures?.Height ?? (picOpts?.MaximumHeight ?? 1.0f);
+			Drawing image = CreateImage(wordDoc, srcAttribute, partId, maxWidth, maxHeight);
 
 			if (wordDoc.MainDocumentPart is null || wordDoc.MainDocumentPart.Document.Body is null)
 			{
@@ -2277,7 +2279,7 @@ namespace SIL.FieldWorks.XWorks
 			return mainPart.GetIdOfPart(imagePart);
 		}
 
-		public static Drawing CreateImage(WordprocessingDocument doc, string filepath, string partId)
+		public static Drawing CreateImage(WordprocessingDocument doc, string filepath, string partId, double maxWidth, double maxHeight)
 		{
 			// Create a bitmap to store the image so we can track/preserve aspect ratio.
 			var img = new BitmapImage();
@@ -2294,8 +2296,8 @@ namespace SIL.FieldWorks.XWorks
 			var actHeightPx = img.PixelHeight;
 			var horzRezDpi = img.DpiX;
 			var vertRezDpi = img.DpiY;
-			var totalWidthInches = (float)(actWidthPx / horzRezDpi);
-			var totalHeightInches = (float)(actHeightPx / vertRezDpi);
+			var totalWidthInches = Math.Min((float)(actWidthPx / horzRezDpi), maxWidth);
+			var totalHeightInches = Math.Min((float)(actHeightPx / vertRezDpi), maxHeight);
 
 			// height/widthInches will store the actual height and width
 			// to use for the image in the Word doc.
