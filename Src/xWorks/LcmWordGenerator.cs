@@ -2322,9 +2322,6 @@ namespace SIL.FieldWorks.XWorks
 			var ratioActualInches = actHeightInches / actWidthInches;
 			var ratioMaxInches = maxHeightInches / maxWidthInches;
 
-			var totalWidthInches = Math.Min((float)(actWidthPx / horzRezDpi), maxWidthInches);
-			var totalHeightInches = Math.Min((float)(actHeightPx / vertRezDpi), maxHeightInches);
-
 			// height/widthInches will store the final height and width
 			// to use for the image in the Word doc.
 			double heightInches = maxHeightInches;
