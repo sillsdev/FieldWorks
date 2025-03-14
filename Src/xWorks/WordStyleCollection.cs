@@ -25,6 +25,7 @@ namespace SIL.FieldWorks.XWorks
 		//
 		private Dictionary<string,List<StyleElement>> styleDictionary = new Dictionary<string, List<StyleElement>>();
 		private int bulletAndNumberingUniqueIdCounter = 1;
+		private int pictureUniqueIdCounter = 1;
 
 		/// <summary>
 		/// Returns a single list containing all of the Styles.
@@ -62,6 +63,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				styleDictionary.Clear();
 				bulletAndNumberingUniqueIdCounter = 1;
+				pictureUniqueIdCounter = 1;
 			}
 		}
 
@@ -256,6 +258,20 @@ namespace SIL.FieldWorks.XWorks
 				lock(styleDictionary)
 				{
 					return bulletAndNumberingUniqueIdCounter++;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Returns a unique id that is used for picture IDs.
+		/// </summary>
+		public int GetAndIncrementPictureUniqueIdCount
+		{
+			get
+			{
+				lock (styleDictionary)
+				{
+					return pictureUniqueIdCounter++;
 				}
 			}
 		}
