@@ -106,7 +106,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			public override void DoWork()
 			{
-				m_scheduler.m_parserWorker.UpdateWordform(m_wordform, m_priority, m_checkParser);
+				m_scheduler.m_parserWorker.ParseAndUpdateWordform(m_wordform, m_priority, m_checkParser);
 				base.DoWork();
 			}
 		}
