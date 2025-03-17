@@ -13,6 +13,7 @@ using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.WritingSystems;
 
 
 namespace SIL.FieldWorks.IText
@@ -374,6 +375,7 @@ namespace SIL.FieldWorks.IText
 			ITsTextProps formTextProperties = FormTextProperties(fdoCache, fUseStyleSheet, wsVern);
 			ITsTextProps glossTextProperties = GlossTextProperties(fdoCache, true, fUseStyleSheet);
 			ITsStrBldr tsb = TsStringUtils.MakeStrBldr();
+			int highlightColor = (int)CmObjectUi.RGB(Color.Yellow);
 			int cmorph = wa.MorphBundlesOS.Count;
 			if (cmorph == 0)
 				return TsStringUtils.MakeString(ITextStrings.ksNoMorphemes, fdoCache.DefaultUserWs);
@@ -444,6 +446,16 @@ namespace SIL.FieldWorks.IText
 				}
 				else
 					tsb.Replace(ichMinSense, ichMinSense, ksMissingString, glossTextProperties);
+
+				// Highlight any analysis that the parser approves.
+				Opinions o = wa.GetAgentOpinion(wa.Cache.LangProject.DefaultParserAgent);
+				if (o == Opinions.approves)
+				{
+					// tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, highlightColor);
+					tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
+					tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptItalic, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
+					// tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
+				}
 
 				// Enhance JohnT: use proper seps.
 				tsb.Replace(tsb.Length, tsb.Length, ksPartSeparator, null);
