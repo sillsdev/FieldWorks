@@ -6151,9 +6151,9 @@ namespace SIL.FieldWorks.XWorks
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
-				var entryDataPath = string.Format("/div[@class='lexentry-1']/span[@class='mlrs-1']/span[@class='mlr']/span[@class='configtargets']/span[@class='configtarget']/span[@class='entrycstring-1']/span[text()='{0}']", entryCustomData);
+				var entryDataPath = string.Format("/div[@class='lexentry-1']/span[@class='mlrs-1']/span[@class='mlr']/span[@class='configtargets-1']/span[@class='configtarget']/span[@class='entrycstring-1']/span[text()='{0}']", entryCustomData);
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(entryDataPath, 1);
-				var senseDataPath = string.Format("/div[@class='lexentry-1']/span[@class='mlrs-1']/span[@class='mlr']/span[@class='configtargets']/span[@class='configtarget']/span[@class='sensecstring']/span[text()='{0}']", senseCustomData);
+				var senseDataPath = string.Format("/div[@class='lexentry-1']/span[@class='mlrs-1']/span[@class='mlr']/span[@class='configtargets-1']/span[@class='configtarget']/span[@class='sensecstring']/span[text()='{0}']", senseCustomData);
 				AssertThatXmlIn.String(result).HasNoMatchForXpath(senseDataPath, message: "Ref is to Entry; should be no Sense Custom Data");
 			}
 		}
@@ -6215,9 +6215,9 @@ namespace SIL.FieldWorks.XWorks
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
-				var entryDataPath = string.Format("/div[@class='lexentry-1']/span[@class='mlrs-1']/span[@class='mlr']/span[@class='configtargets']/span[@class='configtarget']/span[@class='entrycstring-1']/span[text()='{0}']", entryCustomData);
+				var entryDataPath = string.Format("/div[@class='lexentry-1']/span[@class='mlrs-1']/span[@class='mlr']/span[@class='configtargets-1']/span[@class='configtarget']/span[@class='entrycstring-1']/span[text()='{0}']", entryCustomData);
 				AssertThatXmlIn.String(result).HasNoMatchForXpath(entryDataPath, message: "Ref is to Sense; should be no Entry Custom Data");
-				var senseDataPath = string.Format("/div[@class='lexentry-1']/span[@class='mlrs-1']/span[@class='mlr']/span[@class='configtargets']/span[@class='configtarget']/span[@class='sensecstring-1']/span[text()='{0}']", senseCustomData);
+				var senseDataPath = string.Format("/div[@class='lexentry-1']/span[@class='mlrs-1']/span[@class='mlr']/span[@class='configtargets-1']/span[@class='configtarget']/span[@class='sensecstring-1']/span[text()='{0}']", senseCustomData);
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseDataPath, 1);
 			}
 		}
@@ -9237,13 +9237,13 @@ namespace SIL.FieldWorks.XWorks
 
 		private static string HeadwordOrderInCrossRefsXpath(int position, string headword)
 		{
-			return string.Format("//span[@class='minimallexreferences-1']/span[@class='minimallexreference']/span[@class='configtargets']" +
+			return string.Format("//span[@class='minimallexreferences-1']/span[@class='minimallexreference']/span[@class='configtargets-1']" +
 				"/span[@class='configtarget' and position()='{0}']/span/span/a[text()='{1}']", position, headword);
 		}
 
 		private static string HeadwordWsInCrossRefsXpath(string ws, string headword) // REVIEW (Hasso) 2017.04: move these helpers to Helpers?
 		{
-			return string.Format("//span[@class='minimallexreferences-1']/span[@class='minimallexreference']/span[@class='configtargets']" +
+			return string.Format("//span[@class='minimallexreferences-1']/span[@class='minimallexreference']/span[@class='configtargets-1']" +
 				"/span[@class='configtarget']/span/span[@lang='{0}']/a[text()='{1}']", ws, headword);
 		}
 
