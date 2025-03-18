@@ -51,7 +51,9 @@ namespace SIL.FieldWorks.XWorks
 
 		public static Style GenerateLetterHeaderParagraphStyle(ReadOnlyPropertyTable propertyTable, out BulletInfo? bulletInfo)
 		{
-			var style = GenerateParagraphStyleFromLcmStyleSheet(LetterHeadingStyleName, DefaultStyle, propertyTable, out bulletInfo);
+			var cache = propertyTable.GetValue<LcmCache>("cache");
+			var wsId = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
+			var style = GenerateParagraphStyleFromLcmStyleSheet(LetterHeadingStyleName, wsId, propertyTable, out bulletInfo);
 			style.StyleId = LetterHeadingDisplayName;
 			style.StyleName.Val = style.StyleId;
 			return style;
