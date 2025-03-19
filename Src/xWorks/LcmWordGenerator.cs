@@ -132,19 +132,49 @@ namespace SIL.FieldWorks.XWorks
 
 				// Set the last section of the document to be two columns and add the page headers. (The last section
 				// is all the entries after the last letter header.) For the last section this information is stored
-				// different than all the other sections. It is stored as the last child element of the body.
-				var sectProps = new SectionProperties(
+				// differently than for all the other sections:
+				//
+				// For the last section of the document, section properties objects must be added in two places,
+				// otherwise the columns on the final page will not be balanced.
+				//
+				// First, a section properties object using two columns and containing the page headers must be
+				// added to the paragraph properties for the last paragraph in the document.
+				//
+				// Second, a section properties object using two columns but omitting header information must be
+				// added as the last child element of the body.
+
+				//Adding the final section properties to the paragraph properties for the final paragraph.
+				WP.Paragraph docLastParagraph = fragment.GetLastParagraph();
+				var lastParSectProps = new SectionProperties(
 					new HeaderReference() { Id = WordStylesGenerator.PageHeaderIdEven, Type = HeaderFooterValues.Even },
 					new HeaderReference() { Id = WordStylesGenerator.PageHeaderIdOdd, Type = HeaderFooterValues.Default },
 					new Columns() { EqualWidth = true, ColumnCount = 2 },
 					new SectionType() { Val = SectionMarkValues.Continuous }
-					);
-				// Set the section to BiDi so the columns are displayed right to left.
+				);
 				if (IsBidi)
 				{
-					sectProps.Append(new BiDi());
+					// Set the section to BiDi so the columns are displayed right to left.
+					lastParSectProps.Append(new BiDi());
 				}
-				fragment.DocBody.Append(sectProps);
+				if (docLastParagraph.ParagraphProperties != null)
+					docLastParagraph.ParagraphProperties.Append(lastParSectProps);
+				else
+				{
+					docLastParagraph.Append(new ParagraphProperties());
+					docLastParagraph.ParagraphProperties.Append(lastParSectProps);
+				}
+
+				// Adding 2 column section properties without headers as doc's last child.
+				var lastChildSectProps = new SectionProperties(
+					new Columns() { EqualWidth = true, ColumnCount = 2 },
+					new SectionType() { Val = SectionMarkValues.Continuous }
+				);
+				if (IsBidi)
+				{
+					// Set the section to BiDi so the columns are displayed right to left.
+					lastChildSectProps.Append(new BiDi());
+				}
+				fragment.DocBody.Append(lastChildSectProps);
 
 				if (progress != null)
 					progress.Message = xWorksStrings.ksGeneratingStyleInfo;
