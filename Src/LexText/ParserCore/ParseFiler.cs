@@ -170,6 +170,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_workQueue.Clear();
 			}
 
+			// Update work.Wordform with its own NonUndoableUnitOfWorkHelper
+			// so that PropChanged will be triggered when it is updated below.
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
 				foreach (WordformUpdateWork work in results)
@@ -179,6 +181,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						// We postponed creation of the lowercase wordform till we were inside a UnitOfWorkHelper.
 						work.Wordform = WfiWordformServices.FindOrCreateWordform(m_cache, work.Text);
 					}
+				}
+			});
+
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				foreach (WordformUpdateWork work in results)
+				{
 					if (work.CheckParser)
 					{
 						// This was just a test.  Don't update data.
