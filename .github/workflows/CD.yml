@@ -1,34 +1,33 @@
-name: Flex Installer
+name: Base Installer
 on:
   push:
-    branches: ["release/9.1", "develop", "master", "feature/PubSub", "feature/gha-cd"]
-  workflow_call:
+    branches: ["release/9.3", "feature/gha-cd"]
+  workflow_dispatch:
     inputs:
-      flex_ref:
-        description: The tag/branch/sha to build
-        default: 'release/9.1'
+      fw_ref:
+        description: 'Commit-ish (branch, tag, SHA) to checkout for the main repository'
         required: false
-        type: string
-      installer_ref:
-        description: The tag/branch/sha for the installer
-        default: 'feature/netfx48IdFix'
-        required: false
-        type: string
+        default: ''
       helps_ref:
-        description: The tag or branch for helps
-        default: 'master'
+        description: 'Commit-ish for helps repository'
         required: false
-        type: string
+        default: 'develop'
+      installer_ref:
+        description: 'Commit-ish for PatchableInstaller repository'
+        required: false
+        default: 'master'
+      localizations_ref:
+        description: 'Commit-ish for localization repository'
+        required: false
+        default: 'develop'
       lcm_ref:
-        description: The tag or branch for liblcm (for localization)
-        default: 'master'
+        description: 'Commit-ish for liblcm repository'
         required: false
-        type: string
-      l10n_ref:
-        description: The tag or branch for FieldWorks localizations
         default: 'master'
+      s3_copy:
+        description: 'Copy this build result to S3'
         required: false
-        type: string
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -38,49 +37,47 @@ jobs:
   debug_build_and_test:
     env:
       CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
-      LcmLocalArtifactsDir: ${{ github.workspace }}\Localizations\LCM\artifacts\Debug
-      LcmRootDir: ${{ github.workspace }}\Localizations\LCM
-      FILESTOSIGNLATER: "${{ github.workspace }}\\filesToSign"
     name: Build Debug and run Tests
     runs-on: windows-latest
     steps:
       - name: Checkout Files
         uses: actions/checkout@v4
+        id: checkout
         with:
-          ref: ${{ inputs.flex_ref }}
-          
-      - name: Downgrade Wix Toolset
-        shell: cmd
-        run: choco install wixtoolset --version 3.11.2 --allow-downgrade --force
-
-      - name: Checkout Installer
-        uses: actions/checkout@v4
-        with:
-          repository: sillsdev/genericinstaller
-          ref: ${{ inputs.installer_ref || 'feature/netfx48IdFix' }}
-          path: PatchableInstaller
-        
+          ref: ${{ github.event.inputs.fw_ref || github.ref }}
+          fetch-depth: 0
       - name: Checkout Helps
         uses: actions/checkout@v4
+        id: helps-checkout
         with:
-          repository: sillsdev/FwHelps
-          ref: ${{ inputs.helps_ref || 'develop' }}
-          path: DistFiles/Helps
-        
+          repository: 'sillsdev/FwHelps'
+          ref: ${{ github.event.inputs.helps_ref || 'develop' }}
+          fetch-depth: 0
+          path: 'DistFiles/Helps'
+      - name: Checkout PatchableInstaller
+        uses: actions/checkout@v4
+        id: installer-checkout
+        with:
+          repository: 'sillsdev/genericinstaller'
+          ref: ${{ github.event.inputs.installer_ref || 'master' }}
+          fetch-depth: 0
+          path: 'PatchableInstaller'
       - name: Checkout Localizations
         uses: actions/checkout@v4
+        id: loc-checkout
         with:
-          repository: sillsdev/FwLocalizations
-          ref: ${{ inputs.l10n_ref || 'master' }}
-          path: Localizations
-        
-      - name: Checkout liblcm (for l10n)
+          repository: 'sillsdev/FwLocalizations'
+          ref: ${{ github.event.inputs.localizations_ref || 'develop' }}
+          fetch-depth: 0
+          path: 'Localizations'
+      - name: Checkout liblcm
         uses: actions/checkout@v4
+        id: liblcm-checkout
         with:
-          repository: sillsdev/liblcm
-          ref: ${{ inputs.lcm_ref || 'master' }}
-          path: Localizations/LCM
-        
+          repository: 'sillsdev/liblcm'
+          ref: ${{ github.event.inputs.installer_ref || 'master' }}
+          fetch-depth: 0
+          path: 'Localizations/LCM'
 
       - name: Download 461 targeting pack
         uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
@@ -93,17 +90,33 @@ jobs:
         shell: cmd
         working-directory: public
         run: NDP461-DevPack-KB3105179-ENU.exe /q
-         
+
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 5.0.x
-
-      - name: Build installer
-        shell: powershell
+          dotnet-version: | 
+            2.1.x
+            3.1.x
+            5.0.x
+      - name: Install Overcrowdin
+        shell: cmd
+        run: |
+          dotnet tool update -g overcrowdin || dotnet tool install -g overcrowdin
+      - name: Prepare for build
+        shell: cmd
         working-directory: Build
-        run: ./build64.bat /t:BuildBaseInstaller /p:config=release /p:action=test /p:desktopNotAvailable=true /v:d /bl ^| tee-object -FilePath build.log
+        run: build64.bat /t:WriteNonlocalDevelopmentPropertiesFile
 
+      - name: Build Debug and run tests
+        id: build_installer
+        shell: powershell
+        run: |
+          cd Build
+          .\build64.bat /t:BuildBaseInstaller /property:config=release;action=test;desktopNotAvailable=true /v:d /bl ^| tee-object -FilePath build.log
+          cd ..
+          cd BuildDir
+          md5sum *.exe > md5.txt
+      
       - name: Scan Debug Build Output
         shell: powershell
         working-directory: Build
@@ -125,16 +138,26 @@ jobs:
         run: .\NUnitReport /a ^| tee-object -FilePath test-results.log
 
       - name: Report Test Results
-        uses: sillsdev/fw-nunitreport-action@v1.0.0
+        uses: sillsdev/fw-nunitreport-action@v2.0.0
         with:
           log-path: Build/test-results.log
           token: ${{ secrets.GITHUB_TOKEN }}
-
+          
+      - name: Copy to S3
+        if: ${{ github.event.inputs.s3_copy }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: us-east-1
+          S3_BUCKET: flex-updates
+          S3_KEY: base-build/artifact.tar.gz
+        run: |
+          tar -czf artifact.tar.gz BuildDir
+          aws s3 cp artifact.tar.gz s3://$S3_BUCKET/$S3_KEY
+            
       - uses: actions/upload-artifact@v4
         with:
           name: build-logs
           path: |
             Build/*.log
-            **/*.binlog
-            **/*.msi
-        if: always()
+            Build/*.binlog
