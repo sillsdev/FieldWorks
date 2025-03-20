@@ -403,6 +403,9 @@ namespace SIL.FieldWorks.IText
 			FinishSettingAnalysis(newAnalysisTree, oldAnalysis);
 			if (obsoleteAna != null)
 				obsoleteAna.Delete();
+			if (oldWf != null && oldWf.Cache != null && oldWf != wf && oldWf.OccurrencesInTexts.Count() == 0)
+				// oldWf is probably the uppercase form of wf.
+				oldWf.Delete();
 		}
 
 		// Caller must create UOW

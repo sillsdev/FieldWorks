@@ -146,7 +146,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			// SUT
 			// Parsing an uppercase wordform should cause the lowercase wordform to be parsed.
 			// The uppercase wordform doesn't get a parse.
-			var bVal = parserWorker.UpdateWordform(catsUpperTest, ParserPriority.Low);
+			var bVal = parserWorker.ParseAndUpdateWordform(catsUpperTest, ParserPriority.Low);
 			ExecuteIdleQueue();
 			Assert.IsTrue(bVal);
 			CheckAnalysisSize("Cats", 0, false);
@@ -154,7 +154,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			// SUT
 			// The lowercase wordform has already been parsed.
-			bVal = parserWorker.UpdateWordform(catsLowerTest, ParserPriority.Low);
+			bVal = parserWorker.ParseAndUpdateWordform(catsLowerTest, ParserPriority.Low);
 			ExecuteIdleQueue();
 			Assert.IsTrue(bVal);
 			CheckAnalysisSize("Cats", 0, false);

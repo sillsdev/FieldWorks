@@ -115,7 +115,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		public bool UpdateWordform(IWfiWordform wordform, ParserPriority priority, bool checkParser = false)
+		public bool ParseAndUpdateWordform(IWfiWordform wordform, ParserPriority priority, bool checkParser = false)
 		{
 			CheckDisposed();
 
@@ -157,7 +157,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			if (sLower != form.Text)
 			{
-				var text = TsStringUtils.MakeString(sLower, form.get_WritingSystem(0));
+				var lcText = TsStringUtils.MakeString(sLower, form.get_WritingSystem(0));
 				var lcWord = normalizer.Normalize(sLower.Replace(' ', '.'));
 				ParseResult lcResult = null;
 				stopWatch.Start();
@@ -169,13 +169,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				lcResult.ParseTime = stopWatch.ElapsedMilliseconds;
 				if (lcResult.Analyses.Count > 0 && lcResult.ErrorMessage == null)
 				{
-					IWfiWordform lcWordform = null;
-					NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
-						m_cache.ActionHandlerAccessor,
-						() => lcWordform = WfiWordformServices.FindOrCreateWordform(m_cache, text));
-					m_parseFiler.ProcessParse(lcWordform, 0, lcResult, checkParser);
-					m_parseFiler.ProcessParse(wordform, priority, result, checkParser);
-					return true;
+					// Don't turn lcText into a wordform here.
+					// This avoids a problem with broadcasting PropChanged (cf. LT-22079).
+					m_parseFiler.ProcessParse(lcText, 0, lcResult, checkParser);
 				}
 			}
 

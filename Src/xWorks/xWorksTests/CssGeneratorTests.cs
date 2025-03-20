@@ -2711,9 +2711,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// The css for a picture is floated right and we want to clear the float at each entry.
 		/// </summary>
-		[Test]
-		public void GenerateCssForConfiguration_PictureCssIsGenerated()
+		[TestCase("Left", 1.0f)]
+		[TestCase("Right", 1.5f)]
+		[TestCase("Center", 2.0f)]
+		public void GenerateCssForConfiguration_PictureCssIsGenerated(string alignString, double width)
 		{
+			var align = (AlignmentType)Enum.Parse(typeof(AlignmentType), alignString);
 			TestStyle style = GenerateStyle("Normal");
 			style.SetExplicitParaIntProp((int)FwTextPropType.ktptLeadingIndent, 0, LeadingIndent);
 			ConfiguredLcmGenerator.AssemblyFile = "xWorksTests";
@@ -2722,7 +2725,7 @@ namespace SIL.FieldWorks.XWorks
 			var captionNode = new ConfigurableDictionaryNode { FieldDescription = "Caption", Style = "Normal" };
 			var memberNode = new ConfigurableDictionaryNode
 			{
-				DictionaryNodeOptions = new DictionaryNodePictureOptions { MaximumWidth = 1 },
+				DictionaryNodeOptions = new DictionaryNodePictureOptions { MaximumWidth = 1.0f },
 				CSSClassNameOverride = "pictures",
 				FieldDescription = "Pictures",
 				Children = new List<ConfigurableDictionaryNode> { pictureFileNode, senseNumberNode, captionNode }
@@ -2737,20 +2740,21 @@ namespace SIL.FieldWorks.XWorks
 				CSSClassNameOverride = "entry",
 				Children = new List<ConfigurableDictionaryNode> { sensesNode, memberNode }
 			};
-			PopulateFieldsForTesting(rootNode);
 
-			var config = new DictionaryConfigurationModel()
+			var config = new DictionaryConfigurationModel
 				{
-					Parts = new List<ConfigurableDictionaryNode> { rootNode }
+					Parts = new List<ConfigurableDictionaryNode> { rootNode },
+					Pictures = new PictureConfiguration { Alignment = align, Width = width}
 				};
-
+			PopulateFieldsForTesting(config);
+			var alignment = Enum.GetName(typeof(AlignmentType), align)?.ToLower();
 			// SUT
 			var cssWithPictureRules = CssGenerator.GenerateCssFromConfiguration(config, m_propertyTable);
-			VerifyRegex(cssWithPictureRules, @"^\s*\.picture.*{.*float:right.*}", "picture not floated right");
-			VerifyRegex(cssWithPictureRules, @"^\s*\.picture.*img.*{.*max-width:1in;.*}", "css for image did not contain height contraint attribute");
-			VerifyRegex(cssWithPictureRules, @"^\s*\.pictures.*picture.*{.*margin:\s*0pt\s*0pt\s*4pt\s*4pt.*;.*}", "css for image did not contain valid margin attribute");
+			VerifyRegex(cssWithPictureRules, @"^\s*\.picture.*{.*text-align:" + alignment + ".*}", "picture not honoring alignment setting");
+			VerifyRegex(cssWithPictureRules, @"^\s*\.picture.*img.*{.*max-width:" + width +"in;.*}", "css for image did not contain width constraint attribute");
 			VerifyRegex(cssWithPictureRules, @"^\s*\.entry\s*{.*clear:both.*}", "float not cleared at entry");
 			VerifyRegex(cssWithPictureRules, @"^\s*\s*.captionContent\s*.caption*\{.*margin-left:\s*24pt", "css for caption did not contain valid margin attribute");
+			VerifyRegex(cssWithPictureRules, @"^\s*\.pictures\s*\.captionContent\s*\{.*text-indent:\s*0pt", "css for caption did not clear entry text indent");
 		}
 
 		/// <summary>
@@ -2795,12 +2799,13 @@ namespace SIL.FieldWorks.XWorks
 				CSSClassNameOverride = "entry",
 				Children = new List<ConfigurableDictionaryNode> { sensesNode, memberNode }
 			};
-			PopulateFieldsForTesting(rootNode);
 
 			var config = new DictionaryConfigurationModel()
 			{
-				Parts = new List<ConfigurableDictionaryNode> { rootNode }
+				Parts = new List<ConfigurableDictionaryNode> { rootNode },
+				Pictures = new PictureConfiguration()
 			};
+			PopulateFieldsForTesting(config);
 
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(config, m_propertyTable);
@@ -2853,12 +2858,13 @@ namespace SIL.FieldWorks.XWorks
 				CSSClassNameOverride = "entry",
 				Children = new List<ConfigurableDictionaryNode> { sensesNode, memberNode }
 			};
-			PopulateFieldsForTesting(rootNode);
 
 			var config = new DictionaryConfigurationModel()
 			{
-				Parts = new List<ConfigurableDictionaryNode> { rootNode }
+				Parts = new List<ConfigurableDictionaryNode> { rootNode },
+				Pictures = new PictureConfiguration()
 			};
+			PopulateFieldsForTesting(config);
 
 			// SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(config, m_propertyTable);
@@ -2929,12 +2935,13 @@ namespace SIL.FieldWorks.XWorks
 					CSSClassNameOverride = "entry",
 					Children = new List<ConfigurableDictionaryNode> { memberNode }
 				};
-			PopulateFieldsForTesting(rootNode);
 
 			var config = new DictionaryConfigurationModel()
 				{
-					Parts = new List<ConfigurableDictionaryNode> { rootNode }
+					Parts = new List<ConfigurableDictionaryNode> { rootNode },
+					Pictures = new PictureConfiguration()
 				};
+			PopulateFieldsForTesting(config);
 
 			// SUT
 			var cssWithPictureRules = CssGenerator.GenerateCssFromConfiguration(config, m_propertyTable);
@@ -3946,7 +3953,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Assert.NotNull(model);
 			PopulateFieldsForTesting(model.Parts.Concat(model.SharedItems));
-			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model, sharedItems:model.SharedItems);
 		}
 
 		private static void PopulateFieldsForTesting(IEnumerable<ConfigurableDictionaryNode> nodes)
