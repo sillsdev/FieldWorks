@@ -253,7 +253,8 @@ namespace SIL.FieldWorks.FdoUi
 			// Todo: user selected a part of speech.
 			// Arrange to turn all relevant items blue.
 			// Remember which item was selected so we can later 'doit'.
-			if (e.Node == null)
+			var hvoNode = e.Node as HvoTreeNode;
+			if (hvoNode == null || hvoNode.Hvo == 0)
 			{
 				m_selectedHvo = 0;
 				m_selectedLabel = "";
@@ -280,7 +281,7 @@ namespace SIL.FieldWorks.FdoUi
 			// Tell the parent control that we may have changed the selected item so it can
 			// enable or disable the Apply and Preview buttons based on the selection.
 			if (ValueChanged != null)
-				ValueChanged(this, new FwObjectSelectionEventArgs(m_selectedHvo));
+				ValueChanged(this, new FwObjectSelectionEventArgs(m_selectedHvo, hvoNode != null ? 0 : -1));
 		}
 
 		/// <summary>
@@ -427,8 +428,13 @@ namespace SIL.FieldWorks.FdoUi
 
 		private void InitMsa(IMoStemMsa msmTarget, int hvoPos)
 		{
-			msmTarget.PartOfSpeechRA = m_cache.ServiceLocator.GetObject(hvoPos) as IPartOfSpeech;
-			var newFeatures = (IFsFeatStruc)m_cache.ServiceLocator.GetObject(m_selectedHvo);
+			msmTarget.PartOfSpeechRA = m_cache.ServiceLocator.GetObject(hvoPos) as IPartOfSpeech;//var newFeatures = (IFsFeatStruc)m_cache.ServiceLocator.GetObject(m_selectedHvo);
+			var newFeatures = m_selectedHvo == 0 ? null : (IFsFeatStruc)m_cache.ServiceLocator.GetObject(m_selectedHvo);
+			if (newFeatures == null)
+			{
+				msmTarget.MsFeaturesOA = null;
+				return;
+			}
 			msmTarget.CopyMsFeatures(newFeatures);
 		}
 
@@ -515,6 +521,8 @@ namespace SIL.FieldWorks.FdoUi
 		{
 			bool fEnable = false;
 			int hvoMsa = sda.get_ObjectProp(hvo, LexSenseTags.kflidMorphoSyntaxAnalysis);
+			if (hvo == 0)
+				return true;
 			if (hvoMsa != 0)
 			{
 				int clsid = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoMsa).ClassID;
