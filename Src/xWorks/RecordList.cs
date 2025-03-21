@@ -1872,7 +1872,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (SortedObjects.Count == 0)
+			if (SortedObjects.Count <= index)
 				return null;
 			else
 			return SortedObjects[index] as IManyOnePathSortItem;
