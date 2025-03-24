@@ -361,17 +361,9 @@ namespace SIL.FieldWorks.FdoUi
 				}
 				var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(kvp.Key);
 				var sensesToChange = kvp.Value;
-				IMoStemMsa msmTarget = null;
-				foreach (var msa in entry.MorphoSyntaxAnalysesOC)
-				{
-					var msm = msa as IMoStemMsa;
-					if (msm != null && MsaMatchesTarget(msm, fsTarget))
-					{
-						// Can reuse this one!
-						msmTarget = msm;
-						break;
-					}
-				}
+				IMoStemMsa msmTarget = entry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>()
+					.FirstOrDefault(msm => MsaMatchesTarget(msm, fsTarget));
+
 				if (msmTarget == null)
 				{
 					// See if we can reuse an existing MoStemMsa by changing it.
@@ -380,35 +372,20 @@ namespace SIL.FieldWorks.FdoUi
 					var senses = new HashSet<ILexSense>(entry.AllSenses.ToArray());
 					if (senses.Count != sensesToChange.Count)
 					{
-						foreach (var ls in senses)
-						{
-							if (!sensesToChange.Contains(ls))
-								otherSenses.Add(ls);
-						}
+						otherSenses = new HashSet<ILexSense>(senses.Where(ls => !sensesToChange.Contains(ls)));
 					}
-					foreach (var msa in entry.MorphoSyntaxAnalysesOC)
+
+					var msm = entry.MorphoSyntaxAnalysesOC
+						.OfType<IMoStemMsa>() // filter only IMoStemMsa
+						.FirstOrDefault(msa => !otherSenses.Any(ls => ls.MorphoSyntaxAnalysisRA == msa));
+
+					if (msm != null)
 					{
-						var msm = msa as IMoStemMsa;
-						if (msm == null)
-							continue;
-						bool fOk = true;
-						foreach (var ls in otherSenses)
-						{
-							if (ls.MorphoSyntaxAnalysisRA == msm)
-							{
-								fOk = false;
-								break;
-							}
-						}
-						if (fOk)
-						{
-							// Can reuse this one! Nothing we don't want to change uses it.
-							// Adjust its POS as well as its inflection feature, just to be sure.
-							// Ensure that we don't change the POS!  See LT-6835.
-							msmTarget = msm;
-							InitMsa(msmTarget, msm.PartOfSpeechRA.Hvo);
-							break;
-						}
+						// Can reuse this one! Nothing we don't want to change uses it.
+						// Adjust its POS as well as its inflection feature, just to be sure.
+						// Ensure that we don't change the POS!  See LT-6835.
+						msmTarget = msm;
+						InitMsa(msmTarget, msm.PartOfSpeechRA.Hvo);
 					}
 				}
 				if (msmTarget == null)
