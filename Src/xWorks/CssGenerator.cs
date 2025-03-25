@@ -198,7 +198,9 @@ namespace SIL.FieldWorks.XWorks
 			string uniqueNodeName;
 			do
 			{
-				uniqueNodeName = $"{className}-{++counter}";
+				++counter;
+				// For the first unique name, don't append the -1. Webonary does not expect it.
+				uniqueNodeName = counter == 1 ? $"{className}" : $"{className}-{counter}";
 			} while (_styleDictionary.ContainsKey(uniqueNodeName));
 
 			_uniqueNodeNames[nodePath] = uniqueNodeName;
