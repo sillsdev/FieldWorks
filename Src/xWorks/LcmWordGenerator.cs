@@ -25,6 +25,7 @@ using System.Windows.Media.Imaging;
 using XCore;
 using XmlDrawing = DocumentFormat.OpenXml.Drawing;
 using DrawingWP = DocumentFormat.OpenXml.Drawing.Wordprocessing;
+using DrawingShape = DocumentFormat.OpenXml.Office2010.Word.DrawingShape;
 using Pictures = DocumentFormat.OpenXml.Drawing.Pictures;
 using System.Text.RegularExpressions;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -40,8 +41,6 @@ namespace SIL.FieldWorks.XWorks
 		private LcmCache Cache { get; }
 		private static WordStyleCollection s_styleCollection = new WordStyleCollection();
 		private ReadOnlyPropertyTable _propertyTable;
-		internal const int maxImageHeightInches = 1;
-		internal const int maxImageWidthInches = 1;
 		public static bool IsBidi { get; private set; }
 
 		public LcmWordGenerator(LcmCache cache)
@@ -133,19 +132,49 @@ namespace SIL.FieldWorks.XWorks
 
 				// Set the last section of the document to be two columns and add the page headers. (The last section
 				// is all the entries after the last letter header.) For the last section this information is stored
-				// different than all the other sections. It is stored as the last child element of the body.
-				var sectProps = new SectionProperties(
+				// differently than for all the other sections:
+				//
+				// For the last section of the document, section properties objects must be added in two places,
+				// otherwise the columns on the final page will not be balanced.
+				//
+				// First, a section properties object using two columns and containing the page headers must be
+				// added to the paragraph properties for the last paragraph in the document.
+				//
+				// Second, a section properties object using two columns but omitting header information must be
+				// added as the last child element of the body.
+
+				//Adding the final section properties to the paragraph properties for the final paragraph.
+				WP.Paragraph docLastParagraph = fragment.GetLastParagraph();
+				var lastParSectProps = new SectionProperties(
 					new HeaderReference() { Id = WordStylesGenerator.PageHeaderIdEven, Type = HeaderFooterValues.Even },
 					new HeaderReference() { Id = WordStylesGenerator.PageHeaderIdOdd, Type = HeaderFooterValues.Default },
 					new Columns() { EqualWidth = true, ColumnCount = 2 },
 					new SectionType() { Val = SectionMarkValues.Continuous }
-					);
-				// Set the section to BiDi so the columns are displayed right to left.
+				);
 				if (IsBidi)
 				{
-					sectProps.Append(new BiDi());
+					// Set the section to BiDi so the columns are displayed right to left.
+					lastParSectProps.Append(new BiDi());
 				}
-				fragment.DocBody.Append(sectProps);
+				if (docLastParagraph.ParagraphProperties != null)
+					docLastParagraph.ParagraphProperties.Append(lastParSectProps);
+				else
+				{
+					docLastParagraph.Append(new ParagraphProperties());
+					docLastParagraph.ParagraphProperties.Append(lastParSectProps);
+				}
+
+				// Adding 2 column section properties without headers as doc's last child.
+				var lastChildSectProps = new SectionProperties(
+					new Columns() { EqualWidth = true, ColumnCount = 2 },
+					new SectionType() { Val = SectionMarkValues.Continuous }
+				);
+				if (IsBidi)
+				{
+					// Set the section to BiDi so the columns are displayed right to left.
+					lastChildSectProps.Append(new BiDi());
+				}
+				fragment.DocBody.Append(lastChildSectProps);
 
 				if (progress != null)
 					progress.Message = xWorksStrings.ksGeneratingStyleInfo;
@@ -568,6 +597,31 @@ namespace SIL.FieldWorks.XWorks
 				lastPar.AppendChild(CloneElement(fragToCopy, run));
 			}
 
+			public void AppendImageToTextbox(IFragment fragToCopy, Run run, WP.ParagraphProperties paragraphProps)
+			{
+				WP.TextBoxContent lastTextBox = GetLastTextBox();
+
+				if (lastTextBox == null)
+					return;
+
+				WP.Paragraph newImagePar = new WP.Paragraph();
+				newImagePar.Append(paragraphProps);
+
+				// Deep clone the run b/c of its tree of properties and to maintain styles.
+				newImagePar.AppendChild(CloneElement(fragToCopy, run));
+
+				lastTextBox.AppendChild(newImagePar);
+			}
+
+			public void AppendCaptionParagraphToTextbox(IFragment fragToCopy, WP.Paragraph para)
+			{
+				WP.TextBoxContent lastTextBox = GetLastTextBox();
+
+				if (lastTextBox == null)
+					return;
+				lastTextBox.AppendChild(CloneElement(fragToCopy, para));
+			}
+
 			/// <summary>
 			/// Does a deep clone of the element.  If there is picture data then that is cloned
 			/// from the copyFromFrag into 'this' frag.
@@ -682,6 +736,16 @@ namespace SIL.FieldWorks.XWorks
 				return GetNewParagraph();
 			}
 
+			public WP.TextBoxContent GetLastTextBox()
+			{
+				// Returns the textbox content belonging to the last textbox added to the document
+				List<WP.TextBoxContent> textBoxContList =
+					DocBody.Descendants<WP.TextBoxContent>().ToList();
+				if (textBoxContList.Any())
+					return textBoxContList.Last();
+				return null;
+			}
+
 			/// <summary>
 			/// Creates and returns a new paragraph.
 			/// </summary>
@@ -689,6 +753,175 @@ namespace SIL.FieldWorks.XWorks
 			{
 				WP.Paragraph newPar = DocBody.AppendChild(new WP.Paragraph());
 				return newPar;
+			}
+
+			public void AppendNewTextboxParagraph(IFragment frag, Run run, WP.ParagraphProperties paragraphProps, ConfigurableDictionaryNode config)
+			{
+				int uniqueGraphicId;
+				int uniqueInnerDrawingId;
+				int uniqueOuterDrawingId;
+
+				// Lock style collection while getting the IDs to use for the Image & Textbox
+				lock (s_styleCollection)
+				{
+					// The xml textbox image structure consists of a graphic object that is nested inside a drawing object
+					// that is nested inside another drawing object.
+					// The unique ID for the outer drawing object should be incremented once from the inner drawing object,
+					// which should be incremented once from the unique ID of the innermost graphic object.
+					uniqueGraphicId = s_styleCollection.GetAndIncrementPictureUniqueIdCount;
+					uniqueInnerDrawingId = s_styleCollection.GetAndIncrementPictureUniqueIdCount;
+					uniqueOuterDrawingId = s_styleCollection.GetAndIncrementPictureUniqueIdCount;
+				}
+
+				//Use the image alignment specified in FLEx for the textbox alignment, with right align as default
+				string alignment = "right";
+				if (config.DictionaryNodeOptions is DictionaryNodePictureOptions)
+					alignment = config.Model.Pictures.Alignment.ToString().ToLower();
+
+				WP.Paragraph newImagePar = new WP.Paragraph();
+				newImagePar.Append(paragraphProps);
+				// Deep clone the run b/c of its tree of properties and to maintain styles.
+				newImagePar.AppendChild(CloneElement(frag, run));
+
+				// Get the properties of the inner drawing object in order to set its unique ID.
+				DrawingWP.DocProperties innerDrawingObjectProps =
+					newImagePar.Descendants<DrawingWP.DocProperties>().FirstOrDefault();
+				innerDrawingObjectProps.Id = Convert.ToUInt32(uniqueInnerDrawingId);
+
+				// Get the properties of the innermost graphic object in order to set its unique ID.
+				// We will also use this to get the name of the image to use in the textbox.
+				Pictures.NonVisualDrawingProperties graphicObjectProps =
+					newImagePar.Descendants<Pictures.NonVisualDrawingProperties>()
+						.FirstOrDefault();
+				graphicObjectProps.Id = Convert.ToUInt32(uniqueGraphicId);
+
+				// Calculate the height and width in emus to use for the drawing containing the textbox.
+				// Drawing extent is specified in English Metric Units or EMUs, 914400 EMUs corresponds to one inch, and there are 72 points per inch.
+				const double emusPerPoint = 914400.0/72.0;
+				DrawingWP.Extent textBoxExtent = newImagePar.Descendants<DrawingWP.Extent>().FirstOrDefault();
+
+				Int64Value extentX = (Int64Value)Math.Ceiling((double)textBoxExtent.Cx + (24.0 * emusPerPoint));
+				Int64Value extentY = (Int64Value)Math.Ceiling((double)textBoxExtent.Cy + (48.0 * emusPerPoint));
+
+				WP.Paragraph textBoxPar = new WP.Paragraph();
+				Run textBoxRun = new Run();
+				Drawing textBoxDrawing = new Drawing();
+
+				DrawingWP.Anchor anchor = new DrawingWP.Anchor()
+				{
+					DistanceFromTop = (UInt32Value)0U,
+					DistanceFromBottom = (UInt32Value)0U,
+					DistanceFromLeft = (UInt32Value)0U,
+					DistanceFromRight = (UInt32Value)0U,
+					SimplePos = false,
+					RelativeHeight = (UInt32Value)0U,
+					BehindDoc = false,
+					Locked = false,
+					LayoutInCell = true,
+					AllowOverlap = false
+				};
+				anchor.Append(new DrawingWP.SimplePosition() { X = 0L, Y = 0L});
+
+				// image textbox is anchored horizontally wrt the column
+				anchor.Append(
+					new DrawingWP.HorizontalPosition(
+						new DrawingWP.HorizontalAlignment(alignment)
+					)
+					{
+						RelativeFrom = DrawingWP.HorizontalRelativePositionValues.Column
+					}
+				);
+
+				// image textbox is anchored vertically wrt the preceeding paragraph
+				anchor.Append(
+					new DrawingWP.VerticalPosition(
+						new DrawingWP.PositionOffset("0")
+					)
+					{
+						RelativeFrom = DrawingWP.VerticalRelativePositionValues.Paragraph
+					}
+				);
+
+				// This extent must also be declared in the anchor's shapeproperties element.
+				anchor.Append(
+					new DrawingWP.Extent()
+					{
+						Cx = extentX,
+						Cy = extentY
+					}
+				);
+
+				// We don't apply an effect to the textbox, so effect extent is 0
+				anchor.Append(
+					new DrawingWP.EffectExtent()
+					{
+						LeftEdge = 0L,
+						TopEdge = 0L,
+						RightEdge = 0L,
+						BottomEdge = 0L
+					}
+				);
+
+				// Text should wrap above and below the textbox
+				anchor.Append(new DrawingWP.WrapTopBottom());
+
+				// Need to add ID and name to the textbox drawing. Without them, the word document will be mis-formatted and unable to open.
+				// Use the name from the picture for the textbox.
+				anchor.Append(new DrawingWP.DocProperties()
+					{ Id = Convert.ToUInt32(uniqueOuterDrawingId), Name = graphicObjectProps.Name });
+
+				// Graphic frame drawing properties must be specified or the word document will be mis-formatted and unable to open.
+				anchor.Append(
+					new DrawingWP.NonVisualGraphicFrameDrawingProperties(
+						new XmlDrawing.GraphicFrameLocks()//{ NoChangeAspect = true }
+						)
+				);
+
+				anchor.Append(
+					new XmlDrawing.Graphic(
+
+						new XmlDrawing.GraphicData(
+
+							new DrawingShape.WordprocessingShape(
+
+								new DrawingShape.NonVisualDrawingShapeProperties(){ TextBox = true },
+
+								new DrawingShape.ShapeProperties(
+									new XmlDrawing.TransformGroup(
+										new XmlDrawing.Offset(){X=0, Y=0},
+											// Specify the extent here and in the anchor itself (see above)
+											new XmlDrawing.Extents(){Cx = extentX, Cy = extentY}
+									),
+									new XmlDrawing.PresetGeometry() { Preset = XmlDrawing.ShapeTypeValues.Rectangle }
+								) { BlackWhiteMode = XmlDrawing.BlackWhiteModeValues.Auto },
+
+								new DrawingShape.TextBoxInfo2(
+									new WP.TextBoxContent(
+										newImagePar
+									)
+								),
+
+								new DrawingShape.TextBodyProperties(
+									// ShapeAutoFit allows the textbox to resize if its contents overflow
+									new XmlDrawing.ShapeAutoFit()
+								)
+								{
+									Rotation = 0,
+									Vertical = XmlDrawing.TextVerticalValues.Horizontal,
+									Wrap = XmlDrawing.TextWrappingValues.Square,
+									Anchor = XmlDrawing.TextAnchoringTypeValues.Top,
+									AnchorCenter = false
+								}
+							)
+						) { Uri = "http://schemas.microsoft.com/office/word/2010/wordprocessingShape" }
+					)
+				);
+
+				textBoxDrawing.Append(anchor);
+				textBoxRun.Append(textBoxDrawing);
+				textBoxPar.Append(textBoxRun);
+				DocBody.AppendChild(textBoxPar);
+
 			}
 
 			/// <summary>
@@ -1496,22 +1729,18 @@ namespace SIL.FieldWorks.XWorks
 								// immediately before any image run other than the first image run in a piece.
 								if (containsDrawing)
 								{
-									if (pieceHasImage)
-									{
-										wordWriter.WordFragment.GetNewParagraph();
-										wordWriter.WordFragment.AppendToParagraph(frag, new Run(), false);
-									}
+									// Create and add a new textbox containing the image
+									WP.ParagraphProperties paragraphProps =
+										new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextframeStyle });
 
-									// We have now added at least one image from this piece.
-									pieceHasImage = true;
+									wordWriter.WordFragment.AppendNewTextboxParagraph(frag, run, paragraphProps, config);
 								}
-
-								WP.Paragraph newPar = wordWriter.WordFragment.GetNewParagraph();
-								WP.ParagraphProperties paragraphProps =
-									new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextframeStyle });
-								newPar.Append(paragraphProps);
-
-								wordWriter.WordFragment.AppendToParagraph(frag, run, false);
+								else
+								{
+									WP.ParagraphProperties paragraphProps =
+										new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextframeStyle });
+									wordWriter.WordFragment.AppendImageToTextbox(frag, run, paragraphProps);
+								}
 							}
 							else
 							{
@@ -1529,7 +1758,14 @@ namespace SIL.FieldWorks.XWorks
 							break;
 
 						case WP.Paragraph para:
-							wordWriter.WordFragment.AppendParagraph(frag, para);
+							// If we have a paragraph associated with a Pictures node, we are dealing with an image caption.
+							if (config.Label == "Pictures" || config.Parent?.Label == "Pictures")
+							{
+								// In this case, the paragraph is an image caption and belongs in the last textbox
+								wordWriter.WordFragment.AppendCaptionParagraphToTextbox(frag, para);
+							}
+							else
+								wordWriter.WordFragment.AppendParagraph(frag, para);
 
 							// Start a new paragraph with the next run so that it uses the correct style.
 							wordWriter.ForceNewParagraph = true;
@@ -1588,7 +1824,12 @@ namespace SIL.FieldWorks.XWorks
 			DocFragment imageFrag = new DocFragment();
 			WordprocessingDocument wordDoc = imageFrag.DocFrag;
 			string partId = AddImagePartToPackage(wordDoc, srcAttribute);
-			Drawing image = CreateImage(wordDoc, srcAttribute, partId);
+			var picOpts = config.DictionaryNodeOptions as DictionaryNodePictureOptions;
+			// calculate the maximum image width from the configuration
+			var maxWidth = config.Model.Pictures?.Width ?? (picOpts?.MaximumWidth ?? 1.0f);
+			// calculate the maximum image height from the configuration
+			var maxHeight = config.Model.Pictures?.Height ?? (picOpts?.MaximumHeight ?? 1.0f);
+			Drawing image = CreateImage(wordDoc, srcAttribute, partId, maxWidth, maxHeight);
 
 			if (wordDoc.MainDocumentPart is null || wordDoc.MainDocumentPart.Document.Body is null)
 			{
@@ -1833,8 +2074,6 @@ namespace SIL.FieldWorks.XWorks
 
 			// TODO: in openxml, will links be plaintext by default?
 			//WordStylesGenerator.MakeLinksLookLikePlainText(_styleSheet);
-			// TODO:  Generate style for audiows after we add audio to export
-			//WordStylesGenerator.GenerateWordStyleForAudioWs(_styleSheet, cache);
 		}
 
 		/// <summary>
@@ -2090,7 +2329,7 @@ namespace SIL.FieldWorks.XWorks
 			return mainPart.GetIdOfPart(imagePart);
 		}
 
-		public static Drawing CreateImage(WordprocessingDocument doc, string filepath, string partId)
+		public static Drawing CreateImage(WordprocessingDocument doc, string filepath, string partId, double maxWidthInches, double maxHeightInches)
 		{
 			// Create a bitmap to store the image so we can track/preserve aspect ratio.
 			var img = new BitmapImage();
@@ -2107,28 +2346,28 @@ namespace SIL.FieldWorks.XWorks
 			var actHeightPx = img.PixelHeight;
 			var horzRezDpi = img.DpiX;
 			var vertRezDpi = img.DpiY;
-			var actWidthInches = (float)(actWidthPx / horzRezDpi);
-			var actHeightInches = (float)(actHeightPx / vertRezDpi);
+			var actWidthInches = actWidthPx / horzRezDpi;
+			var actHeightInches = actHeightPx / vertRezDpi;
 
 			var ratioActualInches = actHeightInches / actWidthInches;
-			var ratioMaxInches = (float)(maxImageHeightInches) / (float)(maxImageWidthInches);
+			var ratioMaxInches = maxHeightInches / maxWidthInches;
 
-			// height/widthInches will store the actual height and width
+			// height/widthInches will store the final height and width
 			// to use for the image in the Word doc.
-			float heightInches = maxImageHeightInches;
-			float widthInches = maxImageWidthInches;
+			double heightInches = maxHeightInches;
+			double widthInches = maxWidthInches;
 
 			// If the ratio of the actual image is greater than the max ratio,
 			// we leave height equal to the max height and scale width accordingly.
 			if (ratioActualInches >= ratioMaxInches)
 			{
-				widthInches = actWidthInches * (maxImageHeightInches / actHeightInches);
+				widthInches = actWidthInches * (maxHeightInches / actHeightInches);
 			}
 			// Otherwise, if the ratio of the actual image is less than the max ratio,
 			// we leave width equal to the max width and scale height accordingly.
 			else if (ratioActualInches < ratioMaxInches)
 			{
-				heightInches = actHeightInches * (maxImageWidthInches / actWidthInches);
+				heightInches = actHeightInches * (maxWidthInches / actWidthInches);
 			}
 
 			// Calculate the actual height and width in emus to use for the image.
@@ -2142,7 +2381,6 @@ namespace SIL.FieldWorks.XWorks
 			// Create and add a floating image with image wrap set to top/bottom
 			// Name for the image -- the name of the file after all containing folders and the file extension are removed.
 			string name = (filepath.Split('\\').Last()).Split('.').First();
-
 			var element = new Drawing(
 				new DrawingWP.Inline(
 					new DrawingWP.Extent()
@@ -2159,7 +2397,7 @@ namespace SIL.FieldWorks.XWorks
 					},
 					new DrawingWP.DocProperties()
 					{
-						Id = (UInt32Value)1U,
+						// The drawing also needs an Id; we will add this when we add the image to the textbox.
 						Name = name
 					},
 					new DrawingWP.NonVisualGraphicFrameDrawingProperties(
@@ -2170,12 +2408,12 @@ namespace SIL.FieldWorks.XWorks
 								new Pictures.NonVisualPictureProperties(
 									new Pictures.NonVisualDrawingProperties()
 									{
-										Id = (UInt32Value)0U,
+										// The graphic also needs an Id; we will add this when we add the image to the textbox.
 										Name = name
 									},
 									new Pictures.NonVisualPictureDrawingProperties(
 										new XmlDrawing.PictureLocks()
-											{NoChangeAspect = true, NoChangeArrowheads = true}
+											{NoChangeAspect = true}
 									)
 								),
 								new Pictures.BlipFill(
