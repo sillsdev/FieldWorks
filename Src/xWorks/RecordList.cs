@@ -1704,6 +1704,11 @@ namespace SIL.FieldWorks.XWorks
 				// we want to wait until after everything is finished reloading, however.
 				m_requestedLoadWhileSuppressed = true;
 			}
+			if (Clerk.Id == "interlinearTexts")
+			{
+				// Wait for InterestingTextsList to be updated (cf. LT-22089).
+				m_requestedLoadWhileSuppressed = true;
+			}
 
 			// Try to catch things that don't obviously affect us, but will cause problems.
 			if (cvDel > 0 && CurrentIndex >= 0 && IsPropOwning(tag))
