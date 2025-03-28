@@ -39,13 +39,19 @@ namespace SIL.FieldWorks.XWorks
 	public class LcmWordGenerator : ILcmContentGenerator, ILcmStylesGenerator
 	{
 		private LcmCache Cache { get; }
-		private static WordStyleCollection s_styleCollection = new WordStyleCollection();
+		private static WordStyleCollection s_styleCollection = null;
 		private ReadOnlyPropertyTable _propertyTable;
 		public static bool IsBidi { get; private set; }
 
 		public LcmWordGenerator(LcmCache cache)
 		{
 			Cache = cache;
+		}
+
+		public void Init(ReadOnlyPropertyTable propertyTable)
+		{
+			_propertyTable = propertyTable;
+			s_styleCollection = new WordStyleCollection(_propertyTable);
 		}
 
 		public static void SavePublishedDocx(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, int batchSize, DictionaryConfigurationModel configuration,
@@ -107,10 +113,33 @@ namespace SIL.FieldWorks.XWorks
 
 				var propStyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 
+				s_styleCollection.RedirectCharacterElements();
+
 				foreach (var entry in entryContents)
 				{
 					if (!entry.Item2.IsNullOrEmpty())
 					{
+						foreach (WP.Run run in ((DocFragment)entry.Item2).DocBody.Descendants<WP.Run>())
+						{
+							// Reset the run styles to any redirected styles and mark styles as being used.
+							var charElem = GetElementFromRun(run);
+							if (charElem != null) // Runs containing a 'Drawing' will not have RunProperties.
+							{
+								if (charElem.Redirect != null)
+								{
+									SetUniqueDisplayName(run, charElem.Redirect.UniqueDisplayName());
+									charElem.Redirect.Used = true;
+								}
+								else
+								{
+									charElem.Used = true;
+								}
+							}
+
+							// Remove temporary data
+							run.ClearAllAttributes();
+						}
+
 						IFragment letterHeader = GenerateLetterHeaderIfNeeded(entry.Item1,
 							ref lastHeader, col, settings, readOnlyPropertyTable, propStyleSheet, firstHeader, clerk );
 						firstHeader = false;
@@ -188,12 +217,12 @@ namespace SIL.FieldWorks.XWorks
 					stylePart = AddStylesPartToPackage(fragment.DocFrag);
 					Styles styleSheet = new Styles();
 
-					// Add generated styles into the stylesheet from the collection.
-					var styleElements = s_styleCollection.GetStyleElements();
-					foreach (var styleElement in styleElements)
+					// Add generated styles into the stylesheet from the collections.
+					var paragraphElements = s_styleCollection.GetParagraphElements();
+					foreach (var element in paragraphElements)
 					{
 						// Generate bullet and numbering data.
-						if (styleElement.BulletInfo.HasValue)
+						if (element.BulletInfo.HasValue)
 						{
 							// Initialize word doc's numbering part one time.
 							if (numberingPart == null)
@@ -201,10 +230,12 @@ namespace SIL.FieldWorks.XWorks
 								numberingPart = AddNumberingPartToPackage(fragment.DocFrag);
 							}
 
-							GenerateBulletAndNumberingData(styleElement, numberingPart);
+							GenerateBulletAndNumberingData(element, numberingPart);
 						}
-						styleSheet.AppendChild(styleElement.Style.CloneNode(true));
+						styleSheet.AppendChild(element.Style.CloneNode(true));
 					}
+					var characterElements = s_styleCollection.GetUsedCharacterElements();
+					characterElements.ForEach(element => styleSheet.AppendChild(element.Style.CloneNode(true)));
 
 					// Clear the collection.
 					s_styleCollection.Clear();
@@ -276,7 +307,10 @@ namespace SIL.FieldWorks.XWorks
 				headwordWsCollator, settings, clerk);
 
 			// Create LetterHeader doc fragment and link it with the letter heading style.
-			return DocFragment.GenerateLetterHeaderDocFragment(headerTextBuilder.ToString(), WordStylesGenerator.LetterHeadingDisplayName, firstHeader);
+			var cache = propertyTable.GetValue<LcmCache>("cache");
+			var wsId = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
+			var wsString = cache.WritingSystemFactory.GetStrFromWs(wsId);
+			return DocFragment.GenerateLetterHeaderDocFragment(headerTextBuilder.ToString(), WordStylesGenerator.LetterHeadingDisplayName, firstHeader, wsString);
 		}
 
 		/*
@@ -289,7 +323,6 @@ namespace SIL.FieldWorks.XWorks
 			internal WordprocessingDocument DocFrag { get; }
 			internal MainDocumentPart mainDocPart { get; }
 			internal WP.Body DocBody { get; }
-			internal string ParagraphStyle { get; private set; }
 
 			/// <summary>
 			/// Constructs a new memory stream and creates an empty doc fragment
@@ -345,7 +378,7 @@ namespace SIL.FieldWorks.XWorks
 			/// <param name="str">Letter header string.</param>
 			/// <param name="styleDisplayName">Letter header style name to display in Word.</param>
 			/// <param name="firstHeader">True if this is the first header being written.</param>
-			internal static DocFragment GenerateLetterHeaderDocFragment(string str, string styleDisplayName, bool firstHeader)
+			internal static DocFragment GenerateLetterHeaderDocFragment(string str, string styleDisplayName, bool firstHeader, string wsString)
 			{
 				var docFrag = new DocFragment();
 				// Only create paragraph, run, and text objects if string is nonempty
@@ -375,6 +408,8 @@ namespace SIL.FieldWorks.XWorks
 					WP.ParagraphProperties paragraphProps = new WP.ParagraphProperties(new ParagraphStyleId() { Val = styleDisplayName });
 					WP.Paragraph para = docFrag.DocBody.AppendChild(new WP.Paragraph(paragraphProps));
 					WP.Run run = para.AppendChild(new WP.Run());
+					string uniqueDisplayName = WordStylesGenerator.LetterHeadingDisplayName + WordStylesGenerator.GetWsString(wsString);
+					run.Append(GenerateRunProperties(uniqueDisplayName));
 					// For spaces to show correctly, set preserve spaces on the text element
 					WP.Text txt = new WP.Text(str);
 					txt.Space = SpaceProcessingModeValues.Preserve;
@@ -396,37 +431,6 @@ namespace SIL.FieldWorks.XWorks
 					docFrag.DocBody.AppendChild(new WP.Paragraph(new WP.ParagraphProperties(sectProps1)));
 				}
 				return docFrag;
-			}
-
-			public static string GetWsStyleName(LcmCache cache, ConfigurableDictionaryNode config, string writingSystem)
-			{
-				string styleDisplayName = config.DisplayLabel;
-
-				// If the config does not contain writing system options, then just return the style name.(An example is custom fields.)
-				if (!(config.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions))
-				{
-					return styleDisplayName;
-				}
-
-				return GenerateWsStyleName(cache, styleDisplayName, writingSystem);
-			}
-
-			public static string GenerateWsStyleName(LcmCache cache, string styleDisplayName, string writingSystem)
-			{
-				var wsStr = writingSystem;
-				var possiblyMagic = WritingSystemServices.GetMagicWsIdFromName(writingSystem);
-				// If it is magic, then get the associated ws.
-				if (possiblyMagic != 0)
-				{
-					// Get a list of the writing systems for the magic name, and use the first one.
-					wsStr = WritingSystemServices.GetWritingSystemList(cache, possiblyMagic, false).First().Id;
-				}
-
-				// If there is no base style, return just the ws style.
-				if (string.IsNullOrEmpty(styleDisplayName))
-					return WordStylesGenerator.GetWsString(wsStr);
-				// If there is a base style, return the ws-specific version of that style.
-				return styleDisplayName + WordStylesGenerator.GetWsString(wsStr);
 			}
 
 			/// <summary>
@@ -568,13 +572,14 @@ namespace SIL.FieldWorks.XWorks
 							ParagraphStyleId styleId = paraProps.OfType<WP.ParagraphStyleId>().FirstOrDefault();
 							if (styleId != null && styleId.Val != null && styleId.Val.Value != null)
 							{
-								if (styleId.Val.Value.EndsWith(WordStylesGenerator.EntryStyleContinue))
+								var paraElem = s_styleCollection.GetParagraphElement(styleId.Val.Value);
+								if (paraElem.DisplayNameBase.EndsWith(WordStylesGenerator.EntryStyleContinue))
 								{
-									style = styleId.Val.Value;
+									style = paraElem.UniqueDisplayName();
 								}
 								else
 								{
-									style = styleId.Val.Value + WordStylesGenerator.EntryStyleContinue;
+									style = paraElem.ContinuationElement.UniqueDisplayName();
 								}
 							}
 						}
@@ -989,98 +994,6 @@ namespace SIL.FieldWorks.XWorks
 			internal IFragment TableTitleContent { get; set; }
 			internal int TableColumns { get; set; }
 			internal int RowColumns { get; set; }
-
-			/// <summary>
-			/// Add a new run to the WordFragment DocBody.
-			/// </summary>
-			public void AddRun(LcmCache cache, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string writingSystem, bool first)
-			{
-				var run = new WP.Run();
-				string uniqueDisplayName = null;
-				string displayNameBase = (config == null || writingSystem == null) ?
-					null : DocFragment.GetWsStyleName(cache, config, writingSystem);
-
-				if (!string.IsNullOrEmpty(displayNameBase))
-				{
-					// The calls to TryGetStyle() and AddStyle() need to be in the same lock.
-					lock (s_styleCollection)
-					{
-						if (s_styleCollection.TryGetStyle(config.Style, displayNameBase, out StyleElement existingStyle))
-						{
-							uniqueDisplayName = existingStyle.Style.StyleId;
-						}
-						// If the style is not in the collection, then add it.
-						else
-						{
-							var wsString = WordStylesGenerator.GetWsString(writingSystem);
-
-							// Get the style from the LcmStyleSheet, using the style name defined in the config.
-							if (!string.IsNullOrEmpty(config.Style))
-							{
-								var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(writingSystem);
-								Style style = WordStylesGenerator.GenerateCharacterStyleFromLcmStyleSheet(config.Style, wsId, propTable);
-								if (style == null)
-								{
-									// If we hit this assert, then we might end up referencing a style that
-									// does not get created.
-									Debug.Assert(false);
-								}
-								else
-								{
-									style.Append(new BasedOn() { Val = wsString });
-									style.StyleId = displayNameBase;
-									style.StyleName.Val = style.StyleId;
-									bool wsIsRtl = IsWritingSystemRightToLeft(cache, wsId);
-									uniqueDisplayName = s_styleCollection.AddCharacterStyle(style, config.Style, style.StyleId, wsId, wsIsRtl);
-								}
-							}
-							// There is no style name defined in the config so generate a style that is identical to the writing system style
-							// except that it contains a display name that the user wants to see in the Word Styles.
-							// (example: "Reverse Abbreviation[lang='en']")
-							else
-							{
-								StyleElement rootElem = s_styleCollection.GetStyleElement(wsString);
-								// rootElem can be null, see LT-21981.
-								Style rootStyle = rootElem?.Style;
-								if (rootStyle != null)
-								{
-									Style basedOnStyle = WordStylesGenerator.GenerateBasedOnCharacterStyle(new Style(), wsString, displayNameBase);
-									if (basedOnStyle != null)
-									{
-										uniqueDisplayName = s_styleCollection.AddCharacterStyle(basedOnStyle, config.Style, basedOnStyle.StyleId,
-											rootElem.WritingSystemId, rootElem.WritingSystemIsRtl);
-									}
-									else
-									{
-										// If we hit this assert, then we might end up referencing a style that
-										// does not get created.
-										Debug.Assert(false, "Could not generate BasedOn character style " + displayNameBase);
-									}
-								}
-								else
-								{
-									// If we hit this assert, then we might end up referencing a style that
-									// does not get created.
-									Debug.Assert(false, "Could not create style for " + wsString);
-								}
-							}
-						}
-						run.Append(GenerateRunProperties(uniqueDisplayName));
-					}
-				}
-
-				// Add Between text, if it is not the first item.
-				if (!first &&
-					config != null &&
-					!string.IsNullOrEmpty(config.Between))
-				{
-					var betweenRun = CreateBeforeAfterBetweenRun(config.Between, uniqueDisplayName);
-					WordFragment.DocBody.Append(betweenRun);
-				}
-
-				// Add the run.
-				WordFragment.DocBody.AppendChild(run);
-			}
 		}
 		#endregion WordFragmentWriter class
 
@@ -1088,16 +1001,39 @@ namespace SIL.FieldWorks.XWorks
 		 * Content Generator Region
 		 */
 		#region ILcmContentGenerator functions to implement
-		public IFragment GenerateWsPrefixWithString(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings,
+		public IFragment GenerateWsPrefixWithString(ConfigurableDictionaryNode node, ConfiguredLcmGenerator.GeneratorSettings settings,
 			bool displayAbbreviation, int wsId, IFragment content)
 		{
 			if (displayAbbreviation)
 			{
+				// Get the unique display name to use in the run.
+				string uniqueDisplayName = null;
+				lock (s_styleCollection)
+				{
+					string nodePath = CssGenerator.GetNodePath(node);
+					string wsAbbrevStyleName = WordStylesGenerator.WritingSystemStyleName;
+					string wsAbbrevNodePath = nodePath + wsAbbrevStyleName;
+
+					if (s_styleCollection.TryGetCharacterStyle(wsAbbrevNodePath, wsId, out CharacterElement existingWsAbbrevStyle))
+					{
+						uniqueDisplayName = existingWsAbbrevStyle.Style.StyleId;
+					}
+					// If the style is not in the collection, then add it.
+					else
+					{
+						s_styleCollection.TryGetCharacterStyle(nodePath, wsId, out CharacterElement existingStyle);
+						Debug.Assert(existingStyle != null);
+						var lastNodeUniqueName = existingStyle.UniqueDisplayName();
+						uniqueDisplayName = s_styleCollection.AddSpecialCharacterStyle(wsAbbrevStyleName,
+							WordStylesGenerator.WritingSystemDisplayName, lastNodeUniqueName, node, wsAbbrevStyleName, wsId);
+					}
+				}
+
 				//  Create the abbreviation run that uses the abbreviation style.
 				// Note: Appending a space is similar to the code in CssGenerator.cs GenerateCssForWritingSystemPrefix() that adds
 				//       a space after the abbreviation.
 				string abbrev = ((CoreWritingSystemDefinition)settings.Cache.WritingSystemFactory.get_EngineOrNull(wsId)).Abbreviation + " ";
-				var abbrevRun = CreateRun(abbrev, WordStylesGenerator.WritingSystemDisplayName);
+				var abbrevRun = CreateRun(abbrev, uniqueDisplayName);
 
 				// We can't just prepend the abbreviation run because the content might already contain a before or between run.
 				// The abbreviation run should go after the before or between run, but before the string run.
@@ -1112,7 +1048,7 @@ namespace SIL.FieldWorks.XWorks
 					if (runProps != null)
 					{
 						RunStyle runStyle = runProps.OfType<RunStyle>().FirstOrDefault();
-						if (runStyle != null && runStyle.Val.ToString().StartsWith(WordStylesGenerator.BeforeAfterBetweenDisplayName))
+						if (runStyle != null && runStyle.Val.ToString().Contains(WordStylesGenerator.BeforeAfterBetween))
 						{
 							((DocFragment)content).DocBody.InsertAfter(abbrevRun, firstRun);
 							abbrevAdded = true;
@@ -1125,9 +1061,6 @@ namespace SIL.FieldWorks.XWorks
 				{
 					((DocFragment)content).DocBody.PrependChild(abbrevRun);
 				}
-
-				// Add the abbreviation style to the collection (if not already added).
-				GetOrCreateCharacterStyle(WordStylesGenerator.WritingSystemStyleName, WordStylesGenerator.WritingSystemDisplayName, _propertyTable);
 			}
 
 			return content;
@@ -1140,39 +1073,42 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public IFragment WriteProcessedObject(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className)
 		{
-			return WriteProcessedElementContent(elementContent, config);
+			var runs = ((DocFragment)elementContent)?.DocBody.OfType<WP.Run>();
+			// If there is only one run we can use it to get a writing system (needed for Before/After text).
+			int? wsId = null;
+			if (runs.Count() == 1)
+			{
+				var run = runs.First();
+				var runElem = GetElementFromRun(run);
+				wsId = runElem.WritingSystemId;
+			}
+
+			return WriteProcessedElementContent(elementContent, config, wsId);
 		}
 		public IFragment WriteProcessedCollection(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className)
 		{
-			return WriteProcessedElementContent(elementContent, config);
+			return WriteProcessedElementContent(elementContent, config, null);
 		}
 
-		private IFragment WriteProcessedElementContent(IFragment elementContent, ConfigurableDictionaryNode config)
+		private IFragment WriteProcessedElementContent(IFragment elementContent, ConfigurableDictionaryNode config, int? wsId)
 		{
-			// Check if the character style for the last run should be modified.
-			if (string.IsNullOrEmpty(config.Style) && !string.IsNullOrEmpty(config.Parent.Style) &&
-				(config.Parent.StyleType != ConfigurableDictionaryNode.StyleTypes.Paragraph))
-			{
-				AddRunStyle(elementContent, config.Parent.Style, config.Parent.DisplayLabel, false);
-			}
-
 			bool eachInAParagraph = config != null &&
 								  config.DictionaryNodeOptions is IParaOption &&
 								  ((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph;
-			string styleDisplayName = GetUniqueDisplayName(config, elementContent);
-
 
 			// Add Before text, if it is not going to be displayed in a paragraph.
 			if (!eachInAParagraph && !string.IsNullOrEmpty(config.Before))
 			{
-				var beforeRun = CreateBeforeAfterBetweenRun(config.Before, styleDisplayName);
+				var beforeRun = wsId.HasValue ? CreateBeforeAfterBetweenRun(config, config.Before, wsId.Value) :
+					CreateDefaultBeforeAfterBetweenRun(config, config.Before);
 				((DocFragment)elementContent).DocBody.PrependChild(beforeRun);
 			}
 
 			// Add After text, if it is not going to be displayed in a paragraph.
 			if (!eachInAParagraph && !string.IsNullOrEmpty(config.After))
 			{
-				var afterRun = CreateBeforeAfterBetweenRun(config.After, styleDisplayName);
+				var afterRun = wsId.HasValue ? CreateBeforeAfterBetweenRun(config, config.After, wsId.Value) :
+					CreateDefaultBeforeAfterBetweenRun(config, config.After);
 				((DocFragment)elementContent).DocBody.Append(afterRun);
 			}
 
@@ -1220,19 +1156,17 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			string styleDisplayName = GetUniqueDisplayName(config, childContent);
-
 			// Add Before text, if it is not going to be displayed in a paragraph.
 			if (!eachInAParagraph && !string.IsNullOrEmpty(config.Before))
 			{
-				var beforeRun = CreateBeforeAfterBetweenRun(config.Before, styleDisplayName);
+				var beforeRun = CreateDefaultBeforeAfterBetweenRun(config, config.Before);
 				groupData.DocBody.PrependChild(beforeRun);
 			}
 
 			// Add After text, if it is not going to be displayed in a paragraph.
 			if (!eachInAParagraph && !string.IsNullOrEmpty(config.After))
 			{
-				var afterRun = CreateBeforeAfterBetweenRun(config.After, styleDisplayName);
+				var afterRun = CreateDefaultBeforeAfterBetweenRun(config, config.After);
 				groupData.DocBody.Append(afterRun);
 			}
 
@@ -1252,8 +1186,53 @@ namespace SIL.FieldWorks.XWorks
 			return groupData;
 		}
 
+		/// <summary>
+		/// Iterate through the runs in the fragment when AddSenseData() is called. If any of the runs
+		/// are using a style that has the SensesSubentriesUniqueDisplayName property set, then we want
+		/// to change the run so that it uses the style built from the '.entry .senses .subentries' path
+		/// instead of the style that was built from the '.entry subentries' path.
+		///
+		/// The root problem that this method is solving, is that '.entry .senses .subentries' uses the child
+		/// nodes from '.entry .subentries'.  Since the properties of the child nodes are a combination of the
+		/// child node properties and all of its parent node properties, the cumulative properties can be
+		/// different for the two different node paths. While building the individual runs we do not know
+		/// where they are going to be used.  It is not until we get in AddSenseData() that
+		/// we have enough information to figure out which style should be used for the runs.
+		///
+		/// An additional complication is when we get in here for a style built on '.entry .subentries .senses'.
+		/// We only want to change to the style build from the '.entry .senses .subentries .senses' path
+		/// when we get in AddSenseDate() two times for the run. For this special case we set an attribute
+		/// on the run the first time we get in this method. The second time we get in here for the run,
+		/// change the unique name to what is stored in SensesSubentriesUniqueDisplayName.
+		/// </summary>
+		private void FixStylesForSensesSubentries(IFragment content)
+		{
+			foreach (WP.Run run in ((DocFragment)content).DocBody.Descendants<WP.Run>())
+			{
+				CharacterElement charElem = GetElementFromRun(run);
+				if (!string.IsNullOrEmpty(charElem.SensesSubentriesUniqueDisplayName))
+				{
+					// If this node is '.entry .subentries .senses' or one of it's children, then we need
+					// to get in here twice for a run before we want to change the name.  The first time in here
+					// we cannot distinguish if this should remain '.entry .subentries .senses' or be changed
+					// to '.entry .senses .subentries .senses'. If it needs to be changed we will get here
+					// a second time for the larger fragment that includes all children of '.entry .senses .subentries.'.
+					if (charElem.NodePath.StartsWith(".entry .subentries .senses") && !run.HasAttributes)
+					{
+						run.SetAttribute(new DocumentFormat.OpenXml.OpenXmlAttribute("EntrySubentriesSenses", null, "1"));
+						continue;
+					}
+
+					SetUniqueDisplayName(run, charElem.SensesSubentriesUniqueDisplayName);
+				}
+			}
+		}
+
 		public IFragment AddSenseData(ConfigurableDictionaryNode config, IFragment senseNumberSpan, Guid ownerGuid, IFragment senseContent, bool first)
 		{
+			FixStylesForSensesSubentries(senseContent);
+			FixStylesForSensesSubentries(senseNumberSpan);
+
 			var senseData = new DocFragment();
 			WP.Paragraph newPara = null;
 			var senseNode = (DictionaryNodeSenseOptions)config?.DictionaryNodeOptions;
@@ -1278,8 +1257,7 @@ namespace SIL.FieldWorks.XWorks
 				!eachInAParagraph &&
 				!string.IsNullOrEmpty(config.Between))
 			{
-				string styleDisplayName = GetUniqueDisplayName(config, senseContent);
-				var betweenRun = CreateBeforeAfterBetweenRun(config.Between, styleDisplayName);
+				var betweenRun = CreateDefaultBeforeAfterBetweenRun(config, config.Between);
 				senseData.DocBody.Append(betweenRun);
 			}
 
@@ -1313,13 +1291,6 @@ namespace SIL.FieldWorks.XWorks
 
 		public IFragment AddCollectionItem(ConfigurableDictionaryNode config, bool isBlock, string collectionItemClass, IFragment content, bool first)
 		{
-			// Add the style to all the runs in the content fragment.
-			if (!string.IsNullOrEmpty(config.Style) &&
-				(config.StyleType != ConfigurableDictionaryNode.StyleTypes.Paragraph))
-			{
-				AddRunStyle(content, config.Style, config.DisplayLabel, true);
-			}
-
 			var collData = new DocFragment();
 			WP.Paragraph newPara = null;
 			bool eachInAParagraph = false;
@@ -1338,8 +1309,7 @@ namespace SIL.FieldWorks.XWorks
 				!eachInAParagraph &&
 				!string.IsNullOrEmpty(config.Between))
 			{
-				string styleDisplayName = GetUniqueDisplayName(config, content);
-				var betweenRun = CreateBeforeAfterBetweenRun(config.Between, styleDisplayName);
+				var betweenRun = CreateDefaultBeforeAfterBetweenRun(config, config.Between);
 				((DocFragment)collData).DocBody.Append(betweenRun);
 			}
 
@@ -1357,9 +1327,6 @@ namespace SIL.FieldWorks.XWorks
 		public IFragment AddProperty(ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string className, bool isBlockProperty, string content, string writingSystem)
 		{
 			var propFrag = new DocFragment();
-			Run contentRun = null;
-			string styleDisplayName = null;
-
 			if (string.IsNullOrEmpty(content))
 			{
 				// In this case, we should not generate the run or any before/after text for it.
@@ -1368,27 +1335,23 @@ namespace SIL.FieldWorks.XWorks
 
 			// Create a run with the correct style.
 			var writer = CreateWriter(propFrag);
-			((WordFragmentWriter)writer).AddRun(Cache, config, propTable, writingSystem, true);
+			StartRun(writer, config, propTable, writingSystem, true);
 
 			// Add the content to the run.
 			AddToRunContent(writer, content);
-			var currentRun = ((WordFragmentWriter)writer).WordFragment.GetLastRun();
 
-			// Get the run's styleDisplayName for use in before/after text runs.
-			if (currentRun.RunProperties != null)
-				styleDisplayName = currentRun.RunProperties.RunStyle?.Val;
-
+			var wsId = Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(writingSystem);
 			// Add Before text.
 			if (!string.IsNullOrEmpty(config.Before))
 			{
-				var beforeRun = CreateBeforeAfterBetweenRun(config.Before, styleDisplayName);
+				var beforeRun = CreateBeforeAfterBetweenRun(config, config.Before, wsId);
 				propFrag.DocBody.PrependChild(beforeRun);
 			}
 
 			// Add After text.
 			if (!string.IsNullOrEmpty(config.After))
 			{
-				var afterRun = CreateBeforeAfterBetweenRun(config.After, styleDisplayName);
+				var afterRun = CreateBeforeAfterBetweenRun(config, config.After, wsId);
 				propFrag.DocBody.Append(afterRun);
 			}
 
@@ -1429,12 +1392,40 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Add a new run to the writers WordFragment DocBody.
 		/// </summary>
-		/// <param name="writer"></param>
-		/// <param name="writingSystem"></param>
 		public void StartRun(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string writingSystem, bool first)
 		{
-			((WordFragmentWriter)writer).AddRun(Cache, config, propTable, writingSystem, first);
+			var run = new WP.Run();
+			var wsId = Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(writingSystem);
+			string nodePath = CssGenerator.GetNodePath(config);
+			// The calls to 'TryGet' and 'Add' need to be in the same lock.
+			lock (s_styleCollection)
+			{
+				string uniqueDisplayName = null;
+				if (s_styleCollection.TryGetCharacterStyle(nodePath, wsId, out CharacterElement existingStyle))
+				{
+					uniqueDisplayName = existingStyle.Style.StyleId;
+				}
+				// If the style is not in the collection, then add it.
+				else
+				{
+					uniqueDisplayName = s_styleCollection.AddStyles(config, wsId);
+				}
+				run.Append(GenerateRunProperties(uniqueDisplayName));
+			}
+
+			// Add Between text, if it is not the first item.
+			if (!first &&
+				config != null &&
+				!string.IsNullOrEmpty(config.Between))
+			{
+				var betweenRun = CreateBeforeAfterBetweenRun(config, config.Between, wsId);
+				((WordFragmentWriter)writer).WordFragment.DocBody.Append(betweenRun);
+			}
+
+			// Add the run.
+			((WordFragmentWriter)writer).WordFragment.DocBody.Append(run);
 		}
+
 		public void EndRun(IFragmentWriter writer)
 		{
 			// Ending the run should be a null op for word writer
@@ -1451,7 +1442,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (!string.IsNullOrEmpty(runStyle))
 			{
-				AddRunStyle(((WordFragmentWriter)writer).WordFragment, runStyle, runStyle, false);
+				OverrideStyle(((WordFragmentWriter)writer).WordFragment, config, runStyle, writingSystem);
 			}
 		}
 		public void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, Guid destination)
@@ -1654,11 +1645,8 @@ namespace SIL.FieldWorks.XWorks
 			// needs to be added to the entry after the interruption.
 
 			// Create the style for the entry.
-			var style = WordStylesGenerator.GenerateParagraphStyleFromLcmStyleSheet(node.Style, WordStylesGenerator.DefaultStyle, _propertyTable, out BulletInfo? bulletInfo);
-			style.StyleId = node.DisplayLabel;
-			style.StyleName.Val = style.StyleId;
-			AddParagraphBasedOnStyle(style, node, _propertyTable);
-			string uniqueDisplayName = s_styleCollection.AddParagraphStyle(style, node.Style, style.StyleId, bulletInfo);
+			ParagraphElement paraElem = s_styleCollection.AddParagraphStyle(node);
+			string uniqueDisplayName = paraElem.UniqueDisplayName();
 
 			// Create a new paragraph for the entry.
 			DocFragment wordDoc = ((WordFragmentWriter)writer).WordFragment;
@@ -1668,8 +1656,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Create the 'continuation' style for the entry. This style will be the same as the style for the entry with the only
 			// differences being that it does not contain the first line indenting or bullet info (since it is a continuation of the same entry).
-			var contStyle = WordStylesGenerator.GenerateContinuationStyle(style);
-			s_styleCollection.AddParagraphStyle(contStyle, node.Style, contStyle.StyleId, null);
+			s_styleCollection.AddParagraphContinuationStyle(paraElem);
 		}
 
 		public void AddEntryData(IFragmentWriter writer, List<ConfiguredLcmGenerator.ConfigFragment> pieces)
@@ -1731,14 +1718,14 @@ namespace SIL.FieldWorks.XWorks
 								{
 									// Create and add a new textbox containing the image
 									WP.ParagraphProperties paragraphProps =
-										new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextframeStyle });
+										new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextframeDisplayName });
 
 									wordWriter.WordFragment.AppendNewTextboxParagraph(frag, run, paragraphProps, config);
 								}
 								else
 								{
 									WP.ParagraphProperties paragraphProps =
-										new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextframeStyle });
+										new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextframeDisplayName });
 									wordWriter.WordFragment.AppendImageToTextbox(frag, run, paragraphProps);
 								}
 							}
@@ -1759,7 +1746,8 @@ namespace SIL.FieldWorks.XWorks
 
 						case WP.Paragraph para:
 							// If we have a paragraph associated with a Pictures node, we are dealing with an image caption.
-							if (config.Label == "Pictures" || config.Parent?.Label == "Pictures")
+							if (config.Label == WordStylesGenerator.PictureAndCaptionTextframeDisplayName ||
+								config.Parent?.Label == WordStylesGenerator.PictureAndCaptionTextframeDisplayName)
 							{
 								// In this case, the paragraph is an image caption and belongs in the last textbox
 								wordWriter.WordFragment.AppendCaptionParagraphToTextbox(frag, para);
@@ -1784,11 +1772,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public void AddCollection(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty, string className, IFragment content)
 		{
-			string styleDisplayName = GetUniqueDisplayName(config, content);
 			// Add Before text.
 			if (!string.IsNullOrEmpty(config.Before))
 			{
-				var beforeRun = CreateBeforeAfterBetweenRun(config.Before, styleDisplayName);
+				var beforeRun = CreateDefaultBeforeAfterBetweenRun(config, config.Before);
 				((WordFragmentWriter)writer).WordFragment.DocBody.Append(beforeRun);
 			}
 
@@ -1800,10 +1787,11 @@ namespace SIL.FieldWorks.XWorks
 			// Add After text.
 			if (!string.IsNullOrEmpty(config.After))
 			{
-				var afterRun = CreateBeforeAfterBetweenRun(config.After, styleDisplayName);
+				var afterRun = CreateDefaultBeforeAfterBetweenRun(config, config.After);
 				((WordFragmentWriter)writer).WordFragment.DocBody.Append(afterRun);
 			}
 		}
+
 		public void BeginObjectProperty(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty, string getCollectionItemClassAttribute)
 		{
 			return;
@@ -1854,7 +1842,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Create a paragraph using the textframe style for captions.
 				WP.ParagraphProperties paragraphProps = new WP.ParagraphProperties(
-					new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextframeStyle });
+					new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextframeDisplayName });
 				WP.Paragraph captionPara = docFrag.DocBody.AppendChild(new WP.Paragraph(paragraphProps));
 
 				// Clone each caption run and append it to the caption paragraph.
@@ -1880,32 +1868,24 @@ namespace SIL.FieldWorks.XWorks
 					numberStyleName = senseOptions.NumberStyle;
 				}
 			}
-			string displayNameBase = DocFragment.GenerateWsStyleName(Cache, WordStylesGenerator.SenseNumberDisplayName, senseNumberWs);
+			var wsId = Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(senseNumberWs);
 
 			// Add the style to the collection and get the unique name.
 			string uniqueDisplayName = null;
-			// The calls to TryGetStyle() and AddStyle() need to be in the same lock.
+			// The calls to 'TryGet' and 'Add' need to be in the same lock.
 			lock (s_styleCollection)
 			{
-				if (s_styleCollection.TryGetStyle(numberStyleName, displayNameBase, out StyleElement existingStyle))
+				string numberStyleNodePath = CssGenerator.GetNodePath(senseConfigNode) + numberStyleName;
+				if (s_styleCollection.TryGetCharacterStyle(numberStyleNodePath, wsId, out CharacterElement existingStyle))
 				{
 					uniqueDisplayName = existingStyle.Style.StyleId;
 				}
 				// If the style is not in the collection, then add it.
 				else
 				{
-					var wsString = WordStylesGenerator.GetWsString(senseNumberWs);
-
-					// Get the style from the LcmStyleSheet.
-					var cache = _propertyTable.GetValue<LcmCache>("cache");
-					var wsId = cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(senseNumberWs);
-					Style style = WordStylesGenerator.GenerateCharacterStyleFromLcmStyleSheet(numberStyleName, wsId, _propertyTable);
-
-					style.Append(new BasedOn() { Val = wsString });
-					style.StyleId = displayNameBase;
-					style.StyleName.Val = style.StyleId;
-					bool wsIsRtl = IsWritingSystemRightToLeft(cache, wsId);
-					uniqueDisplayName = s_styleCollection.AddCharacterStyle(style, numberStyleName, style.StyleId, wsId, wsIsRtl);
+					var lastNodeUniqueName = s_styleCollection.AddStyles(senseConfigNode, wsId);
+					uniqueDisplayName = s_styleCollection.AddSpecialCharacterStyle(numberStyleName,
+						WordStylesGenerator.SenseNumberDisplayName, lastNodeUniqueName, senseConfigNode, numberStyleName, wsId);
 				}
 			}
 
@@ -1914,7 +1894,7 @@ namespace SIL.FieldWorks.XWorks
 			// Add characters before the number.
 			if (!string.IsNullOrEmpty(beforeNumber))
 			{
-				var beforeRun = CreateBeforeAfterBetweenRun(beforeNumber, uniqueDisplayName);
+				var beforeRun = CreateBeforeAfterBetweenRun(senseConfigNode, beforeNumber, wsId, numberStyleName);
 				senseNum.DocBody.AppendChild(beforeRun);
 			}
 
@@ -1928,12 +1908,13 @@ namespace SIL.FieldWorks.XWorks
 			// Add characters after the number.
 			if (!string.IsNullOrEmpty(afterNumber))
 			{
-				var afterRun = CreateBeforeAfterBetweenRun(afterNumber, uniqueDisplayName);
+				var afterRun = CreateBeforeAfterBetweenRun(senseConfigNode, afterNumber, wsId, numberStyleName);
 				senseNum.DocBody.AppendChild(afterRun);
 			}
 
 			return senseNum;
 		}
+
 		public IFragment AddLexReferences(ConfigurableDictionaryNode config, bool generateLexType, IFragment lexTypeContent, string className, IFragment referencesContent, bool typeBefore)
 		{
 			var fragment = new DocFragment();
@@ -1966,8 +1947,7 @@ namespace SIL.FieldWorks.XWorks
 			// Add Between text if it is not the first item in the collection.
 			if (!firstItem && !string.IsNullOrEmpty(node.Between))
 			{
-				string styleDisplayName = GetUniqueDisplayName(node, content);
-				var betweenRun = CreateBeforeAfterBetweenRun(node.Between, styleDisplayName);
+				var betweenRun = CreateDefaultBeforeAfterBetweenRun(node, node.Between);
 				((DocFragment)content).DocBody.PrependChild(betweenRun);
 			}
 		}
@@ -1976,12 +1956,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var senseOptions = config?.DictionaryNodeOptions as DictionaryNodeSenseOptions;
 			bool eachInAParagraph = senseOptions?.DisplayEachSenseInAParagraph ?? false;
-			string styleDisplayName = GetUniqueDisplayName(config, sharedGramInfo);
 
 			// Add Before text for the senses if they were not displayed in separate paragraphs.
 			if (!eachInAParagraph && !string.IsNullOrEmpty(config.Before))
 			{
-				var beforeRun = CreateBeforeAfterBetweenRun(config.Before, styleDisplayName);
+				var beforeRun = CreateDefaultBeforeAfterBetweenRun(config, config.Before);
 				((DocFragment)sharedGramInfo).DocBody.PrependChild(beforeRun);
 			}
 
@@ -1991,7 +1970,7 @@ namespace SIL.FieldWorks.XWorks
 			// Add After text for the senses if they were not displayed in separate paragraphs.
 			if (!eachInAParagraph && !string.IsNullOrEmpty(config.After))
 			{
-				var afterRun = CreateBeforeAfterBetweenRun(config.After, styleDisplayName);
+				var afterRun = CreateDefaultBeforeAfterBetweenRun(config, config.After);
 				((DocFragment)sharedGramInfo).DocBody.Append(afterRun);
 			}
 
@@ -2020,183 +1999,8 @@ namespace SIL.FieldWorks.XWorks
 		#region ILcmStylesGenerator functions to implement
 		public void AddGlobalStyles(DictionaryConfigurationModel model, ReadOnlyPropertyTable propertyTable)
 		{
-			var cache = propertyTable.GetValue<LcmCache>("cache");
-			var propStyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
-
-			// Generate Character Styles
-			//
-
-			var beforeAfterBetweenStyle = WordStylesGenerator.GenerateBeforeAfterBetweenCharacterStyle(propertyTable, out int wsId);
-			if (beforeAfterBetweenStyle != null)
-			{
-				bool wsIsRtl = IsWritingSystemRightToLeft(cache, wsId);
-				s_styleCollection.AddCharacterStyle(beforeAfterBetweenStyle,
-					WordStylesGenerator.BeforeAfterBetweenStyleName, beforeAfterBetweenStyle.StyleId, wsId, wsIsRtl);
-			}
-
-			List<StyleElement> writingSystemStyles = WordStylesGenerator.GenerateWritingSystemsCharacterStyles(propertyTable);
-			if (writingSystemStyles != null)
-			{
-				foreach (StyleElement elem in writingSystemStyles)
-				{
-					s_styleCollection.AddCharacterStyle(elem.Style, elem.Style.StyleId, elem.Style.StyleId,
-						elem.WritingSystemId, elem.WritingSystemIsRtl);
-				}
-			}
-
-			// Generate Paragraph styles.
-			// Note: the order of generation is important since we want based on names to use the display names, not the style names.
-			//
-			BulletInfo? bulletInfo = null;
-			var normStyle = WordStylesGenerator.GenerateNormalParagraphStyle(propertyTable, out bulletInfo);
-			if (normStyle != null)
-			{
-				s_styleCollection.AddParagraphStyle(normStyle, WordStylesGenerator.NormalParagraphStyleName, normStyle.StyleId, bulletInfo);
-			}
-
-			var pageHeaderStyle = WordStylesGenerator.GeneratePageHeaderStyle(normStyle);
-			// Intentionally re-using the bulletInfo from Normal.
-			s_styleCollection.AddParagraphStyle(pageHeaderStyle, WordStylesGenerator.PageHeaderStyleName, pageHeaderStyle.StyleId, bulletInfo);
-
-			var mainStyle = WordStylesGenerator.GenerateMainEntryParagraphStyle(propertyTable, model, out ConfigurableDictionaryNode node, out bulletInfo);
-			if (mainStyle != null)
-			{
-				AddParagraphBasedOnStyle(mainStyle, node, propertyTable);
-				s_styleCollection.AddParagraphStyle(mainStyle, node.Style, mainStyle.StyleId, bulletInfo);
-			}
-
-			var headStyle = WordStylesGenerator.GenerateLetterHeaderParagraphStyle(propertyTable, out bulletInfo);
-			if (headStyle != null)
-			{
-				AddParagraphBasedOnStyle(headStyle, null, _propertyTable);
-				s_styleCollection.AddParagraphStyle(headStyle, WordStylesGenerator.LetterHeadingStyleName, headStyle.StyleId, bulletInfo);
-			}
-
-			// TODO: in openxml, will links be plaintext by default?
-			//WordStylesGenerator.MakeLinksLookLikePlainText(_styleSheet);
-		}
-
-		/// <summary>
-		/// Intended to add the basedOn styles for paragraph styles, not character styles.
-		/// This method is recursive. It walks up the basedOn styles and adds them
-		/// until we get to a style that is already in the collection.
-		/// If the basedOn style is already in the collection then the style.BasedOn value will
-		/// get updated to the unique display name.
-		/// </summary>
-		/// <param name="style">The style to add it's basedOn style. (It's BasedOn value might get modified.)</param>
-		/// <param name="node">Can be null, but if it is then the only option for getting a basedOnStyle is from
-		/// the style, not the parent node.</param>
-		private void AddParagraphBasedOnStyle(Style style, ConfigurableDictionaryNode node, ReadOnlyPropertyTable propertyTable)
-		{
-			Debug.Assert(style.Type == StyleValues.Paragraph);
-
-			// No based on styles for pictures.
-			if (style.StyleId == WordStylesGenerator.PictureAndCaptionTextframeStyle)
-				return;
-
-			string basedOnStyleName = null;
-			string basedOnDisplayName = null;
-			ConfigurableDictionaryNode parentNode = null;
-			if (style.BasedOn != null && !string.IsNullOrEmpty(style.BasedOn.Val))
-			{
-				basedOnStyleName = style.BasedOn.Val;
-			}
-
-			// If there is no basedOn style, or the basedOn style is "Normal" then use the
-			// parent node's style for the basedOn style.
-			if (string.IsNullOrEmpty(basedOnStyleName) ||
-				basedOnStyleName == WordStylesGenerator.NormalParagraphStyleName)
-			{
-				if (node?.Parent != null && !string.IsNullOrEmpty(node.Parent.Style) &&
-					(node.Parent.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph))
-				{
-					parentNode = node.Parent;
-					basedOnStyleName = node.Parent.Style;
-					basedOnDisplayName = node.Parent.DisplayLabel;
-				}
-			}
-
-			if (!string.IsNullOrEmpty(basedOnStyleName))
-			{
-				bool continuationStyle = style.StyleId.Value.EndsWith(WordStylesGenerator.EntryStyleContinue);
-				// Currently this method does not work (and should not be used) for continuation styles. The problem is
-				// that the basedOn name of the regular style has already been changed to the display name. We would
-				// need a way to get the FLEX name from the display name.
-				if (continuationStyle)
-				{
-					Debug.Assert(!continuationStyle, "Currently this method does not support continuation styles.");
-					return;
-				}
-
-				lock (s_styleCollection)
-				{
-					// If the basedOn style already exists, then update the reference to the basedOn styles unique name.
-					if (s_styleCollection.TryGetParagraphStyle(basedOnStyleName, out Style basedOnStyle))
-					{
-						style.BasedOn.Val = basedOnStyle.StyleId;
-					}
-					// Else if the basedOn style does NOT already exist, then create the basedOn style, if needed add
-					// it's basedOn style, then add this basedOn style to the collection.
-					else
-					{
-						basedOnStyle = WordStylesGenerator.GenerateParagraphStyleFromLcmStyleSheet(basedOnStyleName,
-							WordStylesGenerator.DefaultStyle, propertyTable,out BulletInfo? bulletInfo);
-						// Check if the style is based on itself.  This happens with the 'Normal' style and could possibly happen with others.
-						bool basedOnIsDifferent = basedOnStyle.BasedOn?.Val != null && basedOnStyle.StyleId != basedOnStyle.BasedOn?.Val;
-
-						if (!string.IsNullOrEmpty(basedOnDisplayName))
-						{
-							basedOnStyle.StyleId = basedOnDisplayName;
-							basedOnStyle.StyleName.Val = basedOnStyle.StyleId;
-							style.BasedOn.Val = basedOnStyle.StyleId;
-						}
-
-						if (basedOnIsDifferent)
-						{
-							// If the parentNode is not null then the basedOnStyle came from the parentNode.
-							// If the parentNode is null then the basedOnStyle came from the style.BasedOn.Val and
-							// we should pass null to AddParagraphBasedOnStyle since no node is associated with the basedOnStyle.
-							AddParagraphBasedOnStyle(basedOnStyle, parentNode, propertyTable);
-						}
-						s_styleCollection.AddParagraphStyle(basedOnStyle, basedOnStyleName, basedOnStyle.StyleId, bulletInfo);
-					}
-				}
-			}
-		}
-
-		/// <summary>
-		/// Gets the style from the dictionary (if it is in the dictionary). If not in the
-		/// dictionary then create the Word style from the LCM Style Sheet and add it to the dictionary.
-		/// </summary>
-		/// <returns>Returns null if it fails to find or create the character style.</returns>
-		private static Style GetOrCreateCharacterStyle(string nodeStyleName, string displayNameBase, ReadOnlyPropertyTable propertyTable)
-		{
-			Style retStyle = null;
-			// The calls to TryGetStyle() and AddStyle() need to be in the same lock.
-			lock (s_styleCollection)
-			{
-				if (s_styleCollection.TryGetStyle(nodeStyleName, displayNameBase, out StyleElement styleElem))
-				{
-					retStyle = styleElem.Style;
-					if (retStyle.Type != StyleValues.Character)
-					{
-						return null;
-					}
-				}
-				else
-				{
-					retStyle = WordStylesGenerator.GenerateCharacterStyleFromLcmStyleSheet(nodeStyleName, WordStylesGenerator.DefaultStyle, propertyTable);
-					if (retStyle == null || retStyle.Type != StyleValues.Character)
-					{
-						return null;
-					}
-
-					var cache = propertyTable.GetValue<LcmCache>("cache");
-					bool wsIsRtl = IsWritingSystemRightToLeft(cache, WordStylesGenerator.DefaultStyle);
-					s_styleCollection.AddCharacterStyle(retStyle, nodeStyleName, displayNameBase, WordStylesGenerator.DefaultStyle, wsIsRtl);
-				}
-			}
-			return retStyle;
+			s_styleCollection.AddGlobalCharacterStyles();
+			s_styleCollection.AddGlobalParagraphStyles();
 		}
 
 		/// <summary>
@@ -2207,32 +2011,11 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public string AddStyles(ConfigurableDictionaryNode node)
 		{
-			// The css className isn't important for the Word export.
-			var className = $".{CssGenerator.GetClassAttributeForConfig(node)}";
-
-			Style style = WordStylesGenerator.GenerateParagraphStyleFromConfigurationNode(node, _propertyTable, out BulletInfo? bulletInfo);
-
-			if (style == null)
-				return className;
-
-			if (style.Type == StyleValues.Paragraph)
+			if(WordStylesGenerator.IsParagraphStyle(node.Style, _propertyTable))
 			{
-				lock (s_styleCollection)
-				{
-					if (!s_styleCollection.TryGetStyle(node.Style, style.StyleId, out StyleElement _))
-					{
-						AddParagraphBasedOnStyle(style, node, _propertyTable);
-						string oldName = style.StyleId;
-						string newName = s_styleCollection.AddParagraphStyle(style, node.Style, style.StyleId, bulletInfo);
-						Debug.Assert(oldName == newName, "Not expecting the name for a paragraph style to ever change!");
-					}
-				}
+				s_styleCollection.AddParagraphStyle(node);
 			}
-			return className;
-		}
-		public void Init(ReadOnlyPropertyTable propertyTable)
-		{
-			_propertyTable = propertyTable;
+			return $".{CssGenerator.GetClassAttributeForConfig(node)}";
 		}
 		#endregion ILcmStylesGenerator functions to implement
 
@@ -2481,42 +2264,52 @@ namespace SIL.FieldWorks.XWorks
 			return run;
 		}
 
+		internal WP.Run CreateDefaultBeforeAfterBetweenRun(ConfigurableDictionaryNode node, string text)
+		{
+			int wsId = WordStylesGenerator.DefaultStyle;
+			return CreateBeforeAfterBetweenRun(node, text, wsId);
+		}
+
 		/// <summary>
 		/// Creates a BeforeAfterBetween run using the text and style provided.
 		/// </summary>
 		/// <param name="text">Text for the run.</param>
-		/// <param name="styleDisplayName">The style name to base on, or the complete style name.</param>
 		/// <returns>The BeforeAfterBetween run.</returns>
-		internal static WP.Run CreateBeforeAfterBetweenRun(string text, string styleDisplayName)
+		internal WP.Run CreateBeforeAfterBetweenRun(ConfigurableDictionaryNode node,
+			string text, int wsId, string nodePathAdditions = null)
 		{
+
 			// Get the unique display name to use in the run.
 			string uniqueDisplayName = null;
-			// If there is no styleDisplayName then use the default BefAftBet display name.
-			if (string.IsNullOrEmpty(styleDisplayName))
+			lock (s_styleCollection)
 			{
-				uniqueDisplayName = WordStylesGenerator.BeforeAfterBetweenDisplayName;
-			}
-			// If the styleDisplayName is already a BefAftBet style, then don't create a new style.
-			else if (styleDisplayName.StartsWith(WordStylesGenerator.BeforeAfterBetweenDisplayName))
-			{
-				uniqueDisplayName = styleDisplayName;
-			}
-			// Create a new BefAftBet style similar to the default BefAftBet style but based on styleDisplayName.
-			else
-			{
-				// If the styleDisplayName is a language tag, then no need to add the separator.
-				string displayNameBaseCombined = WordStylesGenerator.BeforeAfterBetweenDisplayName;
-				displayNameBaseCombined += styleDisplayName.StartsWith(WordStylesGenerator.LangTagPre) ?
-					(styleDisplayName) : (WordStylesGenerator.StyleSeparator + styleDisplayName);
-
-				// Get the BeforeAfterBetween style.
-				StyleElement befAftElem = s_styleCollection.GetStyleElement(WordStylesGenerator.BeforeAfterBetweenDisplayName);
-
-				Style basedOnStyle = WordStylesGenerator.GenerateBasedOnCharacterStyle(befAftElem.Style, styleDisplayName, displayNameBaseCombined);
-				if (basedOnStyle != null)
+				string nodePath = CssGenerator.GetNodePath(node);
+				string befAftBetStyleName = WordStylesGenerator.BeforeAfterBetweenStyleName;
+				string befAftBetNodePath = nodePath + nodePathAdditions + befAftBetStyleName;
+				if (s_styleCollection.TryGetCharacterStyle(befAftBetNodePath, wsId, out CharacterElement existingBefAftBetStyle))
 				{
-					uniqueDisplayName = s_styleCollection.AddCharacterStyle(basedOnStyle, WordStylesGenerator.BeforeAfterBetweenStyleName,
-						basedOnStyle.StyleId, befAftElem.WritingSystemId, befAftElem.WritingSystemIsRtl);
+					uniqueDisplayName = existingBefAftBetStyle.Style.StyleId;
+				}
+				// If the style is not in the collection, then add it.
+				else
+				{
+					// Get the parent element and unique display name.
+					string parentUniqueDisplayName = null;
+					if (s_styleCollection.TryGetCharacterStyle(nodePath + nodePathAdditions, wsId, out CharacterElement parentElem))
+					{
+						parentUniqueDisplayName = parentElem.Style.StyleId;
+					}
+					// If the parent element is not in the collection, then add it.
+					else
+					{
+						Debug.Assert(string.IsNullOrEmpty(nodePathAdditions)); // If there are additions then we are expecting an element with additions to already exist.
+						parentUniqueDisplayName = s_styleCollection.AddStyles(node, wsId);
+						parentElem = s_styleCollection.GetCharacterElement(parentUniqueDisplayName);
+					}
+
+					string displayNameBaseCombined = parentElem.DisplayNameBase + WordStylesGenerator.BeforeAfterBetween;
+					uniqueDisplayName = s_styleCollection.AddSpecialCharacterStyle(befAftBetStyleName,
+						displayNameBaseCombined, parentUniqueDisplayName, node, nodePathAdditions + befAftBetStyleName, wsId);
 				}
 			}
 
@@ -2543,139 +2336,72 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Worker method for AddRunStyle(), not intended to be called from other places. If it is
-		/// then the the pre-checks on 'style' should be added to this method.
+		/// Overrides the style used in the last run in the fragment.  The override style will be
+		/// based on the current style that is being used by the run.
 		/// </summary>
-		private void AddRunStyle_Worker(WP.Run run, string nodeStyleName, string displayNameBase)
+		/// <param name="frag">The fragment containing the run that should have its styles overidden.</param>
+		/// <param name="nodeStyleName">The FLEX style to apply to the runs in the fragment.</param>
+		private void OverrideStyle(IFragment frag, ConfigurableDictionaryNode node, string nodeStyleName, string wsString)
 		{
-			// Use the writing system that is already used in the run.
-			int wsId = WordStylesGenerator.DefaultStyle;
-			bool wsIsRtl = false;
-			var styleElem = GetStyleElementFromRun(run);
-			if (styleElem != null)
-			{
-				wsId = styleElem.WritingSystemId;
-				wsIsRtl = styleElem.WritingSystemIsRtl;
-			}
-			else
-			{
-				var cache = _propertyTable.GetValue<LcmCache>("cache");
-				wsIsRtl = IsWritingSystemRightToLeft(cache, wsId);
-			}
-
-			Style rootStyle = WordStylesGenerator.GenerateWordStyleFromLcmStyleSheet(nodeStyleName, wsId, _propertyTable, out BulletInfo? _);
-			if (rootStyle == null || rootStyle.Type != StyleValues.Character)
+			string sDefaultTextStyle = "Default Paragraph Characters";
+			if (string.IsNullOrEmpty(nodeStyleName) || nodeStyleName.StartsWith(sDefaultTextStyle))
 			{
 				return;
 			}
-			rootStyle.StyleId = displayNameBase;
-			rootStyle.StyleName.Val = rootStyle.StyleId;
 
-			if (run.RunProperties != null)
+			List<WP.Run> runList = ((DocFragment)frag).DocBody.Elements<WP.Run>().ToList();
+			if (runList.Any())
 			{
-				if (run.RunProperties.Descendants<RunStyle>().Any())
+				var run = runList.Last();
+				int wsId = WordStylesGenerator.DefaultStyle;
+				if (!string.IsNullOrEmpty(wsString))
 				{
-					string currentRunStyle = run.RunProperties.Descendants<RunStyle>().Last().Val;
-					// If the run has a current style, then make the new style based on the current style.
-					if (!string.IsNullOrEmpty(currentRunStyle))
-					{
-						// If the currentRun has one of the default global character styles then return. We do not
-						// want to create a new style based on these.
-						if (currentRunStyle.StartsWith(WordStylesGenerator.BeforeAfterBetweenDisplayName) ||
-							currentRunStyle == WordStylesGenerator.SenseNumberDisplayName ||
-							currentRunStyle == WordStylesGenerator.WritingSystemDisplayName)
-						{
-							return;
-						}
-
-						// If the current style is a language tag, then no need to add the separator.
-						string displayNameBaseCombined = currentRunStyle.StartsWith(WordStylesGenerator.LangTagPre) ?
-							(displayNameBase + currentRunStyle) : (displayNameBase + WordStylesGenerator.StyleSeparator + currentRunStyle);
-
-						// The calls to TryGetStyle() and AddStyle() need to be in the same lock.
-						lock (s_styleCollection)
-						{
-							if (s_styleCollection.TryGetStyle(nodeStyleName, displayNameBaseCombined, out StyleElement existingStyle))
-							{
-								ResetRunProperties(run, existingStyle.Style.StyleId);
-							}
-							else
-							{
-								// Don't create a new style if the current style already has the same root.
-								int separatorIndex = currentRunStyle.IndexOf(WordStylesGenerator.StyleSeparator);
-								separatorIndex = separatorIndex != -1 ? separatorIndex : currentRunStyle.IndexOf(WordStylesGenerator.LangTagPre);
-								bool hasSameRoot = separatorIndex == -1 ? currentRunStyle.Equals(displayNameBase) :
-									currentRunStyle.Substring(0, separatorIndex).Equals(displayNameBase);
-								if (hasSameRoot)
-								{
-									return;
-								}
-
-								Style basedOnStyle = WordStylesGenerator.GenerateBasedOnCharacterStyle(rootStyle, currentRunStyle, displayNameBaseCombined);
-								if (basedOnStyle != null)
-								{
-									string uniqueDisplayName = s_styleCollection.AddCharacterStyle(basedOnStyle, nodeStyleName, basedOnStyle.StyleId, wsId, wsIsRtl);
-									ResetRunProperties(run, uniqueDisplayName);
-								}
-							}
-						}
-					}
-					else
-					{
-						string uniqueDisplayName = s_styleCollection.AddCharacterStyle(rootStyle, nodeStyleName, displayNameBase, wsId, wsIsRtl);
-						ResetRunProperties(run, uniqueDisplayName);
-					}
+					wsId = Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(wsString);
 				}
 				else
 				{
-					string uniqueDisplayName = s_styleCollection.AddCharacterStyle(rootStyle, nodeStyleName, displayNameBase, wsId, wsIsRtl);
-					ResetRunProperties(run, uniqueDisplayName);
+					// Try to use the writing system that is already used in the run.
+					var characterElem = GetElementFromRun(run);
+					if (characterElem != null)
+					{
+						wsId = characterElem.WritingSystemId;
+					}
 				}
-			}
-			else
-			{
-				string uniqueDisplayName = s_styleCollection.AddCharacterStyle(rootStyle, nodeStyleName, displayNameBase, wsId, wsIsRtl);
-				WP.RunProperties runProps = GenerateRunProperties(uniqueDisplayName);
-				// Prepend RunProperties so it appears before any text elements contained in the run
-				run.PrependChild<WP.RunProperties>(runProps);
+
+				// The calls to 'TryGet' and 'Add' need to be in the same lock.
+				lock (s_styleCollection)
+				{
+					string nodePath = CssGenerator.GetNodePath(node);
+					s_styleCollection.TryGetCharacterStyle(nodePath, wsId, out CharacterElement rootStyle);
+					Debug.Assert(rootStyle != null);
+					string rootNodeUniqueName = rootStyle.UniqueDisplayName();
+					string rootDisplayName = rootStyle.DisplayNameBase;
+
+					// If the currentRun has one of the default global character styles then return. We do not
+					// want to create a new style based on these.
+					if (rootDisplayName.StartsWith(WordStylesGenerator.SenseNumberDisplayName) ||
+						rootDisplayName.StartsWith(WordStylesGenerator.WritingSystemDisplayName) ||
+						rootDisplayName.EndsWith(WordStylesGenerator.BeforeAfterBetween))
+					{
+						return;
+					}
+
+					string overrideNodePath = CssGenerator.GetNodePath(node) + nodeStyleName;
+					if (s_styleCollection.TryGetCharacterStyle(overrideNodePath, wsId, out CharacterElement overrideStyle))
+					{
+						ResetRunProperties(run, overrideStyle.Style.StyleId);
+					}
+					else
+					{
+						string overrideDisplayName = rootDisplayName + WordStylesGenerator.StyleSeparator + nodeStyleName;
+						string uniqueDisplayName = s_styleCollection.AddSpecialCharacterStyle(nodeStyleName,
+							overrideDisplayName, rootNodeUniqueName, node, nodeStyleName, wsId);
+						ResetRunProperties(run, uniqueDisplayName);
+					}
+				}
 			}
 		}
 
-		/// <summary>
-		/// Adds the specified style to either all of the runs contained in the fragment or the last
-		/// run in the fragment. If a run does not contain RunProperties or a RunStyle then just add
-		/// the specified style. Otherwise create a new style for the run that uses the specified
-		/// style but makes it BasedOn the current style that is being used by the run.
-		/// </summary>
-		/// <param name="frag">The fragment containing the runs that should have the new style applied.</param>
-		/// <param name="nodeStyleName">The FLEX style to apply to the runs in the fragment.</param>
-		/// <param name="displayNameBase">The style name to display in Word.</param>
-		/// <param name="allRuns">If true then apply the style to all runs in the fragment.
-		///                       If false then only apply the style to the last run in the fragment.</param>
-		public void AddRunStyle(IFragment frag, string nodeStyleName, string displayNameBase, bool allRuns)
-		{
-			string sDefaultTextStyle = "Default Paragraph Characters";
-			if (string.IsNullOrEmpty(nodeStyleName) || nodeStyleName.StartsWith(sDefaultTextStyle) || string.IsNullOrEmpty(displayNameBase))
-			{
-				return;
-			}
-
-			if (allRuns)
-			{
-				foreach (WP.Run run in ((DocFragment)frag).DocBody.Elements<WP.Run>())
-				{
-					AddRunStyle_Worker(run, nodeStyleName, displayNameBase);
-				}
-			}
-			else
-			{
-				List<WP.Run> runList = ((DocFragment)frag).DocBody.Elements<WP.Run>().ToList();
-				if (runList.Any())
-				{
-					AddRunStyle_Worker(runList.Last(), nodeStyleName, displayNameBase);
-				}
-			}
-		}
 
 		/// <summary>
 		/// Word does not support certain element types being nested inside Paragraphs (Paragraphs & Tables).
@@ -2738,54 +2464,19 @@ namespace SIL.FieldWorks.XWorks
 				// Add the style.
 				if (!string.IsNullOrEmpty(node.Style))
 				{
-					// The calls to TryGetStyle() and AddStyle() need to be in the same lock.
-					lock(s_styleCollection)
+					ParagraphElement paraElem = s_styleCollection.AddParagraphStyle(node);
+					string uniqueDisplayName = paraElem.UniqueDisplayName();
+
+					// Add the continuation style.
+					if (continuationParagraph)
 					{
-						BulletInfo? bulletInfo = null;
-						string uniqueDisplayName = null;
-
-						// Try to get the continuation style.
-						if (continuationParagraph)
-						{
-							if (s_styleCollection.TryGetStyle(node.Style, node.DisplayLabel + WordStylesGenerator.EntryStyleContinue,
-									out StyleElement contStyleElem))
-							{
-								bulletInfo = contStyleElem.BulletInfo;
-								uniqueDisplayName = contStyleElem.Style.StyleId;
-							}
-						}
-
-						if (string.IsNullOrEmpty(uniqueDisplayName))
-						{
-							// Try to get the regular style.
-							Style style = null;
-							if (s_styleCollection.TryGetStyle(node.Style, node.DisplayLabel, out StyleElement styleElem))
-							{
-								style = styleElem.Style;
-								bulletInfo = styleElem.BulletInfo;
-								uniqueDisplayName = style.StyleId;
-							}
-							// Add the regular style.
-							else
-							{
-								style = WordStylesGenerator.GenerateParagraphStyleFromLcmStyleSheet(node.Style, WordStylesGenerator.DefaultStyle, _propertyTable, out bulletInfo);
-								style.StyleId = node.DisplayLabel;
-								style.StyleName.Val = style.StyleId;
-								AddParagraphBasedOnStyle(style, node, _propertyTable);
-								uniqueDisplayName = s_styleCollection.AddParagraphStyle(style, node.Style, style.StyleId, bulletInfo);
-							}
-
-							// Add the continuation style.
-							if (continuationParagraph)
-							{
-								var contStyle = WordStylesGenerator.GenerateContinuationStyle(style);
-								uniqueDisplayName = s_styleCollection.AddParagraphStyle(contStyle, node.Style, contStyle.StyleId, null);
-							}
-						}
-						WP.ParagraphProperties paragraphProps =
-							new WP.ParagraphProperties(new ParagraphStyleId() { Val = uniqueDisplayName });
-						paragraph.PrependChild(paragraphProps);
+						ParagraphElement contElem = s_styleCollection.AddParagraphContinuationStyle(paraElem);
+						uniqueDisplayName = contElem.UniqueDisplayName();
 					}
+
+					WP.ParagraphProperties paragraphProps =
+						new WP.ParagraphProperties(new ParagraphStyleId() { Val = uniqueDisplayName });
+					paragraph.PrependChild(paragraphProps);
 				}
 				return true;
 			}
@@ -2805,7 +2496,8 @@ namespace SIL.FieldWorks.XWorks
 				eachInAParagraph)
 			{
 				// Get the StyleElement.
-				if (s_styleCollection.TryGetStyle(node.Style, node.DisplayLabel, out StyleElement styleElem))
+				string nodePath = CssGenerator.GetNodePath(node);
+				if (s_styleCollection.TryGetParagraphStyle(nodePath, out ParagraphElement styleElem))
 				{
 					// This style uses bullet or numbering.
 					if (styleElem.BulletInfo.HasValue)
@@ -2848,9 +2540,9 @@ namespace SIL.FieldWorks.XWorks
 								if (paraProps != null)
 								{
 									// Only add the uniqueId to paragraphs with the correct style.  There could
-									// be paragraphs with different styles.
+									// be paragraphs with different styles (ie. pictures, continuation styles...).
 									var paraStyle = paraProps.Elements<ParagraphStyleId>().FirstOrDefault();
-									if (paraStyle != null && paraStyle.Val == node.DisplayLabel)
+									if (paraStyle != null && paraStyle.Val == styleElem.UniqueDisplayName())
 									{
 										int uniqueId = styleElem.BulletAndNumberingUniqueId.Value;
 
@@ -2878,7 +2570,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="styleElement">Contains the bullet and numbering data.</param>
 		/// <param name="numberingPart">Part of the Word doc where bullet and numbering data is stored.</param>
-		internal static void GenerateBulletAndNumberingData(StyleElement styleElement, NumberingDefinitionsPart numberingPart)
+		internal static void GenerateBulletAndNumberingData(ParagraphElement styleElement, NumberingDefinitionsPart numberingPart)
 		{
 			if (!styleElement.BulletInfo.HasValue)
 			{
@@ -3075,9 +2767,8 @@ namespace SIL.FieldWorks.XWorks
 			var runProp = new RunProperties(new RunStyle() { Val = uniqueDisplayName });
 			if (IsBidi)
 			{
-				StyleElement styleElem = s_styleCollection.GetStyleElement(uniqueDisplayName);
-				Debug.Assert(styleElem != null);
-				if (styleElem.WritingSystemIsRtl)
+				CharacterElement elem = s_styleCollection.GetCharacterElement(uniqueDisplayName);
+				if (elem.WritingSystemIsRtl)
 				{
 					runProp.RightToLeftText = new RightToLeftText();
 				}
@@ -3086,87 +2777,33 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Iterate through the runs in the fragment looking for the style that
-		/// most closely matches the node.DisplayLabel.
-		/// </summary>
-		private string GetUniqueDisplayName(ConfigurableDictionaryNode node, IFragment content)
-		{
-			Debug.Assert(!string.IsNullOrEmpty(node.DisplayLabel), "Not expecting a node without a DisplayLabel.");
-			string endRunStyle = null;
-			string beginRunStyle = null;
-			var runs = ((DocFragment)content)?.DocBody.OfType<WP.Run>();
-			if (runs != null)
-			{
-				foreach (var run in runs)
-				{
-					string runStyle = run.RunProperties?.RunStyle?.Val;
-					if (runStyle != null)
-					{
-						// Remove the language tag and any appended numbers.
-						string runName = runStyle;
-						int langTagIndex = runName.IndexOf(WordStylesGenerator.LangTagPre);
-						if (langTagIndex != -1)
-						{
-							runName = runName.Substring(0, langTagIndex);
-						}
-						runName = runName.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
-
-						// This is the common case: DisplayLabel followed by a possible integer and a language tag.
-						// Definition (or Gloss)[lang='en'] or
-						// Definition (or Gloss)2[lang='en']
-						// If we find this, then there is no need to look further.  This is the style we want.
-						if (runName == node.DisplayLabel)
-						{
-								return runStyle;
-						}
-
-						// The second preference is a style that ends with the DisplayLabel.
-						// Strong : Example Sentence[lang='es'] or
-						// Strong : Example Sentence3[lang='es']
-						if (endRunStyle == null && runName.EndsWith(node.DisplayLabel))
-						{
-							// In this case don't use the complete runStyle.  We want the base style, not
-							// a possible override applied to a specific run.
-							// Return just "Example Sentence[lang='es']" or "Example Sentence3[lang='es']"
-							endRunStyle = runStyle.Substring(runStyle.IndexOf(node.DisplayLabel));
-						}
-
-						// The third preference is a style that begins with the DisplayLabel.
-						// Grammatical Info.2 : Category Info.[lang='en']
-						if (beginRunStyle == null && endRunStyle == null && runStyle.StartsWith(node.DisplayLabel))
-						{
-							// In this case return the complete RunStyle.
-							// Return "Grammatical Info.2 : Category Info.[lang='en']"
-							beginRunStyle = runStyle;
-						}
-					}
-				}
-			}
-			// Default to returning the DisplayLabel if we don't have anything else.
-			// This is a common case for nodes that are collections.
-			return endRunStyle ?? beginRunStyle ?? node.DisplayLabel;
-		}
-
-		/// <summary>
 		/// Gets the unique display name out of a run.
 		/// </summary>
 		/// <returns>The name, or null if the run does not contain the information.</returns>
-		public string GetUniqueDisplayName(Run run)
+		public static string GetUniqueDisplayName(Run run)
 		{
 			return run?.RunProperties?.RunStyle?.Val;
+		}
+
+		/// <summary>
+		/// Sets the unique display name in a run.
+		/// </summary>
+		public static void SetUniqueDisplayName(Run run, string newUniqueDisplayName)
+		{
+			run.RunProperties.RunStyle.Val = newUniqueDisplayName;
 		}
 
 		/// <summary>
 		/// Get the StyleElement associated with a run.
 		/// </summary>
 		/// <returns>The StyleElement, or null if the run does not contain the information.</returns>
-		public StyleElement GetStyleElementFromRun(Run run)
+		internal static CharacterElement GetElementFromRun(Run run)
 		{
 			string uniqueDisplayName = GetUniqueDisplayName(run);
 			if (uniqueDisplayName == null)  // Runs containing a 'Drawing' will not have RunProperties.
 				return null;
 
-			StyleElement elem = s_styleCollection.GetStyleElement(uniqueDisplayName);
+			CharacterElement elem = s_styleCollection.GetCharacterElement(uniqueDisplayName);
 			Debug.Assert(elem != null);  // I don't think we should ever not find a styleElement.
 
 			return elem;
@@ -3200,7 +2837,8 @@ namespace SIL.FieldWorks.XWorks
 			// Find the first run style with a value that begins with the guideword style.
 			foreach (RunStyle runStyle in frag.DocBody.Descendants<RunStyle>())
 			{
-				if (runStyle.Val.Value.StartsWith(guidewordStyle))
+				if (runStyle.Val.Value.StartsWith(guidewordStyle) &&
+					!runStyle.Val.Value.Contains(WordStylesGenerator.BeforeAfterBetween))
 				{
 					return runStyle.Val.Value;
 				}

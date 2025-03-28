@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Get a path containing Non-Unique names for all the nodes from the root up to and
 		/// including the 'node' passed in.
 		/// </summary>
-		private string GetNodePath(ConfigurableDictionaryNode node)
+		public static string GetNodePath(ConfigurableDictionaryNode node)
 		{
 			// Generate the node path info from the root to this node.
 			string pathToNode = null;
