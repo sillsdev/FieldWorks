@@ -255,51 +255,32 @@ namespace SIL.FieldWorks.XWorks
 
 		public override ITsString get_MultiStringAlt(int hvo, int tag, int ws)
 		{
-			if (tag == m_mlHeadwordFlid)
+			bool handleHeadwordTags = tag == m_mlHeadwordFlid || tag == m_headwordRefFlid || tag == m_headwordReversalFlid;
+			bool handleSenseTags = tag == m_mlOwnerOutlineFlid || tag == m_reversalNameFlid;
+
+			if (handleHeadwordTags)
 			{
 				int hn;
+				var headwordVariant = tag == m_mlHeadwordFlid ? HomographConfiguration.HeadwordVariant.Main :
+					tag == m_headwordRefFlid ? HomographConfiguration.HeadwordVariant.DictionaryCrossRef :
+					HomographConfiguration.HeadwordVariant.ReversalCrossRef;
 				if (m_homographNumbers.TryGetValue(hvo, out hn))
 				{
 					var entry = m_entryRepo.GetObject(hvo);
-					return StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
-						HomographConfiguration.HeadwordVariant.Main);
+					return StringServices.HeadWordForWsAndHn(entry, ws, hn, "", headwordVariant);
 				}
-				// In case it's one we somehow don't know about, we'll let the base method try to get the real HN.
 			}
-			else if (tag == m_headwordRefFlid)
+			else if (handleSenseTags)
 			{
-				int hn;
-				if (m_homographNumbers.TryGetValue(hvo, out hn))
-				{
-					var entry = m_entryRepo.GetObject(hvo);
-					return StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
-						HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
-				}
-				// In case it's one we somehow don't know about, we'll let the base method try to get the real HN.
-			}
-			else if (tag == m_headwordReversalFlid)
-			{
-				int hn;
-				if (m_homographNumbers.TryGetValue(hvo, out hn))
-				{
-					var entry = m_entryRepo.GetObject(hvo);
-					return StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
-						HomographConfiguration.HeadwordVariant.ReversalCrossRef);
-				}
-				// In case it's one we somehow don't know about, we'll let the base method try to get the real HN.
-			}
-			else if (tag == m_mlOwnerOutlineFlid)
-			{
+				var headwordVariant = tag == m_mlOwnerOutlineFlid ? HomographConfiguration.HeadwordVariant.DictionaryCrossRef :
+					HomographConfiguration.HeadwordVariant.ReversalCrossRef;
+
 				// This adapts the logic of LexSense.OwnerOutlineNameForWs
 				var sense = m_senseRepo.GetObject(hvo);
-				return OwnerOutlineNameForWs(sense, ws, HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
+				return OwnerOutlineNameForWs(sense, ws, headwordVariant);
 			}
-			else if (tag == m_reversalNameFlid)
-			{
-				// This adapts the logic of LexSense.OwnerOutlineNameForWs
-				var sense = m_senseRepo.GetObject(hvo);
-				return OwnerOutlineNameForWs(sense, ws, HomographConfiguration.HeadwordVariant.ReversalCrossRef);
-			}
+
+			// In case it's one we somehow don't know about, we'll let the base method try to get the real HN.
 			return base.get_MultiStringAlt(hvo, tag, ws);
 		}
 
@@ -388,25 +369,25 @@ namespace SIL.FieldWorks.XWorks
 			if (Publication != null)
 			{
 				foreach (var obj in Publication.ReferringObjects)
-				{
-					var entry = obj as ILexEntry;
+			{
+				var entry = obj as ILexEntry;
 					if (entry == null || entry.DoNotPublishInRC.Contains(Publication))
-					{
-						m_excludedItems.Add(obj.Hvo);
-						if (obj is ILexEntry)
-							foreach (var sense in ((ILexEntry)obj).SensesOS)
-								ExcludeSense(sense);
-						if (obj is ILexSense)
-							ExcludeSense((ILexSense)obj);
-					}
-					else
-					{
-						// It's an entry, and the only other option is that it refers in DoNotShowAsMainEntry
-						Debug.Assert(entry.DoNotShowMainEntryInRC.Contains(Publication));
-						m_excludeAsMainEntry.Add(entry.Hvo);
-					}
+				{
+					m_excludedItems.Add(obj.Hvo);
+					if (obj is ILexEntry)
+						foreach (var sense in ((ILexEntry)obj).SensesOS)
+							ExcludeSense(sense);
+					if (obj is ILexSense)
+						ExcludeSense((ILexSense)obj);
+				}
+				else
+				{
+					// It's an entry, and the only other option is that it refers in DoNotShowAsMainEntry
+					Debug.Assert(entry.DoNotShowMainEntryInRC.Contains(Publication));
+					m_excludeAsMainEntry.Add(entry.Hvo);
 				}
 			}
+		}
 		}
 
 		private void ExcludeSense(ILexSense sense)
