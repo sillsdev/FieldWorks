@@ -40,6 +40,8 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private LcmCache Cache { get; }
 		private static WordStyleCollection s_styleCollection = null;
+		private static readonly object _collectionLock = new object();
+
 		private ReadOnlyPropertyTable _propertyTable;
 		public static bool IsBidi { get; private set; }
 
@@ -51,7 +53,7 @@ namespace SIL.FieldWorks.XWorks
 		public void Init(ReadOnlyPropertyTable propertyTable)
 		{
 			_propertyTable = propertyTable;
-			s_styleCollection = new WordStyleCollection(_propertyTable);
+			s_styleCollection = new WordStyleCollection(_propertyTable, _collectionLock);
 		}
 
 		public static void SavePublishedDocx(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, int batchSize, DictionaryConfigurationModel configuration,
@@ -767,7 +769,7 @@ namespace SIL.FieldWorks.XWorks
 				int uniqueOuterDrawingId;
 
 				// Lock style collection while getting the IDs to use for the Image & Textbox
-				lock (s_styleCollection)
+				lock (_collectionLock)
 				{
 					// The xml textbox image structure consists of a graphic object that is nested inside a drawing object
 					// that is nested inside another drawing object.
@@ -1008,7 +1010,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Get the unique display name to use in the run.
 				string uniqueDisplayName = null;
-				lock (s_styleCollection)
+				lock (_collectionLock)
 				{
 					string nodePath = CssGenerator.GetNodePath(node);
 					string wsAbbrevStyleName = WordStylesGenerator.WritingSystemStyleName;
@@ -1398,7 +1400,7 @@ namespace SIL.FieldWorks.XWorks
 			var wsId = Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(writingSystem);
 			string nodePath = CssGenerator.GetNodePath(config);
 			// The calls to 'TryGet' and 'Add' need to be in the same lock.
-			lock (s_styleCollection)
+			lock (_collectionLock)
 			{
 				string uniqueDisplayName = null;
 				if (s_styleCollection.TryGetCharacterStyle(nodePath, wsId, out CharacterElement existingStyle))
@@ -1873,7 +1875,7 @@ namespace SIL.FieldWorks.XWorks
 			// Add the style to the collection and get the unique name.
 			string uniqueDisplayName = null;
 			// The calls to 'TryGet' and 'Add' need to be in the same lock.
-			lock (s_styleCollection)
+			lock (_collectionLock)
 			{
 				string numberStyleNodePath = CssGenerator.GetNodePath(senseConfigNode) + numberStyleName;
 				if (s_styleCollection.TryGetCharacterStyle(numberStyleNodePath, wsId, out CharacterElement existingStyle))
@@ -2281,7 +2283,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Get the unique display name to use in the run.
 			string uniqueDisplayName = null;
-			lock (s_styleCollection)
+			lock (_collectionLock)
 			{
 				string nodePath = CssGenerator.GetNodePath(node);
 				string befAftBetStyleName = WordStylesGenerator.BeforeAfterBetweenStyleName;
@@ -2369,7 +2371,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				// The calls to 'TryGet' and 'Add' need to be in the same lock.
-				lock (s_styleCollection)
+				lock (_collectionLock)
 				{
 					string nodePath = CssGenerator.GetNodePath(node);
 					s_styleCollection.TryGetCharacterStyle(nodePath, wsId, out CharacterElement rootStyle);
@@ -2507,7 +2509,7 @@ namespace SIL.FieldWorks.XWorks
 						int? numberingFirstNumUniqueId = null;
 
 						// We are potentially adding data to the StyleElement so it needs to be in a lock.
-						lock (s_styleCollection)
+						lock (_collectionLock)
 						{
 							// If the StyleElement does not already have the unique id then generate one.
 							// Note: This number can be the same for all list items on all the lists associated with

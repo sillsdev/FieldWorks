@@ -14,6 +14,7 @@ namespace SIL.FieldWorks.XWorks
 	public class WordStyleCollection
 	{
 		private ReadOnlyPropertyTable _propertyTable;
+		private object _collectionLock;
 
 		// The Key is the displayNameBase without the added int or wsId that uniquely identifies the different Styles.
 		// The dictionary Value is the list of elements that share the same displayNameBase.
@@ -31,9 +32,10 @@ namespace SIL.FieldWorks.XWorks
 		private int bulletAndNumberingUniqueIdCounter = 1;
 		private int pictureUniqueIdCounter = 1;
 
-		public WordStyleCollection(ReadOnlyPropertyTable propertyTable)
+		public WordStyleCollection(ReadOnlyPropertyTable propertyTable, object collectionLock)
 		{
 			_propertyTable = propertyTable;
+			_collectionLock = collectionLock;
 		}
 
 		/// <summary>
@@ -41,13 +43,10 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal List<CharacterElement> GetUsedCharacterElements()
 		{
-			lock (characterStyles)
-			{
-				// Get an enumerator to the flattened list of all StyleElements.
-				var enumerator = characterStyles.Values.SelectMany(x => x);
-				// Create a single list of all the StyleElements.
-				return enumerator.Where(x => x.Used).ToList();
-			}
+			// Get an enumerator to the flattened list of all StyleElements.
+			var enumerator = characterStyles.Values.SelectMany(x => x);
+			// Create a single list of all the StyleElements.
+			return enumerator.Where(x => x.Used).ToList();
 		}
 
 		/// <summary>
@@ -55,13 +54,10 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal List<ParagraphElement> GetParagraphElements()
 		{
-			lock (paragraphStyles)
-			{
-				// Get an enumerator to the flattened list of all StyleElements.
-				var enumerator = paragraphStyles.Values.SelectMany(x => x);
-				// Create a single list of all the StyleElements.
-				return enumerator.ToList();
-			}
+			// Get an enumerator to the flattened list of all StyleElements.
+			var enumerator = paragraphStyles.Values.SelectMany(x => x);
+			// Create a single list of all the StyleElements.
+			return enumerator.ToList();
 		}
 
 		/// <summary>
@@ -79,11 +75,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="uniqueDisplayName">The style name that uniquely identifies a style.</param>
 		internal ParagraphElement GetParagraphElement(string uniqueDisplayName)
 		{
-			lock (paragraphStyles)
-			{
-				return paragraphStyles.Values.SelectMany(x => x)
-					.FirstOrDefault(element => element.UniqueDisplayName() == uniqueDisplayName);
-			}
+			return paragraphStyles.Values.SelectMany(x => x)
+				.FirstOrDefault(element => element.UniqueDisplayName() == uniqueDisplayName);
 		}
 
 		/// <summary>
@@ -91,7 +84,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public void Clear()
 		{
-			lock(paragraphStyles)
+			lock(_collectionLock)
 			{
 				characterStyles.Clear();
 				paragraphStyles.Clear();
@@ -146,7 +139,7 @@ namespace SIL.FieldWorks.XWorks
 				displayNameBase = WordStylesGenerator.SubentriesHeadword;
 			}
 
-			lock(characterStyles)
+			lock(_collectionLock)
 			{
 				if (TryGetCharacterStyle(nodePath, wsId, out CharacterElement existingStyle))
 				{
@@ -515,7 +508,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="charElem">The associated character element.</param>
 		private void AddParagraphStyle(Style paraStyle, BulletInfo? bulletInfo, CharacterElement charElem)
 		{
-			lock (paragraphStyles)
+			lock (_collectionLock)
 			{
 				// Update the paragraph style name.
 				string uniqueDisplayName = charElem.UniqueNumber == 1 ? charElem.DisplayNameBase : charElem.DisplayNameBase + charElem.UniqueNumber.ToString();
@@ -565,7 +558,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		internal ParagraphElement AddParagraphContinuationStyle(ParagraphElement paraElem)
 		{
-			lock (paragraphStyles)
+			lock (_collectionLock)
 			{
 				if (paraElem.ContinuationElement != null)
 				{
@@ -620,7 +613,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				lock(paragraphStyles)
+				lock (_collectionLock)
 				{
 					return bulletAndNumberingUniqueIdCounter++;
 				}
@@ -634,7 +627,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get
 			{
-				lock (paragraphStyles)
+				lock (_collectionLock)
 				{
 					return pictureUniqueIdCounter++;
 				}
