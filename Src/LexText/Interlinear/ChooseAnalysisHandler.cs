@@ -389,6 +389,8 @@ namespace SIL.FieldWorks.IText
 				lim = -1;
 				increment = -1;
 			}
+			tsb.Replace(tsb.Length, tsb.Length, "  ", null);
+			tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, GetAnalysisColor(wa));
 			for (int i = start; i != lim; i += increment)
 			{
 				var mb = wa.MorphBundlesOS[i];
@@ -449,13 +451,14 @@ namespace SIL.FieldWorks.IText
 
 				// Highlight any analysis that the parser approves.
 				Opinions o = wa.GetAgentOpinion(wa.Cache.LangProject.DefaultParserAgent);
-				if (o == Opinions.approves)
+				if (false && o == Opinions.approves)
 				{
 					// tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, highlightColor);
 					tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptBold, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 					tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptItalic, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 					// tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptUnderline, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
 				}
+				// tsb.SetIntPropValues(0, tsb.Length, (int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, GetAnalysisColor(wa));
 
 				// Enhance JohnT: use proper seps.
 				tsb.Replace(tsb.Length, tsb.Length, ksPartSeparator, null);
@@ -467,6 +470,19 @@ namespace SIL.FieldWorks.IText
 				ichFrom = 0;
 			tsb.Replace(ichFrom, tsb.Length, "", null);
 			return tsb.GetString();
+		}
+
+		internal static int GetAnalysisColor(IWfiAnalysis wa)
+		{
+			Opinions uao = wa.GetAgentOpinion(wa.Cache.LangProject.DefaultUserAgent);
+			Opinions pao = wa.GetAgentOpinion(wa.Cache.LangProject.DefaultParserAgent);
+			if (uao == Opinions.approves && pao == Opinions.approves)
+				return (int)CmObjectUi.RGB(Color.LightGreen);
+			if (uao == Opinions.approves)
+				return (int)CmObjectUi.RGB(200, 255, 255);
+			if (pao == Opinions.approves)
+				return (int)CmObjectUi.RGB(254, 240, 206);
+			return 0;
 		}
 
 		/// <summary>
