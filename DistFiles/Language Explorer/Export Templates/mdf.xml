@@ -63,6 +63,7 @@ Export using the Multi-Dictionary Formatter lexeme-based standard. This exports 
 			<string simpleProperty="SenseNumber"/>
 		</element>
 		<objAtomic objProperty="MorphoSyntaxAnalysisRA"/>
+		<multilingualStringElement name="exm" simpleProperty="Exemplar"/>
 		<multilingualStringElement name="g" simpleProperty="Gloss"/>
 		<multilingualStringElement name="d" simpleProperty="Definition"/>
 		<refVector field="ReferringReversalIndexEntries" itemLabel="re" itemProperty="LongName" itemWsProp="WritingSystem"/>
