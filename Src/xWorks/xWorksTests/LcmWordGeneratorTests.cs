@@ -527,7 +527,7 @@ namespace SIL.FieldWorks.XWorks
 				"<w:t xml:space=\"preserve\">1</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss-Context\" /></w:rPr><w:t xml:space=\"preserve\">BE3</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Writing System Abbreviation[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">Eng </w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">gloss</w:t>";
 			Assert.True(outXml.Contains(beforeAbbreviation));
 
-			// Between text 'TW3' is before the spanish abbreviation, which is before 'glossFR'.
+			// Between text 'TW3' is before the french abbreviation, which is before 'glossFR'.
 			const string betweenAbbreviation =
 				"<w:t xml:space=\"preserve\">TW3</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Writing System Abbreviation[lang=fr]\" /></w:rPr><w:t xml:space=\"preserve\">Fre </w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss[lang=fr]\" /></w:rPr><w:t xml:space=\"preserve\">glossFR</w:t>";
 			Assert.True(outXml.Contains(betweenAbbreviation));
