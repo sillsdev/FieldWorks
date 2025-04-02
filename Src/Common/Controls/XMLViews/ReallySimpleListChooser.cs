@@ -1843,6 +1843,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns></returns>
 		protected virtual LabelNode CreateLabelNode(ObjectLabel nol, bool displayUsage)
 		{
+			if (nol.Object.Owner.ToString() == "Publications")
+				return new PublicationLabelNode(nol, m_stylesheet, displayUsage);
 			return new LabelNode(nol, m_stylesheet, displayUsage);
 		}
 
@@ -2861,6 +2863,40 @@ namespace SIL.FieldWorks.Common.Controls
 				return label.Cache.DomainDataByFlid.get_VecSize(label.Object.Hvo, m_leafFlid) > 0;
 			}
 		}
+	}
+
+	/// ------------------------------------------------------------------------------------
+	/// <summary>
+	/// PublicationLabelNode
+	/// </summary>
+	/// ------------------------------------------------------------------------------------
+	public class PublicationLabelNode : LabelNode
+	{
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="PublicationLabelNode"/> class.
+		/// </summary>
+		public PublicationLabelNode(ObjectLabel label, IVwStylesheet stylesheet, bool displayUsage)
+			: base(label, stylesheet, displayUsage)
+		{
+		}
+		/// <summary>
+		/// Publication is the value of DoNotPublishIn,
+		/// so we need to invert the count.
+		/// </summary>
+		/// <returns></returns>
+		protected override int CountUsages()
+		{
+			int count = 0;
+			// I think only label.Object is likely to be null, but let's prevent crashes thoroughly.
+			if (Label?.Object?.ReferringObjects != null)
+			{
+				ILexEntryRepository repository = Label.Object.Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+				count = repository.Count - Label.Object.ReferringObjects.Count;
+			}
+			return count;
+		}
+
 	}
 
 }

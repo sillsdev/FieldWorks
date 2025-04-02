@@ -16,23 +16,23 @@ namespace SIL.FieldWorks.XWorks
 	public interface ILcmContentGenerator
 	{
 		IFragment GenerateWsPrefixWithString(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, bool displayAbbreviation, int wsId, IFragment content);
-		IFragment GenerateAudioLinkContent(ConfigurableDictionaryNode config, string classname, string srcAttribute, string caption, string safeAudioId);
+		IFragment GenerateAudioLinkContent(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string classname, string srcAttribute, string caption, string safeAudioId);
 		IFragment WriteProcessedObject(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className);
 		IFragment WriteProcessedCollection(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className);
 		IFragment GenerateGramInfoBeforeSensesContent(IFragment content, ConfigurableDictionaryNode config);
 		IFragment GenerateGroupingNode(ConfigurableDictionaryNode config, object field, string className,  DictionaryPublicationDecorator publicationDecorator, ConfiguredLcmGenerator.GeneratorSettings settings,
 			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, IFragment> childContentGenerator);
-		IFragment AddSenseData(ConfigurableDictionaryNode config, IFragment senseNumberSpan, Guid ownerGuid, IFragment senseContent, bool first);
-		IFragment AddCollectionItem(ConfigurableDictionaryNode config, bool isBlock, string collectionItemClass, IFragment content, bool first);
-		IFragment AddProperty(ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string className, bool isBlockProperty, string content, string writingSystem);
+		IFragment AddSenseData(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, IFragment senseNumberSpan, Guid ownerGuid, IFragment senseContent, bool first);
+		IFragment AddCollectionItem(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlock, string collectionItemClass, IFragment content, bool first);
+		IFragment AddProperty(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string className, bool isBlockProperty, string content, string writingSystem);
 		IFragment CreateFragment();
 		IFragment CreateFragment(string str);
 		IFragmentWriter CreateWriter(IFragment fragment);
-		void StartMultiRunString(IFragmentWriter writer, ConfigurableDictionaryNode config, string writingSystem);
+		void StartMultiRunString(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string writingSystem);
 		void EndMultiRunString(IFragmentWriter writer);
-		void StartBiDiWrapper(IFragmentWriter writer, ConfigurableDictionaryNode config, bool rightToLeft);
+		void StartBiDiWrapper(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, bool rightToLeft);
 		void EndBiDiWrapper(IFragmentWriter writer);
-		void StartRun(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propTable, string writingSystem, bool first);
+		void StartRun(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string writingSystem, bool first);
 		void EndRun(IFragmentWriter writer);
 		void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propertyTable, string writingSystem, string runStyle, bool error);
 		void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, Guid destination);
@@ -48,16 +48,16 @@ namespace SIL.FieldWorks.XWorks
 		void EndTableRow(IFragmentWriter writer);
 		void EndTableBody(IFragmentWriter writer);
 		void EndTable(IFragmentWriter writer, ConfigurableDictionaryNode config);
-		void StartEntry(IFragmentWriter writer, ConfigurableDictionaryNode config, string className, Guid entryGuid, int index, RecordClerk clerk);
+		void StartEntry(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string className, Guid entryGuid, int index, RecordClerk clerk);
 		void AddEntryData(IFragmentWriter writer, List<ConfiguredLcmGenerator.ConfigFragment> pieces);
 		void EndEntry(IFragmentWriter writer);
-		void AddCollection(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty, string className, IFragment content);
+		void AddCollection(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlockProperty, string className, IFragment content);
 		void BeginObjectProperty(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty, string getCollectionItemClassAttribute);
 		void EndObject(IFragmentWriter writer);
 		void WriteProcessedContents(IFragmentWriter writer, ConfigurableDictionaryNode config, IFragment contents);
-		IFragment AddImage(ConfigurableDictionaryNode config, string classAttribute, string srcAttribute, string pictureGuid);
+		IFragment AddImage(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string classAttribute, string srcAttribute, string pictureGuid);
 		IFragment AddImageCaption(ConfigurableDictionaryNode config, IFragment captionContent);
-		IFragment GenerateSenseNumber(ConfigurableDictionaryNode config, string formattedSenseNumber, string senseNumberWs);
+		IFragment GenerateSenseNumber(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string formattedSenseNumber, string senseNumberWs);
 		IFragment AddLexReferences(ConfigurableDictionaryNode config, bool generateLexType, IFragment lexTypeContent, string className, IFragment referencesContent, bool typeBefore);
 		void BeginCrossReference(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty, string className);
 		void EndCrossReference(IFragmentWriter writer);

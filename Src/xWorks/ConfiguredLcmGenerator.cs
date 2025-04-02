@@ -344,7 +344,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					var clerk = settings.PropertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 					var entryClassName = settings.StylesGenerator.AddStyles(configuration).Trim('.');
-					settings.ContentGenerator.StartEntry(xw, configuration,
+					settings.ContentGenerator.StartEntry(xw, configuration, settings,
 						entryClassName, entry.Guid, index, clerk);
 					settings.ContentGenerator.AddEntryData(xw, pieces);
 					settings.ContentGenerator.EndEntry(xw);
@@ -883,7 +883,7 @@ namespace SIL.FieldWorks.XWorks
 				// An XHTML id attribute must be unique but the ICmfile is used for all references to the same file within the project.
 				// The ICmPicture that owns the file does have unique guid so we use that.
 				var ownerGuid = owner.Guid.ToString();
-				return settings.ContentGenerator.AddImage(config, className, srcAttribute, ownerGuid);
+				return settings.ContentGenerator.AddImage(config, settings, className, srcAttribute, ownerGuid);
 			}
 			return settings.ContentGenerator.CreateFragment();
 		}
@@ -1936,7 +1936,7 @@ namespace SIL.FieldWorks.XWorks
 			if (bldr.Length() == 0)
 				return bldr;
 
-			return settings.ContentGenerator.AddSenseData(config, senseNumberSpan, ((ICmObject)item).Owner.Guid, bldr, first);
+			return settings.ContentGenerator.AddSenseData(config, settings, senseNumberSpan, ((ICmObject)item).Owner.Guid, bldr, first);
 		}
 
 		private static IFragment GeneratePictureContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
@@ -2021,7 +2021,7 @@ namespace SIL.FieldWorks.XWorks
 			if (bldr.Length() == 0)
 				return bldr;
 			var collectionContent = bldr;
-			return settings.ContentGenerator.AddCollectionItem(config, IsBlockProperty(config), GetCollectionItemClassAttribute(config), collectionContent, first);
+			return settings.ContentGenerator.AddCollectionItem(config, settings, IsBlockProperty(config), GetCollectionItemClassAttribute(config), collectionContent, first);
 		}
 
 		private static void GenerateContentForLexRefCollection(ConfigurableDictionaryNode config,
@@ -2156,7 +2156,7 @@ namespace SIL.FieldWorks.XWorks
 							{
 								// targets
 								var className = settings.StylesGenerator.AddStyles(child).Trim('.');
-								settings.ContentGenerator.AddCollection(xw, child, IsBlockProperty(child),
+								settings.ContentGenerator.AddCollection(xw, child, settings, IsBlockProperty(child),
 									className, content);
 							}
 							break;
@@ -2222,7 +2222,7 @@ namespace SIL.FieldWorks.XWorks
 			var senseNumberWs = string.IsNullOrEmpty(info.HomographConfig.WritingSystem) ? "en" : info.HomographConfig.WritingSystem;
 			if (string.IsNullOrEmpty(formattedSenseNumber))
 				return settings.ContentGenerator.CreateFragment();
-			return settings.ContentGenerator.GenerateSenseNumber(senseConfigNode, formattedSenseNumber, senseNumberWs);
+			return settings.ContentGenerator.GenerateSenseNumber(senseConfigNode, settings, formattedSenseNumber, senseNumberWs);
 		}
 
 		private static string GetSenseNumber(string numberingStyle, ref SenseInfo info)
@@ -2604,7 +2604,7 @@ namespace SIL.FieldWorks.XWorks
 			var writingSystem = GetLanguageFromFirstOptionOrAnalysis(config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions,
 				settings.Cache);
 			var cssClassName = settings.StylesGenerator.AddStyles(config).Trim('.');
-			return settings.ContentGenerator.AddProperty(config, settings.PropertyTable, cssClassName, false, simpleString, writingSystem);
+			return settings.ContentGenerator.AddProperty(config, settings, cssClassName, false, simpleString, writingSystem);
 
 		}
 
@@ -2777,12 +2777,12 @@ namespace SIL.FieldWorks.XWorks
 						{
 							writingSystem = writingSystem ?? GetLanguageFromFirstOption(config.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions,
 																settings.Cache);
-							settings.ContentGenerator.StartMultiRunString(writer, config, writingSystem);
+							settings.ContentGenerator.StartMultiRunString(writer, config, settings, writingSystem);
 							var wsRtl = settings.Cache.WritingSystemFactory.get_Engine(writingSystem).RightToLeftScript;
 							if (rightToLeft != wsRtl)
 							{
 								rightToLeft = wsRtl; // the outer WS direction will be used to identify embedded runs of the opposite direction.
-								settings.ContentGenerator.StartBiDiWrapper(writer, config, rightToLeft);
+								settings.ContentGenerator.StartBiDiWrapper(writer, config, settings, rightToLeft);
 							}
 						}
 
@@ -2858,11 +2858,11 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateRunWithPossibleLink(GeneratorSettings settings, string writingSystem, IFragmentWriter writer, string style,
 			string text, Guid linkDestination, bool rightToLeft, ConfigurableDictionaryNode config, bool first, string externalLink = null)
 		{
-			settings.ContentGenerator.StartRun(writer, config, settings.PropertyTable, writingSystem, first);
+			settings.ContentGenerator.StartRun(writer, config, settings, writingSystem, first);
 			var wsRtl = settings.Cache.WritingSystemFactory.get_Engine(writingSystem).RightToLeftScript;
 			if (rightToLeft != wsRtl)
 			{
-				settings.ContentGenerator.StartBiDiWrapper(writer, config, wsRtl);
+				settings.ContentGenerator.StartBiDiWrapper(writer, config, settings, wsRtl);
 			}
 			if (!String.IsNullOrEmpty(style))
 			{
@@ -2913,7 +2913,7 @@ namespace SIL.FieldWorks.XWorks
 			if (string.IsNullOrEmpty(audioId) && string.IsNullOrEmpty(srcAttribute) && string.IsNullOrEmpty(audioIcon))
 				return settings.ContentGenerator.CreateFragment();
 			var safeAudioId = GetSafeXHTMLId(audioId);
-			return settings.ContentGenerator.GenerateAudioLinkContent(config, classname, srcAttribute, audioIcon, safeAudioId);
+			return settings.ContentGenerator.GenerateAudioLinkContent(config, settings, classname, srcAttribute, audioIcon, safeAudioId);
 		}
 
 		private static string GetSafeXHTMLId(string audioId)
@@ -3082,7 +3082,7 @@ namespace SIL.FieldWorks.XWorks
 		private static void GenerateError(IFragmentWriter writer, GeneratorSettings settings, ConfigurableDictionaryNode config, string text)
 		{
 			var writingSystem = settings.Cache.WritingSystemFactory.GetStrFromWs(settings.Cache.WritingSystemFactory.UserWs);
-			settings.ContentGenerator.StartRun(writer, null, settings.PropertyTable, writingSystem, true);
+			settings.ContentGenerator.StartRun(writer, null, settings, writingSystem, true);
 			settings.ContentGenerator.SetRunStyle(writer, null, settings.PropertyTable, writingSystem, null, true);
 			if (text.Contains(TxtLineSplit))
 			{
@@ -3258,6 +3258,7 @@ namespace SIL.FieldWorks.XWorks
 			public string ExportPath { get; }
 			public bool RightToLeft { get; }
 			public bool IsWebExport { get; }
+			public bool IsXhtmlExport { get; set; }
 			public bool IsTemplate { get; }
 
 			public GeneratorSettings(LcmCache cache, PropertyTable propertyTable, bool relativePaths,bool copyFiles, string exportPath, bool rightToLeft = false, bool isWebExport = false)
@@ -3285,6 +3286,7 @@ namespace SIL.FieldWorks.XWorks
 				RightToLeft = rightToLeft;
 				IsWebExport = isWebExport;
 				IsTemplate = isTemplate;
+				IsXhtmlExport = false;
 				StylesGenerator.Init(propertyTable);
 			}
 		}
