@@ -25,92 +25,85 @@ namespace SIL.FieldWorks.XWorks
 		internal const int DefaultStyle = -1;
 
 		// Global and default character styles.
+		internal const string RootCharacterDisplayName = "root";
+		internal const string RootCharacterNodePath = ".root";
 		internal const string BeforeAfterBetweenStyleName = "Dictionary-Context";
-		internal const string BeforeAfterBetweenDisplayName = "Context";
 		internal const string SenseNumberStyleName = "Dictionary-SenseNumber";
 		internal const string SenseNumberDisplayName = "Sense Number";
 		internal const string WritingSystemStyleName = "Writing System Abbreviation";
 		internal const string WritingSystemDisplayName = "Writing System Abbreviation";
 		internal const string HeadwordDisplayName = "Headword";
 		internal const string ReversalFormDisplayName = "Reversal Form";
-		internal const string StyleSeparator = " : ";
-		internal const string LangTagPre = "[lang=\'";
-		internal const string LangTagPost = "\']";
+		internal const string StyleSeparator = "-";
+		internal const string LangTagPre = "[lang=";
+		internal const string LangTagPost = "]";
+		internal const string BeforeAfterBetween = "-Context";
+		internal const string LinkedCharacterStyle = "-char";
+		internal const string SubentriesHeadword = "Subheadword";
 
 		// Globals and default paragraph styles.
 		internal const string NormalParagraphStyleName = "Normal";
+		internal const string NormalParagraphDisplayName = "Normal";
+		internal const string NormalParagraphNodePath = ".normal";
 		internal const string PageHeaderStyleName = "Header";
+		internal const string PageHeaderDisplayName = "Header";
+		internal const string PageHeaderNodePath = ".header";
 		internal const string MainEntryParagraphDisplayName = "Main Entry";
 		internal const string LetterHeadingStyleName = "Dictionary-LetterHeading";
 		internal const string LetterHeadingDisplayName = "Letter Heading";
-		internal const string PictureAndCaptionTextframeStyle = "Image-Textframe-Style";
+		internal const string LetterHeadingNodePath = ".letterHeading";
+		internal const string PictureAndCaptionTextframeDisplayName = "Pictures";
 		internal const string EntryStyleContinue = "-Continue";
 
 		internal const string PageHeaderIdEven = "EvenPages";
 		internal const string PageHeaderIdOdd = "OddPages";
-
-		public static Style GenerateLetterHeaderParagraphStyle(ReadOnlyPropertyTable propertyTable, out BulletInfo? bulletInfo)
-		{
-			var cache = propertyTable.GetValue<LcmCache>("cache");
-			var wsId = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
-			var style = GenerateParagraphStyleFromLcmStyleSheet(LetterHeadingStyleName, wsId, propertyTable, out bulletInfo);
-			style.StyleId = LetterHeadingDisplayName;
-			style.StyleName.Val = style.StyleId;
-			return style;
-		}
-
-		public static Style GenerateBeforeAfterBetweenCharacterStyle(ReadOnlyPropertyTable propertyTable, out int wsId)
-		{
-			var cache = propertyTable.GetValue<LcmCache>("cache");
-			wsId = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
-			var style = GenerateCharacterStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, wsId, propertyTable);
-			style.StyleId = BeforeAfterBetweenDisplayName;
-			style.StyleName.Val = style.StyleId;
-			return style;
-		}
-
-		public static Style GenerateNormalParagraphStyle(ReadOnlyPropertyTable propertyTable, out BulletInfo? bulletInfo)
-		{
-			var style = GenerateParagraphStyleFromLcmStyleSheet(NormalParagraphStyleName, DefaultStyle, propertyTable, out bulletInfo);
-			return style;
-		}
-
-		public static Style GenerateMainEntryParagraphStyle(ReadOnlyPropertyTable propertyTable, DictionaryConfigurationModel model,
-			out ConfigurableDictionaryNode mainEntryNode, out BulletInfo? bulletInfo)
-		{
-			Style style = null;
-			bulletInfo = null;
-
-			// The user can change the style name that is associated with the Main Entry, so look up the node style name using the DisplayLabel.
-			mainEntryNode = model?.Parts.Find(node => node.DisplayLabel == MainEntryParagraphDisplayName);
-			if (mainEntryNode != null)
-			{
-				style = GenerateParagraphStyleFromLcmStyleSheet(mainEntryNode.Style, DefaultStyle, propertyTable, out bulletInfo);
-				style.StyleId = MainEntryParagraphDisplayName;
-				style.StyleName.Val = style.StyleId;
-			}
-			return style;
-		}
+		internal const string SubentriesClassName = ".subentries";
+		internal const string HeadwordClassName = ".headword";
 
 		/// <summary>
 		/// Generate the style that will be used for the header that goes on the top of
-		/// every page.  The header style will be similar to the provided style, with the
-		/// addition of the tab stop.
+		/// every page.  The header style will be similar to the provided  paragraph style, with the
+		/// addition of the tab stop. It will also include the run properties from the root style, because
+		/// the Word header does not apply run properties applied to the run. They need to be added to the
+		/// paragraph.
 		/// </summary>
 		/// <param name="style">The style to based the header style on.</param>
 		/// <returns>The header style.</returns>
-		internal static Style GeneratePageHeaderStyle(Style style)
+		internal static Style GeneratePageHeaderStyle(Style style, Style rootStyle)
 		{
 			Style pageHeaderStyle = (Style)style.CloneNode(true);
-			pageHeaderStyle.StyleId = PageHeaderStyleName;
-			pageHeaderStyle.StyleName.Val = pageHeaderStyle.StyleId;
+			SetStyleName(pageHeaderStyle, PageHeaderStyleName);
 
 			// Add the tab stop.
 			var tabs = new Tabs();
 			tabs.Append(new TabStop() { Val = TabStopValues.End, Position = (int)(1440 * 6.5/*inches*/) });
 			pageHeaderStyle.StyleParagraphProperties.Append(tabs);
+
+			// The Page Header paragraph needs the run properties directly added to it.
+			// Adding run properties to the runs in the page header do not seem to get applied.
+			var runProps = rootStyle.GetFirstChild<StyleRunProperties>();
+			pageHeaderStyle.Append(runProps.CloneNode(true));
+
 			return pageHeaderStyle;
 		}
+
+		internal static bool IsParagraphStyle(string styleName, ReadOnlyPropertyTable propertyTable)
+		{
+			if(string.IsNullOrEmpty(styleName))
+			{
+				return false;
+			}
+			var styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
+			if (styleSheet == null || !styleSheet.Styles.Contains(styleName))
+			{
+				return false;
+			}
+			var projectStyle = styleSheet.Styles[styleName];
+			var exportStyleInfo = new ExportStyleInfo(projectStyle);
+
+			return exportStyleInfo.IsParagraphStyle;
+		}
+
 
 		/// <summary>
 		/// Generates a Word Paragraph Style for the requested FieldWorks style.
@@ -121,10 +114,10 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="bulletInfo">Returns the bullet and numbering info associated with the style. Returns null
 		///                          if there is none.</param>
 		/// <returns>Returns the WordProcessing.Style item. Can return null.</returns>
-		internal static Style GenerateParagraphStyleFromLcmStyleSheet(string styleName, int wsId,
+		internal static Style GenerateParagraphStyleFromLcmStyleSheet(string styleName,
 			ReadOnlyPropertyTable propertyTable, out BulletInfo? bulletInfo)
 		{
-			var style = GenerateWordStyleFromLcmStyleSheet(styleName, wsId, propertyTable, out bulletInfo);
+			var style = GenerateWordStyleFromLcmStyleSheet(true, styleName, DefaultStyle, propertyTable, out bulletInfo);
 			Debug.Assert(style == null || style.Type == StyleValues.Paragraph);
 			return style;
 		}
@@ -137,24 +130,28 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="propertyTable">To retrieve styles</param>
 		/// <returns>Returns the WordProcessing.Style item. Can return null.</returns>
 		internal static Style GenerateCharacterStyleFromLcmStyleSheet(string styleName, int wsId,
-			ReadOnlyPropertyTable propertyTable)
+			ReadOnlyPropertyTable propertyTable, StyleRunProperties basedOnProps = null)
 		{
-			var style = GenerateWordStyleFromLcmStyleSheet(styleName, wsId, propertyTable, out BulletInfo? _);
+			var style = GenerateWordStyleFromLcmStyleSheet(false, styleName, wsId, propertyTable, out BulletInfo? _, basedOnProps);
 			Debug.Assert(style == null || style.Type == StyleValues.Character);
 			return style;
 		}
 
 		/// <summary>
-		/// Generates a Word Style for the requested FieldWorks style.
+		/// Generates a Paragraph or Character Word Style for the requested FieldWorks style.
+		/// If the FieldWorks style is a paragraph style then either a paragraph or character style can
+		/// be returned.
+		/// If the FieldWorks style is a character style then only a character style can be returned.
 		/// </summary>
+		/// <param name="paragraphData">True to get a paragraph data, False to get a character data.</param>
 		/// <param name="styleName">Name of the character or paragraph style.</param>
-		/// <param name="wsId">writing system id</param>
+		/// <param name="wsId">writing system id. Only used for character style.</param>
 		/// <param name="propertyTable">To retrieve styles</param>
 		/// <param name="bulletInfo">Returns the bullet and numbering info associated with the style. Returns null
 		///                          if there is none. (For character styles always returns null.)</param>
 		/// <returns>Returns the WordProcessing.Style item. Can return null.</returns>
-		internal static Style GenerateWordStyleFromLcmStyleSheet(string styleName, int wsId,
-			ReadOnlyPropertyTable propertyTable, out BulletInfo? bulletInfo)
+		internal static Style GenerateWordStyleFromLcmStyleSheet(bool paragraphData, string styleName, int wsId,
+			ReadOnlyPropertyTable propertyTable, out BulletInfo? bulletInfo, StyleRunProperties basedOnProps = null)
 		{
 			bulletInfo = null;
 			var styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
@@ -165,21 +162,25 @@ namespace SIL.FieldWorks.XWorks
 
 			var projectStyle = styleSheet.Styles[styleName];
 			var exportStyleInfo = new ExportStyleInfo(projectStyle);
+
+			// We can't return paragraph data from a character style.
+			if (!exportStyleInfo.IsParagraphStyle && paragraphData)
+			{
+				Debug.Assert(false, "Can't return paragraph data from a character style.");
+				return null;
+			}
+
 			var exportStyle = new Style();
 			// StyleId is used for style linking in the xml.
 			exportStyle.StyleId = styleName.Trim('.');
 			// StyleName is the name a user will see for the given style in Word's style sheet.
 			exportStyle.Append(new StyleName() {Val = exportStyle.StyleId});
-			var parProps = new StyleParagraphProperties();
-			var runProps = new StyleRunProperties();
-
-			if (exportStyleInfo.BasedOnStyle?.Name != null)
-				exportStyle.BasedOn = new BasedOn() { Val = exportStyleInfo.BasedOnStyle.Name };
 
 			// Create paragraph and run styles as specified by exportStyleInfo.
 			// Only if the style to export is a paragraph style should we create paragraph formatting options like indentation, alignment, border, etc.
-			if (exportStyleInfo.IsParagraphStyle)
+			if (paragraphData)
 			{
+				var parProps = new StyleParagraphProperties();
 				exportStyle.Type = StyleValues.Paragraph;
 				var hangingIndent = 0.0f;
 
@@ -328,77 +329,22 @@ namespace SIL.FieldWorks.XWorks
 			else
 			{
 				exportStyle.Type = StyleValues.Character;
+
+				// Getting the character formatting info to add to the run properties
+				var runProps = AddFontInfoWordStyles(projectStyle, wsId, propertyTable.GetValue<LcmCache>("cache"), basedOnProps);
+				exportStyle.Append(runProps);
 			}
 
-			// Getting the character formatting info to add to the run properties
-			runProps = AddFontInfoWordStyles(projectStyle, wsId, propertyTable.GetValue<LcmCache>("cache"));
-			exportStyle.Append(runProps);
 			return exportStyle;
 		}
 
-		/// <summary>
-		/// Generates paragraph styles from a configuration node.
-		/// </summary>
-		public static Style GenerateParagraphStyleFromConfigurationNode(ConfigurableDictionaryNode configNode,
-			ReadOnlyPropertyTable propertyTable, out BulletInfo? bulletInfo)
-		{
-			bulletInfo = null;
-			switch (configNode.DictionaryNodeOptions)
-			{
-				// TODO: handle listAndPara case and character portion of pictureOptions
-				// case IParaOption listAndParaOpts:
-
-				case DictionaryNodePictureOptions pictureOptions:
-					var cache = propertyTable.GetValue<LcmCache>("cache");
-					return GenerateParagraphStyleFromPictureOptions(configNode, pictureOptions, cache, propertyTable);
-
-				default:
-					{
-						// If the configuration node defines a paragraph style then add the style.
-						if (!string.IsNullOrEmpty(configNode.Style) &&
-							(configNode.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph))
-						{
-							var style = GenerateParagraphStyleFromLcmStyleSheet(configNode.Style, DefaultStyle, propertyTable, out bulletInfo);
-							style.StyleId = configNode.DisplayLabel;
-							style.StyleName.Val = style.StyleId;
-							return style;
-						}
-						return null;
-					}
-			}
-		}
-
-		/// <summary>
-		/// Generate the character styles (for the writing systems) that will be the base of all other character styles.
-		/// </summary>
-		/// <param name="propertyTable"></param>
-		/// <returns></returns>
-		public static List<StyleElement> GenerateWritingSystemsCharacterStyles(ReadOnlyPropertyTable propertyTable)
-		{
-			var styleElements = new List<StyleElement>();
-			var cache = propertyTable.GetValue<LcmCache>("cache");
-			// Generate the styles for all the writing systems
-			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
-			{
-				// Get the character style information from the "Normal" paragraph style.
-				Style wsCharStyle = GetOnlyCharacterStyle(GenerateParagraphStyleFromLcmStyleSheet(NormalParagraphStyleName, aws.Handle, propertyTable, out BulletInfo? _));
-				wsCharStyle.StyleId = GetWsString(aws.LanguageTag);
-				wsCharStyle.StyleName = new StyleName() { Val = wsCharStyle.StyleId };
-				var styleElem = new StyleElement(wsCharStyle.StyleId, wsCharStyle, null, aws.Handle, aws.RightToLeftScript);
-				styleElements.Add(styleElem);
-			}
-
-			return styleElements;
-		}
-
-		private static Style GenerateParagraphStyleFromPictureOptions(ConfigurableDictionaryNode configNode, DictionaryNodePictureOptions pictureOptions,
-			LcmCache cache, ReadOnlyPropertyTable propertyTable)
+		public static Style GenerateParagraphStyleFromPictureOptions()
 		{
 			// Creating a style for the paragraph that will contain the image and caption
 			var textBoxStyle = new Style() {
 				Type = StyleValues.Paragraph,
-				StyleId = PictureAndCaptionTextframeStyle,
-				StyleName = new StyleName() { Val = PictureAndCaptionTextframeStyle }
+				StyleId = PictureAndCaptionTextframeDisplayName,
+				StyleName = new StyleName() { Val = PictureAndCaptionTextframeDisplayName }
 			};
 
 			var parProps = new ParagraphProperties();
@@ -406,13 +352,6 @@ namespace SIL.FieldWorks.XWorks
 			parProps.Justification = new Justification() { Val = JustificationValues.Center }; ;
 			textBoxStyle.Append(parProps);
 			return textBoxStyle;
-		}
-
-		private static Styles GenerateWordStylesFromListAndParaOptions(ConfigurableDictionaryNode configNode,
-			IParaOption listAndParaOpts, ref string baseSelection, LcmCache cache, ReadOnlyPropertyTable propertyTable)
-		{
-			// TODO: Generate these styles when we implement custom numbering as well as before/after + separate paragraphs in styles
-			return null;
 		}
 
 		/// <summary>
@@ -425,14 +364,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Style contStyle = (Style)style.CloneNode(true);
 			WordStylesGenerator.RemoveFirstLineIndentation(contStyle);
-			contStyle.StyleId = contStyle.StyleId + EntryStyleContinue;
-			contStyle.StyleName.Val = contStyle.StyleId;
 
-			if (contStyle.BasedOn != null && !string.IsNullOrEmpty(contStyle.BasedOn.Val) &&
-				contStyle.BasedOn.Val != NormalParagraphStyleName)
-			{
-				contStyle.BasedOn.Val = contStyle.BasedOn.Val + EntryStyleContinue;
-			}
+			// Remove the link to the character style. A continuation should never need an associated character style.
+			contStyle.RemoveAllChildren<LinkedStyle>();
+
 			return contStyle;
 		}
 
@@ -467,31 +402,21 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Generates a new character style similar to the rootStyle, but being based on the provided style name.
-		/// </summary>
-		/// <param name="rootStyle">The style we want the new style to be similar to.</param>
-		/// <param name="styleToBaseOn">The name of the style that the new style will be based on.</param>
-		/// <param name="newStyleName">The name for the new style.</param>
-		internal static Style GenerateBasedOnCharacterStyle(Style rootStyle, string styleToBaseOn, string newStyleName)
-		{
-			if (rootStyle == null || string.IsNullOrEmpty(styleToBaseOn) || string.IsNullOrEmpty(newStyleName))
-			{
-				return null;
-			}
-
-			Style retStyle = GetOnlyCharacterStyle(rootStyle);
-			retStyle.Append(new BasedOn() { Val = styleToBaseOn });
-			retStyle.StyleId = newStyleName;
-			retStyle.StyleName = new StyleName() { Val = retStyle.StyleId };
-			return retStyle;
-		}
-
-		/// <summary>
 		/// Builds the word styles for font info properties using the writing system overrides
 		/// </summary>
-		private static StyleRunProperties AddFontInfoWordStyles(BaseStyleInfo projectStyle, int wsId, LcmCache cache)
+		private static StyleRunProperties AddFontInfoWordStyles(BaseStyleInfo projectStyle, int wsId,
+			LcmCache cache, StyleRunProperties basedOnProps)
 		{
-			var charDefaults = new StyleRunProperties();
+			StyleRunProperties charDefaults = null;
+			if (basedOnProps == null)
+			{
+				charDefaults = new StyleRunProperties();
+			}
+			else
+			{
+				charDefaults = (StyleRunProperties)basedOnProps.CloneNode(true);
+			}
+
 			var wsFontInfo = projectStyle.FontInfoForWs(wsId);
 			var defaultFontInfo = projectStyle.DefaultCharacterStyleInfo;
 
@@ -509,7 +434,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// fontName still null means not set in Normal Style, then get default fonts from WritingSystems configuration.
 			// Comparison, projectStyle.Name == "Normal", required to limit the font-family definition to the
-			// empty span (ie span[lang="en"]{}. If not included, font-family will be added to many more spans.
+			// empty span (ie char). If not included, font-family will be added to many more spans.
 			if (fontName == null && projectStyle.Name == NormalParagraphStyleName)
 			{
 				var lgWritingSystem = cache.ServiceLocator.WritingSystemManager.get_EngineOrNull(wsId);
@@ -534,6 +459,7 @@ namespace SIL.FieldWorks.XWorks
 					ComplexScript = fontName,
 					EastAsia = fontName
 				};
+				charDefaults.RemoveAllChildren<RunFonts>();
 				charDefaults.Append(font);
 			}
 
@@ -556,6 +482,8 @@ namespace SIL.FieldWorks.XWorks
 				fontSize = fontSize / 500;
 				var size = new FontSize() { Val = fontSize.ToString() };
 				var sizeCS = new FontSizeComplexScript() { Val = fontSize.ToString() };
+				charDefaults.RemoveAllChildren<FontSize>();
+				charDefaults.RemoveAllChildren<FontSizeComplexScript>();
 				charDefaults.Append(size);
 				charDefaults.Append(sizeCS);
 			}
@@ -567,6 +495,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var boldFont = new Bold() { Val = true };
 				var boldCS = new BoldComplexScript() { Val = true };
+				charDefaults.RemoveAllChildren<Bold>();
+				charDefaults.RemoveAllChildren<BoldComplexScript>();
 				charDefaults.Append(boldFont);
 				charDefaults.Append(boldCS);
 			}
@@ -578,6 +508,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var italFont = new Italic() { Val = true };
 				var italicCS = new ItalicComplexScript() { Val = true };
+				charDefaults.RemoveAllChildren<Italic>();
+				charDefaults.RemoveAllChildren<ItalicComplexScript>();
 				charDefaults.Append(italFont);
 				charDefaults.Append(italicCS);
 			}
@@ -589,6 +521,7 @@ namespace SIL.FieldWorks.XWorks
 				// note: open xml does not allow alpha
 				string openXmlColor = GetOpenXmlColor(fontColor.R, fontColor.G, fontColor.B);
 				var color = new Color() { Val = openXmlColor };
+				charDefaults.RemoveAllChildren<Color>();
 				charDefaults.Append(color);
 			}
 
@@ -600,6 +533,7 @@ namespace SIL.FieldWorks.XWorks
 				// though a percentage shading could be implemented using shading pattern options.
 				string openXmlColor = GetOpenXmlColor(backColor.R, backColor.G, backColor.B);
 				var backShade = new Shading() { Fill = openXmlColor };
+				charDefaults.RemoveAllChildren<Shading>();
 				charDefaults.Append(backShade);
 			}
 
@@ -619,6 +553,7 @@ namespace SIL.FieldWorks.XWorks
 						oxmlSuperSub.Val = VerticalPositionValues.Baseline;
 						break;
 				}
+				charDefaults.RemoveAllChildren<VerticalTextAlignment>();
 				charDefaults.Append(oxmlSuperSub);
 			}
 
@@ -658,12 +593,13 @@ namespace SIL.FieldWorks.XWorks
 						string openXmlColor = GetOpenXmlColor(color.R, color.G, color.B);
 						oxmlUnderline.Color = openXmlColor;
 					}
-
+					charDefaults.RemoveAllChildren<Underline>();
 					charDefaults.Append(oxmlUnderline);
 				}
 				// Else the underline is actually a strikethrough.
 				else
 				{
+					charDefaults.RemoveAllChildren<Strike>();
 					charDefaults.Append(new Strike());
 				}
 			}
@@ -803,9 +739,9 @@ namespace SIL.FieldWorks.XWorks
 			return runProps;
 		}
 
-		public static string GetWsString(string wsId)
+		public static string GetWsString(string wsString)
 		{
-			return LangTagPre + wsId + LangTagPost;
+			return LangTagPre + wsString + LangTagPost;
 		}
 
 		/// <summary>
@@ -828,20 +764,6 @@ namespace SIL.FieldWorks.XWorks
 			else
 				return false;
 			return true;
-		}
-
-		private static ConfigurableDictionaryNode AncestorWithParagraphStyle(ConfigurableDictionaryNode currentNode,
-			LcmStyleSheet styleSheet)
-		{
-			var parentNode = currentNode;
-			do
-			{
-				parentNode = parentNode.Parent;
-				if (parentNode == null)
-					return null;
-			} while (!IsParagraphStyle(parentNode, styleSheet));
-
-			return parentNode;
 		}
 
 		/// <summary>
@@ -902,127 +824,6 @@ namespace SIL.FieldWorks.XWorks
 			return leadingIndent;
 		}
 
-		/// <summary>
-		/// Returns a style containing only the run properties from the full style declaration
-		/// </summary>
-		internal static Style GetOnlyCharacterStyle(Style fullStyleDeclaration)
-		{
-			Style charStyle = new Style() { Type = StyleValues.Character };
-			if (fullStyleDeclaration.StyleId != null)
-				charStyle.StyleId = fullStyleDeclaration.StyleId;
-			if (fullStyleDeclaration.StyleRunProperties != null)
-				charStyle.Append(fullStyleDeclaration.StyleRunProperties.CloneNode(true));
-			return charStyle;
-		}
-
-		/// <summary>
-		/// Returns a style containing only the paragraph properties from the full style declaration
-		/// </summary>
-		internal static Style GetOnlyParagraphStyle(Style fullStyleDeclaration)
-		{
-			Style parStyle = new Style() { Type = StyleValues.Paragraph };
-			if (fullStyleDeclaration.StyleId != null)
-				parStyle.StyleId = fullStyleDeclaration.StyleId;
-			if (fullStyleDeclaration.StyleParagraphProperties != null)
-				parStyle.Append(fullStyleDeclaration.StyleParagraphProperties.CloneNode(true));
-			return parStyle;
-		}
-
-		private static Styles AddRange(Styles styles, Styles moreStyles)
-		{
-			if (styles != null)
-			{
-				if (moreStyles != null)
-				{
-					foreach (Style style in moreStyles)
-						styles.Append(style.CloneNode(true));
-				}
-
-				return styles;
-			}
-
-			// if we reach this point, moreStyles can only be null if style is also null,
-			// in which case we do actually wish to return null
-			return moreStyles;
-		}
-
-		private static Styles AddRange(Styles moreStyles, Style style)
-		{
-			if (style != null)
-			{
-				if (moreStyles == null)
-				{
-					moreStyles = new Styles();
-				}
-
-				moreStyles.Append(style.CloneNode(true));
-			}
-
-			// if we reach this point, moreStyles can only be null if style is also null,
-			// in which case we do actually wish to return null
-			return moreStyles;
-		}
-
-		private static Styles RemoveBeforeAfterSelectorRules(Styles styles)
-		{
-			Styles selectedStyles = new Styles();
-			// TODO: once all styles are handled, shouldn't need this nullcheck anymore
-			if (styles != null)
-			{
-				foreach (Style style in styles)
-					if (!IsBeforeOrAfter(style))
-						selectedStyles.Append(style.CloneNode(true));
-				return selectedStyles;
-			}
-
-			return null;
-		}
-
-		public static Styles CheckRangeOfStylesForEmpties(Styles rules)
-		{
-			// TODO: once all styles are handled, shouldn't need this nullcheck anymore
-			//if (rules == null)
-			//	return null;
-			Styles nonEmptyStyles = new Styles();
-			foreach (Style style in rules.Descendants<Style>())
-				if (!IsEmptyStyle(style))
-					nonEmptyStyles.Append(style.CloneNode(true));
-			if (nonEmptyStyles.Descendants<Style>().Any())
-				return nonEmptyStyles;
-
-			return null;
-		}
-
-		private static bool IsBeforeOrAfter(Style style)
-		{
-			// TODO
-			return false;
-		}
-
-		private static bool IsEmptyStyle(Style style)
-		{
-			// If the style has even just an ID, it will have descendants.
-			// To check if style is truly empty, need to check if any of its descendants are of the following types:
-			// paragraphproperties, stylerunproperties, runproperties, or tableproperties (or numberingproperties, but these would be specified w/in paragraph properties)
-			// TODO: it is still possible for a style that contains e.g. nothing but an empty RunProperty to return as non-empty. Is there a more robust way of checking this?
-			if (style.Descendants<ParagraphProperties>().Any() ||
-				style.Descendants<StyleRunProperties>().Any() ||
-				style.Descendants<RunProperties>().Any() ||
-				style.Descendants<TableProperties>().Any() ||
-				style.Descendants<TableCellProperties>().Any())
-				return false;
-
-			return true;
-		}
-
-		private static bool IsParagraphStyle(ConfigurableDictionaryNode node, LcmStyleSheet styleSheet)
-		{
-			if (node.StyleType == ConfigurableDictionaryNode.StyleTypes.Character)
-				return false;
-			var style = node.Style;
-			return !string.IsNullOrEmpty(style) && styleSheet.Styles.Contains(style) && styleSheet.Styles[style].IsParagraphStyle;
-		}
-
 		private static bool GetFontSize(BaseStyleInfo projectStyle, int wsId, out double fontSize)
 		{
 			fontSize = default(double);
@@ -1061,6 +862,31 @@ namespace SIL.FieldWorks.XWorks
 		private static int MilliPtToEighthPt(int millipoints)
 		{
 			return (int)Math.Round((float)millipoints / 125, 0);
+		}
+
+		internal static void SetStyleName(Style style, string styleName)
+		{
+			style.StyleId = styleName;
+			if (style.StyleName == null)
+			{
+				style.StyleName = new StyleName() { Val = style.StyleId };
+			}
+			else
+			{
+				style.StyleName.Val = style.StyleId;
+			}
+		}
+
+		internal static void SetBasedOn(Style style, string basedOnValue)
+		{
+			if (style.BasedOn == null)
+			{
+				style.BasedOn = new BasedOn() { Val = basedOnValue };
+			}
+			else
+			{
+				style.BasedOn.Val = basedOnValue;
+			}
 		}
 	}
 
