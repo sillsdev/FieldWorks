@@ -1706,8 +1706,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (Clerk.Id == "interlinearTexts" && cvDel > 0)
 			{
-				// Wait for InterestingTextsList to be updated (cf. LT-22089).
-				m_requestedLoadWhileSuppressed = true;
+				string fieldName = Cache.MetaDataCacheAccessor.GetFieldNameOrNull(tag);
+				if (fieldName != null && fieldName == "InterlinearTexts")
+				{
+					// Wait for InterestingTextsList to be updated (cf. LT-22089).
+					m_requestedLoadWhileSuppressed = true;
+				}
 			}
 
 			// Try to catch things that don't obviously affect us, but will cause problems.
