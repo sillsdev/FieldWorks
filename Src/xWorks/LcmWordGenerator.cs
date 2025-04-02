@@ -1337,7 +1337,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// Create a run with the correct style.
 			var writer = CreateWriter(propFrag);
-			StartRun(writer, config, settings.PropertyTable, writingSystem, true);
+			StartRun(writer, config, settings, writingSystem, true);
 
 			// Add the content to the run.
 			AddToRunContent(writer, content);
