@@ -209,7 +209,14 @@ namespace SIL.FieldWorks.XWorks
 				{
 					style = new Style();
 					style.Type = StyleValues.Character;
-					style.Append(parentRunProps.CloneNode(true));
+					if (parentRunProps != null)
+					{
+						style.Append(parentRunProps.CloneNode(true));
+					}
+					else
+					{
+						style.Append(new StyleRunProperties());
+					}
 				}
 
 				// Update the style name.
@@ -313,18 +320,18 @@ namespace SIL.FieldWorks.XWorks
 				// We only need to build the two sets for the children. The node
 				// '.entry .senses .subentries' does NOT need a second set of rules. It's rules
 				// will get created through the normal execution of this method.
-				if (nodes[ii].DisplayLabel == "Subentries" && (ii + 1 < nodes.Count) &&
-					nodes[ii + 1].DisplayLabel == "MainEntrySubentries")
+				if (CssGenerator.GetClassAttributeForConfig(workingNode) == "subentries" && (ii + 1 < nodes.Count) &&
+					CssGenerator.GetClassAttributeForConfig(nodes[ii + 1]) == "mainentrysubentries")
 				{
 					// Build the styles for the '.entry .senses .subentries' path.
 					var mainEntryNode = nodes[ii - 1];
-					var sensesNode = mainEntryNode.Children.First(child => child.DisplayLabel == "Senses");
-					var sensesSubentriesNode = sensesNode.Children.First(child => child.DisplayLabel == "Subentries");
+					var sensesNode = mainEntryNode.Children.First(child => CssGenerator.GetClassAttributeForConfig(child) == "senses");
+					var sensesSubentriesNode = sensesNode.Children.First(child => CssGenerator.GetClassAttributeForConfig(child) == "subentries");
 					parentSensesSubentryUniqueDisplayName = AddStyles(sensesSubentriesNode, wsId);
 					sensesSubentriesNodePath = CssGenerator.GetNodePath(sensesSubentriesNode);
 				}
 
-				if (workingDisplayName == "MainEntrySubentries")
+				if (CssGenerator.GetClassAttributeForConfig(workingNode) == "mainentrysubentries")
 				{
 					buildSenseSubentryRules = true;
 					continue;
