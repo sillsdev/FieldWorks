@@ -408,22 +408,22 @@ namespace SIL.FieldWorks.XWorks
 						elem.WritingSystemId == WordStylesGenerator.DefaultStyle).ToList();
 
 				// Iterate through the elements, starting with the second, to see if it is the same
-				// as any of the elements proceeding it.
+				// as any of the elements preceding it.
 				for (int currentElem = 1; currentElem < defaultElements.Count; currentElem++)
 				{
-					// Iterate through the proceeding elements to check if they have the same properties.
-					for (int proceedingElem = 0; proceedingElem < currentElem; proceedingElem++)
+					// Iterate through the preceding elements to check if they have the same properties.
+					for (int precedingElem = 0; precedingElem < currentElem; precedingElem++)
 					{
-						// If the proceeding element is already re-directed then there is no need to compare the current
-						// element to this proceeding element, since it is the same as a proceeding element that we would
+						// If the preceding element is already re-directed then there is no need to compare the current
+						// element to this preceding element, since it is the same as one of its preceding elements that we would
 						// have already checked.
-						if (defaultElements[proceedingElem].Redirect == null)
+						if (defaultElements[precedingElem].Redirect == null)
 						{
 							if (defaultElements[currentElem].Style.Descendants<StyleRunProperties>().First().OuterXml
-								.Equals(defaultElements[proceedingElem].Style.Descendants<StyleRunProperties>().First().OuterXml))
+								.Equals(defaultElements[precedingElem].Style.Descendants<StyleRunProperties>().First().OuterXml))
 							{
 								// Properties are the same, redirect the later element to the earlier one.
-								defaultElements[currentElem].Redirect = defaultElements[proceedingElem];
+								defaultElements[currentElem].Redirect = defaultElements[precedingElem];
 								break;
 							}
 						}
@@ -449,7 +449,7 @@ namespace SIL.FieldWorks.XWorks
 						foreach (var defaultElem in defaultElements)
 						{
 							// If the default element is already re-directed then there is no need to compare the current
-							// element to this default element, since it is the same as a proceeding element that we would
+							// element to this default element, since it is the same as one of its preceding elements that we would
 							// have already checked.
 							if (defaultElem.Redirect == null)
 							{
@@ -464,23 +464,23 @@ namespace SIL.FieldWorks.XWorks
 						}
 					}
 
-					// Check if the current element is the same as any of the proceeding elements with the same ws.
+					// Check if the current element is the same as any of the preceding elements with the same ws.
 					if (nonDefaultElements[currentElem].Redirect == null)
 					{
-						// Iterate through the proceeding elements to check if they have the same properties.
-						for (int proceedingElem = 0; proceedingElem < currentElem; proceedingElem++)
+						// Iterate through the preceding elements to check if they have the same properties.
+						for (int precedingElem = 0; precedingElem < currentElem; precedingElem++)
 						{
-							// If the proceeding element is already re-directed then there is no need to compare the current
-							// element to this proceeding element, since it is the same as a proceeding element that we would
+							// If the preceding element is already re-directed then there is no need to compare the current
+							// element to this preceding element, since it is the same as a preceding element that we would
 							// have already checked.
-							if (nonDefaultElements[proceedingElem].Redirect == null)
+							if (nonDefaultElements[precedingElem].Redirect == null)
 							{
-								if (nonDefaultElements[currentElem].WritingSystemId == nonDefaultElements[proceedingElem].WritingSystemId &&
+								if (nonDefaultElements[currentElem].WritingSystemId == nonDefaultElements[precedingElem].WritingSystemId &&
 									nonDefaultElements[currentElem].Style.Descendants<StyleRunProperties>().First().OuterXml
-									.Equals(nonDefaultElements[proceedingElem].Style.Descendants<StyleRunProperties>().First().OuterXml))
+									.Equals(nonDefaultElements[precedingElem].Style.Descendants<StyleRunProperties>().First().OuterXml))
 								{
 									// Properties are the same, redirect the later element to the earlier one.
-									nonDefaultElements[currentElem].Redirect = nonDefaultElements[proceedingElem];
+									nonDefaultElements[currentElem].Redirect = nonDefaultElements[precedingElem];
 									break;
 								}
 							}
