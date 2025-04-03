@@ -347,7 +347,7 @@ namespace SIL.FieldWorks.XWorks
 				StyleName = new StyleName() { Val = PictureAndCaptionTextframeDisplayName }
 			};
 
-			var parProps = new ParagraphProperties();
+			var parProps = new StyleParagraphProperties();
 			// The image and caption should always be centered within the textbox.
 			parProps.Justification = new Justification() { Val = JustificationValues.Center }; ;
 			textBoxStyle.Append(parProps);

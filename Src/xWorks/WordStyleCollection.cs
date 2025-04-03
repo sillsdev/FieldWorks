@@ -52,12 +52,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Returns a single list containing all the ParagraphElements.
 		/// </summary>
-		internal List<ParagraphElement> GetParagraphElements()
+		internal List<ParagraphElement> GetUsedParagraphElements()
 		{
 			// Get an enumerator to the flattened list of all StyleElements.
 			var enumerator = paragraphStyles.Values.SelectMany(x => x);
 			// Create a single list of all the StyleElements.
-			return enumerator.ToList();
+			return enumerator.Where(x => x.Used).ToList();
 		}
 
 		/// <summary>
@@ -407,7 +407,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			foreach (var kvPair in characterStyles)
 			{
-				string DisplayNameBase = kvPair.Key;
 				List<CharacterElement> stylesWithSameDisplayNameBase = kvPair.Value;
 
 				// First redirect all the default styles.
@@ -418,6 +417,12 @@ namespace SIL.FieldWorks.XWorks
 				// as any of the elements preceding it.
 				for (int currentElem = 1; currentElem < defaultElements.Count; currentElem++)
 				{
+					// Don't redirect a characterElement that is linked to a paragraphElement.
+					if (defaultElements[currentElem].LinkedParagraphElement != null)
+					{
+						continue;
+					}
+
 					// Iterate through the preceding elements to check if they have the same properties.
 					for (int precedingElem = 0; precedingElem < currentElem; precedingElem++)
 					{
@@ -426,6 +431,12 @@ namespace SIL.FieldWorks.XWorks
 						// have already checked.
 						if (defaultElements[precedingElem].Redirect == null)
 						{
+							// Don't redirect to a characterElement that is linked to a paragraphElement.
+							if (defaultElements[precedingElem].LinkedParagraphElement != null)
+							{
+								continue;
+							}
+
 							if (defaultElements[currentElem].Style.Descendants<StyleRunProperties>().First().OuterXml
 								.Equals(defaultElements[precedingElem].Style.Descendants<StyleRunProperties>().First().OuterXml))
 							{
@@ -460,6 +471,12 @@ namespace SIL.FieldWorks.XWorks
 							// have already checked.
 							if (defaultElem.Redirect == null)
 							{
+								// Don't redirect to a characterElement that is linked to a paragraphElement.
+								if (defaultElem.LinkedParagraphElement != null)
+								{
+									continue;
+								}
+
 								if (nonDefaultElements[currentElem].Style.Descendants<StyleRunProperties>().First().OuterXml
 									.Equals(defaultElem.Style.Descendants<StyleRunProperties>().First().OuterXml))
 								{
@@ -488,6 +505,77 @@ namespace SIL.FieldWorks.XWorks
 								{
 									// Properties are the same, redirect the later element to the earlier one.
 									nonDefaultElements[currentElem].Redirect = nonDefaultElements[precedingElem];
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Redirect paragraph elements to other paragraph elements that have identical properties.
+		/// The results of the redirection will be used to reduce the number of styles created in Word.
+		/// </summary>
+		internal void RedirectParagraphElements()
+		{
+			// Iterate through the list of elements with different Display Name Bases.
+			foreach (var kvPair in paragraphStyles)
+			{
+				List<ParagraphElement> elements = kvPair.Value;
+
+				// Iterate through the elements, starting with the second, to see if it is the same
+				// as any of the elements preceding it.
+				for (int currentElem = 1; currentElem < elements.Count; currentElem++)
+				{
+					// Don't redirect an element that has BulletInfo.
+					// Continuation elements will not have their LinkedCharacterElement property set.  No need to check them
+					// for redirection. They will get redirected along with the associated normal paragraph element.
+					if ((elements[currentElem].BulletInfo != null) || (elements[currentElem].LinkedCharacterElement == null))
+					{
+						continue;
+					}
+
+					// Iterate through the preceding elements to check if they have the same properties.
+					for (int precedingElem = 0; precedingElem < currentElem; precedingElem++)
+					{
+						// Don't redirect to an element that has BulletInfo.
+						// Continuation elements will not have their LinkedCharacterElement property set.  No need to check them
+						// for redirection. They will get redirected along with the associated normal paragraph element.
+						if ((elements[precedingElem].BulletInfo != null) || (elements[precedingElem].LinkedCharacterElement == null))
+						{
+							continue;
+						}
+
+						// If the preceding element is already re-directed then there is no need to compare the current
+						// element to this preceding element, since it is the same as a preceding element that we would
+						// have already checked.
+						if (elements[precedingElem].Redirect == null)
+						{
+							// Paragraph properties must be the same to redirect.
+							var currentParaProps = elements[currentElem].Style.Descendants<StyleParagraphProperties>().FirstOrDefault();
+							var precedingParaProps = elements[precedingElem].Style.Descendants<StyleParagraphProperties>().FirstOrDefault();
+							if ((currentParaProps == null && precedingParaProps == null) ||
+								currentParaProps != null &&
+								precedingParaProps != null &&
+								currentParaProps.OuterXml.Equals(precedingParaProps.OuterXml))
+							{
+								// The linked character properties must be the same to redirect.
+								if (elements[currentElem].LinkedCharacterElement.Style.Descendants<StyleRunProperties>().First().OuterXml
+									.Equals(elements[precedingElem].LinkedCharacterElement.Style.Descendants<StyleRunProperties>().First().OuterXml))
+								{
+									// Properties are the same, redirect the later element to the earlier one.
+									elements[currentElem].Redirect = elements[precedingElem];
+									elements[currentElem].LinkedCharacterElement.Redirect = elements[precedingElem].LinkedCharacterElement;
+									if (elements[currentElem].ContinuationElement != null)
+									{
+										if (elements[precedingElem].ContinuationElement == null)
+										{
+											AddParagraphContinuationStyle(elements[precedingElem]);
+										}
+										elements[currentElem].ContinuationElement.Redirect = elements[precedingElem].ContinuationElement;
+									}
 									break;
 								}
 							}
@@ -537,10 +625,6 @@ namespace SIL.FieldWorks.XWorks
 				charElem.LinkedParagraphElement = paraElem;
 				paraElem.Style.Append(new LinkedStyle() { Val = charElem.UniqueDisplayName() });
 				charElem.Style.Append(new LinkedStyle() { Val = paraElem.UniqueDisplayName() });
-
-				// Set the paragraph and character styles to used.
-				charElem.Used = true;
-				paraElem.Used = true;
 			}
 		}
 
@@ -562,7 +646,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Creates a paragraph continuation element.
 		/// </summary>
 		/// <param name="paraElem">The element used to build the continuation element.</param>
-		/// <returns></returns>
+		/// <returns>The continuation element.</returns>
 		internal ParagraphElement AddParagraphContinuationStyle(ParagraphElement paraElem)
 		{
 			lock (_collectionLock)
@@ -581,7 +665,6 @@ namespace SIL.FieldWorks.XWorks
 				WordStylesGenerator.SetStyleName(contElem.Style, uniqueDisplayName);
 				AddParagraphElement(contElem);
 				paraElem.ContinuationElement = contElem;
-				contElem.Used = true;
 				return contElem;
 			}
 		}
@@ -594,6 +677,7 @@ namespace SIL.FieldWorks.XWorks
 			var normElem = new ParagraphElement(WordStylesGenerator.NormalParagraphDisplayName,
 				normStyle, 1, WordStylesGenerator.NormalParagraphNodePath, bulletInfo);
 			AddParagraphElement(normElem);
+			normElem.Used = true;
 
 			// Page Header Style
 			TryGetCharacterStyle(WordStylesGenerator.RootCharacterNodePath, WordStylesGenerator.DefaultStyle, out CharacterElement rootElem);
@@ -602,6 +686,7 @@ namespace SIL.FieldWorks.XWorks
 			var pageHeaderElem = new ParagraphElement(WordStylesGenerator.PageHeaderDisplayName,
 				pageHeaderStyle, 1, WordStylesGenerator.PageHeaderNodePath, bulletInfo);
 			AddParagraphElement(pageHeaderElem);
+			pageHeaderElem.Used = true;
 
 			// Letter Header Style
 			var headStyle = WordStylesGenerator.GenerateParagraphStyleFromLcmStyleSheet(WordStylesGenerator.LetterHeadingStyleName,
@@ -611,6 +696,7 @@ namespace SIL.FieldWorks.XWorks
 			var headElem = new ParagraphElement(WordStylesGenerator.LetterHeadingDisplayName,
 				headStyle, 1, WordStylesGenerator.LetterHeadingNodePath, bulletInfo);
 			AddParagraphElement(headElem);
+			headElem.Used = true;
 		}
 
 		/// <summary>
@@ -685,6 +771,7 @@ namespace SIL.FieldWorks.XWorks
 		internal BulletInfo? BulletInfo { get; }
 		internal CharacterElement LinkedCharacterElement { get; set; }
 		internal ParagraphElement ContinuationElement { get; set; }
+		internal ParagraphElement Redirect { get; set; }
 
 		/// <summary>
 		/// Unique id for this style that can be used for all bullet list items, and
