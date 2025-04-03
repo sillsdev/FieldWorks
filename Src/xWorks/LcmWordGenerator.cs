@@ -1178,8 +1178,11 @@ namespace SIL.FieldWorks.XWorks
 				// Add the group style.
 				if (!string.IsNullOrEmpty(config.Style))
 				{
+					ParagraphElement paraElem = s_styleCollection.AddParagraphStyle(config);
+					string uniqueDisplayName = paraElem.UniqueDisplayName();
+
 					WP.ParagraphProperties paragraphProps =
-						new WP.ParagraphProperties(new ParagraphStyleId() { Val = config.DisplayLabel });
+						new WP.ParagraphProperties(new ParagraphStyleId() { Val = uniqueDisplayName });
 					groupPara.PrependChild(paragraphProps);
 				}
 				groupData.DocBody.AppendChild(groupPara);
