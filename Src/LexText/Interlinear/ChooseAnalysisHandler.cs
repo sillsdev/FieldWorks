@@ -390,29 +390,8 @@ namespace SIL.FieldWorks.IText
 
 			Opinions uao = wa.GetAgentOpinion(wa.Cache.LangProject.DefaultUserAgent);
 			Opinions pao = wa.GetAgentOpinion(wa.Cache.LangProject.DefaultParserAgent);
-			if (uao == Opinions.approves)
-			{
-				tsb.Replace(tsb.Length, tsb.Length, "\u2714", null);
-				tsb.SetStrPropValue(tsb.Length - 1, tsb.Length, (int)FwTextPropType.ktptFontFamily, "Segoe UI Symbol");
-				tsb.SetIntPropValues(tsb.Length - 1, tsb.Length,
-					(int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, (int)CmObjectUi.RGB(200, 255, 255));
-			}
-			if (pao == Opinions.approves)
-			{
-				tsb.Replace(tsb.Length, tsb.Length, "\u2713", null);
-				tsb.SetStrPropValue(tsb.Length - 1, tsb.Length, (int)FwTextPropType.ktptFontFamily, "Segoe UI Symbol");
-				tsb.SetIntPropValues(tsb.Length - 1, tsb.Length,
-					(int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, (int)CmObjectUi.RGB(254, 240, 206));
-			}
-			if (pao == Opinions.disapproves)
-			{
-				tsb.Replace(tsb.Length, tsb.Length, "X", null);
-				tsb.SetStrPropValue(tsb.Length - 1, tsb.Length, (int)FwTextPropType.ktptFontFamily, "Segoe UI Symbol");
-				tsb.SetIntPropValues(tsb.Length - 1, tsb.Length,
-					(int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, (int)CmObjectUi.RGB(254, 240, 206));
-				tsb.SetIntPropValues(tsb.Length - 1, tsb.Length,
-					(int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, (int)CmObjectUi.RGB(Color.Red));
-			}
+			AddOpinion(tsb, uao, (int)CmObjectUi.RGB(200, 255, 255));
+			AddOpinion(tsb, pao, (int)CmObjectUi.RGB(254, 240, 206));
 
 			for (int i = start; i != lim; i += increment)
 			{
@@ -482,6 +461,27 @@ namespace SIL.FieldWorks.IText
 				ichFrom = 0;
 			tsb.Replace(ichFrom, tsb.Length, "", null);
 			return tsb.GetString();
+		}
+
+		private static void AddOpinion(ITsStrBldr tsb, Opinions opinion, int backColor)
+		{
+			int foreColor = (int)CmObjectUi.RGB(Color.Black);
+			if (opinion == Opinions.approves)
+				tsb.Replace(tsb.Length, tsb.Length, "\u2714", null); // bold check mark
+			else if (opinion == Opinions.noopinion)
+			{
+				// Use same foreground and background color to create a blank of the same width as a check mark.
+				tsb.Replace(tsb.Length, tsb.Length, "\u2714", null);
+				foreColor = backColor;
+			}
+			else if (opinion == Opinions.disapproves)
+			{
+				tsb.Replace(tsb.Length, tsb.Length, "X", null);
+				foreColor = (int)CmObjectUi.RGB(Color.Red);
+			}
+			tsb.SetStrPropValue(tsb.Length - 1, tsb.Length, (int)FwTextPropType.ktptFontFamily, "Segoe UI Symbol");
+			tsb.SetIntPropValues(tsb.Length - 1, tsb.Length, (int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, foreColor);
+			tsb.SetIntPropValues(tsb.Length - 1, tsb.Length, (int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, backColor);
 		}
 
 		/// <summary>
