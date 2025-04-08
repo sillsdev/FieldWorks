@@ -1104,8 +1104,21 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public IFragment WriteProcessedObject(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className)
 		{
-			var runs = ((DocFragment)elementContent)?.DocBody.OfType<WP.Run>();
+			return WriteProcessedElementContent(elementContent, config);
+		}
+		public IFragment WriteProcessedCollection(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className)
+		{
+			return WriteProcessedElementContent(elementContent, config);
+		}
+
+		private IFragment WriteProcessedElementContent(IFragment elementContent, ConfigurableDictionaryNode config)
+		{
+			bool eachInAParagraph = config != null &&
+								  config.DictionaryNodeOptions is IParaOption &&
+								  ((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph;
+
 			// If there is only one run we can use it to get a writing system (needed for Before/After text).
+			var runs = ((DocFragment)elementContent)?.DocBody.OfType<WP.Run>();
 			int? wsId = null;
 			if (runs.Count() == 1)
 			{
@@ -1113,19 +1126,6 @@ namespace SIL.FieldWorks.XWorks
 				var runElem = GetElementFromRun(run);
 				wsId = runElem.WritingSystemId;
 			}
-
-			return WriteProcessedElementContent(elementContent, config, wsId);
-		}
-		public IFragment WriteProcessedCollection(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className)
-		{
-			return WriteProcessedElementContent(elementContent, config, null);
-		}
-
-		private IFragment WriteProcessedElementContent(IFragment elementContent, ConfigurableDictionaryNode config, int? wsId)
-		{
-			bool eachInAParagraph = config != null &&
-								  config.DictionaryNodeOptions is IParaOption &&
-								  ((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph;
 
 			// Add Before text, if it is not going to be displayed in a paragraph.
 			if (!eachInAParagraph && !string.IsNullOrEmpty(config.Before))
