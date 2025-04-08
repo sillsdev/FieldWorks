@@ -153,7 +153,7 @@ namespace SIL.FieldWorks.XWorks
 					characterStyles.Add(displayNameBase, stylesWithSameDisplayNameBase);
 				}
 
-				bool processParagraphStyle = ((nodePath != WordStylesGenerator.RootCharacterNodePath) &&
+				bool processParagraphStyle = ((nodePath != WordStylesGenerator.NormalCharNodePath) &&
 											  (wsId == WordStylesGenerator.DefaultStyle) &&
 											  WordStylesGenerator.IsParagraphStyle(styleName, _propertyTable));
 
@@ -224,9 +224,9 @@ namespace SIL.FieldWorks.XWorks
 
 				// Update the BasedOn value.
 				CharacterElement basedOnElem = null;
-				if (nodePath != WordStylesGenerator.RootCharacterNodePath)
+				if (nodePath != WordStylesGenerator.NormalCharNodePath)
 				{
-					TryGetCharacterStyle(WordStylesGenerator.RootCharacterNodePath, wsId, out CharacterElement normalElem);
+					TryGetCharacterStyle(WordStylesGenerator.NormalCharNodePath, wsId, out CharacterElement normalElem);
 					basedOnElem = normalElem.Redirect ?? normalElem;
 					WordStylesGenerator.SetBasedOn(style, basedOnElem.UniqueDisplayName());
 				}
@@ -367,14 +367,14 @@ namespace SIL.FieldWorks.XWorks
 			var cache = _propertyTable.GetValue<LcmCache>("cache");
 
 			// Add the Normal default character style.
-			AddStyle(WordStylesGenerator.NormalParagraphStyleName, WordStylesGenerator.RootCharacterDisplayName,
-				WordStylesGenerator.RootCharacterNodePath, null, WordStylesGenerator.DefaultStyle, false);
+			AddStyle(WordStylesGenerator.NormalParagraphStyleName, WordStylesGenerator.NormalCharDisplayName,
+				WordStylesGenerator.NormalCharNodePath, null, WordStylesGenerator.DefaultStyle, false);
 
 			// Add the Normal writing system styles.
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
-				AddStyle(WordStylesGenerator.NormalParagraphStyleName, WordStylesGenerator.RootCharacterDisplayName,
-					WordStylesGenerator.RootCharacterNodePath, null, aws.Handle, false);
+				AddStyle(WordStylesGenerator.NormalParagraphStyleName, WordStylesGenerator.NormalCharDisplayName,
+					WordStylesGenerator.NormalCharNodePath, null, aws.Handle, false);
 			}
 
 			// Set the redirects for the Normal styles so BasedOn values can initially be set to the correct values
@@ -382,7 +382,7 @@ namespace SIL.FieldWorks.XWorks
 			RedirectCharacterElements();
 
 			// Mark the normal styles as 'used' if they are not going to be redirected.
-			characterStyles.TryGetValue(WordStylesGenerator.RootCharacterDisplayName, out var elements);
+			characterStyles.TryGetValue(WordStylesGenerator.NormalCharDisplayName, out var elements);
 			foreach (var elem in elements)
 			{
 				if (elem.Redirect == null)
@@ -461,7 +461,7 @@ namespace SIL.FieldWorks.XWorks
 					//
 					// There is no need to check the default styles if the style the current element is based on is not also
 					// re-directed to the default style.
-					if (nonDefaultElements[currentElem].NodePath == WordStylesGenerator.RootCharacterNodePath ||
+					if (nonDefaultElements[currentElem].NodePath == WordStylesGenerator.NormalCharNodePath ||
 						nonDefaultElements[currentElem].BasedOnElement.WritingSystemId == WordStylesGenerator.DefaultStyle)
 					{
 						foreach (var defaultElem in defaultElements)
@@ -610,7 +610,7 @@ namespace SIL.FieldWorks.XWorks
 				WordStylesGenerator.SetStyleName(paraStyle, uniqueDisplayName);
 
 				// Update the BasedOn value.
-				if (charElem.NodePath != WordStylesGenerator.RootCharacterNodePath)
+				if (charElem.NodePath != WordStylesGenerator.NormalCharNodePath)
 				{
 					TryGetParagraphStyle(WordStylesGenerator.NormalParagraphNodePath, out ParagraphElement normalParaElem);
 					WordStylesGenerator.SetBasedOn(paraStyle, normalParaElem.UniqueDisplayName());
@@ -680,8 +680,8 @@ namespace SIL.FieldWorks.XWorks
 			normElem.Used = true;
 
 			// Page Header Style
-			TryGetCharacterStyle(WordStylesGenerator.RootCharacterNodePath, WordStylesGenerator.DefaultStyle, out CharacterElement rootElem);
-			var pageHeaderStyle = WordStylesGenerator.GeneratePageHeaderStyle(normStyle, rootElem.Style);
+			TryGetCharacterStyle(WordStylesGenerator.NormalCharNodePath, WordStylesGenerator.DefaultStyle, out CharacterElement normalCharElem);
+			var pageHeaderStyle = WordStylesGenerator.GeneratePageHeaderStyle(normStyle, normalCharElem.Style);
 			// Intentionally re-using the bulletInfo from Normal.
 			var pageHeaderElem = new ParagraphElement(WordStylesGenerator.PageHeaderDisplayName,
 				pageHeaderStyle, 1, WordStylesGenerator.PageHeaderNodePath, bulletInfo);
