@@ -674,7 +674,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="LexTextControls.resx">
       <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>LexTextControls.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="LinkAllomorphDlg.resx">
